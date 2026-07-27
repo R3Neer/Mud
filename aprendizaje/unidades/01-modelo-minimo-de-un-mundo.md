@@ -47,7 +47,7 @@ Al terminar esta unidad deberías poder:
 4. Leer la propuesta:
 
    $$
-   W=(I_W,\operatorname{kind}_W,\operatorname{store}_W)
+   W=(\operatorname{kind}_W,\operatorname{store}_W)
    $$
 
 5. Explicar por qué el store se modela inicialmente como una función parcial.
@@ -346,13 +346,44 @@ $$
 
 El store indica valores, pero todavía no indica qué constructo describe cada instancia.
 
-Introducimos:
+Una primera posibilidad sería declarar explícitamente el conjunto $I_W$ de identidades existentes y después una función total:
 
 $$
 \operatorname{kind}_W:I_W\to\mathcal C
 $$
 
-donde $I_W\subseteq\mathcal I$ es el conjunto de identidades que existen en el mundo $W$.
+Pero una función incluye su dominio como parte de su definición. Por tanto, si conocemos $\operatorname{kind}_W$, podemos recuperar $I_W$:
+
+$$
+I_W=\operatorname{dom}(\operatorname{kind}_W)
+$$
+
+Mantener ambos como componentes independientes introduciría redundancia y nos obligaría a imponer:
+
+$$
+I_W=\operatorname{dom}(\operatorname{kind}_W)
+$$
+
+en toda buena formación.
+
+Una representación más pequeña consiste en hacer parcial `kind` sobre el universo de identidades:
+
+$$
+\operatorname{kind}_W:
+\mathcal I
+\rightharpoonup
+\mathcal C
+$$
+
+Una identidad existe en $W$ exactamente cuando `kind` está definida para ella:
+
+$$
+i\in I_W
+\iff
+i\in\operatorname{dom}(\operatorname{kind}_W)
+$$
+
+Así, $I_W$ sigue siendo una abreviatura útil, pero es una noción derivada y no un componente independiente del mundo.
 
 En el ejemplo:
 
@@ -370,12 +401,11 @@ Aquí usamos una función total porque toda identidad existente debe tener algú
 
 ## 11. Primera propuesta de mundo
 
-Ya podemos agrupar las piezas:
+Ya podemos agrupar las piezas dinámicas:
 
 $$
 W=
 \left(
-I_W,
 \operatorname{kind}_W,
 \operatorname{store}_W
 \right)
@@ -383,13 +413,23 @@ $$
 
 Se lee:
 
-> Un mundo $W$ está formado, como mínimo, por sus identidades existentes, la clasificación runtime de cada identidad y el store de sus campos.
+> Un mundo $W$ está formado, como mínimo, por la clasificación runtime parcial de identidades y el store parcial de sus campos.
+
+El programa resuelto $P$ proporciona el contexto estático: constructos, campos, tipos y demás declaraciones. Esos conjuntos no cambian durante la ejecución y no se repiten como componentes de cada mundo:
+
+$$
+\mathcal C_P,\qquad
+\mathcal F_P,\qquad
+\mathcal V_P
+$$
+
+El mundo se interpreta siempre respecto a un programa:
+
+$$
+W\in\operatorname{Worlds}(P)
+$$
 
 Para nuestro mundo:
-
-$$
-I_W=\{\mathit{egypt\#1}\}
-$$
 
 $$
 \operatorname{kind}_W
@@ -447,7 +487,7 @@ El mundo $W$ pertenece al **estado runtime**. Describe:
 
 ## 13. Buena formación
 
-Nuestra tupla permite escribir mundos absurdos:
+Nuestra pareja de funciones permite escribir mundos absurdos:
 
 $$
 \operatorname{store}_W
@@ -461,7 +501,7 @@ La estructura matemática existe, pero no representa un estado válido de MUD.
 Necesitamos un predicado:
 
 $$
-\operatorname{BienFormado}(P,W)
+\operatorname{WellFormed}(P,W)
 $$
 
 que se lee:
@@ -470,7 +510,7 @@ que se lee:
 
 Más adelante tendrá que exigir, al menos:
 
-1. Toda identidad de $I_W$ tiene exactamente un `kind`.
+1. Toda identidad existente pertenece al dominio de `kind`, y cada entrada de ese dominio tiene un único resultado.
 2. Todo campo almacenado pertenece al constructo correspondiente o a sus ancestros.
 3. Todo valor pertenece al tipo declarado del campo.
 4. Se respetan cardinalidades.
@@ -483,17 +523,13 @@ Esta es una técnica profesional importante: podemos definir el nombre y la resp
 
 ## 14. Igualdad de mundos
 
-Con esta primera propuesta:
+Con esta propuesta revisada:
 
 $$
 W_1=W_2
 $$
 
-si y solo si coinciden sus tres componentes:
-
-$$
-I_{W_1}=I_{W_2}
-$$
+si y solo si coinciden sus dos componentes:
 
 $$
 \operatorname{kind}_{W_1}
@@ -524,7 +560,24 @@ Todavía no afirmamos que sea un teorema. Por ahora es la forma de una propiedad
 
 ## 15. Alternativas consideradas
 
-### 15.1 Un mapa por instancia
+### 15.1 Conjunto portador explícito
+
+También podríamos conservar:
+
+$$
+W=
+(I_W,\operatorname{kind}_W,\operatorname{store}_W)
+$$
+
+Esta forma se parece a una estructura algebraica con conjuntos portadores explícitos y puede resultar cómoda al definir operaciones. Sin embargo, si `kind` es total sobre $I_W$, el conjunto puede recuperarse como su dominio.
+
+Conservar ambos exige una condición de coherencia adicional. La propuesta revisada prefiere definir:
+
+$$
+I_W:=\operatorname{dom}(\operatorname{kind}_W)
+$$
+
+### 15.2 Un mapa por instancia
 
 Podríamos representar:
 
@@ -547,7 +600,7 @@ facilita hablar de posiciones individuales, conjuntos de lectura y conjuntos de 
 
 Las dos pueden contener esencialmente la misma información. Elegir una para la especificación es una convención de modelado, no una verdad matemática inevitable.
 
-### 15.2 Un registro fijo
+### 15.3 Un registro fijo
 
 Podríamos definir un registro diferente para cada constructo. Funciona bien para lenguajes pequeños, pero complica:
 
@@ -557,7 +610,7 @@ Podríamos definir un registro diferente para cada constructo. Funciona bien par
 - Creación dinámica.
 - Grafos de dependencia.
 
-### 15.3 Una secuencia de asignaciones
+### 15.4 Una secuencia de asignaciones
 
 Una lista como:
 
@@ -577,13 +630,14 @@ conserva un orden que, según los principios de MUD, no debería cambiar el sign
 - Producto cartesiano.
 - Funciones totales y parciales.
 - Dominio de una función.
-- Igualdad estructural de tuplas.
+- Igualdad estructural de productos y funciones.
 
 ### Convenciones provisionales de la especificación
 
 - $\mathcal C$, $\mathcal I$, $\mathcal F$ y $\mathcal V$ como letras.
 - `kind` como nombre de la clasificación runtime.
 - Store plano sobre pares identidad-campo.
+- $I_W$ como abreviatura de $\operatorname{dom}(\operatorname{kind}_W)$.
 
 ### Decisiones semánticas de MUD que deberán aprobarse
 
@@ -650,7 +704,12 @@ como:
 
 ## 19. Tu turno
 
-El ejercicio está en [[aprendizaje/respuestas/01-modelo-minimo-respuesta]].
+El ejercicio reutilizable está en [[aprendizaje/ejercicios/01-modelo-minimo-ejercicio]].
+
+La primera respuesta del autor y su revisión se conservan como caso de aprendizaje:
+
+- [[aprendizaje/respuestas/01-modelo-minimo-respuesta]]
+- [[aprendizaje/revisiones/01-modelo-minimo-revision]]
 
 > [!exercise] Entregable
 > Modela un mundo con una puerta concreta siguiendo la misma estructura. Después explica con tus palabras por qué el store es parcial.
@@ -659,7 +718,7 @@ El ejercicio está en [[aprendizaje/respuestas/01-modelo-minimo-respuesta]].
 > Separa constructo, identidad, campos y valores antes de escribir funciones.
 
 > [!hint]- Pista 2 — Forma del mundo
-> Conserva la forma $W_G=(I_{W_G},\operatorname{kind}_{W_G},\operatorname{store}_{W_G})$ y sustituye únicamente su contenido.
+> Conserva la forma $W_G=(\operatorname{kind}_{W_G},\operatorname{store}_{W_G})$ y sustituye únicamente su contenido.
 
 > [!hint]- Pista 3 — Dominio del store
 > El dominio debe contener dos pares: uno para `unlocked` y otro para `open`.
@@ -673,7 +732,7 @@ Tras revisar el ejercicio y las alternativas:
 1. Fijaremos las convenciones necesarias en `03-notacion.md`.
 2. Redactaremos una propuesta profesional de `04-modelo-matematico.md`.
 3. Registraremos las decisiones todavía abiertas.
-4. Buscaremos un contraejemplo que obligue a ampliar o corregir la tupla $W$.
+4. Buscaremos un contraejemplo que obligue a ampliar o corregir la representación $W$.
 
 ## 21. Repaso
 
