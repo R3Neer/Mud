@@ -25,12 +25,13 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-010 | Vigente | `eventually` exige prueba de finitud y terminación | [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md) | Sección 44 |
 | D-011 | Vigente | Los derivados no pueden añadir comportamiento de dominio | [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) | Secciones 2.1, 63 a 66 |
 | D-012 | Vigente | Los cambios semánticos válidos se validan y versionan atómicamente | [05-cambios-semanticos-y-git.md](05-cambios-semanticos-y-git.md) | Secciones 68 a 71 e introducción del usuario |
+| D-013 | Vigente | La especificación formal del lenguaje completo precederá a la continuación de su implementación | [especificacion/README.md](../especificacion/README.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 
 | ID | Estado | Propuesta | Motivo | Pregunta relacionada |
 | --- | --- | --- | --- | --- |
-| P-001 | Propuesta | Adoptar el corte de núcleo vertical v0 | Demostrar la tesis sin bloquearse en funciones avanzadas | Q-001 a Q-009 |
+| P-001 | Sustituida | Adoptar el corte de núcleo vertical v0 como objetivo inmediato de implementación | Sustituida por D-013; el corte v0 se conserva como futuro primer objetivo de implementación y como primer ciclo de formalización | Q-001 a Q-009 |
 | P-002 | Propuesta | Separar AST de superficie e IR canónico | Conservar procedencia y desacoplar sintaxis de semántica | Q-009 |
 | P-003 | Propuesta | No crear commits para consultas `READ` puras | Git registra cambios de estado, no lecturas | Q-008 |
 | P-004 | Propuesta | Preparar cambios en un área aislada y publicar al validar | Evitar rollback incompleto y commits contaminados | Q-008 |
@@ -78,4 +79,3 @@ Pruebas o propiedades que demuestran la decisión.
 3. Se aprueba, rechaza o sustituye explícitamente.
 4. Se actualizan especificación, nota dueña y tests.
 5. El registro enlaza la decisión sin repetir toda su argumentación.
-

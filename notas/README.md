@@ -63,8 +63,7 @@ Cada concepto tiene un único documento dueño. Los demás documentos lo enlazan
 
 La siguiente sesión de diseño debería empezar por:
 
-1. Aceptar o corregir el corte de [06-nucleo-vertical-v0.md](06-nucleo-vertical-v0.md).
+1. Continuar el índice de [la especificación formal](../especificacion/README.md) con sus convenciones editoriales y notación matemática.
 2. Resolver las preguntas P0 de [08-preguntas-abiertas.md](08-preguntas-abiertas.md).
-3. Crear una especificación normativa versionada y una gramática ejecutable.
-4. Elegir dos o tres ejemplos canónicos que actúen como pruebas de aceptación.
-
+3. Formalizar el modelo matemático de mundo, estado, valor, identidad y ancla.
+4. Elegir ejemplos canónicos que actúen como testigos de cada regla normativa.

@@ -1,6 +1,12 @@
 # Plan de formalización e implementación temprana
 
-El orden propuesto reduce primero la incertidumbre semántica y después amplía expresividad. Cada hito debe entregar ejemplos ejecutables, diagnósticos y decisiones registradas.
+El orden propuesto reduce primero la incertidumbre semántica y después amplía expresividad. Cada hito debe entregar ejemplos verificables, diagnósticos y decisiones registradas.
+
+## Decisión de estrategia
+
+Antes de continuar la implementación se formalizará el lenguaje MUD completo. El índice normativo y el criterio de completitud se encuentran en [especificacion/README.md](../especificacion/README.md).
+
+Las fases de implementación descritas más abajo se conservan como planificación posterior. Durante la formalización se recorrerán esas capacidades por ciclos verticales, pero no se considerará estable una implementación hasta cerrar la especificación MUD 1.0.
 
 ## Fase 0 — Gobierno de la especificación
 
@@ -16,7 +22,38 @@ Entregables:
 
 Salida: una modificación de la semántica ya no puede ocurrir solo en código.
 
-## Fase 1 — Gramática del núcleo
+## Fase 1 — Infraestructura de la especificación
+
+Objetivo: fijar el metalenguaje con el que se formalizará MUD completo.
+
+Entregables:
+
+- Índice normativo.
+- Convenciones editoriales.
+- Notación matemática.
+- Modelo matemático del mundo.
+- Gramática EBNF versionada.
+- Identificadores de requisitos.
+- Estructura de ejemplos y conformidad.
+
+Salida: cada nueva decisión puede escribirse de forma precisa, enlazarse y probarse.
+
+## Fase 2 — Formalización completa del lenguaje
+
+Objetivo: completar las cinco partes definidas en `especificacion/README.md`.
+
+Método:
+
+1. Sintaxis concreta y abstracta.
+2. Semántica estática.
+3. Semántica dinámica.
+4. Ejemplos y contraejemplos.
+5. Pruebas de conformidad.
+6. Revisión de interacciones con características ya formalizadas.
+
+Salida: se satisfacen los criterios de “especificación completa” de MUD 1.0.
+
+## Fase 3 — Gramática ejecutable del primer corte
 
 Objetivo: hacer inequívoca la superficie incluida en v0.
 
@@ -31,7 +68,7 @@ Entregables:
 
 Salida: todos los ejemplos v0 se parsean o fallan de forma predecible.
 
-## Fase 2 — Modelo semántico estático
+## Fase 4 — Modelo semántico estático
 
 Objetivo: resolver qué significa un programa sin ejecutarlo.
 
@@ -48,7 +85,7 @@ Entregables:
 
 Salida: `mud check` distingue modelos válidos y emite un IR determinista.
 
-## Fase 3 — Runtime transaccional
+## Fase 5 — Runtime transaccional
 
 Objetivo: ejecutar acciones elementales sin reactividad.
 
@@ -64,7 +101,7 @@ Entregables:
 
 Salida: el escenario de reclutamiento cumple todas las pruebas.
 
-## Fase 4 — Causalidad por ondas
+## Fase 6 — Causalidad por ondas
 
 Objetivo: demostrar reactividad determinista.
 
@@ -80,7 +117,7 @@ Entregables:
 
 Salida: el escenario de la puerta y un caso de conflicto son reproducibles.
 
-## Fase 5 — Operaciones semánticas y Git
+## Fase 7 — Operaciones semánticas y Git
 
 Objetivo: cambiar el modelo con el mismo rigor con que se ejecuta.
 
@@ -96,7 +133,7 @@ Entregables:
 
 Salida: una petición controlada en lenguaje natural puede transformarse en un commit semántico verificable.
 
-## Fase 6 — Expansión estructural
+## Fase 8 — Expansión estructural
 
 Orden recomendado:
 
@@ -113,7 +150,7 @@ Orden recomendado:
 
 Cada incorporación debe extender la matriz de conflictos, el grafo, IR y tests.
 
-## Fase 7 — Cantidades y azar
+## Fase 9 — Cantidades y azar
 
 Entregables:
 
@@ -126,7 +163,7 @@ Entregables:
 
 Estas funciones necesitan decisiones numéricas y de reproducibilidad antes de implementarse.
 
-## Fase 8 — Especulación y alcanzabilidad
+## Fase 10 — Especulación y alcanzabilidad
 
 Primero `allowed`, reutilizando el runtime transaccional sobre snapshots descartables. Después `eventually`, únicamente para perfiles de mundo que el analizador pueda demostrar finitos.
 
@@ -170,4 +207,3 @@ Para v0 basta una implementación que favorezca tipos algebraicos, parser manten
 7. Crear una CLI vacía con `check`.
 8. Implementar el primer camino `construct → campo → ancla → IR`.
 9. Añadir una característica por prueba vertical, no por capas gigantes.
-

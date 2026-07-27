@@ -25,7 +25,7 @@ Esta matriz demuestra cobertura sin copiar las 78 secciones. Los rangos indican 
 - La fuente usa expresiones como “se mantiene vigente” o “el resto se mantiene” que parecen depender de versiones anteriores no incluidas. Esto se registra como Q-010.
 - La lista de 35 cuestiones abiertas se conserva temáticamente en Q-001 a Q-035; algunas se agrupan cuando comparten una única decisión normativa.
 - Q-036 a Q-040 son preguntas inferidas del objetivo de producto y del protocolo de automatización; no se presentan como preguntas originales.
-- Las propuestas P-001 a P-005 no son decisiones de la fuente.
+- P-001 a P-005 nacieron como propuestas de estas notas y no como decisiones de la fuente. P-001 quedó posteriormente sustituida por D-013.
 
 ## Cobertura que requiere ejemplos
 
@@ -36,4 +36,3 @@ La trazabilidad temática no sustituye pruebas normativas. Antes de implementar 
 - Al menos un contraejemplo por restricción.
 - Resultado esperado en AST o IR.
 - Diagnóstico esperado cuando sea inválido.
-

@@ -1,0 +1,11 @@
+# Configuración y plugins locales de Obsidian
+.obsidian/
+
+# Papelera local del vault
+.trash/
+
+# Archivos temporales del sistema y editores
+Thumbs.db
+.DS_Store
+*.tmp
+*.bak
