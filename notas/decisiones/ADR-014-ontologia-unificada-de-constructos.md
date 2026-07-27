@@ -65,7 +65,7 @@ Se descarta. Obliga a decidir si un constructo es clase u objeto y no representa
 
 ### Tokens diferentes para declaración y consulta
 
-Podrían utilizarse palabras como `extends` e `is`. Se descarta por ahora porque ambos usos expresan la misma relación conceptual y sus posiciones gramaticales permiten distinguirlos.
+Esta alternativa se descartó inicialmente, pero fue adoptada después por [[notas/decisiones/ADR-018-from-declara-is-consulta|ADR-018]]: `from` declara antecesores directos e `is` consulta la relación reflexiva y transitiva.
 
 ### `is` estricto e irreflexivo
 
@@ -73,9 +73,9 @@ Se descarta. El autor ha decidido que `is` sea reflexivo. La especialización di
 
 ## Consecuencias para el compilador
 
-- El lexer necesita un único token `is`.
-- El parser puede distinguir ambos usos por contexto: una cláusula de cabecera y una expresión no comparten posición gramatical.
-- El AST debe evitar un nodo genérico ambiguo: la declaración añade una arista directa y la expresión construye una consulta booleana.
+- El lexer distingue `from` e `is`.
+- El parser usa `from` en cabeceras e `is` en expresiones.
+- El AST representa la lista de antecesores en la declaración y la consulta booleana en `IsExpression`.
 - La resolución debe comprobar que los nombres usados en una cláusula de especialización designan constructos.
 - La especialización declarada puede analizarse estáticamente.
 - `create` amplía durante la ejecución el conjunto activo y la relación directa activa. Aunque la identidad y su descriptor estén resueltos, una consulta que exija presencia no siempre puede reducirse en compilación.
@@ -83,7 +83,7 @@ Se descarta. El autor ha decidido que `is` sea reflexivo. La especialización di
 
 ## Consecuencias para el uso humano
 
-La reutilización de `is` es coherente si se explica la diferencia entre relación directa y relación derivada:
+La sintaxis separa la declaración directa de la consulta derivada:
 
 ```mud
 construct Kingdom from Place {
@@ -93,7 +93,7 @@ construct Egypt from Kingdom {
 }
 ```
 
-La primera cabecera introduce una relación directa. De ambas declaraciones se derivan:
+Las cabeceras con `from` introducen relaciones directas. De ambas declaraciones se derivan:
 
 ```mud
 Egypt is Kingdom
