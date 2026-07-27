@@ -70,16 +70,31 @@ La fuente afirma que todas las decisiones son vigentes, pero algunas se describe
 
 ### Q-041 — Ontología de constructos
 
+Estado: **cerrada**.
+
 ¿Cuál es la estructura matemática común de los constructos declarados y los creados durante la ejecución, y qué añade exactamente `create C N` al mundo?
 
-Restricción confirmada: MUD no tiene una separación entre clases y objetos, y un constructo no tiene instancias. Debe precisarse:
+Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]].
 
-- Si `create C N` crea un nuevo constructo $N$ relacionado con $C$ mediante el mismo `is` que una declaración estática.
-- Qué diferencias semánticas quedan entre un constructo declarado y uno creado, además de origen y ciclo de vida.
-- Si todo constructo concreto existe como entidad del mundo y puede actuar simultáneamente como especialización de otro y como base de nuevos constructos.
-- Qué partes de su identidad, campos y relaciones pertenecen al programa y cuáles al estado mutable.
+MUD tiene un único dominio conceptual de constructos. Todo constructo concreto es una cosa con identidad y estado propio que también puede ser antecesora. Los abstractos pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` produce otro constructo concreto relacionado mediante el mismo `is`, e `is` es reflexivo y transitivo.
 
-Bloquea el modelo matemático del mundo, el sistema de tipos de constructos, `create`, `destroy` y la semántica de `is`.
+Las consecuencias no resueltas se separan en Q-042 y Q-043.
+
+### Q-042 — Herencia desde un constructo concreto
+
+Cuando un constructo concreto $B$ se especializa a partir de otro constructo concreto $A$, ¿hereda solo las declaraciones, restricciones y valores predeterminados de $A$, o copia u observa también el estado mutable actual de $A$?
+
+La fuente inicial habla de heredar valores predeterminados, lo que sugiere estados independientes. Debe confirmarse el instante y mecanismo de inicialización, especialmente para `create`.
+
+Bloquea la definición del store, la inicialización y la semántica de mutación.
+
+### Q-043 — Ciclos de especialización
+
+¿Debe rechazarse cualquier ciclo no trivial de especialización directa?
+
+Si se rechaza, la relación reflexiva y transitiva `is` puede ser antisimétrica y formar un orden parcial. Si se admite, dos constructos distintos podrían satisfacer simultáneamente `A is B` y `B is A`, y `is` sería solo un preorden.
+
+Bloquea la buena formación del grafo de constructos y la resolución de herencia múltiple.
 
 ## P1 — Antes de ampliar el lenguaje
 

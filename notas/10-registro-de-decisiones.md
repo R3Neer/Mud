@@ -9,7 +9,7 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 - **Sustituida**: reemplazada por otra decisión.
 - **Rechazada**: considerada y descartada.
 
-## Decisiones heredadas de la especificación inicial
+## Decisiones vigentes
 
 | ID | Estado | Decisión | Documento dueño | Procedencia |
 | --- | --- | --- | --- | --- |
@@ -26,6 +26,7 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-011 | Vigente | Los derivados no pueden añadir comportamiento de dominio | [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) | Secciones 2.1, 63 a 66 |
 | D-012 | Vigente | Los cambios semánticos válidos se validan y versionan atómicamente | [05-cambios-semanticos-y-git.md](05-cambios-semanticos-y-git.md) | Secciones 68 a 71 e introducción del usuario |
 | D-013 | Vigente | La especificación formal del lenguaje completo precederá a la continuación de su implementación | [especificacion/README.md](../especificacion/README.md) | Decisión del autor, 2026-07-27 |
+| D-014 | Vigente | Los constructos forman un único dominio, los concretos son cosas y posibles antecesores, `create` crea otro constructo e `is` es reflexivo | [ADR-014](decisiones/ADR-014-ontologia-unificada-de-constructos.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 

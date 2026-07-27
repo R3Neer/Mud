@@ -11,8 +11,10 @@ depends-on:
   - "[[02-terminologia]]"
   - "[[03-notacion]]"
 questions:
-  - Q-041
-decisions: []
+  - Q-042
+  - Q-043
+decisions:
+  - D-014
 ---
 
 # 04. Modelo matemático del mundo
@@ -46,9 +48,22 @@ MUD no presupone una separación entre clases y objetos. En particular, un const
 > [!warning] Modelo retirado
 > La representación $W=(\operatorname{kind}_W,\operatorname{store}_W)$ suponía identidades runtime clasificadas por constructos mediante `kind`. Esa separación no corresponde al concepto de constructo de MUD y no es una estructura candidata.
 
-La estructura de $W$ no se propondrá hasta resolver [[notas/08-preguntas-abiertas#Q-041 — Ontología de constructos|Q-041]].
+## Restricciones confirmadas
+
+La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]] fija:
+
+1. Todo constructo posee identidad semántica.
+2. Todo constructo concreto denota una cosa concreta con estado propio y puede ser antecesor de otros constructos.
+3. Un constructo abstracto pertenece al mismo dominio, pero no denota directamente una cosa concreta con estado propio.
+4. `create C N` crea otro constructo concreto $N$ relacionado con $C$ mediante el mismo `is` que una declaración estática.
+5. La relación semántica `is` es reflexiva y transitiva.
+
+La estructura de $W$ no se propondrá hasta determinar qué se hereda desde un constructo concreto y si la especialización directa debe ser acíclica.
 
 ## Cuestiones abiertas
 
-> [!question] Q-041 — Ontología de constructos
-> Determinar la estructura matemática común de los constructos declarados y creados durante la ejecución, la semántica exacta de `is` y el efecto de `create`. La resolución debe respetar que un constructo no tiene instancias.
+> [!question] Q-042 — Herencia desde un constructo concreto
+> Determinar si un descendiente hereda únicamente declaraciones y predeterminados o también copia u observa estado mutable actual.
+
+> [!question] Q-043 — Ciclos de especialización
+> Determinar si se prohíben los ciclos entre identidades distintas y, por tanto, si `is` forma un orden parcial.

@@ -18,15 +18,19 @@ Una declaración tiene identidad semántica mediante un ancla. El archivo es una
 
 ## Identidad, valor y especialización
 
-MUD no presupone dos dominios separados de clases y objetos. Un constructo no tiene instancias: los constructos declarados y los creados durante la ejecución pertenecen al mismo dominio conceptual. La caracterización matemática exacta de ese dominio, y la diferencia de ciclo de vida entre ambos orígenes, está abierta en [[08-preguntas-abiertas#Q-041 — Ontología de constructos]].
+MUD no presupone dos dominios separados de clases y objetos. Un constructo no tiene instancias: los constructos declarados y los creados durante la ejecución pertenecen al mismo dominio conceptual, según [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]].
+
+Todo constructo concreto denota una cosa con identidad y estado propio, y puede servir a la vez como antecesor de otros constructos. Un constructo abstracto conserva identidad dentro del mismo dominio, pero no denota directamente una cosa concreta con estado propio.
 
 Hay que conservar tres relaciones distintas:
 
 - Los constructos se comparan por identidad.
 - Los aliases se comparan por valor estructural.
-- `is` expresa especialización o pertenencia nominal, no igualdad.
+- `is` expresa especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
 
 Dos constructos creados durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con los mismos componentes son iguales. Aliases diferentes no son intercambiables aunque su forma coincida.
+
+`create C N` crea un nuevo constructo concreto $N$ y establece la misma relación `is` que una declaración estática de especialización. El origen y el ciclo de vida no forman una segunda categoría ontológica.
 
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
 
