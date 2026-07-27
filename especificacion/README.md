@@ -16,7 +16,7 @@ normative: true
 
 - Estado general: **en preparación**
 - Versión objetivo inicial: **MUD 1.0**
-- Autoridad actual: `MUD Especificacion inicial.md`, hasta que cada decisión sea incorporada o sustituida explícitamente aquí.
+- Autoridad actual: los capítulos vigentes de este directorio y las decisiones vigentes enlazadas. [[referencias/MUD Especificacion inicial|La especificación inicial]] es una referencia histórica subsidiaria para requisitos aún no migrados ni sustituidos.
 - Alcance: lenguaje MUD completo, su semántica de ejecución y los criterios de conformidad.
 
 Este directorio contendrá la especificación normativa de MUD. Su objetivo es que dos implementaciones independientes puedan:

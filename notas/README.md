@@ -1,12 +1,12 @@
 # Notas de trabajo de MUD
 
-Esta carpeta convierte la especificación inicial en un espacio de trabajo para pasar de ideación a formalización e implementación temprana. No sustituye la especificación fuente ni intenta reescribirla entera: la descompone por responsabilidades, identifica dependencias y separa decisiones vigentes de propuestas y preguntas.
+Esta carpeta convierte la especificación inicial en un espacio de trabajo para pasar de ideación a formalización e implementación temprana. La descompone por responsabilidades, identifica dependencias y separa decisiones vigentes de propuestas y preguntas.
 
 Documento de procedencia:
 
-- `C:\Users\Usuario\Downloads\MUD Especificacion inicial.md`
-- Estado observado: especificación inicial de 78 secciones.
-- Regla de interpretación: cuando estas notas resuman una decisión, la especificación inicial sigue siendo la autoridad hasta que exista una especificación canónica versionada en el repositorio.
+- [[referencias/MUD Especificacion inicial|MUD — Especificación inicial histórica]].
+- Estado observado: instantánea inicial de 78 secciones, ahora anotada como no normativa.
+- Regla de interpretación: `especificacion/` y las decisiones vigentes prevalecen. La referencia solo conserva procedencia y requisitos que aún no se hayan migrado, sustituido o rechazado explícitamente.
 
 ## Qué se está construyendo
 
@@ -44,7 +44,7 @@ La dificultad principal no es analizar texto. Es garantizar que una intención e
 
 Cada afirmación nueva debería estar marcada mentalmente como una de estas categorías:
 
-- **Decisión vigente**: aparece afirmada como tal en la especificación inicial.
+- **Decisión vigente**: figura como vigente en [[10-registro-de-decisiones]] o en un capítulo normativo.
 - **Propuesta**: recomendación de estas notas para poder avanzar.
 - **Pregunta abierta**: requiere una decisión explícita.
 - **Inferencia**: conclusión razonable, pero no declarada literalmente en la fuente.

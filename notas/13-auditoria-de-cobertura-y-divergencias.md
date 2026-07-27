@@ -1,15 +1,19 @@
 # Auditoría de cobertura y divergencias de la fuente inicial
 
 - Estado: auditoría de procedencia
-- Fuente auditada: `C:\Users\Usuario\Downloads\MUD Especificacion inicial.md`
+- Fuente auditada: [[referencias/MUD Especificacion inicial|MUD — Especificación inicial histórica]]
 - Fecha de la fuente observada: 2026-07-27 12:00:02
 - Líneas: 3652
-- SHA-256: `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`
+- SHA-256 original previo a las anotaciones: `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`
+- Copia histórica anotada: 3765 líneas
+- SHA-256 de la copia anotada y normalizada: `3AFEC544F2F77CDDB8D5849E42ADBD63D8950E2879CD6CF732133CA6C86E4060`
 - Documentos relacionados: [[notas/11-trazabilidad-de-la-fuente]], [[notas/10-registro-de-decisiones]], [[especificacion/README]]
 
 ## Conclusión
 
 El contenido de la especificación inicial **no está todavía formalizado por completo dentro del repositorio**.
+
+La fuente se conserva en `referencias/` con portada de no autoridad, un índice de divergencias y avisos inline. Esas anotaciones alteran el hash actual del archivo, por lo que el hash anterior identifica exclusivamente la instantánea original auditada.
 
 La documentación actual sí:
 
