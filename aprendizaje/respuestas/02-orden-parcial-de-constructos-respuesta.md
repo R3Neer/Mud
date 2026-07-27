@@ -39,27 +39,37 @@ $$
 ## 3. Creación
 
 $$
-\operatorname{created}_W(\mathsf{Memphis})
+\mathcal R_P^{\mathsf{create}}
 =
 $$
 
 $$
-\operatorname{created}_W(\mathsf{Monument})
+\operatorname{shape}_P(\mathsf{Memphis})
 =
 $$
 
 $$
-\operatorname{created}_W(\mathsf{RiverRegion})
+\operatorname{shape}_P(\mathsf{Monument})
 =
 $$
 
 $$
-\operatorname{created}_W(\mathsf{DeltaCapital})
+\operatorname{shape}_P(\mathsf{RiverRegion})
+=
+$$
+
+$$
+\operatorname{shape}_P(\mathsf{DeltaCapital})
 =
 $$
 
 $$
 \mathcal D_W=
+$$
+
+$$
+\operatorname{created}_W
+=
 $$
 
 $$
@@ -133,7 +143,7 @@ Ejemplo mínimo:
 # Escribe aquí.
 ```
 
-## 9. Dos usos de `is`
+## 9. `from` e `is`
 
 Clasificación y explicación del parser:
 

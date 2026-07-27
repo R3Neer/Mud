@@ -19,6 +19,8 @@ spec-chapters:
 decisions:
   - D-014
   - D-015
+  - D-016
+  - D-018
 tags:
   - mud/aprendizaje
   - mud/unidad
@@ -27,14 +29,14 @@ tags:
 # Unidad 02 — Constructos como orden parcial
 
 > [!abstract]
-> Esta unidad formaliza el grafo de especialización de MUD sin introducir clases ni instancias. Es material didáctico; las decisiones semánticas confirmadas proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]] y [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]].
+> Esta unidad formaliza el grafo de especialización de MUD sin introducir clases ni instancias. Es material didáctico; las decisiones semánticas confirmadas proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]] y [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]].
 
 ## 1. Pregunta de MUD
 
 Queremos dar un significado único a estas tres expresiones:
 
 ```mud
-construct Egypt is Kingdom {
+construct Egypt from Kingdom {
 }
 
 Egypt is Place
@@ -58,7 +60,7 @@ Al terminar la unidad deberías poder:
 5. Explicar por qué un grafo directo acíclico produce un orden parcial.
 6. Incorporar a la relación un constructo creado durante la ejecución.
 7. Detectar un ciclo inválido y construir el contraejemplo que produciría.
-8. Distinguir los dos usos sintácticos del token `is`.
+8. Distinguir la declaración directa con `from` de la consulta derivada con `is`.
 
 ## 3. Prerrequisitos
 
@@ -74,48 +76,50 @@ La Unidad 01 introdujo esas herramientas. Su interpretación clase–instancia f
 
 Antes de formalizar `create`, necesitamos separar dos cosas que en el código fuente pueden parecer mezcladas:
 
-- El **programa** $P$ contiene las declaraciones y leyes fijadas antes de comenzar una ejecución.
-- El **mundo** $W$ contiene el estado semántico que puede cambiar durante esa ejecución.
+- El **programa** $P$ es el texto resuelto que describe cómo construir el mundo inicial y qué transiciones están permitidas.
+- El **mundo** $W$ contiene las identidades activas, sus declaraciones activas y su estado semántico actual.
 
-En el fragmento actual, pertenecen a $P$:
+El programa contiene sintácticamente:
 
-- Las identidades de los constructos declarados estáticamente.
-- Su carácter abstracto o concreto.
-- Sus relaciones directas de especialización.
-- Sus campos, restricciones, predeterminados, reglas y acciones declarados.
+- Las declaraciones iniciales de constructos.
+- Las declaraciones reservadas dentro de `create`.
+- Las reglas, acciones y demás leyes de transición.
 
-Pertenecen a $W$:
-
-- Los constructos creados durante la ejecución y sus relaciones directas.
-- El estado mutable actual de todos los constructos concretos existentes.
-- Más adelante, las vinculaciones de reglas y otros componentes del estado runtime.
-
-No son dos universos independientes. Es más preciso escribir:
+Al resolverlo obtenemos, conceptualmente:
 
 $$
-W\in\operatorname{Worlds}(P)
+\llbracket P\rrbracket
+=
+(W_0,\longrightarrow_P)
 $$
 
-porque solo podemos decidir si $W$ está bien formado conociendo el programa al que corresponde.
+donde $W_0$ es el mundo inicial y $\longrightarrow_P$ es la relación de transición permitida por el programa. Una declaración:
 
-Un constructo concreto declarado estáticamente, como `Egypt`, tampoco se divide en una clase y un objeto. Su única identidad tiene:
+```mud
+construct Egypt from Kingdom {
+}
+```
 
-- Un aspecto declarativo fijado por $P$: esquema, restricciones y relaciones.
-- Un estado activo que forma parte de $W$: por ejemplo, el valor actual de `Egypt.treasury`.
+activa `Egypt` en $W_0$. Una creación lo haría en un mundo posterior. La identidad semántica activa pertenece al mundo en ambos casos; el texto que permite activarla pertenece al programa.
 
-El mundo inicial $W_0$ se construye a partir de $P$. Una ejecución produce después una secuencia:
+Esto no introduce clases e instancias. `Egypt` sigue siendo una única identidad. Distinguimos:
+
+- La reserva y descripción de esa identidad en el programa resuelto.
+- Su presencia o ausencia y, cuando sea concreta, su estado activo en el mundo.
+
+Una ejecución produce una secuencia:
 
 $$
 W_0\longrightarrow W_1\longrightarrow W_2\longrightarrow\cdots
 $$
 
-`create` transforma un mundo en otro. No reescribe el archivo `.mud`, no altera $P$ durante esa ejecución y no crea por sí mismo un commit de Git.
+`create` activa una identidad reservada que estaba ausente. `destroy` puede volver a retirarla del conjunto activo; una creación posterior reactiva la misma identidad. Ninguna de esas operaciones reescribe el archivo `.mud`, altera $P$ durante la ejecución ni crea por sí misma un commit de Git.
 
 > [!intuition]
-> $P$ responde «¿qué leyes y declaraciones gobiernan esta ejecución?». $W$ responde «¿qué existe y cuál es su estado ahora, bajo esas leyes?».
+> $P$ responde «¿cómo nace el mundo y qué cambios se permiten?». $W$ responde «¿qué está activo y cuál es su estado ahora?».
 
 > [!note]
-> Que una creación pueda ampliar el grafo de constructos significa que $W$ contiene parte de la ontología activa. No significa que la creación pase a formar parte del texto estático de $P$.
+> El subíndice $P$ que aparece más adelante identifica datos extraídos del programa para este fragmento sin destrucción. No afirma que esas identidades deban permanecer activas para siempre. La unidad de ciclo de vida introducirá un conjunto explícito de identidades activas.
 
 ## 5. Repaso: función frente a relación
 
@@ -138,7 +142,7 @@ es un conjunto de pares. Un mismo elemento de $A$ puede relacionarse con cero, u
 Esto importa porque MUD admite especialización múltiple:
 
 ```mud
-construct Warship is MilitaryUnit, NavalUnit {
+construct Warship from MilitaryUnit, NavalUnit {
 }
 ```
 
@@ -170,11 +174,11 @@ abstract construct Place {
     name: Text
 }
 
-construct Kingdom is Place {
+construct Kingdom from Place {
     mut treasury: Money = 0M
 }
 
-construct Egypt is Kingdom {
+construct Egypt from Kingdom {
     name = "Egypt"
 }
 ```
@@ -394,10 +398,10 @@ La relación directa es acíclica si no existe un camino no vacío que salga de 
 Este programa sería inválido:
 
 ```mud
-construct A is B {
+construct A from B {
 }
 
-construct B is A {
+construct B from A {
 }
 ```
 
@@ -543,12 +547,20 @@ $$
 \}
 $$
 
-El mundo registra cada constructo creado junto con su modo y su conjunto finito de antecesores directos:
+El programa resuelto reserva las identidades que aparecen como resultado de `create`:
 
 $$
-\operatorname{created}_W:
+\mathcal R_P^{\mathsf{create}}
+\subseteq
 \mathcal C
-\rightharpoonup
+$$
+
+Para no adelantar el estudio del cuerpo completo, proyectamos cada declaración reservada sobre su modo y sus antecesores:
+
+$$
+\operatorname{shape}_P:
+\mathcal R_P^{\mathsf{create}}
+\to
 \left(
 \mathcal M
 \times
@@ -556,7 +568,7 @@ $$
 \right)
 $$
 
-Aquí, $\mathcal P_{\mathrm{fin}}(\mathcal C)$ es el conjunto de todos los subconjuntos finitos de $\mathcal C$. Esta es una función parcial porque no toda identidad posible existe como creación en el mundo actual. Su resultado es un par formado por un modo y un conjunto, no por un único antecesor.
+Aquí, $\mathcal P_{\mathrm{fin}}(\mathcal C)$ es el conjunto de todos los subconjuntos finitos de $\mathcal C$. El resultado es un par formado por un modo y un conjunto, no por un único antecesor.
 
 Las proyecciones extraen los dos componentes del par:
 
@@ -568,37 +580,44 @@ $$
 \pi_2(m,S)=S
 $$
 
-Las ejecuciones:
+Las sentencias:
 
 ```mud
-create Monument
-create abstract PoliticalUnion from Place
-create France from Kingdom
-create EuropeanRealm from Kingdom, PoliticalUnion
+create Monument {
+}
+
+create abstract PoliticalUnion from Place {
+}
+
+create France from Kingdom {
+}
+
+create EuropeanRealm from Kingdom, PoliticalUnion {
+}
 ```
 
-producen, esquemáticamente:
+reservan al resolver $P$ y, cuando son efectivas, activan las identidades correspondientes. Su proyección estructural es:
 
 $$
-\operatorname{created}_W(\mathsf{Monument})
+\operatorname{shape}_P(\mathsf{Monument})
 =
 (\mathsf{concrete},\varnothing)
 $$
 
 $$
-\operatorname{created}_W(\mathsf{PoliticalUnion})
+\operatorname{shape}_P(\mathsf{PoliticalUnion})
 =
 (\mathsf{abstract},\{\mathsf{Place}\})
 $$
 
 $$
-\operatorname{created}_W(\mathsf{France})
+\operatorname{shape}_P(\mathsf{France})
 =
 (\mathsf{concrete},\{\mathsf{Kingdom}\})
 $$
 
 $$
-\operatorname{created}_W(\mathsf{EuropeanRealm})
+\operatorname{shape}_P(\mathsf{EuropeanRealm})
 =
 \left(
 \mathsf{concrete},
@@ -606,15 +625,39 @@ $$
 \right)
 $$
 
-En particular, `create abstract PoliticalUnion from Place` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración estática vacía `abstract construct PoliticalUnion is Place {}`. No convierte por ello la sentencia ejecutada en texto nuevo de $P$: coinciden sus consecuencias relevantes para el grafo, pero difieren el momento y el lugar donde nacen.
+En particular, `create abstract PoliticalUnion from Place {}` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración inicial vacía `abstract construct PoliticalUnion from Place {}`. No convierte por ello la sentencia ejecutada en una activación inicial: coinciden sus consecuencias relevantes para el grafo, pero difiere el momento en que la identidad pasa a estar activa.
 
-Los constructos creados y existentes se derivan del dominio:
+El cuerpo de `create` es declarativamente completo. Puede declarar propiedades locales, restricciones, reglas o acciones igual que el cuerpo de un constructo ordinario. En esta unidad usamos únicamente su proyección sobre modo y antecesores; la Unidad 03 estudiará el esquema que ahora estamos omitiendo deliberadamente.
+
+Sea $\mathcal E_W\subseteq\mathcal C$ el conjunto de todas las identidades activas del mundo. Las identidades reservadas mediante `create` que están activas son:
 
 $$
 \mathcal D_W
 :=
-\operatorname{dom}(\operatorname{created}_W)
+\mathcal E_W
+\cap
+\mathcal R_P^{\mathsf{create}}
 $$
+
+La vista activa de los descriptores es la restricción:
+
+$$
+\operatorname{created}_W
+:=
+\left.
+\operatorname{shape}_P
+\right|_{\mathcal D_W}
+$$
+
+De modo que:
+
+$$
+\operatorname{dom}(\operatorname{created}_W)
+=
+\mathcal D_W
+$$
+
+`destroy A` retira $A$ de $\mathcal E_W$ y, por tanto, de $\mathcal D_W$, sin liberar su reserva. Una ejecución posterior de `create A` puede volver a incluir la misma identidad $A$.
 
 Los abstractos creados pueden derivarse mediante la primera proyección:
 
@@ -637,6 +680,9 @@ $$
 :=
 \mathcal C_P\cup\mathcal D_W
 $$
+
+> [!warning]
+> Esta igualdad pertenece al fragmento de la unidad, en el que todavía no se ejecuta `destroy` sobre constructos iniciales. En el modelo completo, la existencia se obtendrá de un conjunto activo explícito y no de una unión que obligue a conservar para siempre $\mathcal C_P$.
 
 La relación directa aportada por el mundo se obtiene de la segunda proyección:
 
@@ -662,15 +708,7 @@ R_P^{\mathrm{dir}}
 R_W^{\mathrm{dir}}
 $$
 
-El tipo de $\operatorname{created}_W$ no basta para garantizar que represente un mundo válido. Exigimos al menos:
-
-$$
-\mathcal D_W\cap\mathcal C_P
-=
-\varnothing
-$$
-
-para que las identidades creadas sean nuevas respecto al programa;
+El tipo de $\operatorname{created}_W$ no basta para garantizar que represente un mundo válido. La identidad debe estar reservada, ausente de $\mathcal E_W$ antes de una creación efectiva y activa después de ella. Exigimos además:
 
 $$
 \bigcup_{c\in\mathcal D_W}
@@ -732,34 +770,34 @@ Por eso conservamos dos niveles:
 > [!note]
 > El descriptor no duplica accidentalmente la relación: contiene información que una relación sin aristas no puede expresar.
 
-### Primera clase no significa nombre futuro
+### Primera clase, reserva y presencia activa
 
-Que un constructo creado sea de primera clase significa que, una vez disponible su identidad, puede participar en relaciones, expresiones, acciones o vinculaciones como cualquier otro constructo. No determina si una aparición textual de su nombre puede resolverse antes de la creación.
+Que un constructo creado sea de primera clase significa que puede participar en relaciones, expresiones, acciones o vinculaciones como cualquier otro constructo. Además, MUD reserva su identidad al resolver el programa, por lo que una aparición textual exacta puede resolverse antes de que esté activa.
 
 Hay dos casos diferentes:
 
 1. Una regla puede hablar de un antecesor ya declarado, como `Place`, y aplicarse en el futuro a constructos creados que satisfagan `is Place`.
 2. Una regla puede intentar mencionar exactamente `FutureCity` antes de que una ejecución cree algo con ese nombre.
 
-El primer caso no necesita referencias futuras. El segundo sí exige decidir qué significa ese nombre antes de existir.
+El primer caso no necesita una identidad exacta futura. En el segundo, el nombre se resuelve a la identidad reservada, pero toda operación que requiera presencia debe comprobar que está activa.
 
 Para una vinculación `for` exacta, antes de la creación no hay todavía una vinculación asociada a ese constructo. La creación podría hacerla nacer; entonces habrá que definir su valor previo y el instante preciso de activación. Una regla `for` no se «llama»: se mantiene una vinculación de la regla para cada participante aplicable.
 
 Para un participante `on` exacto, no habría receptor disponible antes de la creación. En cambio, una acción cuyo participante admita un antecesor ya existente podría aceptar después cualquier descendiente creado compatible.
 
-> [!question] Diseño pendiente
-> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] decidirá si el nombre de `create` es una identidad global reservable, una vinculación local a una identidad fresca o si hace falta una declaración prospectiva explícita. Hasta resolverlo, no debemos asumir que los nombres futuros son válidos.
+> [!note]
+> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] está cerrada: destruir y recrear `FutureCity` conserva su identidad. Si una regla con `create FutureCity` la encuentra activa, la regla completa no se ejecuta. [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]] conserva los casos de acciones y varias creaciones.
 
-## 16. Los dos usos sintácticos de `is`
+## 16. Declarar con `from`, consultar con `is`
 
 En:
 
 ```mud
-construct Egypt is Kingdom {
+construct Egypt from Kingdom {
 }
 ```
 
-`is` forma parte de una cabecera y añade un par a la relación directa.
+`from` forma parte de una cabecera y añade un par a la relación directa.
 
 En:
 
@@ -769,14 +807,14 @@ Egypt is Place
 
 `is` forma una expresión booleana y consulta la relación derivada.
 
-El lexer puede producir el mismo token. El parser y el AST deben distinguir:
+El lexer y el parser distinguen dos palabras y dos nodos:
 
 ```text
-DirectSpecialization(Egypt, Kingdom)
+ConstructDecl(Egypt, parents = {Kingdom})
 IsExpression(Egypt, Place)
 ```
 
-No existe ambigüedad semántica si ambos nodos remiten a la misma relación en niveles distintos.
+Ambos remiten a la misma estructura en niveles distintos: `from` aporta aristas y `is` consulta su clausura.
 
 ## 17. Qué es estándar y qué es de MUD
 
@@ -799,8 +837,9 @@ No existe ambigüedad semántica si ambos nodos remiten a la misma relación en 
 ### Decisiones semánticas de MUD
 
 - Un solo dominio de constructos.
-- `create` produce un constructo raíz, abstracto o concreto con cero o varios antecesores.
-- La sintaxis sitúa la identidad nueva antes de la cláusula opcional `from`.
+- `create` activa una identidad reservada raíz, abstracta o concreta con cero o varios antecesores.
+- La sintaxis sitúa la identidad reservada antes de la cláusula opcional `from`.
+- `from` declara aristas directas; `is` solo consulta la relación derivada.
 - `is` es reflexivo y transitivo.
 - Se rechazan ciclos.
 - Los constructos concretos pueden ser cosas y antecesores.

@@ -21,6 +21,8 @@ spec-chapters:
 decisions:
   - D-014
   - D-015
+  - D-016
+  - D-017
 tags:
   - mud/aprendizaje
   - mud/unidad
@@ -77,7 +79,7 @@ La unidad no volverá a discutir:
 
 Esas decisiones pertenecen a [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]] y [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]].
 
-La unidad distinguirá además entre la fusión del esquema de varios antecesores y la inicialización de un constructo raíz. El alcance exacto del bloque de creación depende de [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de create|Q-045]]: aún debe decidirse si `create` puede declarar esquema nuevo o solo inicializar el esquema efectivo.
+La unidad distinguirá además entre la fusión del esquema de varios antecesores y la inicialización de un constructo raíz. [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de create|Q-045]] ya está cerrada: el bloque de `create` es un cuerpo declarativo completo y puede añadir esquema local. También incorporará [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]]: si una propiedad no declara predeterminado explícito, recibe el de su tipo efectivo.
 
 ## Secuencia prevista
 
@@ -101,7 +103,17 @@ Un campo heredado desde la misma ancla debe deduplicarse. Dos campos homónimos 
 
 ### Predeterminado frente a estado
 
-Un predeterminado pertenece al esquema. El valor actual pertenece al mundo. Una asignación de `create` inicializa estado, pero no crea por sí misma un predeterminado heredable.
+Un predeterminado pertenece al esquema. El valor actual pertenece al mundo. Distinguiremos el predeterminado explícito de una propiedad, el predeterminado de su tipo efectivo y una inicialización concreta. Una inicialización de `create` modifica el estado inicial de esa activación, pero no crea por sí misma un predeterminado heredable.
+
+Todo tipo bien formado debe aportar:
+
+$$
+\operatorname{default}_P(\tau)
+\in
+\llbracket\tau\rrbracket_P
+$$
+
+La selección concreta para cada constructor de tipos permanece abierta en [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]].
 
 ### Store total o parcial
 

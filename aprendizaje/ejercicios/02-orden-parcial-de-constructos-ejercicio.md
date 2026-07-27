@@ -22,18 +22,18 @@ Considera:
 abstract construct Entity {
 }
 
-abstract construct Place is Entity {
+abstract construct Place from Entity {
     name: Text = ""
 }
 
-construct Settlement is Place {
+construct Settlement from Place {
 }
 
-construct Alexandria is Settlement {
+construct Alexandria from Settlement {
     name = "Alexandria"
 }
 
-construct NileDelta is Place {
+construct NileDelta from Place {
     name = "Nile Delta"
 }
 ```
@@ -45,9 +45,11 @@ create Memphis from Settlement {
     name = "Memphis"
 }
 
-create Monument
+create Monument {
+}
 
-create abstract RiverRegion from Place
+create abstract RiverRegion from Place {
+}
 
 create DeltaCapital from NileDelta, Settlement {
     name = "Delta Capital"
@@ -94,24 +96,38 @@ $$
 
 ## 3. Creación
 
-Define las cuatro asociaciones de:
+Define por extensión el conjunto de identidades reservadas:
 
 $$
-\operatorname{created}_W
+\mathcal R_P^{\mathsf{create}}
 $$
 
-Cada resultado debe indicar:
+Después define las cuatro asociaciones de:
+
+$$
+\operatorname{shape}_P
+$$
+
+Cada resultado de $\operatorname{shape}_P$ debe indicar:
 
 1. Si el constructo es abstracto o concreto.
 2. Su conjunto finito de antecesores directos.
 
-Después deriva:
+Como las cuatro creaciones son efectivas en el escenario, define:
 
 $$
 \mathcal D_W
-:=
-\operatorname{dom}(\operatorname{created}_W)
 $$
+
+restringe $\operatorname{shape}_P$ para obtener $\operatorname{created}_W$ y comprueba:
+
+$$
+\operatorname{dom}(\operatorname{created}_W)
+=
+\mathcal D_W
+$$
+
+Después deriva:
 
 $$
 \mathcal A_W
@@ -135,10 +151,11 @@ $$
 
 Comprueba además:
 
-1. Que todas las identidades creadas son frescas respecto a $\mathcal C_P$.
-2. Que todos los antecesores indicados pertenecen a $\mathcal C_{P,W}$.
-3. Que las nuevas aristas no forman ciclos.
-4. Que `Monument` continúa perteneciendo a $\mathcal D_W$ aunque no añada ninguna arista.
+1. Que todas las identidades estaban reservadas antes de activarse.
+2. Que ninguna estaba activa inmediatamente antes de su creación efectiva.
+3. Que todos los antecesores indicados pertenecen a $\mathcal C_{P,W}$.
+4. Que las nuevas aristas no forman ciclos.
+5. Que `Monument` continúa perteneciendo a $\mathcal D_W$ aunque no añada ninguna arista.
 
 ## 4. Relación directa completa
 
@@ -202,7 +219,7 @@ Incluye el propio constructo si la relación es reflexiva.
 Supón que se añade:
 
 ```mud
-construct Entity is Alexandria {
+construct Entity from Alexandria {
 }
 ```
 
@@ -220,21 +237,21 @@ no basta para representar toda la especialización de MUD.
 
 Construye un ejemplo mínimo de especialización múltiple que lo demuestre.
 
-## 9. Dos usos de `is`
+## 9. `from` e `is`
 
-Clasifica cada aparición de `is` como:
+Clasifica `from` e `is` como:
 
 - Introducción de una arista directa.
 - Consulta de la relación reflexiva y transitiva.
 
 ```mud
-construct Alexandria is Settlement {
+construct Alexandria from Settlement {
 }
 
 Alexandria is Place
 ```
 
-Explica por qué el parser puede distinguirlas aunque el lexer produzca el mismo token.
+Explica qué nodo del AST corresponde a cada construcción y por qué emplear palabras distintas refleja sus niveles semánticos.
 
 ## 10. Parte insegura
 
