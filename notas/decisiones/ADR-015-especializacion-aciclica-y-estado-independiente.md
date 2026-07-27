@@ -30,7 +30,7 @@ La especialización no hereda, copia ni observa el estado mutable actual del ant
 
 Cada constructo concreto posee estado independiente. La mutación de un constructo no modifica por sí sola el estado de sus descendientes.
 
-Al activar un constructo concreto mediante `create N from C_1,\ldots,C_n { ... }`, la inicialización de $N$ parte de los valores predeterminados efectivos obtenidos de sus antecesores, incorpora las declaraciones locales del cuerpo y aplica después las inicializaciones explícitas. No parte de los valores que sus estados activos contengan en ese momento. Si no hay antecesores, no existen predeterminados heredados; las propiedades sin predeterminado explícito emplean el de su tipo.
+Al activar por primera vez un constructo concreto mediante `create construct N from C_1,\ldots,C_n { ... }`, la inicialización de $N$ parte de los valores predeterminados efectivos obtenidos de sus antecesores, incorpora las declaraciones locales del cuerpo y aplica después las inicializaciones explícitas. No parte de los valores que sus estados activos contengan en ese momento. Si no hay antecesores, no existen predeterminados heredados; las propiedades sin predeterminado explícito emplean el de su tipo. Una reactivación posterior conserva la carga almacenada conforme a D-021.
 
 Las inicializaciones concretas del bloque `create` inicializan el estado de $N$; no se convierten por ello en nuevos valores predeterminados heredables por futuros descendientes de $N$. Las declaraciones explícitas de predeterminado dentro del mismo cuerpo sí forman parte del esquema.
 
@@ -118,7 +118,7 @@ el valor de `Egypt.treasury` no cambia.
 De igual modo, tras:
 
 ```mud
-create France from Kingdom {
+create construct France from Kingdom {
     treasury = 20M
 }
 ```

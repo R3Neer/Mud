@@ -62,6 +62,10 @@ Después de la raíz:
 
 Las vinculaciones se fijan al inicio de cada onda. Los cambios de pertenencia solo alteran la onda siguiente.
 
+La activación o suspensión de una regla durante una onda tampoco modifica el conjunto de bindings ya fijado para esa onda. La proyección efectiva resultante se utiliza al construir la onda siguiente.
+
+Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las creaciones preceden a las adiciones y las retiradas preceden a las destrucciones. Varias creaciones compatibles de un constructo pueden fusionarse; dos creaciones efectivas de la misma regla son un conflicto dinámico. Véase [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+
 ## Disparo reactivo
 
 `when condition` se activa en una transición `false → true`. Esto implica que el runtime mantiene memoria del valor anterior por vinculación.
@@ -89,6 +93,16 @@ Orden propuesto de validación final:
 5. Confirmación.
 
 La especificación afirma varios puntos de control, pero falta una definición operacional única que elimine cualquier duda sobre el momento exacto.
+
+Una regla `always` suspendida explícitamente o por una dependencia inactiva deja temporalmente de imponer su condición. Cuando vuelve a ser efectiva, el estado tentativo deberá satisfacerla antes de poder publicarse.
+
+Una regla booleana inactiva no produce un booleano fijo. Su llamada se marca como fragmento borrado después de elaborar la expresión a la forma booleana núcleo. `not`, `and` y `or` propagan o eliminan ese hueco; si toda la expresión desaparece, se cierra con verdadero. La definición y sus límites se encuentran en [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
+
+## Estado almacenado y estado efectivo
+
+Una resolución opera sobre una proyección efectiva derivada de información almacenada. `destroy` modifica la actividad lógica y puede suspender propiedades, reglas o acciones dependientes sin eliminar sus cargas. `create` puede restaurarlas. `remove` sobre una propiedad sí elimina su declaración y contenido almacenados.
+
+Esta separación evita que la destrucción tenga que podar colecciones o reparar cardinalidades. Los detalles y las cuestiones restantes se encuentran en [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] y [[notas/12-destruccion-colecciones-y-grafo-activo]].
 
 ## Resultados
 
@@ -124,6 +138,8 @@ La especificación menciona asignaciones idénticas, asignaciones distintas, com
 - Qué diagnóstico emiten si colisionan.
 
 Sin esa tabla, el resultado puede depender accidentalmente de la implementación.
+
+D-023 cierra únicamente la parte estructural necesaria para `create`, `destroy`, `add` y `remove`. No sustituye la futura matriz de asignaciones y actualizaciones aritméticas.
 
 ## Terminación
 
@@ -172,4 +188,3 @@ Antes de implementar azar deben decidirse:
 - Momento de muestreo.
 - Caché dentro de una instantánea.
 - Comportamiento en especulación y reintentos.
-

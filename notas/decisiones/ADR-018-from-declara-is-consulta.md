@@ -20,7 +20,7 @@ Aunque el parser podía distinguir ambos contextos, la misma palabra introducía
 La sintaxis de creación generalizada ya emplea `from` para expresar los antecesores directos:
 
 ```mud
-create France from Kingdom {
+create construct France from Kingdom {
 }
 ```
 
@@ -38,7 +38,7 @@ abstract construct B from A {
 construct D from A, B, C {
 }
 
-create E from D {
+create construct E from D {
 }
 ```
 
@@ -58,7 +58,7 @@ La forma conceptual de una cabecera estática es:
 La forma conceptual de una creación es:
 
 ```text
-create [abstract] nombre [from lista-de-antecesores] bloque
+create [abstract] construct nombre [from lista-de-antecesores] bloque
 ```
 
 En ambos casos, la lista posterior a `from` denota un conjunto finito sin prioridad por posición.

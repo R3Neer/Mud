@@ -299,6 +299,7 @@ Define:
 - Igualdad estructural.
 - Orden lexicográfico.
 - Finitud y enumerabilidad.
+- Activación, suspensión y restauración de la declaración del alias sin identidad individual para sus valores.
 
 ## 13. Familias cerradas de valores
 
@@ -408,6 +409,7 @@ Define:
 - `allowed`.
 - `eventually`.
 - Pureza.
+- Elaboración booleana canónica y poda de llamadas a reglas inactivas.
 - Fallos dentro de expresiones.
 
 ## 20. Cuantificadores, agregaciones e iteración
@@ -438,6 +440,7 @@ Define:
 - Resultado booleano.
 - Dominios fuera de rango.
 - Dependencias y memorización.
+- Borrado estructural cuando la declaración no sea efectiva.
 
 ## 22. Reglas reactivas
 
@@ -491,11 +494,13 @@ Define:
 - Asignaciones.
 - Actualizaciones aritméticas.
 - Operaciones de colección.
+- Adición y retirada dinámica de propiedades.
 - `create`.
 - `destroy`.
 - Efectos de bucles.
 - Conjuntos de lectura y escritura.
 - Compatibilidad y conflicto entre efectos.
+- Consolidación determinista de deltas privados de distintos `then`.
 - Álgebra de composición de efectos.
 
 Juicio previsto:
@@ -520,6 +525,7 @@ Define:
 - Lectura del store.
 - Evaluación determinista.
 - Propagación de ausencias y fallos.
+- Poda y cierre de fragmentos booleanos borrados.
 - Evaluación de campos calculados.
 - Estado inicial observado por expresiones.
 
@@ -554,6 +560,7 @@ Define:
 - Composición de acciones.
 - Lectura común del estado inicial.
 - Raíz simultánea.
+- Overlays secuenciales privados por `then`.
 - Normalización de efectos.
 - Conflictos de raíz.
 
@@ -601,6 +608,8 @@ Define:
 
 - Relación de compatibilidad de efectos.
 - Matriz normativa de conflictos.
+- Fusión parcial de fragmentos concurrentes de constructo.
+- Conflicto dinámico entre creaciones concurrentes de una misma regla.
 - Ciclos causales.
 - Oscilaciones.
 - Detección de repetición.
@@ -616,10 +625,12 @@ Define:
 - Creación de constructos raíz, abstractos y con especialización múltiple.
 - Reserva global, activación y reactivación de los nombres introducidos por `create`.
 - Cuerpo declarativo completo de las creaciones.
-- Inicialización.
-- Destrucción.
-- Referencias pendientes.
-- Cardinalidades tras destrucción.
+- Inicialización de la primera materialización.
+- Distinción entre almacenamiento retenido y proyección efectiva.
+- Suspensión por dependencias.
+- Restauración sin reinicialización.
+- `remove` destructivo frente a `destroy` reversible.
+- Referencias y propiedades latentes.
 - Constructos estáticos.
 - Creación y eliminación de vinculaciones.
 

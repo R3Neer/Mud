@@ -20,7 +20,9 @@ Hay que definir comentarios, sangría irrelevante, recuperación de errores, pre
 
 ¿Qué estado lee cada instrucción de un `then` elemental y cada hoja de una acción compuesta? ¿Cómo se combinan efectos de una misma raíz?
 
-La fuente afirma secuencialidad interna y simultaneidad de hojas; falta una regla operacional que concilie ambas.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+
+Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la instantánea común y no observa deltas parciales ajenos. Falta completar la semántica de acciones compuestas, lecturas intermedias y efectos no estructurales.
 
 ### Q-003 — Puntos de validación
 
@@ -44,7 +46,9 @@ Bloquea el runtime reactivo.
 
 ¿Cuál es la matriz completa de compatibilidad entre asignaciones, incrementos, multiplicaciones y operaciones estructurales concurrentes?
 
-Sin una matriz, la determinación del resultado puede filtrarse desde el orden de implementación.
+Estado: **parcialmente decidida** para efectos estructurales mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+
+Sin una matriz completa para asignaciones y actualizaciones aritméticas, la determinación del resto del resultado todavía puede filtrarse desde el orden de implementación.
 
 ### Q-007 — Fallos técnicos
 
@@ -104,11 +108,11 @@ Todo ciclo de especialización directa es inválido. La relación semántica `is
 
 Estado: **cerrada**.
 
-¿Qué designa el nombre introducido por `create A`?
+¿Qué designa el nombre introducido por `create construct A`?
 
 Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 
-`A` es una identidad global reservada y resoluble antes de estar activa. `create A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
+`A` es una identidad global reservada y resoluble antes de estar activa. `create construct A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
 
 Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `for` continúan coordinados con Q-005.
 
@@ -121,7 +125,7 @@ Estado: **cerrada**.
 Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 
 ```mud
-create abstract B from A {
+create abstract construct B from A {
     # Cuerpo declarativo completo.
 }
 ```
@@ -130,15 +134,17 @@ El bloque admite la declaración completa de las propiedades permitidas en un co
 
 ### Q-046 — Creación inefectiva dentro de una raíz
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]] y [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
 
-Si una regla contiene `create A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
+Si una regla contiene `create construct A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
 
 Falta decidir:
 
 - Qué resultado obtiene una acción solicitada en el mismo caso: `rejected`, `failed` u otro resultado.
 - Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
 - Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
+
+D-023 añade que las creaciones concurrentes compatibles de un constructo ausente se fusionan, mientras dos creaciones efectivas de la misma regla producen un conflicto runtime. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
 
 Bloquea la semántica operacional completa de `create`, los conjuntos de efectos y la atomicidad.
 
@@ -159,32 +165,27 @@ Desde [[notas/decisiones/ADR-020-membresia-estricta-y-reflexive|D-020]], debe de
 
 ### Q-048 — Destrucción con descendientes activos
 
-¿Qué ocurre al ejecutar `destroy A` cuando existe un constructo activo $d\neq A$ tal que `d is A`?
+Estado: **cerrada**.
 
-Alternativas conocidas:
+Decisión: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
-- Rechazar la destrucción mientras existan descendientes activos.
-- Destruirlos en cascada.
-- Mantener `A` como identidad no activa pero todavía utilizable por el grafo.
-- Reescribir las relaciones de los descendientes.
-
-La última alternativa cambia silenciosamente el significado de `from`; la cascada introduce un efecto destructivo implícito. Bloquea la definición del conjunto activo, la relación `is` tras destrucción, las vinculaciones y la recreación.
+Las aristas declaradas se conservan en el almacenamiento. La proyección efectiva atraviesa antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos. El descendiente conserva sus propiedades propias, pierde temporalmente lo heredado desde el nodo destruido y recupera la estructura original al recrearlo.
 
 ### Q-049 — Destrucción y colecciones de constructos
 
-Al desactivar una identidad, cambia también la denotación activa de los tipos de constructo. Una colección `Kingdom [*]` puede contener no solo la identidad `Kingdom`, sino descendientes que satisfacen `is Kingdom`. Si `Kingdom` queda inactivo y sus descendientes se conectan temporalmente con sus antecesores, esos miembros pueden dejar de pertenecer al tipo `Kingdom`.
+Estado: **parcialmente cerrada** mediante [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
-Debe decidirse:
+La destrucción no poda ni reescribe colecciones almacenadas. Si el tipo declarado de una propiedad queda inactivo, la propiedad completa se suspende y conserva orden, multiplicidad, claves, cardinalidad y carga para una recreación posterior. No necesita mutabilidad exterior ni valores de reparación.
 
-- Si las colecciones almacenadas eliminan permanentemente todos los miembros que dejan de satisfacer su tipo activo o conservan membresía latente.
-- Si una colección almacenada sin mutabilidad exterior impide la destrucción de cualquiera de sus miembros válidos.
-- Si las cardinalidades se comprueban inmediatamente o después de las ondas de reparación de la raíz.
-- Si recrear una identidad restaura membresías almacenadas antiguas o únicamente afecta a colecciones derivadas que se recalculen.
-- Cómo se tratan duplicados, orden y entradas de diccionario durante la retirada.
-
-La solución debe coordinar [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], valores predeterminados, cardinalidades, `failed`, rollback y Q-048.
+Permanece abierta la observación de una identidad inactiva dentro de una colección cuyo tipo declarado continúa efectivo por ser más general. También falta coordinar esta observación con iteraciones, diccionarios, `old` y serialización.
 
 ## P1 — Antes de ampliar el lenguaje
+
+### Q-050 — Borrado en operadores booleanos restantes
+
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
+
+Las llamadas a reglas booleanas inactivas se podan después de un desazucarado canónico a `not`, `and` y `or`. Falta fijar la elaboración de `!=`, `xor`, cuantificadores booleanos y las interacciones con `allowed`, `eventually` y fallos internos.
 
 ### Q-011 — Vinculación nombrada de participantes
 
@@ -229,6 +230,8 @@ Detección semántica, salvaguarda técnica, diagnósticos y reproducibilidad.
 ### Q-021 — Análisis estático de conflictos
 
 Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
+
+D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir.
 
 ### Q-022 — Valores de retorno de acciones
 

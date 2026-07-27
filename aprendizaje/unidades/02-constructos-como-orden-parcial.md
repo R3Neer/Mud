@@ -186,7 +186,7 @@ construct Egypt from Kingdom {
 Durante la ejecución aparece además:
 
 ```mud
-create France from Kingdom {
+create construct France from Kingdom {
     name = "France"
 }
 ```
@@ -583,16 +583,16 @@ $$
 Las sentencias:
 
 ```mud
-create Monument {
+create construct Monument {
 }
 
-create abstract PoliticalUnion from Place {
+create abstract construct PoliticalUnion from Place {
 }
 
-create France from Kingdom {
+create construct France from Kingdom {
 }
 
-create EuropeanRealm from Kingdom, PoliticalUnion {
+create construct EuropeanRealm from Kingdom, PoliticalUnion {
 }
 ```
 
@@ -625,9 +625,12 @@ $$
 \right)
 $$
 
-En particular, `create abstract PoliticalUnion from Place {}` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración inicial vacía `abstract construct PoliticalUnion from Place {}`. No convierte por ello la sentencia ejecutada en una activación inicial: coinciden sus consecuencias relevantes para el grafo, pero difiere el momento en que la identidad pasa a estar activa.
+En particular, `create abstract construct PoliticalUnion from Place {}` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración inicial vacía `abstract construct PoliticalUnion from Place {}`. No convierte por ello la sentencia ejecutada en una activación inicial: coinciden sus consecuencias relevantes para el grafo, pero difiere el momento en que la identidad pasa a estar activa.
 
 El cuerpo de `create` es declarativamente completo. Puede declarar propiedades locales, restricciones, reglas o acciones igual que el cuerpo de un constructo ordinario. En esta unidad usamos únicamente su proyección sobre modo y antecesores; la Unidad 03 estudiará el esquema que ahora estamos omitiendo deliberadamente.
+
+> [!warning] Abstracción local
+> Esta demostración representa únicamente la proyección activa y supone un descriptor ya consolidado por identidad. D-021 añadió almacenamiento latente y D-023 permite fusionar varios fragmentos compatibles antes de obtener ese descriptor. La estructura completa se introducirá en una unidad posterior; el razonamiento sobre el orden parcial activo no cambia.
 
 Sea $\mathcal E_W\subseteq\mathcal C$ el conjunto de todas las identidades activas del mundo. Las identidades reservadas mediante `create` que están activas son:
 
@@ -657,7 +660,7 @@ $$
 \mathcal D_W
 $$
 
-`destroy A` retira $A$ de $\mathcal E_W$ y, por tanto, de $\mathcal D_W$, sin liberar su reserva. Una ejecución posterior de `create A` puede volver a incluir la misma identidad $A$.
+`destroy A` retira $A$ de la proyección efectiva sin liberar su reserva ni borrar su carga almacenada. Una ejecución posterior de `create construct A` puede volver a incluir la misma identidad $A$ y restaurar su estado, conforme a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
 Los abstractos creados pueden derivarse mediante la primera proyección:
 
@@ -786,7 +789,7 @@ Para una vinculación `for` exacta, antes de la creación no hay todavía una vi
 Para un participante `on` exacto, no habría receptor disponible antes de la creación. En cambio, una acción cuyo participante admita un antecesor ya existente podría aceptar después cualquier descendiente creado compatible.
 
 > [!note]
-> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] está cerrada: destruir y recrear `FutureCity` conserva su identidad. Si una regla con `create FutureCity` la encuentra activa, la regla completa no se ejecuta. [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]] conserva los casos de acciones y varias creaciones.
+> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] está cerrada: destruir y recrear `FutureCity` conserva su identidad y su carga almacenada. Si una regla con `create construct FutureCity` la encuentra activa, la regla completa no se ejecuta. [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]] conserva los casos de acciones y varias creaciones.
 
 ## 16. Declarar con `from`, consultar con `is`
 

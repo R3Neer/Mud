@@ -33,6 +33,9 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-018 | Vigente | `from` declara especialización y `is` queda reservado para consultas | [ADR-018](decisiones/ADR-018-from-declara-is-consulta.md) | Decisión del autor, 2026-07-27 |
 | D-019 | Vigente | La mutabilidad de una colección y la capacidad sobre sus miembros son ortogonales incluso en `[1]` | [ADR-019](decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros.md) | Decisión del autor, 2026-07-27 |
 | D-020 | Vigente | Las colecciones de constructos excluyen por defecto el ancla exacta de su tipo y `[reflexive]` permite incluirla | [ADR-020](decisiones/ADR-020-membresia-estricta-y-reflexive.md) | Decisión del autor, 2026-07-27 |
+| D-021 | Vigente | `destroy` suspende declaraciones y dependientes sin borrar su almacenamiento; `remove` sí elimina una propiedad y su carga | [ADR-021](decisiones/ADR-021-ciclo-de-vida-logico-y-suspension.md) | Decisión del autor, 2026-07-27 |
+| D-022 | Vigente | Una llamada a una regla booleana inactiva se borra estructuralmente y la expresión exterior vacía se cierra con verdadero | [ADR-022](decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas.md) | Decisión del autor, 2026-07-27 |
+| D-023 | Vigente | Los `then` conservan secuencialidad local y consolidan efectos estructurales de forma determinista; los constructos compatibles se fusionan y las reglas colisionan | [ADR-023](decisiones/ADR-023-consolidacion-de-efectos-estructurales.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 

@@ -1,165 +1,127 @@
-# Destrucción, colecciones y grafo activo
+# Destrucción, estado latente y grafo efectivo
 
-- Estado: análisis
+- Estado: decisión consolidada con cuestiones locales abiertas
 - Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de constructos|Q-049]]
-- Decisiones relacionadas: [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]]
+- Decisión principal: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
 
-## Regla superficial buscada
+## Resultado
 
-La explicación para una persona debería poder mantenerse cerca de:
-
-> Si algo deja de existir, desaparece de las colecciones en las que ya no puede estar. Si alguna regla del juego exige que siga habiendo un miembro y no aparece un sustituto, el cambio entero no vale.
-
-La formalización inferior necesita precisar tipo efectivo, mutabilidad, cardinalidad, ondas y rollback.
-
-## Todos los campos como colecciones
-
-Una cardinalidad omitida equivale a `[1]`. Por tanto:
+La destrucción runtime es una retirada lógica reversible, no una limpieza física del almacenamiento.
 
 ```mud
-kingdom: Kingdom
+destroy Kingdom
 ```
 
-es una colección con exactamente un miembro, igual que:
+produce tres efectos conceptuales:
+
+1. `Kingdom` deja de ser efectivo.
+2. Su estructura y las declaraciones con dependencia dura de `Kingdom` se suspenden.
+3. Sus descriptores y cargas permanecen almacenados para una recreación posterior.
+
+La recomendación anterior de podar destructivamente colecciones queda sustituida por D-021.
+
+## Ejemplo canónico
+
+Antes:
 
 ```mud
-kingdom: Kingdom [1]
+create construct King {
+    kingdom: Kingdom[1] = Panama
+}
 ```
 
-`kingdoms: Kingdom [*]` es la misma clase semántica de valor colección con otra restricción de cardinalidad. Un campo derivado también puede modelarse como una colección cuyo valor se recalcula, en vez de almacenarse.
+```text
+Stored(W):
+    King.kingdom
+        type  = Kingdom[1]
+        value = Panama
 
-## Dominio activo de un tipo constructo
+Effective(W):
+    King.kingdom = Panama
+```
 
-Sea $\mathcal E_W$ el conjunto de identidades activas y sea $R_W^{\mathsf{is}}$ la especialización activa. Una denotación candidata es:
-
-$$
-\llbracket A\rrbracket_W
-:=
-\{
-c\in\mathcal E_W
-\mid
-(c,A)\in R_W^{\mathsf{is}}
-\}
-$$
-
-Si `Kingdom` se desactiva, no solo deja de ser miembro la propia identidad `Kingdom`. Un descendiente `Egypt` puede dejar de satisfacer `Egypt is Kingdom` al conectarse temporalmente con los antecesores activos de `Kingdom`. Por tanto, todas las colecciones cuyo tipo de miembro dependa de `Kingdom` deben revalidarse.
-
-## Poda candidata de una colección almacenada
-
-Sea $K$ una colección de miembros de tipo $A$ antes de la destrucción y sea $W'$ el mundo tentativo posterior. Definimos como propuesta:
-
-$$
-\operatorname{prune}_{A,W'}(K)
-:=
-\operatorname{filter}
-\left(
-K,
-\lambda x.\ x\in\llbracket A\rrbracket_{W'}
-\right)
-$$
-
-La operación elimina todas las apariciones que ya no pertenecen al tipo activo:
-
-- En una secuencia conserva el orden relativo de los supervivientes.
-- En un multiconjunto elimina todas las ocurrencias inválidas.
-- En un conjunto elimina los miembros inválidos.
-- Diccionarios y claves requieren una regla específica todavía abierta.
-
-Esta poda sería una mutación exterior. Conforme a D-019, una colección almacenada sin `mut` no puede cambiar de miembros. En ese caso, la destrucción debería fallar en lugar de atravesar silenciosamente la inmutabilidad.
-
-## Cardinalidad
-
-Tras la poda debe comprobarse:
-
-$$
-\left|
-\operatorname{prune}_{A,W'}(K)
-\right|
-\in
-\operatorname{card}(K)
-$$
-
-Ejemplos:
-
-### Colección singular
+Después de:
 
 ```mud
-mut kingdom: Kingdom [1]
+destroy Kingdom
 ```
 
-Si su único miembro deja de satisfacer `Kingdom`, la poda produce `empty`, que incumple `[1]`. La destrucción no puede confirmarse salvo que la misma raíz establezca un sustituto antes de la validación final.
+```text
+Stored(W'):
+    King.kingdom
+        type  = Kingdom[1]
+        value = Panama
 
-Sin el `mut` exterior, tanto la retirada como una sustitución serían inválidas: ambas cambian la colección almacenada.
+Effective(W'):
+    la propiedad King.kingdom no está disponible
+```
 
-### Colección sin mínimo positivo
+Después de recrear `Kingdom`, la misma propiedad reaparece con `Panama`.
+
+## Diferencia respecto de `remove`
 
 ```mud
-mut kingdoms: Kingdom [*]
+remove kingdom from King
 ```
 
-La retirada puede dejarla vacía porque `[*]` equivale a `[0..*]`.
-
-### Colección derivada
+elimina la declaración y el valor almacenado. Una adición posterior crea una propiedad nueva.
 
 ```mud
-kingdoms: Kingdom [*] := all active kingdoms
+destroy Kingdom
 ```
 
-No se poda un valor almacenado: se vuelve a evaluar la expresión en $W'$. No necesita mutabilidad exterior. Su resultado sí debe satisfacer el tipo y la cardinalidad declarados.
+solo suspende la propiedad por dependencia. La recreación de `Kingdom` restaura la propiedad anterior.
 
-## Relación con valores predeterminados
+## Colecciones
 
-D-017 exige un valor predeterminado para todo tipo bien formado. Si:
+No se eliminan miembros almacenados por el mero hecho de ejecutar `destroy`. Por tanto:
 
-```mud
-kingdom: Kingdom [1]
-```
+- No se necesita mutabilidad exterior para conservar el estado.
+- No se buscan predeterminados para rellenar cardinalidades.
+- No se pierde orden, multiplicidad ni claves.
+- La cardinalidad de la representación almacenada permanece estable.
 
-debe contener obligatoriamente una identidad activa y el dominio activo de `Kingdom` queda vacío, no existe ningún valor que pueda habitar el tipo colección.
+Cuando el tipo declarado de una propiedad queda inactivo, se suspende la propiedad completa. No se presenta al programa una colección visible que incumpla temporalmente su cardinalidad.
 
-Esto favorece una de estas decisiones:
+Permanece abierta la observación de una identidad inactiva desde una colección cuyo tipo declarado sigue activo. Por ejemplo, si `Panama` está en `Thing[*]` y se destruye `Panama`, debe decidirse si la colección efectiva omite el miembro, expone una referencia latente o suspende una operación concreta.
 
-1. Rechazar la destrucción porque produciría un tipo o una posición obligatoria sin valor posible.
-2. Permitir referencias a identidades inactivas.
-3. Introducir membresía latente separada de la colección visible.
+## Grafo efectivo
 
-La primera alternativa conserva mejor el significado de «no existe» y evita referencias colgantes. Las otras dos requieren explicar por qué una colección contiene algo que no está activo.
+Las aristas `from` originales se conservan almacenadas. La proyección efectiva atraviesa cadenas de antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos.
 
-## Recreación
+Este mecanismo:
 
-Hay dos semánticas posibles para colecciones almacenadas:
+- Mantiene activos a los descendientes.
+- Retira las propiedades heredadas desde nodos destruidos.
+- Conserva las propiedades propias cuyos tipos continúen efectivos.
+- Restaura exactamente la forma declarada cuando reaparecen los antecesores.
 
-- **Retirada destructiva:** los miembros podados no regresan al reactivar la identidad. Las colecciones derivadas pueden recuperarlos al recalcularse.
-- **Membresía latente:** se ocultan mientras no son válidos y reaparecen al reactivar la identidad.
+## Aliases
 
-La retirada destructiva es más simple y corresponde a borrar una pieza de las listas del juego. La membresía latente hace reversible la operación, pero añade estado oculto y complica cardinalidad, igualdad, serialización y `old`.
+Destruir un alias suspende:
 
-El grafo reservado sí conserva sus aristas porque proceden de declaraciones, no de estado almacenado. No se sigue automáticamente que las colecciones almacenadas deban conservar membresía latente.
+- Sus componentes.
+- Las propiedades cuyo tipo depende de él.
+- Las declaraciones cuyos participantes o dominios necesitan el alias.
 
-## Orden de una transición candidata
+Los valores estructurales permanecen como cargas de sus propiedades almacenadas. No adquieren identidad runtime por ello.
 
-Una raíz que destruya una identidad podría evaluarse así:
+## Participantes
 
-1. Retirar tentativamente la identidad de $\mathcal E_W$.
-2. Comprimir el grafo activo atravesando identidades inactivas.
-3. Recalcular la denotación activa de los tipos de constructo.
-4. Podar colecciones almacenadas afectadas cuando tengan mutabilidad exterior.
-5. Recalcular colecciones derivadas.
-6. Ejecutar las ondas reactivas que correspondan.
-7. Validar tipos, cardinalidades, reglas `always` y poscondiciones.
-8. Confirmar todo o revertir todo.
+Un participante suspendido no se elimina de una firma. La declaración completa deja de ser efectiva:
 
-Queda por decidir si se permiten estados tentativos con cardinalidad insuficiente durante las ondas o si toda reparación debe formar parte de la misma propuesta atómica.
+- Una regla reactiva deja de producir bindings.
+- Una `always rule` deja de imponer su condición.
+- Una regla booleana pasa a la semántica de borrado de reglas inactivas.
+- Una acción deja de poder solicitarse mientras falte su dependencia.
 
-## Recomendación provisional
+## Próxima formalización
 
-La combinación más uniforme es:
+El capítulo de ciclo de vida deberá definir:
 
-- Supresión temporal de nodos inactivos en el grafo de especialización.
-- Poda destructiva de membresías almacenadas que dejan de estar tipadas.
-- Necesidad de mutabilidad exterior para efectuar esa poda.
-- Recálculo ordinario de campos derivados.
-- Validación final de cardinalidades con rollback completo.
-- Ausencia de restauración automática de membresías almacenadas al recrear.
-
-No debe promoverse a norma hasta resolver Q-048 y Q-049 con ejemplos de `[1]`, `[*]`, múltiples antecesores, campos derivados y diccionarios.
+1. La estructura exacta de `Stored(W)` y `Effective(W)`.
+2. La clausura de dependencias duras.
+3. El algoritmo declarativo de compresión del grafo.
+4. La observación de referencias latentes desde tipos todavía activos.
+5. La interacción con `old`, bindings y serialización.
+6. La restauración simultánea de varias dependencias.

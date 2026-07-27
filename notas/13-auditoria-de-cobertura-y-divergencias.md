@@ -90,15 +90,15 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | Herencia de estado | No estaba delimitada con precisión | Solo se heredan esquema y predeterminados; nunca estado mutable actual | D-015 |
 | Identidad creada | La fuente hablaba de identificador local y de identidades runtime distintas por creación | El nombre de `create` es una identidad global reservada y reactivable | D-016 |
 | Forma de `create` | `create Base NewName` y solo constructos concretos | Raíz, abstracto o varios antecesores, con cuerpo declarativo completo | D-016 |
-| Constructos abstractos | No podían crearse | Pueden activarse mediante `create abstract` | D-016 |
+| Constructos abstractos | No podían crearse | Pueden activarse mediante `create abstract construct` | D-016 y D-021 |
 | Predeterminados | Tabla parcial y tipos sin predeterminado universal | Todo tipo bien formado posee predeterminado | D-017 |
 | Mutabilidad singular | La conversación detectó una excepción entre mutabilidad exterior e interior | Ambos permisos son ortogonales también en `[1]` | D-019 |
-| Alias y `create` | Un alias no podía crearse | Se ha acordado un ciclo de vida efectivo para declaraciones de alias | Decisión posterior pendiente de ADR |
-| Reglas y `create` | Las reglas no tenían ciclo de vida dinámico | Reglas booleanas, reactivas y `always` pueden activarse y destruirse | Decisión posterior pendiente de ADR |
-| Regla booleana inactiva | No contemplada | Su aparición se borra estructuralmente de la fórmula | Decisión posterior pendiente de ADR |
-| Destrucción | Podía fallar por referencias o cardinalidad | Se propone suspensión lógica reversible con conservación del contenido almacenado | Decisión posterior pendiente de ADR |
-| Propiedades dinámicas | `add` y `remove` solo operaban sobre colecciones | También añaden y eliminan propiedades; `remove` sí pierde su contenido | Decisión posterior pendiente de ADR |
-| Miembro reflexivo | `T` podía habitar implícitamente `T[k]` por `T is T` | La membresía exacta del ancla de tipo requerirá `[reflexive]` | Decisión posterior pendiente de ADR |
+| Alias y `create` | Un alias no podía crearse | Las declaraciones de alias tienen ciclo de vida efectivo; sus valores siguen sin identidad | D-021 |
+| Reglas y `create` | Las reglas no tenían ciclo de vida dinámico | Reglas booleanas, reactivas y `always` pueden activarse y destruirse | D-021 |
+| Regla booleana inactiva | No contemplada | Su aparición se borra estructuralmente de la fórmula | D-022 |
+| Destrucción | Podía fallar por referencias o cardinalidad | Suspensión lógica reversible con conservación del contenido almacenado | D-021 |
+| Propiedades dinámicas | `add` y `remove` solo operaban sobre colecciones | También añaden y eliminan propiedades; `remove` sí pierde su contenido | D-021 |
+| Miembro reflexivo | `T` podía habitar implícitamente `T[k]` por `T is T` | La membresía exacta del ancla de tipo requiere `[reflexive]` | D-020 |
 
 ## Estado de la formalización profesional
 

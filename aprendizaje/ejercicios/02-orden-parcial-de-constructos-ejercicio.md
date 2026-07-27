@@ -41,17 +41,17 @@ construct NileDelta from Place {
 Durante la ejecución ocurre:
 
 ```mud
-create Memphis from Settlement {
+create construct Memphis from Settlement {
     name = "Memphis"
 }
 
-create Monument {
+create construct Monument {
 }
 
-create abstract RiverRegion from Place {
+create abstract construct RiverRegion from Place {
 }
 
-create DeltaCapital from NileDelta, Settlement {
+create construct DeltaCapital from NileDelta, Settlement {
     name = "Delta Capital"
 }
 ```

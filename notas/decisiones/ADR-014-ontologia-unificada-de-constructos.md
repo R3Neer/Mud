@@ -116,7 +116,7 @@ La suite deberá cubrir:
 1. Reflexividad: `C is C`.
 2. Relación directa: una cabecera `construct B from A` implica `B is A`.
 3. Transitividad: `C is B` y `B is A` implican `C is A`.
-4. Creación: `create N from C {}` hace verdadera `N is C`, mientras `create N {}` no añade antecesores.
+4. Creación: `create construct N from C {}` hace verdadera `N is C`, mientras `create construct N {}` no añade antecesores.
 5. Identidad reservada: destruir y recrear `N` reactiva la misma identidad.
 6. Identidad distinta: dos nombres reservados diferentes continúan siendo distintos aunque satisfagan los mismos ancestros y posean el mismo estado.
 7. Separación sintáctica de `from` y del operador `is` en el AST.

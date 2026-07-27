@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
+- Modificada por: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
 - Preguntas resueltas: [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]], [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de create|Q-045]]
 - Pregunta abierta relacionada: [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `24-acciones.md`, futuro `32-ciclo-de-vida-runtime.md`
@@ -22,21 +23,21 @@ presuponía una única base y no hacía evidente cuál de los dos nombres design
 `create` admite las siguientes familias:
 
 ```mud
-create A {
+create construct A {
 }
 ```
 
 activa un constructo concreto sin antecesores directos;
 
 ```mud
-create abstract B from A {
+create abstract construct B from A {
 }
 ```
 
 activa un constructo abstracto cuyo antecesor directo es `A`; y:
 
 ```mud
-create D from A, B, C {
+create construct D from A, B, C {
 }
 ```
 
@@ -45,7 +46,7 @@ activa un constructo concreto con los tres antecesores directos indicados.
 Las variantes se combinan de manera uniforme:
 
 ```text
-create [abstract] nombre [from lista-de-antecesores] bloque
+create [abstract] construct nombre [from lista-de-antecesores] bloque
 ```
 
 El nombre reservado aparece antes de `from`. La lista posterior a `from` denota un conjunto finito de antecesores directos y no establece prioridad por orden. El bloque es una declaración completa: puede contener las propiedades admitidas por una declaración ordinaria de constructo, no solo asignaciones de inicialización.
@@ -75,11 +76,18 @@ $$
 \}
 $$
 
-El descriptor resuelto de cada creación es:
+Sea $\mathcal S_P^{\mathsf{create}}$ el conjunto finito de apariciones de creación de constructo. Cada aparición tiene un objetivo y un fragmento resueltos:
 
 $$
-\operatorname{createDecl}_P:
+\operatorname{createTarget}_P:
+\mathcal S_P^{\mathsf{create}}
+\to
 \mathcal R_P^{\mathsf{create}}
+$$
+
+$$
+\operatorname{createFragment}_P:
+\mathcal S_P^{\mathsf{create}}
 \to
 \left(
 \mathcal M
@@ -90,67 +98,52 @@ $$
 \right)
 $$
 
-Sea $\mathcal E_W\subseteq\mathcal C$ el conjunto de todas las identidades activas en el mundo. Definimos:
+D-023 permite que varias apariciones dirigidas a la misma identidad aporten fragmentos compatibles en una oleada. Su combinación parcial se escribe $\sqcup$. Por tanto, el descriptor materializado no es una función fija del programa para cada identidad, sino estado almacenado del mundo:
 
 $$
-\mathcal D_W
-:=
-\mathcal E_W
-\cap
+\operatorname{storedCreate}_W:
 \mathcal R_P^{\mathsf{create}}
+\rightharpoonup
+\left(
+\mathcal M
+\times
+\mathcal P_{\mathrm{fin}}(\mathcal C)
+\times
+\mathcal B
+\right)
 $$
 
-el conjunto de identidades reservadas mediante `create` que están activas en el mundo $W$. La vista activa del descriptor es la restricción:
+Cuando una oleada solicita por primera vez las apariciones $S_c\subseteq\mathcal S_P^{\mathsf{create}}$ cuyo objetivo común es $c$, se exige que:
+
+$$
+\bigsqcup_{s\in S_c}
+\operatorname{createFragment}_P(s)
+$$
+
+esté definida. El resultado se almacena en $\operatorname{storedCreate}_{W'}(c)$.
+
+Sea $\mathcal E_W\subseteq\mathcal C$ el conjunto de identidades activas. La vista efectiva de los constructos creados es:
 
 $$
 \operatorname{created}_W
 :=
 \left.
-\operatorname{createDecl}_P
-\right|_{\mathcal D_W}
+\operatorname{storedCreate}_W
+\right|_{
+\mathcal E_W
+\cap
+\operatorname{dom}(\operatorname{storedCreate}_W)
+}
 $$
 
-Por tanto:
+La reserva y los fragmentos pertenecen al programa resuelto; el descriptor combinado almacenado y su presencia efectiva pertenecen al mundo. No son una clase y una instancia, sino aspectos del ciclo de vida de la misma identidad semántica.
 
 $$
-\operatorname{dom}(\operatorname{created}_W)
-=
-\mathcal D_W
-$$
-
-La reserva de identidad pertenece al programa resuelto; la presencia activa pertenece al mundo. No son una clase y una instancia, sino dos aspectos de la misma identidad semántica.
-
-Para abreviar las dos primeras proyecciones, definimos:
-
-$$
-\operatorname{shape}_P(c)
+\operatorname{shape}_W(c)
 :=
 \left(
-\pi_1(\operatorname{createDecl}_P(c)),
-\pi_2(\operatorname{createDecl}_P(c))
-\right)
-$$
-
-Ejemplos:
-
-$$
-\operatorname{shape}_P(\mathsf{A})
-=
-(\mathsf{concrete},\varnothing)
-$$
-
-$$
-\operatorname{shape}_P(\mathsf{B})
-=
-(\mathsf{abstract},\{\mathsf{A}\})
-$$
-
-$$
-\operatorname{shape}_P(\mathsf{D})
-=
-\left(
-\mathsf{concrete},
-\{\mathsf{A},\mathsf{B},\mathsf{C}\}
+\pi_1(\operatorname{storedCreate}_W(c)),
+\pi_2(\operatorname{storedCreate}_W(c))
 \right)
 $$
 
@@ -162,15 +155,15 @@ R_W^{\mathrm{dir}}
 \{
 (c,p)
 \mid
-c\in\mathcal D_W
+c\in\operatorname{dom}(\operatorname{created}_W)
 \land
-p\in\pi_2(\operatorname{shape}_P(c))
+p\in\pi_2(\operatorname{shape}_W(c))
 \}
 $$
 
-Las dos primeras proyecciones de $\operatorname{createDecl}_P$ recuperan el modo y los antecesores; la tercera recupera el cuerpo declarativo. Un constructo raíz continúa perteneciendo a $\mathcal D_W$ aunque no contribuya ninguna arista a $R_W^{\mathrm{dir}}$.
+Las dos primeras proyecciones recuperan el modo y los antecesores; la tercera recupera el cuerpo declarativo combinado. Un constructo raíz continúa perteneciendo a $\operatorname{dom}(\operatorname{created}_W)$ aunque no contribuya ninguna arista a $R_W^{\mathrm{dir}}$.
 
-Esta representación sustituye la candidata $\operatorname{base}_W$, que no podía representar raíces ni varias bases.
+Esta representación sustituye tanto la candidata $\operatorname{base}_W$, que no podía representar raíces ni varias bases, como la función única $\operatorname{createDecl}_P$, que no podía representar la fusión dinámica de fragmentos decidida posteriormente.
 
 ## Buena formación mínima
 
@@ -200,7 +193,7 @@ Una creación efectiva debe preservar además:
 - Compatibilidad de los esquemas heredados.
 - Ausencia de estado concreto propio cuando el modo sea `abstract`.
 
-Tras `destroy c`, una creación posterior reactiva la misma identidad reservada $c$ y vuelve a construir sus declaraciones y, si es concreta, su estado inicial. La política de destrucción cuando existen descendientes permanece abierta.
+Tras `destroy c`, una creación posterior reactiva la misma identidad reservada $c$. Conforme a D-021, la estructura y el estado almacenados no se reinicializan: vuelven a la proyección efectiva. La política de fusión con nuevos fragmentos declarativos permanece abierta.
 
 ## Evaluación de la sintaxis
 
@@ -222,7 +215,7 @@ Cada nombre de la lista `from` añade una arista directa. El operador `is` conti
 Por ejemplo, tras:
 
 ```mud
-create D from A, B {
+create construct D from A, B {
 }
 ```
 
@@ -255,7 +248,7 @@ y también cualquier relación obtenida transitivamente desde `A` o `B`.
 - Compatibilidad entre varias apariciones declarativas de `create A` en el mismo programa.
 - Tratamiento de antecesores repetidos en la lista `from`.
 - Visibilidad entre varias creaciones dentro de una misma raíz atómica.
-- Destrucción de un constructo que todavía tiene descendientes activos.
+- Combinación entre reactivación y nuevos fragmentos declarativos.
 
 ## Verificación futura
 
@@ -271,5 +264,5 @@ La suite deberá cubrir:
 8. Derivación reflexiva y transitiva de `is`.
 9. Resolución de una referencia exacta antes de que la identidad esté activa.
 10. Ineficacia de `create A` mientras `A` está activa.
-11. Reactivación de la misma identidad tras `destroy A`.
+11. Reactivación de la misma identidad y restauración de su carga tras `destroy A`.
 12. Declaración de propiedades locales dentro del cuerpo de `create`.

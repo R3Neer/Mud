@@ -6,15 +6,15 @@ Este documento es dueño del vocabulario semántico de MUD. Resume la estructura
 
 MUD tiene cuatro declaraciones principales y una auxiliar:
 
-| Declaración | Representa | Tiene identidad propia |
+| Declaración | Representa | Denota identidad o valor dentro del mundo |
 | --- | --- | --- |
 | `construct` | Cosa, concepto, categoría, especialización o familia cerrada | Sí |
 | `magnitude` | Cantidad, unidad o punto sobre una cantidad | No como entidad del mundo |
-| `rule` | Condición consultable, reacción o invariante | No |
-| `action` | Operación externa o composición atómica | No |
-| `alias` | Valor estructural nominal o nombre de tipo | No |
+| `rule` | Condición consultable, reacción o invariante | Su declaración tiene ancla; no es un valor ordinario del mundo |
+| `action` | Operación externa o composición atómica | Su declaración tiene ancla; no es un valor ordinario del mundo |
+| `alias` | Valor estructural nominal o nombre de tipo | La declaración tiene ancla; sus valores no tienen identidad |
 
-Una declaración tiene identidad semántica mediante un ancla. El archivo es una unidad física; el namespace y el tipo de declaración forman parte de su identidad.
+Toda declaración tiene identidad semántica mediante un ancla. La última columna distingue esa identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
 
 ## Identidad, valor y especialización
 
@@ -40,6 +40,42 @@ El bloque de `create` es un cuerpo declarativo completo: puede añadir propiedad
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
 
 Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio, según [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|ADR-017]]. Por tanto, un campo almacenado sin predeterminado explícito puede inicializarse desde el predeterminado de su tipo. La selección concreta para cada familia de tipos permanece abierta en Q-047.
+
+## Ciclo de vida declarativo
+
+`create` y `destroy` también pueden activar y suspender aliases y las tres clases de reglas. No operan sobre acciones ni magnitudes. `create` explicita la clase de declaración; `destroy` resuelve únicamente el nombre:
+
+```mud
+create construct Dragon {
+}
+
+create alias Coordinate {
+    x: Integer
+    y: Integer
+}
+
+create rule FrozenGround for person: Person {
+    ...
+}
+
+destroy Dragon
+destroy Coordinate
+destroy FrozenGround
+```
+
+El mundo distingue información almacenada y proyección efectiva. `destroy` suspende la estructura de su objetivo y las declaraciones que tengan una dependencia dura de él, pero conserva descriptores y cargas. Una recreación restaura esa información. Por el contrario, `remove field from Construct` elimina la propiedad y su contenido almacenado.
+
+`add` y `remove` se sobrecargan para miembros y propiedades sin introducir la palabra `property`:
+
+```mud
+add kingdom: Kingdom[1] = Panama to King
+remove kingdom from King
+
+add Panama to King.kingdoms
+remove Panama from King.kingdoms
+```
+
+Las declaraciones creadas no capturan variables libres de su contexto creador. Pueden usar sus propios participantes y `given`, además de anclas globales. La definición completa pertenece a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
 ## Estado del mundo
 
@@ -90,6 +126,8 @@ Consecuencias normativas:
 ### Regla booleana
 
 Es pura, devuelve `Boolean`, se consulta explícitamente y puede tener `given`. No escribe, crea ni destruye.
+
+Cuando su declaración no es efectiva, sus llamadas se eliminan de la expresión mediante una poda estructural. No devuelven simplemente `true` o `false`: el operador exterior conserva el operando restante y una expresión exterior borrada se interpreta como verdadera. Véase [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
 
 ### Regla reactiva
 
