@@ -68,6 +68,19 @@ El JSON actual es ilustrativo, no suficiente para compatibilidad.
 
 La fuente afirma que todas las decisiones son vigentes, pero algunas se describen como provisionales o “se mantienen vigentes” sin definición local completa. ¿Qué texto previo se presupone y qué debe incorporarse a la especificación canónica?
 
+### Q-041 — Ontología de constructos
+
+¿Cuál es la estructura matemática común de los constructos declarados y los creados durante la ejecución, y qué añade exactamente `create C N` al mundo?
+
+Restricción confirmada: MUD no tiene una separación entre clases y objetos, y un constructo no tiene instancias. Debe precisarse:
+
+- Si `create C N` crea un nuevo constructo $N$ relacionado con $C$ mediante el mismo `is` que una declaración estática.
+- Qué diferencias semánticas quedan entre un constructo declarado y uno creado, además de origen y ciclo de vida.
+- Si todo constructo concreto existe como entidad del mundo y puede actuar simultáneamente como especialización de otro y como base de nuevos constructos.
+- Qué partes de su identidad, campos y relaciones pertenecen al programa y cuáles al estado mutable.
+
+Bloquea el modelo matemático del mundo, el sistema de tipos de constructos, `create`, `destroy` y la semántica de `is`.
+
 ## P1 — Antes de ampliar el lenguaje
 
 ### Q-011 — Vinculación nombrada de participantes
@@ -204,4 +217,3 @@ Al resolver una cuestión:
 4. Añadir ejemplos y contraejemplos.
 5. Añadir pruebas de conformidad si ya existe implementación.
 6. Marcar aquí la pregunta como cerrada con enlace a la decisión.
-

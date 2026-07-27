@@ -1,7 +1,7 @@
 ---
 title: Respuesta 01 — Modelo mínimo de una puerta
 unit: 1
-status: revisada
+status: revisada-con-rectificacion
 author: Samuel
 tags:
   - mud/aprendizaje
@@ -9,6 +9,9 @@ tags:
 ---
 
 # Respuesta 01 — Modelo mínimo de una puerta
+
+> [!warning] Contexto de la respuesta
+> Esta respuesta resolvió correctamente el ejercicio planteado, pero el ejercicio empleaba una interpretación posteriormente descartada: un constructo MUD no es una clase con instancias. La notación se conserva como evidencia del aprendizaje; `northGate#1` y $\operatorname{kind}_{W_G}$ no forman parte de una propuesta normativa.
 
 Referencia: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
 

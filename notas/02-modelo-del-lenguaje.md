@@ -6,9 +6,9 @@ Este documento es dueño del vocabulario semántico de MUD. Resume la estructura
 
 MUD tiene cuatro declaraciones principales y una auxiliar:
 
-| Declaración | Representa | Tiene identidad runtime |
+| Declaración | Representa | Tiene identidad propia |
 | --- | --- | --- |
-| `construct` | Cosa, concepto, categoría, especialización o familia cerrada | Sí para instancias y constructos concretos |
+| `construct` | Cosa, concepto, categoría, especialización o familia cerrada | Sí |
 | `magnitude` | Cantidad, unidad o punto sobre una cantidad | No como entidad del mundo |
 | `rule` | Condición consultable, reacción o invariante | No |
 | `action` | Operación externa o composición atómica | No |
@@ -18,13 +18,15 @@ Una declaración tiene identidad semántica mediante un ancla. El archivo es una
 
 ## Identidad, valor y especialización
 
+MUD no presupone dos dominios separados de clases y objetos. Un constructo no tiene instancias: los constructos declarados y los creados durante la ejecución pertenecen al mismo dominio conceptual. La caracterización matemática exacta de ese dominio, y la diferencia de ciclo de vida entre ambos orígenes, está abierta en [[08-preguntas-abiertas#Q-041 — Ontología de constructos]].
+
 Hay que conservar tres relaciones distintas:
 
 - Los constructos se comparan por identidad.
 - Los aliases se comparan por valor estructural.
 - `is` expresa especialización o pertenencia nominal, no igualdad.
 
-Dos instancias runtime con campos iguales siguen siendo distintas. Dos valores del mismo alias con los mismos componentes son iguales. Aliases diferentes no son intercambiables aunque su forma coincida.
+Dos constructos creados durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con los mismos componentes son iguales. Aliases diferentes no son intercambiables aunque su forma coincida.
 
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
 
@@ -160,4 +162,3 @@ Antes de llamar estable al lenguaje hacen falta, al menos:
 - Reglas de estática para pureza, mutabilidad y dominios.
 - Especificación de diagnósticos.
 - Ejemplos válidos e inválidos ejecutables.
-

@@ -3,7 +3,7 @@ title: Unidad 01 — Modelo mínimo de un mundo
 aliases:
   - Modelo mínimo de un mundo
 unit: 1
-status: en-curso
+status: completada-con-rectificacion
 level: 0-a-1
 concepts:
   - conjuntos
@@ -24,6 +24,11 @@ tags:
 
 > [!abstract]
 > Esta unidad construye una primera representación matemática de un mundo MUD. Es material didáctico y una propuesta de trabajo: no forma parte todavía de la especificación normativa.
+
+> [!warning] Rectificación semántica
+> La unidad alcanzó sus objetivos matemáticos, pero su aplicación a MUD partió de una premisa descartada: interpretó los constructos mediante dos estratos, como si hubiera constructos que actuasen como clases e identidades runtime que fuesen sus instancias. MUD no presupone esa separación. Un constructo no tiene instancias; los constructos declarados y los creados durante la ejecución pertenecen al mismo dominio conceptual y `is` relaciona constructos.
+>
+> Las secciones que emplean $\operatorname{kind}_W$, “tipo runtime” o “instancia” conservan el contramodelo estudiado para documentar el razonamiento, pero no describen el modelo aceptado de MUD y no deben promoverse a la especificación. Las funciones parciales, los productos cartesianos, los dominios y la detección de información redundante sí siguen siendo resultados válidos de aprendizaje. La ontología correcta de `construct` se resolverá antes de reescribir el modelo del mundo.
 
 ## 1. Pregunta de MUD
 
@@ -727,12 +732,12 @@ No hay solución completa en esta unidad. Se añadirá o enlazará después de t
 
 ## 20. Incorporación futura a la especificación
 
-Tras revisar el ejercicio y las alternativas:
+Tras revisar el ejercicio y detectar la premisa incorrecta:
 
 1. Fijaremos las convenciones necesarias en `03-notacion.md`.
-2. Redactaremos una propuesta profesional de `04-modelo-matematico.md`.
-3. Registraremos las decisiones todavía abiertas.
-4. Buscaremos un contraejemplo que obligue a ampliar o corregir la representación $W$.
+2. No incorporaremos $\operatorname{kind}_W$ ni la separación clase–instancia a `04-modelo-matematico.md`.
+3. Formalizaremos primero qué es un constructo y qué relación expresa `is`.
+4. Redactaremos después una nueva propuesta profesional del mundo.
 
 ## 21. Repaso
 

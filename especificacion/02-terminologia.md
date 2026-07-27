@@ -29,7 +29,7 @@ El contenido normativo todavía no ha sido redactado.
 
 - Programa, módulo, archivo y espacio de nombres.
 - Declaración, símbolo, nombre y ancla.
-- Constructo, instancia, identidad y valor.
+- Constructo declarado, constructo creado durante la ejecución, identidad y valor.
 - Campo, relación y colección.
 - Participante, rol, vinculación y valor proporcionado.
 - Regla consultable, regla reactiva y regla `always`.

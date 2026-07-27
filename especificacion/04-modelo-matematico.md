@@ -11,7 +11,7 @@ depends-on:
   - "[[02-terminologia]]"
   - "[[03-notacion]]"
 questions:
-  - Q-WORLD-001
+  - Q-041
 decisions: []
 ---
 
@@ -30,31 +30,25 @@ El contenido normativo todavía no ha sido redactado.
 
 ## Contenido previsto
 
-- Universos estáticos proporcionados por un programa.
-- Identidades runtime y tipos de constructo.
+- Constructos proporcionados por un programa y constructos creados durante la ejecución.
+- Identidad de constructos.
+- Relación de especialización `is`.
 - Store de campos y relaciones.
 - Identidad frente a igualdad estructural.
 - Estados bien formados.
 - Estados estables y tentativos.
 - Observaciones semánticamente visibles.
 
-## Estructuras candidatas
+## Restricción del modelo
 
-La fase preparatoria estudia representar un mundo mediante las funciones que contienen su información:
+MUD no presupone una separación entre clases y objetos. En particular, un constructo no tiene instancias. El modelo matemático deberá representar dentro de un mismo dominio conceptual los constructos declarados y los creados durante la ejecución.
 
-$$
-W=(\operatorname{kind}_W,\operatorname{store}_W)
-$$
+> [!warning] Modelo retirado
+> La representación $W=(\operatorname{kind}_W,\operatorname{store}_W)$ suponía identidades runtime clasificadas por constructos mediante `kind`. Esa separación no corresponde al concepto de constructo de MUD y no es una estructura candidata.
 
-En ese planteamiento, el conjunto de identidades existentes no es un componente independiente, sino una cantidad derivada:
-
-$$
-I_W:=\operatorname{dom}(\operatorname{kind}_W)
-$$
-
-Estas fórmulas son candidatas y no serán normativas hasta que se definan sus universos, condiciones de buena formación e interacciones.
+La estructura de $W$ no se propondrá hasta resolver [[notas/08-preguntas-abiertas#Q-041 — Ontología de constructos|Q-041]].
 
 ## Cuestiones abiertas
 
-> [!question] Q-WORLD-001 — Representación canónica del mundo
-> Determinar la estructura mínima del estado del mundo y qué información debe ser primitiva o derivada. La propuesta inicial elimina $I_W$ como componente independiente y lo deriva de $\operatorname{kind}_W$.
+> [!question] Q-041 — Ontología de constructos
+> Determinar la estructura matemática común de los constructos declarados y creados durante la ejecución, la semántica exacta de `is` y el efecto de `create`. La resolución debe respetar que un constructo no tiene instancias.

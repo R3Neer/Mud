@@ -151,8 +151,8 @@ Capítulo: [[04-modelo-matematico]].
 
 Define, antes de hablar de sintaxis:
 
-- Universos de anclas, tipos, valores e identidades.
-- Estado de una instancia del mundo.
+- Universos de anclas, constructos y valores.
+- Estado del mundo.
 - Store de campos y relaciones.
 - Identidad frente a igualdad estructural.
 - Estados bien formados.
@@ -277,13 +277,13 @@ Archivo previsto: `11-constructos.md`
 Define:
 
 - Constructos concretos y abstractos.
-- Constructos estáticos e instancias runtime.
+- Constructos declarados y creados durante la ejecución.
 - Especialización simple y múltiple.
 - Sustituibilidad.
 - Fusión de campos homónimos.
 - Valores predeterminados heredados.
 - Igualdad de identidad.
-- Canonicalización de instancias runtime.
+- Canonicalización de identidades de constructo.
 
 ## 12. Aliases y valores estructurales
 
@@ -609,7 +609,7 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 
 Define:
 
-- Creación de identidad fresca.
+- Creación de un constructo con identidad fresca.
 - Inicialización.
 - Destrucción.
 - Referencias pendientes.

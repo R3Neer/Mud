@@ -1,7 +1,7 @@
 ---
 title: Revisión 01 — Modelo mínimo de una puerta
 unit: 1
-status: primera-revision
+status: completada-con-rectificacion
 reviews:
   - "[[aprendizaje/respuestas/01-modelo-minimo-respuesta]]"
 tags:
@@ -10,6 +10,9 @@ tags:
 ---
 
 # Revisión 01 — Modelo mínimo de una puerta
+
+> [!warning] Rectificación posterior
+> Esta revisión corrigió adecuadamente la notación del ejercicio, pero aceptó una premisa semántica que después fue rechazada: MUD no divide los constructos en clases e instancias. En consecuencia, la función $\operatorname{kind}_W$ y la identidad didáctica `northGate#1` no son propuestas para el modelo normativo. La unidad queda completada como aprendizaje de funciones parciales, dominios, stores y redundancia representacional; su modelo concreto de constructos queda conservado únicamente como contramodelo.
 
 ## Resultado general
 
@@ -296,9 +299,9 @@ Si prefieres conservar $I_W$ como conjunto portador explícito, defiéndelo: amb
 
 ## 9. Próximo paso tras la revisión
 
-Cuando se complete esta pequeña corrección:
+Completada la corrección mecánica y registrada la rectificación semántica:
 
-1. La Unidad 01 podrá marcarse completada.
-2. Incorporaremos a [[especificacion/03-notacion]] las convenciones ya asentadas.
-3. Redactaremos en [[especificacion/04-modelo-matematico]] la primera propuesta profesional del estado de mundo.
-4. Dejaremos abierta la cuestión de qué otros componentes necesita $W$ para colecciones, aleatoriedad y memoria de vinculaciones.
+1. La Unidad 01 se considera completada en sus objetivos matemáticos.
+2. Se incorporarán a [[especificacion/03-notacion]] las convenciones ya asentadas.
+3. No se promoverá el modelo $\operatorname{kind}_W$ a [[especificacion/04-modelo-matematico]].
+4. Se resolverá primero la ontología de los constructos y la semántica de `is` y `create`.

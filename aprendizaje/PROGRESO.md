@@ -10,9 +10,10 @@ status: activo
 
 ## Estado general
 
-- Etapa: modelo matemático básico.
+- Etapa: notación formal y ontología de constructos.
 - Nivel global orientativo: 0 → 1 — demostración e imitación.
-- Unidad actual: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
+- Unidad completada: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
+- Próximo bloque: ontología de `construct`, `is` y `create`.
 - Especificación relacionada: [[especificacion/03-notacion]] y [[especificacion/04-modelo-matematico]].
 
 ## Competencias
@@ -45,9 +46,10 @@ status: activo
 | Unidad | Tema | Nivel | Estado | Resultado |
 | --- | --- | ---: | --- | --- |
 | 00 | Arquitectura de la especificación | 0 | Completada | Índice maestro |
-| 01 | Modelo mínimo de un mundo | 0 → 1 | En revisión | Respuesta entregada; revisión 01 creada |
+| 01 | Modelo mínimo de un mundo | 0 → 1 | Completada con rectificación | Competencias matemáticas adquiridas; contramodelo clase–instancia rechazado |
 
 ## Errores recurrentes
 
 - Conviene mantener exactamente los subíndices de funciones ya definidas.
 - La escritura de LaTeX todavía requiere consulta, sin afectar a la comprensión conceptual.
+- No debe proyectarse sobre MUD una separación entre clases y objetos: los constructos no tienen instancias.
