@@ -323,6 +323,8 @@ Define:
 - `=` frente a `:=`.
 - Mutabilidad exterior.
 - Capacidad interior `[mut]`.
+- Ortogonalidad de ambos permisos también para cardinalidad `[1]`.
+- Campos derivados como vistas de colección sin mutabilidad exterior.
 - Mutabilidad de participantes.
 - Accesibilidad de escrituras.
 - Ausencia de mutabilidad profunda implícita.

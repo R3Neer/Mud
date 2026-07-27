@@ -168,6 +168,20 @@ Alternativas conocidas:
 
 La última alternativa cambia silenciosamente el significado de `from`; la cascada introduce un efecto destructivo implícito. Bloquea la definición del conjunto activo, la relación `is` tras destrucción, las vinculaciones y la recreación.
 
+### Q-049 — Destrucción y colecciones de constructos
+
+Al desactivar una identidad, cambia también la denotación activa de los tipos de constructo. Una colección `Kingdom [*]` puede contener no solo la identidad `Kingdom`, sino descendientes que satisfacen `is Kingdom`. Si `Kingdom` queda inactivo y sus descendientes se conectan temporalmente con sus antecesores, esos miembros pueden dejar de pertenecer al tipo `Kingdom`.
+
+Debe decidirse:
+
+- Si las colecciones almacenadas eliminan permanentemente todos los miembros que dejan de satisfacer su tipo activo o conservan membresía latente.
+- Si una colección almacenada sin mutabilidad exterior impide la destrucción de cualquiera de sus miembros válidos.
+- Si las cardinalidades se comprueban inmediatamente o después de las ondas de reparación de la raíz.
+- Si recrear una identidad restaura membresías almacenadas antiguas o únicamente afecta a colecciones derivadas que se recalculen.
+- Cómo se tratan duplicados, orden y entradas de diccionario durante la retirada.
+
+La solución debe coordinar [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], valores predeterminados, cardinalidades, `failed`, rollback y Q-048.
+
 ## P1 — Antes de ampliar el lenguaje
 
 ### Q-011 — Vinculación nombrada de participantes

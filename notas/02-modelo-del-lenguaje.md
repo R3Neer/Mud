@@ -51,7 +51,15 @@ El estado se expresa mediante campos:
 - Campo con dominio: `in`.
 - Campo singular, opcional, colección o diccionario mediante cardinalidad.
 
-La mutabilidad exterior de una relación y la capacidad de modificar sus miembros son permisos distintos. No existe mutabilidad profunda implícita.
+Todo campo se modela semánticamente como una colección; omitir la cardinalidad equivale a `[1]`. La mutabilidad exterior de una colección y la capacidad de modificar sus miembros son permisos distintos y ortogonales para cualquier cardinalidad:
+
+- `mut field: T [k]` permite cambiar la colección, pero no modificar sus miembros.
+- `field: T [k mut]` permite modificar miembros, pero no cambiar la colección.
+- `mut field: T [k mut]` concede ambos permisos.
+
+No existe mutabilidad profunda implícita ni excepción para `[1]`. En particular, `mut field: T` equivale a `mut field: T [1]`, no a `field: T [1 mut]`, según [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|ADR-019]].
+
+Los campos derivados también producen colecciones. Su pertenencia se calcula y no admite mutabilidad exterior; la capacidad interior, cuando se declare, solo permite modificar los miembros alcanzados.
 
 ## Participantes y valores suministrados
 

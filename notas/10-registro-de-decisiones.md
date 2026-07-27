@@ -31,6 +31,7 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-016 | Vigente | `create` puede producir constructos raíz, abstractos o con varios antecesores mediante `from` | [ADR-016](decisiones/ADR-016-creacion-generalizada-de-constructos.md) | Decisión del autor, 2026-07-27 |
 | D-017 | Vigente | Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio | [ADR-017](decisiones/ADR-017-valor-predeterminado-de-todo-tipo.md) | Decisión del autor, 2026-07-27 |
 | D-018 | Vigente | `from` declara especialización y `is` queda reservado para consultas | [ADR-018](decisiones/ADR-018-from-declara-is-consulta.md) | Decisión del autor, 2026-07-27 |
+| D-019 | Vigente | La mutabilidad de una colección y la capacidad sobre sus miembros son ortogonales incluso en `[1]` | [ADR-019](decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 

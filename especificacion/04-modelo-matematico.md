@@ -14,12 +14,14 @@ questions:
   - Q-046
   - Q-047
   - Q-048
+  - Q-049
 decisions:
   - D-014
   - D-015
   - D-016
   - D-017
   - D-018
+  - D-019
 ---
 
 # 04. Modelo matemático del mundo
@@ -71,8 +73,9 @@ La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014
 11. Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio.
 12. `from` introduce especialización directa; `is` queda reservado para consultar su clausura reflexiva y transitiva.
 13. Una regla que contiene `create A` solo se ejecuta si la identidad reservada `A` está ausente.
+14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]] y [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]].
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]] y [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]].
 
 ## Próximo desarrollo
 
@@ -86,3 +89,6 @@ El siguiente borrador deberá separar formalmente el grafo de constructos, el es
 
 > [!question] Q-048 — Destrucción y descendientes
 > Determinar el efecto de destruir un constructo con descendientes activos.
+
+> [!question] Q-049 — Destrucción y colecciones
+> Determinar cómo se revalidan membresías, mutabilidad exterior, cardinalidades y restauración tras reactivar una identidad.
