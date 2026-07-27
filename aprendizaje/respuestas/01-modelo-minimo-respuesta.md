@@ -1,7 +1,7 @@
 ---
 title: Respuesta 01 — Modelo mínimo de una puerta
 unit: 1
-status: pendiente
+status: revisada
 author: Samuel
 tags:
   - mud/aprendizaje
@@ -29,29 +29,37 @@ Existe una puerta con identidad didáctica `northGate#1`, tipo runtime `Gate`, `
 
 Completa con una frase breve:
 
-- `Gate` es: un constructo
-- `northGate#1` es: una identidad
-- `unlocked` y `open` son: campos (fields)
-- `true` y `false` son: valores
+- `Gate` es un constructo.
+- `northGate#1` es una identidad runtime didáctica.
+- `unlocked` y `open` son campos.
+- `true` y `false` son valores booleanos.
 
 ## 2. Conjuntos del ejemplo
 
 Define:
 
+Para el ejemplo local:
+
 $$
-C_G= \{Gate\}
+C_G=\{\mathsf{Gate}\}
 $$
 
 $$
-I_G= \{northGate\#1\}
+I_{W_G}=\{\mathit{northGate\#1}\}
 $$
 
 $$
-F_G= \{unlocked, open\}
+F_G=\{\mathsf{unlocked},\mathsf{open}\}
 $$
 
 $$
-V_G= \{true, false\}
+V_G=\{\mathsf{true},\mathsf{false}\}
+$$
+
+El apartado 7 presupone además un conjunto global de campos del programa $\mathcal F_P$ tal que:
+
+$$
+\mathsf{treasury}\in\mathcal F_P
 $$
 
 ## 3. Tipo runtime
@@ -60,16 +68,26 @@ Completa:
 
 $$
 \operatorname{kind}_{W_G}:
-I_{G}
-\to
-C_{G}
+\mathcal I
+\rightharpoonup
+\mathcal C_P
 $$
 
 $$
 \operatorname{kind}_{W_G}
-(northGate\#1)
+(\mathit{northGate\#1})
 =
-Gate
+\mathsf{Gate}
+$$
+
+Las identidades existentes se derivan del dominio de la función:
+
+$$
+I_{W_G}
+:=
+\operatorname{dom}(\operatorname{kind}_{W_G})
+=
+\{\mathit{northGate\#1}\}
 $$
 
 ## 4. Store
@@ -78,25 +96,25 @@ Escribe el tipo de la función:
 
 $$
 \operatorname{store}_{W_G}:
-I_{G} \times F_{G}
+I_{W_G}\times\mathcal F_P
 \rightharpoonup
-V_{G}
+\mathcal V_P
 $$
 
 Después define sus dos asociaciones:
 
 $$
 \operatorname{store}_{W_G}
-(northGate\#1,unlocked)
+(\mathit{northGate\#1},\mathsf{unlocked})
 =
-true
+\mathsf{true}
 $$
 
 $$
 \operatorname{store}_{W_G}
-(northGate\#1,open)
+(\mathit{northGate\#1},\mathsf{open})
 =
-false
+\mathsf{false}
 $$
 
 ## 5. Mundo
@@ -106,9 +124,8 @@ Escribe la tupla completa:
 $$
 W_G=
 \left(
-I_{G},
-kind_{G},
-store_{G}
+\operatorname{kind}_{W_G},
+\operatorname{store}_{W_G}
 \right)
 $$
 
@@ -116,7 +133,8 @@ $$
 
 Explica con tus palabras por qué hemos utilizado una función parcial para el store en lugar de una función total:
 
-> Porque si fuera total significaría que para cada identidad todos los campos existentes en el mundo tendrían valor. Esto no tiene sentido porque solo hay ciertos campos por constructo (las identidades están relacionadas de forma total con los constructos)
+> Si fuera total sobre $I_{W_G}\times\mathcal F_P$, cada identidad tendría que poseer un valor para todos los campos declarados por el programa. Esto no tiene sentido porque cada constructo solo admite determinados campos.
+
 ## 7. Caso límite
 
 Supón que también existe el campo `treasury` en el programa, pero solo pertenece a `Kingdom`.
@@ -130,10 +148,10 @@ $$
 
 Respuesta y justificación:
 
->No. Precisamente es gracias a que $store_{W_{G}}$ es una aplicación parcial y no total que se puede no definir en este caso.
+> No. El par $(\mathit{northGate\#1},\mathsf{treasury})$ pertenece a $I_{W_G}\times\mathcal F_P$, pero $\operatorname{store}_{W_G}$ no está definida para él porque `treasury` no es un campo aplicable a `Gate`. Esto es posible porque el store es una función parcial.
 
 ## 8. Duda o parte insegura
 
 Indica al menos una parte en la que hayas dudado, aunque finalmente creas que está bien:
 
-> Realmente dudado en ninguna. Pero si he necesitado consultar la teoría en varias ocasiones. Sobre todo para la parte de cómo se define el mundo. También para los nombres de los conjuntos. Y un un par de veces para latex, ya que no sé escribirlo y estoy aprendiendo conforme escribo estas respuestas.
+> Realmente no he dudado en ninguna parte, pero sí he necesitado consultar la teoría en varias ocasiones, sobre todo para recordar cómo se define el mundo y los nombres de los conjuntos. También he tenido que consultar un par de veces la sintaxis de LaTeX, que estoy aprendiendo mientras escribo estas respuestas.
