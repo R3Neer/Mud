@@ -58,10 +58,15 @@ create rule FrozenGround for person: Person {
     ...
 }
 
+create FrozenGround
+create Coordinate
+
 destroy Dragon
 destroy Coordinate
 destroy FrozenGround
 ```
+
+Cada regla y alias tiene una única definición completa, ya sea una declaración inicial ordinaria o una definición incluida en `create`. Sus activaciones adicionales usan `create Nombre` sin categoría ni cuerpo y se resuelven a ese descriptor. Los constructos conservan múltiples cuerpos fragmentarios y no admiten la activación abreviada, según [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
 
 El mundo distingue información almacenada y proyección efectiva. `destroy` suspende la estructura de su objetivo y las declaraciones que tengan una dependencia dura de él, pero conserva descriptores y cargas. Una recreación restaura esa información. Por el contrario, `remove field from Construct` elimina la propiedad y su contenido almacenado.
 

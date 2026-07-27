@@ -95,6 +95,7 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | Mutabilidad singular | La conversación detectó una excepción entre mutabilidad exterior e interior | Ambos permisos son ortogonales también en `[1]` | D-019 |
 | Alias y `create` | Un alias no podía crearse | Las declaraciones de alias tienen ciclo de vida efectivo; sus valores siguen sin identidad | D-021 |
 | Reglas y `create` | Las reglas no tenían ciclo de vida dinámico | Reglas booleanas, reactivas y `always` pueden activarse y destruirse | D-021 |
+| Definiciones de reglas y aliases | No existía activación separada de una definición | Una definición completa única y activaciones posteriores mediante `create Nombre` | D-024 |
 | Regla booleana inactiva | No contemplada | Su aparición se borra estructuralmente de la fórmula | D-022 |
 | Destrucción | Podía fallar por referencias o cardinalidad | Suspensión lógica reversible con conservación del contenido almacenado | D-021 |
 | Propiedades dinámicas | `add` y `remove` solo operaban sobre colecciones | También añaden y eliminan propiedades; `remove` sí pierde su contenido | D-021 |

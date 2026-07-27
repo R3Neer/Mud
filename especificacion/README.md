@@ -209,6 +209,7 @@ Define la sintaxis completa de:
 - Efectos.
 - Bloques.
 - Llamadas.
+- Definiciones completas y activaciones abreviadas mediante `create Nombre`.
 - Cuantificadores e iteraciones.
 
 La gramática completa ejecutable vivirá en `gramatica/mud.ebnf`. Este capítulo explicará ambigüedades, precedencia y desazucarado, pero no repetirá toda la EBNF.
@@ -223,6 +224,7 @@ Define las formas semánticamente relevantes después del parsing:
 - AST de tipos y dominios.
 - AST de expresiones.
 - AST de efectos.
+- Distinción entre definición con activación y referencia de activación.
 - Distinción estructural entre las tres clases de regla.
 - Distinción entre acciones elementales y compuestas.
 - Azúcares sintácticos y forma núcleo.
@@ -497,6 +499,7 @@ Define:
 - Adición y retirada dinámica de propiedades.
 - `create`.
 - `destroy`.
+- Resolución de `create Nombre` a la definición canónica de una regla o alias.
 - Efectos de bucles.
 - Conjuntos de lectura y escritura.
 - Compatibilidad y conflicto entre efectos.
@@ -609,7 +612,7 @@ Define:
 - Relación de compatibilidad de efectos.
 - Matriz normativa de conflictos.
 - Fusión parcial de fragmentos concurrentes de constructo.
-- Conflicto dinámico entre creaciones concurrentes de una misma regla.
+- Consolidación idempotente de activaciones concurrentes de una regla o alias con definición única.
 - Ciclos causales.
 - Oscilaciones.
 - Detección de repetición.

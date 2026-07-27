@@ -64,7 +64,7 @@ Las vinculaciones se fijan al inicio de cada onda. Los cambios de pertenencia so
 
 La activación o suspensión de una regla durante una onda tampoco modifica el conjunto de bindings ya fijado para esa onda. La proyección efectiva resultante se utiliza al construir la onda siguiente.
 
-Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las creaciones preceden a las adiciones y las retiradas preceden a las destrucciones. Varias creaciones compatibles de un constructo pueden fusionarse; dos creaciones efectivas de la misma regla son un conflicto dinámico. Véase [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las creaciones preceden a las adiciones y las retiradas preceden a las destrucciones. Varias creaciones compatibles de un constructo pueden fusionarse. Varias activaciones de una regla o alias se consolidan idempotentemente porque remiten a una única definición canónica. Véanse [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]] y [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
 
 ## Disparo reactivo
 

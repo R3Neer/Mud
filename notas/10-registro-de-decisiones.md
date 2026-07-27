@@ -35,7 +35,8 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-020 | Vigente | Las colecciones de constructos excluyen por defecto el ancla exacta de su tipo y `[reflexive]` permite incluirla | [ADR-020](decisiones/ADR-020-membresia-estricta-y-reflexive.md) | Decisión del autor, 2026-07-27 |
 | D-021 | Vigente | `destroy` suspende declaraciones y dependientes sin borrar su almacenamiento; `remove` sí elimina una propiedad y su carga | [ADR-021](decisiones/ADR-021-ciclo-de-vida-logico-y-suspension.md) | Decisión del autor, 2026-07-27 |
 | D-022 | Vigente | Una llamada a una regla booleana inactiva se borra estructuralmente y la expresión exterior vacía se cierra con verdadero | [ADR-022](decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas.md) | Decisión del autor, 2026-07-27 |
-| D-023 | Vigente | Los `then` conservan secuencialidad local y consolidan efectos estructurales de forma determinista; los constructos compatibles se fusionan y las reglas colisionan | [ADR-023](decisiones/ADR-023-consolidacion-de-efectos-estructurales.md) | Decisión del autor, 2026-07-27 |
+| D-023 | Vigente | Los `then` conservan secuencialidad local y consolidan efectos estructurales de forma determinista; los fragmentos compatibles de constructos se fusionan | [ADR-023](decisiones/ADR-023-consolidacion-de-efectos-estructurales.md) | Decisión del autor, 2026-07-27 |
+| D-024 | Vigente | Cada regla y alias tiene una única definición completa; `create Nombre` activa su descriptor canónico y las activaciones concurrentes se consolidan | [ADR-024](decisiones/ADR-024-definicion-unica-y-activacion-abreviada.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 

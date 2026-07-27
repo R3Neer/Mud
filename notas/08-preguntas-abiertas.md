@@ -144,7 +144,7 @@ Falta decidir:
 - Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
 - Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
 
-D-023 añade que las creaciones concurrentes compatibles de un constructo ausente se fusionan, mientras dos creaciones efectivas de la misma regla producen un conflicto runtime. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
+D-023 añade que las creaciones concurrentes compatibles de un constructo ausente se fusionan. D-024 exige una única definición completa por regla y alias, y consolida idempotentemente sus activaciones concurrentes. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
 
 Bloquea la semántica operacional completa de `create`, los conjuntos de efectos y la atomicidad.
 
@@ -231,7 +231,7 @@ Detección semántica, salvaguarda técnica, diagnósticos y reproducibilidad.
 
 Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
 
-D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir.
+D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas y aliases: son idempotentes porque sus definiciones son únicas.
 
 ### Q-022 — Valores de retorno de acciones
 

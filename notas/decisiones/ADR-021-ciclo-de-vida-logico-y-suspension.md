@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
+- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]]
 - Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de constructos|Q-049]]
 - Decisiones sustituidas parcialmente: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 12, 21 a 25 y 32
@@ -87,7 +88,7 @@ Los valores de un alias continúan siendo estructurales y sin identidad individu
 
 ## Sintaxis superficial
 
-`create` indica la categoría porque introduce un descriptor:
+La aparición que define un descriptor indica su categoría:
 
 ```mud
 create construct Kingdom {
@@ -114,6 +115,17 @@ create always rule ValidKingdom for Kingdom {
 }
 ```
 
+Conforme a D-024, cada regla y alias tiene una única definición completa. Las activaciones adicionales omiten categoría y cuerpo:
+
+```mud
+create CanEnter
+create OpenGate
+create ValidKingdom
+create Coordinate
+```
+
+Los constructos conservan cuerpos fragmentarios y no admiten esta forma abreviada.
+
 `destroy` solo necesita una referencia que resuelva de manera unívoca:
 
 ```mud
@@ -124,7 +136,7 @@ destroy CanEnter
 
 Los nombres de declaraciones comparten el espacio necesario para que esa resolución sea inequívoca. Una referencia ambigua debe diagnosticarse; `destroy` no elige una categoría por prioridad.
 
-El compilador puede elaborar internamente estas formas como reserva, activación y desactivación. `activate` y `deactivate` no se introducen como palabras de la superficie MUD.
+El compilador puede elaborar internamente estas formas como definición canónica, reserva, activación y desactivación. `activate` y `deactivate` no se introducen como palabras de la superficie MUD.
 
 ## Suspensión por dependencias
 
