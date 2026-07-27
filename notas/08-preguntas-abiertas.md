@@ -78,23 +78,27 @@ Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014
 
 MUD tiene un único dominio conceptual de constructos. Todo constructo concreto es una cosa con identidad y estado propio que también puede ser antecesora. Los abstractos pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` produce otro constructo concreto relacionado mediante el mismo `is`, e `is` es reflexivo y transitivo.
 
-Las consecuencias no resueltas se separan en Q-042 y Q-043.
+Las consecuencias se separaron en Q-042 y Q-043 y quedaron resueltas mediante [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
 ### Q-042 — Herencia desde un constructo concreto
 
+Estado: **cerrada**.
+
 Cuando un constructo concreto $B$ se especializa a partir de otro constructo concreto $A$, ¿hereda solo las declaraciones, restricciones y valores predeterminados de $A$, o copia u observa también el estado mutable actual de $A$?
 
-La fuente inicial habla de heredar valores predeterminados, lo que sugiere estados independientes. Debe confirmarse el instante y mecanismo de inicialización, especialmente para `create`.
+Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-Bloquea la definición del store, la inicialización y la semántica de mutación.
+Se heredan esquema y predeterminados efectivos, nunca estado activo. Cada constructo concreto posee estado independiente y `create` inicializa desde predeterminados antes de aplicar sus asignaciones explícitas.
 
 ### Q-043 — Ciclos de especialización
 
+Estado: **cerrada**.
+
 ¿Debe rechazarse cualquier ciclo no trivial de especialización directa?
 
-Si se rechaza, la relación reflexiva y transitiva `is` puede ser antisimétrica y formar un orden parcial. Si se admite, dos constructos distintos podrían satisfacer simultáneamente `A is B` y `B is A`, y `is` sería solo un preorden.
+Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-Bloquea la buena formación del grafo de constructos y la resolución de herencia múltiple.
+Todo ciclo de especialización directa es inválido. La relación semántica `is` es un orden parcial.
 
 ## P1 — Antes de ampliar el lenguaje
 
@@ -118,9 +122,9 @@ Sintaxis en consultas y acciones compuestas; mezcla o no con argumentos posicion
 
 ¿`RETIRE` marca obsolescencia, exige reemplazo, elimina físicamente o admite varias fases?
 
-### Q-016 — Canonicalización de constructos runtime
+### Q-016 — Canonicalización de constructos creados durante la ejecución
 
-Formato estable de identidad, snapshots, comparación y referencias entre instancias.
+Formato estable de identidad, snapshots, comparación y referencias entre constructos creados.
 
 ### Q-017 — Dominios dinámicos circulares
 

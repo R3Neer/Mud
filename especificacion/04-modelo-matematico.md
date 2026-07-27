@@ -10,11 +10,10 @@ normative: true
 depends-on:
   - "[[02-terminologia]]"
   - "[[03-notacion]]"
-questions:
-  - Q-042
-  - Q-043
+questions: []
 decisions:
   - D-014
+  - D-015
 ---
 
 # 04. Modelo matemático del mundo
@@ -57,13 +56,13 @@ La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014
 3. Un constructo abstracto pertenece al mismo dominio, pero no denota directamente una cosa concreta con estado propio.
 4. `create C N` crea otro constructo concreto $N$ relacionado con $C$ mediante el mismo `is` que una declaración estática.
 5. La relación semántica `is` es reflexiva y transitiva.
+6. La especialización directa es acíclica, por lo que `is` es también antisimétrica y forma un orden parcial.
+7. Se heredan declaraciones, restricciones, dominios y predeterminados efectivos, pero no estado mutable activo.
+8. Cada constructo concreto posee estado independiente.
+9. `create` inicializa desde predeterminados efectivos y aplica después sus asignaciones explícitas.
 
-La estructura de $W$ no se propondrá hasta determinar qué se hereda desde un constructo concreto y si la especialización directa debe ser acíclica.
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]] y [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]].
 
-## Cuestiones abiertas
+## Próximo desarrollo
 
-> [!question] Q-042 — Herencia desde un constructo concreto
-> Determinar si un descendiente hereda únicamente declaraciones y predeterminados o también copia u observa estado mutable actual.
-
-> [!question] Q-043 — Ciclos de especialización
-> Determinar si se prohíben los ciclos entre identidades distintas y, por tanto, si `is` forma un orden parcial.
+El siguiente borrador deberá separar formalmente el grafo de constructos, el esquema heredable y el estado independiente de cada constructo concreto antes de proponer los componentes definitivos de $W$.

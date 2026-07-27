@@ -31,7 +31,7 @@ El token `is` cumple dos papeles sintácticos relacionados, pero el AST debe rep
 - En una cabecera de `construct`, introduce una relación directa de especialización.
 - En una expresión, consulta la relación semántica `is`.
 
-Sea $R_{\mathrm{dir}}$ la relación de especialización directa. La formalización candidata del operador es:
+Sea $R_{\mathrm{dir}}$ la relación de especialización directa. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]] completa la decisión con la formalización:
 
 $$
 R_{\mathsf{is}}
@@ -55,7 +55,7 @@ c_2\mathrel{R_{\mathrm{dir}}}c_3
 c_1\mathrel{R_{\mathsf{is}}}c_3
 $$
 
-La ecuación es una formalización candidata de la decisión, no cierra todavía si $R_{\mathrm{dir}}$ debe ser acíclica.
+La relación directa es acíclica; por tanto, su clausura reflexiva y transitiva es un orden parcial.
 
 ## Alternativas
 
@@ -103,10 +103,9 @@ Egypt is Egypt
 
 La última expresión puede sorprender si `is` se interpreta informalmente como «hereda directamente de». La documentación deberá presentarlo como «es el mismo constructo o una especialización suya» cuando se use como operador.
 
-## Cuestiones no cerradas
+## Decisiones posteriores y cuestiones no cerradas
 
-- [[notas/08-preguntas-abiertas#Q-042 — Herencia desde un constructo concreto|Q-042]]: distinguir predeterminados heredados de estado mutable vivo.
-- [[notas/08-preguntas-abiertas#Q-043 — Ciclos de especialización|Q-043]]: decidir si `is` es un orden parcial o solo un preorden.
+- [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]] fija que los estados son independientes, que solo se heredan esquema y predeterminados, y que `is` es un orden parcial.
 - Tipado exacto de los operandos de `is`, especialmente el uso de constructos abstractos.
 - Destrucción de un constructo que tenga descendientes vivos.
 

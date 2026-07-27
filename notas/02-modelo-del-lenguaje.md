@@ -32,6 +32,10 @@ Dos constructos creados durante la ejecución con campos iguales siguen teniendo
 
 `create C N` crea un nuevo constructo concreto $N$ y establece la misma relación `is` que una declaración estática de especialización. El origen y el ciclo de vida no forman una segunda categoría ontológica.
 
+La especialización directa es acíclica. Su clausura reflexiva y transitiva, consultada mediante `is`, forma un orden parcial.
+
+Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada constructo concreto conserva estado independiente. `create` inicializa desde los predeterminados efectivos y aplica después las asignaciones explícitas de su bloque.
+
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
 
 ## Estado del mundo

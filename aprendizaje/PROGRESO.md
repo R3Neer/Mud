@@ -13,7 +13,7 @@ status: activo
 - Etapa: notación formal y ontología de constructos.
 - Nivel global orientativo: 0 → 1 — demostración e imitación.
 - Unidad completada: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
-- Próximo bloque: ontología de `construct`, `is` y `create`.
+- Próximo bloque: grafo de constructos, esquema heredable y estado independiente.
 - Especificación relacionada: [[especificacion/03-notacion]] y [[especificacion/04-modelo-matematico]].
 
 ## Competencias
