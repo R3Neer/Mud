@@ -155,6 +155,8 @@ Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio.
 
 También debe decidirse si un tipo derivado puede reemplazar explícitamente el predeterminado que obtendría por composición.
 
+Desde [[notas/decisiones/ADR-020-membresia-estricta-y-reflexive|D-020]], debe definirse además cómo obtiene predeterminado una colección no reflexiva con mínimo positivo. El ancla exacta del tipo no es un candidato válido sin `[reflexive]`; puede ser necesario exigir un descendiente estricto predeterminado o un inicializador explícito.
+
 ### Q-048 — Destrucción con descendientes activos
 
 ¿Qué ocurre al ejecutar `destroy A` cuando existe un constructo activo $d\neq A$ tal que `d is A`?

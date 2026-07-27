@@ -338,6 +338,7 @@ Define:
 - Cardinalidades como intervalos de naturales.
 - Ausencia mediante `empty`.
 - Multiplicidad y `unique`.
+- Membresía estricta de constructos y habilitación del caso exacto mediante `[reflexive]`.
 - Colecciones ordenadas y no ordenadas.
 - Orden natural, de inserción, semántico y `ordered by`.
 - Igualdad de colecciones.

@@ -22,6 +22,7 @@ decisions:
   - D-017
   - D-018
   - D-019
+  - D-020
 ---
 
 # 04. Modelo matemático del mundo
@@ -74,8 +75,9 @@ La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014
 12. `from` introduce especialización directa; `is` queda reservado para consultar su clausura reflexiva y transitiva.
 13. Una regla que contiene `create A` solo se ejecuta si la identidad reservada `A` está ausente.
 14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
+15. Una colección de constructos excluye por defecto el ancla exacta de su tipo; `[reflexive]` habilita el caso derivado de $T\ \mathsf{is}\ T$.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]] y [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]].
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]] y [[notas/decisiones/ADR-020-membresia-estricta-y-reflexive|D-020]].
 
 ## Próximo desarrollo
 

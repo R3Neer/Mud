@@ -61,6 +61,8 @@ No existe mutabilidad profunda implícita ni excepción para `[1]`. En particula
 
 Los campos derivados también producen colecciones. Su pertenencia se calcula y no admite mutabilidad exterior; la capacidad interior, cuando se declare, solo permite modificar los miembros alcanzados.
 
+Una colección cuyo tipo de miembro sea un constructo utiliza membresía estricta por defecto. `person: Person[1]` puede contener un constructo `Alice` que satisfaga `Alice is Person`, pero no el ancla exacta `Person`. El modificador `[reflexive]` habilita ese caso exacto. No significa que el propietario del campo pueda o no almacenarse a sí mismo, según [[notas/decisiones/ADR-020-membresia-estricta-y-reflexive|ADR-020]].
+
 ## Participantes y valores suministrados
 
 La distinción más insistente de la especificación es:
