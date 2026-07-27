@@ -8,6 +8,9 @@
 
 ## Contexto
 
+> [!note] Vocabulario histórico
+> D-025 sustituyó `construct`/`from` por `thing`/`as`. La consolidación decidida aquí sigue vigente; sus ejemplos conservan la sintaxis histórica.
+
 Varias reglas pueden solicitar en la misma oleada:
 
 - La creación del mismo constructo.

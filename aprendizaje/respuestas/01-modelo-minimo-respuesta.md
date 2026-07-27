@@ -20,7 +20,7 @@ Referencia: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
 Considera:
 
 ```mud
-construct Gate {
+thing Gate {
     mut unlocked: Boolean
     mut open: Boolean
 }

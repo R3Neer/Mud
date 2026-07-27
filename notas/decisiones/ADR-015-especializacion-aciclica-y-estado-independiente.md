@@ -7,6 +7,9 @@
 
 ## Contexto
 
+> [!note] Vocabulario histórico
+> D-025 sustituyó `construct`/`from` por `thing`/`as`. La semántica de herencia y estado de este ADR sigue vigente; sus ejemplos conservan la sintaxis histórica.
+
 [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]] establece que todo constructo concreto es simultáneamente una cosa con estado propio y un posible antecesor de otros constructos. Esa unificación obliga a precisar:
 
 1. Si un descendiente observa o copia el estado mutable actual de un antecesor concreto.

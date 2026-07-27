@@ -1,10 +1,13 @@
 # ADR-018 — `from` declara especialización e `is` la consulta
 
-- Estado: Vigente
+- Estado: Sustituida parcialmente por [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
 - Fecha: 2026-07-27
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-constructos.md`
 
 ## Contexto
+
+> [!warning] Sintaxis histórica
+> D-025 conserva la separación conceptual entre declaración directa y consulta, pero sustituye `construct` por `thing` y `from` por `as`. Los ejemplos de este ADR no son sintaxis vigente.
 
 La sintaxis inicial utilizaba `is` tanto en cabeceras de constructo como en expresiones booleanas:
 

@@ -10,7 +10,9 @@ normative: true
 depends-on:
   - "[[01-alcance-y-conformidad]]"
 questions: []
-decisions: []
+decisions:
+  - D-025
+  - D-027
 ---
 
 # 02. Terminología
@@ -29,11 +31,11 @@ El contenido normativo todavía no ha sido redactado.
 
 - Programa, módulo, archivo y espacio de nombres.
 - Declaración, símbolo, nombre y ancla.
-- Constructo declarado, constructo creado durante la ejecución, identidad y valor.
+- `Thing` declarada, `thing` creada durante la ejecución, identidad y valor.
 - Campo, relación y colección.
 - Participante, rol, vinculación y valor proporcionado.
 - Regla consultable, regla reactiva y regla `always`.
-- Acción, solicitud, raíz, onda y resolución.
+- Acción, `look`, `message`, solicitud, observación, ocurrencia, raíz, onda y resolución.
 - Estado, instantánea, efecto y conflicto.
 - Dominio, restricción, condición e invariante.
 - Aceptación, rechazo y fallo.

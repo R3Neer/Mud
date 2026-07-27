@@ -34,7 +34,7 @@ operations:
     anchor: action::warfare.armies.Recruit
     change: add-precondition
 reads:
-  - construct::warfare.armies.Kingdom::lastRecruitmentDate
+  - thing::warfare.armies.Kingdom::lastRecruitmentDate
 expected_impacts:
   - rule::warfare.armies.CanRecruit
 open_questions: []
@@ -145,4 +145,3 @@ El commit debería permitir reconstruir:
 - Resultados de validación.
 
 No todos los derivados necesitan versionarse. La decisión debe basarse en coste, auditabilidad y facilidad de reconstrucción, manteniendo claro que nunca son autoridad semántica.
-

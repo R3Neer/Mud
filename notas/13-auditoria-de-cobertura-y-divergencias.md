@@ -85,12 +85,15 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | Tema | Fuente inicial | Estado posterior | Procedencia |
 | --- | --- | --- | --- |
 | Ontología de constructos | La sintaxis y varios ejemplos sugerían declaración, categoría e identidad runtime separables | Un único dominio de constructos; cada concreto es cosa y posible antecesor | D-014 |
-| Declaración de especialización | `construct A is B` | `construct A from B`; `is` queda como consulta | D-018 |
+| Palabra de entidad | `construct` | `thing` | D-025 |
+| Declaración de especialización | `construct A is B`, después `construct A from B` | `thing A as B`; `is` queda como consulta | D-018 y D-025 |
+| Conversión explícita | `as` | `as` queda reservado para especialización; la conversión explícita se rediseñará | D-025 |
+| Cabeceras `on`/`for` | `on` en solicitudes y `for` en observadores | `for` en acciones, reglas booleanas y `look`; `on` en reglas de cambio, `always` y `message` | D-025 |
 | Ciclos | No existía regla local completa | Se rechaza todo ciclo no trivial | D-015 |
 | Herencia de estado | No estaba delimitada con precisión | Solo se heredan esquema y predeterminados; nunca estado mutable actual | D-015 |
 | Identidad creada | La fuente hablaba de identificador local y de identidades runtime distintas por creación | El nombre de `create` es una identidad global reservada y reactivable | D-016 |
-| Forma de `create` | `create Base NewName` y solo constructos concretos | Raíz, abstracto o varios antecesores, con cuerpo declarativo completo | D-016 |
-| Constructos abstractos | No podían crearse | Pueden activarse mediante `create abstract construct` | D-016 y D-021 |
+| Forma de `create` | `create Base NewName` y solo constructos concretos | Raíz, abstracta o con varios antecesores, mediante `create [abstract] thing A [as ...]` y cuerpo declarativo completo | D-016 y D-025 |
+| `Thing` abstractas | No podían crearse | Pueden activarse mediante `create abstract thing` | D-016, D-021 y D-025 |
 | Predeterminados | Tabla parcial y tipos sin predeterminado universal | Todo tipo bien formado posee predeterminado | D-017 |
 | Mutabilidad singular | La conversación detectó una excepción entre mutabilidad exterior e interior | Ambos permisos son ortogonales también en `[1]` | D-019 |
 | Alias y `create` | Un alias no podía crearse | Las declaraciones de alias tienen ciclo de vida efectivo; sus valores siguen sin identidad | D-021 |
@@ -99,7 +102,9 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | Regla booleana inactiva | No contemplada | Su aparición se borra estructuralmente de la fórmula | D-022 |
 | Destrucción | Podía fallar por referencias o cardinalidad | Suspensión lógica reversible con conservación del contenido almacenado | D-021 |
 | Propiedades dinámicas | `add` y `remove` solo operaban sobre colecciones | También añaden y eliminan propiedades; `remove` sí pierde su contenido | D-021 |
-| Miembro reflexivo | `T` podía habitar implícitamente `T[k]` por `T is T` | La membresía exacta del ancla de tipo requiere `[reflexive]` | D-020 |
+| Miembro igual al tipo | `T` podía habitar implícitamente `T[k]` por `T is T`; D-020 propuso `[reflexive]` | Se prohíbe siempre: $c\neq T\land c\ \mathsf{is}\ T$ | D-026 |
+| Cardinalidad durante efectos | Se comprobaba como validez dinámica sin una frontera local única | Se demuestra estáticamente al final de cada `then` y en su posible consolidación | D-026 |
+| Salidas públicas | No había una frontera simétrica a las acciones | `look` consulta estados estables y `message` publica valores tras estabilizar | D-027 |
 
 ## Estado de la formalización profesional
 
@@ -110,7 +115,7 @@ Dentro de `especificacion/`:
 - Los capítulos 01 y 02 son esqueletos.
 - Los capítulos 05 a 48 existen únicamente como índice previsto.
 
-Los ADR D-014 a D-019 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
+Los ADR D-014 a D-027 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
 
 ## Regla de conservación a partir de esta auditoría
 

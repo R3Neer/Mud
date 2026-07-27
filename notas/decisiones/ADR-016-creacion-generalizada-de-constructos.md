@@ -9,6 +9,9 @@
 
 ## Contexto
 
+> [!note] Vocabulario histórico
+> D-025 conserva esta semántica de creación, pero la sintaxis vigente es `create [abstract] thing nombre [as antecesores] bloque`. Los ejemplos de este ADR muestran la forma anterior.
+
 La sintaxis inicial:
 
 ```mud

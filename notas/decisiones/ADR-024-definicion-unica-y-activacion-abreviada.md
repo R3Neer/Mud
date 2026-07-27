@@ -8,6 +8,9 @@
 
 ## Contexto
 
+> [!note] Vocabulario histórico
+> D-025 sustituyó `construct`/`from` por `thing`/`as` e intercambió los usos de `on` y `for`. La unicidad y activación abreviada decididas aquí siguen vigentes; sus ejemplos conservan la sintaxis histórica.
+
 Permitir varios cuerpos para una misma regla obliga a decidir en runtime qué cuerpo queda activo o a rechazar dos creaciones coincidentes. Repetir un cuerpo idéntico en cada punto de activación tampoco aporta semántica y exige definir una noción artificial de igualdad entre cuerpos.
 
 Para un alias, permitir varios cuerpos es aún menos adecuado: su descriptor fija componentes, tipos, igualdad, orden y representación de todos sus valores.

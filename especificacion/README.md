@@ -151,7 +151,7 @@ Capítulo: [[04-modelo-matematico]].
 
 Define, antes de hablar de sintaxis:
 
-- Universos de anclas, constructos y valores.
+- Universos de anclas, `thing` y valores.
 - Estado del mundo.
 - Store de campos y relaciones.
 - Identidad frente a igualdad estructural.
@@ -227,6 +227,7 @@ Define las formas semánticamente relevantes después del parsing:
 - Distinción entre definición con activación y referencia de activación.
 - Distinción estructural entre las tres clases de regla.
 - Distinción entre acciones elementales y compuestas.
+- Nodos propios para `look`, `message` y propiedades públicas.
 - Azúcares sintácticos y forma núcleo.
 
 ## 09. Namespaces, imports, nombres y anclas
@@ -256,7 +257,7 @@ Archivo previsto: `10-sistema-de-tipos.md`
 Define:
 
 - `Boolean`, `Natural`, `Integer`, `Number`, `Text`, `Money` y `Percentage`.
-- Tipos de constructo.
+- Tipos de `thing`.
 - Tipos nominales de alias.
 - Familias cerradas.
 - Colecciones y diccionarios.
@@ -272,21 +273,21 @@ $$
 \Gamma;\Sigma \vdash e : \tau
 $$
 
-## 11. Constructos, especialización e identidad
+## 11. `Thing`, especialización e identidad
 
-Archivo previsto: `11-constructos.md`
+Archivo previsto: `11-things.md`
 
 Define:
 
-- Constructos concretos y abstractos.
-- Constructos declarados y creados durante la ejecución.
+- `Thing` concretas y abstractas.
+- `Thing` declaradas y creadas durante la ejecución.
 - Especialización simple y múltiple.
-- Cabeceras de especialización con `from` y consultas con `is`.
+- Cabeceras de especialización con `as` y consultas con `is`.
 - Sustituibilidad.
 - Fusión de campos homónimos.
 - Valores predeterminados heredados.
 - Igualdad de identidad.
-- Canonicalización de identidades de constructo.
+- Canonicalización de identidades de `thing`.
 
 ## 12. Aliases y valores estructurales
 
@@ -341,7 +342,7 @@ Define:
 - Cardinalidades como intervalos de naturales.
 - Ausencia mediante `empty`.
 - Multiplicidad y `unique`.
-- Membresía estricta de constructos y habilitación del caso exacto mediante `[reflexive]`.
+- Membresía estricta de `thing`, con exclusión incondicional del ancla exacta del tipo.
 - Colecciones ordenadas y no ordenadas.
 - Orden natural, de inserción, semántico y `ordered by`.
 - Igualdad de colecciones.
@@ -435,7 +436,7 @@ Archivo previsto: `21-reglas-booleanas.md`
 
 Define:
 
-- Participantes `on`.
+- Participantes `for`.
 - Valores `given`.
 - Receptor único y multiparte.
 - Pureza.
@@ -450,7 +451,7 @@ Archivo previsto: `22-reglas-reactivas.md`
 
 Define:
 
-- Vinculaciones `for`.
+- Vinculaciones `on`.
 - Participantes relacionados mediante `in`.
 - `when`.
 - `changes`.
@@ -465,19 +466,19 @@ Archivo previsto: `23-reglas-always.md`
 
 Define:
 
-- Vinculaciones `for`.
+- Vinculaciones `on`.
 - Pureza.
 - Estados en que deben comprobarse.
 - Incumplimiento y resultado de resolución.
 - Dependencias.
 
-## 24. Acciones
+## 24. Frontera pública: `action`, `look` y `message`
 
-Archivo previsto: `24-acciones.md`
+Archivo previsto: `24-frontera-publica.md`
 
 Define:
 
-- Participantes `on`.
+- Participantes `for`.
 - Valores `given`.
 - `if`, `then` y `after`.
 - Acciones elementales.
@@ -486,6 +487,13 @@ Define:
 - Aciclicidad de llamadas.
 - Acciones como API externa de escritura.
 - Posibles valores de retorno.
+- `look` como consulta pública pura de un estado estable.
+- Participantes `for` sin `given`.
+- `message` como evento detectado durante las ondas de una acción.
+- Vinculaciones `on`, condición `when` y guarda `if` opcional.
+- Propiedades públicas tipadas y calculadas.
+- Evaluación diferida de las propiedades del mensaje tras la estabilización.
+- Multiplicidad, orden, deduplicación, rollback y entrega.
 
 ## 25. Efectos
 
@@ -596,7 +604,9 @@ Archivo previsto: `30-restricciones-finales.md`
 
 Define:
 
-- Puntos de comprobación de dominios y cardinalidades.
+- Prueba estática de cardinalidad al final de cada `then`.
+- Compatibilidad cardinal de la consolidación de varios `then`.
+- Puntos de comprobación de dominios y demás invariantes.
 - Comprobación de reglas `always`.
 - Estado observado por `old`.
 - Momento de evaluación de `after`.
@@ -611,7 +621,7 @@ Define:
 
 - Relación de compatibilidad de efectos.
 - Matriz normativa de conflictos.
-- Fusión parcial de fragmentos concurrentes de constructo.
+- Fusión parcial de fragmentos concurrentes de `thing`.
 - Consolidación idempotente de activaciones concurrentes de una regla o alias con definición única.
 - Ciclos causales.
 - Oscilaciones.
@@ -625,7 +635,7 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 
 Define:
 
-- Creación de constructos raíz, abstractos y con especialización múltiple.
+- Creación de `thing` raíz, abstractas y con especialización múltiple.
 - Reserva global, activación y reactivación de los nombres introducidos por `create`.
 - Cuerpo declarativo completo de las creaciones.
 - Inicialización de la primera materialización.
@@ -921,11 +931,13 @@ El orden numérico es el orden de lectura final, no el orden estricto de escritu
 Primer ciclo recomendado:
 
 ```text
-construct
+thing
 → campos básicos
 → regla booleana
 → acción elemental
+→ look
 → estado
+→ message
 → accepted/rejected/failed
 ```
 

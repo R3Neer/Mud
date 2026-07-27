@@ -143,7 +143,7 @@ Ejemplo mínimo:
 # Escribe aquí.
 ```
 
-## 9. `from` e `is`
+## 9. `as` e `is`
 
 Clasificación y explicación del parser:
 

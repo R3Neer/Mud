@@ -55,7 +55,7 @@ No se debe convertir una propuesta o inferencia en comportamiento del compilador
 
 Cada concepto tiene un único documento dueño. Los demás documentos lo enlazan y solo añaden el contexto específico que necesitan. Por ejemplo:
 
-- `action`, `rule`, `construct` y `given` pertenecen al modelo del lenguaje.
+- `action`, `rule`, `thing`, `look`, `message` y `given` pertenecen al modelo del lenguaje.
 - Las ondas, `accepted/rejected/failed` y el rollback pertenecen a la semántica de ejecución.
 - El AST, el grafo, el IR y los materializadores pertenecen a la arquitectura.
 - CREATE, UPDATE, RETIRE, el diff y el commit pertenecen al protocolo de cambios.

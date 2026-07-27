@@ -133,7 +133,7 @@ Un identificador retirado no se reutiliza con otro significado.
 Formato recomendado:
 
 > [!rule] MUD-ACTION-001 — Participantes de una acción
-> Una acción debe declarar sus participantes mediante `on`. Una acción no puede declarar participantes mediante `for`.
+> Una acción debe declarar sus participantes mediante `for`. Una acción no puede declarar participantes mediante `on`.
 
 Después pueden aparecer:
 

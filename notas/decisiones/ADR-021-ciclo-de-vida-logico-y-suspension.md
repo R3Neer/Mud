@@ -9,6 +9,9 @@
 
 ## Contexto
 
+> [!note] Vocabulario histórico
+> D-025 sustituyó `construct`/`from` por `thing`/`as` e intercambió los usos de `on` y `for`. La semántica de ciclo de vida de este ADR sigue vigente; sus ejemplos conservan la sintaxis histórica.
+
 Una semántica que elimina permanentemente estado al ejecutar `destroy` obliga a podar colecciones, reparar cardinalidades, fabricar predeterminados y decidir si la recreación recupera información antigua. También confunde dos intenciones distintas:
 
 - Quitar temporalmente una clase de cosa o ley del juego.

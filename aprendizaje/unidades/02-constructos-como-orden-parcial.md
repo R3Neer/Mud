@@ -20,7 +20,7 @@ decisions:
   - D-014
   - D-015
   - D-016
-  - D-018
+  - D-025
 tags:
   - mud/aprendizaje
   - mud/unidad
@@ -29,14 +29,17 @@ tags:
 # Unidad 02 — Constructos como orden parcial
 
 > [!abstract]
-> Esta unidad formaliza el grafo de especialización de MUD sin introducir clases ni instancias. Es material didáctico; las decisiones semánticas confirmadas proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]] y [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]].
+> Esta unidad formaliza el grafo de especialización de MUD sin introducir clases ni instancias. Es material didáctico; las decisiones semánticas confirmadas proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]] y [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]].
+
+> [!note] Terminología actual
+> La unidad conserva «constructo» como nombre matemático histórico del dominio estudiado, pero la palabra reservada vigente es `thing` y la especialización directa se declara con `as`. Todo bloque de código de esta unidad usa ya esa sintaxis.
 
 ## 1. Pregunta de MUD
 
 Queremos dar un significado único a estas tres expresiones:
 
 ```mud
-construct Egypt from Kingdom {
+thing Egypt as Kingdom {
 }
 
 Egypt is Place
@@ -60,7 +63,7 @@ Al terminar la unidad deberías poder:
 5. Explicar por qué un grafo directo acíclico produce un orden parcial.
 6. Incorporar a la relación un constructo creado durante la ejecución.
 7. Detectar un ciclo inválido y construir el contraejemplo que produciría.
-8. Distinguir la declaración directa con `from` de la consulta derivada con `is`.
+8. Distinguir la declaración directa con `as` de la consulta derivada con `is`.
 
 ## 3. Prerrequisitos
 
@@ -96,7 +99,7 @@ $$
 donde $W_0$ es el mundo inicial y $\longrightarrow_P$ es la relación de transición permitida por el programa. Una declaración:
 
 ```mud
-construct Egypt from Kingdom {
+thing Egypt as Kingdom {
 }
 ```
 
@@ -142,7 +145,7 @@ es un conjunto de pares. Un mismo elemento de $A$ puede relacionarse con cero, u
 Esto importa porque MUD admite especialización múltiple:
 
 ```mud
-construct Warship from MilitaryUnit, NavalUnit {
+thing Warship as MilitaryUnit, NavalUnit {
 }
 ```
 
@@ -170,15 +173,15 @@ $$
 Considera:
 
 ```mud
-abstract construct Place {
+abstract thing Place {
     name: Text
 }
 
-construct Kingdom from Place {
+thing Kingdom as Place {
     mut treasury: Money = 0M
 }
 
-construct Egypt from Kingdom {
+thing Egypt as Kingdom {
     name = "Egypt"
 }
 ```
@@ -186,7 +189,7 @@ construct Egypt from Kingdom {
 Durante la ejecución aparece además:
 
 ```mud
-create construct France from Kingdom {
+create thing France as Kingdom {
     name = "France"
 }
 ```
@@ -398,10 +401,10 @@ La relación directa es acíclica si no existe un camino no vacío que salga de 
 Este programa sería inválido:
 
 ```mud
-construct A from B {
+thing A as B {
 }
 
-construct B from A {
+thing B as A {
 }
 ```
 
@@ -583,16 +586,16 @@ $$
 Las sentencias:
 
 ```mud
-create construct Monument {
+create thing Monument {
 }
 
-create abstract construct PoliticalUnion from Place {
+create abstract thing PoliticalUnion as Place {
 }
 
-create construct France from Kingdom {
+create thing France as Kingdom {
 }
 
-create construct EuropeanRealm from Kingdom, PoliticalUnion {
+create thing EuropeanRealm as Kingdom, PoliticalUnion {
 }
 ```
 
@@ -625,7 +628,7 @@ $$
 \right)
 $$
 
-En particular, `create abstract construct PoliticalUnion from Place {}` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración inicial vacía `abstract construct PoliticalUnion from Place {}`. No convierte por ello la sentencia ejecutada en una activación inicial: coinciden sus consecuencias relevantes para el grafo, pero difiere el momento en que la identidad pasa a estar activa.
+En particular, `create abstract thing PoliticalUnion as Place {}` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración inicial vacía `abstract thing PoliticalUnion as Place {}`. No convierte por ello la sentencia ejecutada en una activación inicial: coinciden sus consecuencias relevantes para el grafo, pero difiere el momento en que la identidad pasa a estar activa.
 
 El cuerpo de `create` es declarativamente completo. Puede declarar propiedades locales, restricciones, reglas o acciones igual que el cuerpo de un constructo ordinario. En esta unidad usamos únicamente su proyección sobre modo y antecesores; la Unidad 03 estudiará el esquema que ahora estamos omitiendo deliberadamente.
 
@@ -660,7 +663,7 @@ $$
 \mathcal D_W
 $$
 
-`destroy A` retira $A$ de la proyección efectiva sin liberar su reserva ni borrar su carga almacenada. Una ejecución posterior de `create construct A` puede volver a incluir la misma identidad $A$ y restaurar su estado, conforme a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
+`destroy A` retira $A$ de la proyección efectiva sin liberar su reserva ni borrar su carga almacenada. Una ejecución posterior de `create thing A` puede volver a incluir la misma identidad $A$ y restaurar su estado, conforme a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
 Los abstractos creados pueden derivarse mediante la primera proyección:
 
@@ -784,23 +787,23 @@ Hay dos casos diferentes:
 
 El primer caso no necesita una identidad exacta futura. En el segundo, el nombre se resuelve a la identidad reservada, pero toda operación que requiera presencia debe comprobar que está activa.
 
-Para una vinculación `for` exacta, antes de la creación no hay todavía una vinculación asociada a ese constructo. La creación podría hacerla nacer; entonces habrá que definir su valor previo y el instante preciso de activación. Una regla `for` no se «llama»: se mantiene una vinculación de la regla para cada participante aplicable.
+Para una vinculación `on` exacta, antes de la creación no hay todavía una vinculación asociada a esa `thing`. La creación podría hacerla nacer; entonces habrá que definir su valor previo y el instante preciso de activación. Una regla `on` no se «llama»: se mantiene una vinculación de la regla para cada participante aplicable.
 
-Para un participante `on` exacto, no habría receptor disponible antes de la creación. En cambio, una acción cuyo participante admita un antecesor ya existente podría aceptar después cualquier descendiente creado compatible.
+Para un participante `for` exacto, no habría receptor disponible antes de la creación. En cambio, una acción cuyo participante admita un antecesor ya existente podría aceptar después cualquier descendiente creado compatible.
 
 > [!note]
-> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] está cerrada: destruir y recrear `FutureCity` conserva su identidad y su carga almacenada. Si una regla con `create construct FutureCity` la encuentra activa, la regla completa no se ejecuta. [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]] conserva los casos de acciones y varias creaciones.
+> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] está cerrada: destruir y recrear `FutureCity` conserva su identidad y su carga almacenada. Si una regla con `create thing FutureCity` la encuentra activa, la regla completa no se ejecuta. [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]] conserva los casos de acciones y varias creaciones.
 
-## 16. Declarar con `from`, consultar con `is`
+## 16. Declarar con `as`, consultar con `is`
 
 En:
 
 ```mud
-construct Egypt from Kingdom {
+thing Egypt as Kingdom {
 }
 ```
 
-`from` forma parte de una cabecera y añade un par a la relación directa.
+`as` forma parte de una cabecera y añade un par a la relación directa.
 
 En:
 
@@ -817,7 +820,7 @@ ConstructDecl(Egypt, parents = {Kingdom})
 IsExpression(Egypt, Place)
 ```
 
-Ambos remiten a la misma estructura en niveles distintos: `from` aporta aristas y `is` consulta su clausura.
+Ambos remiten a la misma estructura en niveles distintos: `as` aporta aristas y `is` consulta su clausura.
 
 ## 17. Qué es estándar y qué es de MUD
 
@@ -841,8 +844,8 @@ Ambos remiten a la misma estructura en niveles distintos: `from` aporta aristas 
 
 - Un solo dominio de constructos.
 - `create` activa una identidad reservada raíz, abstracta o concreta con cero o varios antecesores.
-- La sintaxis sitúa la identidad reservada antes de la cláusula opcional `from`.
-- `from` declara aristas directas; `is` solo consulta la relación derivada.
+- La sintaxis sitúa la identidad reservada antes de la cláusula opcional `as`.
+- `as` declara aristas directas; `is` solo consulta la relación derivada.
 - `is` es reflexivo y transitivo.
 - Se rechazan ciclos.
 - Los constructos concretos pueden ser cosas y antecesores.

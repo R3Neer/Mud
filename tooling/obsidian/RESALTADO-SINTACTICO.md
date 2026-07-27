@@ -22,7 +22,7 @@ La especificación contendrá muchos bloques:
 
 ````markdown
 ```mud
-action Recruit on Kingdom [mut]
+action Recruit for Kingdom [mut]
 given
     amount: Natural
 {

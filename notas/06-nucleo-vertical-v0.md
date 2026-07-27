@@ -23,7 +23,7 @@ Un reino tiene tesoro y soldados. Puede reclutar una cantidad dentro de un domin
 
 Este escenario cubre:
 
-- Un `construct`.
+- Una `thing`.
 - Campos básicos y `mut`.
 - Dominios.
 - Una regla booleana pura.
@@ -42,7 +42,7 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 - Namespaces derivados de carpetas.
 - Un archivo o varios archivos por namespace.
 - Imports exactos.
-- `construct` concreto sin herencia.
+- `thing` concreta sin especialización.
 - Tipos `Boolean`, `Natural`, `Integer`, `Number`, `Text` y `Money`.
 - Campos almacenados, `mut` y dominios de intervalos cerrados.
 - Regla booleana con un participante.
@@ -138,4 +138,3 @@ Excluirlos de v0 no revoca su diseño; impide que la incertidumbre avanzada bloq
 ## Criterio de finalización
 
 v0 termina cuando los dos escenarios canónicos pasan por el flujo completo y los resultados son deterministas. No termina por número de módulos implementados ni por porcentaje de la gramática inicial.
-

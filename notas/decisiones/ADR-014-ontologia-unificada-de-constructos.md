@@ -7,6 +7,9 @@
 
 ## Contexto
 
+> [!note] Vocabulario histórico
+> D-025 sustituyó la palabra reservada `construct` por `thing` y la cláusula de especialización `from` por `as`. La ontología decidida aquí sigue vigente; sus ejemplos conservan la sintaxis de la fecha del ADR.
+
 La especificación inicial afirma a la vez que `construct` representa cosas, conceptos, categorías, entidades estáticas y entidades runtime. También utiliza vocabulario de «instancias runtime», que puede sugerir una separación entre clases y objetos.
 
 Esa separación no corresponde al modelo conceptual de MUD. Una formalización basada en una función que asignase a cada objeto su clase introduciría dos dominios que el lenguaje no posee.

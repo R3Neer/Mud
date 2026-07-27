@@ -25,7 +25,7 @@ La recomendación anterior de podar destructivamente colecciones queda sustituid
 Antes:
 
 ```mud
-create construct King {
+create thing King {
     kingdom: Kingdom[1] = Panama
 }
 ```
@@ -87,7 +87,7 @@ Permanece abierta la observación de una identidad inactiva desde una colección
 
 ## Grafo efectivo
 
-Las aristas `from` originales se conservan almacenadas. La proyección efectiva atraviesa cadenas de antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos.
+Las aristas `as` originales se conservan almacenadas. La proyección efectiva atraviesa cadenas de antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos.
 
 Este mecanismo:
 

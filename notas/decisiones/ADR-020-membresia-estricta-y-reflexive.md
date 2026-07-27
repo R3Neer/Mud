@@ -1,11 +1,14 @@
 # ADR-020 — Membresía estricta y modificador `reflexive`
 
-- Estado: Vigente
+- Estado: Sustituida por [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]]
 - Fecha: 2026-07-27
 - Pregunta relacionada: [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`
 
 ## Contexto
+
+> [!warning] Decisión histórica
+> D-026 elimina `reflexive` y conserva únicamente la membresía estricta. Este documento se mantiene para registrar la alternativa descartada y no define la sintaxis vigente.
 
 La relación `is` es reflexiva:
 
@@ -141,4 +144,3 @@ La suite deberá cubrir:
 5. Rechazo del modificador sobre tipos no constructo.
 6. Interacción con constructos abstractos.
 7. Interacción con cardinalidades obligatorias y predeterminados.
-

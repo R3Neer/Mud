@@ -51,7 +51,7 @@ Hay una tensión que requiere formalización: las instrucciones de un `then` ele
 
 Después de la raíz:
 
-1. Se construyen las vinculaciones `for` de la onda.
+1. Se construyen las vinculaciones `on` de la onda.
 2. Todas las reglas de esa onda leen la misma instantánea.
 3. `when` detecta transiciones por vinculación.
 4. `changes` produce pulsos por cambios netos confirmados.
@@ -64,7 +64,9 @@ Las vinculaciones se fijan al inicio de cada onda. Los cambios de pertenencia so
 
 La activación o suspensión de una regla durante una onda tampoco modifica el conjunto de bindings ya fijado para esa onda. La proyección efectiva resultante se utiliza al construir la onda siguiente.
 
-Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las creaciones preceden a las adiciones y las retiradas preceden a las destrucciones. Varias creaciones compatibles de un constructo pueden fusionarse. Varias activaciones de una regla o alias se consolidan idempotentemente porque remiten a una única definición canónica. Véanse [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]] y [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
+Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las creaciones preceden a las adiciones y las retiradas preceden a las destrucciones. Varias creaciones compatibles de una `thing` pueden fusionarse. Varias activaciones de una regla o alias se consolidan idempotentemente porque remiten a una única definición canónica. Véanse [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]] y [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
+
+La cardinalidad no se comprueba tras cada instrucción del delta privado. El compilador debe demostrar que el resultado final de cada `then` respeta todos los límites y que la consolidación de bloques potencialmente concurrentes también los conserva. Un bloque no puede depender de otro para reparar su cardinalidad. Si la prueba estática no es posible, el programa se rechaza, conforme a [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]].
 
 ## Disparo reactivo
 
@@ -84,13 +86,14 @@ Estas preguntas son requisitos del runtime, no detalles de optimización.
 
 Las reglas `always` se comprueban automáticamente sobre estados tentativos publicables. `after` se evalúa después de todas las ondas, respecto al resultado estable tentativo, y puede consultar `old`.
 
-Orden propuesto de validación final:
+Puntos de validación confirmados y pendientes:
 
-1. Dominios, tipos y cardinalidades durante cada aplicación de efectos.
-2. Reglas `always` al cerrar raíz y ondas según exija la semántica.
-3. Estabilización.
-4. `after`.
-5. Confirmación.
+1. Las cardinalidades finales de cada `then` y de toda consolidación posible se demuestran estáticamente.
+2. Los estados intermedios privados entre instrucciones de un mismo `then` pueden incumplir temporalmente la cardinalidad.
+3. Los tipos, dominios y demás invariantes locales todavía necesitan un punto de comprobación normativo único.
+4. Las reglas `always` se comprobarán al cerrar raíz y ondas según exija la semántica definitiva.
+5. Tras la estabilización se evalúa `after`.
+6. Solo entonces se confirma.
 
 La especificación afirma varios puntos de control, pero falta una definición operacional única que elimine cualquier duda sobre el momento exacto.
 
@@ -103,6 +106,12 @@ Una regla booleana inactiva no produce un booleano fijo. Su llamada se marca com
 Una resolución opera sobre una proyección efectiva derivada de información almacenada. `destroy` modifica la actividad lógica y puede suspender propiedades, reglas o acciones dependientes sin eliminar sus cargas. `create` puede restaurarlas. `remove` sobre una propiedad sí elimina su declaración y contenido almacenados.
 
 Esta separación evita que la destrucción tenga que podar colecciones o reparar cardinalidades. Los detalles y las cuestiones restantes se encuentran en [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] y [[notas/12-destruccion-colecciones-y-grafo-activo]].
+
+## Observaciones y mensajes
+
+Un `look` evalúa todas sus propiedades públicas sobre una misma instantánea estable y no produce efectos.
+
+Un `message` puede detectar su condición durante las ondas de una acción, pero difiere la evaluación de sus propiedades públicas hasta el estado estable tentativo final. El runtime conserva para ello una ocurrencia pendiente y las vinculaciones necesarias. La multiplicidad, el orden, la guarda y el destino de las ocurrencias cuando la acción no se acepta permanecen abiertos en Q-052; ningún transporte externo debe observar un mensaje antes de que la resolución pueda confirmarse.
 
 ## Resultados
 

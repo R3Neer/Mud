@@ -32,6 +32,7 @@ status: activo
 | Leer reglas de inferencia | Introducido | Ejemplo de suma y dominio | Unidad posterior |
 | Escribir EBNF | Sin evaluar | — | Unidad de gramática |
 | Definir semántica estática | Sin evaluar | — | Unidad posterior |
+| Probar cardinalidades con intervalos abstractos | Sin evaluar | D-026 fija la obligación del compilador | Unidad de colecciones y efectos |
 | Definir semántica operacional | Sin evaluar | — | Unidad posterior |
 | Construir contraejemplos | Introducido | Redundancia de $I_G$ y dominio del store | Unidad 02 |
 | Escribir una demostración | Demostración leída | Prueba de que $R^*$ es orden parcial en Unidad 02 | Unidad posterior |

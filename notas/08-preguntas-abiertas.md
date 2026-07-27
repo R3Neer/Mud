@@ -30,6 +30,10 @@ Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la 
 
 La respuesta afecta qué estados tentativos son observables para reglas posteriores.
 
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]].
+
+La cardinalidad final se demuestra estáticamente para cada `then` y para toda consolidación concurrente posible. Los estados intermedios dentro del delta privado de un `then` pueden incumplirla. Siguen abiertos los puntos exactos de validación de dominios, referencias, reglas `always` y estados consolidados.
+
 ### Q-004 — Rollback de `rejected`
 
 ¿Se declara normativamente que un `after` falso revierte raíz y ondas igual que un `failed`?
@@ -38,7 +42,7 @@ La atomicidad lo implica, pero debe quedar explícito.
 
 ### Q-005 — Identidad y ciclo de vida de vinculaciones
 
-¿Cómo se identifica una vinculación `for`, cuál es el valor anterior de `when` al crearla y cuándo se elimina su memoria?
+¿Cómo se identifica una vinculación `on`, cuál es el valor anterior de `when` al crearla y cuándo se elimina su memoria?
 
 Bloquea el runtime reactivo.
 
@@ -108,13 +112,13 @@ Todo ciclo de especialización directa es inválido. La relación semántica `is
 
 Estado: **cerrada**.
 
-¿Qué designa el nombre introducido por `create construct A`?
+¿Qué designa el nombre introducido por `create thing A`?
 
 Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 
-`A` es una identidad global reservada y resoluble antes de estar activa. `create construct A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
+`A` es una identidad global reservada y resoluble antes de estar activa. `create thing A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
 
-Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `for` continúan coordinados con Q-005.
+Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `on` continúan coordinados con Q-005.
 
 ### Q-045 — Contenido declarativo de `create`
 
@@ -125,7 +129,7 @@ Estado: **cerrada**.
 Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 
 ```mud
-create abstract construct B from A {
+create abstract thing B as A {
     # Cuerpo declarativo completo.
 }
 ```
@@ -136,7 +140,7 @@ El bloque admite la declaración completa de las propiedades permitidas en un co
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]] y [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
 
-Si una regla contiene `create construct A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
+Si una regla contiene `create thing A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
 
 Falta decidir:
 
@@ -161,7 +165,7 @@ Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio.
 
 También debe decidirse si un tipo derivado puede reemplazar explícitamente el predeterminado que obtendría por composición.
 
-Desde [[notas/decisiones/ADR-020-membresia-estricta-y-reflexive|D-020]], debe definirse además cómo obtiene predeterminado una colección no reflexiva con mínimo positivo. El ancla exacta del tipo no es un candidato válido sin `[reflexive]`; puede ser necesario exigir un descendiente estricto predeterminado o un inicializador explícito.
+Desde [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], debe definirse además cómo obtiene predeterminado una colección de `thing` con mínimo positivo. El ancla exacta nunca es candidata; puede ser necesario exigir un descendiente estricto predeterminado o un inicializador explícito.
 
 ### Q-048 — Destrucción con descendientes activos
 
@@ -232,6 +236,26 @@ Detección semántica, salvaguarda técnica, diagnósticos y reproducibilidad.
 Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
 
 D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas y aliases: son idempotentes porque sus definiciones son únicas.
+
+D-026 endurece el caso de cardinalidad: el compilador debe demostrar la preservación local y consolidada; si no puede, rechaza conservadoramente el programa en vez de diferir el caso al runtime.
+
+### Q-051 — Identidad y selección de un `look`
+
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
+
+Un `look` es una consulta pública pura cuyos campos se evalúan sobre un único estado estable. Falta definir la sintaxis de solicitud, el tratamiento de participantes inactivos, la posible multiplicidad de filas y la serialización canónica de sus valores.
+
+### Q-052 — Entrega de `message`
+
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
+
+Un `message` detecta un hecho durante la resolución de una acción y evalúa sus campos públicos después de estabilizarla. Falta definir multiplicidad, deduplicación, orden, momento de evaluación de `if`, participantes destruidos y el destino de detecciones pertenecientes a acciones `rejected` o `failed`.
+
+### Q-053 — Conversiones explícitas
+
+Estado de la premisa: **abierta por [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]**.
+
+`as` queda reservado para declarar especialización entre `thing` y deja de expresar casting. Falta decidir si MUD necesita conversiones explícitas, qué conversiones no pueden resolverse implícitamente y, si existen, cuál es su sintaxis y su comportamiento ante fallo.
 
 ### Q-022 — Valores de retorno de acciones
 

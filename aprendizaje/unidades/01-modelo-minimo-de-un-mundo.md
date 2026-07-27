@@ -67,7 +67,7 @@ No se presupone teoría de conjuntos más allá de haber visto alguna vez llaves
 Partimos de este fragmento:
 
 ```mud
-construct Kingdom {
+thing Kingdom {
     name: Text
     mut treasury: Money
     mut soldiers: Natural
@@ -466,7 +466,7 @@ La flecha $\mapsto$ se lee “se asocia con”.
 La declaración:
 
 ```mud
-construct Kingdom {
+thing Kingdom {
     name: Text
     mut treasury: Money
     mut soldiers: Natural

@@ -205,5 +205,5 @@ Para v0 basta una implementación que favorezca tipos algebraicos, parser manten
 5. Definir esquemas AST e IR v0.
 6. Definir catálogo de diagnósticos v0.
 7. Crear una CLI vacía con `check`.
-8. Implementar el primer camino `construct → campo → ancla → IR`.
+8. Implementar el primer camino `thing → campo → ancla → IR`.
 9. Añadir una característica por prueba vertical, no por capas gigantes.

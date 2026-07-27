@@ -19,21 +19,21 @@ Completa la plantilla [[aprendizaje/respuestas/02-orden-parcial-de-constructos-r
 Considera:
 
 ```mud
-abstract construct Entity {
+abstract thing Entity {
 }
 
-abstract construct Place from Entity {
+abstract thing Place as Entity {
     name: Text = ""
 }
 
-construct Settlement from Place {
+thing Settlement as Place {
 }
 
-construct Alexandria from Settlement {
+thing Alexandria as Settlement {
     name = "Alexandria"
 }
 
-construct NileDelta from Place {
+thing NileDelta as Place {
     name = "Nile Delta"
 }
 ```
@@ -41,17 +41,17 @@ construct NileDelta from Place {
 Durante la ejecución ocurre:
 
 ```mud
-create construct Memphis from Settlement {
+create thing Memphis as Settlement {
     name = "Memphis"
 }
 
-create construct Monument {
+create thing Monument {
 }
 
-create abstract construct RiverRegion from Place {
+create abstract thing RiverRegion as Place {
 }
 
-create construct DeltaCapital from NileDelta, Settlement {
+create thing DeltaCapital as NileDelta, Settlement {
     name = "Delta Capital"
 }
 ```
@@ -219,7 +219,7 @@ Incluye el propio constructo si la relación es reflexiva.
 Supón que se añade:
 
 ```mud
-construct Entity from Alexandria {
+thing Entity as Alexandria {
 }
 ```
 
@@ -237,15 +237,15 @@ no basta para representar toda la especialización de MUD.
 
 Construye un ejemplo mínimo de especialización múltiple que lo demuestre.
 
-## 9. `from` e `is`
+## 9. `as` e `is`
 
-Clasifica `from` e `is` como:
+Clasifica `as` e `is` como:
 
 - Introducción de una arista directa.
 - Consulta de la relación reflexiva y transitiva.
 
 ```mud
-construct Alexandria from Settlement {
+thing Alexandria as Settlement {
 }
 
 Alexandria is Place
