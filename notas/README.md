@@ -36,7 +36,9 @@ La dificultad principal no es analizar texto. Es garantizar que una intención e
 | [08-preguntas-abiertas.md](08-preguntas-abiertas.md) | ¿Qué falta decidir y qué bloquea? | Decisiones tomadas en silencio |
 | [09-riesgos-y-restricciones.md](09-riesgos-y-restricciones.md) | ¿Dónde puede fallar el concepto o la ejecución del proyecto? | Lista de tareas |
 | [10-registro-de-decisiones.md](10-registro-de-decisiones.md) | ¿Cómo se documentan decisiones y propuestas? | La explicación normativa completa de cada tema |
-| [11-trazabilidad-de-la-fuente.md](11-trazabilidad-de-la-fuente.md) | ¿Dónde quedó cubierta cada parte del documento inicial? | Repetición de la especificación |
+| [11-trazabilidad-de-la-fuente.md](11-trazabilidad-de-la-fuente.md) | ¿Qué documento es dueño de cada parte del documento inicial? | Afirmaciones sobre cobertura completa |
+| [12-destruccion-colecciones-y-grafo-activo.md](12-destruccion-colecciones-y-grafo-activo.md) | ¿Cómo interactúan destrucción, estado latente y dependencias? | La norma definitiva del ciclo de vida |
+| [13-auditoria-de-cobertura-y-divergencias.md](13-auditoria-de-cobertura-y-divergencias.md) | ¿Qué está formalizado, resumido, pendiente o sustituido respecto de la fuente? | Copia íntegra de la fuente |
 
 ## Convenciones para trabajar en esta carpeta
 

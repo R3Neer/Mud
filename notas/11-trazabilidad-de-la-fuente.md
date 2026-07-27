@@ -1,6 +1,8 @@
-# Trazabilidad de la especificación inicial
+# Enrutamiento temático de la especificación inicial
 
-Esta matriz demuestra cobertura sin copiar las 78 secciones. Los rangos indican el documento dueño principal; algunos temas también aparecen enlazados desde otras notas.
+Esta matriz indica qué documento es responsable de cada bloque de la fuente inicial. **No demuestra que el bloque esté ya formalizado ni que se hayan conservado todos sus detalles.**
+
+La comprobación de cobertura real, las divergencias deliberadas y el inventario de información que aún solo permanece en la fuente se encuentran en [[notas/13-auditoria-de-cobertura-y-divergencias]].
 
 | Secciones de la fuente | Tema | Documento dueño |
 | --- | --- | --- |
@@ -22,6 +24,7 @@ Esta matriz demuestra cobertura sin copiar las 78 secciones. Los rangos indican 
 
 ## Observaciones de procedencia
 
+- Esta tabla se interpretó inicialmente como cobertura temática. A partir de la auditoría de 2026-07-27 se distingue explícitamente entre enrutamiento, resumen, decisión y formalización normativa.
 - La fuente usa expresiones como “se mantiene vigente” o “el resto se mantiene” que parecen depender de versiones anteriores no incluidas. Esto se registra como Q-010.
 - La lista de 35 cuestiones abiertas se conserva temáticamente en Q-001 a Q-035; algunas se agrupan cuando comparten una única decisión normativa.
 - Q-036 a Q-040 son preguntas inferidas del objetivo de producto y del protocolo de automatización; no se presentan como preguntas originales.
@@ -29,7 +32,7 @@ Esta matriz demuestra cobertura sin copiar las 78 secciones. Los rangos indican 
 
 ## Cobertura que requiere ejemplos
 
-La trazabilidad temática no sustituye pruebas normativas. Antes de implementar cada bloque deberán existir:
+El enrutamiento temático no sustituye la migración del contenido ni las pruebas normativas. Antes de implementar cada bloque deberán existir:
 
 - Un ejemplo mínimo válido.
 - Un ejemplo representativo.
