@@ -115,12 +115,12 @@ $$
 El conjunto vacío es $\varnothing$. Las inclusiones se escriben:
 
 $$
-A\subseteq B
+A\subset B
 \qquad
-A\subsetneq B
+A\subseteq B
 $$
 
-$A\subseteq B$ permite que ambos conjuntos sean iguales; $A\subsetneq B$ exige que sean distintos. La especificación evitará $\subset$ porque su interpretación como inclusión estricta o no estricta varía entre fuentes.
+En esta especificación, $A\subset B$ exige que $A$ sea un subconjunto estricto de $B$. La forma $A\subseteq B$ permite que ambos conjuntos sean iguales. Esta convención se mantendrá incluso cuando una fuente matemática externa utilice $\subset$ con un sentido no estricto.
 
 Las operaciones de conjuntos son:
 
