@@ -16,6 +16,7 @@ status: activo
 ## Mapa
 
 - [[REGLAS-DIDACTICAS|Contrato didáctico]]
+- [[PERFIL|Perfil y audiencia]]
 - [[PROGRESO|Progreso]]
 - [[especificacion/00-convenciones-editoriales|Convenciones editoriales]]
 - [[especificacion/README|Índice de la especificación]]

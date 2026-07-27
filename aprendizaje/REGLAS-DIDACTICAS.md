@@ -187,6 +187,8 @@ El autor acepta notación matemática y contenido universitario. Por tanto:
 - No se introducirán cinco abstracciones nuevas en el mismo ejercicio si una basta.
 - La dificultad aumentará por comprensión demostrada, no solo por paso del tiempo.
 
+El punto de partida y la audiencia secundaria se mantienen en [[PERFIL]]. Las unidades deben ser reutilizables por otras personas: definirán sus prerrequisitos y no dependerán de referencias personales dispersas. Los fundamentos conocidos pueden presentarse como repaso compacto, pero no se omiten cuando sostienen reglas posteriores.
+
 ## 9. Papel de Codex
 
 Codex debe actuar sucesivamente como:

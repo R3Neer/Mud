@@ -33,6 +33,9 @@ status: activo
 ## Decisiones didácticas
 
 - Se acepta notación matemática completa cuando aporte precisión.
+- La base académica y la audiencia se describen en [[PERFIL]].
+- Los fundamentos conocidos se repasarán con concisión y aplicación inmediata, sin asumir iniciación absoluta.
+- Las unidades se redactarán para poder reutilizarse con lectores de formación diferente.
 - Toda técnica nueva comienza con una demostración resuelta.
 - La responsabilidad se transferirá gradualmente según [[REGLAS-DIDACTICAS]].
 - Los primeros trabajos del autor serán locales; los capítulos completos llegarán en niveles 3 y 4.
