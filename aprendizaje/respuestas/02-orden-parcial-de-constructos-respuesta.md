@@ -1,5 +1,5 @@
 ---
-title: Respuesta 02 — Orden parcial de constructos
+title: Respuesta 02 — Grafo almacenado y efectivo de `thing`
 unit: 2
 status: pendiente
 author: Samuel
@@ -8,147 +8,93 @@ tags:
   - mud/respuesta
 ---
 
-# Respuesta 02 — Orden parcial de constructos
+# Respuesta 02 — Grafo almacenado y efectivo de `thing`
 
 Referencia: [[aprendizaje/ejercicios/02-orden-parcial-de-constructos-ejercicio]].
 
 > [!important]
-> Completa esta plantilla antes de solicitar la solución. Puedes consultar la teoría y marcar cualquier paso en el que estés adivinando.
+> Esta plantilla corresponde al modelo actual. No contiene la solución: completa solo lo que quieras practicar y marca dónde estés adivinando.
 
-## 1. Conjuntos declarados
-
-$$
-\mathcal C_P=
-$$
+## 1. Identidades
 
 $$
-\mathcal A_P=
+\mathcal T_P=
 $$
 
 $$
-\mathcal K_P=
+\mathcal A_{W_0}=
 $$
 
-## 2. Especialización directa estática
-
 $$
-R_P^{\mathrm{dir}}
-=
+\mathcal A_{W_1}=
 $$
 
-## 3. Creación
+## 2. Relación almacenada
 
 $$
-\mathcal R_P^{\mathsf{create}}
+R^{\mathsf{stored}}_{P,W_0}
 =
 $$
 
 $$
-\operatorname{shape}_P(\mathsf{Memphis})
+R^{\mathsf{stored}}_{P,W_1}
 =
 $$
 
+Justificación:
+
+> Trabajo del autor.
+
+## 3. Relación efectiva en $W_0$
+
 $$
-\operatorname{shape}_P(\mathsf{Monument})
+R^{\mathsf{eff}}_{P,W_0}
 =
 $$
 
-$$
-\operatorname{shape}_P(\mathsf{RiverRegion})
-=
-$$
+## 4. Relación efectiva en $W_1$
 
 $$
-\operatorname{shape}_P(\mathsf{DeltaCapital})
-=
-$$
-
-$$
-\mathcal D_W=
-$$
-
-$$
-\operatorname{created}_W
-=
-$$
-
-$$
-\mathcal A_W=
-$$
-
-$$
-\mathcal C_{P,W}=
-$$
-
-Comprobaciones de buena formación:
-
-> Escribe aquí.
-
-## 4. Relación directa completa
-
-$$
-R_W^{\mathrm{dir}}
-=
-$$
-
-$$
-R_{P,W}^{\mathrm{dir}}
+R^{\mathsf{eff}}_{P,W_1}
 =
 $$
 
 ## 5. Consultas `is`
 
-| Consulta | Verdad | Justificación |
+| Consulta | Resultado | Camino o razón |
 | --- | --- | --- |
-| `Alexandria is Settlement` |  |  |
+| `Alexandria is Place` |  |  |
 | `Alexandria is Entity` |  |  |
+| `Memphis is Place` |  |  |
+| `DeltaCapital is NileDelta` |  |  |
+| `DeltaCapital is Place` |  |  |
 | `Place is Place` |  |  |
 | `Place is Alexandria` |  |  |
-| `Memphis is Entity` |  |  |
-| `NileDelta is Settlement` |  |  |
-| `Monument is Monument` |  |  |
-| `Monument is Entity` |  |  |
-| `RiverRegion is Entity` |  |  |
-| `DeltaCapital is NileDelta` |  |  |
-| `DeltaCapital is Settlement` |  |  |
 
-## 6. Antecesores de `Memphis`
+## 6. Orden parcial
 
-$$
-\operatorname{Anc}_{P,W}(\mathsf{Memphis})
-=
-$$
+> Trabajo del autor.
 
 ## 7. Ciclo inválido
-
-Camino:
 
 $$
 \langle\ \rangle
 $$
 
-Propiedad que se perdería y justificación:
+## 8. Membresía estricta
 
-> Escribe aquí.
-
-## 8. Función o relación
-
-Explicación:
-
-> Escribe aquí.
-
-Ejemplo mínimo:
-
-```mud
-# Escribe aquí.
-```
+| Candidata | Admisible | Justificación |
+| --- | --- | --- |
+| `Place` |  |  |
+| `Alexandria` |  |  |
+| `NileDelta` |  |  |
+| `Memphis` |  |  |
+| `Entity` |  |  |
 
 ## 9. `as` e `is`
 
-Clasificación y explicación del parser:
-
-> Escribe aquí.
+> Trabajo del autor.
 
 ## 10. Parte insegura
 
-> Escribe aquí.
+> Trabajo del autor.

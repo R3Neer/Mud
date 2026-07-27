@@ -1,130 +1,109 @@
 ---
-title: Unidad 02 — Constructos como orden parcial
+title: Unidad 02 — `Thing` como orden parcial
 aliases:
-  - Constructos como orden parcial
+  - Orden parcial de things
 unit: 2
 status: en-curso
 level: 0-a-1
+depends-on:
+  - "[[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]]"
 concepts:
-  - relaciones binarias
-  - grafos dirigidos
+  - relación binaria
+  - grafo dirigido
+  - camino
   - clausura reflexiva y transitiva
-  - relaciones acíclicas
-  - órdenes parciales
-  - especialización
+  - orden parcial
+  - grafo almacenado
+  - grafo efectivo
+  - identidad reservada
+  - actividad
 spec-chapters:
   - "[[especificacion/03-notacion]]"
   - "[[especificacion/04-modelo-matematico]]"
-  - "[[especificacion/README#11. Constructos, especialización e identidad]]"
+  - "[[especificacion/README#11. `Thing`, especialización e identidad]]"
 decisions:
   - D-014
   - D-015
   - D-016
+  - D-021
+  - D-023
   - D-025
+  - D-026
 tags:
   - mud/aprendizaje
   - mud/unidad
 ---
 
-# Unidad 02 — Constructos como orden parcial
+# Unidad 02 — `Thing` como orden parcial
 
 > [!abstract]
-> Esta unidad formaliza el grafo de especialización de MUD sin introducir clases ni instancias. Es material didáctico; las decisiones semánticas confirmadas proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]] y [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]].
-
-> [!note] Terminología actual
-> La unidad conserva «constructo» como nombre matemático histórico del dominio estudiado, pero la palabra reservada vigente es `thing` y la especialización directa se declara con `as`. Todo bloque de código de esta unidad usa ya esa sintaxis.
+> Esta unidad formaliza la especialización actual de MUD. `as` declara aristas directas; `is` consulta una relación reflexiva y transitiva. Las `thing` concretas siguen siendo cosas con identidad y estado propio: no aparecen clases ni instancias.
 
 ## 1. Pregunta de MUD
 
-Queremos dar un significado único a estas tres expresiones:
+Considera:
 
 ```mud
-thing Egypt as Kingdom {
+abstract thing Place {
 }
 
+thing Kingdom as Place {
+}
+
+thing Egypt as Kingdom {
+}
+```
+
+Queremos justificar:
+
+```mud
+Egypt is Kingdom
 Egypt is Place
 Egypt is Egypt
 ```
 
-La primera declara especialización directa. La segunda depende de varios pasos de herencia. La tercera debe ser verdadera porque `is` es reflexivo.
-
-La pregunta es:
-
-> ¿Qué estructura matemática permite introducir relaciones directas, derivar especializaciones indirectas, aceptar reflexividad y rechazar ciclos?
-
-## 2. Objetivos
-
-Al terminar la unidad deberías poder:
-
-1. Distinguir una función de una relación binaria.
-2. Representar una jerarquía de especialización como grafo dirigido.
-3. Distinguir especialización directa de `is` semántico.
-4. Leer y calcular una clausura reflexiva y transitiva.
-5. Explicar por qué un grafo directo acíclico produce un orden parcial.
-6. Incorporar a la relación un constructo creado durante la ejecución.
-7. Detectar un ciclo inválido y construir el contraejemplo que produciría.
-8. Distinguir la declaración directa con `as` de la consulta derivada con `is`.
-
-## 3. Prerrequisitos
-
-- Conjuntos.
-- Pares ordenados.
-- Producto cartesiano.
-- Funciones parciales y dominio.
-- Convenciones de [[especificacion/03-notacion|notación formal]].
-
-La Unidad 01 introdujo esas herramientas. Su interpretación clase–instancia fue retirada, pero las técnicas matemáticas continúan siendo válidas.
-
-## 4. Programa y mundo
-
-Antes de formalizar `create`, necesitamos separar dos cosas que en el código fuente pueden parecer mezcladas:
-
-- El **programa** $P$ es el texto resuelto que describe cómo construir el mundo inicial y qué transiciones están permitidas.
-- El **mundo** $W$ contiene las identidades activas, sus declaraciones activas y su estado semántico actual.
-
-El programa contiene sintácticamente:
-
-- Las declaraciones iniciales de constructos.
-- Las declaraciones reservadas dentro de `create`.
-- Las reglas, acciones y demás leyes de transición.
-
-Al resolverlo obtenemos, conceptualmente:
-
-$$
-\llbracket P\rrbracket
-=
-(W_0,\longrightarrow_P)
-$$
-
-donde $W_0$ es el mundo inicial y $\longrightarrow_P$ es la relación de transición permitida por el programa. Una declaración:
+y rechazar un ciclo como:
 
 ```mud
-thing Egypt as Kingdom {
+thing Place as Egypt {
 }
 ```
 
-activa `Egypt` en $W_0$. Una creación lo haría en un mundo posterior. La identidad semántica activa pertenece al mundo en ambos casos; el texto que permite activarla pertenece al programa.
+La pregunta central es:
 
-Esto no introduce clases e instancias. `Egypt` sigue siendo una única identidad. Distinguimos:
+> ¿Qué estructura matemática permite declarar especialización múltiple, consultar antecesores indirectos y conservar un significado coherente cuando una `thing` se suspende?
 
-- La reserva y descripción de esa identidad en el programa resuelto.
-- Su presencia o ausencia y, cuando sea concreta, su estado activo en el mundo.
+## 2. Objetivos
 
-Una ejecución produce una secuencia:
+Al terminar deberías poder:
+
+1. Distinguir función y relación.
+2. Representar especialización directa mediante pares ordenados.
+3. Leer un camino en un grafo dirigido.
+4. Calcular clausuras transitivas y reflexivas.
+5. Demostrar que `is` forma un orden parcial bajo aciclicidad.
+6. Incorporar `create` sin inventar identidades frescas.
+7. Distinguir grafo almacenado y grafo efectivo.
+8. Explicar el bypass de antecesores inactivos.
+9. Distinguir reflexividad de `is` y membresía estricta de colecciones.
+10. Distinguir `as` declarativo de `is` consultivo.
+
+## 3. Prerrequisitos
+
+De la Unidad 01:
+
+- $\mathcal T_P$: identidades de `thing` reservadas.
+- $\mathcal A_W$: declaraciones activas.
+- Separación entre programa $P$ y mundo $W$.
+- Pares ordenados, productos cartesianos y funciones parciales.
+
+## 4. Función frente a relación
+
+Una relación binaria entre $A$ y $B$ es un subconjunto:
 
 $$
-W_0\longrightarrow W_1\longrightarrow W_2\longrightarrow\cdots
+R\subseteq A\times B
 $$
-
-`create` activa una identidad reservada que estaba ausente. `destroy` puede volver a retirarla del conjunto activo; una creación posterior reactiva la misma identidad. Ninguna de esas operaciones reescribe el archivo `.mud`, altera $P$ durante la ejecución ni crea por sí misma un commit de Git.
-
-> [!intuition]
-> $P$ responde «¿cómo nace el mundo y qué cambios se permiten?». $W$ responde «¿qué está activo y cuál es su estado ahora?».
-
-> [!note]
-> El subíndice $P$ que aparece más adelante identifica datos extraídos del programa para este fragmento sin destrucción. No afirma que esas identidades deban permanecer activas para siempre. La unidad de ciclo de vida introducirá un conjunto explícito de identidades activas.
-
-## 5. Repaso: función frente a relación
 
 Una función:
 
@@ -132,155 +111,104 @@ $$
 f:A\to B
 $$
 
-asigna a cada elemento de $A$ exactamente un elemento de $B$.
+es una relación especial que asocia cada elemento de $A$ con exactamente un elemento de $B$.
 
-Una relación binaria:
-
-$$
-R\subseteq A\times B
-$$
-
-es un conjunto de pares. Un mismo elemento de $A$ puede relacionarse con cero, uno o varios elementos de $B$.
-
-Esto importa porque MUD admite especialización múltiple:
+La especialización no es, en general, una función porque MUD admite varios antecesores:
 
 ```mud
-thing Warship as MilitaryUnit, NavalUnit {
+thing AmphibiousForce as LandForce, NavalForce {
 }
 ```
-
-No podemos representar todos los antecesores directos mediante una función:
-
-$$
-\operatorname{parent}:\mathcal C\to\mathcal C
-$$
-
-porque `Warship` tendría dos resultados. Una relación sí puede contener:
-
-$$
-(\mathsf{Warship},\mathsf{MilitaryUnit})
-$$
-
-$$
-(\mathsf{Warship},\mathsf{NavalUnit})
-$$
-
-> [!intuition]
-> Una función responde «¿cuál es su único resultado?». Una relación responde «¿con cuáles está relacionado?».
-
-## 6. Ejemplo de trabajo
-
-Considera:
-
-```mud
-abstract thing Place {
-    name: Text
-}
-
-thing Kingdom as Place {
-    mut treasury: Money = 0M
-}
-
-thing Egypt as Kingdom {
-    name = "Egypt"
-}
-```
-
-Durante la ejecución aparece además:
-
-```mud
-create thing France as Kingdom {
-    name = "France"
-}
-```
-
-No hay instancias de `Place`, `Kingdom` o `Egypt`. Los cuatro nombres designan constructos. `Place` es abstracto; los demás son concretos.
-
-## 7. Constructos declarados
-
-Sea $P$ el programa resuelto. Sus constructos declarados son:
-
-$$
-\mathcal C_P
-=
-\{
-\mathsf{Place},
-\mathsf{Kingdom},
-\mathsf{Egypt}
-\}
-$$
-
-Los abstractos forman:
-
-$$
-\mathcal A_P
-=
-\{
-\mathsf{Place}
-\}
-$$
-
-Los concretos declarados se derivan:
-
-$$
-\mathcal K_P
-:=
-\mathcal C_P\setminus\mathcal A_P
-$$
 
 Por tanto:
 
 $$
-\mathcal K_P
-=
-\{
-\mathsf{Kingdom},
-\mathsf{Egypt}
-\}
+(\mathsf{AmphibiousForce},\mathsf{LandForce})
+\in R
 $$
 
-El conjunto de abstractos no constituye otro universo. Es un subconjunto que distingue qué constructos no poseen estado concreto propio.
-
-## 8. Relación de especialización directa
-
-Definimos:
+y:
 
 $$
-R_P^{\mathrm{dir}}
+(\mathsf{AmphibiousForce},\mathsf{NavalForce})
+\in R
+$$
+
+La orientación adoptada es:
+
+$$
+(\text{más específica},\text{antecesora})
+$$
+
+## 5. `as` declara la relación directa
+
+Sea:
+
+$$
+R^{\mathsf{stored}}_{P,W}
 \subseteq
-\mathcal C_P\times\mathcal C_P
+\mathcal T_P\times\mathcal T_P
 $$
 
-con la orientación:
+la relación directa almacenada.
 
-$$
-(c,a)\in R_P^{\mathrm{dir}}
-$$
+Una cabecera:
 
-si $c$ declara directamente `is a`.
-
-Para el ejemplo:
-
-$$
-R_P^{\mathrm{dir}}
-=
-\{
-(\mathsf{Kingdom},\mathsf{Place}),
-(\mathsf{Egypt},\mathsf{Kingdom})
-\}
-$$
-
-La primera posición es el constructo más específico; la segunda, su antecesor directo.
-
-```text
-Egypt ──► Kingdom ──► Place
+```mud
+thing Egypt as Kingdom, Place {
+}
 ```
 
-La flecha del dibujo representa especialización directa, no movimiento de datos ni propagación de estado.
+aporta:
 
-## 9. Caminos y especialización indirecta
+$$
+(\mathsf{Egypt},\mathsf{Kingdom})
+$$
 
-Existe un camino de `Egypt` a `Place`:
+$$
+(\mathsf{Egypt},\mathsf{Place})
+$$
+
+`as` no pregunta si la relación es verdadera: introduce aristas en un descriptor conocido por el programa.
+
+> [!rule] Decisión de MUD — D-025
+> `thing` es la palabra reservada de la entidad y `as` introduce sus antecesores directos. `construct` y `from` son sintaxis histórica.
+
+## 6. Caminos
+
+Un camino no vacío desde $x$ hasta $y$ en $R$ es una secuencia:
+
+$$
+\langle v_0,v_1,\ldots,v_n\rangle
+$$
+
+tal que:
+
+$$
+v_0=x
+$$
+
+$$
+v_n=y
+$$
+
+y, para todo $i<n$:
+
+$$
+(v_i,v_{i+1})\in R
+$$
+
+Con:
+
+```mud
+thing Kingdom as Place {
+}
+
+thing Egypt as Kingdom {
+}
+```
+
+existe el camino:
 
 $$
 \langle
@@ -290,115 +218,49 @@ $$
 \rangle
 $$
 
-porque:
+## 7. Clausuras
+
+La clausura transitiva $R^+$ contiene los pares unidos por uno o más pasos.
+
+La clausura reflexiva y transitiva $R^*$ añade además la identidad:
 
 $$
-(\mathsf{Egypt},\mathsf{Kingdom})
-\in
-R_P^{\mathrm{dir}}
-$$
-
-y:
-
-$$
-(\mathsf{Kingdom},\mathsf{Place})
-\in
-R_P^{\mathrm{dir}}
-$$
-
-Aunque el par:
-
-$$
-(\mathsf{Egypt},\mathsf{Place})
-$$
-
-no pertenezca a la relación directa, `Egypt is Place` debe ser verdadero.
-
-## 10. Clausura transitiva y reflexiva
-
-La clausura transitiva:
-
-$$
-\left(R_P^{\mathrm{dir}}\right)^+
-$$
-
-contiene los pares conectados por uno o más pasos.
-
-En el ejemplo:
-
-$$
-\left(R_P^{\mathrm{dir}}\right)^+
+\operatorname{Id}_A
 =
 \{
-(\mathsf{Kingdom},\mathsf{Place}),
-(\mathsf{Egypt},\mathsf{Kingdom}),
-(\mathsf{Egypt},\mathsf{Place})
+(a,a)
+\mid
+a\in A
 \}
 $$
 
-La clausura reflexiva y transitiva:
-
 $$
-\left(R_P^{\mathrm{dir}}\right)^*
-$$
-
-añade los caminos de longitud cero:
-
-$$
-(\mathsf{Place},\mathsf{Place})
+R^*
+=
+\operatorname{Id}_A\cup R^+
 $$
 
-$$
-(\mathsf{Kingdom},\mathsf{Kingdom})
-$$
+Por eso `Egypt is Egypt` puede ser verdadero sin almacenar un bucle:
 
 $$
 (\mathsf{Egypt},\mathsf{Egypt})
+\notin
+R^{\mathsf{stored}}_{P,W}
 $$
 
-Definimos provisionalmente el significado de `is`:
+pero:
 
 $$
-R_P^{\mathsf{is}}
-:=
-\operatorname{Id}_{\mathcal C_P}
-\cup
-\left(R_P^{\mathrm{dir}}\right)^+
-=
-\left(R_P^{\mathrm{dir}}\right)^*
+(\mathsf{Egypt},\mathsf{Egypt})
+\in
+\left(R^{\mathsf{stored}}_{P,W}\right)^*
 $$
 
-La estrella se interpreta aquí respecto al conjunto portador $\mathcal C_P$. Escribir explícitamente la relación identidad evita olvidar constructos aislados que no participan en ninguna arista.
+## 8. Aciclicidad
 
-Y abreviamos:
+La relación directa es acíclica si no existe un camino no vacío que empiece y termine en la misma identidad.
 
-$$
-c\preceq_P a
-\quad\Leftrightarrow\quad
-(c,a)\in R_P^{\mathsf{is}}
-$$
-
-Se lee:
-
-> $c$ es el mismo constructo que $a$ o una especialización suya.
-
-Por tanto:
-
-$$
-\mathsf{Egypt}\preceq_P\mathsf{Place}
-$$
-
-y:
-
-$$
-\mathsf{Egypt}\preceq_P\mathsf{Egypt}
-$$
-
-## 11. Aciclicidad
-
-La relación directa es acíclica si no existe un camino no vacío que salga de un constructo y regrese a él.
-
-Este programa sería inválido:
+El programa:
 
 ```mud
 thing A as B {
@@ -408,549 +270,362 @@ thing B as A {
 }
 ```
 
-Produciría:
+es inválido porque contiene:
 
-```text
-A ──► B
-▲     │
-└─────┘
-```
+$$
+\langle\mathsf A,\mathsf B,\mathsf A\rangle
+$$
 
-No debe confundirse este ciclo con la reflexividad de `is`:
+La reflexividad de `is` no contradice esta regla:
 
-- $(A,A)\notin R^{\mathrm{dir}}$.
-- $(A,A)\in R^{\mathsf{is}}$.
+- La relación directa no contiene $(A,A)$.
+- Su clausura reflexiva sí lo contiene.
 
-La primera sería una arista directa reflexiva inválida. La segunda es un resultado derivado y obligatorio.
+## 9. `is` como orden parcial
 
-## 12. Orden parcial
+Sobre un conjunto portador $X$, una relación $\preceq$ es un orden parcial si es:
 
-Una relación $\preceq$ sobre un conjunto $C$ es un orden parcial cuando es:
+1. Reflexiva.
+2. Transitiva.
+3. Antisimétrica.
 
-1. **Reflexiva**:
+Definimos provisionalmente:
 
-   $$
-   \forall c\in C.\ c\preceq c
-   $$
-
-2. **Transitiva**:
-
-   $$
-   \forall a,b,c\in C.\
-   a\preceq b
-   \land
-   b\preceq c
-   \Rightarrow
-   a\preceq c
-   $$
-
-3. **Antisimétrica**:
-
-   $$
-   \forall a,b\in C.\
-   a\preceq b
-   \land
-   b\preceq a
-   \Rightarrow
-   a=b
-   $$
-
-Antisimetría no significa que solo pueda existir una dirección entre dos elementos. Significa que, si existen las dos, ambos elementos deben ser el mismo.
-
-## 13. Primera demostración resuelta
-
-> [!proof] Proposición — La clausura de una especialización acíclica es un orden parcial
-> Sea $R\subseteq C\times C$ una relación acíclica. Sea $R^*:=\operatorname{Id}_C\cup R^+$. Entonces $R^*$ es un orden parcial sobre $C$.
+$$
+x\preceq_{P,W}y
+\iff
+(x,y)
+\in
+\left(R^{\mathsf{eff}}_{P,W}\right)^*
+$$
 
 ### Reflexividad
 
-$R^*$ contiene por definición todos los caminos de longitud cero. Para cada $c\in C$ existe el camino:
+Por definición de clausura reflexiva:
 
 $$
-\langle c\rangle
+\forall x\in X.\ x\preceq_{P,W}x
 $$
-
-Por tanto:
-
-$$
-(c,c)\in R^*
-$$
-
-y $R^*$ es reflexiva.
 
 ### Transitividad
 
-Supongamos:
-
-$$
-(a,b)\in R^*
-$$
-
-y:
-
-$$
-(b,c)\in R^*
-$$
-
-Existe un camino de $a$ a $b$ y otro de $b$ a $c$. Al concatenarlos obtenemos un camino de $a$ a $c$. Por tanto:
-
-$$
-(a,c)\in R^*
-$$
-
-y $R^*$ es transitiva.
+Si existe un camino de $x$ a $y$ y otro de $y$ a $z$, su concatenación es un camino de $x$ a $z$.
 
 ### Antisimetría
 
-Supongamos:
+Si $x\preceq y$ e $y\preceq x$ con $x\neq y$, los dos caminos formarían un ciclo no vacío. Como los ciclos se rechazan:
 
 $$
-(a,b)\in R^*
+x\preceq y
+\land
+y\preceq x
+\implies
+x=y
+$$
+
+> [!proof] Proposición
+> Si la relación directa efectiva es acíclica, su clausura reflexiva y transitiva es un orden parcial.
+
+## 10. Reserva, `create` y actividad
+
+Una aparición:
+
+```mud
+create thing Memphis as Settlement {
+}
+```
+
+no fabrica un nombre fresco cada vez. Al resolver $P$, `Memphis` ya pertenece a un conjunto de identidades reservadas:
+
+$$
+\mathcal R_P^{\mathsf{create}}
+\subseteq
+\mathcal T_P
+$$
+
+Cuando la creación es efectiva:
+
+- `Memphis` entra en $\mathcal A_W$.
+- Se materializa su carga si es la primera activación concreta.
+- Sus fragmentos declarativos conocidos aportan aristas y esquema.
+
+Después de `destroy Memphis`, el nombre, los fragmentos y la carga permanecen almacenados. Otro `create` reactiva la misma identidad.
+
+Varias creaciones compatibles de una misma `thing` pueden aportar fragmentos fusionables. Esto no convierte la identidad en varias cosas.
+
+## 11. Grafo almacenado y grafo efectivo
+
+D-021 impide identificar sin más «arista almacenada» y «relación actualmente observable».
+
+### Grafo almacenado
+
+$$
+R^{\mathsf{stored}}_{P,W}
+$$
+
+conserva las aristas declaradas aunque alguno de sus extremos esté suspendido.
+
+### Portador efectivo
+
+Para esta unidad:
+
+$$
+\mathcal T^{\mathsf{eff}}_{P,W}
+=
+\mathcal A_W\cap\mathcal T_P
+$$
+
+incluye las `thing` activas, abstractas o concretas.
+
+### Bypass
+
+La relación directa efectiva conecta dos identidades activas cuando el camino almacenado entre ellas no contiene otra identidad activa en medio:
+
+$$
+(x,y)\in R^{\mathsf{eff}}_{P,W}
+$$
+
+si y solo si existe:
+
+$$
+\langle
+x=v_0,v_1,\ldots,v_n=y
+\rangle
+$$
+
+en $R^{\mathsf{stored}}_{P,W}$, con $n\geq 1$, tal que:
+
+$$
+x,y\in\mathcal T^{\mathsf{eff}}_{P,W}
 $$
 
 y:
 
 $$
-(b,a)\in R^*
+\forall i\in\{1,\ldots,n-1\}.\,
+v_i\notin\mathcal T^{\mathsf{eff}}_{P,W}
 $$
 
-Si $a\neq b$, ambos caminos tienen conjuntamente longitud positiva. Concatenarlos produciría un camino no vacío que sale de $a$ y vuelve a $a$: un ciclo.
+Es decir: los nodos internos del camino están inactivos.
 
-Eso contradice que $R$ sea acíclica. Por tanto:
+### Ejemplo
 
-$$
-a=b
-$$
+Antes:
 
-y $R^*$ es antisimétrica.
-
-### Conclusión
-
-Como $R^*$ es reflexiva, transitiva y antisimétrica:
-
-$$
-(C,R^*)
-$$
-
-es un conjunto parcialmente ordenado.
-
-> [!intuition]
-> La reflexividad procede de permitir no moverse; la transitividad, de concatenar caminos; la antisimetría, de haber prohibido regresar mediante un ciclo.
-
-## 14. Incorporación de `create`
-
-Sea $\mathcal C$ un universo ambiente de identidades posibles de constructo y sea:
-
-$$
-\mathcal M
-:=
-\{
-\mathsf{abstract},
-\mathsf{concrete}
-\}
-$$
-
-El programa resuelto reserva las identidades que aparecen como resultado de `create`:
-
-$$
-\mathcal R_P^{\mathsf{create}}
-\subseteq
-\mathcal C
-$$
-
-Para no adelantar el estudio del cuerpo completo, proyectamos cada declaración reservada sobre su modo y sus antecesores:
-
-$$
-\operatorname{shape}_P:
-\mathcal R_P^{\mathsf{create}}
-\to
-\left(
-\mathcal M
-\times
-\mathcal P_{\mathrm{fin}}(\mathcal C)
-\right)
-$$
-
-Aquí, $\mathcal P_{\mathrm{fin}}(\mathcal C)$ es el conjunto de todos los subconjuntos finitos de $\mathcal C$. El resultado es un par formado por un modo y un conjunto, no por un único antecesor.
-
-Las proyecciones extraen los dos componentes del par:
-
-$$
-\pi_1(m,S)=m
-$$
-
-$$
-\pi_2(m,S)=S
-$$
-
-Las sentencias:
-
-```mud
-create thing Monument {
-}
-
-create abstract thing PoliticalUnion as Place {
-}
-
-create thing France as Kingdom {
-}
-
-create thing EuropeanRealm as Kingdom, PoliticalUnion {
-}
+```text
+Egypt → Kingdom → Place
 ```
 
-reservan al resolver $P$ y, cuando son efectivas, activan las identidades correspondientes. Su proyección estructural es:
+Si `Kingdom` se suspende:
 
-$$
-\operatorname{shape}_P(\mathsf{Monument})
-=
-(\mathsf{concrete},\varnothing)
-$$
+```text
+Egypt ─────────→ Place
+        bypass
+```
 
-$$
-\operatorname{shape}_P(\mathsf{PoliticalUnion})
-=
-(\mathsf{abstract},\{\mathsf{Place}\})
-$$
+Las aristas almacenadas no se reescriben. La conexión `Egypt → Place` pertenece solo a la proyección efectiva y desaparece al reactivar `Kingdom`.
 
-$$
-\operatorname{shape}_P(\mathsf{France})
-=
-(\mathsf{concrete},\{\mathsf{Kingdom}\})
-$$
+> [!intuition]
+> El niño dice: «por ahora no jugamos con reinos, pero Egipto sigue siendo un lugar». No necesita borrar y reconstruir todo el árbol del juego.
 
-$$
-\operatorname{shape}_P(\mathsf{EuropeanRealm})
-=
-\left(
-\mathsf{concrete},
-\{\mathsf{Kingdom},\mathsf{PoliticalUnion}\}
-\right)
-$$
+## 12. Por qué el bypass conserva el orden
 
-En particular, `create abstract thing PoliticalUnion as Place {}` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración inicial vacía `abstract thing PoliticalUnion as Place {}`. No convierte por ello la sentencia ejecutada en una activación inicial: coinciden sus consecuencias relevantes para el grafo, pero difiere el momento en que la identidad pasa a estar activa.
-
-El cuerpo de `create` es declarativamente completo. Puede declarar propiedades locales, restricciones, reglas o acciones igual que el cuerpo de un constructo ordinario. En esta unidad usamos únicamente su proyección sobre modo y antecesores; la Unidad 03 estudiará el esquema que ahora estamos omitiendo deliberadamente.
-
-> [!warning] Abstracción local
-> Esta demostración representa únicamente la proyección activa y supone un descriptor ya consolidado por identidad. D-021 añadió almacenamiento latente y D-023 permite fusionar varios fragmentos compatibles antes de obtener ese descriptor. La estructura completa se introducirá en una unidad posterior; el razonamiento sobre el orden parcial activo no cambia.
-
-Sea $\mathcal E_W\subseteq\mathcal C$ el conjunto de todas las identidades activas del mundo. Las identidades reservadas mediante `create` que están activas son:
-
-$$
-\mathcal D_W
-:=
-\mathcal E_W
-\cap
-\mathcal R_P^{\mathsf{create}}
-$$
-
-La vista activa de los descriptores es la restricción:
-
-$$
-\operatorname{created}_W
-:=
-\left.
-\operatorname{shape}_P
-\right|_{\mathcal D_W}
-$$
-
-De modo que:
-
-$$
-\operatorname{dom}(\operatorname{created}_W)
-=
-\mathcal D_W
-$$
-
-`destroy A` retira $A$ de la proyección efectiva sin liberar su reserva ni borrar su carga almacenada. Una ejecución posterior de `create thing A` puede volver a incluir la misma identidad $A$ y restaurar su estado, conforme a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
-
-Los abstractos creados pueden derivarse mediante la primera proyección:
-
-$$
-\mathcal A_W
-:=
-\{
-c\in\mathcal D_W
-\mid
-\pi_1(\operatorname{created}_W(c))
-=
-\mathsf{abstract}
-\}
-$$
-
-El conjunto de constructos existentes respecto a $P$ y $W$ es:
-
-$$
-\mathcal C_{P,W}
-:=
-\mathcal C_P\cup\mathcal D_W
-$$
-
-> [!warning]
-> Esta igualdad pertenece al fragmento de la unidad, en el que todavía no se ejecuta `destroy` sobre constructos iniciales. En el modelo completo, la existencia se obtendrá de un conjunto activo explícito y no de una unión que obligue a conservar para siempre $\mathcal C_P$.
-
-La relación directa aportada por el mundo se obtiene de la segunda proyección:
-
-$$
-R_W^{\mathrm{dir}}
-:=
-\{
-(c,p)
-\mid
-c\in\mathcal D_W
-\land
-p\in\pi_2(\operatorname{created}_W(c))
-\}
-$$
+El bypass no inventa alcanzabilidad: cada arista efectiva corresponde a un camino almacenado.
 
 Por tanto:
 
-$$
-R_{P,W}^{\mathrm{dir}}
-:=
-R_P^{\mathrm{dir}}
-\cup
-R_W^{\mathrm{dir}}
-$$
+- No puede crear un ciclo que no existiera ya en el grafo almacenado.
+- Conserva la orientación de más específico a antecesor.
+- Su clausura sigue siendo reflexiva y transitiva.
+- La aciclicidad almacenada permite conservar antisimetría.
 
-El tipo de $\operatorname{created}_W$ no basta para garantizar que represente un mundo válido. La identidad debe estar reservada, ausente de $\mathcal E_W$ antes de una creación efectiva y activa después de ella. Exigimos además:
+La implementación puede comprimir caminos para consultar, pero la semántica se define mediante la relación, no mediante una optimización concreta.
 
-$$
-\bigcup_{c\in\mathcal D_W}
-\pi_2(\operatorname{created}_W(c))
-\subseteq
-\mathcal C_{P,W}
-$$
-
-para que todo antecesor exista; además, la relación directa combinada debe ser acíclica y los esquemas heredados deben ser compatibles.
-
-> [!intuition]
-> Una signatura indica qué forma tienen los datos. La buena formación descarta datos de esa forma que no representan un estado admisible.
-
-El operador se interpreta mediante:
-
-$$
-R_{P,W}^{\mathsf{is}}
-:=
-\operatorname{Id}_{\mathcal C_{P,W}}
-\cup
-\left(R_{P,W}^{\mathrm{dir}}\right)^+
-=
-\left(R_{P,W}^{\mathrm{dir}}\right)^*
-$$
-
-De ahí:
-
-$$
-\mathsf{France}\preceq_{P,W}\mathsf{Kingdom}
-$$
-
-$$
-\mathsf{France}\preceq_{P,W}\mathsf{Place}
-$$
-
-$$
-\mathsf{France}\preceq_{P,W}\mathsf{France}
-$$
-
-## 15. Por qué la relación no registra por sí sola todas las creaciones
-
-Podríamos intentar almacenar únicamente $R_W^{\mathrm{dir}}$, pero perderíamos `Monument`:
-
-$$
-\pi_2(\operatorname{created}_W(\mathsf{Monument}))
-=
-\varnothing
-$$
-
-Al no tener antecesores, no produce ningún par en la relación. Sin embargo, `Monument` existe, pertenece a $\mathcal D_W$ y hace verdadera la consulta reflexiva `Monument is Monument`.
-
-Por eso conservamos dos niveles:
-
-- $\operatorname{created}_W$: descriptor de existencia, modo y antecesores de cada creación.
-- $R_W^{\mathrm{dir}}$: relación dinámica derivada del descriptor.
-- $R_{P,W}^{\mathrm{dir}}$: relación directa estática y dinámica combinada.
-- $R_{P,W}^{\mathsf{is}}$: cierre reflexivo y transitivo consultado por el operador.
-
-> [!note]
-> El descriptor no duplica accidentalmente la relación: contiene información que una relación sin aristas no puede expresar.
-
-### Primera clase, reserva y presencia activa
-
-Que un constructo creado sea de primera clase significa que puede participar en relaciones, expresiones, acciones o vinculaciones como cualquier otro constructo. Además, MUD reserva su identidad al resolver el programa, por lo que una aparición textual exacta puede resolverse antes de que esté activa.
-
-Hay dos casos diferentes:
-
-1. Una regla puede hablar de un antecesor ya declarado, como `Place`, y aplicarse en el futuro a constructos creados que satisfagan `is Place`.
-2. Una regla puede intentar mencionar exactamente `FutureCity` antes de que una ejecución cree algo con ese nombre.
-
-El primer caso no necesita una identidad exacta futura. En el segundo, el nombre se resuelve a la identidad reservada, pero toda operación que requiera presencia debe comprobar que está activa.
-
-Para una vinculación `on` exacta, antes de la creación no hay todavía una vinculación asociada a esa `thing`. La creación podría hacerla nacer; entonces habrá que definir su valor previo y el instante preciso de activación. Una regla `on` no se «llama»: se mantiene una vinculación de la regla para cada participante aplicable.
-
-Para un participante `for` exacto, no habría receptor disponible antes de la creación. En cambio, una acción cuyo participante admita un antecesor ya existente podría aceptar después cualquier descendiente creado compatible.
-
-> [!note]
-> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] está cerrada: destruir y recrear `FutureCity` conserva su identidad y su carga almacenada. Si una regla con `create thing FutureCity` la encuentra activa, la regla completa no se ejecuta. [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]] conserva los casos de acciones y varias creaciones.
-
-## 16. Declarar con `as`, consultar con `is`
-
-En:
+## 13. `as` e `is` viven en niveles distintos
 
 ```mud
 thing Egypt as Kingdom {
 }
 ```
 
-`as` forma parte de una cabecera y añade un par a la relación directa.
+produce un nodo de declaración, conceptualmente:
 
-En:
+```text
+ThingDecl(
+    name = Egypt,
+    directAncestors = {Kingdom}
+)
+```
 
 ```mud
 Egypt is Place
 ```
 
-`is` forma una expresión booleana y consulta la relación derivada.
-
-El lexer y el parser distinguen dos palabras y dos nodos:
+produce una expresión:
 
 ```text
-ConstructDecl(Egypt, parents = {Kingdom})
 IsExpression(Egypt, Place)
 ```
 
-Ambos remiten a la misma estructura en niveles distintos: `as` aporta aristas y `is` consulta su clausura.
+`as` modifica el descriptor directo. `is` consulta la clausura sobre la proyección efectiva aplicable.
+
+## 14. Reflexividad no significa membresía exacta
+
+`is` es reflexivo:
+
+$$
+\mathsf{Person}\ \mathsf{is}\ \mathsf{Person}
+$$
+
+pero una colección:
+
+```mud
+people: Person[*]
+```
+
+no puede contener el ancla exacta `Person`.
+
+D-026 exige para cada miembro $c$:
+
+$$
+c\neq\mathsf{Person}
+\land
+c\ \mathsf{is}\ \mathsf{Person}
+$$
+
+Puede contener `Alice` si `Alice is Person`, incluso si la propiedad pertenece a `Alice`. La desigualdad se compara con el tipo escrito `Person`, no con la `thing` propietaria.
+
+No existe `[reflexive]`.
+
+## 15. Abstractas y concretas
+
+Las abstractas y concretas pertenecen al mismo grafo.
+
+- Una `thing` abstracta posee identidad y puede ser antecesora.
+- No denota directamente una cosa concreta con carga de estado propia.
+- Una `thing` concreta posee estado independiente.
+- Ser antecesora no provoca propagación del estado mutable.
+
+Si `Egypt is Kingdom`, modificar `Kingdom.treasury` no modifica `Egypt.treasury`. `is` afecta esquema y sustituibilidad, no es un canal de sincronización.
+
+## 16. Relación con reglas y acciones
+
+Con la sintaxis actual:
+
+- Una regla de cambio que observa `Person` declara su vinculación mediante `on`.
+- Una regla booleana, acción o `look` que recibe `Person` declara el participante mediante `for`.
+
+En ambos casos, una identidad creada puede empezar a satisfacer el patrón cuando se activa. La identidad estaba reservada antes; lo que cambia es su presencia efectiva.
 
 ## 17. Qué es estándar y qué es de MUD
 
 ### Matemática estándar
 
 - Relaciones binarias.
-- Grafos dirigidos.
-- Caminos.
-- Clausuras transitiva y reflexiva-transitiva.
+- Grafos dirigidos y caminos.
+- Clausuras.
 - Aciclicidad.
 - Órdenes parciales.
 
 ### Convenciones de notación
 
-- La orientación de específico a general.
-- $R^{\mathrm{dir}}$ para la relación directa.
-- $\preceq$ para la relación semántica.
-- $\operatorname{created}_W$ para el descriptor parcial de las creaciones existentes.
+- Aristas orientadas de específica a antecesora.
+- $R^{\mathsf{stored}}$ para el grafo conservado.
+- $R^{\mathsf{eff}}$ para la proyección activa con bypass.
 
-### Decisiones semánticas de MUD
+### Decisiones de MUD
 
-- Un solo dominio de constructos.
-- `create` activa una identidad reservada raíz, abstracta o concreta con cero o varios antecesores.
-- La sintaxis sitúa la identidad reservada antes de la cláusula opcional `as`.
-- `as` declara aristas directas; `is` solo consulta la relación derivada.
-- `is` es reflexivo y transitivo.
-- Se rechazan ciclos.
-- Los constructos concretos pueden ser cosas y antecesores.
-- Los abstractos participan en el orden, pero no poseen estado concreto propio.
+- Un único dominio de `thing`.
+- Especialización múltiple.
+- `as` declara y `is` consulta.
+- Rechazo de ciclos.
+- Identidades de `create` reservadas globalmente.
+- `destroy` suspende sin borrar.
+- Membresía de colecciones siempre estricta respecto del tipo.
 
 ## 18. Errores frecuentes
 
-### Tratar la especialización múltiple como función
+### Modelar un único padre
 
-Una función solo permite un resultado por entrada. La relación directa puede contener varios antecesores.
+Una función `parent` no representa especialización múltiple.
 
-### Introducir los pares reflexivos en la relación directa
+### Meter reflexividad en el grafo directo
 
-La reflexividad pertenece a $R^*$, no al grafo declarado.
+Los pares $(t,t)$ pertenecen a la clausura, no a las aristas declaradas.
 
-### Confundir aristas con todos los pares verdaderos
+### Confundir `is` con igualdad
 
-`Egypt is Place` puede ser verdadero aunque no exista una arista directa entre ambos.
+`Egypt is Place` no implica `Egypt = Place`.
 
-### Invertir la orientación
+### Confundir suspensión con borrado
 
-En esta unidad:
+`destroy Kingdom` no elimina las aristas almacenadas ni la carga.
 
-$$
-(c,a)
-$$
+### Inferir membresía exacta desde reflexividad
 
-significa que $c$ es más específico que $a$.
+Aunque `Person is Person`, `Person` no puede ser miembro de `Person[*]`.
 
-### Pensar que `is` propaga estado
+### Propagar estado por especialización
 
-La relación determina especialización y sustituibilidad. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]] prohíbe heredar estado activo.
+El estado de cada `thing` concreta es independiente.
 
 ## 19. Lectura comentada
 
-La expresión:
+Lee:
 
 $$
-c\preceq_{P,W}a
+x\preceq_{P,W}y
 $$
 
-se lee:
+como:
 
-> En el programa $P$ y el mundo $W$, el constructo $c$ es idéntico a $a$ o existe un camino de especialización directa desde $c$ hasta $a$.
+> En la proyección efectiva del programa $P$ y el mundo $W$, $x$ es la misma `thing` que $y$ o existe un camino de especialización desde $x$ hasta $y$.
 
-La expresión:
+Lee:
 
 $$
-R_{P,W}^{\mathsf{is}}
-=
-\left(R_{P,W}^{\mathrm{dir}}\right)^*
+R^{\mathsf{eff}}_{P,W}
+\subseteq
+\left(R^{\mathsf{stored}}_{P,W}\right)^+
 $$
 
-no afirma que almacenemos toda la clausura. Define su significado. Una implementación puede calcularla, indexarla o responder mediante búsqueda siempre que obtenga el mismo resultado.
+como:
+
+> Toda arista efectiva resume uno o más pasos realmente almacenados.
 
 ## 20. Tu turno
 
-El entregable está en [[aprendizaje/ejercicios/02-orden-parcial-de-constructos-ejercicio]].
+El ejercicio está en [[aprendizaje/ejercicios/02-orden-parcial-de-constructos-ejercicio]].
 
-La plantilla que debes completar está en [[aprendizaje/respuestas/02-orden-parcial-de-constructos-respuesta]].
+> [!exercise] Objetivo
+> Construir los grafos almacenado y efectivo antes y después de suspender un antecesor, calcular consultas `is` y aplicar la membresía estricta.
 
-> [!exercise] Entregable
-> Formaliza una jerarquía distinta, incorpora un constructo creado, calcula varios casos de `is` y detecta un ciclo inválido.
+> [!hint]- Pista 1
+> No borres ninguna arista al ejecutar `destroy`.
 
-> [!hint]- Pista 1 — Empieza por los pares escritos
-> Construye primero $R_P^{\mathrm{dir}}$ usando únicamente las cabeceras.
+> [!hint]- Pista 2
+> Para cada bypass busca un camino cuyos nodos internos estén inactivos.
 
-> [!hint]- Pista 2 — Separa cierre y grafo
-> Añade después caminos indirectos y pares reflexivos; no los mezcles con las aristas.
+## 21. Incorporación a la especificación
 
-> [!hint]- Pista 3 — Usa el dominio
-> El conjunto de constructos creados puede derivarse de $\operatorname{dom}(\operatorname{created}_W)$.
+Podrán promoverse:
 
-La solución completa no está incluida. Se añadirá tras el intento y la revisión.
+- El universo de identidades reservadas.
+- Las relaciones almacenada y efectiva.
+- La definición formal del bypass.
+- La clausura consultada por `is`.
+- La prueba de orden parcial.
+- La interacción con membresía estricta.
 
-## 21. Criterios de revisión
+Antes de publicar habrá que cerrar el comportamiento diagnóstico de una consulta `is` cuyos operandos estén inactivos.
 
-La revisión comprobará por separado:
+## 22. Repaso
 
-- Orientación de los pares.
-- Exhaustividad de la relación directa.
-- Cálculo de clausura.
-- Uso correcto de reflexividad.
-- Detección y justificación del ciclo.
-- Diferencia entre función y relación.
-- Consistencia de subíndices.
-- Claridad de la explicación.
+Comprueba que puedes:
 
-## 22. Incorporación a la especificación
-
-Después de revisar el ejercicio:
-
-1. Ajustaremos la notación si aparece alguna ambigüedad.
-2. Redactaremos el fragmento profesional del grafo de constructos.
-3. Lo someteremos a ejemplos de herencia múltiple y creación.
-4. Decidiremos qué parte pertenece a `04-modelo-matematico` y cuál al futuro `11-constructos.md`.
-5. Activaremos la Unidad 03.
-
-## 23. Repaso
-
-En la Unidad 03 reaparecerán:
-
-- Relaciones, al calcular campos heredados.
-- Clausuras, al recorrer antecesores.
-- Funciones parciales, al resolver predeterminados.
-- Conjuntos derivados, al definir posiciones válidas del estado.
-
-Dos unidades después se pedirá detectar sin ayuda si una relación propuesta debería ser una función o una relación múltiple.
+1. Explicar por qué especialización es relación y no función.
+2. Construir $R^*$ sin introducir bucles directos.
+3. Demostrar antisimetría mediante aciclicidad.
+4. Explicar reserva frente a actividad.
+5. Calcular un bypass.
+6. Explicar por qué `is` reflexivo no permite almacenar el tipo exacto.

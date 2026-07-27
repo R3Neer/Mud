@@ -18,13 +18,14 @@ status: activo
 - [[REGLAS-DIDACTICAS|Contrato didáctico]]
 - [[PERFIL|Perfil y audiencia]]
 - [[PROGRESO|Progreso]]
+- [[AUDITORIA-DE-VIGENCIA|Auditoría de vigencia]]
 - [[especificacion/00-convenciones-editoriales|Convenciones editoriales]]
 - [[especificacion/README|Índice de la especificación]]
 
 ## Secuencia actual
 
-1. [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo|Unidad 01 — Modelo mínimo de un mundo]] — completada con rectificación.
-2. [[aprendizaje/unidades/02-constructos-como-orden-parcial|Unidad 02 — Constructos como orden parcial]] — activa.
+1. [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo|Unidad 01 — Programa, mundo y store mínimo]] — contenido actualizado; competencias ya demostradas.
+2. [[aprendizaje/unidades/02-constructos-como-orden-parcial|Unidad 02 — `Thing` como orden parcial]] — activa.
 3. [[aprendizaje/unidades/03-esquema-heredable-y-estado-independiente|Unidad 03 — Esquema heredable y estado independiente]] — planificada.
 
 ## Método
@@ -69,6 +70,7 @@ aprendizaje/
 ├── ejercicios/     # Entregables sin solución
 ├── respuestas/     # Trabajo del autor
 ├── revisiones/     # Evaluación y correcciones
+├── historico/      # Versiones sustituidas y procedencia didáctica
 ├── soluciones/     # Soluciones liberadas después del intento
 ├── repasos/        # Recuperación espaciada
 └── glosario/       # Explicaciones reutilizables de conceptos

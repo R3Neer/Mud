@@ -1,9 +1,9 @@
 ---
-title: Revisión 01 — Modelo mínimo de una puerta
+title: Revisión histórica 01 — Modelo clase–instancia descartado
 unit: 1
 status: completada-con-rectificacion
 reviews:
-  - "[[aprendizaje/respuestas/01-modelo-minimo-respuesta]]"
+  - "[[aprendizaje/historico/01-modelo-clase-instancia/01-modelo-minimo-respuesta-historica]]"
 tags:
   - mud/aprendizaje
   - mud/revision

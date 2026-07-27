@@ -1,132 +1,103 @@
 ---
-title: Ejercicio 01 — Modelo mínimo de una puerta
-unit: 1
-status: sustituido
-level: 1
+title: Ejercicio 01 — Programa, mundo y store mínimo
 tags:
   - mud/aprendizaje
   - mud/ejercicio
+status: disponible
+depends-on:
+  - "[[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]]"
 ---
 
-# Ejercicio 01 — Modelo mínimo de una puerta
-
-> [!warning] Ejercicio histórico
-> Este ejercicio conserva el contramodelo clase–instancia que fue retirado tras su revisión. No debe utilizarse como modelo semántico de MUD. Se mantiene como procedencia del aprendizaje de funciones parciales y redundancia representacional.
+# Ejercicio 01 — Programa, mundo y store mínimo
 
 Referencia: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
+
+> [!note]
+> Este es el ejercicio correspondiente al modelo actual. El primer ejercicio realizado y su revisión se conservan en [[aprendizaje/historico/01-modelo-clase-instancia/README|el archivo histórico]]. No es obligatorio repetirlo para conservar el progreso ya demostrado.
 
 ## Enunciado
 
 Considera:
 
 ```mud
-thing Gate {
-    mut unlocked: Boolean
-    mut open: Boolean
+abstract thing Gate {
+    open: Boolean
 }
 
-thing Kingdom {
-    mut treasury: Money
+thing NorthGate as Gate {
+    open = true
+}
+
+thing SouthGate as Gate {
+    open = false
 }
 ```
 
-Existe una puerta con identidad didáctica `northGate#1`, tipo runtime `Gate`, `unlocked = true` y `open = false`. En este mundo no existe todavía ninguna instancia de `Kingdom`.
+En el mundo $W$:
 
-## 1. Clasificación
+- `NorthGate` está activa y materializada.
+- `SouthGate` fue destruida: está materializada, pero suspendida.
+- Ambas conservan su valor almacenado de `open`.
 
-Clasifica:
-
-- `Gate`.
-- `northGate#1`.
-- `unlocked`, `open` y `treasury`.
-- `true` y `false`.
-
-## 2. Contexto estático
-
-Define conjuntos de ejemplo para:
-
-$$
-\mathcal C_P
-$$
-
-$$
-\mathcal F_P
-$$
-
-$$
-\mathcal V_P
-$$
-
-Incluye `treasury` en el conjunto de campos aunque no pertenezca a `Gate`.
-
-## 3. Tipo runtime
+## 1. Conjuntos
 
 Escribe:
 
 $$
-\operatorname{kind}_{W_G}:
-\mathcal I
-\rightharpoonup
-\mathcal C_P
+\mathcal T_P,\qquad
+\mathcal A_W,\qquad
+\mathcal M_W
 $$
 
-y define la asociación correspondiente a `northGate#1`.
+e indica a qué estructura pertenece cada uno: programa o mundo.
 
-Después deriva:
+## 2. Posiciones y store
 
-$$
-I_{W_G}:=
-\operatorname{dom}(\operatorname{kind}_{W_G})
-$$
-
-## 4. Store
-
-Escribe:
+Escribe el dominio de:
 
 $$
-\operatorname{store}_{W_G}:
-I_{W_G}\times\mathcal F_P
-\rightharpoonup
-\mathcal V_P
+\operatorname{store}_W
 $$
 
-Define sus asociaciones para `unlocked` y `open`.
+y sus dos asociaciones.
 
-## 5. Mundo
+Recuerda que el valor de un campo de cardinalidad omitida es una colección singleton.
 
-Completa:
-
-$$
-W_G=
-\left(
-\underline{\hspace{4cm}},
-\underline{\hspace{4cm}}
-\right)
-$$
-
-## 6. Parcialidad
+## 3. Buena formación
 
 Explica por qué:
 
 $$
-\operatorname{store}_{W_G}
-(\mathit{northGate\#1},\mathsf{treasury})
+\mathcal A_W
+\subsetneq
+\mathcal M_W
 $$
 
-no está definida.
+en este ejemplo y por qué eso no es un error.
 
-Después explica por qué el ejemplo no justificaría la parcialidad si el segundo componente del dominio fuese únicamente:
+## 4. Contraejemplo
+
+Refuta esta propuesta:
 
 $$
-\{\mathsf{unlocked},\mathsf{open}\}
+\mathcal A_W
+=
+\{
+t
+\mid
+\exists f.\,
+(t,f)\in
+\operatorname{dom}(\operatorname{store}_W)
+\}
 $$
 
-## 7. Pregunta crítica
+## 5. Pregunta crítica
 
-¿Añadirías $I_{W_G}$ como tercer componente explícito del mundo? Justifica qué información aporta o repite.
+¿Qué información se duplicaría si incluyésemos $\mathcal T_P$ como componente de $W$?
 
-> [!hint]- Pista 1
-> El dominio forma parte de la definición matemática de una función.
+## Criterio de corrección
 
-> [!hint]- Pista 2
-> Compara $\operatorname{dom}(\operatorname{kind}_{W_G})$ con $I_{W_G}$.
+- No aparecen instancias ni una función `kind`.
+- Reserva, materialización y actividad están separadas.
+- El store conserva la carga de `SouthGate`.
+- La explicación distingue información estática y dinámica.

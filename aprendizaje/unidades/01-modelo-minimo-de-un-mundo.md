@@ -1,750 +1,531 @@
 ---
-title: Unidad 01 — Modelo mínimo de un mundo
+title: Unidad 01 — Programa, mundo y store mínimo
 aliases:
-  - Modelo mínimo de un mundo
+  - Modelo mínimo actual de MUD
 unit: 1
-status: completada-con-rectificacion
+status: vigente
 level: 0-a-1
+depends-on: []
 concepts:
-  - conjuntos
-  - producto cartesiano
-  - funciones
-  - funciones parciales
-  - estado
+  - programa resuelto
+  - mundo
+  - thing
   - identidad
+  - posición de estado
+  - función parcial
+  - store
+  - buena formación
 spec-chapters:
   - "[[especificacion/03-notacion]]"
   - "[[especificacion/04-modelo-matematico]]"
+decisions:
+  - D-014
+  - D-017
+  - D-019
+  - D-021
+  - D-025
+  - D-026
 tags:
   - mud/aprendizaje
   - mud/unidad
 ---
 
-# Unidad 01 — Modelo mínimo de un mundo
+# Unidad 01 — Programa, mundo y store mínimo
 
 > [!abstract]
-> Esta unidad construye una primera representación matemática de un mundo MUD. Es material didáctico y una propuesta de trabajo: no forma parte todavía de la especificación normativa.
-
-> [!warning] Rectificación semántica
-> La unidad alcanzó sus objetivos matemáticos, pero su aplicación a MUD partió de una premisa descartada: interpretó los constructos mediante dos estratos, como si hubiera constructos que actuasen como clases e identidades runtime que fuesen sus instancias. MUD no presupone esa separación. Un constructo no tiene instancias; los constructos declarados y los creados durante la ejecución pertenecen al mismo dominio conceptual y `is` relaciona constructos.
->
-> Las secciones que emplean $\operatorname{kind}_W$, “tipo runtime” o “instancia” conservan el contramodelo estudiado para documentar el razonamiento, pero no describen el modelo aceptado de MUD y no deben promoverse a la especificación. Las funciones parciales, los productos cartesianos, los dominios y la detección de información redundante sí siguen siendo resultados válidos de aprendizaje. La ontología correcta de `construct` se resolverá antes de reescribir el modelo del mundo.
+> Esta unidad construye el modelo matemático mínimo de MUD con la ontología actual. No hay clases ni instancias: `Gate`, `NorthGate` y cualquier identidad creada son `thing` del mismo dominio. La versión anterior de la unidad se conserva en [[aprendizaje/historico/01-modelo-clase-instancia/README|el archivo histórico]].
 
 ## 1. Pregunta de MUD
 
-Queremos poder afirmar:
-
-> Si una acción resulta `rejected`, el mundo observable después de la solicitud es exactamente el mismo que antes.
-
-La frase parece clara, pero contiene una pregunta previa:
-
-> ¿Qué es exactamente un mundo y qué significa que dos mundos sean “el mismo”?
-
-No podemos demostrar atomicidad ni rollback mientras “mundo” siga siendo una intuición.
-
-## 2. Objetivos
-
-Al terminar esta unidad deberías poder:
-
-1. Distinguir un conjunto, un par ordenado, una función y una función parcial.
-2. Explicar por qué la definición de un constructo no es el estado de una instancia.
-3. Distinguir tipo, identidad, campo y valor.
-4. Leer la propuesta:
-
-   $$
-   W=(\operatorname{kind}_W,\operatorname{store}_W)
-   $$
-
-5. Explicar por qué el store se modela inicialmente como una función parcial.
-6. Formalizar un segundo mundo siguiendo el mismo patrón.
-
-## 3. Prerrequisitos
-
-No se presupone teoría de conjuntos más allá de haber visto alguna vez llaves como $\{1,2,3\}$. Toda notación nueva se introduce aquí.
-
-## 4. Escenario
-
-Partimos de este fragmento:
+Partimos de:
 
 ```mud
-thing Kingdom {
-    name: Text
-    mut treasury: Money
-    mut soldiers: Natural
+abstract thing Gate {
+    unlocked: Boolean
+    open: Boolean
+}
+
+thing NorthGate as Gate {
+    unlocked = true
+    open = false
 }
 ```
 
-Y de una instancia concreta, que por ahora describimos informalmente:
+Queremos responder:
 
-```text
-identidad: egypt#1
-tipo runtime: Kingdom
-name: "Egypt"
-treasury: 10_000M
-soldiers: 2_000
-```
+> ¿Qué información pertenece al programa y qué información pertenece al mundo para poder decir formalmente que `NorthGate` está activa, desbloqueada y cerrada?
 
-> [!warning]
-> `egypt#1` es una notación didáctica para una identidad runtime. No estamos decidiendo todavía su sintaxis, serialización ni relación definitiva con un constructo estático como `Egypt`.
+La pregunta parece sencilla, pero obliga a separar:
 
-## 5. Conjuntos
+- Identidades y declaraciones conocidas por el programa.
+- Presencia efectiva en un mundo.
+- Propiedades aplicables.
+- Valores almacenados.
+- Información retenida aunque una declaración se suspenda.
 
-Un **conjunto** es una colección matemática en la que:
+## 2. Objetivos
 
-- El orden no forma parte del significado.
-- Un elemento pertenece o no pertenece.
-- Repetir un elemento no crea una segunda aparición.
+Al terminar deberías poder:
 
-Se escribe:
+1. Distinguir programa resuelto y mundo.
+2. Explicar por qué una `thing` no es una clase con instancias.
+3. Leer conjuntos, pares ordenados y productos cartesianos.
+4. Distinguir función total y parcial.
+5. Modelar un store mediante posiciones `(thing, propiedad)`.
+6. Explicar por qué el conjunto de identidades no necesita repetirse dentro del mundo.
+7. Formular una condición sencilla de buena formación.
+8. Distinguir información almacenada de proyección efectiva.
 
-$$
-A=\{a_1,a_2,\ldots,a_n\}
-$$
+## 3. Prerrequisitos
 
-Y la pertenencia se escribe:
+- Notación elemental de conjuntos.
+- Idea informal de función.
+- Ningún conocimiento previo de semántica formal.
 
-$$
-a\in A
-$$
+## 4. Una sola ontología de `thing`
 
-Para nuestro ejemplo introducimos varios universos:
+> [!rule] Decisión de MUD — D-014
+> Las `thing` declaradas inicialmente y las introducidas por `create` pertenecen al mismo dominio conceptual. Una `thing` concreta posee identidad y estado propio; no es una instancia de otra.
 
-$$
-\mathcal C
-$$
+En el ejemplo:
 
-es el conjunto de constructos;
+- `Gate` es una `thing` abstracta.
+- `NorthGate` es una `thing` concreta.
+- `NorthGate as Gate` declara una arista de especialización.
+- `NorthGate is Gate` será una consulta verdadera.
 
-$$
-\mathcal I
-$$
+No existe una identidad adicional como `northGate#1`. `NorthGate` ya es la cosa.
 
-es el conjunto de identidades runtime;
+Esto no impide que `NorthGate` sea a su vez antecesora de otras `thing`. MUD unifica deliberadamente «cosa concreta» y «posible categoría más específica».
 
-$$
-\mathcal F
-$$
+## 5. Programa resuelto y mundo
 
-es el conjunto de campos;
+Llamaremos $P$ al programa resuelto. Contiene información que no depende del estado momentáneo:
 
-$$
-\mathcal V
-$$
+- Identidades reservadas.
+- Descriptores de declaraciones.
+- Propiedades declaradas.
+- Tipos, cardinalidades y predeterminados.
+- Relaciones directas introducidas por `as`.
+- Cuerpos conocidos de `create`.
 
-es el universo de valores.
+Llamaremos $W$ a un mundo. Contiene información que puede variar:
 
-La letra caligráfica no cambia la naturaleza del conjunto. Es una convención visual para reconocer universos o conjuntos importantes.
-
-Para el ejemplo podemos tomar subconjuntos pequeños:
-
-$$
-C_0=\{\mathsf{Kingdom}\}
-$$
-
-$$
-I_0=\{\mathit{egypt\#1}\}
-$$
-
-$$
-F_0=
-\{
-\mathsf{name},
-\mathsf{treasury},
-\mathsf{soldiers}
-\}
-$$
-
-$$
-V_0=
-\{
-\text{"Egypt"},
-10\,000M,
-2\,000
-\}
-$$
+- Qué declaraciones están activas.
+- Qué cargas han sido materializadas.
+- Qué valores están almacenados.
+- Memoria operacional necesaria para reglas y ondas.
 
 > [!intuition]
-> Los conjuntos anteriores no dicen todavía qué valor corresponde a cada campo. Solo enumeran qué objetos estamos considerando.
+> El programa dice qué piezas y reglas podría tener el juego. El mundo dice cuáles están ahora sobre el suelo y en qué estado se encuentran.
 
-## 6. Pares ordenados y producto cartesiano
+## 6. Conjuntos del fragmento
 
-Un par ordenado:
-
-$$
-(a,b)
-$$
-
-no es lo mismo que un conjunto $\{a,b\}$. En el par, la primera y la segunda posición tienen significado:
+Para esta unidad usamos:
 
 $$
-(a,b)\neq(b,a)
+\mathcal T_P
 $$
 
-en general.
-
-El **producto cartesiano** de dos conjuntos $A$ y $B$ es el conjunto de todos los pares posibles:
+conjunto finito de identidades de `thing` reservadas por $P$;
 
 $$
-A\times B
-=
-\{(a,b)\mid a\in A\land b\in B\}
+\mathcal F_P
 $$
 
-En MUD nos interesa:
+conjunto de anclas de propiedades conocidas;
 
 $$
-\mathcal I\times\mathcal F
+\mathcal V_P
 $$
 
-porque cada posición del estado puede identificarse mediante:
-
-1. La identidad de una instancia.
-2. El campo que queremos consultar.
-
-Por ejemplo:
-
-$$
-(\mathit{egypt\#1},\mathsf{treasury})
-\in
-\mathcal I\times\mathcal F
-$$
-
-Este par funciona como una dirección semántica: “el campo `treasury` de la instancia `egypt#1`”.
-
-## 7. Funciones
-
-Una función total:
-
-$$
-f:A\to B
-$$
-
-asigna a **cada** elemento de $A$ exactamente un elemento de $B$.
-
-Las dos palabras importantes son:
-
-- Cada entrada tiene resultado.
-- Cada entrada tiene un único resultado.
-
-Por ejemplo:
-
-$$
-\operatorname{double}:\mathbb N\to\mathbb N
-$$
-
-$$
-\operatorname{double}(n)=2n
-$$
-
-está definida para todos los naturales.
-
-En cambio, la operación “predecesor natural” no tiene resultado natural para $0$, salvo que inventemos una convención. Podemos representarla como función parcial:
-
-$$
-\operatorname{pred}:\mathbb N\rightharpoonup\mathbb N
-$$
-
-El símbolo:
-
-$$
-\rightharpoonup
-$$
-
-indica que algunas entradas pueden no tener resultado.
-
-## 8. Por qué el store es parcial
-
-Podríamos intentar:
-
-$$
-\operatorname{store}_W:
-\mathcal I\times\mathcal F
-\to
-\mathcal V
-$$
-
-Esto obligaría a que toda identidad tuviera un valor para todo campo existente.
-
-Si el mundo contiene un `Kingdom` y un `Gate`, exigiría absurdos como:
-
-$$
-\operatorname{store}_W
-(\mathit{egypt\#1},\mathsf{open})
-$$
-
-aunque `open` solo pertenezca a `Gate`.
-
-Por eso comenzamos con:
-
-$$
-\operatorname{store}_W:
-\mathcal I\times\mathcal F
-\rightharpoonup
-\mathcal V
-$$
-
-Ahora el store puede estar definido únicamente en combinaciones con sentido.
+universo de valores representables en el fragmento.
 
 Para el ejemplo:
 
 $$
-\operatorname{store}_W
-(\mathit{egypt\#1},\mathsf{name})
+\mathcal T_P
 =
-\text{"Egypt"}
+\{
+\mathsf{Gate},
+\mathsf{NorthGate}
+\}
 $$
 
 $$
-\operatorname{store}_W
-(\mathit{egypt\#1},\mathsf{treasury})
+\mathcal F_P
 =
-10\,000M
+\{
+\mathsf{Gate::unlocked},
+\mathsf{Gate::open}
+\}
 $$
 
+No usamos un conjunto separado de «objetos». Hacerlo introduciría otra vez la ontología descartada.
+
+## 7. Pares ordenados y posiciones
+
+Un par ordenado:
+
 $$
-\operatorname{store}_W
-(\mathit{egypt\#1},\mathsf{soldiers})
+(t,f)
+$$
+
+puede leerse como «la posición de la propiedad $f$ en la `thing` $t$».
+
+El producto cartesiano:
+
+$$
+\mathcal T_P\times\mathcal F_P
+$$
+
+contiene todas las combinaciones posibles, incluidas muchas sin sentido. Por ejemplo, una propiedad puede no pertenecer al esquema efectivo de una `thing`.
+
+Definimos provisionalmente:
+
+$$
+\operatorname{fields}_P(t)
+$$
+
+como el conjunto de propiedades efectivas de $t$. La Unidad 03 explicará cómo se deriva mediante herencia y fusión.
+
+Las posiciones almacenables son:
+
+$$
+\operatorname{Pos}_P
 =
-2\,000
+\{
+(t,f)
+\mid
+t\in\mathcal T_P
+\land
+f\in\operatorname{fields}_P(t)
+\land
+\operatorname{stored}_P(f)
+\}
 $$
 
-En cambio:
+La barra vertical se lee «tal que».
+
+## 8. Funciones y funciones parciales
+
+Una función total:
 
 $$
-\operatorname{store}_W
-(\mathit{egypt\#1},\mathsf{open})
+g:A\to B
 $$
 
-no está definido.
+asocia a cada elemento de $A$ exactamente un elemento de $B$.
+
+Una función parcial:
+
+$$
+g:A\rightharpoonup B
+$$
+
+puede no estar definida para algunos elementos de $A$.
+
+El store puede escribirse de dos formas equivalentes si se eligen bien los dominios:
+
+$$
+\operatorname{store}_W:
+\mathcal T_P\times\mathcal F_P
+\rightharpoonup
+\mathcal V_P
+$$
+
+o:
+
+$$
+\operatorname{store}_W:
+\operatorname{Pos}^{\mathsf{mat}}_{P,W}
+\to
+\mathcal V_P
+$$
+
+La primera usa un dominio grande y parcialidad. La segunda usa únicamente las posiciones materializadas y es total sobre ellas.
+
+> [!intuition]
+> «Parcial» no significa incompleto ni defectuoso. Significa que preguntas como «¿cuál es el tesoro de una puerta?» no tienen por qué recibir un valor inventado.
 
 ## 9. Dominio de una función
 
-El dominio efectivo de una función parcial $f$ se escribe:
+El dominio efectivo de una función parcial $g$ es:
 
 $$
-\operatorname{dom}(f)
+\operatorname{dom}(g)
+=
+\{
+x
+\mid
+g(x)\downarrow
+\}
 $$
 
-Es el conjunto de entradas para las que sí existe resultado.
+El símbolo $\downarrow$ se lee «está definido».
 
-En nuestro ejemplo:
+Para el ejemplo:
 
 $$
 \operatorname{dom}(\operatorname{store}_W)
 =
 \{
-(\mathit{egypt\#1},\mathsf{name}),
-(\mathit{egypt\#1},\mathsf{treasury}),
-(\mathit{egypt\#1},\mathsf{soldiers})
+(\mathsf{NorthGate},\mathsf{Gate::unlocked}),
+(\mathsf{NorthGate},\mathsf{Gate::open})
 \}
 $$
 
-Y se cumple:
+y:
 
 $$
-(\mathit{egypt\#1},\mathsf{open})
-\notin
-\operatorname{dom}(\operatorname{store}_W)
-$$
-
-## 10. Tipo runtime de una identidad
-
-El store indica valores, pero todavía no indica qué constructo describe cada instancia.
-
-Una primera posibilidad sería declarar explícitamente el conjunto $I_W$ de identidades existentes y después una función total:
-
-$$
-\operatorname{kind}_W:I_W\to\mathcal C
-$$
-
-Pero una función incluye su dominio como parte de su definición. Por tanto, si conocemos $\operatorname{kind}_W$, podemos recuperar $I_W$:
-
-$$
-I_W=\operatorname{dom}(\operatorname{kind}_W)
-$$
-
-Mantener ambos como componentes independientes introduciría redundancia y nos obligaría a imponer:
-
-$$
-I_W=\operatorname{dom}(\operatorname{kind}_W)
-$$
-
-en toda buena formación.
-
-Una representación más pequeña consiste en hacer parcial `kind` sobre el universo de identidades:
-
-$$
-\operatorname{kind}_W:
-\mathcal I
-\rightharpoonup
-\mathcal C
-$$
-
-Una identidad existe en $W$ exactamente cuando `kind` está definida para ella:
-
-$$
-i\in I_W
-\iff
-i\in\operatorname{dom}(\operatorname{kind}_W)
-$$
-
-Así, $I_W$ sigue siendo una abreviatura útil, pero es una noción derivada y no un componente independiente del mundo.
-
-En el ejemplo:
-
-$$
-I_W=\{\mathit{egypt\#1}\}
-$$
-
-$$
-\operatorname{kind}_W(\mathit{egypt\#1})
+\operatorname{store}_W
+(\mathsf{NorthGate},\mathsf{Gate::unlocked})
 =
-\mathsf{Kingdom}
+\operatorname{singleton}(\mathsf{true})
 $$
 
-Aquí usamos una función total porque toda identidad existente debe tener algún constructo runtime. Esto es una **propuesta semántica razonable**, no todavía una norma aprobada.
+$$
+\operatorname{store}_W
+(\mathsf{NorthGate},\mathsf{Gate::open})
+=
+\operatorname{singleton}(\mathsf{false})
+$$
 
-## 11. Primera propuesta de mundo
+Usamos `singleton` porque todo campo MUD denota una colección. Omitir `[1]` es azúcar de cardinalidad, no convierte el campo en un escalar distinto.
 
-Ya podemos agrupar las piezas dinámicas:
+## 10. Actividad, materialización y suspensión
+
+D-021 obliga a distinguir tres ideas:
+
+1. Una identidad está reservada porque aparece en el programa.
+2. Su carga puede haber sido materializada y permanecer almacenada.
+3. La declaración puede estar activa o suspendida.
+
+Sea:
 
 $$
-W=
+\mathcal M_W\subseteq\mathcal T_P
+$$
+
+el conjunto de `thing` concretas cuya carga ya se materializó, y:
+
+$$
+\mathcal A_W\subseteq\mathcal T_P
+$$
+
+el conjunto de declaraciones activas.
+
+No exigimos:
+
+$$
+\mathcal A_W=\mathcal M_W
+$$
+
+porque `destroy NorthGate` puede retirar `NorthGate` de la proyección efectiva sin borrar sus valores almacenados. Una reactivación posterior recupera la carga.
+
+En el mundo inicial del ejemplo:
+
+$$
+\mathsf{NorthGate}
+\in
+\mathcal A_W\cap\mathcal M_W
+$$
+
+## 11. Modelo mínimo del mundo
+
+Para el fragmento estudiado:
+
+$$
+W
+=
 \left(
-\operatorname{kind}_W,
+\mathcal A_W,
+\mathcal M_W,
 \operatorname{store}_W
 \right)
 $$
 
-Se lee:
+No incluimos $\mathcal T_P$, $\mathcal F_P$ ni las relaciones declaradas porque ya pertenecen a $P$.
 
-> Un mundo $W$ está formado, como mínimo, por la clasificación runtime parcial de identidades y el store parcial de sus campos.
+> [!warning]
+> Esta terna no pretende ser todavía el modelo completo del runtime. Faltan reglas, aliases, vinculaciones, memoria de `when`, azar y trazas. Es un corte matemático suficiente para estudiar identidad, actividad y estado almacenado sin afirmar más.
 
-El programa resuelto $P$ proporciona el contexto estático: constructos, campos, tipos y demás declaraciones. Esos conjuntos no cambian durante la ejecución y no se repiten como componentes de cada mundo:
+## 12. Buena formación
 
-$$
-\mathcal C_P,\qquad
-\mathcal F_P,\qquad
-\mathcal V_P
-$$
-
-El mundo se interpreta siempre respecto a un programa:
+Escribiremos:
 
 $$
-W\in\operatorname{Worlds}(P)
+P\vdash W\ \mathsf{wf}
 $$
 
-Para nuestro mundo:
+para decir «$W$ está bien formado respecto de $P$».
+
+En este fragmento exigimos:
+
+1. $\mathcal A_W\subseteq\mathcal T_P$.
+2. $\mathcal M_W\subseteq\mathcal T_P$.
+3. Toda `thing` concreta activa está materializada:
+
+   $$
+   \mathcal A_W\cap\mathcal T_P^{\mathsf{concrete}}
+   \subseteq
+   \mathcal M_W
+   $$
+
+4. Toda posición del store es aplicable y almacenada.
+5. Todo valor pertenece al tipo y dominio de la propiedad.
+6. Toda posición almacenada obligatoria de una carga materializada tiene valor.
+
+La cardinalidad exacta y los dominios se formalizarán después. D-026 ya fija que una modificación aceptable debe demostrar la cardinalidad final de cada `then` y de su consolidación.
+
+## 13. Información redundante
+
+Podríamos añadir un conjunto:
 
 $$
-\operatorname{kind}_W
+\mathcal I_W
 =
 \{
-\mathit{egypt\#1}\mapsto\mathsf{Kingdom}
+t\mid\exists f.\,(t,f)\in
+\operatorname{dom}(\operatorname{store}_W)
 \}
 $$
 
-$$
-\operatorname{store}_W
-=
-\left\{
-\begin{aligned}
-(\mathit{egypt\#1},\mathsf{name})
-&\mapsto \text{"Egypt"}\\
-(\mathit{egypt\#1},\mathsf{treasury})
-&\mapsto 10\,000M\\
-(\mathit{egypt\#1},\mathsf{soldiers})
-&\mapsto 2\,000
-\end{aligned}
-\right\}
-$$
+pero sería derivable del store y además no distinguiría bien una `thing` activa sin propiedades almacenadas.
 
-La flecha $\mapsto$ se lee “se asocia con”.
+La lección general es:
 
-## 12. Esquema frente a estado
+> [!definition]
+> Una estructura formal no debe incluir como componente independiente información que puede derivarse sin pérdida de los demás componentes, salvo que exista una razón operacional explícita.
 
-La declaración:
+Aquí $\mathcal A_W$ sí merece ser explícito: no se deriva del store, porque una declaración suspendida conserva carga y una declaración activa puede no tener propiedades.
 
-```mud
-thing Kingdom {
-    name: Text
-    mut treasury: Money
-    mut soldiers: Natural
-}
-```
+## 14. Igualdad de mundos en el fragmento
 
-no afirma que exista `egypt#1`, ni que tenga 10 000 unidades monetarias.
-
-La declaración pertenece al **esquema semántico** del programa. Describe, entre otras cosas:
-
-- Qué campos declara `Kingdom`.
-- Qué tipo tiene cada campo.
-- Qué campos son mutables.
-
-El mundo $W$ pertenece al **estado runtime**. Describe:
-
-- Qué identidades existen.
-- Qué constructo runtime tiene cada una.
-- Qué valores poseen sus campos.
-
-> [!important]
-> Confundir esquema y estado impediría expresar correctamente creación, destrucción, varias instancias del mismo constructo y rollback.
-
-## 13. Buena formación
-
-Nuestra pareja de funciones permite escribir mundos absurdos:
-
-$$
-\operatorname{store}_W
-(\mathit{egypt\#1},\mathsf{treasury})
-=
-\text{"mucho"}
-$$
-
-La estructura matemática existe, pero no representa un estado válido de MUD.
-
-Necesitamos un predicado:
-
-$$
-\operatorname{WellFormed}(P,W)
-$$
-
-que se lee:
-
-> El mundo $W$ está bien formado respecto al programa resuelto $P$.
-
-Más adelante tendrá que exigir, al menos:
-
-1. Toda identidad existente pertenece al dominio de `kind`, y cada entrada de ese dominio tiene un único resultado.
-2. Todo campo almacenado pertenece al constructo correspondiente o a sus ancestros.
-3. Todo valor pertenece al tipo declarado del campo.
-4. Se respetan cardinalidades.
-5. Se respetan dominios.
-6. No existen referencias colgantes.
-
-No formalizamos todavía cada condición porque necesitamos antes el sistema de tipos, herencia, cardinalidades y dominios.
-
-Esta es una técnica profesional importante: podemos definir el nombre y la responsabilidad de una noción antes de expandir todos sus casos, siempre que la marquemos como incompleta.
-
-## 14. Igualdad de mundos
-
-Con esta propuesta revisada:
+Para este corte:
 
 $$
 W_1=W_2
 $$
 
-si y solo si coinciden sus dos componentes:
+si y solo si:
 
 $$
-\operatorname{kind}_{W_1}
-=
-\operatorname{kind}_{W_2}
-$$
-
-$$
+\mathcal A_{W_1}=\mathcal A_{W_2}
+\land
+\mathcal M_{W_1}=\mathcal M_{W_2}
+\land
 \operatorname{store}_{W_1}
 =
 \operatorname{store}_{W_2}
 $$
 
-Esto nos permite expresar la atomicidad de una acción rechazada:
+El modelo completo podría añadir componentes semánticamente observables. No deben añadirse a escondidas cuando llegue el runtime.
 
-$$
-\frac{
-\langle W,q\rangle
-\Downarrow
-\langle W',\mathsf{rejected},T\rangle
-}{
-W'=W
-}
-\;\mathsf{Rejected\text{-}Unchanged}
-$$
-
-Todavía no afirmamos que sea un teorema. Por ahora es la forma de una propiedad que queremos exigir o demostrar cuando definamos la semántica de acciones.
-
-## 15. Alternativas consideradas
-
-### 15.1 Conjunto portador explícito
-
-También podríamos conservar:
-
-$$
-W=
-(I_W,\operatorname{kind}_W,\operatorname{store}_W)
-$$
-
-Esta forma se parece a una estructura algebraica con conjuntos portadores explícitos y puede resultar cómoda al definir operaciones. Sin embargo, si `kind` es total sobre $I_W$, el conjunto puede recuperarse como su dominio.
-
-Conservar ambos exige una condición de coherencia adicional. La propuesta revisada prefiere definir:
-
-$$
-I_W:=\operatorname{dom}(\operatorname{kind}_W)
-$$
-
-### 15.2 Un mapa por instancia
-
-Podríamos representar:
-
-$$
-\operatorname{store}_W:
-\mathcal I
-\rightharpoonup
-(\mathcal F\rightharpoonup\mathcal V)
-$$
-
-Es decir: cada identidad se asocia con otro mapa de campos a valores.
-
-Esta representación es intuitiva y cercana a un objeto o registro. La representación plana:
-
-$$
-(\mathcal I\times\mathcal F)\rightharpoonup\mathcal V
-$$
-
-facilita hablar de posiciones individuales, conjuntos de lectura y conjuntos de escritura.
-
-Las dos pueden contener esencialmente la misma información. Elegir una para la especificación es una convención de modelado, no una verdad matemática inevitable.
-
-### 15.3 Un registro fijo
-
-Podríamos definir un registro diferente para cada constructo. Funciona bien para lenguajes pequeños, pero complica:
-
-- Herencia.
-- Colecciones heterogéneas.
-- Acceso uniforme mediante anclas.
-- Creación dinámica.
-- Grafos de dependencia.
-
-### 15.4 Una secuencia de asignaciones
-
-Una lista como:
-
-```text
-name = "Egypt"
-treasury = 10_000M
-soldiers = 2_000
-```
-
-conserva un orden que, según los principios de MUD, no debería cambiar el significado del estado. Introducir orden sin necesidad nos obligaría después a demostrar que es irrelevante.
-
-## 16. Qué es estándar y qué es de MUD
+## 15. Qué es estándar y qué es de MUD
 
 ### Matemática estándar
 
 - Conjuntos y subconjuntos.
-- Producto cartesiano.
+- Pares ordenados y productos cartesianos.
 - Funciones totales y parciales.
 - Dominio de una función.
-- Igualdad estructural de productos y funciones.
+- Igualdad componente a componente.
 
-### Convenciones provisionales de la especificación
+### Convenciones de esta formalización
 
-- $\mathcal C$, $\mathcal I$, $\mathcal F$ y $\mathcal V$ como letras.
-- `kind` como nombre de la clasificación runtime.
-- Store plano sobre pares identidad-campo.
-- $I_W$ como abreviatura de $\operatorname{dom}(\operatorname{kind}_W)$.
+- $\mathcal T_P$ para identidades de `thing`.
+- $\mathcal F_P$ para propiedades.
+- $\mathcal A_W$ para actividad.
+- $\mathcal M_W$ para cargas materializadas.
+- $\operatorname{store}_W$ para valores almacenados.
 
-### Decisiones semánticas de MUD que deberán aprobarse
+### Decisiones de MUD
 
-- Toda identidad existente tiene un único constructo runtime.
-- La identidad forma parte del estado observable.
-- Dos mundos son iguales exactamente cuando coinciden estos componentes.
-- El store contiene solo campos almacenados o también materializa otros datos.
-- Relación entre constructos estáticos e identidades runtime.
+- Un único dominio de `thing`, sin clases e instancias.
+- Identidades globales reservadas.
+- Campos interpretados como colecciones.
+- Valores predeterminados para todo tipo bien formado.
+- Suspensión lógica distinta de eliminación.
 
-## 17. Errores frecuentes
+## 16. Errores frecuentes
 
-### Usar un conjunto para asociaciones
+### Volver a introducir instancias
 
-Esto enumera valores:
+Es incorrecto inventar `northGate#1` como objeto de tipo `Gate`. `NorthGate` ya es la identidad concreta.
 
-$$
-\{10\,000M,2\,000\}
-$$
+### Confundir programa y mundo
 
-pero no indica cuál es tesoro y cuál soldados.
+Una propiedad declarada pertenece a $P$. Su valor actual pertenece a $W$.
 
-### Confundir campo con valor
+### Hacer total el store sobre combinaciones imposibles
 
-$\mathsf{treasury}$ identifica una propiedad. $10\,000M$ es un valor que puede ocuparla en un estado.
+Una función total sobre $\mathcal T_P\times\mathcal F_P$ obligaría a fabricar valores para propiedades no aplicables.
 
-### Confundir nombre con identidad
+### Derivar actividad desde el store
 
-`"Egypt"` puede cambiar o repetirse. Una identidad runtime debe seguir identificando la misma instancia aunque cambie `name`.
+No funciona: una `thing` destruida conserva carga y una `thing` sin propiedades puede estar activa.
 
-### Hacer total el store sin explicar valores imposibles
+### Confundir sintaxis omitida con semántica distinta
 
-Una función total exige valores para todos los pares de su dominio declarado. No puede ignorarse esa obligación.
+`Boolean` y `Boolean[1]` tienen la misma cardinalidad. La omisión solo es azúcar.
 
-### Llamar teorema a una intención
+## 17. Lectura comentada
 
-`Rejected-Unchanged` todavía no está demostrado porque aún no existe una semántica formal completa de acciones.
-
-## 18. Lectura de comprobación
-
-Deberías poder leer:
+Lee:
 
 $$
 \operatorname{store}_W:
-I_W\times\mathcal F
-\rightharpoonup
-\mathcal V
+\operatorname{Pos}^{\mathsf{mat}}_{P,W}
+\to
+\mathcal V_P
 $$
 
 como:
 
-> En el mundo $W$, el store es una función parcial que, para algunos pares formados por una identidad existente y un campo, produce un valor.
+> En el mundo $W$, el store asigna exactamente un valor MUD a cada posición almacenada materializada.
 
-Y:
+Lee:
 
 $$
-(\mathit{egypt\#1},\mathsf{open})
-\notin
-\operatorname{dom}(\operatorname{store}_W)
+\mathcal A_W\subseteq\mathcal T_P
 $$
 
 como:
 
-> El store de $W$ no define un valor para el campo `open` de `egypt#1`.
+> Todo lo activo en el mundo debe haber sido reservado por el programa.
 
-## 19. Tu turno
+## 18. Tu turno
 
-El ejercicio reutilizable está en [[aprendizaje/ejercicios/01-modelo-minimo-ejercicio]].
+El ejercicio actualizado está en [[aprendizaje/ejercicios/01-modelo-minimo-ejercicio]].
 
-La primera respuesta del autor y su revisión se conservan como caso de aprendizaje:
+> [!exercise] Objetivo
+> Modelar un mundo con `NorthGate` activa y `SouthGate` materializada pero suspendida, sin introducir instancias ni repetir dentro de $W$ la información estática de $P$.
 
-- [[aprendizaje/respuestas/01-modelo-minimo-respuesta]]
-- [[aprendizaje/revisiones/01-modelo-minimo-revision]]
+> [!hint]- Pista 1
+> Separa primero $\mathcal T_P$, $\mathcal A_W$ y $\mathcal M_W$.
 
-> [!exercise] Entregable
-> Modela un mundo con una puerta concreta siguiendo la misma estructura. Después explica con tus palabras por qué el store es parcial.
+> [!hint]- Pista 2
+> Pregúntate qué pares deben pertenecer al dominio del store aunque su `thing` no sea efectiva.
 
-> [!hint]- Pista 1 — Clasifica antes de formalizar
-> Separa constructo, identidad, campos y valores antes de escribir funciones.
+## 19. Incorporación a la especificación
 
-> [!hint]- Pista 2 — Forma del mundo
-> Conserva la forma $W_G=(\operatorname{kind}_{W_G},\operatorname{store}_{W_G})$ y sustituye únicamente su contenido.
+De esta unidad podrán promoverse:
 
-> [!hint]- Pista 3 — Dominio del store
-> El dominio debe contener dos pares: uno para `unlocked` y otro para `open`.
+- La separación entre $P$ y $W$.
+- El dominio único de identidades de `thing`.
+- La distinción entre reserva, materialización y actividad.
+- La forma general del store.
+- Las primeras condiciones de buena formación.
 
-No hay solución completa en esta unidad. Se añadirá o enlazará después de tu intento.
+Antes de publicar habrá que integrar formalmente esquema heredado, aliases, reglas, vinculaciones y proyección efectiva.
 
-## 20. Incorporación futura a la especificación
+## 20. Repaso
 
-Tras revisar el ejercicio y detectar la premisa incorrecta:
+Comprueba que puedes explicar:
 
-1. Fijaremos las convenciones necesarias en `03-notacion.md`.
-2. No incorporaremos $\operatorname{kind}_W$ ni la separación clase–instancia a `04-modelo-matematico.md`.
-3. Formalizaremos primero qué es un constructo y qué relación expresa `is`.
-4. Redactaremos después una nueva propuesta profesional del mundo.
-
-## 21. Repaso
-
-En la siguiente unidad reaparecerán:
-
-- Funciones parciales al definir campos y nombres.
-- Productos cartesianos al formalizar anclas de miembros.
-- Predicados de buena formación al introducir tipos.
-
-Dos o tres unidades después tendrás que detectar por tu cuenta cuándo una función supuestamente total debería ser parcial.
+1. Por qué `NorthGate` no es una instancia de `Gate`.
+2. Por qué el store puede verse como función parcial.
+3. Por qué actividad y materialización son conjuntos distintos.
+4. Por qué $\mathcal T_P$ pertenece al programa y no se repite en el mundo.
+5. Qué significa $P\vdash W\ \mathsf{wf}$.

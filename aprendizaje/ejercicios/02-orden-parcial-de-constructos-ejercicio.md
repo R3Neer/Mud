@@ -1,5 +1,5 @@
 ---
-title: Ejercicio 02 — Orden parcial de constructos
+title: Ejercicio 02 — Grafo almacenado y efectivo de `thing`
 unit: 2
 status: vigente
 level: 1
@@ -8,11 +8,11 @@ tags:
   - mud/ejercicio
 ---
 
-# Ejercicio 02 — Orden parcial de constructos
+# Ejercicio 02 — Grafo almacenado y efectivo de `thing`
 
 Referencia: [[aprendizaje/unidades/02-constructos-como-orden-parcial]].
 
-Completa la plantilla [[aprendizaje/respuestas/02-orden-parcial-de-constructos-respuesta]].
+Completa [[aprendizaje/respuestas/02-orden-parcial-de-constructos-respuesta]].
 
 ## Enunciado
 
@@ -23,226 +23,146 @@ abstract thing Entity {
 }
 
 abstract thing Place as Entity {
-    name: Text = ""
 }
 
 thing Settlement as Place {
 }
 
 thing Alexandria as Settlement {
-    name = "Alexandria"
 }
 
 thing NileDelta as Place {
-    name = "Nile Delta"
 }
 ```
 
-Durante la ejecución ocurre:
+Durante la ejecución:
 
 ```mud
 create thing Memphis as Settlement {
-    name = "Memphis"
-}
-
-create thing Monument {
-}
-
-create abstract thing RiverRegion as Place {
 }
 
 create thing DeltaCapital as NileDelta, Settlement {
-    name = "Delta Capital"
 }
 ```
 
-## 1. Conjuntos declarados
+Todas están activas. Después se ejecuta:
 
-Define por extensión:
+```mud
+destroy Settlement
+```
 
-$$
-\mathcal C_P
-$$
+`Settlement` queda suspendida, pero sus aristas permanecen almacenadas.
 
-$$
-\mathcal A_P
-$$
+## 1. Identidades
 
-y deriva:
+Define:
 
 $$
-\mathcal K_P
-:=
-\mathcal C_P\setminus\mathcal A_P
+\mathcal T_P
 $$
 
-## 2. Especialización directa estática
+e indica qué identidades proceden de declaraciones iniciales y cuáles de lugares de `create`.
 
-Escribe:
+Escribe $\mathcal A_{W_0}$ antes de `destroy` y $\mathcal A_{W_1}$ después.
 
-$$
-R_P^{\mathrm{dir}}
-\subseteq
-\mathcal C_P\times\mathcal C_P
-$$
+## 2. Relación almacenada
 
-y enumera todos sus pares.
-
-Usa la orientación:
+Construye:
 
 $$
-(\text{más específico},\text{antecesor directo})
-$$
-
-## 3. Creación
-
-Define por extensión el conjunto de identidades reservadas:
-
-$$
-\mathcal R_P^{\mathsf{create}}
-$$
-
-Después define las cuatro asociaciones de:
-
-$$
-\operatorname{shape}_P
-$$
-
-Cada resultado de $\operatorname{shape}_P$ debe indicar:
-
-1. Si el constructo es abstracto o concreto.
-2. Su conjunto finito de antecesores directos.
-
-Como las cuatro creaciones son efectivas en el escenario, define:
-
-$$
-\mathcal D_W
-$$
-
-restringe $\operatorname{shape}_P$ para obtener $\operatorname{created}_W$ y comprueba:
-
-$$
-\operatorname{dom}(\operatorname{created}_W)
-=
-\mathcal D_W
-$$
-
-Después deriva:
-
-$$
-\mathcal A_W
-:=
-\{
-c\in\mathcal D_W
-\mid
-\pi_1(\operatorname{created}_W(c))
-=
-\mathsf{abstract}
-\}
+R^{\mathsf{stored}}_{P,W_0}
 $$
 
 y:
 
 $$
-\mathcal C_{P,W}
-:=
-\mathcal C_P\cup\mathcal D_W
+R^{\mathsf{stored}}_{P,W_1}
 $$
 
-Comprueba además:
+Explica por qué son iguales.
 
-1. Que todas las identidades estaban reservadas antes de activarse.
-2. Que ninguna estaba activa inmediatamente antes de su creación efectiva.
-3. Que todos los antecesores indicados pertenecen a $\mathcal C_{P,W}$.
-4. Que las nuevas aristas no forman ciclos.
-5. Que `Monument` continúa perteneciendo a $\mathcal D_W$ aunque no añada ninguna arista.
-
-## 4. Relación directa completa
+## 3. Relación efectiva antes de destruir
 
 Construye:
 
 $$
-R_{P,W}^{\mathrm{dir}}
+R^{\mathsf{eff}}_{P,W_0}
 $$
 
-Primero deriva $R_W^{\mathrm{dir}}$ y después construye $R_{P,W}^{\mathrm{dir}}$, incluyendo todos los pares introducidos por las creaciones.
+Cuando todas las identidades del camino están activas, no debe aparecer ningún bypass innecesario.
+
+## 4. Relación efectiva después de destruir
+
+Construye:
+
+$$
+R^{\mathsf{eff}}_{P,W_1}
+$$
+
+Incluye los bypass necesarios desde:
+
+- `Alexandria`.
+- `Memphis`.
+- `DeltaCapital`.
 
 ## 5. Consultas `is`
 
-Indica si son verdaderas o falsas y justifica cada respuesta mediante:
+Evalúa en $W_1$:
 
-- Identidad.
-- Arista directa.
-- Camino de más de una arista.
-- Ausencia de camino.
+| Consulta | Resultado | Camino o razón |
+| --- | --- | --- |
+| `Alexandria is Place` |  |  |
+| `Alexandria is Entity` |  |  |
+| `Memphis is Place` |  |  |
+| `DeltaCapital is NileDelta` |  |  |
+| `DeltaCapital is Place` |  |  |
+| `Place is Place` |  |  |
+| `Place is Alexandria` |  |  |
 
-Consultas:
+No evalúes `x is Settlement`: el tratamiento diagnóstico de operandos inactivos todavía no está cerrado.
 
-```mud
-Alexandria is Settlement
-Alexandria is Entity
-Place is Place
-Place is Alexandria
-Memphis is Entity
-NileDelta is Settlement
-Monument is Monument
-Monument is Entity
-RiverRegion is Entity
-DeltaCapital is NileDelta
-DeltaCapital is Settlement
-```
+## 6. Orden parcial
 
-## 6. Antecesores
-
-Define:
-
-$$
-\operatorname{Anc}_{P,W}(c)
-:=
-\{
-a\in\mathcal C_{P,W}
-\mid
-c\preceq_{P,W}a
-\}
-$$
-
-Calcula:
-
-$$
-\operatorname{Anc}_{P,W}(\mathsf{Memphis})
-$$
-
-Incluye el propio constructo si la relación es reflexiva.
+Explica brevemente por qué el bypass no crea ciclos nuevos y por qué la clausura efectiva sigue siendo antisimétrica.
 
 ## 7. Ciclo inválido
 
-Supón que se añade:
+¿Por qué debe rechazarse?
 
 ```mud
 thing Entity as Alexandria {
 }
 ```
 
-Escribe el camino no vacío que demostraría el ciclo y explica qué propiedad del orden parcial quedaría destruida si `Entity` y `Alexandria` siguieran siendo identidades distintas.
+Escribe el camino no vacío que cerraría el ciclo.
 
-## 8. Función o relación
+## 8. Membresía estricta
 
-Explica por qué:
+Para:
+
+```mud
+places: Place[*]
+```
+
+clasifica como admisibles o inadmisibles en $W_1$:
+
+- `Place`.
+- `Alexandria`.
+- `NileDelta`.
+- `Memphis`.
+- `Entity`.
+
+Justifica usando:
 
 $$
-\operatorname{parent}:\mathcal C\to\mathcal C
+c\neq\mathsf{Place}
+\land
+c\ \mathsf{is}\ \mathsf{Place}
 $$
-
-no basta para representar toda la especialización de MUD.
-
-Construye un ejemplo mínimo de especialización múltiple que lo demuestre.
 
 ## 9. `as` e `is`
 
-Clasifica `as` e `is` como:
-
-- Introducción de una arista directa.
-- Consulta de la relación reflexiva y transitiva.
+Explica qué diferencia existe entre los nodos abstractos correspondientes a:
 
 ```mud
 thing Alexandria as Settlement {
@@ -251,29 +171,17 @@ thing Alexandria as Settlement {
 Alexandria is Place
 ```
 
-Explica qué nodo del AST corresponde a cada construcción y por qué emplear palabras distintas refleja sus niveles semánticos.
-
 ## 10. Parte insegura
 
-Indica al menos una parte en la que hayas dudado o que hayas tenido que comprobar.
+Indica al menos una decisión o paso que hayas tenido que comprobar.
 
 ## Criterio de corrección
 
 La respuesta debe:
 
-1. Contener todos los pares directos y solo esos pares.
-2. Mantener la orientación acordada.
-3. Distinguir relación directa y clausura.
-4. Aplicar correctamente reflexividad y transitividad.
-5. Exhibir el ciclo mediante un camino.
-6. Justificar por qué la especialización general es una relación.
-7. Representar correctamente creaciones raíz, abstractas y con varios antecesores.
-
-> [!hint]- Pista 1
-> Hay cinco constructos declarados y cuatro creados.
-
-> [!hint]- Pista 2
-> `Monument` no aparece en $R_W^{\mathrm{dir}}$, pero sí en el dominio de $\operatorname{created}_W$.
-
-> [!hint]- Pista 3
-> Para demostrar el ciclo, comienza en `Entity`, sigue todas las aristas y regresa al punto inicial.
+1. Conservar las aristas almacenadas tras `destroy`.
+2. Excluir `Settlement` del portador efectivo de $W_1$.
+3. Añadir solo bypass con extremos activos e interior inactivo.
+4. Distinguir relación directa y clausura.
+5. Aplicar reflexividad y antisimetría.
+6. Aplicar la desigualdad obligatoria de membresía.
