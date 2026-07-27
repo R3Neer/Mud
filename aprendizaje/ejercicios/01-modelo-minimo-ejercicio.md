@@ -1,7 +1,7 @@
 ---
 title: Ejercicio 01 — Modelo mínimo de una puerta
 unit: 1
-status: vigente
+status: sustituido
 level: 1
 tags:
   - mud/aprendizaje
@@ -9,6 +9,9 @@ tags:
 ---
 
 # Ejercicio 01 — Modelo mínimo de una puerta
+
+> [!warning] Ejercicio histórico
+> Este ejercicio conserva el contramodelo clase–instancia que fue retirado tras su revisión. No debe utilizarse como modelo semántico de MUD. Se mantiene como procedencia del aprendizaje de funciones parciales y redundancia representacional.
 
 Referencia: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
 

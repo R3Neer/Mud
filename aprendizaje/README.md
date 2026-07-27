@@ -21,6 +21,12 @@ status: activo
 - [[especificacion/00-convenciones-editoriales|Convenciones editoriales]]
 - [[especificacion/README|Índice de la especificación]]
 
+## Secuencia actual
+
+1. [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo|Unidad 01 — Modelo mínimo de un mundo]] — completada con rectificación.
+2. [[aprendizaje/unidades/02-constructos-como-orden-parcial|Unidad 02 — Constructos como orden parcial]] — activa.
+3. [[aprendizaje/unidades/03-esquema-heredable-y-estado-independiente|Unidad 03 — Esquema heredable y estado independiente]] — planificada.
+
 ## Método
 
 El itinerario emplea una transferencia gradual de responsabilidad parecida a Assimil:
@@ -55,14 +61,17 @@ motivación
 > [!important]
 > Ningún fragmento pasa a ser normativo solo porque parezca razonable. Primero debe entenderse, discutirse, comprobarse con ejemplos y registrarse como decisión cuando cierre una cuestión abierta.
 
-## Carpetas futuras
+## Organización
 
 ```text
 aprendizaje/
-├── unidades/       # Lecciones y ejercicios
+├── unidades/       # Lecciones y planificación de unidades
+├── ejercicios/     # Entregables sin solución
+├── respuestas/     # Trabajo del autor
+├── revisiones/     # Evaluación y correcciones
 ├── soluciones/     # Soluciones liberadas después del intento
 ├── repasos/        # Recuperación espaciada
-└── glosario/       # Explicaciones didácticas de conceptos matemáticos
+└── glosario/       # Explicaciones reutilizables de conceptos
 ```
 
-No es necesario crear todos esos archivos de antemano. Se añadirán cuando una unidad los necesite.
+No es necesario crear todas las carpetas o soluciones de antemano. Se añadirán cuando una unidad las necesite.

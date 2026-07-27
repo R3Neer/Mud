@@ -10,10 +10,11 @@ status: activo
 
 ## Estado general
 
-- Etapa: notación formal y ontología de constructos.
+- Etapa: grafo formal de constructos.
 - Nivel global orientativo: 0 → 1 — demostración e imitación.
 - Unidad completada: [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo]].
-- Próximo bloque: grafo de constructos, esquema heredable y estado independiente.
+- Unidad actual: [[aprendizaje/unidades/02-constructos-como-orden-parcial]].
+- Unidad siguiente: [[aprendizaje/unidades/03-esquema-heredable-y-estado-independiente]].
 - Especificación relacionada: [[especificacion/03-notacion]] y [[especificacion/04-modelo-matematico]].
 
 ## Competencias
@@ -23,13 +24,17 @@ status: activo
 | Leer y escribir conjuntos | Nivel 1 demostrado | Respuesta 01 | Unidad 02 |
 | Distinguir conjunto, secuencia y multiconjunto | Introducido parcialmente | Conjunto frente a secuencia en Unidad 01 | Unidad posterior |
 | Usar funciones y funciones parciales | Nivel 1 demostrado | Respuesta 01 y objeción sobre $I_G$ | Unidad 02 |
-| Leer juicios formales | Introducido | `Rejected-Unchanged` en Unidad 01 | Unidad 02 |
-| Leer reglas de inferencia | Introducido | Ejemplo de suma y dominio | Unidad 02 |
-| Escribir EBNF | Sin evaluar | — | Unidad 03 |
+| Distinguir función y relación | Introducido | Demostración de especialización múltiple en Unidad 02 | Ejercicio 02 |
+| Leer grafos y caminos | Introducido | Grafo directo de constructos en Unidad 02 | Ejercicio 02 |
+| Calcular clausuras de relaciones | Introducido | Demostración resuelta en Unidad 02 | Ejercicio 02 |
+| Reconocer órdenes parciales | Introducido | Proposición de aciclicidad en Unidad 02 | Ejercicio 02 |
+| Leer juicios formales | Introducido | `Rejected-Unchanged` en Unidad 01 | Unidad posterior |
+| Leer reglas de inferencia | Introducido | Ejemplo de suma y dominio | Unidad posterior |
+| Escribir EBNF | Sin evaluar | — | Unidad de gramática |
 | Definir semántica estática | Sin evaluar | — | Unidad posterior |
 | Definir semántica operacional | Sin evaluar | — | Unidad posterior |
 | Construir contraejemplos | Introducido | Redundancia de $I_G$ y dominio del store | Unidad 02 |
-| Escribir una demostración | Sin evaluar | — | Después de definiciones básicas |
+| Escribir una demostración | Demostración leída | Prueba de que $R^*$ es orden parcial en Unidad 02 | Unidad posterior |
 
 ## Decisiones didácticas
 
@@ -47,6 +52,8 @@ status: activo
 | --- | --- | ---: | --- | --- |
 | 00 | Arquitectura de la especificación | 0 | Completada | Índice maestro |
 | 01 | Modelo mínimo de un mundo | 0 → 1 | Completada con rectificación | Competencias matemáticas adquiridas; contramodelo clase–instancia rechazado |
+| 02 | Constructos como orden parcial | 0 → 1 | En curso | Teoría y ejercicio preparados |
+| 03 | Esquema heredable y estado independiente | 1 → 2 | Planificada | Se activará tras revisar la respuesta 02 |
 
 ## Errores recurrentes
 
