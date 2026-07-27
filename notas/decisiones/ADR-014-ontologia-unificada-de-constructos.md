@@ -19,7 +19,7 @@ MUD tiene un único dominio conceptual de constructos.
 2. Todo constructo posee identidad semántica.
 3. Todo constructo concreto denota además una cosa concreta con estado propio y puede servir como antecesor de otros constructos.
 4. Un constructo abstracto pertenece al mismo dominio y posee identidad, pero no denota por sí mismo una cosa concreta con estado propio.
-5. `create C N` crea un constructo concreto nuevo $N$ y lo relaciona con $C$ mediante el mismo `is` utilizado por una declaración estática.
+5. `create` crea un constructo nuevo y puede añadir cero o varias relaciones directas mediante `from`, según [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 6. La relación semántica `is` es reflexiva y transitiva.
 
 La procedencia —declaración estática o creación durante la ejecución— y el ciclo de vida no originan dos clases distintas de entidad.
@@ -116,6 +116,6 @@ La suite deberá cubrir:
 1. Reflexividad: `C is C`.
 2. Relación directa: una cabecera `B is A` implica `B is A`.
 3. Transitividad: `C is B` y `B is A` implican `C is A`.
-4. Creación: `create C N` hace verdadera `N is C`.
+4. Creación: `create N from C` hace verdadera `N is C`, mientras `create N` no añade antecesores.
 5. Identidad: dos constructos creados por separado continúan siendo distintos aunque satisfagan los mismos ancestros y posean el mismo estado.
 6. Separación sintáctica de la cláusula y el operador en el AST.

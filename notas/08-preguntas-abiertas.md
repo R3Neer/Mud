@@ -72,7 +72,7 @@ La fuente afirma que todas las decisiones son vigentes, pero algunas se describe
 
 Estado: **cerrada**.
 
-¿Cuál es la estructura matemática común de los constructos declarados y los creados durante la ejecución, y qué añade exactamente `create C N` al mundo?
+¿Cuál es la estructura matemática común de los constructos declarados y los creados durante la ejecución, y qué añade `create` al mundo?
 
 Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]].
 
@@ -99,6 +99,36 @@ Estado: **cerrada**.
 Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
 Todo ciclo de especialización directa es inválido. La relación semántica `is` es un orden parcial.
+
+### Q-044 — Identidad y referencias a constructos futuros
+
+¿Qué designa el nombre introducido por `create A`?
+
+Debe decidirse si:
+
+- `A` es una identidad global reservada y la creación solo puede ocurrir una vez.
+- `A` es una vinculación local a una identidad fresca y la misma sentencia puede ejecutarse varias veces.
+- Existe otro mecanismo explícito para declarar una identidad futura.
+
+La respuesta determina si una regla o acción compilada puede mencionar exactamente `A` antes de su creación, cómo se detectan errores tipográficos, qué ocurre al solicitar una acción antes de que exista y si destruir y recrear conserva identidad.
+
+También afecta a las vinculaciones `for`: una vinculación exacta no existe antes del constructo; al crearlo habría que determinar cuándo nace la vinculación y cuál es su estado anterior, en coordinación con Q-005.
+
+Bloquea resolución de nombres, anclas runtime, repetición de `create`, firmas con participantes y ciclo de vida reactivo.
+
+### Q-045 — Contenido declarativo de `create`
+
+¿Puede el bloque de `create` declarar nuevos campos, restricciones o predeterminados, o solo inicializar el estado permitido por el esquema heredado?
+
+La cuestión es especialmente importante para:
+
+```mud
+create abstract B from A
+```
+
+Un constructo abstracto no tiene estado concreto que inicializar. Si debe ser plenamente equivalente a una declaración estática con cuerpo, el mundo adquiriría también esquema nuevo durante la ejecución y el compilador no podría conocerlo íntegramente de antemano.
+
+Bloquea la frontera programa–mundo, el sistema de tipos, el IR dinámico y la Unidad 03.
 
 ## P1 — Antes de ampliar el lenguaje
 

@@ -30,11 +30,11 @@ Hay que conservar tres relaciones distintas:
 
 Dos constructos creados durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con los mismos componentes son iguales. Aliases diferentes no son intercambiables aunque su forma coincida.
 
-`create C N` crea un nuevo constructo concreto $N$ y establece la misma relación `is` que una declaración estática de especialización. El origen y el ciclo de vida no forman una segunda categoría ontológica.
+`create` puede producir un constructo raíz, abstracto o concreto y relacionarlo con cero o varios antecesores mediante `from`, según [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]]. Cada antecesor añade la misma relación directa que una declaración estática de especialización. El origen y el ciclo de vida no forman una segunda categoría ontológica.
 
 La especialización directa es acíclica. Su clausura reflexiva y transitiva, consultada mediante `is`, forma un orden parcial.
 
-Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada constructo concreto conserva estado independiente. `create` inicializa desde los predeterminados efectivos y aplica después las asignaciones explícitas de su bloque.
+Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada constructo concreto conserva estado independiente. Un `create` concreto inicializa desde los predeterminados efectivos combinados y aplica después las asignaciones explícitas de su bloque.
 
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
 

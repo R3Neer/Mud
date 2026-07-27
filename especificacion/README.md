@@ -609,7 +609,8 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 
 Define:
 
-- Creación de un constructo con identidad fresca.
+- Creación de constructos raíz, abstractos y con especialización múltiple.
+- Identidad y alcance de los nombres introducidos por `create`.
 - Inicialización.
 - Destrucción.
 - Referencias pendientes.

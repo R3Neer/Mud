@@ -30,7 +30,7 @@ La especialización no hereda, copia ni observa el estado mutable actual del ant
 
 Cada constructo concreto posee estado independiente. La mutación de un constructo no modifica por sí sola el estado de sus descendientes.
 
-Al crear un constructo mediante `create C N`, la inicialización de $N$ parte de los valores predeterminados efectivos heredados de $C$ y aplica después las asignaciones explícitas del bloque de creación. No parte de los valores que el estado actual de $C$ contenga en ese momento.
+Al crear un constructo concreto mediante `create N from C_1,\ldots,C_n`, la inicialización de $N$ parte de los valores predeterminados efectivos obtenidos de sus antecesores y aplica después las asignaciones explícitas del bloque de creación. No parte de los valores que sus estados activos contengan en ese momento. Si no hay antecesores, no existen predeterminados heredados.
 
 Las asignaciones del bloque `create` inicializan el estado de $N$; no se convierten por ello en nuevos valores predeterminados heredables por futuros descendientes de $N$.
 
@@ -85,7 +85,7 @@ Se descarta porque convertiría `is` en un preorden: dos constructos con identid
 
 - El grafo de especialización estática debe comprobarse como grafo dirigido acíclico.
 - La resolución de campos y predeterminados puede recorrer antecesores sin riesgo de ciclos.
-- Añadir mediante `create` un constructo fresco con una arista hacia un constructo existente no puede formar un ciclo por sí solo.
+- Añadir mediante `create` un constructo fresco con aristas hacia constructos existentes no puede formar un ciclo por sí solo.
 - Cualquier futura operación que permita cambiar antecesores deberá preservar la aciclicidad.
 - El IR debe separar metadatos heredables de estado mutable.
 - La inicialización debe calcular predeterminados efectivos antes de aplicar las asignaciones explícitas de `create`.
@@ -118,7 +118,7 @@ el valor de `Egypt.treasury` no cambia.
 De igual modo, tras:
 
 ```mud
-create Kingdom France {
+create France from Kingdom {
     treasury = 20M
 }
 ```

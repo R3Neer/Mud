@@ -28,6 +28,7 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-013 | Vigente | La especificación formal del lenguaje completo precederá a la continuación de su implementación | [especificacion/README.md](../especificacion/README.md) | Decisión del autor, 2026-07-27 |
 | D-014 | Vigente | Los constructos forman un único dominio, los concretos son cosas y posibles antecesores, `create` crea otro constructo e `is` es reflexivo | [ADR-014](decisiones/ADR-014-ontologia-unificada-de-constructos.md) | Decisión del autor, 2026-07-27 |
 | D-015 | Vigente | La especialización hereda esquema y predeterminados, mantiene estados independientes y rechaza ciclos | [ADR-015](decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md) | Decisión del autor, 2026-07-27 |
+| D-016 | Vigente | `create` puede producir constructos raíz, abstractos o con varios antecesores mediante `from` | [ADR-016](decisiones/ADR-016-creacion-generalizada-de-constructos.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 
