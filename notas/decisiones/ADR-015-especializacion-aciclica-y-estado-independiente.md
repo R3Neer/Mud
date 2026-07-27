@@ -30,9 +30,9 @@ La especialización no hereda, copia ni observa el estado mutable actual del ant
 
 Cada constructo concreto posee estado independiente. La mutación de un constructo no modifica por sí sola el estado de sus descendientes.
 
-Al crear un constructo concreto mediante `create N from C_1,\ldots,C_n`, la inicialización de $N$ parte de los valores predeterminados efectivos obtenidos de sus antecesores y aplica después las asignaciones explícitas del bloque de creación. No parte de los valores que sus estados activos contengan en ese momento. Si no hay antecesores, no existen predeterminados heredados.
+Al activar un constructo concreto mediante `create N from C_1,\ldots,C_n { ... }`, la inicialización de $N$ parte de los valores predeterminados efectivos obtenidos de sus antecesores, incorpora las declaraciones locales del cuerpo y aplica después las inicializaciones explícitas. No parte de los valores que sus estados activos contengan en ese momento. Si no hay antecesores, no existen predeterminados heredados; las propiedades sin predeterminado explícito emplean el de su tipo.
 
-Las asignaciones del bloque `create` inicializan el estado de $N$; no se convierten por ello en nuevos valores predeterminados heredables por futuros descendientes de $N$.
+Las inicializaciones concretas del bloque `create` inicializan el estado de $N$; no se convierten por ello en nuevos valores predeterminados heredables por futuros descendientes de $N$. Las declaraciones explícitas de predeterminado dentro del mismo cuerpo sí forman parte del esquema.
 
 ### Especialización acíclica
 
@@ -85,7 +85,7 @@ Se descarta porque convertiría `is` en un preorden: dos constructos con identid
 
 - El grafo de especialización estática debe comprobarse como grafo dirigido acíclico.
 - La resolución de campos y predeterminados puede recorrer antecesores sin riesgo de ciclos.
-- Añadir mediante `create` un constructo fresco con aristas hacia constructos existentes no puede formar un ciclo por sí solo.
+- Activar mediante `create` una identidad previamente ausente con aristas hacia constructos activos no puede formar un ciclo por sí solo si ninguna arista previa apunta desde sus antecesores hacia ella; la validación debe comprobar el grafo combinado.
 - Cualquier futura operación que permita cambiar antecesores deberá preservar la aciclicidad.
 - El IR debe separar metadatos heredables de estado mutable.
 - La inicialización debe calcular predeterminados efectivos antes de aplicar las asignaciones explícitas de `create`.
@@ -103,7 +103,7 @@ construct Kingdom {
     mut treasury: Money = 0M
 }
 
-construct Egypt is Kingdom {
+construct Egypt from Kingdom {
 }
 ```
 

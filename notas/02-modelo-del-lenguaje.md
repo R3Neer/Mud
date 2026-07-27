@@ -26,17 +26,20 @@ Hay que conservar tres relaciones distintas:
 
 - Los constructos se comparan por identidad.
 - Los aliases se comparan por valor estructural.
-- `is` expresa especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
+- `from` declara antecesores directos en cabeceras estáticas y dinámicas.
+- `is` consulta especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
 
 Dos constructos creados durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con los mismos componentes son iguales. Aliases diferentes no son intercambiables aunque su forma coincida.
 
-`create` puede producir un constructo raíz, abstracto o concreto y relacionarlo con cero o varios antecesores mediante `from`, según [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]]. Cada antecesor añade la misma relación directa que una declaración estática de especialización. El origen y el ciclo de vida no forman una segunda categoría ontológica.
+`create` puede activar un constructo raíz, abstracto o concreto y relacionarlo con cero o varios antecesores mediante `from`, según [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]]. El nombre introducido es una identidad global reservada, no una variable local ni una identidad fresca por ejecución. Si está ausente, se activa; después de destruirlo, una nueva creación reactiva la misma identidad. Cada antecesor añade la misma relación directa que una declaración estática con `from`, según [[notas/decisiones/ADR-018-from-declara-is-consulta|ADR-018]]. El origen y el ciclo de vida no forman una segunda categoría ontológica.
 
 La especialización directa es acíclica. Su clausura reflexiva y transitiva, consultada mediante `is`, forma un orden parcial.
 
-Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada constructo concreto conserva estado independiente. Un `create` concreto inicializa desde los predeterminados efectivos combinados y aplica después las asignaciones explícitas de su bloque.
+El bloque de `create` es un cuerpo declarativo completo: puede añadir propiedades locales además de las heredadas. Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada constructo concreto conserva estado independiente. Un `create` concreto resuelve su esquema completo, inicializa desde los predeterminados efectivos y aplica después las inicializaciones explícitas que correspondan.
 
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
+
+Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio, según [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|ADR-017]]. Por tanto, un campo almacenado sin predeterminado explícito puede inicializarse desde el predeterminado de su tipo. La selección concreta para cada familia de tipos permanece abierta en Q-047.
 
 ## Estado del mundo
 

@@ -19,7 +19,7 @@ MUD tiene un único dominio conceptual de constructos.
 2. Todo constructo posee identidad semántica.
 3. Todo constructo concreto denota además una cosa concreta con estado propio y puede servir como antecesor de otros constructos.
 4. Un constructo abstracto pertenece al mismo dominio y posee identidad, pero no denota por sí mismo una cosa concreta con estado propio.
-5. `create` crea un constructo nuevo y puede añadir cero o varias relaciones directas mediante `from`, según [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
+5. `create` activa una identidad reservada y puede añadir cero o varias relaciones directas mediante `from`, según [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 6. La relación semántica `is` es reflexiva y transitiva.
 
 La procedencia —declaración estática o creación durante la ejecución— y el ciclo de vida no originan dos clases distintas de entidad.
@@ -78,7 +78,7 @@ Se descarta. El autor ha decidido que `is` sea reflexivo. La especialización di
 - El AST debe evitar un nodo genérico ambiguo: la declaración añade una arista directa y la expresión construye una consulta booleana.
 - La resolución debe comprobar que los nombres usados en una cláusula de especialización designan constructos.
 - La especialización declarada puede analizarse estáticamente.
-- `create` amplía durante la ejecución el conjunto de constructos y la relación directa, por lo que las consultas sobre constructos creados no siempre pueden reducirse completamente en compilación.
+- `create` amplía durante la ejecución el conjunto activo y la relación directa activa. Aunque la identidad y su descriptor estén resueltos, una consulta que exija presencia no siempre puede reducirse en compilación.
 - La reflexividad no requiere almacenar bucles $c\to c$; se obtiene al consultar la clausura.
 
 ## Consecuencias para el uso humano
@@ -86,10 +86,10 @@ Se descarta. El autor ha decidido que `is` sea reflexivo. La especialización di
 La reutilización de `is` es coherente si se explica la diferencia entre relación directa y relación derivada:
 
 ```mud
-construct Kingdom is Place {
+construct Kingdom from Place {
 }
 
-construct Egypt is Kingdom {
+construct Egypt from Kingdom {
 }
 ```
 
@@ -114,8 +114,9 @@ La última expresión puede sorprender si `is` se interpreta informalmente como 
 La suite deberá cubrir:
 
 1. Reflexividad: `C is C`.
-2. Relación directa: una cabecera `B is A` implica `B is A`.
+2. Relación directa: una cabecera `construct B from A` implica `B is A`.
 3. Transitividad: `C is B` y `B is A` implican `C is A`.
-4. Creación: `create N from C` hace verdadera `N is C`, mientras `create N` no añade antecesores.
-5. Identidad: dos constructos creados por separado continúan siendo distintos aunque satisfagan los mismos ancestros y posean el mismo estado.
-6. Separación sintáctica de la cláusula y el operador en el AST.
+4. Creación: `create N from C {}` hace verdadera `N is C`, mientras `create N {}` no añade antecesores.
+5. Identidad reservada: destruir y recrear `N` reactiva la misma identidad.
+6. Identidad distinta: dos nombres reservados diferentes continúan siendo distintos aunque satisfagan los mismos ancestros y posean el mismo estado.
+7. Separación sintáctica de `from` y del operador `is` en el AST.

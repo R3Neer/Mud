@@ -26,9 +26,11 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-011 | Vigente | Los derivados no pueden añadir comportamiento de dominio | [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) | Secciones 2.1, 63 a 66 |
 | D-012 | Vigente | Los cambios semánticos válidos se validan y versionan atómicamente | [05-cambios-semanticos-y-git.md](05-cambios-semanticos-y-git.md) | Secciones 68 a 71 e introducción del usuario |
 | D-013 | Vigente | La especificación formal del lenguaje completo precederá a la continuación de su implementación | [especificacion/README.md](../especificacion/README.md) | Decisión del autor, 2026-07-27 |
-| D-014 | Vigente | Los constructos forman un único dominio, los concretos son cosas y posibles antecesores, `create` crea otro constructo e `is` es reflexivo | [ADR-014](decisiones/ADR-014-ontologia-unificada-de-constructos.md) | Decisión del autor, 2026-07-27 |
+| D-014 | Vigente | Los constructos forman un único dominio, los concretos son cosas y posibles antecesores, y `is` es reflexivo | [ADR-014](decisiones/ADR-014-ontologia-unificada-de-constructos.md) | Decisión del autor, 2026-07-27 |
 | D-015 | Vigente | La especialización hereda esquema y predeterminados, mantiene estados independientes y rechaza ciclos | [ADR-015](decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md) | Decisión del autor, 2026-07-27 |
 | D-016 | Vigente | `create` puede producir constructos raíz, abstractos o con varios antecesores mediante `from` | [ADR-016](decisiones/ADR-016-creacion-generalizada-de-constructos.md) | Decisión del autor, 2026-07-27 |
+| D-017 | Vigente | Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio | [ADR-017](decisiones/ADR-017-valor-predeterminado-de-todo-tipo.md) | Decisión del autor, 2026-07-27 |
+| D-018 | Vigente | `from` declara especialización y `is` queda reservado para consultas | [ADR-018](decisiones/ADR-018-from-declara-is-consulta.md) | Decisión del autor, 2026-07-27 |
 
 ## Propuestas de estas notas
 

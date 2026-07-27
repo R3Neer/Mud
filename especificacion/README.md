@@ -279,6 +279,7 @@ Define:
 - Constructos concretos y abstractos.
 - Constructos declarados y creados durante la ejecución.
 - Especialización simple y múltiple.
+- Cabeceras de especialización con `from` y consultas con `is`.
 - Sustituibilidad.
 - Fusión de campos homónimos.
 - Valores predeterminados heredados.
@@ -610,7 +611,8 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 Define:
 
 - Creación de constructos raíz, abstractos y con especialización múltiple.
-- Identidad y alcance de los nombres introducidos por `create`.
+- Reserva global, activación y reactivación de los nombres introducidos por `create`.
+- Cuerpo declarativo completo de las creaciones.
 - Inicialización.
 - Destrucción.
 - Referencias pendientes.

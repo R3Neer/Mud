@@ -76,7 +76,7 @@ Estado: **cerrada**.
 
 Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]].
 
-MUD tiene un único dominio conceptual de constructos. Todo constructo concreto es una cosa con identidad y estado propio que también puede ser antecesora. Los abstractos pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` produce otro constructo concreto relacionado mediante el mismo `is`, e `is` es reflexivo y transitivo.
+MUD tiene un único dominio conceptual de constructos. Todo constructo concreto es una cosa con identidad y estado propio que también puede ser antecesora. Los abstractos pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` activa una identidad reservada, que puede ser abstracta o concreta, e `is` es reflexivo y transitivo.
 
 Las consecuencias se separaron en Q-042 y Q-043 y quedaron resueltas mediante [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
@@ -102,33 +102,71 @@ Todo ciclo de especialización directa es inválido. La relación semántica `is
 
 ### Q-044 — Identidad y referencias a constructos futuros
 
+Estado: **cerrada**.
+
 ¿Qué designa el nombre introducido por `create A`?
 
-Debe decidirse si:
+Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 
-- `A` es una identidad global reservada y la creación solo puede ocurrir una vez.
-- `A` es una vinculación local a una identidad fresca y la misma sentencia puede ejecutarse varias veces.
-- Existe otro mecanismo explícito para declarar una identidad futura.
+`A` es una identidad global reservada y resoluble antes de estar activa. `create A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
 
-La respuesta determina si una regla o acción compilada puede mencionar exactamente `A` antes de su creación, cómo se detectan errores tipográficos, qué ocurre al solicitar una acción antes de que exista y si destruir y recrear conserva identidad.
-
-También afecta a las vinculaciones `for`: una vinculación exacta no existe antes del constructo; al crearlo habría que determinar cuándo nace la vinculación y cuál es su estado anterior, en coordinación con Q-005.
-
-Bloquea resolución de nombres, anclas runtime, repetición de `create`, firmas con participantes y ciclo de vida reactivo.
+Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `for` continúan coordinados con Q-005.
 
 ### Q-045 — Contenido declarativo de `create`
 
+Estado: **cerrada**.
+
 ¿Puede el bloque de `create` declarar nuevos campos, restricciones o predeterminados, o solo inicializar el estado permitido por el esquema heredado?
 
-La cuestión es especialmente importante para:
+Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
 
 ```mud
-create abstract B from A
+create abstract B from A {
+    # Cuerpo declarativo completo.
+}
 ```
 
-Un constructo abstracto no tiene estado concreto que inicializar. Si debe ser plenamente equivalente a una declaración estática con cuerpo, el mundo adquiriría también esquema nuevo durante la ejecución y el compilador no podría conocerlo íntegramente de antemano.
+El bloque admite la declaración completa de las propiedades permitidas en un constructo ordinario. El compilador conoce el cuerpo porque forma parte del programa, aunque la identidad reservada todavía no esté activa en el mundo. Al activarse, sus declaraciones pasan a participar en el esquema, las reglas, las acciones y las demás estructuras semánticas aplicables.
 
-Bloquea la frontera programa–mundo, el sistema de tipos, el IR dinámico y la Unidad 03.
+### Q-046 — Creación inefectiva dentro de una raíz
+
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
+
+Si una regla contiene `create A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
+
+Falta decidir:
+
+- Qué resultado obtiene una acción solicitada en el mismo caso: `rejected`, `failed` u otro resultado.
+- Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
+- Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
+
+Bloquea la semántica operacional completa de `create`, los conjuntos de efectos y la atomicidad.
+
+### Q-047 — Selección de predeterminados por tipo
+
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|ADR-017]].
+
+Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio. Falta definir la función concreta para:
+
+- Tipos primitivos no cubiertos por la tabla inicial.
+- Aliases, tipos estructurados y colecciones con restricciones.
+- Intervalos, familias cerradas y refinamientos.
+- Tipos cuyo dominio pueda depender del mundo activo.
+
+También debe decidirse si un tipo derivado puede reemplazar explícitamente el predeterminado que obtendría por composición.
+
+### Q-048 — Destrucción con descendientes activos
+
+¿Qué ocurre al ejecutar `destroy A` cuando existe un constructo activo $d\neq A$ tal que `d is A`?
+
+Alternativas conocidas:
+
+- Rechazar la destrucción mientras existan descendientes activos.
+- Destruirlos en cascada.
+- Mantener `A` como identidad no activa pero todavía utilizable por el grafo.
+- Reescribir las relaciones de los descendientes.
+
+La última alternativa cambia silenciosamente el significado de `from`; la cascada introduce un efecto destructivo implícito. Bloquea la definición del conjunto activo, la relación `is` tras destrucción, las vinculaciones y la recreación.
 
 ## P1 — Antes de ampliar el lenguaje
 
@@ -152,9 +190,9 @@ Sintaxis en consultas y acciones compuestas; mezcla o no con argumentos posicion
 
 ¿`RETIRE` marca obsolescencia, exige reemplazo, elimina físicamente o admite varias fases?
 
-### Q-016 — Canonicalización de constructos creados durante la ejecución
+### Q-016 — Canonicalización de identidades activadas durante la ejecución
 
-Formato estable de identidad, snapshots, comparación y referencias entre constructos creados.
+Formato estable de la reserva global, snapshots, comparación, referencias y ciclos de activación–destrucción–reactivación.
 
 ### Q-017 — Dominios dinámicos circulares
 
