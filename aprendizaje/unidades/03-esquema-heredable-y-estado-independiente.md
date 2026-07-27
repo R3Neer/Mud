@@ -23,6 +23,7 @@ decisions:
   - D-015
   - D-016
   - D-017
+  - D-019
 tags:
   - mud/aprendizaje
   - mud/unidad
@@ -53,6 +54,7 @@ La unidad enseñará a:
 6. Comparar un store parcial sobre un producto grande con un store total sobre posiciones válidas.
 7. Escribir condiciones iniciales de buena formación.
 8. Comprobar que estados de antecesores y descendientes son independientes.
+9. Modelar todo campo como colección y separar mutabilidad exterior de capacidad interior.
 
 ## Prerrequisito de activación
 
@@ -114,6 +116,17 @@ $$
 $$
 
 La selección concreta para cada constructor de tipos permanece abierta en [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]].
+
+### Todo campo es una colección
+
+La cardinalidad omitida equivale a `[1]`; no crea un caso escalar separado. Tanto los campos almacenados como los derivados producirán valores colección. La diferencia será si ese valor se almacena o se calcula.
+
+Conforme a [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], estudiaremos por separado:
+
+- Mutabilidad exterior: cambiar pertenencia, orden o multiplicidad.
+- Capacidad interior: modificar los constructos alcanzados como miembros.
+
+La cardinalidad `[1]` no fusiona ambos permisos.
 
 ### Store total o parcial
 
