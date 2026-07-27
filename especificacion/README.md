@@ -73,7 +73,7 @@ El compilador, el plugin conversacional, Git y los materializadores tendrán esp
 
 ## 01. Alcance, conformidad y versiones
 
-Archivo previsto: `01-alcance-y-conformidad.md`
+Capítulo: [[01-alcance-y-conformidad]].
 
 Define:
 
@@ -87,7 +87,7 @@ Define:
 
 ## 02. Terminología
 
-Archivo previsto: `02-terminologia.md`
+Capítulo: [[02-terminologia]].
 
 Glosario normativo de:
 
@@ -104,7 +104,7 @@ Glosario normativo de:
 
 ## 03. Notación matemática y metalenguaje
 
-Archivo previsto: `03-notacion.md`
+Capítulo: [[03-notacion]].
 
 Fija la simbología utilizada en el resto de la norma:
 
@@ -147,7 +147,7 @@ $$
 
 ## 04. Modelo matemático del mundo
 
-Archivo previsto: `04-modelo-matematico.md`
+Capítulo: [[04-modelo-matematico]].
 
 Define, antes de hablar de sintaxis:
 
