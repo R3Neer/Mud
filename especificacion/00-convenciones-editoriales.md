@@ -178,9 +178,11 @@ $$
 }{
   \Gamma \vdash e_1 + e_2 : \mathsf{Natural}
 }
-\;\textsc{T-Add-Natural}
+\;\mathsf{T\text{-}Add\text{-}Natural}
 $$
 ```
+
+Los nombres de reglas usarán `\mathsf{...}`. No se empleará `\textsc`, aunque exista en LaTeX completo, porque no está soportado de forma uniforme por MathJax en Obsidian.
 
 ## 9. Ejemplos
 

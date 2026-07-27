@@ -445,7 +445,7 @@ El mundo $W$ pertenece al **estado runtime**. Describe:
 > [!important]
 > Confundir esquema y estado impediría expresar correctamente creación, destrucción, varias instancias del mismo constructo y rollback.
 
-## 13. Bien formación
+## 13. Buena formación
 
 Nuestra tupla permite escribir mundos absurdos:
 
@@ -461,7 +461,7 @@ La estructura matemática existe, pero no representa un estado válido de MUD.
 Necesitamos un predicado:
 
 $$
-\operatorname{WellFormed}(P,W)
+\operatorname{BienFormado}(P,W)
 $$
 
 que se lee:
@@ -517,7 +517,7 @@ $$
 }{
 W'=W
 }
-\;\textsc{Rejected-Unchanged}
+\;\mathsf{Rejected\text{-}Unchanged}
 $$
 
 Todavía no afirmamos que sea un teorema. Por ahora es la forma de una propiedad que queremos exigir o demostrar cuando definamos la semántica de acciones.
