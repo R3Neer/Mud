@@ -23,10 +23,10 @@ abstract construct Entity {
 }
 
 abstract construct Place is Entity {
+    name: Text = ""
 }
 
 construct Settlement is Place {
-    name: Text = ""
 }
 
 construct Alexandria is Settlement {
@@ -41,8 +41,16 @@ construct NileDelta is Place {
 Durante la ejecución ocurre:
 
 ```mud
-create Settlement Memphis {
+create Memphis from Settlement {
     name = "Memphis"
+}
+
+create Monument
+
+create abstract RiverRegion from Place
+
+create DeltaCapital from NileDelta, Settlement {
+    name = "Delta Capital"
 }
 ```
 
@@ -86,20 +94,35 @@ $$
 
 ## 3. Creación
 
-Define la asociación de:
+Define las cuatro asociaciones de:
 
 $$
-\operatorname{base}_W
+\operatorname{created}_W
 $$
 
-correspondiente a `Memphis`.
+Cada resultado debe indicar:
+
+1. Si el constructo es abstracto o concreto.
+2. Su conjunto finito de antecesores directos.
 
 Después deriva:
 
 $$
 \mathcal D_W
 :=
-\operatorname{dom}(\operatorname{base}_W)
+\operatorname{dom}(\operatorname{created}_W)
+$$
+
+$$
+\mathcal A_W
+:=
+\{
+c\in\mathcal D_W
+\mid
+\pi_1(\operatorname{created}_W(c))
+=
+\mathsf{abstract}
+\}
 $$
 
 y:
@@ -112,9 +135,10 @@ $$
 
 Comprueba además:
 
-1. Que `Memphis` es una identidad fresca respecto a $\mathcal C_P$.
-2. Que su base pertenece a $\mathcal C_{P,W}$.
-3. Que la nueva arista no forma un ciclo.
+1. Que todas las identidades creadas son frescas respecto a $\mathcal C_P$.
+2. Que todos los antecesores indicados pertenecen a $\mathcal C_{P,W}$.
+3. Que las nuevas aristas no forman ciclos.
+4. Que `Monument` continúa perteneciendo a $\mathcal D_W$ aunque no añada ninguna arista.
 
 ## 4. Relación directa completa
 
@@ -124,7 +148,7 @@ $$
 R_{P,W}^{\mathrm{dir}}
 $$
 
-incluyendo el par introducido por `create`.
+Primero deriva $R_W^{\mathrm{dir}}$ y después construye $R_{P,W}^{\mathrm{dir}}$, incluyendo todos los pares introducidos por las creaciones.
 
 ## 5. Consultas `is`
 
@@ -144,6 +168,11 @@ Place is Place
 Place is Alexandria
 Memphis is Entity
 NileDelta is Settlement
+Monument is Monument
+Monument is Entity
+RiverRegion is Entity
+DeltaCapital is NileDelta
+DeltaCapital is Settlement
 ```
 
 ## 6. Antecesores
@@ -221,12 +250,13 @@ La respuesta debe:
 4. Aplicar correctamente reflexividad y transitividad.
 5. Exhibir el ciclo mediante un camino.
 6. Justificar por qué la especialización general es una relación.
+7. Representar correctamente creaciones raíz, abstractas y con varios antecesores.
 
 > [!hint]- Pista 1
-> Hay cinco constructos declarados y uno creado.
+> Hay cinco constructos declarados y cuatro creados.
 
 > [!hint]- Pista 2
-> `Memphis` no pertenece a $\mathcal C_P$, pero sí a $\mathcal C_{P,W}$.
+> `Monument` no aparece en $R_W^{\mathrm{dir}}$, pero sí en el dominio de $\operatorname{created}_W$.
 
 > [!hint]- Pista 3
 > Para demostrar el ciclo, comienza en `Entity`, sigue todas las aristas y regresa al punto inicial.

@@ -77,6 +77,8 @@ La unidad no volverá a discutir:
 
 Esas decisiones pertenecen a [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]] y [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]].
 
+La unidad distinguirá además entre la fusión del esquema de varios antecesores y la inicialización de un constructo raíz. El alcance exacto del bloque de creación depende de [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de create|Q-045]]: aún debe decidirse si `create` puede declarar esquema nuevo o solo inicializar el esquema efectivo.
+
 ## Secuencia prevista
 
 ```text

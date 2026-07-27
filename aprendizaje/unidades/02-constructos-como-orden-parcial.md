@@ -70,7 +70,54 @@ Al terminar la unidad deberías poder:
 
 La Unidad 01 introdujo esas herramientas. Su interpretación clase–instancia fue retirada, pero las técnicas matemáticas continúan siendo válidas.
 
-## 4. Repaso: función frente a relación
+## 4. Programa y mundo
+
+Antes de formalizar `create`, necesitamos separar dos cosas que en el código fuente pueden parecer mezcladas:
+
+- El **programa** $P$ contiene las declaraciones y leyes fijadas antes de comenzar una ejecución.
+- El **mundo** $W$ contiene el estado semántico que puede cambiar durante esa ejecución.
+
+En el fragmento actual, pertenecen a $P$:
+
+- Las identidades de los constructos declarados estáticamente.
+- Su carácter abstracto o concreto.
+- Sus relaciones directas de especialización.
+- Sus campos, restricciones, predeterminados, reglas y acciones declarados.
+
+Pertenecen a $W$:
+
+- Los constructos creados durante la ejecución y sus relaciones directas.
+- El estado mutable actual de todos los constructos concretos existentes.
+- Más adelante, las vinculaciones de reglas y otros componentes del estado runtime.
+
+No son dos universos independientes. Es más preciso escribir:
+
+$$
+W\in\operatorname{Worlds}(P)
+$$
+
+porque solo podemos decidir si $W$ está bien formado conociendo el programa al que corresponde.
+
+Un constructo concreto declarado estáticamente, como `Egypt`, tampoco se divide en una clase y un objeto. Su única identidad tiene:
+
+- Un aspecto declarativo fijado por $P$: esquema, restricciones y relaciones.
+- Un estado activo que forma parte de $W$: por ejemplo, el valor actual de `Egypt.treasury`.
+
+El mundo inicial $W_0$ se construye a partir de $P$. Una ejecución produce después una secuencia:
+
+$$
+W_0\longrightarrow W_1\longrightarrow W_2\longrightarrow\cdots
+$$
+
+`create` transforma un mundo en otro. No reescribe el archivo `.mud`, no altera $P$ durante esa ejecución y no crea por sí mismo un commit de Git.
+
+> [!intuition]
+> $P$ responde «¿qué leyes y declaraciones gobiernan esta ejecución?». $W$ responde «¿qué existe y cuál es su estado ahora, bajo esas leyes?».
+
+> [!note]
+> Que una creación pueda ampliar el grafo de constructos significa que $W$ contiene parte de la ontología activa. No significa que la creación pase a formar parte del texto estático de $P$.
+
+## 5. Repaso: función frente a relación
 
 Una función:
 
@@ -114,7 +161,7 @@ $$
 > [!intuition]
 > Una función responde «¿cuál es su único resultado?». Una relación responde «¿con cuáles está relacionado?».
 
-## 5. Ejemplo de trabajo
+## 6. Ejemplo de trabajo
 
 Considera:
 
@@ -135,14 +182,14 @@ construct Egypt is Kingdom {
 Durante la ejecución aparece además:
 
 ```mud
-create Kingdom France {
+create France from Kingdom {
     name = "France"
 }
 ```
 
 No hay instancias de `Place`, `Kingdom` o `Egypt`. Los cuatro nombres designan constructos. `Place` es abstracto; los demás son concretos.
 
-## 6. Constructos declarados
+## 7. Constructos declarados
 
 Sea $P$ el programa resuelto. Sus constructos declarados son:
 
@@ -187,7 +234,7 @@ $$
 
 El conjunto de abstractos no constituye otro universo. Es un subconjunto que distingue qué constructos no poseen estado concreto propio.
 
-## 7. Relación de especialización directa
+## 8. Relación de especialización directa
 
 Definimos:
 
@@ -224,7 +271,7 @@ Egypt ──► Kingdom ──► Place
 
 La flecha del dibujo representa especialización directa, no movimiento de datos ni propagación de estado.
 
-## 8. Caminos y especialización indirecta
+## 9. Caminos y especialización indirecta
 
 Existe un camino de `Egypt` a `Place`:
 
@@ -260,7 +307,7 @@ $$
 
 no pertenezca a la relación directa, `Egypt is Place` debe ser verdadero.
 
-## 9. Clausura transitiva y reflexiva
+## 10. Clausura transitiva y reflexiva
 
 La clausura transitiva:
 
@@ -340,7 +387,7 @@ $$
 \mathsf{Egypt}\preceq_P\mathsf{Egypt}
 $$
 
-## 10. Aciclicidad
+## 11. Aciclicidad
 
 La relación directa es acíclica si no existe un camino no vacío que salga de un constructo y regrese a él.
 
@@ -369,7 +416,7 @@ No debe confundirse este ciclo con la reflexividad de `is`:
 
 La primera sería una arista directa reflexiva inválida. La segunda es un resultado derivado y obligatorio.
 
-## 11. Orden parcial
+## 12. Orden parcial
 
 Una relación $\preceq$ sobre un conjunto $C$ es un orden parcial cuando es:
 
@@ -403,7 +450,7 @@ Una relación $\preceq$ sobre un conjunto $C$ es un orden parcial cuando es:
 
 Antisimetría no significa que solo pueda existir una dirección entre dos elementos. Significa que, si existen las dos, ambos elementos deben ser el mismo.
 
-## 12. Primera demostración resuelta
+## 13. Primera demostración resuelta
 
 > [!proof] Proposición — La clausura de una especialización acíclica es un orden parcial
 > Sea $R\subseteq C\times C$ una relación acíclica. Sea $R^*:=\operatorname{Id}_C\cup R^+$. Entonces $R^*$ es un orden parcial sobre $C$.
@@ -483,54 +530,107 @@ es un conjunto parcialmente ordenado.
 > [!intuition]
 > La reflexividad procede de permitir no moverse; la transitividad, de concatenar caminos; la antisimetría, de haber prohibido regresar mediante un ciclo.
 
-## 13. Incorporación de `create`
+## 14. Incorporación de `create`
 
-Para el fragmento actual, modelamos el antecesor inmediato de cada constructo creado mediante:
-
-Sea $\mathcal C$ un universo ambiente de identidades posibles de constructo. Definimos:
+Sea $\mathcal C$ un universo ambiente de identidades posibles de constructo y sea:
 
 $$
-\operatorname{base}_W:
+\mathcal M
+:=
+\{
+\mathsf{abstract},
+\mathsf{concrete}
+\}
+$$
+
+El mundo registra cada constructo creado junto con su modo y su conjunto finito de antecesores directos:
+
+$$
+\operatorname{created}_W:
 \mathcal C
 \rightharpoonup
-\mathcal C
+\left(
+\mathcal M
+\times
+\mathcal P_{\mathrm{fin}}(\mathcal C)
+\right)
 $$
 
-La ejecución:
+Aquí, $\mathcal P_{\mathrm{fin}}(\mathcal C)$ es el conjunto de todos los subconjuntos finitos de $\mathcal C$. Esta es una función parcial porque no toda identidad posible existe como creación en el mundo actual. Su resultado es un par formado por un modo y un conjunto, no por un único antecesor.
+
+Las proyecciones extraen los dos componentes del par:
+
+$$
+\pi_1(m,S)=m
+$$
+
+$$
+\pi_2(m,S)=S
+$$
+
+Las ejecuciones:
 
 ```mud
-create Kingdom France {
-    name = "France"
-}
+create Monument
+create abstract PoliticalUnion from Place
+create France from Kingdom
+create EuropeanRealm from Kingdom, PoliticalUnion
 ```
 
-añade:
+producen, esquemáticamente:
 
 $$
-\operatorname{base}_W(\mathsf{France})
+\operatorname{created}_W(\mathsf{Monument})
 =
-\mathsf{Kingdom}
+(\mathsf{concrete},\varnothing)
 $$
 
-Los constructos creados se derivan:
+$$
+\operatorname{created}_W(\mathsf{PoliticalUnion})
+=
+(\mathsf{abstract},\{\mathsf{Place}\})
+$$
+
+$$
+\operatorname{created}_W(\mathsf{France})
+=
+(\mathsf{concrete},\{\mathsf{Kingdom}\})
+$$
+
+$$
+\operatorname{created}_W(\mathsf{EuropeanRealm})
+=
+\left(
+\mathsf{concrete},
+\{\mathsf{Kingdom},\mathsf{PoliticalUnion}\}
+\right)
+$$
+
+En particular, `create abstract PoliticalUnion from Place` produce en el mundo activo el mismo modo y la misma arista que habría aportado una declaración estática vacía `abstract construct PoliticalUnion is Place {}`. No convierte por ello la sentencia ejecutada en texto nuevo de $P$: coinciden sus consecuencias relevantes para el grafo, pero difieren el momento y el lugar donde nacen.
+
+Los constructos creados y existentes se derivan del dominio:
 
 $$
 \mathcal D_W
 :=
-\operatorname{dom}(\operatorname{base}_W)
+\operatorname{dom}(\operatorname{created}_W)
 $$
 
-En el ejemplo:
+Los abstractos creados pueden derivarse mediante la primera proyección:
 
 $$
-\mathcal D_W
-=
+\mathcal A_W
+:=
 \{
-\mathsf{France}
+c\in\mathcal D_W
+\mid
+\pi_1(\operatorname{created}_W(c))
+=
+\mathsf{abstract}
 \}
 $$
 
-Los constructos existentes respecto a $P$ y $W$ son:
+El conjunto de constructos existentes respecto a $P$ y $W$ es:
 
 $$
 \mathcal C_{P,W}
@@ -538,7 +638,31 @@ $$
 \mathcal C_P\cup\mathcal D_W
 $$
 
-El tipo de $\operatorname{base}_W$ no basta para garantizar que represente un mundo válido. Exigimos al menos:
+La relación directa aportada por el mundo se obtiene de la segunda proyección:
+
+$$
+R_W^{\mathrm{dir}}
+:=
+\{
+(c,p)
+\mid
+c\in\mathcal D_W
+\land
+p\in\pi_2(\operatorname{created}_W(c))
+\}
+$$
+
+Por tanto:
+
+$$
+R_{P,W}^{\mathrm{dir}}
+:=
+R_P^{\mathrm{dir}}
+\cup
+R_W^{\mathrm{dir}}
+$$
+
+El tipo de $\operatorname{created}_W$ no basta para garantizar que represente un mundo válido. Exigimos al menos:
 
 $$
 \mathcal D_W\cap\mathcal C_P
@@ -546,34 +670,21 @@ $$
 \varnothing
 $$
 
-para que toda identidad creada sea fresca;
+para que las identidades creadas sean nuevas respecto al programa;
 
 $$
-\operatorname{im}(\operatorname{base}_W)
+\bigcup_{c\in\mathcal D_W}
+\pi_2(\operatorname{created}_W(c))
 \subseteq
 \mathcal C_{P,W}
 $$
 
-para que toda base exista; y que la relación directa combinada siga siendo acíclica.
+para que todo antecesor exista; además, la relación directa combinada debe ser acíclica y los esquemas heredados deben ser compatibles.
 
 > [!intuition]
 > Una signatura indica qué forma tienen los datos. La buena formación descarta datos de esa forma que no representan un estado admisible.
 
-La relación directa completa es:
-
-$$
-R_{P,W}^{\mathrm{dir}}
-:=
-R_P^{\mathrm{dir}}
-\cup
-\{
-(c,\operatorname{base}_W(c))
-\mid
-c\in\mathcal D_W
-\}
-$$
-
-Y el operador se interpreta mediante:
+El operador se interpreta mediante:
 
 $$
 R_{P,W}^{\mathsf{is}}
@@ -599,21 +710,47 @@ $$
 \mathsf{France}\preceq_{P,W}\mathsf{France}
 $$
 
-> [!warning]
-> $\operatorname{base}_W$ es un candidato para el fragmento actual porque `create C N` declara una base. La forma definitiva deberá revisarse si `create` llega a admitir varias bases o cambios de antecesores.
+## 15. Por qué la relación no registra por sí sola todas las creaciones
 
-## 14. Por qué `base` no sustituye a la relación
+Podríamos intentar almacenar únicamente $R_W^{\mathrm{dir}}$, pero perderíamos `Monument`:
 
-La función `base` resulta suficiente para registrar el único antecesor introducido por cada `create` actual. No sirve como representación general de la especialización declarada, porque MUD permite herencia múltiple.
+$$
+\pi_2(\operatorname{created}_W(\mathsf{Monument}))
+=
+\varnothing
+$$
 
-La separación es:
+Al no tener antecesores, no produce ningún par en la relación. Sin embargo, `Monument` existe, pertenece a $\mathcal D_W$ y hace verdadera la consulta reflexiva `Monument is Monument`.
 
-- $R_P^{\mathrm{dir}}$: relación estática, potencialmente múltiple.
-- $\operatorname{base}_W$: función parcial para creaciones runtime con una base.
-- $R_{P,W}^{\mathrm{dir}}$: relación combinada y derivada.
+Por eso conservamos dos niveles:
+
+- $\operatorname{created}_W$: descriptor de existencia, modo y antecesores de cada creación.
+- $R_W^{\mathrm{dir}}$: relación dinámica derivada del descriptor.
+- $R_{P,W}^{\mathrm{dir}}$: relación directa estática y dinámica combinada.
 - $R_{P,W}^{\mathsf{is}}$: cierre reflexivo y transitivo consultado por el operador.
 
-## 15. Los dos usos sintácticos de `is`
+> [!note]
+> El descriptor no duplica accidentalmente la relación: contiene información que una relación sin aristas no puede expresar.
+
+### Primera clase no significa nombre futuro
+
+Que un constructo creado sea de primera clase significa que, una vez disponible su identidad, puede participar en relaciones, expresiones, acciones o vinculaciones como cualquier otro constructo. No determina si una aparición textual de su nombre puede resolverse antes de la creación.
+
+Hay dos casos diferentes:
+
+1. Una regla puede hablar de un antecesor ya declarado, como `Place`, y aplicarse en el futuro a constructos creados que satisfagan `is Place`.
+2. Una regla puede intentar mencionar exactamente `FutureCity` antes de que una ejecución cree algo con ese nombre.
+
+El primer caso no necesita referencias futuras. El segundo sí exige decidir qué significa ese nombre antes de existir.
+
+Para una vinculación `for` exacta, antes de la creación no hay todavía una vinculación asociada a ese constructo. La creación podría hacerla nacer; entonces habrá que definir su valor previo y el instante preciso de activación. Una regla `for` no se «llama»: se mantiene una vinculación de la regla para cada participante aplicable.
+
+Para un participante `on` exacto, no habría receptor disponible antes de la creación. En cambio, una acción cuyo participante admita un antecesor ya existente podría aceptar después cualquier descendiente creado compatible.
+
+> [!question] Diseño pendiente
+> [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a constructos futuros|Q-044]] decidirá si el nombre de `create` es una identidad global reservable, una vinculación local a una identidad fresca o si hace falta una declaración prospectiva explícita. Hasta resolverlo, no debemos asumir que los nombres futuros son válidos.
+
+## 16. Los dos usos sintácticos de `is`
 
 En:
 
@@ -641,7 +778,7 @@ IsExpression(Egypt, Place)
 
 No existe ambigüedad semántica si ambos nodos remiten a la misma relación en niveles distintos.
 
-## 16. Qué es estándar y qué es de MUD
+## 17. Qué es estándar y qué es de MUD
 
 ### Matemática estándar
 
@@ -657,18 +794,19 @@ No existe ambigüedad semántica si ambos nodos remiten a la misma relación en 
 - La orientación de específico a general.
 - $R^{\mathrm{dir}}$ para la relación directa.
 - $\preceq$ para la relación semántica.
-- $\operatorname{base}_W$ para el antecesor de una creación.
+- $\operatorname{created}_W$ para el descriptor parcial de las creaciones existentes.
 
 ### Decisiones semánticas de MUD
 
 - Un solo dominio de constructos.
-- `create` produce otro constructo.
+- `create` produce un constructo raíz, abstracto o concreto con cero o varios antecesores.
+- La sintaxis sitúa la identidad nueva antes de la cláusula opcional `from`.
 - `is` es reflexivo y transitivo.
 - Se rechazan ciclos.
 - Los constructos concretos pueden ser cosas y antecesores.
 - Los abstractos participan en el orden, pero no poseen estado concreto propio.
 
-## 17. Errores frecuentes
+## 18. Errores frecuentes
 
 ### Tratar la especialización múltiple como función
 
@@ -696,7 +834,7 @@ significa que $c$ es más específico que $a$.
 
 La relación determina especialización y sustituibilidad. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]] prohíbe heredar estado activo.
 
-## 18. Lectura comentada
+## 19. Lectura comentada
 
 La expresión:
 
@@ -718,7 +856,7 @@ $$
 
 no afirma que almacenemos toda la clausura. Define su significado. Una implementación puede calcularla, indexarla o responder mediante búsqueda siempre que obtenga el mismo resultado.
 
-## 19. Tu turno
+## 20. Tu turno
 
 El entregable está en [[aprendizaje/ejercicios/02-orden-parcial-de-constructos-ejercicio]].
 
@@ -734,11 +872,11 @@ La plantilla que debes completar está en [[aprendizaje/respuestas/02-orden-parc
 > Añade después caminos indirectos y pares reflexivos; no los mezcles con las aristas.
 
 > [!hint]- Pista 3 — Usa el dominio
-> El conjunto de constructos creados puede derivarse de $\operatorname{dom}(\operatorname{base}_W)$.
+> El conjunto de constructos creados puede derivarse de $\operatorname{dom}(\operatorname{created}_W)$.
 
 La solución completa no está incluida. Se añadirá tras el intento y la revisión.
 
-## 20. Criterios de revisión
+## 21. Criterios de revisión
 
 La revisión comprobará por separado:
 
@@ -751,7 +889,7 @@ La revisión comprobará por separado:
 - Consistencia de subíndices.
 - Claridad de la explicación.
 
-## 21. Incorporación a la especificación
+## 22. Incorporación a la especificación
 
 Después de revisar el ejercicio:
 
@@ -761,7 +899,7 @@ Después de revisar el ejercicio:
 4. Decidiremos qué parte pertenece a `04-modelo-matematico` y cuál al futuro `11-constructos.md`.
 5. Activaremos la Unidad 03.
 
-## 22. Repaso
+## 23. Repaso
 
 En la Unidad 03 reaparecerán:
 

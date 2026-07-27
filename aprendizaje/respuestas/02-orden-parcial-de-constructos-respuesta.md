@@ -39,12 +39,31 @@ $$
 ## 3. Creación
 
 $$
-\operatorname{base}_W(\mathsf{Memphis})
+\operatorname{created}_W(\mathsf{Memphis})
+=
+$$
+
+$$
+\operatorname{created}_W(\mathsf{Monument})
+=
+$$
+
+$$
+\operatorname{created}_W(\mathsf{RiverRegion})
+=
+$$
+
+$$
+\operatorname{created}_W(\mathsf{DeltaCapital})
 =
 $$
 
 $$
 \mathcal D_W=
+$$
+
+$$
+\mathcal A_W=
 $$
 
 $$
@@ -56,6 +75,11 @@ Comprobaciones de buena formación:
 > Escribe aquí.
 
 ## 4. Relación directa completa
+
+$$
+R_W^{\mathrm{dir}}
+=
+$$
 
 $$
 R_{P,W}^{\mathrm{dir}}
@@ -72,6 +96,11 @@ $$
 | `Place is Alexandria` |  |  |
 | `Memphis is Entity` |  |  |
 | `NileDelta is Settlement` |  |  |
+| `Monument is Monument` |  |  |
+| `Monument is Entity` |  |  |
+| `RiverRegion is Entity` |  |  |
+| `DeltaCapital is NileDelta` |  |  |
+| `DeltaCapital is Settlement` |  |  |
 
 ## 6. Antecesores de `Memphis`
 
