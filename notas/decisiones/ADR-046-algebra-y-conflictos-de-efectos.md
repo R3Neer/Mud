@@ -39,6 +39,7 @@ Para efectos estructurales se aplican D-023, D-026 y D-054:
 - las retiradas preceden a destrucciones;
 - `create` y `destroy` coincidentes dejan el objetivo destruido al cerrar la onda;
 - varias activaciones de una misma definición canónica ausente se consolidan idempotentemente;
+- varias adiciones del mismo valor a una colección `unique` se consolidan idempotentemente en una sola presencia;
 - cada `then` y toda consolidación posible deben preservar cardinalidades estáticamente.
 
 Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destinos solo puede conocerse durante una resolución, el runtime la detecta y produce `failed` con rollback completo.
@@ -46,7 +47,7 @@ Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destin
 ## Consecuencias
 
 - La semántica no depende del orden de reglas ni de hilos.
-- Q-006 sigue abierta para combinaciones de colecciones, diccionarios, propiedades, ciclo de vida y solapamientos parciales.
+- Q-006 sigue abierta para las combinaciones restantes de colecciones, diccionarios, propiedades, ciclo de vida y solapamientos parciales.
 - El análisis conservador especial de cardinalidad de D-026 prevalece sobre la regla general de diferir coincidencias indecidibles.
 
 ## Verificación

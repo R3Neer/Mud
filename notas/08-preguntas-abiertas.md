@@ -54,9 +54,9 @@ La transición se memoriza por vinculación; las vinculaciones se fijan al inici
 
 ¿Cuál es la matriz completa de compatibilidad entre asignaciones, incrementos, multiplicaciones y operaciones estructurales concurrentes?
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]].
 
-Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles y el núcleo estructural. Falta completar la matriz para colecciones, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados.
+Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles, el núcleo estructural y la consolidación idempotente de varias adiciones del mismo valor a una colección `unique`. Falta completar la matriz para adiciones y retiradas combinadas, inserciones distintas con orden observable, límites de cardinalidad, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados.
 
 ### Q-007 — Fallos técnicos
 

@@ -25,6 +25,15 @@ Omitirla equivale a `[1]`; `[n]` equivale a `[n..n]`; `[*]` usa la semántica de
 
 Las colecciones admiten duplicados salvo `unique`. `ordered` conserva un orden observable y `ordered by expression` declara una clave semántica.
 
+Añadir a una colección `unique` un valor que ya está presente es un no-op. La operación es idempotente: una o varias adiciones del mismo valor producen una sola presencia, también cuando proceden de efectos concurrentes compatibles.
+
+Cuando un literal destinado a una colección `unique` contiene duplicados cuya igualdad puede demostrarse estáticamente, el compilador los normaliza a una sola presencia y emite un aviso no bloqueante. Si la colección normalizada incumple su cardinalidad, el programa contiene además un error estático de cardinalidad y no es válido:
+
+```mud
+members: Person [* unique] = [Alice, Alice]  # aviso; equivale a [Alice]
+pair: Person [2 unique] = [Alice, Alice]     # error; tras normalizar solo queda un valor
+```
+
 Fuentes iniciales de orden:
 
 - Básicos: orden de su tipo.
@@ -33,9 +42,11 @@ Fuentes iniciales de orden:
 - `ordered family`: orden declarado.
 - Alias ordenado: orden subyacente o lexicográfico.
 
+Cuando el tipo o `ordered by expression` determina un orden canónico, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Este aviso no se aplica a una colección `thing [ordered]` ordenada por inserción: en ella el orden escrito es el orden elegido por el autor.
+
 `Text` no equivale a `Character [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
 
-La consolidación simultánea de inserciones con orden observable deberá integrarse en la matriz de Q-006.
+La consolidación simultánea de inserciones distintas con orden observable deberá integrarse en la matriz de Q-006.
 
 ### Diccionarios
 
@@ -83,11 +94,19 @@ board[E, Four]
 - La iteración no depende del hash o estructura interna del materializador.
 - Las operaciones de colección y diccionario deben ser totales donde esta decisión lo indica.
 
+## Alternativa descartada
+
+### Unicidad predeterminada
+
+Se descarta hacer `unique` implícito, tanto para todas las colecciones como en función del tipo de miembro. La multiplicidad es información observable y necesaria en colecciones como `Number [*]`; eliminarla de manera predeterminada cambiaría el significado de datos que representan observaciones, tiradas o frecuencias. Un valor predeterminado dependiente del tipo haría además que una misma forma de colección cambiara de semántica entre código genérico, aliases y conversiones.
+
+La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su presencia impone una sola ocurrencia por valor.
+
 ## Verificación futura
 
 1. Cardinalidad omitida y `empty`.
-2. Duplicados y `unique`.
-3. Orden natural, de inserción, semántico y `ordered by`.
+2. Duplicados, normalización, aviso e idempotencia de `unique`.
+3. Orden natural, de inserción, semántico y `ordered by`, con aviso solo para órdenes canónicos.
 4. Lectura, escritura y retirada de clave ausente.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.
