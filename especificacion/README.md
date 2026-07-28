@@ -328,7 +328,8 @@ Define:
 - `ordered` como palabra reservada delante de `family`.
 - Miembros como valores nominales sin identidad ni ciclo de vida runtime.
 - Anclas estáticas `family::*`.
-- Esquema uniforme de datos inmutables declarado directamente en la familia.
+- Esquema uniforme de datos inmutables, almacenados o calculados por miembro, declarado directamente en la familia.
+- Tipo opcional y dependencias acíclicas para los datos calculados.
 - Valores de miembro explícitos o completados mediante predeterminados.
 - Prohibición de especialización y herencia entre familias.
 - Enumeración finita.

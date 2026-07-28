@@ -110,10 +110,19 @@ family-declaration
         ;
 
 family-data-declaration
+    ::= stored-family-data-declaration
+      | calculated-family-data-declaration
+      ;
+
+stored-family-data-declaration
     ::= field-name , ":" , declared-type
         , [ "in" , domain-expression ]
         , [ collection-specification ]
         , [ "=" , constant-expression ]
+        ;
+
+calculated-family-data-declaration
+    ::= field-name , [ ":" , declared-type ] , ":=" , constant-expression
         ;
 
 family-member

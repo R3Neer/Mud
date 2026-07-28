@@ -180,6 +180,7 @@ pagination: Pagination = (size = 30) # válido: page conserva 1
 family Terrain {
     movementCost: Natural = 1
     passable: Bool = true
+    costly := movementCost >= 3
 
     Plain,
     Forest {
@@ -192,7 +193,9 @@ family Terrain {
 }
 ```
 
-Los datos aparecen antes del primer miembro. Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración y permite usar sus datos asociados como claves de `ordered by` en colecciones.
+Los datos aparecen antes del primer miembro y pueden ser almacenados o calculados mediante `nombre [: Tipo] := expresión`. El tipo calculado es opcional si se puede inferir de forma unívoca. Su expresión se evalúa estáticamente para cada miembro después de resolver los datos almacenados, puede consultar otros datos asociados mediante nombres no cualificados y debe tener dependencias acíclicas. El bloque de un miembro solo puede asignar datos almacenados.
+
+Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración y permite usar sus datos asociados, incluidos los calculados, como claves de `ordered by` en colecciones.
 
 ## Magnitudes
 

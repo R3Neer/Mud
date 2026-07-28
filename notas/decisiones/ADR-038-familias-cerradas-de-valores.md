@@ -50,6 +50,7 @@ Una `family` puede declarar un esquema uniforme de datos inmutables. Las declara
 family Terrain {
     movementCost: Natural = 1
     passable: Bool = true
+    costly := movementCost >= 3
 
     Plain,
     Forest {
@@ -65,13 +66,21 @@ family Terrain {
 }
 ```
 
-La forma de una declaración de dato es la de un campo almacenado sin `mut` ni `:=`:
+Un dato asociado puede ser almacenado o calculado. El dato almacenado no admite `mut`:
 
 ```text
 nombre : tipo [in dominio] [especificación-de-colección] [= predeterminado]
 ```
 
-Todos los miembros comparten exactamente ese esquema. El subbloque opcional de un miembro contiene únicamente asignaciones que sustituyen sus valores predeterminados; no puede declarar datos nuevos, omitir el nombre del dato asignado ni modificar su tipo, dominio o especificación de colección.
+El dato calculado reutiliza la forma general definida por D-037:
+
+```text
+nombre [: tipo] := expresión
+```
+
+La anotación de tipo de un dato calculado es opcional. Si se omite, el compilador debe inferir un único tipo estático; si no puede hacerlo, la declaración es inválida. Un dato calculado no admite `mut`, `in`, especificación de colección, predeterminado ni almacenamiento propio: su forma y su valor proceden de la expresión.
+
+Todos los miembros comparten exactamente ese esquema. El subbloque opcional de un miembro contiene únicamente asignaciones que sustituyen los valores predeterminados de datos almacenados; no puede declarar datos nuevos, omitir el nombre del dato asignado, modificar su tipo, dominio o especificación de colección ni asignar un dato calculado.
 
 Para cada dato de cada miembro, el valor se obtiene en este orden:
 
@@ -79,9 +88,11 @@ Para cada dato de cada miembro, el valor se obtiene en este orden:
 2. Predeterminado explícito de la declaración del dato.
 3. Predeterminado del tipo efectivo conforme a D-017.
 
-Por tanto, un miembro puede omitir un dato siempre que su valor predeterminado pueda determinarse estáticamente. En particular, un dato `Natural` sin predeterminado explícito obtiene `0`. Aunque la omisión sea válida, se recomienda escribir explícitamente los valores cuyo significado sea importante para comprender el modelo.
+Por tanto, un miembro puede omitir un dato almacenado siempre que su valor predeterminado pueda determinarse estáticamente. En particular, un dato `Natural` sin predeterminado explícito obtiene `0`. Aunque la omisión sea válida, se recomienda escribir explícitamente los valores cuyo significado sea importante para comprender el modelo.
 
-Los predeterminados y las asignaciones de miembro deben ser expresiones puras evaluables estáticamente y satisfacer tipo, dominio y colección. Los datos asociados:
+Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Las expresiones, los predeterminados y las asignaciones de miembro deben ser puros y evaluables estáticamente, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
+
+En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los datos asociados, almacenados o calculados:
 
 - Son inmutables.
 - No poseen identidad ni ciclo de vida propios.
@@ -127,3 +138,5 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 9. Precedencia entre valor de miembro, predeterminado explícito y predeterminado de tipo.
 10. Inmutabilidad y acceso a datos asociados.
 11. Colección de `ordered family` ordenada por un dato asociado, incluidos empates y multiplicidad.
+12. Inferencia de tipo, evaluación por miembro y dependencias acíclicas de datos calculados.
+13. Rechazo de asignaciones de miembro dirigidas a datos calculados.
