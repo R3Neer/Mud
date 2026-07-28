@@ -111,13 +111,18 @@ alias Square {
     file: File
     rank: Rank
 }
+
+alias Pagination {
+    page: Natural = 1
+    size: Natural = 20
+}
 ```
 
-Los componentes pueden declarar dominios, pero no `mut`. El valor completo es inmutable; un campo mutable puede sustituirlo, no modificar uno de sus componentes.
+Los componentes pueden declarar dominios y predeterminados, pero no `mut`. El predeterminado efectivo de un componente es el explícito o, si se omite, el de su tipo. El valor completo es inmutable; un campo mutable puede sustituirlo, no modificar uno de sus componentes.
 
 Los literales son contextuales. `"Ada"` puede construir directamente un `PlayerName` cuando ese es el tipo esperado, y `(E, Four)` puede construir un `Square`. Una expresión ya tipada no se convierte implícitamente: utiliza `to` si su forma normalizada es compatible. La rama nominal de `to` conserva el contenido y valida el dominio de destino; la cuantitativa continúa definida por D-030.
 
-La forma posicional y la nombrada siguen el orden de declaración. La forma nombrada no permite reordenar y todos los componentes deben aparecer exactamente una vez.
+La forma posicional y la nombrada siguen el orden de declaración. La posicional debe proporcionar todos los componentes. La nombrada puede omitir componentes, incluidos anteriores o intermedios, y los completa con sus predeterminados efectivos; los componentes presentes conservan su orden relativo. No se mezclan posiciones y nombres.
 
 La igualdad exige el mismo alias y el mismo contenido. Los operadores de orden requieren una representación ordenada; para aliases estructurales usan el orden lexicográfico de componentes. Un alias estructural cuyos componentes tengan dominios finitos y enumerables puede recorrerse como su producto cartesiano lexicográfico y puede actuar como clave única compuesta de un diccionario.
 

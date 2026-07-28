@@ -96,6 +96,7 @@ component-declaration
     ::= component-name , ":" , declared-type
         , [ "in" , domain-expression ]
         , [ collection-specification ]
+        , [ "=" , constant-expression ]
         ;
 
 family-declaration
@@ -678,14 +679,16 @@ rumber-number ::= RUMBER_LITERAL ;
 exact-integer ::= EXACT_INTEGER_LITERAL ;
 
 structural-literal
-    ::= "(" , structural-element , "," , structural-element
-        , { "," , structural-element } , ")"
-        ;
+    ::= "(" , ( positional-structural-elements | named-structural-elements ) , ")" ;
 
-structural-element
-    ::= expression
-      | component-name , "=" , expression
-      ;
+positional-structural-elements
+    ::= expression , "," , expression , { "," , expression } ;
+
+named-structural-elements
+    ::= named-structural-element , { "," , named-structural-element } ;
+
+named-structural-element
+    ::= component-name , "=" , expression ;
 
 collection-literal
     ::= "[" , [ expression , { "," , expression } ] , "]" ;

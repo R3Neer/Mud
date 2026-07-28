@@ -36,15 +36,28 @@ alias Square {
     file: File
     rank: Rank
 }
+
+alias Pagination {
+    page: Natural = 1
+    size: Natural = 20
+}
 ```
 
 Cada componente:
 
-1. Es obligatorio.
+1. Forma parte obligatoria de todo valor construido.
 2. Ocupa una posición semántica según el orden de declaración.
 3. Forma parte de la estructura del alias.
 4. Puede declarar un dominio.
 5. No puede declarar `mut`.
+6. Puede declarar un valor predeterminado mediante `=`.
+
+El predeterminado explícito debe ser una expresión pura evaluable estáticamente y satisfacer el tipo, dominio y especificación de colección del componente. El valor predeterminado de un alias estructural se obtiene componente a componente:
+
+1. Predeterminado explícito del componente, si existe.
+2. Predeterminado del tipo efectivo del componente conforme a D-017, en otro caso.
+
+Los predeterminados no eliminan componentes de la representación. Después de construir un valor, todos están presentes y participan normalmente en igualdad y orden.
 
 ### Nominalidad
 
@@ -105,7 +118,9 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 1. Alias simple mediante `:=`.
 2. Alias de colección y diccionario mediante `:=`.
 3. Alias estructural con componentes ordenados.
-4. Rechazo de `mut` en un componente.
-5. Rechazo de actualización parcial de un valor.
-6. Sustitución completa desde un campo mutable.
-7. Rechazo de `create`, `destroy`, `abstract`, `as` e `is` aplicados como ciclo de vida o especialización de alias.
+4. Componente con predeterminado explícito y predeterminado procedente de su tipo.
+5. Rechazo de predeterminado impuro, no estático o fuera de tipo, dominio o colección.
+6. Rechazo de `mut` en un componente.
+7. Rechazo de actualización parcial de un valor.
+8. Sustitución completa desde un campo mutable.
+9. Rechazo de `create`, `destroy`, `abstract`, `as` e `is` aplicados como ciclo de vida o especialización de alias.

@@ -151,6 +151,11 @@ alias Square {
     file: File
     rank: Rank
 }
+
+alias Pagination {
+    page: Natural = 1
+    size: Natural = 20
+}
 ```
 
 Los literales estructurales son contextuales:
@@ -158,9 +163,16 @@ Los literales estructurales son contextuales:
 ```mud
 (E, Four)
 (file = E, rank = Four)
+(size = 30)
 ```
 
-La forma nombrada conserva el orden declarado; los nombres no autorizan reordenación.
+La forma posicional debe proporcionar todos los componentes. Si se omite alguno, la forma debe ser completamente nombrada: los omitidos toman su predeterminado explícito o el predeterminado de su tipo. Los componentes nombrados pueden saltar componentes anteriores o intermedios, pero los presentes conservan el orden relativo de declaración. No se permite mezclar posiciones y nombres:
+
+```mud
+pagination: Pagination = (2, 30) # válido
+pagination: Pagination = (2)     # inválido: posición parcial
+pagination: Pagination = (size = 30) # válido: page conserva 1
+```
 
 ## Familias
 

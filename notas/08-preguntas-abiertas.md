@@ -170,14 +170,14 @@ Bloquea la semántica operacional completa de `create`, los conjuntos de efectos
 
 Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|ADR-017]].
 
-Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio. Falta definir la función concreta para:
+Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio. D-031 fija que un alias estructural compone el suyo usando, para cada componente, su predeterminado explícito o el de su tipo efectivo. Falta definir la función concreta para:
 
 - Tipos primitivos no cubiertos por la tabla inicial.
-- Aliases, tipos estructurados y colecciones con restricciones.
+- Aliases no estructurales y colecciones con restricciones.
 - Intervalos, selección del miembro predeterminado de una familia cerrada y refinamientos.
 - Tipos cuyo dominio pueda depender del mundo activo.
 
-También debe decidirse si un tipo derivado puede reemplazar explícitamente el predeterminado que obtendría por composición.
+Los componentes de un alias estructural pueden reemplazar explícitamente el predeterminado que obtendrían de su tipo. Falta decidir si otras clases de tipo derivado pueden reemplazar su predeterminado intrínseco.
 
 Desde [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], debe definirse además cómo obtiene predeterminado una colección de `thing` con mínimo positivo. El ancla exacta nunca es candidata; puede ser necesario exigir un descendiente estricto predeterminado o un inicializador explícito.
 

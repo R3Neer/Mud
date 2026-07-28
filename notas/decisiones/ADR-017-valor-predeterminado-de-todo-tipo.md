@@ -73,10 +73,12 @@ La tercera fase sustituye el valor inicial de esa creación; no modifica por ell
 
 D-038 aplica la misma precedencia a cada dato asociado de un miembro de `family`: asignación del miembro, predeterminado explícito del dato y predeterminado de su tipo.
 
+D-031 aplica esta composición a los aliases estructurales: cada componente usa su predeterminado explícito o, si no existe, el predeterminado de su tipo efectivo. El valor predeterminado del alias contiene todos los componentes.
+
 ## Consecuencias
 
 - Una propiedad almacenada obligatoria puede inicializarse aunque omita un predeterminado explícito.
-- Los refinamientos, intervalos, familias, aliases, colecciones y tipos que dependan de `thing` deben definir cómo obtienen un elemento distinguido de su dominio.
+- Los refinamientos, intervalos, familias, aliases no estructurales, colecciones y tipos que dependan de `thing` deben definir cómo obtienen un elemento distinguido de su dominio.
 - La comprobación de buena formación debe garantizar que el predeterminado satisface todas las restricciones del tipo.
 - Los materializadores deben reproducir el valor de MUD y no elegir predeterminados propios de la tecnología destino.
 
@@ -85,10 +87,10 @@ D-038 aplica la misma precedencia a cada dato asociado de un miembro de `family`
 Q-047 determinará:
 
 - Los valores de los tipos primitivos todavía no enumerados.
-- La regla composicional para aliases, tipos estructurados y colecciones restringidas.
+- La regla para aliases no estructurales y colecciones restringidas; la composición de aliases estructurales queda fijada por D-031.
 - La selección dentro de intervalos, familias cerradas y refinamientos.
 - El tratamiento de tipos cuyo dominio pueda depender del mundo activo.
-- Si una declaración puede reemplazar el predeterminado intrínseco de un tipo derivado.
+- Si otras clases de tipo derivado pueden reemplazar explícitamente su predeterminado intrínseco.
 
 ## Verificación futura
 
@@ -100,3 +102,4 @@ La suite deberá comprobar:
 4. Prioridad del predeterminado explícito de propiedad.
 5. Prioridad final de una inicialización explícita de creación.
 6. Independencia respecto a los valores predeterminados de la tecnología materializada.
+7. Composición del predeterminado de un alias estructural a partir de sus componentes.

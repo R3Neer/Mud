@@ -311,6 +311,7 @@ Define:
 - Valores inmutables y ausencia de identidad runtime.
 - Prohibición de `create`, `destroy`, abstracción y especialización.
 - Literales contextuales posicionales y nombrados.
+- Predeterminados de componentes y construcción parcial exclusivamente nombrada.
 - Casting nominal mediante `to` y compatibilidad de forma normalizada.
 - Igualdad por alias y contenido.
 - Orden lexicográfico cuando la representación está ordenada.

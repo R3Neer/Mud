@@ -54,7 +54,7 @@ Dos representaciones son compatibles cuando tienen la misma forma normalizada. P
 6. Estructura de colecciones y diccionarios.
 7. Modificadores estructurales como `ordered` y `unique`.
 
-Los dominios no cambian esa forma mínima: se validan contra el valor al construir o convertir al destino. La definición inductiva completa de normalización y sus posibles ciclos quedan en Q-056.
+Los dominios y los predeterminados de componentes no cambian esa forma mínima: se validan o aplican al construir el destino. La definición inductiva completa de normalización y sus posibles ciclos quedan en Q-056.
 
 ### Literales contextuales
 
@@ -94,7 +94,7 @@ La forma posicional sigue el orden de declaración:
 (E, Four)
 ```
 
-La forma nombrada exige los mismos componentes en el mismo orden:
+La forma nombrada completa puede escribir todos los componentes en el orden de declaración:
 
 ```mud
 (
@@ -103,7 +103,23 @@ La forma nombrada exige los mismos componentes en el mismo orden:
 )
 ```
 
-Los nombres validan y documentan posiciones; no permiten reordenarlas. Todo componente debe aparecer exactamente una vez. Faltas, duplicados, componentes desconocidos o cambios de orden son errores estáticos.
+La forma posicional debe proporcionar todos los componentes, aunque alguno tenga predeterminado. No existe construcción posicional parcial:
+
+```mud
+pagination: Pagination = (2, 30) # válido: forma posicional completa
+pagination: Pagination = (2)     # inválido: falta size y no está nombrado
+```
+
+La forma nombrada puede omitir componentes. Cada componente omitido toma su predeterminado explícito o, si no lo tiene, el predeterminado de su tipo efectivo conforme a D-017:
+
+```mud
+pagination: Pagination = (size = 30) # page conserva 1
+pagination: Pagination = (page = 2)  # size conserva 20
+```
+
+Por tanto, si no aparecen todos los componentes, todos los que sí aparecen deben estar nombrados. No se pueden mezclar posiciones y nombres. Los componentes escritos conservan el orden relativo de declaración, aunque se omitan componentes anteriores o intermedios. Duplicados, componentes desconocidos o reordenación de los componentes presentes son errores estáticos.
+
+La construcción completa materializa todos los componentes antes de producir el valor nominal. Los predeterminados no alteran su igualdad, orden lexicográfico ni forma normalizada.
 
 ### Contexto de comparación
 
@@ -169,8 +185,9 @@ La igualdad `==` y la desigualdad `!=` están disponibles aunque la representaci
 3. Casting entre aliases compatibles.
 4. Rechazo por forma incompatible o dominio de destino.
 5. Formas posicional y nombrada completas.
-6. Rechazo de reordenación, omisión, duplicado y componente extra.
-7. Comparación con propagación desde ambos lados.
-8. Rechazo de dos literales estructurales desnudos.
-9. Rechazo de aliases nominales distintos sin `to`.
-10. Igualdad y orden lexicográfico.
+6. Forma nombrada parcial con omisión de componentes anteriores e intermedios.
+7. Rechazo de forma posicional parcial, mezcla de posiciones y nombres, reordenación, duplicado y componente extra.
+8. Comparación con propagación desde ambos lados.
+9. Rechazo de dos literales estructurales desnudos.
+10. Rechazo de aliases nominales distintos sin `to`.
+11. Igualdad y orden lexicográfico independiente de los predeterminados.
