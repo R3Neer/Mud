@@ -82,7 +82,9 @@ El IR es reconstruible, versionado, usa anclas, conserva procedencia y represent
 
 ### Q-010 — Estado de las decisiones de la fuente
 
-La fuente afirma que todas las decisiones son vigentes, pero algunas se describen como provisionales o “se mantienen vigentes” sin definición local completa. ¿Qué texto previo se presupone y qué debe incorporarse a la especificación canónica?
+Estado: **cerrada** mediante [[notas/13-auditoria-de-cobertura-y-divergencias]].
+
+Las 78 secciones fueron migradas, sustituidas o retiradas de forma explícita. Ninguna fórmula como «se mantiene vigente» conserva autoridad propia ni presupone texto ausente: el contenido actual debe existir en una decisión, nota dueña, capítulo o pregunta abierta.
 
 ### Q-041 — Ontología de constructos
 

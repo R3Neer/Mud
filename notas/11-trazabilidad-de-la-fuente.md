@@ -1,8 +1,8 @@
 # Enrutamiento temático de la especificación inicial
 
-Esta matriz indica qué documento es responsable de cada bloque de la fuente inicial. **No demuestra que el bloque esté ya formalizado ni que se hayan conservado todos sus detalles.**
+Esta matriz conserva el primer enrutamiento temático de la fuente inicial. La migración requisito por requisito ya está comprobada en [[notas/13-auditoria-de-cobertura-y-divergencias]].
 
-Fuente histórica anotada: [[referencias/MUD Especificacion inicial]]. Sus afirmaciones internas de vigencia no tienen autoridad actual.
+Fuente histórica retirada: [[referencias/retiradas/MUD Especificacion inicial]]. Sus afirmaciones internas de vigencia no tienen autoridad actual.
 
 La comprobación de cobertura real, las divergencias deliberadas y el inventario de información que aún solo permanece en la fuente se encuentran en [[notas/13-auditoria-de-cobertura-y-divergencias]].
 

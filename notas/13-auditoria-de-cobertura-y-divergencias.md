@@ -1,140 +1,128 @@
-# Auditoría de cobertura y divergencias de la fuente inicial
+# Auditoría final de migración de la especificación inicial
 
-- Estado: auditoría de procedencia
-- Fuente auditada: [[referencias/MUD Especificacion inicial|MUD — Especificación inicial histórica]]
-- Fecha de la fuente observada: 2026-07-27 12:00:02
-- Líneas: 3652
-- SHA-256 original previo a las anotaciones: `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`
-- Copia histórica anotada: 3775 líneas
-- SHA-256 de la copia anotada: `23F0C60A8562640E9F79CC697AF8A9FE88E0C2B17781A4478C102B9FACACDC71`
-- Documentos relacionados: [[notas/11-trazabilidad-de-la-fuente]], [[notas/10-registro-de-decisiones]], [[especificacion/README]]
+- Estado: completada
+- Fecha: 2026-07-28
+- Fuente auditada: [[referencias/retiradas/MUD Especificacion inicial|MUD — Especificación inicial histórica retirada]]
+- Alcance: las 78 secciones numeradas, su introducción y las decisiones posteriores
 
-## Conclusión
+## Resultado
 
-El contenido de la especificación inicial **no está todavía formalizado por completo dentro del repositorio**.
+La especificación inicial ya no contiene ningún requisito cuya única copia vigente dependa de ella. Cada sección ha sido:
 
-La fuente se conserva en `referencias/` con portada de no autoridad, un índice de divergencias y avisos inline. Esas anotaciones alteran el hash actual del archivo, por lo que el hash anterior identifica exclusivamente la instantánea original auditada.
+1. migrada a una nota o decisión actual;
+2. sustituida explícitamente por una decisión posterior; o
+3. retirada por ser un ejemplo, catálogo o artefacto obsoleto, conservando su intención en el documento dueño.
 
-La documentación actual sí:
+Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que la referencia temprana ya no es necesaria para descubrir requisitos. Las tareas aún no resueltas están en [[notas/08-preguntas-abiertas]] y la promoción a capítulos profesionales sigue el índice de [[especificacion/README]].
 
-- Conserva la visión general y la arquitectura conceptual.
-- Proporciona un índice normativo que asigna un futuro capítulo a cada tema.
-- Resume la mayoría de las 78 secciones.
-- Registra varias decisiones posteriores mediante ADR.
-- Formaliza la notación matemática básica y una parte del modelo de constructos.
+## Leyenda
 
-Pero la matriz anterior de [[notas/11-trazabilidad-de-la-fuente]] demostraba únicamente **enrutamiento temático**: cada sección tenía algún documento relacionado. No demostraba que todas sus reglas, ejemplos, casos límite y diagnósticos hubieran sido incorporados.
+- **Migrada**: el contenido no contradictorio tiene un dueño vigente.
+- **Sustituida**: una decisión posterior define un comportamiento diferente.
+- **Retirada**: el artefacto no era una regla vigente; su propósito se conserva en el plan actual.
 
-En particular, gran parte del detalle normativo sobre léxico, bucles, operadores generales, diccionarios, aleatoriedad, grafo e IR solo permanece en la referencia histórica. El núcleo nuevo de magnitudes, unidades, límites efectivos, ciclos, conversiones y representaciones exacta/aproximada ya está decidido mediante D-028–D-030 y D-034; las reglas históricas no contradictorias de iteración de intervalos aún requieren revisión.
+## Matriz completa
 
-## Criterios de esta auditoría
+| Sección | Tema histórico | Resultado | Dueño vigente |
+| ---: | --- | --- | --- |
+| 1 | Objetivo | Migrada | [[notas/01-vision-y-alcance]] |
+| 2 | Principios fundamentales | Migrada | [[notas/01-vision-y-alcance]], [[notas/09-riesgos-y-restricciones]] |
+| 3 | Declaraciones principales | Sustituida y migrada | D-025, D-027, D-031; [[notas/02-modelo-del-lenguaje]] |
+| 4 | Organización física | Migrada | D-035 |
+| 5 | Convenciones de nombres | Migrada | D-035 |
+| 6 | Participantes, `on`, `for` y `given` | Sustituida y migrada | D-025, D-036 |
+| 7 | Llamadas a reglas booleanas | Sustituida y migrada | D-036, D-041 |
+| 8 | Solicitud y composición de acciones | Sustituida y migrada | D-036, D-042 |
+| 9 | Acceso, nombres cualificados y anclas | Migrada | D-035 |
+| 10 | Constructos | Sustituida por `thing` y migrada | D-014 a D-016, D-025 |
+| 11 | Aliases y valores estructurales | Sustituida y migrada | D-031 a D-033 |
+| 12 | Familias cerradas | Migrada; extremos abiertos en Q-024 | D-038 |
+| 13 | Campos | Migrada | D-017, D-019, D-037 |
+| 14 | Tipos básicos | Sustituida y migrada | D-028, D-034, D-040 |
+| 15 | Conversiones | Sustituida y migrada | D-030, D-032 |
+| 16 | Mutabilidad y capacidades | Sustituida y migrada | D-019 |
+| 17 | Cardinalidades y colecciones | Sustituida y migrada | D-026, D-039 |
+| 18 | Diccionarios | Migrada | D-033, D-039 |
+| 19 | Dominios declarativos | Migrada | D-037 |
+| 20 | Magnitudes | Sustituida y migrada | D-028 |
+| 21 | Magnitudes lineales | Sustituida y migrada | D-028 |
+| 22 | Prefijos | Sustituida y migrada; catálogo abierto en Q-054 | D-028 |
+| 23 | Operaciones de magnitud | Sustituida y migrada | D-028, D-030, D-040 |
+| 24 | Magnitudes de punto | Sustituida y migrada | D-028, D-029 |
+| 25 | Formato de puntos | Migrada como requisito abierto | D-028; Q-055 |
+| 26 | Magnitudes temporales estándar | Migrada como requisito abierto | D-028; Q-033 |
+| 27 | Operadores | Migrada y actualizada | D-030, D-032, D-034, D-049 |
+| 28 | Intervalos | Sustituida y migrada | D-029, D-047, D-049 |
+| 29 | Precedencia | Migrada como base; ampliación en Q-001 | D-049 |
+| 30 | Literales numéricos y `_` | Sustituida y migrada | D-028, D-034, D-050 |
+| 31 | Reglas booleanas | Sustituida y migrada | D-022, D-025, D-041 |
+| 32 | Reglas reactivas | Sustituida y migrada | D-025, D-041 |
+| 33 | Reglas `always` | Sustituida y migrada | D-025, D-041 |
+| 34 | Transición de `when` | Migrada | D-041, D-045 |
+| 35 | `changes` | Migrada | D-041 |
+| 36 | Acciones | Sustituida y migrada | D-025, D-036, D-042 |
+| 37 | `after` | Migrada | D-042 |
+| 38 | `old` | Migrada | D-042 |
+| 39 | Acciones elementales | Migrada | D-042 |
+| 40 | Acciones compuestas | Migrada | D-042 |
+| 41 | Formas exclusivas de `then` | Migrada | D-042 |
+| 42 | Resultados de acción | Actualizada y migrada | D-021, D-026, D-042 |
+| 43 | `allowed` | Migrada | D-043 |
+| 44 | `eventually` | Migrada; análisis abiertos en Q-026 a Q-031 | D-044 |
+| 45 | Ondas causales | Actualizada y migrada | D-023, D-045 |
+| 46 | Vinculaciones durante ondas | Migrada; identidad abierta en Q-005 | D-045 |
+| 47 | Cola de acciones | Migrada | D-045 |
+| 48 | Conflictos | Migrada como núcleo; matriz abierta en Q-006 | D-046 |
+| 49 | Ciclos y terminación | Migrada; algoritmo abierto en Q-020 y Q-029 | D-045 |
+| 50 | Efectos permitidos | Actualizada y migrada | D-021, D-023, D-046 |
+| 51 | Asignaciones | Migrada como núcleo | D-046 |
+| 52 | Cuantificadores y agregaciones | Migrada | D-047 |
+| 53 | `for each` | Migrada | D-047 |
+| 54 | Operaciones de colección | Actualizada y migrada | D-021, D-026, D-039, D-046 |
+| 55 | Creación runtime | Sustituida y migrada | D-016, D-023, D-024, D-025 |
+| 56 | Destrucción runtime | Sustituida y migrada | D-021, D-023 |
+| 57 | Aleatoriedad | Migrada como núcleo | D-048 |
+| 58 | Fallos semánticos | Actualizada y migrada | D-042, D-043, D-048 |
+| 59 | Valores predeterminados | Sustituida y migrada | D-017, D-034 |
+| 60 | Comentarios | Migrada | D-050 |
+| 61 | Terminadores | Migrada como base; saltos exactos en Q-001 | D-050 |
+| 62 | Lectura y escritura externas | Sustituida y migrada | D-027, D-042 |
+| 63 | Grafo semántico | Actualizada y migrada | D-051 |
+| 64 | Representación intermedia | Ejemplos retirados; contrato migrado | D-051; Q-009 |
+| 65 | Compilador | Actualizada y migrada | D-052 |
+| 66 | Materialización TypeScript | Retirada como tecnología normativa; obligaciones migradas | D-052 |
+| 67 | Plugin para Codex | Retirado como API normativa; capacidades migradas | D-053 |
+| 68 | Clasificación de peticiones | Migrada | D-053 |
+| 69 | Inferencias permitidas | Actualizada y migrada | D-053 |
+| 70 | Agenda de especificación | Migrada | [[notas/07-plan-de-formalizacion]], [[notas/08-preguntas-abiertas]] |
+| 71 | Flujo atómico del plugin | Actualizada y migrada | D-012, D-053 |
+| 72 | Tests | Suite obsoleta retirada; obligaciones migradas | D-052; capítulos 42 y 43 previstos |
+| 73 | Soporte de editor | Migrada como requisito de tooling | D-052 |
+| 74 | Palabras clave provisionales | Catálogo obsoleto retirado; política migrada | D-050, D-052; capítulo 45 previsto |
+| 75 | Ejemplo integral | Ejemplo no conforme retirado; propósito preservado | capítulo 46 previsto y corpus de conformidad |
+| 76 | Decisiones esenciales | Sustituida por el registro vivo | [[notas/10-registro-de-decisiones]] |
+| 77 | Cuestiones abiertas | Sustituida por la agenda viva | [[notas/08-preguntas-abiertas]] |
+| 78 | Instrucciones finales | Migradas y actualizadas | D-013, D-053; [[notas/07-plan-de-formalizacion]] |
 
-Se distinguen cuatro situaciones:
+## Divergencias deliberadas principales
 
-- **Formalizado**: existe una definición matemática o regla normativa candidata suficientemente precisa.
-- **Decidido**: existe un ADR, aunque todavía falte promoverlo a un capítulo normativo.
-- **Resumido**: la idea aparece en las notas, pero se han perdido detalles necesarios para implementar dos runtimes equivalentes.
-- **Solo en la fuente**: el repositorio puede anunciar el tema en un índice, pero no conserva todavía sus reglas concretas.
-- **Sustituido deliberadamente**: una decisión posterior contradice la fuente y conserva la procedencia del cambio.
+La procedencia detallada vive en cada ADR. Los cambios transversales que explican más sustituciones son:
 
-Una entrada en [[especificacion/README]] solo indica que habrá un capítulo. No cuenta como formalización de su contenido.
+- `construct` → `thing`; declaración de especialización con `as`, consulta con `is`.
+- Intercambio de los usos históricos de `on` y `for`.
+- Aliases nominales, inmutables y sin ciclo de vida runtime.
+- `look` y `message` como frontera pública de salida.
+- Membresía de `thing` estricta y cardinalidad demostrada por cada `then`.
+- Suspensión reversible por `destroy` frente a eliminación real por `remove`.
+- Nuevo sistema de magnitudes, unidades, puntos, intervalos y `to`.
+- `Number` racional exacto y `Rumber` `binary64` explícito.
 
-## Cobertura por bloques
+## Criterio de jubilación satisfecho
 
-| Secciones de la fuente | Contenido | Estado real en el repositorio | Destino |
-| --- | --- | --- | --- |
-| Introducción, 1 y 2 | Objetivo, principios, fuente de verdad, causalidad y límites | Resumido con fidelidad en [[notas/01-vision-y-alcance]] y [[notas/09-riesgos-y-restricciones]]; todavía no normativo | Capítulos 01, 27 a 31 y especificaciones separadas de tooling |
-| 3 | Clases de declaración | Resumido; varios ciclos de vida han sido sustituidos después | Capítulos 02, 11 a 24 y ADR de ciclo de vida |
-| 4 a 9 | Archivos, imports, nombres, participantes, llamadas y anclas | Resumido; faltan gramática, resolución formal y diagnósticos | Capítulos 05 a 09, 21 y 24 |
-| 10 | Constructos e herencia | Parcialmente formalizado y ampliamente sustituido por D-014 a D-018 | Capítulos 04 y 11 |
-| 11 y 12 | Aliases y familias cerradas | El sistema de aliases está decidido por D-031–D-033; las familias cerradas siguen resumidas | Capítulos 12 y 13 |
-| 13 a 19 | Campos, tipos básicos, conversiones, mutabilidad, colecciones, diccionarios y dominios | Parcialmente decidido; D-017, D-019, D-028–D-030 y D-034 sustituyen tipos, conversiones y límites, pero diccionarios y dominios calculados siguen resumidos | Capítulos 10 y 14 a 17 |
-| 20 a 30 | Magnitudes, prefijos, operaciones, puntos, operadores, intervalos, precedencia y literales | El núcleo cuantitativo está sustituido por D-028–D-030 y D-034; permanecen abiertos el catálogo léxico, formatos, `Money`, detalles operacionales de `binary64`, la matriz completa de operadores y parte de la iteración | Capítulos 18 a 20 |
-| 31 a 35 | Tres clases de regla, `when` y `changes` | Resumido; el borrado de reglas inactivas es una decisión posterior | Capítulos 21 a 23 y 29 |
-| 36 a 44 | Acciones, `after`, `old`, resultados, `allowed` y `eventually` | Resumido; existen preguntas abiertas sobre composición, rollback y finitud | Capítulos 24 y 27 a 38 |
-| 45 a 49 | Ondas, vinculaciones, cola, conflictos y terminación | Resumido; faltan la transición operacional y la matriz de conflictos | Capítulos 28 a 31 |
-| 50 a 59 | Efectos, cuantificadores, `for each`, colecciones, ciclo de vida, azar, fallos y predeterminados | Parcialmente resumido y parcialmente sustituido. El detalle de iteración y azar permanece solo en la fuente | Capítulos 20, 25, 26, 32 y 33 |
-| 60 y 61 | Tres formas de comentario y terminadores | Solo en la fuente salvo inventario y Q-001 | Capítulos 05 a 07 |
-| 62 | Lectura y escritura externas | Resumido con fidelidad | Capítulos 21, 24 y especificación del contrato externo |
-| 63 a 66 | Grafo, IR, compilador y TypeScript | Resumido arquitectónicamente; el catálogo exacto de aristas y los ejemplos JSON solo están en la fuente | Capítulos 34, 41 y especificaciones separadas |
-| 67 a 71 | Plugin, clasificación, inferencias, agenda y flujo atómico | Resumido; no existe aún contrato formal del operador semántico | Especificaciones separadas de tooling y [[notas/05-cambios-semanticos-y-git]] |
-| 72 a 74 | Tests, editor y palabras clave | Inventariado; las listas exactas permanecen solo en la fuente | Capítulos 43 y 45, corpus de conformidad y tooling |
-| 75 | Ejemplo integral | No preservado dentro del repositorio; solo se usa como procedencia de futuros ejemplos | Capítulo 46 y corpus de conformidad |
-| 76 a 78 | Decisiones, preguntas e instrucciones | Resumido y repartido; las decisiones posteriores deben prevalecer mediante ADR | [[notas/08-preguntas-abiertas]], [[notas/10-registro-de-decisiones]] y gobierno |
+La referencia puede permanecer archivada únicamente para:
 
-## Detalle que hoy solo conserva la fuente
+- comprobar procedencia;
+- reconstruir cómo cambió una decisión;
+- consultar ejemplos históricos sabiendo que pueden ser inválidos.
 
-La siguiente información no puede reconstruirse de manera completa a partir de las notas actuales:
-
-1. Las reglas exactas de comentarios `#`, cierre `#...#`, comentarios `###...###`, prioridad léxica y no anidamiento.
-2. La tabla completa de palabras clave provisionales.
-3. La precedencia completa de operadores.
-4. Los pasos predeterminados de intervalos de `Natural`, `Integer` y `Money`.
-5. La obligación de `by` para intervalos de `Number`.
-6. La iteración de extremos abiertos, intervalos discontinuos y segmentos normalizados.
-7. La distinción entre iteraciones secuenciales de fuentes ordenadas y efectos simultáneos de fuentes no ordenadas.
-8. La instantánea de pertenencia de `for each`.
-9. Las reglas históricas no contradictorias de iteración de intervalos; los prefijos y formatos solo sobreviven como insumo para Q-054 y Q-055.
-10. El catálogo inicial completo de relaciones del grafo semántico.
-11. Los ejemplos JSON de IR.
-12. Los casos de prueba detallados de participantes, `given` y contratos.
-13. El ejemplo integral de la sección 75.
-14. Varias reglas concretas de diccionarios, incluyendo lectura y materialización de claves ausentes.
-15. La tabla inicial de predeterminados primitivos y de colecciones.
-
-Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisarse contra las decisiones posteriores y después promoverse mediante el ciclo documental.
-
-## Cambios deliberados respecto de la fuente
-
-| Tema | Fuente inicial | Estado posterior | Procedencia |
-| --- | --- | --- | --- |
-| Ontología de constructos | La sintaxis y varios ejemplos sugerían declaración, categoría e identidad runtime separables | Un único dominio de constructos; cada concreto es cosa y posible antecesor | D-014 |
-| Palabra de entidad | `construct` | `thing` | D-025 |
-| Declaración de especialización | `construct A is B`, después `construct A from B` | `thing A as B`; `is` queda como consulta | D-018 y D-025 |
-| Tipos cuantitativos | `Boolean`, `Percentage` y sufijos como `M` | `Bool`; cinco representaciones numéricas básicas; `Number` racional exacto; `Rumber` `binary64` explícito; `Percentage` deja de ser básico | D-028 y D-034 |
-| Redondeo y mezcla numérica | Política abierta y semántica de `Number` no fijada | Empates al par; separación explícita `Number`/`Rumber`; valores no finitos excluidos | D-030 y D-034 |
-| Magnitudes y unidades | Unidades nominales con identificador y magnitudes derivadas sin sistema cerrado | Unidades sin identificador de cabecera, raíz única, equivalencias con `:=` y composición dimensional automática | D-028 |
-| Intervalos y ciclos | `*` y ciclos sin semántica lateral integrada | Límites efectivos laterales cerrados y ciclo exclusivo `[a..b cycle)` de puntos | D-029 |
-| Conversión explícita | `as` | `to` convierte cantidades compatibles; `in` cambia su unidad de expresión | D-025 y D-030 |
-| Cabeceras `on`/`for` | `on` en solicitudes y `for` en observadores | `for` en acciones, reglas booleanas y `look`; `on` en reglas de cambio, `always` y `message` | D-025 |
-| Ciclos | No existía regla local completa | Se rechaza todo ciclo no trivial | D-015 |
-| Herencia de estado | No estaba delimitada con precisión | Solo se heredan esquema y predeterminados; nunca estado mutable actual | D-015 |
-| Identidad creada | La fuente hablaba de identificador local y de identidades runtime distintas por creación | El nombre de `create` es una identidad global reservada y reactivable | D-016 |
-| Forma de `create` | `create Base NewName` y solo constructos concretos | Raíz, abstracta o con varios antecesores, mediante `create [abstract] thing A [as ...]` y cuerpo declarativo completo | D-016 y D-025 |
-| `Thing` abstractas | No podían crearse | Pueden activarse mediante `create abstract thing` | D-016, D-021 y D-025 |
-| Predeterminados | Tabla parcial y tipos sin predeterminado universal | Todo tipo bien formado posee predeterminado | D-017 |
-| Mutabilidad singular | La conversación detectó una excepción entre mutabilidad exterior e interior | Ambos permisos son ortogonales también en `[1]` | D-019 |
-| Alias y `create` | Un alias no podía crearse | D-021 introdujo ciclo de vida, pero D-031 lo retira: un alias vuelve a ser un tipo estático nominal y no admite `create` ni `destroy` | D-021 y D-031 |
-| Reglas y `create` | Las reglas no tenían ciclo de vida dinámico | Reglas booleanas, reactivas y `always` pueden activarse y destruirse | D-021 |
-| Definiciones de reglas y aliases | No existía activación separada de una definición | Las reglas poseen definición única y activación mediante `create Nombre`; los aliases solo poseen declaración estática | D-024 y D-031 |
-| Nominalidad de aliases | Nominalidad parcial con literales y comparaciones insuficientemente contextuales | Todos son nominales; literales dirigidos por contexto, casting estructural con `to` y comparación sin coerción implícita | D-031 y D-032 |
-| Finitud y claves de aliases | Claves y finitud descritas informalmente | Clave única compuesta, azúcar de acceso y producto cartesiano lexicográfico para componentes finitos enumerables | D-033 |
-| Regla booleana inactiva | No contemplada | Su aparición se borra estructuralmente de la fórmula | D-022 |
-| Destrucción | Podía fallar por referencias o cardinalidad | Suspensión lógica reversible con conservación del contenido almacenado | D-021 |
-| Propiedades dinámicas | `add` y `remove` solo operaban sobre colecciones | También añaden y eliminan propiedades; `remove` sí pierde su contenido | D-021 |
-| Miembro igual al tipo | `T` podía habitar implícitamente `T[k]` por `T is T`; D-020 propuso `[reflexive]` | Se prohíbe siempre: $c\neq T\land c\ \mathsf{is}\ T$ | D-026 |
-| Cardinalidad durante efectos | Se comprobaba como validez dinámica sin una frontera local única | Se demuestra estáticamente al final de cada `then` y en su posible consolidación | D-026 |
-| Salidas públicas | No había una frontera simétrica a las acciones | `look` consulta estados estables y `message` publica valores tras estabilizar | D-027 |
-
-## Estado de la formalización profesional
-
-Dentro de `especificacion/`:
-
-- [[especificacion/03-notacion]] es el único capítulo con un cuerpo formal sustancial.
-- [[especificacion/04-modelo-matematico]] contiene restricciones y procedencia, pero todavía es un esqueleto.
-- Los capítulos 01 y 02 son esqueletos.
-- Los capítulos 05 a 48 existen únicamente como índice previsto.
-
-Los ADR D-014 a D-034 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
-
-## Regla de conservación a partir de esta auditoría
-
-Hasta que una sección de la fuente haya sido:
-
-1. incorporada a un documento versionado;
-2. sustituida por una decisión explícita; o
-3. rechazada con justificación;
-
-debe considerarse **pendiente de migración**, no “ya cubierta”.
-
-La futura auditoría de promoción deberá trabajar por requisito concreto, no solo por número de sección.
+No se usa para resolver dudas actuales, completar silencios de la especificación ni implementar MUD. Si un documento vigente depende de una regla, debe enlazar su ADR, capítulo o pregunta abierta, nunca esta referencia.

@@ -5,14 +5,14 @@ aliases:
 tags:
   - mud/referencia
   - mud/historico
-status: sustituido
+status: retirado
 normative: false
 snapshot-date: 2026-07-27
 original-sha256: 9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423
 ---
 
-> [!danger] Referencia histórica — no normativa
-> Este archivo conserva un estado temprano y temporal del diseño de MUD. **No describe por sí solo el lenguaje vigente, no debe usarse para implementar y no prevalece sobre `especificacion/`, los ADR vigentes ni el registro de preguntas abiertas.**
+> [!danger] Referencia retirada — no normativa
+> Este archivo conserva un estado temprano y temporal del diseño de MUD. **Su migración está terminada: no debe usarse para completar silencios, resolver dudas ni implementar el lenguaje vigente.** Solo se conserva para trazabilidad histórica.
 >
 > El texto situado bajo estos avisos se conserva deliberadamente sin reescribir para mantener la procedencia. Expresiones internas como «estado vigente», «contexto maestro» o «todas las decisiones [...] vigentes» pertenecen a la instantánea original y ya no tienen autoridad.
 
@@ -21,7 +21,7 @@ Autoridad actual, por orden:
 1. Capítulos vigentes de [[especificacion/README|la especificación formal]].
 2. Decisiones vigentes de [[notas/10-registro-de-decisiones|el registro de decisiones]] y sus ADR.
 3. [[notas/08-preguntas-abiertas|Preguntas abiertas]], cuando una materia todavía no esté cerrada.
-4. Este archivo únicamente como fuente de requisitos históricos aún no migrados ni sustituidos.
+4. Este archivo no tiene autoridad subsidiaria: la matriz de migración demuestra el destino de cada sección.
 
 La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`. La auditoría detallada está en [[notas/13-auditoria-de-cobertura-y-divergencias]].
 

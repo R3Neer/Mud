@@ -4,9 +4,9 @@ Esta carpeta convierte la especificación inicial en un espacio de trabajo para 
 
 Documento de procedencia:
 
-- [[referencias/MUD Especificacion inicial|MUD — Especificación inicial histórica]].
-- Estado observado: instantánea inicial de 78 secciones, ahora anotada como no normativa.
-- Regla de interpretación: `especificacion/` y las decisiones vigentes prevalecen. La referencia solo conserva procedencia y requisitos que aún no se hayan migrado, sustituido o rechazado explícitamente.
+- [[referencias/retiradas/MUD Especificacion inicial|MUD — Especificación inicial histórica retirada]].
+- Estado: sus 78 secciones han sido migradas, sustituidas o retiradas conforme a [[notas/13-auditoria-de-cobertura-y-divergencias]].
+- Regla de interpretación: la referencia conserva únicamente procedencia; nunca completa silencios de la especificación actual.
 
 ## Qué se está construyendo
 
@@ -38,7 +38,7 @@ La dificultad principal no es analizar texto. Es garantizar que una intención e
 | [10-registro-de-decisiones.md](10-registro-de-decisiones.md) | ¿Cómo se documentan decisiones y propuestas? | La explicación normativa completa de cada tema |
 | [11-trazabilidad-de-la-fuente.md](11-trazabilidad-de-la-fuente.md) | ¿Qué documento es dueño de cada parte del documento inicial? | Afirmaciones sobre cobertura completa |
 | [12-destruccion-colecciones-y-grafo-activo.md](12-destruccion-colecciones-y-grafo-activo.md) | ¿Cómo interactúan destrucción, estado latente y dependencias? | La norma definitiva del ciclo de vida |
-| [13-auditoria-de-cobertura-y-divergencias.md](13-auditoria-de-cobertura-y-divergencias.md) | ¿Qué está formalizado, resumido, pendiente o sustituido respecto de la fuente? | Copia íntegra de la fuente |
+| [13-auditoria-de-cobertura-y-divergencias.md](13-auditoria-de-cobertura-y-divergencias.md) | ¿Dónde fue a parar cada una de las 78 secciones de la fuente retirada? | La formalización que aún queda por hacer |
 
 ## Convenciones para trabajar en esta carpeta
 
