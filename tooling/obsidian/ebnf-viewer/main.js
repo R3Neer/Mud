@@ -3,7 +3,9 @@
 const { Plugin, TextFileView } = require("obsidian");
 const { EditorState } = require("@codemirror/state");
 const {
+  Decoration,
   EditorView,
+  ViewPlugin,
   drawSelection,
   highlightActiveLine,
   highlightActiveLineGutter,
@@ -13,7 +15,6 @@ const {
 const {
   bracketMatching,
   StreamLanguage,
-  syntaxHighlighting,
 } = require("@codemirror/language");
 const {
   defaultKeymap,
@@ -22,7 +23,7 @@ const {
   indentWithTab,
 } = require("@codemirror/commands");
 const { searchKeymap } = require("@codemirror/search");
-const { classHighlighter } = require("@lezer/highlight");
+const { tokenizeEbnf } = require("./tokenizer.cjs");
 
 const VIEW_TYPE_EBNF = "mud-ebnf-view";
 
@@ -99,6 +100,33 @@ const ebnfLanguage = StreamLanguage.define({
   },
 });
 
+const ebnfSyntaxDecorations = ViewPlugin.fromClass(
+  class {
+    constructor(view) {
+      this.decorations = buildSyntaxDecorations(view);
+    }
+
+    update(update) {
+      if (update.docChanged) {
+        this.decorations = buildSyntaxDecorations(update.view);
+      }
+    }
+  },
+  {
+    decorations: (plugin) => plugin.decorations,
+  },
+);
+
+function buildSyntaxDecorations(view) {
+  const documentText = view.state.doc.toString();
+  const ranges = tokenizeEbnf(documentText).map((current) =>
+    Decoration.mark({
+      class: `mud-ebnf-token-${current.kind}`,
+    }).range(current.from, current.to),
+  );
+  return Decoration.set(ranges, true);
+}
+
 class EbnfView extends TextFileView {
   constructor(leaf) {
     super(leaf);
@@ -161,7 +189,7 @@ class EbnfView extends TextFileView {
         bracketMatching(),
         highlightActiveLine(),
         ebnfLanguage,
-        syntaxHighlighting(classHighlighter),
+        ebnfSyntaxDecorations,
         keymap.of([
           {
             key: "Mod-s",

@@ -57,39 +57,38 @@
   background: var(--background-modifier-hover);
 }
 
-.mud-ebnf-editor .tok-definition {
+.mud-ebnf-editor .mud-ebnf-token-definition {
   color: var(--color-accent) !important;
   font-weight: 700;
 }
 
-.mud-ebnf-editor .tok-variableName {
+.mud-ebnf-editor .mud-ebnf-token-reference {
   color: var(--color-cyan) !important;
 }
 
-.mud-ebnf-editor .tok-typeName {
+.mud-ebnf-editor .mud-ebnf-token-terminal {
   color: var(--color-purple) !important;
   font-weight: 600;
 }
 
-.mud-ebnf-editor .tok-string {
+.mud-ebnf-editor .mud-ebnf-token-string {
   color: var(--color-green) !important;
 }
 
-.mud-ebnf-editor .tok-comment {
+.mud-ebnf-editor .mud-ebnf-token-comment {
   color: var(--text-muted) !important;
   font-style: italic;
 }
 
-.mud-ebnf-editor .tok-meta,
-.mud-ebnf-editor .tok-number {
+.mud-ebnf-editor .mud-ebnf-token-meta,
+.mud-ebnf-editor .mud-ebnf-token-number {
   color: var(--color-orange) !important;
 }
 
-.mud-ebnf-editor .tok-operator {
+.mud-ebnf-editor .mud-ebnf-token-operator {
   color: var(--color-pink) !important;
 }
 
-.mud-ebnf-editor .tok-punctuation,
-.mud-ebnf-editor .tok-bracket {
+.mud-ebnf-editor .mud-ebnf-token-bracket {
   color: var(--color-yellow) !important;
 }

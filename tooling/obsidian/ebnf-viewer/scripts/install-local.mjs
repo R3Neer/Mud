@@ -12,7 +12,7 @@ const target = path.join(obsidianDirectory, "plugins", PLUGIN_ID);
 
 await mkdir(target, { recursive: true });
 await Promise.all(
-  ["main.js", "manifest.json", "styles.css"].map((file) =>
+  ["main.js", "manifest.json", "styles.css", "tokenizer.cjs"].map((file) =>
     copyFile(path.join(pluginRoot, file), path.join(target, file)),
   ),
 );
