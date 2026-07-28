@@ -3,6 +3,8 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
+import { bundleMain } from "./bundle.mjs";
+
 const PLUGIN_ID = "mud-ebnf-viewer";
 const currentFile = fileURLToPath(import.meta.url);
 const pluginRoot = path.resolve(path.dirname(currentFile), "..");
@@ -11,10 +13,14 @@ const obsidianDirectory = path.join(repositoryRoot, ".obsidian");
 const target = path.join(obsidianDirectory, "plugins", PLUGIN_ID);
 
 await mkdir(target, { recursive: true });
+const bundledMain = await bundleMain(pluginRoot);
 await Promise.all(
-  ["main.js", "manifest.json", "styles.css", "tokenizer.cjs"].map((file) =>
-    copyFile(path.join(pluginRoot, file), path.join(target, file)),
-  ),
+  [
+    writeFile(path.join(target, "main.js"), bundledMain, "utf8"),
+    ...["manifest.json", "styles.css"].map((file) =>
+      copyFile(path.join(pluginRoot, file), path.join(target, file)),
+    ),
+  ],
 );
 
 const communityPluginsFile = path.join(
