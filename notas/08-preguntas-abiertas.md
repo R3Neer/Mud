@@ -291,11 +291,23 @@ Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-030-conversio
 
 Si una acción puede seleccionar dinámicamente otras acciones, cómo se conserva aciclicidad y análisis de impacto.
 
-### Q-024 — Datos asociados a miembros de una `family`
+### Q-059 — Observación de resultados de acción en tests
+
+Estado: **abierta** a partir de [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+
+¿Cómo comprueba un test que una acción solicitada produjo `accepted`, `rejected` o `failed` sin confundir esos resultados con `passed`, `failed` y `error` del propio test?
+
+Debe decidirse:
+
+- Si una solicitud de acción dentro de `then` puede vincular su resultado a un nombre local.
+- Si una acción `rejected` constituye por defecto un error del escenario o un resultado observable.
+- Cómo se exponen la causa y la traza sin convertir diagnósticos en valores ordinarios del mundo.
+
+### Q-024 — Familias cerradas
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
-`family` ya es una declaración nominal independiente de `thing`; sus miembros son valores finitos y enumerables sin identidad ni ciclo de vida runtime, y `ordered family` añade orden semántico. Permanece abierto si los miembros pueden asociar datos inmutables comunes o específicos y, en tal caso, cuál es su sintaxis, construcción, acceso e igualdad.
+Las familias cerradas son nominales, finitas y enumerables; `ordered values` añade el orden declarado y pueden existir campos comunes. Permanecen abiertos los campos específicos por alternativa, la especialización entre familias y su encaje ontológico exacto con el dominio unificado de `thing`.
 
 ### Q-025 — Destrucción de `thing` estáticas
 

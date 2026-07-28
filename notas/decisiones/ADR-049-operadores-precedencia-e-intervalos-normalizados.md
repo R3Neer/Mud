@@ -25,7 +25,7 @@ Los tokens compartidos se resuelven por tipos y contexto sintáctico; no autoriz
 La igualdad se define por clase de valor:
 
 - `thing`: identidad;
-- `family`: tipo nominal y miembro;
+- familia cerrada: tipo nominal y alternativa;
 - alias: mismo tipo nominal y contenido;
 - números: valor dentro de la misma representación o tras conversión explícita;
 - magnitudes: cantidad normalizada dimensionalmente compatible;

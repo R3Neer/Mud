@@ -2,6 +2,7 @@
 
 - Estado: Vigente como frontera arquitectónica
 - Fecha: 2026-07-28
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-007, Q-009, Q-037, Q-038
 - Documentos afectados: arquitectura, tooling, conformidad
 
@@ -36,6 +37,8 @@ Un materializador puede usar funciones, parámetros, tuplas, mapas, transaccione
 
 La conformidad se prueba mediante programas válidos e inválidos, diagnósticos requeridos, IR esperado, transiciones, trazas y propiedades. El soporte de editor debe diferenciar participantes `on`, participantes `for`, `given`, dominios, variantes de regla y firmas públicas, pero no constituye semántica.
 
+El compilador valida las declaraciones `test`. Un perfil de producción puede retirarlas después del análisis; un ejecutor de tests conserva su IR, construye sus mundos aislados y descarta todos sus efectos y salidas. Los tests escritos en MUD no sustituyen la suite de conformidad de una implementación.
+
 ## Consecuencias
 
 - TypeScript es un destino posible, no una parte de MUD.
@@ -48,3 +51,4 @@ La conformidad se prueba mediante programas válidos e inválidos, diagnósticos
 3. Casos de conformidad para participantes, `given`, acciones, reglas y salidas.
 4. El editor muestra la firma semántica resuelta.
 5. Ningún artefacto derivado es necesario para reconstruir el modelo.
+6. Separación entre tests de usuario, ejecución de producción y suite de conformidad.

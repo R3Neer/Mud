@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
+- Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 
@@ -66,6 +66,8 @@ Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invoc
 ### Ciclo de vida común
 
 Las tres variantes poseen una definición canónica única de primer nivel, pueden activarse mediante `start with` o `create Nombre` y suspenderse mediante `destroy`, conforme a D-021 y D-054. Conservan su variante al reactivarse. La suspensión de una regla `always` retira temporalmente su obligación; la reactivación no permite publicar un estado que la incumpla.
+
+Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `always` es una palabra contextual delante de `rule`, no una categoría nominal ni un prefijo de ancla independiente.
 
 ## Consecuencias
 

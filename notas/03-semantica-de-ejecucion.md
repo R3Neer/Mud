@@ -24,7 +24,7 @@ estado estable anterior
 
 ## Construcción del mundo inicial
 
-Las definiciones canónicas de `thing` y reglas pertenecen al programa y no están activas por defecto. La declaración única `start with` determina un conjunto inicial no ordenado de activaciones.
+Las definiciones canónicas de `thing` y reglas pertenecen al programa y no están activas por defecto. La declaración global única `start with` determina un conjunto inicial no ordenado de activaciones.
 
 El runtime:
 
@@ -152,6 +152,22 @@ Casos de `failed`:
 Toda salida distinta de `accepted` deja el mundo exactamente como estaba. Esta consecuencia está fuertemente implicada por la atomicidad y debe escribirse como regla normativa explícita.
 
 Esta consecuencia ya es normativa en [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]]. Los contratos de reglas, especulación, alcanzabilidad, ondas, conflictos, iteración y azar se consolidan respectivamente en [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]], [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]] y [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]].
+
+## Ejecución de tests
+
+Cada test se ejecuta sobre un mundo fresco y aislado. Su `start with` local sustituye al global, materializa únicamente las definiciones canónicas referenciadas y estabiliza el mundo antes de ejecutar `then`.
+
+El `then` forma una única transición de prueba. Las asignaciones situadas al comienzo del bloque son efectos ordinarios; no crean una frontera implícita de preparación. Por ello, `old` dentro del `after` del test observa el estado estable producido por el `start with` local y anterior al `then` completo.
+
+Después de estabilizar la transición, todas las aserciones `after` se evalúan sobre el mismo estado final y en orden textual. Una condición falsa produce su diagnóstico `otherwise`, si existe, y el ejecutor puede acumular varias condiciones falsas.
+
+El resultado del test es:
+
+- `passed` si todas las fases terminan correctamente y todas las aserciones son verdaderas;
+- `failed` si existe al menos una aserción falsa y no se produce un error;
+- `error` si falla la construcción inicial, la transición o la evaluación de una aserción o diagnóstico.
+
+El mundo, los mensajes y las demás salidas se descartan siempre. Estos resultados pertenecen al ejecutor de tests y no son los resultados de acción `accepted`, `rejected` y `failed`. La semántica completa pertenece a [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
 
 ## Conflictos
 

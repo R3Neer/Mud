@@ -36,7 +36,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 9 | Acceso, nombres cualificados y anclas | Migrada | D-035 |
 | 10 | Constructos | Sustituida por `thing` y migrada | D-014, D-015, D-025, D-054 |
 | 11 | Aliases y valores estructurales | Sustituida y migrada | D-031 a D-033 |
-| 12 | Familias cerradas | Migrada; datos asociados abiertos en Q-024 | D-038 |
+| 12 | Familias cerradas | Migrada; extremos abiertos en Q-024 | D-038 |
 | 13 | Campos | Migrada | D-017, D-019, D-037 |
 | 14 | Tipos básicos | Sustituida y migrada | D-028, D-034, D-040 |
 | 15 | Conversiones | Sustituida y migrada | D-030, D-032 |
@@ -96,10 +96,10 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 69 | Inferencias permitidas | Actualizada y migrada | D-053 |
 | 70 | Agenda de especificación | Migrada | [[notas/07-plan-de-formalizacion]], [[notas/08-preguntas-abiertas]] |
 | 71 | Flujo atómico del plugin | Actualizada y migrada | D-012, D-053 |
-| 72 | Tests | Suite obsoleta retirada; obligaciones migradas | D-052; capítulos 42 y 43 previstos |
+| 72 | Tests | Suite obsoleta retirada; obligaciones migradas y tests declarativos añadidos | D-052, D-055; capítulos 43 y 44 previstos |
 | 73 | Soporte de editor | Migrada como requisito de tooling | D-052 |
-| 74 | Palabras clave provisionales | Catálogo obsoleto retirado; política migrada | D-050, D-052; capítulo 45 previsto |
-| 75 | Ejemplo integral | Ejemplo no conforme retirado; propósito preservado | capítulo 46 previsto y corpus de conformidad |
+| 74 | Palabras clave provisionales | Catálogo obsoleto retirado; política migrada | D-050, D-052; capítulo 46 previsto |
+| 75 | Ejemplo integral | Ejemplo no conforme retirado; propósito preservado | capítulo 47 previsto y corpus de conformidad |
 | 76 | Decisiones esenciales | Sustituida por el registro vivo | [[notas/10-registro-de-decisiones]] |
 | 77 | Cuestiones abiertas | Sustituida por la agenda viva | [[notas/08-preguntas-abiertas]] |
 | 78 | Instrucciones finales | Migradas y actualizadas | D-013, D-053; [[notas/07-plan-de-formalizacion]] |

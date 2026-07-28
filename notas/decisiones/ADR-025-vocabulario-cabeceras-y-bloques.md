@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Relacionada con: [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
+- Relacionada con: [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`
 
 ## Contexto
@@ -86,7 +86,7 @@ then {
 }
 ```
 
-`when`, `if` y `after` contienen una única expresión booleana, aunque esa expresión sea compuesta. Por ello, el único caso actual en que la pluralidad hace obligatorias las llaves es `then`.
+En acciones y reglas, `when`, `if` y `after` contienen una única expresión booleana, aunque esa expresión sea compuesta. El `after` de un test, definido por D-055, contiene una o más aserciones ordenadas y exige llaves cuando contiene varias. `then` también exige llaves cuando contiene varias instrucciones.
 
 ## Consecuencias
 
@@ -105,3 +105,4 @@ then {
 4. Una prueba positiva y otra negativa para cada fila de la matriz de participantes.
 5. Aceptación de cada cláusula con y sin llaves cuando contiene un elemento.
 6. Rechazo de un `then` desnudo con varias instrucciones.
+7. Aceptación de una aserción desnuda y exigencia de llaves para varias aserciones `after` de un test.

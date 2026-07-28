@@ -98,6 +98,7 @@ Glosario normativo de:
 - Participante, rol, vinculación y `given`.
 - Regla consultable, reactiva y `always`.
 - Acción, solicitud, raíz, onda y resolución.
+- Test, aserción y diagnóstico.
 - Estado, instantánea, efecto y conflicto.
 - Dominio, restricción, condición e invariante.
 - Aceptación, rechazo y fallo.
@@ -210,6 +211,7 @@ Define la sintaxis completa de:
 - Bloques.
 - Llamadas.
 - Definiciones canónicas de `thing` y reglas, declaración inicial `start with` y activaciones mediante `create Nombre`.
+- Tests aislados con `start with` local, `then`, `after` y `otherwise`.
 - Cuantificadores e iteraciones.
 
 La gramática completa ejecutable vivirá en `gramatica/mud.ebnf`. Este capítulo explicará ambigüedades, precedencia y desazucarado, pero no repetirá toda la EBNF.
@@ -227,6 +229,7 @@ Define las formas semánticamente relevantes después del parsing:
 - Distinción entre definición canónica, conjunto inicial de activaciones y referencia de activación runtime.
 - Distinción estructural entre las tres clases de regla.
 - Distinción entre acciones elementales y compuestas.
+- Nodo propio `TestDecl` y aserciones con diagnóstico opcional.
 - Nodos propios para `look`, `message` y propiedades públicas.
 - Azúcares sintácticos y forma núcleo.
 
@@ -241,6 +244,7 @@ Define:
 - Imports exactos y recursivos.
 - Ambigüedad.
 - Formación y unicidad de anclas.
+- Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
 - Identidad ante movimientos de archivo.
 - Migración de namespace y anclas.
 
@@ -319,12 +323,11 @@ Archivo previsto: `13-familias-cerradas.md`
 
 Define:
 
-- `family`.
-- `ordered` contextual delante de `family`.
-- Miembros como valores nominales sin identidad ni ciclo de vida runtime.
-- Anclas estáticas `family::*`.
+- `values`.
+- `ordered values`.
+- Identidad nominal.
 - Campos comunes y específicos.
-- Prohibición de especialización y herencia entre familias.
+- Herencia de familias.
 - Enumeración finita.
 
 Base normativa migrada: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
@@ -525,6 +528,7 @@ Define:
 - Vinculación posicional y nombrada.
 - Aciclicidad de llamadas.
 - Acciones como API externa de escritura.
+- Exclusión de los tests de la API pública.
 - Posibles valores de retorno.
 - `look` como consulta pública pura de un estado estable.
 - Participantes `for` sin `given`.
@@ -653,6 +657,8 @@ Define:
 - Comprobación de reglas `always`.
 - Estado observado por `old`.
 - Momento de evaluación de `after`.
+- Diferencia entre el `after` booleano de una acción y la secuencia de aserciones de un test.
+- Estado observado por `old` dentro de un test.
 - Rechazo final.
 - Restauración completa.
 
@@ -851,9 +857,27 @@ Define:
 - Requisitos de determinismo.
 - Declaración de versión.
 
-## 43. Suite de conformidad
+## 43. Tests declarativos
 
-Archivo previsto: `43-suite-de-conformidad.md`
+Archivo previsto: `43-tests-declarativos.md`
+
+Define:
+
+- Declaraciones `test` con ancla `test::*`.
+- Mundo aislado y sustitución del `start with` global.
+- Materialización y estabilización previas.
+- Semántica de `then`.
+- Aserciones `after`.
+- Diagnósticos `otherwise`.
+- Resultados `passed`, `failed` y `error`.
+- Descarte del mundo y de sus salidas.
+- Ejecución por ancla o namespace.
+
+Base normativa: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+
+## 44. Suite de conformidad
+
+Archivo previsto: `44-suite-de-conformidad.md`
 
 Define:
 
@@ -878,29 +902,31 @@ conformidad/
 
 Base arquitectónica migrada: [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|D-052]].
 
-## 44. Gramática consolidada
+Los tests declarativos escritos por una persona usuaria forman parte de MUD, pero no sustituyen esta suite: la suite de conformidad comprueba implementaciones completas del lenguaje.
 
-Archivo previsto: `44-gramatica-consolidada.md`
+## 45. Gramática consolidada
+
+Archivo previsto: `45-gramatica-consolidada.md`
 
 Apéndice normativo generado o verificado contra `gramatica/mud.ebnf`.
 
-## 45. Catálogo de palabras reservadas
+## 46. Catálogo de palabras reservadas
 
-Archivo previsto: `45-palabras-reservadas.md`
+Archivo previsto: `46-palabras-reservadas.md`
 
 Lista normativa, clasificación como palabra reservada o contextual y versión de introducción o retirada.
 
-Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]] y [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]; el catálogo se derivará de la gramática y no de la lista provisional histórica.
+Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]; el catálogo se derivará de la gramática.
 
-## 46. Ejemplos integrales
+## 47. Ejemplos integrales
 
-Archivo previsto: `46-ejemplos-integrales.md`
+Archivo previsto: `47-ejemplos-integrales.md`
 
 Ejemplos informativos construidos únicamente con reglas ya especificadas. No introducen comportamiento nuevo.
 
-## 47. Compatibilidad y migraciones
+## 48. Compatibilidad y migraciones
 
-Archivo previsto: `47-compatibilidad.md`
+Archivo previsto: `48-compatibilidad.md`
 
 Define:
 
@@ -910,9 +936,9 @@ Define:
 - Migración del IR.
 - Obsolescencia de sintaxis.
 
-## 48. Índice de reglas normativas
+## 49. Índice de reglas normativas
 
-Archivo previsto: `48-indice-normativo.md`
+Archivo previsto: `49-indice-normativo.md`
 
 Índice generado de requisitos con identificadores estables, por ejemplo:
 
@@ -924,6 +950,7 @@ MUD-TYPE-023
 MUD-ACTION-011
 MUD-WAVE-006
 MUD-REACH-004
+MUD-TEST-003
 ```
 
 ---

@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
+- Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Cierra: [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a `thing` futuras|Q-044]], [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de `create`|Q-045]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/08-preguntas-abiertas]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
 
@@ -70,7 +70,7 @@ Una solicitud `create d` no modifica una declaración ya activa. La aplicabilida
 
 ### Conjunto inicial `start with`
 
-Las definiciones de `thing` y reglas no quedan activas por el mero hecho de aparecer en el programa. Un programa puede contener una única declaración de primer nivel:
+Las definiciones de `thing` y reglas no quedan activas por el mero hecho de aparecer en el programa. Un programa puede contener una única declaración global de primer nivel:
 
 ```mud
 start with {
@@ -106,6 +106,8 @@ El estado inicial se construye materializando conjuntamente las declaraciones de
 
 Las acciones, aliases y magnitudes no pertenecen a $\operatorname{initiallyActive}_P$: no poseen este ciclo de vida. Una acción declarada forma parte de la API estática, aunque su invocabilidad efectiva pueda quedar suspendida por dependencias inactivas.
 
+Conforme a D-055, cada test declara además un `start with` local con la misma forma de conjunto de activaciones. Durante ese test, el conjunto local sustituye por completo al global. Los tests no son activables y no pueden aparecer en ninguno de los dos conjuntos.
+
 ### Inicialización y reactivación
 
 Los inicializadores de una definición se aplican cuando se materializa por primera vez su carga, ya sea mediante `start with` o mediante una instrucción `create`.
@@ -124,9 +126,11 @@ No vuelve a ejecutar los inicializadores ni cambia el descriptor.
 
 `with` es una palabra reservada.
 
-`start` es una palabra contextual: el parser la reconoce como introductor únicamente en la producción de primer nivel `start with`.
+`start` es una palabra contextual: el parser la reconoce como introductor del `start with` global o del `start with` local de un test.
 
 `abstract` también es contextual: el parser lo reconoce como modificador únicamente delante de `thing`. Fuera de esa posición puede usarse como identificador ordinario.
+
+`always` es contextual delante de `rule`. D-055 introduce `test` y `otherwise` como palabras reservadas.
 
 Las etiquetas reconocidas dentro de una declaración concreta, como `name` y `prefixes` en las declaraciones de unidades, son igualmente contextuales y no pertenecen por ello al catálogo de palabras reservadas.
 
@@ -209,11 +213,12 @@ La suite deberá cubrir:
 4. Activación y destrucción de una `thing`.
 5. Reactivación con conservación exacta de descriptor y carga.
 6. Activación idempotente concurrente de una identidad ausente.
-7. Un único `start with`.
+7. Un único `start with` global.
 8. Independencia respecto del orden de su lista.
 9. Rechazo de coma final.
 10. Rechazo de referencias duplicadas o no activables.
 11. Estado inicial vacío cuando se omite la declaración.
 12. Estabilización inicial antes de aceptar acciones externas.
 13. Uso ordinario de `start` y `abstract` como identificadores fuera de sus contextos especiales.
-14. Tratamiento contextual de `name`, `prefixes` y etiquetas equivalentes.
+14. Tratamiento contextual de `always`, `name`, `prefixes` y etiquetas equivalentes.
+15. Sustitución del conjunto global por el `start with` local de cada test.

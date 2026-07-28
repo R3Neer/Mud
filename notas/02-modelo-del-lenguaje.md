@@ -8,17 +8,17 @@ MUD tiene ocho declaraciones con nombre y una declaración única de activación
 
 | Declaración | Representa | Denota identidad o valor dentro del mundo |
 | --- | --- | --- |
-| `thing` | Cosa, concepto, categoría o especialización | Sí |
+| `thing` | Cosa, concepto, categoría, especialización o familia cerrada | Sí |
 | `magnitude` | Cantidad, unidad o punto sobre una cantidad | No como entidad del mundo |
 | `rule` | Condición consultable, reacción o invariante | Su declaración tiene ancla; no es un valor ordinario del mundo |
 | `action` | Operación externa o composición atómica | Su declaración tiene ancla; no es un valor ordinario del mundo |
+| `test` | Escenario aislado que ejecuta efectos y comprueba aserciones | Su declaración tiene ancla; no forma parte del mundo ni de su API |
 | `look` | Consulta pública pura del estado estable | Su declaración tiene ancla; su resultado es un valor de salida |
 | `message` | Evento público detectado durante una resolución y materializado al estabilizar | Su declaración tiene ancla; cada ocurrencia es una salida |
 | `alias` | Tipo nominal de valor simple, estructural o compuesto | La declaración tiene ancla estática; sus valores no tienen identidad runtime |
-| `family` | Tipo nominal finito formado por miembros declarados | La declaración tiene ancla estática; sus miembros son valores sin identidad runtime |
 | `start with` | Conjunto no ordenado de `thing` y reglas activas al comenzar | No tiene ancla propia ni es un valor del mundo |
 
-Toda declaración con nombre tiene identidad semántica mediante un ancla. `start with` es única en el programa y no introduce una identidad adicional. La última columna distingue la identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
+Toda declaración con nombre tiene identidad semántica mediante un ancla. El `start with` global es único en el programa y no introduce una identidad adicional; cada test contiene además su propio `start with` local. La última columna distingue la identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
 
 ## Identidad, valor y especialización
 
@@ -34,8 +34,6 @@ Hay que conservar tres relaciones distintas:
 - `is` consulta especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
 
 Dos `thing` definidas con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con el mismo contenido son iguales. Aliases diferentes no son intercambiables aunque su forma normalizada coincida; requieren casting nominal explícito mediante `to`.
-
-Una `family` declara un tipo nominal finito independiente de `thing`. Sus miembros son valores nominales sin estado ni ciclo de vida runtime: no pertenecen a $\mathcal T_P$, no participan en `as` o `is` y no admiten `create` ni `destroy`. Todas las familias se enumeran en orden de declaración; `ordered family` convierte además ese orden en el orden semántico de comparación. Las reglas completas pertenecen a [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
 Cada `thing` posee una única definición canónica de primer nivel. Puede ser raíz, abstracta o concreta y declarar cero o varios antecesores mediante `as`. `create Nombre` activa esa identidad ya definida: no fabrica una identidad fresca, no añade antecesores y no contiene un cuerpo. Después de `destroy Nombre`, una nueva activación recupera la misma identidad, descriptor y carga almacenada. Las reglas completas pertenecen a [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
@@ -75,7 +73,7 @@ start with {
 }
 ```
 
-`start with` contiene únicamente referencias separadas por comas, sin coma final. No es una acción ni un bloque de instrucciones y no admite `create`, `destroy` u otros efectos. Si se omite, ninguna `thing` ni regla está explícitamente activa al comienzo.
+El `start with` global contiene únicamente referencias separadas por comas, sin coma final. No es una acción ni un bloque de instrucciones y no admite `create`, `destroy` u otros efectos. Si se omite, ninguna `thing` ni regla está explícitamente activa al comienzo ordinario del programa.
 
 El mundo distingue información almacenada y proyección efectiva. `destroy` suspende la estructura de su objetivo y las declaraciones que tengan una dependencia dura de él, pero conserva descriptores y cargas. Una recreación restaura esa información. Por el contrario, `remove field from Thing` elimina la propiedad y su contenido almacenado.
 
@@ -204,6 +202,28 @@ Una acción no se activa sola. Se solicita desde el exterior o desde una acción
 
 La separación entre acciones elementales y compuestas, la raíz simultánea, `old`, `after`, rollback y resultados pertenecen a [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
+## Tests
+
+Un `test` declara un escenario cerrado, aislado y reproducible. No es un modificador de `action`, no pertenece a la API pública y usa un ancla `test::*`.
+
+```mud
+test CounterIncreases {
+    start with {
+        Counter
+    }
+
+    then Counter.value += 1
+
+    after Counter.value == 1 otherwise "The counter did not increase"
+}
+```
+
+El `start with` local sustituye completamente al global y solo contiene referencias a definiciones canónicas activables. Después de materializarlas y estabilizar el mundo inicial, `then` forma la transición probada. Las asignaciones escritas en `then` son efectos, no parte del estado inicial.
+
+El `after` del test contiene aserciones booleanas ordenadas. Cada una puede asociar un diagnóstico `Text` mediante `otherwise`. `old` observa el estado estable anterior al `then` completo. La ejecución produce `passed`, `failed` o `error` para el ejecutor de tests y descarta siempre el mundo aislado y sus salidas.
+
+Un test no admite `for`, `given`, `if`, `when` ni participantes. El contrato completo pertenece a [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+
 ## Salidas: `look` y `message`
 
 Un `look` es una consulta pública pura sobre un estado estable. Declara participantes mediante `for`, no acepta `given` y publica campos tipados calculados a partir de propiedades o expresiones puras.
@@ -214,7 +234,7 @@ Junto con las acciones forman la frontera semántica del modelo: `action` introd
 
 ## Forma de las cláusulas
 
-`when`, `if`, `after` y `then` permiten omitir llaves cuando contienen un solo elemento. Las llaves siguen siendo válidas y pueden mejorar la lectura. Un `then` con varias instrucciones debe encerrarlas entre llaves. `when`, `if` y `after` contienen una única expresión booleana, aunque sea compuesta, según [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]].
+`when`, `if`, `after` y `then` permiten omitir llaves cuando contienen un solo elemento. Las llaves siguen siendo válidas y pueden mejorar la lectura. Un `then` con varias instrucciones debe encerrarlas entre llaves. En acciones y reglas, `when`, `if` y `after` contienen una única expresión booleana, aunque sea compuesta, según [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]. El `after` de un test es la excepción explícita: puede contener varias aserciones, por lo que exige llaves cuando hay más de una.
 
 ## Tipos y formas de datos
 
@@ -223,7 +243,7 @@ La especificación incluye:
 - Tipos básicos no numéricos: `Text` y `Bool`.
 - Tipos numéricos básicos: `Natural`, `Integer`, `Number`, `Rumber` y `Money`.
 - Aliases nominales simples, estructurales y compuestos.
-- Familias cerradas de valores declaradas mediante `family` u `ordered family`.
+- Familias cerradas de valores.
 - Cardinalidades y colecciones.
 - Diccionarios.
 - Intervalos.
@@ -271,16 +291,16 @@ Formato conceptual de anclas:
 ```text
 thing::warfare.armies.Army
 thing::warfare.armies.Army::morale
-family::warfare.armies.Severity
 rule::warfare.armies.IsDestroyed
 action::warfare.armies.Recruit
+test::warfare.armies.RecruitIncreasesArmy
 look::warfare.armies.ArmySummary
 message::warfare.armies.ArmyDestroyed
 ```
 
 Las anclas no incluyen el archivo. Mover una declaración dentro del mismo namespace no cambia su identidad; moverla de namespace sí, salvo una migración explícita todavía por diseñar.
 
-MUD distingue palabras reservadas y contextuales. `with` y `family` están reservadas; `start` solo introduce la declaración de primer nivel `start with`; `abstract` solo actúa como modificador delante de `thing`; `ordered` solo actúa como modificador delante de `family`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
+MUD distingue palabras reservadas y contextuales. `with`, `test` y `otherwise` están reservadas. `start` introduce `start with`; `abstract` solo actúa como modificador delante de `thing`; `always` solo actúa como variante delante de `rule`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
 
 Las reglas completas de organización física, imports, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 

@@ -2,6 +2,7 @@
 
 - Estado: Vigente; continuación de línea abierta
 - Fecha: 2026-07-28
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Pregunta relacionada: Q-001
 - Documentos afectados: léxico, gramática concreta, formateador
 
@@ -44,7 +45,7 @@ Una instrucción termina mediante `;` o un salto de línea que actúe como termi
 - Comentarios y terminadores deben resolverse en el lexer antes del parser.
 - El resaltador puede implementarlos sin conocer el modelo semántico.
 - El catálogo de palabras reservadas se generará desde la gramática consolidada.
-- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-054; que el parser reconozca `start`, `abstract`, `name` o `prefixes` en posiciones concretas no las convierte en palabras reservadas.
+- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-054 y D-055. `with`, `test` y `otherwise` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
 
 ## Verificación
 

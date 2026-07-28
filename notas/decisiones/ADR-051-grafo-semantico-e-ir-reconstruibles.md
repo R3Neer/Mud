@@ -2,7 +2,8 @@
 
 - Estado: Vigente como contrato arquitectónico; esquema exacto abierto
 - Fecha: 2026-07-28
-- Preguntas relacionadas: Q-009, Q-016, Q-027, Q-034, Q-054
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Preguntas relacionadas: Q-009, Q-016, Q-027, Q-034, Q-054, Q-059
 - Documentos afectados: arquitectura, grafo semántico, IR, conformidad
 
 ## Contexto
@@ -25,6 +26,7 @@ El AST conserva forma escrita y procedencia. El IR conserva significado resuelto
 - conservar referencias a archivo y rango de origen;
 - representar actividad lógica y dependencias suspendidas;
 - incluir `look`, `message` y la evaluación diferida de sus salidas.
+- distinguir `TestDecl`, su conjunto inicial local, sus efectos, sus aserciones y sus diagnósticos.
 
 El grafo es una proyección consultable del IR. Como mínimo reconoce nodos para declaraciones, componentes, campos, dominios, unidades, participantes, `given`, patrones de vinculación, expresiones `allowed` y consultas `eventually`.
 
@@ -35,6 +37,7 @@ Sus familias de aristas incluyen:
 - dominios, cardinalidad, mutabilidad y vinculación mediante `in`;
 - lectura, escritura y consulta de reglas;
 - dependencias de `when`, `if`, `after`, `old` y `always`;
+- activaciones, lecturas, escrituras y diagnósticos pertenecientes a tests;
 - llamadas y vinculaciones de acciones;
 - dependencias de `allowed` y `eventually`;
 - `CREATES`, `DESTROYS`, `ADDS_TO` y `REMOVES_FROM`;
@@ -55,5 +58,5 @@ Los nombres concretos de campos JSON y aristas se fijarán con el esquema de Q-0
 1. Reconstrucción determinista desde el mismo programa.
 2. Procedencia IR → AST → rango de fuente.
 3. Consultas de lectores, escritores, llamadas y dependencias transitivas.
-4. Representación diferenciada de `look`, `message` y las tres reglas.
+4. Representación diferenciada de `look`, `message`, tests y las tres reglas.
 5. Rechazo o migración explícita de una versión incompatible.

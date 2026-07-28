@@ -2,7 +2,8 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documentos afectados: frontera pública, efectos, solicitud de acciones, semántica de la raíz
 
 ## Contexto

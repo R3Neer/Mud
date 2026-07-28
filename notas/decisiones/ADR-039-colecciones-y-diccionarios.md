@@ -29,7 +29,7 @@ Fuentes iniciales de orden:
 
 - Básicos: orden de su tipo.
 - `thing`: orden de inserción cuando la colección es `ordered`.
-- `ordered family`: orden declarado.
+- Familias `ordered values`: orden declarado.
 - Alias ordenado: orden subyacente o lexicográfico.
 
 La consolidación simultánea de inserciones con orden observable deberá integrarse en la matriz de Q-006.

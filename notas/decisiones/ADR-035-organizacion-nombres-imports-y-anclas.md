@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-001, Q-014, Q-054
 - Documentos afectados: futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`
 
@@ -38,13 +39,12 @@ El orden textual de archivos e imports no decide empates.
 ### Convenciones de identificadores
 
 - Namespace: segmentos `lowerCamelCase` separados por puntos.
-- Declaraciones nominales (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `look` y `message`): `PascalCase`.
-- Miembros de una `family`: `PascalCase`.
+- Declaraciones nominales (`thing`, alias, magnitude, rule, action, test, look, message y familias): `PascalCase`.
 - Campos, componentes, roles, `given` y variables de iteración: `lowerCamelCase`.
 
 Los identificadores son sensibles a mayúsculas. El catálogo de palabras reservadas no puede usarse como nombre de campo, componente, rol, `given`, variable local o declaración.
 
-D-038 y D-054 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en la declaración `start with`; `abstract` lo es delante de `thing`; `ordered` lo es delante de `family`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `with` y `family` son palabras reservadas.
+D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `with`, `test` y `otherwise` son palabras reservadas.
 
 ### Nombres cualificados y anclas
 
@@ -62,10 +62,10 @@ thing::warfare.armies.Army
 thing::warfare.armies.Army::morale
 alias::geometry.Square
 alias::geometry.Square::file
-family::warfare.armies.Severity
 magnitude::physics.Length
 rule::warfare.armies.IsDestroyed
 action::warfare.armies.Recruit
+test::warfare.armies.RecruitIncreasesArmy
 look::warfare.armies.Summary
 message::warfare.armies.Destroyed
 ```
@@ -90,4 +90,4 @@ La identidad estable de una unidad sin identificador de cabecera permanece en Q-
 5. Colisión por mayúsculas y palabra reservada.
 6. Uso ordinario de una palabra contextual fuera de su posición especial.
 7. Estabilidad de anclas.
-8. Separación entre `family::*` y `thing::*`.
+8. Separación entre `action::*`, `test::*`, `rule::*` y `thing::*`.

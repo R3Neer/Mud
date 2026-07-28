@@ -13,6 +13,7 @@ questions: []
 decisions:
   - D-025
   - D-027
+  - D-055
 ---
 
 # 02. Terminología
@@ -35,10 +36,10 @@ El contenido normativo todavía no ha sido redactado.
 - Campo, relación y colección.
 - Participante, rol, vinculación y valor proporcionado.
 - Regla consultable, regla reactiva y regla `always`.
-- Acción, `look`, `message`, solicitud, observación, ocurrencia, raíz, onda y resolución.
+- Acción, test, aserción, diagnóstico `otherwise`, `look`, `message`, solicitud, observación, ocurrencia, raíz, onda y resolución.
 - Estado, instantánea, efecto y conflicto.
 - Dominio, restricción, condición e invariante.
-- Aceptación, rechazo y fallo.
+- Aceptación, rechazo y fallo de acciones; paso, fallo y error de tests.
 
 ## Criterios de redacción
 

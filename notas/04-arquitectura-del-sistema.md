@@ -78,6 +78,7 @@ El IR debe:
 
 - Usar anclas, no nombres ambiguos.
 - Distinguir explícitamente las tres clases de reglas.
+- Distinguir `TestDecl`, sus activaciones locales, efectos, aserciones y diagnósticos.
 - Conservar participantes y `given` como grupos separados.
 - Normalizar tipos, dominios y cardinalidades.
 - Registrar lecturas, escrituras y llamadas.
@@ -182,4 +183,4 @@ La especificación excluye persistencia de la semántica MUD, pero una materiali
 - Una instancia de estado runtime.
 - La tecnología usada para persistir esa instancia.
 
-El formato canónico de snapshots para tests puede definirse dentro del tooling sin imponer una base de datos al lenguaje.
+Los tests declarativos escritos en MUD pertenecen al lenguaje conforme a D-055 y no deben confundirse con tests generados por un materializador. El formato técnico de snapshots o fixtures adicionales puede definirse dentro del tooling sin imponer una base de datos al lenguaje.
