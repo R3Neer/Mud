@@ -64,6 +64,8 @@ El formato exacto está abierto, pero debe distinguir la intención humana, las 
 
 Si falla cualquier paso anterior al commit, se restaura exactamente el estado inicial de la transacción.
 
+Este flujo, la clasificación y el límite de inferencias del operador quedan consolidados en [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+
 ## Política para repositorios con cambios previos
 
 El operador no puede asumir que un worktree sucio le pertenece. Opciones seguras:

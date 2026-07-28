@@ -68,13 +68,17 @@ Un fallo semántico revierte la acción y se propaga en `allowed`; no equivale a
 
 ¿Qué operaciones producen commit? Propuesta: consultas `READ` no; CREATE, UPDATE, RETIRE y migraciones sí.
 
-También hay que decidir política de worktree sucio, formato del mensaje y qué derivados se versionan.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+
+Las consultas `READ` puras no producen commit y todo cambio confirmado se limita al plan sin descartar trabajo ajeno. Falta fijar el formato estable del mensaje, el aislamiento técnico y qué derivados se versionan.
 
 ### Q-009 — Forma canónica del IR
 
 ¿Cuál es el esquema versionado mínimo, cómo conserva procedencia y qué normalizaciones realiza?
 
-El JSON actual es ilustrativo, no suficiente para compatibilidad.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]].
+
+El IR es reconstruible, versionado, usa anclas, conserva procedencia y representa todas las distinciones semánticas enumeradas en D-051. Falta el esquema ejecutable, los nombres de campos y las reglas de compatibilidad.
 
 ### Q-010 — Estado de las decisiones de la fuente
 
@@ -245,11 +249,15 @@ Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-
 
 Detección semántica, salvaguarda técnica, diagnósticos y reproducibilidad.
 
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
+
+Una oscilación semántica produce `failed`; un límite de recursos es una salvaguarda técnica distinguible. Falta el algoritmo normativo de detección, la configuración portable y los diagnósticos.
+
 ### Q-021 — Análisis estático de conflictos
 
 Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
 
-D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas: son idempotentes porque sus definiciones son únicas. D-031 hace inaplicable el caso de aliases.
+D-023 y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] establecen el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas: son idempotentes porque sus definiciones son únicas. D-031 hace inaplicable el caso de aliases.
 
 D-026 endurece el caso de cardinalidad: el compilador debe demostrar la preservación local y consolidada; si no puede, rechaza conservadoramente el programa en vez de diferir el caso al runtime.
 
@@ -303,6 +311,10 @@ Cómo calcular la proyección mínima de estado que conserva la verdad de una co
 
 Límites del análisis, aproximaciones conservadoras y mensajes cuando no puede demostrarse.
 
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]] y [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]].
+
+La incapacidad de demostrar finitud o enumerabilidad rechaza estáticamente el uso que las exige; no produce una respuesta negativa en runtime. Falta definir el análisis y sus diagnósticos.
+
 ### Q-029 — Terminación
 
 Qué clases de acciones y reglas puede certificar el compilador.
@@ -318,6 +330,10 @@ Si merece la pena definirlo, qué garantías ofrece y cómo convive con el lengu
 ### Q-032 — Aleatoriedad reproducible
 
 Subsemillas, cachés, identidad de puntos aleatorios y exposición de campos estocásticos.
+
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]].
+
+Todo punto aleatorio tiene identidad semántica, deriva de una semilla y un campo calculado mantiene su muestra dentro de una instantánea. Falta el algoritmo de subsemillas, cachés, reintentos y exposición.
 
 ### Q-033 — Calendarios y localización
 
@@ -352,6 +368,10 @@ Fijar la conversión de la escritura decimal de un literal al patrón `binary64`
 ### Q-035 — Coste de `allowed`
 
 Memorización, profundidad especulativa, ciclos y límites de recursos sin cambiar su verdad semántica.
+
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]].
+
+El grafo de admisibilidad es acíclico y un límite de recursos no puede transformarse silenciosamente en falso. Falta definir memorización, presupuestos y diagnóstico.
 
 ## Preguntas de producto adicionales
 

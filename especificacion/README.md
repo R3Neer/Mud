@@ -441,6 +441,8 @@ Define:
 - Elaboración booleana canónica y poda de llamadas a reglas inactivas.
 - Fallos dentro de expresiones.
 
+Base normativa migrada: [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]].
+
 ## 20. Cuantificadores, agregaciones e iteración
 
 Archivo previsto: `20-cuantificadores-e-iteracion.md`
@@ -720,6 +722,8 @@ Define:
 - Dependencias estocásticas.
 - Propiedades reconstruibles desde el programa.
 
+Base arquitectónica migrada: [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]].
+
 ## 35. Consulta especulativa `allowed`
 
 Archivo previsto: `35-allowed.md`
@@ -831,6 +835,8 @@ Define:
 
 El esquema ejecutable vivirá en `esquemas/mud-ir.schema.json`.
 
+Base arquitectónica migrada: [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]].
+
 ## 42. Conformidad de implementaciones
 
 Archivo previsto: `42-conformidad.md`
@@ -870,6 +876,8 @@ conformidad/
 └── propiedades/
 ```
 
+Base arquitectónica migrada: [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|D-052]].
+
 ## 44. Gramática consolidada
 
 Archivo previsto: `44-gramatica-consolidada.md`
@@ -881,6 +889,8 @@ Apéndice normativo generado o verificado contra `gramatica/mud.ebnf`.
 Archivo previsto: `45-palabras-reservadas.md`
 
 Lista normativa, clasificación y versión de introducción o retirada.
+
+Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]]; el catálogo se derivará de la gramática y no de la lista provisional histórica.
 
 ## 46. Ejemplos integrales
 

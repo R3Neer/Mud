@@ -86,6 +86,8 @@ El IR debe:
 
 El JSON de la especificación es un ejemplo, no todavía un contrato completo.
 
+El contrato conceptual actualizado del AST, IR y grafo pertenece a [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]]. El pipeline y las obligaciones de materializadores, conformidad y soporte de editor pertenecen a [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|D-052]].
+
 ## Grafo semántico
 
 El grafo es una proyección consultable del IR. Sirve para:
@@ -170,6 +172,8 @@ mud impact <operation-plan>
 
 La integración conversacional y el plugin deberían construirse después de que estas operaciones tengan contratos estables. Así la IA utiliza capacidades comprobables en vez de contener semántica especial.
 
+La política vigente de clasificación, inferencias permitidas y flujo atómico del operador pertenece a [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+
 ## Persistencia del estado runtime
 
 La especificación excluye persistencia de la semántica MUD, pero una materialización necesitará guardar estados. Debe distinguirse:
@@ -179,4 +183,3 @@ La especificación excluye persistencia de la semántica MUD, pero una materiali
 - La tecnología usada para persistir esa instancia.
 
 El formato canónico de snapshots para tests puede definirse dentro del tooling sin imponer una base de datos al lenguaje.
-
