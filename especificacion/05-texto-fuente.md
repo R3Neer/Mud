@@ -87,4 +87,4 @@ El fin de archivo puede actuar como cierre de un comentario de línea o de un li
 - Paréntesis o corchetes.
 - Bloques entre llaves.
 - Literales o comentarios multilínea.
-- Literales `Character`.
+- Literales `Char`.

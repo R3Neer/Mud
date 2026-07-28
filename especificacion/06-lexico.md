@@ -76,7 +76,7 @@ not and or xor implies iff
 intersection union except
 exists forall count sum min max
 true false empty
-Text Character Bool Natural Integer Number Rumber Money
+Text Char Bool Natural Integer Number Rumber Money
 Rand
 ```
 
@@ -135,7 +135,7 @@ La forma siguiente es inválida:
 
 Los comentarios se eliminan antes del parsing. Un comentario multilínea completo no emite los `NEWLINE` de su contenido.
 
-## `Character`
+## `Char`
 
 Los literales usan comillas simples:
 
@@ -147,7 +147,7 @@ Los literales usan comillas simples:
 ```
 
 > [!rule] MUD-LEX-025 — Un único escalar
-> Después de interpretar escapes, un literal `Character` debe contener exactamente un valor escalar Unicode. La comilla final es obligatoria.
+> Después de interpretar escapes, un literal `Char` debe contener exactamente un valor escalar Unicode. La comilla final es obligatoria.
 
 Su orden natural es el valor escalar creciente. No es colación lingüística ni orden por grafemas.
 
@@ -200,7 +200,7 @@ description = """
 > [!rule] MUD-LEX-034 — Contenido
 > Una comilla ordinaria no cierra la forma multilínea. Solo `"""` en una línea de cierre válida lo hace.
 
-`Text` conserva la posición de sus caracteres. No equivale a `Character [* ordered]`.
+`Text` conserva la posición de sus caracteres. No equivale a `Char [* ordered]`.
 
 ## Escapes
 

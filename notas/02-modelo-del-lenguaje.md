@@ -249,7 +249,7 @@ Junto con las acciones forman la frontera semántica del modelo: `action` introd
 
 La especificación incluye:
 
-- Tipos básicos no numéricos: `Text`, `Character` y `Bool`.
+- Tipos básicos no numéricos: `Text`, `Char` y `Bool`.
 - Tipos numéricos básicos: `Natural`, `Integer`, `Number`, `Rumber` y `Money`.
 - Aliases nominales simples, estructurales y compuestos.
 - Familias cerradas de valores declaradas mediante `family` u `ordered family`.

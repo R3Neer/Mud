@@ -10,7 +10,7 @@ lexical-element
       | comment
       | multiline-text-literal
       | text-literal
-      | character-literal
+      | char-literal
       | rumber-literal
       | exact-number-literal
       | point-form
@@ -66,12 +66,12 @@ multiline-text-literal
 special-multiline-text
     ::= ? bloque triple comilla validado por MUD-LEX-030 a MUD-LEX-036 ? ;
 
-character-literal
-    ::= apostrophe , ( character-content | escape-sequence ) , apostrophe ;
+char-literal
+    ::= apostrophe , ( char-content | escape-sequence ) , apostrophe ;
 
 apostrophe ::= ? U+0027 COMILLA SIMPLE ? ;
 
-character-content
+char-content
     ::= ? un valor escalar Unicode salvo "'", "\", CR y LF ? ;
 
 escape-sequence

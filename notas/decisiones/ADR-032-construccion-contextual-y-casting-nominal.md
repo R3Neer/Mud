@@ -130,7 +130,7 @@ playerName == "Ada"
 
 puede construirse contextualmente como `PlayerName`. En cambio, si `rawText` es una variable de tipo `Text`, `playerName == rawText` continúa siendo inválido sin `to`.
 
-Los literales de `Text`, `Character`, `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente.
+Los literales de `Text`, `Char`, `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente.
 
 Después de resolver los literales, ambos operandos deben tener exactamente el mismo tipo nominal. Comparar aliases diferentes o un alias con una expresión ya tipada como su representación subyacente es un error:
 

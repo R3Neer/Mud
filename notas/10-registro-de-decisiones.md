@@ -63,7 +63,7 @@ Este registro y `notas/decisiones/` contienen únicamente decisiones y propuesta
 | D-053 | Vigente como política de producto | El operador semántico clasifica, analiza impacto, valida y versiona cada mutación sin inventar reglas | [ADR-053](decisiones/ADR-053-operador-semantico-y-flujo-de-autoria.md) | Migración revisada de las secciones 67 a 71 y 78 |
 | D-054 | Vigente | Toda `thing` y regla tiene una definición canónica de primer nivel; `create Nombre` solo activa y `start with` declara el conjunto inicial no ordenado | [ADR-054](decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md) | Decisión del autor, 2026-07-28 |
 | D-055 | Vigente | `test` declara pruebas aisladas con `start with`, `then` y aserciones `after`; `otherwise` aporta diagnósticos de fallo y las anclas usan `test::*` | [ADR-055](decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise.md) | Decisión del autor, 2026-07-28 |
-| D-056 | Vigente | `Character` representa escalares Unicode; `Text` conserva posición y no equivale a una colección de caracteres ordenada | [ADR-056](decisiones/ADR-056-character-texto-y-orden-unicode.md) | Decisión del autor, 2026-07-28 |
+| D-056 | Vigente | `Char` representa escalares Unicode; `Text` conserva posición y no equivale a una colección de caracteres ordenada | [ADR-056](decisiones/ADR-056-char-texto-y-orden-unicode.md) | Decisión del autor, 2026-07-28; tipo renombrado el 2026-07-28 |
 | D-057 | Vigente | Las EBNF léxica y concreta, junto con su tabla de precedencia y reglas contextuales, definen la sintaxis completa de MUD 1.0 | [ADR-057](decisiones/ADR-057-gramatica-concreta-y-continuacion.md) | Decisión del autor, 2026-07-28 |
 
 ## Propuestas de estas notas

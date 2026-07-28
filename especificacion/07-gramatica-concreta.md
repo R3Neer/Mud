@@ -137,7 +137,7 @@ Los paréntesis son obligatorios para anidar un diccionario como valor.
 route: Terrain [* ordered by movementCost]
 ```
 
-La clave debe poseer orden semántico total. Se prohíbe `ordered by` para `Character`; su orden es Unicode. `Text` no acepta especificaciones de colección.
+La clave debe poseer orden semántico total. Se prohíbe `ordered by` para `Char`; su orden es Unicode. `Text` no acepta especificaciones de colección.
 
 ## Aliases
 

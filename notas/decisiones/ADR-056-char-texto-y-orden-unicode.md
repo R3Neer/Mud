@@ -1,4 +1,4 @@
-# ADR-056 — `Character`, `Text` y orden Unicode
+# ADR-056 — `Char`, `Text` y orden Unicode
 
 - Estado: Vigente
 - Fecha: 2026-07-28
@@ -7,7 +7,7 @@
 
 ## Contexto
 
-Modelar `Text` literalmente como `Character [* ordered]` confundiría dos conceptos distintos:
+Modelar `Text` literalmente como `Char [* ordered]` confundiría dos conceptos distintos:
 
 1. La posición de los caracteres en un texto.
 2. La ordenación canónica de una colección.
@@ -16,9 +16,9 @@ Si ambas cosas fueran equivalentes, un texto ordinario como `"cba"` tendría que
 
 ## Decisión
 
-### `Character`
+### `Char`
 
-`Character` es un tipo básico no numérico. Cada valor denota exactamente un valor escalar Unicode; no admite puntos de código sustitutos aislados.
+`Char` es un tipo básico no numérico. Cada valor denota exactamente un valor escalar Unicode; no admite puntos de código sustitutos aislados.
 
 Sus literales usan comillas simples:
 
@@ -36,23 +36,23 @@ ASCII es el subconjunto de Unicode comprendido entre `U+0000` y `U+007F`. No con
 
 ### Orden
 
-El orden natural de `Character` es el orden creciente de su valor escalar Unicode. Por tanto, en una colección:
+El orden natural de `Char` es el orden creciente de su valor escalar Unicode. Por tanto, en una colección:
 
 ```mud
-letters: Character [* ordered] = "abc"
+letters: Char [* ordered] = "abc"
 ```
 
 `ordered` exige ese orden canónico. Esta inicialización es inválida:
 
 ```mud
-letters: Character [* ordered] = "cba"
+letters: Char [* ordered] = "cba"
 ```
 
-`ordered by` no se admite para `Character`: no puede reemplazar su orden Unicode natural.
+`ordered by` no se admite para `Char`: no puede reemplazar su orden Unicode natural.
 
 ### `Text`
 
-`Text` continúa siendo un tipo básico distinto. Denota una secuencia finita de valores `Character` y conserva el orden posicional escrito:
+`Text` continúa siendo un tipo básico distinto. Denota una secuencia finita de valores `Char` y conserva el orden posicional escrito:
 
 ```mud
 word: Text = "cba"
@@ -63,7 +63,7 @@ Este valor sigue siendo `"cba"`. En particular:
 $$
 \mathsf{Text}
 \not\equiv
-\mathsf{Character}[\ast\ \mathsf{ordered}]
+\mathsf{Char}[\ast\ \mathsf{ordered}]
 $$
 
 `Text` puede exponer operaciones de secuencia como indexación, pertenencia, longitud e iteración sin convertirse por ello en una colección ordenada canónicamente. No admite modificadores de colección ni `ordered by`.
@@ -72,9 +72,9 @@ El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y
 
 ## Consecuencias
 
-- El lexer incorpora literales `Character` separados de los literales `Text`.
-- El sistema de tipos incorpora `Character` entre los tipos básicos no numéricos.
-- La iteración de `Text` conserva posición; la enumeración de `Character [* ordered]` usa Unicode.
+- El lexer incorpora literales `Char` separados de los literales `Text`.
+- El sistema de tipos incorpora `Char` entre los tipos básicos no numéricos.
+- La iteración de `Text` conserva posición; la enumeración de `Char [* ordered]` usa Unicode.
 - Una materialización no puede ordenar texto como efecto de su representación.
 - El orden Unicode se define por escalares, no por idioma, colación, grafema visible ni normalización cultural.
 
@@ -85,5 +85,5 @@ El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y
 3. Rechazo de sustitutos Unicode aislados.
 4. Confirmación de que ASCII ocupa `U+0000`–`U+007F`.
 5. Conservación de `"cba"` como `Text`.
-6. Rechazo de `"cba"` como valor de `Character [* ordered]`.
-7. Rechazo de `ordered by` para `Character` y de modificadores de colección sobre `Text`.
+6. Rechazo de `"cba"` como valor de `Char [* ordered]`.
+7. Rechazo de `ordered by` para `Char` y de modificadores de colección sobre `Text`.

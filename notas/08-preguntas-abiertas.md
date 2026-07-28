@@ -12,7 +12,7 @@ Prioridades:
 
 ### Q-001 — Gramática y saltos de línea
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-056-character-texto-y-orden-unicode|D-056]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
+Estado: **cerrada** mediante [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
 
 Una instrucción termina mediante `;` o salto de línea. El salto continúa cuando el prefijo todavía no puede formar una unidad sintáctica completa pero admite una continuación válida; la sangría no interviene.
 

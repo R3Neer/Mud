@@ -37,7 +37,7 @@ pair: Person [2 unique] = [Alice, Alice]     # error; tras normalizar solo queda
 Fuentes iniciales de orden:
 
 - Básicos: orden de su tipo.
-- `Character`: valor escalar Unicode creciente; `ordered by` está prohibido.
+- `Char`: valor escalar Unicode creciente; `ordered by` está prohibido.
 - `thing`: orden de inserción cuando la colección es `ordered`.
 - `ordered family`: orden declarado.
 - Alias ordenado: orden subyacente o lexicográfico.
@@ -46,7 +46,7 @@ En una colección de `ordered family`, `ordered by expression` puede sustituir e
 
 Cuando el tipo o `ordered by expression` determina un orden canónico, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Este aviso no se aplica a una colección `thing [ordered]` ordenada por inserción: en ella el orden escrito es el orden elegido por el autor.
 
-`Text` no equivale a `Character [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
+`Text` no equivale a `Char [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
 
 La consolidación simultánea de inserciones distintas con orden observable deberá integrarse en la matriz de Q-006.
 

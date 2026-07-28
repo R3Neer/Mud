@@ -26,7 +26,7 @@ Los tipos básicos no numéricos son:
 ```mud
 Text
 Bool
-Character
+Char
 ```
 
 Los tipos numéricos básicos son:

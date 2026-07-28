@@ -57,7 +57,7 @@ Se reconocen:
 
 - Comentarios de línea, comentarios cerrados y bloques `###`.
 - `Text` ordinario y multilínea.
-- Literales `Character`.
+- Literales `Char`.
 - Números exactos y `Rumber`.
 - Palabras reservadas, incluida `ordered`.
 - Palabras contextuales inequívocas como `abstract thing` y `always rule`.
@@ -71,7 +71,7 @@ El tokenizador sigue actualmente:
 
 - [[especificacion/gramatica/mud-lexico.ebnf]]
 - [[especificacion/06-lexico]]
-- [[notas/decisiones/ADR-056-character-texto-y-orden-unicode|D-056]]
+- [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]]
 
 Las listas de palabras todavía se mantienen en TypeScript. Cuando exista el parser MUD, el siguiente salto de calidad será generar esas categorías desde sus tokens o reutilizar directamente su árbol.
 
@@ -82,7 +82,7 @@ El color no decide si un programa es válido. En particular, no comprueba:
 - Tipos o dominios.
 - Resolución de participantes o nombres.
 - Cardinalidad.
-- Orden Unicode de los valores de `Character [* ordered]`.
+- Orden Unicode de los valores de `Char [* ordered]`.
 - Formas dinámicas de unidad pendientes de Q-054.
 - Literales de magnitud de punto pendientes de Q-055.
 
@@ -109,7 +109,7 @@ La suite cubre:
 2. Posiciones de palabras contextuales.
 3. Comentarios cerrados con código posterior.
 4. Texto ordinario y multilínea.
-5. `Character`.
+5. `Char`.
 6. Comentarios multilínea.
 7. Fences de backticks y virgulillas.
 8. Preservación de plugins durante la instalación.

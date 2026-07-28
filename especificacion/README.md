@@ -262,7 +262,7 @@ Archivo previsto: `10-sistema-de-tipos.md`
 
 Define:
 
-- `Text`, `Character` y `Bool` como tipos básicos no numéricos.
+- `Text`, `Char` y `Bool` como tipos básicos no numéricos.
 - `Natural`, `Integer`, `Number`, `Rumber` y `Money` como representaciones numéricas básicas, no magnitudes.
 - `Number` como racional exacto y `Rumber` como IEEE 754 `binary64` explícito.
 - Tipos de `thing`.
@@ -364,7 +364,7 @@ Define:
 - Multiplicidad y `unique`.
 - Membresía estricta de `thing`, con exclusión incondicional del ancla exacta del tipo.
 - Colecciones ordenadas y no ordenadas.
-- Orden natural, de inserción y semántico; orden Unicode fijo para `Character`.
+- Orden natural, de inserción y semántico; orden Unicode fijo para `Char`.
 - `ordered by` sobre datos asociados de una `ordered family`, con desempate por orden de declaración.
 - Igualdad de colecciones.
 - Instantáneas de iteración.

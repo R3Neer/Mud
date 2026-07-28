@@ -43,7 +43,7 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 - Un archivo o varios archivos por namespace.
 - Declaraciones `using` exactas.
 - `thing` concreta sin especialización.
-- Tipos `Bool`, `Character`, `Natural`, `Integer`, `Number`, `Rumber`, `Text` y `Money`.
+- Tipos `Bool`, `Char`, `Natural`, `Integer`, `Number`, `Rumber`, `Text` y `Money`.
 - Campos almacenados, `mut` y dominios de intervalos cerrados.
 - Regla booleana con un participante.
 - Regla reactiva con un participante.

@@ -666,7 +666,7 @@ literal
       | rumber-number
       | TEXT_LITERAL
       | MULTILINE_TEXT_LITERAL
-      | CHARACTER_LITERAL
+      | CHAR_LITERAL
       | POINT_LITERAL
       | "true"
       | "false"

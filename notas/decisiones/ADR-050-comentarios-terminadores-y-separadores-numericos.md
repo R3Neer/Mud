@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-character-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Cierra parcialmente: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
 - Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formateador
 
@@ -30,7 +30,7 @@ Comentario multilínea.
 
 El `###` de apertura debe ser el último elemento no blanco de su línea. El contenido comienza en la línea siguiente. El `###` de cierre debe aparecer solo, salvo espacio horizontal, en su propia línea. La línea de apertura y la de cierre no forman parte del comentario. La forma `### comentario ###` es inválida.
 
-Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de un literal `Text` o `Character`, los delimitadores de comentario no tienen significado léxico.
+Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de un literal `Text` o `Char`, los delimitadores de comentario no tienen significado léxico.
 
 El contenido de un comentario no genera tokens, instrucciones ni terminadores. Después de retirarlo, el texto restante debe seguir siendo sintácticamente válido.
 
@@ -58,7 +58,7 @@ description = """
 
 La sangría del delimitador de cierre define el margen que se retira de cada línea no vacía. Una línea no vacía con menos sangría que el margen es un error. La primera línea posterior al inicio y el salto inmediatamente anterior al cierre son estructurales y no forman parte del valor. La sangría adicional se conserva. Los escapes continúan activos.
 
-Un literal `Character` usa comillas simples y, después de procesar escapes, debe contener exactamente un valor escalar Unicode conforme a D-056.
+Un literal `Char` usa comillas simples y, después de procesar escapes, debe contener exactamente un valor escalar Unicode conforme a D-056.
 
 ### Terminadores
 
@@ -107,7 +107,7 @@ D-057 y la gramática consolidada cierran Q-001.
 4. Prioridad de `###` y rechazo del anidamiento.
 5. Texto ordinario con cierre explícito e implícito.
 6. Margen, líneas estructurales y escapes del texto multilínea.
-7. `Character` con exactamente un escalar.
+7. `Char` con exactamente un escalar.
 8. Símbolos sintácticos inocuos dentro de comentarios.
 9. Terminación por `;` y por salto.
 10. Continuación tras delimitador, coma, operador y palabra introductora.
