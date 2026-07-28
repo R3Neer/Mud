@@ -44,28 +44,6 @@ Las declaraciones `family` no participan en especialización ni pueden heredar d
 
 La sintaxis y la semántica de posibles datos inmutables comunes o específicos de cada miembro permanecen abiertas en Q-024. La selección del valor predeterminado de una familia pertenece a Q-047.
 
-## Compatibilidad
-
-Quedan retiradas las formas históricas:
-
-```mud
-thing Color {
-    values =
-        Red,
-        Green,
-        Blue
-}
-
-thing Severity {
-    ordered values =
-        Low,
-        Medium,
-        High
-}
-```
-
-Su migración exige convertir la `thing` contenedora en una declaración `family` u `ordered family`. Esta migración es semántica: los miembros dejan de pertenecer al dominio de identidades $\mathcal T_P$.
-
 ## Verificación futura
 
 1. Familia cerrada ordenada y no ordenada.
