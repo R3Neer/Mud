@@ -34,6 +34,8 @@ Después de interpretar escapes, un literal debe contener exactamente un valor e
 
 ASCII es el subconjunto de Unicode comprendido entre `U+0000` y `U+007F`. No constituye un tipo separado.
 
+El valor predeterminado de `Char` es el escalar `U+0000`, escrito `'\u{0}'`. Es un valor ordinario de `Char`, no ausencia ni terminador de texto. MUD no introduce el escape especial `\0`; la escritura Unicode general ya expresa el valor sin importar una convención específica de C.
+
 ### Orden
 
 El orden natural de `Char` es el orden creciente de su valor escalar Unicode. Por tanto, en una colección:
@@ -87,3 +89,4 @@ El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y
 5. Conservación de `"cba"` como `Text`.
 6. Rechazo de `"cba"` como valor de `Char [* ordered]`.
 7. Rechazo de `ordered by` para `Char` y de modificadores de colección sobre `Text`.
+8. Predeterminado `'\u{0}'` de `Char` y rechazo de `'\0'` como escape no declarado.

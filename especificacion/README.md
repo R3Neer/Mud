@@ -263,6 +263,7 @@ Archivo previsto: `10-sistema-de-tipos.md`
 Define:
 
 - `Text`, `Char` y `Bool` como tipos básicos no numéricos.
+- `'\u{0}'` (`U+0000`) como valor predeterminado de `Char`.
 - `Natural`, `Integer`, `Number`, `Rumber` y `Money` como representaciones numéricas básicas, no magnitudes.
 - `Number` como racional exacto y `Rumber` como IEEE 754 `binary64` explícito.
 - Tipos de `thing`.

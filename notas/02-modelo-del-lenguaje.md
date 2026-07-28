@@ -263,6 +263,8 @@ La especificación incluye:
 - Intervalos.
 - Magnitudes no derivadas, derivadas y de punto.
 
+Los predeterminados básicos incluyen `false`, los ceros numéricos correspondientes, `""` para `Text` y `'\u{0}'` para `Char`. Este último es el escalar Unicode `U+0000`, no ausencia ni terminador.
+
 Los tipos numéricos básicos determinan representación y no son magnitudes. Una magnitud no derivada usa `Number` si omite su tipo numérico; una derivada infiere la representación menos ampliada capaz de representar su operación. `Percentage` no es un tipo básico.
 
 `Number` representa racionales exactos mediante fracciones canónicas de enteros sin límite semántico de tamaño. `Rumber` representa valores aproximados finitos IEEE 754 `binary64`. El primero es la opción general predeterminada; el segundo debe elegirse explícitamente y no expone `NaN`, infinitos ni cero negativo distinguible.

@@ -53,6 +53,7 @@ Los casos básicos, actualizados por D-028, son:
 | `Integer` | `0` |
 | `Number` | `0` |
 | `Rumber` | `r0` |
+| `Char` | `'\u{0}'` (`U+0000`) |
 | `Text` | `""` |
 | `Money` | `0` en contexto `Money` |
 | Colecciones | `empty` |
@@ -86,7 +87,6 @@ D-031 aplica esta composición a los aliases estructurales: cada componente usa 
 
 Q-047 determinará:
 
-- Los valores de los tipos primitivos todavía no enumerados.
 - La regla para aliases no estructurales y colecciones restringidas; la composición de aliases estructurales queda fijada por D-031.
 - La selección dentro de intervalos, familias cerradas y refinamientos.
 - El tratamiento de tipos cuyo dominio pueda depender del mundo activo.
@@ -103,3 +103,4 @@ La suite deberá comprobar:
 5. Prioridad final de una inicialización explícita de creación.
 6. Independencia respecto a los valores predeterminados de la tecnología materializada.
 7. Composición del predeterminado de un alias estructural a partir de sus componentes.
+8. Predeterminado `'\u{0}'` de `Char`.
