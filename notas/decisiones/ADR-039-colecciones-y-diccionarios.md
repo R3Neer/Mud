@@ -46,6 +46,91 @@ En una colección de `ordered family`, `ordered by expression` puede sustituir e
 
 Cuando el tipo o `ordered by expression` determina un orden canónico, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Este aviso no se aplica a una colección `thing [ordered]` ordenada por inserción: en ella el orden escrito es el orden elegido por el autor.
 
+### Álgebra de colecciones
+
+Los operadores conjuntistas se aplican también a colecciones compatibles:
+
+| Operación | Forma simbólica | Forma verbal |
+| --- | --- | --- |
+| Unión | `A | B` | `A union B` |
+| Intersección | `A & B` | `A intersection B` |
+| Diferencia | `A - B` | `A except B` |
+| Diferencia simétrica | `A ^ B` | `A xor B` |
+
+Dos operandos son compatibles cuando poseen el mismo tipo efectivo de miembro. Los refinamientos de dominio y los modificadores de colección pueden diferir y se combinan conforme a las reglas siguientes; no se introducen conversiones implícitas entre tipos distintos.
+
+Sea $\mu_C(v)\in\mathbb N$ la multiplicidad del valor $v$ en la colección $C$. Las operaciones se definen punto a punto:
+
+$$
+\begin{aligned}
+\mu_{A\mid B}(v) &= \max(\mu_A(v),\mu_B(v)),\\
+\mu_{A\mathbin{\&}B}(v) &= \min(\mu_A(v),\mu_B(v)),\\
+\mu_{A-B}(v) &= \max(\mu_A(v)-\mu_B(v),0),\\
+\mu_{A\mathbin{\triangle}B}(v) &= |\mu_A(v)-\mu_B(v)|.
+\end{aligned}
+$$
+
+Por tanto, la unión es idempotente incluso sin `unique`: `A | A == A`. No es concatenación ni suma de bolsas. Si ambos operandos son `unique`, estas definiciones coinciden con la unión, intersección, diferencia y diferencia simétrica ordinarias de conjuntos.
+
+#### Cardinalidad y dominio inferidos
+
+Sean $[a..b]$ y $[c..d]$ las cardinalidades estáticas de $A$ y $B$. Sin información adicional sobre solapamiento, el compilador puede garantizar:
+
+| Resultado | Cardinalidad conservadora |
+| --- | --- |
+| `A | B` | $[\max(a,c)..b+d]$ |
+| `A & B` | $[0..\min(b,d)]$ |
+| `A - B` | $[\max(0,a-d)..b]$ |
+| `A ^ B` | $[\max(0,a-d,c-b)..b+d]$ |
+
+La aritmética de límites conserva `*` como límite superior efectivo. El análisis debe estrechar estos intervalos cuando pueda demostrar disjunción, inclusión, igualdad, un dominio finito o cualquier otra restricción relevante.
+
+Si $D_A$ y $D_B$ son los dominios semánticos de los miembros:
+
+| Resultado | Dominio de miembro |
+| --- | --- |
+| `A | B` | $D_A\cup D_B$ |
+| `A & B` | $D_A\cap D_B$ |
+| `A - B` | $D_A$ |
+| `A ^ B` | $D_A\cup D_B$ |
+
+El IR conserva el dominio resultante aunque su forma más precisa no posea una escritura superficial abreviada.
+
+#### Propagación de modificadores
+
+Para cada modificador $m$ de `unique`, `ordered` o capacidad interior `mut`, su presencia en el resultado se obtiene mediante la misma tabla:
+
+| Resultado | Presencia de $m$ |
+| --- | --- |
+| `A | B` | $m(A)\land m(B)$ |
+| `A & B` | $m(A)\lor m(B)$ |
+| `A - B` | $m(A)$ |
+| `A ^ B` | $m(A)\land m(B)$ |
+
+Para `unique`, la tabla se deduce directamente de las multiplicidades: la intersección es única si cualquiera de los operandos limita cada multiplicidad a uno, mientras que unión y diferencia simétrica necesitan esa garantía en ambos lados.
+
+Para `mut`, la tabla se refiere exclusivamente a la capacidad interior sobre miembros, nunca a la mutabilidad exterior de un campo almacenado. Una unión o diferencia simétrica mixta podría contener un miembro alcanzado únicamente desde el operando sin capacidad; una intersección, en cambio, solo contiene miembros que también son alcanzables desde el operando con capacidad. Una diferencia solo conserva miembros del operando izquierdo. Un campo calculado no adquiere mutabilidad exterior.
+
+Para `ordered`, si solo la intersección conserva orden se filtra el operando ordenado; la diferencia filtra el operando izquierdo. Unión y diferencia simétrica mixtas son no ordenadas porque pueden incorporar miembros exclusivos del operando no ordenado.
+
+Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden canónico por tipo o por una misma clave `ordered by` normaliza el resultado con ese criterio. Para orden de inserción, el resultado es estable respecto del operando izquierdo:
+
+- La unión recorre primero $A$ y añade después, en el orden de $B$, solo las ocurrencias adicionales necesarias para alcanzar cada multiplicidad máxima.
+- La intersección y la diferencia filtran $A$ sin reordenarlo.
+- La diferencia simétrica conserva primero las ocurrencias excedentes de $A$ y después las de $B$.
+
+En consecuencia, para colecciones ordenadas por inserción, las operaciones conmutativas conservan el mismo multiconjunto al intercambiar operandos, pero pueden producir secuencias observables distintas. La igualdad ordenada continúa comparando la secuencia completa.
+
+Ejemplo de inferencia:
+
+```mud
+leftChars: Char [1..5] = ['a']
+rightChars: Char [0..2] = empty
+combinedChars := leftChars | rightChars
+```
+
+El tipo estático de `combinedChars` es `Char [1..7]`: no es `unique`, `ordered` ni `mut`, y su dominio de miembro es el dominio completo de `Char`.
+
 `Text` no equivale a `Char [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
 
 La consolidación simultánea de inserciones distintas con orden observable deberá integrarse en la matriz de Q-006.
@@ -112,3 +197,8 @@ La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su pre
 4. Lectura, escritura y retirada de clave ausente.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.
+7. Multiplicidades de las cuatro operaciones conjuntistas.
+8. Inferencia conservadora y estrechada de cardinalidad y dominio.
+9. Propagación de `unique`, `ordered` y capacidad interior `mut` en las cuatro operaciones.
+10. Orden canónico y orden estable por inserción, incluida la posible diferencia secuencial al intercambiar operandos.
+11. Ausencia de mutabilidad exterior en resultados calculados.

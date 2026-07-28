@@ -124,6 +124,18 @@ citizens: Person [0..*, unique, ordered, mut]
 
 No se permite coma final. La omisión de cardinalidad equivale a `[1]`.
 
+Las colecciones compatibles admiten `|`/`union`, `&`/`intersection`, `-`/`except` y `^`/`xor`. Operan sobre multiplicidades, no concatenan:
+
+```mud
+leftChars: Char [1..5] = ['a']
+rightChars: Char [0..2] = empty
+combinedChars := leftChars | rightChars # Char [1..7]
+```
+
+`unique`, `ordered` y el `mut` interior se propagan con la misma regla: unión y xor los conservan solo si aparecen en ambos operandos; intersección, si aparecen en cualquiera; diferencia, si aparecen en el izquierdo. El `mut` exterior nunca se infiere para un resultado calculado.
+
+Un resultado con orden canónico se normaliza por ese orden. Con orden de inserción, se conserva estable el orden izquierdo y se incorporan después las ocurrencias adicionales derechas cuando la operación lo requiere.
+
 `unique` se prohíbe estáticamente en diccionarios: sus claves ya son únicas y el modificador no se reinterpreta como unicidad de valores.
 
 ```mud

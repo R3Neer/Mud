@@ -63,7 +63,7 @@ La primera forma no equivale a la segunda: omitir `[1]` no desplaza `mut` entre 
 
 Un campo almacenado posee un valor colección cuya estructura solo puede cambiar cuando declara mutabilidad exterior.
 
-Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Puede declarar capacidad interior si el lenguaje permite modificar sus miembros a través de esa vista.
+Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Tampoco escribe un modificador `mut` propio: puede inferir capacidad interior desde su expresión cuando todos los miembros resultantes conservan autoridad suficiente. D-039 fija esta propagación para los operadores conjuntistas.
 
 La capacidad interior nunca hace escribible la pertenencia de una colección derivada.
 
@@ -89,3 +89,4 @@ La suite deberá comprobar las cuatro combinaciones de la tabla tanto para `[1]`
 3. Ausencia de capacidad interior implícita en `mut field: T`.
 4. Ausencia de mutabilidad exterior implícita en `field: T [mut]`.
 5. Rechazo de `mut` exterior sobre un campo derivado.
+6. Inferencia conservadora de capacidad interior en una colección derivada.

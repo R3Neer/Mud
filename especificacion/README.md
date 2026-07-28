@@ -369,6 +369,8 @@ Define:
 - Colecciones ordenadas y no ordenadas.
 - Orden natural, de inserción y semántico; orden Unicode fijo para `Char`.
 - `ordered by` sobre datos asociados de una `ordered family`, con desempate por orden de declaración.
+- Álgebra de multiconjuntos mediante unión, intersección, diferencia y diferencia simétrica.
+- Inferencia de cardinalidad y dominio y propagación de `unique`, `ordered` y capacidad interior `mut`.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
 

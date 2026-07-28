@@ -42,6 +42,8 @@ La inferencia no aplica una prioridad predeterminada entre interpretaciones comp
 
 El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable y no admite `mut`, una cláusula `in` ni una especificación de colección. La cardinalidad y demás propiedades de colección de su resultado proceden del tipo estático de la expresión, no de una segunda restricción escrita en la declaración.
 
+Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `Char [0..2]`, `combinedChars := leftChars | rightChars` infiere `Char [1..7]` conforme al álgebra de D-039. El resultado no adquiere modificadores que las reglas de propagación no puedan garantizar.
+
 Cuando el contexto de declaración también admita un campo almacenado y el compilador pueda demostrar que sustituir `nombre [: tipo] := expresión` por el campo almacenado inmutable equivalente conserva el mismo valor observable en todo estado válido, debe emitir una sugerencia de estilo. La sugerencia es conservadora, no cambia la validez del programa y no autoriza una reescritura automática. En particular, no procede si la expresión depende de estado que pueda cambiar o si almacenarla alteraría sus dependencias o su momento de evaluación.
 
 ### Dominios
@@ -107,3 +109,4 @@ Compartir token no fusiona sus significados.
 7. Rollback sin estado publicable inválido.
 8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
 9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.
+10. Inferencia de cardinalidad, dominio y modificadores en un campo calculado mediante operadores de colección.

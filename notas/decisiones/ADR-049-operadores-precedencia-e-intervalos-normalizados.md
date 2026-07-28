@@ -19,6 +19,7 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 | Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `in` |
 | Lógica | `!`/`not`, `&`/`and`, `|`/`or`, `^`/`xor`, `=>`/`implies`, `<=>`/`iff` |
 | Intervalos | `|`/`union`, `&`/`intersection`, `^`/`xor`, `-`/`except` |
+| Colecciones | `|`/`union`, `&`/`intersection`, `^`/`xor`, `-`/`except` |
 | Texto | `|` para concatenación de `Text` |
 
 Los tokens compartidos se resuelven por tipos y contexto sintáctico; no autorizan coerciones entre booleanos, números, colecciones e intervalos.
@@ -66,7 +67,7 @@ se agrupan como `(population / regions) to Population`, `(distance + offset) in 
 
 Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `iff`. `!=`, `is`, pertenencia `in` e `implies` no se encadenan.
 
-`|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`.
+`|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`. Sobre colecciones compatibles, los cuatro operadores forman el álgebra de multiconjuntos de D-039; `|` no concatena colecciones.
 
 ### Intervalos
 
@@ -89,3 +90,4 @@ Las operaciones de unión, intersección, diferencia simétrica y diferencia pro
 5. Conversión acumulativa y continuación con operadores posteriores.
 6. Encadenamientos admitidos y rechazados.
 7. Concatenación de `Text` y rechazo de las demás operaciones conjuntistas.
+8. Resolución de los cuatro operadores conjuntistas sobre colecciones compatibles.
