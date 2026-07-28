@@ -1,12 +1,15 @@
 # ADR-024 — Definición única y activación abreviada de reglas
 
-- Estado: Vigente para reglas; aliases sustituidos por D-031
+- Estado: Sustituida por [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modifica: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]]
 - Modificada por: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]]
 - Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-006 — Conflictos|Q-006]], [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuros capítulos 07, 08, 21 a 23, 25 y 32
+
+> [!warning] Decisión sustituida
+> D-054 conserva la definición canónica única, la extiende a `thing` y exige que todas las definiciones sean estáticas y de primer nivel. `create Nombre` queda como única forma runtime para activar tanto `thing` como reglas. Las definiciones incluidas en `create` y la excepción fragmentaria de este ADR son históricas.
 
 ## Contexto
 

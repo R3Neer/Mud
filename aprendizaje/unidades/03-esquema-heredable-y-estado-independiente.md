@@ -22,7 +22,7 @@ spec-chapters:
 decisions:
   - D-014
   - D-015
-  - D-016
+  - D-054
   - D-017
   - D-019
   - D-021
@@ -87,6 +87,7 @@ La revisión deberá demostrar:
 
 - Existe un único dominio de `thing`; no hay clases e instancias.
 - La sintaxis vigente usa `thing`, `as` e `is`.
+- Cada `thing` posee una única definición canónica; `start with` y `create Nombre` solo cambian su actividad.
 - Los ciclos de especialización se rechazan.
 - Se heredan esquema y predeterminados, nunca estado activo.
 - Cada `thing` concreta posee estado independiente.
@@ -127,7 +128,7 @@ $$
 \llbracket\tau\rrbracket_P
 $$
 
-El valor actual pertenece al mundo. Una inicialización de `create` determina la primera carga de esa identidad, pero no convierte ese valor actual en predeterminado heredable.
+El valor actual pertenece al mundo. Un inicializador de la definición canónica determina la primera carga de esa identidad cuando se activa por primera vez, pero no convierte ese valor actual en predeterminado heredable.
 
 La selección concreta por constructor de tipos sigue abierta en [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]].
 

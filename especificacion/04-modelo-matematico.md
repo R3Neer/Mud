@@ -17,7 +17,7 @@ questions:
 decisions:
   - D-014
   - D-015
-  - D-016
+  - D-054
   - D-017
   - D-025
   - D-019
@@ -40,8 +40,8 @@ El contenido normativo todavía no ha sido redactado.
 
 ## Contenido previsto
 
-- Identidades reservadas por el programa e identidades activas en cada mundo.
-- Activación inicial, creación, destrucción y reactivación.
+- Definiciones canónicas del programa e identidades activas en cada mundo.
+- Conjunto inicial `start with`, creación, destrucción y reactivación.
 - Identidad de `thing`.
 - Relación de especialización `is`.
 - Store de campos y relaciones.
@@ -54,35 +54,38 @@ El contenido normativo todavía no ha sido redactado.
 
 ## Restricción del modelo
 
-MUD no presupone una separación entre clases y objetos. En particular, una `thing` no tiene instancias. El modelo matemático deberá representar dentro de un mismo dominio conceptual las identidades activadas inicialmente y las activadas mediante `create`, distinguiendo reserva de identidad y presencia activa sin convertirlas en clase e instancia.
+MUD no presupone una separación entre clases y objetos. En particular, una `thing` no tiene instancias. El modelo matemático deberá representar dentro de un mismo dominio conceptual las definiciones canónicas del programa y las identidades activas en cada mundo, sin convertirlas en clase e instancia.
 
 > [!warning] Modelo retirado
 > La representación $W=(\operatorname{kind}_W,\operatorname{store}_W)$ suponía identidades runtime clasificadas por cosas mediante `kind`. Esa separación no corresponde al concepto de `thing` de MUD y no es una estructura candidata.
 
 ## Restricciones confirmadas
 
-La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]] fija:
+Las decisiones aceptadas fijan:
 
 1. Toda `thing` posee identidad semántica.
 2. Toda `thing` concreta denota una cosa concreta con estado propio y puede ser antecesora de otras.
 3. Una `thing` abstracta pertenece al mismo dominio, pero no denota directamente una cosa concreta con estado propio.
-4. `create` puede activar identidades reservadas raíz, abstractas o concretas y añadir cero o varios antecesores mediante `as`.
+4. Cada `thing` tiene una única definición canónica de primer nivel, que fija su carácter abstracto o concreto, sus antecesoras directas y su cuerpo.
 5. La relación semántica `is` es reflexiva y transitiva.
 6. La especialización directa es acíclica, por lo que `is` es también antisimétrica y forma un orden parcial.
 7. Se heredan declaraciones, restricciones, dominios y predeterminados efectivos, pero no estado mutable activo.
 8. Cada `thing` concreta posee estado independiente.
-9. El bloque de `create` es un cuerpo declarativo completo, no solo una lista de asignaciones.
-10. Si la identidad reservada está ausente, `create` la activa; tras destruirla, una creación posterior reactiva la misma identidad.
+9. `create Nombre` solo activa una `thing` o regla definida; no admite categoría, antecesoras ni cuerpo.
+10. Si la identidad canónica está ausente, `create` la activa; tras destruirla, una creación posterior reactiva la misma identidad, descriptor y carga.
 11. Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio.
 12. `as` introduce especialización directa; `is` queda reservado para consultar su clausura reflexiva y transitiva.
-13. Una regla que contiene `create thing A` solo se ejecuta si la identidad reservada `A` está ausente.
+13. Una regla que contiene `create A` solo se ejecuta si la identidad canónica `A` está ausente.
 14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
 15. Una colección de `thing` exige siempre membresía estricta: $c\neq T\land c\ \mathsf{is}\ T$. No existe `reflexive`.
 16. `destroy` retira una declaración de la proyección efectiva sin borrar su descriptor ni su carga almacenada.
 17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes.
 18. `remove` sobre una propiedad elimina su declaración y carga almacenadas, a diferencia de la suspensión reversible producida por `destroy`.
+19. Una única declaración `start with` determina un conjunto finito y no ordenado de `thing` y reglas inicialmente activas.
+20. `start with` contiene referencias separadas por comas sin coma final y no admite instrucciones ni efectos.
+21. Las definiciones no están activas por defecto; si se omite `start with`, el conjunto inicial de declaraciones con ciclo de vida está vacío.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-things|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]] y [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]]. D-025 actualiza el vocabulario de D-018 y D-026 sustituye D-020.
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]] y [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]]. D-054 sustituye D-016 y D-024; D-025 actualiza el vocabulario de D-018 y D-026 sustituye D-020.
 
 ## Próximo desarrollo
 

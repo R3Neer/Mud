@@ -44,6 +44,7 @@ Una instrucción termina mediante `;` o un salto de línea que actúe como termi
 - Comentarios y terminadores deben resolverse en el lexer antes del parser.
 - El resaltador puede implementarlos sin conocer el modelo semántico.
 - El catálogo de palabras reservadas se generará desde la gramática consolidada; la lista histórica provisional no es normativa.
+- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-054; que el parser reconozca `start`, `abstract`, `name` o `prefixes` en posiciones concretas no las convierte en palabras reservadas.
 
 ## Verificación
 

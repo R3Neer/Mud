@@ -16,7 +16,7 @@ produce tres efectos conceptuales:
 
 1. `Kingdom` deja de ser efectivo.
 2. Su estructura y las declaraciones con dependencia dura de `Kingdom` se suspenden.
-3. Sus descriptores y cargas permanecen almacenados para una recreación posterior.
+3. Su definición canónica permanece en el programa y sus cargas runtime permanecen almacenadas para una reactivación posterior.
 
 La recomendación anterior de podar destructivamente colecciones queda sustituida por D-021.
 
@@ -25,7 +25,7 @@ La recomendación anterior de podar destructivamente colecciones queda sustituid
 Antes:
 
 ```mud
-create thing King {
+thing King {
     kingdom: Kingdom[1] = Panama
 }
 ```
@@ -87,7 +87,7 @@ Permanece abierta la observación de una identidad inactiva desde una colección
 
 ## Grafo efectivo
 
-Las aristas `as` originales se conservan almacenadas. La proyección efectiva atraviesa cadenas de antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos.
+Las aristas `as` originales permanecen en las definiciones canónicas del programa. La proyección efectiva atraviesa cadenas de antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos.
 
 Este mecanismo:
 

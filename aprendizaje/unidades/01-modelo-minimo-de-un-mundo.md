@@ -25,6 +25,7 @@ decisions:
   - D-021
   - D-025
   - D-026
+  - D-054
 tags:
   - mud/aprendizaje
   - mud/unidad
@@ -33,7 +34,7 @@ tags:
 # Unidad 01 — Programa, mundo y store mínimo
 
 > [!abstract]
-> Esta unidad construye el modelo matemático mínimo de MUD con la ontología actual. No hay clases ni instancias: `Gate`, `NorthGate` y cualquier identidad creada son `thing` del mismo dominio. La versión anterior de la unidad se conserva en [[aprendizaje/historico/01-modelo-clase-instancia/README|el archivo histórico]].
+> Esta unidad construye el modelo matemático mínimo de MUD con la ontología actual. No hay clases ni instancias: `Gate`, `NorthGate` y cualquier identidad activada son `thing` del mismo dominio. La versión anterior de la unidad se conserva en [[aprendizaje/historico/01-modelo-clase-instancia/README|el archivo histórico]].
 
 ## 1. Pregunta de MUD
 
@@ -48,6 +49,11 @@ abstract thing Gate {
 thing NorthGate as Gate {
     unlocked = true
     open = false
+}
+
+start with {
+    Gate,
+    NorthGate
 }
 ```
 
@@ -85,7 +91,7 @@ Al terminar deberías poder:
 ## 4. Una sola ontología de `thing`
 
 > [!rule] Decisión de MUD — D-014
-> Las `thing` declaradas inicialmente y las introducidas por `create` pertenecen al mismo dominio conceptual. Una `thing` concreta posee identidad y estado propio; no es una instancia de otra.
+> Todas las `thing` definidas canónicamente pertenecen al mismo dominio conceptual. Una `thing` concreta posee identidad y estado propio; no es una instancia de otra. `start with` y `create Nombre` solo cambian su actividad.
 
 En el ejemplo:
 
@@ -102,12 +108,12 @@ Esto no impide que `NorthGate` sea a su vez antecesora de otras `thing`. MUD uni
 
 Llamaremos $P$ al programa resuelto. Contiene información que no depende del estado momentáneo:
 
-- Identidades reservadas.
+- Definiciones canónicas e identidades conocidas.
 - Descriptores de declaraciones.
 - Propiedades declaradas.
 - Tipos, cardinalidades y predeterminados.
 - Relaciones directas introducidas por `as`.
-- Cuerpos conocidos de `create`.
+- Conjunto inicial declarado mediante `start with`.
 
 Llamaremos $W$ a un mundo. Contiene información que puede variar:
 
@@ -127,7 +133,7 @@ $$
 \mathcal T_P
 $$
 
-conjunto finito de identidades de `thing` reservadas por $P$;
+conjunto finito de identidades de `thing` definidas por $P$;
 
 $$
 \mathcal F_P
@@ -295,9 +301,9 @@ Usamos `singleton` porque todo campo MUD denota una colección. Omitir `[1]` es 
 
 ## 10. Actividad, materialización y suspensión
 
-D-021 obliga a distinguir tres ideas:
+D-021 y D-054 obligan a distinguir tres ideas:
 
-1. Una identidad está reservada porque aparece en el programa.
+1. Una identidad está definida canónicamente porque aparece en el programa.
 2. Su carga puede haber sido materializada y permanecer almacenada.
 3. La declaración puede estar activa o suspendida.
 
@@ -323,7 +329,7 @@ $$
 
 porque `destroy NorthGate` puede retirar `NorthGate` de la proyección efectiva sin borrar sus valores almacenados. Una reactivación posterior recupera la carga.
 
-En el mundo inicial del ejemplo:
+La declaración `start with` del ejemplo exige que, en el mundo inicial:
 
 $$
 \mathsf{NorthGate}
@@ -443,7 +449,8 @@ El modelo completo podría añadir componentes semánticamente observables. No d
 ### Decisiones de MUD
 
 - Un único dominio de `thing`, sin clases e instancias.
-- Identidades globales reservadas.
+- Identidades globales con definición canónica única.
+- Conjunto inicial no ordenado mediante `start with`.
 - Campos interpretados como colecciones.
 - Valores predeterminados para todo tipo bien formado.
 - Suspensión lógica distinta de eliminación.
@@ -493,7 +500,7 @@ $$
 
 como:
 
-> Todo lo activo en el mundo debe haber sido reservado por el programa.
+> Todo lo activo en el mundo debe haber sido definido por el programa.
 
 ## 18. Tu turno
 
@@ -514,7 +521,7 @@ De esta unidad podrán promoverse:
 
 - La separación entre $P$ y $W$.
 - El dominio único de identidades de `thing`.
-- La distinción entre reserva, materialización y actividad.
+- La distinción entre definición canónica, materialización y actividad.
 - La forma general del store.
 - Las primeras condiciones de buena formación.
 

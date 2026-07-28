@@ -209,7 +209,7 @@ Define la sintaxis completa de:
 - Efectos.
 - Bloques.
 - Llamadas.
-- Definiciones completas de reglas y sus activaciones abreviadas mediante `create Nombre`.
+- Definiciones canónicas de `thing` y reglas, declaración inicial `start with` y activaciones mediante `create Nombre`.
 - Cuantificadores e iteraciones.
 
 La gramática completa ejecutable vivirá en `gramatica/mud.ebnf`. Este capítulo explicará ambigüedades, precedencia y desazucarado, pero no repetirá toda la EBNF.
@@ -224,7 +224,7 @@ Define las formas semánticamente relevantes después del parsing:
 - AST de tipos y dominios.
 - AST de expresiones.
 - AST de efectos.
-- Distinción entre definición de regla con activación y referencia de activación.
+- Distinción entre definición canónica, conjunto inicial de activaciones y referencia de activación runtime.
 - Distinción estructural entre las tres clases de regla.
 - Distinción entre acciones elementales y compuestas.
 - Nodos propios para `look`, `message` y propiedades públicas.
@@ -547,7 +547,7 @@ Define:
 - Adición y retirada dinámica de propiedades.
 - `create`.
 - `destroy`.
-- Resolución de `create Nombre` a la definición canónica de una regla.
+- Resolución de `create Nombre` a la definición canónica de una `thing` o regla.
 - Efectos de bucles.
 - Conjuntos de lectura y escritura.
 - Compatibilidad y conflicto entre efectos.
@@ -663,8 +663,7 @@ Define:
 
 - Relación de compatibilidad de efectos.
 - Matriz normativa de conflictos.
-- Fusión parcial de fragmentos concurrentes de `thing`.
-- Consolidación idempotente de activaciones concurrentes de una regla con definición única.
+- Consolidación idempotente de activaciones concurrentes de una misma definición canónica.
 - Ciclos causales.
 - Oscilaciones.
 - Detección de repetición.
@@ -677,9 +676,9 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 
 Define:
 
-- Creación de `thing` raíz, abstractas y con especialización múltiple.
-- Reserva global, activación y reactivación de los nombres introducidos por `create`.
-- Cuerpo declarativo completo de las creaciones.
+- Definiciones canónicas estáticas de `thing` raíz, abstractas y con especialización múltiple.
+- Conjunto inicial no ordenado declarado mediante `start with`.
+- Activación y reactivación mediante `create Nombre`.
 - Inicialización de la primera materialización.
 - Distinción entre almacenamiento retenido y proyección efectiva.
 - Suspensión por dependencias.
@@ -888,9 +887,9 @@ Apéndice normativo generado o verificado contra `gramatica/mud.ebnf`.
 
 Archivo previsto: `45-palabras-reservadas.md`
 
-Lista normativa, clasificación y versión de introducción o retirada.
+Lista normativa, clasificación como palabra reservada o contextual y versión de introducción o retirada.
 
-Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]]; el catálogo se derivará de la gramática y no de la lista provisional histórica.
+Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]] y [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]; el catálogo se derivará de la gramática y no de la lista provisional histórica.
 
 ## 46. Ejemplos integrales
 

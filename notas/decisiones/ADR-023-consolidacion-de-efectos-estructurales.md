@@ -1,19 +1,22 @@
 # ADR-023 — Consolidación de efectos estructurales concurrentes
 
-- Estado: Vigente para efectos estructurales; no cierra la matriz general de conflictos
+- Estado: Vigente para efectos estructurales salvo la fusión de definiciones, sustituida por D-054; no cierra la matriz general de conflictos
 - Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]]
+- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-002 — Modelo exacto de efectos secuenciales y simultáneos|Q-002]], [[notas/08-preguntas-abiertas#Q-006 — Conflictos|Q-006]], [[notas/08-preguntas-abiertas#Q-021 — Análisis estático de conflictos|Q-021]], [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]]
 - Documentos afectados: [[notas/03-semantica-de-ejecucion]], futuros capítulos 25, 28, 29 y 31
+
+> [!warning] Alcance sustituido
+> D-054 elimina los fragmentos declarativos runtime y la fusión de cuerpos de `thing`. Varias solicitudes `create d` dirigidas a una misma definición canónica ausente se consolidan idempotentemente. El resto del orden estructural y de la secuencialidad local de este ADR continúa vigente.
 
 ## Contexto
 
 Varias reglas pueden solicitar en la misma oleada:
 
-- La creación de la misma `thing`.
+- La activación de la misma `thing` mediante `create`.
 - La activación de la misma regla.
-- Creaciones y destrucciones incompatibles.
+- Activaciones y destrucciones incompatibles.
 - Adiciones y retiradas sobre una misma estructura.
 
 No siempre es decidible estáticamente si dos reglas producirán efectos en la misma oleada. La semántica tampoco puede depender del orden real en que hilos o estructuras internas recorran los `then`.
@@ -53,7 +56,7 @@ La consolidación produce un único delta tentativo o un conflicto que hace fall
 
 Después de respetar y normalizar el orden interno de cada `then`, los efectos estructurales de bloques distintos se consolidan en este orden:
 
-1. Creaciones supervivientes.
+1. Activaciones `create` supervivientes.
 2. Adiciones supervivientes.
 3. Retiradas supervivientes.
 4. Destrucciones supervivientes.
@@ -64,8 +67,7 @@ Dentro de un único bloque sigue mandando el orden escrito:
 
 ```mud
 then {
-    create thing A {
-    }
+    create A
     destroy A
 }
 ```
@@ -75,39 +77,17 @@ termina con una solicitud local de destrucción.
 ```mud
 then {
     destroy A
-    create thing A {
-    }
+    create A
 }
 ```
 
-termina con una solicitud local de creación. La normalización local debe conservar cualquier efecto intermedio observable dentro del propio bloque antes de calcular su estado final.
+termina con una solicitud local de activación. La normalización local debe conservar cualquier efecto intermedio observable dentro del propio bloque antes de calcular su estado final.
 
 Esta regla no introduce una prioridad temporal oculta entre reglas: define una operación de consolidación declarativa sobre sus deltas.
 
-## Varias creaciones de la misma `thing`
+## Varias activaciones de la misma declaración
 
-Si la `thing` estaba ausente en $W_i$, las solicitudes concurrentes se fusionan mediante una operación parcial:
-
-$$
-D_1\sqcup\cdots\sqcup D_m
-$$
-
-Las antecesoras directas se unen sin prioridad por orden. Los campos homónimos se combinan con las reglas de especialización múltiple:
-
-- Tipo, dominio, cardinalidad, mutabilidad, capacidad, unicidad, orden y naturaleza almacenada o calculada deben ser compatibles.
-- Si ninguna aparición declara valor inicial, se obtiene un único campo.
-- Si exactamente una aparición declara valor inicial, se conserva ese valor.
-- Si dos o más apariciones declaran valor inicial, existe conflicto, aunque los valores escritos sean iguales.
-
-Si la operación $\sqcup$ no está definida, la resolución falla y revierte.
-
-La fusión es idempotente respecto de la activación de identidad, pero no convierte cuerpos incompatibles en una declaración arbitraria.
-
-Si la `thing` ya estaba activa en $W_i$, se conserva la regla de D-016: una regla cuya aplicabilidad exige esa creación no publica ninguno de sus efectos. Q-046 mantiene abiertos los casos generales de acciones y bloques con varias creaciones de disponibilidad mixta.
-
-## Varias activaciones de la misma regla
-
-D-024 sustituye el conflicto dinámico que este ADR establecía inicialmente. Cada regla posee una única definición completa; las demás apariciones son referencias de activación al mismo descriptor. D-031 retira los aliases del sistema de activación.
+D-054 sustituye la fusión dinámica que este ADR establecía inicialmente. Cada `thing` y regla posee una única definición canónica de primer nivel; toda aparición `create d` es una referencia de activación al mismo descriptor. D-031 mantiene los aliases fuera del sistema de activación.
 
 Varias solicitudes concurrentes se consolidan idempotentemente:
 
@@ -121,11 +101,11 @@ $$
 \operatorname{create}(d)
 $$
 
-Dos definiciones completas no llegan al runtime: son un error de buena formación, incluso si sus cuerpos son iguales.
+Dos definiciones completas no llegan al runtime: son un error de buena formación, incluso si sus cuerpos son iguales. Si la declaración ya estaba activa en $W_i$, una regla cuya aplicabilidad exige esa activación no publica ninguno de sus efectos. Q-046 mantiene abiertos los casos generales de acciones y bloques con varias activaciones de disponibilidad mixta.
 
 ## Efectividad temporal
 
-Las creaciones y destrucciones consolidadas producen la proyección efectiva de $W_{i+1}$. No alteran retrospectivamente:
+Las activaciones y destrucciones consolidadas producen la proyección efectiva de $W_{i+1}$. No alteran retrospectivamente:
 
 - La instantánea leída por los `then` de la oleada actual.
 - Los bindings fijados al comienzo de esa oleada.
@@ -137,16 +117,15 @@ Las nuevas reglas y suspensiones afectan a la construcción de bindings y evalua
 
 - El compilador puede usar análisis conservadores sin tener que decidir toda coincidencia dinámica.
 - El runtime necesita agrupar solicitudes por identidad y clase de efecto.
-- Las creaciones de `thing` deben conservar procedencia de cada fragmento para diagnosticar conflictos.
+- Cada activación debe conservar procedencia para explicar su causa.
 - La secuencialidad local puede implementarse mediante overlays sin publicar estados parciales.
-- La traza causal debe indicar qué solicitudes se fusionaron y qué regla aportó cada fragmento.
+- La traza causal debe indicar qué solicitudes idempotentes se consolidaron.
 - Un conflicto dinámico estructural no produce commit ni estado parcial.
 
 ## Cuestiones abiertas
 
-- Combinación de una recreación con fragmentos que no estaban presentes en la carga almacenada.
-- Creaciones múltiples dentro de un mismo `then`.
-- Resultado operativo de una acción cuya creación resulta inefectiva.
+- Activaciones múltiples dentro de un mismo `then`.
+- Resultado operativo de una acción cuya activación resulta inefectiva.
 - Matriz completa de asignaciones, aritmética y operaciones de colección.
 - Interacción exacta con acciones compuestas y sus hojas simultáneas.
 
@@ -154,14 +133,8 @@ Las nuevas reglas y suspensiones afectan a la construcción de bindings y evalua
 
 La suite deberá cubrir:
 
-1. Dos fragmentos compatibles de la misma `thing`.
-2. Unión de antecesoras.
-3. Campo homónimo sin inicializadores.
-4. Un único inicializador entre varios fragmentos.
-5. Conflicto por dos inicializadores iguales y distintos.
-6. Conflicto de tipo, dominio, cardinalidad y mutabilidad.
-7. Rechazo estático de dos definiciones de la misma regla.
-8. Consolidación idempotente de varias activaciones de la misma regla.
-9. Creación y destrucción desde bloques distintos, con destrucción final.
-10. Orden inverso dentro de un único `then`.
-11. Efectos visibles únicamente en la oleada siguiente.
+1. Rechazo estático de dos definiciones de una misma `thing` o regla.
+2. Consolidación idempotente de varias activaciones de una misma definición ausente.
+3. Creación y destrucción desde bloques distintos, con destrucción final.
+4. Orden inverso dentro de un único `then`.
+5. Efectos visibles únicamente en la oleada siguiente.

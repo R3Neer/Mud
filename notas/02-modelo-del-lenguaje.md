@@ -4,7 +4,7 @@ Este documento es dueño del vocabulario semántico de MUD. Resume la estructura
 
 ## Unidades de declaración
 
-MUD tiene seis declaraciones principales y una auxiliar:
+MUD tiene seis declaraciones principales con nombre, una auxiliar con nombre y una declaración única de activación inicial:
 
 | Declaración | Representa | Denota identidad o valor dentro del mundo |
 | --- | --- | --- |
@@ -15,8 +15,9 @@ MUD tiene seis declaraciones principales y una auxiliar:
 | `look` | Consulta pública pura del estado estable | Su declaración tiene ancla; su resultado es un valor de salida |
 | `message` | Evento público detectado durante una resolución y materializado al estabilizar | Su declaración tiene ancla; cada ocurrencia es una salida |
 | `alias` | Tipo nominal de valor simple, estructural o compuesto | La declaración tiene ancla estática; sus valores no tienen identidad runtime |
+| `start with` | Conjunto no ordenado de `thing` y reglas activas al comenzar | No tiene ancla propia ni es un valor del mundo |
 
-Toda declaración tiene identidad semántica mediante un ancla. La última columna distingue esa identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
+Toda declaración con nombre tiene identidad semántica mediante un ancla. `start with` es única en el programa y no introduce una identidad adicional. La última columna distingue la identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
 
 ## Identidad, valor y especialización
 
@@ -28,16 +29,16 @@ Hay que conservar tres relaciones distintas:
 
 - Las `thing` se comparan por identidad.
 - Los aliases se comparan por tipo nominal y valor.
-- `as` declara antecesores directos en cabeceras estáticas y dinámicas.
+- `as` declara antecesores directos en la definición canónica de una `thing`.
 - `is` consulta especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
 
-Dos `thing` creadas durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con el mismo contenido son iguales. Aliases diferentes no son intercambiables aunque su forma normalizada coincida; requieren casting nominal explícito mediante `to`.
+Dos `thing` definidas con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con el mismo contenido son iguales. Aliases diferentes no son intercambiables aunque su forma normalizada coincida; requieren casting nominal explícito mediante `to`.
 
-`create` puede activar una `thing` raíz, abstracta o concreta y relacionarla con cero o varios antecesores mediante `as`. El nombre introducido es una identidad global reservada, no una variable local ni una identidad fresca por ejecución. Si está ausente, se activa; después de destruirlo, una nueva creación reactiva la misma identidad. Cada antecesor añade la misma relación directa que una declaración estática con `as`, según [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]. El origen y el ciclo de vida no forman una segunda categoría ontológica.
+Cada `thing` posee una única definición canónica de primer nivel. Puede ser raíz, abstracta o concreta y declarar cero o varios antecesores mediante `as`. `create Nombre` activa esa identidad ya definida: no fabrica una identidad fresca, no añade antecesores y no contiene un cuerpo. Después de `destroy Nombre`, una nueva activación recupera la misma identidad, descriptor y carga almacenada. Las reglas completas pertenecen a [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
 La especialización directa es acíclica. Su clausura reflexiva y transitiva, consultada mediante `is`, forma un orden parcial.
 
-El bloque de `create` es un cuerpo declarativo completo: puede añadir propiedades locales además de las heredadas. Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada `thing` concreta conserva estado independiente. Un `create` concreto resuelve su esquema completo, inicializa desde los predeterminados efectivos y aplica después las inicializaciones explícitas que correspondan.
+El bloque de la definición canónica puede declarar propiedades locales además de las heredadas. Los descendientes heredan declaraciones, restricciones, dominios y valores predeterminados efectivos, pero nunca el estado mutable actual de sus antecesores. Cada `thing` concreta conserva estado independiente. La primera activación resuelve su esquema completo, inicializa desde los predeterminados efectivos y aplica después las inicializaciones explícitas que correspondan.
 
 Esta separación debe existir en el sistema de tipos, el IR, el runtime y los materializadores.
 
@@ -45,23 +46,33 @@ Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio,
 
 ## Ciclo de vida declarativo
 
-`create` y `destroy` también pueden activar y suspender las tres clases de reglas. No operan sobre aliases, acciones ni magnitudes. `create` explicita la clase de declaración; `destroy` resuelve únicamente el nombre:
+`create` y `destroy` pueden activar y suspender `thing` y las tres clases de reglas. No operan sobre aliases, acciones ni magnitudes. Ambos resuelven únicamente el nombre de una definición canónica de primer nivel:
 
 ```mud
-create thing Dragon {
+thing Dragon {
 }
 
-create rule FrozenGround on person: Person {
+rule FrozenGround on person: Person {
     ...
 }
 
+create Dragon
 create FrozenGround
 
 destroy Dragon
 destroy FrozenGround
 ```
 
-Cada regla tiene una única definición completa, ya sea una declaración inicial ordinaria o una definición incluida en `create`. Sus activaciones adicionales usan `create Nombre` sin categoría ni cuerpo y se resuelven a ese descriptor. Las `thing` conservan múltiples cuerpos fragmentarios y no admiten la activación abreviada, según [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
+Una declaración no queda activa por el mero hecho de estar definida. El conjunto inicial se declara una sola vez y sin orden observable:
+
+```mud
+start with {
+    Dragon,
+    FrozenGround
+}
+```
+
+`start with` contiene únicamente referencias separadas por comas, sin coma final. No es una acción ni un bloque de instrucciones y no admite `create`, `destroy` u otros efectos. Si se omite, ninguna `thing` ni regla está explícitamente activa al comienzo.
 
 El mundo distingue información almacenada y proyección efectiva. `destroy` suspende la estructura de su objetivo y las declaraciones que tengan una dependencia dura de él, pero conserva descriptores y cargas. Una recreación restaura esa información. Por el contrario, `remove field from Thing` elimina la propiedad y su contenido almacenado.
 
@@ -75,7 +86,7 @@ add Panama to King.kingdoms
 remove Panama from King.kingdoms
 ```
 
-Las declaraciones creadas no capturan variables libres de su contexto creador. Pueden usar sus propios participantes y `given`, además de anclas globales. La definición completa pertenece a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
+Como todas las definiciones son de primer nivel, ninguna declaración puede capturar variables libres de una activación. Puede usar sus propios participantes y `given`, además de anclas globales. La definición completa del ciclo de vida pertenece a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] y D-054.
 
 ## Aliases nominales
 
@@ -264,6 +275,8 @@ message::warfare.armies.ArmyDestroyed
 ```
 
 Las anclas no incluyen el archivo. Mover una declaración dentro del mismo namespace no cambia su identidad; moverla de namespace sí, salvo una migración explícita todavía por diseñar.
+
+MUD distingue palabras reservadas y contextuales. `with` está reservada; `start` solo introduce la declaración de primer nivel `start with`; `abstract` solo actúa como modificador delante de `thing`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
 
 Las reglas completas de organización física, imports, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 

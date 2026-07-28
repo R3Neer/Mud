@@ -36,7 +36,7 @@ abstract thing Place {
 thing Egypt as Kingdom, Place {
 }
 
-create thing Alexandria as City {
+thing Alexandria as City {
 }
 ```
 
@@ -105,7 +105,7 @@ Los fragmentos anteriores de esta sección son contraejemplos históricos. Los A
 
 ## Consecuencias
 
-- El lexer reserva `thing` y `as`; `construct` deja de ser palabra reservada.
+- El lexer reserva `thing` y `as`; `abstract` es contextual delante de `thing`, conforme a D-054; `construct` deja de ser palabra reservada.
 - El AST utiliza `ThingDecl` y una lista `directAncestors` introducida por `as`.
 - `is` sigue siendo el único operador de consulta de especialización.
 - El parser puede seleccionar la forma de cabecera a partir de la clase de entidad.

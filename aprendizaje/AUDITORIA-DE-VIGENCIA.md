@@ -29,7 +29,7 @@ Una unidad nueva o revisada debe comprobar, cuando el tema sea aplicable, que:
 - Emplea `as` para declarar especialización directa.
 - Emplea `is` como consulta reflexiva y transitiva, no como declaración.
 - No introduce clases, objetos ni instancias.
-- Distingue identidad reservada, materialización almacenada y actividad efectiva.
+- Distingue definición canónica, activación inicial, materialización almacenada y actividad efectiva.
 - Distingue el grafo almacenado del efectivo cuando intervienen `create` o `destroy`.
 - No hereda estado activo.
 - Rechaza ciclos de especialización.

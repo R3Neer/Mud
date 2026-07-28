@@ -6,7 +6,7 @@ tags:
   - mud/tooling
   - mud/obsidian
 status: propuesta
-verified: 2026-07-27
+verified: 2026-07-28
 ---
 
 # Resaltado sintáctico de MUD en Obsidian
@@ -75,7 +75,7 @@ Ventajas:
 Limitaciones:
 
 - El resaltado es léxico, no semántico.
-- Puede confundir un identificador con una palabra en ciertos contextos.
+- Puede confundir un identificador con una palabra contextual como `start`, `abstract`, `name` o `prefixes`.
 - Los comentarios `#...#` y `###...###` exigen patrones y prioridades cuidadosos.
 - Debe actualizarse al cambiar palabras reservadas o literales.
 
@@ -88,6 +88,7 @@ Cuando la gramática concreta sea estable, MUD debería tener una herramienta pr
 3. Renderizado de lectura mediante PrismJS o un postprocesador equivalente.
 4. Tests que relacionen tokens con casos del léxico normativo.
 5. Generación o validación de las listas de palabras reservadas.
+6. Resaltado contextual derivado del parser para palabras que no están reservadas globalmente.
 
 Esto evita mantener manualmente tres descripciones divergentes:
 
@@ -113,6 +114,7 @@ La configuración local de `.obsidian/` permanece ignorada por Git. La fuente ma
 Puede construirse un primer resaltado después de cerrar:
 
 - El conjunto provisional de palabras reservadas.
+- La clasificación provisional de palabras contextuales.
 - Literales de texto y números.
 - Comentarios.
 - Operadores y puntuación.

@@ -33,13 +33,12 @@ Reglas mínimas:
 | asignación con actualización aritmética | conflicto |
 | actualización aditiva con multiplicativa | conflicto |
 
-Para efectos estructurales se aplican D-023, D-024 y D-026:
+Para efectos estructurales se aplican D-023, D-026 y D-054:
 
-- las creaciones compatibles preceden a adiciones;
+- las activaciones compatibles mediante `create` preceden a adiciones;
 - las retiradas preceden a destrucciones;
 - `create` y `destroy` coincidentes dejan el objetivo destruido al cerrar la onda;
-- fragmentos compatibles de una `thing` ausente se fusionan;
-- activaciones coincidentes de una regla son idempotentes;
+- varias activaciones de una misma definición canónica ausente se consolidan idempotentemente;
 - cada `then` y toda consolidación posible deben preservar cardinalidades estáticamente.
 
 Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destinos solo puede conocerse durante una resolución, el runtime la detecta y produce `failed` con rollback completo.
@@ -55,5 +54,5 @@ Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destin
 1. Casos compatibles e incompatibles de cada fila.
 2. Igualdad bajo permutación de deltas.
 3. Conflicto conocido estáticamente y conflicto dependiente de bindings.
-4. Consolidación estructural con creación, adición, retirada y destrucción.
+4. Consolidación estructural con activación mediante `create`, adición, retirada y destrucción.
 5. Rollback integral ante conflicto tardío.

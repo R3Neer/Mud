@@ -31,6 +31,12 @@ thing NorthGate as Gate {
 thing SouthGate as Gate {
     open = false
 }
+
+start with {
+    Gate,
+    NorthGate,
+    SouthGate
+}
 ```
 
 En el mundo $W$:
@@ -98,6 +104,6 @@ $$
 ## Criterio de corrección
 
 - No aparecen instancias ni una función `kind`.
-- Reserva, materialización y actividad están separadas.
+- Definición canónica, materialización y actividad están separadas.
 - El store conserva la carga de `SouthGate`.
 - La explicación distingue información estática y dinámica.

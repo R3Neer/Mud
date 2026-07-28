@@ -94,7 +94,7 @@ Estado: **cerrada**.
 
 Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]].
 
-MUD tiene un único dominio conceptual de `thing`. Toda `thing` concreta es una cosa con identidad y estado propio que también puede ser antecesora. Las abstractas pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` activa una identidad reservada, que puede ser abstracta o concreta, e `is` es reflexivo y transitivo.
+MUD tiene un único dominio conceptual de `thing`. Toda `thing` concreta es una cosa con identidad y estado propio que también puede ser antecesora. Las abstractas pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. D-054 precisa que todas se definen canónicamente en el nivel superior; `start with` o `create Nombre` las activan sin cambiar su identidad. `is` es reflexivo y transitivo.
 
 Las consecuencias se separaron en Q-042 y Q-043 y quedaron resueltas mediante [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
@@ -106,7 +106,7 @@ Cuando una `thing` concreta $B$ se especializa a partir de otra `thing` concreta
 
 Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-Se heredan esquema y predeterminados efectivos, nunca estado activo. Cada `thing` concreta posee estado independiente y `create` inicializa desde predeterminados antes de aplicar sus asignaciones explícitas.
+Se heredan esquema y predeterminados efectivos, nunca estado activo. Cada `thing` concreta posee estado independiente y su primera activación inicializa desde predeterminados antes de aplicar sus asignaciones explícitas.
 
 ### Q-043 — Ciclos de especialización
 
@@ -122,11 +122,11 @@ Todo ciclo de especialización directa es inválido. La relación semántica `is
 
 Estado: **cerrada**.
 
-¿Qué designa el nombre introducido por `create thing A`?
+¿Qué designa el nombre activado por `create A`?
 
-Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|ADR-016]].
+Decisión vigente: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], que sustituye D-016.
 
-`A` es una identidad global reservada y resoluble antes de estar activa. `create thing A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
+`A` posee una única definición canónica de primer nivel y es resoluble antes de estar activa. `create A` solo solicita su activación. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A` ni modifica sus antecesoras.
 
 Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `on` continúan coordinados con Q-005.
 
@@ -136,21 +136,23 @@ Estado: **cerrada**.
 
 ¿Puede el bloque de `create` declarar nuevos campos, restricciones o predeterminados, o solo inicializar el estado permitido por el esquema heredado?
 
-Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|ADR-016]].
+Decisión vigente: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], que sustituye D-016.
 
 ```mud
-create abstract thing B as A {
-    # Cuerpo declarativo completo.
+abstract thing B as A {
+    # Única definición canónica.
 }
+
+create B
 ```
 
-El bloque admite la declaración completa de las propiedades permitidas en una `thing` ordinaria. El compilador conoce el cuerpo porque forma parte del programa, aunque la identidad reservada todavía no esté activa en el mundo. Al activarse, sus declaraciones pasan a participar en el esquema, las reglas, las acciones y las demás estructuras semánticas aplicables.
+`create` no admite bloque, categoría, antecesoras ni contenido declarativo. La definición canónica contiene todas las propiedades, restricciones, predeterminados y antecesoras. La activación solo las incorpora a la proyección efectiva.
 
 ### Q-046 — Creación inefectiva dentro de una raíz
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-things|ADR-016]] y [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]] y [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
-Si una regla contiene `create thing A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
+Si una regla contiene `create A` cuando la identidad canónica `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
 
 Falta decidir:
 
@@ -158,7 +160,7 @@ Falta decidir:
 - Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
 - Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
 
-D-023 añade que las creaciones concurrentes compatibles de una `thing` ausente se fusionan. D-024 exige una única definición completa por regla y consolida idempotentemente sus activaciones concurrentes. D-031 retira los aliases del sistema de `create` y `destroy`. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
+D-054 exige una única definición completa de primer nivel para cada `thing` y regla. Varias activaciones concurrentes de una misma identidad ausente se consolidan idempotentemente; ya no existen cuerpos ni fragmentos que fusionar. D-031 retira los aliases del sistema de `create` y `destroy`. La activación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
 
 Bloquea la semántica operacional completa de `create`, los conjuntos de efectos y la atomicidad.
 
@@ -259,7 +261,7 @@ Una oscilación semántica produce `failed`; un límite de recursos es una salva
 
 Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
 
-D-023 y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] establecen el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas: son idempotentes porque sus definiciones son únicas. D-031 hace inaplicable el caso de aliases.
+D-023 y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] establecen el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-054 retira de esta categoría las activaciones coincidentes de una misma `thing` o regla: son idempotentes porque sus definiciones son únicas. D-031 hace inaplicable el caso de aliases.
 
 D-026 endurece el caso de cardinalidad: el compilador debe demostrar la preservación local y consolidada; si no puede, rechaza conservadoramente el programa en vez de diferir el caso al runtime.
 
@@ -297,7 +299,9 @@ Las familias cerradas son nominales, finitas y enumerables; `ordered values` añ
 
 ### Q-025 — Destrucción de `thing` estáticas
 
-Si está permitida y qué significa para anclas, referencias y estados.
+Estado: **cerrada** mediante [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] y [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
+
+Toda `thing` se define estáticamente y puede activarse mediante `start with` o `create Nombre`. `destroy` suspende su identidad canónica sin borrar ancla, descriptor, aristas ni carga; una activación posterior restaura la misma declaración.
 
 ## P2 — Funciones avanzadas
 

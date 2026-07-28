@@ -26,7 +26,7 @@ status: activo
 | Usar funciones y funciones parciales | Nivel 1 demostrado | [[aprendizaje/historico/01-modelo-clase-instancia/01-modelo-minimo-respuesta-historica|Respuesta histórica 01]] y objeción sobre $I_G$ | Unidad 02 |
 | Distinguir función y relación | Introducido | Demostración de especialización múltiple en Unidad 02 | Ejercicio 02 |
 | Leer grafos y caminos | Introducido | Grafos almacenado y efectivo de `thing` en Unidad 02 | Ejercicio 02 |
-| Distinguir reserva, materialización y actividad | Introducido | Unidad 01 actualizada | Unidad 02 |
+| Distinguir definición canónica, activación inicial, materialización y actividad | Introducido | Unidad 01 actualizada y D-054 | Unidad 02 |
 | Calcular clausuras de relaciones | Introducido | Demostración resuelta en Unidad 02 | Ejercicio 02 |
 | Reconocer órdenes parciales | Introducido | Proposición de aciclicidad en Unidad 02 | Ejercicio 02 |
 | Leer juicios formales | Introducido | Juicio $P\vdash W\ \mathsf{wf}$ en Unidad 01 | Unidad posterior |

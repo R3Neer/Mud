@@ -3,7 +3,7 @@
 - Estado: Vigente excepto para aliases, sustituidos por D-031
 - Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]]
+- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de `thing`|Q-049]]
 - Decisiones sustituidas parcialmente: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|D-016]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
@@ -22,22 +22,23 @@ Se desea que `destroy Kingdom` haga desaparecer lógicamente `Kingdom` y las dec
 
 ## Decisión
 
-Todo mundo distingue:
+El modelo distingue:
 
-1. Una representación **almacenada**, que conserva declaraciones, aristas y cargas latentes.
-2. Una proyección **efectiva**, que contiene únicamente las partes que participan actualmente en el juego.
+1. Un catálogo de **definiciones canónicas** del programa, que conserva identidades, descriptores y aristas `as` estáticas.
+2. Una representación **almacenada** del mundo, que conserva cargas y modificaciones estructurales runtime latentes.
+3. Una proyección **efectiva**, que contiene únicamente las partes que participan actualmente en el juego.
 
-Sea $\mathcal D_P$ el conjunto de declaraciones conocidas por el programa. Un estado $W$ mantiene, como mínimo:
+Sea $\mathcal D_P$ el conjunto de declaraciones conocidas por el programa y sea $\mathcal L_P\subseteq\mathcal D_P$ el subconjunto con ciclo de vida explícito. Un estado $W$ mantiene, como mínimo:
 
 $$
 \operatorname{stored}_W
 $$
 
-para la información retenida y:
+para la información runtime retenida y:
 
 $$
 \operatorname{active}_W:
-\mathcal D_P\to\mathbb B
+\mathcal L_P\to\mathbb B
 $$
 
 para la activación explícita de las declaraciones con ciclo de vida. La proyección efectiva:
@@ -48,7 +49,7 @@ $$
 
 se deriva de ambos componentes y de las dependencias entre declaraciones.
 
-`destroy d` cambia la activación de $d$, pero no elimina su descriptor ni su carga almacenada:
+`destroy d` cambia la activación de $d$, pero no modifica su definición canónica ni su carga almacenada:
 
 $$
 \operatorname{active}_{W'}(d)=\bot
@@ -68,7 +69,7 @@ $$
 \operatorname{stored}_{W}(d)
 $$
 
-Los inicializadores del cuerpo de `create` se aplican cuando la carga se materializa por primera vez. La incorporación posterior de fragmentos declarativos compatibles se rige por la semántica de combinación de creaciones, no por una reinicialización silenciosa.
+Los inicializadores de la definición canónica se aplican cuando la carga se materializa por primera vez, ya sea mediante `start with` o mediante `create Nombre`. Una reactivación posterior no reinicializa la carga.
 
 ## Categorías con ciclo de vida
 
@@ -90,29 +91,29 @@ Las acciones forman la API estable de escritura. Las magnitudes forman parte del
 
 ## Sintaxis superficial
 
-La aparición que define un descriptor indica su categoría:
+Conforme a D-054, toda `thing` y regla posee una única definición canónica de primer nivel:
 
 ```mud
-create thing Kingdom {
+thing Kingdom {
 }
 
-create abstract thing Place {
+abstract thing Place {
 }
 
-create rule CanEnter for person: Person {
+rule CanEnter for person: Person {
     ...
 }
 
-create rule OpenGate on gate: Gate [mut] {
+rule OpenGate on gate: Gate [mut] {
     ...
 }
 
-create always rule ValidKingdom on kingdom: Kingdom {
+always rule ValidKingdom on kingdom: Kingdom {
     ...
 }
 ```
 
-Conforme a D-024, cada regla tiene una única definición completa. Las activaciones adicionales omiten categoría y cuerpo:
+Las activaciones runtime omiten categoría y cuerpo:
 
 ```mud
 create CanEnter
@@ -120,7 +121,22 @@ create OpenGate
 create ValidKingdom
 ```
 
-Las `thing` conservan cuerpos fragmentarios y no admiten esta forma abreviada.
+La misma forma activa una `thing`:
+
+```mud
+create Kingdom
+create Place
+```
+
+Las declaraciones presentes al comienzo se enumeran conjuntamente:
+
+```mud
+start with {
+    Kingdom,
+    Place,
+    CanEnter
+}
+```
 
 `destroy` solo necesita una referencia que resuelva de manera unívoca:
 
@@ -131,7 +147,7 @@ destroy CanEnter
 
 Los nombres de declaraciones comparten el espacio necesario para que esa resolución sea inequívoca. Una referencia ambigua debe diagnosticarse; `destroy` no elige una categoría por prioridad.
 
-El compilador puede elaborar internamente estas formas como definición canónica, reserva, activación y desactivación. `activate` y `deactivate` no se introducen como palabras de la superficie MUD.
+El compilador puede elaborar internamente estas formas como definición canónica, activación inicial, activación runtime y desactivación. `activate` y `deactivate` no se introducen como palabras de la superficie MUD.
 
 ## Suspensión por dependencias
 
@@ -161,7 +177,7 @@ Para una propiedad almacenada $p$, son dependencias duras:
 Por tanto, si:
 
 ```mud
-create thing King {
+thing King {
     kingdom: Kingdom[1] = Panama
 }
 ```
@@ -174,7 +190,7 @@ destroy Kingdom
 
 la propiedad `King.kingdom` deja de pertenecer a $\operatorname{Effective}(W)$, pero continúa almacenada junto con `Panama`. Al recrear `Kingdom`, vuelve a ser efectiva con la misma carga.
 
-La estructura propia de una `thing` destruida desaparece de la proyección efectiva y permanece almacenada.
+La estructura propia de una `thing` destruida desaparece de la proyección efectiva. Su definición canónica permanece en el programa y su carga o modificaciones runtime permanecen almacenadas en el mundo.
 
 ## Participantes y declaraciones dependientes
 
@@ -189,7 +205,7 @@ Esta suspensión conserva aridad, nombres de roles y referencias internas. Recre
 
 ## Especialización y descendientes
 
-Las aristas declaradas mediante `as` se conservan en el almacenamiento. En la proyección efectiva, un descendiente activo no se suspende necesariamente porque una de sus antecesoras esté destruida.
+Las aristas declaradas mediante `as` permanecen en la definición canónica del programa. En la proyección efectiva, un descendiente activo no se suspende necesariamente porque una de sus antecesoras esté destruida.
 
 Cuando un camino almacenado:
 
@@ -293,7 +309,6 @@ Se descartan. Exigirían definir cuándo se demuestra la unicidad, qué ocurre s
 
 - Visibilidad de una identidad destruida dentro de una colección cuyo tipo declarado sigue efectivo por ser un antecesor más general.
 - Operaciones permitidas sobre propiedades suspendidas.
-- Combinación exacta entre una reactivación y nuevos fragmentos declarativos.
 - Serialización e introspección de la representación almacenada.
 - Orden de restauración cuando se recrean varias dependencias en una misma oleada.
 

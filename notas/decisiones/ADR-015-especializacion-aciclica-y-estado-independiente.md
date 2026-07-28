@@ -29,12 +29,18 @@ No hereda, copia ni observa el estado mutable actual de la antecesora.
 
 Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
 
-Al activar por primera vez una `thing` concreta:
+La definición canónica de una `thing` concreta puede declarar antecesoras e inicializadores:
 
 ```mud
-create thing N as BaseOne, BaseTwo {
+thing N as BaseOne, BaseTwo {
     ...
 }
+```
+
+Al activarla por primera vez mediante `start with` o:
+
+```mud
+create N
 ```
 
 la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después las inicializaciones explícitas. No parte de sus estados activos. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
@@ -71,12 +77,12 @@ La reflexividad de `is` pertenece a la clausura y no introduce bucles en $R_{\ma
 ## Alternativas descartadas
 
 - **Delegación viva al estado de la antecesora:** produciría cambios no locales y complicaría ondas, rollback y explicación.
-- **Copia del estado actual al crear:** haría que una misma creación dependiera de estado mutable ajeno.
+- **Copia del estado actual al activar:** haría que una misma primera activación dependiera de estado mutable ajeno.
 - **Ciclos:** convertirían `is` en un preorden e impedirían resolver campos y predeterminados de forma bien fundada.
 
 ## Consecuencias
 
-- El grafo estático y el grafo combinado tras `create` deben ser acíclicos.
+- El grafo fijado por las definiciones canónicas debe ser acíclico.
 - El IR separa esquema heredable de estado mutable.
 - La inicialización calcula predeterminados efectivos antes de aplicar asignaciones explícitas.
 - Escribir sobre una antecesora no añade lecturas ni escrituras implícitas sobre sus descendientes.
@@ -93,15 +99,15 @@ thing Egypt as Kingdom {
 }
 ```
 
-`Egypt` empieza con `treasury = 0`. Una escritura posterior sobre `Kingdom.treasury` no modifica `Egypt.treasury`.
+Al activarse por primera vez, `Egypt` empieza con `treasury = 0`. Una escritura posterior sobre `Kingdom.treasury` no modifica `Egypt.treasury`.
 
 ```mud
-create thing France as Kingdom {
+thing France as Kingdom {
     treasury = 20
 }
 ```
 
-`France.treasury` vale `20`, pero esa asignación no se convierte en predeterminado para futuras descendientes de `France`.
+Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación no se convierte en predeterminado para futuras descendientes de `France`.
 
 ## Verificación
 
@@ -110,5 +116,5 @@ create thing France as Kingdom {
 3. Antisimetría de `is`.
 4. Independencia de estados.
 5. Inicialización desde predeterminados efectivos.
-6. Aplicación posterior de inicializaciones de `create`.
+6. Aplicación de los inicializadores canónicos en la primera activación.
 7. Ausencia de propagación implícita a futuras descendientes.

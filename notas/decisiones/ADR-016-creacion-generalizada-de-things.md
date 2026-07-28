@@ -1,12 +1,15 @@
 # ADR-016 — Creación generalizada de `thing`
 
-- Estado: Vigente
+- Estado: Sustituida por [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modificada por: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
 - Preguntas resueltas: [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a `thing` futuras|Q-044]], [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de `create`|Q-045]]
 - Pregunta abierta relacionada: [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `24-acciones.md`, futuro `32-ciclo-de-vida-runtime.md`
+
+> [!warning] Decisión sustituida
+> D-054 traslada toda definición de `thing` al nivel superior, fija una única definición canónica y reserva `create Nombre` para activar una identidad ya definida. Las formas `create thing ...`, los cuerpos fragmentarios y la fusión runtime descritos en este ADR son históricos.
 
 ## Contexto
 

@@ -32,12 +32,7 @@ $$
 ## 2. Relación almacenada
 
 $$
-R^{\mathsf{stored}}_{P,W_0}
-=
-$$
-
-$$
-R^{\mathsf{stored}}_{P,W_1}
+R^{\mathsf{stored}}_P
 =
 $$
 

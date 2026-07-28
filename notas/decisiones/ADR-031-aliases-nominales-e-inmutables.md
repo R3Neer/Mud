@@ -97,7 +97,7 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 ## Consecuencias
 
 - D-021 continúa gobernando `thing` y reglas, pero deja de incluir aliases entre las categorías con ciclo de vida.
-- D-024 continúa exigiendo definición canónica y activación abreviada para reglas, pero deja de aplicarse a aliases.
+- D-054 exige definiciones canónicas de primer nivel y reserva `create Nombre` para activar `thing` y reglas; los aliases quedan fuera de ese ciclo de vida.
 - El AST solo necesita `AliasDecl`; elimina `DefineAndCreateAlias` y cualquier efecto `create`/`destroy` de alias.
 - El runtime no necesita marcas de actividad, almacenamiento latente ni restauración para aliases.
 - Las propiedades y declaraciones que usan un alias no pueden quedar suspendidas por inactividad de ese alias.

@@ -22,6 +22,20 @@ estado estable anterior
 
 `old` observa el estado estable anterior a la acción exterior completa.
 
+## Construcción del mundo inicial
+
+Las definiciones canónicas de `thing` y reglas pertenecen al programa y no están activas por defecto. La declaración única `start with` determina un conjunto inicial no ordenado de activaciones.
+
+El runtime:
+
+1. Resuelve todas sus referencias contra definiciones canónicas.
+2. Materializa conjuntamente las cargas que todavía no existan.
+3. Activa todo el conjunto sin observar el orden textual de la lista.
+4. Valida dependencias, tipos, dominios, cardinalidades y reglas `always` efectivas.
+5. Resuelve las consecuencias iniciales hasta alcanzar un primer estado estable.
+
+Solo después puede aceptar acciones externas. Un fallo en este proceso significa que el programa no produce un mundo inicial válido; no es `rejected`, porque no existe una solicitud exterior. La memoria inicial de las vinculaciones `when` continúa bajo Q-005.
+
 ## Inicio de una acción
 
 Al comenzar la acción:
@@ -64,7 +78,7 @@ Las vinculaciones se fijan al inicio de cada onda. Los cambios de pertenencia so
 
 La activación o suspensión de una regla durante una onda tampoco modifica el conjunto de bindings ya fijado para esa onda. La proyección efectiva resultante se utiliza al construir la onda siguiente.
 
-Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las creaciones preceden a las adiciones y las retiradas preceden a las destrucciones. Varias creaciones compatibles de una `thing` pueden fusionarse. Varias activaciones de una regla se consolidan idempotentemente porque remiten a una única definición canónica. Los aliases no participan en efectos de ciclo de vida. Véanse [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]] y [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]].
+Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las activaciones mediante `create` preceden a las adiciones y las retiradas preceden a las destrucciones. Varias activaciones de una misma definición canónica ausente se consolidan idempotentemente; `create` no aporta cuerpos ni fragmentos declarativos. Los aliases no participan en efectos de ciclo de vida. Véanse [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]].
 
 La cardinalidad no se comprueba tras cada instrucción del delta privado. El compilador debe demostrar que el resultado final de cada `then` respeta todos los límites y que la consolidación de bloques potencialmente concurrentes también los conserva. Un bloque no puede depender de otro para reparar su cardinalidad. Si la prueba estática no es posible, el programa se rechaza, conforme a [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]].
 

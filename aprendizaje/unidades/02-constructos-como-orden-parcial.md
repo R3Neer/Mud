@@ -15,7 +15,8 @@ concepts:
   - orden parcial
   - grafo almacenado
   - grafo efectivo
-  - identidad reservada
+  - definición canónica
+  - activación inicial
   - actividad
 spec-chapters:
   - "[[especificacion/03-notacion]]"
@@ -24,11 +25,11 @@ spec-chapters:
 decisions:
   - D-014
   - D-015
-  - D-016
   - D-021
   - D-023
   - D-025
   - D-026
+  - D-054
 tags:
   - mud/aprendizaje
   - mud/unidad
@@ -51,6 +52,12 @@ thing Kingdom as Place {
 }
 
 thing Egypt as Kingdom {
+}
+
+start with {
+    Place,
+    Kingdom,
+    Egypt
 }
 ```
 
@@ -82,7 +89,7 @@ Al terminar deberías poder:
 3. Leer un camino en un grafo dirigido.
 4. Calcular clausuras transitivas y reflexivas.
 5. Demostrar que `is` forma un orden parcial bajo aciclicidad.
-6. Incorporar `create` sin inventar identidades frescas.
+6. Distinguir definición canónica, `start with` y activación mediante `create`.
 7. Distinguir grafo almacenado y grafo efectivo.
 8. Explicar el bypass de antecesores inactivos.
 9. Distinguir reflexividad de `is` y membresía estricta de colecciones.
@@ -92,7 +99,7 @@ Al terminar deberías poder:
 
 De la Unidad 01:
 
-- $\mathcal T_P$: identidades de `thing` reservadas.
+- $\mathcal T_P$: identidades de `thing` definidas canónicamente.
 - $\mathcal A_W$: declaraciones activas.
 - Separación entre programa $P$ y mundo $W$.
 - Pares ordenados, productos cartesianos y funciones parciales.
@@ -145,7 +152,7 @@ $$
 Sea:
 
 $$
-R^{\mathsf{stored}}_{P,W}
+R^{\mathsf{stored}}_P
 \subseteq
 \mathcal T_P\times\mathcal T_P
 $$
@@ -245,7 +252,7 @@ Por eso `Egypt is Egypt` puede ser verdadero sin almacenar un bucle:
 $$
 (\mathsf{Egypt},\mathsf{Egypt})
 \notin
-R^{\mathsf{stored}}_{P,W}
+R^{\mathsf{stored}}_P
 $$
 
 pero:
@@ -253,7 +260,7 @@ pero:
 $$
 (\mathsf{Egypt},\mathsf{Egypt})
 \in
-\left(R^{\mathsf{stored}}_{P,W}\right)^*
+\left(R^{\mathsf{stored}}_P\right)^*
 $$
 
 ## 8. Aciclicidad
@@ -326,32 +333,41 @@ $$
 > [!proof] Proposición
 > Si la relación directa efectiva es acíclica, su clausura reflexiva y transitiva es un orden parcial.
 
-## 10. Reserva, `create` y actividad
+## 10. Definición, estado inicial y actividad
 
-Una aparición:
+Una declaración canónica:
 
 ```mud
-create thing Memphis as Settlement {
+thing Memphis as Settlement {
 }
 ```
 
-no fabrica un nombre fresco cada vez. Al resolver $P$, `Memphis` ya pertenece a un conjunto de identidades reservadas:
+incorpora `Memphis` a $\mathcal T_P$ y fija su arista hacia `Settlement`. Ni `start with` ni `create` pueden cambiar después esa antecesora.
 
-$$
-\mathcal R_P^{\mathsf{create}}
-\subseteq
-\mathcal T_P
-$$
+Puede activarse al comienzo:
 
-Cuando la creación es efectiva:
+```mud
+start with {
+    Settlement,
+    Memphis
+}
+```
+
+o durante la partida:
+
+```mud
+create Memphis
+```
+
+Cuando la activación es efectiva:
 
 - `Memphis` entra en $\mathcal A_W$.
 - Se materializa su carga si es la primera activación concreta.
-- Sus fragmentos declarativos conocidos aportan aristas y esquema.
+- Su definición canónica ya determina las aristas y el esquema aplicables.
 
-Después de `destroy Memphis`, el nombre, los fragmentos y la carga permanecen almacenados. Otro `create` reactiva la misma identidad.
+Después de `destroy Memphis`, la definición y sus aristas continúan en $P$, mientras su carga materializada permanece almacenada en $W$. `create Memphis` reactiva la misma identidad.
 
-Varias creaciones compatibles de una misma `thing` pueden aportar fragmentos fusionables. Esto no convierte la identidad en varias cosas.
+Varias solicitudes concurrentes `create Memphis` se consolidan idempotentemente. No aportan cuerpos ni fragmentos que fusionar.
 
 ## 11. Grafo almacenado y grafo efectivo
 
@@ -360,7 +376,7 @@ D-021 impide identificar sin más «arista almacenada» y «relación actualment
 ### Grafo almacenado
 
 $$
-R^{\mathsf{stored}}_{P,W}
+R^{\mathsf{stored}}_P
 $$
 
 conserva las aristas declaradas aunque alguno de sus extremos esté suspendido.
@@ -393,7 +409,7 @@ x=v_0,v_1,\ldots,v_n=y
 \rangle
 $$
 
-en $R^{\mathsf{stored}}_{P,W}$, con $n\geq 1$, tal que:
+en $R^{\mathsf{stored}}_P$, con $n\geq 1$, tal que:
 
 $$
 x,y\in\mathcal T^{\mathsf{eff}}_{P,W}
@@ -515,7 +531,7 @@ Con la sintaxis actual:
 - Una regla de cambio que observa `Person` declara su vinculación mediante `on`.
 - Una regla booleana, acción o `look` que recibe `Person` declara el participante mediante `for`.
 
-En ambos casos, una identidad creada puede empezar a satisfacer el patrón cuando se activa. La identidad estaba reservada antes; lo que cambia es su presencia efectiva.
+En ambos casos, una identidad definida puede empezar a satisfacer el patrón cuando se activa. La definición ya existía; lo que cambia es su presencia efectiva.
 
 ## 17. Qué es estándar y qué es de MUD
 
@@ -530,7 +546,7 @@ En ambos casos, una identidad creada puede empezar a satisfacer el patrón cuand
 ### Convenciones de notación
 
 - Aristas orientadas de específica a antecesora.
-- $R^{\mathsf{stored}}$ para el grafo conservado.
+- $R^{\mathsf{stored}}_P$ para el grafo fijado por las definiciones del programa.
 - $R^{\mathsf{eff}}$ para la proyección activa con bypass.
 
 ### Decisiones de MUD
@@ -539,7 +555,8 @@ En ambos casos, una identidad creada puede empezar a satisfacer el patrón cuand
 - Especialización múltiple.
 - `as` declara y `is` consulta.
 - Rechazo de ciclos.
-- Identidades de `create` reservadas globalmente.
+- Definiciones canónicas únicas de `thing`.
+- `start with` declara el conjunto inicial y `create Nombre` solo activa.
 - `destroy` suspende sin borrar.
 - Membresía de colecciones siempre estricta respecto del tipo.
 
@@ -586,7 +603,7 @@ Lee:
 $$
 R^{\mathsf{eff}}_{P,W}
 \subseteq
-\left(R^{\mathsf{stored}}_{P,W}\right)^+
+\left(R^{\mathsf{stored}}_P\right)^+
 $$
 
 como:
@@ -610,7 +627,7 @@ El ejercicio está en [[aprendizaje/ejercicios/02-orden-parcial-de-constructos-e
 
 Podrán promoverse:
 
-- El universo de identidades reservadas.
+- El universo de identidades definidas canónicamente.
 - Las relaciones almacenada y efectiva.
 - La definición formal del bypass.
 - La clausura consultada por `is`.
@@ -626,6 +643,6 @@ Comprueba que puedes:
 1. Explicar por qué especialización es relación y no función.
 2. Construir $R^*$ sin introducir bucles directos.
 3. Demostrar antisimetría mediante aciclicidad.
-4. Explicar reserva frente a actividad.
+4. Explicar definición canónica y `start with` frente a actividad runtime.
 5. Calcular un bypass.
 6. Explicar por qué `is` reflexivo no permite almacenar el tipo exacto.

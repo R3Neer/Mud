@@ -33,16 +33,27 @@ thing Alexandria as Settlement {
 
 thing NileDelta as Place {
 }
+
+thing Memphis as Settlement {
+}
+
+thing DeltaCapital as NileDelta, Settlement {
+}
+
+start with {
+    Entity,
+    Place,
+    Settlement,
+    Alexandria,
+    NileDelta
+}
 ```
 
 Durante la ejecución:
 
 ```mud
-create thing Memphis as Settlement {
-}
-
-create thing DeltaCapital as NileDelta, Settlement {
-}
+create Memphis
+create DeltaCapital
 ```
 
 Todas están activas. Después se ejecuta:
@@ -61,7 +72,7 @@ $$
 \mathcal T_P
 $$
 
-e indica qué identidades proceden de declaraciones iniciales y cuáles de lugares de `create`.
+e indica cuáles se activan mediante `start with` y cuáles se activan después mediante `create`.
 
 Escribe $\mathcal A_{W_0}$ antes de `destroy` y $\mathcal A_{W_1}$ después.
 
@@ -70,16 +81,10 @@ Escribe $\mathcal A_{W_0}$ antes de `destroy` y $\mathcal A_{W_1}$ después.
 Construye:
 
 $$
-R^{\mathsf{stored}}_{P,W_0}
+R^{\mathsf{stored}}_P
 $$
 
-y:
-
-$$
-R^{\mathsf{stored}}_{P,W_1}
-$$
-
-Explica por qué son iguales.
+Explica por qué `destroy Settlement` no puede modificarla.
 
 ## 3. Relación efectiva antes de destruir
 

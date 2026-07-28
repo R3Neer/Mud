@@ -65,7 +65,7 @@ Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invoc
 
 ### Ciclo de vida común
 
-Las tres variantes poseen una definición canónica única, pueden activarse y suspenderse conforme a D-021 y D-024 y conservan su variante al reactivarse. La suspensión de una regla `always` retira temporalmente su obligación; la reactivación no permite publicar un estado que la incumpla.
+Las tres variantes poseen una definición canónica única de primer nivel, pueden activarse mediante `start with` o `create Nombre` y suspenderse mediante `destroy`, conforme a D-021 y D-054. Conservan su variante al reactivarse. La suspensión de una regla `always` retira temporalmente su obligación; la reactivación no permite publicar un estado que la incumpla.
 
 ## Consecuencias
 

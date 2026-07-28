@@ -25,7 +25,7 @@ abstract thing B as A {
 thing D as A, B, C {
 }
 
-create thing E as D {
+thing E as D {
 }
 ```
 
@@ -40,7 +40,6 @@ Las formas conceptuales son:
 
 ```text
 [abstract] thing nombre [as lista-de-antecesores] bloque
-create [abstract] thing nombre [as lista-de-antecesores] bloque
 ```
 
 La lista posterior a `as` es finita y su posición no establece prioridad.
@@ -70,8 +69,8 @@ Por tanto:
 
 ## Consecuencias
 
-- El lexer reserva `as` e `is`; `construct` no es palabra reservada y `from` no introduce especialización.
-- El AST usa una lista de antecesores en `ThingDecl` y `CreateThingEffect`.
+- El lexer reserva `as` e `is`; `abstract` es contextual delante de `thing`, conforme a D-054; `construct` no es palabra reservada y `from` no introduce especialización.
+- El AST usa una lista de antecesores en `ThingDecl`; `CreateReference` no contiene antecesores ni cuerpo.
 - `IsExpression` es el nodo asociado a la consulta `is`.
 - Los diagnósticos hablan de «antecesores declarados con `as`».
 - Las cabeceras estáticas y las de `create` son paralelas.
@@ -96,7 +95,7 @@ Se conservan aquí únicamente como contraejemplos de migración.
 
 1. `thing` raíz sin `as`.
 2. Declaraciones abstractas y concretas con una o varias antecesoras.
-3. `create thing` con las mismas variantes.
+3. Activación mediante `create Nombre` sin alterar las antecesoras declaradas.
 4. Rechazo de `is` y `from` como cláusulas de cabecera.
 5. Aceptación de `is` como expresión.
 6. Correspondencia entre aristas `as` y resultados de `is`.
