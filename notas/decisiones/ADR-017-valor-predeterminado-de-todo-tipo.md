@@ -71,6 +71,8 @@ Para una propiedad almacenada, el valor inicial se obtiene en este orden concept
 
 La tercera fase sustituye el valor inicial de esa creación; no modifica por ello el predeterminado heredable de la propiedad ni el del tipo.
 
+D-038 aplica la misma precedencia a cada dato asociado de un miembro de `family`: asignación del miembro, predeterminado explícito del dato y predeterminado de su tipo.
+
 ## Consecuencias
 
 - Una propiedad almacenada obligatoria puede inicializarse aunque omita un predeterminado explícito.

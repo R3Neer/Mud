@@ -12,9 +12,11 @@ Prioridades:
 
 ### Q-001 — Gramática y saltos de línea
 
-¿Cuál es la gramática completa del subconjunto v0 y cuándo un salto de línea termina una instrucción frente a continuar una expresión?
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]].
 
-Hay que definir comentarios, sangría irrelevante, recuperación de errores, precedencia y ambigüedades de `in`, receptores y bloques.
+Una instrucción termina mediante `;` o salto de línea. El salto continúa cuando el prefijo todavía no puede formar una unidad sintáctica completa pero admite una continuación válida; la sangría no interviene.
+
+Falta definir la gramática completa del subconjunto v0, enumerar exhaustivamente los prefijos abiertos y completar recuperación de errores, precedencia y ambigüedades de `in`, receptores y bloques.
 
 ### Q-002 — Modelo exacto de efectos secuenciales y simultáneos
 
@@ -172,7 +174,7 @@ Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio.
 
 - Tipos primitivos no cubiertos por la tabla inicial.
 - Aliases, tipos estructurados y colecciones con restricciones.
-- Intervalos, familias cerradas y refinamientos.
+- Intervalos, selección del miembro predeterminado de una familia cerrada y refinamientos.
 - Tipos cuyo dominio pueda depender del mundo activo.
 
 También debe decidirse si un tipo derivado puede reemplazar explícitamente el predeterminado que obtendría por composición.
@@ -211,11 +213,9 @@ Una llamada puede usar un receptor posicional o un receptor nombrado entre paré
 
 ### Q-012 — Valores `given` nombrados
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+Estado: **cerrada** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 
-Un argumento `given` puede vincularse por nombre mediante `nombre = expresión` dentro de los paréntesis de la llamada. Los nombres desconocidos y repetidos son inválidos.
-
-Permanece abierto si una llamada puede mezclar argumentos posicionales y nombrados y, en tal caso, qué orden admite.
+Los argumentos `given` son siempre posicionales y pueden llevar la etiqueta opcional `nombre =` para mejorar la lectura. Se pueden mezclar argumentos etiquetados y no etiquetados en cualquier posición; una etiqueta debe coincidir con el `given` declarado en esa misma posición y nunca permite reordenar.
 
 ### Q-013 — Restricciones relacionales entre participantes `on`
 
@@ -309,9 +309,9 @@ Debe decidirse:
 
 ### Q-024 — Datos asociados a miembros de una `family`
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
+Estado: **cerrada** mediante [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
-`family` ya es una declaración nominal independiente de `thing`; sus miembros son valores finitos y enumerables sin identidad ni ciclo de vida runtime, y `ordered family` añade orden semántico. Permanece abierto si los miembros pueden asociar datos inmutables comunes o específicos y, en tal caso, cuál es su sintaxis, construcción, acceso e igualdad.
+Una `family` puede declarar directamente un esquema uniforme de datos inmutables antes de sus miembros. Cada miembro puede sustituir valores en un subbloque; los omitidos proceden primero del predeterminado explícito del dato y después del predeterminado de su tipo. Los datos no alteran la identidad ni la igualdad nominal del miembro.
 
 ### Q-025 — Destrucción de `thing` estáticas
 

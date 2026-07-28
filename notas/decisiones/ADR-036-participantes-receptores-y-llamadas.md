@@ -99,7 +99,21 @@ game.InCheck(color = White)
 (source, destination).Transfer(amount = 10)
 ```
 
-Un argumento nombrado debe corresponder a un `given` declarado y no puede repetirse. Q-012 conserva únicamente la decisión sobre si una misma llamada puede mezclar argumentos posicionales y nombrados y, en su caso, qué orden permite.
+La vinculación de los `given` continúa siendo siempre posicional. El nombre escrito es una etiqueta opcional de legibilidad y comprobación: debe coincidir con el `given` que ocupa esa misma posición y no permite reordenar argumentos.
+
+Los argumentos posicionales y etiquetados pueden mezclarse en cualquier posición:
+
+```mud
+game.Search(origin, depth = 3, true)
+```
+
+Si la firma declara `given origin`, `given depth` y `given exhaustive` en ese orden, la llamada anterior es válida. Esto no lo sería:
+
+```mud
+game.Search(depth = 3, origin, true)
+```
+
+porque la primera posición corresponde a `origin`, no a `depth`.
 
 ### Naturaleza de la llamada
 
@@ -118,7 +132,8 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 2. Varios participantes anónimos con accesos unívocos y rechazo de un acceso ambiguo.
 3. Receptor multiparte posicional y nombrado.
 4. Rol ausente, duplicado, desconocido o mal tipado.
-5. Argumento `given` posicional y nombrado; rechazo de nombres desconocidos o repetidos.
-6. Separación entre participantes y `given`.
-7. Vinculación `on` relacionada mediante `in`.
-8. Rechazo de cabeceras incompatibles.
+5. Mezcla de argumentos `given` sin etiqueta y etiquetados, conservando siempre la posición.
+6. Rechazo de una etiqueta que no coincide con el `given` de su posición.
+7. Separación entre participantes y `given`.
+8. Vinculación `on` relacionada mediante `in`.
+9. Rechazo de cabeceras incompatibles.

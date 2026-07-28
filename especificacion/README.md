@@ -327,7 +327,8 @@ Define:
 - `ordered` contextual delante de `family`.
 - Miembros como valores nominales sin identidad ni ciclo de vida runtime.
 - Anclas estáticas `family::*`.
-- Campos comunes y específicos.
+- Esquema uniforme de datos inmutables declarado directamente en la familia.
+- Valores de miembro explícitos o completados mediante predeterminados.
 - Prohibición de especialización y herencia entre familias.
 - Enumeración finita.
 

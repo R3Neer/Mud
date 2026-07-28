@@ -1,6 +1,6 @@
 # ADR-050 — Comentarios, terminadores y separadores numéricos
 
-- Estado: Vigente; continuación de línea abierta
+- Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Pregunta relacionada: Q-001
@@ -34,7 +34,27 @@ Un comentario de línea cerrado explícitamente no atraviesa un salto. Un delimi
 
 ### Terminadores
 
-Una instrucción termina mediante `;` o un salto de línea que actúe como terminador. Q-001 debe definir cuándo un salto continúa una construcción incompleta en vez de terminarla; el formateador no puede decidirlo mediante sangría significativa.
+Una instrucción termina mediante `;` o un salto de línea.
+
+El salto no actúa como terminador cuando aparece dentro de una construcción sintácticamente abierta. Un prefijo está abierto cuando todavía no puede formar una unidad sintáctica completa, pero puede completarse con tokens posteriores. Esto incluye, entre otros casos que enumerará la gramática:
+
+- Un delimitador `(` o `[` todavía sin cerrar.
+- Una línea terminada en coma u operador que exige un operando posterior.
+- Una cabecera o cláusula terminada en una palabra que exige contenido, como `for`, `given`, `if`, `then` o `:=`.
+
+Si el prefijo anterior al salto ya puede formar una unidad completa, el salto la termina aunque la línea siguiente pudiera comenzar otra expresión. La continuación nunca depende de la sangría.
+
+```mud
+rule CanAttack for
+    attacker: Army,
+    defender: Army
+{
+    attacker.strength >
+        defender.strength
+}
+```
+
+La gramática consolidada debe identificar exhaustivamente los prefijos abiertos; Q-001 continúa abierta para esa enumeración y para el resto de la gramática, no para el principio general de terminación.
 
 ### Separadores numéricos
 
@@ -42,7 +62,7 @@ Una instrucción termina mediante `;` o un salto de línea que actúe como termi
 
 ## Consecuencias
 
-- Comentarios y terminadores deben resolverse en el lexer antes del parser.
+- El lexer retira comentarios y emite tokens de salto; el parser determina cuáles son terminadores a partir de si el prefijo sintáctico está completo.
 - El resaltador puede implementarlos sin conocer el modelo semántico.
 - El catálogo de palabras reservadas se generará desde la gramática consolidada.
 - El catálogo distingue palabras reservadas de palabras contextuales conforme a D-035, D-054 y D-055. `using`, `with`, `test` y `otherwise` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
@@ -54,4 +74,7 @@ Una instrucción termina mediante `;` o un salto de línea que actúe como termi
 3. Prioridad de `###` y rechazo del anidamiento.
 4. Símbolos sintácticos inocuos dentro de comentarios.
 5. Terminación por `;` y por salto.
-6. Literales con separadores válidos e inválidos.
+6. Continuación tras delimitador, coma, operador y palabra introductora.
+7. Terminación cuando el prefijo anterior ya es completo.
+8. Independencia respecto de la sangría.
+9. Literales con separadores válidos e inválidos.

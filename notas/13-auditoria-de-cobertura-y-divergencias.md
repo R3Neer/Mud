@@ -36,7 +36,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 9 | Acceso, nombres cualificados y anclas | Migrada | D-035 |
 | 10 | Constructos | Sustituida por `thing` y migrada | D-014, D-015, D-025, D-054 |
 | 11 | Aliases y valores estructurales | Sustituida y migrada | D-031 a D-033 |
-| 12 | Familias cerradas | Migrada; datos asociados abiertos en Q-024 | D-038 |
+| 12 | Familias cerradas | Migrada; esquema uniforme de datos asociados resuelto | D-038 |
 | 13 | Campos | Migrada | D-017, D-019, D-037 |
 | 14 | Tipos básicos | Sustituida y migrada | D-028, D-034, D-040 |
 | 15 | Conversiones | Sustituida y migrada | D-030, D-032 |
