@@ -43,7 +43,7 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 - Un archivo o varios archivos por namespace.
 - Imports exactos.
 - `thing` concreta sin especialización.
-- Tipos `Bool`, `Natural`, `Integer`, `Number`, `Text` y `Money`.
+- Tipos `Bool`, `Natural`, `Integer`, `Number`, `Rumber`, `Text` y `Money`.
 - Campos almacenados, `mut` y dominios de intervalos cerrados.
 - Regla booleana con un participante.
 - Regla reactiva con un participante.

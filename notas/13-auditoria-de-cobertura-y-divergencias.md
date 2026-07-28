@@ -5,8 +5,8 @@
 - Fecha de la fuente observada: 2026-07-27 12:00:02
 - Líneas: 3652
 - SHA-256 original previo a las anotaciones: `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`
-- Copia histórica anotada: 3773 líneas
-- SHA-256 de la copia anotada: `DBE5AF332F43E063E7DD955EA87701CCAB0795892A3827812E5F55AE935A82FC`
+- Copia histórica anotada: 3775 líneas
+- SHA-256 de la copia anotada: `23F0C60A8562640E9F79CC697AF8A9FE88E0C2B17781A4478C102B9FACACDC71`
 - Documentos relacionados: [[notas/11-trazabilidad-de-la-fuente]], [[notas/10-registro-de-decisiones]], [[especificacion/README]]
 
 ## Conclusión
@@ -25,7 +25,7 @@ La documentación actual sí:
 
 Pero la matriz anterior de [[notas/11-trazabilidad-de-la-fuente]] demostraba únicamente **enrutamiento temático**: cada sección tenía algún documento relacionado. No demostraba que todas sus reglas, ejemplos, casos límite y diagnósticos hubieran sido incorporados.
 
-En particular, gran parte del detalle normativo sobre léxico, bucles, operadores generales, diccionarios, aleatoriedad, grafo e IR solo permanece en la referencia histórica. El núcleo nuevo de magnitudes, unidades, límites efectivos, ciclos y conversiones ya está decidido mediante D-028–D-030; las reglas históricas no contradictorias de iteración de intervalos aún requieren revisión.
+En particular, gran parte del detalle normativo sobre léxico, bucles, operadores generales, diccionarios, aleatoriedad, grafo e IR solo permanece en la referencia histórica. El núcleo nuevo de magnitudes, unidades, límites efectivos, ciclos, conversiones y representaciones exacta/aproximada ya está decidido mediante D-028–D-030 y D-034; las reglas históricas no contradictorias de iteración de intervalos aún requieren revisión.
 
 ## Criterios de esta auditoría
 
@@ -48,8 +48,8 @@ Una entrada en [[especificacion/README]] solo indica que habrá un capítulo. No
 | 4 a 9 | Archivos, imports, nombres, participantes, llamadas y anclas | Resumido; faltan gramática, resolución formal y diagnósticos | Capítulos 05 a 09, 21 y 24 |
 | 10 | Constructos e herencia | Parcialmente formalizado y ampliamente sustituido por D-014 a D-018 | Capítulos 04 y 11 |
 | 11 y 12 | Aliases y familias cerradas | El sistema de aliases está decidido por D-031–D-033; las familias cerradas siguen resumidas | Capítulos 12 y 13 |
-| 13 a 19 | Campos, tipos básicos, conversiones, mutabilidad, colecciones, diccionarios y dominios | Parcialmente decidido; D-017, D-019 y D-028–D-030 sustituyen tipos, conversiones y límites, pero diccionarios y dominios calculados siguen resumidos | Capítulos 10 y 14 a 17 |
-| 20 a 30 | Magnitudes, prefijos, operaciones, puntos, operadores, intervalos, precedencia y literales | El núcleo cuantitativo está sustituido por D-028–D-030; permanecen abiertos el catálogo léxico, formatos, `Money`, la matriz completa de operadores y la iteración de intervalos | Capítulos 18 a 20 |
+| 13 a 19 | Campos, tipos básicos, conversiones, mutabilidad, colecciones, diccionarios y dominios | Parcialmente decidido; D-017, D-019, D-028–D-030 y D-034 sustituyen tipos, conversiones y límites, pero diccionarios y dominios calculados siguen resumidos | Capítulos 10 y 14 a 17 |
+| 20 a 30 | Magnitudes, prefijos, operaciones, puntos, operadores, intervalos, precedencia y literales | El núcleo cuantitativo está sustituido por D-028–D-030 y D-034; permanecen abiertos el catálogo léxico, formatos, `Money`, detalles operacionales de `binary64`, la matriz completa de operadores y parte de la iteración | Capítulos 18 a 20 |
 | 31 a 35 | Tres clases de regla, `when` y `changes` | Resumido; el borrado de reglas inactivas es una decisión posterior | Capítulos 21 a 23 y 29 |
 | 36 a 44 | Acciones, `after`, `old`, resultados, `allowed` y `eventually` | Resumido; existen preguntas abiertas sobre composición, rollback y finitud | Capítulos 24 y 27 a 38 |
 | 45 a 49 | Ondas, vinculaciones, cola, conflictos y terminación | Resumido; faltan la transición operacional y la matriz de conflictos | Capítulos 28 a 31 |
@@ -91,7 +91,8 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | Ontología de constructos | La sintaxis y varios ejemplos sugerían declaración, categoría e identidad runtime separables | Un único dominio de constructos; cada concreto es cosa y posible antecesor | D-014 |
 | Palabra de entidad | `construct` | `thing` | D-025 |
 | Declaración de especialización | `construct A is B`, después `construct A from B` | `thing A as B`; `is` queda como consulta | D-018 y D-025 |
-| Tipos cuantitativos | `Boolean`, `Percentage` y sufijos como `M` | `Bool`; cuatro representaciones numéricas básicas; `Percentage` deja de ser básico; literales sin sufijo | D-028 |
+| Tipos cuantitativos | `Boolean`, `Percentage` y sufijos como `M` | `Bool`; cinco representaciones numéricas básicas; `Number` racional exacto; `Rumber` `binary64` explícito; `Percentage` deja de ser básico | D-028 y D-034 |
+| Redondeo y mezcla numérica | Política abierta y semántica de `Number` no fijada | Empates al par; separación explícita `Number`/`Rumber`; valores no finitos excluidos | D-030 y D-034 |
 | Magnitudes y unidades | Unidades nominales con identificador y magnitudes derivadas sin sistema cerrado | Unidades sin identificador de cabecera, raíz única, equivalencias con `:=` y composición dimensional automática | D-028 |
 | Intervalos y ciclos | `*` y ciclos sin semántica lateral integrada | Límites efectivos laterales cerrados y ciclo exclusivo `[a..b cycle)` de puntos | D-029 |
 | Conversión explícita | `as` | `to` convierte cantidades compatibles; `in` cambia su unidad de expresión | D-025 y D-030 |
@@ -124,7 +125,7 @@ Dentro de `especificacion/`:
 - Los capítulos 01 y 02 son esqueletos.
 - Los capítulos 05 a 48 existen únicamente como índice previsto.
 
-Los ADR D-014 a D-033 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
+Los ADR D-014 a D-034 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
 
 ## Regla de conservación a partir de esta auditoría
 

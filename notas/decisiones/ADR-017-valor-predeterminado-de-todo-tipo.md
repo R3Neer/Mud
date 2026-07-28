@@ -52,6 +52,7 @@ Los casos básicos, actualizados por D-028, son:
 | `Natural` | `0` |
 | `Integer` | `0` |
 | `Number` | `0` |
+| `Rumber` | `r0` |
 | `Text` | `""` |
 | `Money` | `0` en contexto `Money` |
 | Colecciones | `empty` |

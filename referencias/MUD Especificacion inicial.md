@@ -33,7 +33,7 @@ La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0C
 | 6–8, 31–33 y 36 | Se intercambian `on` y `for`: `on` corresponde a observadores automáticos; `for`, a acciones, reglas booleanas y `look`. Véase D-025. |
 | 9, 10, 63–65 y ejemplos relacionados | El modelo ya no separa clases e instancias; las `thing` forman un único dominio. La especialización se declara con `as` y se consulta con `is`. Véanse D-014–D-016 y D-025. |
 | 3.5, 11 y usos relacionados | D-031–D-033 redefinen los aliases como tipos nominales inmutables y estáticos: usan `:=` o bloque, no admiten `create`/`destroy`, construyen literales por contexto, usan casting nominal `to` y enumeran productos finitos lexicográficamente. |
-| 14–15, 20–28, 30, 59 y ejemplos cuantitativos | El sistema cuantitativo ha sido sustituido: `Bool` reemplaza `Boolean`; `Percentage` deja de ser básico; no hay sufijos numéricos; las magnitudes, unidades, intervalos, ciclos, `in` y `to` se rigen por D-028–D-030. |
+| 14–15, 20–28, 30, 59 y ejemplos cuantitativos | El sistema cuantitativo ha sido sustituido: `Bool` reemplaza `Boolean`; `Percentage` deja de ser básico; `Number` es racional exacto; aparece `Rumber` `binary64`; las magnitudes, unidades, intervalos, ciclos, literales, `in` y `to` se rigen por D-028–D-030 y D-034. |
 | 16 | La mutabilidad exterior y la capacidad interior son ortogonales incluso para `[1]`; no existe una excepción singular. Véase D-019. |
 | 17, 30, 48, 56 y 59 | No existe `[reflexive]`; una colección de tipo `T` exige $c\neq T\land c\ \mathsf{is}\ T$. La cardinalidad final se demuestra por `then` y consolidación. Véase D-026. |
 | 32–33, 42, 50, 55 y 56 | `create` y `destroy` se generalizan y la destrucción es suspensión lógica reversible; `remove` sí elimina propiedades y cargas. Véanse D-021, D-023 y D-024. |
@@ -1285,7 +1285,7 @@ stabilityScore: Number in 0..100 :=
  
 ## 14. Tipos básicos
 > [!warning] Catálogo cuantitativo sustituido
-> Los tipos básicos vigentes son `Text`, `Bool`, `Natural`, `Integer`, `Number` y `Money`. Los cuatro últimos son representaciones numéricas, no magnitudes. `Percentage` deja de ser un tipo básico y los literales numéricos no usan sufijos. Véase D-028.
+> Los tipos básicos vigentes son `Text`, `Bool`, `Natural`, `Integer`, `Number`, `Rumber` y `Money`. Los cinco últimos son representaciones numéricas, no magnitudes. `Number` es racional exacto y `Rumber` usa `binary64` explícito. `Percentage` deja de ser un tipo básico. Véanse D-028 y D-034.
 ```
 Boolean
 Natural
@@ -1310,6 +1310,8 @@ Integer → Number
 
 ```
 ## 14.4 Number
+> [!warning] Representación fijada
+> `Number` denota racionales exactos en forma canónica. `Rumber` es el tipo aproximado IEEE 754 `binary64`; sus literales puros usan el prefijo `r`. No se mezclan implícitamente. Véase D-034.
 ```
 growthRate: Number = 1.25
 
@@ -1330,7 +1332,7 @@ No está restringido automáticamente a 0%..100%.
  
 ## 15. Conversiones
 > [!warning] Operador retirado para conversiones
-> `as` queda reservado para declarar especialización entre `thing`. `to` posee una rama cuantitativa y otra de casting nominal de alias estructuralmente compatible; `in` solo cambia la unidad de presentación. No existe una política de redondeo local por conversión. Véanse D-030 y D-032.
+> `as` queda reservado para declarar especialización entre `thing`. `to` posee una rama cuantitativa y otra de casting nominal de alias estructuralmente compatible; `in` solo cambia la unidad de presentación. D-034 fija el redondeo global al más cercano con empates al par. Véanse D-030, D-032 y D-034.
 Implícitas:
 ```
 Natural → Integer
@@ -1784,7 +1786,7 @@ is
  
 ## 28. Intervalos
 > [!warning] Sintaxis y límites ampliados
-> D-029 fija el azúcar `[n]`, el significado lateral de `*`, la equivalencia `[*] = [*..*]`, la obligación de cerrar todo extremo con `*`, los límites canónicos desnudos de magnitudes y la única forma cíclica `[a..b cycle)`. Las reglas históricas no contradictorias sobre normalización e iteración siguen pendientes de promoción.
+> D-029 fija el azúcar `[n]`, el significado lateral de `*`, la equivalencia `[*] = [*..*]`, la obligación de cerrar todo extremo con `*`, los límites canónicos desnudos de magnitudes y la única forma cíclica `[a..b cycle)`. D-034 permite intervalos `Rumber` como dominios, pero prohíbe enumerarlos. Las reglas históricas no contradictorias sobre normalización e iteración siguen pendientes de promoción.
 Se escriben:
 ```
 Natural Interval
@@ -2030,7 +2032,7 @@ De mayor a menor:
  
 ## 30. Literales numéricos y
 > [!warning] Sufijos retirados
-> Los separadores `_` se conservan, pero D-028 retira todos los sufijos de tipo, incluidos `N`, `I` y `M`. El contexto determina la representación numérica.
+> Los separadores `_` se conservan. D-028 retira todos los sufijos de tipo, incluidos `N`, `I` y `M`; D-034 introduce `r` como prefijo obligatorio de literales `Rumber` puros y opcional únicamente dentro de cantidades de magnitud `Rumber`.
 ```
 _
 
@@ -2732,7 +2734,7 @@ Los efectos inválidos producen failed.
  
 ## 59. Valores predeterminados
 > [!warning] Premisa ampliada
-> D-017 exige un valor predeterminado perteneciente al dominio de todo tipo bien formado. D-028 sustituye `Boolean` por `Bool`, retira `Percentage` como básico y elimina el sufijo `M`: el predeterminado de `Money` se escribe `0` en contexto. Para colecciones de `thing`, el ancla exacta del tipo nunca puede servir como miembro predeterminado; Q-047 mantiene abierta la selección concreta.
+> D-017 exige un valor predeterminado perteneciente al dominio de todo tipo bien formado. D-028 sustituye `Boolean` por `Bool`, retira `Percentage` como básico y elimina el sufijo `M`; D-034 añade `Rumber` con predeterminado `r0`. Para colecciones de `thing`, el ancla exacta del tipo nunca puede servir como miembro predeterminado; Q-047 mantiene abierta la selección concreta.
 ```
 Boolean        false
 Natural        0

@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]
 - Preguntas relacionadas: Q-019, Q-034, Q-054, Q-055
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
@@ -33,10 +34,11 @@ Los tipos numéricos básicos son:
 Natural
 Integer
 Number
+Rumber
 Money
 ```
 
-Los cuatro tipos numéricos son representaciones, no magnitudes. Pueden usarse directamente o ser la representación numérica de una magnitud:
+Los cinco tipos numéricos son representaciones, no magnitudes. Pueden usarse directamente o ser la representación numérica de una magnitud:
 
 ```mud
 attempts: Natural
@@ -47,13 +49,14 @@ magnitude Population: Natural {
 }
 ```
 
-`Percentage` deja de ser un tipo básico. Un concepto porcentual deberá modelarse mediante el sistema de magnitudes y dominios.
+`Percentage` deja de ser un tipo básico. Un concepto porcentual deberá modelarse mediante el sistema de magnitudes y dominios. D-034 fija `Number` como racional exacto y añade `Rumber` como representación aproximada `binary64`.
 
-Los literales numéricos no llevan sufijos de tipo. No existen `30N`, `30I`, `30M` ni formas equivalentes. El contexto de tipado determina la representación:
+Los literales numéricos no llevan sufijos de tipo. No existen `30N`, `30I`, `30M` ni formas equivalentes. El contexto de tipado determina la representación exacta. Los literales `Rumber` puros constituyen una familia distinta con prefijo `r`, según D-034:
 
 ```mud
 balance: Money = 30
 population: Population = 30 people
+rapid: Rumber = r0.1
 ```
 
 ### Magnitudes no derivadas
@@ -180,6 +183,8 @@ magnitude DiscreteArea: Natural :=
     Width * Height
 ```
 
+La tabla describe operaciones exactas. Operaciones cuyos operandos sean todos `Rumber` producen `Rumber`; `Rumber` no se mezcla implícitamente con representaciones exactas. La inferencia de magnitudes derivadas que combinen componentes `Rumber` se completará en Q-058.
+
 La anotación explícita no introduce redondeo. El programa debe satisfacer las reglas estáticas de representabilidad correspondientes. Las reglas de `Money` y la matriz completa de operadores permanecen abiertas en Q-019.
 
 ## Consecuencias
@@ -188,7 +193,7 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 - El análisis estático necesitará normalizar dimensiones y factores de escala.
 - Las unidades derivadas son expresiones estructurales, no una enumeración nominal.
 - El lexer y el resolvedor deberán distinguir nombres, plurales, abreviaturas y prefijos sin depender de un identificador de cabecera.
-- Los sufijos numéricos históricos y el tipo básico `Percentage` quedan retirados.
+- Los sufijos numéricos históricos y el tipo básico `Percentage` quedan retirados; `r` es un prefijo de literal aproximado, no un sufijo.
 
 ## Verificación futura
 

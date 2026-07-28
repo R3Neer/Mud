@@ -225,14 +225,13 @@ Normalización canónica, igualdad, orden descendente y varias claves.
 
 ### Q-019 — Números
 
-Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]] y [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
+Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]].
 
-`Natural`, `Integer`, `Number` y `Money` son representaciones numéricas básicas; los literales no usan sufijos y las conversiones estrechas se escriben con `to`. Falta fijar:
+`Natural`, `Integer`, `Number`, `Rumber` y `Money` son representaciones numéricas básicas. `Number` es racional exacto; `Rumber` es `binary64`; no se mezclan implícitamente. Los literales exactos no usan sufijos, los literales `Rumber` puros usan el prefijo `r`, las conversiones se escriben con `to` y el redondeo global es al más cercano con empates al par. Falta fijar:
 
-- La política global concreta de redondeo.
 - Las reglas de representación e inferencia específicas de `Money`.
-- Los límites de representación, overflow y portabilidad.
-- División por cero y demás fallos aritméticos.
+- Los límites de representación y overflow de `Natural`, `Integer` y `Money`.
+- Los fallos aritméticos no cubiertos expresamente por D-034.
 
 ### Q-020 — Oscilaciones y límite de ondas
 
@@ -335,6 +334,10 @@ Definición inductiva de la forma estructural normalizada, tratamiento de aliase
 ### Q-057 — Capacidad interior dentro de valores de alias
 
 Si una representación de alias contiene una colección de `thing`, decidir si puede declarar capacidad interior `[mut]` aunque el valor de alias sea inmutable, qué autoridad concede y cómo se conserva la distinción entre modificar un miembro alcanzado y reemplazar la colección contenida.
+
+### Q-058 — Evaluación portable de `Rumber`
+
+Fijar la conversión de la escritura decimal de un literal al patrón `binary64`, el modo de redondeo de cada operación, tratamiento de subnormales y underflow, prohibición o semántica de contracción FMA, precisión de resultados intermedios, canonicalización en IR y reglas de inferencia para magnitudes derivadas cuyos componentes usan `Rumber`.
 
 ### Q-035 — Coste de `allowed`
 

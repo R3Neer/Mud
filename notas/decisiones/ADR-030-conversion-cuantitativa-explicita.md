@@ -4,6 +4,7 @@
 - Fecha: 2026-07-28
 - Preguntas relacionadas: Q-019, Q-053
 - Ampliada por: [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]]
+- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
 ## Contexto
@@ -51,9 +52,11 @@ Cuando la representación de destino no puede conservar una fracción, `to` apli
 value to Integer
 ```
 
-La política global debe ser determinista y portable; su elección concreta permanece abierta en Q-019.
+La política global, fijada por D-034, es redondeo al más cercano con empates al par (`roundTiesToEven`).
 
 Después del redondeo, el resultado debe pertenecer al dominio de destino. `to` no satura ni corrige automáticamente un valor fuera de dominio.
+
+`Number to Rumber` redondea al valor `binary64` más cercano. `Rumber to Number` recupera exactamente el racional representado por el valor binario almacenado. Ambas formas son explícitas.
 
 ### Diferencia respecto de `in`
 

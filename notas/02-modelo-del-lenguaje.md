@@ -201,7 +201,7 @@ Junto con las acciones forman la frontera semántica del modelo: `action` introd
 La especificación incluye:
 
 - Tipos básicos no numéricos: `Text` y `Bool`.
-- Tipos numéricos básicos: `Natural`, `Integer`, `Number` y `Money`.
+- Tipos numéricos básicos: `Natural`, `Integer`, `Number`, `Rumber` y `Money`.
 - Aliases nominales simples, estructurales y compuestos.
 - Familias cerradas de valores.
 - Cardinalidades y colecciones.
@@ -210,6 +210,12 @@ La especificación incluye:
 - Magnitudes no derivadas, derivadas y de punto.
 
 Los tipos numéricos básicos determinan representación y no son magnitudes. Una magnitud no derivada usa `Number` si omite su tipo numérico; una derivada infiere la representación menos ampliada capaz de representar su operación. `Percentage` no es un tipo básico.
+
+`Number` representa racionales exactos mediante fracciones canónicas de enteros sin límite semántico de tamaño. `Rumber` representa valores aproximados finitos IEEE 754 `binary64`. El primero es la opción general predeterminada; el segundo debe elegirse explícitamente y no expone `NaN`, infinitos ni cero negativo distinguible.
+
+Un literal `Rumber` puro exige el prefijo `r`, incluso bajo un tipo esperado `Rumber`. En una cantidad con unidad de una magnitud basada en `Rumber`, el prefijo es opcional porque la magnitud aporta el contexto. `Number` y `Rumber` no se mezclan en operaciones ni comparaciones sin `to`.
+
+La conversión `Number to Rumber` selecciona el `binary64` más cercano; `Rumber to Number` recupera el racional exacto almacenado. Toda conversión estrecha usa redondeo al más cercano con empates al par. Los intervalos `Rumber` sirven como dominios, pero nunca como fuentes enumerables. Véase [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]].
 
 Las unidades se identifican mediante `name` dentro de un bloque sin identificador de cabecera. Una magnitud no derivada con unidades declara una `root unit`; las alternativas y los nombres derivados se expresan mediante `unit := cantidad`. Una magnitud derivada combina automáticamente las unidades raíz de sus componentes y no puede declarar raíz.
 

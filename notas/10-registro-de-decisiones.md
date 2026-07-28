@@ -40,12 +40,13 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-025 | Vigente | `thing` y `as` sustituyen `construct` y `from`; `on` se usa en observadores y `for` en solicitudes; las cláusulas simples pueden omitir llaves | [ADR-025](decisiones/ADR-025-vocabulario-cabeceras-y-bloques.md) | Decisión del autor, 2026-07-27 |
 | D-026 | Vigente | La membresía de `thing` es siempre estricta y cada `then` debe demostrar estáticamente su cardinalidad final y la compatibilidad de consolidación | [ADR-026](decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then.md) | Decisión del autor, 2026-07-27 |
 | D-027 | Vigente | `look` consulta el estado estable y `message` publica tras estabilizar valores de un evento detectado durante una acción | [ADR-027](decisiones/ADR-027-salidas-look-y-message.md) | Decisión del autor, 2026-07-27 |
-| D-028 | Vigente | Los tipos numéricos básicos representan números; las magnitudes aportan dimensión y derivan automáticamente unidades compatibles | [ADR-028](decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md) | Decisión del autor, 2026-07-28 |
+| D-028 | Vigente, ampliada por D-034 | Los tipos numéricos básicos representan números; las magnitudes aportan dimensión y derivan automáticamente unidades compatibles | [ADR-028](decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md) | Decisión del autor, 2026-07-28 |
 | D-029 | Vigente | `*` designa el límite efectivo lateral; los dominios de magnitud usan límites canónicos desnudos y solo los puntos admiten `[a..b cycle)` | [ADR-029](decisiones/ADR-029-intervalos-estrellas-y-ciclos.md) | Decisión del autor, 2026-07-28 |
 | D-030 | Vigente como rama cuantitativa; ampliada por D-032 | `in` cambia la unidad de expresión y la rama cuantitativa de `to` convierte cantidades compatibles | [ADR-030](decisiones/ADR-030-conversion-cuantitativa-explicita.md) | Decisión del autor, 2026-07-28 |
 | D-031 | Vigente | Todo alias es un tipo nominal de valor, inmutable y sin identidad ni ciclo de vida runtime | [ADR-031](decisiones/ADR-031-aliases-nominales-e-inmutables.md) | Decisión del autor, 2026-07-28 |
 | D-032 | Vigente | `to` admite casting nominal estructural; los literales se construyen por contexto y las comparaciones no coercionan valores ya tipados | [ADR-032](decisiones/ADR-032-construccion-contextual-y-casting-nominal.md) | Decisión del autor, 2026-07-28 |
 | D-033 | Vigente | Los aliases estructurales pueden ser claves y se enumeran como productos cartesianos lexicográficos cuando sus componentes son finitos y enumerables | [ADR-033](decisiones/ADR-033-claves-y-enumeracion-de-aliases.md) | Decisión del autor, 2026-07-28 |
+| D-034 | Vigente | `Number` es racional exacto; `Rumber` usa `binary64` explícito, no se mezcla implícitamente y sus intervalos no son enumerables | [ADR-034](decisiones/ADR-034-number-exacto-y-rumber-binary64.md) | Decisión del autor, 2026-07-28 |
 
 ## Propuestas de estas notas
 

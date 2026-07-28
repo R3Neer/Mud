@@ -257,7 +257,8 @@ Archivo previsto: `10-sistema-de-tipos.md`
 Define:
 
 - `Text` y `Bool` como tipos básicos no numéricos.
-- `Natural`, `Integer`, `Number` y `Money` como representaciones numéricas básicas, no magnitudes.
+- `Natural`, `Integer`, `Number`, `Rumber` y `Money` como representaciones numéricas básicas, no magnitudes.
+- `Number` como racional exacto y `Rumber` como IEEE 754 `binary64` explícito.
 - Tipos de `thing`.
 - Tipos nominales de alias.
 - Familias cerradas.
@@ -267,6 +268,7 @@ Define:
 - Subtipado mediante `is`.
 - Inferencia y ampliación de representaciones en operaciones cuantitativas.
 - Dos familias explícitas de `to`: conversión cuantitativa y casting nominal estructural.
+- Redondeo global al más cercano con empates al par.
 - Igualdad y orden por tipo.
 
 Juicio principal:
@@ -386,6 +388,7 @@ Define:
 - Pasos de iteración.
 - Dominios dinámicos.
 - Dominios cíclicos `[a..b cycle)` exclusivos de magnitudes de punto.
+- Intervalos `Rumber` admitidos como dominios, pero no como fuentes enumerables.
 
 ## 18. Magnitudes, unidades y puntos
 
@@ -395,6 +398,7 @@ Define:
 
 - Magnitudes no derivadas, derivadas y de punto.
 - Representaciones numéricas explícitas e inferidas.
+- Magnitudes basadas en `Rumber` y omisión contextual del prefijo `r` en cantidades con unidad.
 - Unidades raíz sin identificador de cabecera y equivalencias mediante `:=`.
 - Prefijos.
 - Normalización.
@@ -411,7 +415,7 @@ Archivo previsto: `19-expresiones.md`
 
 Define:
 
-- Literales y acceso.
+- Literales racionales exactos, literales `Rumber` prefijados con `r` y acceso.
 - Llamadas a reglas.
 - Receptores multiparte.
 - Operadores.
@@ -441,6 +445,7 @@ Define:
 - Iteraciones secuenciales y simultáneas.
 - Filtros.
 - Terminación de intervalos.
+- Prohibición de enumerar intervalos `Rumber`.
 - Enumeración de aliases estructurales como productos cartesianos lexicográficos.
 
 ## 21. Reglas booleanas

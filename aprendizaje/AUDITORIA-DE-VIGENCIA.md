@@ -48,6 +48,9 @@ Una unidad nueva o revisada debe comprobar, cuando el tema sea aplicable, que:
 - Usa `:=` para aliases definidos por expresión de tipo y reserva el bloque para componentes ordenados.
 - Distingue construcción contextual de literales y casting nominal explícito mediante `to`.
 - No permite reordenar componentes nombrados ni comparar aliases nominales distintos sin conversión.
+- Presenta `Number` como racional exacto y `Rumber` como aproximación explícita `binary64`.
+- Exige `r` en literales `Rumber` puros, pero no necesariamente en cantidades de magnitudes `Rumber`.
+- No mezcla `Number` y `Rumber` sin `to` ni enumera intervalos `Rumber`.
 
 ## Autoridad
 
