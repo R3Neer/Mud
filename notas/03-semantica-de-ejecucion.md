@@ -40,7 +40,7 @@ Solo después puede aceptar acciones externas. Un fallo en este proceso signific
 
 Al comenzar la acción:
 
-1. Se vinculan los participantes.
+1. Se vinculan los roles `for`: por identidad para `thing`, por valor para valores inmutables y por lugar para `mut` exterior.
 2. Se validan tipos, cardinalidades y capacidades de los roles.
 3. Para cada rol con mutabilidad exterior se conserva el lugar almacenado receptor.
 4. Se evalúan los valores `given`.

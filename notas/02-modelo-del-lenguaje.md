@@ -161,17 +161,19 @@ Una colección cuyo tipo de miembro sea una `thing` utiliza siempre membresía e
 La distinción más insistente de la especificación es:
 
 - `on`: vinculaciones individuales construidas automáticamente por el runtime para reglas de cambio, reglas `always` y mensajes.
-- `for`: una o varias cosas existentes, agrupadas en roles individuales o colectivos, proporcionadas al consultar una regla booleana, solicitar una acción o evaluar un `look`.
+- `for`: uno o varios valores que actúan como sujetos explícitos, agrupados en roles individuales o colectivos, al consultar una regla booleana, solicitar una acción o evaluar un `look`.
 - `given`: valores auxiliares proporcionados a una regla booleana o una acción.
 
-Los participantes ocupan roles semánticos. Los `given` no son participantes. En una llamada:
+Los participantes ocupan roles semánticos y pueden ser `thing` o valores sin identidad runtime. Los `given` son parámetros auxiliares, incluso cuando tienen un tipo que también podría aparecer en `for`. En una llamada:
 
 - El receptor identifica participantes.
 - Los argumentos identifican valores `given`.
 
 El nombre de un participante `on` o de un rol `for` con cardinalidad exactamente `[1]` puede omitirse. Una referencia no cualificada se resuelve entre los participantes anónimos y los demás nombres visibles solo si existe un candidato compatible único; cualquier ambigüedad es un error estático. Si el cuerpo necesita el participante como valor completo, debe nombrarlo. Un rol `for` de otra cardinalidad siempre se nombra y admite la especificación completa de colección; sus miembros solo se acceden mediante cuantificación, agregación o iteración explícitas.
 
-En una action, `mut nombre: Thing [...]` sobre un rol `for` concede mutabilidad exterior y exige que el receptor sea un lugar almacenado mutable. El `mut` interior de `[...]` concede por separado capacidad sobre las `thing` miembro. Reglas booleanas y `look` no admiten el primero. `on` permanece individual y su `[mut]` solo concede capacidad sobre la `thing` vinculada.
+En una action, `mut nombre: Tipo [...]` sobre un rol `for` concede mutabilidad exterior y exige que el receptor sea un lugar almacenado mutable. Puede aplicarse a cualquier tipo. El `mut` interior de `[...]` concede por separado capacidad sobre miembros `thing` y es inválido para los demás tipos. Reglas booleanas y `look` no admiten el primero. `on` permanece individual, exige una `thing` y su `[mut]` solo concede capacidad sobre ella.
+
+Una `thing` se vincula por identidad; un básico, alias, miembro de `family`, diccionario u otro valor inmutable, por valor; un rol con mutabilidad exterior, por identidad del lugar almacenado y por su valor actual.
 
 Los receptores y los argumentos `given` admiten vinculación posicional. En los argumentos `given`, `nombre = expresión` añade una etiqueta opcional que debe coincidir con el nombre de esa posición: puede mezclarse con argumentos sin etiqueta, pero nunca reordena la llamada. La forma nombrada de un receptor multiparte sí constituye una vinculación por nombre y se rige por reglas distintas.
 

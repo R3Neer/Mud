@@ -20,7 +20,7 @@ El AST conserva forma escrita y procedencia. El IR conserva significado resuelto
 - usar anclas resueltas;
 - distinguir las tres variantes de regla;
 - separar participantes de `given`;
-- representar `for` y `on` conforme a D-025 y D-036, incluidas cardinalidad colectiva y mutabilidad exterior o interior;
+- representar `for` y `on` conforme a D-025 y D-036, incluidas cardinalidad colectiva, mutabilidad exterior o interior y vinculación por identidad, valor o lugar;
 - normalizar tipos, aliases, dominios, cardinalidades, unidades e intervalos;
 - representar efectos, lecturas, escrituras, llamadas y dependencias;
 - conservar referencias a archivo y rango de origen;

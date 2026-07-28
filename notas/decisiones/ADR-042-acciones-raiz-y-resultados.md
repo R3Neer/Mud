@@ -36,7 +36,7 @@ Una acción:
 - puede solicitarse desde el exterior o desde otra acción;
 - inicia una resolución causal y es atómica junto con todas sus ondas.
 
-Los participantes son receptores y los `given` son argumentos conforme a D-036. Al iniciar la acción se vinculan participantes, se comprueban sus tipos, cardinalidades y capacidades, se evalúan y validan los `given`, y después se evalúa `if`. Un rol con `mut` exterior conserva el lugar receptor como destino de efectos y exige que sea almacenable y exteriormente mutable. Un `given` fuera de dominio o un `if` falso no producen efectos.
+Los participantes son receptores y los `given` son argumentos conforme a D-036. Al iniciar la acción se vinculan los roles por identidad, valor o lugar según su contrato, se comprueban sus tipos, cardinalidades y capacidades, se evalúan y validan los `given`, y después se evalúa `if`. Un rol con `mut` exterior conserva el lugar receptor como destino de efectos y exige que sea almacenable y exteriormente mutable. Un `given` fuera de dominio o un `if` falso no producen efectos.
 
 ### Acciones elementales
 

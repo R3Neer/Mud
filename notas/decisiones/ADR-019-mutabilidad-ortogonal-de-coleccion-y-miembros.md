@@ -78,7 +78,13 @@ mut patients: Person [1..10, unique, mut]
 
 el primer `mut` permite cambiar la colección suministrada y el segundo permite modificar las `Person` miembro. La mutabilidad exterior vincula el rol por referencia a un lugar almacenado: el receptor de la llamada debe designar una colección exteriormente mutable. Un literal, una unión u otra colección calculada son valores y no pueden satisfacer ese contrato.
 
-Sin `mut` exterior, el rol recibe el valor de cualquier expresión de colección compatible. La capacidad interior sigue comprobándose con independencia de que la colección proceda de un lugar o de una expresión.
+Sin `mut` exterior, el rol recibe el valor de cualquier expresión de colección compatible. La capacidad interior sigue comprobándose con independencia de que la colección proceda de un lugar o de una expresión y solo es válida para miembros `thing`.
+
+La mutabilidad exterior se aplica también a lugares que almacenan básicos, aliases, miembros de `family`, diccionarios o colecciones de esos valores. Permite sustituir o reorganizar el contenido, pero no vuelve mutables los valores contenidos:
+
+```mud
+mut observations: Number [*]
+```
 
 Reglas booleanas y `look` son puros y no admiten mutabilidad exterior en sus roles `for`. Los roles automáticos `on` continúan siendo individuales y solo pueden declarar capacidad interior sobre la `thing` vinculada.
 
@@ -109,3 +115,5 @@ La suite deberá comprobar las cuatro combinaciones de la tabla tanto para `[1]`
 7. Roles `for` de cardinalidad `[1]` y colectiva con las cuatro combinaciones de capacidad.
 8. Rechazo de un literal o resultado calculado como receptor de un rol exteriormente mutable.
 9. Rechazo de mutabilidad exterior en reglas booleanas, `look` y roles `on`.
+10. Mutabilidad exterior de una colección de valores inmutables sin capacidad interior.
+11. Rechazo de capacidad interior sobre un tipo de miembro que no sea `thing`.

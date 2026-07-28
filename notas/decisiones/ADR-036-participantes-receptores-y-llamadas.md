@@ -10,21 +10,21 @@
 
 ### Participantes y `given`
 
-Un participante ocupa un rol semántico desempeñado por una o varias `thing` existentes. Determina sujetos, acceso a estado y, cuando sea mutable, capacidad de escritura.
+Un participante ocupa un rol semántico desempeñado por uno o varios valores. Determina los sujetos de la operación y, cuando el rol posee capacidades, el acceso a estado o a un lugar de escritura.
 
-Un `given` es un valor suministrado; no ocupa un rol de identidad del mundo.
+Un `given` es un valor suministrado como parámetro auxiliar; no ocupa un rol semántico aunque su tipo también pudiera aparecer en `for`.
 
 D-025 fija las cabeceras:
 
-- `on`: vinculaciones automáticas e individuales de reglas reactivas, `always` y `message`.
-- `for`: participantes individuales o colectivos suministrados a reglas booleanas, actions y `look`.
+- `on`: vinculaciones automáticas e individuales de `thing` para reglas reactivas, `always` y `message`.
+- `for`: roles individuales o colectivos de cualquier tipo declarado, suministrados a reglas booleanas, actions y `look`.
 - `given`: valores auxiliares de reglas booleanas y actions.
 
 Reglas reactivas, `always`, `look` y `message` no admiten `given`.
 
 ### Cardinalidad y nombres
 
-Un rol `for` admite la especificación completa de colección: cardinalidad, `unique`, `ordered`, `ordered by` y capacidad interior `mut`. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite cardinalidad ni los modificadores de colección `unique` u `ordered`.
+Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, además de la especificación completa de colección: cardinalidad, `unique`, `ordered`, `ordered by` y, cuando sus miembros son `thing`, capacidad interior `mut`. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
 
 El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos, además de los nombres ordinariamente visibles:
 
@@ -44,6 +44,8 @@ La omisión no crea una variable global ni cambia el tipo de la declaración.
 
 Cuando el cuerpo necesita referirse al participante como valor completo, y no solo resolver un miembro suyo, debe declararle un nombre.
 
+Un valor básico no ofrece miembros que puedan resolverse implícitamente; por tanto, un rol básico anónimo no puede ser utilizado por el cuerpo y el compilador debe sugerir nombrarlo o eliminarlo. Los componentes de un alias estructural y los datos asociados de una `family` sí participan en la resolución implícita cuando esta es unívoca.
+
 Todo rol `for` cuya cardinalidad no sea exactamente `[1]` debe tener nombre. La colección no proyecta implícitamente los campos de sus miembros: el cuerpo debe emplear el nombre en una cuantificación, agregación o iteración explícita.
 
 ```mud
@@ -52,11 +54,19 @@ rule AllAdults for people: Person [1..*, unique] {
 }
 ```
 
+También son roles válidos los valores sin identidad runtime:
+
+```mud
+rule IsWeekend for day: Day {
+    day == Saturday or day == Sunday
+}
+```
+
 ### Mutabilidad de participantes `for`
 
 En una action, `mut` antes del nombre de cualquier rol `for`, incluido uno de cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. Ese rol siempre debe tener nombre. El receptor correspondiente debe ser un lugar almacenado exteriormente mutable; un literal o una expresión calculada no son lugares y se rechazan.
 
-El `mut` incluido en la especificación de colección concede capacidad interior sobre las `thing` miembro. Ambos permisos son ortogonales conforme a D-019:
+El `mut` incluido en la especificación de colección concede capacidad interior sobre las `thing` miembro. Es inválido cuando el tipo efectivo de miembro no es una `thing`. Ambos permisos son ortogonales conforme a D-019:
 
 | Declaración | Cambiar colección | Modificar miembros |
 | --- | --- | --- |
@@ -66,6 +76,27 @@ El `mut` incluido en la especificación de colección concede capacidad interior
 | `mut patients: Person [* mut]` | Sí | Sí |
 
 Reglas booleanas y `look` no admiten `mut` exterior porque son puros. Los participantes `on` tampoco lo admiten: su `[mut]` opcional es exclusivamente capacidad interior sobre la `thing` individual vinculada.
+
+La mutabilidad exterior no exige que los miembros sean `thing`: modifica el lugar que contiene la colección, no los valores inmutables contenidos. Por ejemplo:
+
+```mud
+action Record for mut observations: Number [*]
+given value: Number {
+    then add value to observations
+}
+```
+
+### Modos de vinculación
+
+El modo de vinculación depende del contrato del rol:
+
+| Rol | Modo |
+| --- | --- |
+| `thing` sin `mut` exterior | identidad de cada `thing` |
+| básico, alias, `family`, diccionario u otro valor inmutable | valor |
+| cualquier tipo con `mut` exterior | identidad del lugar almacenado y valor actual |
+
+Una colección conserva además cardinalidad, multiplicidad y orden. Repetir un valor o una identidad produce tantas ocurrencias como permita el contrato salvo que el rol sea `unique`.
 
 ### Varios participantes
 
@@ -106,7 +137,7 @@ rule AdvanceCalendar {
 
 Aquí `World` no significa «toda `thing` que sea `World`», sino la única identidad `World`.
 
-En cambio, un participante individual `on World` o `for World` selecciona `thing` concretas activas cuyo tipo satisface `is World`. Cada miembro de un rol `for` colectivo se somete a la misma selección. La selección es reflexiva: incluye la identidad exacta `World` cuando es concreta y activa, además de sus especializaciones activas. Una `thing` abstracta no aporta por sí misma una vinculación concreta, aunque sus especializaciones sí puedan aportarla.
+En cambio, un participante individual `on World` o `for World` selecciona `thing` concretas activas cuyo tipo satisface `is World`. Cada miembro `thing` de un rol `for` colectivo se somete a la misma selección. La selección es reflexiva: incluye la identidad exacta `World` cuando es concreta y activa, además de sus especializaciones activas. Una `thing` abstracta no aporta por sí misma una vinculación concreta, aunque sus especializaciones sí puedan aportarla. Esta regla de selección no se aplica a roles de valor.
 
 Para excluir deliberadamente la identidad raíz debe declararse un rol y expresarse la condición:
 
@@ -130,6 +161,15 @@ game.InCheck(White)
 ```
 
 La vinculación ordinaria de participantes y `given` es posicional. Reordenar la declaración cambia la API.
+
+La separación no depende del tipo. Un valor es `for` cuando constituye un sujeto semántico de la declaración y `given` cuando solo parametriza la operación:
+
+```mud
+action Record for mut observations: Number [*]
+given value: Number {
+    then add value to observations
+}
+```
 
 Una expresión de colección ocupa una sola posición de receptor cuando el rol correspondiente es colectivo; no se expande en varios receptores. Si el rol declara mutabilidad exterior, la expresión debe ser un lugar mutable compatible y la vinculación conserva ese destino para los efectos de la action.
 
@@ -177,6 +217,7 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 - La omisión del nombre de participante individual es azúcar sometido a resolución estática no ambigua, no una firma distinta.
 - Un rol colectivo conserva cardinalidad, modificadores de colección y ambos ejes de capacidad en AST e IR.
 - Una vinculación exteriormente mutable conserva el lugar receptor, no solo su valor.
+- El IR distingue vinculaciones de rol por identidad, por valor y por lugar.
 - D-025 y esta decisión resuelven Q-011 para participantes nombrados.
 - El compilador puede reconstruir lecturas, escrituras y dependencias desde la firma.
 
@@ -199,3 +240,7 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 15. Las cuatro combinaciones de mutabilidad exterior e interior.
 16. Aceptación de un lugar mutable y rechazo de literales o expresiones calculadas para `mut nombre`.
 17. Rechazo de colecciones en `on` y de mutabilidad exterior en construcciones puras.
+18. Roles `for` básicos, alias, `family`, diccionario y `thing`.
+19. Vinculación por identidad, valor y lugar.
+20. Rechazo de capacidad interior `mut` sobre miembros que no sean `thing`.
+21. Diferencia entre un valor sujeto `for` y un valor auxiliar `given` del mismo tipo.

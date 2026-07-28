@@ -482,7 +482,8 @@ Archivo previsto: `21-reglas-booleanas.md`
 
 Define:
 
-- Participantes `for` individuales o colectivos y nombre obligatorio para los colectivos o exteriormente mutables.
+- Roles `for` de cualquier tipo declarado, individuales o colectivos.
+- Vinculación por identidad, valor o lugar y nombre obligatorio para roles colectivos o exteriormente mutables.
 - Ausencia de mutabilidad exterior por pureza.
 - Valores `given`.
 - Receptor único y multiparte.
@@ -531,7 +532,7 @@ Archivo previsto: `24-frontera-publica.md`
 
 Define:
 
-- Participantes `for` individuales o colectivos.
+- Roles `for` de cualquier tipo, individuales o colectivos.
 - Valores `given`.
 - `if`, `then` y `after`.
 - Acciones elementales.

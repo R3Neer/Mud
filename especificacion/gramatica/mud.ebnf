@@ -310,7 +310,7 @@ on-clause
     ::= "on" , on-participant , { "," , on-participant } ;
 
 for-participant
-    ::= [ "mut" ] , [ role-name , ":" ] , type-reference
+    ::= [ "mut" ] , [ role-name , ":" ] , declared-type
         , [ collection-specification ]
       ;
 

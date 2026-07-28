@@ -250,7 +250,7 @@ Las formas producidas por ese minilenguaje ocupan el token contextual `POINT_LIT
 
 ## Participantes
 
-`for` vincula participantes suministrados. Cada rol puede contener una `thing` individual o una colección de `thing` y admite la especificación completa de colección. `on` construye vinculaciones automáticas exclusivamente individuales.
+`for` vincula roles suministrados de cualquier tipo de valor declarado. Un rol puede ser individual o colectivo y admite la especificación completa de colección. `on` construye vinculaciones automáticas exclusivamente individuales cuyo tipo debe ser una `thing`.
 
 ```mud
 rule CanAttack for attacker: Army, defender: Army
@@ -260,6 +260,10 @@ given maximumDistance: Length {
 
 rule AllAdults for people: Person [1..*, unique] {
     forall person in people: person.age >= 18
+}
+
+rule IsWeekend for day: Day {
+    day == Saturday or day == Sunday
 }
 
 rule Starve on
@@ -295,9 +299,26 @@ action Treat for
 }
 ```
 
-La declaración anterior puede cambiar la membresía u orden de la colección almacenada recibida y modificar sus miembros. `mut patients: Person [*]` concede solo la primera capacidad; `patients: Person [*, mut]`, solo la segunda. Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior.
+La declaración anterior puede cambiar la membresía u orden de la colección almacenada recibida y modificar sus miembros. `mut patients: Person [*]` concede solo la primera capacidad; `patients: Person [*, mut]`, solo la segunda. La capacidad interior `mut` solo es válida cuando el tipo efectivo de miembro es una `thing`; los valores básicos, aliases y miembros de `family` son inmutables.
 
-Una referencia ordinaria a `World` designa la identidad exacta. `on World` y `for World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta.
+La mutabilidad exterior sí puede aplicarse a una colección de cualquier tipo:
+
+```mud
+action Record for mut observations: Number [*]
+given value: Number {
+    then add value to observations
+}
+```
+
+Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior.
+
+Una referencia ordinaria a `World` designa la identidad exacta. `on World` y un rol `for World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta. Esta selección solo se aplica cuando el tipo del rol es una `thing`.
+
+La vinculación depende de la categoría del rol:
+
+- una `thing` se vincula por identidad;
+- un básico, alias, miembro de `family`, diccionario u otro valor inmutable se vincula por valor;
+- un rol con `mut` exterior se vincula por identidad del lugar almacenado y conserva además su valor actual.
 
 ## Reglas
 
@@ -408,6 +429,8 @@ army.IsDestroyed()
 Los receptores nombrados pueden reordenar roles si son exactos y exhaustivos.
 
 Una expresión de colección ocupa una sola posición de receptor cuando el rol correspondiente es colectivo; no se descompone en varios roles. Si el rol declara `mut` exterior, esa expresión debe ser además un lugar mutable compatible.
+
+Que un tipo pueda aparecer en `for` no obliga a tratar todos los argumentos de ese tipo como roles. `for` identifica los sujetos semánticos de la operación; `given`, sus parámetros auxiliares.
 
 Las etiquetas de `given` no reordenan:
 
