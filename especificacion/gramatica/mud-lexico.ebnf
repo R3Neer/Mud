@@ -92,15 +92,40 @@ rumber-literal
     ::= "r" , decimal-mantissa , [ exponent-part ] ;
 
 decimal-mantissa
-    ::= digits , [ "." , digits ]
-      | "." , digits
+    ::= integer-digits , [ "." , fractional-digits ]
+      | "." , fractional-digits
       ;
 
 exponent-part
-    ::= ( "e" | "E" ) , [ "+" | "-" ] , digits ;
+    ::= ( "e" | "E" ) , [ "+" | "-" ] , integer-digits ;
 
-digits
-    ::= digit , { digit | ( "_" , digit ) } ;
+integer-digits
+    ::= plain-digits | grouped-integer-digits ;
+
+fractional-digits
+    ::= plain-digits | grouped-fractional-digits ;
+
+plain-digits
+    ::= digit , { digit } ;
+
+grouped-integer-digits
+    ::= one-to-three-digits , "_" , three-digits
+        , { "_" , three-digits }
+      ;
+
+grouped-fractional-digits
+    ::= three-digits , "_" , grouped-fractional-tail ;
+
+grouped-fractional-tail
+    ::= one-to-three-digits
+      | three-digits , "_" , grouped-fractional-tail
+      ;
+
+one-to-three-digits
+    ::= digit , [ digit , [ digit ] ] ;
+
+three-digits
+    ::= digit , digit , digit ;
 
 digit     ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 hex-digit ::= digit | "A" | "B" | "C" | "D" | "E" | "F"

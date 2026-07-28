@@ -235,6 +235,7 @@ Los racionales exactos admiten parte decimal y exponente:
 10
 0.25
 .5
+3e6
 1e-6
 ```
 
@@ -247,14 +248,29 @@ r.5
 r1e-6
 ```
 
-`_` solo puede aparecer entre dos cifras:
+> [!rule] MUD-LEX-040 — Exponente decimal
+> Si una mantisa $m$ lleva un exponente entero $n$ introducido por `e` o `E`, el literal denota $m\times 10^n$. El signo opcional situado inmediatamente después del introductor pertenece al exponente; los signos aplicados al valor completo continúan siendo operadores externos.
+
+Por ejemplo, `3e6` denota `3_000_000` y `3e-6` denota `0.000_003`.
+
+La parte entera de la mantisa, su parte fraccionaria y las cifras del exponente son tres componentes independientes a efectos de agrupación.
+
+> [!rule] MUD-LEX-041 — Agrupación numérica completa
+> Cada componente puede escribirse sin `_` o agruparse mediante `_`. Si un componente contiene `_`, todas sus cifras deben quedar agrupadas dentro de ese componente. La presencia de `_` en uno no obliga a agrupar los demás.
+>
+> La parte entera y el exponente se agrupan desde la derecha: el primer grupo contiene de una a tres cifras y todos los posteriores contienen exactamente tres. La parte fraccionaria se agrupa desde el punto decimal hacia la derecha: todos los grupos salvo el último contienen exactamente tres cifras y el último contiene de una a tres.
+
+Son válidos:
 
 ```mud
 1_000
 r1_000.25
+1_000.123456e1000
+1000.123_456
+3e1_000
 ```
 
-Son inválidos `_1`, `1_`, `1__000` y `1_.0`.
+Son inválidos `_1`, `1_`, `1__000`, `1_.0`, `1_000000`, `1.123_456789` y `3e1_000000`.
 
 ## Unidades
 

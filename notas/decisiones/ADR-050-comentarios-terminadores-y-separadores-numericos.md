@@ -90,7 +90,13 @@ D-057 y la gramática consolidada cierran Q-001.
 
 ### Separadores numéricos
 
-`_` puede agrupar cifras para lectura, con grupos ordinarios de tres cifras. No altera el valor. El prefijo `r` se rige por D-034.
+La notación científica usa `e` o `E`: una mantisa $m$ seguida de un exponente entero $n$ denota $m\times 10^n$. El signo opcional situado tras `e` o `E` pertenece al exponente; el signo del valor completo continúa siendo un operador exterior.
+
+`_` puede agrupar cifras para lectura y no altera el valor. La parte entera de la mantisa, su parte fraccionaria y las cifras del exponente se agrupan independientemente: usar `_` en un componente no obliga a usarlo en los demás.
+
+Cuando un componente contiene `_`, su agrupación debe ser completa. La parte entera y el exponente se agrupan desde la derecha, con un primer grupo de una a tres cifras y los restantes de tres. La parte fraccionaria se agrupa desde el punto decimal hacia la derecha, con grupos de tres salvo el último, que puede contener de una a tres cifras.
+
+Por tanto, `1_000.123456e1000`, `1000.123_456` y `3e1_000` son válidos. `1_000000`, `1.123_456789` y `3e1_000000` son inválidos por dejar sin agrupar cifras del mismo componente. El prefijo `r` se rige por D-034 y no modifica estas reglas.
 
 ## Consecuencias
 
@@ -113,4 +119,6 @@ D-057 y la gramática consolidada cierran Q-001.
 10. Continuación tras delimitador, coma, operador y palabra introductora.
 11. Terminación cuando el prefijo anterior ya es completo.
 12. Independencia respecto de la sangría fuera de literales multilínea.
-13. Literales con separadores válidos e inválidos.
+13. Literales sin separadores y con agrupación completa independiente en la parte entera, fraccionaria y exponencial.
+14. Rechazo de agrupaciones parciales, grupos interiores de tamaño distinto de tres y `_` en los extremos o duplicado.
+15. Equivalencia decimal de exponentes positivos, negativos y con signo explícito en literales exactos y `Rumber`.
