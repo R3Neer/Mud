@@ -38,12 +38,13 @@ El orden textual de archivos e imports no decide empates.
 ### Convenciones de identificadores
 
 - Namespace: segmentos `lowerCamelCase` separados por puntos.
-- Declaraciones nominales (`thing`, alias, magnitude, rule, action, look, message y familias): `PascalCase`.
+- Declaraciones nominales (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `look` y `message`): `PascalCase`.
+- Miembros de una `family`: `PascalCase`.
 - Campos, componentes, roles, `given` y variables de iteración: `lowerCamelCase`.
 
 Los identificadores son sensibles a mayúsculas. El catálogo de palabras reservadas no puede usarse como nombre de campo, componente, rol, `given`, variable local o declaración.
 
-D-054 distingue esas palabras reservadas de las palabras contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en la declaración `start with`; `abstract` lo es delante de `thing`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `with` sí es una palabra reservada.
+D-038 y D-054 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en la declaración `start with`; `abstract` lo es delante de `thing`; `ordered` lo es delante de `family`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `with` y `family` son palabras reservadas.
 
 ### Nombres cualificados y anclas
 
@@ -61,6 +62,7 @@ thing::warfare.armies.Army
 thing::warfare.armies.Army::morale
 alias::geometry.Square
 alias::geometry.Square::file
+family::warfare.armies.Severity
 magnitude::physics.Length
 rule::warfare.armies.IsDestroyed
 action::warfare.armies.Recruit
@@ -88,3 +90,4 @@ La identidad estable de una unidad sin identificador de cabecera permanece en Q-
 5. Colisión por mayúsculas y palabra reservada.
 6. Uso ordinario de una palabra contextual fuera de su posición especial.
 7. Estabilidad de anclas.
+8. Separación entre `family::*` y `thing::*`.

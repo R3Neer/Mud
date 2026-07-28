@@ -4,17 +4,18 @@ Este documento es dueño del vocabulario semántico de MUD. Resume la estructura
 
 ## Unidades de declaración
 
-MUD tiene seis declaraciones principales con nombre, una auxiliar con nombre y una declaración única de activación inicial:
+MUD tiene ocho declaraciones con nombre y una declaración única de activación inicial:
 
 | Declaración | Representa | Denota identidad o valor dentro del mundo |
 | --- | --- | --- |
-| `thing` | Cosa, concepto, categoría, especialización o familia cerrada | Sí |
+| `thing` | Cosa, concepto, categoría o especialización | Sí |
 | `magnitude` | Cantidad, unidad o punto sobre una cantidad | No como entidad del mundo |
 | `rule` | Condición consultable, reacción o invariante | Su declaración tiene ancla; no es un valor ordinario del mundo |
 | `action` | Operación externa o composición atómica | Su declaración tiene ancla; no es un valor ordinario del mundo |
 | `look` | Consulta pública pura del estado estable | Su declaración tiene ancla; su resultado es un valor de salida |
 | `message` | Evento público detectado durante una resolución y materializado al estabilizar | Su declaración tiene ancla; cada ocurrencia es una salida |
 | `alias` | Tipo nominal de valor simple, estructural o compuesto | La declaración tiene ancla estática; sus valores no tienen identidad runtime |
+| `family` | Tipo nominal finito formado por miembros declarados | La declaración tiene ancla estática; sus miembros son valores sin identidad runtime |
 | `start with` | Conjunto no ordenado de `thing` y reglas activas al comenzar | No tiene ancla propia ni es un valor del mundo |
 
 Toda declaración con nombre tiene identidad semántica mediante un ancla. `start with` es única en el programa y no introduce una identidad adicional. La última columna distingue la identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
@@ -33,6 +34,8 @@ Hay que conservar tres relaciones distintas:
 - `is` consulta especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
 
 Dos `thing` definidas con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con el mismo contenido son iguales. Aliases diferentes no son intercambiables aunque su forma normalizada coincida; requieren casting nominal explícito mediante `to`.
+
+Una `family` declara un tipo nominal finito independiente de `thing`. Sus miembros son valores nominales sin estado ni ciclo de vida runtime: no pertenecen a $\mathcal T_P$, no participan en `as` o `is` y no admiten `create` ni `destroy`. Todas las familias se enumeran en orden de declaración; `ordered family` convierte además ese orden en el orden semántico de comparación. Las reglas completas pertenecen a [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
 Cada `thing` posee una única definición canónica de primer nivel. Puede ser raíz, abstracta o concreta y declarar cero o varios antecesores mediante `as`. `create Nombre` activa esa identidad ya definida: no fabrica una identidad fresca, no añade antecesores y no contiene un cuerpo. Después de `destroy Nombre`, una nueva activación recupera la misma identidad, descriptor y carga almacenada. Las reglas completas pertenecen a [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
@@ -220,7 +223,7 @@ La especificación incluye:
 - Tipos básicos no numéricos: `Text` y `Bool`.
 - Tipos numéricos básicos: `Natural`, `Integer`, `Number`, `Rumber` y `Money`.
 - Aliases nominales simples, estructurales y compuestos.
-- Familias cerradas de valores.
+- Familias cerradas de valores declaradas mediante `family` u `ordered family`.
 - Cardinalidades y colecciones.
 - Diccionarios.
 - Intervalos.
@@ -268,6 +271,7 @@ Formato conceptual de anclas:
 ```text
 thing::warfare.armies.Army
 thing::warfare.armies.Army::morale
+family::warfare.armies.Severity
 rule::warfare.armies.IsDestroyed
 action::warfare.armies.Recruit
 look::warfare.armies.ArmySummary
@@ -276,7 +280,7 @@ message::warfare.armies.ArmyDestroyed
 
 Las anclas no incluyen el archivo. Mover una declaración dentro del mismo namespace no cambia su identidad; moverla de namespace sí, salvo una migración explícita todavía por diseñar.
 
-MUD distingue palabras reservadas y contextuales. `with` está reservada; `start` solo introduce la declaración de primer nivel `start with`; `abstract` solo actúa como modificador delante de `thing`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
+MUD distingue palabras reservadas y contextuales. `with` y `family` están reservadas; `start` solo introduce la declaración de primer nivel `start with`; `abstract` solo actúa como modificador delante de `thing`; `ordered` solo actúa como modificador delante de `family`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
 
 Las reglas completas de organización física, imports, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 
