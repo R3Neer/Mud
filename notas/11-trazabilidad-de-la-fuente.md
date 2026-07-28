@@ -4,7 +4,7 @@ Esta matriz conserva el primer enrutamiento temático de la fuente inicial. La m
 
 Fuente histórica retirada: [[referencias/retiradas/MUD Especificacion inicial]]. Sus afirmaciones internas de vigencia no tienen autoridad actual.
 
-La comprobación de cobertura real, las divergencias deliberadas y el inventario de información que aún solo permanece en la fuente se encuentran en [[notas/13-auditoria-de-cobertura-y-divergencias]].
+La comprobación final de cobertura y las divergencias deliberadas se encuentran en [[notas/13-auditoria-de-cobertura-y-divergencias]].
 
 | Secciones de la fuente | Tema | Documento dueño |
 | --- | --- | --- |
