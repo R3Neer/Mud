@@ -36,6 +36,7 @@ decisions:
   - D-055
   - D-056
   - D-057
+  - D-058
 ---
 
 # 07. Gramática concreta
@@ -344,24 +345,39 @@ rule OpenGate on gate: Gate [mut] {
 }
 ```
 
-`changes` es postfix:
+`changes` es un sufijo temporal de expresiones:
 
 ```mud
-when day changes
+when position + offset changes
 
 when {
-    calendar.day
-} changes
+    calendar.day changes
+    or alarm.enabled
+}
 ```
 
-Para una vinculación $b$, sea $v_n(b,e)$ el valor de `e` en la instantánea de inicio de la onda $n$:
+Tiene menos precedencia que la aritmética, las conversiones y las comparaciones, pero más que `and` y `or`. Por tanto:
 
-- `when e` exige `Bool` y dispara exactamente si $v_{n-1}(b,e)$ es falso y $v_n(b,e)$ es verdadero.
-- `when e changes` pulsa si $v_{n-1}(b,e)\ne v_n(b,e)$.
+```text
+position + offset changes  ≡  (position + offset) changes
+temperature > limit changes  ≡  (temperature > limit) changes
+position changes or ready  ≡  (position changes) or ready
+```
 
-El pulso de `changes` no se almacena ni se restablece a falso: se calcula directamente para cada par de instantáneas y puede aparecer en ondas consecutivas. Solo observa el cambio neto entre instantáneas de inicio.
+Dentro de `when`, cada `e changes` produce un activador temporal que pulsa cuando `e` tiene valores distintos en las dos instantáneas de inicio consecutivas. Los operandos booleanos ordinarios de `and` y `or` se elevan a su transición `false` → `true`; así pueden combinarse cambios y condiciones que pasan a ser verdaderas sin perder pulsos consecutivos. Solo las palabras `and` y `or` componen activadores temporales; sus variantes simbólicas y los demás operadores lógicos conservan su significado ordinario sobre valores.
 
-Las vinculaciones presentes en la primera instantánea materializada por `start with` usan un anterior virtual falso para su primer `when` booleano, que dispara si la condición inicial es verdadera. Un `changes` inicial memoriza su valor sin pulsar. Toda vinculación nacida después entra en la primera onda posterior en que está activa, usa esa onda para memorizar su línea base sin disparar y comienza a comparar en la siguiente.
+Un `when e` puramente booleano detecta la transición `false` → `true` de la expresión completa. `old e` puede aparecer en `when` y en `if` de una regla reactiva cuando `e` es pura y evaluable en ambas instantáneas; lee la anterior. No se admite en su `then`. Para medir una variación se escribe una condición explícita, por ejemplo `position - old position >= 10 meters`; no existe `changes by`.
+
+```mud
+when position changes and velocity changes
+
+when price changes or outOfStock
+if price > old price and stock < old stock
+
+when position - old position >= 10 meters
+```
+
+Las vinculaciones presentes en la primera instantánea materializada por `start with` comparan `old` y el valor actual contra la misma instantánea: `changes` no pulsa. Las ramas booleanas elevadas conservan, en cambio, el anterior virtual falso y pueden disparar si ya son verdaderas. Toda vinculación nacida después toma su primera onda activa como línea base completa, sin disparar, y comienza a comparar en la siguiente.
 
 ### `always`
 
@@ -541,12 +557,13 @@ De mayor a menor:
 | 4 | `+`, `-` | izquierda |
 | 5 | sufijos `to Type`, `in unit` | acumulativa |
 | 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, pertenencia `in` | restringida |
-| 7 | `and`, `&` | izquierda |
-| 8 | `or`, `|` | izquierda |
-| 9 | `xor`, `^` | izquierda |
-| 10 | `=>` | derecha |
-| 11 | `<=>` | cadena adyacente |
-| 12 | `eventually ... through ...` | exterior |
+| 7 | sufijo temporal `changes` | no asociativa |
+| 8 | `and`, `&` | izquierda |
+| 9 | `or`, `|` | izquierda |
+| 10 | `xor`, `^` | izquierda |
+| 11 | `=>` | derecha |
+| 12 | `<=>` | cadena adyacente |
+| 13 | `eventually ... through ...` | exterior |
 
 `to` y el `in` de unidad transforman el valor completo acumulado a su izquierda. El parser continúa después con el resultado:
 

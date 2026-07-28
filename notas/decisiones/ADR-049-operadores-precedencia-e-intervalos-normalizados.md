@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Preguntas relacionadas: Q-001, Q-018, Q-050
 - Documentos afectados: expresiones, intervalos, gramática
 
@@ -18,6 +19,7 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 | Aritmética | `+`, `-`, `*`, `/`, `%` |
 | Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `in` |
 | Lógica | `not`, `and`, `or`, `xor`, `=>`, `<=>` |
+| Temporal | sufijo `changes`; composición con `and`, `or` dentro de `when` |
 | Intervalos | `|`, `&`, `^`, `-` |
 | Colecciones | `|`, `&`, `^`, `-` |
 | Texto | `|` para concatenación de `Text` |
@@ -52,12 +54,15 @@ De mayor a menor:
 4. suma, resta y diferencia conjuntista;
 5. sufijos `to Type` e `in unit`;
 6. comparaciones, `is` y pertenencia `in`;
-7. conjunción e intersección;
-8. disyunción, unión y concatenación;
-9. diferencia simétrica;
-10. implicación;
-11. bicondicional;
-12. `eventually ... through ...`.
+7. sufijo temporal `changes`;
+8. conjunción e intersección;
+9. disyunción, unión y concatenación;
+10. diferencia simétrica;
+11. implicación;
+12. bicondicional;
+13. `eventually ... through ...`.
+
+En un `when` temporal, solo las palabras `and` y `or` componen activadores. Los símbolos `&` y `|` conservan sus operaciones tipadas ordinarias y se rechazan si reciben un activador; tampoco se aplican a estos `not`, `xor`, `^`, `=>` ni `<=>`. D-058 define la elevación de operandos booleanos y la semántica de la composición.
 
 `to` y el `in` de unidad se aplican al valor completo acumulado a su izquierda. El parser continúa después sobre el resultado convertido:
 
@@ -97,3 +102,5 @@ Las operaciones de unión, intersección, diferencia simétrica y diferencia pro
 8. Resolución de los cuatro operadores conjuntistas sobre colecciones compatibles.
 9. Rechazo de los aliases retirados y de `!` aislado, con conservación de `!=`.
 10. Separación estática entre `xor` lógico y `^` conjuntista.
+11. Precedencia de `changes` por debajo de comparaciones y por encima de `and` y `or`.
+12. Rechazo de operadores distintos de las palabras `and` y `or` sobre activadores temporales.

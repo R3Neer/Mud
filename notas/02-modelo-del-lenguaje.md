@@ -197,7 +197,7 @@ Cuando su declaración no es efectiva, sus llamadas se eliminan de la expresión
 
 ### Regla reactiva
 
-Se vincula automáticamente con `on`, observa una transición mediante `when`, puede filtrar con `if` y produce efectos mediante `then`. `when e` dispara solo en `false → true`; `when e changes` produce un pulso por diferencia neta entre dos instantáneas consecutivas sin almacenar ni restablecer ese pulso. Las vinculaciones presentes en la primera instantánea de `start with` usan un anterior virtual falso para `when`; las nacidas después toman primero una línea base sin disparar.
+Se vincula automáticamente con `on`, observa activadores temporales mediante `when`, puede filtrar con `if` y produce efectos mediante `then`. Un `when e` puramente booleano dispara solo en `false → true`; el sufijo `changes` produce un pulso por diferencia neta y se combina con otros cambios o transiciones mediante las palabras `and` y `or`. `old` puede leer la instantánea anterior desde `when` e `if`, pero no desde `then`. Las vinculaciones iniciales usan un anterior virtual falso para ramas booleanas y la misma instantánea para `changes` y `old`; las nacidas después toman primero una línea base completa sin disparar.
 
 ### Regla `always`
 

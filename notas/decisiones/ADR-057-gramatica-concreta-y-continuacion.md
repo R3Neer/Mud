@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Cierra: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
 - Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
 
@@ -49,7 +50,7 @@ La enumeración exhaustiva de introductores y operadores procede de la propia gr
 
 ### Operadores
 
-La precedencia y los encadenamientos se fijan en [[especificacion/07-gramatica-concreta#Precedencia y agrupación]]. `to` y el `in` de presentación son operadores postfix que transforman todo el valor acumulado a su izquierda; después del sufijo pueden aparecer operadores nuevos sobre el resultado convertido.
+La precedencia y los encadenamientos se fijan en [[especificacion/07-gramatica-concreta#Precedencia y agrupación]]. `to` y el `in` de presentación son operadores postfix que transforman todo el valor acumulado a su izquierda; después del sufijo pueden aparecer operadores nuevos sobre el resultado convertido. `changes` es un sufijo temporal situado por debajo de comparaciones y por encima de `and` y `or`, conforme a D-058.
 
 Los encadenamientos admitidos se elaboran por pares adyacentes:
 

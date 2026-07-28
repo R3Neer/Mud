@@ -3,6 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 
@@ -45,7 +46,7 @@ rule OpenGate on gate: Gate [mut] {
 
 Declara vinculaciones automáticas mediante `on`, no admite `given`, exige `when`, admite `if` y produce efectos mediante `then`. No ejecuta acciones reales. Puede consultar reglas booleanas y usar `allowed` si el grafo resultante sigue siendo acíclico.
 
-Sea $W_n$ la instantánea leída al comienzo de la onda $n$ y sea $v_n(b,e)$ el valor de la expresión $e$ para la vinculación $b$ en esa instantánea. Para una vinculación que ya posea memoria, `when e` exige que $e$ sea booleana y dispara únicamente cuando:
+Sea $W_n$ la instantánea leída al comienzo de la onda $n$ y sea $v_n(b,e)$ el valor de la expresión $e$ para la vinculación $b$ en esa instantánea. Para una vinculación que ya posea memoria, un `when e` puramente booleano dispara únicamente cuando:
 
 $$
 \neg v_{n-1}(b,e)\land v_n(b,e).
@@ -53,7 +54,7 @@ $$
 
 Por tanto, solo dispara en la transición $\mathsf{false}\longrightarrow\mathsf{true}$. El runtime conserva el valor anterior por identidad de vinculación.
 
-`when e changes` admite cualquier expresión con igualdad definida y produce en la onda $n$ el pulso:
+El sufijo `changes` admite cualquier expresión pura con igualdad definida y produce en la onda $n$ el pulso:
 
 $$
 \operatorname{changes}_n(b,e)
@@ -63,9 +64,11 @@ $$
 
 Este pulso se calcula directamente para cada par de instantáneas de inicio consecutivas. No es un booleano almacenado, no se restablece mediante un cambio a `false` y no se somete de nuevo a la detección $\mathsf{false}\rightarrow\mathsf{true}$. Si $e$ cambia entre dos pares consecutivos de instantáneas, `changes` pulsa en ambas ondas. Solo importa el cambio neto entre instantáneas; los valores transitorios dentro de un delta privado no son observables.
 
+Los activadores temporales se componen con las palabras `and` y `or`. Un operando booleano ordinario de una composición se eleva a su transición `false` → `true`; no se interpreta como un nivel sostenido. La gramática, el alcance de `old` y la elaboración formal de estas combinaciones se fijan en D-058.
+
 ### Inicialización de la memoria reactiva
 
-Las vinculaciones presentes en la primera instantánea obtenida al materializar conjuntamente el `start with` global o local reciben para su primer `when e` booleano un valor anterior virtual $\mathsf{false}$. Si $e$ es verdadera en esa primera instantánea de estabilización, la regla dispara. `when e changes` no recibe un valor ficticio: solo memoriza $v_0(b,e)$ y no pulsa.
+Las vinculaciones presentes en la primera instantánea obtenida al materializar conjuntamente el `start with` global o local reciben para cada rama booleana elevada un valor anterior virtual $\mathsf{false}$. Si la rama es verdadera en esa primera instantánea de estabilización, pulsa. Las expresiones temporales, incluidos `changes` y `old`, comparan la instantánea inicial consigo misma: `changes` no pulsa y `old e` vale lo mismo que `e`.
 
 Una vinculación que no estaba presente en esa primera instantánea, ya sea por activación posterior de una regla o por aparición de participantes, no participa en la raíz u onda que la crea. En su primera onda activa memoriza el valor actual sin disparar `when` ni producir un pulso `changes`. Desde la onda siguiente compara normalmente dos instantáneas. En particular, si memoriza $\mathsf{false}$ y la condición es $\mathsf{true}$ en la onda posterior, `when` dispara; si memoriza inicialmente $\mathsf{true}$, esa mera aparición no dispara.
 
@@ -98,9 +101,11 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 1. Un ejemplo válido y otro inválido por cada variante.
 2. Rechazo de `given` en una regla `on`.
 3. Rechazo de efectos en reglas booleanas y `always`.
-4. Disparo reactivo únicamente en `false → true`.
+4. Disparo de un `when` puramente booleano únicamente en `false → true`.
 5. Poda de una llamada booleana suspendida.
 6. `changes` pulsa en cambios consecutivos sin una onda falsa intermedia.
 7. Ausencia de pulso cuando una expresión cambia transitoriamente pero conserva el mismo valor entre instantáneas.
 8. Disparo inicial de un `when` verdadero procedente de `start with`.
 9. Inicialización sin disparo de una vinculación creada fuera de `start with`.
+10. Composición de dos cambios y de un cambio con una transición booleana mediante `and` y `or`.
+11. Pulsos consecutivos preservados dentro de una composición temporal.

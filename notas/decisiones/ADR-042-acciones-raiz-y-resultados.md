@@ -3,6 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documentos afectados: frontera pública, efectos, solicitud de acciones, semántica de la raíz
 
@@ -59,7 +60,7 @@ El grafo estático de llamadas entre acciones debe ser acíclico. La selección 
 
 `after` se evalúa tras todas las ondas sobre el estado estable tentativo. Su falsedad produce `rejected`; un error durante su evaluación produce `failed`.
 
-`old e` lee `e` en el estado estable inmediatamente anterior a la acción exterior completa. En MUD 1.0 solo está admitido dentro de `after`.
+En el contexto de acciones y tests, `old e` lee `e` en el estado estable inmediatamente anterior a la acción exterior completa y solo está admitido dentro de `after`. D-058 añade un contexto distinto para `old` dentro de reglas reactivas, donde compara instantáneas de onda.
 
 ### Resultados
 

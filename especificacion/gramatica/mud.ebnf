@@ -398,7 +398,7 @@ message-declaration
         ;
 
 when-clause
-    ::= "when" , expression-clause-body , [ "changes" ] ;
+    ::= "when" , expression-clause-body ;
 
 if-clause
     ::= "if" , expression-clause-body ;
@@ -582,10 +582,13 @@ or-operator
     ::= "or" | "|" ;
 
 and-expression
-    ::= comparison-expression , { and-operator , comparison-expression } ;
+    ::= change-expression , { and-operator , change-expression } ;
 
 and-operator
     ::= "and" | "&" ;
+
+change-expression
+    ::= comparison-expression , [ "changes" ] ;
 
 comparison-expression
     ::= quantitative-expression , [ comparison-tail ] ;

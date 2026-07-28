@@ -20,7 +20,7 @@ estado estable anterior
 → confirmar o revertir
 ```
 
-`old` observa el estado estable anterior a la acción exterior completa.
+En el `after` de acciones y tests, `old` observa el estado estable anterior a la acción exterior completa. En el `when` o `if` de una regla reactiva, observa la instantánea de inicio de la onda anterior.
 
 ## Construcción del mundo inicial
 
@@ -69,12 +69,11 @@ Después de la raíz:
 
 1. Se construyen las vinculaciones `on` de la onda.
 2. Todas las reglas de esa onda leen la misma instantánea.
-3. `when` detecta transiciones por vinculación.
-4. `changes` produce pulsos por diferencias netas entre instantáneas consecutivas.
-5. Los efectos se calculan de forma independiente.
-6. Los efectos compatibles se combinan.
-7. Los conflictos fallan la resolución.
-8. El nuevo estado alimenta la siguiente onda.
+3. `when` evalúa activadores temporales por vinculación.
+4. Los efectos se calculan de forma independiente.
+5. Los efectos compatibles se combinan.
+6. Los conflictos fallan la resolución.
+7. El nuevo estado alimenta la siguiente onda.
 
 Las vinculaciones se fijan al inicio de cada onda. Los cambios de pertenencia solo alteran la onda siguiente.
 
@@ -86,11 +85,13 @@ La cardinalidad no se comprueba tras cada instrucción del delta privado. El com
 
 ## Disparo reactivo
 
-Sea $v_n(b,e)$ el valor de `e` para la vinculación $b$ en la instantánea de inicio de la onda $n$. `when e` se activa exactamente cuando $v_{n-1}(b,e)$ es falso y $v_n(b,e)$ es verdadero.
+Sea $v_n(b,e)$ el valor de `e` para la vinculación $b$ en la instantánea de inicio de la onda $n$. Un `when e` puramente booleano se activa exactamente cuando $v_{n-1}(b,e)$ es falso y $v_n(b,e)$ es verdadero.
 
-`when e changes` pulsa cuando $v_{n-1}(b,e)\ne v_n(b,e)$. El pulso se calcula para esa onda: no es estado almacenado, no se restablece a falso y puede producirse en ondas consecutivas. Los cambios transitorios que desaparecen antes de formar la instantánea siguiente no cuentan.
+`e changes` pulsa cuando $v_{n-1}(b,e)\ne v_n(b,e)$. El pulso se calcula para esa onda: no es estado almacenado, no se restablece a falso y puede producirse en ondas consecutivas. Los cambios transitorios que desaparecen antes de formar la instantánea siguiente no cuentan.
 
-Una vinculación presente en la primera instantánea materializada por `start with` usa un anterior virtual falso y dispara si su primer `when` booleano es verdadero. Un `changes` inicial solo memoriza el primer valor y no pulsa. Una vinculación nacida después entra en la primera onda posterior en que está activa, memoriza allí su línea base sin disparar y empieza a comparar en la onda siguiente.
+Las palabras `and` y `or` componen activadores. Un operando booleano ordinario se eleva a su transición `false` → `true`, de modo que puede combinarse con `changes` sin convertir el pulso en un nivel sostenido. `old e`, admitido en `when` e `if` pero no en `then`, evalúa `e` sobre la instantánea anterior y permite expresar magnitudes de cambio sin un operador `changes by`.
+
+Una vinculación presente en la primera instantánea materializada por `start with` usa un anterior virtual falso para cada rama booleana elevada, pero compara esa instantánea consigo misma para `changes` y `old`. Una vinculación nacida después entra en la primera onda posterior en que está activa, memoriza allí toda su línea base sin disparar y empieza a comparar en la onda siguiente.
 
 Queda por definir:
 

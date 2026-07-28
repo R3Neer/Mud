@@ -2,6 +2,7 @@
 
 - Estado: Vigente en su núcleo
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Preguntas relacionadas: Q-003, Q-005, Q-020, Q-052
 - Documentos afectados: semántica dinámica, reglas reactivas, mensajes
 
@@ -29,16 +30,16 @@ En cada onda:
 
 1. se construye el conjunto de vinculaciones `on` activas;
 2. todas las reglas leen la misma instantánea de inicio;
-3. se evalúan transiciones de `when` y pulsos de `changes`;
+3. se evalúan los activadores temporales de `when`;
 4. cada `then` produce secuencialmente un delta privado;
 5. los deltas se consolidan mediante D-023 y D-046;
 6. el estado resultante, si es válido, alimenta la onda siguiente.
 
 Las vinculaciones se fijan al comienzo de la onda. Cambios de pertenencia, activaciones o suspensiones producidos durante ella solo alteran la siguiente. Ningún bloque observa deltas parciales de otro bloque.
 
-Para una vinculación con memoria, los disparos comparan su valor en las instantáneas de inicio de dos ondas consecutivas conforme a D-041. `when e` detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$; `when e changes` compara directamente ambos valores y puede pulsar en ondas consecutivas.
+Para una vinculación con memoria, los disparos comparan valores en las instantáneas de inicio de dos ondas consecutivas conforme a D-041 y D-058. Un `when e` puramente booleano detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$; `e changes` compara directamente ambos valores y puede pulsar en ondas consecutivas. `and` y `or` componen pulsos de cambio y transiciones booleanas sin convertirlos en estado persistente.
 
-Una vinculación que no estaba presente en la primera instantánea materializada por `start with` se incorpora al conjunto en la primera onda posterior en que resulte activa. Esa onda inicializa su memoria sin dispararla. Su primer disparo posible se produce en la onda siguiente. Las vinculaciones presentes desde la primera instantánea son la excepción expresa: un `when` booleano comienza con anterior virtual `false` y puede disparar durante la estabilización inicial.
+Una vinculación que no estaba presente en la primera instantánea materializada por `start with` se incorpora al conjunto en la primera onda posterior en que resulte activa. Esa onda inicializa toda su memoria temporal sin dispararla. Su primer disparo posible se produce en la onda siguiente. Las vinculaciones presentes desde la primera instantánea son la excepción expresa: cada rama booleana elevada comienza con anterior virtual `false` y puede pulsar durante la estabilización inicial; `changes` y `old` comparan esa instantánea consigo misma.
 
 Una resolución termina cuando una onda no produce efectos ni nuevas consecuencias pendientes. Un ciclo u oscilación detectados producen `failed`; un límite de recursos es una salvaguarda técnica distinguible, no una definición alternativa de estabilización.
 
@@ -63,3 +64,5 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 6. Una vinculación inicial verdadera dispara durante la estabilización de `start with`.
 7. Una vinculación creada en una onda toma línea base en la siguiente y solo puede disparar a partir de la posterior.
 8. Dos cambios netos consecutivos producen dos pulsos `changes`.
+9. Dos activadores unidos por `and` solo disparan cuando ambos pulsan en la misma onda.
+10. Un cambio unido mediante `or` a una transición booleana preserva cualquiera de los dos pulsos.

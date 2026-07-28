@@ -504,14 +504,16 @@ Define:
 - Vinculaciones `on` exclusivamente individuales.
 - Participantes relacionados mediante `in`.
 - `when`.
-- `changes`.
+- Sufijo temporal `changes` y su precedencia.
+- Composición de activadores mediante `and` y `or`.
 - Transición `false → true`, pulsos sin estado y cambios netos entre instantáneas.
+- `old` sobre la onda anterior dentro de `when` e `if`.
 - `if`.
 - `then`.
 - Estado anterior virtual en `start with` y línea base sin disparo para vinculaciones posteriores.
 - Creación y eliminación de vinculaciones.
 
-Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
+Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]].
 
 ## 23. Reglas `always`
 
@@ -642,7 +644,7 @@ Define:
 
 - Instantánea de una onda.
 - Vinculaciones activas.
-- Detección de transiciones.
+- Evaluación de activadores temporales.
 - Cálculo simultáneo de consecuencias.
 - Combinación de efectos.
 - Paso a la onda siguiente.
@@ -657,7 +659,7 @@ $$
 \langle W_{i+1}, B_{i+1}, P_{i+1} \rangle
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
+Base normativa migrada: [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]] y [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]].
 
 ## 30. Restricciones, `after` y `old`
 

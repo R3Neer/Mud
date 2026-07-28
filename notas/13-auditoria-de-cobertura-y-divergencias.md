@@ -56,13 +56,13 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 29 | Precedencia | Migrada como base; ampliación en Q-001 | D-049 |
 | 30 | Literales numéricos y `_` | Sustituida y migrada | D-028, D-034, D-050 |
 | 31 | Reglas booleanas | Sustituida y migrada | D-022, D-025, D-041 |
-| 32 | Reglas reactivas | Sustituida y migrada | D-025, D-041 |
+| 32 | Reglas reactivas | Sustituida y migrada | D-025, D-041, D-058 |
 | 33 | Reglas `always` | Sustituida y migrada | D-025, D-041 |
-| 34 | Transición de `when` | Migrada | D-041, D-045 |
-| 35 | `changes` | Migrada | D-041 |
+| 34 | Transición de `when` | Migrada | D-041, D-045, D-058 |
+| 35 | `changes` | Sustituida y migrada | D-041, D-058 |
 | 36 | Acciones | Sustituida y migrada | D-025, D-036, D-042 |
 | 37 | `after` | Migrada | D-042 |
-| 38 | `old` | Migrada | D-042 |
+| 38 | `old` | Ampliada y migrada | D-042, D-058 |
 | 39 | Acciones elementales | Migrada | D-042 |
 | 40 | Acciones compuestas | Migrada | D-042 |
 | 41 | Formas exclusivas de `then` | Migrada | D-042 |
