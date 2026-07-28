@@ -323,11 +323,12 @@ Archivo previsto: `13-familias-cerradas.md`
 
 Define:
 
-- `values`.
-- `ordered values`.
-- Identidad nominal.
+- `family`.
+- `ordered` contextual delante de `family`.
+- Miembros como valores nominales sin identidad ni ciclo de vida runtime.
+- Anclas estáticas `family::*`.
 - Campos comunes y específicos.
-- Herencia de familias.
+- Prohibición de especialización y herencia entre familias.
 - Enumeración finita.
 
 Base normativa migrada: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].

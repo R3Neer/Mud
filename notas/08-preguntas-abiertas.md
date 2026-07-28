@@ -303,11 +303,11 @@ Debe decidirse:
 - Si una acción `rejected` constituye por defecto un error del escenario o un resultado observable.
 - Cómo se exponen la causa y la traza sin convertir diagnósticos en valores ordinarios del mundo.
 
-### Q-024 — Familias cerradas
+### Q-024 — Datos asociados a miembros de una `family`
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
-Las familias cerradas son nominales, finitas y enumerables; `ordered values` añade el orden declarado y pueden existir campos comunes. Permanecen abiertos los campos específicos por alternativa, la especialización entre familias y su encaje ontológico exacto con el dominio unificado de `thing`.
+`family` ya es una declaración nominal independiente de `thing`; sus miembros son valores finitos y enumerables sin identidad ni ciclo de vida runtime, y `ordered family` añade orden semántico. Permanece abierto si los miembros pueden asociar datos inmutables comunes o específicos y, en tal caso, cuál es su sintaxis, construcción, acceso e igualdad.
 
 ### Q-025 — Destrucción de `thing` estáticas
 
