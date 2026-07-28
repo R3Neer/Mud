@@ -458,6 +458,8 @@ Define:
 - Prohibición de enumerar intervalos `Rumber`.
 - Enumeración de aliases estructurales como productos cartesianos lexicográficos.
 
+Base normativa migrada: [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]].
+
 ## 21. Reglas booleanas
 
 Archivo previsto: `21-reglas-booleanas.md`
@@ -472,6 +474,8 @@ Define:
 - Dominios fuera de rango.
 - Dependencias y memorización.
 - Borrado estructural cuando la declaración no sea efectiva.
+
+Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
 
 ## 22. Reglas reactivas
 
@@ -488,6 +492,8 @@ Define:
 - Estado anterior por vinculación.
 - Creación y eliminación de vinculaciones.
 
+Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
+
 ## 23. Reglas `always`
 
 Archivo previsto: `23-reglas-always.md`
@@ -499,6 +505,8 @@ Define:
 - Estados en que deben comprobarse.
 - Incumplimiento y resultado de resolución.
 - Dependencias.
+
+Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
 
 ## 24. Frontera pública: `action`, `look` y `message`
 
@@ -522,6 +530,8 @@ Define:
 - Propiedades públicas tipadas y calculadas.
 - Evaluación diferida de las propiedades del mensaje tras la estabilización.
 - Multiplicidad, orden, deduplicación, rollback y entrega.
+
+Bases normativas migradas: [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]] y [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
 
 ## 25. Efectos
 
@@ -626,6 +636,8 @@ $$
 \langle W_{i+1}, B_{i+1}, P_{i+1} \rangle
 $$
 
+Base normativa migrada: [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
+
 ## 30. Restricciones, `after` y `old`
 
 Archivo previsto: `30-restricciones-finales.md`
@@ -721,6 +733,8 @@ Define:
 - Aciclicidad del grafo de admisibilidad.
 - Aleatoriedad reproducible.
 
+Base normativa migrada: [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]].
+
 ## 36. Alcanzabilidad `eventually`
 
 Archivo previsto: `36-eventually.md`
@@ -734,6 +748,8 @@ Define:
 - Múltiples acciones.
 - Semántica existencial del azar.
 - Estrategia BFS cuando sea normativa.
+
+Base normativa migrada: [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]].
 
 ## 37. Finitud, enumerabilidad y estado relevante
 

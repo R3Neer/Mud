@@ -173,6 +173,8 @@ Se vincula automáticamente con `on`, no tiene efectos y debe ser verdadera en t
 
 Aunque compartan la palabra `rule`, estas tres formas tienen contratos y ciclos de vida distintos. El AST debería representarlas como variantes explícitas, no como una estructura permisiva con muchos campos opcionales.
 
+El contrato normativo completo de cada variante pertenece a [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
+
 ## Acciones
 
 Una acción es la API semántica de escritura. Declara:
@@ -185,6 +187,8 @@ Una acción es la API semántica de escritura. Declara:
 - Poscondición `after`.
 
 Una acción no se activa sola. Se solicita desde el exterior o desde una acción compuesta. Su resultado es `accepted`, `rejected` o `failed`; la semántica de esos resultados pertenece a [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md).
+
+La separación entre acciones elementales y compuestas, la raíz simultánea, `old`, `after`, rollback y resultados pertenecen a [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
 ## Salidas: `look` y `message`
 

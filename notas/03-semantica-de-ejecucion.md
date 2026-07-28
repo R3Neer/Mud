@@ -137,6 +137,8 @@ Casos de `failed`:
 
 Toda salida distinta de `accepted` deja el mundo exactamente como estaba. Esta consecuencia está fuertemente implicada por la atomicidad y debe escribirse como regla normativa explícita.
 
+Esta consecuencia ya es normativa en [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]]. Los contratos de reglas, especulación, alcanzabilidad, ondas, conflictos, iteración y azar se consolidan respectivamente en [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]], [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]] y [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]].
+
 ## Conflictos
 
 La especificación menciona asignaciones idénticas, asignaciones distintas, combinaciones aditivas y multiplicativas y operaciones de colección. Falta una tabla normativa que, para cada par de efectos concurrentes, determine:

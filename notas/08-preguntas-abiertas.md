@@ -20,9 +20,9 @@ Hay que definir comentarios, sangría irrelevante, recuperación de errores, pre
 
 ¿Qué estado lee cada instrucción de un `then` elemental y cada hoja de una acción compuesta? ¿Cómo se combinan efectos de una misma raíz?
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]].
 
-Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la instantánea común y no observa deltas parciales ajenos. Falta completar la semántica de acciones compuestas, lecturas intermedias y efectos no estructurales.
+Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la instantánea común y no observa deltas parciales ajenos. Las hojas de una acción compuesta leen el mismo estado inicial y forman una raíz simultánea. Falta una semántica operacional que precise las lecturas intermedias y todas las combinaciones del álgebra de efectos.
 
 ### Q-003 — Puntos de validación
 
@@ -36,29 +36,33 @@ La cardinalidad final se demuestra estáticamente para cada `then` y para toda c
 
 ### Q-004 — Rollback de `rejected`
 
-¿Se declara normativamente que un `after` falso revierte raíz y ondas igual que un `failed`?
+Estado: **cerrada** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
-La atomicidad lo implica, pero debe quedar explícito.
+Todo resultado distinto de `accepted`, incluido un `after` falso, restaura exactamente el estado estable anterior y no publica mensajes ni efectos externos.
 
 ### Q-005 — Identidad y ciclo de vida de vinculaciones
 
 ¿Cómo se identifica una vinculación `on`, cuál es el valor anterior de `when` al crearla y cuándo se elimina su memoria?
 
-Bloquea el runtime reactivo.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
+
+La transición se memoriza por vinculación; las vinculaciones se fijan al inicio de cada onda y sus altas o bajas surten efecto en la siguiente. Falta definir su identidad canónica, valor inicial y política de conservación de memoria.
 
 ### Q-006 — Conflictos
 
 ¿Cuál es la matriz completa de compatibilidad entre asignaciones, incrementos, multiplicaciones y operaciones estructurales concurrentes?
 
-Estado: **parcialmente decidida** para efectos estructurales mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]].
 
-Sin una matriz completa para asignaciones y actualizaciones aritméticas, la determinación del resto del resultado todavía puede filtrarse desde el orden de implementación.
+Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles y el núcleo estructural. Falta completar la matriz para colecciones, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados.
 
 ### Q-007 — Fallos técnicos
 
 ¿Qué estructura tiene un error técnico y cómo se distingue de `failed` semántico, de un límite de recursos y de un defecto del runtime?
 
-Debe existir un contrato estable para CLI, plugin y materializaciones.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]] y [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]].
+
+Un fallo semántico revierte la acción y se propaga en `allowed`; no equivale a rechazo ni falsedad. Un límite de recursos o defecto interno debe distinguirse de él. Falta el contrato estable de representación para CLI, plugin y materializaciones y la tabla de errores en expresiones ordinarias.
 
 ### Q-008 — Protocolo Git y `READ`
 
