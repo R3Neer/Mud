@@ -42,7 +42,7 @@ create thing Alexandria as City {
 
 La lista posterior a `as` sigue denotando un conjunto finito de antecesores directos sin prioridad por posición. El operador booleano `is` conserva su semántica: consulta la clausura reflexiva y transitiva de esa relación.
 
-`as` deja de ser un operador de conversión explícita. D-030 fija posteriormente `to` para conversiones cuantitativas compatibles.
+`as` deja de ser un operador de conversión explícita. D-030 fija posteriormente la rama cuantitativa de `to` y D-032 añade el casting nominal de aliases compatibles.
 
 ### Matriz de participantes
 

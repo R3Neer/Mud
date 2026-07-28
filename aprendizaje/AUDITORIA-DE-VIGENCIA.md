@@ -44,6 +44,10 @@ Una unidad nueva o revisada debe comprobar, cuando el tema sea aplicable, que:
 - Distingue representaciones numéricas básicas de magnitudes y no introduce sufijos de tipo.
 - Usa `:=` para derivación dimensional, `in` para unidad de expresión y `to` para conversión cuantitativa.
 - Solo presenta ciclos mediante un dominio de punto `[a..b cycle)`.
+- Presenta todos los aliases como tipos nominales de valores inmutables y sin ciclo de vida runtime.
+- Usa `:=` para aliases definidos por expresión de tipo y reserva el bloque para componentes ordenados.
+- Distingue construcción contextual de literales y casting nominal explícito mediante `to`.
+- No permite reordenar componentes nombrados ni comparar aliases nominales distintos sin conversión.
 
 ## Autoridad
 

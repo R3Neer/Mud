@@ -6,7 +6,7 @@
 - Líneas: 3652
 - SHA-256 original previo a las anotaciones: `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`
 - Copia histórica anotada: 3773 líneas
-- SHA-256 de la copia anotada: `C076865A962792DE5D12F82D3CDFED733ABCAA0D5518F0F1D3E84C593037853C`
+- SHA-256 de la copia anotada: `DBE5AF332F43E063E7DD955EA87701CCAB0795892A3827812E5F55AE935A82FC`
 - Documentos relacionados: [[notas/11-trazabilidad-de-la-fuente]], [[notas/10-registro-de-decisiones]], [[especificacion/README]]
 
 ## Conclusión
@@ -47,7 +47,7 @@ Una entrada en [[especificacion/README]] solo indica que habrá un capítulo. No
 | 3 | Clases de declaración | Resumido; varios ciclos de vida han sido sustituidos después | Capítulos 02, 11 a 24 y ADR de ciclo de vida |
 | 4 a 9 | Archivos, imports, nombres, participantes, llamadas y anclas | Resumido; faltan gramática, resolución formal y diagnósticos | Capítulos 05 a 09, 21 y 24 |
 | 10 | Constructos e herencia | Parcialmente formalizado y ampliamente sustituido por D-014 a D-018 | Capítulos 04 y 11 |
-| 11 y 12 | Aliases y familias cerradas | Resumido; el ciclo de vida de aliases se ha sustituido deliberadamente | Capítulos 12 y 13 |
+| 11 y 12 | Aliases y familias cerradas | El sistema de aliases está decidido por D-031–D-033; las familias cerradas siguen resumidas | Capítulos 12 y 13 |
 | 13 a 19 | Campos, tipos básicos, conversiones, mutabilidad, colecciones, diccionarios y dominios | Parcialmente decidido; D-017, D-019 y D-028–D-030 sustituyen tipos, conversiones y límites, pero diccionarios y dominios calculados siguen resumidos | Capítulos 10 y 14 a 17 |
 | 20 a 30 | Magnitudes, prefijos, operaciones, puntos, operadores, intervalos, precedencia y literales | El núcleo cuantitativo está sustituido por D-028–D-030; permanecen abiertos el catálogo léxico, formatos, `Money`, la matriz completa de operadores y la iteración de intervalos | Capítulos 18 a 20 |
 | 31 a 35 | Tres clases de regla, `when` y `changes` | Resumido; el borrado de reglas inactivas es una decisión posterior | Capítulos 21 a 23 y 29 |
@@ -103,9 +103,11 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | `Thing` abstractas | No podían crearse | Pueden activarse mediante `create abstract thing` | D-016, D-021 y D-025 |
 | Predeterminados | Tabla parcial y tipos sin predeterminado universal | Todo tipo bien formado posee predeterminado | D-017 |
 | Mutabilidad singular | La conversación detectó una excepción entre mutabilidad exterior e interior | Ambos permisos son ortogonales también en `[1]` | D-019 |
-| Alias y `create` | Un alias no podía crearse | Las declaraciones de alias tienen ciclo de vida efectivo; sus valores siguen sin identidad | D-021 |
+| Alias y `create` | Un alias no podía crearse | D-021 introdujo ciclo de vida, pero D-031 lo retira: un alias vuelve a ser un tipo estático nominal y no admite `create` ni `destroy` | D-021 y D-031 |
 | Reglas y `create` | Las reglas no tenían ciclo de vida dinámico | Reglas booleanas, reactivas y `always` pueden activarse y destruirse | D-021 |
-| Definiciones de reglas y aliases | No existía activación separada de una definición | Una definición completa única y activaciones posteriores mediante `create Nombre` | D-024 |
+| Definiciones de reglas y aliases | No existía activación separada de una definición | Las reglas poseen definición única y activación mediante `create Nombre`; los aliases solo poseen declaración estática | D-024 y D-031 |
+| Nominalidad de aliases | Nominalidad parcial con literales y comparaciones insuficientemente contextuales | Todos son nominales; literales dirigidos por contexto, casting estructural con `to` y comparación sin coerción implícita | D-031 y D-032 |
+| Finitud y claves de aliases | Claves y finitud descritas informalmente | Clave única compuesta, azúcar de acceso y producto cartesiano lexicográfico para componentes finitos enumerables | D-033 |
 | Regla booleana inactiva | No contemplada | Su aparición se borra estructuralmente de la fórmula | D-022 |
 | Destrucción | Podía fallar por referencias o cardinalidad | Suspensión lógica reversible con conservación del contenido almacenado | D-021 |
 | Propiedades dinámicas | `add` y `remove` solo operaban sobre colecciones | También añaden y eliminan propiedades; `remove` sí pierde su contenido | D-021 |
@@ -122,7 +124,7 @@ Dentro de `especificacion/`:
 - Los capítulos 01 y 02 son esqueletos.
 - Los capítulos 05 a 48 existen únicamente como índice previsto.
 
-Los ADR D-014 a D-030 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
+Los ADR D-014 a D-033 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
 
 ## Regla de conservación a partir de esta auditoría
 

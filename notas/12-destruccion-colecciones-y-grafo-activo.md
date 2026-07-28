@@ -98,13 +98,9 @@ Este mecanismo:
 
 ## Aliases
 
-Destruir un alias suspende:
+D-031 retira los aliases del ciclo de vida runtime. `destroy AliasName` y cualquier forma de `create alias` son errores estáticos.
 
-- Sus componentes.
-- Las propiedades cuyo tipo depende de él.
-- Las declaraciones cuyos participantes o dominios necesitan el alias.
-
-Los valores estructurales permanecen como cargas de sus propiedades almacenadas. No adquieren identidad runtime por ello.
+Un alias es un tipo nominal declarado estáticamente. Sus valores son inmutables y carecen de identidad runtime; por tanto, no existen componentes suspendidos, cargas latentes por inactividad del tipo ni restauración de su declaración.
 
 ## Participantes
 

@@ -1,16 +1,19 @@
 # ADR-021 — Ciclo de vida lógico y suspensión por dependencias
 
-- Estado: Vigente
+- Estado: Vigente excepto para aliases, sustituidos por D-031
 - Fecha: 2026-07-27
-- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]]
+- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]]
 - Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de constructos|Q-049]]
 - Decisiones sustituidas parcialmente: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]]
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 12, 21 a 25 y 32
+- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
 
 ## Contexto
 
 > [!note] Vocabulario histórico
 > D-025 sustituyó `construct`/`from` por `thing`/`as` e intercambió los usos de `on` y `for`. La semántica de ciclo de vida de este ADR sigue vigente; sus ejemplos conservan la sintaxis histórica.
+
+> [!warning] Alcance sustituido
+> D-031 retira los aliases de este ciclo de vida. Un alias es un tipo nominal estático y no admite `create`, `destroy`, suspensión ni restauración.
 
 Una semántica que elimina permanentemente estado al ejecutar `destroy` obliga a podar colecciones, reparar cardinalidades, fabricar predeterminados y decidir si la recreación recupera información antigua. También confunde dos intenciones distintas:
 
@@ -75,19 +78,17 @@ Los inicializadores del cuerpo de `create` se aplican cuando la carga se materia
 
 - Constructos concretos.
 - Constructos abstractos.
-- Aliases.
 - Reglas booleanas.
 - Reglas reactivas.
 - Reglas `always`.
 
 No operan sobre:
 
+- Aliases.
 - Acciones.
 - Magnitudes.
 
 Las acciones forman la API estable de escritura. Las magnitudes forman parte del sistema dimensional estático.
-
-Los valores de un alias continúan siendo estructurales y sin identidad individual. La identidad que se activa o destruye es la declaración del alias, no cada valor.
 
 ## Sintaxis superficial
 
@@ -98,11 +99,6 @@ create construct Kingdom {
 }
 
 create abstract construct Place {
-}
-
-create alias Coordinate {
-    x: Integer
-    y: Integer
 }
 
 create rule CanEnter on Person {
@@ -118,13 +114,12 @@ create always rule ValidKingdom for Kingdom {
 }
 ```
 
-Conforme a D-024, cada regla y alias tiene una única definición completa. Las activaciones adicionales omiten categoría y cuerpo:
+Conforme a D-024, cada regla tiene una única definición completa. Las activaciones adicionales omiten categoría y cuerpo:
 
 ```mud
 create CanEnter
 create OpenGate
 create ValidKingdom
-create Coordinate
 ```
 
 Los constructos conservan cuerpos fragmentarios y no admiten esta forma abreviada.
@@ -133,7 +128,6 @@ Los constructos conservan cuerpos fragmentarios y no admiten esta forma abreviad
 
 ```mud
 destroy Kingdom
-destroy Coordinate
 destroy CanEnter
 ```
 
@@ -182,7 +176,7 @@ destroy Kingdom
 
 la propiedad `King.kingdom` deja de pertenecer a $\operatorname{Effective}(W)$, pero continúa almacenada junto con `Panama`. Al recrear `Kingdom`, vuelve a ser efectiva con la misma carga.
 
-La estructura propia de un constructo destruido y los componentes de un alias destruido siguen la misma regla: desaparecen de la proyección efectiva y permanecen almacenados.
+La estructura propia de un constructo destruido desaparece de la proyección efectiva y permanece almacenada.
 
 ## Participantes y declaraciones dependientes
 
@@ -313,7 +307,7 @@ La suite deberá cubrir:
 2. Restauración exacta tras recrear el tipo.
 3. Pérdida de carga tras `remove`.
 4. Suspensión completa de reglas y acciones con participantes de tipo inactivo.
-5. Desaparición y restauración de componentes de alias.
+5. Rechazo de `create` y `destroy` aplicados a un alias, conforme a D-031.
 6. Compresión y restauración del grafo efectivo.
 7. Conservación de propiedades propias de descendientes.
 8. Ausencia de capturas implícitas.

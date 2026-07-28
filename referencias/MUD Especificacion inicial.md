@@ -32,7 +32,7 @@ La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0C
 | 3, 5 y 74 | El catálogo y el léxico cambian: `thing` sustituye a `construct`; aparecen `look` y `message`; `as` declara especialización. Véanse D-025 y D-027. |
 | 6–8, 31–33 y 36 | Se intercambian `on` y `for`: `on` corresponde a observadores automáticos; `for`, a acciones, reglas booleanas y `look`. Véase D-025. |
 | 9, 10, 63–65 y ejemplos relacionados | El modelo ya no separa clases e instancias; las `thing` forman un único dominio. La especialización se declara con `as` y se consulta con `is`. Véanse D-014–D-016 y D-025. |
-| 3.5 y 11 | Los aliases y las reglas poseen ciclo de vida lógico; cada regla y alias tiene una única definición completa y puede activarse mediante `create Nombre`. Véanse D-021 y D-024. |
+| 3.5, 11 y usos relacionados | D-031–D-033 redefinen los aliases como tipos nominales inmutables y estáticos: usan `:=` o bloque, no admiten `create`/`destroy`, construyen literales por contexto, usan casting nominal `to` y enumeran productos finitos lexicográficamente. |
 | 14–15, 20–28, 30, 59 y ejemplos cuantitativos | El sistema cuantitativo ha sido sustituido: `Bool` reemplaza `Boolean`; `Percentage` deja de ser básico; no hay sufijos numéricos; las magnitudes, unidades, intervalos, ciclos, `in` y `to` se rigen por D-028–D-030. |
 | 16 | La mutabilidad exterior y la capacidad interior son ortogonales incluso para `[1]`; no existe una excepción singular. Véase D-019. |
 | 17, 30, 48, 56 y 59 | No existe `[reflexive]`; una colección de tipo `T` exige $c\neq T\land c\ \mathsf{is}\ T$. La cardinalidad final se demuestra por `then` y consolidación. Véase D-026. |
@@ -233,7 +233,7 @@ Las consultas eventually tienen restricciones adicionales y solo pueden compilar
  
 ## 3. Declaraciones principales
 > [!warning] Catálogo parcialmente sustituido
-> D-025 sustituye la palabra reservada `construct` por `thing`; D-027 añade `look` y `message`. Las restricciones de ciclo de vida de reglas y aliases también cambiaron mediante D-021 y D-024.
+> D-025 sustituye la palabra reservada `construct` por `thing`; D-027 añade `look` y `message`. D-031 retira los aliases del ciclo de vida runtime; la activación abreviada de D-024 queda reservada a reglas.
 MUD tiene cuatro declaraciones principales de dominio:
 ```
 construct
@@ -1106,8 +1106,8 @@ La fusión exige compatibilidad de:
 ⸻
  
 ## 11. Aliases y valores estructurales
-> [!warning] Ciclo de vida sustituido
-> Los valores de alias siguen siendo estructurales y sin identidad individual, pero la declaración de un alias puede activarse y suspenderse. Cada alias posee una única definición completa; activaciones adicionales usan `create Nombre`. Véanse D-021 y D-024.
+> [!warning] Sistema de aliases sustituido
+> D-031–D-033 son la autoridad actual. Todos los aliases son tipos nominales inmutables y sin ciclo de vida runtime. Las expresiones de tipo usan `:=`; los literales son contextuales; dos literales estructurales desnudos no se comparan; `to` realiza casting nominal compatible; la forma nombrada conserva el orden; y la enumeración finita usa el producto cartesiano lexicográfico.
 ## 11.1 Alias estructural
 ```
 alias Square {
@@ -1150,7 +1150,7 @@ square.rank
 (E, Four) == (E, Four)
 
 ```
-es verdadero.
+Esta comparación histórica es inválida porque ninguno de los literales aporta contexto nominal. Debe tiparse al menos uno como `Square`.
 ## 11.6 Tipos nominales y valores estructurales
 Aliases diferentes no son intercambiables automáticamente aunque tengan los mismos componentes.
 ## 11.7 Orden lexicográfico
@@ -1166,7 +1166,7 @@ exists destination in Square:
 ```
 ## 11.9 Alias simple
 ```
-alias Board =
+alias Board :=
     Square -> Piece [0..32 ordered]
 
 ```
@@ -1330,7 +1330,7 @@ No está restringido automáticamente a 0%..100%.
  
 ## 15. Conversiones
 > [!warning] Operador retirado para conversiones
-> `as` queda reservado para declarar especialización entre `thing`. La conversión cuantitativa explícita usa `to`; `in` solo cambia la unidad de presentación. No existe una política de redondeo local por conversión. Véase D-030.
+> `as` queda reservado para declarar especialización entre `thing`. `to` posee una rama cuantitativa y otra de casting nominal de alias estructuralmente compatible; `in` solo cambia la unidad de presentación. No existe una política de redondeo local por conversión. Véanse D-030 y D-032.
 Implícitas:
 ```
 Natural → Integer
@@ -2521,7 +2521,7 @@ eventually exige demostración previa más fuerte.
  
 ## 50. Efectos permitidos
 > [!warning] Catálogo ampliado
-> `add` y `remove` también operan sobre propiedades. `create` y `destroy` alcanzan reglas y aliases, con las restricciones de D-021 y D-024.
+> `add` y `remove` también operan sobre propiedades. `create` y `destroy` alcanzan reglas, pero D-031 prohíbe aplicarlos a aliases.
 ```
 =
 +=
@@ -2691,7 +2691,7 @@ Se mantienen:
  
 ## 55. Creación runtime
 > [!warning] Sección sustituida
-> La sintaxis vigente es `create [abstract] thing A [as B, ...] { ... }`. Admite raíces, abstractas y especialización múltiple; la identidad queda reservada globalmente y puede reactivarse. Reglas y aliases usan una definición completa única y `create Nombre` para activaciones posteriores. Véanse D-016, D-021, D-024 y D-025.
+> La sintaxis vigente es `create [abstract] thing A [as B, ...] { ... }`. Admite raíces, abstractas y especialización múltiple; la identidad queda reservada globalmente y puede reactivarse. Las reglas usan una definición completa única y `create Nombre` para activaciones posteriores. Los aliases no admiten creación. Véanse D-016, D-021, D-024, D-025 y D-031.
 Solo de constructos concretos:
 ```
 create EgyptianArmy AirForce {

@@ -86,7 +86,7 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 ## Fuera de v0
 
 - Herencia, especialmente múltiple.
-- Aliases estructurales.
+- Aliases nominales estructurales, inmutables y estáticos.
 - Familias cerradas.
 - Colecciones y diccionarios.
 - Creación y destrucción runtime.

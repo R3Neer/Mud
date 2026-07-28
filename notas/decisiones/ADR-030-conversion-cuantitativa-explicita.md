@@ -1,8 +1,9 @@
 # ADR-030 — Conversión cuantitativa explícita mediante `to`
 
-- Estado: Vigente
+- Estado: Vigente para la rama cuantitativa de `to`; ampliada por D-032
 - Fecha: 2026-07-28
 - Preguntas relacionadas: Q-019, Q-053
+- Ampliada por: [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
 ## Contexto
@@ -32,7 +33,7 @@ averagePopulation: Population :=
     population / regions to Population
 ```
 
-`to` no es un casting general. Deben rechazarse conversiones como:
+En su rama cuantitativa, `to` no es un casting general. D-032 añade por separado el casting nominal de aliases estructuralmente compatibles. Continúan rechazándose conversiones como:
 
 ```mud
 army to Kingdom
@@ -77,6 +78,7 @@ amount to Money
 - El sistema de tipos debe probar compatibilidad numérica y dimensional antes de aceptar `to`.
 - Una conversión inválida conocida estáticamente se diagnostica en compilación; una violación dependiente del valor deberá tener un resultado dinámico explícito todavía por integrar con la semántica general de fallos.
 - `as` deja definitivamente de participar en conversiones.
+- D-032 añade la rama nominal sin alterar estas reglas cuantitativas.
 
 ## Verificación futura
 

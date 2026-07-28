@@ -1,0 +1,113 @@
+# ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
+
+- Estado: Vigente
+- Fecha: 2026-07-28
+- Sustituye parcialmente: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]]
+- Pregunta relacionada: Q-057
+- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], futuro `12-aliases.md`, futuro `25-efectos.md`
+
+## Contexto
+
+Las decisiones anteriores atribuyeron ciclo de vida a la declaración de un alias: podía definirse dentro de `create`, suspenderse mediante `destroy` y reactivarse con `create Nombre`. Esa semántica confundía una declaración estática de tipo con una entidad variable del mundo.
+
+Un alias debe proporcionar identidad nominal a valores, no identidad runtime ni estado mutable.
+
+## Decisión
+
+### Definición de tipo
+
+Un alias definido mediante una expresión de tipo usa `:=`:
+
+```mud
+alias PlayerName :=
+    Text
+
+alias Board :=
+    Square -> Piece [0..32 ordered]
+
+alias Path :=
+    Position [* ordered]
+```
+
+En este contexto, `:=` introduce una definición estática de tipo. No declara un campo calculado ni una evaluación runtime.
+
+Un alias estructural declara un bloque ordenado de componentes:
+
+```mud
+alias Square {
+    file: File
+    rank: Rank
+}
+```
+
+Cada componente:
+
+1. Es obligatorio.
+2. Ocupa una posición semántica según el orden de declaración.
+3. Forma parte de la estructura del alias.
+4. Puede declarar un dominio.
+5. No puede declarar `mut`.
+
+### Nominalidad
+
+Todo alias introduce un tipo nominal nuevo. Dos aliases distintos no son intercambiables automáticamente aunque sus representaciones normalizadas coincidan:
+
+```mud
+alias PlayerName :=
+    Text
+
+alias CityName :=
+    Text
+```
+
+`PlayerName`, `CityName` y `Text` son tres tipos diferentes. La representación común permite una conversión nominal explícita conforme a D-032, no una asignación implícita.
+
+### Inmutabilidad
+
+Un valor de alias es inmutable. No puede actualizarse uno de sus componentes:
+
+```mud
+square.file = B // inválido
+```
+
+Un campo con mutabilidad exterior puede sustituir el valor completo:
+
+```mud
+thing Piece {
+    mut square: Square
+}
+
+square = (B, Four)
+```
+
+La capacidad interior de colecciones que formen parte de la representación de un alias queda pendiente en Q-057; no se deduce de la mutabilidad exterior del alias.
+
+### Ausencia de identidad runtime
+
+La declaración posee un ancla estática para resolución y nominalidad, pero sus valores no poseen identidad runtime. Un alias:
+
+- No puede aparecer como objetivo de `create`.
+- No puede aparecer como objetivo de `destroy`.
+- No puede ser `abstract`.
+- No participa en herencia ni especialización.
+- No mantiene estado mutable propio.
+
+Los valores se comparan por tipo nominal y contenido. La declaración existe durante todo el programa bien formado y no forma parte de la proyección de actividad del mundo.
+
+## Consecuencias
+
+- D-021 continúa gobernando `thing` y reglas, pero deja de incluir aliases entre las categorías con ciclo de vida.
+- D-024 continúa exigiendo definición canónica y activación abreviada para reglas, pero deja de aplicarse a aliases.
+- El AST solo necesita `AliasDecl`; elimina `DefineAndCreateAlias` y cualquier efecto `create`/`destroy` de alias.
+- El runtime no necesita marcas de actividad, almacenamiento latente ni restauración para aliases.
+- Las propiedades y declaraciones que usan un alias no pueden quedar suspendidas por inactividad de ese alias.
+
+## Verificación futura
+
+1. Alias simple mediante `:=`.
+2. Alias de colección y diccionario mediante `:=`.
+3. Alias estructural con componentes ordenados.
+4. Rechazo de `mut` en un componente.
+5. Rechazo de actualización parcial de un valor.
+6. Sustitución completa desde un campo mutable.
+7. Rechazo de `create`, `destroy`, `abstract`, `as` e `is` aplicados como ciclo de vida o especialización de alias.

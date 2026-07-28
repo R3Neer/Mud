@@ -107,9 +107,9 @@ La fusión es idempotente respecto de la activación de identidad, pero no convi
 
 Si el constructo ya estaba activo en $W_i$, se conserva la regla de D-016: una regla cuya aplicabilidad exige esa creación no publica ninguno de sus efectos. Q-046 mantiene abiertos los casos generales de acciones y bloques con varias creaciones de disponibilidad mixta.
 
-## Varias activaciones de la misma regla o alias
+## Varias activaciones de la misma regla
 
-D-024 sustituye el conflicto dinámico que este ADR establecía inicialmente. Cada regla y alias posee una única definición completa; las demás apariciones son referencias de activación al mismo descriptor.
+D-024 sustituye el conflicto dinámico que este ADR establecía inicialmente. Cada regla posee una única definición completa; las demás apariciones son referencias de activación al mismo descriptor. D-031 retira los aliases del sistema de activación.
 
 Varias solicitudes concurrentes se consolidan idempotentemente:
 
@@ -162,8 +162,8 @@ La suite deberá cubrir:
 4. Un único inicializador entre varios fragmentos.
 5. Conflicto por dos inicializadores iguales y distintos.
 6. Conflicto de tipo, dominio, cardinalidad y mutabilidad.
-7. Rechazo estático de dos definiciones de la misma regla o alias.
-8. Consolidación idempotente de varias activaciones de la misma regla o alias.
+7. Rechazo estático de dos definiciones de la misma regla.
+8. Consolidación idempotente de varias activaciones de la misma regla.
 9. Creación y destrucción desde bloques distintos, con destrucción final.
 10. Orden inverso dentro de un único `then`.
 11. Efectos visibles únicamente en la oleada siguiente.

@@ -148,7 +148,7 @@ Falta decidir:
 - Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
 - Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
 
-D-023 añade que las creaciones concurrentes compatibles de un constructo ausente se fusionan. D-024 exige una única definición completa por regla y alias, y consolida idempotentemente sus activaciones concurrentes. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
+D-023 añade que las creaciones concurrentes compatibles de un constructo ausente se fusionan. D-024 exige una única definición completa por regla y consolida idempotentemente sus activaciones concurrentes. D-031 retira los aliases del sistema de `create` y `destroy`. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
 
 Bloquea la semántica operacional completa de `create`, los conjuntos de efectos y la atomicidad.
 
@@ -242,7 +242,7 @@ Detección semántica, salvaguarda técnica, diagnósticos y reproducibilidad.
 
 Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
 
-D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas y aliases: son idempotentes porque sus definiciones son únicas.
+D-023 establece el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-024 retira de esta categoría las activaciones coincidentes de reglas: son idempotentes porque sus definiciones son únicas. D-031 hace inaplicable el caso de aliases.
 
 D-026 endurece el caso de cardinalidad: el compilador debe demostrar la preservación local y consolidada; si no puede, rechaza conservadoramente el programa en vez de diferir el caso al runtime.
 
@@ -260,9 +260,9 @@ Un `message` detecta un hecho durante la resolución de una acción y evalúa su
 
 ### Q-053 — Conversiones explícitas
 
-Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]].
 
-`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles y `in` cambia la unidad de expresión. Falta integrar una violación de dominio dependiente del valor con la taxonomía general de fallos dinámicos.
+`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal entre representaciones estructuralmente compatibles; `in` cambia la unidad de expresión. Falta integrar una violación de dominio dependiente del valor con la taxonomía general de fallos dinámicos.
 
 ### Q-022 — Valores de retorno de acciones
 
@@ -327,6 +327,14 @@ Qué prefijos incorpora MUD, qué formas ASCII y Unicode reconoce, cómo se resu
 ### Q-055 — Formatos de magnitudes de punto
 
 Gramática de `format`, nombres y significado de componentes, parseo frente a impresión, unicidad de la representación, validación de anchuras y relación con calendarios y localización.
+
+### Q-056 — Forma normalizada y recursión de aliases
+
+Definición inductiva de la forma estructural normalizada, tratamiento de aliases anidados, admisión o rechazo de recursión directa e indirecta, decidibilidad de la compatibilidad y enumeración canónica de cada tipo componente.
+
+### Q-057 — Capacidad interior dentro de valores de alias
+
+Si una representación de alias contiene una colección de `thing`, decidir si puede declarar capacidad interior `[mut]` aunque el valor de alias sea inmutable, qué autoridad concede y cómo se conserva la distinción entre modificar un miembro alcanzado y reemplazar la colección contenida.
 
 ### Q-035 — Coste de `allowed`
 

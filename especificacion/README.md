@@ -209,7 +209,7 @@ Define la sintaxis completa de:
 - Efectos.
 - Bloques.
 - Llamadas.
-- Definiciones completas y activaciones abreviadas mediante `create Nombre`.
+- Definiciones completas de reglas y sus activaciones abreviadas mediante `create Nombre`.
 - Cuantificadores e iteraciones.
 
 La gramática completa ejecutable vivirá en `gramatica/mud.ebnf`. Este capítulo explicará ambigüedades, precedencia y desazucarado, pero no repetirá toda la EBNF.
@@ -224,7 +224,7 @@ Define las formas semánticamente relevantes después del parsing:
 - AST de tipos y dominios.
 - AST de expresiones.
 - AST de efectos.
-- Distinción entre definición con activación y referencia de activación.
+- Distinción entre definición de regla con activación y referencia de activación.
 - Distinción estructural entre las tres clases de regla.
 - Distinción entre acciones elementales y compuestas.
 - Nodos propios para `look`, `message` y propiedades públicas.
@@ -266,7 +266,7 @@ Define:
 - Magnitudes.
 - Subtipado mediante `is`.
 - Inferencia y ampliación de representaciones en operaciones cuantitativas.
-- Conversión cuantitativa explícita mediante `to`.
+- Dos familias explícitas de `to`: conversión cuantitativa y casting nominal estructural.
 - Igualdad y orden por tipo.
 
 Juicio principal:
@@ -291,20 +291,23 @@ Define:
 - Igualdad de identidad.
 - Canonicalización de identidades de `thing`.
 
-## 12. Aliases y valores estructurales
+## 12. Aliases nominales y valores estructurales
 
 Archivo previsto: `12-aliases.md`
 
 Define:
 
-- Alias estructural y simple.
-- Componentes.
-- Literales posicionales y nombrados.
-- Tipado nominal.
-- Igualdad estructural.
-- Orden lexicográfico.
-- Finitud y enumerabilidad.
-- Activación, suspensión y restauración de la declaración del alias sin identidad individual para sus valores.
+- Definición de tipo mediante `:=` y bloque estructural.
+- Componentes obligatorios, ordenados, con dominio y sin `mut`.
+- Nominalidad de todos los aliases.
+- Valores inmutables y ausencia de identidad runtime.
+- Prohibición de `create`, `destroy`, abstracción y especialización.
+- Literales contextuales posicionales y nombrados.
+- Casting nominal mediante `to` y compatibilidad de forma normalizada.
+- Igualdad por alias y contenido.
+- Orden lexicográfico cuando la representación está ordenada.
+- Claves compuestas y azúcar de acceso.
+- Finitud, enumerabilidad y producto cartesiano lexicográfico.
 
 ## 13. Familias cerradas de valores
 
@@ -364,6 +367,7 @@ Define:
 - Iteración por claves y entradas.
 - Orden canónico.
 - Operaciones totales.
+- Alias nominal como clave única compuesta y azúcar `map[c1, c2]`.
 
 ## 17. Dominios e intervalos
 
@@ -413,7 +417,9 @@ Define:
 - Operadores.
 - Precedencia y asociatividad.
 - Conversiones.
-- Distinción entre presentación en otra unidad mediante `in` y conversión cuantitativa mediante `to`.
+- Distinción entre presentación en otra unidad mediante `in`, conversión cuantitativa y casting nominal mediante `to`.
+- Construcción contextual de literales de alias.
+- Propagación bidireccional del tipo esperado entre un alias y un literal en comparaciones.
 - `old`.
 - `allowed`.
 - `eventually`.
@@ -435,6 +441,7 @@ Define:
 - Iteraciones secuenciales y simultáneas.
 - Filtros.
 - Terminación de intervalos.
+- Enumeración de aliases estructurales como productos cartesianos lexicográficos.
 
 ## 21. Reglas booleanas
 
@@ -513,7 +520,7 @@ Define:
 - Adición y retirada dinámica de propiedades.
 - `create`.
 - `destroy`.
-- Resolución de `create Nombre` a la definición canónica de una regla o alias.
+- Resolución de `create Nombre` a la definición canónica de una regla.
 - Efectos de bucles.
 - Conjuntos de lectura y escritura.
 - Compatibilidad y conflicto entre efectos.
@@ -628,7 +635,7 @@ Define:
 - Relación de compatibilidad de efectos.
 - Matriz normativa de conflictos.
 - Fusión parcial de fragmentos concurrentes de `thing`.
-- Consolidación idempotente de activaciones concurrentes de una regla o alias con definición única.
+- Consolidación idempotente de activaciones concurrentes de una regla con definición única.
 - Ciclos causales.
 - Oscilaciones.
 - Detección de repetición.

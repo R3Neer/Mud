@@ -14,7 +14,7 @@ MUD tiene seis declaraciones principales y una auxiliar:
 | `action` | Operación externa o composición atómica | Su declaración tiene ancla; no es un valor ordinario del mundo |
 | `look` | Consulta pública pura del estado estable | Su declaración tiene ancla; su resultado es un valor de salida |
 | `message` | Evento público detectado durante una resolución y materializado al estabilizar | Su declaración tiene ancla; cada ocurrencia es una salida |
-| `alias` | Valor estructural nominal o nombre de tipo | La declaración tiene ancla; sus valores no tienen identidad |
+| `alias` | Tipo nominal de valor simple, estructural o compuesto | La declaración tiene ancla estática; sus valores no tienen identidad runtime |
 
 Toda declaración tiene identidad semántica mediante un ancla. La última columna distingue esa identidad declarativa de las identidades y valores que pueden almacenarse en el mundo. El archivo es una unidad física; el namespace y el tipo de declaración forman parte del ancla.
 
@@ -27,11 +27,11 @@ Toda `thing` concreta denota una cosa con identidad y estado propio, y puede ser
 Hay que conservar tres relaciones distintas:
 
 - Las `thing` se comparan por identidad.
-- Los aliases se comparan por valor estructural.
+- Los aliases se comparan por tipo nominal y valor.
 - `as` declara antecesores directos en cabeceras estáticas y dinámicas.
 - `is` consulta especialización nominal no estricta: es reflexiva y transitiva, pero no es igualdad.
 
-Dos `thing` creadas durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con los mismos componentes son iguales. Aliases diferentes no son intercambiables aunque su forma coincida.
+Dos `thing` creadas durante la ejecución con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con el mismo contenido son iguales. Aliases diferentes no son intercambiables aunque su forma normalizada coincida; requieren casting nominal explícito mediante `to`.
 
 `create` puede activar una `thing` raíz, abstracta o concreta y relacionarla con cero o varios antecesores mediante `as`. El nombre introducido es una identidad global reservada, no una variable local ni una identidad fresca por ejecución. Si está ausente, se activa; después de destruirlo, una nueva creación reactiva la misma identidad. Cada antecesor añade la misma relación directa que una declaración estática con `as`, según [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]. El origen y el ciclo de vida no forman una segunda categoría ontológica.
 
@@ -45,15 +45,10 @@ Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio,
 
 ## Ciclo de vida declarativo
 
-`create` y `destroy` también pueden activar y suspender aliases y las tres clases de reglas. No operan sobre acciones ni magnitudes. `create` explicita la clase de declaración; `destroy` resuelve únicamente el nombre:
+`create` y `destroy` también pueden activar y suspender las tres clases de reglas. No operan sobre aliases, acciones ni magnitudes. `create` explicita la clase de declaración; `destroy` resuelve únicamente el nombre:
 
 ```mud
 create thing Dragon {
-}
-
-create alias Coordinate {
-    x: Integer
-    y: Integer
 }
 
 create rule FrozenGround on person: Person {
@@ -61,14 +56,12 @@ create rule FrozenGround on person: Person {
 }
 
 create FrozenGround
-create Coordinate
 
 destroy Dragon
-destroy Coordinate
 destroy FrozenGround
 ```
 
-Cada regla y alias tiene una única definición completa, ya sea una declaración inicial ordinaria o una definición incluida en `create`. Sus activaciones adicionales usan `create Nombre` sin categoría ni cuerpo y se resuelven a ese descriptor. Las `thing` conservan múltiples cuerpos fragmentarios y no admiten la activación abreviada, según [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
+Cada regla tiene una única definición completa, ya sea una declaración inicial ordinaria o una definición incluida en `create`. Sus activaciones adicionales usan `create Nombre` sin categoría ni cuerpo y se resuelven a ese descriptor. Las `thing` conservan múltiples cuerpos fragmentarios y no admiten la activación abreviada, según [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]].
 
 El mundo distingue información almacenada y proyección efectiva. `destroy` suspende la estructura de su objetivo y las declaraciones que tengan una dependencia dura de él, pero conserva descriptores y cargas. Una recreación restaura esa información. Por el contrario, `remove field from Thing` elimina la propiedad y su contenido almacenado.
 
@@ -83,6 +76,37 @@ remove Panama from King.kingdoms
 ```
 
 Las declaraciones creadas no capturan variables libres de su contexto creador. Pueden usar sus propios participantes y `given`, además de anclas globales. La definición completa pertenece a [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
+
+## Aliases nominales
+
+Un alias declara un tipo nominal de valor. Una expresión de tipo se introduce mediante `:=`:
+
+```mud
+alias PlayerName :=
+    Text
+
+alias Board :=
+    Square -> Piece [0..32 ordered]
+```
+
+Un alias estructural declara componentes obligatorios, ordenados e inmutables:
+
+```mud
+alias Square {
+    file: File
+    rank: Rank
+}
+```
+
+Los componentes pueden declarar dominios, pero no `mut`. El valor completo es inmutable; un campo mutable puede sustituirlo, no modificar uno de sus componentes.
+
+Los literales son contextuales. `"Ada"` puede construir directamente un `PlayerName` cuando ese es el tipo esperado, y `(E, Four)` puede construir un `Square`. Una expresión ya tipada no se convierte implícitamente: utiliza `to` si su forma normalizada es compatible. La rama nominal de `to` conserva el contenido y valida el dominio de destino; la cuantitativa continúa definida por D-030.
+
+La forma posicional y la nombrada siguen el orden de declaración. La forma nombrada no permite reordenar y todos los componentes deben aparecer exactamente una vez.
+
+La igualdad exige el mismo alias y el mismo contenido. Los operadores de orden requieren una representación ordenada; para aliases estructurales usan el orden lexicográfico de componentes. Un alias estructural cuyos componentes tengan dominios finitos y enumerables puede recorrerse como su producto cartesiano lexicográfico y puede actuar como clave única compuesta de un diccionario.
+
+Un alias no posee identidad ni ciclo de vida runtime, no participa en especialización y no admite `create` ni `destroy`. Las reglas completas pertenecen a [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]] y [[notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases|D-033]].
 
 ## Estado del mundo
 
@@ -178,7 +202,7 @@ La especificación incluye:
 
 - Tipos básicos no numéricos: `Text` y `Bool`.
 - Tipos numéricos básicos: `Natural`, `Integer`, `Number` y `Money`.
-- Aliases estructurales.
+- Aliases nominales simples, estructurales y compuestos.
 - Familias cerradas de valores.
 - Cardinalidades y colecciones.
 - Diccionarios.
@@ -189,7 +213,7 @@ Los tipos numéricos básicos determinan representación y no son magnitudes. Un
 
 Las unidades se identifican mediante `name` dentro de un bloque sin identificador de cabecera. Una magnitud no derivada con unidades declara una `root unit`; las alternativas y los nombres derivados se expresan mediante `unit := cantidad`. Una magnitud derivada combina automáticamente las unidades raíz de sus componentes y no puede declarar raíz.
 
-Los literales numéricos no tienen sufijos de tipo. `in` cambia la unidad de presentación de una cantidad y `to` convierte explícitamente valores cuantitativos compatibles. Los dominios declarados en cabeceras de magnitud usan límites numéricos desnudos interpretados en su representación canónica.
+Los literales numéricos no tienen sufijos de tipo. `in` cambia la unidad de presentación de una cantidad. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal de una representación compatible. Los dominios declarados en cabeceras de magnitud usan límites numéricos desnudos interpretados en su representación canónica.
 
 Una magnitud de punto se declara mediante `point over`. Solo estas magnitudes pueden usar el dominio cíclico `[a..b cycle)`. Las decisiones completas pertenecen a [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
 
