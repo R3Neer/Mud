@@ -124,7 +124,7 @@ citizens: Person [0..*, unique, ordered, mut]
 
 No se permite coma final. La omisión de cardinalidad equivale a `[1]`.
 
-Las colecciones compatibles admiten `|`/`union`, `&`/`intersection`, `-`/`except` y `^`/`xor`. Operan sobre multiplicidades, no concatenan:
+Las colecciones compatibles admiten `|`, `&`, `-` y `^`. Operan sobre multiplicidades, no concatenan:
 
 ```mud
 leftChars: Char [1..5] = ['a']
@@ -132,7 +132,7 @@ rightChars: Char [0..2] = empty
 combinedChars := leftChars | rightChars # Char [1..7]
 ```
 
-`unique`, `ordered` y el `mut` interior se propagan con la misma regla: unión y xor los conservan solo si aparecen en ambos operandos; intersección, si aparecen en cualquiera; diferencia, si aparecen en el izquierdo. El `mut` exterior nunca se infiere para un resultado calculado.
+`unique`, `ordered` y el `mut` interior se propagan con la misma regla: unión y diferencia simétrica los conservan solo si aparecen en ambos operandos; intersección, si aparecen en cualquiera; diferencia, si aparecen en el izquierdo. El `mut` exterior nunca se infiere para un resultado calculado.
 
 Un resultado con orden canónico se normaliza por ese orden. Con orden de inserción, se conserva estable el orden izquierdo y se incorporan después las ocurrencias adicionales derechas cuando la operación lo requiere.
 
@@ -482,16 +482,16 @@ De mayor a menor:
 | Nivel | Formas | Agrupación |
 | ---: | --- | --- |
 | 1 | acceso `.`, índice `[]`, llamada `()` | izquierda |
-| 2 | prefijos `old`, `allowed`, `!`, `not`, signo | derecha |
+| 2 | prefijos `old`, `allowed`, `not`, signo | derecha |
 | 3 | `*`, `/`, `%` | izquierda |
-| 4 | `+`, `-`, `except` | izquierda |
+| 4 | `+`, `-` | izquierda |
 | 5 | sufijos `to Type`, `in unit` | acumulativa |
 | 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, pertenencia `in` | restringida |
-| 7 | `and`, `&`, `intersection` | izquierda |
-| 8 | `or`, `|`, `union` | izquierda |
+| 7 | `and`, `&` | izquierda |
+| 8 | `or`, `|` | izquierda |
 | 9 | `xor`, `^` | izquierda |
-| 10 | `implies`, `=>` | derecha |
-| 11 | `iff`, `<=>` | cadena adyacente |
+| 10 | `=>` | derecha |
+| 11 | `<=>` | cadena adyacente |
 | 12 | `eventually ... through ...` | exterior |
 
 `to` y el `in` de unidad transforman el valor completo acumulado a su izquierda. El parser continúa después con el resultado:
@@ -533,12 +533,12 @@ se elaboran como:
 a < b and b < c
 ```
 
-La igualdad encadenada usa la misma regla. `iff` produce conjunciones de pares adyacentes. No se encadenan:
+La igualdad encadenada usa la misma regla. `<=>` produce conjunciones de pares adyacentes. No se encadenan:
 
 - `!=`
 - `is`
 - pertenencia `in`
-- `implies`
+- `=>`
 
 No se mezclan operadores distintos dentro de una misma cadena sin conjunciones explícitas.
 
@@ -550,7 +550,7 @@ No se mezclan operadores distintos dentro de una misma cadena sin conjunciones e
 "Hello, " | name
 ```
 
-No se admiten `&`, `^`, `-`, `intersection`, `xor` ni `except` sobre `Text`. Los aliases nominales de `Text` no adquieren concatenación implícita.
+No se admiten `&`, `^` ni `-` sobre `Text`. `xor` es exclusivamente lógico. Los aliases nominales de `Text` no adquieren concatenación implícita.
 
 ## `eventually`, `allowed` y azar
 

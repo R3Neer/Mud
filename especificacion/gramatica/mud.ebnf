@@ -536,8 +536,8 @@ domain-expression
     ::= expression ;
 
 eventually-expression
-    ::= iff-expression
-      | "eventually" , iff-expression , "through" , action-reference-list
+    ::= biconditional-expression
+      | "eventually" , biconditional-expression , "through" , action-reference-list
       ;
 
 action-reference-list
@@ -550,17 +550,19 @@ action-reference
       | receiver-tuple , "." , qualified-name
       ;
 
-iff-expression
-    ::= implies-expression , { iff-operator , implies-expression } ;
+biconditional-expression
+    ::= implication-expression
+        , { biconditional-operator , implication-expression }
+        ;
 
-iff-operator
-    ::= "iff" | "<=>" ;
+biconditional-operator
+    ::= "<=>" ;
 
-implies-expression
-    ::= xor-expression , [ implies-operator , implies-expression ] ;
+implication-expression
+    ::= xor-expression , [ implication-operator , implication-expression ] ;
 
-implies-operator
-    ::= "implies" | "=>" ;
+implication-operator
+    ::= "=>" ;
 
 xor-expression
     ::= or-expression , { xor-operator , or-expression } ;
@@ -572,13 +574,13 @@ or-expression
     ::= and-expression , { or-operator , and-expression } ;
 
 or-operator
-    ::= "or" | "|" | "union" ;
+    ::= "or" | "|" ;
 
 and-expression
     ::= comparison-expression , { and-operator , comparison-expression } ;
 
 and-operator
-    ::= "and" | "&" | "intersection" ;
+    ::= "and" | "&" ;
 
 comparison-expression
     ::= quantitative-expression , [ comparison-tail ] ;
@@ -618,7 +620,7 @@ arithmetic-operator
 
 arithmetic-expression
     ::= multiplicative-expression
-        , { ( "+" | "-" | "except" ) , multiplicative-expression }
+        , { ( "+" | "-" ) , multiplicative-expression }
         ;
 
 multiplicative-expression
@@ -630,7 +632,7 @@ prefix-expression
     ::= { prefix-operator } , postfix-expression ;
 
 prefix-operator
-    ::= "!" | "not" | "+" | "-" | "old" | "allowed" ;
+    ::= "not" | "+" | "-" | "old" | "allowed" ;
 
 postfix-expression
     ::= primary-expression

@@ -17,12 +17,16 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 | --- | --- |
 | Aritmética | `+`, `-`, `*`, `/`, `%` |
 | Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `in` |
-| Lógica | `!`/`not`, `&`/`and`, `|`/`or`, `^`/`xor`, `=>`/`implies`, `<=>`/`iff` |
-| Intervalos | `|`/`union`, `&`/`intersection`, `^`/`xor`, `-`/`except` |
-| Colecciones | `|`/`union`, `&`/`intersection`, `^`/`xor`, `-`/`except` |
+| Lógica | `not`, `and`, `or`, `xor`, `=>`, `<=>` |
+| Intervalos | `|`, `&`, `^`, `-` |
+| Colecciones | `|`, `&`, `^`, `-` |
 | Texto | `|` para concatenación de `Text` |
 
 Los tokens compartidos se resuelven por tipos y contexto sintáctico; no autorizan coerciones entre booleanos, números, colecciones e intervalos.
+
+Cada operación posee una única escritura canónica. `not`, `and`, `or` y `xor` son exclusivamente lógicos. `|`, `&` y `^` no se aplican a `Bool`: expresan respectivamente unión, intersección y diferencia simétrica sobre intervalos o colecciones, salvo la concatenación de `Text` ya indicada. `-` continúa compartido por resta cuantitativa y diferencia conjuntista. `=>` expresa implicación y `<=>`, bicondicional.
+
+Se eliminan del lenguaje fuente `!`, `implies`, `iff`, `union`, `intersection` y `except`. Las palabras retiradas dejan de estar reservadas y pueden usarse como identificadores. El token `!=` permanece como desigualdad independiente y no presupone que exista un operador unitario `!`.
 
 La igualdad se define por clase de valor:
 
@@ -43,9 +47,9 @@ La igualdad se define por clase de valor:
 De mayor a menor:
 
 1. acceso `.`, indexación `[]` y llamada `()`;
-2. prefijos `old`, `allowed`, negación y signo;
+2. prefijos `old`, `allowed`, `not` y signo;
 3. multiplicación, división y módulo;
-4. suma, resta y `except`;
+4. suma, resta y diferencia conjuntista;
 5. sufijos `to Type` e `in unit`;
 6. comparaciones, `is` y pertenencia `in`;
 7. conjunción e intersección;
@@ -65,7 +69,7 @@ value to A to B
 
 se agrupan como `(population / regions) to Population`, `(distance + offset) in km` y `(value to A) to B`.
 
-Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `iff`. `!=`, `is`, pertenencia `in` e `implies` no se encadenan.
+Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `<=>`. `!=`, `is`, pertenencia `in` y `=>` no se encadenan.
 
 `|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`. Sobre colecciones compatibles, los cuatro operadores forman el álgebra de multiconjuntos de D-039; `|` no concatena colecciones.
 
@@ -91,3 +95,5 @@ Las operaciones de unión, intersección, diferencia simétrica y diferencia pro
 6. Encadenamientos admitidos y rechazados.
 7. Concatenación de `Text` y rechazo de las demás operaciones conjuntistas.
 8. Resolución de los cuatro operadores conjuntistas sobre colecciones compatibles.
+9. Rechazo de los aliases retirados y de `!` aislado, con conservación de `!=`.
+10. Separación estática entre `xor` lógico y `^` conjuntista.

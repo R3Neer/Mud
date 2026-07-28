@@ -50,12 +50,12 @@ Cuando el tipo o `ordered by expression` determina un orden canónico, un litera
 
 Los operadores conjuntistas se aplican también a colecciones compatibles:
 
-| Operación | Forma simbólica | Forma verbal |
-| --- | --- | --- |
-| Unión | `A | B` | `A union B` |
-| Intersección | `A & B` | `A intersection B` |
-| Diferencia | `A - B` | `A except B` |
-| Diferencia simétrica | `A ^ B` | `A xor B` |
+| Operación | Forma |
+| --- | --- |
+| Unión | `A | B` |
+| Intersección | `A & B` |
+| Diferencia | `A - B` |
+| Diferencia simétrica | `A ^ B` |
 
 Dos operandos son compatibles cuando poseen el mismo tipo efectivo de miembro. Los refinamientos de dominio y los modificadores de colección pueden diferir y se combinan conforme a las reglas siguientes; no se introducen conversiones implícitas entre tipos distintos.
 

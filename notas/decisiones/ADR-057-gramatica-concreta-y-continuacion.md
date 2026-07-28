@@ -61,7 +61,7 @@ equivale a:
 a < b and b < c
 ```
 
-La misma regla se aplica a cadenas homogéneas de igualdad y de `iff`. No se encadenan `!=`, `is`, pertenencia `in` ni `implies`.
+La misma regla se aplica a cadenas homogéneas de igualdad y de `<=>`. No se encadenan `!=`, `is`, pertenencia `in` ni `=>`.
 
 ### Recuperación de errores
 

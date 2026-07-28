@@ -38,7 +38,7 @@ Una regla booleana no efectiva se elabora conforme a la poda estructural de D-02
 ```mud
 rule OpenGate on gate: Gate [mut] {
     when gate.unlocked
-    if !gate.open
+    if not gate.open
     then gate.open = true
 }
 ```

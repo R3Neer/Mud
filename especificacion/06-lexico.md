@@ -72,15 +72,14 @@ mut unique ordered
 create destroy add to remove from each by
 eventually through allowed old
 is in
-not and or xor implies iff
-intersection union except
+not and or xor
 exists forall count sum min max
 true false empty
 Text Char Bool Natural Integer Number Rumber Money
 Rand
 ```
 
-Los terminales simbólicos equivalentes, como `!`, `&`, `|`, `^`, `=>` y `<=>`, no son palabras.
+Los terminales `&`, `|`, `^`, `=>` y `<=>` no son palabras. `!` aislado no pertenece al léxico; `!=` continúa siendo un token indivisible de desigualdad y no se interpreta como la composición de negación y asignación.
 
 Son contextuales:
 

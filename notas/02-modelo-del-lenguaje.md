@@ -150,7 +150,7 @@ No existe mutabilidad profunda implícita ni excepción para `[1]`. En particula
 
 Los campos derivados también pueden producir colecciones, pero su forma se deduce de la expresión. La declaración derivada no vuelve a anotar cardinalidad, orden, unicidad ni capacidad interior.
 
-Las colecciones compatibles admiten unión, intersección, diferencia y diferencia simétrica como operaciones de multiconjunto. Las multiplicidades usan respectivamente máximo, mínimo, resta saturada y diferencia absoluta. La cardinalidad y el dominio del resultado se infieren conservadoramente. `unique`, `ordered` y la capacidad interior `mut` se conservan en unión y xor solo desde ambos operandos, en intersección desde cualquiera y en diferencia desde el izquierdo. La mutabilidad exterior nunca se propaga a una expresión.
+Las colecciones compatibles admiten unión, intersección, diferencia y diferencia simétrica como operaciones de multiconjunto. Las multiplicidades usan respectivamente máximo, mínimo, resta saturada y diferencia absoluta. La cardinalidad y el dominio del resultado se infieren conservadoramente. `unique`, `ordered` y la capacidad interior `mut` se conservan en unión y diferencia simétrica solo desde ambos operandos, en intersección desde cualquiera y en diferencia desde el izquierdo. La mutabilidad exterior nunca se propaga a una expresión.
 
 La sintaxis y las obligaciones de campos almacenados, calculados y dominios pertenecen a [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]. La semántica común de cardinalidad, `empty`, multiplicidad, orden y diccionarios pertenece a [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
 
