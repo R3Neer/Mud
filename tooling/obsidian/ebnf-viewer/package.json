@@ -1,0 +1,10 @@
+{
+  "name": "mud-ebnf-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check main.js && node --check scripts/install-local.mjs",
+    "install-local": "npm run check && node scripts/install-local.mjs"
+  }
+}
