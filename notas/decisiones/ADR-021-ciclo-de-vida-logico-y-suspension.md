@@ -1,17 +1,13 @@
 # ADR-021 — Ciclo de vida lógico y suspensión por dependencias
 
-- Estado: Vigente excepto para aliases, sustituidos por D-031
+- Estado: Vigente
 - Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
+- Relacionada con: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de `thing`|Q-049]]
-- Decisiones sustituidas parcialmente: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|D-016]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
 
 ## Contexto
-
-> [!warning] Alcance sustituido
-> D-031 retira los aliases de este ciclo de vida. Un alias es un tipo nominal estático y no admite `create`, `destroy`, suspensión ni restauración.
 
 Una semántica que elimina permanentemente estado al ejecutar `destroy` obliga a podar colecciones, reparar cardinalidades, fabricar predeterminados y decidir si la recreación recupera información antigua. También confunde dos intenciones distintas:
 

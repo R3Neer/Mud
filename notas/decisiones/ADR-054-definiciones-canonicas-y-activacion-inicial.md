@@ -2,22 +2,17 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Sustituye: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|D-016]], [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]]
-- Modifica: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
+- Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
 - Cierra: [[notas/08-preguntas-abiertas#Q-044 — Identidad y referencias a `thing` futuras|Q-044]], [[notas/08-preguntas-abiertas#Q-045 — Contenido declarativo de `create`|Q-045]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/08-preguntas-abiertas]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
 
 ## Contexto
 
-Las decisiones anteriores permitían definir una `thing` dentro de cada instrucción `create`. Varias instrucciones dirigidas al mismo nombre podían aportar antecesoras y propiedades distintas y fusionarse si coincidían en una oleada.
-
-Ese diseño mezclaba tres operaciones:
+La sintaxis debe separar tres operaciones:
 
 1. Definir qué es una declaración.
 2. Decidir si participa en el mundo actual.
 3. Modificar su estructura.
-
-También dejaba sin respuesta qué debía ocurrir si una `thing` era destruida y una creación posterior aportaba antecesoras incompatibles con las anteriores. Interpretar cada creación como una identidad nueva hacía que las referencias declarativas existentes tuvieran que elegir entre conservar la identidad anterior o volver a enlazarse por nombre. Interpretarla como la misma identidad acumulaba estructura que el usuario no había pedido conservar.
 
 El modelo de uso adoptado es el de un juego con:
 
@@ -66,17 +61,6 @@ create CanGrow
 ```
 
 Su objetivo debe resolver estáticamente a una única definición canónica de `thing` o regla. No admite categoría, modificador, lista de antecesoras ni cuerpo.
-
-Quedan retiradas:
-
-```mud
-create thing Tree as Vegetation {
-}
-
-create rule CanGrow on plant: Vegetation {
-    ...
-}
-```
 
 Una activación posterior a `destroy Tree` recupera la misma identidad `Tree`, con las mismas antecesoras y el mismo descriptor. Conforme a D-021, la carga almacenada se conserva.
 
@@ -205,7 +189,7 @@ Se descarta porque obliga a decidir si las referencias existentes siguen a la id
 
 ### Acumular antecesoras sin permitir retirarlas
 
-Se descarta porque una nueva creación aparenta proporcionar una definición completa, pero conservaría silenciosamente todas las antecesoras históricas. No resulta natural para lectores sin formación técnica y tampoco coincide con la expectativa habitual de herencia declarativa.
+Se descarta porque una nueva creación aparenta proporcionar una definición completa, pero conservaría silenciosamente todas las antecesoras anteriores. No resulta natural para lectores sin formación técnica y tampoco coincide con la expectativa habitual de herencia declarativa.
 
 ### Conservar la fusión fragmentaria de `thing`
 

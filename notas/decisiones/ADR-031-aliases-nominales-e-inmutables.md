@@ -2,15 +2,13 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Sustituye parcialmente: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]]
+- Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Pregunta relacionada: Q-057
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], futuro `12-aliases.md`, futuro `25-efectos.md`
 
 ## Contexto
 
-Las decisiones anteriores atribuyeron ciclo de vida a la declaración de un alias: podía definirse dentro de `create`, suspenderse mediante `destroy` y reactivarse con `create Nombre`. Esa semántica confundía una declaración estática de tipo con una entidad variable del mundo.
-
-Un alias debe proporcionar identidad nominal a valores, no identidad runtime ni estado mutable.
+Un alias debe proporcionar identidad nominal a valores, no identidad runtime ni estado mutable. Por tanto, su declaración es estática y no participa en el ciclo de vida del mundo.
 
 ## Decisión
 
@@ -96,7 +94,7 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 
 ## Consecuencias
 
-- D-021 continúa gobernando `thing` y reglas, pero deja de incluir aliases entre las categorías con ciclo de vida.
+- D-021 gobierna el ciclo de vida de `thing` y reglas; los aliases no pertenecen a esas categorías.
 - D-054 exige definiciones canónicas de primer nivel y reserva `create Nombre` para activar `thing` y reglas; los aliases quedan fuera de ese ciclo de vida.
 - El AST solo necesita `AliasDecl`; elimina `DefineAndCreateAlias` y cualquier efecto `create`/`destroy` de alias.
 - El runtime no necesita marcas de actividad, almacenamiento latente ni restauración para aliases.

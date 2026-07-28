@@ -42,7 +42,7 @@ Las consultas puras `READ` no crean commit. Si una consulta cierra una duda o mo
 
 ## Consecuencias
 
-- Un plugin para Codex es una interfaz posible sobre servicios de consulta, gestión de reglas y gestión de acciones; sus nombres históricos no son API normativa.
+- Un plugin para Codex es una interfaz posible sobre servicios de consulta, gestión de reglas y gestión de acciones.
 - La agenda conserva estado, procedencia y preguntas, pero no añade semántica al mundo.
 - `RETIRE`, permisos de aprobación y el contrato de explicación siguen abiertos.
 

@@ -2,13 +2,12 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Pregunta posteriormente resuelta: Q-053 mediante D-030
-- Decisiones actualizadas o sustituidas: D-004, D-005, [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]]
+- Relacionada con: [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`
 
 ## Contexto
 
-La terminología y las cabeceras históricas de MUD acumulaban tres problemas:
+La terminología y las cabeceras de MUD deben resolver tres problemas:
 
 1. `construct` sonaba a artefacto del lenguaje en vez de a cosa del mundo.
 2. `from` declaraba especialización, aunque la lectura infantil natural es «`A` es como `B`».
@@ -88,20 +87,6 @@ then {
 ```
 
 `when`, `if` y `after` contienen una única expresión booleana, aunque esa expresión sea compuesta. Por ello, el único caso actual en que la pluralidad hace obligatorias las llaves es `then`.
-
-## Compatibilidad
-
-Quedan retiradas de la sintaxis vigente:
-
-```mud
-construct Egypt from Kingdom {
-}
-
-action Enter on person: Person {
-}
-```
-
-Los fragmentos anteriores de esta sección son contraejemplos históricos. Los ADR vigentes relacionados se han actualizado para usar `thing`, `as` y la distribución actual de participantes.
 
 ## Consecuencias
 

@@ -8,9 +8,7 @@
 
 ## Contexto
 
-La especificación inicial empleaba la palabra retirada `construct` para cosas, conceptos, categorías, entidades estáticas y entidades runtime. También hablaba de «instancias runtime», lo que podía sugerir una separación entre clases y objetos.
-
-Esa separación no corresponde al modelo conceptual de MUD. Una formalización basada en una función que asignase a cada objeto su clase introduciría dos dominios que el lenguaje no posee.
+Hablar de «instancias runtime» puede sugerir una separación entre clases y objetos. Esa separación no corresponde al modelo conceptual de MUD: una formalización basada en una función que asignase a cada objeto su clase introduciría dos dominios que el lenguaje no posee.
 
 ## Decisión
 

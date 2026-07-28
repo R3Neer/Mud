@@ -6,8 +6,8 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 
 - **Vigente**: norma actual.
 - **Propuesta**: candidata pendiente de aprobación.
-- **Sustituida**: reemplazada por otra decisión.
-- **Rechazada**: considerada y descartada.
+
+Este registro y `notas/decisiones/` contienen únicamente decisiones y propuestas vigentes. Cuando una deja de estarlo, se elimina del estado de trabajo; Git conserva su contenido y evolución. Los identificadores retirados no se reutilizan.
 
 ## Decisiones vigentes
 
@@ -16,8 +16,6 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-001 | Vigente | `.mud` es la fuente semántica de verdad | [01-vision-y-alcance.md](01-vision-y-alcance.md) | Secciones 2.1 y 76 |
 | D-002 | Vigente | MUD describe dominio, no arquitectura de aplicación | [01-vision-y-alcance.md](01-vision-y-alcance.md) | Secciones 2.2 y 66 |
 | D-003 | Vigente | MUD es un lenguaje declarativo, no lenguaje natural controlado | [01-vision-y-alcance.md](01-vision-y-alcance.md) | Sección 2.3 |
-| D-004 | Sustituida parcialmente por D-025 y D-027 | Catálogo histórico de declaraciones principales | [02-modelo-del-lenguaje.md](02-modelo-del-lenguaje.md) | Secciones 3 y 76 |
-| D-005 | Sustituida por D-025 | Distribución histórica de `on`, `for` y `given` | [ADR-025](decisiones/ADR-025-vocabulario-cabeceras-y-bloques.md) | Secciones 6 y 76 |
 | D-006 | Vigente | Las reglas booleanas son puras y las acciones forman la API de escritura | [02-modelo-del-lenguaje.md](02-modelo-del-lenguaje.md) | Secciones 7, 31, 36 y 62 |
 | D-007 | Vigente | Las resoluciones causales ocurren por ondas sobre instantáneas | [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md) | Secciones 45 a 49 |
 | D-008 | Vigente | Una acción produce `accepted`, `rejected` o `failed` | [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md) | Sección 42 |
@@ -28,15 +26,12 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-013 | Vigente | La especificación formal del lenguaje completo precederá a la continuación de su implementación | [especificacion/README.md](../especificacion/README.md) | Decisión del autor, 2026-07-27 |
 | D-014 | Vigente | Las `thing` forman un único dominio; las concretas son cosas y posibles antecesoras, y `is` es reflexivo | [ADR-014](decisiones/ADR-014-ontologia-unificada-de-things.md) | Decisión del autor, 2026-07-27; vocabulario actualizado por D-025 |
 | D-015 | Vigente | La especialización hereda esquema y predeterminados, mantiene estados independientes y rechaza ciclos | [ADR-015](decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md) | Decisión del autor, 2026-07-27 |
-| D-016 | Sustituida por D-054 | `create thing` podía definir y activar identidades raíz, abstractas o con varias antecesoras mediante `as` | [ADR-016](decisiones/ADR-016-creacion-generalizada-de-things.md) | Decisión del autor, 2026-07-27; sustituida el 2026-07-28 |
 | D-017 | Vigente | Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio | [ADR-017](decisiones/ADR-017-valor-predeterminado-de-todo-tipo.md) | Decisión del autor, 2026-07-27 |
-| D-018 | Vigente; vocabulario actualizado por D-025 | `as` declara especialización directa e `is` consulta su clausura reflexiva y transitiva | [ADR-018](decisiones/ADR-018-as-declara-is-consulta.md) | Decisión del autor, 2026-07-27 |
+| D-018 | Vigente | `as` declara especialización directa e `is` consulta su clausura reflexiva y transitiva | [ADR-018](decisiones/ADR-018-as-declara-is-consulta.md) | Decisión del autor, 2026-07-27 |
 | D-019 | Vigente | La mutabilidad de una colección y la capacidad sobre sus miembros son ortogonales incluso en `[1]` | [ADR-019](decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros.md) | Decisión del autor, 2026-07-27 |
-| D-020 | Sustituida por D-026 | Propuso el modificador hoy retirado `[reflexive]` para habilitar el ancla exacta | [ADR-020](decisiones/ADR-020-propuesta-retirada-reflexive.md) | Decisión del autor, 2026-07-27 |
-| D-021 | Vigente con aliases sustituidos por D-031 | `destroy` suspende `thing`, reglas y dependientes sin borrar su almacenamiento; `remove` sí elimina una propiedad y su carga | [ADR-021](decisiones/ADR-021-ciclo-de-vida-logico-y-suspension.md) | Decisión del autor, 2026-07-27 |
+| D-021 | Vigente | `destroy` suspende `thing`, reglas y dependientes sin borrar su almacenamiento; `remove` sí elimina una propiedad y su carga | [ADR-021](decisiones/ADR-021-ciclo-de-vida-logico-y-suspension.md) | Decisión del autor, 2026-07-27 |
 | D-022 | Vigente | Una llamada a una regla booleana inactiva se borra estructuralmente y la expresión exterior vacía se cierra con verdadero | [ADR-022](decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas.md) | Decisión del autor, 2026-07-27 |
-| D-023 | Vigente salvo la fusión de definiciones, sustituida por D-054 | Los `then` conservan secuencialidad local y consolidan efectos estructurales de forma determinista | [ADR-023](decisiones/ADR-023-consolidacion-de-efectos-estructurales.md) | Decisión del autor, 2026-07-27 |
-| D-024 | Sustituida por D-054 | Introdujo la definición canónica y la activación abreviada para reglas, pero mantuvo definiciones dinámicas y una excepción fragmentaria para `thing` | [ADR-024](decisiones/ADR-024-definicion-unica-y-activacion-abreviada.md) | Decisión del autor, 2026-07-27; sustituida el 2026-07-28 |
+| D-023 | Vigente | Los `then` conservan secuencialidad local y consolidan efectos estructurales de forma determinista | [ADR-023](decisiones/ADR-023-consolidacion-de-efectos-estructurales.md) | Decisión del autor, 2026-07-27 |
 | D-025 | Vigente | `thing` y `as` sustituyen `construct` y `from`; `on` se usa en observadores y `for` en solicitudes; las cláusulas simples pueden omitir llaves | [ADR-025](decisiones/ADR-025-vocabulario-cabeceras-y-bloques.md) | Decisión del autor, 2026-07-27 |
 | D-026 | Vigente | La membresía de `thing` es siempre estricta y cada `then` debe demostrar estáticamente su cardinalidad final y la compatibilidad de consolidación | [ADR-026](decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then.md) | Decisión del autor, 2026-07-27 |
 | D-027 | Vigente | `look` consulta el estado estable y `message` publica tras estabilizar valores de un evento detectado durante una acción | [ADR-027](decisiones/ADR-027-salidas-look-y-message.md) | Decisión del autor, 2026-07-27 |
@@ -72,7 +67,6 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 
 | ID | Estado | Propuesta | Motivo | Pregunta relacionada |
 | --- | --- | --- | --- | --- |
-| P-001 | Sustituida | Adoptar el corte de núcleo vertical v0 como objetivo inmediato de implementación | Sustituida por D-013; el corte v0 se conserva como futuro primer objetivo de implementación y como primer ciclo de formalización | Q-001 a Q-009 |
 | P-002 | Propuesta | Separar AST de superficie e IR canónico | Conservar procedencia y desacoplar sintaxis de semántica | Q-009 |
 | P-003 | Propuesta | No crear commits para consultas `READ` puras | Git registra cambios de estado, no lecturas | Q-008 |
 | P-004 | Propuesta | Preparar cambios en un área aislada y publicar al validar | Evitar rollback incompleto y commits contaminados | Q-008 |

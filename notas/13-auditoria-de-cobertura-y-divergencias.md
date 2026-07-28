@@ -34,7 +34,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 7 | Llamadas a reglas booleanas | Sustituida y migrada | D-036, D-041 |
 | 8 | Solicitud y composición de acciones | Sustituida y migrada | D-036, D-042 |
 | 9 | Acceso, nombres cualificados y anclas | Migrada | D-035 |
-| 10 | Constructos | Sustituida por `thing` y migrada | D-014, D-015, D-025, D-054; D-016 sustituida |
+| 10 | Constructos | Sustituida por `thing` y migrada | D-014, D-015, D-025, D-054 |
 | 11 | Aliases y valores estructurales | Sustituida y migrada | D-031 a D-033 |
 | 12 | Familias cerradas | Migrada; extremos abiertos en Q-024 | D-038 |
 | 13 | Campos | Migrada | D-017, D-019, D-037 |
@@ -79,7 +79,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 52 | Cuantificadores y agregaciones | Migrada | D-047 |
 | 53 | `for each` | Migrada | D-047 |
 | 54 | Operaciones de colección | Actualizada y migrada | D-021, D-026, D-039, D-046 |
-| 55 | Creación runtime | Sustituida y migrada | D-023, D-025, D-054; D-016 y D-024 sustituidas |
+| 55 | Creación runtime | Sustituida y migrada | D-023, D-025, D-054 |
 | 56 | Destrucción runtime | Sustituida y migrada | D-021, D-023 |
 | 57 | Aleatoriedad | Migrada como núcleo | D-048 |
 | 58 | Fallos semánticos | Actualizada y migrada | D-042, D-043, D-048 |

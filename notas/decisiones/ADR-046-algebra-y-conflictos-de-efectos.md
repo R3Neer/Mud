@@ -46,7 +46,7 @@ Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destin
 ## Consecuencias
 
 - La semántica no depende del orden de reglas ni de hilos.
-- La tabla anterior conserva el núcleo histórico, pero Q-006 sigue abierta para combinaciones de colecciones, diccionarios, propiedades, ciclo de vida y solapamientos parciales.
+- Q-006 sigue abierta para combinaciones de colecciones, diccionarios, propiedades, ciclo de vida y solapamientos parciales.
 - El análisis conservador especial de cardinalidad de D-026 prevalece sobre la regla general de diferir coincidencias indecidibles.
 
 ## Verificación

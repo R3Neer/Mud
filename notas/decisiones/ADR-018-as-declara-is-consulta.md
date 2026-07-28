@@ -7,7 +7,7 @@
 
 ## Contexto
 
-La primera sintaxis de MUD utilizó `is` tanto para declarar especialización como para consultarla. Una revisión intermedia empleó la palabra ahora retirada `from`. D-025 fijó definitivamente `as` para la declaración y conservó `is` como operador.
+La declaración de especialización y su consulta necesitan formas distintas para que una cabecera no se confunda con una expresión. D-025 fija `as` para la declaración y conserva `is` como operador.
 
 Aunque el parser podría distinguir una cabecera de una expresión, ambas operaciones tienen significado diferente: una añade aristas directas y la otra consulta una relación derivada.
 
@@ -77,25 +77,11 @@ Por tanto:
 
 El token `from` puede seguir existiendo en otras producciones independientes, como `remove x from collection`; eso no lo convierte en cláusula de especialización.
 
-## Sintaxis retirada
-
-Estas formas son inválidas:
-
-```mud
-construct B is A {
-}
-
-thing B from A {
-}
-```
-
-Se conservan aquí únicamente como contraejemplos de migración.
-
 ## Verificación
 
 1. `thing` raíz sin `as`.
 2. Declaraciones abstractas y concretas con una o varias antecesoras.
 3. Activación mediante `create Nombre` sin alterar las antecesoras declaradas.
-4. Rechazo de `is` y `from` como cláusulas de cabecera.
+4. Rechazo de `is` como cláusula de cabecera.
 5. Aceptación de `is` como expresión.
 6. Correspondencia entre aristas `as` y resultados de `is`.

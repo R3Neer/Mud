@@ -2,15 +2,12 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Decisión sustituida: [[notas/decisiones/ADR-020-propuesta-retirada-reflexive|D-020]]
 - Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-003 — Puntos de validación|Q-003]], [[notas/08-preguntas-abiertas#Q-021 — Análisis estático de conflictos|Q-021]], [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`
 
 ## Contexto
 
-La decisión D-020 permitía incluir el ancla exacta de un tipo mediante `[reflexive]`. Ese permiso no aporta un caso de uso suficiente y debilita una regla sencilla: una colección tipada por una `thing` contiene especializaciones suyas, no la propia identidad que actúa como tipo.
-
-También era necesario fijar si una modificación de colección debe respetar la cardinalidad después de cada instrucción o al completar una unidad atómica de efectos.
+Una colección tipada por una `thing` contiene especializaciones suyas, no la propia identidad que actúa como tipo. También es necesario fijar si una modificación de colección debe respetar la cardinalidad después de cada instrucción o al completar una unidad atómica de efectos.
 
 ## Decisión
 
@@ -83,7 +80,7 @@ Por ejemplo, dos bloques que añaden elementos distintos a una colección vacía
 
 ## Consecuencias
 
-- `reflexive` se elimina del léxico, la gramática, el AST y el IR.
+- No existe un modificador `reflexive` en el léxico, la gramática, el AST ni el IR.
 - La cardinalidad es una propiedad de salida de cada `then`, no de cada estado intermedio de su delta.
 - Las reglas estáticas necesitan un análisis abstracto de intervalos y efectos de colección.
 - La aceptación del lenguaje es deliberadamente conservadora: un programa seguro pero no demostrable puede ser rechazado.

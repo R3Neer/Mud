@@ -7,7 +7,7 @@
 
 ## Contexto
 
-El grafo y el IR son fundamentales para impacto, explicación y ejecución, pero no deben convertirse en fuentes alternativas ni perpetuar nombres retirados de la sintaxis histórica.
+El grafo y el IR son fundamentales para impacto, explicación y ejecución, pero no deben convertirse en fuentes alternativas de verdad.
 
 ## Decisión
 
@@ -48,7 +48,6 @@ Los nombres concretos de campos JSON y aristas se fijarán con el esquema de Q-0
 ## Consecuencias
 
 - Una discrepancia se resuelve descartando y reconstruyendo el derivado.
-- Los ejemplos JSON de la referencia quedan retirados porque usan `construct` y modos de participante obsoletos.
 - Dos herramientas pueden intercambiar IR solo cuando declaren una versión de esquema compatible.
 
 ## Verificación

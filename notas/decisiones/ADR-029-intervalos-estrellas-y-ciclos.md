@@ -111,7 +111,6 @@ Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados
 - El AST de intervalos representará cada límite como concreto o efectivo y conservará la apertura de cada lado.
 - La comprobación de dominios de magnitud se realizará después de normalizar unidades.
 - El ciclo forma parte del dominio de una magnitud de punto, no es una propiedad independiente del bloque.
-- Las formas históricas `cycle = ...` quedan retiradas.
 
 ## Verificación futura
 

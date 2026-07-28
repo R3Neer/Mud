@@ -7,7 +7,7 @@
 
 ## Contexto
 
-Estas reglas léxicas solo existían con detalle en la referencia histórica. Son independientes de la ontología y pueden promoverse sin conservar su catálogo obsoleto de palabras clave.
+Estas reglas léxicas son independientes de la ontología y deben quedar fijadas sin mantener manualmente un catálogo paralelo de palabras clave.
 
 ## Decisión
 
@@ -37,13 +37,13 @@ Una instrucción termina mediante `;` o un salto de línea que actúe como termi
 
 ### Separadores numéricos
 
-`_` puede agrupar cifras para lectura, con grupos ordinarios de tres cifras. No altera el valor. Los sufijos históricos `N`, `I` y `M` están retirados; el prefijo `r` se rige por D-034.
+`_` puede agrupar cifras para lectura, con grupos ordinarios de tres cifras. No altera el valor. El prefijo `r` se rige por D-034.
 
 ## Consecuencias
 
 - Comentarios y terminadores deben resolverse en el lexer antes del parser.
 - El resaltador puede implementarlos sin conocer el modelo semántico.
-- El catálogo de palabras reservadas se generará desde la gramática consolidada; la lista histórica provisional no es normativa.
+- El catálogo de palabras reservadas se generará desde la gramática consolidada.
 - El catálogo distingue palabras reservadas de palabras contextuales conforme a D-054; que el parser reconozca `start`, `abstract`, `name` o `prefixes` en posiciones concretas no las convierte en palabras reservadas.
 
 ## Verificación

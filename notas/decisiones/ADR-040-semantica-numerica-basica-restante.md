@@ -30,7 +30,7 @@ Esta saturación no se aplica a `to Natural`: D-030 exige redondear y después v
 
 ### `Money`
 
-`Money` usa aritmética decimal exacta con escala de dos cifras decimales. Los literales no usan el sufijo histórico `M`; el contexto aporta el tipo.
+`Money` usa aritmética decimal exacta con escala de dos cifras decimales. El contexto aporta el tipo de sus literales.
 
 Cuando una operación o conversión necesita reducir escala, se aplica la política global de empates al par fijada por D-034. Las reglas de overflow, división y combinación con magnitudes permanecen en Q-019.
 

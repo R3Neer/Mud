@@ -1,14 +1,11 @@
 # ADR-023 — Consolidación de efectos estructurales concurrentes
 
-- Estado: Vigente para efectos estructurales salvo la fusión de definiciones, sustituida por D-054; no cierra la matriz general de conflictos
+- Estado: Vigente para efectos estructurales; no cierra la matriz general de conflictos
 - Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
+- Relacionada con: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-002 — Modelo exacto de efectos secuenciales y simultáneos|Q-002]], [[notas/08-preguntas-abiertas#Q-006 — Conflictos|Q-006]], [[notas/08-preguntas-abiertas#Q-021 — Análisis estático de conflictos|Q-021]], [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]]
 - Documentos afectados: [[notas/03-semantica-de-ejecucion]], futuros capítulos 25, 28, 29 y 31
-
-> [!warning] Alcance sustituido
-> D-054 elimina los fragmentos declarativos runtime y la fusión de cuerpos de `thing`. Varias solicitudes `create d` dirigidas a una misma definición canónica ausente se consolidan idempotentemente. El resto del orden estructural y de la secuencialidad local de este ADR continúa vigente.
 
 ## Contexto
 
@@ -87,7 +84,7 @@ Esta regla no introduce una prioridad temporal oculta entre reglas: define una o
 
 ## Varias activaciones de la misma declaración
 
-D-054 sustituye la fusión dinámica que este ADR establecía inicialmente. Cada `thing` y regla posee una única definición canónica de primer nivel; toda aparición `create d` es una referencia de activación al mismo descriptor. D-031 mantiene los aliases fuera del sistema de activación.
+Cada `thing` y regla posee una única definición canónica de primer nivel; toda aparición `create d` es una referencia de activación al mismo descriptor. Los aliases quedan fuera del sistema de activación.
 
 Varias solicitudes concurrentes se consolidan idempotentemente:
 

@@ -39,7 +39,6 @@ La conformidad se prueba mediante programas válidos e inválidos, diagnósticos
 ## Consecuencias
 
 - TypeScript es un destino posible, no una parte de MUD.
-- La suite histórica se retira como autoridad porque contiene sintaxis sustituida; sus intenciones de prueba se conservan en el plan de conformidad.
 - El catálogo de palabras reservadas se genera o verifica contra la gramática normativa, no se mantiene manualmente como lista provisional.
 
 ## Verificación

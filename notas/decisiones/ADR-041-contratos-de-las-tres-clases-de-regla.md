@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Sustituye: formulaciones históricas con `on` y `for` intercambiados
+- Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 

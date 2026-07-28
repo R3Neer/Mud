@@ -193,7 +193,7 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 - El análisis estático necesitará normalizar dimensiones y factores de escala.
 - Las unidades derivadas son expresiones estructurales, no una enumeración nominal.
 - El lexer y el resolvedor deberán distinguir nombres, plurales, abreviaturas y prefijos sin depender de un identificador de cabecera.
-- Los sufijos numéricos históricos y el tipo básico `Percentage` quedan retirados; `r` es un prefijo de literal aproximado, no un sufijo.
+- `r` es un prefijo de literal aproximado.
 
 ## Verificación futura
 
