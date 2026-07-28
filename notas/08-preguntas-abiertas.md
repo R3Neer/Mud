@@ -208,7 +208,7 @@ Las llamadas a reglas booleanas inactivas se podan después de un desazucarado c
 
 Estado: **cerrada** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 
-Una llamada puede usar un receptor posicional o un receptor nombrado entre paréntesis. La forma nombrada debe ser exacta y exhaustiva: no admite roles ausentes, repetidos ni desconocidos. El orden de la declaración sigue siendo canónico y los argumentos posteriores corresponden exclusivamente a `given`.
+Una llamada puede usar un receptor posicional o un receptor nombrado entre paréntesis. La forma nombrada debe ser exacta y exhaustiva: no admite roles ausentes, repetidos ni desconocidos. Una colección suministrada a un rol colectivo ocupa una sola posición y no se expande. Si el rol declara mutabilidad exterior, el receptor debe ser un lugar almacenado mutable. El orden de la declaración sigue siendo canónico y los argumentos posteriores corresponden exclusivamente a `given`.
 
 ### Q-012 — Valores `given` nombrados
 

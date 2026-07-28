@@ -80,6 +80,7 @@ El IR debe:
 - Distinguir explícitamente las tres clases de reglas.
 - Distinguir `TestDecl`, sus activaciones locales, efectos, aserciones y diagnósticos.
 - Conservar participantes y `given` como grupos separados.
+- Conservar por cada rol `for` su cardinalidad, modificadores, capacidades exterior e interior y, cuando proceda, el lugar receptor.
 - Normalizar tipos, dominios y cardinalidades.
 - Registrar lecturas, escrituras y llamadas.
 - Mantener procedencia hacia archivo y rango del AST.

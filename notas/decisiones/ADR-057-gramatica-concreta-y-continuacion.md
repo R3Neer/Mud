@@ -33,6 +33,8 @@ Las EBNF definen el conjunto de formas sintácticas. No intentan decidir cuestio
 
 Esas distinciones producen nodos distintos durante la elaboración y deben diagnosticarse estáticamente cuando sean ambiguas o inválidas.
 
+Las cabeceras usan producciones distintas para participantes `for` y `on`. La EBNF permite que `for` escriba una especificación de colección y un `mut` exterior, mientras `on` conserva únicamente la forma individual y su capacidad interior opcional. Las restricciones de nombre obligatorio, pureza y receptor-lugar pertenecen al análisis estático de D-036.
+
 ### Terminadores
 
 El lexer emite `NEWLINE` y `SEMICOLON`. El parser los convierte en `TERMINATOR`, salvo cuando el salto aparece:
@@ -82,3 +84,4 @@ La recuperación concreta no forma parte del lenguaje aceptado. Una implementaci
 4. Terminación y continuación en cada clase de prefijo.
 5. Agrupación de cada nivel de precedencia.
 6. Diagnósticos de las ambigüedades contextuales.
+7. Separación sintáctica de roles `for` colectivos y vinculaciones `on` individuales.

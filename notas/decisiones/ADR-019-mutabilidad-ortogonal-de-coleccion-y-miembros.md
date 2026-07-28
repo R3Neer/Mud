@@ -35,6 +35,7 @@ Los dos ejes son ortogonales para toda cardinalidad, incluida `[1]`.
 - `mut` dentro de la especificación de cardinalidad concede capacidad interior sobre sus miembros.
 - Ninguna posición implica la otra.
 - No existe una excepción para campos singulares.
+- El `mut` exterior califica un lugar almacenable, no el tipo de miembro: se escribe `mut nombre: Tipo`; `nombre: mut Tipo` es inválido.
 
 | Declaración | Cambiar colección | Modificar miembros |
 | --- | --- | --- |
@@ -67,6 +68,20 @@ Un campo derivado también produce semánticamente una colección, pero su perte
 
 La capacidad interior nunca hace escribible la pertenencia de una colección derivada.
 
+## Participantes `for`
+
+Todo rol `for`, incluido el individual de cardinalidad `[1]`, conserva los mismos dos ejes. En una action:
+
+```mud
+mut patients: Person [1..10, unique, mut]
+```
+
+el primer `mut` permite cambiar la colección suministrada y el segundo permite modificar las `Person` miembro. La mutabilidad exterior vincula el rol por referencia a un lugar almacenado: el receptor de la llamada debe designar una colección exteriormente mutable. Un literal, una unión u otra colección calculada son valores y no pueden satisfacer ese contrato.
+
+Sin `mut` exterior, el rol recibe el valor de cualquier expresión de colección compatible. La capacidad interior sigue comprobándose con independencia de que la colección proceda de un lugar o de una expresión.
+
+Reglas booleanas y `look` son puros y no admiten mutabilidad exterior en sus roles `for`. Los roles automáticos `on` continúan siendo individuales y solo pueden declarar capacidad interior sobre la `thing` vinculada.
+
 ## Consecuencias
 
 - Sustituir el único miembro de `[1]` es una mutación exterior.
@@ -75,6 +90,7 @@ La capacidad interior nunca hace escribible la pertenencia de una colección der
 - La omisión de `[1]` es únicamente azúcar de cardinalidad; no cambia permisos.
 - El AST y el IR deben almacenar por separado `outerMutable` e `elementMutable`.
 - La fusión hereditaria debe comparar ambos ejes independientemente.
+- Una llamada con un rol `for` exteriormente mutable exige un receptor-lugar y conserva en el IR la referencia al destino escrito.
 
 ## Compatibilidad
 
@@ -90,3 +106,6 @@ La suite deberá comprobar las cuatro combinaciones de la tabla tanto para `[1]`
 4. Ausencia de mutabilidad exterior implícita en `field: T [mut]`.
 5. Rechazo de `mut` exterior sobre un campo derivado.
 6. Inferencia conservadora de capacidad interior en una colección derivada.
+7. Roles `for` de cardinalidad `[1]` y colectiva con las cuatro combinaciones de capacidad.
+8. Rechazo de un literal o resultado calculado como receptor de un rol exteriormente mutable.
+9. Rechazo de mutabilidad exterior en reglas booleanas, `look` y roles `on`.

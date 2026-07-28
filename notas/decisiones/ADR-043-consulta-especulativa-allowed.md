@@ -41,6 +41,8 @@ Un fallo no se degrada a falso.
 
 La evaluación especulativa no modifica el mundo, la cola de acciones, los logs, el azar global ni el identificador de resolución. Si interviene azar, utiliza una rama concreta, sembrada y reproducible que no consume la rama de la ejecución real.
 
+Cuando la acción declara un rol `for` con mutabilidad exterior, el receptor-lugar se resuelve dentro de la copia especulativa. Sus efectos nunca conservan una referencia de escritura hacia el mundo real.
+
 `allowed` puede aparecer en reglas booleanas, `if`, `after`, `when`, reglas `always` y cuantificadores, siempre dentro de una expresión pura. El grafo de dependencias de admisibilidad debe ser acíclico.
 
 ## Consecuencias

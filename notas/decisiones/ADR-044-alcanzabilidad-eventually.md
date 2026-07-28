@@ -26,7 +26,7 @@ La expresión es verdadera si existe una secuencia finita de solicitudes aceptad
 
 Cada arista explorada es una transición MUD completa con validación de solicitud, raíz, ondas, reglas `always` y `after`. Las solicitudes rechazadas no forman aristas; un fallo durante una transición no se convierte en una transición válida.
 
-Los participantes y todos los `given` que deban generarse tienen que proceder de dominios finitos, enumerables y con orden canónico.
+Los participantes y todos los `given` que deban generarse tienen que proceder de dominios finitos, enumerables y con orden canónico. Para un rol `for` colectivo se enumeran colecciones completas que satisfacen su contrato, no miembros que ocupen posiciones de receptor separadas. Si el rol posee mutabilidad exterior, también debe existir un conjunto finito, enumerable y canónico de lugares almacenados candidatos; no basta con enumerar sus valores actuales.
 
 El compilador solo admite la expresión cuando demuestra, conservadoramente:
 

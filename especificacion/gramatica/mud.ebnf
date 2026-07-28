@@ -304,17 +304,22 @@ optional-comma ::= [ "," ] ;
 (* ------------------------------------------------------------------ *)
 
 for-clause
-    ::= "for" , participant , { "," , participant } ;
+    ::= "for" , for-participant , { "," , for-participant } ;
 
 on-clause
-    ::= "on" , participant , { "," , participant } ;
+    ::= "on" , on-participant , { "," , on-participant } ;
 
-participant
-    ::= [ role-name , ":" ] , type-reference , [ participant-capability ]
-      | role-name , "in" , expression , [ participant-capability ]
+for-participant
+    ::= [ "mut" ] , [ role-name , ":" ] , type-reference
+        , [ collection-specification ]
       ;
 
-participant-capability
+on-participant
+    ::= [ role-name , ":" ] , type-reference , [ member-capability ]
+      | role-name , "in" , expression , [ member-capability ]
+      ;
+
+member-capability
     ::= "[" , "mut" , "]" ;
 
 given-clause

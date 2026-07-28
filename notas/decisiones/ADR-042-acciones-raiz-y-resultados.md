@@ -36,7 +36,7 @@ Una acción:
 - puede solicitarse desde el exterior o desde otra acción;
 - inicia una resolución causal y es atómica junto con todas sus ondas.
 
-Los participantes son receptores y los `given` son argumentos conforme a D-036. Al iniciar la acción se vinculan participantes, se evalúan y validan los `given`, y después se evalúa `if`. Un `given` fuera de dominio o un `if` falso no producen efectos.
+Los participantes son receptores y los `given` son argumentos conforme a D-036. Al iniciar la acción se vinculan participantes, se comprueban sus tipos, cardinalidades y capacidades, se evalúan y validan los `given`, y después se evalúa `if`. Un rol con `mut` exterior conserva el lugar receptor como destino de efectos y exige que sea almacenable y exteriormente mutable. Un `given` fuera de dominio o un `if` falso no producen efectos.
 
 ### Acciones elementales
 
@@ -80,8 +80,9 @@ Todo resultado distinto de `accepted` restaura exactamente el estado estable ant
 
 ## Verificación
 
-1. Aceptación, rechazo por dominio, rechazo por `if` y rechazo por `after`.
+1. Aceptación, rechazo por dominio de `given`, rechazo por `if` y rechazo por `after`.
 2. Rollback completo de una acción rechazada al final.
 3. Acción elemental y compuesta válidas.
 4. Rechazo de un `then` mixto y de un ciclo de llamadas.
 5. `old` observa la acción exterior, no una hoja intermedia.
+6. Vinculación de un receptor-lugar mutable y rechazo de un receptor que sea solo un valor.

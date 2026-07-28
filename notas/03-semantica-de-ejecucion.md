@@ -41,10 +41,12 @@ Solo después puede aceptar acciones externas. Un fallo en este proceso signific
 Al comenzar la acción:
 
 1. Se vinculan los participantes.
-2. Se evalúan los valores `given`.
-3. Se validan sus dominios.
-4. Se evalúa `if`.
-5. Se calcula la raíz.
+2. Se validan tipos, cardinalidades y capacidades de los roles.
+3. Para cada rol con mutabilidad exterior se conserva el lugar almacenado receptor.
+4. Se evalúan los valores `given`.
+5. Se validan sus dominios.
+6. Se evalúa `if`.
+7. Se calcula la raíz.
 
 Los `given` fuera de dominio rechazan la acción antes de evaluar `if`. Una precondición falsa también la rechaza. Ninguno de los dos casos produce efectos.
 

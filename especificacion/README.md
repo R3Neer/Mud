@@ -349,8 +349,9 @@ Define:
 - Mutabilidad exterior.
 - Capacidad interior `[mut]`.
 - Ortogonalidad de ambos permisos también para cardinalidad `[1]`.
+- Posición `mut nombre: Tipo`; rechazo de `nombre: mut Tipo`.
 - Campos derivados como vistas de colección sin mutabilidad exterior.
-- Mutabilidad de participantes.
+- Mutabilidad exterior e interior de participantes `for`, incluidos receptores-lugar.
 - Accesibilidad de escrituras.
 - Ausencia de mutabilidad profunda implícita.
 
@@ -481,7 +482,8 @@ Archivo previsto: `21-reglas-booleanas.md`
 
 Define:
 
-- Participantes `for`.
+- Participantes `for` individuales o colectivos y nombre obligatorio para los colectivos o exteriormente mutables.
+- Ausencia de mutabilidad exterior por pureza.
 - Valores `given`.
 - Receptor único y multiparte.
 - Pureza.
@@ -498,7 +500,7 @@ Archivo previsto: `22-reglas-reactivas.md`
 
 Define:
 
-- Vinculaciones `on`.
+- Vinculaciones `on` exclusivamente individuales.
 - Participantes relacionados mediante `in`.
 - `when`.
 - `changes`.
@@ -529,12 +531,13 @@ Archivo previsto: `24-frontera-publica.md`
 
 Define:
 
-- Participantes `for`.
+- Participantes `for` individuales o colectivos.
 - Valores `given`.
 - `if`, `then` y `after`.
 - Acciones elementales.
 - Acciones compuestas.
 - Vinculación posicional y nombrada.
+- Receptores-lugar para roles con mutabilidad exterior.
 - Aciclicidad de llamadas.
 - Acciones como API externa de escritura.
 - Exclusión de los tests de la API pública.

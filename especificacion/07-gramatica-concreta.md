@@ -105,6 +105,8 @@ name [: Type] := expression
 
 La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
 
+El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `name: mut Type` no pertenece a la sintaxis.
+
 ```mud
 mut population: Population in [0..*] [1] = 10 people
 density := population / area
@@ -248,12 +250,16 @@ Las formas producidas por ese minilenguaje ocupan el token contextual `POINT_LIT
 
 ## Participantes
 
-`for` vincula participantes suministrados. `on` construye vinculaciones automáticas.
+`for` vincula participantes suministrados. Cada rol puede contener una `thing` individual o una colección de `thing` y admite la especificación completa de colección. `on` construye vinculaciones automáticas exclusivamente individuales.
 
 ```mud
 rule CanAttack for attacker: Army, defender: Army
 given maximumDistance: Length {
     distance <= maximumDistance
+}
+
+rule AllAdults for people: Person [1..*, unique] {
+    forall person in people: person.age >= 18
 }
 
 rule Starve on
@@ -267,7 +273,7 @@ rule Starve on
 
 El tipo se infiere en un participante relacionado: se escribe `kingdom in world.kingdoms`, no `kingdom: Kingdom in ...`.
 
-El nombre de un participante puede omitirse:
+El nombre de un participante puede omitirse cuando su cardinalidad efectiva es exactamente `[1]` y no declara mutabilidad exterior:
 
 ```mud
 rule IsDestroyed for Army {
@@ -275,7 +281,21 @@ rule IsDestroyed for Army {
 }
 ```
 
-La omisión es válida solo si cada acceso no cualificado se resuelve unívocamente. Los nombres de `given` nunca se omiten.
+La omisión es válida solo si cada acceso no cualificado se resuelve unívocamente. Un rol `for` con cardinalidad distinta de `[1]` debe tener nombre, porque los accesos a miembros de una colección requieren cuantificación, agregación o iteración explícitas. Los nombres de `given` nunca se omiten.
+
+En una action, `mut` antes del nombre de cualquier rol `for`, incluida la cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. El receptor correspondiente debe ser un lugar almacenado con esa capacidad; un literal o una colección calculada no satisfacen el contrato. El `mut` de la especificación de colección continúa concediendo capacidad interior sobre las `thing` miembro:
+
+```mud
+action Treat for
+    mut patients: Person [1..10, unique, mut]
+{
+    then for each patient in patients {
+        patient.health += 10
+    }
+}
+```
+
+La declaración anterior puede cambiar la membresía u orden de la colección almacenada recibida y modificar sus miembros. `mut patients: Person [*]` concede solo la primera capacidad; `patients: Person [*, mut]`, solo la segunda. Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior.
 
 Una referencia ordinaria a `World` designa la identidad exacta. `on World` y `for World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta.
 
@@ -386,6 +406,8 @@ army.IsDestroyed()
 ```
 
 Los receptores nombrados pueden reordenar roles si son exactos y exhaustivos.
+
+Una expresión de colección ocupa una sola posición de receptor cuando el rol correspondiente es colectivo; no se descompone en varios roles. Si el rol declara `mut` exterior, esa expresión debe ser además un lugar mutable compatible.
 
 Las etiquetas de `given` no reordenan:
 
