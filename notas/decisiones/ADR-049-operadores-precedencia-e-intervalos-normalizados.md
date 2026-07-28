@@ -1,6 +1,6 @@
 # ADR-049 — Operadores, precedencia e intervalos normalizados
 
-- Estado: Vigente como base; gramática completa abierta
+- Estado: Vigente
 - Fecha: 2026-07-28
 - Preguntas relacionadas: Q-001, Q-018, Q-050
 - Documentos afectados: expresiones, intervalos, gramática
@@ -17,8 +17,9 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 | --- | --- |
 | Aritmética | `+`, `-`, `*`, `/`, `%` |
 | Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `in` |
-| Lógica | `!`/`not`, `&`/`and`, `|`/`or`, `=>`/`implies`, `<=>`/`iff` |
+| Lógica | `!`/`not`, `&`/`and`, `|`/`or`, `^`/`xor`, `=>`/`implies`, `<=>`/`iff` |
 | Intervalos | `|`/`union`, `&`/`intersection`, `^`/`xor`, `-`/`except` |
+| Texto | `|` para concatenación de `Text` |
 
 Los tokens compartidos se resuelven por tipos y contexto sintáctico; no autorizan coerciones entre booleanos, números, colecciones e intervalos.
 
@@ -36,26 +37,36 @@ La igualdad se define por clase de valor:
 
 `is` consulta la relación reflexiva y transitiva de especialización entre `thing`; no es igualdad ni casting.
 
-### Precedencia heredada
+### Precedencia
 
 De mayor a menor:
 
 1. acceso `.`, indexación `[]` y llamada `()`;
-2. receptor multiparte;
-3. `old`;
-4. `allowed`;
-5. negación;
-6. multiplicación, división y módulo;
-7. suma y resta;
-8. comparaciones, `is` e `in`;
-9. conjunción e intersección;
-10. disyunción y unión;
-11. diferencia simétrica;
-12. implicación;
-13. bicondicional;
-14. `eventually ... through ...`.
+2. prefijos `old`, `allowed`, negación y signo;
+3. multiplicación, división y módulo;
+4. suma, resta y `except`;
+5. sufijos `to Type` e `in unit`;
+6. comparaciones, `is` y pertenencia `in`;
+7. conjunción e intersección;
+8. disyunción, unión y concatenación;
+9. diferencia simétrica;
+10. implicación;
+11. bicondicional;
+12. `eventually ... through ...`.
 
-Esta lista es vinculante para las formas que contiene. Q-001 debe insertar `to`, construcción contextual y cualquier forma nueva, además de fijar asociatividad y prohibiciones de encadenamiento.
+`to` y el `in` de unidad se aplican al valor completo acumulado a su izquierda. El parser continúa después sobre el resultado convertido:
+
+```mud
+population / regions to Population
+distance + offset in km
+value to A to B
+```
+
+se agrupan como `(population / regions) to Population`, `(distance + offset) in km` y `(value to A) to B`.
+
+Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `iff`. `!=`, `is`, pertenencia `in` e `implies` no se encadenan.
+
+`|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`.
 
 ### Intervalos
 
@@ -75,4 +86,6 @@ Las operaciones de unión, intersección, diferencia simétrica y diferencia pro
 2. Igualdad y desigualdad de cada clase de valor.
 3. Normalización equivalente de intervalos.
 4. Rechazo de sobrecargas sin combinación tipada.
-5. Casos que obliguen a parentetizar hasta fijar `to`.
+5. Conversión acumulativa y continuación con operadores posteriores.
+6. Encadenamientos admitidos y rechazados.
+7. Concatenación de `Text` y rechazo de las demás operaciones conjuntistas.

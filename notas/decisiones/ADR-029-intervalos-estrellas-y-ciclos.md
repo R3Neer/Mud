@@ -29,9 +29,9 @@ Las cuatro formas delimitadas son:
 `*` representa el límite efectivo del lado en el que aparece. Los dos lados no tienen por qué denotar el mismo valor:
 
 ```mud
-Natural [*..10]  // [0..10]
-Natural [1..*]   // [1..+∞]
-[*..*]           // dominio efectivo completo
+Natural [*..10]  # [0..10]
+Natural [1..*]   # [1..+∞]
+[*..*]           # dominio efectivo completo
 ```
 
 `[*]` es azúcar de `[*..*]`. En una cardinalidad ordinaria, `Thing[*]` comienza en cero y llega hasta el límite superior permitido.

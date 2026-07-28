@@ -1,14 +1,14 @@
-# ADR-050 — Comentarios, terminadores y separadores numéricos
+# ADR-050 — Comentarios, terminadores, texto y separadores numéricos
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Pregunta relacionada: Q-001
-- Documentos afectados: léxico, gramática concreta, formateador
+- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-character-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Cierra parcialmente: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
+- Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formateador
 
 ## Contexto
 
-Estas reglas léxicas son independientes de la ontología y deben quedar fijadas sin mantener manualmente un catálogo paralelo de palabras clave.
+Estas reglas léxicas son independientes de la ontología y deben quedar fijadas sin mantener manualmente un catálogo paralelo de palabras clave. Los delimitadores de comentario y texto siguen una simetría deliberada entre formas ordinarias y multilínea.
 
 ## Decisión
 
@@ -16,31 +16,63 @@ Estas reglas léxicas son independientes de la ontología y deben quedar fijadas
 
 MUD admite:
 
-1. comentario de línea desde `#` hasta el salto de línea;
-2. comentario de línea cerrado por un segundo `#` antes del salto;
-3. comentario multilínea delimitado por `###`.
+1. Comentario de línea desde `#` hasta el salto de línea.
+2. Comentario de línea cerrado por un segundo `#` antes del salto.
+3. Comentario multilínea cuyo delimitador de apertura y cierre es `###`.
 
 ```mud
 soldiers = 1_000 # hasta fin de línea
 soldiers = 1_000 # comentario # morale = 100
-soldiers = ### comentario multilínea ### 1_000
+###
+Comentario multilínea.
+###
 ```
 
-Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de una cadena de `Text`, estos delimitadores no tienen significado léxico.
+El `###` de apertura debe ser el último elemento no blanco de su línea. El contenido comienza en la línea siguiente. El `###` de cierre debe aparecer solo, salvo espacio horizontal, en su propia línea. La línea de apertura y la de cierre no forman parte del comentario. La forma `### comentario ###` es inválida.
+
+Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de un literal `Text` o `Character`, los delimitadores de comentario no tienen significado léxico.
 
 El contenido de un comentario no genera tokens, instrucciones ni terminadores. Después de retirarlo, el texto restante debe seguir siendo sintácticamente válido.
 
-Un comentario de línea cerrado explícitamente no atraviesa un salto. Un delimitador multilínea sin pareja o los delimitadores sobrantes que dejen texto inválido producen diagnóstico.
+Un comentario de línea cerrado explícitamente no atraviesa un salto. Un delimitador multilínea sin pareja, un inicio con contenido en su misma línea o un cierre que no esté aislado producen diagnóstico.
+
+### Literales de texto
+
+Un literal ordinario de `Text` comienza con `"`. Puede cerrarse con otro `"` en la misma línea o cerrarse implícitamente al llegar al salto:
+
+```mud
+name = "Ada"
+name = "Ada
+```
+
+Ambas formas producen el mismo valor. El cierre explícito es obligatorio cuando deben aparecer otros tokens en esa línea.
+
+Un literal multilínea utiliza `"""`. El delimitador de apertura debe ser el último elemento no blanco de su línea; el contenido comienza en la siguiente. El cierre debe aparecer aislado, salvo espacio horizontal, en su propia línea.
+
+```mud
+description = """
+    First line.
+      Indented line.
+    """
+```
+
+La sangría del delimitador de cierre define el margen que se retira de cada línea no vacía. Una línea no vacía con menos sangría que el margen es un error. La primera línea posterior al inicio y el salto inmediatamente anterior al cierre son estructurales y no forman parte del valor. La sangría adicional se conserva. Los escapes continúan activos.
+
+Un literal `Character` usa comillas simples y, después de procesar escapes, debe contener exactamente un valor escalar Unicode conforme a D-056.
 
 ### Terminadores
 
 Una instrucción termina mediante `;` o un salto de línea.
 
-El salto no actúa como terminador cuando aparece dentro de una construcción sintácticamente abierta. Un prefijo está abierto cuando todavía no puede formar una unidad sintáctica completa, pero puede completarse con tokens posteriores. Esto incluye, entre otros casos que enumerará la gramática:
+El salto no actúa como terminador cuando aparece dentro de una construcción sintácticamente abierta. Un prefijo está abierto cuando todavía no puede formar una unidad sintáctica completa, pero puede completarse con tokens posteriores. La gramática de D-057 proporciona la enumeración exhaustiva. Incluye:
 
 - Un delimitador `(` o `[` todavía sin cerrar.
+- Una cabecera que todavía exige participantes, argumentos u otro contenido.
 - Una línea terminada en coma u operador que exige un operando posterior.
 - Una cabecera o cláusula terminada en una palabra que exige contenido, como `for`, `given`, `if`, `then` o `:=`.
+- El contenido de un literal o comentario multilínea.
+
+Las llaves `{}` no suprimen los terminadores de su interior: un bloque contiene instrucciones o declaraciones separadas por saltos o `;`.
 
 Si el prefijo anterior al salto ya puede formar una unidad completa, el salto la termina aunque la línea siguiente pudiera comenzar otra expresión. La continuación nunca depende de la sangría.
 
@@ -54,7 +86,7 @@ rule CanAttack for
 }
 ```
 
-La gramática consolidada debe identificar exhaustivamente los prefijos abiertos; Q-001 continúa abierta para esa enumeración y para el resto de la gramática, no para el principio general de terminación.
+D-057 y la gramática consolidada cierran Q-001.
 
 ### Separadores numéricos
 
@@ -63,18 +95,22 @@ La gramática consolidada debe identificar exhaustivamente los prefijos abiertos
 ## Consecuencias
 
 - El lexer retira comentarios y emite tokens de salto; el parser determina cuáles son terminadores a partir de si el prefijo sintáctico está completo.
-- El resaltador puede implementarlos sin conocer el modelo semántico.
-- El catálogo de palabras reservadas se generará desde la gramática consolidada.
-- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-035, D-054 y D-055. `using`, `with`, `test` y `otherwise` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
+- El resaltador puede implementar el léxico sin conocer el modelo semántico.
+- El catálogo de palabras reservadas se genera desde la gramática consolidada.
+- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-035, D-054 y D-055. `using`, `with`, `test`, `otherwise` y `ordered` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
 
 ## Verificación
 
 1. Las tres formas de comentario.
-2. Delimitadores dentro de cadenas.
-3. Prioridad de `###` y rechazo del anidamiento.
-4. Símbolos sintácticos inocuos dentro de comentarios.
-5. Terminación por `;` y por salto.
-6. Continuación tras delimitador, coma, operador y palabra introductora.
-7. Terminación cuando el prefijo anterior ya es completo.
-8. Independencia respecto de la sangría.
-9. Literales con separadores válidos e inválidos.
+2. Apertura y cierre multilínea en líneas propias.
+3. Delimitadores dentro de cadenas.
+4. Prioridad de `###` y rechazo del anidamiento.
+5. Texto ordinario con cierre explícito e implícito.
+6. Margen, líneas estructurales y escapes del texto multilínea.
+7. `Character` con exactamente un escalar.
+8. Símbolos sintácticos inocuos dentro de comentarios.
+9. Terminación por `;` y por salto.
+10. Continuación tras delimitador, coma, operador y palabra introductora.
+11. Terminación cuando el prefijo anterior ya es completo.
+12. Independencia respecto de la sangría fuera de literales multilínea.
+13. Literales con separadores válidos e inválidos.

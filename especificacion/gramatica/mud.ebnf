@@ -1,0 +1,764 @@
+(* MUD 1.0 — gramática concreta normativa.
+   Los terminales en MAYÚSCULAS proceden de mud-lexico.ebnf o del
+   clasificador contextual descrito en 06-lexico.md. *)
+
+mud-file
+    ::= layout
+        , [ file-item , { required-separation , file-item }
+            , [ required-separation ]
+          ]
+        , EOF
+        ;
+
+file-item
+    ::= using-declaration
+      | top-level-declaration
+      ;
+
+using-declaration
+    ::= "using" , namespace-path , [ "." , "*" ] ;
+
+top-level-declaration
+    ::= thing-declaration
+      | alias-declaration
+      | family-declaration
+      | magnitude-declaration
+      | boolean-rule-declaration
+      | reactive-rule-declaration
+      | always-rule-declaration
+      | action-declaration
+      | look-declaration
+      | message-declaration
+      | test-declaration
+      | global-start-declaration
+      ;
+
+(* ------------------------------------------------------------------ *)
+(* Nombres y referencias                                               *)
+(* ------------------------------------------------------------------ *)
+
+namespace-path
+    ::= lower-name , { "." , lower-name } ;
+
+qualified-name
+    ::= identifier , { "." , identifier } ;
+
+nominal-name      ::= identifier ;
+lower-name        ::= identifier ;
+member-name       ::= identifier ;
+field-name        ::= identifier ;
+role-name         ::= identifier ;
+given-name        ::= identifier ;
+component-name    ::= identifier ;
+variable-name     ::= identifier ;
+declaration-reference ::= qualified-name ;
+type-reference    ::= qualified-name ;
+
+identifier ::= IDENTIFIER ;
+
+(* PascalCase/lowerCamelCase y palabras prohibidas son reglas estáticas. *)
+
+(* ------------------------------------------------------------------ *)
+(* Declaraciones nominales                                             *)
+(* ------------------------------------------------------------------ *)
+
+thing-declaration
+    ::= [ "abstract" ] , "thing" , nominal-name
+        , [ "as" , type-reference , { "," , type-reference } ]
+        , thing-body
+        ;
+
+thing-body
+    ::= "{" , declaration-layout
+        , [ field-declaration
+            , { required-separation , field-declaration }
+            , [ required-separation ]
+          ]
+        , "}"
+        ;
+
+alias-declaration
+    ::= "alias" , nominal-name
+        , ( ":=" , type-expression
+          | structural-alias-body
+          )
+        ;
+
+structural-alias-body
+    ::= "{" , declaration-layout
+        , component-declaration
+        , { required-separation , component-declaration }
+        , [ required-separation ]
+        , "}"
+        ;
+
+component-declaration
+    ::= component-name , ":" , declared-type
+        , [ "in" , domain-expression ]
+        , [ collection-specification ]
+        ;
+
+family-declaration
+    ::= [ "ordered" ] , "family" , nominal-name
+        , "{" , declaration-layout
+        , { family-data-declaration , required-separation }
+        , family-member
+        , { "," , declaration-layout , family-member }
+        , [ required-separation ]
+        , "}"
+        ;
+
+family-data-declaration
+    ::= field-name , ":" , declared-type
+        , [ "in" , domain-expression ]
+        , [ collection-specification ]
+        , [ "=" , constant-expression ]
+        ;
+
+family-member
+    ::= member-name , [ family-member-body ] ;
+
+family-member-body
+    ::= "{" , declaration-layout
+        , family-data-assignment
+        , { required-separation , family-data-assignment }
+        , [ required-separation ]
+        , "}"
+        ;
+
+family-data-assignment
+    ::= field-name , "=" , constant-expression ;
+
+(* ------------------------------------------------------------------ *)
+(* Magnitudes y unidades                                               *)
+(* ------------------------------------------------------------------ *)
+
+magnitude-declaration
+    ::= base-magnitude-declaration
+      | derived-magnitude-declaration
+      | point-magnitude-declaration
+      ;
+
+base-magnitude-declaration
+    ::= "magnitude" , nominal-name
+        , [ ":" , numeric-type ]
+        , [ "in" , interval-expression ]
+        , magnitude-body
+        ;
+
+derived-magnitude-declaration
+    ::= "magnitude" , nominal-name
+        , [ ":" , numeric-type ]
+        , [ "in" , interval-expression ]
+        , ":=" , dimension-expression
+        , [ derived-unit-body ]
+        ;
+
+point-magnitude-declaration
+    ::= "magnitude" , nominal-name
+        , "point" , "over" , type-reference
+        , "in" , cyclic-interval
+        , point-magnitude-body
+        ;
+
+numeric-type
+    ::= "Natural" | "Integer" | "Number" | "Rumber" | "Money" ;
+
+magnitude-body
+    ::= "{" , declaration-layout
+        , [ root-unit-declaration
+            , { required-separation , alternative-unit-declaration }
+            , [ required-separation ]
+          ]
+        , "}"
+        ;
+
+derived-unit-body
+    ::= "{" , declaration-layout
+        , [ alternative-unit-declaration
+            , { required-separation , alternative-unit-declaration }
+            , [ required-separation ]
+          ]
+        , "}"
+        ;
+
+point-magnitude-body
+    ::= "{" , declaration-layout
+        , "format" , "=" , text-expression
+        , [ required-separation ]
+        , "}"
+        ;
+
+root-unit-declaration
+    ::= "root" , "unit" , unit-body ;
+
+alternative-unit-declaration
+    ::= "unit" , ":=" , quantity-expression , unit-body ;
+
+unit-body
+    ::= "{" , declaration-layout
+        , unit-property
+        , { required-separation , unit-property }
+        , [ required-separation ]
+        , "}"
+        ;
+
+unit-property
+    ::= "name" , "=" , text-expression
+      | "plural" , "=" , text-expression
+      | "abbreviation" , "=" , text-expression
+      | "prefixes" , [ "=" , prefix-name , { "," , prefix-name } ]
+      ;
+
+prefix-name ::= identifier ;
+
+dimension-expression
+    ::= dimension-factor , { ( "*" | "/" ) , dimension-factor } ;
+
+dimension-factor
+    ::= type-reference
+      | "(" , dimension-expression , ")"
+      ;
+
+(* ------------------------------------------------------------------ *)
+(* Campos y tipos                                                      *)
+(* ------------------------------------------------------------------ *)
+
+field-declaration
+    ::= stored-field-declaration
+      | calculated-field-declaration
+      ;
+
+stored-field-declaration
+    ::= [ "mut" ] , field-name , ":" , declared-type
+        , [ "in" , domain-expression ]
+        , [ collection-specification ]
+        , [ "=" , value-expression ]
+        ;
+
+calculated-field-declaration
+    ::= field-name , ":" , declared-type , ":=" , expression ;
+
+public-field-declaration
+    ::= field-name , ":" , declared-type , ":=" , expression ;
+
+type-expression
+    ::= declared-type
+        , [ "in" , domain-expression ]
+        , [ collection-specification ]
+        ;
+
+declared-type
+    ::= type-reference
+      | dictionary-type
+      ;
+
+dictionary-type
+    ::= type-reference , "->" , dictionary-value-type ;
+
+dictionary-value-type
+    ::= type-reference
+      | "(" , type-expression , ")"
+        ;
+
+collection-specification
+    ::= "["
+        , ( cardinality
+            , [ optional-comma , collection-modifier
+                , { optional-comma , collection-modifier }
+              ]
+          | collection-modifier
+            , { optional-comma , collection-modifier }
+          )
+        , "]"
+        ;
+
+cardinality
+    ::= cardinality-bound
+      | cardinality-bound , ".." , cardinality-bound
+      ;
+
+cardinality-bound
+    ::= exact-integer | "*" ;
+
+collection-modifier
+    ::= "unique"
+      | "ordered" , [ "by" , expression ]
+      | "mut"
+      ;
+
+optional-comma ::= [ "," ] ;
+
+(* ------------------------------------------------------------------ *)
+(* Participantes, given y declaraciones de comportamiento              *)
+(* ------------------------------------------------------------------ *)
+
+for-clause
+    ::= "for" , participant , { "," , participant } ;
+
+on-clause
+    ::= "on" , participant , { "," , participant } ;
+
+participant
+    ::= [ role-name , ":" ] , type-reference , [ participant-capability ]
+      | role-name , "in" , expression , [ participant-capability ]
+      ;
+
+participant-capability
+    ::= "[" , "mut" , "]" ;
+
+given-clause
+    ::= "given" , given-declaration , { "," , given-declaration } ;
+
+given-declaration
+    ::= given-name , ":" , declared-type
+        , [ "in" , domain-expression ]
+        , [ collection-specification ]
+        ;
+
+boolean-rule-declaration
+    ::= "rule" , nominal-name
+        , [ for-clause ]
+        , [ given-clause ]
+        , boolean-body
+        ;
+
+boolean-body
+    ::= "{" , declaration-layout , boolean-expression
+        , [ required-separation ] , "}"
+        ;
+
+reactive-rule-declaration
+    ::= "rule" , nominal-name
+        , [ on-clause ]
+        , "{" , declaration-layout
+        , when-clause
+        , required-separation
+        , [ if-clause , required-separation ]
+        , then-clause
+        , [ required-separation ]
+        , "}"
+        ;
+
+always-rule-declaration
+    ::= "always" , "rule" , nominal-name
+        , [ on-clause ]
+        , boolean-body
+        ;
+
+action-declaration
+    ::= "action" , nominal-name
+        , [ for-clause ]
+        , [ given-clause ]
+        , "{" , declaration-layout
+        , [ if-clause , required-separation ]
+        , then-clause
+        , [ required-separation , after-clause ]
+        , [ required-separation ]
+        , "}"
+        ;
+
+look-declaration
+    ::= "look" , nominal-name
+        , [ for-clause ]
+        , "{" , declaration-layout
+        , [ public-field-declaration
+            , { required-separation , public-field-declaration }
+            , [ required-separation ]
+          ]
+        , "}"
+        ;
+
+message-declaration
+    ::= "message" , nominal-name
+        , [ on-clause ]
+        , "{" , declaration-layout
+        , when-clause
+        , [ required-separation , if-clause ]
+        , [ required-separation , public-field-declaration
+            , { required-separation , public-field-declaration }
+          ]
+        , [ required-separation ]
+        , "}"
+        ;
+
+when-clause
+    ::= "when" , expression-clause-body , [ "changes" ] ;
+
+if-clause
+    ::= "if" , expression-clause-body ;
+
+after-clause
+    ::= "after" , expression-clause-body ;
+
+expression-clause-body
+    ::= boolean-expression
+      | "{" , declaration-layout , boolean-expression
+          , [ required-separation ] , "}"
+      ;
+
+then-clause
+    ::= "then" , effect
+      | "then" , effect-block
+      ;
+
+effect-block
+    ::= "{" , declaration-layout
+        , effect
+        , { required-separation , effect }
+        , [ required-separation ]
+        , "}"
+        ;
+
+(* ------------------------------------------------------------------ *)
+(* Activación inicial y tests                                          *)
+(* ------------------------------------------------------------------ *)
+
+global-start-declaration
+    ::= start-with-declaration ;
+
+start-with-declaration
+    ::= "start" , "with"
+        , "{" , declaration-layout
+        , [ declaration-reference
+            , { "," , declaration-layout , declaration-reference }
+          ]
+        , declaration-layout , "}"
+        ;
+
+test-declaration
+    ::= "test" , nominal-name
+        , "{" , declaration-layout
+        , start-with-declaration
+        , required-separation
+        , then-clause
+        , required-separation
+        , test-after-clause
+        , [ required-separation ]
+        , "}"
+        ;
+
+test-after-clause
+    ::= "after" , test-assertion
+      | "after" , "{"
+          , declaration-layout
+          , test-assertion
+          , { required-separation , test-assertion }
+          , [ required-separation ]
+          , "}"
+      ;
+
+test-assertion
+    ::= boolean-expression , [ "otherwise" , text-expression ] ;
+
+(* ------------------------------------------------------------------ *)
+(* Efectos                                                             *)
+(* ------------------------------------------------------------------ *)
+
+effect
+    ::= assignment-effect
+      | add-effect
+      | remove-effect
+      | create-effect
+      | destroy-effect
+      | action-call-effect
+      | for-each-effect
+      ;
+
+assignment-effect
+    ::= assignable-expression , assignment-operator , value-expression ;
+
+assignment-operator
+    ::= "=" | "+=" | "-=" | "*=" | "/=" ;
+
+add-effect
+    ::= "add" , expression , "to" , assignable-expression
+      | "add" , stored-field-declaration , "to" , declaration-reference
+      ;
+
+remove-effect
+    ::= "remove" , expression , "from" , assignable-expression ;
+
+create-effect
+    ::= "create" , declaration-reference ;
+
+destroy-effect
+    ::= "destroy" , declaration-reference ;
+
+action-call-effect
+    ::= postfix-expression ;
+
+for-each-effect
+    ::= "for" , "each" , iteration-binding , "in" , expression
+        , [ "by" , expression ]
+        , [ "if" , boolean-expression ]
+        , effect-block
+        ;
+
+iteration-binding
+    ::= variable-name
+      | "(" , variable-name , "," , variable-name , ")"
+      ;
+
+assignable-expression
+    ::= primary-expression , { member-access | index-access } ;
+
+(* ------------------------------------------------------------------ *)
+(* Expresiones                                                         *)
+(* ------------------------------------------------------------------ *)
+
+expression
+    ::= eventually-expression ;
+
+value-expression
+    ::= expression , [ "," , expression , { "," , expression } ] ;
+
+boolean-expression
+    ::= expression ;
+
+text-expression
+    ::= expression ;
+
+constant-expression
+    ::= expression ;
+
+domain-expression
+    ::= expression ;
+
+eventually-expression
+    ::= iff-expression
+      | "eventually" , iff-expression , "through" , action-reference-list
+      ;
+
+action-reference-list
+    ::= action-reference , { "," , action-reference }
+      | "[" , action-reference , { "," , action-reference } , "]"
+      ;
+
+action-reference
+    ::= qualified-name
+      | receiver-tuple , "." , qualified-name
+      ;
+
+iff-expression
+    ::= implies-expression , { iff-operator , implies-expression } ;
+
+iff-operator
+    ::= "iff" | "<=>" ;
+
+implies-expression
+    ::= xor-expression , [ implies-operator , implies-expression ] ;
+
+implies-operator
+    ::= "implies" | "=>" ;
+
+xor-expression
+    ::= or-expression , { xor-operator , or-expression } ;
+
+xor-operator
+    ::= "xor" | "^" ;
+
+or-expression
+    ::= and-expression , { or-operator , and-expression } ;
+
+or-operator
+    ::= "or" | "|" | "union" ;
+
+and-expression
+    ::= comparison-expression , { and-operator , comparison-expression } ;
+
+and-operator
+    ::= "and" | "&" | "intersection" ;
+
+comparison-expression
+    ::= quantitative-expression , [ comparison-tail ] ;
+
+comparison-tail
+    ::= chainable-comparison , quantitative-expression
+        , { chainable-comparison , quantitative-expression }
+      | nonchainable-comparison , quantitative-expression
+      ;
+
+chainable-comparison
+    ::= "==" | "<" | "<=" | ">" | ">=" ;
+
+nonchainable-comparison
+    ::= "!=" | "is" | membership-in ;
+
+membership-in
+    ::= "in" ;
+
+(* quantitative-expression admite barreras postfix to/in. El parser
+   aplica la tabla de 07-gramatica-concreta y continúa sobre el resultado. *)
+quantitative-expression
+    ::= arithmetic-expression
+        , { conversion-suffix , [ arithmetic-continuation ] }
+        ;
+
+conversion-suffix
+    ::= "to" , type-reference
+      | "in" , unit-expression
+      ;
+
+arithmetic-continuation
+    ::= arithmetic-operator , arithmetic-expression ;
+
+arithmetic-operator
+    ::= "+" | "-" | "*" | "/" | "%" ;
+
+arithmetic-expression
+    ::= multiplicative-expression
+        , { ( "+" | "-" | "except" ) , multiplicative-expression }
+        ;
+
+multiplicative-expression
+    ::= prefix-expression
+        , { ( "*" | "/" | "%" ) , prefix-expression }
+        ;
+
+prefix-expression
+    ::= { prefix-operator } , postfix-expression ;
+
+prefix-operator
+    ::= "!" | "not" | "+" | "-" | "old" | "allowed" ;
+
+postfix-expression
+    ::= primary-expression
+        , { member-access | index-access | call-arguments }
+        ;
+
+member-access
+    ::= "." , identifier ;
+
+index-access
+    ::= "[" , expression , { "," , expression } , "]" ;
+
+call-arguments
+    ::= "(" , [ call-argument , { "," , call-argument } ] , ")" ;
+
+call-argument
+    ::= [ given-name , "=" ] , expression ;
+
+receiver-tuple
+    ::= "(" , receiver-entry , "," , receiver-entry
+        , { "," , receiver-entry } , ")"
+        ;
+
+receiver-entry
+    ::= expression
+      | role-name , "=" , expression
+      ;
+
+primary-expression
+    ::= literal
+      | qualified-name
+      | structural-literal
+      | collection-literal
+      | interval-expression
+      | quantity-expression
+      | quantifier-expression
+      | random-expression
+      | "(" , expression , ")"
+      ;
+
+literal
+    ::= exact-number
+      | rumber-number
+      | TEXT_LITERAL
+      | MULTILINE_TEXT_LITERAL
+      | CHARACTER_LITERAL
+      | POINT_LITERAL
+      | "true"
+      | "false"
+      | "empty"
+      ;
+
+exact-number  ::= EXACT_NUMBER_LITERAL ;
+rumber-number ::= RUMBER_LITERAL ;
+exact-integer ::= EXACT_INTEGER_LITERAL ;
+
+structural-literal
+    ::= "(" , structural-element , "," , structural-element
+        , { "," , structural-element } , ")"
+        ;
+
+structural-element
+    ::= expression
+      | component-name , "=" , expression
+      ;
+
+collection-literal
+    ::= "[" , [ expression , { "," , expression } ] , "]" ;
+
+quantity-expression
+    ::= ( exact-number | rumber-number ) , unit-expression ;
+
+unit-expression
+    ::= unit-factor , { ( "*" | "/" ) , unit-factor } ;
+
+unit-factor
+    ::= UNIT_FORM
+      | identifier
+      | "(" , unit-expression , ")"
+      ;
+
+random-expression
+    ::= "Rand" , "(" , expression , ")" ;
+
+quantifier-expression
+    ::= quantifier , variable-name , "in" , expression
+        , ":" , expression
+        ;
+
+quantifier
+    ::= "exists" | "forall" | "count" | "sum" | "min" | "max" ;
+
+(* ------------------------------------------------------------------ *)
+(* Intervalos                                                          *)
+(* ------------------------------------------------------------------ *)
+
+interval-expression
+    ::= bounded-interval
+      | closed-interval-sugar
+      | singleton-interval
+      ;
+
+bounded-interval
+    ::= "[" , interval-bound , ".." , interval-bound , "]"
+      | "(" , finite-interval-bound , ".." , finite-interval-bound , ")"
+      | "[" , interval-bound , ".." , finite-interval-bound , ")"
+      | "(" , finite-interval-bound , ".." , interval-bound , "]"
+      ;
+
+closed-interval-sugar
+    ::= interval-bound , ".." , interval-bound ;
+
+singleton-interval
+    ::= "[" , interval-bound , "]" ;
+
+interval-bound
+    ::= finite-interval-bound | "*" ;
+
+finite-interval-bound
+    ::= expression-without-interval ;
+
+cyclic-interval
+    ::= "[" , expression-without-interval , ".."
+        , expression-without-interval , "cycle" , ")"
+        ;
+
+expression-without-interval
+    ::= quantitative-expression ;
+
+(* ------------------------------------------------------------------ *)
+(* Separación física                                                   *)
+(* ------------------------------------------------------------------ *)
+
+layout
+    ::= { TERMINATOR } ;
+
+declaration-layout
+    ::= { TERMINATOR } ;
+
+required-separation
+    ::= TERMINATOR , { TERMINATOR } ;

@@ -17,7 +17,7 @@ family Color {
 }
 ```
 
-`ordered` es una palabra contextual que, situada inmediatamente antes de `family`, añade orden semántico:
+`ordered` es una palabra reservada que, situada inmediatamente antes de `family`, añade orden semántico:
 
 ```mud
 ordered family Severity {

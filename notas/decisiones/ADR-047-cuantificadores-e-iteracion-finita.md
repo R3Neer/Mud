@@ -30,7 +30,13 @@ La fuente debe ser finita y enumerable. La evaluación es pura; `min` y `max` so
 for each item in source if predicate {
     ...
 }
+
+for each value in source by step if predicate {
+    ...
+}
 ```
+
+La cláusula `by` opcional precede siempre a `if`. Un diccionario puede vincular un par mediante `(key, value)`.
 
 La pertenencia a `source` se toma como instantánea al comienzo del bucle. El filtro es puro, determinista y no puede depender de azar calculado.
 
@@ -56,3 +62,4 @@ Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmen
 3. Diferencia observable entre bucle ordenado y no ordenado.
 4. Intervalos abiertos, cerrados, discontinuos y con paso.
 5. Rechazo de una enumeración `Rumber` o infinita.
+6. Orden sintáctico `by` antes de `if` y vinculación de pares de diccionario.

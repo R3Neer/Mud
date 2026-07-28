@@ -45,7 +45,9 @@ El orden textual de archivos y declaraciones `using` no decide empates.
 
 Los identificadores son sensibles a mayúsculas. El catálogo de palabras reservadas no puede usarse como nombre de campo, componente, rol, `given`, variable local o declaración.
 
-D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; `ordered` lo es delante de `family`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `using`, `with`, `family`, `test` y `otherwise` son palabras reservadas.
+D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen.
+
+`using`, `with`, `family`, `test`, `otherwise` y `ordered` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección.
 
 ### Nombres cualificados y anclas
 

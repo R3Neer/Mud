@@ -11,6 +11,14 @@ MUD admite azar, pero no permite que este o los errores introduzcan resultados d
 
 ## Decisión
 
+MUD 1.0 expone una única forma sintáctica de muestreo:
+
+```mud
+Rand(source)
+```
+
+La fuente debe ser una colección o dominio muestreable. No existen todavía argumentos de pesos, distribuciones ni política local.
+
 `Rand` puede intervenir de tres formas:
 
 - campo almacenado inicializado aleatoriamente mediante `=`;
@@ -39,3 +47,4 @@ Los límites de recursos y defectos internos de una implementación no deben con
 3. Prohibición en condiciones y filtros.
 4. Aislamiento del azar especulativo.
 5. Rollback y propagación de fallos.
+6. Aceptación exclusiva de `Rand(source)` y rechazo de firmas adicionales.

@@ -1,0 +1,149 @@
+(* MUD 1.0 — gramática léxica normativa.
+   Dialecto descrito en README.md.
+   Las producciones SPECIAL_* remiten a algoritmos normativos de 06-lexico.md. *)
+
+mud-source ::= [ bom ] , { lexical-element } , eof ;
+
+lexical-element
+    ::= horizontal-space
+      | newline
+      | comment
+      | multiline-text-literal
+      | text-literal
+      | character-literal
+      | rumber-literal
+      | exact-number-literal
+      | point-form
+      | identifier
+      | operator-or-delimiter
+      | unit-form
+      ;
+
+bom              ::= ? U+FEFF, únicamente como primer carácter ? ;
+eof              ::= ? fin de archivo ? ;
+horizontal-space ::= " " | tab ;
+tab              ::= ? U+0009 ? ;
+newline          ::= cr , [ lf ] | lf ;
+cr               ::= ? U+000D ? ;
+lf               ::= ? U+000A ? ;
+
+(* El scanner intenta las formas multilínea antes que las ordinarias. *)
+comment
+    ::= multiline-comment
+      | closed-line-comment
+      | open-line-comment
+      ;
+
+open-line-comment
+    ::= "#" , { line-comment-character } ;
+
+closed-line-comment
+    ::= "#" , { closed-comment-character } , "#" ;
+
+line-comment-character
+    ::= ? cualquier escalar Unicode salvo NEWLINE ? ;
+
+closed-comment-character
+    ::= ? cualquier escalar Unicode salvo "#", NEWLINE ? ;
+
+multiline-comment
+    ::= special-multiline-comment ;
+
+special-multiline-comment
+    ::= ? bloque ### validado por MUD-LEX-020 a MUD-LEX-024 ? ;
+
+text-literal
+    ::= quote , { text-character | escape-sequence } , [ quote ] ;
+
+quote ::= ? U+0022 COMILLA DOBLE ? ;
+
+text-character
+    ::= ? escalar Unicode salvo '"', "\", CR y LF ? ;
+
+multiline-text-literal
+    ::= special-multiline-text ;
+
+special-multiline-text
+    ::= ? bloque triple comilla validado por MUD-LEX-030 a MUD-LEX-036 ? ;
+
+character-literal
+    ::= apostrophe , ( character-content | escape-sequence ) , apostrophe ;
+
+apostrophe ::= ? U+0027 COMILLA SIMPLE ? ;
+
+character-content
+    ::= ? un valor escalar Unicode salvo "'", "\", CR y LF ? ;
+
+escape-sequence
+    ::= reverse-solidus
+        , ( reverse-solidus | quote | apostrophe | "n" | "r" | "t" )
+      | unicode-escape
+      ;
+
+unicode-escape
+    ::= reverse-solidus , "u" , "{" , hex-digit , { hex-digit } , "}" ;
+
+reverse-solidus ::= ? U+005C BARRA INVERSA ? ;
+
+exact-number-literal
+    ::= decimal-mantissa , [ exponent-part ] ;
+
+rumber-literal
+    ::= "r" , decimal-mantissa , [ exponent-part ] ;
+
+decimal-mantissa
+    ::= digits , [ "." , digits ]
+      | "." , digits
+      ;
+
+exponent-part
+    ::= ( "e" | "E" ) , [ "+" | "-" ] , digits ;
+
+digits
+    ::= digit , { digit | ( "_" , digit ) } ;
+
+digit     ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+hex-digit ::= digit | "A" | "B" | "C" | "D" | "E" | "F"
+                    | "a" | "b" | "c" | "d" | "e" | "f" ;
+
+identifier
+    ::= ascii-letter , { ascii-letter | digit } ;
+
+ascii-letter
+    ::= "A" | "B" | "C" | "D" | "E" | "F" | "G"
+      | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+      | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+      | "V" | "W" | "X" | "Y" | "Z"
+      | "a" | "b" | "c" | "d" | "e" | "f" | "g"
+      | "h" | "i" | "j" | "k" | "l" | "m" | "n"
+      | "o" | "p" | "q" | "r" | "s" | "t" | "u"
+      | "v" | "w" | "x" | "y" | "z"
+      ;
+
+(* UNIT_FORM es contextual y procede del catálogo de unidades ya resuelto. *)
+unit-form
+    ::= ? forma Unicode de unidad habilitada por una declaración magnitude ? ;
+
+point-form
+    ::= ? forma contextual habilitada por format; gramática pendiente en Q-055 ? ;
+
+operator-or-delimiter
+    ::= three-character-token
+      | two-character-token
+      | one-character-token
+      ;
+
+three-character-token
+    ::= "<=>" ;
+
+two-character-token
+    ::= ":=" | "->" | ".." | "==" | "!=" | "<=" | ">="
+      | "=>" | "+=" | "-=" | "*=" | "/="
+      ;
+
+one-character-token
+    ::= "{" | "}" | "(" | ")" | "[" | "]"
+      | "," | "." | ":" | ";" | "="
+      | "+" | "-" | "*" | "/" | "%"
+      | "<" | ">" | "!" | "&" | "|" | "^"
+      ;

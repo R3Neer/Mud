@@ -68,6 +68,31 @@ rule ApplyStarvation on
 
 Esto crea una vinculación por pertenencia real y no un producto cartesiano. En participantes suministrados mediante `for`, las restricciones adicionales se expresan mediante tipos, dominios o condiciones.
 
+### Identidad exacta y selección por tipo
+
+Una referencia cualificada escrita en el cuerpo sin cabecera de participantes designa la identidad canónica exacta:
+
+```mud
+rule AdvanceCalendar {
+    when World.day changes
+    then World.date += 1 day
+}
+```
+
+Aquí `World` no significa «toda `thing` que sea `World`», sino la única identidad `World`.
+
+En cambio, un participante `on World` o `for World` selecciona `thing` concretas activas cuyo tipo satisface `is World`. La selección es reflexiva: incluye la identidad exacta `World` cuando es concreta y activa, además de sus especializaciones activas. Una `thing` abstracta no aporta por sí misma una vinculación concreta, aunque sus especializaciones sí puedan aportarla.
+
+Para excluir deliberadamente la identidad raíz debe declararse un rol y expresarse la condición:
+
+```mud
+rule DescendantOnly for world: World {
+    world != World and ...
+}
+```
+
+La selección por tipo nunca sustituye una referencia nominal exacta escrita fuera de una cabecera.
+
 ### Receptores y argumentos
 
 Los receptores vinculan participantes; los argumentos vinculan `given`.
@@ -137,3 +162,5 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 7. Separación entre participantes y `given`.
 8. Vinculación `on` relacionada mediante `in`.
 9. Rechazo de cabeceras incompatibles.
+10. Diferencia entre la referencia exacta `World` y un participante `on World` o `for World`.
+11. Reflexividad para una raíz concreta y ausencia de vinculación directa para una raíz abstracta.

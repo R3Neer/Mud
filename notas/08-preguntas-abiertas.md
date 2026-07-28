@@ -12,11 +12,11 @@ Prioridades:
 
 ### Q-001 — Gramática y saltos de línea
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]].
+Estado: **cerrada** mediante [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-056-character-texto-y-orden-unicode|D-056]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
 
 Una instrucción termina mediante `;` o salto de línea. El salto continúa cuando el prefijo todavía no puede formar una unidad sintáctica completa pero admite una continuación válida; la sangría no interviene.
 
-Falta definir la gramática completa del subconjunto v0, enumerar exhaustivamente los prefijos abiertos y completar recuperación de errores, precedencia y ambigüedades de `in`, receptores y bloques.
+La sintaxis completa vive en `especificacion/gramatica/`; [[especificacion/07-gramatica-concreta]] fija precedencia, prefijos abiertos y distinciones contextuales. La recuperación de errores puede variar entre implementaciones, pero nunca amplía el lenguaje aceptado.
 
 ### Q-002 — Modelo exacto de efectos secuenciales y simultáneos
 
@@ -323,7 +323,9 @@ Toda `thing` se define estáticamente y puede activarse mediante `start with` o 
 
 ### Q-026 — Varias acciones en `eventually`
 
-Sintaxis, unión de espacios de entrada y orden de enumeración.
+Estado: **parcialmente cerrada** mediante [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
+
+`through` acepta una colección contextual, con corchetes opcionales, de referencias a acciones. Falta fijar el orden canónico de enumeración de solicitudes y su posible efecto en testigos y diagnósticos; no afecta a la verdad existencial.
 
 ### Q-027 — Estado relevante
 

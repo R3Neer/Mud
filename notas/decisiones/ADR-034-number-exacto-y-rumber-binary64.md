@@ -109,7 +109,7 @@ value: Rumber = r0.1
 Tampoco se mezclan literales exactos y rápidos:
 
 ```mud
-r0.1 + 0.2 // inválido
+r0.1 + 0.2 # inválido
 ```
 
 ### Magnitudes basadas en `Rumber`

@@ -68,8 +68,8 @@ El tipo esperado puede construir directamente el valor nominal:
 
 ```mud
 square: Square = (E, Four)
-game.Move((E, Four)) // si el `given` esperado es Square
-board[E, Four]       // si la clave esperada es Square
+game.Move((E, Four)) # si el `given` esperado es Square
+board[E, Four]       # si la clave esperada es Square
 ```
 
 Lo mismo se aplica a literales básicos:
@@ -110,7 +110,7 @@ Los nombres validan y documentan posiciones; no permiten reordenarlas. Todo comp
 Dos literales estructurales desnudos no pueden compararse porque ninguno aporta un tipo esperado:
 
 ```mud
-(E, Four) == (E, Four) // inválido
+(E, Four) == (E, Four) # inválido
 ```
 
 Si un operando ya está resuelto como un alias y el otro es un literal sintáctico compatible todavía construible por contexto, el tipo nominal se propaga como expectativa al literal:
@@ -130,7 +130,7 @@ playerName == "Ada"
 
 puede construirse contextualmente como `PlayerName`. En cambio, si `rawText` es una variable de tipo `Text`, `playerName == rawText` continúa siendo inválido sin `to`.
 
-Los literales de `Text`, `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente.
+Los literales de `Text`, `Character`, `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente.
 
 Después de resolver los literales, ambos operandos deben tener exactamente el mismo tipo nominal. Comparar aliases diferentes o un alias con una expresión ya tipada como su representación subyacente es un error:
 

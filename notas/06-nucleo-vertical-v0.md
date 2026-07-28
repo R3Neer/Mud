@@ -41,9 +41,9 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 
 - Namespaces derivados de carpetas.
 - Un archivo o varios archivos por namespace.
-- Imports exactos.
+- Declaraciones `using` exactas.
 - `thing` concreta sin especialización.
-- Tipos `Bool`, `Natural`, `Integer`, `Number`, `Rumber`, `Text` y `Money`.
+- Tipos `Bool`, `Character`, `Natural`, `Integer`, `Number`, `Rumber`, `Text` y `Money`.
 - Campos almacenados, `mut` y dominios de intervalos cerrados.
 - Regla booleana con un participante.
 - Regla reactiva con un participante.
@@ -97,7 +97,7 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 - `allowed`.
 - `eventually`.
 - Aleatoriedad.
-- Imports recursivos.
+- Declaraciones `using` recursivas.
 - Participantes múltiples y vinculación nombrada.
 - Comentarios cerrados con `#...#` y multilínea `###...###`.
 - Materialización TypeScript completa.

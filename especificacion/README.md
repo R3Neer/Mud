@@ -166,7 +166,7 @@ Define, antes de hablar de sintaxis:
 
 ## 05. Texto fuente y estructura física
 
-Archivo previsto: `05-texto-fuente.md`
+Capítulo: [[05-texto-fuente]].
 
 Define:
 
@@ -179,7 +179,7 @@ Define:
 
 ## 06. Estructura léxica
 
-Archivo previsto: `06-lexico.md`
+Capítulo: [[06-lexico]].
 
 Define:
 
@@ -196,11 +196,11 @@ La gramática léxica ejecutable vivirá en `gramatica/mud-lexico.ebnf`.
 
 ## 07. Gramática concreta
 
-Archivo previsto: `07-gramatica-concreta.md`
+Capítulo: [[07-gramatica-concreta]].
 
 Define la sintaxis completa de:
 
-- Imports.
+- Declaraciones `using`.
 - Declaraciones.
 - Tipos.
 - Campos.
@@ -241,7 +241,7 @@ Define:
 
 - Ámbitos.
 - Resolución local y cualificada.
-- Imports exactos y recursivos.
+- Declaraciones `using` exactas y recursivas.
 - Ambigüedad.
 - Formación y unicidad de anclas.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
@@ -262,7 +262,7 @@ Archivo previsto: `10-sistema-de-tipos.md`
 
 Define:
 
-- `Text` y `Bool` como tipos básicos no numéricos.
+- `Text`, `Character` y `Bool` como tipos básicos no numéricos.
 - `Natural`, `Integer`, `Number`, `Rumber` y `Money` como representaciones numéricas básicas, no magnitudes.
 - `Number` como racional exacto y `Rumber` como IEEE 754 `binary64` explícito.
 - Tipos de `thing`.
@@ -324,7 +324,7 @@ Archivo previsto: `13-familias-cerradas.md`
 Define:
 
 - `family`.
-- `ordered` contextual delante de `family`.
+- `ordered` como palabra reservada delante de `family`.
 - Miembros como valores nominales sin identidad ni ciclo de vida runtime.
 - Anclas estáticas `family::*`.
 - Esquema uniforme de datos inmutables declarado directamente en la familia.
@@ -363,7 +363,7 @@ Define:
 - Multiplicidad y `unique`.
 - Membresía estricta de `thing`, con exclusión incondicional del ancla exacta del tipo.
 - Colecciones ordenadas y no ordenadas.
-- Orden natural, de inserción, semántico y `ordered by`.
+- Orden natural, de inserción y semántico; orden Unicode fijo para `Character`.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
 

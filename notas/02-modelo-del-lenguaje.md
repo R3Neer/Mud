@@ -249,7 +249,7 @@ Junto con las acciones forman la frontera semántica del modelo: `action` introd
 
 La especificación incluye:
 
-- Tipos básicos no numéricos: `Text` y `Bool`.
+- Tipos básicos no numéricos: `Text`, `Character` y `Bool`.
 - Tipos numéricos básicos: `Natural`, `Integer`, `Number`, `Rumber` y `Money`.
 - Aliases nominales simples, estructurales y compuestos.
 - Familias cerradas de valores declaradas mediante `family` u `ordered family`.
@@ -310,7 +310,7 @@ message::warfare.armies.ArmyDestroyed
 
 Las anclas no incluyen el archivo. Mover una declaración dentro del mismo namespace no cambia su identidad; moverla de namespace sí, salvo una migración explícita todavía por diseñar.
 
-MUD distingue palabras reservadas y contextuales. `using`, `with`, `family`, `test` y `otherwise` están reservadas. `start` introduce `start with`; `abstract` solo actúa como modificador delante de `thing`; `always` solo actúa como variante delante de `rule`; `ordered` solo actúa como modificador delante de `family`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
+MUD distingue palabras reservadas y contextuales. `using`, `with`, `family`, `test`, `otherwise` y `ordered` están reservadas. `start` introduce `start with`; `abstract` solo actúa como modificador delante de `thing`; `always` solo actúa como variante delante de `rule`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial; `ordered` no puede.
 
 Las reglas completas de organización física, declaraciones `using`, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 

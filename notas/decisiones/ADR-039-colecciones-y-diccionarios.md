@@ -28,9 +28,12 @@ Las colecciones admiten duplicados salvo `unique`. `ordered` conserva un orden o
 Fuentes iniciales de orden:
 
 - Básicos: orden de su tipo.
+- `Character`: valor escalar Unicode creciente; `ordered by` está prohibido.
 - `thing`: orden de inserción cuando la colección es `ordered`.
 - `ordered family`: orden declarado.
 - Alias ordenado: orden subyacente o lexicográfico.
+
+`Text` no equivale a `Character [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
 
 La consolidación simultánea de inserciones con orden observable deberá integrarse en la matriz de Q-006.
 

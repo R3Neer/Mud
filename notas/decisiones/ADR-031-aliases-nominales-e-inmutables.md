@@ -65,7 +65,7 @@ alias CityName :=
 Un valor de alias es inmutable. No puede actualizarse uno de sus componentes:
 
 ```mud
-square.file = B // inválido
+square.file = B # inválido
 ```
 
 Un campo con mutabilidad exterior puede sustituir el valor completo:
