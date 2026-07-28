@@ -256,7 +256,8 @@ Archivo previsto: `10-sistema-de-tipos.md`
 
 Define:
 
-- `Boolean`, `Natural`, `Integer`, `Number`, `Text`, `Money` y `Percentage`.
+- `Text` y `Bool` como tipos básicos no numéricos.
+- `Natural`, `Integer`, `Number` y `Money` como representaciones numéricas básicas, no magnitudes.
 - Tipos de `thing`.
 - Tipos nominales de alias.
 - Familias cerradas.
@@ -264,7 +265,8 @@ Define:
 - Intervalos.
 - Magnitudes.
 - Subtipado mediante `is`.
-- Conversión implícita y explícita.
+- Inferencia y ampliación de representaciones en operaciones cuantitativas.
+- Conversión cuantitativa explícita mediante `to`.
 - Igualdad y orden por tipo.
 
 Juicio principal:
@@ -374,10 +376,12 @@ Define:
 - Dominios calculados.
 - Pertenencia.
 - Intervalos abiertos, cerrados, vacíos y discontinuos.
+- Límites efectivos laterales mediante `*` y azúcar `[*]`.
 - Normalización.
 - Finitud y enumerabilidad.
 - Pasos de iteración.
-- Dominios dinámicos y ciclos.
+- Dominios dinámicos.
+- Dominios cíclicos `[a..b cycle)` exclusivos de magnitudes de punto.
 
 ## 18. Magnitudes, unidades y puntos
 
@@ -385,15 +389,16 @@ Archivo previsto: `18-magnitudes.md`
 
 Define:
 
-- Magnitudes lineales.
-- Unidades raíz y equivalentes.
+- Magnitudes no derivadas, derivadas y de punto.
+- Representaciones numéricas explícitas e inferidas.
+- Unidades raíz sin identificador de cabecera y equivalencias mediante `:=`.
 - Prefijos.
 - Normalización.
 - Aritmética dimensional.
-- Magnitudes de punto.
-- Ciclos y formatos.
+- Inferencia de unidades canónicas derivadas y combinaciones automáticas.
+- Unidades nominales derivadas opcionales.
+- Declaraciones `point over`, ciclos y formatos.
 - Magnitudes temporales.
-- Magnitudes derivadas.
 - Calendarios y localización.
 
 ## 19. Expresiones
@@ -408,6 +413,7 @@ Define:
 - Operadores.
 - Precedencia y asociatividad.
 - Conversiones.
+- Distinción entre presentación en otra unidad mediante `in` y conversión cuantitativa mediante `to`.
 - `old`.
 - `allowed`.
 - `eventually`.

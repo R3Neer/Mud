@@ -133,7 +133,7 @@ Consecuencias normativas:
 
 ### Regla booleana
 
-Es pura, devuelve `Boolean`, se consulta explícitamente y puede tener `given`. No escribe, crea ni destruye.
+Es pura, devuelve `Bool`, se consulta explícitamente y puede tener `given`. No escribe, crea ni destruye.
 
 Cuando su declaración no es efectiva, sus llamadas se eliminan de la expresión mediante una poda estructural. No devuelven simplemente `true` o `false`: el operador exterior conserva el operando restante y una expresión exterior borrada se interpreta como verdadera. Véase [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
 
@@ -176,13 +176,22 @@ Junto con las acciones forman la frontera semántica del modelo: `action` introd
 
 La especificación incluye:
 
-- `Boolean`, `Natural`, `Integer`, `Number`, `Text`, `Money` y `Percentage`.
+- Tipos básicos no numéricos: `Text` y `Bool`.
+- Tipos numéricos básicos: `Natural`, `Integer`, `Number` y `Money`.
 - Aliases estructurales.
 - Familias cerradas de valores.
 - Cardinalidades y colecciones.
 - Diccionarios.
 - Intervalos.
-- Magnitudes lineales, unidades y magnitudes de punto.
+- Magnitudes no derivadas, derivadas y de punto.
+
+Los tipos numéricos básicos determinan representación y no son magnitudes. Una magnitud no derivada usa `Number` si omite su tipo numérico; una derivada infiere la representación menos ampliada capaz de representar su operación. `Percentage` no es un tipo básico.
+
+Las unidades se identifican mediante `name` dentro de un bloque sin identificador de cabecera. Una magnitud no derivada con unidades declara una `root unit`; las alternativas y los nombres derivados se expresan mediante `unit := cantidad`. Una magnitud derivada combina automáticamente las unidades raíz de sus componentes y no puede declarar raíz.
+
+Los literales numéricos no tienen sufijos de tipo. `in` cambia la unidad de presentación de una cantidad y `to` convierte explícitamente valores cuantitativos compatibles. Los dominios declarados en cabeceras de magnitud usan límites numéricos desnudos interpretados en su representación canónica.
+
+Una magnitud de punto se declara mediante `point over`. Solo estas magnitudes pueden usar el dominio cíclico `[a..b cycle)`. Las decisiones completas pertenecen a [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
 
 Para formalizar esta parte se necesita una matriz por operador que indique:
 

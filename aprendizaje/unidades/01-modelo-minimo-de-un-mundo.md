@@ -41,8 +41,8 @@ Partimos de:
 
 ```mud
 abstract thing Gate {
-    unlocked: Boolean
-    open: Boolean
+    unlocked: Bool
+    open: Bool
 }
 
 thing NorthGate as Gate {
@@ -468,7 +468,7 @@ No funciona: una `thing` destruida conserva carga y una `thing` sin propiedades 
 
 ### Confundir sintaxis omitida con semántica distinta
 
-`Boolean` y `Boolean[1]` tienen la misma cardinalidad. La omisión solo es azúcar.
+`Bool` y `Bool[1]` tienen la misma cardinalidad. La omisión solo es azúcar.
 
 ## 17. Lectura comentada
 

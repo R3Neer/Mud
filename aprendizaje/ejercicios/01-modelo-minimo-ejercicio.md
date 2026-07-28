@@ -21,7 +21,7 @@ Considera:
 
 ```mud
 abstract thing Gate {
-    open: Boolean
+    open: Bool
 }
 
 thing NorthGate as Gate {

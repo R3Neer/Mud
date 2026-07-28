@@ -103,17 +103,17 @@ Los conjuntos de lectura y escritura de una acción no incluyen descendientes po
 
 ```mud
 construct Kingdom {
-    mut treasury: Money = 0M
+    mut treasury: Money = 0
 }
 
 construct Egypt from Kingdom {
 }
 ```
 
-`Egypt` comienza con el predeterminado efectivo `treasury = 0M`. Si posteriormente:
+`Egypt` comienza con el predeterminado efectivo `treasury = 0`. Si posteriormente:
 
 ```mud
-Kingdom.treasury = 100M
+Kingdom.treasury = 100
 ```
 
 el valor de `Egypt.treasury` no cambia.
@@ -122,11 +122,11 @@ De igual modo, tras:
 
 ```mud
 create construct France from Kingdom {
-    treasury = 20M
+    treasury = 20
 }
 ```
 
-`France.treasury` vale `20M`. Si más adelante se crea un descendiente de `France` sin inicialización explícita, la asignación `20M` no actúa como predeterminado heredable.
+`France.treasury` vale `20`. Si más adelante se crea un descendiente de `France` sin inicialización explícita, esa asignación no actúa como predeterminado heredable.
 
 ## Verificación futura
 

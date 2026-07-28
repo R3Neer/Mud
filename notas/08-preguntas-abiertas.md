@@ -225,7 +225,14 @@ Normalización canónica, igualdad, orden descendente y varias claves.
 
 ### Q-019 — Números
 
-Redondeo de `Money`, conversiones estrechas, límites numéricos, overflow y división por cero.
+Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]] y [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
+
+`Natural`, `Integer`, `Number` y `Money` son representaciones numéricas básicas; los literales no usan sufijos y las conversiones estrechas se escriben con `to`. Falta fijar:
+
+- La política global concreta de redondeo.
+- Las reglas de representación e inferencia específicas de `Money`.
+- Los límites de representación, overflow y portabilidad.
+- División por cero y demás fallos aritméticos.
 
 ### Q-020 — Oscilaciones y límite de ondas
 
@@ -253,9 +260,9 @@ Un `message` detecta un hecho durante la resolución de una acción y evalúa su
 
 ### Q-053 — Conversiones explícitas
 
-Estado de la premisa: **abierta por [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]**.
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
 
-`as` queda reservado para declarar especialización entre `thing` y deja de expresar casting. Falta decidir si MUD necesita conversiones explícitas, qué conversiones no pueden resolverse implícitamente y, si existen, cuál es su sintaxis y su comportamiento ante fallo.
+`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles y `in` cambia la unidad de expresión. Falta integrar una violación de dominio dependiente del valor con la taxonomía general de fallos dinámicos.
 
 ### Q-022 — Valores de retorno de acciones
 
@@ -309,7 +316,17 @@ Calendario civil inicial, zonas horarias, formatos, idiomas y separación entre 
 
 ### Q-034 — Magnitudes derivadas
 
-Composición dimensional, simplificación, equivalencias y errores.
+Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]].
+
+`:=` define composición dimensional; la representación canónica combina unidades raíz y las expresiones compatibles de unidad se admiten automáticamente. Falta concretar el algoritmo de normalización dimensional, sus diagnósticos y las interacciones especiales con `Money`.
+
+### Q-054 — Catálogo y resolución léxica de unidades y prefijos
+
+Qué prefijos incorpora MUD, qué formas ASCII y Unicode reconoce, cómo se resuelven colisiones entre `name`, `plural`, `abbreviation` y formas prefijadas, y qué identidad semántica estable recibe una unidad cuya cabecera no tiene identificador.
+
+### Q-055 — Formatos de magnitudes de punto
+
+Gramática de `format`, nombres y significado de componentes, parseo frente a impresión, unicidad de la representación, validación de anchuras y relación con calendarios y localización.
 
 ### Q-035 — Coste de `allowed`
 

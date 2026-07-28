@@ -1,0 +1,87 @@
+# ADR-030 — Conversión cuantitativa explícita mediante `to`
+
+- Estado: Vigente
+- Fecha: 2026-07-28
+- Preguntas relacionadas: Q-019, Q-053
+- Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
+
+## Contexto
+
+`as` queda reservado para declarar especialización de `thing`, por lo que no puede seguir expresando conversiones. MUD necesita distinguir el cambio de unidad de una cantidad de la conversión de su representación numérica.
+
+## Decisión
+
+`to` es el operador de conversión cuantitativa explícita:
+
+```mud
+value to Integer
+value to Natural
+value to Money
+value to Population
+value to Price
+```
+
+Puede convertir:
+
+1. Entre representaciones numéricas compatibles.
+2. Una cantidad a una magnitud dimensionalmente compatible.
+3. Una expresión cuantitativa más amplia a la representación declarada por la magnitud de destino.
+
+```mud
+averagePopulation: Population :=
+    population / regions to Population
+```
+
+`to` no es un casting general. Deben rechazarse conversiones como:
+
+```mud
+army to Kingdom
+place to House
+text to Number
+distance to Time
+Bool to Natural
+```
+
+### Redondeo y validación
+
+Cuando la representación de destino no puede conservar una fracción, `to` aplica la única política global de redondeo de MUD. La sintaxis no permite seleccionar una política local:
+
+```mud
+value to Integer
+```
+
+La política global debe ser determinista y portable; su elección concreta permanece abierta en Q-019.
+
+Después del redondeo, el resultado debe pertenecer al dominio de destino. `to` no satura ni corrige automáticamente un valor fuera de dominio.
+
+### Diferencia respecto de `in`
+
+`in` cambia la unidad con la que se expresa una cantidad, sin cambiar su magnitud:
+
+```mud
+distance in kilometers
+speed in km/h
+```
+
+`to` cambia la representación numérica o materializa una magnitud cuantitativamente compatible:
+
+```mud
+average to Integer
+averagePopulation to Population
+amount to Money
+```
+
+## Consecuencias
+
+- El AST distingue `UnitPresentationExpr` de `QuantitativeConversionExpr`.
+- El sistema de tipos debe probar compatibilidad numérica y dimensional antes de aceptar `to`.
+- Una conversión inválida conocida estáticamente se diagnostica en compilación; una violación dependiente del valor deberá tener un resultado dinámico explícito todavía por integrar con la semántica general de fallos.
+- `as` deja definitivamente de participar en conversiones.
+
+## Verificación futura
+
+1. Ampliaciones y estrechamientos entre representaciones numéricas.
+2. Conversión a una magnitud compatible.
+3. Rechazo de dimensiones incompatibles.
+4. Rechazo de valores fuera del dominio tras redondear.
+5. Diferencia observable entre `quantity in unit` y `quantity to type`.

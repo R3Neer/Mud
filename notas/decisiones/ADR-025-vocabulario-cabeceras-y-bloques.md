@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Pregunta abierta: Q-053
+- Pregunta posteriormente resuelta: Q-053 mediante D-030
 - Decisiones sustituidas parcialmente: D-004, D-005, [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`
 
@@ -42,7 +42,7 @@ create thing Alexandria as City {
 
 La lista posterior a `as` sigue denotando un conjunto finito de antecesores directos sin prioridad por posición. El operador booleano `is` conserva su semántica: consulta la clausura reflexiva y transitiva de esa relación.
 
-`as` deja de ser un operador de conversión explícita. La existencia y sintaxis de conversiones explícitas queda pendiente para el sistema de tipos.
+`as` deja de ser un operador de conversión explícita. D-030 fija posteriormente `to` para conversiones cuantitativas compatibles.
 
 ### Matriz de participantes
 

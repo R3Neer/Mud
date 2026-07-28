@@ -5,8 +5,8 @@
 - Fecha de la fuente observada: 2026-07-27 12:00:02
 - Líneas: 3652
 - SHA-256 original previo a las anotaciones: `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`
-- Copia histórica anotada: 3765 líneas
-- SHA-256 de la copia anotada y normalizada: `3AFEC544F2F77CDDB8D5849E42ADBD63D8950E2879CD6CF732133CA6C86E4060`
+- Copia histórica anotada: 3773 líneas
+- SHA-256 de la copia anotada: `C076865A962792DE5D12F82D3CDFED733ABCAA0D5518F0F1D3E84C593037853C`
 - Documentos relacionados: [[notas/11-trazabilidad-de-la-fuente]], [[notas/10-registro-de-decisiones]], [[especificacion/README]]
 
 ## Conclusión
@@ -25,7 +25,7 @@ La documentación actual sí:
 
 Pero la matriz anterior de [[notas/11-trazabilidad-de-la-fuente]] demostraba únicamente **enrutamiento temático**: cada sección tenía algún documento relacionado. No demostraba que todas sus reglas, ejemplos, casos límite y diagnósticos hubieran sido incorporados.
 
-En particular, gran parte del detalle normativo sobre léxico, intervalos, bucles, magnitudes, operadores, diccionarios, aleatoriedad, grafo e IR solo permanece en el archivo de Descargas. Hasta incorporarlo o sustituirlo explícitamente, ese archivo sigue siendo necesario para reconstruir el diseño inicial.
+En particular, gran parte del detalle normativo sobre léxico, bucles, operadores generales, diccionarios, aleatoriedad, grafo e IR solo permanece en la referencia histórica. El núcleo nuevo de magnitudes, unidades, límites efectivos, ciclos y conversiones ya está decidido mediante D-028–D-030; las reglas históricas no contradictorias de iteración de intervalos aún requieren revisión.
 
 ## Criterios de esta auditoría
 
@@ -48,8 +48,8 @@ Una entrada en [[especificacion/README]] solo indica que habrá un capítulo. No
 | 4 a 9 | Archivos, imports, nombres, participantes, llamadas y anclas | Resumido; faltan gramática, resolución formal y diagnósticos | Capítulos 05 a 09, 21 y 24 |
 | 10 | Constructos e herencia | Parcialmente formalizado y ampliamente sustituido por D-014 a D-018 | Capítulos 04 y 11 |
 | 11 y 12 | Aliases y familias cerradas | Resumido; el ciclo de vida de aliases se ha sustituido deliberadamente | Capítulos 12 y 13 |
-| 13 a 19 | Campos, tipos básicos, conversiones, mutabilidad, colecciones, diccionarios y dominios | Resumido; D-017 y D-019 sustituyen partes; la mayoría de reglas concretas siguen solo en la fuente | Capítulos 10 y 14 a 17 |
-| 20 a 30 | Magnitudes, prefijos, operaciones, puntos, operadores, intervalos, precedencia y literales | Solo inventariado o resumido. Los pasos de intervalos, extremos, segmentos y restricciones de terminación no están preservados con detalle | Capítulos 18 a 20 |
+| 13 a 19 | Campos, tipos básicos, conversiones, mutabilidad, colecciones, diccionarios y dominios | Parcialmente decidido; D-017, D-019 y D-028–D-030 sustituyen tipos, conversiones y límites, pero diccionarios y dominios calculados siguen resumidos | Capítulos 10 y 14 a 17 |
+| 20 a 30 | Magnitudes, prefijos, operaciones, puntos, operadores, intervalos, precedencia y literales | El núcleo cuantitativo está sustituido por D-028–D-030; permanecen abiertos el catálogo léxico, formatos, `Money`, la matriz completa de operadores y la iteración de intervalos | Capítulos 18 a 20 |
 | 31 a 35 | Tres clases de regla, `when` y `changes` | Resumido; el borrado de reglas inactivas es una decisión posterior | Capítulos 21 a 23 y 29 |
 | 36 a 44 | Acciones, `after`, `old`, resultados, `allowed` y `eventually` | Resumido; existen preguntas abiertas sobre composición, rollback y finitud | Capítulos 24 y 27 a 38 |
 | 45 a 49 | Ondas, vinculaciones, cola, conflictos y terminación | Resumido; faltan la transición operacional y la matriz de conflictos | Capítulos 28 a 31 |
@@ -74,7 +74,7 @@ La siguiente información no puede reconstruirse de manera completa a partir de 
 6. La iteración de extremos abiertos, intervalos discontinuos y segmentos normalizados.
 7. La distinción entre iteraciones secuenciales de fuentes ordenadas y efectos simultáneos de fuentes no ordenadas.
 8. La instantánea de pertenencia de `for each`.
-9. Las reglas concretas de prefijos y magnitudes de punto.
+9. Las reglas históricas no contradictorias de iteración de intervalos; los prefijos y formatos solo sobreviven como insumo para Q-054 y Q-055.
 10. El catálogo inicial completo de relaciones del grafo semántico.
 11. Los ejemplos JSON de IR.
 12. Los casos de prueba detallados de participantes, `given` y contratos.
@@ -91,7 +91,10 @@ Estos elementos no se copiarán ciegamente a la norma. Primero deberán revisars
 | Ontología de constructos | La sintaxis y varios ejemplos sugerían declaración, categoría e identidad runtime separables | Un único dominio de constructos; cada concreto es cosa y posible antecesor | D-014 |
 | Palabra de entidad | `construct` | `thing` | D-025 |
 | Declaración de especialización | `construct A is B`, después `construct A from B` | `thing A as B`; `is` queda como consulta | D-018 y D-025 |
-| Conversión explícita | `as` | `as` queda reservado para especialización; la conversión explícita se rediseñará | D-025 |
+| Tipos cuantitativos | `Boolean`, `Percentage` y sufijos como `M` | `Bool`; cuatro representaciones numéricas básicas; `Percentage` deja de ser básico; literales sin sufijo | D-028 |
+| Magnitudes y unidades | Unidades nominales con identificador y magnitudes derivadas sin sistema cerrado | Unidades sin identificador de cabecera, raíz única, equivalencias con `:=` y composición dimensional automática | D-028 |
+| Intervalos y ciclos | `*` y ciclos sin semántica lateral integrada | Límites efectivos laterales cerrados y ciclo exclusivo `[a..b cycle)` de puntos | D-029 |
+| Conversión explícita | `as` | `to` convierte cantidades compatibles; `in` cambia su unidad de expresión | D-025 y D-030 |
 | Cabeceras `on`/`for` | `on` en solicitudes y `for` en observadores | `for` en acciones, reglas booleanas y `look`; `on` en reglas de cambio, `always` y `message` | D-025 |
 | Ciclos | No existía regla local completa | Se rechaza todo ciclo no trivial | D-015 |
 | Herencia de estado | No estaba delimitada con precisión | Solo se heredan esquema y predeterminados; nunca estado mutable actual | D-015 |
@@ -119,7 +122,7 @@ Dentro de `especificacion/`:
 - Los capítulos 01 y 02 son esqueletos.
 - Los capítulos 05 a 48 existen únicamente como índice previsto.
 
-Los ADR D-014 a D-027 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
+Los ADR D-014 a D-030 contienen formalización útil, pero una decisión no sustituye el capítulo normativo, su gramática, sus juicios, ejemplos, diagnósticos y pruebas.
 
 ## Regla de conservación a partir de esta auditoría
 

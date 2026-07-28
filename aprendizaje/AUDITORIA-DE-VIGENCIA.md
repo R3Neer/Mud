@@ -40,6 +40,10 @@ Una unidad nueva o revisada debe comprobar, cuando el tema sea aplicable, que:
 - Usa `on` para participantes observados automáticamente y `for` —con posible `given`— para participantes suministrados.
 - Comprueba la cardinalidad al final atómico de cada `then`, mediante análisis estático de sus efectos posibles.
 - Trata `action` como entrada y `look`/`message` como salidas del modelo.
+- Usa `Bool`, no el nombre histórico `Boolean`.
+- Distingue representaciones numéricas básicas de magnitudes y no introduce sufijos de tipo.
+- Usa `:=` para derivación dimensional, `in` para unidad de expresión y `to` para conversión cuantitativa.
+- Solo presenta ciclos mediante un dominio de punto `[a..b cycle)`.
 
 ## Autoridad
 

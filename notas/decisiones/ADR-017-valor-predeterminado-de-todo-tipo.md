@@ -44,17 +44,16 @@ Una construcción de tipos cuyo dominio fuese vacío no podría aceptarse como t
 
 ## Casos ya fijados
 
-La tabla de la especificación inicial se conserva:
+Los casos básicos, actualizados por D-028, son:
 
 | Tipo o familia | Valor predeterminado |
 | --- | --- |
-| `Boolean` | `false` |
+| `Bool` | `false` |
 | `Natural` | `0` |
 | `Integer` | `0` |
 | `Number` | `0` |
 | `Text` | `""` |
-| `Money` | `0M` |
-| `Percentage` | `0%` |
+| `Money` | `0` en contexto `Money` |
 | Colecciones | `empty` |
 | Diccionarios | `empty` |
 | Intervalos | `empty` |

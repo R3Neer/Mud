@@ -30,7 +30,7 @@ $$
 \mathsf{erased}
 $$
 
-que significa «este fragmento sintáctico ha sido borrado». No es un valor de MUD, no puede almacenarse y no pertenece a `Boolean`.
+que significa «este fragmento sintáctico ha sido borrado». No es un valor de MUD, no puede almacenarse y no pertenece a `Bool`.
 
 Antes del borrado, las expresiones booleanas se elaboran a un núcleo canónico:
 

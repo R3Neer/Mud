@@ -33,7 +33,7 @@ La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0C
 | 6–8, 31–33 y 36 | Se intercambian `on` y `for`: `on` corresponde a observadores automáticos; `for`, a acciones, reglas booleanas y `look`. Véase D-025. |
 | 9, 10, 63–65 y ejemplos relacionados | El modelo ya no separa clases e instancias; las `thing` forman un único dominio. La especialización se declara con `as` y se consulta con `is`. Véanse D-014–D-016 y D-025. |
 | 3.5 y 11 | Los aliases y las reglas poseen ciclo de vida lógico; cada regla y alias tiene una única definición completa y puede activarse mediante `create Nombre`. Véanse D-021 y D-024. |
-| 15 | `as` ya no expresa conversión explícita. La sintaxis futura de conversiones está abierta en Q-053. |
+| 14–15, 20–28, 30, 59 y ejemplos cuantitativos | El sistema cuantitativo ha sido sustituido: `Bool` reemplaza `Boolean`; `Percentage` deja de ser básico; no hay sufijos numéricos; las magnitudes, unidades, intervalos, ciclos, `in` y `to` se rigen por D-028–D-030. |
 | 16 | La mutabilidad exterior y la capacidad interior son ortogonales incluso para `[1]`; no existe una excepción singular. Véase D-019. |
 | 17, 30, 48, 56 y 59 | No existe `[reflexive]`; una colección de tipo `T` exige $c\neq T\land c\ \mathsf{is}\ T$. La cardinalidad final se demuestra por `then` y consolidación. Véase D-026. |
 | 32–33, 42, 50, 55 y 56 | `create` y `destroy` se generalizan y la destrucción es suspensión lógica reversible; `remove` sí elimina propiedades y cargas. Véanse D-021, D-023 y D-024. |
@@ -1284,6 +1284,8 @@ stabilityScore: Number in 0..100 :=
 ⸻
  
 ## 14. Tipos básicos
+> [!warning] Catálogo cuantitativo sustituido
+> Los tipos básicos vigentes son `Text`, `Bool`, `Natural`, `Integer`, `Number` y `Money`. Los cuatro últimos son representaciones numéricas, no magnitudes. `Percentage` deja de ser un tipo básico y los literales numéricos no usan sufijos. Véase D-028.
 ```
 Boolean
 Natural
@@ -1328,7 +1330,7 @@ No está restringido automáticamente a 0%..100%.
  
 ## 15. Conversiones
 > [!warning] Operador retirado para conversiones
-> `as` queda reservado para declarar especialización entre `thing`. La necesidad y sintaxis de conversiones explícitas se rediseñarán en Q-053.
+> `as` queda reservado para declarar especialización entre `thing`. La conversión cuantitativa explícita usa `to`; `in` solo cambia la unidad de presentación. No existe una política de redondeo local por conversión. Véase D-030.
 Implícitas:
 ```
 Natural → Integer
@@ -1622,6 +1624,8 @@ distance in kilometers
 ⸻
  
 ## 20. Magnitudes
+> [!warning] Sistema de magnitudes sustituido
+> Las secciones 20–26 conservan únicamente contexto histórico. D-028 redefine tipos numéricos, unidades raíz y alternativas, magnitudes derivadas, inferencia de representación y unidades compuestas automáticas. D-029 mueve `point over` y `cycle` a la cabecera y al dominio.
 Una magnitud es:
 1. Lineal con unidades.
 2. Punto sobre magnitud lineal.
@@ -1779,6 +1783,8 @@ is
 ⸻
  
 ## 28. Intervalos
+> [!warning] Sintaxis y límites ampliados
+> D-029 fija el azúcar `[n]`, el significado lateral de `*`, la equivalencia `[*] = [*..*]`, la obligación de cerrar todo extremo con `*`, los límites canónicos desnudos de magnitudes y la única forma cíclica `[a..b cycle)`. Las reglas históricas no contradictorias sobre normalización e iteración siguen pendientes de promoción.
 Se escriben:
 ```
 Natural Interval
@@ -2023,6 +2029,8 @@ De mayor a menor:
 ⸻
  
 ## 30. Literales numéricos y
+> [!warning] Sufijos retirados
+> Los separadores `_` se conservan, pero D-028 retira todos los sufijos de tipo, incluidos `N`, `I` y `M`. El contexto determina la representación numérica.
 ```
 _
 
@@ -2724,7 +2732,7 @@ Los efectos inválidos producen failed.
  
 ## 59. Valores predeterminados
 > [!warning] Premisa ampliada
-> D-017 exige un valor predeterminado perteneciente al dominio de todo tipo bien formado. Para colecciones de `thing`, el ancla exacta del tipo nunca puede servir como miembro predeterminado; Q-047 mantiene abierta la selección concreta.
+> D-017 exige un valor predeterminado perteneciente al dominio de todo tipo bien formado. D-028 sustituye `Boolean` por `Bool`, retira `Percentage` como básico y elimina el sufijo `M`: el predeterminado de `Money` se escribe `0` en contexto. Para colecciones de `thing`, el ancla exacta del tipo nunca puede servir como miembro predeterminado; Q-047 mantiene abierta la selección concreta.
 ```
 Boolean        false
 Natural        0
@@ -3282,7 +3290,7 @@ Debe mostrar claramente:
  
 ## 74. Palabras clave provisionales
 > [!warning] Catálogo sustituido
-> Esta lista no es el léxico vigente: `thing` sustituye a `construct`, `as` declara especialización, `look` y `message` son entidades nuevas y `reflexive` no existe. El catálogo normativo futuro será `45-palabras-reservadas.md`.
+> Esta lista no es el léxico vigente: `thing` sustituye a `construct`; `as` declara especialización; `look` y `message` son entidades nuevas; `root unit`, `:=`, `point over`, `cycle`, `in` y `to` tienen los usos de D-028–D-030; `equivalent` y `reflexive` no pertenecen a esas formas actuales. El catálogo normativo futuro será `45-palabras-reservadas.md`.
 ```
 abstract
 construct
