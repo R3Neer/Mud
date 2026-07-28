@@ -365,6 +365,7 @@ Define:
 - Membresía estricta de `thing`, con exclusión incondicional del ancla exacta del tipo.
 - Colecciones ordenadas y no ordenadas.
 - Orden natural, de inserción y semántico; orden Unicode fijo para `Character`.
+- `ordered by` sobre datos asociados de una `ordered family`, con desempate por orden de declaración.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
 

@@ -42,6 +42,8 @@ Fuentes iniciales de orden:
 - `ordered family`: orden declarado.
 - Alias ordenado: orden subyacente o lexicográfico.
 
+En una colección de `ordered family`, `ordered by expression` puede sustituir el orden declarado por una clave calculada a partir de los datos asociados de cada miembro. Durante la evaluación de la clave, los nombres no cualificados de esos datos se resuelven sobre el miembro actual. La clave debe tener orden semántico total y el orden declarado de la familia desempata claves iguales. Este orden de colección no modifica la comparación intrínseca entre miembros de la familia.
+
 Cuando el tipo o `ordered by expression` determina un orden canónico, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Este aviso no se aplica a una colección `thing [ordered]` ordenada por inserción: en ella el orden escrito es el orden elegido por el autor.
 
 `Text` no equivale a `Character [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
@@ -106,7 +108,7 @@ La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su pre
 
 1. Cardinalidad omitida y `empty`.
 2. Duplicados, normalización, aviso e idempotencia de `unique`.
-3. Orden natural, de inserción, semántico y `ordered by`, con aviso solo para órdenes canónicos.
+3. Orden natural, de inserción, semántico y `ordered by`, incluida una `ordered family` ordenada por dato asociado y con aviso solo para órdenes canónicos.
 4. Lectura, escritura y retirada de clave ausente.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.

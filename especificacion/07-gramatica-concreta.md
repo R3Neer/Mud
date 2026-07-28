@@ -131,7 +131,13 @@ nested: Name -> (Coordinate -> Piece [*]) [*]
 
 Los paréntesis son obligatorios para anidar un diccionario como valor.
 
-`ordered by expression` pertenece a colecciones cuyo tipo admita una clave semántica. Se prohíbe para `Character`; su orden es Unicode. `Text` no acepta especificaciones de colección.
+`ordered by expression` pertenece a colecciones cuyo tipo admita una clave semántica. En una colección de `ordered family`, la expresión puede consultar los datos asociados del miembro mediante nombres no cualificados; el orden de declaración desempata claves iguales:
+
+```mud
+route: Terrain [* ordered by movementCost]
+```
+
+La clave debe poseer orden semántico total. Se prohíbe `ordered by` para `Character`; su orden es Unicode. `Text` no acepta especificaciones de colección.
 
 ## Aliases
 
@@ -174,7 +180,7 @@ family Terrain {
 }
 ```
 
-Los datos aparecen antes del primer miembro. Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración.
+Los datos aparecen antes del primer miembro. Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración y permite usar sus datos asociados como claves de `ordered by` en colecciones.
 
 ## Magnitudes
 

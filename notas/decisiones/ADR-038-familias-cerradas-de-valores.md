@@ -88,6 +88,30 @@ Los predeterminados y las asignaciones de miembro deben ser expresiones puras ev
 - Se consultan como propiedades del valor de familia, por ejemplo `terrain.movementCost`.
 - No alteran la identidad ni la igualdad del miembro: siguen dependiendo de la familia nominal y el nombre del miembro.
 
+### Datos asociados como clave de colección
+
+Una colección de miembros de una `ordered family` puede usar `ordered by expression`. La expresión de clave se evalúa para cada miembro y puede consultar sus datos asociados mediante nombres no cualificados:
+
+```mud
+ordered family Terrain {
+    movementCost: Natural = 1
+
+    Plain,
+    Forest {
+        movementCost = 2
+    },
+    Mountain {
+        movementCost = 4
+    }
+}
+
+route: Terrain [* ordered by movementCost]
+```
+
+Dentro de `ordered by movementCost`, `movementCost` designa el dato del miembro de `Terrain` que se está ordenando. La expresión debe ser pura y su resultado debe poseer un orden semántico total. Los datos de una familia son inmutables, por lo que la clave no puede cambiar durante la vida de la colección.
+
+`ordered by` sustituye el orden de declaración como criterio principal de esa colección, pero no cambia los operadores de comparación propios de la familia. Cuando dos miembros producen la misma clave, su orden de declaración actúa como desempate canónico. Las ocurrencias repetidas de un mismo miembro permanecen contiguas y conservan su multiplicidad salvo que la colección sea también `unique`.
+
 La selección del miembro predeterminado de la propia familia continúa perteneciendo a Q-047.
 
 ## Verificación futura
@@ -102,3 +126,4 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 8. Esquema uniforme de datos y rechazo de datos específicos no declarados.
 9. Precedencia entre valor de miembro, predeterminado explícito y predeterminado de tipo.
 10. Inmutabilidad y acceso a datos asociados.
+11. Colección de `ordered family` ordenada por un dato asociado, incluidos empates y multiplicidad.
