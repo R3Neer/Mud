@@ -12,7 +12,6 @@ const {
 } = require("@codemirror/view");
 const {
   bracketMatching,
-  defaultHighlightStyle,
   StreamLanguage,
   syntaxHighlighting,
 } = require("@codemirror/language");
@@ -23,6 +22,7 @@ const {
   indentWithTab,
 } = require("@codemirror/commands");
 const { searchKeymap } = require("@codemirror/search");
+const { classHighlighter } = require("@lezer/highlight");
 
 const VIEW_TYPE_EBNF = "mud-ebnf-view";
 
@@ -34,6 +34,8 @@ const ebnfLanguage = StreamLanguage.define({
   },
 
   token(stream, state) {
+    const atLineStart = stream.sol();
+
     if (state.inComment) {
       if (stream.skipTo("*)")) {
         stream.match("*)");
@@ -76,7 +78,10 @@ const ebnfLanguage = StreamLanguage.define({
       return "meta";
     }
 
-    if (stream.match(/[A-Za-z][A-Za-z0-9-]*(?=\s*::=)/)) {
+    if (
+      stream.match(/[A-Za-z][A-Za-z0-9-]*(?=\s*::=)/) ||
+      (atLineStart && stream.match(/[A-Za-z][A-Za-z0-9-]*(?=\s*$)/))
+    ) {
       return "definition";
     }
 
@@ -156,7 +161,7 @@ class EbnfView extends TextFileView {
         bracketMatching(),
         highlightActiveLine(),
         ebnfLanguage,
-        syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+        syntaxHighlighting(classHighlighter),
         keymap.of([
           {
             key: "Mod-s",

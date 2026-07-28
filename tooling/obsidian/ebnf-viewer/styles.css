@@ -58,6 +58,38 @@
 }
 
 .mud-ebnf-editor .tok-definition {
-  color: var(--color-accent);
-  font-weight: var(--font-semibold);
+  color: var(--color-accent) !important;
+  font-weight: 700;
+}
+
+.mud-ebnf-editor .tok-variableName {
+  color: var(--color-cyan) !important;
+}
+
+.mud-ebnf-editor .tok-typeName {
+  color: var(--color-purple) !important;
+  font-weight: 600;
+}
+
+.mud-ebnf-editor .tok-string {
+  color: var(--color-green) !important;
+}
+
+.mud-ebnf-editor .tok-comment {
+  color: var(--text-muted) !important;
+  font-style: italic;
+}
+
+.mud-ebnf-editor .tok-meta,
+.mud-ebnf-editor .tok-number {
+  color: var(--color-orange) !important;
+}
+
+.mud-ebnf-editor .tok-operator {
+  color: var(--color-pink) !important;
+}
+
+.mud-ebnf-editor .tok-punctuation,
+.mud-ebnf-editor .tok-bracket {
+  color: var(--color-yellow) !important;
 }
