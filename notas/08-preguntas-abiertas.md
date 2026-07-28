@@ -30,9 +30,9 @@ Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la 
 
 La respuesta afecta qué estados tentativos son observables para reglas posteriores.
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]] y [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]].
 
-La cardinalidad final se demuestra estáticamente para cada `then` y para toda consolidación concurrente posible. Los estados intermedios dentro del delta privado de un `then` pueden incumplirla. Siguen abiertos los puntos exactos de validación de dominios, referencias, reglas `always` y estados consolidados.
+La cardinalidad final se demuestra estáticamente para cada `then` y para toda consolidación concurrente posible. Los estados intermedios dentro del delta privado de un `then` pueden incumplirla. Los dominios se preservan en inicialización, materialización, especialización, escrituras, raíces, ondas y estados publicables. Siguen abiertos la formulación operacional unificada, el tratamiento exacto de referencias suspendidas y los puntos de comprobación de reglas `always`.
 
 ### Q-004 — Rollback de `rejected`
 
@@ -193,7 +193,9 @@ Las llamadas a reglas booleanas inactivas se podan después de un desazucarado c
 
 ### Q-011 — Vinculación nombrada de participantes
 
-Sintaxis canónica, exhaustividad, orden y compatibilidad con receptores multiparte.
+Estado: **cerrada** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+
+Una llamada puede usar un receptor posicional o un receptor nombrado entre paréntesis. La forma nombrada debe ser exacta y exhaustiva: no admite roles ausentes, repetidos ni desconocidos. El orden de la declaración sigue siendo canónico y los argumentos posteriores corresponden exclusivamente a `given`.
 
 ### Q-012 — Valores `given` nombrados
 
@@ -201,7 +203,9 @@ Sintaxis en consultas y acciones compuestas; mezcla o no con argumentos posicion
 
 ### Q-013 — Restricciones relacionales entre participantes `on`
 
-¿Se expresan solo en `if`, mediante tipos/dominios o también en la cabecera?
+Estado: **cerrada** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+
+La cabecera puede construir participantes relacionados mediante `role: Type in previousRole.relation`. Las condiciones relacionales que no formen parte de esa vinculación estructural se expresan en `if`; `given` no está permitido en declaraciones `on`.
 
 ### Q-014 — Migración de anclas
 
@@ -225,12 +229,12 @@ Normalización canónica, igualdad, orden descendente y varias claves.
 
 ### Q-019 — Números
 
-Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]].
+Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]] y [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]].
 
-`Natural`, `Integer`, `Number`, `Rumber` y `Money` son representaciones numéricas básicas. `Number` es racional exacto; `Rumber` es `binary64`; no se mezclan implícitamente. Los literales exactos no usan sufijos, los literales `Rumber` puros usan el prefijo `r`, las conversiones se escriben con `to` y el redondeo global es al más cercano con empates al par. Falta fijar:
+`Natural`, `Integer`, `Number`, `Rumber` y `Money` son representaciones numéricas básicas. `Number` es racional exacto; `Rumber` es `binary64`; no se mezclan implícitamente. `Money` usa decimal exacto de escala dos, no tiene sufijo literal y aplica el redondeo global al más cercano con empates al par. La ampliación exacta ordinaria sigue `Natural → Integer → Number` y la resta de naturales satura en cero. Falta fijar:
 
-- Las reglas de representación e inferencia específicas de `Money`.
 - Los límites de representación y overflow de `Natural`, `Integer` y `Money`.
+- La matriz completa de inferencia de `Money` frente a otras representaciones y magnitudes.
 - Los fallos aritméticos no cubiertos expresamente por D-034.
 
 ### Q-020 — Oscilaciones y límite de ondas
@@ -273,7 +277,9 @@ Si una acción puede seleccionar dinámicamente otras acciones, cómo se conserv
 
 ### Q-024 — Familias cerradas
 
-Campos específicos por valor y herencia de familias cerradas.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
+
+Las familias cerradas son nominales, finitas y enumerables; `ordered values` añade el orden declarado y pueden existir campos comunes. Permanecen abiertos los campos específicos por alternativa, la especialización entre familias y su encaje ontológico exacto con el dominio unificado de `thing`.
 
 ### Q-025 — Destrucción de constructos estáticos
 

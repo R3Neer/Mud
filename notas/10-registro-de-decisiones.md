@@ -47,6 +47,12 @@ Este archivo es un índice de decisiones, no una duplicación de la especificaci
 | D-032 | Vigente | `to` admite casting nominal estructural; los literales se construyen por contexto y las comparaciones no coercionan valores ya tipados | [ADR-032](decisiones/ADR-032-construccion-contextual-y-casting-nominal.md) | Decisión del autor, 2026-07-28 |
 | D-033 | Vigente | Los aliases estructurales pueden ser claves y se enumeran como productos cartesianos lexicográficos cuando sus componentes son finitos y enumerables | [ADR-033](decisiones/ADR-033-claves-y-enumeracion-de-aliases.md) | Decisión del autor, 2026-07-28 |
 | D-034 | Vigente | `Number` es racional exacto; `Rumber` usa `binary64` explícito, no se mezcla implícitamente y sus intervalos no son enumerables | [ADR-034](decisiones/ADR-034-number-exacto-y-rumber-binary64.md) | Decisión del autor, 2026-07-28 |
+| D-035 | Vigente | El namespace procede de la ruta; los imports controlan visibilidad y las anclas estables no contienen el archivo | [ADR-035](decisiones/ADR-035-organizacion-nombres-imports-y-anclas.md) | Migración normativa de las secciones 4, 5 y 9 |
+| D-036 | Vigente | Los participantes son roles de `thing`, los `given` son valores y las llamadas separan receptores de argumentos | [ADR-036](decisiones/ADR-036-participantes-receptores-y-llamadas.md) | Migración normativa de las secciones 6 y 7, actualizada por D-025 |
+| D-037 | Vigente | `=` declara estado almacenado, `:=` cálculo puro e `in` un dominio validado en toda frontera observable | [ADR-037](decisiones/ADR-037-campos-y-dominios-declarativos.md) | Migración normativa de las secciones 13, 15 y 20 |
+| D-038 | Vigente en su núcleo | Las familias cerradas son tipos nominales finitos, enumerables y opcionalmente ordenados | [ADR-038](decisiones/ADR-038-familias-cerradas-de-valores.md) | Migración normativa de la sección 12 |
+| D-039 | Vigente | Colecciones y diccionarios tienen cardinalidad, orden y operaciones totales definidos explícitamente | [ADR-039](decisiones/ADR-039-colecciones-y-diccionarios.md) | Migración normativa de las secciones 16 a 18 |
+| D-040 | Vigente | La aritmética exacta amplía tipos de forma controlada; `Money` tiene escala decimal dos y `Natural` satura su resta en cero | [ADR-040](decisiones/ADR-040-semantica-numerica-basica-restante.md) | Migración normativa de las secciones 19 y 29, coordinada con D-034 |
 
 ## Propuestas de estas notas
 

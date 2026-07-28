@@ -250,6 +250,8 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
+Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]].
+
 ## 10. Sistema de tipos
 
 Archivo previsto: `10-sistema-de-tipos.md`
@@ -324,6 +326,8 @@ Define:
 - Herencia de familias.
 - Enumeración finita.
 
+Base normativa migrada: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
+
 ## 14. Campos, mutabilidad y capacidades
 
 Archivo previsto: `14-campos-y-mutabilidad.md`
@@ -340,6 +344,8 @@ Define:
 - Accesibilidad de escrituras.
 - Ausencia de mutabilidad profunda implícita.
 
+Bases normativas migradas: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]] y [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]].
+
 ## 15. Cardinalidades y colecciones
 
 Archivo previsto: `15-colecciones.md`
@@ -354,6 +360,8 @@ Define:
 - Orden natural, de inserción, semántico y `ordered by`.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
+
+Bases normativas migradas: [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]] y [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
 
 ## 16. Diccionarios
 
@@ -370,6 +378,8 @@ Define:
 - Orden canónico.
 - Operaciones totales.
 - Alias nominal como clave única compuesta y azúcar `map[c1, c2]`.
+
+Base normativa migrada: [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
 
 ## 17. Dominios e intervalos
 

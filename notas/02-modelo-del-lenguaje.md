@@ -128,6 +128,8 @@ No existe mutabilidad profunda implícita ni excepción para `[1]`. En particula
 
 Los campos derivados también producen colecciones. Su pertenencia se calcula y no admite mutabilidad exterior; la capacidad interior, cuando se declare, solo permite modificar los miembros alcanzados.
 
+La sintaxis y las obligaciones de campos almacenados, calculados y dominios pertenecen a [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]. La semántica común de cardinalidad, `empty`, multiplicidad, orden y diccionarios pertenece a [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
+
 Una colección cuyo tipo de miembro sea una `thing` utiliza siempre membresía estricta. `person: Person[1]` puede contener `Alice` si `Alice is Person` y `Alice != Person`, pero nunca el ancla exacta `Person`. No existe un modificador que habilite ese caso. La comparación se realiza con el tipo escrito, no con el propietario de la colección, según [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]].
 
 ## Participantes y valores suministrados
@@ -258,6 +260,8 @@ message::warfare.armies.ArmyDestroyed
 ```
 
 Las anclas no incluyen el archivo. Mover una declaración dentro del mismo namespace no cambia su identidad; moverla de namespace sí, salvo una migración explícita todavía por diseñar.
+
+Las reglas completas de organización física, imports, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 
 ## Pureza y efectos
 
