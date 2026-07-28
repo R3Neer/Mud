@@ -29,6 +29,7 @@ Las EBNF definen el conjunto de formas sintácticas. No intentan decidir cuestio
 - Pertenencia mediante `in` de presentación de unidades mediante `in`.
 - Un nombre de unidad reconocido de un identificador ordinario.
 - La variante semántica de operadores sobrecargados.
+- Una colección unitaria `[e]` de un intervalo unitario `[e]`.
 
 Esas distinciones producen nodos distintos durante la elaboración y deben diagnosticarse estáticamente cuando sean ambiguas o inválidas.
 

@@ -38,7 +38,11 @@ nombre [ : tipo ] := expresión
 
 La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo estático de la expresión; si se escribe, la expresión debe ser compatible con él y la anotación puede aportar el tipo esperado necesario para elaborar literales contextuales. Cuando una expresión sin anotación no tiene un tipo inferible de forma unívoca, la declaración es un error estático y debe escribirlo.
 
+La inferencia no aplica una prioridad predeterminada entre interpretaciones compatibles. Esto incluye tanto la representación de literales numéricos como las formas contextuales compartidas. Por ejemplo, `[3]` puede elaborar una colección unitaria o el intervalo unitario `[3..3]`: ambas formas se conservan y una declaración calculada sin contexto que permita elegir una sola debe anotar su tipo. La omisión está pensada para los usos comunes en los que las operaciones y dependencias de la expresión determinan un único tipo, no para garantizar que toda expresión aislada sea inferible.
+
 El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable y no admite `mut`, una cláusula `in` ni una especificación de colección. La cardinalidad y demás propiedades de colección de su resultado proceden del tipo estático de la expresión, no de una segunda restricción escrita en la declaración.
+
+Cuando el contexto de declaración también admita un campo almacenado y el compilador pueda demostrar que sustituir `nombre [: tipo] := expresión` por el campo almacenado inmutable equivalente conserva el mismo valor observable en todo estado válido, debe emitir una sugerencia de estilo. La sugerencia es conservadora, no cambia la validez del programa y no autoriza una reescritura automática. En particular, no procede si la expresión depende de estado que pueda cambiar o si almacenarla alteraría sus dependencias o su momento de evaluación.
 
 ### Dominios
 
@@ -101,3 +105,5 @@ Compartir token no fusiona sus significados.
 5. Campo calculado con tipo declarado, inferido y no inferible unívocamente.
 6. Rechazo de `mut` y de especificaciones de colección en campos calculados.
 7. Rollback sin estado publicable inválido.
+8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
+9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.

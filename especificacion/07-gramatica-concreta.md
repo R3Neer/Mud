@@ -103,13 +103,15 @@ Forma calculada:
 name [: Type] := expression
 ```
 
-La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse unívocamente de la expresión. Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
+La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
 
 ```mud
 mut population: Population in [0..*] [1] = 10 people
 density := population / area
 displayDensity: Density := density
 ```
+
+Si el compilador puede demostrar que un campo calculado conservaría exactamente el mismo valor observable como campo almacenado inmutable, debe sugerir esa forma más directa. No es un error ni una reescritura automática, y la sugerencia no aparece si el cálculo depende de estado cambiante.
 
 ## Colecciones y diccionarios
 
@@ -583,8 +585,9 @@ El parser o la elaboración posterior deben resolver sin elección arbitraria:
 | `UNIT_FORM` | unidad habilitada o nombre inválido |
 | operadores compartidos | operación lógica, aritmética, textual o conjuntista |
 | literal estructural | alias esperado |
+| `[expression]` | colección unitaria o intervalo unitario |
 
-Si nombres y tipos no determinan una única interpretación válida, el programa es inválido.
+Si nombres, tipos y restricciones de la expresión no determinan una única interpretación válida, el programa es inválido y debe aportar el tipo que falte. No se aplica una preferencia implícita. Por ejemplo, una derivación sin contexto suficiente no puede elegir arbitrariamente si `[3]` es una colección o el intervalo `[3..3]`.
 
 ## Recuperación de errores
 

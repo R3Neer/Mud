@@ -137,7 +137,7 @@ El estado se expresa mediante campos:
 - Campo calculado: `:=`.
 - Campo con dominio: `in`.
 
-La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= valor]`. El dominio se escribe antes que la especificación de colección. Un campo calculado usa `nombre [: Tipo] := expresión`: la anotación es opcional y, si se omite, el tipo se infiere unívocamente de la expresión. No admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión.
+La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= valor]`. El dominio se escribe antes que la especificación de colección. Un campo calculado usa `nombre [: Tipo] := expresión`: la anotación es opcional y, si se omite, el tipo debe inferirse unívocamente de la expresión sin preferencias entre interpretaciones compatibles; de lo contrario, debe escribirse. No admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión. Cuando un cálculo sea demostrablemente equivalente a un campo almacenado inmutable, el compilador sugiere este último sin cambiar la validez ni reescribirlo automáticamente.
 - Campo singular, opcional, colección o diccionario mediante cardinalidad.
 
 Todo campo se modela semánticamente como una colección; omitir la cardinalidad equivale a `[1]`. La mutabilidad exterior de una colección y la capacidad de modificar sus miembros son permisos distintos y ortogonales para cualquier cardinalidad:

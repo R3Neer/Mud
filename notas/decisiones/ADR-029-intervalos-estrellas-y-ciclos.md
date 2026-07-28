@@ -24,6 +24,8 @@ Las cuatro formas delimitadas son:
 
 `n..m` equivale a `[n..m]` y `[n]` equivale a `[n..n]`.
 
+La forma `[n]` también coincide superficialmente con una colección unitaria. No se elimina ninguno de los dos usos ni se concede prioridad a uno: el tipo esperado y las restricciones de la expresión deben producir una única elaboración. Si una derivación sin tipo admite ambas, debe declarar el tipo explícitamente conforme a D-037.
+
 ### Límites efectivos
 
 `*` representa el límite efectivo del lado en el que aparece. Los dos lados no tienen por qué denotar el mismo valor:
@@ -126,3 +128,4 @@ Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados
 4. Rechazo de unidades explícitas en la cabecera `in` de una magnitud.
 5. Normalización cíclica con límite inferior distinto de cero.
 6. Rechazo de ciclos en magnitudes no puntuales y dominios no semiabiertos.
+7. Resolución contextual de `[n]` como intervalo unitario y rechazo cuando también sea viable como colección sin tipo esperado suficiente.
