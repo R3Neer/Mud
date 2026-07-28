@@ -237,10 +237,10 @@ stored-field-declaration
         ;
 
 calculated-field-declaration
-    ::= field-name , ":" , declared-type , ":=" , expression ;
+    ::= field-name , [ ":" , declared-type ] , ":=" , expression ;
 
 public-field-declaration
-    ::= field-name , ":" , declared-type , ":=" , expression ;
+    ::= field-name , [ ":" , declared-type ] , ":=" , expression ;
 
 type-expression
     ::= declared-type

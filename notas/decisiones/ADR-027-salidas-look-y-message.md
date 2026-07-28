@@ -22,7 +22,7 @@ Un `look` declara participantes explícitos con `for`, no admite `given` y publi
 
 ```mud
 look RealmSummary for kingdom: Kingdom {
-    name: Text := kingdom.name
+    name := kingdom.name
     population: Natural := kingdom.cities.population.sum
 }
 ```
@@ -31,7 +31,7 @@ Forma conceptual:
 
 ```text
 look nombre for participantes {
-    propiedad-publica : tipo := expresión
+    propiedad-publica [ : tipo ] := expresión
     ...
 }
 ```
@@ -47,7 +47,7 @@ message KingChanged on kingdom: Kingdom {
     when kingdom.king changes
     if kingdom.visible
 
-    kingdomName: Text := kingdom.name
+    kingdomName := kingdom.name
     kingName: Text := kingdom.king.name
 }
 ```
@@ -58,7 +58,7 @@ Forma conceptual:
 message nombre on participantes {
     when expresión-booleana
     [if expresión-booleana]
-    propiedad-publica : tipo := expresión
+    propiedad-publica [ : tipo ] := expresión
     ...
 }
 ```
@@ -80,8 +80,8 @@ Ninguna de estas entidades autoriza a observar detalles de arquitectura, framewo
 ## Reglas estáticas iniciales
 
 - Los nombres de propiedades públicas son únicos dentro de su entidad.
-- Toda propiedad pública declara un tipo.
-- La expresión asignada debe ser pura y compatible con ese tipo.
+- Toda propiedad pública posee un tipo estático, declarado opcionalmente o inferido de su expresión.
+- La expresión asignada debe ser pura. Si el tipo se declara, debe ser compatible con él; si se omite, su tipo debe poder inferirse unívocamente.
 - Un `look` no admite `on`, `given`, `when`, `if`, `then` ni `after`.
 - Un `message` no admite `for`, `given`, `then` ni `after`.
 - Un `message` exige exactamente un `when` y como máximo un `if`.
@@ -116,7 +116,7 @@ Hasta resolver Q-052, la norma solo fija que los campos publicados se evalúan d
 
 ## Verificación futura
 
-1. `look` puro con una propiedad y con una expresión compuesta.
+1. `look` puro con propiedades de tipo declarado e inferido y con una expresión compuesta.
 2. Rechazo de `given` en `look`.
 3. `message` con y sin `if`.
 4. Rechazo de cabeceras y cláusulas incompatibles.

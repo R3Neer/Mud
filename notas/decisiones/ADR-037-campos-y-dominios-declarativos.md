@@ -15,7 +15,8 @@ name: Text = ""
 mut treasury: Money = 0
 age: Natural in 0..150 [1] = 18
 subjects: Person [* unique]
-maintenanceCost: Money := soldiers * 2
+maintenanceCost := soldiers * 2
+displayCost: Money := maintenanceCost
 ```
 
 - `=` introduce carga almacenada.
@@ -32,10 +33,12 @@ La forma concreta de un campo almacenado es:
 El dominio precede a la especificación de colección. Un campo calculado usa exclusivamente:
 
 ```text
-nombre : tipo := expresión
+nombre [ : tipo ] := expresión
 ```
 
-No posee carga asignable y no admite `mut`, una cláusula `in` ni una especificación de colección. La cardinalidad y demás propiedades de colección de su resultado proceden del tipo estático de la expresión, no de una segunda restricción escrita en la declaración.
+La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo estático de la expresión; si se escribe, la expresión debe ser compatible con él y la anotación puede aportar el tipo esperado necesario para elaborar literales contextuales. Cuando una expresión sin anotación no tiene un tipo inferible de forma unívoca, la declaración es un error estático y debe escribirlo.
+
+El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable y no admite `mut`, una cláusula `in` ni una especificación de colección. La cardinalidad y demás propiedades de colección de su resultado proceden del tipo estático de la expresión, no de una segunda restricción escrita en la declaración.
 
 ### Dominios
 
@@ -95,5 +98,6 @@ Compartir token no fusiona sus significados.
 2. `given` fuera de dominio en regla y action.
 3. Campo almacenado fuera de dominio y rechazo de `in` sobre un campo calculado.
 4. Ciclo y dependencia estocástica inválidos.
-5. Rechazo de `mut` y de especificaciones de colección en campos calculados.
-6. Rollback sin estado publicable inválido.
+5. Campo calculado con tipo declarado, inferido y no inferible unívocamente.
+6. Rechazo de `mut` y de especificaciones de colección en campos calculados.
+7. Rollback sin estado publicable inválido.

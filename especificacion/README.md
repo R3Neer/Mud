@@ -341,6 +341,7 @@ Archivo previsto: `14-campos-y-mutabilidad.md`
 Define:
 
 - Campos almacenados y calculados.
+- Anotación opcional e inferencia unívoca del tipo de campos calculados.
 - `=` frente a `:=`.
 - Mutabilidad exterior.
 - Capacidad interior `[mut]`.
@@ -536,7 +537,7 @@ Define:
 - Participantes `for` sin `given`.
 - `message` como evento detectado durante las ondas de una acción.
 - Vinculaciones `on`, condición `when` y guarda `if` opcional.
-- Propiedades públicas tipadas y calculadas.
+- Propiedades públicas calculadas con tipo declarado opcionalmente o inferido.
 - Evaluación diferida de las propiedades del mensaje tras la estabilización.
 - Multiplicidad, orden, deduplicación, rollback y entrega.
 

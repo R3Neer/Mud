@@ -100,14 +100,15 @@ Forma almacenada:
 Forma calculada:
 
 ```text
-name: Type := expression
+name [: Type] := expression
 ```
 
-Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
+La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse unívocamente de la expresión. Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
 
 ```mud
 mut population: Population in [0..*] [1] = 10 people
-density: Density := population / area
+density := population / area
+displayDensity: Density := density
 ```
 
 ## Colecciones y diccionarios
@@ -307,7 +308,7 @@ given amount: Natural in 1..100 {
 
 ```mud
 look RealmSummary for kingdom: Kingdom {
-    name: Text := kingdom.name
+    name := kingdom.name
     population: Population := kingdom.population
 }
 
@@ -315,7 +316,7 @@ message KingChanged on kingdom: Kingdom {
     when kingdom.king changes
     if kingdom.visible
 
-    kingdomName: Text := kingdom.name
+    kingdomName := kingdom.name
     kingName: Text := kingdom.king.name
 }
 ```

@@ -132,7 +132,7 @@ El estado se expresa mediante campos:
 - Campo calculado: `:=`.
 - Campo con dominio: `in`.
 
-La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= valor]`. El dominio se escribe antes que la especificación de colección. Un campo calculado usa `nombre: Tipo := expresión` y no admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión.
+La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= valor]`. El dominio se escribe antes que la especificación de colección. Un campo calculado usa `nombre [: Tipo] := expresión`: la anotación es opcional y, si se omite, el tipo se infiere unívocamente de la expresión. No admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión.
 - Campo singular, opcional, colección o diccionario mediante cardinalidad.
 
 Todo campo se modela semánticamente como una colección; omitir la cardinalidad equivale a `[1]`. La mutabilidad exterior de una colección y la capacidad de modificar sus miembros son permisos distintos y ortogonales para cualquier cardinalidad:
@@ -235,9 +235,9 @@ Un test no admite `for`, `given`, `if`, `when` ni participantes. El contrato com
 
 ## Salidas: `look` y `message`
 
-Un `look` es una consulta pública pura sobre un estado estable. Declara participantes mediante `for`, no acepta `given` y publica campos tipados calculados a partir de propiedades o expresiones puras.
+Un `look` es una consulta pública pura sobre un estado estable. Declara participantes mediante `for`, no acepta `given` y publica campos calculados con tipo declarado opcionalmente o inferido a partir de propiedades o expresiones puras.
 
-Un `message` es un evento público. Declara vinculaciones mediante `on`, exige `when`, admite un `if` opcional y publica campos tipados. El hecho puede detectarse durante una secuencia de ondas, pero los campos se evalúan una vez estabilizada la resolución de la acción causante. Los detalles abiertos de selección, multiplicidad y entrega se registran en [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
+Un `message` es un evento público. Declara vinculaciones mediante `on`, exige `when`, admite un `if` opcional y publica campos cuyo tipo puede declararse o inferirse. El hecho puede detectarse durante una secuencia de ondas, pero los campos se evalúan una vez estabilizada la resolución de la acción causante. Los detalles abiertos de selección, multiplicidad y entrega se registran en [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
 
 Junto con las acciones forman la frontera semántica del modelo: `action` introduce cambios; `look` consulta; `message` notifica.
 
