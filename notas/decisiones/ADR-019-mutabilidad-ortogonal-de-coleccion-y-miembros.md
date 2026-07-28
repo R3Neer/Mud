@@ -11,7 +11,7 @@ Todo campo MUD se interpreta uniformemente como una colección con cardinalidad.
 MUD distingue dos permisos:
 
 1. Cambiar la colección almacenada: añadir, retirar, sustituir o reordenar miembros.
-2. Modificar los constructos alcanzados como miembros de la colección.
+2. Modificar las `thing` alcanzadas como miembros de la colección.
 
 La formulación previa sugería una excepción para cardinalidad singular por la que:
 

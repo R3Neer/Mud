@@ -1,7 +1,7 @@
 # Destrucción, estado latente y grafo efectivo
 
 - Estado: decisión consolidada con cuestiones locales abiertas
-- Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de constructos|Q-049]]
+- Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de `thing`|Q-049]]
 - Decisión principal: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
 
 ## Resultado

@@ -74,7 +74,7 @@ La tercera fase sustituye el valor inicial de esa creación; no modifica por ell
 ## Consecuencias
 
 - Una propiedad almacenada obligatoria puede inicializarse aunque omita un predeterminado explícito.
-- Los refinamientos, intervalos, familias, aliases, colecciones y tipos que dependan de constructos deben definir cómo obtienen un elemento distinguido de su dominio.
+- Los refinamientos, intervalos, familias, aliases, colecciones y tipos que dependan de `thing` deben definir cómo obtienen un elemento distinguido de su dominio.
 - La comprobación de buena formación debe garantizar que el predeterminado satisface todas las restricciones del tipo.
 - Los materializadores deben reproducir el valor de MUD y no elegir predeterminados propios de la tecnología destino.
 

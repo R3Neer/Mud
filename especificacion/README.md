@@ -93,7 +93,7 @@ Glosario normativo de:
 
 - Programa, módulo, archivo y namespace.
 - Declaración, símbolo, nombre y ancla.
-- Constructo, instancia y valor.
+- `thing`, identidad y valor.
 - Campo, relación y colección.
 - Participante, rol, vinculación y `given`.
 - Regla consultable, reactiva y `always`.
@@ -686,7 +686,7 @@ Define:
 - Restauración sin reinicialización.
 - `remove` destructivo frente a `destroy` reversible.
 - Referencias y propiedades latentes.
-- Constructos estáticos.
+- `thing` estáticas.
 - Creación y eliminación de vinculaciones.
 
 ## 33. Aleatoriedad

@@ -2,20 +2,16 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Preguntas: [[notas/08-preguntas-abiertas#Q-042 — Herencia desde un constructo concreto|Q-042]], [[notas/08-preguntas-abiertas#Q-043 — Ciclos de especialización|Q-043]]
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-constructos.md`
+- Actualizada: 2026-07-28 para usar el vocabulario de D-025
+- Preguntas: [[notas/08-preguntas-abiertas#Q-042 — Especialización desde una `thing` concreta|Q-042]], [[notas/08-preguntas-abiertas#Q-043 — Ciclos de especialización|Q-043]]
+- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`
 
 ## Contexto
 
-> [!note] Vocabulario histórico
-> D-025 sustituyó `construct`/`from` por `thing`/`as`. La semántica de herencia y estado de este ADR sigue vigente; sus ejemplos conservan la sintaxis histórica.
+[[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]] establece que toda `thing` concreta es simultáneamente una cosa con estado propio y una posible antecesora. Esto obliga a precisar:
 
-[[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]] establece que todo constructo concreto es simultáneamente una cosa con estado propio y un posible antecesor de otros constructos. Esa unificación obliga a precisar:
-
-1. Si un descendiente observa o copia el estado mutable actual de un antecesor concreto.
+1. Si una descendiente observa o copia el estado mutable actual de una antecesora concreta.
 2. Si la relación de especialización directa admite ciclos entre identidades distintas.
-
-Ambas decisiones afectan al store, la inicialización, la causalidad, el rollback, la resolución de campos y el significado algebraico de `is`.
 
 ## Decisión
 
@@ -23,28 +19,36 @@ Ambas decisiones afectan al store, la inicialización, la causalidad, el rollbac
 
 La especialización hereda:
 
-- Declaraciones de campos.
-- Restricciones.
-- Dominios.
-- Valores predeterminados efectivos.
-- Los demás elementos de esquema que la especificación autorice expresamente.
+- declaraciones de campos;
+- restricciones;
+- dominios;
+- valores predeterminados efectivos;
+- los demás elementos de esquema que la especificación autorice expresamente.
 
-La especialización no hereda, copia ni observa el estado mutable actual del antecesor.
+No hereda, copia ni observa el estado mutable actual de la antecesora.
 
-Cada constructo concreto posee estado independiente. La mutación de un constructo no modifica por sí sola el estado de sus descendientes.
+Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
 
-Al activar por primera vez un constructo concreto mediante `create construct N from C_1,\ldots,C_n { ... }`, la inicialización de $N$ parte de los valores predeterminados efectivos obtenidos de sus antecesores, incorpora las declaraciones locales del cuerpo y aplica después las inicializaciones explícitas. No parte de los valores que sus estados activos contengan en ese momento. Si no hay antecesores, no existen predeterminados heredados; las propiedades sin predeterminado explícito emplean el de su tipo. Una reactivación posterior conserva la carga almacenada conforme a D-021.
+Al activar por primera vez una `thing` concreta:
 
-Las inicializaciones concretas del bloque `create` inicializan el estado de $N$; no se convierten por ello en nuevos valores predeterminados heredables por futuros descendientes de $N$. Las declaraciones explícitas de predeterminado dentro del mismo cuerpo sí forman parte del esquema.
+```mud
+create thing N as BaseOne, BaseTwo {
+    ...
+}
+```
+
+la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después las inicializaciones explícitas. No parte de sus estados activos. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
+
+Las asignaciones concretas del bloque inicializan $N$, pero no se convierten en predeterminados heredables. Solo una declaración explícita de predeterminado forma parte del esquema.
 
 ### Especialización acíclica
 
-La relación de especialización directa $R_{\mathrm{dir}}$ no puede contener ciclos. En particular:
+La relación directa $R_{\mathrm{dir}}$ no contiene ciclos:
 
-- No puede contener una arista directa $(c,c)$.
-- No puede existir un camino no vacío que comience y termine en el mismo constructo.
+- no admite $(t,t)$;
+- no admite ningún camino no vacío que empiece y termine en la misma `thing`.
 
-La relación semántica:
+La relación:
 
 $$
 R_{\mathsf{is}}
@@ -52,91 +56,59 @@ R_{\mathsf{is}}
 R_{\mathrm{dir}}^*
 $$
 
-es, por tanto:
-
-- Reflexiva.
-- Transitiva.
-- Antisimétrica.
-
-En consecuencia, $R_{\mathsf{is}}$ es un orden parcial sobre los constructos:
+es reflexiva, transitiva y antisimétrica. Por tanto:
 
 $$
-c_1\mathrel{R_{\mathsf{is}}}c_2
+t_1\mathrel{R_{\mathsf{is}}}t_2
 \land
-c_2\mathrel{R_{\mathsf{is}}}c_1
+t_2\mathrel{R_{\mathsf{is}}}t_1
 \Rightarrow
-c_1=c_2
+t_1=t_2.
 $$
 
-La reflexividad de `is` es una propiedad de la clausura y no requiere introducir bucles en $R_{\mathrm{dir}}$.
+La reflexividad de `is` pertenece a la clausura y no introduce bucles en $R_{\mathrm{dir}}$.
 
-## Alternativas
+## Alternativas descartadas
 
-### Delegación viva al estado del antecesor
+- **Delegación viva al estado de la antecesora:** produciría cambios no locales y complicaría ondas, rollback y explicación.
+- **Copia del estado actual al crear:** haría que una misma creación dependiera de estado mutable ajeno.
+- **Ciclos:** convertirían `is` en un preorden e impedirían resolver campos y predeterminados de forma bien fundada.
 
-Se descarta porque una mutación local produciría cambios no locales en todos los descendientes. Complicaría dependencias, ondas, atomicidad, rollback y explicación de resultados.
+## Consecuencias
 
-### Copia del estado actual al crear
-
-Se descarta porque haría depender la inicialización de un constructo de un estado mutable ajeno y convertiría una misma operación de creación en contextualmente distinta aunque las declaraciones no cambiasen.
-
-### Ciclos admitidos
-
-Se descarta porque convertiría `is` en un preorden: dos constructos con identidades diferentes podrían especializarse mutuamente. También impediría una resolución finita y bien fundada de la herencia de campos y predeterminados.
-
-## Consecuencias para el compilador
-
-- El grafo de especialización estática debe comprobarse como grafo dirigido acíclico.
-- La resolución de campos y predeterminados puede recorrer antecesores sin riesgo de ciclos.
-- Activar mediante `create` una identidad previamente ausente con aristas hacia constructos activos no puede formar un ciclo por sí solo si ninguna arista previa apunta desde sus antecesores hacia ella; la validación debe comprobar el grafo combinado.
-- Cualquier futura operación que permita cambiar antecesores deberá preservar la aciclicidad.
-- El IR debe separar metadatos heredables de estado mutable.
-- La inicialización debe calcular predeterminados efectivos antes de aplicar las asignaciones explícitas de `create`.
-
-## Consecuencias semánticas
-
-Sea $a$ antecesor de $c$. Una escritura sobre un campo almacenado de $a$ no implica una escritura sobre la posición correspondiente de $c$.
-
-Los conjuntos de lectura y escritura de una acción no incluyen descendientes por el mero hecho de modificar un antecesor. La relación `is` afecta a sustituibilidad y resolución de esquema, pero no constituye un canal implícito de propagación de estado.
+- El grafo estático y el grafo combinado tras `create` deben ser acíclicos.
+- El IR separa esquema heredable de estado mutable.
+- La inicialización calcula predeterminados efectivos antes de aplicar asignaciones explícitas.
+- Escribir sobre una antecesora no añade lecturas ni escrituras implícitas sobre sus descendientes.
+- `is` afecta a sustituibilidad y resolución de esquema, no propaga estado.
 
 ## Ejemplo
 
 ```mud
-construct Kingdom {
+thing Kingdom {
     mut treasury: Money = 0
 }
 
-construct Egypt from Kingdom {
+thing Egypt as Kingdom {
 }
 ```
 
-`Egypt` comienza con el predeterminado efectivo `treasury = 0`. Si posteriormente:
+`Egypt` empieza con `treasury = 0`. Una escritura posterior sobre `Kingdom.treasury` no modifica `Egypt.treasury`.
 
 ```mud
-Kingdom.treasury = 100
-```
-
-el valor de `Egypt.treasury` no cambia.
-
-De igual modo, tras:
-
-```mud
-create construct France from Kingdom {
+create thing France as Kingdom {
     treasury = 20
 }
 ```
 
-`France.treasury` vale `20`. Si más adelante se crea un descendiente de `France` sin inicialización explícita, esa asignación no actúa como predeterminado heredable.
+`France.treasury` vale `20`, pero esa asignación no se convierte en predeterminado para futuras descendientes de `France`.
 
-## Verificación futura
+## Verificación
 
-La suite deberá comprobar:
-
-1. Rechazo de una arista directa reflexiva.
-2. Rechazo de ciclos de dos o más constructos.
-3. Aceptación de especialización múltiple acíclica.
-4. Antisimetría de `is`.
-5. Independencia entre el estado de un antecesor concreto y sus descendientes.
-6. Inicialización desde predeterminados efectivos, no desde estado activo.
-7. Aplicación de las asignaciones de `create` después de los predeterminados.
-8. Ausencia de propagación implícita de las asignaciones de `create` a descendientes futuros.
+1. Rechazo de aristas reflexivas y ciclos no triviales.
+2. Especialización múltiple acíclica.
+3. Antisimetría de `is`.
+4. Independencia de estados.
+5. Inicialización desde predeterminados efectivos.
+6. Aplicación posterior de inicializaciones de `create`.
+7. Ausencia de propagación implícita a futuras descendientes.

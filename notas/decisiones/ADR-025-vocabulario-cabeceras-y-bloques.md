@@ -3,7 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-27
 - Pregunta posteriormente resuelta: Q-053 mediante D-030
-- Decisiones sustituidas parcialmente: D-004, D-005, [[notas/decisiones/ADR-018-from-declara-is-consulta|D-018]]
+- Decisiones actualizadas o sustituidas: D-004, D-005, [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`
 
 ## Contexto
@@ -101,7 +101,7 @@ action Enter on person: Person {
 }
 ```
 
-Los ADR anteriores conservan valor como historial de razonamiento, pero sus ejemplos con `construct`, `from` y la antigua distribución de participantes no son sintaxis vigente.
+Los fragmentos anteriores de esta sección son contraejemplos históricos. Los ADR vigentes relacionados se han actualizado para usar `thing`, `as` y la distribución actual de participantes.
 
 ## Consecuencias
 

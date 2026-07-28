@@ -61,7 +61,7 @@ MUD no presupone una separación entre clases y objetos. En particular, una `thi
 
 ## Restricciones confirmadas
 
-La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]] fija:
+La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]] fija:
 
 1. Toda `thing` posee identidad semántica.
 2. Toda `thing` concreta denota una cosa concreta con estado propio y puede ser antecesora de otras.
@@ -82,7 +82,7 @@ La decisión [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014
 17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes.
 18. `remove` sobre una propiedad elimina su declaración y carga almacenadas, a diferencia de la suspensión reversible producida por `destroy`.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]] y [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]]. D-025 sustituye la sintaxis histórica de D-018 y D-026 sustituye D-020.
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-016-creacion-generalizada-de-things|D-016]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]] y [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]]. D-025 actualiza el vocabulario de D-018 y D-026 sustituye D-020.
 
 ## Próximo desarrollo
 

@@ -2,15 +2,13 @@
 
 - Estado: Vigente excepto para aliases, sustituidos por D-031
 - Fecha: 2026-07-27
+- Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modificada por: [[notas/decisiones/ADR-024-definicion-unica-y-activacion-abreviada|D-024]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]]
-- Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de constructos|Q-049]]
-- Decisiones sustituidas parcialmente: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|D-016]]
+- Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-048 — Destrucción con descendientes activos|Q-048]], [[notas/08-preguntas-abiertas#Q-049 — Destrucción y colecciones de `thing`|Q-049]]
+- Decisiones sustituidas parcialmente: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|D-016]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
 
 ## Contexto
-
-> [!note] Vocabulario histórico
-> D-025 sustituyó `construct`/`from` por `thing`/`as` e intercambió los usos de `on` y `for`. La semántica de ciclo de vida de este ADR sigue vigente; sus ejemplos conservan la sintaxis histórica.
 
 > [!warning] Alcance sustituido
 > D-031 retira los aliases de este ciclo de vida. Un alias es un tipo nominal estático y no admite `create`, `destroy`, suspensión ni restauración.
@@ -76,8 +74,8 @@ Los inicializadores del cuerpo de `create` se aplican cuando la carga se materia
 
 `create` y `destroy` pueden operar sobre:
 
-- Constructos concretos.
-- Constructos abstractos.
+- `thing` concretas.
+- `thing` abstractas.
 - Reglas booleanas.
 - Reglas reactivas.
 - Reglas `always`.
@@ -95,21 +93,21 @@ Las acciones forman la API estable de escritura. Las magnitudes forman parte del
 La aparición que define un descriptor indica su categoría:
 
 ```mud
-create construct Kingdom {
+create thing Kingdom {
 }
 
-create abstract construct Place {
+create abstract thing Place {
 }
 
-create rule CanEnter on Person {
+create rule CanEnter for person: Person {
     ...
 }
 
-create rule OpenGate for Gate[mut] {
+create rule OpenGate on gate: Gate [mut] {
     ...
 }
 
-create always rule ValidKingdom for Kingdom {
+create always rule ValidKingdom on kingdom: Kingdom {
     ...
 }
 ```
@@ -122,7 +120,7 @@ create OpenGate
 create ValidKingdom
 ```
 
-Los constructos conservan cuerpos fragmentarios y no admiten esta forma abreviada.
+Las `thing` conservan cuerpos fragmentarios y no admiten esta forma abreviada.
 
 `destroy` solo necesita una referencia que resuelva de manera unívoca:
 
@@ -163,7 +161,7 @@ Para una propiedad almacenada $p$, son dependencias duras:
 Por tanto, si:
 
 ```mud
-create construct King {
+create thing King {
     kingdom: Kingdom[1] = Panama
 }
 ```
@@ -176,7 +174,7 @@ destroy Kingdom
 
 la propiedad `King.kingdom` deja de pertenecer a $\operatorname{Effective}(W)$, pero continúa almacenada junto con `Panama`. Al recrear `Kingdom`, vuelve a ser efectiva con la misma carga.
 
-La estructura propia de un constructo destruido desaparece de la proyección efectiva y permanece almacenada.
+La estructura propia de una `thing` destruida desaparece de la proyección efectiva y permanece almacenada.
 
 ## Participantes y declaraciones dependientes
 
@@ -191,7 +189,7 @@ Esta suspensión conserva aridad, nombres de roles y referencias internas. Recre
 
 ## Especialización y descendientes
 
-Las aristas declaradas mediante `from` se conservan en el almacenamiento. En la proyección efectiva, un descendiente activo no se suspende necesariamente porque uno de sus antecesores esté destruido.
+Las aristas declaradas mediante `as` se conservan en el almacenamiento. En la proyección efectiva, un descendiente activo no se suspende necesariamente porque una de sus antecesoras esté destruida.
 
 Cuando un camino almacenado:
 
@@ -218,7 +216,7 @@ Thing
 
 Las propiedades declaradas por `Kingdom` dejan de heredarse mientras esté destruido. Las propiedades propias de `Panama` permanecen si sus dependencias siguen efectivas. Al recrear `Kingdom`, reaparecen las aristas y propiedades almacenadas originales.
 
-La dependencia `from` es, por tanto, atravesable en la proyección efectiva y no una dependencia dura que destruya en cascada a todos los descendientes.
+La dependencia de especialización declarada con `as` es atravesable en la proyección efectiva y no una dependencia dura que destruya en cascada a todos los descendientes.
 
 ## `add` y `remove` sobre propiedades
 

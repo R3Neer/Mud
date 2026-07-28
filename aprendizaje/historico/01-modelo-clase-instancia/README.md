@@ -8,7 +8,7 @@ status: sustituido
 
 # Primera versión histórica de la Unidad 01
 
-Estos documentos conservan el primer ejercicio, la respuesta del autor y su revisión. Partían de un modelo clase–instancia que posteriormente fue rechazado por [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|D-014]].
+Estos documentos conservan el primer ejercicio, la respuesta del autor y su revisión. Partían de un modelo clase–instancia que posteriormente fue rechazado por [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]].
 
 Su valor actual es histórico y didáctico:
 

@@ -2,6 +2,7 @@
 
 - Estado: Vigente para reglas; aliases sustituidos por D-031
 - Fecha: 2026-07-27
+- Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modifica: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]]
 - Modificada por: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]]
 - Preguntas relacionadas: [[notas/08-preguntas-abiertas#Q-006 — Conflictos|Q-006]], [[notas/08-preguntas-abiertas#Q-046 — Creación inefectiva dentro de una raíz|Q-046]]
@@ -9,12 +10,9 @@
 
 ## Contexto
 
-> [!note] Vocabulario histórico
-> D-025 sustituyó `construct`/`from` por `thing`/`as` e intercambió los usos de `on` y `for`. La unicidad y activación abreviada de reglas decididas aquí siguen vigentes; sus ejemplos conservan la sintaxis histórica.
-
 Permitir varios cuerpos para una misma regla obliga a decidir en runtime qué cuerpo queda activo o a rechazar dos creaciones coincidentes. Repetir un cuerpo idéntico en cada punto de activación tampoco aporta semántica y exige definir una noción artificial de igualdad entre cuerpos.
 
-Los constructos son distintos. Sus creaciones pueden aportar fragmentos compatibles y fusionables con casos de uso causales reales.
+Las `thing` son distintas. Sus creaciones pueden aportar fragmentos compatibles y fusionables con casos de uso causales reales.
 
 ## Decisión
 
@@ -40,7 +38,7 @@ create rule FrozenGround for person: Person {
 ```
 
 ```mud
-create always rule ValidKingdom for kingdom: Kingdom {
+create always rule ValidKingdom on kingdom: Kingdom {
     ...
 }
 ```
@@ -139,23 +137,23 @@ El compilador tampoco necesita demostrar que las reglas activadoras sean mutuame
 
 La creación y destrucción del mismo objetivo desde `then` distintos mantiene el orden estructural de D-023: la destrucción se aplica después y el objetivo termina inactivo.
 
-## Excepción de los constructos
+## Excepción de las `thing`
 
-Los constructos mantienen definiciones fragmentarias:
+Las `thing` mantienen definiciones fragmentarias:
 
 ```mud
-create construct Storm from WeatherEvent {
+create thing Storm as WeatherEvent {
     intensity: Number
 }
 ```
 
 ```mud
-create construct Storm from SeaHazard {
+create thing Storm as SeaHazard {
     affectedShips: Ship[*]
 }
 ```
 
-Si ambas solicitudes son efectivas en la misma oleada, sus antecesores y propiedades se fusionan conforme a D-023.
+Si ambas solicitudes son efectivas en la misma oleada, sus antecesoras y propiedades se fusionan conforme a D-023.
 
 No se admite:
 
@@ -163,7 +161,7 @@ No se admite:
 create Storm
 ```
 
-como activación abreviada de constructo. Sin un descriptor canónico único, esa forma no determina qué fragmento debe aportar, especialmente si la identidad nunca se materializó antes.
+como activación abreviada de `thing`. Sin un descriptor canónico único, esa forma no determina qué fragmento debe aportar, especialmente si la identidad nunca se materializó antes.
 
 Los aliases, las acciones y las magnitudes no admiten `create`.
 

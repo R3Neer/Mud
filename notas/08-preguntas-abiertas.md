@@ -86,27 +86,27 @@ Estado: **cerrada** mediante [[notas/13-auditoria-de-cobertura-y-divergencias]].
 
 Las 78 secciones fueron migradas, sustituidas o retiradas de forma explícita. Ninguna fórmula como «se mantiene vigente» conserva autoridad propia ni presupone texto ausente: el contenido actual debe existir en una decisión, nota dueña, capítulo o pregunta abierta.
 
-### Q-041 — Ontología de constructos
+### Q-041 — Ontología de `thing`
 
 Estado: **cerrada**.
 
-¿Cuál es la estructura matemática común de los constructos declarados y los creados durante la ejecución, y qué añade `create` al mundo?
+¿Cuál es la estructura matemática común de las `thing` declaradas y las activadas durante la ejecución, y qué añade `create` al mundo?
 
-Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]].
+Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]].
 
-MUD tiene un único dominio conceptual de constructos. Todo constructo concreto es una cosa con identidad y estado propio que también puede ser antecesora. Los abstractos pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` activa una identidad reservada, que puede ser abstracta o concreta, e `is` es reflexivo y transitivo.
+MUD tiene un único dominio conceptual de `thing`. Toda `thing` concreta es una cosa con identidad y estado propio que también puede ser antecesora. Las abstractas pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. `create` activa una identidad reservada, que puede ser abstracta o concreta, e `is` es reflexivo y transitivo.
 
 Las consecuencias se separaron en Q-042 y Q-043 y quedaron resueltas mediante [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-### Q-042 — Herencia desde un constructo concreto
+### Q-042 — Especialización desde una `thing` concreta
 
 Estado: **cerrada**.
 
-Cuando un constructo concreto $B$ se especializa a partir de otro constructo concreto $A$, ¿hereda solo las declaraciones, restricciones y valores predeterminados de $A$, o copia u observa también el estado mutable actual de $A$?
+Cuando una `thing` concreta $B$ se especializa a partir de otra `thing` concreta $A$, ¿hereda solo las declaraciones, restricciones y valores predeterminados de $A$, o copia u observa también su estado mutable actual?
 
 Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-Se heredan esquema y predeterminados efectivos, nunca estado activo. Cada constructo concreto posee estado independiente y `create` inicializa desde predeterminados antes de aplicar sus asignaciones explícitas.
+Se heredan esquema y predeterminados efectivos, nunca estado activo. Cada `thing` concreta posee estado independiente y `create` inicializa desde predeterminados antes de aplicar sus asignaciones explícitas.
 
 ### Q-043 — Ciclos de especialización
 
@@ -118,13 +118,13 @@ Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independ
 
 Todo ciclo de especialización directa es inválido. La relación semántica `is` es un orden parcial.
 
-### Q-044 — Identidad y referencias a constructos futuros
+### Q-044 — Identidad y referencias a `thing` futuras
 
 Estado: **cerrada**.
 
 ¿Qué designa el nombre introducido por `create thing A`?
 
-Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
+Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|ADR-016]].
 
 `A` es una identidad global reservada y resoluble antes de estar activa. `create thing A` solo puede activarla cuando no existe. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A`.
 
@@ -136,7 +136,7 @@ Estado: **cerrada**.
 
 ¿Puede el bloque de `create` declarar nuevos campos, restricciones o predeterminados, o solo inicializar el estado permitido por el esquema heredado?
 
-Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]].
+Decisión: [[notas/decisiones/ADR-016-creacion-generalizada-de-things|ADR-016]].
 
 ```mud
 create abstract thing B as A {
@@ -144,11 +144,11 @@ create abstract thing B as A {
 }
 ```
 
-El bloque admite la declaración completa de las propiedades permitidas en un constructo ordinario. El compilador conoce el cuerpo porque forma parte del programa, aunque la identidad reservada todavía no esté activa en el mundo. Al activarse, sus declaraciones pasan a participar en el esquema, las reglas, las acciones y las demás estructuras semánticas aplicables.
+El bloque admite la declaración completa de las propiedades permitidas en una `thing` ordinaria. El compilador conoce el cuerpo porque forma parte del programa, aunque la identidad reservada todavía no esté activa en el mundo. Al activarse, sus declaraciones pasan a participar en el esquema, las reglas, las acciones y las demás estructuras semánticas aplicables.
 
 ### Q-046 — Creación inefectiva dentro de una raíz
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-constructos|ADR-016]] y [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-016-creacion-generalizada-de-things|ADR-016]] y [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]].
 
 Si una regla contiene `create thing A` cuando la identidad reservada `A` ya está activa, la regla completa no se ejecuta y no publica ninguno de sus efectos.
 
@@ -158,7 +158,7 @@ Falta decidir:
 - Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
 - Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
 
-D-023 añade que las creaciones concurrentes compatibles de un constructo ausente se fusionan. D-024 exige una única definición completa por regla y consolida idempotentemente sus activaciones concurrentes. D-031 retira los aliases del sistema de `create` y `destroy`. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
+D-023 añade que las creaciones concurrentes compatibles de una `thing` ausente se fusionan. D-024 exige una única definición completa por regla y consolida idempotentemente sus activaciones concurrentes. D-031 retira los aliases del sistema de `create` y `destroy`. La creación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
 
 Bloquea la semántica operacional completa de `create`, los conjuntos de efectos y la atomicidad.
 
@@ -185,7 +185,7 @@ Decisión: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
 Las aristas declaradas se conservan en el almacenamiento. La proyección efectiva atraviesa antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos. El descendiente conserva sus propiedades propias, pierde temporalmente lo heredado desde el nodo destruido y recupera la estructura original al recrearlo.
 
-### Q-049 — Destrucción y colecciones de constructos
+### Q-049 — Destrucción y colecciones de `thing`
 
 Estado: **parcialmente cerrada** mediante [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
@@ -295,7 +295,7 @@ Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-038-familias-c
 
 Las familias cerradas son nominales, finitas y enumerables; `ordered values` añade el orden declarado y pueden existir campos comunes. Permanecen abiertos los campos específicos por alternativa, la especialización entre familias y su encaje ontológico exacto con el dominio unificado de `thing`.
 
-### Q-025 — Destrucción de constructos estáticos
+### Q-025 — Destrucción de `thing` estáticas
 
 Si está permitida y qué significa para anclas, referencias y estados.
 

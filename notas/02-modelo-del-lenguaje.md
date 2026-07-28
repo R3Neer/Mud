@@ -20,7 +20,7 @@ Toda declaración tiene identidad semántica mediante un ancla. La última colum
 
 ## Identidad, valor y especialización
 
-MUD no presupone dos dominios separados de clases y objetos. Una `thing` no tiene instancias: las declaradas y las creadas durante la ejecución pertenecen al mismo dominio conceptual, según [[notas/decisiones/ADR-014-ontologia-unificada-de-constructos|ADR-014]]. Los documentos históricos emplean «constructo» para este mismo concepto.
+MUD no presupone dos dominios separados de clases y objetos. Una `thing` no tiene instancias: las declaradas y las activadas durante la ejecución pertenecen al mismo dominio conceptual, según [[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]]. Los documentos históricos emplean «constructo» para este mismo concepto.
 
 Toda `thing` concreta denota una cosa con identidad y estado propio, y puede servir a la vez como antecesora de otras. Una `thing` abstracta conserva identidad dentro del mismo dominio, pero no denota directamente una cosa concreta con estado propio.
 
