@@ -36,6 +36,10 @@ En cada onda:
 
 Las vinculaciones se fijan al comienzo de la onda. Cambios de pertenencia, activaciones o suspensiones producidos durante ella solo alteran la siguiente. Ningún bloque observa deltas parciales de otro bloque.
 
+Para una vinculación con memoria, los disparos comparan su valor en las instantáneas de inicio de dos ondas consecutivas conforme a D-041. `when e` detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$; `when e changes` compara directamente ambos valores y puede pulsar en ondas consecutivas.
+
+Una vinculación que no estaba presente en la primera instantánea materializada por `start with` se incorpora al conjunto en la primera onda posterior en que resulte activa. Esa onda inicializa su memoria sin dispararla. Su primer disparo posible se produce en la onda siguiente. Las vinculaciones presentes desde la primera instantánea son la excepción expresa: un `when` booleano comienza con anterior virtual `false` y puede disparar durante la estabilización inicial.
+
 Una resolución termina cuando una onda no produce efectos ni nuevas consecuencias pendientes. Un ciclo u oscilación detectados producen `failed`; un límite de recursos es una salvaguarda técnica distinguible, no una definición alternativa de estabilización.
 
 Solo hay una resolución causal activa por mundo. Las solicitudes externas que llegan durante ella entran en una cola y vinculan participantes, evalúan `given`, dominios e `if` cuando les corresponde comenzar, no cuando fueron encoladas.
@@ -45,7 +49,7 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 ## Consecuencias
 
 - El orden de ejecución física no altera el resultado.
-- La identidad y memoria exactas de las vinculaciones siguen abiertas en Q-005.
+- La identidad canónica y la conservación de memoria tras desaparecer una vinculación siguen abiertas en Q-005; su valor inicial ya está fijado.
 - La detección semántica de oscilaciones y la salvaguarda técnica siguen abiertas en Q-020.
 - La multiplicidad, orden y deduplicación de mensajes siguen en Q-052.
 
@@ -56,3 +60,6 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 3. Una acción encolada se valida contra el estado en que comienza.
 4. Una oscilación no confirma estado parcial.
 5. Una resolución revertida no publica mensajes.
+6. Una vinculación inicial verdadera dispara durante la estabilización de `start with`.
+7. Una vinculación creada en una onda toma línea base en la siguiente y solo puede disparar a partir de la posterior.
+8. Dos cambios netos consecutivos producen dos pulsos `changes`.

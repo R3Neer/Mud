@@ -505,9 +505,10 @@ Define:
 - Participantes relacionados mediante `in`.
 - `when`.
 - `changes`.
+- Transición `false → true`, pulsos sin estado y cambios netos entre instantáneas.
 - `if`.
 - `then`.
-- Estado anterior por vinculación.
+- Estado anterior virtual en `start with` y línea base sin disparo para vinculaciones posteriores.
 - Creación y eliminación de vinculaciones.
 
 Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].

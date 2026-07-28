@@ -354,6 +354,15 @@ when {
 } changes
 ```
 
+Para una vinculación $b$, sea $v_n(b,e)$ el valor de `e` en la instantánea de inicio de la onda $n$:
+
+- `when e` exige `Bool` y dispara exactamente si $v_{n-1}(b,e)$ es falso y $v_n(b,e)$ es verdadero.
+- `when e changes` pulsa si $v_{n-1}(b,e)\ne v_n(b,e)$.
+
+El pulso de `changes` no se almacena ni se restablece a falso: se calcula directamente para cada par de instantáneas y puede aparecer en ondas consecutivas. Solo observa el cambio neto entre instantáneas de inicio.
+
+Las vinculaciones presentes en la primera instantánea materializada por `start with` usan un anterior virtual falso para su primer `when` booleano, que dispara si la condición inicial es verdadera. Un `changes` inicial memoriza su valor sin pulsar. Toda vinculación nacida después entra en la primera onda posterior en que está activa, usa esa onda para memorizar su línea base sin disparar y comienza a comparar en la siguiente.
+
 ### `always`
 
 ```mud

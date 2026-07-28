@@ -34,7 +34,7 @@ El runtime:
 4. Valida dependencias, tipos, dominios, cardinalidades y reglas `always` efectivas.
 5. Resuelve las consecuencias iniciales hasta alcanzar un primer estado estable.
 
-Solo después puede aceptar acciones externas. Un fallo en este proceso significa que el programa no produce un mundo inicial válido; no es `rejected`, porque no existe una solicitud exterior. La memoria inicial de las vinculaciones `when` continúa bajo Q-005.
+Solo después puede aceptar acciones externas. Un fallo en este proceso significa que el programa no produce un mundo inicial válido; no es `rejected`, porque no existe una solicitud exterior. Las vinculaciones presentes en la primera instantánea materializada usan la inicialización reactiva descrita más adelante; Q-005 conserva abiertas únicamente su identidad canónica y la retirada o conservación posterior de memoria.
 
 ## Inicio de una acción
 
@@ -70,7 +70,7 @@ Después de la raíz:
 1. Se construyen las vinculaciones `on` de la onda.
 2. Todas las reglas de esa onda leen la misma instantánea.
 3. `when` detecta transiciones por vinculación.
-4. `changes` produce pulsos por cambios netos confirmados.
+4. `changes` produce pulsos por diferencias netas entre instantáneas consecutivas.
 5. Los efectos se calculan de forma independiente.
 6. Los efectos compatibles se combinan.
 7. Los conflictos fallan la resolución.
@@ -86,15 +86,17 @@ La cardinalidad no se comprueba tras cada instrucción del delta privado. El com
 
 ## Disparo reactivo
 
-`when condition` se activa en una transición `false → true`. Esto implica que el runtime mantiene memoria del valor anterior por vinculación.
+Sea $v_n(b,e)$ el valor de `e` para la vinculación $b$ en la instantánea de inicio de la onda $n$. `when e` se activa exactamente cuando $v_{n-1}(b,e)$ es falso y $v_n(b,e)$ es verdadero.
+
+`when e changes` pulsa cuando $v_{n-1}(b,e)\ne v_n(b,e)$. El pulso se calcula para esa onda: no es estado almacenado, no se restablece a falso y puede producirse en ondas consecutivas. Los cambios transitorios que desaparecen antes de formar la instantánea siguiente no cuentan.
+
+Una vinculación presente en la primera instantánea materializada por `start with` usa un anterior virtual falso y dispara si su primer `when` booleano es verdadero. Un `changes` inicial solo memoriza el primer valor y no pulsa. Una vinculación nacida después entra en la primera onda posterior en que está activa, memoriza allí su línea base sin disparar y empieza a comparar en la onda siguiente.
 
 Queda por definir:
 
-- Estado inicial de una vinculación recién creada.
 - Qué ocurre al destruir y recrear una vinculación equivalente.
 - Identidad de una vinculación con varios participantes.
 - Cuándo se descarta su memoria.
-- Interacción exacta entre `when`, `changes` y una raíz.
 
 Estas preguntas son requisitos del runtime, no detalles de optimización.
 

@@ -102,7 +102,7 @@ $$
 \mathcal L_P
 $$
 
-El estado inicial se construye materializando conjuntamente las declaraciones de $\operatorname{initiallyActive}_P$, validando sus dependencias y estabilizando las consecuencias iniciales antes de aceptar acciones externas.
+El estado inicial se construye materializando conjuntamente las declaraciones de $\operatorname{initiallyActive}_P$, validando sus dependencias y estabilizando las consecuencias iniciales antes de aceptar acciones externas. Conforme a D-041, las vinculaciones reactivas presentes en la primera instantánea materializada usan un anterior virtual falso para su primer `when` booleano; una condición inicialmente verdadera puede producir consecuencias iniciales. Las vinculaciones que nazcan durante esa estabilización siguen la regla ordinaria de línea base sin disparo.
 
 Las acciones, aliases y magnitudes no pertenecen a $\operatorname{initiallyActive}_P$: no poseen este ciclo de vida. Una acción declarada forma parte de la API estática, aunque su invocabilidad efectiva pueda quedar suspendida por dependencias inactivas.
 
@@ -222,3 +222,4 @@ La suite deberá cubrir:
 13. Uso ordinario de `start` y `abstract` como identificadores fuera de sus contextos especiales.
 14. Tratamiento contextual de `always`, `name`, `prefixes` y etiquetas equivalentes.
 15. Sustitución del conjunto global por el `start with` local de cada test.
+16. Disparo durante la estabilización inicial de un `when` cuya condición comienza verdadera.

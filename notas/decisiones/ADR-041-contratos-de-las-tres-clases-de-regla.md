@@ -45,13 +45,29 @@ rule OpenGate on gate: Gate [mut] {
 
 Declara vinculaciones automáticas mediante `on`, no admite `given`, exige `when`, admite `if` y produce efectos mediante `then`. No ejecuta acciones reales. Puede consultar reglas booleanas y usar `allowed` si el grafo resultante sigue siendo acíclico.
 
-Para cada vinculación, `when e` dispara únicamente por la transición:
+Sea $W_n$ la instantánea leída al comienzo de la onda $n$ y sea $v_n(b,e)$ el valor de la expresión $e$ para la vinculación $b$ en esa instantánea. Para una vinculación que ya posea memoria, `when e` exige que $e$ sea booleana y dispara únicamente cuando:
 
 $$
-\mathsf{false}\longrightarrow\mathsf{true}.
+\neg v_{n-1}(b,e)\land v_n(b,e).
 $$
 
-El runtime conserva el valor anterior por identidad de vinculación. `changes e` solo aparece dentro de `when` y produce un pulso por cambio neto confirmado de `e`.
+Por tanto, solo dispara en la transición $\mathsf{false}\longrightarrow\mathsf{true}$. El runtime conserva el valor anterior por identidad de vinculación.
+
+`when e changes` admite cualquier expresión con igualdad definida y produce en la onda $n$ el pulso:
+
+$$
+\operatorname{changes}_n(b,e)
+\iff
+v_{n-1}(b,e)\ne v_n(b,e).
+$$
+
+Este pulso se calcula directamente para cada par de instantáneas de inicio consecutivas. No es un booleano almacenado, no se restablece mediante un cambio a `false` y no se somete de nuevo a la detección $\mathsf{false}\rightarrow\mathsf{true}$. Si $e$ cambia entre dos pares consecutivos de instantáneas, `changes` pulsa en ambas ondas. Solo importa el cambio neto entre instantáneas; los valores transitorios dentro de un delta privado no son observables.
+
+### Inicialización de la memoria reactiva
+
+Las vinculaciones presentes en la primera instantánea obtenida al materializar conjuntamente el `start with` global o local reciben para su primer `when e` booleano un valor anterior virtual $\mathsf{false}$. Si $e$ es verdadera en esa primera instantánea de estabilización, la regla dispara. `when e changes` no recibe un valor ficticio: solo memoriza $v_0(b,e)$ y no pulsa.
+
+Una vinculación que no estaba presente en esa primera instantánea, ya sea por activación posterior de una regla o por aparición de participantes, no participa en la raíz u onda que la crea. En su primera onda activa memoriza el valor actual sin disparar `when` ni producir un pulso `changes`. Desde la onda siguiente compara normalmente dos instantáneas. En particular, si memoriza $\mathsf{false}$ y la condición es $\mathsf{true}$ en la onda posterior, `when` dispara; si memoriza inicialmente $\mathsf{true}$, esa mera aparición no dispara.
 
 ### Regla `always`
 
@@ -75,7 +91,7 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 - Solo las reglas booleanas forman llamadas con resultado.
 - Solo las reactivas forman consecuencias causales.
 - Solo `always` convierte una falsedad en fallo de invariante.
-- Q-005 todavía debe fijar la identidad, nacimiento y retirada de la memoria de una vinculación.
+- Q-005 todavía debe fijar la identidad canónica, la retirada de memoria y su posible conservación cuando una vinculación desaparece y reaparece.
 
 ## Verificación
 
@@ -84,3 +100,7 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 3. Rechazo de efectos en reglas booleanas y `always`.
 4. Disparo reactivo únicamente en `false → true`.
 5. Poda de una llamada booleana suspendida.
+6. `changes` pulsa en cambios consecutivos sin una onda falsa intermedia.
+7. Ausencia de pulso cuando una expresión cambia transitoriamente pero conserva el mismo valor entre instantáneas.
+8. Disparo inicial de un `when` verdadero procedente de `start with`.
+9. Inicialización sin disparo de una vinculación creada fuera de `start with`.

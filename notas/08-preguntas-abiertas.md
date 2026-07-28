@@ -44,11 +44,11 @@ Todo resultado distinto de `accepted`, incluido un `after` falso, restaura exact
 
 ### Q-005 — Identidad y ciclo de vida de vinculaciones
 
-¿Cómo se identifica una vinculación `on`, cuál es el valor anterior de `when` al crearla y cuándo se elimina su memoria?
+¿Cómo se identifica canónicamente una vinculación `on`, cuándo se elimina su memoria y qué ocurre si una vinculación equivalente desaparece y reaparece?
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
 
-La transición se memoriza por vinculación; las vinculaciones se fijan al inicio de cada onda y sus altas o bajas surten efecto en la siguiente. Falta definir su identidad canónica, valor inicial y política de conservación de memoria.
+La transición se memoriza por vinculación; las vinculaciones se fijan al inicio de cada onda y sus altas o bajas surten efecto en la siguiente. Una vinculación presente en la primera instantánea materializada por `start with` usa para `when` un anterior virtual falso y puede disparar durante la estabilización inicial; `changes` memoriza su primer valor sin pulsar. Una vinculación nacida después usa su primera onda activa para establecer la línea base sin disparar y compara desde la siguiente. Falta definir su identidad canónica y la política de eliminación o conservación de memoria cuando desaparece.
 
 ### Q-006 — Conflictos
 
