@@ -58,7 +58,7 @@ Un segundo escenario pequeño, como una puerta que se abre al desbloquearse, añ
 ## Semántica incluida
 
 - Identidad estable de declaraciones.
-- Resolución de nombres sin imports recursivos.
+- Resolución de nombres sin declaraciones `using` recursivas.
 - Tipado estático.
 - Pureza de reglas booleanas.
 - Comprobación de mutabilidad.

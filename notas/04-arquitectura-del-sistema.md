@@ -62,7 +62,7 @@ Separación recomendada:
 1. **Lexer**: tokens, comentarios, literales y terminadores.
 2. **Parser**: estructura sintáctica y recuperación de errores.
 3. **AST de superficie**: conserva procedencia y forma escrita.
-4. **Resolución**: namespaces, imports, nombres y anclas.
+4. **Resolución**: namespaces, declaraciones `using`, nombres y anclas.
 5. **Tipado**: tipos, cardinalidades, dominios, conversiones y mutabilidad.
 6. **Análisis semántico**: pureza, efectos, ciclos, finitud y estocasticidad.
 7. **IR canónico**: representación independiente de la sintaxis.

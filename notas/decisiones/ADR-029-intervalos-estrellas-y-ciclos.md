@@ -60,6 +60,12 @@ magnitude Speed in [0..*] :=
     Length / Time
 ```
 
+En una magnitud no derivada, la representación numérica opcional precede siempre al dominio:
+
+```text
+magnitude nombre [: representación-numérica] [in intervalo] bloque
+```
+
 Los límites se escriben como números desnudos. En una magnitud no derivada se interpretan en su unidad raíz; en una derivada, en la combinación canónica inferida de las unidades raíz componentes.
 
 Por tanto, si la unidad canónica de `Speed` es `m/s`, `[0..100]` significa de `0 m/s` a `100 m/s`. No se admiten unidades explícitas ni unidades alternativas dentro de esos límites. Los valores escritos posteriormente con otra unidad se normalizan antes de comprobar el dominio.

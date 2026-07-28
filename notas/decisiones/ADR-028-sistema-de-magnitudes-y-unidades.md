@@ -81,6 +81,26 @@ magnitude Temperature: Integer {
 }
 ```
 
+Puede restringir su dominio mediante `in`, situado después de la representación numérica opcional y antes del bloque:
+
+```mud
+magnitude Probability: Number in [0..1] {
+    ...
+}
+
+magnitude Population: Natural in [*] {
+    ...
+}
+```
+
+Su cabecera sigue por tanto este orden:
+
+```text
+magnitude nombre [: representación-numérica] [in intervalo] bloque
+```
+
+Los límites del intervalo son números desnudos en la representación canónica de la magnitud. Cuando existe una unidad raíz, se interpretan en ella; la unidad no se escribe dentro del intervalo.
+
 Una magnitud no derivada que declara unidades contiene exactamente una `root unit`. Las unidades no tienen identificador en su cabecera; sus formas léxicas se declaran dentro del bloque:
 
 ```mud
@@ -197,7 +217,7 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 
 ## Verificación futura
 
-1. Magnitud no derivada con representación predeterminada y explícita.
+1. Magnitud no derivada con representación predeterminada, explícita y dominio opcional en el orden canónico.
 2. Rechazo de cero, signo negativo y ciclos en equivalencias.
 3. Normalización de `km/h` a la unidad canónica de `Speed`.
 4. Inferencia de cada combinación ordinaria de tipos numéricos.

@@ -74,7 +74,7 @@ Objetivo: resolver qué significa un programa sin ejecutarlo.
 
 Entregables:
 
-- Namespaces, imports exactos y anclas.
+- Namespaces, declaraciones `using` exactas y anclas.
 - Tabla de símbolos.
 - Tipos básicos y conversiones v0.
 - Mutabilidad y dominios.

@@ -368,12 +368,12 @@ Moverla a otro namespace cambia su nombre cualificado y su ancla, salvo migraci�
 ## 4.3 Imports
 Import exacto:
 ```
-import warfare.armies
+using warfare.armies
 
 ```
 Import recursivo:
 ```
-import warfare.armies.*
+using warfare.armies.*
 
 ```
 Orden de resolución:
@@ -382,7 +382,7 @@ Orden de resolución:
 3. Imports exactos.
 4. Imports recursivos.
 5. Nombres completamente cualificados.
-Si dos imports proporcionan el mismo nombre, debe utilizarse el nombre cualificado.
+Si dos declaraciones `using` proporcionan el mismo nombre, debe utilizarse el nombre cualificado.
  
 ⸻
  
@@ -3302,7 +3302,7 @@ unit
 values
 ordered
 is
-import
+using
 mut
 
 rule
@@ -3391,8 +3391,8 @@ Puede seguir existiendo como término técnico interno en herramientas o tecnolo
 > [!danger] Ejemplo histórico no conforme
 > Este ejemplo usa `construct`, herencia mediante `is`, la distribución antigua de `on`/`for` y otras reglas retiradas. Sirve como procedencia de requisitos, no como programa ejecutable ni como ejemplo de MUD vigente.
 ```
-import economy.resources
-import warfare.armies.*
+using economy.resources
+using warfare.armies.*
 
 construct Side {
     values =

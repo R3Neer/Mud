@@ -233,7 +233,7 @@ Define las formas semánticamente relevantes después del parsing:
 - Nodos propios para `look`, `message` y propiedades públicas.
 - Azúcares sintácticos y forma núcleo.
 
-## 09. Namespaces, imports, nombres y anclas
+## 09. Namespaces, `using`, nombres y anclas
 
 Archivo previsto: `09-nombres-y-anclas.md`
 
@@ -254,7 +254,7 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]].
+Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]].
 
 ## 10. Sistema de tipos
 

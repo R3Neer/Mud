@@ -69,7 +69,7 @@ then open gate
 after gate.open
 ```
 
-También admiten llaves con ese único elemento cuando mejoren la lectura:
+Todas estas cláusulas admiten siempre llaves, también cuando contienen un único elemento:
 
 ```mud
 when {

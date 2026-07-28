@@ -42,7 +42,7 @@ La forma:
 Key -> Value [cardinality modifiers]
 ```
 
-declara un diccionario con claves únicas. `unique` no se aplica porque la unicidad de clave es intrínseca.
+declara un diccionario con claves únicas. `unique` no se aplica porque la unicidad de clave es intrínseca y escribirlo es un error estático. Tampoco se reinterpreta como unicidad de valores: esa restricción debe expresarse, si se incorpora en el futuro, mediante una construcción distinta y explícita.
 
 ```mud
 stock =

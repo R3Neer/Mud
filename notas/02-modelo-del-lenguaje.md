@@ -131,6 +131,8 @@ El estado se expresa mediante campos:
 - Campo almacenado mutable: `mut` y `=`.
 - Campo calculado: `:=`.
 - Campo con dominio: `in`.
+
+La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= valor]`. El dominio se escribe antes que la especificación de colección. Un campo calculado usa `nombre: Tipo := expresión` y no admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión.
 - Campo singular, opcional, colección o diccionario mediante cardinalidad.
 
 Todo campo se modela semánticamente como una colección; omitir la cardinalidad equivale a `[1]`. La mutabilidad exterior de una colección y la capacidad de modificar sus miembros son permisos distintos y ortogonales para cualquier cardinalidad:
@@ -141,7 +143,7 @@ Todo campo se modela semánticamente como una colección; omitir la cardinalidad
 
 No existe mutabilidad profunda implícita ni excepción para `[1]`. En particular, `mut field: T` equivale a `mut field: T [1]`, no a `field: T [1 mut]`, según [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|ADR-019]].
 
-Los campos derivados también producen colecciones. Su pertenencia se calcula y no admite mutabilidad exterior; la capacidad interior, cuando se declare, solo permite modificar los miembros alcanzados.
+Los campos derivados también pueden producir colecciones, pero su forma se deduce de la expresión. La declaración derivada no vuelve a anotar cardinalidad, orden, unicidad ni capacidad interior.
 
 La sintaxis y las obligaciones de campos almacenados, calculados y dominios pertenecen a [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]. La semántica común de cardinalidad, `empty`, multiplicidad, orden y diccionarios pertenece a [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
 
@@ -159,6 +161,10 @@ Los participantes ocupan roles semánticos. Los `given` no son participantes. En
 
 - El receptor identifica participantes.
 - Los argumentos identifican valores `given`.
+
+El nombre de cada participante de `on` o `for` puede omitirse. Una referencia no cualificada se resuelve entre los participantes anónimos y los demás nombres visibles solo si existe un candidato compatible único; cualquier ambigüedad es un error estático. Si el cuerpo necesita el participante como valor completo, debe nombrarlo.
+
+Los receptores y los argumentos `given` admiten vinculación posicional. También pueden vincularse por nombre mediante `nombre = expresión`; para los `given` permanece abierta únicamente la mezcla entre argumentos posicionales y nombrados en una misma llamada.
 
 Consecuencias normativas:
 
@@ -285,9 +291,9 @@ El mismo token también expresa pertenencia, vinculación estructural y conversi
 
 Un dominio puede ser estático o calculado. Los dominios calculados introducen dependencias y posibles ciclos; por eso requieren análisis específico.
 
-## Namespaces, imports y anclas
+## Namespaces, `using` y anclas
 
-El namespace se deriva de la ruta. Los imports pueden ser exactos o recursivos. La resolución da prioridad a símbolos locales, mismo namespace, imports y nombres cualificados.
+El namespace se deriva de la ruta. Las declaraciones `using` pueden ser exactas o recursivas. La resolución da prioridad a símbolos locales, mismo namespace, declaraciones `using` y nombres cualificados.
 
 Formato conceptual de anclas:
 
@@ -304,9 +310,9 @@ message::warfare.armies.ArmyDestroyed
 
 Las anclas no incluyen el archivo. Mover una declaración dentro del mismo namespace no cambia su identidad; moverla de namespace sí, salvo una migración explícita todavía por diseñar.
 
-MUD distingue palabras reservadas y contextuales. `with`, `family`, `test` y `otherwise` están reservadas. `start` introduce `start with`; `abstract` solo actúa como modificador delante de `thing`; `always` solo actúa como variante delante de `rule`; `ordered` solo actúa como modificador delante de `family`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
+MUD distingue palabras reservadas y contextuales. `using`, `with`, `family`, `test` y `otherwise` están reservadas. `start` introduce `start with`; `abstract` solo actúa como modificador delante de `thing`; `always` solo actúa como variante delante de `rule`; `ordered` solo actúa como modificador delante de `family`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial.
 
-Las reglas completas de organización física, imports, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-imports-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+Las reglas completas de organización física, declaraciones `using`, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 
 ## Pureza y efectos
 

@@ -13,6 +13,8 @@
 ```mud
 name: Text = ""
 mut treasury: Money = 0
+age: Natural in 0..150 [1] = 18
+subjects: Person [* unique]
 maintenanceCost: Money := soldiers * 2
 ```
 
@@ -21,7 +23,19 @@ maintenanceCost: Money := soldiers * 2
 - `mut` concede mutabilidad exterior conforme a D-019.
 - Todo campo denota una colección conforme a D-026; omitir cardinalidad equivale a `[1]`.
 
-Un campo calculado no posee carga asignable y no admite mutabilidad exterior.
+La forma concreta de un campo almacenado es:
+
+```text
+[mut] nombre : tipo [in dominio] [especificación-de-colección] [= valor]
+```
+
+El dominio precede a la especificación de colección. Un campo calculado usa exclusivamente:
+
+```text
+nombre : tipo := expresión
+```
+
+No posee carga asignable y no admite `mut`, una cláusula `in` ni una especificación de colección. La cardinalidad y demás propiedades de colección de su resultado proceden del tipo estático de la expresión, no de una segunda restricción escrita en la declaración.
 
 ### Dominios
 
@@ -34,6 +48,12 @@ given amount: Natural in 1..100
 
 Puede aparecer en campos, componentes de alias y `given`. Un dominio calculado debe ser puro, determinista, no estocástico, analizable y libre de ciclos inválidos.
 
+En un campo almacenado, `in` aparece después del tipo y antes de la especificación de colección:
+
+```mud
+citizens: Person in EligibleCitizens [1..* unique]
+```
+
 La semántica del tipo y las conversiones explícitas se aplican antes de comprobar pertenencia al dominio.
 
 ### Resultados por contexto
@@ -43,7 +63,7 @@ La semántica del tipo y las conversiones explícitas se aplican antes de compro
 - Campo fuera de dominio en un estado candidato: la resolución resulta `failed` y revierte.
 - Inicializador constante fuera de dominio: error estático.
 
-Los campos calculados también deben satisfacer su dominio cuando se evalúan.
+Los campos calculados también deben satisfacer el dominio de su tipo estático cuando se evalúan, aunque no puedan declarar una cláusula `in` adicional.
 
 ### Puntos de control
 
@@ -73,6 +93,7 @@ Compartir token no fusiona sus significados.
 
 1. Dominio constante y calculado.
 2. `given` fuera de dominio en regla y action.
-3. Campo almacenado y calculado fuera de dominio.
+3. Campo almacenado fuera de dominio y rechazo de `in` sobre un campo calculado.
 4. Ciclo y dependencia estocástica inválidos.
-5. Rollback sin estado publicable inválido.
+5. Rechazo de `mut` y de especificaciones de colección en campos calculados.
+6. Rollback sin estado publicable inválido.

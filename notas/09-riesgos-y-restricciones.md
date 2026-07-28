@@ -30,7 +30,7 @@ Mitigación: núcleo vertical v0 y expansión por escenarios.
 
 ### No determinismo accidental
 
-Puede entrar por orden de mapas, recorrido de colecciones, resolución de imports, concurrencia o azar.
+Puede entrar por orden de mapas, recorrido de colecciones, resolución de declaraciones `using`, concurrencia o azar.
 
 Mitigación: orden canónico, semillas explícitas, tests repetidos y comparación de IR y trazas byte a byte.
 
@@ -129,4 +129,3 @@ Detener y revisar si aparece cualquiera de estas situaciones:
 - “El límite de ondas define el significado”.
 - “El parser decidirá por contexto aunque la gramática sea ambigua”.
 - “El commit también incluye estos cambios, pero parecen relacionados”.
-

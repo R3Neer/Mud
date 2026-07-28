@@ -211,7 +211,11 @@ Una llamada puede usar un receptor posicional o un receptor nombrado entre paré
 
 ### Q-012 — Valores `given` nombrados
 
-Sintaxis en consultas y acciones compuestas; mezcla o no con argumentos posicionales.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+
+Un argumento `given` puede vincularse por nombre mediante `nombre = expresión` dentro de los paréntesis de la llamada. Los nombres desconocidos y repetidos son inválidos.
+
+Permanece abierto si una llamada puede mezclar argumentos posicionales y nombrados y, en tal caso, qué orden admite.
 
 ### Q-013 — Restricciones relacionales entre participantes `on`
 

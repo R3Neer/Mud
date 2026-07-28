@@ -45,7 +45,7 @@ Una instrucción termina mediante `;` o un salto de línea que actúe como termi
 - Comentarios y terminadores deben resolverse en el lexer antes del parser.
 - El resaltador puede implementarlos sin conocer el modelo semántico.
 - El catálogo de palabras reservadas se generará desde la gramática consolidada.
-- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-054 y D-055. `with`, `test` y `otherwise` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
+- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-035, D-054 y D-055. `using`, `with`, `test` y `otherwise` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
 
 ## Verificación
 

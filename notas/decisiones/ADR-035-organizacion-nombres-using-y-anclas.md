@@ -1,4 +1,4 @@
-# ADR-035 — Organización, nombres, imports y anclas
+# ADR-035 — Organización, nombres, `using` y anclas
 
 - Estado: Vigente
 - Fecha: 2026-07-28
@@ -10,31 +10,31 @@
 
 ### Archivos y namespaces
 
-El namespace se deriva de la ruta relativa dentro de la raíz MUD y no se declara en el archivo. Un archivo puede contener imports y varias declaraciones de cualquier categoría.
+El namespace se deriva de la ruta relativa dentro de la raíz MUD y no se declara en el archivo. Un archivo puede contener declaraciones `using` y varias declaraciones de cualquier categoría.
 
 El archivo es una unidad física, no una unidad de identidad semántica. Cada declaración conserva por separado ancla, dependencias, nodo de grafo, procedencia e historial.
 
 Mover una declaración entre archivos del mismo namespace no cambia su ancla. Moverla a otro namespace sí la cambia, salvo una migración explícita todavía definida por Q-014.
 
-### Imports
+### Declaraciones `using`
 
-Se admiten imports exactos y recursivos:
+Se admiten declaraciones `using` exactas y recursivas:
 
 ```mud
-import warfare.armies
-import warfare.armies.*
+using warfare.armies
+using warfare.armies.*
 ```
 
 Para un nombre no cualificado, la búsqueda sigue:
 
 1. Declaraciones locales.
 2. Mismo namespace.
-3. Imports exactos.
-4. Imports recursivos.
+3. Declaraciones `using` exactas.
+4. Declaraciones `using` recursivas.
 
 Una referencia completamente cualificada se resuelve directamente. Si dos candidatos importados proporcionan el mismo nombre no cualificado, existe ambigüedad y debe escribirse el nombre cualificado.
 
-El orden textual de archivos e imports no decide empates.
+El orden textual de archivos y declaraciones `using` no decide empates.
 
 ### Convenciones de identificadores
 
@@ -45,7 +45,7 @@ El orden textual de archivos e imports no decide empates.
 
 Los identificadores son sensibles a mayúsculas. El catálogo de palabras reservadas no puede usarse como nombre de campo, componente, rol, `given`, variable local o declaración.
 
-D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; `ordered` lo es delante de `family`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `with`, `family`, `test` y `otherwise` son palabras reservadas.
+D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; `ordered` lo es delante de `family`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen. `using`, `with`, `family`, `test` y `otherwise` son palabras reservadas.
 
 ### Nombres cualificados y anclas
 
@@ -87,7 +87,7 @@ La identidad estable de una unidad sin identificador de cabecera permanece en Q-
 
 1. Varias declaraciones por archivo.
 2. Movimiento dentro y fuera del namespace.
-3. Import exacto, recursivo y ambiguo.
+3. Declaración `using` exacta, recursiva y ambigua.
 4. Resolución cualificada.
 5. Colisión por mayúsculas y palabra reservada.
 6. Uso ordinario de una palabra contextual fuera de su posición especial.
