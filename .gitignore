@@ -4,6 +4,13 @@
 # Papelera local del vault
 .trash/
 
+# Artefactos derivados del exportador Markdown
+exports/
+
+# Cachés generadas por las herramientas Python
+__pycache__/
+*.py[cod]
+
 # Archivos temporales del sistema y editores
 Thumbs.db
 .DS_Store
