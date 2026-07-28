@@ -24,3 +24,13 @@ El instalador copia el plugin a `.obsidian/plugins/mud-ebnf-viewer`, lo añade a
 
 Después hay que recargar Obsidian una vez. Para actualizar el plugin tras un
 cambio, se ejecuta el mismo comando y se vuelve a recargar Obsidian.
+
+## Personalización de colores
+
+Las paletas están al principio de `styles.css`, en los bloques
+`.theme-dark .mud-ebnf-view` y `.theme-light .mud-ebnf-view`. Cada categoría
+dispone de una variable `--mud-ebnf-*`, por lo que se puede cambiar un color sin
+tocar las reglas del editor.
+
+Los valores iniciales siguen las convenciones visuales de Visual Studio Code
+Dark+ y Light+, adaptadas a las categorías de EBNF.

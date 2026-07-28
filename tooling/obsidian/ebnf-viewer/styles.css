@@ -5,6 +5,32 @@
   padding: 0;
 }
 
+.theme-dark .mud-ebnf-view {
+  /* Paleta inspirada en Visual Studio Code Dark+. */
+  --mud-ebnf-definition: #569cd6;
+  --mud-ebnf-reference: #9cdcfe;
+  --mud-ebnf-terminal: #4ec9b0;
+  --mud-ebnf-string: #ce9178;
+  --mud-ebnf-comment: #6a9955;
+  --mud-ebnf-meta: #d7ba7d;
+  --mud-ebnf-number: #b5cea8;
+  --mud-ebnf-operator: #c586c0;
+  --mud-ebnf-bracket: #dcdcaa;
+}
+
+.theme-light .mud-ebnf-view {
+  /* Paleta inspirada en Visual Studio Code Light+. */
+  --mud-ebnf-definition: #0000ff;
+  --mud-ebnf-reference: #001080;
+  --mud-ebnf-terminal: #267f99;
+  --mud-ebnf-string: #a31515;
+  --mud-ebnf-comment: #008000;
+  --mud-ebnf-meta: #795e26;
+  --mud-ebnf-number: #098658;
+  --mud-ebnf-operator: #af00db;
+  --mud-ebnf-bracket: #795e26;
+}
+
 .mud-ebnf-toolbar {
   align-items: center;
   border-bottom: 1px solid var(--background-modifier-border);
@@ -58,37 +84,40 @@
 }
 
 .mud-ebnf-editor .mud-ebnf-token-definition {
-  color: var(--color-accent) !important;
+  color: var(--mud-ebnf-definition) !important;
   font-weight: 700;
 }
 
 .mud-ebnf-editor .mud-ebnf-token-reference {
-  color: var(--color-cyan) !important;
+  color: var(--mud-ebnf-reference) !important;
 }
 
 .mud-ebnf-editor .mud-ebnf-token-terminal {
-  color: var(--color-purple) !important;
+  color: var(--mud-ebnf-terminal) !important;
   font-weight: 600;
 }
 
 .mud-ebnf-editor .mud-ebnf-token-string {
-  color: var(--color-green) !important;
+  color: var(--mud-ebnf-string) !important;
 }
 
 .mud-ebnf-editor .mud-ebnf-token-comment {
-  color: var(--text-muted) !important;
+  color: var(--mud-ebnf-comment) !important;
   font-style: italic;
 }
 
-.mud-ebnf-editor .mud-ebnf-token-meta,
+.mud-ebnf-editor .mud-ebnf-token-meta {
+  color: var(--mud-ebnf-meta) !important;
+}
+
 .mud-ebnf-editor .mud-ebnf-token-number {
-  color: var(--color-orange) !important;
+  color: var(--mud-ebnf-number) !important;
 }
 
 .mud-ebnf-editor .mud-ebnf-token-operator {
-  color: var(--color-pink) !important;
+  color: var(--mud-ebnf-operator) !important;
 }
 
 .mud-ebnf-editor .mud-ebnf-token-bracket {
-  color: var(--color-yellow) !important;
+  color: var(--mud-ebnf-bracket) !important;
 }
