@@ -16,7 +16,7 @@ normative: true
 
 - Estado general: **en preparación**
 - Versión objetivo inicial: **MUD 1.0**
-- Autoridad actual: los capítulos vigentes de este directorio y las decisiones vigentes enlazadas. [[referencias/retiradas/MUD Especificacion inicial|La especificación inicial retirada]] conserva procedencia, pero ya no tiene autoridad subsidiaria.
+- Autoridad actual: los capítulos vigentes de este directorio y las decisiones vigentes enlazadas. El historial Git conserva la procedencia retirada, pero no tiene autoridad subsidiaria.
 - Alcance: lenguaje MUD completo, su semántica de ejecución y los criterios de conformidad.
 
 Este directorio contendrá la especificación normativa de MUD. Su objetivo es que dos implementaciones independientes puedan:

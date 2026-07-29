@@ -111,4 +111,3 @@ La primera versión no necesita expresar toda la especificación. Sí necesita d
 - Resolver desde el inicio `eventually`, azar, calendarios y herencia múltiple.
 - Aceptar cualquier petición ambigua sin intervención humana.
 - Garantizar propiedades formales que todavía no han sido demostradas.
-
