@@ -212,7 +212,7 @@ Define la sintaxis completa de:
 - Llamadas.
 - Definiciones canónicas de `thing` y reglas, declaración inicial `start with` y activaciones mediante `create Nombre`.
 - Tests aislados con `start with` local, `then`, `after` y `otherwise`.
-- Diagnóstico `otherwise` obligatorio en reglas `always`.
+- Diagnóstico `otherwise` opcional en reglas `always`; omitirlo produce un aviso y una razón predeterminada.
 - Formatos numéricos dentro de interpolaciones `Text`.
 - Cuantificadores e iteraciones.
 
