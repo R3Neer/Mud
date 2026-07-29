@@ -40,3 +40,9 @@ No se debe hacer push ni reescribir historial sin petición explícita.
 La promoción desde material didáctico hasta norma se rige por `gobierno/CICLO-DOCUMENTAL.md`.
 
 La especificación no debe contener ejercicios, pistas ni referencias al proceso personal de aprendizaje. Cuando el autor indique que una parte está revisada, se debe realizar la pasada de publicación antes de marcarla vigente.
+
+## Preguntas
+
+La apertura, actualización, división y cierre de preguntas se rige por `gobierno/POLITICA-DE-PREGUNTAS.md`.
+
+Las preguntas cerradas no deben permanecer en índices activos ni en el frontmatter `questions` de la especificación. Su archivo estable se conserva como trazabilidad y enlaza las decisiones o evidencias que las resolvieron.

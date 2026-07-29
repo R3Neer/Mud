@@ -199,12 +199,16 @@ Un ejemplo informativo nunca puede ser la única definición de una regla.
 
 ## 10. Cuestiones abiertas
 
+El ciclo de vida, los estados y el archivo estable de cada pregunta se rigen por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
+
 Formato:
 
 > [!question] Q-NNN — Título
 > Pregunta precisa, alternativas conocidas y capítulos afectados.
 
 Mientras una pregunta afecte al significado de una construcción, el capítulo no puede pasar a `vigente`.
+
+El frontmatter `questions` enumera solo preguntas en estado `abierta` o `parcialmente-decidida`. Una pregunta cerrada se retira de la lista sin borrar su archivo histórico.
 
 ## 11. Teoremas y demostraciones
 

@@ -25,7 +25,7 @@ La autoridad actual se consulta en este orden:
 
 1. [[especificacion/README|Especificación formal]].
 2. [[notas/10-registro-de-decisiones|Registro de decisiones]] y ADR vigentes.
-3. [[notas/08-preguntas-abiertas|Preguntas abiertas]].
+3. [[notas/preguntas/README|Preguntas activas]].
 4. Referencias históricas, solo para procedencia.
 
 ## Documentos

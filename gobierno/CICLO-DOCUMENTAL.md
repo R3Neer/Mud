@@ -10,6 +10,8 @@ status: vigente
 
 # Ciclo documental de MUD
 
+Gestión de cuestiones abiertas: [[POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
+
 ## Propósito
 
 La formalización se aprende de manera didáctica, pero la especificación publicada debe tener apariencia y precisión profesionales. Este proceso impide que ejercicios, ayudas personales o razonamientos provisionales se filtren dentro de la norma.

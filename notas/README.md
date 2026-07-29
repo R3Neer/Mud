@@ -33,7 +33,7 @@ La dificultad principal no es analizar texto. Es garantizar que una intención e
 | [05-cambios-semanticos-y-git.md](05-cambios-semanticos-y-git.md) | ¿Cómo se consulta, cambia, valida y versiona un modelo? | Semántica completa del DSL |
 | [06-nucleo-vertical-v0.md](06-nucleo-vertical-v0.md) | ¿Cuál es el primer corte ejecutable y demostrable? | Funcionalidades avanzadas |
 | [07-plan-de-formalizacion.md](07-plan-de-formalizacion.md) | ¿En qué orden se reduce la incertidumbre y se implementa? | Inventario completo de dudas |
-| [08-preguntas-abiertas.md](08-preguntas-abiertas.md) | ¿Qué falta decidir y qué bloquea? | Decisiones tomadas en silencio |
+| [preguntas/README.md](preguntas/README.md) | ¿Qué falta decidir y qué bloquea? | Decisiones tomadas en silencio |
 | [09-riesgos-y-restricciones.md](09-riesgos-y-restricciones.md) | ¿Dónde puede fallar el concepto o la ejecución del proyecto? | Lista de tareas |
 | [10-registro-de-decisiones.md](10-registro-de-decisiones.md) | ¿Cómo se documentan decisiones y propuestas? | La explicación normativa completa de cada tema |
 | [11-trazabilidad-de-la-fuente.md](11-trazabilidad-de-la-fuente.md) | ¿Qué documento es dueño de cada parte del documento inicial? | Afirmaciones sobre cobertura completa |
@@ -66,6 +66,6 @@ Cada concepto tiene un único documento dueño. Los demás documentos lo enlazan
 La siguiente sesión de diseño debería empezar por:
 
 1. Continuar el índice de [la especificación formal](../especificacion/README.md) con sus convenciones editoriales y notación matemática.
-2. Resolver las preguntas P0 de [08-preguntas-abiertas.md](08-preguntas-abiertas.md).
+2. Resolver las preguntas P0 del [índice de preguntas activas](preguntas/README.md) y, durante la migración, del [registro anterior](08-preguntas-abiertas.md).
 3. Formalizar el modelo matemático de mundo, estado, valor, identidad y ancla.
 4. Elegir ejemplos canónicos que actúen como testigos de cada regla normativa.
