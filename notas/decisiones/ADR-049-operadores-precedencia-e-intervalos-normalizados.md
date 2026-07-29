@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Preguntas relacionadas: Q-001, Q-018, Q-050
 - Documentos afectados: expresiones, intervalos, gramática
 
@@ -84,6 +84,8 @@ Las operaciones de unión, intersección, diferencia simétrica y diferencia pro
 
 `empty` denota el intervalo vacío. Los literales básicos y las reglas de `*`, `[n]`, ciclos y límites canónicos pertenecen a D-029; la enumeración pertenece a D-047.
 
+D-059 incorpora intervalos de magnitud con unidades locales o una unidad común exterior. Sus extremos se comparan después de normalizar unidades. Un intervalo lineal con límite inferior mayor que el superior, o con límites iguales y algún lado abierto, se normaliza a `empty`; nunca adquiere implícitamente orden descendente ni semántica cíclica.
+
 ## Consecuencias
 
 - La sobrecarga nunca se decide por una prioridad de implementación.
@@ -104,3 +106,5 @@ Las operaciones de unión, intersección, diferencia simétrica y diferencia pro
 10. Separación estática entre `xor` lógico y `^` conjuntista.
 11. Precedencia de `changes` por debajo de comparaciones y por encima de `and` y `or`.
 12. Rechazo de operadores distintos de las palabras `and` y `or` sobre activadores temporales.
+13. Normalización equivalente de intervalos de magnitud con unidades locales y compartidas.
+14. Normalización a `empty` de extremos lineales invertidos o degenerados abiertos.

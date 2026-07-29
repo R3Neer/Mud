@@ -44,15 +44,15 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 17 | Cardinalidades y colecciones | Sustituida y migrada | D-026, D-039 |
 | 18 | Diccionarios | Migrada | D-033, D-039 |
 | 19 | Dominios declarativos | Migrada | D-037 |
-| 20 | Magnitudes | Sustituida y migrada | D-028 |
-| 21 | Magnitudes lineales | Sustituida y migrada | D-028 |
+| 20 | Magnitudes | Sustituida y migrada | D-028, D-059 |
+| 21 | Magnitudes lineales | Sustituida y migrada | D-028, D-059 |
 | 22 | Prefijos | Sustituida y migrada; catálogo abierto en Q-054 | D-028 |
 | 23 | Operaciones de magnitud | Sustituida y migrada | D-028, D-030, D-040 |
 | 24 | Magnitudes de punto | Sustituida y migrada | D-028, D-029 |
 | 25 | Formato de puntos | Migrada como requisito abierto | D-028; Q-055 |
 | 26 | Magnitudes temporales estándar | Migrada como requisito abierto | D-028; Q-033 |
 | 27 | Operadores | Migrada y actualizada | D-030, D-032, D-034, D-049 |
-| 28 | Intervalos | Sustituida y migrada | D-029, D-047, D-049 |
+| 28 | Intervalos | Sustituida y migrada | D-029, D-047, D-049, D-059 |
 | 29 | Precedencia | Migrada como base; ampliación en Q-001 | D-049 |
 | 30 | Literales numéricos y `_` | Sustituida y migrada | D-028, D-034, D-050 |
 | 31 | Reglas booleanas | Sustituida y migrada | D-022, D-025, D-041 |

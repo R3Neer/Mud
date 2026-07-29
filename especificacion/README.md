@@ -406,13 +406,17 @@ Define:
 - Dominios calculados.
 - Pertenencia.
 - Intervalos abiertos, cerrados, vacíos y discontinuos.
+- Intervalos de magnitud con unidades locales o una unidad común exterior.
 - Límites efectivos laterales mediante `*` y azúcar `[*]`.
 - Normalización.
+- Normalización de extremos lineales invertidos a `empty`.
 - Finitud y enumerabilidad.
 - Pasos de iteración.
 - Dominios dinámicos.
 - Dominios cíclicos `[a..b cycle)` exclusivos de magnitudes de punto.
 - Intervalos `Rumber` admitidos como dominios, pero no como fuentes enumerables.
+
+Base normativa migrada: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
 ## 18. Magnitudes, unidades y puntos
 
@@ -429,9 +433,12 @@ Define:
 - Aritmética dimensional.
 - Inferencia de unidades canónicas derivadas y combinaciones automáticas.
 - Unidades nominales derivadas opcionales.
+- Unidades locales y compartidas en expresiones de intervalo.
 - Declaraciones `point over`, ciclos y formatos.
 - Magnitudes temporales.
 - Calendarios y localización.
+
+Base normativa migrada: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
 ## 19. Expresiones
 
@@ -455,7 +462,7 @@ Define:
 - Elaboración booleana canónica y poda de llamadas a reglas inactivas.
 - Fallos dentro de expresiones.
 
-Base normativa migrada: [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]].
+Base normativa migrada: [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
 ## 20. Cuantificadores, agregaciones e iteración
 

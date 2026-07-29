@@ -240,7 +240,9 @@ Qué ciclos son inválidos y si existe un punto fijo admisible.
 
 ### Q-018 — Intervalos discontinuos
 
-Normalización canónica, igualdad, orden descendente y varias claves.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
+
+Los intervalos se normalizan por contenido. En los lineales, extremos efectivos invertidos producen `empty` y no implican recorrido descendente ni ciclo. Permanecen abiertos la sintaxis consolidada de intervalos discontinuos, el orden descendente explícito y varias claves.
 
 ### Q-019 — Números
 
@@ -282,9 +284,9 @@ Un `message` detecta un hecho durante la resolución de una acción y evalúa su
 
 ### Q-053 — Conversiones explícitas
 
-Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]].
+Estado: **cerrada** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
-`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal entre representaciones estructuralmente compatibles; `in` cambia la unidad de expresión. Falta integrar una violación de dominio dependiente del valor con la taxonomía general de fallos dinámicos.
+`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal entre representaciones estructuralmente compatibles; `in` cambia la unidad de expresión. Un `given` fuera de dominio produce `rejected`, mientras un estado tentativo con un campo fuera de dominio produce `failed`. La normalización de un intervalo invertido a `empty` no es por sí misma una violación.
 
 ### Q-022 — Valores de retorno de acciones
 

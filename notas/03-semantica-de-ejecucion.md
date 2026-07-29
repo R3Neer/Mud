@@ -154,6 +154,8 @@ Casos de `failed`:
 - `always` incumplida.
 - Fallo técnico o semántico propagado.
 
+Un intervalo lineal con extremos invertidos se normaliza válidamente a `empty` y no añade por sí solo un caso de `failed`. Si ese vacío deja un `given` fuera de dominio o hace falso un `if` o `after`, se aplican los casos ordinarios de `rejected`. Si deja un valor almacenado fuera de dominio o incumple una regla `always`, el estado tentativo es inválido y se obtiene `failed`, conforme a [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
+
 Toda salida distinta de `accepted` deja el mundo exactamente como estaba. Esta consecuencia está fuertemente implicada por la atomicidad y debe escribirse como regla normativa explícita.
 
 Esta consecuencia ya es normativa en [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]]. Los contratos de reglas, especulación, alcanzabilidad, ondas, conflictos, iteración y azar se consolidan respectivamente en [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]], [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]] y [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]].

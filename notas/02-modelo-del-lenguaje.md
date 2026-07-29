@@ -283,7 +283,9 @@ Las unidades se identifican mediante `name` dentro de un bloque sin identificado
 
 Los literales numéricos no tienen sufijos de tipo. `in` cambia la unidad de presentación de una cantidad. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal de una representación compatible. Los dominios declarados en cabeceras de magnitud usan límites numéricos desnudos interpretados en su representación canónica.
 
-Una magnitud de punto se declara mediante `point over`. Solo estas magnitudes pueden usar el dominio cíclico `[a..b cycle)`. Las decisiones completas pertenecen a [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]].
+Los intervalos ordinarios de magnitud admiten cantidades completas en cada extremo, como `[1 m..5 km]` o `[minimumDistance..5 m]`. Si todos los extremos finitos son literales numéricos desnudos, pueden compartir una unidad exterior: `[1..5] m` y `1..5 m`. Un intervalo lineal cuyos extremos efectivos se invierten se normaliza a `empty`; no se vuelve descendente ni cíclico.
+
+Una magnitud de punto se declara mediante `point over`. Solo estas magnitudes pueden usar el dominio cíclico `[a..b cycle)`. Las decisiones completas pertenecen a [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
 Para formalizar esta parte se necesita una matriz por operador que indique:
 

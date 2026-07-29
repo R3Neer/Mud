@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]
+- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Preguntas relacionadas: Q-019, Q-034, Q-054, Q-055
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
@@ -100,7 +100,7 @@ Su cabecera sigue por tanto este orden:
 magnitude nombre [: representación-numérica] [in intervalo] bloque
 ```
 
-Los límites del intervalo son números desnudos en la representación canónica de la magnitud. Cuando existe una unidad raíz, se interpretan en ella; la unidad no se escribe dentro del intervalo.
+Los límites del intervalo de la cabecera son números desnudos en la representación canónica de la magnitud. Cuando existe una unidad raíz, se interpretan en ella; la unidad no se escribe dentro del intervalo. Esta restricción de declaración no impide que las expresiones ordinarias de intervalo usen unidades locales o una unidad común conforme a D-059.
 
 Una magnitud no derivada que declara unidades contiene exactamente una `root unit`. Las unidades no tienen identificador en su cabecera; sus formas léxicas se declaran dentro del bloque:
 

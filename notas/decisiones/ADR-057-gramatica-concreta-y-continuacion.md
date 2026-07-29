@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Cierra: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
 - Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
 
@@ -33,6 +33,8 @@ Las EBNF definen el conjunto de formas sintácticas. No intentan decidir cuestio
 - Una colección unitaria `[e]` de un intervalo unitario `[e]`.
 
 Esas distinciones producen nodos distintos durante la elaboración y deben diagnosticarse estáticamente cuando sean ambiguas o inválidas.
+
+D-059 añade otra distinción contextual: `1..5 m` se elabora como un intervalo numérico con unidad común, mientras `1 m..5 km` contiene dos extremos de magnitud ordinarios. Una unidad común solo puede seguir a una forma cuyos extremos finitos sean literales numéricos sin unidad.
 
 Las cabeceras usan producciones distintas para participantes `for` y `on`. La EBNF permite que `for` use cualquier `declared-type`, escriba una especificación de colección y declare un `mut` exterior, mientras `on` conserva únicamente una referencia de tipo individual y su capacidad interior opcional. El análisis estático exige que ese tipo `on` resuelva a una `thing`; las restricciones de nombre obligatorio, pureza y receptor-lugar pertenecen también a D-036.
 
@@ -86,3 +88,4 @@ La recuperación concreta no forma parte del lenguaje aceptado. Una implementaci
 5. Agrupación de cada nivel de precedencia.
 6. Diagnósticos de las ambigüedades contextuales.
 7. Separación sintáctica de roles `for` colectivos y vinculaciones `on` individuales.
+8. Elaboración de intervalos con unidad compartida frente a unidades locales.

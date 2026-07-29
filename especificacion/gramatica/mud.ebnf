@@ -740,10 +740,40 @@ quantifier
 (* ------------------------------------------------------------------ *)
 
 interval-expression
-    ::= bounded-interval
+    ::= shared-unit-interval
+      | bounded-interval
       | closed-interval-sugar
       | singleton-interval
       ;
+
+shared-unit-interval
+    ::= shared-unit-bounded-interval , unit-expression
+      | shared-unit-closed-interval , unit-expression
+      | shared-unit-singleton-interval , unit-expression
+      | "[" , "]" , unit-expression
+      ;
+
+shared-unit-bounded-interval
+    ::= "[" , shared-unit-bound , ".." , shared-unit-bound , "]"
+      | "(" , finite-shared-unit-bound , ".."
+        , finite-shared-unit-bound , ")"
+      | "[" , shared-unit-bound , ".."
+        , finite-shared-unit-bound , ")"
+      | "(" , finite-shared-unit-bound , ".."
+        , shared-unit-bound , "]"
+      ;
+
+shared-unit-closed-interval
+    ::= shared-unit-bound , ".." , shared-unit-bound ;
+
+shared-unit-singleton-interval
+    ::= "[" , shared-unit-bound , "]" ;
+
+shared-unit-bound
+    ::= finite-shared-unit-bound | "*" ;
+
+finite-shared-unit-bound
+    ::= [ "+" | "-" ] , ( exact-number | rumber-number ) ;
 
 bounded-interval
     ::= "[" , interval-bound , ".." , interval-bound , "]"

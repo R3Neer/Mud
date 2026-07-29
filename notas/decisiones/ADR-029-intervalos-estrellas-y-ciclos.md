@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Preguntas relacionadas: Q-018, Q-055
 - Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`
 
@@ -23,6 +24,8 @@ Las cuatro formas delimitadas son:
 ```
 
 `n..m` equivale a `[n..m]` y `[n]` equivale a `[n..n]`.
+
+D-059 añade unidades locales y compartidas a las expresiones ordinarias de intervalo y fija que un intervalo lineal con límites efectivos invertidos se normaliza a `empty`. Esta inversión no expresa orden descendente ni ciclo.
 
 La forma `[n]` también coincide superficialmente con una colección unitaria. No se elimina ninguno de los dos usos ni se concede prioridad a uno: el tipo esperado y las restricciones de la expresión deben producir una única elaboración. Si una derivación sin tipo admite ambas, debe declarar el tipo explícitamente conforme a D-037.
 
@@ -111,7 +114,7 @@ Para `[0..360 cycle)`:
 -10  → 350
 ```
 
-`cycle` modifica la normalización del dominio de punto. No altera la semántica ni la iteración de los intervalos generales.
+`cycle` modifica la normalización del dominio de punto. No altera la semántica ni la iteración de los intervalos generales. Su periodo debe ser estrictamente positivo: la normalización a `empty` de D-059 no repara un dominio cíclico invertido o degenerado.
 Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados tratados por Q-017.
 
 ## Consecuencias
@@ -129,3 +132,5 @@ Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados
 5. Normalización cíclica con límite inferior distinto de cero.
 6. Rechazo de ciclos en magnitudes no puntuales y dominios no semiabiertos.
 7. Resolución contextual de `[n]` como intervalo unitario y rechazo cuando también sea viable como colección sin tipo esperado suficiente.
+8. Normalización de intervalos lineales invertidos a `empty` sin interpretación descendente.
+9. Rechazo de un periodo cíclico nulo o negativo.

@@ -3,7 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documentos afectados: frontera pública, efectos, solicitud de acciones, semántica de la raíz
 
@@ -72,6 +72,8 @@ En el contexto de acciones y tests, `old e` lee `e` en el estado estable inmedia
 
 Todo resultado distinto de `accepted` restaura exactamente el estado estable anterior y no publica mensajes ni otros efectos externos.
 
+La normalización de un intervalo lineal con extremos invertidos a `empty` es una evaluación válida conforme a D-059 y no produce `failed` por sí misma. Un `given` que quede fuera de dominio o un `if` o `after` que resulte falso a causa de ese vacío producen `rejected`; un dominio que deje un valor almacenado inválido o una regla `always` incumplida producen `failed` por el estado tentativo resultante.
+
 ## Consecuencias
 
 - `rejected` es una respuesta semántica normal; `failed` indica que no se pudo formar una transición válida.
@@ -87,3 +89,5 @@ Todo resultado distinto de `accepted` restaura exactamente el estado estable ant
 4. Rechazo de un `then` mixto y de un ciclo de llamadas.
 5. `old` observa la acción exterior, no una hoja intermedia.
 6. Vinculación de un receptor-lugar mutable y rechazo de un receptor que sea solo un valor.
+7. Intervalo invertido normalizado a `empty` sin fallo intrínseco.
+8. Distinción entre rechazo por una guarda falsa sobre `empty` y fallo por estado fuera de dominio.

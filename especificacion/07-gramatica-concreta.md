@@ -37,6 +37,7 @@ decisions:
   - D-056
   - D-057
   - D-058
+  - D-059
 ---
 
 # 07. Gramática concreta
@@ -545,6 +546,42 @@ a..b
 
 `a..b` equivale a `[a..b]`; `[a]`, a `[a..a]`. Un extremo `*` debe estar cerrado en su lado. La forma cíclica exclusiva de magnitudes de punto es `[a..b cycle)`.
 
+Los extremos finitos son expresiones completas y deben elaborar al mismo tipo ordenado. En un intervalo de magnitud pueden llevar unidades locales, incluso distintas, que se normalizan antes de comparar:
+
+```mud
+[1 m..5 km]
+[minimumDistance..5 m]
+[1 km..maximumDistance]
+[minimumDistance..maximumDistance]
+```
+
+Un literal situado junto a un campo de magnitud debe llevar su propia unidad. Por tanto, `[minimumDistance..5] m` es inválido y se escribe `[minimumDistance..5 m]`.
+
+Cuando todos los extremos finitos son literales numéricos sin unidad, una sola unidad puede seguir al intervalo:
+
+```mud
+[1..5] m
+1..5 m
+[1..5) km
+[*..5] m
+[1] m
+[] m
+```
+
+`1..5 m` se agrupa como `(1..5) m`. La unidad exterior no se distribuye sobre campos ni sobre cantidades que ya tengan unidad. `[1..5 m]` es inválido porque enfrenta `Number` con una magnitud, y `[1 m..5 m] m` añade una segunda unidad exterior inválida.
+
+La serialización canónica de literales que comparten unidad usa `[1..5] m`, aunque `[1 m..5 m]` también es válida. Si las unidades difieren o un extremo es una expresión ya tipada, se usan unidades locales.
+
+Después de evaluar y normalizar los extremos efectivos de un intervalo lineal:
+
+- un límite inferior menor que el superior conserva los lados escritos;
+- dos límites iguales forman un unitario solo si ambos lados son cerrados y producen `empty` en otro caso;
+- un límite inferior mayor que el superior produce `empty`.
+
+La inversión no implica recorrido descendente ni ciclo. Construir ese intervalo vacío no falla una resolución por sí mismo; solo producen `failed` las restricciones que vuelvan inválido el estado tentativo, como un valor almacenado que quede fuera de su dominio o una regla `always` incumplida. Un `given` fuera de dominio y un `if` o `after` falsos conservan su resultado `rejected`.
+
+Los dominios declarados en la cabecera de una magnitud conservan los límites numéricos desnudos interpretados en su unidad canónica. La forma `[a..b cycle)` también conserva esa restricción y exige un periodo estrictamente positivo.
+
 ## Precedencia y agrupación
 
 De mayor a menor:
@@ -669,8 +706,9 @@ El parser o la elaboración posterior deben resolver sin elección arbitraria:
 | operadores compartidos | operación lógica, aritmética, textual o conjuntista |
 | literal estructural | alias esperado |
 | `[expression]` | colección unitaria o intervalo unitario |
+| `1..5 unit` | unidad común del intervalo o extremo derecho de una derivación inválida |
 
-Si nombres, tipos y restricciones de la expresión no determinan una única interpretación válida, el programa es inválido y debe aportar el tipo que falte. No se aplica una preferencia implícita. Por ejemplo, una derivación sin contexto suficiente no puede elegir arbitrariamente si `[3]` es una colección o el intervalo `[3..3]`.
+Si nombres, tipos y restricciones de la expresión no determinan una única interpretación válida, el programa es inválido y debe aportar el tipo que falte. No se aplica una preferencia implícita. Por ejemplo, una derivación sin contexto suficiente no puede elegir arbitrariamente si `[3]` es una colección o el intervalo `[3..3]`. D-059 sí fija expresamente `1..5 m` como la forma de unidad común `(1..5) m`; no queda a elección del parser.
 
 ## Recuperación de errores
 
