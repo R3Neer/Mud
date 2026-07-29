@@ -103,10 +103,20 @@ def main() -> int:
         profile = profiles[profile_name]
         includes = profile.get("include", [])
         excludes = profile.get("exclude", [])
+
+        def included(relative: str, pattern: str) -> bool:
+            normalized = pattern.replace("\\", "/").strip("/")
+            return (
+                normalized in {"", "."}
+                or relative == normalized
+                or relative.startswith(f"{normalized}/")
+                or fnmatchcase(relative, pattern)
+            )
+
         return {
             question_id
             for question_id, relative in question_paths.items()
-            if any(fnmatchcase(relative, pattern) for pattern in includes)
+            if any(included(relative, pattern) for pattern in includes)
             and not any(fnmatchcase(relative, pattern) for pattern in excludes)
         }
 
