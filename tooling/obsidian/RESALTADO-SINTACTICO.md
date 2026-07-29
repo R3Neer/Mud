@@ -93,9 +93,10 @@ parsers ni un sustituto del futuro parser MUD.
 ## Temas
 
 Los colores se configuran desde los ajustes del plugin, por perfil y por modo
-claro u oscuro. Las plantillas iniciales reproducen los colores anteriores de
-MUD y EBNF; también se incluyen Catppuccin y Visual Studio Code. `styles.css`
-solo contiene estructura y énfasis tipográfico.
+claro u oscuro. Las plantillas disponibles son Catppuccin, Visual Studio Code
+Dark+/Light+, Solarized, GitHub Default y Gruvbox. Modificar una plantilla crea
+un estado personalizado que puede guardarse con nombre y reutilizarse.
+`styles.css` solo contiene estructura y énfasis tipográfico.
 
 ## Límites deliberados
 
