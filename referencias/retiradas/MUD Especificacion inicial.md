@@ -23,7 +23,7 @@ Autoridad actual, por orden:
 3. [[notas/preguntas/README|Preguntas activas]], cuando una materia todavía no esté cerrada.
 4. Este archivo no tiene autoridad subsidiaria: la matriz de migración demuestra el destino de cada sección.
 
-La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`. La auditoría detallada está en [[notas/13-auditoria-de-cobertura-y-divergencias]].
+La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`. La auditoría detallada está en [[referencias/retiradas/13-auditoria-de-cobertura-y-divergencias]].
 
 ## Índice de contenido desactualizado
 

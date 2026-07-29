@@ -140,7 +140,7 @@ Operaciones mínimas:
 - `RETIRE anchor`
 - `MOVE anchor` o migración explícita
 
-`READ` es una operación de consulta y no debería producir commit por sí sola. Esta distinción está pendiente de confirmación porque el texto inicial mezcla clasificación CRUD con cambios versionables.
+`READ` es una operación de consulta y no produce commit por sí sola. Esta separación entre consultas y cambios versionables está fijada por [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|D-012]], desarrollada por [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y aplicada por [[gobierno/POLITICA-DE-COMMITS|la política de commits]].
 
 ## Materializadores
 

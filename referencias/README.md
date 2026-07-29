@@ -31,4 +31,4 @@ La autoridad actual se consulta en este orden:
 ## Documentos
 
 - [[referencias/retiradas/MUD Especificacion inicial|MUD — Especificación inicial histórica retirada]]: instantánea inicial de 78 secciones, anotada y archivada después de completar su migración.
-- [[notas/13-auditoria-de-cobertura-y-divergencias|Auditoría final de migración]]: destino comprobable de cada sección y divergencias posteriores.
+- [[referencias/retiradas/13-auditoria-de-cobertura-y-divergencias|Auditoría final de migración]]: destino comprobable de cada sección y divergencias posteriores.

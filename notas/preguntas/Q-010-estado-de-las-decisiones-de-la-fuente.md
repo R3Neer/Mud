@@ -14,6 +14,6 @@ superseded-by: []
 
 ## Contenido
 
-Estado: **cerrada** mediante [[notas/13-auditoria-de-cobertura-y-divergencias]].
+Estado: **cerrada** mediante [[referencias/retiradas/13-auditoria-de-cobertura-y-divergencias|la auditoría final de migración]].
 
 Las 78 secciones fueron migradas, sustituidas o retiradas de forma explícita. Ninguna fórmula como «se mantiene vigente» conserva autoridad propia ni presupone texto ausente: el contenido actual debe existir en una decisión, nota dueña, capítulo o pregunta abierta.

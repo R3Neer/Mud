@@ -24,7 +24,7 @@ Mitigación: después de cada operación, todo significado duradero debe quedar 
 
 La especificación combina compilación, runtime reactivo, búsqueda de estados, generación, integración con IA y Git. Implementarlo horizontalmente puede producir muchas piezas sin un contrato verificable.
 
-Mitigación: núcleo vertical v0 y expansión por escenarios.
+Mitigación: completar primero la formalización de MUD 1.0 conforme a [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|D-013]] y validar después la implementación mediante cortes verticales y escenarios de conformidad.
 
 ## Riesgos semánticos
 
@@ -96,7 +96,7 @@ Mitigación: versión de esquema, compatibilidad declarada y pruebas de migraci�
 
 Optimizar por legibilidad antes de estabilizar la semántica genera migraciones costosas.
 
-Mitigación: priorizar AST e IR claros; considerar la sintaxis experimental hasta validar ejemplos reales.
+Mitigación: tratar la gramática consolidada por [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]] como propuesta normativa sujeta al ciclo documental; validar ejemplos reales y registrar cualquier cambio mediante norma, decisión y conformidad.
 
 ### Decisiones silenciosas en la implementación
 

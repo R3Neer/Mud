@@ -18,4 +18,7 @@ No se utilizan para:
 - derivar una implementación;
 - contradecir una decisión o capítulo vigente.
 
-La matriz de destino de la especificación inicial está en [[notas/13-auditoria-de-cobertura-y-divergencias]].
+Documentos conservados:
+
+- [[referencias/retiradas/MUD Especificacion inicial|MUD — Especificación inicial histórica]]: instantánea temprana ya sustituida.
+- [[referencias/retiradas/13-auditoria-de-cobertura-y-divergencias|Auditoría final de migración]]: matriz que demuestra el destino de sus 78 secciones.

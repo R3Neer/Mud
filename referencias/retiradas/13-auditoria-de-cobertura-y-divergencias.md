@@ -1,6 +1,16 @@
+---
+title: Auditoría final de migración de la especificación inicial
+tags:
+  - mud/referencia
+  - mud/historico
+status: retirado
+normative: false
+---
+
 # Auditoría final de migración de la especificación inicial
 
-- Estado: completada
+- Estado de la auditoría: completada
+- Estado documental: referencia histórica retirada
 - Fecha: 2026-07-28
 - Fuente auditada: [[referencias/retiradas/MUD Especificacion inicial|MUD — Especificación inicial histórica retirada]]
 - Alcance: las 78 secciones numeradas, su introducción y las decisiones posteriores
@@ -94,7 +104,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 67 | Plugin para Codex | Retirado como API normativa; capacidades migradas | D-053 |
 | 68 | Clasificación de peticiones | Migrada | D-053 |
 | 69 | Inferencias permitidas | Actualizada y migrada | D-053 |
-| 70 | Agenda de especificación | Migrada | [[notas/07-plan-de-formalizacion]], [[notas/preguntas/README|Preguntas activas]] |
+| 70 | Agenda de especificación | Migrada | [[especificacion/README|Índice normativo]], [[notas/preguntas/README|Preguntas activas]] |
 | 71 | Flujo atómico del plugin | Actualizada y migrada | D-012, D-053 |
 | 72 | Tests | Suite obsoleta retirada; obligaciones migradas y tests declarativos añadidos | D-052, D-055; capítulos 43 y 44 previstos |
 | 73 | Soporte de editor | Migrada como requisito de tooling | D-052 |
@@ -102,7 +112,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 75 | Ejemplo integral | Ejemplo no conforme retirado; propósito preservado | capítulo 47 previsto y corpus de conformidad |
 | 76 | Decisiones esenciales | Sustituida por ADR estables e índice generado | [[notas/decisiones/README|Decisiones de MUD]] |
 | 77 | Cuestiones abiertas | Sustituida por la agenda viva | [[notas/preguntas/README|Preguntas activas]] |
-| 78 | Instrucciones finales | Migradas y actualizadas | D-013, D-053; [[notas/07-plan-de-formalizacion]] |
+| 78 | Instrucciones finales | Migradas y actualizadas | [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|D-013]], [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] |
 
 ## Divergencias deliberadas principales
 

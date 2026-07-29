@@ -1,6 +1,6 @@
 # Cambios semánticos y Git
 
-Este documento define el protocolo de seguridad alrededor de una modificación del modelo. Es distinto de ejecutar una acción dentro de un mundo: aquí se cambia la definición `.mud` del mundo.
+Este documento describe el protocolo de seguridad alrededor de una modificación del modelo. La autoridad del flujo pertenece a [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|D-012]], [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y [[gobierno/POLITICA-DE-COMMITS|la política de commits]]. Es distinto de ejecutar una acción dentro de un mundo: aquí se cambia la definición `.mud` del mundo.
 
 ## Dos clases de transacción
 
@@ -42,7 +42,7 @@ open_questions: []
 
 El formato exacto está abierto, pero debe distinguir la intención humana, las operaciones, las anclas leídas y las consecuencias previstas.
 
-## Flujo atómico propuesto
+## Flujo atómico
 
 1. Capturar el estado Git y la versión del compilador.
 2. Clasificar la petición.
@@ -102,11 +102,11 @@ Impact:
 - Data migration: none
 ```
 
-La forma final debe decidirse antes de automatizar parsers de historial.
+El formato general de los commits se rige por [[gobierno/POLITICA-DE-COMMITS|la política de commits]]. Antes de automatizar parsers de historial debe fijarse además un contrato estable para los campos semánticos legibles por máquina.
 
 ## ¿Debe `READ` crear un commit?
 
-Propuesta: no. Una consulta puede quedar en logs de auditoría, pero no modifica la fuente semántica. La frase “cada cambio semántico válido” es compatible con commits para CREATE, UPDATE, RETIRE y migraciones, no para una lectura aislada.
+No. Una consulta puede quedar en logs de auditoría, pero no modifica la fuente semántica. D-012, D-053 y la política de commits reservan los commits para CREATE, UPDATE, RETIRE, migraciones u otras modificaciones persistentes, no para una lectura aislada.
 
 Si se desea versionar conocimiento obtenido durante una consulta —por ejemplo, cerrar una decisión— eso sería un `UPDATE` sobre metadatos de especificación, no un `READ`.
 
@@ -120,7 +120,7 @@ Si se desea versionar conocimiento obtenido durante una consulta —por ejemplo,
 - Permitir migración de anclas.
 - Eliminar físicamente solo cuando sea seguro.
 
-Esta política debe formalizarse. Hasta entonces, el operador no debería equiparar automáticamente `RETIRE` con eliminar una declaración.
+La semántica exacta sigue abierta en [[notas/preguntas/Q-015-retirada|Q-015]]. Hasta resolverla, el operador no debe equiparar automáticamente `RETIRE` con eliminar una declaración.
 
 ## Validación del impacto
 
