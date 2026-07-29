@@ -84,7 +84,7 @@ El color no decide si un programa es válido. En particular, no comprueba:
 - Cardinalidad.
 - Orden Unicode de los valores de `Char [* ordered]`.
 - Formas dinámicas de unidad pendientes de Q-054.
-- Literales de magnitud de punto pendientes de Q-055.
+- Literales contextuales `POINT_LITERAL` definidos por D-062, todavía no implementados por este resaltador.
 
 Los términos contextuales que no puedan reconocerse con seguridad permanecen como identificadores ordinarios para evitar falsos positivos.
 

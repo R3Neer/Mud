@@ -2,8 +2,8 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Preguntas relacionadas: Q-018, Q-055
+- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]] y [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]]
+- Preguntas relacionadas: Q-018, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`
 
 ## Contexto
@@ -99,7 +99,7 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 Representa posiciones sobre una magnitud lineal y utiliza sus unidades. No puede declarar unidades ni `root unit`.
 Sin `in`, admite el dominio completo de la coordenada subyacente. Con un intervalo lineal, queda acotada sin envolvimiento. Con `[a..b cycle)`, queda acotada y se normaliza cíclicamente.
 
-Puede declarar mediante el `format` opcional una representación textual especial. Si lo omite, se representa como cualquier magnitud ordinaria: coordenada en la unidad raíz seguida de la abreviatura o nombre de esa unidad. Conforme a D-061, el formato es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; Q-055 conserva abiertos el parseo inverso, la unicidad, las colisiones y los calendarios irregulares.
+Puede declarar mediante el `format` opcional una representación textual especial. Si lo omite, se representa como cualquier magnitud ordinaria: coordenada en la unidad raíz seguida de la abreviatura o nombre de esa unidad. Conforme a D-061, el formato es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; D-062 exige que el formato de punto sea invertible, lo usa como forma literal canónica y rechaza antes de normalizar cualquier literal fuera del dominio.
 
 Su aritmética es:
 

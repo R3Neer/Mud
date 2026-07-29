@@ -1,6 +1,9 @@
-# Preguntas abiertas
+# Registro de preguntas en migración
 
-Esta es la agenda de diseño. Una pregunta solo se considera cerrada cuando existe una decisión registrada, una actualización del documento dueño y pruebas cuando corresponda.
+> [!warning]
+> Este registro conserva temporalmente preguntas anteriores mientras se separan en `notas/preguntas/`. El índice activo y la política vigente están en [[notas/preguntas/README|Preguntas activas de MUD]] y [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]]. Las entradas marcadas como cerradas son históricas y no forman parte de la agenda activa.
+
+Una pregunta solo se considera cerrada cuando existe una decisión registrada, una actualización del documento dueño y pruebas cuando corresponda.
 
 Prioridades:
 
@@ -373,12 +376,6 @@ Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-028-sistema-d
 ### Q-054 — Catálogo y resolución léxica de unidades y prefijos
 
 Qué prefijos incorpora MUD, qué formas ASCII y Unicode reconoce, cómo se resuelven colisiones entre `name`, `plural`, `abbreviation` y formas prefijadas, y qué identidad semántica estable recibe una unidad cuya cabecera no tiene identificador.
-
-### Q-055 — Formatos de magnitudes de punto
-
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
-
-`format` usa la sintaxis general de plantilla `Text`: cada `{...}` contiene código y la especificación numérica sigue el orden izquierda–derecha de D-061. Los componentes ordinarios se encadenan de mayor a menor y un contenedor explícito usa `unidad from contenedor`; fuera del formato se añade `in punto`. La extracción es independiente del formato y usa el origen canónico y resto euclídeo, incluso cuando queda un último componente parcial. Falta definir el parseo inverso frente a la impresión, la unicidad de la representación, las colisiones y la relación con calendarios irregulares y localización.
 
 ### Q-056 — Forma normalizada y recursión de aliases
 

@@ -13,7 +13,6 @@ depends-on:
 questions:
   - Q-022
   - Q-054
-  - Q-055
   - Q-059
 decisions:
   - D-025
@@ -40,6 +39,7 @@ decisions:
   - D-058
   - D-059
   - D-061
+  - D-062
 ---
 
 # 07. Gramática concreta
@@ -273,7 +273,9 @@ week from year in date
 
 La forma es una sola construcción sintáctica. El receptor debe ser una magnitud de punto; ambas unidades pertenecen a su magnitud subyacente; la unidad extraída no supera a la contenedora; el resultado es `Natural`. Se usa el origen canónico y el resto euclídeo, con un posible último componente parcial cuando las unidades no dividen exactamente. La extracción no depende del `format`.
 
-Las formas producidas por `format` ocupan el token contextual `POINT_LITERAL`; por ejemplo, el objetivo es que el formato horario pueda reconocer `12:30:00`. Q-055 conserva abiertos el parseo inverso, la unicidad y las colisiones, y debe cerrarse antes de declarar conforme esa familia de literales.
+Las formas producidas por `format` ocupan el token contextual `POINT_LITERAL`. El tipo esperado selecciona una única magnitud de punto y el literal debe reproducir exactamente su forma canónica. Un formato que no pueda invertirse unívocamente es inválido. Los componentes más finos que el último representado toman valor cero.
+
+Sin `format`, el literal se escribe como una cantidad ordinaria con unidad compatible. Todo literal debe pertenecer al dominio antes de aplicar normalización cíclica; por ejemplo, `26:00:00` es inválido para `TimeOfDay`.
 
 ## Participantes
 

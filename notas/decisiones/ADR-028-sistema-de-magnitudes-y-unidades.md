@@ -3,7 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
-- Preguntas relacionadas: Q-019, Q-034, Q-054, Q-055
+- Preguntas relacionadas: Q-019, Q-034, Q-054, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
 ## Contexto

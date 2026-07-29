@@ -18,6 +18,7 @@ decisions:
   - D-056
   - D-057
   - D-061
+  - D-062
 ---
 
 # 06. Estructura léxica
@@ -308,8 +309,12 @@ Las formas de unidad pueden contener Unicode y no son identificadores generales.
 
 Una magnitud `point over` puede habilitar escrituras contextuales mediante su propiedad `format`, por ejemplo `12:30:00`. El lexer representa una coincidencia válida como `POINT_LITERAL`.
 
-> [!warning]
-> `format` usa las plantillas `Text` de D-061. Q-055 todavía debe definir sus nombres contextuales, el parseo inverso y la resolución de colisiones. Hasta entonces, `POINT_LITERAL` es un punto de extensión identificado, no una autorización para que cada implementación invente componentes o formatos distintos y los declare conformes.
+> [!rule]
+> `POINT_LITERAL` se interpreta contra el único tipo de magnitud de punto exigido por el contexto. Si declara `format`, el texto debe coincidir exactamente con su representación canónica y el formato debe ser estáticamente invertible. La precisión inferior no representada toma valor cero.
+
+Una magnitud de punto sin `format` usa una cantidad ordinaria con una unidad compatible como coordenada completa. En ambos casos, la coordenada reconstruida debe pertenecer al dominio declarado. Los dominios cíclicos no normalizan literales fuera de rango: un literal equivalente a `26 hours` es inválido para `[0..24 hours cycle)`.
+
+Las reglas completas pertenecen a [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]].
 
 ## Prioridad del scanner
 

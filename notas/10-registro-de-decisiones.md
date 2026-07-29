@@ -69,6 +69,7 @@ Este registro y `notas/decisiones/` contienen únicamente decisiones y propuesta
 | D-059 | Vigente | Los intervalos de magnitud admiten unidades locales o una unidad común; los extremos lineales invertidos producen `empty` | [ADR-059](decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos.md) | Decisión del autor, 2026-07-29 |
 | D-060 | Vigente | Los efectos aditivos sobre `Natural` suman deltas firmados y normalizan una sola vez antes de la siguiente instantánea | [ADR-060](decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural.md) | Decisión del autor, 2026-07-29 |
 | D-061 | Vigente | Todo resultado no aceptado incluye `reason: Text`; `otherwise` diagnostica comprobaciones concretas; las plantillas representan valores, magnitudes, formatos, componentes y anclas | [ADR-061](decisiones/ADR-061-resultados-fallidos-y-plantillas-text.md) | Decisión del autor, 2026-07-29; ampliada el mismo día con diagnósticos opcionales, unidades públicas y componentes de punto |
+| D-062 | Vigente | Los puntos usan literales canónicos seleccionados por tipo; la precisión omitida vale cero y ningún ciclo normaliza un literal fuera de dominio | [ADR-062](decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md) | Decisión del autor, 2026-07-29 |
 
 ## Propuestas de estas notas
 
