@@ -12,7 +12,7 @@ verified: 2026-07-29
 # Resaltado sintáctico de MUD en Obsidian
 
 > [!abstract]
-> La bóveda incluye un plugin local configurable que colorea bloques MUD y EBNF en modo lectura, Source y Live Preview, y deriva el catálogo visual de MUD de las gramáticas normativas.
+> La bóveda incluye un plugin local configurable que colorea bloques MUD, EBNF y ASDL, abre sus archivos fuente y deriva el catálogo visual de MUD de las gramáticas normativas.
 
 Este documento es informativo. La gramática normativa pertenece a [[especificacion/06-lexico]] y [[especificacion/07-gramatica-concreta]].
 
@@ -36,6 +36,7 @@ El plugin no depende de Codeblock Customizer ni de otro plugin comunitario. Usa:
 - Decoraciones de CodeMirror 6 para Source y Live Preview.
 - El mismo registro de lenguajes y tokenizadores en ambas superficies.
 - Una pestaña de ajustes para perfiles, gramáticas, validación y temas.
+- Una vista común para editar directamente `.mud`, `.ebnf` y `.asdl`.
 
 ## Uso
 
@@ -67,8 +68,11 @@ Se reconocen:
 - Operadores y puntuación.
 - Formas de punto numéricas como `12:30:00`.
 
-Los bloques `ebnf` también se colorean automáticamente con el tokenizador que
-usa el visor EBNF.
+Los bloques `ebnf` también se colorean automáticamente con el tokenizador
+integrado de la metanotación.
+
+Los bloques `asdl` usan el dialecto Zephyr/CPython para describir árboles de
+sintaxis abstracta. El perfil registra también la extensión `.asdl`.
 
 ## Relación con la gramática
 

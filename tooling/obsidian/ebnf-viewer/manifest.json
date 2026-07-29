@@ -1,9 +1,0 @@
-{
-  "id": "mud-ebnf-viewer",
-  "name": "EBNF Viewer",
-  "version": "0.1.5",
-  "minAppVersion": "1.7.2",
-  "description": "Opens and edits .ebnf files directly in Obsidian with syntax highlighting.",
-  "author": "Samuel",
-  "isDesktopOnly": false
-}
