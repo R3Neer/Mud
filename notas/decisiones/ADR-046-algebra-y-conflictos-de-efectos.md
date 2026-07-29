@@ -2,6 +2,7 @@
 
 - Estado: Vigente como núcleo; matriz completa abierta
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Preguntas relacionadas: Q-002, Q-006, Q-021, Q-046
 - Documentos afectados: efectos, raíz, ondas, conflictos
 
@@ -28,7 +29,7 @@ Reglas mínimas:
 | --- | --- |
 | asignaciones al mismo valor | compatibles, una asignación normalizada |
 | asignaciones a valores distintos | conflicto |
-| actualizaciones aditivas homogéneas | compatibles, suma de deltas |
+| actualizaciones aditivas homogéneas | compatibles, suma de deltas antes de normalizar el destino |
 | actualizaciones multiplicativas homogéneas | compatibles, producto de factores |
 | asignación con actualización aritmética | conflicto |
 | actualización aditiva con multiplicativa | conflicto |
@@ -44,9 +45,18 @@ Para efectos estructurales se aplican D-023, D-026 y D-054:
 
 Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destinos solo puede conocerse durante una resolución, el runtime la detecta y produce `failed` con rollback completo.
 
+Los deltas aditivos dirigidos a un `Natural` son enteros firmados, aunque el valor del destino nunca pueda ser negativo. Para un valor inicial $n$ y deltas compatibles $\delta_i$, D-060 fija:
+
+$$
+n'=\max\left(0,n+\sum_i\delta_i\right).
+$$
+
+Dentro de un `then`, una lectura posterior observa la proyección saturada del valor inicial más su delta privado acumulado, pero esa proyección no recorta el delta pendiente. Los bloques no observan deltas privados ajenos.
+
 ## Consecuencias
 
 - La semántica no depende del orden de reglas ni de hilos.
+- La saturación de `Natural` no rompe la conmutatividad de las actualizaciones aditivas.
 - Q-006 sigue abierta para las combinaciones restantes de colecciones, diccionarios, propiedades, ciclo de vida y solapamientos parciales.
 - El análisis conservador especial de cardinalidad de D-026 prevalece sobre la regla general de diferir coincidencias indecidibles.
 
@@ -57,3 +67,5 @@ Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destin
 3. Conflicto conocido estáticamente y conflicto dependiente de bindings.
 4. Consolidación estructural con activación mediante `create`, adición, retirada y destrucción.
 5. Rollback integral ante conflicto tardío.
+6. Consolidación de deltas firmados sobre `Natural` antes de saturar.
+7. Lectura secuencial proyectada sin recorte del delta privado.

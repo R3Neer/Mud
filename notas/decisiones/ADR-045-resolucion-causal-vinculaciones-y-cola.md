@@ -2,7 +2,7 @@
 
 - Estado: Vigente en su núcleo
 - Fecha: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Preguntas relacionadas: Q-003, Q-005, Q-020, Q-052
 - Documentos afectados: semántica dinámica, reglas reactivas, mensajes
 
@@ -32,10 +32,13 @@ En cada onda:
 2. todas las reglas leen la misma instantánea de inicio;
 3. se evalúan los activadores temporales de `when`;
 4. cada `then` produce secuencialmente un delta privado;
-5. los deltas se consolidan mediante D-023 y D-046;
-6. el estado resultante, si es válido, alimenta la onda siguiente.
+5. los deltas se consolidan mediante D-023, D-046 y D-060;
+6. los valores se normalizan a sus tipos básicos y se validan;
+7. el estado resultante, si es válido, alimenta la onda siguiente.
 
 Las vinculaciones se fijan al comienzo de la onda. Cambios de pertenencia, activaciones o suspensiones producidos durante ella solo alteran la siguiente. Ningún bloque observa deltas parciales de otro bloque.
+
+La raíz y cada onda forman lotes causales con la misma frontera de consolidación. Para un destino `Natural`, todos los deltas aditivos compatibles se suman como enteros firmados y el total se satura una sola vez en cero antes de construir la instantánea siguiente. Ninguna regla observa el acumulador firmado.
 
 Para una vinculación con memoria, los disparos comparan valores en las instantáneas de inicio de dos ondas consecutivas conforme a D-041 y D-058. Un `when e` puramente booleano detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$; `e changes` compara directamente ambos valores y puede pulsar en ondas consecutivas. `and` y `or` componen pulsos de cambio y transiciones booleanas sin convertirlos en estado persistente.
 
@@ -66,3 +69,5 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 8. Dos cambios netos consecutivos producen dos pulsos `changes`.
 9. Dos activadores unidos por `and` solo disparan cuando ambos pulsan en la misma onda.
 10. Un cambio unido mediante `or` a una transición booleana preserva cualquiera de los dos pulsos.
+11. Deltas `-2` y `+3` sobre un `Natural` inicial cero producen uno en la siguiente instantánea.
+12. Ninguna instantánea de onda expone un `Natural` negativo.

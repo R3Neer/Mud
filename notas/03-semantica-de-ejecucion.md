@@ -81,6 +81,8 @@ La activación o suspensión de una regla durante una onda tampoco modifica el c
 
 Cada `then` conserva su secuencialidad mediante un delta privado sobre la instantánea común. Los bloques no observan deltas parciales ajenos. Al consolidarlos, las activaciones mediante `create` preceden a las adiciones y las retiradas preceden a las destrucciones. Varias activaciones de una misma definición canónica ausente se consolidan idempotentemente; `create` no aporta cuerpos ni fragmentos declarativos. Los aliases no participan en efectos de ciclo de vida. Véanse [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]].
 
+Para un destino `Natural`, `+=` y `-=` aportan deltas enteros firmados. Una lectura posterior dentro del mismo `then` proyecta a cero el valor inicial más el delta privado acumulado, pero no recorta ese delta. Al consolidar la raíz o una onda, se suman primero todos los deltas compatibles y se aplica `max(0, ...)` una sola vez antes de validar dominios y formar la instantánea siguiente. Véase [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
+
 La cardinalidad no se comprueba tras cada instrucción del delta privado. El compilador debe demostrar que el resultado final de cada `then` respeta todos los límites y que la consolidación de bloques potencialmente concurrentes también los conserva. Un bloque no puede depender de otro para reparar su cardinalidad. Si la prueba estática no es posible, el programa se rechaza, conforme a [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]].
 
 ## Disparo reactivo

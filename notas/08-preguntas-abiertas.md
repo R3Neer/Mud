@@ -22,9 +22,9 @@ La sintaxis completa vive en `especificacion/gramatica/`; [[especificacion/07-gr
 
 ¿Qué estado lee cada instrucción de un `then` elemental y cada hoja de una acción compuesta? ¿Cómo se combinan efectos de una misma raíz?
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
-Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la instantánea común y no observa deltas parciales ajenos. Las hojas de una acción compuesta leen el mismo estado inicial y forman una raíz simultánea. Falta una semántica operacional que precise las lecturas intermedias y todas las combinaciones del álgebra de efectos.
+Cada `then` se interpreta secuencialmente sobre un delta privado derivado de la instantánea común y no observa deltas parciales ajenos. En `Natural`, una lectura privada proyecta a cero la suma del valor inicial y el delta local acumulado sin recortar el delta. Las hojas de una acción compuesta leen el mismo estado inicial y forman una raíz simultánea. Falta una semántica operacional para las lecturas intermedias de las demás familias de efectos y todas sus combinaciones.
 
 ### Q-003 — Puntos de validación
 
@@ -54,9 +54,9 @@ La memoria temporal pertenece a la vinculación; estas se fijan al inicio de cad
 
 ¿Cuál es la matriz completa de compatibilidad entre asignaciones, incrementos, multiplicaciones y operaciones estructurales concurrentes?
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
-Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles, el núcleo estructural y la consolidación idempotente de varias adiciones del mismo valor a una colección `unique`. Falta completar la matriz para adiciones y retiradas combinadas, inserciones distintas con orden observable, límites de cardinalidad, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados.
+Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles, el núcleo estructural y la consolidación idempotente de varias adiciones del mismo valor a una colección `unique`. En `Natural`, los deltas aditivos se suman como enteros firmados y solo después se normalizan a cero. Falta completar la matriz para adiciones y retiradas combinadas, inserciones distintas con orden observable, límites de cardinalidad, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados.
 
 ### Q-007 — Fallos técnicos
 
@@ -246,9 +246,9 @@ Los intervalos se normalizan por contenido. En los lineales, extremos efectivos 
 
 ### Q-019 — Números
 
-Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]] y [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]].
+Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
-`Natural`, `Integer`, `Number`, `Rumber` y `Money` son representaciones numéricas básicas. `Number` es racional exacto; `Rumber` es `binary64`; no se mezclan implícitamente. `Money` usa decimal exacto de escala dos, no tiene sufijo literal y aplica el redondeo global al más cercano con empates al par. La ampliación exacta ordinaria sigue `Natural → Integer → Number` y la resta de naturales satura en cero. Falta fijar:
+`Natural`, `Integer`, `Number`, `Rumber` y `Money` son representaciones numéricas básicas. `Number` es racional exacto; `Rumber` es `binary64`; no se mezclan implícitamente. `Money` usa decimal exacto de escala dos, no tiene sufijo literal y aplica el redondeo global al más cercano con empates al par. La ampliación exacta ordinaria sigue `Natural → Integer → Number`. La resta pura de naturales satura en cero; los efectos aditivos suman deltas firmados antes de una única normalización. Falta fijar:
 
 - Los límites de representación y overflow de `Natural`, `Integer` y `Money`.
 - La matriz completa de inferencia de `Money` frente a otras representaciones y magnitudes.

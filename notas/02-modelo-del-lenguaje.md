@@ -277,6 +277,8 @@ Los tipos numéricos básicos determinan representación y no son magnitudes. Un
 
 Un literal `Rumber` puro exige el prefijo `r`, incluso bajo un tipo esperado `Rumber`. En una cantidad con unidad de una magnitud basada en `Rumber`, el prefijo es opcional porque la magnitud aporta el contexto. `Number` y `Rumber` no se mezclan en operaciones ni comparaciones sin `to`.
 
+Un valor `Natural` nunca es negativo. Su resta pura satura inmediatamente en cero, mientras `+=` y `-=` generan deltas enteros firmados que se suman antes de normalizar el siguiente valor. Por ello, sobre un valor inicial cero, los efectos `-2` y `+3` producen uno y no tres. Una lectura secuencial dentro del mismo `then` observa la proyección no negativa del delta privado acumulado sin recortarlo.
+
 La conversión `Number to Rumber` selecciona el `binary64` más cercano; `Rumber to Number` recupera el racional exacto almacenado. Toda conversión estrecha usa redondeo al más cercano con empates al par. Los intervalos `Rumber` sirven como dominios, pero nunca como fuentes enumerables. Véase [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]].
 
 Las unidades se identifican mediante `name` dentro de un bloque sin identificador de cabecera. Una magnitud no derivada con unidades declara una `root unit`; las alternativas y los nombres derivados se expresan mediante `unit := cantidad`. Una magnitud derivada combina automáticamente las unidades raíz de sus componentes y no puede declarar raíz.

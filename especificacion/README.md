@@ -265,6 +265,7 @@ Define:
 - `Text`, `Char` y `Bool` como tipos básicos no numéricos.
 - `'\u{0}'` (`U+0000`) como valor predeterminado de `Char`.
 - `Natural`, `Integer`, `Number`, `Rumber` y `Money` como representaciones numéricas básicas, no magnitudes.
+- Saturación de la resta pura de `Natural` frente a deltas aditivos firmados.
 - `Number` como racional exacto y `Rumber` como IEEE 754 `binary64` explícito.
 - Tipos de `thing`.
 - Tipos nominales de alias.
@@ -277,6 +278,8 @@ Define:
 - Dos familias explícitas de `to`: conversión cuantitativa y casting nominal estructural.
 - Redondeo global al más cercano con empates al par.
 - Igualdad y orden por tipo.
+
+Base normativa migrada para aritmética de `Natural`: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 Juicio principal:
 
@@ -571,6 +574,7 @@ Define:
 
 - Asignaciones.
 - Actualizaciones aritméticas.
+- Deltas firmados para actualizaciones aditivas sobre `Natural`.
 - Operaciones de colección.
 - Adición y retirada dinámica de propiedades.
 - `create`.
@@ -580,6 +584,7 @@ Define:
 - Conjuntos de lectura y escritura.
 - Compatibilidad y conflicto entre efectos.
 - Consolidación determinista de deltas privados de distintos `then`.
+- Suma de deltas antes de normalizar el tipo del destino.
 - Álgebra de composición de efectos.
 
 Juicio previsto:
@@ -589,6 +594,8 @@ $$
 $$
 
 donde $R$, $W$, $C$ y $D$ representan anclas leídas, escritas, creadas y destruidas.
+
+Base normativa migrada: [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 ---
 
@@ -640,8 +647,11 @@ Define:
 - Lectura común del estado inicial.
 - Raíz simultánea.
 - Overlays secuenciales privados por `then`.
+- Proyección no negativa de lecturas `Natural` sin recortar el delta privado.
 - Normalización de efectos.
 - Conflictos de raíz.
+
+Base normativa migrada: [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 ## 29. Semántica causal por ondas
 
@@ -654,6 +664,7 @@ Define:
 - Evaluación de activadores temporales.
 - Cálculo simultáneo de consecuencias.
 - Combinación de efectos.
+- Normalización de valores después de consolidar cada lote causal.
 - Paso a la onda siguiente.
 - Estado estable.
 - Traza causal.
@@ -666,7 +677,7 @@ $$
 \langle W_{i+1}, B_{i+1}, P_{i+1} \rangle
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]] y [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]].
+Base normativa migrada: [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 ## 30. Restricciones, `after` y `old`
 

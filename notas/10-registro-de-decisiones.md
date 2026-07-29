@@ -67,6 +67,7 @@ Este registro y `notas/decisiones/` contienen únicamente decisiones y propuesta
 | D-057 | Vigente | Las EBNF léxica y concreta, junto con su tabla de precedencia y reglas contextuales, definen la sintaxis completa de MUD 1.0 | [ADR-057](decisiones/ADR-057-gramatica-concreta-y-continuacion.md) | Decisión del autor, 2026-07-28; operadores canónicos y roles `for` generalizados el 2026-07-29 |
 | D-058 | Vigente | `changes` forma activadores temporales componibles con `and` y `or`; `old` puede leer la onda anterior en `when` e `if` reactivos | [ADR-058](decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo.md) | Decisión del autor, 2026-07-29 |
 | D-059 | Vigente | Los intervalos de magnitud admiten unidades locales o una unidad común; los extremos lineales invertidos producen `empty` | [ADR-059](decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos.md) | Decisión del autor, 2026-07-29 |
+| D-060 | Vigente | Los efectos aditivos sobre `Natural` suman deltas firmados y normalizan una sola vez antes de la siguiente instantánea | [ADR-060](decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural.md) | Decisión del autor, 2026-07-29 |
 
 ## Propuestas de estas notas
 

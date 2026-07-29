@@ -69,13 +69,13 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 42 | Resultados de acción | Actualizada y migrada | D-021, D-026, D-042 |
 | 43 | `allowed` | Migrada | D-043 |
 | 44 | `eventually` | Migrada; análisis abiertos en Q-026 a Q-031 | D-044 |
-| 45 | Ondas causales | Actualizada y migrada | D-023, D-045 |
+| 45 | Ondas causales | Actualizada y migrada | D-023, D-045, D-060 |
 | 46 | Vinculaciones durante ondas | Migrada; identidad abierta en Q-005 | D-045 |
 | 47 | Cola de acciones | Migrada | D-045 |
-| 48 | Conflictos | Migrada como núcleo; matriz abierta en Q-006 | D-046 |
+| 48 | Conflictos | Migrada como núcleo; matriz abierta en Q-006 | D-046, D-060 |
 | 49 | Ciclos y terminación | Migrada; algoritmo abierto en Q-020 y Q-029 | D-045 |
-| 50 | Efectos permitidos | Actualizada y migrada | D-021, D-023, D-046 |
-| 51 | Asignaciones | Migrada como núcleo | D-046 |
+| 50 | Efectos permitidos | Actualizada y migrada | D-021, D-023, D-046, D-060 |
+| 51 | Asignaciones y actualizaciones | Migrada como núcleo | D-046, D-060 |
 | 52 | Cuantificadores y agregaciones | Migrada | D-047 |
 | 53 | `for each` | Migrada | D-047 |
 | 54 | Operaciones de colección | Actualizada y migrada | D-021, D-026, D-039, D-046 |
