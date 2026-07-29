@@ -167,9 +167,14 @@ derived-magnitude-declaration
 point-magnitude-declaration
     ::= "magnitude" , nominal-name
         , "point" , "over" , type-reference
-        , "in" , cyclic-interval
+        , [ "in" , point-domain ]
         , point-magnitude-body
         ;
+
+point-domain
+    ::= interval-expression
+      | cyclic-interval
+      ;
 
 numeric-type
     ::= "Natural" | "Integer" | "Number" | "Rumber" | "Money" ;
@@ -194,8 +199,9 @@ derived-unit-body
 
 point-magnitude-body
     ::= "{" , declaration-layout
-        , "format" , "=" , text-expression
-        , [ required-separation ]
+        , [ "format" , "=" , text-expression
+            , [ required-separation ]
+          ]
         , "}"
         ;
 
@@ -364,8 +370,7 @@ always-rule-declaration
 invariant-body
     ::= "{" , declaration-layout
         , boolean-expression
-        , [ required-separation ]
-        , "otherwise" , text-expression
+        , [ diagnostic-tail ]
         , [ required-separation ]
         , "}"
         ;
@@ -375,9 +380,9 @@ action-declaration
         , [ for-clause ]
         , [ given-clause ]
         , "{" , declaration-layout
-        , [ if-clause , required-separation ]
+        , [ action-if-clause , required-separation ]
         , then-clause
-        , [ required-separation , after-clause ]
+        , [ required-separation , action-after-clause ]
         , [ required-separation ]
         , "}"
         ;
@@ -412,8 +417,14 @@ when-clause
 if-clause
     ::= "if" , expression-clause-body ;
 
-after-clause
-    ::= "after" , expression-clause-body ;
+action-if-clause
+    ::= "if" , expression-clause-body , [ diagnostic-tail ] ;
+
+action-after-clause
+    ::= "after" , expression-clause-body , [ diagnostic-tail ] ;
+
+diagnostic-tail
+    ::= [ required-separation ] , "otherwise" , text-expression ;
 
 expression-clause-body
     ::= boolean-expression
@@ -473,7 +484,7 @@ test-after-clause
       ;
 
 test-assertion
-    ::= boolean-expression , [ "otherwise" , text-expression ] ;
+    ::= boolean-expression , [ diagnostic-tail ] ;
 
 (* ------------------------------------------------------------------ *)
 (* Efectos                                                             *)
@@ -582,7 +593,7 @@ xor-expression
     ::= or-expression , { xor-operator , or-expression } ;
 
 xor-operator
-    ::= "xor" | "^" ;
+    ::= "^" ;
 
 or-expression
     ::= and-expression , { or-operator , and-expression } ;
@@ -685,10 +696,16 @@ primary-expression
       | collection-literal
       | interval-expression
       | quantity-expression
+      | point-component-expression
       | quantifier-expression
       | random-expression
       | "(" , expression , ")"
       ;
+
+point-component-expression
+    ::= unit-expression , "from" , unit-expression
+        , "in" , postfix-expression
+        ;
 
 literal
     ::= exact-number
@@ -709,10 +726,13 @@ text-template
 
 value-interpolation
     ::= INTERPOLATION_START
-        , expression
+        , ( expression | contextual-point-component )
         , [ numeric-text-format ]
         , INTERPOLATION_END
         ;
+
+contextual-point-component
+    ::= unit-expression , "from" , unit-expression ;
 
 numeric-text-format
     ::= ":" , exact-integer , [ ":" , exact-integer ]

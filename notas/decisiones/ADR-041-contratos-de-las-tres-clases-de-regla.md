@@ -82,7 +82,7 @@ always rule ValidPosition on game: Game {
 }
 ```
 
-Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo contiene una condición pura y un diagnóstico `Text` obligatorio introducido por `otherwise`. La condición se comprueba automáticamente en los puntos normativos de validación. Una infracción evalúa perezosamente el diagnóstico sobre el estado tentativo infractor y produce `failed` con esa causa, nunca `rejected`, conforme a D-061.
+Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo contiene una condición pura y puede añadir un diagnóstico `Text` mediante `otherwise`. La condición se comprueba automáticamente en los puntos normativos de validación. Una infracción evalúa perezosamente el diagnóstico sobre el estado tentativo infractor y produce `failed` con esa causa, nunca `rejected`, conforme a D-061. Si se omite, el compilador emite un aviso y el runtime genera una razón predeterminada.
 
 ### Ciclo de vida común
 
@@ -111,4 +111,4 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 9. Inicialización sin disparo de una vinculación creada fuera de `start with`.
 10. Composición de dos cambios y de un cambio con una transición booleana mediante `and` y `or`.
 11. Pulsos consecutivos preservados dentro de una composición temporal.
-12. Rechazo de una regla `always` sin `otherwise` y propagación de su diagnóstico al `failed`.
+12. Aviso para una regla `always` sin `otherwise`, generación de una razón predeterminada y propagación de un diagnóstico explícito al `failed`.

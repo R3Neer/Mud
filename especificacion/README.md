@@ -437,6 +437,9 @@ Define:
 - Normalización.
 - Aritmética dimensional.
 - Inferencia de unidades canónicas derivadas y combinaciones automáticas.
+- Dominios de punto opcionales: completos, lineales o cíclicos.
+- Presentación `in unit` de coordenadas completas y extracción `unit from container in point`.
+- Representación textual raíz, abreviaturas y formatos de punto.
 - Unidades nominales derivadas opcionales.
 - Unidades locales y compartidas en expresiones de intervalo.
 - Declaraciones `point over`, ciclos y formatos.
@@ -634,7 +637,7 @@ Define:
 - Validación de dominios.
 - Evaluación de `if`.
 - `accepted`, `rejected` y `failed`.
-- Objeto externo de resultado y `reason: Text` obligatorio para `failed`.
+- Objeto externo de resultado y `reason: Text` obligatorio para `rejected` y `failed`.
 - Visibilidad del estado.
 - Atomicidad y rollback.
 

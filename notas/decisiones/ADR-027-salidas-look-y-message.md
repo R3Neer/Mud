@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas abiertas: Q-051, Q-052
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`
 
@@ -86,12 +87,14 @@ Ninguna de estas entidades autoriza a observar detalles de arquitectura, framewo
 - Un `message` no admite `for`, `given`, `then` ni `after`.
 - Un `message` exige exactamente un `when` y como máximo un `if`.
 - Las expresiones públicas de un `message` deben seguir siendo evaluables en el estado estable final para las vinculaciones conservadas.
+- Un campo público cuyo valor directo sea una magnitud puede elegir unidad mediante `in`. Si la omite, la salida usa la unidad raíz o combinación canónica y el compilador emite un aviso.
+- Una magnitud de punto publicada directamente es una coordenada numérica en la unidad elegida; su `format` solo se publica construyendo explícitamente un campo `Text`.
 
 ## Cuestiones todavía abiertas
 
 ### Q-051 — Identidad y selección de un `look`
 
-Falta definir cómo se proporcionan participantes, qué resultado se obtiene cuando no están activos, si una consulta puede devolver varias filas y cómo se serializan cardinalidades, aliases y magnitudes.
+Falta definir cómo se proporcionan participantes, qué resultado se obtiene cuando no están activos, si una consulta puede devolver varias filas y cómo se serializan cardinalidades, aliases y magnitudes anidadas. D-061 ya fija la presentación de una magnitud usada como valor directo de un campo público.
 
 ### Q-052 — Entrega de `message`
 
@@ -122,3 +125,4 @@ Hasta resolver Q-052, la norma solo fija que los campos publicados se evalúan d
 4. Rechazo de cabeceras y cláusulas incompatibles.
 5. Caso donde el valor al detectar difiere del valor estable publicado.
 6. Rollback sin emisión externa prematura.
+7. Aviso por una magnitud pública sin `in`, unidad explícita y publicación formateada de un punto mediante `Text`.

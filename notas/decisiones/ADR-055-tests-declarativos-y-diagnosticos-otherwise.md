@@ -121,7 +121,7 @@ El `after` de un test contiene una o más aserciones ordenadas. Cada aserción c
 1. Una expresión pura de tipo `Bool`.
 2. Un diagnóstico opcional introducido por la palabra reservada `otherwise`.
 
-El diagnóstico debe ser una expresión pura de tipo `Text` y solo se evalúa cuando la condición asociada es falsa. Si se omite, el ejecutor produce un diagnóstico predeterminado a partir de la condición y su procedencia.
+El diagnóstico debe ser una expresión pura de tipo `Text` y solo se evalúa cuando la condición asociada es falsa. Si se omite, el compilador ofrece una sugerencia y el ejecutor produce un diagnóstico predeterminado a partir de la condición y su procedencia.
 
 ```mud
 after condition

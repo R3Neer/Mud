@@ -64,7 +64,7 @@ Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, m
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]], [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-Un fallo semántico revierte la acción y se propaga en `allowed`; no equivale a rechazo ni falsedad. El resultado externo usa `state: failed` y exige `reason: Text`, y todo caso normativo de fallo debe aportar ese diagnóstico humano. Un límite de recursos o defecto interno debe distinguirse de él. Falta fijar la estructura y el orden canónicos al agregar varias causas, el contrato adicional de códigos y trazas para CLI, plugin y materializaciones y la tabla de errores en expresiones ordinarias.
+Un fallo semántico revierte la acción y se propaga en `allowed`; no equivale a rechazo ni falsedad. Todo resultado externo distinto de `accepted` exige `reason: Text`, por lo que tanto los rechazos como los fallos normativos aportan un diagnóstico humano. Un límite de recursos o defecto interno debe distinguirse de ellos. Falta fijar la estructura y el orden canónicos al agregar varias causas, el contrato adicional de códigos y trazas para CLI, plugin y materializaciones y la tabla de errores en expresiones ordinarias.
 
 ### Q-008 — Protocolo Git y `READ`
 
@@ -202,7 +202,7 @@ Permanece abierta la observación de una identidad inactiva dentro de una colecc
 
 Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
 
-Las llamadas a reglas booleanas inactivas se podan después de un desazucarado canónico a `not`, `and` y `or`. Falta fijar la elaboración de `!=`, `xor`, cuantificadores booleanos y las interacciones con `allowed`, `eventually` y fallos internos.
+Las llamadas a reglas booleanas inactivas se podan después de un desazucarado canónico a `not`, `and` y `or`. Falta fijar la elaboración de `!=`, `^` lógico, cuantificadores booleanos y las interacciones con `allowed`, `eventually` y fallos internos.
 
 ### Q-011 — Vinculación nombrada de participantes
 
@@ -272,9 +272,9 @@ D-026 endurece el caso de cardinalidad: el compilador debe demostrar la preserva
 
 ### Q-051 — Identidad y selección de un `look`
 
-Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-Un `look` es una consulta pública pura cuyos campos se evalúan sobre un único estado estable. Falta definir la sintaxis de solicitud, el tratamiento de participantes inactivos, la posible multiplicidad de filas y la serialización canónica de sus valores.
+Un `look` es una consulta pública pura cuyos campos se evalúan sobre un único estado estable. Una magnitud usada directamente selecciona su unidad con `in`; omitirla usa la unidad raíz o combinación canónica y emite un aviso. Un punto directo publica su coordenada, mientras que su formato se publica construyendo `Text`. Falta definir la sintaxis de solicitud, el tratamiento de participantes inactivos, la posible multiplicidad de filas y la serialización recursiva de aliases, colecciones y magnitudes anidadas.
 
 ### Q-052 — Entrega de `message`
 
@@ -284,9 +284,9 @@ Un `message` detecta un hecho durante la resolución de una acción y evalúa su
 
 ### Q-053 — Conversiones explícitas
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
+Estado: **cerrada** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal entre representaciones estructuralmente compatibles; `in` cambia la unidad de expresión. Un `given` fuera de dominio produce `rejected`, mientras un estado tentativo con un campo fuera de dominio produce `failed`. La normalización de un intervalo invertido a `empty` no es por sí misma una violación.
+`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal entre representaciones estructuralmente compatibles; `in` cambia la unidad de expresión de magnitudes lineales y de punto. En un punto transforma la coordenada completa y evita su `format`; la extracción de partes usa `unidad from contenedor in punto`. Un `given` fuera de dominio produce `rejected`, mientras un estado tentativo con un campo fuera de dominio produce `failed`. La normalización de un intervalo invertido a `empty` no es por sí misma una violación.
 
 ### Q-022 — Valores de retorno de acciones
 
@@ -306,7 +306,7 @@ Debe decidirse:
 
 - Si una solicitud de acción dentro de `then` puede vincular su resultado a un nombre local.
 - Si una acción `rejected` constituye por defecto un error del escenario o un resultado observable.
-- Cómo se enlaza el `reason` externo ya definido y su traza sin convertir diagnósticos en valores ordinarios del mundo.
+- Cómo se enlaza el `reason` externo ya definido para `rejected` y `failed`, junto con su traza, sin convertir diagnósticos en valores ordinarios del mundo.
 
 ### Q-024 — Datos asociados a miembros de una `family`
 
@@ -378,7 +378,7 @@ Qué prefijos incorpora MUD, qué formas ASCII y Unicode reconoce, cómo se resu
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-`format` usa la sintaxis general de plantilla `Text`: cada `{...}` contiene código y la especificación numérica sigue el orden izquierda–derecha de D-061. Falta definir los nombres y el significado de sus componentes contextuales, el parseo inverso frente a la impresión, la unicidad de la representación, las anchuras válidas y la relación con calendarios y localización.
+`format` usa la sintaxis general de plantilla `Text`: cada `{...}` contiene código y la especificación numérica sigue el orden izquierda–derecha de D-061. Los componentes ordinarios se encadenan de mayor a menor y un contenedor explícito usa `unidad from contenedor`; fuera del formato se añade `in punto`. La extracción es independiente del formato y usa el origen canónico y resto euclídeo, incluso cuando queda un último componente parcial. Falta definir el parseo inverso frente a la impresión, la unicidad de la representación, las colisiones y la relación con calendarios irregulares y localización.
 
 ### Q-056 — Forma normalizada y recursión de aliases
 

@@ -142,7 +142,7 @@ Un `message` puede detectar su condición durante las ondas de una acción, pero
 | `rejected` | La solicitud es semánticamente válida, pero no admisible en este estado |
 | `failed` | La evaluación encontró un error, conflicto o estado inválido |
 
-El invocador externo recibe un objeto con el campo `state`. Si su valor es `failed`, el objeto contiene además `reason: Text`; este campo es obligatorio y explica la causa humana del fallo. Códigos, anclas, trazas y causas estructuradas pueden acompañarlo, pero no reemplazarlo.
+El invocador externo recibe un objeto con el campo `state`. Si su valor es `rejected` o `failed`, el objeto contiene además `reason: Text`; este campo es obligatorio y explica la causa humana del resultado. Códigos, anclas, trazas y causas estructuradas pueden acompañarlo, pero no reemplazarlo.
 
 Casos de `rejected`:
 
@@ -158,7 +158,7 @@ Casos de `failed`:
 - `always` incumplida.
 - Fallo semántico propagado.
 
-Todo caso normativo de `failed` debe asociarse a un diagnóstico `Text`. Una regla `always` obtiene el suyo del `otherwise` obligatorio, evaluado perezosamente sobre el estado tentativo infractor. La agregación estable de varias causas y la separación externa respecto de límites técnicos continúan bajo Q-007.
+Todo caso normativo de `rejected` o `failed` debe asociarse a un diagnóstico `Text`. `if`, `after` y `always` pueden declarar el suyo con `otherwise`, evaluado perezosamente sobre el estado que hizo falsa la condición. Si falta se genera una razón; la omisión produce una sugerencia en `if` y `after`, y un aviso en `always`. `otherwise` no captura errores de evaluación. La agregación estable de varias causas y la separación externa respecto de límites técnicos continúan bajo Q-007.
 
 Un intervalo lineal con extremos invertidos se normaliza válidamente a `empty` y no añade por sí solo un caso de `failed`. Si ese vacío deja un `given` fuera de dominio o hace falso un `if` o `after`, se aplican los casos ordinarios de `rejected`. Si deja un valor almacenado fuera de dominio o incumple una regla `always`, el estado tentativo es inválido y se obtiene `failed`, conforme a [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 

@@ -243,14 +243,34 @@ magnitude Speed: Number in [0..*] :=
 Magnitud de punto:
 
 ```mud
+magnitude Timestamp point over Time {
+    format = "{day}:{hour:2}:{minute:2}"
+}
+
+magnitude WorkdayTime point over Time in [0..28_800] {
+    format = "{hour:2}:{minute:2}"
+}
+
 magnitude TimeOfDay point over Time in [0..86_400 cycle) {
     format = "{hour:2}:{minute:2}:{second:2}"
 }
 ```
 
-Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. `format` usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Q-055 debe definir el entorno contextual que aporta `hour`, `minute`, `second` u otros componentes.
+Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b cycle)` añade normalización cíclica. Solo una magnitud de punto admite `cycle`.
 
-Las formas producidas ocupan el token contextual `POINT_LITERAL`; por ejemplo, el objetivo es que el formato horario pueda reconocer `12:30:00`. Q-055 conserva abiertos el parseo inverso, la unicidad, las anchuras válidas y las colisiones, y debe cerrarse antes de declarar conforme esa familia de literales.
+`format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él, la representación textual estándar usa la coordenada en la unidad raíz. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `format = "{week from year:2}"`.
+
+Fuera de `format`, la extracción exige el punto:
+
+```mud
+minute from hour in time
+picosecond from second in time
+week from year in date
+```
+
+La forma es una sola construcción sintáctica. El receptor debe ser una magnitud de punto; ambas unidades pertenecen a su magnitud subyacente; la unidad extraída no supera a la contenedora; el resultado es `Natural`. Se usa el origen canónico y el resto euclídeo, con un posible último componente parcial cuando las unidades no dividen exactamente. La extracción no depende del `format`.
+
+Las formas producidas por `format` ocupan el token contextual `POINT_LITERAL`; por ejemplo, el objetivo es que el formato horario pueda reconocer `12:30:00`. Q-055 conserva abiertos el parseo inverso, la unicidad y las colisiones, y debe cerrarse antes de declarar conforme esa familia de literales.
 
 ## Participantes
 
@@ -391,7 +411,7 @@ always rule ValidPopulation on kingdom: Kingdom {
 }
 ```
 
-El cuerpo contiene directamente la condición, sin `if`, seguida obligatoriamente por `otherwise` y una expresión `Text`. El diagnóstico solo se evalúa si la condición es falsa, sobre el mismo estado tentativo y con las mismas vinculaciones que incumplieron la regla. Su valor pasa a ser una causa del resultado `failed`.
+El cuerpo contiene directamente la condición, sin `if`, y puede añadir `otherwise` con una expresión `Text`. El diagnóstico solo se evalúa si la condición es falsa, sobre el mismo estado tentativo y con las mismas vinculaciones que incumplieron la regla. Su valor pasa a ser la razón del resultado `failed`. Omitirlo es legal, pero produce un aviso y una razón predeterminada.
 
 ## Acciones
 
@@ -399,22 +419,24 @@ El cuerpo contiene directamente la condición, sin `if`, seguida obligatoriament
 action Recruit for kingdom: Kingdom [mut]
 given amount: Natural in 1..100 {
     if kingdom.treasury >= amount * recruitmentCost
+    otherwise "The kingdom cannot afford {amount} recruits"
     then {
         kingdom.treasury -= amount * recruitmentCost
         kingdom.soldiers += amount
     }
     after kingdom.soldiers >= old kingdom.soldiers
+    otherwise "Recruitment did not increase the army"
 }
 ```
 
-`then` contiene efectos o llamadas a acciones conforme a la distinción estática entre acciones elementales y compuestas.
+`then` contiene efectos o llamadas a acciones conforme a la distinción estática entre acciones elementales y compuestas. El `otherwise` opcional de `if` o `after` explica un `rejected`; omitirlo produce una sugerencia y una razón generada. No captura errores de evaluación ni envuelve resultados.
 
 ## Frontera de salida
 
 ```mud
 look RealmSummary for kingdom: Kingdom {
     name := kingdom.name
-    population: Population := kingdom.population
+    population: Population := kingdom.population in people
 }
 
 message KingChanged on kingdom: Kingdom {
@@ -423,10 +445,14 @@ message KingChanged on kingdom: Kingdom {
 
     kingdomName := kingdom.name
     kingName: Text := kingdom.king.name
+    time := kingdom.clock in second
+    timeText := "{kingdom.clock}"
 }
 ```
 
 `look` y `message` se declaran en MUD pero no se llaman desde MUD. El exterior consulta un `look`; el runtime detecta y publica un `message`.
+
+Un campo público cuyo valor directo es una magnitud debe seleccionar preferentemente su unidad con `in`. Omitirla es legal y usa la unidad raíz o combinación canónica, pero produce un aviso por dejar implícita una decisión de la API. Una magnitud de punto directa publica su coordenada en la unidad elegida y no su `format`; para publicar el formato se construye un campo `Text`.
 
 ## Cláusulas y llaves
 
@@ -591,7 +617,7 @@ De mayor a menor:
 
 | Nivel | Formas | Agrupación |
 | ---: | --- | --- |
-| 1 | acceso `.`, índice `[]`, llamada `()` | izquierda |
+| 1 | acceso `.`, índice `[]`, llamada `()` y `unit from container in point` | izquierda o forma completa |
 | 2 | prefijos `old`, `allowed`, `not`, signo | derecha |
 | 3 | `*`, `/`, `%` | izquierda |
 | 4 | `+`, `-` | izquierda |
@@ -600,7 +626,7 @@ De mayor a menor:
 | 7 | sufijo temporal `changes` | no asociativa |
 | 8 | `and`, `&` | izquierda |
 | 9 | `or`, `|` | izquierda |
-| 10 | `xor`, `^` | izquierda |
+| 10 | `^` | izquierda |
 | 11 | `=>` | derecha |
 | 12 | `<=>` | cadena adyacente |
 | 13 | `eventually ... through ...` | exterior |
@@ -661,7 +687,7 @@ No se mezclan operadores distintos dentro de una misma cadena sin conjunciones e
 "Hello, " | name
 ```
 
-No se admiten `&`, `^` ni `-` sobre `Text`. `xor` es exclusivamente lógico. Los aliases nominales de `Text` no adquieren concatenación implícita.
+No se admiten `&`, `^` ni `-` sobre `Text`. `^` expresa disyunción exclusiva sobre `Bool` y diferencia simétrica sobre intervalos o colecciones. Los aliases nominales de `Text` no adquieren concatenación implícita.
 
 Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e` e inserta la representación de su valor; `anchor{d}` inserta el ancla canónica de la entidad designada:
 
@@ -674,7 +700,7 @@ Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e
 
 `anchor` es contextual dentro de la plantilla. `anchor{...}` no forma una llamada ni una conversión general a `Text`.
 
-Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos y las colecciones. Una llamada a regla booleana también lo es porque produce `Bool`. El nombre desnudo de una declaración no es un valor; acciones, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}`.
+Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. El nombre desnudo de una declaración no es un valor; acciones, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}`.
 
 Una `thing` se representa mediante su nombre nominal y un miembro de `family` mediante el nombre del miembro. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
 
@@ -692,6 +718,10 @@ Un hueco numérico admite `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derech
 ```
 
 La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Number`, `Rumber` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
+
+Una magnitud lineal sin `in` se representa en su unidad raíz o combinación canónica. Una magnitud de punto usa su `format` si lo tiene y, si no, su coordenada raíz. `{magnitude in unit}` selecciona la unidad y, para un punto, evita el `format` y representa la coordenada completa. Se escribe la abreviatura de la unidad si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
+
+`time in picosecond` expresa la coordenada total; `picosecond from second in time` extrae la parte dentro del segundo. La segunda forma es válida aunque el formato visible no incluya picosegundos.
 
 ## `eventually`, `allowed` y azar
 

@@ -2,8 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
+- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-018, Q-055
 - Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`
 
@@ -78,16 +77,26 @@ Por tanto, si la unidad canónica de `Speed` es `m/s`, `[0..100]` significa de `
 
 ### Magnitudes de punto
 
-Una magnitud de punto se declara con `point over` en la cabecera:
+Una magnitud de punto se declara con `point over` en la cabecera. Su dominio es opcional:
 
 ```mud
+magnitude Timestamp point over Time {
+    format = "{day}:{hour:2}:{minute:2}"
+}
+
+magnitude WorkdayTime point over Time in [0..28_800] {
+    format = "{hour:2}:{minute:2}"
+}
+
 magnitude TimeOfDay point over Time in [0..86_400 cycle) {
     format = "{hour:2}:{minute:2}:{second:2}"
 }
 ```
 
 Representa posiciones sobre una magnitud lineal y utiliza sus unidades. No puede declarar unidades ni `root unit`.
-Puede declarar mediante `format` una representación textual. Conforme a D-061, el valor es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del entorno que Q-055 debe terminar de definir, y `:2` solicita dos posiciones a la izquierda del punto. Q-055 conserva abiertos el catálogo y significado de componentes, el parseo inverso, la unicidad y las colisiones, no una sintaxis de llaves distinta.
+Sin `in`, admite el dominio completo de la coordenada subyacente. Con un intervalo lineal, queda acotada sin envolvimiento. Con `[a..b cycle)`, queda acotada y se normaliza cíclicamente.
+
+Puede declarar mediante el `format` opcional una representación textual. Si lo omite, usa su coordenada en la unidad raíz. Conforme a D-061, el formato es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; Q-055 conserva abiertos el parseo inverso, la unicidad, las colisiones y los calendarios irregulares.
 
 Su aritmética es:
 
@@ -122,7 +131,8 @@ Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados
 
 - El AST de intervalos representará cada límite como concreto o efectivo y conservará la apertura de cada lado.
 - La comprobación de dominios de magnitud se realizará después de normalizar unidades.
-- El ciclo forma parte del dominio de una magnitud de punto, no es una propiedad independiente del bloque.
+- Una magnitud de punto no necesita ser cíclica ni declarar dominio.
+- Cuando existe, el ciclo forma parte del dominio de una magnitud de punto, no es una propiedad independiente del bloque.
 
 ## Verificación futura
 
@@ -135,3 +145,4 @@ Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados
 7. Resolución contextual de `[n]` como intervalo unitario y rechazo cuando también sea viable como colección sin tipo esperado suficiente.
 8. Normalización de intervalos lineales invertidos a `empty` sin interpretación descendente.
 9. Rechazo de un periodo cíclico nulo o negativo.
+10. Magnitudes de punto sin dominio, con dominio lineal y con dominio cíclico.

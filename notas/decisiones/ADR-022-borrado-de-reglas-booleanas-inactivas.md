@@ -222,7 +222,7 @@ Se descarta porque impediría que una fórmula continuase funcionando con las de
 
 ## Cuestiones abiertas
 
-- Elaboración exacta de `!=`, `xor` y otros comparadores booleanos.
+- Elaboración exacta de `!=`, `^` lógico y otros comparadores booleanos.
 - Poda dentro de cuantificadores y agregaciones booleanas.
 - Interacción con `allowed`, `eventually` y fallos de subexpresiones que desaparecen.
 - Diagnósticos o advertencias para fórmulas especialmente sensibles a su forma sintáctica.

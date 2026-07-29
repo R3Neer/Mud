@@ -87,7 +87,7 @@ exige que ambas diferencias netas ocurran entre las mismas dos instantáneas de 
 
 Una subexpresión booleana ordinaria entre paréntesis se eleva como una unidad. Así, `(ready or authorized) and position changes` contiene `Rise(ready or authorized)`, no dos activadores independientes.
 
-Los activadores solo se combinan inicialmente mediante las palabras `and` y `or`. `not`, `xor`, `=>`, `<=>`, `&`, `|` y `^` no aceptan operandos `Trigger`. Esta restricción no impide usar operadores booleanos ordinarios dentro de la expresión booleana de un `Rise` o `Temporal`.
+Los activadores solo se combinan inicialmente mediante las palabras `and` y `or`. `not`, `=>`, `<=>`, `&`, `|` y `^` no aceptan operandos `Trigger`. Esta restricción no impide usar operadores booleanos ordinarios dentro de la expresión booleana de un `Rise` o `Temporal`.
 
 ### Precedencia de `changes`
 

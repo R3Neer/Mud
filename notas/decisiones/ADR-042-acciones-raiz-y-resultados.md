@@ -19,11 +19,13 @@ given
     amount: Natural in 1..100
 {
     if kingdom.treasury >= amount * kingdom.recruitmentCost
+    otherwise "The kingdom cannot afford {amount} recruits"
     then {
         kingdom.treasury -= amount * kingdom.recruitmentCost
         kingdom.soldiers += amount
     }
     after kingdom.soldiers >= old kingdom.soldiers
+    otherwise "Recruitment did not increase the army"
 }
 ```
 
@@ -58,7 +60,9 @@ El grafo estático de llamadas entre acciones debe ser acíclico. La selección 
 
 ### `after` y `old`
 
-`after` se evalúa tras todas las ondas sobre el estado estable tentativo. Su falsedad produce `rejected`; un error durante su evaluación produce `failed`.
+`if` y `after` pueden adjuntar mediante `otherwise` una razón `Text` para su falsedad. Su omisión es legal y produce una sugerencia, no un aviso, porque el rechazo es una respuesta normal; en ese caso se genera una razón a partir de la condición y su procedencia. El diagnóstico es puro y perezoso.
+
+`after` se evalúa tras todas las ondas sobre el estado estable tentativo. Su falsedad produce `rejected`; un error durante su evaluación produce `failed`. Un error al evaluar `if` o `after` no queda capturado por `otherwise`, que solo explica una condición evaluada correctamente como falsa.
 
 En el contexto de acciones y tests, `old e` lee `e` en el estado estable inmediatamente anterior a la acción exterior completa y solo está admitido dentro de `after`. D-058 añade un contexto distinto para `old` dentro de reglas reactivas, donde compara instantáneas de onda.
 
@@ -70,7 +74,7 @@ En el contexto de acciones y tests, `old e` lee `e` en el estado estable inmedia
 | `rejected` | `given` fuera de dominio, `if` falso o `after` falso |
 | `failed` | Conflicto, ciclo u oscilación, operación inválida, dominio o referencia inválidos, `always` incumplida o fallo semántico propagado |
 
-La solicitud devuelve al invocador externo un objeto cuyo campo `state` contiene uno de esos tres resultados. Cuando contiene `failed`, el objeto incluye además un campo obligatorio `reason: Text` con la explicación humana del fallo. Todo caso normativo de `failed` debe proporcionar esa razón conforme a D-061; pueden acompañarla códigos y causas estructuradas.
+La solicitud devuelve al invocador externo un objeto cuyo campo `state` contiene uno de esos tres resultados. Cuando contiene `rejected` o `failed`, el objeto incluye además un campo obligatorio `reason: Text` con la explicación humana. Todo caso normativo distinto de `accepted` debe proporcionar esa razón conforme a D-061; pueden acompañarla códigos y causas estructuradas.
 
 Todo resultado distinto de `accepted` restaura exactamente el estado estable anterior y no publica mensajes ni otros efectos externos.
 
@@ -93,4 +97,5 @@ La normalización de un intervalo lineal con extremos invertidos a `empty` es un
 6. Vinculación de un receptor-lugar mutable y rechazo de un receptor que sea solo un valor.
 7. Intervalo invertido normalizado a `empty` sin fallo intrínseco.
 8. Distinción entre rechazo por una guarda falsa sobre `empty` y fallo por estado fuera de dominio.
-9. Presencia obligatoria de `reason: Text` en `failed` y ausencia en `accepted` y `rejected`.
+9. Presencia obligatoria de `reason: Text` en `rejected` y `failed`, y ausencia en `accepted`.
+10. Diagnósticos `otherwise` explícitos y generados para `if` y `after`, incluida la evaluación perezosa.

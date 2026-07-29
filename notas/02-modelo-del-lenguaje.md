@@ -201,7 +201,7 @@ Se vincula automáticamente con `on`, observa activadores temporales mediante `w
 
 ### Regla `always`
 
-Se vincula automáticamente con `on`, no tiene efectos y debe ser verdadera en todo estado publicable. Su condición va seguida obligatoriamente por `otherwise` y un diagnóstico `Text` que se evalúa si la invariante se incumple y explica el `failed`.
+Se vincula automáticamente con `on`, no tiene efectos y debe ser verdadera en todo estado publicable. Su condición puede ir seguida por `otherwise` y un diagnóstico `Text` que se evalúa si la invariante se incumple y explica el `failed`. Omitirlo produce un aviso y una razón predeterminada.
 
 Aunque compartan la palabra `rule`, estas tres formas tienen contratos y ciclos de vida distintos. El AST debería representarlas como variantes explícitas, no como una estructura permisiva con muchos campos opcionales.
 
@@ -218,7 +218,7 @@ Una acción es la API semántica de escritura. Declara:
 - Efectos o llamadas atómicas en `then`.
 - Poscondición `after`.
 
-Una acción no se activa sola. Se solicita desde el exterior o desde una acción compuesta. Su resultado externo es un objeto cuyo estado es `accepted`, `rejected` o `failed`; el último incluye obligatoriamente un `reason: Text`. La semántica de esos resultados pertenece a [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md).
+Una acción no se activa sola. Se solicita desde el exterior o desde una acción compuesta. Su resultado externo es un objeto cuyo estado es `accepted`, `rejected` o `failed`; los dos últimos incluyen obligatoriamente un `reason: Text`. Los `if` y `after` pueden declarar esa razón con `otherwise`; omitirla produce una sugerencia y una razón generada. La semántica de esos resultados pertenece a [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md).
 
 La separación entre acciones elementales y compuestas, la raíz simultánea, `old`, `after`, rollback y resultados pertenecen a [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
@@ -251,6 +251,8 @@ Un `look` es una consulta pública pura sobre un estado estable. Declara partici
 Un `message` es un evento público. Declara vinculaciones mediante `on`, exige `when`, admite un `if` opcional y publica campos cuyo tipo puede declararse o inferirse. El hecho puede detectarse durante una secuencia de ondas, pero los campos se evalúan una vez estabilizada la resolución de la acción causante. Los detalles abiertos de selección, multiplicidad y entrega se registran en [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
 
 Junto con las acciones forman la frontera semántica del modelo: `action` introduce cambios; `look` consulta; `message` notifica.
+
+Una magnitud usada directamente como campo público puede seleccionar su unidad mediante `in`. La omisión es legal, usa la unidad raíz o combinación canónica y produce un aviso. Una magnitud de punto directa publica su coordenada; su representación `format` se publica construyendo un campo `Text`.
 
 ## Forma de las cláusulas
 
@@ -289,7 +291,7 @@ Los literales numéricos no tienen sufijos de tipo. `in` cambia la unidad de pre
 
 Los intervalos ordinarios de magnitud admiten cantidades completas en cada extremo, como `[1 m..5 km]` o `[minimumDistance..5 m]`. Si todos los extremos finitos son literales numéricos desnudos, pueden compartir una unidad exterior: `[1..5] m` y `1..5 m`. Un intervalo lineal cuyos extremos efectivos se invierten se normaliza a `empty`; no se vuelve descendente ni cíclico.
 
-Una magnitud de punto se declara mediante `point over`. Solo estas magnitudes pueden usar el dominio cíclico `[a..b cycle)`. Las decisiones completas pertenecen a [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
+Una magnitud de punto se declara mediante `point over`. Puede omitir el dominio, usar uno lineal o usar el dominio cíclico `[a..b cycle)`; solo estas magnitudes admiten `cycle`. `in unit` expresa la coordenada completa en esa unidad y evita `format`. La extracción `unidad from contenedor in punto` produce un componente `Natural` independiente del formato. Las decisiones completas pertenecen a [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
 Para formalizar esta parte se necesita una matriz por operador que indique:
 
