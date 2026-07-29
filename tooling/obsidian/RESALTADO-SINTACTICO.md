@@ -137,4 +137,4 @@ La suite cubre:
 10. Paletas predeterminadas y reglas separadas para tema claro y oscuro.
 11. Preservación de plugins durante la instalación.
 
-La instalación se preparó para Obsidian 1.12.7. Cuando Obsidian permanece abierto durante `install-local`, puede restaurar en disco su lista anterior de plugins; en ese caso debe activarse `MUD Syntax Highlight` desde los ajustes comunitarios antes de realizar la comprobación visual definitiva.
+La instalación se preparó para Obsidian 1.12.7. Cuando Obsidian permanece abierto durante `install-local`, puede restaurar en disco su lista anterior de plugins; en ese caso debe activarse `Syntax Highlight` desde los ajustes comunitarios antes de realizar la comprobación visual definitiva.

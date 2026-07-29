@@ -1,4 +1,7 @@
-# MUD EBNF Viewer
+# EBNF Viewer
+
+El identificador interno conserva el prefijo histórico para mantener compatible
+la instalación existente; el nombre visible del plugin es `EBNF Viewer`.
 
 Plugin local de Obsidian para abrir y editar archivos `.ebnf` sin salir de la
 bóveda.
