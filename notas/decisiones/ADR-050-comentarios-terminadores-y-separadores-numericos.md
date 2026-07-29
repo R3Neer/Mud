@@ -4,7 +4,7 @@
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Cierra parcialmente: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
+- Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formateador
 
 ## Contexto

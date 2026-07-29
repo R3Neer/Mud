@@ -26,7 +26,7 @@ notas/preguntas/Q-NNN-titulo-breve.md
 
 El archivo no se mueve al cambiar de estado. Su ubicación estable evita romper enlaces y conserva la trazabilidad.
 
-`notas/preguntas/README.md` enumera únicamente las preguntas activas. Los registros históricos anteriores se migrarán al tocar cada pregunta; mientras dure la migración, `notas/08-preguntas-abiertas.md` conserva las preguntas todavía no separadas.
+`notas/preguntas/README.md` enumera únicamente las preguntas activas.
 
 ## Identidad
 
@@ -56,6 +56,7 @@ Cada archivo usa:
 id: Q-NNN
 title:
 status: abierta
+priority: P0
 opened:
 closed:
 decisions: []
@@ -63,6 +64,8 @@ affects: []
 superseded-by: []
 ---
 ```
+
+La prioridad es `P0`, `P1` o `P2` y determina la sección del índice activo; no forma parte de la identidad estable de la pregunta.
 
 Y contiene, cuando proceda:
 
@@ -112,6 +115,12 @@ Antes de publicar una unidad se verifica:
 - que una pregunta cerrada no permanezca en el índice activo;
 - que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
 - que no existan estados parciales sin una enumeración explícita de lo pendiente.
+
+La comprobación mecánica se ejecuta desde la raíz:
+
+```powershell
+python tooling/questions/validate_questions.py
+```
 
 ## Relación con Git
 

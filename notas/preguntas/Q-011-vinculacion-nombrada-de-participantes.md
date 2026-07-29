@@ -1,0 +1,20 @@
+---
+id: Q-011
+title: Vinculación nombrada de participantes
+status: cerrada
+priority: P1
+opened:
+closed:
+decisions:
+  - D-036
+affects: []
+superseded-by: []
+---
+
+# Q-011 — Vinculación nombrada de participantes
+
+## Contenido
+
+Estado: **cerrada** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+
+Una llamada puede usar un receptor posicional o un receptor nombrado entre paréntesis. La forma nombrada debe ser exacta y exhaustiva: no admite roles ausentes, repetidos ni desconocidos. Los roles `for` pueden contener cualquier tipo de valor; una colección ocupa una sola posición y no se expande. Una `thing` se vincula por identidad, un valor inmutable por valor y un rol exteriormente mutable por lugar almacenado. El orden de la declaración sigue siendo canónico y los argumentos posteriores corresponden exclusivamente a `given`.

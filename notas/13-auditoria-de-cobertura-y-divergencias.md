@@ -13,7 +13,7 @@ La especificación inicial ya no contiene ningún requisito cuya única copia vi
 2. sustituida explícitamente por una decisión posterior; o
 3. retirada por ser un ejemplo, catálogo o artefacto obsoleto, conservando su intención en el documento dueño.
 
-Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que la referencia temprana ya no es necesaria para descubrir requisitos. Las tareas aún no resueltas están en [[notas/08-preguntas-abiertas]] y la promoción a capítulos profesionales sigue el índice de [[especificacion/README]].
+Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que la referencia temprana ya no es necesaria para descubrir requisitos. Las tareas aún no resueltas están en [[notas/preguntas/README|Preguntas activas]] y la promoción a capítulos profesionales sigue el índice de [[especificacion/README]].
 
 ## Leyenda
 
@@ -94,14 +94,14 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 67 | Plugin para Codex | Retirado como API normativa; capacidades migradas | D-053 |
 | 68 | Clasificación de peticiones | Migrada | D-053 |
 | 69 | Inferencias permitidas | Actualizada y migrada | D-053 |
-| 70 | Agenda de especificación | Migrada | [[notas/07-plan-de-formalizacion]], [[notas/08-preguntas-abiertas]] |
+| 70 | Agenda de especificación | Migrada | [[notas/07-plan-de-formalizacion]], [[notas/preguntas/README|Preguntas activas]] |
 | 71 | Flujo atómico del plugin | Actualizada y migrada | D-012, D-053 |
 | 72 | Tests | Suite obsoleta retirada; obligaciones migradas y tests declarativos añadidos | D-052, D-055; capítulos 43 y 44 previstos |
 | 73 | Soporte de editor | Migrada como requisito de tooling | D-052 |
 | 74 | Palabras clave provisionales | Catálogo obsoleto retirado; política migrada | D-050, D-052; capítulo 46 previsto |
 | 75 | Ejemplo integral | Ejemplo no conforme retirado; propósito preservado | capítulo 47 previsto y corpus de conformidad |
 | 76 | Decisiones esenciales | Sustituida por el registro vivo | [[notas/10-registro-de-decisiones]] |
-| 77 | Cuestiones abiertas | Sustituida por la agenda viva | [[notas/08-preguntas-abiertas]] |
+| 77 | Cuestiones abiertas | Sustituida por la agenda viva | [[notas/preguntas/README|Preguntas activas]] |
 | 78 | Instrucciones finales | Migradas y actualizadas | D-013, D-053; [[notas/07-plan-de-formalizacion]] |
 
 ## Divergencias deliberadas principales

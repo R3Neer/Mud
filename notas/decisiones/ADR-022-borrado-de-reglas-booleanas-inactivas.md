@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Pregunta abierta relacionada: [[notas/08-preguntas-abiertas#Q-050 — Borrado en operadores booleanos restantes|Q-050]]
+- Pregunta abierta relacionada: [[notas/preguntas/Q-050-borrado-en-operadores-booleanos-restantes|Q-050]]
 - Decisión relacionada: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuros capítulos 19, 21 y 26
 

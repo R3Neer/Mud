@@ -2,7 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-27
-- Preguntas afectadas: [[notas/08-preguntas-abiertas#Q-003 — Puntos de validación|Q-003]], [[notas/08-preguntas-abiertas#Q-021 — Análisis estático de conflictos|Q-021]], [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]]
+- Preguntas afectadas: [[notas/preguntas/Q-003-puntos-de-validacion|Q-003]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`
 
 ## Contexto

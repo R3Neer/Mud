@@ -130,7 +130,7 @@ $$
 
 El valor actual pertenece al mundo. Un inicializador de la definición canónica determina la primera carga de esa identidad cuando se activa por primera vez, pero no convierte ese valor actual en predeterminado heredable.
 
-La selección concreta por constructor de tipos sigue abierta en [[notas/08-preguntas-abiertas#Q-047 — Selección de predeterminados por tipo|Q-047]].
+La selección concreta por constructor de tipos sigue abierta en [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]].
 
 ### Todo campo es una colección
 

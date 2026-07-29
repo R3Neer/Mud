@@ -3,7 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
-- Cierra: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
+- Cierra: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
 
 ## Contexto

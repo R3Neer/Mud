@@ -66,6 +66,6 @@ Cada concepto tiene un único documento dueño. Los demás documentos lo enlazan
 La siguiente sesión de diseño debería empezar por:
 
 1. Continuar el índice de [la especificación formal](../especificacion/README.md) con sus convenciones editoriales y notación matemática.
-2. Resolver las preguntas P0 del [índice de preguntas activas](preguntas/README.md) y, durante la migración, del [registro anterior](08-preguntas-abiertas.md).
+2. Resolver las preguntas P0 del [índice de preguntas activas](preguntas/README.md) y.
 3. Formalizar el modelo matemático de mundo, estado, valor, identidad y ancla.
 4. Elegir ejemplos canónicos que actúen como testigos de cada regla normativa.

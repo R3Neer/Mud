@@ -14,14 +14,14 @@ La comprobación final de cobertura y las divergencias deliberadas se encuentran
 | 31 a 44 | Reglas, acciones, `after`, `old`, resultados, `allowed` y `eventually` | [02-modelo-del-lenguaje.md](02-modelo-del-lenguaje.md) y [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md) |
 | 45 a 49 | Ondas, vinculaciones, cola, conflictos y terminación | [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md) |
 | 50 a 59 | Efectos, iteración, creación, destrucción, azar, fallos y predeterminados | [02-modelo-del-lenguaje.md](02-modelo-del-lenguaje.md) y [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md) |
-| 60, 61, 74 | Léxico, comentarios, terminadores y palabras clave | [07-plan-de-formalizacion.md](07-plan-de-formalizacion.md) y Q-001 en [08-preguntas-abiertas.md](08-preguntas-abiertas.md) |
+| 60, 61, 74 | Léxico, comentarios, terminadores y palabras clave | [07-plan-de-formalizacion.md](07-plan-de-formalizacion.md) y [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]] |
 | 62 | Lectura, escritura y contratos externos | [01-vision-y-alcance.md](01-vision-y-alcance.md) y [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) |
 | 63 a 66 | Grafo, IR, compilador y TypeScript | [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) |
 | 67 a 71 | Plugin, clasificación, inferencias, agenda y flujo atómico | [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) y [05-cambios-semanticos-y-git.md](05-cambios-semanticos-y-git.md) |
 | 72, 73 | Tests y editor | [06-nucleo-vertical-v0.md](06-nucleo-vertical-v0.md) y [07-plan-de-formalizacion.md](07-plan-de-formalizacion.md) |
 | 75 | Ejemplo integral | Base para seleccionar ejemplos canónicos en [06-nucleo-vertical-v0.md](06-nucleo-vertical-v0.md) |
 | 76 | Decisiones esenciales | [10-registro-de-decisiones.md](10-registro-de-decisiones.md) |
-| 77 | Cuestiones abiertas | [08-preguntas-abiertas.md](08-preguntas-abiertas.md) |
+| 77 | Cuestiones abiertas | [preguntas/README.md](preguntas/README.md) |
 | 78 | Instrucciones operativas | Distribuidas por documento dueño y preservadas como restricciones en [09-riesgos-y-restricciones.md](09-riesgos-y-restricciones.md) |
 
 ## Observaciones de procedencia

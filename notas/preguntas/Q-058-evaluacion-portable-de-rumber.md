@@ -1,0 +1,17 @@
+---
+id: Q-058
+title: Evaluación portable de Rumber
+status: abierta
+priority: P2
+opened:
+closed:
+decisions: []
+affects: []
+superseded-by: []
+---
+
+# Q-058 — Evaluación portable de `Rumber`
+
+## Contenido
+
+Fijar la conversión de la escritura decimal de un literal al patrón `binary64`, el modo de redondeo de cada operación, tratamiento de subnormales y underflow, prohibición o semántica de contracción FMA, precisión de resultados intermedios, canonicalización en IR y reglas de inferencia para magnitudes derivadas cuyos componentes usan `Rumber`.
