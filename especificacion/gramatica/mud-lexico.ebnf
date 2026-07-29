@@ -14,6 +14,7 @@ lexical-element
       | rumber-literal
       | exact-number-literal
       | point-form
+      | reserved-word
       | identifier
       | operator-or-delimiter
       | unit-form
@@ -160,7 +161,54 @@ digit     ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 hex-digit ::= digit | "A" | "B" | "C" | "D" | "E" | "F"
                     | "a" | "b" | "c" | "d" | "e" | "f" ;
 
+reserved-word
+    ::= keyword-word
+      | operator-word
+      | builtin-word
+      | constant-word
+      ;
+
+keyword-word
+    ::= "using"
+      | "thing" | "as" | "alias" | "family" | "magnitude"
+      | "rule" | "action" | "look" | "message" | "test"
+      | "for" | "on" | "given" | "when" | "changes"
+      | "if" | "then" | "after" | "with" | "otherwise"
+      | "mut" | "unique" | "ordered"
+      | "create" | "destroy" | "add" | "remove" | "from"
+      | "each" | "by" | "through"
+      | "exists" | "forall" | "count" | "sum" | "min" | "max"
+      ;
+
+operator-word
+    ::= "to" | "eventually" | "allowed" | "old"
+      | "is" | "in"
+      | "not" | "and" | "or" | "xor"
+      ;
+
+builtin-word
+    ::= "Text" | "Char" | "Bool" | "Natural" | "Integer"
+      | "Number" | "Rumber" | "Money" | "Rand"
+      ;
+
+constant-word
+    ::= "true" | "false" | "empty" ;
+
+(* Estas formas se emiten como IDENTIFIER fuera de las posiciones que
+   mud.ebnf reserva contextualmente. La producción hace inventariable el
+   catálogo sin convertirlo en palabras reservadas duras. *)
+contextual-word
+    ::= "abstract" | "always" | "start"
+      | "name" | "plural" | "abbreviation" | "prefixes" | "format"
+      | "root" | "unit" | "point" | "over" | "cycle" | "anchor"
+      ;
+
 identifier
+    ::= contextual-word
+      | identifier-form
+      ;
+
+identifier-form
     ::= ascii-letter , { ascii-letter | digit } ;
 
 ascii-letter
@@ -182,9 +230,17 @@ point-form
     ::= ? forma canónica contextual de D-062 para el tipo de punto esperado ? ;
 
 operator-or-delimiter
+    ::= operator-token
+      | brace-token
+      | parenthesis-token
+      | bracket-token
+      | punctuation-token
+      ;
+
+operator-token
     ::= three-character-token
       | two-character-token
-      | one-character-token
+      | one-character-operator
       ;
 
 three-character-token
@@ -195,9 +251,12 @@ two-character-token
       | "=>" | "+=" | "-=" | "*=" | "/="
       ;
 
-one-character-token
-    ::= "{" | "}" | "(" | ")" | "[" | "]"
-      | "," | "." | ":" | ";" | "="
-      | "+" | "-" | "*" | "/" | "%"
+one-character-operator
+    ::= "=" | "+" | "-" | "*" | "/" | "%"
       | "<" | ">" | "&" | "|" | "^"
       ;
+
+brace-token       ::= "{" | "}" ;
+parenthesis-token ::= "(" | ")" ;
+bracket-token     ::= "[" | "]" ;
+punctuation-token ::= "," | "." | ":" | ";" ;

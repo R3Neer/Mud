@@ -6,13 +6,13 @@ tags:
   - mud/tooling
   - mud/obsidian
 status: implementado
-verified: 2026-07-28
+verified: 2026-07-29
 ---
 
 # Resaltado sintáctico de MUD en Obsidian
 
 > [!abstract]
-> La bóveda incluye un plugin local que colorea bloques ` ```mud ` en modo lectura, Source y Live Preview mediante un único tokenizador compartido.
+> La bóveda incluye un plugin local configurable que colorea bloques MUD y EBNF en modo lectura, Source y Live Preview, y deriva el catálogo visual de MUD de las gramáticas normativas.
 
 Este documento es informativo. La gramática normativa pertenece a [[especificacion/06-lexico]] y [[especificacion/07-gramatica-concreta]].
 
@@ -34,7 +34,8 @@ El plugin no depende de Codeblock Customizer ni de otro plugin comunitario. Usa:
 
 - Un procesador de bloques Markdown para el modo lectura.
 - Decoraciones de CodeMirror 6 para Source y Live Preview.
-- El mismo scanner en ambas superficies.
+- El mismo registro de lenguajes y tokenizadores en ambas superficies.
+- Una pestaña de ajustes para perfiles, gramáticas, validación y temas.
 
 ## Uso
 
@@ -64,16 +65,33 @@ Se reconocen:
 - Tipos básicos.
 - Nombres de declaraciones, propiedades y llamadas.
 - Operadores y puntuación.
+- Formas de punto numéricas como `12:30:00`.
+
+Los bloques `ebnf` también se colorean automáticamente con el tokenizador que
+usa el visor EBNF.
 
 ## Relación con la gramática
 
-El tokenizador sigue actualmente:
+El perfil MUD analiza directamente:
 
 - [[especificacion/gramatica/mud-lexico.ebnf]]
-- [[especificacion/06-lexico]]
-- [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]]
+- [[especificacion/gramatica/mud.ebnf]]
 
-Las listas de palabras todavía se mantienen en TypeScript. Cuando exista el parser MUD, el siguiente salto de calidad será generar esas categorías desde sus tokens o reutilizar directamente su árbol.
+Las categorías normativas de palabras y símbolos se declaran como producciones
+EBNF y ya no se duplican en un JSON manual. Cuando cambia una de las gramáticas,
+el plugin la valida y recarga; si falla, conserva la última configuración válida.
+
+También pueden crearse perfiles genéricos indicando las dos gramáticas, sus
+símbolos iniciales y el mapeo entre producciones y categorías visuales. Es una
+infraestructura de resaltado léxico configurable, no un generador universal de
+parsers ni un sustituto del futuro parser MUD.
+
+## Temas
+
+Los colores se configuran desde los ajustes del plugin, por perfil y por modo
+claro u oscuro. Las plantillas iniciales reproducen los colores anteriores de
+MUD y EBNF; también se incluyen Catppuccin y Visual Studio Code. `styles.css`
+solo contiene estructura y énfasis tipográfico.
 
 ## Límites deliberados
 
@@ -84,7 +102,9 @@ El color no decide si un programa es válido. En particular, no comprueba:
 - Cardinalidad.
 - Orden Unicode de los valores de `Char [* ordered]`.
 - Formas dinámicas de unidad pendientes de Q-054.
-- Literales contextuales `POINT_LITERAL` definidos por D-062, todavía no implementados por este resaltador.
+- Validez de un literal de punto respecto del `format` declarado; el resaltador
+  reconoce la forma numérica, pero el rango y la interpretación corresponden al
+  compilador.
 
 Los términos contextuales que no puedan reconocerse con seguridad permanecen como identificadores ordinarios para evitar falsos positivos.
 
@@ -112,6 +132,9 @@ La suite cubre:
 5. `Char`.
 6. Comentarios multilínea.
 7. Fences de backticks y virgulillas.
-8. Preservación de plugins durante la instalación.
+8. Derivación del catálogo desde EBNF y rechazo de gramáticas inválidas.
+9. Perfiles, aliases y conservación de la última configuración válida.
+10. Paletas predeterminadas y reglas separadas para tema claro y oscuro.
+11. Preservación de plugins durante la instalación.
 
 La instalación se preparó para Obsidian 1.12.7. Cuando Obsidian permanece abierto durante `install-local`, puede restaurar en disco su lista anterior de plugins; en ese caso debe activarse `MUD Syntax Highlight` desde los ajustes comunitarios antes de realizar la comprobación visual definitiva.
