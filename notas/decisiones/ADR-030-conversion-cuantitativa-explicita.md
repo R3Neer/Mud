@@ -1,7 +1,18 @@
+---
+id: D-030
+title: "Conversión cuantitativa explícita mediante `to`"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-019"
+  - "Q-053"
+affects:
+  - "futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`"
+---
 # ADR-030 — Conversión cuantitativa explícita mediante `to`
 
-- Estado: Vigente para la rama cuantitativa de `to`; ampliada por D-032
-- Fecha: 2026-07-28
 - Preguntas relacionadas: Q-019, Q-053
 - Ampliada por: [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]]
 - Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]

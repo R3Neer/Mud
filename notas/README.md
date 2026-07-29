@@ -35,7 +35,7 @@ La dificultad principal no es analizar texto. Es garantizar que una intención e
 | [07-plan-de-formalizacion.md](07-plan-de-formalizacion.md) | ¿En qué orden se reduce la incertidumbre y se implementa? | Inventario completo de dudas |
 | [preguntas/README.md](preguntas/README.md) | ¿Qué falta decidir y qué bloquea? | Decisiones tomadas en silencio |
 | [09-riesgos-y-restricciones.md](09-riesgos-y-restricciones.md) | ¿Dónde puede fallar el concepto o la ejecución del proyecto? | Lista de tareas |
-| [10-registro-de-decisiones.md](10-registro-de-decisiones.md) | ¿Cómo se documentan decisiones y propuestas? | La explicación normativa completa de cada tema |
+| [decisiones/README.md](decisiones/README.md) | ¿Qué decisiones existen y cuál es su estado? | La explicación normativa completa de cada tema |
 | [11-trazabilidad-de-la-fuente.md](11-trazabilidad-de-la-fuente.md) | ¿Qué documento es dueño de cada parte del documento inicial? | Afirmaciones sobre cobertura completa |
 | [12-destruccion-colecciones-y-grafo-activo.md](12-destruccion-colecciones-y-grafo-activo.md) | ¿Cómo interactúan destrucción, estado latente y dependencias? | La norma definitiva del ciclo de vida |
 | [13-auditoria-de-cobertura-y-divergencias.md](13-auditoria-de-cobertura-y-divergencias.md) | ¿Dónde fue a parar cada una de las 78 secciones de la fuente retirada? | La formalización que aún queda por hacer |
@@ -44,7 +44,7 @@ La dificultad principal no es analizar texto. Es garantizar que una intención e
 
 Cada afirmación nueva debería estar marcada mentalmente como una de estas categorías:
 
-- **Decisión vigente**: figura como vigente en [[10-registro-de-decisiones]] o en un capítulo normativo.
+- **Decisión vigente**: su ADR figura como vigente en [[decisiones/README|el índice generado de decisiones]] o ha sido promovida a un capítulo normativo.
 - **Propuesta**: recomendación de estas notas para poder avanzar.
 - **Pregunta abierta**: requiere una decisión explícita.
 - **Inferencia**: conclusión razonable, pero no declarada literalmente en la fuente.

@@ -19,7 +19,7 @@ original-sha256: 9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A42
 Autoridad actual, por orden:
 
 1. Capítulos vigentes de [[especificacion/README|la especificación formal]].
-2. Decisiones vigentes de [[notas/10-registro-de-decisiones|el registro de decisiones]] y sus ADR.
+2. Decisiones vigentes de [[notas/decisiones/README|el índice de decisiones]] y sus ADR.
 3. [[notas/preguntas/README|Preguntas activas]], cuando una materia todavía no esté cerrada.
 4. Este archivo no tiene autoridad subsidiaria: la matriz de migración demuestra el destino de cada sección.
 
@@ -3662,7 +3662,7 @@ action AdvanceDay on World [mut] {
  
 ## 76. Decisiones vigentes esenciales
 > [!danger] Lista congelada y sustituida
-> Ninguna entrada de esta sección debe asumirse vigente por aparecer aquí. La autoridad es [[notas/10-registro-de-decisiones]], que registra también D-014–D-027 y las decisiones sustituidas.
+> Ninguna entrada de esta sección debe asumirse vigente por aparecer aquí. La autoridad de identidad y estado vive en cada ADR y se consulta mediante [[notas/decisiones/README|el índice generado de decisiones]].
 1. .mud es la fuente semántica de verdad.
 2. MUD es un lenguaje de programación declarativo.
 3. Las declaraciones principales son construct, magnitude, rule y action.

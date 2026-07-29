@@ -1,7 +1,17 @@
+---
+id: D-059
+title: "Intervalos de magnitud y extremos invertidos"
+status: vigente
+date: 2026-07-29
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-018"
+affects:
+  - "[[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`, [[notas/02-modelo-del-lenguaje]] y [[notas/03-semantica-de-ejecucion]]"
+---
 # ADR-059 — Intervalos de magnitud y extremos invertidos
 
-- Estado: Vigente
-- Fecha: 2026-07-29
 - Modifica: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
 - Preguntas relacionadas: Q-018

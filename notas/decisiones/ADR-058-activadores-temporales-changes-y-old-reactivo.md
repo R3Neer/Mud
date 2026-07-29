@@ -1,7 +1,17 @@
+---
+id: D-058
+title: "Activadores temporales, `changes` y `old` reactivo"
+status: vigente
+date: 2026-07-29
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-005"
+affects:
+  - "[[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`, [[notas/02-modelo-del-lenguaje]] y [[notas/03-semantica-de-ejecucion]]"
+---
 # ADR-058 — Activadores temporales, `changes` y `old` reactivo
 
-- Estado: Vigente
-- Fecha: 2026-07-29
 - Modifica: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Preguntas relacionadas: Q-005
 - Documentos afectados: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`, [[notas/02-modelo-del-lenguaje]] y [[notas/03-semantica-de-ejecucion]]

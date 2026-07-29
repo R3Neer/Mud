@@ -20,7 +20,7 @@ superseded-by: []
 
 Al resolver una cuestión:
 
-1. Crear una decisión en [10-registro-de-decisiones.md](10-registro-de-decisiones.md).
+1. Crear un ADR conforme a [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 2. Incluir alternativas y consecuencias.
 3. Actualizar el documento dueño.
 4. Añadir ejemplos y contraejemplos.

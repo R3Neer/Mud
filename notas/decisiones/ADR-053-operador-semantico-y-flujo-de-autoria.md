@@ -1,7 +1,21 @@
+---
+id: D-053
+title: "Operador semántico y flujo de autoría"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-008"
+  - "Q-015"
+  - "Q-036"
+  - "Q-039"
+  - "Q-040"
+affects:
+  - "cambios semánticos, Git, tooling del operador"
+---
 # ADR-053 — Operador semántico y flujo de autoría
 
-- Estado: Vigente como política de producto
-- Fecha: 2026-07-28
 - Preguntas relacionadas: Q-008, Q-015, Q-036, Q-039, Q-040
 - Documentos afectados: cambios semánticos, Git, tooling del operador
 

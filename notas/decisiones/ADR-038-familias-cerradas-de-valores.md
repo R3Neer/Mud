@@ -1,7 +1,18 @@
+---
+id: D-038
+title: "Familias cerradas de valores"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-024"
+  - "Q-047"
+affects:
+  - "futuro `13-familias-cerradas.md`"
+---
 # ADR-038 — Familias cerradas de valores
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Pregunta relacionada: Q-024
 - Documentos afectados: futuro `13-familias-cerradas.md`

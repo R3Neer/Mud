@@ -1,7 +1,19 @@
+---
+id: D-049
+title: "Operadores, precedencia e intervalos normalizados"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-001"
+  - "Q-018"
+  - "Q-050"
+affects:
+  - "expresiones, intervalos, gramática"
+---
 # ADR-049 — Operadores, precedencia e intervalos normalizados
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-001, Q-018, Q-050
 - Documentos afectados: expresiones, intervalos, gramática

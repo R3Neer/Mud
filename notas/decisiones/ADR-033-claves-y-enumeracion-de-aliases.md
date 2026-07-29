@@ -1,7 +1,17 @@
+---
+id: D-033
+title: "Claves compuestas y enumeración de aliases"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-056"
+affects:
+  - "futuro `12-aliases.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`, futuro `37-finitud-y-enumerabilidad.md`"
+---
 # ADR-033 — Claves compuestas y enumeración de aliases
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Pregunta relacionada: Q-056
 - Documentos afectados: futuro `12-aliases.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`, futuro `37-finitud-y-enumerabilidad.md`
 

@@ -1,7 +1,20 @@
+---
+id: D-045
+title: "Resolución causal, vinculaciones y cola"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-003"
+  - "Q-005"
+  - "Q-020"
+  - "Q-052"
+affects:
+  - "semántica dinámica, reglas reactivas, mensajes"
+---
 # ADR-045 — Resolución causal, vinculaciones y cola
 
-- Estado: Vigente en su núcleo
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Preguntas relacionadas: Q-003, Q-005, Q-020, Q-052
 - Documentos afectados: semántica dinámica, reglas reactivas, mensajes

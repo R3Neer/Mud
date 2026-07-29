@@ -1,7 +1,19 @@
+---
+id: D-047
+title: "Cuantificadores e iteración finita"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-018"
+  - "Q-028"
+  - "Q-029"
+affects:
+  - "expresiones, intervalos, iteración"
+---
 # ADR-047 — Cuantificadores e iteración finita
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Preguntas relacionadas: Q-018, Q-028, Q-029
 - Documentos afectados: expresiones, intervalos, iteración
 

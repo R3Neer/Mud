@@ -1,7 +1,16 @@
+---
+id: D-025
+title: "Vocabulario de `thing`, cabeceras y bloques"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions: []
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`"
+---
 # ADR-025 — Vocabulario de `thing`, cabeceras y bloques
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Relacionada con: [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`
 

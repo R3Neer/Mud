@@ -1,7 +1,17 @@
+---
+id: D-062
+title: "Literales canónicos de magnitudes de punto"
+status: vigente
+date: 2026-07-29
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-055"
+affects:
+  - "léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad"
+---
 # ADR-062 — Literales canónicos de magnitudes de punto
 
-- Estado: Vigente
-- Fecha: 2026-07-29
 - Amplía: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Cierra: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad

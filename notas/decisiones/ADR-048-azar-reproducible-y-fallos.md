@@ -1,7 +1,20 @@
+---
+id: D-048
+title: "Azar reproducible y fallos"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-007"
+  - "Q-032"
+  - "Q-035"
+  - "Q-058"
+affects:
+  - "expresiones, efectos, runtime, diagnósticos"
+---
 # ADR-048 — Azar reproducible y fallos
 
-- Estado: Vigente en su núcleo
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-007, Q-032, Q-035, Q-058
 - Documentos afectados: expresiones, efectos, runtime, diagnósticos

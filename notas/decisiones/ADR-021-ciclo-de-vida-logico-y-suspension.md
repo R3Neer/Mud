@@ -1,7 +1,18 @@
+---
+id: D-021
+title: "Ciclo de vida lógico y suspensión por dependencias"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-048"
+  - "Q-049"
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32"
+---
 # ADR-021 — Ciclo de vida lógico y suspensión por dependencias
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Relacionada con: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]

@@ -20,7 +20,7 @@ La comprobación final de cobertura y las divergencias deliberadas se encuentran
 | 67 a 71 | Plugin, clasificación, inferencias, agenda y flujo atómico | [04-arquitectura-del-sistema.md](04-arquitectura-del-sistema.md) y [05-cambios-semanticos-y-git.md](05-cambios-semanticos-y-git.md) |
 | 72, 73 | Tests y editor | [06-nucleo-vertical-v0.md](06-nucleo-vertical-v0.md) y [07-plan-de-formalizacion.md](07-plan-de-formalizacion.md) |
 | 75 | Ejemplo integral | Base para seleccionar ejemplos canónicos en [06-nucleo-vertical-v0.md](06-nucleo-vertical-v0.md) |
-| 76 | Decisiones esenciales | [10-registro-de-decisiones.md](10-registro-de-decisiones.md) |
+| 76 | Decisiones esenciales | [[notas/decisiones/README|Índice generado de decisiones]] |
 | 77 | Cuestiones abiertas | [preguntas/README.md](preguntas/README.md) |
 | 78 | Instrucciones operativas | Distribuidas por documento dueño y preservadas como restricciones en [09-riesgos-y-restricciones.md](09-riesgos-y-restricciones.md) |
 

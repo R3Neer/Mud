@@ -15,7 +15,9 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 
 - [[POLITICA-DE-COMMITS|Política de commits]]
 - [[CICLO-DOCUMENTAL|Ciclo documental]]
-- [[notas/10-registro-de-decisiones|Registro de decisiones]]
+- [[POLITICA-DE-DECISIONES|Política de decisiones]]
+- [[POLITICA-DE-PREGUNTAS|Política de preguntas]]
+- [[notas/decisiones/README|Índice generado de decisiones]]
 
 ## Separación de autoridades
 
@@ -23,5 +25,7 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 | --- | --- |
 | `especificacion/` | Norma del lenguaje y criterios de conformidad |
 | `aprendizaje/` | Material didáctico, ejercicios y progreso |
-| `notas/` | Análisis, riesgos, planificación y decisiones |
+| `notas/` | Análisis, riesgos y planificación no normativos |
+| `notas/decisiones/` | Procedencia y ciclo de vida de decisiones |
+| `notas/preguntas/` | Incertidumbres abiertas y trazabilidad de su cierre |
 | `gobierno/` | Procesos editoriales y de control de cambios |

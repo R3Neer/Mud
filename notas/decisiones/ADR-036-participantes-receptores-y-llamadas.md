@@ -1,7 +1,19 @@
+---
+id: D-036
+title: "Participantes, receptores y llamadas"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-011"
+  - "Q-012"
+  - "Q-013"
+affects:
+  - "futuro `07-gramatica-concreta.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24"
+---
 # ADR-036 — Participantes, receptores y llamadas
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Amplía: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Preguntas relacionadas: Q-011, Q-012, Q-013

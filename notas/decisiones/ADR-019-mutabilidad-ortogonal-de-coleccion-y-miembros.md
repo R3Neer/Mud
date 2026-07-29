@@ -1,7 +1,16 @@
+---
+id: D-019
+title: "Mutabilidad ortogonal de colección y miembros"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions: []
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`"
+---
 # ADR-019 — Mutabilidad ortogonal de colección y miembros
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
 
 ## Contexto

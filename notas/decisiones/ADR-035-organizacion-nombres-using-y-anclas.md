@@ -1,7 +1,19 @@
+---
+id: D-035
+title: "Organización, nombres, `using` y anclas"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-001"
+  - "Q-014"
+  - "Q-054"
+affects:
+  - "futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`"
+---
 # ADR-035 — Organización, nombres, `using` y anclas
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-001, Q-014, Q-054

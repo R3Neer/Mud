@@ -1,7 +1,17 @@
+---
+id: D-057
+title: "Gramática concreta, precedencia y continuación"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-001"
+affects:
+  - "[[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`"
+---
 # ADR-057 — Gramática concreta, precedencia y continuación
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Cierra: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`

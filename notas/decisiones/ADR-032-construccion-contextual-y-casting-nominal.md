@@ -1,7 +1,17 @@
+---
+id: D-032
+title: "Construcción contextual y casting nominal de aliases"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-056"
+affects:
+  - "futuro `10-sistema-de-tipos.md`, futuro `12-aliases.md`, futuro `19-expresiones.md`"
+---
 # ADR-032 — Construcción contextual y casting nominal de aliases
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Amplía: [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
 - Pregunta relacionada: Q-056
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `12-aliases.md`, futuro `19-expresiones.md`

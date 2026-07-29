@@ -1,7 +1,18 @@
+---
+id: D-015
+title: "Especialización acíclica y estado independiente"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-042"
+  - "Q-043"
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`"
+---
 # ADR-015 — Especialización acíclica y estado independiente
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Preguntas: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`

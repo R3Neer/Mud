@@ -1,7 +1,18 @@
+---
+id: D-041
+title: "Contratos de las tres clases de regla"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-005"
+  - "Q-050"
+affects:
+  - "modelo del lenguaje, semántica estática, semántica dinámica"
+---
 # ADR-041 — Contratos de las tres clases de regla
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]

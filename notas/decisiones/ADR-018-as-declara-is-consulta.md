@@ -1,7 +1,16 @@
+---
+id: D-018
+title: "`as` declara especialización e `is` la consulta"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions: []
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`"
+---
 # ADR-018 — `as` declara especialización e `is` la consulta
 
-- Estado: Vigente; vocabulario actualizado por D-025
-- Fecha: 2026-07-27
 - Actualizada: 2026-07-28
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`
 

@@ -1,7 +1,17 @@
+---
+id: D-014
+title: "Ontología unificada de `thing`"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-041"
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`"
+---
 # ADR-014 — Ontología unificada de `thing`
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Preguntas: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`

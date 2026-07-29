@@ -1,7 +1,22 @@
+---
+id: D-044
+title: "Alcanzabilidad `eventually`"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-026"
+  - "Q-027"
+  - "Q-028"
+  - "Q-029"
+  - "Q-030"
+  - "Q-031"
+affects:
+  - "expresiones, alcanzabilidad, finitud, terminación"
+---
 # ADR-044 — Alcanzabilidad `eventually`
 
-- Estado: Vigente con admisibilidad conservadora
-- Fecha: 2026-07-28
 - Preguntas relacionadas: Q-026 a Q-031
 - Documentos afectados: expresiones, alcanzabilidad, finitud, terminación
 

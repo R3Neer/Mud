@@ -1,7 +1,22 @@
+---
+id: D-051
+title: "Grafo semántico e IR reconstruibles"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-009"
+  - "Q-016"
+  - "Q-027"
+  - "Q-034"
+  - "Q-054"
+  - "Q-059"
+affects:
+  - "arquitectura, grafo semántico, IR, conformidad"
+---
 # ADR-051 — Grafo semántico e IR reconstruibles
 
-- Estado: Vigente como contrato arquitectónico; esquema exacto abierto
-- Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-009, Q-016, Q-027, Q-034, Q-054, Q-059
 - Documentos afectados: arquitectura, grafo semántico, IR, conformidad

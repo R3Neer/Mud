@@ -1,7 +1,20 @@
+---
+id: D-046
+title: "Álgebra y conflictos de efectos"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-002"
+  - "Q-006"
+  - "Q-021"
+  - "Q-046"
+affects:
+  - "efectos, raíz, ondas, conflictos"
+---
 # ADR-046 — Álgebra y conflictos de efectos
 
-- Estado: Vigente como núcleo; matriz completa abierta
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Preguntas relacionadas: Q-002, Q-006, Q-021, Q-046
 - Documentos afectados: efectos, raíz, ondas, conflictos

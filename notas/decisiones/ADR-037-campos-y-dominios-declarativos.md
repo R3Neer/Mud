@@ -1,7 +1,18 @@
+---
+id: D-037
+title: "Campos y dominios declarativos"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-003"
+  - "Q-017"
+affects:
+  - "futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`"
+---
 # ADR-037 — Campos y dominios declarativos
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Amplía: D-019, D-026
 - Preguntas relacionadas: Q-003, Q-017
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`

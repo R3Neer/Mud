@@ -10,13 +10,15 @@ status: vigente
 
 # Política de preguntas de MUD
 
+Decisiones relacionadas: [[POLITICA-DE-DECISIONES|Política de decisiones de MUD]].
+
 ## Propósito
 
 Una pregunta identifica una incertidumbre concreta que puede impedir completar la especificación, una decisión o una prueba de conformidad. No sustituye a una decisión ni conserva indefinidamente como «abierto» un problema ya resuelto.
 
 ## Autoridad
 
-Las preguntas se registran en `notas/preguntas/`. No definen semántica por sí mismas. Una respuesta solo pasa a ser una regla de MUD mediante una decisión aceptada y su promoción a `especificacion/` conforme a [[CICLO-DOCUMENTAL]].
+Las preguntas se registran en `notas/preguntas/`. No definen semántica por sí mismas. Una respuesta solo pasa a ser una regla de MUD mediante una decisión aceptada conforme a [[POLITICA-DE-DECISIONES]] y su promoción a `especificacion/` conforme a [[CICLO-DOCUMENTAL]].
 
 Cada pregunta dispone de un archivo estable:
 

@@ -1,7 +1,18 @@
+---
+id: D-027
+title: "Salidas del modelo mediante `look` y `message`"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-051"
+  - "Q-052"
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`"
+---
 # ADR-027 — Salidas del modelo mediante `look` y `message`
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas abiertas: Q-051, Q-052
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`

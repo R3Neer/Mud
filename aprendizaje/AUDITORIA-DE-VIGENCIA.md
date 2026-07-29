@@ -54,4 +54,4 @@ Una unidad nueva o revisada debe comprobar, cuando el tema sea aplicable, que:
 
 ## Autoridad
 
-Si una lección contradice una decisión aceptada o la especificación vigente, la lección se corrige: el material didáctico nunca tiene autoridad normativa. Las decisiones todavía no promovidas se consultan en [[notas/07-registro-de-decisiones]] y las cuestiones abiertas en [[notas/preguntas/README|Preguntas activas]].
+Si una lección contradice una decisión aceptada o la especificación vigente, la lección se corrige: el material didáctico nunca tiene autoridad normativa. Las decisiones todavía no promovidas se consultan en [[notas/decisiones/README|el índice de decisiones]] y las cuestiones abiertas en [[notas/preguntas/README|Preguntas activas]].

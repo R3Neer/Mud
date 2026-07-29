@@ -1,7 +1,17 @@
+---
+id: D-056
+title: "`Char`, `Text` y orden Unicode"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-001"
+affects:
+  - "[[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], futuros capítulos 10 y 15"
+---
 # ADR-056 — `Char`, `Text` y orden Unicode
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], futuros capítulos 10 y 15

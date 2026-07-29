@@ -1,7 +1,20 @@
+---
+id: D-023
+title: "Consolidación de efectos estructurales concurrentes"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-002"
+  - "Q-006"
+  - "Q-021"
+  - "Q-046"
+affects:
+  - "[[notas/03-semantica-de-ejecucion]], futuros capítulos 25, 28, 29 y 31"
+---
 # ADR-023 — Consolidación de efectos estructurales concurrentes
 
-- Estado: Vigente para efectos estructurales; no cierra la matriz general de conflictos
-- Fecha: 2026-07-27
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Relacionada con: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas relacionadas: [[notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos|Q-002]], [[notas/preguntas/Q-006-conflictos|Q-006]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz|Q-046]]

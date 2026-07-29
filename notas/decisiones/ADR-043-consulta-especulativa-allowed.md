@@ -1,7 +1,19 @@
+---
+id: D-043
+title: "Consulta especulativa `allowed`"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-007"
+  - "Q-035"
+  - "Q-053"
+affects:
+  - "expresiones, acciones, análisis de admisibilidad"
+---
 # ADR-043 — Consulta especulativa `allowed`
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Preguntas relacionadas: Q-007, Q-035, Q-053
 - Documentos afectados: expresiones, acciones, análisis de admisibilidad
 

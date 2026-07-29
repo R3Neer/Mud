@@ -1,7 +1,18 @@
+---
+id: D-029
+title: "Intervalos, límites efectivos y ciclos de punto"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-018"
+  - "Q-055"
+affects:
+  - "futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`"
+---
 # ADR-029 — Intervalos, límites efectivos y ciclos de punto
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]] y [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]]
 - Preguntas relacionadas: Q-018, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`

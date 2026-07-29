@@ -100,7 +100,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | 73 | Soporte de editor | Migrada como requisito de tooling | D-052 |
 | 74 | Palabras clave provisionales | Catálogo obsoleto retirado; política migrada | D-050, D-052; capítulo 46 previsto |
 | 75 | Ejemplo integral | Ejemplo no conforme retirado; propósito preservado | capítulo 47 previsto y corpus de conformidad |
-| 76 | Decisiones esenciales | Sustituida por el registro vivo | [[notas/10-registro-de-decisiones]] |
+| 76 | Decisiones esenciales | Sustituida por ADR estables e índice generado | [[notas/decisiones/README|Decisiones de MUD]] |
 | 77 | Cuestiones abiertas | Sustituida por la agenda viva | [[notas/preguntas/README|Preguntas activas]] |
 | 78 | Instrucciones finales | Migradas y actualizadas | D-013, D-053; [[notas/07-plan-de-formalizacion]] |
 

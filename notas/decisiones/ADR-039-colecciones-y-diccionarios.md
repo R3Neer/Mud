@@ -1,7 +1,18 @@
+---
+id: D-039
+title: "Colecciones y diccionarios"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-006"
+  - "Q-047"
+affects:
+  - "futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`"
+---
 # ADR-039 — Colecciones y diccionarios
 
-- Estado: Vigente
-- Fecha: 2026-07-28
 - Amplía: D-019, D-026, D-033
 - Preguntas relacionadas: Q-006, Q-047
 - Documentos afectados: futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`

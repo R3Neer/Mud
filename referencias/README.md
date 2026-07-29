@@ -24,7 +24,7 @@ Una referencia histórica:
 La autoridad actual se consulta en este orden:
 
 1. [[especificacion/README|Especificación formal]].
-2. [[notas/10-registro-de-decisiones|Registro de decisiones]] y ADR vigentes.
+2. [[notas/decisiones/README|Decisiones vigentes]] y sus ADR.
 3. [[notas/preguntas/README|Preguntas activas]].
 4. Referencias históricas, solo para procedencia.
 

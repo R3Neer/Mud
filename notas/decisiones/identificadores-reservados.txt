@@ -1,0 +1,7 @@
+# Identificadores históricos que no contienen una decisión recuperable.
+# No se reutilizan. Un hueco nuevo no incluido aquí hace fallar la validación.
+D-004
+D-005
+D-016
+D-020
+D-024

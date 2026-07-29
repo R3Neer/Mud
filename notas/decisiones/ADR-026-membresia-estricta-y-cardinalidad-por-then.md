@@ -1,7 +1,19 @@
+---
+id: D-026
+title: "Membresía estricta y cardinalidad por `then`"
+status: vigente
+date: 2026-07-27
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-003"
+  - "Q-021"
+  - "Q-047"
+affects:
+  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`"
+---
 # ADR-026 — Membresía estricta y cardinalidad por `then`
 
-- Estado: Vigente
-- Fecha: 2026-07-27
 - Preguntas afectadas: [[notas/preguntas/Q-003-puntos-de-validacion|Q-003]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
 - Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`
 

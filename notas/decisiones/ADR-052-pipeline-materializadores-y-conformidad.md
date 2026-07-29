@@ -1,7 +1,20 @@
+---
+id: D-052
+title: "Pipeline, materializadores y conformidad"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-007"
+  - "Q-009"
+  - "Q-037"
+  - "Q-038"
+affects:
+  - "arquitectura, tooling, conformidad"
+---
 # ADR-052 — Pipeline, materializadores y conformidad
 
-- Estado: Vigente como frontera arquitectónica
-- Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-007, Q-009, Q-037, Q-038
 - Documentos afectados: arquitectura, tooling, conformidad

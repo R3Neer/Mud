@@ -1,7 +1,18 @@
+---
+id: D-040
+title: "Semántica numérica básica restante"
+status: vigente
+date: 2026-07-28
+supersedes: []
+superseded-by: []
+questions:
+  - "Q-001"
+  - "Q-019"
+affects:
+  - "futuro `06-lexico.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`"
+---
 # ADR-040 — Semántica numérica básica restante
 
-- Estado: Vigente con fallos aritméticos pendientes
-- Fecha: 2026-07-28
 - Amplía: D-028, D-030, D-034
 - Modificada por: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Preguntas relacionadas: Q-001, Q-019
