@@ -7,11 +7,11 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`"
+  - "futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`"
 ---
 # ADR-019 — Mutabilidad ortogonal de colección y miembros
 
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
+- Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
 
 ## Contexto
 

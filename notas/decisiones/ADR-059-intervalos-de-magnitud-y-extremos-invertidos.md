@@ -8,14 +8,14 @@ superseded-by: []
 questions:
   - "Q-018"
 affects:
-  - "[[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`, [[notas/02-modelo-del-lenguaje]] y [[notas/03-semantica-de-ejecucion]]"
+  - "[[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`"
 ---
 # ADR-059 — Intervalos de magnitud y extremos invertidos
 
 - Modifica: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
 - Preguntas relacionadas: Q-018
-- Documentos afectados: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`, [[notas/02-modelo-del-lenguaje]] y [[notas/03-semantica-de-ejecucion]]
+- Documentos afectados: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`
 
 ## Contexto
 

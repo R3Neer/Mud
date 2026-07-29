@@ -9,14 +9,14 @@ questions:
   - "Q-044"
   - "Q-045"
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/preguntas/README|Preguntas activas]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32"
+  - "[[notas/preguntas/README|Preguntas activas]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32"
 ---
 # ADR-054 — Definiciones canónicas y activación inicial
 
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Cierra: [[notas/preguntas/Q-044-identidad-y-referencias-a-thing-futuras|Q-044]], [[notas/preguntas/Q-045-contenido-declarativo-de-create|Q-045]]
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/preguntas/README|Preguntas activas]], [[notas/12-destruccion-colecciones-y-grafo-activo]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
+- Documentos afectados: [[notas/preguntas/README|Preguntas activas]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
 
 ## Contexto
 

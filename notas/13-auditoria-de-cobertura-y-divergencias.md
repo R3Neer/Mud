@@ -27,7 +27,7 @@ Esto **no significa que MUD 1.0 esté formalizado por completo**. Significa que 
 | ---: | --- | --- | --- |
 | 1 | Objetivo | Migrada | [[notas/01-vision-y-alcance]] |
 | 2 | Principios fundamentales | Migrada | [[notas/01-vision-y-alcance]], [[notas/09-riesgos-y-restricciones]] |
-| 3 | Declaraciones principales | Sustituida y migrada | D-025, D-027, D-031; [[notas/02-modelo-del-lenguaje]] |
+| 3 | Declaraciones principales | Sustituida y migrada | D-025, D-027, D-031, D-038, D-054 y D-055 |
 | 4 | Organización física | Migrada | D-035 |
 | 5 | Convenciones de nombres | Migrada | D-035 |
 | 6 | Participantes, `on`, `for` y `given` | Sustituida y migrada | D-025, D-036 |

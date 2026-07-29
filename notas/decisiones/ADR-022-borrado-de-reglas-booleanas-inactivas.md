@@ -8,13 +8,13 @@ superseded-by: []
 questions:
   - "Q-050"
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuros capítulos 19, 21 y 26"
+  - "futuros capítulos 19, 21 y 26"
 ---
 # ADR-022 — Borrado estructural de reglas booleanas inactivas
 
 - Pregunta abierta relacionada: [[notas/preguntas/Q-050-borrado-en-operadores-booleanos-restantes|Q-050]]
 - Decisión relacionada: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuros capítulos 19, 21 y 26
+- Documentos afectados: futuros capítulos 19, 21 y 26
 
 ## Contexto
 

@@ -7,12 +7,12 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`"
+  - "futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`"
 ---
 # ADR-018 — `as` declara especialización e `is` la consulta
 
 - Actualizada: 2026-07-28
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`
+- Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`
 
 ## Contexto
 

@@ -10,14 +10,14 @@ questions:
   - "Q-006"
   - "Q-019"
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`"
+  - "futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`"
 ---
 # ADR-060 — Deltas aditivos y normalización de `Natural`
 
 - Modifica: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
 - Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
 - Preguntas relacionadas: Q-002, Q-006, Q-019
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`
+- Documentos afectados: futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`
 
 ## Contexto
 

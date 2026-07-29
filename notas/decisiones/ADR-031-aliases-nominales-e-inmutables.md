@@ -8,13 +8,13 @@ superseded-by: []
 questions:
   - "Q-057"
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], futuro `12-aliases.md`, futuro `25-efectos.md`"
+  - "futuro `12-aliases.md`, futuro `25-efectos.md`"
 ---
 # ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
 
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Pregunta relacionada: Q-057
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[notas/03-semantica-de-ejecucion]], [[notas/12-destruccion-colecciones-y-grafo-activo]], futuro `12-aliases.md`, futuro `25-efectos.md`
+- Documentos afectados: futuro `12-aliases.md`, futuro `25-efectos.md`
 
 ## Contexto
 

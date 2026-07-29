@@ -8,13 +8,13 @@ superseded-by: []
 questions:
   - "Q-041"
 affects:
-  - "[[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`"
+  - "[[especificacion/04-modelo-matematico]], futuro `11-things.md`"
 ---
 # ADR-014 — Ontología unificada de `thing`
 
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Preguntas: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
-- Documentos afectados: [[notas/02-modelo-del-lenguaje]], [[especificacion/04-modelo-matematico]], futuro `11-things.md`
+- Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
 
 ## Contexto
 
