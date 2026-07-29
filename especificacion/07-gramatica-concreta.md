@@ -243,6 +243,9 @@ magnitude Speed: Number in [0..*] :=
 Magnitud de punto:
 
 ```mud
+magnitude RawInstant point over Time {
+}
+
 magnitude Timestamp point over Time {
     format = "{day}:{hour:2}:{minute:2}"
 }
@@ -258,7 +261,7 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 
 Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b cycle)` añade normalización cíclica. Solo una magnitud de punto admite `cycle`.
 
-`format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él, la representación textual estándar usa la coordenada en la unidad raíz. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `format = "{week from year:2}"`.
+`format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él no existe una representación especial de punto: se aplica exactamente la representación textual ordinaria de una magnitud, con la coordenada en la unidad raíz y la abreviatura o nombre de esa unidad. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `format = "{week from year:2}"`.
 
 Fuera de `format`, la extracción exige el punto:
 
@@ -719,7 +722,7 @@ Un hueco numérico admite `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derech
 
 La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Number`, `Rumber` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
 
-Una magnitud lineal sin `in` se representa en su unidad raíz o combinación canónica. Una magnitud de punto usa su `format` si lo tiene y, si no, su coordenada raíz. `{magnitude in unit}` selecciona la unidad y, para un punto, evita el `format` y representa la coordenada completa. Se escribe la abreviatura de la unidad si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
+Una magnitud lineal sin `in` se representa en su unidad raíz o combinación canónica. Una magnitud de punto usa su `format` si lo tiene y, si no, sigue esa misma regla ordinaria, incluida la escritura de la unidad. `{magnitude in unit}` selecciona la unidad y, para un punto, evita el `format` y representa la coordenada completa. Se escribe la abreviatura de la unidad si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
 
 `time in picosecond` expresa la coordenada total; `picosecond from second in time` extrae la parte dentro del segundo. La segunda forma es válida aunque el formato visible no incluya picosegundos.
 

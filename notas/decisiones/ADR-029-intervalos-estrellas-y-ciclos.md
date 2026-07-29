@@ -80,6 +80,9 @@ Por tanto, si la unidad canónica de `Speed` es `m/s`, `[0..100]` significa de `
 Una magnitud de punto se declara con `point over` en la cabecera. Su dominio es opcional:
 
 ```mud
+magnitude RawInstant point over Time {
+}
+
 magnitude Timestamp point over Time {
     format = "{day}:{hour:2}:{minute:2}"
 }
@@ -96,7 +99,7 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 Representa posiciones sobre una magnitud lineal y utiliza sus unidades. No puede declarar unidades ni `root unit`.
 Sin `in`, admite el dominio completo de la coordenada subyacente. Con un intervalo lineal, queda acotada sin envolvimiento. Con `[a..b cycle)`, queda acotada y se normaliza cíclicamente.
 
-Puede declarar mediante el `format` opcional una representación textual. Si lo omite, usa su coordenada en la unidad raíz. Conforme a D-061, el formato es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; Q-055 conserva abiertos el parseo inverso, la unicidad, las colisiones y los calendarios irregulares.
+Puede declarar mediante el `format` opcional una representación textual especial. Si lo omite, se representa como cualquier magnitud ordinaria: coordenada en la unidad raíz seguida de la abreviatura o nombre de esa unidad. Conforme a D-061, el formato es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; Q-055 conserva abiertos el parseo inverso, la unicidad, las colisiones y los calendarios irregulares.
 
 Su aritmética es:
 
@@ -146,3 +149,4 @@ Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados
 8. Normalización de intervalos lineales invertidos a `empty` sin interpretación descendente.
 9. Rechazo de un periodo cíclico nulo o negativo.
 10. Magnitudes de punto sin dominio, con dominio lineal y con dominio cíclico.
+11. `format` opcional y representación cuantitativa ordinaria, con unidad, cuando se omite.

@@ -90,7 +90,7 @@ La representación de un hueco depende del valor evaluado, no del nombre escrito
 | Intervalo | Su forma canónica normalizada |
 | Colección | Sus elementos separados por `, `, sin los corchetes exteriores |
 | Magnitud lineal | Su cantidad en la unidad raíz o combinación canónica de unidades raíz |
-| Magnitud de punto | Su `format`, si existe; en otro caso, su coordenada en la unidad raíz |
+| Magnitud de punto | Su `format`, si existe; en otro caso, la representación ordinaria de su coordenada como magnitud |
 
 Si un elemento de una colección es a su vez una colección, esa colección interior conserva sus corchetes. La regla se aplica recursivamente:
 
@@ -103,7 +103,7 @@ Una colección vacía aporta el texto vacío. `ordered`, `unique`, `mut` y la ca
 
 Una llamada a regla booleana es renderizable porque produce `Bool`. El nombre desnudo de una declaración no es un valor. Acciones, reglas reactivas, reglas `always`, `look`, `message` y `test` no producen valores interpolables. Los tipos, familias como declaraciones y cualquier otra categoría sin representación decidida producen error estático en `{...}`.
 
-La representación de una magnitud escribe la abreviatura de la unidad cuando exista. En otro caso usa su nombre singular para `1` y `-1`, y el plural declarado para los demás valores; si no hay plural, reutiliza el nombre. Las unidades derivadas usan la composición canónica de sus factores.
+La representación de una magnitud escribe la abreviatura de la unidad cuando exista. En otro caso usa su nombre singular para `1` y `-1`, y el plural declarado para los demás valores; si no hay plural, reutiliza el nombre. Las unidades derivadas usan la composición canónica de sus factores. Una magnitud de punto sin `format` no introduce una excepción: representa su coordenada en la unidad raíz mediante estas mismas reglas, incluida la etiqueta de unidad.
 
 Una presentación explícita selecciona la unidad:
 
