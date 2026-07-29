@@ -626,7 +626,7 @@ De mayor a menor:
 | 7 | sufijo temporal `changes` | no asociativa |
 | 8 | `and`, `&` | izquierda |
 | 9 | `or`, `|` | izquierda |
-| 10 | `^` | izquierda |
+| 10 | `xor`, `^` | izquierda |
 | 11 | `=>` | derecha |
 | 12 | `<=>` | cadena adyacente |
 | 13 | `eventually ... through ...` | exterior |
@@ -687,7 +687,7 @@ No se mezclan operadores distintos dentro de una misma cadena sin conjunciones e
 "Hello, " | name
 ```
 
-No se admiten `&`, `^` ni `-` sobre `Text`. `^` expresa disyunción exclusiva sobre `Bool` y diferencia simétrica sobre intervalos o colecciones. Los aliases nominales de `Text` no adquieren concatenación implícita.
+No se admiten `&`, `^` ni `-` sobre `Text`. `xor` es exclusivamente lógico y `^` exclusivamente conjuntista. Los aliases nominales de `Text` no adquieren concatenación implícita.
 
 Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e` e inserta la representación de su valor; `anchor{d}` inserta el ancla canónica de la entidad designada:
 

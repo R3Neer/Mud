@@ -593,7 +593,7 @@ xor-expression
     ::= or-expression , { xor-operator , or-expression } ;
 
 xor-operator
-    ::= "^" ;
+    ::= "xor" | "^" ;
 
 or-expression
     ::= and-expression , { or-operator , and-expression } ;

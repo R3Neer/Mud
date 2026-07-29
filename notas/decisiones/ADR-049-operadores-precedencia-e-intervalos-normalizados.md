@@ -18,7 +18,7 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 | --- | --- |
 | Aritmética | `+`, `-`, `*`, `/`, `%` |
 | Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `in` |
-| Lógica | `not`, `and`, `or`, `^`, `=>`, `<=>` |
+| Lógica | `not`, `and`, `or`, `xor`, `=>`, `<=>` |
 | Temporal | sufijo `changes`; composición con `and`, `or` dentro de `when` |
 | Intervalos | `|`, `&`, `^`, `-` |
 | Colecciones | `|`, `&`, `^`, `-` |
@@ -26,9 +26,9 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 
 Los tokens compartidos se resuelven por tipos y contexto sintáctico; no autorizan coerciones entre booleanos, números, colecciones e intervalos.
 
-Cada operación posee una única escritura canónica. `not`, `and` y `or` son exclusivamente lógicos. `|` y `&` no se aplican a `Bool`: expresan respectivamente unión e intersección sobre intervalos o colecciones, salvo la concatenación de `Text` ya indicada. `^` expresa diferencia simétrica sobre intervalos o colecciones y disyunción exclusiva sobre `Bool`; los tipos resuelven esa sobrecarga. `-` continúa compartido por resta cuantitativa y diferencia conjuntista. `=>` expresa implicación y `<=>`, bicondicional.
+Cada operación posee una única escritura canónica. `not`, `and`, `or` y `xor` son exclusivamente lógicos. `|`, `&` y `^` no se aplican a `Bool`: expresan respectivamente unión, intersección y diferencia simétrica sobre intervalos o colecciones, salvo la concatenación de `Text` ya indicada. `-` continúa compartido por resta cuantitativa y diferencia conjuntista. `=>` expresa implicación y `<=>`, bicondicional.
 
-Se eliminan del lenguaje fuente `!`, `implies`, `iff`, `union`, `intersection`, `xor` y `except`. Las palabras retiradas dejan de estar reservadas y pueden usarse como identificadores. El token `!=` permanece como desigualdad independiente y no presupone que exista un operador unitario `!`.
+Se eliminan del lenguaje fuente `!`, `implies`, `iff`, `union`, `intersection` y `except`. Las palabras retiradas dejan de estar reservadas y pueden usarse como identificadores. El token `!=` permanece como desigualdad independiente y no presupone que exista un operador unitario `!`.
 
 La igualdad se define por clase de valor:
 
@@ -62,7 +62,7 @@ De mayor a menor:
 12. bicondicional;
 13. `eventually ... through ...`.
 
-En un `when` temporal, solo las palabras `and` y `or` componen activadores. Los símbolos `&` y `|` conservan sus operaciones tipadas ordinarias y se rechazan si reciben un activador; tampoco se aplican a estos `not`, `^`, `=>` ni `<=>`. D-058 define la elevación de operandos booleanos y la semántica de la composición.
+En un `when` temporal, solo las palabras `and` y `or` componen activadores. Los símbolos `&` y `|` conservan sus operaciones tipadas ordinarias y se rechazan si reciben un activador; tampoco se aplican a estos `not`, `xor`, `^`, `=>` ni `<=>`. D-058 define la elevación de operandos booleanos y la semántica de la composición.
 
 `to` y el `in` de unidad se aplican al valor completo acumulado a su izquierda. El parser continúa después sobre el resultado convertido:
 
@@ -102,8 +102,8 @@ D-059 incorpora intervalos de magnitud con unidades locales o una unidad común 
 6. Encadenamientos admitidos y rechazados.
 7. Concatenación de `Text` y rechazo de las demás operaciones conjuntistas.
 8. Resolución de los cuatro operadores conjuntistas sobre colecciones compatibles.
-9. Rechazo de los aliases retirados, incluido `xor`, y de `!` aislado, con conservación de `!=`.
-10. Resolución tipada de `^` como disyunción exclusiva lógica o diferencia simétrica conjuntista.
+9. Rechazo de los aliases retirados y de `!` aislado, con conservación de `!=`.
+10. Separación estática entre `xor` lógico y `^` conjuntista.
 11. Precedencia de `changes` por debajo de comparaciones y por encima de `and` y `or`.
 12. Rechazo de operadores distintos de las palabras `and` y `or` sobre activadores temporales.
 13. Normalización equivalente de intervalos de magnitud con unidades locales y compartidas.

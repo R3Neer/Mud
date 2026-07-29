@@ -202,7 +202,7 @@ Permanece abierta la observación de una identidad inactiva dentro de una colecc
 
 Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
 
-Las llamadas a reglas booleanas inactivas se podan después de un desazucarado canónico a `not`, `and` y `or`. Falta fijar la elaboración de `!=`, `^` lógico, cuantificadores booleanos y las interacciones con `allowed`, `eventually` y fallos internos.
+Las llamadas a reglas booleanas inactivas se podan después de un desazucarado canónico a `not`, `and` y `or`. Falta fijar la elaboración de `!=`, `xor`, cuantificadores booleanos y las interacciones con `allowed`, `eventually` y fallos internos.
 
 ### Q-011 — Vinculación nombrada de participantes
 

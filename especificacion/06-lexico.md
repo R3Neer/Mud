@@ -73,7 +73,7 @@ mut unique ordered
 create destroy add to remove from each by
 eventually through allowed old
 is in
-not and or
+not and or xor
 exists forall count sum min max
 true false empty
 Text Char Bool Natural Integer Number Rumber Money
