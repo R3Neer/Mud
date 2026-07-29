@@ -3,7 +3,8 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Amplía: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
-- Preguntas relacionadas: Q-011, Q-012
+- Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Preguntas relacionadas: Q-011, Q-012, Q-013
 - Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24
 
 ## Decisión
@@ -24,7 +25,9 @@ Reglas reactivas, `always`, `look` y `message` no admiten `given`.
 
 ### Cardinalidad y nombres
 
-Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, además de la especificación completa de colección: cardinalidad, `unique`, `ordered`, `ordered by` y, cuando sus miembros son `thing`, capacidad interior `mut`. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
+Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, además de la especificación completa de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
+
+Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilidad exterior ni capacidad interior. Puede declarar un predeterminado estático cerrado conforme a D-063.
 
 El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos, además de los nombres ordinariamente visibles:
 
@@ -66,7 +69,7 @@ rule IsWeekend for day: Day {
 
 En una action, `mut` antes del nombre de cualquier rol `for`, incluido uno de cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. Ese rol siempre debe tener nombre. El receptor correspondiente debe ser un lugar almacenado exteriormente mutable; un literal o una expresión calculada no son lugares y se rechazan.
 
-El `mut` incluido en la especificación de colección concede capacidad interior sobre las `thing` miembro. Es inválido cuando el tipo efectivo de miembro no es una `thing`. Ambos permisos son ortogonales conforme a D-019:
+El `mut` incluido en la especificación de colección concede capacidad interior sobre los valores miembro que posean estado modificable. Escribirlo cuando el tipo efectivo solo contiene valores inmutables es legal, pero produce una sugerencia porque el permiso es inútil. Ambos permisos son ortogonales conforme a D-019:
 
 | Declaración | Cambiar colección | Modificar miembros |
 | --- | --- | --- |
@@ -75,7 +78,7 @@ El `mut` incluido en la especificación de colección concede capacidad interior
 | `patients: Person [* mut]` | No | Sí |
 | `mut patients: Person [* mut]` | Sí | Sí |
 
-Reglas booleanas y `look` no admiten `mut` exterior porque son puros. Los participantes `on` tampoco lo admiten: su `[mut]` opcional es exclusivamente capacidad interior sobre la `thing` individual vinculada.
+Reglas booleanas y `look` no admiten `mut` exterior porque son puros. Los participantes `on` tampoco lo admiten: su `[mut]` opcional es exclusivamente capacidad interior sobre la `thing` individual vinculada. Los `given` no admiten ninguna forma de `mut`.
 
 La mutabilidad exterior no exige que los miembros sean `thing`: modifica el lugar que contiene la colección, no los valores inmutables contenidos. Por ejemplo:
 
@@ -122,7 +125,20 @@ rule ApplyStarvation on
 }
 ```
 
-Esto crea una vinculación por pertenencia real y no un producto cartesiano. En participantes suministrados mediante `for`, las restricciones relacionales adicionales se expresan mediante tipos o condiciones.
+La anotación puede conservarse delante de `in` para refinar nominalmente el elemento:
+
+```mud
+rule MutualFriends on
+    alice: Person in bob.friends,
+    bob in alice.friends
+{
+    ...
+}
+```
+
+Los nombres son visibles en toda la cabecera y sus restricciones se resuelven conjuntamente, no de izquierda a derecha. Para cada rol se parte de las `thing` concretas y activas de su tipo efectivo; el conjunto de vinculaciones es el join finito que satisface todas las pertenencias. Una solución de tipos ambigua exige anotaciones adicionales. Los ciclos relacionales no son puntos fijos y leen una única instantánea, conforme a D-063.
+
+Las asignaciones de roles conservan orientación, permiten que dos roles reciban la misma `thing` y no deduplican automáticamente parejas simétricas. En participantes suministrados mediante `for`, las restricciones relacionales adicionales se expresan mediante tipos o condiciones.
 
 ### Identidad exacta y selección por tipo
 
@@ -160,7 +176,7 @@ game.InCheck(White)
 (source, destination).Transfer(amount)
 ```
 
-La vinculación ordinaria de participantes y `given` es posicional. Reordenar la declaración cambia la API.
+La vinculación ordinaria de participantes y `given` puede ser posicional. Reordenar la declaración cambia el orden canónico de la API.
 
 La separación no depende del tipo. Un valor es `for` cuando constituye un sujeto semántico de la declaración y `given` cuando solo parametriza la operación:
 
@@ -184,28 +200,31 @@ Un receptor multiparte puede usar forma nombrada:
 
 Debe nombrar roles existentes exactamente una vez, ser exhaustivo y aportar tipos compatibles. Los nombres permiten reordenar roles en esta construcción de llamada; no se confunden con la regla de orden de componentes nombrados de alias.
 
-Los argumentos `given` también pueden vincularse por nombre mediante `=` dentro de los paréntesis:
+La forma nombrada es válida en cualquier orden, pero el compilador sugiere el orden de declaración. No puede mezclarse con receptores posicionales.
+
+Los argumentos `given` pueden vincularse realmente por nombre mediante `=` dentro de los paréntesis:
 
 ```mud
 game.InCheck(color = White)
 (source, destination).Transfer(amount = 10)
 ```
 
-La vinculación de los `given` continúa siendo siempre posicional. El nombre escrito es una etiqueta opcional de legibilidad y comprobación: debe coincidir con el `given` que ocupa esa misma posición y no permite reordenar argumentos.
+Una llamada admite posiciones, nombres o un prefijo posicional seguido por nombres. Después del primer nombre no puede aparecer una posición. Los nombres pueden reordenar los `given`, aunque el compilador sugiere el orden de declaración.
 
-Los argumentos posicionales y etiquetados pueden mezclarse en cualquier posición:
-
-```mud
-game.Search(origin, depth = 3, true)
-```
-
-Si la firma declara `given origin`, `given depth` y `given exhaustive` en ese orden, la llamada anterior es válida. Esto no lo sería:
+Los predeterminados estáticos permiten omisiones. Posicionalmente solo puede omitirse un sufijo completo de `given` predeterminados; los nombres permiten omitir cualquier predeterminado intermedio:
 
 ```mud
-game.Search(depth = 3, origin, true)
+game.Search(origin, depth = 3)
+game.Search(depth = 3)
 ```
 
-porque la primera posición corresponde a `origin`, no a `depth`.
+Si la firma declara `origin = Capital`, `depth` y `exhaustive = false` en ese orden, ambas llamadas son válidas. Esto no lo sería:
+
+```mud
+game.Search(depth = 3, origin)
+```
+
+porque una posición no puede aparecer después del primer argumento nombrado.
 
 ### Naturaleza de la llamada
 
@@ -227,10 +246,10 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 2. Varios participantes individuales anónimos con accesos unívocos y rechazo de un acceso ambiguo.
 3. Receptor multiparte posicional y nombrado.
 4. Rol ausente, duplicado, desconocido o mal tipado.
-5. Mezcla de argumentos `given` sin etiqueta y etiquetados, conservando siempre la posición.
-6. Rechazo de una etiqueta que no coincide con el `given` de su posición.
+5. Argumentos `given` posicionales, nombrados y con prefijo posicional seguido por nombres.
+6. Omisión de predeterminados finales por posición e intermedios por nombre.
 7. Separación entre participantes y `given`.
-8. Vinculación `on` relacionada mediante `in`.
+8. Vinculación `on` relacionada, refinada, adelantada y cíclica mediante `in`.
 9. Rechazo de cabeceras incompatibles.
 10. Diferencia entre la referencia exacta `World` y un participante `on World` o `for World`.
 11. Reflexividad para una raíz concreta y ausencia de vinculación directa para una raíz abstracta.
@@ -242,5 +261,7 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 17. Rechazo de colecciones en `on` y de mutabilidad exterior en construcciones puras.
 18. Roles `for` básicos, alias, `family`, diccionario y `thing`.
 19. Vinculación por identidad, valor y lugar.
-20. Rechazo de capacidad interior `mut` sobre miembros que no sean `thing`.
+20. Sugerencia para capacidad interior demostrablemente inútil sobre valores inmutables.
 21. Diferencia entre un valor sujeto `for` y un valor auxiliar `given` del mismo tipo.
+22. Rechazo de mutabilidad exterior e interior en `given`.
+23. Conservación de orientaciones simétricas y de roles reflexivos en `on`.

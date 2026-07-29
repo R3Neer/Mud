@@ -23,7 +23,7 @@ Omitirla equivale a `[1]`; `[n]` equivale a `[n..n]`; `[*]` usa la semántica de
 
 `empty` representa ausencia sin `null`.
 
-Las colecciones admiten duplicados salvo `unique`. `ordered` conserva un orden observable y `ordered by expression` declara una clave semántica.
+Las colecciones admiten duplicados salvo `unique`. `ordered` conserva un orden observable y `ordered by ruta` declara una clave semántica estable conforme a D-064.
 
 Añadir a una colección `unique` un valor que ya está presente es un no-op. La operación es idempotente: una o varias adiciones del mismo valor producen una sola presencia, también cuando proceden de efectos concurrentes compatibles.
 
@@ -42,9 +42,9 @@ Fuentes iniciales de orden:
 - `ordered family`: orden declarado.
 - Alias ordenado: orden subyacente o lexicográfico.
 
-En una colección de `ordered family`, `ordered by expression` puede sustituir el orden declarado por una clave calculada a partir de los datos asociados de cada miembro. Durante la evaluación de la clave, los nombres no cualificados de esos datos se resuelven sobre el miembro actual. La clave debe tener orden semántico total y el orden declarado de la familia desempata claves iguales. Este orden de colección no modifica la comparación intrínseca entre miembros de la familia.
+En una colección de valores con campos, componentes o datos asociados, `ordered by ruta` puede sustituir el orden ordinario por una clave obtenida mediante accesos singulares desde cada miembro. La clave debe tener orden semántico total y toda la ruta debe ser transitivamente estable. Una `thing` no es una clave final ordenable. Las claves iguales conservan el orden relativo de inserción. Este orden de colección no modifica la comparación intrínseca entre sus miembros.
 
-Cuando el tipo o `ordered by expression` determina un orden canónico, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Este aviso no se aplica a una colección `thing [ordered]` ordenada por inserción: en ella el orden escrito es el orden elegido por el autor.
+Cuando el tipo o `ordered by ruta` determina el orden principal, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Entre claves iguales se conserva el orden escrito, que actúa como inserción. Este aviso no se aplica a una colección `thing [ordered]` ordenada enteramente por inserción.
 
 ### Álgebra de colecciones
 
@@ -113,7 +113,7 @@ Para `mut`, la tabla se refiere exclusivamente a la capacidad interior sobre mie
 
 Para `ordered`, si solo la intersección conserva orden se filtra el operando ordenado; la diferencia filtra el operando izquierdo. Unión y diferencia simétrica mixtas son no ordenadas porque pueden incorporar miembros exclusivos del operando no ordenado.
 
-Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden canónico por tipo o por una misma clave `ordered by` normaliza el resultado con ese criterio. Para orden de inserción, el resultado es estable respecto del operando izquierdo:
+Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden por tipo o por una misma ruta `ordered by` normaliza el resultado con ese criterio y preserva inserción entre empates. Para orden de inserción, el resultado es estable respecto del operando izquierdo:
 
 - La unión recorre primero $A$ y añade después, en el orden de $B$, solo las ocurrencias adicionales necesarias para alcanzar cada multiplicidad máxima.
 - La intersección y la diferencia filtran $A$ sin reordenarlo.
@@ -193,7 +193,7 @@ La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su pre
 
 1. Cardinalidad omitida y `empty`.
 2. Duplicados, normalización, aviso e idempotencia de `unique`.
-3. Orden natural, de inserción, semántico y `ordered by`, incluida una `ordered family` ordenada por dato asociado y con aviso solo para órdenes canónicos.
+3. Orden natural, de inserción, semántico y `ordered by`, incluida una ruta estable sobre dato asociado y empates por inserción.
 4. Lectura, escritura y retirada de clave ausente.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.

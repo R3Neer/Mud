@@ -200,7 +200,7 @@ Capítulo: [[07-gramatica-concreta]].
 
 Define la sintaxis completa de:
 
-- Declaraciones `using`.
+- Cabecera de declaraciones `using`, situada antes de cualquier declaración de primer nivel.
 - Declaraciones.
 - Tipos.
 - Campos.
@@ -244,6 +244,7 @@ Define:
 - Ámbitos.
 - Resolución local y cualificada.
 - Declaraciones `using` exactas y recursivas.
+- Posición obligatoria de todos los `using` en la cabecera del fichero.
 - Ambigüedad.
 - Formación y unicidad de anclas.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
@@ -256,7 +257,7 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]].
+Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]].
 
 ## 10. Sistema de tipos
 
@@ -349,6 +350,7 @@ Archivo previsto: `14-campos-y-mutabilidad.md`
 Define:
 
 - Campos almacenados y calculados.
+- Expresiones estáticas cerradas para valores almacenados y predeterminados.
 - Anotación opcional e inferencia unívoca del tipo de campos calculados.
 - `=` frente a `:=`.
 - Mutabilidad exterior.
@@ -360,7 +362,7 @@ Define:
 - Accesibilidad de escrituras.
 - Ausencia de mutabilidad profunda implícita.
 
-Bases normativas migradas: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]] y [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]].
+Bases normativas migradas: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ## 15. Cardinalidades y colecciones
 
@@ -374,13 +376,13 @@ Define:
 - Membresía estricta de `thing`, con exclusión incondicional del ancla exacta del tipo.
 - Colecciones ordenadas y no ordenadas.
 - Orden natural, de inserción y semántico; orden Unicode fijo para `Char`.
-- `ordered by` sobre datos asociados de una `ordered family`, con desempate por orden de declaración.
+- `ordered by` sobre una ruta estable con resultado totalmente ordenado y empates por orden de inserción.
 - Álgebra de multiconjuntos mediante unión, intersección, diferencia y diferencia simétrica.
 - Inferencia de cardinalidad y dominio y propagación de `unique`, `ordered` y capacidad interior `mut`.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
 
-Bases normativas migradas: [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]] y [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
+Bases normativas migradas: [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]].
 
 ## 16. Diccionarios
 
@@ -398,7 +400,7 @@ Define:
 - Operaciones totales.
 - Alias nominal como clave única compuesta y azúcar `map[c1, c2]`.
 
-Base normativa migrada: [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]].
+Bases normativas migradas: [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 17. Dominios e intervalos
 
@@ -500,15 +502,16 @@ Define:
 - Roles `for` de cualquier tipo declarado, individuales o colectivos.
 - Vinculación por identidad, valor o lugar y nombre obligatorio para roles colectivos o exteriormente mutables.
 - Ausencia de mutabilidad exterior por pureza.
-- Valores `given`.
+- Valores `given` inmutables, con predeterminados estáticos y vinculación posicional o nominal.
 - Receptor único y multiparte.
+- Sugerencia de orden de declaración para receptores y argumentos nombrados desordenados.
 - Pureza.
 - Resultado booleano.
 - Dominios fuera de rango.
 - Dependencias y memorización.
 - Borrado estructural cuando la declaración no sea efectiva.
 
-Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
+Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 22. Reglas reactivas
 
@@ -517,7 +520,7 @@ Archivo previsto: `22-reglas-reactivas.md`
 Define:
 
 - Vinculaciones `on` exclusivamente individuales.
-- Participantes relacionados mediante `in`.
+- Participantes relacionados mediante `in`, con refinamiento nominal opcional, resolución conjunta, referencias adelantadas y ciclos finitos.
 - `when`.
 - Sufijo temporal `changes` y su precedencia.
 - Composición de activadores mediante `and` y `or`.
@@ -528,7 +531,7 @@ Define:
 - Estado anterior virtual en `start with` y línea base sin disparo para vinculaciones posteriores.
 - Creación y eliminación de vinculaciones.
 
-Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]].
+Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 23. Reglas `always`
 
@@ -542,7 +545,7 @@ Define:
 - Incumplimiento y resultado de resolución.
 - Dependencias.
 
-Base normativa migrada: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]].
+Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 24. Frontera pública: `action`, `look` y `message`
 
@@ -551,8 +554,9 @@ Archivo previsto: `24-frontera-publica.md`
 Define:
 
 - Roles `for` de cualquier tipo, individuales o colectivos.
-- Valores `given`.
+- Valores `given` inmutables, predeterminados estáticos y omisiones posicionales o nominales.
 - `if`, `then` y `after`.
+- Vinculaciones locales `:=` secuenciales y sin referencias adelantadas dentro de `then`.
 - Acciones elementales.
 - Acciones compuestas.
 - Vinculación posicional y nombrada.
@@ -564,12 +568,13 @@ Define:
 - `look` como consulta pública pura de un estado estable.
 - Participantes `for` sin `given`.
 - `message` como evento detectado durante las ondas de una acción.
-- Vinculaciones `on`, condición `when` y guarda `if` opcional.
+- Vinculaciones `on` conjuntas, refinamientos nominales, referencias adelantadas y ciclos relacionales finitos.
+- Condición `when` y guarda `if` opcional.
 - Propiedades públicas calculadas con tipo declarado opcionalmente o inferido.
 - Evaluación diferida de las propiedades del mensaje tras la estabilización.
 - Multiplicidad, orden, deduplicación, rollback y entrega.
 
-Bases normativas migradas: [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]] y [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]].
+Bases normativas migradas: [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ## 25. Efectos
 
@@ -600,7 +605,7 @@ $$
 
 donde $R$, $W$, $C$ y $D$ representan anclas leídas, escritas, creadas y destruidas.
 
-Base normativa migrada: [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
+Bases normativas migradas: [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ---
 
@@ -909,13 +914,14 @@ Define:
 - Mundo aislado y sustitución del `start with` global.
 - Materialización y estabilización previas.
 - Semántica de `then`.
+- Vinculaciones locales inmutables y secuenciales mediante `nombre [: Tipo] := expresión`.
 - Aserciones `after`.
 - Diagnósticos `otherwise`.
 - Resultados `passed`, `failed` y `error`.
 - Descarte del mundo y de sus salidas.
 - Ejecución por ancla o namespace.
 
-Base normativa: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+Bases normativas: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ## 44. Suite de conformidad
 

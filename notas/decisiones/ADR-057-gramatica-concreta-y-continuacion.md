@@ -13,6 +13,10 @@ Las decisiones de MUD ya fijaban las construcciones principales, pero no existí
 - Qué formas pertenecen al lenguaje fuente.
 - Qué palabras son reservadas o contextuales.
 - Cuándo un salto de línea termina una construcción.
+- Modificada además por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Modificada también por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
+- Modificada asimismo por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
+- Modificada finalmente por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Cómo se agrupan operadores, conversiones y encadenamientos.
 - Qué distinciones se resuelven por sintaxis y cuáles por análisis estático.
 

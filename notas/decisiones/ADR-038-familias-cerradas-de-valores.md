@@ -93,7 +93,7 @@ Para cada dato de cada miembro, el valor se obtiene en este orden:
 
 Por tanto, un miembro puede omitir un dato almacenado siempre que su valor predeterminado pueda determinarse estáticamente. En particular, un dato `Natural` sin predeterminado explícito obtiene `0`. Aunque la omisión sea válida, se recomienda escribir explícitamente los valores cuyo significado sea importante para comprender el modelo.
 
-Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Las expresiones, los predeterminados y las asignaciones de miembro deben ser puros y evaluables estáticamente, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
+Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Los predeterminados y las asignaciones de miembro deben ser expresiones estáticas cerradas conforme a D-066. Los datos calculados también se evalúan estáticamente por miembro y deben ser puros, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
 
 En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los datos asociados, almacenados o calculados:
 
@@ -104,7 +104,7 @@ En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `fals
 
 ### Datos asociados como clave de colección
 
-Una colección de miembros de una `ordered family` puede usar `ordered by expression`. La expresión de clave se evalúa para cada miembro y puede consultar sus datos asociados mediante nombres no cualificados:
+Una colección de miembros de una `ordered family` puede usar `ordered by ruta`. La ruta parte de cada miembro y selecciona un dato asociado estable:
 
 ```mud
 ordered family Terrain {
@@ -122,9 +122,9 @@ ordered family Terrain {
 route: Terrain [* ordered by movementCost]
 ```
 
-Dentro de `ordered by movementCost`, `movementCost` designa el dato del miembro de `Terrain` que se está ordenando. La expresión debe ser pura y su resultado debe poseer un orden semántico total. Los datos de una familia son inmutables, por lo que la clave no puede cambiar durante la vida de la colección.
+Dentro de `ordered by movementCost`, `movementCost` designa el dato del miembro de `Terrain` que se está ordenando. El resultado debe poseer un orden semántico total. Los datos de una familia son inmutables, por lo que esta ruta es estable. Una fórmula debe declararse primero como dato calculado y ordenarse después por su nombre; `ordered by` no contiene expresiones arbitrarias.
 
-`ordered by` sustituye el orden de declaración como criterio principal de esa colección, pero no cambia los operadores de comparación propios de la familia. Cuando dos miembros producen la misma clave, su orden de declaración actúa como desempate canónico. Las ocurrencias repetidas de un mismo miembro permanecen contiguas y conservan su multiplicidad salvo que la colección sea también `unique`.
+`ordered by` sustituye el orden de declaración como criterio principal de esa colección, pero no cambia los operadores de comparación propios de la familia. Cuando dos ocurrencias producen la misma clave, conservan su orden relativo de inserción. Las ocurrencias repetidas conservan su multiplicidad salvo que la colección sea también `unique`.
 
 La selección del miembro predeterminado de la propia familia continúa perteneciendo a Q-047.
 
@@ -140,7 +140,7 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 8. Esquema uniforme de datos y rechazo de datos específicos no declarados.
 9. Precedencia entre valor de miembro, predeterminado explícito y predeterminado de tipo.
 10. Inmutabilidad y acceso a datos asociados.
-11. Colección de `ordered family` ordenada por un dato asociado, incluidos empates y multiplicidad.
+11. Colección de `ordered family` ordenada por una ruta de datos asociados, con empates por inserción y conservación de multiplicidad.
 12. Inferencia de tipo, evaluación por miembro y dependencias acíclicas de datos calculados.
 13. Rechazo de asignaciones de miembro dirigidas a datos calculados.
 14. Renderización nominal de un miembro y acceso explícito a un dato `Text` alternativo.

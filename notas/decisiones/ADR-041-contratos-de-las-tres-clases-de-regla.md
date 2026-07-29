@@ -16,6 +16,7 @@ MUD utiliza una sola palabra declarativa, `rule`, para tres mecanismos distintos
 
 El AST contiene tres variantes distintas: regla booleana, regla reactiva y regla `always`.
 
+- Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 ### Regla booleana
 
 ```mud
@@ -42,6 +43,8 @@ rule OpenGate on gate: Gate [mut] {
     when gate.unlocked
     if not gate.open
     then gate.open = true
+Sus `given` son valores de solo lectura y pueden declarar predeterminados estáticos. Las llamadas los vinculan por posición o por nombre conforme a D-063.
+
 }
 ```
 
@@ -58,6 +61,8 @@ Por tanto, solo dispara en la transición $\mathsf{false}\longrightarrow\mathsf{
 El sufijo `changes` admite cualquier expresión pura con igualdad definida y produce en la onda $n$ el pulso:
 
 $$
+Los roles de una misma cabecera `on` se resuelven conjuntamente y pueden formar restricciones relacionales cíclicas finitas conforme a D-063.
+
 \operatorname{changes}_n(b,e)
 \iff
 v_{n-1}(b,e)\ne v_n(b,e).

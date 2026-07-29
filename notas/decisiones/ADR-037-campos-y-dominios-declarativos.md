@@ -14,6 +14,7 @@
 name: Text = ""
 mut treasury: Money = 0
 age: Natural in 0..150 [1] = 18
+- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 subjects: Person [* unique]
 maintenanceCost := soldiers * 2
 displayCost: Money := maintenanceCost
@@ -27,7 +28,7 @@ displayCost: Money := maintenanceCost
 La forma concreta de un campo almacenado es:
 
 ```text
-[mut] nombre : tipo [in dominio] [especificación-de-colección] [= valor]
+[mut] nombre : tipo [in dominio] [especificación-de-colección] [= expresión-estática]
 ```
 
 El dominio precede a la especificación de colección. Un campo calculado usa exclusivamente:
@@ -46,9 +47,11 @@ El campo calculado siempre conserva en el IR un tipo estático resuelto, haya si
 
 Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `Char [0..2]`, `combinedChars := leftChars | rightChars` infiere `Char [1..7]` conforme al álgebra de D-039. El resultado no adquiere modificadores que las reglas de propagación no puedan garantizar.
 
-Cuando el contexto de declaración también admita un campo almacenado y el compilador pueda demostrar que sustituir `nombre [: tipo] := expresión` por el campo almacenado inmutable equivalente conserva el mismo valor observable en todo estado válido, debe emitir una sugerencia de estilo. La sugerencia es conservadora, no cambia la validez del programa y no autoriza una reescritura automática. En particular, no procede si la expresión depende de estado que pueda cambiar o si almacenarla alteraría sus dependencias o su momento de evaluación.
+Cuando el contexto de declaración también admita un campo almacenado y la expresión calculada sea estática cerrada, el compilador debe sugerir la forma almacenada inmutable equivalente. La sugerencia es conservadora, no cambia la validez del programa y no autoriza una reescritura automática. No procede si la expresión depende de estado o si almacenarla alteraría sus dependencias o su momento de evaluación.
 
 ### Dominios
+El valor explícito de un campo almacenado es una expresión estática cerrada conforme a D-066. Puede combinar literales, valores nominales y operaciones constantes, pero no consultar estado, participantes, `given`, locales ni actividad del mundo. Se evalúa y normaliza durante la compilación.
+
 
 `in` restringe valores admisibles:
 
@@ -112,3 +115,4 @@ Compartir token no fusiona sus significados.
 8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
 9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.
 10. Inferencia de cardinalidad, dominio y modificadores en un campo calculado mediante operadores de colección.
+11. Expresión estática compuesta como valor almacenado y rechazo de dependencias runtime.

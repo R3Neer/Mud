@@ -10,12 +10,14 @@ normative: true
 depends-on:
   - "[[01-alcance-y-conformidad]]"
   - "[[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]]"
+  - "[[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]"
 questions: []
 decisions:
   - D-035
   - D-050
   - D-057
   - D-061
+  - D-065
 ---
 
 # 05. Texto fuente y estructura física
@@ -56,11 +58,10 @@ El nombre del archivo no forma parte del namespace. Un archivo situado directame
 
 ## Contenido
 
-Un archivo puede contener:
+Un archivo contiene, en este orden:
 
-- Declaraciones `using`.
-- Varias declaraciones de primer nivel de cualquier categoría.
-- La declaración global `start with`.
+1. Cero o más declaraciones `using`.
+2. Cero o más declaraciones de primer nivel de cualquier categoría, incluida la declaración global `start with`.
 
 El orden físico de archivos no es semántico. Tampoco resuelve duplicidades ni ambigüedades.
 
@@ -80,6 +81,9 @@ given newName: Text {
 
 > [!rule] MUD-SYN-001 — Separación superior
 > Dos elementos de primer nivel deben estar separados por al menos un terminador. Los comentarios y espacios no sustituyen por sí solos ese terminador.
+
+> [!rule] MUD-SYN-002 — Cabecera `using`
+> Toda declaración `using` debe aparecer antes de cualquier declaración de primer nivel del mismo archivo. Un `using` posterior es inválido y nunca introduce alcance local.
 
 ## Fin de archivo
 

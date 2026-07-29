@@ -16,6 +16,7 @@ El namespace se deriva de la ruta relativa dentro de la raíz MUD y no se declar
 El archivo es una unidad física, no una unidad de identidad semántica. Cada declaración conserva por separado ancla, dependencias, nodo de grafo, procedencia e historial.
 
 Mover una declaración entre archivos del mismo namespace no cambia su ancla. Moverla a otro namespace sí la cambia, salvo una migración explícita todavía definida por Q-014.
+- Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
 
 ### Declaraciones `using`
 
@@ -38,6 +39,8 @@ Una referencia completamente cualificada se resuelve directamente. Si dos candid
 El orden textual de archivos y declaraciones `using` no decide empates.
 
 ### Convenciones de identificadores
+Todas las declaraciones `using` forman la cabecera del fichero y deben aparecer antes de cualquier declaración de primer nivel. Después de la primera declaración nominal o `start with` no puede aparecer otro `using`. Su orden dentro de la cabecera no introduce alcance secuencial.
+
 
 - Namespace: segmentos `lowerCamelCase` separados por puntos.
 - Declaraciones nominales (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `test`, `look` y `message`): `PascalCase`.
@@ -99,3 +102,4 @@ La identidad estable de una unidad sin identificador de cabecera permanece en Q-
 7. Estabilidad de anclas.
 8. Separación entre `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
 9. Interpolación contextual de un ancla y uso ordinario de `anchor` fuera de plantillas.
+10. Rechazo de un `using` posterior a una declaración de primer nivel.

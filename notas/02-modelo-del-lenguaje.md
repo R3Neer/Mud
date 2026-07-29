@@ -36,7 +36,7 @@ Hay que conservar tres relaciones distintas:
 
 Dos `thing` definidas con campos iguales siguen teniendo identidades distintas. Dos valores del mismo alias con el mismo contenido son iguales. Aliases diferentes no son intercambiables aunque su forma normalizada coincida; requieren casting nominal explícito mediante `to`.
 
-Una `family` declara un tipo nominal finito independiente de `thing`. Sus miembros son valores nominales sin estado ni ciclo de vida runtime: no pertenecen a $\mathcal T_P$, no participan en `as` o `is` y no admiten `create` ni `destroy`. Todas las familias se enumeran en orden de declaración; `ordered family` convierte además ese orden en el orden semántico de comparación. Una familia puede declarar directamente un esquema uniforme de datos inmutables, almacenados o calculados, antes de sus miembros. Cada miembro puede sustituir valores almacenados en un subbloque; los omitidos proceden del predeterminado explícito del dato o del predeterminado de su tipo. Los datos calculados se evalúan estáticamente para cada miembro, pueden depender de otros datos asociados y no admiten sustitución. Una colección de `ordered family` puede usar un dato asociado como clave `ordered by`; la clave determina el orden principal y la declaración de miembros desempata. Las reglas completas pertenecen a [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
+Una `family` declara un tipo nominal finito independiente de `thing`. Sus miembros son valores nominales sin estado ni ciclo de vida runtime: no pertenecen a $\mathcal T_P$, no participan en `as` o `is` y no admiten `create` ni `destroy`. Todas las familias se enumeran en orden de declaración; `ordered family` convierte además ese orden en el orden semántico de comparación. Una familia puede declarar directamente un esquema uniforme de datos inmutables, almacenados o calculados, antes de sus miembros. Cada miembro puede sustituir valores almacenados en un subbloque; los omitidos proceden del predeterminado explícito del dato o del predeterminado de su tipo. Los datos calculados se evalúan estáticamente para cada miembro, pueden depender de otros datos asociados y no admiten sustitución. Una colección puede usar una ruta estable de campos, componentes o datos asociados como clave `ordered by`; el resultado final debe tener orden total y los empates conservan inserción. Las reglas completas pertenecen a [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]] y [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]].
 
 Cada `thing` posee una única definición canónica de primer nivel. Puede ser raíz, abstracta o concreta y declarar cero o varios antecesores mediante `as`. `create Nombre` activa esa identidad ya definida: no fabrica una identidad fresca, no añade antecesores y no contiene un cuerpo. Después de `destroy Nombre`, una nueva activación recupera la misma identidad, descriptor y carga almacenada. Las reglas completas pertenecen a [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
@@ -137,7 +137,9 @@ El estado se expresa mediante campos:
 - Campo calculado: `:=`.
 - Campo con dominio: `in`.
 
-La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= valor]`. El dominio se escribe antes que la especificación de colección. Un campo calculado usa `nombre [: Tipo] := expresión`: la anotación es opcional y, si se omite, el tipo debe inferirse unívocamente de la expresión sin preferencias entre interpretaciones compatibles; de lo contrario, debe escribirse. No admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión. Cuando un cálculo sea demostrablemente equivalente a un campo almacenado inmutable, el compilador sugiere este último sin cambiar la validez ni reescribirlo automáticamente.
+La forma de un campo almacenado es `[mut] nombre: Tipo [in dominio] [especificación de colección] [= expresión estática]`. El dominio se escribe antes que la especificación de colección. La expresión de `=` es cerrada, pura y evaluable al compilar: puede combinar literales, valores nominales y operaciones constantes, como `1..2 | 3..4`, pero no leer estado runtime.
+
+Un campo calculado usa `nombre [: Tipo] := expresión`: la anotación es opcional y, si se omite, el tipo debe inferirse unívocamente de la expresión sin preferencias entre interpretaciones compatibles; de lo contrario, debe escribirse. No admite `mut`, dominio ni especificación de colección propios; esas propiedades proceden del tipo estático de la expresión. Cuando el cálculo sea además una expresión estática cerrada, el compilador sugiere el campo almacenado inmutable equivalente sin cambiar la validez ni reescribirlo automáticamente.
 - Campo singular, opcional, colección o diccionario mediante cardinalidad.
 
 Todo campo se modela semánticamente como una colección; omitir la cardinalidad equivale a `[1]`. La mutabilidad exterior de una colección y la capacidad de modificar sus miembros son permisos distintos y ortogonales para cualquier cardinalidad:
@@ -171,16 +173,22 @@ Los participantes ocupan roles semánticos y pueden ser `thing` o valores sin id
 
 El nombre de un participante `on` o de un rol `for` con cardinalidad exactamente `[1]` puede omitirse. Una referencia no cualificada se resuelve entre los participantes anónimos y los demás nombres visibles solo si existe un candidato compatible único; cualquier ambigüedad es un error estático. Si el cuerpo necesita el participante como valor completo, debe nombrarlo. Un rol `for` de otra cardinalidad siempre se nombra y admite la especificación completa de colección; sus miembros solo se acceden mediante cuantificación, agregación o iteración explícitas.
 
-En una action, `mut nombre: Tipo [...]` sobre un rol `for` concede mutabilidad exterior y exige que el receptor sea un lugar almacenado mutable. Puede aplicarse a cualquier tipo. El `mut` interior de `[...]` concede por separado capacidad sobre miembros `thing` y es inválido para los demás tipos. Reglas booleanas y `look` no admiten el primero. `on` permanece individual, exige una `thing` y su `[mut]` solo concede capacidad sobre ella.
+En una action, `mut nombre: Tipo [...]` sobre un rol `for` concede mutabilidad exterior y exige que el receptor sea un lugar almacenado mutable. Puede aplicarse a cualquier tipo. El `mut` interior de `[...]` concede por separado capacidad sobre miembros con estado modificable. Reglas booleanas y `look` no admiten el primero. `on` permanece individual, exige una `thing` y su `[mut]` solo concede capacidad sobre ella.
+
+D-063 sustituye el rechazo de `[mut]` sobre valores inmutables por una sugerencia: declarar el permiso es legal, pero retirarlo conserva el comportamiento cuando ningún valor alcanzable puede modificarse. En un diccionario, el permiso interior se aplica solo a valores `thing` asociados y nunca a claves, aliases, contenedores anidados ni predeterminados obtenidos de una clave ausente.
+
+Los roles de una cabecera `on` se resuelven conjuntamente. Un rol relacionado puede refinar nominalmente el elemento mediante `role: Type in expression`; los nombres son visibles en toda la cabecera y pueden formar ciclos de restricciones. Cada universo contiene las `thing` concretas y activas del tipo efectivo, y las vinculaciones son el join finito que satisface todas las pertenencias en una misma instantánea. Los roles conservan orientación y no se impone desigualdad ni deduplicación simétrica.
 
 Una `thing` se vincula por identidad; un básico, alias, miembro de `family`, diccionario u otro valor inmutable, por valor; un rol con mutabilidad exterior, por identidad del lugar almacenado y por su valor actual.
 
-Los receptores y los argumentos `given` admiten vinculación posicional. En los argumentos `given`, `nombre = expresión` añade una etiqueta opcional que debe coincidir con el nombre de esa posición: puede mezclarse con argumentos sin etiqueta, pero nunca reordena la llamada. La forma nombrada de un receptor multiparte sí constituye una vinculación por nombre y se rige por reglas distintas.
+Los receptores y los argumentos `given` admiten vinculación posicional. Los receptores multiparte pueden usar una forma completamente nombrada, exacta y exhaustiva; puede reordenar roles, pero el compilador sugiere el orden de declaración.
+
+Todo `given` tiene nombre obligatorio, es de solo lectura, no admite ninguna forma de `mut` y puede declarar un predeterminado estático cerrado. Una llamada puede usar posiciones, nombres o un prefijo posicional seguido por nombres. Los nombres vinculan realmente, permiten omitir predeterminados intermedios y pueden reordenarse, aunque el compilador sugiere el orden canónico. Posicionalmente solo se omite un sufijo predeterminado.
 
 Consecuencias normativas:
 
-- Las reglas booleanas usan `for` y pueden usar `given`.
-- Las acciones usan `for` y pueden usar `given`.
+- Las reglas booleanas usan `for` y pueden usar `given` inmutables.
+- Las acciones usan `for` y pueden usar `given` inmutables.
 - Los `look` usan `for`, pero no `given`.
 - Las reglas reactivas, las reglas `always` y los mensajes usan `on`.
 - Las reglas reactivas y `always` no admiten `given`.
@@ -239,6 +247,8 @@ test CounterIncreases {
 ```
 
 El `start with` local sustituye completamente al global y solo contiene referencias a definiciones canónicas activables. Después de materializarlas y estabilizar el mundo inicial, `then` forma la transición probada. Las asignaciones escritas en `then` son efectos, no parte del estado inicial.
+
+Dentro de un bloque `then`, `nombre [: Tipo] := expresión` declara una vinculación local inmutable. Se evalúa una vez en su posición textual, observa los efectos secuenciales anteriores del delta privado y queda fijada frente a los posteriores. Su ámbito comienza después de la declaración; no existen referencias adelantadas, ciclos, redeclaración ni sombreado. Cada iteración crea un ámbito nuevo y el bloque debe conservar al menos un efecto observable.
 
 El `after` del test contiene aserciones booleanas ordenadas. Cada una puede asociar un diagnóstico `Text` mediante `otherwise`. `old` observa el estado estable anterior al `then` completo. La ejecución produce `passed`, `failed` o `error` para el ejecutor de tests y descarta siempre el mundo aislado y sus salidas.
 
@@ -314,7 +324,7 @@ Un dominio puede ser estático o calculado. Los dominios calculados introducen d
 
 ## Namespaces, `using` y anclas
 
-El namespace se deriva de la ruta. Las declaraciones `using` pueden ser exactas o recursivas. La resolución da prioridad a símbolos locales, mismo namespace, declaraciones `using` y nombres cualificados.
+El namespace se deriva de la ruta. Las declaraciones `using` pueden ser exactas o recursivas y forman obligatoriamente la cabecera anterior a cualquier declaración de primer nivel. La resolución da prioridad a símbolos locales, mismo namespace, declaraciones `using` y nombres cualificados.
 
 Formato conceptual de anclas:
 
@@ -333,7 +343,7 @@ Las anclas no incluyen el archivo. Mover una declaración dentro del mismo names
 
 MUD distingue palabras reservadas y contextuales. `using`, `with`, `family`, `test`, `otherwise` y `ordered` están reservadas. `start` introduce `start with`; `abstract` solo actúa como modificador delante de `thing`; `always` solo actúa como variante delante de `rule`; y etiquetas como `name` o `prefixes` se reconocen dentro de la declaración que las define. Las palabras contextuales pueden usarse como identificadores ordinarios fuera de su posición especial; `ordered` no puede.
 
-Las reglas completas de organización física, declaraciones `using`, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]]. La semántica de participantes, receptores posicionales o nombrados y argumentos `given` pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+Las reglas completas de organización física, declaraciones `using`, resolución, nombres y formación de anclas pertenecen a [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]. La semántica de participantes, receptores, argumentos `given` y vinculaciones `on` conjuntas pertenece a [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## Pureza y efectos
 

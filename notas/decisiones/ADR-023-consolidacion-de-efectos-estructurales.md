@@ -16,6 +16,7 @@ Varias reglas pueden solicitar en la misma oleada:
 - Activaciones y destrucciones incompatibles.
 - Adiciones y retiradas sobre una misma estructura.
 
+- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 No siempre es decidible estáticamente si dos reglas producirán efectos en la misma oleada. La semántica tampoco puede depender del orden real en que hilos o estructuras internas recorran los `then`.
 
 Al mismo tiempo, las instrucciones escritas dentro de un único `then` deben conservar su secuencialidad.
@@ -52,6 +53,8 @@ La consolidación produce un único delta tentativo o un conflicto que hace fall
 ## Orden estructural entre bloques
 
 Después de respetar y normalizar el orden interno de cada `then`, los efectos estructurales de bloques distintos se consolidan en este orden:
+
+Una vinculación local `nombre [: tipo] := expresión` se evalúa una vez en su posición textual y puede leer la superposición privada producida por instrucciones anteriores del mismo bloque. No produce un delta y las instrucciones posteriores no recalculan su valor, conforme a D-066.
 
 1. Activaciones `create` supervivientes.
 2. Adiciones supervivientes.

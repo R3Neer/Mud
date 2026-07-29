@@ -20,7 +20,8 @@ El AST conserva forma escrita y procedencia. El IR conserva significado resuelto
 - usar anclas resueltas;
 - distinguir las tres variantes de regla;
 - separar participantes de `given`;
-- representar `for` y `on` conforme a D-025 y D-036, incluidas cardinalidad colectiva, mutabilidad exterior o interior y vinculación por identidad, valor o lugar;
+- representar `for` y `on` conforme a D-025, D-036 y D-063, incluidas cardinalidad colectiva, mutabilidad exterior o interior, refinamientos nominales, restricciones conjuntas y vinculación por identidad, valor o lugar;
+- conservar predeterminados estáticos y modos posicionales o nominales de los `given`, que carecen de capacidades de escritura;
 - normalizar tipos, aliases, dominios, cardinalidades, unidades e intervalos;
 - representar efectos, lecturas, escrituras, llamadas y dependencias;
 - conservar referencias a archivo y rango de origen;
@@ -40,6 +41,7 @@ Sus familias de aristas incluyen:
 - activaciones, lecturas, escrituras y diagnósticos pertenecientes a tests;
 - llamadas y vinculaciones de acciones;
 - dependencias de `allowed` y `eventually`;
+- distinguir las vinculaciones locales inmutables de los campos, lugares y efectos, conservando su ámbito y orden de evaluación;
 - `CREATES`, `DESTROYS`, `ADDS_TO` y `REMOVES_FROM`;
 - derivación dimensional, `POINT_OVER` y equivalencias de unidad;
 - dependencias generales, de dominio y estocásticas;

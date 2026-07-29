@@ -40,6 +40,10 @@ decisions:
   - D-059
   - D-061
   - D-062
+  - D-063
+  - D-064
+  - D-065
+  - D-066
 ---
 
 # 07. Gramática concreta
@@ -50,7 +54,7 @@ decisions:
 
 ## Programa
 
-Un archivo contiene declaraciones `using` y declaraciones de primer nivel:
+Un archivo contiene una cabecera de declaraciones `using` seguida por las declaraciones de primer nivel:
 
 ```mud
 using world.people
@@ -58,6 +62,8 @@ using physics.*
 ```
 
 No existe una declaración `namespace`; se deriva de la ruta. `using`, no `import`, es la única construcción de visibilidad entre namespaces.
+
+Todos los `using` deben aparecer antes de la primera declaración de primer nivel. Intercalarlos es un error y nunca crea alcance local o secuencial. El orden entre varios `using` no decide ambigüedades.
 
 Las categorías de primer nivel son:
 
@@ -98,7 +104,7 @@ destroy Alexandria
 Forma almacenada:
 
 ```text
-[mut] name: Type [in domain] [collection-specification] [= value]
+[mut] name: Type [in domain] [collection-specification] [= static-expression]
 ```
 
 Forma calculada:
@@ -111,13 +117,22 @@ La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse un�
 
 El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `name: mut Type` no pertenece a la sintaxis.
 
+El valor de `=` es una expresión estática cerrada: se evalúa por completo al compilar, no lee estado, participantes, `given`, locales ni actividad del mundo y puede combinar literales, valores nominales y operaciones constantes. Por ejemplo:
+
+```mud
+allowed: Integer Interval = 1..2 | 3..4
+duration: Time = 1 hour + 30 minutes
+```
+
+La primera forma produce directamente un intervalo discontinuo normalizado.
+
 ```mud
 mut population: Population in [0..*] [1] = 10 people
 density := population / area
 displayDensity: Density := density
 ```
 
-Si el compilador puede demostrar que un campo calculado conservaría exactamente el mismo valor observable como campo almacenado inmutable, debe sugerir esa forma más directa. No es un error ni una reescritura automática, y la sugerencia no aparece si el cálculo depende de estado cambiante.
+Si la expresión de un campo calculado es además estática cerrada, el compilador debe sugerir la forma almacenada inmutable. No es un error ni una reescritura automática, y la sugerencia no aparece cuando el cálculo depende de estado runtime.
 
 ## Colecciones y diccionarios
 
@@ -151,13 +166,18 @@ nested: Name -> (Coordinate -> Piece [*]) [*]
 
 Los paréntesis son obligatorios para anidar un diccionario como valor.
 
-`ordered by expression` pertenece a colecciones cuyo tipo admita una clave semántica. En una colección de `ordered family`, la expresión puede consultar los datos asociados del miembro mediante nombres no cualificados; el orden de declaración desempata claves iguales:
+`ordered by ruta` pertenece a colecciones cuyos miembros ofrecen una ruta estable de campos, componentes o datos asociados. Cada acceso intermedio debe ser singular y el valor final debe poseer orden semántico total:
 
 ```mud
 route: Terrain [* ordered by movementCost]
+teams: Team [* ordered by captain.age]
 ```
 
-La clave debe poseer orden semántico total. Se prohíbe `ordered by` para `Char`; su orden es Unicode. `Text` no acepta especificaciones de colección.
+Una `thing` no posee por sí misma orden total y no puede ser la clave final. Toda la ruta debe ser transitivamente estable: se rechazan campos almacenados mutables, cálculos con dependencias mutables y accesos intermedios cuyo estado posterior pueda alterar la clave. Una ruta opcional también se rechaza mientras no exista una posición definida para `empty`.
+
+`ordered by` no admite expresiones arbitrarias. Si el criterio necesita una fórmula, se declara como campo o dato calculado y se ordena por su nombre. Las claves iguales conservan el orden relativo de inserción; no se desempatan por ancla, identidad ni orden de declaración de una `family`.
+
+Se prohíbe `ordered by` para `Char`; su orden es Unicode. `Text` no acepta especificaciones de colección.
 
 ## Aliases
 
@@ -215,7 +235,7 @@ family Terrain {
 
 Los datos aparecen antes del primer miembro y pueden ser almacenados o calculados mediante `nombre [: Tipo] := expresión`. El tipo calculado es opcional si se puede inferir de forma unívoca. Su expresión se evalúa estáticamente para cada miembro después de resolver los datos almacenados, puede consultar otros datos asociados mediante nombres no cualificados y debe tener dependencias acíclicas. El bloque de un miembro solo puede asignar datos almacenados.
 
-Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración y permite usar sus datos asociados, incluidos los calculados, como claves de `ordered by` en colecciones.
+Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración y permite usar rutas de datos asociados, incluidos los calculados estables, como claves de `ordered by` en colecciones.
 
 ## Magnitudes
 
@@ -304,7 +324,21 @@ rule Starve on
 }
 ```
 
-El tipo se infiere en un participante relacionado: se escribe `kingdom in world.kingdoms`, no `kingdom: Kingdom in ...`.
+El tipo puede inferirse en un participante relacionado: normalmente basta `kingdom in world.kingdoms`.
+
+También puede escribirse el tipo para refinar nominalmente los miembros de la colección, no para repetir necesariamente su tipo declarado:
+
+```mud
+rule MutualFriends on
+    alice: Person in bob.friends,
+    bob in alice.friends
+{
+    when alice.mood changes or bob.mood changes
+    then ...
+}
+```
+
+Todos los nombres de una cabecera `on` son visibles en la cabecera completa. Sus tipos y restricciones se resuelven conjuntamente, de modo que se admiten referencias adelantadas y ciclos cuando existe una solución nominal única. Cada rol parte de las `thing` concretas y activas de su tipo efectivo; las vinculaciones son el join finito que satisface todas las pertenencias sobre una misma instantánea. No se impone que roles distintos reciban identidades distintas y dos orientaciones simétricas constituyen vinculaciones diferentes.
 
 El nombre de un participante puede omitirse cuando su cardinalidad efectiva es exactamente `[1]` y no declara mutabilidad exterior:
 
@@ -328,7 +362,9 @@ action Treat for
 }
 ```
 
-La declaración anterior puede cambiar la membresía u orden de la colección almacenada recibida y modificar sus miembros. `mut patients: Person [*]` concede solo la primera capacidad; `patients: Person [*, mut]`, solo la segunda. La capacidad interior `mut` solo es válida cuando el tipo efectivo de miembro es una `thing`; los valores básicos, aliases y miembros de `family` son inmutables.
+La declaración anterior puede cambiar la membresía u orden de la colección almacenada recibida y modificar sus miembros. `mut patients: Person [*]` concede solo la primera capacidad; `patients: Person [*, mut]`, solo la segunda.
+
+Escribir capacidad interior sobre valores inmutables es legal, pero el compilador sugiere retirarla cuando puede demostrar que nunca será ejercitable. La sugerencia conserva el significado y no constituye un aviso. En diccionarios, el `mut` exterior cambia asociaciones y `[mut]` solo concede capacidad sobre valores `thing` materialmente asociados; nunca sobre claves, aliases, niveles anidados o el predeterminado leído para una clave ausente.
 
 La mutabilidad exterior sí puede aplicarse a una colección de cualquier tipo:
 
@@ -339,7 +375,7 @@ given value: Number {
 }
 ```
 
-Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior.
+Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior. Ningún `given` admite mutabilidad exterior ni interior.
 
 Una referencia ordinaria a `World` designa la identidad exacta. `on World` y un rol `for World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta. Esta selección solo se aplica cuando el tipo del rol es una `thing`.
 
@@ -473,6 +509,24 @@ if {
 
 Las llaves no suprimen los terminadores entre elementos de un bloque.
 
+### Valores locales en `then`
+
+Un bloque `then`, incluido el de una iteración, puede intercalar efectos con vinculaciones locales calculadas:
+
+```mud
+then {
+    cost := amount * price
+    remaining: Money := kingdom.money - cost
+    kingdom.money -= cost
+}
+```
+
+La forma `name [: Type] := expression` declara un valor local inmutable. El tipo se infiere si existe una solución única; en otro caso debe escribirse. No admite `mut`, `in` ni especificación de colección propia.
+
+La expresión es pura y se evalúa una sola vez cuando la ejecución alcanza la declaración. Lee los efectos secuenciales anteriores del mismo delta privado y conserva su valor aunque instrucciones posteriores cambien sus dependencias.
+
+El nombre solo está disponible desde su declaración hasta el final del bloque. Puede usarse en declaraciones posteriores, pero no antes de aparecer; no existen referencias adelantadas, ciclos, redeclaración ni sombreado. Cada iteración crea un ámbito nuevo. Un `then` debe conservar al menos un efecto o llamada: un bloque compuesto únicamente por valores locales es inválido.
+
 ## Llamadas
 
 Los participantes ocupan el receptor; los `given`, los paréntesis:
@@ -492,13 +546,25 @@ Una expresión de colección ocupa una sola posición de receptor cuando el rol 
 
 Que un tipo pueda aparecer en `for` no obliga a tratar todos los argumentos de ese tipo como roles. `for` identifica los sujetos semánticos de la operación; `given`, sus parámetros auxiliares.
 
-Las etiquetas de `given` no reordenan:
+Los `given` tienen nombre obligatorio, son de solo lectura y pueden declarar un predeterminado estático cerrado:
 
 ```mud
-game.Search(origin, depth = 3, true)
+given origin: Square = Capital,
+      depth: Natural,
+      exhaustive: Bool = false
 ```
 
-Pueden mezclarse argumentos etiquetados y desnudos, pero cada etiqueta debe coincidir con la posición declarada.
+Los argumentos pueden ser posicionales, nombrados o un prefijo posicional seguido por nombres. Después del primer argumento nombrado no puede aparecer uno posicional. Posicionalmente solo puede omitirse un sufijo completo con predeterminado; los nombres permiten omitir predeterminados intermedios y reordenar:
+
+```mud
+game.Search(Capital, 3)
+game.Search(depth = 3)
+game.Search(exhaustive = true, depth = 3)
+```
+
+La última forma es válida, pero el compilador sugiere escribir `depth` antes de `exhaustive` para seguir el orden de declaración. Un nombre no puede repetirse ni ser desconocido y todo `given` sin predeterminado debe quedar vinculado.
+
+Los receptores multiparte completamente nombrados también pueden reordenar roles y reciben la misma sugerencia de orden canónico. Continúan siendo exactos, exhaustivos y no se mezclan con receptores posicionales.
 
 ## Efectos
 
