@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Cierra parcialmente: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
 - Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], futuros capítulos 10 y 15
 
@@ -72,6 +73,8 @@ $$
 
 El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y `-` no se aplican a `Text`. Un alias nominal basado en `Text` necesita una conversión explícita a `Text` para concatenar y otra al alias de destino.
 
+Los literales `Text` son además plantillas conforme a D-061. Sus fragmentos literales y los valores interpolados producen una única secuencia de `Char`; esta elaboración no convierte `Text` en una colección ni introduce conversiones implícitas generales.
+
 ## Consecuencias
 
 - El lexer incorpora literales `Char` separados de los literales `Text`.
@@ -90,3 +93,4 @@ El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y
 6. Rechazo de `"cba"` como valor de `Char [* ordered]`.
 7. Rechazo de `ordered by` para `Char` y de modificadores de colección sobre `Text`.
 8. Predeterminado `'\u{0}'` de `Char` y rechazo de `'\0'` como escape no declarado.
+9. Conservación posicional de fragmentos literales e interpolados dentro de una plantilla.

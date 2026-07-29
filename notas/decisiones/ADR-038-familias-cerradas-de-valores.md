@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Pregunta relacionada: Q-024
 - Documentos afectados: futuro `13-familias-cerradas.md`
 
@@ -37,6 +38,8 @@ La declaración introduce un tipo nominal finito y un ancla estática `family::*
 - Se enumera en el orden de declaración.
 - Es igual a otro miembro si y solo si ambos pertenecen a la misma familia nominal y tienen el mismo nombre.
 - Solo admite operadores de orden si la declaración usa `ordered family`.
+
+En una plantilla `Text`, interpolar un miembro produce exactamente su nombre nominal declarado. Los datos asociados no sustituyen implícitamente esa representación; una presentación alternativa debe pedirse expresamente, por ejemplo `{severity.label}`.
 
 El orden de declaración es canónico para enumerar cualquier `family`, pero solo forma parte de las relaciones `<`, `<=`, `>` y `>=` cuando aparece `ordered`.
 
@@ -140,3 +143,4 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 11. Colección de `ordered family` ordenada por un dato asociado, incluidos empates y multiplicidad.
 12. Inferencia de tipo, evaluación por miembro y dependencias acíclicas de datos calculados.
 13. Rechazo de asignaciones de miembro dirigidas a datos calculados.
+14. Renderización nominal de un miembro y acceso explícito a un dato `Text` alternativo.

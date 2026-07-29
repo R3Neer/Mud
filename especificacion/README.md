@@ -187,7 +187,7 @@ Define:
 - Identificadores y sensibilidad a mayúsculas.
 - Palabras reservadas.
 - Literales numéricos, monetarios y porcentuales.
-- Literales de texto.
+- Plantillas `Text` ordinarias y multilínea, interpolaciones, escapes y `anchor{...}` contextual.
 - Comentarios `#`, `#...#` y `###...###`.
 - Espacio en blanco.
 - Tokens y errores léxicos.
@@ -212,6 +212,8 @@ Define la sintaxis completa de:
 - Llamadas.
 - Definiciones canónicas de `thing` y reglas, declaración inicial `start with` y activaciones mediante `create Nombre`.
 - Tests aislados con `start with` local, `then`, `after` y `otherwise`.
+- Diagnóstico `otherwise` obligatorio en reglas `always`.
+- Formatos numéricos dentro de interpolaciones `Text`.
 - Cuantificadores e iteraciones.
 
 La gramática completa ejecutable vivirá en `gramatica/mud.ebnf`. Este capítulo explicará ambigüedades, precedencia y desazucarado, pero no repetirá toda la EBNF.
@@ -632,6 +634,7 @@ Define:
 - Validación de dominios.
 - Evaluación de `if`.
 - `accepted`, `rejected` y `failed`.
+- Objeto externo de resultado y `reason: Text` obligatorio para `failed`.
 - Visibilidad del estado.
 - Atomicidad y rollback.
 
@@ -848,6 +851,8 @@ No todas estas propiedades tienen por qué ser demostrables para el lenguaje com
 ## 40. Diagnósticos
 
 Archivo previsto: `40-diagnosticos.md`
+
+Base normativa parcial: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
 Define:
 

@@ -2,6 +2,7 @@
 
 - Estado: Vigente en su núcleo
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-007, Q-032, Q-035, Q-058
 - Documentos afectados: expresiones, efectos, runtime, diagnósticos
 
@@ -30,6 +31,8 @@ Todo punto aleatorio posee identidad semántica y deriva su resultado de una sem
 `allowed` usa una rama concreta, sembrada y descartable. `eventually` cuantifica existencialmente sobre resultados de probabilidad positiva conforme a D-044.
 
 Los resultados no finitos de `Rumber`, la división por cero, una referencia no disponible, una operación fuera de dominio y cualquier efecto que no pueda producir un estado bien formado son fallos. Dentro de una acción real producen `failed` y rollback. Dentro de `allowed` se propagan como fallo de evaluación y no equivalen a falso.
+
+Cada uno de esos fallos debe tener un diagnóstico humano `Text`. Cuando alcanza la frontera de una acción real, ese diagnóstico forma el `reason` obligatorio de su resultado `failed` conforme a D-061.
 
 Los límites de recursos y defectos internos de una implementación no deben confundirse con un `failed` semántico. Q-007 debe fijar su representación externa y la frontera exacta entre ambas categorías.
 

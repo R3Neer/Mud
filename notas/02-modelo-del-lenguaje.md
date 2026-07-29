@@ -201,7 +201,7 @@ Se vincula automáticamente con `on`, observa activadores temporales mediante `w
 
 ### Regla `always`
 
-Se vincula automáticamente con `on`, no tiene efectos y debe ser verdadera en todo estado publicable.
+Se vincula automáticamente con `on`, no tiene efectos y debe ser verdadera en todo estado publicable. Su condición va seguida obligatoriamente por `otherwise` y un diagnóstico `Text` que se evalúa si la invariante se incumple y explica el `failed`.
 
 Aunque compartan la palabra `rule`, estas tres formas tienen contratos y ciclos de vida distintos. El AST debería representarlas como variantes explícitas, no como una estructura permisiva con muchos campos opcionales.
 
@@ -218,7 +218,7 @@ Una acción es la API semántica de escritura. Declara:
 - Efectos o llamadas atómicas en `then`.
 - Poscondición `after`.
 
-Una acción no se activa sola. Se solicita desde el exterior o desde una acción compuesta. Su resultado es `accepted`, `rejected` o `failed`; la semántica de esos resultados pertenece a [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md).
+Una acción no se activa sola. Se solicita desde el exterior o desde una acción compuesta. Su resultado externo es un objeto cuyo estado es `accepted`, `rejected` o `failed`; el último incluye obligatoriamente un `reason: Text`. La semántica de esos resultados pertenece a [03-semantica-de-ejecucion.md](03-semantica-de-ejecucion.md).
 
 La separación entre acciones elementales y compuestas, la raíz simultánea, `old`, `after`, rollback y resultados pertenecen a [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
@@ -270,6 +270,8 @@ La especificación incluye:
 - Magnitudes no derivadas, derivadas y de punto.
 
 Los predeterminados básicos incluyen `false`, los ceros numéricos correspondientes, `""` para `Text` y `'\u{0}'` para `Char`. Este último es el escalar Unicode `U+0000`, no ausencia ni terminador.
+
+Los literales `Text` son plantillas: `{e}` representa el valor de una expresión y `anchor{d}` representa el ancla de una entidad anclada. Las llaves literales se escriben `\{` y `\}`. Las colecciones omiten sus corchetes exteriores al interpolarse, pero las colecciones anidadas los conservan. Los números admiten precisión izquierda y derecha mediante `{e:i}`, `{e::d}` y `{e:i:d}`.
 
 Los tipos numéricos básicos determinan representación y no son magnitudes. Una magnitud no derivada usa `Number` si omite su tipo numérico; una derivada infiere la representación menos ampliada capaz de representar su operación. `Percentage` no es un tipo básico.
 

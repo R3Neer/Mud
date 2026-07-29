@@ -3,6 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-001, Q-014, Q-054
 - Documentos afectados: futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`
 
@@ -76,6 +77,8 @@ message::warfare.armies.Destroyed
 
 Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo namespace. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
 
+D-061 añade `anchor{...}` como forma contextual exclusiva de una plantilla `Text`. Produce la escritura canónica del ancla de una declaración o de un valor con identidad nominal anclada, sin convertir las declaraciones en valores ordinarios ni reservar `anchor` fuera de ese contexto.
+
 La identidad estable de una unidad sin identificador de cabecera permanece en Q-054.
 
 ## Consecuencias
@@ -95,3 +98,4 @@ La identidad estable de una unidad sin identificador de cabecera permanece en Q-
 6. Uso ordinario de una palabra contextual fuera de su posición especial.
 7. Estabilidad de anclas.
 8. Separación entre `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
+9. Interpolación contextual de un ancla y uso ordinario de `anchor` fuera de plantillas.

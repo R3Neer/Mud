@@ -17,6 +17,7 @@ decisions:
   - D-050
   - D-056
   - D-057
+  - D-061
 ---
 
 # 06. Estructura léxica
@@ -87,6 +88,7 @@ Son contextuales:
 - `always` delante de `rule`.
 - `start` como parte de `start with`.
 - `name`, `plural`, `abbreviation`, `prefixes`, `format`, `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
+- `anchor` inmediatamente antes de `{` dentro de una plantilla `Text`.
 
 Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador no puede usar esta flexibilidad para aceptar una palabra reservada dura como nombre.
 
@@ -201,6 +203,25 @@ description = """
 
 `Text` conserva la posición de sus caracteres. No equivale a `Char [* ordered]`.
 
+### Plantillas e interpolación
+
+Todo literal `Text`, ordinario o multilínea, es una plantilla. Un fragmento `{...}` abandona temporalmente el modo de texto y contiene una expresión MUD ordinaria. La forma contextual `anchor{...}` contiene un designador de ancla. Ambas vuelven al modo de texto tras su llave de cierre:
+
+```mud
+"Kingdom: {kingdom}"
+"Population: {kingdom.population:6}"
+"Rule: anchor{CanRecruit}"
+```
+
+> [!rule] MUD-LEX-036 — Modos anidados de plantilla
+> El scanner mantiene una pila de modos de texto y código. Las llaves del código interpolado se equilibran normalmente y un literal `Text` dentro de ese código abre un modo de plantilla anidado. Un salto o fin de archivo no puede cerrar implícitamente un texto ordinario mientras quede abierta una interpolación.
+
+Dentro del contenido literal, una `{` abre una interpolación y la secuencia exacta `anchor{` abre una interpolación de ancla. Cualquier llave que deba formar parte del texto se escribe mediante `\{` o `\}`. Una llave cruda que no pueda formar o cerrar el hueco correspondiente es un error.
+
+El escape Unicode `\u{...}` se reconoce como una unidad antes de buscar delimitadores de interpolación.
+
+El scanner entrega al parser `TEXT_START`, `TEXT_FRAGMENT`, `INTERPOLATION_START`, `ANCHOR_INTERPOLATION_START`, `INTERPOLATION_END` y `TEXT_END`. El último puede ser sintético cuando el texto ordinario se cierra ante un salto o el fin de archivo. La forma multilínea usa el mismo flujo de tokens después de aplicar sus reglas de margen y saltos estructurales.
+
 ## Escapes
 
 Las formas mínimas son:
@@ -214,9 +235,13 @@ Las formas mínimas son:
 | `\r` | retorno `CR` |
 | `\t` | tabulador |
 | `\u{H...}` | escalar escrito con una o más cifras hexadecimales |
+| `\{` | llave de apertura literal en `Text` |
+| `\}` | llave de cierre literal en `Text` |
 
 > [!rule] MUD-LEX-035 — Escape Unicode
 > El valor de `\u{...}` debe encontrarse entre `U+0000` y `U+10FFFF` y no puede pertenecer al intervalo de sustitutos.
+
+Los escapes de llaves solo pertenecen a `Text`; no amplían los literales `Char`.
 
 ## Números
 
@@ -284,7 +309,7 @@ Las formas de unidad pueden contener Unicode y no son identificadores generales.
 Una magnitud `point over` puede habilitar escrituras contextuales mediante su propiedad `format`, por ejemplo `12:30:00`. El lexer representa una coincidencia válida como `POINT_LITERAL`.
 
 > [!warning]
-> Q-055 todavía debe definir el minilenguaje de `format`, su parseo y la resolución de colisiones. Hasta entonces, `POINT_LITERAL` es un punto de extensión identificado, no una autorización para que cada implementación invente formatos distintos y los declare conformes.
+> `format` usa las plantillas `Text` de D-061. Q-055 todavía debe definir sus nombres contextuales, el parseo inverso y la resolución de colisiones. Hasta entonces, `POINT_LITERAL` es un punto de extensión identificado, no una autorización para que cada implementación invente componentes o formatos distintos y los declare conformes.
 
 ## Prioridad del scanner
 
@@ -297,3 +322,5 @@ En una misma posición se intenta:
 5. Operadores de un carácter.
 
 Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se descartan; `NEWLINE` se conserva para decidir terminación.
+
+Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes, después `anchor{` y `{`, y por último el fragmento literal más largo posible. Dentro de una interpolación vuelve a aplicarse la prioridad ordinaria.

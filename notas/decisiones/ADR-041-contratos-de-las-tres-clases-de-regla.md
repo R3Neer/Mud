@@ -4,6 +4,7 @@
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 
@@ -76,11 +77,12 @@ Una vinculación que no estaba presente en esa primera instantánea, ya sea por 
 
 ```mud
 always rule ValidPosition on game: Game {
-    ...
+    game.position in game.board
+    otherwise "A position is outside the board of {game}"
 }
 ```
 
-Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo es una condición pura que se comprueba automáticamente en los puntos normativos de validación. Una infracción produce `failed`, nunca `rejected`.
+Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo contiene una condición pura y un diagnóstico `Text` obligatorio introducido por `otherwise`. La condición se comprueba automáticamente en los puntos normativos de validación. Una infracción evalúa perezosamente el diagnóstico sobre el estado tentativo infractor y produce `failed` con esa causa, nunca `rejected`, conforme a D-061.
 
 ### Ciclo de vida común
 
@@ -109,3 +111,4 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 9. Inicialización sin disparo de una vinculación creada fuera de `start with`.
 10. Composición de dos cambios y de un cambio con una transición booleana mediante `and` y `or`.
 11. Pulsos consecutivos preservados dentro de una composición temporal.
+12. Rechazo de una regla `always` sin `otherwise` y propagación de su diagnóstico al `failed`.

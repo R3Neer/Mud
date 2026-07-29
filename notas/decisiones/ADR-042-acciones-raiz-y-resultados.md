@@ -3,7 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documentos afectados: frontera pública, efectos, solicitud de acciones, semántica de la raíz
 
@@ -68,7 +68,9 @@ En el contexto de acciones y tests, `old e` lee `e` en el estado estable inmedia
 | --- | --- |
 | `accepted` | Solicitud válida, raíz compatible, estabilización, invariantes y `after` satisfechos |
 | `rejected` | `given` fuera de dominio, `if` falso o `after` falso |
-| `failed` | Conflicto, ciclo u oscilación, operación inválida, dominio o referencia inválidos, `always` incumplida o fallo propagado |
+| `failed` | Conflicto, ciclo u oscilación, operación inválida, dominio o referencia inválidos, `always` incumplida o fallo semántico propagado |
+
+La solicitud devuelve al invocador externo un objeto cuyo campo `state` contiene uno de esos tres resultados. Cuando contiene `failed`, el objeto incluye además un campo obligatorio `reason: Text` con la explicación humana del fallo. Todo caso normativo de `failed` debe proporcionar esa razón conforme a D-061; pueden acompañarla códigos y causas estructuradas.
 
 Todo resultado distinto de `accepted` restaura exactamente el estado estable anterior y no publica mensajes ni otros efectos externos.
 
@@ -91,3 +93,4 @@ La normalización de un intervalo lineal con extremos invertidos a `empty` es un
 6. Vinculación de un receptor-lugar mutable y rechazo de un receptor que sea solo un valor.
 7. Intervalo invertido normalizado a `empty` sin fallo intrínseco.
 8. Distinción entre rechazo por una guarda falsa sobre `empty` y fallo por estado fuera de dominio.
+9. Presencia obligatoria de `reason: Text` en `failed` y ausencia en `accepted` y `rejected`.

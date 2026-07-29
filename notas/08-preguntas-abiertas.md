@@ -62,9 +62,9 @@ Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, m
 
 ¿Qué estructura tiene un error técnico y cómo se distingue de `failed` semántico, de un límite de recursos y de un defecto del runtime?
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]] y [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]], [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-Un fallo semántico revierte la acción y se propaga en `allowed`; no equivale a rechazo ni falsedad. Un límite de recursos o defecto interno debe distinguirse de él. Falta el contrato estable de representación para CLI, plugin y materializaciones y la tabla de errores en expresiones ordinarias.
+Un fallo semántico revierte la acción y se propaga en `allowed`; no equivale a rechazo ni falsedad. El resultado externo usa `state: failed` y exige `reason: Text`, y todo caso normativo de fallo debe aportar ese diagnóstico humano. Un límite de recursos o defecto interno debe distinguirse de él. Falta fijar la estructura y el orden canónicos al agregar varias causas, el contrato adicional de códigos y trazas para CLI, plugin y materializaciones y la tabla de errores en expresiones ordinarias.
 
 ### Q-008 — Protocolo Git y `READ`
 
@@ -298,7 +298,7 @@ Si una acción puede seleccionar dinámicamente otras acciones, cómo se conserv
 
 ### Q-059 — Observación de resultados de acción en tests
 
-Estado: **abierta** a partir de [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+Estado: **abierta** a partir de [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
 ¿Cómo comprueba un test que una acción solicitada produjo `accepted`, `rejected` o `failed` sin confundir esos resultados con `passed`, `failed` y `error` del propio test?
 
@@ -306,7 +306,7 @@ Debe decidirse:
 
 - Si una solicitud de acción dentro de `then` puede vincular su resultado a un nombre local.
 - Si una acción `rejected` constituye por defecto un error del escenario o un resultado observable.
-- Cómo se exponen la causa y la traza sin convertir diagnósticos en valores ordinarios del mundo.
+- Cómo se enlaza el `reason` externo ya definido y su traza sin convertir diagnósticos en valores ordinarios del mundo.
 
 ### Q-024 — Datos asociados a miembros de una `family`
 
@@ -376,7 +376,9 @@ Qué prefijos incorpora MUD, qué formas ASCII y Unicode reconoce, cómo se resu
 
 ### Q-055 — Formatos de magnitudes de punto
 
-Gramática de `format`, nombres y significado de componentes, parseo frente a impresión, unicidad de la representación, validación de anchuras y relación con calendarios y localización.
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
+
+`format` usa la sintaxis general de plantilla `Text`: cada `{...}` contiene código y la especificación numérica sigue el orden izquierda–derecha de D-061. Falta definir los nombres y el significado de sus componentes contextuales, el parseo inverso frente a la impresión, la unicidad de la representación, las anchuras válidas y la relación con calendarios y localización.
 
 ### Q-056 — Forma normalizada y recursión de aliases
 

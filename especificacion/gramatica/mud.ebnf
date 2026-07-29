@@ -358,7 +358,16 @@ reactive-rule-declaration
 always-rule-declaration
     ::= "always" , "rule" , nominal-name
         , [ on-clause ]
-        , boolean-body
+        , invariant-body
+        ;
+
+invariant-body
+    ::= "{" , declaration-layout
+        , boolean-expression
+        , [ required-separation ]
+        , "otherwise" , text-expression
+        , [ required-separation ]
+        , "}"
         ;
 
 action-declaration
@@ -684,14 +693,40 @@ primary-expression
 literal
     ::= exact-number
       | rumber-number
-      | TEXT_LITERAL
-      | MULTILINE_TEXT_LITERAL
+      | text-template
       | CHAR_LITERAL
       | POINT_LITERAL
       | "true"
       | "false"
       | "empty"
       ;
+
+text-template
+    ::= TEXT_START
+        , { TEXT_FRAGMENT | value-interpolation | anchor-interpolation }
+        , TEXT_END
+        ;
+
+value-interpolation
+    ::= INTERPOLATION_START
+        , expression
+        , [ numeric-text-format ]
+        , INTERPOLATION_END
+        ;
+
+numeric-text-format
+    ::= ":" , exact-integer , [ ":" , exact-integer ]
+      | ":" , ":" , exact-integer
+      ;
+
+anchor-interpolation
+    ::= ANCHOR_INTERPOLATION_START
+        , anchor-designator
+        , INTERPOLATION_END
+        ;
+
+anchor-designator
+    ::= expression ;
 
 exact-number  ::= EXACT_NUMBER_LITERAL ;
 rumber-number ::= RUMBER_LITERAL ;

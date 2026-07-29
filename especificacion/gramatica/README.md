@@ -19,6 +19,8 @@ especial    ::= ? condición definida en prosa ? ;
 
 La EBNF distingue reconocimiento sintáctico de elaboración semántica. Las restricciones que requieren nombres o tipos —por ejemplo, decidir si `in` expresa pertenencia o una unidad— están identificadas en [[../07-gramatica-concreta]] y no amplían las formas aceptadas.
 
+Las plantillas `Text` requieren un scanner modal: `mud-lexico.ebnf` delimita fragmentos y huecos, y `mud.ebnf` analiza como expresiones ordinarias los tokens situados dentro de cada interpolación.
+
 Símbolo inicial:
 
 - Léxico: `mud-source`.

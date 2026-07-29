@@ -15,6 +15,7 @@ decisions:
   - D-035
   - D-050
   - D-057
+  - D-061
 ---
 
 # 05. Texto fuente y estructura física
@@ -86,5 +87,6 @@ El fin de archivo puede actuar como cierre de un comentario de línea o de un li
 
 - Paréntesis o corchetes.
 - Bloques entre llaves.
+- Interpolaciones de una plantilla `Text`.
 - Literales o comentarios multilínea.
 - Literales `Char`.

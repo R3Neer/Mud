@@ -2,6 +2,7 @@
 
 - Estado: Vigente
 - Fecha: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Preguntas relacionadas: Q-018, Q-055
 - Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`
@@ -86,7 +87,7 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 ```
 
 Representa posiciones sobre una magnitud lineal y utiliza sus unidades. No puede declarar unidades ni `root unit`.
-Puede declarar mediante `format` una representación textual; la gramática concreta de esos formatos permanece en Q-055.
+Puede declarar mediante `format` una representación textual. Conforme a D-061, el valor es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del entorno que Q-055 debe terminar de definir, y `:2` solicita dos posiciones a la izquierda del punto. Q-055 conserva abiertos el catálogo y significado de componentes, el parseo inverso, la unicidad y las colisiones, no una sintaxis de llaves distinta.
 
 Su aritmética es:
 

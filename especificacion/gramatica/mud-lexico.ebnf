@@ -52,13 +52,34 @@ multiline-comment
 special-multiline-comment
     ::= ? bloque ### validado por MUD-LEX-020 a MUD-LEX-024 ? ;
 
+(* Las formas SPECIAL_TEMPLATE_HOLE vuelven al léxico ordinario y emiten
+   delimitadores separados para que mud.ebnf analice la expresión interior. *)
 text-literal
-    ::= quote , { text-character | escape-sequence } , [ quote ] ;
+    ::= quote
+        , { text-character
+          | text-escape-sequence
+          | value-template-hole
+          | anchor-template-hole
+          }
+        , [ quote ]
+        ;
 
 quote ::= ? U+0022 COMILLA DOBLE ? ;
 
 text-character
-    ::= ? escalar Unicode salvo '"', "\", CR y LF ? ;
+    ::= ? escalar Unicode salvo '"', "\", "{", "}", CR y LF ? ;
+
+value-template-hole
+    ::= special-value-template-hole ;
+
+special-value-template-hole
+    ::= ? bloque {...} equilibrado según MUD-LEX-036 ? ;
+
+anchor-template-hole
+    ::= special-anchor-template-hole ;
+
+special-anchor-template-hole
+    ::= ? bloque contextual anchor{...} equilibrado según MUD-LEX-036 ? ;
 
 multiline-text-literal
     ::= special-multiline-text ;
@@ -67,14 +88,22 @@ special-multiline-text
     ::= ? bloque triple comilla validado por MUD-LEX-030 a MUD-LEX-036 ? ;
 
 char-literal
-    ::= apostrophe , ( char-content | escape-sequence ) , apostrophe ;
+    ::= apostrophe , ( char-content | char-escape-sequence ) , apostrophe ;
 
 apostrophe ::= ? U+0027 COMILLA SIMPLE ? ;
 
 char-content
     ::= ? un valor escalar Unicode salvo "'", "\", CR y LF ? ;
 
-escape-sequence
+text-escape-sequence
+    ::= common-escape-sequence
+      | reverse-solidus , ( "{" | "}" )
+      ;
+
+char-escape-sequence
+    ::= common-escape-sequence ;
+
+common-escape-sequence
     ::= reverse-solidus
         , ( reverse-solidus | quote | apostrophe | "n" | "r" | "t" )
       | unicode-escape

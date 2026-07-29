@@ -3,6 +3,7 @@
 - Estado: Vigente
 - Fecha: 2026-07-28
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Cierra parcialmente: [[notas/08-preguntas-abiertas#Q-001 — Gramática y saltos de línea|Q-001]]
 - Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formateador
 
@@ -56,7 +57,7 @@ description = """
     """
 ```
 
-La sangría del delimitador de cierre define el margen que se retira de cada línea no vacía. Una línea no vacía con menos sangría que el margen es un error. La primera línea posterior al inicio y el salto inmediatamente anterior al cierre son estructurales y no forman parte del valor. La sangría adicional se conserva. Los escapes continúan activos.
+La sangría del delimitador de cierre define el margen que se retira de cada línea no vacía. Una línea no vacía con menos sangría que el margen es un error. La primera línea posterior al inicio y el salto inmediatamente anterior al cierre son estructurales y no forman parte del valor. La sangría adicional se conserva. Los escapes y las interpolaciones de D-061 continúan activos.
 
 Un literal `Char` usa comillas simples y, después de procesar escapes, debe contener exactamente un valor escalar Unicode conforme a D-056.
 
@@ -122,3 +123,4 @@ Por tanto, `1_000.123456e1000`, `1000.123_456` y `3e1_000` son válidos. `1_0000
 13. Literales sin separadores y con agrupación completa independiente en la parte entera, fraccionaria y exponencial.
 14. Rechazo de agrupaciones parciales, grupos interiores de tamaño distinto de tres y `_` en los extremos o duplicado.
 15. Equivalencia decimal de exponentes positivos, negativos y con signo explícito en literales exactos y `Rumber`.
+16. Modos anidados de texto y código, escapes de llaves y rechazo de un cierre implícito con interpolación abierta.

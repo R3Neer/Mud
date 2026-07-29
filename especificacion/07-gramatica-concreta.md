@@ -19,6 +19,7 @@ decisions:
   - D-025
   - D-027
   - D-028
+  - D-029
   - D-031
   - D-035
   - D-036
@@ -38,6 +39,7 @@ decisions:
   - D-057
   - D-058
   - D-059
+  - D-061
 ---
 
 # 07. Gramática concreta
@@ -246,9 +248,9 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 }
 ```
 
-Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. La gramática de la cadena `format` queda separada del lenguaje MUD general y continúa en Q-055.
+Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. `format` usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Q-055 debe definir el entorno contextual que aporta `hour`, `minute`, `second` u otros componentes.
 
-Las formas producidas por ese minilenguaje ocupan el token contextual `POINT_LITERAL`; por ejemplo, el objetivo es que un formato horario pueda reconocer `12:30:00`. Q-055 debe cerrarse antes de declarar conforme esa familia de literales.
+Las formas producidas ocupan el token contextual `POINT_LITERAL`; por ejemplo, el objetivo es que el formato horario pueda reconocer `12:30:00`. Q-055 conserva abiertos el parseo inverso, la unicidad, las anchuras válidas y las colisiones, y debe cerrarse antes de declarar conforme esa familia de literales.
 
 ## Participantes
 
@@ -385,10 +387,11 @@ Las vinculaciones presentes en la primera instantánea materializada por `start 
 ```mud
 always rule ValidPopulation on kingdom: Kingdom {
     kingdom.population >= 0 people
+    otherwise "Population cannot be negative in {kingdom}"
 }
 ```
 
-El cuerpo contiene directamente la condición, sin `if`.
+El cuerpo contiene directamente la condición, sin `if`, seguida obligatoriamente por `otherwise` y una expresión `Text`. El diagnóstico solo se evalúa si la condición es falsa, sobre el mismo estado tentativo y con las mismas vinculaciones que incumplieron la regla. Su valor pasa a ser una causa del resultado `failed`.
 
 ## Acciones
 
@@ -659,6 +662,36 @@ No se mezclan operadores distintos dentro de una misma cadena sin conjunciones e
 ```
 
 No se admiten `&`, `^` ni `-` sobre `Text`. `xor` es exclusivamente lógico. Los aliases nominales de `Text` no adquieren concatenación implícita.
+
+Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e` e inserta la representación de su valor; `anchor{d}` inserta el ancla canónica de la entidad designada:
+
+```mud
+"Kingdom: {kingdom}"
+"Population: {kingdom.population:6}"
+"Rule: anchor{CanRecruit}"
+"Literal braces: \{example\}"
+```
+
+`anchor` es contextual dentro de la plantilla. `anchor{...}` no forma una llamada ni una conversión general a `Text`.
+
+Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos y las colecciones. Una llamada a regla booleana también lo es porque produce `Bool`. El nombre desnudo de una declaración no es un valor; acciones, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}`.
+
+Una `thing` se representa mediante su nombre nominal y un miembro de `family` mediante el nombre del miembro. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
+
+```mud
+"{[1, 2, 3]}"          # 1, 2, 3
+"{[[1, 2], [3, 4]]}"   # [1, 2], [3, 4]
+```
+
+Un hueco numérico admite `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derecha}`. La precisión izquierda es el mínimo de cifras anteriores al punto y rellena con ceros sin contar el signo ni truncar. La derecha fija exactamente las cifras posteriores, añade ceros o redondea al más cercano con empates al par:
+
+```mud
+"{count:4}"     # 0012
+"{ratio::2}"    # 12.30
+"{ratio:4:2}"   # 0012.30
+```
+
+La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Number`, `Rumber` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
 
 ## `eventually`, `allowed` y azar
 
