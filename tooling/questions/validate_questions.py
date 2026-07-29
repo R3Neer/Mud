@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import re
 import sys
+import tomllib
 from collections import Counter
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 
@@ -10,6 +12,8 @@ ROOT = Path(__file__).resolve().parents[2]
 QUESTION_DIR = ROOT / "notas" / "preguntas"
 INDEX = QUESTION_DIR / "README.md"
 LEGACY = ROOT / "notas" / "08-preguntas-abiertas.md"
+EXPORT_PROFILES = ROOT / "tooling" / "markdown_export" / "profiles.toml"
+EXPORT_DIR = ROOT / "exports"
 
 QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")
 ID_FIELD = re.compile(r"^id: (Q-\d{3})$", re.MULTILINE)
@@ -83,8 +87,47 @@ def main() -> int:
     if inactive_index:
         errors.append(f"Preguntas inactivas presentes en el índice: {', '.join(inactive_index)}")
 
-    if re.search(r"^### Q-\d{3} — ", read(LEGACY), re.MULTILINE):
-        errors.append("El registro anterior todavía contiene preguntas canónicas.")
+    if LEGACY.exists():
+        errors.append("El registro sustituido notas/08-preguntas-abiertas.md todavía existe.")
+
+    with EXPORT_PROFILES.open("rb") as stream:
+        profiles = tomllib.load(stream)["profiles"]
+
+    all_question_ids = set(questions)
+    question_paths = {
+        question_id: path.relative_to(ROOT).as_posix()
+        for question_id, (path, _) in questions.items()
+    }
+
+    def questions_selected_by(profile_name: str) -> set[str]:
+        profile = profiles[profile_name]
+        includes = profile.get("include", [])
+        excludes = profile.get("exclude", [])
+        return {
+            question_id
+            for question_id, relative in question_paths.items()
+            if any(fnmatchcase(relative, pattern) for pattern in includes)
+            and not any(fnmatchcase(relative, pattern) for pattern in excludes)
+        }
+
+    expected_by_profile = {
+        "specification": set(),
+        "decisions": all_question_ids,
+        "language": active,
+        "current": active,
+    }
+    for profile_name, expected in expected_by_profile.items():
+        selected = questions_selected_by(profile_name)
+        missing = sorted(expected - selected)
+        unexpected = sorted(selected - expected)
+        if missing:
+            errors.append(
+                f"El perfil {profile_name} omite preguntas requeridas: {', '.join(missing)}"
+            )
+        if unexpected:
+            errors.append(
+                f"El perfil {profile_name} incluye preguntas impropias: {', '.join(unexpected)}"
+            )
 
     for path in (ROOT / "especificacion").glob("*.md"):
         for question_id in SPEC_QUESTION.findall(read(path)):
@@ -95,9 +138,11 @@ def main() -> int:
                 )
 
     for path in ROOT.rglob("*.md"):
+        if path.is_relative_to(EXPORT_DIR):
+            continue
         text = read(path)
-        if "08-preguntas-abiertas#" in text:
-            errors.append(f"Enlace con ancla al registro anterior: {path.relative_to(ROOT)}")
+        if "08-preguntas-abiertas" in text:
+            errors.append(f"Enlace al registro sustituido: {path.relative_to(ROOT)}")
         for target in QUESTION_LINK.findall(text):
             target_path = ROOT / f"{target}.md"
             if not target_path.is_file():

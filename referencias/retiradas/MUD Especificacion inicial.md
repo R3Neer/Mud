@@ -20,7 +20,7 @@ Autoridad actual, por orden:
 
 1. Capítulos vigentes de [[especificacion/README|la especificación formal]].
 2. Decisiones vigentes de [[notas/10-registro-de-decisiones|el registro de decisiones]] y sus ADR.
-3. [[notas/08-preguntas-abiertas|Preguntas abiertas]], cuando una materia todavía no esté cerrada.
+3. [[notas/preguntas/README|Preguntas activas]], cuando una materia todavía no esté cerrada.
 4. Este archivo no tiene autoridad subsidiaria: la matriz de migración demuestra el destino de cada sección.
 
 La copia original previa a estas anotaciones tenía 3652 líneas y SHA-256 `9E0CDB7626ADF2B525720B094BE3C33D296D06C7952302D68645F16F8E56A423`. La auditoría detallada está en [[notas/13-auditoria-de-cobertura-y-divergencias]].
@@ -3694,7 +3694,7 @@ action AdvanceDay on World [mut] {
  
 ## 77. Cuestiones abiertas prioritarias
 > [!danger] Agenda congelada y sustituida
-> La agenda vigente es [[notas/08-preguntas-abiertas]]. Algunas preguntas de esta lista ya se cerraron y otras nuevas no aparecen aquí.
+> La agenda vigente es [[notas/preguntas/README|Preguntas activas]]. Algunas preguntas de esta lista ya se cerraron y otras nuevas no aparecen aquí.
 1. Gramática formal completa.
 2. Sintaxis canónica de vinculación nombrada de participantes.
 3. Sintaxis canónica de valores given nombrados.
