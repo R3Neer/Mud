@@ -11,6 +11,10 @@ exports/
 __pycache__/
 *.py[cod]
 
+# Derivados del plugin local de Obsidian
+tooling/obsidian/markdown-export/node_modules/
+tooling/obsidian/markdown-export/dist/
+
 # Archivos temporales del sistema y editores
 Thumbs.db
 .DS_Store
