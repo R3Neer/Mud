@@ -50,7 +50,7 @@ Esas distinciones producen nodos distintos durante la elaboración y deben diagn
 
 D-059 añade otra distinción contextual: `1..5 m` se elabora como un intervalo numérico con unidad común, mientras `1 m..5 km` contiene dos extremos de magnitud ordinarios. Una unidad común solo puede seguir a una forma cuyos extremos finitos sean literales numéricos sin unidad.
 
-Las cabeceras usan producciones distintas para participantes `for` y `on`. La EBNF permite que `for` use cualquier `declared-type`, escriba una especificación de colección y declare un `mut` exterior, mientras `on` conserva únicamente una referencia de tipo individual y su capacidad interior opcional. El análisis estático exige que ese tipo `on` resuelva a una `thing`; las restricciones de nombre obligatorio, pureza y receptor-lugar pertenecen también a D-036.
+Las cabeceras usan producciones distintas para participantes `for`, `on` y `given`. La EBNF permite que `for` use cualquier `declared-type`, declare un dominio `in`, escriba una especificación de colección y declare un `mut` exterior. `given` también admite dominio, cardinalidad, unicidad y orden, pero su producción excluye tanto `mut` exterior como capacidad interior. `on` conserva únicamente una referencia de tipo individual y su capacidad interior opcional. El análisis estático exige que ese tipo `on` resuelva a una `thing`; las restricciones de nombre obligatorio, pureza y receptor-lugar pertenecen también a D-036.
 
 ### Terminadores
 
@@ -103,3 +103,5 @@ La recuperación concreta no forma parte del lenguaje aceptado. Una implementaci
 6. Diagnósticos de las ambigüedades contextuales.
 7. Separación sintáctica de roles `for` colectivos y vinculaciones `on` individuales.
 8. Elaboración de intervalos con unidad compartida frente a unidades locales.
+9. Rechazo sintáctico de capacidad interior `mut` en `given`.
+10. Dominio situado entre el tipo y la colección de un rol `for`.

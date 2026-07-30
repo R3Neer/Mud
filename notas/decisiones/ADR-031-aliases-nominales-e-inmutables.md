@@ -13,7 +13,7 @@ affects:
 # ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
 
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
-- Pregunta relacionada: Q-057
+- Resuelve: [[notas/preguntas/Q-057-capacidad-interior-dentro-de-valores-de-alias|Q-057]]
 - Documentos afectados: futuro `12-aliases.md`, futuro `25-efectos.md`
 
 ## Contexto
@@ -59,8 +59,9 @@ Cada componente:
 2. Ocupa una posición semántica según el orden de declaración.
 3. Forma parte de la estructura del alias.
 4. Puede declarar un dominio.
-5. No puede declarar `mut`.
-6. Puede declarar un valor predeterminado mediante `=`.
+5. No puede declarar mutabilidad exterior: la forma `mut nombre: tipo` no existe para componentes.
+6. Puede declarar capacidad interior `[mut]` sobre las `thing` contenidas directamente por una colección.
+7. Puede declarar un valor predeterminado mediante `=`.
 
 El predeterminado explícito debe ser una expresión pura evaluable estáticamente y satisfacer el tipo, dominio y especificación de colección del componente. El valor predeterminado de un alias estructural se obtiene componente a componente:
 
@@ -101,7 +102,7 @@ thing Piece {
 square = (B, Four)
 ```
 
-La capacidad interior de colecciones que formen parte de la representación de un alias queda pendiente en Q-057; no se deduce de la mutabilidad exterior del alias.
+El `mut` de la especificación de colección de un componente concede capacidad interior sobre las `thing` contenidas directamente por esa colección. No vuelve reemplazable la colección ni permite actualizar el componente: el valor de alias continúa siendo inmutable. La capacidad tampoco atraviesa implícitamente otro alias o contenedor anidado; cada nivel que deba concederla debe declararla expresamente.
 
 ### Ausencia de identidad runtime
 
@@ -122,6 +123,7 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 - El AST solo necesita `AliasDecl`; elimina `DefineAndCreateAlias` y cualquier efecto `create`/`destroy` de alias.
 - El runtime no necesita marcas de actividad, almacenamiento latente ni restauración para aliases.
 - Las propiedades y declaraciones que usan un alias no pueden quedar suspendidas por inactividad de ese alias.
+- La inmutabilidad del contenedor alias es compatible con autoridad explícita para modificar las `thing` alcanzadas mediante un componente colectivo `[mut]`.
 
 ## Verificación futura
 
@@ -130,7 +132,7 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 3. Alias estructural con componentes ordenados.
 4. Componente con predeterminado explícito y predeterminado procedente de su tipo.
 5. Rechazo de predeterminado impuro, no estático o fuera de tipo, dominio o colección.
-6. Rechazo de `mut` en un componente.
+6. Rechazo de `mut` exterior y aceptación de `[mut]` interior en un componente colectivo de `thing`.
 7. Rechazo de actualización parcial de un valor.
 8. Sustitución completa desde un campo mutable.
 9. Rechazo de `create`, `destroy`, `abstract`, `as` e `is` aplicados como ciclo de vida o especialización de alias.

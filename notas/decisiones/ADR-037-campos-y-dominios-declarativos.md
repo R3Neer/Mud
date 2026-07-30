@@ -69,11 +69,12 @@ El valor explícito de un campo almacenado es una expresión estática cerrada c
 ```mud
 age: Natural in 0..150
 given amount: Natural in 1..100
+for people: Person in EligibleCitizens [1..* unique]
 ```
 
-Puede aparecer en campos, componentes de alias y `given`. Un dominio calculado debe ser puro, determinista, no estocástico, analizable y libre de ciclos inválidos.
+Puede aparecer en campos, componentes de alias, roles `for` y `given`. Un dominio calculado debe ser puro, determinista, no estocástico, analizable y libre de ciclos inválidos.
 
-En un campo almacenado, `in` aparece después del tipo y antes de la especificación de colección:
+En un campo almacenado o un rol `for`, `in` aparece después del tipo y antes de la especificación de colección:
 
 ```mud
 citizens: Person in EligibleCitizens [1..* unique]
@@ -127,3 +128,4 @@ Compartir token no fusiona sus significados.
 9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.
 10. Inferencia de cardinalidad, dominio y modificadores en un campo calculado mediante operadores de colección.
 11. Expresión estática compuesta como valor almacenado y rechazo de dependencias runtime.
+12. Rol `for` individual o colectivo restringido por dominio.

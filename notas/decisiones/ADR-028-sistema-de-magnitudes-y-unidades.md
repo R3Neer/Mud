@@ -123,7 +123,6 @@ magnitude Length {
         name = "meter"
         plural = "meters"
         abbreviation = "m"
-        prefixes
     }
 }
 ```
@@ -147,7 +146,7 @@ Toda equivalencia de unidad debe:
 3. Reducirse a la unidad raíz.
 4. No participar en ciclos.
 
-La ausencia de `prefixes` no habilita ninguno. `prefixes` habilita el catálogo incorporado completo y `prefixes = ...` habilita solo el subconjunto enumerado. El catálogo concreto y la resolución de colisiones permanecen en Q-054.
+La ausencia de la propiedad `prefixes` habilita el catálogo incorporado completo. `prefixes = empty` no habilita ningún prefijo y `prefixes = [p1, p2, ...]` habilita solo el subconjunto enumerado. La forma desnuda `prefixes` no es válida. El catálogo concreto y la resolución de colisiones permanecen en Q-054.
 
 ### Magnitudes derivadas
 
@@ -237,3 +236,4 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 4. Inferencia de cada combinación ordinaria de tipos numéricos.
 5. Rechazo de `root unit` en una magnitud derivada.
 6. Equivalencia entre una unidad nominal derivada y su expresión estructural.
+7. Prefijos completos por omisión, ninguno mediante `prefixes = empty` y subconjunto mediante una colección explícita.

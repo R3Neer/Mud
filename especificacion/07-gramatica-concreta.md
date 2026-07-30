@@ -214,6 +214,8 @@ pagination: Pagination = (2)     # inválido: posición parcial
 pagination: Pagination = (size = 30) # válido: page conserva 1
 ```
 
+Un componente no admite `mut` exterior porque el valor de alias y cada uno de sus componentes son inmutables. Sí puede escribir `[mut]` en su especificación de colección para conceder capacidad interior sobre las `thing` contenidas directamente; esa capacidad no permite reemplazar la colección ni atraviesa aliases o contenedores anidados de manera implícita.
+
 ## Familias
 
 ```mud
@@ -281,6 +283,8 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 
 Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b cycle)` añade normalización cíclica. Solo una magnitud de punto admite `cycle`.
 
+En una unidad, omitir la propiedad `prefixes` habilita todos los prefijos del catálogo incorporado. `prefixes = empty` no habilita ninguno y `prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. No existe una forma desnuda `prefixes`.
+
 `format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él no existe una representación especial de punto: se aplica exactamente la representación textual ordinaria de una magnitud, con la coordenada en la unidad raíz y la abreviatura o nombre de esa unidad. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `format = "{week from year:2}"`.
 
 Fuera de `format`, la extracción exige el punto:
@@ -299,7 +303,7 @@ Sin `format`, el literal se escribe como una cantidad ordinaria con unidad compa
 
 ## Participantes
 
-`for` vincula roles suministrados de cualquier tipo de valor declarado. Un rol puede ser individual o colectivo y admite la especificación completa de colección. `on` construye vinculaciones automáticas exclusivamente individuales cuyo tipo debe ser una `thing`.
+`for` vincula roles suministrados de cualquier tipo de valor declarado. Un rol puede ser individual o colectivo, restringir sus valores mediante `in dominio` y admitir la especificación completa de colección. El dominio se escribe después del tipo y antes de la colección. `on` construye vinculaciones automáticas exclusivamente individuales cuyo tipo debe ser una `thing`.
 
 ```mud
 rule CanAttack for attacker: Army, defender: Army
@@ -307,7 +311,7 @@ given maximumDistance: Length {
     distance <= maximumDistance
 }
 
-rule AllAdults for people: Person [1..*, unique] {
+rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {
     forall person in people: person.age >= 18
 }
 
@@ -375,7 +379,7 @@ given value: Number {
 }
 ```
 
-Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior. Ningún `given` admite mutabilidad exterior ni interior.
+Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior. Ningún `given` admite mutabilidad exterior ni interior: su especificación de colección puede declarar cardinalidad, `unique` y `ordered`, pero su producción excluye `mut`.
 
 Una referencia ordinaria a `World` designa la identidad exacta. `on World` y un rol `for World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta. Esta selección solo se aplica cuando el tipo del rol es una `thing`.
 

@@ -10,7 +10,7 @@ status: activo
 
 Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
 
-Hay 43 preguntas activas: 22 abiertas y 21 parcialmente decididas.
+Hay 42 preguntas activas: 21 abiertas y 21 parcialmente decididas.
 
 Prioridades:
 
@@ -67,7 +67,6 @@ Prioridades:
 | [[Q-034-magnitudes-derivadas|Q-034 — Magnitudes derivadas]] | Parcialmente decidida |
 | [[Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054 — Catálogo y resolución léxica de unidades y prefijos]] | Abierta |
 | [[Q-056-forma-normalizada-y-recursion-de-aliases|Q-056 — Forma normalizada y recursión de aliases]] | Abierta |
-| [[Q-057-capacidad-interior-dentro-de-valores-de-alias|Q-057 — Capacidad interior dentro de valores de alias]] | Abierta |
 | [[Q-058-evaluacion-portable-de-rumber|Q-058 — Evaluación portable de `Rumber`]] | Abierta |
 | [[Q-035-coste-de-allowed|Q-035 — Coste de `allowed`]] | Parcialmente decidida |
 | [[Q-036-unidad-de-interaccion-humana|Q-036 — Unidad de interacción humana]] | Abierta |

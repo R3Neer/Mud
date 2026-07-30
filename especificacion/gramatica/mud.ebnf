@@ -233,7 +233,12 @@ unit-property
     ::= "name" , "=" , text-expression
       | "plural" , "=" , text-expression
       | "abbreviation" , "=" , text-expression
-      | "prefixes" , [ "=" , prefix-name , { "," , prefix-name } ]
+      | "prefixes" , "=" , prefix-selection
+      ;
+
+prefix-selection
+    ::= "empty"
+      | "[" , prefix-name , { "," , prefix-name } , "]"
       ;
 
 prefix-name ::= identifier ;
@@ -327,6 +332,7 @@ on-clause
 
 for-participant
     ::= [ "mut" ] , [ role-name , ":" ] , declared-type
+        , [ "in" , domain-expression ]
         , [ collection-specification ]
       ;
 
@@ -345,9 +351,26 @@ given-clause
 given-declaration
     ::= given-name , ":" , declared-type
         , [ "in" , domain-expression ]
-        , [ collection-specification ]
+        , [ given-collection-specification ]
         , [ "=" , constant-expression ]
         ;
+
+given-collection-specification
+    ::= "["
+        , ( cardinality
+            , [ optional-comma , given-collection-modifier
+                , { optional-comma , given-collection-modifier }
+              ]
+          | given-collection-modifier
+            , { optional-comma , given-collection-modifier }
+          )
+        , "]"
+        ;
+
+given-collection-modifier
+    ::= "unique"
+      | "ordered" , [ "by" , order-key-path ]
+      ;
 
 boolean-rule-declaration
     ::= "rule" , nominal-name

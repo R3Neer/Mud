@@ -37,7 +37,7 @@ Reglas reactivas, `always`, `look` y `message` no admiten `given`.
 
 ### Cardinalidad y nombres
 
-Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, además de la especificación completa de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
+Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, un dominio `in` y la especificación completa de colección. El dominio restringe los valores admisibles del rol y se escribe entre el tipo y la especificación de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
 
 Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilidad exterior ni capacidad interior. Puede declarar un predeterminado estático cerrado conforme a D-063.
 
@@ -64,7 +64,7 @@ Un valor básico no ofrece miembros que puedan resolverse implícitamente; por t
 Todo rol `for` cuya cardinalidad no sea exactamente `[1]` debe tener nombre. La colección no proyecta implícitamente los campos de sus miembros: el cuerpo debe emplear el nombre en una cuantificación, agregación o iteración explícita.
 
 ```mud
-rule AllAdults for people: Person [1..*, unique] {
+rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {
     forall person in people: person.age >= 18
 }
 ```
@@ -265,7 +265,7 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 9. Rechazo de cabeceras incompatibles.
 10. Diferencia entre la referencia exacta `World` y un participante `on World` o `for World`.
 11. Reflexividad para una raíz concreta y ausencia de vinculación directa para una raíz abstracta.
-12. Rol `for` colectivo con cardinalidad y cada modificador de colección.
+12. Rol `for` colectivo con dominio, cardinalidad y cada modificador de colección.
 13. Nombre obligatorio para cardinalidad distinta de `[1]` y para mutabilidad exterior.
 14. Receptor colectivo ocupando una sola posición, sin expansión implícita.
 15. Las cuatro combinaciones de mutabilidad exterior e interior.
