@@ -16,6 +16,7 @@ affects:
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 
@@ -27,7 +28,6 @@ MUD utiliza una sola palabra declarativa, `rule`, para tres mecanismos distintos
 
 El AST contiene tres variantes distintas: regla booleana, regla reactiva y regla `always`.
 
-- Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 ### Regla booleana
 
 ```mud
@@ -43,6 +43,8 @@ given
 
 Declara participantes mediante `for`, puede declarar `given`, es pura y devuelve `Bool`. Puede usar cuantificadores, agregaciones booleanas, `allowed` y, cuando el análisis lo admita, `eventually`.
 
+Sus `given` son valores de solo lectura y pueden declarar predeterminados estáticos. Las llamadas los vinculan por posición o por nombre conforme a D-063.
+
 No puede escribir estado, ejecutar efectos, crear, destruir ni leer directamente un campo estocástico calculado. Se consulta explícitamente mediante el protocolo de receptores y argumentos de D-036.
 
 Una regla booleana no efectiva se elabora conforme a la poda estructural de D-022, no como una llamada que devuelve un booleano fijo.
@@ -54,12 +56,12 @@ rule OpenGate on gate: Gate [mut] {
     when gate.unlocked
     if not gate.open
     then gate.open = true
-Sus `given` son valores de solo lectura y pueden declarar predeterminados estáticos. Las llamadas los vinculan por posición o por nombre conforme a D-063.
-
 }
 ```
 
 Declara vinculaciones automáticas mediante `on`, no admite `given`, exige `when`, admite `if` y produce efectos mediante `then`. No ejecuta acciones reales. Puede consultar reglas booleanas y usar `allowed` si el grafo resultante sigue siendo acíclico.
+
+Los roles de una misma cabecera `on` se resuelven conjuntamente y pueden formar restricciones relacionales cíclicas finitas conforme a D-063.
 
 Sea $W_n$ la instantánea leída al comienzo de la onda $n$ y sea $v_n(b,e)$ el valor de la expresión $e$ para la vinculación $b$ en esa instantánea. Para una vinculación que ya posea memoria, un `when e` puramente booleano dispara únicamente cuando:
 
@@ -72,8 +74,6 @@ Por tanto, solo dispara en la transición $\mathsf{false}\longrightarrow\mathsf{
 El sufijo `changes` admite cualquier expresión pura con igualdad definida y produce en la onda $n$ el pulso:
 
 $$
-Los roles de una misma cabecera `on` se resuelven conjuntamente y pueden formar restricciones relacionales cíclicas finitas conforme a D-063.
-
 \operatorname{changes}_n(b,e)
 \iff
 v_{n-1}(b,e)\ne v_n(b,e).

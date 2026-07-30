@@ -16,6 +16,7 @@ affects:
 # ADR-023 — Consolidación de efectos estructurales concurrentes
 
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
+- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Relacionada con: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas relacionadas: [[notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos|Q-002]], [[notas/preguntas/Q-006-conflictos|Q-006]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz|Q-046]]
 - Documentos afectados: futuros capítulos 25, 28, 29 y 31
@@ -29,7 +30,6 @@ Varias reglas pueden solicitar en la misma oleada:
 - Activaciones y destrucciones incompatibles.
 - Adiciones y retiradas sobre una misma estructura.
 
-- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 No siempre es decidible estáticamente si dos reglas producirán efectos en la misma oleada. La semántica tampoco puede depender del orden real en que hilos o estructuras internas recorran los `then`.
 
 Al mismo tiempo, las instrucciones escritas dentro de un único `then` deben conservar su secuencialidad.
@@ -54,6 +54,8 @@ que comienza sobre $W_i$. Una instrucción posterior del mismo `then` puede obse
 
 Ningún `then` observa durante la misma oleada el delta parcial de otro `then`. La implementación puede intercalar o paralelizar su cálculo, pero esa planificación no es observable.
 
+Una vinculación local `nombre [: tipo] := expresión` se evalúa una vez en su posición textual y puede leer la superposición privada producida por instrucciones anteriores del mismo bloque. No produce un delta y las instrucciones posteriores no recalculan su valor, conforme a D-066.
+
 Al terminar todos los bloques, se normaliza cada delta privado y después se consolidan:
 
 $$
@@ -66,8 +68,6 @@ La consolidación produce un único delta tentativo o un conflicto que hace fall
 ## Orden estructural entre bloques
 
 Después de respetar y normalizar el orden interno de cada `then`, los efectos estructurales de bloques distintos se consolidan en este orden:
-
-Una vinculación local `nombre [: tipo] := expresión` se evalúa una vez en su posición textual y puede leer la superposición privada producida por instrucciones anteriores del mismo bloque. No produce un delta y las instrucciones posteriores no recalculan su valor, conforme a D-066.
 
 1. Activaciones `create` supervivientes.
 2. Adiciones supervivientes.

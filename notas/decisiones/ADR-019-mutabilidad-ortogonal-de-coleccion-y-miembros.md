@@ -11,6 +11,7 @@ affects:
 ---
 # ADR-019 — Mutabilidad ortogonal de colección y miembros
 
+- Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
 
 ## Contexto

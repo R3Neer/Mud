@@ -14,6 +14,7 @@ affects:
 # ADR-037 — Campos y dominios declarativos
 
 - Amplía: D-019, D-026
+- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Preguntas relacionadas: Q-003, Q-017
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`
 
@@ -25,7 +26,6 @@ affects:
 name: Text = ""
 mut treasury: Money = 0
 age: Natural in 0..150 [1] = 18
-- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 subjects: Person [* unique]
 maintenanceCost := soldiers * 2
 displayCost: Money := maintenanceCost
@@ -50,6 +50,8 @@ nombre [ : tipo ] := expresión
 
 El `mut` exterior pertenece al lugar almacenado y por eso precede al nombre; no es un constructor ni un calificador del tipo. La forma `nombre: mut tipo` es inválida.
 
+El valor explícito de un campo almacenado es una expresión estática cerrada conforme a D-066. Puede combinar literales, valores nominales y operaciones constantes, pero no consultar estado, participantes, `given`, locales ni actividad del mundo. Se evalúa y normaliza durante la compilación.
+
 La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo estático de la expresión; si se escribe, la expresión debe ser compatible con él y la anotación puede aportar el tipo esperado necesario para elaborar literales contextuales. Cuando una expresión sin anotación no tiene un tipo inferible de forma unívoca, la declaración es un error estático y debe escribirlo.
 
 La inferencia no aplica una prioridad predeterminada entre interpretaciones compatibles. Esto incluye tanto la representación de literales numéricos como las formas contextuales compartidas. Por ejemplo, `[3]` puede elaborar una colección unitaria o el intervalo unitario `[3..3]`: ambas formas se conservan y una declaración calculada sin contexto que permita elegir una sola debe anotar su tipo. La omisión está pensada para los usos comunes en los que las operaciones y dependencias de la expresión determinan un único tipo, no para garantizar que toda expresión aislada sea inferible.
@@ -61,8 +63,6 @@ Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `
 Cuando el contexto de declaración también admita un campo almacenado y la expresión calculada sea estática cerrada, el compilador debe sugerir la forma almacenada inmutable equivalente. La sugerencia es conservadora, no cambia la validez del programa y no autoriza una reescritura automática. No procede si la expresión depende de estado o si almacenarla alteraría sus dependencias o su momento de evaluación.
 
 ### Dominios
-El valor explícito de un campo almacenado es una expresión estática cerrada conforme a D-066. Puede combinar literales, valores nominales y operaciones constantes, pero no consultar estado, participantes, `given`, locales ni actividad del mundo. Se evalúa y normaliza durante la compilación.
-
 
 `in` restringe valores admisibles:
 

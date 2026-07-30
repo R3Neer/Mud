@@ -27,6 +27,8 @@ Un participante ocupa un rol semántico desempeñado por uno o varios valores. D
 
 Un `given` es un valor suministrado como parámetro auxiliar; no ocupa un rol semántico aunque su tipo también pudiera aparecer en `for`.
 
+Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilidad exterior ni capacidad interior. Puede declarar un predeterminado estático cerrado conforme a D-063.
+
 D-025 fija las cabeceras:
 
 - `on`: vinculaciones automáticas e individuales de `thing` para reglas reactivas, `always` y `message`.
@@ -38,8 +40,6 @@ Reglas reactivas, `always`, `look` y `message` no admiten `given`.
 ### Cardinalidad y nombres
 
 Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, un dominio `in` y la especificación completa de colección. El dominio restringe los valores admisibles del rol y se escribe entre el tipo y la especificación de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
-
-Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilidad exterior ni capacidad interior. Puede declarar un predeterminado estático cerrado conforme a D-063.
 
 El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos, además de los nombres ordinariamente visibles:
 

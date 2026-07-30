@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-039 — Colecciones y diccionarios
 
+- Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Amplía: D-019, D-026, D-033
 - Preguntas relacionadas: Q-006, Q-047
 - Documentos afectados: futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`

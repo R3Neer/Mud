@@ -20,6 +20,7 @@ affects:
 
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada además por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documentos afectados: frontera pública, efectos, solicitud de acciones, semántica de la raíz
 
@@ -36,7 +37,6 @@ given
 {
     if kingdom.treasury >= amount * kingdom.recruitmentCost
     otherwise "The kingdom cannot afford {amount} recruits"
-- Modificada además por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
     then {
         kingdom.treasury -= amount * kingdom.recruitmentCost
         kingdom.soldiers += amount

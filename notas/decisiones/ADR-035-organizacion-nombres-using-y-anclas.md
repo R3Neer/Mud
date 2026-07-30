@@ -16,6 +16,7 @@ affects:
 
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
 - Preguntas relacionadas: Q-001, Q-014, Q-054
 - Documentos afectados: futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`
 
@@ -28,7 +29,6 @@ El namespace se deriva de la ruta relativa dentro de la raíz MUD y no se declar
 El archivo es una unidad física, no una unidad de identidad semántica. Cada declaración conserva por separado ancla, dependencias, nodo de grafo, procedencia e historial.
 
 Mover una declaración entre archivos del mismo namespace no cambia su ancla. Moverla a otro namespace sí la cambia, salvo una migración explícita todavía definida por Q-014.
-- Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
 
 ### Declaraciones `using`
 
@@ -38,6 +38,8 @@ Se admiten declaraciones `using` exactas y recursivas:
 using warfare.armies
 using warfare.armies.*
 ```
+
+Todas las declaraciones `using` forman la cabecera del fichero y deben aparecer antes de cualquier declaración de primer nivel. Después de la primera declaración nominal o `start with` no puede aparecer otro `using`. Su orden dentro de la cabecera no introduce alcance secuencial.
 
 Para un nombre no cualificado, la búsqueda sigue:
 
@@ -51,8 +53,6 @@ Una referencia completamente cualificada se resuelve directamente. Si dos candid
 El orden textual de archivos y declaraciones `using` no decide empates.
 
 ### Convenciones de identificadores
-Todas las declaraciones `using` forman la cabecera del fichero y deben aparecer antes de cualquier declaración de primer nivel. Después de la primera declaración nominal o `start with` no puede aparecer otro `using`. Su orden dentro de la cabecera no introduce alcance secuencial.
-
 
 - Namespace: segmentos `lowerCamelCase` separados por puntos.
 - Declaraciones nominales (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `test`, `look` y `message`): `PascalCase`.

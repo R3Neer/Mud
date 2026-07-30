@@ -17,6 +17,8 @@ affects:
 ---
 # ADR-051 — Grafo semántico e IR reconstruibles
 
+- Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-009, Q-016, Q-027, Q-034, Q-054, Q-059
 - Documentos afectados: arquitectura, grafo semántico, IR, conformidad
@@ -39,6 +41,7 @@ El AST conserva forma escrita y procedencia. El IR conserva significado resuelto
 - conservar predeterminados estáticos y modos posicionales o nominales de los `given`, que carecen de capacidades de escritura;
 - normalizar tipos, aliases, dominios, cardinalidades, unidades e intervalos;
 - representar efectos, lecturas, escrituras, llamadas y dependencias;
+- distinguir las vinculaciones locales inmutables de los campos, lugares y efectos, conservando su ámbito y orden de evaluación;
 - conservar referencias a archivo y rango de origen;
 - representar actividad lógica y dependencias suspendidas;
 - incluir `look`, `message` y la evaluación diferida de sus salidas.
@@ -56,7 +59,6 @@ Sus familias de aristas incluyen:
 - activaciones, lecturas, escrituras y diagnósticos pertenecientes a tests;
 - llamadas y vinculaciones de acciones;
 - dependencias de `allowed` y `eventually`;
-- distinguir las vinculaciones locales inmutables de los campos, lugares y efectos, conservando su ámbito y orden de evaluación;
 - `CREATES`, `DESTROYS`, `ADDS_TO` y `REMOVES_FROM`;
 - derivación dimensional, `POINT_OVER` y equivalencias de unidad;
 - dependencias generales, de dominio y estocásticas;

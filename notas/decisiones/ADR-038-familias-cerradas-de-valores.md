@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-038 — Familias cerradas de valores
 
+- Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
+- Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Pregunta relacionada: Q-024
 - Documentos afectados: futuro `13-familias-cerradas.md`
