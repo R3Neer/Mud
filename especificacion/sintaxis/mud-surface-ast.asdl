@@ -1,0 +1,553 @@
+-- MUD 1.0 — AST superficial normalizado
+--
+-- Dialecto ASDL-MUD definido en especificacion/03-notacion.md.
+-- Este esquema es normativo respecto de las distinciones semánticas que
+-- sobreviven al parsing, no respecto de la representación en memoria.
+--
+-- Convenciones:
+--   T?  = cero o un valor T
+--   T*  = secuencia finita ordenada de valores T
+--   identifier, string e int son escalares incorporados.
+--   Todo nodo sintáctico lleva source_origin salvo MudProject.
+
+module MUDSurface {
+
+    -- -----------------------------------------------------------------
+    -- Procedencia y escalares comunes
+    -- -----------------------------------------------------------------
+
+    flag = Disabled | Enabled
+
+    source_position = (int byte_offset, int line, int column)
+
+    source_span = (source_id source,
+                   source_position start,
+                   source_position end)
+
+    source_origin = Written(source_span span)
+                  | Synthetic(source_span anchor, synthetic_reason reason)
+
+    synthetic_reason = OmittedDefault
+                     | NormalizedSugar
+                     | ImplicitTextEnd
+                     | RecoveryInsertion
+                     | ProjectAggregation
+
+    source_id = (string normalized_path)
+
+    file_metadata = (source_id source,
+                     string relative_path,
+                     namespace_path namespace,
+                     flag had_bom,
+                     newline_style newline_style)
+
+    newline_style = LF | CRLF | CR | MixedNewlines | NoNewline
+
+    -- -----------------------------------------------------------------
+    -- Raíces
+    -- -----------------------------------------------------------------
+
+    project = MudProject(source_file* files)
+
+    source_file = MudFile(file_metadata metadata,
+                          using_decl* usings,
+                          top_level_decl* declarations)
+        attributes (source_origin origin)
+
+    using_decl = UsingDecl(namespace_path path, flag recursive)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Nombres todavía no resueltos
+    -- -----------------------------------------------------------------
+
+    namespace_path = (lower_name* segments)
+        attributes (source_origin origin)
+
+    qualified_name = (identifier_name first,
+                      identifier_name* remaining)
+        attributes (source_origin origin)
+
+    order_key_path = (field_name first,
+                      field_name* remaining)
+        attributes (source_origin origin)
+
+    nominal_name = (identifier text)
+        attributes (source_origin origin)
+
+    lower_name = (identifier text)
+        attributes (source_origin origin)
+
+    identifier_name = (identifier text)
+        attributes (source_origin origin)
+
+    member_name = (identifier text)
+        attributes (source_origin origin)
+
+    field_name = (identifier text)
+        attributes (source_origin origin)
+
+    role_name = (identifier text)
+        attributes (source_origin origin)
+
+    given_name = (identifier text)
+        attributes (source_origin origin)
+
+    component_name = (identifier text)
+        attributes (source_origin origin)
+
+    variable_name = (identifier text)
+        attributes (source_origin origin)
+
+    declaration_ref = (qualified_name name)
+        attributes (source_origin origin)
+
+    type_ref = (qualified_name name)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Declaraciones de primer nivel
+    -- -----------------------------------------------------------------
+
+    top_level_decl = ThingDecl(flag is_abstract,
+                               nominal_name name,
+                               type_ref* direct_ancestors,
+                               string? intrinsic_name_override,
+                               field_decl* fields)
+                   | AliasDecl(nominal_name name, alias_body body)
+                   | FamilyDecl(flag is_ordered,
+                                nominal_name name,
+                                family_data_decl* data,
+                                family_member first_member,
+                                family_member* remaining_members)
+                   | BaseMagnitudeDecl(nominal_name name,
+                                       declared_type? representation,
+                                       interval_expr? domain,
+                                       root_unit_decl? root_unit,
+                                       alternative_unit_decl* units)
+                   | DerivedMagnitudeDecl(nominal_name name,
+                                          declared_type? representation,
+                                          interval_expr? domain,
+                                          dimension_expr dimension,
+                                          alternative_unit_decl* units)
+                   | PointMagnitudeDecl(nominal_name name,
+                                        type_ref coordinate_type,
+                                        point_domain? domain,
+                                        expr? format)
+                   | BooleanRuleDecl(nominal_name name,
+                                     for_clause? participants,
+                                     given_clause? givens,
+                                     expr condition)
+                   | ReactiveRuleDecl(nominal_name name,
+                                      on_clause? participants,
+                                      expr activator,
+                                      expr? guard,
+                                      effect_block effects)
+                   | AlwaysRuleDecl(nominal_name name,
+                                    on_clause? participants,
+                                    expr invariant,
+                                    expr? diagnostic)
+                   | ActionDecl(nominal_name name,
+                                for_clause? participants,
+                                given_clause? givens,
+                                action_guard? guard,
+                                effect_block effects,
+                                action_postcondition? postcondition)
+                   | LookDecl(nominal_name name,
+                              for_clause? participants,
+                              public_field_decl* fields)
+                   | MessageDecl(nominal_name name,
+                                 on_clause? participants,
+                                 expr activator,
+                                 expr? guard,
+                                 public_field_decl* fields)
+                   | TestDecl(nominal_name name,
+                              start_set start,
+                              effect_block effects,
+                              test_assertion first_assertion,
+                              test_assertion* remaining_assertions)
+                   | GlobalStartDecl(start_set start)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Campos, aliases y familias
+    -- -----------------------------------------------------------------
+
+    stored_field_data = (flag collection_mutable,
+                         field_name name,
+                         value_shape shape,
+                         expr? default_value)
+        attributes (source_origin origin)
+
+    field_decl = StoredFieldDecl(stored_field_data field)
+               | CalculatedFieldDecl(field_name name,
+                                     declared_type? annotation,
+                                     expr value)
+        attributes (source_origin origin)
+
+    public_field_decl = PublicFieldDecl(field_name name,
+                                        declared_type? annotation,
+                                        expr value)
+        attributes (source_origin origin)
+
+    alias_body = AliasOf(type_expr target)
+               | StructuralAlias(alias_component first_component,
+                                 alias_component* remaining_components)
+        attributes (source_origin origin)
+
+    alias_component = AliasComponent(component_name name,
+                                     value_shape shape,
+                                     expr? default_value)
+        attributes (source_origin origin)
+
+    family_data_decl = StoredFamilyDataDecl(field_name name,
+                                            value_shape shape,
+                                            expr? default_value)
+                     | CalculatedFamilyDataDecl(field_name name,
+                                                declared_type? annotation,
+                                                expr value)
+        attributes (source_origin origin)
+
+    family_member = FamilyMember(member_name name,
+                                 family_data_assignment* assignments)
+        attributes (source_origin origin)
+
+    family_data_assignment = FamilyDataAssignment(field_name name,
+                                                   expr value)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Tipos, dominios y colecciones
+    -- -----------------------------------------------------------------
+
+    declared_type = NamedType(type_ref name)
+                  | IntervalType(type_ref element_type)
+                  | DictionaryType(type_ref key_type, type_expr value_type)
+        attributes (source_origin origin)
+
+    type_expr = TypeExpr(declared_type type,
+                         expr? domain,
+                         collection_spec collection)
+        attributes (source_origin origin)
+
+    value_shape = (declared_type type,
+                   expr? domain,
+                   collection_spec collection)
+        attributes (source_origin origin)
+
+    readonly_value_shape = (declared_type type,
+                            expr? domain,
+                            readonly_collection_spec collection)
+        attributes (source_origin origin)
+
+    collection_spec = (cardinality cardinality,
+                       flag is_unique,
+                       collection_order order,
+                       flag elements_mutable)
+        attributes (source_origin origin)
+
+    readonly_collection_spec = (cardinality cardinality,
+                                flag is_unique,
+                                collection_order order)
+        attributes (source_origin origin)
+
+    cardinality = (cardinality_bound lower, cardinality_bound upper)
+        attributes (source_origin origin)
+
+    cardinality_bound = FiniteCardinality(int value)
+                      | EffectiveCardinality
+        attributes (source_origin origin)
+
+    collection_order = Unordered
+                     | InsertionOrdered
+                     | OrderedBy(order_key_path key)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Participantes y givens
+    -- -----------------------------------------------------------------
+
+    for_clause = ForClause(for_participant first, for_participant* remaining)
+        attributes (source_origin origin)
+
+    on_clause = OnClause(on_participant first, on_participant* remaining)
+        attributes (source_origin origin)
+
+    given_clause = GivenClause(given_decl first, given_decl* remaining)
+        attributes (source_origin origin)
+
+    for_participant = ForParticipant(flag collection_mutable,
+                                     role_name? name,
+                                     value_shape shape)
+        attributes (source_origin origin)
+
+    on_participant = DirectOnParticipant(role_name? name,
+                                         type_ref type,
+                                         flag elements_mutable)
+                   | RelatedOnParticipant(role_name name,
+                                          type_ref? refinement,
+                                          expr source,
+                                          flag elements_mutable)
+        attributes (source_origin origin)
+
+    given_decl = GivenDecl(given_name name,
+                           readonly_value_shape shape,
+                           expr? default_value)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Magnitudes y unidades
+    -- -----------------------------------------------------------------
+
+    point_domain = OrdinaryPointDomain(interval_expr interval)
+                 | CyclicPointDomain(interval_expr interval)
+        attributes (source_origin origin)
+
+    root_unit_decl = RootUnitDecl(unit_properties properties)
+        attributes (source_origin origin)
+
+    alternative_unit_decl = AlternativeUnitDecl(quantity_expr equivalence,
+                                                 unit_properties properties)
+        attributes (source_origin origin)
+
+    unit_properties = (expr name,
+                       expr? plural,
+                       expr abbreviation,
+                       prefix_policy prefixes)
+        attributes (source_origin origin)
+
+    prefix_policy = AllPrefixes
+                  | NoPrefixes
+                  | SelectedPrefixes(identifier_name first,
+                                     identifier_name* remaining)
+        attributes (source_origin origin)
+
+    dimension_expr = DimensionProduct(dimension_term first,
+                                      dimension_link* rest)
+        attributes (source_origin origin)
+
+    dimension_link = (dimension_operator operator, dimension_term term)
+        attributes (source_origin origin)
+
+    dimension_operator = MultiplyDimension | DivideDimension
+
+    dimension_term = DimensionType(type_ref type)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Cuerpos, condiciones y tests
+    -- -----------------------------------------------------------------
+
+    action_guard = ActionGuard(expr condition, expr? diagnostic)
+        attributes (source_origin origin)
+
+    action_postcondition = ActionPostcondition(expr condition,
+                                               expr? diagnostic)
+        attributes (source_origin origin)
+
+    effect_block = EffectBlock(local_value_decl* leading_locals,
+                               effect first_effect,
+                               then_statement* remaining_statements)
+        attributes (source_origin origin)
+
+    then_statement = EffectStatement(effect value)
+                   | LocalValueStatement(local_value_decl value)
+        attributes (source_origin origin)
+
+    local_value_decl = LocalValueDecl(variable_name name,
+                                      declared_type? annotation,
+                                      expr value)
+        attributes (source_origin origin)
+
+    start_set = StartSet(declaration_ref* declarations)
+        attributes (source_origin origin)
+
+    test_assertion = TestAssertion(expr condition, expr? diagnostic)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Efectos
+    -- -----------------------------------------------------------------
+
+    effect = AssignmentEffect(assignable_expr target,
+                              assignment_operator operator,
+                              expr value)
+           | AddValueEffect(expr value, assignable_expr target)
+           | AddFieldEffect(stored_field_data field, declaration_ref target)
+           | RemoveEffect(expr value, assignable_expr target)
+           | CreateEffect(declaration_ref target)
+           | DestroyEffect(declaration_ref target)
+           | ActionCallCandidateEffect(expr candidate)
+           | ForEachEffect(iteration_binding binding,
+                           expr source,
+                           expr? order_key,
+                           expr? guard,
+                           effect_block body)
+        attributes (source_origin origin)
+
+    assignment_operator = Assign
+                        | AddAssign
+                        | SubtractAssign
+                        | MultiplyAssign
+                        | DivideAssign
+
+    iteration_binding = ValueIterationBinding(variable_name value)
+                      | DictionaryIterationBinding(variable_name key,
+                                                   variable_name value)
+        attributes (source_origin origin)
+
+    assignable_expr = AssignableExpr(expr base, access_suffix* accesses)
+        attributes (source_origin origin)
+
+    access_suffix = MemberSuffix(identifier_name member)
+                  | IndexSuffix(expr first_index, expr* remaining_indices)
+        attributes (source_origin origin)
+
+    -- -----------------------------------------------------------------
+    -- Expresiones
+    -- -----------------------------------------------------------------
+
+    expr = DottedPathExpr(identifier_name first,
+                          identifier_name* remaining)
+         | ExactNumberLiteral(string canonical)
+         | RumberLiteral(string canonical)
+         | PointLiteral(string source_form)
+         | BoolLiteral(flag value)
+         | EmptyLiteral
+         | TextTemplateExpr(text_part* parts)
+         | CollectionLiteralExpr(expr* elements)
+         | PositionalStructuralLiteralExpr(expr first,
+                                           expr second,
+                                           expr* remaining)
+         | NamedStructuralLiteralExpr(named_structural_element first,
+                                      named_structural_element* remaining)
+         | IntervalValueExpr(interval_expr interval)
+         | QuantityValueExpr(quantity_expr quantity)
+         | PointComponentExpr(unit_expr extracted,
+                              unit_expr container,
+                              expr receiver)
+         | ContextualPointComponentExpr(unit_expr extracted,
+                                        unit_expr container)
+         | RandomExpr(expr domain)
+         | QuantifierExpr(quantifier_kind kind,
+                          variable_name variable,
+                          expr source,
+                          expr body)
+         | EventuallyExpr(expr condition, action_ref first_action, action_ref* remaining_actions)
+         | ChangesExpr(expr value)
+         | PrefixExpr(prefix_operator operator, expr operand)
+         | BinaryExpr(expr left, binary_operator operator, expr right)
+         | ComparisonChainExpr(expr first,
+                               comparison_link first_comparison,
+                               comparison_link* remaining_comparisons)
+         | ConversionExpr(expr value, conversion_target target)
+         | MemberAccessExpr(expr receiver, identifier_name member)
+         | IndexExpr(expr receiver,
+                     expr first_index,
+                     expr* remaining_indices)
+         | CallExpr(expr callee,
+                    expr* positional_arguments,
+                    named_call_argument* named_arguments)
+        attributes (source_origin origin)
+
+    named_structural_element = NamedStructuralElement(component_name name,
+                                                       expr value)
+        attributes (source_origin origin)
+
+    named_call_argument = NamedCallArgument(given_name name, expr value)
+        attributes (source_origin origin)
+
+    action_ref = UnqualifiedActionRef(qualified_name name)
+               | ReceiverActionRef(expr receiver, qualified_name name)
+        attributes (source_origin origin)
+
+    text_part = TextFragment(string decoded_text)
+              | ValueInterpolation(expr value, numeric_text_format? format)
+              | AnchorInterpolation(expr designator)
+        attributes (source_origin origin)
+
+    numeric_text_format = NumericTextFormat(int? minimum_integer_width,
+                                            int? fractional_width)
+        attributes (source_origin origin)
+
+    prefix_operator = LogicalNot
+                    | UnaryPlus
+                    | UnaryMinus
+                    | OldValue
+                    | AllowedQuery
+
+    binary_operator = Biconditional
+                    | Implication
+                    | WordXor
+                    | SymbolXor
+                    | WordOr
+                    | SymbolOr
+                    | WordAnd
+                    | SymbolAnd
+                    | Add
+                    | Subtract
+                    | Multiply
+                    | Divide
+                    | Remainder
+
+    comparison_operator = Equal
+                        | NotEqual
+                        | Less
+                        | LessOrEqual
+                        | Greater
+                        | GreaterOrEqual
+                        | IsRelation
+                        | Membership
+
+    comparison_link = (comparison_operator operator, expr operand)
+        attributes (source_origin origin)
+
+    conversion_target = TypeConversion(type_ref target)
+                      | UnitConversion(unit_expr target)
+        attributes (source_origin origin)
+
+    quantifier_kind = Exists
+                    | ForAll
+                    | Count
+                    | Sum
+                    | Minimum
+                    | Maximum
+
+    -- -----------------------------------------------------------------
+    -- Intervalos, cantidades y unidades
+    -- -----------------------------------------------------------------
+
+    interval_expr = Interval(interval_bound lower,
+                             boundary_kind lower_boundary,
+                             interval_bound upper,
+                             boundary_kind upper_boundary,
+                             unit_expr? shared_unit,
+                             flag cyclic)
+                  | EmptyInterval(unit_expr? shared_unit)
+        attributes (source_origin origin)
+
+    interval_bound = FiniteIntervalBound(expr value)
+                   | EffectiveIntervalBound
+        attributes (source_origin origin)
+
+    boundary_kind = OpenBoundary | ClosedBoundary
+
+    quantity_expr = Quantity(number_literal value, unit_expr unit)
+        attributes (source_origin origin)
+
+    number_literal = ExactQuantityNumber(string canonical)
+                   | RumberQuantityNumber(string canonical)
+        attributes (source_origin origin)
+
+    unit_expr = UnitProduct(unit_term first, unit_link* rest)
+        attributes (source_origin origin)
+
+    unit_link = (unit_operator operator, unit_term term)
+        attributes (source_origin origin)
+
+    unit_operator = MultiplyUnit | DivideUnit
+
+    unit_term = UnitForm(string source_form)
+              | UnitName(identifier_name name)
+        attributes (source_origin origin)
+}

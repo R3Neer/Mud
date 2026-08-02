@@ -190,7 +190,8 @@ Define:
 - Plantillas `Text` ordinarias y multilínea, interpolaciones, escapes y `anchor{...}` contextual.
 - Comentarios `#`, `#...#` y `###...###`.
 - Espacio en blanco.
-- Tokens y errores léxicos.
+- Tokens, trivia, spans y errores léxicos.
+- Flujo completo y vista significativa.
 
 La gramática léxica ejecutable vivirá en `gramatica/mud-lexico.ebnf`.
 
@@ -216,24 +217,25 @@ Define la sintaxis completa de:
 - Formatos numéricos dentro de interpolaciones `Text`.
 - Cuantificadores e iteraciones.
 
-La gramática completa ejecutable vivirá en `gramatica/mud.ebnf`. Este capítulo explicará ambigüedades, precedencia y desazucarado, pero no repetirá toda la EBNF.
+La gramática completa ejecutable vive en `gramatica/mud.ebnf`. El parsing produce una CST sin pérdidas; este capítulo explica ambigüedades, precedencia, validación contextual y la frontera con el desazucarado, pero no repite toda la EBNF.
 
-## 08. Sintaxis abstracta
+## 08. Sintaxis abstracta superficial
 
-Archivo previsto: `08-sintaxis-abstracta.md`
+Capítulo: [[08-sintaxis-abstracta]].
 
-Define las formas semánticamente relevantes después del parsing:
+Define las formas semánticamente relevantes después de la CST y de la validación sintáctica contextual:
 
-- AST de declaraciones.
-- AST de tipos y dominios.
-- AST de expresiones.
-- AST de efectos.
-- Distinción entre definición canónica, conjunto inicial de activaciones y referencia de activación runtime.
+- Raíces `MudFile` y `MudProject`.
+- AST de declaraciones, tipos, dominios, expresiones y efectos.
+- Normalización de cardinalidades, intervalos, bloques y literales contextuales.
 - Distinción estructural entre las tres clases de regla.
-- Distinción entre acciones elementales y compuestas.
+- `ActionDecl` superficial sin clasificar todavía como elemental o compuesta.
 - Nodo propio `TestDecl` y aserciones con diagnóstico opcional.
 - Nodos propios para `look`, `message` y propiedades públicas.
-- Azúcares sintácticos y forma núcleo.
+- Procedencia mediante `SourceOrigin`.
+- Ambigüedades que se conservan hasta resolución.
+
+Artefactos mecánicos y de transformación: `sintaxis/`.
 
 ## 09. Namespaces, `using`, nombres y anclas
 
@@ -1026,6 +1028,21 @@ tooling/
 
 La separación evita que una decisión de arquitectura se convierta accidentalmente en una regla de MUD.
 
+## Artefactos sintácticos verificables
+
+El subdirectorio `sintaxis/` contiene el contrato de CST, el ASDL superficial, la transformación, la cobertura producción por producción y su validador editorial.
+
+```text
+sintaxis/
+├── cst-sin-perdidas.md
+├── mud-syntax-kinds.yaml
+├── mud-surface-ast.asdl
+├── cst-a-ast-superficial.md
+├── cobertura-sintactica.yaml
+├── validate_syntax_model.py
+└── casos/
+```
+
 ## Dependencias principales
 
 ```text
@@ -1036,7 +1053,7 @@ notación
    │       ├──► tipos y valores
    │       └──► estado y efectos
    │
-léxico ─► gramática ─► sintaxis abstracta
+léxico ─► CST sin pérdidas ─► AST superficial
                          │
               ┌──────────┴──────────┐
               ▼                     ▼
@@ -1087,7 +1104,7 @@ MUD 1.0 estará formalmente especificado cuando:
 3. Todo programa estáticamente válido tenga un comportamiento definido o un fallo explícitamente definido.
 4. Toda interacción entre características esté cubierta o prohibida.
 5. Todas las cuestiones abiertas de MUD 1.0 estén resueltas.
-6. La gramática y el esquema IR sean verificables automáticamente.
+6. La gramática, la cobertura CST/AST y el esquema IR sean verificables automáticamente.
 7. Exista una suite de conformidad representativa.
 8. Las propiedades prometidas estén demostradas o delimitadas mediante hipótesis explícitas.
 9. Los ejemplos integrales no dependan de comportamiento implícito.

@@ -12,7 +12,8 @@ depends-on:
   - "[[01-alcance-y-conformidad]]"
   - "[[02-terminologia]]"
 questions: []
-decisions: []
+decisions:
+  - D-070
 ---
 
 # 03. Notación matemática y metalenguaje
@@ -474,7 +475,47 @@ Los símbolos EBNF pertenecen al metalenguaje. Cuando uno de ellos sea también 
 
 La ausencia de ambigüedad no se presume por haber escrito una EBNF. El capítulo de gramática deberá fijar además precedencia, asociatividad y cualquier restricción contextual necesaria.
 
-## 13. Ausencia, indefinición y resultados
+## 13. ASDL-MUD
+
+El AST superficial se describe mediante un dialecto ASDL explícito.
+
+| Forma | Significado |
+|---|---|
+| `t = C(a x) \| D` | Tipo suma con constructores. |
+| `t = (a x, b y)` | Tipo producto. |
+| `T?` | Cero o un valor. |
+| `T*` | Secuencia finita ordenada. |
+| `attributes (...)` | Atributos comunes de todos los constructores del tipo. |
+
+Escalares incorporados:
+
+- `identifier`: texto ya validado como identificador léxico.
+- `string`: cadena Unicode.
+- `int`: entero matemático no acotado en el esquema.
+
+MUD añade el tipo declarado:
+
+```asdl
+flag = Disabled | Enabled
+```
+
+ASDL describe distinciones normativas, no una disposición concreta de memoria. Una implementación puede usar índices, referencias, interning o estructuras compactas si conserva el mismo contenido observable.
+
+## 14. Notación de CST
+
+El catálogo CST usa las nociones:
+
+```text
+SyntaxNode(kind, children, span, fullSpan)
+SyntaxToken(kind, text, leadingTrivia, span, fullSpan, origin)
+SyntaxTrivia(kind, text, span)
+```
+
+Una categoría terminada en `Syntax` corresponde a una producción o a un nodo especial de recuperación. La CST conserva tokens y trivia; el AST no.
+
+`SourceSpan` usa posiciones basadas en cero, offsets en bytes UTF-8 y extremo final exclusivo. La columna cuenta valores escalares Unicode.
+
+## 15. Ausencia, indefinición y resultados
 
 La especificación distinguirá siempre:
 
@@ -487,7 +528,7 @@ La especificación distinguirá siempre:
 
 Ninguna de estas situaciones se identificará con otra sin una regla explícita.
 
-## 14. Disciplina de uso
+## 16. Disciplina de uso
 
 Todo capítulo deberá:
 
@@ -500,7 +541,7 @@ Todo capítulo deberá:
 7. Declarar si una colección es conjunto, secuencia o multiconjunto.
 8. Explicar cualquier sobrecarga de notación.
 
-## 15. Notación pendiente de introducción
+## 17. Notación pendiente de introducción
 
 Los órdenes parciales, puntos fijos, medidas de probabilidad y variables aleatorias se definirán cuando un capítulo normativo los necesite por primera vez. Hasta entonces no se fija una notación propia para ellos.
 

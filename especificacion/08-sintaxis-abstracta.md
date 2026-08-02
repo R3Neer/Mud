@@ -1,0 +1,660 @@
+---
+title: Sintaxis abstracta superficial
+aliases:
+  - AST superficial
+  - Surface AST
+tags:
+  - mud/especificacion
+  - mud/sintaxis
+status: propuesta
+normative: true
+depends-on:
+  - 03-notacion
+  - 05-texto-fuente
+  - 06-lexico
+  - 07-gramatica-concreta
+  - sintaxis/cst-sin-perdidas
+  - sintaxis/mud-surface-ast.asdl
+questions: []
+decisions:
+  - D-070
+---
+
+# 08. Sintaxis abstracta superficial
+
+## Estado y propósito
+
+Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva las distinciones sintácticas que afectan a fases posteriores y elimina puntuación, trivia, agrupaciones concretas y azúcares cuya interpretación no depende de resolución de nombres o tipos.
+
+El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
+
+## Cadena de representaciones
+
+```text
+texto fuente
+→ tokens y trivia
+→ CST sin pérdidas
+→ validación sintáctica contextual
+→ AST superficial normalizado
+→ resolución de nombres
+→ AST resuelto
+→ tipado y elaboración
+→ IR
+```
+
+> [!rule] MUD-AST-001 — Responsabilidad superficial
+> El AST superficial no contiene símbolos resueltos, anclas, tipos inferidos, efectos calculados ni decisiones que dependan de una declaración encontrada por nombre.
+
+> [!rule] MUD-AST-002 — Normalización
+> Dos formas concretas declaradas equivalentes por este capítulo producen la misma forma AST, salvo su procedencia.
+
+## Relación con la CST
+
+La CST conserva:
+
+- Palabras clave.
+- Delimitadores.
+- Comas y terminadores.
+- Paréntesis de agrupación.
+- Comentarios y espacios.
+- Escritura exacta de literales.
+- Tokens ausentes o inesperados de recuperación.
+
+El AST conserva:
+
+- Categoría de declaración.
+- Nombres escritos, todavía sin resolver.
+- Orden fuente de listas semánticamente relevantes.
+- Dominios, cardinalidades y permisos.
+- Estructura de expresiones y efectos.
+- Diferencias léxicas que tienen significado, como `and` frente a `&`.
+- Procedencia suficiente para diagnósticos y transformaciones.
+
+Un archivo con errores sintácticos puede tener CST sin producir un AST completo.
+
+## Raíces
+
+### `MudProject`
+
+`MudProject` agrega los archivos que forman una compilación. No procede de una producción de un único archivo y no posee un `SourceSpan` único.
+
+Sus archivos se serializan canónicamente por `relativePath` normalizada. Esa ordenación no modifica el orden interno de cada archivo ni atribuye significado semántico al orden físico de archivos.
+
+### `MudFile`
+
+Cada `MudFile` contiene:
+
+- Metadatos físicos.
+- La lista de `using`.
+- La lista de declaraciones de primer nivel.
+
+Los `using` se almacenan separados de las declaraciones porque la gramática exige que formen una cabecera. Ambos grupos conservan su orden fuente.
+
+El namespace derivado de la ruta es metadato y no una declaración AST.
+
+## Procedencia
+
+Todos los nodos salvo `MudProject` poseen `SourceOrigin`:
+
+```text
+Written(span)
+Synthetic(anchor, reason)
+```
+
+`Written` indica una región concreta. `Synthetic` se usa para elementos introducidos por normalización, como una cardinalidad omitida que se convierte en `[1..1]`.
+
+Las posiciones:
+
+- Comienzan en cero.
+- Usan offsets de bytes UTF-8.
+- Tienen extremo final exclusivo.
+- Cuentan columnas mediante valores escalares Unicode.
+
+## Nombres
+
+El AST usa wrappers distintos para evitar mezclar categorías antes de la resolución:
+
+- `NamespacePath`.
+- `QualifiedName`.
+- `NominalName`.
+- `FieldName`.
+- `MemberName`.
+- `RoleName`.
+- `GivenName`.
+- `ComponentName`.
+- `VariableName`.
+- `TypeRef`.
+- `DeclarationRef`.
+
+La capitalización se valida según el contexto, pero el texto original del identificador se conserva.
+
+### Caminos con punto
+
+Una secuencia de identificadores enlazados exclusivamente mediante `.` se representa como `DottedPathExpr`. La resolución posterior decidirá si sus segmentos denotan:
+
+- Namespace y declaración.
+- Declaración y miembro.
+- Participante y campo.
+- Una combinación de los anteriores.
+
+Cuando la cadena contiene llamadas, índices u otros postfix, se usan `MemberAccessExpr`, `IndexExpr` y `CallExpr`.
+
+## Flags
+
+ASDL-MUD define:
+
+```text
+flag = Disabled | Enabled
+```
+
+Se usa para propiedades conceptualmente booleanas como:
+
+- `isAbstract`.
+- `isOrdered` de una `family`.
+- Mutabilidad exterior.
+- Capacidad sobre miembros.
+- Unicidad.
+- Ciclicidad de un intervalo.
+
+No se representa mediante enteros ni strings.
+
+## Declaraciones de `thing`
+
+Una `ThingDecl` contiene:
+
+- `isAbstract`.
+- Nombre.
+- Antecesores directos en orden fuente.
+- Sobrescritura opcional del `name` intrínseco, ya decodificada.
+- Campos.
+
+El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prioridad semántica no elimina su valor como procedencia, formato y diagnóstico.
+
+El cuerpo contiene como máximo una sobrescritura `name = "literal"` y los campos. El `name` intrínseco no se convierte en campo, no se hereda y no forma parte del store.
+
+## Campos
+
+### Campo almacenado
+
+```text
+StoredFieldDecl(
+    collectionMutable,
+    name,
+    shape,
+    defaultValue?
+)
+```
+
+`ValueShape` contiene:
+
+- Tipo declarado.
+- Dominio opcional.
+- Especificación de colección normalizada.
+
+### Campo calculado
+
+```text
+CalculatedFieldDecl(name, annotation?, value)
+```
+
+No contiene mutabilidad, dominio ni colección adicionales. La anotación es opcional y la inferencia pertenece al tipado.
+
+### Campos públicos
+
+`PublicFieldDecl` comparte la forma calculada, pero conserva una categoría propia porque pertenece a la interfaz de `look` y `message`.
+
+## Forma de valor
+
+`ValueShape` es una estructura reutilizada por:
+
+- Campos almacenados.
+- Componentes de alias.
+- Datos almacenados de `family`.
+- Participantes `for`.
+
+Contiene tipo, dominio y colección, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
+
+`GivenDecl` usa `ReadonlyValueShape`, que no puede representar capacidad interior `mut`.
+
+## Tipos
+
+### Tipo nominal
+
+```text
+NamedType(TypeRef)
+```
+
+Incluye tanto tipos incorporados como tipos declarados por el programa. Que un nombre sea `Nat`, una `thing`, una `family`, un alias o una magnitud se decide después.
+
+### Diccionario
+
+```text
+DictionaryType(keyType, valueTypeExpression)
+```
+
+El valor conserva su `TypeExpr`, por lo que puede contener dominio y colección propios. La colección escrita después del diccionario completo pertenece al `TypeExpr` exterior.
+
+Los paréntesis exigidos por la gramática para un diccionario anidado no sobreviven al AST.
+
+## Colecciones
+
+La forma normalizada es:
+
+```text
+CollectionSpec(
+    cardinality,
+    isUnique,
+    order,
+    elementsMutable
+)
+```
+
+El orden es una suma:
+
+```text
+Unordered
+InsertionOrdered
+OrderedBy(path)
+```
+
+No se usa una combinación de booleano más ruta opcional porque permitiría estados inválidos.
+
+### Cardinalidad
+
+Toda colección posee una cardinalidad explícita en el AST:
+
+- Omisión → `[1..1]` sintético.
+- `[a]` → `[a..a]`.
+- `[*]` → `[*..*]`.
+- `[a..b]` conserva ambos extremos.
+
+Un extremo `*` permanece como `EffectiveCardinality` en el AST superficial. La elaboración posterior aplica su valor efectivo según el lado y el contexto.
+
+### Modificadores duplicados
+
+La CST puede representar `unique unique`; la validación previa al AST lo rechaza. El AST solo contiene una propiedad `isUnique`.
+
+## Aliases
+
+`AliasDecl` tiene dos cuerpos:
+
+```text
+AliasOf(TypeExpr)
+StructuralAlias(AliasComponent*)
+```
+
+Un componente estructural:
+
+- No admite mutabilidad exterior.
+- Puede contener capacidad interior `[mut]` en su colección.
+- Puede tener dominio y predeterminado estático.
+- No puede ser calculado.
+
+Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto.
+
+## Familias
+
+`FamilyDecl` contiene:
+
+- Flag de orden por declaración.
+- Datos almacenados o calculados.
+- Miembros.
+
+Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas.
+
+Cada `FamilyMember` contiene únicamente asignaciones a datos almacenados. Un bloque omitido produce una secuencia vacía.
+
+## Magnitudes
+
+Existen constructores separados:
+
+- `BaseMagnitudeDecl`.
+- `DerivedMagnitudeDecl`.
+- `PointMagnitudeDecl`.
+
+La representación numérica opcional se almacena mediante `DeclaredType`, no mediante una enumeración cerrada. Una regla estática posterior exige que el tipo resuelto sea una representación numérica permitida.
+
+### Dimensiones
+
+Las expresiones dimensionales usan nodos propios y no expresiones aritméticas generales:
+
+```text
+DimensionProduct(first, links)
+DimensionLink(MultiplyDimension | DivideDimension, term)
+```
+
+### Unidades
+
+Una unidad raíz y una alternativa son variantes diferentes porque la segunda posee equivalencia cuantitativa.
+
+Las propiedades se normalizan a una estructura fija:
+
+- `name` obligatorio.
+- `plural` opcional.
+- `abbreviation` obligatoria.
+- Política de prefijos.
+
+La ausencia de `plural` se conserva; no se sintetiza en el AST superficial.
+
+La política de prefijos es:
+
+- Propiedad omitida → `AllPrefixes`.
+- `prefixes = empty` → `NoPrefixes`.
+- `prefixes = [p1, ...]` → `SelectedPrefixes`.
+
+Propiedades duplicadas o requeridas ausentes se rechazan antes de construir el AST.
+
+## Participantes
+
+### `for`
+
+`ForParticipant` contiene:
+
+- Mutabilidad exterior.
+- Nombre opcional.
+- `ValueShape` completo.
+
+No admite predeterminado.
+
+### `on`
+
+Hay dos variantes:
+
+```text
+DirectOnParticipant(name?, type, elementsMutable)
+RelatedOnParticipant(name, refinement?, source, elementsMutable)
+```
+
+Las referencias entre participantes, incluidas referencias adelantadas y ciclos, se conservan como expresiones. Su resolución conjunta no pertenece al AST superficial.
+
+### `given`
+
+`GivenDecl` contiene:
+
+- Nombre obligatorio.
+- Forma de valor de solo lectura.
+- Predeterminado opcional.
+
+No puede representar mutabilidad exterior ni interior.
+
+### Cláusulas
+
+`ForClause`, `OnClause` y `GivenClause` son nodos propios. Una cláusula omitida es ausencia, no una cláusula sintética vacía.
+
+## Reglas
+
+Las tres clases tienen constructores distintos:
+
+- `BooleanRuleDecl`.
+- `ReactiveRuleDecl`.
+- `AlwaysRuleDecl`.
+
+Una regla reactiva almacena:
+
+- Activador `when`.
+- Guardia `if` opcional.
+- Bloque de efectos.
+
+`changes` es un nodo de expresión, no una variante separada de cláusula `when`.
+
+Una regla `always` puede omitir `otherwise`; el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
+
+## Acciones
+
+El AST superficial usa un único `ActionDecl`.
+
+La clasificación como elemental o compuesta requiere resolver los `ActionCallCandidateEffect`; por ello pertenece al AST resuelto. La forma superficial no inventa una clasificación basada únicamente en la apariencia de un `postfix-expression`.
+
+Una acción contiene:
+
+- Participantes `for` opcionales.
+- `given` opcionales.
+- Guardia opcional y diagnóstico.
+- Bloque de efectos.
+- Postcondición `after` opcional y diagnóstico.
+
+## `look` y `message`
+
+`LookDecl` conserva participantes `for` y propiedades públicas.
+
+`MessageDecl` conserva participantes `on`, activador, guardia opcional y propiedades públicas.
+
+No se reducen a reglas o acciones genéricas porque sus contratos posteriores son distintos.
+
+## Tests
+
+`TestDecl` contiene:
+
+- Conjunto inicial local.
+- Bloque de efectos.
+- Una secuencia no vacía de aserciones.
+
+La forma `after expr` y la forma `after { ... }` producen la misma secuencia de `TestAssertion`.
+
+`start with` global y local comparten `StartSet`, pero solo el primero está envuelto en `GlobalStartDecl`.
+
+## Bloques de efectos
+
+Un `then` con un único efecto se normaliza a `EffectBlock` con `leadingLocals` vacío, ese efecto como `firstEffect` y `remainingStatements` vacío.
+
+El bloque conserva por separado las declaraciones locales anteriores al primer efecto, el primer efecto obligatorio y las sentencias restantes. Estas últimas pueden ser `EffectStatement` o `LocalValueStatement`.
+
+El AST no presupone ejecución secuencial o simultánea distinta de la definida por capítulos posteriores; solo conserva la estructura declarada.
+
+## Efectos
+
+Hay nodos propios para:
+
+- Asignación.
+- Adición de valor.
+- Adición de campo.
+- Eliminación.
+- Creación.
+- Destrucción.
+- Candidato a llamada de acción.
+- Iteración `for each`.
+
+### Valores separados por comas
+
+`value-expression` con varios elementos se normaliza a:
+
+```text
+CollectionLiteralExpr(elements)
+```
+
+La forma de un solo elemento permanece como esa expresión, no como una colección sintética.
+
+### Asignables
+
+`AssignableExpr` conserva una base y sufijos de miembro o índice. La comprobación de que la base designa un lugar escribible pertenece a resolución, tipos y efectos.
+
+## Expresiones
+
+### Operadores
+
+El AST conserva operadores léxicamente distintos cuando MUD les atribuye contratos diferentes:
+
+- `WordAnd` frente a `SymbolAnd`.
+- `WordOr` frente a `SymbolOr`.
+- `WordXor` frente a `SymbolXor`.
+
+Esto permite que `when` distinga composición temporal mediante palabras de booleanos ordinarios mediante símbolos.
+
+### Comparaciones
+
+Una cadena como:
+
+```mud
+0 <= x < 10
+```
+
+se representa mediante `ComparisonChainExpr`, no como asociaciones binarias arbitrarias.
+
+Las comparaciones no encadenables producen una única arista en la cadena o un nodo equivalente validado.
+
+### Conversiones
+
+`to Type` y `in unit` producen `ConversionExpr` con destinos distintos. La barrera postfix de la gramática ya ha decidido su agrupación, pero no la compatibilidad.
+
+### Postfix y llamadas
+
+`MemberAccessExpr`, `IndexExpr` y `CallExpr` se construyen de izquierda a derecha.
+
+`CallExpr` conserva:
+
+- La expresión llamada.
+- El prefijo de argumentos posicionales.
+- El sufijo de argumentos nombrados.
+
+La separación impide representar un posicional posterior a un nombrado.
+
+La posible interpretación de:
+
+```mud
+(attacker, defender).CanAttack()
+```
+
+como varios receptores o como un único valor estructural queda pendiente de resolución de firma. El AST superficial conserva la forma estructural y el encadenamiento postfix.
+
+### `Rand`
+
+`Rand(expr)` posee `RandomExpr`; no es un tipo ni una llamada ordinaria.
+
+### Cuantificadores
+
+`exists`, `forall`, `count`, `sum`, `min` y `max` comparten `QuantifierExpr` con un enum propio.
+
+## Plantillas `Text`
+
+Una plantilla es una secuencia ordenada de:
+
+- `TextFragment` con texto decodificado.
+- `ValueInterpolation`.
+- `AnchorInterpolation`.
+
+El AST no conserva:
+
+- Comilla final explícita o implícita.
+- Margen físico del literal multilínea.
+- Escapes usados para obtener el mismo carácter.
+
+La CST sí los conserva.
+
+La escritura ordinaria entre comillas dobles siempre llega al AST superficial como `TextTemplateExpr`. La elaboración posterior puede convertirla en un valor `Char` cuando el contexto exige `Char`, no contiene interpolaciones y su valor decodificado es exactamente un escalar Unicode. Por ello el AST superficial no posee un constructor léxico separado `CharLiteral`.
+
+`NumericTextFormat` representa anchuras enteras y fraccionarias opcionales sin conservar los dos puntos concretos.
+
+Dentro del `format` de una magnitud de punto, `unidad from contenedor` produce `ContextualPointComponentExpr`; no se inventa un receptor explícito que no aparece en la fuente.
+
+## Intervalos
+
+Todas las formas se normalizan a:
+
+```text
+Interval(lower, lowerBoundary, upper, upperBoundary, sharedUnit?, cyclic)
+EmptyInterval(sharedUnit?)
+```
+
+Normalizaciones:
+
+- `a..b` → intervalo cerrado.
+- `[a]` → intervalo cerrado con ambos extremos iguales.
+- Formas con unidad compartida → unidad en `sharedUnit`.
+- `[] unit` → `EmptyInterval(unit)`.
+- `[a..b cycle)` → intervalo cíclico con límites declarados.
+
+Los paréntesis y corchetes solo sobreviven como `OpenBoundary` o `ClosedBoundary`.
+
+Los extremos `*` permanecen como `EffectiveIntervalBound` hasta elaboración.
+
+## Cantidades y unidades
+
+`QuantityValueExpr` contiene un literal numérico y una `UnitProduct`.
+
+La expresión de unidad y la de dimensión poseen árboles separados aunque ambas usen `*`, `/` y paréntesis en la sintaxis concreta.
+
+Una forma `UNIT_FORM` se conserva como texto fuente contextual. Su resolución contra el catálogo pertenece a fases posteriores.
+
+## Literales numéricos
+
+El AST conserva una escritura canónica del valor, no necesariamente el lexema exacto. Por ejemplo:
+
+```mud
+1_000
+1000
+```
+
+pueden producir el mismo `ExactNumberLiteral("1000")`.
+
+La exactitud matemática de `Num` y la interpretación binary64 de `Rum` se elaboran después.
+
+## Orden preservado y orden canónico
+
+Se conserva el orden fuente de:
+
+- Declaraciones dentro de un archivo.
+- Antecesores.
+- Campos y componentes.
+- Datos y miembros de familias.
+- Participantes y `given`.
+- Argumentos.
+- Efectos y aserciones.
+
+Solo `MudProject` define una serialización canónica de archivos por ruta. Ninguna otra lista se ordena automáticamente en el AST superficial salvo que una normalización concreta lo declare.
+
+## Estados inválidos excluidos
+
+Un AST superficial conforme no puede contener:
+
+- Cardinalidad ausente.
+- Dos modificadores `unique`.
+- Dos órdenes de colección.
+- `given` mutable.
+- Unidad con propiedades duplicadas.
+- Acción ya clasificada elemental o compuesta sin resolución.
+- Símbolo o ancla resueltos.
+- Tipo inferido insertado como si se hubiera escrito.
+- Comentarios ordinarios.
+- Tokens de recuperación.
+
+## Serialización estructural
+
+La serialización canónica de AST:
+
+1. Ordena archivos por ruta normalizada.
+2. Conserva el orden de las secuencias internas.
+3. Usa los nombres de constructores ASDL.
+4. Omite trivia y puntuación.
+5. Incluye `SourceOrigin` salvo en vistas de comparación que lo excluyan expresamente.
+6. Serializa enums por su nombre canónico.
+
+Esta serialización sirve para snapshots, caché y tooling. No es código MUD y no sustituye al pretty-printer.
+
+## Cobertura
+
+Toda producción de [[mud]] debe aparecer en:
+
+- `mud-syntax-kinds.yaml`.
+- `cobertura-sintactica.yaml`.
+
+La cobertura declara si la producción:
+
+- Construye un nodo.
+- Se normaliza.
+- Se pliega en el padre.
+- Se descarta como layout.
+- Queda contextual hasta resolución.
+
+`validate_syntax_model.py` comprueba esa correspondencia.
+
+## Conformidad
+
+Una implementación conforme del AST superficial debe:
+
+1. Producir constructores equivalentes a `mud-surface-ast.asdl`.
+2. Aplicar todas las normalizaciones de [[cst-a-ast-superficial]].
+3. Rechazar antes del AST los estados excluidos.
+4. Conservar procedencia.
+5. No anticipar resolución, tipado o IR.
+6. Mantener las diferencias de operadores exigidas.
+7. Permitir generar una forma estructural estable para pruebas.

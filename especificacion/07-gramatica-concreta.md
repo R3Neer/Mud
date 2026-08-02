@@ -47,6 +47,7 @@ decisions:
   - D-067
   - D-068
   - D-069
+  - D-070
 ---
 
 # 07. Gramática concreta
@@ -54,6 +55,27 @@ decisions:
 ## Estado y propósito
 
 [[gramatica/mud.ebnf]] define la sintaxis completa de MUD 1.0. Este capítulo fija cómo leerla, cómo resolver las construcciones contextuales y cómo agrupar expresiones. Las cuestiones listadas en el frontmatter afectan semántica posterior, no impiden reconocer la forma fuente.
+
+## Producto del parsing
+
+El resultado normativo del parsing es una CST sin pérdidas por archivo, definida en [[sintaxis/cst-sin-perdidas]]. La EBNF determina agrupación y orden de tokens significativos; la CST conserva además puntuación, terminadores y trivia.
+
+La existencia de una CST no afirma que el archivo sea válido. La recuperación puede representar tokens ausentes o inesperados sin descartarlos.
+
+## Validación anterior al AST
+
+Después de construir la CST se comprueban restricciones sintácticas contextuales necesarias para producir un AST normalizado, entre ellas:
+
+- Modificadores de colección duplicados.
+- Propiedades de unidad duplicadas o requeridas ausentes.
+- Un argumento posicional posterior a uno nombrado.
+- Combinaciones concretas prohibidas por este capítulo.
+
+La resolución de nombres, tipos, dominios y efectos no pertenece a esta validación.
+
+## Transformación abstracta
+
+La proyección a AST está en [[sintaxis/cst-a-ast-superficial]]. Las producciones se cubren mecánicamente en `sintaxis/cobertura-sintactica.yaml`.
 
 ## Programa
 
@@ -645,6 +667,18 @@ board[E, Four]
 
 ## Intervalos
 
+La forma concreta de un tipo de intervalo escribe primero el tipo de sus límites y después la palabra contextual `Interval`:
+
+```mud
+Nat Interval
+Int Interval
+Num Interval
+Rum Interval
+Money Interval
+```
+
+La gramática conserva cualquier `type-reference` en esa posición; la fase estática exige que resuelva a una representación numérica admitida. `Interval` no es una declaración nominal consultada mediante resolución de nombres en esta construcción.
+
 Formas:
 
 ```mud
@@ -865,3 +899,19 @@ Una implementación puede sincronizar después de un error en:
 - Inicio inequívoco de una declaración superior
 
 La recuperación solo mejora diagnósticos. No puede insertar silenciosamente semántica ni aceptar una forma fuera de la gramática.
+
+## Construcciones contextuales conservadas
+
+El parser no decide cuestiones que requieren resolución:
+
+- Si un camino con puntos atraviesa namespaces, declaraciones o miembros.
+- Si un literal estructural usado antes de una llamada representa un receptor único o varios receptores.
+- Si un `postfix-expression` de un efecto es una llamada de acción.
+- Si una acción es elemental o compuesta.
+- Qué tipo contextual selecciona un literal estructural, de unidad, de punto o textual de un único escalar.
+
+La CST conserva la forma concreta y el AST superficial una forma no resuelta. Las fases posteriores realizan la clasificación.
+
+## Representación de magnitudes
+
+La anotación opcional de una magnitud usa la sintaxis general `declared-type`. Una regla estática posterior exige que el tipo resuelto sea una representación numérica permitida. La gramática no mantiene una lista cerrada duplicada de tipos numéricos.

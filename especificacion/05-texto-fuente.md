@@ -19,6 +19,7 @@ decisions:
   - D-061
   - D-065
   - D-069
+  - D-070
 ---
 
 # 05. Texto fuente y estructura física
@@ -85,6 +86,41 @@ given newTitle: Text {
 
 > [!rule] MUD-SYN-002 — Cabecera `using`
 > Toda declaración `using` debe aparecer antes de cualquier declaración de primer nivel del mismo archivo. Un `using` posterior es inválido y nunca introduce alcance local.
+
+## Identidad de fuente y procedencia
+
+Cada archivo recibe un `SourceId` formado a partir de su ruta relativa normalizada. El `SourceId` identifica la unidad de procedencia durante una compilación; no es un ancla semántica y puede cambiar al mover el archivo.
+
+Las posiciones sintácticas usan:
+
+```text
+SourcePosition(byteOffset, line, column)
+SourceSpan(sourceId, start, end)
+```
+
+- Índices basados en cero.
+- Offsets en bytes UTF-8.
+- Final exclusivo.
+- Columnas en valores escalares Unicode.
+
+La conversión a posiciones UTF-16 pertenece a la frontera LSP.
+
+## Raíces sintácticas
+
+Cada archivo produce una CST independiente y, tras validación, un `MudFile` del AST superficial. Un `MudProject` agrega varios `MudFile`; no es una construcción escrita en un único archivo.
+
+Para serialización estructural, los archivos de `MudProject` se ordenan por ruta relativa normalizada. Ese orden no altera la semántica.
+
+## Metadatos físicos conservados
+
+La CST o sus metadatos conservan:
+
+- Presencia del BOM inicial.
+- Ruta relativa normalizada.
+- Namespace derivado.
+- Forma física de cada salto mediante el texto de sus tokens o trivia.
+
+El AST superficial conserva solo los metadatos necesarios para procedencia y tooling; no utiliza el BOM o el estilo de salto como significado del programa.
 
 ## Fin de archivo
 

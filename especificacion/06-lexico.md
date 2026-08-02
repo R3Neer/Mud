@@ -22,6 +22,7 @@ decisions:
   - D-067
   - D-068
   - D-069
+  - D-070
 ---
 
 # 06. Estructura léxica
@@ -94,6 +95,7 @@ Son contextuales:
 - `name` delante de `=` dentro del cuerpo de una `thing` y en las etiquetas declarativas que lo admiten.
 - `name`, `plural`, `abbreviation`, `prefixes`, `format`, `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
 - `anchor` inmediatamente antes de `{` dentro de una plantilla `Text`.
+- `Interval` inmediatamente después de una referencia de tipo dentro de `interval-type`.
 
 Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador no puede usar esta flexibilidad para aceptar una palabra reservada dura como nombre.
 
@@ -139,7 +141,31 @@ La forma siguiente es inválida:
 ### comentario ###
 ```
 
-Los comentarios se eliminan antes del parsing. Un comentario multilínea completo no emite los `NEWLINE` de su contenido.
+Los comentarios no emiten tokens significativos para la gramática, pero se conservan con su texto exacto como trivia en el flujo léxico completo y en la CST sin pérdidas. Un comentario multilínea completo no emite tokens significativos `NEWLINE`; sus saltos interiores permanecen dentro de la trivia del comentario.
+
+## Flujo completo, flujo significativo y trivia
+
+El scanner ofrece dos vistas sincronizadas:
+
+```text
+flujo completo      = trivia y tokens significativos en orden fuente
+flujo significativo = tokens que consume mud.ebnf
+```
+
+La CST se construye con el flujo completo. La gramática consume la vista significativa.
+
+La trivia mínima es:
+
+- Espacio horizontal.
+- Comentario abierto de línea.
+- Comentario cerrado de línea.
+- Comentario multilínea.
+
+Toda trivia pertenece al token significativo siguiente. `EOF` posee la trivia final. Esta convención es normativa para serialización sin pérdidas, aunque una API pueda exponer vistas derivadas de trivia final.
+
+## Tokens sintéticos
+
+Un `TEXT_END` cerrado implícitamente se emite como token sintético de anchura cero y origen `ImplicitTextEnd`. La recuperación del parser puede introducir tokens esperados de anchura cero con origen `MissingForRecovery`; estos últimos no convierten una construcción inválida en un AST normativo.
 
 ## `Char`
 
@@ -322,6 +348,12 @@ Una magnitud de punto sin `format` usa una cantidad ordinaria con una unidad com
 
 Las reglas completas pertenecen a [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]].
 
+## Spans léxicos
+
+Todo token y trivia posee `SourceSpan`. El texto de un token escrito ocupa exactamente su intervalo de bytes. Un token sintético tiene inicio y final iguales. El `fullSpan` de un token comienza en su primera trivia inicial.
+
+La decodificación de escapes o la normalización de margen de `Text` no cambia los spans de sus tokens concretos; el valor decodificado pertenece al AST.
+
 ## Prioridad del scanner
 
 En una misma posición se intenta:
@@ -332,6 +364,6 @@ En una misma posición se intenta:
 4. Literales `Rum`, números e identificadores.
 5. Operadores de un carácter.
 
-Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se descartan; `NEWLINE` se conserva para decidir terminación.
+Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se excluyen del flujo significativo, pero se conservan como trivia en el flujo completo; `NEWLINE` se conserva como token significativo para decidir terminación.
 
 Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes, después `anchor{` y `{`, y por último el fragmento literal más largo posible. Dentro de una interpolación vuelve a aplicarse la prioridad ordinaria.

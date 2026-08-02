@@ -7,6 +7,10 @@ tags:
   - mud/normativa
 status: propuesta
 normative: true
+depends-on: []
+questions: []
+decisions:
+  - D-070
 ---
 
 # Convenciones editoriales de la especificación MUD
@@ -223,7 +227,32 @@ Se distinguirán:
 
 Una propiedad no demostrada no se llamará teorema.
 
-## 12. Plantilla de capítulo
+## 12. Artefactos normativos mecánicos
+
+Además de Markdown, la especificación puede contener EBNF, ASDL, YAML y scripts de validación. Cada archivo debe declarar su función en el README del subdirectorio correspondiente.
+
+> [!rule] MUD-EDIT-001 — Autoridad complementaria
+> Un artefacto mecánico normativo y la prosa que lo explica son complementarios. Una contradicción entre ambos es un defecto; no se resuelve suponiendo que uno tenga prioridad silenciosa.
+
+Convenciones:
+
+- EBNF: producciones `kebab-case`.
+- CST: categorías `PascalCaseSyntax`.
+- ASDL: tipos `snake_case`, constructores `PascalCase`, campos `snake_case`.
+- YAML: claves estables y orden legible; no se depende del orden de mapas para el significado.
+- Python editorial: debe fallar con código distinto de cero ante divergencias.
+
+## 13. Archivos escritos y generados
+
+Todo archivo generado debe indicarlo en su cabecera y declarar su fuente. Los esquemas normativos de `especificacion/` se escriben o revisan deliberadamente; el código generado a partir de ellos no adquiere autoridad sobre su fuente.
+
+Un cambio de gramática que afecte a la estructura debe actualizar en el mismo commit el catálogo CST, la cobertura, la transformación y el ASDL correspondientes.
+
+## 14. Enlaces a archivos mecánicos
+
+Los capítulos enlazarán por nombre de archivo a los esquemas mecánicos. Los README de `gramatica/` y `sintaxis/` mantienen el inventario y los comandos de validación. No se copiarán tablas extensas generadas dentro de varios capítulos cuando puedan verificarse desde una única fuente.
+
+## 15. Plantilla de capítulo
 
 ```markdown
 ---

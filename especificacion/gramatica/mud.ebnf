@@ -169,14 +169,14 @@ magnitude-declaration
 
 base-magnitude-declaration
     ::= "magnitude" , nominal-name
-        , [ ":" , numeric-type ]
+        , [ ":" , declared-type ]
         , [ "in" , interval-expression ]
         , magnitude-body
         ;
 
 derived-magnitude-declaration
     ::= "magnitude" , nominal-name
-        , [ ":" , numeric-type ]
+        , [ ":" , declared-type ]
         , [ "in" , interval-expression ]
         , ":=" , dimension-expression
         , [ derived-unit-body ]
@@ -193,9 +193,6 @@ point-domain
     ::= interval-expression
       | cyclic-interval
       ;
-
-numeric-type
-    ::= "Nat" | "Int" | "Num" | "Rum" | "Money" ;
 
 magnitude-body
     ::= "{" , declaration-layout
@@ -289,8 +286,12 @@ type-expression
 
 declared-type
     ::= type-reference
+      | interval-type
       | dictionary-type
       ;
+
+interval-type
+    ::= type-reference , "Interval" ;
 
 dictionary-type
     ::= type-reference , "->" , dictionary-value-type ;

@@ -8,9 +8,9 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 64.
+- Total: 65.
 - Vigentes: 64.
-- Propuestas: 0.
+- Propuestas: 1.
 - Sustituidas: 0.
 - Retiradas: 0.
 - Rechazadas: 0.
@@ -83,6 +83,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-067 | vigente | 2026-08-02 | [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|Nombres breves de los tipos numéricos]] |
 | D-068 | vigente | 2026-08-02 | [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|`Thing` universal y nombre intrínseco]] |
 | D-069 | vigente | 2026-08-02 | [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|Literales `Char` con comillas dobles]] |
+| D-070 | propuesta | 2026-08-02 | [[notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|CST sin pérdidas y AST superficial normalizado]] |
 
 ## Identificadores reservados
 
