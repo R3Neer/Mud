@@ -170,7 +170,7 @@ $$
 (\mathsf{Egypt},\mathsf{Place})
 $$
 
-`as` no pregunta si la relación es verdadera: introduce aristas en un descriptor conocido por el programa. D-068 añade además la raíz abstracta incorporada `Thing`. Una declaración sin `as` conserva cero antecesoras declaradas, pero el modelo incorpora una arista implícita desde ella hacia `Thing`; escribir `as Thing` es innecesario e inválido.
+`as` no pregunta si la relación es verdadera: introduce aristas en un descriptor conocido por el programa. D-068 añade además la raíz abstracta incorporada `Thing`. Una declaración sin `as` conserva cero antecesoras declaradas, pero el modelo incorpora una arista implícita desde ella hacia `Thing`. D-073 permite escribir `as Thing`, aunque el compilador lo señala como redundante y sugiere eliminarlo.
 
 > [!rule] Decisión de MUD — D-025
 > `thing` es la palabra reservada de la entidad y `as` introduce sus antecesores directos. `construct` y `from` son sintaxis histórica.

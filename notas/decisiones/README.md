@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 67.
-- Vigentes: 67.
+- Total: 68.
+- Vigentes: 68.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -86,6 +86,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-070 | vigente | 2026-08-02 | [[notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|CST sin pérdidas y AST superficial normalizado]] |
 | D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Vinculaciones locales en bloques booleanos]] |
 | D-072 | vigente | 2026-08-02 | [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|Entornos de resolución y migraciones explícitas de anclas]] |
+| D-073 | vigente | 2026-08-02 | [[notas/decisiones/ADR-073-as-thing-explicito-redundante|`as Thing` explícito válido pero redundante]] |
 
 ## Identificadores reservados
 

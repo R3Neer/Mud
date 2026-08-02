@@ -412,6 +412,16 @@ cases:
     normalizations: [decode-intrinsic-name]
     produces_ast: true
 
+  - id: redundant-explicit-thing-ancestor
+    category: thing
+    source: |
+      thing Place as Thing {}
+    cst_root: MudFileSyntax
+    ast: ThingDecl(Place, directAncestors=[Thing])
+    expected_diagnostics: [redundant-explicit-thing-ancestor]
+    normalizations: [preserve-redundancy-until-resolution]
+    produces_ast: true
+
   - id: char-context-uses-text-template
     category: text
     source: |

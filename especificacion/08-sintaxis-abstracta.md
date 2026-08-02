@@ -20,6 +20,7 @@ decisions:
   - D-070
   - D-071
   - D-072
+  - D-073
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -171,6 +172,8 @@ Una `ThingDecl` contiene:
 - Campos.
 
 El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prioridad semántica no elimina su valor como procedencia, formato y diagnóstico.
+
+El AST superficial conserva un `Thing` escrito explícitamente en `as`. La resolución posterior lo normaliza como redundancia de la raíz efectiva y el tooling ofrece retirarlo; el formatter no lo elimina silenciosamente.
 
 El cuerpo contiene como máximo una sobrescritura `name = "literal"` y los campos. El `name` intrínseco no se convierte en campo, no se hereda y no forma parte del store.
 

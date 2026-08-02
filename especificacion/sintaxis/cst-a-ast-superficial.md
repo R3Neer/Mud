@@ -18,6 +18,7 @@ decisions:
   - D-070
   - D-071
   - D-072
+  - D-073
 ---
 
 # Transformación de CST a AST superficial
@@ -139,6 +140,8 @@ produce `ThingDecl`:
 - Cuerpo → campos.
 
 `thing-body`, `thing-body-declaration` e `intrinsic-name-override` no generan nodos AST independientes. La validación anterior al AST exige como máximo una sobrescritura, sin interpolaciones, y la integra en `ThingDecl` sin convertirla en campo.
+
+Un antecesor explícito `Thing` permanece en esa secuencia superficial. No bloquea la transformación: la resolución posterior emite la redundancia, normaliza la raíz efectiva y puede ofrecer una acción de código que retire el elemento escrito.
 
 ## Campos
 

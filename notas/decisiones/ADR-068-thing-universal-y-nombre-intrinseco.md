@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-068 — `Thing` universal y nombre intrínseco
 
+- Modificada por: [[ADR-073-as-thing-explicito-redundante|D-073]]
 - Modifica: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Pregunta relacionada: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
 - Cuestión pendiente relacionada: [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
@@ -34,11 +35,11 @@ La interpolación de una `thing` usa hasta ahora su nombre nominal. Ese valor es
 - Una `thing` sin cláusula `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
 - Una `thing` con antecesoras declaradas alcanza `Thing` transitivamente.
 - `Thing is Thing` por reflexividad.
-- `Thing` no puede declararse, redefinirse, activarse, destruirse ni escribirse explícitamente en una cláusula `as`.
+- `Thing` no puede declararse, redefinirse, activarse ni destruirse. D-073 permite escribirla explícitamente en `as`, pero la forma es redundante y recibe una sugerencia de eliminación.
 - `Thing` sí puede usarse como tipo de campos, roles, argumentos, colecciones y demás posiciones de tipo compatibles.
 - `on Thing` selecciona todas las `thing` concretas y activas; la identidad abstracta `Thing` no constituye por sí misma una vinculación.
 
-`Thing` es una palabra reservada y un tipo incorporado sensible a mayúsculas y minúsculas. La arista implícita no se serializa como `as Thing` ni se presenta como una antecesora declarada por el autor.
+`Thing` es una palabra reservada y un tipo incorporado sensible a mayúsculas y minúsculas. La arista efectiva no se duplica ni se serializa como una antecesora semántica adicional cuando el autor escribe el redundante `as Thing`; la CST y el AST superficial sí conservan esa escritura hasta que se aplica la corrección sugerida.
 
 Su ancla canónica es `thing::Thing`; `anchor{Thing}` produce esa escritura. El ancla pertenece al lenguaje y no ocupa un namespace declarable por el programa.
 
@@ -99,7 +100,7 @@ Dos `thing` pueden compartir el mismo `name`; la igualdad, resolución y anclaje
 ## Verificación
 
 1. `T is Thing` para toda `thing` declarada y `Thing is Thing`.
-2. Rechazo de declaración, `create`, `destroy` y `as Thing` explícito sobre `Thing`.
+2. Rechazo de declaración, `create` y `destroy` de `Thing`; aceptación no bloqueante de `as Thing` con sugerencia de eliminación.
 3. Ancla incorporada `thing::Thing` y renderización mediante `anchor{Thing}`.
 4. `on Thing` y roles `for` de tipo `Thing` sobre cualquier `thing` concreta activa.
 5. Colección `Thing [*]` con identidades de ramas no relacionadas.

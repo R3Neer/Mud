@@ -13,6 +13,7 @@ affects:
 
 - Actualizada: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Modificada además por: [[notas/decisiones/ADR-073-as-thing-explicito-redundante|D-073]]
 - Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`
 
 ## Contexto
@@ -48,7 +49,7 @@ Las formas conceptuales son:
 [abstract] thing nombre [as lista-de-antecesores] bloque
 ```
 
-La lista posterior a `as` es finita y su posición no establece prioridad. Una declaración sin `as` conserva cero antecesoras declaradas y recibe semánticamente la raíz incorporada `Thing`; `as Thing` explícito es inválido.
+La lista posterior a `as` es finita y su posición no establece prioridad. Una declaración sin `as` conserva cero antecesoras declaradas y recibe semánticamente la raíz incorporada `Thing`. D-073 admite `as Thing` explícito como redundancia no bloqueante y sugiere eliminarlo.
 
 ## Correspondencia semántica
 
@@ -92,4 +93,4 @@ El token `from` puede seguir existiendo en otras producciones independientes, co
 4. Rechazo de `is` como cláusula de cabecera.
 5. Aceptación de `is` como expresión.
 6. Correspondencia entre aristas `as` y resultados de `is`.
-7. Rechazo de `as Thing` explícito.
+7. Diagnóstico no bloqueante y corrección sugerida para `as Thing` explícito.

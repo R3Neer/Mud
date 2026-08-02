@@ -50,6 +50,7 @@ decisions:
   - D-070
   - D-071
   - D-072
+  - D-073
 ---
 
 # 07. Gramática concreta
@@ -117,7 +118,7 @@ thing Alexandria as City, Place {
 }
 ```
 
-`Thing` es la `thing` abstracta incorporada que actúa como tipo superior. Toda `thing` satisface `is Thing`. Una raíz sin `as` conserva cero antecesoras declaradas, pero recibe una arista semántica implícita hacia `Thing`; no se escribe `as Thing`. `Thing` no puede declararse, crearse ni destruirse.
+`Thing` es la `thing` abstracta incorporada que actúa como tipo superior. Toda `thing` satisface `is Thing`. Una raíz sin `as` conserva cero antecesoras declaradas, pero recibe una arista semántica implícita hacia `Thing`. Es válido escribir `as Thing`, pero es redundante: una implementación conforme debe emitir un diagnóstico no bloqueante y ofrecer eliminarlo. `Thing` no puede declararse, crearse ni destruirse.
 
 Toda `thing` expone la propiedad intrínseca e inmutable `name: Text`. Su valor predeterminado es su nombre nominal no cualificado. Puede sobrescribirse una sola vez con `name =` y un literal `Text` sin interpolaciones, como en `Alexandria`. No es un campo almacenado o calculado, no ocupa el store y no se hereda: una descendiente sin sobrescritura usa siempre su propio nombre nominal.
 
