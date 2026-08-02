@@ -57,8 +57,7 @@ No es un campo de esquema, no ocupa una posición mutable del store y no se here
 Si no se escribe una sobrescritura, `name` vale exactamente el nombre nominal no cualificado de la `thing`:
 
 ```mud
-thing BlackCastle {
-}
+thing BlackCastle {}
 ```
 
 produce `name = "BlackCastle"`.
@@ -80,8 +79,7 @@ thing Kingdom {
     name = "Reino"
 }
 
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 ```
 
 `Egypt.name` vale `"Egypt"`, no `"Reino"`.

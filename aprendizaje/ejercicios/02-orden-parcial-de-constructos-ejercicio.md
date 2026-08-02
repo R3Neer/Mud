@@ -19,26 +19,19 @@ Completa [[aprendizaje/respuestas/02-orden-parcial-de-constructos-respuesta]].
 Considera:
 
 ```mud
-abstract thing Entity {
-}
+abstract thing Entity {}
 
-abstract thing Place as Entity {
-}
+abstract thing Place as Entity {}
 
-thing Settlement as Place {
-}
+thing Settlement as Place {}
 
-thing Alexandria as Settlement {
-}
+thing Alexandria as Settlement {}
 
-thing NileDelta as Place {
-}
+thing NileDelta as Place {}
 
-thing Memphis as Settlement {
-}
+thing Memphis as Settlement {}
 
-thing DeltaCapital as NileDelta, Settlement {
-}
+thing DeltaCapital as NileDelta, Settlement {}
 
 start with {
     Entity,
@@ -135,8 +128,7 @@ Explica brevemente por qué el bypass no crea ciclos nuevos y por qué la clausu
 ¿Por qué debe rechazarse?
 
 ```mud
-thing Entity as Alexandria {
-}
+thing Entity as Alexandria {}
 ```
 
 Escribe el camino no vacío que cerraría el ciclo.
@@ -170,8 +162,7 @@ $$
 Explica qué diferencia existe entre los nodos abstractos correspondientes a:
 
 ```mud
-thing Alexandria as Settlement {
-}
+thing Alexandria as Settlement {}
 
 Alexandria is Place
 ```

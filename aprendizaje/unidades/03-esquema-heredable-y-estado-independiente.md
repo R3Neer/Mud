@@ -43,8 +43,7 @@ tags:
 Si:
 
 ```mud
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 ```
 
 entonces `Egypt` puede heredar la propiedad `treasury`, pero una mutación de `Kingdom.treasury` no cambia `Egypt.treasury`.

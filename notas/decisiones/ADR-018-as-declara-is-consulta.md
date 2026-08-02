@@ -26,17 +26,13 @@ Aunque el parser podría distinguir una cabecera de una expresión, ambas operac
 Toda declaración de especialización utiliza `as`:
 
 ```mud
-thing A {
-}
+thing A {}
 
-abstract thing B as A {
-}
+abstract thing B as A {}
 
-thing D as A, B, C {
-}
+thing D as A, B, C {}
 
-thing E as D {
-}
+thing E as D {}
 ```
 
 `is` queda reservado para expresiones:

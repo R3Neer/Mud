@@ -91,8 +91,7 @@ Por tanto, si la unidad canónica de `Speed` es `m/s`, `[0..100]` significa de `
 Una magnitud de punto se declara con `point over` en la cabecera. Su dominio es opcional:
 
 ```mud
-magnitude RawInstant point over Time {
-}
+magnitude RawInstant point over Time {}
 
 magnitude Timestamp point over Time {
     format = "{day}:{hour:2}:{minute:2}"

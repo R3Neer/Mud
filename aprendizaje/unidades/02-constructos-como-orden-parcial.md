@@ -45,14 +45,11 @@ tags:
 Considera:
 
 ```mud
-abstract thing Place {
-}
+abstract thing Place {}
 
-thing Kingdom as Place {
-}
+thing Kingdom as Place {}
 
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 
 start with {
     Place,
@@ -72,8 +69,7 @@ Egypt is Egypt
 y rechazar un ciclo como:
 
 ```mud
-thing Place as Egypt {
-}
+thing Place as Egypt {}
 ```
 
 La pregunta central es:
@@ -123,8 +119,7 @@ es una relación especial que asocia cada elemento de $A$ con exactamente un ele
 La especialización no es, en general, una función porque MUD admite varios antecesores:
 
 ```mud
-thing AmphibiousForce as LandForce, NavalForce {
-}
+thing AmphibiousForce as LandForce, NavalForce {}
 ```
 
 Por tanto:
@@ -162,8 +157,7 @@ la relación directa almacenada.
 Una cabecera:
 
 ```mud
-thing Egypt as Kingdom, Place {
-}
+thing Egypt as Kingdom, Place {}
 ```
 
 aporta:
@@ -208,11 +202,9 @@ $$
 Con:
 
 ```mud
-thing Kingdom as Place {
-}
+thing Kingdom as Place {}
 
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 ```
 
 existe el camino:
@@ -272,11 +264,9 @@ La relación directa es acíclica si no existe un camino no vacío que empiece y
 El programa:
 
 ```mud
-thing A as B {
-}
+thing A as B {}
 
-thing B as A {
-}
+thing B as A {}
 ```
 
 es inválido porque contiene:
@@ -340,8 +330,7 @@ $$
 Una declaración canónica:
 
 ```mud
-thing Memphis as Settlement {
-}
+thing Memphis as Settlement {}
 ```
 
 incorpora `Memphis` a $\mathcal T_P$ y fija su arista hacia `Settlement`. Ni `start with` ni `create` pueden cambiar después esa antecesora.
@@ -462,8 +451,7 @@ La implementación puede comprimir caminos para consultar, pero la semántica se
 ## 13. `as` e `is` viven en niveles distintos
 
 ```mud
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 ```
 
 produce un nodo de declaración, conceptualmente:

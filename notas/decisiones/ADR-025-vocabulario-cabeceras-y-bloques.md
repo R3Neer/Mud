@@ -31,21 +31,17 @@ Además, la documentación no distinguía con suficiente precisión cuándo las 
 `thing` sustituye a `construct` como palabra reservada:
 
 ```mud
-thing Kingdom {
-}
+thing Kingdom {}
 
-abstract thing Place {
-}
+abstract thing Place {}
 ```
 
 `as` introduce los antecesores directos de una `thing`:
 
 ```mud
-thing Egypt as Kingdom, Place {
-}
+thing Egypt as Kingdom, Place {}
 
-thing Alexandria as City {
-}
+thing Alexandria as City {}
 ```
 
 La lista posterior a `as` sigue denotando un conjunto finito de antecesores directos sin prioridad por posición. El operador booleano `is` conserva su semántica: consulta la clausura reflexiva y transitiva de esa relación.

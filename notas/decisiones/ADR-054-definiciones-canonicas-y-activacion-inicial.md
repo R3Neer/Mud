@@ -40,8 +40,7 @@ El modelo de uso adoptado es el de un juego con:
 Cada `thing` declarable y cada regla tiene exactamente una definición completa de primer nivel en todo el programa. La raíz incorporada `Thing` es la única `thing` sin definición fuente: su descriptor canónico pertenece al lenguaje, es abstracto y siempre efectivo. No puede redefinirse ni aparecer como objetivo de `create` o `destroy`.
 
 ```mud
-abstract thing Vegetation {
-}
+abstract thing Vegetation {}
 
 thing Tree as Vegetation {
     age: Years

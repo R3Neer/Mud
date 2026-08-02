@@ -105,15 +105,12 @@ Las categorías de primer nivel son:
 - `test`
 - `start with
 
-
 ## `thing`
 
 ```mud
-thing World {
-}
+thing World {}
 
-abstract thing Place {
-}
+abstract thing Place {}
 
 thing Alexandria as City, Place {
     name = "Alejandría"
@@ -216,8 +213,7 @@ Se prohíbe `ordered by` para `Char`; su orden es Unicode. `Text` no acepta espe
 ```mud
 alias PlayerName := Text
 
-alias Board :=
-    Square -> Piece [0..32 ordered]
+alias Board := Square -> Piece [0..32 ordered]
 
 alias Square {
     file: File
@@ -276,16 +272,13 @@ Los miembros se separan por comas y no admiten coma final. `ordered family` hace
 Magnitud base:
 
 ```mud
-magnitude Probability: Num in [0..1] {
-}
+magnitude Probability: Num in [0..1] {}
 ```
 
 Magnitud derivada:
 
 ```mud
-magnitude Speed: Num in [0..*] :=
-    Length / Time
-{
+magnitude Speed: Num in [0..*] := Length / Time {
     unit := 1 m/s {
         name = "fastie"
         plural = "fasties"
@@ -297,8 +290,7 @@ magnitude Speed: Num in [0..*] :=
 Magnitud de punto:
 
 ```mud
-magnitude RawInstant point over Time {
-}
+magnitude RawInstant point over Time {}
 
 magnitude Timestamp point over Time {
     format = "{day}:{hour:2}:{minute:2}"

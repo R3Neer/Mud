@@ -102,11 +102,9 @@ Las acciones forman la API estable de escritura. Las magnitudes forman parte del
 Conforme a D-054, toda `thing` y regla posee una única definición canónica de primer nivel:
 
 ```mud
-thing Kingdom {
-}
+thing Kingdom {}
 
-abstract thing Place {
-}
+abstract thing Place {}
 
 rule CanEnter for person: Person {
     ...

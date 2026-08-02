@@ -109,8 +109,7 @@ thing Kingdom {
     mut treasury: Money = 0
 }
 
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 ```
 
 Al activarse por primera vez, `Egypt` empieza con `treasury = 0`. Una escritura posterior sobre `Kingdom.treasury` no modifica `Egypt.treasury`.

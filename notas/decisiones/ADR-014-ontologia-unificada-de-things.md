@@ -94,11 +94,9 @@ Se descarta. La especialización directa es estricta, pero `is` consulta su clau
 ## Ejemplo
 
 ```mud
-thing Kingdom as Place {
-}
+thing Kingdom as Place {}
 
-thing Egypt as Kingdom {
-}
+thing Egypt as Kingdom {}
 ```
 
 De esas cabeceras se derivan:

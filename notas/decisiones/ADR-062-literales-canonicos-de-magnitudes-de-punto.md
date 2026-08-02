@@ -95,8 +95,7 @@ opening: TimeOfDay = 26:00:00  # inválido: queda fuera del dominio
 Sin formato:
 
 ```mud
-magnitude Timestamp point over Time {
-}
+magnitude Timestamp point over Time {}
 
 created: Timestamp = 90 second
 ```
