@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "clis": [
+    {
+      "path": "tooling/markdown_export/__main__.py",
+      "module": "tooling.markdown_export",
+      "minimumPython": "3.11",
+      "helpProbes": [
+        ["--help"],
+        ["export", "--help"],
+        ["serve", "--help"]
+      ],
+      "valueProviders": [
+        {
+          "command": "export",
+          "option": "--profile",
+          "arguments": ["list-profiles"],
+          "format": "colon-prefix",
+          "watch": ["tooling/markdown_export/profiles.toml"]
+        }
+      ]
+    },
+    {
+      "path": "especificacion/gramatica/validate_grammar.py",
+      "disableHelp": true
+    }
+  ]
+}

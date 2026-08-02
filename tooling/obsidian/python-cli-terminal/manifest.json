@@ -1,0 +1,9 @@
+{
+  "id": "mud-python-cli-terminal",
+  "name": "Python CLI Terminal",
+  "version": "0.1.0",
+  "minAppVersion": "1.7.2",
+  "description": "Opens Python CLI entry points in a contextual terminal with local completion.",
+  "author": "Samuel",
+  "isDesktopOnly": true
+}
