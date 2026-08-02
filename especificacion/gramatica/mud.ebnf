@@ -389,8 +389,13 @@ boolean-rule-declaration
         ;
 
 boolean-body
-    ::= "{" , declaration-layout , boolean-expression
+    ::= "{" , declaration-layout , boolean-block
         , [ required-separation ] , "}"
+        ;
+
+boolean-block
+    ::= { local-value-declaration , required-separation }
+        , boolean-expression
         ;
 
 reactive-rule-declaration
@@ -413,7 +418,7 @@ always-rule-declaration
 
 invariant-body
     ::= "{" , declaration-layout
-        , boolean-expression
+        , boolean-block
         , [ diagnostic-tail ]
         , [ required-separation ]
         , "}"
@@ -472,7 +477,7 @@ diagnostic-tail
 
 expression-clause-body
     ::= boolean-expression
-      | "{" , declaration-layout , boolean-expression
+      | "{" , declaration-layout , boolean-block
           , [ required-separation ] , "}"
       ;
 
@@ -530,6 +535,7 @@ test-after-clause
     ::= "after" , test-assertion
       | "after" , "{"
           , declaration-layout
+          , { local-value-declaration , required-separation }
           , test-assertion
           , { required-separation , test-assertion }
           , [ required-separation ]

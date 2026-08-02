@@ -14,6 +14,7 @@ affects:
 
 - Modifica: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Preguntas relacionadas: Q-005
+- Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
 - Documentos afectados: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`
 
 ## Contexto

@@ -16,6 +16,8 @@ depends-on:
 questions: []
 decisions:
   - D-070
+  - D-071
+  - D-072
 ---
 
 # Transformación de CST a AST superficial
@@ -353,25 +355,31 @@ Se convierten nombre, tipo, dominio, colección de solo lectura y predeterminado
 
 ### Regla booleana
 
-El cuerpo de una única expresión se almacena directamente como condición.
+El cuerpo se convierte en `BooleanBlock(locals, result)`. La forma sin declaraciones locales produce `locals = []`.
 
 ### Regla reactiva
 
-`when` produce `activator`; `if` produce `guard?`; `then` produce `EffectBlock`.
+`when` produce un `BooleanBlock` en `activator`; `if` produce otro en `guard?`; `then` produce `EffectBlock`.
 
 ### Regla `always`
 
-`otherwise` ausente produce `diagnostic = absent`. No se inserta aquí el texto predeterminado del warning.
+El cuerpo anterior a `otherwise` produce un `BooleanBlock`. `otherwise` ausente produce `diagnostic = absent`. No se inserta aquí el texto predeterminado del warning.
 
 ### Acción
 
-`if` produce `ActionGuard`; `after` produce `ActionPostcondition`.
+`if` produce `ActionGuard` con un `BooleanBlock`; `after` produce `ActionPostcondition` con otro.
 
 No se clasifica la acción como elemental o compuesta.
 
 ### `look` y `message`
 
 Las propiedades públicas se convierten a `PublicFieldDecl` y conservan su orden.
+
+## Bloques booleanos y tests
+
+Una forma breve como `if ready` produce `BooleanBlock([], ready)`. Una forma entre llaves recoge todas las declaraciones locales `:=` iniciales y exige una única expresión final. El `otherwise` asociado queda fuera del bloque AST, pero la resolución posterior extiende hasta él el entorno de esos locales.
+
+En tests, `after expr` produce `TestAfterBlock([], [TestAssertion(expr)])`. La forma entre llaves produce `TestAfterBlock(locals, assertions)`; los locales solo pueden aparecer antes de la primera aserción.
 
 ## `then` y bloques
 
@@ -587,7 +595,7 @@ Las referencias de un `start with` producen `StartSet`.
 
 La declaración global añade `GlobalStartDecl`. Dentro de un test, el mismo `StartSet` es un campo de `TestDecl`.
 
-`after assertion` y `after { assertion... }` producen una secuencia uniforme.
+`after assertion` y `after { assertion... }` producen un `TestAfterBlock` uniforme.
 
 ## Elementos que no se normalizan todavía
 

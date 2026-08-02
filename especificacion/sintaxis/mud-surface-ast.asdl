@@ -137,15 +137,15 @@ module MUDSurface {
                    | BooleanRuleDecl(nominal_name name,
                                      for_clause? participants,
                                      given_clause? givens,
-                                     expr condition)
+                                     boolean_block condition)
                    | ReactiveRuleDecl(nominal_name name,
                                       on_clause? participants,
-                                      expr activator,
-                                      expr? guard,
+                                      boolean_block activator,
+                                      boolean_block? guard,
                                       effect_block effects)
                    | AlwaysRuleDecl(nominal_name name,
                                     on_clause? participants,
-                                    expr invariant,
+                                    boolean_block invariant,
                                     expr? diagnostic)
                    | ActionDecl(nominal_name name,
                                 for_clause? participants,
@@ -158,14 +158,13 @@ module MUDSurface {
                               public_field_decl* fields)
                    | MessageDecl(nominal_name name,
                                  on_clause? participants,
-                                 expr activator,
-                                 expr? guard,
+                                 boolean_block activator,
+                                 boolean_block? guard,
                                  public_field_decl* fields)
                    | TestDecl(nominal_name name,
                               start_set start,
                               effect_block effects,
-                              test_assertion first_assertion,
-                              test_assertion* remaining_assertions)
+                              test_after_block after)
                    | GlobalStartDecl(start_set start)
         attributes (source_origin origin)
 
@@ -338,10 +337,13 @@ module MUDSurface {
     -- Cuerpos, condiciones y tests
     -- -----------------------------------------------------------------
 
-    action_guard = ActionGuard(expr condition, expr? diagnostic)
+    boolean_block = BooleanBlock(local_value_decl* locals, expr result)
         attributes (source_origin origin)
 
-    action_postcondition = ActionPostcondition(expr condition,
+    action_guard = ActionGuard(boolean_block condition, expr? diagnostic)
+        attributes (source_origin origin)
+
+    action_postcondition = ActionPostcondition(boolean_block condition,
                                                expr? diagnostic)
         attributes (source_origin origin)
 
@@ -360,6 +362,11 @@ module MUDSurface {
         attributes (source_origin origin)
 
     start_set = StartSet(declaration_ref* declarations)
+        attributes (source_origin origin)
+
+    test_after_block = TestAfterBlock(local_value_decl* locals,
+                                      test_assertion first_assertion,
+                                      test_assertion* remaining_assertions)
         attributes (source_origin origin)
 
     test_assertion = TestAssertion(expr condition, expr? diagnostic)

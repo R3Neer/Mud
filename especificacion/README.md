@@ -259,7 +259,7 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]].
+Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]] y [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
 ## 10. Sistema de tipos
 

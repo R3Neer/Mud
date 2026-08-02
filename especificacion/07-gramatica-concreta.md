@@ -48,6 +48,8 @@ decisions:
   - D-068
   - D-069
   - D-070
+  - D-071
+  - D-072
 ---
 
 # 07. Gramática concreta
@@ -423,11 +425,16 @@ La vinculación depende de la categoría del rol:
 
 ### Booleana
 
-El cuerpo contiene directamente una expresión `Bool`:
+El cuerpo termina en una única expresión `Bool` y puede declarar antes vinculaciones locales inmutables:
 
 ```mud
 rule IsAdult for person: Person {
     person.age >= 18
+}
+
+rule CanAfford for person: Person given price: Money {
+    available := person.money
+    available >= price
 }
 ```
 
@@ -481,8 +488,9 @@ Las vinculaciones presentes en la primera instantánea materializada por `start 
 
 ```mud
 always rule ValidPopulation on kingdom: Kingdom {
-    kingdom.population >= 0 people
-    otherwise "Population cannot be negative in {kingdom}"
+    population := kingdom.population
+    population >= 0 people
+    otherwise "Population cannot be negative: {population}"
 }
 ```
 
@@ -537,11 +545,41 @@ Un campo público cuyo valor directo es una magnitud debe seleccionar preferente
 if ready
 
 if {
-    ready
+    available := player.money
+    available >= price
 }
+otherwise "Available: {available}"
 ```
 
 Las llaves no suprimen los terminadores entre elementos de un bloque.
+
+### Valores locales en condiciones
+
+Los bloques de reglas booleanas, `when`, `if`, reglas `always` y `after` de acciones pueden contener cero o más vinculaciones locales seguidas por exactamente una expresión final:
+
+```mud
+when {
+    wasOpen := old door.open
+    isOpen := door.open
+    wasOpen != isOpen
+}
+```
+
+Las vinculaciones usan `nombre [: Tipo] := expresión`, son puras, inmutables y secuenciales, y no admiten referencias adelantadas, ciclos, redeclaración ni sombreado. Se recalculan en cada evaluación de la cláusula y no almacenan estado entre ondas.
+
+Su ámbito alcanza el `otherwise` asociado, pero no `then` ni otra cláusula. En un `when`, `changes` y `old` evalúan la expresión definitoria de una local en cada instantánea necesaria.
+
+Una expresión sin estructura de declaración debe ser la última. Debe elaborar a `Bool`, salvo en `when`, donde debe elaborar a un activador admitido por su contrato temporal. Un bloque vacío, un bloque compuesto solo por locales o una segunda expresión no declarativa son inválidos.
+
+El bloque `after` de un test conserva una o más aserciones. Puede comenzar con locales comunes, visibles en todas las aserciones y sus `otherwise`; después de la primera aserción no puede declararse otra local:
+
+```mud
+after {
+    expected := before + amount
+    kingdom.soldiers == expected
+    kingdom.treasury >= 0
+}
+```
 
 ### Valores locales en `then`
 

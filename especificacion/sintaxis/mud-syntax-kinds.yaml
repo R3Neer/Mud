@@ -971,11 +971,18 @@ syntax_nodes:
     - body
   boolean-body:
     kind: BooleanBodySyntax
-    rhs: "\"{\" , declaration-layout , boolean-expression\n        , [ required-separation ] , \"}\""
+    rhs: '"{" , declaration-layout , boolean-block , [ required-separation ] , "}"'
     references:
     - declaration-layout
-    - boolean-expression
+    - boolean-block
     - required-separation
+  boolean-block:
+    kind: BooleanBlockSyntax
+    rhs: "{ local-value-declaration , required-separation }\n      , boolean-expression"
+    references:
+    - local-value-declaration
+    - required-separation
+    - boolean-expression
   reactive-rule-declaration:
     kind: ReactiveRuleDeclarationSyntax
     rhs: "\"rule\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , when-clause\n        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n        , [ required-separation ]\n        , \"}\""
@@ -1007,10 +1014,10 @@ syntax_nodes:
     - body
   invariant-body:
     kind: InvariantBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , boolean-expression\n        , [ diagnostic-tail ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , boolean-block\n        , [ diagnostic-tail ]\n        , [ required-separation ]\n        , \"}\""
     references:
     - declaration-layout
-    - boolean-expression
+    - boolean-block
     - diagnostic-tail
     - required-separation
   action-declaration:
@@ -1091,10 +1098,11 @@ syntax_nodes:
     - text-expression
   expression-clause-body:
     kind: ExpressionClauseBodySyntax
-    rhs: "boolean-expression\n      | \"{\" , declaration-layout , boolean-expression\n          , [ required-separation ] , \"}\""
+    rhs: "boolean-expression\n      | \"{\" , declaration-layout , boolean-block\n          , [ required-separation ] , \"}\""
     references:
     - boolean-expression
     - declaration-layout
+    - boolean-block
     - required-separation
   then-clause:
     kind: ThenClauseSyntax
@@ -1117,7 +1125,6 @@ syntax_nodes:
     references:
     - effect
     - local-value-declaration
-  local-value-declaration:
   local-value-declaration:
     kind: LocalValueDeclarationSyntax
     rhs: variable-name , [ ":" , declared-type ] , ":=" , expression
@@ -1158,8 +1165,9 @@ syntax_nodes:
     - body
   test-after-clause:
     kind: TestAfterClauseSyntax
-    rhs: "\"after\" , test-assertion\n      | \"after\" , \"{\"\n          , declaration-layout\n          , test-assertion\n          , { required-separation , test-assertion }\n          , [ required-separation ]\n          , \"}\""
+    rhs: "\"after\" , test-assertion\n      | \"after\" , \"{\"\n          , declaration-layout\n          , { local-value-declaration , required-separation }\n          , test-assertion\n          , { required-separation , test-assertion }\n          , [ required-separation ]\n          , \"}\""
     references:
+    - local-value-declaration
     - test-assertion
     - declaration-layout
     - required-separation

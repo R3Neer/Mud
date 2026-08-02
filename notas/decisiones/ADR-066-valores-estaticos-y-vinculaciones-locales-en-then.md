@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-066 — Valores estáticos y vinculaciones locales en `then`
 
+- Ampliada por: [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+
 - Modifica: [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Amplía: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Documentos afectados: campos almacenados y calculados, familias, predeterminados, acciones, tests, bloques de efectos, AST e IR

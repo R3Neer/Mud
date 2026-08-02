@@ -17,6 +17,7 @@ affects:
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 

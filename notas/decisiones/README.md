@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 65.
-- Vigentes: 65.
+- Total: 67.
+- Vigentes: 67.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -84,6 +84,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-068 | vigente | 2026-08-02 | [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|`Thing` universal y nombre intrínseco]] |
 | D-069 | vigente | 2026-08-02 | [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|Literales `Char` con comillas dobles]] |
 | D-070 | vigente | 2026-08-02 | [[notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|CST sin pérdidas y AST superficial normalizado]] |
+| D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Vinculaciones locales en bloques booleanos]] |
+| D-072 | vigente | 2026-08-02 | [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|Entornos de resolución y migraciones explícitas de anclas]] |
 
 ## Identificadores reservados
 

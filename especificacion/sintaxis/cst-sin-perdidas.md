@@ -18,6 +18,7 @@ depends-on:
 questions: []
 decisions:
   - D-070
+  - D-071
 ---
 
 # CST sin pérdidas
@@ -40,6 +41,8 @@ La autoridad se reparte de esta manera:
 - Este documento define el modelo común, la conservación de texto y la recuperación.
 
 Una divergencia entre esos archivos es un defecto de la especificación y debe detectarse mediante `validate_syntax_model.py`.
+
+Entre las categorías concretas inventariadas se encuentra `BooleanBlockSyntax`, que conserva en orden las declaraciones locales iniciales y la expresión booleana final. La CST no amplía por sí sola su ámbito hasta `otherwise`; esa relación se establece al proyectar y resolver la construcción propietaria.
 
 ## Terminología
 

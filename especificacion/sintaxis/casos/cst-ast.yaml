@@ -201,6 +201,43 @@ cases:
     ast: ComparisonChainExpr(0, [(LessOrEqual,x),(Less,10)])
     produces_ast: true
 
+  - id: boolean-block-with-locals
+    category: boolean-block
+    source: |
+      rule CanAfford for person: Person given price: Money {
+          available := person.money
+          available >= price
+      }
+    cst_root: MudFileSyntax
+    ast: BooleanRuleDecl(condition=BooleanBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
+    normalizations: [boolean-block-locals-and-result]
+    produces_ast: true
+
+  - id: action-condition-locals-visible-in-otherwise
+    category: boolean-block
+    source: |
+      action Buy for person: Person given price: Money {
+          if {
+              missing := price - person.money
+              missing <= 0
+          } otherwise "You need {missing} more"
+          then person.money -= price
+      }
+    cst_root: MudFileSyntax
+    ast: ActionGuard(condition=BooleanBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
+    normalizations: [extend-boolean-local-environment-through-otherwise]
+    produces_ast: true
+
+  - id: boolean-block-without-final-expression
+    category: validation-before-ast
+    source: |
+      rule Broken for person: Person {
+          available := person.money
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [missing-final-boolean-expression]
+    produces_ast: false
+
   - id: interval-closed-sugar
     category: interval
     source: |
@@ -316,8 +353,28 @@ cases:
           after Door.open == false
       }
     cst_root: MudFileSyntax
-    ast: TestDecl(assertions=[TestAssertion(...)])
-    normalizations: [single-assertion-to-list]
+    ast: TestDecl(after=TestAfterBlock(locals=[], assertions=[TestAssertion(...)]))
+    normalizations: [single-assertion-to-test-after-block]
+    produces_ast: true
+
+  - id: test-after-locals
+    category: test
+    source: |
+      test Purchase {
+          start with { Buyer }
+          then {
+              cost := 5
+              Buyer.money -= cost
+          }
+          after {
+              remaining := Buyer.money
+              remaining >= 0
+              remaining < 10 otherwise "Unexpected balance: {remaining}"
+          }
+      }
+    cst_root: MudFileSyntax
+    ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
+    normalizations: [test-then-locals, test-after-locals-before-assertions]
     produces_ast: true
 
   - id: comments-lossless

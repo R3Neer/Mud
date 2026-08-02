@@ -18,6 +18,8 @@ depends-on:
 questions: []
 decisions:
   - D-070
+  - D-071
+  - D-072
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -391,13 +393,23 @@ Las tres clases tienen constructores distintos:
 
 Una regla reactiva almacena:
 
-- Activador `when`.
-- Guardia `if` opcional.
+- Activador `when` como bloque booleano.
+- Guardia `if` opcional como bloque booleano.
 - Bloque de efectos.
 
 `changes` es un nodo de expresión, no una variante separada de cláusula `when`.
 
 Una regla `always` puede omitir `otherwise`; el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
+
+## Bloques booleanos
+
+Las condiciones de reglas booleanas, `when`, `if`, `always` y `after` se normalizan como:
+
+```text
+BooleanBlock(locals, result)
+```
+
+`locals` conserva en orden las declaraciones con `:=`; `result` es la única expresión final. Debe satisfacer el contrato booleano del propietario o, en `when`, el contrato temporal de activador. La forma breve posee una secuencia local vacía. El `otherwise` asociado no forma parte de `BooleanBlock`, pero su expresión puede resolver los nombres locales declarados por este.
 
 ## Acciones
 
@@ -409,15 +421,15 @@ Una acción contiene:
 
 - Participantes `for` opcionales.
 - `given` opcionales.
-- Guardia opcional y diagnóstico.
+- Guardia booleana opcional y diagnóstico.
 - Bloque de efectos.
-- Postcondición `after` opcional y diagnóstico.
+- Postcondición booleana `after` opcional y diagnóstico.
 
 ## `look` y `message`
 
 `LookDecl` conserva participantes `for` y propiedades públicas.
 
-`MessageDecl` conserva participantes `on`, activador, guardia opcional y propiedades públicas.
+`MessageDecl` conserva participantes `on`, activador booleano, guardia booleana opcional y propiedades públicas.
 
 No se reducen a reglas o acciones genéricas porque sus contratos posteriores son distintos.
 
@@ -427,9 +439,9 @@ No se reducen a reglas o acciones genéricas porque sus contratos posteriores so
 
 - Conjunto inicial local.
 - Bloque de efectos.
-- Una secuencia no vacía de aserciones.
+- Un `TestAfterBlock` con declaraciones locales iniciales y una secuencia no vacía de aserciones.
 
-La forma `after expr` y la forma `after { ... }` producen la misma secuencia de `TestAssertion`.
+La forma `after expr` produce un bloque sin locales y una aserción. En la forma `after { ... }`, todas las declaraciones locales preceden a la primera aserción.
 
 `start with` global y local comparten `StartSet`, pero solo el primero está envuelto en `GlobalStartDecl`.
 

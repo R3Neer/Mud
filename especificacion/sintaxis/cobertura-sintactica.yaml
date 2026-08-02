@@ -372,6 +372,11 @@ productions:
     ast:
       disposition: normalized
       target: BooleanRuleDecl
+  boolean-block:
+    cst: BooleanBlockSyntax
+    ast:
+      disposition: constructor
+      target: BooleanBlock
   reactive-rule-declaration:
     cst: ReactiveRuleDeclarationSyntax
     ast:
@@ -406,12 +411,12 @@ productions:
     cst: WhenClauseSyntax
     ast:
       disposition: normalized
-      target: expr
+      target: BooleanBlock
   if-clause:
     cst: IfClauseSyntax
     ast:
       disposition: normalized
-      target: expr
+      target: BooleanBlock
   action-if-clause:
     cst: ActionIfClauseSyntax
     ast:
@@ -431,7 +436,7 @@ productions:
     cst: ExpressionClauseBodySyntax
     ast:
       disposition: normalized
-      target: expr
+      target: BooleanBlock
   then-clause:
     cst: ThenClauseSyntax
     ast:
@@ -471,7 +476,7 @@ productions:
     cst: TestAfterClauseSyntax
     ast:
       disposition: normalized
-      target: TestAssertion
+      target: TestAfterBlock
   test-assertion:
     cst: TestAssertionSyntax
     ast:

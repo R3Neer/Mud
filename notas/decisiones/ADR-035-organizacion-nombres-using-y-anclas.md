@@ -19,6 +19,7 @@ affects:
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
+- Ampliada por: [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]]
 - Preguntas relacionadas: Q-001, Q-014, Q-054
 - Documentos afectados: futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`
 

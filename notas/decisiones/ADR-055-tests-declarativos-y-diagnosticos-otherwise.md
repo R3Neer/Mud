@@ -14,6 +14,7 @@ affects:
 
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Abre: [[notas/preguntas/Q-059-observacion-de-resultados-de-accion-en-tests|Q-059]]
+- Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
 - Documentos afectados: [[notas/preguntas/README|Preguntas activas]], futuros capítulos 06 a 09, 25, 28, 30, 43, 46 y 49
 
 ## Contexto
