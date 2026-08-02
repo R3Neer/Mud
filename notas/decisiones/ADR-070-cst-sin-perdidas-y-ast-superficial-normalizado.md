@@ -1,7 +1,7 @@
 ---
 id: D-070
 title: "CST sin pérdidas y AST superficial normalizado"
-status: propuesta
+status: vigente
 date: 2026-08-02
 supersedes: []
 superseded-by: []
@@ -14,9 +14,9 @@ affects:
 
 ## Estado
 
-Propuesta.
+Vigente.
 
-Esta propuesta se ha actualizado al vocabulario y a la gramática vigentes: usa los tipos numéricos breves de [[ADR-067-nombres-breves-de-tipos-numericos|D-067]], integra el `name` intrínseco de [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]] y representa los literales de comillas dobles conforme a [[ADR-069-literales-char-con-comillas-dobles|D-069]]. En particular, el AST superficial no inventa un nodo léxico distinto para `Char`; esa elaboración requiere contexto de tipos.
+Esta decisión se ha actualizado al vocabulario y a la gramática vigentes: usa los tipos numéricos breves de [[ADR-067-nombres-breves-de-tipos-numericos|D-067]], integra el `name` intrínseco de [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]] y representa los literales de comillas dobles conforme a [[ADR-069-literales-char-con-comillas-dobles|D-069]]. En particular, el AST superficial no inventa un nodo léxico distinto para `Char`; esa elaboración requiere contexto de tipos.
 
 ## Contexto
 
