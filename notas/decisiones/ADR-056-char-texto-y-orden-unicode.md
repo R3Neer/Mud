@@ -13,6 +13,7 @@ affects:
 # ADR-056 — `Char`, `Text` y orden Unicode
 
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
 - Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], futuros capítulos 10 y 15
 
@@ -31,21 +32,21 @@ Si ambas cosas fueran equivalentes, un texto ordinario como `"cba"` tendría que
 
 `Char` es un tipo básico no numérico. Cada valor denota exactamente un valor escalar Unicode; no admite puntos de código sustitutos aislados.
 
-Sus literales usan comillas simples:
+Sus literales usan la forma ordinaria entre comillas dobles y requieren un contexto `Char`:
 
 ```mud
-'a'
-'ñ'
-'界'
-'\n'
-'\u{1F642}'
+"a"
+"ñ"
+"界"
+"\n"
+"\u{1F642}"
 ```
 
-Después de interpretar escapes, un literal debe contener exactamente un valor escalar Unicode.
+Después de interpretar escapes, un literal debe contener exactamente un valor escalar Unicode. La forma `Char` exige cierre explícito y no admite interpolaciones; sin un contexto que exija `Char`, incluso `"a"` tiene tipo `Text`.
 
 ASCII es el subconjunto de Unicode comprendido entre `U+0000` y `U+007F`. No constituye un tipo separado.
 
-El valor predeterminado de `Char` es el escalar `U+0000`, escrito `'\u{0}'`. Es un valor ordinario de `Char`, no ausencia ni terminador de texto. MUD no introduce el escape especial `\0`; la escritura Unicode general ya expresa el valor sin importar una convención específica de C.
+El valor predeterminado de `Char` es el escalar `U+0000`, escrito `"\u{0}"` en contexto `Char`. Es un valor ordinario de `Char`, no ausencia ni terminador de texto. MUD no introduce el escape especial `\0`; la escritura Unicode general ya expresa el valor sin importar una convención específica de C.
 
 ### Orden
 
@@ -87,7 +88,7 @@ Los literales `Text` son además plantillas conforme a D-061. Sus fragmentos lit
 
 ## Consecuencias
 
-- El lexer incorpora literales `Char` separados de los literales `Text`.
+- El lexer incorpora una forma textual común; la elaboración estática distingue `Char` de `Text`.
 - El sistema de tipos incorpora `Char` entre los tipos básicos no numéricos.
 - La iteración de `Text` conserva posición; la enumeración de `Char [* ordered]` usa Unicode.
 - Una materialización no puede ordenar texto como efecto de su representación.
@@ -102,5 +103,5 @@ Los literales `Text` son además plantillas conforme a D-061. Sus fragmentos lit
 5. Conservación de `"cba"` como `Text`.
 6. Rechazo de `"cba"` como valor de `Char [* ordered]`.
 7. Rechazo de `ordered by` para `Char` y de modificadores de colección sobre `Text`.
-8. Predeterminado `'\u{0}'` de `Char` y rechazo de `'\0'` como escape no declarado.
+8. Predeterminado `"\u{0}"` de `Char` y rechazo de `"\0"` como escape no declarado.
 9. Conservación posicional de fragmentos literales e interpolados dentro de una plantilla.

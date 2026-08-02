@@ -15,6 +15,7 @@ affects:
 # ADR-061 — Resultados no aceptados y plantillas `Text`
 
 - Modifica: [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]]
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-007, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]], Q-059
 - Documentos afectados: resultados de acción, reglas `always`, léxico, gramática, evaluación de `Text`, diagnósticos y frontera externa
@@ -97,7 +98,7 @@ La representación de un hueco depende del valor evaluado, no del nombre escrito
 | `Char` | El escalar que contiene |
 | `Bool` | `true` o `false` |
 | Número básico | Su representación numérica canónica o el formato explícito |
-| `thing` | El nombre nominal de la `thing` almacenada |
+| `thing` | El valor de su propiedad intrínseca `name` |
 | Miembro de `family` | El nombre nominal del miembro |
 | Intervalo | Su forma canónica normalizada |
 | Colección | Sus elementos separados por `, `, sin los corchetes exteriores |
@@ -224,6 +225,7 @@ Esto permite mencionar acciones, reglas, `look`, `message`, tests y tipos sin co
 - `otherwise` es opcional y localizado; su ausencia produce el diagnóstico de estilo correspondiente.
 - El catálogo de resultados debe proporcionar una razón humana para cada `rejected` y `failed`.
 - La renderización contextual no introduce una conversión implícita general a `Text`.
+- El nombre visible de una `thing` puede diferir de su ancla; `anchor{...}` conserva la identidad canónica.
 - `in` sirve tanto para magnitudes lineales como de punto y, en estas últimas, evita el formato.
 - La extracción de componentes no queda limitada por el formato visible.
 

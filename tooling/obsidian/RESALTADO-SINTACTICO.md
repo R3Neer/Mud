@@ -59,7 +59,7 @@ Se reconocen:
 
 - Comentarios de línea, comentarios cerrados y bloques `###`.
 - `Text` ordinario y multilínea.
-- Literales `Char`.
+- Formas de `Text` y `Char` con comillas dobles; la distinción de tipo es contextual.
 - Números exactos y `Rum`.
 - Palabras reservadas, incluida `ordered`.
 - Palabras contextuales inequívocas como `abstract thing` y `always rule`.

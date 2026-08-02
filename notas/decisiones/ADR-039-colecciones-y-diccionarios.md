@@ -136,7 +136,7 @@ En consecuencia, para colecciones ordenadas por inserción, las operaciones conm
 Ejemplo de inferencia:
 
 ```mud
-leftChars: Char [1..5] = ['a']
+leftChars: Char [1..5] = ["a"]
 rightChars: Char [0..2] = empty
 combinedChars := leftChars | rightChars
 ```

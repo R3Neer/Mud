@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-032 — Construcción contextual y casting nominal de aliases
 
+- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+
 - Amplía: [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
 - Pregunta relacionada: Q-056
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `12-aliases.md`, futuro `19-expresiones.md`
@@ -156,7 +158,7 @@ playerName == "Ada"
 
 puede construirse contextualmente como `PlayerName`. En cambio, si `rawText` es una variable de tipo `Text`, `playerName == rawText` continúa siendo inválido sin `to`.
 
-Los literales de `Text`, `Char`, `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente.
+Los literales de `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente. Una forma ordinaria entre comillas dobles prefiere `Text`, pero puede elaborarse como `Char` cuando el contexto exige exactamente un escalar conforme a D-069.
 
 Después de resolver los literales, ambos operandos deben tener exactamente el mismo tipo nominal. Comparar aliases diferentes o un alias con una expresión ya tipada como su representación subyacente es un error:
 

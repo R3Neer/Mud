@@ -13,6 +13,7 @@ affects:
 # ADR-014 — Ontología unificada de `thing`
 
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Preguntas: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
 
@@ -28,8 +29,9 @@ MUD tiene un único dominio conceptual de `thing`.
 2. Toda `thing` posee identidad semántica.
 3. Toda `thing` concreta denota además una cosa concreta con estado propio y puede servir como antecesora de otras.
 4. Una `thing` abstracta pertenece al mismo dominio y posee identidad, pero no denota por sí misma una cosa concreta con estado propio.
-5. Cada `thing` tiene una única definición canónica; `as` fija en ella cero o varias relaciones directas y `create Nombre` solo activa esa identidad, según [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
+5. Cada `thing` declarable tiene una única definición canónica; `as` fija en ella cero o varias relaciones declaradas y `create Nombre` solo activa esa identidad, según [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 6. La relación semántica `is` es reflexiva y transitiva.
+7. `Thing` es la identidad abstracta incorporada superior a toda `thing`; no posee definición fuente ni ciclo de vida controlable por el programa.
 
 La procedencia —declaración estática o activación durante la ejecución— y el ciclo de vida no originan categorías ontológicas distintas.
 
@@ -40,7 +42,7 @@ La procedencia —declaración estática o activación durante la ejecución— 
 - `as` introduce antecesores directos en la cabecera de una `thing` estática o creada.
 - `is` es un operador de expresión que consulta la relación semántica derivada.
 
-Sea $R_{\mathrm{dir}}$ la relación de especialización directa. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]] la completa con:
+Sea $R_{\mathrm{decl}}$ la relación de especialización declarada con `as`. D-068 añade una arista implícita desde cada raíz declarada hacia `Thing`; su unión forma $R_{\mathrm{dir}}$. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]] la completa con:
 
 $$
 R_{\mathsf{is}}
@@ -114,7 +116,7 @@ La documentación debe presentar `is` como «es la misma `thing` o una especiali
 1. Reflexividad: `T is T`.
 2. Relación directa: `thing B as A {}` implica `B is A`.
 3. Transitividad.
-4. `thing N as C {}` declara verdadera `N is C` cuando ambas identidades son efectivas; `thing N {}` no añade antecesores.
+4. `thing N as C {}` declara verdadera `N is C` cuando ambas identidades son efectivas; `thing N {}` no añade antecesores declarados y sí satisface `N is Thing`.
 5. Destruir y recrear `N` conserva la identidad.
 6. Dos nombres distintos siguen siendo distintos aunque compartan antecesores y estado.
 7. Separación de `as` e `is` en el AST.

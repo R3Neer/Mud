@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-050 — Comentarios, terminadores, texto y separadores numéricos
 
+- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
@@ -41,15 +43,15 @@ Comentario multilínea.
 
 El `###` de apertura debe ser el último elemento no blanco de su línea. El contenido comienza en la línea siguiente. El `###` de cierre debe aparecer solo, salvo espacio horizontal, en su propia línea. La línea de apertura y la de cierre no forman parte del comentario. La forma `### comentario ###` es inválida.
 
-Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de un literal `Text` o `Char`, los delimitadores de comentario no tienen significado léxico.
+Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de una forma textual entre comillas dobles, se elabore como `Text` o como `Char`, los delimitadores de comentario no tienen significado léxico.
 
 El contenido de un comentario no genera tokens, instrucciones ni terminadores. Después de retirarlo, el texto restante debe seguir siendo sintácticamente válido.
 
 Un comentario de línea cerrado explícitamente no atraviesa un salto. Un delimitador multilínea sin pareja, un inicio con contenido en su misma línea o un cierre que no esté aislado producen diagnóstico.
 
-### Literales de texto
+### Formas textuales
 
-Un literal ordinario de `Text` comienza con `"`. Puede cerrarse con otro `"` en la misma línea o cerrarse implícitamente al llegar al salto:
+Un literal ordinario comienza con `"` y prefiere el tipo `Text`. Puede cerrarse con otro `"` en la misma línea o cerrarse implícitamente al llegar al salto:
 
 ```mud
 name = "Ada"
@@ -69,7 +71,7 @@ description = """
 
 La sangría del delimitador de cierre define el margen que se retira de cada línea no vacía. Una línea no vacía con menos sangría que el margen es un error. La primera línea posterior al inicio y el salto inmediatamente anterior al cierre son estructurales y no forman parte del valor. La sangría adicional se conserva. Los escapes y las interpolaciones de D-061 continúan activos.
 
-Un literal `Char` usa comillas simples y, después de procesar escapes, debe contener exactamente un valor escalar Unicode conforme a D-056.
+Un literal ordinario entre comillas dobles prefiere `Text` y puede elaborarse como `Char` cuando el contexto lo exige y contiene exactamente un valor escalar Unicode conforme a D-069. Las comillas simples no delimitan literales.
 
 ### Terminadores
 

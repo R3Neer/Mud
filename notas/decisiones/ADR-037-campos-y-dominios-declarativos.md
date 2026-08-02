@@ -15,6 +15,7 @@ affects:
 
 - Amplía: D-019, D-026
 - Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Preguntas relacionadas: Q-003, Q-017
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`
 
@@ -23,7 +24,7 @@ affects:
 ### Clases de campo
 
 ```mud
-name: Text = ""
+title: Text = ""
 mut treasury: Money = 0
 age: Nat in 0..150 [1] = 18
 subjects: Person [* unique]
@@ -35,6 +36,7 @@ displayCost: Money := maintenanceCost
 - `:=` introduce una expresión calculada y pura.
 - `mut` concede mutabilidad exterior conforme a D-019.
 - Todo campo denota una colección conforme a D-026; omitir cardinalidad equivale a `[1]`.
+- Dentro de una `thing`, `name` designa la propiedad intrínseca fijada por D-068 y no puede declararse como campo ordinario.
 
 La forma concreta de un campo almacenado es:
 

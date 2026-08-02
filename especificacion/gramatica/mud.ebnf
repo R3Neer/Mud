@@ -80,12 +80,20 @@ thing-declaration
 
 thing-body
     ::= "{" , declaration-layout
-        , [ field-declaration
-            , { required-separation , field-declaration }
+        , [ thing-body-declaration
+            , { required-separation , thing-body-declaration }
             , [ required-separation ]
           ]
         , "}"
         ;
+
+thing-body-declaration
+    ::= intrinsic-name-override
+      | field-declaration
+      ;
+
+intrinsic-name-override
+    ::= "name" , "=" , TEXT_START , { TEXT_FRAGMENT } , TEXT_END ;
 
 alias-declaration
     ::= "alias" , nominal-name
@@ -755,7 +763,6 @@ literal
     ::= exact-number
       | rumber-number
       | text-template
-      | CHAR_LITERAL
       | POINT_LITERAL
       | "true"
       | "false"

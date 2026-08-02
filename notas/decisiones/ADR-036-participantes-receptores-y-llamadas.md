@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-036 — Participantes, receptores y llamadas
 
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+
 - Amplía: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Preguntas relacionadas: Q-011, Q-012, Q-013
@@ -40,6 +42,8 @@ Reglas reactivas, `always`, `look` y `message` no admiten `given`.
 ### Cardinalidad y nombres
 
 Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, un dominio `in` y la especificación completa de colección. El dominio restringe los valores admisibles del rol y se escribe entre el tipo y la especificación de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
+
+El tipo incorporado `Thing` admite cualquier `thing`. Por tanto, un rol `for` de tipo `Thing` acepta cualquier identidad concreta compatible y `on Thing` enumera todas las `thing` concretas y activas; la raíz abstracta no produce una vinculación propia.
 
 El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos, además de los nombres ordinariamente visibles:
 

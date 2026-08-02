@@ -266,7 +266,8 @@ Archivo previsto: `10-sistema-de-tipos.md`
 Define:
 
 - `Text`, `Char` y `Bool` como tipos básicos no numéricos.
-- `'\u{0}'` (`U+0000`) como valor predeterminado de `Char`.
+- Comillas dobles comunes para `Text` y `Char`, con preferencia por `Text` y elaboración contextual de un único escalar como `Char`.
+- `"\u{0}"` (`U+0000`) como valor predeterminado contextual de `Char`.
 - `Nat`, `Int`, `Num`, `Rum` y `Money` como representaciones numéricas básicas, no magnitudes.
 - Saturación de la resta pura de `Nat` frente a deltas aditivos firmados.
 - `Num` como racional exacto y `Rum` como IEEE 754 `binary64` explícito.
@@ -284,6 +285,8 @@ Define:
 
 Base normativa migrada para aritmética de `Nat`: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
+Base normativa de literales textuales y `Char`: [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]] y [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]].
+
 Juicio principal:
 
 $$
@@ -297,6 +300,7 @@ Archivo previsto: `11-things.md`
 Define:
 
 - `Thing` concretas y abstractas.
+- `Thing` incorporada, abstracta y superior a toda `thing`.
 - `Thing` declaradas y creadas durante la ejecución.
 - Especialización simple y múltiple.
 - Cabeceras de especialización con `as` y consultas con `is`.
@@ -305,6 +309,7 @@ Define:
 - Valores predeterminados heredados.
 - Igualdad de identidad.
 - Canonicalización de identidades de `thing`.
+- Propiedad intrínseca `name: Text`, presentación local y separación respecto del ancla.
 
 ## 12. Aliases nominales y valores estructurales
 
@@ -350,6 +355,7 @@ Archivo previsto: `14-campos-y-mutabilidad.md`
 Define:
 
 - Campos almacenados y calculados.
+- Exclusión de `name`, que pertenece al descriptor intrínseco de cada `thing`.
 - Expresiones estáticas cerradas para valores almacenados y predeterminados.
 - Anotación opcional e inferencia unívoca del tipo de campos calculados.
 - `=` frente a `:=`.
@@ -964,7 +970,7 @@ Archivo previsto: `46-palabras-reservadas.md`
 
 Lista normativa, clasificación como palabra reservada o contextual y versión de introducción o retirada.
 
-Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]; el catálogo se derivará de la gramática.
+Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]; el catálogo se derivará de la gramática.
 
 ## 47. Ejemplos integrales
 

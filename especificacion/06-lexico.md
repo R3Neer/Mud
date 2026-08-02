@@ -20,6 +20,8 @@ decisions:
   - D-061
   - D-062
   - D-067
+  - D-068
+  - D-069
 ---
 
 # 06. Estructura léxica
@@ -78,7 +80,7 @@ is in
 not and or xor
 exists forall count sum min max
 true false empty
-Text Char Bool Nat Int Num Rum Money
+Text Char Bool Thing Nat Int Num Rum Money
 Rand
 ```
 
@@ -89,6 +91,7 @@ Son contextuales:
 - `abstract` delante de `thing`.
 - `always` delante de `rule`.
 - `start` como parte de `start with`.
+- `name` delante de `=` dentro del cuerpo de una `thing` y en las etiquetas declarativas que lo admiten.
 - `name`, `plural`, `abbreviation`, `prefixes`, `format`, `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
 - `anchor` inmediatamente antes de `{` dentro de una plantilla `Text`.
 
@@ -140,17 +143,19 @@ Los comentarios se eliminan antes del parsing. Un comentario multilínea complet
 
 ## `Char`
 
-Los literales usan comillas simples:
+`Char` comparte con `Text` los literales ordinarios entre comillas dobles:
 
 ```mud
-'a'
-'ñ'
-'\n'
-'\u{1F642}'
+letter: Char = "a"
+letterEnye: Char = "ñ"
+newline: Char = "\n"
+face: Char = "\u{1F642}"
 ```
 
 > [!rule] MUD-LEX-025 — Un único escalar
-> Después de interpretar escapes, un literal `Char` debe contener exactamente un valor escalar Unicode. La comilla final es obligatoria.
+> Un literal ordinario puede elaborarse como `Char` cuando el contexto lo exige y, después de interpretar escapes, contiene exactamente un valor escalar Unicode. La comilla final explícita es obligatoria y no admite interpolaciones. Sin contexto `Char`, la misma escritura tiene tipo `Text`.
+
+La forma multilínea siempre es `Text`. Las comillas simples no delimitan ningún literal de MUD.
 
 Su orden natural es el valor escalar creciente. No es colación lingüística ni orden por grafemas.
 
@@ -243,7 +248,7 @@ Las formas mínimas son:
 > [!rule] MUD-LEX-035 — Escape Unicode
 > El valor de `\u{...}` debe encontrarse entre `U+0000` y `U+10FFFF` y no puede pertenecer al intervalo de sustitutos.
 
-Los escapes de llaves solo pertenecen a `Text`; no amplían los literales `Char`.
+Los escapes de llaves forman parte de la sintaxis textual común. Un literal que, después de procesarlos, contenga exactamente una llave puede elaborarse como `Char` en el contexto correspondiente.
 
 ## Números
 

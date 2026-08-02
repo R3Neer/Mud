@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-035 — Organización, nombres, `using` y anclas
 
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
@@ -63,7 +65,7 @@ Los identificadores son sensibles a mayúsculas. El catálogo de palabras reserv
 
 D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen.
 
-`using`, `with`, `family`, `test`, `otherwise` y `ordered` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección.
+`using`, `with`, `family`, `test`, `otherwise`, `ordered` y el tipo incorporado `Thing` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección. `name` es contextual dentro de un cuerpo de `thing` cuando aparece seguido de `=`; no queda reservado en los demás espacios de nombres.
 
 ### Nombres cualificados y anclas
 
@@ -89,6 +91,8 @@ test::warfare.armies.RecruitIncreasesArmy
 look::warfare.armies.Summary
 message::warfare.armies.Destroyed
 ```
+
+La raíz incorporada usa el ancla reservada `thing::Thing` conforme a D-068.
 
 Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo namespace. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
 

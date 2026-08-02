@@ -18,6 +18,7 @@ decisions:
   - D-057
   - D-061
   - D-065
+  - D-069
 ---
 
 # 05. Texto fuente y estructura física
@@ -70,12 +71,12 @@ using world.people
 using physics.*
 
 thing Kingdom {
-    mut name: Text
+    mut title: Text
 }
 
-action Rename for kingdom: Kingdom [mut]
-given newName: Text {
-    then kingdom.name = newName
+action Retitle for kingdom: Kingdom [mut]
+given newTitle: Text {
+    then kingdom.title = newTitle
 }
 ```
 
@@ -93,4 +94,4 @@ El fin de archivo puede actuar como cierre de un comentario de línea o de un li
 - Bloques entre llaves.
 - Interpolaciones de una plantilla `Text`.
 - Literales o comentarios multilínea.
-- Literales `Char`.
+- Literales contextuales `Char` con las mismas comillas dobles que `Text`.

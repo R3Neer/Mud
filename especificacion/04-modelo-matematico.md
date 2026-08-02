@@ -24,6 +24,7 @@ decisions:
   - D-026
   - D-021
   - D-055
+  - D-068
 ---
 
 # 04. Modelo matemático del mundo
@@ -89,8 +90,14 @@ Las decisiones aceptadas fijan:
 22. Cada test construye un mundo fresco y aislado cuyo `start with` local sustituye al global.
 23. Los tests no son declaraciones activables ni forman parte del mundo o de su API pública.
 24. El mundo construido para un test y todas sus salidas se descartan al terminar su ejecución.
+25. `Thing` es una `thing` abstracta incorporada, siempre efectiva y superior a toda `thing` mediante `is`.
+26. Una raíz sin `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
+27. `Thing` no posee estado concreto ni ciclo de vida controlable por el programa.
+28. Toda `thing` posee un `name: Text` intrínseco, inmutable y local a su descriptor.
+29. El `name` predeterminado es el nombre nominal no cualificado y una sobrescritura no se hereda.
+30. La identidad y el ancla no dependen de `name`; varias `thing` pueden compartir la misma presentación.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]] y [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]].
 
 ## Próximo desarrollo
 

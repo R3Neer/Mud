@@ -9,6 +9,8 @@ decisions:
   - D-017
   - D-026
   - D-031
+  - D-068
+  - D-069
 affects: []
 superseded-by: []
 ---
@@ -19,7 +21,7 @@ superseded-by: []
 
 Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|ADR-017]].
 
-Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio. Los tipos básicos ya tienen selección concreta; en particular, `Char` usa `'\u{0}'` (`U+0000`). D-031 fija que un alias estructural compone el suyo usando, para cada componente, su predeterminado explícito o el de su tipo efectivo. Falta definir la función concreta para:
+Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio. Los tipos básicos ya tienen selección concreta; en particular, `Char` usa `"\u{0}"` (`U+0000`) en contexto `Char`. D-031 fija que un alias estructural compone el suyo usando, para cada componente, su predeterminado explícito o el de su tipo efectivo. Falta definir la función concreta para:
 
 - Aliases no estructurales y colecciones con restricciones.
 - Intervalos, selección del miembro predeterminado de una familia cerrada y refinamientos.
@@ -28,3 +30,5 @@ Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio.
 Los componentes de un alias estructural pueden reemplazar explícitamente el predeterminado que obtendrían de su tipo. Falta decidir si otras clases de tipo derivado pueden reemplazar su predeterminado intrínseco.
 
 Desde [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], debe definirse además cómo obtiene predeterminado una colección de `thing` con mínimo positivo. El ancla exacta nunca es candidata; puede ser necesario exigir un descendiente estricto predeterminado o un inicializador explícito.
+
+El tipo superior `Thing` introducido por D-068 no proporciona por sí mismo ese miembro distinguido: es abstracto y la membresía continúa siendo estricta.

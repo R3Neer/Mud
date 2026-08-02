@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 62.
-- Vigentes: 62.
+- Total: 64.
+- Vigentes: 64.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -81,6 +81,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-065 | vigente | 2026-07-30 | [[notas/decisiones/ADR-065-cabecera-using-de-fichero|Cabecera `using` de fichero]] |
 | D-066 | vigente | 2026-07-30 | [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|Valores estáticos y vinculaciones locales en `then`]] |
 | D-067 | vigente | 2026-08-02 | [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|Nombres breves de los tipos numéricos]] |
+| D-068 | vigente | 2026-08-02 | [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|`Thing` universal y nombre intrínseco]] |
+| D-069 | vigente | 2026-08-02 | [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|Literales `Char` con comillas dobles]] |
 
 ## Identificadores reservados
 

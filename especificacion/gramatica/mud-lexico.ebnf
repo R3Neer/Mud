@@ -10,7 +10,6 @@ lexical-element
       | comment
       | multiline-text-literal
       | text-literal
-      | char-literal
       | rumber-literal
       | exact-number-literal
       | point-form
@@ -88,21 +87,12 @@ multiline-text-literal
 special-multiline-text
     ::= ? bloque triple comilla validado por MUD-LEX-030 a MUD-LEX-036 ? ;
 
-char-literal
-    ::= apostrophe , ( char-content | char-escape-sequence ) , apostrophe ;
-
 apostrophe ::= ? U+0027 COMILLA SIMPLE ? ;
-
-char-content
-    ::= ? un valor escalar Unicode salvo "'", "\", CR y LF ? ;
 
 text-escape-sequence
     ::= common-escape-sequence
       | reverse-solidus , ( "{" | "}" )
       ;
-
-char-escape-sequence
-    ::= common-escape-sequence ;
 
 common-escape-sequence
     ::= reverse-solidus
@@ -187,7 +177,7 @@ operator-word
       ;
 
 builtin-word
-    ::= "Text" | "Char" | "Bool" | "Nat" | "Int"
+    ::= "Text" | "Char" | "Bool" | "Thing" | "Nat" | "Int"
       | "Num" | "Rum" | "Money" | "Rand"
       ;
 

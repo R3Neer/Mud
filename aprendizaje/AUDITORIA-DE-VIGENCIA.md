@@ -16,7 +16,7 @@ status: activo
 | Unidad | Estado | Modelo enseñado |
 | --- | --- | --- |
 | [[aprendizaje/unidades/01-modelo-minimo-de-un-mundo|01 — Programa, mundo y store mínimo]] | Actualizada | Un solo dominio de `thing`; reserva, materialización, actividad y carga |
-| [[aprendizaje/unidades/02-constructos-como-orden-parcial|02 — `Thing` como orden parcial]] | Actualizada y activa | `as` directo, `is` reflexivo-transitivo, grafo almacenado y grafo efectivo |
+| [[aprendizaje/unidades/02-constructos-como-orden-parcial|02 — `Thing` como orden parcial]] | Actualizada y activa | `as` directo, raíz incorporada `Thing`, `is` reflexivo-transitivo, grafo almacenado y grafo efectivo |
 | [[aprendizaje/unidades/03-esquema-heredable-y-estado-independiente|03 — Esquema heredable y estado independiente]] | Planificada y alineada | Esquema heredado, estado independiente, propiedades suspendidas y colecciones |
 
 La primera versión de la Unidad 01 usaba una separación entre clases e instancias que MUD ya no admite. Se conserva, junto con el ejercicio, la respuesta y la revisión originales, en [[aprendizaje/historico/01-modelo-clase-instancia/README|el archivo histórico]].

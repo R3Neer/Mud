@@ -12,6 +12,7 @@ affects:
 # ADR-018 — `as` declara especialización e `is` la consulta
 
 - Actualizada: 2026-07-28
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`
 
 ## Contexto
@@ -51,7 +52,7 @@ Las formas conceptuales son:
 [abstract] thing nombre [as lista-de-antecesores] bloque
 ```
 
-La lista posterior a `as` es finita y su posición no establece prioridad.
+La lista posterior a `as` es finita y su posición no establece prioridad. Una declaración sin `as` conserva cero antecesoras declaradas y recibe semánticamente la raíz incorporada `Thing`; `as Thing` explícito es inválido.
 
 ## Correspondencia semántica
 
@@ -80,6 +81,7 @@ Por tanto:
 
 - El lexer reserva `as` e `is`; `abstract` es contextual delante de `thing`, conforme a D-054; `construct` no es palabra reservada y `from` no introduce especialización.
 - El AST usa una lista de antecesores en `ThingDecl`; `CreateReference` no contiene antecesores ni cuerpo.
+- La ausencia de antecesores en `ThingDecl` se conserva en el AST; la arista hacia `Thing` se incorpora durante la elaboración semántica.
 - `IsExpression` es el nodo asociado a la consulta `is`.
 - Los diagnósticos hablan de «antecesores declarados con `as`».
 - Las cabeceras estáticas y las de `create` son paralelas.
@@ -88,9 +90,10 @@ El token `from` puede seguir existiendo en otras producciones independientes, co
 
 ## Verificación
 
-1. `thing` raíz sin `as`.
+1. `thing` raíz sin `as`, con cero antecesoras declaradas y `is Thing` verdadero.
 2. Declaraciones abstractas y concretas con una o varias antecesoras.
 3. Activación mediante `create Nombre` sin alterar las antecesoras declaradas.
 4. Rechazo de `is` como cláusula de cabecera.
 5. Aceptación de `is` como expresión.
 6. Correspondencia entre aristas `as` y resultados de `is`.
+7. Rechazo de `as Thing` explícito.

@@ -86,10 +86,12 @@ La revisión deberá demostrar:
 ## Decisiones que no se reabrirán
 
 - Existe un único dominio de `thing`; no hay clases e instancias.
+- `Thing` es la raíz abstracta incorporada y toda `thing` satisface `is Thing`.
 - La sintaxis vigente usa `thing`, `as` e `is`.
 - Cada `thing` posee una única definición canónica; `start with` y `create Nombre` solo cambian su actividad.
 - Los ciclos de especialización se rechazan.
 - Se heredan esquema y predeterminados, nunca estado activo.
+- `name` es una propiedad intrínseca local al descriptor: no pertenece al esquema heredable ni al store.
 - Cada `thing` concreta posee estado independiente.
 - Todo tipo bien formado posee un predeterminado.
 - Todo campo denota una colección.

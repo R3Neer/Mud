@@ -45,6 +45,8 @@ decisions:
   - D-065
   - D-066
   - D-067
+  - D-068
+  - D-069
 ---
 
 # 07. Gramática concreta
@@ -90,9 +92,13 @@ abstract thing Place {
 }
 
 thing Alexandria as City, Place {
-    name: Text = "Alexandria"
+    name = "Alejandría"
 }
 ```
+
+`Thing` es la `thing` abstracta incorporada que actúa como tipo superior. Toda `thing` satisface `is Thing`. Una raíz sin `as` conserva cero antecesoras declaradas, pero recibe una arista semántica implícita hacia `Thing`; no se escribe `as Thing`. `Thing` no puede declararse, crearse ni destruirse.
+
+Toda `thing` expone la propiedad intrínseca e inmutable `name: Text`. Su valor predeterminado es su nombre nominal no cualificado. Puede sobrescribirse una sola vez con `name =` y un literal `Text` sin interpolaciones, como en `Alexandria`. No es un campo almacenado o calculado, no ocupa el store y no se hereda: una descendiente sin sobrescritura usa siempre su propio nombre nominal.
 
 La lista posterior a `as` no expresa prioridad. `create` no acepta aquí ni en ningún otro lugar un cuerpo:
 
@@ -106,18 +112,18 @@ destroy Alexandria
 Forma almacenada:
 
 ```text
-[mut] name: Type [in domain] [collection-specification] [= static-expression]
+[mut] fieldName: Type [in domain] [collection-specification] [= static-expression]
 ```
 
 Forma calculada:
 
 ```text
-name [: Type] := expression
+fieldName [: Type] := expression
 ```
 
 La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
 
-El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `name: mut Type` no pertenece a la sintaxis.
+El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `fieldName: mut Type` no pertenece a la sintaxis. El identificador `name` está ocupado por la propiedad intrínseca dentro de una `thing` y no puede redeclararse mediante ninguna de estas formas.
 
 El valor de `=` es una expresión estática cerrada: se evalúa por completo al compilar, no lee estado, participantes, `given`, locales ni actividad del mundo y puede combinar literales, valores nominales y operaciones constantes. Por ejemplo:
 
@@ -150,7 +156,7 @@ No se permite coma final. La omisión de cardinalidad equivale a `[1]`.
 Las colecciones compatibles admiten `|`, `&`, `-` y `^`. Operan sobre multiplicidades, no concatenan:
 
 ```mud
-leftChars: Char [1..5] = ['a']
+leftChars: Char [1..5] = ["a"]
 rightChars: Char [0..2] = empty
 combinedChars := leftChars | rightChars # Char [1..7]
 ```
@@ -779,7 +785,7 @@ Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e
 
 Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. El nombre desnudo de una declaración no es un valor; acciones, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}`.
 
-Una `thing` se representa mediante su nombre nominal y un miembro de `family` mediante el nombre del miembro. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
+Una `thing` se representa mediante el valor de su propiedad intrínseca `name`; `anchor{...}` continúa representando su ancla canónica. Un miembro de `family` se representa mediante el nombre del miembro. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
 
 ```mud
 "{[1, 2, 3]}"          # 1, 2, 3

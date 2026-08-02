@@ -14,6 +14,7 @@ affects:
 # ADR-015 — Especialización acíclica y estado independiente
 
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Preguntas: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
 
@@ -37,6 +38,8 @@ La especialización hereda:
 - los demás elementos de esquema que la especificación autorice expresamente.
 
 No hereda, copia ni observa el estado mutable actual de la antecesora.
+
+La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local de cada identidad y, si no se sobrescribe, se deriva de su propio nombre nominal.
 
 Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
 

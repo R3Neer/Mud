@@ -15,6 +15,7 @@ affects:
 
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Cierra: [[notas/preguntas/Q-044-identidad-y-referencias-a-thing-futuras|Q-044]], [[notas/preguntas/Q-045-contenido-declarativo-de-create|Q-045]]
 - Documentos afectados: [[notas/preguntas/README|Preguntas activas]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
 
@@ -36,7 +37,7 @@ El modelo de uso adoptado es el de un juego con:
 
 ### Definición canónica única
 
-Cada `thing` y cada regla tiene exactamente una definición completa de primer nivel en todo el programa.
+Cada `thing` declarable y cada regla tiene exactamente una definición completa de primer nivel en todo el programa. La raíz incorporada `Thing` es la única `thing` sin definición fuente: su descriptor canónico pertenece al lenguaje, es abstracto y siempre efectivo. No puede redefinirse ni aparecer como objetivo de `create` o `destroy`.
 
 ```mud
 abstract thing Vegetation {
@@ -144,7 +145,7 @@ No vuelve a ejecutar los inicializadores ni cambia el descriptor.
 
 `always` es contextual delante de `rule`. D-055 introduce `test` y `otherwise` como palabras reservadas.
 
-Las etiquetas reconocidas dentro de una declaración concreta, como `name` y `prefixes` en las declaraciones de unidades, son igualmente contextuales y no pertenecen por ello al catálogo de palabras reservadas.
+Las etiquetas reconocidas dentro de una declaración concreta, como `name` y `prefixes` en las declaraciones de unidades o `name =` en un cuerpo de `thing`, son igualmente contextuales y no pertenecen por ello al catálogo general de palabras reservadas.
 
 No existe un token único ni una categoría léxica denominada «expresión reservada» para `start with`; es una producción gramatical formada por una palabra contextual y una palabra reservada.
 

@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-017 — Todo tipo bien formado tiene valor predeterminado
 
+- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+
 - Pregunta abierta relacionada: [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `14-campos.md`
 
@@ -63,7 +65,7 @@ Los casos básicos, actualizados por D-028, son:
 | `Int` | `0` |
 | `Num` | `0` |
 | `Rum` | `r0` |
-| `Char` | `'\u{0}'` (`U+0000`) |
+| `Char` | `"\u{0}"` (`U+0000`) en contexto `Char` |
 | `Text` | `""` |
 | `Money` | `0` en contexto `Money` |
 | Colecciones | `empty` |
@@ -113,4 +115,4 @@ La suite deberá comprobar:
 5. Prioridad final de una inicialización explícita de creación.
 6. Independencia respecto a los valores predeterminados de la tecnología materializada.
 7. Composición del predeterminado de un alias estructural a partir de sus componentes.
-8. Predeterminado `'\u{0}'` de `Char`.
+8. Predeterminado `"\u{0}"` de `Char`.

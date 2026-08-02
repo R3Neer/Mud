@@ -176,7 +176,7 @@ $$
 (\mathsf{Egypt},\mathsf{Place})
 $$
 
-`as` no pregunta si la relación es verdadera: introduce aristas en un descriptor conocido por el programa.
+`as` no pregunta si la relación es verdadera: introduce aristas en un descriptor conocido por el programa. D-068 añade además la raíz abstracta incorporada `Thing`. Una declaración sin `as` conserva cero antecesoras declaradas, pero el modelo incorpora una arista implícita desde ella hacia `Thing`; escribir `as Thing` es innecesario e inválido.
 
 > [!rule] Decisión de MUD — D-025
 > `thing` es la palabra reservada de la entidad y `as` introduce sus antecesores directos. `construct` y `from` son sintaxis histórica.
@@ -224,6 +224,8 @@ $$
 \mathsf{Place}
 \rangle
 $$
+
+Si `Place` no declara otra antecesora, el camino continúa semánticamente hasta `Thing`. Esta última arista no procede de una cláusula `as` del autor.
 
 ## 7. Clausuras
 
@@ -388,10 +390,10 @@ Para esta unidad:
 $$
 \mathcal T^{\mathsf{eff}}_{P,W}
 =
-\mathcal A_W\cap\mathcal T_P
+(\mathcal A_W\cap\mathcal T_P)\cup\{\mathsf{Thing}\}
 $$
 
-incluye las `thing` activas, abstractas o concretas.
+incluye las `thing` activas, abstractas o concretas, y la raíz incorporada `Thing`, que es siempre efectiva y no posee ciclo de vida controlable por el programa.
 
 ### Bypass
 
@@ -472,6 +474,8 @@ ThingDecl(
     directAncestors = {Kingdom}
 )
 ```
+
+Una raíz fuente conserva `directAncestors = {}` en el AST. La arista hacia `Thing` se añade durante la elaboración semántica y no se presenta como escritura del autor.
 
 ```mud
 Egypt is Place
