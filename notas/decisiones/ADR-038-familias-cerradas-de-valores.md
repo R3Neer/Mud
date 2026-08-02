@@ -64,7 +64,7 @@ Una `family` puede declarar un esquema uniforme de datos inmutables. Las declara
 
 ```mud
 family Terrain {
-    movementCost: Natural = 1
+    movementCost: Nat = 1
     passable: Bool = true
     costly := movementCost >= 3
 
@@ -104,7 +104,7 @@ Para cada dato de cada miembro, el valor se obtiene en este orden:
 2. Predeterminado explícito de la declaración del dato.
 3. Predeterminado del tipo efectivo conforme a D-017.
 
-Por tanto, un miembro puede omitir un dato almacenado siempre que su valor predeterminado pueda determinarse estáticamente. En particular, un dato `Natural` sin predeterminado explícito obtiene `0`. Aunque la omisión sea válida, se recomienda escribir explícitamente los valores cuyo significado sea importante para comprender el modelo.
+Por tanto, un miembro puede omitir un dato almacenado siempre que su valor predeterminado pueda determinarse estáticamente. En particular, un dato `Nat` sin predeterminado explícito obtiene `0`. Aunque la omisión sea válida, se recomienda escribir explícitamente los valores cuyo significado sea importante para comprender el modelo.
 
 Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Los predeterminados y las asignaciones de miembro deben ser expresiones estáticas cerradas conforme a D-066. Los datos calculados también se evalúan estáticamente por miembro y deben ser puros, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
 
@@ -121,7 +121,7 @@ Una colección de miembros de una `ordered family` puede usar `ordered by ruta`.
 
 ```mud
 ordered family Terrain {
-    movementCost: Natural = 1
+    movementCost: Nat = 1
 
     Plain,
     Forest {

@@ -267,9 +267,9 @@ Define:
 
 - `Text`, `Char` y `Bool` como tipos básicos no numéricos.
 - `'\u{0}'` (`U+0000`) como valor predeterminado de `Char`.
-- `Natural`, `Integer`, `Number`, `Rumber` y `Money` como representaciones numéricas básicas, no magnitudes.
-- Saturación de la resta pura de `Natural` frente a deltas aditivos firmados.
-- `Number` como racional exacto y `Rumber` como IEEE 754 `binary64` explícito.
+- `Nat`, `Int`, `Num`, `Rum` y `Money` como representaciones numéricas básicas, no magnitudes.
+- Saturación de la resta pura de `Nat` frente a deltas aditivos firmados.
+- `Num` como racional exacto y `Rum` como IEEE 754 `binary64` explícito.
 - Tipos de `thing`.
 - Tipos nominales de alias.
 - Familias cerradas.
@@ -282,7 +282,7 @@ Define:
 - Redondeo global al más cercano con empates al par.
 - Igualdad y orden por tipo.
 
-Base normativa migrada para aritmética de `Natural`: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
+Base normativa migrada para aritmética de `Nat`: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 Juicio principal:
 
@@ -421,7 +421,7 @@ Define:
 - Pasos de iteración.
 - Dominios dinámicos.
 - Dominios cíclicos `[a..b cycle)` exclusivos de magnitudes de punto.
-- Intervalos `Rumber` admitidos como dominios, pero no como fuentes enumerables.
+- Intervalos `Rum` admitidos como dominios, pero no como fuentes enumerables.
 
 Base normativa migrada: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
@@ -433,7 +433,7 @@ Define:
 
 - Magnitudes no derivadas, derivadas y de punto.
 - Representaciones numéricas explícitas e inferidas.
-- Magnitudes basadas en `Rumber` y omisión contextual del prefijo `r` en cantidades con unidad.
+- Magnitudes basadas en `Rum` y omisión contextual del prefijo `r` en cantidades con unidad.
 - Unidades raíz sin identificador de cabecera y equivalencias mediante `:=`.
 - Prefijos.
 - Normalización.
@@ -456,7 +456,7 @@ Archivo previsto: `19-expresiones.md`
 
 Define:
 
-- Literales racionales exactos, literales `Rumber` prefijados con `r` y acceso.
+- Literales racionales exactos, literales `Rum` prefijados con `r` y acceso.
 - Llamadas a reglas.
 - Receptores multiparte.
 - Operadores.
@@ -488,7 +488,7 @@ Define:
 - Iteraciones secuenciales y simultáneas.
 - Filtros.
 - Terminación de intervalos.
-- Prohibición de enumerar intervalos `Rumber`.
+- Prohibición de enumerar intervalos `Rum`.
 - Enumeración de aliases estructurales como productos cartesianos lexicográficos.
 
 Base normativa migrada: [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]].
@@ -584,7 +584,7 @@ Define:
 
 - Asignaciones.
 - Actualizaciones aritméticas.
-- Deltas firmados para actualizaciones aditivas sobre `Natural`.
+- Deltas firmados para actualizaciones aditivas sobre `Nat`.
 - Operaciones de colección.
 - Adición y retirada dinámica de propiedades.
 - `create`.
@@ -658,7 +658,7 @@ Define:
 - Lectura común del estado inicial.
 - Raíz simultánea.
 - Overlays secuenciales privados por `then`.
-- Proyección no negativa de lecturas `Natural` sin recortar el delta privado.
+- Proyección no negativa de lecturas `Nat` sin recortar el delta privado.
 - Normalización de efectos.
 - Conflictos de raíz.
 

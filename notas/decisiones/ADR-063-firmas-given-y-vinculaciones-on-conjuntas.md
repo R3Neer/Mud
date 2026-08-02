@@ -43,7 +43,7 @@ Todo `given` tiene nombre obligatorio, es de solo lectura y puede declarar un va
 ```mud
 given
     origin: Square = Capital,
-    depth: Natural,
+    depth: Nat,
     exhaustive: Bool = false
 ```
 

@@ -25,22 +25,22 @@ affects:
 Se admiten las ampliaciones implícitas:
 
 $$
-\mathsf{Natural}
+\mathsf{Nat}
 \longrightarrow
-\mathsf{Integer}
+\mathsf{Int}
 \longrightarrow
-\mathsf{Number}
+\mathsf{Num}
 $$
 
-No se extienden a `Rumber` ni a `Money`. Una operación mixta usa la representación exacta común menos ampliada. Los estrechamientos requieren `to`.
+No se extienden a `Rum` ni a `Money`. Una operación mixta usa la representación exacta común menos ampliada. Los estrechamientos requieren `to`.
 
-### `Natural`
+### `Nat`
 
-Una operación aritmética pura que produciría un entero negativo bajo representación `Natural` satura en cero antes de comprobar el dominio declarado.
+Una operación aritmética pura que produciría un entero negativo bajo representación `Nat` satura en cero antes de comprobar el dominio declarado.
 
-Esta saturación no se aplica a `to Natural`: D-030 exige redondear y después validar, sin saturación correctiva.
+Esta saturación no se aplica a `to Nat`: D-030 exige redondear y después validar, sin saturación correctiva.
 
-D-060 distingue de esta operación pura los efectos `+=` y `-=`. Estos producen deltas enteros firmados, se suman antes de saturar y solo entonces forman el siguiente valor `Natural`. Por tanto, no pueden expandirse a una asignación que aplique la resta saturada por separado.
+D-060 distingue de esta operación pura los efectos `+=` y `-=`. Estos producen deltas enteros firmados, se suman antes de saturar y solo entonces forman el siguiente valor `Nat`. Por tanto, no pueden expandirse a una asignación que aplique la resta saturada por separado.
 
 ### `Money`
 
@@ -50,7 +50,7 @@ Cuando una operación o conversión necesita reducir escala, se aplica la polít
 
 ### Separadores numéricos
 
-`_` puede agrupar cifras para legibilidad, incluidas formas exactas y `Rumber`:
+`_` puede agrupar cifras para legibilidad, incluidas formas exactas y `Rum`:
 
 ```mud
 1_000
@@ -64,27 +64,27 @@ No altera el valor. La gramática exacta de posiciones admitidas y diagnósticos
 La forma nominal de tipo de intervalo es:
 
 ```text
-Natural Interval
-Integer Interval
-Number Interval
-Rumber Interval
+Nat Interval
+Int Interval
+Num Interval
+Rum Interval
 Money Interval
 ```
 
-Los valores de intervalo se normalizan por el conjunto que denotan. D-029 gobierna límites y D-034 prohíbe enumerar intervalos `Rumber`.
+Los valores de intervalo se normalizan por el conjunto que denotan. D-029 gobierna límites y D-034 prohíbe enumerar intervalos `Rum`.
 
 ## Consecuencias
 
 - La inferencia exacta no autoriza mezcla aproximada.
-- Saturación de `Natural` y validación de dominio son fases distintas.
+- Saturación de `Nat` y validación de dominio son fases distintas.
 - `Money` deja de depender de sufijos léxicos.
 - El IR debe preservar valor, no separadores escritos.
 
 ## Verificación futura
 
 1. Cadena de ampliación exacta.
-2. Rechazo de mezcla implícita con `Rumber` y `Money`.
-3. Saturación de la aritmética pura de `Natural`, consolidación previa de deltas aditivos y no saturación de `to Natural`.
+2. Rechazo de mezcla implícita con `Rum` y `Money`.
+3. Saturación de la aritmética pura de `Nat`, consolidación previa de deltas aditivos y no saturación de `to Nat`.
 4. Escala y redondeo de `Money`.
 5. Separadores válidos e inválidos.
 6. Normalización de tipos de intervalo.

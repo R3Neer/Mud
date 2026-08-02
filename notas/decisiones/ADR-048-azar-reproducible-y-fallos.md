@@ -43,7 +43,7 @@ Todo punto aleatorio posee identidad semántica y deriva su resultado de una sem
 
 `allowed` usa una rama concreta, sembrada y descartable. `eventually` cuantifica existencialmente sobre resultados de probabilidad positiva conforme a D-044.
 
-Los resultados no finitos de `Rumber`, la división por cero, una referencia no disponible, una operación fuera de dominio y cualquier efecto que no pueda producir un estado bien formado son fallos. Dentro de una acción real producen `failed` y rollback. Dentro de `allowed` se propagan como fallo de evaluación y no equivalen a falso.
+Los resultados no finitos de `Rum`, la división por cero, una referencia no disponible, una operación fuera de dominio y cualquier efecto que no pueda producir un estado bien formado son fallos. Dentro de una acción real producen `failed` y rollback. Dentro de `allowed` se propagan como fallo de evaluación y no equivalen a falso.
 
 Cada uno de esos fallos debe tener un diagnóstico humano `Text`. Cuando alcanza la frontera de una acción real, ese diagnóstico forma el `reason` obligatorio de su resultado `failed` conforme a D-061.
 
@@ -53,7 +53,7 @@ Los límites de recursos y defectos internos de una implementación no deben con
 
 - Una implementación no puede usar tiempo de máquina ni orden de evaluación como fuente semántica de azar.
 - Las reglas de subsemillas, caché, reintentos y exposición de resultados siguen abiertas en Q-032.
-- La portabilidad aritmética de `Rumber` sigue en Q-058.
+- La portabilidad aritmética de `Rum` sigue en Q-058.
 - La semántica de errores dentro de expresiones booleanas ordinarias, fuera de `allowed`, requiere una tabla normativa dentro de Q-007.
 
 ## Verificación

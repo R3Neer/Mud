@@ -25,7 +25,7 @@ affects:
 ```mud
 name: Text = ""
 mut treasury: Money = 0
-age: Natural in 0..150 [1] = 18
+age: Nat in 0..150 [1] = 18
 subjects: Person [* unique]
 maintenanceCost := soldiers * 2
 displayCost: Money := maintenanceCost
@@ -67,8 +67,8 @@ Cuando el contexto de declaración también admita un campo almacenado y la expr
 `in` restringe valores admisibles:
 
 ```mud
-age: Natural in 0..150
-given amount: Natural in 1..100
+age: Nat in 0..150
+given amount: Nat in 1..100
 for people: Person in EligibleCitizens [1..* unique]
 ```
 

@@ -173,13 +173,13 @@ Cada regla tendrá:
 ```laTeX
 $$
 \frac{
-  \Gamma \vdash e_1 : \mathsf{Natural}
+  \Gamma \vdash e_1 : \mathsf{Nat}
   \qquad
-  \Gamma \vdash e_2 : \mathsf{Natural}
+  \Gamma \vdash e_2 : \mathsf{Nat}
 }{
-  \Gamma \vdash e_1 + e_2 : \mathsf{Natural}
+  \Gamma \vdash e_1 + e_2 : \mathsf{Nat}
 }
-\;\mathsf{T\text{-}Add\text{-}Natural}
+\;\mathsf{T\text{-}Add\text{-}Nat}
 $$
 ```
 

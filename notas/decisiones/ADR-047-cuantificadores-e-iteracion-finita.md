@@ -57,7 +57,7 @@ La pertenencia a `source` se toma como instantánea al comienzo del bucle. El fi
 
 La enumeración canónica procede del tipo: orden declarado de una familia cerrada, producto lexicográfico de un alias estructural, orden del diccionario o colección, u orden ascendente de un intervalo.
 
-Los intervalos finitos de `Natural` e `Integer` usan paso predeterminado uno; `Money`, paso `0.01`. Un intervalo de `Number` no discreto requiere paso exacto explícito. Los intervalos de `Rumber` nunca son enumerables. El último valor es el último punto generado que pertenece al intervalo; no se fuerza la inclusión del extremo.
+Los intervalos finitos de `Nat` e `Int` usan paso predeterminado uno; `Money`, paso `0.01`. Un intervalo de `Num` no discreto requiere paso exacto explícito. Los intervalos de `Rum` nunca son enumerables. El último valor es el último punto generado que pertenece al intervalo; no se fuerza la inclusión del extremo.
 
 Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmento a segmento, reiniciando el paso en cada segmento. Un intervalo vacío produce cero iteraciones.
 
@@ -73,5 +73,5 @@ Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmen
 2. Error de agregación extrema vacía.
 3. Diferencia observable entre bucle ordenado y no ordenado.
 4. Intervalos abiertos, cerrados, discontinuos y con paso.
-5. Rechazo de una enumeración `Rumber` o infinita.
+5. Rechazo de una enumeración `Rum` o infinita.
 6. Orden sintáctico `by` antes de `if` y vinculación de pares de diccionario.

@@ -45,8 +45,8 @@ La forma `[n]` también coincide superficialmente con una colección unitaria. N
 `*` representa el límite efectivo del lado en el que aparece. Los dos lados no tienen por qué denotar el mismo valor:
 
 ```mud
-Natural [*..10]  # [0..10]
-Natural [1..*]   # [1..+∞]
+Nat [*..10]  # [0..10]
+Nat [1..*]   # [1..+∞]
 [*..*]           # dominio efectivo completo
 ```
 
@@ -68,7 +68,7 @@ Son inválidos `(*..10]`, `[1..*)`, `(*..*)` y cualquier otra forma que deje abi
 Una magnitud puede declarar su dominio en la cabecera:
 
 ```mud
-magnitude PlayerCount: Natural in 1..8 {
+magnitude PlayerCount: Nat in 1..8 {
     ...
 }
 

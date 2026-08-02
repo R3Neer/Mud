@@ -48,8 +48,8 @@ alias Square {
 }
 
 alias Pagination {
-    page: Natural = 1
-    size: Natural = 20
+    page: Nat = 1
+    size: Nat = 20
 }
 ```
 

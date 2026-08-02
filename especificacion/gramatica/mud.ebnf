@@ -187,7 +187,7 @@ point-domain
       ;
 
 numeric-type
-    ::= "Natural" | "Integer" | "Number" | "Rumber" | "Money" ;
+    ::= "Nat" | "Int" | "Num" | "Rum" | "Money" ;
 
 magnitude-body
     ::= "{" , declaration-layout

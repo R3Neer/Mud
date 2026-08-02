@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 61.
-- Vigentes: 61.
+- Total: 62.
+- Vigentes: 62.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -47,7 +47,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-031 | vigente | 2026-07-28 | [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|Aliases nominales, inmutables y sin ciclo de vida]] |
 | D-032 | vigente | 2026-07-28 | [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|Construcción contextual y casting nominal de aliases]] |
 | D-033 | vigente | 2026-07-28 | [[notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases|Claves compuestas y enumeración de aliases]] |
-| D-034 | vigente | 2026-07-28 | [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|`Number` exacto y `Rumber` binary64]] |
+| D-034 | vigente | 2026-07-28 | [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|`Num` exacto y `Rum` binary64]] |
 | D-035 | vigente | 2026-07-28 | [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|Organización, nombres, `using` y anclas]] |
 | D-036 | vigente | 2026-07-28 | [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|Participantes, receptores y llamadas]] |
 | D-037 | vigente | 2026-07-28 | [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|Campos y dominios declarativos]] |
@@ -73,13 +73,14 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-057 | vigente | 2026-07-28 | [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|Gramática concreta, precedencia y continuación]] |
 | D-058 | vigente | 2026-07-29 | [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|Activadores temporales, `changes` y `old` reactivo]] |
 | D-059 | vigente | 2026-07-29 | [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|Intervalos de magnitud y extremos invertidos]] |
-| D-060 | vigente | 2026-07-29 | [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|Deltas aditivos y normalización de `Natural`]] |
+| D-060 | vigente | 2026-07-29 | [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|Deltas aditivos y normalización de `Nat`]] |
 | D-061 | vigente | 2026-07-29 | [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|Resultados no aceptados y plantillas `Text`]] |
 | D-062 | vigente | 2026-07-29 | [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|Literales canónicos de magnitudes de punto]] |
 | D-063 | vigente | 2026-07-30 | [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|Firmas, `given` y vinculaciones `on` conjuntas]] |
 | D-064 | vigente | 2026-07-30 | [[notas/decisiones/ADR-064-orden-por-ruta-estable|Orden por ruta estable]] |
 | D-065 | vigente | 2026-07-30 | [[notas/decisiones/ADR-065-cabecera-using-de-fichero|Cabecera `using` de fichero]] |
 | D-066 | vigente | 2026-07-30 | [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|Valores estáticos y vinculaciones locales en `then`]] |
+| D-067 | vigente | 2026-08-02 | [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|Nombres breves de los tipos numéricos]] |
 
 ## Identificadores reservados
 

@@ -136,7 +136,7 @@ picosecond from second in time
 
 extrae del punto `time` el componente medido en `picosecond` contenido en el `second` correspondiente. La forma general es `unidad-extraída from unidad-contenedora in punto`. Es una construcción sintáctica única, no la composición de tres operadores independientes.
 
-El receptor debe ser una magnitud de punto. Ambas unidades deben pertenecer a su magnitud subyacente y la unidad extraída no puede ser mayor que la contenedora. El resultado es `Natural`, se calcula respecto del origen canónico mediante resto euclídeo y no depende de las unidades escritas en `format`. Por tanto, pueden extraerse picosegundos de un tiempo cuyo formato solo muestre horas, minutos y segundos.
+El receptor debe ser una magnitud de punto. Ambas unidades deben pertenecer a su magnitud subyacente y la unidad extraída no puede ser mayor que la contenedora. El resultado es `Nat`, se calcula respecto del origen canónico mediante resto euclídeo y no depende de las unidades escritas en `format`. Por tanto, pueden extraerse picosegundos de un tiempo cuyo formato solo muestre horas, minutos y segundos.
 
 Cuando la relación no contiene un número entero de unidades menores, el último componente puede ser parcial. En un calendario regular de 360 días, `week from year in date` produce índices de `0` a `51`; el último designa la semana parcial final.
 
@@ -177,11 +177,11 @@ Un hueco numérico admite:
 - `derecha` fija exactamente las cifras a la derecha del punto, añade ceros o redondea al más cercano con empates al par conforme a D-034;
 - si `derecha` es cero, no se escribe punto decimal.
 
-La precisión izquierda se admite para todos los tipos numéricos básicos. La precisión derecha solo se admite para los tipos que pueden mostrar parte fraccionaria: `Number`, `Rumber` y `Money`. El formato modifica exclusivamente el `Text` producido, nunca el valor ni su tipo.
+La precisión izquierda se admite para todos los tipos numéricos básicos. La precisión derecha solo se admite para los tipos que pueden mostrar parte fraccionaria: `Num`, `Rum` y `Money`. El formato modifica exclusivamente el `Text` producido, nunca el valor ni su tipo.
 
 ```mud
-count: Natural = 12
-ratio: Number = 12.3
+count: Nat = 12
+ratio: Num = 12.3
 
 "{count:4}"     # 0012
 "{ratio::2}"    # 12.30

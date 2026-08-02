@@ -51,7 +51,7 @@ En cada onda:
 
 Las vinculaciones se fijan al comienzo de la onda. Cambios de pertenencia, activaciones o suspensiones producidos durante ella solo alteran la siguiente. Ningún bloque observa deltas parciales de otro bloque.
 
-La raíz y cada onda forman lotes causales con la misma frontera de consolidación. Para un destino `Natural`, todos los deltas aditivos compatibles se suman como enteros firmados y el total se satura una sola vez en cero antes de construir la instantánea siguiente. Ninguna regla observa el acumulador firmado.
+La raíz y cada onda forman lotes causales con la misma frontera de consolidación. Para un destino `Nat`, todos los deltas aditivos compatibles se suman como enteros firmados y el total se satura una sola vez en cero antes de construir la instantánea siguiente. Ninguna regla observa el acumulador firmado.
 
 Para una vinculación con memoria, los disparos comparan valores en las instantáneas de inicio de dos ondas consecutivas conforme a D-041 y D-058. Un `when e` puramente booleano detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$; `e changes` compara directamente ambos valores y puede pulsar en ondas consecutivas. `and` y `or` componen pulsos de cambio y transiciones booleanas sin convertirlos en estado persistente.
 
@@ -82,5 +82,5 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 8. Dos cambios netos consecutivos producen dos pulsos `changes`.
 9. Dos activadores unidos por `and` solo disparan cuando ambos pulsan en la misma onda.
 10. Un cambio unido mediante `or` a una transición booleana preserva cualquiera de los dos pulsos.
-11. Deltas `-2` y `+3` sobre un `Natural` inicial cero producen uno en la siguiente instantánea.
-12. Ninguna instantánea de onda expone un `Natural` negativo.
+11. Deltas `-2` y `+3` sobre un `Nat` inicial cero producen uno en la siguiente instantánea.
+12. Ninguna instantánea de onda expone un `Nat` negativo.

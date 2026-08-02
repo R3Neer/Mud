@@ -59,10 +59,10 @@ Los casos básicos, actualizados por D-028, son:
 | Tipo o familia | Valor predeterminado |
 | --- | --- |
 | `Bool` | `false` |
-| `Natural` | `0` |
-| `Integer` | `0` |
-| `Number` | `0` |
-| `Rumber` | `r0` |
+| `Nat` | `0` |
+| `Int` | `0` |
+| `Num` | `0` |
+| `Rum` | `r0` |
 | `Char` | `'\u{0}'` (`U+0000`) |
 | `Text` | `""` |
 | `Money` | `0` en contexto `Money` |

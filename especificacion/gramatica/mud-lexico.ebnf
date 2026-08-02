@@ -187,8 +187,8 @@ operator-word
       ;
 
 builtin-word
-    ::= "Text" | "Char" | "Bool" | "Natural" | "Integer"
-      | "Number" | "Rumber" | "Money" | "Rand"
+    ::= "Text" | "Char" | "Bool" | "Nat" | "Int"
+      | "Num" | "Rum" | "Money" | "Rand"
       ;
 
 constant-word

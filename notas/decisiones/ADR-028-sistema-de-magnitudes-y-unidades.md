@@ -45,32 +45,32 @@ Char
 Los tipos numéricos básicos son:
 
 ```mud
-Natural
-Integer
-Number
-Rumber
+Nat
+Int
+Num
+Rum
 Money
 ```
 
 Los cinco tipos numéricos son representaciones, no magnitudes. Pueden usarse directamente o ser la representación numérica de una magnitud:
 
 ```mud
-attempts: Natural
-factor: Number
+attempts: Nat
+factor: Num
 
-magnitude Population: Natural {
+magnitude Population: Nat {
     ...
 }
 ```
 
-`Percentage` deja de ser un tipo básico. Un concepto porcentual deberá modelarse mediante el sistema de magnitudes y dominios. D-034 fija `Number` como racional exacto y añade `Rumber` como representación aproximada `binary64`.
+`Percentage` deja de ser un tipo básico. Un concepto porcentual deberá modelarse mediante el sistema de magnitudes y dominios. D-034 fija `Num` como racional exacto y añade `Rum` como representación aproximada `binary64`.
 
-Los literales numéricos no llevan sufijos de tipo. No existen `30N`, `30I`, `30M` ni formas equivalentes. El contexto de tipado determina la representación exacta. Los literales `Rumber` puros constituyen una familia distinta con prefijo `r`, según D-034:
+Los literales numéricos no llevan sufijos de tipo. No existen `30N`, `30I`, `30M` ni formas equivalentes. El contexto de tipado determina la representación exacta. Los literales `Rum` puros constituyen una familia distinta con prefijo `r`, según D-034:
 
 ```mud
 balance: Money = 30
 population: Population = 30 people
-rapid: Rumber = r0.1
+rapid: Rum = r0.1
 ```
 
 ### Magnitudes no derivadas
@@ -83,14 +83,14 @@ magnitude Length {
 }
 ```
 
-Si omite la representación numérica, usa `Number`. Puede declararla mediante `:`:
+Si omite la representación numérica, usa `Num`. Puede declararla mediante `:`:
 
 ```mud
-magnitude Population: Natural {
+magnitude Population: Nat {
     ...
 }
 
-magnitude Temperature: Integer {
+magnitude Temperature: Int {
     ...
 }
 ```
@@ -98,11 +98,11 @@ magnitude Temperature: Integer {
 Puede restringir su dominio mediante `in`, situado después de la representación numérica opcional y antes del bloque:
 
 ```mud
-magnitude Probability: Number in [0..1] {
+magnitude Probability: Num in [0..1] {
     ...
 }
 
-magnitude Population: Natural in [*] {
+magnitude Population: Nat in [*] {
     ...
 }
 ```
@@ -192,31 +192,31 @@ Esa unidad no se convierte en raíz ni restringe las demás expresiones compatib
 Una magnitud derivada sin tipo explícito elige la representación menos ampliada capaz de representar la operación. Para la jerarquía ordinaria:
 
 $$
-\mathsf{Natural}
+\mathsf{Nat}
 \prec
-\mathsf{Integer}
+\mathsf{Int}
 \prec
-\mathsf{Number}
+\mathsf{Num}
 $$
 
 se aplican inicialmente estas reglas:
 
 | Operación de representaciones | Resultado |
 | --- | --- |
-| `Natural * Natural` | `Natural` |
-| `Natural * Integer` | `Integer` |
-| `Integer * Integer` | `Integer` |
-| Cualquier operación con `Number` | `Number` |
-| Cualquier división | `Number` |
+| `Nat * Nat` | `Nat` |
+| `Nat * Int` | `Int` |
+| `Int * Int` | `Int` |
+| Cualquier operación con `Num` | `Num` |
+| Cualquier división | `Num` |
 
 Puede declararse una representación explícita:
 
 ```mud
-magnitude DiscreteArea: Natural :=
+magnitude DiscreteArea: Nat :=
     Width * Height
 ```
 
-La tabla describe operaciones exactas. Operaciones cuyos operandos sean todos `Rumber` producen `Rumber`; `Rumber` no se mezcla implícitamente con representaciones exactas. La inferencia de magnitudes derivadas que combinen componentes `Rumber` se completará en Q-058.
+La tabla describe operaciones exactas. Operaciones cuyos operandos sean todos `Rum` producen `Rum`; `Rum` no se mezcla implícitamente con representaciones exactas. La inferencia de magnitudes derivadas que combinen componentes `Rum` se completará en Q-058.
 
 La anotación explícita no introduce redondeo. El programa debe satisfacer las reglas estáticas de representabilidad correspondientes. Las reglas de `Money` y la matriz completa de operadores permanecen abiertas en Q-019.
 

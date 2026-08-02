@@ -44,6 +44,7 @@ decisions:
   - D-064
   - D-065
   - D-066
+  - D-067
 ---
 
 # 07. Gramática concreta
@@ -121,7 +122,7 @@ El `mut` exterior se escribe antes del nombre porque califica el lugar almacenad
 El valor de `=` es una expresión estática cerrada: se evalúa por completo al compilar, no lee estado, participantes, `given`, locales ni actividad del mundo y puede combinar literales, valores nominales y operaciones constantes. Por ejemplo:
 
 ```mud
-allowed: Integer Interval = 1..2 | 3..4
+allowed: Int Interval = 1..2 | 3..4
 duration: Time = 1 hour + 30 minutes
 ```
 
@@ -194,8 +195,8 @@ alias Square {
 }
 
 alias Pagination {
-    page: Natural = 1
-    size: Natural = 20
+    page: Nat = 1
+    size: Nat = 20
 }
 ```
 
@@ -221,7 +222,7 @@ Un componente no admite `mut` exterior porque el valor de alias y cada uno de su
 
 ```mud
 family Terrain {
-    movementCost: Natural = 1
+    movementCost: Nat = 1
     passable: Bool = true
     costly := movementCost >= 3
 
@@ -245,14 +246,14 @@ Los miembros se separan por comas y no admiten coma final. `ordered family` hace
 Magnitud base:
 
 ```mud
-magnitude Probability: Number in [0..1] {
+magnitude Probability: Num in [0..1] {
 }
 ```
 
 Magnitud derivada:
 
 ```mud
-magnitude Speed: Number in [0..*] :=
+magnitude Speed: Num in [0..*] :=
     Length / Time
 {
     unit := 1 m/s {
@@ -296,7 +297,7 @@ picosecond from second in time
 week from year in date
 ```
 
-La forma es una sola construcción sintáctica. El receptor debe ser una magnitud de punto; ambas unidades pertenecen a su magnitud subyacente; la unidad extraída no supera a la contenedora; el resultado es `Natural`. Se usa el origen canónico y el resto euclídeo, con un posible último componente parcial cuando las unidades no dividen exactamente. La extracción no depende del `format`.
+La forma es una sola construcción sintáctica. El receptor debe ser una magnitud de punto; ambas unidades pertenecen a su magnitud subyacente; la unidad extraída no supera a la contenedora; el resultado es `Nat`. Se usa el origen canónico y el resto euclídeo, con un posible último componente parcial cuando las unidades no dividen exactamente. La extracción no depende del `format`.
 
 Las formas producidas por `format` ocupan el token contextual `POINT_LITERAL`. El tipo esperado selecciona una única magnitud de punto y el literal debe reproducir exactamente su forma canónica. Un formato que no pueda invertirse unívocamente es inválido. Los componentes más finos que el último representado toman valor cero.
 
@@ -374,8 +375,8 @@ Escribir capacidad interior sobre valores inmutables es legal, pero el compilado
 La mutabilidad exterior sí puede aplicarse a una colección de cualquier tipo:
 
 ```mud
-action Record for mut observations: Number [*]
-given value: Number {
+action Record for mut observations: Num [*]
+given value: Num {
     then add value to observations
 }
 ```
@@ -463,7 +464,7 @@ El cuerpo contiene directamente la condición, sin `if`, y puede añadir `otherw
 
 ```mud
 action Recruit for kingdom: Kingdom [mut]
-given amount: Natural in 1..100 {
+given amount: Nat in 1..100 {
     if kingdom.treasury >= amount * recruitmentCost
     otherwise "The kingdom cannot afford {amount} recruits"
     then {
@@ -555,7 +556,7 @@ Los `given` tienen nombre obligatorio, son de solo lectura y pueden declarar un 
 
 ```mud
 given origin: Square = Capital,
-      depth: Natural,
+      depth: Nat,
       exhaustive: Bool = false
 ```
 
@@ -585,7 +586,7 @@ target /= divisor
 add value to collection
 remove value from collection
 
-add mut morale: Natural in 0..100 = 50 to Army
+add mut morale: Nat in 0..100 = 50 to Army
 remove morale from Army
 
 create Declaration
@@ -673,7 +674,7 @@ Cuando todos los extremos finitos son literales numéricos sin unidad, una sola 
 [] m
 ```
 
-`1..5 m` se agrupa como `(1..5) m`. La unidad exterior no se distribuye sobre campos ni sobre cantidades que ya tengan unidad. `[1..5 m]` es inválido porque enfrenta `Number` con una magnitud, y `[1 m..5 m] m` añade una segunda unidad exterior inválida.
+`1..5 m` se agrupa como `(1..5) m`. La unidad exterior no se distribuye sobre campos ni sobre cantidades que ya tengan unidad. `[1..5 m]` es inválido porque enfrenta `Num` con una magnitud, y `[1 m..5 m] m` añade una segunda unidad exterior inválida.
 
 La serialización canónica de literales que comparten unidad usa `[1..5] m`, aunque `[1 m..5 m]` también es válida. Si las unidades difieren o un extremo es una expresión ya tipada, se usan unidades locales.
 
@@ -793,7 +794,7 @@ Un hueco numérico admite `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derech
 "{ratio:4:2}"   # 0012.30
 ```
 
-La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Number`, `Rumber` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
+La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Num`, `Rum` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
 
 Una magnitud lineal sin `in` se representa en su unidad raíz o combinación canónica. Una magnitud de punto usa su `format` si lo tiene y, si no, sigue esa misma regla ordinaria, incluida la escritura de la unidad. `{magnitude in unit}` selecciona la unidad y, para un punto, evita el `format` y representa la coordenada completa. Se escribe la abreviatura de la unidad si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
 

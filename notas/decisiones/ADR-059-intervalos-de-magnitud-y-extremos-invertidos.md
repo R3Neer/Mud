@@ -88,7 +88,7 @@ La unidad exterior no completa intervalos mixtos ni intervalos cuyos extremos se
 Un literal numérico situado junto a una expresión de magnitud debe llevar su propia unidad. Dentro de una forma delimitada, una unidad escrita antes del cierre pertenece únicamente a ese extremo:
 
 ```mud
-[1..5 m]                 # inválido: Number frente a Length
+[1..5 m]                 # inválido: Num frente a Length
 [1 m..5 m]               # válido
 ```
 

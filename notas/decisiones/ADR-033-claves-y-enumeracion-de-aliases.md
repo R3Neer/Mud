@@ -54,8 +54,8 @@ Un alias estructural es finito y enumerable cuando todos sus componentes poseen 
 
 ```mud
 alias Coordinate {
-    horizontal: Integer in 0..7
-    vertical: Integer in 0..7
+    horizontal: Int in 0..7
+    vertical: Int in 0..7
 }
 ```
 

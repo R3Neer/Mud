@@ -95,8 +95,8 @@ Reglas booleanas y `look` no admiten `mut` exterior porque son puros. Los partic
 La mutabilidad exterior no exige que los miembros sean `thing`: modifica el lugar que contiene la colección, no los valores inmutables contenidos. Por ejemplo:
 
 ```mud
-action Record for mut observations: Number [*]
-given value: Number {
+action Record for mut observations: Num [*]
+given value: Num {
     then add value to observations
 }
 ```
@@ -193,8 +193,8 @@ La vinculación ordinaria de participantes y `given` puede ser posicional. Reord
 La separación no depende del tipo. Un valor es `for` cuando constituye un sujeto semántico de la declaración y `given` cuando solo parametriza la operación:
 
 ```mud
-action Record for mut observations: Number [*]
-given value: Number {
+action Record for mut observations: Num [*]
+given value: Num {
     then add value to observations
 }
 ```

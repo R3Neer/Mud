@@ -33,7 +33,7 @@ Una acción es la frontera de escritura de MUD. Su contrato debe separar la inad
 ```mud
 action Recruit for kingdom: Kingdom [mut]
 given
-    amount: Natural in 1..100
+    amount: Nat in 1..100
 {
     if kingdom.treasury >= amount * kingdom.recruitmentCost
     otherwise "The kingdom cannot afford {amount} recruits"

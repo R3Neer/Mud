@@ -19,6 +19,7 @@ decisions:
   - D-057
   - D-061
   - D-062
+  - D-067
 ---
 
 # 06. Estructura léxica
@@ -77,7 +78,7 @@ is in
 not and or xor
 exists forall count sum min max
 true false empty
-Text Char Bool Natural Integer Number Rumber Money
+Text Char Bool Nat Int Num Rum Money
 Rand
 ```
 
@@ -265,7 +266,7 @@ Los racionales exactos admiten parte decimal y exponente:
 1e-6
 ```
 
-Los literales `Rumber` puros usan `r`:
+Los literales `Rum` puros usan `r`:
 
 ```mud
 r10
@@ -323,7 +324,7 @@ En una misma posición se intenta:
 1. Delimitadores multilínea.
 2. Operadores de tres caracteres.
 3. Operadores de dos caracteres.
-4. Literales `Rumber`, números e identificadores.
+4. Literales `Rum`, números e identificadores.
 5. Operadores de un carácter.
 
 Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se descartan; `NEWLINE` se conserva para decidir terminación.

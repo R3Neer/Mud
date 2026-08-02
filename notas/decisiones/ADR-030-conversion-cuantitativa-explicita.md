@@ -28,8 +28,8 @@ affects:
 `to` es el operador de conversión cuantitativa explícita:
 
 ```mud
-value to Integer
-value to Natural
+value to Int
+value to Nat
 value to Money
 value to Population
 value to Price
@@ -51,9 +51,9 @@ En su rama cuantitativa, `to` no es un casting general. D-032 añade por separad
 ```mud
 army to Kingdom
 place to House
-text to Number
+text to Num
 distance to Time
-Bool to Natural
+Bool to Nat
 ```
 
 ### Redondeo y validación
@@ -61,14 +61,14 @@ Bool to Natural
 Cuando la representación de destino no puede conservar una fracción, `to` aplica la única política global de redondeo de MUD. La sintaxis no permite seleccionar una política local:
 
 ```mud
-value to Integer
+value to Int
 ```
 
 La política global, fijada por D-034, es redondeo al más cercano con empates al par (`roundTiesToEven`).
 
 Después del redondeo, el resultado debe pertenecer al dominio de destino. `to` no satura ni corrige automáticamente un valor fuera de dominio.
 
-`Number to Rumber` redondea al valor `binary64` más cercano. `Rumber to Number` recupera exactamente el racional representado por el valor binario almacenado. Ambas formas son explícitas.
+`Num to Rum` redondea al valor `binary64` más cercano. `Rum to Num` recupera exactamente el racional representado por el valor binario almacenado. Ambas formas son explícitas.
 
 ### Diferencia respecto de `in`
 
@@ -84,7 +84,7 @@ Se aplica tanto a magnitudes lineales como a magnitudes de punto. En una magnitu
 La presentación seleccionada es observable al convertirla después a una representación numérica, interpolarla en `Text` o publicarla en un campo de `look` o `message`:
 
 ```mud
-speed in km/h to Rumber
+speed in km/h to Rum
 "{distance in kilometer}"
 ```
 
@@ -93,7 +93,7 @@ Si ninguna operación posterior observa la presentación, el compilador puede su
 `to` cambia la representación numérica o materializa una magnitud cuantitativamente compatible:
 
 ```mud
-average to Integer
+average to Int
 averagePopulation to Population
 amount to Money
 ```

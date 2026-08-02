@@ -35,7 +35,7 @@ Un `look` declara participantes explícitos con `for`, no admite `given` y publi
 ```mud
 look RealmSummary for kingdom: Kingdom {
     name := kingdom.name
-    population: Natural := kingdom.cities.population.sum
+    population: Nat := kingdom.cities.population.sum
 }
 ```
 

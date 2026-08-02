@@ -132,5 +132,5 @@ Por tanto, `1_000.123456e1000`, `1000.123_456` y `3e1_000` son válidos. `1_0000
 12. Independencia respecto de la sangría fuera de literales multilínea.
 13. Literales sin separadores y con agrupación completa independiente en la parte entera, fraccionaria y exponencial.
 14. Rechazo de agrupaciones parciales, grupos interiores de tamaño distinto de tres y `_` en los extremos o duplicado.
-15. Equivalencia decimal de exponentes positivos, negativos y con signo explícito en literales exactos y `Rumber`.
+15. Equivalencia decimal de exponentes positivos, negativos y con signo explícito en literales exactos y `Rum`.
 16. Modos anidados de texto y código, escapes de llaves y rechazo de un cierre implícito con interpolación abierta.

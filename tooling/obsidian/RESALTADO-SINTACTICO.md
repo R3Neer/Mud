@@ -45,7 +45,7 @@ Todo bloque con identificador `mud` se colorea automáticamente:
 ````markdown
 ```mud
 ordered family Terrain {
-    movementCost: Natural = 1
+    movementCost: Nat = 1
 
     Plain,
     Forest {
@@ -60,7 +60,7 @@ Se reconocen:
 - Comentarios de línea, comentarios cerrados y bloques `###`.
 - `Text` ordinario y multilínea.
 - Literales `Char`.
-- Números exactos y `Rumber`.
+- Números exactos y `Rum`.
 - Palabras reservadas, incluida `ordered`.
 - Palabras contextuales inequívocas como `abstract thing` y `always rule`.
 - Tipos básicos.

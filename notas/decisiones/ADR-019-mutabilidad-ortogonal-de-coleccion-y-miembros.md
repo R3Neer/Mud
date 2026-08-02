@@ -93,7 +93,7 @@ Sin `mut` exterior, el rol recibe el valor de cualquier expresión de colección
 La mutabilidad exterior se aplica también a lugares que almacenan básicos, aliases, miembros de `family`, diccionarios o colecciones de esos valores. Permite sustituir o reorganizar el contenido, pero no vuelve mutables los valores contenidos:
 
 ```mud
-mut observations: Number [*]
+mut observations: Num [*]
 ```
 
 Reglas booleanas y `look` son puros y no admiten mutabilidad exterior en sus roles `for`. Los roles automáticos `on` continúan siendo individuales y solo pueden declarar capacidad interior sobre la `thing` vinculada. Los `given` no admiten ninguno de los dos permisos.

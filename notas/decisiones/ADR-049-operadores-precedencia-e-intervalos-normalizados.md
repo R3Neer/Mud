@@ -101,7 +101,7 @@ D-059 incorpora intervalos de magnitud con unidades locales o una unidad común 
 ## Consecuencias
 
 - La sobrecarga nunca se decide por una prioridad de implementación.
-- Comparar aliases distintos o `Number` con `Rumber` requiere `to`.
+- Comparar aliases distintos o `Num` con `Rum` requiere `to`.
 - El catálogo completo de tipos admitidos y resultados por operador sigue siendo trabajo del sistema de tipos.
 
 ## Verificación

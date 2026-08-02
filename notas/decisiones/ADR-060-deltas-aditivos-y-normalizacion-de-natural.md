@@ -1,6 +1,6 @@
 ---
 id: D-060
-title: "Deltas aditivos y normalización de `Natural`"
+title: "Deltas aditivos y normalización de `Nat`"
 status: vigente
 date: 2026-07-29
 supersedes: []
@@ -12,7 +12,7 @@ questions:
 affects:
   - "futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`"
 ---
-# ADR-060 — Deltas aditivos y normalización de `Natural`
+# ADR-060 — Deltas aditivos y normalización de `Nat`
 
 - Modifica: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
 - Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
@@ -21,7 +21,7 @@ affects:
 
 ## Contexto
 
-D-040 establecía que la aritmética de `Natural` satura en cero. D-046 establecía a la vez que las actualizaciones aditivas compatibles se consolidan sumando deltas. Sin precisar el punto de saturación, estas reglas admitían dos resultados distintos:
+D-040 establecía que la aritmética de `Nat` satura en cero. D-046 establecía a la vez que las actualizaciones aditivas compatibles se consolidan sumando deltas. Sin precisar el punto de saturación, estas reglas admitían dos resultados distintos:
 
 ```mud
 # counter vale 0
@@ -35,13 +35,13 @@ Saturar cada actualización produciría `3`; sumar primero los deltas y saturar 
 
 ### Valores y deltas
 
-Un valor de tipo `Natural` nunca es negativo. Los estados almacenados, las instantáneas de onda y toda lectura de una expresión `Natural` pertenecen a:
+Un valor de tipo `Nat` nunca es negativo. Los estados almacenados, las instantáneas de onda y toda lectura de una expresión `Nat` pertenecen a:
 
 $$
 \mathbb N=\{0,1,2,\ldots\}.
 $$
 
-Un delta aditivo dirigido a un `Natural` no es a su vez un valor `Natural`. El IR lo representa como un entero con signo:
+Un delta aditivo dirigido a un `Nat` no es a su vez un valor `Nat`. El IR lo representa como un entero con signo:
 
 $$
 \delta\in\mathbb Z.
@@ -51,7 +51,7 @@ Por tanto, `counter -= 2` aporta el delta $-2$ y no almacena el valor $-2$.
 
 ### Aritmética pura
 
-La resta ordinaria de valores `Natural` conserva la saturación inmediata de D-040:
+La resta ordinaria de valores `Nat` conserva la saturación inmediata de D-040:
 
 $$
 a-_{\mathsf N}b=\max(0,a-b).
@@ -60,7 +60,7 @@ $$
 Una expresión pura siempre produce un valor de su tipo. En particular:
 
 ```mud
-result: Natural := 0 - 2
+result: Nat := 0 - 2
 ```
 
 produce `0`.
@@ -103,7 +103,7 @@ El resultado es el mismo para cualquier permutación de los deltas.
 
 ### Overlay secuencial de un `then`
 
-Cada `then` conserva su orden textual para evaluar los operandos de efectos posteriores. Sea $\Delta_j$ la suma firmada de los deltas que ese mismo `then` ya ha emitido sobre un destino `Natural` después de sus primeras $j$ instrucciones.
+Cada `then` conserva su orden textual para evaluar los operandos de efectos posteriores. Sea $\Delta_j$ la suma firmada de los deltas que ese mismo `then` ya ha emitido sobre un destino `Nat` después de sus primeras $j$ instrucciones.
 
 Una lectura posterior del destino dentro del mismo delta privado observa:
 
@@ -126,7 +126,7 @@ Un `then` nunca observa deltas privados de otros `then`. Todos ellos parten de l
 
 ### Dominios y observación
 
-Tras normalizar el resultado al tipo `Natural`, se comprueba el dominio refinado del destino conforme a D-037. Si el dominio excluye el valor normalizado, el estado tentativo es inválido y la resolución produce `failed`.
+Tras normalizar el resultado al tipo `Nat`, se comprueba el dominio refinado del destino conforme a D-037. Si el dominio excluye el valor normalizado, el estado tentativo es inválido y la resolución produce `failed`.
 
 Ninguna regla reactiva, mensaje, `look`, `old` ni `changes` observa deltas negativos o valores intermedios de un `then`. Las ondas solo comparan instantáneas ya consolidadas y normalizadas.
 
@@ -141,7 +141,7 @@ D-060 fija únicamente las actualizaciones aditivas homogéneas. Permanecen vige
 
 ## Consecuencias
 
-- La saturación de `Natural` no rompe la conmutatividad de los deltas aditivos.
+- La saturación de `Nat` no rompe la conmutatividad de los deltas aditivos.
 - El IR distingue valores naturales de deltas enteros firmados.
 - El orden físico de reglas o hilos no altera el resultado consolidado.
 - La secuencialidad privada afecta a las lecturas usadas para calcular efectos posteriores, no al punto global de normalización.
@@ -156,7 +156,7 @@ Para un valor inicial cero, aplicar `-2` y `+3` produciría `3` o `1` según el 
 
 ### Exponer el acumulador negativo
 
-Permitiría que una expresión de tipo `Natural` produjera temporalmente un entero negativo y filtraría detalles del IR a la semántica observable.
+Permitiría que una expresión de tipo `Nat` produjera temporalmente un entero negativo y filtraría detalles del IR a la semántica observable.
 
 ### Recortar también el delta privado
 
@@ -168,7 +168,7 @@ Confundiría el efecto acumulativo con el cálculo puro saturado y haría imposi
 
 ## Verificación
 
-1. `Natural` nunca contiene ni expone un valor negativo.
+1. `Nat` nunca contiene ni expone un valor negativo.
 2. La resta pura `0 - 2` produce `0`.
 3. Sobre valor inicial `0`, los deltas `-2` y `+3` producen `1`.
 4. Toda permutación de deltas aditivos produce el mismo resultado.

@@ -46,9 +46,9 @@ Las referencias nominales permitidas no leen la carga mutable ni la actividad ac
 El valor explícito de un campo almacenado, componente, dato almacenado de `family`, asignación de miembro y predeterminado de `given` debe ser una expresión estática cerrada.
 
 ```mud
-lives: Natural = 3
+lives: Nat = 3
 king: Person = Arthur
-allowed: Integer Interval = 1..2 | 3..4
+allowed: Int Interval = 1..2 | 3..4
 duration: Time = 1 hour + 30 minutes
 ```
 
@@ -57,7 +57,7 @@ La unión de intervalos produce un único valor normalizado de intervalo discont
 Esto es inválido si `victories` es estado:
 
 ```mud
-initialScore: Natural = victories * 3
+initialScore: Nat = victories * 3
 ```
 
 La forma calculada es:

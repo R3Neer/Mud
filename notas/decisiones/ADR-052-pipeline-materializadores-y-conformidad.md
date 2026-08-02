@@ -45,7 +45,7 @@ Un materializador puede usar funciones, parámetros, tuplas, mapas, transaccione
 - confundir participantes con `given`;
 - cambiar atomicidad, orden causal o resultados;
 - convertir `failed` en falso;
-- usar coma flotante para la semántica observable de `Number`;
+- usar coma flotante para la semántica observable de `Num`;
 - adelantar la publicación de `message`.
 
 La conformidad se prueba mediante programas válidos e inválidos, diagnósticos requeridos, IR esperado, transiciones, trazas y propiedades. El soporte de editor debe diferenciar participantes `on`, roles `for` vinculados por identidad, valor o lugar, `given`, dominios, variantes de regla y firmas públicas, pero no constituye semántica.

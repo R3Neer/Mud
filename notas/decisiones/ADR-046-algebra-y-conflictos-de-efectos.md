@@ -58,7 +58,7 @@ Para efectos estructurales se aplican D-023, D-026 y D-054:
 
 Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destinos solo puede conocerse durante una resolución, el runtime la detecta y produce `failed` con rollback completo.
 
-Los deltas aditivos dirigidos a un `Natural` son enteros firmados, aunque el valor del destino nunca pueda ser negativo. Para un valor inicial $n$ y deltas compatibles $\delta_i$, D-060 fija:
+Los deltas aditivos dirigidos a un `Nat` son enteros firmados, aunque el valor del destino nunca pueda ser negativo. Para un valor inicial $n$ y deltas compatibles $\delta_i$, D-060 fija:
 
 $$
 n'=\max\left(0,n+\sum_i\delta_i\right).
@@ -69,7 +69,7 @@ Dentro de un `then`, una lectura posterior observa la proyección saturada del v
 ## Consecuencias
 
 - La semántica no depende del orden de reglas ni de hilos.
-- La saturación de `Natural` no rompe la conmutatividad de las actualizaciones aditivas.
+- La saturación de `Nat` no rompe la conmutatividad de las actualizaciones aditivas.
 - Q-006 sigue abierta para las combinaciones restantes de colecciones, diccionarios, propiedades, ciclo de vida y solapamientos parciales.
 - El análisis conservador especial de cardinalidad de D-026 prevalece sobre la regla general de diferir coincidencias indecidibles.
 
@@ -80,5 +80,5 @@ Dentro de un `then`, una lectura posterior observa la proyección saturada del v
 3. Conflicto conocido estáticamente y conflicto dependiente de bindings.
 4. Consolidación estructural con activación mediante `create`, adición, retirada y destrucción.
 5. Rollback integral ante conflicto tardío.
-6. Consolidación de deltas firmados sobre `Natural` antes de saturar.
+6. Consolidación de deltas firmados sobre `Nat` antes de saturar.
 7. Lectura secuencial proyectada sin recorte del delta privado.
