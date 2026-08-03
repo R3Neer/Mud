@@ -10,7 +10,6 @@ normative: true
 depends-on:
   - "[[05-texto-fuente]]"
 questions:
-  - Q-054
 decisions:
   - D-034
   - D-035
@@ -22,6 +21,7 @@ decisions:
   - D-067
   - D-068
   - D-069
+  - D-076
   - D-070
 ---
 
@@ -80,7 +80,7 @@ eventually through allowed old
 is in
 not and or xor
 exists forall count sum min max
-true false empty
+true false empty all
 Text Char Bool Thing Nat Int Num Rum Money
 Rand
 ```
@@ -100,6 +100,14 @@ Son contextuales:
 Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador no puede usar esta flexibilidad para aceptar una palabra reservada dura como nombre.
 
 `ordered` es una palabra reservada dura tanto delante de `family` como dentro de una especificación de colección. No puede usarse como identificador en ningún otro contexto.
+
+`all` es un literal contextual que requiere un dominio enumerable esperado. Su carácter reservado permite distinguirlo de una declaración ordinaria aun antes del tipado.
+
+## Adyacencia de unidades
+
+Después de reconocer un literal numérico, el flujo significativo puede reconocer inmediatamente una forma de unidad habilitada, sin exigir trivia intermedia. Por ello `3m`, `90km/h` y `r0.1m` producen los mismos tokens significativos que sus formas espaciadas. Un identificador alfanumérico completo conserva prioridad fuera de esa frontera; `R2D2` y `ronto` no se dividen como número y unidad.
+
+La forma canónica inserta un espacio entre número y primera unidad. Esta normalización pertenece al formateador, no al resaltador léxico.
 
 ## Comentarios
 
@@ -335,7 +343,7 @@ Son inválidos `_1`, `1_`, `1__000`, `1_.0`, `1_000000`, `1.123_456789` y `3e1_0
 Las formas de unidad pueden contener Unicode y no son identificadores generales. Se reconocen contextualmente contra el catálogo construido a partir de las declaraciones `magnitude`.
 
 > [!warning]
-> Q-054 todavía debe fijar prefijos, colisiones y la identidad estable de cada forma. La existencia del token contextual `UNIT_FORM` no resuelve esa semántica.
+> [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] fija el catálogo de prefijos, la resolución de colisiones y la identidad estable. `UNIT_FORM` conserva la escritura encontrada; la resolución semántica selecciona después una unidad declarada o una forma prefijada estructural.
 
 ## Formas de magnitudes de punto
 

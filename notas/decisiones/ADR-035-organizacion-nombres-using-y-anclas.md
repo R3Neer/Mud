@@ -20,18 +20,19 @@ affects:
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
 - Ampliada por: [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]]
+- Ampliada además por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
 - Preguntas relacionadas: Q-001, Q-014, Q-054
 - Documentos afectados: futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`
 
 ## Decisión
 
-### Archivos y namespaces
+### Archivos y paths de MUD
 
-El namespace se deriva de la ruta relativa dentro de la raíz MUD y no se declara en el archivo. Un archivo puede contener declaraciones `using` y varias declaraciones de cualquier categoría.
+El path de MUD se deriva de la ruta relativa dentro de la raíz MUD y no se declara en el archivo. `namespace` no es vocabulario de superficie y `path` no se reserva. Un archivo puede contener declaraciones `using` y varias declaraciones de cualquier categoría.
 
 El archivo es una unidad física, no una unidad de identidad semántica. Cada declaración conserva por separado ancla, dependencias, nodo de grafo, procedencia e historial.
 
-Mover una declaración entre archivos del mismo namespace no cambia su ancla. Moverla a otro namespace sí la cambia, salvo una migración explícita todavía definida por Q-014.
+Mover una declaración entre archivos del mismo path no cambia su ancla. Moverla a otro path sí la cambia, salvo una migración explícita todavía definida por Q-014.
 
 ### Declaraciones `using`
 
@@ -47,7 +48,7 @@ Todas las declaraciones `using` forman la cabecera del fichero y deben aparecer 
 Para un nombre no cualificado, la búsqueda sigue:
 
 1. Declaraciones locales.
-2. Mismo namespace.
+2. Mismo path de MUD.
 3. Declaraciones `using` exactas.
 4. Declaraciones `using` recursivas.
 
@@ -66,7 +67,7 @@ Los identificadores son sensibles a mayúsculas. El catálogo de palabras reserv
 
 D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen.
 
-`using`, `with`, `family`, `test`, `otherwise`, `ordered` y el tipo incorporado `Thing` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección. `name` es contextual dentro de un cuerpo de `thing` cuando aparece seguido de `=`; no queda reservado en los demás espacios de nombres.
+`using`, `with`, `family`, `test`, `otherwise`, `ordered` y el tipo incorporado `Thing` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección. `name` es contextual dentro de un cuerpo de `thing` cuando aparece seguido de `=`; no queda reservado en los demás espacios nominales.
 
 ### Nombres cualificados y anclas
 
@@ -95,23 +96,23 @@ message::warfare.armies.Destroyed
 
 La raíz incorporada usa el ancla reservada `thing::Thing` conforme a D-068.
 
-Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo namespace. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
+Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo path. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
 
 D-061 añade `anchor{...}` como forma contextual exclusiva de una plantilla `Text`. Produce la escritura canónica del ancla de una declaración o de un valor con identidad nominal anclada, sin convertir las declaraciones en valores ordinarios ni reservar `anchor` fuera de ese contexto.
 
-La identidad estable de una unidad sin identificador de cabecera permanece en Q-054.
+D-076 fija la identidad estable de cada unidad mediante el identificador `lowerCamel` obligatorio de su cabecera.
 
 ## Consecuencias
 
 - La resolución de nombres no depende del orden de archivos.
 - La procedencia física y la identidad semántica son dimensiones distintas.
 - El compilador debe detectar ambigüedades en vez de elegir silenciosamente.
-- La migración de namespace necesita una operación explícita, no un simple movimiento de archivo.
+- La migración de path necesita una operación explícita, no un simple movimiento de archivo.
 
 ## Verificación futura
 
 1. Varias declaraciones por archivo.
-2. Movimiento dentro y fuera del namespace.
+2. Movimiento dentro y fuera del path.
 3. Declaración `using` exacta, recursiva y ambigua.
 4. Resolución cualificada.
 5. Colisión por mayúsculas y palabra reservada.

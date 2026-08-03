@@ -20,13 +20,14 @@ decisions:
   - D-065
   - D-069
   - D-070
+  - D-078
 ---
 
 # 05. Texto fuente y estructura física
 
 ## Estado y propósito
 
-Este capítulo define la unidad física que recibe un procesador MUD. La identidad semántica de las declaraciones se define en el futuro capítulo 09; la estructura léxica pertenece a [[06-lexico]].
+Este capítulo define la unidad física que recibe un procesador MUD. La identidad semántica de las declaraciones se define en [[09-nombres-y-anclas]]; la estructura léxica pertenece a [[06-lexico]].
 
 ## Archivos
 
@@ -41,22 +42,22 @@ Este capítulo define la unidad física que recibe un procesador MUD. La identid
 
 ## Namespace derivado
 
-El namespace de un archivo se deriva de la ruta relativa desde la raíz MUD:
+El path de MUD de un archivo se deriva de la ruta relativa desde la raíz MUD:
 
 ```text
 world/kingdoms.mud
 ```
 
-pertenece al namespace:
+pertenece al path de MUD:
 
 ```text
 world
 ```
 
-El nombre del archivo no forma parte del namespace. Un archivo situado directamente en la raíz pertenece al namespace raíz.
+El nombre del archivo no forma parte del path. Un archivo situado directamente en la raíz pertenece al path raíz.
 
 > [!rule] MUD-NAME-001 — Ruta segura
-> Todo archivo debe permanecer dentro de la raíz MUD después de resolver componentes de ruta. Los nombres de directorio que forman namespaces deben ser identificadores `lowerCamelCase` válidos.
+> Todo archivo debe permanecer dentro de la raíz MUD después de resolver componentes de ruta. Los nombres de directorio que forman paths de MUD deben ser identificadores `lowerCamelCase` válidos.
 
 ## Contenido
 

@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
 
+- Ampliada por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
+
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Resuelve: [[notas/preguntas/Q-057-capacidad-interior-dentro-de-valores-de-alias|Q-057]]
 - Documentos afectados: futuro `12-aliases.md`, futuro `25-efectos.md`

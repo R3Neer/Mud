@@ -16,6 +16,7 @@ affects:
 - Amplía: D-019, D-026
 - Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
 - Preguntas relacionadas: Q-003, Q-017
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`
 

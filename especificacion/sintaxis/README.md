@@ -9,6 +9,7 @@ Este directorio contiene los artefactos normativos y verificables que conectan l
 | `cst-sin-perdidas.md` | Normativo | Modelo de CST, trivia, spans y recuperación. |
 | `mud-syntax-kinds.yaml` | Normativo mecánico | Inventario de producciones, tokens, trivia y categorías CST. |
 | `mud-surface-ast.asdl` | Normativo mecánico | Esquema del AST superficial normalizado. |
+| `mud-resolved-ast.asdl` | Normativo mecánico | Contrato del AST resuelto, tipos unión, símbolos, anclas y dependencias. |
 | `cst-a-ast-superficial.md` | Normativo | Transformación y normalizaciones. |
 | `cobertura-sintactica.yaml` | Normativo mecánico | Mapeo exhaustivo EBNF → CST → AST. |
 | `validate_syntax_model.py` | Herramienta editorial | Detecta divergencias entre los artefactos anteriores. |

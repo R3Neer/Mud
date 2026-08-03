@@ -15,6 +15,7 @@ affects:
 # ADR-049 — Operadores, precedencia e intervalos normalizados
 
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada además por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 - Preguntas relacionadas: Q-001, Q-018, Q-050
 - Documentos afectados: expresiones, intervalos, gramática
 
@@ -29,7 +30,7 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 | Familia | Formas |
 | --- | --- |
 | Aritmética | `+`, `-`, `*`, `/`, `%` |
-| Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `in` |
+| Comparación | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `in` |
 | Lógica | `not`, `and`, `or`, `xor`, `=>`, `<=>` |
 | Temporal | sufijo `changes`; composición con `and`, `or` dentro de `when` |
 | Intervalos | `|`, `&`, `^`, `-` |
@@ -54,7 +55,7 @@ La igualdad se define por clase de valor:
 - colección no ordenada: multiplicidad;
 - diccionario: conjunto de asociaciones clave–valor.
 
-`is` consulta la relación reflexiva y transitiva de especialización entre `thing`; no es igualdad ni casting.
+`is` consulta la relación reflexiva y transitiva de especialización entre `thing` y, conforme a D-074, la alternativa nominal de una unión. `is not` es su negación compuesta canónica. Ninguno es igualdad ni casting.
 
 ### Precedencia
 

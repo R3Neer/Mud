@@ -11,6 +11,7 @@ decisions:
   - D-031
   - D-068
   - D-069
+  - D-074
 affects: []
 superseded-by: []
 ---
@@ -26,6 +27,8 @@ Todo tipo bien formado tiene un valor predeterminado perteneciente a su dominio.
 - Aliases no estructurales y colecciones con restricciones.
 - Intervalos, selección del miembro predeterminado de una familia cerrada y refinamientos.
 - Tipos cuyo dominio pueda depender del mundo activo.
+
+D-074 decide que una unión sin predeterminado nominal único exige inicializador explícito en el contexto que deba materializarla; el orden textual de alternativas no decide. Continúa pendiente integrar esta excepción con la formulación general de D-017 y completar las demás clases enumeradas arriba.
 
 Los componentes de un alias estructural pueden reemplazar explícitamente el predeterminado que obtendrían de su tipo. Falta decidir si otras clases de tipo derivado pueden reemplazar su predeterminado intrínseco.
 

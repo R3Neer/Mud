@@ -12,7 +12,6 @@ depends-on:
   - "[[06-lexico]]"
 questions:
   - Q-022
-  - Q-054
   - Q-059
 decisions:
   - D-025
@@ -51,6 +50,10 @@ decisions:
   - D-071
   - D-072
   - D-073
+  - D-074
+  - D-075
+  - D-076
+  - D-077
 ---
 
 # 07. Gramática concreta
@@ -89,7 +92,7 @@ using world.people
 using physics.*
 ```
 
-No existe una declaración `namespace`; se deriva de la ruta. `using`, no `import`, es la única construcción de visibilidad entre namespaces.
+No existe una declaración de path; se deriva de la ruta. `using`, no `import`, es la única construcción de visibilidad entre paths de MUD.
 
 Todos los `using` deben aparecer antes de la primera declaración de primer nivel. Intercalarlos es un error y nunca crea alcance local o secuencial. El orden entre varios `using` no decide ambigüedades.
 
@@ -140,10 +143,10 @@ Forma almacenada:
 Forma calculada:
 
 ```text
-fieldName [: Type] := expression
+fieldName [derived-value-shape] := value-expression
 ```
 
-La anotación de tipo es opcional. Si se omite, el tipo debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut`, dominio ni especificación de colección adicionales.
+`derived-value-shape` puede ser `: Type`, `in domain` con colección opcional, o una especificación de colección sola. Por tanto son válidos tanto `area: Num in 0..* := width * height` como `area in 0..* := width * height`. Si se omite el tipo, debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut`, pero sí dominio y especificación de colección.
 
 El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `fieldName: mut Type` no pertenece a la sintaxis. El identificador `name` está ocupado por la propiedad intrínseca dentro de una `thing` y no puede redeclararse mediante ninguna de estas formas.
 
@@ -163,6 +166,24 @@ displayDensity: Density := density
 ```
 
 Si la expresión de un campo calculado es además estática cerrada, el compilador debe sugerir la forma almacenada inmutable. No es un error ni una reescritura automática, y la sugerencia no aparece cuando el cálculo depende de estado runtime.
+
+Una lista separada por comas construye una colección calculada e infiere tipo y cardinalidad cuando sean demostrables:
+
+```mud
+numbers := a * b, d, c / a
+```
+
+El dominio de un cálculo actúa como contrato. Una posible salida exterior produce warning y comprobación de transición; una salida necesariamente exterior produce error.
+
+## Uniones de tipos
+
+`|` une alternativas nominales en cualquier posición de tipo. Cada alternativa puede declarar dominio y una única especificación de colección final pertenece a la unión completa:
+
+```mud
+values: Nat in 0..10 | Int in -10..-1 [1..*]
+```
+
+Los paréntesis redundantes se eliminan de la forma canónica. No se permiten cardinalidades por alternativa. Si una expresión todavía contextual encaja en varias alternativas debe seleccionar una mediante `to`.
 
 ## Colecciones y diccionarios
 
@@ -280,7 +301,7 @@ Magnitud derivada:
 
 ```mud
 magnitude Speed: Num in [0..*] := Length / Time {
-    unit := 1 m/s {
+    unit fastie := 1 m/s {
         name = "fastie"
         plural = "fasties"
         abbreviation = "fst"
@@ -306,9 +327,11 @@ magnitude TimeOfDay point over Time in [0..86_400 cycle) {
 }
 ```
 
-Una magnitud base puede tener una `root unit`; una derivada solo unidades nominales alternativas; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b cycle)` añade normalización cíclica. Solo una magnitud de punto admite `cycle`.
+Una magnitud base puede tener una `root unit nombre`; una derivada solo unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b cycle)` añade normalización cíclica. Solo una magnitud de punto admite `cycle`.
 
-En una unidad, omitir la propiedad `prefixes` habilita todos los prefijos del catálogo incorporado. `prefixes = empty` no habilita ninguno y `prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. No existe una forma desnuda `prefixes`.
+En una unidad, omitir `prefixes` o escribir `prefixes = empty` no habilita ninguno; `prefixes = all` habilita el catálogo SI decimal completo y `prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. `name`, `plural` y `abbreviation` son opcionales.
+
+Una cantidad puede omitir el espacio antes de su unidad, pero el formateador lo inserta: `3m` y `3 m` tienen el mismo AST y la segunda es canónica.
 
 `format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él no existe una representación especial de punto: se aplica exactamente la representación textual ordinaria de una magnitud, con la coordenada en la unidad raíz y la abreviatura o nombre de esa unidad. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `format = "{week from year:2}"`.
 
@@ -505,7 +528,7 @@ given amount: Nat in 1..100 {
 }
 ```
 
-`then` contiene efectos o llamadas a acciones conforme a la distinción estática entre acciones elementales y compuestas. El `otherwise` opcional de `if` o `after` explica un `rejected`; omitirlo produce una sugerencia y una razón generada. No captura errores de evaluación ni envuelve resultados.
+`then` contiene efectos o llamadas a acciones conforme a la distinción estática entre acciones elementales y compuestas. El `otherwise` opcional de `if` o `after` explica un `rejected`; omitirlo produce una sugerencia y una razón generada. Un `otherwise` asociado al `then` explica el `failed` de su transición atómica completa, se evalúa perezosamente y no recupera ni ejecuta una rama alternativa.
 
 ## Frontera de salida
 
@@ -586,7 +609,7 @@ then {
 }
 ```
 
-La forma `name [: Type] := expression` declara un valor local inmutable. El tipo se infiere si existe una solución única; en otro caso debe escribirse. No admite `mut`, `in` ni especificación de colección propia.
+La forma `name [derived-value-shape] := value-expression` declara un valor local inmutable. La forma derivada admite `: Type`, `in domain` con colección opcional, o una colección sola. El tipo y la cardinalidad se infieren cuando existe una solución única; en otro caso deben escribirse. No admite `mut` exterior.
 
 La expresión es pura y se evalúa una sola vez cuando la ejecución alcanza la declaración. Lee los efectos secuenciales anteriores del mismo delta privado y conserva su valor aunque instrucciones posteriores cambien sus dependencias.
 
@@ -770,7 +793,7 @@ De mayor a menor:
 | 3 | `*`, `/`, `%` | izquierda |
 | 4 | `+`, `-` | izquierda |
 | 5 | sufijos `to Type`, `in unit` | acumulativa |
-| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, pertenencia `in` | restringida |
+| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, pertenencia `in` | restringida |
 | 7 | sufijo temporal `changes` | no asociativa |
 | 8 | `and`, `&` | izquierda |
 | 9 | `or`, `|` | izquierda |
@@ -803,6 +826,8 @@ Si aparece después otro operador, usa el resultado ya convertido. Esta regla se
 speed in km/h
 acceleration in m/(s*s)
 ```
+
+Como `to` pertenece a cada operando cuantitativo antes de comparar, `3 m == 3 m to Length` se agrupa como `3 m == (3 m to Length)`, no como una conversión del resultado booleano.
 
 ## Encadenamientos
 
@@ -935,7 +960,7 @@ La recuperación solo mejora diagnósticos. No puede insertar silenciosamente se
 
 El parser no decide cuestiones que requieren resolución:
 
-- Si un camino con puntos atraviesa namespaces, declaraciones o miembros.
+- Si un camino con puntos atraviesa paths de MUD, declaraciones o miembros.
 - Si un literal estructural usado antes de una llamada representa un receptor único o varios receptores.
 - Si un `postfix-expression` de un efecto es una llamada de acción.
 - Si una acción es elemental o compuesta.

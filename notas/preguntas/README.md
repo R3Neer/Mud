@@ -10,7 +10,7 @@ status: activo
 
 Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
 
-Hay 42 preguntas activas: 21 abiertas y 21 parcialmente decididas.
+Hay 40 preguntas activas: 19 abiertas y 21 parcialmente decididas.
 
 Prioridades:
 
@@ -31,7 +31,6 @@ Prioridades:
 | [[Q-009-forma-canonica-del-ir|Q-009 — Forma canónica del IR]] | Parcialmente decidida |
 | [[Q-046-creacion-inefectiva-dentro-de-una-raiz|Q-046 — Creación inefectiva dentro de una raíz]] | Parcialmente decidida |
 | [[Q-047-seleccion-de-predeterminados-por-tipo|Q-047 — Selección de predeterminados por tipo]] | Parcialmente decidida |
-| [[Q-049-destruccion-y-colecciones-de-thing|Q-049 — Destrucción y colecciones de `thing`]] | Parcialmente decidida |
 
 ## P1 — Antes de ampliar el lenguaje
 
@@ -65,7 +64,6 @@ Prioridades:
 | [[Q-032-aleatoriedad-reproducible|Q-032 — Aleatoriedad reproducible]] | Parcialmente decidida |
 | [[Q-033-calendarios-y-localizacion|Q-033 — Calendarios y localización]] | Abierta |
 | [[Q-034-magnitudes-derivadas|Q-034 — Magnitudes derivadas]] | Parcialmente decidida |
-| [[Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054 — Catálogo y resolución léxica de unidades y prefijos]] | Abierta |
 | [[Q-056-forma-normalizada-y-recursion-de-aliases|Q-056 — Forma normalizada y recursión de aliases]] | Abierta |
 | [[Q-058-evaluacion-portable-de-rumber|Q-058 — Evaluación portable de `Rum`]] | Abierta |
 | [[Q-035-coste-de-allowed|Q-035 — Coste de `allowed`]] | Parcialmente decidida |

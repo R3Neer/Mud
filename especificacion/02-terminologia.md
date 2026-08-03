@@ -30,7 +30,7 @@ El contenido normativo todavía no ha sido redactado.
 
 ## Familias terminológicas previstas
 
-- Programa, módulo, archivo y espacio de nombres.
+- Programa, módulo, archivo y path de MUD.
 - Declaración, símbolo, nombre y ancla.
 - `Thing` declarada, `thing` creada durante la ejecución, identidad y valor.
 - Campo, relación y colección.

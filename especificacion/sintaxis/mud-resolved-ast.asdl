@@ -1,0 +1,81 @@
+-- MUD 1.0 — Contrato del AST resuelto
+--
+-- Complementa mud-surface-ast.asdl. Conserva procedencia y forma semántica,
+-- pero sustituye referencias nominales por símbolos y anclas resueltas.
+
+module MUDResolved {
+
+    source_span = (string source, int start, int end)
+
+    anchor = (string canonical)
+
+    symbol_id = AnchoredSymbol(anchor value)
+              | LocalSymbol(anchor owner, string kind, string name, int ordinal)
+
+    resolved_project = ResolvedProject(resolved_decl* declarations,
+                                       dependency_edge* dependencies)
+
+    resolved_decl = ResolvedDecl(anchor identity,
+                                 string category,
+                                 resolved_type? declared_type,
+                                 resolved_member* members)
+        attributes (source_span origin)
+
+    resolved_member = ResolvedMember(symbol_id identity,
+                                     string category,
+                                     resolved_type? declared_type,
+                                     resolved_expr? value)
+        attributes (source_span origin)
+
+    resolved_type = UnionType(type_alternative first,
+                              type_alternative* remaining,
+                              collection_shape collection)
+        attributes (source_span origin)
+
+    type_alternative = (anchor nominal_type, resolved_domain? domain)
+
+    resolved_domain = IntervalDomain(resolved_expr lower,
+                                     resolved_expr upper,
+                                     string boundaries)
+                    | SteppedDomain(resolved_domain interval,
+                                    resolved_expr step)
+                    | FiniteDomain(resolved_expr* members)
+                    | NamedDomain(anchor declaration)
+                    | UnionDomain(resolved_domain left, resolved_domain right)
+                    | IntersectionDomain(resolved_domain left, resolved_domain right)
+                    | DifferenceDomain(resolved_domain left, resolved_domain right)
+                    | SymmetricDifferenceDomain(resolved_domain left,
+                                                resolved_domain right)
+
+    collection_shape = (int? lower,
+                        int? upper,
+                        string multiplicity,
+                        string order,
+                        string capability)
+
+    resolved_expr = ReferenceExpr(symbol_id target)
+                  | LiteralExpr(string kind, string canonical)
+                  | AllExpr(resolved_domain expected_domain, string stability)
+                  | CollectionExpr(resolved_expr* elements)
+                  | OperationExpr(string operator, resolved_expr* operands)
+                  | ConversionExpr(resolved_expr value, anchor target_type)
+                  | TypeTestExpr(resolved_expr value,
+                                 anchor tested_type,
+                                 string polarity)
+                  | NarrowedExpr(resolved_expr value,
+                                 resolved_type narrowed_type)
+        attributes (source_span origin)
+
+    dependency_edge = Owns(symbol_id source, symbol_id target)
+                    | Specializes(anchor source, anchor target)
+                    | RefersTo(symbol_id source, symbol_id target)
+                    | HasType(symbol_id source, anchor target)
+                    | HasDomain(symbol_id source, symbol_id target)
+                    | InitializesFrom(symbol_id source, symbol_id target)
+                    | CalculatesFrom(symbol_id source, symbol_id target)
+                    | Reads(symbol_id source, symbol_id target)
+                    | Writes(symbol_id source, symbol_id target)
+                    | Creates(symbol_id source, anchor target)
+                    | Destroys(symbol_id source, anchor target)
+                    | UnitOf(anchor unit, anchor magnitude)
+}

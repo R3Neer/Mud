@@ -21,6 +21,10 @@ decisions:
   - D-071
   - D-072
   - D-073
+  - D-074
+  - D-075
+  - D-076
+  - D-077
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -30,6 +34,8 @@ decisions:
 Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva las distinciones sintácticas que afectan a fases posteriores y elimina puntuación, trivia, agrupaciones concretas y azúcares cuya interpretación no depende de resolución de nombres o tipos.
 
 El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
+
+El contrato de la fase posterior vive en [[mud-resolved-ast]]. Allí las referencias se sustituyen por `AnchoredSymbol` o `LocalSymbol`, las uniones quedan normalizadas y el grafo nominal se expresa mediante aristas reconstruibles.
 
 ## Cadena de representaciones
 
@@ -93,7 +99,7 @@ Cada `MudFile` contiene:
 
 Los `using` se almacenan separados de las declaraciones porque la gramática exige que formen una cabecera. Ambos grupos conservan su orden fuente.
 
-El namespace derivado de la ruta es metadato y no una declaración AST.
+El path de MUD derivado de la ruta es metadato y no una declaración AST.
 
 ## Procedencia
 
@@ -190,19 +196,15 @@ StoredFieldDecl(
 )
 ```
 
-`ValueShape` contiene:
-
-- Tipo declarado.
-- Dominio opcional.
-- Especificación de colección normalizada.
+`ValueShape` contiene un `TypeExpr` normalizado con alternativas nominales, dominio opcional por alternativa y una única especificación de colección exterior.
 
 ### Campo calculado
 
 ```text
-CalculatedFieldDecl(name, annotation?, value)
+CalculatedFieldDecl(name, shape?, value)
 ```
 
-No contiene mutabilidad, dominio ni colección adicionales. La anotación es opcional y la inferencia pertenece al tipado.
+No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colección a la inferencia. `ExplicitDerivedShape` conserva un `TypeExpr` completo; `InferredDerivedShape` conserva un dominio o colección escritos sin inventar un tipo superficial. La elaboración combina esas restricciones con el tipo inferido.
 
 ### Campos públicos
 
@@ -217,11 +219,17 @@ No contiene mutabilidad, dominio ni colección adicionales. La anotación es opc
 - Datos almacenados de `family`.
 - Participantes `for`.
 
-Contiene tipo, dominio y colección, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
+Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
 
 `GivenDecl` usa `ReadonlyValueShape`, que no puede representar capacidad interior `mut`.
 
 ## Tipos
+
+### Uniones nominales
+
+`TypeExpr` contiene una secuencia no vacía de `TypeAlternative` y una sola especificación de colección exterior. La secuencia se normaliza como unión asociativa, conmutativa e idempotente, pero no elimina una alternativa por inclusión de dominio. Los paréntesis redundantes no sobreviven.
+
+Cada `TypeAlternative` contiene un `DeclaredType` y un `DomainExpr` opcional. `SteppedDomain` conserva por separado intervalo y paso; los demás dominios superficiales usan `ExpressionDomain` hasta su elaboración semántica.
 
 ### Tipo nominal
 
@@ -307,7 +315,7 @@ Los literales estructurales siguen siendo contextuales. `PositionalStructuralLit
 
 Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas.
 
-Cada `FamilyMember` contiene únicamente asignaciones a datos almacenados. Un bloque omitido produce una secuencia vacía.
+Cada `FamilyMember` conserva una sobrescritura opcional del `name` intrínseco y asignaciones a datos almacenados. Un bloque omitido produce sobrescritura ausente y secuencia vacía.
 
 ## Magnitudes
 
@@ -334,17 +342,19 @@ Una unidad raíz y una alternativa son variantes diferentes porque la segunda po
 
 Las propiedades se normalizan a una estructura fija:
 
-- `name` obligatorio.
+- Identificador `lowerCamel` obligatorio en la declaración.
+- `name` opcional.
 - `plural` opcional.
-- `abbreviation` obligatoria.
+- `abbreviation` opcional.
 - Política de prefijos.
 
 La ausencia de `plural` se conserva; no se sintetiza en el AST superficial.
 
 La política de prefijos es:
 
-- Propiedad omitida → `AllPrefixes`.
+- Propiedad omitida → `NoPrefixes`.
 - `prefixes = empty` → `NoPrefixes`.
+- `prefixes = all` → `AllPrefixes`.
 - `prefixes = [p1, ...]` → `SelectedPrefixes`.
 
 Propiedades duplicadas o requeridas ausentes se rechazan antes de construir el AST.
@@ -450,7 +460,7 @@ La forma `after expr` produce un bloque sin locales y una aserción. En la forma
 
 ## Bloques de efectos
 
-Un `then` con un único efecto se normaliza a `EffectBlock` con `leadingLocals` vacío, ese efecto como `firstEffect` y `remainingStatements` vacío.
+Un `then` con un único efecto se normaliza a `EffectBlock` con `leadingLocals` vacío, ese efecto como `firstEffect`, `remainingStatements` vacío y diagnóstico de fallo opcional.
 
 El bloque conserva por separado las declaraciones locales anteriores al primer efecto, el primer efecto obligatorio y las sentencias restantes. Estas últimas pueden ser `EffectStatement` o `LocalValueStatement`.
 
@@ -507,6 +517,8 @@ se representa mediante `ComparisonChainExpr`, no como asociaciones binarias arbi
 
 Las comparaciones no encadenables producen una única arista en la cadena o un nodo equivalente validado.
 
+`is not` produce `IsNotRelation`; no se pierde como un `not` exterior porque el estrechamiento nominal necesita reconocer directamente la prueba negativa.
+
 ### Conversiones
 
 `to Type` y `in unit` producen `ConversionExpr` con destinos distintos. La barrera postfix de la gramática ya ha decidido su agrupación, pero no la compatibilidad.
@@ -534,6 +546,10 @@ como varios receptores o como un único valor estructural queda pendiente de res
 ### `Rand`
 
 `Rand(expr)` posee `RandomExpr`; no es un tipo ni una llamada ordinaria.
+
+### `all`
+
+El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estático o dinámico se determinan durante el tipado; el AST superficial no enumera sus valores.
 
 ### Cuantificadores
 
@@ -589,6 +605,8 @@ Los extremos `*` permanecen como `EffectiveIntervalBound` hasta elaboración.
 La expresión de unidad y la de dimensión poseen árboles separados aunque ambas usen `*`, `/` y paréntesis en la sintaxis concreta.
 
 Una forma `UNIT_FORM` se conserva como texto fuente contextual. Su resolución contra el catálogo pertenece a fases posteriores.
+
+La ausencia de espacio entre número y unidad no altera el AST. `3m` y `3 m` producen la misma cantidad; la forma fuente exacta permanece disponible en la CST y el formateador emite la segunda.
 
 ## Literales numéricos
 

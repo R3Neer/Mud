@@ -25,7 +25,7 @@ declaration-file-body
       ;
 
 using-declaration
-    ::= "using" , namespace-path , [ "." , "*" ] ;
+    ::= "using" , mud-path , [ "." , "*" ] ;
 
 top-level-declaration
     ::= thing-declaration
@@ -46,7 +46,7 @@ top-level-declaration
 (* Nombres y referencias                                               *)
 (* ------------------------------------------------------------------ *)
 
-namespace-path
+mud-path
     ::= lower-name , { "." , lower-name } ;
 
 qualified-name
@@ -111,9 +111,7 @@ structural-alias-body
         ;
 
 component-declaration
-    ::= component-name , ":" , declared-type
-        , [ "in" , domain-expression ]
-        , [ collection-specification ]
+    ::= component-name , ":" , type-expression
         , [ "=" , constant-expression ]
         ;
 
@@ -133,14 +131,12 @@ family-data-declaration
       ;
 
 stored-family-data-declaration
-    ::= field-name , ":" , declared-type
-        , [ "in" , domain-expression ]
-        , [ collection-specification ]
+    ::= field-name , ":" , type-expression
         , [ "=" , constant-expression ]
         ;
 
 calculated-family-data-declaration
-    ::= field-name , [ ":" , declared-type ] , ":=" , constant-expression
+    ::= field-name , [ derived-value-shape ] , ":=" , value-expression
         ;
 
 family-member
@@ -221,16 +217,19 @@ point-magnitude-body
         ;
 
 root-unit-declaration
-    ::= "root" , "unit" , unit-body ;
+    ::= "root" , "unit" , unit-name , unit-body ;
 
 alternative-unit-declaration
-    ::= "unit" , ":=" , quantity-expression , unit-body ;
+    ::= "unit" , unit-name , ":=" , quantity-expression , unit-body ;
+
+unit-name ::= identifier ;
 
 unit-body
     ::= "{" , declaration-layout
-        , unit-property
-        , { required-separation , unit-property }
-        , [ required-separation ]
+        , [ unit-property
+            , { required-separation , unit-property }
+            , [ required-separation ]
+          ]
         , "}"
         ;
 
@@ -243,6 +242,7 @@ unit-property
 
 prefix-selection
     ::= "empty"
+      | "all"
       | "[" , prefix-name , { "," , prefix-name } , "]"
       ;
 
@@ -266,22 +266,41 @@ field-declaration
       ;
 
 stored-field-declaration
-    ::= [ "mut" ] , field-name , ":" , declared-type
-        , [ "in" , domain-expression ]
-        , [ collection-specification ]
+    ::= [ "mut" ] , field-name , ":" , type-expression
         , [ "=" , constant-expression ]
         ;
 
 calculated-field-declaration
-    ::= field-name , [ ":" , declared-type ] , ":=" , expression ;
+    ::= field-name , [ derived-value-shape ] , ":=" , value-expression ;
 
 public-field-declaration
-    ::= field-name , [ ":" , declared-type ] , ":=" , expression ;
+    ::= field-name , [ derived-value-shape ] , ":=" , value-expression ;
+
+derived-value-shape
+    ::= ":" , type-expression
+      | "in" , type-alternative-domain , [ collection-specification ]
+      | collection-specification
+        ;
 
 type-expression
-    ::= declared-type
-        , [ "in" , domain-expression ]
-        , [ collection-specification ]
+    ::= union-type-expression , [ collection-specification ]
+        ;
+
+union-type-expression
+    ::= type-alternative , { "|" , type-alternative }
+        ;
+
+type-alternative
+    ::= declared-type , [ "in" , type-alternative-domain ]
+      | "(" , union-type-expression , ")"
+        ;
+
+type-alternative-domain
+    ::= stepped-domain
+      | interval-expression
+      | collection-literal
+      | qualified-name
+      | "(" , domain-expression , ")"
         ;
 
 declared-type
@@ -340,9 +359,7 @@ on-clause
     ::= "on" , on-participant , { "," , on-participant } ;
 
 for-participant
-    ::= [ "mut" ] , [ role-name , ":" ] , declared-type
-        , [ "in" , domain-expression ]
-        , [ collection-specification ]
+    ::= [ "mut" ] , [ role-name , ":" ] , type-expression
       ;
 
 on-participant
@@ -358,8 +375,7 @@ given-clause
     ::= "given" , given-declaration , { "," , given-declaration } ;
 
 given-declaration
-    ::= given-name , ":" , declared-type
-        , [ "in" , domain-expression ]
+    ::= given-name , ":" , union-type-expression
         , [ given-collection-specification ]
         , [ "=" , constant-expression ]
         ;
@@ -482,8 +498,10 @@ expression-clause-body
       ;
 
 then-clause
-    ::= "then" , effect
-      | "then" , effect-block
+    ::= ( "then" , effect
+        | "then" , effect-block
+        )
+        , [ diagnostic-tail ]
       ;
 
 effect-block
@@ -501,7 +519,7 @@ then-statement
       ;
 
 local-value-declaration
-    ::= variable-name , [ ":" , declared-type ] , ":=" , expression ;
+    ::= variable-name , [ derived-value-shape ] , ":=" , value-expression ;
 
 (* ------------------------------------------------------------------ *)
 (* Activación inicial y tests                                          *)
@@ -619,6 +637,9 @@ constant-expression
 domain-expression
     ::= expression ;
 
+stepped-domain
+    ::= interval-expression , "by" , constant-expression ;
+
 eventually-expression
     ::= biconditional-expression
       | "eventually" , biconditional-expression , "through" , action-reference-list
@@ -682,7 +703,7 @@ chainable-comparison
     ::= "==" | "<" | "<=" | ">" | ">=" ;
 
 nonchainable-comparison
-    ::= "!=" | "is" | membership-in ;
+    ::= "!=" | "is" , [ "not" ] | membership-in ;
 
 membership-in
     ::= "in" ;
@@ -774,6 +795,7 @@ literal
       | "true"
       | "false"
       | "empty"
+      | "all"
       ;
 
 text-template

@@ -19,6 +19,7 @@ affects:
 
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-009, Q-016, Q-027, Q-034, Q-054, Q-059
 - Documentos afectados: arquitectura, grafo semántico, IR, conformidad

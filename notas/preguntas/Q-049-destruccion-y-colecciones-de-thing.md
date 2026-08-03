@@ -1,22 +1,21 @@
 ---
 id: Q-049
 title: Destrucción y colecciones de thing
-status: parcialmente-decidida
+status: cerrada
 priority: P0
 opened:
-closed:
+closed: 2026-08-03
 decisions:
   - D-021
+  - D-077
 affects: []
 superseded-by: []
 ---
 
 # Q-049 — Destrucción y colecciones de `thing`
 
-## Contenido
+## Resolución
 
-Estado: **parcialmente cerrada** mediante [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
+[[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] conserva propiedades completas cuando se destruye una dependencia estructural. [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] resuelve las identidades contenidas: la retirada solo se confirma si todas las cardinalidades y dominios finales son válidos; una relación inmutable conserva pertenencia latente y una relación `mut` la elimina permanentemente. `create` restaura únicamente la primera y vuelve a validar la transición.
 
-La destrucción no poda ni reescribe colecciones almacenadas. Si el tipo declarado de una propiedad queda inactivo, la propiedad completa se suspende y conserva orden, multiplicidad, claves, cardinalidad y carga para una recreación posterior. No necesita mutabilidad exterior ni valores de reparación.
-
-Permanece abierta la observación de una identidad inactiva dentro de una colección cuyo tipo declarado continúa efectivo por ser más general. También falta coordinar esta observación con iteraciones, diccionarios, `old` y serialización.
+No existe una colección efectiva cardinalmente degradada: un incumplimiento produce `failed` y rollback.

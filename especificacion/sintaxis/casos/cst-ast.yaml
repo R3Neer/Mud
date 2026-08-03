@@ -285,13 +285,13 @@ cases:
     category: unit
     source: |
       magnitude Length: Num {
-          root unit {
+          root unit meter {
               name = "meter"
               abbreviation = "m"
           }
       }
     cst_root: MudFileSyntax
-    ast: UnitProperties(prefixes=AllPrefixes)
+    ast: RootUnitDecl(meter, prefixes=NoPrefixes)
     normalizations: [omitted-prefixes-to-all]
     produces_ast: true
 
@@ -299,7 +299,7 @@ cases:
     category: unit
     source: |
       magnitude Length: Num {
-          root unit {
+          root unit meter {
               name = "meter"
               abbreviation = "m"
               prefixes = empty
@@ -313,7 +313,7 @@ cases:
     category: validation-before-ast
     source: |
       magnitude Length: Num {
-          root unit {
+          root unit meter {
               name = "meter"
               name = "metre"
               abbreviation = "m"
@@ -442,3 +442,103 @@ cases:
     cst_root: MudFileSyntax
     expected_diagnostics: [unexpected-apostrophe]
     produces_ast: false
+
+  - id: union-type-with-local-domains-and-collection
+    category: type
+    source: |
+      thing Sample {
+          values: Nat in 0..10 | Int in -10..-1 [1..*]
+      }
+    cst_root: MudFileSyntax
+    ast: TypeExpr(alternatives=[Nat in 0..10, Int in -10..-1], cardinality=[1..*])
+    normalizations: [flatten-union-type, discard-redundant-type-parentheses]
+    produces_ast: true
+
+  - id: union-alternative-cardinality-rejected
+    category: validation-before-ast
+    source: |
+      thing Sample {
+          values: Nat [2] | Text [1]
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [collection-specification-must-follow-whole-union]
+    produces_ast: false
+
+  - id: union-literal-needs-nominal-choice
+    category: typing-after-ast
+    source: |
+      thing Sample {
+          value: Nat | Int = 2
+      }
+    cst_root: MudFileSyntax
+    ast: StoredFieldDecl(value, alternatives=[Nat, Int], defaultValue=2)
+    expected_diagnostics: [ambiguous-union-alternative]
+    produces_ast: true
+
+  - id: is-not-comparison
+    category: expression
+    source: |
+      rule IsText given value: Nat | Text {
+          value is not Nat
+      }
+    cst_root: MudFileSyntax
+    ast: ComparisonChainExpr(value, IsNotRelation, Nat)
+    produces_ast: true
+
+  - id: stepped-domain-all
+    category: domain
+    source: |
+      thing Sample {
+          numbers: Num in 0..1 by 0.2 [6] = all
+      }
+    cst_root: MudFileSyntax
+    ast: StoredFieldDecl(numbers, domain=SteppedDomain(0..1, 0.2), defaultValue=AllLiteral)
+    produces_ast: true
+
+  - id: calculated-collection-with-domain
+    category: field
+    source: |
+      thing Sample {
+          numbers: Num in 0..100 := a * b, d, c / a
+      }
+    cst_root: MudFileSyntax
+    ast: CalculatedFieldDecl(numbers, value=CollectionLiteralExpr(3 elements))
+    normalizations: [comma-value-to-derived-collection, infer-cardinality-three]
+    produces_ast: true
+
+  - id: calculated-collection-with-inferred-type-domain
+    category: field
+    source: |
+      thing Sample {
+          numbers in 0..100 := a * b, d, c / a
+      }
+    cst_root: MudFileSyntax
+    ast: CalculatedFieldDecl(numbers, shape=InferredDerivedShape(domain=0..100), value=CollectionLiteralExpr(3 elements))
+    normalizations: [comma-value-to-derived-collection, infer-cardinality-three]
+    produces_ast: true
+
+  - id: named-units-and-all-prefixes
+    category: unit
+    source: |
+      magnitude Length: Num {
+          root unit meter {
+              abbreviation = "m"
+              prefixes = all
+          }
+      }
+    cst_root: MudFileSyntax
+    ast: RootUnitDecl(meter, abbreviation=m, prefixes=AllPrefixes)
+    produces_ast: true
+
+  - id: transition-otherwise
+    category: action
+    source: |
+      action RemoveBob for mut team: Team {
+          then {
+              destroy Bob
+          }
+          otherwise "Bob is still required by {team}"
+      }
+    cst_root: MudFileSyntax
+    ast: EffectBlock(failureDiagnostic=TextTemplateExpr(...))
+    produces_ast: true

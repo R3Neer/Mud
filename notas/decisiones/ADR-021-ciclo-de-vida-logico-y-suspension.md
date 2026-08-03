@@ -16,6 +16,7 @@ affects:
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Relacionada con: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada además por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
 - Preguntas afectadas: [[notas/preguntas/Q-048-destruccion-con-descendientes-activos|Q-048]], [[notas/preguntas/Q-049-destruccion-y-colecciones-de-thing|Q-049]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
 
@@ -296,9 +297,9 @@ Esta regla evita que la misma identidad global reciba cierres diferentes según 
 
 ## Alternativas descartadas
 
-### Poda destructiva
+### Poda destructiva indiscriminada
 
-Se descarta eliminar automáticamente miembros de colecciones. Confunde suspensión con pérdida de información y hace depender `destroy` de la mutabilidad exterior de todas las colecciones alcanzadas.
+Se descarta eliminar automáticamente y de la misma forma todos los miembros de colecciones. D-077 adopta una retirada condicionada: debe conservar la cardinalidad final, las relaciones inmutables retienen pertenencia latente y las relaciones `mut` eliminan la pertenencia almacenada.
 
 ### Cascada destructiva
 
@@ -314,10 +315,8 @@ Se descartan. Exigirían definir cuándo se demuestra la unicidad, qué ocurre s
 
 ## Cuestiones todavía abiertas
 
-- Visibilidad de una identidad destruida dentro de una colección cuyo tipo declarado sigue efectivo por ser un antecesor más general.
 - Operaciones permitidas sobre propiedades suspendidas.
 - Serialización e introspección de la representación almacenada.
-- Orden de restauración cuando se recrean varias dependencias en una misma oleada.
 
 ## Verificación futura
 

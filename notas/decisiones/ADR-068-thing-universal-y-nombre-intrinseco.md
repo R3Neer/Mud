@@ -41,7 +41,7 @@ La interpolación de una `thing` usa hasta ahora su nombre nominal. Ese valor es
 
 `Thing` es una palabra reservada y un tipo incorporado sensible a mayúsculas y minúsculas. La arista efectiva no se duplica ni se serializa como una antecesora semántica adicional cuando el autor escribe el redundante `as Thing`; la CST y el AST superficial sí conservan esa escritura hasta que se aplica la corrección sugerida.
 
-Su ancla canónica es `thing::Thing`; `anchor{Thing}` produce esa escritura. El ancla pertenece al lenguaje y no ocupa un namespace declarable por el programa.
+Su ancla canónica es `thing::Thing`; `anchor{Thing}` produce esa escritura. El ancla pertenece al lenguaje y no ocupa un path declarable por el programa.
 
 Esta decisión no selecciona un miembro predeterminado para posiciones de tipo `Thing` con cardinalidad mínima positiva. `Thing` es abstracta y la membresía continúa siendo estricta; Q-047 conserva pendiente cuándo debe exigirse un inicializador explícito u otra selección válida.
 
@@ -93,7 +93,7 @@ Dos `thing` pueden compartir el mismo `name`; la igualdad, resolución y anclaje
 
 - Existe un tipo común garantizado para todas las `thing` y para colecciones heterogéneas.
 - El grafo distingue antecesoras declaradas de la arista implícita de las raíces hacia `Thing`.
-- La presentación humana puede cambiar sin alterar identidad, namespace ni ancla.
+- La presentación humana puede cambiar sin alterar identidad, path de MUD ni ancla.
 - `name` no introduce estado heredado, conflictos de fusión ni escrituras adicionales.
 - Los campos ordinarios llamados `name` dejan de ser válidos dentro de cuerpos de `thing`; aliases, familias y otros contextos conservan sus propios espacios estructurales.
 

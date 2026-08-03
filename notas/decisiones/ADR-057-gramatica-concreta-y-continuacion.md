@@ -17,6 +17,7 @@ affects:
 - Modificada también por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada asimismo por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
 - Modificada finalmente por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Modificada después por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
 - Cierra: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
 

@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 68.
-- Vigentes: 68.
+- Total: 73.
+- Vigentes: 73.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -87,6 +87,11 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Vinculaciones locales en bloques booleanos]] |
 | D-072 | vigente | 2026-08-02 | [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|Entornos de resolución y migraciones explícitas de anclas]] |
 | D-073 | vigente | 2026-08-02 | [[notas/decisiones/ADR-073-as-thing-explicito-redundante|`as Thing` explícito válido pero redundante]] |
+| D-074 | vigente | 2026-08-03 | [[notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento|Uniones nominales y estrechamiento de tipos]] |
+| D-075 | vigente | 2026-08-03 | [[notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados|Dominios enumerables, `all` y forma de valores derivados]] |
+| D-076 | vigente | 2026-08-03 | [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|Unidades nombradas, prefijos y escritura adyacente]] |
+| D-077 | vigente | 2026-08-03 | [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|Destrucción condicionada por cardinalidad y diagnóstico de transición]] |
+| D-078 | vigente | 2026-08-03 | [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|Resolución nominal, catálogo de anclas y grafo inicial]] |
 
 ## Identificadores reservados
 

@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-047 — Cuantificadores e iteración finita
 
+- Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
+
 - Preguntas relacionadas: Q-018, Q-028, Q-029
 - Documentos afectados: expresiones, intervalos, iteración
 

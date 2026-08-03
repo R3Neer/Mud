@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-026 — Membresía estricta y cardinalidad por `then`
 
+- Ampliada por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
+
 - Preguntas afectadas: [[notas/preguntas/Q-003-puntos-de-validacion|Q-003]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`
 

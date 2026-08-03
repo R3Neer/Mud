@@ -54,7 +54,7 @@ Mitigación: índices, análisis conservador, presupuestos técnicos visibles y 
 
 ### Identidad inestable
 
-Renombrar o mover namespaces cambia anclas y puede romper historial, referencias y estados persistidos.
+Renombrar o mover paths de MUD cambia anclas y puede romper historial, referencias y estados persistidos.
 
 Mitigación: migraciones de anclas de primera clase antes de permitir refactors automáticos.
 

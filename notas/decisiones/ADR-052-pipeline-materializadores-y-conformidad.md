@@ -30,7 +30,7 @@ El pipeline conceptual separa:
 1. lexer;
 2. parser;
 3. AST de superficie;
-4. resolución de namespaces, declaraciones `using`, nombres y anclas;
+4. resolución de paths de MUD, declaraciones `using`, nombres y anclas;
 5. sistema de tipos, aliases, dominios, cardinalidades, mutabilidad y magnitudes;
 6. análisis de pureza, efectos, ciclos, finitud, terminación y estocasticidad;
 7. IR canónico;

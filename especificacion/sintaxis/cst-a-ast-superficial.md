@@ -280,6 +280,12 @@ Los paréntesis concretos se descartan.
 
 La alternativa `:= type-expression` produce `AliasOf`.
 
+`type-expression` normaliza una o más `type-alternative` separadas por `|` en un único `TypeExpr`. Se eliminan agrupaciones redundantes, se deduplican alternativas idénticas y se conserva cada alternativa nominal aunque su dominio esté contenido en el de otra. La especificación de colección exterior se asocia al `TypeExpr` completo.
+
+`derived-value-shape` con `: type-expression` produce `ExplicitDerivedShape`. Las formas sin tipo, `in domain [collection]` y `collection`, producen `InferredDerivedShape`; una colección omitida se normaliza a la cardinalidad escalar y el tipo no se inventa hasta la fase de inferencia.
+
+Una restricción `interval-expression by constant-expression` produce `SteppedDomain`; las demás restricciones producen `ExpressionDomain`. Los paréntesis que no cambian la agrupación no llegan al AST superficial.
+
 El cuerpo estructural produce `StructuralAlias` con `AliasComponent` en orden fuente.
 
 Un componente no puede producir mutabilidad exterior. Su colección general sí puede producir `elementsMutable = Enabled`.
@@ -288,7 +294,7 @@ Un componente no puede producir mutabilidad exterior. Su colección general sí 
 
 La palabra `ordered` produce `isOrdered = Enabled`.
 
-Las declaraciones de datos se separan en almacenadas y calculadas. Los miembros conservan sus asignaciones; el cuerpo omitido genera una secuencia vacía.
+Las declaraciones de datos se separan en almacenadas y calculadas. En el cuerpo de un miembro, `name = "literal"` se normaliza como sobrescritura intrínseca y las demás formas se conservan como asignaciones; el cuerpo omitido genera sobrescritura ausente y secuencia vacía.
 
 La coma entre miembros desaparece. La ausencia de coma final ya ha sido validada por la gramática.
 
@@ -317,20 +323,23 @@ El dominio ordinario produce `OrdinaryPointDomain`; la forma con `cycle` produce
 
 ## Unidades
 
-La lista concreta de propiedades se convierte en una estructura fija después de validar unicidad y obligatoriedad.
+El identificador `lowerCamel` escrito después de `unit` se conserva en `RootUnitDecl` o `AlternativeUnitDecl`. La lista concreta de propiedades se convierte en una estructura fija después de validar unicidad; todas las propiedades son opcionales.
 
 | Forma concreta | AST |
 |---|---|
 | `name = e` | `name = e` |
 | `plural = e` | `plural = e` |
 | `abbreviation = e` | `abbreviation = e` |
-| propiedad `prefixes` omitida | `AllPrefixes` |
+| propiedad `prefixes` omitida | `NoPrefixes` |
 | `prefixes = empty` | `NoPrefixes` |
+| `prefixes = all` | `AllPrefixes` |
 | `prefixes = [a, b]` | `SelectedPrefixes([a,b])` |
 
 No se sintetiza plural.
 
-Una unidad raíz produce `RootUnitDecl`. Una alternativa produce `AlternativeUnitDecl(equivalence, properties)`.
+Una unidad raíz produce `RootUnitDecl(name, properties)`. Una alternativa produce `AlternativeUnitDecl(name, equivalence, properties)`.
+
+`name`, plural y abreviatura omitidos permanecen ausentes. El `name` intrínseco predeterminado y la resolución de formas pertenecen a la elaboración semántica.
 
 ## Participantes
 

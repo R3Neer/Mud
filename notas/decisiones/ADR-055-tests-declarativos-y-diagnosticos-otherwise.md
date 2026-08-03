@@ -15,6 +15,7 @@ affects:
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Abre: [[notas/preguntas/Q-059-observacion-de-resultados-de-accion-en-tests|Q-059]]
 - Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+- Ampliada además por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
 - Documentos afectados: [[notas/preguntas/README|Preguntas activas]], futuros capítulos 06 a 09, 25, 28, 30, 43, 46 y 49
 
 ## Contexto
@@ -183,7 +184,7 @@ Una `abstract thing` usa `thing::*`. Una regla `always` usa `rule::*`. Un test u
 - Los tests forman parte del lenguaje fuente, pero no del mundo ejecutado ni de su API pública.
 - El compilador puede excluir `TestDecl` de una compilación de producción después de validarlo.
 - El ejecutor de tests reutiliza el motor transaccional y causal sin publicar sus efectos.
-- La selección por anclas `test::*` permite ejecutar un test, un namespace o un conjunto filtrado.
+- La selección por anclas `test::*` permite ejecutar un test, un path de MUD o un conjunto filtrado.
 - No se infiere una fase de preparación a partir de las primeras instrucciones de `then`.
 - La comprobación explícita del resultado `accepted`, `rejected` o `failed` de una acción invocada queda abierta en Q-059.
 

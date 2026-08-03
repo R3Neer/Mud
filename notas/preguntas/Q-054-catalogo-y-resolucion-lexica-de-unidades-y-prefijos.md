@@ -1,17 +1,18 @@
 ---
 id: Q-054
 title: Catálogo y resolución léxica de unidades y prefijos
-status: abierta
+status: cerrada
 priority: P2
 opened:
-closed:
-decisions: []
+closed: 2026-08-03
+decisions:
+  - D-076
 affects: []
 superseded-by: []
 ---
 
 # Q-054 — Catálogo y resolución léxica de unidades y prefijos
 
-## Contenido
+## Resolución
 
-Qué prefijos incorpora MUD, qué formas ASCII y Unicode reconoce, cómo se resuelven colisiones entre `name`, `plural`, `abbreviation` y formas prefijadas, y qué identidad semántica estable recibe una unidad cuya cabecera no tiene identificador.
+[[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] exige un identificador `lowerCamel`, fija el ancla bajo su magnitud, adopta el catálogo decimal SI completo, normaliza micro a `µ`, define la resolución contextual de identificador, `name`, plural y abreviatura, y permite unidades adyacentes al número con separación canónica posterior.

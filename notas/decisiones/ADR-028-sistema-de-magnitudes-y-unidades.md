@@ -16,6 +16,7 @@ affects:
 # ADR-028 — Sistema de magnitudes y unidades
 
 - Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
+- Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
 - Preguntas relacionadas: Q-019, Q-034, Q-054, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
@@ -115,11 +116,11 @@ magnitude nombre [: representación-numérica] [in intervalo] bloque
 
 Los límites del intervalo de la cabecera son números desnudos en la representación canónica de la magnitud. Cuando existe una unidad raíz, se interpretan en ella; la unidad no se escribe dentro del intervalo. Esta restricción de declaración no impide que las expresiones ordinarias de intervalo usen unidades locales o una unidad común conforme a D-059.
 
-Una magnitud no derivada que declara unidades contiene exactamente una `root unit`. Las unidades no tienen identificador en su cabecera; sus formas léxicas se declaran dentro del bloque:
+Una magnitud no derivada que declara unidades contiene exactamente una `root unit`. D-076 exige un identificador `lowerCamel` en su cabecera:
 
 ```mud
 magnitude Length {
-    root unit {
+    root unit meter {
         name = "meter"
         plural = "meters"
         abbreviation = "m"
@@ -127,12 +128,12 @@ magnitude Length {
 }
 ```
 
-`name` es obligatorio e identifica la unidad dentro de la magnitud. `plural`, `abbreviation` y `prefixes` son opcionales.
+El identificador determina el nombre intrínseco y el ancla. `name`, `plural`, `abbreviation` y `prefixes` son opcionales.
 
 Una unidad alternativa se declara mediante una equivalencia positiva:
 
 ```mud
-unit := 60 seconds {
+unit minute := 60 seconds {
     name = "minute"
     plural = "minutes"
     abbreviation = "min"
@@ -146,7 +147,7 @@ Toda equivalencia de unidad debe:
 3. Reducirse a la unidad raíz.
 4. No participar en ciclos.
 
-La ausencia de la propiedad `prefixes` habilita el catálogo incorporado completo. `prefixes = empty` no habilita ningún prefijo y `prefixes = [p1, p2, ...]` habilita solo el subconjunto enumerado. La forma desnuda `prefixes` no es válida. El catálogo concreto y la resolución de colisiones permanecen en Q-054.
+La ausencia de la propiedad `prefixes` no habilita prefijos. `prefixes = empty` es equivalente, `prefixes = all` habilita el catálogo decimal SI completo y `prefixes = [p1, p2, ...]` habilita solo el subconjunto enumerado. La forma desnuda `prefixes` no es válida.
 
 ### Magnitudes derivadas
 
@@ -177,7 +178,7 @@ Una magnitud derivada puede añadir una forma nominal para una equivalencia que 
 magnitude Speed :=
     Length / Time
 {
-    unit := 1 m/s {
+    unit fastie := 1 m/s {
         name = "fastie"
         plural = "fasties"
         abbreviation = "fst"
@@ -225,7 +226,7 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 - El AST separará `NumericType`, `MagnitudeDecl`, `UnitDecl` y expresiones dimensionales.
 - El análisis estático necesitará normalizar dimensiones y factores de escala.
 - Las unidades derivadas son expresiones estructurales, no una enumeración nominal.
-- El lexer y el resolvedor deberán distinguir nombres, plurales, abreviaturas y prefijos sin depender de un identificador de cabecera.
+- El lexer y el resolvedor deberán distinguir identificadores, nombres, plurales, abreviaturas y prefijos bajo el contexto de magnitud.
 - `r` es un prefijo de literal aproximado.
 
 ## Verificación futura
@@ -236,4 +237,4 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 4. Inferencia de cada combinación ordinaria de tipos numéricos.
 5. Rechazo de `root unit` en una magnitud derivada.
 6. Equivalencia entre una unidad nominal derivada y su expresión estructural.
-7. Prefijos completos por omisión, ninguno mediante `prefixes = empty` y subconjunto mediante una colección explícita.
+7. Ningún prefijo por omisión o `empty`, catálogo completo mediante `all` y subconjunto mediante una colección explícita.

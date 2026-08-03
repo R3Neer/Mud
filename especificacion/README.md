@@ -91,7 +91,7 @@ Capítulo: [[02-terminologia]].
 
 Glosario normativo de:
 
-- Programa, módulo, archivo y namespace.
+- Programa, módulo, archivo y path de MUD.
 - Declaración, símbolo, nombre y ancla.
 - `thing`, identidad y valor.
 - Campo, relación y colección.
@@ -172,7 +172,7 @@ Define:
 
 - Codificación.
 - Archivos `.mud`.
-- Derivación de namespaces desde rutas.
+- Derivación de paths de MUD desde rutas.
 - Varias declaraciones por archivo.
 - Independencia semántica respecto al orden de archivos.
 - Terminadores de línea.
@@ -237,9 +237,9 @@ Define las formas semánticamente relevantes después de la CST y de la validaci
 
 Artefactos mecánicos y de transformación: `sintaxis/`.
 
-## 09. Namespaces, `using`, nombres y anclas
+## 09. Paths, `using`, nombres y anclas
 
-Archivo previsto: `09-nombres-y-anclas.md`
+Capítulo: [[09-nombres-y-anclas]].
 
 Define:
 
@@ -251,7 +251,7 @@ Define:
 - Formación y unicidad de anclas.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
 - Identidad ante movimientos de archivo.
-- Migración de namespace y anclas.
+- Migración de path y anclas.
 
 Juicio principal:
 
@@ -260,6 +260,8 @@ $$
 $$
 
 Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]] y [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
+
+Ampliación normativa: [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
 
 ## 10. Sistema de tipos
 
@@ -442,7 +444,7 @@ Define:
 - Magnitudes no derivadas, derivadas y de punto.
 - Representaciones numéricas explícitas e inferidas.
 - Magnitudes basadas en `Rum` y omisión contextual del prefijo `r` en cantidades con unidad.
-- Unidades raíz sin identificador de cabecera y equivalencias mediante `:=`.
+- Unidades raíz y alternativas con identificador `lowerCamel` y equivalencias mediante `:=`.
 - Prefijos.
 - Normalización.
 - Aritmética dimensional.
@@ -927,7 +929,7 @@ Define:
 - Diagnósticos `otherwise`.
 - Resultados `passed`, `failed` y `error`.
 - Descarte del mundo y de sus salidas.
-- Ejecución por ancla o namespace.
+- Ejecución por ancla o path de MUD.
 
 Bases normativas: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 

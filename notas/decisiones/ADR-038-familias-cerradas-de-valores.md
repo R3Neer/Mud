@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-038 — Familias cerradas de valores
 
+- Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
+
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
@@ -52,7 +54,7 @@ La declaración introduce un tipo nominal finito y un ancla estática `family::*
 - Es igual a otro miembro si y solo si ambos pertenecen a la misma familia nominal y tienen el mismo nombre.
 - Solo admite operadores de orden si la declaración usa `ordered family`.
 
-En una plantilla `Text`, interpolar un miembro produce exactamente su nombre nominal declarado. Los datos asociados no sustituyen implícitamente esa representación; una presentación alternativa debe pedirse expresamente, por ejemplo `{severity.label}`.
+Cada miembro posee un `name: Text` intrínseco cuyo predeterminado es su nombre nominal declarado. Puede sobrescribirse mediante `name = "..."` sin cambiar identidad, igualdad, ancla ni orden. Una sobrescritura idéntica recibe sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro produce su `name` efectivo.
 
 El orden de declaración es canónico para enumerar cualquier `family`, pero solo forma parte de las relaciones `<`, `<=`, `>` y `>=` cuando aparece `ordered`.
 

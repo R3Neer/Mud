@@ -182,7 +182,7 @@ builtin-word
       ;
 
 constant-word
-    ::= "true" | "false" | "empty" ;
+    ::= "true" | "false" | "empty" | "all" ;
 
 (* Estas formas se emiten como IDENTIFIER fuera de las posiciones que
    mud.ebnf reserva contextualmente. La producción hace inventariable el

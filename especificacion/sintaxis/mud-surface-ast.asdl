@@ -37,7 +37,7 @@ module MUDSurface {
 
     file_metadata = (source_id source,
                      string relative_path,
-                     namespace_path namespace,
+                     mud_path mud_path,
                      flag had_bom,
                      newline_style newline_style)
 
@@ -54,14 +54,14 @@ module MUDSurface {
                           top_level_decl* declarations)
         attributes (source_origin origin)
 
-    using_decl = UsingDecl(namespace_path path, flag recursive)
+    using_decl = UsingDecl(mud_path path, flag recursive)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
     -- Nombres todavía no resueltos
     -- -----------------------------------------------------------------
 
-    namespace_path = (lower_name* segments)
+    mud_path = (lower_name* segments)
         attributes (source_origin origin)
 
     qualified_name = (identifier_name first,
@@ -180,12 +180,12 @@ module MUDSurface {
 
     field_decl = StoredFieldDecl(stored_field_data field)
                | CalculatedFieldDecl(field_name name,
-                                     declared_type? annotation,
+                                     derived_value_shape? shape,
                                      expr value)
         attributes (source_origin origin)
 
     public_field_decl = PublicFieldDecl(field_name name,
-                                        declared_type? annotation,
+                                        derived_value_shape? shape,
                                         expr value)
         attributes (source_origin origin)
 
@@ -203,11 +203,12 @@ module MUDSurface {
                                             value_shape shape,
                                             expr? default_value)
                      | CalculatedFamilyDataDecl(field_name name,
-                                                declared_type? annotation,
+                                                derived_value_shape? shape,
                                                 expr value)
         attributes (source_origin origin)
 
     family_member = FamilyMember(member_name name,
+                                 string? intrinsic_name_override,
                                  family_data_assignment* assignments)
         attributes (source_origin origin)
 
@@ -224,18 +225,28 @@ module MUDSurface {
                   | DictionaryType(type_ref key_type, type_expr value_type)
         attributes (source_origin origin)
 
-    type_expr = TypeExpr(declared_type type,
-                         expr? domain,
+    type_expr = TypeExpr(type_alternative first,
+                         type_alternative* remaining,
                          collection_spec collection)
         attributes (source_origin origin)
 
-    value_shape = (declared_type type,
-                   expr? domain,
-                   collection_spec collection)
+    type_alternative = (declared_type type, domain_expr? domain)
         attributes (source_origin origin)
 
-    readonly_value_shape = (declared_type type,
-                            expr? domain,
+    domain_expr = ExpressionDomain(expr value)
+                | SteppedDomain(interval_expr interval, expr step)
+        attributes (source_origin origin)
+
+    value_shape = (type_expr type)
+        attributes (source_origin origin)
+
+    derived_value_shape = ExplicitDerivedShape(type_expr type)
+                        | InferredDerivedShape(domain_expr? domain,
+                                               collection_spec collection)
+        attributes (source_origin origin)
+
+    readonly_value_shape = (type_alternative first,
+                            type_alternative* remaining,
                             readonly_collection_spec collection)
         attributes (source_origin origin)
 
@@ -302,16 +313,18 @@ module MUDSurface {
                  | CyclicPointDomain(interval_expr interval)
         attributes (source_origin origin)
 
-    root_unit_decl = RootUnitDecl(unit_properties properties)
+    root_unit_decl = RootUnitDecl(identifier_name name,
+                                  unit_properties properties)
         attributes (source_origin origin)
 
-    alternative_unit_decl = AlternativeUnitDecl(quantity_expr equivalence,
+    alternative_unit_decl = AlternativeUnitDecl(identifier_name name,
+                                                 quantity_expr equivalence,
                                                  unit_properties properties)
         attributes (source_origin origin)
 
-    unit_properties = (expr name,
+    unit_properties = (expr? name,
                        expr? plural,
-                       expr abbreviation,
+                       expr? abbreviation,
                        prefix_policy prefixes)
         attributes (source_origin origin)
 
@@ -349,7 +362,8 @@ module MUDSurface {
 
     effect_block = EffectBlock(local_value_decl* leading_locals,
                                effect first_effect,
-                               then_statement* remaining_statements)
+                               then_statement* remaining_statements,
+                               expr? failure_diagnostic)
         attributes (source_origin origin)
 
     then_statement = EffectStatement(effect value)
@@ -357,7 +371,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     local_value_decl = LocalValueDecl(variable_name name,
-                                      declared_type? annotation,
+                                      derived_value_shape? shape,
                                       expr value)
         attributes (source_origin origin)
 
@@ -421,6 +435,7 @@ module MUDSurface {
          | PointLiteral(string source_form)
          | BoolLiteral(flag value)
          | EmptyLiteral
+         | AllLiteral
          | TextTemplateExpr(text_part* parts)
          | CollectionLiteralExpr(expr* elements)
          | PositionalStructuralLiteralExpr(expr first,
@@ -504,6 +519,7 @@ module MUDSurface {
                         | Greater
                         | GreaterOrEqual
                         | IsRelation
+                        | IsNotRelation
                         | Membership
 
     comparison_link = (comparison_operator operator, expr operand)

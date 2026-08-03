@@ -13,6 +13,7 @@ affects:
 # ADR-072 — Entornos de resolución y migraciones explícitas de anclas
 
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]]
+- Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
 - Decide parcialmente: [[../preguntas/Q-014-migracion-de-anclas|Q-014]]
 
 ## Contexto

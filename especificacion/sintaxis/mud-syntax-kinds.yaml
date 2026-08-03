@@ -96,6 +96,7 @@ fixed_tokens:
 - spelling: with
 - spelling: after
 - spelling: alias
+- spelling: all
 - spelling: count
 - spelling: cycle
 - spelling: empty
@@ -355,7 +356,7 @@ lexical_forms:
     rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\""
     references: []
   constant-word:
-    rhs: '"true" | "false" | "empty"'
+    rhs: '"true" | "false" | "empty" | "all"'
     references: []
   contextual-word:
     rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"name\" | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\" | \"anchor\""
@@ -441,12 +442,12 @@ syntax_nodes:
     - required-separation
   using-declaration:
     kind: UsingDeclarationSyntax
-    rhs: '"using" , namespace-path , [ "." , "*" ]'
+    rhs: '"using" , mud-path , [ "." , "*" ]'
     references:
-    - namespace-path
+    - mud-path
     field_model:
     - usingKeyword
-    - namespacePath
+    - mudPath
     - dotStar?
   top-level-declaration:
     kind: TopLevelDeclarationSyntax
@@ -464,8 +465,8 @@ syntax_nodes:
     - message-declaration
     - test-declaration
     - global-start-declaration
-  namespace-path:
-    kind: NamespacePathSyntax
+  mud-path:
+    kind: MudPathSyntax
     rhs: lower-name , { "." , lower-name }
     references:
     - lower-name
@@ -583,12 +584,10 @@ syntax_nodes:
     - required-separation
   component-declaration:
     kind: ComponentDeclarationSyntax
-    rhs: "component-name , \":\" , declared-type\n        , [ \"in\" , domain-expression ]\n        , [ collection-specification ]\n        , [ \"=\" , constant-expression ]"
+    rhs: "component-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]"
     references:
     - component-name
-    - declared-type
-    - domain-expression
-    - collection-specification
+    - type-expression
     - constant-expression
     field_model:
     - name
@@ -622,20 +621,18 @@ syntax_nodes:
     - calculated-family-data-declaration
   stored-family-data-declaration:
     kind: StoredFamilyDataDeclarationSyntax
-    rhs: "field-name , \":\" , declared-type\n        , [ \"in\" , domain-expression ]\n        , [ collection-specification ]\n        , [ \"=\" , constant-expression ]"
+    rhs: "field-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]"
     references:
     - field-name
-    - declared-type
-    - domain-expression
-    - collection-specification
+    - type-expression
     - constant-expression
   calculated-family-data-declaration:
     kind: CalculatedFamilyDataDeclarationSyntax
-    rhs: field-name , [ ":" , declared-type ] , ":=" , constant-expression
+    rhs: field-name , [ derived-value-shape ] , ":=" , value-expression
     references:
     - field-name
-    - declared-type
-    - constant-expression
+    - derived-value-shape
+    - value-expression
   family-member:
     kind: FamilyMemberSyntax
     rhs: member-name , [ family-member-body ]
@@ -739,18 +736,25 @@ syntax_nodes:
     - required-separation
   root-unit-declaration:
     kind: RootUnitDeclarationSyntax
-    rhs: '"root" , "unit" , unit-body'
+    rhs: '"root" , "unit" , unit-name , unit-body'
     references:
+    - unit-name
     - unit-body
   alternative-unit-declaration:
     kind: AlternativeUnitDeclarationSyntax
-    rhs: '"unit" , ":=" , quantity-expression , unit-body'
+    rhs: '"unit" , unit-name , ":=" , quantity-expression , unit-body'
     references:
+    - unit-name
     - quantity-expression
     - unit-body
+  unit-name:
+    kind: UnitNameSyntax
+    rhs: identifier
+    references:
+    - identifier
   unit-body:
     kind: UnitBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , unit-property\n        , { required-separation , unit-property }\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ unit-property\n            , { required-separation , unit-property }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - unit-property
@@ -763,7 +767,7 @@ syntax_nodes:
     - prefix-selection
   prefix-selection:
     kind: PrefixSelectionSyntax
-    rhs: "\"empty\"\n      | \"[\" , prefix-name , { \",\" , prefix-name } , \"]\""
+    rhs: "\"empty\"\n      | \"all\"\n      | \"[\" , prefix-name , { \",\" , prefix-name } , \"]\""
     references:
     - prefix-name
   prefix-name:
@@ -790,12 +794,10 @@ syntax_nodes:
     - calculated-field-declaration
   stored-field-declaration:
     kind: StoredFieldDeclarationSyntax
-    rhs: "[ \"mut\" ] , field-name , \":\" , declared-type\n        , [ \"in\" , domain-expression ]\n        , [ collection-specification ]\n        , [ \"=\" , constant-expression ]"
+    rhs: "[ \"mut\" ] , field-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]"
     references:
     - field-name
-    - declared-type
-    - domain-expression
-    - collection-specification
+    - type-expression
     - constant-expression
     field_model:
     - outerMut?
@@ -807,30 +809,57 @@ syntax_nodes:
     - default?
   calculated-field-declaration:
     kind: CalculatedFieldDeclarationSyntax
-    rhs: field-name , [ ":" , declared-type ] , ":=" , expression
+    rhs: field-name , [ derived-value-shape ] , ":=" , value-expression
     references:
     - field-name
-    - declared-type
-    - expression
+    - derived-value-shape
+    - value-expression
     field_model:
     - name
-    - typeAnnotation?
+    - shape?
     - definitionOperator
     - expression
   public-field-declaration:
     kind: PublicFieldDeclarationSyntax
-    rhs: field-name , [ ":" , declared-type ] , ":=" , expression
+    rhs: field-name , [ derived-value-shape ] , ":=" , value-expression
     references:
     - field-name
-    - declared-type
-    - expression
+    - derived-value-shape
+    - value-expression
+  derived-value-shape:
+    kind: DerivedValueShapeSyntax
+    rhs: '":" , type-expression\n      | "in" , type-alternative-domain , [ collection-specification ]\n      | collection-specification'
+    references:
+    - type-expression
+    - type-alternative-domain
+    - collection-specification
   type-expression:
     kind: TypeExpressionSyntax
-    rhs: "declared-type\n        , [ \"in\" , domain-expression ]\n        , [ collection-specification ]"
+    rhs: union-type-expression , [ collection-specification ]
+    references:
+    - union-type-expression
+    - collection-specification
+  union-type-expression:
+    kind: UnionTypeExpressionSyntax
+    rhs: type-alternative , { "|" , type-alternative }
+    references:
+    - type-alternative
+  type-alternative:
+    kind: TypeAlternativeSyntax
+    rhs: "declared-type , [ \"in\" , type-alternative-domain ]\n      | \"(\" , union-type-expression , \")\""
     references:
     - declared-type
+    - type-alternative-domain
+    - union-type-expression
+  type-alternative-domain:
+    kind: TypeAlternativeDomainSyntax
+    rhs: "stepped-domain\n      | interval-expression\n      | collection-literal\n      | qualified-name\n      | \"(\" , domain-expression , \")\""
+    references:
+    - stepped-domain
+    - interval-expression
+    - collection-literal
+    - qualified-name
     - domain-expression
-    - collection-specification
   declared-type:
     kind: DeclaredTypeSyntax
     rhs: "type-reference\n      | interval-type\n      | dictionary-type"
@@ -896,12 +925,10 @@ syntax_nodes:
     - on-participant
   for-participant:
     kind: ForParticipantSyntax
-    rhs: "[ \"mut\" ] , [ role-name , \":\" ] , declared-type\n        , [ \"in\" , domain-expression ]\n        , [ collection-specification ]"
+    rhs: '[ "mut" ] , [ role-name , ":" ] , type-expression'
     references:
     - role-name
-    - declared-type
-    - domain-expression
-    - collection-specification
+    - type-expression
     field_model:
     - outerMut?
     - roleAndColon?
@@ -929,11 +956,10 @@ syntax_nodes:
     - given-declaration
   given-declaration:
     kind: GivenDeclarationSyntax
-    rhs: "given-name , \":\" , declared-type\n        , [ \"in\" , domain-expression ]\n        , [ given-collection-specification ]\n        , [ \"=\" , constant-expression ]"
+    rhs: "given-name , \":\" , union-type-expression\n        , [ given-collection-specification ]\n        , [ \"=\" , constant-expression ]"
     references:
     - given-name
-    - declared-type
-    - domain-expression
+    - union-type-expression
     - given-collection-specification
     - constant-expression
     field_model:
@@ -1106,10 +1132,11 @@ syntax_nodes:
     - required-separation
   then-clause:
     kind: ThenClauseSyntax
-    rhs: "\"then\" , effect\n      | \"then\" , effect-block"
+    rhs: "( \"then\" , effect\n        | \"then\" , effect-block\n        )\n        , [ diagnostic-tail ]"
     references:
     - effect
     - effect-block
+    - diagnostic-tail
   effect-block:
     kind: EffectBlockSyntax
     rhs: "\"{\" , declaration-layout\n        , { local-value-declaration , required-separation }\n        , effect\n        , { required-separation , then-statement }\n        , [ required-separation ]\n        , \"}\""
@@ -1127,11 +1154,11 @@ syntax_nodes:
     - local-value-declaration
   local-value-declaration:
     kind: LocalValueDeclarationSyntax
-    rhs: variable-name , [ ":" , declared-type ] , ":=" , expression
+    rhs: variable-name , [ derived-value-shape ] , ":=" , value-expression
     references:
     - variable-name
-    - declared-type
-    - expression
+    - derived-value-shape
+    - value-expression
   global-start-declaration:
     kind: GlobalStartDeclarationSyntax
     rhs: start-with-declaration
@@ -1291,6 +1318,12 @@ syntax_nodes:
     rhs: expression
     references:
     - expression
+  stepped-domain:
+    kind: SteppedDomainSyntax
+    rhs: interval-expression , "by" , constant-expression
+    references:
+    - interval-expression
+    - constant-expression
   eventually-expression:
     kind: EventuallyExpressionSyntax
     rhs: "biconditional-expression\n      | \"eventually\" , biconditional-expression , \"through\" , action-reference-list"
@@ -1383,7 +1416,7 @@ syntax_nodes:
     references: []
   nonchainable-comparison:
     kind: NonchainableComparisonSyntax
-    rhs: '"!=" | "is" | membership-in'
+    rhs: '"!=" | "is" , [ "not" ] | membership-in'
     references:
     - membership-in
   membership-in:
@@ -1498,7 +1531,7 @@ syntax_nodes:
     - postfix-expression
   literal:
     kind: LiteralSyntax
-    rhs: "exact-number\n      | rumber-number\n      | text-template\n      | POINT_LITERAL\n      | \"true\"\n      | \"false\"\n      | \"empty\""
+    rhs: "exact-number\n      | rumber-number\n      | text-template\n      | POINT_LITERAL\n      | \"true\"\n      | \"false\"\n      | \"empty\"\n      | \"all\""
     references:
     - exact-number
     - rumber-number

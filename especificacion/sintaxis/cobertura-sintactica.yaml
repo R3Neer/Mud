@@ -27,11 +27,11 @@ productions:
     ast:
       disposition: normalized
       target: top_level_decl
-  namespace-path:
-    cst: NamespacePathSyntax
+  mud-path:
+    cst: MudPathSyntax
     ast:
       disposition: wrapper
-      target: namespace_path
+      target: mud_path
   qualified-name:
     cst: QualifiedNameSyntax
     ast:
@@ -217,6 +217,11 @@ productions:
     ast:
       disposition: constructor
       target: AlternativeUnitDecl
+  unit-name:
+    cst: UnitNameSyntax
+    ast:
+      disposition: normalized
+      target: identifier_name
   unit-body:
     cst: UnitBodySyntax
     ast:
@@ -267,11 +272,31 @@ productions:
     ast:
       disposition: constructor
       target: PublicFieldDecl
+  derived-value-shape:
+    cst: DerivedValueShapeSyntax
+    ast:
+      disposition: normalized
+      target: derived_value_shape
   type-expression:
     cst: TypeExpressionSyntax
     ast:
       disposition: wrapper
       target: TypeExpr
+  union-type-expression:
+    cst: UnionTypeExpressionSyntax
+    ast:
+      disposition: normalized
+      target: TypeExpr
+  type-alternative:
+    cst: TypeAlternativeSyntax
+    ast:
+      disposition: normalized
+      target: type_alternative
+  type-alternative-domain:
+    cst: TypeAlternativeDomainSyntax
+    ast:
+      disposition: normalized
+      target: domain_expr
   declared-type:
     cst: DeclaredTypeSyntax
     ast:
@@ -568,6 +593,11 @@ productions:
     ast:
       disposition: inlined
       reason: alias gramatical o componente plegado en una construcción mayor
+  stepped-domain:
+    cst: SteppedDomainSyntax
+    ast:
+      disposition: constructor
+      target: SteppedDomain
   eventually-expression:
     cst: EventuallyExpressionSyntax
     ast:
