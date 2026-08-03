@@ -15,6 +15,7 @@ __pycache__/
 tooling/obsidian/markdown-export/node_modules/
 tooling/obsidian/markdown-export/dist/
 tooling/markdown_export/profiles.local.toml
+tooling/.deps/
 
 # Archivos temporales del sistema y editores
 Thumbs.db
