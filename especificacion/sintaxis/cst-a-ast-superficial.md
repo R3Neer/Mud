@@ -375,7 +375,7 @@ El cuerpo se convierte en `BooleanBlock(locals, result)`. La forma sin declaraci
 
 ### Regla `always`
 
-El cuerpo anterior a `otherwise` produce un `BooleanBlock`. `otherwise` ausente produce `diagnostic = absent`. No se inserta aquí el texto predeterminado del warning.
+`InvariantBodySyntax`, encerrado entre llaves, produce un `BooleanBlock`. El `DiagnosticTailSyntax` exterior produce el diagnóstico de `AlwaysRuleDecl`; si está ausente se conserva `diagnostic = absent`. No se inserta aquí el texto predeterminado del warning.
 
 ### Acción
 

@@ -58,10 +58,10 @@ La convención comprobable por categoría es:
 
 | Categoría | Forma |
 | --- | --- |
-| Namespace | `lowerCamelCase` |
+| Segmento de path de MUD | `lowerCamel` |
 | Declaración nominal | `PascalCase` |
 | Miembro de `family` | `PascalCase` |
-| Campo, rol, `given`, componente o variable | `lowerCamelCase` |
+| Unidad, campo, rol, `given`, componente o variable | `lowerCamel` |
 
 Un nombre que incumpla la capitalización es un error estático, no una tokenización alternativa.
 

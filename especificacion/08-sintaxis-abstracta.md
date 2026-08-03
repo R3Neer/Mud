@@ -25,6 +25,7 @@ decisions:
   - D-075
   - D-076
   - D-077
+  - D-079
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -107,7 +108,7 @@ Todos los nodos salvo `MudProject` poseen `SourceOrigin`:
 
 ```text
 Written(span)
-Synthetic(anchor, reason)
+Synthetic(basis, reason)
 ```
 
 `Written` indica una región concreta. `Synthetic` se usa para elementos introducidos por normalización, como una cardinalidad omitida que se convierte en `[1..1]`.
@@ -123,7 +124,7 @@ Las posiciones:
 
 El AST usa wrappers distintos para evitar mezclar categorías antes de la resolución:
 
-- `NamespacePath`.
+- `MudPath`.
 - `QualifiedName`.
 - `NominalName`.
 - `FieldName`.
@@ -141,7 +142,7 @@ La capitalización se valida según el contexto, pero el texto original del iden
 
 Una secuencia de identificadores enlazados exclusivamente mediante `.` se representa como `DottedPathExpr`. La resolución posterior decidirá si sus segmentos denotan:
 
-- Namespace y declaración.
+- Path de MUD y declaración.
 - Declaración y miembro.
 - Participante y campo.
 - Una combinación de los anteriores.
@@ -227,7 +228,7 @@ Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad e
 
 ### Uniones nominales
 
-`TypeExpr` contiene una secuencia no vacía de `TypeAlternative` y una sola especificación de colección exterior. La secuencia se normaliza como unión asociativa, conmutativa e idempotente, pero no elimina una alternativa por inclusión de dominio. Los paréntesis redundantes no sobreviven.
+`TypeExpr` contiene una secuencia no vacía de `TypeAlternative` y una sola especificación de colección exterior. El AST superficial aplana agrupaciones, elimina duplicados idénticos y conserva el orden de la primera aparición para procedencia y formato. La unión elaborada es asociativa, conmutativa e idempotente, pero no elimina una alternativa por inclusión de dominio. Los paréntesis redundantes no sobreviven.
 
 Cada `TypeAlternative` contiene un `DeclaredType` y un `DomainExpr` opcional. `SteppedDomain` conserva por separado intervalo y paso; los demás dominios superficiales usan `ExpressionDomain` hasta su elaboración semántica.
 
@@ -357,7 +358,7 @@ La política de prefijos es:
 - `prefixes = all` → `AllPrefixes`.
 - `prefixes = [p1, ...]` → `SelectedPrefixes`.
 
-Propiedades duplicadas o requeridas ausentes se rechazan antes de construir el AST.
+Las propiedades duplicadas se rechazan antes de construir el AST. Un cuerpo vacío es válido y produce metadatos ausentes con `NoPrefixes`.
 
 ## Participantes
 
@@ -412,7 +413,7 @@ Una regla reactiva almacena:
 
 `changes` es un nodo de expresión, no una variante separada de cláusula `when`.
 
-Una regla `always` puede omitir `otherwise`; el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
+En una regla `always`, `InvariantBodySyntax` produce exclusivamente el `BooleanBlock`; el `DiagnosticTailSyntax` posterior a la llave de cierre produce el campo `diagnostic` de `AlwaysRuleDecl`. La regla puede omitirlo y el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
 
 ## Bloques booleanos
 

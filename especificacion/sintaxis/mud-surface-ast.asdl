@@ -25,7 +25,7 @@ module MUDSurface {
                    source_position end)
 
     source_origin = Written(source_span span)
-                  | Synthetic(source_span anchor, synthetic_reason reason)
+                  | Synthetic(source_span basis, synthetic_reason reason)
 
     synthetic_reason = OmittedDefault
                      | NormalizedSugar

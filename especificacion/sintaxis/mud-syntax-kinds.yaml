@@ -1027,24 +1027,25 @@ syntax_nodes:
     - body
   always-rule-declaration:
     kind: AlwaysRuleDeclarationSyntax
-    rhs: "\"always\" , \"rule\" , nominal-name\n        , [ on-clause ]\n        , invariant-body"
+    rhs: "\"always\" , \"rule\" , nominal-name\n        , [ on-clause ]\n        , invariant-body\n        , [ diagnostic-tail ]"
     references:
     - nominal-name
     - on-clause
     - invariant-body
+    - diagnostic-tail
     field_model:
     - alwaysKeyword
     - ruleKeyword
     - name
     - onClause?
     - body
+    - diagnostic?
   invariant-body:
     kind: InvariantBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , boolean-block\n        , [ diagnostic-tail ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , boolean-block\n        , [ required-separation ]\n        , \"}\""
     references:
     - declaration-layout
     - boolean-block
-    - diagnostic-tail
     - required-separation
   action-declaration:
     kind: ActionDeclarationSyntax

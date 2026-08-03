@@ -542,3 +542,41 @@ cases:
     cst_root: MudFileSyntax
     ast: EffectBlock(failureDiagnostic=TextTemplateExpr(...))
     produces_ast: true
+
+  - id: always-rule-external-otherwise
+    category: rule
+    source: |
+      always rule ValidPopulation on kingdom: Kingdom {
+          population := kingdom.population
+          population >= 0 people
+      }
+      otherwise "Population cannot be negative: {population}"
+    cst_root: MudFileSyntax
+    ast: AlwaysRuleDecl(invariant=BooleanBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
+    normalizations: [extend-boolean-local-environment-through-otherwise]
+    produces_ast: true
+
+  - id: always-rule-internal-otherwise-invalid
+    category: validation-before-ast
+    source: |
+      always rule Broken on kingdom: Kingdom {
+          kingdom.population >= 0
+          otherwise "Invalid population"
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [always-otherwise-must-follow-body]
+    produces_ast: false
+
+  - id: leading-or-after-complete-when-expression
+    category: validation-before-ast
+    source: |
+      rule BrokenAlarm on alarm: Alarm {
+          when {
+              alarm.calendar.day changes
+              or alarm.enabled
+          }
+          then create AlarmTriggered
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [unexpected-leading-operator-after-terminator]
+    produces_ast: false

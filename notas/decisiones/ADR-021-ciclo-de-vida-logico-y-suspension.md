@@ -17,6 +17,7 @@ affects:
 - Relacionada con: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada además por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
+- Ejemplo actualizado por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
 - Preguntas afectadas: [[notas/preguntas/Q-048-destruccion-con-descendientes-activos|Q-048]], [[notas/preguntas/Q-049-destruccion-y-colecciones-de-thing|Q-049]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
 
@@ -117,8 +118,8 @@ rule OpenGate on gate: Gate [mut] {
 
 always rule ValidKingdom on kingdom: Kingdom {
     kingdom.population >= 0
-    otherwise "Invalid population in {kingdom}"
 }
+otherwise "Invalid population in {kingdom}"
 ```
 
 Las activaciones runtime omiten categoría y cuerpo:

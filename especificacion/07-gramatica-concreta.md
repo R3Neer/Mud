@@ -54,6 +54,7 @@ decisions:
   - D-075
   - D-076
   - D-077
+  - D-079
 ---
 
 # 07. Gramática concreta
@@ -73,7 +74,7 @@ La existencia de una CST no afirma que el archivo sea válido. La recuperación 
 Después de construir la CST se comprueban restricciones sintácticas contextuales necesarias para producir un AST normalizado, entre ellas:
 
 - Modificadores de colección duplicados.
-- Propiedades de unidad duplicadas o requeridas ausentes.
+- Propiedades de unidad duplicadas.
 - Un argumento posicional posterior a uno nombrado.
 - Combinaciones concretas prohibidas por este capítulo.
 
@@ -180,7 +181,7 @@ El dominio de un cálculo actúa como contrato. Una posible salida exterior prod
 `|` une alternativas nominales en cualquier posición de tipo. Cada alternativa puede declarar dominio y una única especificación de colección final pertenece a la unión completa:
 
 ```mud
-values: Nat in 0..10 | Int in -10..-1 [1..*]
+values: Nat in 0..10 | Int in -10..-1 [1..*] = [2 to Nat]
 ```
 
 Los paréntesis redundantes se eliminan de la forma canónica. No se permiten cardinalidades por alternativa. Si una expresión todavía contextual encaja en varias alternativas debe seleccionar una mediante `to`.
@@ -295,6 +296,14 @@ Magnitud base:
 
 ```mud
 magnitude Probability: Num in [0..1] {}
+
+magnitude Length: Num in [0..*] {
+    root unit meter {
+        plural = "meters"
+        abbreviation = "m"
+        prefixes = all
+    }
+}
 ```
 
 Magnitud derivada:
@@ -302,7 +311,6 @@ Magnitud derivada:
 ```mud
 magnitude Speed: Num in [0..*] := Length / Time {
     unit fastie := 1 m/s {
-        name = "fastie"
         plural = "fasties"
         abbreviation = "fst"
     }
@@ -386,7 +394,7 @@ rule MutualFriends on
     bob in alice.friends
 {
     when alice.mood changes or bob.mood changes
-    then ...
+    then create FriendshipChanged
 }
 ```
 
@@ -472,10 +480,21 @@ rule OpenGate on gate: Gate [mut] {
 when position + offset changes
 
 when {
+    calendar.day changes or
+        alarm.enabled
+}
+```
+
+En cambio, comenzar la segunda línea con `or` es inválido:
+
+```mud
+when {
     calendar.day changes
     or alarm.enabled
 }
 ```
+
+El salto posterior a `changes` termina una expresión completa; las llaves no suprimen terminadores y el `or` queda sin operando izquierdo. Para colocar el operador al principio de la segunda línea habría que mantener abierta la expresión con paréntesis.
 
 Tiene menos precedencia que la aritmética, las conversiones y las comparaciones, pero más que `and` y `or`. Por tanto:
 
@@ -506,11 +525,11 @@ Las vinculaciones presentes en la primera instantánea materializada por `start 
 always rule ValidPopulation on kingdom: Kingdom {
     population := kingdom.population
     population >= 0 people
-    otherwise "Population cannot be negative: {population}"
 }
+otherwise "Population cannot be negative: {population}"
 ```
 
-El cuerpo contiene directamente la condición, sin `if`, y puede añadir `otherwise` con una expresión `Text`. El diagnóstico solo se evalúa si la condición es falsa, sobre el mismo estado tentativo y con las mismas vinculaciones que incumplieron la regla. Su valor pasa a ser la razón del resultado `failed`. Omitirlo es legal, pero produce un aviso y una razón predeterminada.
+El cuerpo contiene directamente la condición, sin `if`. El `otherwise` opcional se escribe después de la llave de cierre, pertenece a la regla completa y admite una expresión `Text`. El diagnóstico solo se evalúa si la condición es falsa, sobre el mismo estado tentativo y con las mismas vinculaciones que incumplieron la regla. Su valor pasa a ser la razón del resultado `failed`. Omitirlo es legal, pero produce un aviso y una razón predeterminada. Escribirlo dentro de las llaves es un error.
 
 ## Acciones
 
@@ -668,7 +687,7 @@ target /= divisor
 add value to collection
 remove value from collection
 
-add mut morale: Nat in 0..100 = 50 to Army
+add mut morale: Nat to Army
 remove morale from Army
 
 create Declaration
@@ -685,7 +704,7 @@ for each person in kingdom.people if person.hungry {
 }
 
 for each value in 0..100 by 5 {
-    ...
+    total += value
 }
 ```
 

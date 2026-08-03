@@ -14,7 +14,7 @@ affects:
 # ADR-041 — Contratos de las tres clases de regla
 
 - Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
 - Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
@@ -95,11 +95,11 @@ Una vinculación que no estaba presente en esa primera instantánea, ya sea por 
 ```mud
 always rule ValidPosition on game: Game {
     game.position in game.board
-    otherwise "A position is outside the board of {game}"
 }
+otherwise "A position is outside the board of {game}"
 ```
 
-Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo contiene una condición pura y puede añadir un diagnóstico `Text` mediante `otherwise`. La condición se comprueba automáticamente en los puntos normativos de validación. Una infracción evalúa perezosamente el diagnóstico sobre el estado tentativo infractor y produce `failed` con esa causa, nunca `rejected`, conforme a D-061. Si se omite, el compilador emite un aviso y el runtime genera una razón predeterminada.
+Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo contiene una condición pura; el diagnóstico `Text` opcional mediante `otherwise` se escribe después de la llave de cierre conforme a D-079. La condición se comprueba automáticamente en los puntos normativos de validación. Una infracción evalúa perezosamente el diagnóstico sobre el estado tentativo infractor y produce `failed` con esa causa, nunca `rejected`, conforme a D-061. Si se omite, el compilador emite un aviso y el runtime genera una razón predeterminada.
 
 ### Ciclo de vida común
 

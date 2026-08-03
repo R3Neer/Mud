@@ -213,7 +213,7 @@ Define la sintaxis completa de:
 - Llamadas.
 - Definiciones canónicas de `thing` y reglas, declaración inicial `start with` y activaciones mediante `create Nombre`.
 - Tests aislados con `start with` local, `then`, `after` y `otherwise`.
-- Diagnóstico `otherwise` opcional en reglas `always`; omitirlo produce un aviso y una razón predeterminada.
+- Diagnóstico `otherwise` opcional después del cuerpo de reglas `always`; omitirlo produce un aviso y una razón predeterminada.
 - Formatos numéricos dentro de interpolaciones `Text`.
 - Cuantificadores e iteraciones.
 
@@ -553,9 +553,10 @@ Define:
 - Pureza.
 - Estados en que deben comprobarse.
 - Incumplimiento y resultado de resolución.
+- Diagnóstico `otherwise` exterior al cuerpo y visibilidad de sus locales.
 - Dependencias.
 
-Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
+Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-079-diagnostico-exterior-de-reglas-always|D-079]].
 
 ## 24. Frontera pública: `action`, `look` y `message`
 

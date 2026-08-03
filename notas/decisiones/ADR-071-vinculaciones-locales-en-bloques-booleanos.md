@@ -13,6 +13,7 @@ affects:
 
 - Amplía: [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modifica: [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Modificada después por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
 
 ## Contexto
 

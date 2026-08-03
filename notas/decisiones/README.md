@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 73.
-- Vigentes: 73.
+- Total: 74.
+- Vigentes: 74.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -92,6 +92,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-076 | vigente | 2026-08-03 | [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|Unidades nombradas, prefijos y escritura adyacente]] |
 | D-077 | vigente | 2026-08-03 | [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|Destrucción condicionada por cardinalidad y diagnóstico de transición]] |
 | D-078 | vigente | 2026-08-03 | [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|Resolución nominal, catálogo de anclas y grafo inicial]] |
+| D-079 | vigente | 2026-08-04 | [[notas/decisiones/ADR-079-diagnostico-exterior-de-reglas-always|Diagnóstico exterior de reglas `always`]] |
 
 ## Identificadores reservados
 

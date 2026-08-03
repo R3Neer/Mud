@@ -430,12 +430,12 @@ always-rule-declaration
     ::= "always" , "rule" , nominal-name
         , [ on-clause ]
         , invariant-body
+        , [ diagnostic-tail ]
         ;
 
 invariant-body
     ::= "{" , declaration-layout
         , boolean-block
-        , [ diagnostic-tail ]
         , [ required-separation ]
         , "}"
         ;
