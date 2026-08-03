@@ -67,6 +67,9 @@ Se reconocen:
 - Nombres de declaraciones, propiedades y llamadas.
 - Operadores y puntuación.
 - Formas de punto numéricas como `12:30:00`.
+- Uniones de tipos, dominios escalonados, `all` e `is not`.
+- Unidades adyacentes como `3m`, `90km/h` y `r0.1m`, separando número y unidad.
+- Unidades cualificadas como `Length.meter` y nombres `lowerCamel` declarados tras `unit`.
 
 Los bloques `ebnf` también se colorean automáticamente con el tokenizador
 integrado de la metanotación.
@@ -106,7 +109,7 @@ El color no decide si un programa es válido. En particular, no comprueba:
 - Resolución de participantes o nombres.
 - Cardinalidad.
 - Orden Unicode de los valores de `Char [* ordered]`.
-- Formas dinámicas de unidad pendientes de Q-054.
+- Colisiones semánticas entre formas de unidad; el resaltador reconoce su forma y el compilador resuelve la magnitud.
 - Validez de un literal de punto respecto del `format` declarado; el resaltador
   reconoce la forma numérica, pero el rango y la interpretación corresponden al
   compilador.
@@ -141,5 +144,7 @@ La suite cubre:
 9. Perfiles, aliases y conservación de la última configuración válida.
 10. Paletas predeterminadas y reglas separadas para tema claro y oscuro.
 11. Preservación de plugins durante la instalación.
+12. Uniones de tipos, `all`, `is not` y dominios con `by`.
+13. Unidades pegadas, cualificadas y compuestas sin confundir identificadores con dígitos ni `Rum` con `ronto`.
 
 La instalación se preparó para Obsidian 1.12.7. Cuando Obsidian permanece abierto durante `install-local`, puede restaurar en disco su lista anterior de plugins; en ese caso debe activarse `Syntax Highlight` desde los ajustes comunitarios antes de realizar la comprobación visual definitiva.
