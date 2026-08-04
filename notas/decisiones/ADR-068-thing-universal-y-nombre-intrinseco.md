@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-068 — `Thing` universal y nombre intrínseco
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modificada por: [[ADR-073-as-thing-explicito-redundante|D-073]]
 - Modifica: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Pregunta relacionada: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
@@ -110,3 +111,7 @@ Dos `thing` pueden compartir el mismo `name`; la igualdad, resolución y anclaje
 9. Ausencia de herencia del `name` sobrescrito.
 10. `{value}` usa `value.name` y `anchor{value}` conserva la identidad canónica.
 11. Nombres visibles duplicados sin fusión de identidades.
+
+## Aclaración por D-084
+
+Los aliases no reciben una propiedad intrínseca `name`. Su declaración conserva un nombre nominal y un ancla de tipo, pero cada valor alias solo posee los componentes declarados. Un alias estructural puede declarar un componente ordinario `name: Text`. Los miembros de `family` conservan su nombre intrínseco propio.

@@ -122,16 +122,31 @@ productions:
     ast:
       disposition: constructor
       target: AliasDecl
+  alias-definition:
+    cst: AliasDefinitionSyntax
+    ast:
+      disposition: normalized
+      target: alias_definition
   structural-alias-body:
     cst: StructuralAliasBodySyntax
     ast:
       disposition: discarded
       reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+  alias-body-declaration:
+    cst: AliasBodyDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: alias_member
   component-declaration:
     cst: ComponentDeclarationSyntax
     ast:
       disposition: constructor
       target: AliasComponent
+  inherited-default-override:
+    cst: InheritedDefaultOverrideSyntax
+    ast:
+      disposition: constructor
+      target: AliasDefaultOverride
   family-declaration:
     cst: FamilyDeclarationSyntax
     ast:

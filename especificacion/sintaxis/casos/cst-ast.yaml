@@ -665,3 +665,117 @@ cases:
     cst_root: MudFileSyntax
     ast: IndexExpr(players, IntervalValueExpr(1..n))
     produces_ast: true
+
+  - id: thing-body-omitted
+    category: thing
+    source: |
+      thing Marker
+    cst_root: MudFileSyntax
+    ast: ThingDecl(Marker, fields=[])
+    normalizations: [omitted-thing-body-to-empty]
+    produces_ast: true
+
+  - id: thing-semicolon-sequence
+    category: thing
+    source: |
+      thing A; thing B as A; thing C
+    cst_root: MudFileSyntax
+    ast: MudFile(declarations=[ThingDecl(A), ThingDecl(B), ThingDecl(C)])
+    normalizations: [semicolon-to-terminator, omitted-thing-body-to-empty]
+    produces_ast: true
+
+  - id: nominal-alias-specialization
+    category: alias
+    source: |
+      alias Identifier := Text
+      alias UserIdentifier as Identifier
+    cst_root: MudFileSyntax
+    ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=None)
+    produces_ast: true
+
+  - id: structural-alias-specialization-and-derived
+    category: alias
+    source: |
+      alias Person {
+          first: Text
+          last: Text
+          full: Text := "{first} {last}"
+      }
+      alias Student as Person {
+          id: Nat
+      }
+    cst_root: MudFileSyntax
+    ast: AliasDecl(Student, ancestors=[Person], definition=StructuralAlias(...))
+    produces_ast: true
+
+  - id: alias-default-override
+    category: alias
+    source: |
+      alias Pagination {
+          page: Nat = 1
+          size: Nat = 20
+      }
+      alias LargePagination as Pagination {
+          size = 100
+      }
+    cst_root: MudFileSyntax
+    ast: AliasDefaultOverride(size, 100)
+    produces_ast: true
+
+  - id: alias-derived-mutable-view
+    category: alias
+    source: |
+      alias Squad {
+          members: Soldier [*]
+          wounded [* mut] := soldier in members: soldier.health < MaximumHealth
+      }
+    cst_root: MudFileSyntax
+    ast: AliasCalculatedFieldDecl(wounded, elementsMutable=Enabled, ...)
+    produces_ast: true
+
+  - id: alias-without-definition-or-ancestors
+    category: validation-before-ast
+    source: |
+      alias Empty
+    cst_root: MudFileSyntax
+    expected_diagnostics: [alias-requires-ancestor-or-definition]
+    produces_ast: false
+
+  - id: alias-representation-redeclared-after-as
+    category: validation-before-ast
+    source: |
+      alias Identifier := Text
+      alias UserIdentifier as Identifier := Text
+    cst_root: MudFileSyntax
+    expected_diagnostics: [derived-alias-cannot-redeclare-representation]
+    produces_ast: false
+
+  - id: structural-member-requires-nominal-alias
+    category: resolution
+    source: |
+      alias CosoAlias {
+          first: Nat
+          second: Nat
+          derived: Nat := first * second
+      }
+      rule Valid {
+          ((1, 2) to CosoAlias).derived == 2
+      }
+    cst_root: MudFileSyntax
+    ast: MemberAccessExpr(ConvertExpr(PositionalStructuralLiteralExpr(...), CosoAlias), derived)
+    produces_ast: true
+
+  - id: structural-literal-does-not-own-alias-member
+    category: validation-after-resolution
+    source: |
+      alias CosoAlias {
+          first: Nat
+          second: Nat
+          derived: Nat := first * second
+      }
+      rule Invalid {
+          (1, 2).derived == 2
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [member-requires-nominal-alias]
+    produces_ast: true

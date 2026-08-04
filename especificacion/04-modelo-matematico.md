@@ -110,3 +110,11 @@ El siguiente borrador deberá separar formalmente el grafo de `thing`, el esquem
 
 > [!question] Q-047 — Predeterminados concretos
 > Determinar el valor predeterminado de cada constructor de tipos y su comportamiento cuando el dominio depende del mundo.
+
+## Extensión confirmada para aliases
+
+D-084 añade un segundo orden parcial nominal sobre aliases. Sus nodos son tipos de valor, no identidades activables. La especialización directa es acíclica y su clausura `is` es reflexiva, transitiva y antisimétrica.
+
+Para un alias nominal con varias antecesoras, el conjunto de valores del descendiente debe estar contenido en la intersección de los conjuntos de valores de todas ellas. La unión `A | B` no satisface esta obligación. Para aliases estructurales, la forma efectiva se obtiene acumulando miembros por origen: un mismo miembro heredado por varias rutas se deduplica y miembros independientes con el mismo nombre producen conflicto.
+
+Los campos derivados denotan colecciones recalculadas. Su pertenencia se fija durante una instantánea de evaluación y se vuelve a calcular sobre el estado posterior consolidado. La capacidad interior es parte del contrato de la colección derivada y no del linaje de la fuente. Las colecciones almacenadas, en cambio, conservan su pertenencia hasta una modificación estructural explícita.

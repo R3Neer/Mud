@@ -75,7 +75,7 @@ identifier ::= IDENTIFIER ;
 thing-declaration
     ::= [ "abstract" ] , "thing" , nominal-name
         , [ "as" , type-reference , { "," , type-reference } ]
-        , thing-body
+        , [ thing-body ]
         ;
 
 thing-body
@@ -97,23 +97,37 @@ intrinsic-name-override
 
 alias-declaration
     ::= "alias" , nominal-name
-        , ( ":=" , type-expression
-          | structural-alias-body
-          )
+        , [ "as" , type-reference , { "," , type-reference } ]
+        , [ alias-definition ]
+        ;
+
+alias-definition
+    ::= ":=" , type-expression
+      | structural-alias-body
         ;
 
 structural-alias-body
     ::= "{" , declaration-layout
-        , component-declaration
-        , { required-separation , component-declaration }
-        , [ required-separation ]
+        , [ alias-body-declaration
+            , { required-separation , alias-body-declaration }
+            , [ required-separation ]
+          ]
         , "}"
+        ;
+
+alias-body-declaration
+    ::= component-declaration
+      | calculated-field-declaration
+      | inherited-default-override
         ;
 
 component-declaration
     ::= component-name , ":" , type-expression
         , [ "=" , constant-expression ]
         ;
+
+inherited-default-override
+    ::= component-name , "=" , constant-expression ;
 
 family-declaration
     ::= [ "ordered" ] , "family" , nominal-name

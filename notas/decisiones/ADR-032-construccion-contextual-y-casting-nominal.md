@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-032 — Construcción contextual y casting nominal de aliases
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
 
 - Amplía: [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
@@ -203,3 +204,7 @@ La igualdad `==` y la desigualdad `!=` están disponibles aunque la representaci
 9. Rechazo de dos literales estructurales desnudos.
 10. Rechazo de aliases nominales distintos sin `to`.
 11. Igualdad y orden lexicográfico independiente de los predeterminados.
+
+## Ampliación por D-084
+
+Los componentes y campos derivados de un alias solo están disponibles después de que un literal estructural haya adquirido ese tipo nominal por contexto o `to`. `(1, 2).derived` es inválido; `((1, 2) to CosoAlias).derived` es válido. La resolución no busca aliases candidatos por el nombre del miembro.

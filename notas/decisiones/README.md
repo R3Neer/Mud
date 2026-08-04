@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 78.
-- Vigentes: 78.
+- Total: 79.
+- Vigentes: 79.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -97,6 +97,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-081 | vigente | 2026-08-04 | [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|Filtrado, `take` e indexación de colecciones]] |
 | D-082 | vigente | 2026-08-04 | [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|`cycle` como modificador de dominio de punto]] |
 | D-083 | vigente | 2026-08-04 | [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|Magnitudes base sin unidades]] |
+| D-084 | vigente | 2026-08-04 | [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|Especialización de aliases, miembros heredados y vistas derivadas]] |
 
 ## Identificadores reservados
 

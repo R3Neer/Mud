@@ -104,7 +104,7 @@ La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaraci
 | Declaración | Categoría de ancla |
 |---|---|
 | `thing` y sus campos | `thing` |
-| alias y sus componentes | `alias` |
+| alias, sus componentes y sus campos derivados | `alias` |
 | family, datos y miembros | `family` |
 | magnitude | `magnitude` |
 | unidad declarada | `unit` |
@@ -133,7 +133,7 @@ No poseen ancla pública:
 - resultados intermedios;
 - unidades creadas estructuralmente por prefijos.
 
-Un campo heredado conserva el ancla del propietario que lo declaró. Esto no comparte estado: cada `thing` mantiene su valor propio y hereda solamente esquema y predeterminado.
+Un miembro heredado conserva el ancla del propietario que lo declaró. En `thing` esto no comparte estado; en aliases identifica el origen usado para deduplicar diamantes. Una sobrescritura de predeterminado no introduce un miembro ni un ancla nuevos.
 
 Un diagnóstico puede describir un símbolo local mediante el ancla de su propietario:
 
@@ -178,3 +178,7 @@ El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declarac
 ## Conformidad
 
 Una implementación conforme debe producir los mismos candidatos y anclas, rechazar el sombreado y las colisiones indicadas, conservar la procedencia y permitir reconstruir el grafo nominal desde el programa fuente.
+
+## Especialización de aliases
+
+Las declaraciones `alias` pueden aportar aristas de especialización. El grafo nominal conserva las antecesoras directas escritas y la clausura `is` se calcula durante elaboración. Los miembros heredados mantienen el ancla de su origen; dos miembros independientes con el mismo nombre no se fusionan.

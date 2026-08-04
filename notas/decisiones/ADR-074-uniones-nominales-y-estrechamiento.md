@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-074 — Uniones nominales y estrechamiento de tipos
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 ## Contexto
 
 MUD necesita expresar que un valor puede pertenecer a varias alternativas sin perder la identidad nominal elegida. La misma necesidad aparece en campos, participantes, valores `given`, vinculaciones locales y aliases.
@@ -92,3 +93,7 @@ Una unión que no permita seleccionar un predeterminado nominal único exige ini
 5. Estrechamiento mediante `is` e `is not`.
 6. Solapamiento por especialización múltiple.
 7. Rechazo de cuerpos estructurales anónimos unidos.
+
+## Aclaración por D-084
+
+La unión `A | B` expresa alternativas. No resuelve una especialización múltiple `alias C as A, B`: esta exige que cada valor de `C` satisfaga simultáneamente ambas antecesoras y, por tanto, una representación efectiva común obtenida por intersección compatible.

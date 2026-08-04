@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-037 — Campos y dominios declarativos
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Amplía: D-019, D-026
 - Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
@@ -59,7 +60,7 @@ La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo es
 
 La inferencia no aplica una prioridad predeterminada entre interpretaciones compatibles. Esto incluye tanto la representación de literales numéricos como las formas contextuales compartidas. Por ejemplo, `[3]` puede elaborar una colección unitaria o el intervalo unitario `[3..3]`: ambas formas se conservan y una declaración calculada sin contexto que permita elegir una sola debe anotar su tipo. La omisión está pensada para los usos comunes en los que las operaciones y dependencias de la expresión determinan un único tipo, no para garantizar que toda expresión aislada sea inferible.
 
-El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable y no admite `mut`, una cláusula `in` ni una especificación de colección. La cardinalidad y demás propiedades de colección de su resultado proceden del tipo estático de la expresión, no de una segunda restricción escrita en la declaración.
+El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable ni admite `mut` exterior. Puede declarar tipo, dominio y especificación de colección —incluida capacidad interior `[mut]`— como contrato comprobado sobre el resultado. La anotación no transforma la expresión ni crea miembros.
 
 Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `Char [0..2]`, `combinedChars := leftChars | rightChars` infiere `Char [1..7]` conforme al álgebra de D-039. El resultado no adquiere modificadores que las reglas de propagación no puedan garantizar.
 
@@ -132,3 +133,7 @@ Compartir token no fusiona sus significados.
 10. Inferencia de cardinalidad, dominio y modificadores en un campo calculado mediante operadores de colección.
 11. Expresión estática compuesta como valor almacenado y rechazo de dependencias runtime.
 12. Rol `for` individual o colectivo restringido por dominio.
+
+## Modificación por D-084
+
+Los aliases estructurales admiten campos derivados y sobrescrituras de predeterminados heredados. Los derivados pueden declarar una forma colectiva como `wounded [* mut] := ...`. La capacidad interior pertenece al campo derivado y no depende de la fuente.

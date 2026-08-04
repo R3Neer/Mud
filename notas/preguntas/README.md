@@ -64,7 +64,7 @@ Prioridades:
 | [[Q-032-aleatoriedad-reproducible|Q-032 — Aleatoriedad reproducible]] | Parcialmente decidida |
 | [[Q-033-calendarios-y-localizacion|Q-033 — Calendarios y localización]] | Abierta |
 | [[Q-034-magnitudes-derivadas|Q-034 — Magnitudes derivadas]] | Parcialmente decidida |
-| [[Q-056-forma-normalizada-y-recursion-de-aliases|Q-056 — Forma normalizada y recursión de aliases]] | Abierta |
+| [[Q-056-forma-normalizada-y-recursion-de-aliases|Q-056 — Forma normalizada y recursión de aliases]] | Parcialmente decidida |
 | [[Q-058-evaluacion-portable-de-rumber|Q-058 — Evaluación portable de `Rum`]] | Abierta |
 | [[Q-035-coste-de-allowed|Q-035 — Coste de `allowed`]] | Parcialmente decidida |
 | [[Q-036-unidad-de-interaccion-humana|Q-036 — Unidad de interacción humana]] | Abierta |

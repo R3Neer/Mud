@@ -1115,3 +1115,7 @@ MUD 1.0 estará formalmente especificado cuando:
 8. Las propiedades prometidas estén demostradas o delimitadas mediante hipótesis explícitas.
 9. Los ejemplos integrales no dependan de comportamiento implícito.
 10. Una implementación pueda declarar de forma objetiva su grado de conformidad.
+
+## Cambios semánticos recientes
+
+La especialización de aliases, los cuerpos vacíos omitibles de `thing`, los campos derivados de alias y las vistas derivadas con capacidad interior se fijan en [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]].

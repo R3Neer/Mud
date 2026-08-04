@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
 ## Decisión
@@ -43,3 +44,7 @@ Una ancla cambia con categoría, path o nombre cualificado. El tooling conserva 
 5. Anclas de campos heredados, members, unidades y builtins.
 6. Símbolos locales sin ancla pública.
 7. Grafo nominal construible antes del tipado completo.
+
+## Ampliación por D-084
+
+El grafo nominal incluye aristas `Specializes` entre aliases. Los componentes y campos derivados de un alias poseen ancla bajo la categoría `alias`; un miembro heredado conserva el ancla de su origen. Las sobrescrituras de predeterminado no introducen un nuevo miembro público, sino una relación de inicialización dirigida al componente heredado resuelto.

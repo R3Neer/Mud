@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Ampliada por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
@@ -113,7 +114,7 @@ La declaración posee un ancla estática para resolución y nominalidad, pero su
 - No puede aparecer como objetivo de `create`.
 - No puede aparecer como objetivo de `destroy`.
 - No puede ser `abstract`.
-- No participa en herencia ni especialización.
+- Participa en especialización nominal acíclica conforme a D-084, sin adquirir identidad ni ciclo de vida runtime.
 - No mantiene estado mutable propio.
 
 Los valores se comparan por tipo nominal y contenido. La declaración existe durante todo el programa bien formado y no forma parte de la proyección de actividad del mundo.
@@ -137,4 +138,8 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 6. Rechazo de `mut` exterior y aceptación de `[mut]` interior en un componente colectivo de `thing`.
 7. Rechazo de actualización parcial de un valor.
 8. Sustitución completa desde un campo mutable.
-9. Rechazo de `create`, `destroy`, `abstract`, `as` e `is` aplicados como ciclo de vida o especialización de alias.
+9. Rechazo de `create`, `destroy` y `abstract`; aceptación de `as` e `is` como especialización nominal conforme a D-084.
+
+## Modificación por D-084
+
+Los aliases pueden declarar especialización simple o múltiple. Los nominales raíz conservan `:= tipo`; los descendientes heredan una representación efectiva común. Los estructurales heredan componentes y campos derivados, y pueden sobrescribir exclusivamente predeterminados de componentes almacenados. Esta modificación no introduce identidad runtime ni mutabilidad del valor alias.

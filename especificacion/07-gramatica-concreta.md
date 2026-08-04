@@ -58,7 +58,7 @@ decisions:
   - D-080
   - D-081
   - D-082
-  - D-083
+  - D-084
 ---
 
 # 07. Gramática concreta
@@ -151,7 +151,7 @@ Forma calculada:
 fieldName [derived-value-shape] := value-expression
 ```
 
-`derived-value-shape` puede ser `: Type`, `in domain` con colección opcional, o una especificación de colección sola. Por tanto son válidos tanto `area: Num in 0..* := width * height` como `area in 0..* := width * height`. Si se omite el tipo, debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut`, pero sí dominio y especificación de colección.
+`derived-value-shape` puede ser `: Type`, `in domain` con colección opcional, o una especificación de colección sola. Por tanto son válidos tanto `area: Num in 0..* := width * height` como `area in 0..* := width * height`. Si se omite el tipo, debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut` exterior. Su forma puede declarar dominio, especificación de colección y capacidad interior `[mut]`.
 
 El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `fieldName: mut Type` no pertenece a la sintaxis. El identificador `name` está ocupado por la propiedad intrínseca dentro de una `thing` y no puede redeclararse mediante ninguna de estas formas.
 
@@ -243,19 +243,38 @@ Se prohíbe `ordered by` para `Char`; su orden es Unicode. `Text` no acepta espe
 
 ```mud
 alias PlayerName := Text
+alias UserName as PlayerName
 
 alias Board := Square -> Piece [0..32 ordered]
 
 alias Square {
     file: File
     rank: Rank
+    label: Text := "{file}{rank}"
 }
+
+alias Coordinate {
+    x: Num
+    y: Num
+}
+
+alias PositionedCoordinate as Coordinate
 
 alias Pagination {
     page: Nat = 1
     size: Nat = 20
 }
+
+alias LargePagination as Pagination {
+    size = 100
+}
 ```
+
+Una declaración de alias puede escribir una lista no ordenada de antecesores con `as`. La definición local es opcional cuando los antecesores determinan una forma efectiva completa. Por ello son válidas tanto `alias UserName as PlayerName` como `alias PositionedCoordinate as Coordinate`. `alias A` sin antecesores ni definición es un error estático.
+
+`:= tipo` solo introduce la representación de un alias nominal raíz. Un alias nominal con antecesores hereda la representación efectiva y no puede volver a declararla. En especial, `alias UserName as PlayerName := Text` es inválido.
+
+El cuerpo estructural puede contener componentes almacenados, campos derivados y sobrescrituras de predeterminados heredados. Una sobrescritura `nombre = valor` solo cambia el predeterminado efectivo: no puede alterar tipo, dominio, cardinalidad, orden, unicidad ni capacidad interior.
 
 Los literales estructurales son contextuales:
 
@@ -273,7 +292,21 @@ pagination: Pagination = (2)     # inválido: posición parcial
 pagination: Pagination = (size = 30) # válido: page conserva 1
 ```
 
-Un componente no admite `mut` exterior porque el valor de alias y cada uno de sus componentes son inmutables. Sí puede escribir `[mut]` en su especificación de colección para conceder capacidad interior sobre las `thing` contenidas directamente; esa capacidad no permite reemplazar la colección ni atraviesa aliases o contenedores anidados de manera implícita.
+Un componente no admite `mut` exterior porque el valor de alias y cada uno de sus componentes son inmutables. Sí puede escribir `[mut]` en su especificación de colección para conceder capacidad interior sobre las `thing` contenidas directamente; esa capacidad no permite reemplazar la colección.
+
+Un campo derivado de alias usa la misma sintaxis que los demás campos calculados, incluida una forma declarada opcional:
+
+```mud
+alias Squad {
+    members: Soldier [*]
+
+    wounded [* mut] :=
+        soldier in members:
+            soldier.health < MaximumHealth
+}
+```
+
+La colección derivada no es una subcolección almacenada de `members`: posee contrato propio. `[mut]` concede capacidad interior aunque la fuente no la conceda. La selección se fija para la instantánea en evaluación; después de consolidar los efectos se recalcula sobre el nuevo estado, por lo que los miembros pueden entrar o salir automáticamente. Una colección almacenada nunca se autopoda por esta razón.
 
 ## Familias
 
@@ -1053,3 +1086,28 @@ La CST conserva la forma concreta y el AST superficial una forma no resuelta. La
 ## Representación de magnitudes
 
 La anotación opcional de una magnitud usa la sintaxis general `declared-type`. Una regla estática posterior exige que el tipo resuelto sea una representación numérica permitida. La gramática no mantiene una lista cerrada duplicada de tipos numéricos.
+
+## Cuerpos vacíos omitidos
+
+El cuerpo de una `thing` es opcional. Estas formas producen el mismo AST e IR, aunque la CST conserva la escritura:
+
+```mud
+thing A
+thing A {}
+thing A;
+abstract thing Root
+thing B as Root
+```
+
+El punto y coma no añade una regla nueva: ya es un `TERMINATOR` explícito y permite, por ejemplo, `thing A; thing B; thing C as A`.
+
+## Acceso nominal a miembros de alias
+
+Los componentes y campos derivados pertenecen al tipo nominal del alias. Una estructura desnuda no adquiere miembros por coincidencia de forma:
+
+```mud
+(1, 2).derived                    # inválido
+((1, 2) to CosoAlias).derived     # válido
+```
+
+El contexto de tipo también puede construir el alias sin `to`. El compilador no busca aliases candidatos a partir del nombre del miembro.

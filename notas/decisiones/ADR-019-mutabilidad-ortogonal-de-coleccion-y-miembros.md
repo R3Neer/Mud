@@ -11,6 +11,7 @@ affects:
 ---
 # ADR-019 — Mutabilidad ortogonal de colección y miembros
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
 
@@ -74,7 +75,7 @@ La primera forma no equivale a la segunda: omitir `[1]` no desplaza `mut` entre 
 
 Un campo almacenado posee un valor colección cuya estructura solo puede cambiar cuando declara mutabilidad exterior.
 
-Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Tampoco escribe un modificador `mut` propio: puede inferir capacidad interior desde su expresión cuando todos los miembros resultantes conservan autoridad suficiente. D-039 fija esta propagación para los operadores conjuntistas.
+Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Sí puede declarar capacidad interior `[mut]` como parte de su propio contrato, con independencia de la capacidad de las fuentes. Esa autoridad solo alcanza a las `thing` directamente contenidas y nunca permite escribir la pertenencia derivada.
 
 La capacidad interior nunca hace escribible la pertenencia de una colección derivada.
 
@@ -127,3 +128,7 @@ La suite deberá comprobar las cuatro combinaciones de la tabla tanto para `[1]`
 9. Rechazo de mutabilidad exterior en reglas booleanas, `look` y roles `on`.
 10. Mutabilidad exterior de una colección de valores inmutables sin capacidad interior.
 11. Sugerencia para retirar una capacidad interior demostrablemente inútil sobre valores inmutables.
+
+## Modificación por D-084
+
+La pertenencia de una colección derivada se fija para la instantánea en evaluación y se recalcula después de consolidar efectos. Los miembros pueden entrar o salir automáticamente. Las colecciones almacenadas no se autopodan. Los contratos del resultado derivado se validan tras el recálculo y su incumplimiento falla la transición.

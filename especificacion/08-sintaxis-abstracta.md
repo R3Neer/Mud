@@ -29,7 +29,7 @@ decisions:
   - D-080
   - D-081
   - D-082
-  - D-083
+  - D-084
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -294,21 +294,38 @@ La CST puede representar `unique unique`; la validación previa al AST lo rechaz
 
 ## Aliases
 
-`AliasDecl` tiene dos cuerpos:
+`AliasDecl` contiene:
+
+- Nombre nominal.
+- Secuencia fuente de antecesores directos todavía no resueltos.
+- Definición local opcional.
+
+La definición local es una de:
 
 ```text
-AliasOf(TypeExpr)
-StructuralAlias(AliasComponent*)
+AliasRepresentation(TypeExpr)
+StructuralAlias(AliasMember*)
 ```
+
+Los miembros estructurales pueden ser:
+
+```text
+AliasComponentDecl(AliasComponent)
+AliasCalculatedFieldDecl(nombre, forma?, expresión)
+AliasDefaultOverride(nombre, valor)
+```
+
+La ausencia de definición se conserva cuando existe `as`; la validación previa al AST rechaza `alias A` sin antecesores ni definición. Un cuerpo vacío explícito y la omisión de cuerpo son formas concretas distintas, pero ambos producen una secuencia local vacía.
 
 Un componente estructural:
 
 - No admite mutabilidad exterior.
 - Puede contener capacidad interior `[mut]` en su colección.
 - Puede tener dominio y predeterminado estático.
-- No puede ser calculado.
 
-Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto.
+Un campo derivado no posee carga asignable, puede declarar forma y capacidad interior y se recalcula desde su expresión. Una sobrescritura local solo puede dirigirse a un componente almacenado heredado y solo reemplaza su predeterminado.
+
+Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto. Por tanto, los miembros del alias solo quedan disponibles después de elaboración contextual o de una conversión nominal explícita.
 
 ## Familias
 
@@ -710,3 +727,7 @@ Una implementación conforme del AST superficial debe:
 5. No anticipar resolución, tipado o IR.
 6. Mantener las diferencias de operadores exigidas.
 7. Permitir generar una forma estructural estable para pruebas.
+
+## Normalización de cuerpos vacíos de `thing`
+
+`thing A`, `thing A;` y `thing A {}` producen el mismo `ThingDecl` con cero campos y sin sobrescritura intrínseca. La CST conserva el cuerpo y el terminador escritos; el AST no fabrica un nodo de cuerpo vacío.

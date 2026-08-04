@@ -114,7 +114,9 @@ module MUDSurface {
                                type_ref* direct_ancestors,
                                string? intrinsic_name_override,
                                field_decl* fields)
-                   | AliasDecl(nominal_name name, alias_body body)
+                   | AliasDecl(nominal_name name,
+                               type_ref* direct_ancestors,
+                               alias_definition? definition)
                    | FamilyDecl(flag is_ordered,
                                 nominal_name name,
                                 family_data_decl* data,
@@ -189,9 +191,16 @@ module MUDSurface {
                                         expr value)
         attributes (source_origin origin)
 
-    alias_body = AliasOf(type_expr target)
-               | StructuralAlias(alias_component first_component,
-                                 alias_component* remaining_components)
+    alias_definition = AliasRepresentation(type_expr target)
+                     | StructuralAlias(alias_member* members)
+        attributes (source_origin origin)
+
+    alias_member = AliasComponentDecl(alias_component component)
+                 | AliasCalculatedFieldDecl(field_name name,
+                                            derived_value_shape? shape,
+                                            expr value)
+                 | AliasDefaultOverride(component_name name,
+                                        expr value)
         attributes (source_origin origin)
 
     alias_component = AliasComponent(component_name name,

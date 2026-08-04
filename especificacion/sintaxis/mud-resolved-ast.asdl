@@ -66,6 +66,8 @@ module MUDResolved {
                                  resolved_type narrowed_type)
         attributes (source_span origin)
 
+    -- Specializes se aplica tanto a thing como a alias. Los miembros
+    -- heredados conservan su AnchoredSymbol de origen.
     dependency_edge = Owns(symbol_id source, symbol_id target)
                     | Specializes(anchor source, anchor target)
                     | RefersTo(symbol_id source, symbol_id target)

@@ -139,7 +139,7 @@ produce `ThingDecl`:
 - `name = "literal"` → texto decodificado en `intrinsic_name_override`.
 - Cuerpo → campos.
 
-`thing-body`, `thing-body-declaration` e `intrinsic-name-override` no generan nodos AST independientes. La validación anterior al AST exige como máximo una sobrescritura, sin interpolaciones, y la integra en `ThingDecl` sin convertirla en campo.
+`thing-body`, `thing-body-declaration` e `intrinsic-name-override` no generan nodos AST independientes. La validación anterior al AST exige como máximo una sobrescritura, sin interpolaciones, y la integra en `ThingDecl` sin convertirla en campo. La omisión del cuerpo y un cuerpo explícito vacío producen la misma lista de campos vacía; el terminador se descarta como layout.
 
 Un antecesor explícito `Thing` permanece en esa secuencia superficial. No bloquea la transformación: la resolución posterior emite la redundancia, normaliza la raíz efectiva y puede ofrecer una acción de código que retire el elemento escrito.
 
@@ -278,7 +278,7 @@ Los paréntesis concretos se descartan.
 
 ## Aliases
 
-La alternativa `:= type-expression` produce `AliasOf`.
+La lista escrita después de `as` se conserva como `direct_ancestors`. La alternativa `:= type-expression` produce `AliasRepresentation`; su combinación con antecesores se rechaza antes del AST. La ausencia de definición produce `definition = None` y solo es válida si existe al menos una antecesora.
 
 `type-expression` normaliza una o más `type-alternative` separadas por `|` en un único `TypeExpr`. Se eliminan agrupaciones redundantes, se deduplican alternativas idénticas y se conserva cada alternativa nominal aunque su dominio esté contenido en el de otra. La especificación de colección exterior se asocia al `TypeExpr` completo.
 
@@ -286,9 +286,9 @@ La alternativa `:= type-expression` produce `AliasOf`.
 
 Una restricción `interval-expression by constant-expression` produce `SteppedDomain`; las demás restricciones producen `ExpressionDomain`. Los paréntesis que no cambian la agrupación no llegan al AST superficial.
 
-El cuerpo estructural produce `StructuralAlias` con `AliasComponent` en orden fuente.
+El cuerpo estructural produce `StructuralAlias` con `AliasMember` en orden fuente. Un `component-declaration` produce `AliasComponentDecl`; un `calculated-field-declaration`, `AliasCalculatedFieldDecl`; y `inherited-default-override`, `AliasDefaultOverride`.
 
-Un componente no puede producir mutabilidad exterior. Su colección general sí puede producir `elementsMutable = Enabled`.
+Un componente no puede producir mutabilidad exterior. Su colección general sí puede producir `elementsMutable = Enabled`. Un campo derivado puede declarar igualmente `elementsMutable = Enabled`; esa capacidad pertenece a la colección derivada y no se infiere de las fuentes de su expresión.
 
 ## Familias
 

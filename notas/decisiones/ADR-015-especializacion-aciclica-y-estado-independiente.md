@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-015 — Especialización acíclica y estado independiente
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Preguntas: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
@@ -131,3 +132,7 @@ Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación 
 5. Inicialización desde predeterminados efectivos.
 6. Aplicación de los inicializadores canónicos en la primera activación.
 7. Ausencia de propagación implícita a futuras descendientes.
+
+## Ampliación por D-084
+
+La aciclicidad y la política no ordenada de antecesores se aplican también a aliases. Para miembros heredados, un diamante deduplica el mismo origen; miembros independientes con el mismo nombre entran en conflicto. En aliases no existe estado mutable propio que heredar.

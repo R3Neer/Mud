@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-054 — Definiciones canónicas y activación inicial
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
@@ -156,7 +157,7 @@ De manera esquemática:
 thing-declaration
     ::= [ "abstract" ] "thing" nominal-name
         [ "as" nominal-name { "," nominal-name } ]
-        body
+        [ body ]
 
 create-instruction
     ::= "create" declaration-reference
@@ -235,3 +236,7 @@ La suite deberá cubrir:
 14. Tratamiento contextual de `always`, `name`, `prefixes` y etiquetas equivalentes.
 15. Sustitución del conjunto global por el `start with` local de cada test.
 16. Disparo durante la estabilización inicial de un `when` cuya condición comienza verdadera.
+
+## Modificación sintáctica por D-084
+
+El cuerpo de una `thing` puede omitirse cuando no contiene miembros. `thing A`, `thing A {}` y `thing A;` fijan la misma definición canónica; solo su CST difiere.

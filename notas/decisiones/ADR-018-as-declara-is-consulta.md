@@ -11,6 +11,7 @@ affects:
 ---
 # ADR-018 — `as` declara especialización e `is` la consulta
 
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Actualizada: 2026-07-28
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Modificada además por: [[notas/decisiones/ADR-073-as-thing-explicito-redundante|D-073]]
@@ -94,3 +95,7 @@ El token `from` puede seguir existiendo en otras producciones independientes, co
 5. Aceptación de `is` como expresión.
 6. Correspondencia entre aristas `as` y resultados de `is`.
 7. Diagnóstico no bloqueante y corrección sugerida para `as Thing` explícito.
+
+## Ampliación por D-084
+
+`as` e `is` se aplican también a aliases. En un alias nominal o estructural, `as` declara especialización directa entre tipos de valor; `is` consulta la clausura nominal conservando el tipo concreto del valor. La especialización múltiple no establece prioridad textual.
