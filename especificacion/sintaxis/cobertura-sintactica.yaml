@@ -956,11 +956,6 @@ productions:
     ast:
       disposition: normalized
       target: FiniteIntervalBound
-  cyclic-interval:
-    cst: CyclicIntervalSyntax
-    ast:
-      disposition: wrapper
-      target: Interval
   expression-without-interval:
     cst: ExpressionWithoutIntervalSyntax
     ast:

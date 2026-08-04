@@ -28,6 +28,7 @@ decisions:
   - D-079
   - D-080
   - D-081
+  - D-082
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -597,7 +598,7 @@ Dentro del `format` de una magnitud de punto, `unidad from contenedor` produce `
 Todas las formas se normalizan a:
 
 ```text
-Interval(lower, lowerBoundary, upper, upperBoundary, sharedUnit?, cyclic)
+Interval(lower, lowerBoundary, upper, upperBoundary, sharedUnit?)
 EmptyInterval(sharedUnit?)
 ```
 
@@ -607,7 +608,7 @@ Normalizaciones:
 - `[a]` → intervalo cerrado con ambos extremos iguales.
 - Formas con unidad compartida → unidad en `sharedUnit`.
 - `[] unit` → `EmptyInterval(unit)`.
-- `[a..b cycle)` → intervalo cíclico con límites declarados.
+- `[a..b) cycle` → `CyclicPointDomain` sobre el intervalo semiabierto declarado.
 
 Los paréntesis y corchetes solo sobreviven como `OpenBoundary` o `ClosedBoundary`.
 

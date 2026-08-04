@@ -13,7 +13,7 @@ affects:
 ---
 # ADR-029 — Intervalos, límites efectivos y ciclos de punto
 
-- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]] y [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]]
+- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]], [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
 - Preguntas relacionadas: Q-018, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`
 
@@ -101,13 +101,13 @@ magnitude WorkdayTime point over Time in [0..28_800] {
     format = "{hour:2}:{minute:2}"
 }
 
-magnitude TimeOfDay point over Time in [0..86_400 cycle) {
+magnitude TimeOfDay point over Time in [0..86_400) cycle {
     format = "{hour:2}:{minute:2}:{second:2}"
 }
 ```
 
 Representa posiciones sobre una magnitud lineal y utiliza sus unidades. No puede declarar unidades ni `root unit`.
-Sin `in`, admite el dominio completo de la coordenada subyacente. Con un intervalo lineal, queda acotada sin envolvimiento. Con `[a..b cycle)`, queda acotada y se normaliza cíclicamente.
+Sin `in`, admite el dominio completo de la coordenada subyacente. Con un intervalo lineal, queda acotada sin envolvimiento. Con `[a..b) cycle`, queda acotada y se normaliza cíclicamente.
 
 Puede declarar mediante el `format` opcional una representación textual especial. Si lo omite, se representa como cualquier magnitud ordinaria: coordenada en la unidad raíz seguida de la abreviatura o nombre de esa unidad. Conforme a D-061, el formato es una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; D-062 exige que el formato de punto sea invertible, lo usa como forma literal canónica y rechaza antes de normalizar cualquier literal fuera del dominio.
 
@@ -121,15 +121,15 @@ Su aritmética es:
 | $P-M$ | $P$ |
 | $P+P$ | error |
 
-Solo una magnitud `point over` puede ser cíclica. `cycle` aparece dentro del intervalo, inmediatamente antes del delimitador derecho, y la única forma cíclica válida es:
+Solo una magnitud `point over` puede ser cíclica. Conforme a D-082, `cycle` aparece después del intervalo completo y la única forma cíclica válida es:
 
 ```mud
-[a..b cycle)
+[a..b) cycle
 ```
 
 El dominio debe ser finito, contiguo, no vacío, cerrado a la izquierda y abierto a la derecha. Su periodo es $b-a$ y todo valor se normaliza módulo ese periodo respecto de $a$.
 
-Para `[0..360 cycle)`:
+Para `[0..360) cycle`:
 
 ```text
 360  → 0

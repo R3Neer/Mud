@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 76.
-- Vigentes: 76.
+- Total: 77.
+- Vigentes: 77.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -95,6 +95,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-079 | vigente | 2026-08-04 | [[notas/decisiones/ADR-079-diagnostico-exterior-de-reglas-always|Diagnóstico exterior de reglas `always`]] |
 | D-080 | vigente | 2026-08-04 | [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|Álgebra elevada y actualizaciones de colección]] |
 | D-081 | vigente | 2026-08-04 | [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|Filtrado, `take` e indexación de colecciones]] |
+| D-082 | vigente | 2026-08-04 | [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|`cycle` como modificador de dominio de punto]] |
 
 ## Identificadores reservados
 

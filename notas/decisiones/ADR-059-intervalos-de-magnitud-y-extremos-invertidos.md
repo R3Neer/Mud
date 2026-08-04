@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-059 — Intervalos de magnitud y extremos invertidos
 
+- Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
 - Modifica: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
 - Preguntas relacionadas: Q-018
@@ -137,7 +138,7 @@ Un error real al evaluar un extremo —por ejemplo, una referencia inválida— 
 
 La normalización a `empty` se aplica a intervalos lineales. No introduce semántica cíclica implícita.
 
-La forma `[a..b cycle)` de D-029 continúa siendo exclusiva del dominio de una magnitud de punto. Debe definir un periodo estrictamente positivo y conserva sus límites numéricos desnudos en la representación canónica; las nuevas unidades locales o exteriores no se admiten en esa cabecera.
+La forma `[a..b) cycle` de D-029 y D-082 continúa siendo exclusiva del dominio de una magnitud de punto. Debe definir un periodo estrictamente positivo y conserva sus límites numéricos desnudos en la representación canónica; las nuevas unidades locales o exteriores no se admiten en esa cabecera.
 
 ## Consecuencias
 
@@ -179,4 +180,4 @@ Mezclaría contenido del intervalo, orden de enumeración y topología cíclica.
 9. Dominio vacío que excluye un valor almacenado produce `failed`.
 10. `if`, `given` o `after` falsos a causa del vacío producen `rejected`.
 11. Ausencia de interpretación descendente o cíclica implícita.
-12. Conservación de las restricciones especiales de dominios de magnitud y de `[a..b cycle)`.
+12. Conservación de las restricciones especiales de dominios de magnitud y de `[a..b) cycle`.

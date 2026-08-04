@@ -714,10 +714,12 @@ syntax_nodes:
     - body
   point-domain:
     kind: PointDomainSyntax
-    rhs: "interval-expression\n      | cyclic-interval"
+    rhs: 'interval-expression , [ "cycle" ]'
     references:
     - interval-expression
-    - cyclic-interval
+    field_model:
+    - interval
+    - cycleKeyword?
   magnitude-body:
     kind: MagnitudeBodySyntax
     rhs: "\"{\" , declaration-layout\n        , [ root-unit-declaration\n            , { required-separation , alternative-unit-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
@@ -1743,11 +1745,6 @@ syntax_nodes:
   finite-interval-bound:
     kind: FiniteIntervalBoundSyntax
     rhs: expression-without-interval
-    references:
-    - expression-without-interval
-  cyclic-interval:
-    kind: CyclicIntervalSyntax
-    rhs: "\"[\" , expression-without-interval , \"..\"\n        , expression-without-interval , \"cycle\" , \")\""
     references:
     - expression-without-interval
   expression-without-interval:

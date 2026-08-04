@@ -432,7 +432,7 @@ Define:
 - Finitud y enumerabilidad.
 - Pasos de iteración.
 - Dominios dinámicos.
-- Dominios cíclicos `[a..b cycle)` exclusivos de magnitudes de punto.
+- Dominios cíclicos `[a..b) cycle` exclusivos de magnitudes de punto.
 - Intervalos `Rum` admitidos como dominios, pero no como fuentes enumerables.
 
 Base normativa migrada: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].

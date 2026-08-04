@@ -25,6 +25,7 @@ decisions:
   - D-070
   - D-080
   - D-081
+  - D-082
 ---
 
 # 06. Estructura léxica
@@ -356,7 +357,7 @@ Una magnitud `point over` puede habilitar escrituras contextuales mediante su pr
 > [!rule]
 > `POINT_LITERAL` se interpreta contra el único tipo de magnitud de punto exigido por el contexto. Si declara `format`, el texto debe coincidir exactamente con su representación canónica y el formato debe ser estáticamente invertible. La precisión inferior no representada toma valor cero.
 
-Una magnitud de punto sin `format` usa una cantidad ordinaria con una unidad compatible como coordenada completa. En ambos casos, la coordenada reconstruida debe pertenecer al dominio declarado. Los dominios cíclicos no normalizan literales fuera de rango: un literal equivalente a `26 hours` es inválido para `[0..24 hours cycle)`.
+Una magnitud de punto sin `format` usa una cantidad ordinaria con una unidad compatible como coordenada completa. En ambos casos, la coordenada reconstruida debe pertenecer al dominio declarado. Los dominios cíclicos no normalizan literales fuera de rango: un literal equivalente a `26 hours` es inválido para `[0..24 hours) cycle`.
 
 Las reglas completas pertenecen a [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]].
 

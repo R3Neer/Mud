@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-062 — Literales canónicos de magnitudes de punto
 
+- Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
 - Amplía: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Cierra: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad
@@ -62,7 +63,7 @@ Cuando el tipo esperado no declara `format`, su literal usa la sintaxis ordinari
 
 Después de reconstruir la coordenada, el compilador comprueba que pertenezca al dominio declarado por la magnitud de punto. Un literal fuera del dominio es un error de compilación.
 
-La comprobación se realiza antes de cualquier normalización cíclica. Un dominio `[0..86_400 cycle)` cuya unidad raíz sea el segundo no autoriza un literal de `26 hour` ni su equivalente formateado; los valores fuente fuera de rango no se envuelven.
+La comprobación se realiza antes de cualquier normalización cíclica. Un dominio `[0..86_400) cycle` cuya unidad raíz sea el segundo no autoriza un literal de `26 hour` ni su equivalente formateado; los valores fuente fuera de rango no se envuelven.
 
 La normalización cíclica continúa aplicándose a las operaciones runtime según las reglas de magnitudes de punto, pero no corrige un literal inválido.
 
@@ -78,7 +79,7 @@ La normalización cíclica continúa aplicándose a las operaciones runtime seg�
 ## Ejemplos
 
 ```mud
-magnitude TimeOfDay point over Time in [0..86_400 cycle) {
+magnitude TimeOfDay point over Time in [0..86_400) cycle {
     format = "{hour:2}:{minute:2}:{second:2}"
 }
 

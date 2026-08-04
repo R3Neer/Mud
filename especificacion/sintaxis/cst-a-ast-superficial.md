@@ -317,7 +317,7 @@ La expresión dimensional se pliega de izquierda a derecha en `DimensionProduct`
 
 ### Punto
 
-El dominio ordinario produce `OrdinaryPointDomain`; la forma con `cycle` produce `CyclicPointDomain`.
+El dominio ordinario produce `OrdinaryPointDomain`; la presencia de `cycle` después de la expresión intervalo produce `CyclicPointDomain`. El token no se incorpora al intervalo como un delimitador ni como parte de sus extremos.
 
 `format` ausente permanece ausente.
 
@@ -610,7 +610,7 @@ La unidad final se mueve al campo `sharedUnit`; no se duplica en cada extremo.
 
 ### Cíclico
 
-`cycle` produce `cyclic = Enabled` y conserva el extremo superior abierto exigido por la sintaxis.
+El `cycle` posterior del `PointDomainSyntax` selecciona `CyclicPointDomain`; no modifica el `Interval` contenido. La validación anterior al AST exige que el intervalo precedente sea finito, no vacío, cerrado a la izquierda y abierto a la derecha.
 
 ### Estrellas
 

@@ -274,12 +274,39 @@ cases:
   - id: cyclic-point-domain
     category: magnitude
     source: |
-      magnitude TimeOfDay point over Time in [0..86_400 cycle) {
+      magnitude TimeOfDay point over Time in [0..86_400) cycle {
           format = "{hour:2}:{minute:2}:{second:2}"
       }
     cst_root: MudFileSyntax
     ast: PointMagnitudeDecl(domain=CyclicPointDomain(...))
     produces_ast: true
+
+  - id: half-open-ordinary-point-domain
+    category: magnitude
+    source: |
+      magnitude WorkdayTime point over Time in [0..28_800) {
+      }
+    cst_root: MudFileSyntax
+    ast: PointMagnitudeDecl(domain=OrdinaryPointDomain(Interval(...)))
+    produces_ast: true
+
+  - id: legacy-cycle-inside-interval-invalid
+    category: validation-before-ast
+    source: |
+      magnitude LegacyClock point over Time in [0..24 cycle) {
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [cycle-must-follow-point-domain]
+    produces_ast: false
+
+  - id: cycle-requires-left-closed-right-open-domain
+    category: validation-before-ast
+    source: |
+      magnitude BrokenClock point over Time in [0..24] cycle {
+      }
+    cst_root: MudFileSyntax
+    expected_diagnostics: [cyclic-point-domain-must-be-left-closed-right-open]
+    produces_ast: false
 
   - id: unit-prefixes-omitted
     category: unit

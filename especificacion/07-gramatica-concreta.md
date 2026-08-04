@@ -57,6 +57,7 @@ decisions:
   - D-079
   - D-080
   - D-081
+  - D-082
 ---
 
 # 07. Gramática concreta
@@ -336,12 +337,12 @@ magnitude WorkdayTime point over Time in [0..28_800] {
     format = "{hour:2}:{minute:2}"
 }
 
-magnitude TimeOfDay point over Time in [0..86_400 cycle) {
+magnitude TimeOfDay point over Time in [0..86_400) cycle {
     format = "{hour:2}:{minute:2}:{second:2}"
 }
 ```
 
-Una magnitud base puede tener una `root unit nombre`; una derivada solo unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b cycle)` añade normalización cíclica. Solo una magnitud de punto admite `cycle`.
+Una magnitud base puede tener una `root unit nombre`; una derivada solo unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b) cycle` añade normalización cíclica. `cycle` modifica el dominio completo, no forma parte de la expresión intervalo, y solo una magnitud de punto lo admite.
 
 En una unidad, omitir `prefixes` o escribir `prefixes = empty` no habilita ninguno; `prefixes = all` habilita el catálogo SI decimal completo y `prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. `name`, `plural` y `abbreviation` son opcionales.
 
@@ -807,7 +808,7 @@ a..b
 [a]
 ```
 
-`a..b` equivale a `[a..b]`; `[a]`, a `[a..a]`. Un extremo `*` debe estar cerrado en su lado. La forma cíclica exclusiva de magnitudes de punto es `[a..b cycle)`.
+`a..b` equivale a `[a..b]`; `[a]`, a `[a..a]`. Un extremo `*` debe estar cerrado en su lado. La forma cíclica exclusiva de magnitudes de punto es un intervalo completo seguido por el modificador: `[a..b) cycle`.
 
 Los extremos finitos son expresiones completas y deben elaborar al mismo tipo ordenado. En un intervalo de magnitud pueden llevar unidades locales, incluso distintas, que se normalizan antes de comparar:
 
@@ -843,7 +844,7 @@ Después de evaluar y normalizar los extremos efectivos de un intervalo lineal:
 
 La inversión no implica recorrido descendente ni ciclo. Construir ese intervalo vacío no falla una resolución por sí mismo; solo producen `failed` las restricciones que vuelvan inválido el estado tentativo, como un valor almacenado que quede fuera de su dominio o una regla `always` incumplida. Un `given` fuera de dominio y un `if` o `after` falsos conservan su resultado `rejected`.
 
-Los dominios declarados en la cabecera de una magnitud conservan los límites numéricos desnudos interpretados en su unidad canónica. La forma `[a..b cycle)` también conserva esa restricción y exige un periodo estrictamente positivo.
+Los dominios declarados en la cabecera de una magnitud conservan los límites numéricos desnudos interpretados en su unidad canónica. La forma `[a..b) cycle` también conserva esa restricción y exige un periodo estrictamente positivo. Otros lados, infinitos o intervalos vacíos son inválidos con `cycle`.
 
 ## Precedencia y agrupación
 

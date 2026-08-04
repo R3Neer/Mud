@@ -186,9 +186,7 @@ point-magnitude-declaration
         ;
 
 point-domain
-    ::= interval-expression
-      | cyclic-interval
-      ;
+    ::= interval-expression , [ "cycle" ] ;
 
 magnitude-body
     ::= "{" , declaration-layout
@@ -940,11 +938,6 @@ interval-bound
 
 finite-interval-bound
     ::= expression-without-interval ;
-
-cyclic-interval
-    ::= "[" , expression-without-interval , ".."
-        , expression-without-interval , "cycle" , ")"
-        ;
 
 expression-without-interval
     ::= quantitative-expression ;

@@ -553,8 +553,7 @@ module MUDSurface {
                              boundary_kind lower_boundary,
                              interval_bound upper,
                              boundary_kind upper_boundary,
-                             unit_expr? shared_unit,
-                             flag cyclic)
+                             unit_expr? shared_unit)
                   | EmptyInterval(unit_expr? shared_unit)
         attributes (source_origin origin)
 
