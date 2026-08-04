@@ -29,6 +29,7 @@ decisions:
   - D-080
   - D-081
   - D-082
+  - D-083
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -330,6 +331,8 @@ Existen constructores separados:
 - `PointMagnitudeDecl`.
 
 La representación numérica opcional se almacena mediante `DeclaredType`, no mediante una enumeración cerrada. Una regla estática posterior exige que el tipo resuelto sea una representación numérica permitida.
+
+En `BaseMagnitudeDecl`, `root_unit` ausente representa deliberadamente una magnitud base sin unidades; no es un nodo incompleto ni solicita una unidad sintética posterior. En ese caso `units` debe estar vacío. La dimensión nominal se incorpora durante la elaboración y no se deduce de la presencia de una forma de unidad.
 
 ### Dimensiones
 

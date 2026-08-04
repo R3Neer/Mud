@@ -17,6 +17,7 @@ affects:
 - Ampliada por: [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]]
 - Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]
 - Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Modificada después por: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
 ## Contexto
@@ -40,6 +41,9 @@ Puede convertir:
 1. Entre representaciones numéricas compatibles.
 2. Una cantidad a una magnitud dimensionalmente compatible.
 3. Una expresión cuantitativa más amplia a la representación declarada por la magnitud de destino.
+4. Una expresión numérica básica a una magnitud base sin unidades, como materialización nominal explícita.
+
+La cuarta forma, fijada por D-083, comprueba la compatibilidad de la representación y el dominio de destino. No permite convertir entre dos magnitudes nominales distintas por el mero hecho de que ninguna tenga unidad.
 
 ```mud
 averagePopulation: Population :=
@@ -114,3 +118,4 @@ amount to Money
 4. Rechazo de valores fuera del dominio tras redondear.
 5. Diferencia observable entre `quantity in unit` y `quantity to type`.
 6. Presentación de una magnitud de punto en una unidad sin aplicar su `format`.
+7. Materialización de una magnitud base sin unidades y rechazo entre magnitudes nominales distintas.

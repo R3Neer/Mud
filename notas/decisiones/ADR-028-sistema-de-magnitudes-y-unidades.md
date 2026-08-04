@@ -15,7 +15,7 @@ affects:
 ---
 # ADR-028 — Sistema de magnitudes y unidades
 
-- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
+- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
 - Preguntas relacionadas: Q-019, Q-034, Q-054, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`

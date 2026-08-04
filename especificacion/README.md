@@ -444,6 +444,7 @@ Archivo previsto: `18-magnitudes.md`
 Define:
 
 - Magnitudes no derivadas, derivadas y de punto.
+- Magnitudes base con unidad raíz o deliberadamente sin unidades, conservando en ambos casos su dimensión nominal.
 - Representaciones numéricas explícitas e inferidas.
 - Magnitudes basadas en `Rum` y omisión contextual del prefijo `r` en cantidades con unidad.
 - Unidades raíz y alternativas con identificador `lowerCamel` y equivalencias mediante `:=`.
@@ -460,7 +461,7 @@ Define:
 - Magnitudes temporales.
 - Calendarios y localización.
 
-Base normativa migrada: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
+Base normativa migrada: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]].
 
 ## 19. Expresiones
 

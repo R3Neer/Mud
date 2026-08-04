@@ -17,6 +17,7 @@ affects:
 - Modifica: [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]]
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Modificada después por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Modificada además por: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-007, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]], Q-059
 - Documentos afectados: resultados de acción, reglas `always`, léxico, gramática, evaluación de `Text`, diagnósticos y frontera externa
@@ -103,7 +104,7 @@ La representación de un hueco depende del valor evaluado, no del nombre escrito
 | Miembro de `family` | El nombre nominal del miembro |
 | Intervalo | Su forma canónica normalizada |
 | Colección | Sus elementos separados por `, `, sin los corchetes exteriores |
-| Magnitud lineal | Su cantidad en la unidad raíz o combinación canónica de unidades raíz |
+| Magnitud lineal | Su número y la proyección canónica de unidades; si esta es vacía, solo el número |
 | Magnitud de punto | Su `format`, si existe; en otro caso, la representación ordinaria de su coordenada como magnitud |
 
 Si un elemento de una colección es a su vez una colección, esa colección interior conserva sus corchetes. La regla se aplica recursivamente:
@@ -117,7 +118,7 @@ Una colección vacía aporta el texto vacío. `ordered`, `unique`, `mut` y la ca
 
 Una llamada a regla booleana es renderizable porque produce `Bool`. El nombre desnudo de una declaración no es un valor. Acciones, reglas reactivas, reglas `always`, `look`, `message` y `test` no producen valores interpolables. Los tipos, familias como declaraciones y cualquier otra categoría sin representación decidida producen error estático en `{...}`.
 
-La representación de una magnitud escribe la abreviatura de la unidad cuando exista. En otro caso usa su nombre singular para `1` y `-1`, y el plural declarado para los demás valores; si no hay plural, reutiliza el nombre. Las unidades derivadas usan la composición canónica de sus factores. Una magnitud de punto sin `format` no introduce una excepción: representa su coordenada en la unidad raíz mediante estas mismas reglas, incluida la etiqueta de unidad.
+La representación de una magnitud escribe la abreviatura de la unidad cuando exista. En otro caso usa su nombre singular para `1` y `-1`, y el plural declarado para los demás valores; si no hay plural, reutiliza el nombre. Las unidades derivadas usan la proyección canónica de sus factores con unidad. Los factores nominales sin unidad permanecen en el tipo, pero no producen texto; si la proyección completa es vacía se escribe solo el número. Una magnitud de punto sin `format` no introduce una excepción: representa su coordenada mediante estas mismas reglas.
 
 Una presentación explícita selecciona la unidad:
 
@@ -203,7 +204,7 @@ speed := vehicle.speed in km/h
 time := clock.time in second
 ```
 
-Omitirla es legal, pero produce un aviso porque hace depender una frontera pública de la unidad raíz o combinación canónica. El arreglo sugerido añade explícitamente esa unidad. En una magnitud de punto, un campo directo sin `in` publica la coordenada numérica raíz, no el `format`; para publicar la representación formateada se declara un campo `Text`, por ejemplo `timeText := "{clock.time}"`.
+Omitirla es legal, pero produce un aviso cuando existe una unidad seleccionable porque hace depender una frontera pública de su proyección canónica. El arreglo sugerido añade explícitamente esa unidad. Una magnitud sin unidades publica su número y no produce el aviso. En una magnitud de punto, un campo directo sin `in` publica la coordenada numérica, no el `format`; para publicar la representación formateada se declara un campo `Text`, por ejemplo `timeText := "{clock.time}"`.
 
 La regla afecta a campos públicos cuyo valor directo es una magnitud. La serialización recursiva de magnitudes contenidas en aliases o colecciones permanece en Q-051.
 
@@ -244,4 +245,4 @@ Esto permite mencionar acciones, reglas, `look`, `message`, tests y tipos sin co
 10. Rechazo de `anchor{...}` sobre valores sin identidad anclada.
 11. Renderización raíz, alternativa y formateada de magnitudes lineales y de punto.
 12. Extracción `picosecond from second in time` independiente del `format`.
-13. Aviso por magnitud pública sin unidad explícita y publicación formateada mediante `Text`.
+13. Aviso por magnitud pública con unidad seleccionable pero sin presentación explícita, ausencia de aviso cuando no existen unidades y publicación formateada mediante `Text`.

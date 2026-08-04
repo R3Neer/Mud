@@ -58,6 +58,7 @@ decisions:
   - D-080
   - D-081
   - D-082
+  - D-083
 ---
 
 # 07. Gramática concreta
@@ -342,7 +343,16 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 }
 ```
 
-Una magnitud base puede tener una `root unit nombre`; una derivada solo unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b) cycle` añade normalización cíclica. `cycle` modifica el dominio completo, no forma parte de la expresión intervalo, y solo una magnitud de punto lo admite.
+Una magnitud base tiene una de dos formas: un cuerpo vacío sin unidades, o exactamente una `root unit nombre` seguida de cero o más unidades alternativas. No puede declarar una alternativa sin raíz. La ausencia de raíz es una elección semántica completa: la magnitud conserva una dimensión nominal independiente, pero sus valores no escriben unidad. No equivale a su representación numérica, a otra magnitud sin unidades ni al elemento neutro dimensional.
+
+```mud
+chance: Probability = 0.75
+explicitChance := ratio to Probability
+```
+
+Un literal numérico desnudo puede tomar el tipo de una magnitud sin unidades cuando el contexto esperado la determina unívocamente. Una expresión numérica general exige `to` para materializarla. La aritmética conserva el factor nominal aunque este no tenga forma de unidad; la proyección visible de unidades puede coincidir entre dimensiones estáticamente distintas. Una cantidad que sí escribe unidad solo aporta los factores determinados por ella: el contexto no añade factores invisibles.
+
+Una magnitud derivada solo declara unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b) cycle` añade normalización cíclica. `cycle` modifica el dominio completo, no forma parte de la expresión intervalo, y solo una magnitud de punto lo admite.
 
 En una unidad, omitir `prefixes` o escribir `prefixes = empty` no habilita ninguno; `prefixes = all` habilita el catálogo SI decimal completo y `prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. `name`, `plural` y `abbreviation` son opcionales.
 
@@ -577,7 +587,7 @@ message KingChanged on kingdom: Kingdom {
 
 `look` y `message` se declaran en MUD pero no se llaman desde MUD. El exterior consulta un `look`; el runtime detecta y publica un `message`.
 
-Un campo público cuyo valor directo es una magnitud debe seleccionar preferentemente su unidad con `in`. Omitirla es legal y usa la unidad raíz o combinación canónica, pero produce un aviso por dejar implícita una decisión de la API. Una magnitud de punto directa publica su coordenada en la unidad elegida y no su `format`; para publicar el formato se construye un campo `Text`.
+Un campo público cuyo valor directo es una magnitud que admite unidades debe seleccionar preferentemente su presentación con `in`. Omitirla es legal y usa la proyección canónica de unidades, pero produce un aviso por dejar implícita una decisión de la API. Una magnitud sin unidades publica directamente su representación numérica y no produce ese aviso. Una magnitud de punto directa publica su coordenada en la unidad elegida y no su `format`; para publicar el formato se construye un campo `Text`.
 
 ## Cláusulas y llaves
 
@@ -844,7 +854,7 @@ Después de evaluar y normalizar los extremos efectivos de un intervalo lineal:
 
 La inversión no implica recorrido descendente ni ciclo. Construir ese intervalo vacío no falla una resolución por sí mismo; solo producen `failed` las restricciones que vuelvan inválido el estado tentativo, como un valor almacenado que quede fuera de su dominio o una regla `always` incumplida. Un `given` fuera de dominio y un `if` o `after` falsos conservan su resultado `rejected`.
 
-Los dominios declarados en la cabecera de una magnitud conservan los límites numéricos desnudos interpretados en su unidad canónica. La forma `[a..b) cycle` también conserva esa restricción y exige un periodo estrictamente positivo. Otros lados, infinitos o intervalos vacíos son inválidos con `cycle`.
+Los dominios declarados en la cabecera de una magnitud conservan los límites numéricos desnudos interpretados en su representación canónica: en la unidad raíz cuando existe y directamente en la representación numérica cuando no hay unidades. La forma `[a..b) cycle` también conserva esa restricción y exige un periodo estrictamente positivo. Otros lados, infinitos o intervalos vacíos son inválidos con `cycle`.
 
 ## Precedencia y agrupación
 
@@ -964,7 +974,7 @@ Un hueco numérico admite `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derech
 
 La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Num`, `Rum` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
 
-Una magnitud lineal sin `in` se representa en su unidad raíz o combinación canónica. Una magnitud de punto usa su `format` si lo tiene y, si no, sigue esa misma regla ordinaria, incluida la escritura de la unidad. `{magnitude in unit}` selecciona la unidad y, para un punto, evita el `format` y representa la coordenada completa. Se escribe la abreviatura de la unidad si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
+Una magnitud lineal sin `in` representa el número seguido por la proyección canónica de unidades de su dimensión. Si esa proyección es vacía, representa únicamente el número. Los factores nominales sin unidad no se imprimen, pero permanecen en el tipo. Una magnitud de punto usa su `format` si lo tiene y, si no, sigue la regla ordinaria de su magnitud subyacente. `{magnitude in unit}` selecciona una presentación disponible y, para un punto, evita el `format` y representa la coordenada completa. Es inválido aplicar `in` a una magnitud base sin unidades. Cuando hay unidad, se escribe su abreviatura si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
 
 `time in picosecond` expresa la coordenada total; `picosecond from second in time` extrae la parte dentro del segundo. La segunda forma es válida aunque el formato visible no incluya picosegundos.
 
