@@ -26,6 +26,8 @@ decisions:
   - D-076
   - D-077
   - D-079
+  - D-080
+  - D-081
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -548,6 +550,14 @@ como varios receptores o como un único valor estructural queda pendiente de res
 
 `Rand(expr)` posee `RandomExpr`; no es un tipo ni una llamada ordinaria.
 
+### Selección y `take`
+
+`binding in source: predicate` posee `SelectionExpr`. Conserva la vinculación, la fuente y el predicado sin materializar la colección resultante. La vinculación solo introduce nombres dentro del predicado.
+
+`take amount from source` posee `TakeExpr`. El AST superficial no decide si la fuente es ordenada, texto, diccionario, dominio enumerable o una colección sin orden; esa resolución determina después si se toma un prefijo canónico o una muestra reproducible.
+
+La composición de ambas formas es estructural. `take n from player in players: condition` contiene un `SelectionExpr` como fuente de `TakeExpr`; `player in take m from players: condition` contiene un `TakeExpr` como fuente de `SelectionExpr`.
+
 ### `all`
 
 El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estático o dinámico se determinan durante el tipado; el AST superficial no enumera sus valores.
@@ -555,6 +565,10 @@ El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estáti
 ### Cuantificadores
 
 `exists`, `forall`, `count`, `sum`, `min` y `max` comparten `QuantifierExpr` con un enum propio.
+
+### Operadores de colección
+
+`--` produce `CollectionDifference`, distinto de `Subtract`. Las actualizaciones `|=`, `&=`, `^=` y `--=` producen respectivamente `UnionAssign`, `IntersectionAssign`, `SymmetricDifferenceAssign` y `DifferenceAssign`; no se reducen a `Assign` porque la clase de actualización participa en la consolidación concurrente.
 
 ## Plantillas `Text`
 

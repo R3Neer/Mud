@@ -16,6 +16,7 @@ affects:
 # ADR-046 — Álgebra y conflictos de efectos
 
 - Modificada por: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
+- Ampliada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]]
 - Preguntas relacionadas: Q-002, Q-006, Q-021, Q-046
 - Documentos afectados: efectos, raíz, ondas, conflictos
 
@@ -30,6 +31,7 @@ El catálogo de efectos de MUD comprende:
 - asignación `=`;
 - suma y resta acumulativas;
 - multiplicación acumulativa;
+- unión, intersección, diferencia simétrica `unique` y diferencia acumulativas;
 - `add` y `remove` sobre colecciones o propiedades;
 - `create` y `destroy`;
 - llamadas a acciones únicamente en acciones compuestas.
@@ -46,6 +48,12 @@ Reglas mínimas:
 | actualizaciones multiplicativas homogéneas | compatibles, producto de factores |
 | asignación con actualización aritmética | conflicto |
 | actualización aditiva con multiplicativa | conflicto |
+| actualizaciones `|=` homogéneas sobre colecciones | unión de operandos |
+| concatenaciones `|=` homogéneas sobre `Text` | compatibles solo con orden total determinado |
+| actualizaciones `&=` homogéneas | intersección de operandos |
+| actualizaciones `--=` homogéneas | suma de multiplicidades retiradas y truncado final |
+| actualizaciones `^=` homogéneas sobre `unique` | diferencia simétrica por paridad |
+| clases distintas de actualización de colección | conflicto |
 
 Para efectos estructurales se aplican D-023, D-026 y D-054:
 

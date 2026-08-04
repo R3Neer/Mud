@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-056 — `Char`, `Text` y orden Unicode
 
+- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
 - Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
@@ -81,6 +83,8 @@ $$
 $$
 
 `Text` puede exponer operaciones de secuencia como indexación, pertenencia, longitud e iteración sin convertirse por ello en una colección ordenada canónicamente. No admite modificadores de colección ni `ordered by`.
+
+`take n from text` produce otro `Text` formado por sus primeros `n` valores `Char`, o el texto completo si contiene menos. Es determinista porque la posición forma parte de `Text`; no convierte el resultado en `Char [* ordered]`.
 
 El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y `-` no se aplican a `Text`. Un alias nominal basado en `Text` necesita una conversión explícita a `Text` para concatenar y otra al alias de destino.
 

@@ -875,6 +875,16 @@ productions:
     ast:
       disposition: constructor
       target: RandomExpr
+  take-expression:
+    cst: TakeExpressionSyntax
+    ast:
+      disposition: constructor
+      target: TakeExpr
+  selection-expression:
+    cst: SelectionExpressionSyntax
+    ast:
+      disposition: constructor
+      target: SelectionExpr
   quantifier-expression:
     cst: QuantifierExpressionSyntax
     ast:

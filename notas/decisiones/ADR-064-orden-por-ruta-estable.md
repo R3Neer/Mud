@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-064 — Orden por ruta estable
 
+- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+
 - Modifica: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Documentos afectados: colecciones, familias, aliases, campos, tipos ordenables, normalización e iteración
 
@@ -70,6 +72,8 @@ Toda la ruta debe ser estable durante la vida de la colección:
 - Ninguna lectura puede depender de azar, actividad cambiante ni estado cuya variación altere la clave.
 
 La comprobación es transitiva. Si no puede demostrarse la estabilidad, la colección es inválida.
+
+Cuando el miembro es una unión, la ruta debe existir y permanecer singular y estable sobre todas las alternativas alcanzables. Las claves finales deben elaborar hacia un único tipo común con orden total mediante, como máximo, una ampliación implícita única. La coincidencia representacional de aliases nominales no basta. Si una alternativa necesita adaptación, se declara un campo calculado común y se ordena por él.
 
 ### Empates
 

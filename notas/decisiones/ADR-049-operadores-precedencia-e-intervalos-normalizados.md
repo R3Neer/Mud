@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-049 — Operadores, precedencia e intervalos normalizados
 
+- Modificada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]]
+
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada además por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 - Preguntas relacionadas: Q-001, Q-018, Q-050
@@ -39,7 +41,7 @@ La referencia contenía el catálogo de operadores y su precedencia, pero es ant
 
 Los tokens compartidos se resuelven por tipos y contexto sintáctico; no autorizan coerciones entre booleanos, números, colecciones e intervalos.
 
-Cada operación posee una única escritura canónica. `not`, `and`, `or` y `xor` son exclusivamente lógicos. `|`, `&` y `^` no se aplican a `Bool`: expresan respectivamente unión, intersección y diferencia simétrica sobre intervalos o colecciones, salvo la concatenación de `Text` ya indicada. `-` continúa compartido por resta cuantitativa y diferencia conjuntista. `=>` expresa implicación y `<=>`, bicondicional.
+Cada operación posee una única escritura canónica. `not`, `and`, `or` y `xor` son exclusivamente lógicos. `|`, `&` y `^` no se aplican a `Bool`: expresan respectivamente unión, intersección y diferencia simétrica sobre intervalos o colecciones, salvo la concatenación de `Text` ya indicada. Cuando opera sobre colecciones, `^` exige operandos `unique`; la diferencia simétrica de intervalos conserva su contrato propio. `--` expresa diferencia de colecciones y `-` queda reservado a resta cuantitativa. `=>` expresa implicación y `<=>`, bicondicional.
 
 Se eliminan del lenguaje fuente `!`, `implies`, `iff`, `union`, `intersection` y `except`. Las palabras retiradas dejan de estar reservadas y pueden usarse como identificadores. El token `!=` permanece como desigualdad independiente y no presupone que exista un operador unitario `!`.
 
@@ -89,7 +91,7 @@ se agrupan como `(population / regions) to Population`, `(distance + offset) in 
 
 Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `<=>`. `!=`, `is`, pertenencia `in` y `=>` no se encadenan.
 
-`|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`. Sobre colecciones compatibles, los cuatro operadores forman el álgebra de multiconjuntos de D-039; `|` no concatena colecciones.
+`|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`. Sobre colecciones compatibles, `|`, `&` y `--` forman el álgebra de multiconjuntos de D-039; `^` forma diferencia simétrica exclusivamente sobre `unique`. `|` no concatena colecciones.
 
 ### Intervalos
 

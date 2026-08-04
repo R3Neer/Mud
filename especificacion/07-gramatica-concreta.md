@@ -55,6 +55,8 @@ decisions:
   - D-076
   - D-077
   - D-079
+  - D-080
+  - D-081
 ---
 
 # 07. Gramática concreta
@@ -197,7 +199,7 @@ citizens: Person [0..*, unique, ordered, mut]
 
 No se permite coma final. La omisión de cardinalidad equivale a `[1]`.
 
-Las colecciones compatibles admiten `|`, `&`, `-` y `^`. Operan sobre multiplicidades, no concatenan:
+Las colecciones compatibles admiten `|`, `&` y `--`. `^` exige además que ambos operandos sean `unique`. Operan sobre multiplicidades o pertenencia, no concatenan:
 
 ```mud
 leftChars: Char [1..5] = ["a"]
@@ -205,7 +207,9 @@ rightChars: Char [0..2] = empty
 combinedChars := leftChars | rightChars # Char [1..7]
 ```
 
-`unique`, `ordered` y el `mut` interior se propagan con la misma regla: unión y diferencia simétrica los conservan solo si aparecen en ambos operandos; intersección, si aparecen en cualquiera; diferencia, si aparecen en el izquierdo. El `mut` exterior nunca se infiere para un resultado calculado.
+`unique`, `ordered` y el `mut` interior se propagan con la misma regla: unión y diferencia simétrica los conservan solo si aparecen en ambos operandos; intersección, si aparecen en cualquiera; diferencia `--`, si aparecen en el izquierdo. `^` siempre conserva `unique` porque lo exige. El `mut` exterior nunca se infiere para un resultado calculado.
+
+`-` es exclusivamente resta aritmética elevada. Una operación `+`, `-`, `*`, `/` o `%` entre colecciones es válida si al menos un operando tiene límite superior de cardinalidad uno. Combina cada ocurrencia del lado potencialmente múltiple con la ocurrencia opcional o unitaria del otro; `empty` produce `empty` sin evaluar una operación de miembros. Si ambos lados pueden contener más de una ocurrencia, la expresión es inválida.
 
 Un resultado con orden canónico se normaliza por ese orden. Con orden de inserción, se conserva estable el orden izquierdo y se incorporan después las ocurrencias adicionales derechas cuando la operación lo requiere.
 
@@ -226,6 +230,8 @@ teams: Team [* ordered by captain.age]
 ```
 
 Una `thing` no posee por sí misma orden total y no puede ser la clave final. Toda la ruta debe ser transitivamente estable: se rechazan campos almacenados mutables, cálculos con dependencias mutables y accesos intermedios cuyo estado posterior pueda alterar la clave. Una ruta opcional también se rechaza mientras no exista una posición definida para `empty`.
+
+Si el miembro es una unión, la ruta debe existir sobre todas las alternativas alcanzables. Cada segmento conserva singularidad y estabilidad y las claves finales deben elaborar hacia un único tipo común totalmente ordenado. Una ampliación implícita única es válida; dos aliases meramente representacionales no se unifican. Cuando haga falta adaptar alternativas se declara primero un campo calculado común.
 
 `ordered by` no admite expresiones arbitrarias. Si el criterio necesita una fórmula, se declara como campo o dato calculado y se ordena por su nombre. Las claves iguales conservan el orden relativo de inserción; no se desempatan por ancla, identidad ni orden de declaración de una `family`.
 
@@ -683,6 +689,10 @@ target += amount
 target -= amount
 target *= factor
 target /= divisor
+target |= values
+target &= values
+target ^= uniqueValues
+target --= values
 
 add value to collection
 remove value from collection
@@ -695,6 +705,8 @@ destroy Declaration
 ```
 
 La forma `remove name from Owner` se distingue de retirar un valor mediante resolución y tipos. En ambos casos el parser conserva la misma procedencia; el AST elaborado debe producir la variante correcta o un diagnóstico.
+
+`|=`, `&=`, `^=` y `--=` conservan en el AST su clase de actualización. Exigen un destino exteriormente mutable y un resultado asignable. `^=` solo admite colecciones `unique`. Sobre colecciones, las actualizaciones homogéneas se consolidan por unión, intersección, paridad o suma de multiplicidades retiradas; mezclar clases distintas es conflicto salvo regla posterior expresa. Sobre `Text`, `|=` concatena y varias actualizaciones concurrentes requieren un orden total determinado.
 
 ## `for each` y cuantificadores
 
@@ -720,6 +732,38 @@ sum city in kingdom.cities: city.population
 min city in kingdom.cities: city.population
 max city in kingdom.cities: city.population
 ```
+
+Una selección devuelve los miembros que satisfacen el predicado, en vez de reducirlos a un booleano o agregado:
+
+```mud
+player in players: player.score == 2
+
+(key, value) in stock: value > 0
+```
+
+La fuente debe ser finita y enumerable y el predicado, puro y determinista. El resultado conserva multiplicidad, `unique`, orden y capacidad interior demostrables; no adquiere mutabilidad exterior.
+
+`take` es una expresión general:
+
+```mud
+take 3 from players
+take n from player in players: player.score == 2
+player in take m from players: player.score == 2
+take n from player in take m from players: player.score == 2
+```
+
+La cantidad debe ser `Nat [1]`. Sobre una fuente ordenada o con enumeración canónica, `take` devuelve el prefijo. Sobre una colección o diccionario no ordenado con elección real, selecciona uniformemente y sin reemplazo mediante la semilla reproducible y no hace observable el orden del muestreo. Devuelve como máximo la cantidad solicitada y nunca falla solo porque falten miembros.
+
+`take` también admite dominios finitos, diccionarios y `Text`. En `Text` devuelve otro `Text` con el prefijo solicitado.
+
+Una colección admite índice o sección posicional solo si es ordenada:
+
+```mud
+queue[1]
+queue[2..5]
+```
+
+Los índices comienzan en uno. Un índice inexistente y una sección totalmente exterior producen `empty`; una sección parcialmente exterior conserva las posiciones existentes. Una colección no ordenada debe usar `take`. La resolución por tipos mantiene separados estos accesos, las claves de diccionario y la indexación de `Text`.
 
 ## Valores contextuales
 
@@ -810,7 +854,7 @@ De mayor a menor:
 | 1 | acceso `.`, índice `[]`, llamada `()` y `unit from container in point` | izquierda o forma completa |
 | 2 | prefijos `old`, `allowed`, `not`, signo | derecha |
 | 3 | `*`, `/`, `%` | izquierda |
-| 4 | `+`, `-` | izquierda |
+| 4 | `+`, `-`, `--` | izquierda |
 | 5 | sufijos `to Type`, `in unit` | acumulativa |
 | 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, pertenencia `in` | restringida |
 | 7 | sufijo temporal `changes` | no asociativa |
@@ -820,6 +864,14 @@ De mayor a menor:
 | 11 | `=>` | derecha |
 | 12 | `<=>` | cadena adyacente |
 | 13 | `eventually ... through ...` | exterior |
+
+Las formas `take amount from source`, `binding in source: predicate` y los cuantificadores contienen expresiones completas en sus posiciones delimitadas. El primer `from` no anidado que puede cerrar la cantidad de `take` separa cantidad y fuente; los dos puntos no anidados separan fuente y predicado. Los `from` o `:` encerrados entre paréntesis o dentro de otra construcción completa pertenecen a esa construcción. Esta regla de delimitación contextual evita que el `from` de extracción de componentes absorba accidentalmente el separador de `take`. Por ello:
+
+```mud
+take n from player in players: player.ready
+```
+
+se agrupa como `take n from (player in players: player.ready)` sin paréntesis.
 
 `to` y el `in` de unidad transforman el valor completo acumulado a su izquierda. El parser continúa después con el resultado:
 

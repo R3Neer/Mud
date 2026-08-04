@@ -411,6 +411,10 @@ module MUDSurface {
                         | SubtractAssign
                         | MultiplyAssign
                         | DivideAssign
+                        | UnionAssign
+                        | IntersectionAssign
+                        | SymmetricDifferenceAssign
+                        | DifferenceAssign
 
     iteration_binding = ValueIterationBinding(variable_name value)
                       | DictionaryIterationBinding(variable_name key,
@@ -451,6 +455,10 @@ module MUDSurface {
          | ContextualPointComponentExpr(unit_expr extracted,
                                         unit_expr container)
          | RandomExpr(expr domain)
+         | TakeExpr(expr amount, expr source)
+         | SelectionExpr(iteration_binding binding,
+                         expr source,
+                         expr predicate)
          | QuantifierExpr(quantifier_kind kind,
                           variable_name variable,
                           expr source,
@@ -508,6 +516,7 @@ module MUDSurface {
                     | SymbolAnd
                     | Add
                     | Subtract
+                    | CollectionDifference
                     | Multiply
                     | Divide
                     | Remainder

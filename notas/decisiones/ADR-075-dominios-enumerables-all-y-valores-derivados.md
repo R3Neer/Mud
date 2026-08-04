@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-075 — Dominios enumerables, `all` y forma de valores derivados
 
+- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+
 ## Contexto
 
 Los intervalos no bastan para restringir valores enumerados, escalonados o nominales. Además, la forma de colección de un valor calculado debe poder expresarse e inferirse igual que en un valor almacenado.
@@ -54,6 +56,8 @@ numbers := a * b, d, c / a
 ```
 
 Su tipo común y cardinalidad se infieren. La aridad es cardinalidad exacta para colecciones con multiplicidad ordinaria; bajo `unique` solo lo es cuando la distinción de elementos puede demostrarse. Una colección incluida como elemento no se aplana implícitamente.
+
+Una selección `value in source: predicate` y `take amount from source` también producen valores derivados de colección. Conservan los contratos demostrables de su fuente y permiten que la forma derivada declare un dominio o cardinalidad más precisa como obligación independiente.
 
 ## Diagnósticos de conversión
 

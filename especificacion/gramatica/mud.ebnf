@@ -581,7 +581,9 @@ assignment-effect
     ::= assignable-expression , assignment-operator , value-expression ;
 
 assignment-operator
-    ::= "=" | "+=" | "-=" | "*=" | "/=" ;
+    ::= "=" | "+=" | "-=" | "*=" | "/="
+      | "|=" | "&=" | "^=" | "--="
+      ;
 
 add-effect
     ::= "add" , expression , "to" , assignable-expression
@@ -724,11 +726,11 @@ arithmetic-continuation
     ::= arithmetic-operator , arithmetic-expression ;
 
 arithmetic-operator
-    ::= "+" | "-" | "*" | "/" | "%" ;
+    ::= "+" | "-" | "--" | "*" | "/" | "%" ;
 
 arithmetic-expression
     ::= multiplicative-expression
-        , { ( "+" | "-" ) , multiplicative-expression }
+        , { ( "+" | "-" | "--" ) , multiplicative-expression }
         ;
 
 multiplicative-expression
@@ -771,6 +773,8 @@ receiver-entry
 
 primary-expression
     ::= literal
+      | take-expression
+      | selection-expression
       | qualified-name
       | structural-literal
       | collection-literal
@@ -781,6 +785,14 @@ primary-expression
       | random-expression
       | "(" , expression , ")"
       ;
+
+take-expression
+    ::= "take" , expression , "from" , expression ;
+
+selection-expression
+    ::= iteration-binding , "in" , expression
+        , ":" , boolean-expression
+        ;
 
 point-component-expression
     ::= unit-expression , "from" , unit-expression

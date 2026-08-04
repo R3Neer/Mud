@@ -14,6 +14,7 @@ affects:
 # ADR-039 — Colecciones y diccionarios
 
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
+- Modificada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 - Amplía: D-019, D-026, D-033
 - Preguntas relacionadas: Q-006, Q-047
 - Documentos afectados: futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`
@@ -66,8 +67,8 @@ Los operadores conjuntistas se aplican también a colecciones compatibles:
 | --- | --- |
 | Unión | `A | B` |
 | Intersección | `A & B` |
-| Diferencia | `A - B` |
-| Diferencia simétrica | `A ^ B` |
+| Diferencia | `A -- B` |
+| Diferencia simétrica de conjuntos `unique` | `A ^ B` |
 
 Dos operandos son compatibles cuando poseen el mismo tipo efectivo de miembro. Los refinamientos de dominio y los modificadores de colección pueden diferir y se combinan conforme a las reglas siguientes; no se introducen conversiones implícitas entre tipos distintos.
 
@@ -77,12 +78,13 @@ $$
 \begin{aligned}
 \mu_{A\mid B}(v) &= \max(\mu_A(v),\mu_B(v)),\\
 \mu_{A\mathbin{\&}B}(v) &= \min(\mu_A(v),\mu_B(v)),\\
-\mu_{A-B}(v) &= \max(\mu_A(v)-\mu_B(v),0),\\
-\mu_{A\mathbin{\triangle}B}(v) &= |\mu_A(v)-\mu_B(v)|.
+\mu_{A\mathbin{--}B}(v) &= \max(\mu_A(v)-\mu_B(v),0).
 \end{aligned}
 $$
 
-Por tanto, la unión es idempotente incluso sin `unique`: `A | A == A`. No es concatenación ni suma de bolsas. Si ambos operandos son `unique`, estas definiciones coinciden con la unión, intersección, diferencia y diferencia simétrica ordinarias de conjuntos.
+Por tanto, la unión es idempotente incluso sin `unique`: `A | A == A`. No es concatenación ni suma de bolsas. Si ambos operandos son `unique`, estas definiciones coinciden con la unión, intersección y diferencia ordinarias de conjuntos.
+
+`^` exige que ambos operandos sean `unique` y aplica la diferencia simétrica ordinaria. No se define mediante diferencia absoluta de multiplicidades porque esa operación no es asociativa. La forma binaria equivalente sobre multiconjuntos se escribe `(A -- B) | (B -- A)`.
 
 #### Cardinalidad y dominio inferidos
 
@@ -92,8 +94,8 @@ Sean $[a..b]$ y $[c..d]$ las cardinalidades estáticas de $A$ y $B$. Sin informa
 | --- | --- |
 | `A | B` | $[\max(a,c)..b+d]$ |
 | `A & B` | $[0..\min(b,d)]$ |
-| `A - B` | $[\max(0,a-d)..b]$ |
-| `A ^ B` | $[\max(0,a-d,c-b)..b+d]$ |
+| `A -- B` | $[\max(0,a-d)..b]$ |
+| `A ^ B` (`unique`) | $[\max(0,a-d,c-b)..b+d]$ |
 
 La aritmética de límites conserva `*` como límite superior efectivo. El análisis debe estrechar estos intervalos cuando pueda demostrar disjunción, inclusión, igualdad, un dominio finito o cualquier otra restricción relevante.
 
@@ -103,8 +105,8 @@ Si $D_A$ y $D_B$ son los dominios semánticos de los miembros:
 | --- | --- |
 | `A | B` | $D_A\cup D_B$ |
 | `A & B` | $D_A\cap D_B$ |
-| `A - B` | $D_A$ |
-| `A ^ B` | $D_A\cup D_B$ |
+| `A -- B` | $D_A$ |
+| `A ^ B` (`unique`) | $D_A\cup D_B$ |
 
 El IR conserva el dominio resultante aunque su forma más precisa no posea una escritura superficial abreviada.
 
@@ -116,19 +118,19 @@ Para cada modificador $m$ de `unique`, `ordered` o capacidad interior `mut`, su 
 | --- | --- |
 | `A | B` | $m(A)\land m(B)$ |
 | `A & B` | $m(A)\lor m(B)$ |
-| `A - B` | $m(A)$ |
-| `A ^ B` | $m(A)\land m(B)$ |
+| `A -- B` | $m(A)$ |
+| `A ^ B` | $m(A)\land m(B)$; `unique` está garantizado |
 
-Para `unique`, la tabla se deduce directamente de las multiplicidades: la intersección es única si cualquiera de los operandos limita cada multiplicidad a uno, mientras que unión y diferencia simétrica necesitan esa garantía en ambos lados.
+Para `unique`, la tabla se deduce directamente de las multiplicidades: la intersección es única si cualquiera de los operandos limita cada multiplicidad a uno y la unión necesita esa garantía en ambos lados. La diferencia simétrica ya exige `unique` en sus operandos.
 
-Para `mut`, la tabla se refiere exclusivamente a la capacidad interior sobre miembros, nunca a la mutabilidad exterior de un campo almacenado. Una unión o diferencia simétrica mixta podría contener un miembro alcanzado únicamente desde el operando sin capacidad; una intersección, en cambio, solo contiene miembros que también son alcanzables desde el operando con capacidad. Una diferencia solo conserva miembros del operando izquierdo. Un campo calculado no adquiere mutabilidad exterior.
+Para `mut`, la tabla se refiere exclusivamente a la capacidad interior sobre miembros, nunca a la mutabilidad exterior de un campo almacenado. Una unión o diferencia simétrica mixta podría contener un miembro alcanzado únicamente desde el operando sin capacidad; una intersección, en cambio, solo contiene miembros que también son alcanzables desde el operando con capacidad. Una diferencia `--` solo conserva miembros del operando izquierdo. Un campo calculado no adquiere mutabilidad exterior.
 
-Para `ordered`, si solo la intersección conserva orden se filtra el operando ordenado; la diferencia filtra el operando izquierdo. Unión y diferencia simétrica mixtas son no ordenadas porque pueden incorporar miembros exclusivos del operando no ordenado.
+Para `ordered`, si solo la intersección conserva orden se filtra el operando ordenado; la diferencia `--` filtra el operando izquierdo. Unión y diferencia simétrica mixtas son no ordenadas porque pueden incorporar miembros exclusivos del operando no ordenado.
 
 Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden por tipo o por una misma ruta `ordered by` normaliza el resultado con ese criterio y preserva inserción entre empates. Para orden de inserción, el resultado es estable respecto del operando izquierdo:
 
 - La unión recorre primero $A$ y añade después, en el orden de $B$, solo las ocurrencias adicionales necesarias para alcanzar cada multiplicidad máxima.
-- La intersección y la diferencia filtran $A$ sin reordenarlo.
+- La intersección y la diferencia `--` filtran $A$ sin reordenarlo.
 - La diferencia simétrica conserva primero las ocurrencias excedentes de $A$ y después las de $B$.
 
 En consecuencia, para colecciones ordenadas por inserción, las operaciones conmutativas conservan el mismo multiconjunto al intercambiar operandos, pero pueden producir secuencias observables distintas. La igualdad ordenada continúa comparando la secuencia completa.
@@ -209,8 +211,8 @@ La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su pre
 4. Lectura, escritura y retirada de clave ausente.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.
-7. Multiplicidades de las cuatro operaciones conjuntistas.
+7. Multiplicidades de unión, intersección y diferencia; rechazo de `^` sin `unique`.
 8. Inferencia conservadora y estrechada de cardinalidad y dominio.
-9. Propagación de `unique`, `ordered` y capacidad interior `mut` en las cuatro operaciones.
+9. Propagación de `unique`, `ordered` y capacidad interior `mut` en las cuatro operaciones admitidas.
 10. Orden canónico y orden estable por inserción, incluida la posible diferencia secuencial al intercambiar operandos.
 11. Ausencia de mutabilidad exterior en resultados calculados.

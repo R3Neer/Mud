@@ -15,6 +15,7 @@ affects:
 # ADR-047 — Cuantificadores e iteración finita
 
 - Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
+- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 
 - Preguntas relacionadas: Q-018, Q-028, Q-029
 - Documentos afectados: expresiones, intervalos, iteración
@@ -37,6 +38,14 @@ max x in source: expression
 ```
 
 La fuente debe ser finita y enumerable. La evaluación es pura; `min` y `max` sobre una fuente vacía producen el error definido para agregación vacía, no un valor inventado.
+
+D-081 añade una selección pura que devuelve los testigos en lugar de consumirlos:
+
+```mud
+item in source: predicate
+```
+
+Comparte la obligación de finitud y enumerabilidad, pero produce la subcolección aceptada y puede alimentar después un cuantificador, `take` u otra expresión.
 
 `for each` aparece dentro de un `then`:
 

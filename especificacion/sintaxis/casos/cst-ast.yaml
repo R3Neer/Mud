@@ -580,3 +580,61 @@ cases:
     cst_root: MudFileSyntax
     expected_diagnostics: [unexpected-leading-operator-after-terminator]
     produces_ast: false
+
+  - id: collection-difference-distinct-from-subtraction
+    category: expression
+    source: |
+      thing Difference {
+          removed := left -- right
+          numeric := singletonLeft - singletonRight
+      }
+    cst_root: MudFileSyntax
+    ast: BinaryExpr(left, CollectionDifference, right); BinaryExpr(singletonLeft, Subtract, singletonRight)
+    produces_ast: true
+
+  - id: compound-collection-updates
+    category: effect
+    source: |
+      action Update for mut target: Item [* unique] {
+          then {
+              target |= added
+              target &= allowedItems
+              target ^= toggled
+              target --= removed
+          }
+      }
+    cst_root: MudFileSyntax
+    ast: AssignmentEffect(UnionAssign); AssignmentEffect(IntersectionAssign); AssignmentEffect(SymmetricDifferenceAssign); AssignmentEffect(DifferenceAssign)
+    produces_ast: true
+
+  - id: take-after-filter
+    category: expression
+    source: |
+      thing Ranking {
+          chosen := take n from player in players: player.score == 2
+      }
+    cst_root: MudFileSyntax
+    ast: TakeExpr(n, SelectionExpr(player, players, BinaryExpr(...)))
+    normalizations: [take-source-contains-selection]
+    produces_ast: true
+
+  - id: filter-after-take
+    category: expression
+    source: |
+      thing Ranking {
+          chosen := player in take m from players: player.score == 2
+      }
+    cst_root: MudFileSyntax
+    ast: SelectionExpr(player, TakeExpr(m, players), BinaryExpr(...))
+    normalizations: [selection-source-contains-take]
+    produces_ast: true
+
+  - id: ordered-positional-slice
+    category: expression
+    source: |
+      thing Ranking {
+          chosen := players[1..n]
+      }
+    cst_root: MudFileSyntax
+    ast: IndexExpr(players, IntervalValueExpr(1..n))
+    produces_ast: true

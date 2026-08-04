@@ -23,6 +23,8 @@ decisions:
   - D-069
   - D-076
   - D-070
+  - D-080
+  - D-081
 ---
 
 # 06. Estructura léxica
@@ -75,7 +77,7 @@ thing as alias family magnitude
 rule action look message test
 for on given when changes if then after with otherwise
 mut unique ordered
-create destroy add to remove from each by
+create destroy add to remove from each by take
 eventually through allowed old
 is in
 not and or xor
@@ -85,7 +87,9 @@ Text Char Bool Thing Nat Int Num Rum Money
 Rand
 ```
 
-Los terminales `&`, `|`, `^`, `=>` y `<=>` no son palabras. `!` aislado no pertenece al léxico; `!=` continúa siendo un token indivisible de desigualdad y no se interpreta como la composición de negación y asignación.
+Los terminales `&`, `|`, `^`, `--`, `=>` y `<=>` no son palabras. También son tokens indivisibles `|=`, `&=`, `^=` y `--=`. `!` aislado no pertenece al léxico; `!=` continúa siendo un token indivisible de desigualdad y no se interpreta como la composición de negación y asignación.
+
+El scanner aplica coincidencia más larga: `a--b` contiene el operador `--`, mientras que `a - -b` contiene resta y negación separadas. La forma parentizada `a - (-b)` es equivalente a esta última.
 
 Son contextuales:
 

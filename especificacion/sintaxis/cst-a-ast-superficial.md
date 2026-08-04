@@ -422,6 +422,10 @@ El operador concreto se convierte a:
 - `SubtractAssign`.
 - `MultiplyAssign`.
 - `DivideAssign`.
+- `UnionAssign`.
+- `IntersectionAssign`.
+- `SymmetricDifferenceAssign`.
+- `DifferenceAssign`.
 
 ### `add`
 
@@ -459,10 +463,27 @@ Se conservan enums distintos:
 | `|` | `SymbolOr` |
 | `xor` | `WordXor` |
 | `^` | `SymbolXor` |
+| `--` | `CollectionDifference` |
 
 ### `changes`
 
 La presencia del sufijo produce `ChangesExpr(operand)`.
+
+### Selección y `take`
+
+`binding in source: predicate` produce `SelectionExpr(binding, source, predicate)`. La vinculación simple o de diccionario reutiliza respectivamente `ValueIterationBinding` o `DictionaryIterationBinding`; su alcance queda limitado al predicado.
+
+`take amount from source` produce `TakeExpr(amount, source)`. La forma del nodo no decide si la selección será un prefijo ordenado o una muestra reproducible: esa distinción depende del tipo y del orden resueltos de `source`.
+
+Ambas construcciones contienen expresiones completas. Por tanto, la composición se conserva por anidamiento explícito del AST:
+
+```text
+take n from player in players: player.score == 2
+→ TakeExpr(n, SelectionExpr(player, players, ...))
+
+player in take m from players: player.score == 2
+→ SelectionExpr(player, TakeExpr(m, players), ...)
+```
 
 ### Conversiones
 

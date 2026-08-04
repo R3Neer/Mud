@@ -16,6 +16,7 @@ affects:
 # ADR-048 — Azar reproducible y fallos
 
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 - Preguntas relacionadas: Q-007, Q-032, Q-035, Q-058
 - Documentos afectados: expresiones, efectos, runtime, diagnósticos
 
@@ -25,13 +26,15 @@ MUD admite azar, pero no permite que este o los errores introduzcan resultados d
 
 ## Decisión
 
-MUD 1.0 expone una única forma sintáctica de muestreo:
+MUD 1.0 expone una forma explícitamente aleatoria de muestreo:
 
 ```mud
 Rand(source)
 ```
 
 La fuente debe ser una colección o dominio muestreable. No existen todavía argumentos de pesos, distribuciones ni política local.
+
+D-081 añade `take amount from source`. Sobre una fuente sin orden observable y con más ocurrencias que `amount`, `take` es un punto aleatorio reproducible aunque no escriba `Rand`: selecciona uniformemente y sin reemplazo. Posee la misma identidad, caché por instantánea y restricciones contextuales. Sobre una fuente ordenada, o cuando no existe elección real, `take` es determinista y no consume azar.
 
 `Rand` puede intervenir de tres formas:
 
@@ -63,4 +66,4 @@ Los límites de recursos y defectos internos de una implementación no deben con
 3. Prohibición en condiciones y filtros.
 4. Aislamiento del azar especulativo.
 5. Rollback y propagación de fallos.
-6. Aceptación exclusiva de `Rand(source)` y rechazo de firmas adicionales.
+6. Aceptación de `Rand(source)`, rechazo de firmas adicionales y clasificación contextual de `take` ordenado o estocástico.

@@ -166,7 +166,7 @@ keyword-word
       | "if" | "then" | "after" | "with" | "otherwise"
       | "mut" | "unique" | "ordered"
       | "create" | "destroy" | "add" | "remove" | "from"
-      | "each" | "by" | "through"
+      | "each" | "by" | "through" | "take"
       | "exists" | "forall" | "count" | "sum" | "min" | "max"
       ;
 
@@ -234,11 +234,12 @@ operator-token
       ;
 
 three-character-token
-    ::= "<=>" ;
+    ::= "<=>" | "--=" ;
 
 two-character-token
     ::= ":=" | "->" | ".." | "==" | "!=" | "<=" | ">="
       | "=>" | "+=" | "-=" | "*=" | "/="
+      | "|=" | "&=" | "^=" | "--"
       ;
 
 one-character-operator

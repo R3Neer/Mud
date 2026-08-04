@@ -31,12 +31,15 @@ synthetic_token_origins:
 fixed_tokens:
 - spelling: '%'
 - spelling: '&'
+- spelling: '&='
 - spelling: (
 - spelling: )
 - spelling: '*'
 - spelling: +
 - spelling: ','
 - spelling: '-'
+- spelling: --
+- spelling: --=
 - spelling: .
 - spelling: /
 - spelling: ':'
@@ -46,8 +49,10 @@ fixed_tokens:
 - spelling: '['
 - spelling: ']'
 - spelling: ^
+- spelling: ^=
 - spelling: '{'
 - spelling: '|'
+- spelling: '|='
 - spelling: '}'
 - spelling: '!='
 - spelling: '*='
@@ -79,6 +84,7 @@ fixed_tokens:
 - spelling: not
 - spelling: old
 - spelling: sum
+- spelling: take
 - spelling: xor
 - spelling: Rand
 - spelling: each
@@ -347,7 +353,7 @@ lexical_forms:
     - builtin-word
     - constant-word
   keyword-word:
-    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\"\n      | \"exists\" | \"forall\" | \"count\" | \"sum\" | \"min\" | \"max\""
+    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"sum\" | \"min\" | \"max\""
     references: []
   operator-word:
     rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
@@ -395,10 +401,10 @@ lexical_forms:
     - two-character-token
     - one-character-operator
   three-character-token:
-    rhs: '"<=>"'
+    rhs: '"<=>" | "--="'
     references: []
   two-character-token:
-    rhs: "\":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\""
+    rhs: "\":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
     references: []
   one-character-operator:
     rhs: "\"=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"\n      | \"<\" | \">\" | \"&\" | \"|\" | \"^\""
@@ -1229,7 +1235,7 @@ syntax_nodes:
     - value
   assignment-operator:
     kind: AssignmentOperatorSyntax
-    rhs: '"=" | "+=" | "-=" | "*=" | "/="'
+    rhs: '"=" | "+=" | "-=" | "*=" | "/=" | "|=" | "&=" | "^=" | "--="'
     references: []
   add-effect:
     kind: AddEffectSyntax
@@ -1445,11 +1451,11 @@ syntax_nodes:
     - arithmetic-expression
   arithmetic-operator:
     kind: ArithmeticOperatorSyntax
-    rhs: '"+" | "-" | "*" | "/" | "%"'
+    rhs: '"+" | "-" | "--" | "*" | "/" | "%"'
     references: []
   arithmetic-expression:
     kind: ArithmeticExpressionSyntax
-    rhs: "multiplicative-expression\n        , { ( \"+\" | \"-\" ) , multiplicative-expression }"
+    rhs: "multiplicative-expression\n        , { ( \"+\" | \"-\" | \"--\" ) , multiplicative-expression }"
     references:
     - multiplicative-expression
   multiplicative-expression:
@@ -1512,9 +1518,11 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: "literal\n      | qualified-name\n      | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n      | point-component-expression\n      | quantifier-expression\n      | random-expression\n      | \"(\" , expression , \")\""
+    rhs: "literal\n      | take-expression\n      | selection-expression\n      | qualified-name\n      | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n      | point-component-expression\n      | quantifier-expression\n      | random-expression\n      | \"(\" , expression , \")\""
     references:
     - literal
+    - take-expression
+    - selection-expression
     - qualified-name
     - structural-literal
     - collection-literal
@@ -1524,6 +1532,25 @@ syntax_nodes:
     - quantifier-expression
     - random-expression
     - expression
+  take-expression:
+    kind: TakeExpressionSyntax
+    rhs: '"take" , expression , "from" , expression'
+    references:
+    - expression
+    field_model:
+    - amount
+    - source
+  selection-expression:
+    kind: SelectionExpressionSyntax
+    rhs: 'iteration-binding , "in" , expression , ":" , boolean-expression'
+    references:
+    - iteration-binding
+    - expression
+    - boolean-expression
+    field_model:
+    - binding
+    - source
+    - predicate
   point-component-expression:
     kind: PointComponentExpressionSyntax
     rhs: "unit-expression , \"from\" , unit-expression\n        , \"in\" , postfix-expression"

@@ -387,12 +387,14 @@ Define:
 - Colecciones ordenadas y no ordenadas.
 - Orden natural, de inserción y semántico; orden Unicode fijo para `Char`.
 - `ordered by` sobre una ruta estable con resultado totalmente ordenado y empates por orden de inserción.
-- Álgebra de multiconjuntos mediante unión, intersección, diferencia y diferencia simétrica.
+- Álgebra de multiconjuntos mediante unión, intersección y diferencia `--`; diferencia simétrica `^` reservada a colecciones `unique`.
+- Aritmética elevada cuando al menos un operando es opcional o unitario, con `empty` absorbente.
+- Filtrado puro, `take` ordenado o reproduciblemente aleatorio e indexación posicional exclusiva de colecciones ordenadas.
 - Inferencia de cardinalidad y dominio y propagación de `unique`, `ordered` y capacidad interior `mut`.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
 
-Bases normativas migradas: [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]].
+Bases normativas migradas: [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]], [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]], [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]].
 
 ## 16. Diccionarios
 
