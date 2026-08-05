@@ -118,9 +118,9 @@ Las categorías de primer nivel son:
 ## `thing`
 
 ```mud
-thing World {}
+thing World
 
-abstract thing Place {}
+abstract thing Place
 
 thing Alexandria as City, Place {
     name = "Alejandría"
