@@ -41,6 +41,11 @@ La promoción desde material didáctico hasta norma se rige por `gobierno/CICLO-
 
 La especificación no debe contener ejercicios, pistas ni referencias al proceso personal de aprendizaje. Cuando el autor indique que una parte está revisada, se debe realizar la pasada de publicación antes de marcarla vigente.
 
+## Patches descargables
+
+Cuando el usuario solicite expresamente un patch descargable, o cuando el entorno no permita modificar directamente el repositorio y los cambios deban ser aplicados localmente por el usuario, debe leerse y seguirse `gobierno/USO-DE-REPO-PATCHER.md`.
+
+Esta regla no se aplica cuando el agente puede editar directamente el repositorio mediante Codex, un checkout escribible, GitHub, una rama o una pull request.
 ## Preguntas
 
 La apertura, actualización, división y cierre de preguntas se rige por `gobierno/POLITICA-DE-PREGUNTAS.md`.
