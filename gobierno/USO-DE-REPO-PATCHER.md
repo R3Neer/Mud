@@ -6,612 +6,973 @@ scope: "Entrega de patches descargables"
 repo-patcher-min-version: "0.1.0"  
 package-format: 1
 ---
+# Guía técnica autoritativa de paquetes para `repo-patcher` 0.1.0
 
-# Uso de `repo-patcher`
+> Alcance: esta guía describe **la implementación real de `repo-patcher` 0.1.0** contenida en el wheel `repo_patcher-0.1.0-py3-none-any.whl`. No describe una API deseada ni una versión futura.
+>
+> Convención de citas: `archivo:Lx-Ly` se refiere a las líneas del código fuente distribuido con la versión 0.1.0.
 
-## Propósito
+## 1. Versión exacta analizada
 
-`repo-patcher` es la herramienta utilizada para entregar cambios descargables que otra persona aplicará sobre una copia local de este repositorio.
+La versión analizada es **`0.1.0`**:
 
-Su función es separar:
+- `pyproject.toml:L5-L13` declara el proyecto `repo-patcher`, versión `0.1.0`, Python `>=3.11` y dependencia `PyYAML>=6.0`.
+- `src/repo_patcher/__init__.py:L1-L3` define `__version__ = "0.1.0"`.
+- `pyproject.toml:L26-L27` registra el comando `repo-patcher = repo_patcher.cli:main`.
 
-- el motor estable que aplica cambios de forma transaccional;
-    
-- el paquete concreto que describe una modificación del repositorio.
-    
+La API descrita aquí se verificó también por introspección directa del wheel instalado.
 
-El motor `repo-patcher` no contiene decisiones específicas de MUD. Cada cambio se entrega como un paquete independiente con su manifiesto, operaciones, archivos y, cuando sea necesario, un plugin Python.
+## 2. Modelo real de un paquete
 
-## Cuándo se aplica este documento
+Un paquete es:
 
-Este documento se aplica únicamente en alguno de estos casos:
+- un **directorio** que contiene `patch.yaml` directamente; o
+- un **ZIP** que contiene `patch.yaml` en su raíz, **o** exactamente dentro de un único directorio de primer nivel.
 
-1. El usuario solicita expresamente un patch descargable.
-2. El entorno permite leer el repositorio, pero no modificarlo directamente.
-3. El agente no puede crear una rama, realizar commits o abrir una pull request y debe entregar los cambios para que el usuario los aplique localmente.
-4. El resultado solicitado es un paquete reproducible y revisable que pueda aplicarse posteriormente.
-
-Este documento no se aplica cuando el agente puede trabajar directamente sobre el repositorio mediante:
-
-- Codex;
-- un checkout local con permisos de escritura;
-- el conector de GitHub con capacidad de modificación;
-- una rama de trabajo;
-- commits;
-- una pull request;
-- cualquier otro flujo directo autorizado por el usuario.
-
-Cuando sea posible modificar directamente el repositorio, debe emplearse el flujo normal indicado por `AGENTS.md` y por las políticas de gobierno correspondientes.
-
-## Principio general
-
-Cuando este documento sea aplicable, la entrega normal debe ser un paquete compatible con `repo-patcher`.
-
-No debe entregarse un script Python monolítico que reproduzca por sí mismo toda la infraestructura de comprobación, escritura, validación y rollback, salvo que exista una limitación técnica concreta y documentada que impida utilizar `repo-patcher`.
-
-El motor general no debe copiarse ni modificarse dentro de cada paquete. Los cambios específicos pertenecen al paquete del patch.
-
-## Lecturas obligatorias antes de preparar un patch
-
-Antes de diseñar el paquete, el agente debe:
-
-1. Leer el `AGENTS.md` aplicable a la raíz y a cada subdirectorio afectado.
-2. Leer las políticas y documentos enlazados desde `AGENTS.md`.
-3. Inspeccionar el estado actual del repositorio.
-4. Identificar la rama y revisión exactas utilizadas como base.
-5. Revisar los generadores y validadores disponibles.
-6. Localizar los archivos derivados que no deben editarse manualmente.
-7. Determinar qué decisiones anteriores quedan modificadas, ampliadas o sustituidas.
-8. Comprobar que el cambio solicitado está suficientemente definido.
-
-No debe asumirse que el repositorio conserva el estado observado en una conversación anterior.
-
-## Flujo de trabajo del agente
-
-### 1. Inspección
-
-El agente debe identificar:
-
-- la raíz del repositorio;
-- el remoto esperado;
-- el commit base;
-- los archivos afectados;
-- los archivos generados;
-- los validadores obligatorios;
-- las dependencias necesarias;
-- las posibles divergencias con el estado actual.
-
-### 2. Diseño del cambio
-
-El agente debe separar:
-
-- cambios normativos;
-- cambios editoriales;
-- cambios mecánicos;
-- artefactos generados;
-- pruebas y casos de cobertura;
-- operaciones de regeneración;
-- validaciones posteriores.
-
-Cuando el repositorio mantenga trazabilidad mediante ADR, índices, manifiestos o referencias recíprocas, el patch debe conservarla.
-
-### 3. Construcción del paquete
-
-El paquete debe contener como mínimo:
+El cargador admite estas dos formas ZIP:
 
 ```text
-patch-id/
+patch.zip
 ├── patch.yaml
-├── README.md
+├── transform.py
 └── files/
 ```
-
-Puede contener además:
 
 ```text
-patch-id/
-├── transform.py
-├── operations.yaml
-├── checks.yaml
-└── files/
+patch.zip
+└── mi-patch/
+    ├── patch.yaml
+    ├── transform.py
+    └── files/
 ```
 
-La estructura exacta depende de las necesidades del cambio, pero `patch.yaml` es obligatorio.
+En un directorio pasado directamente al programa, `patch.yaml` sí debe estar en la raíz de ese directorio. Para ZIP, `_manifest_root()` busca primero `patch.yaml` directo y, si no existe, exactamente un patrón `*/patch.yaml`. Cero candidatos o más de uno son error. El extractor rechaza rutas que escapen del directorio temporal. Fuentes: `src/repo_patcher/patch_source.py:L13-L33`, `src/repo_patcher/patch_source.py:L36-L54`.
 
-### 4. Comprobación previa
+No existe ningún significado especial para el nombre `files/`: es una convención. Cualquier archivo incluido dentro del paquete puede usarse como fuente si su ruta no escapa del paquete.
 
-Antes de entregar el paquete deben ejecutarse, cuando el entorno lo permita:
+## 3. Esquema completo y real de `patch.yaml`
 
-```powershell
-repo-patcher explain ".\patch.zip"
-repo-patcher check ".\patch.zip" --repo "D:\Ruta\Al\Repositorio"
-```
+### 3.1. Nivel raíz
 
-`check` no debe modificar archivos.
+| Campo | Obligatorio | Tipo admitido | Valor por defecto | Uso real |
+|---|---:|---|---|---|
+| `schema` | No | valor igual a entero `1` | `1` | Cualquier otro valor produce error. |
+| `id` | Sí | `str` no vacío tras `strip()` | — | Identificador del patch y parte del nombre interno del módulo plugin. |
+| `version` | No | `str`, `int` o `float` | `"1"` | Se convierte a `str`. |
+| `title` | Sí | `str` no vacío tras `strip()` | — | Título humano. |
+| `description` | No | `str` | `""` | Descripción humana. |
+| `repository` | No | mapa YAML | `{}` | Restricciones de nombre/remoto. |
+| `compatibility` | No | mapa YAML | `{}` | Restricciones Git y de archivos. |
+| `plugin` | No | mapa YAML o `null` | `null` | Plugin Python. |
+| `operations` | Condicional | lista de mapas | `[]` | Debe haber `operations`, `plugin`, o ambos. |
+| `generators` | No | lista de especificaciones de comando | `[]` | Se ejecutan tras escribir los cambios. |
+| `validators` | No | lista de especificaciones de comando | `[]` | Se ejecutan después de los generadores. |
 
-### 5. Aplicación de prueba
+La validación y construcción del objeto `Manifest` están en `src/repo_patcher/manifest.py:L54-L132`. El requisito «plugin u operations» está en `manifest.py:L113-L117`.
 
-El paquete debe probarse sobre una copia limpia y compatible del repositorio:
+**Campos raíz desconocidos:** la implementación no los rechaza; simplemente los ignora, porque solo consulta las claves anteriores. Esto no significa que deban usarse: un error tipográfico puede quedar silenciosamente ignorado. Fuente: `manifest.py:L62-L132`.
 
-```powershell
-repo-patcher apply ".\patch.zip" `
-    --repo "D:\Ruta\Al\Repositorio" `
-    --emit-diff ".\resultado.patch"
-```
-
-### 6. Verificación
-
-Deben comprobarse:
-
-- el estado final del repositorio;
-- los validadores propios del proyecto;
-- `git diff --check`;
-- el diff completo;
-- los archivos nuevos;
-- los archivos eliminados;
-- los artefactos regenerados;
-- la detección de una aplicación previa;
-- la idempotencia cuando proceda;
-- el rollback ante un fallo inyectado.
-
-### 7. Entrega
-
-La entrega debe indicar:
-
-- el identificador y versión del patch;
-- la revisión o condiciones de compatibilidad;
-- el alcance;
-- los archivos afectados;
-- los validadores ejecutados;
-- las limitaciones conocidas;
-- los comandos PowerShell exactos para aplicarlo;
-- cómo revisar el resultado;
-- qué hacer si el preflight falla.
-
-No debe afirmarse que una validación se ha ejecutado si el entorno no permitió realizarla.
-
-## Manifiesto `patch.yaml`
-
-El manifiesto identifica el patch y declara sus condiciones de aplicación.
-
-Ejemplo orientativo:
+### 3.2. `repository`
 
 ```yaml
-format_version: 1
-
-patch:
-  id: mud-d085
-  version: 2
-  title: Diccionarios decisionales y metadatos
-  description: >
-    Actualiza la especificación, gramática y modelos sintácticos para
-    incorporar las decisiones de D-085.
-
 repository:
-  expected_name: Mud
-  expected_remote: github.com/R3Neer/Mud
+  names: [Mud, mud]
+  remotes:
+    - github.com/R3Neer/Mud
+```
 
+Campos admitidos:
+
+| Campo | Alias | Tipo | Semántica |
+|---|---|---|---|
+| `names` | `name` | texto o lista de textos | El nombre de la carpeta raíz de la repo, comparado sin distinguir mayúsculas. |
+| `remotes` | `remote` | texto o lista de textos | Valores admitidos para `origin`, normalizados. |
+
+La elección se hace con `repo_raw.get("names") or repo_raw.get("name")`, y de modo equivalente para remotos. Una lista vacía en la forma plural puede hacer que se consulte el alias singular. Fuente: `src/repo_patcher/manifest.py:L81-L85`.
+
+La comparación real está en `src/repo_patcher/gitops.py:L81-L94`. La normalización elimina `.git`, traduce `git@host:ruta` a `host/ruta`, elimina el esquema y pasa a minúsculas (`gitops.py:L66-L73`).
+
+Válido:
+
+```yaml
+repository:
+  name: Mud
+  remote: https://github.com/R3Neer/Mud.git
+```
+
+También válido:
+
+```yaml
+repository:
+  names: Mud
+  remotes: [github.com/R3Neer/Mud]
+```
+
+Inválido:
+
+```yaml
+repository:
+  names: 42
+```
+
+Produce `ManifestError`: debe ser texto o lista de textos (`manifest.py:L20-L27`).
+
+### 3.3. `compatibility`
+
+```yaml
 compatibility:
-  required_ancestor: 82e79f5af90f4d19037d234d7fc96ed4ecd4bdd7
-  require_clean_worktree: true
-
-requirements:
-  files:
+  clean_worktree: true
+  exact_heads:
+    - abcdef0123456789
+  required_ancestor: 0123456789abcdef
+  required_files:
     - AGENTS.md
-    - especificacion/gramatica/mud.ebnf
-    - tooling/decisions/manage_decisions.py
+```
 
+| Campo | Alias | Tipo | Predeterminado | Semántica |
+|---|---|---|---|---|
+| `clean_worktree` | — | `bool` | `true` | Solo se exige cuando el comando llama a compatibilidad con `require_clean=True`; actualmente, solo `apply`. |
+| `exact_heads` | `exact_head` | texto o lista de textos | vacío | El SHA devuelto por `git rev-parse HEAD` debe coincidir literalmente con uno. |
+| `required_ancestor` | — | texto o `null` | `null` | Se comprueba con `git merge-base --is-ancestor SHA HEAD`. |
+| `required_files` | — | texto o lista de textos | vacío | Cada ruta debe existir bajo la repo. No se impide `..` aquí. |
+
+Fuentes: `src/repo_patcher/manifest.py:L87-L99`; comprobación: `src/repo_patcher/gitops.py:L96-L123`.
+
+`exact_heads` y `required_ancestor` se comprueban ambos si se declaran ambos.
+
+Importante: `explain` y `check` llaman a `build_plan(..., require_clean=False)`, por lo que **no exigen árbol limpio**, aunque `clean_worktree: true`. `apply` sí lo exige. Fuente: `src/repo_patcher/cli.py:L172-L173` y `gitops.py:L115-L123`.
+
+Inválido:
+
+```yaml
+compatibility:
+  clean_worktree: "true"
+```
+
+Debe ser booleano YAML real (`manifest.py:L87-L90`).
+
+### 3.4. `plugin`
+
+```yaml
 plugin:
   file: transform.py
   entrypoint: apply
-
-generators:
-  - command:
-      - python
-      - tooling/decisions/manage_decisions.py
-      - generate
-
-validators:
-  - command:
-      - python
-      - tooling/decisions/manage_decisions.py
-      - validate
-
-  - command:
-      - python
-      - especificacion/gramatica/validate_grammar.py
-
-  - command:
-      - python
-      - especificacion/sintaxis/validate_syntax_model.py
-
-  - command:
-      - git
-      - diff
-      - --check
 ```
 
-El manifiesto real debe ajustarse al esquema admitido por la versión instalada de `repo-patcher`. Este ejemplo expresa el contrato conceptual y no autoriza a inventar campos no soportados.
+| Campo | Obligatorio | Tipo | Predeterminado |
+|---|---:|---|---|
+| `file` | Sí si existe `plugin` | `str` no vacío | — |
+| `entrypoint` | No | `str` no vacío | `"apply"` |
 
-## Compatibilidad
+Fuentes: `src/repo_patcher/manifest.py:L101-L111`.
 
-La compatibilidad no debe reducirse innecesariamente a un único `HEAD` exacto cuando el patch pueda comprobarse de forma más flexible.
+La ruta debe resolver dentro del paquete y existir como archivo (`src/repo_patcher/plugin.py:L14-L24`).
 
-Puede declararse mediante:
+### 3.5. `operations`
 
-- commit base exacto;
-- ancestro obligatorio;
-- uno de varios commits compatibles;
-- remoto esperado;
-- archivos requeridos;
-- hashes o fragmentos concretos;
-- ausencia o presencia de determinadas construcciones;
-- versión mínima de una herramienta;
-- estado limpio del árbol de trabajo.
+Debe ser una lista cuyos elementos sean mapas. Cada mapa debe contener **exactamente una** operación, y su payload debe ser otro mapa. Fuentes: `manifest.py:L113-L117`, `src/repo_patcher/operations.py:L10-L16`.
 
-La estrategia debe ser conservadora.
+Operaciones admitidas, y solo estas:
 
-Si el repositorio ha avanzado, pero todos los fragmentos y condiciones relevantes siguen siendo compatibles, el paquete puede permitir la aplicación sobre descendientes del commit base.
+#### `create`
 
-Si existe una divergencia significativa, debe adaptarse el patch al nuevo estado. No debe recomendarse `--force` como solución ordinaria.
-
-## Operaciones declarativas
-
-Las operaciones sencillas deberían declararse sin plugin cuando el formato lo permita.
-
-Ejemplos conceptuales:
-
-- crear un archivo
-- sustituir un fragmento exacto;
-- insertar una sección;
-- eliminar un archivo;
-- copiar un archivo incluido en el paquete;
-- actualizar un valor YAML o JSON;
-- ejecutar un generador;
-- ejecutar un validador.
-
-Los reemplazos exactos deben:
-
-- exigir una coincidencia inequívoca;
-- abortar si el contexto esperado no existe;
-- detectar cuando el resultado ya está aplicado;
-- no realizar sustituciones parciales silenciosas.
-
-Las expresiones regulares deben emplearse solo cuando un reemplazo exacto o estructural no sea suficiente.
-
-## Plugins Python
-
-Un paquete puede incluir un plugin Python cuando el cambio requiera lógica que no pueda expresarse de manera razonable mediante operaciones declarativas.
-
-Es apropiado para:
-
-- transformaciones complejas de YAML;
-- actualización coordinada de varios modelos;
-- regeneración estructurada;
-- análisis de gramáticas;
-- migraciones dependientes del contenido;
-- cambios que exijan calcular información derivada.
-
-El plugin debe contener únicamente la lógica específica del patch.
-
-No debe reimplementar:
-
-- detección de la raíz Git;
-- comprobación del árbol de trabajo;
-- backups;
-- rollback;
-- ejecución general de validadores;
-- generación del diff;
-- interfaz de línea de comandos;
-- informes finales.
-
-El plugin debe utilizar la API transaccional proporcionada por `repo-patcher`. No debe escribir fuera del repositorio ni ejecutar procesos arbitrarios salvo que el manifiesto y el motor lo permitan expresamente.
-
-Ejemplo conceptual:
-
-```python
-def apply(ctx):
-    ctx.replace_exact(
-        "especificacion/gramatica/mud.ebnf",
-        old="fragmento anterior",
-        new="fragmento nuevo",
-    )
-
-    ctx.create_text_file(
-        "notas/decisiones/ADR-085.md",
-        source="files/ADR-085.md",
-    )
-```
-
-Un plugin Python es código ejecutable. El paquete debe indicar claramente su existencia y `repo-patcher` debe exigir autorización antes de cargarlo.
-
-## Seguridad
-
-El motor debe impedir, salvo autorización expresa:
-
-- escribir fuera de la raíz del repositorio;
-- seguir rutas que escapen mediante `..`;
-- modificar el propio motor;
-- ejecutar plugins antes de su autorización;
-- realizar commits;
-- hacer `push`;
-- cambiar remotos;
-- borrar ramas;
-- ejecutar comandos destructivos;
-- continuar después de una precondición fallida.
-
-Los plugins de procedencia desconocida no deben autorizarse.
-
-Antes de aplicar un paquete con plugin, el usuario debe poder inspeccionar:
-
-```powershell
-repo-patcher package-info ".\patch.zip"
-repo-patcher explain ".\patch.zip"
-```
-
-## Transacciones y rollback
-
-La aplicación debe ser transaccional.
-
-Antes de escribir, `repo-patcher` debe registrar el estado original de cada archivo que pueda verse afectado.
-
-Si falla cualquier operación, generador o validador, debe restaurar:
-
-- archivos modificados;
-- archivos eliminados;
-- archivos nuevos;
-- archivos generados;
-- índices regenerados;
-- cualquier otro artefacto incluido en la transacción.
-
-El informe de error debe indicar si el rollback terminó correctamente.
-
-Un error no debe dejar el repositorio parcialmente migrado.
-
-## Árbol de trabajo
-
-Por defecto, el repositorio debe estar limpio antes de aplicar un patch:
-
-```powershell
-git status
-```
-
-Los cambios locales deben confirmarse, guardarse mediante `git stash` o descartarse antes de continuar.
-
-Un commit local adicional no implica necesariamente incompatibilidad, pero debe evaluarse mediante las condiciones declaradas por el paquete. No debe forzarse una aplicación simplemente porque la divergencia parezca pequeña.
-
-## Generadores
-
-Los archivos derivados deben actualizarse mediante sus generadores oficiales.
-
-Ejemplo:
-
-```powershell
-python tooling/decisions/manage_decisions.py generate
-```
-
-El patch debe distinguir entre:
-
-- archivos fuente editados directamente;
-- artefactos generados;
-- índices regenerados;
-- salidas temporales.
-
-Cuando un generador modifique archivos adicionales, estos deben quedar incluidos en la transacción y en el informe final.
-
-## Validadores
-
-Cada paquete debe ejecutar los validadores relevantes del repositorio.
-
-Para MUD pueden incluir, según el alcance:
-
-```powershell
-python tooling/decisions/manage_decisions.py validate
-python especificacion/gramatica/validate_grammar.py
-python especificacion/sintaxis/validate_syntax_model.py
-git diff --check
-```
-
-Esta lista no es universal. El agente debe inspeccionar el repositorio y utilizar los comandos vigentes en el momento de preparar el patch.
-
-Pasar los validadores existentes no demuestra automáticamente que toda decisión conceptual sea correcta. El agente también debe revisar la coherencia normativa y semántica que los validadores todavía no cubran.
-
-## Idempotencia y estado de aplicación
-
-Siempre que sea razonable, el paquete debe distinguir entre:
-
-- aplicable;
-- ya aplicado;
-- parcialmente aplicado;
-- incompatible;
-- compatible con advertencias.
-
-Una segunda ejecución no debe duplicar:
-
-- secciones;
-- referencias;
-- entradas YAML;
-- archivos;
-- decisiones;
-- índices;
-- casos de prueba.
-
-Cuando la operación no pueda ser idempotente, debe documentarse expresamente.
-
-## Comandos para el usuario
-
-### Ejecutar desde la raíz del repositorio
-
-```powershell
-Set-Location "D:\Ruta\Al\Repositorio"
-
-repo-patcher explain "C:\Ruta\Al\patch.zip"
-repo-patcher check "C:\Ruta\Al\patch.zip"
-repo-patcher apply "C:\Ruta\Al\patch.zip"
-```
-
-### Indicar explícitamente la ruta
-
-```powershell
-repo-patcher check "C:\Ruta\Al\patch.zip" `
-    --repo "D:\Ruta\Al\Repositorio"
-```
-
-### Generar un diff convencional
-
-```powershell
-repo-patcher apply "C:\Ruta\Al\patch.zip" `
-    --repo "D:\Ruta\Al\Repositorio" `
-    --emit-diff "C:\Ruta\Al\resultado.patch"
-```
-
-### Revisar el resultado
-
-```powershell
-Set-Location "D:\Ruta\Al\Repositorio"
-
-git status
-git diff --stat
-git diff
-```
-
-`repo-patcher` no debe crear el commit. Después de revisar:
-
-```powershell
-git add .
-git commit -m "descripción del cambio"
-```
-
-## Diagnósticos
-
-Los errores deben explicar:
-
-1. Qué condición falló.
-2. Qué archivo o comando está implicado.
-3. Si se escribió algún archivo.
-4. Si el rollback se completó.
-5. Qué comando puede ejecutar el usuario para inspeccionar el estado.
-6. Cuál es la solución recomendada.
-7. Qué acciones no debe realizar.
-
-Ejemplo:
-
-```text
-No puede aplicarse el patch porque el archivo
-especificacion/gramatica/mud.ebnf no contiene el fragmento esperado.
-
-No se ha conservado ningún cambio parcial.
-El rollback terminó correctamente.
-
-Comprueba:
-
-    git status
-    git log -1 --oneline
-
-No uses --force sin revisar primero la divergencia.
-```
-
-## Uso de `--force`
-
-`--force` es una opción excepcional.
-
-No debe recomendarse para:
-
-- ignorar un commit base diferente;
-- saltarse un árbol de trabajo sucio;
-- resolver un fragmento que ya no coincide;
-- evitar un validador fallido;
-- aplicar un paquete preparado para otra revisión.
-
-Solo puede utilizarse cuando una persona haya revisado expresamente la divergencia y comprenda qué comprobación está anulando.
-
-Un agente debe preferir preparar una nueva versión compatible del paquete.
-
-## Versionado de paquetes
-
-Cada patch debe poseer:
-
-- identificador estable;
-- versión;
-- versión del formato;
-- versión mínima de `repo-patcher`;
-- descripción de cambios respecto de versiones anteriores.
-
-Ejemplo:
+Con contenido inline:
 
 ```yaml
-format_version: 1
-
-patch:
-  id: mud-d085
-  version: 2
-
-requires:
-  repo_patcher: ">=0.1.0"
+- create:
+    path: docs/nuevo.md
+    content: "contenido\n"
 ```
 
-Corregir un paquete fallido debe incrementar su versión. No debe reutilizarse silenciosamente el mismo archivo con contenido distinto.
+Desde un archivo del paquete:
 
-Nombres recomendados:
+```yaml
+- create:
+    path: docs/nuevo.md
+    source: files/nuevo.md
+```
+
+Campos:
+
+- `path`: obligatorio, texto.
+- Si existe la clave `source`, se usa `source` y se ignora `content` si también existe.
+- Si no existe `source`, `content` es obligatorio y debe ser texto.
+
+Fuente: `src/repo_patcher/operations.py:L30-L35`.
+
+Solo crea texto UTF-8 mediante `create_from_patch()` o `create_text_file()`. Si el destino ya existe con el mismo contenido, es no-op; si existe con contenido diferente, conflicto. Fuentes: `src/repo_patcher/context.py:L80-L99`.
+
+#### `delete`
+
+```yaml
+- delete:
+    path: obsoleto.txt
+```
+
+`path` es obligatorio y texto. Si no existe, es no-op. Fuente: `operations.py:L36-L37`, `context.py:L101-L106`.
+
+#### `replace`
+
+```yaml
+- replace:
+    path: README.md
+    old: "antes"
+    new: "después"
+    count: 1
+```
+
+- `path`, `old`, `new`: textos obligatorios.
+- `count`: entero; predeterminado `1`.
+
+Fuente: `operations.py:L38-L47`.
+
+Semántica exacta:
+
+- Cuenta todas las apariciones de `old`.
+- Si hay cero y `new` no vacío ya aparece, lo considera ya aplicado.
+- Si hay cero y no se cumple lo anterior, conflicto.
+- Si `count >= 0`, el número total de apariciones debe ser exactamente `count`.
+- `count < 0` desactiva esa comprobación y `str.replace(..., -1)` reemplaza todas.
+
+Fuente: `context.py:L108-L124`.
+
+#### `regex_replace`
+
+```yaml
+- regex_replace:
+    path: archivo.md
+    pattern: "(?m)^Viejo$"
+    replacement: "Nuevo"
+    count: 1
+    flags: [MULTILINE]
+```
+
+- `path`, `pattern`, `replacement`: textos obligatorios.
+- `count`: no tiene validación explícita de tipo en `operations.py`; se pasa a `re.subn`. El valor predeterminado es `1`.
+- `flags`: lista de textos; predeterminado `[]`. Cada texto se resuelve con `getattr(re, nombre)` y se combina con OR binario. Un nombre inexistente produce `ManifestError`.
+
+Fuente: `operations.py:L48-L65`.
+
+La operación exige al menos una sustitución; cero produce `PatchConflictError`. No implementa detección «ya aplicado». Fuente: `context.py:L126-L139`.
+
+#### `append_once`
+
+```yaml
+- append_once:
+    path: README.md
+    marker: "## Nueva sección"
+    content: |
+      ## Nueva sección
+
+      Texto.
+```
+
+Todos los campos son textos obligatorios. Si `marker` ya aparece en el archivo, no cambia nada. En otro caso produce `text.rstrip() + "\n\n" + content.strip() + "\n"`. Fuentes: `operations.py:L66-L71`, `context.py:L141-L146`.
+
+#### `assert_contains`
+
+```yaml
+- assert_contains:
+    path: AGENTS.md
+    text: "Regla obligatoria"
+```
+
+Ambos campos son textos obligatorios. No modifica; falla si el fragmento no existe. Fuentes: `operations.py:L72-L73`, `context.py:L148-L150`.
+
+#### `assert_not_contains`
+
+```yaml
+- assert_not_contains:
+    path: README.md
+    text: "Sintaxis retirada"
+```
+
+Ambos campos son textos obligatorios. No modifica; falla si el fragmento existe. Fuentes: `operations.py:L74-L75`, `context.py:L152-L154`.
+
+#### Operaciones inválidas
+
+```yaml
+operations:
+  - copy:
+      from: a
+      to: b
+```
+
+Produce «Operación declarativa desconocida» (`operations.py:L76-L77`).
+
+```yaml
+operations:
+  - create:
+      path: a.txt
+      content: a
+    delete:
+      path: b.txt
+```
+
+Produce error porque un elemento debe contener exactamente una operación (`operations.py:L10-L16`).
+
+### 3.6. `generators` y `validators`
+
+Ambos usan el mismo esquema, una lista:
+
+```yaml
+generators:
+  - name: Regenerar índice
+    command: ["{python}", tooling/generate.py]
+    cwd: .
+    env:
+      MODE: generated
+```
+
+Por elemento:
+
+| Campo | Obligatorio | Tipo | Predeterminado |
+|---|---:|---|---|
+| `command` | Sí | lista no vacía de textos | — |
+| `name` | No | texto | unión de `command` con espacios |
+| `cwd` | No | texto | `"."` |
+| `env` | No | mapa texto→texto | `{}` |
+
+Fuente: `src/repo_patcher/manifest.py:L30-L51`.
+
+Sustituciones literales disponibles en cada argumento, en `cwd` y en valores de `env`:
+
+- `{python}` → `sys.executable`;
+- `{repo}` → raíz de la repo;
+- `{patch}` → raíz física o temporal del paquete.
+
+Fuente: `src/repo_patcher/commands.py:L13-L18`, `commands.py:L41-L52`.
+
+No se usa shell: cada `command` es `argv` directo para `subprocess.run`. `cwd` siempre se interpreta como `repo / cwd` y debe permanecer dentro de la repo. En preflight solo se comprueba que el directorio y el ejecutable existan; el comando no se ejecuta hasta `apply`. Fuentes: `commands.py:L22-L38`, `commands.py:L41-L69`.
+
+## 4. Firma exacta del entrypoint de plugins
+
+El loader espera un callable y lo invoca así:
+
+```python
+entrypoint(ctx, manifest)
+```
+
+Por tanto, la firma compatible es:
+
+```python
+def apply(ctx: PatchContext, manifest: Manifest) -> None:
+    ...
+```
+
+El nombre `apply` es solo el predeterminado; puede configurarse otro mediante `plugin.entrypoint`. Fuentes: `src/repo_patcher/plugin.py:L14-L39`, `src/repo_patcher/engine.py:L48-L55`.
+
+### Argumento 1: `ctx`
+
+Tipo real: `repo_patcher.context.PatchContext`.
+
+Contenido público relevante al entrar:
+
+- `ctx.repo: pathlib.Path`: raíz absoluta resuelta de la repo.
+- `ctx.patch_root: pathlib.Path`: raíz absoluta resuelta del paquete; en un ZIP apunta a un directorio temporal válido solo durante el comando.
+- `ctx.changes: list[PlannedChange]`: registro acumulado de operaciones virtuales.
+- `ctx.notes: list[str]`: notas que `explain`, `check` y `apply` muestran.
+
+Se construye en `context.py:L26-L32` y se pasa en `engine.py:L46-L51`.
+
+### Argumento 2: `manifest`
+
+Tipo real: `repo_patcher.models.Manifest`, dataclass con:
+
+```python
+Manifest(
+    source: Path,
+    schema: int,
+    patch_id: str,
+    version: str,
+    title: str,
+    description: str,
+    repository: RepositorySpec,
+    compatibility: CompatibilitySpec,
+    plugin: PluginSpec | None,
+    operations: tuple[dict[str, Any], ...],
+    generators: tuple[CommandSpec, ...],
+    validators: tuple[CommandSpec, ...],
+)
+```
+
+Fuente: `src/repo_patcher/models.py:L8-L49`.
+
+### Valor de retorno
+
+No se inspecciona ni se utiliza. El entrypoint **debe terminar normalmente**; por convención debe devolver `None`. Cualquier otro retorno se ignora. Una `RepoPatcherError` se propaga; cualquier otra excepción se envuelve como `RepoPatcherError("El plugin falló al preparar el patch: ...")`. Fuente: `engine.py:L48-L55`.
+
+## 5. API pública completa de `PatchContext`
+
+Todas las rutas de repo se reciben como `str`, aceptan `/` o `\`, se normalizan a POSIX y no pueden ser absolutas ni contener `..`. Salir de la repo produce `PatchConflictError`. Fuente: `context.py:L34-L44`.
+
+### Constructor
+
+```python
+PatchContext(repo: Path, patch_root: Path)
+```
+
+Normalmente no lo crea el plugin; lo crea el motor. Fuente: `context.py:L26-L32`.
+
+### `exists`
+
+```python
+def exists(self, relative: str) -> bool
+```
+
+Devuelve si el archivo virtual existe. Carga su estado original la primera vez. Puede lanzar `PatchConflictError` por ruta insegura; errores de I/O no se envuelven. Fuente: `context.py:L46-L56`.
+
+```python
+if ctx.exists("config.yaml"):
+    ...
+```
+
+### `read_bytes`
+
+```python
+def read_bytes(self, relative: str) -> bytes
+```
+
+Lee el contenido virtual actual. Si no existe, `PatchConflictError`. Fuente: `context.py:L58-L62`.
+
+```python
+raw = ctx.read_bytes("logo.bin")
+```
+
+### `read_text`
+
+```python
+def read_text(self, relative: str, encoding: str = "utf-8") -> str
+```
+
+Decodifica `read_bytes`. Archivo ausente o ruta insegura: `PatchConflictError`; error de decodificación: `PatchConflictError`. Fuente: `context.py:L64-L68`.
+
+```python
+text = ctx.read_text("README.md")
+```
+
+### `write_bytes`
+
+```python
+def write_bytes(
+    self,
+    relative: str,
+    content: bytes,
+    *,
+    action: str = "modificar",
+    detail: str = "",
+) -> None
+```
+
+Sustituye virtualmente el contenido binario. Si es idéntico, no registra cambio. `action` y `detail` solo alimentan el informe. Ruta insegura: `PatchConflictError`. Fuente: `context.py:L70-L75`.
+
+```python
+ctx.write_bytes("data.bin", b"\x00\x01", action="modificar", detail="cabecera")
+```
+
+### `write_text`
+
+```python
+def write_text(self, relative: str, content: str, encoding: str = "utf-8") -> None
+```
+
+Reemplazo completo virtual; registra acción `modificar`, detalle `reemplazo completo`. Fuente: `context.py:L77-L78`.
+
+```python
+ctx.write_text("README.md", "# Nuevo\n")
+```
+
+### `create_text_file`
+
+```python
+def create_text_file(
+    self,
+    relative: str,
+    content: str,
+    *,
+    encoding: str = "utf-8",
+) -> None
+```
+
+Crea virtualmente. Si ya existe idéntico, no-op; si existe diferente, `PatchConflictError`. Fuente: `context.py:L80-L89`.
+
+```python
+ctx.create_text_file("docs/nuevo.md", "# Nuevo\n")
+```
+
+### `create_from_patch`
+
+```python
+def create_from_patch(
+    self,
+    relative: str,
+    source: str,
+    *,
+    encoding: str = "utf-8",
+) -> None
+```
+
+Lee un archivo de texto incluido en el paquete y lo crea en la repo mediante `create_text_file`. `source` es relativo a `ctx.patch_root`, debe permanecer dentro del paquete y existir. Errores: `PatchConflictError` por escape, ausencia o conflicto del destino; errores de lectura/decodificación no se envuelven expresamente. Fuente: `context.py:L91-L99`.
+
+```python
+ctx.create_from_patch(
+    "docs/GUIA.md",
+    "files/GUIA.md",
+)
+```
+
+Este es el mecanismo exacto pedido para tomar contenido de `files/`.
+
+### `delete_file`
+
+```python
+def delete_file(self, relative: str) -> None
+```
+
+Marca el archivo virtual para eliminación. Ausente: no-op. Fuente: `context.py:L101-L106`.
+
+```python
+ctx.delete_file("docs/obsoleto.md")
+```
+
+### `replace_exact`
+
+```python
+def replace_exact(
+    self,
+    relative: str,
+    old: str,
+    new: str,
+    *,
+    count: int = 1,
+) -> None
+```
+
+Semántica descrita en §3.5. Errores: archivo/ruta/UTF-8 y `PatchConflictError` por ausencia o cardinalidad inesperada. Fuente: `context.py:L108-L124`.
+
+```python
+ctx.replace_exact("README.md", "Estado: antiguo", "Estado: nuevo")
+```
+
+### `replace_regex`
+
+```python
+def replace_regex(
+    self,
+    relative: str,
+    pattern: str,
+    replacement: str,
+    *,
+    count: int = 1,
+    flags: int = 0,
+) -> None
+```
+
+Ejecuta `re.subn`. Cero sustituciones: `PatchConflictError`. Expresión inválida: `re.error` sin envolver. Fuente: `context.py:L126-L139`.
+
+```python
+import re
+ctx.replace_regex("README.md", r"^Estado: .+$", "Estado: nuevo", flags=re.MULTILINE)
+```
+
+### `append_once`
+
+```python
+def append_once(self, relative: str, marker: str, content: str) -> None
+```
+
+No-op si `marker` aparece en cualquier posición. En otro caso añade dos saltos y contenido recortado. Fuente: `context.py:L141-L146`.
+
+```python
+ctx.append_once("README.md", "## Instalación", "## Instalación\n\nTexto.")
+```
+
+### `assert_contains`
+
+```python
+def assert_contains(self, relative: str, fragment: str) -> None
+```
+
+Falla con `PatchConflictError` si falta el fragmento. Fuente: `context.py:L148-L150`.
+
+```python
+ctx.assert_contains("AGENTS.md", "## Reglas")
+```
+
+### `assert_not_contains`
+
+```python
+def assert_not_contains(self, relative: str, fragment: str) -> None
+```
+
+Falla con `PatchConflictError` si aparece. Fuente: `context.py:L152-L154`.
+
+```python
+ctx.assert_not_contains("README.md", "texto retirado")
+```
+
+### `load_yaml`
+
+```python
+def load_yaml(self, relative: str) -> Any
+```
+
+Ejecuta `yaml.safe_load` sobre el texto virtual. YAML inválido: `PatchConflictError`; puede devolver cualquier tipo YAML, incluido `None`. Fuente: `context.py:L156-L160`.
+
+```python
+data = ctx.load_yaml("config.yaml")
+```
+
+### `save_yaml`
+
+```python
+def save_yaml(
+    self,
+    relative: str,
+    value: Any,
+    *,
+    sort_keys: bool = False,
+) -> None
+```
+
+Serializa con `yaml.safe_dump(..., allow_unicode=True, width=120)` y reemplaza el archivo virtual. Errores de serialización de PyYAML no se envuelven. Fuente: `context.py:L162-L164`.
+
+```python
+data = ctx.load_yaml("config.yaml")
+data["enabled"] = True
+ctx.save_yaml("config.yaml", data)
+```
+
+### `note`
+
+```python
+def note(self, text: str) -> None
+```
+
+Añade una nota al informe de plan. No comprueba el tipo en runtime. Fuente: `context.py:L166-L167`, presentación en `src/repo_patcher/cli.py:L125-L128`.
+
+```python
+ctx.note("Se regenerará el índice durante apply.")
+```
+
+### `changed_paths`
+
+```python
+def changed_paths(self) -> list[str]
+```
+
+Devuelve rutas ordenadas cuyo valor virtual difiere del original. Fuente: `context.py:L169-L170`.
+
+```python
+paths = ctx.changed_paths()
+```
+
+### `is_already_applied`
+
+```python
+def is_already_applied(self) -> bool
+```
+
+Es exactamente `not self.changed_paths()`. No consulta un registro de IDs o versiones. Fuente: `context.py:L172-L173`.
+
+```python
+if ctx.is_already_applied():
+    ctx.note("No hay cambios virtuales.")
+```
+
+### `commit_to_disk`
+
+```python
+def commit_to_disk(self) -> None
+```
+
+Escribe/elimina todos los archivos virtualmente cambiados. Es API pública por nombre, pero un plugin **no debe llamarla**: el motor la llama en `apply_plan`. Fuente: `context.py:L175-L184`, `engine.py:L75-L77`.
+
+### `restore_original`
+
+```python
+def restore_original(self) -> None
+```
+
+Restaura los archivos que el contexto llegó a cargar, incluidos archivos ignorados. También es infraestructura del motor, no una operación normal de plugin. Fuente: `context.py:L186-L195`, `engine.py:L91-L94`.
+
+## 6. Qué hace el plugin en cada comando
+
+### `package-info`
+
+- Abre/descomprime el paquete.
+- Carga `patch.yaml`.
+- No busca repo.
+- **No solicita confianza, no carga ni ejecuta el plugin.**
+- Calcula un SHA-256 lógico del árbol del paquete.
+
+Fuentes: `src/repo_patcher/cli.py:L155-L162`; digest: `engine.py:L33-L40`.
+
+### `explain`
+
+- Localiza la repo.
+- Carga primero el manifiesto.
+- Si hay plugin, exige confirmación o `--trust-plugin`.
+- Construye el plan: comprueba compatibilidad, ejecuta operaciones declarativas **en memoria**, carga y ejecuta el plugin **en memoria**, y hace preflight de comandos.
+- No escribe archivos ni ejecuta generadores/validadores.
+
+Fuentes: `cli.py:L164-L181`, `engine.py:L43-L58`.
+
+### `check`
+
+Hace exactamente el mismo `build_plan` que `explain`, incluido ejecutar el plugin virtualmente. No escribe ni ejecuta generadores/validadores. No exige árbol limpio. Fuentes: `cli.py:L164-L186`.
+
+### `apply`
+
+Hace el mismo plan, pero exige árbol limpio si el manifiesto lo solicita. Si hay cambios virtuales:
+
+1. escribe el plan;
+2. ejecuta generadores;
+3. comprueba que HEAD no cambió;
+4. ejecuta validadores;
+5. ejecuta siempre `git diff --check` adicional;
+6. vuelve a comprobar HEAD;
+7. opcionalmente emite diff.
+
+Fuentes: `cli.py:L172-L205`, `engine.py:L61-L98`.
+
+Si no hay cambios virtuales, devuelve inmediatamente y **no ejecuta generadores ni validadores** (`engine.py:L68-L71`).
+
+## 7. Registro y ejecución de operaciones, generadores, validadores y rollback
+
+### Operaciones
+
+Las operaciones declarativas se ejecutan primero sobre `PatchContext`; luego el plugin, si existe, ve ya esos cambios virtuales. Fuente: `engine.py:L43-L51`.
+
+Cada cambio que altera bytes añade `PlannedChange(path, action, detail)` a `ctx.changes`. Puede haber varias entradas para una ruta; el informe agrupa acciones por ruta. Fuentes: `context.py:L13-L17`, `context.py:L70-L75`, `cli.py:L111-L124`.
+
+### Generadores y validadores
+
+Se almacenan como tuplas de `CommandSpec`. `build_plan` solo hace preflight. `apply_plan` ejecuta todos los generadores en orden y luego todos los validadores en orden. Un código de salida distinto de cero lanza `CommandError` con stdout/stderr. Fuentes: `models.py:L8-L13`, `commands.py:L22-L69`, `engine.py:L75-L85`.
+
+### Rollback
+
+Cualquier excepción tras comenzar `apply_plan` provoca:
+
+```python
+plan.context.restore_original()
+rollback_clean_repo(repo, initial_head)
+```
+
+Después, `rollback_clean_repo` ejecuta siempre:
 
 ```text
-mud-d085-v1.zip
-mud-d085-v2.zip
+git reset --hard <HEAD-inicial>
+git clean -fd
 ```
 
-## Contenido del `README.md` del paquete
+Fuentes: `engine.py:L91-L94`, `src/repo_patcher/gitops.py:L126-L132`.
 
-Cada paquete debe explicar:
+**Advertencia autoritativa:** `git clean -fd` elimina archivos y directorios no rastreados de toda la repo, no solo los creados por el patch. Normalmente `apply` exige un árbol limpio, pero un manifiesto puede poner `clean_worktree: false`; en ese caso, un fallo podría borrar elementos no rastreados preexistentes. No use `clean_worktree: false` salvo que acepte esta consecuencia.
 
-- qué modifica;
-- para qué revisión se preparó;
-- qué condiciones de compatibilidad utiliza;
-- si contiene un plugin;
-- qué validadores ejecuta;
-- cómo realizar `explain`, `check` y `apply`;
-- cómo revisar el resultado;
-- qué limitaciones tiene;
-- qué versión sustituye, cuando proceda.
+## 8. Detección de estados
 
-## Informe final del agente
+### Aplicación previa
 
-La respuesta que acompaña al paquete debe indicar con precisión:
+No hay base de datos, marca, ID aplicado ni comparación de versión. Se considera «ya aplicado» únicamente cuando todas las operaciones y el plugin producen un contexto sin diferencias: `ctx.changed_paths()` vacío. Fuentes: `context.py:L169-L173`, `engine.py:L68-L71`, `cli.py:L188-L192`.
 
-- qué se entrega;
-- qué se ha probado;
-- qué no se ha podido probar;
-- la versión de `repo-patcher` requerida;
-- los comandos PowerShell;
-- si existe plugin Python;
-- si el patch crea, elimina o regenera archivos;
-- cómo reconocer una aplicación correcta;
-- qué información debe devolver el usuario si falla.
+### Aplicación parcial
 
-No debe afirmarse que el repositorio quedó validado cuando solo se validó el paquete en una reconstrucción o entorno parcial.
+No existe un estado específico «parcialmente aplicado» ni una detección global. Casos posibles:
 
-## Instalación de `repo-patcher`
+- Si algunas operaciones son no-op por estar ya aplicadas y otras aún generan cambios, el plan se considera aplicable y aplicará las restantes.
+- Si una operación encuentra un estado incompatible, lanza conflicto durante el plan y no escribe nada.
+- Si todo queda sin cambios, se considera ya aplicado.
 
-La herramienta debe instalarse de forma aislada, preferentemente mediante `pipx`, y quedar disponible en el `PATH`.
+La distinción depende de las precondiciones, `assert_*`, reemplazos exactos y lógica del plugin; no existe una clasificación explícita.
 
-Comprobaciones:
+### Incompatibilidad
 
-```powershell
-repo-patcher --version
-repo-patcher doctor
-pipx list
-Get-Command repo-patcher
+Se detecta por:
+
+- nombre de carpeta de repo;
+- `origin` normalizado;
+- HEAD exacto;
+- antepasado Git;
+- archivos requeridos;
+- árbol sucio en `apply` si corresponde.
+
+Fuente: `gitops.py:L81-L123`.
+
+### Divergencia del repositorio
+
+No existe análisis semántico general. Se manifiesta como:
+
+- incompatibilidad Git/archivos;
+- `PatchConflictError` porque un fragmento exacto, regex o aserción no coincide;
+- excepción del plugin;
+- fallo de generador o validador.
+
+## 9. Paquete mínimo completo y probado
+
+El ZIP adjunto `repo-patcher-authoritative-example.zip` fue probado contra `repo-patcher 0.1.0` ejecutando `package-info`, `explain`, `check` y `apply`.
+
+Estructura:
+
+```text
+repo-patcher-authoritative-example.zip
+├── patch.yaml
+└── files/
+    └── CREADO-DESDE-EL-PATCH.md
 ```
 
-El ZIP o wheel usado para instalarla puede eliminarse después. La instalación administrada por `pipx` no depende de que el archivo permanezca en `Downloads`.
+`patch.yaml`:
 
-Desinstalación:
-
-```powershell
-pipx uninstall repo-patcher
+```yaml
+schema: 1
+id: authoritative-minimal-example
+version: 1
+title: Ejemplo mínimo autoritativo
+description: Reemplaza un fragmento, crea un archivo desde files/, ejecuta un generador y un validador.
+repository:
+  names: [demo-repo]
+compatibility:
+  clean_worktree: true
+  required_files:
+    - README.md
+    - tools/generate.py
+    - tools/validate.py
+operations:
+  - replace:
+      path: README.md
+      old: "Estado: antiguo"
+      new: "Estado: nuevo"
+      count: 1
+  - create:
+      path: docs/CREADO-DESDE-EL-PATCH.md
+      source: files/CREADO-DESDE-EL-PATCH.md
+generators:
+  - name: Generar marca
+    command: ["{python}", tools/generate.py]
+validators:
+  - name: Validar resultado
+    command: ["{python}", tools/validate.py]
 ```
 
-## Regla de cierre
+El repositorio de prueba contenía:
 
-`repo-patcher` es el mecanismo preferente para entregar cambios descargables cuando no puede utilizarse el flujo directo del repositorio.
+```python
+# tools/generate.py
+from pathlib import Path
+Path("GENERATED.txt").write_text("generado\n", encoding="utf-8")
+```
 
-No sustituye a Codex, GitHub, ramas, commits ni pull requests cuando esos mecanismos están disponibles.
+```python
+# tools/validate.py
+from pathlib import Path
+assert "Estado: nuevo" in Path("README.md").read_text(encoding="utf-8")
+assert Path("docs/CREADO-DESDE-EL-PATCH.md").read_text(encoding="utf-8").startswith("# Creado")
+assert Path("GENERATED.txt").read_text(encoding="utf-8") == "generado\n"
+```
+
+Resultado verificado:
+
+- `README.md` modificado;
+- archivo de `files/` creado;
+- `GENERATED.txt` creado por el generador;
+- validador superado;
+- `git diff --check` superado;
+- diff emitido.
+
+## 10. Tests existentes que demuestran las interfaces
+
+La distribución contiene únicamente tres tests de integración:
+
+1. `test_declarative_apply_and_idempotent_plan`: prueba `append_once`, un validador, aplicación y detección posterior de contexto sin cambios. `tests/test_integration.py:L27-L66`.
+2. `test_validator_failure_rolls_back_everything`: prueba creación, modificación, fallo de validador y rollback a repo limpia sin archivo nuevo. `tests/test_integration.py:L68-L102`.
+3. `test_plugin_uses_virtual_context`: prueba plugin `apply(ctx, manifest)`, `load_yaml`, acceso `manifest.patch_id`, `save_yaml`, ausencia de escritura durante plan y aplicación posterior. `tests/test_integration.py:L104-L140`.
+
+Los tres tests se ejecutaron sobre el código 0.1.0 y pasaron.
+
+No existen tests distribuidos específicos para:
+
+- ZIP y raíz alternativa;
+- todas las operaciones declarativas;
+- seguridad de rutas;
+- remotos y compatibilidad;
+- comandos `package-info`, `explain`, `check` y CLI;
+- retorno del plugin;
+- rollback con `clean_worktree: false`;
+- campos desconocidos del manifiesto.
+
+## 11. Diferencias entre la API real y `USO-DE-REPO-PATCHER.md`
+
+La documentación anterior propuesta en esa conversación no era autoritativa y contiene diferencias importantes:
+
+1. **`format_version` no existe.** El campo real es `schema` en la raíz. Un manifiesto con solo `format_version` usará `schema=1` por defecto, pero `format_version` será ignorado. Fuente: `manifest.py:L64-L66`.
+2. **No existe un mapa raíz `patch:`.** `id`, `version`, `title` y `description` están directamente en la raíz. Un ejemplo con `patch.id` falla por faltar `id` raíz. Fuente: `manifest.py:L68-L79`.
+3. **No existe `requires.repo_patcher`.** No se comprueba versión mínima del motor; cualquier campo `requires` es ignorado.
+4. **No existen `repository.expected_name` ni `expected_remote`.** Los campos reales son `name`/`names` y `remote`/`remotes`. Los otros se ignoran y no protegen contra repo equivocada. Fuente: `manifest.py:L81-L85`.
+5. **No existe `compatibility.require_clean_worktree`.** El campo real es `clean_worktree`. Fuente: `manifest.py:L87-L90`.
+6. **No existe `requirements.files`.** Los archivos requeridos están en `compatibility.required_files`. Fuente: `manifest.py:L94-L99`.
+7. **`operations.yaml` y `checks.yaml` no se cargan.** Todas las operaciones, generadores y validadores se leen de `patch.yaml`.
+8. **`files/` no es una ubicación reservada ni automática.** Se usa mediante `source: files/x` o `ctx.create_from_patch(...)`.
+9. **`create_text_file(..., source=...)` es inválido.** La firma real recibe contenido; para archivo incluido se usa `create_from_patch(relative, source)`. Fuente: `context.py:L80-L99`.
+10. **No existen comandos CLI `status`, `diff` ni `undo`.** Los comandos reales son `tutorial`, `doctor`, `package-info`, `explain`, `check` y `apply`. Fuente: `cli.py:L48-L74`.
+11. **`check` no ejecuta validadores.** Solo comprueba que sus ejecutables/cwd existan; los validadores se ejecutan durante `apply`. Fuente: `cli.py:L182-L186`, `commands.py:L22-L38`.
+12. **`explain` y `check` sí ejecutan el plugin.** Lo hacen virtualmente y requieren confianza. Fuente: `cli.py:L164-L177`, `engine.py:L43-L55`.
+13. **No hay sandbox de plugin.** Aunque se recomienda usar `PatchContext`, el plugin es Python arbitrario ejecutado en el proceso. Fuente: `plugin.py:L25-L34`.
+14. **No hay detección explícita de aplicación parcial ni registro por ID/versión.** Solo se inspeccionan diferencias virtuales.
+15. **El rollback no se limita a archivos registrados.** Además de `restore_original`, hace `git reset --hard` y `git clean -fd`. Fuente: `engine.py:L91-L94`, `gitops.py:L126-L132`.
+
+## 12. Lista de comprobación para agentes que generen paquetes
+
+### Antes de escribir el paquete
+
+- [ ] Confirmar que el usuario usa `repo-patcher 0.1.0`.
+- [ ] Leer el código o esta guía; no usar campos conceptuales de versiones futuras.
+- [ ] Identificar nombre real de la carpeta repo y `origin` si se van a restringir.
+- [ ] Elegir `exact_heads` o `required_ancestor` conscientemente.
+- [ ] Mantener `compatibility.clean_worktree: true`.
+- [ ] Enumerar en `required_files` los archivos esenciales.
+
+### `patch.yaml`
+
+- [ ] Usar `schema: 1`.
+- [ ] Poner `id` y `title` no vacíos en la raíz.
+- [ ] Poner `version` en la raíz.
+- [ ] Declarar `operations`, `plugin` o ambos.
+- [ ] No usar `format_version`, `patch:`, `requires:`, `requirements:` ni `expected_name`.
+- [ ] Escribir comandos como listas de strings, no como comandos de shell.
+- [ ] Usar `{python}`, `{repo}` y `{patch}` solo donde corresponda.
+
+### Operaciones
+
+- [ ] Cada elemento de `operations` contiene exactamente una clave.
+- [ ] Para crear desde el ZIP, usar `create.source` o `ctx.create_from_patch`.
+- [ ] Hacer reemplazos exactos con fragmentos suficientemente distintivos.
+- [ ] Añadir `assert_contains`/`assert_not_contains` para detectar estados parciales cuando sea útil.
+- [ ] No confiar en `regex_replace` como idempotente: añadir una aserción o lógica de plugin.
+
+### Plugins
+
+- [ ] Declarar `plugin.file` y opcionalmente `entrypoint`.
+- [ ] Usar firma `def apply(ctx, manifest):`.
+- [ ] Devolver `None` por convención.
+- [ ] Usar `PatchContext`; no escribir directamente en disco ni lanzar subprocess desde el plugin.
+- [ ] Recordar que `explain` y `check` ejecutarán el plugin.
+- [ ] No conservar `ctx.patch_root` para usarlo después del comando: en ZIP es temporal.
+
+### Pruebas mínimas
+
+- [ ] `repo-patcher package-info patch.zip`.
+- [ ] `repo-patcher explain patch.zip --repo RUTA`.
+- [ ] `repo-patcher check patch.zip --repo RUTA`.
+- [ ] `repo-patcher apply patch.zip --repo COPIA_LIMPIA --emit-diff resultado.patch`.
+- [ ] Revisar `git status`, `git diff --stat`, `git diff`.
+- [ ] Confirmar que generadores y validadores realmente se ejecutaron.
+- [ ] Aplicar, confirmar el resultado en Git y ejecutar `check` de nuevo para comprobar no-op/idempotencia.
+- [ ] Inyectar un validador fallido en una copia y comprobar rollback.
+- [ ] No probar fallos en una repo con archivos no rastreados valiosos: el rollback ejecuta `git clean -fd`.
+
+### Entrega
+
+- [ ] ZIP con `patch.yaml` en raíz o en un único directorio de primer nivel.
+- [ ] Incluir todos los archivos referenciados por `source` y `plugin.file`.
+- [ ] Indicar si contiene plugin y exigir `--trust-plugin` en uso no interactivo.
+- [ ] No afirmar que existe una interfaz que el código 0.1.0 no implementa.
