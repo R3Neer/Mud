@@ -87,6 +87,9 @@ module MUDSurface {
     field_name = (identifier text)
         attributes (source_origin origin)
 
+    metadata_name = (identifier text)
+        attributes (source_origin origin)
+
     role_name = (identifier text)
         attributes (source_origin origin)
 
@@ -112,11 +115,12 @@ module MUDSurface {
     top_level_decl = ThingDecl(flag is_abstract,
                                nominal_name name,
                                type_ref* direct_ancestors,
-                               string? intrinsic_name_override,
+                               metadata_assignment* metadata,
                                field_decl* fields)
                    | AliasDecl(nominal_name name,
                                type_ref* direct_ancestors,
-                               alias_definition? definition)
+                               alias_definition? definition,
+                               metadata_assignment* metadata)
                    | FamilyDecl(flag is_ordered,
                                 nominal_name name,
                                 family_data_decl* data,
@@ -135,7 +139,7 @@ module MUDSurface {
                    | PointMagnitudeDecl(nominal_name name,
                                         type_ref coordinate_type,
                                         point_domain? domain,
-                                        expr? format)
+                                        metadata_assignment* metadata)
                    | BooleanRuleDecl(nominal_name name,
                                      for_clause? participants,
                                      given_clause? givens,
@@ -149,7 +153,8 @@ module MUDSurface {
                                     on_clause? participants,
                                     boolean_block invariant,
                                     expr? diagnostic)
-                   | ActionDecl(nominal_name name,
+                   | ActionDecl(action_kind kind,
+                                nominal_name name,
                                 for_clause? participants,
                                 given_clause? givens,
                                 action_guard? guard,
@@ -217,12 +222,15 @@ module MUDSurface {
         attributes (source_origin origin)
 
     family_member = FamilyMember(member_name name,
-                                 string? intrinsic_name_override,
+                                 metadata_assignment* metadata,
                                  family_data_assignment* assignments)
         attributes (source_origin origin)
 
     family_data_assignment = FamilyDataAssignment(field_name name,
                                                    expr value)
+        attributes (source_origin origin)
+
+    metadata_assignment = MetadataAssignment(metadata_name name, expr value)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
@@ -231,7 +239,21 @@ module MUDSurface {
 
     declared_type = NamedType(type_ref name)
                   | IntervalType(type_ref element_type)
-                  | DictionaryType(type_ref key_type, type_expr value_type)
+                  | PositionalProductType(type_expr first,
+                                          type_expr second,
+                                          type_expr* remaining)
+                  | NamedProductType(named_product_component first,
+                                     named_product_component* remaining)
+                  | ExactDictionaryType(type_expr key_type,
+                                        type_expr value_type,
+                                        collection_spec entries)
+                  | DecisionDictionaryType(type_expr input_type,
+                                           type_expr output_type,
+                                           decision_mode mode,
+                                           collection_spec branches)
+        attributes (source_origin origin)
+
+    named_product_component = (component_name name, type_expr type)
         attributes (source_origin origin)
 
     type_expr = TypeExpr(type_alternative first,
@@ -260,12 +282,14 @@ module MUDSurface {
         attributes (source_origin origin)
 
     collection_spec = (cardinality cardinality,
+                       cardinality_origin origin,
                        flag is_unique,
                        collection_order order,
                        flag elements_mutable)
         attributes (source_origin origin)
 
     readonly_collection_spec = (cardinality cardinality,
+                                cardinality_origin origin,
                                 flag is_unique,
                                 collection_order order)
         attributes (source_origin origin)
@@ -276,6 +300,12 @@ module MUDSurface {
     cardinality_bound = FiniteCardinality(int value)
                       | EffectiveCardinality
         attributes (source_origin origin)
+
+    cardinality_origin = WrittenCardinality | OmittedCardinality
+
+    decision_mode = FirstMatch | AllMatches
+
+    action_kind = PublicAction | Subaction
 
     collection_order = Unordered
                      | InsertionOrdered
@@ -384,7 +414,7 @@ module MUDSurface {
                                       expr value)
         attributes (source_origin origin)
 
-    start_set = StartSet(declaration_ref* declarations)
+    start_set = StartSet(expr* things, expr* rules)
         attributes (source_origin origin)
 
     test_after_block = TestAfterBlock(local_value_decl* locals,
@@ -434,6 +464,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     access_suffix = MemberSuffix(identifier_name member)
+                  | MetadataSuffix(metadata_name metadata)
                   | IndexSuffix(expr first_index, expr* remaining_indices)
         attributes (source_origin origin)
 
@@ -449,6 +480,7 @@ module MUDSurface {
          | BoolLiteral(flag value)
          | EmptyLiteral
          | AllLiteral
+         | FallbackLiteral
          | TextTemplateExpr(text_part* parts)
          | CollectionLiteralExpr(expr* elements)
          | PositionalStructuralLiteralExpr(expr first,
@@ -456,6 +488,8 @@ module MUDSurface {
                                            expr* remaining)
          | NamedStructuralLiteralExpr(named_structural_element first,
                                       named_structural_element* remaining)
+         | ExactAssociationExpr(expr key, expr value)
+         | DecisionBranchExpr(expr selector, expr result)
          | IntervalValueExpr(interval_expr interval)
          | QuantityValueExpr(quantity_expr quantity)
          | PointComponentExpr(unit_expr extracted,
@@ -481,6 +515,7 @@ module MUDSurface {
                                comparison_link* remaining_comparisons)
          | ConversionExpr(expr value, conversion_target target)
          | MemberAccessExpr(expr receiver, identifier_name member)
+         | MetadataAccessExpr(expr receiver, metadata_name metadata)
          | IndexExpr(expr receiver,
                      expr first_index,
                      expr* remaining_indices)
@@ -539,6 +574,7 @@ module MUDSurface {
                         | IsRelation
                         | IsNotRelation
                         | Membership
+                        | NotMembership
 
     comparison_link = (comparison_operator operator, expr operand)
         attributes (source_origin origin)

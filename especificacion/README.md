@@ -187,7 +187,7 @@ Define:
 - Identificadores y sensibilidad a mayúsculas.
 - Palabras reservadas.
 - Literales numéricos, monetarios y porcentuales.
-- Plantillas `Text` ordinarias y multilínea, interpolaciones, escapes y `anchor{...}` contextual.
+- Plantillas `Text` ordinarias y multilínea, interpolaciones ordinarias, escapes y acceso tipado `~anchor`.
 - Comentarios `#`, `#...#` y `###...###`.
 - Espacio en blanco.
 - Tokens, trivia, spans y errores léxicos.
@@ -211,7 +211,7 @@ Define la sintaxis completa de:
 - Efectos.
 - Bloques.
 - Llamadas.
-- Definiciones canónicas de `thing` y reglas, declaración inicial `start with` y activaciones mediante `create Nombre`.
+- Definiciones canónicas de `thing` y reglas, `start with` separado en `things` y `rules`, y activaciones mediante `create Nombre`.
 - Tests aislados con `start with` local, `then`, `after` y `otherwise`.
 - Diagnóstico `otherwise` opcional después del cuerpo de reglas `always`; omitirlo produce un aviso y una razón predeterminada.
 - Formatos numéricos dentro de interpolaciones `Text`.
@@ -229,7 +229,7 @@ Define las formas semánticamente relevantes después de la CST y de la validaci
 - AST de declaraciones, tipos, dominios, expresiones y efectos.
 - Normalización de cardinalidades, intervalos, bloques y literales contextuales.
 - Distinción estructural entre las tres clases de regla.
-- `ActionDecl` superficial sin clasificar todavía como elemental o compuesta.
+- `ActionDecl` superficial con clase `PublicAction` o `Subaction`, sin clasificar todavía como elemental o compuesta.
 - Nodo propio `TestDecl` y aserciones con diagnóstico opcional.
 - Nodos propios para `look`, `message` y propiedades públicas.
 - Procedencia mediante `SourceOrigin`.
@@ -248,7 +248,7 @@ Define:
 - Declaraciones `using` exactas y recursivas.
 - Posición obligatoria de todos los `using` en la cabecera del fichero.
 - Ambigüedad.
-- Formación y unicidad de anclas.
+- Formación y unicidad de anclas, incluidas anclas estables de ramas decisionales.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
 - Identidad ante movimientos de archivo.
 - Migración de path y anclas.
@@ -278,7 +278,7 @@ Define:
 - Tipos de `thing`.
 - Tipos nominales de alias.
 - Familias cerradas.
-- Colecciones y diccionarios.
+- Colecciones, productos estructurales, diccionarios exactos y diccionarios decisionales.
 - Intervalos.
 - Magnitudes.
 - Subtipado mediante `is`.
@@ -313,7 +313,7 @@ Define:
 - Valores predeterminados heredados.
 - Igualdad de identidad.
 - Canonicalización de identidades de `thing`.
-- Propiedad intrínseca `name: Text`, presentación local y separación respecto del ancla.
+- Metadatos tipados `~name`, `~path`, `~anchor` y `~file`, separados de campos y de la identidad nominal.
 
 ## 12. Aliases nominales y valores estructurales
 
@@ -359,7 +359,7 @@ Archivo previsto: `14-campos-y-mutabilidad.md`
 Define:
 
 - Campos almacenados y calculados.
-- Exclusión de `name`, que pertenece al descriptor intrínseco de cada `thing`.
+- Metadatos postfix separados de los campos ordinarios y reglas de escritura de `~name`.
 - Expresiones estáticas cerradas para valores almacenados y predeterminados.
 - Anotación opcional e inferencia unívoca del tipo de campos calculados.
 - `=` frente a `:=`.
@@ -389,7 +389,7 @@ Define:
 - `ordered by` sobre una ruta estable con resultado totalmente ordenado y empates por orden de inserción.
 - Álgebra de multiconjuntos mediante unión, intersección y diferencia `--`; diferencia simétrica `^` reservada a colecciones `unique`.
 - Aritmética elevada cuando al menos un operando es opcional o unitario, con `empty` absorbente.
-- Filtrado puro, `take` ordenado o reproduciblemente aleatorio e indexación posicional exclusiva de colecciones ordenadas.
+- Filtrado puro sin proyección ni aplanamiento, `take` ordenado o reproduciblemente aleatorio e indexación posicional exclusiva de colecciones ordenadas.
 - Inferencia de cardinalidad y dominio y propagación de `unique`, `ordered` y capacidad interior `mut`.
 - Igualdad de colecciones.
 - Instantáneas de iteración.
@@ -402,15 +402,15 @@ Archivo previsto: `16-diccionarios.md`
 
 Define:
 
-- Tipos de clave y valor.
+- Tipos completos de entrada y salida, incluidos productos y diccionarios anidados.
 - Cardinalidad.
 - Claves compuestas.
-- Lectura y escritura de claves ausentes.
+- Consulta exacta ausente mediante `empty`, asociaciones operativas y escritura de claves.
 - Materialización de entradas.
 - Iteración por claves y entradas.
 - Orden canónico.
 - Operaciones totales.
-- Alias nominal como clave única compuesta y azúcar `map[c1, c2]`.
+- Diccionarios decisionales `-->`, modos `FirstMatch` y `AllMatches`, fallback, pureza, dependencias y terminación.
 
 Bases normativas migradas: [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
@@ -557,7 +557,7 @@ Define:
 - Estados en que deben comprobarse.
 - Incumplimiento y resultado de resolución.
 - Diagnóstico `otherwise` exterior al cuerpo y visibilidad de sus locales.
-- Dependencias.
+- Dependencias, incluidas lecturas de metadatos y ramas decisionales.
 
 Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-079-diagnostico-exterior-de-reglas-always|D-079]].
 
@@ -584,7 +584,7 @@ Define:
 - `message` como evento detectado durante las ondas de una acción.
 - Vinculaciones `on` conjuntas, refinamientos nominales, referencias adelantadas y ciclos relacionales finitos.
 - Condición `when` y guarda `if` opcional.
-- Propiedades públicas calculadas con tipo declarado opcionalmente o inferido.
+- Propiedades públicas calculadas con tipo declarado opcionalmente o inferido y acciones auxiliares `subaction` fuera de la API raíz.
 - Evaluación diferida de las propiedades del mensaje tras la estabilización.
 - Multiplicidad, orden, deduplicación, rollback y entrega.
 
@@ -634,7 +634,7 @@ Define:
 - Entornos de participantes y `given`.
 - Lectura del store.
 - Evaluación determinista.
-- Propagación de ausencias y fallos.
+- Propagación de `empty` en consultas parciales y fallo solo al infringir el contrato exterior.
 - Poda y cierre de fragmentos booleanos borrados.
 - Evaluación de campos calculados.
 - Estado inicial observado por expresiones.
@@ -743,7 +743,7 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 Define:
 
 - Definiciones canónicas estáticas de `thing` raíz, abstractas y con especialización múltiple.
-- Conjunto inicial no ordenado declarado mediante `start with`.
+- Conjuntos iniciales no ordenados y separados de `things` y `rules` declarados mediante `start with`.
 - Activación y reactivación mediante `create Nombre`.
 - Inicialización de la primera materialización.
 - Distinción entre almacenamiento retenido y proyección efectiva.
@@ -844,7 +844,7 @@ Define:
 - Terminación de resoluciones.
 - Análisis conservadores.
 - Frontera entre rechazo estático y fallo runtime.
-- Posible subconjunto no Turing completo.
+- Prueba estática de terminación para todo componente recursivo de diccionarios decisionales.
 - Propiedades decidibles y semidecidibles.
 
 ## 39. Propiedades metateóricas
@@ -1119,3 +1119,17 @@ MUD 1.0 estará formalmente especificado cuando:
 ## Cambios semánticos recientes
 
 La especialización de aliases, los cuerpos vacíos omitibles de `thing`, los campos derivados de alias y las vistas derivadas con capacidad interior se fijan en [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]].
+
+
+## Integración transversal de D-085
+
+[[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] modifica los contratos de los capítulos futuros 10 a 20, 24, 26, 32, 34 y 38:
+
+- `Any` es el tipo superior no enumerable de todos los valores y no posee predeterminado universal.
+- Los productos estructurales anónimos y las flechas `->`/`-->` forman tipos completos asociativos a la derecha.
+- Los diccionarios exactos devuelven `empty` ante clave ausente; los decisionales distinguen `FirstMatch` y `AllMatches`, ramas puras, fallback, dependencias y terminación demostrable.
+- La cardinalidad omitida de un campo almacenado inmutable con inicializador se infiere exactamente.
+- `start with` separa contribuciones de `things` y `rules`.
+- `subaction` queda fuera de la API raíz y comparte la atomicidad de la acción exterior.
+- `~name`, `~path`, `~anchor`, `~file` y los metadatos de unidades sustituyen las excepciones `.name`, `name =` y `anchor{...}`.
+- El grafo registra anclas de rama, lecturas de metadatos, llamadas decisionales y evidencia de terminación.

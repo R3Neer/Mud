@@ -19,6 +19,7 @@ questions: []
 decisions:
   - D-070
   - D-071
+  - D-085
 ---
 
 # CST sin pérdidas
@@ -376,3 +377,8 @@ Un frontend conforme debe satisfacer:
 5. Distinción entre tokens escritos y sintéticos.
 6. Ausencia de decisiones de resolución o tipado en la CST.
 7. Resultado compatible con las normalizaciones del AST superficial.
+
+
+## Tokens añadidos y retirados por D-085
+
+La CST conserva los tokens fijos `-->` y `~` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. Se retira `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.

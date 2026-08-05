@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 79.
-- Vigentes: 79.
+- Total: 80.
+- Vigentes: 80.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -98,6 +98,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-082 | vigente | 2026-08-04 | [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|`cycle` como modificador de dominio de punto]] |
 | D-083 | vigente | 2026-08-04 | [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|Magnitudes base sin unidades]] |
 | D-084 | vigente | 2026-08-04 | [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|Especialización de aliases, miembros heredados y vistas derivadas]] |
+| D-085 | vigente | 2026-08-05 | [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|Diccionarios decisionales, metadatos y activación estructurada]] |
 
 ## Identificadores reservados
 

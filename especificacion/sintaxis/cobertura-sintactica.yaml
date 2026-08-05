@@ -57,6 +57,11 @@ productions:
     ast:
       disposition: wrapper
       target: field_name
+  metadata-name:
+    cst: MetadataNameSyntax
+    ast:
+      disposition: wrapper
+      target: metadata_name
   order-key-path:
     cst: OrderKeyPathSyntax
     ast:
@@ -112,11 +117,11 @@ productions:
     ast:
       disposition: inlined
       reason: alternativa integrada en ThingDecl como nombre intrínseco o campo
-  intrinsic-name-override:
-    cst: IntrinsicNameOverrideSyntax
+  metadata-assignment:
+    cst: MetadataAssignmentSyntax
     ast:
-      disposition: inlined
-      reason: texto decodificado integrado en intrinsic_name_override de ThingDecl
+      disposition: constructor
+      target: MetadataAssignment
   alias-declaration:
     cst: AliasDeclarationSyntax
     ast:
@@ -177,6 +182,11 @@ productions:
     ast:
       disposition: discarded
       reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+  family-member-entry:
+    cst: FamilyMemberEntrySyntax
+    ast:
+      disposition: normalized
+      target: family_member
   family-data-assignment:
     cst: FamilyDataAssignmentSyntax
     ast:
@@ -322,11 +332,41 @@ productions:
     ast:
       disposition: constructor
       target: IntervalType
+  product-type:
+    cst: ProductTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  positional-product-type:
+    cst: PositionalProductTypeSyntax
+    ast:
+      disposition: constructor
+      target: PositionalProductType
+  named-product-type:
+    cst: NamedProductTypeSyntax
+    ast:
+      disposition: constructor
+      target: NamedProductType
+  named-product-component:
+    cst: NamedProductComponentSyntax
+    ast:
+      disposition: wrapper
+      target: named_product_component
   dictionary-type:
     cst: DictionaryTypeSyntax
     ast:
-      disposition: wrapper
-      target: DictionaryType
+      disposition: normalized
+      target: declared_type
+  dictionary-link:
+    cst: DictionaryLinkSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  dictionary-arrow:
+    cst: DictionaryArrowSyntax
+    ast:
+      disposition: enum-or-property
+      target: declared_type
   dictionary-value-type:
     cst: DictionaryValueTypeSyntax
     ast:
@@ -437,6 +477,16 @@ productions:
     ast:
       disposition: constructor
       target: ActionDecl
+  subaction-declaration:
+    cst: SubactionDeclarationSyntax
+    ast:
+      disposition: constructor
+      target: ActionDecl
+  action-signature-body:
+    cst: ActionSignatureBodySyntax
+    ast:
+      disposition: normalized
+      target: ActionDecl
   look-declaration:
     cst: LookDeclarationSyntax
     ast:
@@ -507,6 +557,11 @@ productions:
     ast:
       disposition: constructor
       target: StartSet
+  start-contribution-body:
+    cst: StartContributionBodySyntax
+    ast:
+      disposition: normalized
+      target: start_set
   test-declaration:
     cst: TestDeclarationSyntax
     ast:
@@ -582,6 +637,16 @@ productions:
     ast:
       disposition: inlined
       reason: alias gramatical o componente plegado en una construcción mayor
+  mapping-expression:
+    cst: MappingExpressionSyntax
+    ast:
+      disposition: normalized
+      target: expr
+  mapping-arrow:
+    cst: MappingArrowSyntax
+    ast:
+      disposition: enum-or-property
+      target: expr
   value-expression:
     cst: ValueExpressionSyntax
     ast:
@@ -760,6 +825,11 @@ productions:
     ast:
       disposition: normalized
       target: MemberAccessExpr
+  metadata-access:
+    cst: MetadataAccessSyntax
+    ast:
+      disposition: constructor
+      target: MetadataAccessExpr
   index-access:
     cst: IndexAccessSyntax
     ast:
@@ -790,6 +860,16 @@ productions:
     ast:
       disposition: normalized
       target: expr
+  take-expression:
+    cst: TakeExpressionSyntax
+    ast:
+      disposition: constructor
+      target: TakeExpr
+  selection-expression:
+    cst: SelectionExpressionSyntax
+    ast:
+      disposition: constructor
+      target: SelectionExpr
   point-component-expression:
     cst: PointComponentExpressionSyntax
     ast:
@@ -820,16 +900,6 @@ productions:
     ast:
       disposition: wrapper
       target: NumericTextFormat
-  anchor-interpolation:
-    cst: AnchorInterpolationSyntax
-    ast:
-      disposition: constructor
-      target: AnchorInterpolation
-  anchor-designator:
-    cst: AnchorDesignatorSyntax
-    ast:
-      disposition: normalized
-      target: expr
   exact-number:
     cst: ExactNumberSyntax
     ast:
@@ -890,16 +960,6 @@ productions:
     ast:
       disposition: constructor
       target: RandomExpr
-  take-expression:
-    cst: TakeExpressionSyntax
-    ast:
-      disposition: constructor
-      target: TakeExpr
-  selection-expression:
-    cst: SelectionExpressionSyntax
-    ast:
-      disposition: constructor
-      target: SelectionExpr
   quantifier-expression:
     cst: QuantifierExpressionSyntax
     ast:

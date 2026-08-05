@@ -11,6 +11,7 @@ affects:
 ---
 # ADR-083 — Magnitudes base sin unidades
 
+- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modifica: [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 - Documentos afectados: magnitudes, tipos, conversiones cuantitativas, plantillas `Text` y frontera pública.
 

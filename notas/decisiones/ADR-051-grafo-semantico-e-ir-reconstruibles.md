@@ -17,6 +17,7 @@ affects:
 ---
 # ADR-051 — Grafo semántico e IR reconstruibles
 
+- Ampliada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]

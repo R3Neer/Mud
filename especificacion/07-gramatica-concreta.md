@@ -59,6 +59,7 @@ decisions:
   - D-081
   - D-082
   - D-084
+  - D-085
 ---
 
 # 07. Gramática concreta
@@ -1111,3 +1112,20 @@ Los componentes y campos derivados pertenecen al tipo nominal del alias. Una est
 ```
 
 El contexto de tipo también puede construir el alias sin `to`. El compilador no busca aliases candidatos a partir del nombre del miembro.
+
+
+## Integración sintáctica de D-085
+
+Las reglas de esta sección sustituyen cualquier ejemplo anterior incompatible del capítulo.
+
+- `subaction` comparte la firma y el cuerpo de `action`, pero no es una raíz pública.
+- `->` y `-->` forman cadenas de tipo asociativas a la derecha; cada especificación de colección pertenece a la flecha inmediatamente anterior.
+- `(A, B)` y `(a: A, b: B)` son tipos producto estructurales anónimos.
+- `a -> b` es una asociación exacta y `selector --> resultado` una rama decisional. `_` es el fallback y `value` el parámetro contextual de rama.
+- `not in` es una comparación no encadenable.
+- `element~metadata` es un acceso postfix y puede ser asignable cuando el metadato lo permita. La forma `element.~metadata` es inválida.
+- `name =` y `anchor{...}` quedan retirados; se usan `~name =` y `{expression~anchor}`.
+- La cardinalidad omitida se conserva en la AST y se elabora según el contexto del campo almacenado.
+- `start with` contiene exactamente las secciones `things { ... }` y `rules { ... }`; cada una recibe expresiones de contribución separadas por comas.
+
+La validación contextual rechaza `mut` en un decisional, iteración directa de decisionales, colecciones anidadas en `start with`, metadatos no admitidos por el propietario y escrituras de metadatos inmutables.

@@ -29,112 +29,117 @@ synthetic_token_origins:
 - ImplicitTextEnd
 - MissingForRecovery
 fixed_tokens:
-- spelling: '%'
-- spelling: '&'
-- spelling: '&='
-- spelling: (
-- spelling: )
-- spelling: '*'
-- spelling: +
-- spelling: ','
-- spelling: '-'
-- spelling: --
-- spelling: --=
+- spelling: using
 - spelling: .
-- spelling: /
-- spelling: ':'
-- spelling: <
+- spelling: '*'
+- spelling: abstract
+- spelling: thing
+- spelling: as
+- spelling: ','
+- spelling: '{'
+- spelling: '}'
+- spelling: '~'
 - spelling: '='
-- spelling: '>'
+- spelling: alias
+- spelling: :=
+- spelling: ':'
+- spelling: ordered
+- spelling: family
+- spelling: magnitude
+- spelling: in
+- spelling: point
+- spelling: over
+- spelling: cycle
+- spelling: root
+- spelling: unit
+- spelling: name
+- spelling: plural
+- spelling: abbreviation
+- spelling: prefixes
+- spelling: empty
+- spelling: all
 - spelling: '['
 - spelling: ']'
-- spelling: ^
-- spelling: ^=
-- spelling: '{'
+- spelling: /
+- spelling: (
+- spelling: )
+- spelling: mut
 - spelling: '|'
-- spelling: '|='
-- spelling: '}'
-- spelling: '!='
-- spelling: '*='
+- spelling: Interval
+- spelling: ->
+- spelling: -->
+- spelling: ..
+- spelling: unique
+- spelling: by
+- spelling: for
+- spelling: 'on'
+- spelling: given
+- spelling: rule
+- spelling: always
+- spelling: action
+- spelling: subaction
+- spelling: look
+- spelling: message
+- spelling: when
+- spelling: if
+- spelling: after
+- spelling: otherwise
+- spelling: then
+- spelling: start
+- spelling: with
+- spelling: things
+- spelling: rules
+- spelling: test
 - spelling: +=
 - spelling: -=
-- spelling: ->
-- spelling: ..
+- spelling: '*='
 - spelling: /=
-- spelling: :=
-- spelling: <=
-- spelling: ==
-- spelling: =>
-- spelling: '>='
-- spelling: as
-- spelling: by
-- spelling: if
-- spelling: in
-- spelling: is
-- spelling: 'on'
-- spelling: or
-- spelling: to
-- spelling: <=>
+- spelling: '|='
+- spelling: '&='
+- spelling: ^=
+- spelling: --=
 - spelling: add
-- spelling: and
-- spelling: for
-- spelling: max
-- spelling: min
-- spelling: mut
-- spelling: not
-- spelling: old
-- spelling: sum
-- spelling: take
-- spelling: xor
-- spelling: Rand
-- spelling: each
-- spelling: from
-- spelling: look
-- spelling: name
-- spelling: over
-- spelling: root
-- spelling: rule
-- spelling: test
-- spelling: then
-- spelling: 'true'
-- spelling: unit
-- spelling: when
-- spelling: with
-- spelling: after
-- spelling: alias
-- spelling: all
-- spelling: count
-- spelling: cycle
-- spelling: empty
-- spelling: 'false'
-- spelling: given
-- spelling: point
-- spelling: start
-- spelling: thing
-- spelling: using
-- spelling: action
-- spelling: always
-- spelling: create
-- spelling: exists
-- spelling: family
-- spelling: forall
-- spelling: format
-- spelling: plural
+- spelling: to
 - spelling: remove
-- spelling: unique
-- spelling: allowed
-- spelling: changes
+- spelling: from
+- spelling: create
 - spelling: destroy
-- spelling: message
-- spelling: ordered
-- spelling: through
-- spelling: abstract
-- spelling: prefixes
-- spelling: magnitude
-- spelling: otherwise
+- spelling: each
 - spelling: eventually
-- spelling: abbreviation
-- spelling: Interval
+- spelling: through
+- spelling: <=>
+- spelling: =>
+- spelling: xor
+- spelling: ^
+- spelling: or
+- spelling: and
+- spelling: '&'
+- spelling: changes
+- spelling: ==
+- spelling: <
+- spelling: <=
+- spelling: '>'
+- spelling: '>='
+- spelling: '!='
+- spelling: is
+- spelling: not
+- spelling: +
+- spelling: '-'
+- spelling: --
+- spelling: '%'
+- spelling: old
+- spelling: allowed
+- spelling: take
+- spelling: 'true'
+- spelling: 'false'
+- spelling: _
+- spelling: Rand
+- spelling: exists
+- spelling: forall
+- spelling: count
+- spelling: sum
+- spelling: min
+- spelling: max
 named_tokens:
 - kind: EOF
 - kind: IDENTIFIER
@@ -144,7 +149,6 @@ named_tokens:
 - kind: TEXT_END
 - kind: INTERPOLATION_START
 - kind: INTERPOLATION_END
-- kind: ANCHOR_INTERPOLATION_START
 - kind: EXACT_NUMBER_LITERAL
 - kind: RUMBER_LITERAL
 - kind: EXACT_INTEGER_LITERAL
@@ -158,9 +162,9 @@ lexical_forms:
     - lexical-element
     - eof
   lexical-element:
-    rhs: "horizontal-space\n      | newline\n      | comment\n      | multiline-text-literal\n      | text-literal\n\
-      \      | rumber-literal\n      | exact-number-literal\n      | point-form\n      | reserved-word\n      |\
-      \ identifier\n      | operator-or-delimiter\n      | unit-form"
+    rhs: "horizontal-space\n      | newline\n      | comment\n      | multiline-text-literal\n      | text-literal\n     \
+      \ | rumber-literal\n      | exact-number-literal\n      | point-form\n      | reserved-word\n      | identifier\n  \
+      \    | operator-or-delimiter\n      | unit-form"
     references:
     - horizontal-space
     - newline
@@ -226,14 +230,13 @@ lexical_forms:
     rhs: '? bloque ### validado por MUD-LEX-020 a MUD-LEX-024 ?'
     references: []
   text-literal:
-    rhs: "quote\n        , { text-character\n          | text-escape-sequence\n          | value-template-hole\n\
-      \          | anchor-template-hole\n          }\n        , [ quote ]"
+    rhs: "quote\n        , { text-character\n          | text-escape-sequence\n          | value-template-hole\n         \
+      \ }\n        , [ quote ]"
     references:
     - quote
     - text-character
     - text-escape-sequence
     - value-template-hole
-    - anchor-template-hole
   quote:
     rhs: '? U+0022 COMILLA DOBLE ?'
     references: []
@@ -246,13 +249,6 @@ lexical_forms:
     - special-value-template-hole
   special-value-template-hole:
     rhs: '? bloque {...} equilibrado según MUD-LEX-036 ?'
-    references: []
-  anchor-template-hole:
-    rhs: special-anchor-template-hole
-    references:
-    - special-anchor-template-hole
-  special-anchor-template-hole:
-    rhs: '? bloque contextual anchor{...} equilibrado según MUD-LEX-036 ?'
     references: []
   multiline-text-literal:
     rhs: special-multiline-text
@@ -345,8 +341,8 @@ lexical_forms:
     rhs: '"0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"'
     references: []
   hex-digit:
-    rhs: "digit | \"A\" | \"B\" | \"C\" | \"D\" | \"E\" | \"F\"\n                    | \"a\" | \"b\" | \"c\" | \"\
-      d\" | \"e\" | \"f\""
+    rhs: "digit | \"A\" | \"B\" | \"C\" | \"D\" | \"E\" | \"F\"\n                    | \"a\" | \"b\" | \"c\" | \"d\" | \"\
+      e\" | \"f\""
     references:
     - digit
   reserved-word:
@@ -357,26 +353,27 @@ lexical_forms:
     - builtin-word
     - constant-word
   keyword-word:
-    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"\
-      action\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\
-      \n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\
-      \n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\"\
-      \ | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"sum\" | \"min\" | \"max\""
+    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\" |\
+      \ \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n\
+      \      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n    \
+      \  | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\" | \"take\"\n\
+      \      | \"exists\" | \"forall\" | \"count\" | \"sum\" | \"min\" | \"max\""
     references: []
   operator-word:
-    rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"in\"\n      | \"not\" | \"and\" |\
-      \ \"or\" | \"xor\""
+    rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"\
+      xor\""
     references: []
   builtin-word:
-    rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\"\
-      \ | \"Rand\""
+    rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\"\
+      \ | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\""
     references: []
   constant-word:
-    rhs: '"true" | "false" | "empty" | "all"'
+    rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"name\" | \"plural\" | \"abbreviation\" | \"prefixes\"\
-      \ | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\" | \"anchor\""
+    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"things\" | \"rules\" | \"value\"\n      | \"name\" | \"path\" |\
+      \ \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\"\
+      \ | \"point\" | \"over\" | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"
@@ -389,11 +386,11 @@ lexical_forms:
     - ascii-letter
     - digit
   ascii-letter:
-    rhs: "\"A\" | \"B\" | \"C\" | \"D\" | \"E\" | \"F\" | \"G\"\n      | \"H\" | \"I\" | \"J\" | \"K\" | \"L\" |\
-      \ \"M\" | \"N\"\n      | \"O\" | \"P\" | \"Q\" | \"R\" | \"S\" | \"T\" | \"U\"\n      | \"V\" | \"W\" | \"\
-      X\" | \"Y\" | \"Z\"\n      | \"a\" | \"b\" | \"c\" | \"d\" | \"e\" | \"f\" | \"g\"\n      | \"h\" | \"i\"\
-      \ | \"j\" | \"k\" | \"l\" | \"m\" | \"n\"\n      | \"o\" | \"p\" | \"q\" | \"r\" | \"s\" | \"t\" | \"u\"\n\
-      \      | \"v\" | \"w\" | \"x\" | \"y\" | \"z\""
+    rhs: "\"A\" | \"B\" | \"C\" | \"D\" | \"E\" | \"F\" | \"G\"\n      | \"H\" | \"I\" | \"J\" | \"K\" | \"L\" | \"M\" | \"\
+      N\"\n      | \"O\" | \"P\" | \"Q\" | \"R\" | \"S\" | \"T\" | \"U\"\n      | \"V\" | \"W\" | \"X\" | \"Y\" | \"Z\"\n\
+      \      | \"a\" | \"b\" | \"c\" | \"d\" | \"e\" | \"f\" | \"g\"\n      | \"h\" | \"i\" | \"j\" | \"k\" | \"l\" | \"m\"\
+      \ | \"n\"\n      | \"o\" | \"p\" | \"q\" | \"r\" | \"s\" | \"t\" | \"u\"\n      | \"v\" | \"w\" | \"x\" | \"y\" | \"\
+      z\""
     references: []
   unit-form:
     rhs: '? forma Unicode de unidad habilitada por una declaración magnitude ?'
@@ -416,14 +413,14 @@ lexical_forms:
     - two-character-token
     - one-character-operator
   three-character-token:
-    rhs: '"<=>" | "--="'
+    rhs: '"<=>" | "-->" | "--="'
     references: []
   two-character-token:
-    rhs: "\":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\"\
-      \ | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
+    rhs: "\":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\
+      \n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
     references: []
   one-character-operator:
-    rhs: "\"=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"\n      | \"<\" | \">\" | \"&\" | \"|\" | \"^\""
+    rhs: "\"=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"\n      | \"<\" | \">\" | \"&\" | \"|\" | \"^\" | \"~\""
     references: []
   brace-token:
     rhs: '"{" | "}"'
@@ -435,7 +432,7 @@ lexical_forms:
     rhs: '"[" | "]"'
     references: []
   punctuation-token:
-    rhs: '"," | "." | ":" | ";"'
+    rhs: '"," | "." | ":" | "'
     references: []
 syntax_nodes:
   mud-file:
@@ -445,15 +442,11 @@ syntax_nodes:
     - layout
     - using-file-body
     - declaration-file-body
-    field_model:
-    - layout
-    - body?
-    - EOF
   using-file-body:
     kind: UsingFileBodySyntax
-    rhs: "using-declaration\n        , { required-separation , using-declaration }\n        , [ required-separation\n\
-      \            , top-level-declaration\n            , { required-separation , top-level-declaration }\n    \
-      \      ]\n        , [ required-separation ]"
+    rhs: "using-declaration\n        , { required-separation , using-declaration }\n        , [ required-separation\n    \
+      \        , top-level-declaration\n            , { required-separation , top-level-declaration }\n          ]\n     \
+      \   , [ required-separation ]"
     references:
     - using-declaration
     - required-separation
@@ -470,16 +463,12 @@ syntax_nodes:
     rhs: '"using" , mud-path , [ "." , "*" ]'
     references:
     - mud-path
-    field_model:
-    - usingKeyword
-    - mudPath
-    - dotStar?
   top-level-declaration:
     kind: TopLevelDeclarationSyntax
-    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n\
-      \      | boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n  \
-      \    | action-declaration\n      | look-declaration\n      | message-declaration\n      | test-declaration\n\
-      \      | global-start-declaration"
+    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n      |\
+      \ boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n      | action-declaration\n\
+      \      | subaction-declaration\n      | look-declaration\n      | message-declaration\n      | test-declaration\n  \
+      \    | global-start-declaration"
     references:
     - thing-declaration
     - alias-declaration
@@ -489,6 +478,7 @@ syntax_nodes:
     - reactive-rule-declaration
     - always-rule-declaration
     - action-declaration
+    - subaction-declaration
     - look-declaration
     - message-declaration
     - test-declaration
@@ -520,6 +510,11 @@ syntax_nodes:
     - identifier
   field-name:
     kind: FieldNameSyntax
+    rhs: identifier
+    references:
+    - identifier
+  metadata-name:
+    kind: MetadataNameSyntax
     rhs: identifier
     references:
     - identifier
@@ -564,49 +559,40 @@ syntax_nodes:
     references: []
   thing-declaration:
     kind: ThingDeclarationSyntax
-    rhs: "[ \"abstract\" ] , \"thing\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference\
-      \ } ]\n        , [ thing-body ]"
+    rhs: "[ \"abstract\" ] , \"thing\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference } ]\n\
+      \        , [ thing-body ]"
     references:
     - nominal-name
     - type-reference
     - thing-body
-    field_model:
-    - abstractKeyword?
-    - thingKeyword
-    - name
-    - ancestorClause?
-    - body
   thing-body:
     kind: ThingBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ thing-body-declaration\n            , { required-separation ,\
-      \ thing-body-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ thing-body-declaration\n            , { required-separation , thing-body-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - thing-body-declaration
     - required-separation
   thing-body-declaration:
     kind: ThingBodyDeclarationSyntax
-    rhs: "intrinsic-name-override\n      | field-declaration"
+    rhs: "metadata-assignment\n      | field-declaration"
     references:
-    - intrinsic-name-override
+    - metadata-assignment
     - field-declaration
-  intrinsic-name-override:
-    kind: IntrinsicNameOverrideSyntax
-    rhs: '"name" , "=" , TEXT_START , { TEXT_FRAGMENT } , TEXT_END'
-    references: []
+  metadata-assignment:
+    kind: MetadataAssignmentSyntax
+    rhs: '"~" , metadata-name , "=" , value-expression'
+    references:
+    - metadata-name
+    - value-expression
   alias-declaration:
     kind: AliasDeclarationSyntax
-    rhs: "\"alias\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference } ]\n       \
-      \ , [ alias-definition ]"
+    rhs: "\"alias\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference } ]\n        , [ alias-definition\
+      \ ]"
     references:
     - nominal-name
     - type-reference
     - alias-definition
-    field_model:
-    - aliasKeyword
-    - name
-    - asClause?
-    - definition?
   alias-definition:
     kind: AliasDefinitionSyntax
     rhs: "\":=\" , type-expression\n      | structural-alias-body"
@@ -615,16 +601,17 @@ syntax_nodes:
     - structural-alias-body
   structural-alias-body:
     kind: StructuralAliasBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ alias-body-declaration\n            , { required-separation ,\
-      \ alias-body-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ alias-body-declaration\n            , { required-separation , alias-body-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - alias-body-declaration
     - required-separation
   alias-body-declaration:
     kind: AliasBodyDeclarationSyntax
-    rhs: "component-declaration\n      | calculated-field-declaration\n      | inherited-default-override"
+    rhs: "metadata-assignment\n      | component-declaration\n      | calculated-field-declaration\n      | inherited-default-override"
     references:
+    - metadata-assignment
     - component-declaration
     - calculated-field-declaration
     - inherited-default-override
@@ -635,42 +622,23 @@ syntax_nodes:
     - component-name
     - type-expression
     - constant-expression
-    field_model:
-    - name
-    - colon
-    - type
-    - domainClause?
-    - collectionSpec?
-    - defaultClause?
   inherited-default-override:
     kind: InheritedDefaultOverrideSyntax
     rhs: component-name , "=" , constant-expression
     references:
     - component-name
     - constant-expression
-    field_model:
-    - name
-    - equals
-    - value
   family-declaration:
     kind: FamilyDeclarationSyntax
     rhs: "[ \"ordered\" ] , \"family\" , nominal-name\n        , \"{\" , declaration-layout\n        , { family-data-declaration\
-      \ , required-separation }\n        , family-member\n        , { \",\" , declaration-layout , family-member\
-      \ }\n        , [ required-separation ]\n        , \"}\""
+      \ , required-separation }\n        , family-member\n        , { \",\" , declaration-layout , family-member }\n     \
+      \   , [ required-separation ]\n        , \"}\""
     references:
     - nominal-name
     - declaration-layout
     - family-data-declaration
     - required-separation
     - family-member
-    field_model:
-    - orderedKeyword?
-    - familyKeyword
-    - name
-    - openBrace
-    - data*
-    - members+
-    - closeBrace
   family-data-declaration:
     kind: FamilyDataDeclarationSyntax
     rhs: "stored-family-data-declaration\n      | calculated-family-data-declaration"
@@ -699,12 +667,18 @@ syntax_nodes:
     - family-member-body
   family-member-body:
     kind: FamilyMemberBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , family-data-assignment\n        , { required-separation , family-data-assignment\
+    rhs: "\"{\" , declaration-layout\n        , family-member-entry\n        , { required-separation , family-member-entry\
       \ }\n        , [ required-separation ]\n        , \"}\""
     references:
     - declaration-layout
-    - family-data-assignment
+    - family-member-entry
     - required-separation
+  family-member-entry:
+    kind: FamilyMemberEntrySyntax
+    rhs: "metadata-assignment\n      | family-data-assignment"
+    references:
+    - metadata-assignment
+    - family-data-assignment
   family-data-assignment:
     kind: FamilyDataAssignmentSyntax
     rhs: field-name , "=" , constant-expression
@@ -720,37 +694,23 @@ syntax_nodes:
     - point-magnitude-declaration
   base-magnitude-declaration:
     kind: BaseMagnitudeDeclarationSyntax
-    rhs: "\"magnitude\" , nominal-name\n        , [ \":\" , declared-type ]\n        , [ \"in\" , interval-expression\
-      \ ]\n        , magnitude-body"
+    rhs: "\"magnitude\" , nominal-name\n        , [ \":\" , declared-type ]\n        , [ \"in\" , interval-expression ]\n\
+      \        , magnitude-body"
     references:
     - nominal-name
     - declared-type
     - interval-expression
     - magnitude-body
-    field_model:
-    - magnitudeKeyword
-    - name
-    - representation?
-    - domain?
-    - body
   derived-magnitude-declaration:
     kind: DerivedMagnitudeDeclarationSyntax
-    rhs: "\"magnitude\" , nominal-name\n        , [ \":\" , declared-type ]\n        , [ \"in\" , interval-expression\
-      \ ]\n        , \":=\" , dimension-expression\n        , [ derived-unit-body ]"
+    rhs: "\"magnitude\" , nominal-name\n        , [ \":\" , declared-type ]\n        , [ \"in\" , interval-expression ]\n\
+      \        , \":=\" , dimension-expression\n        , [ derived-unit-body ]"
     references:
     - nominal-name
     - declared-type
     - interval-expression
     - dimension-expression
     - derived-unit-body
-    field_model:
-    - magnitudeKeyword
-    - name
-    - representation?
-    - domain?
-    - definitionOperator
-    - dimension
-    - unitBody?
   point-magnitude-declaration:
     kind: PointMagnitudeDeclarationSyntax
     rhs: "\"magnitude\" , nominal-name\n        , \"point\" , \"over\" , type-reference\n        , [ \"in\" , point-domain\
@@ -760,22 +720,11 @@ syntax_nodes:
     - type-reference
     - point-domain
     - point-magnitude-body
-    field_model:
-    - magnitudeKeyword
-    - name
-    - pointKeyword
-    - overKeyword
-    - coordinateType
-    - domain?
-    - body
   point-domain:
     kind: PointDomainSyntax
     rhs: interval-expression , [ "cycle" ]
     references:
     - interval-expression
-    field_model:
-    - interval
-    - cycleKeyword?
   magnitude-body:
     kind: MagnitudeBodySyntax
     rhs: "\"{\" , declaration-layout\n        , [ root-unit-declaration\n            , { required-separation , alternative-unit-declaration\
@@ -787,19 +736,18 @@ syntax_nodes:
     - alternative-unit-declaration
   derived-unit-body:
     kind: DerivedUnitBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ alternative-unit-declaration\n            , { required-separation\
-      \ , alternative-unit-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ alternative-unit-declaration\n            , { required-separation , alternative-unit-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - alternative-unit-declaration
     - required-separation
   point-magnitude-body:
     kind: PointMagnitudeBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ \"format\" , \"=\" , text-expression\n            , [ required-separation\
-      \ ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , [ required-separation ] ]\n        , \"}\""
     references:
     - declaration-layout
-    - text-expression
+    - metadata-assignment
     - required-separation
   root-unit-declaration:
     kind: RootUnitDeclarationSyntax
@@ -821,16 +769,16 @@ syntax_nodes:
     - identifier
   unit-body:
     kind: UnitBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ unit-property\n            , { required-separation , unit-property\
-      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ unit-property\n            , { required-separation , unit-property }\n \
+      \           , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - unit-property
     - required-separation
   unit-property:
     kind: UnitPropertySyntax
-    rhs: "\"name\" , \"=\" , text-expression\n      | \"plural\" , \"=\" , text-expression\n      | \"abbreviation\"\
-      \ , \"=\" , text-expression\n      | \"prefixes\" , \"=\" , prefix-selection"
+    rhs: "\"~\" , \"name\" , \"=\" , text-expression\n      | \"~\" , \"plural\" , \"=\" , text-expression\n      | \"~\"\
+      \ , \"abbreviation\" , \"=\" , text-expression\n      | \"~\" , \"prefixes\" , \"=\" , prefix-selection"
     references:
     - text-expression
     - prefix-selection
@@ -868,14 +816,6 @@ syntax_nodes:
     - field-name
     - type-expression
     - constant-expression
-    field_model:
-    - outerMut?
-    - name
-    - colon
-    - type
-    - domain?
-    - collection?
-    - default?
   calculated-field-declaration:
     kind: CalculatedFieldDeclarationSyntax
     rhs: field-name , [ derived-value-shape ] , ":=" , value-expression
@@ -883,11 +823,6 @@ syntax_nodes:
     - field-name
     - derived-value-shape
     - value-expression
-    field_model:
-    - name
-    - shape?
-    - definitionOperator
-    - expression
   public-field-declaration:
     kind: PublicFieldDeclarationSyntax
     rhs: field-name , [ derived-value-shape ] , ":=" , value-expression
@@ -897,18 +832,18 @@ syntax_nodes:
     - value-expression
   derived-value-shape:
     kind: DerivedValueShapeSyntax
-    rhs: '":" , type-expression\n      | "in" , type-alternative-domain , [ collection-specification ]\n      |
-      collection-specification'
+    rhs: "\":\" , type-expression\n      | \"in\" , type-alternative-domain , [ collection-specification ]\n      | collection-specification"
     references:
     - type-expression
     - type-alternative-domain
     - collection-specification
   type-expression:
     kind: TypeExpressionSyntax
-    rhs: union-type-expression , [ collection-specification ]
+    rhs: "union-type-expression\n        , [ collection-specification | dictionary-type ]"
     references:
     - union-type-expression
     - collection-specification
+    - dictionary-type
   union-type-expression:
     kind: UnionTypeExpressionSyntax
     rhs: type-alternative , { "|" , type-alternative }
@@ -916,15 +851,15 @@ syntax_nodes:
     - type-alternative
   type-alternative:
     kind: TypeAlternativeSyntax
-    rhs: "declared-type , [ \"in\" , type-alternative-domain ]\n      | \"(\" , union-type-expression , \")\""
+    rhs: "declared-type , [ \"in\" , type-alternative-domain ]\n      | \"(\" , type-expression , \")\""
     references:
     - declared-type
     - type-alternative-domain
-    - union-type-expression
+    - type-expression
   type-alternative-domain:
     kind: TypeAlternativeDomainSyntax
-    rhs: "stepped-domain\n      | interval-expression\n      | collection-literal\n      | qualified-name\n    \
-      \  | \"(\" , domain-expression , \")\""
+    rhs: "stepped-domain\n      | interval-expression\n      | collection-literal\n      | qualified-name\n      | \"(\" ,\
+      \ domain-expression , \")\""
     references:
     - stepped-domain
     - interval-expression
@@ -933,36 +868,65 @@ syntax_nodes:
     - domain-expression
   declared-type:
     kind: DeclaredTypeSyntax
-    rhs: "type-reference\n      | interval-type\n      | dictionary-type"
+    rhs: "type-reference\n      | interval-type\n      | product-type"
     references:
     - type-reference
     - interval-type
-    - dictionary-type
+    - product-type
   interval-type:
     kind: IntervalTypeSyntax
     rhs: type-reference , "Interval"
     references:
     - type-reference
-    field_model:
-    - elementType
-    - intervalKeyword
+  product-type:
+    kind: ProductTypeSyntax
+    rhs: "positional-product-type\n      | named-product-type"
+    references:
+    - positional-product-type
+    - named-product-type
+  positional-product-type:
+    kind: PositionalProductTypeSyntax
+    rhs: "\"(\" , type-expression , \",\" , type-expression\n        , { \",\" , type-expression } , \")\""
+    references:
+    - type-expression
+  named-product-type:
+    kind: NamedProductTypeSyntax
+    rhs: "\"(\" , named-product-component\n        , \",\" , named-product-component\n        , { \",\" , named-product-component\
+      \ } , \")\""
+    references:
+    - named-product-component
+  named-product-component:
+    kind: NamedProductComponentSyntax
+    rhs: component-name , ":" , type-expression
+    references:
+    - component-name
+    - type-expression
   dictionary-type:
     kind: DictionaryTypeSyntax
-    rhs: type-reference , "->" , dictionary-value-type
+    rhs: dictionary-link , { dictionary-link }
     references:
-    - type-reference
+    - dictionary-link
+  dictionary-link:
+    kind: DictionaryLinkSyntax
+    rhs: "dictionary-arrow , dictionary-value-type\n        , [ collection-specification ]"
+    references:
+    - dictionary-arrow
     - dictionary-value-type
+    - collection-specification
+  dictionary-arrow:
+    kind: DictionaryArrowSyntax
+    rhs: '"->" | "-->"'
+    references: []
   dictionary-value-type:
     kind: DictionaryValueTypeSyntax
-    rhs: "type-reference\n      | \"(\" , type-expression , \")\""
+    rhs: union-type-expression
     references:
-    - type-reference
-    - type-expression
+    - union-type-expression
   collection-specification:
     kind: CollectionSpecificationSyntax
-    rhs: "\"[\"\n        , ( cardinality\n            , [ optional-comma , collection-modifier\n               \
-      \ , { optional-comma , collection-modifier }\n              ]\n          | collection-modifier\n         \
-      \   , { optional-comma , collection-modifier }\n          )\n        , \"]\""
+    rhs: "\"[\"\n        , ( cardinality\n            , [ optional-comma , collection-modifier\n                , { optional-comma\
+      \ , collection-modifier }\n              ]\n          | collection-modifier\n            , { optional-comma , collection-modifier\
+      \ }\n          )\n        , \"]\""
     references:
     - cardinality
     - optional-comma
@@ -1002,23 +966,15 @@ syntax_nodes:
     references:
     - role-name
     - type-expression
-    field_model:
-    - outerMut?
-    - roleAndColon?
-    - type
-    - domain?
-    - collection?
   on-participant:
     kind: OnParticipantSyntax
-    rhs: "[ role-name , \":\" ] , type-reference , [ member-capability ]\n      | role-name , [ \":\" , type-reference\
-      \ ]\n        , \"in\" , expression , [ member-capability ]"
+    rhs: "[ role-name , \":\" ] , type-reference , [ member-capability ]\n      | role-name , [ \":\" , type-reference ]\n\
+      \        , \"in\" , expression , [ member-capability ]"
     references:
     - role-name
     - type-reference
     - member-capability
     - expression
-    field_model:
-    - directOrRelatedBinding
   member-capability:
     kind: MemberCapabilitySyntax
     rhs: '"[" , "mut" , "]"'
@@ -1030,25 +986,18 @@ syntax_nodes:
     - given-declaration
   given-declaration:
     kind: GivenDeclarationSyntax
-    rhs: "given-name , \":\" , union-type-expression\n        , [ given-collection-specification ]\n        , [\
-      \ \"=\" , constant-expression ]"
+    rhs: "given-name , \":\" , union-type-expression\n        , [ given-collection-specification ]\n        , [ \"=\" , constant-expression\
+      \ ]"
     references:
     - given-name
     - union-type-expression
     - given-collection-specification
     - constant-expression
-    field_model:
-    - name
-    - colon
-    - type
-    - domain?
-    - readonlyCollection?
-    - default?
   given-collection-specification:
     kind: GivenCollectionSpecificationSyntax
-    rhs: "\"[\"\n        , ( cardinality\n            , [ optional-comma , given-collection-modifier\n         \
-      \       , { optional-comma , given-collection-modifier }\n              ]\n          | given-collection-modifier\n\
-      \            , { optional-comma , given-collection-modifier }\n          )\n        , \"]\""
+    rhs: "\"[\"\n        , ( cardinality\n            , [ optional-comma , given-collection-modifier\n                , {\
+      \ optional-comma , given-collection-modifier }\n              ]\n          | given-collection-modifier\n           \
+      \ , { optional-comma , given-collection-modifier }\n          )\n        , \"]\""
     references:
     - cardinality
     - optional-comma
@@ -1066,22 +1015,16 @@ syntax_nodes:
     - for-clause
     - given-clause
     - boolean-body
-    field_model:
-    - ruleKeyword
-    - name
-    - forClause?
-    - givenClause?
-    - body
   boolean-body:
     kind: BooleanBodySyntax
-    rhs: '"{" , declaration-layout , boolean-block , [ required-separation ] , "}"'
+    rhs: "\"{\" , declaration-layout , boolean-block\n        , [ required-separation ] , \"}\""
     references:
     - declaration-layout
     - boolean-block
     - required-separation
   boolean-block:
     kind: BooleanBlockSyntax
-    rhs: "{ local-value-declaration , required-separation }\n      , boolean-expression"
+    rhs: "{ local-value-declaration , required-separation }\n        , boolean-expression"
     references:
     - local-value-declaration
     - required-separation
@@ -1089,8 +1032,8 @@ syntax_nodes:
   reactive-rule-declaration:
     kind: ReactiveRuleDeclarationSyntax
     rhs: "\"rule\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , when-clause\n\
-      \        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n   \
-      \     , [ required-separation ]\n        , \"}\""
+      \        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n        , [ required-separation\
+      \ ]\n        , \"}\""
     references:
     - nominal-name
     - on-clause
@@ -1099,11 +1042,6 @@ syntax_nodes:
     - required-separation
     - if-clause
     - then-clause
-    field_model:
-    - ruleKeyword
-    - name
-    - onClause?
-    - body
   always-rule-declaration:
     kind: AlwaysRuleDeclarationSyntax
     rhs: "\"always\" , \"rule\" , nominal-name\n        , [ on-clause ]\n        , invariant-body\n        , [ diagnostic-tail\
@@ -1113,13 +1051,6 @@ syntax_nodes:
     - on-clause
     - invariant-body
     - diagnostic-tail
-    field_model:
-    - alwaysKeyword
-    - ruleKeyword
-    - name
-    - onClause?
-    - body
-    - diagnostic?
   invariant-body:
     kind: InvariantBodySyntax
     rhs: "\"{\" , declaration-layout\n        , boolean-block\n        , [ required-separation ]\n        , \"}\""
@@ -1129,9 +1060,19 @@ syntax_nodes:
     - required-separation
   action-declaration:
     kind: ActionDeclarationSyntax
-    rhs: "\"action\" , nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n\
-      \        , [ action-if-clause , required-separation ]\n        , then-clause\n        , [ required-separation\
-      \ , action-after-clause ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: '"action" , action-signature-body'
+    references:
+    - action-signature-body
+  subaction-declaration:
+    kind: SubactionDeclarationSyntax
+    rhs: '"subaction" , action-signature-body'
+    references:
+    - action-signature-body
+  action-signature-body:
+    kind: ActionSignatureBodySyntax
+    rhs: "nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n     \
+      \   , [ action-if-clause , required-separation ]\n        , then-clause\n        , [ required-separation , action-after-clause\
+      \ ]\n        , [ required-separation ]\n        , \"}\""
     references:
     - nominal-name
     - for-clause
@@ -1141,34 +1082,23 @@ syntax_nodes:
     - required-separation
     - then-clause
     - action-after-clause
-    field_model:
-    - actionKeyword
-    - name
-    - forClause?
-    - givenClause?
-    - body
   look-declaration:
     kind: LookDeclarationSyntax
     rhs: "\"look\" , nominal-name\n        , [ for-clause ]\n        , \"{\" , declaration-layout\n        , [ public-field-declaration\n\
-      \            , { required-separation , public-field-declaration }\n            , [ required-separation ]\n\
-      \          ]\n        , \"}\""
+      \            , { required-separation , public-field-declaration }\n            , [ required-separation ]\n         \
+      \ ]\n        , \"}\""
     references:
     - nominal-name
     - for-clause
     - declaration-layout
     - public-field-declaration
     - required-separation
-    field_model:
-    - lookKeyword
-    - name
-    - forClause?
-    - body
   message-declaration:
     kind: MessageDeclarationSyntax
     rhs: "\"message\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , when-clause\n\
-      \        , [ required-separation , if-clause ]\n        , [ required-separation , public-field-declaration\n\
-      \            , { required-separation , public-field-declaration }\n          ]\n        , [ required-separation\
-      \ ]\n        , \"}\""
+      \        , [ required-separation , if-clause ]\n        , [ required-separation , public-field-declaration\n       \
+      \     , { required-separation , public-field-declaration }\n          ]\n        , [ required-separation ]\n       \
+      \ , \"}\""
     references:
     - nominal-name
     - on-clause
@@ -1177,11 +1107,6 @@ syntax_nodes:
     - required-separation
     - if-clause
     - public-field-declaration
-    field_model:
-    - messageKeyword
-    - name
-    - onClause?
-    - body
   when-clause:
     kind: WhenClauseSyntax
     rhs: '"when" , expression-clause-body'
@@ -1212,8 +1137,8 @@ syntax_nodes:
     - text-expression
   expression-clause-body:
     kind: ExpressionClauseBodySyntax
-    rhs: "boolean-expression\n      | \"{\" , declaration-layout , boolean-block\n          , [ required-separation\
-      \ ] , \"}\""
+    rhs: "boolean-expression\n      | \"{\" , declaration-layout , boolean-block\n          , [ required-separation ] , \"\
+      }\""
     references:
     - boolean-expression
     - declaration-layout
@@ -1228,8 +1153,8 @@ syntax_nodes:
     - diagnostic-tail
   effect-block:
     kind: EffectBlockSyntax
-    rhs: "\"{\" , declaration-layout\n        , { local-value-declaration , required-separation }\n        , effect\n\
-      \        , { required-separation , then-statement }\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , { local-value-declaration , required-separation }\n        , effect\n    \
+      \    , { required-separation , then-statement }\n        , [ required-separation ]\n        , \"}\""
     references:
     - declaration-layout
     - local-value-declaration
@@ -1256,23 +1181,24 @@ syntax_nodes:
     - start-with-declaration
   start-with-declaration:
     kind: StartWithDeclarationSyntax
-    rhs: "\"start\" , \"with\"\n        , \"{\" , declaration-layout\n        , [ declaration-reference\n      \
-      \      , { \",\" , declaration-layout , declaration-reference }\n          ]\n        , declaration-layout\
-      \ , \"}\""
+    rhs: "\"start\" , \"with\"\n        , \"{\" , declaration-layout\n        , \"things\" , start-contribution-body\n   \
+      \     , required-separation\n        , \"rules\" , start-contribution-body\n        , declaration-layout , \"}\""
     references:
     - declaration-layout
-    - declaration-reference
-    field_model:
-    - startKeyword
-    - withKeyword
-    - openBrace
-    - references*
-    - closeBrace
+    - start-contribution-body
+    - required-separation
+  start-contribution-body:
+    kind: StartContributionBodySyntax
+    rhs: "\"{\" , declaration-layout\n        , [ expression\n            , { \",\" , declaration-layout , expression }\n\
+      \          ]\n        , declaration-layout , \"}\""
+    references:
+    - declaration-layout
+    - expression
   test-declaration:
     kind: TestDeclarationSyntax
-    rhs: "\"test\" , nominal-name\n        , \"{\" , declaration-layout\n        , start-with-declaration\n    \
-      \    , required-separation\n        , then-clause\n        , required-separation\n        , test-after-clause\n\
-      \        , [ required-separation ]\n        , \"}\""
+    rhs: "\"test\" , nominal-name\n        , \"{\" , declaration-layout\n        , start-with-declaration\n        , required-separation\n\
+      \        , then-clause\n        , required-separation\n        , test-after-clause\n        , [ required-separation\
+      \ ]\n        , \"}\""
     references:
     - nominal-name
     - declaration-layout
@@ -1280,19 +1206,15 @@ syntax_nodes:
     - required-separation
     - then-clause
     - test-after-clause
-    field_model:
-    - testKeyword
-    - name
-    - body
   test-after-clause:
     kind: TestAfterClauseSyntax
     rhs: "\"after\" , test-assertion\n      | \"after\" , \"{\"\n          , declaration-layout\n          , { local-value-declaration\
-      \ , required-separation }\n          , test-assertion\n          , { required-separation , test-assertion\
-      \ }\n          , [ required-separation ]\n          , \"}\""
+      \ , required-separation }\n          , test-assertion\n          , { required-separation , test-assertion }\n      \
+      \    , [ required-separation ]\n          , \"}\""
     references:
-    - local-value-declaration
     - test-assertion
     - declaration-layout
+    - local-value-declaration
     - required-separation
   test-assertion:
     kind: TestAssertionSyntax
@@ -1302,8 +1224,8 @@ syntax_nodes:
     - diagnostic-tail
   effect:
     kind: EffectSyntax
-    rhs: "assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n      | destroy-effect\n\
-      \      | action-call-effect\n      | for-each-effect"
+    rhs: "assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n      | destroy-effect\n  \
+      \    | action-call-effect\n      | for-each-effect"
     references:
     - assignment-effect
     - add-effect
@@ -1319,18 +1241,13 @@ syntax_nodes:
     - assignable-expression
     - assignment-operator
     - value-expression
-    field_model:
-    - target
-    - operator
-    - value
   assignment-operator:
     kind: AssignmentOperatorSyntax
-    rhs: '"=" | "+=" | "-=" | "*=" | "/=" | "|=" | "&=" | "^=" | "--="'
+    rhs: "\"=\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--=\""
     references: []
   add-effect:
     kind: AddEffectSyntax
-    rhs: "\"add\" , expression , \"to\" , assignable-expression\n      | \"add\" , stored-field-declaration , \"\
-      to\" , declaration-reference"
+    rhs: "\"add\" , expression , \"to\" , assignable-expression\n      | \"add\" , stored-field-declaration , \"to\" , declaration-reference"
     references:
     - expression
     - assignable-expression
@@ -1359,22 +1276,13 @@ syntax_nodes:
     - postfix-expression
   for-each-effect:
     kind: ForEachEffectSyntax
-    rhs: "\"for\" , \"each\" , iteration-binding , \"in\" , expression\n        , [ \"by\" , expression ]\n    \
-      \    , [ \"if\" , boolean-expression ]\n        , effect-block"
+    rhs: "\"for\" , \"each\" , iteration-binding , \"in\" , expression\n        , [ \"by\" , expression ]\n        , [ \"\
+      if\" , boolean-expression ]\n        , effect-block"
     references:
     - iteration-binding
     - expression
     - boolean-expression
     - effect-block
-    field_model:
-    - forKeyword
-    - eachKeyword
-    - binding
-    - inKeyword
-    - source
-    - order?
-    - guard?
-    - body
   iteration-binding:
     kind: IterationBindingSyntax
     rhs: "variable-name\n      | \"(\" , variable-name , \",\" , variable-name , \")\""
@@ -1382,16 +1290,28 @@ syntax_nodes:
     - variable-name
   assignable-expression:
     kind: AssignableExpressionSyntax
-    rhs: primary-expression , { member-access | index-access }
+    rhs: primary-expression , { member-access | metadata-access | index-access }
     references:
     - primary-expression
     - member-access
+    - metadata-access
     - index-access
   expression:
     kind: ExpressionSyntax
-    rhs: eventually-expression
+    rhs: mapping-expression
+    references:
+    - mapping-expression
+  mapping-expression:
+    kind: MappingExpressionSyntax
+    rhs: eventually-expression , [ mapping-arrow , mapping-expression ]
     references:
     - eventually-expression
+    - mapping-arrow
+    - mapping-expression
+  mapping-arrow:
+    kind: MappingArrowSyntax
+    rhs: '"->" | "-->"'
+    references: []
   value-expression:
     kind: ValueExpressionSyntax
     rhs: expression , [ "," , expression , { "," , expression } ]
@@ -1431,8 +1351,8 @@ syntax_nodes:
     - action-reference-list
   action-reference-list:
     kind: ActionReferenceListSyntax
-    rhs: "action-reference , { \",\" , action-reference }\n      | \"[\" , action-reference , { \",\" , action-reference\
-      \ } , \"]\""
+    rhs: "action-reference , { \",\" , action-reference }\n      | \"[\" , action-reference , { \",\" , action-reference }\
+      \ , \"]\""
     references:
     - action-reference
   action-reference:
@@ -1505,8 +1425,8 @@ syntax_nodes:
     - comparison-tail
   comparison-tail:
     kind: ComparisonTailSyntax
-    rhs: "chainable-comparison , quantitative-expression\n        , { chainable-comparison , quantitative-expression\
-      \ }\n      | nonchainable-comparison , quantitative-expression"
+    rhs: "chainable-comparison , quantitative-expression\n        , { chainable-comparison , quantitative-expression }\n \
+      \     | nonchainable-comparison , quantitative-expression"
     references:
     - chainable-comparison
     - quantitative-expression
@@ -1522,7 +1442,7 @@ syntax_nodes:
     - membership-in
   membership-in:
     kind: MembershipInSyntax
-    rhs: '"in"'
+    rhs: '"in" | "not" , "in"'
     references: []
   quantitative-expression:
     kind: QuantitativeExpressionSyntax
@@ -1569,20 +1489,23 @@ syntax_nodes:
     references: []
   postfix-expression:
     kind: PostfixExpressionSyntax
-    rhs: "primary-expression\n        , { member-access | index-access | call-arguments }"
+    rhs: "primary-expression\n        , { member-access | metadata-access | index-access | call-arguments }"
     references:
     - primary-expression
     - member-access
+    - metadata-access
     - index-access
     - call-arguments
-    field_model:
-    - primary
-    - suffix*
   member-access:
     kind: MemberAccessSyntax
     rhs: '"." , identifier'
     references:
     - identifier
+  metadata-access:
+    kind: MetadataAccessSyntax
+    rhs: '"~" , metadata-name'
+    references:
+    - metadata-name
   index-access:
     kind: IndexAccessSyntax
     rhs: '"[" , expression , { "," , expression } , "]"'
@@ -1633,20 +1556,13 @@ syntax_nodes:
     rhs: '"take" , expression , "from" , expression'
     references:
     - expression
-    field_model:
-    - amount
-    - source
   selection-expression:
     kind: SelectionExpressionSyntax
-    rhs: iteration-binding , "in" , expression , ":" , boolean-expression
+    rhs: "iteration-binding , \"in\" , expression\n        , \":\" , boolean-expression"
     references:
     - iteration-binding
     - expression
     - boolean-expression
-    field_model:
-    - binding
-    - source
-    - predicate
   point-component-expression:
     kind: PointComponentExpressionSyntax
     rhs: "unit-expression , \"from\" , unit-expression\n        , \"in\" , postfix-expression"
@@ -1655,26 +1571,21 @@ syntax_nodes:
     - postfix-expression
   literal:
     kind: LiteralSyntax
-    rhs: "exact-number\n      | rumber-number\n      | text-template\n      | POINT_LITERAL\n      | \"true\"\n\
-      \      | \"false\"\n      | \"empty\"\n      | \"all\""
+    rhs: "exact-number\n      | rumber-number\n      | text-template\n      | POINT_LITERAL\n      | \"true\"\n      | \"\
+      false\"\n      | \"empty\"\n      | \"all\"\n      | \"_\""
     references:
     - exact-number
     - rumber-number
     - text-template
   text-template:
     kind: TextTemplateSyntax
-    rhs: "TEXT_START\n        , { TEXT_FRAGMENT | value-interpolation | anchor-interpolation }\n        , TEXT_END"
+    rhs: "TEXT_START\n        , { TEXT_FRAGMENT | value-interpolation }\n        , TEXT_END"
     references:
     - value-interpolation
-    - anchor-interpolation
-    field_model:
-    - start
-    - parts*
-    - end
   value-interpolation:
     kind: ValueInterpolationSyntax
-    rhs: "INTERPOLATION_START\n        , ( expression | contextual-point-component )\n        , [ numeric-text-format\
-      \ ]\n        , INTERPOLATION_END"
+    rhs: "INTERPOLATION_START\n        , ( expression | contextual-point-component )\n        , [ numeric-text-format ]\n\
+      \        , INTERPOLATION_END"
     references:
     - expression
     - contextual-point-component
@@ -1689,16 +1600,6 @@ syntax_nodes:
     rhs: "\":\" , exact-integer , [ \":\" , exact-integer ]\n      | \":\" , \":\" , exact-integer"
     references:
     - exact-integer
-  anchor-interpolation:
-    kind: AnchorInterpolationSyntax
-    rhs: "ANCHOR_INTERPOLATION_START\n        , anchor-designator\n        , INTERPOLATION_END"
-    references:
-    - anchor-designator
-  anchor-designator:
-    kind: AnchorDesignatorSyntax
-    rhs: expression
-    references:
-    - expression
   exact-number:
     kind: ExactNumberSyntax
     rhs: EXACT_NUMBER_LITERAL
@@ -1780,12 +1681,10 @@ syntax_nodes:
     - bounded-interval
     - closed-interval-sugar
     - singleton-interval
-    field_model:
-    - intervalAlternative
   shared-unit-interval:
     kind: SharedUnitIntervalSyntax
-    rhs: "shared-unit-bounded-interval , unit-expression\n      | shared-unit-closed-interval , unit-expression\n\
-      \      | shared-unit-singleton-interval , unit-expression\n      | \"[\" , \"]\" , unit-expression"
+    rhs: "shared-unit-bounded-interval , unit-expression\n      | shared-unit-closed-interval , unit-expression\n      | shared-unit-singleton-interval\
+      \ , unit-expression\n      | \"[\" , \"]\" , unit-expression"
     references:
     - shared-unit-bounded-interval
     - unit-expression
@@ -1793,10 +1692,9 @@ syntax_nodes:
     - shared-unit-singleton-interval
   shared-unit-bounded-interval:
     kind: SharedUnitBoundedIntervalSyntax
-    rhs: "\"[\" , shared-unit-bound , \"..\" , shared-unit-bound , \"]\"\n      | \"(\" , finite-shared-unit-bound\
-      \ , \"..\"\n        , finite-shared-unit-bound , \")\"\n      | \"[\" , shared-unit-bound , \"..\"\n     \
-      \   , finite-shared-unit-bound , \")\"\n      | \"(\" , finite-shared-unit-bound , \"..\"\n        , shared-unit-bound\
-      \ , \"]\""
+    rhs: "\"[\" , shared-unit-bound , \"..\" , shared-unit-bound , \"]\"\n      | \"(\" , finite-shared-unit-bound , \"..\"\
+      \n        , finite-shared-unit-bound , \")\"\n      | \"[\" , shared-unit-bound , \"..\"\n        , finite-shared-unit-bound\
+      \ , \")\"\n      | \"(\" , finite-shared-unit-bound , \"..\"\n        , shared-unit-bound , \"]\""
     references:
     - shared-unit-bound
     - finite-shared-unit-bound
@@ -1823,9 +1721,9 @@ syntax_nodes:
     - rumber-number
   bounded-interval:
     kind: BoundedIntervalSyntax
-    rhs: "\"[\" , interval-bound , \"..\" , interval-bound , \"]\"\n      | \"(\" , finite-interval-bound , \"..\"\
-      \ , finite-interval-bound , \")\"\n      | \"[\" , interval-bound , \"..\" , finite-interval-bound , \")\"\
-      \n      | \"(\" , finite-interval-bound , \"..\" , interval-bound , \"]\""
+    rhs: "\"[\" , interval-bound , \"..\" , interval-bound , \"]\"\n      | \"(\" , finite-interval-bound , \"..\" , finite-interval-bound\
+      \ , \")\"\n      | \"[\" , interval-bound , \"..\" , finite-interval-bound , \")\"\n      | \"(\" , finite-interval-bound\
+      \ , \"..\" , interval-bound , \"]\""
     references:
     - interval-bound
     - finite-interval-bound

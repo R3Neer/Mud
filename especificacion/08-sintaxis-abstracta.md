@@ -30,6 +30,7 @@ decisions:
   - D-081
   - D-082
   - D-084
+  - D-085
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -731,3 +732,20 @@ Una implementación conforme del AST superficial debe:
 ## Normalización de cuerpos vacíos de `thing`
 
 `thing A`, `thing A;` y `thing A {}` producen el mismo `ThingDecl` con cero campos y sin sobrescritura intrínseca. La CST conserva el cuerpo y el terminador escritos; el AST no fabrica un nodo de cuerpo vacío.
+
+
+## Integración abstracta de D-085
+
+El AST superficial conserva desde esta revisión:
+
+- la clase pública o auxiliar de cada acción;
+- tipos separados de diccionario exacto y decisional;
+- modo `FirstMatch` o `AllMatches` del decisional;
+- productos anónimos posicionales y nombrados;
+- asociaciones exactas, ramas decisionales y fallback;
+- accesos postfix a metadatos;
+- `NotMembership`;
+- cardinalidad escrita u omitida;
+- contribuciones separadas de `things` y `rules` en `start with`.
+
+Desaparecen `intrinsic_name_override` y `AnchorInterpolation`. La resolución añade anclas de rama, dependencias externas, cardinalidad derivada, evidencia de terminación y procedencia de la cardinalidad inferida.

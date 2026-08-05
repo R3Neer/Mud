@@ -14,6 +14,7 @@ affects:
 ---
 # ADR-047 — Cuantificadores e iteración finita
 
+- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
 - Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 

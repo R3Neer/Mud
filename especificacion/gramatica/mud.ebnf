@@ -36,6 +36,7 @@ top-level-declaration
       | reactive-rule-declaration
       | always-rule-declaration
       | action-declaration
+      | subaction-declaration
       | look-declaration
       | message-declaration
       | test-declaration
@@ -56,6 +57,7 @@ nominal-name      ::= identifier ;
 lower-name        ::= identifier ;
 member-name       ::= identifier ;
 field-name        ::= identifier ;
+metadata-name     ::= identifier ;
 order-key-path    ::= field-name , { "." , field-name } ;
 role-name         ::= identifier ;
 given-name        ::= identifier ;
@@ -88,12 +90,12 @@ thing-body
         ;
 
 thing-body-declaration
-    ::= intrinsic-name-override
+    ::= metadata-assignment
       | field-declaration
       ;
 
-intrinsic-name-override
-    ::= "name" , "=" , TEXT_START , { TEXT_FRAGMENT } , TEXT_END ;
+metadata-assignment
+    ::= "~" , metadata-name , "=" , value-expression ;
 
 alias-declaration
     ::= "alias" , nominal-name
@@ -116,7 +118,8 @@ structural-alias-body
         ;
 
 alias-body-declaration
-    ::= component-declaration
+    ::= metadata-assignment
+      | component-declaration
       | calculated-field-declaration
       | inherited-default-override
         ;
@@ -158,11 +161,16 @@ family-member
 
 family-member-body
     ::= "{" , declaration-layout
-        , family-data-assignment
-        , { required-separation , family-data-assignment }
+        , family-member-entry
+        , { required-separation , family-member-entry }
         , [ required-separation ]
         , "}"
         ;
+
+family-member-entry
+    ::= metadata-assignment
+      | family-data-assignment
+      ;
 
 family-data-assignment
     ::= field-name , "=" , constant-expression ;
@@ -222,9 +230,7 @@ derived-unit-body
 
 point-magnitude-body
     ::= "{" , declaration-layout
-        , [ "format" , "=" , text-expression
-            , [ required-separation ]
-          ]
+        , [ metadata-assignment , [ required-separation ] ]
         , "}"
         ;
 
@@ -246,10 +252,10 @@ unit-body
         ;
 
 unit-property
-    ::= "name" , "=" , text-expression
-      | "plural" , "=" , text-expression
-      | "abbreviation" , "=" , text-expression
-      | "prefixes" , "=" , prefix-selection
+    ::= "~" , "name" , "=" , text-expression
+      | "~" , "plural" , "=" , text-expression
+      | "~" , "abbreviation" , "=" , text-expression
+      | "~" , "prefixes" , "=" , prefix-selection
       ;
 
 prefix-selection
@@ -295,7 +301,8 @@ derived-value-shape
         ;
 
 type-expression
-    ::= union-type-expression , [ collection-specification ]
+    ::= union-type-expression
+        , [ collection-specification | dictionary-type ]
         ;
 
 union-type-expression
@@ -304,7 +311,7 @@ union-type-expression
 
 type-alternative
     ::= declared-type , [ "in" , type-alternative-domain ]
-      | "(" , union-type-expression , ")"
+      | "(" , type-expression , ")"
         ;
 
 type-alternative-domain
@@ -318,19 +325,44 @@ type-alternative-domain
 declared-type
     ::= type-reference
       | interval-type
-      | dictionary-type
+      | product-type
       ;
 
 interval-type
     ::= type-reference , "Interval" ;
 
+product-type
+    ::= positional-product-type
+      | named-product-type
+      ;
+
+positional-product-type
+    ::= "(" , type-expression , "," , type-expression
+        , { "," , type-expression } , ")"
+      ;
+
+named-product-type
+    ::= "(" , named-product-component
+        , "," , named-product-component
+        , { "," , named-product-component } , ")"
+      ;
+
+named-product-component
+    ::= component-name , ":" , type-expression ;
+
 dictionary-type
-    ::= type-reference , "->" , dictionary-value-type ;
+    ::= dictionary-link , { dictionary-link } ;
+
+dictionary-link
+    ::= dictionary-arrow , dictionary-value-type
+        , [ collection-specification ]
+      ;
+
+dictionary-arrow
+    ::= "->" | "-->" ;
 
 dictionary-value-type
-    ::= type-reference
-      | "(" , type-expression , ")"
-        ;
+    ::= union-type-expression ;
 
 collection-specification
     ::= "["
@@ -453,7 +485,13 @@ invariant-body
         ;
 
 action-declaration
-    ::= "action" , nominal-name
+    ::= "action" , action-signature-body ;
+
+subaction-declaration
+    ::= "subaction" , action-signature-body ;
+
+action-signature-body
+    ::= nominal-name
         , [ for-clause ]
         , [ given-clause ]
         , "{" , declaration-layout
@@ -543,8 +581,16 @@ global-start-declaration
 start-with-declaration
     ::= "start" , "with"
         , "{" , declaration-layout
-        , [ declaration-reference
-            , { "," , declaration-layout , declaration-reference }
+        , "things" , start-contribution-body
+        , required-separation
+        , "rules" , start-contribution-body
+        , declaration-layout , "}"
+        ;
+
+start-contribution-body
+    ::= "{" , declaration-layout
+        , [ expression
+            , { "," , declaration-layout , expression }
           ]
         , declaration-layout , "}"
         ;
@@ -627,14 +673,20 @@ iteration-binding
       ;
 
 assignable-expression
-    ::= primary-expression , { member-access | index-access } ;
+    ::= primary-expression , { member-access | metadata-access | index-access } ;
 
 (* ------------------------------------------------------------------ *)
 (* Expresiones                                                         *)
 (* ------------------------------------------------------------------ *)
 
 expression
-    ::= eventually-expression ;
+    ::= mapping-expression ;
+
+mapping-expression
+    ::= eventually-expression , [ mapping-arrow , mapping-expression ] ;
+
+mapping-arrow
+    ::= "->" | "-->" ;
 
 value-expression
     ::= expression , [ "," , expression , { "," , expression } ] ;
@@ -720,7 +772,7 @@ nonchainable-comparison
     ::= "!=" | "is" , [ "not" ] | membership-in ;
 
 membership-in
-    ::= "in" ;
+    ::= "in" | "not" , "in" ;
 
 (* quantitative-expression admite barreras postfix to/in. El parser
    aplica la tabla de 07-gramatica-concreta y continúa sobre el resultado. *)
@@ -758,11 +810,14 @@ prefix-operator
 
 postfix-expression
     ::= primary-expression
-        , { member-access | index-access | call-arguments }
+        , { member-access | metadata-access | index-access | call-arguments }
         ;
 
 member-access
     ::= "." , identifier ;
+
+metadata-access
+    ::= "~" , metadata-name ;
 
 index-access
     ::= "[" , expression , { "," , expression } , "]" ;
@@ -820,11 +875,12 @@ literal
       | "false"
       | "empty"
       | "all"
+      | "_"
       ;
 
 text-template
     ::= TEXT_START
-        , { TEXT_FRAGMENT | value-interpolation | anchor-interpolation }
+        , { TEXT_FRAGMENT | value-interpolation }
         , TEXT_END
         ;
 
@@ -843,14 +899,6 @@ numeric-text-format
       | ":" , ":" , exact-integer
       ;
 
-anchor-interpolation
-    ::= ANCHOR_INTERPOLATION_START
-        , anchor-designator
-        , INTERPOLATION_END
-        ;
-
-anchor-designator
-    ::= expression ;
 
 exact-number  ::= EXACT_NUMBER_LITERAL ;
 rumber-number ::= RUMBER_LITERAL ;

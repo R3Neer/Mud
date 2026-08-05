@@ -17,6 +17,7 @@ decisions:
   - D-065
   - D-072
   - D-078
+  - D-085
 ---
 # 09. Nombres, paths y anclas
 
@@ -182,3 +183,12 @@ Una implementación conforme debe producir los mismos candidatos y anclas, recha
 ## Especialización de aliases
 
 Las declaraciones `alias` pueden aportar aristas de especialización. El grafo nominal conserva las antecesoras directas escritas y la clausura `is` se calcula durante elaboración. Los miembros heredados mantienen el ancla de su origen; dos miembros independientes con el mismo nombre no se fusionan.
+
+
+## Metadatos nominales y de procedencia
+
+D-085 separa los nombres fuente de los metadatos postfix. `~anchor`, `~path` y `~file` son valores tipados e inmutables; `~name` es la presentación mutable admitida por cada categoría. El cambio de `~name` no altera resolución, igualdad, path ni ancla.
+
+Las ramas de un diccionario decisional reciben anclas estables subordinadas al ancla del diccionario, con un segmento propio de rama que no depende de su posición fuente. Las operaciones semánticas de creación, actualización, retirada y movimiento se dirigen a esas anclas.
+
+La interpolación de una ancla usa una expresión ordinaria `"{value~anchor}"`. `anchor{...}` deja de existir. Sobre `MudPath`, `p in q` compara segmentos completos y es reflexivo.

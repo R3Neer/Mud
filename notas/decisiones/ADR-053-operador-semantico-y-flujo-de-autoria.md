@@ -16,6 +16,7 @@ affects:
 ---
 # ADR-053 — Operador semántico y flujo de autoría
 
+- Ampliada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Preguntas relacionadas: Q-008, Q-015, Q-036, Q-039, Q-040
 - Documentos afectados: cambios semánticos, Git, tooling del operador
 

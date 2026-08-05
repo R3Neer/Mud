@@ -13,6 +13,7 @@ affects:
 ---
 # ADR-039 — Colecciones y diccionarios
 
+- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 - Amplía: D-019, D-026, D-033

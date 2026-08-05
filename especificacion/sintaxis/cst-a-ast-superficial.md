@@ -19,6 +19,7 @@ decisions:
   - D-071
   - D-072
   - D-073
+  - D-085
 ---
 
 # Transformación de CST a AST superficial
@@ -683,3 +684,19 @@ Cada regla de normalización debe contar con al menos:
 - Caso inválido previo al AST cuando proceda.
 
 El corpus inicial está en `casos/cst-ast.yaml`.
+
+
+## Revisión de transformación por D-085
+
+Estas reglas sustituyen las normalizaciones anteriores incompatibles:
+
+1. `~name = e` produce `MetadataAssignment`; nunca se integra como string especial en `ThingDecl` o `FamilyMember`.
+2. La omisión de cardinalidad produce `OmittedCardinality`. La inferencia exacta de un campo almacenado inmutable pertenece a la elaboración y no se simula con `[1]` sintético.
+3. Una cadena `A -> B [m] --> C [n]` se pliega de derecha a izquierda. Cada enlace produce `ExactDictionaryType` o `DecisionDictionaryType` y conserva sus modificadores.
+4. Los productos de tipo producen `PositionalProductType` o `NamedProductType`; los literales estructurales existentes conservan sus nodos de valor.
+5. `a -> b` produce `ExactAssociationExpr`; `selector --> resultado`, `DecisionBranchExpr`; `_`, `FallbackLiteral`.
+6. `element~metadata` produce `MetadataAccessExpr` o `MetadataSuffix` cuando forma parte de un objetivo asignable.
+7. `not in` produce `NotMembership`.
+8. `action` y `subaction` producen `ActionDecl` con `PublicAction` o `Subaction`.
+9. `start with` produce `StartSet(things, rules)` sin mezclar contribuciones.
+10. Toda interpolación es `ValueInterpolation`; ya no existe `AnchorInterpolation`.

@@ -59,7 +59,6 @@ text-literal
         , { text-character
           | text-escape-sequence
           | value-template-hole
-          | anchor-template-hole
           }
         , [ quote ]
         ;
@@ -75,11 +74,6 @@ value-template-hole
 special-value-template-hole
     ::= ? bloque {...} equilibrado según MUD-LEX-036 ? ;
 
-anchor-template-hole
-    ::= special-anchor-template-hole ;
-
-special-anchor-template-hole
-    ::= ? bloque contextual anchor{...} equilibrado según MUD-LEX-036 ? ;
 
 multiline-text-literal
     ::= special-multiline-text ;
@@ -161,7 +155,7 @@ reserved-word
 keyword-word
     ::= "using"
       | "thing" | "as" | "alias" | "family" | "magnitude"
-      | "rule" | "action" | "look" | "message" | "test"
+      | "rule" | "action" | "subaction" | "look" | "message" | "test"
       | "for" | "on" | "given" | "when" | "changes"
       | "if" | "then" | "after" | "with" | "otherwise"
       | "mut" | "unique" | "ordered"
@@ -177,20 +171,23 @@ operator-word
       ;
 
 builtin-word
-    ::= "Text" | "Char" | "Bool" | "Thing" | "Nat" | "Int"
+    ::= "Text" | "Char" | "Bool" | "Thing" | "Any" | "Nat" | "Int"
       | "Num" | "Rum" | "Money" | "Rand"
+      | "Name" | "MudPath" | "Anchor" | "MudFile"
       ;
 
 constant-word
-    ::= "true" | "false" | "empty" | "all" ;
+    ::= "true" | "false" | "empty" | "all" | "_" ;
 
 (* Estas formas se emiten como IDENTIFIER fuera de las posiciones que
    mud.ebnf reserva contextualmente. La producción hace inventariable el
    catálogo sin convertirlo en palabras reservadas duras. *)
 contextual-word
     ::= "abstract" | "always" | "start"
-      | "name" | "plural" | "abbreviation" | "prefixes" | "format"
-      | "root" | "unit" | "point" | "over" | "cycle" | "anchor"
+      | "things" | "rules" | "value"
+      | "name" | "path" | "anchor" | "file"
+      | "plural" | "abbreviation" | "prefixes" | "format"
+      | "root" | "unit" | "point" | "over" | "cycle"
       ;
 
 identifier
@@ -234,7 +231,7 @@ operator-token
       ;
 
 three-character-token
-    ::= "<=>" | "--=" ;
+    ::= "<=>" | "-->" | "--=" ;
 
 two-character-token
     ::= ":=" | "->" | ".." | "==" | "!=" | "<=" | ">="
@@ -244,7 +241,7 @@ two-character-token
 
 one-character-operator
     ::= "=" | "+" | "-" | "*" | "/" | "%"
-      | "<" | ">" | "&" | "|" | "^"
+      | "<" | ">" | "&" | "|" | "^" | "~"
       ;
 
 brace-token       ::= "{" | "}" ;

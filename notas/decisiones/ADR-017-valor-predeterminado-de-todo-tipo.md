@@ -12,6 +12,7 @@ affects:
 ---
 # ADR-017 — Todo tipo bien formado tiene valor predeterminado
 
+- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
 - Modificada además por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 

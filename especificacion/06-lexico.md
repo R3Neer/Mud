@@ -26,6 +26,7 @@ decisions:
   - D-080
   - D-081
   - D-082
+  - D-085
 ---
 
 # 06. Estructura léxica
@@ -380,3 +381,12 @@ En una misma posición se intenta:
 Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se excluyen del flujo significativo, pero se conservan como trivia en el flujo completo; `NEWLINE` se conserva como token significativo para decidir terminación.
 
 Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes, después `anchor{` y `{`, y por último el fragmento literal más largo posible. Dentro de una interpolación vuelve a aplicarse la prioridad ordinaria.
+
+
+## Revisión léxica por D-085
+
+`subaction` es palabra reservada. `Any`, `Name`, `MudPath`, `Anchor` y `MudFile` son nombres incorporados reservados. `value`, `things`, `rules`, `path` y `file` son contextuales en sus producciones propias. `_` es el fallback reservado de una rama decisional.
+
+El scanner reconoce `-->` mediante coincidencia más larga antes que `--` y `->`. `~` es un token postfix independiente. `not in` conserva dos tokens de palabra y el parser lo agrupa como una sola comparación.
+
+Las plantillas solo abren interpolaciones ordinarias `{...}`. La forma especial `anchor{...}` y `ANCHOR_INTERPOLATION_START` dejan de pertenecer al lenguaje. Un ancla se escribe como expresión ordinaria: `"{value~anchor}"`.

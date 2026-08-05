@@ -21,6 +21,7 @@ decisions:
   - D-069
   - D-070
   - D-078
+  - D-085
 ---
 
 # 05. Texto fuente y estructura física
@@ -132,3 +133,9 @@ El fin de archivo puede actuar como cierre de un comentario de línea o de un li
 - Interpolaciones de una plantilla `Text`.
 - Literales o comentarios multilínea.
 - Literales contextuales `Char` con las mismas comillas dobles que `Text`.
+
+
+## Organización editorial recomendada
+
+> [!note] MUD-SRC-001 — Cohesión de dominio
+> Los archivos deberían agrupar conceptos, lugares, procesos o situaciones del mundo antes que categorías sintácticas. Un mismo `battle.mud` puede contener las `thing`, aliases, reglas, acciones, vistas y mensajes que explican conjuntamente una batalla. Esta recomendación no altera paths, resolución, anclas ni conformidad; una relación transversal puede ocupar un archivo propio cuando represente mejor el dominio.

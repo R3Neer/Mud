@@ -15,6 +15,7 @@ affects:
 ---
 # ADR-052 — Pipeline, materializadores y conformidad
 
+- Ampliada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-007, Q-009, Q-037, Q-038
 - Documentos afectados: arquitectura, tooling, conformidad

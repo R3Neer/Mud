@@ -1,781 +1,633 @@
 schema_version: 1
 cases:
-  - id: file-using-header
-    category: file
-    source: |
-      using world.people
-      using physics.*
-
-      thing World {
-      }
-    cst_root: MudFileSyntax
-    ast: MudFile(usings=2, declarations=[ThingDecl(World)])
-    normalizations: [separate-using-header]
-    produces_ast: true
-
-  - id: cardinality-omitted
-    category: collection
-    source: |
-      thing Counter {
-          value: Nat
-      }
-    cst_root: MudFileSyntax
-    ast: StoredFieldDecl(value, cardinality=[1..1])
-    normalizations: [omitted-cardinality-to-one]
-    produces_ast: true
-
-  - id: cardinality-singleton
-    category: collection
-    source: |
-      thing Group {
-          members: Person [5]
-      }
-    cst_root: MudFileSyntax
-    ast: StoredFieldDecl(members, cardinality=[5..5])
-    normalizations: [singleton-cardinality-to-range]
-    produces_ast: true
-
-  - id: cardinality-star
-    category: collection
-    source: |
-      thing Group {
-          members: Person [*]
-      }
-    cst_root: MudFileSyntax
-    ast: StoredFieldDecl(members, cardinality=[*..*])
-    normalizations: [star-cardinality-preserved]
-    produces_ast: true
-
-  - id: collection-modifier-spacing
-    category: collection
-    source: |
-      thing Group {
-          members: Person [0..*, unique, ordered, mut]
-      }
-    cst_root: MudFileSyntax
-    ast: CollectionSpec([0..*], unique=Enabled, order=InsertionOrdered, elementsMutable=Enabled)
-    normalizations: [discard-optional-commas]
-    produces_ast: true
-
-  - id: duplicate-unique
-    category: validation-before-ast
-    source: |
-      thing Group {
-          members: Person [* unique unique]
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [duplicate-collection-modifier]
-    produces_ast: false
-
-  - id: ordered-by-path
-    category: collection
-    source: |
-      thing League {
-          teams: Team [* ordered by captain.age]
-      }
-    cst_root: MudFileSyntax
-    ast: OrderedBy([captain, age])
-    produces_ast: true
-
-  - id: given-readonly
-    category: participant
-    source: |
-      rule HasEnough for owner: Person
-      given amount: Money [1 ordered] = 1 {
-          owner.balance >= amount
-      }
-    cst_root: MudFileSyntax
-    ast: GivenDecl(amount, ReadonlyCollectionSpec([1..1], ordered))
-    produces_ast: true
-
-  - id: for-domain
-    category: participant
-    source: |
-      rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {
-          forall person in people: person.age >= 18
-      }
-    cst_root: MudFileSyntax
-    ast: ForParticipant(people, domain=EligibleCitizens)
-    produces_ast: true
-
-  - id: related-on-forward-reference
-    category: participant
-    source: |
-      rule MutualFriends on
-          alice: Person in bob.friends,
-          bob in alice.friends
-      {
-          when alice.mood changes or bob.mood changes
-          then alice.mood = bob.mood
-      }
-    cst_root: MudFileSyntax
-    ast: ReactiveRuleDecl(on=[RelatedOnParticipant(alice), RelatedOnParticipant(bob)])
-    normalizations: [preserve-joint-unresolved-bindings]
-    produces_ast: true
-
-  - id: alias-inner-mut
-    category: alias
-    source: |
-      alias Party {
-          members: Person [* mut]
-      }
-    cst_root: MudFileSyntax
-    ast: AliasComponent(members, elementsMutable=Enabled)
-    produces_ast: true
-
-  - id: structural-literal-named
-    category: expression
-    source: |
-      thing Config {
-          value: Pagination = (size = 30)
-      }
-    cst_root: MudFileSyntax
-    ast: NamedStructuralLiteralExpr([NamedStructuralElement(size, 30)])
-    normalizations: [contextual-structural-literal]
-    produces_ast: true
-
-  - id: receiver-tuple-contextual
-    category: call
-    source: |
-      action Attack for attacker: Army, defender: Army {
-          then (attacker, defender).Resolve()
-      }
-    cst_root: MudFileSyntax
-    ast: ActionCallCandidateEffect(CallExpr(MemberAccessExpr(PositionalStructuralLiteralExpr(...), Resolve), []))
-    normalizations: [defer-multi-receiver-interpretation]
-    produces_ast: true
-
-  - id: action-classification-deferred
-    category: action
-    source: |
-      action Composite for actor: Person {
-          then actor.Move()
-      }
-    cst_root: MudFileSyntax
-    ast: ActionDecl(effects=[ActionCallCandidateEffect(...)])
-    normalizations: [defer-elementary-composite-classification]
-    produces_ast: true
-
-  - id: then-single-effect
-    category: block
-    source: |
-      action Close for mut door: Door {
-          then door.open = false
-      }
-    cst_root: MudFileSyntax
-    ast: EffectBlock(leadingLocals=[], firstEffect=AssignmentEffect(...), remaining=[])
-    normalizations: [single-effect-to-block]
-    produces_ast: true
-
-  - id: value-expression-many
-    category: effect
-    source: |
-      action Replace for mut values: Nat [*] {
-          then values = 1, 2, 3
-      }
-    cst_root: MudFileSyntax
-    ast: AssignmentEffect(value=CollectionLiteralExpr([1,2,3]))
-    normalizations: [comma-values-to-collection-literal]
-    produces_ast: true
-
-  - id: word-and-symbol-and
-    category: operator
-    source: |
-      rule Sample on world: World {
-          when world.a changes and world.b changes
-          if world.a & world.b
-          then world.c = true
-      }
-    cst_root: MudFileSyntax
-    ast: BinaryExpr(WordAnd) and BinaryExpr(SymbolAnd)
-    normalizations: [preserve-operator-spelling]
-    produces_ast: true
-
-  - id: comparison-chain
-    category: expression
-    source: |
-      rule Range for x: Int {
-          0 <= x < 10
-      }
-    cst_root: MudFileSyntax
-    ast: ComparisonChainExpr(0, [(LessOrEqual,x),(Less,10)])
-    produces_ast: true
-
-  - id: boolean-block-with-locals
-    category: boolean-block
-    source: |
-      rule CanAfford for person: Person given price: Money {
-          available := person.money
-          available >= price
-      }
-    cst_root: MudFileSyntax
-    ast: BooleanRuleDecl(condition=BooleanBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
-    normalizations: [boolean-block-locals-and-result]
-    produces_ast: true
-
-  - id: action-condition-locals-visible-in-otherwise
-    category: boolean-block
-    source: |
-      action Buy for person: Person given price: Money {
-          if {
-              missing := price - person.money
-              missing <= 0
-          } otherwise "You need {missing} more"
-          then person.money -= price
-      }
-    cst_root: MudFileSyntax
-    ast: ActionGuard(condition=BooleanBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
-    normalizations: [extend-boolean-local-environment-through-otherwise]
-    produces_ast: true
-
-  - id: boolean-block-without-final-expression
-    category: validation-before-ast
-    source: |
-      rule Broken for person: Person {
-          available := person.money
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [missing-final-boolean-expression]
-    produces_ast: false
-
-  - id: interval-closed-sugar
-    category: interval
-    source: |
-      thing RangeHolder {
-          range: Int Interval = 1..5
-      }
-    cst_root: MudFileSyntax
-    ast: Interval(lower=1, lowerBoundary=Closed, upper=5, upperBoundary=Closed)
-    normalizations: [closed-interval-sugar]
-    produces_ast: true
-
-  - id: interval-singleton
-    category: interval
-    source: |
-      thing RangeHolder {
-          range: Int Interval = [5]
-      }
-    cst_root: MudFileSyntax
-    ast: Interval(lower=5, upper=5, bothClosed=true)
-    normalizations: [singleton-interval]
-    produces_ast: true
-
-  - id: shared-unit-interval
-    category: interval
-    source: |
-      thing Journey {
-          distance: Length in [1..10] km
-      }
-    cst_root: MudFileSyntax
-    ast: Interval(sharedUnit=km)
-    normalizations: [shared-unit-extracted]
-    produces_ast: true
-
-  - id: cyclic-point-domain
-    category: magnitude
-    source: |
-      magnitude TimeOfDay point over Time in [0..86_400) cycle {
-          format = "{hour:2}:{minute:2}:{second:2}"
-      }
-    cst_root: MudFileSyntax
-    ast: PointMagnitudeDecl(domain=CyclicPointDomain(...))
-    produces_ast: true
-
-  - id: half-open-ordinary-point-domain
-    category: magnitude
-    source: |
-      magnitude WorkdayTime point over Time in [0..28_800) {
-      }
-    cst_root: MudFileSyntax
-    ast: PointMagnitudeDecl(domain=OrdinaryPointDomain(Interval(...)))
-    produces_ast: true
-
-  - id: legacy-cycle-inside-interval-invalid
-    category: validation-before-ast
-    source: |
-      magnitude LegacyClock point over Time in [0..24 cycle) {
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [cycle-must-follow-point-domain]
-    produces_ast: false
-
-  - id: cycle-requires-left-closed-right-open-domain
-    category: validation-before-ast
-    source: |
-      magnitude BrokenClock point over Time in [0..24] cycle {
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [cyclic-point-domain-must-be-left-closed-right-open]
-    produces_ast: false
-
-  - id: unit-prefixes-omitted
-    category: unit
-    source: |
-      magnitude Length: Num {
-          root unit meter {
-              name = "meter"
-              abbreviation = "m"
-          }
-      }
-    cst_root: MudFileSyntax
-    ast: RootUnitDecl(meter, prefixes=NoPrefixes)
-    normalizations: [omitted-prefixes-to-all]
-    produces_ast: true
-
-  - id: unit-prefixes-empty
-    category: unit
-    source: |
-      magnitude Length: Num {
-          root unit meter {
-              name = "meter"
-              abbreviation = "m"
-              prefixes = empty
-          }
-      }
-    cst_root: MudFileSyntax
-    ast: UnitProperties(prefixes=NoPrefixes)
-    produces_ast: true
-
-  - id: duplicate-unit-property
-    category: validation-before-ast
-    source: |
-      magnitude Length: Num {
-          root unit meter {
-              name = "meter"
-              name = "metre"
-              abbreviation = "m"
-          }
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [duplicate-unit-property]
-    produces_ast: false
-
-  - id: text-implicit-end
-    category: text
-    source: |
-      thing Person {
-          label: Text = "Ada
-      }
-    cst_root: MudFileSyntax
-    ast: TextTemplateExpr([TextFragment(Ada)])
-    normalizations: [implicit-and-explicit-text-end-equivalent]
-    produces_ast: true
-
-  - id: text-anchor-interpolation
-    category: text
-    source: |
-      thing Reporter {
-          label: Text = "Rule: anchor{CanRecruit}"
-      }
-    cst_root: MudFileSyntax
-    ast: TextTemplateExpr([TextFragment, AnchorInterpolation(DottedPathExpr(CanRecruit))])
-    produces_ast: true
-
-  - id: test-after-single
-    category: test
-    source: |
-      test CloseDoor {
-          start with { Door }
-          then Door.open = false
-          after Door.open == false
-      }
-    cst_root: MudFileSyntax
-    ast: TestDecl(after=TestAfterBlock(locals=[], assertions=[TestAssertion(...)]))
-    normalizations: [single-assertion-to-test-after-block]
-    produces_ast: true
-
-  - id: test-after-locals
-    category: test
-    source: |
-      test Purchase {
-          start with { Buyer }
-          then {
-              cost := 5
-              Buyer.money -= cost
-          }
-          after {
-              remaining := Buyer.money
-              remaining >= 0
-              remaining < 10 otherwise "Unexpected balance: {remaining}"
-          }
-      }
-    cst_root: MudFileSyntax
-    ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
-    normalizations: [test-then-locals, test-after-locals-before-assertions]
-    produces_ast: true
-
-  - id: comments-lossless
-    category: cst
-    source: |
-      # before
-      thing Person { # body #
-          label: Text
-      }
-    cst_root: MudFileSyntax
-    ast: ThingDecl(Person)
-    normalizations: [discard-comments-from-ast]
-    produces_ast: true
-    cst_properties: [roundtrip-bytes, comments-as-leading-trivia]
-
-  - id: missing-colon-recovery
-    category: cst-error
-    source: |
-      thing Person {
-          label Text
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [missing-colon]
-    cst_properties: [missing-token-zero-width, roundtrip-original-bytes]
-    produces_ast: false
-
-  - id: thing-intrinsic-name-override
-    category: thing
-    source: |
-      thing Person {
-          name = "Ada"
-      }
-    cst_root: MudFileSyntax
-    ast: ThingDecl(Person, intrinsic_name_override=Ada)
-    normalizations: [decode-intrinsic-name]
-    produces_ast: true
-
-  - id: redundant-explicit-thing-ancestor
-    category: thing
-    source: |
-      thing Place as Thing {}
-    cst_root: MudFileSyntax
-    ast: ThingDecl(Place, directAncestors=[Thing])
-    expected_diagnostics: [redundant-explicit-thing-ancestor]
-    normalizations: [preserve-redundancy-until-resolution]
-    produces_ast: true
-
-  - id: char-context-uses-text-template
-    category: text
-    source: |
-      thing Glyph {
-          symbol: Char = "A"
-      }
-    cst_root: MudFileSyntax
-    ast: StoredFieldDecl(symbol, defaultValue=TextTemplateExpr([TextFragment(A)]))
-    normalizations: [defer-char-elaboration]
-    produces_ast: true
-
-  - id: single-quotes-are-not-literals
-    category: lexical-error
-    source: |
-      thing Glyph {
-          symbol: Char = 'A'
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [unexpected-apostrophe]
-    produces_ast: false
-
-  - id: union-type-with-local-domains-and-collection
-    category: type
-    source: |
-      thing Sample {
-          values: Nat in 0..10 | Int in -10..-1 [1..*]
-      }
-    cst_root: MudFileSyntax
-    ast: TypeExpr(alternatives=[Nat in 0..10, Int in -10..-1], cardinality=[1..*])
-    normalizations: [flatten-union-type, discard-redundant-type-parentheses]
-    produces_ast: true
-
-  - id: union-alternative-cardinality-rejected
-    category: validation-before-ast
-    source: |
-      thing Sample {
-          values: Nat [2] | Text [1]
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [collection-specification-must-follow-whole-union]
-    produces_ast: false
-
-  - id: union-literal-needs-nominal-choice
-    category: typing-after-ast
-    source: |
-      thing Sample {
-          value: Nat | Int = 2
-      }
-    cst_root: MudFileSyntax
-    ast: StoredFieldDecl(value, alternatives=[Nat, Int], defaultValue=2)
-    expected_diagnostics: [ambiguous-union-alternative]
-    produces_ast: true
-
-  - id: is-not-comparison
-    category: expression
-    source: |
-      rule IsText given value: Nat | Text {
-          value is not Nat
-      }
-    cst_root: MudFileSyntax
-    ast: ComparisonChainExpr(value, IsNotRelation, Nat)
-    produces_ast: true
-
-  - id: stepped-domain-all
-    category: domain
-    source: |
-      thing Sample {
-          numbers: Num in 0..1 by 0.2 [6] = all
-      }
-    cst_root: MudFileSyntax
-    ast: StoredFieldDecl(numbers, domain=SteppedDomain(0..1, 0.2), defaultValue=AllLiteral)
-    produces_ast: true
-
-  - id: calculated-collection-with-domain
-    category: field
-    source: |
-      thing Sample {
-          numbers: Num in 0..100 := a * b, d, c / a
-      }
-    cst_root: MudFileSyntax
-    ast: CalculatedFieldDecl(numbers, value=CollectionLiteralExpr(3 elements))
-    normalizations: [comma-value-to-derived-collection, infer-cardinality-three]
-    produces_ast: true
-
-  - id: calculated-collection-with-inferred-type-domain
-    category: field
-    source: |
-      thing Sample {
-          numbers in 0..100 := a * b, d, c / a
-      }
-    cst_root: MudFileSyntax
-    ast: CalculatedFieldDecl(numbers, shape=InferredDerivedShape(domain=0..100), value=CollectionLiteralExpr(3 elements))
-    normalizations: [comma-value-to-derived-collection, infer-cardinality-three]
-    produces_ast: true
-
-  - id: named-units-and-all-prefixes
-    category: unit
-    source: |
-      magnitude Length: Num {
-          root unit meter {
-              abbreviation = "m"
-              prefixes = all
-          }
-      }
-    cst_root: MudFileSyntax
-    ast: RootUnitDecl(meter, abbreviation=m, prefixes=AllPrefixes)
-    produces_ast: true
-
-  - id: transition-otherwise
-    category: action
-    source: |
-      action RemoveBob for mut team: Team {
-          then {
-              destroy Bob
-          }
-          otherwise "Bob is still required by {team}"
-      }
-    cst_root: MudFileSyntax
-    ast: EffectBlock(failureDiagnostic=TextTemplateExpr(...))
-    produces_ast: true
-
-  - id: always-rule-external-otherwise
-    category: rule
-    source: |
-      always rule ValidPopulation on kingdom: Kingdom {
-          population := kingdom.population
-          population >= 0 people
-      }
-      otherwise "Population cannot be negative: {population}"
-    cst_root: MudFileSyntax
-    ast: AlwaysRuleDecl(invariant=BooleanBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
-    normalizations: [extend-boolean-local-environment-through-otherwise]
-    produces_ast: true
-
-  - id: always-rule-internal-otherwise-invalid
-    category: validation-before-ast
-    source: |
-      always rule Broken on kingdom: Kingdom {
-          kingdom.population >= 0
-          otherwise "Invalid population"
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [always-otherwise-must-follow-body]
-    produces_ast: false
-
-  - id: leading-or-after-complete-when-expression
-    category: validation-before-ast
-    source: |
-      rule BrokenAlarm on alarm: Alarm {
-          when {
-              alarm.calendar.day changes
-              or alarm.enabled
-          }
-          then create AlarmTriggered
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [unexpected-leading-operator-after-terminator]
-    produces_ast: false
-
-  - id: collection-difference-distinct-from-subtraction
-    category: expression
-    source: |
-      thing Difference {
-          removed := left -- right
-          numeric := singletonLeft - singletonRight
-      }
-    cst_root: MudFileSyntax
-    ast: BinaryExpr(left, CollectionDifference, right); BinaryExpr(singletonLeft, Subtract, singletonRight)
-    produces_ast: true
-
-  - id: compound-collection-updates
-    category: effect
-    source: |
-      action Update for mut target: Item [* unique] {
-          then {
-              target |= added
-              target &= allowedItems
-              target ^= toggled
-              target --= removed
-          }
-      }
-    cst_root: MudFileSyntax
-    ast: AssignmentEffect(UnionAssign); AssignmentEffect(IntersectionAssign); AssignmentEffect(SymmetricDifferenceAssign); AssignmentEffect(DifferenceAssign)
-    produces_ast: true
-
-  - id: take-after-filter
-    category: expression
-    source: |
-      thing Ranking {
-          chosen := take n from player in players: player.score == 2
-      }
-    cst_root: MudFileSyntax
-    ast: TakeExpr(n, SelectionExpr(player, players, BinaryExpr(...)))
-    normalizations: [take-source-contains-selection]
-    produces_ast: true
-
-  - id: filter-after-take
-    category: expression
-    source: |
-      thing Ranking {
-          chosen := player in take m from players: player.score == 2
-      }
-    cst_root: MudFileSyntax
-    ast: SelectionExpr(player, TakeExpr(m, players), BinaryExpr(...))
-    normalizations: [selection-source-contains-take]
-    produces_ast: true
-
-  - id: ordered-positional-slice
-    category: expression
-    source: |
-      thing Ranking {
-          chosen := players[1..n]
-      }
-    cst_root: MudFileSyntax
-    ast: IndexExpr(players, IntervalValueExpr(1..n))
-    produces_ast: true
-
-  - id: thing-body-omitted
-    category: thing
-    source: |
-      thing Marker
-    cst_root: MudFileSyntax
-    ast: ThingDecl(Marker, fields=[])
-    normalizations: [omitted-thing-body-to-empty]
-    produces_ast: true
-
-  - id: thing-semicolon-sequence
-    category: thing
-    source: |
-      thing A; thing B as A; thing C
-    cst_root: MudFileSyntax
-    ast: MudFile(declarations=[ThingDecl(A), ThingDecl(B), ThingDecl(C)])
-    normalizations: [semicolon-to-terminator, omitted-thing-body-to-empty]
-    produces_ast: true
-
-  - id: nominal-alias-specialization
-    category: alias
-    source: |
-      alias Identifier := Text
-      alias UserIdentifier as Identifier
-    cst_root: MudFileSyntax
-    ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=None)
-    produces_ast: true
-
-  - id: structural-alias-specialization-and-derived
-    category: alias
-    source: |
-      alias Person {
-          first: Text
-          last: Text
-          full: Text := "{first} {last}"
-      }
-      alias Student as Person {
-          id: Nat
-      }
-    cst_root: MudFileSyntax
-    ast: AliasDecl(Student, ancestors=[Person], definition=StructuralAlias(...))
-    produces_ast: true
-
-  - id: alias-default-override
-    category: alias
-    source: |
-      alias Pagination {
-          page: Nat = 1
-          size: Nat = 20
-      }
-      alias LargePagination as Pagination {
-          size = 100
-      }
-    cst_root: MudFileSyntax
-    ast: AliasDefaultOverride(size, 100)
-    produces_ast: true
-
-  - id: alias-derived-mutable-view
-    category: alias
-    source: |
-      alias Squad {
-          members: Soldier [*]
-          wounded [* mut] := soldier in members: soldier.health < MaximumHealth
-      }
-    cst_root: MudFileSyntax
-    ast: AliasCalculatedFieldDecl(wounded, elementsMutable=Enabled, ...)
-    produces_ast: true
-
-  - id: alias-without-definition-or-ancestors
-    category: validation-before-ast
-    source: |
-      alias Empty
-    cst_root: MudFileSyntax
-    expected_diagnostics: [alias-requires-ancestor-or-definition]
-    produces_ast: false
-
-  - id: alias-representation-redeclared-after-as
-    category: validation-before-ast
-    source: |
-      alias Identifier := Text
-      alias UserIdentifier as Identifier := Text
-    cst_root: MudFileSyntax
-    expected_diagnostics: [derived-alias-cannot-redeclare-representation]
-    produces_ast: false
-
-  - id: structural-member-requires-nominal-alias
-    category: resolution
-    source: |
-      alias CosoAlias {
-          first: Nat
-          second: Nat
-          derived: Nat := first * second
-      }
-      rule Valid {
-          ((1, 2) to CosoAlias).derived == 2
-      }
-    cst_root: MudFileSyntax
-    ast: MemberAccessExpr(ConvertExpr(PositionalStructuralLiteralExpr(...), CosoAlias), derived)
-    produces_ast: true
-
-  - id: structural-literal-does-not-own-alias-member
-    category: validation-after-resolution
-    source: |
-      alias CosoAlias {
-          first: Nat
-          second: Nat
-          derived: Nat := first * second
-      }
-      rule Invalid {
-          (1, 2).derived == 2
-      }
-    cst_root: MudFileSyntax
-    expected_diagnostics: [member-requires-nominal-alias]
-    produces_ast: true
+- id: file-using-header
+  category: file
+  source: 'using world.people
+
+    using physics.*
+
+
+    thing World {
+
+    }
+
+    '
+  cst_root: MudFileSyntax
+  ast: MudFile(usings=2, declarations=[ThingDecl(World)])
+  normalizations:
+  - separate-using-header
+  produces_ast: true
+- id: cardinality-omitted
+  category: collection
+  source: "thing Counter {\n    value: Nat\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(value, cardinality=[1..1])
+  normalizations:
+  - omitted-cardinality-to-one
+  produces_ast: true
+- id: cardinality-singleton
+  category: collection
+  source: "thing Group {\n    members: Person [5]\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(members, cardinality=[5..5])
+  normalizations:
+  - singleton-cardinality-to-range
+  produces_ast: true
+- id: cardinality-star
+  category: collection
+  source: "thing Group {\n    members: Person [*]\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(members, cardinality=[*..*])
+  normalizations:
+  - star-cardinality-preserved
+  produces_ast: true
+- id: collection-modifier-spacing
+  category: collection
+  source: "thing Group {\n    members: Person [0..*, unique, ordered, mut]\n}\n"
+  cst_root: MudFileSyntax
+  ast: CollectionSpec([0..*], unique=Enabled, order=InsertionOrdered, elementsMutable=Enabled)
+  normalizations:
+  - discard-optional-commas
+  produces_ast: true
+- id: duplicate-unique
+  category: validation-before-ast
+  source: "thing Group {\n    members: Person [* unique unique]\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - duplicate-collection-modifier
+  produces_ast: false
+- id: ordered-by-path
+  category: collection
+  source: "thing League {\n    teams: Team [* ordered by captain.age]\n}\n"
+  cst_root: MudFileSyntax
+  ast: OrderedBy([captain, age])
+  produces_ast: true
+- id: given-readonly
+  category: participant
+  source: "rule HasEnough for owner: Person\ngiven amount: Money [1 ordered] = 1 {\n    owner.balance >= amount\n}\n"
+  cst_root: MudFileSyntax
+  ast: GivenDecl(amount, ReadonlyCollectionSpec([1..1], ordered))
+  produces_ast: true
+- id: for-domain
+  category: participant
+  source: "rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {\n    forall person in people: person.age\
+    \ >= 18\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForParticipant(people, domain=EligibleCitizens)
+  produces_ast: true
+- id: related-on-forward-reference
+  category: participant
+  source: "rule MutualFriends on\n    alice: Person in bob.friends,\n    bob in alice.friends\n{\n    when alice.mood changes\
+    \ or bob.mood changes\n    then alice.mood = bob.mood\n}\n"
+  cst_root: MudFileSyntax
+  ast: ReactiveRuleDecl(on=[RelatedOnParticipant(alice), RelatedOnParticipant(bob)])
+  normalizations:
+  - preserve-joint-unresolved-bindings
+  produces_ast: true
+- id: alias-inner-mut
+  category: alias
+  source: "alias Party {\n    members: Person [* mut]\n}\n"
+  cst_root: MudFileSyntax
+  ast: AliasComponent(members, elementsMutable=Enabled)
+  produces_ast: true
+- id: structural-literal-named
+  category: expression
+  source: "thing Config {\n    value: Pagination = (size = 30)\n}\n"
+  cst_root: MudFileSyntax
+  ast: NamedStructuralLiteralExpr([NamedStructuralElement(size, 30)])
+  normalizations:
+  - contextual-structural-literal
+  produces_ast: true
+- id: receiver-tuple-contextual
+  category: call
+  source: "action Attack for attacker: Army, defender: Army {\n    then (attacker, defender).Resolve()\n}\n"
+  cst_root: MudFileSyntax
+  ast: ActionCallCandidateEffect(CallExpr(MemberAccessExpr(PositionalStructuralLiteralExpr(...), Resolve), []))
+  normalizations:
+  - defer-multi-receiver-interpretation
+  produces_ast: true
+- id: action-classification-deferred
+  category: action
+  source: "action Composite for actor: Person {\n    then actor.Move()\n}\n"
+  cst_root: MudFileSyntax
+  ast: ActionDecl(effects=[ActionCallCandidateEffect(...)])
+  normalizations:
+  - defer-elementary-composite-classification
+  produces_ast: true
+- id: then-single-effect
+  category: block
+  source: "action Close for mut door: Door {\n    then door.open = false\n}\n"
+  cst_root: MudFileSyntax
+  ast: EffectBlock(leadingLocals=[], firstEffect=AssignmentEffect(...), remaining=[])
+  normalizations:
+  - single-effect-to-block
+  produces_ast: true
+- id: value-expression-many
+  category: effect
+  source: "action Replace for mut values: Nat [*] {\n    then values = 1, 2, 3\n}\n"
+  cst_root: MudFileSyntax
+  ast: AssignmentEffect(value=CollectionLiteralExpr([1,2,3]))
+  normalizations:
+  - comma-values-to-collection-literal
+  produces_ast: true
+- id: word-and-symbol-and
+  category: operator
+  source: "rule Sample on world: World {\n    when world.a changes and world.b changes\n    if world.a & world.b\n    then\
+    \ world.c = true\n}\n"
+  cst_root: MudFileSyntax
+  ast: BinaryExpr(WordAnd) and BinaryExpr(SymbolAnd)
+  normalizations:
+  - preserve-operator-spelling
+  produces_ast: true
+- id: comparison-chain
+  category: expression
+  source: "rule Range for x: Int {\n    0 <= x < 10\n}\n"
+  cst_root: MudFileSyntax
+  ast: ComparisonChainExpr(0, [(LessOrEqual,x),(Less,10)])
+  produces_ast: true
+- id: boolean-block-with-locals
+  category: boolean-block
+  source: "rule CanAfford for person: Person given price: Money {\n    available := person.money\n    available >= price\n\
+    }\n"
+  cst_root: MudFileSyntax
+  ast: BooleanRuleDecl(condition=BooleanBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
+  normalizations:
+  - boolean-block-locals-and-result
+  produces_ast: true
+- id: action-condition-locals-visible-in-otherwise
+  category: boolean-block
+  source: "action Buy for person: Person given price: Money {\n    if {\n        missing := price - person.money\n       \
+    \ missing <= 0\n    } otherwise \"You need {missing} more\"\n    then person.money -= price\n}\n"
+  cst_root: MudFileSyntax
+  ast: ActionGuard(condition=BooleanBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
+  normalizations:
+  - extend-boolean-local-environment-through-otherwise
+  produces_ast: true
+- id: boolean-block-without-final-expression
+  category: validation-before-ast
+  source: "rule Broken for person: Person {\n    available := person.money\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - missing-final-boolean-expression
+  produces_ast: false
+- id: interval-closed-sugar
+  category: interval
+  source: "thing RangeHolder {\n    range: Int Interval = 1..5\n}\n"
+  cst_root: MudFileSyntax
+  ast: Interval(lower=1, lowerBoundary=Closed, upper=5, upperBoundary=Closed)
+  normalizations:
+  - closed-interval-sugar
+  produces_ast: true
+- id: interval-singleton
+  category: interval
+  source: "thing RangeHolder {\n    range: Int Interval = [5]\n}\n"
+  cst_root: MudFileSyntax
+  ast: Interval(lower=5, upper=5, bothClosed=true)
+  normalizations:
+  - singleton-interval
+  produces_ast: true
+- id: shared-unit-interval
+  category: interval
+  source: "thing Journey {\n    distance: Length in [1..10] km\n}\n"
+  cst_root: MudFileSyntax
+  ast: Interval(sharedUnit=km)
+  normalizations:
+  - shared-unit-extracted
+  produces_ast: true
+- id: cyclic-point-domain
+  category: magnitude
+  source: "magnitude TimeOfDay point over Time in [0..86_400) cycle {\n    ~format = \"{hour:2}:{minute:2}:{second:2}\"\n\
+    }\n"
+  cst_root: MudFileSyntax
+  ast: PointMagnitudeDecl(domain=CyclicPointDomain(...))
+  produces_ast: true
+- id: half-open-ordinary-point-domain
+  category: magnitude
+  source: 'magnitude WorkdayTime point over Time in [0..28_800) {
+
+    }
+
+    '
+  cst_root: MudFileSyntax
+  ast: PointMagnitudeDecl(domain=OrdinaryPointDomain(Interval(...)))
+  produces_ast: true
+- id: legacy-cycle-inside-interval-invalid
+  category: validation-before-ast
+  source: 'magnitude LegacyClock point over Time in [0..24 cycle) {
+
+    }
+
+    '
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - cycle-must-follow-point-domain
+  produces_ast: false
+- id: cycle-requires-left-closed-right-open-domain
+  category: validation-before-ast
+  source: 'magnitude BrokenClock point over Time in [0..24] cycle {
+
+    }
+
+    '
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - cyclic-point-domain-must-be-left-closed-right-open
+  produces_ast: false
+- id: unit-prefixes-omitted
+  category: unit
+  source: "magnitude Length: Num {\n    root unit meter {\n        name = \"meter\"\n        abbreviation = \"m\"\n    }\n\
+    }\n"
+  cst_root: MudFileSyntax
+  ast: RootUnitDecl(meter, prefixes=NoPrefixes)
+  normalizations:
+  - omitted-prefixes-to-all
+  produces_ast: true
+- id: unit-prefixes-empty
+  category: unit
+  source: "magnitude Length: Num {\n    root unit meter {\n        name = \"meter\"\n        abbreviation = \"m\"\n      \
+    \  prefixes = empty\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: UnitProperties(prefixes=NoPrefixes)
+  produces_ast: true
+- id: duplicate-unit-property
+  category: validation-before-ast
+  source: "magnitude Length: Num {\n    root unit meter {\n        name = \"meter\"\n        name = \"metre\"\n        abbreviation\
+    \ = \"m\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - duplicate-unit-property
+  produces_ast: false
+- id: text-implicit-end
+  category: text
+  source: "thing Person {\n    label: Text = \"Ada\n}\n"
+  cst_root: MudFileSyntax
+  ast: TextTemplateExpr([TextFragment(Ada)])
+  normalizations:
+  - implicit-and-explicit-text-end-equivalent
+  produces_ast: true
+- id: test-after-single
+  category: test
+  source: "test CloseDoor {\n    start with {\n    things { Door }\n    rules { empty }\n}\n    then Door.open = false\n \
+    \   after Door.open == false\n}\n"
+  cst_root: MudFileSyntax
+  ast: TestDecl(after=TestAfterBlock(locals=[], assertions=[TestAssertion(...)]))
+  normalizations:
+  - single-assertion-to-test-after-block
+  produces_ast: true
+- id: test-after-locals
+  category: test
+  source: "test Purchase {\n    start with {\n    things { Buyer }\n    rules { empty }\n}\n    then {\n        cost := 5\n\
+    \        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining >= 0\n        remaining\
+    \ < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)],
+    assertions=[TestAssertion(...), TestAssertion(...)]))
+  normalizations:
+  - test-then-locals
+  - test-after-locals-before-assertions
+  produces_ast: true
+- id: comments-lossless
+  category: cst
+  source: "# before\nthing Person { # body #\n    label: Text\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Person)
+  normalizations:
+  - discard-comments-from-ast
+  produces_ast: true
+  cst_properties:
+  - roundtrip-bytes
+  - comments-as-leading-trivia
+- id: missing-colon-recovery
+  category: cst-error
+  source: "thing Person {\n    label Text\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - missing-colon
+  cst_properties:
+  - missing-token-zero-width
+  - roundtrip-original-bytes
+  produces_ast: false
+- id: redundant-explicit-thing-ancestor
+  category: thing
+  source: 'thing Place as Thing {}
+
+    '
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Place, directAncestors=[Thing])
+  expected_diagnostics:
+  - redundant-explicit-thing-ancestor
+  normalizations:
+  - preserve-redundancy-until-resolution
+  produces_ast: true
+- id: char-context-uses-text-template
+  category: text
+  source: "thing Glyph {\n    symbol: Char = \"A\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(symbol, defaultValue=TextTemplateExpr([TextFragment(A)]))
+  normalizations:
+  - defer-char-elaboration
+  produces_ast: true
+- id: single-quotes-are-not-literals
+  category: lexical-error
+  source: "thing Glyph {\n    symbol: Char = 'A'\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unexpected-apostrophe
+  produces_ast: false
+- id: union-type-with-local-domains-and-collection
+  category: type
+  source: "thing Sample {\n    values: Nat in 0..10 | Int in -10..-1 [1..*]\n}\n"
+  cst_root: MudFileSyntax
+  ast: TypeExpr(alternatives=[Nat in 0..10, Int in -10..-1], cardinality=[1..*])
+  normalizations:
+  - flatten-union-type
+  - discard-redundant-type-parentheses
+  produces_ast: true
+- id: union-alternative-cardinality-rejected
+  category: validation-before-ast
+  source: "thing Sample {\n    values: Nat [2] | Text [1]\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - collection-specification-must-follow-whole-union
+  produces_ast: false
+- id: union-literal-needs-nominal-choice
+  category: typing-after-ast
+  source: "thing Sample {\n    value: Nat | Int = 2\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(value, alternatives=[Nat, Int], defaultValue=2)
+  expected_diagnostics:
+  - ambiguous-union-alternative
+  produces_ast: true
+- id: is-not-comparison
+  category: expression
+  source: "rule IsText given value: Nat | Text {\n    value is not Nat\n}\n"
+  cst_root: MudFileSyntax
+  ast: ComparisonChainExpr(value, IsNotRelation, Nat)
+  produces_ast: true
+- id: stepped-domain-all
+  category: domain
+  source: "thing Sample {\n    numbers: Num in 0..1 by 0.2 [6] = all\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(numbers, domain=SteppedDomain(0..1, 0.2), defaultValue=AllLiteral)
+  produces_ast: true
+- id: calculated-collection-with-domain
+  category: field
+  source: "thing Sample {\n    numbers: Num in 0..100 := a * b, d, c / a\n}\n"
+  cst_root: MudFileSyntax
+  ast: CalculatedFieldDecl(numbers, value=CollectionLiteralExpr(3 elements))
+  normalizations:
+  - comma-value-to-derived-collection
+  - infer-cardinality-three
+  produces_ast: true
+- id: calculated-collection-with-inferred-type-domain
+  category: field
+  source: "thing Sample {\n    numbers in 0..100 := a * b, d, c / a\n}\n"
+  cst_root: MudFileSyntax
+  ast: CalculatedFieldDecl(numbers, shape=InferredDerivedShape(domain=0..100), value=CollectionLiteralExpr(3 elements))
+  normalizations:
+  - comma-value-to-derived-collection
+  - infer-cardinality-three
+  produces_ast: true
+- id: named-units-and-all-prefixes
+  category: unit
+  source: "magnitude Length: Num {\n    root unit meter {\n        abbreviation = \"m\"\n        prefixes = all\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: RootUnitDecl(meter, abbreviation=m, prefixes=AllPrefixes)
+  produces_ast: true
+- id: transition-otherwise
+  category: action
+  source: "action RemoveBob for mut team: Team {\n    then {\n        destroy Bob\n    }\n    otherwise \"Bob is still required\
+    \ by {team}\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: EffectBlock(failureDiagnostic=TextTemplateExpr(...))
+  produces_ast: true
+- id: always-rule-external-otherwise
+  category: rule
+  source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n    population >= 0 people\n\
+    }\notherwise \"Population cannot be negative: {population}\"\n"
+  cst_root: MudFileSyntax
+  ast: AlwaysRuleDecl(invariant=BooleanBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
+  normalizations:
+  - extend-boolean-local-environment-through-otherwise
+  produces_ast: true
+- id: always-rule-internal-otherwise-invalid
+  category: validation-before-ast
+  source: "always rule Broken on kingdom: Kingdom {\n    kingdom.population >= 0\n    otherwise \"Invalid population\"\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - always-otherwise-must-follow-body
+  produces_ast: false
+- id: leading-or-after-complete-when-expression
+  category: validation-before-ast
+  source: "rule BrokenAlarm on alarm: Alarm {\n    when {\n        alarm.calendar.day changes\n        or alarm.enabled\n\
+    \    }\n    then create AlarmTriggered\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unexpected-leading-operator-after-terminator
+  produces_ast: false
+- id: collection-difference-distinct-from-subtraction
+  category: expression
+  source: "thing Difference {\n    removed := left -- right\n    numeric := singletonLeft - singletonRight\n}\n"
+  cst_root: MudFileSyntax
+  ast: BinaryExpr(left, CollectionDifference, right); BinaryExpr(singletonLeft, Subtract, singletonRight)
+  produces_ast: true
+- id: compound-collection-updates
+  category: effect
+  source: "action Update for mut target: Item [* unique] {\n    then {\n        target |= added\n        target &= allowedItems\n\
+    \        target ^= toggled\n        target --= removed\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: AssignmentEffect(UnionAssign); AssignmentEffect(IntersectionAssign); AssignmentEffect(SymmetricDifferenceAssign); AssignmentEffect(DifferenceAssign)
+  produces_ast: true
+- id: take-after-filter
+  category: expression
+  source: "thing Ranking {\n    chosen := take n from player in players: player.score == 2\n}\n"
+  cst_root: MudFileSyntax
+  ast: TakeExpr(n, SelectionExpr(player, players, BinaryExpr(...)))
+  normalizations:
+  - take-source-contains-selection
+  produces_ast: true
+- id: filter-after-take
+  category: expression
+  source: "thing Ranking {\n    chosen := player in take m from players: player.score == 2\n}\n"
+  cst_root: MudFileSyntax
+  ast: SelectionExpr(player, TakeExpr(m, players), BinaryExpr(...))
+  normalizations:
+  - selection-source-contains-take
+  produces_ast: true
+- id: ordered-positional-slice
+  category: expression
+  source: "thing Ranking {\n    chosen := players[1..n]\n}\n"
+  cst_root: MudFileSyntax
+  ast: IndexExpr(players, IntervalValueExpr(1..n))
+  produces_ast: true
+- id: thing-body-omitted
+  category: thing
+  source: 'thing Marker
+
+    '
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Marker, fields=[])
+  normalizations:
+  - omitted-thing-body-to-empty
+  produces_ast: true
+- id: thing-semicolon-sequence
+  category: thing
+  source: 'thing A; thing B as A; thing C
+
+    '
+  cst_root: MudFileSyntax
+  ast: MudFile(declarations=[ThingDecl(A), ThingDecl(B), ThingDecl(C)])
+  normalizations:
+  - semicolon-to-terminator
+  - omitted-thing-body-to-empty
+  produces_ast: true
+- id: nominal-alias-specialization
+  category: alias
+  source: 'alias Identifier := Text
+
+    alias UserIdentifier as Identifier
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=None)
+  produces_ast: true
+- id: structural-alias-specialization-and-derived
+  category: alias
+  source: "alias Person {\n    first: Text\n    last: Text\n    full: Text := \"{first} {last}\"\n}\nalias Student as Person\
+    \ {\n    id: Nat\n}\n"
+  cst_root: MudFileSyntax
+  ast: AliasDecl(Student, ancestors=[Person], definition=StructuralAlias(...))
+  produces_ast: true
+- id: alias-default-override
+  category: alias
+  source: "alias Pagination {\n    page: Nat = 1\n    size: Nat = 20\n}\nalias LargePagination as Pagination {\n    size =\
+    \ 100\n}\n"
+  cst_root: MudFileSyntax
+  ast: AliasDefaultOverride(size, 100)
+  produces_ast: true
+- id: alias-derived-mutable-view
+  category: alias
+  source: "alias Squad {\n    members: Soldier [*]\n    wounded [* mut] := soldier in members: soldier.health < MaximumHealth\n\
+    }\n"
+  cst_root: MudFileSyntax
+  ast: AliasCalculatedFieldDecl(wounded, elementsMutable=Enabled, ...)
+  produces_ast: true
+- id: alias-without-definition-or-ancestors
+  category: validation-before-ast
+  source: 'alias Empty
+
+    '
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - alias-requires-ancestor-or-definition
+  produces_ast: false
+- id: alias-representation-redeclared-after-as
+  category: validation-before-ast
+  source: 'alias Identifier := Text
+
+    alias UserIdentifier as Identifier := Text
+
+    '
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - derived-alias-cannot-redeclare-representation
+  produces_ast: false
+- id: structural-member-requires-nominal-alias
+  category: resolution
+  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat := first * second\n}\nrule Valid {\n    ((1,\
+    \ 2) to CosoAlias).derived == 2\n}\n"
+  cst_root: MudFileSyntax
+  ast: MemberAccessExpr(ConvertExpr(PositionalStructuralLiteralExpr(...), CosoAlias), derived)
+  produces_ast: true
+- id: structural-literal-does-not-own-alias-member
+  category: validation-after-resolution
+  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat := first * second\n}\nrule Invalid {\n   \
+    \ (1, 2).derived == 2\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - member-requires-nominal-alias
+  produces_ast: true
+- id: cardinality-omitted-inferred-immutable
+  category: collection
+  source: "thing Sample {\n    values: Nat = [1, 2, 3]\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(values, cardinalityOrigin=OmittedCardinality)
+  normalizations:
+  - preserve-omitted-cardinality
+  - infer-exact-cardinality-after-ast
+  expected_diagnostics:
+  - suggest-explicit-inferred-cardinality
+  produces_ast: true
+- id: subaction-kind-preserved
+  category: action
+  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\n"
+  cst_root: MudFileSyntax
+  ast: ActionDecl(kind=Subaction, name=RemoveMoney)
+  produces_ast: true
+- id: dictionary-chain-right-associative
+  category: type
+  source: "thing Tables {\n    table: A -> B [2] --> C [3 ordered]\n}\n"
+  cst_root: MudFileSyntax
+  ast: ExactDictionaryType(A, DecisionDictionaryType(B, C, branches=[3], mode=FirstMatch), entries=[2])
+  normalizations:
+  - fold-dictionary-chain-right
+  produces_ast: true
+- id: anonymous-product-types
+  category: type
+  source: "thing Pairs {\n    positional: (Nat, Text)\n    named: (count: Nat, label: Text)\n}\n"
+  cst_root: MudFileSyntax
+  ast: 'PositionalProductType(Nat, Text) and NamedProductType(count: Nat, label: Text)'
+  produces_ast: true
+- id: not-in-comparison
+  category: expression
+  source: "rule Outside given value: Nat {\n    value not in 1..10\n}\n"
+  cst_root: MudFileSyntax
+  ast: ComparisonChainExpr(value, NotMembership, 1..10)
+  produces_ast: true
+- id: metadata-access-and-assignment
+  category: metadata
+  source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora [mut] {\n    then person~name = \"Nora\
+    \ la Roja\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: MetadataAssignment(name) and AssignmentEffect(MetadataAccessExpr(person, name))
+  produces_ast: true
+- id: text-anchor-via-metadata
+  category: text
+  source: "thing Reporter {\n    label: Text = \"Rule: {CanRecruit~anchor}\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: TextTemplateExpr([TextFragment, ValueInterpolation(MetadataAccessExpr(CanRecruit, anchor))])
+  produces_ast: true
+- id: structured-start-with
+  category: start
+  source: "start with {\n    things { all }\n    rules { empty, CanGrow }\n}\n"
+  cst_root: MudFileSyntax
+  ast: GlobalStartDecl(StartSet(things=[all], rules=[empty, CanGrow]))
+  produces_ast: true
+- id: decision-fallback
+  category: dictionary
+  source: "thing Policies {\n    policy: Any --> Text [ordered] =\n        value is Nat --> \"number\",\n        _ --> \"\
+    other\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: DecisionDictionaryType(Any, Text, FirstMatch) with DecisionBranchExpr and FallbackLiteral
+  produces_ast: true
+- id: decision-mut-rejected
+  category: validation-before-ast
+  source: "thing Broken {\n    mut policy: Nat --> Text [mut]\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - decision-dictionary-forbids-mut
+  produces_ast: false
+- id: legacy-anchor-interpolation-rejected
+  category: lexical-error
+  source: "thing Reporter {\n    label: Text = \"Rule: anchor{CanRecruit}\"\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - legacy-anchor-interpolation
+  produces_ast: false
+- id: legacy-intrinsic-name-rejected
+  category: validation-before-ast
+  source: "thing Person {\n    name = \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - legacy-intrinsic-name-override
+  produces_ast: false

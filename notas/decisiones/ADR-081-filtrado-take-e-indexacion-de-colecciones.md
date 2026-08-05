@@ -14,6 +14,7 @@ affects:
 
 # ADR-081 — Filtrado, `take` e indexación de colecciones
 
+- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modifica: [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-056-char-texto-y-orden-unicode|D-056]], [[ADR-064-orden-por-ruta-estable|D-064]] y [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]].
 - Preguntas relacionadas: [[notas/preguntas/Q-028-finitud|Q-028]] y [[notas/preguntas/Q-032-aleatoriedad-reproducible|Q-032]].
