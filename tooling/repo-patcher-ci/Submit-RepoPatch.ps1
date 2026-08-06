@@ -16,7 +16,9 @@ param(
     [string] $Workflow = "validate-repo-patcher.yml",
 
     [string] $ArtifactDirectory = (
-        Join-Path $env:USERPROFILE "Downloads\repo-patcher-validation"
+        Join-Path `
+            $env:USERPROFILE `
+            "Downloads\repo-patcher-validation"
     ),
 
     [switch] $KeepBranch
@@ -82,25 +84,15 @@ $repoRoot = Get-NativeText git @(
     "-C", $Repo,
     "rev-parse", "--show-toplevel"
 )
+
 $Repo = (Resolve-Path -LiteralPath $repoRoot).Path
 
 Invoke-Native gh @("auth", "status") | Out-Null
 
-$originUrl = Get-NativeText git @(
-    "-C", $Repo,
-    "remote", "get-url", "origin"
-)
-
-if ($originUrl -notmatch "github\.com[/:](?<slug>[^/]+/[^/]+?)(?:\.git)?$") {
-    throw "Could not derive OWNER/REPO from origin: $originUrl"
-}
-
-$slug = $Matches.slug -replace "\.git$", ""
-
-$defaultBranch = Get-NativeText gh @(
-    "repo", "view", $slug,
-    "--json", "defaultBranchRef",
-    "--jq", ".defaultBranchRef.name"
+$slug = Get-NativeText gh @(
+    "repo", "view",
+    "--json", "nameWithOwner",
+    "--jq", ".nameWithOwner"
 )
 
 $targetSha = Get-NativeText git @(
@@ -108,7 +100,7 @@ $targetSha = Get-NativeText git @(
     "rev-parse", $TargetRef
 )
 
-# Verify that GitHub knows the target commit.
+# The target must already exist on GitHub so Actions can check it out.
 Invoke-Native gh @(
     "api",
     "repos/$slug/commits/$targetSha",
@@ -122,7 +114,9 @@ $requestId = "{0}-{1}" -f (
 )
 
 $branch = "repo-patcher-validation/$requestId"
-$remotePackagePath = ".repo-patcher-candidates/package.zip"
+$candidateDirectory = ".repo-patcher-candidates"
+$remotePackagePath = "$candidateDirectory/package.zip"
+$requestPath = "$candidateDirectory/request.json"
 $worktree = Join-Path $env:TEMP "repo-patcher-$requestId"
 $artifactOutput = Join-Path $ArtifactDirectory $requestId
 $branchPushed = $false
@@ -130,8 +124,17 @@ $worktreeCreated = $false
 $runId = $null
 $runExitCode = 1
 
+$packageHash = (
+    Get-FileHash `
+        -LiteralPath $Package `
+        -Algorithm SHA256
+).Hash.ToLowerInvariant()
+
 try {
-    New-Item -ItemType Directory -Path $ArtifactDirectory -Force | Out-Null
+    New-Item `
+        -ItemType Directory `
+        -Path $ArtifactDirectory `
+        -Force | Out-Null
 
     Invoke-Native git @(
         "-C", $Repo,
@@ -140,24 +143,39 @@ try {
         $worktree,
         $targetSha
     ) | Out-Null
+
     $worktreeCreated = $true
 
-    $remotePackageFile = Join-Path $worktree (
-        $remotePackagePath.Replace(
-            "/",
-            [System.IO.Path]::DirectorySeparatorChar
-        )
-    )
+    $candidatePath = Join-Path `
+        $worktree `
+        $candidateDirectory
 
     New-Item `
         -ItemType Directory `
-        -Path (Split-Path -Parent $remotePackageFile) `
+        -Path $candidatePath `
         -Force | Out-Null
 
     Copy-Item `
         -LiteralPath $Package `
-        -Destination $remotePackageFile `
+        -Destination (
+            Join-Path $worktree $remotePackagePath
+        ) `
         -Force
+
+    [ordered] @{
+        schema = 1
+        request_id = $requestId
+        target_sha = $targetSha
+        package_sha256 = $packageHash
+        package_name = [System.IO.Path]::GetFileName($Package)
+        created_at_utc = [DateTime]::UtcNow.ToString("o")
+    } |
+        ConvertTo-Json |
+        Set-Content `
+            -LiteralPath (
+                Join-Path $worktree $requestPath
+            ) `
+            -Encoding utf8
 
     Invoke-Native git @(
         "-C", $worktree,
@@ -174,7 +192,8 @@ try {
     Invoke-Native git @(
         "-C", $worktree,
         "add", "--",
-        $remotePackagePath
+        $remotePackagePath,
+        $requestPath
     ) | Out-Null
 
     Invoke-Native git @(
@@ -191,20 +210,10 @@ try {
         "origin",
         $branch
     ) | Out-Null
+
     $branchPushed = $true
 
-    Invoke-Native gh @(
-        "workflow", "run", $Workflow,
-        "--repo", $slug,
-        "--ref", $defaultBranch,
-        "-f", "request_id=$requestId",
-        "-f", "package_ref=$branch",
-        "-f", "package_path=$remotePackagePath",
-        "-f", "target_ref=$targetSha"
-    ) | Out-Null
-
-    $expectedTitle = "repo-patcher validation $requestId"
-    $deadline = [DateTime]::UtcNow.AddMinutes(3)
+    $deadline = [DateTime]::UtcNow.AddMinutes(5)
 
     while (-not $runId -and [DateTime]::UtcNow -lt $deadline) {
         Start-Sleep -Seconds 2
@@ -213,15 +222,17 @@ try {
             "run", "list",
             "--repo", $slug,
             "--workflow", $Workflow,
-            "--event", "workflow_dispatch",
-            "--limit", "50",
+            "--branch", $branch,
+            "--event", "push",
+            "--limit", "20",
             "--json",
-            "databaseId,displayTitle,status,conclusion,createdAt,url"
+            "databaseId,headBranch,status,conclusion,createdAt,url"
         )
 
-        $runs = $runsJson | ConvertFrom-Json
+        $runs = @($runsJson | ConvertFrom-Json)
+
         $run = $runs |
-            Where-Object { $_.displayTitle -eq $expectedTitle } |
+            Where-Object { $_.headBranch -eq $branch } |
             Sort-Object createdAt -Descending |
             Select-Object -First 1
 
@@ -232,14 +243,26 @@ try {
     }
 
     if (-not $runId) {
-        throw "The workflow run was not found after being dispatched."
+        throw @"
+No workflow run was found for branch:
+  $branch
+
+Confirm that the workflow is active and listens to:
+  repo-patcher-validation/**
+"@
     }
 
-    & gh run watch $runId --repo $slug --exit-status
+    & gh run watch $runId `
+        --repo $slug `
+        --exit-status
+
     $runExitCode = $LASTEXITCODE
 
     if (Test-Path -LiteralPath $artifactOutput) {
-        Remove-Item -LiteralPath $artifactOutput -Recurse -Force
+        Remove-Item `
+            -LiteralPath $artifactOutput `
+            -Recurse `
+            -Force
     }
 
     New-Item `
@@ -249,7 +272,6 @@ try {
 
     & gh run download $runId `
         --repo $slug `
-        -n "repo-patcher-validation-$requestId" `
         -D $artifactOutput
 
     if ($LASTEXITCODE -ne 0) {
@@ -262,20 +284,30 @@ try {
     if ($runExitCode -ne 0) {
         Write-Host ""
         Write-Host "Failed workflow log:"
-        & gh run view $runId --repo $slug --log-failed
+        & gh run view $runId `
+            --repo $slug `
+            --log-failed
     }
 }
 finally {
     if ($worktreeCreated -and (Test-Path -LiteralPath $worktree)) {
-        & git -C $Repo worktree remove --force $worktree | Out-Null
+        & git -C $Repo `
+            worktree remove `
+            --force `
+            $worktree | Out-Null
     }
 
     if (-not $KeepBranch) {
         if ($branchPushed) {
-            & git -C $Repo push origin --delete $branch | Out-Null
+            & git -C $Repo `
+                push origin `
+                --delete `
+                $branch | Out-Null
         }
 
-        & git -C $Repo branch -D $branch | Out-Null
+        & git -C $Repo `
+            branch -D `
+            $branch | Out-Null
     }
     else {
         Write-Host "Temporary branch retained: $branch"

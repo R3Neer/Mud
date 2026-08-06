@@ -31,6 +31,10 @@ $submitSource = Join-Path `
     $kitRoot `
     "templates\Submit-RepoPatch.ps1"
 
+$testSource = Join-Path `
+    $kitRoot `
+    "templates\Test-GitHubWorkflow.ps1"
+
 $workflowDestination = Join-Path `
     $Repo `
     ".github\workflows\validate-repo-patcher.yml"
@@ -43,9 +47,17 @@ $submitDestination = Join-Path `
     $ciDirectory `
     "Submit-RepoPatch.ps1"
 
+$testDestination = Join-Path `
+    $ciDirectory `
+    "Test-GitHubWorkflow.ps1"
+
 $installerDestination = Join-Path `
     $ciDirectory `
     "Install-RepoPatcherCI.ps1"
+
+$versionDestination = Join-Path `
+    $ciDirectory `
+    "VERSION.txt"
 
 $runtimeDestination = Join-Path `
     $Repo `
@@ -61,32 +73,39 @@ New-Item `
     -Path $ciDirectory `
     -Force | Out-Null
 
-Copy-Item `
-    -LiteralPath $workflowSource `
-    -Destination $workflowDestination `
-    -Force:$Force
+foreach ($copy in @(
+    @($workflowSource, $workflowDestination),
+    @($submitSource, $submitDestination),
+    @($testSource, $testDestination),
+    @($MyInvocation.MyCommand.Path, $installerDestination)
+)) {
+    Copy-Item `
+        -LiteralPath $copy[0] `
+        -Destination $copy[1] `
+        -Force:$Force
+}
 
-Copy-Item `
-    -LiteralPath $submitSource `
-    -Destination $submitDestination `
-    -Force:$Force
-
-Copy-Item `
-    -LiteralPath $MyInvocation.MyCommand.Path `
-    -Destination $installerDestination `
-    -Force:$Force
+"2" | Set-Content `
+    -LiteralPath $versionDestination `
+    -Encoding ascii
 
 if ($RuntimeSource) {
-    $RuntimeSource = (Resolve-Path -LiteralPath $RuntimeSource).Path
+    $RuntimeSource = (
+        Resolve-Path -LiteralPath $RuntimeSource
+    ).Path
 
-    if (-not (Test-Path `
-        -LiteralPath (Join-Path $RuntimeSource "repo_patcher\__init__.py") `
-        -PathType Leaf
+    if (-not (
+        Test-Path `
+            -LiteralPath (
+                Join-Path $RuntimeSource "repo_patcher\__init__.py"
+            ) `
+            -PathType Leaf
     )) {
         throw "RuntimeSource does not contain repo_patcher: $RuntimeSource"
     }
 
     $sameRuntime = $false
+
     if (Test-Path -LiteralPath $runtimeDestination) {
         $sameRuntime = (
             (Resolve-Path -LiteralPath $runtimeDestination).Path -eq
@@ -118,9 +137,12 @@ Use -Force to replace it.
             -Force
     }
 }
-elseif (-not (Test-Path `
-    -LiteralPath (Join-Path $runtimeDestination "repo_patcher\__init__.py") `
-    -PathType Leaf
+elseif (-not (
+    Test-Path `
+        -LiteralPath (
+            Join-Path $runtimeDestination "repo_patcher\__init__.py"
+        ) `
+        -PathType Leaf
 )) {
     throw @"
 No vendored repo-patcher runtime exists in the destination repository.
@@ -130,6 +152,13 @@ Pass:
 "@
 }
 
+& $testDestination `
+    -Workflow $workflowDestination
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Workflow validation failed."
+}
+
 $pathsToStage = @(
     ".github/workflows/validate-repo-patcher.yml",
     "tooling/repo-patcher-ci",
@@ -137,13 +166,14 @@ $pathsToStage = @(
 )
 
 Write-Host ""
-Write-Host "Installed:"
+Write-Host "Installed CI kit version 2:"
 foreach ($path in $pathsToStage) {
     Write-Host "  $path"
 }
 
 if ($Commit) {
     & git -C $Repo add -- $pathsToStage
+
     if ($LASTEXITCODE -ne 0) {
         throw "git add failed."
     }
@@ -153,7 +183,7 @@ if ($Commit) {
 
     if (-not $hasNoStagedChanges) {
         & git -C $Repo commit -m `
-            "tooling(repo-patcher): add package validation workflow"
+            "tooling(repo-patcher): update package validation workflow"
 
         if ($LASTEXITCODE -ne 0) {
             throw "git commit failed."
@@ -165,6 +195,7 @@ if ($Commit) {
 
     if ($Push) {
         & git -C $Repo push
+
         if ($LASTEXITCODE -ne 0) {
             throw "git push failed."
         }
@@ -175,8 +206,9 @@ elseif ($Push) {
 }
 
 Write-Host ""
-Write-Host "Next:"
-Write-Host "  git -C `"$Repo`" status --short"
-Write-Host "  git -C `"$Repo`" add .github/workflows/validate-repo-patcher.yml tooling/repo-patcher-ci tooling/repo-patcher-runtime"
-Write-Host "  git -C `"$Repo`" commit -m `"tooling(repo-patcher): add package validation workflow`""
-Write-Host "  git -C `"$Repo`" push"
+Write-Host "CI kit version:"
+Get-Content -LiteralPath $versionDestination
+
+Write-Host ""
+Write-Host "Next validation command:"
+Write-Host "& `"$submitDestination`" -Repo `"$Repo`" -Package `"C:\Path\candidate.zip`""
