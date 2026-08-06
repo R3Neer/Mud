@@ -40,7 +40,7 @@ if ((Resolve-Path -LiteralPath $topLevel).Path -ne $Repo) {
 
 $currentBranch = (& git -C $Repo branch --show-current 2>&1 | Out-String).Trim()
 if ($LASTEXITCODE -ne 0 -or $currentBranch -ne "main") {
-    throw "Install v5 from the local main branch. Current branch: $currentBranch"
+    throw "Install v6 from the local main branch. Current branch: $currentBranch"
 }
 
 $stagedBefore = @(& git -C $Repo diff --cached --name-only)
@@ -48,7 +48,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Could not inspect staged changes."
 }
 if ($stagedBefore.Count -ne 0) {
-    throw "The index already contains staged changes. Commit or unstage them before installing v5."
+    throw "The index already contains staged changes. Commit or unstage them before installing v6."
 }
 
 $managedPaths = @(
@@ -71,8 +71,10 @@ $requiredTemplates = @(
     "Collect-RepoPatchRun.ps1",
     "Test-GitHubWorkflow.ps1",
     "issue_transport.py",
+    "issue_queue.py",
     "package_checks.py",
     "test_issue_transport.py",
+    "test_issue_queue.py",
     "test_package_checks.py",
     "test_workflow_contract.py",
     "PluginConsent.ps1",
@@ -87,7 +89,7 @@ foreach ($name in $requiredTemplates) {
     }
 }
 
-Write-Host "Validating the v5 kit before modifying the repository..."
+Write-Host "Validating the v6 kit before modifying the repository..."
 & (Join-Path $templates "Test-GitHubWorkflow.ps1") `
     -Workflow (Join-Path $templates "validate-repo-patcher.yml") `
     -ToolingDirectory $templates `
@@ -107,8 +109,10 @@ $copies = @(
     @((Join-Path $templates "Collect-RepoPatchRun.ps1"), (Join-Path $ciDirectory "Collect-RepoPatchRun.ps1")),
     @((Join-Path $templates "Test-GitHubWorkflow.ps1"), (Join-Path $ciDirectory "Test-GitHubWorkflow.ps1")),
     @((Join-Path $templates "issue_transport.py"), (Join-Path $ciDirectory "issue_transport.py")),
+    @((Join-Path $templates "issue_queue.py"), (Join-Path $ciDirectory "issue_queue.py")),
     @((Join-Path $templates "package_checks.py"), (Join-Path $ciDirectory "package_checks.py")),
     @((Join-Path $templates "test_issue_transport.py"), (Join-Path $ciDirectory "test_issue_transport.py")),
+    @((Join-Path $templates "test_issue_queue.py"), (Join-Path $ciDirectory "test_issue_queue.py")),
     @((Join-Path $templates "test_package_checks.py"), (Join-Path $ciDirectory "test_package_checks.py")),
     @((Join-Path $templates "test_workflow_contract.py"), (Join-Path $ciDirectory "test_workflow_contract.py")),
     @((Join-Path $templates "PluginConsent.ps1"), (Join-Path $ciDirectory "PluginConsent.ps1")),
@@ -126,7 +130,7 @@ foreach ($copy in $copies) {
         throw "Installed file hash mismatch: $($copy[1])"
     }
 }
-"5" | Set-Content -LiteralPath (Join-Path $ciDirectory "VERSION.txt") -Encoding ascii
+"6" | Set-Content -LiteralPath (Join-Path $ciDirectory "VERSION.txt") -Encoding ascii
 
 if ($RuntimeSource) {
     $RuntimeSource = (Resolve-Path -LiteralPath $RuntimeSource).Path
@@ -178,11 +182,11 @@ if ($LASTEXITCODE -ne 0) {
     throw "Could not inspect the installed diff."
 }
 if ($status.Count -eq 0) {
-    throw "Installation produced no changes; v5 may already be installed."
+    throw "Installation produced no changes; v6 may already be installed."
 }
 
 Write-Host ""
-Write-Host "Installed CI kit version 5."
+Write-Host "Installed CI kit version 6."
 Write-Host "Managed changes:"
 $status | ForEach-Object { Write-Host "  $_" }
 
@@ -197,14 +201,14 @@ if ($Commit) {
         throw "The staged diff failed git diff --check."
     }
 
-    & git -C $Repo commit -m "chore(repo-patcher): add plugin-aware issue validation relay"
+    & git -C $Repo commit -m "chore(repo-patcher): poll issue validation queue"
     if ($LASTEXITCODE -ne 0) {
         throw "git commit failed."
     }
 
     $managedAfterCommit = @(& git -C $Repo status --porcelain=v1 --untracked-files=all -- $managedPaths)
     if ($LASTEXITCODE -ne 0 -or $managedAfterCommit.Count -ne 0) {
-        throw "Managed paths are not clean after the v5 commit."
+        throw "Managed paths are not clean after the v6 commit."
     }
 
     if ($Push) {
@@ -218,4 +222,4 @@ if ($Commit) {
 Write-Host "Version:"
 Get-Content -LiteralPath (Join-Path $ciDirectory "VERSION.txt")
 Write-Host ""
-Write-Host "Next: after this commit is on main, run the Issues relay smoke tests for declarative and plugin packages before validating D-086 v9."
+Write-Host "Next: after this commit is on main, let the scheduled queue process the existing smoke-test issues and inspect their runs and artifacts."

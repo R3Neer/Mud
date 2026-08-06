@@ -8,7 +8,6 @@ import unittest
 import zipfile
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).with_name("package_checks.py").resolve()
 
 
@@ -35,17 +34,14 @@ class PackageInspectionTests(unittest.TestCase):
     def test_declarative_package_has_no_plugin(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             package = Path(temp) / "declarative.zip"
-            write_package(
-                package,
-                """schema: 1
+            write_package(package, """schema: 1
 id: declarative
 title: Declarative
 operations:
   - assert_contains:
       path: AGENTS.md
       text: MUD
-""",
-            )
+""")
             result = inspect_plugin(package)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout.strip(), "false")
@@ -53,16 +49,12 @@ operations:
     def test_plugin_is_detected_without_importing_it(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             package = Path(temp) / "plugin.zip"
-            write_package(
-                package,
-                """schema: 1
+            write_package(package, """schema: 1
 id: plugin-test
 title: Plugin test
 plugin:
   file: plugin.py
-""",
-                {"plugin.py": "raise RuntimeError('plugin was executed during inspection')\n"},
-            )
+""", {"plugin.py": "raise RuntimeError('plugin was executed during inspection')\n"})
             result = inspect_plugin(package)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout.strip(), "true")

@@ -1,25 +1,16 @@
-# repo-patcher CI relay v5
+# repo-patcher CI queue v6
 
-This directory supports two transports for
-`.github/workflows/validate-repo-patcher.yml`:
+This directory validates RepoPatcher packages through two transports:
 
-1. manual `workflow_dispatch` using a temporary carrier branch;
-2. GitHub Issues using Base64 comments and an `issue_comment` trigger.
+1. a scheduled GitHub Issues queue;
+2. manual `workflow_dispatch` using a temporary carrier branch.
 
-Neither transport writes to `main`.
+Neither transport writes package changes to `main`.
 
-## Authorized issue actors
+## Scheduled issue queue
 
-```text
-R3Neer
-efferra
-```
-
-The issue author, accepted chunk authors and trigger author must be the same
-authorized actor. Public issue bodies must never contain secrets or confidential
-data.
-
-## Issue protocol
+A request is complete when an open issue contains one request block and all of
+its Base64 chunk comments. No final command comment is required.
 
 Request body:
 
@@ -41,14 +32,33 @@ Chunk comment:
 <!-- /mud-repo-patcher-chunk:v1 -->
 ````
 
-Final trigger:
+The workflow polls every five minutes, selects the oldest complete request,
+posts a claim, reconstructs the exact ZIP, validates it and closes the issue
+with a machine-readable result. A claim becomes reclaimable after two hours if
+no result was published.
+
+Authorized request actors:
 
 ```text
-/repo-patcher validate REQUEST_ID
+R3Neer
+efferra
 ```
 
-`trust_plugin` must be a JSON boolean. It records explicit consent; it is not a
-claim that the package actually contains a plugin.
+State comments are trusted only when authored by `github-actions[bot]`.
+Untrusted users cannot block the queue by imitating claim or result markers.
+
+## Security boundary
+
+The workflow uses three jobs:
+
+- `prepare` has `issues: write`, but never executes RepoPatcher or package code;
+- `validate` executes plugins only with explicit consent and has no issue-write
+  permission or `GITHUB_TOKEN` environment variable;
+- `finalize` has `issues: write`, but never executes package code.
+
+The control-plane checkout and target checkout are separate. Validation helpers
+come from the workflow commit; the RepoPatcher runtime and repository contents
+come from the exact requested target SHA.
 
 ## Encoding helper
 
@@ -61,30 +71,15 @@ python "$Repo\tooling\repo-patcher-ci\issue_transport.py" encode `
     --output-directory "$env:TEMP\candidate-001"
 ```
 
-For an explicitly authorized plugin, add:
+For an explicitly authorized plugin, add `--trust-plugin`.
 
-```text
---trust-plugin
-```
-
-## Plugin rules
-
-`package_checks.py plugin` loads only the manifest through the vendored runtime.
-It does not import or execute the plugin.
-
-For a package with a plugin:
-
-- `trust_plugin: false` fails with a specific diagnostic before `explain`;
-- `trust_plugin: true` adds `--trust-plugin` to `explain`, both `check` calls and
-  `apply`;
-- the artifact records `plugin_present` and `plugin_authorized` separately.
-
-For a declarative package, no prompt or plugin warning is shown.
+The helper produces `issue-body.md`, one or more `chunk-*.md` files and
+`request.json`. It deliberately does not produce a trigger comment.
 
 ## Validation sequence
 
 ```text
-transport and actor validation
+queue authorization and persistent claim
 Base64, size and SHA-256 validation
 ZIP safety and expansion limits
 exact target checkout
@@ -97,7 +92,18 @@ git diff --check
 check after apply
 semantic changed_paths() == [] proof
 status, diff and artifact collection
+persistent result and issue closure
 ```
+
+## Plugin rules
+
+`package_checks.py plugin` loads only `patch.yaml`; it does not import or execute
+the plugin.
+
+- `trust_plugin: false` rejects a plugin before `explain`;
+- `trust_plugin: true` adds `--trust-plugin` to `explain`, both `check` calls and
+  `apply`;
+- artifacts record plugin presence and authorization separately.
 
 ## Local verification
 
@@ -106,13 +112,9 @@ status, diff and artifact collection
     -Workflow "$Repo\.github\workflows\validate-repo-patcher.yml"
 ```
 
-The command runs:
-
-- 25 issue-transport tests;
-- 2 runtime-backed package-inspection tests;
-- 5 PowerShell consent cases;
-- 12 workflow-contract tests;
-- pinned `actionlint` with SHA-256 verification.
+The command compiles the queue and transport, runs their unit tests, runs the
+runtime-backed package and plugin-consent tests, checks the workflow contract
+and validates the YAML with pinned `actionlint`.
 
 The authoritative runtime guide is `gobierno/USO-DE-REPO-PATCHER.md`, audited
-against the vendored `repo-patcher 0.2.0` implementation.
+against the vendored RepoPatcher 0.2.0 implementation.

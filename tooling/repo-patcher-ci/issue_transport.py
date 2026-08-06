@@ -22,7 +22,6 @@ REQUEST_START = "<!-- mud-repo-patcher-request:v1 -->"
 REQUEST_END = "<!-- /mud-repo-patcher-request:v1 -->"
 CHUNK_START = "<!-- mud-repo-patcher-chunk:v1 -->"
 CHUNK_END = "<!-- /mud-repo-patcher-chunk:v1 -->"
-TRIGGER_RE = re.compile(r"^/repo-patcher validate ([A-Za-z0-9][A-Za-z0-9._-]{0,79})$")
 REQUEST_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$")
 SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
@@ -237,25 +236,21 @@ def validate_zip_bytes(
     return {"entry_count": len(names), "uncompressed_size": total}
 
 
-def reconstruct_from_documents(
+def parse_issue_request(
     issue: dict[str, Any],
-    comments: Iterable[dict[str, Any]],
     *,
     expected_repository: str,
-    expected_actor: str,
     allowed_actors: Iterable[str],
-    trigger_comment_id: int,
     max_package_bytes: int = DEFAULT_MAX_PACKAGE_BYTES,
     max_chunks: int = DEFAULT_MAX_CHUNKS,
-) -> tuple[bytes, dict[str, Any], dict[str, Any]]:
+) -> tuple[dict[str, Any], str]:
     issue = _require_mapping(issue, "issue")
-    comments_list = [_require_mapping(item, "comment") for item in comments]
-    allowed = {item.casefold() for item in allowed_actors}
-    if expected_actor.casefold() not in allowed:
-        raise TransportError(f"Actor {expected_actor!r} is not authorized for the relay.")
+    if issue.get("pull_request") is not None:
+        raise TransportError("Pull requests are not valid repo-patcher queue items.")
     issue_actor = _login(issue, "issue")
-    if issue_actor.casefold() != expected_actor.casefold():
-        raise TransportError("The issue author does not match the triggering actor.")
+    allowed = {item.casefold() for item in allowed_actors}
+    if issue_actor.casefold() not in allowed:
+        raise TransportError(f"Actor {issue_actor!r} is not authorized for the relay.")
     request = _extract_json_block(issue.get("body"), REQUEST_START, REQUEST_END, "request")
     request = _validate_request(
         request,
@@ -263,38 +258,49 @@ def reconstruct_from_documents(
         max_package_bytes=max_package_bytes,
         max_chunks=max_chunks,
     )
-    request_id = request["request_id"]
+    return request, issue_actor
 
-    trigger_comments: list[dict[str, Any]] = []
-    chunk_comments: list[dict[str, Any]] = []
-    for comment in comments_list:
+
+def authorized_chunk_comments(
+    comments: Iterable[dict[str, Any]],
+    *,
+    expected_actor: str,
+) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    for comment in comments:
+        comment = _require_mapping(comment, "comment")
         body = comment.get("body")
-        if not isinstance(body, str):
+        if not isinstance(body, str) or CHUNK_START not in body:
             continue
         try:
             author = _login(comment, "comment")
         except TransportError:
             continue
-        if author.casefold() != expected_actor.casefold():
-            # Public issues may contain unrelated or hostile comments. Only the
-            # authorized request actor participates in the transport protocol.
-            continue
-        if TRIGGER_RE.fullmatch(body.strip()):
-            trigger_comments.append(comment)
-        if CHUNK_START in body:
-            chunk_comments.append(comment)
+        if author.casefold() == expected_actor.casefold():
+            result.append(comment)
+    return result
 
-    if len(trigger_comments) != 1:
-        raise TransportError("The issue must contain exactly one relay validation trigger comment.")
-    trigger = trigger_comments[0]
-    if _comment_id(trigger) != trigger_comment_id:
-        raise TransportError("The workflow event is not the unique trigger comment for this request.")
-    if _login(trigger, "trigger comment").casefold() != expected_actor.casefold():
-        raise TransportError("The trigger comment author does not match the authorized actor.")
-    trigger_match = TRIGGER_RE.fullmatch(str(trigger.get("body", "")).strip())
-    if trigger_match is None or trigger_match.group(1) != request_id:
-        raise TransportError("The trigger comment request_id does not match the issue request.")
 
+def reconstruct_from_documents(
+    issue: dict[str, Any],
+    comments: Iterable[dict[str, Any]],
+    *,
+    expected_repository: str,
+    allowed_actors: Iterable[str],
+    max_package_bytes: int = DEFAULT_MAX_PACKAGE_BYTES,
+    max_chunks: int = DEFAULT_MAX_CHUNKS,
+) -> tuple[bytes, dict[str, Any], dict[str, Any]]:
+    issue = _require_mapping(issue, "issue")
+    comments_list = [_require_mapping(item, "comment") for item in comments]
+    request, issue_actor = parse_issue_request(
+        issue,
+        expected_repository=expected_repository,
+        allowed_actors=allowed_actors,
+        max_package_bytes=max_package_bytes,
+        max_chunks=max_chunks,
+    )
+    request_id = request["request_id"]
+    chunk_comments = authorized_chunk_comments(comments_list, expected_actor=issue_actor)
     if len(chunk_comments) != request["chunk_count"]:
         raise TransportError(
             f"Expected {request['chunk_count']} chunk comments, found {len(chunk_comments)}."
@@ -302,8 +308,6 @@ def reconstruct_from_documents(
 
     chunks: dict[int, str] = {}
     for comment in chunk_comments:
-        if _login(comment, "chunk comment").casefold() != expected_actor.casefold():
-            raise TransportError("A chunk comment author does not match the authorized actor.")
         chunk = _extract_json_block(comment.get("body"), CHUNK_START, CHUNK_END, "chunk")
         chunk = _validate_chunk(
             chunk,
@@ -340,8 +344,7 @@ def reconstruct_from_documents(
         "request_id": request_id,
         "repository": expected_repository,
         "issue_number": issue.get("number"),
-        "actor": expected_actor,
-        "trigger_comment_id": trigger_comment_id,
+        "actor": issue_actor,
         "target_sha": request["target_sha"],
         "package_sha256": actual_hash,
         "package_size": len(package),
@@ -350,7 +353,6 @@ def reconstruct_from_documents(
         **archive,
     }
     return package, request, report
-
 
 def _api_get_json(url: str, token: str) -> tuple[Any, dict[str, str]]:
     request = urllib.request.Request(
@@ -423,9 +425,7 @@ def reconstruct_command(args: argparse.Namespace) -> int:
         issue,
         comments,
         expected_repository=args.repository,
-        expected_actor=args.expected_actor,
         allowed_actors=args.allowed_actor,
-        trigger_comment_id=args.trigger_comment_id,
         max_package_bytes=args.max_package_bytes,
         max_chunks=args.max_chunks,
     )
@@ -447,9 +447,7 @@ def fetch_command(args: argparse.Namespace) -> int:
         issue,
         comments,
         expected_repository=args.repository,
-        expected_actor=args.expected_actor,
         allowed_actors=args.allowed_actor,
-        trigger_comment_id=args.trigger_comment_id,
         max_package_bytes=args.max_package_bytes,
         max_chunks=args.max_chunks,
     )
@@ -517,9 +515,6 @@ def encode_command(args: argparse.Namespace) -> int:
         (output / f"chunk-{index:03d}.md").write_text(
             _delimited_json(CHUNK_START, CHUNK_END, chunk), encoding="utf-8"
         )
-    (output / "trigger-comment.md").write_text(
-        f"/repo-patcher validate {args.request_id}\n", encoding="utf-8"
-    )
     _write_json(output / "request.json", request)
     print(json.dumps({**request, "output_directory": str(output)}, ensure_ascii=False, indent=2))
     return 0
@@ -531,9 +526,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     def add_reconstruct_arguments(command: argparse.ArgumentParser) -> None:
         command.add_argument("--repository", required=True)
-        command.add_argument("--expected-actor", required=True)
         command.add_argument("--allowed-actor", action="append", required=True)
-        command.add_argument("--trigger-comment-id", type=int, required=True)
         command.add_argument("--output-package", required=True)
         command.add_argument("--output-request", required=True)
         command.add_argument("--output-report", required=True)

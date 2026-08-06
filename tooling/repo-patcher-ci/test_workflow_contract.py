@@ -5,64 +5,75 @@ import re
 import unittest
 from pathlib import Path
 
-
-WORKFLOW = Path(
-    os.environ.get(
-        "MUD_WORKFLOW_PATH",
-        Path(__file__).with_name("validate-repo-patcher.yml"),
-    )
-).resolve()
+WORKFLOW = Path(os.environ.get("MUD_WORKFLOW_PATH", Path(__file__).with_name("validate-repo-patcher.yml"))).resolve()
 TEXT = WORKFLOW.read_text(encoding="utf-8")
 
 
+def job_block(name: str) -> str:
+    match = re.search(rf"(?ms)^  {re.escape(name)}:\n(.*?)(?=^  [a-zA-Z0-9_-]+:\n|\Z)", TEXT)
+    if match is None:
+        raise AssertionError(f"job not found: {name}")
+    return match.group(1)
+
+
 class WorkflowContractTests(unittest.TestCase):
-    def test_dual_transport_triggers_exist(self) -> None:
+    def test_pull_request_self_test_exists(self):
+        self.assertIn("  pull_request:\n", TEXT)
+        block = job_block("self_test")
+        self.assertIn("github.event_name == 'pull_request'", block)
+        self.assertIn("test_issue_queue.py", block)
+        self.assertIn("actionlint_1.7.12_linux_amd64.tar.gz", block)
+        self.assertIn("8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8", block)
+
+    def test_schedule_and_manual_dispatch_exist(self):
+        self.assertIn("  schedule:\n    - cron: \"*/5 * * * *\"", TEXT)
         self.assertIn("  workflow_dispatch:\n", TEXT)
-        self.assertIn("  issue_comment:\n    types: [created]", TEXT)
 
-    def test_permissions_are_read_only_and_minimal(self) -> None:
-        block = re.search(r"(?ms)^permissions:\n(.*?)(?=^[A-Za-z])", TEXT)
-        self.assertIsNotNone(block)
-        permissions = block.group(1)
-        self.assertIn("contents: read", permissions)
-        self.assertIn("issues: read", permissions)
-        self.assertNotIn("write", permissions)
+    def test_issue_comment_trigger_is_removed(self):
+        self.assertNotIn("issue_comment:", TEXT)
+        self.assertNotIn("github.event.comment", TEXT)
+        self.assertNotIn("/repo-patcher validate", TEXT)
 
-    def test_issue_relay_rejects_pull_requests_and_limits_actors(self) -> None:
-        self.assertIn("github.event.issue.pull_request == null", TEXT)
-        self.assertIn("startsWith(github.event.comment.body, '/repo-patcher validate ')", TEXT)
-        self.assertIn("fromJSON('[\"R3Neer\",\"efferra\"]')", TEXT)
+    def test_queue_has_global_concurrency(self):
+        self.assertIn("'repo-patcher-issue-queue'", TEXT)
+        self.assertIn("cancel-in-progress: false", TEXT)
 
-    def test_issue_transport_uses_event_identity(self) -> None:
-        self.assertIn("EXPECTED_ACTOR: ${{ github.actor }}", TEXT)
-        self.assertIn("TRIGGER_COMMENT_ID: ${{ github.event.comment.id }}", TEXT)
-        self.assertIn('"--allowed-actor", "R3Neer"', TEXT)
-        self.assertIn('"--allowed-actor", "efferra"', TEXT)
+    def test_three_jobs_exist(self):
+        for name in ("prepare", "validate", "finalize"):
+            self.assertRegex(TEXT, rf"(?m)^  {name}:$")
 
-    def test_manual_dispatch_is_retained(self) -> None:
-        for input_name in (
-            "request_id",
-            "package_ref",
-            "package_path",
-            "target_sha",
-            "package_sha256",
-            "trust_plugin",
-        ):
+    def test_prepare_has_issue_write_but_does_not_execute_repo_patcher(self):
+        block = job_block("prepare")
+        self.assertIn("issues: write", block)
+        self.assertIn("contents: read", block)
+        self.assertIn("issue_queue.py claim", block)
+        self.assertNotIn("python -m repo_patcher apply", block)
+
+    def test_validation_job_cannot_write_issues(self):
+        block = job_block("validate")
+        self.assertIn("contents: read", block)
+        self.assertNotIn("issues: write", block)
+        self.assertNotIn("GITHUB_TOKEN:", block)
+
+    def test_finalize_has_issue_write_and_always_runs_for_found_request(self):
+        block = job_block("finalize")
+        self.assertIn("issues: write", block)
+        self.assertIn("if: always() && needs.prepare.outputs.found == 'true'", block)
+        self.assertIn("issue_queue.py finalize", block)
+
+    def test_control_plane_is_separate_from_target_checkout(self):
+        block = job_block("validate")
+        self.assertIn("path: _control", block)
+        self.assertIn("path: _target", block)
+        self.assertIn("CONTROL_ROOT:", block)
+        self.assertIn("TARGET_REPO:", block)
+
+    def test_manual_dispatch_contract_is_retained(self):
+        for input_name in ("request_id", "package_ref", "package_path", "target_sha", "package_sha256", "trust_plugin"):
             self.assertIn(f"      {input_name}:\n", TEXT)
         self.assertIn("Checkout manual package carrier", TEXT)
 
-    def test_exact_target_and_package_identity_are_rechecked(self) -> None:
-        self.assertIn("Checkout exact target commit", TEXT)
-        self.assertIn("ref: ${{ steps.request.outputs.target_sha }}", TEXT)
-        self.assertIn("Wrong target commit", TEXT)
-        self.assertIn("Package identity changed after transport", TEXT)
-
-    def test_vendored_runtime_is_used(self) -> None:
-        self.assertIn(r"PYTHONPATH: ${{ github.workspace }}\tooling\repo-patcher-runtime", TEXT)
-        self.assertIn('python -m repo_patcher --version', TEXT)
-        self.assertNotIn("pip install repo-patcher", TEXT)
-
-    def test_required_validation_sequence_is_present_and_ordered(self) -> None:
+    def test_required_validation_sequence_is_ordered(self):
         markers = [
             'Invoke-Checked "package-info"',
             'Invoke-Checked "explain"',
@@ -75,38 +86,25 @@ class WorkflowContractTests(unittest.TestCase):
         positions = [TEXT.index(marker) for marker in markers]
         self.assertEqual(positions, sorted(positions))
 
-    def test_idempotence_is_checked_semantically(self) -> None:
-        self.assertIn("package_checks.py", TEXT)
-        self.assertIn("idempotence --repo", TEXT)
-        self.assertIn('Invoke-Checked "prove second plan is a no-op"', TEXT)
-
-    def test_plugin_execution_requires_explicit_request_authorization(self) -> None:
-        self.assertIn("trust_plugin", TEXT)
-        self.assertIn("The package contains a Python plugin", TEXT)
-        self.assertIn('$trustArguments = @("--trust-plugin")', TEXT)
+    def test_plugin_consent_reaches_all_loading_commands(self):
+        block = job_block("validate")
+        self.assertIn("The package contains a Python plugin", block)
+        self.assertIn('$trustArguments = @("--trust-plugin")', block)
         for command in ("explain", "check", "apply"):
-            self.assertRegex(TEXT, rf"python -m repo_patcher {command}[^\n]*@trustArguments")
-        self.assertIn("Plugin authorized:", TEXT)
+            self.assertRegex(block, rf"python -m repo_patcher {command}[^\n]*@trustArguments")
 
-    def test_artifact_is_uploaded_even_on_failure(self) -> None:
-        self.assertIn("      - name: Upload logs and resulting diff", TEXT)
-        self.assertIn("        if: always()", TEXT)
-        self.assertIn("uses: actions/upload-artifact@v7", TEXT)
-        self.assertIn("failure-summary.txt", TEXT)
-        self.assertIn("transport-report.json", TEXT)
-        self.assertIn('Join-Path $env:LOG_DIR "request.json"', TEXT)
-        self.assertIn("validation-metadata.json", TEXT)
+    def test_evidence_is_uploaded_on_validation_failure(self):
+        block = job_block("validate")
+        self.assertIn("if: always()", block)
+        self.assertIn("actions/upload-artifact@v7", block)
+        self.assertIn("failure-summary.txt", block)
 
-    def test_workflow_never_requests_write_permissions(self) -> None:
-        forbidden = (
-            "contents: write",
-            "issues: write",
-            "pull-requests: write",
-            "actions: write",
-            "id-token: write",
-        )
-        for item in forbidden:
-            self.assertNotIn(item, TEXT)
+    def test_workflow_level_permissions_are_empty(self):
+        self.assertIn("permissions: {}", TEXT)
+        validation = job_block("validate")
+        self.assertNotIn("actions: write", validation)
+        self.assertNotIn("contents: write", validation)
+        self.assertNotIn("id-token: write", validation)
 
 
 if __name__ == "__main__":

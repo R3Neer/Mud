@@ -34,29 +34,37 @@ foreach ($command in "python", "gh") {
 }
 
 $transport = Join-Path $ToolingDirectory "issue_transport.py"
+$queue = Join-Path $ToolingDirectory "issue_queue.py"
 $packageChecks = Join-Path $ToolingDirectory "package_checks.py"
 $transportTests = Join-Path $ToolingDirectory "test_issue_transport.py"
+$queueTests = Join-Path $ToolingDirectory "test_issue_queue.py"
 $packageTests = Join-Path $ToolingDirectory "test_package_checks.py"
 $workflowTests = Join-Path $ToolingDirectory "test_workflow_contract.py"
 $pluginConsent = Join-Path $ToolingDirectory "PluginConsent.ps1"
 $pluginConsentTests = Join-Path $ToolingDirectory "Test-PluginConsent.ps1"
-foreach ($path in $transport, $packageChecks, $transportTests, $packageTests, $workflowTests, $pluginConsent, $pluginConsentTests) {
+foreach ($path in $transport, $queue, $packageChecks, $transportTests, $queueTests, $packageTests, $workflowTests, $pluginConsent, $pluginConsentTests) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Required relay file is missing: $path"
     }
 }
 
-Write-Host "Compiling issue relay and tests..."
-& python -m py_compile $transport $packageChecks $transportTests $packageTests $workflowTests
+Write-Host "Compiling queue, transport and tests..."
+& python -m py_compile $transport $queue $packageChecks $transportTests $queueTests $packageTests $workflowTests
 if ($LASTEXITCODE -ne 0) {
     throw "Python compilation failed."
 }
 
 try {
-    Write-Host "Running issue relay tests..."
+    Write-Host "Running issue transport tests..."
     & python $transportTests
     if ($LASTEXITCODE -ne 0) {
-        throw "Issue relay tests failed."
+        throw "Issue transport tests failed."
+    }
+
+    Write-Host "Running scheduled queue tests..."
+    & python $queueTests
+    if ($LASTEXITCODE -ne 0) {
+        throw "Issue queue tests failed."
     }
 
     Write-Host "Running runtime-backed package inspection tests..."
