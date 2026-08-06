@@ -43,7 +43,7 @@ REQUEST_KEYS = {
     "package_size",
     "encoding",
     "chunk_count",
-    "allow_python_plugin",
+    "trust_plugin",
 }
 CHUNK_KEYS = {"protocol", "request_id", "index", "count", "payload"}
 
@@ -143,8 +143,8 @@ def _validate_request(
         or chunk_count > max_chunks
     ):
         raise TransportError(f"chunk_count must be between 1 and {max_chunks}.")
-    if not isinstance(request["allow_python_plugin"], bool):
-        raise TransportError("allow_python_plugin must be a JSON boolean.")
+    if not isinstance(request["trust_plugin"], bool):
+        raise TransportError("trust_plugin must be a JSON boolean.")
     normalized = dict(request)
     normalized["target_sha"] = target_sha.lower()
     normalized["package_sha256"] = package_sha256.lower()
@@ -346,7 +346,7 @@ def reconstruct_from_documents(
         "package_sha256": actual_hash,
         "package_size": len(package),
         "chunk_count": request["chunk_count"],
-        "allow_python_plugin": request["allow_python_plugin"],
+        "trust_plugin": request["trust_plugin"],
         **archive,
     }
     return package, request, report
@@ -405,7 +405,7 @@ def _write_github_outputs(report: dict[str, Any]) -> None:
         "request_id": report["request_id"],
         "target_sha": report["target_sha"],
         "package_sha256": report["package_sha256"],
-        "allow_python_plugin": str(report["allow_python_plugin"]).lower(),
+        "trust_plugin": str(report["trust_plugin"]).lower(),
         "actor": report["actor"],
         "issue_number": report["issue_number"],
     }
@@ -491,7 +491,7 @@ def encode_command(args: argparse.Namespace) -> int:
         "package_size": len(package),
         "encoding": "base64",
         "chunk_count": len(chunks),
-        "allow_python_plugin": args.allow_python_plugin,
+        "trust_plugin": args.trust_plugin,
     }
     request = _validate_request(
         request,
@@ -561,7 +561,7 @@ def build_parser() -> argparse.ArgumentParser:
     encode.add_argument("--chunk-chars", type=int, default=DEFAULT_CHUNK_CHARS)
     encode.add_argument("--max-package-bytes", type=int, default=DEFAULT_MAX_PACKAGE_BYTES)
     encode.add_argument("--max-chunks", type=int, default=DEFAULT_MAX_CHUNKS)
-    encode.add_argument("--allow-python-plugin", action="store_true")
+    encode.add_argument("--trust-plugin", action="store_true")
     encode.set_defaults(func=encode_command)
     return parser
 

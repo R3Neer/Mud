@@ -24,8 +24,8 @@ on:
         description: Expected SHA-256 of the package ZIP
         required: true
         type: string
-      allow_python_plugin:
-        description: Permit and trust a Python plugin contained in the package
+      trust_plugin:
+        description: Explicitly authorize a Python plugin contained in the package
         required: false
         default: false
         type: boolean
@@ -152,7 +152,7 @@ jobs:
           PACKAGE_PATH: ${{ inputs.package_path }}
           EXPECTED_SHA256: ${{ inputs.package_sha256 }}
           TARGET_SHA: ${{ inputs.target_sha }}
-          ALLOW_PYTHON_PLUGIN: ${{ inputs.allow_python_plugin }}
+          TRUST_PLUGIN: ${{ inputs.trust_plugin }}
           PACKAGE_FILE: ${{ steps.paths.outputs.package_file }}
           REQUEST_FILE: ${{ steps.paths.outputs.request_file }}
           REPORT_FILE: ${{ steps.paths.outputs.report_file }}
@@ -174,7 +174,7 @@ jobs:
               }
 
               $packageSize = (Get-Item -LiteralPath $env:PACKAGE_FILE).Length
-              $allowPlugin = [System.Convert]::ToBoolean($env:ALLOW_PYTHON_PLUGIN)
+              $trustPlugin = [System.Convert]::ToBoolean($env:TRUST_PLUGIN)
               $request = [ordered]@{
                   protocol = "mud-repo-patcher-dispatch/v1"
                   request_id = $env:REQUEST_ID
@@ -182,7 +182,7 @@ jobs:
                   target_sha = $env:TARGET_SHA.ToLowerInvariant()
                   package_sha256 = $actualHash
                   package_size = $packageSize
-                  allow_python_plugin = $allowPlugin
+                  trust_plugin = $trustPlugin
               }
               $request | ConvertTo-Json | Set-Content -LiteralPath $env:REQUEST_FILE -Encoding utf8
               $request | ConvertTo-Json | Set-Content -LiteralPath $env:REPORT_FILE -Encoding utf8
@@ -195,7 +195,7 @@ jobs:
                   "request_id=$($env:REQUEST_ID)"
                   "target_sha=$($env:TARGET_SHA.ToLowerInvariant())"
                   "package_sha256=$actualHash"
-                  "allow_python_plugin=$($allowPlugin.ToString().ToLowerInvariant())"
+                  "trust_plugin=$($trustPlugin.ToString().ToLowerInvariant())"
               ) | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
           }
           catch {
@@ -211,24 +211,24 @@ jobs:
           DISPATCH_REQUEST_ID: ${{ steps.dispatch_transport.outputs.request_id }}
           DISPATCH_TARGET_SHA: ${{ steps.dispatch_transport.outputs.target_sha }}
           DISPATCH_PACKAGE_SHA256: ${{ steps.dispatch_transport.outputs.package_sha256 }}
-          DISPATCH_ALLOW_PLUGIN: ${{ steps.dispatch_transport.outputs.allow_python_plugin }}
+          DISPATCH_TRUST_PLUGIN: ${{ steps.dispatch_transport.outputs.trust_plugin }}
           ISSUE_REQUEST_ID: ${{ steps.issue_transport.outputs.request_id }}
           ISSUE_TARGET_SHA: ${{ steps.issue_transport.outputs.target_sha }}
           ISSUE_PACKAGE_SHA256: ${{ steps.issue_transport.outputs.package_sha256 }}
-          ISSUE_ALLOW_PLUGIN: ${{ steps.issue_transport.outputs.allow_python_plugin }}
+          ISSUE_TRUST_PLUGIN: ${{ steps.issue_transport.outputs.trust_plugin }}
         run: |
           $ErrorActionPreference = "Stop"
           if ($env:EVENT_NAME -eq "workflow_dispatch") {
               $requestId = $env:DISPATCH_REQUEST_ID
               $targetSha = $env:DISPATCH_TARGET_SHA
               $packageHash = $env:DISPATCH_PACKAGE_SHA256
-              $allowPlugin = $env:DISPATCH_ALLOW_PLUGIN
+              $trustPlugin = $env:DISPATCH_TRUST_PLUGIN
           }
           else {
               $requestId = $env:ISSUE_REQUEST_ID
               $targetSha = $env:ISSUE_TARGET_SHA
               $packageHash = $env:ISSUE_PACKAGE_SHA256
-              $allowPlugin = $env:ISSUE_ALLOW_PLUGIN
+              $trustPlugin = $env:ISSUE_TRUST_PLUGIN
           }
 
           if ($requestId -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$') {
@@ -240,15 +240,15 @@ jobs:
           if ($packageHash -notmatch '^[0-9a-f]{64}$') {
               throw "Resolved package SHA-256 is invalid: $packageHash"
           }
-          if ($allowPlugin -notin @("true", "false")) {
-              throw "Resolved plugin policy is invalid: $allowPlugin"
+          if ($trustPlugin -notin @("true", "false")) {
+              throw "Resolved plugin policy is invalid: $trustPlugin"
           }
 
           @(
               "request_id=$requestId"
               "target_sha=$targetSha"
               "package_sha256=$packageHash"
-              "allow_python_plugin=$allowPlugin"
+              "trust_plugin=$trustPlugin"
           ) | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
 
       - name: Remove transport checkouts
@@ -340,7 +340,7 @@ jobs:
           REQUEST_ID: ${{ steps.request.outputs.request_id }}
           TARGET_SHA: ${{ steps.request.outputs.target_sha }}
           PACKAGE_SHA256: ${{ steps.request.outputs.package_sha256 }}
-          ALLOW_PYTHON_PLUGIN: ${{ steps.request.outputs.allow_python_plugin }}
+          TRUST_PLUGIN: ${{ steps.request.outputs.trust_plugin }}
           PYTHONPATH: ${{ github.workspace }}\tooling\repo-patcher-runtime
         run: |
           $ErrorActionPreference = "Stop"
@@ -362,13 +362,14 @@ jobs:
 
           try {
               git config --global --add safe.directory $env:GITHUB_WORKSPACE
+              Copy-Item -LiteralPath $env:REQUEST_FILE -Destination (Join-Path $env:LOG_DIR "request.json") -Force
 
               $packageChecks = Join-Path $env:GITHUB_WORKSPACE "tooling\repo-patcher-ci\package_checks.py"
               $pluginPresent = (& python $packageChecks plugin --package $env:PACKAGE_FILE).Trim().ToLowerInvariant()
               if ($LASTEXITCODE -ne 0 -or $pluginPresent -notin @("true", "false")) {
                   throw "Could not inspect the package plugin policy."
               }
-              if ($pluginPresent -eq "true" -and $env:ALLOW_PYTHON_PLUGIN -ne "true") {
+              if ($pluginPresent -eq "true" -and $env:TRUST_PLUGIN -ne "true") {
                   throw "The package contains a Python plugin, but this request did not authorize it."
               }
               $trustArguments = @()
@@ -381,7 +382,7 @@ jobs:
                   target_sha = $env:TARGET_SHA
                   package_sha256 = $env:PACKAGE_SHA256
                   plugin_present = ($pluginPresent -eq "true")
-                  plugin_authorized = ($env:ALLOW_PYTHON_PLUGIN -eq "true")
+                  plugin_authorized = ($pluginPresent -eq "true" -and $env:TRUST_PLUGIN -eq "true")
                   runner = "windows-latest"
                   python = "3.13"
               } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "validation-metadata.json") -Encoding utf8
@@ -421,6 +422,7 @@ jobs:
           - Runner: Windows
           - Python: 3.13
           - Plugin present: $pluginPresent
+          - Plugin authorized: $($pluginPresent -eq "true" -and $env:TRUST_PLUGIN -eq "true")
           "@ | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
           }
           catch {

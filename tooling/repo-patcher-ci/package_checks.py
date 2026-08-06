@@ -4,12 +4,10 @@ import argparse
 import sys
 from pathlib import Path
 
-from repo_patcher.engine import build_plan
-from repo_patcher.manifest import load_manifest
-from repo_patcher.patch_source import open_patch_source
-
-
 def plugin_command(args: argparse.Namespace) -> int:
+    from repo_patcher.manifest import load_manifest
+    from repo_patcher.patch_source import open_patch_source
+
     package = Path(args.package).expanduser().resolve()
     with open_patch_source(package) as root:
         present = load_manifest(root).plugin is not None
@@ -18,6 +16,9 @@ def plugin_command(args: argparse.Namespace) -> int:
 
 
 def idempotence_command(args: argparse.Namespace) -> int:
+    from repo_patcher.engine import build_plan
+    from repo_patcher.patch_source import open_patch_source
+
     repo = Path(args.repo).expanduser().resolve()
     package = Path(args.package).expanduser().resolve()
     with open_patch_source(package) as root:
@@ -38,7 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    plugin = sub.add_parser("plugin", help="print whether the package declares a Python plugin")
+    plugin = sub.add_parser("plugin", help="inspect only patch.yaml and print whether it declares a Python plugin")
     plugin.add_argument("--package", required=True)
     plugin.set_defaults(func=plugin_command)
 

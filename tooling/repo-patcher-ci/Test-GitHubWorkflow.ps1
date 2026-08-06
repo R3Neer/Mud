@@ -4,7 +4,9 @@ param(
     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
     [string] $Workflow,
 
-    [string] $ToolingDirectory
+    [string] $ToolingDirectory,
+
+    [string] $RuntimeDirectory
 )
 
 Set-StrictMode -Version Latest
@@ -17,6 +19,14 @@ if (-not $ToolingDirectory) {
 }
 $ToolingDirectory = (Resolve-Path -LiteralPath $ToolingDirectory).Path
 
+if (-not $RuntimeDirectory) {
+    $RuntimeDirectory = Join-Path (Split-Path -Parent $ToolingDirectory) "repo-patcher-runtime"
+}
+$RuntimeDirectory = (Resolve-Path -LiteralPath $RuntimeDirectory).Path
+if (-not (Test-Path -LiteralPath (Join-Path $RuntimeDirectory "repo_patcher\__init__.py") -PathType Leaf)) {
+    throw "Vendored repo-patcher runtime is missing: $RuntimeDirectory"
+}
+
 foreach ($command in "python", "gh") {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
         throw "Required command is not available in PATH: $command"
@@ -26,15 +36,18 @@ foreach ($command in "python", "gh") {
 $transport = Join-Path $ToolingDirectory "issue_transport.py"
 $packageChecks = Join-Path $ToolingDirectory "package_checks.py"
 $transportTests = Join-Path $ToolingDirectory "test_issue_transport.py"
+$packageTests = Join-Path $ToolingDirectory "test_package_checks.py"
 $workflowTests = Join-Path $ToolingDirectory "test_workflow_contract.py"
-foreach ($path in $transport, $packageChecks, $transportTests, $workflowTests) {
+$pluginConsent = Join-Path $ToolingDirectory "PluginConsent.ps1"
+$pluginConsentTests = Join-Path $ToolingDirectory "Test-PluginConsent.ps1"
+foreach ($path in $transport, $packageChecks, $transportTests, $packageTests, $workflowTests, $pluginConsent, $pluginConsentTests) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Required relay file is missing: $path"
     }
 }
 
 Write-Host "Compiling issue relay and tests..."
-& python -m py_compile $transport $packageChecks $transportTests $workflowTests
+& python -m py_compile $transport $packageChecks $transportTests $packageTests $workflowTests
 if ($LASTEXITCODE -ne 0) {
     throw "Python compilation failed."
 }
@@ -44,6 +57,25 @@ try {
     & python $transportTests
     if ($LASTEXITCODE -ne 0) {
         throw "Issue relay tests failed."
+    }
+
+    Write-Host "Running runtime-backed package inspection tests..."
+    $previousPythonPath = $env:PYTHONPATH
+    try {
+        $env:PYTHONPATH = $RuntimeDirectory
+        & python $packageTests
+        if ($LASTEXITCODE -ne 0) {
+            throw "Package inspection tests failed."
+        }
+    }
+    finally {
+        $env:PYTHONPATH = $previousPythonPath
+    }
+
+    Write-Host "Running plugin consent tests..."
+    & $pluginConsentTests
+    if ($LASTEXITCODE -ne 0) {
+        throw "Plugin consent tests failed."
     }
 
     Write-Host "Running workflow contract tests..."

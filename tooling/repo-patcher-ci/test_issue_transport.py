@@ -45,7 +45,7 @@ def make_documents(package: bytes | None = None, chunk_chars: int = 24):
         "package_size": len(package),
         "encoding": "base64",
         "chunk_count": len(chunks),
-        "allow_python_plugin": False,
+        "trust_plugin": False,
     }
     issue = {
         "number": 7,
@@ -255,6 +255,14 @@ class TransportTests(unittest.TestCase):
         with self.assertRaisesRegex(transport.TransportError, "unknown keys"):
             reconstruct(issue, comments)
 
+    def test_trust_plugin_must_be_a_json_boolean(self):
+        _, _, issue, comments = make_documents(chunk_chars=100_000)
+        request = transport._extract_json_block(issue["body"], transport.REQUEST_START, transport.REQUEST_END, "request")
+        request["trust_plugin"] = "true"
+        issue["body"] = json_block(transport.REQUEST_START, transport.REQUEST_END, request)
+        with self.assertRaisesRegex(transport.TransportError, "JSON boolean"):
+            reconstruct(issue, comments)
+
     def test_same_request_can_be_reconstructed_again(self):
         package, _, issue, comments = make_documents(chunk_chars=100_000)
         first, _, _ = reconstruct(issue, comments)
@@ -283,6 +291,7 @@ class TransportTests(unittest.TestCase):
                     str(output),
                     "--chunk-chars",
                     "20",
+                    "--trust-plugin",
                 ]
             )
             self.assertEqual(args.func(args), 0)
@@ -291,8 +300,10 @@ class TransportTests(unittest.TestCase):
             for index, path in enumerate(sorted(output.glob("chunk-*.md")), 1):
                 comments.append({"id": index, "body": path.read_text(), "user": {"login": ACTOR}})
             comments.append({"id": TRIGGER_ID, "body": (output / "trigger-comment.md").read_text(), "user": {"login": ACTOR}})
-            rebuilt, _, _ = reconstruct(issue, comments)
+            rebuilt, request, report = reconstruct(issue, comments)
             self.assertEqual(rebuilt, package)
+            self.assertIs(request["trust_plugin"], True)
+            self.assertIs(report["trust_plugin"], True)
 
 
 if __name__ == "__main__":

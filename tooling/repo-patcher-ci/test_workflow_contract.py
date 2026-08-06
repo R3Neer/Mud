@@ -46,7 +46,7 @@ class WorkflowContractTests(unittest.TestCase):
             "package_path",
             "target_sha",
             "package_sha256",
-            "allow_python_plugin",
+            "trust_plugin",
         ):
             self.assertIn(f"      {input_name}:\n", TEXT)
         self.assertIn("Checkout manual package carrier", TEXT)
@@ -81,9 +81,12 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn('Invoke-Checked "prove second plan is a no-op"', TEXT)
 
     def test_plugin_execution_requires_explicit_request_authorization(self) -> None:
-        self.assertIn("allow_python_plugin", TEXT)
+        self.assertIn("trust_plugin", TEXT)
         self.assertIn("The package contains a Python plugin", TEXT)
         self.assertIn('$trustArguments = @("--trust-plugin")', TEXT)
+        for command in ("explain", "check", "apply"):
+            self.assertRegex(TEXT, rf"python -m repo_patcher {command}[^\n]*@trustArguments")
+        self.assertIn("Plugin authorized:", TEXT)
 
     def test_artifact_is_uploaded_even_on_failure(self) -> None:
         self.assertIn("      - name: Upload logs and resulting diff", TEXT)
@@ -91,6 +94,8 @@ class WorkflowContractTests(unittest.TestCase):
         self.assertIn("uses: actions/upload-artifact@v7", TEXT)
         self.assertIn("failure-summary.txt", TEXT)
         self.assertIn("transport-report.json", TEXT)
+        self.assertIn('Join-Path $env:LOG_DIR "request.json"', TEXT)
+        self.assertIn("validation-metadata.json", TEXT)
 
     def test_workflow_never_requests_write_permissions(self) -> None:
         forbidden = (

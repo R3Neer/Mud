@@ -17,11 +17,16 @@ param(
     ),
     [switch] $NoWait,
     [switch] $KeepBranch,
-    [switch] $AllowPythonPlugin
+
+    [Alias("AllowPythonPlugin")]
+    [switch] $TrustPlugin
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+$scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $scriptDirectory "PluginConsent.ps1")
 
 function Invoke-Native {
     param([string] $File, [string[]] $Arguments = @())
@@ -71,7 +76,7 @@ function Invoke-Dispatch {
             -f "package_path=$($Inputs.package_path)" `
             -f "target_sha=$($Inputs.target_sha)" `
             -f "package_sha256=$($Inputs.package_sha256)" `
-            -f "allow_python_plugin=$($Inputs.allow_python_plugin)" 2>&1
+            -f "trust_plugin=$($Inputs.trust_plugin)" 2>&1
 
         $exitCode = $LASTEXITCODE
         $text = ($output -join [Environment]::NewLine).Trim()
@@ -89,7 +94,7 @@ function Invoke-Dispatch {
     throw "GitHub did not accept the workflow after five attempts."
 }
 
-foreach ($command in "git", "gh") {
+foreach ($command in "git", "gh", "python") {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
         throw "Required command is not available in PATH: $command"
     }
@@ -98,6 +103,34 @@ foreach ($command in "git", "gh") {
 $Package = (Resolve-Path -LiteralPath $Package).Path
 $Repo = (Resolve-Path -LiteralPath $Repo).Path
 $Repo = (Resolve-Path -LiteralPath (Get-NativeText git @("-C", $Repo, "rev-parse", "--show-toplevel"))).Path
+
+$packageChecks = Join-Path $Repo "tooling\repo-patcher-ci\package_checks.py"
+$runtimeDirectory = Join-Path $Repo "tooling\repo-patcher-runtime"
+if (-not (Test-Path -LiteralPath $packageChecks -PathType Leaf)) {
+    throw "Package inspection helper is missing: $packageChecks"
+}
+if (-not (Test-Path -LiteralPath (Join-Path $runtimeDirectory "repo_patcher\__init__.py") -PathType Leaf)) {
+    throw "Vendored repo-patcher runtime is missing: $runtimeDirectory"
+}
+
+$previousPythonPath = $env:PYTHONPATH
+try {
+    $env:PYTHONPATH = $runtimeDirectory
+    $pluginText = Get-NativeText python @($packageChecks, "plugin", "--package", $Package)
+}
+finally {
+    $env:PYTHONPATH = $previousPythonPath
+}
+
+switch ($pluginText.Trim().ToLowerInvariant()) {
+    "true" { $hasPlugin = $true }
+    "false" { $hasPlugin = $false }
+    default { throw "Package inspection returned an invalid plugin result: $pluginText" }
+}
+
+$trustPluginGranted = Resolve-RepoPatcherPluginConsent `
+    -HasPlugin:$hasPlugin `
+    -TrustPlugin:$TrustPlugin
 
 Invoke-Native gh @("auth", "status")
 
@@ -151,7 +184,7 @@ try {
             package_path = $remotePackagePath
             target_sha = $targetSha
             package_sha256 = $packageHash
-            allow_python_plugin = $AllowPythonPlugin.IsPresent.ToString().ToLowerInvariant()
+            trust_plugin = $trustPluginGranted.ToString().ToLowerInvariant()
         }
     $dispatchAccepted = $true
 
@@ -200,7 +233,8 @@ try {
         workflow = $Workflow
         target_sha = $targetSha
         package_sha256 = $packageHash
-        allow_python_plugin = $AllowPythonPlugin.IsPresent
+        plugin_present = $hasPlugin
+        trust_plugin = $trustPluginGranted
         created_at_utc = [DateTime]::UtcNow.ToString("o")
     } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
 

@@ -1,52 +1,37 @@
-# repo-patcher CI relay v4
+# repo-patcher CI relay v5
 
-This directory contains the validation tooling used by
-`.github/workflows/validate-repo-patcher.yml`.
+This directory supports two transports for
+`.github/workflows/validate-repo-patcher.yml`:
 
-Version 4 supports two transports:
+1. manual `workflow_dispatch` using a temporary carrier branch;
+2. GitHub Issues using Base64 comments and an `issue_comment` trigger.
 
-1. `workflow_dispatch` with a temporary carrier branch, retained from v3;
-2. GitHub Issues with Base64 chunks and an `issue_comment` trigger.
+Neither transport writes to `main`.
 
-The Issues relay exists so an authorized assistant can submit and iterate
-candidate packages without permission to create branches or dispatch workflows.
-It never writes to `main`.
-
-## Authorized relay actors
-
-The workflow currently authorizes the GitHub logins:
+## Authorized issue actors
 
 ```text
 R3Neer
 efferra
 ```
 
-`efferra` is the actor observed when the connected GitHub integration creates
-issues and comments. The parser requires the issue author, every accepted chunk author,
-and the trigger author to be the same authorized actor. Unrelated comments from
-other users are ignored so they cannot invalidate a request.
+The issue author, accepted chunk authors and trigger author must be the same
+authorized actor. Public issue bodies must never contain secrets or confidential
+data.
 
-## Public transport warning
+## Issue protocol
 
-Issue bodies and comments in this repository are public. Never place secrets,
-tokens, credentials, private keys, confidential files, or personal data in a
-relay package.
-
-## Protocol
-
-One issue represents exactly one validation request.
-
-The issue body contains one delimited JSON request block:
+Request body:
 
 `````markdown
 <!-- mud-repo-patcher-request:v1 -->
 ```json
-{"protocol":"mud-repo-patcher-issue/v1","request_id":"...","repository":"R3Neer/Mud","target_sha":"...","package_sha256":"...","package_size":123,"encoding":"base64","chunk_count":2,"allow_python_plugin":false}
+{"protocol":"mud-repo-patcher-issue/v1","request_id":"...","repository":"R3Neer/Mud","target_sha":"...","package_sha256":"...","package_size":123,"encoding":"base64","chunk_count":2,"trust_plugin":false}
 ```
 <!-- /mud-repo-patcher-request:v1 -->
 ````
 
-Each package chunk is a separate comment:
+Chunk comment:
 
 `````markdown
 <!-- mud-repo-patcher-chunk:v1 -->
@@ -56,18 +41,16 @@ Each package chunk is a separate comment:
 <!-- /mud-repo-patcher-chunk:v1 -->
 ````
 
-After every chunk exists, add exactly one trigger comment:
+Final trigger:
 
 ```text
 /repo-patcher validate REQUEST_ID
 ```
 
-A second trigger on the same issue is rejected. Create a new issue for a new
-candidate.
+`trust_plugin` must be a JSON boolean. It records explicit consent; it is not a
+claim that the package actually contains a plugin.
 
 ## Encoding helper
-
-The parser can produce issue and comment bodies without publishing them:
 
 ```powershell
 python "$Repo\tooling\repo-patcher-ci\issue_transport.py" encode `
@@ -78,67 +61,58 @@ python "$Repo\tooling\repo-patcher-ci\issue_transport.py" encode `
     --output-directory "$env:TEMP\candidate-001"
 ```
 
-Default limits:
+For an explicitly authorized plugin, add:
 
 ```text
-package bytes:       1,048,576
-Base64 chunk chars:     28,000
-chunk comments:              64
-ZIP entries:               4,096
-uncompressed bytes:   33,554,432
-member bytes:          8,388,608
+--trust-plugin
 ```
 
-## Validation performed
+## Plugin rules
 
-For a reconstructed package, the Windows runner verifies:
+`package_checks.py plugin` loads only the manifest through the vendored runtime.
+It does not import or execute the plugin.
+
+For a package with a plugin:
+
+- `trust_plugin: false` fails with a specific diagnostic before `explain`;
+- `trust_plugin: true` adds `--trust-plugin` to `explain`, both `check` calls and
+  `apply`;
+- the artifact records `plugin_present` and `plugin_authorized` separately.
+
+For a declarative package, no prompt or plugin warning is shown.
+
+## Validation sequence
 
 ```text
-transport schema and actors
-Base64 integrity
-package size
-SHA-256
-ZIP paths and expansion limits
-exact target SHA
-clean target checkout
-vendored repo-patcher runtime
+transport and actor validation
+Base64, size and SHA-256 validation
+ZIP safety and expansion limits
+exact target checkout
+vendored repo-patcher version
 package-info
 explain
 check before apply
 apply and declared generators/validators
 git diff --check
 check after apply
-explicit second-plan no-op proof
-final status and complete binary diff
+semantic changed_paths() == [] proof
+status, diff and artifact collection
 ```
 
-The workflow uploads logs and available evidence even when a step fails.
-
-## Python plugins
-
-Issue requests default to:
-
-```json
-"allow_python_plugin": false
-```
-
-A package containing a Python plugin is rejected before `explain` unless the
-request explicitly authorizes it. Authorized plugins are passed
-`--trust-plugin` to all commands that load the plugin.
-
-## Local tests
+## Local verification
 
 ```powershell
 & "$Repo\tooling\repo-patcher-ci\Test-GitHubWorkflow.ps1" `
     -Workflow "$Repo\.github\workflows\validate-repo-patcher.yml"
 ```
 
-This compiles the parser and tests, runs 24 transport tests and 12 workflow-contract tests, downloads the pinned actionlint
-binary, verifies its SHA-256, and validates the workflow.
+The command runs:
 
-## Documentation discrepancy
+- 25 issue-transport tests;
+- 2 runtime-backed package-inspection tests;
+- 5 PowerShell consent cases;
+- 12 workflow-contract tests;
+- pinned `actionlint` with SHA-256 verification.
 
-The vendored runtime at the v4 base commit reports `repo-patcher 0.2.0`, while
-`gobierno/USO-DE-REPO-PATCHER.md` still describes 0.1.0. The workflow executes
-the vendored runtime from the exact target SHA. This README records the
-mismatch but does not silently rewrite the authoritative government document.
+The authoritative runtime guide is `gobierno/USO-DE-REPO-PATCHER.md`, audited
+against the vendored `repo-patcher 0.2.0` implementation.
