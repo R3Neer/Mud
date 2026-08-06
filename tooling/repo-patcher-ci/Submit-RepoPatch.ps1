@@ -10,17 +10,12 @@ param(
     [string] $Package,
 
     [string] $Repo = (Get-Location).Path,
-
     [string] $TargetRef = "HEAD",
-
     [string] $Workflow = "validate-repo-patcher.yml",
-
     [string] $ArtifactDirectory = (
-        Join-Path `
-            $env:USERPROFILE `
-            "Downloads\repo-patcher-validation"
+        Join-Path $env:USERPROFILE "Downloads\repo-patcher-validation"
     ),
-
+    [switch] $NoWait,
     [switch] $KeepBranch
 )
 
@@ -28,47 +23,68 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 function Invoke-Native {
-    param(
-        [Parameter(Mandatory)]
-        [string] $File,
-
-        [Parameter()]
-        [string[]] $Arguments = @(),
-
-        [switch] $AllowFailure
-    )
-
+    param([string] $File, [string[]] $Arguments = @())
     & $File @Arguments
-    $exitCode = $LASTEXITCODE
-
-    if ($exitCode -ne 0 -and -not $AllowFailure) {
-        throw "$File failed with exit code $exitCode."
+    if ($LASTEXITCODE -ne 0) {
+        throw "$File failed with exit code $LASTEXITCODE."
     }
-
-    return $exitCode
 }
 
 function Get-NativeText {
-    param(
-        [Parameter(Mandatory)]
-        [string] $File,
+    param([string] $File, [string[]] $Arguments = @())
+    $lines = & $File @Arguments 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "$File failed with exit code $LASTEXITCODE.`n$($lines -join [Environment]::NewLine)"
+    }
+    return (($lines -join [Environment]::NewLine).Trim())
+}
 
-        [Parameter()]
-        [string[]] $Arguments = @()
+function Get-StateRoot {
+    if ($env:LOCALAPPDATA) {
+        return Join-Path $env:LOCALAPPDATA "repo-patcher-ci"
+    }
+    return Join-Path $env:TEMP "repo-patcher-ci"
+}
+
+function Invoke-Dispatch {
+    param(
+        [string] $WorkflowName,
+        [string] $Repository,
+        [string] $WorkflowRef,
+        [hashtable] $Inputs
     )
 
-    $lines = & $File @Arguments 2>&1
-    $exitCode = $LASTEXITCODE
+    $delays = @(0, 5, 10, 20, 40)
 
-    if ($exitCode -ne 0) {
-        throw @"
-$File failed with exit code $exitCode.
+    for ($attempt = 0; $attempt -lt $delays.Count; $attempt++) {
+        if ($delays[$attempt] -gt 0) {
+            Write-Warning "GitHub returned a server error. Retrying in $($delays[$attempt]) seconds..."
+            Start-Sleep -Seconds $delays[$attempt]
+        }
 
-$($lines -join [Environment]::NewLine)
-"@
+        $output = & gh workflow run $WorkflowName `
+            --repo $Repository `
+            --ref $WorkflowRef `
+            -f "request_id=$($Inputs.request_id)" `
+            -f "package_ref=$($Inputs.package_ref)" `
+            -f "package_path=$($Inputs.package_path)" `
+            -f "target_sha=$($Inputs.target_sha)" `
+            -f "package_sha256=$($Inputs.package_sha256)" 2>&1
+
+        $exitCode = $LASTEXITCODE
+        $text = ($output -join [Environment]::NewLine).Trim()
+
+        if ($exitCode -eq 0) {
+            if ($text) { Write-Host $text }
+            return
+        }
+
+        if ($text -notmatch "HTTP 5\d\d") {
+            throw "GitHub rejected the workflow dispatch.`n$text"
+        }
     }
 
-    return (($lines -join [Environment]::NewLine).Trim())
+    throw "GitHub did not accept the workflow after five attempts."
 }
 
 foreach ($command in "git", "gh") {
@@ -79,162 +95,85 @@ foreach ($command in "git", "gh") {
 
 $Package = (Resolve-Path -LiteralPath $Package).Path
 $Repo = (Resolve-Path -LiteralPath $Repo).Path
+$Repo = (Resolve-Path -LiteralPath (Get-NativeText git @("-C", $Repo, "rev-parse", "--show-toplevel"))).Path
 
-$repoRoot = Get-NativeText git @(
-    "-C", $Repo,
-    "rev-parse", "--show-toplevel"
-)
+Invoke-Native gh @("auth", "status")
 
-$Repo = (Resolve-Path -LiteralPath $repoRoot).Path
+$origin = Get-NativeText git @("-C", $Repo, "remote", "get-url", "origin")
+$slug = Get-NativeText gh @("repo", "view", $origin, "--json", "nameWithOwner", "--jq", ".nameWithOwner")
+$defaultBranch = Get-NativeText gh @("repo", "view", $origin, "--json", "defaultBranchRef", "--jq", ".defaultBranchRef.name")
+$targetSha = Get-NativeText git @("-C", $Repo, "rev-parse", $TargetRef)
+Invoke-Native gh @("api", "repos/$slug/commits/$targetSha", "--silent")
 
-Invoke-Native gh @("auth", "status") | Out-Null
-
-$slug = Get-NativeText gh @(
-    "repo", "view",
-    "--json", "nameWithOwner",
-    "--jq", ".nameWithOwner"
-)
-
-$targetSha = Get-NativeText git @(
-    "-C", $Repo,
-    "rev-parse", $TargetRef
-)
-
-# The target must already exist on GitHub so Actions can check it out.
-Invoke-Native gh @(
-    "api",
-    "repos/$slug/commits/$targetSha",
-    "--silent"
-) | Out-Null
-
-$requestId = "{0}-{1}" -f (
-    Get-Date -Format "yyyyMMdd-HHmmss"
-), (
-    [Guid]::NewGuid().ToString("N").Substring(0, 8)
-)
-
+$requestId = "{0}-{1}" -f (Get-Date -Format "yyyyMMdd-HHmmss"), ([Guid]::NewGuid().ToString("N").Substring(0, 8))
 $branch = "repo-patcher-validation/$requestId"
-$candidateDirectory = ".repo-patcher-candidates"
-$remotePackagePath = "$candidateDirectory/package.zip"
-$requestPath = "$candidateDirectory/request.json"
+$remotePackagePath = ".repo-patcher-candidates/package.zip"
 $worktree = Join-Path $env:TEMP "repo-patcher-$requestId"
 $artifactOutput = Join-Path $ArtifactDirectory $requestId
-$branchPushed = $false
-$worktreeCreated = $false
-$runId = $null
-$runExitCode = 1
+$packageHash = (Get-FileHash -LiteralPath $Package -Algorithm SHA256).Hash.ToLowerInvariant()
+$safeSlug = $slug.Replace("/", "__")
+$stateDirectory = Join-Path (Get-StateRoot) $safeSlug
+$stateFile = Join-Path $stateDirectory "$requestId.json"
 
-$packageHash = (
-    Get-FileHash `
-        -LiteralPath $Package `
-        -Algorithm SHA256
-).Hash.ToLowerInvariant()
+$worktreeCreated = $false
+$branchPushed = $false
+$dispatchAccepted = $false
+$runId = $null
 
 try {
-    New-Item `
-        -ItemType Directory `
-        -Path $ArtifactDirectory `
-        -Force | Out-Null
-
-    Invoke-Native git @(
-        "-C", $Repo,
-        "worktree", "add",
-        "-b", $branch,
-        $worktree,
-        $targetSha
-    ) | Out-Null
-
+    Write-Host "[1/5] Preparing temporary carrier branch..."
+    Invoke-Native git @("-C", $Repo, "worktree", "add", "-b", $branch, $worktree, $targetSha)
     $worktreeCreated = $true
 
-    $candidatePath = Join-Path `
-        $worktree `
-        $candidateDirectory
+    $remotePackageFile = Join-Path $worktree $remotePackagePath
+    New-Item -ItemType Directory -Path (Split-Path -Parent $remotePackageFile) -Force | Out-Null
+    Copy-Item -LiteralPath $Package -Destination $remotePackageFile -Force
 
-    New-Item `
-        -ItemType Directory `
-        -Path $candidatePath `
-        -Force | Out-Null
+    Invoke-Native git @("-C", $worktree, "config", "user.name", "repo-patcher CI uploader")
+    Invoke-Native git @("-C", $worktree, "config", "user.email", "repo-patcher-ci@users.noreply.github.com")
+    Invoke-Native git @("-C", $worktree, "add", "--", $remotePackagePath)
+    Invoke-Native git @("-C", $worktree, "commit", "-m", "ci(repo-patcher): carry package $requestId")
 
-    Copy-Item `
-        -LiteralPath $Package `
-        -Destination (
-            Join-Path $worktree $remotePackagePath
-        ) `
-        -Force
-
-    [ordered] @{
-        schema = 1
-        request_id = $requestId
-        target_sha = $targetSha
-        package_sha256 = $packageHash
-        package_name = [System.IO.Path]::GetFileName($Package)
-        created_at_utc = [DateTime]::UtcNow.ToString("o")
-    } |
-        ConvertTo-Json |
-        Set-Content `
-            -LiteralPath (
-                Join-Path $worktree $requestPath
-            ) `
-            -Encoding utf8
-
-    Invoke-Native git @(
-        "-C", $worktree,
-        "config", "user.name",
-        "repo-patcher CI uploader"
-    ) | Out-Null
-
-    Invoke-Native git @(
-        "-C", $worktree,
-        "config", "user.email",
-        "repo-patcher-ci@users.noreply.github.com"
-    ) | Out-Null
-
-    Invoke-Native git @(
-        "-C", $worktree,
-        "add", "--",
-        $remotePackagePath,
-        $requestPath
-    ) | Out-Null
-
-    Invoke-Native git @(
-        "-C", $worktree,
-        "commit",
-        "-m",
-        "ci(repo-patcher): validate package $requestId"
-    ) | Out-Null
-
-    Invoke-Native git @(
-        "-C", $worktree,
-        "push",
-        "--set-upstream",
-        "origin",
-        $branch
-    ) | Out-Null
-
+    Write-Host "[2/5] Uploading package branch..."
+    Invoke-Native git @("-C", $worktree, "push", "--set-upstream", "origin", $branch)
     $branchPushed = $true
 
-    $deadline = [DateTime]::UtcNow.AddMinutes(5)
+    Write-Host "[3/5] Requesting GitHub Actions validation..."
+    Invoke-Dispatch `
+        -WorkflowName $Workflow `
+        -Repository $slug `
+        -WorkflowRef $defaultBranch `
+        -Inputs @{
+            request_id = $requestId
+            package_ref = $branch
+            package_path = $remotePackagePath
+            target_sha = $targetSha
+            package_sha256 = $packageHash
+        }
+    $dispatchAccepted = $true
+
+    Write-Host "[4/5] Waiting for GitHub to register the run..."
+    $expectedTitle = "repo-patcher validation $requestId"
+    $started = [DateTime]::UtcNow
+    $deadline = $started.AddMinutes(2)
+    $lastProgress = $started.AddSeconds(-10)
 
     while (-not $runId -and [DateTime]::UtcNow -lt $deadline) {
-        Start-Sleep -Seconds 2
+        if (([DateTime]::UtcNow - $lastProgress).TotalSeconds -ge 10) {
+            $elapsed = [int](([DateTime]::UtcNow - $started).TotalSeconds)
+            Write-Host "  Still waiting for run registration (${elapsed}s)..."
+            $lastProgress = [DateTime]::UtcNow
+        }
 
+        Start-Sleep -Seconds 2
         $runsJson = Get-NativeText gh @(
-            "run", "list",
-            "--repo", $slug,
-            "--workflow", $Workflow,
-            "--branch", $branch,
-            "--event", "push",
-            "--limit", "20",
-            "--json",
-            "databaseId,headBranch,status,conclusion,createdAt,url"
+            "run", "list", "--repo", $slug, "--workflow", $Workflow,
+            "--event", "workflow_dispatch", "--limit", "50", "--json",
+            "databaseId,displayTitle,status,conclusion,createdAt,url"
         )
 
         $runs = @($runsJson | ConvertFrom-Json)
-
-        $run = $runs |
-            Where-Object { $_.headBranch -eq $branch } |
-            Sort-Object createdAt -Descending |
-            Select-Object -First 1
+        $run = $runs | Where-Object { $_.displayTitle -eq $expectedTitle } | Sort-Object createdAt -Descending | Select-Object -First 1
 
         if ($run) {
             $runId = [string] $run.databaseId
@@ -243,75 +182,47 @@ try {
     }
 
     if (-not $runId) {
-        throw @"
-No workflow run was found for branch:
-  $branch
-
-Confirm that the workflow is active and listens to:
-  repo-patcher-validation/**
-"@
+        throw "GitHub accepted the dispatch but the run was not found."
     }
 
-    & gh run watch $runId `
-        --repo $slug `
-        --exit-status
+    New-Item -ItemType Directory -Path $stateDirectory -Force | Out-Null
+    [ordered] @{
+        schema = 1
+        request_id = $requestId
+        run_id = $runId
+        slug = $slug
+        branch = $branch
+        repo = $Repo
+        artifact_output = $artifactOutput
+        workflow = $Workflow
+        target_sha = $targetSha
+        package_sha256 = $packageHash
+        created_at_utc = [DateTime]::UtcNow.ToString("o")
+    } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
 
-    $runExitCode = $LASTEXITCODE
+    Write-Host "[5/5] Carrier uploaded and run registered."
 
-    if (Test-Path -LiteralPath $artifactOutput) {
-        Remove-Item `
-            -LiteralPath $artifactOutput `
-            -Recurse `
-            -Force
-    }
-
-    New-Item `
-        -ItemType Directory `
-        -Path $artifactOutput `
-        -Force | Out-Null
-
-    & gh run download $runId `
-        --repo $slug `
-        -D $artifactOutput
-
-    if ($LASTEXITCODE -ne 0) {
-        Write-Warning "The validation artifact could not be downloaded."
-    }
-    else {
-        Write-Host "Validation files: $artifactOutput"
-    }
-
-    if ($runExitCode -ne 0) {
+    if ($NoWait) {
         Write-Host ""
-        Write-Host "Failed workflow log:"
-        & gh run view $runId `
-            --repo $slug `
-            --log-failed
+        Write-Host "Validation continues on GitHub."
+        Write-Host "State file: $stateFile"
+        Write-Host ""
+        Write-Host "Collect later with:"
+        Write-Host "& `"$Repo\tooling\repo-patcher-ci\Collect-RepoPatchRun.ps1`" -StateFile `"$stateFile`""
+        exit 0
     }
+
+    & "$Repo\tooling\repo-patcher-ci\Collect-RepoPatchRun.ps1" -StateFile $stateFile -KeepBranch:$KeepBranch
+    exit $LASTEXITCODE
 }
 finally {
     if ($worktreeCreated -and (Test-Path -LiteralPath $worktree)) {
-        & git -C $Repo `
-            worktree remove `
-            --force `
-            $worktree | Out-Null
+        & git -C $Repo worktree remove --force $worktree | Out-Null
     }
 
-    if (-not $KeepBranch) {
-        if ($branchPushed) {
-            & git -C $Repo `
-                push origin `
-                --delete `
-                $branch | Out-Null
-        }
+    & git -C $Repo branch -D $branch 2>$null | Out-Null
 
-        & git -C $Repo `
-            branch -D `
-            $branch | Out-Null
-    }
-    else {
-        Write-Host "Temporary branch retained: $branch"
+    if ($branchPushed -and -not $dispatchAccepted) {
+        & git -C $Repo push origin --delete $branch | Out-Null
     }
 }
-
-exit $runExitCode

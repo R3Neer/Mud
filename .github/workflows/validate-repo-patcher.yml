@@ -1,19 +1,35 @@
 name: Validate repo-patcher package
-run-name: repo-patcher validation ${{ github.ref_name }}
+run-name: repo-patcher validation ${{ inputs.request_id }}
 
 on:
-  push:
-    branches:
-      - 'repo-patcher-validation/**'
-    paths:
-      - '.repo-patcher-candidates/package.zip'
-      - '.repo-patcher-candidates/request.json'
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Unique validation request identifier
+        required: true
+        type: string
+      package_ref:
+        description: Temporary branch containing the package ZIP
+        required: true
+        type: string
+      package_path:
+        description: Repository-relative path to the package ZIP
+        required: true
+        type: string
+      target_sha:
+        description: Exact repository commit to validate against
+        required: true
+        type: string
+      package_sha256:
+        description: Expected SHA-256 of the package ZIP
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: repo-patcher-validation-${{ github.ref }}
+  group: repo-patcher-validation-${{ inputs.request_id }}
   cancel-in-progress: false
 
 jobs:
@@ -23,178 +39,80 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - name: Checkout package carrier branch
+      - name: Checkout package carrier
         uses: actions/checkout@v6
         with:
+          ref: ${{ inputs.package_ref }}
+          fetch-depth: 1
+          path: _package_carrier
+          persist-credentials: false
+
+      - name: Copy and verify package
+        shell: pwsh
+        env:
+          PACKAGE_PATH: ${{ inputs.package_path }}
+          EXPECTED_SHA256: ${{ inputs.package_sha256 }}
+          PACKAGE_FILE: ${{ runner.temp }}\repo-patcher-input\package.zip
+          LOG_DIR: ${{ runner.temp }}\repo-patcher-validation
+        run: |
+          $ErrorActionPreference = "Stop"
+          $relativePath = $env:PACKAGE_PATH.Replace("/", [System.IO.Path]::DirectorySeparatorChar)
+          $source = Join-Path (Join-Path $env:GITHUB_WORKSPACE "_package_carrier") $relativePath
+
+          if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+              throw "Package not found in carrier branch: $source"
+          }
+
+          New-Item -ItemType Directory -Path (Split-Path -Parent $env:PACKAGE_FILE) -Force | Out-Null
+          New-Item -ItemType Directory -Path $env:LOG_DIR -Force | Out-Null
+          Copy-Item -LiteralPath $source -Destination $env:PACKAGE_FILE -Force
+
+          $actualHash = (Get-FileHash -LiteralPath $env:PACKAGE_FILE -Algorithm SHA256).Hash.ToLowerInvariant()
+          $expectedHash = $env:EXPECTED_SHA256.ToLowerInvariant()
+
+          @"
+          Expected: $expectedHash
+          Actual:   $actualHash
+          "@ | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "package-sha256.txt") -Encoding utf8
+
+          if ($actualHash -ne $expectedHash) {
+              throw "Package SHA-256 mismatch. Expected $expectedHash, got $actualHash."
+          }
+
+          Remove-Item `
+              -LiteralPath (Join-Path $env:GITHUB_WORKSPACE "_package_carrier") `
+              -Recurse `
+              -Force
+
+      - name: Checkout exact target commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.target_sha }}
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Prepare isolated package and target checkout
-        id: prepare
+      - name: Verify target checkout
         shell: pwsh
+        env:
+          TARGET_SHA: ${{ inputs.target_sha }}
         run: |
           $ErrorActionPreference = "Stop"
-
-          $candidateDirectory = Join-Path `
-              $env:GITHUB_WORKSPACE `
-              ".repo-patcher-candidates"
-
-          $requestFile = Join-Path `
-              $candidateDirectory `
-              "request.json"
-
-          $sourcePackage = Join-Path `
-              $candidateDirectory `
-              "package.zip"
-
-          if (-not (Test-Path -LiteralPath $requestFile -PathType Leaf)) {
-              throw "Request metadata was not found: $requestFile"
-          }
-
-          if (-not (Test-Path -LiteralPath $sourcePackage -PathType Leaf)) {
-              throw "Package was not found: $sourcePackage"
-          }
-
-          $request = Get-Content `
-              -LiteralPath $requestFile `
-              -Raw |
-              ConvertFrom-Json
-
-          foreach ($property in "request_id", "target_sha", "package_sha256") {
-              if (-not $request.PSObject.Properties[$property]) {
-                  throw "request.json is missing required property: $property"
-              }
-
-              if ([string]::IsNullOrWhiteSpace([string] $request.$property)) {
-                  throw "request.json contains an empty property: $property"
-              }
-          }
-
-          $carrierSha = (
-              git rev-parse HEAD
-          ).Trim()
+          $actual = (git rev-parse HEAD).Trim()
 
           if ($LASTEXITCODE -ne 0) {
-              throw "Could not resolve the carrier commit."
+              throw "Could not resolve checked-out HEAD."
           }
 
-          $parentSha = (
-              git rev-parse HEAD^
-          ).Trim()
-
-          if ($LASTEXITCODE -ne 0) {
-              throw "The carrier commit has no parent commit."
+          if ($actual -ne $env:TARGET_SHA) {
+              throw "Wrong target commit. Expected $env:TARGET_SHA, got $actual."
           }
 
-          if ($request.target_sha -ne $parentSha) {
-              throw @"
-          The requested target is not the direct parent of the carrier commit.
-
-          Carrier: $carrierSha
-          Parent:  $parentSha
-          Request: $($request.target_sha)
-          "@
-          }
-
-          $actualHash = (
-              Get-FileHash `
-                  -LiteralPath $sourcePackage `
-                  -Algorithm SHA256
-          ).Hash.ToLowerInvariant()
-
-          $expectedHash = (
-              [string] $request.package_sha256
-          ).ToLowerInvariant()
-
-          if ($actualHash -ne $expectedHash) {
-              throw @"
-          Package SHA-256 does not match request.json.
-
-          Expected: $expectedHash
-          Actual:   $actualHash
-          "@
-          }
-
-          $packageDirectory = Join-Path `
-              $env:RUNNER_TEMP `
-              "repo-patcher-input"
-
-          $logDirectory = Join-Path `
-              $env:RUNNER_TEMP `
-              "repo-patcher-validation"
-
-          $packageFile = Join-Path `
-              $packageDirectory `
-              "package.zip"
-
-          $diffFile = Join-Path `
-              $logDirectory `
-              "applied.patch"
-
-          New-Item `
-              -ItemType Directory `
-              -Path $packageDirectory `
-              -Force | Out-Null
-
-          New-Item `
-              -ItemType Directory `
-              -Path $logDirectory `
-              -Force | Out-Null
-
-          Copy-Item `
-              -LiteralPath $sourcePackage `
-              -Destination $packageFile `
-              -Force
-
-          Get-FileHash `
-              -LiteralPath $packageFile `
-              -Algorithm SHA256 |
-              Format-List |
-              Out-File `
-                  -LiteralPath (
-                      Join-Path $logDirectory "package-sha256.txt"
-                  ) `
-                  -Encoding utf8
-
-          @(
-              "request_id=$($request.request_id)"
-              "target_sha=$($request.target_sha)"
-              "package_file=$packageFile"
-              "log_directory=$logDirectory"
-              "diff_file=$diffFile"
-          ) | Add-Content `
-              -LiteralPath $env:GITHUB_OUTPUT `
-              -Encoding utf8
-
-          git checkout --detach $request.target_sha
-          if ($LASTEXITCODE -ne 0) {
-              throw "Could not check out target commit $($request.target_sha)."
-          }
-
-          git reset --hard $request.target_sha
-          if ($LASTEXITCODE -ne 0) {
-              throw "Could not reset to target commit $($request.target_sha)."
-          }
-
-          git clean -fdx
-          if ($LASTEXITCODE -ne 0) {
-              throw "Could not clean the disposable runner checkout."
-          }
-
-          $status = @(
-              git status --porcelain=v1 --untracked-files=all
-          )
-
+          $status = @(git status --porcelain=v1 --untracked-files=all)
           if ($LASTEXITCODE -ne 0) {
               throw "Could not inspect the target working tree."
           }
-
           if ($status.Count -ne 0) {
-              throw @"
-          Target checkout is not clean after preparation:
-
-          $($status -join [Environment]::NewLine)
-          "@
+              throw "Target checkout is not clean: $($status -join '; ')"
           }
 
       - name: Set up Python
@@ -205,9 +123,7 @@ jobs:
       - name: Install runtime dependency
         shell: pwsh
         run: |
-          python -m pip install `
-              --disable-pip-version-check `
-              "PyYAML==6.0.3"
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
 
       - name: Verify vendored repo-patcher
         shell: pwsh
@@ -215,20 +131,10 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}\tooling\repo-patcher-runtime
         run: |
           $ErrorActionPreference = "Stop"
-
-          $runtime = Join-Path `
-              $env:GITHUB_WORKSPACE `
-              "tooling\repo-patcher-runtime\repo_patcher"
-
+          $runtime = Join-Path $env:GITHUB_WORKSPACE "tooling\repo-patcher-runtime\repo_patcher"
           if (-not (Test-Path -LiteralPath $runtime -PathType Container)) {
-              throw @"
-          Vendored repo-patcher runtime was not found at:
-            $runtime
-
-          Install the CI kit with a valid -RuntimeSource first.
-          "@
+              throw "Vendored repo-patcher runtime not found: $runtime"
           }
-
           python -m repo_patcher --version
           if ($LASTEXITCODE -ne 0) {
               throw "The vendored repo-patcher runtime could not be executed."
@@ -237,121 +143,65 @@ jobs:
       - name: Validate and apply package
         shell: pwsh
         env:
-          PACKAGE_FILE: ${{ steps.prepare.outputs.package_file }}
-          LOG_DIR: ${{ steps.prepare.outputs.log_directory }}
-          DIFF_FILE: ${{ steps.prepare.outputs.diff_file }}
-          REQUEST_ID: ${{ steps.prepare.outputs.request_id }}
-          TARGET_SHA: ${{ steps.prepare.outputs.target_sha }}
+          PACKAGE_FILE: ${{ runner.temp }}\repo-patcher-input\package.zip
+          LOG_DIR: ${{ runner.temp }}\repo-patcher-validation
+          DIFF_FILE: ${{ runner.temp }}\repo-patcher-validation\applied.patch
+          REQUEST_ID: ${{ inputs.request_id }}
+          TARGET_SHA: ${{ inputs.target_sha }}
           PYTHONPATH: ${{ github.workspace }}\tooling\repo-patcher-runtime
         run: |
           $ErrorActionPreference = "Stop"
-
-          $transcript = Join-Path `
-              $env:LOG_DIR `
-              "validation-transcript.txt"
-
-          Start-Transcript `
-              -LiteralPath $transcript `
-              -Force
+          $transcript = Join-Path $env:LOG_DIR "validation-transcript.txt"
+          Start-Transcript -LiteralPath $transcript -Force
 
           function Invoke-Checked {
-              param(
-                  [Parameter(Mandatory)]
-                  [string] $Label,
-
-                  [Parameter(Mandatory)]
-                  [scriptblock] $Command
-              )
-
+              param([string] $Label, [scriptblock] $Command)
               Write-Host "::group::$Label"
               & $Command
               $exitCode = $LASTEXITCODE
               Write-Host "::endgroup::"
-
               if ($exitCode -ne 0) {
                   throw "$Label failed with exit code $exitCode."
               }
           }
 
           try {
-              git config `
-                  --global `
-                  --add `
-                  safe.directory `
-                  $env:GITHUB_WORKSPACE
+              git config --global --add safe.directory $env:GITHUB_WORKSPACE
 
               Invoke-Checked "Initial Git status" {
                   git status --short --untracked-files=all
               }
 
               Invoke-Checked "package-info" {
-                  python -m repo_patcher `
-                      package-info `
-                      $env:PACKAGE_FILE
+                  python -m repo_patcher package-info $env:PACKAGE_FILE
               }
 
               Invoke-Checked "explain" {
-                  python -m repo_patcher `
-                      explain `
-                      $env:PACKAGE_FILE `
-                      --repo $env:GITHUB_WORKSPACE
+                  python -m repo_patcher explain $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE
               }
 
               Invoke-Checked "check" {
-                  python -m repo_patcher `
-                      check `
-                      $env:PACKAGE_FILE `
-                      --repo $env:GITHUB_WORKSPACE
+                  python -m repo_patcher check $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE
               }
 
-              Invoke-Checked "apply and repository validators" {
-                  python -m repo_patcher `
-                      apply `
-                      $env:PACKAGE_FILE `
-                      --repo $env:GITHUB_WORKSPACE `
-                      --emit-diff $env:DIFF_FILE
+              Invoke-Checked "apply and declared validators" {
+                  python -m repo_patcher apply $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE --emit-diff $env:DIFF_FILE
               }
 
               Invoke-Checked "Explicit git diff --check" {
                   git diff --check
               }
 
-              Invoke-Checked "Post-apply idempotence check" {
-                  python -m repo_patcher `
-                      check `
-                      $env:PACKAGE_FILE `
-                      --repo $env:GITHUB_WORKSPACE
-              }
-
-              git status --short --untracked-files=all |
-                  Tee-Object `
-                      -FilePath (
-                          Join-Path $env:LOG_DIR "git-status.txt"
-                      )
-
-              git diff --stat |
-                  Tee-Object `
-                      -FilePath (
-                          Join-Path $env:LOG_DIR "git-diff-stat.txt"
-                      )
-
-              $binaryDiff = Join-Path `
-                  $env:LOG_DIR `
-                  "git-diff-binary.patch"
-
-              git diff `
-                  --binary `
-                  --output=$binaryDiff
+              git status --short --untracked-files=all | Tee-Object -FilePath (Join-Path $env:LOG_DIR "git-status.txt")
+              git diff --stat | Tee-Object -FilePath (Join-Path $env:LOG_DIR "git-diff-stat.txt")
+              $binaryDiff = Join-Path $env:LOG_DIR "git-diff-binary.patch"
+              git diff --binary --output=$binaryDiff
 
               if ($LASTEXITCODE -ne 0) {
                   throw "Could not save the final Git diff."
               }
 
-              if (-not (
-                  Test-Path `
-                      -LiteralPath $env:DIFF_FILE `
-                      -PathType Leaf
-              )) {
+              if (-not (Test-Path -LiteralPath $env:DIFF_FILE -PathType Leaf)) {
                   throw "repo-patcher did not create the requested diff."
               }
 
@@ -360,11 +210,9 @@ jobs:
 
           - Request: $env:REQUEST_ID
           - Target: $env:TARGET_SHA
-          - Package branch: $env:GITHUB_REF_NAME
           - Runner: Windows
           - Python: 3.13
-          "@ | Add-Content `
-              -LiteralPath $env:GITHUB_STEP_SUMMARY
+          "@ | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
           }
           finally {
               Stop-Transcript
@@ -374,7 +222,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: repo-patcher-validation-${{ github.run_id }}
+          name: repo-patcher-validation-${{ inputs.request_id }}
           path: ${{ runner.temp }}\repo-patcher-validation
           if-no-files-found: warn
           retention-days: 14

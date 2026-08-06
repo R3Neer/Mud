@@ -1,14 +1,10 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory)]
     [string] $Repo,
-
     [string] $RuntimeSource,
-
     [switch] $Force,
-
     [switch] $Commit,
-
     [switch] $Push
 )
 
@@ -23,138 +19,56 @@ if ($LASTEXITCODE -ne 0) {
     throw "The destination is not a Git repository: $Repo"
 }
 
-$workflowSource = Join-Path `
-    $kitRoot `
-    "templates\validate-repo-patcher.yml"
+$ciDirectory = Join-Path $Repo "tooling\repo-patcher-ci"
+$workflowDestination = Join-Path $Repo ".github\workflows\validate-repo-patcher.yml"
+$runtimeDestination = Join-Path $Repo "tooling\repo-patcher-runtime"
 
-$submitSource = Join-Path `
-    $kitRoot `
-    "templates\Submit-RepoPatch.ps1"
+New-Item -ItemType Directory -Path (Split-Path -Parent $workflowDestination) -Force | Out-Null
+New-Item -ItemType Directory -Path $ciDirectory -Force | Out-Null
 
-$testSource = Join-Path `
-    $kitRoot `
-    "templates\Test-GitHubWorkflow.ps1"
+$copies = @(
+    @((Join-Path $kitRoot "templates\validate-repo-patcher.yml"), $workflowDestination),
+    @((Join-Path $kitRoot "templates\Submit-RepoPatch.ps1"), (Join-Path $ciDirectory "Submit-RepoPatch.ps1")),
+    @((Join-Path $kitRoot "templates\Collect-RepoPatchRun.ps1"), (Join-Path $ciDirectory "Collect-RepoPatchRun.ps1")),
+    @((Join-Path $kitRoot "templates\Test-GitHubWorkflow.ps1"), (Join-Path $ciDirectory "Test-GitHubWorkflow.ps1")),
+    @($MyInvocation.MyCommand.Path, (Join-Path $ciDirectory "Install-RepoPatcherCI.ps1"))
+)
 
-$workflowDestination = Join-Path `
-    $Repo `
-    ".github\workflows\validate-repo-patcher.yml"
-
-$ciDirectory = Join-Path `
-    $Repo `
-    "tooling\repo-patcher-ci"
-
-$submitDestination = Join-Path `
-    $ciDirectory `
-    "Submit-RepoPatch.ps1"
-
-$testDestination = Join-Path `
-    $ciDirectory `
-    "Test-GitHubWorkflow.ps1"
-
-$installerDestination = Join-Path `
-    $ciDirectory `
-    "Install-RepoPatcherCI.ps1"
-
-$versionDestination = Join-Path `
-    $ciDirectory `
-    "VERSION.txt"
-
-$runtimeDestination = Join-Path `
-    $Repo `
-    "tooling\repo-patcher-runtime"
-
-New-Item `
-    -ItemType Directory `
-    -Path (Split-Path -Parent $workflowDestination) `
-    -Force | Out-Null
-
-New-Item `
-    -ItemType Directory `
-    -Path $ciDirectory `
-    -Force | Out-Null
-
-foreach ($copy in @(
-    @($workflowSource, $workflowDestination),
-    @($submitSource, $submitDestination),
-    @($testSource, $testDestination),
-    @($MyInvocation.MyCommand.Path, $installerDestination)
-)) {
-    Copy-Item `
-        -LiteralPath $copy[0] `
-        -Destination $copy[1] `
-        -Force:$Force
+foreach ($copy in $copies) {
+    Copy-Item -LiteralPath $copy[0] -Destination $copy[1] -Force:$Force
 }
 
-"2" | Set-Content `
-    -LiteralPath $versionDestination `
-    -Encoding ascii
+"3" | Set-Content -LiteralPath (Join-Path $ciDirectory "VERSION.txt") -Encoding ascii
 
 if ($RuntimeSource) {
-    $RuntimeSource = (
-        Resolve-Path -LiteralPath $RuntimeSource
-    ).Path
+    $RuntimeSource = (Resolve-Path -LiteralPath $RuntimeSource).Path
+    $runtimePackage = Join-Path $RuntimeSource "repo_patcher\__init__.py"
 
-    if (-not (
-        Test-Path `
-            -LiteralPath (
-                Join-Path $RuntimeSource "repo_patcher\__init__.py"
-            ) `
-            -PathType Leaf
-    )) {
-        throw "RuntimeSource does not contain repo_patcher: $RuntimeSource"
+    if (-not (Test-Path -LiteralPath $runtimePackage -PathType Leaf)) {
+        throw "RuntimeSource does not contain repo_patcher."
     }
 
     $sameRuntime = $false
-
     if (Test-Path -LiteralPath $runtimeDestination) {
-        $sameRuntime = (
-            (Resolve-Path -LiteralPath $runtimeDestination).Path -eq
-            $RuntimeSource
-        )
+        $sameRuntime = ((Resolve-Path -LiteralPath $runtimeDestination).Path -eq $RuntimeSource)
     }
 
     if (-not $sameRuntime) {
         if (Test-Path -LiteralPath $runtimeDestination) {
             if (-not $Force) {
-                throw @"
-Runtime already exists:
-  $runtimeDestination
-
-Use -Force to replace it.
-"@
+                throw "Runtime exists. Use -Force to replace it."
             }
-
-            Remove-Item `
-                -LiteralPath $runtimeDestination `
-                -Recurse `
-                -Force
+            Remove-Item -LiteralPath $runtimeDestination -Recurse -Force
         }
 
-        Copy-Item `
-            -LiteralPath $RuntimeSource `
-            -Destination $runtimeDestination `
-            -Recurse `
-            -Force
+        Copy-Item -LiteralPath $RuntimeSource -Destination $runtimeDestination -Recurse -Force
     }
 }
-elseif (-not (
-    Test-Path `
-        -LiteralPath (
-            Join-Path $runtimeDestination "repo_patcher\__init__.py"
-        ) `
-        -PathType Leaf
-)) {
-    throw @"
-No vendored repo-patcher runtime exists in the destination repository.
-
-Pass:
-  -RuntimeSource "PATH\TO\repo-patcher-runtime"
-"@
+elseif (-not (Test-Path -LiteralPath (Join-Path $runtimeDestination "repo_patcher\__init__.py") -PathType Leaf)) {
+    throw "No vendored repo-patcher runtime exists."
 }
 
-& $testDestination `
-    -Workflow $workflowDestination
-
+& (Join-Path $ciDirectory "Test-GitHubWorkflow.ps1") -Workflow $workflowDestination
 if ($LASTEXITCODE -ne 0) {
     throw "Workflow validation failed."
 }
@@ -166,49 +80,26 @@ $pathsToStage = @(
 )
 
 Write-Host ""
-Write-Host "Installed CI kit version 2:"
-foreach ($path in $pathsToStage) {
-    Write-Host "  $path"
-}
+Write-Host "Installed CI kit version 3."
 
 if ($Commit) {
     & git -C $Repo add -- $pathsToStage
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "git add failed."
-    }
+    if ($LASTEXITCODE -ne 0) { throw "git add failed." }
 
     & git -C $Repo diff --cached --quiet
-    $hasNoStagedChanges = ($LASTEXITCODE -eq 0)
-
-    if (-not $hasNoStagedChanges) {
-        & git -C $Repo commit -m `
-            "tooling(repo-patcher): update package validation workflow"
-
-        if ($LASTEXITCODE -ne 0) {
-            throw "git commit failed."
-        }
-    }
-    else {
-        Write-Host "No new CI changes needed a commit."
+    if ($LASTEXITCODE -ne 0) {
+        & git -C $Repo commit -m "tooling(repo-patcher): update validation workflow to v3"
+        if ($LASTEXITCODE -ne 0) { throw "git commit failed." }
     }
 
     if ($Push) {
         & git -C $Repo push
-
-        if ($LASTEXITCODE -ne 0) {
-            throw "git push failed."
-        }
+        if ($LASTEXITCODE -ne 0) { throw "git push failed." }
     }
 }
 elseif ($Push) {
     throw "-Push requires -Commit."
 }
 
-Write-Host ""
-Write-Host "CI kit version:"
-Get-Content -LiteralPath $versionDestination
-
-Write-Host ""
-Write-Host "Next validation command:"
-Write-Host "& `"$submitDestination`" -Repo `"$Repo`" -Package `"C:\Path\candidate.zip`""
+Write-Host "Version:"
+Get-Content -LiteralPath (Join-Path $ciDirectory "VERSION.txt")
