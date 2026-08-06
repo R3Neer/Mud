@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory, Position = 0)]
     [ValidateScript({
@@ -16,7 +16,8 @@ param(
         Join-Path $env:USERPROFILE "Downloads\repo-patcher-validation"
     ),
     [switch] $NoWait,
-    [switch] $KeepBranch
+    [switch] $KeepBranch,
+    [switch] $AllowPythonPlugin
 )
 
 Set-StrictMode -Version Latest
@@ -69,7 +70,8 @@ function Invoke-Dispatch {
             -f "package_ref=$($Inputs.package_ref)" `
             -f "package_path=$($Inputs.package_path)" `
             -f "target_sha=$($Inputs.target_sha)" `
-            -f "package_sha256=$($Inputs.package_sha256)" 2>&1
+            -f "package_sha256=$($Inputs.package_sha256)" `
+            -f "allow_python_plugin=$($Inputs.allow_python_plugin)" 2>&1
 
         $exitCode = $LASTEXITCODE
         $text = ($output -join [Environment]::NewLine).Trim()
@@ -149,6 +151,7 @@ try {
             package_path = $remotePackagePath
             target_sha = $targetSha
             package_sha256 = $packageHash
+            allow_python_plugin = $AllowPythonPlugin.IsPresent.ToString().ToLowerInvariant()
         }
     $dispatchAccepted = $true
 
@@ -197,6 +200,7 @@ try {
         workflow = $Workflow
         target_sha = $targetSha
         package_sha256 = $packageHash
+        allow_python_plugin = $AllowPythonPlugin.IsPresent
         created_at_utc = [DateTime]::UtcNow.ToString("o")
     } | ConvertTo-Json | Set-Content -LiteralPath $stateFile -Encoding utf8
 

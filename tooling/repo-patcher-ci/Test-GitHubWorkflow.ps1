@@ -1,49 +1,118 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [Parameter(Mandatory)]
     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Leaf })]
-    [string] $Workflow
+    [string] $Workflow,
+
+    [string] $ToolingDirectory
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$env:PYTHONDONTWRITEBYTECODE = "1"
 $Workflow = (Resolve-Path -LiteralPath $Workflow).Path
+
+if (-not $ToolingDirectory) {
+    $ToolingDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+$ToolingDirectory = (Resolve-Path -LiteralPath $ToolingDirectory).Path
+
+foreach ($command in "python", "gh") {
+    if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
+        throw "Required command is not available in PATH: $command"
+    }
+}
+
+$transport = Join-Path $ToolingDirectory "issue_transport.py"
+$packageChecks = Join-Path $ToolingDirectory "package_checks.py"
+$transportTests = Join-Path $ToolingDirectory "test_issue_transport.py"
+$workflowTests = Join-Path $ToolingDirectory "test_workflow_contract.py"
+foreach ($path in $transport, $packageChecks, $transportTests, $workflowTests) {
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+        throw "Required relay file is missing: $path"
+    }
+}
+
+Write-Host "Compiling issue relay and tests..."
+& python -m py_compile $transport $packageChecks $transportTests $workflowTests
+if ($LASTEXITCODE -ne 0) {
+    throw "Python compilation failed."
+}
+
+try {
+    Write-Host "Running issue relay tests..."
+    & python $transportTests
+    if ($LASTEXITCODE -ne 0) {
+        throw "Issue relay tests failed."
+    }
+
+    Write-Host "Running workflow contract tests..."
+    $previousWorkflowPath = $env:MUD_WORKFLOW_PATH
+    try {
+        $env:MUD_WORKFLOW_PATH = $Workflow
+        & python $workflowTests
+        if ($LASTEXITCODE -ne 0) {
+            throw "Workflow contract tests failed."
+        }
+    }
+    finally {
+        $env:MUD_WORKFLOW_PATH = $previousWorkflowPath
+    }
+}
+finally {
+    Remove-Item -LiteralPath (Join-Path $ToolingDirectory "__pycache__") -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 $version = "v1.7.12"
 $asset = "actionlint_1.7.12_windows_amd64.zip"
 $expectedHash = "6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9"
-$temp = Join-Path $env:TEMP "repo-patcher-actionlint-1.7.12"
-$archive = Join-Path $temp $asset
-$expanded = Join-Path $temp "expanded"
+$cacheBase = if ($env:LOCALAPPDATA) {
+    Join-Path $env:LOCALAPPDATA "repo-patcher-ci\tools\actionlint-1.7.12"
+}
+else {
+    Join-Path $env:TEMP "repo-patcher-ci-tools\actionlint-1.7.12"
+}
+$archive = Join-Path $cacheBase $asset
+$expanded = Join-Path $cacheBase "expanded"
+$executable = Join-Path $expanded "actionlint.exe"
 
-Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Path $temp -Force | Out-Null
+New-Item -ItemType Directory -Path $cacheBase -Force | Out-Null
 
-try {
+$download = $true
+if (Test-Path -LiteralPath $archive -PathType Leaf) {
+    $actualHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actualHash -eq $expectedHash) {
+        $download = $false
+    }
+    else {
+        Remove-Item -LiteralPath $archive -Force
+    }
+}
+
+if ($download) {
     & gh release download $version `
         --repo rhysd/actionlint `
         --pattern $asset `
-        --dir $temp `
+        --dir $cacheBase `
         --clobber
-
     if ($LASTEXITCODE -ne 0) {
         throw "Could not download actionlint."
     }
+}
 
-    $actualHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
-    if ($actualHash -ne $expectedHash) {
-        throw "actionlint SHA-256 mismatch."
-    }
+$actualHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+if ($actualHash -ne $expectedHash) {
+    throw "actionlint SHA-256 mismatch. Expected $expectedHash, got $actualHash."
+}
 
+if (-not (Test-Path -LiteralPath $executable -PathType Leaf)) {
+    Remove-Item -LiteralPath $expanded -Recurse -Force -ErrorAction SilentlyContinue
     Expand-Archive -LiteralPath $archive -DestinationPath $expanded -Force
-    & (Join-Path $expanded "actionlint.exe") $Workflow
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "actionlint rejected the workflow."
-    }
-
-    Write-Host "Workflow accepted by actionlint: $Workflow"
 }
-finally {
-    Remove-Item -LiteralPath $temp -Recurse -Force -ErrorAction SilentlyContinue
+
+& $executable $Workflow
+if ($LASTEXITCODE -ne 0) {
+    throw "actionlint rejected the workflow."
 }
+
+Write-Host "Workflow accepted by actionlint: $Workflow"

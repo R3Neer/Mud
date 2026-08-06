@@ -1,5 +1,5 @@
 name: Validate repo-patcher package
-run-name: repo-patcher validation ${{ inputs.request_id }}
+run-name: repo-patcher validation ${{ github.event_name == 'workflow_dispatch' && inputs.request_id || github.event.comment.body }}
 
 on:
   workflow_dispatch:
@@ -24,22 +24,118 @@ on:
         description: Expected SHA-256 of the package ZIP
         required: true
         type: string
+      allow_python_plugin:
+        description: Permit and trust a Python plugin contained in the package
+        required: false
+        default: false
+        type: boolean
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
+  issues: read
 
 concurrency:
-  group: repo-patcher-validation-${{ inputs.request_id }}
+  group: repo-patcher-validation-${{ github.event_name == 'workflow_dispatch' && inputs.request_id || format('issue-{0}', github.event.issue.number) }}
   cancel-in-progress: false
 
 jobs:
   validate:
     name: Apply package and run every validator
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.pull_request == null &&
+        startsWith(github.event.comment.body, '/repo-patcher validate ') &&
+        contains(fromJSON('["R3Neer","efferra"]'), github.actor)
+      )
     runs-on: windows-latest
     timeout-minutes: 30
 
     steps:
-      - name: Checkout package carrier
+      - name: Prepare isolated paths
+        id: paths
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $packageDirectory = Join-Path $env:RUNNER_TEMP "repo-patcher-input"
+          $logDirectory = Join-Path $env:RUNNER_TEMP "repo-patcher-validation"
+          $packageFile = Join-Path $packageDirectory "package.zip"
+          $requestFile = Join-Path $packageDirectory "request.json"
+          $reportFile = Join-Path $logDirectory "transport-report.json"
+          $diffFile = Join-Path $logDirectory "applied.patch"
+
+          New-Item -ItemType Directory -Path $packageDirectory -Force | Out-Null
+          New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
+
+          @(
+              "package_file=$packageFile"
+              "request_file=$requestFile"
+              "report_file=$reportFile"
+              "log_directory=$logDirectory"
+              "diff_file=$diffFile"
+          ) | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Checkout issue relay tooling
+        if: github.event_name == 'issue_comment'
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          path: _relay
+          persist-credentials: false
+
+      - name: Reconstruct package from issue
+        if: github.event_name == 'issue_comment'
+        id: issue_transport
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          EXPECTED_ACTOR: ${{ github.actor }}
+          TRIGGER_COMMENT_ID: ${{ github.event.comment.id }}
+          PACKAGE_FILE: ${{ steps.paths.outputs.package_file }}
+          REQUEST_FILE: ${{ steps.paths.outputs.request_file }}
+          REPORT_FILE: ${{ steps.paths.outputs.report_file }}
+          LOG_DIR: ${{ steps.paths.outputs.log_directory }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $transcript = Join-Path $env:LOG_DIR "transport-transcript.txt"
+          try {
+              $arguments = @(
+                  (Join-Path $env:GITHUB_WORKSPACE "_relay\tooling\repo-patcher-ci\issue_transport.py")
+                  "fetch"
+                  "--repository", $env:REPOSITORY
+                  "--issue-number", $env:ISSUE_NUMBER
+                  "--expected-actor", $env:EXPECTED_ACTOR
+                  "--allowed-actor", "R3Neer"
+                  "--allowed-actor", "efferra"
+                  "--trigger-comment-id", $env:TRIGGER_COMMENT_ID
+                  "--output-package", $env:PACKAGE_FILE
+                  "--output-request", $env:REQUEST_FILE
+                  "--output-report", $env:REPORT_FILE
+              )
+              $output = & python @arguments 2>&1
+              $exitCode = $LASTEXITCODE
+              $output | Tee-Object -FilePath $transcript
+              if ($exitCode -ne 0) {
+                  throw "Issue transport failed with exit code $exitCode."
+              }
+          }
+          catch {
+              $_ | Out-String | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "failure-summary.txt") -Encoding utf8
+              throw
+          }
+
+      - name: Checkout manual package carrier
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.package_ref }}
@@ -47,78 +143,163 @@ jobs:
           path: _package_carrier
           persist-credentials: false
 
-      - name: Copy and verify package
+      - name: Copy and verify manually dispatched package
+        if: github.event_name == 'workflow_dispatch'
+        id: dispatch_transport
         shell: pwsh
         env:
+          REQUEST_ID: ${{ inputs.request_id }}
           PACKAGE_PATH: ${{ inputs.package_path }}
           EXPECTED_SHA256: ${{ inputs.package_sha256 }}
-          PACKAGE_FILE: ${{ runner.temp }}\repo-patcher-input\package.zip
-          LOG_DIR: ${{ runner.temp }}\repo-patcher-validation
+          TARGET_SHA: ${{ inputs.target_sha }}
+          ALLOW_PYTHON_PLUGIN: ${{ inputs.allow_python_plugin }}
+          PACKAGE_FILE: ${{ steps.paths.outputs.package_file }}
+          REQUEST_FILE: ${{ steps.paths.outputs.request_file }}
+          REPORT_FILE: ${{ steps.paths.outputs.report_file }}
+          LOG_DIR: ${{ steps.paths.outputs.log_directory }}
         run: |
           $ErrorActionPreference = "Stop"
-          $relativePath = $env:PACKAGE_PATH.Replace("/", [System.IO.Path]::DirectorySeparatorChar)
-          $source = Join-Path (Join-Path $env:GITHUB_WORKSPACE "_package_carrier") $relativePath
+          try {
+              $relativePath = $env:PACKAGE_PATH.Replace("/", [System.IO.Path]::DirectorySeparatorChar)
+              $source = Join-Path (Join-Path $env:GITHUB_WORKSPACE "_package_carrier") $relativePath
+              if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+                  throw "Package not found in carrier branch: $source"
+              }
 
-          if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
-              throw "Package not found in carrier branch: $source"
-          }
+              Copy-Item -LiteralPath $source -Destination $env:PACKAGE_FILE -Force
+              $actualHash = (Get-FileHash -LiteralPath $env:PACKAGE_FILE -Algorithm SHA256).Hash.ToLowerInvariant()
+              $expectedHash = $env:EXPECTED_SHA256.ToLowerInvariant()
+              if ($actualHash -ne $expectedHash) {
+                  throw "Package SHA-256 mismatch. Expected $expectedHash, got $actualHash."
+              }
 
-          New-Item -ItemType Directory -Path (Split-Path -Parent $env:PACKAGE_FILE) -Force | Out-Null
-          New-Item -ItemType Directory -Path $env:LOG_DIR -Force | Out-Null
-          Copy-Item -LiteralPath $source -Destination $env:PACKAGE_FILE -Force
-
-          $actualHash = (Get-FileHash -LiteralPath $env:PACKAGE_FILE -Algorithm SHA256).Hash.ToLowerInvariant()
-          $expectedHash = $env:EXPECTED_SHA256.ToLowerInvariant()
-
-          @"
+              $packageSize = (Get-Item -LiteralPath $env:PACKAGE_FILE).Length
+              $allowPlugin = [System.Convert]::ToBoolean($env:ALLOW_PYTHON_PLUGIN)
+              $request = [ordered]@{
+                  protocol = "mud-repo-patcher-dispatch/v1"
+                  request_id = $env:REQUEST_ID
+                  repository = $env:GITHUB_REPOSITORY
+                  target_sha = $env:TARGET_SHA.ToLowerInvariant()
+                  package_sha256 = $actualHash
+                  package_size = $packageSize
+                  allow_python_plugin = $allowPlugin
+              }
+              $request | ConvertTo-Json | Set-Content -LiteralPath $env:REQUEST_FILE -Encoding utf8
+              $request | ConvertTo-Json | Set-Content -LiteralPath $env:REPORT_FILE -Encoding utf8
+              @"
           Expected: $expectedHash
           Actual:   $actualHash
           "@ | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "package-sha256.txt") -Encoding utf8
 
-          if ($actualHash -ne $expectedHash) {
-              throw "Package SHA-256 mismatch. Expected $expectedHash, got $actualHash."
+              @(
+                  "request_id=$($env:REQUEST_ID)"
+                  "target_sha=$($env:TARGET_SHA.ToLowerInvariant())"
+                  "package_sha256=$actualHash"
+                  "allow_python_plugin=$($allowPlugin.ToString().ToLowerInvariant())"
+              ) | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
+          }
+          catch {
+              $_ | Out-String | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "failure-summary.txt") -Encoding utf8
+              throw
           }
 
-          Remove-Item `
-              -LiteralPath (Join-Path $env:GITHUB_WORKSPACE "_package_carrier") `
-              -Recurse `
-              -Force
+      - name: Resolve validated request metadata
+        id: request
+        shell: pwsh
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_REQUEST_ID: ${{ steps.dispatch_transport.outputs.request_id }}
+          DISPATCH_TARGET_SHA: ${{ steps.dispatch_transport.outputs.target_sha }}
+          DISPATCH_PACKAGE_SHA256: ${{ steps.dispatch_transport.outputs.package_sha256 }}
+          DISPATCH_ALLOW_PLUGIN: ${{ steps.dispatch_transport.outputs.allow_python_plugin }}
+          ISSUE_REQUEST_ID: ${{ steps.issue_transport.outputs.request_id }}
+          ISSUE_TARGET_SHA: ${{ steps.issue_transport.outputs.target_sha }}
+          ISSUE_PACKAGE_SHA256: ${{ steps.issue_transport.outputs.package_sha256 }}
+          ISSUE_ALLOW_PLUGIN: ${{ steps.issue_transport.outputs.allow_python_plugin }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          if ($env:EVENT_NAME -eq "workflow_dispatch") {
+              $requestId = $env:DISPATCH_REQUEST_ID
+              $targetSha = $env:DISPATCH_TARGET_SHA
+              $packageHash = $env:DISPATCH_PACKAGE_SHA256
+              $allowPlugin = $env:DISPATCH_ALLOW_PLUGIN
+          }
+          else {
+              $requestId = $env:ISSUE_REQUEST_ID
+              $targetSha = $env:ISSUE_TARGET_SHA
+              $packageHash = $env:ISSUE_PACKAGE_SHA256
+              $allowPlugin = $env:ISSUE_ALLOW_PLUGIN
+          }
+
+          if ($requestId -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$') {
+              throw "Resolved request_id has an invalid format: $requestId"
+          }
+          if ($targetSha -notmatch '^[0-9a-f]{40}$') {
+              throw "Resolved target SHA is invalid: $targetSha"
+          }
+          if ($packageHash -notmatch '^[0-9a-f]{64}$') {
+              throw "Resolved package SHA-256 is invalid: $packageHash"
+          }
+          if ($allowPlugin -notin @("true", "false")) {
+              throw "Resolved plugin policy is invalid: $allowPlugin"
+          }
+
+          @(
+              "request_id=$requestId"
+              "target_sha=$targetSha"
+              "package_sha256=$packageHash"
+              "allow_python_plugin=$allowPlugin"
+          ) | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Remove transport checkouts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          foreach ($name in "_relay", "_package_carrier") {
+              $path = Join-Path $env:GITHUB_WORKSPACE $name
+              if (Test-Path -LiteralPath $path) {
+                  Remove-Item -LiteralPath $path -Recurse -Force
+              }
+          }
 
       - name: Checkout exact target commit
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.target_sha }}
+          ref: ${{ steps.request.outputs.target_sha }}
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify target checkout
+      - name: Verify target checkout and package identity
         shell: pwsh
         env:
-          TARGET_SHA: ${{ inputs.target_sha }}
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+          EXPECTED_SHA256: ${{ steps.request.outputs.package_sha256 }}
+          PACKAGE_FILE: ${{ steps.paths.outputs.package_file }}
+          LOG_DIR: ${{ steps.paths.outputs.log_directory }}
         run: |
           $ErrorActionPreference = "Stop"
-          $actual = (git rev-parse HEAD).Trim()
-
-          if ($LASTEXITCODE -ne 0) {
-              throw "Could not resolve checked-out HEAD."
+          try {
+              $actualHead = (git rev-parse HEAD).Trim()
+              if ($LASTEXITCODE -ne 0 -or $actualHead -ne $env:TARGET_SHA) {
+                  throw "Wrong target commit. Expected $env:TARGET_SHA, got $actualHead."
+              }
+              $status = @(git status --porcelain=v1 --untracked-files=all)
+              if ($LASTEXITCODE -ne 0 -or $status.Count -ne 0) {
+                  throw "Target checkout is not clean: $($status -join '; ')"
+              }
+              $actualHash = (Get-FileHash -LiteralPath $env:PACKAGE_FILE -Algorithm SHA256).Hash.ToLowerInvariant()
+              if ($actualHash -ne $env:EXPECTED_SHA256) {
+                  throw "Package identity changed after transport. Expected $env:EXPECTED_SHA256, got $actualHash."
+              }
+              @"
+          Expected: $($env:EXPECTED_SHA256)
+          Actual:   $actualHash
+          "@ | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "package-sha256.txt") -Encoding utf8
           }
-
-          if ($actual -ne $env:TARGET_SHA) {
-              throw "Wrong target commit. Expected $env:TARGET_SHA, got $actual."
+          catch {
+              $_ | Out-String | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "failure-summary.txt") -Encoding utf8
+              throw
           }
-
-          $status = @(git status --porcelain=v1 --untracked-files=all)
-          if ($LASTEXITCODE -ne 0) {
-              throw "Could not inspect the target working tree."
-          }
-          if ($status.Count -ne 0) {
-              throw "Target checkout is not clean: $($status -join '; ')"
-          }
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
 
       - name: Install runtime dependency
         shell: pwsh
@@ -128,35 +309,49 @@ jobs:
       - name: Verify vendored repo-patcher
         shell: pwsh
         env:
+          LOG_DIR: ${{ steps.paths.outputs.log_directory }}
           PYTHONPATH: ${{ github.workspace }}\tooling\repo-patcher-runtime
         run: |
           $ErrorActionPreference = "Stop"
-          $runtime = Join-Path $env:GITHUB_WORKSPACE "tooling\repo-patcher-runtime\repo_patcher"
-          if (-not (Test-Path -LiteralPath $runtime -PathType Container)) {
-              throw "Vendored repo-patcher runtime not found: $runtime"
+          try {
+              $runtime = Join-Path $env:GITHUB_WORKSPACE "tooling\repo-patcher-runtime\repo_patcher"
+              if (-not (Test-Path -LiteralPath $runtime -PathType Container)) {
+                  throw "Vendored repo-patcher runtime not found: $runtime"
+              }
+              $version = (& python -m repo_patcher --version 2>&1 | Out-String).Trim()
+              if ($LASTEXITCODE -ne 0) {
+                  throw "The vendored repo-patcher runtime could not be executed."
+              }
+              $version | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "runtime-version.txt") -Encoding utf8
+              Write-Host $version
           }
-          python -m repo_patcher --version
-          if ($LASTEXITCODE -ne 0) {
-              throw "The vendored repo-patcher runtime could not be executed."
+          catch {
+              $_ | Out-String | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "failure-summary.txt") -Encoding utf8
+              throw
           }
 
-      - name: Validate and apply package
+      - name: Validate, apply and prove idempotence
         shell: pwsh
         env:
-          PACKAGE_FILE: ${{ runner.temp }}\repo-patcher-input\package.zip
-          LOG_DIR: ${{ runner.temp }}\repo-patcher-validation
-          DIFF_FILE: ${{ runner.temp }}\repo-patcher-validation\applied.patch
-          REQUEST_ID: ${{ inputs.request_id }}
-          TARGET_SHA: ${{ inputs.target_sha }}
+          PACKAGE_FILE: ${{ steps.paths.outputs.package_file }}
+          REQUEST_FILE: ${{ steps.paths.outputs.request_file }}
+          LOG_DIR: ${{ steps.paths.outputs.log_directory }}
+          DIFF_FILE: ${{ steps.paths.outputs.diff_file }}
+          REQUEST_ID: ${{ steps.request.outputs.request_id }}
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+          PACKAGE_SHA256: ${{ steps.request.outputs.package_sha256 }}
+          ALLOW_PYTHON_PLUGIN: ${{ steps.request.outputs.allow_python_plugin }}
           PYTHONPATH: ${{ github.workspace }}\tooling\repo-patcher-runtime
         run: |
           $ErrorActionPreference = "Stop"
           $transcript = Join-Path $env:LOG_DIR "validation-transcript.txt"
+          $failureFile = Join-Path $env:LOG_DIR "failure-summary.txt"
           Start-Transcript -LiteralPath $transcript -Force
 
           function Invoke-Checked {
               param([string] $Label, [scriptblock] $Command)
               Write-Host "::group::$Label"
+              $global:LASTEXITCODE = 0
               & $Command
               $exitCode = $LASTEXITCODE
               Write-Host "::endgroup::"
@@ -168,41 +363,53 @@ jobs:
           try {
               git config --global --add safe.directory $env:GITHUB_WORKSPACE
 
+              $packageChecks = Join-Path $env:GITHUB_WORKSPACE "tooling\repo-patcher-ci\package_checks.py"
+              $pluginPresent = (& python $packageChecks plugin --package $env:PACKAGE_FILE).Trim().ToLowerInvariant()
+              if ($LASTEXITCODE -ne 0 -or $pluginPresent -notin @("true", "false")) {
+                  throw "Could not inspect the package plugin policy."
+              }
+              if ($pluginPresent -eq "true" -and $env:ALLOW_PYTHON_PLUGIN -ne "true") {
+                  throw "The package contains a Python plugin, but this request did not authorize it."
+              }
+              $trustArguments = @()
+              if ($pluginPresent -eq "true") {
+                  $trustArguments = @("--trust-plugin")
+              }
+
+              [ordered]@{
+                  request_id = $env:REQUEST_ID
+                  target_sha = $env:TARGET_SHA
+                  package_sha256 = $env:PACKAGE_SHA256
+                  plugin_present = ($pluginPresent -eq "true")
+                  plugin_authorized = ($env:ALLOW_PYTHON_PLUGIN -eq "true")
+                  runner = "windows-latest"
+                  python = "3.13"
+              } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "validation-metadata.json") -Encoding utf8
+
               Invoke-Checked "Initial Git status" {
                   git status --short --untracked-files=all
               }
-
               Invoke-Checked "package-info" {
                   python -m repo_patcher package-info $env:PACKAGE_FILE
               }
-
               Invoke-Checked "explain" {
-                  python -m repo_patcher explain $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE
+                  python -m repo_patcher explain $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE @trustArguments
               }
-
-              Invoke-Checked "check" {
-                  python -m repo_patcher check $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE
+              Invoke-Checked "check before apply" {
+                  python -m repo_patcher check $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE @trustArguments
               }
-
               Invoke-Checked "apply and declared validators" {
-                  python -m repo_patcher apply $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE --emit-diff $env:DIFF_FILE
+                  python -m repo_patcher apply $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE --emit-diff $env:DIFF_FILE @trustArguments
               }
-
-              Invoke-Checked "Explicit git diff --check" {
+              Invoke-Checked "explicit git diff --check" {
                   git diff --check
               }
-
-              git status --short --untracked-files=all | Tee-Object -FilePath (Join-Path $env:LOG_DIR "git-status.txt")
-              git diff --stat | Tee-Object -FilePath (Join-Path $env:LOG_DIR "git-diff-stat.txt")
-              $binaryDiff = Join-Path $env:LOG_DIR "git-diff-binary.patch"
-              git diff --binary --output=$binaryDiff
-
-              if ($LASTEXITCODE -ne 0) {
-                  throw "Could not save the final Git diff."
+              Invoke-Checked "check after apply" {
+                  python -m repo_patcher check $env:PACKAGE_FILE --repo $env:GITHUB_WORKSPACE @trustArguments
               }
 
-              if (-not (Test-Path -LiteralPath $env:DIFF_FILE -PathType Leaf)) {
-                  throw "repo-patcher did not create the requested diff."
+              Invoke-Checked "prove second plan is a no-op" {
+                  python $packageChecks idempotence --repo $env:GITHUB_WORKSPACE --package $env:PACKAGE_FILE
               }
 
               @"
@@ -210,11 +417,21 @@ jobs:
 
           - Request: $env:REQUEST_ID
           - Target: $env:TARGET_SHA
+          - Package SHA-256: $env:PACKAGE_SHA256
           - Runner: Windows
           - Python: 3.13
+          - Plugin present: $pluginPresent
           "@ | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
           }
+          catch {
+              $_ | Out-String | Set-Content -LiteralPath $failureFile -Encoding utf8
+              throw
+          }
           finally {
+              git status --short --untracked-files=all 2>&1 | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "git-status.txt") -Encoding utf8
+              git diff --stat 2>&1 | Set-Content -LiteralPath (Join-Path $env:LOG_DIR "git-diff-stat.txt") -Encoding utf8
+              $binaryDiff = Join-Path $env:LOG_DIR "git-diff-binary.patch"
+              git diff --binary --no-ext-diff --output=$binaryDiff 2>&1 | Out-Null
               Stop-Transcript
           }
 
@@ -222,7 +439,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: repo-patcher-validation-${{ inputs.request_id }}
-          path: ${{ runner.temp }}\repo-patcher-validation
+          name: repo-patcher-validation-${{ steps.request.outputs.request_id || inputs.request_id || format('issue-{0}', github.event.issue.number) }}
+          path: ${{ steps.paths.outputs.log_directory }}
           if-no-files-found: warn
           retention-days: 14
