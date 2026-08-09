@@ -14,6 +14,9 @@ __pycache__/
 # Derivados del plugin local de Obsidian
 tooling/obsidian/markdown-export/node_modules/
 tooling/obsidian/markdown-export/dist/
+tooling/repo-patcher-mcp-probe/node_modules/
+tooling/repo-patcher-mcp-probe/.wrangler/
+tooling/repo-patcher-mcp-probe/coverage/
 tooling/markdown_export/profiles.local.toml
 tooling/.deps/
 
