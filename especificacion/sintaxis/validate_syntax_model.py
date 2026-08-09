@@ -166,6 +166,127 @@ def validate(root: Path) -> list[Problem]:
         if snippet not in ast_text:
             problems.append(Problem(str(asdl_path), f"falta contrato requerido: {snippet}"))
 
+    # Regresiones normativas que la mera sincronización de nombres no detecta.
+    forbidden_fragments = {
+        root / "especificacion/sintaxis/mud-surface-ast.asdl": [
+            "AnchorInterpolation(",
+            "intrinsic_name_override",
+        ],
+        root / "especificacion/06-lexico.md": [
+            "después `anchor{` y `{`",
+        ],
+        root / "especificacion/04-modelo-matematico.md": [
+            "`name: Text` intrínseco",
+            "Una única declaración global `start with` determina un conjunto finito",
+        ],
+        root / "especificacion/07-gramatica-concreta.md": [
+            "propiedad intrínseca e inmutable `name: Text`",
+            "`unique` se prohíbe estáticamente en diccionarios",
+            "Los paréntesis son obligatorios para anidar un diccionario como valor",
+            "`anchor{d}` inserta el ancla canónica",
+        ],
+        root / "especificacion/08-sintaxis-abstracta.md": [
+            "sobrescritura opcional del `name` intrínseco",
+            "`prefixes = empty` → `NoPrefixes`",
+        ],
+        root / "especificacion/sintaxis/cst-a-ast-superficial.md": [
+            "`intrinsic_name_override`",
+            "produce una colección sintética:",
+            "| `name = e` | `name = e` |",
+        ],
+    }
+    for path, fragments in forbidden_fragments.items():
+        text = path.read_text(encoding="utf-8")
+        for fragment in fragments:
+            if fragment in text:
+                problems.append(Problem(str(path), f"contrato retirado todavía presente: {fragment}"))
+
+    required_fragments = {
+        root / "especificacion/sintaxis/mud-surface-ast.asdl": [
+            "ExactTypeTestExpr(",
+        ],
+        root / "especificacion/sintaxis/mud-resolved-ast.asdl": [
+            "ExactNominalTypeTestExpr(",
+            "ExactDictionarySetOperationExpr(",
+            "FunctionalDictionarySetOperationExpr(",
+        ],
+    }
+    for path, fragments in required_fragments.items():
+        text = path.read_text(encoding="utf-8")
+        for fragment in fragments:
+            if fragment not in text:
+                problems.append(Problem(str(path), f"falta contrato D-086: {fragment}"))
+
+    for case in cases.get("cases", []):
+        source = case.get("source")
+        if not isinstance(source, str):
+            continue
+        diagnostics = set(case.get("expected_diagnostics", []))
+        if "legacy-anchor-interpolation" not in diagnostics and "anchor{" in source:
+            problems.append(Problem(str(cases_path), f"{case.get('id')}: ejemplo válido usa anchor{{...}}"))
+        if ("root unit" in source or "point over" in source) and "legacy-unit-metadata-without-postfix" not in diagnostics:
+            for metadata in ("name", "plural", "abbreviation", "prefixes", "format"):
+                if re.search(rf"(?m)^\s*{metadata}\s*=", source):
+                    problems.append(Problem(str(cases_path), f"{case.get('id')}: metadato {metadata} sin ~"))
+
+    required_case_ids = {
+        "subaction-internal-call",
+        "subaction-root-request-rejected",
+        "mud-path-not-membership",
+        "not-in-chain-rejected",
+        "exact-dictionary-substitution",
+        "exact-dictionary-iterate-keys",
+        "exact-dictionary-iterate-associations",
+        "exact-dictionary-unique-collision-noop",
+        "functional-explicit-value-selector",
+        "functional-explicit-interval-selector",
+        "functional-implicit-selector-rejected",
+        "functional-boolean-selector",
+        "functional-external-read-dependencies",
+        "functional-recursion-decreasing",
+        "functional-recursion-without-descent-rejected",
+        "functional-mut-exterior-rejected",
+        "functional-mut-interior-rejected",
+        "functional-direct-iteration-rejected",
+        "functional-branch-after-fallback-rejected",
+        "functional-duplicate-fallback-rejected",
+        "firstmatch-unique-redundant",
+        "allmatches-overlap-deduplicated",
+        "nested-dictionary-application",
+        "selection-direct-filter",
+        "selection-dictionary-preserves-associations",
+        "create-built-in-thing-rejected",
+        "destroy-built-in-thing-rejected",
+        "all-any-rejected",
+        "any-field-requires-initializer",
+        "metadata-file-behavior-warning",
+        "cardinality-inferred-zero",
+        "cardinality-inferred-one",
+        "cardinality-inferred-three",
+        "cardinality-dictionary-is-one-outer-value",
+        "start-with-empty-one-many-deduplicated",
+        "exact-type-test-multiple-specialization",
+        "functional-branch-edit-operations",
+        "functional-composed-dependencies-same-snapshot",
+        "functional-ordered-intersection-preserves-order",
+        "functional-ordered-difference-preserves-order",
+        "exact-dictionary-operation-order",
+        "exact-dictionary-operation-unique-noop",
+        "firstmatch-no-match-empty",
+        "allmatches-no-match-empty",
+        "all-thing-excludes-built-in",
+        "any-equality-uses-effective-type",
+        "any-order-rejected",
+        "metadata-path-assignment-rejected",
+        "metadata-file-assignment-rejected",
+        "iis-negation-equivalence",
+        "not-iis-spelling-rejected",
+        "is-iis-equality-distinction",
+    }
+    present_case_ids = {case.get("id") for case in cases.get("cases", [])}
+    for missing in sorted(required_case_ids - present_case_ids):
+        problems.append(Problem(str(cases_path), f"falta caso de cobertura D-086 v4: {missing}"))
+
     return problems
 
 

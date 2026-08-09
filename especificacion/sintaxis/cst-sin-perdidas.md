@@ -20,6 +20,7 @@ decisions:
   - D-070
   - D-071
   - D-085
+  - D-086
 ---
 
 # CST sin pérdidas
@@ -381,4 +382,4 @@ Un frontend conforme debe satisfacer:
 
 ## Tokens añadidos y retirados por D-085
 
-La CST conserva los tokens fijos `-->` y `~` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. Se retira `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.
+La CST conserva los tokens fijos `-->` y `~`, la palabra operadora `iis` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. `not in` e `iis not` conservan dos tokens con trivia propia. No existe `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.

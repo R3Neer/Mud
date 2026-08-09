@@ -20,6 +20,7 @@ decisions:
   - D-072
   - D-073
   - D-085
+  - D-086
 ---
 
 # Transformación de CST a AST superficial
@@ -137,10 +138,10 @@ produce `ThingDecl`:
 - `abstract` → `Enabled`; omisión → `Disabled`.
 - Nombre → `NominalName`.
 - Antecesores → secuencia de `TypeRef`.
-- `name = "literal"` → texto decodificado en `intrinsic_name_override`.
-- Cuerpo → campos.
+- Asignaciones `~metadata = expresión` → secuencia de `MetadataAssignment`.
+- Cuerpo → metadatos y campos.
 
-`thing-body`, `thing-body-declaration` e `intrinsic-name-override` no generan nodos AST independientes. La validación anterior al AST exige como máximo una sobrescritura, sin interpolaciones, y la integra en `ThingDecl` sin convertirla en campo. La omisión del cuerpo y un cuerpo explícito vacío producen la misma lista de campos vacía; el terminador se descarta como layout.
+`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. La omisión del cuerpo y un cuerpo explícito vacío producen las mismas secuencias vacías; el terminador se descarta como layout. La forma antigua `name =` se rechaza antes del AST.
 
 Un antecesor explícito `Thing` permanece en esa secuencia superficial. No bloquea la transformación: la resolución posterior emite la redundancia, normaliza la raíz efectiva y puede ofrecer una acción de código que retire el elemento escrito.
 
@@ -179,15 +180,10 @@ La anotación de tipo ausente permanece ausente. No se inserta el tipo inferido.
 
 ```mud
 value: Nat
+values: Nat = [1, 2, 3]
 ```
 
-produce una colección sintética:
-
-```text
-Cardinality(FiniteCardinality(1), FiniteCardinality(1))
-```
-
-con razón `OmittedDefault`.
+ambas formas producen un `CollectionSpec` con `OmittedCardinality`. El AST superficial no fabrica `[1]` ni infiere `[3]`. La elaboración posterior usa el propietario y el inicializador: un escalar ordinario sin evidencia conserva `[1]`; un campo almacenado inmutable con inicializador finito puede obtener una cardinalidad exacta con procedencia `InferredFromInitializer`.
 
 ### Cardinalidad exacta
 
@@ -253,29 +249,18 @@ La validación previa rechaza:
 
 Todo `type-reference` produce `NamedType(TypeRef(...))`. El AST no clasifica aún el nombre.
 
-### Diccionario
+### Productos y diccionarios
 
 ```mud
-Name -> (Coordinate -> Piece [*]) [*]
+Name -> Coordinate -> Piece [*]
+A -> B [2] --> C [3 ordered]
 ```
 
-se proyecta de dentro hacia fuera:
+Las cadenas de flechas se pliegan por la derecha. La primera forma produce un `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; la segunda produce un exacto cuyo valor es un `DecisionDictionaryType(B, C, FirstMatch, [3])`, y `[2]` pertenece a la flecha exterior.
 
-```text
-TypeExpr(
-  DictionaryType(
-    Name,
-    TypeExpr(
-      DictionaryType(Coordinate, TypeExpr(Piece, ..., [*])),
-      ...
-    )
-  ),
-  ...,
-  [*]
-)
-```
+`(A, B)` y `(name: A, value: B)` producen respectivamente `PositionalProductType` y `NamedProductType`. Los paréntesis que forman el producto sobreviven mediante el constructor; los paréntesis puramente agrupadores se descartan.
 
-Los paréntesis concretos se descartan.
+La CST puede reconocer una flecha parentizada dentro de una alternativa, pero la validación contextual o la resolución rechaza que una flecha sea una alternativa parcial de `|`, incluso cuando la forma exterior procede de un alias.
 
 ## Aliases
 
@@ -295,7 +280,7 @@ Un componente no puede producir mutabilidad exterior. Su colección general sí 
 
 La palabra `ordered` produce `isOrdered = Enabled`.
 
-Las declaraciones de datos se separan en almacenadas y calculadas. En el cuerpo de un miembro, `name = "literal"` se normaliza como sobrescritura intrínseca y las demás formas se conservan como asignaciones; el cuerpo omitido genera sobrescritura ausente y secuencia vacía.
+Las declaraciones de datos se separan en almacenadas y calculadas. En el cuerpo de un miembro, `~name = expresión` produce `MetadataAssignment`; las demás asignaciones se conservan como datos almacenados. El cuerpo omitido genera ambas secuencias vacías.
 
 La coma entre miembros desaparece. La ausencia de coma final ya ha sido validada por la gramática.
 
@@ -320,7 +305,7 @@ La expresión dimensional se pliega de izquierda a derecha en `DimensionProduct`
 
 El dominio ordinario produce `OrdinaryPointDomain`; la presencia de `cycle` después de la expresión intervalo produce `CyclicPointDomain`. El token no se incorpora al intervalo como un delimitador ni como parte de sus extremos.
 
-`format` ausente permanece ausente.
+`~format` ausente permanece ausente.
 
 ## Unidades
 
@@ -328,19 +313,19 @@ El identificador `lowerCamel` escrito después de `unit` se conserva en `RootUni
 
 | Forma concreta | AST |
 |---|---|
-| `name = e` | `name = e` |
-| `plural = e` | `plural = e` |
-| `abbreviation = e` | `abbreviation = e` |
-| propiedad `prefixes` omitida | `NoPrefixes` |
-| `prefixes = empty` | `NoPrefixes` |
-| `prefixes = all` | `AllPrefixes` |
-| `prefixes = [a, b]` | `SelectedPrefixes([a,b])` |
+| `~name = e` | `name = e` |
+| `~plural = e` | `plural = e` |
+| `~abbreviation = e` | `abbreviation = e` |
+| metadato `~prefixes` omitido | `NoPrefixes` |
+| `~prefixes = empty` | `NoPrefixes` |
+| `~prefixes = all` | `AllPrefixes` |
+| `~prefixes = [a, b]` | `SelectedPrefixes([a,b])` |
 
 No se sintetiza plural.
 
 Una unidad raíz produce `RootUnitDecl(name, properties)`. Una alternativa produce `AlternativeUnitDecl(name, equivalence, properties)`.
 
-`name`, plural y abreviatura omitidos permanecen ausentes. El `name` intrínseco predeterminado y la resolución de formas pertenecen a la elaboración semántica.
+`~name`, `~plural` y `~abbreviation` omitidos permanecen ausentes. Los valores de presentación predeterminados y la resolución de formas pertenecen a la elaboración semántica.
 
 ## Participantes
 
@@ -699,4 +684,7 @@ Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 7. `not in` produce `NotMembership`.
 8. `action` y `subaction` producen `ActionDecl` con `PublicAction` o `Subaction`.
 9. `start with` produce `StartSet(things, rules)` sin mezclar contribuciones.
-10. Toda interpolación es `ValueInterpolation`; ya no existe `AnchorInterpolation`.
+10. Toda interpolación es `ValueInterpolation`; no existe `AnchorInterpolation`.
+11. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
+12. `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración los especializa según sean colecciones, diccionarios exactos o diccionarios funcionales.
+13. Una operación funcional conserva ambos operandos y nunca se transforma en una lista fusionada de ramas.

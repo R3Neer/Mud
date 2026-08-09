@@ -60,6 +60,7 @@ decisions:
   - D-082
   - D-084
   - D-085
+  - D-086
 ---
 
 # 07. Gramática concreta
@@ -110,10 +111,11 @@ Las categorías de primer nivel son:
 - `magnitude`
 - Las tres formas de `rule`
 - `action`
+- `subaction`
 - `look`
 - `message`
 - `test`
-- `start with
+- `start with`
 
 ## `thing`
 
@@ -123,13 +125,31 @@ thing World
 abstract thing Place
 
 thing Alexandria as City, Place {
-    name = "Alejandría"
+    ~name = "Alejandría"
 }
 ```
 
-`Thing` es la `thing` abstracta incorporada que actúa como tipo superior. Toda `thing` satisface `is Thing`. Una raíz sin `as` conserva cero antecesoras declaradas, pero recibe una arista semántica implícita hacia `Thing`. Es válido escribir `as Thing`, pero es redundante: una implementación conforme debe emitir un diagnóstico no bloqueante y ofrecer eliminarlo. `Thing` no puede declararse, crearse ni destruirse.
+`Thing` es la `thing` abstracta incorporada que actúa como tipo superior. Toda `thing` satisface `is Thing`. Una raíz sin `as` conserva cero antecesoras declaradas, pero recibe una arista semántica implícita hacia `Thing`. Es válido escribir `as Thing`, pero es redundante: una implementación conforme debe emitir un diagnóstico no bloqueante y ofrecer eliminarlo. `Thing` no puede declararse, crearse ni destruirse:
 
-Toda `thing` expone la propiedad intrínseca e inmutable `name: Text`. Su valor predeterminado es su nombre nominal no cualificado. Puede sobrescribirse una sola vez con `name =` y un literal `Text` sin interpolaciones, como en `Alexandria`. No es un campo almacenado o calculado, no ocupa el store y no se hereda: una descendiente sin sobrescritura usa siempre su propio nombre nominal.
+```mud
+create Thing   # error estático
+destroy Thing  # error estático
+```
+
+`Thing` está siempre efectiva sin aparecer en `start with`, y `all Thing` enumera únicamente las `thing` concretas efectivas, nunca el incorporado abstracto.
+
+Toda `thing` expone metadatos tipados separados de sus campos. `~name: Name` contiene su presentación humana y toma inicialmente el nombre nominal no cualificado, salvo una declaración `~name = expresión`. El identificador fuente, `~path`, `~anchor` y `~file` no cambian al modificar `~name`.
+
+`~name` puede escribirse durante una acción cuando el propietario se recibe con la capacidad necesaria:
+
+```mud
+action Rename for person: Person [mut]
+given newName: Name {
+    then person~name = newName
+}
+```
+
+`~path`, `~anchor` y `~file` son inmutables y no asignables. Los metadatos no son campos ordinarios ni ocupan un nombre reservado del espacio de campos; por tanto puede existir un campo declarado llamado `name` si su sintaxis y tipo son válidos.
 
 La lista posterior a `as` no expresa prioridad. `create` no acepta aquí ni en ningún otro lugar un cuerpo:
 
@@ -154,7 +174,7 @@ fieldName [derived-value-shape] := value-expression
 
 `derived-value-shape` puede ser `: Type`, `in domain` con colección opcional, o una especificación de colección sola. Por tanto son válidos tanto `area: Num in 0..* := width * height` como `area in 0..* := width * height`. Si se omite el tipo, debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut` exterior. Su forma puede declarar dominio, especificación de colección y capacidad interior `[mut]`.
 
-El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `fieldName: mut Type` no pertenece a la sintaxis. El identificador `name` está ocupado por la propiedad intrínseca dentro de una `thing` y no puede redeclararse mediante ninguna de estas formas.
+El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `fieldName: mut Type` no pertenece a la sintaxis. Los nombres de campo y los nombres de metadato ocupan espacios sintácticos distintos: `name: Text` declara un campo, mientras `~name = expresión` declara o modifica el metadato de presentación.
 
 El valor de `=` es una expresión estática cerrada: se evalúa por completo al compilar, no lee estado, participantes, `given`, locales ni actividad del mundo y puede combinar literales, valores nominales y operaciones constantes. Por ejemplo:
 
@@ -181,15 +201,45 @@ numbers := a * b, d, c / a
 
 El dominio de un cálculo actúa como contrato. Una posible salida exterior produce warning y comprobación de transición; una salida necesariamente exterior produce error.
 
-## Uniones de tipos
+## Uniones de tipos y flechas exteriores
 
-`|` une alternativas nominales en cualquier posición de tipo. Cada alternativa puede declarar dominio y una única especificación de colección final pertenece a la unión completa:
+`|` une alternativas no flecha y tiene mayor precedencia que `->` y `-->`. Las dos flechas poseen la misma precedencia y se agrupan por la derecha:
+
+```mud
+A | B -> C | D       # (A | B) -> (C | D)
+A | B --> C | D      # (A | B) --> (C | D)
+A -> B -> C           # A -> (B -> C)
+```
+
+Una flecha debe ser la forma exterior completa del tipo. Un diccionario no puede aparecer como alternativa parcial de una unión, ni siquiera mediante paréntesis o a través de un alias cuya forma efectiva sea una flecha.
+
+Son inválidos:
+
+```mud
+value: A | (B -> C)
+value: (A -> B) | C
+value: A | (B --> C) | D
+
+alias Lookup := B -> C
+value: A | Lookup
+```
+
+Son válidos:
+
+```mud
+value: (A | B) -> C
+value: A -> (B | C)
+value: (A | B) --> (C | D)
+value: A -> Lookup
+```
+
+La restricción de aliases se comprueba después de la resolución nominal. Cada alternativa no flecha puede declarar dominio y una única especificación de colección final pertenece a la unión completa:
 
 ```mud
 values: Nat in 0..10 | Int in -10..-1 [1..*] = [2 to Nat]
 ```
 
-Los paréntesis redundantes se eliminan de la forma canónica. No se permiten cardinalidades por alternativa. Si una expresión todavía contextual encaja en varias alternativas debe seleccionar una mediante `to`.
+No se permiten cardinalidades por alternativa. Si una expresión contextual encaja en varias alternativas debe seleccionar una mediante `to`.
 
 ## Colecciones y diccionarios
 
@@ -200,30 +250,221 @@ citizens: Person [0..* unique ordered mut]
 citizens: Person [0..*, unique, ordered, mut]
 ```
 
-No se permite coma final. La omisión de cardinalidad equivale a `[1]`.
+No se permite coma final. En un campo almacenado inmutable con inicializador, una cardinalidad omitida se conserva como omitida en el AST y se infiere como la cardinalidad exterior exacta del valor inicial:
 
-Las colecciones compatibles admiten `|`, `&` y `--`. `^` exige además que ambos operandos sean `unique`. Operan sobre multiplicidades o pertenencia, no concatenan:
+```mud
+one: Nat = 1                 # [1]
+three: Nat = [1, 2, 3]      # [3]
+none: Nat = empty            # [0]
+table: A -> B = AValue -> BValue # [1]: el diccionario completo es un valor
+```
+
+Un campo con `mut` exterior conserva `[1]` cuando la omite. Los campos calculados `:=` conservan la forma inferida de su expresión. Una cardinalidad inmutable inferida distinta de `[1]` produce una sugerencia para escribirla explícitamente.
+
+Las colecciones compatibles admiten `|`, `&` y `--`. `^` exige que el resultado cumpla las reglas de unicidad. Operan sobre multiplicidades o pertenencia, no concatenan:
 
 ```mud
 leftChars: Char [1..5] = ["a"]
 rightChars: Char [0..2] = empty
-combinedChars := leftChars | rightChars # Char [1..7]
+combinedChars := leftChars | rightChars
 ```
 
-`unique`, `ordered` y el `mut` interior se propagan con la misma regla: unión y diferencia simétrica los conservan solo si aparecen en ambos operandos; intersección, si aparecen en cualquiera; diferencia `--`, si aparecen en el izquierdo. `^` siempre conserva `unique` porque lo exige. El `mut` exterior nunca se infiere para un resultado calculado.
+`empty` no es un fallo por sí mismo. Una consulta parcial produce `empty`; el fallo aparece únicamente cuando la forma exterior exigida no admite cardinalidad cero.
 
-`-` es exclusivamente resta aritmética elevada. Una operación `+`, `-`, `*`, `/` o `%` entre colecciones es válida si al menos un operando tiene límite superior de cardinalidad uno. Combina cada ocurrencia del lado potencialmente múltiple con la ocurrencia opcional o unitaria del otro; `empty` produce `empty` sin evaluar una operación de miembros. Si ambos lados pueden contener más de una ocurrencia, la expresión es inválida.
+### Diccionarios exactos `->`
 
-Un resultado con orden canónico se normaliza por ese orden. Con orden de inserción, se conserva estable el orden izquierdo y se incorporan después las ocurrencias adicionales derechas cuando la operación lo requiere.
+Un diccionario exacto consulta por igualdad de clave, es enumerable y admite mutabilidad exterior. Las asociaciones se escriben con la misma flecha:
 
-`unique` se prohíbe estáticamente en diccionarios: sus claves ya son únicas y el modificador no se reinterpreta como unicidad de valores.
+```mud
+capitalOf: Country -> City [2 ordered] =
+    Spain -> Madrid,
+    France -> Paris
+```
+
+Una clave ausente produce `empty`. Una asociación completa puede insertarse como valor operativo:
+
+```mud
+then add (Portugal -> Lisbon) to capitalOf
+```
+
+`unique` exige unicidad global de los valores asociados. Una inserción o sustitución que duplicaría un valor bajo dos claves es una no-op completa: no modifica ninguna asociación y no produce `failed`.
+
+Añadir una asociación cuya clave ya existe sustituye atómicamente la asociación anterior cuando el resultado respeta el contrato:
+
+```mud
+then add (Spain -> Barcelona) to capitalOf
+```
+
+Los diccionarios exactos son enumerables. Una vinculación simple recorre claves y una vinculación por pareja recorre asociaciones:
+
+```mud
+for each country in capitalOf {
+    Log(country)
+}
+
+for each (country, capital) in capitalOf {
+    Log("{country}: {capital}")
+}
+```
+
+Una consulta ausente conserva la forma de salida opcional:
+
+```mud
+capitalOf[Italy] # City [0..1], produce empty si Italy no está
+```
+
+Las claves pueden ser productos estructurales:
+
+```mud
+distance: (City, City) -> Length =
+    (Madrid, Toledo) -> 74 km,
+    (Madrid, Segovia) -> 91 km
+```
+
+Los operadores conjuntistas de exactos actúan sobre claves. Para una clave común, `|` y `&` conservan el valor izquierdo:
+
+```mud
+left: Key -> Nat = AKey -> 1, BKey -> 2
+right: Key -> Nat = BKey -> 9, CKey -> 3
+
+left | right   # AKey -> 1, BKey -> 2, CKey -> 3
+left & right   # BKey -> 2
+left -- right  # AKey -> 1
+left ^ right   # AKey -> 1, CKey -> 3
+```
+
+`|` y `&` no son necesariamente conmutativos como diccionarios. El orden de inserción conserva primero el contenido izquierdo; `ordered by` normaliza después de calcular el contenido.
+
+### Diccionarios funcionales `-->`
+
+Un diccionario funcional es una política pura definida por casos. `value` designa la entrada dentro del selector y el resultado; `_` es el fallback:
+
+```mud
+dangerOf: Creature --> Danger [ordered] =
+    value is Dragon --> Extreme,
+    value is Predator --> High,
+    _ --> Low
+```
+
+`ordered` significa `FirstMatch`: gana la primera rama aplicable y la aplicación produce `[0..1]`, o `[1]` con fallback. Sin `ordered` se evalúan todas las ramas ordinarias y se obtiene un resultado por coincidencia; `unique` deduplica resultados:
+
+```mud
+traitsOf: Creature --> Trait [unique] =
+    value is Flying --> Aerial,
+    value is Aquatic --> Aquatic,
+    value is Magical --> Magical
+```
+
+Los selectores se escriben de forma explícita. No existe una abreviatura que inserte implícitamente `value`, `==`, `is` o `in`:
+
+```mud
+seasonName: Month --> Text [ordered] =
+    value == January --> "winter",
+    value in [March..May] --> "spring",
+    value == June or value == July --> "summer",
+    _ --> "other"
+```
+
+Por tanto, `January --> "winter"`, `[March..May] --> "spring"`, `Dragon --> Extreme` y `shop.discounted --> DiscountedPrice` no adquieren automáticamente significado de selector. Debe escribirse la comparación o pertenencia completa.
+
+Aplicabilidad y producción de resultado se registran por separado. Una rama cuyo selector es aplicable puede producir `empty`; el fallback `_` solo aporta resultado cuando ninguna rama ordinaria aplicable ha producido uno. En `FirstMatch` se conserva el orden de prueba; en `AllMatches` se recogen todos los resultados realmente producidos.
+
+Los selectores y resultados pueden leer estado externo puro:
+
+```mud
+priceOf: Product --> Money [ordered] =
+    value in shop.discounted --> value.basePrice * shop.discount,
+    _ --> value.basePrice
+```
+
+Esas lecturas crean dependencias explícitas hacia `shop.discounted`, `shop.discount` y `basePrice`. Todas las llamadas transitivas observan la misma instantánea.
+
+No admite `mut` exterior ni `[mut]`, no se recorre directamente mediante `for each` y toda recursión debe poseer una medida bien fundada demostrable. Son pruebas válidas el descenso numérico, la reducción estricta de cardinalidad o el paso a una subestructura estrictamente menor; un ciclo sin evidencia demostrable es error.
+
+Para recorrer resultados se recorre un dominio de entradas y se aplica el diccionario:
+
+```mud
+for each product in shop.products {
+    price := priceOf[product]
+    Log("{product~name}: {price}")
+}
+```
+
+Las ramas solo cambian mediante edición semántica dirigida a sus anclas. `CREATE` inserta antes de `_` por defecto; `UPDATE`, `REMOVE` y `MOVE` conservan la identidad estable de la rama.
+
+La aritmética de funcionales es extensional; no fusiona ramas:
+
+```text
+(F op G)[x] = F[x] op G[x]
+```
+
+`F | G`, `F & G`, `F -- G` y `F ^ G` combinan las colecciones obtenidas al aplicar ambos operandos a `x`. Sus fallbacks se evalúan de forma independiente. La unión y la diferencia simétrica de dos funcionales `ordered` pueden producir dos resultados y pierden `ordered` en general; intersección y diferencia pueden conservarlo.
+
+No se permite combinar directamente un exacto con un funcional.
+
+### `FirstMatch`, `AllMatches`, fallback y cardinalidad
+
+En un funcional `[ordered]`, `unique` es válido pero redundante y produce una sugerencia de eliminación. Sin fallback, la aplicación tiene `[0..1]`; con fallback, `[1]`.
+
+En un funcional no ordenado, cada rama ordinaria coincidente aporta como máximo un resultado. Con `n` ramas potencialmente coincidentes, la forma conservadora es `[0..n]`; un fallback eleva la cota inferior a `1`. `unique` deduplica resultados iguales de ramas distintas sin cambiar qué ramas fueron aplicables.
+
+```mud
+tagsOf: Creature --> Tag [unique] =
+    value is Dragon --> Magical,
+    value is FireCreature --> Magical,
+    value is Flying --> Aerial,
+    _ --> Ordinary
+```
+
+Para un dragón de fuego, `Magical` aparece una sola vez. La unión o diferencia simétrica de dos funcionales `ordered` pierde `ordered` cuando puede producir dos resultados distintos; intersección y diferencia lo conservan cuando mantienen la cota `[0..1]`.
+
+### Encadenamiento de tipos de diccionario
+
+Las flechas aceptan tipos completos y son asociativas a la derecha:
 
 ```mud
 board: Square -> Piece [0..32 ordered]
-nested: Name -> (Coordinate -> Piece [*]) [*]
+nested: Name -> Coordinate -> Piece [*]
+policyByMode: Mode -> Product --> Money [2..4 ordered]
 ```
 
-Los paréntesis son obligatorios para anidar un diccionario como valor.
+El segundo ejemplo equivale a `Name -> (Coordinate -> Piece [*])`. Cada especificación de colección pertenece a la flecha inmediatamente anterior. Los paréntesis solo son necesarios para cambiar la agrupación natural o para delimitar otra construcción completa.
+
+La aplicación encadenada consume cada nivel sucesivamente:
+
+```mud
+piece := boardByGame[game][coordinate]
+```
+
+La composición no introduce una categoría abstracta de función. Se expresa aplicando el resultado de un diccionario como entrada de otro:
+
+```mud
+weather := weatherOf[capitalOf[country]]
+```
+
+### Productos estructurales anónimos
+
+Los tipos `(A, B)` y `(a: A, b: B)` son productos estructurales. Sus literales son `(x, y)` y `(a = x, b = y)`. Se comparan componente a componente y pueden actuar como claves exactas o entradas funcionales:
+
+```mud
+distance: (City, City) -> Length
+label: (name: Text, count: Nat)
+routePolicy: (origin: City, destination: City) --> Route
+```
+
+Los nombres de variables no crean nombres de componentes: `(x, y)` continúa siendo posicional aunque las variables se llamen `x` e `y`. Un alias declarado sigue siendo nominal aunque su payload tenga la misma forma:
+
+```mud
+alias Coordinate {
+    x: Num
+    y: Num
+}
+
+raw: (Num, Num) = (1, 2)
+nominal: Coordinate = (x = 1, y = 2)
+```
+
+`raw` y `nominal` no son intercambiables sin una conversión nominal explícita. La compatibilidad de productos anónimos exige misma aridad, nombres de componente compatibles cuando existen y tipos componente a componente.
 
 `ordered by ruta` pertenece a colecciones cuyos miembros ofrecen una ruta estable de campos, componentes o datos asociados. Cada acceso intermedio debe ser singular y el valor final debe poseer orden semántico total:
 
@@ -341,9 +582,9 @@ magnitude Probability: Num in [0..1] {}
 
 magnitude Length: Num in [0..*] {
     root unit meter {
-        plural = "meters"
-        abbreviation = "m"
-        prefixes = all
+        ~plural = "meters"
+        ~abbreviation = "m"
+        ~prefixes = all
     }
 }
 ```
@@ -353,8 +594,8 @@ Magnitud derivada:
 ```mud
 magnitude Speed: Num in [0..*] := Length / Time {
     unit fastie := 1 m/s {
-        plural = "fasties"
-        abbreviation = "fst"
+        ~plural = "fasties"
+        ~abbreviation = "fst"
     }
 }
 ```
@@ -365,15 +606,15 @@ Magnitud de punto:
 magnitude RawInstant point over Time {}
 
 magnitude Timestamp point over Time {
-    format = "{day}:{hour:2}:{minute:2}"
+    ~format = "{day}:{hour:2}:{minute:2}"
 }
 
 magnitude WorkdayTime point over Time in [0..28_800] {
-    format = "{hour:2}:{minute:2}"
+    ~format = "{hour:2}:{minute:2}"
 }
 
 magnitude TimeOfDay point over Time in [0..86_400) cycle {
-    format = "{hour:2}:{minute:2}:{second:2}"
+    ~format = "{hour:2}:{minute:2}:{second:2}"
 }
 ```
 
@@ -388,13 +629,13 @@ Un literal numérico desnudo puede tomar el tipo de una magnitud sin unidades cu
 
 Una magnitud derivada solo declara unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b) cycle` añade normalización cíclica. `cycle` modifica el dominio completo, no forma parte de la expresión intervalo, y solo una magnitud de punto lo admite.
 
-En una unidad, omitir `prefixes` o escribir `prefixes = empty` no habilita ninguno; `prefixes = all` habilita el catálogo SI decimal completo y `prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. `name`, `plural` y `abbreviation` son opcionales.
+En una unidad, omitir `~prefixes` o escribir `~prefixes = empty` no habilita ninguno; `~prefixes = all` habilita el catálogo SI decimal completo y `~prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. `~name`, `~plural` y `~abbreviation` son metadatos opcionales con tipos y mutabilidad propios.
 
 Una cantidad puede omitir el espacio antes de su unidad, pero el formateador lo inserta: `3m` y `3 m` tienen el mismo AST y la segunda es canónica.
 
-`format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él no existe una representación especial de punto: se aplica exactamente la representación textual ordinaria de una magnitud, con la coordenada en la unidad raíz y la abreviatura o nombre de esa unidad. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `format = "{week from year:2}"`.
+`~format` es opcional y usa la sintaxis general de plantilla `Text`: los huecos son código y `:2` fija aquí dos posiciones a la izquierda del punto. Sin él no existe una representación especial de punto: se aplica exactamente la representación textual ordinaria de una magnitud, con la coordenada en la unidad raíz y la abreviatura o nombre de esa unidad. Con él, el primer componente es la coordenada en esa unidad —reducida por el ciclo, si existe— y cada componente siguiente se extrae dentro del anterior. Un contenedor no obvio se hace explícito, por ejemplo `~format = "{week from year:2}"`.
 
-Fuera de `format`, la extracción exige el punto:
+Fuera de `~format`, la extracción exige el punto:
 
 ```mud
 minute from hour in time
@@ -402,11 +643,31 @@ picosecond from second in time
 week from year in date
 ```
 
-La forma es una sola construcción sintáctica. El receptor debe ser una magnitud de punto; ambas unidades pertenecen a su magnitud subyacente; la unidad extraída no supera a la contenedora; el resultado es `Nat`. Se usa el origen canónico y el resto euclídeo, con un posible último componente parcial cuando las unidades no dividen exactamente. La extracción no depende del `format`.
+La forma es una sola construcción sintáctica. El receptor debe ser una magnitud de punto; ambas unidades pertenecen a su magnitud subyacente; la unidad extraída no supera a la contenedora; el resultado es `Nat`. Se usa el origen canónico y el resto euclídeo, con un posible último componente parcial cuando las unidades no dividen exactamente. La extracción no depende de `~format`.
 
-Las formas producidas por `format` ocupan el token contextual `POINT_LITERAL`. El tipo esperado selecciona una única magnitud de punto y el literal debe reproducir exactamente su forma canónica. Un formato que no pueda invertirse unívocamente es inválido. Los componentes más finos que el último representado toman valor cero.
+Las formas producidas por `~format` ocupan el token contextual `POINT_LITERAL`. El tipo esperado selecciona una única magnitud de punto y el literal debe reproducir exactamente su forma canónica. Un formato que no pueda invertirse unívocamente es inválido. Los componentes más finos que el último representado toman valor cero.
 
-Sin `format`, el literal se escribe como una cantidad ordinaria con unidad compatible. Todo literal debe pertenecer al dominio antes de aplicar normalización cíclica; por ejemplo, `26:00:00` es inválido para `TimeOfDay`.
+Sin `~format`, el literal se escribe como una cantidad ordinaria con unidad compatible. Todo literal debe pertenecer al dominio antes de aplicar normalización cíclica; por ejemplo, `26:00:00` es inválido para `TimeOfDay`.
+
+## Activación inicial `start with`
+
+`start with` contiene exactamente una sección `things` y una sección `rules`. Cada sección recibe cero o más contribuciones estáticas separadas por comas:
+
+```mud
+start with {
+    things {
+        all
+    }
+
+    rules {
+        empty,
+        CanGrow,
+        candidate in GrowthRules: candidate~path in world.growth
+    }
+}
+```
+
+`empty` no aporta elementos. Una colección aporta directamente sus miembros; no se admiten colecciones anidadas. El resultado se deduplica y carece de orden semántico. `Thing` siempre es efectiva y no se añade ni se retira mediante `start with`; `all` sobre categorías de `thing` enumera únicamente identidades concretas declaradas.
 
 ## Participantes
 
@@ -475,7 +736,7 @@ action Treat for
 
 La declaración anterior puede cambiar la membresía u orden de la colección almacenada recibida y modificar sus miembros. `mut patients: Person [*]` concede solo la primera capacidad; `patients: Person [*, mut]`, solo la segunda.
 
-Escribir capacidad interior sobre valores inmutables es legal, pero el compilador sugiere retirarla cuando puede demostrar que nunca será ejercitable. La sugerencia conserva el significado y no constituye un aviso. En diccionarios, el `mut` exterior cambia asociaciones y `[mut]` solo concede capacidad sobre valores `thing` materialmente asociados; nunca sobre claves, aliases, niveles anidados o el predeterminado leído para una clave ausente.
+Escribir capacidad interior sobre valores inmutables es legal, pero el compilador sugiere retirarla cuando puede demostrar que nunca será ejercitable. La sugerencia conserva el significado y no constituye un aviso. En un diccionario exacto, el `mut` exterior cambia asociaciones y `[mut]` solo concede capacidad sobre valores `thing` materialmente asociados; nunca sobre claves, aliases, niveles anidados o el valor ausente. Un diccionario funcional prohíbe ambas formas de `mut`.
 
 La mutabilidad exterior sí puede aplicarse a una colección de cualquier tipo:
 
@@ -600,11 +861,31 @@ given amount: Nat in 1..100 {
 
 `then` contiene efectos o llamadas a acciones conforme a la distinción estática entre acciones elementales y compuestas. El `otherwise` opcional de `if` o `after` explica un `rejected`; omitirlo produce una sugerencia y una razón generada. Un `otherwise` asociado al `then` explica el `failed` de su transición atómica completa, se evalúa perezosamente y no recupera ni ejecuta una rama alternativa.
 
+Una `subaction` usa la misma firma y el mismo cuerpo, pero solo puede invocarse desde otra `action` o `subaction`:
+
+```mud
+subaction RemoveMoney for account: Account [mut]
+given amount: Money {
+    then account.balance -= amount
+}
+
+action Transfer
+for source: Account [mut], destination: Account [mut]
+given amount: Money {
+    then {
+        source.RemoveMoney(amount)
+        destination.AddMoney(amount)
+    }
+}
+```
+
+No puede constituir una solicitud exterior ni un comando raíz. Toda la cadena comparte una resolución atómica: un rechazo o fallo interno descarta también los efectos privados anteriores de sus llamadores. Su ancla conserva la categoría `action::*`.
+
 ## Frontera de salida
 
 ```mud
 look RealmSummary for kingdom: Kingdom {
-    name := kingdom.name
+    name := kingdom~name
     population: Population := kingdom.population in people
 }
 
@@ -612,8 +893,8 @@ message KingChanged on kingdom: Kingdom {
     when kingdom.king changes
     if kingdom.visible
 
-    kingdomName := kingdom.name
-    kingName: Text := kingdom.king.name
+    kingdomName := kingdom~name
+    kingName: Text := kingdom.king~name
     time := kingdom.clock in second
     timeText := "{kingdom.clock}"
 }
@@ -621,7 +902,7 @@ message KingChanged on kingdom: Kingdom {
 
 `look` y `message` se declaran en MUD pero no se llaman desde MUD. El exterior consulta un `look`; el runtime detecta y publica un `message`.
 
-Un campo público cuyo valor directo es una magnitud que admite unidades debe seleccionar preferentemente su presentación con `in`. Omitirla es legal y usa la proyección canónica de unidades, pero produce un aviso por dejar implícita una decisión de la API. Una magnitud sin unidades publica directamente su representación numérica y no produce ese aviso. Una magnitud de punto directa publica su coordenada en la unidad elegida y no su `format`; para publicar el formato se construye un campo `Text`.
+Un campo público cuyo valor directo es una magnitud que admite unidades debe seleccionar preferentemente su presentación con `in`. Omitirla es legal y usa la proyección canónica de unidades, pero produce un aviso por dejar implícita una decisión de la API. Una magnitud sin unidades publica directamente su representación numérica y no produce ese aviso. Una magnitud de punto directa publica su coordenada en la unidad elegida y no su `~format`; para publicar el formato se construye un campo `Text`.
 
 ## Cláusulas y llaves
 
@@ -778,15 +1059,23 @@ min city in kingdom.cities: city.population
 max city in kingdom.cities: city.population
 ```
 
-Una selección devuelve los miembros que satisfacen el predicado, en vez de reducirlos a un booleano o agregado:
+Una selección es exclusivamente un filtro: devuelve directamente los miembros aceptados, no proyecta, no aplana y no envuelve cada resultado en otra colección.
 
 ```mud
-player in players: player.score == 2
-
-(key, value) in stock: value > 0
+characters := character in coolCharacters:
+    character.coolness < 30
 ```
 
-La fuente debe ser finita y enumerable y el predicado, puro y determinista. El resultado conserva multiplicidad, `unique`, orden y capacidad interior demostrables; no adquiere mutabilidad exterior.
+`characters` contiene directamente personajes, no `[[...]]`. El cuerpo posterior a `:` debe ser booleano.
+
+Sobre un diccionario exacto, la vinculación por pareja conserva asociaciones y devuelve otro diccionario:
+
+```mud
+availableStock := (product, amount) in stock:
+    amount > 0
+```
+
+La fuente debe ser finita y enumerable y el predicado, puro y determinista. El resultado conserva multiplicidad, `unique`, orden, claves y capacidad interior demostrables; no adquiere mutabilidad exterior. Su cardinalidad es una aproximación conservadora acotada por la fuente.
 
 `take` es una expresión general:
 
@@ -809,6 +1098,36 @@ queue[2..5]
 ```
 
 Los índices comienzan en uno. Un índice inexistente y una sección totalmente exterior producen `empty`; una sección parcialmente exterior conserva las posiciones existentes. Una colección no ordenada debe usar `take`. La resolución por tipos mantiene separados estos accesos, las claves de diccionario y la indexación de `Text`.
+
+## Tipo superior `Any`
+
+`Any` es el tipo superior abierto de los valores MUD del proyecto. Incluye básicos, `thing`, aliases, miembros de `family`, magnitudes, intervalos, colecciones, diccionarios y productos estructurales. No incluye acciones, reglas, tests, declaraciones ni nodos de AST como valores ordinarios.
+
+`Any` no es enumerable, no posee orden total universal ni predeterminado. Son inválidos:
+
+```mud
+all Any
+unknown: Any
+```
+
+Un campo almacenado `Any` debe escribir inicializador. La igualdad exige tipos efectivos compatibles y delega en la igualdad del tipo efectivo. Cualquier operación específica requiere narrowing:
+
+```mud
+rule Positive given value: Any {
+    value is Nat and value > 0
+}
+```
+
+Dentro de una rama funcional, `is` e `iis` conservan el narrowing en el resultado:
+
+```mud
+describeAny: Any --> Text [ordered] =
+    value iis PersonId --> "Person id {value}",
+    value is Nat --> "Natural {value}",
+    _ --> "Other"
+```
+
+`Money` continúa siendo un básico incorporado por sus reglas de materialización, no una excepción a la apertura de `Any`.
 
 ## Valores contextuales
 
@@ -896,12 +1215,12 @@ De mayor a menor:
 
 | Nivel | Formas | Agrupación |
 | ---: | --- | --- |
-| 1 | acceso `.`, índice `[]`, llamada `()` y `unit from container in point` | izquierda o forma completa |
+| 1 | acceso `.`, metadato `~`, índice `[]`, llamada `()` y `unit from container in point` | izquierda o forma completa |
 | 2 | prefijos `old`, `allowed`, `not`, signo | derecha |
 | 3 | `*`, `/`, `%` | izquierda |
 | 4 | `+`, `-`, `--` | izquierda |
 | 5 | sufijos `to Type`, `in unit` | acumulativa |
-| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, pertenencia `in` | restringida |
+| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `iis`, `iis not`, `in`, `not in` | restringida |
 | 7 | sufijo temporal `changes` | no asociativa |
 | 8 | `and`, `&` | izquierda |
 | 9 | `or`, `|` | izquierda |
@@ -962,11 +1281,60 @@ a < b and b < c
 La igualdad encadenada usa la misma regla. `<=>` produce conjunciones de pares adyacentes. No se encadenan:
 
 - `!=`
-- `is`
-- pertenencia `in`
+- `is` e `is not`
+- `iis` e `iis not`
+- pertenencia `in` y `not in`
 - `=>`
 
 No se mezclan operadores distintos dentro de una misma cadena sin conjunciones explícitas.
+
+`iis` comprueba el tipo nominal efectivo exacto; `is` incluye especializaciones. Para:
+
+```mud
+alias Identifier := Nat
+alias PersonId as Identifier
+alias EmployeeId as PersonId
+```
+
+un `EmployeeId` satisface `value is PersonId`, pero no `value iis PersonId`. `value iis not PersonId` elimina únicamente la posibilidad exacta `PersonId` durante el narrowing. El operando derecho de `iis` debe ser un tipo nominal; productos, diccionarios y la identidad singleton `Madrid` son inválidos.
+
+Sobre `MudPath`, `p in q` es reflexivo y compara segmentos completos:
+
+```mud
+world.combat in world.combat          # true
+world.combat.melee in world.combat    # true
+world.combatant in world.combat       # false
+```
+
+## Metadatos postfix
+
+El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Los metadatos son valores tipados, no campos ordinarios ni `Text` implícito.
+
+| Metadato | Tipo | Propietarios principales | Escritura desde MUD |
+| --- | --- | --- | --- |
+| `~name` | `Name` | `thing`, alias, miembro de `family`, unidad | según contrato del propietario |
+| `~path` | `MudPath` | declaraciones | no |
+| `~anchor` | `Anchor` | declaraciones y ramas funcionales | no |
+| `~file` | `MudFile` | declaraciones físicas | no |
+| `~plural` | tipo de presentación de unidad | unidades | declaración |
+| `~abbreviation` | tipo de presentación de unidad | unidades | declaración |
+| `~prefixes` | política de prefijos | unidades | declaración |
+| `~format` | plantilla de formato | magnitudes de punto | declaración |
+
+Las conversiones generales son explícitas cuando existen:
+
+```mud
+pathText: Text = Alexandria~path to Text
+```
+
+Las plantillas pueden renderizar los tipos de metadatos directamente sin crear compatibilidad nominal general con `Text`. `~file` es válido en cualquier expresión, pero produce advertencia cuando escapa de texto o logging y su valor puede alterar el comportamiento:
+
+```mud
+Log("Loaded from {Alexandria~file}")         # uso informativo
+rule Fragile { Alexandria~file == expected } # válido con advertencia
+```
+
+`~name` puede poseer estado separado en `thing`, aliases y miembros de `family`; modificarlo no cambia el payload, la igualdad, `~path`, `~anchor` ni `~file`.
 
 ## `Text` y operadores
 
@@ -978,20 +1346,21 @@ No se mezclan operadores distintos dentro de una misma cadena sin conjunciones e
 
 No se admiten `&`, `^` ni `-` sobre `Text`. `xor` es exclusivamente lógico y `^` exclusivamente conjuntista. Los aliases nominales de `Text` no adquieren concatenación implícita.
 
-Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e` e inserta la representación de su valor; `anchor{d}` inserta el ancla canónica de la entidad designada:
+Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e` e inserta la representación textual canónica del valor. Los metadatos son expresiones ordinarias:
 
 ```mud
 "Kingdom: {kingdom}"
 "Population: {kingdom.population:6}"
-"Rule: anchor{CanRecruit}"
+"Rule: {CanRecruit~anchor}"
+"Path: {CanRecruit~path}"
 "Literal braces: \{example\}"
 ```
 
-`anchor` es contextual dentro de la plantilla. `anchor{...}` no forma una llamada ni una conversión general a `Text`.
+`anchor{...}` no pertenece al lenguaje. Renderizar `Name`, `MudPath`, `Anchor` o `MudFile` en una plantilla no los convierte implícitamente a `Text` fuera de ese contexto.
 
 Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. El nombre desnudo de una declaración no es un valor; acciones, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}`.
 
-Una `thing` se representa mediante el valor de su propiedad intrínseca `name`; `anchor{...}` continúa representando su ancla canónica. Un miembro de `family` se representa mediante el nombre del miembro. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
+Una `thing`, un alias nominal y un miembro de `family` se representan mediante su `~name` efectivo. Su ancla canónica se obtiene mediante `~anchor`; modificar `~name` no cambia igualdad, path ni ancla. Un miembro de `family` sin sobrescritura usa inicialmente su nombre nominal. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
 
 ```mud
 "{[1, 2, 3]}"          # 1, 2, 3
@@ -1008,7 +1377,7 @@ Un hueco numérico admite `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derech
 
 La precisión izquierda se admite para todos los tipos numéricos básicos. La derecha se admite para los tipos que pueden mostrar parte fraccionaria: `Num`, `Rum` y `Money`. Cualquier formato numérico sobre otro tipo es un error estático.
 
-Una magnitud lineal sin `in` representa el número seguido por la proyección canónica de unidades de su dimensión. Si esa proyección es vacía, representa únicamente el número. Los factores nominales sin unidad no se imprimen, pero permanecen en el tipo. Una magnitud de punto usa su `format` si lo tiene y, si no, sigue la regla ordinaria de su magnitud subyacente. `{magnitude in unit}` selecciona una presentación disponible y, para un punto, evita el `format` y representa la coordenada completa. Es inválido aplicar `in` a una magnitud base sin unidades. Cuando hay unidad, se escribe su abreviatura si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
+Una magnitud lineal sin `in` representa el número seguido por la proyección canónica de unidades de su dimensión. Si esa proyección es vacía, representa únicamente el número. Los factores nominales sin unidad no se imprimen, pero permanecen en el tipo. Una magnitud de punto usa su `~format` si lo tiene y, si no, sigue la regla ordinaria de su magnitud subyacente. `{magnitude in unit}` selecciona una presentación disponible y, para un punto, evita el `~format` y representa la coordenada completa. Es inválido aplicar `in` a una magnitud base sin unidades. Cuando hay unidad, se escribe su abreviatura si existe; en otro caso, el nombre singular para `1` y `-1`, y el plural para los demás valores.
 
 `time in picosecond` expresa la coordenada total; `picosecond from second in time` extrae la parte dentro del segundo. La segunda forma es válida aunque el formato visible no incluya picosegundos.
 
@@ -1035,7 +1404,7 @@ Las entradas de `through` son referencias a acciones, no llamadas concretas. La 
 1. Dentro de `()` o `[]`.
 2. Después de `,`.
 3. Después de un operador binario o asignación incompletos.
-4. Después de `:`, `:=`, `->` o `.` cuando falta su operando o miembro.
+4. Después de `:`, `:=`, `->`, `-->`, `.` o `~` cuando falta su operando o miembro.
 5. Después de `using`, `as`, `for`, `on`, `given`, `when`, `if`, `then`, `after`, `otherwise`, `to`, `in`, `through`, `by`, `from`, `over`, `root` o `point` cuando la producción exige contenido.
 6. Dentro de una cabecera que, según la EBNF, no puede terminar todavía.
 7. Dentro de un literal o comentario multilínea.
@@ -1112,20 +1481,3 @@ Los componentes y campos derivados pertenecen al tipo nominal del alias. Una est
 ```
 
 El contexto de tipo también puede construir el alias sin `to`. El compilador no busca aliases candidatos a partir del nombre del miembro.
-
-
-## Integración sintáctica de D-085
-
-Las reglas de esta sección sustituyen cualquier ejemplo anterior incompatible del capítulo.
-
-- `subaction` comparte la firma y el cuerpo de `action`, pero no es una raíz pública.
-- `->` y `-->` forman cadenas de tipo asociativas a la derecha; cada especificación de colección pertenece a la flecha inmediatamente anterior.
-- `(A, B)` y `(a: A, b: B)` son tipos producto estructurales anónimos.
-- `a -> b` es una asociación exacta y `selector --> resultado` una rama decisional. `_` es el fallback y `value` el parámetro contextual de rama.
-- `not in` es una comparación no encadenable.
-- `element~metadata` es un acceso postfix y puede ser asignable cuando el metadato lo permita. La forma `element.~metadata` es inválida.
-- `name =` y `anchor{...}` quedan retirados; se usan `~name =` y `{expression~anchor}`.
-- La cardinalidad omitida se conserva en la AST y se elabora según el contexto del campo almacenado.
-- `start with` contiene exactamente las secciones `things { ... }` y `rules { ... }`; cada una recibe expresiones de contribución separadas por comas.
-
-La validación contextual rechaza `mut` en un decisional, iteración directa de decisionales, colecciones anidadas en `start with`, metadatos no admitidos por el propietario y escrituras de metadatos inmutables.

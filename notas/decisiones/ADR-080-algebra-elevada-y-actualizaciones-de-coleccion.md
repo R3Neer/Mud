@@ -14,6 +14,8 @@ affects:
 
 # ADR-080 — Álgebra elevada y actualizaciones de colección
 
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+
 - Modifica: [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[ADR-057-gramatica-concreta-y-continuacion|D-057]].
 - Preguntas relacionadas: [[notas/preguntas/Q-006-conflictos|Q-006]] y [[notas/preguntas/Q-019-numeros|Q-019]].
 

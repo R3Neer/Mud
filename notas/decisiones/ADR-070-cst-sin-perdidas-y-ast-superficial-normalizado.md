@@ -12,6 +12,8 @@ affects:
 
 # ADR-070 — CST sin pérdidas y AST superficial normalizado
 
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+
 ## Estado
 
 Vigente.

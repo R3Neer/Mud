@@ -27,6 +27,7 @@ decisions:
   - D-081
   - D-082
   - D-085
+  - D-086
 ---
 
 # 06. Estructura léxica
@@ -76,20 +77,20 @@ Las palabras reservadas no pueden usarse como identificadores. El catálogo norm
 ```text
 using
 thing as alias family magnitude
-rule action look message test
+rule action subaction look message test
 for on given when changes if then after with otherwise
 mut unique ordered
 create destroy add to remove from each by take
 eventually through allowed old
-is in
+is iis in
 not and or xor
 exists forall count sum min max
-true false empty all
-Text Char Bool Thing Nat Int Num Rum Money
-Rand
+true false empty all _
+Text Char Bool Thing Any Nat Int Num Rum Money
+Name MudPath Anchor MudFile Rand
 ```
 
-Los terminales `&`, `|`, `^`, `--`, `=>` y `<=>` no son palabras. También son tokens indivisibles `|=`, `&=`, `^=` y `--=`. `!` aislado no pertenece al léxico; `!=` continúa siendo un token indivisible de desigualdad y no se interpreta como la composición de negación y asignación.
+Los terminales `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>` y `<=>` no son palabras. `-->` se reconoce por coincidencia más larga antes que `--` y `->`. También son tokens indivisibles `|=`, `&=`, `^=` y `--=`. `!` aislado no pertenece al léxico; `!=` continúa siendo un token indivisible de desigualdad y no se interpreta como la composición de negación y asignación.
 
 El scanner aplica coincidencia más larga: `a--b` contiene el operador `--`, mientras que `a - -b` contiene resta y negación separadas. La forma parentizada `a - (-b)` es equivalente a esta última.
 
@@ -98,9 +99,10 @@ Son contextuales:
 - `abstract` delante de `thing`.
 - `always` delante de `rule`.
 - `start` como parte de `start with`.
-- `name` delante de `=` dentro del cuerpo de una `thing` y en las etiquetas declarativas que lo admiten.
-- `name`, `plural`, `abbreviation`, `prefixes`, `format`, `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
-- `anchor` inmediatamente antes de `{` dentro de una plantilla `Text`.
+- `things` y `rules` como etiquetas obligatorias de sus secciones de `start with`.
+- `value` dentro de los selectores y resultados de ramas funcionales `-->`.
+- `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` y `format` después de `~` en las posiciones admitidas.
+- `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
 - `Interval` inmediatamente después de una referencia de tipo dentro de `interval-type`.
 
 Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador no puede usar esta flexibilidad para aceptar una palabra reservada dura como nombre.
@@ -380,13 +382,38 @@ En una misma posición se intenta:
 
 Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se excluyen del flujo significativo, pero se conservan como trivia en el flujo completo; `NEWLINE` se conserva como token significativo para decidir terminación.
 
-Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes, después `anchor{` y `{`, y por último el fragmento literal más largo posible. Dentro de una interpolación vuelve a aplicarse la prioridad ordinaria.
+Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes, después `{` y por último el fragmento literal más largo posible. Dentro de una interpolación vuelve a aplicarse la prioridad ordinaria. La secuencia `anchor{` no posee tratamiento léxico especial.
 
 
-## Revisión léxica por D-085
+## Palabras y tokens añadidos
 
-`subaction` es palabra reservada. `Any`, `Name`, `MudPath`, `Anchor` y `MudFile` son nombres incorporados reservados. `value`, `things`, `rules`, `path` y `file` son contextuales en sus producciones propias. `_` es el fallback reservado de una rama decisional.
+`subaction` es palabra reservada. `Any`, `Name`, `MudPath`, `Anchor` y `MudFile` son nombres incorporados reservados. `value`, `things`, `rules`, `path` y `file` son contextuales en sus producciones propias. `_` es el fallback reservado de una rama funcional.
 
-El scanner reconoce `-->` mediante coincidencia más larga antes que `--` y `->`. `~` es un token postfix independiente. `not in` conserva dos tokens de palabra y el parser lo agrupa como una sola comparación.
+`iis` es palabra operadora reservada. `not in` e `iis not` conservan dos tokens de palabra; el parser agrupa cada pareja dentro de una comparación no encadenable.
 
-Las plantillas solo abren interpolaciones ordinarias `{...}`. La forma especial `anchor{...}` y `ANCHOR_INTERPOLATION_START` dejan de pertenecer al lenguaje. Un ancla se escribe como expresión ordinaria: `"{value~anchor}"`.
+```mud
+value not in domain
+value iis PersonId
+value iis not PersonId
+```
+
+El scanner reconoce `-->` mediante coincidencia más larga antes que `--` y `->`:
+
+```mud
+selector --> result
+key -> value
+left -- right
+```
+
+`~` es un token postfix independiente:
+
+```mud
+value~name
+value~anchor
+```
+
+Las plantillas solo abren interpolaciones ordinarias `{...}`. La forma especial `anchor{...}` y `ANCHOR_INTERPOLATION_START` no pertenecen al lenguaje. Un ancla se interpola mediante una expresión ordinaria:
+
+```mud
+"Rule: {CanRecruit~anchor}"
+```

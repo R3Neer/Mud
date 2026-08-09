@@ -14,6 +14,8 @@ decisions:
   - D-025
   - D-027
   - D-055
+  - D-085
+  - D-086
 ---
 
 # 02. Terminología
@@ -34,6 +36,8 @@ El contenido normativo todavía no ha sido redactado.
 - Declaración, símbolo, nombre y ancla.
 - `Thing` declarada, `thing` creada durante la ejecución, identidad y valor.
 - Campo, relación y colección.
+- Diccionario exacto, diccionario funcional, asociación, rama, selector y fallback.
+- Unión de tipos, flecha exterior, pertenencia nominal, tipo nominal exacto e igualdad de valores.
 - Participante, rol, vinculación y valor proporcionado.
 - Regla consultable, regla reactiva y regla `always`.
 - Acción, test, aserción, diagnóstico `otherwise`, `look`, `message`, solicitud, observación, ocurrencia, raíz, onda y resolución.

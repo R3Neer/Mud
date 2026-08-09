@@ -31,6 +31,7 @@ decisions:
   - D-082
   - D-084
   - D-085
+  - D-086
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -116,7 +117,7 @@ Written(span)
 Synthetic(basis, reason)
 ```
 
-`Written` indica una región concreta. `Synthetic` se usa para elementos introducidos por normalización, como una cardinalidad omitida que se convierte en `[1..1]`.
+`Written` indica una región concreta. `Synthetic` se usa para elementos realmente introducidos por normalización. Una cardinalidad omitida no se convierte en `[1..1]` en el AST superficial: conserva `OmittedCardinality` y la elaboración decide su forma según el propietario y el inicializador.
 
 Las posiciones:
 
@@ -178,16 +179,16 @@ No se representa mediante enteros ni strings.
 Una `ThingDecl` contiene:
 
 - `isAbstract`.
-- Nombre.
+- Nombre nominal fuente.
 - Antecesores directos en orden fuente.
-- Sobrescritura opcional del `name` intrínseco, ya decodificada.
+- Asignaciones de metadatos como `~name`.
 - Campos.
 
 El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prioridad semántica no elimina su valor como procedencia, formato y diagnóstico.
 
 El AST superficial conserva un `Thing` escrito explícitamente en `as`. La resolución posterior lo normaliza como redundancia de la raíz efectiva y el tooling ofrece retirarlo; el formatter no lo elimina silenciosamente.
 
-El cuerpo contiene como máximo una sobrescritura `name = "literal"` y los campos. El `name` intrínseco no se convierte en campo, no se hereda y no forma parte del store.
+El cuerpo contiene asignaciones de metadatos y campos. `MetadataAssignment` conserva nombre y expresión sin fabricar una propiedad intrínseca especial. Los metadatos se resuelven y tipan por categoría de propietario; no se convierten en campos ordinarios.
 
 ## Campos
 
@@ -338,7 +339,7 @@ Los literales estructurales siguen siendo contextuales. `PositionalStructuralLit
 
 Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas.
 
-Cada `FamilyMember` conserva una sobrescritura opcional del `name` intrínseco y asignaciones a datos almacenados. Un bloque omitido produce sobrescritura ausente y secuencia vacía.
+Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. Un bloque omitido produce ambas secuencias vacías. Los metadatos no se confunden con datos de la familia.
 
 ## Magnitudes
 
@@ -368,19 +369,19 @@ Una unidad raíz y una alternativa son variantes diferentes porque la segunda po
 Las propiedades se normalizan a una estructura fija:
 
 - Identificador `lowerCamel` obligatorio en la declaración.
-- `name` opcional.
-- `plural` opcional.
-- `abbreviation` opcional.
-- Política de prefijos.
+- Metadato `~name` opcional.
+- Metadato `~plural` opcional.
+- Metadato `~abbreviation` opcional.
+- Política declarada mediante `~prefixes`.
 
 La ausencia de `plural` se conserva; no se sintetiza en el AST superficial.
 
 La política de prefijos es:
 
-- Propiedad omitida → `NoPrefixes`.
-- `prefixes = empty` → `NoPrefixes`.
-- `prefixes = all` → `AllPrefixes`.
-- `prefixes = [p1, ...]` → `SelectedPrefixes`.
+- Metadato omitido → `NoPrefixes`.
+- `~prefixes = empty` → `NoPrefixes`.
+- `~prefixes = all` → `AllPrefixes`.
+- `~prefixes = [p1, ...]` → `SelectedPrefixes`.
 
 Las propiedades duplicadas se rechazan antes de construir el AST. Un cuerpo vacío es válido y produce metadatos ausentes con `NoPrefixes`.
 
@@ -734,18 +735,91 @@ Una implementación conforme del AST superficial debe:
 `thing A`, `thing A;` y `thing A {}` producen el mismo `ThingDecl` con cero campos y sin sobrescritura intrínseca. La CST conserva el cuerpo y el terminador escritos; el AST no fabrica un nodo de cuerpo vacío.
 
 
-## Integración abstracta de D-085
+## Ejemplos fuente → AST
 
-El AST superficial conserva desde esta revisión:
+```mud
+A -> B -> C
+```
 
-- la clase pública o auxiliar de cada acción;
-- tipos separados de diccionario exacto y decisional;
-- modo `FirstMatch` o `AllMatches` del decisional;
-- productos anónimos posicionales y nombrados;
-- asociaciones exactas, ramas decisionales y fallback;
-- accesos postfix a metadatos;
-- `NotMembership`;
-- cardinalidad escrita u omitida;
-- contribuciones separadas de `things` y `rules` en `start with`.
+se normaliza como `ExactDictionaryType(A, ExactDictionaryType(B, C))`.
 
-Desaparecen `intrinsic_name_override` y `AnchorInterpolation`. La resolución añade anclas de rama, dependencias externas, cardinalidad derivada, evidencia de terminación y procedencia de la cardinalidad inferida.
+```mud
+value iis not PersonId
+```
+
+produce `ExactTypeTestExpr(value, PersonId, Enabled)`.
+
+```mud
+"{value~anchor}"
+```
+
+produce `TextTemplateExpr([ValueInterpolation(MetadataAccessExpr(value, anchor))])`.
+
+```mud
+values: Nat = [1, 2, 3]
+```
+
+conserva `OmittedCardinality` en el AST superficial y adquiere `[3]` únicamente durante la elaboración del campo.
+
+```mud
+start with { things { all } rules { empty } }
+```
+
+produce `StartSet(things=[AllLiteral], rules=[EmptyLiteral])`.
+
+## Tipos producto y tipos de diccionario
+
+`PositionalProductType` y `NamedProductType` conservan los componentes de los productos estructurales anónimos. `ExactDictionaryType` y `DecisionDictionaryType` representan respectivamente los diccionarios exactos y los diccionarios funcionales definidos por ramas. El nombre mecánico `Decision` se conserva por estabilidad del esquema.
+
+Una cadena se pliega por la derecha:
+
+```text
+A -> B [2] --> C [3 ordered]
+```
+
+produce conceptualmente:
+
+```text
+ExactDictionaryType(
+    A,
+    DecisionDictionaryType(B, C, FirstMatch, [3]),
+    [2]
+)
+```
+
+La validación posterior a la resolución rechaza una flecha como alternativa parcial de una unión, incluso cuando aparece a través de un alias.
+
+## Cardinalidad omitida
+
+`CollectionSpec` conserva `WrittenCardinality` u `OmittedCardinality`. Para:
+
+```mud
+values: Nat = [1, 2, 3]
+```
+
+el AST superficial conserva la omisión. La elaboración de un campo almacenado inmutable infiere después `[3]` y registra `InferredFromInitializer`; no fabrica esa información durante el parsing.
+
+## Comparaciones nominales
+
+`is` continúa representándose mediante la comparación nominal transitiva. `iis` produce un nodo propio porque su narrowing es distinto:
+
+```text
+ExactTypeTestExpr(value, PersonId, negated=Disabled)
+ExactTypeTestExpr(value, PersonId, negated=Enabled)
+```
+
+La segunda forma corresponde a `value iis not PersonId`. La resolución exige que el operando derecho sea un tipo nominal.
+
+## Operaciones conjuntistas de diccionarios
+
+El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la categoría exacta depende de los tipos resueltos. La elaboración los especializa como operación de diccionario exacto o funcional. Una operación funcional conserva sus operandos; no crea una lista nueva de ramas.
+
+## Metadatos, texto y activación
+
+`element~metadata` produce `MetadataAccessExpr` o `MetadataSuffix` en un destino asignable. Toda interpolación produce `ValueInterpolation`, incluida:
+
+```mud
+"{value~anchor}"
+```
+
+No existe `AnchorInterpolation`. `start with` produce `StartSet(things, rules)` y mantiene ambas contribuciones separadas. `ActionDecl` conserva `PublicAction` o `Subaction`.

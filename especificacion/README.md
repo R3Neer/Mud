@@ -281,7 +281,7 @@ Define:
 - Colecciones, productos estructurales, diccionarios exactos y diccionarios decisionales.
 - Intervalos.
 - Magnitudes.
-- Subtipado mediante `is`.
+- Pertenencia nominal mediante `is`, identidad nominal exacta mediante `iis` y narrowing positivo y negativo.
 - Inferencia y ampliación de representaciones en operaciones cuantitativas.
 - Dos familias explícitas de `to`: conversión cuantitativa y casting nominal estructural.
 - Redondeo global al más cercano con empates al par.
@@ -409,8 +409,8 @@ Define:
 - Materialización de entradas.
 - Iteración por claves y entradas.
 - Orden canónico.
-- Operaciones totales.
-- Diccionarios decisionales `-->`, modos `FirstMatch` y `AllMatches`, fallback, pureza, dependencias y terminación.
+- Operaciones totales y aritmética conjuntista de exactos por dominio de claves, con precedencia izquierda, orden, `unique` e inferencia cardinal.
+- Diccionarios funcionales `-->`, modos `FirstMatch` y `AllMatches`, fallback, pureza, dependencias, terminación y aritmética extensional punto a punto.
 
 Bases normativas migradas: [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
@@ -472,8 +472,8 @@ Define:
 - Literales racionales exactos, literales `Rum` prefijados con `r` y acceso.
 - Llamadas a reglas.
 - Receptores multiparte.
-- Operadores.
-- Precedencia y asociatividad.
+- Operadores, incluidos `not in`, `iis`, `iis not` y la aritmética de diccionarios.
+- Precedencia y asociatividad, incluidas las flechas exteriores de tipo.
 - Conversiones.
 - Distinción entre presentación en otra unidad mediante `in`, conversión cuantitativa y casting nominal mediante `to`.
 - Construcción contextual de literales de alias.
@@ -1121,15 +1121,17 @@ MUD 1.0 estará formalmente especificado cuando:
 La especialización de aliases, los cuerpos vacíos omitibles de `thing`, los campos derivados de alias y las vistas derivadas con capacidad interior se fijan en [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]].
 
 
-## Integración transversal de D-085
+## Contratos transversales de diccionarios y metadatos
 
-[[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] modifica los contratos de los capítulos futuros 10 a 20, 24, 26, 32, 34 y 38:
+[[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] modifican los contratos de los capítulos futuros 10 a 20, 24, 26, 32, 34, 38, 40, 41, 44 y 47:
 
 - `Any` es el tipo superior no enumerable de todos los valores y no posee predeterminado universal.
-- Los productos estructurales anónimos y las flechas `->`/`-->` forman tipos completos asociativos a la derecha.
-- Los diccionarios exactos devuelven `empty` ante clave ausente; los decisionales distinguen `FirstMatch` y `AllMatches`, ramas puras, fallback, dependencias y terminación demostrable.
+- Los productos estructurales anónimos y las flechas `->`/`-->` forman tipos completos asociativos a la derecha; una flecha no puede ocultarse como alternativa parcial de una unión.
+- `is` comprueba pertenencia nominal transitiva; `iis` y `iis not` comprueban y niegan identidad nominal exacta con narrowing propio.
+- Los diccionarios exactos devuelven `empty` ante clave ausente y su álgebra opera sobre claves con precedencia izquierda.
+- Los diccionarios funcionales distinguen `FirstMatch` y `AllMatches`; su álgebra combina extensionalmente resultados sobre una misma entrada e instantánea sin fusionar ramas.
 - La cardinalidad omitida de un campo almacenado inmutable con inicializador se infiere exactamente.
-- `start with` separa contribuciones de `things` y `rules`.
+- `start with` separa contribuciones de `things` y `rules`; `Thing` permanece siempre efectiva.
 - `subaction` queda fuera de la API raíz y comparte la atomicidad de la acción exterior.
-- `~name`, `~path`, `~anchor`, `~file` y los metadatos de unidades sustituyen las excepciones `.name`, `name =` y `anchor{...}`.
-- El grafo registra anclas de rama, lecturas de metadatos, llamadas decisionales y evidencia de terminación.
+- `~name`, `~path`, `~anchor`, `~file` y los metadatos de unidades sustituyen `.name`, `name =` y `anchor{...}`.
+- El grafo registra anclas de rama, lecturas de metadatos, operaciones funcionales, dependencias combinadas y evidencia de terminación.

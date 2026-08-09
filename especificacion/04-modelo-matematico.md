@@ -25,6 +25,8 @@ decisions:
   - D-055
   - D-068
   - D-077
+  - D-085
+  - D-086
 ---
 
 # 04. Modelo matemático del mundo
@@ -76,30 +78,49 @@ Las decisiones aceptadas fijan:
 8. Cada `thing` concreta posee estado independiente.
 9. `create Nombre` solo activa una `thing` o regla definida; no admite categoría, antecesoras ni cuerpo.
 10. Si la identidad canónica está ausente, `create` la activa; tras destruirla, una creación posterior reactiva la misma identidad, descriptor y carga.
-11. Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio.
-12. `as` introduce especialización directa; `is` queda reservado para consultar su clausura reflexiva y transitiva.
+11. Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio salvo que una decisión lo excluya expresamente. `Any` no posee predeterminado universal y un campo almacenado de tipo `Any` debe escribir inicializador.
+12. `as` introduce especialización directa; `is` consulta su clausura reflexiva y transitiva; `iis` y `iis not` consultan o excluyen exclusivamente el tipo nominal efectivo indicado.
 13. Una regla que contiene `create A` solo se ejecuta si la identidad canónica `A` está ausente.
 14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
 15. Una colección de `thing` exige siempre membresía estricta: $c\neq T\land c\ \mathsf{is}\ T$. No existe `reflexive`.
 16. `destroy` solo confirma una retirada si todas las cardinalidades y dominios resultantes son válidos; en otro caso produce `failed` y rollback.
 17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes.
 18. `remove` sobre una propiedad elimina su declaración y carga almacenadas, a diferencia de la suspensión reversible producida por `destroy`.
-19. Una única declaración global `start with` determina un conjunto finito y no ordenado de `thing` y reglas inicialmente activas.
-20. `start with` contiene referencias separadas por comas sin coma final y no admite instrucciones ni efectos.
-21. Las definiciones no están activas por defecto; si se omite `start with`, el conjunto inicial de declaraciones con ciclo de vida está vacío.
+19. Una única declaración global `start with` determina por separado contribuciones finitas y no ordenadas de `thing` y reglas inicialmente activas mediante las secciones `things { ... }` y `rules { ... }`.
+20. Cada contribución es una expresión estática que produce una declaración o una colección plana de declaraciones de la categoría correspondiente; no admite instrucciones, efectos ni colecciones anidadas.
+21. Si se omite `start with`, ambas contribuciones están vacías. `Thing` continúa siempre efectiva y no forma parte de la colección activable ni del resultado de `all`.
 22. Cada test construye un mundo fresco y aislado cuyo `start with` local sustituye al global.
 23. Los tests no son declaraciones activables ni forman parte del mundo o de su API pública.
 24. El mundo construido para un test y todas sus salidas se descartan al terminar su ejecución.
 25. `Thing` es una `thing` abstracta incorporada, siempre efectiva y superior a toda `thing` mediante `is`.
 26. Una raíz sin `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
 27. `Thing` no posee estado concreto ni ciclo de vida controlable por el programa.
-28. Toda `thing` posee un `name: Text` intrínseco, inmutable y local a su descriptor.
-29. El `name` predeterminado es el nombre nominal no cualificado y una sobrescritura no se hereda.
-30. La identidad y el ancla no dependen de `name`; varias `thing` pueden compartir la misma presentación.
+28. Las declaraciones y valores que admiten presentación exponen metadatos postfix tipados; `~name` tiene tipo `Name`, mientras `~path`, `~anchor` y `~file` describen procedencia e identidad.
+29. El valor inicial de `~name` deriva del nombre nominal no cualificado cuando la categoría lo define; puede escribirse o modificarse únicamente donde su contrato de metadatos lo permita y no se hereda como identidad.
+30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. `~path`, `~anchor` y `~file` son inmutables desde MUD.
 31. Una relación inmutable conserva latentemente una identidad retirada y la restaura con `create`; una relación `mut` elimina esa pertenencia almacenada.
 32. Ningún estado confirmado contiene una colección cuya cardinalidad efectiva contradiga su declaración.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]] y [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]].
+Ejemplo de las distinciones confirmadas:
+
+```mud
+thing Alexandria as City {
+    ~name = "Alejandría"
+}
+
+start with {
+    things { Alexandria }
+    rules { empty }
+}
+
+rule ExactIdentifier given value: Identifier {
+    value iis PersonId
+}
+```
+
+`Alexandria is City` consulta especialización, `value iis PersonId` exige el tipo nominal efectivo exacto y `Alexandria == Alexandria` compara identidad de valor. Ninguna de esas relaciones depende de `Alexandria~name`.
+
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]], [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]].
 
 ## Próximo desarrollo
 

@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-076 — Unidades nombradas, prefijos y escritura adyacente
 
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+
 ## Decisión
 
 Toda unidad declara un identificador `lowerCamel` que participa en su ancla. `name`, `plural` y `abbreviation` son metadatos `Text` opcionales; `name` es intrínseco y adopta el identificador cuando no se sobrescribe.

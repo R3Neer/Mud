@@ -513,6 +513,9 @@ module MUDSurface {
          | ComparisonChainExpr(expr first,
                                comparison_link first_comparison,
                                comparison_link* remaining_comparisons)
+         | ExactTypeTestExpr(expr value,
+                             type_ref tested_type,
+                             flag negated)
          | ConversionExpr(expr value, conversion_target target)
          | MemberAccessExpr(expr receiver, identifier_name member)
          | MetadataAccessExpr(expr receiver, metadata_name metadata)
@@ -537,7 +540,6 @@ module MUDSurface {
 
     text_part = TextFragment(string decoded_text)
               | ValueInterpolation(expr value, numeric_text_format? format)
-              | AnchorInterpolation(expr designator)
         attributes (source_origin origin)
 
     numeric_text_format = NumericTextFormat(int? minimum_integer_width,

@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-057 — Gramática concreta, precedencia y continuación
 
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
 - Modificada además por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Modificada también por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]

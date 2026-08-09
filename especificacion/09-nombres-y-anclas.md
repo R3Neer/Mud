@@ -18,6 +18,7 @@ decisions:
   - D-072
   - D-078
   - D-085
+  - D-086
 ---
 # 09. Nombres, paths y anclas
 
@@ -187,8 +188,58 @@ Las declaraciones `alias` pueden aportar aristas de especialización. El grafo n
 
 ## Metadatos nominales y de procedencia
 
-D-085 separa los nombres fuente de los metadatos postfix. `~anchor`, `~path` y `~file` son valores tipados e inmutables; `~name` es la presentación mutable admitida por cada categoría. El cambio de `~name` no altera resolución, igualdad, path ni ancla.
+Los nombres fuente y los metadatos postfix son entidades distintas:
 
-Las ramas de un diccionario decisional reciben anclas estables subordinadas al ancla del diccionario, con un segmento propio de rama que no depende de su posición fuente. Las operaciones semánticas de creación, actualización, retirada y movimiento se dirigen a esas anclas.
+```mud
+thing Alexandria as City {
+    ~name = "Alejandría"
+}
+```
 
-La interpolación de una ancla usa una expresión ordinaria `"{value~anchor}"`. `anchor{...}` deja de existir. Sobre `MudPath`, `p in q` compara segmentos completos y es reflexivo.
+`Alexandria` forma parte de la resolución nominal. `Alexandria~name` es una presentación de tipo `Name`; cambiarla no altera igualdad, path ni ancla. `~path`, `~anchor` y `~file` son valores tipados e inmutables. `~file` puede leerse, pero una dependencia que altere comportamiento del mundo produce una advertencia por fragilidad física.
+
+```mud
+"{Alexandria~name} — {Alexandria~anchor}"
+```
+
+La interpolación usa una expresión ordinaria. `anchor{...}` no pertenece al lenguaje.
+
+## Matriz de metadatos
+
+`~name` identifica presentación; `~path`, `~anchor` y `~file`, procedencia e identidad pública. Una escritura runtime de `~name` requiere capacidad sobre el propietario y participa en la misma transacción atómica que los campos. Los otros tres metadatos nunca son destinos asignables.
+
+Un alias nominal y un miembro de `family` conservan `~name` en estado nominal separado de su payload inmutable o de sus datos asociados:
+
+```mud
+alias PersonId := Nat
+family Color { Red, Green, Blue }
+
+action RenameId for mut id: PersonId {
+    then id~name = "identifier"
+}
+```
+
+El ejemplo expresa el contrato de metadato; no convierte el valor numérico subyacente ni el miembro de familia en mutable.
+
+`~file` puede sostener observabilidad y logging. Cuando entra en un selector, condición, cálculo o efecto que altera comportamiento, el compilador emite `fragile-file-metadata-dependency` sin rechazar el programa.
+
+## Anclas de ramas funcionales
+
+Cada rama de un diccionario funcional recibe una ancla estable subordinada al ancla del diccionario. Su segmento propio no depende del ordinal fuente; mover una rama cambia su posición en un `FirstMatch`, pero no su identidad. El operador semántico puede dirigir `CREATE`, `UPDATE`, `REMOVE` y `MOVE` a esa ancla.
+
+Las operaciones conjuntistas de funcionales no crean ni fusionan anclas de rama: el nodo compuesto conserva referencias a ambos operandos y su grafo de dependencias es la unión transitiva de los dos.
+
+## Pertenencia de paths
+
+Sobre `MudPath`, `p in q` es reflexivo y compara segmentos completos:
+
+```mud
+world.combat in world.combat                  # true
+world.combat.melee in world.combat            # true
+world.combatant in world.combat                # false
+world.trade not in world.combat                # true
+```
+
+## Identidad nominal exacta
+
+`is` consulta la clausura de especialización; `iis` compara el tipo nominal efectivo exacto. El narrowing de `iis not` elimina una única posibilidad nominal y no elimina sus especializaciones. Esta distinción no crea anclas nuevas ni sustituye la igualdad de identidades singleton mediante `==`.

@@ -22,6 +22,7 @@ decisions:
   - D-070
   - D-078
   - D-085
+  - D-086
 ---
 
 # 05. Texto fuente y estructura física
@@ -138,4 +139,18 @@ El fin de archivo puede actuar como cierre de un comentario de línea o de un li
 ## Organización editorial recomendada
 
 > [!note] MUD-SRC-001 — Cohesión de dominio
-> Los archivos deberían agrupar conceptos, lugares, procesos o situaciones del mundo antes que categorías sintácticas. Un mismo `battle.mud` puede contener las `thing`, aliases, reglas, acciones, vistas y mensajes que explican conjuntamente una batalla. Esta recomendación no altera paths, resolución, anclas ni conformidad; una relación transversal puede ocupar un archivo propio cuando represente mejor el dominio.
+> Los archivos deberían agrupar conceptos, lugares, procesos o situaciones del mundo antes que categorías sintácticas. Esta recomendación no altera paths, resolución, anclas ni conformidad; una relación transversal puede ocupar un archivo propio cuando represente mejor el dominio.
+
+Por ejemplo:
+
+```text
+forest/
+├── wolves.mud
+└── weather.mud
+
+village/
+├── market.mud
+└── guards.mud
+```
+
+Un archivo `battle.mud` puede reunir las `thing`, aliases, diccionarios, reglas, acciones, `look` y `message` que explican conjuntamente una batalla. Separarlos únicamente porque pertenecen a categorías sintácticas distintas dificulta leer el mundo como una unidad conceptual.

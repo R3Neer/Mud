@@ -122,6 +122,7 @@ fixed_tokens:
 - spelling: '>='
 - spelling: '!='
 - spelling: is
+- spelling: iis
 - spelling: not
 - spelling: +
 - spelling: '-'
@@ -360,7 +361,7 @@ lexical_forms:
       \      | \"exists\" | \"forall\" | \"count\" | \"sum\" | \"min\" | \"max\""
     references: []
   operator-word:
-    rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"\
+    rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"\
       xor\""
     references: []
   builtin-word:
@@ -1329,9 +1330,9 @@ syntax_nodes:
     - expression
   constant-expression:
     kind: ConstantExpressionSyntax
-    rhs: expression
+    rhs: value-expression
     references:
-    - expression
+    - value-expression
   domain-expression:
     kind: DomainExpressionSyntax
     rhs: expression
@@ -1437,7 +1438,7 @@ syntax_nodes:
     references: []
   nonchainable-comparison:
     kind: NonchainableComparisonSyntax
-    rhs: '"!=" | "is" , [ "not" ] | membership-in'
+    rhs: '"!=" | "is" , [ "not" ] | "iis" , [ "not" ] | membership-in'
     references:
     - membership-in
   membership-in:

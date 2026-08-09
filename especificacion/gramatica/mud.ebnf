@@ -698,7 +698,7 @@ text-expression
     ::= expression ;
 
 constant-expression
-    ::= expression ;
+    ::= value-expression ;
 
 domain-expression
     ::= expression ;
@@ -769,7 +769,11 @@ chainable-comparison
     ::= "==" | "<" | "<=" | ">" | ">=" ;
 
 nonchainable-comparison
-    ::= "!=" | "is" , [ "not" ] | membership-in ;
+    ::= "!="
+      | "is" , [ "not" ]
+      | "iis" , [ "not" ]
+      | membership-in
+      ;
 
 membership-in
     ::= "in" | "not" , "in" ;
