@@ -44,10 +44,23 @@ El primer procesamiento descubrió dos incompatibilidades ya corregidas:
 - la descarga del artifact usa `redirect: manual`, único modo de rechazo
   explícito compatible con Workers, y falla si la URL firmada vuelve a redirigir.
 
+Después se detectó que `git diff` omitía archivos nuevos. El harness genera
+ahora la evidencia completa mediante un índice Git temporal; la ejecución
+`remote-e2e-20260810-04`, run `31431845357`, produjo un patch de 221 bytes con
+la ruta creada. Esa ejecución tardó 91,1 segundos porque instalar PyYAML desde
+la red consumió 32 segundos.
+
+El workflow instala ahora el wheel fijado
+`pyyaml-6.0.3-cp313-cp313-win_amd64.whl` después de verificar SHA-256 y sin
+acceso a índice. La ejecución `remote-e2e-20260810-05`, run `31432380172`,
+terminó en D1 en 59,2 segundos y volvió a entregar exactamente 377 bytes con
+SHA-256 `77ca23adf7a98335b046ff579615cf44f30225438d6513f80328a446d50f486a`.
+
 La ingestión se reanudó sobre el mismo artifact sin lanzar otro runner, lo que
 verifica la recuperación idempotente de este tramo.
 
-Quedan nueve verdes, candidata roja, corrección, duplicados y carreras antes de
+El run 03 no cuenta para el corte porque permitió descubrir que su diff estaba
+incompleto. Quedan ocho verdes, candidata roja, corrección, duplicados y carreras antes de
 cumplir el criterio de corte. La credencial debe rotarse antes de su caducidad.
 
 ## Verificación local

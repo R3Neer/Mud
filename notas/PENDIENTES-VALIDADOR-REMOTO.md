@@ -130,7 +130,7 @@ No se incorporará facturación ni credenciales de la API de OpenAI hasta que P1
 
 ### P7 — E2E y latencia
 
-Estado: **en curso; 1/10 verdes**.
+Estado: **en curso; 2/10 verdes que cumplen el contrato vigente**.
 
 Primer verde real, 2026-08-10:
 
@@ -149,11 +149,34 @@ El retraso hasta `completed_at` de D1 en esta ejecución no representa el camino
 normal: se empleó en diagnosticar y corregir la ingestión del primer artifact.
 La solicitud se reanudó de forma idempotente sin ejecutar otro runner.
 
+Este primer verde funcional no se cuenta entre los diez de corte: reveló que el
+diff de Git no incluía archivos nuevos sin seguimiento. Los snapshots y la
+reproducibilidad sí eran correctos, pero la evidencia `applied.patch` estaba
+incompleta.
+
+Verdes con el contrato completo:
+
+| Request | Run | Estado D1 | Evidencia | Latencia D1 |
+| --- | ---: | --- | --- | ---: |
+| `remote-e2e-20260810-04` | `31431845357` | `succeeded` | diff completo, 221 bytes | 91,1 s |
+| `remote-e2e-20260810-05` | `31432380172` | `succeeded` | diff completo y ZIP exacto | 59,2 s |
+
+La ejecución 04 descargó PyYAML desde PyPI y dedicó 32 segundos a esa operación.
+Desde la ejecución 05, el plano de control contiene el wheel Windows CPython
+3.13 de PyYAML 6.0.3, verifica su SHA-256 y lo instala con `--no-index`; esa
+instalación tardó 6 segundos. El ZIP entregado en la ejecución 05 conservó sus
+377 bytes y el SHA-256
+`77ca23adf7a98335b046ff579615cf44f30225438d6513f80328a446d50f486a`.
+
 Incidencias descubiertas y corregidas por este E2E:
 
 - el input `package_size` debe cruzar `workflow_dispatch` como cadena decimal;
 - Cloudflare Workers no admite `redirect: "error"`; la descarga firmada usa
   `manual` y rechaza explícitamente una segunda redirección.
+- el diff completo de archivos nuevos o ignorados se genera con un índice Git
+  temporal, sin modificar el índice físico del clon;
+- PyYAML se instala desde un wheel Windows 3.13 fijado y verificado, fuera de la
+  red del camino crítico.
 
 Antes del corte deben existir:
 
@@ -207,8 +230,8 @@ Desde el 2026-08-10 están implementados y versionados, sin cerrar P1–P6:
 - D1 y R2 reales creados, migración aplicada y Worker desplegado.
 
 El workflow está publicado y el Worker dispone de una credencial fine-grained
-limitada a `R3Neer/Mud` y Actions. El primer E2E verde está registrado en P7.
-Siguen abiertos P1–P6 y faltan nueve verdes, casos rojos y pruebas de carreras
+limitada a `R3Neer/Mud` y Actions. Los E2E están registrados en P7.
+Siguen abiertos P1–P6 y faltan ocho verdes, casos rojos y pruebas de carreras
 antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
 
 ## Trabajo autorizado mientras estos puntos siguen abiertos
