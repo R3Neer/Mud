@@ -60,7 +60,7 @@ jobs:
           python-version: "3.13"
       - name: Install pinned runtime dependency
         shell: pwsh
-        run: python -m pip install --disable-pip-version-check -r tooling/repo-patcher-validator/requirements.txt
+        run: tooling/repo-patcher-validator/Install-PinnedDependencies.ps1
       - name: Run validator tests
         shell: pwsh
         run: tooling/repo-patcher-validator/Test-RemoteWorkflow.ps1
@@ -156,7 +156,7 @@ jobs:
 
       - name: Install pinned runtime dependency
         shell: pwsh
-        run: python -m pip install --disable-pip-version-check -r control/tooling/repo-patcher-validator/requirements.txt
+        run: control/tooling/repo-patcher-validator/Install-PinnedDependencies.ps1
 
       - name: Download immutable candidate with OIDC
         shell: pwsh

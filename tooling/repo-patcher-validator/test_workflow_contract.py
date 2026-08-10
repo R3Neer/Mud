@@ -40,6 +40,19 @@ class RemoteWorkflowContractTests(unittest.TestCase):
         self.assertIsNotNone(match)
         self.assertIn("        type: string", match.group(1))
 
+    def test_windows_dependency_install_is_offline_and_hash_checked(self) -> None:
+        self.assertEqual(TEXT.count("Install-PinnedDependencies.ps1"), 2)
+        installer = (
+            WORKFLOW.parent.parent.parent
+            / "tooling"
+            / "repo-patcher-validator"
+            / "Install-PinnedDependencies.ps1"
+        )
+        installer_text = installer.read_text(encoding="utf-8")
+        self.assertIn("Get-FileHash", installer_text)
+        self.assertIn("--no-index", installer_text)
+        self.assertIn("pyyaml-6.0.3-cp313-cp313-win_amd64.whl", installer_text)
+
     def test_control_and_target_are_distinct_exact_checkouts(self) -> None:
         block = job_block("validate")
         self.assertIn("ref: ${{ github.workflow_sha }}", block)
