@@ -130,6 +130,31 @@ No se incorporará facturación ni credenciales de la API de OpenAI hasta que P1
 
 ### P7 — E2E y latencia
 
+Estado: **en curso; 1/10 verdes**.
+
+Primer verde real, 2026-08-10:
+
+- `request_id`: `remote-e2e-20260810-03`;
+- run: `31430689484`;
+- `target_sha` y `control_sha`: `f56b69a460ffdb7c724376851b1d08d6410516cc`;
+- RepoPatcher: `0.2.0`;
+- paquete: 364 bytes, SHA-256
+  `97d68cfbbcddc5bdeea8b16d45649fe2332a58e903b9c38f7b6f49b762eee0dd`;
+- aceptación D1: `20:46:48Z`; workflow completado: `20:47:40Z`;
+- latencia del camino normal hasta el verde de Actions: aproximadamente 52 segundos;
+- el objeto entregado por el Worker volvió a medir 364 bytes y produjo el mismo
+  SHA-256.
+
+El retraso hasta `completed_at` de D1 en esta ejecución no representa el camino
+normal: se empleó en diagnosticar y corregir la ingestión del primer artifact.
+La solicitud se reanudó de forma idempotente sin ejecutar otro runner.
+
+Incidencias descubiertas y corregidas por este E2E:
+
+- el input `package_size` debe cruzar `workflow_dispatch` como cadena decimal;
+- Cloudflare Workers no admite `redirect: "error"`; la descarga firmada usa
+  `manual` y rechaza explícitamente una segunda redirección.
+
 Antes del corte deben existir:
 
 - candidata verde;
@@ -181,8 +206,10 @@ Desde el 2026-08-10 están implementados y versionados, sin cerrar P1–P6:
 - pruebas Python y pruebas Workers dentro de `workerd`;
 - D1 y R2 reales creados, migración aplicada y Worker desplegado.
 
-El primer E2E sigue bloqueado por la publicación del workflow y la credencial
-GitHub de Actions de alcance mínimo. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
+El workflow está publicado y el Worker dispone de una credencial fine-grained
+limitada a `R3Neer/Mud` y Actions. El primer E2E verde está registrado en P7.
+Siguen abiertos P1–P6 y faltan nueve verdes, casos rojos y pruebas de carreras
+antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
 
 ## Trabajo autorizado mientras estos puntos siguen abiertos
 

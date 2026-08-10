@@ -15,32 +15,40 @@ URL: https://mud-repo-patcher-validator.mud-repo-patcher-mcp-probe.workers.dev
 D1: 4522dc3f-483a-41ac-873c-b30eb73936cd (WEUR)
 R2 producción: mud-repo-patcher-validator
 R2 preview: mud-repo-patcher-validator-preview
-Versión Worker actual: d7c8a2b1-abc3-467d-939c-b36445df11a5
+Versión Worker actual: b0a7f1d8-bf58-4f1d-beb6-0c2ba6b35c22
 ```
 
 La migración `0001_initial.sql` está aplicada y `/health` respondió correctamente
 el 2026-08-10. `ADAPTER_TOKEN` está configurado; su copia de smoke solo está en
-TEMP y no se registra aquí. La variable GitHub `REPO_PATCHER_WORKER_URL` también
-está configurada con la URL anterior.
+TEMP y no se registra aquí. `GITHUB_DISPATCH_TOKEN` es fine-grained, está
+limitado a `R3Neer/Mud`, concede Actions de lectura/escritura y caduca el
+2027-08-10. La variable GitHub `REPO_PATCHER_WORKER_URL` también está
+configurada con la URL anterior.
 
-## Bloqueos para el primer E2E
+## Primer E2E verde
 
-1. Publicar en `main` el workflow y el control actualmente locales.
-2. Crear un token GitHub fine-grained limitado a `R3Neer/Mud`, permiso
-   **Actions: read and write**.
-3. Guardarlo sin imprimirlo:
+El 2026-08-10 se completó:
 
-   ```powershell
-   Set-Location tooling/repo-patcher-validator-worker
-   npx wrangler secret put GITHUB_DISPATCH_TOKEN
-   ```
+- request `remote-e2e-20260810-03`;
+- run `31430689484`;
+- SHA de control y target
+  `f56b69a460ffdb7c724376851b1d08d6410516cc`;
+- Actions terminó correctamente en unos 52 segundos desde la aceptación;
+- `result.json` declaró éxito y RepoPatcher `0.2.0`;
+- el ZIP almacenado y el descargado midieron 364 bytes y compartieron SHA-256
+  `97d68cfbbcddc5bdeea8b16d45649fe2332a58e903b9c38f7b6f49b762eee0dd`.
 
-4. Confirmar que el actor del token figura en `GITHUB_ALLOWED_ACTORS`.
-5. Hacer un dispatch verde controlado y verificar artifact, D1 y entrega exacta.
+El primer procesamiento descubrió dos incompatibilidades ya corregidas:
 
-No se reutiliza automáticamente el token configurado en `gh`: convertir una
-credencial local general en secreto de infraestructura requiere una decisión
-explícita.
+- `package_size` se declara y transmite como cadena decimal;
+- la descarga del artifact usa `redirect: manual`, único modo de rechazo
+  explícito compatible con Workers, y falla si la URL firmada vuelve a redirigir.
+
+La ingestión se reanudó sobre el mismo artifact sin lanzar otro runner, lo que
+verifica la recuperación idempotente de este tramo.
+
+Quedan nueve verdes, candidata roja, corrección, duplicados y carreras antes de
+cumplir el criterio de corte. La credencial debe rotarse antes de su caducidad.
 
 ## Verificación local
 
