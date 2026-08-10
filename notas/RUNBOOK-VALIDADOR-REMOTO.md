@@ -20,7 +20,8 @@ Versión Worker actual: d7c8a2b1-abc3-467d-939c-b36445df11a5
 
 La migración `0001_initial.sql` está aplicada y `/health` respondió correctamente
 el 2026-08-10. `ADAPTER_TOKEN` está configurado; su copia de smoke solo está en
-TEMP y no se registra aquí.
+TEMP y no se registra aquí. La variable GitHub `REPO_PATCHER_WORKER_URL` también
+está configurada con la URL anterior.
 
 ## Bloqueos para el primer E2E
 
@@ -34,14 +35,8 @@ TEMP y no se registra aquí.
    npx wrangler secret put GITHUB_DISPATCH_TOKEN
    ```
 
-4. Crear en GitHub la variable de repositorio:
-
-   ```text
-   REPO_PATCHER_WORKER_URL = https://mud-repo-patcher-validator.mud-repo-patcher-mcp-probe.workers.dev
-   ```
-
-5. Confirmar que el actor del token figura en `GITHUB_ALLOWED_ACTORS`.
-6. Hacer un dispatch verde controlado y verificar artifact, D1 y entrega exacta.
+4. Confirmar que el actor del token figura en `GITHUB_ALLOWED_ACTORS`.
+5. Hacer un dispatch verde controlado y verificar artifact, D1 y entrega exacta.
 
 No se reutiliza automáticamente el token configurado en `gh`: convertir una
 credencial local general en secreto de infraestructura requiere una decisión
