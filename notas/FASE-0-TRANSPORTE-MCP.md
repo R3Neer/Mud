@@ -96,6 +96,10 @@ ChatGPT solicitó confirmación manual para las operaciones de almacenamiento. E
 
 Se hizo después una prueba aislada de `probe_get_file` con el objeto conocido `local-base64-001k-1-1786383573760-998ac3a9e0e94`. ChatGPT pidió una confirmación manual antes de la única llamada, aunque la herramienta estaba anunciada como lectura y no invocó ninguna operación de almacenamiento. Tras aprobarla recuperó correctamente 1024 bytes con SHA-256 `8c6b6570692b82c082a00868c97c7e88e5fb7e44f33eb449d738c90bc9cc021b`.
 
+La prueba se repitió después desde la aplicación móvil con la política específica del complemento configurada en **Permitir todas las acciones**, cuya interfaz indica que ChatGPT no pedirá confirmación antes de leer o realizar acciones. Aun así, el cliente volvió a solicitar confirmación antes de `probe_get_file`. Tras aprobarla, devolvió otra vez los 1024 bytes y el mismo SHA-256. La captura de la configuración y el resultado del chat confirman que la excepción estaba seleccionada y que la llamada alcanzó el servidor.
+
+Esta observación demuestra que, al menos en esa ejecución móvil, la política más permisiva no eliminó la aprobación de una herramienta MCP de lectura. Falta repetir el mismo caso en ChatGPT web o escritorio para distinguir un comportamiento específico del cliente móvil de una limitación general de los complementos privados.
+
 Por tanto, las anotaciones correctas no bastan para evitar aprobaciones en este complemento privado de ChatGPT Plus. La confirmación observada pertenece a la política del cliente, no a una clasificación errónea del servidor.
 
 No se falsearán las anotaciones para intentar eludirla. El diseño estable todavía puede minimizar las operaciones: una única herramienta de envío por candidata; espera, evidencias y descarga serían lecturas. Sin embargo, mientras el cliente exija una aprobación incluso para cada lectura, este canal MCP no satisface por sí solo los requisitos de cero intervención por candidata ni de corrección automática mediante varias llamadas dentro de la misma interacción.
@@ -159,12 +163,12 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 
 ## Estado actual
 
-- Implementación local: completa; TypeScript compila, 16 pruebas unitarias pasan y la matriz MCP local obtuvo 24/24 transferencias exactas.
-- Empaquetado Wrangler: verificado mediante `wrangler deploy --dry-run` (1.020,37 KiB; gzip 177,94 KiB).
+- Implementación local: completa; TypeScript compila, 18 pruebas unitarias pasan y la matriz MCP local obtuvo 24/24 transferencias exactas.
+- Empaquetado Wrangler: verificado mediante `wrangler deploy --dry-run` (1.029,19 KiB; gzip 179,97 KiB).
 - Cuenta Cloudflare: Wrangler autenticado y buckets R2 de producción y preview creados.
 - Despliegue Cloudflare: operativo mediante HTTPS, con secreto de ruta y subdominio `workers.dev` registrados.
 - Validación remota de referencia: completa; 24/24 envíos y descargas exactos contra R2 real.
 - Conexión desde ChatGPT: operativa; exactitud básica demostrada para ambos transportes, matriz completa pendiente.
-- Confirmaciones de ChatGPT: incluso `probe_get_file`, estrictamente de solo lectura, requiere aprobación manual; el MCP privado no cumple cero intervención.
+- Confirmaciones de ChatGPT: incluso `probe_get_file`, estrictamente de solo lectura, requirió aprobación manual en móvil con **Permitir todas las acciones** seleccionado; falta contraste en web o escritorio.
 - Sonda de llamada larga: desplegada en la versión Worker `3d59d75d-adda-472a-95c2-f75e57e9e5e6`; referencia remota de 15 segundos superada, prueba desde ChatGPT pendiente.
 - Transporte elegido: ninguno todavía.
