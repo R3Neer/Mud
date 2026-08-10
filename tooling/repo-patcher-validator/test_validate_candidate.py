@@ -166,6 +166,11 @@ class ValidatorIntegrationTests(unittest.TestCase):
         state = json.loads((output / "run-a-state.json").read_text(encoding="utf-8"))
         paths = {entry["relative_path"] for entry in state["filesystem_tree"]}
         self.assertIn("generated/evidence.bin", paths)
+        applied = (output / "applied.patch").read_bytes()
+        self.assertIn(b"result.txt", applied)
+        self.assertIn(b"generated/evidence.bin", applied)
+        self.assertEqual((output / "git-diff-binary.patch").read_bytes(), applied)
+        self.assertIn("result.txt", (output / "diff-stat.txt").read_text(encoding="utf-8"))
 
     def test_plugin_writing_during_explain_is_rejected_as_preflight_side_effect(self) -> None:
         plugin = textwrap.dedent(

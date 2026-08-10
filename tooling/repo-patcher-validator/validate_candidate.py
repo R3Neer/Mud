@@ -189,11 +189,21 @@ class Validator:
         write_json(self.output / name, value)
         return value
 
-    def run_command(self, label: str, argv: list[str], *, cwd: Path | None = None) -> CommandResult:
+    def run_command(
+        self,
+        label: str,
+        argv: list[str],
+        *,
+        cwd: Path | None = None,
+        env_overrides: dict[str, str] | None = None,
+    ) -> CommandResult:
+        environment = candidate_environment(self.runtime)
+        if env_overrides:
+            environment.update(env_overrides)
         result = subprocess.run(
             argv,
             cwd=cwd or self.control,
-            env=candidate_environment(self.runtime),
+            env=environment,
             text=True,
             capture_output=True,
             encoding="utf-8",
@@ -209,8 +219,15 @@ class Validator:
         self.checks.append({"check": label, "status": "passed" if result.returncode == 0 else "failed"})
         return command
 
-    def require_command(self, label: str, argv: list[str], *, cwd: Path | None = None) -> CommandResult:
-        result = self.run_command(label, argv, cwd=cwd)
+    def require_command(
+        self,
+        label: str,
+        argv: list[str],
+        *,
+        cwd: Path | None = None,
+        env_overrides: dict[str, str] | None = None,
+    ) -> CommandResult:
+        result = self.run_command(label, argv, cwd=cwd, env_overrides=env_overrides)
         if result.returncode != 0:
             raise ValidationFailure(
                 "candidate_validation_failed",
@@ -291,7 +308,11 @@ class Validator:
             f"{label} apply",
             self.repo_patcher("apply", repo, plugin, "--emit-diff", str(emit)),
         )
-        self.require_command(f"{label} git diff --check", ["git", "diff", "--check"], cwd=repo)
+        diff, stat_text = self.complete_git_evidence(label, repo)
+        emit.write_bytes(diff)
+        if label == "run-a":
+            (self.output / "git-diff-binary.patch").write_bytes(diff)
+            (self.output / "diff-stat.txt").write_text(stat_text, encoding="utf-8")
         state = capture_repository(repo)
         write_json(self.output / f"{label}-state.json", state)
         return state
@@ -332,13 +353,44 @@ class Validator:
         if differences:
             raise ValidationFailure("not_reproducible", f"run-a and run-b differ: {differences}")
 
-    def export_git_evidence(self, repo: Path) -> None:
-        diff = subprocess.run(
-            ["git", "diff", "--binary", "--no-ext-diff"], cwd=repo, capture_output=True, check=True
-        ).stdout
-        (self.output / "git-diff-binary.patch").write_bytes(diff)
-        stat_text = run_git(repo, "diff", "--stat")
-        (self.output / "diff-stat.txt").write_text(stat_text, encoding="utf-8")
+    def complete_git_evidence(self, label: str, repo: Path) -> tuple[bytes, str]:
+        raw_index = run_git(repo, "rev-parse", "--git-path", "index").strip()
+        real_index = Path(raw_index)
+        if not real_index.is_absolute():
+            real_index = (repo / real_index).resolve()
+        evidence_index = self.output / f".{label}-evidence.index"
+        evidence_index.unlink(missing_ok=True)
+        shutil.copyfile(real_index, evidence_index)
+        index_env = {"GIT_INDEX_FILE": str(evidence_index)}
+        try:
+            self.require_command(
+                f"{label} stage complete evidence",
+                ["git", "add", "-A", "-f", "--"],
+                cwd=repo,
+                env_overrides=index_env,
+            )
+            self.require_command(
+                f"{label} complete git diff --check",
+                ["git", "diff", "--cached", "--check", "HEAD", "--"],
+                cwd=repo,
+                env_overrides=index_env,
+            )
+            diff = subprocess.run(
+                ["git", "diff", "--cached", "--binary", "--no-ext-diff", "HEAD", "--"],
+                cwd=repo,
+                env={**candidate_environment(self.runtime), **index_env},
+                capture_output=True,
+                check=True,
+            ).stdout
+            stat = self.require_command(
+                f"{label} complete diff stat",
+                ["git", "diff", "--cached", "--stat", "HEAD", "--"],
+                cwd=repo,
+                env_overrides=index_env,
+            ).stdout
+            return diff, stat
+        finally:
+            evidence_index.unlink(missing_ok=True)
 
     def execute(self) -> None:
         self.initialize_artifacts()
@@ -361,7 +413,6 @@ class Validator:
         if state_b != converged_b:
             raise ValidationFailure("convergence_side_effect", "run-b state changed during convergence")
         self.compare_runs(state_a, state_b)
-        self.export_git_evidence(run_a)
 
     def finish_protected(self) -> None:
         if not self.protected_before:
