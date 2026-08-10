@@ -179,6 +179,10 @@ interface ArtifactListItem {
   expired: boolean;
 }
 
+export function artifactDownloadRequestInit(): RequestInit {
+  return { redirect: "manual" };
+}
+
 export async function downloadEvidenceArtifact(env: Env, row: ValidationRow): Promise<Uint8Array> {
   if (row.github_run_id === null) throw new ServiceError("run_not_associated", "Run is not associated.", 409);
   const list = await githubFetch(
@@ -207,8 +211,16 @@ export async function downloadEvidenceArtifact(env: Env, row: ValidationRow): Pr
   const location = redirect.headers.get("Location");
   const response =
     redirect.status >= 300 && redirect.status < 400 && location
-      ? await fetch(location, { redirect: "error" })
+      ? await fetch(location, artifactDownloadRequestInit())
       : redirect;
+  if (response.status >= 300 && response.status < 400) {
+    throw new ServiceError(
+      "artifact_download_redirected",
+      "Signed artifact download returned an unexpected redirect.",
+      502,
+      true,
+    );
+  }
   if (!response.ok) {
     throw new ServiceError("artifact_download_failed", `Could not download artifact: ${response.status}`, 502, true);
   }

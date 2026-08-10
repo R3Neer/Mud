@@ -5,7 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { sha256Hex } from "../src/crypto.js";
 import { acceptRequest, getRequest, transition } from "../src/db.js";
 import { ServiceError } from "../src/errors.js";
-import { buildWorkflowDispatchInputs } from "../src/github.js";
+import { artifactDownloadRequestInit, buildWorkflowDispatchInputs } from "../src/github.js";
 import { verifyRequestClaims } from "../src/oidc.js";
 import { candidateKey, putImmutableCandidate, readVerifiedObject } from "../src/storage.js";
 import type { CandidateIdentity, Env, ValidationRow } from "../src/types.js";
@@ -94,6 +94,10 @@ describe("GitHub workflow dispatch", () => {
       package_size: "321",
       trust_plugin: false,
     });
+  });
+
+  it("uses the redirect mode supported at the Workers edge", () => {
+    expect(artifactDownloadRequestInit()).toEqual({ redirect: "manual" });
   });
 });
 
