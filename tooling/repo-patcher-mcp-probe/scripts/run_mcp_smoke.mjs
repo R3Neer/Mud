@@ -12,6 +12,11 @@ const endpoint =
 const runMatrix = process.argv.includes("--matrix");
 const inputs = join(tmpdir(), "mud-repo-patcher-mcp-probe", "inputs");
 
+function displayEndpoint(value) {
+  const parsed = new URL(value);
+  return `${parsed.origin}/<redacted>/mcp`;
+}
+
 function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
@@ -92,7 +97,7 @@ try {
       );
     }
   }
-  console.log(JSON.stringify({ endpoint, tools: names, results }, null, 2));
+  console.log(JSON.stringify({ endpoint: displayEndpoint(endpoint), tools: names, results }, null, 2));
 } finally {
   await client.close();
 }

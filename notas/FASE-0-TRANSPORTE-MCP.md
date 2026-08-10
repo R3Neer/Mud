@@ -64,6 +64,23 @@ El 2026-08-09 se ejecutó la matriz completa mediante el cliente MCP 2.0 contra 
 
 Esto valida el servidor, R2, la construcción determinista y el cliente MCP de referencia. No demuestra todavía que ChatGPT pueda materializar los argumentos de igual tamaño; por tanto, no autoriza elegir un transporte ni empezar las fases posteriores.
 
+## Validación remota del prototipo
+
+El 2026-08-10 se repitió la misma matriz mediante HTTPS contra el Worker desplegado y el bucket R2 real. El cliente descargó cada objeto desde el enlace devuelto por el MCP y verificó de nuevo tamaño y SHA-256.
+
+| Transporte | Tamaño o forma | Envíos exactos | Descargas exactas | Latencia mediana remota |
+| --- | --- | ---: | ---: | ---: |
+| ZIP base64 | 1 KiB | 3/3 | 3/3 | 357 ms |
+| ZIP base64 | 16 KiB | 3/3 | 3/3 | 348 ms |
+| ZIP base64 | 64 KiB | 3/3 | 3/3 | 393 ms |
+| ZIP base64 | 128 KiB | 3/3 | 3/3 | 634 ms |
+| ZIP base64 | 256 KiB | 3/3 | 3/3 | 746 ms |
+| files | paquete pequeño | 3/3 | 3/3 | 296 ms |
+| files | paquete MUD representativo | 3/3 | 3/3 | 314 ms |
+| files | binario + Unicode | 3/3 | 3/3 | 319 ms |
+
+Esta evidencia confirma el comportamiento del servicio público y de R2. Sigue siendo evidencia auxiliar: la tabla de decisión solo se completará con llamadas originadas por ChatGPT Plus.
+
 ## Paquete MUD representativo
 
 La prueba lógica debe incluir en conjunto:
@@ -92,6 +109,7 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 - Implementación local: completa; TypeScript compila, 16 pruebas unitarias pasan y la matriz MCP local obtuvo 24/24 transferencias exactas.
 - Empaquetado Wrangler: verificado mediante `wrangler deploy --dry-run` (1.020,37 KiB; gzip 177,94 KiB).
 - Cuenta Cloudflare: Wrangler autenticado y buckets R2 de producción y preview creados.
-- Despliegue Cloudflare: código y secreto de ruta desplegados el 2026-08-10; falta registrar una vez el subdominio `workers.dev` de la cuenta antes de poder ejecutar la matriz remota.
+- Despliegue Cloudflare: operativo mediante HTTPS, con secreto de ruta y subdominio `workers.dev` registrados.
+- Validación remota de referencia: completa; 24/24 envíos y descargas exactos contra R2 real.
 - Conexión desde ChatGPT: pendiente.
 - Transporte elegido: ninguno todavía.
