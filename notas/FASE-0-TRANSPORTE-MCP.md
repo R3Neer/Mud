@@ -81,6 +81,21 @@ El 2026-08-10 se repitió la misma matriz mediante HTTPS contra el Worker desple
 
 Esta evidencia confirma el comportamiento del servicio público y de R2. Sigue siendo evidencia auxiliar: la tabla de decisión solo se completará con llamadas originadas por ChatGPT Plus.
 
+## Primera evidencia desde ChatGPT Plus
+
+El 2026-08-10 ChatGPT Plus descubrió y ejecutó las tres herramientas del complemento privado:
+
+- `probe_store_files` construyó un ZIP determinista de 252 bytes con SHA-256 `cad6f969e82f75e50b5f195c64cf8613623b27905efc0dbda1e5af036c5cf353`;
+- `probe_store_base64` transmitió 128 bytes y obtuvo el mismo SHA-256 esperado, `cd4ebf7ae5e0f819a806a8e8cfab3ce07177d30f3279d9cffa9b135b4c62d6a8`;
+- `probe_get_file` recuperó el segundo objeto conservando tamaño y SHA-256;
+- una entrada base64 incorrecta fue rechazada antes del intento correcto.
+
+Esto demuestra conectividad y exactitud básica desde ChatGPT, pero no satisface todavía las tres repeticiones ni los tamaños y formas de la matriz obligatoria.
+
+ChatGPT solicitó confirmación manual para las operaciones de almacenamiento. Es el comportamiento coherente con sus anotaciones MCP: ambas cambian el estado privado de R2 y se declaran `readOnlyHint: false`, `destructiveHint: false`, `idempotentHint: true` y `openWorldHint: false`. `probe_get_file` se mantiene estrictamente no mutante y se declara `readOnlyHint: true`.
+
+No se falsearán las anotaciones para evitar confirmaciones. El diseño estable minimizará las operaciones mutantes: una única herramienta de envío por candidata; espera, evidencias y descarga serán lecturas. Queda por comprobar empíricamente si ChatGPT permite autorizar de forma persistente ese complemento privado. Si exige aprobación para cada envío, el requisito de cero intervención por candidata no será alcanzable desde ChatGPT Plus mediante una herramienta MCP que escriba y despache trabajo externo.
+
 ## Paquete MUD representativo
 
 La prueba lógica debe incluir en conjunto:
@@ -111,5 +126,6 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 - Cuenta Cloudflare: Wrangler autenticado y buckets R2 de producción y preview creados.
 - Despliegue Cloudflare: operativo mediante HTTPS, con secreto de ruta y subdominio `workers.dev` registrados.
 - Validación remota de referencia: completa; 24/24 envíos y descargas exactos contra R2 real.
-- Conexión desde ChatGPT: pendiente.
+- Conexión desde ChatGPT: operativa; exactitud básica demostrada para ambos transportes, matriz completa pendiente.
+- Confirmaciones de ChatGPT: operaciones mutantes requieren aprobación manual en la prueba inicial; impacto sobre el requisito de cero intervención pendiente de cerrar.
 - Transporte elegido: ninguno todavía.

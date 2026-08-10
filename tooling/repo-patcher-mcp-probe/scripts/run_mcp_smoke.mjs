@@ -42,6 +42,18 @@ async function callAndVerify(client, tool, args) {
   if (args.expected_sha256 && args.expected_sha256 !== response.sha256) {
     throw new Error(`${tool} source hash mismatch`);
   }
+  const retrieved = await client.callTool({
+    name: "probe_get_file",
+    arguments: { request_id: response.request_id },
+  });
+  if (
+    retrieved.isError ||
+    !retrieved.structuredContent ||
+    retrieved.structuredContent.sha256 !== response.sha256 ||
+    retrieved.structuredContent.size !== response.size
+  ) {
+    throw new Error(`probe_get_file mismatch after ${tool}`);
+  }
   return {
     tool,
     request_id: response.request_id,
@@ -60,6 +72,27 @@ try {
   const expected = ["probe_get_file", "probe_store_base64", "probe_store_files"];
   if (JSON.stringify(names) !== JSON.stringify(expected)) {
     throw new Error(`unexpected tool list: ${JSON.stringify(names)}`);
+  }
+  const toolsByName = new Map(listed.tools.map((tool) => [tool.name, tool]));
+  for (const name of ["probe_store_base64", "probe_store_files"]) {
+    const annotations = toolsByName.get(name)?.annotations;
+    if (
+      annotations?.readOnlyHint !== false ||
+      annotations?.destructiveHint !== false ||
+      annotations?.idempotentHint !== true ||
+      annotations?.openWorldHint !== false
+    ) {
+      throw new Error(`unsafe or inaccurate annotations for ${name}`);
+    }
+  }
+  const getAnnotations = toolsByName.get("probe_get_file")?.annotations;
+  if (
+    getAnnotations?.readOnlyHint !== true ||
+    getAnnotations?.destructiveHint !== false ||
+    getAnnotations?.idempotentHint !== true ||
+    getAnnotations?.openWorldHint !== false
+  ) {
+    throw new Error("unsafe or inaccurate annotations for probe_get_file");
   }
   const nonce = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const cases = runMatrix

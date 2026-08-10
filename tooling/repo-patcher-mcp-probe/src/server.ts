@@ -6,6 +6,7 @@ import {
   decodeCanonicalBase64,
   MAX_BASE64_BYTES,
   ProbeError,
+  readImmutableProbe,
   storeImmutableProbe,
 } from "./probe.js";
 import type { Env, ProbeFileInput, StoredProbe } from "./types.js";
@@ -128,17 +129,9 @@ export function createProbeServer(env: Env, publicBaseUrl: string): McpServer {
     },
     async ({ request_id }) => {
       try {
-        const key = `probe/${request_id}.zip`;
-        const object = await env.PROBE_BUCKET.get(key);
-        if (object === null) {
-          throw new ProbeError("not_found", `No existe un objeto para ${request_id}.`);
-        }
-        const bytes = new Uint8Array(await object.arrayBuffer());
-        const stored = await storeImmutableProbe(
+        const stored = await readImmutableProbe(
           env.PROBE_BUCKET,
           request_id,
-          bytes,
-          object.customMetadata?.sha256,
           publicBaseUrl,
           env.PROBE_ROUTE_SECRET,
         );

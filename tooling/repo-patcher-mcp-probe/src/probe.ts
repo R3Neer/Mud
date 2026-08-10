@@ -212,3 +212,42 @@ export async function storeImmutableProbe(
     downloadUrl: `${base}/${secret}/probe-files/${id}`,
   };
 }
+
+export async function readImmutableProbe(
+  bucket: R2Bucket,
+  requestId: string,
+  publicBaseUrl: string,
+  routeSecret: string,
+): Promise<StoredProbe> {
+  validateRequestId(requestId);
+  const objectKey = `probe/${requestId}.zip`;
+  const object = await bucket.get(objectKey);
+  if (object === null) {
+    throw new ProbeError("not_found", `No existe un objeto para ${requestId}.`);
+  }
+
+  const bytes = new Uint8Array(await object.arrayBuffer());
+  const sha256 = await sha256Hex(bytes);
+  if (
+    object.customMetadata?.requestId !== requestId ||
+    object.customMetadata?.sha256 !== sha256 ||
+    object.customMetadata?.size !== String(bytes.byteLength)
+  ) {
+    throw new ProbeError(
+      "stored_object_corrupt",
+      "Los metadatos del objeto almacenado no coinciden con sus bytes.",
+    );
+  }
+
+  const base = publicBaseUrl.replace(/\/$/, "");
+  const secret = encodeURIComponent(routeSecret);
+  const id = encodeURIComponent(requestId);
+  return {
+    requestId,
+    objectKey,
+    sha256,
+    size: bytes.byteLength,
+    reused: true,
+    downloadUrl: `${base}/${secret}/probe-files/${id}`,
+  };
+}
