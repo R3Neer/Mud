@@ -23,3 +23,39 @@ o archivos lógicos.
 La arquitectura está fijada en `notas/ADR-VALIDADOR-REMOTO.md`. La Fase 0 y el
 corte de v6 siguen condicionados por `notas/PENDIENTES-VALIDADOR-REMOTO.md`.
 
+## Harness
+
+`validate_candidate.py` recibe dos checkouts ya verificados, crea
+`validation/run-a/Mud` y `validation/run-b/Mud`, y produce un directorio de
+evidencias. No hace red ni obtiene credenciales.
+
+Ejemplo de ejecución por el workflow:
+
+```powershell
+python control/tooling/repo-patcher-validator/validate_candidate.py `
+  --control-root control `
+  --target-source target-source `
+  --validation-root validation `
+  --package candidate.zip `
+  --request request.json `
+  --output evidence `
+  --target-sha $TargetSha `
+  --control-sha $ControlSha `
+  --workflow-run-id $RunId `
+  --run-attempt $RunAttempt
+```
+
+El proceso devuelve `0` solo para una candidata verde. Tanto los fallos del
+paquete como los de infraestructura producen `result.json`, diagnóstico,
+transcript y todas las evidencias alcanzadas.
+
+## Pruebas locales
+
+```powershell
+python tooling/repo-patcher-validator/test_snapshot.py
+python tooling/repo-patcher-validator/test_validate_candidate.py
+```
+
+Las pruebas cubren archivos ignorados y binarios, índice físico y semántico,
+historia requerida, candidata verde, consentimiento de plugin, efectos
+laterales durante `explain` y divergencia de un generador aleatorio entre A/B.
