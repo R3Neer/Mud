@@ -169,6 +169,21 @@ Tendrá permisos y credenciales separados si se implementa en el futuro.
 - Matrices local y remota de referencia: 24/24 transferencias exactas.
 - Evidencia detallada: `notas/FASE-0-TRANSPORTE-MCP.md`.
 
+## Núcleo común implementado
+
+Desde el 2026-08-10 están implementados y versionados, sin cerrar P1–P6:
+
+- ADR y schemas neutrales;
+- harness A/B con preflight no mutante, convergencia y reproducibilidad;
+- workflow Windows separado de v6, con control/target y descarga OIDC;
+- Worker durable con D1, R2, dispatch directo, reconciliación y artifacts;
+- ambos adaptadores de transporte privados;
+- pruebas Python y pruebas Workers dentro de `workerd`;
+- D1 y R2 reales creados, migración aplicada y Worker desplegado.
+
+El primer E2E sigue bloqueado por la publicación del workflow y la credencial
+GitHub de Actions de alcance mínimo. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
+
 ## Trabajo autorizado mientras estos puntos siguen abiertos
 
 Puede avanzarse sin resolver P1–P6 en:

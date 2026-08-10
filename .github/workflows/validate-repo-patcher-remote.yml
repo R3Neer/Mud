@@ -199,8 +199,9 @@ jobs:
             'GH_TOKEN'
           ) | ForEach-Object {
             Remove-Item -LiteralPath "Env:\$_" -ErrorAction SilentlyContinue
-            "$_=" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
           }
+          @('ACTIONS_ID_TOKEN_REQUEST_URL', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN') |
+            ForEach-Object { "$_=" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8 }
 
       - name: Run deterministic validator
         id: validator

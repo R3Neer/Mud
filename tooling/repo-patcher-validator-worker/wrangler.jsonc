@@ -1,0 +1,35 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mud-repo-patcher-validator",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-10",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "VALIDATION_DB",
+      "database_name": "mud-repo-patcher-validator",
+      "database_id": "4522dc3f-483a-41ac-873c-b30eb73936cd",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "VALIDATION_BUCKET",
+      "bucket_name": "mud-repo-patcher-validator",
+      "preview_bucket_name": "mud-repo-patcher-validator-preview"
+    }
+  ],
+  "vars": {
+    "GITHUB_OWNER": "R3Neer",
+    "GITHUB_REPO": "Mud",
+    "GITHUB_WORKFLOW": "validate-repo-patcher-remote.yml",
+    "GITHUB_REF": "main",
+    "GITHUB_REPOSITORY_ID": "1323036958",
+    "GITHUB_ALLOWED_ACTORS": "R3Neer,efferra",
+    "OIDC_AUDIENCE": "mud-repo-patcher-worker"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
