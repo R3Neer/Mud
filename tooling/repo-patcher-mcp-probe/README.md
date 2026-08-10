@@ -9,7 +9,7 @@ The probe deliberately has no GitHub integration, D1 state, validation workflow,
 
 ## Endpoints
 
-With the local defaults:
+After copying `.dev.vars.example` to `.dev.vars`, the local defaults are:
 
 ```text
 MCP:      http://localhost:8787/local-probe/mcp
@@ -17,7 +17,7 @@ Health:   http://localhost:8787/local-probe/health
 Download: http://localhost:8787/local-probe/probe-files/<request_id>
 ```
 
-The production deployment must replace `PROBE_ROUTE_SECRET` with a random secret. Download links derive their origin from the incoming MCP request, so there is no separately configured public URL to drift.
+The production deployment must store `PROBE_ROUTE_SECRET` with Wrangler secrets. Download links derive their origin from the incoming MCP request, so there is no separately configured public URL to drift.
 
 ## Tools
 
@@ -31,6 +31,7 @@ A `request_id` is immutable: repeating it with the same bytes reuses the object;
 
 ```powershell
 npm install
+npm run types
 npm run check
 npm run fixtures
 npm run dev
@@ -43,14 +44,17 @@ With the local Worker running, `npm run smoke` negotiates Streamable HTTP throug
 
 ## Deployment prerequisites
 
-Authenticate Wrangler, create the two R2 buckets declared in `wrangler.jsonc`, then deploy with a freshly generated route secret:
+Authenticate Wrangler and create the two R2 buckets declared in `wrangler.jsonc`. For a new Worker, deploy once, immediately store a freshly generated route secret, and never pass its value as a command argument:
 
 ```powershell
 npx wrangler login
 npx wrangler r2 bucket create mud-repo-patcher-mcp-probe
 npx wrangler r2 bucket create mud-repo-patcher-mcp-probe-preview
-npx wrangler deploy --var PROBE_ROUTE_SECRET:<random-secret>
+npx wrangler deploy
+npx wrangler secret put PROBE_ROUTE_SECRET
 ```
+
+The Worker fails closed with HTTP 503 while the secret is absent. A new Cloudflare account must also register its account-wide `workers.dev` subdomain in **Workers & Pages → Overview** before the public URL resolves. This is a one-time account setting, not a setting of the R2 bucket.
 
 Do not commit the deployed route secret. Phase 0 is not an authenticated production service.
 

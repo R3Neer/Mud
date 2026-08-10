@@ -17,6 +17,8 @@ tooling/obsidian/markdown-export/dist/
 tooling/repo-patcher-mcp-probe/node_modules/
 tooling/repo-patcher-mcp-probe/.wrangler/
 tooling/repo-patcher-mcp-probe/coverage/
+tooling/repo-patcher-mcp-probe/.dev.vars*
+!tooling/repo-patcher-mcp-probe/.dev.vars.example
 tooling/markdown_export/profiles.local.toml
 tooling/.deps/
 

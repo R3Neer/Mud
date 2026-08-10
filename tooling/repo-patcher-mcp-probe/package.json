@@ -12,7 +12,9 @@
     "smoke:matrix": "node scripts/run_mcp_smoke.mjs --matrix",
     "test": "vitest run --configLoader runner",
     "test:watch": "vitest --configLoader runner",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "types": "wrangler types worker-configuration.d.ts --include-runtime false",
+    "types:check": "wrangler types worker-configuration.d.ts --include-runtime false --check"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
@@ -21,7 +23,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "5.20260809.1",
+    "@cloudflare/workers-types": "5.20260810.1",
     "@modelcontextprotocol/client": "2.0.0",
     "typescript": "7.0.2",
     "vitest": "4.1.10",

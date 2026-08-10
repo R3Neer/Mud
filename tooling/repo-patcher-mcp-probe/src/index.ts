@@ -6,6 +6,10 @@ import type { Env } from "./types.js";
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    if (!env.PROBE_ROUTE_SECRET) {
+      return Response.json({ code: "server_not_configured" }, { status: 503 });
+    }
+
     const url = new URL(request.url);
     const basePath = `/${encodeURIComponent(env.PROBE_ROUTE_SECRET)}`;
 

@@ -91,6 +91,7 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 
 - Implementación local: completa; TypeScript compila, 16 pruebas unitarias pasan y la matriz MCP local obtuvo 24/24 transferencias exactas.
 - Empaquetado Wrangler: verificado mediante `wrangler deploy --dry-run` (1.020,37 KiB; gzip 177,94 KiB).
-- Despliegue Cloudflare: bloqueado porque Wrangler no tiene una sesión autenticada en este equipo.
+- Cuenta Cloudflare: Wrangler autenticado y buckets R2 de producción y preview creados.
+- Despliegue Cloudflare: código y secreto de ruta desplegados el 2026-08-10; falta registrar una vez el subdominio `workers.dev` de la cuenta antes de poder ejecutar la matriz remota.
 - Conexión desde ChatGPT: pendiente.
 - Transporte elegido: ninguno todavía.

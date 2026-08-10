@@ -1,5 +1,6 @@
-export interface Env {
-  PROBE_BUCKET: R2Bucket;
+export interface Env extends Cloudflare.Env {
+  // Secrets are intentionally absent from wrangler.jsonc and therefore cannot
+  // be inferred by `wrangler types`.
   PROBE_ROUTE_SECRET: string;
 }
 

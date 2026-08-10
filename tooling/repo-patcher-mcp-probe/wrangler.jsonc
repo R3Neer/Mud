@@ -2,11 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mud-repo-patcher-mcp-probe",
   "main": "src/index.ts",
-  "compatibility_date": "2026-08-08",
+  "compatibility_date": "2026-08-10",
   "compatibility_flags": ["nodejs_compat"],
-  "vars": {
-    "PROBE_ROUTE_SECRET": "local-probe"
-  },
   "r2_buckets": [
     {
       "binding": "PROBE_BUCKET",
@@ -15,6 +12,7 @@
     }
   ],
   "observability": {
-    "enabled": true
+    "enabled": true,
+    "head_sampling_rate": 1
   }
 }
