@@ -106,6 +106,34 @@ Este resultado bloquea el paso a las fases de D1, GitHub Actions y harness hasta
 2. usar un cliente propio de la API que configure la política de aprobación;
 3. trasladar el bucle completo, incluida la corrección de candidatas, a un servicio autónomo distinto de ChatGPT.
 
+## Fase 0B: una única llamada larga
+
+Antes de elegir entre las dos últimas arquitecturas se probará una reducción más pequeña: una sola aprobación de ChatGPT inicia una llamada MCP que permanece abierta durante todo el trabajo autónomo del servidor.
+
+La herramienta experimental `probe_wait_and_record` acepta un `probe_id` nuevo y una duración de 15, 30, 60 o 120 segundos. Persiste en R2 eventos append-only de inicio, heartbeat cada cinco segundos y finalización. El endpoint secreto `probe-timings/<probe_id>` permite consultar después esos eventos aunque ChatGPT haya abandonado la llamada.
+
+Se medirán por separado:
+
+- tiempo de servidor entre inicio y finalización;
+- tiempo observado por el cliente MCP de referencia;
+- si ChatGPT recibe el resultado terminal tras una sola aprobación;
+- último heartbeat persistido cuando el cliente falle o desconecte;
+- tiempo aproximado percibido en la interacción de ChatGPT.
+
+La telemetría del Worker no puede observar el instante exacto en el que la interfaz de ChatGPT muestra el resultado. Esa última medida se registrará como evidencia del cliente, no se inferirá del reloj del servidor.
+
+| Cliente | Duración solicitada | Aprobaciones | Servidor completó | ChatGPT recibió resultado | Tiempo servidor | Tiempo cliente |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| MCP de referencia | 15 s | n/a | sí | n/a | 15.000 ms | 15.932 ms |
+| ChatGPT Plus | 15 s | pendiente | pendiente | pendiente | pendiente | pendiente |
+| ChatGPT Plus | 30 s | pendiente | pendiente | pendiente | pendiente | pendiente |
+| ChatGPT Plus | 60 s | pendiente | pendiente | pendiente | pendiente | pendiente |
+| ChatGPT Plus | 120 s | pendiente | pendiente | pendiente | pendiente | pendiente |
+
+Si 120 segundos termina y vuelve a ChatGPT con una sola aprobación, el bucle completo podrá diseñarse como una operación MCP única. Si ChatGPT corta antes, los eventos persistidos distinguirán el límite del cliente de un fallo del Worker y decidirán si hace falta un cliente propio o una operación asíncrona con una concesión explícita de interacción.
+
+La prueba remota de referencia `reference-long-15-20260810-003` registró inicio, heartbeats a 5.484 y 10.639 segundos y finalización exactamente a los 15.000 segundos. El cliente recibió la respuesta y volvió a descargar la telemetría en 15.932 segundos. Esto valida Worker, Streamable HTTP, persistencia R2 y consulta posterior; no sustituye la prueba desde ChatGPT.
+
 ## Paquete MUD representativo
 
 La prueba lógica debe incluir en conjunto:
@@ -138,4 +166,5 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 - Validación remota de referencia: completa; 24/24 envíos y descargas exactos contra R2 real.
 - Conexión desde ChatGPT: operativa; exactitud básica demostrada para ambos transportes, matriz completa pendiente.
 - Confirmaciones de ChatGPT: incluso `probe_get_file`, estrictamente de solo lectura, requiere aprobación manual; el MCP privado no cumple cero intervención.
+- Sonda de llamada larga: desplegada en la versión Worker `3d59d75d-adda-472a-95c2-f75e57e9e5e6`; referencia remota de 15 segundos superada, prueba desde ChatGPT pendiente.
 - Transporte elegido: ninguno todavía.

@@ -24,6 +24,7 @@ The production deployment must store `PROBE_ROUTE_SECRET` with Wrangler secrets.
 - `probe_store_base64`: stores exact canonical-base64 bytes after checking a caller-provided SHA-256.
 - `probe_store_files`: constructs a ZIP with sorted paths, fixed metadata, fixed compression, and strict Windows-safe paths.
 - `probe_get_file`: returns a resource link for the exact R2 object already stored.
+- `probe_wait_and_record`: keeps one MCP call open for 15, 30, 60, or 120 seconds and records append-only timing events in R2.
 
 A `request_id` is immutable: repeating it with the same bytes reuses the object; different bytes fail instead of overwriting it.
 
@@ -39,8 +40,16 @@ npm run dev
 
 `npm run fixtures` creates the five exact-size ZIPs and the three logical payloads under `%TEMP%\mud-repo-patcher-mcp-probe\inputs\`. Replace `REPLACE` in each request ID with attempt `1`, `2`, or `3`. The local Worker uses Wrangler's local R2 implementation. Run MCP Inspector against the MCP URL before connecting ChatGPT.
 
-With the local Worker running, `npm run smoke` negotiates Streamable HTTP through the real MCP client, lists the three tools, stores one direct ZIP and one logical package, downloads both, and verifies their size and SHA-256.
+With the local Worker running, `npm run smoke` negotiates Streamable HTTP through the real MCP client, lists the four tools, stores one direct ZIP and one logical package, downloads both, and verifies their size and SHA-256.
 `npm run smoke:matrix` repeats all eight Phase 0 variants three times. This proves the Worker stack locally, but it does not replace the required experiment initiated by ChatGPT.
+
+`npm run smoke:long` runs the 15-second reference call. A remote duration and a stable probe ID can be selected explicitly:
+
+```powershell
+node scripts/run_mcp_smoke.mjs https://<worker>/<secret>/mcp --long-call 120 --probe-id reference-long-120-001
+```
+
+The Worker writes `started`, five-second `heartbeat`, and `completed` JSON events under `timing/<probe_id>/`. The returned `timing_url` and the secret HTTP endpoint `/probe-timings/<probe_id>` expose the evidence even if the MCP client disconnects before receiving the final result. Timing records contain no candidate bytes or credentials.
 
 ## Deployment prerequisites
 

@@ -10,6 +10,7 @@ import {
   sha256Hex,
   validateRequestId,
 } from "../src/probe.js";
+import { LONG_CALL_DURATIONS, timingEventKey } from "../src/timing.js";
 
 describe("base64 transport", () => {
   it("round-trips arbitrary bytes", () => {
@@ -115,5 +116,23 @@ describe("identifiers", () => {
 
   it.each(["", "with space", "../escape", "a".repeat(81)])("rejects %j", (value) => {
     expect(() => validateRequestId(value)).toThrow(ProbeError);
+  });
+});
+
+describe("long-call telemetry", () => {
+  it("offers only the durations selected for the ChatGPT experiment", () => {
+    expect(LONG_CALL_DURATIONS).toEqual([15, 30, 60, 120]);
+  });
+
+  it("sorts append-only event keys by sequence", () => {
+    expect(timingEventKey("chatgpt-long-001", 0, "started")).toBe(
+      "timing/chatgpt-long-001/000-started.json",
+    );
+    expect(timingEventKey("chatgpt-long-001", 12, "heartbeat")).toBe(
+      "timing/chatgpt-long-001/012-heartbeat.json",
+    );
+    expect(timingEventKey("chatgpt-long-001", 99, "completed")).toBe(
+      "timing/chatgpt-long-001/099-completed.json",
+    );
   });
 });

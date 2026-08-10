@@ -6,10 +6,16 @@ import { join } from "node:path";
 import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
 
 
+const cliArguments = process.argv.slice(2);
 const endpoint =
-  process.argv.slice(2).find((argument) => !argument.startsWith("--")) ??
+  cliArguments.find((argument) => /^https?:\/\//.test(argument)) ??
   "http://127.0.0.1:8787/local-probe/mcp";
-const runMatrix = process.argv.includes("--matrix");
+const runMatrix = cliArguments.includes("--matrix");
+const longCallIndex = cliArguments.indexOf("--long-call");
+const longCallDuration =
+  longCallIndex === -1 ? undefined : Number.parseInt(cliArguments[longCallIndex + 1] ?? "", 10);
+const probeIdIndex = cliArguments.indexOf("--probe-id");
+const requestedProbeId = probeIdIndex === -1 ? undefined : cliArguments[probeIdIndex + 1];
 const inputs = join(tmpdir(), "mud-repo-patcher-mcp-probe", "inputs");
 
 function displayEndpoint(value) {
@@ -63,13 +69,19 @@ async function callAndVerify(client, tool, args) {
   };
 }
 
-const client = new Client({ name: "mud-phase-0-local-smoke", version: "0.1.0" });
-const transport = new StreamableHTTPClientTransport(new URL(endpoint));
-await client.connect(transport);
-try {
+async function main() {
+  const client = new Client({ name: "mud-phase-0-local-smoke", version: "0.1.0" });
+  const transport = new StreamableHTTPClientTransport(new URL(endpoint));
+  await client.connect(transport);
+  try {
   const listed = await client.listTools();
   const names = listed.tools.map((tool) => tool.name).sort();
-  const expected = ["probe_get_file", "probe_store_base64", "probe_store_files"];
+  const expected = [
+    "probe_get_file",
+    "probe_store_base64",
+    "probe_store_files",
+    "probe_wait_and_record",
+  ];
   if (JSON.stringify(names) !== JSON.stringify(expected)) {
     throw new Error(`unexpected tool list: ${JSON.stringify(names)}`);
   }
@@ -94,7 +106,57 @@ try {
   ) {
     throw new Error("unsafe or inaccurate annotations for probe_get_file");
   }
+  const longCallAnnotations = toolsByName.get("probe_wait_and_record")?.annotations;
+  if (
+    longCallAnnotations?.readOnlyHint !== false ||
+    longCallAnnotations?.destructiveHint !== false ||
+    longCallAnnotations?.idempotentHint !== false ||
+    longCallAnnotations?.openWorldHint !== false
+  ) {
+    throw new Error("unsafe or inaccurate annotations for probe_wait_and_record");
+  }
   const nonce = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  if (longCallDuration !== undefined) {
+    if (![15, 30, 60, 120].includes(longCallDuration)) {
+      throw new Error("--long-call must be 15, 30, 60, or 120");
+    }
+    const probeId = requestedProbeId ?? `reference-long-${longCallDuration}-${nonce}`;
+    const started = performance.now();
+    const result = await client.callTool({
+      name: "probe_wait_and_record",
+      arguments: { probe_id: probeId, duration_seconds: longCallDuration },
+    });
+    if (result.isError || !result.structuredContent) {
+      throw new Error(`probe_wait_and_record failed: ${JSON.stringify(result)}`);
+    }
+    const response = result.structuredContent;
+    const timingResponse = await fetch(response.timing_url);
+    if (!timingResponse.ok) {
+      throw new Error(`timing download failed: ${timingResponse.status}`);
+    }
+    const timing = await timingResponse.json();
+    if (
+      timing.probe_id !== probeId ||
+      timing.complete !== true ||
+      timing.events.at(-1)?.event !== "completed"
+    ) {
+      throw new Error(`incomplete timing evidence: ${JSON.stringify(timing)}`);
+    }
+    console.log(
+      JSON.stringify(
+        {
+          endpoint: displayEndpoint(endpoint),
+          tools: names,
+          client_elapsed_ms: Math.round(performance.now() - started),
+          result: response,
+          timing,
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
   const cases = runMatrix
     ? [
         ...["001", "016", "064", "128", "256"].map((size) => ({
@@ -131,6 +193,9 @@ try {
     }
   }
   console.log(JSON.stringify({ endpoint: displayEndpoint(endpoint), tools: names, results }, null, 2));
-} finally {
-  await client.close();
+  } finally {
+    await client.close();
+  }
 }
+
+await main();

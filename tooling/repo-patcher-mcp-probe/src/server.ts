@@ -9,7 +9,14 @@ import {
   readImmutableProbe,
   storeImmutableProbe,
 } from "./probe.js";
-import type { Env, ProbeFileInput, StoredProbe } from "./types.js";
+import { LONG_CALL_DURATIONS, runLongCallProbe } from "./timing.js";
+import type {
+  Env,
+  LongCallResult,
+  ProbeFileInput,
+  ProbeRequestContext,
+  StoredProbe,
+} from "./types.js";
 
 const requestId = z.string().min(1).max(80);
 const sha256 = z.string().regex(/^[0-9a-fA-F]{64}$/);
@@ -21,12 +28,64 @@ const storedProbeSchema = {
   download_url: z.string().url(),
 };
 
-export function createProbeServer(env: Env, publicBaseUrl: string): McpServer {
+export function createProbeServer(
+  env: Env,
+  publicBaseUrl: string,
+  requestContext: ProbeRequestContext = {},
+): McpServer {
   const server = new McpServer(
     { name: "mud-repo-patcher-transport-probe", version: "0.1.0" },
     {
       instructions:
         "Servidor experimental de Fase 0. Conserva request_id, compara siempre SHA-256 y usa probe_get_file para recuperar exactamente el objeto almacenado.",
+    },
+  );
+
+  server.registerTool(
+    "probe_wait_and_record",
+    {
+      title: "Run one timed long MCP call",
+      description:
+        "Keep this single tool call open for the requested duration while recording server-side start, heartbeat, and completion events. Use it to test whether ChatGPT can complete a long autonomous MCP operation after one approval.",
+      inputSchema: {
+        probe_id: requestId,
+        duration_seconds: z.union([
+          z.literal(LONG_CALL_DURATIONS[0]),
+          z.literal(LONG_CALL_DURATIONS[1]),
+          z.literal(LONG_CALL_DURATIONS[2]),
+          z.literal(LONG_CALL_DURATIONS[3]),
+        ]),
+      },
+      outputSchema: {
+        probe_id: z.string(),
+        requested_duration_seconds: z.number().int(),
+        started_at: z.string(),
+        completed_at: z.string(),
+        server_elapsed_ms: z.number().int().nonnegative(),
+        event_count: z.number().int().positive(),
+        timing_url: z.string().url(),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: false,
+      },
+    },
+    async ({ probe_id, duration_seconds }) => {
+      try {
+        const result = await runLongCallProbe(
+          env.PROBE_BUCKET,
+          probe_id,
+          duration_seconds,
+          publicBaseUrl,
+          env.PROBE_ROUTE_SECRET,
+          requestContext,
+        );
+        return longCallToolResult(result);
+      } catch (error) {
+        return toolError(error);
+      }
     },
   );
 
@@ -143,6 +202,27 @@ export function createProbeServer(env: Env, publicBaseUrl: string): McpServer {
   );
 
   return server;
+}
+
+function longCallToolResult(result: LongCallResult) {
+  const structuredContent = {
+    probe_id: result.probeId,
+    requested_duration_seconds: result.requestedDurationSeconds,
+    started_at: result.startedAt,
+    completed_at: result.completedAt,
+    server_elapsed_ms: result.serverElapsedMs,
+    event_count: result.eventCount,
+    timing_url: result.timingUrl,
+  };
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: `Llamada ${result.probeId} completada en ${result.serverElapsedMs} ms con ${result.eventCount} eventos persistidos.`,
+      },
+    ],
+    structuredContent,
+  };
 }
 
 function toolResult(stored: StoredProbe) {

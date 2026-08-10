@@ -9,6 +9,7 @@
     "dev": "wrangler dev",
     "fixtures": "python scripts/generate_probe_inputs.py",
     "smoke": "node scripts/run_mcp_smoke.mjs",
+    "smoke:long": "node scripts/run_mcp_smoke.mjs --long-call 15",
     "smoke:matrix": "node scripts/run_mcp_smoke.mjs --matrix",
     "test": "vitest run --configLoader runner",
     "test:watch": "vitest --configLoader runner",

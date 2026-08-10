@@ -2,6 +2,7 @@ import { createMcpHandler } from "agents/mcp/server";
 
 import { sha256Hex, validateRequestId } from "./probe.js";
 import { createProbeServer } from "./server.js";
+import { readTimingEvents } from "./timing.js";
 import type { Env } from "./types.js";
 
 export default {
@@ -48,8 +49,34 @@ export default {
       });
     }
 
+    if (url.pathname.startsWith(`${basePath}/probe-timings/`) && request.method === "GET") {
+      const rawId = url.pathname.slice(`${basePath}/probe-timings/`.length);
+      try {
+        const probeId = decodeURIComponent(rawId);
+        const events = await readTimingEvents(env.PROBE_BUCKET, probeId);
+        return Response.json(
+          {
+            probe_id: probeId,
+            complete: events.at(-1)?.event === "completed",
+            events,
+          },
+          { headers: { "Cache-Control": "private, no-store" } },
+        );
+      } catch (error) {
+        const code = error instanceof Error && "code" in error ? String(error.code) : "internal_error";
+        const status = code === "not_found" ? 404 : code === "invalid_request_id" ? 400 : 500;
+        return Response.json({ code }, { status });
+      }
+    }
+
     if (url.pathname === `${basePath}/mcp`) {
-      return createMcpHandler(() => createProbeServer(env, url.origin), {
+      const cfRay = request.headers.get("CF-Ray");
+      const colo = request.cf?.colo;
+      const requestContext = {
+        ...(cfRay ? { cfRay } : {}),
+        ...(typeof colo === "string" ? { colo } : {}),
+      };
+      return createMcpHandler(() => createProbeServer(env, url.origin, requestContext), {
         route: `${basePath}/mcp`,
       })(request, env, ctx);
     }
