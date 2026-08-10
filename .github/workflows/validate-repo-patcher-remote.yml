@@ -23,7 +23,7 @@ on:
       package_size:
         description: Candidate ZIP size in bytes
         required: true
-        type: number
+        type: string
       trust_plugin:
         description: Explicitly authorize a Python plugin
         required: true

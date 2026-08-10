@@ -32,6 +32,14 @@ class RemoteWorkflowContractTests(unittest.TestCase):
         for forbidden in ("package_url", "package_ref", "package_path", "issue_number"):
             self.assertNotIn(f"      {forbidden}:\n", TEXT)
 
+    def test_package_size_crosses_dispatch_as_a_decimal_string(self) -> None:
+        match = re.search(
+            r"(?ms)^      package_size:\n(.*?)(?=^      [a-zA-Z0-9_-]+:\n)",
+            TEXT,
+        )
+        self.assertIsNotNone(match)
+        self.assertIn("        type: string", match.group(1))
+
     def test_control_and_target_are_distinct_exact_checkouts(self) -> None:
         block = job_block("validate")
         self.assertIn("ref: ${{ github.workflow_sha }}", block)
