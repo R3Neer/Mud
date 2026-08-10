@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { sha256Hex } from "../src/crypto.js";
 import { acceptRequest, getRequest, transition } from "../src/db.js";
 import { ServiceError } from "../src/errors.js";
+import { buildWorkflowDispatchInputs } from "../src/github.js";
 import { verifyRequestClaims } from "../src/oidc.js";
 import { candidateKey, putImmutableCandidate, readVerifiedObject } from "../src/storage.js";
 import type { CandidateIdentity, Env, ValidationRow } from "../src/types.js";
@@ -75,6 +76,24 @@ describe("D1 state machine", () => {
     await expect(
       transition(bindings.VALIDATION_DB, "db-transition", "accepted", "running"),
     ).rejects.toMatchObject({ code: "state_transition_conflict" });
+  });
+});
+
+describe("GitHub workflow dispatch", () => {
+  it("serializes number inputs in the form accepted by the REST API", () => {
+    const row = {
+      request_id: "dispatch-inputs",
+      target_sha: "1".repeat(40),
+      package_sha256: "2".repeat(64),
+      package_size: 321,
+      trust_plugin: 0,
+      transport_kind: "logical_files",
+    } as ValidationRow;
+
+    expect(buildWorkflowDispatchInputs(row)).toMatchObject({
+      package_size: "321",
+      trust_plugin: false,
+    });
   });
 });
 

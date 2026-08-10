@@ -78,6 +78,20 @@ function repositoryPath(env: Env): string {
   return `/repos/${encodeURIComponent(env.GITHUB_OWNER)}/${encodeURIComponent(env.GITHUB_REPO)}`;
 }
 
+export function buildWorkflowDispatchInputs(
+  row: ValidationRow,
+): Record<string, string | boolean> {
+  return {
+    protocol: "mud-repo-patcher-validation/v1",
+    request_id: row.request_id,
+    target_sha: row.target_sha,
+    package_sha256: row.package_sha256,
+    package_size: String(row.package_size),
+    trust_plugin: Boolean(row.trust_plugin),
+    transport_kind: row.transport_kind,
+  };
+}
+
 export async function dispatchWorkflow(
   env: Env,
   row: ValidationRow,
@@ -89,15 +103,7 @@ export async function dispatchWorkflow(
       method: "POST",
       body: JSON.stringify({
         ref: env.GITHUB_REF,
-        inputs: {
-          protocol: "mud-repo-patcher-validation/v1",
-          request_id: row.request_id,
-          target_sha: row.target_sha,
-          package_sha256: row.package_sha256,
-          package_size: row.package_size,
-          trust_plugin: Boolean(row.trust_plugin),
-          transport_kind: row.transport_kind,
-        },
+        inputs: buildWorkflowDispatchInputs(row),
       }),
     },
   );
