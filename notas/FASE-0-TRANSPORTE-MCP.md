@@ -94,7 +94,17 @@ Esto demuestra conectividad y exactitud básica desde ChatGPT, pero no satisface
 
 ChatGPT solicitó confirmación manual para las operaciones de almacenamiento. Es el comportamiento coherente con sus anotaciones MCP: ambas cambian el estado privado de R2 y se declaran `readOnlyHint: false`, `destructiveHint: false`, `idempotentHint: true` y `openWorldHint: false`. `probe_get_file` se mantiene estrictamente no mutante y se declara `readOnlyHint: true`.
 
-No se falsearán las anotaciones para evitar confirmaciones. El diseño estable minimizará las operaciones mutantes: una única herramienta de envío por candidata; espera, evidencias y descarga serán lecturas. Queda por comprobar empíricamente si ChatGPT permite autorizar de forma persistente ese complemento privado. Si exige aprobación para cada envío, el requisito de cero intervención por candidata no será alcanzable desde ChatGPT Plus mediante una herramienta MCP que escriba y despache trabajo externo.
+Se hizo después una prueba aislada de `probe_get_file` con el objeto conocido `local-base64-001k-1-1786383573760-998ac3a9e0e94`. ChatGPT pidió una confirmación manual antes de la única llamada, aunque la herramienta estaba anunciada como lectura y no invocó ninguna operación de almacenamiento. Tras aprobarla recuperó correctamente 1024 bytes con SHA-256 `8c6b6570692b82c082a00868c97c7e88e5fb7e44f33eb449d738c90bc9cc021b`.
+
+Por tanto, las anotaciones correctas no bastan para evitar aprobaciones en este complemento privado de ChatGPT Plus. La confirmación observada pertenece a la política del cliente, no a una clasificación errónea del servidor.
+
+No se falsearán las anotaciones para intentar eludirla. El diseño estable todavía puede minimizar las operaciones: una única herramienta de envío por candidata; espera, evidencias y descarga serían lecturas. Sin embargo, mientras el cliente exija una aprobación incluso para cada lectura, este canal MCP no satisface por sí solo los requisitos de cero intervención por candidata ni de corrección automática mediante varias llamadas dentro de la misma interacción.
+
+Este resultado bloquea el paso a las fases de D1, GitHub Actions y harness hasta elegir explícitamente una de estas concesiones arquitectónicas:
+
+1. aceptar aprobaciones manuales en ChatGPT Plus;
+2. usar un cliente propio de la API que configure la política de aprobación;
+3. trasladar el bucle completo, incluida la corrección de candidatas, a un servicio autónomo distinto de ChatGPT.
 
 ## Paquete MUD representativo
 
@@ -127,5 +137,5 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 - Despliegue Cloudflare: operativo mediante HTTPS, con secreto de ruta y subdominio `workers.dev` registrados.
 - Validación remota de referencia: completa; 24/24 envíos y descargas exactos contra R2 real.
 - Conexión desde ChatGPT: operativa; exactitud básica demostrada para ambos transportes, matriz completa pendiente.
-- Confirmaciones de ChatGPT: operaciones mutantes requieren aprobación manual en la prueba inicial; impacto sobre el requisito de cero intervención pendiente de cerrar.
+- Confirmaciones de ChatGPT: incluso `probe_get_file`, estrictamente de solo lectura, requiere aprobación manual; el MCP privado no cumple cero intervención.
 - Transporte elegido: ninguno todavía.
