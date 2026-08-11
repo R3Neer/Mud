@@ -530,11 +530,6 @@ Fuente: `repo_patcher/errors.py`.
 
 ## 10. Validación CI de MUD
 
-El procedimiento conversacional de ChatGPT para construir, transportar, corregir y
-entregar estos paquetes se define en `gobierno/MUD-COMANDO-PATCH.md`. Esta guía describe
-el motor y sus garantías; el documento del comando gobierna el uso del adaptador MCP y la
-entrega estricta del objeto validado.
-
 El workflow debe ejecutar sobre un checkout desechable del SHA exacto:
 
 ```text
