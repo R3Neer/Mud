@@ -165,6 +165,23 @@ def main() -> None:
         ],
         "binary": [entry for entry in representative if entry["path"] == "assets/recurso.bin"],
     }
+    representative_text = [entry for entry in representative if entry["encoding"] == "utf8"]
+    write_json(
+        "files-representative-stage-text.json",
+        {
+            "request_id": "phase0-staged-text-representative-REPLACE",
+            "batch_id": "text",
+            "files": with_integrity(representative_text),
+        },
+    )
+    write_json(
+        "files-representative-finalize-text.json",
+        {
+            "request_id": "phase0-staged-text-representative-REPLACE",
+            "batch_ids": ["text"],
+            "expected_file_count": len(representative_text),
+        },
+    )
     for batch_id, batch_files in representative_batches.items():
         write_json(
             f"files-representative-stage-{batch_id}.json",
@@ -194,7 +211,7 @@ def main() -> None:
         },
     )
     write_json("base64-manifest.json", manifest)
-    print(f"Generated {len(manifest)} ZIP probes and 3 logical payloads in {OUTPUT}")
+    print(f"Generated ZIP, logical, and staged probe payloads in {OUTPUT}")
 
 
 if __name__ == "__main__":

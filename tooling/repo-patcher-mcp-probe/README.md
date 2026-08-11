@@ -1,6 +1,6 @@
 # RepoPatcher MCP transport probe
 
-This directory implements only Phase 0 of the MUD RepoPatcher validation architecture. It answers two empirical questions before the production validator is built:
+This directory preserves the completed Phase 0 experiment of the MUD RepoPatcher validation architecture. It answered two empirical questions:
 
 1. Can ChatGPT transmit exact ZIP bytes to a custom MCP tool?
 2. Can ChatGPT instead send a representative logical file set and receive the exact ZIP built by the server?
@@ -42,7 +42,7 @@ npm run dev
 
 `npm run fixtures` creates the five exact-size ZIPs and the three logical payloads under `%TEMP%\mud-repo-patcher-mcp-probe\inputs\`. Replace `REPLACE` in each request ID with attempt `1`, `2`, or `3`. The local Worker uses Wrangler's local R2 implementation. Run MCP Inspector against the MCP URL before connecting ChatGPT.
 
-The representative fixture also produces three staged requests (`patch`, `support`, and `binary`) plus one finalize request. A complete file always belongs to exactly one batch; this experiment does not fragment base64 or split files. Each staged entry carries its decoded byte size and SHA-256, and the Worker rejects a damaged file before storing the batch.
+The representative fixture produces three exploratory staged requests (`patch`, `support`, and `binary`) and the corresponding finalize request. It also produces the final v1 fixture: one `text` batch containing all 27 UTF-8 files and its finalize request. A complete file always belongs to exactly one batch; this experiment does not fragment base64 or split files. Each staged entry carries its decoded byte size and SHA-256, and the Worker rejects a damaged file before storing the batch.
 
 With the local Worker running, `npm run smoke` negotiates Streamable HTTP through the real MCP client, lists the four tools, stores one direct ZIP and one logical package, downloads both, and verifies their size and SHA-256.
 `npm run smoke:matrix` repeats all eight Phase 0 variants three times. This proves the Worker stack locally, but it does not replace the required experiment initiated by ChatGPT.
@@ -79,6 +79,6 @@ https://<worker>.workers.dev/<random-secret>/mcp
 
 Generate fresh `request_id` values for every attempt. Record only tests initiated by ChatGPT in the decision table; `npm run smoke:matrix` is supporting local evidence, not a substitute.
 
-## Exit gate
+## Phase 0 decision
 
-Record three attempts for each transport and fixture in `notas/FASE-0-TRANSPORTE-MCP.md`. Do not implement the production workflow or harness until one transport satisfies the gate described there.
+Phase 0 is closed. The production adapter will stage immutable batches of complete UTF-8 files and finalize the deterministic ZIP in the Worker. Direct ZIP base64, monolithic representative payloads, base64 fragmentation, and arbitrary binary assets are outside v1. The complete evidence and exact hashes are recorded in `notas/FASE-0-TRANSPORTE-MCP.md`.

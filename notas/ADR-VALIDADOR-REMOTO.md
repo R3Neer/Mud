@@ -1,7 +1,7 @@
 ---
 title: "Arquitectura del validador remoto RepoPatcher"
 status: aceptada
-date: 2026-08-10
+date: 2026-08-11
 ---
 
 # Arquitectura del validador remoto RepoPatcher
@@ -14,16 +14,18 @@ que superaron la validación. La cola v6 demuestra el proceso, pero su polling,
 sus issues y sus ramas portadoras añaden latencia y acoplan el transporte al
 validador.
 
-La Fase 0 todavía no ha decidido si ChatGPT enviará un ZIP en base64 o una lista
-de archivos lógicos. Tampoco está resuelta la política real de confirmaciones
-del cliente. Esas incógnitas no deben contaminar el núcleo durable.
+La Fase 0 demostró que ChatGPT no transmite de forma fiable un ZIP en base64 ni
+un paquete representativo completo en una sola llamada. Sí transmite de forma
+repetible archivos UTF-8 completos mediante lotes cortos e inmutables. La
+configuración final del complemento permite esas operaciones sin confirmación
+manual.
 
 ## Decisión
 
 Se construirá un camino nuevo en paralelo a v6:
 
 ```text
-adaptador MCP
+adaptador MCP: stage UTF-8 → finalize
   → servicio de candidatas
     → R2 (bytes por SHA-256) + D1 (estado por request_id)
       → workflow_dispatch
@@ -43,8 +45,10 @@ Las fronteras son:
 - el paquete solo se ejecuta en clones descartables A y B;
 - el resultado terminal y el ZIP verde son inmutables.
 
-El flujo después de construir el ZIP es idéntico para ambos transportes. Por
-eso la elección pendiente solo afecta a la entrada del adaptador.
+El adaptador verifica tamaño y SHA-256 de cada archivo, persiste lotes
+inmutables y construye el ZIP determinista al finalizar. A partir de ese ZIP,
+el núcleo durable conserva el flujo descrito. Los binarios arbitrarios quedan
+fuera del contrato v1.
 
 ## Plano de control y plano objetivo
 
@@ -118,9 +122,8 @@ accepted/dispatching/queued/running → expired
 
 - v6 permanece intacta hasta diez ejecuciones E2E verdes del sistema nuevo;
 - no se crean issues, commits, ramas ni PR desde el sistema nuevo;
-- el adaptador MCP puede cambiar entre varias herramientas y una operación
-  compuesta sin reescribir almacenamiento, workflow ni harness;
+- el adaptador MCP usa llamadas cortas, idempotentes y reanudables; no depende
+  de mantener una conexión HTTP abierta;
 - la aplicación local, commit y push siguen fuera de alcance;
 - las decisiones aún abiertas se mantienen en
   `notas/PENDIENTES-VALIDADOR-REMOTO.md`.
-

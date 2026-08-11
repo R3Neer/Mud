@@ -1,16 +1,16 @@
 ---
 title: "Fase 0: transporte MCP de paquetes RepoPatcher"
-status: en-prueba
-date: 2026-08-09
+status: cerrada
+date: 2026-08-11
 ---
 
 # Fase 0: transporte MCP de paquetes RepoPatcher
 
 ## Propósito
 
-Esta prueba decide empíricamente cómo transferirá ChatGPT una candidata al validador. El backend, GitHub Actions, OIDC y el harness pudieron adelantarse manteniendo ambos adaptadores privados, pero no se elegirá ni retirará ningún transporte hasta cerrar esta fase.
+Esta prueba decidió empíricamente cómo transferirá ChatGPT una candidata al validador. La decisión es enviar archivos UTF-8 completos mediante lotes cortos e inmutables y construir el ZIP definitivo en el Worker.
 
-El prototipo está en `tooling/repo-patcher-mcp-probe/` y ofrece los dos transportes candidatos simultáneamente.
+El prototipo está en `tooling/repo-patcher-mcp-probe/`. Conserva herramientas experimentales para reproducir la evidencia, pero el adaptador definitivo solo incorporará el transporte elegido.
 
 ## Criterio de identidad
 
@@ -38,7 +38,7 @@ Cada celda `Envíos exactos` y `Descargas exactas` debe registrar tres intentos 
 | files | paquete pequeño | 3/3 | 3/3 | menos de 5 s observados |
 | files | paquete MUD representativo, llamada única | 0/3 | 0/3 | 14:02 mediana |
 | files | binario + Unicode | 3/3 | 3/3 | unos 5 s |
-| files por lotes completos | paquete MUD representativo | pendiente | pendiente | pendiente |
+| files UTF-8 por lotes completos | paquete MUD representativo | 3/3 | 3/3 | unos 66 s, lote más finalización |
 
 Esta tabla solo usa llamadas iniciadas por ChatGPT Plus. Las recuperaciones independientes desde R2 verifican los bytes aunque ChatGPT pierda el retorno visible. Las pruebas locales del mismo protocolo no se mezclan con la evidencia que decide el transporte.
 
@@ -99,7 +99,7 @@ Esto demuestra conectividad y exactitud básica desde ChatGPT, pero no satisface
 
 La instalación renovada del complemento descubrió las cuatro herramientas originales. `probe_wait_and_record` completó llamadas de 15 y 120 segundos sin confirmación manual. La llamada de 120 segundos devolvió 25 eventos y exactamente 120.000 ms de tiempo de servidor. Al final, la interfaz mostró un aviso transitorio por exceso de solicitudes; otro chat siguió funcionando. Esta evidencia permite medir llamadas largas, pero refuerza que el diseño final no debe depender de mantener una conexión HTTP abierta.
 
-El cliente solo ofrece de forma global **Permitir acciones de bajo riesgo**. En una conversación solicitó tres aprobaciones iniciales que se concedieron para toda la conversación; las operaciones posteriores no requirieron confirmaciones adicionales. El requisito operativo queda precisado como cero intervención **por candidata después de la autorización inicial de la conversación**.
+La configuración final del complemento permite todas sus acciones sin preguntar. Las pruebas finales se ejecutaron con cero confirmaciones manuales. La autorización por conversación que se observó inicialmente queda como posible comportamiento de respaldo del cliente, no como requisito del protocolo.
 
 El transporte ZIP base64 fue bloqueado tres veces antes de alcanzar el Worker, pese a que ChatGPT calculó correctamente los 1024 bytes y el SHA-256 `8c6b6570692b82c082a00868c97c7e88e5fb7e44f33eb449d738c90bc9cc021b`. El transporte directo queda descartado sin probar tamaños superiores.
 
@@ -115,9 +115,28 @@ La llamada monolítica representativa no es fiable:
 
 Por tanto, no se confiará en una sola llamada que materialice unos 32 KiB de JSON. El prototipo 0.2 introduce lotes inmutables de archivos completos: `probe_stage_files` exige tamaño y SHA-256 por archivo, limita cada lote a 24 KiB de contenido textual y nunca divide un archivo ni fragmenta base64; `probe_finalize_files` relee los lotes explícitos, revalida cada archivo y construye el ZIP definitivo. El paquete representativo se divide en `patch`, `support` y `binary`.
 
-El smoke test local del nuevo protocolo listó seis herramientas, almacenó los tres lotes, verificó 28 archivos y 25.988 bytes fuente y produjo un ZIP determinista de 6456 bytes con SHA-256 `23f423b6a95a21edbbbd22eb462f0a57723661c6505b92342067d2e27a5bdf4e`. Falta repetir este camino desde ChatGPT Plus.
+El smoke test local del nuevo protocolo listó seis herramientas, almacenó los tres lotes, verificó 28 archivos y 25.988 bytes fuente y produjo un ZIP determinista de 6456 bytes con SHA-256 `23f423b6a95a21edbbbd22eb462f0a57723661c6505b92342067d2e27a5bdf4e`.
 
-Las primeras pruebas del complemento antiguo solicitaron confirmaciones incluso para `probe_get_file`. La instalación renovada mostró después un comportamiento más preciso: puede pedir varias autorizaciones iniciales para toda la conversación y ejecutar sin nuevas interrupciones las operaciones posteriores. Esta limitación de interfaz se acepta porque Samuel trabaja habitualmente en conversaciones largas.
+La prueba final desde ChatGPT se limitó deliberadamente a los 27 archivos UTF-8 que puede generar el propio modelo. El primer intento los dividió en los lotes `patch` y `support`; los dos siguientes usaron un único lote `text`. Los tres finales produjeron exactamente el mismo ZIP:
+
+```text
+files: 27
+source bytes: 17.796
+ZIP bytes: 6.008
+SHA-256: a199b3814e7e64e53f3b393b3d12862535d0907d43c6d712ccae8b32ddca2811
+```
+
+Las tres descargas independientes desde R2 verificaron rutas, contenidos, timestamps fijos, tamaño y SHA-256. Los tiempos observados de staging más finalización fueron aproximadamente 66, 59 y 71 segundos. Esta es una prueba de estrés del transporte, no la medición E2E del sistema completo.
+
+| Intento | `request_id` | Lotes | Tiempo observado | Resultado |
+| --- | --- | ---: | ---: | --- |
+| 1 | `phase0-staged-representative-chatgpt-20260811-01` | 2 | unos 66 s | exacto |
+| 2 | `phase0-staged-text-representative-chatgpt-20260811-02` | 1 | 59 s | exacto |
+| 3 | `phase0-staged-text-representative-chatgpt-20260811-03` | 1 | 71 s | exacto |
+
+El lote binario representativo no fue fiable en ChatGPT. Como `/patch` genera texto y no recursos base64 arbitrarios, v1 admite únicamente archivos UTF-8. Un recurso binario futuro deberá incorporarse mediante otro mecanismo expresamente diseñado o generarse determinísticamente durante la aplicación; no se enviará como base64 a través del modelo.
+
+Las primeras pruebas del complemento antiguo solicitaron confirmaciones incluso para `probe_get_file`. Una instalación renovada permitió concederlas para toda la conversación y la configuración definitiva **Permitir todas las acciones** eliminó también esas confirmaciones iniciales. El protocolo no depende de cuál de esos dos comportamientos ofrezca una versión concreta del cliente.
 
 No se falsearán las anotaciones MCP: almacenamiento y staging siguen declarados mutantes, no destructivos e idempotentes; la recuperación sigue siendo lectura. Ya no se considera necesario un cliente propio ni trasladar fuera de ChatGPT el bucle de corrección únicamente para eliminar la autorización inicial.
 
@@ -159,18 +178,21 @@ La prueba lógica debe incluir en conjunto:
 - plugin Python opcional;
 - acentos y Unicode;
 - muchas rutas;
-- recurso binario.
+- recurso binario en la matriz exploratoria.
 
-No basta con demostrar que una lista de un solo archivo atraviesa el MCP.
+No basta con demostrar que una lista de un solo archivo atraviesa el MCP. La
+decisión v1 se tomó sobre los 27 archivos UTF-8 representativos; el recurso
+binario permitió descubrir y delimitar una capacidad que no necesita el flujo
+normal de generación de patches.
 
 ## Regla de salida
 
 1. ZIP base64 queda descartado tras 0/3 incluso a 1 KiB.
-2. Si el transporte lógico por lotes completos funciona 3/3 con el paquete representativo, el Worker construirá el ZIP definitivo desde esos lotes inmutables.
+2. El transporte lógico UTF-8 por lotes completos funcionó 3/3 con el paquete representativo; el Worker construirá el ZIP definitivo desde esos lotes inmutables.
 3. No se implementará base64 fragmentado.
-4. Si ambos fallan, se detiene la arquitectura antes de construir el laboratorio Windows.
+4. Los archivos binarios arbitrarios quedan fuera del contrato v1.
 
-Después de decidir se eliminará del servidor la herramienta de transporte descartada.
+Las herramientas descartadas se eliminarán del adaptador definitivo. Podrán permanecer temporalmente en la sonda experimental hasta que el E2E nuevo esté operativo.
 
 ## Estado actual
 
@@ -180,6 +202,7 @@ Después de decidir se eliminará del servidor la herramienta de transporte desc
 - Despliegue Cloudflare: prototipo 0.2 publicado en la versión Worker `22619184-837b-4a16-8c13-a8361f06e1ca`, con staging por lotes completos.
 - Validación remota de referencia: completa; 24/24 envíos y descargas exactos contra R2 real.
 - Conexión desde ChatGPT: operativa; paquete mínimo y Unicode/binario obtuvieron 3/3, mientras ZIP base64 y `files` monolítico quedaron descartados.
-- Confirmaciones de ChatGPT: una conversación puede exigir tres autorizaciones iniciales; después no pidió intervención adicional por operación.
+- Confirmaciones de ChatGPT: la configuración final permitió todas las acciones y las pruebas decisivas requirieron cero confirmaciones manuales.
 - Sonda de llamada larga: 15 y 120 segundos completados desde ChatGPT; no se usará como fundamento de la arquitectura asíncrona.
-- Transporte elegido: dirección provisional `files` por lotes completos; falta 3/3 representativo desde ChatGPT antes de cerrar la fase.
+- Transporte elegido: archivos UTF-8 completos por lotes inmutables, seguidos de finalización determinista en el Worker.
+- Resultado de salida: Fase 0 cerrada con 3/3 envíos y 3/3 descargas representativas exactas.

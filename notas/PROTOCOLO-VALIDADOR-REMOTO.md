@@ -1,7 +1,7 @@
 ---
 title: "Protocolo interno del validador remoto RepoPatcher"
 status: vigente
-date: 2026-08-10
+date: 2026-08-11
 ---
 
 # Protocolo interno del validador remoto RepoPatcher
@@ -22,7 +22,7 @@ transport_kind
 El Worker calcula SHA-256 y tamaño. Un `request_id` repetido con la misma
 identidad devuelve el estado existente; con otra identidad devuelve conflicto.
 
-Después de la entrada, ambos transportes producen exactamente el mismo objeto:
+El transporte v1 es `files-staged-v1`. Después de la entrada produce exactamente el objeto:
 
 ```text
 candidates/<package_sha256>.zip
@@ -30,6 +30,25 @@ candidates/<package_sha256>.zip
 
 Una creación R2 usa `If-None-Match: *`. Si pierde una carrera, vuelve a leer y
 verifica bytes, tamaño, hash y metadatos antes de reutilizar el objeto.
+
+## Entrada MCP v1
+
+`stage_candidate_files` recibe un `request_id`, un `batch_id` y archivos UTF-8
+completos. Cada archivo incluye ruta POSIX relativa, contenido, tamaño en bytes
+y SHA-256. El Worker valida estos valores antes de persistir un lote inmutable.
+Un archivo nunca se divide entre lotes y un lote repetido con otros datos es
+conflicto.
+
+`submit_candidate` recibe los identificadores explícitos de los lotes, el
+número total esperado de archivos, `target_sha` y `trust_plugin`. Relee y
+verifica todos los lotes, rechaza rutas duplicadas o colisiones sin distinguir
+mayúsculas y construye el ZIP con orden, timestamp y metadatos fijos. Solo
+entonces calcula `package_sha256`, almacena `candidates/<sha256>.zip`, crea el
+estado durable y hace dispatch.
+
+Los recursos binarios arbitrarios y el base64 fragmentado quedan fuera de v1.
+Las operaciones posteriores son `await_validation`,
+`read_validation_evidence` y `get_validated_candidate`.
 
 ## Dispatch
 

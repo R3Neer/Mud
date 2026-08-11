@@ -1,7 +1,7 @@
 ---
 title: "Pendientes del validador remoto RepoPatcher"
 status: vigente
-date: 2026-08-10
+date: 2026-08-11
 ---
 
 # Pendientes del validador remoto RepoPatcher
@@ -18,7 +18,7 @@ Este documento conserva las decisiones abiertas, experimentos incompletos y cond
 → entrega del mismo ZIP que obtuvo verde
 ```
 
-Debe consultarse antes de cerrar la Fase 0, elegir el adaptador MCP definitivo o retirar la infraestructura v6. El subsistema que aplique localmente el ZIP, haga commit o publique cambios continúa fuera de alcance.
+Debe consultarse antes de modificar el adaptador MCP definitivo o retirar la infraestructura v6. La Fase 0 ya está cerrada. El subsistema que aplique localmente el ZIP, haga commit o publique cambios continúa fuera de alcance.
 
 ## Decisiones ya fijadas
 
@@ -37,15 +37,15 @@ Debe consultarse antes de cerrar la Fase 0, elegir el adaptador MCP definitivo o
 
 ### P1 — Política real de aprobaciones de ChatGPT
 
-Estado: **cerrado con concesión aceptada**.
+Estado: **cerrado**.
 
 Evidencia actual:
 
-- El cliente puede solicitar varias autorizaciones al comenzar una conversación.
-- Al concederlas para toda la conversación, las candidatas posteriores se enviaron y recuperaron sin nuevas confirmaciones.
-- Samuel acepta esta autorización inicial porque trabaja habitualmente en conversaciones largas.
+- La configuración final del complemento permite todas las acciones sin preguntar.
+- Las pruebas decisivas de staging y finalización se ejecutaron sin confirmaciones manuales.
+- El cliente puede pedir autorizaciones iniciales en otras configuraciones, pero no forman parte del contrato ni condicionan la arquitectura.
 
-El requisito queda precisado como cero intervención **por candidata después de la autorización inicial de la conversación**. No se cambiará la arquitectura para eliminar esa concesión de interfaz.
+El requisito de cero intervención por candidata queda satisfecho en la configuración probada.
 
 ### P2 — Catálogo MCP actualizado en ChatGPT
 
@@ -61,33 +61,30 @@ ChatGPT completó llamadas de 15 y 120 segundos sin confirmación manual y recib
 
 ### P4 — Transporte candidato definitivo
 
-Estado: **abierto**.
+Estado: **cerrado**.
 
 Resultados:
 
 ```text
 ZIP base64: descartado tras 0/3 a 1 KiB por bloqueo del cliente
 files monolítico: descartado tras 0/3 representativos exactos
-files por lotes completos: implementado localmente, pendiente 3/3 desde ChatGPT
+files UTF-8 por lotes completos: 3/3 representativos exactos desde ChatGPT
 ```
 
-Falta completar desde ChatGPT la matriz 3/3 por lotes establecida en `FASE-0-TRANSPORTE-MCP.md`. Hasta entonces:
-
-- no retirar todavía las herramientas experimentales anteriores;
-- no declarar cerrada la Fase 0;
-- no introducir base64 fragmentado.
+Se eligió staging de archivos UTF-8 completos, con tamaño y SHA-256 por archivo, seguido de finalización determinista. Los tres ZIP midieron 6008 bytes y compartieron SHA-256 `a199b3814e7e64e53f3b393b3d12862535d0907d43c6d712ccae8b32ddca2811`. No se implementará base64 fragmentado y los recursos binarios arbitrarios quedan fuera de v1.
 
 ### P5 — Adaptador MCP definitivo
 
-Estado: **dirección fijada; nombres finales pendientes de P4**.
+Estado: **en implementación**.
 
 Se usarán varias llamadas cortas, idempotentes y reanudables:
 
 ```text
-stage batches → finalize/submit → await → evidence → download
+stage_candidate_files → submit_candidate → await_validation
+→ read_validation_evidence → get_validated_candidate
 ```
 
-El aviso posterior a la prueba de 120 segundos descarta depender de una operación compuesta mantenida abierta. Los servicios internos continúan independientes del número exacto de herramientas.
+El staging usa archivos completos y lotes inmutables; nunca divide un archivo. El aviso posterior a la prueba de 120 segundos descarta depender de una operación compuesta mantenida abierta. Los servicios internos continúan independientes del número exacto de herramientas.
 
 ### P6 — Propietario del bucle de corrección
 
@@ -181,14 +178,14 @@ Tendrá permisos y credenciales separados si se implementa en el futuro.
 - Worker: `mud-repo-patcher-mcp-probe`.
 - Versión desplegada al registrar este documento: `22619184-837b-4a16-8c13-a8361f06e1ca`.
 - R2 de prueba operativo.
-- Seis herramientas experimentales desplegadas; `probe_stage_files` y `probe_finalize_files` están pendientes de refrescar y probar desde ChatGPT.
+- Seis herramientas experimentales desplegadas; `probe_stage_files` y `probe_finalize_files` quedaron verificadas 3/3 desde ChatGPT con el paquete UTF-8 representativo.
 - `probe_wait_and_record` verificada mediante cliente MCP de referencia.
 - Matrices local y remota de referencia: 24/24 transferencias exactas.
 - Evidencia detallada: `notas/FASE-0-TRANSPORTE-MCP.md`.
 
 ## Núcleo común implementado
 
-Desde el 2026-08-10 están implementados y versionados, sin cerrar P1–P6:
+Desde el 2026-08-10 están implementados y versionados:
 
 - ADR y schemas neutrales;
 - harness A/B con preflight no mutante, convergencia y reproducibilidad;
@@ -200,12 +197,11 @@ Desde el 2026-08-10 están implementados y versionados, sin cerrar P1–P6:
 
 El workflow está publicado y el Worker dispone de una credencial fine-grained
 limitada a `R3Neer/Mud` y Actions. Los E2E están registrados en P7.
-Siguen abiertos P1–P6 y faltan ocho verdes, casos rojos y pruebas de carreras
-antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
+P1–P4 y P6 están cerrados. Falta terminar el adaptador definitivo P5, además de ocho verdes, casos rojos y pruebas de carreras P7 antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
 
 ## Trabajo autorizado mientras estos puntos siguen abiertos
 
-Puede avanzarse sin resolver P1–P6 en:
+Mientras P5 y P7 sigan abiertos puede avanzarse en:
 
 - contratos y schemas neutrales;
 - máquina de estados D1;

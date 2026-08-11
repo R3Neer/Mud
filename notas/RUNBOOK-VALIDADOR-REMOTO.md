@@ -1,7 +1,7 @@
 ---
 title: "Runbook del validador remoto RepoPatcher"
 status: vigente
-date: 2026-08-10
+date: 2026-08-11
 ---
 
 # Runbook del validador remoto RepoPatcher
@@ -24,6 +24,13 @@ TEMP y no se registra aquí. `GITHUB_DISPATCH_TOKEN` es fine-grained, está
 limitado a `R3Neer/Mud`, concede Actions de lectura/escritura y caduca el
 2027-08-10. La variable GitHub `REPO_PATCHER_WORKER_URL` también está
 configurada con la URL anterior.
+
+La Fase 0 está cerrada. El transporte elegido es staging de archivos UTF-8
+completos en lotes inmutables y finalización determinista en el Worker. La
+sonda `mud-repo-patcher-mcp-probe`, versión
+`22619184-837b-4a16-8c13-a8361f06e1ca`, verificó 3/3 paquetes representativos
+desde ChatGPT. El adaptador estable del Worker validador aún debe incorporar
+este contrato antes de iniciar la serie E2E definitiva.
 
 ## Primer E2E verde
 
@@ -99,6 +106,6 @@ Antes de desplegar se regeneran tipos y se ejecutan las pruebas en `workerd`.
 
 ## Corte
 
-No retirar v6 hasta completar los pendientes P1–P7 y diez verdes E2E. El cron
+No retirar v6 hasta completar P5, P7 y diez verdes E2E. El cron
 de issues, ramas portadoras y scripts antiguos siguen siendo fallback mientras
 el sistema nuevo no haya cumplido esa condición.
