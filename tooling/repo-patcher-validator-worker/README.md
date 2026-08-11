@@ -53,8 +53,11 @@ get_validated_candidate
 ```
 
 `stage_candidate_files` acepta lotes de hasta 32 archivos completos y 24 KiB
-de contenido textual. Cada entrada declara tamaño UTF-8 y SHA-256. Los lotes
-son inmutables y un archivo nunca se divide entre llamadas.
+de contenido textual. El Worker calcula y devuelve tamaño UTF-8 y SHA-256 de
+cada entrada. El llamante puede aportar ambos valores como aserciones
+opcionales cuando ya posee una identidad previa; no necesita calcularlos para
+texto que acaba de generar. Los lotes son inmutables y un archivo nunca se
+divide entre llamadas.
 
 `submit_candidate` recibe los `batch_ids` explícitos, reconstruye y revalida
 todos los archivos, crea el ZIP determinista y despacha la validación. El valor

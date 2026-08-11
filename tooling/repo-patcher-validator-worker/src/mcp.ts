@@ -16,7 +16,7 @@ import {
   stageCandidateFiles,
 } from "./staging.js";
 import { MAX_FILES, MAX_FILE_BYTES } from "./zip.js";
-import { PROTOCOL, type Env, type StagedUtf8File, type ValidationResult } from "./types.js";
+import { PROTOCOL, type Env, type StagedUtf8FileInput, type ValidationResult } from "./types.js";
 
 const requestId = z.string().min(1).max(96).regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/);
 const sha256 = z.string().regex(/^[0-9a-fA-F]{64}$/);
@@ -52,13 +52,13 @@ const statusSchema = {
 const stagedFile = z.object({
   path: z.string().min(1).max(240),
   content: z.string().max(MAX_BATCH_CONTENT_CHARS),
-  expected_size: z.number().int().nonnegative().max(MAX_FILE_BYTES),
-  expected_sha256: sha256,
+  expected_size: z.number().int().nonnegative().max(MAX_FILE_BYTES).optional(),
+  expected_sha256: sha256.optional(),
 });
 
 export function createValidatorMcpServer(env: Env, publicBaseUrl: string): McpServer {
   const server = new McpServer(
-    { name: "mud-repo-patcher-validator", version: "0.2.0" },
+    { name: "mud-repo-patcher-validator", version: "0.2.1" },
     {
       instructions:
         "Validate RepoPatcher candidates against an exact MUD commit. Stage complete UTF-8 files, submit explicit batches, poll durable state, inspect evidence, and only download a candidate after success.",
@@ -70,7 +70,7 @@ export function createValidatorMcpServer(env: Env, publicBaseUrl: string): McpSe
     {
       title: "Stage complete candidate files",
       description:
-        "Store one small immutable batch of complete UTF-8 files after verifying the declared byte size and SHA-256 of each file. Never split a file across calls.",
+        "Store one small immutable batch of complete UTF-8 files. The Worker computes byte size and SHA-256; optional expected values add a strict assertion. Never split a file across calls.",
       inputSchema: {
         request_id: requestId,
         batch_id: requestId,
@@ -82,6 +82,11 @@ export function createValidatorMcpServer(env: Env, publicBaseUrl: string): McpSe
         file_count: z.number().int().positive(),
         total_size: z.number().int().nonnegative(),
         batch_sha256: z.string(),
+        files: z.array(z.object({
+          path: z.string(),
+          size: z.number().int().nonnegative(),
+          sha256: z.string(),
+        })),
         reused: z.boolean(),
       },
       annotations: {
@@ -96,7 +101,7 @@ export function createValidatorMcpServer(env: Env, publicBaseUrl: string): McpSe
         const stored = await stageCandidateFiles(env.VALIDATION_BUCKET, {
           request_id,
           batch_id,
-          files: files as StagedUtf8File[],
+          files: files as StagedUtf8FileInput[],
         });
         const structuredContent = {
           request_id: stored.requestId,
@@ -104,6 +109,7 @@ export function createValidatorMcpServer(env: Env, publicBaseUrl: string): McpSe
           file_count: stored.fileCount,
           total_size: stored.totalSize,
           batch_sha256: stored.batchSha256,
+          files: stored.files,
           reused: stored.reused,
         };
         return {

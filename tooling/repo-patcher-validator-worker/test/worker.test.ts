@@ -59,6 +59,35 @@ describe("deterministic ZIP", () => {
 });
 
 describe("staged UTF-8 transport", () => {
+  it("computes integrity metadata when the caller has no prior byte identity", async () => {
+    const content = "schema: 1\nid: generated-by-chatgpt\noperations: []\n";
+    const bytes = new TextEncoder().encode(content);
+    const stored = await stageCandidateFiles(bindings.VALIDATION_BUCKET, {
+      request_id: "staged-computed-integrity",
+      batch_id: "text",
+      files: [{ path: "patch.yaml", content }],
+    });
+    expect(stored.files).toEqual([{
+      path: "patch.yaml",
+      size: bytes.byteLength,
+      sha256: await sha256Hex(bytes),
+    }]);
+  });
+
+  it("still rejects an optional integrity assertion that does not match", async () => {
+    await expect(
+      stageCandidateFiles(bindings.VALIDATION_BUCKET, {
+        request_id: "staged-bad-assertion",
+        batch_id: "text",
+        files: [{
+          path: "patch.yaml",
+          content: "schema: 1\n",
+          expected_size: 999,
+        }],
+      }),
+    ).rejects.toMatchObject({ code: "file_integrity_mismatch" });
+  });
+
   it("stores immutable complete files and finalizes exact deterministic bytes", async () => {
     const firstContent = "schema: 1\nid: staged\noperations: []\n";
     const secondContent = "# Árbol\n";
@@ -266,6 +295,10 @@ describe("Worker surface", () => {
         "submit_candidate",
       ]);
       const stage = listed.tools.find((tool) => tool.name === "stage_candidate_files");
+      const stageInput = stage?.inputSchema as {
+        properties?: { files?: { items?: { required?: string[] } } };
+      };
+      expect(stageInput.properties?.files?.items?.required).toEqual(["path", "content"]);
       expect(stage?.annotations).toMatchObject({
         readOnlyHint: false,
         destructiveHint: false,
@@ -302,8 +335,6 @@ describe("Worker surface", () => {
           files: [{
             path: "patch.yaml",
             content,
-            expected_size: bytes.byteLength,
-            expected_sha256: await sha256Hex(bytes),
           }],
         },
       });
@@ -312,6 +343,12 @@ describe("Worker surface", () => {
         request_id: "mcp-stage-test",
         batch_id: "text",
         file_count: 1,
+        total_size: bytes.byteLength,
+        files: [{
+          path: "patch.yaml",
+          size: bytes.byteLength,
+          sha256: await sha256Hex(bytes),
+        }],
         reused: false,
       });
     } finally {

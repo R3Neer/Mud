@@ -67,6 +67,13 @@ export interface StagedUtf8File {
   expected_sha256: string;
 }
 
+export interface StagedUtf8FileInput {
+  path: string;
+  content: string;
+  expected_size?: number;
+  expected_sha256?: string;
+}
+
 export interface StagedFileBatch {
   schema: 1;
   protocol: "mud-repo-patcher-staged-files/v1";

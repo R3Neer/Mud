@@ -95,6 +95,12 @@ están verdes. El despliegue remoto del 2026-08-11 usa la versión
 completo del cliente MCP de referencia. La renovación del complemento de
 ChatGPT y el primer ciclo completo pertenecen a P7.
 
+La primera invocación real desde ChatGPT reveló que exigir al modelo tamaño y
+SHA por cada texto recién generado crea una identidad previa artificial. Desde
+Worker 0.2.1 esas aserciones son opcionales: el Worker calcula y devuelve la
+identidad recibida, y solo compara valores esperados cuando el llamante ya los
+posee.
+
 ### P6 — Propietario del bucle de corrección
 
 Estado: **cerrado**.

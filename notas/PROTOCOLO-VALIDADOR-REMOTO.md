@@ -36,10 +36,12 @@ verifica bytes, tamaño, hash y metadatos antes de reutilizar el objeto.
 ## Entrada MCP v1
 
 `stage_candidate_files` recibe un `request_id`, un `batch_id` y archivos UTF-8
-completos. Cada archivo incluye ruta POSIX relativa, contenido, tamaño en bytes
-y SHA-256. El Worker valida estos valores antes de persistir un lote inmutable.
-Un archivo nunca se divide entre lotes y un lote repetido con otros datos es
-conflicto.
+completos. Cada archivo incluye ruta POSIX relativa y contenido. El Worker
+calcula y devuelve su tamaño en bytes y SHA-256 antes de persistir un lote
+inmutable. `expected_size` y `expected_sha256` son aserciones opcionales para
+entradas que ya tengan una identidad previa; si se proporcionan, deben
+coincidir. Un archivo nunca se divide entre lotes y un lote repetido con otros
+datos es conflicto.
 
 `submit_candidate` recibe los identificadores explícitos de los lotes, el
 número total esperado de archivos, `target_sha` y `trust_plugin`. Relee y

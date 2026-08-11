@@ -1,4 +1,4 @@
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 
 import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
 
@@ -6,10 +6,6 @@ const endpoint =
   process.env.MUD_VALIDATOR_MCP_URL ??
   "http://127.0.0.1:8787/local-validator/mcp";
 const shouldStage = process.argv.includes("--stage");
-
-function sha256(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
-}
 
 function redactedEndpoint(value) {
   const url = new URL(value);
@@ -37,7 +33,6 @@ async function main() {
     let staged;
     if (shouldStage) {
       const content = "schema: 1\nid: mcp-smoke\noperations: []\n";
-      const bytes = Buffer.from(content, "utf8");
       const requestId = `mcp-smoke-${randomUUID()}`;
       const result = await client.callTool({
         name: "stage_candidate_files",
@@ -47,8 +42,6 @@ async function main() {
           files: [{
             path: "patch.yaml",
             content,
-            expected_size: bytes.length,
-            expected_sha256: sha256(bytes),
           }],
         },
       });

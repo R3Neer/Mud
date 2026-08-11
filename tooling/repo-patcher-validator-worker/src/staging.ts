@@ -2,7 +2,7 @@ import { strToU8 } from "fflate";
 
 import { sha256Hex } from "./crypto.js";
 import { ServiceError } from "./errors.js";
-import type { StagedFileBatch, StagedUtf8File } from "./types.js";
+import type { StagedFileBatch, StagedUtf8File, StagedUtf8FileInput } from "./types.js";
 import {
   buildDeterministicZip,
   MAX_FILES,
@@ -22,7 +22,7 @@ const SHA256 = /^[0-9a-f]{64}$/;
 export interface StageFilesInput {
   request_id: string;
   batch_id: string;
-  files: StagedUtf8File[];
+  files: StagedUtf8FileInput[];
 }
 
 export interface StoredBatch {
@@ -31,6 +31,7 @@ export interface StoredBatch {
   fileCount: number;
   totalSize: number;
   batchSha256: string;
+  files: Array<{ path: string; size: number; sha256: string }>;
   reused: boolean;
 }
 
@@ -56,7 +57,7 @@ function batchKey(requestId: string, batchId: string): string {
 async function canonicalBatch(
   requestId: string,
   batchId: string,
-  files: StagedUtf8File[],
+  files: StagedUtf8FileInput[],
 ): Promise<{ batch: StagedFileBatch; bytes: Uint8Array; totalSize: number; sha256: string }> {
   validateStagingIdentifier(requestId, "request_id");
   validateStagingIdentifier(batchId, "batch_id");
@@ -87,12 +88,12 @@ async function canonicalBatch(
       file === null ||
       typeof file.path !== "string" ||
       typeof file.content !== "string" ||
-      !Number.isSafeInteger(file.expected_size) ||
-      typeof file.expected_sha256 !== "string"
+      (file.expected_size !== undefined && !Number.isSafeInteger(file.expected_size)) ||
+      (file.expected_sha256 !== undefined && typeof file.expected_sha256 !== "string")
     ) {
       throw new ServiceError(
         "invalid_staged_file",
-        "Each staged file needs path, UTF-8 content, expected_size and expected_sha256.",
+        "Each staged file needs path and UTF-8 content; integrity assertions are optional.",
       );
     }
     const path = normalizePath(file.path);
@@ -106,11 +107,14 @@ async function canonicalBatch(
       throw new ServiceError("file_too_large", `${path} exceeds ${MAX_FILE_BYTES} bytes.`, 413);
     }
     const actualSha256 = await sha256Hex(bytes);
-    const expectedSha256 = file.expected_sha256.toLowerCase();
-    if (!SHA256.test(expectedSha256)) {
+    const expectedSha256 = file.expected_sha256?.toLowerCase();
+    if (expectedSha256 !== undefined && !SHA256.test(expectedSha256)) {
       throw new ServiceError("invalid_file_sha256", `Invalid SHA-256 for ${path}.`);
     }
-    if (file.expected_size !== bytes.byteLength || expectedSha256 !== actualSha256) {
+    if (
+      (file.expected_size !== undefined && file.expected_size !== bytes.byteLength) ||
+      (expectedSha256 !== undefined && expectedSha256 !== actualSha256)
+    ) {
       throw new ServiceError(
         "file_integrity_mismatch",
         `Declared size or SHA-256 differs from UTF-8 bytes for ${path}.`,
@@ -187,6 +191,11 @@ export async function stageCandidateFiles(
     fileCount: canonical.batch.files.length,
     totalSize: canonical.totalSize,
     batchSha256: canonical.sha256,
+    files: canonical.batch.files.map((file) => ({
+      path: file.path,
+      size: file.expected_size,
+      sha256: file.expected_sha256,
+    })),
     reused,
   };
 }
