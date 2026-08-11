@@ -3,7 +3,8 @@ id: Q-012
 title: Valores given nombrados
 status: cerrada
 priority: P1
-opened: false
+opened: 2026-07-29
+resolved: true
 closed: 2026-07-30
 decisions:
   - D-036

@@ -3,7 +3,8 @@ id: Q-008
 title: Protocolo Git y READ
 status: parcialmente-decidida
 priority: P0
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-053

@@ -3,7 +3,8 @@ id: Q-002
 title: Modelo exacto de efectos secuenciales y simultáneos
 status: parcialmente-decidida
 priority: P0
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-023

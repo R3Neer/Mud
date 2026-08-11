@@ -3,7 +3,8 @@ id: Q-034
 title: Magnitudes derivadas
 status: parcialmente-decidida
 priority: P2
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-028

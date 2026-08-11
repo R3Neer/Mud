@@ -3,7 +3,8 @@ id: Q-051
 title: Identidad y selección de un look
 status: parcialmente-decidida
 priority: P1
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-027

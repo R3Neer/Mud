@@ -3,7 +3,8 @@ id: Q-010
 title: Estado de las decisiones de la fuente
 status: cerrada
 priority: P0
-opened: false
+opened: 2026-07-29
+resolved: true
 closed: 2026-07-30
 decisions: []
 affects: []

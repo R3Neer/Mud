@@ -3,7 +3,8 @@ id: Q-024
 title: Datos asociados a miembros de una family
 status: cerrada
 priority: P1
-opened: false
+opened: 2026-07-29
+resolved: true
 closed: 2026-07-28
 decisions:
   - D-038

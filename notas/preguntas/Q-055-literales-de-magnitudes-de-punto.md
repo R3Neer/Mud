@@ -3,7 +3,8 @@ id: Q-055
 title: Literales de magnitudes de punto
 status: cerrada
 priority: P2
-opened: false
+opened: 2026-07-29
+resolved: true
 closed: 2026-07-29
 decisions:
   - D-061

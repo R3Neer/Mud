@@ -3,7 +3,8 @@ id: Q-029
 title: Terminación
 status: abierta
 priority: P2
-opened: true
+opened: 2026-07-29
+resolved: false
 closed:
 decisions: []
 affects: []

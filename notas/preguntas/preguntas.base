@@ -15,7 +15,9 @@ properties:
   priority:
     displayName: Prioridad
   opened:
-    displayName: Abierta
+    displayName: Apertura
+  resolved:
+    displayName: Resuelta
   closed:
     displayName: Cierre
   decisions:
@@ -37,6 +39,7 @@ views:
       - title
       - status
       - opened
+      - resolved
       - decisions
       - affects
     sort:
@@ -52,6 +55,7 @@ views:
       - title
       - priority
       - opened
+      - resolved
       - decisions
     sort:
       - property: priority
@@ -68,6 +72,7 @@ views:
       - title
       - priority
       - opened
+      - resolved
       - decisions
     sort:
       - property: priority
@@ -87,6 +92,8 @@ views:
       - id
       - title
       - priority
+      - opened
+      - resolved
       - closed
       - decisions
     sort:

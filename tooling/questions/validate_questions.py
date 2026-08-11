@@ -23,7 +23,8 @@ ID_FIELD = re.compile(r"^id: (Q-\d{3})$", re.MULTILINE)
 STATUS_FIELD = re.compile(r"^status: ([a-z-]+)$", re.MULTILINE)
 PRIORITY_FIELD = re.compile(r"^priority: (P[012])$", re.MULTILINE)
 HEADING = re.compile(r"^# Q-\d{3} — (.+)$", re.MULTILINE)
-OPENED_FIELD = re.compile(r"^opened:(?: (true|false))?$", re.MULTILINE)
+OPENED_FIELD = re.compile(r"^opened: (\d{4}-\d{2}-\d{2})$", re.MULTILINE)
+RESOLVED_FIELD = re.compile(r"^resolved:(?: (true|false))?$", re.MULTILINE)
 CLOSED_FIELD = re.compile(r"^closed:(?: (\d{4}-\d{2}-\d{2}))?$", re.MULTILINE)
 INDEX_LINK = re.compile(r"\[\[[^|\]]+\|(Q-\d{3}) —")
 SPEC_QUESTION = re.compile(r"^  - (Q-\d{3})$", re.MULTILINE)
@@ -31,12 +32,12 @@ QUESTION_LINK = re.compile(r"\[\[(notas/preguntas/Q-[^|\]#]+)")
 
 ACTIVE_STATUSES = {"abierta", "parcialmente-decidida"}
 ALLOWED_STATUSES = ACTIVE_STATUSES | {"cerrada", "descartada", "sustituida"}
-EXPECTED_OPENED = {
-    "abierta": "true",
+EXPECTED_RESOLVED = {
+    "abierta": "false",
     "parcialmente-decidida": None,
-    "cerrada": "false",
-    "descartada": "false",
-    "sustituida": "false",
+    "cerrada": "true",
+    "descartada": "true",
+    "sustituida": "true",
 }
 REQUIRED_FIELDS = (
     "id:",
@@ -44,6 +45,7 @@ REQUIRED_FIELDS = (
     "status:",
     "priority:",
     "opened:",
+    "resolved:",
     "closed:",
     "decisions:",
     "affects:",
@@ -148,6 +150,7 @@ def main() -> int:
         priority = PRIORITY_FIELD.search(text)
         heading = HEADING.search(text)
         opened = OPENED_FIELD.search(text)
+        resolved = RESOLVED_FIELD.search(text)
         closed = CLOSED_FIELD.search(text)
 
         if filename is None:
@@ -171,11 +174,21 @@ def main() -> int:
                 errors.append(f"Falta {field} en {path.relative_to(ROOT)}")
         question_status = status.group(1)
         if opened is None:
-            errors.append(f"Valor inválido de opened en {path.relative_to(ROOT)}")
-        elif opened.group(1) != EXPECTED_OPENED[question_status]:
+            errors.append(f"Fecha de apertura inválida en {path.relative_to(ROOT)}")
+        else:
+            try:
+                date.fromisoformat(opened.group(1))
+            except ValueError:
+                errors.append(
+                    f"Fecha de apertura inválida en {path.relative_to(ROOT)}: "
+                    f"{opened.group(1)}"
+                )
+        if resolved is None:
+            errors.append(f"Valor inválido de resolved en {path.relative_to(ROOT)}")
+        elif resolved.group(1) != EXPECTED_RESOLVED[question_status]:
             errors.append(
-                f"opened no corresponde a status en {path.relative_to(ROOT)}: "
-                f"{opened.group(1) or 'vacío'} frente a {question_status}"
+                f"resolved no corresponde a status en {path.relative_to(ROOT)}: "
+                f"{resolved.group(1) or 'vacío'} frente a {question_status}"
             )
         if closed is None:
             errors.append(f"Valor inválido de closed en {path.relative_to(ROOT)}")

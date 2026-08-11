@@ -3,7 +3,8 @@ id: Q-009
 title: Forma canónica del IR
 status: parcialmente-decidida
 priority: P0
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-051

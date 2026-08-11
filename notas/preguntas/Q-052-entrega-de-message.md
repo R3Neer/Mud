@@ -3,7 +3,8 @@ id: Q-052
 title: Entrega de message
 status: parcialmente-decidida
 priority: P1
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-027

@@ -3,7 +3,8 @@ id: Q-020
 title: Oscilaciones y límite de ondas
 status: parcialmente-decidida
 priority: P1
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-045

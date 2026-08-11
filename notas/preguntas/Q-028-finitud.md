@@ -3,7 +3,8 @@ id: Q-028
 title: Finitud
 status: parcialmente-decidida
 priority: P2
-opened:
+opened: 2026-07-29
+resolved:
 closed:
 decisions:
   - D-044

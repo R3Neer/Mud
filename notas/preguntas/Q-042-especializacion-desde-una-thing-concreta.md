@@ -3,7 +3,8 @@ id: Q-042
 title: Especialización desde una thing concreta
 status: cerrada
 priority: P0
-opened: false
+opened: 2026-07-29
+resolved: true
 closed: 2026-07-27
 decisions:
   - D-015

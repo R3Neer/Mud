@@ -3,7 +3,8 @@ id: Q-030
 title: Perfil de mundos finitos
 status: abierta
 priority: P2
-opened: true
+opened: 2026-07-29
+resolved: false
 closed:
 decisions: []
 affects: []
