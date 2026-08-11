@@ -34,6 +34,7 @@ async function payload(name, requestId) {
 }
 
 async function callAndVerify(client, tool, args) {
+  console.error(`calling ${tool} for ${args.request_id}`);
   const started = performance.now();
   const result = await client.callTool({ name: tool, arguments: args });
   if (result.isError || !result.structuredContent) {
@@ -69,6 +70,27 @@ async function callAndVerify(client, tool, args) {
   };
 }
 
+async function stageRepresentative(client, requestId) {
+  const batchFiles = [
+    "files-representative-stage-patch.json",
+    "files-representative-stage-support.json",
+    "files-representative-stage-binary.json",
+  ];
+  const staged = [];
+  for (const file of batchFiles) {
+    const args = await payload(file, requestId);
+    console.error(`calling probe_stage_files/${args.batch_id} for ${requestId}`);
+    const result = await client.callTool({ name: "probe_stage_files", arguments: args });
+    if (result.isError || !result.structuredContent) {
+      throw new Error(`probe_stage_files failed: ${JSON.stringify(result)}`);
+    }
+    staged.push(result.structuredContent);
+  }
+  const finalize = await payload("files-representative-finalize.json", requestId);
+  const finalized = await callAndVerify(client, "probe_finalize_files", finalize);
+  return { request_id: requestId, staged, finalized };
+}
+
 async function main() {
   const client = new Client({ name: "mud-phase-0-local-smoke", version: "0.1.0" });
   const transport = new StreamableHTTPClientTransport(new URL(endpoint));
@@ -77,7 +99,9 @@ async function main() {
   const listed = await client.listTools();
   const names = listed.tools.map((tool) => tool.name).sort();
   const expected = [
+    "probe_finalize_files",
     "probe_get_file",
+    "probe_stage_files",
     "probe_store_base64",
     "probe_store_files",
     "probe_wait_and_record",
@@ -86,7 +110,12 @@ async function main() {
     throw new Error(`unexpected tool list: ${JSON.stringify(names)}`);
   }
   const toolsByName = new Map(listed.tools.map((tool) => [tool.name, tool]));
-  for (const name of ["probe_store_base64", "probe_store_files"]) {
+  for (const name of [
+    "probe_finalize_files",
+    "probe_stage_files",
+    "probe_store_base64",
+    "probe_store_files",
+  ]) {
     const annotations = toolsByName.get(name)?.annotations;
     if (
       annotations?.readOnlyHint !== false ||
@@ -192,7 +221,19 @@ async function main() {
       );
     }
   }
-  console.log(JSON.stringify({ endpoint: displayEndpoint(endpoint), tools: names, results }, null, 2));
+  const stagedResults = [];
+  for (let attempt = 1; attempt <= (runMatrix ? 3 : 1); attempt += 1) {
+    stagedResults.push(
+      await stageRepresentative(client, `local-staged-representative-${attempt}-${nonce}`),
+    );
+  }
+  console.log(
+    JSON.stringify(
+      { endpoint: displayEndpoint(endpoint), tools: names, results, staged_results: stagedResults },
+      null,
+      2,
+    ),
+  );
   } finally {
     await client.close();
   }

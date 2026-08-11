@@ -4,8 +4,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildDeterministicZip,
   bytesToBase64,
+  createStagedBatch,
   decodeCanonicalBase64,
   normalizeProbePath,
+  parseStagedBatch,
   ProbeError,
   sha256Hex,
   validateRequestId,
@@ -106,6 +108,38 @@ describe("logical file transport", () => {
       Array.from({ length: 3 }, () => sha256Hex(buildDeterministicZip(files))),
     );
     expect(new Set(hashes).size).toBe(1);
+  });
+
+  it("stages complete files canonically and verifies per-file integrity", async () => {
+    const text = new TextEncoder().encode("árbol\n");
+    const binary = Uint8Array.from([0, 1, 127, 128, 255]);
+    const files = [
+      {
+        path: "texto.md",
+        encoding: "utf8" as const,
+        content: "árbol\n",
+        expected_size: text.byteLength,
+        expected_sha256: await sha256Hex(text),
+      },
+      {
+        path: "assets/data.bin",
+        encoding: "base64" as const,
+        content: bytesToBase64(binary),
+        expected_size: binary.byteLength,
+        expected_sha256: await sha256Hex(binary),
+      },
+    ];
+
+    const staged = await createStagedBatch("candidate-001", "batch-01", files);
+    const parsed = await parseStagedBatch(staged.bytes, "candidate-001", "batch-01");
+
+    expect(parsed.files.map((file) => file.path)).toEqual(["assets/data.bin", "texto.md"]);
+    expect(buildDeterministicZip(parsed.files)).toEqual(buildDeterministicZip(files));
+    await expect(
+      createStagedBatch("candidate-001", "batch-02", [
+        { ...files[0], expected_size: files[0].expected_size + 1 },
+      ]),
+    ).rejects.toThrow(/Tamaño o SHA-256/);
   });
 });
 

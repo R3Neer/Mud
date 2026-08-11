@@ -23,6 +23,8 @@ The production deployment must store `PROBE_ROUTE_SECRET` with Wrangler secrets.
 
 - `probe_store_base64`: stores exact canonical-base64 bytes after checking a caller-provided SHA-256.
 - `probe_store_files`: constructs a ZIP with sorted paths, fixed metadata, fixed compression, and strict Windows-safe paths.
+- `probe_stage_files`: stores one bounded batch of complete files after checking the declared size and SHA-256 of every file.
+- `probe_finalize_files`: combines explicitly named immutable batches and builds the definitive ZIP after revalidating every file.
 - `probe_get_file`: returns a resource link for the exact R2 object already stored.
 - `probe_wait_and_record`: keeps one MCP call open for 15, 30, 60, or 120 seconds and records append-only timing events in R2.
 
@@ -39,6 +41,8 @@ npm run dev
 ```
 
 `npm run fixtures` creates the five exact-size ZIPs and the three logical payloads under `%TEMP%\mud-repo-patcher-mcp-probe\inputs\`. Replace `REPLACE` in each request ID with attempt `1`, `2`, or `3`. The local Worker uses Wrangler's local R2 implementation. Run MCP Inspector against the MCP URL before connecting ChatGPT.
+
+The representative fixture also produces three staged requests (`patch`, `support`, and `binary`) plus one finalize request. A complete file always belongs to exactly one batch; this experiment does not fragment base64 or split files. Each staged entry carries its decoded byte size and SHA-256, and the Worker rejects a damaged file before storing the batch.
 
 With the local Worker running, `npm run smoke` negotiates Streamable HTTP through the real MCP client, lists the four tools, stores one direct ZIP and one logical package, downloads both, and verifies their size and SHA-256.
 `npm run smoke:matrix` repeats all eight Phase 0 variants three times. This proves the Worker stack locally, but it does not replace the required experiment initiated by ChatGPT.

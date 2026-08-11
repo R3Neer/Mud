@@ -3,10 +3,16 @@ import { z } from "zod";
 
 import {
   buildDeterministicZip,
+  finalizeStagedProbe,
   decodeCanonicalBase64,
+  MAX_BATCH_CONTENT_CHARS,
+  MAX_BATCH_FILES,
   MAX_BASE64_BYTES,
+  MAX_FILE_BYTES,
+  MAX_STAGED_BATCHES,
   ProbeError,
   readImmutableProbe,
+  storeImmutableStagedBatch,
   storeImmutableProbe,
 } from "./probe.js";
 import { LONG_CALL_DURATIONS, runLongCallProbe } from "./timing.js";
@@ -14,8 +20,10 @@ import type {
   Env,
   LongCallResult,
   ProbeFileInput,
+  ProbeFileWithIntegrity,
   ProbeRequestContext,
   StoredProbe,
+  StoredProbeBatch,
 } from "./types.js";
 
 const requestId = z.string().min(1).max(80);
@@ -27,6 +35,13 @@ const storedProbeSchema = {
   reused: z.boolean(),
   download_url: z.string().url(),
 };
+const fileWithIntegritySchema = z.object({
+  path: z.string().min(1),
+  encoding: z.enum(["utf8", "base64"]),
+  content: z.string().max(MAX_BATCH_CONTENT_CHARS),
+  expected_size: z.number().int().nonnegative().max(MAX_FILE_BYTES),
+  expected_sha256: sha256,
+});
 
 export function createProbeServer(
   env: Env,
@@ -34,7 +49,7 @@ export function createProbeServer(
   requestContext: ProbeRequestContext = {},
 ): McpServer {
   const server = new McpServer(
-    { name: "mud-repo-patcher-transport-probe", version: "0.1.0" },
+    { name: "mud-repo-patcher-transport-probe", version: "0.2.0" },
     {
       instructions:
         "Servidor experimental de Fase 0. Conserva request_id, compara siempre SHA-256 y usa probe_get_file para recuperar exactamente el objeto almacenado.",
@@ -172,6 +187,91 @@ export function createProbeServer(
   );
 
   server.registerTool(
+    "probe_stage_files",
+    {
+      title: "Stage one bounded batch of complete files",
+      description:
+        "Store a small immutable batch of complete logical files after verifying each declared size and SHA-256. Files are never split across calls.",
+      inputSchema: {
+        request_id: requestId,
+        batch_id: requestId,
+        files: z.array(fileWithIntegritySchema).min(1).max(MAX_BATCH_FILES),
+      },
+      outputSchema: {
+        request_id: z.string(),
+        batch_id: z.string(),
+        file_count: z.number().int().positive(),
+        total_size: z.number().int().nonnegative(),
+        batch_sha256: z.string(),
+        reused: z.boolean(),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ request_id, batch_id, files }) => {
+      try {
+        const stored = await storeImmutableStagedBatch(
+          env.PROBE_BUCKET,
+          request_id,
+          batch_id,
+          files as ProbeFileWithIntegrity[],
+        );
+        return stagedBatchToolResult(stored);
+      } catch (error) {
+        return toolError(error);
+      }
+    },
+  );
+
+  server.registerTool(
+    "probe_finalize_files",
+    {
+      title: "Finalize staged files into one deterministic ZIP",
+      description:
+        "Read explicitly named immutable batches, revalidate every complete file, and store the definitive deterministic ZIP.",
+      inputSchema: {
+        request_id: requestId,
+        batch_ids: z.array(requestId).min(1).max(MAX_STAGED_BATCHES),
+        expected_file_count: z.number().int().positive().max(500),
+      },
+      outputSchema: {
+        ...storedProbeSchema,
+        batch_count: z.number().int().positive(),
+        file_count: z.number().int().positive(),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ request_id, batch_ids, expected_file_count }) => {
+      try {
+        const finalized = await finalizeStagedProbe(
+          env.PROBE_BUCKET,
+          request_id,
+          batch_ids,
+          expected_file_count,
+          publicBaseUrl,
+          env.PROBE_ROUTE_SECRET,
+        );
+        return finalizedToolResult(
+          finalized.stored,
+          finalized.batchCount,
+          finalized.fileCount,
+        );
+      } catch (error) {
+        return toolError(error);
+      }
+    },
+  );
+
+  server.registerTool(
     "probe_get_file",
     {
       title: "Get a stored probe file",
@@ -248,6 +348,38 @@ function toolResult(stored: StoredProbe) {
       },
     ],
     structuredContent,
+  };
+}
+
+function stagedBatchToolResult(stored: StoredProbeBatch) {
+  const structuredContent = {
+    request_id: stored.requestId,
+    batch_id: stored.batchId,
+    file_count: stored.fileCount,
+    total_size: stored.totalSize,
+    batch_sha256: stored.sha256,
+    reused: stored.reused,
+  };
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: `Lote ${stored.batchId}: ${stored.fileCount} archivos completos y ${stored.totalSize} bytes verificados.`,
+      },
+    ],
+    structuredContent,
+  };
+}
+
+function finalizedToolResult(stored: StoredProbe, batchCount: number, fileCount: number) {
+  const base = toolResult(stored);
+  return {
+    ...base,
+    structuredContent: {
+      ...base.structuredContent,
+      batch_count: batchCount,
+      file_count: fileCount,
+    },
   };
 }
 

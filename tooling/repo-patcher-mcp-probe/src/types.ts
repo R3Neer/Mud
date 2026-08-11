@@ -1,8 +1,4 @@
-export interface Env extends Cloudflare.Env {
-  // Secrets are intentionally absent from wrangler.jsonc and therefore cannot
-  // be inferred by `wrangler types`.
-  PROBE_ROUTE_SECRET: string;
-}
+export type Env = Cloudflare.Env;
 
 export type ProbeFileEncoding = "utf8" | "base64";
 
@@ -10,6 +6,29 @@ export interface ProbeFileInput {
   path: string;
   encoding: ProbeFileEncoding;
   content: string;
+}
+
+export interface ProbeFileWithIntegrity extends ProbeFileInput {
+  expected_size: number;
+  expected_sha256: string;
+}
+
+export interface StagedProbeBatch {
+  schema: 1;
+  protocol: "mud-repo-patcher-staged-files/v1";
+  request_id: string;
+  batch_id: string;
+  files: ProbeFileWithIntegrity[];
+}
+
+export interface StoredProbeBatch {
+  requestId: string;
+  batchId: string;
+  objectKey: string;
+  fileCount: number;
+  totalSize: number;
+  sha256: string;
+  reused: boolean;
 }
 
 export interface StoredProbe {

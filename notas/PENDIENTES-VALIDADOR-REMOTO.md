@@ -37,94 +37,63 @@ Debe consultarse antes de cerrar la Fase 0, elegir el adaptador MCP definitivo o
 
 ### P1 — Política real de aprobaciones de ChatGPT
 
-Estado: **abierto**.
+Estado: **cerrado con concesión aceptada**.
 
 Evidencia actual:
 
-- ChatGPT Plus pidió confirmación incluso para `probe_get_file`, que es estrictamente de lectura.
-- La aplicación móvil volvió a pedirla con **Permitir todas las acciones** seleccionado.
-- La lectura sí llegó al Worker y recuperó 1024 bytes con SHA-256 `8c6b6570692b82c082a00868c97c7e88e5fb7e44f33eb449d738c90bc9cc021b`.
+- El cliente puede solicitar varias autorizaciones al comenzar una conversación.
+- Al concederlas para toda la conversación, las candidatas posteriores se enviaron y recuperaron sin nuevas confirmaciones.
+- Samuel acepta esta autorización inicial porque trabaja habitualmente en conversaciones largas.
 
-Falta:
-
-- repetir la lectura en ChatGPT web o escritorio, conversación nueva y conexión seleccionada explícitamente;
-- si no pide confirmación, probar una secuencia de escritura, lectura y segunda candidata;
-- si pide confirmación, considerar no fiable la ejecución de varias llamadas desde ChatGPT normal.
-
-Consecuencia:
-
-- no impide construir Worker, D1, R2, Actions ni harness;
-- decide si el adaptador final expone varias herramientas o una operación compuesta.
+El requisito queda precisado como cero intervención **por candidata después de la autorización inicial de la conversación**. No se cambiará la arquitectura para eliminar esa concesión de interfaz.
 
 ### P2 — Catálogo MCP actualizado en ChatGPT
 
-Estado: **abierto**.
+Estado: **cerrado**.
 
-El Worker desplegado expone `probe_wait_and_record`, pero una conversación de ChatGPT conservó el catálogo anterior y no la encontró. El cliente MCP de referencia sí la descubrió y ejecutó.
-
-Falta:
-
-- recrear o refrescar la conexión desde web/escritorio;
-- abrir una conversación nueva;
-- comprobar que aparecen las cuatro herramientas.
+Se recreó la conexión en modo desarrollador. El catálogo renovado mostró y ejecutó las cuatro herramientas originales, incluida `probe_wait_and_record`. Los cambios posteriores de catálogo seguirán requiriendo reinstalar o renovar el complemento.
 
 ### P3 — Prueba de llamada única larga desde ChatGPT
 
-Estado: **abierto**.
+Estado: **cerrado**.
 
-Evidencia disponible:
-
-- el cliente MCP de referencia completó 15 segundos;
-- tiempo de servidor: 15.000 ms;
-- tiempo de cliente: 15.932 ms;
-- los eventos append-only quedaron persistidos en R2.
-
-Falta ejecutar desde ChatGPT una prueba de 120 segundos. Su resultado decidirá si una operación MCP puede esperar de forma cómoda al resultado, pero no cambiará la durabilidad interna del trabajo.
+ChatGPT completó llamadas de 15 y 120 segundos sin confirmación manual y recibió sus resultados terminales. La prueba de 120 segundos registró 25 eventos y 120.000 ms. La interfaz mostró después un aviso transitorio de protección, por lo que el sistema definitivo conservará estado durable y consultas cortas; no dependerá de una conexión HTTP larga.
 
 ### P4 — Transporte candidato definitivo
 
 Estado: **abierto**.
 
-Ambos caminos siguen disponibles:
+Resultados:
 
 ```text
-submit_candidate_zip
-submit_candidate_files
+ZIP base64: descartado tras 0/3 a 1 KiB por bloqueo del cliente
+files monolítico: descartado tras 0/3 representativos exactos
+files por lotes completos: implementado localmente, pendiente 3/3 desde ChatGPT
 ```
 
-Falta completar desde ChatGPT la matriz 3/3 establecida en `FASE-0-TRANSPORTE-MCP.md`. Hasta entonces:
+Falta completar desde ChatGPT la matriz 3/3 por lotes establecida en `FASE-0-TRANSPORTE-MCP.md`. Hasta entonces:
 
-- no eliminar ninguno;
+- no retirar todavía las herramientas experimentales anteriores;
 - no declarar cerrada la Fase 0;
 - no introducir base64 fragmentado.
 
 ### P5 — Adaptador MCP definitivo
 
-Estado: **abierto**.
+Estado: **dirección fijada; nombres finales pendientes de P4**.
 
-Alternativas deliberadamente aisladas del núcleo:
+Se usarán varias llamadas cortas, idempotentes y reanudables:
 
 ```text
-varias llamadas
-submit → await → evidence → download
-
-una operación compuesta
-validate_candidate → espera o reanudación → resultado
+stage batches → finalize/submit → await → evidence → download
 ```
 
-La selección depende de P1 y P3. Los servicios internos no dependerán de esa selección.
+El aviso posterior a la prueba de 120 segundos descarta depender de una operación compuesta mantenida abierta. Los servicios internos continúan independientes del número exacto de herramientas.
 
 ### P6 — Propietario del bucle de corrección
 
-Estado: **abierto**.
+Estado: **cerrado**.
 
-Alternativas:
-
-- ChatGPT conserva el razonamiento y repite candidatas mediante varias llamadas;
-- un orquestador servidor usa la API de OpenAI con límites explícitos;
-- una llamada compuesta coordina un trabajo durable y devuelve cada diagnóstico al cliente.
-
-No se incorporará facturación ni credenciales de la API de OpenAI hasta que P1 determine que hacen falta.
+ChatGPT conserva el razonamiento, lee el diagnóstico y repite candidatas mediante varias llamadas en la misma conversación autorizada. No se incorporarán facturación ni credenciales de la API de OpenAI en v1.
 
 ## Pendientes operativos posteriores
 
@@ -210,9 +179,9 @@ Tendrá permisos y credenciales separados si se implementa en el futuro.
 ## Componentes experimentales ya disponibles
 
 - Worker: `mud-repo-patcher-mcp-probe`.
-- Versión desplegada al registrar este documento: `3d59d75d-adda-472a-95c2-f75e57e9e5e6`.
+- Versión desplegada al registrar este documento: `22619184-837b-4a16-8c13-a8361f06e1ca`.
 - R2 de prueba operativo.
-- Tres herramientas de transporte verificadas desde ChatGPT.
+- Seis herramientas experimentales desplegadas; `probe_stage_files` y `probe_finalize_files` están pendientes de refrescar y probar desde ChatGPT.
 - `probe_wait_and_record` verificada mediante cliente MCP de referencia.
 - Matrices local y remota de referencia: 24/24 transferencias exactas.
 - Evidencia detallada: `notas/FASE-0-TRANSPORTE-MCP.md`.

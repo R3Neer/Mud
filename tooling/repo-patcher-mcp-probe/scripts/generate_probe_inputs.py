@@ -99,6 +99,24 @@ def write_json(name: str, value: object) -> None:
     )
 
 
+def with_integrity(files: list[dict[str, str]]) -> list[dict[str, str | int]]:
+    result = []
+    for entry in files:
+        content = (
+            entry["content"].encode("utf-8")
+            if entry["encoding"] == "utf8"
+            else base64.b64decode(entry["content"], validate=True)
+        )
+        result.append(
+            {
+                **entry,
+                "expected_size": len(content),
+                "expected_sha256": hashlib.sha256(content).hexdigest(),
+            }
+        )
+    return result
+
+
 def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     manifest = []
@@ -130,11 +148,38 @@ def main() -> None:
             ],
         },
     )
+    representative = representative_files()
     write_json(
         "files-representative-request.json",
         {
             "request_id": "phase0-files-representative-attempt-REPLACE",
-            "files": representative_files(),
+            "files": representative,
+        },
+    )
+    representative_batches = {
+        "patch": [entry for entry in representative if entry["path"] == "patch.yaml"],
+        "support": [
+            entry
+            for entry in representative
+            if entry["path"] not in {"patch.yaml", "assets/recurso.bin"}
+        ],
+        "binary": [entry for entry in representative if entry["path"] == "assets/recurso.bin"],
+    }
+    for batch_id, batch_files in representative_batches.items():
+        write_json(
+            f"files-representative-stage-{batch_id}.json",
+            {
+                "request_id": "phase0-staged-representative-REPLACE",
+                "batch_id": batch_id,
+                "files": with_integrity(batch_files),
+            },
+        )
+    write_json(
+        "files-representative-finalize.json",
+        {
+            "request_id": "phase0-staged-representative-REPLACE",
+            "batch_ids": list(representative_batches),
+            "expected_file_count": len(representative),
         },
     )
     write_json(
