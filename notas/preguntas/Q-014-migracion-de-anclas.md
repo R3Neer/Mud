@@ -6,10 +6,10 @@ priority: P1
 opened:
 closed:
 decisions:
-  - "D-072"
-  - "D-078"
+  - D-072
+  - D-078
 affects:
-  - "futuro capítulo 09, compatibilidad, persistencia y tooling de renombrado"
+  - futuro capítulo 09, compatibilidad, persistencia y tooling de renombrado
 superseded-by: []
 ---
 

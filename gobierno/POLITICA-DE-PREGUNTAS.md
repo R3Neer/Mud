@@ -132,9 +132,11 @@ Antes de publicar una unidad se verifica:
 - que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
 - que no existan estados parciales sin una enumeración explícita de lo pendiente.
 
-La comprobación mecánica se ejecuta desde la raíz:
+El índice activo se regenera desde los metadatos y después se valida desde la
+raíz:
 
 ```powershell
+python tooling/questions/validate_questions.py generate
 python tooling/questions/validate_questions.py
 ```
 

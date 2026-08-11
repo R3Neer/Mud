@@ -3,7 +3,9 @@ from __future__ import annotations
 import re
 import sys
 import tomllib
+from argparse import ArgumentParser
 from collections import Counter
+from dataclasses import dataclass
 from datetime import date
 from fnmatch import fnmatchcase
 from pathlib import Path
@@ -20,6 +22,7 @@ QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")
 ID_FIELD = re.compile(r"^id: (Q-\d{3})$", re.MULTILINE)
 STATUS_FIELD = re.compile(r"^status: ([a-z-]+)$", re.MULTILINE)
 PRIORITY_FIELD = re.compile(r"^priority: (P[012])$", re.MULTILINE)
+HEADING = re.compile(r"^# Q-\d{3} — (.+)$", re.MULTILINE)
 OPENED_FIELD = re.compile(r"^opened:(?: (true|false))?$", re.MULTILINE)
 CLOSED_FIELD = re.compile(r"^closed:(?: (\d{4}-\d{2}-\d{2}))?$", re.MULTILINE)
 INDEX_LINK = re.compile(r"\[\[[^|\]]+\|(Q-\d{3}) —")
@@ -47,14 +50,95 @@ REQUIRED_FIELDS = (
     "superseded-by:",
 )
 
+PRIORITY_HEADINGS = {
+    "P0": "Antes de congelar el núcleo",
+    "P1": "Antes de ampliar el lenguaje",
+    "P2": "Producto y operación",
+}
+STATUS_LABELS = {
+    "abierta": "Abierta",
+    "parcialmente-decidida": "Parcialmente decidida",
+}
+
+
+@dataclass(frozen=True)
+class Question:
+    path: Path
+    status: str
+    priority: str
+    title: str
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def render_index(questions: dict[str, Question]) -> str:
+    active = {
+        question_id: question
+        for question_id, question in questions.items()
+        if question.status in ACTIVE_STATUSES
+    }
+    counts = Counter(question.status for question in active.values())
+    lines = [
+        "---",
+        "title: Preguntas activas de MUD",
+        "tags:",
+        "  - mud/notas",
+        "  - mud/preguntas",
+        "status: activo",
+        "---",
+        "",
+        "# Preguntas activas de MUD",
+        "",
+        "Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].",
+        "",
+        f"Hay {len(active)} preguntas activas: {counts['abierta']} abiertas y {counts['parcialmente-decidida']} parcialmente decididas.",
+        "",
+        "Prioridades:",
+        "",
+        "- **P0**: bloquea el núcleo v0 o puede forzar una reescritura cercana.",
+        "- **P1**: bloquea una fase posterior concreta.",
+        "- **P2**: puede aplazarse sin falsear el núcleo.",
+        "",
+    ]
+    for priority, heading in PRIORITY_HEADINGS.items():
+        lines.extend([
+            f"## {priority} — {heading}",
+            "",
+            "| Pregunta | Estado |",
+            "| --- | --- |",
+        ])
+        for question_id in sorted(active):
+            question = active[question_id]
+            if question.priority != priority:
+                continue
+            stem = question.path.stem
+            lines.append(
+                f"| [[{stem}|{question_id} — {question.title}]] | "
+                f"{STATUS_LABELS[question.status]} |"
+            )
+        lines.append("")
+    lines.extend([
+        "## Historial",
+        "",
+        "Las preguntas cerradas, descartadas o sustituidas no aparecen en este índice. Sus archivos permanecen en esta carpeta con una ubicación estable para conservar la trazabilidad.",
+        "",
+    ])
+    return "\n".join(lines)
+
+
 def main() -> int:
+    parser = ArgumentParser(description="Genera o valida el registro de preguntas de MUD.")
+    parser.add_argument(
+        "command",
+        nargs="?",
+        choices=("validate", "generate"),
+        default="validate",
+    )
+    args = parser.parse_args()
     errors: list[str] = []
-    questions: dict[str, tuple[Path, str]] = {}
+    questions: dict[str, Question] = {}
 
     for path in sorted(QUESTION_DIR.glob("Q-*.md")):
         filename = QUESTION_FILE.fullmatch(path.name)
@@ -62,6 +146,7 @@ def main() -> int:
         identifier = ID_FIELD.search(text)
         status = STATUS_FIELD.search(text)
         priority = PRIORITY_FIELD.search(text)
+        heading = HEADING.search(text)
         opened = OPENED_FIELD.search(text)
         closed = CLOSED_FIELD.search(text)
 
@@ -79,6 +164,8 @@ def main() -> int:
             continue
         if priority is None:
             errors.append(f"Prioridad ausente en {path.relative_to(ROOT)}")
+        if heading is None:
+            errors.append(f"Título H1 ausente o inválido en {path.relative_to(ROOT)}")
         for field in REQUIRED_FIELDS:
             if not re.search(rf"^{re.escape(field)}", text, re.MULTILINE):
                 errors.append(f"Falta {field} en {path.relative_to(ROOT)}")
@@ -109,12 +196,31 @@ def main() -> int:
                     errors.append(
                         f"Fecha de cierre inválida en {path.relative_to(ROOT)}: {closed_value}"
                     )
-        questions[question_id] = (path, question_status)
+        if priority is not None and heading is not None:
+            questions[question_id] = Question(
+                path=path,
+                status=question_status,
+                priority=priority.group(1),
+                title=heading.group(1),
+            )
+
+    expected_index = render_index(questions)
+    if args.command == "generate":
+        if errors:
+            for error in errors:
+                print(f"ERROR: {error}", file=sys.stderr)
+            return 1
+        INDEX.write_text(expected_index, encoding="utf-8", newline="\n")
 
     index_text = read(INDEX)
+    if index_text != expected_index:
+        errors.append(
+            "El índice de preguntas no coincide con los metadatos; ejecuta "
+            "python tooling/questions/validate_questions.py generate"
+        )
     indexed = INDEX_LINK.findall(index_text)
     indexed_counts = Counter(indexed)
-    active = {question_id for question_id, (_, status) in questions.items() if status in ACTIVE_STATUSES}
+    active = {question_id for question_id, question in questions.items() if question.status in ACTIVE_STATUSES}
 
     duplicate_index = sorted(question_id for question_id, count in indexed_counts.items() if count > 1)
     missing_index = sorted(active - set(indexed))
@@ -134,8 +240,8 @@ def main() -> int:
 
     all_question_ids = set(questions)
     question_paths = {
-        question_id: path.relative_to(ROOT).as_posix()
-        for question_id, (path, _) in questions.items()
+        question_id: question.path.relative_to(ROOT).as_posix()
+        for question_id, question in questions.items()
     }
 
     def questions_selected_by(profile_name: str) -> set[str]:
@@ -180,7 +286,8 @@ def main() -> int:
 
     for path in (ROOT / "especificacion").glob("*.md"):
         for question_id in SPEC_QUESTION.findall(read(path)):
-            status = questions.get(question_id, (None, None))[1]
+            question = questions.get(question_id)
+            status = question.status if question is not None else None
             if status not in ACTIVE_STATUSES:
                 errors.append(
                     f"{path.relative_to(ROOT)} referencia en frontmatter una pregunta inexistente o inactiva: {question_id}"
@@ -199,7 +306,7 @@ def main() -> int:
                     f"Enlace a pregunta inexistente en {path.relative_to(ROOT)}: {target}"
                 )
 
-    counts = Counter(status for _, status in questions.values())
+    counts = Counter(question.status for question in questions.values())
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
