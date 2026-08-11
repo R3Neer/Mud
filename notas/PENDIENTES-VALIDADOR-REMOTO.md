@@ -111,7 +111,7 @@ ChatGPT conserva el razonamiento, lee el diagnóstico y repite candidatas median
 
 ### P7 — E2E y latencia
 
-Estado: **en curso; 2/10 verdes que cumplen el contrato vigente**.
+Estado: **en curso; 3/10 verdes que cumplen el contrato vigente**.
 
 Primer verde real, 2026-08-10:
 
@@ -141,6 +141,7 @@ Verdes con el contrato completo:
 | --- | ---: | --- | --- | ---: |
 | `remote-e2e-20260810-04` | `31431845357` | `succeeded` | diff completo, 221 bytes | 91,1 s |
 | `remote-e2e-20260810-05` | `31432380172` | `succeeded` | diff completo y ZIP exacto | 59,2 s |
+| `remote-mcp-e2e-20260811-01` | `31453323782` | `succeeded` | MCP completo, reproducible y ZIP exacto | 58,608 s |
 
 La ejecución 04 descargó PyYAML desde PyPI y dedicó 32 segundos a esa operación.
 Desde la ejecución 05, el plano de control contiene el wheel Windows CPython
@@ -148,6 +149,17 @@ Desde la ejecución 05, el plano de control contiene el wheel Windows CPython
 instalación tardó 6 segundos. El ZIP entregado en la ejecución 05 conservó sus
 377 bytes y el SHA-256
 `77ca23adf7a98335b046ff579615cf44f30225438d6513f80328a446d50f486a`.
+
+La ejecución `remote-mcp-e2e-20260811-01` es el primer verde iniciado y
+recogido íntegramente por ChatGPT mediante el MCP estable. El Worker recibió un
+`patch.yaml` CRLF de 429 bytes, construyó un ZIP determinista de 422 bytes con
+SHA-256 `85a77745d400028bd3313185830109fba99f09222771dc32ce09bfed7d43f794`
+y lo validó contra `9a1464e8b30d546132b8cdb3f8cfabc41a7fd61c`. La descarga directa y la copia
+incluida en la evidencia resultaron idénticas byte por byte; las 16
+comprobaciones pasaron y reproducibilidad no informó diferencias. D1 llegó a
+terminal en 58,608 segundos. La interacción visible tardó cerca de dos minutos
+por ocho consultas de estado, por lo que todavía debe optimizarse el ritmo de
+polling aunque el laboratorio quedó por debajo de un minuto.
 
 Incidencias descubiertas y corregidas por este E2E:
 
@@ -212,7 +224,7 @@ Desde el 2026-08-10 están implementados y versionados:
 
 El workflow está publicado y el Worker dispone de una credencial fine-grained
 limitada a `R3Neer/Mud` y Actions. Los E2E están registrados en P7.
-P1–P6 están cerrados. Faltan ocho verdes, casos rojos y pruebas de carreras P7
+P1–P6 están cerrados. Faltan siete verdes, casos rojos y pruebas de carreras P7
 antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
 
 ## Trabajo autorizado mientras estos puntos siguen abiertos

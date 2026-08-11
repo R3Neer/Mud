@@ -79,8 +79,19 @@ SHA-256 `77ca23adf7a98335b046ff579615cf44f30225438d6513f80328a446d50f486a`.
 La ingestión se reanudó sobre el mismo artifact sin lanzar otro runner, lo que
 verifica la recuperación idempotente de este tramo.
 
+El 2026-08-11 se completó el primer ciclo íntegro desde ChatGPT a través del
+MCP estable: request `remote-mcp-e2e-20260811-01`, run `31453323782`. El target
+y el control fueron `9a1464e8b30d546132b8cdb3f8cfabc41a7fd61c`; D1 alcanzó
+`succeeded` en 58,608 segundos con RepoPatcher 0.2.0. El ZIP entregado midió
+422 bytes y su SHA-256 fue
+`85a77745d400028bd3313185830109fba99f09222771dc32ce09bfed7d43f794`.
+La verificación independiente confirmó igualdad byte por byte entre la descarga
+y la copia del artifact, 16 checks verdes y reproducibilidad sin diferencias.
+La conversación tardó cerca de dos minutos debido a ocho consultas, una
+latencia de orquestación que debe medirse y reducirse por separado.
+
 El run 03 no cuenta para el corte porque permitió descubrir que su diff estaba
-incompleto. Quedan ocho verdes, candidata roja, corrección, duplicados y carreras antes de
+incompleto. Quedan siete verdes, candidata roja, corrección, duplicados y carreras antes de
 cumplir el criterio de corte. La credencial debe rotarse antes de su caducidad.
 
 ## Verificación local
