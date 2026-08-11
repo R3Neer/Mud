@@ -5,7 +5,16 @@ tags:
   - mud/obsidian
 status: vigente
 sorting-spec: |
+  target-folder: /*
+  README
+  /:files. ....base
+   < a-z
+  sorting: standard
+
   target-folder: /
+  README
+  /:files. ....base
+   < a-z
   especificacion
   notas
   aprendizaje
@@ -19,6 +28,8 @@ sorting-spec: |
 
   target-folder: aprendizaje
   README
+  /:files. ....base
+   < a-z
   PROGRESO
   REGLAS-DIDACTICAS
   PERFIL
@@ -33,6 +44,8 @@ sorting-spec: |
 
   target-folder: gobierno
   README
+  /:files. ....base
+   < a-z
   POLITICA-DE-DECISIONES
   POLITICA-DE-PREGUNTAS
   CICLO-DOCUMENTAL
@@ -44,8 +57,11 @@ sorting-spec: |
 
 # Orden del explorador de Obsidian
 
-Esta nota configura `Custom File Explorer sorting` solo donde existe un orden
-editorial útil:
+Esta nota configura `Custom File Explorer sorting` con una regla general y tres
+órdenes editoriales concretos:
+
+- en cualquier carpeta, `README.md` aparece primero y los archivos `.base`
+  inmediatamente después, ordenados alfabéticamente si hay más de uno;
 
 - en la raíz, primero las superficies documentales y después el soporte técnico;
 - en `aprendizaje/`, primero la orientación y el progreso, después el material;
