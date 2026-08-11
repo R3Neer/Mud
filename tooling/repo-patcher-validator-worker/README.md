@@ -116,11 +116,15 @@ npm run migrate:remote
 npm run deploy
 ```
 
-Antes del primer despliegue MCP se debe configurar interactivamente:
+Cada instancia MCP debe configurar de forma segura:
 
 ```powershell
 npx wrangler secret put MCP_ROUTE_SECRET
 ```
+
+La instancia de producción quedó desplegada el 2026-08-11 como versión
+`f4c4d549-d01d-43d4-857c-5aecbf8e3c7a`. El smoke remoto verificó el catálogo
+exacto de cinco herramientas y un lote staged de 39 bytes.
 
 El despliegue no autoriza retirar v6. El secreto local de smoke del adaptador
 antiguo se conserva fuera del repositorio en:

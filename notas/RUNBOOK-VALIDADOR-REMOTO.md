@@ -15,27 +15,34 @@ URL: https://mud-repo-patcher-validator.mud-repo-patcher-mcp-probe.workers.dev
 D1: 4522dc3f-483a-41ac-873c-b30eb73936cd (WEUR)
 R2 producción: mud-repo-patcher-validator
 R2 preview: mud-repo-patcher-validator-preview
-Versión Worker actual: b0a7f1d8-bf58-4f1d-beb6-0c2ba6b35c22
+Versión Worker actual: f4c4d549-d01d-43d4-857c-5aecbf8e3c7a
 ```
 
-La migración `0001_initial.sql` está aplicada y `/health` respondió correctamente
-el 2026-08-10. `ADAPTER_TOKEN` está configurado; su copia de smoke solo está en
-TEMP y no se registra aquí. `GITHUB_DISPATCH_TOKEN` es fine-grained, está
-limitado a `R3Neer/Mud`, concede Actions de lectura/escritura y caduca el
+Las migraciones `0001_initial.sql` y `0002_staged_transport.sql` están aplicadas
+y `/health` respondió correctamente el 2026-08-11 con el protocolo
+`mud-repo-patcher-validator/v1`. `ADAPTER_TOKEN` está configurado; su copia de
+smoke solo está en TEMP y no se registra aquí. `GITHUB_DISPATCH_TOKEN` es
+fine-grained, está limitado a `R3Neer/Mud`, concede Actions de lectura/escritura y caduca el
 2027-08-10. La variable GitHub `REPO_PATCHER_WORKER_URL` también está
 configurada con la URL anterior.
 
-El adaptador MCP estable requiere además el secret `MCP_ROUTE_SECRET`. Su valor
+El adaptador MCP estable usa además el secret `MCP_ROUTE_SECRET`. Su valor
 forma el primer segmento de la URL del complemento y no se registra en Git ni
 en este documento. Es independiente de `ADAPTER_TOKEN`, que solo protege las
 rutas privadas antiguas.
+
+La copia local de recuperación de la ruta MCP se conserva fuera del repositorio
+en `%TEMP%\mud-repo-patcher-validator\mcp-route-secret.txt`. No debe añadirse a
+Git ni reutilizarse como otra credencial.
 
 La Fase 0 está cerrada. El transporte elegido es staging de archivos UTF-8
 completos en lotes inmutables y finalización determinista en el Worker. La
 sonda `mud-repo-patcher-mcp-probe`, versión
 `22619184-837b-4a16-8c13-a8361f06e1ca`, verificó 3/3 paquetes representativos
-desde ChatGPT. El adaptador estable del Worker validador aún debe incorporar
-este contrato antes de iniciar la serie E2E definitiva.
+desde ChatGPT. El adaptador estable ya incorpora ese contrato. Su smoke remoto
+enumeró exactamente las cinco herramientas públicas y almacenó un lote UTF-8
+de 39 bytes en 3,7 segundos mediante el cliente MCP de referencia. Falta
+actualizar la URL del complemento de ChatGPT e iniciar la serie E2E definitiva.
 
 ## Primer E2E verde
 
@@ -111,6 +118,6 @@ Antes de desplegar se regeneran tipos y se ejecutan las pruebas en `workerd`.
 
 ## Corte
 
-No retirar v6 hasta completar P5, P7 y diez verdes E2E. El cron
+No retirar v6 hasta completar P7 y diez verdes E2E. El cron
 de issues, ramas portadoras y scripts antiguos siguen siendo fallback mientras
 el sistema nuevo no haya cumplido esa condición.

@@ -75,7 +75,7 @@ Se eligió staging de archivos UTF-8 completos, con tamaño y SHA-256 por archiv
 
 ### P5 — Adaptador MCP definitivo
 
-Estado: **implementado localmente; pendiente de despliegue y prueba desde ChatGPT**.
+Estado: **cerrado y desplegado**.
 
 Se usarán varias llamadas cortas, idempotentes y reanudables:
 
@@ -86,12 +86,14 @@ stage_candidate_files → submit_candidate → await_validation
 
 El staging usa archivos completos y lotes inmutables; nunca divide un archivo. El aviso posterior a la prueba de 120 segundos descarta depender de una operación compuesta mantenida abierta. Los servicios internos continúan independientes del número exacto de herramientas.
 
-El Worker 0.2 ya expone las cinco herramientas mediante MCP Streamable HTTP,
+El Worker 0.2 expone las cinco herramientas mediante MCP Streamable HTTP,
 protege MCP y descargas con una ruta secreta distinta de `ADAPTER_TOKEN`, y
-persiste `transport_kind = files_staged_v1`. Las 11 pruebas `workerd`, la
-migración D1 local y un smoke MCP real de catálogo más staging están verdes.
-Para cerrar P5 falta aplicar la migración remota, configurar
-`MCP_ROUTE_SECRET`, desplegar el Worker y renovar el complemento de ChatGPT.
+persiste `transport_kind = files_staged_v1`. Las 12 pruebas `workerd`, la
+migración D1 local y los smokes MCP local y remoto de catálogo más staging
+están verdes. El despliegue remoto del 2026-08-11 usa la versión
+`f4c4d549-d01d-43d4-857c-5aecbf8e3c7a` y respondió en 3,7 segundos al smoke
+completo del cliente MCP de referencia. La renovación del complemento de
+ChatGPT y el primer ciclo completo pertenecen a P7.
 
 ### P6 — Propietario del bucle de corrección
 
@@ -204,11 +206,12 @@ Desde el 2026-08-10 están implementados y versionados:
 
 El workflow está publicado y el Worker dispone de una credencial fine-grained
 limitada a `R3Neer/Mud` y Actions. Los E2E están registrados en P7.
-P1–P4 y P6 están cerrados. Falta terminar el adaptador definitivo P5, además de ocho verdes, casos rojos y pruebas de carreras P7 antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
+P1–P6 están cerrados. Faltan ocho verdes, casos rojos y pruebas de carreras P7
+antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
 
 ## Trabajo autorizado mientras estos puntos siguen abiertos
 
-Mientras P5 y P7 sigan abiertos puede avanzarse en:
+Mientras P7 siga abierto puede avanzarse en:
 
 - contratos y schemas neutrales;
 - máquina de estados D1;
