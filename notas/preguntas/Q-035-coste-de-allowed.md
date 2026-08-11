@@ -1,7 +1,6 @@
 ---
 id: Q-035
 title: Coste de allowed
-status: parcialmente-decidida
 priority: P2
 opened: 2026-07-29
 resolved:

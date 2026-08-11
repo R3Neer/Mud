@@ -1,7 +1,6 @@
 ---
 id: Q-045
 title: Contenido declarativo de create
-status: cerrada
 priority: P0
 opened: 2026-07-29
 resolved: true

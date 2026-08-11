@@ -20,7 +20,6 @@ EXPORT_DIR = ROOT / "exports"
 
 QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")
 ID_FIELD = re.compile(r"^id: (Q-\d{3})$", re.MULTILINE)
-STATUS_FIELD = re.compile(r"^status: ([a-z-]+)$", re.MULTILINE)
 PRIORITY_FIELD = re.compile(r"^priority: (P[012])$", re.MULTILINE)
 HEADING = re.compile(r"^# Q-\d{3} — (.+)$", re.MULTILINE)
 OPENED_FIELD = re.compile(r"^opened: (\d{4}-\d{2}-\d{2})$", re.MULTILINE)
@@ -30,19 +29,15 @@ INDEX_LINK = re.compile(r"\[\[[^|\]]+\|(Q-\d{3}) —")
 SPEC_QUESTION = re.compile(r"^  - (Q-\d{3})$", re.MULTILINE)
 QUESTION_LINK = re.compile(r"\[\[(notas/preguntas/Q-[^|\]#]+)")
 
-ACTIVE_STATUSES = {"abierta", "parcialmente-decidida"}
-ALLOWED_STATUSES = ACTIVE_STATUSES | {"cerrada", "descartada", "sustituida"}
-EXPECTED_RESOLVED = {
-    "abierta": "false",
-    "parcialmente-decidida": None,
-    "cerrada": "true",
-    "descartada": "true",
-    "sustituida": "true",
+ACTIVE_STATES = {"abierta", "parcialmente-decidida"}
+RESOLVED_STATES = {
+    "false": "abierta",
+    None: "parcialmente-decidida",
+    "true": "cerrada",
 }
 REQUIRED_FIELDS = (
     "id:",
     "title:",
-    "status:",
     "priority:",
     "opened:",
     "resolved:",
@@ -66,7 +61,7 @@ STATUS_LABELS = {
 @dataclass(frozen=True)
 class Question:
     path: Path
-    status: str
+    state: str
     priority: str
     title: str
 
@@ -79,9 +74,9 @@ def render_index(questions: dict[str, Question]) -> str:
     active = {
         question_id: question
         for question_id, question in questions.items()
-        if question.status in ACTIVE_STATUSES
+        if question.state in ACTIVE_STATES
     }
-    counts = Counter(question.status for question in active.values())
+    counts = Counter(question.state for question in active.values())
     lines = [
         "---",
         "title: Preguntas activas de MUD",
@@ -118,7 +113,7 @@ def render_index(questions: dict[str, Question]) -> str:
             stem = question.path.stem
             lines.append(
                 f"| [[{stem}|{question_id} — {question.title}]] | "
-                f"{STATUS_LABELS[question.status]} |"
+                f"{STATUS_LABELS[question.state]} |"
             )
         lines.append("")
     lines.extend([
@@ -146,7 +141,6 @@ def main() -> int:
         filename = QUESTION_FILE.fullmatch(path.name)
         text = read(path)
         identifier = ID_FIELD.search(text)
-        status = STATUS_FIELD.search(text)
         priority = PRIORITY_FIELD.search(text)
         heading = HEADING.search(text)
         opened = OPENED_FIELD.search(text)
@@ -162,9 +156,6 @@ def main() -> int:
         question_id = identifier.group(1)
         if question_id in questions:
             errors.append(f"ID duplicado: {question_id}")
-        if status is None or status.group(1) not in ALLOWED_STATUSES:
-            errors.append(f"Estado inválido en {path.relative_to(ROOT)}")
-            continue
         if priority is None:
             errors.append(f"Prioridad ausente en {path.relative_to(ROOT)}")
         if heading is None:
@@ -172,7 +163,6 @@ def main() -> int:
         for field in REQUIRED_FIELDS:
             if not re.search(rf"^{re.escape(field)}", text, re.MULTILINE):
                 errors.append(f"Falta {field} en {path.relative_to(ROOT)}")
-        question_status = status.group(1)
         if opened is None:
             errors.append(f"Fecha de apertura inválida en {path.relative_to(ROOT)}")
         else:
@@ -185,20 +175,17 @@ def main() -> int:
                 )
         if resolved is None:
             errors.append(f"Valor inválido de resolved en {path.relative_to(ROOT)}")
-        elif resolved.group(1) != EXPECTED_RESOLVED[question_status]:
-            errors.append(
-                f"resolved no corresponde a status en {path.relative_to(ROOT)}: "
-                f"{resolved.group(1) or 'vacío'} frente a {question_status}"
-            )
+            continue
+        question_state = RESOLVED_STATES[resolved.group(1)]
         if closed is None:
             errors.append(f"Valor inválido de closed en {path.relative_to(ROOT)}")
         else:
             closed_value = closed.group(1)
-            if question_status in ACTIVE_STATUSES and closed_value is not None:
+            if question_state in ACTIVE_STATES and closed_value is not None:
                 errors.append(
                     f"Pregunta activa con fecha de cierre en {path.relative_to(ROOT)}"
                 )
-            if question_status not in ACTIVE_STATUSES and closed_value is None:
+            if question_state not in ACTIVE_STATES and closed_value is None:
                 errors.append(
                     f"Pregunta inactiva sin fecha de cierre en {path.relative_to(ROOT)}"
                 )
@@ -212,7 +199,7 @@ def main() -> int:
         if priority is not None and heading is not None:
             questions[question_id] = Question(
                 path=path,
-                status=question_status,
+                state=question_state,
                 priority=priority.group(1),
                 title=heading.group(1),
             )
@@ -233,7 +220,7 @@ def main() -> int:
         )
     indexed = INDEX_LINK.findall(index_text)
     indexed_counts = Counter(indexed)
-    active = {question_id for question_id, question in questions.items() if question.status in ACTIVE_STATUSES}
+    active = {question_id for question_id, question in questions.items() if question.state in ACTIVE_STATES}
 
     duplicate_index = sorted(question_id for question_id, count in indexed_counts.items() if count > 1)
     missing_index = sorted(active - set(indexed))
@@ -300,8 +287,8 @@ def main() -> int:
     for path in (ROOT / "especificacion").glob("*.md"):
         for question_id in SPEC_QUESTION.findall(read(path)):
             question = questions.get(question_id)
-            status = question.status if question is not None else None
-            if status not in ACTIVE_STATUSES:
+            state = question.state if question is not None else None
+            if state not in ACTIVE_STATES:
                 errors.append(
                     f"{path.relative_to(ROOT)} referencia en frontmatter una pregunta inexistente o inactiva: {question_id}"
                 )
@@ -319,7 +306,7 @@ def main() -> int:
                     f"Enlace a pregunta inexistente en {path.relative_to(ROOT)}: {target}"
                 )
 
-    counts = Counter(question.status for question in questions.values())
+    counts = Counter(question.state for question in questions.values())
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)

@@ -1,7 +1,6 @@
 ---
 id: Q-016
 title: Canonicalización de identidades activadas durante la ejecución
-status: abierta
 priority: P1
 opened: 2026-07-29
 resolved: false

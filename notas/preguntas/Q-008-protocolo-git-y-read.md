@@ -1,7 +1,6 @@
 ---
 id: Q-008
 title: Protocolo Git y READ
-status: parcialmente-decidida
 priority: P0
 opened: 2026-07-29
 resolved:

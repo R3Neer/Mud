@@ -1,7 +1,6 @@
 ---
 id: Q-054
 title: Catálogo y resolución léxica de unidades y prefijos
-status: cerrada
 priority: P2
 opened: 2026-07-29
 resolved: true

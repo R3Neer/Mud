@@ -1,7 +1,6 @@
 ---
 id: Q-036
 title: Unidad de interacción humana
-status: abierta
 priority: P2
 opened: 2026-07-29
 resolved: false

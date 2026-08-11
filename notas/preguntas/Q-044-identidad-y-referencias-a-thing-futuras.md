@@ -1,7 +1,6 @@
 ---
 id: Q-044
 title: Identidad y referencias a thing futuras
-status: cerrada
 priority: P0
 opened: 2026-07-29
 resolved: true

@@ -1,7 +1,6 @@
 ---
 id: Q-006
 title: Conflictos
-status: parcialmente-decidida
 priority: P0
 opened: 2026-07-29
 resolved:

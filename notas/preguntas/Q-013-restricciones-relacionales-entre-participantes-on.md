@@ -1,7 +1,6 @@
 ---
 id: Q-013
 title: Restricciones relacionales entre participantes on
-status: cerrada
 priority: P1
 opened: 2026-07-29
 resolved: true

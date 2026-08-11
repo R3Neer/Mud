@@ -1,7 +1,6 @@
 ---
 id: Q-059
 title: Observación de resultados de acción en tests
-status: abierta
 priority: P1
 opened: 2026-07-29
 resolved: false

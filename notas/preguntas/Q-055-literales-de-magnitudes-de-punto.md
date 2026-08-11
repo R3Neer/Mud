@@ -1,7 +1,6 @@
 ---
 id: Q-055
 title: Literales de magnitudes de punto
-status: cerrada
 priority: P2
 opened: 2026-07-29
 resolved: true

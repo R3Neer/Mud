@@ -1,7 +1,6 @@
 ---
 id: Q-017
 title: Dominios dinámicos circulares
-status: abierta
 priority: P1
 opened: 2026-07-29
 resolved: false

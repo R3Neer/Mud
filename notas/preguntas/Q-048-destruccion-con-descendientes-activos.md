@@ -1,7 +1,6 @@
 ---
 id: Q-048
 title: Destrucción con descendientes activos
-status: cerrada
 priority: P0
 opened: 2026-07-29
 resolved: true

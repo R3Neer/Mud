@@ -1,7 +1,6 @@
 ---
 id: Q-028
 title: Finitud
-status: parcialmente-decidida
 priority: P2
 opened: 2026-07-29
 resolved:

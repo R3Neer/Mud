@@ -1,7 +1,6 @@
 ---
 id: Q-047
 title: Selección de predeterminados por tipo
-status: parcialmente-decidida
 priority: P0
 opened: 2026-07-29
 resolved:

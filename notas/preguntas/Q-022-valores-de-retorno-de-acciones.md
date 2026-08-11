@@ -1,7 +1,6 @@
 ---
 id: Q-022
 title: Valores de retorno de acciones
-status: abierta
 priority: P1
 opened: 2026-07-29
 resolved: false

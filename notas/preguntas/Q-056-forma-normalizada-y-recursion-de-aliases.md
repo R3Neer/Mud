@@ -1,7 +1,6 @@
 ---
 id: Q-056
 title: Forma normalizada y recursión de aliases
-status: parcialmente-decidida
 priority: P2
 opened: 2026-07-29
 resolved:

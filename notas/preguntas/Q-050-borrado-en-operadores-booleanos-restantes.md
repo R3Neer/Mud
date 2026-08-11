@@ -1,7 +1,6 @@
 ---
 id: Q-050
 title: Borrado en operadores booleanos restantes
-status: parcialmente-decidida
 priority: P1
 opened: 2026-07-29
 resolved:

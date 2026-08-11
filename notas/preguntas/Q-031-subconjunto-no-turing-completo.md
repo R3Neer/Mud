@@ -1,7 +1,6 @@
 ---
 id: Q-031
 title: Subconjunto no Turing completo
-status: abierta
 priority: P2
 opened: 2026-07-29
 resolved: false

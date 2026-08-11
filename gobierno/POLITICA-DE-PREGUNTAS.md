@@ -37,17 +37,17 @@ El archivo no se mueve al cambiar de estado. Su ubicación estable evita romper 
 - Si una pregunta contiene incertidumbres independientes, se divide y cada nueva pregunta enlaza su procedencia.
 - Una decisión puede resolver varias preguntas y una pregunta puede requerir varias decisiones.
 
-## Estados
+## Estado de resolución
 
-Los estados permitidos son:
+El campo `resolved` es la única fuente de verdad del estado de una pregunta:
 
-- `abierta`: no existe una respuesta aceptada suficiente.
-- `parcialmente-decidida`: una decisión resolvió parte del problema y el archivo enumera de forma exacta qué falta.
-- `cerrada`: no queda ninguna incertidumbre dentro de su alcance y el archivo enlaza la decisión o evidencia que la cerró.
-- `descartada`: la pregunta perdió aplicabilidad sin convertirse en regla; debe explicar por qué.
-- `sustituida`: otras preguntas cubren ahora su alcance; debe enlazarlas.
+- `resolved: false` (`[ ]`): abierta; no existe una respuesta aceptada suficiente.
+- `resolved:` (`[-]`): parcialmente decidida; el archivo enumera de forma exacta qué falta.
+- `resolved: true` (`[x]`): cerrada; no queda ninguna incertidumbre dentro de su alcance.
 
-Solo `abierta` y `parcialmente-decidida` son estados activos.
+Las preguntas abiertas y parcialmente decididas son activas. Si una pregunta se
+cierra porque fue descartada, la sección `Resolución` explica el motivo. Si fue
+sustituida, `superseded-by` enlaza las preguntas que cubren ahora su alcance.
 
 ## Contenido mínimo
 
@@ -57,7 +57,6 @@ Cada archivo usa:
 ---
 id: Q-NNN
 title:
-status: abierta
 priority: P0
 opened: YYYY-MM-DD
 resolved: false
@@ -70,22 +69,15 @@ superseded-by: []
 
 La prioridad es `P0`, `P1` o `P2` y determina la sección del índice activo; no forma parte de la identidad estable de la pregunta.
 
-`status` conserva el estado editorial canónico. `opened` contiene en formato
-`YYYY-MM-DD` la fecha de creación del archivo estable de la pregunta y no cambia
+`opened` contiene en formato `YYYY-MM-DD` la fecha de creación del archivo
+estable de la pregunta y no cambia
 durante su ciclo de vida. En preguntas migradas desde un registro anterior,
 `closed` puede ser anterior a `opened` porque documenta el cierre de la pregunta,
 no la creación posterior de su archivo individual.
 
-`resolved` es la proyección trivalente del estado para las vistas de Obsidian:
-
-- `resolved: false` muestra `[ ]` y corresponde únicamente a `abierta`;
-- `resolved:` muestra `[-]` y corresponde únicamente a `parcialmente-decidida`;
-- `resolved: true` muestra `[x]` y corresponde a `cerrada`, `descartada` o
-  `sustituida`.
-
 `closed` queda vacío mientras la pregunta esté activa. Cuando pasa a un estado
 inactivo contiene la fecha de cierre en formato `YYYY-MM-DD`. Los campos
-`resolved` y `closed` deben actualizarse en el mismo cambio que `status`.
+`resolved` y `closed` deben actualizarse en el mismo cambio.
 
 Y contiene, cuando proceda:
 
@@ -133,8 +125,8 @@ Antes de publicar una unidad se verifica:
 - que todo identificador incluido en `questions` corresponda a una pregunta activa;
 - que toda advertencia normativa sobre una cuestión pendiente enlace una pregunta activa;
 - que una pregunta cerrada no permanezca en el índice activo;
-- que `opened` contenga una fecha válida, que `resolved` represente el mismo
-  estado que `status` y que `closed` solo esté vacío en preguntas activas;
+- que `opened` contenga una fecha válida y que `closed` solo esté vacío en
+  preguntas activas según `resolved`;
 - que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
 - que no existan estados parciales sin una enumeración explícita de lo pendiente.
 

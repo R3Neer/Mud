@@ -1,7 +1,6 @@
 ---
 id: Q-041
 title: Ontología de thing
-status: cerrada
 priority: P0
 opened: 2026-07-29
 resolved: true

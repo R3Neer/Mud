@@ -1,7 +1,6 @@
 ---
 id: Q-057
 title: Capacidad interior dentro de valores de alias
-status: cerrada
 priority: P2
 opened: 2026-07-29
 resolved: true

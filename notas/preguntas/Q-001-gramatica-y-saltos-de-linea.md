@@ -1,7 +1,6 @@
 ---
 id: Q-001
 title: Gramática y saltos de línea
-status: cerrada
 priority: P0
 opened: 2026-07-29
 resolved: true

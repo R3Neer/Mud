@@ -1,7 +1,6 @@
 ---
 id: Q-014
 title: Migración de anclas
-status: parcialmente-decidida
 priority: P1
 opened: 2026-07-29
 resolved:

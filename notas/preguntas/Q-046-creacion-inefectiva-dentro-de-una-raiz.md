@@ -1,7 +1,6 @@
 ---
 id: Q-046
 title: Creación inefectiva dentro de una raíz
-status: parcialmente-decidida
 priority: P0
 opened: 2026-07-29
 resolved:

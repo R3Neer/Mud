@@ -1,7 +1,6 @@
 ---
 id: Q-049
 title: Destrucción y colecciones de thing
-status: cerrada
 priority: P0
 opened: 2026-07-29
 resolved: true

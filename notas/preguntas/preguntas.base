@@ -10,8 +10,6 @@ properties:
     displayName: Pregunta
   title:
     displayName: Título
-  status:
-    displayName: Estado
   priority:
     displayName: Prioridad
   opened:
@@ -29,15 +27,14 @@ views:
     name: Activas por prioridad
     filters:
       or:
-        - status == "abierta"
-        - status == "parcialmente-decidida"
+        - resolved == false
+        - resolved == null
     groupBy:
       property: priority
       direction: ASC
     order:
       - id
       - title
-      - status
       - opened
       - resolved
       - decisions
@@ -49,7 +46,7 @@ views:
     name: Abiertas
     filters:
       and:
-        - status == "abierta"
+        - resolved == false
     order:
       - id
       - title
@@ -66,7 +63,7 @@ views:
     name: Parcialmente decididas
     filters:
       and:
-        - status == "parcialmente-decidida"
+        - resolved == null
     order:
       - id
       - title
@@ -82,12 +79,8 @@ views:
   - type: table
     name: Historial
     filters:
-      not:
-        - status == "abierta"
-        - status == "parcialmente-decidida"
-    groupBy:
-      property: status
-      direction: ASC
+      and:
+        - resolved == true
     order:
       - id
       - title

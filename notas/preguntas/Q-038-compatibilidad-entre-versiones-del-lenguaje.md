@@ -1,7 +1,6 @@
 ---
 id: Q-038
 title: Compatibilidad entre versiones del lenguaje
-status: abierta
 priority: P2
 opened: 2026-07-29
 resolved: false

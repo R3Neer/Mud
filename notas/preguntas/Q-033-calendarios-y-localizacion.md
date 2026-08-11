@@ -1,7 +1,6 @@
 ---
 id: Q-033
 title: Calendarios y localización
-status: abierta
 priority: P2
 opened: 2026-07-29
 resolved: false

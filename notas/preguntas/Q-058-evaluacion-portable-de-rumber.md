@@ -1,7 +1,6 @@
 ---
 id: Q-058
 title: Evaluación portable de Rum
-status: abierta
 priority: P2
 opened: 2026-07-29
 resolved: false

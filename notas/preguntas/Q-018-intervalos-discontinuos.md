@@ -1,7 +1,6 @@
 ---
 id: Q-018
 title: Intervalos discontinuos
-status: parcialmente-decidida
 priority: P1
 opened: 2026-07-29
 resolved:

@@ -1,7 +1,6 @@
 ---
 id: Q-015
 title: Retirada
-status: abierta
 priority: P1
 opened: 2026-07-29
 resolved: false

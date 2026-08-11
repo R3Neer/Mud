@@ -1,7 +1,6 @@
 ---
 id: Q-023
 title: Composición dinámica
-status: abierta
 priority: P1
 opened: 2026-07-29
 resolved: false

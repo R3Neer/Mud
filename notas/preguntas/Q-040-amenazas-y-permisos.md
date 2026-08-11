@@ -1,7 +1,6 @@
 ---
 id: Q-040
 title: Amenazas y permisos
-status: abierta
 priority: P2
 opened: 2026-07-29
 resolved: false

@@ -1,7 +1,6 @@
 ---
 id: Q-003
 title: Puntos de validación
-status: parcialmente-decidida
 priority: P0
 opened: 2026-07-29
 resolved:

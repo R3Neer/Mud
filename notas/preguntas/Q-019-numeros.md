@@ -1,7 +1,6 @@
 ---
 id: Q-019
 title: Números
-status: parcialmente-decidida
 priority: P1
 opened: 2026-07-29
 resolved:
