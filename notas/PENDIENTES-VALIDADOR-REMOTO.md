@@ -88,10 +88,10 @@ El staging usa archivos completos y lotes inmutables; nunca divide un archivo. E
 
 El Worker 0.2 expone las cinco herramientas mediante MCP Streamable HTTP,
 protege MCP y descargas con una ruta secreta distinta de `ADAPTER_TOKEN`, y
-persiste `transport_kind = files_staged_v1`. Las 12 pruebas `workerd`, la
+persiste `transport_kind = files_staged_v1`. Las 14 pruebas `workerd`, la
 migración D1 local y los smokes MCP local y remoto de catálogo más staging
 están verdes. El despliegue remoto del 2026-08-11 usa la versión
-`f4c4d549-d01d-43d4-857c-5aecbf8e3c7a` y respondió en 3,7 segundos al smoke
+`e4f09664-ed6e-4e05-8e39-75491dac339b` y respondió en 3,3 segundos al smoke
 completo del cliente MCP de referencia. La renovación del complemento de
 ChatGPT y el primer ciclo completo pertenecen a P7.
 

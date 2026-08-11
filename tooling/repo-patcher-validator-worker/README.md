@@ -126,8 +126,9 @@ npx wrangler secret put MCP_ROUTE_SECRET
 ```
 
 La instancia de producción quedó desplegada el 2026-08-11 como versión
-`f4c4d549-d01d-43d4-857c-5aecbf8e3c7a`. El smoke remoto verificó el catálogo
-exacto de cinco herramientas y un lote staged de 39 bytes.
+`e4f09664-ed6e-4e05-8e39-75491dac339b`. El smoke remoto verificó el catálogo
+exacto de cinco herramientas y un lote staged de 39 bytes sin aserciones de
+identidad aportadas por el cliente.
 
 El despliegue no autoriza retirar v6. El secreto local de smoke del adaptador
 antiguo se conserva fuera del repositorio en:

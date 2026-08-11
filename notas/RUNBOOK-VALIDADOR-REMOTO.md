@@ -15,7 +15,7 @@ URL: https://mud-repo-patcher-validator.mud-repo-patcher-mcp-probe.workers.dev
 D1: 4522dc3f-483a-41ac-873c-b30eb73936cd (WEUR)
 R2 producción: mud-repo-patcher-validator
 R2 preview: mud-repo-patcher-validator-preview
-Versión Worker actual: f4c4d549-d01d-43d4-857c-5aecbf8e3c7a
+Versión Worker actual: e4f09664-ed6e-4e05-8e39-75491dac339b
 ```
 
 Las migraciones `0001_initial.sql` y `0002_staged_transport.sql` están aplicadas
@@ -41,7 +41,8 @@ sonda `mud-repo-patcher-mcp-probe`, versión
 `22619184-837b-4a16-8c13-a8361f06e1ca`, verificó 3/3 paquetes representativos
 desde ChatGPT. El adaptador estable ya incorpora ese contrato. Su smoke remoto
 enumeró exactamente las cinco herramientas públicas y almacenó un lote UTF-8
-de 39 bytes en 3,7 segundos mediante el cliente MCP de referencia. Falta
+de 39 bytes en 3,3 segundos mediante el cliente MCP de referencia. Worker 0.2.1
+calculó y devolvió tamaño y SHA sin exigir identidad previa al cliente. Falta
 actualizar la URL del complemento de ChatGPT e iniciar la serie E2E definitiva.
 
 ## Primer E2E verde
