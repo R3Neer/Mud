@@ -3,7 +3,7 @@ id: Q-038
 title: Compatibilidad entre versiones del lenguaje
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

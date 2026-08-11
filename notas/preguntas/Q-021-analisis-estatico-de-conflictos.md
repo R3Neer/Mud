@@ -3,7 +3,7 @@ id: Q-021
 title: Análisis estático de conflictos
 status: abierta
 priority: P1
-opened:
+opened: true
 closed:
 decisions:
   - D-023

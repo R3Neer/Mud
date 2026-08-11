@@ -4,6 +4,7 @@ import re
 import sys
 import tomllib
 from collections import Counter
+from datetime import date
 from fnmatch import fnmatchcase
 from pathlib import Path
 
@@ -19,12 +20,21 @@ QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")
 ID_FIELD = re.compile(r"^id: (Q-\d{3})$", re.MULTILINE)
 STATUS_FIELD = re.compile(r"^status: ([a-z-]+)$", re.MULTILINE)
 PRIORITY_FIELD = re.compile(r"^priority: (P[012])$", re.MULTILINE)
+OPENED_FIELD = re.compile(r"^opened:(?: (true|false))?$", re.MULTILINE)
+CLOSED_FIELD = re.compile(r"^closed:(?: (\d{4}-\d{2}-\d{2}))?$", re.MULTILINE)
 INDEX_LINK = re.compile(r"\[\[[^|\]]+\|(Q-\d{3}) —")
 SPEC_QUESTION = re.compile(r"^  - (Q-\d{3})$", re.MULTILINE)
 QUESTION_LINK = re.compile(r"\[\[(notas/preguntas/Q-[^|\]#]+)")
 
 ACTIVE_STATUSES = {"abierta", "parcialmente-decidida"}
 ALLOWED_STATUSES = ACTIVE_STATUSES | {"cerrada", "descartada", "sustituida"}
+EXPECTED_OPENED = {
+    "abierta": "true",
+    "parcialmente-decidida": None,
+    "cerrada": "false",
+    "descartada": "false",
+    "sustituida": "false",
+}
 REQUIRED_FIELDS = (
     "id:",
     "title:",
@@ -52,6 +62,8 @@ def main() -> int:
         identifier = ID_FIELD.search(text)
         status = STATUS_FIELD.search(text)
         priority = PRIORITY_FIELD.search(text)
+        opened = OPENED_FIELD.search(text)
+        closed = CLOSED_FIELD.search(text)
 
         if filename is None:
             errors.append(f"Nombre de archivo inválido: {path.relative_to(ROOT)}")
@@ -70,7 +82,34 @@ def main() -> int:
         for field in REQUIRED_FIELDS:
             if not re.search(rf"^{re.escape(field)}", text, re.MULTILINE):
                 errors.append(f"Falta {field} en {path.relative_to(ROOT)}")
-        questions[question_id] = (path, status.group(1))
+        question_status = status.group(1)
+        if opened is None:
+            errors.append(f"Valor inválido de opened en {path.relative_to(ROOT)}")
+        elif opened.group(1) != EXPECTED_OPENED[question_status]:
+            errors.append(
+                f"opened no corresponde a status en {path.relative_to(ROOT)}: "
+                f"{opened.group(1) or 'vacío'} frente a {question_status}"
+            )
+        if closed is None:
+            errors.append(f"Valor inválido de closed en {path.relative_to(ROOT)}")
+        else:
+            closed_value = closed.group(1)
+            if question_status in ACTIVE_STATUSES and closed_value is not None:
+                errors.append(
+                    f"Pregunta activa con fecha de cierre en {path.relative_to(ROOT)}"
+                )
+            if question_status not in ACTIVE_STATUSES and closed_value is None:
+                errors.append(
+                    f"Pregunta inactiva sin fecha de cierre en {path.relative_to(ROOT)}"
+                )
+            if closed_value is not None:
+                try:
+                    date.fromisoformat(closed_value)
+                except ValueError:
+                    errors.append(
+                        f"Fecha de cierre inválida en {path.relative_to(ROOT)}: {closed_value}"
+                    )
+        questions[question_id] = (path, question_status)
 
     index_text = read(INDEX)
     indexed = INDEX_LINK.findall(index_text)

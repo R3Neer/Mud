@@ -3,7 +3,7 @@ id: Q-031
 title: Subconjunto no Turing completo
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

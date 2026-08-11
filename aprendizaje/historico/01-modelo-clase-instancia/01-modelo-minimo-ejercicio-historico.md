@@ -2,7 +2,7 @@
 title: Ejercicio histórico 01 — Modelo clase–instancia descartado
 unit: 1
 status: sustituido
-level: 1
+level: "1"
 tags:
   - mud/aprendizaje
   - mud/ejercicio

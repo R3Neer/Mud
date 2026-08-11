@@ -3,8 +3,8 @@ id: Q-004
 title: Rollback de rejected
 status: cerrada
 priority: P0
-opened:
-closed:
+opened: false
+closed: 2026-07-28
 decisions:
   - D-042
 affects: []

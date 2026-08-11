@@ -3,7 +3,7 @@ id: Q-058
 title: Evaluación portable de Rum
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

@@ -3,7 +3,7 @@ id: Q-033
 title: Calendarios y localización
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

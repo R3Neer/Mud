@@ -3,8 +3,8 @@ id: Q-048
 title: Destrucción con descendientes activos
 status: cerrada
 priority: P0
-opened:
-closed:
+opened: false
+closed: 2026-07-27
 decisions:
   - D-021
 affects: []

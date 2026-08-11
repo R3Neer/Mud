@@ -3,8 +3,8 @@ id: Q-041
 title: Ontología de thing
 status: cerrada
 priority: P0
-opened:
-closed:
+opened: false
+closed: 2026-07-28
 decisions:
   - D-014
   - D-015

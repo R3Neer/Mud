@@ -3,7 +3,7 @@ id: Q-040
 title: Amenazas y permisos
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

@@ -2,7 +2,7 @@
 title: Ejercicio 02 — Grafo almacenado y efectivo de `thing`
 unit: 2
 status: vigente
-level: 1
+level: "1"
 tags:
   - mud/aprendizaje
   - mud/ejercicio

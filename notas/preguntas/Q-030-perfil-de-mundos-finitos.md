@@ -3,7 +3,7 @@ id: Q-030
 title: Perfil de mundos finitos
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

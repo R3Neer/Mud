@@ -3,7 +3,7 @@ id: Q-015
 title: Retirada
 status: abierta
 priority: P1
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

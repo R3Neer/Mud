@@ -3,7 +3,7 @@ id: Q-027
 title: Estado relevante
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

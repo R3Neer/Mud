@@ -3,8 +3,8 @@ id: Q-001
 title: Gramática y saltos de línea
 status: cerrada
 priority: P0
-opened:
-closed:
+opened: false
+closed: 2026-07-28
 decisions:
   - D-050
   - D-056

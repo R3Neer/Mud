@@ -3,7 +3,7 @@ id: Q-022
 title: Valores de retorno de acciones
 status: abierta
 priority: P1
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

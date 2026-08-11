@@ -3,8 +3,8 @@ id: Q-025
 title: Destrucción de thing estáticas
 status: cerrada
 priority: P1
-opened:
-closed:
+opened: false
+closed: 2026-07-28
 decisions:
   - D-021
   - D-054

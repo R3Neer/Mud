@@ -3,8 +3,8 @@ id: Q-053
 title: Conversiones explícitas
 status: cerrada
 priority: P1
-opened:
-closed:
+opened: false
+closed: 2026-07-29
 decisions:
   - D-030
   - D-032

@@ -3,7 +3,7 @@ id: Q-023
 title: Composición dinámica
 status: abierta
 priority: P1
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

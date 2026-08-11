@@ -3,8 +3,8 @@ id: Q-045
 title: Contenido declarativo de create
 status: cerrada
 priority: P0
-opened:
-closed:
+opened: false
+closed: 2026-07-28
 decisions:
   - D-054
 affects: []

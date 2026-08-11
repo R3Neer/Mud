@@ -3,7 +3,7 @@ id: Q-037
 title: Convivencia con código manual
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

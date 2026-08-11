@@ -9,7 +9,7 @@ status: propuesta
 normative: true
 depends-on:
   - "[[05-texto-fuente]]"
-questions:
+questions: []
 decisions:
   - D-034
   - D-035

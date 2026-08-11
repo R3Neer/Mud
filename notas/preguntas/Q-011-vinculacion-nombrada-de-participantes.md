@@ -3,7 +3,7 @@ id: Q-011
 title: Vinculación nombrada de participantes
 status: cerrada
 priority: P1
-opened:
+opened: false
 closed: 2026-07-30
 decisions:
   - D-036

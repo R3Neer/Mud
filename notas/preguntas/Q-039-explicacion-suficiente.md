@@ -3,7 +3,7 @@ id: Q-039
 title: Explicación suficiente
 status: abierta
 priority: P2
-opened:
+opened: true
 closed:
 decisions: []
 affects: []

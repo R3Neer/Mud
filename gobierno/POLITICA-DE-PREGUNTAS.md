@@ -59,7 +59,7 @@ id: Q-NNN
 title:
 status: abierta
 priority: P0
-opened:
+opened: true
 closed:
 decisions: []
 affects: []
@@ -68,6 +68,18 @@ superseded-by: []
 ```
 
 La prioridad es `P0`, `P1` o `P2` y determina la sección del índice activo; no forma parte de la identidad estable de la pregunta.
+
+`status` conserva el estado editorial canónico. `opened` es su proyección de
+tres estados para las vistas de Obsidian:
+
+- `opened: true` muestra `[x]` y corresponde únicamente a `abierta`;
+- `opened:` muestra `[-]` y corresponde únicamente a `parcialmente-decidida`;
+- `opened: false` muestra `[ ]` y corresponde a `cerrada`, `descartada` o
+  `sustituida`.
+
+`closed` queda vacío mientras la pregunta esté activa. Cuando pasa a un estado
+inactivo contiene la fecha de cierre en formato `YYYY-MM-DD`. Los campos
+`opened` y `closed` deben actualizarse en el mismo cambio que `status`.
 
 Y contiene, cuando proceda:
 
@@ -115,6 +127,8 @@ Antes de publicar una unidad se verifica:
 - que todo identificador incluido en `questions` corresponda a una pregunta activa;
 - que toda advertencia normativa sobre una cuestión pendiente enlace una pregunta activa;
 - que una pregunta cerrada no permanezca en el índice activo;
+- que `opened` represente el mismo estado que `status` y que `closed` solo esté
+  vacío en preguntas activas;
 - que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
 - que no existan estados parciales sin una enumeración explícita de lo pendiente.
 

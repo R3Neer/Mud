@@ -3,7 +3,7 @@ id: Q-054
 title: Catálogo y resolución léxica de unidades y prefijos
 status: cerrada
 priority: P2
-opened:
+opened: false
 closed: 2026-08-03
 decisions:
   - D-076

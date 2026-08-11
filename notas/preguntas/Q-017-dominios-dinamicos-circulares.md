@@ -3,7 +3,7 @@ id: Q-017
 title: Dominios dinámicos circulares
 status: abierta
 priority: P1
-opened:
+opened: true
 closed:
 decisions: []
 affects: []
