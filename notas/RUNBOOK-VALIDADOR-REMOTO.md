@@ -90,8 +90,17 @@ y la copia del artifact, 16 checks verdes y reproducibilidad sin diferencias.
 La conversación tardó cerca de dos minutos debido a ocho consultas, una
 latencia de orquestación que debe medirse y reducirse por separado.
 
+El ciclo autónomo rojo/corrección del 2026-08-11 produjo los runs `31477000740`
+y `31477092679`. El rojo quedó correctamente clasificado como
+`candidate_validation_failed` en 55,676 segundos; el diagnóstico mostró que
+un SHA de cuarenta ceros sin comillas fue interpretado por YAML como número.
+ChatGPT creó una request corregida sin intervención y obtuvo verde en 74,921
+segundos. Su ZIP descargado y el del artifact fueron idénticos: 383 bytes,
+SHA-256 `0f2a1f6e746f5565ac9fde0b3f8dc285faa872d080ba0116071e4e3086ead9e0`,
+con reproducibilidad verde y sin diferencias.
+
 El run 03 no cuenta para el corte porque permitió descubrir que su diff estaba
-incompleto. Quedan siete verdes, candidata roja, corrección, duplicados y carreras antes de
+incompleto. Quedan seis verdes, duplicados, carreras y fallo de infraestructura antes de
 cumplir el criterio de corte. La credencial debe rotarse antes de su caducidad.
 
 ## Verificación local

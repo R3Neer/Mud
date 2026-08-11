@@ -111,7 +111,7 @@ ChatGPT conserva el razonamiento, lee el diagnóstico y repite candidatas median
 
 ### P7 — E2E y latencia
 
-Estado: **en curso; 3/10 verdes que cumplen el contrato vigente**.
+Estado: **en curso; 4/10 verdes que cumplen el contrato vigente**.
 
 Primer verde real, 2026-08-10:
 
@@ -142,6 +142,7 @@ Verdes con el contrato completo:
 | `remote-e2e-20260810-04` | `31431845357` | `succeeded` | diff completo, 221 bytes | 91,1 s |
 | `remote-e2e-20260810-05` | `31432380172` | `succeeded` | diff completo y ZIP exacto | 59,2 s |
 | `remote-mcp-e2e-20260811-01` | `31453323782` | `succeeded` | MCP completo, reproducible y ZIP exacto | 58,608 s |
+| `remote-mcp-corrected-20260811-01` | `31477092679` | `succeeded` | corrección autónoma y ZIP exacto | 74,921 s |
 
 La ejecución 04 descargó PyYAML desde PyPI y dedicó 32 segundos a esa operación.
 Desde la ejecución 05, el plano de control contiene el wheel Windows CPython
@@ -161,6 +162,18 @@ terminal en 58,608 segundos. La interacción visible tardó cerca de dos minutos
 por ocho consultas de estado, por lo que todavía debe optimizarse el ritmo de
 polling aunque el laboratorio quedó por debajo de un minuto.
 
+El ciclo rojo/corrección usó `remote-mcp-red-20260811-01`, run `31477000740`,
+y `remote-mcp-corrected-20260811-01`, run `31477092679`. La primera candidata
+falló en 55,676 segundos con `candidate_validation_failed`: YAML interpretó
+cuarenta ceros sin comillas como valor no textual. ChatGPT leyó el diagnóstico,
+creó otra request sin intervención y obtuvo verde en 74,921 segundos. El ZIP
+corregido descargado y el incluido en la evidencia coincidieron byte por byte:
+383 bytes y SHA-256
+`0f2a1f6e746f5565ac9fde0b3f8dc285faa872d080ba0116071e4e3086ead9e0`;
+reproducibilidad no informó diferencias. El ciclo visible completo tardó cerca
+de tres minutos y 151,312 segundos entre creación del rojo y finalización del
+verde.
+
 Incidencias descubiertas y corregidas por este E2E:
 
 - el input `package_size` debe cruzar `workflow_dispatch` como cadena decimal;
@@ -173,13 +186,13 @@ Incidencias descubiertas y corregidas por este E2E:
 
 Antes del corte deben existir:
 
-- candidata verde;
-- candidata roja con diagnóstico útil;
-- repetición con candidata corregida;
-- duplicados y carreras recuperados;
-- fallo de infraestructura distinguible de fallo del paquete;
-- diez verdes consecutivos;
-- mediana inferior a un minuto y al menos ocho de diez ejecuciones inferiores a un minuto.
+- [x] candidata verde;
+- [x] candidata roja con diagnóstico útil;
+- [x] repetición con candidata corregida;
+- [ ] duplicados y carreras recuperados;
+- [ ] fallo de infraestructura distinguible de fallo del paquete;
+- [ ] diez verdes consecutivos;
+- [ ] mediana inferior a un minuto y al menos ocho de diez ejecuciones inferiores a un minuto.
 
 ### P8 — Retirada de v6
 
@@ -224,7 +237,8 @@ Desde el 2026-08-10 están implementados y versionados:
 
 El workflow está publicado y el Worker dispone de una credencial fine-grained
 limitada a `R3Neer/Mud` y Actions. Los E2E están registrados en P7.
-P1–P6 están cerrados. Faltan siete verdes, casos rojos y pruebas de carreras P7
+P1–P6 están cerrados. Faltan seis verdes y las pruebas de carreras e
+infraestructura de P7
 antes de cualquier corte. Véase `notas/RUNBOOK-VALIDADOR-REMOTO.md`.
 
 ## Trabajo autorizado mientras estos puntos siguen abiertos

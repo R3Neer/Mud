@@ -116,8 +116,8 @@ Fuentes: `repo_patcher/manifest.py::load_manifest` y
 compatibility:
   clean_worktree: true
   exact_heads:
-    - 0123456789abcdef0123456789abcdef01234567
-  required_ancestor: 89abcdef0123456789abcdef0123456789abcdef
+    - "0123456789abcdef0123456789abcdef01234567"
+  required_ancestor: "89abcdef0123456789abcdef0123456789abcdef"
   required_files:
     - AGENTS.md
 ```
@@ -128,6 +128,10 @@ compatibility:
 | `exact_heads` | `exact_head` | texto o lista | vacío | `HEAD` debe coincidir literalmente con uno de los SHA. |
 | `required_ancestor` | — | texto o `null` | `null` | Se usa `git merge-base --is-ancestor`. |
 | `required_files` | — | texto o lista | vacío | Cada ruta debe existir bajo la ruta construida desde la repo. |
+
+Los SHA deben escribirse entre comillas. YAML puede interpretar como número una
+cadena formada solo por dígitos —por ejemplo, cuarenta ceros— y el manifiesto
+la rechazará antes de comprobar compatibilidad.
 
 El contrato de limpieza equivale a:
 
