@@ -22,7 +22,9 @@ transport_kind
 El Worker calcula SHA-256 y tamaño. Un `request_id` repetido con la misma
 identidad devuelve el estado existente; con otra identidad devuelve conflicto.
 
-El transporte v1 es `files-staged-v1`. Después de la entrada produce exactamente el objeto:
+El protocolo de entrada es `files-staged-v1` y el valor persistido de
+`transport_kind` es `files_staged_v1`. Después de la entrada produce
+exactamente el objeto:
 
 ```text
 candidates/<package_sha256>.zip

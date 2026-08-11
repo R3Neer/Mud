@@ -146,7 +146,11 @@ class Validator:
             raise ValidationFailure("request_contract_error", "invalid package_size")
         if type(self.request["trust_plugin"]) is not bool:
             raise ValidationFailure("request_contract_error", "invalid trust_plugin")
-        if self.request["transport_kind"] not in {"zip_base64", "logical_files"}:
+        if self.request["transport_kind"] not in {
+            "zip_base64",
+            "logical_files",
+            "files_staged_v1",
+        }:
             raise ValidationFailure("request_contract_error", "invalid transport_kind")
 
     def check_package(self) -> None:

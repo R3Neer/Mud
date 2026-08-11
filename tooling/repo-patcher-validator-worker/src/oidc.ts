@@ -6,6 +6,15 @@ import type { Env, ValidationRow } from "./types.js";
 const ISSUER = "https://token.actions.githubusercontent.com";
 const JWKS = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
 
+interface OidcRequestConfig {
+  GITHUB_OWNER: string;
+  GITHUB_REPO: string;
+  GITHUB_WORKFLOW: string;
+  GITHUB_REF: string;
+  GITHUB_REPOSITORY_ID: string;
+  GITHUB_ALLOWED_ACTORS: string;
+}
+
 function claim(payload: JWTPayload, name: string): string {
   const value = payload[name];
   if (typeof value !== "string" && typeof value !== "number") {
@@ -34,7 +43,11 @@ export async function verifyBaseOidc(token: string, env: Env): Promise<JWTPayloa
   }
 }
 
-export function verifyRequestClaims(payload: JWTPayload, env: Env, row: ValidationRow): void {
+export function verifyRequestClaims(
+  payload: JWTPayload,
+  env: OidcRequestConfig,
+  row: ValidationRow,
+): void {
   if (row.github_run_id === null || row.control_sha === null) {
     throw new ServiceError(
       "dispatch_not_committed_yet",

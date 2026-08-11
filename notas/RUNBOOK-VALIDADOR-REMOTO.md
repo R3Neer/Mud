@@ -25,6 +25,11 @@ limitado a `R3Neer/Mud`, concede Actions de lectura/escritura y caduca el
 2027-08-10. La variable GitHub `REPO_PATCHER_WORKER_URL` también está
 configurada con la URL anterior.
 
+El adaptador MCP estable requiere además el secret `MCP_ROUTE_SECRET`. Su valor
+forma el primer segmento de la URL del complemento y no se registra en Git ni
+en este documento. Es independiente de `ADAPTER_TOKEN`, que solo protege las
+rutas privadas antiguas.
+
 La Fase 0 está cerrada. El transporte elegido es staging de archivos UTF-8
 completos en lotes inmutables y finalización determinista en el Worker. La
 sonda `mud-repo-patcher-mcp-probe`, versión

@@ -29,8 +29,7 @@
     "trust_plugin": { "type": "boolean" },
     "transport_kind": {
       "type": "string",
-      "enum": ["zip_base64", "logical_files"]
+      "enum": ["zip_base64", "logical_files", "files_staged_v1"]
     }
   }
 }
-

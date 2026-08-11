@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
-import { applyD1Migrations } from "cloudflare:test";
+import { applyD1Migrations, createExecutionContext, SELF } from "cloudflare:test";
+import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { sha256Hex } from "../src/crypto.js";
@@ -8,14 +9,18 @@ import { ServiceError } from "../src/errors.js";
 import { artifactDownloadRequestInit, buildWorkflowDispatchInputs } from "../src/github.js";
 import { verifyRequestClaims } from "../src/oidc.js";
 import { candidateKey, putImmutableCandidate, readVerifiedObject } from "../src/storage.js";
+import { finalizeStagedFiles, stageCandidateFiles } from "../src/staging.js";
 import type { CandidateIdentity, Env, ValidationRow } from "../src/types.js";
 import { buildDeterministicZip } from "../src/zip.js";
 import worker from "../src/index.js";
 
-const bindings = env as unknown as {
-  VALIDATION_DB: D1Database;
-  VALIDATION_BUCKET: R2Bucket;
+const bindings = env as Cloudflare.Env & {
   TEST_MIGRATIONS: Parameters<typeof applyD1Migrations>[1];
+};
+const testWorkerEnv: Env = {
+  ...env,
+  ADAPTER_TOKEN: "test-adapter-token",
+  MCP_ROUTE_SECRET: "test-mcp-route-secret",
 };
 
 beforeAll(async () => {
@@ -53,6 +58,67 @@ describe("deterministic ZIP", () => {
   });
 });
 
+describe("staged UTF-8 transport", () => {
+  it("stores immutable complete files and finalizes exact deterministic bytes", async () => {
+    const firstContent = "schema: 1\nid: staged\noperations: []\n";
+    const secondContent = "# Árbol\n";
+    const firstBytes = new TextEncoder().encode(firstContent);
+    const secondBytes = new TextEncoder().encode(secondContent);
+    const input = {
+      request_id: "staged-transport",
+      batch_id: "text",
+      files: [
+        {
+          path: "patch.yaml",
+          content: firstContent,
+          expected_size: firstBytes.byteLength,
+          expected_sha256: await sha256Hex(firstBytes),
+        },
+        {
+          path: "docs/arbol.md",
+          content: secondContent,
+          expected_size: secondBytes.byteLength,
+          expected_sha256: await sha256Hex(secondBytes),
+        },
+      ],
+    };
+
+    expect((await stageCandidateFiles(bindings.VALIDATION_BUCKET, input)).reused).toBe(false);
+    expect((await stageCandidateFiles(bindings.VALIDATION_BUCKET, input)).reused).toBe(true);
+    const finalized = await finalizeStagedFiles(
+      bindings.VALIDATION_BUCKET,
+      input.request_id,
+      [input.batch_id],
+      2,
+    );
+    expect(finalized.fileCount).toBe(2);
+    expect(finalized.batchCount).toBe(1);
+    expect(finalized.bytes).toEqual(
+      buildDeterministicZip([
+        { path: "patch.yaml", encoding: "utf8", content: firstContent },
+        { path: "docs/arbol.md", encoding: "utf8", content: secondContent },
+      ]),
+    );
+
+    const changedContent = `${secondContent}cambio\n`;
+    const changedBytes = new TextEncoder().encode(changedContent);
+    await expect(
+      stageCandidateFiles(bindings.VALIDATION_BUCKET, {
+        ...input,
+        files: [
+          input.files[0],
+          {
+            ...input.files[1],
+            content: changedContent,
+            expected_size: changedBytes.byteLength,
+            expected_sha256: await sha256Hex(changedBytes),
+          },
+        ],
+      }),
+    ).rejects.toMatchObject({ code: "staged_batch_conflict" });
+  });
+});
+
 describe("D1 state machine", () => {
   it("accepts idempotently and rejects a changed identity", async () => {
     const first = await acceptRequest(bindings.VALIDATION_DB, identity("db-idempotent"));
@@ -65,6 +131,14 @@ describe("D1 state machine", () => {
         targetSha: "3".repeat(40),
       }),
     ).rejects.toMatchObject({ code: "request_id_conflict" });
+  });
+
+  it("persists the final staged transport identity", async () => {
+    const accepted = await acceptRequest(bindings.VALIDATION_DB, {
+      ...identity("db-staged-transport"),
+      transportKind: "files_staged_v1",
+    });
+    expect(accepted.row.transport_kind).toBe("files_staged_v1");
   });
 
   it("allows only the expected monotonic transition", async () => {
@@ -142,7 +216,7 @@ describe("OIDC request binding", () => {
       GITHUB_REF: "main",
       GITHUB_REPOSITORY_ID: "456",
       GITHUB_ALLOWED_ACTORS: "R3Neer,efferra",
-    } as Env;
+    };
     const payload = {
       repository: "R3Neer/Mud",
       repository_id: "456",
@@ -167,10 +241,86 @@ describe("Worker surface", () => {
   it("exposes only a no-store health response without credentials", async () => {
     const response = await worker.fetch(
       new Request("https://example.com/health"),
-      env as unknown as Env,
+      testWorkerEnv,
+      createExecutionContext(),
     );
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     expect(await response.json()).toMatchObject({ status: "ok" });
+  });
+
+  it("serves exactly the five stable MCP tools behind the secret route", async () => {
+    const client = new Client({ name: "validator-test", version: "0.1.0" });
+    const transport = new StreamableHTTPClientTransport(
+      new URL("https://example.com/test-mcp-route-secret/mcp"),
+      { fetch: (input, init) => SELF.fetch(new Request(input, init)) },
+    );
+    await client.connect(transport);
+    try {
+      const listed = await client.listTools();
+      expect(listed.tools.map((tool) => tool.name).sort()).toEqual([
+        "await_validation",
+        "get_validated_candidate",
+        "read_validation_evidence",
+        "stage_candidate_files",
+        "submit_candidate",
+      ]);
+      const stage = listed.tools.find((tool) => tool.name === "stage_candidate_files");
+      expect(stage?.annotations).toMatchObject({
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      });
+      expect(listed.tools.find((tool) => tool.name === "submit_candidate")?.annotations).toMatchObject({
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      });
+      expect(listed.tools.find((tool) => tool.name === "await_validation")?.annotations).toMatchObject({
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      });
+      for (const name of ["read_validation_evidence", "get_validated_candidate"]) {
+        expect(listed.tools.find((tool) => tool.name === name)?.annotations).toMatchObject({
+          readOnlyHint: true,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+        });
+      }
+      const content = "schema: 1\nid: mcp\noperations: []\n";
+      const bytes = new TextEncoder().encode(content);
+      const result = await client.callTool({
+        name: "stage_candidate_files",
+        arguments: {
+          request_id: "mcp-stage-test",
+          batch_id: "text",
+          files: [{
+            path: "patch.yaml",
+            content,
+            expected_size: bytes.byteLength,
+            expected_sha256: await sha256Hex(bytes),
+          }],
+        },
+      });
+      expect(result.isError).not.toBe(true);
+      expect(result.structuredContent).toMatchObject({
+        request_id: "mcp-stage-test",
+        batch_id: "text",
+        file_count: 1,
+        reused: false,
+      });
+    } finally {
+      await client.close();
+    }
+  });
+
+  it("hides the MCP route when the secret segment is wrong", async () => {
+    const response = await SELF.fetch("https://example.com/wrong-secret/mcp");
+    expect(response.status).toBe(404);
   });
 });

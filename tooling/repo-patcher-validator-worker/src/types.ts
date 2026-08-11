@@ -1,7 +1,7 @@
 export const PROTOCOL = "mud-repo-patcher-validation/v1" as const;
 export const RESULT_PROTOCOL = "mud-repo-patcher-validation-result/v1" as const;
 
-export type TransportKind = "zip_base64" | "logical_files";
+export type TransportKind = "zip_base64" | "logical_files" | "files_staged_v1";
 export type RequestState =
   | "accepted"
   | "dispatching"
@@ -12,22 +12,14 @@ export type RequestState =
   | "infrastructure_error"
   | "expired";
 
-export interface Env {
-  VALIDATION_DB: D1Database;
-  VALIDATION_BUCKET: R2Bucket;
+export type Env = Cloudflare.Env & {
   ADAPTER_TOKEN: string;
+  MCP_ROUTE_SECRET: string;
   GITHUB_DISPATCH_TOKEN?: string;
   GITHUB_APP_ID?: string;
   GITHUB_APP_PRIVATE_KEY?: string;
   GITHUB_INSTALLATION_ID?: string;
-  GITHUB_OWNER: string;
-  GITHUB_REPO: string;
-  GITHUB_WORKFLOW: string;
-  GITHUB_REF: string;
-  GITHUB_REPOSITORY_ID: string;
-  GITHUB_ALLOWED_ACTORS: string;
-  OIDC_AUDIENCE: string;
-}
+};
 
 export interface CandidateIdentity {
   requestId: string;
@@ -66,6 +58,21 @@ export interface LogicalFile {
   path: string;
   encoding: "utf8" | "base64";
   content: string;
+}
+
+export interface StagedUtf8File {
+  path: string;
+  content: string;
+  expected_size: number;
+  expected_sha256: string;
+}
+
+export interface StagedFileBatch {
+  schema: 1;
+  protocol: "mud-repo-patcher-staged-files/v1";
+  request_id: string;
+  batch_id: string;
+  files: StagedUtf8File[];
 }
 
 export interface WorkflowDispatchResponse {

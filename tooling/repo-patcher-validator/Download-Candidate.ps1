@@ -5,7 +5,7 @@ param(
     [Parameter(Mandatory = $true)][string] $PackageSha256,
     [Parameter(Mandatory = $true)][long] $PackageSize,
     [Parameter(Mandatory = $true)][bool] $TrustPlugin,
-    [Parameter(Mandatory = $true)][ValidateSet("zip_base64", "logical_files")][string] $TransportKind,
+    [Parameter(Mandatory = $true)][ValidateSet("zip_base64", "logical_files", "files_staged_v1")][string] $TransportKind,
     [Parameter(Mandatory = $true)][string] $PackageFile,
     [Parameter(Mandatory = $true)][string] $RequestFile,
     [Parameter(Mandatory = $true)][string] $MetadataFile

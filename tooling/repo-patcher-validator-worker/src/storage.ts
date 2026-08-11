@@ -74,3 +74,21 @@ export async function putImmutableEvidence(
   if (created !== null) return;
   await readVerifiedObject(bucket, key, sha256, bytes.byteLength);
 }
+
+export async function readVerifiedEvidence(bucket: R2Bucket, key: string): Promise<Uint8Array> {
+  const object = await bucket.get(key);
+  if (object === null) {
+    throw new ServiceError("stored_evidence_missing", `R2 evidence object is missing: ${key}`, 500);
+  }
+  const bytes = new Uint8Array(await object.arrayBuffer());
+  const expectedSha256 = object.customMetadata?.sha256;
+  const expectedSize = object.customMetadata?.size;
+  if (
+    !expectedSha256 ||
+    expectedSize !== String(bytes.byteLength) ||
+    (await sha256Hex(bytes)) !== expectedSha256
+  ) {
+    throw new ServiceError("stored_evidence_corrupt", `R2 evidence failed identity checks: ${key}`, 500);
+  }
+  return bytes;
+}

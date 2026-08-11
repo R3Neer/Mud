@@ -1,8 +1,12 @@
+import { createMcpHandler } from "agents/mcp/server";
+
 import { getRequest } from "./db.js";
 import { ServiceError, errorResponse } from "./errors.js";
+import { createValidatorMcpServer } from "./mcp.js";
 import { bearerToken, verifyBaseOidc, verifyRequestClaims } from "./oidc.js";
 import {
   authorizeAndReadCandidate,
+  readEvidenceArtifact,
   readResult,
   readValidatedCandidate,
   refreshRequest,
@@ -11,8 +15,10 @@ import {
   type SubmitFiles,
   type SubmitZip,
 } from "./service.js";
-import { tokensEqual } from "./crypto.js";
+import { sha256Hex, tokensEqual } from "./crypto.js";
 import type { Env } from "./types.js";
+
+const REQUEST_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$/;
 
 function noStore(response: Response): Response {
   response.headers.set("Cache-Control", "private, no-store");
@@ -55,7 +61,7 @@ async function jsonBody<T>(request: Request): Promise<T> {
   }
 }
 
-async function handle(request: Request, env: Env): Promise<Response> {
+async function handle(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   if (url.pathname === "/health" && request.method === "GET") {
     return Response.json({ status: "ok", protocol: "mud-repo-patcher-validator/v1" });
@@ -68,6 +74,42 @@ async function handle(request: Request, env: Env): Promise<Response> {
   if (url.pathname === "/adapter/v1/candidates/files" && request.method === "POST") {
     await authorizeAdapter(request, env);
     return Response.json(await submitFiles(env, await jsonBody<SubmitFiles>(request)), { status: 202 });
+  }
+
+  const route = await mcpRoute(url, env);
+  if (route !== null) {
+    if (url.pathname === `${route.basePath}/mcp`) {
+      return createMcpHandler(
+        () => createValidatorMcpServer(env, `${url.origin}${route.basePath}`),
+        { route: `${route.basePath}/mcp` },
+      )(request, env, ctx);
+    }
+    const download = downloadRequest(url.pathname, route.basePath);
+    if (download !== null && request.method === "GET") {
+      if (download.kind === "candidate") {
+        const candidate = await readValidatedCandidate(env, download.requestId);
+        return new Response(responseBytes(candidate.bytes), {
+          headers: {
+            "Content-Disposition": `attachment; filename="${candidate.row.request_id}.zip"`,
+            "Content-Length": String(candidate.row.package_size),
+            "Content-Type": "application/zip",
+            ETag: `"${candidate.row.package_sha256}"`,
+            "X-Package-SHA256": candidate.row.package_sha256,
+          },
+        });
+      }
+      const evidence = await readEvidenceArtifact(env, download.requestId);
+      const evidenceSha256 = await sha256Hex(evidence);
+      return new Response(responseBytes(evidence), {
+        headers: {
+          "Content-Disposition": `attachment; filename="${download.requestId}-evidence.zip"`,
+          "Content-Length": String(evidence.byteLength),
+          "Content-Type": "application/zip",
+          ETag: `"${evidenceSha256}"`,
+          "X-Evidence-SHA256": evidenceSha256,
+        },
+      });
+    }
   }
 
   const internalId = requestIdFrom(url.pathname, "/internal/v1/candidates/");
@@ -119,11 +161,47 @@ async function handle(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     try {
-      return noStore(await handle(request, env));
+      return noStore(await handle(request, env, ctx));
     } catch (error) {
       return noStore(errorResponse(error));
     }
   },
 } satisfies ExportedHandler<Env>;
+
+async function mcpRoute(
+  url: URL,
+  env: Env,
+): Promise<{ basePath: string } | null> {
+  if (!env.MCP_ROUTE_SECRET) return null;
+  const encodedSegment = url.pathname.split("/")[1] ?? "";
+  let segment: string;
+  try {
+    segment = decodeURIComponent(encodedSegment);
+  } catch {
+    return null;
+  }
+  if (!(await tokensEqual(segment, env.MCP_ROUTE_SECRET))) return null;
+  return { basePath: `/${encodedSegment}` };
+}
+
+function downloadRequest(
+  pathname: string,
+  basePath: string,
+): { requestId: string; kind: "candidate" | "evidence" } | null {
+  const prefix = `${basePath}/downloads/`;
+  if (!pathname.startsWith(prefix)) return null;
+  const rest = pathname.slice(prefix.length).split("/");
+  if (rest.length !== 2) return null;
+  let requestId: string;
+  try {
+    requestId = decodeURIComponent(rest[0]);
+  } catch {
+    return null;
+  }
+  if (!REQUEST_ID.test(requestId)) return null;
+  if (rest[1] === "candidate.zip") return { requestId, kind: "candidate" };
+  if (rest[1] === "evidence.zip") return { requestId, kind: "evidence" };
+  return null;
+}

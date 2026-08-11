@@ -75,7 +75,7 @@ Se eligió staging de archivos UTF-8 completos, con tamaño y SHA-256 por archiv
 
 ### P5 — Adaptador MCP definitivo
 
-Estado: **en implementación**.
+Estado: **implementado localmente; pendiente de despliegue y prueba desde ChatGPT**.
 
 Se usarán varias llamadas cortas, idempotentes y reanudables:
 
@@ -85,6 +85,13 @@ stage_candidate_files → submit_candidate → await_validation
 ```
 
 El staging usa archivos completos y lotes inmutables; nunca divide un archivo. El aviso posterior a la prueba de 120 segundos descarta depender de una operación compuesta mantenida abierta. Los servicios internos continúan independientes del número exacto de herramientas.
+
+El Worker 0.2 ya expone las cinco herramientas mediante MCP Streamable HTTP,
+protege MCP y descargas con una ruta secreta distinta de `ADAPTER_TOKEN`, y
+persiste `transport_kind = files_staged_v1`. Las 11 pruebas `workerd`, la
+migración D1 local y un smoke MCP real de catálogo más staging están verdes.
+Para cerrar P5 falta aplicar la migración remota, configurar
+`MCP_ROUTE_SECRET`, desplegar el Worker y renovar el complemento de ChatGPT.
 
 ### P6 — Propietario del bucle de corrección
 

@@ -18,7 +18,14 @@ import {
   findAmbiguousDispatch,
   getWorkflowRun,
 } from "./github.js";
-import { readVerifiedObject, putImmutableCandidate, putImmutableEvidence, candidateKey } from "./storage.js";
+import { finalizeStagedFiles } from "./staging.js";
+import {
+  readVerifiedObject,
+  putImmutableCandidate,
+  putImmutableEvidence,
+  candidateKey,
+  readVerifiedEvidence,
+} from "./storage.js";
 import {
   PROTOCOL,
   RESULT_PROTOCOL,
@@ -47,6 +54,11 @@ export interface SubmitZip extends SubmitCommon {
 
 export interface SubmitFiles extends SubmitCommon {
   files: LogicalFile[];
+}
+
+export interface SubmitStagedFiles extends SubmitCommon {
+  batch_ids: string[];
+  expected_file_count: number;
 }
 
 function validateCommon(input: SubmitCommon): void {
@@ -83,7 +95,7 @@ async function acceptBytes(
   env: Env,
   common: SubmitCommon,
   bytes: Uint8Array,
-  transportKind: "zip_base64" | "logical_files",
+  transportKind: "zip_base64" | "logical_files" | "files_staged_v1",
   expectedSha256?: string,
 ): Promise<Record<string, unknown>> {
   validateCommon(common);
@@ -126,6 +138,25 @@ async function acceptBytes(
   }
 
   return { ...publicRow(row), reused: !accepted.created || stored.reused };
+}
+
+export async function submitStagedFiles(
+  env: Env,
+  input: SubmitStagedFiles,
+): Promise<Record<string, unknown>> {
+  validateCommon(input);
+  const finalized = await finalizeStagedFiles(
+    env.VALIDATION_BUCKET,
+    input.request_id,
+    input.batch_ids,
+    input.expected_file_count,
+  );
+  const accepted = await acceptBytes(env, input, finalized.bytes, "files_staged_v1");
+  return {
+    ...accepted,
+    batch_count: finalized.batchCount,
+    file_count: finalized.fileCount,
+  };
 }
 
 export async function submitZip(env: Env, input: SubmitZip): Promise<Record<string, unknown>> {
@@ -351,7 +382,14 @@ export async function readResult(env: Env, requestId: string): Promise<Uint8Arra
   if (!row.result_object_key) {
     throw new ServiceError("result_not_available", `Request state is ${row.state}.`, 409);
   }
-  const object = await env.VALIDATION_BUCKET.get(row.result_object_key);
-  if (!object) throw new ServiceError("stored_result_missing", "Stored result is missing.", 500);
-  return new Uint8Array(await object.arrayBuffer());
+  return readVerifiedEvidence(env.VALIDATION_BUCKET, row.result_object_key);
+}
+
+export async function readEvidenceArtifact(env: Env, requestId: string): Promise<Uint8Array> {
+  const row = await getRequest(env.VALIDATION_DB, requestId);
+  if (row === null) throw new ServiceError("not_found", "Unknown request_id.", 404);
+  if (!row.evidence_object_key) {
+    throw new ServiceError("evidence_not_available", `Request state is ${row.state}.`, 409);
+  }
+  return readVerifiedEvidence(env.VALIDATION_BUCKET, row.evidence_object_key);
 }

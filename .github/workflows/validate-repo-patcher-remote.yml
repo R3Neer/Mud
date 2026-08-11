@@ -102,7 +102,7 @@ jobs:
           if ($env:TARGET_SHA -notmatch '^[0-9a-f]{40}$') { throw "Invalid target SHA." }
           if ($env:PACKAGE_SHA256 -notmatch '^[0-9a-f]{64}$') { throw "Invalid package SHA-256." }
           if ([long]$env:PACKAGE_SIZE -lt 1 -or [long]$env:PACKAGE_SIZE -gt 10485760) { throw "Invalid package size." }
-          if ($env:TRANSPORT_KIND -notin @('zip_base64', 'logical_files')) { throw "Invalid transport kind." }
+          if ($env:TRANSPORT_KIND -notin @('zip_base64', 'logical_files', 'files_staged_v1')) { throw "Invalid transport kind." }
 
       - name: Prepare isolated paths
         id: paths

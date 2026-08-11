@@ -127,7 +127,7 @@ class ValidatorIntegrationTests(unittest.TestCase):
             "package_sha256": hashlib.sha256(raw).hexdigest(),
             "package_size": len(raw),
             "trust_plugin": plugin is not None,
-            "transport_kind": "logical_files",
+            "transport_kind": "files_staged_v1",
         }
         return package, request
 

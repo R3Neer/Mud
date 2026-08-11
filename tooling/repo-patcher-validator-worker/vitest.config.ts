@@ -10,6 +10,7 @@ export default defineConfig(async () => {
         miniflare: {
           bindings: {
             ADAPTER_TOKEN: "test-adapter-token",
+            MCP_ROUTE_SECRET: "test-mcp-route-secret",
             TEST_MIGRATIONS: migrations,
           },
         },
