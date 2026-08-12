@@ -970,9 +970,10 @@ cases:
 - id: exact-dictionary-iterate-keys
   category: iteration
   source: |
-    action Visit for capitals: Country -> City {
+    action Visit for capitals: Country -> City,
+        mut visited: Country [* unique] {
         then for each country in capitals {
-            Log(country)
+            add country to visited
         }
     }
   cst_root: MudFileSyntax
@@ -983,9 +984,10 @@ cases:
 - id: exact-dictionary-iterate-associations
   category: iteration
   source: |
-    action Visit for capitals: Country -> City {
+    action Visit for capitals: Country -> City,
+        mut visited: City [* unique] {
         then for each (country, city) in capitals {
-            Log(city)
+            add city to visited
         }
     }
   cst_root: MudFileSyntax
@@ -1105,10 +1107,11 @@ cases:
 - id: functional-apply-over-domain
   category: iteration
   source: |
-    action Quote for products: Product [*], pricing: Product --> Money {
+    action Quote for products: Product [*], pricing: Product --> Money,
+        mut quotes: Money [*] {
         then for each product in products {
             quote := pricing[product]
-            Log(quote)
+            add quote to quotes
         }
     }
   cst_root: MudFileSyntax
@@ -1162,9 +1165,9 @@ cases:
 - id: functional-direct-iteration-rejected
   category: validation-after-resolution
   source: |
-    action Broken for policy: A --> B {
+    action Broken for policy: A --> B, mut results: B [*] {
         then for each result in policy {
-            Log(result)
+            add result to results
         }
     }
   cst_root: MudFileSyntax

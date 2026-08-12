@@ -298,12 +298,20 @@ then add (Spain -> Barcelona) to capitalOf
 Los diccionarios exactos son enumerables. Una vinculación simple recorre claves y una vinculación por pareja recorre asociaciones:
 
 ```mud
-for each country in capitalOf {
-    Log(country)
-}
+action CollectCapitalData
+for capitalOf: Country -> City [*],
+    mut visitedCountries: Country [* unique],
+    mut visitedCapitals: City [* unique] {
+    then {
+        for each country in capitalOf {
+            add country to visitedCountries
+        }
 
-for each (country, capital) in capitalOf {
-    Log("{country}: {capital}")
+        for each (country, capital) in capitalOf {
+            add country to visitedCountries
+            add capital to visitedCapitals
+        }
+    }
 }
 ```
 
@@ -384,9 +392,13 @@ No admite `mut` exterior ni `[mut]`, no se recorre directamente mediante `for ea
 Para recorrer resultados se recorre un dominio de entradas y se aplica el diccionario:
 
 ```mud
-for each product in shop.products {
-    price := priceOf[product]
-    Log("{product~name}: {price}")
+action CollectPrices
+for products: Product [*], pricing: Product --> Money,
+    mut prices: Money [*] {
+    then for each product in products {
+        price := pricing[product]
+        add price to prices
+    }
 }
 ```
 
@@ -1327,11 +1339,16 @@ Las conversiones generales son explícitas cuando existen:
 pathText: Text = Alexandria~path to Text
 ```
 
-Las plantillas pueden renderizar los tipos de metadatos directamente sin crear compatibilidad nominal general con `Text`. `~file` es válido en cualquier expresión, pero produce advertencia cuando escapa de texto o logging y su valor puede alterar el comportamiento:
+Las plantillas pueden renderizar los tipos de metadatos directamente sin crear compatibilidad nominal general con `Text`. `~file` es válido en cualquier expresión, pero produce advertencia cuando escapa de texto o de una salida pública meramente informativa y su valor puede alterar el comportamiento:
 
 ```mud
-Log("Loaded from {Alexandria~file}")         # uso informativo
-rule Fragile { Alexandria~file == expected } # válido con advertencia
+look SourceInfo {
+    source := "Loaded from {Alexandria~file}"
+}
+
+rule Fragile given expected: MudFile {
+    Alexandria~file == expected # válido con advertencia
+}
 ```
 
 `~name` puede poseer estado separado en `thing`, aliases y miembros de `family`; modificarlo no cambia el payload, la igualdad, `~path`, `~anchor` ni `~file`.
