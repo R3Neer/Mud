@@ -142,23 +142,23 @@ cases:
   cst_root: MudFileSyntax
   ast: ComparisonChainExpr(0, [(LessOrEqual,x),(Less,10)])
   produces_ast: true
-- id: boolean-block-with-locals
-  category: boolean-block
+- id: expression-block-with-locals
+  category: expression-block
   source: "rule CanAfford for person: Person given price: Money {\n    available := person.money\n    available >= price\n}\n"
   cst_root: MudFileSyntax
-  ast: BooleanRuleDecl(condition=BooleanBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
+  ast: BooleanRuleDecl(condition=ExpressionBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
   normalizations:
-  - boolean-block-locals-and-result
+  - expression-block-locals-and-result
   produces_ast: true
 - id: action-condition-locals-visible-in-otherwise
-  category: boolean-block
+  category: expression-block
   source: "action Buy for person: Person given price: Money {\n    if {\n        missing := price - person.money\n        missing <= 0\n    } otherwise \"You need {missing} more\"\n    then person.money -= price\n}\n"
   cst_root: MudFileSyntax
-  ast: ActionGuard(condition=BooleanBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
+  ast: ActionGuard(condition=ExpressionBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
   normalizations:
   - extend-boolean-local-environment-through-otherwise
   produces_ast: true
-- id: boolean-block-without-final-expression
+- id: expression-block-without-final-expression
   category: validation-before-ast
   source: "rule Broken for person: Person {\n    available := person.money\n}\n"
   cst_root: MudFileSyntax
@@ -391,7 +391,7 @@ cases:
   category: rule
   source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n    population >= 0 people\n}\notherwise \"Population cannot be negative: {population}\"\n"
   cst_root: MudFileSyntax
-  ast: AlwaysRuleDecl(invariant=BooleanBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
+  ast: AlwaysRuleDecl(invariant=ExpressionBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
   normalizations:
   - extend-boolean-local-environment-through-otherwise
   produces_ast: true
@@ -829,7 +829,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-keys
   category: iteration
-  source: "action Visit for capitals: Country -> City,\n    mut visited: Country [* unique] {\n    then for each country in capitals {\n        add country to visited\n    }\n}\n"
+  source: "action Visit for capitals: Country -> City,\n    mut visited: Country [* unique] {\n    then for each country in capitals: {\n        add country to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=country, source=capitals)
   normalizations:
@@ -837,7 +837,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-associations
   category: iteration
-  source: "action Visit for capitals: Country -> City,\n    mut visited: City [* unique] {\n    then for each (country, city) in capitals {\n        add city to visited\n    }\n}\n"
+  source: "action Visit for capitals: Country -> City,\n    mut visited: City [* unique] {\n    then for each (country, city) in capitals: {\n        add city to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=(country, city), source=capitals)
   normalizations:
@@ -911,7 +911,7 @@ cases:
   produces_ast: true
 - id: functional-apply-over-domain
   category: iteration
-  source: "action Quote for products: Product [*], pricing: Product --> Money,\n    mut quotes: Money [*] {\n    then for each product in products {\n        quote := pricing[product]\n        add quote to quotes\n    }\n}\n"
+  source: "action Quote for products: Product [*], pricing: Product --> Money,\n    mut quotes: Money [*] {\n    then for each product in products: {\n        quote := pricing[product]\n        add quote to quotes\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(source=products) with DecisionApplyExpr
   produces_ast: true
@@ -946,7 +946,7 @@ cases:
   produces_ast: true
 - id: functional-direct-iteration-rejected
   category: validation-after-resolution
-  source: "action Broken for policy: A --> B, mut results: B [*] {\n    then for each result in policy {\n        add result to results\n    }\n}\n"
+  source: "action Broken for policy: A --> B, mut results: B [*] {\n    then for each result in policy: {\n        add result to results\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-dictionary-not-enumerable
@@ -1468,7 +1468,7 @@ cases:
   category: metadata
   source: "rule Ready for actor: Person {\n    ~summary = \"ready check\"\n    actor.ready\n}\n"
   cst_root: MudFileSyntax
-  ast: BooleanRuleDecl(Ready, metadata=[StoredMetadataAssignment(summary)], condition=BooleanBlock(...))
+  ast: BooleanRuleDecl(Ready, metadata=[StoredMetadataAssignment(summary)], condition=ExpressionBlock(...))
   produces_ast: true
 - id: alias-representation-metadata-body
   category: metadata
@@ -1487,4 +1487,66 @@ cases:
   source: "look Signature {\n    forRoles := CanAttack~for\n    onRoles := Starve~on\n    givens := CanAttack~given\n}\n"
   cst_root: MudFileSyntax
   ast: LookDecl(fields=[MetadataAccessExpr(CanAttack, for), MetadataAccessExpr(Starve, on), MetadataAccessExpr(CanAttack, given)])
+  produces_ast: true
+- id: for-each-requires-colon
+  category: validation-before-ast
+  source: "action Iterate for mut total: Nat {\n    then for each i in [1..5] {\n        total += i\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics: [for-each-missing-colon]
+  produces_ast: false
+- id: for-each-negative-step
+  category: effect
+  source: "action Iterate for mut total: Int {\n    then for each i in [1..8] by -3:\n        total += i\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForEachEffect(binding=i, source=1..8, step=PrefixExpr(UnaryMinus, 3), filter=None, body=EffectBlock(...))
+  produces_ast: true
+- id: for-each-filter-expression-block
+  category: effect
+  source: "action Feed for people: Person [* mut] {\n    then for each person in people if {\n        hungry := person.hunger > 0\n        awake := person.state == Awake\n        hungry and awake\n    }:\n        person.health += 1\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForEachEffect(filter=ExpressionBlock(locals=[hungry, awake], result=...), body=EffectBlock(...))
+  produces_ast: true
+- id: for-each-static-zero-step
+  category: validation-after-resolution
+  source: "action Broken for mut total: Int {\n    then for each i in [1..8] by 0:\n        total += i\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics: [progression-step-zero]
+  produces_ast: true
+- id: selection-by-expression-block
+  category: expression
+  source: "thing Sample {\n    chosen := value in [1..10] by 2: {\n        limit := 7\n        value < limit\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: SelectionExpr(value, 1..10, step=2, predicate=ExpressionBlock(locals=[limit], result=...))
+  produces_ast: true
+- id: quantifier-by-expression-block
+  category: expression
+  source: "rule Enough {\n    count value in [1..10] by 2: {\n        threshold := 5\n        value >= threshold\n    } > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(Count, value, 1..10, step=2, body=ExpressionBlock(locals=[threshold], result=...))
+  produces_ast: true
+- id: sum-by-expression-block
+  category: expression
+  source: "thing Sample {\n    total := sum value in [1..10] by 2: {\n        doubled := value * 2\n        doubled\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(Sum, value, 1..10, step=2, body=ExpressionBlock(locals=[doubled], result=doubled))
+  produces_ast: true
+- id: negative-stepped-domain-all
+  category: domain
+  source: "thing Sample {\n    values: Nat in [1..8] by -2 [4] = all\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(values, domain=SteppedDomain(1..8, PrefixExpr(UnaryMinus, 2)), defaultValue=AllLiteral)
+  normalizations: [signed-domain-step-preserved, all-materializes-domain-in-canonical-order]
+  produces_ast: true
+- id: rumber-stepped-domain-rejected
+  category: validation-after-resolution
+  source: "thing Sample {\n    value: Rum in [r0..r1] by r0.1\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics: [rumber-progression-not-enumerable]
+  produces_ast: true
+- id: magnitude-step-compatible-units
+  category: validation-after-resolution
+  source: "action Walk for mut total: Length {\n    then for each distance in [1 m..10 m] by 50 cm:\n        total += distance\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForEachEffect(step=QuantityValueExpr(50 cm), ...)
+  normalizations: [elaborate-compatible-difference-units]
   produces_ast: true

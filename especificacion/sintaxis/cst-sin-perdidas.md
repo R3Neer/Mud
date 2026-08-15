@@ -21,6 +21,7 @@ decisions:
   - D-071
   - D-085
   - D-086
+  - D-088
 ---
 
 # CST sin pérdidas
@@ -44,7 +45,7 @@ La autoridad se reparte de esta manera:
 
 Una divergencia entre esos archivos es un defecto de la especificación y debe detectarse mediante `validate_syntax_model.py`.
 
-Entre las categorías concretas inventariadas se encuentra `BooleanBlockSyntax`, que conserva en orden las declaraciones locales iniciales y la expresión booleana final. La CST no amplía por sí sola su ámbito hasta `otherwise`; esa relación se establece al proyectar y resolver la construcción propietaria.
+Entre las categorías concretas inventariadas se encuentra `ExpressionBlockSyntax`, que conserva en orden las declaraciones locales iniciales y la expresión final. La categoría no fija por sí sola el contrato de esa expresión: el propietario decide si debe ser booleana, temporal, agregable u ordenable. La CST no amplía por sí sola su ámbito hasta `otherwise`; esa relación se establece al proyectar y resolver la construcción propietaria.
 
 ## Terminología
 

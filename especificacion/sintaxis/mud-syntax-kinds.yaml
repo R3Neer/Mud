@@ -985,19 +985,19 @@ syntax_nodes:
     - boolean-body
   boolean-body:
     kind: BooleanBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , boolean-block\n        , [ required-separation ] , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , expression-block\n        , [ required-separation ] , \"}\""
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
-    - boolean-block
-  boolean-block:
-    kind: BooleanBlockSyntax
-    rhs: "{ local-value-declaration , required-separation }\n        , boolean-expression"
+    - expression-block
+  expression-block:
+    kind: ExpressionBlockSyntax
+    rhs: "{ local-value-declaration , required-separation }\n        , expression"
     references:
     - local-value-declaration
     - required-separation
-    - boolean-expression
+    - expression
   reactive-rule-declaration:
     kind: ReactiveRuleDeclarationSyntax
     rhs: "\"rule\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , when-clause\n        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n        , [ required-separation ]\n        , \"}\""
@@ -1020,12 +1020,12 @@ syntax_nodes:
     - diagnostic-tail
   invariant-body:
     kind: InvariantBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , boolean-block\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , expression-block\n        , [ required-separation ]\n        , \"}\""
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
-    - boolean-block
+    - expression-block
   action-declaration:
     kind: ActionDeclarationSyntax
     rhs: '"action" , action-signature-body'
@@ -1073,25 +1073,25 @@ syntax_nodes:
     - public-field-declaration
   when-clause:
     kind: WhenClauseSyntax
-    rhs: '"when" , expression-clause-body'
+    rhs: '"when" , expression-body'
     references:
-    - expression-clause-body
+    - expression-body
   if-clause:
     kind: IfClauseSyntax
-    rhs: '"if" , expression-clause-body'
+    rhs: '"if" , expression-body'
     references:
-    - expression-clause-body
+    - expression-body
   action-if-clause:
     kind: ActionIfClauseSyntax
-    rhs: '"if" , expression-clause-body , [ diagnostic-tail ]'
+    rhs: '"if" , expression-body , [ diagnostic-tail ]'
     references:
-    - expression-clause-body
+    - expression-body
     - diagnostic-tail
   action-after-clause:
     kind: ActionAfterClauseSyntax
-    rhs: '"after" , expression-clause-body , [ diagnostic-tail ]'
+    rhs: '"after" , expression-body , [ diagnostic-tail ]'
     references:
-    - expression-clause-body
+    - expression-body
     - diagnostic-tail
   diagnostic-tail:
     kind: DiagnosticTailSyntax
@@ -1099,13 +1099,13 @@ syntax_nodes:
     references:
     - required-separation
     - text-expression
-  expression-clause-body:
-    kind: ExpressionClauseBodySyntax
-    rhs: "boolean-expression\n      | \"{\" , declaration-layout , boolean-block\n          , [ required-separation ] , \"}\""
+  expression-body:
+    kind: ExpressionBodySyntax
+    rhs: "expression\n      | \"{\" , declaration-layout , expression-block\n          , [ required-separation ] , \"}\""
     references:
-    - boolean-expression
+    - expression
     - declaration-layout
-    - boolean-block
+    - expression-block
     - required-separation
   then-clause:
     kind: ThenClauseSyntax
@@ -1234,11 +1234,12 @@ syntax_nodes:
     - postfix-expression
   for-each-effect:
     kind: ForEachEffectSyntax
-    rhs: "\"for\" , \"each\" , iteration-binding , \"in\" , expression\n        , [ \"by\" , expression ]\n        , [ \"if\" , boolean-expression ]\n        , effect-block"
+    rhs: "\"for\" , \"each\" , iteration-binding , \"in\" , expression\n        , [ \"by\" , expression ]\n        , [ \"if\" , expression-body ]\n        , \":\"\n        , ( effect | effect-block )"
     references:
     - iteration-binding
     - expression
-    - boolean-expression
+    - expression-body
+    - effect
     - effect-block
   iteration-binding:
     kind: IterationBindingSyntax
@@ -1510,11 +1511,11 @@ syntax_nodes:
     - expression
   selection-expression:
     kind: SelectionExpressionSyntax
-    rhs: "iteration-binding , \"in\" , expression\n        , \":\" , boolean-expression"
+    rhs: "iteration-binding , \"in\" , expression\n        , [ \"by\" , expression ]\n        , \":\" , expression-body"
     references:
     - iteration-binding
     - expression
-    - boolean-expression
+    - expression-body
   point-component-expression:
     kind: PointComponentExpressionSyntax
     rhs: "unit-expression , \"from\" , unit-expression\n        , \"in\" , postfix-expression"
@@ -1614,11 +1615,12 @@ syntax_nodes:
     - expression
   quantifier-expression:
     kind: QuantifierExpressionSyntax
-    rhs: "quantifier , variable-name , \"in\" , expression\n        , \":\" , expression"
+    rhs: "quantifier , variable-name , \"in\" , expression\n        , [ \"by\" , expression ]\n        , \":\" , expression-body"
     references:
     - quantifier
     - variable-name
     - expression
+    - expression-body
   quantifier:
     kind: QuantifierSyntax
     rhs: '"exists" | "forall" | "count" | "sum" | "min" | "max"'
