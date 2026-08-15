@@ -27,6 +27,7 @@ decisions:
   - D-077
   - D-085
   - D-086
+  - D-087
 ---
 
 # 04. Modelo matemático del mundo
@@ -96,8 +97,8 @@ Las decisiones aceptadas fijan:
 26. Una raíz sin `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
 27. `Thing` no posee estado concreto ni ciclo de vida controlable por el programa.
 28. Las declaraciones y valores que admiten presentación exponen metadatos postfix tipados; `~name` tiene tipo `Name`, mientras `~path`, `~anchor` y `~file` describen procedencia e identidad.
-29. El valor inicial de `~name` deriva del nombre nominal no cualificado cuando la categoría lo define; puede escribirse o modificarse únicamente donde su contrato de metadatos lo permita y no se hereda como identidad.
-30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. `~path`, `~anchor` y `~file` son inmutables desde MUD.
+29. El valor predeterminado de `~name` deriva del identificador nominal no cualificado cuando la categoría lo define. Puede configurarse mediante la declaración o edición del modelo, pero ningún acceso `~` puede ser destino de una asignación o actualización runtime; los metadatos no se heredan.
+30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. Todo acceso `~` es de solo lectura durante la ejecución; `~path`, `~anchor` y `~file` son además propiedades intrínsecas y no metadatos configurables.
 31. Una relación inmutable conserva latentemente una identidad retirada y la restaura con `create`; una relación `mut` elimina esa pertenencia almacenada.
 32. Ningún estado confirmado contiene una colección cuya cardinalidad efectiva contradiga su declaración.
 
@@ -120,7 +121,7 @@ rule ExactIdentifier given value: Identifier {
 
 `Alexandria is City` consulta especialización, `value iis PersonId` exige el tipo nominal efectivo exacto y `Alexandria == Alexandria` compara identidad de valor. Ninguna de esas relaciones depende de `Alexandria~name`.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]], [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]].
+Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]], [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
 
 ## Próximo desarrollo
 

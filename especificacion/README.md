@@ -359,7 +359,7 @@ Archivo previsto: `14-campos-y-mutabilidad.md`
 Define:
 
 - Campos almacenados y calculados.
-- Metadatos postfix separados de los campos ordinarios y reglas de escritura de `~name`.
+- Metadatos postfix separados de los campos ordinarios; todo acceso `~` es de solo lectura durante la ejecución y los metadatos configurables se modifican mediante edición del modelo.
 - Expresiones estáticas cerradas para valores almacenados y predeterminados.
 - Anotación opcional e inferencia unívoca del tipo de campos calculados.
 - `=` frente a `:=`.

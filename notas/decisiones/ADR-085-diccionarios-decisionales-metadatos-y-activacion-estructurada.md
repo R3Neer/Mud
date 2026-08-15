@@ -301,19 +301,13 @@ Se elimina la propiedad intrínseca `.name` y la forma especial `name = ...`. El
 
 Si se omite, su valor inicial deriva del nombre nominal no cualificado. `~name` no modifica identificador fuente, igualdad, orden nominal, `~anchor`, `~path` ni `~file`.
 
-`~name` es mutable para `thing`, declaraciones alias y miembros de `family`. Una escritura runtime usa el objetivo postfix:
-
-```mud
-Nora~name = "Nora la Roja"
-```
-
-La escritura exige la capacidad correspondiente y participa en la atomicidad y conflictos como una escritura de estado del propietario. En aliases y miembros de familia se almacena separada del payload inmutable; cambiarla no cambia igualdad estructural ni datos asociados.
+D-087 sustituye la mutabilidad runtime que esta decisión había introducido para `~name`. `~name` es un metadato configurable del modelo, pero todo acceso postfix `~` es de solo lectura durante la ejecución. Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime; los cambios configurables se realizan mediante edición del modelo y nueva elaboración. En aliases y miembros de `family`, los metadatos continúan separados del payload inmutable y no alteran igualdad estructural ni datos asociados.
 
 La interpolación ordinaria de esos valores usa su `~name` efectivo.
 
 #### Identidad y procedencia
 
-`~anchor`, `~path` y `~file` son inmutables y no asignables. `~anchor` produce el ancla pública canónica; `~path`, el path MUD; `~file`, la procedencia física.
+Todo acceso `~` es runtime-readonly. `~anchor`, `~path` y `~file` son además propiedades intrínsecas, no configurables ni declarables: `~anchor` produce el ancla pública canónica; `~path`, el path MUD; `~file`, la procedencia física.
 
 `~file` puede participar en cualquier expresión válida, pero el compilador emite un aviso cuando escapa de presentación o logging, o cuando su dependencia puede alterar comportamiento del mundo. El uso continúa siendo válido.
 
@@ -429,7 +423,7 @@ La suite debe cubrir al menos:
 10. `start with` por secciones, `empty`, colecciones de un nivel, deduplicación, `all` contextual y rechazo de colecciones anidadas.
 11. Efectividad permanente y exclusión catalográfica de `Thing`.
 12. `Any`, estrechamiento, igualdad compatible, rechazo de enumeración y exigencia de inicializador.
-13. Lectura, escritura y tipos de metadatos; inmutabilidad de identidad y aviso de `~file`.
+13. Lectura y tipos de metadatos; solo lectura runtime de todo acceso `~`, separación de identidad y aviso de `~file`.
 14. Pertenencia reflexiva y segmentada de `MudPath`.
 15. Metadatos de unidades y magnitudes.
 16. Retirada de `.name`, `name =` y `anchor{...}` y sustitución por `~name` y `~anchor`.
