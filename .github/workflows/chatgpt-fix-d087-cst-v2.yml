@@ -1,0 +1,76 @@
+name: ChatGPT fix D087 CST residue v2
+
+on:
+  push:
+    branches:
+      - chatgpt-fix-d087-cst-runner-v2
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-validate:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-d087-cst-candidate-v2
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install validation dependency
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Apply exact cleanup
+        shell: pwsh
+        env:
+          BASE: 94b61116c7552a30fc50f231d39a4e41bf926d2f
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'dirty base' }
+          @'
+          from pathlib import Path
+          p=Path('especificacion/sintaxis/cst-sin-perdidas.md')
+          t=p.read_text(encoding='utf-8')
+          for old,new,label in [
+            ('  - D-086\n','  - D-086\n  - D-087\n','frontmatter'),
+            ('intrinsic-name-override  → IntrinsicNameOverrideSyntax','metadata-assignment       → MetadataAssignmentSyntax','example'),
+            ('- Propiedades de unidad duplicadas.','- Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.','terminology'),
+          ]:
+            if t.count(old)!=1: raise SystemExit(f'{label}: expected once, found {t.count(old)}')
+            t=t.replace(old,new,1)
+          p.write_text(t,encoding='utf-8',newline='\n')
+          '@ | python -
+      - name: Validate targeted and official
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          from pathlib import Path
+          t=Path('especificacion/sintaxis/cst-sin-perdidas.md').read_text(encoding='utf-8')
+          for s in ['  - D-087','metadata-assignment       → MetadataAssignmentSyntax','Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.','No existe `ANCHOR_INTERPOLATION_START`']:
+            if s not in t: raise SystemExit(f'missing {s}')
+          for s in ['IntrinsicNameOverrideSyntax','- Propiedades de unidad duplicadas.','- `ANCHOR_INTERPOLATION_START`.']:
+            if s in t: raise SystemExit(f'stale {s}')
+          '@ | python -
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'validation failed' }
+      - name: Verify surface and commit
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $actual=@(git status --porcelain=v1 --untracked-files=all | ForEach-Object { $_.Substring(3).Trim('"') })
+          if ($actual.Count -ne 1 -or $actual[0] -ne 'especificacion/sintaxis/cst-sin-perdidas.md') { throw 'unexpected surface' }
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add especificacion/sintaxis/cst-sin-perdidas.md
+          git diff --cached --check
+          git commit -m "fix(spec): limpia residuos CST de D-087"
+          git push origin HEAD:chatgpt-fix-d087-cst-candidate-v2
