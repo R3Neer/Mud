@@ -1,0 +1,175 @@
+name: ChatGPT D088 published audit v8
+
+on:
+  push:
+    branches:
+      - chatgpt-d088-published-audit-v8
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact published HEAD
+        uses: actions/checkout@v6
+        with:
+          ref: 126f1962a3ca03f6ca6e212171c22de9f598f856
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Verify publication identity and atomic diff
+        shell: pwsh
+        env:
+          BASE: 1e2c793b6ae0ae4a7abbab416f5e16c9f2a40e67
+          HEAD_SHA: 126f1962a3ca03f6ca6e212171c22de9f598f856
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:HEAD_SHA) { throw 'published HEAD mismatch' }
+          if ((git rev-parse HEAD^).Trim() -ne $env:BASE) { throw 'D088 is not one atomic child of published base' }
+          $remoteMain=(git ls-remote origin refs/heads/main).Split("`t")[0].Trim()
+          if ($remoteMain -ne $env:HEAD_SHA) { throw "remote main moved during audit: $remoteMain" }
+          $expected=@(
+            'especificacion/07-gramatica-concreta.md','especificacion/08-sintaxis-abstracta.md','especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml','especificacion/sintaxis/cobertura-sintactica.yaml','especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/cst-sin-perdidas.md','especificacion/sintaxis/mud-surface-ast.asdl','especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md','notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md',
+            'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md','notas/decisiones/ADR-057-gramatica-concreta-y-continuacion.md',
+            'notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos.md','notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md',
+            'notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones.md','notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md',
+            'notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md','notas/decisiones/README.md',
+            'notas/preguntas/Q-018-intervalos-discontinuos.md','notas/preguntas/Q-028-finitud.md','notas/preguntas/Q-029-terminacion.md','notas/preguntas/README.md'
+          ) | Sort-Object
+          $actual=@(git diff --name-only "$env:BASE..$env:HEAD_SHA") | Sort-Object
+          $d=Compare-Object $expected $actual
+          if ($d) { Write-Host 'EXPECTED';$expected;Write-Host 'ACTUAL';$actual;Write-Host 'DIFF';$d;throw 'published D088 surface mismatch' }
+          git diff --check "$env:BASE..$env:HEAD_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'published diff check failed' }
+
+      - name: Audit semantic invariants and regressions
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          import re, yaml
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
+
+          # Grammar / CST / AST are synchronized.
+          g='especificacion/gramatica/mud.ebnf'
+          need(g,'expression-block'); need(g,'expression-body')
+          forbid(g,'boolean-block'); forbid(g,'expression-clause-body')
+          need(g,', ":"\n        , [ required-separation ]\n        , ( effect | effect-block )')
+          if r(g).count(', ":" , [ required-separation ] , expression-body') != 2:
+              raise SystemExit('selection/quantifier colon separation mismatch')
+          ast='especificacion/sintaxis/mud-surface-ast.asdl'
+          need(ast,'expression_block = ExpressionBlock')
+          need(ast,'ForEachEffect(iteration_binding binding,\n                           expr source,\n                           expr? step,\n                           expression_block? filter,\n                           effect_block body)')
+          need(ast,'SelectionExpr(iteration_binding binding,\n                         expr source,\n                         expr? step,\n                         expression_block predicate)')
+          need(ast,'QuantifierExpr(quantifier_kind kind,\n                          variable_name variable,\n                          expr source,\n                          expr? step,\n                          expression_block body)')
+          for p in ('especificacion/sintaxis/mud-syntax-kinds.yaml','especificacion/sintaxis/cobertura-sintactica.yaml','especificacion/sintaxis/cst-a-ast-superficial.md','especificacion/sintaxis/cst-sin-perdidas.md','especificacion/08-sintaxis-abstracta.md'):
+              forbid(p,'BooleanBlockSyntax')
+
+          # Accepted D088 semantics.
+          d88='notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md'
+          for s in (
+              'Con orden semántico, cada filtro se evalúa inmediatamente antes de su iteración',
+              'Sin orden semántico, todos los filtros observan la misma instantánea inicial',
+              'fallo de evaluación `progression-step-zero`',
+              'Una fuente que ya posee enumeración propia',
+              'Los pasos predeterminados solo intervienen cuando la enumeración se construye como progresión',
+              'No significa stride sobre una colección arbitraria',
+              'D-088 no permite azar en el filtro de una iteración',
+              'Un dominio cíclico de punto puede enumerarse con diferencia compatible, pero solo durante un periodo fundamental',
+              'La sintaxis consolidada de intervalos discontinuos sigue abierta en Q-018',
+              'no depende de Q-018',
+          ): need(d88,s)
+          for s in ('process i','process doubled','use i','intervalos discontinuos y del periodo fundamental cíclico'):
+              forbid(d88,s)
+          d47='notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md'
+          need(d47,'El orden de recorrido de una progresión explícita es independiente')
+          need(d47,'Las fuentes que ya poseen enumeración propia no necesitan fabricar un paso')
+          need(d47,'recorrido descendente explícito se expresa mediante `by` negativo')
+          d75='notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md'
+          need(d75,'Su paso es estático, firmado, no nulo, exacto')
+          forbid(d75,'Su paso es estático, positivo, no nulo')
+          need('notas/decisiones/ADR-048-azar-reproducible-y-fallos.md','ni filtros de iteración')
+          need('notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md','6. Una progresión sobre un dominio cíclico de punto visita como máximo un periodo fundamental')
+
+          # Questions remain correctly partial/open.
+          need('notas/preguntas/Q-018-intervalos-discontinuos.md','Permanece abierta la sintaxis consolidada de intervalos discontinuos')
+          need('notas/preguntas/Q-028-finitud.md','Falta definir el análisis y sus diagnósticos')
+          q29='notas/preguntas/Q-029-terminacion.md'
+          need(q29,'Estado: **parcialmente decidida**')
+          need(q29,'Permanece abierta la certificación general de terminación')
+
+          # Concurrent D087 fixes that landed before D088 remain intact.
+          need('especificacion/08-sintaxis-abstracta.md','Declaraciones de metadatos duplicadas en una misma unidad.')
+          cst='especificacion/sintaxis/cst-sin-perdidas.md'
+          need(cst,'metadata-assignment       → MetadataAssignmentSyntax')
+          need(cst,'Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.')
+          forbid(cst,'- `ANCHOR_INTERPOLATION_START`.')
+          forbid('especificacion/08-sintaxis-abstracta.md','- `AnchorInterpolation`.')
+          need('notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md','Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]')
+
+          cases=yaml.safe_load(r('especificacion/sintaxis/casos/cst-ast.yaml'))['cases']
+          by_id={c['id']:c for c in cases}
+          d088_cases=(
+              'for-each-requires-colon','for-each-negative-step','for-each-filter-expression-block','for-each-static-zero-step',
+              'selection-by-expression-block','quantifier-by-expression-block','sum-by-expression-block','negative-stepped-domain-all',
+              'rumber-stepped-domain-rejected','magnitude-step-compatible-units','d088-for-each-body-after-terminator',
+              'd088-selection-body-after-terminator','d088-quantifier-block-after-terminator','d088-runtime-zero-step-action',
+              'd088-num-interval-without-step-rejected','d088-infinite-interval-not-enumerable','d088-arbitrary-collection-by-is-not-stride',
+              'd088-filter-must-be-bool','d088-random-filter-rejected','d088-step-evaluated-once','d088-explicit-rum-collection-enumerable',
+              'd088-ordered-filter-sees-previous-effects','d088-unordered-filter-sees-initial-snapshot','d088-remaining-quantifiers-with-by',
+              'd088-open-lower-positive-step','d088-open-upper-negative-step','d088-empty-inverted-interval-zero-iterations',
+          )
+          missing=[cid for cid in d088_cases if cid not in by_id]
+          if missing: raise SystemExit(f'missing D088 cases: {missing}')
+          for cid in ('immutable-metadata-assignment-rejected','metadata-path-assignment-rejected','metadata-file-assignment-rejected','alias-runtime-name-metadata','family-runtime-name-metadata','metadata-access-and-assignment'):
+              c=by_id[cid]
+              if c.get('category')!='validation-before-ast' or c.get('expected_diagnostics')!=['metadata-runtime-write'] or c.get('produces_ast') is not False:
+                  raise SystemExit(f'D087 metadata write regression: {cid}')
+
+          # No live normative/ADR example uses the retired no-colon for-each brace spelling.
+          bad=[]
+          for root in (Path('especificacion'),Path('notas/decisiones')):
+              for p in root.rglob('*.md'):
+                  for n,line in enumerate(p.read_text(encoding='utf-8').splitlines(),1):
+                      if 'for each' in line and re.search(r'for each .*\{\s*$', line) and ': {' not in line:
+                          bad.append(f'{p}:{n}:{line}')
+          if bad: raise SystemExit('retired for-each brace syntax remains:\n'+'\n'.join(bad))
+          print('D088_PUBLISHED_SEMANTIC_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'published semantic audit failed' }
+
+      - name: Run official validators on published HEAD
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'published validators changed checkout' }
