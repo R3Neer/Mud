@@ -14,6 +14,7 @@ affects:
 - Amplía: [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modifica: [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada después por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 
 ## Contexto
 
@@ -80,13 +81,13 @@ No pueden intercalarse nuevas declaraciones locales después de la primera aserc
 
 ### Representación abstracta
 
-El AST superficial normaliza toda condición a:
+D-088 generaliza la representación común. El AST superficial normaliza toda condición a:
 
 ```text
-BooleanBlock(locals, result)
+ExpressionBlock(locals, result)
 ```
 
-El diagnóstico `otherwise` pertenece a la construcción propietaria y puede resolver los nombres de `locals`. Un `after` de test usa un bloque propio con locales comunes y una secuencia no vacía de `TestAssertion`.
+En los contextos definidos por esta decisión, el propietario exige que `result` cumpla el contrato booleano o temporal correspondiente. El diagnóstico `otherwise` pertenece a la construcción propietaria y puede resolver los nombres de `locals`. Un `after` de test usa un bloque propio con locales comunes y una secuencia no vacía de `TestAssertion`.
 
 ## Consecuencias
 
@@ -106,3 +107,7 @@ El diagnóstico `otherwise` pertenece a la construcción propietaria y puede res
 7. Reevaluación temporal de locales usadas por `changes` u `old`.
 8. Locales comunes en `after` de test con una o varias aserciones.
 9. Rechazo de una local posterior a la primera aserción de test.
+
+## Modificación por D-088
+
+La estructura se generaliza a `ExpressionBlock(locals, result)`. Las condiciones mantienen sus contratos booleanos/temporales; selección y cuantificadores/agregadores pueden escribir tras `:` una expresión breve o `{ locales*; resultado }`, con las mismas reglas de pureza, secuencialidad, ámbito y ausencia de referencias adelantadas, ciclos, redeclaración y sombreado.
