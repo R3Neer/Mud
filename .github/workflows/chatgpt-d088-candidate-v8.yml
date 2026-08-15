@@ -1,0 +1,189 @@
+name: ChatGPT D088 candidate v8
+
+on:
+  push:
+    branches:
+      - chatgpt-d088-runner-v8
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout current review stack
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v8
+          path: runner
+          fetch-depth: 0
+
+      - name: Checkout original transform stack
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v4
+          path: prior
+          fetch-depth: 0
+
+      - name: Checkout updated main base
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-candidate-v8
+          path: target
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Verify exact updated base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 1e2c793b6ae0ae4a7abbab416f5e16c9f2a40e67
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'updated base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate base not clean' }
+
+      - name: Rebuild D088 on updated base
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../prior/tooling/chatgpt/transform_d088.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 transform failed' }
+          python ../prior/tooling/chatgpt/transform_d088_fix_v2.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v2 failed' }
+          python ../prior/tooling/chatgpt/transform_d088_fix_v3.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v3 failed' }
+          python ../prior/tooling/chatgpt/transform_d088_fix_examples.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 examples failed' }
+          python ../prior/tooling/chatgpt/transform_d088_fix_cst.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 CST failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_v5.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v5 failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_v6.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v6 failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_v7.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v7 failed' }
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision generation failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question generation failed' }
+
+      - name: Stage 1 preserve concurrent D087 cleanups and D088 invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          from pathlib import Path
+          import yaml
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
+
+          # Changes that arrived on main while D088 was under review must survive.
+          need('especificacion/08-sintaxis-abstracta.md','Declaraciones de metadatos duplicadas en una misma unidad.')
+          need('especificacion/sintaxis/cst-sin-perdidas.md','  - D-087')
+          need('especificacion/sintaxis/cst-sin-perdidas.md','metadata-assignment       → MetadataAssignmentSyntax')
+          need('especificacion/sintaxis/cst-sin-perdidas.md','Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.')
+          need('notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md','Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]')
+          need('notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md','Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.')
+
+          # Core D088 mechanics.
+          g='especificacion/gramatica/mud.ebnf'
+          need(g,'expression-block'); need(g,'expression-body')
+          forbid(g,'boolean-block'); forbid(g,'expression-clause-body')
+          need(g,', ":"\n        , [ required-separation ]\n        , ( effect | effect-block )')
+          if r(g).count(', ":" , [ required-separation ] , expression-body') != 2:
+              raise SystemExit('selection/quantifier separation mismatch')
+          ast='especificacion/sintaxis/mud-surface-ast.asdl'
+          need(ast,'expression_block = ExpressionBlock')
+          need(ast,'expression_block? filter')
+          need(ast,'expr? step')
+          d88='notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md'
+          for s in ('fallo de evaluación `progression-step-zero`','Una fuente que ya posee enumeración propia','No significa stride sobre una colección arbitraria','D-088 no permite azar en el filtro de una iteración','no depende de Q-018'):
+              need(d88,s)
+          q29='notas/preguntas/Q-029-terminacion.md'
+          need(q29,'Estado: **parcialmente decidida**'); need(q29,'  - D-088')
+
+          # D087 invariants must still hold after D088 rewrite.
+          forbid('especificacion/08-sintaxis-abstracta.md','- `AnchorInterpolation`.')
+          forbid('especificacion/sintaxis/cst-sin-perdidas.md','- `ANCHOR_INTERPOLATION_START`.')
+          cases=yaml.safe_load(r('especificacion/sintaxis/casos/cst-ast.yaml'))['cases']
+          by_id={c['id']:c for c in cases}
+          for cid in ('immutable-metadata-assignment-rejected','metadata-path-assignment-rejected','metadata-file-assignment-rejected','alias-runtime-name-metadata','family-runtime-name-metadata','metadata-access-and-assignment'):
+              c=by_id[cid]
+              if c.get('category')!='validation-before-ast' or c.get('expected_diagnostics')!=['metadata-runtime-write'] or c.get('produces_ast') is not False:
+                  raise SystemExit(f'metadata write regression {cid}')
+          print('D088_V8_STAGE1_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'v8 invariant audit failed' }
+
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git add -N notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+
+      - name: Stage 3 exact D088 surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @(
+            'especificacion/07-gramatica-concreta.md','especificacion/08-sintaxis-abstracta.md','especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml','especificacion/sintaxis/cobertura-sintactica.yaml','especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/cst-sin-perdidas.md','especificacion/sintaxis/mud-surface-ast.asdl','especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md','notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md',
+            'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md','notas/decisiones/ADR-057-gramatica-concreta-y-continuacion.md',
+            'notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos.md','notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md',
+            'notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones.md','notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md',
+            'notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md','notas/decisiones/README.md',
+            'notas/preguntas/Q-018-intervalos-discontinuos.md','notas/preguntas/Q-028-finitud.md','notas/preguntas/Q-029-terminacion.md','notas/preguntas/README.md'
+          ) | Sort-Object
+          $actual = @(git status --porcelain=v1 --untracked-files=all | ForEach-Object {
+            $p=$_.Substring(3); if ($p -match ' -> ') { $p=($p -split ' -> ',2)[1] }; $p.Trim('"')
+          }) | Sort-Object -Unique
+          $d=Compare-Object $expected $actual
+          if ($d) { Write-Host 'EXPECTED';$expected;Write-Host 'ACTUAL';$actual;Write-Host 'DIFF';$d;throw 'unexpected v8 surface' }
+          git diff --stat
+
+      - name: Commit candidate v8
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "spec(language): define progresiones y bloques de expresión" -m "Context:`n- Integra D-088 sobre el main actualizado sin perder las limpiezas concurrentes de D-087.`n`nValidation:`n- invariantes de integración v8`n- decisiones y preguntas`n- gramática`n- modelo sintáctico`n- superficie exacta`n- git diff --check"
+          if ($LASTEXITCODE -ne 0) { throw 'candidate commit failed' }
+          git push origin HEAD:chatgpt-d088-candidate-v8
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
