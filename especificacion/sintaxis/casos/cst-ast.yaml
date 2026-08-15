@@ -241,7 +241,7 @@ cases:
   cst_root: MudFileSyntax
   ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(name), StoredMetadataAssignment(abbreviation), StoredMetadataAssignment(prefixes, empty)])
   produces_ast: true
-- id: duplicate-unit-property
+- id: duplicate-unit-metadata
   category: validation-before-ast
   source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\n        ~name = \"metre\"\n        ~abbreviation = \"m\"\n    }\n}\n"
   cst_root: MudFileSyntax
@@ -379,7 +379,7 @@ cases:
   category: unit
   source: "magnitude Length: Num {\n    root unit meter {\n        ~abbreviation = \"m\"\n        ~prefixes = all\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: RootUnitDecl(meter, abbreviation=m, prefixes=AllPrefixes)
+  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(abbreviation, ...), StoredMetadataAssignment(prefixes, AllLiteral)])
   produces_ast: true
 - id: transition-otherwise
   category: action
@@ -563,13 +563,12 @@ cases:
   ast: ComparisonChainExpr(value, NotMembership, 1..10)
   produces_ast: true
 - id: metadata-access-and-assignment
-  category: metadata
+  category: validation-before-ast
   source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora [mut] {\n    then person~name = \"Nora la Roja\"\n}\n"
   cst_root: MudFileSyntax
-  ast: StoredMetadataAssignment(name, ...) and AssignmentEffect(MetadataAccessExpr(person, name))
   expected_diagnostics:
   - metadata-runtime-write
-  produces_ast: true
+  produces_ast: false
 - id: text-anchor-via-metadata
   category: text
   source: "thing Reporter {\n    label: Text = \"Rule: {CanRecruit~anchor}\"\n}\n"

@@ -1247,11 +1247,10 @@ syntax_nodes:
     - variable-name
   assignable-expression:
     kind: AssignableExpressionSyntax
-    rhs: primary-expression , { member-access | metadata-access | index-access }
+    rhs: primary-expression , { member-access | index-access }
     references:
     - primary-expression
     - member-access
-    - metadata-access
     - index-access
   expression:
     kind: ExpressionSyntax

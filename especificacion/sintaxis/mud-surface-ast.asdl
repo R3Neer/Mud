@@ -473,7 +473,6 @@ module MUDSurface {
         attributes (source_origin origin)
 
     access_suffix = MemberSuffix(identifier_name member)
-                  | MetadataSuffix(metadata_name metadata)
                   | IndexSuffix(expr first_index, expr* remaining_indices)
         attributes (source_origin origin)
 

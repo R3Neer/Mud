@@ -697,7 +697,7 @@ iteration-binding
       ;
 
 assignable-expression
-    ::= primary-expression , { member-access | metadata-access | index-access } ;
+    ::= primary-expression , { member-access | index-access } ;
 
 (* ------------------------------------------------------------------ *)
 (* Expresiones                                                         *)
