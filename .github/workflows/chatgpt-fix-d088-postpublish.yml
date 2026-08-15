@@ -1,0 +1,134 @@
+name: ChatGPT fix D088 postpublish review
+
+on:
+  push:
+    branches:
+      - chatgpt-fix-d088-postpublish-runner
+
+permissions:
+  contents: write
+
+jobs:
+  fix-review-and-commit:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout control
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-d088-postpublish-runner
+          path: control
+          fetch-depth: 0
+      - name: Checkout v7 review transform
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v7b
+          path: review7
+          fetch-depth: 0
+      - name: Checkout v8 review transform
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v8b
+          path: review8
+          fetch-depth: 0
+      - name: Checkout candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-d088-postpublish-candidate
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+      - name: Verify exact base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: d87626337e949643f17306b25a912e65255b5a9d
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
+      - name: Apply reviewed D088 corrections
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../review7/tooling/chatgpt/transform_d088_fix_v7.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v7 review transform failed' }
+          python ../review8/tooling/chatgpt/transform_d088_fix_v8.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v8 review transform failed' }
+          python ../control/tooling/chatgpt/transform_d088_postpublish.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 postpublish transform failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question generation failed' }
+      - name: Validate reviewed invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../control/tooling/chatgpt/validate_d088_postpublish.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 postpublish invariant failure' }
+      - name: Run official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff check failed' }
+      - name: Verify exact surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @(
+            'especificacion/09-nombres-y-anclas.md',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md',
+            'notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md',
+            'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md',
+            'notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md',
+            'notas/preguntas/Q-029-terminacion.md',
+            'notas/preguntas/README.md'
+          ) | Sort-Object
+          $actual = @(git status --porcelain=v1 --untracked-files=all | ForEach-Object {
+            $p = $_.Substring(3)
+            if ($p -match ' -> ') { $p = ($p -split ' -> ', 2)[1] }
+            $p.Trim('"')
+          }) | Sort-Object -Unique
+          $difference = Compare-Object $expected $actual
+          if ($difference) {
+            Write-Host 'EXPECTED:'; $expected
+            Write-Host 'ACTUAL:'; $actual
+            Write-Host 'DIFFERENCE:'; $difference
+            throw 'unexpected D088 corrective surface'
+          }
+          git diff --stat
+      - name: Commit candidate
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "fix(spec): completa revisión de D-088" -m "Context:`n- Corrige ejemplos y casos que mezclaban errores secundarios.`n- Fija ámbitos de iteradores y ExpressionBlock en resolución de nombres.`n- Separa el fallo runtime por paso cero de los diagnósticos estáticos.`n- Mantiene Q-029 abierta porque D-088 no cierra la certificación general de terminación.`n`nValidation:`n- invariantes postpublicación D-088`n- decisiones y preguntas`n- gramática y modelo sintáctico`n- superficie exacta`n- git diff --check"
+          if ($LASTEXITCODE -ne 0) { throw 'candidate commit failed' }
+          git push origin HEAD:chatgpt-fix-d088-postpublish-candidate
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
