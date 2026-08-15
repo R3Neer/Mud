@@ -1,0 +1,243 @@
+name: ChatGPT D088 candidate v4
+
+on:
+  push:
+    branches:
+      - chatgpt-d088-runner-v4
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout runner
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v4
+          path: runner
+          fetch-depth: 0
+
+      - name: Checkout candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-candidate-v4
+          path: target
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Verify exact base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 0f0897a734a327280ded1cfa5b098135f2fe571a
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $actual = (git rev-parse HEAD).Trim()
+          if ($actual -ne $env:BASE) { throw "candidate base mismatch: $actual" }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
+
+      - name: Apply D088 transformation stack
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python runner/tooling/chatgpt/transform_d088.py target
+          if ($LASTEXITCODE -ne 0) { throw 'D088 transform failed' }
+          python runner/tooling/chatgpt/transform_d088_fix_v2.py target
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v2 correction failed' }
+          python runner/tooling/chatgpt/transform_d088_fix_v3.py target
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v3 correction failed' }
+          python runner/tooling/chatgpt/transform_d088_fix_examples.py target
+          if ($LASTEXITCODE -ne 0) { throw 'D088 example sweep failed' }
+          python runner/tooling/chatgpt/transform_d088_fix_cst.py target
+          if ($LASTEXITCODE -ne 0) { throw 'D088 CST correction failed' }
+
+      - name: Regenerate decision index
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision generation failed' }
+
+      - name: Stage 1 exact semantic invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          from pathlib import Path
+          import re
+
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
+
+          g='especificacion/gramatica/mud.ebnf'
+          need(g,'expression-block')
+          need(g,'expression-body')
+          forbid(g,'boolean-block')
+          forbid(g,'expression-clause-body')
+          need(g,', [ "by" , expression ]\n        , [ "if" , expression-body ]\n        , ":"\n        , ( effect | effect-block )')
+          need(g,'selection-expression\n    ::= iteration-binding , "in" , expression\n        , [ "by" , expression ]\n        , ":" , expression-body')
+          need(g,'quantifier-expression\n    ::= quantifier , variable-name , "in" , expression\n        , [ "by" , expression ]\n        , ":" , expression-body')
+
+          asdl='especificacion/sintaxis/mud-surface-ast.asdl'
+          need(asdl,'expression_block = ExpressionBlock')
+          forbid(asdl,'BooleanBlock')
+          need(asdl,'expr? step,\n                           expression_block? filter')
+          need(asdl,'SelectionExpr(iteration_binding binding,\n                         expr source,\n                         expr? step,\n                         expression_block predicate)')
+          need(asdl,'QuantifierExpr(quantifier_kind kind,\n                          variable_name variable,\n                          expr source,\n                          expr? step,\n                          expression_block body)')
+
+          kinds='especificacion/sintaxis/mud-syntax-kinds.yaml'
+          need(kinds,'expression-body:')
+          need(kinds,'ExpressionBodySyntax')
+          forbid(kinds,'ExpressionClauseBodySyntax')
+          forbid(kinds,'expression-clause-body')
+
+          cst='especificacion/sintaxis/cst-sin-perdidas.md'
+          need(cst,'`ExpressionBlockSyntax`')
+          forbid(cst,'BooleanBlockSyntax')
+          forbid(cst,'- `ANCHOR_INTERPOLATION_START`.')
+          need(cst,'No existe `ANCHOR_INTERPOLATION_START`')
+
+          d47='notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md'
+          need(d47,'for each item in source if predicate: {')
+          need(d47,'for each value in source by step if predicate: {')
+          need(d47,'cada filtro se evalúa inmediatamente antes de su iteración')
+          need(d47,'recorrido descendente explícito se expresa mediante `by` negativo')
+          forbid(d47,'El orden descendente y la sintaxis consolidada de intervalos discontinuos siguen en Q-018')
+
+          d71='notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos.md'
+          need(d71,'ExpressionBlock(locals, result)')
+          forbid(d71,'BooleanBlock(locals, result)')
+
+          d75='notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md'
+          need(d75,'Su paso es estático, firmado, no nulo, exacto')
+          forbid(d75,'Su paso es estático, positivo, no nulo')
+
+          d48='notas/decisiones/ADR-048-azar-reproducible-y-fallos.md'
+          need(d48,'ni filtros de iteración')
+
+          d88='notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md'
+          for x in ['## Filtro de `for each`','## Paso cero','## Dominios escalonados','## Otras construcciones con `by`','No significa stride sobre una colección arbitraria','solo durante un periodo fundamental']:
+              need(d88,x)
+
+          q18='notas/preguntas/Q-018-intervalos-discontinuos.md'
+          need(q18,'D-088 cierra el recorrido descendente explícito')
+          forbid(q18,'el orden descendente explícito y varias claves')
+
+          chapter='especificacion/07-gramatica-concreta.md'
+          for old in [
+              'for each country in capitalOf {',
+              'for each (country, capital) in capitalOf {',
+              'then for each product in products {',
+              'then for each patient in patients {',
+          ]: forbid(chapter,old)
+          need(chapter,'Los intervalos de `Rum` nunca admiten `by`, ni en iteración ni en dominios escalonados')
+          need(chapter,'Con orden semántico se evalúa justo antes de cada iteración')
+          need(chapter,'sin orden semántico todos los filtros leen la instantánea inicial')
+
+          need('notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md','for each coordinate in Coordinate: {')
+          need('notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md','for each value in [r0..r1] by r0.1: {}')
+
+          cases='especificacion/sintaxis/casos/cst-ast.yaml'
+          for old in [
+              'for each country in capitals {',
+              'for each (country, city) in capitals {',
+              'for each product in products {',
+              'for each result in policy {',
+              'category: boolean-block',
+              'boolean-block-locals-and-result',
+          ]: forbid(cases,old)
+          need(cases,'id: for-each-requires-colon')
+          need(cases,'expected_diagnostics: [for-each-missing-colon]')
+          need(cases,'id: negative-stepped-domain-all')
+          need(cases,'id: magnitude-step-compatible-units')
+
+          # D-087 cleanups inherited from main must not regress.
+          ast08='especificacion/08-sintaxis-abstracta.md'
+          forbid(ast08,'- `AnchorInterpolation`.')
+          need(ast08,'No existe `AnchorInterpolation`.')
+
+          print('D088_STAGE1_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'stage 1 semantic audit failed' }
+
+      - name: Stage 2 repository validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
+
+      - name: Stage 3 exact change surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @(
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/cst-sin-perdidas.md',
+            'especificacion/sintaxis/mud-surface-ast.asdl',
+            'especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md',
+            'notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md',
+            'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md',
+            'notas/decisiones/ADR-057-gramatica-concreta-y-continuacion.md',
+            'notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos.md',
+            'notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md',
+            'notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones.md',
+            'notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md',
+            'notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md',
+            'notas/decisiones/README.md',
+            'notas/preguntas/Q-018-intervalos-discontinuos.md'
+          ) | Sort-Object
+          $actual = @(git diff --name-only) | Sort-Object
+          if (Compare-Object $expected $actual) {
+            Write-Host 'EXPECTED:'; $expected
+            Write-Host 'ACTUAL:'; $actual
+            throw 'unexpected D088 change surface'
+          }
+          git diff --stat
+
+      - name: Commit candidate
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git commit -m "spec(language): define progresiones y bloques de expresión" -m "Context:`n- Integra D-088 sobre iteración, filtros, by, selección, cuantificadores y dominios escalonados.`n`nValidation:`n- auditoría semántica específica`n- decisiones`n- preguntas`n- gramática`n- modelo sintáctico`n- git diff --check"
+          if ($LASTEXITCODE -ne 0) { throw 'candidate commit failed' }
+          git push origin HEAD:chatgpt-d088-candidate-v4
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
