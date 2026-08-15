@@ -1,0 +1,136 @@
+name: ChatGPT D088 candidate v4b
+
+on:
+  push:
+    branches:
+      - chatgpt-d088-runner-v4b
+
+permissions:
+  contents: write
+
+jobs:
+  resume-from-surface-audit:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout runner
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v4b
+          path: runner
+          fetch-depth: 0
+
+      - name: Checkout clean candidate base
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-candidate-v4
+          path: target
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Reconstruct already-reviewed candidate
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 0f0897a734a327280ded1cfa5b098135f2fe571a
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
+          python ../runner/tooling/chatgpt/transform_d088.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 transform failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_v2.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v2 correction failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_v3.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v3 correction failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_examples.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 example sweep failed' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_cst.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 CST correction failed' }
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision generation failed' }
+
+      - name: Reconfirm official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
+
+      - name: Resume stage 3 exact change surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @(
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/cst-sin-perdidas.md',
+            'especificacion/sintaxis/mud-surface-ast.asdl',
+            'especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md',
+            'notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md',
+            'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md',
+            'notas/decisiones/ADR-057-gramatica-concreta-y-continuacion.md',
+            'notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos.md',
+            'notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md',
+            'notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones.md',
+            'notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md',
+            'notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md',
+            'notas/decisiones/README.md',
+            'notas/preguntas/Q-018-intervalos-discontinuos.md'
+          ) | Sort-Object
+          $statusLines = @(git status --porcelain=v1 --untracked-files=all)
+          $actual = @($statusLines | ForEach-Object {
+            $path = $_.Substring(3)
+            if ($path -match ' -> ') { $path = ($path -split ' -> ', 2)[1] }
+            $path.Trim('"')
+          }) | Sort-Object
+          $difference = Compare-Object $expected $actual
+          if ($difference) {
+            Write-Host 'EXPECTED:'; $expected
+            Write-Host 'ACTUAL:'; $actual
+            Write-Host 'DIFFERENCE:'; $difference
+            throw 'unexpected D088 change surface'
+          }
+          git diff --stat
+          Write-Host 'UNTRACKED/CHANGED:'
+          $statusLines
+
+      - name: Commit candidate
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "spec(language): define progresiones y bloques de expresión" -m "Context:`n- Integra D-088 sobre iteración, filtros, by, selección, cuantificadores y dominios escalonados.`n`nValidation:`n- auditoría semántica específica v4`n- decisiones`n- preguntas`n- gramática`n- modelo sintáctico`n- git diff --check"
+          if ($LASTEXITCODE -ne 0) { throw 'candidate commit failed' }
+          git push origin HEAD:chatgpt-d088-candidate-v4
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
