@@ -13,6 +13,7 @@ affects:
 # ADR-033 — Claves compuestas y enumeración de aliases
 
 - Pregunta relacionada: Q-056
+- Sintaxis actualizada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 - Documentos afectados: futuro `12-aliases.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`, futuro `37-finitud-y-enumerabilidad.md`
 
 ## Contexto
@@ -62,12 +63,15 @@ alias Coordinate {
 Este alias tiene $8\cdot 8=64$ valores y puede usarse como fuente:
 
 ```mud
-for each coordinate in Coordinate {
-    ...
+action VisitCoordinates for mut visits: Nat {
+    then for each coordinate in Coordinate:
+        visits += 1
 }
 
-exists destination in Coordinate:
-    ...
+rule HasLeftEdge {
+    exists destination in Coordinate:
+        destination.horizontal == 0
+}
 ```
 
 Si algún componente carece de dominio finito y enumerable, el alias sigue siendo un tipo válido, pero su dominio completo no puede recorrerse ni cuantificarse exhaustivamente.
