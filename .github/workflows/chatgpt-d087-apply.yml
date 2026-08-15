@@ -1,0 +1,119 @@
+name: ChatGPT cardinality coherence fix
+
+on:
+  push:
+    branches:
+      - chatgpt-d087-apply
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    name: Fix omitted cardinality coherence
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout control branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          path: control
+
+      - name: Checkout exact main
+        uses: actions/checkout@v6
+        with:
+          ref: e283529dd46cd90513dd760b6dc4b91e95cf7b93
+          fetch-depth: 0
+          persist-credentials: true
+          path: Mud
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Verify exact base
+        shell: pwsh
+        env:
+          EXPECTED_HEAD: e283529dd46cd90513dd760b6dc4b91e95cf7b93
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git -C Mud fetch origin main
+          $remote = (git -C Mud rev-parse origin/main).Trim()
+          $local = (git -C Mud rev-parse HEAD).Trim()
+          if ($remote -ne $env:EXPECTED_HEAD) { throw "main moved: expected $env:EXPECTED_HEAD, found $remote" }
+          if ($local -ne $env:EXPECTED_HEAD) { throw "checkout mismatch: expected $env:EXPECTED_HEAD, found $local" }
+
+      - name: Apply cardinality coherence correction
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Push-Location Mud
+          try {
+            python ../control/.chatgpt/fix-cardinality.py
+            if ($LASTEXITCODE -ne 0) { throw 'cardinality correction failed' }
+          }
+          finally { Pop-Location }
+
+      - name: Verify exact change surface
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $actual = @(git -C Mud status --porcelain=v1 --untracked-files=all)
+          $expected = @(
+            ' M especificacion/08-sintaxis-abstracta.md',
+            ' M especificacion/sintaxis/casos/cst-ast.yaml'
+          )
+          if (($actual -join "`n") -ne ($expected -join "`n")) {
+            Write-Host 'Actual status:'
+            $actual | ForEach-Object { Write-Host $_ }
+            throw 'unexpected change surface'
+          }
+
+      - name: Run D087 coherence audit
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Push-Location Mud
+          try {
+            python ../control/.chatgpt/audit-d087.py
+            if ($LASTEXITCODE -ne 0) { throw 'D087 coherence assertions failed' }
+          }
+          finally { Pop-Location }
+
+      - name: Run repository validators
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          python Mud/tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python Mud/tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python Mud/especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python Mud/especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          git -C Mud diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
+
+      - name: Commit and fast-forward main
+        shell: pwsh
+        env:
+          EXPECTED_HEAD: e283529dd46cd90513dd760b6dc4b91e95cf7b93
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git -C Mud config user.name "ChatGPT"
+          git -C Mud config user.email "chatgpt@users.noreply.github.com"
+          git -C Mud add -- especificacion/08-sintaxis-abstracta.md especificacion/sintaxis/casos/cst-ast.yaml
+          git -C Mud diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git -C Mud commit -m "fix(syntax): conserva cardinalidad omitida en AST"
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git -C Mud fetch origin main
+          $remote = (git -C Mud rev-parse origin/main).Trim()
+          if ($remote -ne $env:EXPECTED_HEAD) { throw "main moved before push: expected $env:EXPECTED_HEAD, found $remote" }
+          git -C Mud push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { throw 'push failed' }
