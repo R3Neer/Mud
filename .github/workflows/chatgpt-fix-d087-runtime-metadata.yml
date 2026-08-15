@@ -13,6 +13,12 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 20
     steps:
+      - name: Checkout runner
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-d087-runtime-metadata-runner
+          path: runner
+          fetch-depth: 0
       - name: Checkout candidate
         uses: actions/checkout@v6
         with:
@@ -28,7 +34,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
           if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
-      - name: Verify base and apply exact D087 cleanup
+      - name: Verify exact base
         shell: pwsh
         working-directory: target
         env:
@@ -37,107 +43,21 @@ jobs:
           $ErrorActionPreference = 'Stop'
           if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
           if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
-          @'
-          from pathlib import Path
-
-          def read(p): return Path(p).read_text(encoding='utf-8')
-          def write(p,t): Path(p).write_text(t.rstrip('\n')+'\n', encoding='utf-8', newline='\n')
-          def exact(t,old,new,label,count=1):
-              n=t.count(old)
-              if n != count: raise SystemExit(f'{label}: expected {count}, found {n}')
-              return t.replace(old,new,count)
-
-          p='especificacion/README.md'
-          t=read(p)
-          t=exact(t,
-              '- Metadatos postfix separados de los campos ordinarios y reglas de escritura de `~name`.',
-              '- Metadatos postfix separados de los campos ordinarios; todo acceso `~` es de solo lectura durante la ejecución y los metadatos configurables se modifican mediante edición del modelo.',
-              'README chapter 14 metadata')
-          write(p,t)
-
-          p='especificacion/04-modelo-matematico.md'
-          t=read(p)
-          t=exact(t,'  - D-086\n---','  - D-086\n  - D-087\n---','04 frontmatter D087')
-          t=exact(t,
-              '29. El valor inicial de `~name` deriva del nombre nominal no cualificado cuando la categoría lo define; puede escribirse o modificarse únicamente donde su contrato de metadatos lo permita y no se hereda como identidad.',
-              '29. El valor predeterminado de `~name` deriva del identificador nominal no cualificado cuando la categoría lo define. Puede configurarse mediante la declaración o edición del modelo, pero ningún acceso `~` puede ser destino de una asignación o actualización runtime; los metadatos no se heredan.',
-              '04 stale name mutability')
-          t=exact(t,
-              '30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. `~path`, `~anchor` y `~file` son inmutables desde MUD.',
-              '30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. Todo acceso `~` es de solo lectura durante la ejecución; `~path`, `~anchor` y `~file` son además propiedades intrínsecas y no metadatos configurables.',
-              '04 runtime readonly rule')
-          t=exact(t,
-              '[[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]], [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]].',
-              '[[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]], [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].',
-              '04 provenance D087')
-          write(p,t)
-
-          p='notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md'
-          t=read(p)
-          old='''`~name` es mutable para `thing`, declaraciones alias y miembros de `family`. Una escritura runtime usa el objetivo postfix:
-
-```mud
-Nora~name = "Nora la Roja"
-```
-
-La escritura exige la capacidad correspondiente y participa en la atomicidad y conflictos como una escritura de estado del propietario. En aliases y miembros de familia se almacena separada del payload inmutable; cambiarla no cambia igualdad estructural ni datos asociados.
-
-La interpolación ordinaria de esos valores usa su `~name` efectivo.
-
-#### Identidad y procedencia
-
-`~anchor`, `~path` y `~file` son inmutables y no asignables. `~anchor` produce el ancla pública canónica; `~path`, el path MUD; `~file`, la procedencia física.'''
-          new='''D-087 sustituye la mutabilidad runtime que esta decisión había introducido para `~name`. `~name` es un metadato configurable del modelo, pero todo acceso postfix `~` es de solo lectura durante la ejecución. Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime; los cambios configurables se realizan mediante edición del modelo y nueva elaboración. En aliases y miembros de `family`, los metadatos continúan separados del payload inmutable y no alteran igualdad estructural ni datos asociados.
-
-La interpolación ordinaria de esos valores usa su `~name` efectivo.
-
-#### Identidad y procedencia
-
-Todo acceso `~` es runtime-readonly. `~anchor`, `~path` y `~file` son además propiedades intrínsecas, no configurables ni declarables: `~anchor` produce el ancla pública canónica; `~path`, el path MUD; `~file`, la procedencia física.'''
-          t=exact(t,old,new,'D085 runtime name write block')
-          t=exact(t,
-              '13. Lectura, escritura y tipos de metadatos; inmutabilidad de identidad y aviso de `~file`.',
-              '13. Lectura y tipos de metadatos; solo lectura runtime de todo acceso `~`, separación de identidad y aviso de `~file`.',
-              'D085 verification metadata')
-          write(p,t)
-          print('D087_RUNTIME_METADATA_FIX_APPLIED')
-          '@ | python -
-          if ($LASTEXITCODE -ne 0) { throw 'exact D087 cleanup failed' }
-      - name: Targeted invariants
+      - name: Apply exact cleanup
         shell: pwsh
         working-directory: target
         run: |
           $ErrorActionPreference = 'Stop'
-          @'
-          from pathlib import Path
-          def r(p): return Path(p).read_text(encoding='utf-8')
-          def need(p,s):
-              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
-          def forbid(p,s):
-              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
-
-          readme='especificacion/README.md'
-          forbid(readme,'reglas de escritura de `~name`')
-          need(readme,'todo acceso `~` es de solo lectura durante la ejecución')
-
-          m='especificacion/04-modelo-matematico.md'
-          need(m,'  - D-087')
-          forbid(m,'puede escribirse o modificarse únicamente donde su contrato de metadatos lo permita')
-          need(m,'ningún acceso `~` puede ser destino de una asignación o actualización runtime')
-          need(m,'Todo acceso `~` es de solo lectura durante la ejecución')
-          need(m,'ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087')
-
-          d='notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md'
-          forbid(d,'`~name` es mutable para `thing`')
-          forbid(d,'Nora~name = "Nora la Roja"')
-          need(d,'D-087 sustituye la mutabilidad runtime')
-          need(d,'Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime')
-          need(d,'Todo acceso `~` es runtime-readonly')
-          need(d,'solo lectura runtime de todo acceso `~`')
-          print('D087_RUNTIME_METADATA_INVARIANTS_OK')
-          '@ | python -
-          if ($LASTEXITCODE -ne 0) { throw 'targeted invariant failure' }
-      - name: Official validators
+          python ../runner/tooling/chatgpt/transform_d087_runtime_metadata.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D087 transform failed' }
+      - name: Validate targeted invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../runner/tooling/chatgpt/validate_d087_runtime_metadata.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D087 invariant validation failed' }
+      - name: Run official validators
         shell: pwsh
         working-directory: target
         run: |
@@ -152,21 +72,28 @@ Todo acceso `~` es runtime-readonly. `~anchor`, `~path` y `~file` son además pr
           if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
           git diff --check
           if ($LASTEXITCODE -ne 0) { throw 'git diff check failed' }
-      - name: Exact surface and commit
+      - name: Verify surface and commit
         shell: pwsh
         working-directory: target
         run: |
           $ErrorActionPreference = 'Stop'
-          $expected=@(
+          $expected = @(
             'especificacion/04-modelo-matematico.md',
             'especificacion/README.md',
             'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md'
           ) | Sort-Object
-          $actual=@(git status --porcelain=v1 --untracked-files=all | ForEach-Object {
-            $p=$_.Substring(3); if ($p -match ' -> ') { $p=($p -split ' -> ',2)[1] }; $p.Trim('"')
+          $actual = @(git status --porcelain=v1 --untracked-files=all | ForEach-Object {
+            $p = $_.Substring(3)
+            if ($p -match ' -> ') { $p = ($p -split ' -> ', 2)[1] }
+            $p.Trim('"')
           }) | Sort-Object -Unique
-          $diff=Compare-Object $expected $actual
-          if ($diff) { Write-Host 'EXPECTED:'; $expected; Write-Host 'ACTUAL:'; $actual; Write-Host 'DIFF:'; $diff; throw 'unexpected surface' }
+          $difference = Compare-Object $expected $actual
+          if ($difference) {
+            Write-Host 'EXPECTED:'; $expected
+            Write-Host 'ACTUAL:'; $actual
+            Write-Host 'DIFFERENCE:'; $difference
+            throw 'unexpected surface'
+          }
           git config user.name "ChatGPT"
           git config user.email "chatgpt@users.noreply.github.com"
           git add --all
