@@ -21,6 +21,7 @@ decisions:
   - D-071
   - D-085
   - D-086
+  - D-087
 ---
 
 # CST sin pérdidas
@@ -210,7 +211,7 @@ Cada producción de `mud.ebnf` posee una categoría `PascalCaseSyntax` inventari
 thing-declaration        → ThingDeclarationSyntax
 thing-body               → ThingBodySyntax
 thing-body-declaration   → ThingBodyDeclarationSyntax
-intrinsic-name-override  → IntrinsicNameOverrideSyntax
+metadata-assignment       → MetadataAssignmentSyntax
 stored-field-declaration → StoredFieldDeclarationSyntax
 postfix-expression       → PostfixExpressionSyntax
 ```
@@ -294,7 +295,7 @@ La validación situada después de la CST y antes del AST comprueba condiciones 
 
 - Modificadores de colección duplicados.
 - Dos criterios `ordered` incompatibles.
-- Propiedades de unidad duplicadas.
+- Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.
 - Propiedades obligatorias ausentes.
 - Mezcla de argumentos posicionales después de un argumento nombrado.
 - Combinaciones que la prosa de sintaxis concreta prohíba.
