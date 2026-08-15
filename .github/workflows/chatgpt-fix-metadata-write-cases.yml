@@ -1,0 +1,168 @@
+name: ChatGPT fix stale metadata write cases
+
+on:
+  push:
+    branches:
+      - chatgpt-fix-metadata-write-cases-runner
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-metadata-write-cases-candidate
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Align stale D087 conformance cases
+        shell: pwsh
+        env:
+          BASE: 0f0897a734a327280ded1cfa5b098135f2fe571a
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'base mismatch' }
+          @'
+          from pathlib import Path
+          import yaml
+
+          path = Path('especificacion/sintaxis/casos/cst-ast.yaml')
+          text = path.read_text(encoding='utf-8')
+          lines = text.splitlines()
+          targets = {
+              'immutable-metadata-assignment-rejected',
+              'metadata-path-assignment-rejected',
+              'metadata-file-assignment-rejected',
+              'alias-runtime-name-metadata',
+              'family-runtime-name-metadata',
+          }
+
+          def span(case_id):
+              marker = f'- id: {case_id}'
+              starts = [i for i, line in enumerate(lines) if line == marker]
+              if len(starts) != 1:
+                  raise SystemExit(f'{case_id}: expected one case, found {len(starts)}')
+              start = starts[0]
+              end = next((i for i in range(start + 1, len(lines)) if lines[i].startswith('- id: ')), len(lines))
+              return start, end
+
+          # Process backwards so indices remain valid.
+          locations = sorted(((span(cid)[0], cid) for cid in targets), reverse=True)
+          for _, case_id in locations:
+              start, end = span(case_id)
+              block = lines[start:end]
+
+              for i, line in enumerate(block):
+                  if line.startswith('  category:'):
+                      block[i] = '  category: validation-before-ast'
+                      break
+              else:
+                  raise SystemExit(f'{case_id}: category missing')
+
+              # Remove obsolete positive AST/normalization expectations.
+              cleaned = []
+              i = 0
+              while i < len(block):
+                  line = block[i]
+                  if line.startswith('  ast:'):
+                      i += 1
+                      continue
+                  if line == '  normalizations:':
+                      i += 1
+                      while i < len(block) and block[i].startswith('  - '):
+                          i += 1
+                      continue
+                  if line == '  expected_diagnostics:':
+                      i += 1
+                      while i < len(block) and block[i].startswith('  - '):
+                          i += 1
+                      cleaned.extend(['  expected_diagnostics:', '  - metadata-runtime-write'])
+                      continue
+                  i += 1
+                  cleaned.append(line)
+              block = cleaned
+
+              if '  expected_diagnostics:' not in block:
+                  try:
+                      pos = next(i for i, line in enumerate(block) if line.startswith('  produces_ast:'))
+                  except StopIteration:
+                      raise SystemExit(f'{case_id}: produces_ast missing')
+                  block[pos:pos] = ['  expected_diagnostics:', '  - metadata-runtime-write']
+
+              found_produces = False
+              for i, line in enumerate(block):
+                  if line.startswith('  produces_ast:'):
+                      block[i] = '  produces_ast: false'
+                      found_produces = True
+              if not found_produces:
+                  raise SystemExit(f'{case_id}: produces_ast missing')
+
+              lines[start:end] = block
+
+          result = '\n'.join(lines) + '\n'
+          data = yaml.safe_load(result)
+          by_id = {case['id']: case for case in data['cases']}
+          for case_id in targets:
+              case = by_id[case_id]
+              assert case['category'] == 'validation-before-ast', (case_id, case)
+              assert case['expected_diagnostics'] == ['metadata-runtime-write'], (case_id, case)
+              assert case['produces_ast'] is False, (case_id, case)
+              assert 'ast' not in case, (case_id, case)
+              assert 'normalizations' not in case, (case_id, case)
+
+          # The already-correct generic case remains the reference contract.
+          ref = by_id['metadata-access-and-assignment']
+          assert ref['category'] == 'validation-before-ast'
+          assert ref['expected_diagnostics'] == ['metadata-runtime-write']
+          assert ref['produces_ast'] is False
+
+          path.write_text(result, encoding='utf-8', newline='\n')
+          print('METADATA_WRITE_CASES_ALIGNED')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'case alignment failed' }
+
+      - name: Validate repository
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+          $paths = @(git diff --name-only)
+          if ($paths.Count -ne 1 -or $paths[0] -ne 'especificacion/sintaxis/casos/cst-ast.yaml') { throw "unexpected surface: $($paths -join ', ')" }
+
+      - name: Commit fix
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add especificacion/sintaxis/casos/cst-ast.yaml
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "fix(syntax): alinea casos de escritura de metadatos"
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-fix-metadata-write-cases-candidate
+          if ($LASTEXITCODE -ne 0) { throw 'push failed' }
