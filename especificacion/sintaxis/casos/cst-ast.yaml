@@ -1482,3 +1482,9 @@ cases:
   cst_root: MudFileSyntax
   ast: CalculatedMetadataAssignment(category, value=DeclarationCategoryExpr(thing))
   produces_ast: true
+- id: metadata-clause-properties-use-hard-keywords
+  category: metadata
+  source: "look Signature {\n    forRoles := CanAttack~for\n    onRoles := Starve~on\n    givens := CanAttack~given\n}\n"
+  cst_root: MudFileSyntax
+  ast: LookDecl(fields=[MetadataAccessExpr(CanAttack, for), MetadataAccessExpr(Starve, on), MetadataAccessExpr(CanAttack, given)])
+  produces_ast: true

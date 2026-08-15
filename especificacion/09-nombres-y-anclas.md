@@ -88,7 +88,7 @@ La norma se expresa mediante entornos y conjuntos de candidatos. Una implementac
 ## Anclas
 
 > [!definition] MUD-NAME-005 — Ancla pública
-> Una ancla es la identidad legible, global y sensible a mayúsculas de una declaración nominal persistente.
+> Una ancla es la identidad legible, global y sensible a mayúsculas de una entidad semántica persistente a la que la especificación asigna identidad pública.
 
 Formas representativas:
 
@@ -121,6 +121,8 @@ La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaraci
 | test | `test` |
 | tipo incorporado | `type` |
 
+Los participantes `for`, `on` y `given` no introducen una categoría superior nueva: su ancla es subordinada a la del propietario y deriva además de la clase de cláusula y del identificador, conforme a D-087. La posición nunca forma parte de esa identidad.
+
 `start with` global no introduce nombre y, por tanto, no posee ancla. La categoría describe la declaración propietaria: un campo de `look` conserva una ancla como `look::game.Status::score`, no una categoría adicional `field`.
 
 Poseen ancla:
@@ -129,6 +131,7 @@ Poseen ancla:
 - campos y componentes;
 - miembros de family;
 - unidades declaradas;
+- participantes `for`, `on` y `given`;
 - tipos incorporados.
 
 No poseen ancla pública:

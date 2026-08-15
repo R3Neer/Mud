@@ -1313,10 +1313,23 @@ El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` 
 | `~path` | `MudPath` | declaraciones y elementos anclados | no, intrínseco |
 | `~anchor` | `Anchor` | declaraciones y elementos anclados | no, intrínseco |
 | `~file` | `MudFile` | elementos con procedencia física | no, intrínseco |
+| `~kind` | familia reflectiva según receptor | declaraciones y descriptores compatibles | no, intrínseco |
+| `~type` | `Type` | todo valor MUD | no, intrínseco |
+| `~metadata` | `Metadata [* unique]` | elementos metadata-bearing | no, intrínseco |
+| `~for` | `Participant [* unique ordered]` | declaraciones con cláusula `for` | no, intrínseco |
+| `~on` | `Participant [* unique ordered]` | declaraciones con cláusula `on` | no, intrínseco |
+| `~given` | `Participant [* unique ordered]` | declaraciones con cláusula `given` | no, intrínseco |
+| `~clauses` | `ClauseKind [* unique]` | declaraciones con cláusulas | no, intrínseco |
 | `~plural` | `Text` | unidades | sí |
 | `~abbreviation` | `Text` | unidades | sí |
 | `~prefixes` | `Prefix [* unique]` | unidades | sí; default `empty` |
 | `~format` | `Text` | magnitudes de punto | sí |
+| `~summary` | `Text` | elementos metadata-bearing compatibles | sí; default `""` |
+| `~description` | `Text` | elementos metadata-bearing compatibles | sí; default `""` |
+| `~deprecated` | `Text [0..1]` | elementos metadata-bearing compatibles | sí; default `empty` |
+| `~private` | `Bool` | categorías admitidas por D-087 | sí; default `false` |
+
+La tabla resume las propiedades comunes y configurables que afectan a la sintaxis de este capítulo. D-087 define además las propiedades reflectivas específicas de cada descriptor, como relaciones de especialización, campos, componentes y propiedades estructurales de colecciones y diccionarios; no se duplican aquí como un segundo catálogo normativo.
 
 `Prefix` es un tipo incorporado. Sus valores SI se escriben como identificadores ordinarios (`kilo`, `milli`, ...), por lo que `~prefixes = [kilo, milli]` no necesita gramática especial.
 

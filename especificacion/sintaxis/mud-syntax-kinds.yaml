@@ -491,7 +491,7 @@ syntax_nodes:
     - identifier
   metadata-name:
     kind: MetadataNameSyntax
-    rhs: identifier
+    rhs: 'identifier | "for" | "on" | "given"'
     references:
     - identifier
   order-key-path:

@@ -207,7 +207,8 @@ StoredFieldDecl(
     collectionMutable,
     name,
     shape,
-    defaultValue?
+    defaultValue?,
+    metadata*
 )
 ```
 
@@ -216,14 +217,14 @@ StoredFieldDecl(
 ### Campo calculado
 
 ```text
-CalculatedFieldDecl(name, shape?, value)
+CalculatedFieldDecl(name, shape?, value, metadata*)
 ```
 
 No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colección a la inferencia. `ExplicitDerivedShape` conserva un `TypeExpr` completo; `InferredDerivedShape` conserva un dominio o colección escritos sin inventar un tipo superficial. La elaboración combina esas restricciones con el tipo inferido.
 
 ### Campos públicos
 
-`PublicFieldDecl` comparte la forma calculada, pero conserva una categoría propia porque pertenece a la interfaz de `look` y `message`.
+`PublicFieldDecl(name, shape?, value, metadata*)` comparte la forma calculada, pero conserva una categoría propia porque pertenece a la interfaz de `look` y `message`.
 
 ## Forma de valor
 
@@ -309,6 +310,7 @@ La CST puede representar `unique unique`; la validación previa al AST lo rechaz
 - Nombre nominal.
 - Secuencia fuente de antecesores directos todavía no resueltos.
 - Definición local opcional.
+- Metadatos del alias en orden fuente.
 
 La definición local es una de:
 
@@ -342,6 +344,7 @@ Los literales estructurales siguen siendo contextuales. `PositionalStructuralLit
 `FamilyDecl` contiene:
 
 - Flag de orden por declaración.
+- Metadatos de la family en orden fuente.
 - Datos almacenados o calculados.
 - Miembros.
 
@@ -401,8 +404,8 @@ No admite predeterminado.
 Hay dos variantes:
 
 ```text
-DirectOnParticipant(name, type, elementsMutable)
-RelatedOnParticipant(name, refinement?, source, elementsMutable)
+DirectOnParticipant(name, type, elementsMutable, metadata*)
+RelatedOnParticipant(name, refinement?, source, elementsMutable, metadata*)
 ```
 
 Las referencias entre participantes, incluidas referencias adelantadas y ciclos, se conservan como expresiones. Su resolución conjunta no pertenece al AST superficial.

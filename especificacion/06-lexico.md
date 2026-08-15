@@ -106,6 +106,8 @@ Son contextuales:
 - `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
 - `Interval` inmediatamente después de una referencia de tipo dentro de `interval-type`.
 
+`for`, `on` y `given` continúan siendo palabras reservadas duras, pero `metadata-name` las admite explícitamente después de `~` para las propiedades reflectivas `~for`, `~on` y `~given`. Esta excepción sintáctica no las convierte en `IDENTIFIER` ni permite usarlas como nombres ordinarios.
+
 Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador no puede usar esta flexibilidad para aceptar una palabra reservada dura como nombre.
 
 `ordered` es una palabra reservada dura tanto delante de `family` como dentro de una especificación de colección. No puede usarse como identificador en ningún otro contexto.
