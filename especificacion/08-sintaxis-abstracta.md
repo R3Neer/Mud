@@ -290,14 +290,15 @@ No se usa una combinación de booleano más ruta opcional porque permitiría est
 
 ### Cardinalidad
 
-Toda colección posee una cardinalidad explícita en el AST:
+`CollectionSpec` conserva la procedencia de la cardinalidad. Si no se escribe ninguna, `cardinalityOrigin = OmittedCardinality`: el AST superficial no sintetiza `[1..1]` ni infiere todavía una cardinalidad efectiva. La elaboración posterior la determina según el propietario y, cuando corresponda, su inicializador.
 
-- Omisión → `[1..1]` sintético.
+Las formas explícitas se normalizan así:
+
 - `[a]` → `[a..a]`.
 - `[*]` → `[*..*]`.
 - `[a..b]` conserva ambos extremos.
 
-Un extremo `*` permanece como `EffectiveCardinality` en el AST superficial. La elaboración posterior aplica su valor efectivo según el lado y el contexto.
+Un extremo `*` escrito permanece como `EffectiveCardinality` en el AST superficial. La elaboración posterior aplica su valor efectivo según el lado y el contexto.
 
 ### Modificadores duplicados
 

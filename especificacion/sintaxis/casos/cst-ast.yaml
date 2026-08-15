@@ -21,9 +21,9 @@ cases:
   category: collection
   source: "thing Counter {\n    value: Nat\n}\n"
   cst_root: MudFileSyntax
-  ast: StoredFieldDecl(value, cardinality=[1..1])
+  ast: StoredFieldDecl(value, cardinalityOrigin=OmittedCardinality)
   normalizations:
-  - omitted-cardinality-to-one
+  - preserve-omitted-cardinality
   produces_ast: true
 - id: cardinality-singleton
   category: collection
