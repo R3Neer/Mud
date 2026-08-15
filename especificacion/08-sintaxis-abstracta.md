@@ -603,7 +603,6 @@ Una plantilla es una secuencia ordenada de:
 
 - `TextFragment` con texto decodificado.
 - `ValueInterpolation`.
-- `AnchorInterpolation`.
 
 El AST no conserva:
 
