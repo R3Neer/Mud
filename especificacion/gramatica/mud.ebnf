@@ -4,6 +4,7 @@
 
 mud-file
     ::= layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ using-file-body | declaration-file-body ]
         , EOF
         ;
@@ -82,6 +83,7 @@ thing-declaration
 
 thing-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ thing-body-declaration
             , { required-separation , thing-body-declaration }
             , [ required-separation ]
@@ -90,12 +92,16 @@ thing-body
         ;
 
 thing-body-declaration
-    ::= metadata-assignment
-      | field-declaration
+    ::= field-declaration
       ;
 
 metadata-assignment
-    ::= "~" , metadata-name , "=" , value-expression ;
+    ::= "~" , metadata-name
+        , ( "=" , constant-expression
+          | ":" , type-expression , [ "=" , constant-expression ]
+          | [ derived-value-shape ] , ":=" , value-expression
+          )
+        ;
 
 alias-declaration
     ::= "alias" , nominal-name
@@ -110,6 +116,7 @@ alias-definition
 
 structural-alias-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ alias-body-declaration
             , { required-separation , alias-body-declaration }
             , [ required-separation ]
@@ -118,8 +125,7 @@ structural-alias-body
         ;
 
 alias-body-declaration
-    ::= metadata-assignment
-      | component-declaration
+    ::= component-declaration
       | calculated-field-declaration
       | inherited-default-override
         ;
@@ -127,6 +133,7 @@ alias-body-declaration
 component-declaration
     ::= component-name , ":" , type-expression
         , [ "=" , constant-expression ]
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
 
 inherited-default-override
@@ -135,6 +142,7 @@ inherited-default-override
 family-declaration
     ::= [ "ordered" ] , "family" , nominal-name
         , "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , { family-data-declaration , required-separation }
         , family-member
         , { "," , declaration-layout , family-member }
@@ -161,6 +169,7 @@ family-member
 
 family-member-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , family-member-entry
         , { required-separation , family-member-entry }
         , [ required-separation ]
@@ -168,8 +177,7 @@ family-member-body
         ;
 
 family-member-entry
-    ::= metadata-assignment
-      | family-data-assignment
+    ::= family-data-assignment
       ;
 
 family-data-assignment
@@ -212,6 +220,7 @@ point-domain
 
 magnitude-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ root-unit-declaration
             , { required-separation , alternative-unit-declaration }
             , [ required-separation ]
@@ -221,6 +230,7 @@ magnitude-body
 
 derived-unit-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ alternative-unit-declaration
             , { required-separation , alternative-unit-declaration }
             , [ required-separation ]
@@ -230,6 +240,7 @@ derived-unit-body
 
 point-magnitude-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ metadata-assignment , [ required-separation ] ]
         , "}"
         ;
@@ -244,8 +255,8 @@ unit-name ::= identifier ;
 
 unit-body
     ::= "{" , declaration-layout
-        , [ unit-property
-            , { required-separation , unit-property }
+        , [ ( unit-property | metadata-assignment )
+            , { required-separation , ( unit-property | metadata-assignment ) }
             , [ required-separation ]
           ]
         , "}"
@@ -286,13 +297,18 @@ field-declaration
 stored-field-declaration
     ::= [ "mut" ] , field-name , ":" , type-expression
         , [ "=" , constant-expression ]
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
 
 calculated-field-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , value-expression ;
+    ::= field-name , [ derived-value-shape ] , ":=" , value-expression
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+        ;
 
 public-field-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , value-expression ;
+    ::= field-name , [ derived-value-shape ] , ":=" , value-expression
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+        ;
 
 derived-value-shape
     ::= ":" , type-expression
@@ -403,13 +419,13 @@ on-clause
     ::= "on" , on-participant , { "," , on-participant } ;
 
 for-participant
-    ::= [ "mut" ] , [ role-name , ":" ] , type-expression
-      ;
+    ::= [ "mut" ] , role-name , { "," , role-name } , ":" , type-expression
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+        ;
 
 on-participant
-    ::= [ role-name , ":" ] , type-reference , [ member-capability ]
-      | role-name , [ ":" , type-reference ]
-        , "in" , expression , [ member-capability ]
+    ::= role-name , { "," , role-name } , ":" , type-reference , [ member-capability ] , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+      | role-name , { "," , role-name } , [ ":" , type-reference ] , "in" , expression , [ member-capability ] , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
       ;
 
 member-capability
@@ -419,9 +435,8 @@ given-clause
     ::= "given" , given-declaration , { "," , given-declaration } ;
 
 given-declaration
-    ::= given-name , ":" , union-type-expression
-        , [ given-collection-specification ]
-        , [ "=" , constant-expression ]
+    ::= given-name , { "," , given-name } , ":" , union-type-expression , [ given-collection-specification ] , [ "=" , constant-expression ]
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
 
 given-collection-specification
@@ -462,6 +477,7 @@ reactive-rule-declaration
     ::= "rule" , nominal-name
         , [ on-clause ]
         , "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , when-clause
         , required-separation
         , [ if-clause , required-separation ]
@@ -479,6 +495,7 @@ always-rule-declaration
 
 invariant-body
     ::= "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , boolean-block
         , [ required-separation ]
         , "}"
@@ -495,6 +512,7 @@ action-signature-body
         , [ for-clause ]
         , [ given-clause ]
         , "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ action-if-clause , required-separation ]
         , then-clause
         , [ required-separation , action-after-clause ]
@@ -506,6 +524,7 @@ look-declaration
     ::= "look" , nominal-name
         , [ for-clause ]
         , "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ public-field-declaration
             , { required-separation , public-field-declaration }
             , [ required-separation ]
@@ -517,6 +536,7 @@ message-declaration
     ::= "message" , nominal-name
         , [ on-clause ]
         , "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , when-clause
         , [ required-separation , if-clause ]
         , [ required-separation , public-field-declaration
@@ -598,6 +618,7 @@ start-contribution-body
 test-declaration
     ::= "test" , nominal-name
         , "{" , declaration-layout
+        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , start-with-declaration
         , required-separation
         , then-clause
@@ -645,7 +666,7 @@ assignment-operator
 
 add-effect
     ::= "add" , expression , "to" , assignable-expression
-      | "add" , stored-field-declaration , "to" , declaration-reference
+      | "add" , [ "mut" ] , field-name , ":" , type-expression , [ "=" , constant-expression ] , "to" , declaration-reference
       ;
 
 remove-effect
@@ -854,6 +875,8 @@ primary-expression
       | point-component-expression
       | quantifier-expression
       | random-expression
+      | "thing" | "alias" | "family" | "magnitude" | "rule"
+      | "action" | "subaction" | "look" | "message" | "test"
       | "(" , expression , ")"
       ;
 

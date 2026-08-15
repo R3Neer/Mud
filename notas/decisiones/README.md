@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 81.
-- Vigentes: 81.
+- Total: 82.
+- Vigentes: 82.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -100,6 +100,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-084 | vigente | 2026-08-04 | [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|Especialización de aliases, miembros heredados y vistas derivadas]] |
 | D-085 | vigente | 2026-08-05 | [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|Diccionarios decisionales, metadatos y activación estructurada]] |
 | D-086 | vigente | 2026-08-05 | [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|Identidad nominal exacta, flechas exteriores y álgebra de diccionarios]] |
+| D-087 | vigente | 2026-08-15 | [[notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|Metadatos reflectivos, descriptores estables y visibilidad exterior]] |
 
 ## Identificadores reservados
 

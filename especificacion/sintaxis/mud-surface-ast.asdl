@@ -50,6 +50,8 @@ module MUDSurface {
     project = MudProject(source_file* files)
 
     source_file = MudFile(file_metadata metadata,
+                          metadata_assignment* metadata_defaults,
+                          metadata_attachment* metadata_attachments,
                           using_decl* usings,
                           top_level_decl* declarations)
         attributes (source_origin origin)
@@ -230,7 +232,11 @@ module MUDSurface {
                                                    expr value)
         attributes (source_origin origin)
 
-    metadata_assignment = MetadataAssignment(metadata_name name, expr value)
+    metadata_assignment = StoredMetadataAssignment(metadata_name name, type_expr? type, expr? value)
+                        | CalculatedMetadataAssignment(metadata_name name, derived_value_shape? shape, expr value)
+        attributes (source_origin origin)
+
+    metadata_attachment = MetadataAttachment(source_span owner_span, metadata_assignment first, metadata_assignment* remaining)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
@@ -326,11 +332,11 @@ module MUDSurface {
         attributes (source_origin origin)
 
     for_participant = ForParticipant(flag collection_mutable,
-                                     role_name? name,
+                                     role_name name,
                                      value_shape shape)
         attributes (source_origin origin)
 
-    on_participant = DirectOnParticipant(role_name? name,
+    on_participant = DirectOnParticipant(role_name name,
                                          type_ref type,
                                          flag elements_mutable)
                    | RelatedOnParticipant(role_name name,
@@ -481,6 +487,7 @@ module MUDSurface {
          | EmptyLiteral
          | AllLiteral
          | FallbackLiteral
+         | DeclarationCategoryExpr(string category)
          | TextTemplateExpr(text_part* parts)
          | CollectionLiteralExpr(expr* elements)
          | PositionalStructuralLiteralExpr(expr first,

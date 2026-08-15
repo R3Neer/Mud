@@ -120,8 +120,8 @@ productions:
   metadata-assignment:
     cst: MetadataAssignmentSyntax
     ast:
-      disposition: constructor
-      target: MetadataAssignment
+      disposition: normalized
+      target: metadata_assignment
   alias-declaration:
     cst: AliasDeclarationSyntax
     ast:

@@ -21,6 +21,7 @@ decisions:
   - D-073
   - D-085
   - D-086
+  - D-087
 ---
 
 # Transformación de CST a AST superficial
@@ -97,7 +98,7 @@ mud-file → MudFile
 using-declaration → UsingDecl
 ```
 
-El cuerpo concreto `using-file-body` o `declaration-file-body` desaparece. La transformación separa la cabecera `using` de las declaraciones.
+El cuerpo concreto `using-file-body` o `declaration-file-body` desaparece. La transformación separa los defaults de metadatos de archivo, la cabecera `using` y las declaraciones; además conserva los `MetadataAttachment` de propietarios subordinados admitidos por D-087.
 
 ```mud
 using physics.*
@@ -138,7 +139,7 @@ produce `ThingDecl`:
 - `abstract` → `Enabled`; omisión → `Disabled`.
 - Nombre → `NominalName`.
 - Antecesores → secuencia de `TypeRef`.
-- Asignaciones `~metadata = expresión` → secuencia de `MetadataAssignment`.
+- Declaraciones `~...` almacenadas o calculadas → secuencia de `metadata_assignment`, normalizada a `StoredMetadataAssignment` o `CalculatedMetadataAssignment`.
 - Cuerpo → metadatos y campos.
 
 `thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. La omisión del cuerpo y un cuerpo explícito vacío producen las mismas secuencias vacías; el terminador se descarta como layout. La forma antigua `name =` se rechaza antes del AST.
@@ -688,3 +689,7 @@ Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 11. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
 12. `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración los especializa según sean colecciones, diccionarios exactos o diccionarios funcionales.
 13. Una operación funcional conserva ambos operandos y nunca se transforma en una lista fusionada de ramas.
+
+## Proyección D-087
+
+`MudFile` conserva defaults y `MetadataAttachment` por span del propietario. Los grupos de participantes producen un nodo por identificador y copian su attachment con `NormalizedSugar`. `start with` y cuerpos de cláusula no reciben attachment.

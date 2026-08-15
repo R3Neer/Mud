@@ -23,6 +23,7 @@ decisions:
   - D-078
   - D-085
   - D-086
+  - D-087
 ---
 
 # 05. Texto fuente y estructura física
@@ -65,8 +66,9 @@ El nombre del archivo no forma parte del path. Un archivo situado directamente e
 
 Un archivo contiene, en este orden:
 
-1. Cero o más declaraciones `using`.
-2. Cero o más declaraciones de primer nivel de cualquier categoría, incluida la declaración global `start with`.
+1. Cero o más defaults almacenados y constantes de metadatos `~...` aplicables al archivo.
+2. Cero o más declaraciones `using`.
+3. Cero o más declaraciones de primer nivel de cualquier categoría, incluida la declaración global `start with`.
 
 El orden físico de archivos no es semántico. Tampoco resuelve duplicidades ni ambigüedades.
 

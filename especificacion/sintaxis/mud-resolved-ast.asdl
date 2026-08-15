@@ -26,14 +26,9 @@ module MUDResolved {
                        | InferredFromInitializer
                        | DerivedFromDecisionBranches
 
-    metadata_kind = NameMetadata
-                  | PathMetadata
-                  | AnchorMetadata
-                  | FileMetadata
-                  | PluralMetadata
-                  | AbbreviationMetadata
-                  | PrefixesMetadata
-                  | FormatMetadata
+    metadata_kind = IntrinsicMetadata(string name)
+                  | NameMetadata | PrivateMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
+                  | PluralMetadata | AbbreviationMetadata | PrefixesMetadata | FormatMetadata
                   | ExtensionMetadata(string name)
 
     resolved_project = ResolvedProject(resolved_decl* declarations,

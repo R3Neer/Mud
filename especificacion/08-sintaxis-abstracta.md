@@ -32,6 +32,7 @@ decisions:
   - D-084
   - D-085
   - D-086
+  - D-087
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -101,6 +102,8 @@ Sus archivos se serializan canónicamente por `relativePath` normalizada. Esa or
 Cada `MudFile` contiene:
 
 - Metadatos físicos.
+- Los defaults de metadatos de archivo en orden fuente.
+- Los `MetadataAttachment` asociados a propietarios subordinados estables.
 - La lista de `using`.
 - La lista de declaraciones de primer nivel.
 
@@ -188,7 +191,7 @@ El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prior
 
 El AST superficial conserva un `Thing` escrito explícitamente en `as`. La resolución posterior lo normaliza como redundancia de la raíz efectiva y el tooling ofrece retirarlo; el formatter no lo elimina silenciosamente.
 
-El cuerpo contiene asignaciones de metadatos y campos. `MetadataAssignment` conserva nombre y expresión sin fabricar una propiedad intrínseca especial. Los metadatos se resuelven y tipan por categoría de propietario; no se convierten en campos ordinarios.
+El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene campos. `metadata_assignment` distingue `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; conserva únicamente información escrita o normalizada sintácticamente, sin fabricar propiedades intrínsecas. Los metadatos se resuelven y tipan por categoría de propietario y no se convierten en campos ordinarios.
 
 ## Campos
 
@@ -392,7 +395,7 @@ Las propiedades duplicadas se rechazan antes de construir el AST. Un cuerpo vac�
 `ForParticipant` contiene:
 
 - Mutabilidad exterior.
-- Nombre opcional.
+- Nombre obligatorio.
 - `ValueShape` completo.
 
 No admite predeterminado.
@@ -402,7 +405,7 @@ No admite predeterminado.
 Hay dos variantes:
 
 ```text
-DirectOnParticipant(name?, type, elementsMutable)
+DirectOnParticipant(name, type, elementsMutable)
 RelatedOnParticipant(name, refinement?, source, elementsMutable)
 ```
 

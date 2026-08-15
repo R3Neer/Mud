@@ -61,6 +61,7 @@ decisions:
   - D-084
   - D-085
   - D-086
+  - D-087
 ---
 
 # 07. Gramática concreta
@@ -138,18 +139,7 @@ destroy Thing  # error estático
 
 `Thing` está siempre efectiva sin aparecer en `start with`, y `all Thing` enumera únicamente las `thing` concretas efectivas, nunca el incorporado abstracto.
 
-Toda `thing` expone metadatos tipados separados de sus campos. `~name: Name` contiene su presentación humana y toma inicialmente el nombre nominal no cualificado, salvo una declaración `~name = expresión`. El identificador fuente, `~path`, `~anchor` y `~file` no cambian al modificar `~name`.
-
-`~name` puede escribirse durante una acción cuando el propietario se recibe con la capacidad necesaria:
-
-```mud
-action Rename for person: Person [mut]
-given newName: Name {
-    then person~name = newName
-}
-```
-
-`~path`, `~anchor` y `~file` son inmutables y no asignables. Los metadatos no son campos ordinarios ni ocupan un nombre reservado del espacio de campos; por tanto puede existir un campo declarado llamado `name` si su sintaxis y tipo son válidos.
+Toda `thing` expone propiedades y metadatos postfix separados de sus campos. `~identifier` conserva el identificador fuente y `~name` es presentación configurable. Todo acceso `~` es de solo lectura durante ejecución; ningún metadato es destino asignable. Los metadatos no son campos ordinarios.
 
 La lista posterior a `as` no expresa prioridad. `create` no acepta aquí ni en ningún otro lugar un cuerpo:
 
@@ -1498,3 +1488,7 @@ Los componentes y campos derivados pertenecen al tipo nominal del alias. Una est
 ```
 
 El contexto de tipo también puede construir el alias sin `to`. El compilador no busca aliases candidatos a partir del nombre del miembro.
+
+## Metadatos reflectivos D-087
+
+Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.

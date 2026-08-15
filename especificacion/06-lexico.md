@@ -28,6 +28,7 @@ decisions:
   - D-082
   - D-085
   - D-086
+  - D-087
 ---
 
 # 06. Estructura léxica
@@ -254,22 +255,7 @@ description = """
 
 ### Plantillas e interpolación
 
-Todo literal `Text`, ordinario o multilínea, es una plantilla. Un fragmento `{...}` abandona temporalmente el modo de texto y contiene una expresión MUD ordinaria. La forma contextual `anchor{...}` contiene un designador de ancla. Ambas vuelven al modo de texto tras su llave de cierre:
-
-```mud
-"Kingdom: {kingdom}"
-"Population: {kingdom.population:6}"
-"Rule: anchor{CanRecruit}"
-```
-
-> [!rule] MUD-LEX-036 — Modos anidados de plantilla
-> El scanner mantiene una pila de modos de texto y código. Las llaves del código interpolado se equilibran normalmente y un literal `Text` dentro de ese código abre un modo de plantilla anidado. Un salto o fin de archivo no puede cerrar implícitamente un texto ordinario mientras quede abierta una interpolación.
-
-Dentro del contenido literal, una `{` abre una interpolación y la secuencia exacta `anchor{` abre una interpolación de ancla. Cualquier llave que deba formar parte del texto se escribe mediante `\{` o `\}`. Una llave cruda que no pueda formar o cerrar el hueco correspondiente es un error.
-
-El escape Unicode `\u{...}` se reconoce como una unidad antes de buscar delimitadores de interpolación.
-
-El scanner entrega al parser `TEXT_START`, `TEXT_FRAGMENT`, `INTERPOLATION_START`, `ANCHOR_INTERPOLATION_START`, `INTERPOLATION_END` y `TEXT_END`. El último puede ser sintético cuando el texto ordinario se cierra ante un salto o el fin de archivo. La forma multilínea usa el mismo flujo de tokens después de aplicar sus reglas de margen y saltos estructurales.
+Todo `Text` es una plantilla. `{...}` contiene una expresión MUD ordinaria, que puede usar accesos postfix `~` como `~anchor`. No existe `anchor{...}`. Las llaves de código interpolado se equilibran y `\{`/`\}` escriben llaves literales. El scanner entrega `TEXT_START`, `TEXT_FRAGMENT`, `INTERPOLATION_START`, `INTERPOLATION_END` y `TEXT_END`.
 
 ## Escapes
 

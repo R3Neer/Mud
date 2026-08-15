@@ -589,7 +589,9 @@ cases:
   source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora [mut] {\n    then person~name = \"Nora\
     \ la Roja\"\n}\n"
   cst_root: MudFileSyntax
-  ast: MetadataAssignment(name) and AssignmentEffect(MetadataAccessExpr(person, name))
+  ast: StoredMetadataAssignment(name, ...) and AssignmentEffect(MetadataAccessExpr(person, name))
+  expected_diagnostics:
+  - metadata-runtime-write
   produces_ast: true
 - id: text-anchor-via-metadata
   category: text
@@ -1822,3 +1824,16 @@ cases:
   normalizations:
   - preserve-membership-exact-type-and-value-equality-distinction
   produces_ast: true
+
+- id: metadata-file-defaults
+  category: metadata
+  source: "~private = true\n\nthing Cache {}\n"
+  cst_root: MudFileSyntax
+  ast: MudFile(metadataDefaults=[private])
+  produces_ast: true
+- id: anonymous-participant-rejected
+  category: validation-before-ast
+  source: "rule Broken for Person { true }\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics: [participant-name-required]
+  produces_ast: false

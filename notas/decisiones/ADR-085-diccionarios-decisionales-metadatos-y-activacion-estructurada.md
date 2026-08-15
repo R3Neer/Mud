@@ -13,6 +13,7 @@ affects:
 # ADR-085 — Diccionarios decisionales, metadatos y activación estructurada
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 
 - Modifica: [[ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-042-acciones-raiz-y-resultados|D-042]], [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[ADR-061-resultados-fallidos-y-plantillas-text|D-061]], [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]], [[ADR-083-magnitudes-base-sin-unidades|D-083]] y [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]].
 - Amplía: [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-052-pipeline-materializadores-y-conformidad|D-052]] y [[ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].

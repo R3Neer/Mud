@@ -19,6 +19,7 @@ decisions:
   - D-078
   - D-085
   - D-086
+  - D-087
 ---
 # 09. Nombres, paths y anclas
 
@@ -186,42 +187,11 @@ Una implementación conforme debe producir los mismos candidatos y anclas, recha
 Las declaraciones `alias` pueden aportar aristas de especialización. El grafo nominal conserva las antecesoras directas escritas y la clausura `is` se calcula durante elaboración. Los miembros heredados mantienen el ancla de su origen; dos miembros independientes con el mismo nombre no se fusionan.
 
 
-## Metadatos nominales y de procedencia
+## Metadatos, descriptores y anclas subordinadas
 
-Los nombres fuente y los metadatos postfix son entidades distintas:
+D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el global continúa sin ancla.
 
-```mud
-thing Alexandria as City {
-    ~name = "Alejandría"
-}
-```
-
-`Alexandria` forma parte de la resolución nominal. `Alexandria~name` es una presentación de tipo `Name`; cambiarla no altera igualdad, path ni ancla. `~path`, `~anchor` y `~file` son valores tipados e inmutables. `~file` puede leerse, pero una dependencia que altere comportamiento del mundo produce una advertencia por fragilidad física.
-
-```mud
-"{Alexandria~name} — {Alexandria~anchor}"
-```
-
-La interpolación usa una expresión ordinaria. `anchor{...}` no pertenece al lenguaje.
-
-## Matriz de metadatos
-
-`~name` identifica presentación; `~path`, `~anchor` y `~file`, procedencia e identidad pública. Una escritura runtime de `~name` requiere capacidad sobre el propietario y participa en la misma transacción atómica que los campos. Los otros tres metadatos nunca son destinos asignables.
-
-Un alias nominal y un miembro de `family` conservan `~name` en estado nominal separado de su payload inmutable o de sus datos asociados:
-
-```mud
-alias PersonId := Nat
-family Color { Red, Green, Blue }
-
-action RenameId for mut id: PersonId {
-    then id~name = "identifier"
-}
-```
-
-El ejemplo expresa el contrato de metadato; no convierte el valor numérico subyacente ni el miembro de familia en mutable.
-
-`~file` puede sostener observabilidad y logging. Cuando entra en un selector, condición, cálculo o efecto que altera comportamiento, el compilador emite `fragile-file-metadata-dependency` sin rechazar el programa.
+Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
 
 ## Anclas de ramas funcionales
 
