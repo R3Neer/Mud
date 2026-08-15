@@ -185,7 +185,6 @@ Los tokens producidos por el scanner modal se conservan:
 - `TEXT_START`.
 - `TEXT_FRAGMENT`.
 - `INTERPOLATION_START`.
-- `ANCHOR_INTERPOLATION_START`.
 - `INTERPOLATION_END`.
 - `TEXT_END`.
 
