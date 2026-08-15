@@ -87,3 +87,7 @@ Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmen
 4. Intervalos abiertos, cerrados, discontinuos y con paso.
 5. Rechazo de una enumeración `Rum` o infinita.
 6. Orden sintáctico `by` antes de `if` y vinculación de pares de diccionario.
+
+## Modificación por D-088
+
+D-088 generaliza `by` a diferencias firmadas compatibles, evaluadas una vez, y distingue filtros ordenados (ven efectos secuenciales anteriores) de no ordenados (leen la instantánea inicial). Los seis cuantificadores/agregadores admiten `by` y bloques de expresión. `Rum` sigue sin ser enumerable y los dominios cíclicos de punto se recorren como máximo durante un periodo fundamental.

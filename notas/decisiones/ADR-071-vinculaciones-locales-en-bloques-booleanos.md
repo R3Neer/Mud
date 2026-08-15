@@ -106,3 +106,7 @@ El diagnóstico `otherwise` pertenece a la construcción propietaria y puede res
 7. Reevaluación temporal de locales usadas por `changes` u `old`.
 8. Locales comunes en `after` de test con una o varias aserciones.
 9. Rechazo de una local posterior a la primera aserción de test.
+
+## Modificación por D-088
+
+La estructura se generaliza a `ExpressionBlock(locals, result)`. Las condiciones mantienen sus contratos booleanos/temporales; selección y cuantificadores/agregadores pueden escribir tras `:` una expresión breve o `{ locales*; resultado }`, con las mismas reglas de pureza, secuencialidad, ámbito y ausencia de referencias adelantadas, ciclos, redeclaración y sombreado.

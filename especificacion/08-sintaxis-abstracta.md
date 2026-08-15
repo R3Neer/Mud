@@ -33,6 +33,7 @@ decisions:
   - D-085
   - D-086
   - D-087
+  - D-088
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -442,17 +443,11 @@ Una regla reactiva almacena:
 
 `changes` es un nodo de expresión, no una variante separada de cláusula `when`.
 
-En una regla `always`, `InvariantBodySyntax` produce exclusivamente el `BooleanBlock`; el `DiagnosticTailSyntax` posterior a la llave de cierre produce el campo `diagnostic` de `AlwaysRuleDecl`. La regla puede omitirlo y el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
+En una regla `always`, `InvariantBodySyntax` produce exclusivamente el `ExpressionBlock`; el `DiagnosticTailSyntax` posterior a la llave de cierre produce el campo `diagnostic` de `AlwaysRuleDecl`. La regla puede omitirlo y el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
 
-## Bloques booleanos
+## Bloques de expresión
 
-Las condiciones de reglas booleanas, `when`, `if`, `always` y `after` se normalizan como:
-
-```text
-BooleanBlock(locals, result)
-```
-
-`locals` conserva en orden las declaraciones con `:=`; `result` es la única expresión final. Debe satisfacer el contrato booleano del propietario o, en `when`, el contrato temporal de activador. La forma breve posee una secuencia local vacía. El `otherwise` asociado no forma parte de `BooleanBlock`, pero su expresión puede resolver los nombres locales declarados por este.
+La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las declaraciones `:=` y `result` la única expresión final. El nodo no fija el tipo del resultado: el propietario aplica su contrato booleano, temporal, agregable u ordenable. La forma breve normaliza a `ExpressionBlock([], expression)`. Las locales son puras, inmutables, secuenciales y sin referencias adelantadas, ciclos, redeclaración ni sombreado. El `otherwise` asociado no forma parte del bloque.
 
 ## Acciones
 
@@ -523,6 +518,10 @@ La forma de un solo elemento permanece como esa expresión, no como una colecci�
 
 `AssignableExpr` conserva una base y sufijos de miembro o índice. La comprobación de que la base designa un lugar escribible pertenece a resolución, tipos y efectos.
 
+### Iteración `for each`
+
+`ForEachEffect(binding, source, step?, filter?, body)` conserva la expresión `by`, el filtro como `ExpressionBlock` y normaliza efecto breve/bloque posterior a `:` a `EffectBlock`. Dirección, paso predeterminado, compatibilidad, orden del filtro y paso cero pertenecen a elaboración.
+
 ## Expresiones
 
 ### Operadores
@@ -548,6 +547,10 @@ se representa mediante `ComparisonChainExpr`, no como asociaciones binarias arbi
 Las comparaciones no encadenables producen una única arista en la cadena o un nodo equivalente validado.
 
 `is not` produce `IsNotRelation`; no se pierde como un `not` exterior porque el estrechamiento nominal necesita reconocer directamente la prueba negativa.
+
+### Selección y cuantificadores
+
+`SelectionExpr(binding, source, step?, predicate)` conserva `step?` y normaliza el predicado a `ExpressionBlock`. `QuantifierExpr(kind, variable, source, step?, body)` hace lo mismo para los seis cuantificadores/agregadores. El AST no decide el contrato de tipo de `body`.
 
 ### Conversiones
 

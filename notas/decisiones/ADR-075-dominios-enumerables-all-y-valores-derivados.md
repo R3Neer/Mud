@@ -80,3 +80,7 @@ Cada transformación es una sugerencia independiente y solo se ofrece cuando con
 5. Inferencia de listas calculadas, multiplicidad y `unique`.
 6. Tres resultados del análisis de dominios derivados.
 7. Sugerencias escalonadas de `to`.
+
+## Modificación por D-088
+
+El paso de un dominio escalonado deja de exigirse positivo. Sigue siendo estático, exacto, compatible y no nulo, pero puede ser firmado. Positivo ancla en el límite inferior y negativo en el superior; un límite inicial abierto avanza una vez antes del primer candidato. El signo puede cambiar la pertenencia, pero no introduce orden en el tipo; `all` usa el orden canónico. `Rum` continúa excluido.

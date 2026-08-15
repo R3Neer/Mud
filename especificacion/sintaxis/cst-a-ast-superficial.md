@@ -339,19 +339,19 @@ El preámbulo metadata-bearing de cada regla, action, subaction, look, message y
 
 ### Regla booleana
 
-El cuerpo se convierte en `BooleanBlock(locals, result)`. La forma sin declaraciones locales produce `locals = []`.
+El cuerpo se convierte en `ExpressionBlock(locals, result)`. La forma sin declaraciones locales produce `locals = []`.
 
 ### Regla reactiva
 
-`when` produce un `BooleanBlock` en `activator`; `if` produce otro en `guard?`; `then` produce `EffectBlock`.
+`when` produce un `ExpressionBlock` en `activator`; `if` produce otro en `guard?`; `then` produce `EffectBlock`.
 
 ### Regla `always`
 
-`InvariantBodySyntax`, encerrado entre llaves, produce un `BooleanBlock`. El `DiagnosticTailSyntax` exterior produce el diagnóstico de `AlwaysRuleDecl`; si está ausente se conserva `diagnostic = absent`. No se inserta aquí el texto predeterminado del warning.
+`InvariantBodySyntax`, encerrado entre llaves, produce un `ExpressionBlock`. El `DiagnosticTailSyntax` exterior produce el diagnóstico de `AlwaysRuleDecl`; si está ausente se conserva `diagnostic = absent`. No se inserta aquí el texto predeterminado del warning.
 
 ### Acción
 
-`if` produce `ActionGuard` con un `BooleanBlock`; `after` produce `ActionPostcondition` con otro.
+`if` produce `ActionGuard` con un `ExpressionBlock`; `after` produce `ActionPostcondition` con otro.
 
 No se clasifica la acción como elemental o compuesta.
 
@@ -361,7 +361,7 @@ Las propiedades públicas se convierten a `PublicFieldDecl` y conservan su orden
 
 ## Bloques booleanos y tests
 
-Una forma breve como `if ready` produce `BooleanBlock([], ready)`. Una forma entre llaves recoge todas las declaraciones locales `:=` iniciales y exige una única expresión final. El `otherwise` asociado queda fuera del bloque AST, pero la resolución posterior extiende hasta él el entorno de esos locales.
+Una forma breve como `if ready` produce `ExpressionBlock([], ready)`. Una forma entre llaves recoge todas las declaraciones locales `:=` iniciales y exige una única expresión final. El `otherwise` asociado queda fuera del bloque AST, pero la resolución posterior extiende hasta él el entorno de esos locales.
 
 En tests, `after expr` produce `TestAfterBlock([], [TestAssertion(expr)])`. La forma entre llaves produce `TestAfterBlock(locals, assertions)`; los locales solo pueden aparecer antes de la primera aserción.
 
@@ -411,7 +411,7 @@ La alternativa con declaración de campo produce `AddFieldEffect`. La declaraci�
 
 ### Iteración
 
-La vinculación simple produce `ValueIterationBinding`. La pareja entre paréntesis produce `DictionaryIterationBinding`.
+La vinculación simple produce `ValueIterationBinding`. La pareja entre paréntesis produce `DictionaryIterationBinding`. `for each` conserva `by` como `step?`, normaliza `if` a `ExpressionBlock` y convierte tanto el efecto breve como el bloque tras `:` en `EffectBlock`. Dirección, compatibilidad y paso cero pertenecen a fases posteriores.
 
 ## Expresiones
 
@@ -443,7 +443,9 @@ La presencia del sufijo produce `ChangesExpr(operand)`.
 
 ### Selección y `take`
 
-`binding in source: predicate` produce `SelectionExpr(binding, source, predicate)`. La vinculación simple o de diccionario reutiliza respectivamente `ValueIterationBinding` o `DictionaryIterationBinding`; su alcance queda limitado al predicado.
+`binding in source [by step]: predicate` produce `SelectionExpr(binding, source, step?, predicate)`. La vinculación simple o de diccionario reutiliza `ValueIterationBinding` o `DictionaryIterationBinding`; su alcance queda limitado al predicado. La forma breve y `{ locales*; resultado }` convergen en `ExpressionBlock`.
+
+Los cuantificadores/agregadores producen `QuantifierExpr(kind, variable, source, step?, body)`, con `body` como `ExpressionBlock`. La transformación no decide contrato de tipo ni admisibilidad de la progresión.
 
 `take amount from source` produce `TakeExpr(amount, source)`. La forma del nodo no decide si la selección será un prefijo ordenado o una muestra reproducible: esa distinción depende del tipo y del orden resueltos de `source`.
 

@@ -59,3 +59,7 @@ No se admiten intervalos abiertos ni intervalos anidados como cardinalidad.
 3. Rechazo de `cycle` en magnitudes no puntuales.
 4. Rechazo de `cycle` tras intervalos cerrados, abiertos a la izquierda, infinitos, vacíos o degenerados.
 5. Conservación de las formas de cardinalidad `[1]`, `[1..3]` y `[1..3 mut]`.
+
+## Modificación por D-088
+
+Un dominio cíclico de punto puede alimentar una progresión exacta mediante diferencia compatible. La enumeración cubre un único periodo fundamental y nunca repite el ciclo indefinidamente. El signo y los límites se aplican al intervalo fundamental `[a..b)`.

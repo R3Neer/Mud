@@ -108,3 +108,7 @@ La recuperación concreta no forma parte del lenguaje aceptado. Una implementaci
 8. Elaboración de intervalos con unidad compartida frente a unidades locales.
 9. Rechazo sintáctico de capacidad interior `mut` en `given`.
 10. Dominio situado entre el tipo y la colección de un rol `for`.
+
+## Modificación por D-088
+
+`:` es separador obligatorio en toda construcción que lo usa para introducir un cuerpo subordinado; las llaves no lo sustituyen. `for each` pasa a escribir siempre `:` antes de su efecto o bloque. Selecciones y cuantificadores conservan `:` también con `{ ... }`. La gramática añade `by` opcional a selección/cuantificadores y generaliza `boolean-block` a `expression-block`.

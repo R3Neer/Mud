@@ -166,3 +166,7 @@ Se admiten ampliaciones implícitas únicas, como `Nat` hacia `Int`. No se elimi
 ## Modificación por D-084
 
 Una selección usada para definir un campo derivado puede alimentar una colección `[mut]` aunque la fuente no conceda capacidad interior. La declaración de la vista concede esa autoridad. La lista seleccionada permanece estable durante la instantánea y se recalcula tras consolidar efectos.
+
+## Modificación por D-088
+
+La selección pura admite `item in source by step: predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.
