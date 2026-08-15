@@ -10,7 +10,7 @@ questions:
   - "Q-028"
   - "Q-029"
 affects:
-  - "for each, filtros, cuantificadores, selección, dominios escalonados, intervalos, magnitudes, bloques de expresión, gramática, CST y AST"
+  - "for each, filtros, cuantificadores, selección, dominios escalonados, intervalos, magnitudes, bloques de expresión, resolución de nombres, gramática, CST y AST"
 ---
 
 # ADR-088 — Iteración, progresiones firmadas y bloques de expresión
@@ -28,9 +28,9 @@ MUD ya dispone de `for each`, cuantificadores, selección pura y dominios escalo
 `for each` acepta cualquier fuente cuya finitud y enumerabilidad puedan demostrarse: colecciones, diccionarios exactos, intervalos enumerables, dominios finitos enumerables y cualquier otro valor con enumeración canónica definida. Un intervalo sigue siendo un intervalo; poder enumerarlo no lo convierte en colección.
 
 ```mud
-action Accumulate for mut total: Int {
-    then for each i in [1..10]:
-        total += i
+action Accumulate for values: Int [* ordered], mut total: Int {
+    then for each value in values:
+        total += value
 }
 ```
 
@@ -41,9 +41,9 @@ La pertenencia de la fuente se captura al comenzar el bucle. Un intervalo vacío
 Cuando una construcción usa `:` para separar una cabecera de un cuerpo subordinado, las llaves pertenecen al cuerpo posterior y nunca sustituyen al separador.
 
 ```mud
-action AccumulateDoubled for mut total: Int {
-    then for each i in [1..10]: {
-        doubled := i * 2
+action AccumulateDoubled for values: Int [* ordered], mut total: Int {
+    then for each value in values: {
+        doubled := value * 2
         total += doubled
     }
 }
@@ -58,6 +58,15 @@ Selecciones y cuantificadores/agregadores conservan igualmente su `:` obligatori
 Se generaliza el antiguo `BooleanBlock` a `ExpressionBlock(locals, result)`. La estructura no decide el tipo de `result`; lo hace su propietario. Reglas booleanas, guardas `if`, reglas `always`, postcondiciones `after` de acciones, selección, `exists`, `forall` y `count` aplican su contrato booleano; `when` exige un activador admitido; `sum` un valor agregable; `min` y `max` un valor ordenable. El `after` de test conserva su estructura propia de varias aserciones.
 
 Las locales son puras, inmutables, secuenciales y no admiten referencias adelantadas, ciclos, redeclaración ni sombreado.
+
+
+## Ámbitos de iteración y bloques de expresión
+
+`source` y el `by` opcional se resuelven en el entorno exterior, antes de introducir la vinculación de iteración. Por tanto, la variable iterada —o la pareja `(key, value)`— no es visible dentro de `source` ni de `by`.
+
+En `for each`, la vinculación de iteración sí es visible en el filtro `if` y en el cuerpo ejecutable. Si el filtro usa un `ExpressionBlock`, sus locales son visibles únicamente en las locales posteriores y en la expresión final del propio filtro; desaparecen antes de entrar en el cuerpo de efectos.
+
+En selección y cuantificadores/agregadores, la vinculación introducida es visible en las locales y en la expresión final de su `ExpressionBlock`, pero no fuera de él. Cada local se vuelve visible después de su propia declaración, de modo que puede ser usada por locales posteriores y por el resultado final, nunca por su inicializador ni por declaraciones anteriores.
 
 ## Filtro de `for each`
 
@@ -77,15 +86,15 @@ La compatibilidad se determina por la operación de avance y por las conversione
 Un paso positivo se ancla en el límite inferior; uno negativo, en el superior. Si el límite inicial es abierto, se aplica una vez el paso antes de comprobar el primer candidato. Tras cada valor emitido se suma el paso y el recorrido termina antes del primer candidato exterior. No es necesario alcanzar exactamente el extremo opuesto.
 
 ```mud
-action Forward for mut total: Int {
-    then for each i in [1..8] by 2:
-        total += i
+action Forward for mut total: Num {
+    then for each value in [1..8] by 2:
+        total += value
 }
 # recorrido: 1, 3, 5, 7
 
-action Backward for mut total: Int {
-    then for each i in [1..8] by -3:
-        total += i
+action Backward for mut total: Num {
+    then for each value in [1..8] by -3:
+        total += value
 }
 # recorrido: 8, 5, 2
 ```
@@ -98,7 +107,7 @@ Si un paso runtime es demostrablemente cero, existe error estático. Si no puede
 
 ## Pasos predeterminados
 
-Una fuente que ya posee enumeración propia —por ejemplo una colección ordenada, un diccionario exacto o un dominio nominal finito— no necesita `by` para recorrerse. Los pasos predeterminados solo intervienen cuando la enumeración se construye como progresión. En esas fuentes puede omitirse `by` únicamente cuando el tipo recorrido define una diferencia sucesora canónica. MUD fija `Nat -> 1`, `Int -> 1` y `Money -> 0.01`; omitir `by` selecciona siempre esa diferencia positiva. Otros tipos de progresión exacta requieren paso explícito salvo decisión que defina un sucesor canónico.
+Una fuente que ya posee enumeración propia —por ejemplo una colección, un diccionario exacto o un dominio nominal finito— no necesita `by` para recorrerse. Los pasos predeterminados solo intervienen cuando la enumeración se construye como progresión. En una fuente cuya enumeración se construye como progresión puede omitirse `by` únicamente cuando el tipo recorrido define una diferencia sucesora canónica. MUD fija `Nat -> 1`, `Int -> 1` y `Money -> 0.01`; omitir `by` selecciona siempre esa diferencia positiva. Otros tipos de progresión exacta requieren paso explícito salvo decisión que defina un sucesor canónico.
 
 `Num` admite progresión con paso exacto explícito, pero un intervalo general de `Num` sin paso es inválido. `Rum` conserva la prohibición de D-034: sus intervalos nunca son enumerables y no admiten progresión `by`, ni en iteración ni en dominio escalonado. Una colección explícita de valores `Rum` sí puede enumerarse sin `by` porque su enumeración procede de la colección, no de una progresión numérica.
 

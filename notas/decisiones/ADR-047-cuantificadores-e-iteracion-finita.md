@@ -52,13 +52,11 @@ Comparte la obligación de finitud y enumerabilidad, pero produce la subcolecci�
 `for each` aparece dentro de un `then`:
 
 ```mud
-for each item in source if predicate: {
-    ...
-}
+for each item in source if predicate:
+    iterations += 1
 
-for each value in source by step if predicate: {
-    ...
-}
+for each value in source by step if predicate:
+    iterations += 1
 ```
 
 La cláusula `by` opcional precede siempre a `if`. Un diccionario puede vincular un par mediante `(key, value)`.

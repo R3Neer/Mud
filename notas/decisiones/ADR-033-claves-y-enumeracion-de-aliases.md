@@ -63,12 +63,15 @@ alias Coordinate {
 Este alias tiene $8\cdot 8=64$ valores y puede usarse como fuente:
 
 ```mud
-for each coordinate in Coordinate: {
-    ...
+action VisitCoordinates for mut visits: Nat {
+    then for each coordinate in Coordinate:
+        visits += 1
 }
 
-exists destination in Coordinate:
-    ...
+rule HasLeftEdge {
+    exists destination in Coordinate:
+        destination.horizontal == 0
+}
 ```
 
 Si algún componente carece de dominio finito y enumerable, el alias sigue siendo un tipo válido, pero su dominio completo no puede recorrerse ni cuantificarse exhaustivamente.

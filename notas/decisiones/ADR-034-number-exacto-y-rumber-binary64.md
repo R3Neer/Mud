@@ -191,7 +191,10 @@ value: Rum in [r0..r1]
 No es enumerable. Por tanto, no puede ser fuente de `for each` ni de otra construcción que requiera enumeración exhaustiva:
 
 ```mud
-for each value in [r0..r1] by r0.1: {}
+action InvalidRumIteration for mut total: Rum {
+    then for each value in [r0..r1] by r0.1:
+        total += value
+}
 ```
 
 Ese bucle es inválido. La prohibición evita que la acumulación aproximada defina pertenencia, orden de recorrido o terminación.
