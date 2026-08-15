@@ -72,14 +72,85 @@ jobs:
             throw 'unexpected change surface'
           }
 
-      - name: Run D087 coherence audit
+      - name: Run coherence assertions
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           Push-Location Mud
           try {
-            python ../control/.chatgpt/audit-d087.py
-            if ($LASTEXITCODE -ne 0) { throw 'D087 coherence assertions failed' }
+            @'
+          from pathlib import Path
+          import re
+
+          def read(path):
+              return Path(path).read_text(encoding="utf-8")
+
+          def require(path, needle):
+              if needle not in read(path):
+                  raise SystemExit(f"MISSING in {path}: {needle}")
+
+          def forbid(path, needle):
+              if needle in read(path):
+                  raise SystemExit(f"FORBIDDEN in {path}: {needle}")
+
+          grammar = "especificacion/gramatica/mud.ebnf"
+          require(grammar, 'metadata-name     ::= identifier | "for" | "on" | "given" ;')
+          require(grammar, 'assignable-expression\n    ::= primary-expression , { member-access | index-access } ;')
+          forbid(grammar, "unit-property")
+          forbid(grammar, "prefix-selection")
+
+          surface = "especificacion/sintaxis/mud-surface-ast.asdl"
+          for stale in ("MetadataAttachment", "metadata_attachment", "UnitProperties", "unit_properties", "PrefixPolicy", "prefix_policy", "MetadataSuffix"):
+              forbid(surface, stale)
+          require(surface, "metadata_assignment* metadata_defaults")
+          require(surface, "cardinality_origin = WrittenCardinality | OmittedCardinality")
+          require(surface, "RootUnitDecl(identifier_name name,")
+          require(surface, "metadata_assignment* metadata)")
+
+          resolved = "especificacion/sintaxis/mud-resolved-ast.asdl"
+          forbid(resolved, "WritesMetadata")
+          require(resolved, "ReadsMetadata")
+
+          kinds = "especificacion/sintaxis/mud-syntax-kinds.yaml"
+          require(kinds, 'rhs: primary-expression , { member-access | index-access }')
+          require(kinds, 'member-access | metadata-access | index-access | call-arguments')
+          forbid(kinds, "  unit-property:")
+
+          projection = "especificacion/sintaxis/cst-a-ast-superficial.md"
+          require(projection, "ambas formas producen un `CollectionSpec` con `OmittedCardinality`")
+          require(projection, "Las unidades no tienen una normalización `UnitProperties` separada.")
+          require(projection, "Toda interpolación produce `ValueInterpolation`; `anchor{...}` no pertenece al lenguaje.")
+
+          cases = "especificacion/sintaxis/casos/cst-ast.yaml"
+          require(cases, '- id: metadata-access-and-assignment\n  category: validation-before-ast')
+          require(cases, "metadata-runtime-write")
+          require(cases, "metadata-clause-properties-use-hard-keywords")
+          require(cases, "StoredMetadataAssignment(prefixes, AllLiteral)")
+          require(cases, '- id: cardinality-omitted\n  category: collection')
+          require(cases, 'ast: StoredFieldDecl(value, cardinalityOrigin=OmittedCardinality)')
+          forbid(cases, "omitted-cardinality-to-one")
+
+          abstract = "especificacion/08-sintaxis-abstracta.md"
+          require(abstract, "`cardinalityOrigin = OmittedCardinality`")
+          forbid(abstract, "Omisión → `[1..1]` sintético.")
+          require(abstract, "No existe `UnitProperties` ni `PrefixPolicy`")
+
+          concrete = "especificacion/07-gramatica-concreta.md"
+          require(concrete, "Todo participante `for`, `on` y `given` tiene identificador explícito.")
+          require(concrete, "Todo acceso `~` es runtime-readonly")
+          require(concrete, '| `~for` | `Participant [* unique ordered]`')
+
+          names = "especificacion/09-nombres-y-anclas.md"
+          require(names, "entidad semántica persistente a la que la especificación asigna identidad pública")
+          require(names, "Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada")
+
+          adr87 = "notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md"
+          require(adr87, "Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime.")
+          require(adr87, "~prefixes     : Prefix [* unique] = empty")
+
+          print("COHERENCE_ASSERTIONS_OK")
+          '@ | python -
+            if ($LASTEXITCODE -ne 0) { throw 'coherence assertions failed' }
           }
           finally { Pop-Location }
 
