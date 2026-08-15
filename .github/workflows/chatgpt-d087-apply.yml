@@ -1,4 +1,4 @@
-name: ChatGPT cardinality coherence fix
+name: ChatGPT final metadata audit
 
 on:
   push:
@@ -6,81 +6,76 @@ on:
       - chatgpt-d087-apply
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  apply:
-    name: Fix omitted cardinality coherence
+  audit:
+    name: Audit final main after metadata integration
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout control branch
+      - name: Checkout final main
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.sha }}
-          fetch-depth: 1
-          persist-credentials: false
-          path: control
-
-      - name: Checkout exact main
-        uses: actions/checkout@v6
-        with:
-          ref: e283529dd46cd90513dd760b6dc4b91e95cf7b93
+          ref: 100c7d5aaacea364de07d4f00edfc7fed4dc5501
           fetch-depth: 0
-          persist-credentials: true
-          path: Mud
+          persist-credentials: false
 
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
-      - name: Verify exact base
+      - name: Verify identity and exact diff surface
         shell: pwsh
         env:
-          EXPECTED_HEAD: e283529dd46cd90513dd760b6dc4b91e95cf7b93
+          BASE: 003cad1dbf70183ad77f798721535300d0536fa0
+          HEAD_SHA: 100c7d5aaacea364de07d4f00edfc7fed4dc5501
         run: |
           $ErrorActionPreference = 'Stop'
-          git -C Mud fetch origin main
-          $remote = (git -C Mud rev-parse origin/main).Trim()
-          $local = (git -C Mud rev-parse HEAD).Trim()
-          if ($remote -ne $env:EXPECTED_HEAD) { throw "main moved: expected $env:EXPECTED_HEAD, found $remote" }
-          if ($local -ne $env:EXPECTED_HEAD) { throw "checkout mismatch: expected $env:EXPECTED_HEAD, found $local" }
-
-      - name: Apply cardinality coherence correction
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          Push-Location Mud
-          try {
-            python ../control/.chatgpt/fix-cardinality.py
-            if ($LASTEXITCODE -ne 0) { throw 'cardinality correction failed' }
-          }
-          finally { Pop-Location }
-
-      - name: Verify exact change surface
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $actual = @(git -C Mud status --porcelain=v1 --untracked-files=all)
+          $actualHead = (git rev-parse HEAD).Trim()
+          if ($actualHead -ne $env:HEAD_SHA) { throw "HEAD mismatch: $actualHead" }
+          $mergeBase = (git merge-base $env:BASE $env:HEAD_SHA).Trim()
+          if ($mergeBase -ne $env:BASE) { throw "base is not ancestor: $mergeBase" }
+          $count = [int](git rev-list --count "$env:BASE..$env:HEAD_SHA")
+          if ($count -ne 5) { throw "expected 5 commits after base, found $count" }
+          $actual = @(git diff --name-only "$env:BASE..$env:HEAD_SHA")
           $expected = @(
-            ' M especificacion/08-sintaxis-abstracta.md',
-            ' M especificacion/sintaxis/casos/cst-ast.yaml'
+            'especificacion/05-texto-fuente.md',
+            'especificacion/06-lexico.md',
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/09-nombres-y-anclas.md',
+            'especificacion/gramatica/mud-lexico.ebnf',
+            'especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/mud-resolved-ast.asdl',
+            'especificacion/sintaxis/mud-surface-ast.asdl',
+            'especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md',
+            'notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md',
+            'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md',
+            'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
+            'notas/decisiones/README.md'
           )
           if (($actual -join "`n") -ne ($expected -join "`n")) {
-            Write-Host 'Actual status:'
+            Write-Host 'Actual diff surface:'
             $actual | ForEach-Object { Write-Host $_ }
-            throw 'unexpected change surface'
+            throw 'unexpected final diff surface'
           }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'checkout not clean before audit' }
+          git diff --check "$env:BASE..$env:HEAD_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'final diff --check failed' }
 
-      - name: Run coherence assertions
+      - name: Audit accepted language invariants
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          Push-Location Mud
-          try {
-            @'
+          @'
           from pathlib import Path
           import re
+          import yaml
 
           def read(path):
               return Path(path).read_text(encoding="utf-8")
@@ -93,98 +88,146 @@ jobs:
               if needle in read(path):
                   raise SystemExit(f"FORBIDDEN in {path}: {needle}")
 
+          def require_re(path, pattern):
+              if not re.search(pattern, read(path), re.M | re.S):
+                  raise SystemExit(f"MISSING REGEX in {path}: {pattern}")
+
           grammar = "especificacion/gramatica/mud.ebnf"
           require(grammar, 'metadata-name     ::= identifier | "for" | "on" | "given" ;')
+          require(grammar, 'metadata-assignment\n    ::= "~" , metadata-name')
           require(grammar, 'assignable-expression\n    ::= primary-expression , { member-access | index-access } ;')
-          forbid(grammar, "unit-property")
-          forbid(grammar, "prefix-selection")
+          require(grammar, 'postfix-expression\n    ::= primary-expression\n        , { member-access | metadata-access | index-access | call-arguments }')
+          for stale in ("unit-property", "prefix-selection"):
+              forbid(grammar, stale)
+          require_re(grammar, r'for-participant\s*::= \[ "mut" \] , role-name , \{ "," , role-name \} , ":" , type-expression.*?metadata-assignment')
+          require_re(grammar, r'on-participant\s*::=.*?role-name.*?metadata-assignment')
+          require_re(grammar, r'given-declaration\s*::= given-name.*?metadata-assignment')
+          require_re(grammar, r'global-start-declaration\s*::= start-with-declaration')
+          forbid(grammar, 'global-start-declaration\n    ::= metadata-assignment')
+
+          lex = "especificacion/06-lexico.md"
+          require(lex, '`for`, `on` y `given` continúan siendo palabras reservadas duras')
+          require(lex, '`Prefix` es un tipo incorporado')
+          require(lex, 'No existe `anchor{...}`')
+
+          concrete = "especificacion/07-gramatica-concreta.md"
+          require(concrete, 'Todo participante `for`, `on` y `given` tiene identificador explícito.')
+          forbid(concrete, 'El nombre de un participante puede omitirse')
+          require(concrete, 'Todo acceso `~` es runtime-readonly')
+          require(concrete, '| `~for` | `Participant [* unique ordered]`')
+          require(concrete, '| `~on` | `Participant [* unique ordered]`')
+          require(concrete, '| `~given` | `Participant [* unique ordered]`')
+          require(concrete, '| `~clauses` | `ClauseKind [* unique]`')
+          require(concrete, '| `~private` | `Bool`')
+          require(concrete, '`~prefixes: Prefix [* unique] = empty`')
+          require(concrete, 'no existe `unit-property`')
+          require(concrete, '`anchor{...}` no pertenece al lenguaje')
+
+          abstract = "especificacion/08-sintaxis-abstracta.md"
+          require(abstract, 'metadata_assignment* metadata')
+          require(abstract, 'no en una tabla lateral por `SourceSpan`')
+          require(abstract, 'No existe `UnitProperties` ni `PrefixPolicy`')
+          require(abstract, '`cardinalityOrigin = OmittedCardinality`')
+          forbid(abstract, 'Omisión → `[1..1]` sintético.')
+
+          names = "especificacion/09-nombres-y-anclas.md"
+          require(names, 'entidad semántica persistente a la que la especificación asigna identidad pública')
+          require(names, 'Participantes `for`, `on` y `given` son símbolos léxicos con ancla subordinada estable')
+          require(names, 'Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada')
+          require(names, 'La posición no forma parte de la identidad.')
+          require(names, '`Prefix` participa en el último nivel como tipo incorporado.')
 
           surface = "especificacion/sintaxis/mud-surface-ast.asdl"
           for stale in ("MetadataAttachment", "metadata_attachment", "UnitProperties", "unit_properties", "PrefixPolicy", "prefix_policy", "MetadataSuffix"):
               forbid(surface, stale)
-          require(surface, "metadata_assignment* metadata_defaults")
-          require(surface, "cardinality_origin = WrittenCardinality | OmittedCardinality")
-          require(surface, "RootUnitDecl(identifier_name name,")
-          require(surface, "metadata_assignment* metadata)")
+          require(surface, 'metadata_assignment* metadata_defaults')
+          require(surface, 'metadata_assignment = StoredMetadataAssignment')
+          require(surface, '| CalculatedMetadataAssignment')
+          require(surface, 'cardinality_origin = WrittenCardinality | OmittedCardinality')
+          require(surface, 'ForParticipant(flag collection_mutable,')
+          require(surface, 'DirectOnParticipant(role_name name,')
+          require(surface, 'GivenDecl(given_name name,')
+          require(surface, 'RootUnitDecl(identifier_name name,')
+          require(surface, 'AlternativeUnitDecl(identifier_name name,')
+          require(surface, 'access_suffix = MemberSuffix(identifier_name member)\n                  | IndexSuffix')
 
           resolved = "especificacion/sintaxis/mud-resolved-ast.asdl"
-          forbid(resolved, "WritesMetadata")
-          require(resolved, "ReadsMetadata")
+          require(resolved, 'metadata_evaluation = StoredMetadata | CalculatedMetadata')
+          require(resolved, 'ReadsMetadata')
+          forbid(resolved, 'WritesMetadata')
+          require(resolved, 'AnchoredSymbol')
 
           kinds = "especificacion/sintaxis/mud-syntax-kinds.yaml"
+          require(kinds, "rhs: 'identifier | \"for\" | \"on\" | \"given\"'")
           require(kinds, 'rhs: primary-expression , { member-access | index-access }')
           require(kinds, 'member-access | metadata-access | index-access | call-arguments')
-          forbid(kinds, "  unit-property:")
+          forbid(kinds, '  unit-property:')
+
+          coverage_path = "especificacion/sintaxis/cobertura-sintactica.yaml"
+          coverage = yaml.safe_load(read(coverage_path))
+          meta = coverage['productions']['metadata-assignment']['ast']
+          if meta.get('disposition') != 'normalized' or meta.get('target') != 'metadata_assignment':
+              raise SystemExit(f"bad metadata coverage: {meta}")
+          assign = coverage['productions']['assignable-expression']['ast']
+          if assign.get('target') != 'AssignableExpr':
+              raise SystemExit(f"bad assignable coverage: {assign}")
 
           projection = "especificacion/sintaxis/cst-a-ast-superficial.md"
-          require(projection, "ambas formas producen un `CollectionSpec` con `OmittedCardinality`")
-          require(projection, "Las unidades no tienen una normalización `UnitProperties` separada.")
-          require(projection, "Toda interpolación produce `ValueInterpolation`; `anchor{...}` no pertenece al lenguaje.")
+          require(projection, 'ningún acceso `~` forma parte de un objetivo asignable runtime')
+          require(projection, 'Las unidades no tienen una normalización `UnitProperties` separada.')
+          require(projection, 'no existe `UnitProperties`, `PrefixPolicy` ni `MetadataAttachment` lateral')
+          require(projection, 'ambas formas producen un `CollectionSpec` con `OmittedCardinality`')
+          require(projection, 'Toda interpolación produce `ValueInterpolation`; `anchor{...}` no pertenece al lenguaje.')
 
-          cases = "especificacion/sintaxis/casos/cst-ast.yaml"
-          require(cases, '- id: metadata-access-and-assignment\n  category: validation-before-ast')
-          require(cases, "metadata-runtime-write")
-          require(cases, "metadata-clause-properties-use-hard-keywords")
-          require(cases, "StoredMetadataAssignment(prefixes, AllLiteral)")
-          require(cases, '- id: cardinality-omitted\n  category: collection')
-          require(cases, 'ast: StoredFieldDecl(value, cardinalityOrigin=OmittedCardinality)')
-          forbid(cases, "omitted-cardinality-to-one")
-
-          abstract = "especificacion/08-sintaxis-abstracta.md"
-          require(abstract, "`cardinalityOrigin = OmittedCardinality`")
-          forbid(abstract, "Omisión → `[1..1]` sintético.")
-          require(abstract, "No existe `UnitProperties` ni `PrefixPolicy`")
-
-          concrete = "especificacion/07-gramatica-concreta.md"
-          require(concrete, "Todo participante `for`, `on` y `given` tiene identificador explícito.")
-          require(concrete, "Todo acceso `~` es runtime-readonly")
-          require(concrete, '| `~for` | `Participant [* unique ordered]`')
-
-          names = "especificacion/09-nombres-y-anclas.md"
-          require(names, "entidad semántica persistente a la que la especificación asigna identidad pública")
-          require(names, "Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada")
+          cases_path = "especificacion/sintaxis/casos/cst-ast.yaml"
+          cases_doc = yaml.safe_load(read(cases_path))
+          cases = {case['id']: case for case in cases_doc['cases']}
+          mwrite = cases['metadata-access-and-assignment']
+          if mwrite.get('category') != 'validation-before-ast' or mwrite.get('produces_ast') is not False or 'metadata-runtime-write' not in mwrite.get('expected_diagnostics', []):
+              raise SystemExit(f"bad metadata write case: {mwrite}")
+          comit = cases['cardinality-omitted']
+          if 'OmittedCardinality' not in comit.get('ast', '') or 'preserve-omitted-cardinality' not in comit.get('normalizations', []):
+              raise SystemExit(f"bad omitted cardinality case: {comit}")
+          if 'omitted-cardinality-to-one' in read(cases_path):
+              raise SystemExit('stale omitted-cardinality-to-one remains')
+          require(cases_path, 'metadata-clause-properties-use-hard-keywords')
+          require(cases_path, 'StoredMetadataAssignment(prefixes, AllLiteral)')
+          require(cases_path, 'legacy-anchor-interpolation-rejected')
 
           adr87 = "notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md"
-          require(adr87, "Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime.")
-          require(adr87, "~prefixes     : Prefix [* unique] = empty")
+          require(adr87, 'Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime.')
+          require(adr87, 'Todo participante `for`, `on` y `given` debe tener identificador fuente explícito.')
+          require(adr87, '~prefixes     : Prefix [* unique] = empty')
+          require(adr87, 'El catálogo completo de miembros de `TypeKind` pertenece a la especificación del sistema de tipos')
+          require(adr87, 'La declaración global `start with` continúa sin nombre y sin ancla pública, por lo que no admite metadatos.')
 
-          print("COHERENCE_ASSERTIONS_OK")
+          adr76 = "notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md"
+          require(adr76, '`Prefix` es un tipo nominal incorporado.')
+          require(adr76, 'Ninguna de estas propiedades usa una producción sintáctica especial de unidad.')
+
+          adr85 = "notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md"
+          require(adr85, 'La AST superficial conserva que la cardinalidad fue omitida')
+
+          index = "notas/decisiones/README.md"
+          require(index, '| D-087 | vigente | 2026-08-15 |')
+
+          print('FINAL_METADATA_AUDIT_OK')
           '@ | python -
-            if ($LASTEXITCODE -ne 0) { throw 'coherence assertions failed' }
-          }
-          finally { Pop-Location }
+          if ($LASTEXITCODE -ne 0) { throw 'final invariant audit failed' }
 
       - name: Run repository validators
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
-          python Mud/tooling/decisions/manage_decisions.py validate
+          python tooling/decisions/manage_decisions.py validate
           if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
-          python Mud/tooling/questions/validate_questions.py
+          python tooling/questions/validate_questions.py
           if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
-          python Mud/especificacion/gramatica/validate_grammar.py
+          python especificacion/gramatica/validate_grammar.py
           if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
-          python Mud/especificacion/sintaxis/validate_syntax_model.py
+          python especificacion/sintaxis/validate_syntax_model.py
           if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
-          git -C Mud diff --check
-          if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
-
-      - name: Commit and fast-forward main
-        shell: pwsh
-        env:
-          EXPECTED_HEAD: e283529dd46cd90513dd760b6dc4b91e95cf7b93
-        run: |
-          $ErrorActionPreference = 'Stop'
-          git -C Mud config user.name "ChatGPT"
-          git -C Mud config user.email "chatgpt@users.noreply.github.com"
-          git -C Mud add -- especificacion/08-sintaxis-abstracta.md especificacion/sintaxis/casos/cst-ast.yaml
-          git -C Mud diff --cached --check
-          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
-          git -C Mud commit -m "fix(syntax): conserva cardinalidad omitida en AST"
-          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
-          git -C Mud fetch origin main
-          $remote = (git -C Mud rev-parse origin/main).Trim()
-          if ($remote -ne $env:EXPECTED_HEAD) { throw "main moved before push: expected $env:EXPECTED_HEAD, found $remote" }
-          git -C Mud push origin HEAD:main
-          if ($LASTEXITCODE -ne 0) { throw 'push failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'worktree diff --check failed' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'audit dirtied checkout' }
