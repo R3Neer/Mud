@@ -15,6 +15,7 @@ affects:
 
 - Modifica: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
 - Preguntas relacionadas: Q-019, Q-058
+- Sintaxis actualizada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 - Documentos afectados: futuro `06-lexico.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`, futuro `20-cuantificadores-e-iteracion.md`
 
 ## Contexto
@@ -190,7 +191,7 @@ value: Rum in [r0..r1]
 No es enumerable. Por tanto, no puede ser fuente de `for each` ni de otra construcción que requiera enumeración exhaustiva:
 
 ```mud
-for each value in [r0..r1] by r0.1 {}
+for each value in [r0..r1] by r0.1: {}
 ```
 
 Ese bucle es inválido. La prohibición evita que la acumulación aproximada defina pertenencia, orden de recorrido o terminación.
