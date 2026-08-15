@@ -1,0 +1,199 @@
+name: ChatGPT D088 final candidate audit
+
+on:
+  push:
+    branches:
+      - chatgpt-d088-final-audit-runner
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v6
+        with:
+          ref: 6596c5d1a406f2609bc41d09fa19d5a054eab665
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Verify identity and atomic ancestry
+        shell: pwsh
+        env:
+          BASE: 94b61116c7552a30fc50f231d39a4e41bf926d2f
+          HEAD_SHA: 6596c5d1a406f2609bc41d09fa19d5a054eab665
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:HEAD_SHA) { throw 'candidate HEAD mismatch' }
+          if ((git rev-parse HEAD^).Trim() -ne $env:BASE) { throw 'D088 candidate is not one atomic child of base' }
+          if ((git rev-list --count "$env:BASE..$env:HEAD_SHA") -ne 1) { throw 'D088 candidate is not one commit' }
+          git diff --check "$env:BASE..$env:HEAD_SHA"
+          if ($LASTEXITCODE -ne 0) { throw 'candidate diff check failed' }
+
+      - name: Audit repository-wide semantic residues
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          from pathlib import Path
+          import re, yaml
+
+          ROOT = Path('.')
+          def text(path): return (ROOT / path).read_text(encoding='utf-8')
+          def need(path, needle):
+              if needle not in text(path): raise SystemExit(f'MISSING {needle!r} in {path}')
+          def forbid(path, needle):
+              if needle in text(path): raise SystemExit(f'STALE {needle!r} in {path}')
+
+          # Normative mechanics agree on the generalized expression block.
+          for path in [
+              'especificacion/gramatica/mud.ebnf',
+              'especificacion/sintaxis/mud-syntax-kinds.yaml',
+              'especificacion/sintaxis/cobertura-sintactica.yaml',
+              'especificacion/sintaxis/mud-surface-ast.asdl',
+              'especificacion/sintaxis/cst-a-ast-superficial.md',
+              'especificacion/sintaxis/cst-sin-perdidas.md',
+              'especificacion/08-sintaxis-abstracta.md',
+          ]:
+              forbid(path, 'BooleanBlockSyntax')
+          for path in [
+              'especificacion/gramatica/mud.ebnf',
+              'especificacion/sintaxis/mud-syntax-kinds.yaml',
+              'especificacion/sintaxis/cobertura-sintactica.yaml',
+          ]:
+              forbid(path, 'boolean-block')
+              forbid(path, 'expression-clause-body')
+          need('especificacion/gramatica/mud.ebnf', 'expression-block')
+          need('especificacion/gramatica/mud.ebnf', 'expression-body')
+          need('especificacion/sintaxis/mud-surface-ast.asdl', 'expression_block = ExpressionBlock')
+
+          # Concrete syntax: colon is structural and can be followed by physical separation.
+          g = text('especificacion/gramatica/mud.ebnf')
+          if ', ":"\n        , [ required-separation ]\n        , ( effect | effect-block )' not in g:
+              raise SystemExit('for-each colon/separation contract missing')
+          if g.count(', ":" , [ required-separation ] , expression-body') != 2:
+              raise SystemExit('selection/quantifier colon/separation contract not exactly twice')
+
+          # No positive stale D-087 forms.
+          forbid('especificacion/08-sintaxis-abstracta.md', '- `AnchorInterpolation`.')
+          need('especificacion/08-sintaxis-abstracta.md', 'No existe `AnchorInterpolation`.')
+          forbid('especificacion/sintaxis/cst-sin-perdidas.md', '- `ANCHOR_INTERPOLATION_START`.')
+          need('especificacion/sintaxis/cst-sin-perdidas.md', 'No existe `ANCHOR_INTERPOLATION_START`')
+
+          # D088 decisions and retained open boundaries.
+          d88='notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md'
+          for s in [
+              'Con orden semántico, cada filtro se evalúa inmediatamente antes de su iteración',
+              'Sin orden semántico, todos los filtros observan la misma instantánea inicial',
+              'fallo de evaluación `progression-step-zero`',
+              'Una fuente que ya posee enumeración propia',
+              'No significa stride sobre una colección arbitraria',
+              'D-088 no permite azar en el filtro de una iteración',
+              'solo durante un periodo fundamental',
+              'La sintaxis consolidada de intervalos discontinuos sigue abierta en Q-018',
+              'no depende de Q-018',
+          ]: need(d88,s)
+          for s in ['process i','process doubled','use i','intervalos discontinuos y del periodo fundamental cíclico']:
+              forbid(d88,s)
+
+          d47='notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md'
+          need(d47,'El orden de recorrido de una progresión explícita es independiente')
+          need(d47,'Las fuentes que ya poseen enumeración propia no necesitan fabricar un paso')
+          need(d47,'recorrido descendente explícito se expresa mediante `by` negativo')
+          d75='notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md'
+          need(d75,'Su paso es estático, firmado, no nulo, exacto')
+          forbid(d75,'Su paso es estático, positivo, no nulo')
+          d48='notas/decisiones/ADR-048-azar-reproducible-y-fallos.md'
+          need(d48,'ni filtros de iteración')
+          d82='notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md'
+          need(d82,'6. Una progresión sobre un dominio cíclico de punto visita como máximo un periodo fundamental')
+
+          # Open-question lifecycle is consistent and no question was over-closed.
+          q18='notas/preguntas/Q-018-intervalos-discontinuos.md'
+          need(q18,'Estado: **parcialmente decidida**')
+          need(q18,'Permanece abierta la sintaxis consolidada de intervalos discontinuos')
+          q28='notas/preguntas/Q-028-finitud.md'
+          need(q28,'Estado: **parcialmente decidida**')
+          need(q28,'Falta definir el análisis y sus diagnósticos')
+          q29='notas/preguntas/Q-029-terminacion.md'
+          need(q29,'Estado: **parcialmente decidida**')
+          need(q29,'Permanece abierta la certificación general de terminación')
+          for q in (q18,q28,q29):
+              forbid(q,'closed: 2026')
+
+          # AST shape exactly carries the information D088 needs.
+          ast='especificacion/sintaxis/mud-surface-ast.asdl'
+          need(ast,'ForEachEffect(iteration_binding binding,\n                           expr source,\n                           expr? step,\n                           expression_block? filter,\n                           effect_block body)')
+          need(ast,'SelectionExpr(iteration_binding binding,\n                         expr source,\n                         expr? step,\n                         expression_block predicate)')
+          need(ast,'QuantifierExpr(quantifier_kind kind,\n                          variable_name variable,\n                          expr source,\n                          expr? step,\n                          expression_block body)')
+
+          # Conformance corpus covers major accepted edge cases and preserves D087 write prohibition.
+          data=yaml.safe_load(text('especificacion/sintaxis/casos/cst-ast.yaml'))
+          by_id={c['id']:c for c in data['cases']}
+          ids=[
+              'for-each-requires-colon','for-each-negative-step','for-each-filter-expression-block',
+              'for-each-static-zero-step','selection-by-expression-block','quantifier-by-expression-block',
+              'sum-by-expression-block','negative-stepped-domain-all','rumber-stepped-domain-rejected',
+              'magnitude-step-compatible-units','d088-for-each-body-after-terminator',
+              'd088-selection-body-after-terminator','d088-quantifier-block-after-terminator',
+              'd088-runtime-zero-step-action','d088-num-interval-without-step-rejected',
+              'd088-infinite-interval-not-enumerable','d088-arbitrary-collection-by-is-not-stride',
+              'd088-filter-must-be-bool','d088-random-filter-rejected','d088-step-evaluated-once',
+              'd088-explicit-rum-collection-enumerable','d088-ordered-filter-sees-previous-effects',
+              'd088-unordered-filter-sees-initial-snapshot','d088-remaining-quantifiers-with-by',
+              'd088-open-lower-positive-step','d088-open-upper-negative-step',
+              'd088-empty-inverted-interval-zero-iterations',
+          ]
+          missing=[i for i in ids if i not in by_id]
+          if missing: raise SystemExit(f'missing conformance cases: {missing}')
+          for cid in [
+              'immutable-metadata-assignment-rejected','metadata-path-assignment-rejected',
+              'metadata-file-assignment-rejected','alias-runtime-name-metadata',
+              'family-runtime-name-metadata','metadata-access-and-assignment',
+          ]:
+              c=by_id[cid]
+              if c.get('category')!='validation-before-ast' or c.get('expected_diagnostics')!=['metadata-runtime-write'] or c.get('produces_ast') is not False:
+                  raise SystemExit(f'D087 metadata write regression: {cid}')
+
+          # Search changed normative/decision surfaces for old for-each examples lacking colon.
+          scan_paths=list((ROOT/'especificacion').rglob('*.md')) + list((ROOT/'notas'/'decisiones').rglob('*.md'))
+          bad=[]
+          # Narrow pattern: a line containing "for each" ending directly in "{". Deliberate invalid
+          # conformance cases live in YAML and are intentionally excluded.
+          for p in scan_paths:
+              for n,line in enumerate(p.read_text(encoding='utf-8').splitlines(),1):
+                  if 'for each' in line and re.search(r'for each .*\{\s*$', line) and ': {' not in line:
+                      bad.append(f'{p}:{n}:{line}')
+          if bad: raise SystemExit('old for-each brace syntax remains:\n'+'\n'.join(bad))
+
+          print('D088_FINAL_CANDIDATE_RESIDUE_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'repository-wide residue audit failed' }
+
+      - name: Run all official validators
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'validator changed audited checkout' }
