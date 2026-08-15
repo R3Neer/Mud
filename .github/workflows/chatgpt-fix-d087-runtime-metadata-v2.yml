@@ -1,0 +1,100 @@
+name: ChatGPT fix D087 runtime metadata residue v2
+
+on:
+  push:
+    branches:
+      - chatgpt-fix-d087-runtime-metadata-runner-v2
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-validate:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout runner
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-d087-runtime-metadata-runner-v2
+          path: runner
+          fetch-depth: 0
+      - name: Checkout candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-fix-d087-runtime-metadata-candidate-v2
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+      - name: Verify exact base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 126f1962a3ca03f6ca6e212171c22de9f598f856
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
+      - name: Apply exact cleanup
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../runner/tooling/chatgpt/transform_d087_runtime_metadata.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D087 transform failed' }
+      - name: Validate targeted invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../runner/tooling/chatgpt/validate_d087_runtime_metadata.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D087 invariant validation failed' }
+      - name: Run official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff check failed' }
+      - name: Verify surface and commit
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @(
+            'especificacion/04-modelo-matematico.md',
+            'especificacion/README.md',
+            'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md'
+          ) | Sort-Object
+          $actual = @(git status --porcelain=v1 --untracked-files=all | ForEach-Object {
+            $p = $_.Substring(3)
+            if ($p -match ' -> ') { $p = ($p -split ' -> ', 2)[1] }
+            $p.Trim('"')
+          }) | Sort-Object -Unique
+          $difference = Compare-Object $expected $actual
+          if ($difference) { Write-Host 'EXPECTED:'; $expected; Write-Host 'ACTUAL:'; $actual; Write-Host 'DIFFERENCE:'; $difference; throw 'unexpected surface' }
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "fix(spec): retira mutabilidad runtime residual de metadatos" -m "Context:`n- Alinea README, modelo matemático y D-085 con D-087 sobre el main actual.`n- Retira la autorización residual de escritura runtime de ~name.`n`nValidation:`n- invariantes D-087`n- decisiones y preguntas`n- gramática y modelo sintáctico`n- superficie exacta`n- git diff --check"
+          if ($LASTEXITCODE -ne 0) { throw 'candidate commit failed' }
+          git push origin HEAD:chatgpt-fix-d087-runtime-metadata-candidate-v2
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
