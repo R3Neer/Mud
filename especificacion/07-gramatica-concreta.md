@@ -62,6 +62,7 @@ decisions:
   - D-085
   - D-086
   - D-087
+  - D-088
 ---
 
 # 07. Gramática concreta
@@ -293,11 +294,11 @@ for capitalOf: Country -> City [*],
     mut visitedCountries: Country [* unique],
     mut visitedCapitals: City [* unique] {
     then {
-        for each country in capitalOf {
+        for each country in capitalOf: {
             add country to visitedCountries
         }
 
-        for each (country, capital) in capitalOf {
+        for each (country, capital) in capitalOf: {
             add country to visitedCountries
             add capital to visitedCapitals
         }
@@ -385,7 +386,7 @@ Para recorrer resultados se recorre un dominio de entradas y se aplica el diccio
 action CollectPrices
 for products: Product [*], pricing: Product --> Money,
     mut prices: Money [*] {
-    then for each product in products {
+    then for each product in products: {
         price := pricing[product]
         add price to prices
     }
@@ -724,7 +725,7 @@ En una action, `mut` antes del nombre de cualquier rol `for`, incluida la cardin
 action Treat for
     mut patients: Person [1..10, unique, mut]
 {
-    then for each patient in patients {
+    then for each patient in patients: {
         patient.health += 10
     }
 }
@@ -1030,70 +1031,70 @@ La forma `remove name from Owner` se distingue de retirar un valor mediante reso
 
 `|=`, `&=`, `^=` y `--=` conservan en el AST su clase de actualización. Exigen un destino exteriormente mutable y un resultado asignable. `^=` solo admite colecciones `unique`. Sobre colecciones, las actualizaciones homogéneas se consolidan por unión, intersección, paridad o suma de multiplicidades retiradas; mezclar clases distintas es conflicto salvo regla posterior expresa. Sobre `Text`, `|=` concatena y varias actualizaciones concurrentes requieren un orden total determinado.
 
-## `for each` y cuantificadores
+## `for each`, progresiones, selección y cuantificadores
+
+`for each` acepta cualquier fuente finita y enumerable: colecciones, diccionarios exactos, intervalos enumerables, dominios finitos enumerables y cualquier otro valor con enumeración canónica. Un intervalo no se convierte en colección por poder recorrerse.
 
 ```mud
-for each person in kingdom.people if person.hungry {
+for each person in kingdom.people if person.hungry:
     person.health -= 1
+
+for each value in [0..100] by 5: {
+    doubled := value * 2
+    total += doubled
+}
+```
+
+El `:` es obligatorio. Las llaves pertenecen al cuerpo posterior y no sustituyen el separador. El cuerpo puede comenzar en la misma línea o después de uno o más terminadores; esa separación física no cambia su estructura abstracta. El cuerpo breve debe ser un efecto o llamada a acción; el bloque comparte el contrato de `then`.
+
+### Filtro de iteración
+
+`by` precede a `if`. El filtro puede ser una expresión o un bloque de expresión con locales. Es puro y no estocástico. Con orden semántico se evalúa justo antes de cada iteración y observa efectos secuenciales anteriores; sin orden semántico todos los filtros leen la instantánea inicial y los deltas aceptados se consolidan simultáneamente. Un diccionario exacto puede vincular `(key, value)`.
+
+### Progresión `by`
+
+`by` recibe una diferencia firmada compatible y se evalúa una vez antes del recorrido runtime. Positivo ancla en el límite inferior y negativo en el superior. Un límite inicial abierto avanza una vez antes del primer candidato. La progresión termina antes del primer candidato exterior y no necesita alcanzar el extremo opuesto. Los extremos invertidos siguen produciendo `empty`.
+
+```text
+[1..8] by 2   -> 1, 3, 5, 7
+[1..8] by -3  -> 8, 5, 2
+(1..8] by 2   -> 3, 5, 7
+[1..8) by -2  -> 6, 4, 2
+```
+
+Un paso runtime demostrablemente cero es error estático; si puede variar y finalmente vale cero, produce el fallo de evaluación `progression-step-zero`. En una acción real ese fallo termina como `failed` y rollback; en una expresión pura se propaga como fallo de evaluación y nunca se convierte en `false`. En un dominio escalonado cero siempre es error estático. La compatibilidad usa la operación de avance y conversiones implícitas exactas, no identidad nominal: `Nat` puede avanzar por `Int`, `Num` por diferencias exactas compatibles y las magnitudes por unidades compatibles. En una magnitud de punto el paso es una diferencia lineal.
+
+`by` no es stride sobre colecciones arbitrarias. `ordered by ruta` conserva otra semántica.
+
+### Pasos predeterminados y números
+
+Una fuente con enumeración propia no necesita `by`. Cuando la enumeración depende de una progresión, `Nat` e `Int` usan por defecto `1` y `Money`, `0.01`; omitir `by` elige siempre esa diferencia positiva. Otros tipos de progresión exacta requieren paso explícito salvo sucesor canónico definido. `Num` admite paso exacto explícito y un intervalo general de `Num` sin paso es inválido. Los intervalos de `Rum` nunca admiten progresión `by`, ni en iteración ni en dominios escalonados; una colección explícita de valores `Rum` sí es enumerable sin `by`.
+
+### Dominios escalonados
+
+`interval by step` usa la misma progresión para definir pertenencia y el paso estático puede ser negativo. El signo puede cambiar los miembros, pero el orden no forma parte del tipo. `all` materializa en orden canónico; `Nat in [1..8] by -2 = all` produce `2, 4, 6, 8`. En intervalos discontinuos el paso se reinicia por segmento; positivo recorre segmentos de menor a mayor y negativo al revés. Un dominio cíclico de punto recorre como máximo un periodo fundamental.
+
+### Selección y cuantificadores
+
+Selección y `exists`, `forall`, `count`, `sum`, `min`, `max` aceptan `by` cuando la fuente define progresión y mantienen `:` aunque el cuerpo tenga llaves. El bloque contiene locales `:=` seguidas de una expresión final. Selección, `exists`, `forall` y `count` exigen contrato booleano; `sum`, valor agregable; `min`/`max`, valor ordenable.
+
+```mud
+selected := x in source by step: {
+    threshold := limit
+    x < threshold
 }
 
-for each value in 0..100 by 5 {
-    total += value
+sum x in source by step: {
+    adjusted := x.amount - x.exempt
+    adjusted
 }
 ```
 
-`by` precede a `if`. Un diccionario puede vincular `(key, value)`.
+Una selección devuelve directamente las ocurrencias aceptadas y conserva multiplicidad, unicidad y orden demostrables. Su predicado sigue siendo puro y determinista.
 
-Cuantificadores y agregaciones:
+### `take` e indexación
 
-```mud
-exists person in kingdom.people: person.hungry
-forall person in kingdom.people: person.alive
-count person in kingdom.people: person.hungry
-sum city in kingdom.cities: city.population
-min city in kingdom.cities: city.population
-max city in kingdom.cities: city.population
-```
-
-Una selección es exclusivamente un filtro: devuelve directamente los miembros aceptados, no proyecta, no aplana y no envuelve cada resultado en otra colección.
-
-```mud
-characters := character in coolCharacters:
-    character.coolness < 30
-```
-
-`characters` contiene directamente personajes, no `[[...]]`. El cuerpo posterior a `:` debe ser booleano.
-
-Sobre un diccionario exacto, la vinculación por pareja conserva asociaciones y devuelve otro diccionario:
-
-```mud
-availableStock := (product, amount) in stock:
-    amount > 0
-```
-
-La fuente debe ser finita y enumerable y el predicado, puro y determinista. El resultado conserva multiplicidad, `unique`, orden, claves y capacidad interior demostrables; no adquiere mutabilidad exterior. Su cardinalidad es una aproximación conservadora acotada por la fuente.
-
-`take` es una expresión general:
-
-```mud
-take 3 from players
-take n from player in players: player.score == 2
-player in take m from players: player.score == 2
-take n from player in take m from players: player.score == 2
-```
-
-La cantidad debe ser `Nat [1]`. Sobre una fuente ordenada o con enumeración canónica, `take` devuelve el prefijo. Sobre una colección o diccionario no ordenado con elección real, selecciona uniformemente y sin reemplazo mediante la semilla reproducible y no hace observable el orden del muestreo. Devuelve como máximo la cantidad solicitada y nunca falla solo porque falten miembros.
-
-`take` también admite dominios finitos, diccionarios y `Text`. En `Text` devuelve otro `Text` con el prefijo solicitado.
-
-Una colección admite índice o sección posicional solo si es ordenada:
-
-```mud
-queue[1]
-queue[2..5]
-```
-
-Los índices comienzan en uno. Un índice inexistente y una sección totalmente exterior producen `empty`; una sección parcialmente exterior conserva las posiciones existentes. Una colección no ordenada debe usar `take`. La resolución por tipos mantiene separados estos accesos, las claves de diccionario y la indexación de `Text`.
+`take amount from source` conserva su semántica existente. Sobre fuente ordenada o con enumeración canónica toma el prefijo; sobre colección/diccionario no ordenado con elección real muestrea reproduciblemente sin reemplazo. La indexación posicional sigue exigiendo orden observable.
 
 ## Tipo superior `Any`
 
