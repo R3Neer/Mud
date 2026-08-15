@@ -1,0 +1,185 @@
+name: ChatGPT D088 candidate v7
+
+on:
+  push:
+    branches:
+      - chatgpt-d088-runner-v7
+
+permissions:
+  contents: write
+
+jobs:
+  revise-review-and-squash:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout review control
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-runner-v7
+          path: runner
+          fetch-depth: 0
+
+      - name: Checkout reviewed v6 candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-d088-candidate-v6
+          path: target
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
+      - name: Verify reviewed parent and apply v7 corrections
+        shell: pwsh
+        working-directory: target
+        env:
+          V6: 78e7e4b50aaca625589d2f5bff269d2088d297e9
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:V6) { throw 'v6 candidate mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'v6 checkout not clean' }
+          python ../runner/tooling/chatgpt/transform_d088_fix_v7.py .
+          if ($LASTEXITCODE -ne 0) { throw 'D088 v7 correction failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question generation failed' }
+
+      - name: Stage 1 review findings closed
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          from pathlib import Path
+          import yaml
+
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
+
+          d88='notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md'
+          forbid(d88,'intervalos discontinuos y del periodo fundamental cíclico')
+          need(d88,'La verificación concreta de intervalos discontinuos se completa cuando Q-018 cierre su forma fuente consolidada')
+          need(d88,'El requisito de recorrer como máximo un periodo fundamental de un dominio cíclico pertenece a la verificación de D-082 y no depende de Q-018')
+
+          d82='notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md'
+          need(d82,'6. Una progresión sobre un dominio cíclico de punto visita como máximo un periodo fundamental')
+
+          q29='notas/preguntas/Q-029-terminacion.md'
+          need(q29,'  - D-047')
+          need(q29,'  - D-088')
+          need(q29,'Estado: **parcialmente decidida**')
+          need(q29,'Permanece abierta la certificación general de terminación')
+          forbid(q29,'resolved: false')
+
+          qindex='notas/preguntas/README.md'
+          need(qindex,'Q-029 — Terminación')
+
+          # Reconfirm the key v6 semantic invariants after the correction.
+          grammar='especificacion/gramatica/mud.ebnf'
+          need(grammar,'expression-block')
+          need(grammar,'expression-body')
+          forbid(grammar,'boolean-block')
+          forbid(grammar,'expression-clause-body')
+
+          d47='notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md'
+          need(d47,'recorrido descendente explícito se expresa mediante `by` negativo')
+          d75='notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md'
+          need(d75,'Su paso es estático, firmado, no nulo, exacto')
+          d48='notas/decisiones/ADR-048-azar-reproducible-y-fallos.md'
+          need(d48,'ni filtros de iteración')
+
+          cases=yaml.safe_load(r('especificacion/sintaxis/casos/cst-ast.yaml'))['cases']
+          by_id={c['id']:c for c in cases}
+          for cid in ('d088-runtime-zero-step-action','d088-arbitrary-collection-by-is-not-stride','d088-random-filter-rejected','d088-ordered-filter-sees-previous-effects','d088-unordered-filter-sees-initial-snapshot'):
+              if cid not in by_id: raise SystemExit(f'missing case {cid}')
+
+          print('D088_V7_STAGE1_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'v7 semantic audit failed' }
+
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          git diff 94b61116c7552a30fc50f231d39a4e41bf926d2f --check
+          if ($LASTEXITCODE -ne 0) { throw 'combined diff check failed' }
+
+      - name: Stage 3 exact combined surface
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 94b61116c7552a30fc50f231d39a4e41bf926d2f
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @(
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/cst-sin-perdidas.md',
+            'especificacion/sintaxis/mud-surface-ast.asdl',
+            'especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases.md',
+            'notas/decisiones/ADR-034-number-exacto-y-rumber-binary64.md',
+            'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md',
+            'notas/decisiones/ADR-057-gramatica-concreta-y-continuacion.md',
+            'notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos.md',
+            'notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados.md',
+            'notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones.md',
+            'notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto.md',
+            'notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md',
+            'notas/decisiones/README.md',
+            'notas/preguntas/Q-018-intervalos-discontinuos.md',
+            'notas/preguntas/Q-028-finitud.md',
+            'notas/preguntas/Q-029-terminacion.md',
+            'notas/preguntas/README.md'
+          ) | Sort-Object
+          $actual = @(git diff --name-only $env:BASE) | Sort-Object
+          $difference = Compare-Object $expected $actual
+          if ($difference) {
+            Write-Host 'EXPECTED:'; $expected
+            Write-Host 'ACTUAL:'; $actual
+            Write-Host 'DIFFERENCE:'; $difference
+            throw 'unexpected D088 v7 change surface'
+          }
+          git diff --stat $env:BASE
+
+      - name: Squash into one atomic D088 commit and publish candidate v7
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 94b61116c7552a30fc50f231d39a4e41bf926d2f
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git reset --soft $env:BASE
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "spec(language): define progresiones y bloques de expresión" -m "Context:`n- Integra D-088 sobre iteración, filtros, by, selección, cuantificadores, dominios escalonados y terminación parcial.`n- Generaliza BooleanBlock a ExpressionBlock y hace obligatorio ':' antes de cuerpos subordinados.`n`nValidation:`n- auditoría semántica específica v7`n- decisiones y preguntas`n- gramática`n- modelo sintáctico`n- superficie exacta`n- git diff --check"
+          if ($LASTEXITCODE -ne 0) { throw 'atomic D088 commit failed' }
+          git push origin HEAD:chatgpt-d088-candidate-v7
+          if ($LASTEXITCODE -ne 0) { throw 'candidate v7 push failed' }
