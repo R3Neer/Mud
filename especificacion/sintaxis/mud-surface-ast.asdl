@@ -148,17 +148,17 @@ module MUDSurface {
                                      for_clause? participants,
                                      given_clause? givens,
                                      metadata_assignment* metadata,
-                                     boolean_block condition)
+                                     expression_block condition)
                    | ReactiveRuleDecl(nominal_name name,
                                       on_clause? participants,
                                       metadata_assignment* metadata,
-                                      boolean_block activator,
-                                      boolean_block? guard,
+                                      expression_block activator,
+                                      expression_block? guard,
                                       effect_block effects)
                    | AlwaysRuleDecl(nominal_name name,
                                     on_clause? participants,
                                     metadata_assignment* metadata,
-                                    boolean_block invariant,
+                                    expression_block invariant,
                                     expr? diagnostic)
                    | ActionDecl(action_kind kind,
                                 nominal_name name,
@@ -175,8 +175,8 @@ module MUDSurface {
                    | MessageDecl(nominal_name name,
                                  on_clause? participants,
                                  metadata_assignment* metadata,
-                                 boolean_block activator,
-                                 boolean_block? guard,
+                                 expression_block activator,
+                                 expression_block? guard,
                                  public_field_decl* fields)
                    | TestDecl(nominal_name name,
                               metadata_assignment* metadata,
@@ -398,13 +398,13 @@ module MUDSurface {
     -- Cuerpos, condiciones y tests
     -- -----------------------------------------------------------------
 
-    boolean_block = BooleanBlock(local_value_decl* locals, expr result)
+    expression_block = ExpressionBlock(local_value_decl* locals, expr result)
         attributes (source_origin origin)
 
-    action_guard = ActionGuard(boolean_block condition, expr? diagnostic)
+    action_guard = ActionGuard(expression_block condition, expr? diagnostic)
         attributes (source_origin origin)
 
-    action_postcondition = ActionPostcondition(boolean_block condition,
+    action_postcondition = ActionPostcondition(expression_block condition,
                                                expr? diagnostic)
         attributes (source_origin origin)
 
@@ -449,8 +449,8 @@ module MUDSurface {
            | ActionCallCandidateEffect(expr candidate)
            | ForEachEffect(iteration_binding binding,
                            expr source,
-                           expr? order_key,
-                           expr? guard,
+                           expr? step,
+                           expression_block? filter,
                            effect_block body)
         attributes (source_origin origin)
 
@@ -510,11 +510,13 @@ module MUDSurface {
          | TakeExpr(expr amount, expr source)
          | SelectionExpr(iteration_binding binding,
                          expr source,
-                         expr predicate)
+                         expr? step,
+                         expression_block predicate)
          | QuantifierExpr(quantifier_kind kind,
                           variable_name variable,
                           expr source,
-                          expr body)
+                          expr? step,
+                          expression_block body)
          | EventuallyExpr(expr condition, action_ref first_action, action_ref* remaining_actions)
          | ChangesExpr(expr value)
          | PrefixExpr(prefix_operator operator, expr operand)

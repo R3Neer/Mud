@@ -467,13 +467,13 @@ boolean-body
             , { required-separation , metadata-assignment }
             , required-separation
           ]
-        , boolean-block
+        , expression-block
         , [ required-separation ] , "}"
         ;
 
-boolean-block
+expression-block
     ::= { local-value-declaration , required-separation }
-        , boolean-expression
+        , expression
         ;
 
 reactive-rule-declaration
@@ -499,7 +499,7 @@ always-rule-declaration
 invariant-body
     ::= "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , boolean-block
+        , expression-block
         , [ required-separation ]
         , "}"
         ;
@@ -550,23 +550,23 @@ message-declaration
         ;
 
 when-clause
-    ::= "when" , expression-clause-body ;
+    ::= "when" , expression-body ;
 
 if-clause
-    ::= "if" , expression-clause-body ;
+    ::= "if" , expression-body ;
 
 action-if-clause
-    ::= "if" , expression-clause-body , [ diagnostic-tail ] ;
+    ::= "if" , expression-body , [ diagnostic-tail ] ;
 
 action-after-clause
-    ::= "after" , expression-clause-body , [ diagnostic-tail ] ;
+    ::= "after" , expression-body , [ diagnostic-tail ] ;
 
 diagnostic-tail
     ::= [ required-separation ] , "otherwise" , text-expression ;
 
-expression-clause-body
-    ::= boolean-expression
-      | "{" , declaration-layout , boolean-block
+expression-body
+    ::= expression
+      | "{" , declaration-layout , expression-block
           , [ required-separation ] , "}"
       ;
 
@@ -687,8 +687,10 @@ action-call-effect
 for-each-effect
     ::= "for" , "each" , iteration-binding , "in" , expression
         , [ "by" , expression ]
-        , [ "if" , boolean-expression ]
-        , effect-block
+        , [ "if" , expression-body ]
+        , ":"
+        , [ required-separation ]
+        , ( effect | effect-block )
         ;
 
 iteration-binding
@@ -888,7 +890,8 @@ take-expression
 
 selection-expression
     ::= iteration-binding , "in" , expression
-        , ":" , boolean-expression
+        , [ "by" , expression ]
+        , ":" , [ required-separation ] , expression-body
         ;
 
 point-component-expression
@@ -966,7 +969,8 @@ random-expression
 
 quantifier-expression
     ::= quantifier , variable-name , "in" , expression
-        , ":" , expression
+        , [ "by" , expression ]
+        , ":" , [ required-separation ] , expression-body
         ;
 
 quantifier

@@ -10,7 +10,7 @@ status: activo
 
 Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
 
-Hay 40 preguntas activas: 18 abiertas y 22 parcialmente decididas.
+Hay 40 preguntas activas: 17 abiertas y 23 parcialmente decididas.
 
 Prioridades:
 
@@ -58,7 +58,7 @@ Prioridades:
 | [[Q-026-varias-acciones-en-eventually|Q-026 — Varias acciones en `eventually`]] | Parcialmente decidida |
 | [[Q-027-estado-relevante|Q-027 — Estado relevante]] | Abierta |
 | [[Q-028-finitud|Q-028 — Finitud]] | Parcialmente decidida |
-| [[Q-029-terminacion|Q-029 — Terminación]] | Abierta |
+| [[Q-029-terminacion|Q-029 — Terminación]] | Parcialmente decidida |
 | [[Q-030-perfil-de-mundos-finitos|Q-030 — Perfil de mundos finitos]] | Abierta |
 | [[Q-031-subconjunto-no-turing-completo|Q-031 — Subconjunto no Turing completo]] | Abierta |
 | [[Q-032-aleatoriedad-reproducible|Q-032 — Aleatoriedad reproducible]] | Parcialmente decidida |

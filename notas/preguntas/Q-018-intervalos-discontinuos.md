@@ -9,6 +9,7 @@ decisions:
   - D-049
   - D-059
   - D-082
+  - D-088
 affects: []
 superseded-by: []
 ---
@@ -17,6 +18,6 @@ superseded-by: []
 
 ## Contenido
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]].
+Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] y [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
 
-Los intervalos se normalizan por contenido. En los lineales, extremos efectivos invertidos producen `empty` y no implican recorrido descendente ni ciclo. `cycle` es un modificador posterior exclusivo de un dominio de punto `[a..b)`, no parte de la expresión intervalo. Permanecen abiertos la sintaxis consolidada de intervalos discontinuos, el orden descendente explícito y varias claves.
+Los intervalos se normalizan por contenido. En los lineales, extremos efectivos invertidos producen `empty` y no implican recorrido descendente ni ciclo. `cycle` es un modificador posterior exclusivo de un dominio de punto `[a..b)`, no parte de la expresión intervalo. Permanece abierta la sintaxis consolidada de intervalos discontinuos y sus claves. D-088 cierra el recorrido descendente explícito: se expresa mediante `by` con diferencia negativa, nunca invirtiendo extremos.
