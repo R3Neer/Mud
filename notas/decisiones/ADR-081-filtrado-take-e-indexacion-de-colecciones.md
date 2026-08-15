@@ -16,6 +16,7 @@ affects:
 
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 - Modifica: [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-056-char-texto-y-orden-unicode|D-056]], [[ADR-064-orden-por-ruta-estable|D-064]] y [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]].
 - Preguntas relacionadas: [[notas/preguntas/Q-028-finitud|Q-028]] y [[notas/preguntas/Q-032-aleatoriedad-reproducible|Q-032]].
 
@@ -166,3 +167,7 @@ Se admiten ampliaciones implícitas únicas, como `Nat` hacia `Int`. No se elimi
 ## Modificación por D-084
 
 Una selección usada para definir un campo derivado puede alimentar una colección `[mut]` aunque la fuente no conceda capacidad interior. La declaración de la vista concede esa autoridad. La lista seleccionada permanece estable durante la instantánea y se recalcula tras consolidar efectos.
+
+## Modificación por D-088
+
+La selección pura admite `item in source by step: predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.

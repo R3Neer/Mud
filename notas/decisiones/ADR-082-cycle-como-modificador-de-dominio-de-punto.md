@@ -15,6 +15,7 @@ affects:
 
 - Modifica: [[ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]].
 - Pregunta relacionada: [[notas/preguntas/Q-018-intervalos-discontinuos|Q-018]].
+- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 
 ## Contexto
 
@@ -59,3 +60,7 @@ No se admiten intervalos abiertos ni intervalos anidados como cardinalidad.
 3. Rechazo de `cycle` en magnitudes no puntuales.
 4. Rechazo de `cycle` tras intervalos cerrados, abiertos a la izquierda, infinitos, vacíos o degenerados.
 5. Conservación de las formas de cardinalidad `[1]`, `[1..3]` y `[1..3 mut]`.
+
+## Modificación por D-088
+
+Un dominio cíclico de punto puede alimentar una progresión exacta mediante diferencia compatible. La enumeración cubre un único periodo fundamental y nunca repite el ciclo indefinidamente. El signo y los límites se aplican al intervalo fundamental `[a..b)`.
