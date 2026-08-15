@@ -777,12 +777,12 @@ cases:
   - metadata-access-must-not-use-dot
   produces_ast: false
 - id: immutable-metadata-assignment-rejected
-  category: validation-after-resolution
+  category: validation-before-ast
   source: "action BreakIdentity for person: Person [mut] {\n    then person~anchor = OtherAnchor\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
-  - immutable-metadata-assignment
-  produces_ast: true
+  - metadata-runtime-write
+  produces_ast: false
 - id: subaction-internal-call
   category: action
   source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\naction Pay for account: Account [mut] given amount: Money {\n    then account.RemoveMoney(amount)\n}\n"
@@ -1371,35 +1371,33 @@ cases:
   - any-has-no-universal-total-order
   produces_ast: true
 - id: metadata-path-assignment-rejected
-  category: validation-after-resolution
+  category: validation-before-ast
   source: "action BreakIdentity for person: Person [mut] {\n    then person~path = OtherPath\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
-  - immutable-metadata-assignment
-  produces_ast: true
+  - metadata-runtime-write
+  produces_ast: false
 - id: metadata-file-assignment-rejected
-  category: validation-after-resolution
+  category: validation-before-ast
   source: "action BreakIdentity for person: Person [mut] {\n    then person~file = OtherFile\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
-  - immutable-metadata-assignment
-  produces_ast: true
+  - metadata-runtime-write
+  produces_ast: false
 - id: alias-runtime-name-metadata
-  category: metadata
+  category: validation-before-ast
   source: "alias PersonId := Nat\naction Rename for mut id: PersonId {\n    then id~name = \"identifier\"\n}\n"
   cst_root: MudFileSyntax
-  ast: AssignmentEffect(target=MetadataAccessExpr(name))
-  normalizations:
-  - mutate-nominal-name-state-not-alias-payload
-  produces_ast: true
+  expected_diagnostics:
+  - metadata-runtime-write
+  produces_ast: false
 - id: family-runtime-name-metadata
-  category: metadata
+  category: validation-before-ast
   source: "family Color { Red, Green }\naction Rename for mut color: Color {\n    then color~name = \"colour\"\n}\n"
   cst_root: MudFileSyntax
-  ast: AssignmentEffect(target=MetadataAccessExpr(name))
-  normalizations:
-  - mutate-family-member-name-state-not-associated-data
-  produces_ast: true
+  expected_diagnostics:
+  - metadata-runtime-write
+  produces_ast: false
 - id: iis-negation-equivalence
   category: expression
   source: "rule Same given value: Identifier {\n    (value iis not PersonId) == not (value iis PersonId)\n}\n"
