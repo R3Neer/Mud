@@ -13,6 +13,7 @@ affects:
 # ADR-070 — CST sin pérdidas y AST superficial normalizado
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 
 ## Estado
 
@@ -98,7 +99,7 @@ Una documentación estructurada futura usará un árbol documental separado y re
 Las formas que la EBNF puede reconocer pero que no caben unívocamente en el AST normalizado se validan antes de construirlo. Ejemplos:
 
 - Modificadores duplicados.
-- Propiedades de unidad duplicadas.
+- Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.
 - Propiedades obligatorias ausentes.
 - Orden inválido de argumentos.
 

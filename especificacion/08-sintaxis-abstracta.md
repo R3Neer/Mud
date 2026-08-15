@@ -684,7 +684,7 @@ Un AST superficial conforme no puede contener:
 - Dos modificadores `unique`.
 - Dos órdenes de colección.
 - `given` mutable.
-- Unidad con propiedades duplicadas.
+- Declaraciones de metadatos duplicadas en una misma unidad.
 - Acción ya clasificada elemental o compuesta sin resolución.
 - Símbolo o ancla resueltos.
 - Tipo inferido insertado como si se hubiera escrito.
