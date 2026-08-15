@@ -25,6 +25,13 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+
       - name: Verify identity and exact diff surface
         shell: pwsh
         env:
@@ -219,7 +226,6 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
           python tooling/decisions/manage_decisions.py validate
           if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
           python tooling/questions/validate_questions.py
