@@ -49,7 +49,7 @@ Mover una declaración entre archivos del mismo path no cambia su nombre cualifi
 
 La categoría esperada no desambigua dos declaraciones superiores homónimas. Los campos y miembros anidados pertenecen al espacio de su propietario y pueden repetir nombres en propietarios distintos.
 
-Roles, `given`, iteradores y vinculaciones locales son símbolos léxicos. Pueden repetirse en ámbitos independientes, pero no pueden sombrear un nombre ya visible. Los valores globales no nominales siguen la misma regla y no adquieren ancla pública.
+Participantes `for`, `on` y `given` son símbolos léxicos con ancla subordinada estable según D-087. Iteradores y vinculaciones locales ordinarias continúan sin ancla pública. Los nombres pueden repetirse en ámbitos independientes, pero no pueden sombrear un nombre ya visible.
 
 > [!rule] MUD-NAME-003 — Convenciones obligatorias
 > Declaraciones nominales y miembros de family usan `PascalCase`; campos, componentes, roles, `given`, variables y segmentos de path usan `lowerCamel`; los identificadores de unidad usan `lowerCamel`. Un incumplimiento es un error estático con arreglo mecánico cuando exista una única corrección segura.
@@ -71,6 +71,8 @@ Sea $Gamma$ un entorno y sea $n$ un nombre no cualificado. La resolución consul
 Candidatos que designan la misma ancla se deduplican. Dos anclas distintas en el mismo nivel producen ambigüedad. El orden textual de archivos y `using` no decide empates.
 
 Un `using` exacto importa un path concreto y uno recursivo importa sus descendientes. Ninguno reexporta los `using` contenidos en los archivos alcanzados. Una referencia completamente cualificada evita la búsqueda por niveles.
+
+`Prefix` participa en el último nivel como tipo incorporado. Los nombres SI `quecto`…`quetta` también se resuelven allí como constantes incorporadas de `Prefix`; no introducen declaraciones ni anclas propias.
 
 Los accesos con puntos se elaboran por etapas: primero se resuelve la raíz nominal y después cada miembro con el tipo o propietario obtenido. Una ruta cualificada y una cadena de miembros pueden compartir escritura superficial sin compartir resolución interna.
 
@@ -100,6 +102,7 @@ magnitude::physics.Length
 unit::physics.Length::meter
 action::game.combat.Heal
 type::Nat
+type::Prefix
 ```
 
 La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaración anidada, añade `::<miembro>` por cada propietario. Los identificadores de MUD no contienen `::`, de modo que la separación es inequívoca. El catálogo de categorías de MUD 1.0 es:
@@ -130,11 +133,11 @@ Poseen ancla:
 
 No poseen ancla pública:
 
-- roles y `given`;
 - variables locales o de iteración;
-- vinculaciones temporales;
+- vinculaciones temporales que no sean participantes declarados;
 - resultados intermedios;
-- unidades creadas estructuralmente por prefijos.
+- unidades creadas estructuralmente por prefijos;
+- los valores incorporados `Prefix`, que se elaboran como constantes y no como declaraciones.
 
 Un miembro heredado conserva el ancla del propietario que lo declaró. En `thing` esto no comparte estado; en aliases identifica el origen usado para deduplicar diamantes. Una sobrescritura de predeterminado no introduce un miembro ni un ancla nuevos.
 
@@ -176,7 +179,7 @@ Después de la resolución nominal puede construirse un grafo parcial con nodos 
 
 El tipado completa o rechaza aristas cuya validez dependa de una unión, una inferencia o un miembro contextual. El grafo parcial no sustituye al AST ni constituye fuente de verdad.
 
-El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declaración persistente usa `AnchoredSymbol`; un rol, `given` o local usa `LocalSymbol` subordinado a su propietario sin fabricar una ancla pública.
+El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario.
 
 ## Conformidad
 

@@ -12,7 +12,7 @@ affects:
 
 # ADR-087 — Metadatos reflectivos, descriptores estables y visibilidad exterior
 
-- Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
+- Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
 
 ## Contexto
@@ -129,6 +129,8 @@ family MetadataKind { Standard, User }
 
 `Start` puede describir la categoría de la declaración global en tooling/reflexión de proyecto, pero no implica que esa construcción posea ancla o `~metadata`.
 
+Las keywords duras de categoría ya presentes en la gramática pueden aparecer desnudas en posición de expresión como valores de `DeclarationKind`: `thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `subaction`, `look`, `message` y `test`. La forma superficial se conserva como un valor categorial, no como una referencia nominal. Los miembros de `DeclarationKind` que no poseen keyword dura propia no reciben por esta decisión una grafía literal nueva.
+
 El narrowing categorial admite formas como `declaration is rule`, `declaration is action`, `declaration is subaction` y `declaration is thing`. `~type` no sustituye esta clasificación.
 
 El catálogo completo de miembros de `TypeKind` pertenece a la especificación del sistema de tipos; esta decisión no inventa dicho catálogo.
@@ -239,14 +241,21 @@ Todo valor MUD expone `~type: Type`. Los descriptores `Type` exponen `~kind`, `~
 
 ### Metadatos estándar configurables
 
-Se conservan `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` con sus categorías aplicables, y se añaden:
+Se conservan los metadatos estándar de presentación y configuración con estos contratos principales:
 
 ```text
-~summary     : Text = ""
-~description : Text = ""
-~deprecated  : Text [0..1] = empty
-~private     : Bool = false
+~name         : Name
+~plural       : Text
+~abbreviation : Text
+~prefixes     : Prefix [* unique] = empty
+~format       : Text
+~summary      : Text = ""
+~description  : Text = ""
+~deprecated   : Text [0..1] = empty
+~private      : Bool = false
 ```
+
+`Prefix` es un tipo nominal incorporado. El catálogo SI fijado por D-076 proporciona valores incorporados de `Prefix` desde `quecto` hasta `quetta`. Sus nombres son identificadores ordinarios que se resuelven en el nivel de incorporados. Por ello `~prefixes = [kilo, milli]` es una colección MUD ordinaria, `all` enumera el dominio incorporado de `Prefix` y `empty` representa la colección vacía. Las unidades no mantienen `unit-property`, `prefix-selection` ni otra subgramática paralela: su cuerpo contiene exclusivamente declaraciones generales de metadatos.
 
 `~name`, `~summary`, `~description` y `~deprecated` están disponibles en todo elemento metadata-bearing compatible. `~name` toma por defecto una presentación derivada de `~identifier`. `~summary` es una descripción breve; `~description` admite Markdown de presentación; `~deprecated` no vacío activa diagnóstico de obsolescencia pero no invalida el uso.
 

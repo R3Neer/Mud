@@ -173,7 +173,7 @@ operator-word
 builtin-word
     ::= "Text" | "Char" | "Bool" | "Thing" | "Any" | "Nat" | "Int"
       | "Num" | "Rum" | "Money" | "Rand"
-      | "Name" | "MudPath" | "Anchor" | "MudFile"
+      | "Name" | "MudPath" | "Anchor" | "MudFile" | "Prefix"
       ;
 
 constant-word

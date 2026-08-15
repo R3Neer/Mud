@@ -103,11 +103,10 @@ Cada `MudFile` contiene:
 
 - Metadatos físicos.
 - Los defaults de metadatos de archivo en orden fuente.
-- Los `MetadataAttachment` asociados a propietarios subordinados estables.
 - La lista de `using`.
 - La lista de declaraciones de primer nivel.
 
-Los `using` se almacenan separados de las declaraciones porque la gramática exige que formen una cabecera. Ambos grupos conservan su orden fuente.
+Los metadatos de propietarios subordinados se almacenan directamente en sus constructores AST, no en una tabla lateral por `SourceSpan`. Los `using` se almacenan separados de las declaraciones porque la gramática exige que formen una cabecera. Ambos grupos conservan su orden fuente.
 
 El path de MUD derivado de la ruta es metadato y no una declaración AST.
 
@@ -176,6 +175,12 @@ Se usa para propiedades conceptualmente booleanas como:
 - Ciclicidad de un intervalo.
 
 No se representa mediante enteros ni strings.
+
+## Metadatos en propietarios estables
+
+Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales admitidas por D-087, unidades, campos, componentes y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
+
+Una cabecera agrupada de participantes se normaliza a varios descriptores y copia la misma secuencia de metadatos a cada uno. `GlobalStartDecl` y el `start with` interno de un test no reciben secuencia propia.
 
 ## Declaraciones de `thing`
 
@@ -367,26 +372,16 @@ DimensionLink(MultiplyDimension | DivideDimension, term)
 
 ### Unidades
 
-Una unidad raíz y una alternativa son variantes diferentes porque la segunda posee equivalencia cuantitativa.
+Una unidad raíz y una alternativa son variantes diferentes porque la segunda posee equivalencia cuantitativa:
 
-Las propiedades se normalizan a una estructura fija:
+```text
+RootUnitDecl(name, metadata*)
+AlternativeUnitDecl(name, equivalence, metadata*)
+```
 
-- Identificador `lowerCamel` obligatorio en la declaración.
-- Metadato `~name` opcional.
-- Metadato `~plural` opcional.
-- Metadato `~abbreviation` opcional.
-- Política declarada mediante `~prefixes`.
+No existe `UnitProperties` ni `PrefixPolicy` en el AST superficial. El cuerpo de unidad es un preámbulo general de `metadata_assignment` y cada declaración se conserva sin convertirla a una estructura paralela.
 
-La ausencia de `plural` se conserva; no se sintetiza en el AST superficial.
-
-La política de prefijos es:
-
-- Metadato omitido → `NoPrefixes`.
-- `~prefixes = empty` → `NoPrefixes`.
-- `~prefixes = all` → `AllPrefixes`.
-- `~prefixes = [p1, ...]` → `SelectedPrefixes`.
-
-Las propiedades duplicadas se rechazan antes de construir el AST. Un cuerpo vacío es válido y produce metadatos ausentes con `NoPrefixes`.
+`~prefixes` es metadata almacenada de tipo `Prefix [* unique]` cuyo default de lenguaje es `empty`. `empty`, `all` y `[kilo, milli]` permanecen expresiones MUD ordinarias en el AST; la resolución posterior identifica `kilo`, `milli`, etc. como valores incorporados de `Prefix`. La ausencia de `~plural` o `~abbreviation` también se conserva, sin sintetizar presentación en esta fase.
 
 ## Participantes
 
@@ -397,6 +392,7 @@ Las propiedades duplicadas se rechazan antes de construir el AST. Un cuerpo vac�
 - Mutabilidad exterior.
 - Nombre obligatorio.
 - `ValueShape` completo.
+- Metadatos del descriptor en orden fuente.
 
 No admite predeterminado.
 
@@ -418,6 +414,7 @@ Las referencias entre participantes, incluidas referencias adelantadas y ciclos,
 - Nombre obligatorio.
 - Forma de valor de solo lectura.
 - Predeterminado opcional.
+- Metadatos del descriptor en orden fuente.
 
 No puede representar mutabilidad exterior ni interior.
 

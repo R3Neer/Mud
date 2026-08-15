@@ -111,6 +111,13 @@ alias-declaration
 
 alias-definition
     ::= ":=" , type-expression
+        , [ "{" , declaration-layout
+            , [ metadata-assignment
+                , { required-separation , metadata-assignment }
+                , [ required-separation ]
+              ]
+            , "}"
+          ]
       | structural-alias-body
         ;
 
@@ -169,10 +176,14 @@ family-member
 
 family-member-body
     ::= "{" , declaration-layout
-        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , family-member-entry
-        , { required-separation , family-member-entry }
-        , [ required-separation ]
+        , [ metadata-assignment
+            , { required-separation , metadata-assignment }
+            , required-separation
+          ]
+        , [ family-member-entry
+            , { required-separation , family-member-entry }
+            , [ required-separation ]
+          ]
         , "}"
         ;
 
@@ -240,8 +251,10 @@ derived-unit-body
 
 point-magnitude-body
     ::= "{" , declaration-layout
-        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , [ metadata-assignment , [ required-separation ] ]
+        , [ metadata-assignment
+            , { required-separation , metadata-assignment }
+            , [ required-separation ]
+          ]
         , "}"
         ;
 
@@ -255,27 +268,12 @@ unit-name ::= identifier ;
 
 unit-body
     ::= "{" , declaration-layout
-        , [ ( unit-property | metadata-assignment )
-            , { required-separation , ( unit-property | metadata-assignment ) }
+        , [ metadata-assignment
+            , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
         , "}"
         ;
-
-unit-property
-    ::= "~" , "name" , "=" , text-expression
-      | "~" , "plural" , "=" , text-expression
-      | "~" , "abbreviation" , "=" , text-expression
-      | "~" , "prefixes" , "=" , prefix-selection
-      ;
-
-prefix-selection
-    ::= "empty"
-      | "all"
-      | "[" , prefix-name , { "," , prefix-name } , "]"
-      ;
-
-prefix-name ::= identifier ;
 
 dimension-expression
     ::= dimension-factor , { ( "*" | "/" ) , dimension-factor } ;
@@ -464,7 +462,12 @@ boolean-rule-declaration
         ;
 
 boolean-body
-    ::= "{" , declaration-layout , boolean-block
+    ::= "{" , declaration-layout
+        , [ metadata-assignment
+            , { required-separation , metadata-assignment }
+            , required-separation
+          ]
+        , boolean-block
         , [ required-separation ] , "}"
         ;
 

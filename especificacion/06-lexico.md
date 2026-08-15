@@ -88,7 +88,7 @@ not and or xor
 exists forall count sum min max
 true false empty all _
 Text Char Bool Thing Any Nat Int Num Rum Money
-Name MudPath Anchor MudFile Rand
+Name MudPath Anchor MudFile Prefix Rand
 ```
 
 Los terminales `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>` y `<=>` no son palabras. `-->` se reconoce por coincidencia más larga antes que `--` y `->`. También son tokens indivisibles `|=`, `&=`, `^=` y `--=`. `!` aislado no pertenece al léxico; `!=` continúa siendo un token indivisible de desigualdad y no se interpreta como la composición de negación y asignación.
@@ -338,6 +338,8 @@ Las formas de unidad pueden contener Unicode y no son identificadores generales.
 
 > [!warning]
 > [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] fija el catálogo de prefijos, la resolución de colisiones y la identidad estable. `UNIT_FORM` conserva la escritura encontrada; la resolución semántica selecciona después una unidad declarada o una forma prefijada estructural.
+
+`Prefix` es un tipo incorporado. Los nombres SI `quecto`…`quetta` permanecen identificadores ordinarios: en una expresión como `~prefixes = [kilo, milli]` se resuelven como valores incorporados de `Prefix`; no se convierten en palabras reservadas.
 
 ## Formas de magnitudes de punto
 

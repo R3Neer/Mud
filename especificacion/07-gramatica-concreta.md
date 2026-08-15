@@ -81,7 +81,7 @@ La existencia de una CST no afirma que el archivo sea válido. La recuperación 
 Después de construir la CST se comprueban restricciones sintácticas contextuales necesarias para producir un AST normalizado, entre ellas:
 
 - Modificadores de colección duplicados.
-- Propiedades de unidad duplicadas.
+- Declaraciones duplicadas del mismo metadato en un propietario, incluidas las unidades.
 - Un argumento posicional posterior a uno nombrado.
 - Combinaciones concretas prohibidas por este capítulo.
 
@@ -518,6 +518,8 @@ Una declaración de alias puede escribir una lista no ordenada de antecesores co
 
 `:= tipo` solo introduce la representación de un alias nominal raíz. Un alias nominal con antecesores hereda la representación efectiva y no puede volver a declararla. En especial, `alias UserName as PlayerName := Text` es inválido.
 
+Una representación `:= tipo` puede ir seguida por un cuerpo inmediato que contiene solo metadatos del alias. Así un alias representacional puede documentarse o configurarse sin adquirir componentes estructurales.
+
 El cuerpo estructural puede contener componentes almacenados, campos derivados y sobrescrituras de predeterminados heredados. Una sobrescritura `nombre = valor` solo cambia el predeterminado efectivo: no puede alterar tipo, dominio, cardinalidad, orden, unicidad ni capacidad interior.
 
 Los literales estructurales son contextuales:
@@ -631,7 +633,7 @@ Un literal numérico desnudo puede tomar el tipo de una magnitud sin unidades cu
 
 Una magnitud derivada solo declara unidades nominales alternativas `unit nombre := equivalencia`; una magnitud de punto no declara unidades. En esta última, `in` y el dominio son opcionales: sin ellos se usa el dominio completo de la coordenada subyacente, un intervalo ordinario la acota sin envolver y `[a..b) cycle` añade normalización cíclica. `cycle` modifica el dominio completo, no forma parte de la expresión intervalo, y solo una magnitud de punto lo admite.
 
-En una unidad, omitir `~prefixes` o escribir `~prefixes = empty` no habilita ninguno; `~prefixes = all` habilita el catálogo SI decimal completo y `~prefixes = [p1, p2, ...]` selecciona únicamente los enumerados. `~name`, `~plural` y `~abbreviation` son metadatos opcionales con tipos y mutabilidad propios.
+El cuerpo de una unidad contiene exclusivamente declaraciones generales `~...`; no existe `unit-property`. `~prefixes: Prefix [* unique] = empty` usa el tipo incorporado `Prefix`: omitirlo o escribir `empty` no habilita ninguno, `all` habilita el catálogo SI decimal completo y una colección como `[kilo, milli]` selecciona esos valores incorporados. `~name`, `~plural` y `~abbreviation` usan el mismo sistema general de metadatos y todo acceso runtime mediante `~` es de solo lectura.
 
 Una cantidad puede omitir el espacio antes de su unidad, pero el formateador lo inserta: `3m` y `3 m` tienen el mismo AST y la segunda es canónica.
 
@@ -714,15 +716,7 @@ rule MutualFriends on
 
 Todos los nombres de una cabecera `on` son visibles en la cabecera completa. Sus tipos y restricciones se resuelven conjuntamente, de modo que se admiten referencias adelantadas y ciclos cuando existe una solución nominal única. Cada rol parte de las `thing` concretas y activas de su tipo efectivo; las vinculaciones son el join finito que satisface todas las pertenencias sobre una misma instantánea. No se impone que roles distintos reciban identidades distintas y dos orientaciones simétricas constituyen vinculaciones diferentes.
 
-El nombre de un participante puede omitirse cuando su cardinalidad efectiva es exactamente `[1]` y no declara mutabilidad exterior:
-
-```mud
-rule IsDestroyed for Army {
-    soldiers == 0
-}
-```
-
-La omisión es válida solo si cada acceso no cualificado se resuelve unívocamente. Un rol `for` con cardinalidad distinta de `[1]` debe tener nombre, porque los accesos a miembros de una colección requieren cuantificación, agregación o iteración explícitas. Los nombres de `given` nunca se omiten.
+Todo participante `for`, `on` y `given` tiene identificador explícito. No existe participante anónimo, tampoco con cardinalidad efectiva `[1]`. Una cabecera puede agrupar identificadores que comparten tipo y metadata-body, por ejemplo `for attacker, target: Fighter { ... }`; el grupo es azúcar y cada descriptor conserva su propia ancla.
 
 En una action, `mut` antes del nombre de cualquier rol `for`, incluida la cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. El receptor correspondiente debe ser un lugar almacenado con esa capacidad; un literal o una colección calculada no satisfacen el contrato. El `mut` de la especificación de colección continúa concediendo capacidad interior sobre las `thing` miembro:
 
@@ -1103,7 +1097,7 @@ Los índices comienzan en uno. Un índice inexistente y una sección totalmente 
 
 ## Tipo superior `Any`
 
-`Any` es el tipo superior abierto de los valores MUD del proyecto. Incluye básicos, `thing`, aliases, miembros de `family`, magnitudes, intervalos, colecciones, diccionarios y productos estructurales. No incluye acciones, reglas, tests, declaraciones ni nodos de AST como valores ordinarios.
+`Any` es el tipo superior abierto de los valores MUD del proyecto. Incluye básicos, valores incorporados como los miembros de `Prefix`, `thing`, aliases, miembros de `family`, magnitudes, intervalos, colecciones, diccionarios y productos estructurales. No incluye acciones, reglas, tests, declaraciones ni nodos de AST como valores ordinarios.
 
 `Any` no es enumerable, no posee orden total universal ni predeterminado. Son inválidos:
 
@@ -1310,18 +1304,21 @@ world.combatant in world.combat       # false
 
 ## Metadatos postfix
 
-El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Los metadatos son valores tipados, no campos ordinarios ni `Text` implícito.
+El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` es runtime-readonly; la escritura solo existe como declaración del modelo dentro del preámbulo metadata-bearing correspondiente.
 
-| Metadato | Tipo | Propietarios principales | Escritura desde MUD |
+| Metadato | Tipo | Propietarios principales | Declarable |
 | --- | --- | --- | --- |
-| `~name` | `Name` | `thing`, alias, miembro de `family`, unidad | según contrato del propietario |
-| `~path` | `MudPath` | declaraciones | no |
-| `~anchor` | `Anchor` | declaraciones y ramas funcionales | no |
-| `~file` | `MudFile` | declaraciones físicas | no |
-| `~plural` | tipo de presentación de unidad | unidades | declaración |
-| `~abbreviation` | tipo de presentación de unidad | unidades | declaración |
-| `~prefixes` | política de prefijos | unidades | declaración |
-| `~format` | plantilla de formato | magnitudes de punto | declaración |
+| `~identifier` | `Name` | elementos anclados | no, intrínseco |
+| `~name` | `Name` | elementos metadata-bearing compatibles | sí |
+| `~path` | `MudPath` | declaraciones y elementos anclados | no, intrínseco |
+| `~anchor` | `Anchor` | declaraciones y elementos anclados | no, intrínseco |
+| `~file` | `MudFile` | elementos con procedencia física | no, intrínseco |
+| `~plural` | `Text` | unidades | sí |
+| `~abbreviation` | `Text` | unidades | sí |
+| `~prefixes` | `Prefix [* unique]` | unidades | sí; default `empty` |
+| `~format` | `Text` | magnitudes de punto | sí |
+
+`Prefix` es un tipo incorporado. Sus valores SI se escriben como identificadores ordinarios (`kilo`, `milli`, ...), por lo que `~prefixes = [kilo, milli]` no necesita gramática especial.
 
 Las conversiones generales son explícitas cuando existen:
 
@@ -1341,7 +1338,7 @@ rule Fragile given expected: MudFile {
 }
 ```
 
-`~name` puede poseer estado separado en `thing`, aliases y miembros de `family`; modificarlo no cambia el payload, la igualdad, `~path`, `~anchor` ni `~file`.
+`~name` y cualquier otro metadato configurable se cambian editando el modelo y reelaborándolo; nunca mediante un efecto runtime. Esta edición no cambia payload, igualdad, path ni ancla salvo que se modifique el identificador fuente por otro mecanismo.
 
 ## `Text` y operadores
 

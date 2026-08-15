@@ -51,7 +51,6 @@ module MUDSurface {
 
     source_file = MudFile(file_metadata metadata,
                           metadata_assignment* metadata_defaults,
-                          metadata_attachment* metadata_attachments,
                           using_decl* usings,
                           top_level_decl* declarations)
         attributes (source_origin origin)
@@ -125,18 +124,21 @@ module MUDSurface {
                                metadata_assignment* metadata)
                    | FamilyDecl(flag is_ordered,
                                 nominal_name name,
+                                metadata_assignment* metadata,
                                 family_data_decl* data,
                                 family_member first_member,
                                 family_member* remaining_members)
                    | BaseMagnitudeDecl(nominal_name name,
                                        declared_type? representation,
                                        interval_expr? domain,
+                                       metadata_assignment* metadata,
                                        root_unit_decl? root_unit,
                                        alternative_unit_decl* units)
                    | DerivedMagnitudeDecl(nominal_name name,
                                           declared_type? representation,
                                           interval_expr? domain,
                                           dimension_expr dimension,
+                                          metadata_assignment* metadata,
                                           alternative_unit_decl* units)
                    | PointMagnitudeDecl(nominal_name name,
                                         type_ref coordinate_type,
@@ -145,32 +147,39 @@ module MUDSurface {
                    | BooleanRuleDecl(nominal_name name,
                                      for_clause? participants,
                                      given_clause? givens,
+                                     metadata_assignment* metadata,
                                      boolean_block condition)
                    | ReactiveRuleDecl(nominal_name name,
                                       on_clause? participants,
+                                      metadata_assignment* metadata,
                                       boolean_block activator,
                                       boolean_block? guard,
                                       effect_block effects)
                    | AlwaysRuleDecl(nominal_name name,
                                     on_clause? participants,
+                                    metadata_assignment* metadata,
                                     boolean_block invariant,
                                     expr? diagnostic)
                    | ActionDecl(action_kind kind,
                                 nominal_name name,
                                 for_clause? participants,
                                 given_clause? givens,
+                                metadata_assignment* metadata,
                                 action_guard? guard,
                                 effect_block effects,
                                 action_postcondition? postcondition)
                    | LookDecl(nominal_name name,
                               for_clause? participants,
+                              metadata_assignment* metadata,
                               public_field_decl* fields)
                    | MessageDecl(nominal_name name,
                                  on_clause? participants,
+                                 metadata_assignment* metadata,
                                  boolean_block activator,
                                  boolean_block? guard,
                                  public_field_decl* fields)
                    | TestDecl(nominal_name name,
+                              metadata_assignment* metadata,
                               start_set start,
                               effect_block effects,
                               test_after_block after)
@@ -184,18 +193,21 @@ module MUDSurface {
     stored_field_data = (flag collection_mutable,
                          field_name name,
                          value_shape shape,
-                         expr? default_value)
+                         expr? default_value,
+                         metadata_assignment* metadata)
         attributes (source_origin origin)
 
     field_decl = StoredFieldDecl(stored_field_data field)
                | CalculatedFieldDecl(field_name name,
                                      derived_value_shape? shape,
-                                     expr value)
+                                     expr value,
+                                     metadata_assignment* metadata)
         attributes (source_origin origin)
 
     public_field_decl = PublicFieldDecl(field_name name,
                                         derived_value_shape? shape,
-                                        expr value)
+                                        expr value,
+                                        metadata_assignment* metadata)
         attributes (source_origin origin)
 
     alias_definition = AliasRepresentation(type_expr target)
@@ -205,14 +217,16 @@ module MUDSurface {
     alias_member = AliasComponentDecl(alias_component component)
                  | AliasCalculatedFieldDecl(field_name name,
                                             derived_value_shape? shape,
-                                            expr value)
+                                            expr value,
+                                            metadata_assignment* metadata)
                  | AliasDefaultOverride(component_name name,
                                         expr value)
         attributes (source_origin origin)
 
     alias_component = AliasComponent(component_name name,
                                      value_shape shape,
-                                     expr? default_value)
+                                     expr? default_value,
+                                     metadata_assignment* metadata)
         attributes (source_origin origin)
 
     family_data_decl = StoredFamilyDataDecl(field_name name,
@@ -234,9 +248,6 @@ module MUDSurface {
 
     metadata_assignment = StoredMetadataAssignment(metadata_name name, type_expr? type, expr? value)
                         | CalculatedMetadataAssignment(metadata_name name, derived_value_shape? shape, expr value)
-        attributes (source_origin origin)
-
-    metadata_attachment = MetadataAttachment(source_span owner_span, metadata_assignment first, metadata_assignment* remaining)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
@@ -333,21 +344,25 @@ module MUDSurface {
 
     for_participant = ForParticipant(flag collection_mutable,
                                      role_name name,
-                                     value_shape shape)
+                                     value_shape shape,
+                                     metadata_assignment* metadata)
         attributes (source_origin origin)
 
     on_participant = DirectOnParticipant(role_name name,
                                          type_ref type,
-                                         flag elements_mutable)
+                                         flag elements_mutable,
+                                         metadata_assignment* metadata)
                    | RelatedOnParticipant(role_name name,
                                           type_ref? refinement,
                                           expr source,
-                                          flag elements_mutable)
+                                          flag elements_mutable,
+                                          metadata_assignment* metadata)
         attributes (source_origin origin)
 
     given_decl = GivenDecl(given_name name,
                            readonly_value_shape shape,
-                           expr? default_value)
+                           expr? default_value,
+                           metadata_assignment* metadata)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
@@ -359,24 +374,12 @@ module MUDSurface {
         attributes (source_origin origin)
 
     root_unit_decl = RootUnitDecl(identifier_name name,
-                                  unit_properties properties)
+                                  metadata_assignment* metadata)
         attributes (source_origin origin)
 
     alternative_unit_decl = AlternativeUnitDecl(identifier_name name,
                                                  quantity_expr equivalence,
-                                                 unit_properties properties)
-        attributes (source_origin origin)
-
-    unit_properties = (expr? name,
-                       expr? plural,
-                       expr? abbreviation,
-                       prefix_policy prefixes)
-        attributes (source_origin origin)
-
-    prefix_policy = AllPrefixes
-                  | NoPrefixes
-                  | SelectedPrefixes(identifier_name first,
-                                     identifier_name* remaining)
+                                                 metadata_assignment* metadata)
         attributes (source_origin origin)
 
     dimension_expr = DimensionProduct(dimension_term first,

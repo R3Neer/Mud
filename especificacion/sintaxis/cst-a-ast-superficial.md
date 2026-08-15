@@ -49,11 +49,14 @@ La existencia de tokens `MissingForRecovery`, `ErrorSyntax` o `SkippedTokensSynt
 La transformación produce un `MudFile` con:
 
 ```text
-metadata
+metadata físico
+metadataDefaults[]
 usings[]
 declarations[]
 origin
 ```
+
+Los metadatos de campos, componentes, participantes, unidades y demás propietarios estables se conservan directamente en el constructor del propietario. No existe una tabla lateral de `MetadataAttachment` por span.
 
 El agregador de compilación construye después `MudProject` y ordena sus archivos por ruta normalizada para serialización canónica.
 
@@ -98,7 +101,7 @@ mud-file → MudFile
 using-declaration → UsingDecl
 ```
 
-El cuerpo concreto `using-file-body` o `declaration-file-body` desaparece. La transformación separa los defaults de metadatos de archivo, la cabecera `using` y las declaraciones; además conserva los `MetadataAttachment` de propietarios subordinados admitidos por D-087.
+El cuerpo concreto `using-file-body` o `declaration-file-body` desaparece. La transformación separa los defaults de metadatos de archivo, la cabecera `using` y las declaraciones. Los metadatos subordinados quedan en el constructor de su propietario, no en una tabla lateral.
 
 ```mud
 using physics.*
@@ -265,7 +268,7 @@ La CST puede reconocer una flecha parentizada dentro de una alternativa, pero la
 
 ## Aliases
 
-La lista escrita después de `as` se conserva como `direct_ancestors`. La alternativa `:= type-expression` produce `AliasRepresentation`; su combinación con antecesores se rechaza antes del AST. La ausencia de definición produce `definition = None` y solo es válida si existe al menos una antecesora.
+La lista escrita después de `as` se conserva como `direct_ancestors`. La alternativa `:= type-expression` produce `AliasRepresentation`; su combinación con antecesores se rechaza antes del AST. La ausencia de definición produce `definition = None` y solo es válida si existe al menos una antecesora. Un cuerpo metadata-only posterior a `:= type-expression` alimenta `AliasDecl.metadata` y no crea miembros estructurales.
 
 `type-expression` normaliza una o más `type-alternative` separadas por `|` en un único `TypeExpr`. Se eliminan agrupaciones redundantes, se deduplican alternativas idénticas y se conserva cada alternativa nominal aunque su dominio esté contenido en el de otra. La especificación de colección exterior se asocia al `TypeExpr` completo.
 
@@ -281,7 +284,7 @@ Un componente no puede producir mutabilidad exterior. Su colección general sí 
 
 La palabra `ordered` produce `isOrdered = Enabled`.
 
-Las declaraciones de datos se separan en almacenadas y calculadas. En el cuerpo de un miembro, `~name = expresión` produce `MetadataAssignment`; las demás asignaciones se conservan como datos almacenados. El cuerpo omitido genera ambas secuencias vacías.
+Las declaraciones de datos se separan en almacenadas y calculadas. En el preámbulo de un miembro, cualquier `metadata-assignment` produce `StoredMetadataAssignment` o `CalculatedMetadataAssignment`; las asignaciones ordinarias posteriores se conservan como datos almacenados. Un cuerpo metadata-only produce `assignments = []` y conserva su secuencia `metadata`.
 
 La coma entre miembros desaparece. La ausencia de coma final ya ha sido validada por la gramática.
 
@@ -310,47 +313,29 @@ El dominio ordinario produce `OrdinaryPointDomain`; la presencia de `cycle` desp
 
 ## Unidades
 
-El identificador `lowerCamel` escrito después de `unit` se conserva en `RootUnitDecl` o `AlternativeUnitDecl`. La lista concreta de propiedades se convierte en una estructura fija después de validar unicidad; todas las propiedades son opcionales.
+Las unidades no tienen una normalización `UnitProperties` separada. `unit-body` se descarta como envoltorio concreto y cada `metadata-assignment` se conserva en la secuencia `metadata` de `RootUnitDecl` o `AlternativeUnitDecl`.
 
-| Forma concreta | AST |
-|---|---|
-| `~name = e` | `name = e` |
-| `~plural = e` | `plural = e` |
-| `~abbreviation = e` | `abbreviation = e` |
-| metadato `~prefixes` omitido | `NoPrefixes` |
-| `~prefixes = empty` | `NoPrefixes` |
-| `~prefixes = all` | `AllPrefixes` |
-| `~prefixes = [a, b]` | `SelectedPrefixes([a,b])` |
+`~prefixes = empty`, `~prefixes = all` y `~prefixes = [kilo, milli]` siguen la transformación ordinaria de expresiones. El AST superficial no fabrica `NoPrefixes`, `AllPrefixes` ni `SelectedPrefixes`; la elaboración posterior aplica el tipo esperado `Prefix [* unique]` y el default `empty`.
 
-No se sintetiza plural.
-
-Una unidad raíz produce `RootUnitDecl(name, properties)`. Una alternativa produce `AlternativeUnitDecl(name, equivalence, properties)`.
-
-`~name`, `~plural` y `~abbreviation` omitidos permanecen ausentes. Los valores de presentación predeterminados y la resolución de formas pertenecen a la elaboración semántica.
+Una unidad raíz produce `RootUnitDecl(name, metadata)` y una alternativa `AlternativeUnitDecl(name, equivalence, metadata)`. Los metadatos de presentación omitidos permanecen ausentes en esta fase.
 
 ## Participantes
 
 ### `for`
 
-Se convierte `mut` exterior, nombre opcional y `ValueShape`.
-
-La omisión de nombre sigue siendo ausencia; no se inventa uno a partir del tipo.
+Cada participante tiene nombre obligatorio. Se convierten `mut` exterior, `ValueShape` y la secuencia de metadatos del descriptor. Una cabecera agrupada produce un `ForParticipant` por identificador y copia a cada uno el mismo metadata-body.
 
 ### `on`
 
-La primera alternativa gramatical produce `DirectOnParticipant`.
-
-La alternativa con `in expression` produce `RelatedOnParticipant`.
-
-`[mut]` produce `elementsMutable = Enabled`.
-
-Las referencias entre participantes permanecen como expresiones no resueltas.
+La variante directa produce `DirectOnParticipant(name, type, elementsMutable, metadata)`. La variante relacionada produce `RelatedOnParticipant(name, refinement?, source, elementsMutable, metadata)`. Las referencias cruzadas continúan sin resolver en esta fase.
 
 ### `given`
 
-Se convierten nombre, tipo, dominio, colección de solo lectura y predeterminado. El predeterminado continúa siendo `expr`; su carácter constante se comprueba después.
+Se convierten nombre, tipo, dominio, colección de solo lectura, predeterminado y metadatos. El predeterminado continúa siendo `expr`; su carácter constante se comprueba después.
 
 ## Reglas y acciones
+
+El preámbulo metadata-bearing de cada regla, action, subaction, look, message y test se conserva en el campo `metadata` del constructor superior correspondiente. `start with` no obtiene metadata propia.
 
 ### Regla booleana
 
@@ -540,7 +525,7 @@ Conserva su forma fuente en `PointLiteral`; su magnitud esperada no se resuelve 
 
 La diferencia entre cierre explícito e implícito desaparece.
 
-Una interpolación de valor produce `ValueInterpolation`; `anchor{...}` produce `AnchorInterpolation`.
+Toda interpolación produce `ValueInterpolation`; `anchor{...}` no pertenece al lenguaje.
 
 Dentro del `format` de una magnitud de punto, `unidad from contenedor` produce `ContextualPointComponentExpr`; no se inventa un receptor que no estaba escrito.
 
@@ -676,12 +661,12 @@ El corpus inicial está en `casos/cst-ast.yaml`.
 
 Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 
-1. `~name = e` produce `MetadataAssignment`; nunca se integra como string especial en `ThingDecl` o `FamilyMember`.
+1. Una declaración `~...` produce `StoredMetadataAssignment` o `CalculatedMetadataAssignment` y se conserva en la secuencia `metadata` de su propietario.
 2. La omisión de cardinalidad produce `OmittedCardinality`. La inferencia exacta de un campo almacenado inmutable pertenece a la elaboración y no se simula con `[1]` sintético.
 3. Una cadena `A -> B [m] --> C [n]` se pliega de derecha a izquierda. Cada enlace produce `ExactDictionaryType` o `DecisionDictionaryType` y conserva sus modificadores.
 4. Los productos de tipo producen `PositionalProductType` o `NamedProductType`; los literales estructurales existentes conservan sus nodos de valor.
 5. `a -> b` produce `ExactAssociationExpr`; `selector --> resultado`, `DecisionBranchExpr`; `_`, `FallbackLiteral`.
-6. `element~metadata` produce `MetadataAccessExpr` o `MetadataSuffix` cuando forma parte de un objetivo asignable.
+6. `element~metadata` produce `MetadataAccessExpr`; ningún acceso `~` forma parte de un objetivo asignable runtime.
 7. `not in` produce `NotMembership`.
 8. `action` y `subaction` producen `ActionDecl` con `PublicAction` o `Subaction`.
 9. `start with` produce `StartSet(things, rules)` sin mezclar contribuciones.
@@ -692,4 +677,6 @@ Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 
 ## Proyección D-087
 
-`MudFile` conserva defaults y `MetadataAttachment` por span del propietario. Los grupos de participantes producen un nodo por identificador y copian su attachment con `NormalizedSugar`. `start with` y cuerpos de cláusula no reciben attachment.
+`MudFile` conserva defaults de archivo y cada propietario estable conserva directamente su secuencia `metadata`. Los grupos de participantes producen un nodo por identificador y copian a cada descriptor las mismas declaraciones con procedencia `NormalizedSugar`. `start with` y los cuerpos de cláusula no reciben metadata propia.
+
+Las unidades usan exactamente la misma proyección: `unit-body` es solo un contenedor de `metadata-assignment`. `~prefixes` permanece una expresión ordinaria cuyo tipo esperado es `Prefix [* unique]`; no existe `UnitProperties`, `PrefixPolicy` ni `MetadataAttachment` lateral.

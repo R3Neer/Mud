@@ -52,10 +52,6 @@ fixed_tokens:
 - spelling: cycle
 - spelling: root
 - spelling: unit
-- spelling: name
-- spelling: plural
-- spelling: abbreviation
-- spelling: prefixes
 - spelling: empty
 - spelling: all
 - spelling: '['
@@ -356,7 +352,7 @@ lexical_forms:
     rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
     references: []
   builtin-word:
-    rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\""
+    rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\" | \"Prefix\""
     references: []
   constant-word:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
@@ -416,7 +412,7 @@ lexical_forms:
     rhs: '"[" | "]"'
     references: []
   punctuation-token:
-    rhs: '"," | "." | ":" | "'
+    rhs: '"," | "." | ":" | ";"'
     references: []
 syntax_nodes:
   mud-file:
@@ -575,9 +571,12 @@ syntax_nodes:
     - alias-definition
   alias-definition:
     kind: AliasDefinitionSyntax
-    rhs: "\":=\" , type-expression\n      | structural-alias-body"
+    rhs: "\":=\" , type-expression\n        , [ \"{\" , declaration-layout\n            , [ metadata-assignment\n                , { required-separation , metadata-assignment }\n                , [ required-separation ]\n              ]\n            , \"}\"\n          ]\n      | structural-alias-body"
     references:
     - type-expression
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
     - structural-alias-body
   structural-alias-body:
     kind: StructuralAliasBodySyntax
@@ -648,7 +647,7 @@ syntax_nodes:
     - family-member-body
   family-member-body:
     kind: FamilyMemberBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , family-member-entry\n        , { required-separation , family-member-entry }\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , [ family-member-entry\n            , { required-separation , family-member-entry }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - metadata-assignment
@@ -721,7 +720,7 @@ syntax_nodes:
     - alternative-unit-declaration
   point-magnitude-body:
     kind: PointMagnitudeBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ metadata-assignment , [ required-separation ] ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
     - metadata-assignment
@@ -746,28 +745,11 @@ syntax_nodes:
     - identifier
   unit-body:
     kind: UnitBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ ( unit-property | metadata-assignment )\n            , { required-separation , ( unit-property | metadata-assignment ) }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - declaration-layout
-    - unit-property
     - metadata-assignment
     - required-separation
-  unit-property:
-    kind: UnitPropertySyntax
-    rhs: "\"~\" , \"name\" , \"=\" , text-expression\n      | \"~\" , \"plural\" , \"=\" , text-expression\n      | \"~\" , \"abbreviation\" , \"=\" , text-expression\n      | \"~\" , \"prefixes\" , \"=\" , prefix-selection"
-    references:
-    - text-expression
-    - prefix-selection
-  prefix-selection:
-    kind: PrefixSelectionSyntax
-    rhs: "\"empty\"\n      | \"all\"\n      | \"[\" , prefix-name , { \",\" , prefix-name } , \"]\""
-    references:
-    - prefix-name
-  prefix-name:
-    kind: PrefixNameSyntax
-    rhs: identifier
-    references:
-    - identifier
   dimension-expression:
     kind: DimensionExpressionSyntax
     rhs: dimension-factor , { ( "*" | "/" ) , dimension-factor }
@@ -1003,11 +985,12 @@ syntax_nodes:
     - boolean-body
   boolean-body:
     kind: BooleanBodySyntax
-    rhs: "\"{\" , declaration-layout , boolean-block\n        , [ required-separation ] , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , boolean-block\n        , [ required-separation ] , \"}\""
     references:
     - declaration-layout
-    - boolean-block
+    - metadata-assignment
     - required-separation
+    - boolean-block
   boolean-block:
     kind: BooleanBlockSyntax
     rhs: "{ local-value-declaration , required-separation }\n        , boolean-expression"

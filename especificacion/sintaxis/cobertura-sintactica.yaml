@@ -250,23 +250,8 @@ productions:
   unit-body:
     cst: UnitBodySyntax
     ast:
-      disposition: normalized
-      target: unit_properties
-  unit-property:
-    cst: UnitPropertySyntax
-    ast:
-      disposition: normalized
-      target: unit_properties
-  prefix-selection:
-    cst: PrefixSelectionSyntax
-    ast:
-      disposition: normalized
-      target: prefix_policy
-  prefix-name:
-    cst: PrefixNameSyntax
-    ast:
-      disposition: folded
-      reason: producción auxiliar preservada por la CST y absorbida durante la normalización
+      disposition: discarded
+      reason: estructura concreta absorbida por la declaración de unidad; sus metadata-assignment se conservan en el propietario
   dimension-expression:
     cst: DimensionExpressionSyntax
     ast:

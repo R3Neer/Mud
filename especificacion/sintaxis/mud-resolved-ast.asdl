@@ -31,6 +31,8 @@ module MUDResolved {
                   | PluralMetadata | AbbreviationMetadata | PrefixesMetadata | FormatMetadata
                   | ExtensionMetadata(string name)
 
+    metadata_evaluation = StoredMetadata | CalculatedMetadata
+
     resolved_project = ResolvedProject(resolved_decl* declarations,
                                        resolved_decision_branch* decision_branches,
                                        dependency_edge* dependencies)
@@ -53,7 +55,7 @@ module MUDResolved {
     resolved_metadata = ResolvedMetadata(symbol_id owner,
                                          metadata_kind kind,
                                          resolved_type type,
-                                         string mutability,
+                                         metadata_evaluation evaluation,
                                          resolved_expr value)
         attributes (source_span origin)
 
@@ -176,7 +178,6 @@ module MUDResolved {
                     | Reads(symbol_id source, symbol_id target)
                     | ReadsMetadata(symbol_id source, symbol_id target, metadata_kind metadata)
                     | Writes(symbol_id source, symbol_id target)
-                    | WritesMetadata(symbol_id source, symbol_id target, metadata_kind metadata)
                     | CallsAction(anchor source, anchor target)
                     | CallsDecision(anchor source, anchor target)
                     | DecisionDependsOn(anchor branch, symbol_id target)
