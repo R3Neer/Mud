@@ -13,6 +13,7 @@ affects:
 # ADR-075 — Dominios enumerables, `all` y forma de valores derivados
 
 - Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 
 ## Contexto
 
@@ -29,7 +30,7 @@ colors: Color in [Red, White] [2] = all
 numbers: Num in 0..1 by 0.2 [6] = all
 ```
 
-`by` convierte un intervalo lineal en un dominio discreto. Su paso es estático, positivo, no nulo y compatible con el tipo o dimensión. `Num` usa aritmética racional exacta; un dominio `Rum` no se considera enumerable. La cardinalidad siempre usa corchetes y es independiente del dominio.
+`by` convierte un intervalo lineal en un dominio discreto. Su paso es estático, firmado, no nulo, exacto y compatible con el tipo o dimensión. Un paso positivo se ancla en el límite inferior y uno negativo en el superior conforme a D-088. `Num` usa aritmética racional exacta; un dominio `Rum` no se considera enumerable. La cardinalidad siempre usa corchetes y es independiente del dominio.
 
 ### Literal contextual `all`
 
@@ -80,3 +81,7 @@ Cada transformación es una sugerencia independiente y solo se ofrece cuando con
 5. Inferencia de listas calculadas, multiplicidad y `unique`.
 6. Tres resultados del análisis de dominios derivados.
 7. Sugerencias escalonadas de `to`.
+
+## Modificación por D-088
+
+El paso de un dominio escalonado deja de exigirse positivo. Sigue siendo estático, exacto, compatible y no nulo, pero puede ser firmado. Positivo ancla en el límite inferior y negativo en el superior; un límite inicial abierto avanza una vez antes del primer candidato. El signo puede cambiar la pertenencia, pero no introduce orden en el tipo; `all` usa el orden canónico. `Rum` continúa excluido.
