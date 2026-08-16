@@ -17,6 +17,7 @@ affects:
 
 - Modifica: [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]].
 - Conserva: [[ADR-034-number-exacto-y-rumber-binary64|D-034]], [[ADR-040-semantica-numerica-basica-restante|D-040]] y la prohibición de azar en filtros de [[ADR-048-azar-reproducible-y-fallos|D-048]].
+- Modificada por: [[ADR-093-extremos-vacios-como-ausencia-ordinaria|D-093]] en la forma de resultado de `min` y `max` sobre ausencia.
 - Preguntas relacionadas: [[notas/preguntas/Q-018-intervalos-discontinuos|Q-018]], [[notas/preguntas/Q-028-finitud|Q-028]] y [[notas/preguntas/Q-029-terminacion|Q-029]].
 
 ## Contexto
@@ -136,7 +137,7 @@ Un dominio cíclico de punto puede enumerarse con diferencia compatible, pero so
 
 ## Otras construcciones con `by`
 
-`by` de progresión se admite también en selección y en `exists`, `forall`, `count`, `sum`, `min` y `max`, siempre que la fuente ofrezca progresión mediante diferencia. No significa stride sobre una colección arbitraria. Una fuente futura puede definir expresamente esa capacidad; esta decisión no introduce un protocolo general. `ordered by path` conserva una semántica distinta.
+`by` de progresión se admite también en selección y en `exists`, `forall`, `count`, `sum`, `min` y `max`, siempre que la fuente ofrezca progresión mediante diferencia. No significa stride sobre una colección arbitraria. La semántica de ausencia de `min` y `max` es la de D-093: ningún candidato produce `empty [0..1]`. Una fuente futura puede definir expresamente esa capacidad; esta decisión no introduce un protocolo general. `ordered by path` conserva una semántica distinta.
 
 ## Azar
 

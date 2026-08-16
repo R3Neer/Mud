@@ -37,6 +37,7 @@ decisions:
   - D-090
   - D-091
   - D-092
+  - D-093
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -366,6 +367,10 @@ Una `FamilyDataAssignment` dentro de un miembro no contiene metadatos ni crea de
 ## Tipos readonly de `given`
 
 La subgramática `given-type-expression` no crea una familia AST paralela. Se normaliza a `readonly_value_shape`; sus flechas producen los constructores generales `ExactDictionaryType` y `DecisionDictionaryType`. Toda especificación readonly se traduce con `elements_mutable = false`, y una pasada estática recursiva rechaza cualquier `collection_spec` mutable que haya entrado a través de una forma parentizada general.
+
+## Resultado de `min` y `max`
+
+`QuantifierExpr(Min|Max, ...)` no necesita un constructor superficial especial para ausencia. La elaboración asigna al resultado el tipo elemento y una cardinalidad conservadora `[0..1]`; un recorrido sin candidatos produce el valor ordinario `empty`. Solo un contexto posterior incompatible con cero elementos introduce el fallo normal de cardinalidad.
 
 ## Magnitudes
 

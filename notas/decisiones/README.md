@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 87.
-- Vigentes: 87.
+- Total: 88.
+- Vigentes: 88.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -106,6 +106,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-090 | vigente | 2026-08-16 | [[notas/decisiones/ADR-090-claves-locales-de-entradas-de-diccionario|Claves locales de entradas de diccionario sin anclas de rama]] |
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-identidad-de-datos-family-y-anclas-de-metadatos|Identidad de datos de `family` y anclas de metadatos]] |
 | D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-tipos-readonly-completos-en-given|Tipos de solo lectura completos en `given`]] |
+| D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
 
 ## Identificadores reservados
 
