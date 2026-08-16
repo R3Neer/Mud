@@ -1785,3 +1785,21 @@ cases:
   expected_diagnostics:
   - given-mutability-forbidden
   produces_ast: true
+- id: min-empty-is-empty
+  category: quantifier-semantics
+  source: "min x in empty: x"
+  cst_root: ExpressionSyntax
+  ast: QuantifierExpr(Min, source=empty)
+  semantic_expectations:
+  - result-cardinality-0-or-1
+  - empty-source-produces-empty
+  produces_ast: true
+- id: max-empty-is-empty
+  category: quantifier-semantics
+  source: "max x in empty: x"
+  cst_root: ExpressionSyntax
+  ast: QuantifierExpr(Max, source=empty)
+  semantic_expectations:
+  - result-cardinality-0-or-1
+  - empty-source-produces-empty
+  produces_ast: true
