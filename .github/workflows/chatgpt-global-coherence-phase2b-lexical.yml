@@ -1,0 +1,121 @@
+name: ChatGPT global coherence phase 2b lexical
+
+on:
+  push:
+    branches:
+      - chatgpt-global-coherence-runner-v2b
+
+permissions:
+  contents: write
+
+jobs:
+  lexical-context:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-runner-v2b
+          path: runner
+          fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-20260816-v1
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Verify base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 6d2d52e351f80f368ae123b55f07d81b34012bff
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate not clean' }
+      - name: Apply lexical decision and catalog sync
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase2_lexical.py tooling/chatgpt/phase2.py
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase2_syntax_kinds.py tooling/chatgpt/phase2k.py
+          python tooling/chatgpt/phase2.py
+          if ($LASTEXITCODE -ne 0) { throw 'lexical transform failed' }
+          python tooling/chatgpt/phase2k.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax catalog sync failed' }
+          Remove-Item tooling/chatgpt/phase2.py,tooling/chatgpt/phase2k.py
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision generation failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question generation failed' }
+      - name: Stage 1 invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          for p in ('especificacion/gramatica/mud-lexico.ebnf','especificacion/sintaxis/mud-syntax-kinds.yaml'):
+              t=r(p)
+              for stale in ('point-form\n    ::=','unit-form\n    ::=','    - point-form','    - unit-form'):
+                  if stale in t: raise SystemExit(f'{p}: stale {stale!r}')
+          for p,s in (
+              ('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','scanner base'),
+              ('especificacion/06-lexico.md','MUD-LEX-015'),
+              ('notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','resolved: true'),
+              ('notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md','resolved: true'),
+          ):
+              if s not in r(p): raise SystemExit(f'{p}: missing {s}')
+          print('PHASE2B_INVARIANTS_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'invariants failed' }
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+      - name: Stage 3 controlled surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          $allowed=@(
+            'notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md','notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md','notas/decisiones/README.md',
+            'notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md','notas/preguntas/README.md',
+            'especificacion/06-lexico.md','especificacion/gramatica/mud-lexico.ebnf','especificacion/sintaxis/mud-syntax-kinds.yaml','tooling/markdown_export/profiles.toml'
+          )
+          $actual=@(git status --porcelain=v1 --untracked-files=all | % { $p=$_.Substring(3); if($p -match ' -> '){$p=($p -split ' -> ',2)[1]}; $p.Trim('"') }) | Sort-Object -Unique
+          foreach($p in $actual){ if($allowed -notcontains $p){ throw "unexpected path: $p" } }
+          git diff --stat
+      - name: Commit lexical phase
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff failed' }
+          git commit -m "spec(lexicon): separa scanner base de formas contextuales" -m "D-089 mueve UNIT_FORM y POINT_LITERAL fuera del scanner base y cierra Q-054/Q-055 con clasificación contextual sobre spans fuente.`n`nValidation: decisiones, preguntas, gramática, sintaxis y git diff --check."
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-global-coherence-20260816-v1
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
