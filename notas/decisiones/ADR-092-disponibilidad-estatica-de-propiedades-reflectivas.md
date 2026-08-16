@@ -14,6 +14,7 @@ affects:
 
 - Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
 - Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Precisa la terminalidad de `Metadata` conforme a [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
 - Amplía: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
 
 ## Contexto
@@ -67,7 +68,7 @@ rule PingHasNoForParticipants {
 }
 ```
 
-La regla de disponibilidad se aplica también al resto de propiedades reflectivas conforme al conjunto de propietarios de su contrato. Una propiedad cuyo resultado admita ausencia o colección vacía sigue distinguiendo esa ausencia de la inexistencia de la propiedad.
+La regla de disponibilidad se aplica también al resto de propiedades reflectivas conforme al conjunto de propietarios de su contrato. Una propiedad cuyo resultado admita ausencia o colección vacía sigue distinguiendo esa ausencia de la inexistencia de la propiedad. En particular, `Metadata` admite su contrato intrínseco incluido `~anchor`, pero no admite `~metadata`: D-094 lo define como descriptor terminal.
 
 ## Consecuencias por fase
 

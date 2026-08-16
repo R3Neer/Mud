@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 88.
-- Vigentes: 88.
+- Total: 89.
+- Vigentes: 89.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -107,6 +107,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados|Datos de family como descriptores anclados]] |
 | D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Disponibilidad estática de propiedades reflectivas]] |
 | D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial único e IR semántico elaborado]] |
+| D-094 | vigente | 2026-08-16 | [[notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados|Anclas terminales de metadatos configurados]] |
 
 ## Identificadores reservados
 

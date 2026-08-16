@@ -29,10 +29,12 @@ module MUDSemanticIR {
                        | InferredFromInitializer
                        | DerivedFromDecisionBranches
 
-    metadata_kind = IntrinsicMetadata(string name)
-                  | NameMetadata | PrivateMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
+    metadata_kind = NameMetadata | PrivateMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
                   | PluralMetadata | AbbreviationMetadata | PrefixesMetadata | FormatMetadata
                   | ExtensionMetadata(string name)
+
+    metadata_property = IntrinsicProperty(string name)
+                      | ConfiguredProperty(metadata_kind kind)
 
     metadata_evaluation = StoredMetadata | CalculatedMetadata
 
@@ -55,7 +57,8 @@ module MUDSemanticIR {
                                      semantic_expr? value)
         attributes (source_span origin)
 
-    semantic_metadata = SemanticMetadata(symbol_id owner,
+    semantic_metadata = SemanticMetadata(anchor identity,
+                                         symbol_id owner,
                                          metadata_kind kind,
                                          semantic_type type,
                                          metadata_evaluation evaluation,
@@ -152,7 +155,7 @@ module MUDSemanticIR {
                                                          semantic_expr right,
                                                          semantic_type result_type)
                   | MetadataAccessExpr(semantic_expr receiver,
-                                       metadata_kind metadata,
+                                       metadata_property metadata,
                                        semantic_type result_type)
                   | OperationExpr(string operator, semantic_expr* operands)
                   | ConversionExpr(semantic_expr value, anchor target_type)

@@ -24,6 +24,7 @@ decisions:
   - D-090
   - D-091
   - D-093
+  - D-094
 ---
 # 09. Nombres, paths y anclas
 
@@ -119,9 +120,10 @@ unit::physics.Length::meter
 action::game.combat.Heal
 type::Nat
 type::Prefix
+thing::game.people.Person::friends~summary
 ```
 
-La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaración anidada, añade `::<miembro>` por cada propietario. Los identificadores de MUD no contienen `::`, de modo que la separación es inequívoca. El catálogo de categorías de MUD 1.0 es:
+La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaración anidada, añade `::<miembro>` por cada propietario. Un metadato configurado añade `~<identificador-metadata>` a la ancla de su propietario. Los identificadores de MUD no contienen `::` y `~` pertenece al espacio postfix reservado, de modo que ambas separaciones son inequívocas. El catálogo de categorías de MUD 1.0 es:
 
 | Declaración | Categoría de ancla |
 |---|---|
@@ -148,6 +150,7 @@ Poseen ancla:
 - miembros de family;
 - unidades declaradas;
 - participantes `for`, `on` y `given`;
+- metadatos configurados y de usuario materializados como `Metadata`;
 - tipos incorporados.
 
 No poseen ancla pública:
@@ -157,7 +160,8 @@ No poseen ancla pública:
 - resultados intermedios;
 - unidades creadas estructuralmente por prefijos;
 - los valores incorporados `Prefix`, que se elaboran como constantes y no como declaraciones;
-- las ramas de diccionarios funcionales, que se identifican solo de forma local dentro de su diccionario propietario.
+- las ramas de diccionarios funcionales, que se identifican solo de forma local dentro de su diccionario propietario;
+- las propiedades reflectivas intrínsecas, que no materializan objetos `Metadata`.
 
 Un dato asociado declarado por una `family` posee un ancla subordinada estable formada con la categoría `family`, el nombre cualificado de la familia y el identificador del dato. Esa ancla identifica el descriptor del esquema uniforme, no cada valor obtenido al consultar un miembro. Una asignación dentro del cuerpo de un miembro no introduce ancla y no cambia la del dato declarado.
 
@@ -217,6 +221,8 @@ Las declaraciones `alias` pueden aportar aristas de especialización. El grafo n
 D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el global continúa sin ancla.
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
+
+Cada valor `Metadata` configurado posee a su vez una ancla terminal formada añadiendo `~<identificador-metadata>` a la ancla del propietario, por ejemplo `thing::game.Person::health~description`. Esa ancla sirve para reflexión y tooling; no convierte a `Metadata` en propietario de otros metadatos. `Metadata~anchor` es válido, mientras `Metadata~metadata` no forma parte del contrato.
 
 ## Claves locales de ramas funcionales
 

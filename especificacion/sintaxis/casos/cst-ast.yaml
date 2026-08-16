@@ -1751,3 +1751,21 @@ cases:
   expected_diagnostics:
   - duplicate-decision-branch-key
   produces_ast: true
+- id: configured-metadata-anchor
+  category: metadata
+  source: "thing Nora {\n    ~summary = \"Persona principal\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredMetadataAssignment(summary, ...)
+  normalizations:
+  - metadata-anchor=thing::Nora~summary
+  - intrinsic-properties-do-not-materialize-metadata
+  produces_ast: true
+- id: metadata-descriptor-terminal
+  category: reflection-contract
+  source: "thing Nora {\n    ~summary = \"Persona principal\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredMetadataAssignment(summary, ...)
+  semantic_expectations:
+  - configured-metadata-exposes-anchor
+  - metadata-does-not-expose-metadata
+  produces_ast: true

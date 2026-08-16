@@ -14,7 +14,7 @@ affects:
 
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
-- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]] y [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]].
+- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] y [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
 
 ## Contexto
 
@@ -66,7 +66,9 @@ Un elemento puede poseer metadatos propios únicamente cuando satisface conjunta
 
 Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, unidades, campos almacenados/calculados/públicos, datos asociados almacenados/calculados de una `family`, componentes de alias y participantes `for`/`on`/`given`.
 
-No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. Una rama de diccionario funcional tampoco posee ancla pública: D-090 le asigna únicamente una clave local dentro de su propietario para la representación resuelta. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
+No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. Una rama de diccionario funcional tampoco posee ancla pública: D-090 le asigna únicamente una clave local dentro de su propietario para el IR semántico. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
+
+Un valor `Metadata` configurado sí posee descriptor y ancla propios para reflexión y tooling, pero es **terminal**: no puede poseer metadata propia y no expone `~metadata`. D-094 fija esta excepción deliberada al principio de admisión.
 
 La declaración global `start with` continúa sin nombre y sin ancla pública, por lo que no admite metadatos. El `start with` local de un `test` es parte del descriptor del test, no una declaración independiente, y tampoco admite metadatos.
 
@@ -228,6 +230,7 @@ Un valor `Metadata` expone al menos:
 
 ```text
 ~identifier  : Name
+~anchor      : Anchor
 ~type        : Type
 ~domain      : Domain
 ~cardinality : Cardinality
@@ -236,7 +239,7 @@ Un valor `Metadata` expone al menos:
 ~calculated  : Bool
 ```
 
-Las propiedades intrínsecas no se convierten en `Metadata`. Los nombres intrínsecos y estándar reservados no pueden ser ocultados por un metadato de usuario.
+Las propiedades intrínsecas no se convierten en `Metadata` y no reciben ancla de metadata. Los nombres intrínsecos y estándar reservados no pueden ser ocultados por un metadato de usuario. La ancla de un metadato configurado se deriva como `<ancla-propietario>~<identificador-metadata>`; cambiar su valor no cambia identidad.
 
 ### Colecciones y diccionarios
 
