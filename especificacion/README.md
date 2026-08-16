@@ -248,7 +248,7 @@ Define:
 - Declaraciones `using` exactas y recursivas.
 - Posición obligatoria de todos los `using` en la cabecera del fichero.
 - Ambigüedad.
-- Formación y unicidad de anclas, incluidas anclas estables de ramas decisionales.
+- Formación y unicidad de anclas, y claves locales de ramas decisionales sin ancla pública propia.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
 - Identidad ante movimientos de archivo.
 - Migración de path y anclas.
@@ -1134,4 +1134,4 @@ La especialización de aliases, los cuerpos vacíos omitibles de `thing`, los ca
 - `start with` separa contribuciones de `things` y `rules`; `Thing` permanece siempre efectiva.
 - `subaction` queda fuera de la API raíz y comparte la atomicidad de la acción exterior.
 - `~name`, `~path`, `~anchor`, `~file` y los metadatos de unidades sustituyen `.name`, `name =` y `anchor{...}`.
-- El grafo registra anclas de rama, lecturas de metadatos, operaciones funcionales, dependencias combinadas y evidencia de terminación.
+- El grafo registra claves locales de rama junto con el ancla del diccionario propietario, lecturas de metadatos, operaciones funcionales, dependencias combinadas y evidencia de terminación.

@@ -48,33 +48,17 @@ Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases
 
 El tipo incorporado `Thing` admite cualquier `thing`. Por tanto, un rol `for` de tipo `Thing` acepta cualquier identidad concreta compatible y `on Thing` enumera todas las `thing` concretas y activas; la raíz abstracta no produce una vinculación propia.
 
-El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos, además de los nombres ordinariamente visibles:
+Todo participante `for`, `on` y `given` declara un identificador fuente explícito, con independencia de su cardinalidad. D-087 retira la antigua proyección implícita de miembros desde participantes anónimos: el cuerpo accede a cada participante mediante su identificador y los accesos no cualificados siguen las reglas ordinarias de resolución.
 
-```mud
-rule IsDestroyed for Army {
-    soldiers == 0
-}
-
-rule CanGovern for Person, Kingdom {
-    age >= 18 and treasury > 0
-}
-```
-
-La omisión es válida únicamente si cada referencia no cualificada posee un solo candidato compatible. Esta resolución se aplica por igual a campos, reglas booleanas y actions accesibles desde los participantes; la firma y los tipos de los argumentos forman parte de la resolución. En el segundo ejemplo, `age` debe resolverse solo contra `Person` y `treasury` solo contra `Kingdom`. Si ambos tipos ofrecieran `name`, una referencia desnuda a `name` sería ambigua y el programa debería cualificarla declarando el nombre del participante correspondiente.
-
-La omisión no crea una variable global ni cambia el tipo de la declaración.
-
-Cuando el cuerpo necesita referirse al participante como valor completo, y no solo resolver un miembro suyo, debe declararle un nombre.
-
-Un valor básico no ofrece miembros que puedan resolverse implícitamente; por tanto, un rol básico anónimo no puede ser utilizado por el cuerpo y el compilador debe sugerir nombrarlo o eliminarlo. Los componentes de un alias estructural y los datos asociados de una `family` sí participan en la resolución implícita cuando esta es unívoca.
-
-Todo rol `for` cuya cardinalidad no sea exactamente `[1]` debe tener nombre. La colección no proyecta implícitamente los campos de sus miembros: el cuerpo debe emplear el nombre en una cuantificación, agregación o iteración explícita.
+Un rol `for` colectivo conserva igualmente su nombre y se usa explícitamente en cuantificaciones, agregaciones o iteraciones:
 
 ```mud
 rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {
     forall person in people: person.age >= 18
 }
 ```
+
+El identificador nombra el slot de la firma y participa en su ancla subordinada; la posición textual no constituye identidad persistente.
 
 También son roles válidos los valores sin identidad runtime:
 
@@ -172,7 +156,7 @@ rule AdvanceCalendar {
 
 Aquí `World` no significa «toda `thing` que sea `World`», sino la única identidad `World`.
 
-En cambio, un participante individual `on World` o `for World` selecciona `thing` concretas activas cuyo tipo satisface `is World`. Cada miembro `thing` de un rol `for` colectivo se somete a la misma selección. La selección es reflexiva: incluye la identidad exacta `World` cuando es concreta y activa, además de sus especializaciones activas. Una `thing` abstracta no aporta por sí misma una vinculación concreta, aunque sus especializaciones sí puedan aportarla. Esta regla de selección no se aplica a roles de valor.
+En cambio, un participante individual `on world: World` o `for world: World` selecciona `thing` concretas activas cuyo tipo satisface `is World`. Cada miembro `thing` de un rol `for` colectivo se somete a la misma selección. La selección es reflexiva: incluye la identidad exacta `World` cuando es concreta y activa, además de sus especializaciones activas. Una `thing` abstracta no aporta por sí misma una vinculación concreta, aunque sus especializaciones sí puedan aportarla. Esta regla de selección no se aplica a roles de valor.
 
 Para excluir deliberadamente la identidad raíz debe declararse un rol y expresarse la condición:
 
@@ -252,17 +236,17 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 ## Consecuencias
 
 - AST e IR separan receptores de argumentos.
-- La omisión del nombre de participante individual es azúcar sometido a resolución estática no ambigua, no una firma distinta.
+- Todo participante posee identificador fuente explícito; no existe proyección implícita de miembros desde un participante anónimo.
 - Un rol colectivo conserva cardinalidad, modificadores de colección y ambos ejes de capacidad en AST e IR.
 - Una vinculación exteriormente mutable conserva el lugar receptor, no solo su valor.
 - El IR distingue vinculaciones de rol por identidad, por valor y por lugar.
-- D-025 y esta decisión resuelven Q-011 para participantes nombrados.
+- D-025 y esta decisión resuelven Q-011 para participantes.
 - El compilador puede reconstruir lecturas, escrituras y dependencias desde la firma.
 
 ## Verificación futura
 
-1. Participante individual anónimo y nombrado.
-2. Varios participantes individuales anónimos con accesos unívocos y rechazo de un acceso ambiguo.
+1. Participantes individuales `for`, `on` y `given` con identificador explícito.
+2. Rechazo de participantes anónimos, también con cardinalidad efectiva `[1]`.
 3. Receptor multiparte posicional y nombrado.
 4. Rol ausente, duplicado, desconocido o mal tipado.
 5. Argumentos `given` posicionales, nombrados y con prefijo posicional seguido por nombres.
@@ -270,10 +254,10 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 7. Separación entre participantes y `given`.
 8. Vinculación `on` relacionada, refinada, adelantada y cíclica mediante `in`.
 9. Rechazo de cabeceras incompatibles.
-10. Diferencia entre la referencia exacta `World` y un participante `on World` o `for World`.
+10. Diferencia entre la referencia exacta `World` y un participante nombrado `on world: World` o `for world: World`.
 11. Reflexividad para una raíz concreta y ausencia de vinculación directa para una raíz abstracta.
 12. Rol `for` colectivo con dominio, cardinalidad y cada modificador de colección.
-13. Nombre obligatorio para cardinalidad distinta de `[1]` y para mutabilidad exterior.
+13. Identificador obligatorio para todo participante, con independencia de cardinalidad o mutabilidad exterior.
 14. Receptor colectivo ocupando una sola posición, sin expansión implícita.
 15. Las cuatro combinaciones de mutabilidad exterior e interior.
 16. Aceptación de un lugar mutable y rechazo de literales o expresiones calculadas para `mut nombre`.

@@ -16,6 +16,7 @@ affects:
 
 - Modifica: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Amplía: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
+- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 - Cierra de nuevo: [[notas/preguntas/Q-011-vinculacion-nombrada-de-participantes|Q-011]], [[notas/preguntas/Q-012-valores-given-nombrados|Q-012]] y [[notas/preguntas/Q-013-restricciones-relacionales-entre-participantes-on|Q-013]]
 - Documentos afectados: firmas, llamadas, capacidades, vinculaciones automáticas, análisis de nombres, AST, IR y diagnósticos
 
@@ -96,11 +97,7 @@ La sugerencia conserva exactamente la vinculación y no se emite cuando el orden
 
 ### Receptores `for`
 
-Los roles `for` conservan sus reglas de nombre:
-
-- Un rol de cardinalidad exactamente `[1]` puede ser anónimo cuando la resolución del cuerpo es unívoca.
-- Un rol colectivo o exteriormente mutable debe tener nombre.
-- Un rol anónimo solo admite vinculación posicional.
+Todo rol `for` posee identificador fuente explícito conforme a D-087, también cuando su cardinalidad efectiva es `[1]`. La llamada puede vincular ese slot por posición o por nombre; la vinculación posicional no convierte el rol declarado en anónimo ni permite omitir posiciones requeridas.
 
 La forma de receptor multiparte nombrado continúa siendo exacta, exhaustiva y no mezclable con posiciones. Puede reordenar roles, pero el compilador sugiere el orden de declaración. Los receptores posicionales no pueden omitir roles.
 
