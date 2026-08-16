@@ -14,7 +14,7 @@ affects:
 
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
-- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
+- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]] y [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]].
 
 ## Contexto
 
@@ -138,7 +138,22 @@ El catálogo completo de miembros de `TypeKind` pertenece a la especificación d
 
 ### Firmas y participantes
 
-Las declaraciones que posean las cláusulas correspondientes exponen:
+La disponibilidad de una propiedad reflectiva depende de la categoría estática compatible del receptor. Que la gramática pueda reconocer `expression~name` no hace que ese nombre exista para todo receptor. D-092 fija esta frontera de lookup.
+
+Las propiedades de participantes tienen estas capacidades por subcategoría de declaración:
+
+| Subcategoría | `~for` | `~on` | `~given` |
+| --- | --- | --- | --- |
+| regla booleana | sí | no | sí |
+| regla reactiva | no | sí | no |
+| regla `always` | no | sí | no |
+| `action` | sí | no | sí |
+| `subaction` | sí | no | sí |
+| `look` | sí | no | no |
+| `message` | no | sí | no |
+| demás declaraciones | no | no | no |
+
+Cuando una propiedad está soportada por la subcategoría pero la declaración concreta omite su cláusula opcional, el valor es `empty` con el tipo de colección correspondiente. Cuando la propiedad no está soportada por la subcategoría estática, el acceso es un error estático; no produce `empty` ni un valor predeterminado. Por ejemplo, `thing A` hace inválido `A~for`, mientras que una `action` sin cláusula `for` admite `ActionName~for` y devuelve `empty`.
 
 ```text
 ~for     : Participant [* unique ordered]
@@ -147,7 +162,7 @@ Las declaraciones que posean las cláusulas correspondientes exponen:
 ~clauses : ClauseKind [* unique]
 ```
 
-Una cláusula ausente produce `empty`. `~clauses` informa solo de presencia de clases, nunca expone el AST del cuerpo.
+`~clauses` informa solo de presencia de clases, nunca expone el AST del cuerpo. Su disponibilidad sigue igualmente el contrato de propietario de la propiedad; la regla anterior sobre `empty` no convierte `~clauses` ni ninguna otra propiedad en universal.
 
 Todo participante `for`, `on` y `given` debe tener identificador fuente explícito. Queda retirada la forma anónima admitida por D-036. El orden continúa formando parte de la firma, pero no de la identidad persistente.
 

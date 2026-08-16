@@ -1727,3 +1727,20 @@ cases:
   expected_diagnostics:
   - family-data-assignment-cannot-have-metadata
   produces_ast: false
+- id: metadata-signature-supported-absent
+  category: typing-after-ast
+  source: "thing Seed\naction Spawn {\n    then create Seed\n}\nrule EmptySignatureCheck {\n    Spawn~for == empty and Spawn~given == empty\n}\n"
+  cst_root: MudFileSyntax
+  ast: BooleanRuleDecl(condition=BinaryExpr(MetadataAccessExpr(Spawn, for) == empty, WordAnd, MetadataAccessExpr(Spawn, given) == empty))
+  semantic_expectations:
+  - action-without-for-yields-empty-for
+  - action-without-given-yields-empty-given
+  produces_ast: true
+- id: metadata-signature-unsupported-receiver
+  category: typing-after-ast
+  source: "thing Seed\nrule InvalidSignatureReflection {\n    Seed~for == empty\n}\n"
+  cst_root: MudFileSyntax
+  ast: BooleanRuleDecl(condition=ComparisonChainExpr(MetadataAccessExpr(Seed, for), Equal, empty))
+  expected_diagnostics:
+  - metadata-property-not-supported-by-static-receiver
+  produces_ast: true
