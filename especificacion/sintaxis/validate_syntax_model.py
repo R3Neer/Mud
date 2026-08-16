@@ -86,6 +86,8 @@ def validate(root: Path) -> list[Problem]:
     kinds_path = root / "especificacion/sintaxis/mud-syntax-kinds.yaml"
     coverage_path = root / "especificacion/sintaxis/cobertura-sintactica.yaml"
     asdl_path = root / "especificacion/sintaxis/mud-surface-ast.asdl"
+    resolved_asdl_path = root / "especificacion/sintaxis/mud-resolved-ast.asdl"
+    elaborated_asdl_path = root / "especificacion/sintaxis/mud-elaborated-ast.asdl"
 
     syntax_productions = production_names(grammar)
     lexical_productions = production_names(lexical)
@@ -144,6 +146,19 @@ def validate(root: Path) -> list[Problem]:
 
     for unknown in sorted(asdl_used - asdl_defined - {"int", "string", "identifier"}):
         problems.append(Problem(str(asdl_path), f"tipo ASDL no definido: {unknown}"))
+
+    for semantic_asdl, module_name in (
+        (resolved_asdl_path, "MUDResolved"),
+        (elaborated_asdl_path, "MUDElaborated"),
+    ):
+        if not semantic_asdl.is_file():
+            problems.append(Problem(str(semantic_asdl), "falta esquema ASDL normativo"))
+            continue
+        defined, used = asdl_types_and_uses(semantic_asdl)
+        for unknown in sorted(used - defined - {"int", "string", "identifier"}):
+            problems.append(Problem(str(semantic_asdl), f"tipo ASDL no definido: {unknown}"))
+        if f"module {module_name}" not in semantic_asdl.read_text(encoding="utf-8"):
+            problems.append(Problem(str(semantic_asdl), f"falta módulo requerido: {module_name}"))
 
     cases_path = root / "especificacion/sintaxis/casos/cst-ast.yaml"
     cases = load_yaml(cases_path)
@@ -205,7 +220,7 @@ def validate(root: Path) -> list[Problem]:
         root / "especificacion/sintaxis/mud-surface-ast.asdl": [
             "ExactTypeTestExpr(",
         ],
-        root / "especificacion/sintaxis/mud-resolved-ast.asdl": [
+        root / "especificacion/sintaxis/mud-elaborated-ast.asdl": [
             "ExactNominalTypeTestExpr(",
             "ExactDictionarySetOperationExpr(",
             "FunctionalDictionarySetOperationExpr(",

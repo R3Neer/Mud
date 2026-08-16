@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 88.
-- Vigentes: 88.
+- Total: 89.
+- Vigentes: 89.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -107,6 +107,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-identidad-de-datos-family-y-anclas-de-metadatos|Identidad de datos de `family` y anclas de metadatos]] |
 | D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-tipos-readonly-completos-en-given|Tipos de solo lectura completos en `given`]] |
 | D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
+| D-094 | vigente | 2026-08-16 | [[notas/decisiones/ADR-094-frontera-ast-resuelto-y-elaborado|Frontera entre AST resuelto y representación elaborada]] |
 
 ## Identificadores reservados
 

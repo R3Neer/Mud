@@ -22,6 +22,7 @@ affects:
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
+- Modificada por: [[ADR-094-frontera-ast-resuelto-y-elaborado|D-094]]
 - Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Preguntas relacionadas: Q-009, Q-016, Q-027, Q-034, Q-054, Q-059
 - Documentos afectados: arquitectura, grafo semántico, IR, conformidad
@@ -32,9 +33,9 @@ El grafo y el IR son fundamentales para impacto, explicación y ejecución, pero
 
 ## Decisión
 
-Los archivos `.mud` y sus decisiones de versión son la única fuente semántica. El AST, la tabla de símbolos, el grafo y el IR se reconstruyen a partir de ella.
+Los archivos `.mud` y sus decisiones de versión son la única fuente semántica. CST, AST superficial, AST/HIR resuelto, representación elaborada, tabla de símbolos, grafo e IR se reconstruyen a partir de ella.
 
-El AST conserva forma escrita y procedencia. El IR conserva significado resuelto y debe:
+El AST superficial conserva forma escrita y procedencia. La capa resuelta conserva identidad nominal; la elaborada conserva tipos, dominios y análisis estáticos. El IR conserva el significado ya elaborado y debe:
 
 - declarar `schemaVersion`;
 - usar anclas resueltas;

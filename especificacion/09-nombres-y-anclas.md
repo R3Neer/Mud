@@ -23,6 +23,7 @@ decisions:
   - D-088
   - D-090
   - D-091
+  - D-094
 ---
 # 09. Nombres, paths y anclas
 
@@ -92,10 +93,10 @@ Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaració
 
 ## Etapas
 
-1. El AST superficial aporta nombres y procedencia.
-2. La resolución nominal crea símbolos y resuelve declaraciones cuya categoría ya es conocida.
-3. El sistema de tipos resuelve uniones, dominios y referencias dependientes del tipo.
-4. La resolución de miembros completa accesos, llamadas y abreviaturas contextuales.
+1. El AST superficial aporta nombres, estructura y procedencia sin símbolos resueltos.
+2. La resolución nominal crea `AnchoredSymbol`/`LocalSymbol`, fija anclas, ámbitos y destinos de referencias que pueden decidirse por nombre, y produce `mud-resolved-ast.asdl`.
+3. El sistema de tipos y la elaboración resuelven uniones, dominios, cardinalidades, conversiones y miembros cuya selección depende del tipo; el resultado pertenece a `mud-elaborated-ast.asdl`.
+4. El IR recibe únicamente una representación ya elaborada y conserva las identidades nominales anteriores.
 
 La norma se expresa mediante entornos y conjuntos de candidatos. Una implementación puede usar scope graphs si reproduce exactamente prioridades, candidatos, ambigüedades y rechazos.
 
@@ -197,7 +198,7 @@ Después de la resolución nominal puede construirse un grafo parcial con nodos 
 
 El tipado completa o rechaza aristas cuya validez dependa de una unión, una inferencia o un miembro contextual. El grafo parcial no sustituye al AST ni constituye fuente de verdad.
 
-El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario.
+El esquema mecánico [[mud-resolved-ast]] representa exclusivamente esta frontera nominal: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario. [[mud-elaborated-ast]] conserva esos símbolos y añade después tipos, dominios, formas efectivas y evidencias de análisis.
 
 ## Conformidad
 

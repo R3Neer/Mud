@@ -13,7 +13,7 @@ affects:
 # ADR-070 — CST sin pérdidas y AST superficial normalizado
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
-- Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
+- Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-094-frontera-ast-resuelto-y-elaborado|D-094]]
 
 ## Estado
 
@@ -50,8 +50,9 @@ texto
 → validación sintáctica contextual
 → AST superficial
 → resolución
-→ AST resuelto
+→ AST/HIR resuelto nominalmente
 → tipado/elaboración
+→ AST/HIR elaborado
 → IR
 ```
 
@@ -115,7 +116,7 @@ El AST superficial conserva sin decidir:
 - Acción elemental frente a compuesta.
 - Tipo contextual de literales.
 
-Estas decisiones pertenecen al AST resuelto o elaborado.
+La resolución de identidad pertenece al AST/HIR resuelto; toda decisión que requiera tipos efectivos pertenece a la representación elaborada.
 
 ## Procedencia
 

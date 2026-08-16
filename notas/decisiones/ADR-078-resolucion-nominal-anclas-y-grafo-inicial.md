@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]], [[ADR-091-identidad-de-datos-family-y-anclas-de-metadatos|D-091]] y [[ADR-094-frontera-ast-resuelto-y-elaborado|D-094]]
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
 ## Decisión
@@ -23,13 +23,13 @@ Todas las declaraciones superiores de un path comparten un espacio nominal. La b
 
 No existe sombreado de un nombre visible. Las convenciones `PascalCase`, `lowerCamel` y `lowerCamel` de unidad son requisitos estáticos con arreglo automático.
 
-Poseen ancla las declaraciones globales, campos en su propietario original, componentes, miembros de family, unidades declaradas y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Roles, `given`, iteradores, vinculaciones locales y valores globales no nominales solo reciben identidad interna efímera.
+Poseen ancla las declaraciones globales, campos en su propietario original, componentes, miembros y datos declarados de `family`, unidades declaradas, participantes nombrados `for`/`on`/`given`, metadatos materializados y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Iteradores, vinculaciones locales ordinarias, sobrescrituras de datos de `family` y valores globales no nominales solo reciben identidad interna no pública.
 
 Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; un `start with` global no tiene nombre ni ancla.
 
-La resolución se ejecuta por etapas: primero símbolos nominales, después tipos y dominios, y finalmente miembros dependientes del tipo. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
+La resolución nominal fija primero símbolos, anclas, ámbitos y referencias decidibles por nombre y produce el AST/HIR resuelto. Tipos, dominios, cardinalidades, conversiones y miembros cuya selección depende del tipo se calculan después en la representación elaborada. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
 
-Tras resolver nombres puede construirse el esqueleto del grafo con aristas de propiedad, especialización, referencia, tipo, dominio, inicialización, cálculo y efecto. El tipado completa y valida aristas posteriores sin impedir construir este grafo nominal inicial.
+Tras resolver nombres puede construirse el esqueleto del grafo con identidad, propiedad, especialización y referencias nominales, además de dependencias cuya fuente y destino ya sean conocidos. La representación elaborada clasifica y completa aristas de tipo, dominio y otras relaciones que dependan del tipo efectivo sin impedir construir antes este grafo nominal inicial.
 
 ## Migraciones
 

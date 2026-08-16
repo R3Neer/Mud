@@ -9,7 +9,8 @@ Este directorio contiene los artefactos normativos y verificables que conectan l
 | `cst-sin-perdidas.md` | Normativo | Modelo de CST, trivia, spans y recuperación. |
 | `mud-syntax-kinds.yaml` | Normativo mecánico | Inventario de producciones, tokens, trivia y categorías CST. |
 | `mud-surface-ast.asdl` | Normativo mecánico | Esquema del AST superficial normalizado. |
-| `mud-resolved-ast.asdl` | Normativo mecánico | Contrato del AST resuelto, tipos unión, símbolos, anclas y dependencias. |
+| `mud-resolved-ast.asdl` | Normativo mecánico | Contrato de la resolución nominal: símbolos, anclas, referencias y grafo inicial. |
+| `mud-elaborated-ast.asdl` | Normativo mecánico | Contrato tipado/elaborado: tipos, dominios, cardinalidades, conversiones y evidencias de análisis. |
 | `cst-a-ast-superficial.md` | Normativo | Transformación y normalizaciones. |
 | `cobertura-sintactica.yaml` | Normativo mecánico | Mapeo exhaustivo EBNF → CST → AST. |
 | `validate_syntax_model.py` | Herramienta editorial | Detecta divergencias entre los artefactos anteriores. |
@@ -38,14 +39,15 @@ archivo .mud
 → validación sintáctica contextual
 → AST superficial normalizado
 → resolución
-→ AST resuelto
+→ AST/HIR resuelto nominalmente
 → tipado/elaboración
+→ AST/HIR elaborado
 → IR
 ```
 
 ## Generación de código
 
-`mud-surface-ast.asdl` puede alimentar generadores de:
+Los esquemas `mud-surface-ast.asdl`, `mud-resolved-ast.asdl` y `mud-elaborated-ast.asdl` pueden alimentar generadores de:
 
 - Clases o structs.
 - Visitantes.
@@ -116,14 +118,10 @@ Un cambio interno que no altere comportamiento observable puede modificar una im
 
 ## Límites
 
-Este directorio no define:
+Los ASDL de este directorio fijan **la forma de los contratos entre fases**, no sustituyen las reglas semánticas de los capítulos correspondientes. En particular:
 
-- Resolución de nombres y anclas.
-- Subtipado.
-- Inferencia de tipos.
-- Evaluación estática.
-- Semántica de efectos.
-- Ondas causales.
-- Forma canónica del IR.
+- `mud-resolved-ast.asdl` representa el resultado de nombres, ámbitos y anclas definidos en el capítulo 09;
+- `mud-elaborated-ast.asdl` representa resultados de tipado y elaboración, pero las reglas que los calculan pertenecen a los capítulos de tipos, dominios y análisis;
+- la semántica de efectos, ondas causales y la forma canónica final del IR continúan fuera de este directorio.
 
-Las referencias a esas fases sirven únicamente para impedir que el AST superficial las anticipe.
+La separación existe precisamente para impedir que una fase anticipe silenciosamente datos de la siguiente.

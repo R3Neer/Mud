@@ -38,6 +38,7 @@ decisions:
   - D-091
   - D-092
   - D-093
+  - D-094
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -48,7 +49,7 @@ Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva
 
 El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
 
-El contrato de la fase posterior vive en [[mud-resolved-ast]]. Allí las referencias se sustituyen por `AnchoredSymbol` o `LocalSymbol`, las uniones quedan normalizadas y el grafo nominal se expresa mediante aristas reconstruibles.
+El contrato de resolución nominal vive en [[mud-resolved-ast]]: allí las referencias se vinculan a `AnchoredSymbol` o `LocalSymbol` y se construye el grafo nominal inicial. Los tipos efectivos, dominios, cardinalidades, conversiones y evidencias de análisis aparecen solo después en [[mud-elaborated-ast]].
 
 ## Cadena de representaciones
 
@@ -59,8 +60,9 @@ texto fuente
 → validación sintáctica contextual
 → AST superficial normalizado
 → resolución de nombres
-→ AST resuelto
+→ AST/HIR resuelto nominalmente
 → tipado y elaboración
+→ AST/HIR elaborado
 → IR
 ```
 
@@ -69,6 +71,12 @@ texto fuente
 
 > [!rule] MUD-AST-002 — Normalización
 > Dos formas concretas declaradas equivalentes por este capítulo producen la misma forma AST, salvo su procedencia.
+
+## Frontera resuelta y elaborada
+
+El AST/HIR resuelto es deliberadamente nominal. Puede existir aunque la compilación contenga un error de tipos: conserva símbolos, anclas, referencias y dependencias nominales suficientes para diagnósticos y tooling. No normaliza uniones por su significado, no calcula dominios efectivos y no inserta conversiones.
+
+La representación elaborada conserva la misma identidad nominal y añade las decisiones que requieren tipado o análisis estático. `mud-elaborated-ast.asdl` contiene por ello las antiguas estructuras de tipos, `collection_shape`, `decision_shape`, conversiones, narrowing y `termination_evidence` que ya no pertenecen al contrato resuelto.
 
 ## Relación con la CST
 

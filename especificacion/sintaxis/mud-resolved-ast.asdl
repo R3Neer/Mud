@@ -1,7 +1,9 @@
--- MUD 1.0 — Contrato del AST resuelto
+-- MUD 1.0 — Contrato del AST/HIR resuelto nominalmente
 --
--- Complementa mud-surface-ast.asdl. Conserva procedencia y forma semántica,
--- pero sustituye referencias nominales por símbolos y anclas resueltas.
+-- Complementa mud-surface-ast.asdl. Esta capa fija identidad, símbolos,
+-- ámbitos, anclas y destino de referencias, pero NO contiene tipos efectivos,
+-- dominios elaborados, cardinalidades inferidas, conversiones ni evidencias
+-- de terminación. Esas distinciones pertenecen a mud-elaborated-ast.asdl.
 
 module MUDResolved {
 
@@ -14,19 +16,7 @@ module MUDResolved {
 
     action_access = PublicAction | Subaction
 
-    decision_mode = FirstMatch | AllMatches
-
     decision_branch_key = (symbol_id dictionary, string canonical_selector)
-
-    dictionary_set_operator = DictionaryUnion
-                            | DictionaryIntersection
-                            | DictionaryDifference
-                            | DictionarySymmetricDifference
-
-    cardinality_origin = ExplicitCardinality
-                       | OrdinaryScalarDefault
-                       | InferredFromInitializer
-                       | DerivedFromDecisionBranches
 
     metadata_kind = IntrinsicMetadata(string name)
                   | NameMetadata | PrivateMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
@@ -35,146 +25,51 @@ module MUDResolved {
 
     metadata_evaluation = StoredMetadata | CalculatedMetadata
 
+    resolution_site = (source_span origin, string role)
+
     resolved_project = ResolvedProject(resolved_decl* declarations,
+                                       resolved_reference* references,
                                        resolved_decision_branch* decision_branches,
+                                       resolved_start_set? start,
                                        dependency_edge* dependencies)
 
     resolved_decl = ResolvedDecl(anchor identity,
                                  string category,
                                  action_access? action_visibility,
-                                 resolved_type? declared_type,
                                  resolved_metadata* metadata,
                                  resolved_member* members)
         attributes (source_span origin)
 
     resolved_member = ResolvedMember(symbol_id identity,
                                      string category,
-                                     resolved_type? declared_type,
-                                     resolved_metadata* metadata,
-                                     resolved_expr? value)
+                                     resolved_metadata* metadata)
         attributes (source_span origin)
 
     resolved_metadata = ResolvedMetadata(anchor identity,
                                          symbol_id owner,
                                          metadata_kind kind,
-                                         resolved_type type,
-                                         metadata_evaluation evaluation,
-                                         resolved_expr value)
+                                         metadata_evaluation evaluation)
         attributes (source_span origin)
 
-    resolved_type = UnionType(type_alternative first,
-                              type_alternative* remaining,
-                              collection_shape collection)
-                  | AnyValueType
-                  | PositionalProductType(resolved_type first,
-                                          resolved_type second,
-                                          resolved_type* remaining)
-                  | NamedProductType(named_type_component first,
-                                     named_type_component* remaining)
-                  | ExactDictionaryType(resolved_type key_type,
-                                        resolved_type value_type,
-                                        collection_shape entries)
-                  | DecisionDictionaryType(resolved_type input_type,
-                                           resolved_type output_type,
-                                           decision_shape decision)
-        attributes (source_span origin)
-
-    named_type_component = (string name, resolved_type type)
-
-    type_alternative = (anchor nominal_type, resolved_domain? domain)
-
-    resolved_domain = IntervalDomain(resolved_expr lower,
-                                     resolved_expr upper,
-                                     string boundaries)
-                    | SteppedDomain(resolved_domain interval,
-                                    resolved_expr step)
-                    | FiniteDomain(resolved_expr* members)
-                    | NamedDomain(anchor declaration)
-                    | UnionDomain(resolved_domain left, resolved_domain right)
-                    | IntersectionDomain(resolved_domain left, resolved_domain right)
-                    | DifferenceDomain(resolved_domain left, resolved_domain right)
-                    | SymmetricDifferenceDomain(resolved_domain left,
-                                                resolved_domain right)
-
-    collection_shape = (int? lower,
-                        int? upper,
-                        string multiplicity,
-                        string order,
-                        string capability,
-                        cardinality_origin origin)
-
-    decision_shape = (decision_mode mode,
-                      string semantic_order,
-                      string fallback,
-                      string result_uniqueness,
-                      collection_shape application_result,
-                      termination_evidence* termination)
-
-    termination_evidence = NumericDescent(symbol_id measure)
-                         | CardinalityDescent(symbol_id measure)
-                         | StructuralDescent(symbol_id measure)
-                         | ExternalProof(string identity)
+    resolved_reference = ResolvedReference(resolution_site site,
+                                           symbol_id target)
 
     resolved_decision_branch = ResolvedDecisionBranch(decision_branch_key key,
                                                        int source_ordinal,
                                                        string is_fallback,
-                                                       resolved_expr selector,
-                                                       resolved_expr result,
                                                        symbol_id* external_reads)
         attributes (source_span origin)
 
     resolved_start_set = ResolvedStartSet(anchor* things, anchor* rules)
         attributes (source_span origin)
 
-    resolved_expr = ReferenceExpr(symbol_id target)
-                  | LiteralExpr(string kind, string canonical)
-                  | EmptyExpr(resolved_type expected_shape)
-                  | AllExpr(resolved_domain expected_domain, string stability)
-                  | CollectionExpr(resolved_expr* elements)
-                  | PositionalProductExpr(resolved_expr first,
-                                          resolved_expr second,
-                                          resolved_expr* remaining)
-                  | NamedProductExpr(named_expr_component first,
-                                     named_expr_component* remaining)
-                  | ExactAssociationExpr(resolved_expr key, resolved_expr value)
-                  | DecisionBranchExpr(resolved_expr selector, resolved_expr result)
-                  | ExactLookupExpr(resolved_expr dictionary, resolved_expr key)
-                  | DecisionApplyExpr(resolved_expr dictionary,
-                                      resolved_expr input,
-                                      decision_mode mode,
-                                      collection_shape result_shape)
-                  | ExactDictionarySetOperationExpr(dictionary_set_operator operator,
-                                                    resolved_expr left,
-                                                    resolved_expr right,
-                                                    resolved_type result_type)
-                  | FunctionalDictionarySetOperationExpr(dictionary_set_operator operator,
-                                                         resolved_expr left,
-                                                         resolved_expr right,
-                                                         resolved_type result_type)
-                  | MetadataAccessExpr(resolved_expr receiver,
-                                       metadata_kind metadata,
-                                       resolved_type result_type)
-                  | OperationExpr(string operator, resolved_expr* operands)
-                  | ConversionExpr(resolved_expr value, anchor target_type)
-                  | TypeTestExpr(resolved_expr value,
-                                 anchor tested_type,
-                                 string polarity)
-                  | ExactNominalTypeTestExpr(resolved_expr value,
-                                             anchor tested_type,
-                                             string polarity)
-                  | NarrowedExpr(resolved_expr value,
-                                 resolved_type narrowed_type)
-        attributes (source_span origin)
-
-    named_expr_component = (string name, resolved_expr value)
-
-    -- Specializes se aplica tanto a thing como a alias. Los miembros
-    -- heredados conservan su AnchoredSymbol de origen.
+    -- El grafo nominal solo contiene aristas cuya identidad puede conocerse
+    -- antes del tipado. RefersTo cubre referencias escritas a tipos, dominios
+    -- nominales y valores; la capa elaborada clasifica después las aristas
+    -- que dependan del tipo efectivo.
     dependency_edge = Owns(symbol_id source, symbol_id target)
                     | Specializes(anchor source, anchor target)
                     | RefersTo(symbol_id source, symbol_id target)
-                    | HasType(symbol_id source, anchor target)
-                    | HasDomain(symbol_id source, symbol_id target)
                     | InitializesFrom(symbol_id source, symbol_id target)
                     | CalculatesFrom(symbol_id source, symbol_id target)
                     | Reads(symbol_id source, symbol_id target)
