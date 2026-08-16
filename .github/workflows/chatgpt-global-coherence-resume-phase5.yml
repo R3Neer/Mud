@@ -1,0 +1,120 @@
+name: ChatGPT global coherence resume phase 5
+on:
+  push:
+    branches: [chatgpt-global-coherence-resume-runner-h]
+permissions: {contents: write}
+jobs:
+  residue-cleanup:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-runner-h, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-20260816-f, path: target, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Base exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: 942d0d0e6c17ce04bbc6e9b091fe71fda3bc4eb9}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transformación
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/resume_phase5_residue_cleanup.py tooling/chatgpt/x.py
+          python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
+          Remove-Item tooling/chatgpt/x.py
+      - name: Invariantes de residuos
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          d36=r('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md')
+          for stale in ('puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos','un rol básico anónimo','Participante individual anónimo','participantes individuales anónimos','La omisión del nombre de participante individual'):
+              assert stale not in d36, stale
+          assert 'Todo participante `for`, `on` y `given` declara un identificador fuente explícito' in d36
+          assert '`on world: World` o `for world: World`' in d36
+
+          d63=r('notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md')
+          for stale in ('puede ser anónimo','Un rol anónimo solo admite'):
+              assert stale not in d63, stale
+          assert 'Todo rol `for` posee identificador fuente explícito conforme a D-087' in d63
+          assert 'Modificada por: [[ADR-087-' in d63
+
+          d72=r('notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md')
+          assert 'Roles, `given`, variables de iteración y vinculaciones locales son símbolos léxicos sin ancla.' not in d72
+          assert 'participantes `for`, `on` y `given` son símbolos léxicos con ancla pública subordinada' in d72
+          assert 'action::game.Heal - given amount' not in d72
+          assert 'action::game.Heal - local remaining' in d72
+
+          d78=r('notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md')
+          assert 'Roles, `given`, iteradores, vinculaciones locales y valores globales no nominales solo reciben identidad interna efímera.' not in d78
+          assert 'participantes `for`/`on`/`given`' in d78
+          assert 'datos almacenados/calculados declarados por una `family`' in d78
+
+          d38=r('notas/decisiones/ADR-038-familias-cerradas-de-valores.md')
+          assert '`name: Text` intrínseco' not in d38
+          assert '`~identifier: Name`' in d38 and '`~name: Name`' in d38
+
+          d85=r('notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md')
+          assert 'objetivos asignables de metadato' not in d85
+          assert 'ancla estable de cada rama' not in d85
+          assert '`decision_branch_key` local de cada rama' in d85
+          assert 'D-087 prohíbe usar cualquier acceso `~` como destino runtime' in d85
+
+          readme=r('especificacion/README.md')
+          assert 'anclas estables de ramas decisionales' not in readme
+          assert 'El grafo registra anclas de rama' not in readme
+          assert 'claves locales de ramas decisionales sin ancla pública propia' in readme
+
+          cases=r('especificacion/sintaxis/casos/cst-ast.yaml')
+          for stale in ('update-branch-by-stable-anchor','remove-branch-by-stable-anchor','move-branch-preserves-anchor-and-changes-first-match-order'):
+              assert stale not in cases, stale
+          assert 'update-branch-within-owner-by-local-key' in cases
+          assert 'no-public-branch-anchor' in cases
+
+          d87=r('notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md')
+          for rel in ('ADR-038-familias-cerradas-de-valores','ADR-063-firmas-given-y-vinculaciones-on-conjuntas','ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas'):
+              assert rel in d87
+          print('PHASE5_RESIDUE_INVARIANTS_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validadores oficiales
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Superficie exacta
+        shell: pwsh
+        working-directory: target
+        run: |
+          $allowed=@('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md','notas/decisiones/ADR-038-familias-cerradas-de-valores.md','notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md','notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md','notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md','notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md','notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md','especificacion/README.md','especificacion/sintaxis/casos/cst-ast.yaml')
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
+          foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
+          if($actual.Count -ne $allowed.Count){throw "changed-path count mismatch: $($actual.Count)"}
+          foreach($p in $allowed){if($actual -notcontains $p){throw "missing expected change $p"}}
+          git diff --stat
+      - name: Commit candidato
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
+          git commit -m "fix(spec): elimina residuos de identidad y participantes" -m "Alinea ADR vigentes y casos con D-087/D-090/D-091: participantes siempre nombrados y anclados, presentación de family mediante ~name, metadata runtime-readonly y ramas funcionales dirigidas por clave local sin ancla pública.`n`nValidation: invariantes de residuos, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-resume-20260816-f; if($LASTEXITCODE){throw 'push'}
