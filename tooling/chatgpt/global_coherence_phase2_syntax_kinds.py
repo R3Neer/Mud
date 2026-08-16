@@ -2,8 +2,8 @@ from pathlib import Path
 
 p = Path('especificacion/sintaxis/mud-syntax-kinds.yaml')
 text = p.read_text(encoding='utf-8')
-# `rhs` es una cadena YAML con escapes literales \n; `references` usa líneas reales.
-for fragment in ('      | point-form\\n', '      | unit-form\\n'):
+# `rhs` es una cadena YAML con escapes literales \n; unit-form es la última alternativa.
+for fragment in ('      | point-form\\n', '\\n      | unit-form'):
     if fragment not in text:
         raise SystemExit(f'missing escaped syntax-kinds fragment: {fragment!r}')
     text = text.replace(fragment, '', 1)
