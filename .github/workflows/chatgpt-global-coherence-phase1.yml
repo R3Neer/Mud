@@ -1,0 +1,159 @@
+name: ChatGPT global coherence phase 1
+
+on:
+  push:
+    branches:
+      - chatgpt-global-coherence-runner-v1
+
+permissions:
+  contents: write
+
+jobs:
+  governance-questions:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout runner
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-runner-v1
+          path: runner
+          fetch-depth: 0
+      - name: Checkout clean candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-20260816-v1
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install validation dependency
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+          if ($LASTEXITCODE -ne 0) { throw 'PyYAML installation failed' }
+      - name: Verify exact candidate base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 42f3c9ae0142cd494ad6091dff0128cd60163ddb
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
+      - name: Apply phase 1
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python ../runner/tooling/chatgpt/global_coherence_phase1.py
+          if ($LASTEXITCODE -ne 0) { throw 'phase 1 transform failed' }
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision index generation failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question index generation failed' }
+      - name: Stage 1 governance invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          from pathlib import Path
+          import re, yaml
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          need = lambda p,s: (_ for _ in ()).throw(SystemExit(f'MISSING {s!r} in {p}')) if s not in r(p) else None
+          forbid = lambda p,s: (_ for _ in ()).throw(SystemExit(f'STALE {s!r} in {p}')) if s in r(p) else None
+
+          need('gobierno/POLITICA-DE-DECISIONES.md','### Vigencia efectiva del cuerpo')
+          need('gobierno/POLITICA-DE-PREGUNTAS.md','### Criterios y evidencia de cierre')
+          need('tooling/questions/validate_questions.py','CRITERION_ENTRY')
+          need('tooling/questions/validate_questions.py','Pregunta cerrada sin evidencia de cierre')
+
+          for q in ('Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','Q-055-literales-de-magnitudes-de-punto.md'):
+              p='notas/preguntas/'+q
+              need(p,'resolved:\nclosed:')
+              need(p,'## Pendiente')
+              need(p,'- C1:')
+          q60='notas/preguntas/Q-060-catalogo-reflectivo-de-typekind.md'
+          need(q60,'resolved: false')
+          need(q60,'TypeKind')
+          need('notas/preguntas/README.md','Q-060 — Catálogo reflectivo de `TypeKind`')
+          need('notas/preguntas/README.md','Q-054 — Catálogo y resolución léxica de unidades y prefijos')
+          need('notas/preguntas/README.md','Q-055 — Literales de magnitudes de punto')
+
+          need('notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md','Responde parcialmente:')
+          forbid('notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md','- Cierra: [[notas/preguntas/Q-055')
+          need('notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md','Q-054')
+
+          criterion=re.compile(r'^- (C\d+):\s+\S.*$',re.M)
+          evidence=re.compile(r'^## Evidencia de cierre\s*$([\s\S]*?)(?=^## |\Z)',re.M)
+          for p in Path('notas/preguntas').glob('Q-*.md'):
+              text=p.read_text(encoding='utf-8')
+              front=text.split('---',2)[1]
+              meta=yaml.safe_load(front)
+              if meta.get('resolved') is True:
+                  if '## Criterio de cierre' not in text or not criterion.search(text):
+                      raise SystemExit(f'closed question without criterion: {p}')
+                  em=evidence.search(text)
+                  if em is None or not criterion.search(em.group(1)):
+                      raise SystemExit(f'closed question without evidence: {p}')
+          print('PHASE1_INVARIANTS_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'phase 1 invariants failed' }
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff check failed' }
+      - name: Stage 3 controlled surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $allowedExact = @(
+            'gobierno/POLITICA-DE-DECISIONES.md',
+            'gobierno/POLITICA-DE-PREGUNTAS.md',
+            'tooling/questions/validate_questions.py',
+            'notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md',
+            'notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md',
+            'notas/decisiones/README.md',
+            'notas/preguntas/README.md',
+            'notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md',
+            'notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md',
+            'notas/preguntas/Q-060-catalogo-reflectivo-de-typekind.md'
+          )
+          $actual = @(git status --porcelain=v1 --untracked-files=all | ForEach-Object {
+            $p=$_.Substring(3); if ($p -match ' -> ') { $p=($p -split ' -> ',2)[1] }; $p.Trim('"')
+          }) | Sort-Object -Unique
+          foreach ($p in $actual) {
+            if ($allowedExact -contains $p) { continue }
+            if ($p -like 'notas/preguntas/Q-*.md') { continue }
+            throw "unexpected phase 1 path: $p"
+          }
+          git diff --stat
+      - name: Commit and publish phase 1 to candidate
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff check failed' }
+          git commit -m "govern(questions): exige evidencia por criterio de cierre" -m "Context:`n- Evita que un ADR enlazado baste para declarar cerrada una pregunta.`n- Reabre Q-054/Q-055 donde el bootstrapping léxico seguía sin formalizar y registra TypeKind como Q-060.`n`nChanges:`n- Hace efectivos los ADR vigentes tras modificaciones parciales.`n- Migra preguntas cerradas a criterios/evidencias y amplía el validador.`n`nValidation:`n- Decisiones, preguntas, gramática, sintaxis y git diff --check." 
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-global-coherence-20260816-v1
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
