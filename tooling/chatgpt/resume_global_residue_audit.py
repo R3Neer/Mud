@@ -26,7 +26,13 @@ patterns = {
     ),
     'metadata-dot-syntax': re.compile(r'\.~[A-Za-z_]'),
     'metadata-recursive': re.compile(r'(?i)Metadata[^\n]{0,80}(?:puede\s+(?:tener|poseer)|metadata-bearing)[^\n]{0,80}metad'),
-    'signature-property-universal': re.compile(r'(?i)(?:toda|cualquier)\s+(?:declaraci[oó]n|descriptor)[^\n]{0,100}`~(?:for|on|given)`|`~(?:for|on|given)`[^\n]{0,100}(?:toda|cualquier)\s+(?:declaraci[oó]n|descriptor))'),
+    'signature-property-universal': re.compile(
+        r'(?i)(?:'
+        r'(?:toda|cualquier)\s+(?:declaraci[oó]n|descriptor)[^\n]{0,100}`~(?:for|on|given)`'
+        r'|'
+        r'`~(?:for|on|given)`[^\n]{0,100}(?:toda|cualquier)\s+(?:declaraci[oó]n|descriptor)'
+        r')'
+    ),
     'resolved-ast-pretyping': re.compile(r'(?i)(AST\s+resuelto[^\n]{0,80}(?:antes\s+de|→)\s*(?:tipado|elaboraci[oó]n)|resoluci[oó]n\s+de\s+nombres\s*\n?→\s*AST\s+resuelto\s*\n?→\s*tipado)'),
     'contextual-cast-collapse': re.compile(r'(?i)(?:literal|construcci[oó]n)[^\n]{0,100}(?:contextual)[^\n]{0,100}(?:ConversionExpr|equivale[^\n]{0,20}`?to`?)'),
 }
