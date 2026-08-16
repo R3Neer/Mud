@@ -10,6 +10,7 @@ for scope in SCOPES:
 
 patterns = {
     'anonymous-participants': re.compile(r'(?i)(an[oó]nim|omitir(?:se)?\s+(?:el\s+)?nombre|nombre\s+(?:es\s+)?opcional|rol\s+sin\s+nombre|participante\s+sin\s+nombre)'),
+    'bare-participant-type-shorthand': re.compile(r'`(?:on|for|given)\s+[A-Z][A-Za-z0-9_]*`'),
     'participant-anchor-denial': re.compile(r'(?i)(?:for|on|given).{0,100}(?:sin\s+ancla|no\s+(?:tiene|posee)[^\n]{0,20}ancla)|(?:roles?|participantes?)[^\n]{0,100}(?:sin\s+ancla|no\s+(?:tienen|poseen)[^\n]{0,20}ancla)'),
     'branch-public-anchor': re.compile(r'(?i)(ancla(?:s)?\s+(?:propia|p[uú]blica)?[^\n]{0,60}rama|rama(?:s)?[^\n]{0,80}ancla(?:s)?|branch[^\n]{0,60}anchor)'),
     'given-readonly-subgrammar': re.compile(r'(given-collection-specification|given-collection-modifier|ReadonlyValueShape|readonly_value_shape|ReadonlyCollectionSpec|readonly_collection_spec)'),
@@ -17,6 +18,8 @@ patterns = {
     'empty-extrema-error': re.compile(r'(?i)(min[^\n]{0,80}max[^\n]{0,100}(?:fuente\s+vac[ií]a|vac[ií]o)[^\n]{0,60}(?:error|fall)|agregaci[oó]n\s+extrema\s+vac[ií]a[^\n]{0,50}(?:error|fall)|error\s+de\s+agregaci[oó]n\s+(?:extrema\s+)?vac[ií]a)'),
     'family-data-no-identity': re.compile(r'(?i)datos?\s+asociad[^\n]{0,100}(?:no\s+posee[^\n]{0,20}(?:identidad|ancla)|sin\s+(?:identidad|ancla))'),
     'family-member-name-field': re.compile(r'`name:\s*Text`\s+intr[ií]nseco'),
+    'legacy-anchor-interpolation': re.compile(r'anchor\{[^}]+\}'),
+    'intrinsic-name-language': re.compile(r'(?i)(nombre\s+intr[ií]nseco|propiedad\s+intr[ií]nseca\s+`?name`?|`name`\s+intr[ií]nseco)'),
     'metadata-runtime-write': re.compile(
         r'(?i)(?:'
         r'(?:asignar|escribir|modificar|mutable)[^\n]{0,80}`?~(?:name|plural|abbreviation|summary|description)`?[^\n]{0,80}(?:runtime|ejecuci[oó]n)'
