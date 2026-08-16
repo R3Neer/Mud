@@ -13,10 +13,18 @@ def patch(path: str, replacements: list[tuple[str, str]]) -> None:
 patch('especificacion/06-lexico.md', [
     ('El lexer representa una coincidencia válida como `POINT_LITERAL`.',
      'El clasificador contextual representa una coincidencia válida como `POINT_LITERAL`; el scanner base conserva su tokenización ordinaria.'),
+    ('Si declara `format`, el texto debe coincidir exactamente',
+     'Si declara `~format`, el texto debe coincidir exactamente'),
+    ('Una magnitud de punto sin `format` usa una cantidad ordinaria',
+     'Una magnitud de punto sin `~format` usa una cantidad ordinaria'),
 ])
 patch('notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md', [
     ('La propiedad `format` ya determina cómo se representa una magnitud de punto.',
      'El metadato `~format` ya determina cómo se representa una magnitud de punto.'),
+    ('Un `format` de punto debe ser estáticamente invertible:',
+     'Un `~format` de punto debe ser estáticamente invertible:'),
+    ('dentro del `format` de una magnitud de punto',
+     'dentro del `~format` de una magnitud de punto'),
     ('- `format` es simultáneamente la representación canónica y, cuando existe, la forma fuente del tipo de punto.',
      '- `~format` es simultáneamente la representación canónica y, cuando existe, la forma fuente del tipo de punto.'),
 ])
