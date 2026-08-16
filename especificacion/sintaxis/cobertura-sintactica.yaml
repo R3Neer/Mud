@@ -419,16 +419,6 @@ productions:
     ast:
       disposition: constructor
       target: GivenDecl
-  given-collection-specification:
-    cst: GivenCollectionSpecificationSyntax
-    ast:
-      disposition: wrapper
-      target: readonly_collection_spec
-  given-collection-modifier:
-    cst: GivenCollectionModifierSyntax
-    ast:
-      disposition: enum-or-property
-      target: readonly_collection_spec
   boolean-rule-declaration:
     cst: BooleanRuleDeclarationSyntax
     ast:

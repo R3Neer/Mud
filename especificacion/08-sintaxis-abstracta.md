@@ -242,7 +242,7 @@ No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colecci
 
 Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
 
-`GivenDecl` usa `ReadonlyValueShape`, que no puede representar capacidad interior `mut`.
+`GivenDecl` reutiliza directamente `TypeExpr`. Su inmutabilidad es un invariante de construcción del AST: la validación previa recorre el tipo completo y rechaza cualquier `CollectionSpec` con `elementsMutable = Enabled`, incluso si aparece dentro de un producto o diccionario. Así un `given` puede usar toda la forma de tipos sin transportar capacidad de escritura.
 
 ## Tipos
 

@@ -245,7 +245,7 @@ La validación previa rechaza:
 
 ### `given`
 
-`given-collection-specification` produce `ReadonlyCollectionSpec`; no existe campo para `elementsMutable`.
+`given-declaration` reutiliza `TypeExpr` completo, incluidos productos y diccionarios. Antes de construir `GivenDecl`, la validación contextual recorre todo el árbol de tipo y rechaza cualquier `collection-specification` que contenga `mut`, también dentro de productos, diccionarios o agrupaciones anidadas. No existe un segundo álgebra de tipos exclusivo de `given`.
 
 ## Tipos
 
