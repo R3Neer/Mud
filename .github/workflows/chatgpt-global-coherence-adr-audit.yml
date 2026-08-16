@@ -1,0 +1,17 @@
+name: ChatGPT global coherence ADR audit
+on:
+  push:
+    branches: [chatgpt-global-coherence-runner-v7-audit]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-20260816-v3, path: target, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-runner-v7-audit, path: runner, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - name: Inventory current-positive legacy patterns
+        working-directory: target
+        run: python ../runner/tooling/chatgpt/global_coherence_adr_audit.py
