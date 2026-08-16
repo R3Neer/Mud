@@ -15,6 +15,8 @@ affects:
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+
 ## Contexto
 
 MUD necesita expresar que un valor puede pertenecer a varias alternativas sin perder la identidad nominal elegida. La misma necesidad aparece en campos, participantes, valores `given`, vinculaciones locales y aliases.
@@ -81,7 +83,7 @@ Una unión que no permita seleccionar un predeterminado nominal único exige ini
 
 ## Consecuencias
 
-- El AST resuelto conserva alternativas nominales normalizadas y la alternativa elegida por cada incorporación.
+- El IR semántico conserva alternativas nominales normalizadas y la alternativa elegida por cada incorporación.
 - Los análisis booleanos necesitan entornos refinados sensibles al flujo.
 - D-017 debe distinguir tipos válidos de tipos materializables sin inicializador.
 - `|` se desambigua por contexto sintáctico entre unión de tipos y sus usos sobre valores.

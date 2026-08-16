@@ -14,11 +14,12 @@ affects:
 
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]]
 - Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
+- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 - Decide parcialmente: [[../preguntas/Q-014-migracion-de-anclas|Q-014]]
 
 ## Contexto
 
-La separación entre CST, AST superficial y AST resuelto exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.
+La separación entre CST, AST superficial, resultados de resolución nominal e IR semántico exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.
 
 Las anclas legibles cambian cuando cambia el nombre cualificado de una declaración. Debe conservarse trazabilidad sin convertir el nombre antiguo en un alias fuente silencioso.
 

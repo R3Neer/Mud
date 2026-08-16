@@ -7,11 +7,12 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "especialización de thing, diagnósticos, AST resuelto, formateadores y acciones de código"
+  - "especialización de thing, diagnósticos, resolución nominal, IR semántico, formateadores y acciones de código"
 ---
 # ADR-073 — `as Thing` explícito válido pero redundante
 
 - Modifica: [[ADR-018-as-declara-is-consulta|D-018]] y [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 
 ## Contexto
 

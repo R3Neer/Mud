@@ -331,7 +331,7 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 
 - Los participantes anónimos dejan de ser sintaxis válida.
 - Los participantes, campos y componentes anclados pasan a formar parte del grafo nominal como descriptores persistentes.
-- El AST superficial conserva declaraciones de metadatos y cuerpos de metadatos; el AST resuelto distingue propiedades intrínsecas de valores `Metadata` configurados.
+- El AST superficial conserva declaraciones de metadatos y cuerpos de metadatos; el IR semántico distingue propiedades intrínsecas de valores `Metadata` configurados.
 - Las escrituras runtime a cualquier acceso `~` son errores estáticos.
 - La visibilidad exterior se vuelve una propiedad de generación/tooling y no una regla de acceso interna.
 - El `start with` global y el local de tests permanecen fuera de la superficie metadata-bearing.

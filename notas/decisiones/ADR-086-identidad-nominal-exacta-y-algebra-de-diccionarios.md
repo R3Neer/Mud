@@ -440,9 +440,9 @@ ExactTypeTestExpr(valueExpression, nominalTypeReference, negated)
 - `negated = false` para `iis`.
 - `negated = true` para `iis not`.
 
-El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan antes de construir el AST resuelto.
+El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan durante tipado/elaboración antes de producir la forma correspondiente del IR semántico.
 
-Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. El AST resuelto o IR distingue:
+Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. El IR semántico distingue:
 
 ```text
 ExactDictionarySetOperationExpr(operator, left, right, resultType)
@@ -451,7 +451,7 @@ FunctionalDictionarySetOperationExpr(operator, left, right, resultType)
 
 La aplicación del segundo nodo equivale a aplicar ambos operandos en la misma instantánea y ejecutar después la operación de colección. Nunca se materializa una lista fusionada de ramas ni se intenta demostrar equivalencia lógica entre selectores.
 
-El AST resuelto diferencia también:
+El IR semántico diferencia también:
 
 ```text
 TypeTestExpr                # pertenencia transitiva de is

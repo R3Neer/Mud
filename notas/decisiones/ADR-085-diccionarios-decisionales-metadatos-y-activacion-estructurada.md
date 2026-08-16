@@ -352,7 +352,7 @@ La gramática y los modelos deben distinguir como mínimo:
 - cardinalidad omitida frente a explícita;
 - ausencia del antiguo nombre intrínseco y de la interpolación especial de ancla.
 
-El AST resuelto o IR registra para cada decisional:
+El IR semántico registra para cada decisional:
 
 - modo `FirstMatch` o `AllMatches`;
 - orden semántico;

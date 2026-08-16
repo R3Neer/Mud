@@ -14,6 +14,7 @@ affects:
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
+- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 
 ## Estado
 
@@ -49,10 +50,9 @@ texto
 → CST sin pérdidas
 → validación sintáctica contextual
 → AST superficial
-→ resolución
-→ AST resuelto
+→ resolución nominal: símbolos + bindings + grafo parcial
 → tipado/elaboración
-→ IR
+→ IR semántico
 ```
 
 ## CST
@@ -115,7 +115,7 @@ El AST superficial conserva sin decidir:
 - Acción elemental frente a compuesta.
 - Tipo contextual de literales.
 
-Estas decisiones pertenecen al AST resuelto o elaborado.
+Estas decisiones pertenecen a la resolución nominal cuando dependen solo de identidad y bindings, o al IR semántico cuando requieren tipado o elaboración.
 
 ## Procedencia
 

@@ -49,7 +49,7 @@ Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva
 
 El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
 
-El contrato de la fase posterior vive en [[mud-resolved-ast]]. Allí las referencias se sustituyen por `AnchoredSymbol` o `LocalSymbol`, las uniones quedan normalizadas y el grafo nominal se expresa mediante aristas reconstruibles.
+La resolución nominal opera sobre este AST sin fabricar un segundo árbol normativo: produce símbolos, bindings, anclas y un grafo nominal parcial. Tras tipado y elaboración, el contrato semántico vive en `ir/mud-semantic-ir.asdl`, donde aparecen tipos efectivos, dominios, cardinalidades, dependencias y otras formas elaboradas.
 
 ## Cadena de representaciones
 
@@ -59,10 +59,9 @@ texto fuente
 → CST sin pérdidas
 → validación sintáctica contextual
 → AST superficial normalizado
-→ resolución de nombres
-→ AST resuelto
+→ resolución nominal: símbolos + bindings + grafo parcial
 → tipado y elaboración
-→ IR
+→ IR semántico
 ```
 
 > [!rule] MUD-AST-001 — Responsabilidad superficial
@@ -466,7 +465,7 @@ La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las
 
 El AST superficial usa un único `ActionDecl`.
 
-La clasificación como elemental o compuesta requiere resolver los `ActionCallCandidateEffect`; por ello pertenece al AST resuelto. La forma superficial no inventa una clasificación basada únicamente en la apariencia de un `postfix-expression`.
+La clasificación como elemental o compuesta requiere resolver los `ActionCallCandidateEffect`; por ello pertenece al IR semántico después de resolución y elaboración. La forma superficial no inventa una clasificación basada únicamente en la apariencia de un `postfix-expression`.
 
 Una acción contiene:
 
