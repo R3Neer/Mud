@@ -13,6 +13,7 @@ affects:
 # ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
 
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
 ## Decisión
@@ -23,7 +24,7 @@ Todas las declaraciones superiores de un path comparten un espacio nominal. La b
 
 No existe sombreado de un nombre visible. Las convenciones `PascalCase`, `lowerCamel` y `lowerCamel` de unidad son requisitos estáticos con arreglo automático.
 
-Poseen ancla las declaraciones globales, campos en su propietario original, componentes, miembros de family, unidades declaradas y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Roles, `given`, iteradores, vinculaciones locales y valores globales no nominales solo reciben identidad interna efímera.
+Poseen ancla las declaraciones globales, campos en su propietario original, componentes, miembros de `family`, datos almacenados/calculados declarados por una `family`, unidades declaradas, participantes `for`/`on`/`given` y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Iteradores, vinculaciones locales ordinarias y valores globales no nominales solo reciben identidad interna efímera.
 
 Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; un `start with` global no tiene nombre ni ancla.
 
@@ -41,8 +42,8 @@ Una ancla cambia con categoría, path o nombre cualificado. El tooling conserva 
 2. Colisión global entre categorías.
 3. Deduplicación por ancla y ambigüedad real.
 4. Ausencia de sombreado y errores de casing reparables.
-5. Anclas de campos heredados, members, unidades y builtins.
-6. Símbolos locales sin ancla pública.
+5. Anclas de campos heredados, miembros, datos declarados de `family`, unidades, participantes y builtins.
+6. Iteradores y vinculaciones locales ordinarias sin ancla pública.
 7. Grafo nominal construible antes del tipado completo.
 
 ## Ampliación por D-084

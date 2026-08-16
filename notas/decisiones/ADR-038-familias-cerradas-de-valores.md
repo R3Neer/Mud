@@ -15,7 +15,7 @@ affects:
 # ADR-038 — Familias cerradas de valores
 
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
@@ -56,7 +56,7 @@ La declaración introduce un tipo nominal finito y un ancla estática `family::*
 - Es igual a otro miembro si y solo si ambos pertenecen a la misma familia nominal y tienen el mismo nombre.
 - Solo admite operadores de orden si la declaración usa `ordered family`.
 
-Cada miembro posee un `name: Text` intrínseco cuyo predeterminado es su nombre nominal declarado. Puede sobrescribirse mediante `name = "..."` sin cambiar identidad, igualdad, ancla ni orden. Una sobrescritura idéntica recibe sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro produce su `name` efectivo.
+Cada miembro posee `~identifier: Name` como identificador fuente y el metadato configurable `~name: Name` como presentación humana. `~name` toma por defecto una presentación derivada de `~identifier`; configurarlo mediante `~name = "..."` no cambia identidad, igualdad, ancla ni orden. Una configuración idéntica al predeterminado puede recibir sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro usa su `~name` efectivo.
 
 El orden de declaración es canónico para enumerar cualquier `family`, pero solo forma parte de las relaciones `<`, `<=`, `>` y `>=` cuando aparece `ordered`.
 
@@ -162,4 +162,4 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 11. Colección de `ordered family` ordenada por una ruta de datos asociados, con empates por inserción y conservación de multiplicidad.
 12. Inferencia de tipo, evaluación por miembro y dependencias acíclicas de datos calculados.
 13. Rechazo de asignaciones de miembro dirigidas a datos calculados.
-14. Renderización nominal de un miembro y acceso explícito a un dato `Text` alternativo.
+14. Presentación de un miembro mediante `~name` sin alterar `~identifier`, identidad, ancla ni igualdad.
