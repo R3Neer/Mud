@@ -14,6 +14,7 @@ affects:
 
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]]
 - Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
+- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 - Decide parcialmente: [[../preguntas/Q-014-migracion-de-anclas|Q-014]]
 
 ## Contexto
@@ -30,7 +31,7 @@ Todas las declaraciones superiores comparten un único espacio de nombres nomina
 
 Los campos se identifican dentro de su propietario y pueden repetir su nombre en propietarios distintos. Su ancla incorpora el ancla del propietario. Los demás miembros anidados obedecen el ámbito de su declaración propietaria.
 
-Roles, `given`, variables de iteración y vinculaciones locales son símbolos léxicos sin ancla. Pueden repetir nombre en declaraciones o bloques independientes, pero no dentro de un mismo ámbito ni mediante sombreado de un nombre visible.
+Los participantes `for`, `on` y `given` son símbolos léxicos con ancla pública subordinada al propietario, la clase de cláusula y su identificador conforme a D-087. Variables de iteración y vinculaciones locales ordinarias continúan siendo símbolos léxicos sin ancla pública. Los nombres pueden repetirse en declaraciones o bloques independientes, pero no dentro de un mismo ámbito ni mediante sombreado de un nombre visible.
 
 ### Modelo normativo de resolución
 
@@ -40,13 +41,13 @@ Los scope graphs pueden usarse como representación de implementación o explica
 
 ### Referencias diagnósticas
 
-Un símbolo sin ancla puede describirse combinando el ancla de su propietario con una etiqueta humana:
+Un participante se identifica mediante su ancla subordinada canónica. Un símbolo léxico que realmente carece de ancla, como un iterador o una vinculación local ordinaria, puede describirse combinando el ancla de su propietario con una etiqueta humana:
 
 ```text
-action::game.Heal - given amount
+action::game.Heal - local remaining
 ```
 
-La escritura completa es información diagnóstica, no una ancla nueva. Cuando existe fuente disponible, el span continúa siendo la localización principal.
+La escritura descriptiva del local es información diagnóstica, no una ancla nueva. Cuando existe fuente disponible, el span continúa siendo la localización principal.
 
 ### Migración de anclas
 
@@ -73,9 +74,9 @@ Q-014 permanece parcialmente decidida hasta fijar el formato y ubicación del re
 
 1. Rechazo de dos declaraciones superiores homónimas de igual o distinta categoría dentro del mismo path.
 2. Campos homónimos válidos en propietarios distintos y anclas propietarias distintas.
-3. Ausencia de ancla para roles, `given`, iteradores y locales.
+3. Ancla subordinada para participantes `for`/`on`/`given` y ausencia de ancla pública para iteradores y locales ordinarios.
 4. Reutilización de un nombre local en ámbitos independientes.
 5. Determinismo e independencia del orden físico mediante niveles de candidatos.
-6. Diagnóstico descriptivo de un símbolo local sin fabricar una ancla.
+6. Diagnóstico descriptivo de un iterador o local ordinario sin fabricar una ancla.
 7. Cambio de ancla al renombrar o mover entre paths.
 8. Migración explícita de referencias persistentes sin alias fuente implícito.

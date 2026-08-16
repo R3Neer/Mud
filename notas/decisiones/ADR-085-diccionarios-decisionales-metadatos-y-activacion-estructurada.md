@@ -326,7 +326,7 @@ Las propiedades especiales de magnitudes y unidades usan la misma familia de met
 ~format = "{hour:2}:{minute:2}:{second:2}"
 ```
 
-Cada metadato conserva su tipo, mutabilidad y restricciones propias. El prefijo `~` no implica mutabilidad.
+Cada metadato conserva su tipo, modo de evaluación y restricciones propias. El prefijo `~` no implica mutabilidad y D-087 prohíbe usar cualquier acceso `~` como destino runtime.
 
 ### Plantillas y anclas
 
@@ -346,7 +346,7 @@ La gramática y los modelos deben distinguir como mínimo:
 - `ExactDictionaryType` y `DecisionDictionaryType`;
 - asociaciones exactas y ramas decisionales;
 - productos posicionales y nombrados;
-- `MetadataAccessExpr` y objetivos asignables de metadato;
+- `MetadataAccessExpr` separado de los objetivos asignables ordinarios;
 - `NotMembership`;
 - conjuntos separados de activación de `thing` y reglas;
 - cardinalidad omitida frente a explícita;
@@ -360,7 +360,7 @@ El AST resuelto o IR registra para cada decisional:
 - unicidad de resultados;
 - cardinalidad derivada de aplicación;
 - dependencias externas de selectores y resultados;
-- ancla estable de cada rama;
+- `decision_branch_key` local de cada rama junto con el ancla del diccionario propietario para dependencias;
 - evidencia de terminación de cada componente recursivo.
 
 Los diagnósticos mínimos nuevos son:
