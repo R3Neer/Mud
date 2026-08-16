@@ -1,5 +1,5 @@
 from pathlib import Path
-import re, sys
+import json, re, sys
 
 root = Path(sys.argv[1]).resolve()
 
@@ -55,19 +55,13 @@ given-collection-modifier
         ;''', 'grammar given')
 wr(p, t)
 
-# CST inventory mirrors the EBNF.
+# CST inventory mirrors the EBNF. json.dumps emits a valid YAML double-quoted
+# scalar with all inner quotes/newlines escaped deterministically.
 p = 'especificacion/sintaxis/mud-syntax-kinds.yaml'
 t = rd(p)
-t = yaml_block(t, 'given-declaration', '''  given-declaration:
-    kind: GivenDeclarationSyntax
-    rhs: "given-name , { \",\" , given-name } , \":\" , type-expression , [ \"=\" , constant-expression ]\\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
-    references:
-    - given-name
-    - type-expression
-    - constant-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation''')
+rhs = 'given-name , { "," , given-name } , ":" , type-expression , [ "=" , constant-expression ]\n        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]'
+given_block = '''  given-declaration:\n    kind: GivenDeclarationSyntax\n    rhs: %s\n    references:\n    - given-name\n    - type-expression\n    - constant-expression\n    - declaration-layout\n    - metadata-assignment\n    - required-separation''' % json.dumps(rhs)
+t = yaml_block(t, 'given-declaration', given_block)
 t = yaml_block(t, 'given-collection-specification', None)
 t = yaml_block(t, 'given-collection-modifier', None)
 wr(p, t)
@@ -140,7 +134,7 @@ t = exact(t,
 '`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o decisionales. D-063 mantiene `given` como parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente antes del IR semántico.', '08 GivenDecl')
 wr(p, t)
 
-# Concrete prose: add explicit valid form near dictionaries/given contract.
+# Concrete prose: add explicit valid form near the static validation boundary.
 p = 'especificacion/07-gramatica-concreta.md'
 t = rd(p)
 anchor = 'La resolución de nombres, tipos, dominios y efectos no pertenece a esta validación.\n'
