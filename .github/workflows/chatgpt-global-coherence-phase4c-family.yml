@@ -1,0 +1,150 @@
+name: ChatGPT global coherence phase 4c family
+
+on:
+  push:
+    branches:
+      - chatgpt-global-coherence-runner-v4c-family
+
+permissions:
+  contents: write
+
+jobs:
+  family-metadata:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-runner-v4c-family
+          path: runner
+          fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-20260816-v9
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Verify accepted base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 16e2de929ca3b668a0e387a6f4edcc2672fb09ff
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate not clean' }
+      - name: Apply family metadata phase
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase4_family_metadata.py tooling/chatgpt/phase4.py
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase4b_open_shape.py tooling/chatgpt/phase4b.py
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase4c_traceability.py tooling/chatgpt/phase4c.py
+          python tooling/chatgpt/phase4.py
+          if ($LASTEXITCODE -ne 0) { throw 'family transform failed' }
+          python tooling/chatgpt/phase4b.py
+          if ($LASTEXITCODE -ne 0) { throw 'open-shape correction failed' }
+          python tooling/chatgpt/phase4c.py
+          if ($LASTEXITCODE -ne 0) { throw 'traceability correction failed' }
+          Remove-Item tooling/chatgpt/phase4.py,tooling/chatgpt/phase4b.py,tooling/chatgpt/phase4c.py
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision index generation failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question index generation failed' }
+      - name: Stage 1 family invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'{p}: missing {s!r}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'{p}: stale {s!r}')
+          ebnf=r('especificacion/gramatica/mud.ebnf')
+          need('notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md','questions:\n  - "Q-061"')
+          need('notas/decisiones/ADR-038-familias-cerradas-de-valores.md','"Q-061"')
+          need('notas/decisiones/ADR-037-campos-y-dominios-declarativos.md','"Q-061"')
+          need('notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md','"Q-061"')
+          need('notas/preguntas/Q-061-forma-de-datos-calculados-de-family.md','  - D-085')
+          need('notas/preguntas/Q-061-forma-de-datos-calculados-de-family.md','resolved: false')
+          need('notas/preguntas/README.md','Q-061 — Forma declarable de datos calculados de `family`')
+          need('notas/decisiones/ADR-038-familias-cerradas-de-valores.md','[= predeterminado] [metadata-body]')
+          need('especificacion/09-nombres-y-anclas.md','Terrain::movementCost')
+          need('especificacion/sintaxis/mud-surface-ast.asdl','CalculatedFamilyDataDecl(field_name name,\n                                                derived_value_shape? shape,')
+          need('especificacion/sintaxis/casos/cst-ast.yaml','shape=ExplicitDerivedShape(Bool)')
+          forbid('especificacion/sintaxis/casos/cst-ast.yaml','CalculatedFamilyDataDecl(costly, type=Bool')
+          if 'calculated-family-data-declaration\n    ::= field-name , [ derived-value-shape ]' not in ebnf:
+              raise SystemExit('Q-061 was accidentally resolved in the grammar')
+          if 'family-data-assignment\n    ::= field-name , "=" , constant-expression\n        , [ "{"' in ebnf:
+              raise SystemExit('family override accidentally accepts metadata')
+          need('notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md','datos asociados almacenados/calculados de una `family`')
+          print('PHASE4C_FAMILY_INVARIANTS_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'family invariants failed' }
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+      - name: Stage 3 controlled surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          $allowed=@(
+            'notas/decisiones/ADR-037-campos-y-dominios-declarativos.md',
+            'notas/decisiones/ADR-038-familias-cerradas-de-valores.md',
+            'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md',
+            'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
+            'notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md',
+            'notas/decisiones/README.md',
+            'notas/preguntas/Q-061-forma-de-datos-calculados-de-family.md',
+            'notas/preguntas/README.md',
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/09-nombres-y-anclas.md',
+            'especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/mud-surface-ast.asdl',
+            'especificacion/sintaxis/casos/cst-ast.yaml'
+          )
+          $actual=@(git status --porcelain=v1 --untracked-files=all | % { $p=$_.Substring(3); if($p -match ' -> '){$p=($p -split ' -> ',2)[1]}; $p.Trim('"') }) | Sort-Object -Unique
+          foreach($p in $actual){ if($allowed -notcontains $p){ throw "unexpected path: $p" } }
+          foreach($p in $allowed){ if($actual -notcontains $p){ throw "expected path not changed: $p" } }
+          git diff --stat
+      - name: Commit candidate phase
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff failed' }
+          git commit -m "spec(family): ancla descriptores de datos asociados" -m "D-091 permite metadata-body en datos declarados y mantiene overrides sin identidad. Q-061 registra la única contradicción abierta sobre la forma calculada y queda trazada desde D-037, D-038 y D-085.`n`nValidation: invariantes específicas, decisiones, preguntas, gramática, sintaxis y git diff --check."
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-global-coherence-20260816-v9
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
