@@ -30,8 +30,18 @@ jobs:
           $ErrorActionPreference='Stop'
           New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
           Copy-Item ../runner/tooling/chatgpt/resume_phase4b_given_types.py tooling/chatgpt/x.py
+          Copy-Item ../runner/tooling/chatgpt/resume_phase4b_syntax_kinds.py tooling/chatgpt/k.py
+          @'
+          from pathlib import Path
+          p=Path('tooling/chatgpt/x.py')
+          t=p.read_text(encoding='utf-8')
+          a=t.index('# CST inventory mirrors the grammar')
+          b=t.index('# Coverage drops productions', a)
+          p.write_text(t[:a]+'# CST inventory updated by companion structural script.\n\n'+t[b:], encoding='utf-8', newline='\n')
+          '@ | python -
           python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
-          Remove-Item tooling/chatgpt/x.py
+          python tooling/chatgpt/k.py; if($LASTEXITCODE){throw 'syntax kinds'}
+          Remove-Item tooling/chatgpt/x.py,tooling/chatgpt/k.py
       - name: Invariantes
         shell: pwsh
         working-directory: target
