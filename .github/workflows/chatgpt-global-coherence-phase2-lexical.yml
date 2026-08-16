@@ -1,0 +1,124 @@
+name: ChatGPT global coherence phase 2 lexical
+
+on:
+  push:
+    branches:
+      - chatgpt-global-coherence-runner-v2
+
+permissions:
+  contents: write
+
+jobs:
+  lexical-context:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-runner-v2
+          path: runner
+          fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-20260816-v1
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Verify phase 1 base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 6d2d52e351f80f368ae123b55f07d81b34012bff
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate not clean' }
+      - name: Apply lexical decision
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase2_lexical.py tooling/chatgpt/phase2.py
+          python tooling/chatgpt/phase2.py
+          if ($LASTEXITCODE -ne 0) { throw 'lexical transform failed' }
+          Remove-Item tooling/chatgpt/phase2.py
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision generation failed' }
+          python tooling/questions/validate_questions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'question generation failed' }
+      - name: Stage 1 lexical invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
+          need('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','El scanner base depende exclusivamente')
+          need('especificacion/06-lexico.md','MUD-LEX-012')
+          need('especificacion/06-lexico.md','MUD-LEX-015')
+          lex=r('especificacion/gramatica/mud-lexico.ebnf')
+          if '      | point-form' in lex or '      | unit-form' in lex: raise SystemExit('context forms still baseline lexical elements')
+          if 'point-form\n    ::=' in lex or 'unit-form\n    ::=' in lex: raise SystemExit('context forms still baseline productions')
+          need('notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','resolved: true')
+          need('notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md','resolved: true')
+          forbid('notas/preguntas/README.md','Q-054 —')
+          forbid('notas/preguntas/README.md','Q-055 —')
+          need('notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md','D-089')
+          need('notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md','~format')
+          need('notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md','D-089')
+          print('PHASE2_LEXICAL_INVARIANTS_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'lexical invariants failed' }
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+      - name: Stage 3 controlled surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          $allowed=@(
+            'notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto.md','notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente.md','notas/decisiones/README.md',
+            'notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md','notas/preguntas/README.md',
+            'especificacion/06-lexico.md','especificacion/gramatica/mud-lexico.ebnf','tooling/markdown_export/profiles.toml'
+          )
+          $actual=@(git status --porcelain=v1 --untracked-files=all | % { $p=$_.Substring(3); if($p -match ' -> '){$p=($p -split ' -> ',2)[1]}; $p.Trim('"') }) | Sort-Object -Unique
+          foreach($p in $actual){ if($allowed -notcontains $p){ throw "unexpected lexical path: $p" } }
+          git diff --stat
+      - name: Commit lexical phase
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff failed' }
+          git commit -m "spec(lexicon): separa scanner base de formas contextuales" -m "Context:`n- Elimina la dependencia circular de UNIT_FORM y POINT_LITERAL respecto del modelo ya resuelto.`n`nChanges:`n- D-089 define clasificación contextual sobre spans fuente.`n- Q-054 y Q-055 quedan cerradas con evidencia por criterio.`n`nValidation:`n- Decisiones, preguntas, gramática, sintaxis y git diff --check."
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-global-coherence-20260816-v1
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
