@@ -99,7 +99,7 @@ La raíz incorporada usa el ancla reservada `thing::Thing` conforme a D-068.
 
 Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo path. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
 
-D-061 añade `anchor{...}` como forma contextual exclusiva de una plantilla `Text`. Produce la escritura canónica del ancla de una declaración o de un valor con identidad nominal anclada, sin convertir las declaraciones en valores ordinarios ni reservar `anchor` fuera de ese contexto.
+D-085 retira la forma contextual `anchor{...}`. El ancla es una propiedad reflectiva tipada `~anchor`; dentro de una plantilla `Text` se interpola como cualquier otra expresión, por ejemplo `"{value~anchor}"`, y también puede usarse fuera de plantillas.
 
 D-076 fija la identidad estable de cada unidad mediante el identificador `lowerCamel` obligatorio de su cabecera.
 

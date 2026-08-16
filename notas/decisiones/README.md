@@ -81,7 +81,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-065 | vigente | 2026-07-30 | [[notas/decisiones/ADR-065-cabecera-using-de-fichero|Cabecera `using` de fichero]] |
 | D-066 | vigente | 2026-07-30 | [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|Valores estáticos y vinculaciones locales en `then`]] |
 | D-067 | vigente | 2026-08-02 | [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|Nombres breves de los tipos numéricos]] |
-| D-068 | vigente | 2026-08-02 | [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|`Thing` universal y nombre intrínseco]] |
+| D-068 | vigente | 2026-08-02 | [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|`Thing` universal, identificador y presentación reflectiva]] |
 | D-069 | vigente | 2026-08-02 | [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|Literales `Char` con comillas dobles]] |
 | D-070 | vigente | 2026-08-02 | [[notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|CST sin pérdidas y AST superficial normalizado]] |
 | D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Vinculaciones locales en bloques booleanos]] |

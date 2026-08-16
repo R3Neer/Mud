@@ -16,6 +16,7 @@ affects:
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 - Preguntas: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
 
@@ -40,7 +41,7 @@ La especialización hereda:
 
 No hereda, copia ni observa el estado mutable actual de la antecesora.
 
-La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local de cada identidad y, si no se sobrescribe, se deriva de su propio nombre nominal.
+`~identifier` pertenece al descriptor local de cada identidad y refleja su propio identificador fuente. La presentación configurable `~name` tampoco se hereda desde una antecesora: una descendiente sin configuración explícita deriva su propio valor predeterminado de `~identifier`.
 
 Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
 

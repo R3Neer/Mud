@@ -17,6 +17,7 @@ affects:
 
 - Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
+- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 - Preguntas relacionadas: Q-019, Q-034, Q-054, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
 
@@ -121,22 +122,22 @@ Una magnitud no derivada que declara unidades contiene exactamente una `root uni
 ```mud
 magnitude Length {
     root unit meter {
-        name = "meter"
-        plural = "meters"
-        abbreviation = "m"
+        ~name = "meter"
+        ~plural = "meters"
+        ~abbreviation = "m"
     }
 }
 ```
 
-El identificador determina el nombre intrínseco y el ancla. `name`, `plural`, `abbreviation` y `prefixes` son opcionales.
+El identificador determina `~identifier` y participa en el ancla de la unidad. `~name`, `~plural`, `~abbreviation` y `~prefixes` son metadatos estándar opcionales conforme a D-076/D-087; omitirlos no altera la identidad nominal.
 
 Una unidad alternativa se declara mediante una equivalencia positiva:
 
 ```mud
 unit minute := 60 seconds {
-    name = "minute"
-    plural = "minutes"
-    abbreviation = "min"
+    ~name = "minute"
+    ~plural = "minutes"
+    ~abbreviation = "min"
 }
 ```
 
@@ -147,7 +148,7 @@ Toda equivalencia de unidad debe:
 3. Reducirse a la unidad raíz.
 4. No participar en ciclos.
 
-La ausencia de la propiedad `prefixes` no habilita prefijos. `prefixes = empty` es equivalente, `prefixes = all` habilita el catálogo decimal SI completo y `prefixes = [p1, p2, ...]` habilita solo el subconjunto enumerado. La forma desnuda `prefixes` no es válida.
+La ausencia del metadato `~prefixes` no habilita prefijos. `~prefixes = empty` es equivalente, `~prefixes = all` habilita el catálogo decimal SI completo y `~prefixes = [p1, p2, ...]` habilita solo el subconjunto enumerado. La forma desnuda `~prefixes` no es válida.
 
 ### Magnitudes derivadas
 
@@ -179,9 +180,9 @@ magnitude Speed :=
     Length / Time
 {
     unit fastie := 1 m/s {
-        name = "fastie"
-        plural = "fasties"
-        abbreviation = "fst"
+        ~name = "fastie"
+        ~plural = "fasties"
+        ~abbreviation = "fst"
     }
 }
 ```
@@ -226,7 +227,7 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 - El AST separará `NumericType`, `MagnitudeDecl`, `UnitDecl` y expresiones dimensionales.
 - El análisis estático necesitará normalizar dimensiones y factores de escala.
 - Las unidades derivadas son expresiones estructurales, no una enumeración nominal.
-- El lexer y el resolvedor deberán distinguir identificadores, nombres, plurales, abreviaturas y prefijos bajo el contexto de magnitud.
+- La clasificación contextual y la resolución distinguen el identificador de unidad de sus metadatos de presentación, abreviación y prefijos bajo el contexto de magnitud.
 - `r` es un prefijo de literal aproximado.
 
 ## Verificación futura
@@ -237,4 +238,4 @@ La anotación explícita no introduce redondeo. El programa debe satisfacer las 
 4. Inferencia de cada combinación ordinaria de tipos numéricos.
 5. Rechazo de `root unit` en una magnitud derivada.
 6. Equivalencia entre una unidad nominal derivada y su expresión estructural.
-7. Ningún prefijo por omisión o `empty`, catálogo completo mediante `all` y subconjunto mediante una colección explícita.
+7. Ningún prefijo por omisión o `~prefixes = empty`, catálogo completo mediante `~prefixes = all` y subconjunto mediante una colección explícita.
