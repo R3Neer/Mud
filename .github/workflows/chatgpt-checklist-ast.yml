@@ -3,7 +3,7 @@ name: ChatGPT checklist AST IR
 on:
   push:
     branches:
-      - chatgpt-checklist-runner-ast
+      - chatgpt-checklist-runner-ast-v2
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: chatgpt-checklist-runner-ast
+          ref: chatgpt-checklist-runner-ast-v2
           path: control
           fetch-depth: 1
           persist-credentials: false
@@ -45,6 +45,8 @@ jobs:
         run: |
           python control/.chatgpt/transform_ast.py target
           if ($LASTEXITCODE -ne 0) { throw 'transform failed' }
+          python control/.chatgpt/fix_ast_review.py target
+          if ($LASTEXITCODE -ne 0) { throw 'review fix failed' }
       - name: Regenerate decision index
         shell: pwsh
         working-directory: target
@@ -56,6 +58,15 @@ jobs:
         run: |
           python control/.chatgpt/audit_ast.py target
           if ($LASTEXITCODE -ne 0) { throw 'architecture audit failed' }
+          @'
+          from pathlib import Path
+          import sys
+          root=Path('target')
+          d=(root/'notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md').read_text(encoding='utf-8')
+          if 'resolución, AST resuelto,' in d: raise SystemExit('stale D078 affects')
+          print('AST_HUMAN_REVIEW_REGRESSION_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'review regression failed' }
       - name: Repository validators
         shell: pwsh
         working-directory: target
