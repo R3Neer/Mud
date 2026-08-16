@@ -34,6 +34,7 @@ decisions:
   - D-086
   - D-087
   - D-088
+  - D-090
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -340,6 +341,10 @@ Un componente estructural:
 Un campo derivado no posee carga asignable, puede declarar forma y capacidad interior y se recalcula desde su expresión. Una sobrescritura local solo puede dirigirse a un componente almacenado heredado y solo reemplaza su predeterminado.
 
 Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto. Por tanto, los miembros del alias solo quedan disponibles después de elaboración contextual o de una conversión nominal explícita.
+
+## Entradas de diccionario
+
+Las asociaciones exactas y ramas decisionales permanecen estructuras internas del valor diccionario; no se convierten en declaraciones ancladas. El AST resuelto puede asignar a una rama una `decision_branch_key` interna compuesta por su diccionario propietario y el selector canónico para dependencias y edición. Esa clave no es una ancla pública y el resultado de la rama no participa en ella.
 
 ## Familias
 

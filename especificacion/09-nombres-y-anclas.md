@@ -21,6 +21,7 @@ decisions:
   - D-086
   - D-087
   - D-088
+  - D-090
 ---
 # 09. Nombres, paths y anclas
 
@@ -211,11 +212,13 @@ D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es prese
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
 
-## Anclas de ramas funcionales
+## Claves locales de entradas de diccionario
 
-Cada rama de un diccionario funcional recibe una ancla estable subordinada al ancla del diccionario. Su segmento propio no depende del ordinal fuente; mover una rama cambia su posición en un `FirstMatch`, pero no su identidad. El operador semántico puede dirigir `CREATE`, `UPDATE`, `REMOVE` y `MOVE` a esa ancla.
+Las asociaciones exactas y las ramas decisionales no poseen ancla pública propia. Son entradas estructurales del valor diccionario y se direccionan dentro de su contenedor mediante una clave local conforme a D-090.
 
-Las operaciones conjuntistas de funcionales no crean ni fusionan anclas de rama: el nodo compuesto conserva referencias a ambos operandos y su grafo de dependencias es la unión transitiva de los dos.
+En un diccionario exacto se usa la clave ordinaria. En un decisional se usa la forma canónica del selector; el resultado y la posición no participan en esa clave y `_` es la clave especial del fallback. `CREATE`, `UPDATE`, `REMOVE` y `MOVE` pueden usar el par `(diccionario, clave-local)` sin convertirlo en `AnchoredSymbol` ni someterlo a migración de anclas.
+
+Las operaciones conjuntistas de funcionales no crean ni fusionan identidades de rama: el nodo compuesto conserva referencias a ambos operandos y su grafo de dependencias es la unión transitiva de los dos.
 
 ## Pertenencia de paths
 
