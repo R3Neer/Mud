@@ -1243,9 +1243,10 @@ cases:
   ast: DecisionDictionaryType(A, B, FirstMatch)
   normalizations:
   - create-branch-before-fallback-by-default
-  - update-branch-by-stable-anchor
-  - remove-branch-by-stable-anchor
-  - move-branch-preserves-anchor-and-changes-first-match-order
+  - update-branch-within-owner-by-local-key
+  - remove-branch-within-owner-by-local-key
+  - move-branch-changes-first-match-order-without-anchor-migration
+  - no-public-branch-anchor
   produces_ast: true
 - id: functional-composed-dependencies-same-snapshot
   category: semantic-graph
