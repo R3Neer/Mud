@@ -35,6 +35,7 @@ decisions:
   - D-087
   - D-088
   - D-090
+  - D-091
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -353,9 +354,11 @@ Los literales estructurales siguen siendo contextuales. `PositionalStructuralLit
 - Datos almacenados o calculados.
 - Miembros.
 
-Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas.
+Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva `metadata_assignment* metadata` junto a su forma y predeterminado. El dato calculado conserva únicamente `type_expr? type`, su expresión y `metadata_assignment* metadata`: una forma `in ...` o una especificación de colección sería inválida antes del AST.
 
-Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. Un bloque omitido produce ambas secuencias vacías. Los metadatos no se confunden con datos de la familia.
+Cada declaración de dato asociado es un propietario metadata-bearing estable y se elabora como descriptor `Field` subordinado a la `family`, con `FieldKind.Stored` o `FieldKind.Calculated`. La proyección `member.data` es un valor, no una copia del descriptor. Por tanto, los metadatos pertenecen al dato declarado una sola vez y no se duplican por miembro.
+
+Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. `FamilyDataAssignment` permanece deliberadamente sin campo `metadata`: una sobrescritura de miembro solo selecciona el valor efectivo del slot almacenado y no crea un propietario metadata-bearing. Un bloque omitido produce ambas secuencias vacías.
 
 ## Magnitudes
 

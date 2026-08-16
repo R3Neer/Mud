@@ -14,7 +14,7 @@ affects:
 # ADR-038 — Familias cerradas de valores
 
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
@@ -91,13 +91,13 @@ Un dato asociado puede ser almacenado o calculado. El dato almacenado no admite 
 nombre : tipo [in dominio] [especificación-de-colección] [= predeterminado]
 ```
 
-El dato calculado reutiliza la forma general definida por D-037:
+El dato calculado reutiliza la forma de cálculo con tipo opcional definida por D-037:
 
 ```text
-nombre [: tipo] := expresión
+nombre [: tipo] := expresión [metadata-body]
 ```
 
-La anotación de tipo de un dato calculado es opcional. Si se omite, el compilador debe inferir un único tipo estático; si no puede hacerlo, la declaración es inválida. Un dato calculado no admite `mut`, `in`, especificación de colección, predeterminado ni almacenamiento propio: su forma y su valor proceden de la expresión.
+La anotación de tipo de un dato calculado es opcional. Si se omite, el compilador debe inferir un único tipo estático; si no puede hacerlo, la declaración es inválida. Un dato calculado no admite `mut`, `in`, especificación de colección, predeterminado ni almacenamiento propio: su forma y su valor proceden de la expresión. Tanto un dato almacenado como uno calculado pueden llevar un cuerpo inmediato formado exclusivamente por declaraciones de metadatos `~...`; D-091 fija que ese cuerpo pertenece al descriptor uniforme del dato.
 
 Todos los miembros comparten exactamente ese esquema. El subbloque opcional de un miembro contiene únicamente asignaciones que sustituyen los valores predeterminados de datos almacenados; no puede declarar datos nuevos, omitir el nombre del dato asignado, modificar su tipo, dominio o especificación de colección ni asignar un dato calculado.
 
@@ -111,12 +111,14 @@ Por tanto, un miembro puede omitir un dato almacenado siempre que su valor prede
 
 Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Los predeterminados y las asignaciones de miembro deben ser expresiones estáticas cerradas conforme a D-066. Los datos calculados también se evalúan estáticamente por miembro y deben ser puros, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
 
-En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los datos asociados, almacenados o calculados:
+En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los valores asociados obtenidos para un miembro, almacenados o calculados:
 
 - Son inmutables.
-- No poseen identidad ni ciclo de vida propios.
+- No poseen identidad ni ciclo de vida runtime propios.
 - Se consultan como propiedades del valor de familia, por ejemplo `terrain.movementCost`.
 - No alteran la identidad ni la igualdad del miembro: siguen dependiendo de la familia nominal y el nombre del miembro.
+
+La declaración del dato sí es una entidad semántica estable del esquema de la `family`: posee descriptor `Field`, ancla subordinada y metadatos propios conforme a D-091. Una asignación de miembro solo sustituye el valor efectivo de un dato almacenado y no crea una segunda entidad.
 
 ### Datos asociados como clave de colección
 

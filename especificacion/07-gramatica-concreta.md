@@ -64,6 +64,7 @@ decisions:
   - D-087
   - D-088
   - D-090
+  - D-091
 ---
 
 # 07. Gramática concreta
@@ -575,7 +576,27 @@ family Terrain {
 }
 ```
 
-Los datos aparecen antes del primer miembro y pueden ser almacenados o calculados mediante `nombre [: Tipo] := expresión`. El tipo calculado es opcional si se puede inferir de forma unívoca. Su expresión se evalúa estáticamente para cada miembro después de resolver los datos almacenados, puede consultar otros datos asociados mediante nombres no cualificados y debe tener dependencias acíclicas. El bloque de un miembro solo puede asignar datos almacenados.
+Los datos aparecen antes del primer miembro. Un dato almacenado puede llevar, después de su predeterminado opcional, un cuerpo inmediato que contenga solo declaraciones `~...`. Un dato calculado se escribe exclusivamente como `nombre [: Tipo] := expresión` y puede llevar el mismo metadata-body inmediato; no admite `in`, especificación de colección, predeterminado ni `mut`. El tipo calculado es opcional si se puede inferir de forma unívoca.
+
+El metadata-body describe el descriptor uniforme del dato de la `family`, no el valor concreto proyectado por cada miembro. Por ejemplo:
+
+```mud
+family Terrain {
+    movementCost: Nat = 1 {
+        ~summary = "Coste base de movimiento"
+    }
+    costly := movementCost >= 3 {
+        ~summary = "Indica terreno costoso"
+    }
+
+    Plain,
+    Mountain {
+        movementCost = 4
+    }
+}
+```
+
+La asignación `movementCost = 4` del miembro es solo una sobrescritura de valor del dato almacenado. No admite metadata-body, no introduce otra ancla y no modifica los metadatos del descriptor `movementCost`. La expresión de un dato calculado se evalúa estáticamente para cada miembro después de resolver los datos almacenados, puede consultar otros datos asociados mediante nombres no cualificados y debe tener dependencias acíclicas. El bloque de un miembro solo puede asignar datos almacenados.
 
 Los miembros se separan por comas y no admiten coma final. `ordered family` hace comparables sus miembros en orden de declaración y permite usar rutas de datos asociados, incluidos los calculados estables, como claves de `ordered by` en colecciones.
 
