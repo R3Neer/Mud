@@ -1,0 +1,28 @@
+name: ChatGPT global coherence residue audit
+on:
+  push:
+    branches: [chatgpt-global-coherence-resume-runner-g]
+permissions: {contents: read}
+jobs:
+  residue-audit:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-runner-g, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-20260816-e, path: target, fetch-depth: 0}
+      - name: Base candidata exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: 942d0d0e6c17ce04bbc6e9b091fe71fda3bc4eb9}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Barrido de residuos
+        shell: pwsh
+        working-directory: target
+        run: |
+          Copy-Item ../runner/tooling/chatgpt/resume_global_residue_audit.py ./audit.py
+          python audit.py
+          Remove-Item audit.py
