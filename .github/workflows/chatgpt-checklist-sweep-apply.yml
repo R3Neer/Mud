@@ -36,15 +36,27 @@ jobs:
         shell: pwsh
         working-directory: target
         run: |
-          $ErrorActionPreference='Stop'
+          $ErrorActionPreference='Continue'
           git fetch origin 2d6390f19640a0e8b86889b5a3ea479bf7341dab
           if ($LASTEXITCODE -ne 0) { throw 'could not fetch historical sweep' }
           git cherry-pick --no-commit 2d6390f19640a0e8b86889b5a3ea479bf7341dab
           if ($LASTEXITCODE -ne 0) {
-            git status --short
-            git diff --name-only --diff-filter=U
-            throw 'historical sweep conflicts with current HEAD'
+            $conflicts=@(git diff --name-only --diff-filter=U)
+            $expected=@(
+              'notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md',
+              'notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md'
+            ) | Sort-Object
+            $delta=Compare-Object -ReferenceObject $expected -DifferenceObject ($conflicts | Sort-Object)
+            if ($delta) {
+              git status --short
+              throw "unexpected conflicts: $($conflicts -join ', ')"
+            }
+            git checkout --ours -- notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md
+            git checkout --theirs -- notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md
+            git add notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md
+            git cherry-pick --quit
           }
+          $ErrorActionPreference='Stop'
           python ../control/.chatgpt/fix_sweep_current.py .
           if ($LASTEXITCODE -ne 0) { throw 'current-head adaptation failed' }
       - name: Regenerate decisions
@@ -80,14 +92,16 @@ jobs:
           $ErrorActionPreference='Stop'
           $allowed=@(
             'especificacion/07-gramatica-concreta.md',
+            'especificacion/README.md',
             'especificacion/sintaxis/casos/cst-ast.yaml',
             'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md',
             'notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md',
             'notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos.md',
             'notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas.md',
             'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md',
             'notas/decisiones/ADR-037-campos-y-dominios-declarativos.md',
-            'notas/decisiones/ADR-038-family-y-miembros.md',
+            'notas/decisiones/ADR-038-familias-cerradas-de-valores.md',
             'notas/decisiones/ADR-039-colecciones-y-diccionarios.md',
             'notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md',
             'notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise.md',
@@ -95,9 +109,12 @@ jobs:
             'notas/decisiones/ADR-062-magnitudes-de-punto-formatos-y-texto.md',
             'notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md',
             'notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco.md',
+            'notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md',
             'notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md',
+            'notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md',
             'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md',
             'notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios.md',
+            'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
             'notas/decisiones/README.md'
           )
           $actual=@(git status --porcelain=v1 --untracked-files=all | ForEach-Object {$_.Substring(3)})
