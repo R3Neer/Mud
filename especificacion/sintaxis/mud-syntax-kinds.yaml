@@ -619,18 +619,24 @@ syntax_nodes:
     - calculated-family-data-declaration
   stored-family-data-declaration:
     kind: StoredFamilyDataDeclarationSyntax
-    rhs: "field-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]"
+    rhs: "field-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
     references:
     - field-name
     - type-expression
     - constant-expression
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
   calculated-family-data-declaration:
     kind: CalculatedFamilyDataDeclarationSyntax
-    rhs: field-name , [ derived-value-shape ] , ":=" , value-expression
+    rhs: "field-name , [ derived-value-shape ] , \":=\" , value-expression\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
     references:
     - field-name
     - derived-value-shape
     - value-expression
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
   family-member:
     kind: FamilyMemberSyntax
     rhs: member-name , [ family-member-body ]

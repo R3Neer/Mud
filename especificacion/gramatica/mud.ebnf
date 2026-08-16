@@ -165,10 +165,12 @@ family-data-declaration
 stored-family-data-declaration
     ::= field-name , ":" , type-expression
         , [ "=" , constant-expression ]
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
 
 calculated-family-data-declaration
     ::= field-name , [ derived-value-shape ] , ":=" , value-expression
+        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
 
 family-member

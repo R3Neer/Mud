@@ -14,7 +14,7 @@ affects:
 
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
-- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]].
+- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
 
 ## Contexto
 
@@ -64,7 +64,7 @@ Un elemento puede poseer metadatos propios únicamente cuando satisface conjunta
 4. el metadato describe al elemento completo y no una ocurrencia sintáctica accidental;
 5. su existencia no depende de una ejecución concreta.
 
-Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, unidades, campos almacenados/calculados/públicos, componentes de alias y participantes `for`/`on`/`given`.
+Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, unidades, campos almacenados/calculados/públicos, datos asociados almacenados/calculados de una `family`, componentes de alias y participantes `for`/`on`/`given`.
 
 No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. Una rama de diccionario funcional tampoco posee ancla pública: D-090 le asigna únicamente una clave local dentro de su propietario para la representación resuelta. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
 
@@ -201,11 +201,11 @@ Los descriptores `Field` exponen:
 ~inherited ~declaredBy ~metadata
 ```
 
-`~kind` usa `FieldKind`. Los componentes de alias exponen el mismo contrato estructural salvo que `~mutable` es siempre `false`; esta decisión no crea una `ComponentKind` nueva.
+`~kind` usa `FieldKind`. Los datos asociados declarados por una `family` reutilizan `Field`: un dato almacenado usa `FieldKind.Stored` y uno calculado `FieldKind.Calculated`. No se crea `FamilyDataKind`. Su ancla es subordinada a la `family`; el valor proyectado por cada miembro no obtiene descriptor ni metadatos propios. Los componentes de alias exponen el mismo contrato estructural salvo que `~mutable` es siempre `false`; esta decisión no crea una `ComponentKind` nueva.
 
 Un miembro heredado conserva el ancla, descriptor y metadatos del elemento que lo declaró. No se fabrican copias metadata-bearing por cada descendiente.
 
-Campos y componentes pueden llevar inmediatamente un cuerpo que contenga solo declaraciones `~...`. El cuerpo pertenece al descriptor, no al valor del campo o componente. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
+Campos, componentes y datos asociados declarados por una `family` pueden llevar inmediatamente un cuerpo que contenga solo declaraciones `~...`. El cuerpo pertenece al descriptor, no al valor proyectado. Una asignación de dato dentro de un miembro de `family` no admite ese cuerpo porque no declara un descriptor nuevo. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
 
 ### Descriptor `Metadata`
 

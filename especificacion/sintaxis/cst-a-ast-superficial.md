@@ -284,7 +284,9 @@ Un componente no puede producir mutabilidad exterior. Su colección general sí 
 
 La palabra `ordered` produce `isOrdered = Enabled`.
 
-Las declaraciones de datos se separan en almacenadas y calculadas. En el preámbulo de un miembro, cualquier `metadata-assignment` produce `StoredMetadataAssignment` o `CalculatedMetadataAssignment`; las asignaciones ordinarias posteriores se conservan como datos almacenados. Un cuerpo metadata-only produce `assignments = []` y conserva su secuencia `metadata`.
+Las declaraciones de datos se separan en almacenadas y calculadas. Cada declaración puede llevar un cuerpo inmediato formado exclusivamente por `metadata-assignment`; esa secuencia se conserva en `StoredFamilyDataDecl.metadata` o `CalculatedFamilyDataDecl.metadata`. El dato calculado conserva provisionalmente `derived_value_shape? shape`, porque Q-061 mantiene abierta la contradicción entre la EBNF actual y la restricción más estrecha escrita en D-038. Esta transformación no inventa una normalización que resuelva esa cuestión.
+
+En el preámbulo de un miembro, cualquier `metadata-assignment` produce `StoredMetadataAssignment` o `CalculatedMetadataAssignment` del descriptor del miembro; las asignaciones ordinarias posteriores se conservan como `FamilyDataAssignment`. Estas asignaciones sustituyen el valor de un dato almacenado para ese miembro, pero no crean descriptor, ancla ni metadata-body propios. Un cuerpo de miembro metadata-only produce `assignments = []` y conserva su secuencia `metadata`.
 
 La coma entre miembros desaparece. La ausencia de coma final ya ha sido validada por la gramática.
 
