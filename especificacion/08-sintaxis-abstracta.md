@@ -34,6 +34,7 @@ decisions:
   - D-086
   - D-087
   - D-088
+  - D-090
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -265,6 +266,8 @@ DictionaryType(keyType, valueTypeExpression)
 El valor conserva su `TypeExpr`, por lo que puede contener dominio y colección propios. La colección escrita después del diccionario completo pertenece al `TypeExpr` exterior.
 
 Los paréntesis exigidos por la gramática para un diccionario anidado no sobreviven al AST.
+
+Las ramas de un diccionario funcional permanecen nodos de valor en el AST superficial y no reciben `AnchoredSymbol` ni ancla sintética. La resolución conserva su orden fuente y deriva una `decision_branch_key` local al diccionario a partir del selector normalizado; esa clave sirve para reconstrucción y dependencias internas, no para resolución nominal ni metadatos.
 
 ## Colecciones
 
