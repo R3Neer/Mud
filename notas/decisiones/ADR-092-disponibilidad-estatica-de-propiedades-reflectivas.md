@@ -7,12 +7,13 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "reflexión, metadatos, participantes, resolución, tipado, AST resuelto, diagnósticos y tooling"
+  - "reflexión, metadatos, participantes, resolución nominal, tipado, IR semántico, diagnósticos y tooling"
 ---
 
 # ADR-092 — Disponibilidad estática de propiedades reflectivas
 
 - Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
+- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 - Amplía: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
 
 ## Contexto
@@ -80,7 +81,7 @@ Conserva `MetadataAccessExpr(receiver, metadata)` aunque el acceso vaya a result
 
 ### Resolución y tipado
 
-Determinan la categoría estática del receptor, aplican narrowing cuando exista y seleccionan el contrato de propiedad. Si ninguna propiedad compatible existe para todos los casos todavía posibles del receptor, emiten error estático. Solo los accesos válidos llegan al AST resuelto con tipo de resultado.
+Determinan la categoría estática del receptor, aplican narrowing cuando exista y seleccionan el contrato de propiedad. Si ninguna propiedad compatible existe para todos los casos todavía posibles del receptor, emiten error estático. Solo los accesos válidos se elaboran en el IR semántico con tipo de resultado.
 
 ### Ejecución
 
@@ -111,4 +112,4 @@ Descartada porque el receptor es una expresión general y su categoría se conoc
 2. `thing A; A~for` produce AST superficial y después error estático de propiedad no soportada.
 3. Una declaración de categoría compatible sin cláusula concreta devuelve `empty`.
 4. `AssignableExpr` no contiene ningún sufijo de metadata.
-5. El AST resuelto solo contiene `MetadataAccessExpr` para propiedades compatibles con la categoría estática resuelta.
+5. El IR semántico solo contiene `MetadataAccessExpr` para propiedades compatibles con la categoría estática resuelta.
