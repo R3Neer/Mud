@@ -1,0 +1,131 @@
+name: ChatGPT global coherence phase 5b metadata capabilities
+
+on:
+  push:
+    branches:
+      - chatgpt-global-coherence-runner-v5b-metadata-capabilities
+
+permissions:
+  contents: write
+
+jobs:
+  metadata-capabilities:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-runner-v5b-metadata-capabilities
+          path: runner
+          fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-20260816-v10
+          path: target
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Verify accepted base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 7b7c3995a7fd463871fa0ca4c578046581e993a2
+        run: |
+          $ErrorActionPreference='Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:BASE) { throw 'candidate base mismatch' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate not clean' }
+      - name: Apply metadata capability phase
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase5_metadata_capabilities.py tooling/chatgpt/phase5.py
+          python tooling/chatgpt/phase5.py
+          if ($LASTEXITCODE -ne 0) { throw 'metadata capability transform failed' }
+          Remove-Item tooling/chatgpt/phase5.py
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision index generation failed' }
+      - name: Stage 1 capability invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'{p}: missing {s!r}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'{p}: stale {s!r}')
+          need('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','RuleKind.Boolean')
+          need('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','participants := Ping~for  # empty')
+          need('notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md','| regla booleana | sí | no | sí |')
+          need('especificacion/07-gramatica-concreta.md','`thing A` hace inválido `A~for`')
+          need('especificacion/07-gramatica-concreta.md','metadata-name ::= identifier | "for" | "on" | "given"')
+          need('especificacion/08-sintaxis-abstracta.md','produce siempre `MetadataAccessExpr`')
+          forbid('especificacion/08-sintaxis-abstracta.md','`MetadataSuffix` en un destino asignable')
+          surf=r('especificacion/sintaxis/mud-surface-ast.asdl')
+          if 'access_suffix = MemberSuffix(identifier_name member)\n                  | IndexSuffix' not in surf:
+              raise SystemExit('assignable suffix contract changed unexpectedly')
+          if 'MetadataSuffix' in surf:
+              raise SystemExit('surface AST still has MetadataSuffix')
+          need('especificacion/sintaxis/casos/cst-ast.yaml','id: metadata-signature-supported-absent')
+          need('especificacion/sintaxis/casos/cst-ast.yaml','id: metadata-signature-unsupported-receiver')
+          need('especificacion/sintaxis/casos/cst-ast.yaml','metadata-property-not-supported-by-static-receiver')
+          grammar=r('especificacion/gramatica/mud.ebnf')
+          if 'metadata-name     ::= identifier | "for" | "on" | "given" ;' not in grammar:
+              raise SystemExit('hard-keyword metadata names were lost')
+          print('PHASE5B_METADATA_CAPABILITY_INVARIANTS_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'metadata capability invariants failed' }
+      - name: Stage 2 official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+      - name: Stage 3 controlled surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          $allowed=@(
+            'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
+            'notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md',
+            'notas/decisiones/README.md',
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/sintaxis/casos/cst-ast.yaml'
+          )
+          $actual=@(git status --porcelain=v1 --untracked-files=all | % { $p=$_.Substring(3); if($p -match ' -> '){$p=($p -split ' -> ',2)[1]}; $p.Trim('"') }) | Sort-Object -Unique
+          foreach($p in $actual){ if($allowed -notcontains $p){ throw "unexpected path: $p" } }
+          foreach($p in $allowed){ if($actual -notcontains $p){ throw "expected path not changed: $p" } }
+          git diff --stat
+      - name: Commit candidate phase
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'staged diff failed' }
+          git commit -m "spec(reflection): tipa disponibilidad de propiedades de firma" -m "D-092 distingue propiedad no soportada de cláusula soportada pero ausente. La gramática sigue reconociendo keywords tras ~ y el AST superficial difiere el lookup; además se elimina el residuo documental de MetadataSuffix asignable.`n`nValidation: invariantes específicas, decisiones, preguntas, gramática, sintaxis y git diff --check."
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-global-coherence-20260816-v10
+          if ($LASTEXITCODE -ne 0) { throw 'candidate push failed' }
