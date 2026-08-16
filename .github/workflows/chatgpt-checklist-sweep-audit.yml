@@ -24,7 +24,7 @@ jobs:
         with: {python-version: '3.13'}
       - name: Verify audited HEAD
         shell: pwsh
-        env: {EXPECTED_HEAD: e117e86eebcf215af0f5e0c9cc1965f9277f03ef}
+        env: {EXPECTED_HEAD: 7a25d21bb6d3a539ddc118384b920ee476258c87}
         run: |
           $h=(git -C target rev-parse HEAD).Trim()
           if ($h -ne $env:EXPECTED_HEAD) { throw "main moved: $h" }
