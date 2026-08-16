@@ -52,7 +52,7 @@ jobs:
                               continue
                           offenders.append(f'{rel}:{n}:{line}')
           if offenders:
-              print('\n'.join(offenders))
+              print(('\n'.join(offenders)).encode('ascii','backslashreplace').decode('ascii'))
               raise SystemExit('active retired architecture references remain')
           print('ARCH_RESIDUE_AUDIT_OK')
           '@ | python -
