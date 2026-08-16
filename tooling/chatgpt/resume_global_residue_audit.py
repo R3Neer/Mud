@@ -17,7 +17,13 @@ patterns = {
     'empty-extrema-error': re.compile(r'(?i)(min[^\n]{0,80}max[^\n]{0,100}(?:fuente\s+vac[ií]a|vac[ií]o)[^\n]{0,60}(?:error|fall)|agregaci[oó]n\s+extrema\s+vac[ií]a[^\n]{0,50}(?:error|fall)|error\s+de\s+agregaci[oó]n\s+(?:extrema\s+)?vac[ií]a)'),
     'family-data-no-identity': re.compile(r'(?i)datos?\s+asociad[^\n]{0,100}(?:no\s+posee[^\n]{0,20}(?:identidad|ancla)|sin\s+(?:identidad|ancla))'),
     'family-member-name-field': re.compile(r'`name:\s*Text`\s+intr[ií]nseco'),
-    'metadata-runtime-write': re.compile(r'(?i)(?:asignar|escribir|modificar|mutable)[^\n]{0,80}`?~(?:name|plural|abbreviation|summary|description)`?[^\n]{0,80}(?:runtime|ejecuci[oó]n)|`?~(?:name|plural|abbreviation)`?[^\n]{0,80}(?:asignable|mutable\s+en\s+runtime|escritura\s+runtime))'),
+    'metadata-runtime-write': re.compile(
+        r'(?i)(?:'
+        r'(?:asignar|escribir|modificar|mutable)[^\n]{0,80}`?~(?:name|plural|abbreviation|summary|description)`?[^\n]{0,80}(?:runtime|ejecuci[oó]n)'
+        r'|'
+        r'`?~(?:name|plural|abbreviation)`?[^\n]{0,80}(?:asignable|mutable\s+en\s+runtime|escritura\s+runtime)'
+        r')'
+    ),
     'metadata-dot-syntax': re.compile(r'\.~[A-Za-z_]'),
     'metadata-recursive': re.compile(r'(?i)Metadata[^\n]{0,80}(?:puede\s+(?:tener|poseer)|metadata-bearing)[^\n]{0,80}metad'),
     'signature-property-universal': re.compile(r'(?i)(?:toda|cualquier)\s+(?:declaraci[oó]n|descriptor)[^\n]{0,100}`~(?:for|on|given)`|`~(?:for|on|given)`[^\n]{0,100}(?:toda|cualquier)\s+(?:declaraci[oó]n|descriptor))'),
