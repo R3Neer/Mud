@@ -435,26 +435,9 @@ given-clause
     ::= "given" , given-declaration , { "," , given-declaration } ;
 
 given-declaration
-    ::= given-name , { "," , given-name } , ":" , union-type-expression , [ given-collection-specification ] , [ "=" , constant-expression ]
+    ::= given-name , { "," , given-name } , ":" , type-expression , [ "=" , constant-expression ]
         , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
-
-given-collection-specification
-    ::= "["
-        , ( cardinality
-            , [ optional-comma , given-collection-modifier
-                , { optional-comma , given-collection-modifier }
-              ]
-          | given-collection-modifier
-            , { optional-comma , given-collection-modifier }
-          )
-        , "]"
-        ;
-
-given-collection-modifier
-    ::= "unique"
-      | "ordered" , [ "by" , order-key-path ]
-      ;
 
 boolean-rule-declaration
     ::= "rule" , nominal-name

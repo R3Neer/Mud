@@ -245,7 +245,7 @@ La validación previa rechaza:
 
 ### `given`
 
-`given-collection-specification` produce `ReadonlyCollectionSpec`; no existe campo para `elementsMutable`.
+`given-declaration` proyecta su anotación mediante el mismo `TypeExpr` superficial que los demás contextos de tipo. Esto permite conservar tipos diccionario completos sin introducir una segunda jerarquía de tipos de solo lectura. La presencia de capacidad `mut` puede quedar representada en el AST superficial, pero D-063 la rechaza estáticamente para `given` antes de producir IR semántico.
 
 ## Tipos
 
@@ -333,7 +333,7 @@ La variante directa produce `DirectOnParticipant(name, type, elementsMutable, me
 
 ### `given`
 
-Se convierten nombre, tipo, dominio, colección de solo lectura, predeterminado y metadatos. El predeterminado continúa siendo `expr`; su carácter constante se comprueba después.
+Se convierten nombre, `TypeExpr`, predeterminado y metadatos. Un tipo diccionario se conserva mediante los constructores ordinarios `ExactDictionaryType` o `DecisionDictionaryType`. El predeterminado continúa siendo `expr`; su carácter constante y la prohibición de cualquier capacidad `mut` del `given` se comprueban después.
 
 ## Reglas y acciones
 

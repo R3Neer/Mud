@@ -1769,3 +1769,19 @@ cases:
   - configured-metadata-exposes-anchor
   - metadata-does-not-expose-metadata
   produces_ast: true
+
+- id: given-dictionary-type
+  category: participant
+  source: "action Price given prices: Product -> Money {\n    then total += 1\n}\n"
+  cst_root: MudFileSyntax
+  ast: GivenDecl(prices, TypeExpr(ExactDictionaryType(Product, Money, ...)), defaultValue=None, metadata=[])
+  semantic_expectations:
+  - given-is-readonly
+  produces_ast: true
+- id: given-dictionary-mut-rejected
+  category: validation-after-ast
+  source: "action Price given prices: Product -> Money [mut] {\n    then total += 1\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - given-mutability-forbidden
+  produces_ast: true
