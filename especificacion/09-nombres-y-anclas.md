@@ -21,6 +21,7 @@ decisions:
   - D-086
   - D-087
   - D-088
+  - D-090
 ---
 # 09. Nombres, paths y anclas
 
@@ -152,7 +153,8 @@ No poseen ancla pública:
 - vinculaciones temporales que no sean participantes declarados;
 - resultados intermedios;
 - unidades creadas estructuralmente por prefijos;
-- los valores incorporados `Prefix`, que se elaboran como constantes y no como declaraciones.
+- los valores incorporados `Prefix`, que se elaboran como constantes y no como declaraciones;
+- las ramas de diccionarios funcionales, que se identifican solo de forma local dentro de su diccionario propietario.
 
 Un miembro heredado conserva el ancla del propietario que lo declaró. En `thing` esto no comparte estado; en aliases identifica el origen usado para deduplicar diamantes. Una sobrescritura de predeterminado no introduce un miembro ni un ancla nuevos.
 
@@ -194,7 +196,7 @@ Después de la resolución nominal puede construirse un grafo parcial con nodos 
 
 El tipado completa o rechaza aristas cuya validez dependa de una unión, una inferencia o un miembro contextual. El grafo parcial no sustituye al AST ni constituye fuente de verdad.
 
-El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario.
+El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario. Las ramas funcionales no son símbolos: sus dependencias se reconstruyen mediante el ancla del diccionario propietario y una `decision_branch_key` local.
 
 ## Conformidad
 
@@ -211,11 +213,16 @@ D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es prese
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
 
-## Anclas de ramas funcionales
+## Claves locales de ramas funcionales
 
-Cada rama de un diccionario funcional recibe una ancla estable subordinada al ancla del diccionario. Su segmento propio no depende del ordinal fuente; mover una rama cambia su posición en un `FirstMatch`, pero no su identidad. El operador semántico puede dirigir `CREATE`, `UPDATE`, `REMOVE` y `MOVE` a esa ancla.
+> [!rule] MUD-NAME-006 — Sin ancla pública de rama
+> Una rama de diccionario funcional no introduce símbolo anclado, nombre público ni propietario de metadatos. Su identidad persistente es la del diccionario que la contiene.
 
-Las operaciones conjuntistas de funcionales no crean ni fusionan anclas de rama: el nodo compuesto conserva referencias a ambos operandos y su grafo de dependencias es la unión transitiva de los dos.
+El AST resuelto conserva para cada rama una `decision_branch_key` local al diccionario. Para una rama ordinaria, la clave contiene la forma canónica del selector resuelto y un índice de colisión entre ramas con el mismo selector canónico. El índice solo garantiza unicidad dentro de esa representación resuelta y no constituye identidad persistente. `_` usa una clave `FallbackBranchKey` distinta. El ordinal fuente se conserva por separado porque participa en `FirstMatch`, pero tampoco se convierte en ancla.
+
+Las operaciones de tooling que requieran una referencia persistente deben dirigirse al diccionario propietario y expresar después la edición estructural de su conjunto o secuencia de ramas. `CREATE`, `UPDATE`, `REMOVE` y `MOVE` no pueden tratar una rama como entidad global independiente.
+
+Las operaciones conjuntistas de funcionales no crean ni fusionan claves globales de rama: el nodo compuesto conserva referencias a ambos operandos y su grafo de dependencias es la unión transitiva de los dos.
 
 ## Pertenencia de paths
 
