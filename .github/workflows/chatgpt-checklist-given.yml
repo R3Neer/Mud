@@ -1,0 +1,108 @@
+name: ChatGPT checklist given dictionaries
+on:
+  push:
+    branches: [chatgpt-checklist-runner-given]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-runner-given
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-given
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.13'}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.3'
+      - name: Verify base
+        shell: pwsh
+        env: {EXPECTED_HEAD: 3c57d19db714020de842099d3b6ff1c9362ac2d8}
+        run: |
+          $ErrorActionPreference='Stop'
+          $h=(git -C target rev-parse HEAD).Trim()
+          if ($h -ne $env:EXPECTED_HEAD) { throw "base mismatch: $h" }
+          if (git -C target status --porcelain=v1 --untracked-files=all) { throw 'candidate not clean' }
+      - name: Apply transform
+        shell: pwsh
+        run: |
+          python control/.chatgpt/transform_given.py target
+          if ($LASTEXITCODE -ne 0) { throw 'transform failed' }
+      - name: Checklist invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'MISSING {s!r} in {p}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'STALE {s!r} in {p}')
+          need('especificacion/gramatica/mud.ebnf', 'given-name , { "," , given-name } , ":" , type-expression')
+          forbid('especificacion/gramatica/mud.ebnf', 'given-collection-specification')
+          need('especificacion/sintaxis/mud-surface-ast.asdl', 'given_decl = GivenDecl(given_name name,\n                           type_expr shape,')
+          forbid('especificacion/sintaxis/mud-surface-ast.asdl', 'readonly_value_shape')
+          need('especificacion/sintaxis/casos/cst-ast.yaml', 'id: given-dictionary-type')
+          need('notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md', 'given prices: Product -> Money')
+          print('GIVEN_CHECKLIST_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'checklist audit failed' }
+      - name: Repository validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decisions' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'questions' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff' }
+      - name: Verify exact surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          $expected=@(
+            'especificacion/07-gramatica-concreta.md',
+            'especificacion/08-sintaxis-abstracta.md',
+            'especificacion/gramatica/mud.ebnf',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'especificacion/sintaxis/cobertura-sintactica.yaml',
+            'especificacion/sintaxis/cst-a-ast-superficial.md',
+            'especificacion/sintaxis/mud-surface-ast.asdl',
+            'especificacion/sintaxis/mud-syntax-kinds.yaml',
+            'notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md'
+          ) | Sort-Object
+          $actual=@(git status --porcelain=v1 --untracked-files=all | ForEach-Object {$_.Substring(3)}) | Sort-Object
+          $delta=Compare-Object -ReferenceObject $expected -DifferenceObject $actual
+          if ($delta) { $delta | Format-Table | Out-String | Write-Host; throw 'unexpected surface' }
+      - name: Commit candidate
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'cached diff' }
+          git commit -m 'fix(grammar): admite diccionarios en given'
+          if ($LASTEXITCODE -ne 0) { throw 'commit' }
+          git push origin HEAD:chatgpt-checklist-given
+          if ($LASTEXITCODE -ne 0) { throw 'push' }
