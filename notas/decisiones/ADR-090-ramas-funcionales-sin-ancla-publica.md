@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "diccionarios funcionales, anclas, AST resuelto, grafo de dependencias, operador semántico y tooling"
+  - "diccionarios funcionales, anclas, IR semántico, grafo de dependencias, operador semántico y tooling"
 ---
 
 # ADR-090 — Ramas funcionales sin ancla pública
@@ -24,7 +24,7 @@ D-085 asignaba anclas propias a las ramas de diccionarios funcionales para poder
 
 Una rama de diccionario funcional no posee ancla pública, no introduce `AnchoredSymbol` y no puede poseer metadatos propios. La entidad persistente es el diccionario propietario.
 
-El AST resuelto asigna a cada rama una clave local `decision_branch_key`:
+El IR semántico asigna a cada rama una clave local `decision_branch_key`:
 
 ```text
 SelectorBranchKey(canonical_selector)
@@ -33,7 +33,7 @@ FallbackBranchKey
 
 `canonical_selector` es la forma canónica del selector después de resolución y normalización semántica suficiente para reconstruir la rama. Dentro de un mismo diccionario no pueden existir dos ramas ordinarias con el mismo selector canónico: la parte izquierda actúa como clave estructural local. El fallback `_` usa una variante propia y única por diccionario.
 
-La variante de `decision_branch_key` determina por sí sola si la rama es ordinaria o fallback; el AST resuelto no conserva un segundo flag `is_fallback` que pudiera contradecirla. El `source_ordinal` continúa conservándose por separado. En `FirstMatch` forma parte del valor funcional porque decide prioridad; en `AllMatches` conserva procedencia y diagnóstico, pero no se convierte en identidad persistente.
+La variante de `decision_branch_key` determina por sí sola si la rama es ordinaria o fallback; el IR semántico no conserva un segundo flag `is_fallback` que pudiera contradecirla. El `source_ordinal` continúa conservándose por separado. En `FirstMatch` forma parte del valor funcional porque decide prioridad; en `AllMatches` conserva procedencia y diagnóstico, pero no se convierte en identidad persistente.
 
 Las dependencias de una rama se representan mediante el par formado por el ancla del diccionario propietario y su clave local. Una operación externa que necesite persistencia se dirige al diccionario y expresa la edición de sus ramas como estructura interna del propietario; no puede tratar la rama como entidad global independiente.
 
@@ -57,7 +57,7 @@ Descartada porque la rama ya posee una clave estructural natural: su selector ca
 
 ## Verificación
 
-1. `mud-resolved-ast.asdl` no representa la identidad de `ResolvedDecisionBranch` mediante `anchor`.
+1. `especificacion/ir/mud-semantic-ir.asdl` no representa la identidad de `ResolvedDecisionBranch` mediante `anchor`.
 2. `ResolvedDecisionBranch` no duplica la condición de fallback mediante un flag separado.
 3. `DecisionDependsOn` conserva el ancla del diccionario y una clave local de rama sin índice de colisión.
 4. El catálogo de anclas no enumera ramas funcionales como entidades públicas.

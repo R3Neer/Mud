@@ -1,9 +1,9 @@
--- MUD 1.0 — Contrato del AST resuelto
+-- MUD 1.0 — Contrato del IR semántico elaborado
 --
--- Complementa mud-surface-ast.asdl. Conserva procedencia y forma semántica,
--- pero sustituye referencias nominales por símbolos y anclas resueltas.
+-- Se reconstruye desde el AST superficial después de resolución nominal, tipado y elaboración.
+-- Conserva significado semántico, símbolos/anclas resueltos y procedencia de fuente.
 
-module MUDResolved {
+module MUDSemanticIR {
 
     source_span = (string source, int start, int end)
 
@@ -36,65 +36,65 @@ module MUDResolved {
 
     metadata_evaluation = StoredMetadata | CalculatedMetadata
 
-    resolved_project = ResolvedProject(resolved_decl* declarations,
-                                       resolved_decision_branch* decision_branches,
+    semantic_project = SemanticProject(semantic_decl* declarations,
+                                       semantic_decision_branch* decision_branches,
                                        dependency_edge* dependencies)
 
-    resolved_decl = ResolvedDecl(anchor identity,
+    semantic_decl = SemanticDecl(anchor identity,
                                  string category,
                                  action_access? action_visibility,
-                                 resolved_type? declared_type,
-                                 resolved_metadata* metadata,
-                                 resolved_member* members)
+                                 semantic_type? declared_type,
+                                 semantic_metadata* metadata,
+                                 semantic_member* members)
         attributes (source_span origin)
 
-    resolved_member = ResolvedMember(symbol_id identity,
+    semantic_member = SemanticMember(symbol_id identity,
                                      string category,
-                                     resolved_type? declared_type,
-                                     resolved_metadata* metadata,
-                                     resolved_expr? value)
+                                     semantic_type? declared_type,
+                                     semantic_metadata* metadata,
+                                     semantic_expr? value)
         attributes (source_span origin)
 
-    resolved_metadata = ResolvedMetadata(symbol_id owner,
+    semantic_metadata = SemanticMetadata(symbol_id owner,
                                          metadata_kind kind,
-                                         resolved_type type,
+                                         semantic_type type,
                                          metadata_evaluation evaluation,
-                                         resolved_expr value)
+                                         semantic_expr value)
         attributes (source_span origin)
 
-    resolved_type = UnionType(type_alternative first,
+    semantic_type = UnionType(type_alternative first,
                               type_alternative* remaining,
                               collection_shape collection)
                   | AnyValueType
-                  | PositionalProductType(resolved_type first,
-                                          resolved_type second,
-                                          resolved_type* remaining)
+                  | PositionalProductType(semantic_type first,
+                                          semantic_type second,
+                                          semantic_type* remaining)
                   | NamedProductType(named_type_component first,
                                      named_type_component* remaining)
-                  | ExactDictionaryType(resolved_type key_type,
-                                        resolved_type value_type,
+                  | ExactDictionaryType(semantic_type key_type,
+                                        semantic_type value_type,
                                         collection_shape entries)
-                  | DecisionDictionaryType(resolved_type input_type,
-                                           resolved_type output_type,
+                  | DecisionDictionaryType(semantic_type input_type,
+                                           semantic_type output_type,
                                            decision_shape decision)
         attributes (source_span origin)
 
-    named_type_component = (string name, resolved_type type)
+    named_type_component = (string name, semantic_type type)
 
-    type_alternative = (anchor nominal_type, resolved_domain? domain)
+    type_alternative = (anchor nominal_type, semantic_domain? domain)
 
-    resolved_domain = IntervalDomain(resolved_expr lower,
-                                     resolved_expr upper,
+    semantic_domain = IntervalDomain(semantic_expr lower,
+                                     semantic_expr upper,
                                      string boundaries)
-                    | SteppedDomain(resolved_domain interval,
-                                    resolved_expr step)
-                    | FiniteDomain(resolved_expr* members)
+                    | SteppedDomain(semantic_domain interval,
+                                    semantic_expr step)
+                    | FiniteDomain(semantic_expr* members)
                     | NamedDomain(anchor declaration)
-                    | UnionDomain(resolved_domain left, resolved_domain right)
-                    | IntersectionDomain(resolved_domain left, resolved_domain right)
-                    | DifferenceDomain(resolved_domain left, resolved_domain right)
-                    | SymmetricDifferenceDomain(resolved_domain left,
-                                                resolved_domain right)
+                    | UnionDomain(semantic_domain left, semantic_domain right)
+                    | IntersectionDomain(semantic_domain left, semantic_domain right)
+                    | DifferenceDomain(semantic_domain left, semantic_domain right)
+                    | SymmetricDifferenceDomain(semantic_domain left,
+                                                semantic_domain right)
 
     collection_shape = (int? lower,
                         int? upper,
@@ -115,58 +115,58 @@ module MUDResolved {
                          | StructuralDescent(symbol_id measure)
                          | ExternalProof(string identity)
 
-    resolved_decision_branch = ResolvedDecisionBranch(decision_branch_key key,
+    semantic_decision_branch = SemanticDecisionBranch(decision_branch_key key,
                                                        anchor dictionary,
                                                        int source_ordinal,
-                                                       resolved_expr selector,
-                                                       resolved_expr result,
+                                                       semantic_expr selector,
+                                                       semantic_expr result,
                                                        symbol_id* external_reads)
         attributes (source_span origin)
 
-    resolved_start_set = ResolvedStartSet(anchor* things, anchor* rules)
+    semantic_start_set = SemanticStartSet(anchor* things, anchor* rules)
         attributes (source_span origin)
 
-    resolved_expr = ReferenceExpr(symbol_id target)
+    semantic_expr = ReferenceExpr(symbol_id target)
                   | LiteralExpr(string kind, string canonical)
-                  | EmptyExpr(resolved_type expected_shape)
-                  | AllExpr(resolved_domain expected_domain, string stability)
-                  | CollectionExpr(resolved_expr* elements)
-                  | PositionalProductExpr(resolved_expr first,
-                                          resolved_expr second,
-                                          resolved_expr* remaining)
+                  | EmptyExpr(semantic_type expected_shape)
+                  | AllExpr(semantic_domain expected_domain, string stability)
+                  | CollectionExpr(semantic_expr* elements)
+                  | PositionalProductExpr(semantic_expr first,
+                                          semantic_expr second,
+                                          semantic_expr* remaining)
                   | NamedProductExpr(named_expr_component first,
                                      named_expr_component* remaining)
-                  | ExactAssociationExpr(resolved_expr key, resolved_expr value)
-                  | DecisionBranchExpr(resolved_expr selector, resolved_expr result)
-                  | ExactLookupExpr(resolved_expr dictionary, resolved_expr key)
-                  | DecisionApplyExpr(resolved_expr dictionary,
-                                      resolved_expr input,
+                  | ExactAssociationExpr(semantic_expr key, semantic_expr value)
+                  | DecisionBranchExpr(semantic_expr selector, semantic_expr result)
+                  | ExactLookupExpr(semantic_expr dictionary, semantic_expr key)
+                  | DecisionApplyExpr(semantic_expr dictionary,
+                                      semantic_expr input,
                                       decision_mode mode,
                                       collection_shape result_shape)
                   | ExactDictionarySetOperationExpr(dictionary_set_operator operator,
-                                                    resolved_expr left,
-                                                    resolved_expr right,
-                                                    resolved_type result_type)
+                                                    semantic_expr left,
+                                                    semantic_expr right,
+                                                    semantic_type result_type)
                   | FunctionalDictionarySetOperationExpr(dictionary_set_operator operator,
-                                                         resolved_expr left,
-                                                         resolved_expr right,
-                                                         resolved_type result_type)
-                  | MetadataAccessExpr(resolved_expr receiver,
+                                                         semantic_expr left,
+                                                         semantic_expr right,
+                                                         semantic_type result_type)
+                  | MetadataAccessExpr(semantic_expr receiver,
                                        metadata_kind metadata,
-                                       resolved_type result_type)
-                  | OperationExpr(string operator, resolved_expr* operands)
-                  | ConversionExpr(resolved_expr value, anchor target_type)
-                  | TypeTestExpr(resolved_expr value,
+                                       semantic_type result_type)
+                  | OperationExpr(string operator, semantic_expr* operands)
+                  | ConversionExpr(semantic_expr value, anchor target_type)
+                  | TypeTestExpr(semantic_expr value,
                                  anchor tested_type,
                                  string polarity)
-                  | ExactNominalTypeTestExpr(resolved_expr value,
+                  | ExactNominalTypeTestExpr(semantic_expr value,
                                              anchor tested_type,
                                              string polarity)
-                  | NarrowedExpr(resolved_expr value,
-                                 resolved_type narrowed_type)
+                  | NarrowedExpr(semantic_expr value,
+                                 semantic_type narrowed_type)
         attributes (source_span origin)
 
-    named_expr_component = (string name, resolved_expr value)
+    named_expr_component = (string name, semantic_expr value)
 
     -- Specializes se aplica tanto a thing como a alias. Los miembros
     -- heredados conservan su AnchoredSymbol de origen.

@@ -9,7 +9,6 @@ Este directorio contiene los artefactos normativos y verificables que conectan l
 | `cst-sin-perdidas.md` | Normativo | Modelo de CST, trivia, spans y recuperación. |
 | `mud-syntax-kinds.yaml` | Normativo mecánico | Inventario de producciones, tokens, trivia y categorías CST. |
 | `mud-surface-ast.asdl` | Normativo mecánico | Esquema del AST superficial normalizado. |
-| `mud-resolved-ast.asdl` | Normativo mecánico | Contrato del AST resuelto, tipos unión, símbolos, anclas y dependencias. |
 | `cst-a-ast-superficial.md` | Normativo | Transformación y normalizaciones. |
 | `cobertura-sintactica.yaml` | Normativo mecánico | Mapeo exhaustivo EBNF → CST → AST. |
 | `validate_syntax_model.py` | Herramienta editorial | Detecta divergencias entre los artefactos anteriores. |
@@ -37,10 +36,9 @@ archivo .mud
 → CST sin pérdidas
 → validación sintáctica contextual
 → AST superficial normalizado
-→ resolución
-→ AST resuelto
+→ resolución nominal: símbolos + bindings + grafo parcial
 → tipado/elaboración
-→ IR
+→ IR semántico (`../ir/mud-semantic-ir.asdl`)
 ```
 
 ## Generación de código
@@ -124,6 +122,6 @@ Este directorio no define:
 - Evaluación estática.
 - Semántica de efectos.
 - Ondas causales.
-- Forma canónica del IR.
+- Forma canónica del IR, cuyo esquema mecánico vive en `../ir/`.
 
 Las referencias a esas fases sirven únicamente para impedir que el AST superficial las anticipe.

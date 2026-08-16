@@ -14,7 +14,7 @@ affects:
 
 - Modifica: [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]], [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]], [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[ADR-052-pipeline-materializadores-y-conformidad|D-052]].
-- Documentos afectados: capítulos 02 y 04 a 09; futuros capítulos 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 y 47; gramática; CST; AST superficial y resuelto; casos de conformidad.
+- Documentos afectados: capítulos 02 y 04 a 09; futuros capítulos 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 y 47; gramática; CST; AST superficial; IR semántico; casos de conformidad.
 
 ## Contexto
 

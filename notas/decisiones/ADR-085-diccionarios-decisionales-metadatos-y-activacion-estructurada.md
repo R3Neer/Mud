@@ -212,7 +212,7 @@ La omisión de cardinalidad ya no se normaliza universalmente a `[1]` antes de c
 
 Cuando la cardinalidad inferida de un campo inmutable sea distinta de `[1]`, el compilador emite una sugerencia no bloqueante con una corrección que materializa la cardinalidad exacta en el texto fuente.
 
-La AST superficial conserva que la cardinalidad fue omitida; la elaboración resuelta registra la cardinalidad efectiva y su procedencia `InferredFromInitializer`, `OrdinaryScalarDefault` o `Explicit`.
+El AST superficial conserva que la cardinalidad fue omitida; el IR semántico elaborado registra la cardinalidad efectiva y su procedencia `InferredFromInitializer`, `OrdinaryScalarDefault` o `Explicit`.
 
 ### Selección
 

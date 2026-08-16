@@ -86,6 +86,8 @@ def validate(root: Path) -> list[Problem]:
     kinds_path = root / "especificacion/sintaxis/mud-syntax-kinds.yaml"
     coverage_path = root / "especificacion/sintaxis/cobertura-sintactica.yaml"
     asdl_path = root / "especificacion/sintaxis/mud-surface-ast.asdl"
+    semantic_ir_path = root / "especificacion/ir/mud-semantic-ir.asdl"
+    retired_resolved_ast_path = root / "especificacion/sintaxis/mud-resolved-ast.asdl"
 
     syntax_productions = production_names(grammar)
     lexical_productions = production_names(lexical)
@@ -103,6 +105,13 @@ def validate(root: Path) -> list[Problem]:
     coverage = load_yaml(coverage_path)
     symbols = asdl_symbols(asdl_path)
     asdl_defined, asdl_used = asdl_types_and_uses(asdl_path)
+    if retired_resolved_ast_path.exists():
+        problems.append(Problem(str(retired_resolved_ast_path), "contrato retirado: solo existe AST superficial; use IR semántico"))
+    if not semantic_ir_path.exists():
+        problems.append(Problem(str(semantic_ir_path), "falta el contrato del IR semántico"))
+        semantic_ir_defined, semantic_ir_used = set(), set()
+    else:
+        semantic_ir_defined, semantic_ir_used = asdl_types_and_uses(semantic_ir_path)
 
     kind_syntax = kinds.get("syntax_nodes", {})
     kind_lexical = kinds.get("lexical_forms", {})
@@ -144,6 +153,10 @@ def validate(root: Path) -> list[Problem]:
 
     for unknown in sorted(asdl_used - asdl_defined - {"int", "string", "identifier"}):
         problems.append(Problem(str(asdl_path), f"tipo ASDL no definido: {unknown}"))
+    for unknown in sorted(semantic_ir_used - semantic_ir_defined - {"int", "string", "identifier"}):
+        problems.append(Problem(str(semantic_ir_path), f"tipo ASDL no definido: {unknown}"))
+    if semantic_ir_path.exists() and "module MUDSemanticIR" not in semantic_ir_path.read_text(encoding="utf-8"):
+        problems.append(Problem(str(semantic_ir_path), "falta module MUDSemanticIR"))
 
     cases_path = root / "especificacion/sintaxis/casos/cst-ast.yaml"
     cases = load_yaml(cases_path)
@@ -205,7 +218,7 @@ def validate(root: Path) -> list[Problem]:
         root / "especificacion/sintaxis/mud-surface-ast.asdl": [
             "ExactTypeTestExpr(",
         ],
-        root / "especificacion/sintaxis/mud-resolved-ast.asdl": [
+        root / "especificacion/ir/mud-semantic-ir.asdl": [
             "ExactNominalTypeTestExpr(",
             "ExactDictionarySetOperationExpr(",
             "FunctionalDictionarySetOperationExpr(",

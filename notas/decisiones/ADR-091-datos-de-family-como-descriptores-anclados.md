@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-061"
 affects:
-  - "family, datos asociados, metadatos, anclas, gramática, CST, AST superficial, AST resuelto, reflexión y tooling"
+  - "family, datos asociados, metadatos, anclas, gramática, CST, AST superficial, IR semántico, reflexión y tooling"
 ---
 
 # ADR-091 — Datos de family como descriptores anclados
