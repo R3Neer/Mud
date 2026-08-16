@@ -10,6 +10,7 @@ for scope in SCOPES:
 
 patterns = {
     'anonymous-participants': re.compile(r'(?i)(an[oó]nim|omitir(?:se)?\s+(?:el\s+)?nombre|nombre\s+(?:es\s+)?opcional|rol\s+sin\s+nombre|participante\s+sin\s+nombre)'),
+    'bare-participant-type-shorthand': re.compile(r'`(?:on|for|given)\s+[A-Z][A-Za-z0-9_]*`'),
     'participant-anchor-denial': re.compile(r'(?i)(?:for|on|given).{0,100}(?:sin\s+ancla|no\s+(?:tiene|posee)[^\n]{0,20}ancla)|(?:roles?|participantes?)[^\n]{0,100}(?:sin\s+ancla|no\s+(?:tienen|poseen)[^\n]{0,20}ancla)'),
     'branch-public-anchor': re.compile(r'(?i)(ancla(?:s)?\s+(?:propia|p[uú]blica)?[^\n]{0,60}rama|rama(?:s)?[^\n]{0,80}ancla(?:s)?|branch[^\n]{0,60}anchor)'),
     'given-readonly-subgrammar': re.compile(r'(given-collection-specification|given-collection-modifier|ReadonlyValueShape|readonly_value_shape|ReadonlyCollectionSpec|readonly_collection_spec)'),
