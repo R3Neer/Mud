@@ -167,11 +167,13 @@ productions:
     ast:
       disposition: constructor
       target: StoredFamilyDataDecl
+      reason: conserva el metadata-body del descriptor de dato almacenado
   calculated-family-data-declaration:
     cst: CalculatedFamilyDataDeclarationSyntax
     ast:
       disposition: constructor
       target: CalculatedFamilyDataDecl
+      reason: conserva la forma derivada vigente, la expresión y el metadata-body del descriptor calculado; Q-061 mantiene abierta su restricción exacta
   family-member:
     cst: FamilyMemberSyntax
     ast:

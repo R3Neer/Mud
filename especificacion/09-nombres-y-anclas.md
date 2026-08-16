@@ -22,6 +22,7 @@ decisions:
   - D-087
   - D-088
   - D-090
+  - D-091
 ---
 # 09. Nombres, paths y anclas
 
@@ -111,6 +112,7 @@ thing::game.people.Person::friends
 alias::game.ids.UserId
 family::game.rules.Severity
 family::game.rules.Severity::Critical
+family::game.world.Terrain::movementCost
 magnitude::physics.Length
 unit::physics.Length::meter
 action::game.combat.Heal
@@ -141,7 +143,7 @@ Los participantes `for`, `on` y `given` no introducen una categoría superior nu
 Poseen ancla:
 
 - declaraciones globales;
-- campos y componentes;
+- campos, componentes y datos asociados declarados por una `family`;
 - miembros de family;
 - unidades declaradas;
 - participantes `for`, `on` y `given`;
@@ -155,6 +157,8 @@ No poseen ancla pública:
 - unidades creadas estructuralmente por prefijos;
 - los valores incorporados `Prefix`, que se elaboran como constantes y no como declaraciones;
 - las ramas de diccionarios funcionales, que se identifican solo de forma local dentro de su diccionario propietario.
+
+Un dato asociado declarado por una `family` posee un ancla subordinada estable formada con la categoría `family`, el nombre cualificado de la familia y el identificador del dato. Esa ancla identifica el descriptor del esquema uniforme, no cada valor obtenido al consultar un miembro. Una asignación dentro del cuerpo de un miembro no introduce ancla y no cambia la del dato declarado.
 
 Un miembro heredado conserva el ancla del propietario que lo declaró. En `thing` esto no comparte estado; en aliases identifica el origen usado para deduplicar diamantes. Una sobrescritura de predeterminado no introduce un miembro ni un ancla nuevos.
 

@@ -1712,3 +1712,18 @@ cases:
   semantic_expectations:
   - selection-binding-visible-to-expression-block-locals-and-result
   produces_ast: true
+- id: family-data-metadata
+  category: family
+  source: "family Terrain {\n    movementCost: Nat = 1 {\n        ~summary = \"Coste base\"\n    }\n    costly: Bool := movementCost >= 3 {\n        ~summary = \"Costoso\"\n    }\n\n    Plain,\n    Mountain {\n        movementCost = 4\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: FamilyDecl(data=[StoredFamilyDataDecl(movementCost, metadata=[StoredMetadataAssignment(summary)]), CalculatedFamilyDataDecl(costly, shape=ExplicitDerivedShape(Bool), metadata=[StoredMetadataAssignment(summary)])])
+  normalizations:
+  - family-data-metadata-belongs-to-schema-descriptor
+  produces_ast: true
+- id: family-data-override-metadata-rejected
+  category: validation-before-ast
+  source: "family Terrain {\n    movementCost: Nat = 1\n\n    Plain,\n    Mountain {\n        movementCost = 4 {\n            ~summary = \"solo aquí\"\n        }\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - family-data-assignment-cannot-have-metadata
+  produces_ast: false

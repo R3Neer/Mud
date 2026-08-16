@@ -5,7 +5,8 @@ status: vigente
 date: 2026-08-05
 supersedes: []
 superseded-by: []
-questions: []
+questions:
+  - "Q-061"
 affects:
   - "acciones y subacciones, organización de archivos, operadores, tipos, diccionarios, productos, ausencia, cardinalidad, selección, activación inicial, Thing, Any, metadatos, magnitudes, texto, gramática, CST, AST, IR y diagnósticos"
 ---

@@ -8,6 +8,7 @@ superseded-by: []
 questions:
   - "Q-003"
   - "Q-017"
+  - "Q-061"
 affects:
   - "futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`"
 ---
