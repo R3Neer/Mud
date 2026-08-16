@@ -12,11 +12,9 @@ lexical-element
       | text-literal
       | rumber-literal
       | exact-number-literal
-      | point-form
       | reserved-word
       | identifier
       | operator-or-delimiter
-      | unit-form
       ;
 
 bom              ::= ? U+FEFF, únicamente como primer carácter ? ;
@@ -209,12 +207,8 @@ ascii-letter
       | "v" | "w" | "x" | "y" | "z"
       ;
 
-(* UNIT_FORM es contextual y procede del catálogo de unidades ya resuelto. *)
-unit-form
-    ::= ? forma Unicode de unidad habilitada por una declaración magnitude ? ;
-
-point-form
-    ::= ? forma canónica contextual de D-062 para el tipo de punto esperado ? ;
+(* UNIT_FORM y POINT_LITERAL no son producciones del scanner base.
+   D-089 los define como clasificaciones contextuales sobre spans fuente. *)
 
 operator-or-delimiter
     ::= operator-token
