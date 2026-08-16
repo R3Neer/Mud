@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 84.
-- Vigentes: 84.
+- Total: 85.
+- Vigentes: 85.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -103,6 +103,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-087 | vigente | 2026-08-15 | [[notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|Metadatos reflectivos, descriptores estables y visibilidad exterior]] |
 | D-088 | vigente | 2026-08-15 | [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|Iteración, progresiones firmadas y bloques de expresión]] |
 | D-089 | vigente | 2026-08-16 | [[notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente|Clasificación contextual de formas fuente sin dependencia circular del scanner]] |
+| D-090 | vigente | 2026-08-16 | [[notas/decisiones/ADR-090-ramas-funcionales-sin-ancla-publica|Ramas funcionales sin ancla pública]] |
 
 ## Identificadores reservados
 

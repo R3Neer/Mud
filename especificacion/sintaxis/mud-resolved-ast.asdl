@@ -16,6 +16,9 @@ module MUDResolved {
 
     decision_mode = FirstMatch | AllMatches
 
+    decision_branch_key = SelectorBranchKey(string canonical_selector, int duplicate_index)
+                        | FallbackBranchKey
+
     dictionary_set_operator = DictionaryUnion
                             | DictionaryIntersection
                             | DictionaryDifference
@@ -112,10 +115,9 @@ module MUDResolved {
                          | StructuralDescent(symbol_id measure)
                          | ExternalProof(string identity)
 
-    resolved_decision_branch = ResolvedDecisionBranch(anchor identity,
+    resolved_decision_branch = ResolvedDecisionBranch(decision_branch_key key,
                                                        anchor dictionary,
                                                        int source_ordinal,
-                                                       string is_fallback,
                                                        resolved_expr selector,
                                                        resolved_expr result,
                                                        symbol_id* external_reads)
@@ -180,7 +182,7 @@ module MUDResolved {
                     | Writes(symbol_id source, symbol_id target)
                     | CallsAction(anchor source, anchor target)
                     | CallsDecision(anchor source, anchor target)
-                    | DecisionDependsOn(anchor branch, symbol_id target)
+                    | DecisionDependsOn(anchor dictionary, decision_branch_key branch, symbol_id target)
                     | Creates(symbol_id source, anchor target)
                     | Destroys(symbol_id source, anchor target)
                     | UnitOf(anchor unit, anchor magnitude)

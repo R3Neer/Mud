@@ -63,6 +63,7 @@ decisions:
   - D-086
   - D-087
   - D-088
+  - D-090
 ---
 
 # 07. Gramática concreta
@@ -393,7 +394,7 @@ for products: Product [*], pricing: Product --> Money,
 }
 ```
 
-Las ramas solo cambian mediante edición semántica dirigida a sus anclas. `CREATE` inserta antes de `_` por defecto; `UPDATE`, `REMOVE` y `MOVE` conservan la identidad estable de la rama.
+Las ramas solo cambian mediante edición del modelo sobre el diccionario propietario. Una edición estructural puede insertar antes de `_` por defecto y puede actualizar, retirar o mover una rama, pero ninguna de esas operaciones se dirige a una ancla de rama ni presupone identidad pública independiente; D-090 fija su clave local en la representación resuelta.
 
 La aritmética de funcionales es extensional; no fusiona ramas:
 
