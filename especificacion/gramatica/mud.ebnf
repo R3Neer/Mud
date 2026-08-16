@@ -435,9 +435,25 @@ given-clause
     ::= "given" , given-declaration , { "," , given-declaration } ;
 
 given-declaration
-    ::= given-name , { "," , given-name } , ":" , union-type-expression , [ given-collection-specification ] , [ "=" , constant-expression ]
+    ::= given-name , { "," , given-name } , ":" , given-type-expression , [ "=" , constant-expression ]
         , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
         ;
+
+given-type-expression
+    ::= union-type-expression
+        , [ given-collection-specification | given-dictionary-type ]
+        ;
+
+given-dictionary-type
+    ::= given-dictionary-link , { given-dictionary-link } ;
+
+given-dictionary-link
+    ::= dictionary-arrow , given-dictionary-value-type
+        , [ given-collection-specification ]
+      ;
+
+given-dictionary-value-type
+    ::= union-type-expression ;
 
 given-collection-specification
     ::= "["

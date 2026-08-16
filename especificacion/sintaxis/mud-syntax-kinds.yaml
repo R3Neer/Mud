@@ -952,15 +952,38 @@ syntax_nodes:
     - given-declaration
   given-declaration:
     kind: GivenDeclarationSyntax
-    rhs: "given-name , { \",\" , given-name } , \":\" , union-type-expression , [ given-collection-specification ] , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: 'given-name , { "," , given-name } , ":" , given-type-expression , [ "=" , constant-expression ]\n        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]'
     references:
     - given-name
-    - union-type-expression
-    - given-collection-specification
+    - given-type-expression
     - constant-expression
     - declaration-layout
     - metadata-assignment
     - required-separation
+  given-type-expression:
+    kind: GivenTypeExpressionSyntax
+    rhs: 'union-type-expression\n        , [ given-collection-specification | given-dictionary-type ]'
+    references:
+    - union-type-expression
+    - given-collection-specification
+    - given-dictionary-type
+  given-dictionary-type:
+    kind: GivenDictionaryTypeSyntax
+    rhs: given-dictionary-link , { given-dictionary-link }
+    references:
+    - given-dictionary-link
+  given-dictionary-link:
+    kind: GivenDictionaryLinkSyntax
+    rhs: 'dictionary-arrow , given-dictionary-value-type\n        , [ given-collection-specification ]'
+    references:
+    - dictionary-arrow
+    - given-dictionary-value-type
+    - given-collection-specification
+  given-dictionary-value-type:
+    kind: GivenDictionaryValueTypeSyntax
+    rhs: union-type-expression
+    references:
+    - union-type-expression
   given-collection-specification:
     kind: GivenCollectionSpecificationSyntax
     rhs: "\"[\"\n        , ( cardinality\n            , [ optional-comma , given-collection-modifier\n                , { optional-comma , given-collection-modifier }\n              ]\n          | given-collection-modifier\n            , { optional-comma , given-collection-modifier }\n          )\n        , \"]\""

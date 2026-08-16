@@ -36,6 +36,7 @@ decisions:
   - D-088
   - D-090
   - D-091
+  - D-092
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -361,6 +362,10 @@ Las asociaciones exactas y ramas decisionales permanecen estructuras internas de
 Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas. `StoredFamilyDataDecl` y `CalculatedFamilyDataDecl` conservan además `metadata_assignment* metadata`; cada declaración corresponde a un descriptor `Field` anclado de la familia.
 
 Una `FamilyDataAssignment` dentro de un miembro no contiene metadatos ni crea descriptor/ancla nuevos. Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. Un bloque omitido produce ambas secuencias vacías. Los metadatos no se confunden con datos de la familia.
+
+## Tipos readonly de `given`
+
+La subgramática `given-type-expression` no crea una familia AST paralela. Se normaliza a `readonly_value_shape`; sus flechas producen los constructores generales `ExactDictionaryType` y `DecisionDictionaryType`. Toda especificación readonly se traduce con `elements_mutable = false`, y una pasada estática recursiva rechaza cualquier `collection_spec` mutable que haya entrado a través de una forma parentizada general.
 
 ## Magnitudes
 

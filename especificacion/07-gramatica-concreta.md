@@ -64,6 +64,7 @@ decisions:
   - D-087
   - D-088
   - D-091
+  - D-092
 ---
 
 # 07. Gramática concreta
@@ -192,6 +193,18 @@ numbers := a * b, d, c / a
 ```
 
 El dominio de un cálculo actúa como contrato. Una posible salida exterior produce warning y comprobación de transición; una salida necesariamente exterior produce error.
+
+## Tipos de `given`
+
+`given` usa una forma de tipo de solo lectura que admite diccionarios completos:
+
+```mud
+rule HasPrice given prices: Product -> Money {
+    true
+}
+```
+
+Las flechas se normalizan a los mismos tipos diccionario del resto de MUD, pero toda especificación de colección de la forma completa debe carecer de `mut`. La comprobación es recursiva y rechaza también una capacidad mutable oculta dentro de paréntesis, productos o niveles anidados.
 
 ## `family`
 

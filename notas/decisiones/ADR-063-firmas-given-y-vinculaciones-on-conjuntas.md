@@ -16,6 +16,7 @@ affects:
 
 - Modifica: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Amplía: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
+- Modificada por: [[ADR-092-tipos-readonly-completos-en-given|D-092]]
 - Cierra de nuevo: [[notas/preguntas/Q-011-vinculacion-nombrada-de-participantes|Q-011]], [[notas/preguntas/Q-012-valores-given-nombrados|Q-012]] y [[notas/preguntas/Q-013-restricciones-relacionales-entre-participantes-on|Q-013]]
 - Documentos afectados: firmas, llamadas, capacidades, vinculaciones automáticas, análisis de nombres, AST, IR y diagnósticos
 
@@ -48,6 +49,8 @@ given
 ```
 
 Un `given` no admite mutabilidad exterior ni capacidad interior `mut`. Si una acción necesita escribir la colección suministrada o el estado de una `thing` recibida, ese valor constituye un sujeto de la operación y debe declararse mediante `for`.
+
+El tipo de un `given` puede ser un diccionario exacto o decisional y puede encadenar flechas como cualquier otro valor auxiliar. La ausencia de capacidad es recursiva: ninguna colección o enlace de diccionario contenido en la forma completa, incluso bajo paréntesis o productos, puede declarar `mut`.
 
 El predeterminado:
 

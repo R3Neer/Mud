@@ -1727,3 +1727,26 @@ cases:
   expected_diagnostics:
   - family-data-override-metadata-not-allowed
   produces_ast: false
+- id: given-exact-dictionary
+  category: given
+  source: "rule HasPrice given prices: Product -> Money {\n    true\n}\n"
+  cst_root: MudFileSyntax
+  ast: GivenDecl(prices, ExactDictionaryType(Product, Money), readonly=true)
+  normalizations:
+  - given-dictionary-to-general-dictionary-type
+  produces_ast: true
+- id: given-decision-dictionary-ordered
+  category: given
+  source: "rule Policy given policy: Person --> Permission [ordered] {\n    true\n}\n"
+  cst_root: MudFileSyntax
+  ast: GivenDecl(policy, DecisionDictionaryType(Person, Permission, ordered), readonly=true)
+  normalizations:
+  - given-dictionary-to-general-dictionary-type
+  produces_ast: true
+- id: given-hidden-mut-invalid
+  category: validation-before-ast
+  source: "rule Bad given prices: (Product -> Money [mut]) {\n    true\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - given-type-cannot-contain-mut
+  produces_ast: false

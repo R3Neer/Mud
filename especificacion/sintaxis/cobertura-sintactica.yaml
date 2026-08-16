@@ -417,6 +417,26 @@ productions:
     ast:
       disposition: constructor
       target: GivenDecl
+  given-type-expression:
+    cst: GivenTypeExpressionSyntax
+    ast:
+      disposition: normalized
+      target: readonly_value_shape
+  given-dictionary-type:
+    cst: GivenDictionaryTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  given-dictionary-link:
+    cst: GivenDictionaryLinkSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  given-dictionary-value-type:
+    cst: GivenDictionaryValueTypeSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
   given-collection-specification:
     cst: GivenCollectionSpecificationSyntax
     ast:

@@ -178,6 +178,12 @@ El dominio de la forma de valor y la especificación de colección son nodos nor
 
 La anotación de tipo ausente permanece ausente. No se inserta el tipo inferido.
 
+## Tipos de `given`
+
+`given-type-expression`, `given-dictionary-type`, `given-dictionary-link` y `given-dictionary-value-type` son envoltorios concretos de una forma readonly. La transformación construye los mismos `declared_type` de diccionario usados por `type-expression`, pero convierte cada `given-collection-specification` en una colección con capacidad interior falsa y mantiene el exterior en `readonly_value_shape`.
+
+Después de normalizar, la validación recorre la forma completa. Si cualquier subárbol procedente de una forma general parentizada conserva `elements_mutable = true`, el `given` es inválido aunque la palabra `mut` no aparezca en el nivel exterior.
+
 ## `family`
 
 `stored-family-data-declaration` y `calculated-family-data-declaration` proyectan sus cuerpos `~...` directamente a la secuencia `metadata` de `StoredFamilyDataDecl` o `CalculatedFamilyDataDecl`. El bloque concreto desaparece como agrupación, igual que en campos y componentes.

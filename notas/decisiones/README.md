@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 86.
-- Vigentes: 86.
+- Total: 87.
+- Vigentes: 87.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -105,6 +105,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-089 | vigente | 2026-08-16 | [[notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente|Clasificación contextual de formas fuente sin dependencia circular del scanner]] |
 | D-090 | vigente | 2026-08-16 | [[notas/decisiones/ADR-090-claves-locales-de-entradas-de-diccionario|Claves locales de entradas de diccionario sin anclas de rama]] |
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-identidad-de-datos-family-y-anclas-de-metadatos|Identidad de datos de `family` y anclas de metadatos]] |
+| D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-tipos-readonly-completos-en-given|Tipos de solo lectura completos en `given`]] |
 
 ## Identificadores reservados
 
