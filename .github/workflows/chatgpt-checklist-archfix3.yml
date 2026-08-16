@@ -26,7 +26,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.3'
       - name: Verify base and apply
         shell: pwsh
-        env: {EXPECTED_HEAD: 6703cec5368656cb84022ae533c1c2a0834f65d1}
+        env: {EXPECTED_HEAD: e117e86eebcf215af0f5e0c9cc1965f9277f03ef}
         run: |
           $ErrorActionPreference='Stop'
           $h=(git -C target rev-parse HEAD).Trim()
