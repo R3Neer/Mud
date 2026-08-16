@@ -1,7 +1,7 @@
-name: ChatGPT global coherence resume phase 5
+name: ChatGPT global coherence resume phase 5 v2
 on:
   push:
-    branches: [chatgpt-global-coherence-resume-runner-h]
+    branches: [chatgpt-global-coherence-resume-runner-i]
 permissions: {contents: write}
 jobs:
   residue-cleanup:
@@ -9,9 +9,9 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
-        with: {ref: chatgpt-global-coherence-resume-runner-h, path: runner, fetch-depth: 0}
+        with: {ref: chatgpt-global-coherence-resume-runner-i, path: runner, fetch-depth: 0}
       - uses: actions/checkout@v6
-        with: {ref: chatgpt-global-coherence-resume-20260816-f, path: target, fetch-depth: 0}
+        with: {ref: chatgpt-global-coherence-resume-20260816-g, path: target, fetch-depth: 0}
       - uses: actions/setup-python@v6
         with: {python-version: "3.13"}
       - shell: pwsh
@@ -30,8 +30,10 @@ jobs:
           $ErrorActionPreference='Stop'
           New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
           Copy-Item ../runner/tooling/chatgpt/resume_phase5_residue_cleanup.py tooling/chatgpt/x.py
+          Copy-Item ../runner/tooling/chatgpt/resume_phase5_review_fix.py tooling/chatgpt/r.py
           python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
-          Remove-Item tooling/chatgpt/x.py
+          python tooling/chatgpt/r.py; if($LASTEXITCODE){throw 'review fix'}
+          Remove-Item tooling/chatgpt/x.py,tooling/chatgpt/r.py
       - name: Invariantes de residuos
         shell: pwsh
         working-directory: target
@@ -40,10 +42,10 @@ jobs:
           from pathlib import Path
           def r(p): return Path(p).read_text(encoding='utf-8')
           d36=r('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md')
-          for stale in ('puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos','un rol básico anónimo','Participante individual anónimo','participantes individuales anónimos','La omisión del nombre de participante individual'):
+          for stale in ('puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos','un rol básico anónimo','Participante individual anónimo','participantes individuales anónimos','La omisión del nombre de participante individual','`on World` o `for World`'):
               assert stale not in d36, stale
           assert 'Todo participante `for`, `on` y `given` declara un identificador fuente explícito' in d36
-          assert '`on world: World` o `for world: World`' in d36
+          assert d36.count('`on world: World` o `for world: World`') == 2
 
           d63=r('notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md')
           for stale in ('puede ser anónimo','Un rol anónimo solo admite'):
@@ -86,7 +88,7 @@ jobs:
           d87=r('notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md')
           for rel in ('ADR-038-familias-cerradas-de-valores','ADR-063-firmas-given-y-vinculaciones-on-conjuntas','ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas'):
               assert rel in d87
-          print('PHASE5_RESIDUE_INVARIANTS_OK')
+          print('PHASE5_V2_RESIDUE_INVARIANTS_OK')
           '@ | python -
           if($LASTEXITCODE){throw 'invariants'}
       - name: Validadores oficiales
@@ -116,5 +118,5 @@ jobs:
           git config user.email chatgpt@users.noreply.github.com
           git add --all
           git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
-          git commit -m "fix(spec): elimina residuos de identidad y participantes" -m "Alinea ADR vigentes y casos con D-087/D-090/D-091: participantes siempre nombrados y anclados, presentación de family mediante ~name, metadata runtime-readonly y ramas funcionales dirigidas por clave local sin ancla pública.`n`nValidation: invariantes de residuos, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
-          git push origin HEAD:chatgpt-global-coherence-resume-20260816-f; if($LASTEXITCODE){throw 'push'}
+          git commit -m "fix(spec): elimina residuos de identidad y participantes" -m "Alinea ADR vigentes y casos con D-087/D-090/D-091: participantes siempre nombrados y anclados, presentación de family mediante ~name, metadata runtime-readonly y ramas funcionales dirigidas por clave local sin ancla pública. Corrige también la verificación de participantes World para usar identificadores explícitos.`n`nValidation: invariantes de residuos, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-resume-20260816-g; if($LASTEXITCODE){throw 'push'}
