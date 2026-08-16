@@ -1,0 +1,85 @@
+name: ChatGPT checklist extrema empty v2
+on:
+  push:
+    branches: [chatgpt-checklist-runner-extrema-v2]
+permissions: {contents: write}
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-checklist-runner-extrema-v2, path: control, persist-credentials: false}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-checklist-extrema-v2, path: target, fetch-depth: 0, persist-credentials: true}
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.13'}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.3'
+      - name: Verify base
+        shell: pwsh
+        env: {EXPECTED_HEAD: 6703cec5368656cb84022ae533c1c2a0834f65d1}
+        run: |
+          $h=(git -C target rev-parse HEAD).Trim()
+          if($h -ne $env:EXPECTED_HEAD){throw "base mismatch: $h"}
+          if(git -C target status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transform
+        shell: pwsh
+        run: |
+          python control/.chatgpt/transform_extrema.py target
+          if($LASTEXITCODE){throw 'transform'}
+          python control/.chatgpt/fix_extrema_cases.py target
+          if($LASTEXITCODE){throw 'case fix'}
+          Push-Location target
+          python tooling/decisions/manage_decisions.py generate
+          if($LASTEXITCODE){throw 'decision generate'}
+          Pop-Location
+      - name: Invariants
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          d=r('notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md')
+          assert 'error definido para agregación vacía' not in d
+          assert '`min` y `max` son consultas parciales' in d
+          d95=r('notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria.md')
+          assert 'T [0..1]' in d95 and 'no introduce por sí misma `failed`' in d95
+          a=r('especificacion/08-sintaxis-abstracta.md')
+          assert '## Resultado de `min` y `max`' in a
+          c=r('especificacion/sintaxis/casos/cst-ast.yaml')
+          assert 'values: Nat [*] = empty' in c
+          assert 'result-type-Nat' in c
+          assert 'source: "min x in empty: x"' not in c
+          assert 'source: "max x in empty: x"' not in c
+          print('EXTREMA_CHECKLIST_AUDIT_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $expected=@('especificacion/08-sintaxis-abstracta.md','especificacion/sintaxis/casos/cst-ast.yaml','notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md','notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion.md','notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria.md','notas/decisiones/README.md')|Sort-Object
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$_.Substring(3)})|Sort-Object
+          $delta=Compare-Object $expected $actual
+          if($delta){$delta|Format-Table|Out-String|Write-Host;throw 'unexpected surface'}
+      - name: Commit
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check; if($LASTEXITCODE){throw 'cached diff'}
+          git commit -m 'spec(language): devuelve empty en min y max vacíos'; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-checklist-extrema-v2; if($LASTEXITCODE){throw 'push'}
