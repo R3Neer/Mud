@@ -1,0 +1,88 @@
+name: ChatGPT global coherence phase 3b family metadata
+on:
+  push:
+    branches: [chatgpt-global-coherence-runner-v3b]
+permissions: {contents: write}
+jobs:
+  family-metadata:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-runner-v3b, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-20260816-v3, path: target, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Base exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: ff85c919fb4a0d8c6a2d3f18a36074da809b4868}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transformación
+        shell: pwsh
+        working-directory: target
+        run: |
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase3b_family_metadata.py tooling/chatgpt/x.py
+          python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
+          Remove-Item tooling/chatgpt/x.py
+          python tooling/decisions/manage_decisions.py generate; if($LASTEXITCODE){throw 'decisions generate'}
+      - name: Invariantes semánticos y estructurales
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          g=r('especificacion/gramatica/mud.ebnf')
+          assert g.count('stored-family-data-declaration') >= 2
+          block=g.split('stored-family-data-declaration',2)[2].split('family-member',1)[0]
+          assert block.count('metadata-assignment') >= 2
+          s=r('especificacion/sintaxis/mud-surface-ast.asdl')
+          assert 'StoredFamilyDataDecl(field_name name,\n                                            value_shape shape,\n                                            expr? default_value,\n                                            metadata_assignment* metadata)' in s
+          assert 'CalculatedFamilyDataDecl(field_name name,\n                                                derived_value_shape? shape,\n                                                expr value,\n                                                metadata_assignment* metadata)' in s
+          rr=r('especificacion/sintaxis/mud-resolved-ast.asdl')
+          assert 'ResolvedMetadata(anchor identity,' in rr
+          d=r('notas/decisiones/ADR-038-familias-cerradas-de-valores.md')
+          assert 'No poseen identidad ni ciclo de vida propios.' not in d
+          assert 'no tiene ancla ni metadatos propios' in d
+          d91=r('notas/decisiones/ADR-091-identidad-de-datos-family-y-anclas-de-metadatos.md')
+          assert 'owner~metadata' in d91 and 'no puede poseer metadatos propios' in d91
+          n=r('especificacion/09-nombres-y-anclas.md')
+          assert '### Anclas de metadatos' in n
+          assert 'datos almacenados y calculados declarados por una family' in n
+          c=r('especificacion/sintaxis/casos/cst-ast.yaml')
+          assert 'id: family-data-metadata' in c and 'id: family-data-override-metadata-invalid' in c
+          print('PHASE3B_INVARIANTS_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validadores oficiales
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Superficie
+        shell: pwsh
+        working-directory: target
+        run: |
+          $allowed=@('notas/decisiones/ADR-091-identidad-de-datos-family-y-anclas-de-metadatos.md','notas/decisiones/ADR-038-familias-cerradas-de-valores.md','notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md','notas/decisiones/README.md','especificacion/gramatica/mud.ebnf','especificacion/sintaxis/mud-syntax-kinds.yaml','especificacion/sintaxis/mud-surface-ast.asdl','especificacion/sintaxis/mud-resolved-ast.asdl','especificacion/sintaxis/cst-a-ast-superficial.md','especificacion/sintaxis/casos/cst-ast.yaml','especificacion/07-gramatica-concreta.md','especificacion/08-sintaxis-abstracta.md','especificacion/09-nombres-y-anclas.md')
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
+          foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
+          git diff --stat
+      - name: Commit candidato
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT; git config user.email chatgpt@users.noreply.github.com
+          git add --all; git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
+          git commit -m "spec(language): ancla datos de family y metadatos" -m "D-091 convierte datos declarados de family en Field estables, mantiene overrides sin identidad y asigna anclas owner~metadata a Metadata materializada.`n`nValidation: invariantes, decisiones, preguntas, gramática, sintaxis y diff check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-20260816-v3; if($LASTEXITCODE){throw 'push'}
