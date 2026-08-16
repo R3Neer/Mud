@@ -1,7 +1,7 @@
-name: ChatGPT global coherence resume phase 5 v3
+name: ChatGPT global coherence resume phase 5 v4
 on:
   push:
-    branches: [chatgpt-global-coherence-resume-runner-j]
+    branches: [chatgpt-global-coherence-resume-runner-l]
 permissions: {contents: write}
 jobs:
   residue-cleanup:
@@ -9,9 +9,9 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
-        with: {ref: chatgpt-global-coherence-resume-runner-j, path: runner, fetch-depth: 0}
+        with: {ref: chatgpt-global-coherence-resume-runner-l, path: runner, fetch-depth: 0}
       - uses: actions/checkout@v6
-        with: {ref: chatgpt-global-coherence-resume-20260816-h, path: target, fetch-depth: 0}
+        with: {ref: chatgpt-global-coherence-resume-20260816-i, path: target, fetch-depth: 0}
       - uses: actions/setup-python@v6
         with: {python-version: "3.13"}
       - shell: pwsh
@@ -48,11 +48,26 @@ jobs:
           assert d36.count('`on world: World` o `for world: World`') == 2
           assert 'un rol `on` de tipo `Thing` enumera' in d36
 
+          spec=r('especificacion/07-gramatica-concreta.md')
+          assert '`on World` y un rol `for World`' not in spec
+          assert 'Los participantes `on world: World` y `for world: World`' in spec
+
           d63=r('notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md')
           for stale in ('puede ser anónimo','Un rol anónimo solo admite'):
               assert stale not in d63, stale
           assert 'Todo rol `for` posee identificador fuente explícito conforme a D-087' in d63
           assert 'Modificada por: [[ADR-087-' in d63
+
+          d68=r('notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco.md')
+          for stale in ('`on Thing`','anchor{Thing}','anchor{value}','### Propiedad intrínseca `name`','thing BlackCastle {\n    name =','`Egypt.name`','`value.name` vale','Los campos ordinarios llamados `name` dejan de ser válidos'):
+              assert stale not in d68, stale
+          assert 'Modificada por: [[ADR-087-' in d68
+          assert '`~identifier : Name`' in d68 and '`~name       : Name`' in d68
+          assert 'Un participante `on value: Thing`' in d68
+          assert '`Thing~anchor` devuelve ese valor reflectivo' in d68
+          assert 'La forma especial `anchor{...}` dejó de existir con D-087.' in d68
+          assert 'Un campo ordinario llamado `name`' in d68
+          assert 'value~identifier' in d68 and 'value~anchor' in d68
 
           d72=r('notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md')
           assert 'Roles, `given`, variables de iteración y vinculaciones locales son símbolos léxicos sin ancla.' not in d72
@@ -87,9 +102,9 @@ jobs:
           assert 'no-public-branch-anchor' in cases
 
           d87=r('notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md')
-          for rel in ('ADR-038-familias-cerradas-de-valores','ADR-063-firmas-given-y-vinculaciones-on-conjuntas','ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas'):
+          for rel in ('ADR-038-familias-cerradas-de-valores','ADR-063-firmas-given-y-vinculaciones-on-conjuntas','ADR-068-thing-universal-y-nombre-intrinseco','ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas'):
               assert rel in d87
-          print('PHASE5_V3_RESIDUE_INVARIANTS_OK')
+          print('PHASE5_V4_RESIDUE_INVARIANTS_OK')
           '@ | python -
           if($LASTEXITCODE){throw 'invariants'}
       - name: Validadores oficiales
@@ -105,7 +120,7 @@ jobs:
         shell: pwsh
         working-directory: target
         run: |
-          $allowed=@('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md','notas/decisiones/ADR-038-familias-cerradas-de-valores.md','notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md','notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md','notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md','notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md','notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md','especificacion/README.md','especificacion/sintaxis/casos/cst-ast.yaml')
+          $allowed=@('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md','notas/decisiones/ADR-038-familias-cerradas-de-valores.md','notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md','notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco.md','notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md','notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md','notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md','notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md','especificacion/07-gramatica-concreta.md','especificacion/README.md','especificacion/sintaxis/casos/cst-ast.yaml')
           $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
           foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
           if($actual.Count -ne $allowed.Count){throw "changed-path count mismatch: $($actual.Count)"}
@@ -119,5 +134,5 @@ jobs:
           git config user.email chatgpt@users.noreply.github.com
           git add --all
           git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
-          git commit -m "fix(spec): elimina residuos de identidad y participantes" -m "Alinea ADR vigentes y casos con D-087/D-090/D-091: participantes siempre nombrados y anclados, presentación de family mediante ~name, metadata runtime-readonly y ramas funcionales dirigidas por clave local sin ancla pública. Elimina además shorthands antiguos de participantes World y Thing.`n`nValidation: invariantes de residuos, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
-          git push origin HEAD:chatgpt-global-coherence-resume-20260816-h; if($LASTEXITCODE){throw 'push'}
+          git commit -m "fix(spec): elimina residuos reflectivos e identitarios" -m "Alinea ADR vigentes, especificación y casos con D-087/D-090/D-091: participantes siempre nombrados y anclados, Thing y family usan ~identifier/~name, ~anchor sustituye la interpolación antigua, metadata es runtime-readonly y ramas funcionales carecen de ancla pública.`n`nValidation: invariantes de residuos, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-resume-20260816-i; if($LASTEXITCODE){throw 'push'}
