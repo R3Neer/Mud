@@ -29,13 +29,14 @@ decisions:
   - D-085
   - D-086
   - D-087
+  - D-089
 ---
 
 # 06. Estructura léxica
 
 ## Estado y propósito
 
-Este capítulo define cómo se transforma un flujo Unicode en tokens. La gramática normativa está en [[gramatica/mud-lexico.ebnf]]. La sintaxis que consume esos tokens pertenece a [[07-gramatica-concreta]].
+Este capítulo define el scanner base y la clasificación contextual de formas fuente. El scanner base transforma Unicode en tokens sin consultar el modelo; `POINT_LITERAL` y `UNIT_FORM` se añaden únicamente en una vista contextual posterior conforme a D-089. La gramática léxica base está en [[gramatica/mud-lexico.ebnf]]. La sintaxis que consume las vistas significativas pertenece a [[07-gramatica-concreta]].
 
 ## Valores escalares Unicode
 
@@ -116,9 +117,25 @@ Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador n
 
 ## Adyacencia de unidades
 
-Después de reconocer un literal numérico, el flujo significativo puede reconocer inmediatamente una forma de unidad habilitada, sin exigir trivia intermedia. Por ello `3m`, `90km/h` y `r0.1m` producen los mismos tokens significativos que sus formas espaciadas. Un identificador alfanumérico completo conserva prioridad fuera de esa frontera; `R2D2` y `ronto` no se dividen como número y unidad.
+El scanner base no necesita conocer unidades para reconocer la frontera posterior a un número. Cuando la gramática de cantidad admite una unidad, el clasificador contextual de D-089 consulta el texto fuente desde ese offset y puede cubrir una forma habilitada sin exigir trivia intermedia. Por ello `3m`, `90km/h` y `r0.1m` obtienen la misma clasificación semántica que sus formas espaciadas. Fuera de una posición de unidad, `R2D2`, `ronto` y cualquier secuencia semejante conservan exclusivamente su tokenización base.
 
-La forma canónica inserta un espacio entre número y primera unidad. Esta normalización pertenece al formateador, no al resaltador léxico.
+La forma canónica inserta un espacio entre número y primera unidad. Esta normalización pertenece al formateador, no al scanner base ni al resaltador.
+
+## Clasificación contextual de formas fuente
+
+> [!rule] MUD-LEX-012 — Independencia del scanner base
+> El scanner base solo depende del texto Unicode y del léxico fijo de MUD. No consulta declaraciones, tipos esperados, `~format` ni catálogos de unidad. Todos sus tokens y trivia conservan offsets exactos en el texto fuente.
+
+> [!rule] MUD-LEX-013 — Alternativa contextual por span
+> `POINT_LITERAL` y `UNIT_FORM` son clasificaciones contextuales sobre spans del texto original. El clasificador puede cubrir una o varias unidades del tokenizado base, pero debe conservar el intervalo fuente exacto y no puede fabricar caracteres al recomponer tokens.
+
+> [!rule] MUD-LEX-014 — Prioridad dirigida por contexto
+> Una alternativa contextual existe únicamente cuando su contexto semántico satisface el contrato de D-089. Cuando un único tipo de punto esperado reconoce exactamente su `~format`, `POINT_LITERAL` prevalece sobre una interpretación ordinaria del mismo span. Sin contexto suficiente, esa alternativa no existe.
+
+> [!rule] MUD-LEX-015 — Determinismo de unidad
+> `UNIT_FORM` usa el catálogo semántico ya resuelto. El tipo esperado restringe candidatos; sin él la forma debe ser globalmente unívoca. Entre coincidencias compatibles de distinta longitud gana la forma completa más larga; dos candidatos distintos para el mismo span son ambiguos.
+
+La arquitectura concreta puede usar token lattice, re-tokenización localizada o parsing diferido. Esas estrategias no son observables siempre que reproduzcan las reglas anteriores y el round-trip de la CST.
 
 ## Comentarios
 
@@ -336,16 +353,16 @@ Son inválidos `_1`, `1_`, `1__000`, `1_.0`, `1_000000`, `1.123_456789` y `3e1_0
 
 ## Unidades
 
-Las formas de unidad pueden contener Unicode y no son identificadores generales. Se reconocen contextualmente contra el catálogo construido a partir de las declaraciones `magnitude`.
+Las formas de unidad pueden contener Unicode y no son identificadores generales. El scanner base conserva su tokenización textual ordinaria; únicamente el clasificador contextual de D-089 puede superponer `UNIT_FORM` en una posición donde la sintaxis de cantidad admita una unidad.
 
 > [!warning]
-> [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] fija el catálogo de prefijos, la resolución de colisiones y la identidad estable. `UNIT_FORM` conserva la escritura encontrada; la resolución semántica selecciona después una unidad declarada o una forma prefijada estructural.
+> [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] fija el catálogo de prefijos y las formas habilitadas. D-089 fija su reconocimiento sin dependencia circular: `UNIT_FORM` conserva la escritura encontrada y se selecciona contra el catálogo semántico ya resuelto.
 
 `Prefix` es un tipo incorporado. Los nombres SI `quecto`…`quetta` permanecen identificadores ordinarios: en una expresión como `~prefixes = [kilo, milli]` se resuelven como valores incorporados de `Prefix`; no se convierten en palabras reservadas.
 
 ## Formas de magnitudes de punto
 
-Una magnitud `point over` puede habilitar escrituras contextuales mediante su propiedad `format`, por ejemplo `12:30:00`. El lexer representa una coincidencia válida como `POINT_LITERAL`.
+Una magnitud `point over` puede habilitar escrituras contextuales mediante su metadato `~format`, por ejemplo `12:30:00`. El clasificador contextual representa una coincidencia válida como `POINT_LITERAL`; el scanner base conserva su tokenización ordinaria.
 
 > [!rule]
 > `POINT_LITERAL` se interpreta contra el único tipo de magnitud de punto exigido por el contexto. Si declara `format`, el texto debe coincidir exactamente con su representación canónica y el formato debe ser estáticamente invertible. La precisión inferior no representada toma valor cero.
