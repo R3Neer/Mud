@@ -10,20 +10,17 @@ def exact(text,old,new,label):
     if n!=1: raise SystemExit(f'{label}: expected 1, found {n}')
     return text.replace(old,new,1)
 
-# D-072 no estuvo cubierto por el sweep histórico: D-087 ancló participantes declarados.
+# D-072 se toma del sweep histórico porque ya corrige participantes y diagnósticos.
+# Se adapta a la frontera AST/IR de D-093 sin perder D-087.
 rel='notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas.md'
 t=read(rel)
+if '- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].' not in t:
+    marker='- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]\n'
+    if t.count(marker)!=1: raise SystemExit('D072 D087 relation marker mismatch')
+    t=t.replace(marker, marker+'- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].\n',1)
 t=exact(t,
-'''Roles, `given`, variables de iteración y vinculaciones locales son símbolos léxicos sin ancla. Pueden repetir nombre en declaraciones o bloques independientes, pero no dentro de un mismo ámbito ni mediante sombreado de un nombre visible.''',
-'''Los participantes declarados `for`, `on` y `given` son símbolos anclados subordinados a su propietario conforme a D-087. Las variables de iteración y vinculaciones locales ordinarias son símbolos léxicos sin ancla. Los nombres locales pueden repetirse en declaraciones o bloques independientes, pero no dentro de un mismo ámbito ni mediante sombreado de un nombre visible.''',
-'D072 participants anchors')
-t=exact(t,
-'''3. Ausencia de ancla para roles, `given`, iteradores y locales.''',
-'''3. Anclas subordinadas para participantes `for`, `on` y `given`, y ausencia de ancla para iteradores y locales ordinarios.''',
-'D072 verification anchors')
-if 'D-087' not in t.split('## Contexto',1)[0]:
-    marker='- Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]\n'
-    if t.count(marker)!=1: raise SystemExit('D072 relation marker')
-    t=t.replace(marker, marker+'- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].\n',1)
+'''La separación entre CST, AST superficial y AST resuelto exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.''',
+'''La separación entre CST, AST superficial, resultados de resolución nominal e IR semántico exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.''',
+'D072 phase wording')
 write(rel,t)
 print('SWEEP_CURRENT_FIX_OK')
