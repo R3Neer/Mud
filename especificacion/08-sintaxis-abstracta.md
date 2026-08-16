@@ -37,6 +37,7 @@ decisions:
   - D-088
   - D-090
   - D-091
+  - D-092
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -829,7 +830,7 @@ El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la ca
 
 ## Metadatos, texto y activación
 
-`element~metadata` produce `MetadataAccessExpr` o `MetadataSuffix` en un destino asignable. Toda interpolación produce `ValueInterpolation`, incluida:
+`element~metadata` produce siempre `MetadataAccessExpr`. No existe `MetadataSuffix` asignable: `AssignableExpr` solo conserva `MemberSuffix` e `IndexSuffix`, de modo que ningún acceso `~` puede ser destino de un efecto. El AST superficial tampoco decide si la propiedad existe para el receptor; D-092 difiere esa comprobación hasta que la categoría estática del receptor ha sido resuelta. Toda interpolación produce `ValueInterpolation`, incluida:
 
 ```mud
 "{value~anchor}"

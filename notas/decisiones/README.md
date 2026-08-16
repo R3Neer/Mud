@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 86.
-- Vigentes: 86.
+- Total: 87.
+- Vigentes: 87.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -105,6 +105,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-089 | vigente | 2026-08-16 | [[notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente|Clasificación contextual de formas fuente sin dependencia circular del scanner]] |
 | D-090 | vigente | 2026-08-16 | [[notas/decisiones/ADR-090-ramas-funcionales-sin-ancla-publica|Ramas funcionales sin ancla pública]] |
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados|Datos de family como descriptores anclados]] |
+| D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Disponibilidad estática de propiedades reflectivas]] |
 
 ## Identificadores reservados
 

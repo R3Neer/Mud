@@ -66,6 +66,7 @@ decisions:
   - D-088
   - D-090
   - D-091
+  - D-092
 ---
 
 # 07. Gramática concreta
@@ -1340,9 +1341,9 @@ El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` 
 | `~kind` | familia reflectiva según receptor | declaraciones y descriptores compatibles | no, intrínseco |
 | `~type` | `Type` | todo valor MUD | no, intrínseco |
 | `~metadata` | `Metadata [* unique]` | elementos metadata-bearing | no, intrínseco |
-| `~for` | `Participant [* unique ordered]` | declaraciones con cláusula `for` | no, intrínseco |
-| `~on` | `Participant [* unique ordered]` | declaraciones con cláusula `on` | no, intrínseco |
-| `~given` | `Participant [* unique ordered]` | declaraciones con cláusula `given` | no, intrínseco |
+| `~for` | `Participant [* unique ordered]` | regla booleana, `action`, `subaction`, `look` | no, intrínseco |
+| `~on` | `Participant [* unique ordered]` | regla reactiva, regla `always`, `message` | no, intrínseco |
+| `~given` | `Participant [* unique ordered]` | regla booleana, `action`, `subaction` | no, intrínseco |
 | `~clauses` | `ClauseKind [* unique]` | declaraciones con cláusulas | no, intrínseco |
 | `~plural` | `Text` | unidades | sí |
 | `~abbreviation` | `Text` | unidades | sí |
@@ -1352,6 +1353,10 @@ El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` 
 | `~description` | `Text` | elementos metadata-bearing compatibles | sí; default `""` |
 | `~deprecated` | `Text [0..1]` | elementos metadata-bearing compatibles | sí; default `empty` |
 | `~private` | `Bool` | categorías admitidas por D-087 | sí; default `false` |
+
+La columna «Propietarios» es una restricción semántica de disponibilidad, no una descripción de cuándo el resultado es no vacío. Tras resolver y tipar el receptor, un acceso a una propiedad no soportada por su categoría estática es error. En particular, `thing A` hace inválido `A~for`; una `action` sí soporta `~for` aunque omita la cláusula y en ese caso obtiene `empty`. La misma separación entre propiedad inexistente y valor vacío se aplica a `~on` y `~given`.
+
+La producción `metadata-name ::= identifier | "for" | "on" | "given"` solo permite que esas keywords duras aparezcan sintácticamente después de `~`. El parser no puede decidir por el nombre textual del receptor si el acceso existe: construye la forma postfix y la resolución/tipado aplica la matriz de D-092.
 
 La tabla resume las propiedades comunes y configurables que afectan a la sintaxis de este capítulo. D-087 define además las propiedades reflectivas específicas de cada descriptor, como relaciones de especialización, campos, componentes y propiedades estructurales de colecciones y diccionarios; no se duplican aquí como un segundo catálogo normativo.
 
