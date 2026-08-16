@@ -1,0 +1,84 @@
+name: ChatGPT global coherence resume phase 4a
+on:
+  push:
+    branches: [chatgpt-global-coherence-resume-runner-a]
+permissions: {contents: write}
+jobs:
+  contextual-nominal:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-runner-a, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-20260816-a, path: target, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Base exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: 3ada845fccf190f88bea22f4ea366af01d233921}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transformación
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/resume_phase4a_contextual_nominal.py tooling/chatgpt/x.py
+          python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
+          Remove-Item tooling/chatgpt/x.py
+      - name: Invariantes
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          d=r('notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal.md')
+          assert 'ContextualNominalConstructionExpr(literal, target_type)' in d
+          assert 'una conversión escrita con `to` produce `ConversionExpr(value, target_type)`' in d
+          a=r('especificacion/sintaxis/mud-resolved-ast.asdl')
+          assert a.count('ContextualNominalConstructionExpr') == 1
+          assert 'ConversionExpr(resolved_expr value, anchor target_type)' in a
+          s=r('especificacion/08-sintaxis-abstracta.md')
+          assert 'La construcción contextual no se aplica a variables, accesos, llamadas ni otras expresiones ya tipadas.' in s
+          c=r('especificacion/sintaxis/casos/cst-ast.yaml')
+          for case in ('contextual-nominal-basic','contextual-nominal-structural','explicit-nominal-cast-distinct-from-context'):
+              assert f'id: {case}' in c
+          print('PHASE4A_INVARIANTS_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validadores
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Superficie
+        shell: pwsh
+        working-directory: target
+        run: |
+          $allowed=@('notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal.md','especificacion/08-sintaxis-abstracta.md','especificacion/sintaxis/mud-resolved-ast.asdl','especificacion/sintaxis/casos/cst-ast.yaml')
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
+          foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
+          if($actual.Count -ne $allowed.Count){throw "changed-path count mismatch: $($actual.Count)"}
+          foreach($p in $allowed){if($actual -notcontains $p){throw "missing expected change $p"}}
+          git diff --stat
+      - name: Commit candidato
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
+          git commit -m "fix(types): distingue construcción nominal contextual" -m "D-032 ya separa construir un literal bajo tipo esperado de convertir un valor escrito con to. El AST resuelto conserva ahora esa diferencia y los casos de conformidad cubren literales básicos, estructurales y casts explícitos.`n`nValidation: invariantes específicas, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-resume-20260816-a; if($LASTEXITCODE){throw 'push'}
