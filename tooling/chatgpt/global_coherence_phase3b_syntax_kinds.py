@@ -6,7 +6,7 @@ start = text.index('  stored-family-data-declaration:\n')
 end = text.index('  family-member:\n', start)
 replacement = '''  stored-family-data-declaration:
     kind: StoredFamilyDataDeclarationSyntax
-    rhs: "field-name , \":\" , type-expression\\n        , [ \"=\" , constant-expression ]\\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: 'field-name , ":" , type-expression\\n        , [ "=" , constant-expression ]\\n        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]'
     references:
     - field-name
     - type-expression
@@ -16,7 +16,7 @@ replacement = '''  stored-family-data-declaration:
     - required-separation
   calculated-family-data-declaration:
     kind: CalculatedFamilyDataDeclarationSyntax
-    rhs: "field-name , [ derived-value-shape ] , \":=\" , value-expression\\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: 'field-name , [ derived-value-shape ] , ":=" , value-expression\\n        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]'
     references:
     - field-name
     - derived-value-shape
