@@ -1,0 +1,88 @@
+name: ChatGPT checklist metadata anchors
+on:
+  push:
+    branches: [chatgpt-checklist-runner-metadata]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-runner-metadata
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-candidate
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.13'}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.3'
+      - name: Verify base
+        shell: pwsh
+        env: {EXPECTED_HEAD: 2b60d489feef98801ce76c20151d626bd0aa07ea}
+        run: |
+          $ErrorActionPreference='Stop'
+          $h=(git -C target rev-parse HEAD).Trim()
+          if ($h -ne $env:EXPECTED_HEAD) { throw "base mismatch: $h" }
+          if (git -C target status --porcelain=v1 --untracked-files=all) { throw 'candidate not clean' }
+      - name: Apply metadata transform
+        shell: pwsh
+        run: |
+          python control/.chatgpt/transform_metadata.py target
+          if ($LASTEXITCODE -ne 0) { throw 'transform failed' }
+          python target/tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { throw 'decision generation failed' }
+          python control/.chatgpt/audit_metadata.py target
+          if ($LASTEXITCODE -ne 0) { throw 'metadata audit failed' }
+      - name: Repository validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decisions' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'questions' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff' }
+      - name: Verify exact surface
+        shell: pwsh
+        working-directory: target
+        run: |
+          $expected=@(
+            'especificacion/09-nombres-y-anclas.md',
+            'especificacion/ir/mud-semantic-ir.asdl',
+            'especificacion/sintaxis/casos/cst-ast.yaml',
+            'notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md',
+            'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
+            'notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md',
+            'notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados.md',
+            'notas/decisiones/README.md'
+          ) | Sort-Object
+          $actual=@(git status --porcelain=v1 --untracked-files=all | ForEach-Object {$_.Substring(3)}) | Sort-Object
+          $delta=Compare-Object -ReferenceObject $expected -DifferenceObject $actual
+          if ($delta) { $delta | Format-Table | Out-String | Write-Host; throw 'unexpected surface' }
+      - name: Commit
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'cached diff' }
+          git commit -m 'feat(metadata): ancla descriptores configurados'
+          if ($LASTEXITCODE -ne 0) { throw 'commit' }
+          git push origin HEAD:chatgpt-checklist-candidate
+          if ($LASTEXITCODE -ne 0) { throw 'push' }
