@@ -97,6 +97,8 @@ Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaració
 3. El sistema de tipos resuelve uniones, dominios y referencias dependientes del tipo.
 4. La resolución de miembros completa accesos, llamadas y abreviaturas contextuales.
 
+Estas etapas no obligan a materializar un AST canónico distinto al terminar cada una. La resolución nominal temprana produce la tabla de símbolos y permite construir el grafo nominal parcial; `mud-resolved-ast.asdl` describe la forma semántica acumulada una vez completados también tipado, elaboración y los análisis estáticos que preceden al IR.
+
 La norma se expresa mediante entornos y conjuntos de candidatos. Una implementación puede usar scope graphs si reproduce exactamente prioridades, candidatos, ambigüedades y rechazos.
 
 ## Anclas
@@ -200,7 +202,7 @@ Después de la resolución nominal puede construirse un grafo parcial con nodos 
 
 El tipado completa o rechaza aristas cuya validez dependa de una unión, una inferencia o un miembro contextual. El grafo parcial no sustituye al AST ni constituye fuente de verdad.
 
-El esquema mecánico [[mud-resolved-ast]] representa esta frontera: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario. Las ramas funcionales no son símbolos: sus dependencias se reconstruyen mediante el ancla del diccionario propietario y una `decision_branch_key` local.
+Esta frontera nominal temprana se representa mediante símbolos y el grafo parcial, no mediante una segunda instantánea canónica del AST. El esquema mecánico [[mud-resolved-ast]] representa el resultado semántico posterior ya elaborado: una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario. Las ramas funcionales no son símbolos: sus dependencias se reconstruyen mediante el ancla del diccionario propietario y una `decision_branch_key` local.
 
 ## Conformidad
 

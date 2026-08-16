@@ -99,6 +99,8 @@ playerName: PlayerName =
     rawName to PlayerName
 ```
 
+La representación semántica conserva la diferencia: un literal todavía contextual que adquiere un alias por tipo esperado produce `ContextualNominalConstructionExpr(literal, target_type)`; una conversión escrita con `to` produce `ConversionExpr(value, target_type)`. La primera forma solo construye literales cuya identidad nominal aún depende del contexto y nunca convierte silenciosamente variables, accesos, llamadas u otras expresiones ya tipadas.
+
 ### Literales estructurales posicionales y nombrados
 
 La forma posicional sigue el orden de declaración:

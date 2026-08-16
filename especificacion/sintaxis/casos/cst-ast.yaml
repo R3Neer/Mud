@@ -1744,3 +1744,34 @@ cases:
   expected_diagnostics:
   - metadata-property-not-supported-by-static-receiver
   produces_ast: true
+- id: contextual-nominal-basic
+  category: typing-after-ast
+  source: "alias PlayerName := Text\nthing Person {\n    nickname: PlayerName = \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(nickname, defaultValue=TextTemplateExpr([TextFragment(Ada)]))
+  normalizations:
+  - preserve-literal-untyped-until-contextual-elaboration
+  semantic_expectations:
+  - contextual-nominal-construction-target-PlayerName
+  - no-synthetic-explicit-conversion
+  produces_ast: true
+- id: contextual-nominal-structural
+  category: typing-after-ast
+  source: "alias Coordinate {\n    x: Num\n    y: Num\n}\nthing Marker {\n    position: Coordinate = (x = 1, y = 2)\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(position, defaultValue=NamedStructuralLiteralExpr([x=1,y=2]))
+  normalizations:
+  - preserve-structural-literal-untyped-until-contextual-elaboration
+  semantic_expectations:
+  - contextual-nominal-construction-target-Coordinate
+  - components-available-after-nominal-construction
+  produces_ast: true
+- id: explicit-nominal-cast-distinct-from-context
+  category: typing-after-ast
+  source: "alias PlayerName := Text\nrule IsAda given raw: Text {\n    raw to PlayerName == \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: ComparisonChainExpr(ConversionExpr(raw, PlayerName), EqualRelation, TextTemplateExpr([TextFragment(Ada)]))
+  semantic_expectations:
+  - written-to-produces-conversion-expr
+  - right-literal-contextually-constructs-PlayerName
+  produces_ast: true

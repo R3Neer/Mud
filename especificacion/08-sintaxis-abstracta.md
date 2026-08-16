@@ -48,7 +48,7 @@ Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva
 
 El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
 
-El contrato de la fase posterior vive en [[mud-resolved-ast]]. Allí las referencias se sustituyen por `AnchoredSymbol` o `LocalSymbol`, las uniones quedan normalizadas y el grafo nominal se expresa mediante aristas reconstruibles.
+El contrato semántico previo al IR vive en [[mud-resolved-ast]]. No es una instantánea tomada inmediatamente después de buscar nombres: se completa tras resolución nominal, tipado, elaboración y los análisis estáticos que alimentan su forma. Allí las referencias ya usan `AnchoredSymbol` o `LocalSymbol`, las uniones están elaboradas y las dependencias se expresan mediante aristas reconstruibles. La resolución nominal temprana puede construir símbolos y un grafo parcial sin introducir otro AST canónico intermedio.
 
 ## Cadena de representaciones
 
@@ -58,9 +58,9 @@ texto fuente
 → CST sin pérdidas
 → validación sintáctica contextual
 → AST superficial normalizado
-→ resolución de nombres
-→ AST resuelto
-→ tipado y elaboración
+→ resolución nominal (símbolos + grafo parcial)
+→ tipado, elaboración y análisis estático
+→ AST semántico resuelto
 → IR
 ```
 
@@ -346,6 +346,8 @@ Un componente estructural:
 Un campo derivado no posee carga asignable, puede declarar forma y capacidad interior y se recalcula desde su expresión. Una sobrescritura local solo puede dirigirse a un componente almacenado heredado y solo reemplaza su predeterminado.
 
 Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto. Por tanto, los miembros del alias solo quedan disponibles después de elaboración contextual o de una conversión nominal explícita.
+
+Cuando la elaboración recibe un tipo esperado que selecciona un único alias compatible, el AST semántico resuelto conserva una `ContextualNominalConstructionExpr` alrededor del literal. Esta forma no equivale a `ConversionExpr`: esta última representa `to` escrito sobre un valor que ya tenía tipo. La construcción contextual solo puede materializar un literal cuya identidad nominal dependía todavía del contexto; no convierte silenciosamente variables, accesos, llamadas ni otras expresiones ya tipadas.
 
 ## Familias
 

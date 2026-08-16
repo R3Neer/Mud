@@ -1,7 +1,10 @@
--- MUD 1.0 — Contrato del AST resuelto
+-- MUD 1.0 — Contrato del AST semántico resuelto
 --
--- Complementa mud-surface-ast.asdl. Conserva procedencia y forma semántica,
--- pero sustituye referencias nominales por símbolos y anclas resueltas.
+-- Complementa mud-surface-ast.asdl. Esta forma se completa después de la
+-- resolución nominal, el tipado, la elaboración y los análisis estáticos
+-- que preceden al IR; no representa la instantánea temprana de name lookup.
+-- Conserva procedencia y significado resuelto mediante símbolos, anclas,
+-- tipos elaborados y dependencias semánticas.
 
 module MUDResolved {
 
@@ -136,6 +139,8 @@ module MUDResolved {
                                           resolved_expr* remaining)
                   | NamedProductExpr(named_expr_component first,
                                      named_expr_component* remaining)
+                  | ContextualNominalConstructionExpr(resolved_expr literal,
+                                                      anchor target_type)
                   | ExactAssociationExpr(resolved_expr key, resolved_expr value)
                   | DecisionBranchExpr(resolved_expr selector, resolved_expr result)
                   | ExactLookupExpr(resolved_expr dictionary, resolved_expr key)
