@@ -1,0 +1,107 @@
+name: ChatGPT global coherence resume phase 4b v2
+on:
+  push:
+    branches: [chatgpt-global-coherence-resume-runner-d]
+permissions: {contents: write}
+jobs:
+  given-types:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-runner-d, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-resume-20260816-c, path: target, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Base exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: b0655ca9863463e5075efee4106d84eec3bd0837}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transformación
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/resume_phase4b_given_types.py tooling/chatgpt/x.py
+          Copy-Item ../runner/tooling/chatgpt/resume_phase4b_syntax_kinds.py tooling/chatgpt/k.py
+          Copy-Item ../runner/tooling/chatgpt/resume_phase4b_review_fixes.py tooling/chatgpt/r.py
+          @'
+          from pathlib import Path
+          p=Path('tooling/chatgpt/x.py')
+          t=p.read_text(encoding='utf-8')
+          a=t.index('# CST inventory mirrors the grammar')
+          b=t.index('# Coverage drops productions', a)
+          p.write_text(t[:a]+'# CST inventory updated by companion structural script.\n\n'+t[b:], encoding='utf-8', newline='\n')
+          '@ | python -
+          python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
+          python tooling/chatgpt/k.py; if($LASTEXITCODE){throw 'syntax kinds'}
+          python tooling/chatgpt/r.py; if($LASTEXITCODE){throw 'review fixes'}
+          Remove-Item tooling/chatgpt/x.py,tooling/chatgpt/k.py,tooling/chatgpt/r.py
+      - name: Invariantes
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          g=r('especificacion/gramatica/mud.ebnf')
+          seg=g[g.index('given-declaration'):g.index('boolean-rule-declaration',g.index('given-declaration'))]
+          assert 'type-expression' in seg
+          assert 'given-collection-specification' not in g and 'given-collection-modifier' not in g
+          k=r('especificacion/sintaxis/mud-syntax-kinds.yaml')
+          assert 'given-collection-specification:' not in k and 'given-collection-modifier:' not in k
+          cov=r('especificacion/sintaxis/cobertura-sintactica.yaml')
+          assert 'given-collection-specification:' not in cov and 'given-collection-modifier:' not in cov
+          a=r('especificacion/sintaxis/mud-surface-ast.asdl')
+          assert 'readonly_value_shape' not in a and 'readonly_collection_spec' not in a
+          assert 'given_decl = GivenDecl(given_name name,\n                           type_expr type,' in a
+          d=r('notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md')
+          assert 'incluidos productos y diccionarios exactos o funcionales' in d and 'se aplica recursivamente a todo el tipo' in d
+          d36=r('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md')
+          assert '\n Su tipo usa la forma general' not in d36
+          s=r('especificacion/08-sintaxis-abstracta.md')
+          assert 'GivenDecl` reutiliza directamente `TypeExpr`' in s
+          c=r('especificacion/sintaxis/casos/cst-ast.yaml')
+          for case in ('given-exact-dictionary','given-functional-dictionary','given-nested-mut-invalid'):
+              assert f'id: {case}' in c
+          assert 'policy: Input --> Output [ordered]' not in c
+          assert 'DecisionDictionaryType(Input, Output, AllMatches)' in c
+          print('PHASE4B_V2_INVARIANTS_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validadores
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Superficie
+        shell: pwsh
+        working-directory: target
+        run: |
+          $allowed=@('especificacion/gramatica/mud.ebnf','especificacion/sintaxis/mud-syntax-kinds.yaml','especificacion/sintaxis/cobertura-sintactica.yaml','especificacion/sintaxis/mud-surface-ast.asdl','especificacion/sintaxis/cst-a-ast-superficial.md','especificacion/sintaxis/casos/cst-ast.yaml','especificacion/07-gramatica-concreta.md','especificacion/08-sintaxis-abstracta.md','notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md','notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md')
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
+          foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
+          if($actual.Count -ne $allowed.Count){throw "changed-path count mismatch: $($actual.Count)"}
+          foreach($p in $allowed){if($actual -notcontains $p){throw "missing expected change $p"}}
+          git diff --stat
+      - name: Commit candidato
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
+          git commit -m "fix(types): admite diccionarios readonly en given" -m "given reutiliza la type-expression completa, incluidos diccionarios exactos y funcionales. La validación rechaza recursivamente cualquier capacidad mut dentro del tipo y elimina la subgramática readonly incompleta. Los casos conservan correctamente AllMatches para el tipo funcional no ordenado.`n`nValidation: invariantes específicas, decisiones, preguntas, gramática, sintaxis y git diff --check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-resume-20260816-c; if($LASTEXITCODE){throw 'push'}
