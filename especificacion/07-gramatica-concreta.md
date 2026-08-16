@@ -771,7 +771,7 @@ given value: Num {
 
 Reglas booleanas y `look`, por ser puros, no admiten `mut` exterior. Ningún `given` admite mutabilidad exterior ni interior. Su anotación usa la `type-expression` completa, por lo que puede ser un tipo básico, nominal, producto, colección o diccionario exacto/funcional. La validación previa al AST rechaza `mut` en cualquier `collection-specification` contenida en ese tipo, no solo en la colección exterior; cardinalidad, `unique` y `ordered` continúan disponibles donde la forma de tipo los admita.
 
-Una referencia ordinaria a `World` designa la identidad exacta. `on World` y un rol `for World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta. Esta selección solo se aplica cuando el tipo del rol es una `thing`.
+Una referencia ordinaria a `World` designa la identidad exacta. Los participantes `on world: World` y `for world: World` seleccionan reflexivamente las `thing` concretas activas que satisfacen `is World`, incluida la propia `World` si es concreta. Esta selección solo se aplica cuando el tipo del rol es una `thing`.
 
 La vinculación depende de la categoría del rol:
 

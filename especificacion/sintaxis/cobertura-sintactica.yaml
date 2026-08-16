@@ -116,7 +116,7 @@ productions:
     cst: ThingBodyDeclarationSyntax
     ast:
       disposition: inlined
-      reason: alternativa integrada en ThingDecl como nombre intrínseco o campo
+      reason: alternativa integrada en ThingDecl como campo
   metadata-assignment:
     cst: MetadataAssignmentSyntax
     ast:
