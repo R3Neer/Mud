@@ -1,0 +1,35 @@
+name: ChatGPT checklist sweep audit
+on:
+  push:
+    branches: [chatgpt-checklist-runner-sweep]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-runner-sweep
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          path: target
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.13'}
+      - name: Verify audited HEAD
+        shell: pwsh
+        env: {EXPECTED_HEAD: e117e86eebcf215af0f5e0c9cc1965f9277f03ef}
+        run: |
+          $h=(git -C target rev-parse HEAD).Trim()
+          if ($h -ne $env:EXPECTED_HEAD) { throw "main moved: $h" }
+      - name: Audit current ADR state
+        shell: pwsh
+        run: |
+          python control/.chatgpt/audit_current_adr_state.py target
+          if ($LASTEXITCODE -ne 0) { throw 'ADR sweep found current issues; inspect log' }
