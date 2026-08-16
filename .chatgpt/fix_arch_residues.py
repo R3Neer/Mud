@@ -32,7 +32,7 @@ write(rel,t)
 
 # D-070
 rel='notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md'; t=read(rel)
-t=add_relation(t,'- Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]\n','- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].\n','D070 relation')
+t=add_relation(t,'- Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]\n','- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].\n','D070 relation')
 t=exact(t,
 '''→ resolución\n→ AST resuelto\n→ tipado/elaboración\n→ IR''',
 '''→ resolución nominal: símbolos + bindings + grafo parcial\n→ tipado/elaboración\n→ IR semántico''',
@@ -60,7 +60,6 @@ write(rel,t)
 
 # D-074
 rel='notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento.md'; t=read(rel)
-# relation marker varies; add after title/frontmatter relation if absent by using first known relation
 if 'D-093' not in t:
     marker='## Contexto\n'
     if t.count(marker)!=1: raise SystemExit('D074 context marker')
