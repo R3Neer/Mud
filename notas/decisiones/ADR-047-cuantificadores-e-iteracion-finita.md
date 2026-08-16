@@ -18,6 +18,7 @@ affects:
 - Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
 - Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 - Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Modificada por: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]]
 
 - Preguntas relacionadas: Q-018, Q-028, Q-029
 - Documentos afectados: expresiones, intervalos, iteración
@@ -39,7 +40,7 @@ min x in source: expression
 max x in source: expression
 ```
 
-La fuente debe ser finita y enumerable. La evaluación es pura; `min` y `max` sobre una fuente vacía producen el error definido para agregación vacía, no un valor inventado.
+La fuente debe ser finita y enumerable. La evaluación es pura. `min` y `max` son consultas parciales: sobre una fuente vacía producen `empty` con forma de resultado `T [0..1]`; sobre una fuente no vacía producen un valor de tipo `T`. La ausencia solo falla después si el contexto receptor no admite cardinalidad cero, conforme a D-095.
 
 D-081 añade una selección pura que devuelve los testigos en lugar de consumirlos:
 
@@ -78,7 +79,7 @@ Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmen
 ## Verificación
 
 1. Cuantificadores y agregaciones sobre fuente finita.
-2. Error de agregación extrema vacía.
+2. `min` y `max` vacíos producen `empty` y su incompatibilidad posterior usa las reglas ordinarias de cardinalidad.
 3. Diferencia observable entre bucle ordenado y no ordenado.
 4. Intervalos abiertos, cerrados, discontinuos y con paso.
 5. Rechazo de una enumeración `Rum` o infinita.

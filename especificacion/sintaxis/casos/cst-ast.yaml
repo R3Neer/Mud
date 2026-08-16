@@ -1785,3 +1785,23 @@ cases:
   expected_diagnostics:
   - given-mutability-forbidden
   produces_ast: true
+- id: min-empty-is-empty
+  category: quantifier-semantics
+  source: "thing Sample {\n    values: Nat [*] = empty\n    minimum := min x in values: x\n}\n"
+  cst_root: MudFileSyntax
+  ast: CalculatedFieldDecl(minimum, value=QuantifierExpr(Min, source=values, body=ExpressionBlock([], x)))
+  semantic_expectations:
+  - result-type-Nat
+  - result-cardinality-0-or-1
+  - empty-source-produces-empty
+  produces_ast: true
+- id: max-empty-is-empty
+  category: quantifier-semantics
+  source: "thing Sample {\n    values: Nat [*] = empty\n    maximum := max x in values: x\n}\n"
+  cst_root: MudFileSyntax
+  ast: CalculatedFieldDecl(maximum, value=QuantifierExpr(Max, source=values, body=ExpressionBlock([], x)))
+  semantic_expectations:
+  - result-type-Nat
+  - result-cardinality-0-or-1
+  - empty-source-produces-empty
+  produces_ast: true

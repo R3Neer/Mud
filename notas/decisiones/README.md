@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 89.
-- Vigentes: 89.
+- Total: 90.
+- Vigentes: 90.
 - Propuestas: 0.
 - Sustituidas: 0.
 - Retiradas: 0.
@@ -108,6 +108,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Disponibilidad estática de propiedades reflectivas]] |
 | D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial único e IR semántico elaborado]] |
 | D-094 | vigente | 2026-08-16 | [[notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados|Anclas terminales de metadatos configurados]] |
+| D-095 | vigente | 2026-08-16 | [[notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
 
 ## Identificadores reservados
 

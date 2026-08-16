@@ -18,6 +18,7 @@ depends-on:
 questions:
   - Q-061
 decisions:
+  - D-095
   - D-070
   - D-071
   - D-072
@@ -361,6 +362,10 @@ Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva
 Cada declaración de dato asociado es un propietario metadata-bearing estable y se elabora como descriptor `Field` subordinado a la `family`, con `FieldKind.Stored` o `FieldKind.Calculated`. La proyección `member.data` es un valor, no una copia del descriptor. Por tanto, los metadatos pertenecen al dato declarado una sola vez y no se duplican por miembro.
 
 Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. `FamilyDataAssignment` permanece deliberadamente sin campo `metadata`: una sobrescritura de miembro solo selecciona el valor efectivo del slot almacenado y no crea un propietario metadata-bearing. Un bloque omitido produce ambas secuencias vacías.
+
+## Resultado de `min` y `max`
+
+`QuantifierExpr(Min|Max, ...)` no necesita un constructor superficial especial para ausencia. La elaboración asigna al resultado el tipo elemento y una cardinalidad conservadora `[0..1]`; un recorrido sin candidatos produce el valor ordinario `empty`. Solo un contexto posterior incompatible con cero elementos introduce el fallo normal de cardinalidad.
 
 ## Magnitudes
 
