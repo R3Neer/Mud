@@ -295,22 +295,11 @@ module MUDSurface {
                                                collection_spec collection)
         attributes (source_origin origin)
 
-    readonly_value_shape = (type_alternative first,
-                            type_alternative* remaining,
-                            readonly_collection_spec collection)
-        attributes (source_origin origin)
-
     collection_spec = (cardinality cardinality,
                        cardinality_origin origin,
                        flag is_unique,
                        collection_order order,
                        flag elements_mutable)
-        attributes (source_origin origin)
-
-    readonly_collection_spec = (cardinality cardinality,
-                                cardinality_origin origin,
-                                flag is_unique,
-                                collection_order order)
         attributes (source_origin origin)
 
     cardinality = (cardinality_bound lower, cardinality_bound upper)
@@ -362,7 +351,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     given_decl = GivenDecl(given_name name,
-                           readonly_value_shape shape,
+                           type_expr shape,
                            expr? default_value,
                            metadata_assignment* metadata)
         attributes (source_origin origin)

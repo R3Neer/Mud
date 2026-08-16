@@ -952,27 +952,14 @@ syntax_nodes:
     - given-declaration
   given-declaration:
     kind: GivenDeclarationSyntax
-    rhs: "given-name , { \",\" , given-name } , \":\" , union-type-expression , [ given-collection-specification ] , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: "given-name , { \",\" , given-name } , \":\" , type-expression , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
     references:
     - given-name
-    - union-type-expression
-    - given-collection-specification
+    - type-expression
     - constant-expression
     - declaration-layout
     - metadata-assignment
     - required-separation
-  given-collection-specification:
-    kind: GivenCollectionSpecificationSyntax
-    rhs: "\"[\"\n        , ( cardinality\n            , [ optional-comma , given-collection-modifier\n                , { optional-comma , given-collection-modifier }\n              ]\n          | given-collection-modifier\n            , { optional-comma , given-collection-modifier }\n          )\n        , \"]\""
-    references:
-    - cardinality
-    - optional-comma
-    - given-collection-modifier
-  given-collection-modifier:
-    kind: GivenCollectionModifierSyntax
-    rhs: "\"unique\"\n      | \"ordered\" , [ \"by\" , order-key-path ]"
-    references:
-    - order-key-path
   boolean-rule-declaration:
     kind: BooleanRuleDeclarationSyntax
     rhs: "\"rule\" , nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , boolean-body"

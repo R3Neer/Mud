@@ -92,6 +92,14 @@ Después de construir la CST se comprueban restricciones sintácticas contextual
 
 La resolución de nombres, tipos, dominios y efectos no pertenece a esta validación.
 
+Un `given` reutiliza la expresión general de tipo, incluidos los diccionarios:
+
+```mud
+given prices: Product -> Money
+```
+
+La gramática puede conservar un modificador `mut` escrito dentro de esa expresión para diagnóstico, pero D-063 lo hace estáticamente inválido: `given` nunca concede capacidad de escritura.
+
 ## Transformación abstracta
 
 La proyección a AST está en [[sintaxis/cst-a-ast-superficial]]. Las producciones se cubren mecánicamente en `sintaxis/cobertura-sintactica.yaml`.

@@ -49,6 +49,8 @@ given
 
 Un `given` no admite mutabilidad exterior ni capacidad interior `mut`. Si una acción necesita escribir la colección suministrada o el estado de una `thing` recibida, ese valor constituye un sujeto de la operación y debe declararse mediante `for`.
 
+La anotación de un `given` admite la expresión general de tipo, incluidos tipos diccionario exactos y decisionales. Por ejemplo, `given prices: Product -> Money` es válido. La posibilidad de escribir un diccionario no concede capacidad: todas sus colecciones y valores siguen sometidos a la prohibición anterior de `mut` en `given`.
+
 El predeterminado:
 
 - Es una expresión estática cerrada, pura y determinista.
