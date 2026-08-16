@@ -1,0 +1,95 @@
+name: ChatGPT global coherence phase 6b pipeline
+on:
+  push:
+    branches: [chatgpt-global-coherence-runner-v6b-pipeline]
+permissions: {contents: write}
+jobs:
+  pipeline:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-runner-v6b-pipeline, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-20260816-v3, path: target, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Base exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: 566ffa4e6280d372196f926cf94a3f3298221aa2}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transformación
+        shell: pwsh
+        working-directory: target
+        run: |
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase6_pipeline.py tooling/chatgpt/x.py
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase6_validator.py tooling/chatgpt/v.py
+          python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
+          python tooling/chatgpt/v.py; if($LASTEXITCODE){throw 'validator boundary'}
+          Remove-Item tooling/chatgpt/x.py,tooling/chatgpt/v.py
+          python tooling/decisions/manage_decisions.py generate; if($LASTEXITCODE){throw 'decisions generate'}
+      - name: Invariantes de fase
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          res=r('especificacion/sintaxis/mud-resolved-ast.asdl')
+          assert 'module MUDResolved' in res
+          for forbidden in ('resolved_type =','resolved_domain =','collection_shape =','decision_shape =','termination_evidence =','ConversionExpr(','NarrowedExpr('):
+              assert forbidden not in res, forbidden
+          for needed in ('resolved_reference = ResolvedReference','ResolvedMetadata(anchor identity','decision_branch_key ='):
+              assert needed in res, needed
+          ela=r('especificacion/sintaxis/mud-elaborated-ast.asdl')
+          assert 'module MUDElaborated' in ela
+          for needed in ('elaborated_type =','elaborated_domain =','collection_shape =','decision_shape =','termination_evidence =','ExactNominalTypeTestExpr(','ExactDictionarySetOperationExpr(','FunctionalDictionarySetOperationExpr('):
+              assert needed in ela, needed
+          val=r('especificacion/sintaxis/validate_syntax_model.py')
+          block=val[val.index('required_fragments ='):val.index('for path, fragments in required_fragments.items()')]
+          assert 'mud-elaborated-ast.asdl' in block
+          assert 'mud-resolved-ast.asdl' not in block
+          d=r('notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md')
+          assert 'Roles, `given`' not in d
+          assert 'participantes nombrados `for`/`on`/`given`' in d
+          assert 'representación elaborada' in d
+          readme=r('especificacion/sintaxis/README.md')
+          assert '`mud-elaborated-ast.asdl`' in readme and '→ AST/HIR elaborado' in readme
+          a8=r('especificacion/08-sintaxis-abstracta.md')
+          assert '[[mud-elaborated-ast]]' in a8 and '## Frontera resuelta y elaborada' in a8
+          a9=r('especificacion/09-nombres-y-anclas.md')
+          assert '[[mud-elaborated-ast]]' in a9
+          print('PHASE6B_PIPELINE_INVARIANTS_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validadores
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Superficie
+        shell: pwsh
+        working-directory: target
+        run: |
+          $allowed=@('notas/decisiones/ADR-094-frontera-ast-resuelto-y-elaborado.md','notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles.md','notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md','notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md','notas/decisiones/README.md','especificacion/08-sintaxis-abstracta.md','especificacion/09-nombres-y-anclas.md','especificacion/sintaxis/README.md','especificacion/sintaxis/mud-resolved-ast.asdl','especificacion/sintaxis/mud-elaborated-ast.asdl','especificacion/sintaxis/validate_syntax_model.py')
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
+          foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
+          git diff --stat
+      - name: Commit candidato
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT; git config user.email chatgpt@users.noreply.github.com
+          git add --all; git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
+          git commit -m "refactor(language): separa resolución nominal y elaboración" -m "D-094 adelgaza el AST resuelto y crea un contrato elaborado explícito para tipos, dominios, cardinalidades, conversiones y evidencias de análisis.`n`nValidation: invariantes, decisiones, preguntas, gramática, los tres ASDL y diff check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-20260816-v3; if($LASTEXITCODE){throw 'push'}
