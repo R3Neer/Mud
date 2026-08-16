@@ -72,7 +72,7 @@ p = 'especificacion/sintaxis/casos/cst-ast.yaml'
 t = read(p)
 marker = '- id: duplicate-decision-branch-canonical-selector\n'
 if marker not in t:
-    t = t.rstrip() + '''\n- id: duplicate-decision-branch-canonical-selector\n  category: resolution-after-ast\n  source: "thing PolicyHolder {\\n    policy: Nat --> Text = {\\n        value < 10 --> \\\"low\\\"\\n        value < 10 --> \\\"alsoLow\\\"\\n    }\\n}\\n"\n  cst_root: MudFileSyntax\n  expected_diagnostics:\n  - duplicate-decision-branch-key\n  produces_ast: true\n''' 
+    t = t.rstrip() + '''\n- id: duplicate-decision-branch-canonical-selector\n  category: resolution-after-ast\n  source: "thing PolicyHolder {\\n    policy: Nat --> Text = value < 10 --> \\\"low\\\", value < 10 --> \\\"alsoLow\\\"\\n}\\n"\n  cst_root: MudFileSyntax\n  expected_diagnostics:\n  - duplicate-decision-branch-key\n  produces_ast: true\n''' 
 write(p, t)
 
 print('BRANCH_KEY_TRANSFORM_OK')
