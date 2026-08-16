@@ -77,7 +77,8 @@ jobs:
           need('notas/preguntas/Q-061-forma-de-datos-calculados-de-family.md','resolved: false')
           need('notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','resolved: true')
           need('notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md','resolved: true')
-          need('gobierno/POLITICA-DE-PREGUNTAS.md','closure-evidence')
+          need('gobierno/POLITICA-DE-PREGUNTAS.md','## Evidencia de cierre')
+          need('gobierno/POLITICA-DE-PREGUNTAS.md','un ADR enlazado por sí solo no constituye cierre')
 
           # Scanner base y formas contextuales.
           lex=r('especificacion/gramatica/mud-lexico.ebnf')
