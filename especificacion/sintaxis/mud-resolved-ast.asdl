@@ -136,6 +136,8 @@ module MUDResolved {
                                           resolved_expr* remaining)
                   | NamedProductExpr(named_expr_component first,
                                      named_expr_component* remaining)
+                  | ContextualNominalConstructionExpr(resolved_expr literal,
+                                                      anchor target_type)
                   | ExactAssociationExpr(resolved_expr key, resolved_expr value)
                   | DecisionBranchExpr(resolved_expr selector, resolved_expr result)
                   | ExactLookupExpr(resolved_expr dictionary, resolved_expr key)

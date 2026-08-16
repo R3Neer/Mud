@@ -347,6 +347,8 @@ Un campo derivado no posee carga asignable, puede declarar forma y capacidad int
 
 Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto. Por tanto, los miembros del alias solo quedan disponibles después de elaboración contextual o de una conversión nominal explícita.
 
+Cuando el tipado/elaboración recibe un tipo esperado que selecciona un único alias compatible, la forma posterior conserva una `ContextualNominalConstructionExpr` alrededor del literal. Esta forma no equivale a una `ConversionExpr`: esta última representa `to` escrito sobre un valor que ya tenía tipo. La construcción contextual no se aplica a variables, accesos, llamadas ni otras expresiones ya tipadas.
+
 ## Familias
 
 `FamilyDecl` contiene:
