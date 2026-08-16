@@ -67,6 +67,7 @@ decisions:
   - D-090
   - D-091
   - D-092
+  - D-093
 ---
 
 # 07. Gramática concreta
@@ -1115,6 +1116,8 @@ sum x in source by step: {
 ```
 
 Una selección devuelve directamente las ocurrencias aceptadas y conserva multiplicidad, unicidad y orden demostrables. Su predicado sigue siendo puro y determinista.
+
+Sobre cero iteraciones, `forall` produce `true`, `exists` produce `false`, `count` produce `0 : Nat` y `sum` conserva su cero aditivo. `min` y `max` producen `empty` con el tipo del valor agregado, no un error ni un extremo sentinela. Su resultado contiene como máximo un valor: usa `[0]` si el análisis demuestra vacuidad, `[0..1]` si la vacuidad sigue siendo posible y `[1]` si demuestra al menos un candidato. Un contexto que exija `[1]` aplica las reglas generales de cardinalidad; `empty` no se convierte por ello en un fallo especial.
 
 ### `take` e indexación
 

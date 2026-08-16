@@ -1806,3 +1806,34 @@ cases:
   semantic_expectations:
   - mut-rejection-recurses-through-product-type
   produces_ast: false
+- id: min-empty-source
+  category: aggregation
+  source: "thing Sample {\n    values: Nat [0] = empty\n    minimum := min value in values: value\n}\n"
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(Minimum, value, values, value)
+  semantic_expectations:
+  - result-type-Nat
+  - result-cardinality-[0]
+  - statically-known-empty
+  - no-empty-extrema-failure
+  produces_ast: true
+- id: max-empty-source
+  category: aggregation
+  source: "thing Sample {\n    values: Nat [0] = empty\n    maximum := max value in values: value\n}\n"
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(Maximum, value, values, value)
+  semantic_expectations:
+  - result-type-Nat
+  - result-cardinality-[0]
+  - statically-known-empty
+  - no-empty-extrema-failure
+  produces_ast: true
+- id: extrema-proven-nonempty
+  category: aggregation
+  source: "thing Sample {\n    values: Nat [1..*] = [1]\n    minimum := min value in values: value\n}\n"
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(Minimum, value, values, value)
+  semantic_expectations:
+  - result-type-Nat
+  - result-cardinality-[1]
+  produces_ast: true
