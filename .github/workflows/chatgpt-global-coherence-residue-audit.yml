@@ -1,7 +1,7 @@
-name: ChatGPT global coherence residue audit
+name: ChatGPT global coherence residue audit v2
 on:
   push:
-    branches: [chatgpt-global-coherence-resume-runner-g]
+    branches: [chatgpt-global-coherence-resume-runner-k]
 permissions: {contents: read}
 jobs:
   residue-audit:
@@ -9,13 +9,13 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
-        with: {ref: chatgpt-global-coherence-resume-runner-g, path: runner, fetch-depth: 0}
+        with: {ref: chatgpt-global-coherence-resume-runner-k, path: runner, fetch-depth: 0}
       - uses: actions/checkout@v6
-        with: {ref: chatgpt-global-coherence-resume-20260816-e, path: target, fetch-depth: 0}
+        with: {ref: chatgpt-global-coherence-resume-20260816-h, path: target, fetch-depth: 0}
       - name: Base candidata exacta
         shell: pwsh
         working-directory: target
-        env: {BASE: 942d0d0e6c17ce04bbc6e9b091fe71fda3bc4eb9}
+        env: {BASE: e0bdc666fee03c51d08328db88b9e184a9b60690}
         run: |
           if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
           if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
