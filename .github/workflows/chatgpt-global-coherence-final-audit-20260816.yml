@@ -1,0 +1,147 @@
+name: ChatGPT global coherence final audit 20260816
+
+on:
+  push:
+    branches:
+      - chatgpt-global-coherence-final-audit-20260816
+
+permissions:
+  contents: read
+
+jobs:
+  final-audit:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-global-coherence-20260816-v11
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Verify immutable endpoints
+        shell: pwsh
+        env:
+          BASE: 42f3c9ae0142cd494ad6091dff0128cd60163ddb
+          CANDIDATE: 3ada845fccf190f88bea22f4ea366af01d233921
+        run: |
+          $ErrorActionPreference='Stop'
+          git fetch origin main --no-tags
+          if ((git rev-parse HEAD).Trim() -ne $env:CANDIDATE) { throw 'candidate SHA drifted' }
+          if ((git rev-parse origin/main).Trim() -ne $env:BASE) { throw 'main drifted during audit' }
+          if ((git merge-base HEAD origin/main).Trim() -ne $env:BASE) { throw 'candidate no longer descends exactly from audited main' }
+          if ((git rev-list --count "$env:BASE..HEAD").Trim() -ne '5') { throw 'unexpected candidate commit count' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout not clean' }
+      - name: Official validators
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax validation failed' }
+          git diff --check 42f3c9ae0142cd494ad6091dff0128cd60163ddb..HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'aggregate diff check failed' }
+      - name: Aggregate semantic invariants
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          import subprocess
+
+          BASE='42f3c9ae0142cd494ad6091dff0128cd60163ddb'
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          def need(p,s):
+              if s not in r(p): raise SystemExit(f'{p}: missing {s!r}')
+          def forbid(p,s):
+              if s in r(p): raise SystemExit(f'{p}: stale {s!r}')
+          def changed():
+              out=subprocess.check_output(['git','diff','--name-only',f'{BASE}..HEAD'], text=True)
+              return [x for x in out.splitlines() if x]
+
+          paths=changed()
+          if any(p.startswith('.github/') or p.startswith('tooling/chatgpt/') for p in paths):
+              raise SystemExit('candidate leaks audit/runner infrastructure')
+
+          # Gobierno de preguntas y aperturas deliberadas.
+          need('notas/preguntas/Q-060-catalogo-reflectivo-de-typekind.md','resolved: false')
+          need('notas/preguntas/Q-061-forma-de-datos-calculados-de-family.md','resolved: false')
+          need('notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos.md','resolved: true')
+          need('notas/preguntas/Q-055-literales-de-magnitudes-de-punto.md','resolved: true')
+          need('gobierno/POLITICA-DE-PREGUNTAS.md','closure-evidence')
+
+          # Scanner base y formas contextuales.
+          lex=r('especificacion/gramatica/mud-lexico.ebnf')
+          if 'point-form\n    ::=' in lex or 'unit-form\n    ::=' in lex:
+              raise SystemExit('contextual forms leaked back into baseline lexer')
+          kinds=r('especificacion/sintaxis/mud-syntax-kinds.yaml')
+          for stale in ('  point-form:\n','  unit-form:\n','    - point-form\n','    - unit-form\n'):
+              if stale in kinds: raise SystemExit(f'syntax-kinds retains {stale!r}')
+          need('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','scanner base')
+          need('especificacion/06-lexico.md','MUD-LEX-015')
+
+          # Ramas funcionales sin identidad pública independiente.
+          resolved='especificacion/sintaxis/mud-resolved-ast.asdl'
+          need(resolved,'decision_branch_key = SelectorBranchKey')
+          need(resolved,'DecisionDependsOn(anchor dictionary, decision_branch_key branch, symbol_id target)')
+          forbid(resolved,'ResolvedDecisionBranch(anchor identity')
+          forbid(resolved,'string is_fallback')
+          forbid('especificacion/09-nombres-y-anclas.md','## Anclas de ramas funcionales')
+          for p in ('notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md','especificacion/07-gramatica-concreta.md'):
+              for stale in ('mediante sus anclas propias','edición semántica dirigida a sus anclas','conservan la identidad estable de la rama'):
+                  forbid(p,stale)
+
+          # Datos de family: descriptor único, metadata propia, override sin identidad.
+          need('notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md','FieldKind.Stored')
+          need('notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md','  - "Q-061"')
+          surf='especificacion/sintaxis/mud-surface-ast.asdl'
+          need(surf,'StoredFamilyDataDecl(field_name name,')
+          need(surf,'CalculatedFamilyDataDecl(field_name name,\n                                                derived_value_shape? shape,')
+          need(surf,'metadata_assignment* metadata)')
+          need('especificacion/gramatica/mud.ebnf','calculated-family-data-declaration\n    ::= field-name , [ derived-value-shape ]')
+          need('especificacion/sintaxis/casos/cst-ast.yaml','id: family-data-override-metadata-rejected')
+          forbid('especificacion/sintaxis/casos/cst-ast.yaml','CalculatedFamilyDataDecl(costly, type=Bool')
+
+          # Disponibilidad reflectiva por capacidad estática.
+          need('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','rule InvalidForReflection {\n    A~for == empty\n}')
+          need('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','rule PingHasNoForParticipants {\n    Ping~for == empty\n}')
+          forbid('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','check := A~for')
+          forbid('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','participants := Ping~for')
+          need('especificacion/07-gramatica-concreta.md','`thing A` hace inválido `A~for`')
+          forbid('especificacion/08-sintaxis-abstracta.md','`MetadataSuffix`')
+          if 'MetadataSuffix' in r(surf): raise SystemExit('surface AST has MetadataSuffix')
+
+          # Known stale wording must not survive anywhere in normative/spec/decision text.
+          roots=[Path('especificacion'),Path('notas/decisiones')]
+          forbidden_global=(
+              'El lexer representa una coincidencia válida como `POINT_LITERAL`',
+              'Una cláusula ausente produce `empty`.',
+          )
+          for root in roots:
+              for p in root.rglob('*'):
+                  if not p.is_file() or p.suffix not in {'.md','.ebnf','.asdl','.yaml','.toml'}: continue
+                  txt=p.read_text(encoding='utf-8')
+                  for stale in forbidden_global:
+                      if stale in txt: raise SystemExit(f'{p}: global stale wording {stale!r}')
+
+          print('AGGREGATE_INVARIANTS_OK')
+          print(f'CHANGED_PATH_COUNT={len(paths)}')
+          for p in paths: print('CHANGED',p)
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'aggregate semantic invariants failed' }
+      - name: Diff inventory
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          git log --oneline --decorate=no 42f3c9ae0142cd494ad6091dff0128cd60163ddb..HEAD
+          git diff --stat 42f3c9ae0142cd494ad6091dff0128cd60163ddb..HEAD
+          git diff --name-status 42f3c9ae0142cd494ad6091dff0128cd60163ddb..HEAD
