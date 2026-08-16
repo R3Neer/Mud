@@ -1,0 +1,99 @@
+name: ChatGPT global coherence phase 7 ADR sweep
+on:
+  push:
+    branches: [chatgpt-global-coherence-runner-v7-sweep]
+permissions: {contents: write}
+jobs:
+  adr-sweep:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-runner-v7-sweep, path: runner, fetch-depth: 0}
+      - uses: actions/checkout@v6
+        with: {ref: chatgpt-global-coherence-20260816-v3, path: target, fetch-depth: 0}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.13"}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Base exacta
+        shell: pwsh
+        working-directory: target
+        env: {BASE: d53136b8ae98a41b1aa637ac09f7101177e98d4b}
+        run: |
+          if((git rev-parse HEAD).Trim() -ne $env:BASE){throw 'base mismatch'}
+          if(git status --porcelain=v1 --untracked-files=all){throw 'dirty base'}
+      - name: Transformación
+        shell: pwsh
+        working-directory: target
+        run: |
+          New-Item -ItemType Directory -Force tooling/chatgpt | Out-Null
+          Copy-Item ../runner/tooling/chatgpt/global_coherence_phase7_adr_sweep.py tooling/chatgpt/x.py
+          python tooling/chatgpt/x.py; if($LASTEXITCODE){throw 'transform'}
+          Remove-Item tooling/chatgpt/x.py
+          python tooling/decisions/manage_decisions.py generate; if($LASTEXITCODE){throw 'decisions generate'}
+      - name: Invariantes de vigencia
+        shell: pwsh
+        working-directory: target
+        run: |
+          @'
+          from pathlib import Path
+          def r(p): return Path(p).read_text(encoding='utf-8')
+          checks={
+            'notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md': ['name = "meter"','plural = "meters"','abbreviation = "m"','prefixes = empty'],
+            'notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos.md': ['    format ='],
+            'notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas.md': ['anchor{...}','`name` es contextual dentro de un cuerpo de `thing`'],
+            'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md': ['puede omitirse','participante individual anónimo'],
+            'notas/decisiones/ADR-037-campos-y-dominios-declarativos.md': ['omitir cardinalidad equivale a `[1]`','rechazo de `in` sobre un campo calculado','Rechazo de `mut` y de especificaciones de colección en campos calculados'],
+            'notas/decisiones/ADR-039-colecciones-y-diccionarios.md': ['`unique` no se aplica porque','Leer una clave ausente produce el predeterminado'],
+            'notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md': ['Vegetation,\n    Tree,\n    CanGrow','InitialActivationSet(references)','`name` y `prefixes`'],
+            'notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise.md': ['[ declaration-reference','Es un conjunto finito y no ordenado.'],
+            'notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text.md': ['anchor{','format = "{hour','La propiedad `format`'],
+            'notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md': ['puede ser anónimo','Un rol anónimo'],
+            'notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco.md': ['anchor{','name = "El Castillo Negro"','Egypt.name','propiedad intrínseca, pública, inmutable'],
+            'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md': ['objetivos asignables de metadato','ancla estable de cada rama','El AST resuelto o IR registra'],
+          }
+          for p,stales in checks.items():
+              text=r(p)
+              for s in stales:
+                  if s in text: raise SystemExit(f'{p}: stale positive semantics: {s!r}')
+          must={
+            'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md': ['Todo participante `for`, `on` y `given` debe declarar un identificador'],
+            'notas/decisiones/ADR-039-colecciones-y-diccionarios.md': ['Leer una clave ausente produce `empty`','`unique`, cuando se escribe, se aplica a los **valores asociados**'],
+            'notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md': ['things {','rules {','InitialActivationSet(things, rules)'],
+            'notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text.md': ['"Rule: {CanRecruit~anchor}"','metadato `~format`'],
+            'notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco.md': ['### Metadato estándar `~name`','Un campo ordinario `name` puede coexistir con `~name`'],
+            'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md': ['ningún acceso `~` forma parte de los objetivos asignables','clave local canónica de cada rama'],
+          }
+          for p,need in must.items():
+              text=r(p)
+              for s in need:
+                  if s not in text: raise SystemExit(f'{p}: missing current semantics: {s!r}')
+          print('PHASE7_ADR_SWEEP_INVARIANTS_OK')
+          '@ | python -
+          if($LASTEXITCODE){throw 'invariants'}
+      - name: Validadores
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate; if($LASTEXITCODE){throw 'decisions'}
+          python tooling/questions/validate_questions.py; if($LASTEXITCODE){throw 'questions'}
+          python especificacion/gramatica/validate_grammar.py; if($LASTEXITCODE){throw 'grammar'}
+          python especificacion/sintaxis/validate_syntax_model.py; if($LASTEXITCODE){throw 'syntax'}
+          git diff --check; if($LASTEXITCODE){throw 'diff'}
+      - name: Superficie
+        shell: pwsh
+        working-directory: target
+        run: |
+          $allowed=@('notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md','notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos.md','notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas.md','notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md','notas/decisiones/ADR-037-campos-y-dominios-declarativos.md','notas/decisiones/ADR-039-colecciones-y-diccionarios.md','notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md','notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise.md','notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text.md','notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas.md','notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco.md','notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md','notas/decisiones/README.md')
+          $actual=@(git status --porcelain=v1 --untracked-files=all|%{$p=$_.Substring(3);if($p -match ' -> '){$p=($p -split ' -> ',2)[1]};$p.Trim('"')})|Sort-Object -Unique
+          foreach($p in $actual){if($allowed -notcontains $p){throw "unexpected $p"}}
+          git diff --stat
+      - name: Commit candidato
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT; git config user.email chatgpt@users.noreply.github.com
+          git add --all; git diff --cached --check; if($LASTEXITCODE){throw 'staged diff'}
+          git commit -m "fix(decisions): hace efectivos los ADR vigentes" -m "Retira semántica positiva sustituida sobre metadatos, participantes, campos, diccionarios y activación inicial, conservando Git como historial.`n`nValidation: invariantes dirigidos, decisiones, preguntas, gramática, sintaxis y diff check."; if($LASTEXITCODE){throw 'commit'}
+          git push origin HEAD:chatgpt-global-coherence-20260816-v3; if($LASTEXITCODE){throw 'push'}
