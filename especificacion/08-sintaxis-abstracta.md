@@ -35,6 +35,7 @@ decisions:
   - D-087
   - D-088
   - D-090
+  - D-091
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -180,9 +181,11 @@ No se representa mediante enteros ni strings.
 
 ## Metadatos en propietarios estables
 
-Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales admitidas por D-087, unidades, campos, componentes y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
+Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales admitidas por D-087, unidades, campos, componentes, datos declarados por `family` y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
 
 Una cabecera agrupada de participantes se normaliza a varios descriptores y copia la misma secuencia de metadatos a cada uno. `GlobalStartDecl` y el `start with` interno de un test no reciben secuencia propia.
+
+Los valores `Metadata` configurados adquieren ancla durante resolución mediante `owner-anchor~metadata-name`. Las propiedades intrínsecas pueden aparecer como `metadata_kind` en un acceso resuelto, pero no instancian `ResolvedMetadata`; este constructor representa únicamente metadata materializada y conserva su propia ancla. `Metadata` no es metadata-bearing.
 
 ## Declaraciones de `thing`
 
@@ -355,9 +358,9 @@ Las asociaciones exactas y ramas decisionales permanecen estructuras internas de
 - Datos almacenados o calculados.
 - Miembros.
 
-Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas.
+Los datos asociados no admiten mutabilidad exterior. Su colección puede conceder capacidad interior sobre `thing` contenidas. `StoredFamilyDataDecl` y `CalculatedFamilyDataDecl` conservan además `metadata_assignment* metadata`; cada declaración corresponde a un descriptor `Field` anclado de la familia.
 
-Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. Un bloque omitido produce ambas secuencias vacías. Los metadatos no se confunden con datos de la familia.
+Una `FamilyDataAssignment` dentro de un miembro no contiene metadatos ni crea descriptor/ancla nuevos. Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. Un bloque omitido produce ambas secuencias vacías. Los metadatos no se confunden con datos de la familia.
 
 ## Magnitudes
 

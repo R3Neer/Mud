@@ -22,6 +22,7 @@ decisions:
   - D-087
   - D-088
   - D-090
+  - D-091
 ---
 # 09. Nombres, paths y anclas
 
@@ -143,6 +144,7 @@ Poseen ancla:
 - declaraciones globales;
 - campos y componentes;
 - miembros de family;
+- datos almacenados y calculados declarados por una family;
 - unidades declaradas;
 - participantes `for`, `on` y `given`;
 - tipos incorporados.
@@ -208,9 +210,15 @@ Las declaraciones `alias` pueden aportar aristas de especialización. El grafo n
 
 ## Metadatos, descriptores y anclas subordinadas
 
-D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el global continúa sin ancla.
+D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, datos declarados por una `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula, sobrescrituras de datos en miembros y ambos `start with` como propietarios; el global continúa sin ancla.
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
+
+### Anclas de metadatos
+
+Cada valor `Metadata` configurado o de usuario tiene una ancla obtenida anexando `~identifier` a la ancla de su propietario: `thing::game.Person~summary`, `thing::game.Person::health~description` o `family::game.Terrain::movementCost~summary`. El separador `~` distingue el espacio de metadata del encadenamiento subordinado `::`.
+
+Las propiedades intrínsecas no son valores `Metadata` y no reciben estas anclas. Un valor `Metadata` tampoco puede poseer metadatos propios: la identidad `owner~metadata` es terminal.
 
 ## Claves locales de entradas de diccionario
 

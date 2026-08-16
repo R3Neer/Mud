@@ -178,6 +178,12 @@ El dominio de la forma de valor y la especificación de colección son nodos nor
 
 La anotación de tipo ausente permanece ausente. No se inserta el tipo inferido.
 
+## `family`
+
+`stored-family-data-declaration` y `calculated-family-data-declaration` proyectan sus cuerpos `~...` directamente a la secuencia `metadata` de `StoredFamilyDataDecl` o `CalculatedFamilyDataDecl`. El bloque concreto desaparece como agrupación, igual que en campos y componentes.
+
+`family-data-assignment` continúa produciendo únicamente `FamilyDataAssignment(name, value)`: una sobrescritura dentro de un miembro no acepta metadata-body y no fabrica identidad sintáctica adicional.
+
 ## Normalización de colecciones
 
 ### Cardinalidad omitida

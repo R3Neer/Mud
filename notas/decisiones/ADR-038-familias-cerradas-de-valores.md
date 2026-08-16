@@ -15,6 +15,7 @@ affects:
 
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-091-identidad-de-datos-family-y-anclas-de-metadatos|D-091]]
 
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
@@ -55,7 +56,7 @@ La declaración introduce un tipo nominal finito y un ancla estática `family::*
 - Es igual a otro miembro si y solo si ambos pertenecen a la misma familia nominal y tienen el mismo nombre.
 - Solo admite operadores de orden si la declaración usa `ordered family`.
 
-Cada miembro posee un `name: Text` intrínseco cuyo predeterminado es su nombre nominal declarado. Puede sobrescribirse mediante `name = "..."` sin cambiar identidad, igualdad, ancla ni orden. Una sobrescritura idéntica recibe sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro produce su `name` efectivo.
+Cada miembro posee `~identifier: Name` y el metadato configurable `~name: Name`, cuyo predeterminado se deriva del identificador nominal. Configurar `~name = "..."` no cambia identidad, igualdad, ancla ni orden. Una configuración idéntica al predeterminado puede recibir sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro usa su presentación `~name` efectiva.
 
 El orden de declaración es canónico para enumerar cualquier `family`, pero solo forma parte de las relaciones `<`, `<=`, `>` y `>=` cuando aparece `ordered`.
 
@@ -91,6 +92,8 @@ Un dato asociado puede ser almacenado o calculado. El dato almacenado no admite 
 nombre : tipo [in dominio] [especificación-de-colección] [= predeterminado]
 ```
 
+Cada declaración de dato posee descriptor `Field`, ancla subordinada a la `family` y puede llevar un cuerpo inmediato formado exclusivamente por declaraciones `~...`. El cuerpo describe el dato para toda la familia; no describe el valor efectivo de un miembro concreto.
+
 El dato calculado reutiliza la forma general definida por D-037:
 
 ```text
@@ -99,7 +102,7 @@ nombre [: tipo] := expresión
 
 La anotación de tipo de un dato calculado es opcional. Si se omite, el compilador debe inferir un único tipo estático; si no puede hacerlo, la declaración es inválida. Un dato calculado no admite `mut`, `in`, especificación de colección, predeterminado ni almacenamiento propio: su forma y su valor proceden de la expresión.
 
-Todos los miembros comparten exactamente ese esquema. El subbloque opcional de un miembro contiene únicamente asignaciones que sustituyen los valores predeterminados de datos almacenados; no puede declarar datos nuevos, omitir el nombre del dato asignado, modificar su tipo, dominio o especificación de colección ni asignar un dato calculado.
+Todos los miembros comparten exactamente ese esquema. El subbloque opcional de un miembro contiene metadatos del propio miembro al comienzo y, después, únicamente asignaciones que sustituyen los valores predeterminados de datos almacenados. Una asignación de miembro no declara un dato nuevo, no posee ancla ni puede llevar metadata-body; tampoco puede modificar tipo, dominio o colección ni asignar un dato calculado.
 
 Para cada dato de cada miembro, el valor se obtiene en este orden:
 
@@ -111,12 +114,15 @@ Por tanto, un miembro puede omitir un dato almacenado siempre que su valor prede
 
 Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Los predeterminados y las asignaciones de miembro deben ser expresiones estáticas cerradas conforme a D-066. Los datos calculados también se evalúan estáticamente por miembro y deben ser puros, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
 
-En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los datos asociados, almacenados o calculados:
+En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los datos asociados declarados, almacenados o calculados:
 
 - Son inmutables.
-- No poseen identidad ni ciclo de vida propios.
+- Poseen descriptor `Field`, ancla subordinada `family::...::dato` y pueden tener metadatos.
+- No poseen ciclo de vida runtime independiente.
 - Se consultan como propiedades del valor de familia, por ejemplo `terrain.movementCost`.
 - No alteran la identidad ni la igualdad del miembro: siguen dependiendo de la familia nominal y el nombre del miembro.
+
+La sobrescritura de un dato en un miembro es solo un valor efectivo del descriptor de la familia: no tiene ancla ni metadatos propios.
 
 ### Datos asociados como clave de colección
 

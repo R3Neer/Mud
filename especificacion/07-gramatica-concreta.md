@@ -63,6 +63,7 @@ decisions:
   - D-086
   - D-087
   - D-088
+  - D-091
 ---
 
 # 07. Gramática concreta
@@ -191,6 +192,25 @@ numbers := a * b, d, c / a
 ```
 
 El dominio de un cálculo actúa como contrato. Una posible salida exterior produce warning y comprobación de transición; una salida necesariamente exterior produce error.
+
+## `family`
+
+Los datos asociados declarados directamente en una `family` pueden llevar un cuerpo de metadatos igual que un campo o componente:
+
+```mud
+family Terrain {
+    movementCost: Nat = 1 {
+        ~summary = "Coste base"
+    }
+
+    Plain,
+    Mountain {
+        movementCost = 4
+    }
+}
+```
+
+El cuerpo unido a `movementCost: ...` contiene exclusivamente declaraciones `~...` y describe el descriptor del dato para toda la `family`. La asignación `movementCost = 4` dentro de `Mountain` es solo una sobrescritura de valor y no admite cuerpo ni metadatos propios.
 
 ## Uniones de tipos y flechas exteriores
 

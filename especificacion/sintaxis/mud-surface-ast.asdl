@@ -231,10 +231,12 @@ module MUDSurface {
 
     family_data_decl = StoredFamilyDataDecl(field_name name,
                                             value_shape shape,
-                                            expr? default_value)
+                                            expr? default_value,
+                                            metadata_assignment* metadata)
                      | CalculatedFamilyDataDecl(field_name name,
                                                 derived_value_shape? shape,
-                                                expr value)
+                                                expr value,
+                                                metadata_assignment* metadata)
         attributes (source_origin origin)
 
     family_member = FamilyMember(member_name name,

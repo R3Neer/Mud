@@ -14,6 +14,7 @@ affects:
 
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
+- Modificada por: [[ADR-091-identidad-de-datos-family-y-anclas-de-metadatos|D-091]].
 
 ## Contexto
 
@@ -63,7 +64,7 @@ Un elemento puede poseer metadatos propios únicamente cuando satisface conjunta
 4. el metadato describe al elemento completo y no una ocurrencia sintáctica accidental;
 5. su existencia no depende de una ejecución concreta.
 
-Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, unidades, campos almacenados/calculados/públicos, componentes de alias y participantes `for`/`on`/`given`.
+Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, datos almacenados/calculados declarados por una `family`, unidades, campos almacenados/calculados/públicos, componentes de alias y participantes `for`/`on`/`given`. Un dato de `family` usa descriptor `Field`; una sobrescritura del dato dentro de un miembro no crea descriptor ni propietario metadata-bearing.
 
 No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
 
@@ -204,7 +205,7 @@ Los descriptores `Field` exponen:
 
 Un miembro heredado conserva el ancla, descriptor y metadatos del elemento que lo declaró. No se fabrican copias metadata-bearing por cada descendiente.
 
-Campos y componentes pueden llevar inmediatamente un cuerpo que contenga solo declaraciones `~...`. El cuerpo pertenece al descriptor, no al valor del campo o componente. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
+Campos, componentes y datos declarados por una `family` pueden llevar inmediatamente un cuerpo que contenga solo declaraciones `~...`. El cuerpo pertenece al descriptor, no al valor del campo o componente. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
 
 ### Descriptor `Metadata`
 
@@ -212,6 +213,7 @@ Un valor `Metadata` expone al menos:
 
 ```text
 ~identifier  : Name
+~anchor      : Anchor
 ~type        : Type
 ~domain      : Domain
 ~cardinality : Cardinality
@@ -220,7 +222,9 @@ Un valor `Metadata` expone al menos:
 ~calculated  : Bool
 ```
 
-Las propiedades intrínsecas no se convierten en `Metadata`. Los nombres intrínsecos y estándar reservados no pueden ser ocultados por un metadato de usuario.
+Su ancla concatena la ancla del propietario y `~identifier`, por ejemplo `thing::game.Person::health~summary`. Los datos declarados por una `family` son propietarios `Field`, por lo que no requieren una variante adicional de `~owner`.
+
+Las propiedades intrínsecas no se convierten en `Metadata` ni reciben ancla de metadata. Los nombres intrínsecos y estándar reservados no pueden ser ocultados por un metadato de usuario. `Metadata` es terminal: aunque posea ancla pública, no puede tener metadatos propios.
 
 ### Colecciones y diccionarios
 

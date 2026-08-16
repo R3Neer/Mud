@@ -54,7 +54,8 @@ module MUDResolved {
                                      resolved_expr? value)
         attributes (source_span origin)
 
-    resolved_metadata = ResolvedMetadata(symbol_id owner,
+    resolved_metadata = ResolvedMetadata(anchor identity,
+                                         symbol_id owner,
                                          metadata_kind kind,
                                          resolved_type type,
                                          metadata_evaluation evaluation,

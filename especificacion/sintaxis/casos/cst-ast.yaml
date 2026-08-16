@@ -1712,3 +1712,18 @@ cases:
   semantic_expectations:
   - selection-binding-visible-to-expression-block-locals-and-result
   produces_ast: true
+- id: family-data-metadata
+  category: family
+  source: "family Terrain {\n    movementCost: Nat = 1 {\n        ~summary = \"Coste base\"\n    }\n\n    Plain,\n    Mountain { movementCost = 4 }\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFamilyDataDecl(movementCost, metadata=[StoredMetadataAssignment(summary)])
+  normalizations:
+  - family-data-metadata-to-owner
+  produces_ast: true
+- id: family-data-override-metadata-invalid
+  category: validation-before-ast
+  source: "family Terrain {\n    movementCost: Nat = 1\n    Plain,\n    Mountain {\n        movementCost = 4 { ~summary = \"No permitido\" }\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - family-data-override-metadata-not-allowed
+  produces_ast: false
