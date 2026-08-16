@@ -12,8 +12,8 @@ affects:
 ---
 # ADR-076 — Unidades nombradas, prefijos y escritura adyacente
 
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
-- Responde parcialmente: [[notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054]].
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]].
+- Cierra junto con D-089: [[notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054]].
 
 ## Decisión
 
@@ -71,7 +71,7 @@ Las unidades prefijadas se elaboran estructuralmente y no reciben anclas adicion
 
 ### Adyacencia y formato
 
-El léxico acepta una unidad inmediatamente después del literal numérico:
+El clasificador contextual de D-089 acepta una unidad inmediatamente después del literal numérico, sin exigir al scanner base conocer el catálogo:
 
 ```mud
 3m
@@ -87,7 +87,7 @@ La forma canónica inserta exactamente un espacio después del número y conserv
 r0.1 m
 ```
 
-El resaltador reconoce número y unidad como tokens distintos aun sin espacio. La edición inteligente y el formateador insertan el espacio; el mero resaltado nunca modifica el archivo.
+La vista contextual reconoce número y unidad como tokens distintos aun sin espacio; el tokenizado base permanece independiente del catálogo. La edición inteligente y el formateador insertan el espacio; el mero resaltado nunca modifica el archivo.
 
 Las cantidades con unidades pueden ser miembros de colecciones. Las declaraciones de unidad como valores de primera clase quedan fuera de MUD 1.0.
 

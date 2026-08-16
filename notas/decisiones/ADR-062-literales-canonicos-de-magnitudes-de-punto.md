@@ -12,14 +12,14 @@ affects:
 ---
 # ADR-062 — Literales canónicos de magnitudes de punto
 
-- Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
+- Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] y [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]]
 - Amplía: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Responde parcialmente: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
+- Cerrada conjuntamente por esta decisión y [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]]: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad
 
 ## Contexto
 
-La propiedad `format` ya determina cómo se representa una magnitud de punto. La gramática reservaba `POINT_LITERAL`, pero no fijaba si el formato era solo de salida ni cómo reconstruir un punto cuando omitía precisión, coincidía con el formato de otro tipo o describía un valor fuera del dominio.
+El metadato `~format` ya determina cómo se representa una magnitud de punto. La gramática reservaba `POINT_LITERAL`, pero no fijaba si el formato era solo de salida ni cómo reconstruir un punto cuando omitía precisión, coincidía con el formato de otro tipo o describía un valor fuera del dominio.
 
 ## Decisión
 
@@ -29,9 +29,9 @@ La propiedad `format` ya determina cómo se representa una magnitud de punto. La
 
 La selección por tipo ocurre antes de interpretar el formato. Por tanto, dos magnitudes pueden producir la misma secuencia visible sin colisionar cuando el contexto determina una de ellas.
 
-### Magnitud con `format`
+### Magnitud con `~format`
 
-Cuando el tipo esperado declara `format`, el literal debe coincidir exactamente con la representación canónica que ese formato produciría. Debe contener:
+Cuando el tipo esperado declara `~format`, el literal debe coincidir exactamente con la representación canónica que ese formato produciría. Debe contener:
 
 - todos los fragmentos fijos;
 - todos los componentes, en el orden declarado;
@@ -40,7 +40,7 @@ Cuando el tipo esperado declara `format`, el literal debe coincidir exactamente 
 
 No se aceptan escrituras alternativas aunque produzcan los mismos componentes. Por ejemplo, si el formato canónico produce `07:05:00`, `7:05:00` no es el mismo literal.
 
-Un `format` de punto debe ser estáticamente invertible: sus fragmentos y huecos deben permitir reconstruir un único punto. Una declaración cuyo formato no tenga una inversión unívoca es inválida. Esta obligación restringe el uso de expresiones arbitrarias dentro del `format` de una magnitud de punto, aunque esas expresiones sean renderizables en una plantilla `Text` ordinaria.
+Un `~format` de punto debe ser estáticamente invertible: sus fragmentos y huecos deben permitir reconstruir un único punto. Una declaración cuyo formato no tenga una inversión unívoca es inválida. Esta obligación restringe el uso de expresiones arbitrarias dentro del `~format` de una magnitud de punto, aunque esas expresiones sean renderizables en una plantilla `Text` ordinaria.
 
 La comprobación canónica equivale a:
 
@@ -55,9 +55,9 @@ Todo componente de precisión inferior a la menor unidad representada por el for
 
 La omisión no redondea ni conserva información implícita.
 
-### Magnitud sin `format`
+### Magnitud sin `~format`
 
-Cuando el tipo esperado no declara `format`, su literal usa la sintaxis ordinaria de cantidad y debe escribir una unidad compatible habilitada para la magnitud subyacente. La cantidad se interpreta como la coordenada completa del punto respecto de su origen canónico.
+Cuando el tipo esperado no declara `~format`, su literal usa la sintaxis ordinaria de cantidad y debe escribir una unidad compatible habilitada para la magnitud subyacente. La cantidad se interpreta como la coordenada completa del punto respecto de su origen canónico.
 
 ### Dominio
 
@@ -69,8 +69,8 @@ La normalización cíclica continúa aplicándose a las operaciones runtime seg�
 
 ## Consecuencias
 
-- `format` es simultáneamente la representación canónica y, cuando existe, la forma fuente del tipo de punto.
-- El lexer conserva `POINT_LITERAL` como token contextual, pero el análisis requiere el tipo esperado y la declaración de magnitud resuelta.
+- `~format` es simultáneamente la representación canónica y, cuando existe, la forma fuente del tipo de punto.
+- `POINT_LITERAL` es una clasificación contextual de D-089 sobre el span fuente; el scanner base no requiere el tipo esperado ni la declaración de magnitud resuelta.
 - Los formatos de punto tienen una restricción de invertibilidad que no afecta a las plantillas `Text` generales.
 - Las colisiones entre formatos se resuelven por el tipo esperado, no por prioridad léxica global.
 - La precisión no escrita tiene un valor definido y reproducible.
@@ -80,7 +80,7 @@ La normalización cíclica continúa aplicándose a las operaciones runtime seg�
 
 ```mud
 magnitude TimeOfDay point over Time in [0..86_400) cycle {
-    format = "{hour:2}:{minute:2}:{second:2}"
+    ~format = "{hour:2}:{minute:2}:{second:2}"
 }
 
 opening: TimeOfDay = 07:05:00
@@ -109,5 +109,5 @@ created: Timestamp = 90 second
 4. Resolución de formatos coincidentes mediante tipos esperados distintos.
 5. Rechazo sin tipo esperado o con tipo ambiguo.
 6. Rechazo estático de formatos no invertibles.
-7. Literal con unidad para una magnitud sin `format`.
+7. Literal con unidad para una magnitud sin `~format`.
 8. Rechazo de coordenadas fuera de dominios lineales y cíclicos.

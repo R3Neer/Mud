@@ -159,7 +159,7 @@ lexical_forms:
     - lexical-element
     - eof
   lexical-element:
-    rhs: "horizontal-space\n      | newline\n      | comment\n      | multiline-text-literal\n      | text-literal\n      | rumber-literal\n      | exact-number-literal\n      | point-form\n      | reserved-word\n      | identifier\n      | operator-or-delimiter\n      | unit-form"
+    rhs: "horizontal-space\n      | newline\n      | comment\n      | multiline-text-literal\n      | text-literal\n      | rumber-literal\n      | exact-number-literal\n      | reserved-word\n      | identifier\n      | operator-or-delimiter"
     references:
     - horizontal-space
     - newline
@@ -168,11 +168,9 @@ lexical_forms:
     - text-literal
     - rumber-literal
     - exact-number-literal
-    - point-form
     - reserved-word
     - identifier
     - operator-or-delimiter
-    - unit-form
   bom:
     rhs: '? U+FEFF, únicamente como primer carácter ?'
     references: []
@@ -372,12 +370,6 @@ lexical_forms:
     - digit
   ascii-letter:
     rhs: "\"A\" | \"B\" | \"C\" | \"D\" | \"E\" | \"F\" | \"G\"\n      | \"H\" | \"I\" | \"J\" | \"K\" | \"L\" | \"M\" | \"N\"\n      | \"O\" | \"P\" | \"Q\" | \"R\" | \"S\" | \"T\" | \"U\"\n      | \"V\" | \"W\" | \"X\" | \"Y\" | \"Z\"\n      | \"a\" | \"b\" | \"c\" | \"d\" | \"e\" | \"f\" | \"g\"\n      | \"h\" | \"i\" | \"j\" | \"k\" | \"l\" | \"m\" | \"n\"\n      | \"o\" | \"p\" | \"q\" | \"r\" | \"s\" | \"t\" | \"u\"\n      | \"v\" | \"w\" | \"x\" | \"y\" | \"z\""
-    references: []
-  unit-form:
-    rhs: '? forma Unicode de unidad habilitada por una declaración magnitude ?'
-    references: []
-  point-form:
-    rhs: '? forma canónica contextual de D-062 para el tipo de punto esperado ?'
     references: []
   operator-or-delimiter:
     rhs: "operator-token\n      | brace-token\n      | parenthesis-token\n      | bracket-token\n      | punctuation-token"
