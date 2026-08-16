@@ -1744,3 +1744,10 @@ cases:
   expected_diagnostics:
   - metadata-property-not-supported-by-static-receiver
   produces_ast: true
+- id: duplicate-decision-branch-canonical-selector
+  category: resolution-after-ast
+  source: "thing PolicyHolder {\n    policy: Nat --> Text = value < 10 --> \"low\", value < 10 --> \"alsoLow\"\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - duplicate-decision-branch-key
+  produces_ast: true

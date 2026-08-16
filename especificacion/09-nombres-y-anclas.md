@@ -222,7 +222,7 @@ Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada 
 > [!rule] MUD-NAME-006 — Sin ancla pública de rama
 > Una rama de diccionario funcional no introduce símbolo anclado, nombre público ni propietario de metadatos. Su identidad persistente es la del diccionario que la contiene.
 
-El AST resuelto conserva para cada rama una `decision_branch_key` local al diccionario. Para una rama ordinaria, la clave contiene la forma canónica del selector resuelto y un índice de colisión entre ramas con el mismo selector canónico. El índice solo garantiza unicidad dentro de esa representación resuelta y no constituye identidad persistente. `_` usa una clave `FallbackBranchKey` distinta. El ordinal fuente se conserva por separado porque participa en `FirstMatch`, pero tampoco se convierte en ancla.
+El AST resuelto conserva para cada rama una `decision_branch_key` local al diccionario. Para una rama ordinaria, la clave es la forma canónica del selector resuelto. Dos ramas ordinarias con la misma forma canónica dentro del mismo diccionario son inválidas: compartirían la misma clave estructural local. `_` usa una clave `FallbackBranchKey` distinta y única. El ordinal fuente se conserva por separado porque participa en `FirstMatch`, pero tampoco se convierte en ancla.
 
 Las operaciones de tooling que requieran una referencia persistente deben dirigirse al diccionario propietario y expresar después la edición estructural de su conjunto o secuencia de ramas. `CREATE`, `UPDATE`, `REMOVE` y `MOVE` no pueden tratar una rama como entidad global independiente.
 

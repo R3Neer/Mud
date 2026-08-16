@@ -16,7 +16,7 @@ module MUDResolved {
 
     decision_mode = FirstMatch | AllMatches
 
-    decision_branch_key = SelectorBranchKey(string canonical_selector, int duplicate_index)
+    decision_branch_key = SelectorBranchKey(string canonical_selector)
                         | FallbackBranchKey
 
     dictionary_set_operator = DictionaryUnion
