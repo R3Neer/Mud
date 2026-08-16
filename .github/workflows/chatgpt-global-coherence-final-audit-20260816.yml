@@ -118,7 +118,7 @@ jobs:
           forbid('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','check := A~for')
           forbid('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas.md','participants := Ping~for')
           need('especificacion/07-gramatica-concreta.md','`thing A` hace inválido `A~for`')
-          forbid('especificacion/08-sintaxis-abstracta.md','`MetadataSuffix`')
+          forbid('especificacion/08-sintaxis-abstracta.md','produce `MetadataAccessExpr` o `MetadataSuffix`')
           if 'MetadataSuffix' in r(surf): raise SystemExit('surface AST has MetadataSuffix')
 
           # Known stale wording must not survive anywhere in normative/spec/decision text.
