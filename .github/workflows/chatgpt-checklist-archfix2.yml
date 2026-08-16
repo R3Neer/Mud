@@ -1,0 +1,87 @@
+name: ChatGPT checklist architecture residue
+on:
+  push:
+    branches: [chatgpt-checklist-runner-archfix2]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-runner-archfix2
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-candidate
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with: {python-version: '3.13'}
+      - shell: pwsh
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.3'
+      - name: Verify base and apply
+        shell: pwsh
+        env: {EXPECTED_HEAD: 3c57d19db714020de842099d3b6ff1c9362ac2d8}
+        run: |
+          $ErrorActionPreference='Stop'
+          $h=(git -C target rev-parse HEAD).Trim()
+          if ($h -ne $env:EXPECTED_HEAD) { throw "base mismatch: $h" }
+          python control/.chatgpt/fix_arch_residue.py target
+          if ($LASTEXITCODE -ne 0) { throw 'fix failed' }
+      - name: Audit retired architecture terms
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          from pathlib import Path
+          root=Path('target')
+          offenders=[]
+          for top in ('especificacion','notas'):
+              for p in (root/top).rglob('*'):
+                  if not p.is_file() or p.suffix not in {'.md','.yaml','.yml','.asdl','.py'}: continue
+                  rel=p.relative_to(root).as_posix()
+                  text=p.read_text(encoding='utf-8')
+                  for n,line in enumerate(text.splitlines(),1):
+                      if 'AST resuelto' in line or 'mud-resolved-ast' in line:
+                          if rel=='notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado.md':
+                              continue
+                          offenders.append(f'{rel}:{n}:{line}')
+          if offenders:
+              print('\n'.join(offenders))
+              raise SystemExit('active retired architecture references remain')
+          print('ARCH_RESIDUE_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'architecture residue audit failed' }
+      - name: Validate
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference='Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decisions' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'questions' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff' }
+          $paths=@(git status --porcelain=v1 --untracked-files=all | ForEach-Object {$_.Substring(3)})
+          if ($paths.Count -ne 1 -or $paths[0] -ne 'especificacion/08-sintaxis-abstracta.md') { throw "unexpected surface: $paths" }
+      - name: Commit
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git commit -m 'fix(spec): retira referencia residual a AST resuelto'
+          if ($LASTEXITCODE -ne 0) { throw 'commit failed' }
+          git push origin HEAD:chatgpt-checklist-candidate
+          if ($LASTEXITCODE -ne 0) { throw 'push failed' }
