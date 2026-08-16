@@ -30,3 +30,11 @@ create B
 ```
 
 `create` no admite bloque, categoría, antecesoras ni contenido declarativo. La definición canónica contiene todas las propiedades, restricciones, predeterminados y antecesoras. La activación solo las incorpora a la proyección efectiva.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-054`.

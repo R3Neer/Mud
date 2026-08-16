@@ -18,3 +18,11 @@ superseded-by: []
 Estado: **cerrada** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
 Todo resultado distinto de `accepted`, incluido un `after` falso, restaura exactamente el estado estable anterior y no publica mensajes ni efectos externos.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-042`.

@@ -20,3 +20,11 @@ Estado: **cerrada**.
 Decisión: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
 Las aristas declaradas se conservan en el almacenamiento. La proyección efectiva atraviesa antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos. El descendiente conserva sus propiedades propias, pierde temporalmente lo heredado desde el nodo destruido y recupera la estructura original al recrearlo.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-021`.

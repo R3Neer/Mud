@@ -24,3 +24,11 @@ Decisión vigente: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacio
 `A` posee una única definición canónica de primer nivel y es resoluble antes de estar activa. `create A` solo solicita su activación. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A` ni modifica sus antecesoras.
 
 Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `on` continúan coordinados con Q-005.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-054`.

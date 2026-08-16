@@ -22,3 +22,11 @@ Estado: **cerrada**.
 Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
 Todo ciclo de especialización directa es inválido. La relación semántica `is` es un orden parcial.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-015`.

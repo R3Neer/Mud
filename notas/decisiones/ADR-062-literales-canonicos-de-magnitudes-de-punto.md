@@ -14,7 +14,7 @@ affects:
 
 - Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
 - Amplía: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Cierra: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
+- Responde parcialmente: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
 - Documentos afectados: léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad
 
 ## Contexto

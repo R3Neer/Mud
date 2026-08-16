@@ -23,3 +23,11 @@ Si una representación de alias contiene una colección de `thing`, decidir si p
 Sí. Un componente de alias no admite `mut` exterior, pero su especificación de colección puede declarar `[mut]`. Esa capacidad permite modificar las `thing` contenidas directamente sin volver reemplazable la colección ni actualizable el componente. No se propaga implícitamente a través de aliases o contenedores anidados.
 
 La decisión queda incorporada en [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]] y en la gramática concreta.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-031`, `aliases estructurales, capacidades y gramática concreta`.

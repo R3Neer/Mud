@@ -19,3 +19,11 @@ superseded-by: []
 Estado: **cerrada** mediante [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] y [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
 Toda `thing` se define estáticamente y puede activarse mediante `start with` o `create Nombre`. `destroy` suspende su identidad canónica sin borrar ancla, descriptor, aristas ni carga; una activación posterior restaura la misma declaración.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-021`, `D-054`.

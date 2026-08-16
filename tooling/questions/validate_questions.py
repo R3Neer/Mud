@@ -28,6 +28,8 @@ CLOSED_FIELD = re.compile(r"^closed:(?: (\d{4}-\d{2}-\d{2}))?$", re.MULTILINE)
 INDEX_LINK = re.compile(r"\[\[[^|\]]+\|(Q-\d{3}) —")
 SPEC_QUESTION = re.compile(r"^  - (Q-\d{3})$", re.MULTILINE)
 QUESTION_LINK = re.compile(r"\[\[(notas/preguntas/Q-[^|\]#]+)")
+CRITERION_ENTRY = re.compile(r"^- (C\d+):\s+\S.*$", re.MULTILINE)
+EVIDENCE_ENTRY = re.compile(r"^- (C\d+):\s+\S.*$", re.MULTILINE)
 
 ACTIVE_STATES = {"abierta", "parcialmente-decidida"}
 RESOLVED_STATES = {
@@ -196,6 +198,49 @@ def main() -> int:
                     errors.append(
                         f"Fecha de cierre inválida en {path.relative_to(ROOT)}: {closed_value}"
                     )
+        if question_state == "cerrada":
+            criterion_match = re.search(
+                r"^## Criterio de cierre\s*$([\s\S]*?)(?=^## |\Z)",
+                text,
+                re.MULTILINE,
+            )
+            evidence_match = re.search(
+                r"^## Evidencia de cierre\s*$([\s\S]*?)(?=^## |\Z)",
+                text,
+                re.MULTILINE,
+            )
+            if criterion_match is None:
+                errors.append(f"Pregunta cerrada sin criterios identificados: {path.relative_to(ROOT)}")
+            if evidence_match is None:
+                errors.append(f"Pregunta cerrada sin evidencia de cierre: {path.relative_to(ROOT)}")
+            if criterion_match is not None and evidence_match is not None:
+                criteria = CRITERION_ENTRY.findall(criterion_match.group(1))
+                evidence = EVIDENCE_ENTRY.findall(evidence_match.group(1))
+                criterion_counts = Counter(criteria)
+                evidence_counts = Counter(evidence)
+                if not criteria:
+                    errors.append(f"Pregunta cerrada sin entradas Cn: {path.relative_to(ROOT)}")
+                duplicated_criteria = sorted(k for k, v in criterion_counts.items() if v != 1)
+                duplicated_evidence = sorted(k for k, v in evidence_counts.items() if v != 1)
+                if duplicated_criteria:
+                    errors.append(
+                        f"Criterios duplicados en {path.relative_to(ROOT)}: {', '.join(duplicated_criteria)}"
+                    )
+                if duplicated_evidence:
+                    errors.append(
+                        f"Evidencia duplicada en {path.relative_to(ROOT)}: {', '.join(duplicated_evidence)}"
+                    )
+                missing_evidence = sorted(set(criteria) - set(evidence))
+                unknown_evidence = sorted(set(evidence) - set(criteria))
+                if missing_evidence:
+                    errors.append(
+                        f"Criterios sin evidencia en {path.relative_to(ROOT)}: {', '.join(missing_evidence)}"
+                    )
+                if unknown_evidence:
+                    errors.append(
+                        f"Evidencia para criterios inexistentes en {path.relative_to(ROOT)}: {', '.join(unknown_evidence)}"
+                    )
+
         if priority is not None and heading is not None:
             questions[question_id] = Question(
                 path=path,

@@ -23,3 +23,11 @@ La evidencia histórica puede recuperarse en Git:
 - `0d39195`: auditoría completa de cobertura de la especificación inicial.
 - `095d115`: retirada de la especificación inicial después de su migración.
 - `5ce7ee8`: consolidación final de la auditoría junto a la instantánea en el archivo histórico antes de eliminarlas del árbol vigente.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: sección `Resolución` de esta pregunta.

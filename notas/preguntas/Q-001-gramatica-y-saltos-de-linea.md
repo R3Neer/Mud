@@ -22,3 +22,11 @@ Estado: **cerrada** mediante [[notas/decisiones/ADR-050-comentarios-terminadores
 Una instrucción termina mediante `;` o salto de línea. El salto continúa cuando el prefijo todavía no puede formar una unidad sintáctica completa pero admite una continuación válida; la sangría no interviene.
 
 La sintaxis completa vive en `especificacion/gramatica/`; [[especificacion/07-gramatica-concreta]] fija precedencia, prefijos abiertos y distinciones contextuales. La recuperación de errores puede variar entre implementaciones, pero nunca amplía el lenguaje aceptado.
+
+## Criterio de cierre
+
+- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+
+## Evidencia de cierre
+
+- C1: `D-050`, `D-056`, `D-057`.

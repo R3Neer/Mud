@@ -10,7 +10,7 @@ status: activo
 
 Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
 
-Hay 40 preguntas activas: 18 abiertas y 22 parcialmente decididas.
+Hay 43 preguntas activas: 19 abiertas y 24 parcialmente decididas.
 
 Prioridades:
 
@@ -50,6 +50,7 @@ Prioridades:
 | [[Q-051-identidad-y-seleccion-de-un-look|Q-051 — Identidad y selección de un `look`]] | Parcialmente decidida |
 | [[Q-052-entrega-de-message|Q-052 — Entrega de `message`]] | Parcialmente decidida |
 | [[Q-059-observacion-de-resultados-de-accion-en-tests|Q-059 — Observación de resultados de acción en tests]] | Abierta |
+| [[Q-060-catalogo-reflectivo-de-typekind|Q-060 — Catálogo reflectivo de `TypeKind`]] | Abierta |
 
 ## P2 — Producto y operación
 
@@ -70,6 +71,8 @@ Prioridades:
 | [[Q-038-compatibilidad-entre-versiones-del-lenguaje|Q-038 — Compatibilidad entre versiones del lenguaje]] | Abierta |
 | [[Q-039-explicacion-suficiente|Q-039 — Explicación suficiente]] | Abierta |
 | [[Q-040-amenazas-y-permisos|Q-040 — Amenazas y permisos]] | Abierta |
+| [[Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054 — Catálogo y resolución léxica de unidades y prefijos]] | Parcialmente decidida |
+| [[Q-055-literales-de-magnitudes-de-punto|Q-055 — Literales de magnitudes de punto]] | Parcialmente decidida |
 | [[Q-056-forma-normalizada-y-recursion-de-aliases|Q-056 — Forma normalizada y recursión de aliases]] | Parcialmente decidida |
 | [[Q-058-evaluacion-portable-de-rumber|Q-058 — Evaluación portable de `Rum`]] | Abierta |
 

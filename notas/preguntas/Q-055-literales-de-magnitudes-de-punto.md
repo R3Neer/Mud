@@ -3,14 +3,15 @@ id: Q-055
 title: Literales de magnitudes de punto
 priority: P2
 opened: 2026-07-29
-resolved: true
-closed: 2026-07-29
+resolved:
+closed:
 decisions:
   - D-061
   - D-062
 affects:
   - especificacion/06-lexico.md
   - especificacion/07-gramatica-concreta.md
+  - especificacion/gramatica/mud-lexico.ebnf
 superseded-by: []
 ---
 
@@ -18,33 +19,36 @@ superseded-by: []
 
 ## Pregunta
 
-¿La propiedad `format` de una magnitud de punto define también la forma de sus literales fuente y, si es así, cómo se resuelven la inversión, la precisión omitida, las colisiones y el dominio?
-
-## Contexto
-
-D-061 definió la representación de magnitudes de punto y la extracción de sus componentes, pero dejó sin cerrar si una representación como `12:30:00` podía volver a convertirse en un valor fuente mediante `POINT_LITERAL`.
+¿Cómo puede `~format` definir simultáneamente la representación canónica y una forma literal fuente directa sin exigir que el scanner inicial conozca ya el tipo esperado y la declaración de magnitud resuelta?
 
 ## Ya decidido
 
-D-061 fija:
+D-062 fija que:
 
-- la sintaxis de plantilla usada por `format`;
-- el significado de los componentes contextuales;
-- la representación numérica de cada hueco;
-- la extracción de componentes respecto del origen canónico.
-
-## Resolución
-
-[[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]] cierra la pregunta:
-
-- un tipo de punto con `format` admite como literal únicamente su representación canónica exacta;
+- una magnitud de punto con `~format` admite como literal su representación canónica exacta;
 - el tipo esperado debe seleccionar unívocamente la magnitud;
 - el formato debe ser estáticamente invertible;
-- toda precisión inferior no representada toma valor cero;
-- sin `format` se usa una cantidad ordinaria con una unidad compatible;
+- la precisión inferior omitida toma valor cero;
+- sin `~format` se usa una cantidad ordinaria con unidad compatible;
 - el valor reconstruido debe pertenecer al dominio declarado;
-- un dominio cíclico no normaliza literales fuera de rango.
+- un dominio cíclico no normaliza literales fuente fuera de rango.
+
+También está aceptado que `~format` **sí** define sintaxis fuente directa: no se sustituirá por un literal textual delimitado obligatorio.
+
+## Pendiente
+
+- C1: separar el scanner inicial de la clasificación contextual del literal de punto.
+- C2: definir cómo se conserva y delimita la secuencia fuente candidata hasta que exista un único tipo esperado.
+- C3: hacer determinista la prioridad entre una coincidencia de `~format` y las tokenizaciones ordinarias de la misma secuencia.
+- C4: incorporar la arquitectura resultante a léxico, gramática/CST y conformidad sin introducir dependencia circular.
 
 ## Criterio de cierre
 
-Cumplido por D-062 y su incorporación al léxico y la gramática concreta.
+- C1: el scanner inicial puede ejecutarse sin consultar declaraciones de magnitud.
+- C2: una secuencia fuente puede reinterpretarse de forma reproducible cuando el tipo esperado identifica una única magnitud de punto.
+- C3: las colisiones con números, palabras, operadores y puntuación tienen una regla explícita.
+- C4: los artefactos mecánicos y casos de conformidad representan la misma frontera.
+
+## Resolución
+
+D-062 resolvió canonicalidad, inversión, precisión y dominio. Queda pendiente formalizar la arquitectura léxica contextual que permite usar directamente la salida de `~format` como literal fuente.

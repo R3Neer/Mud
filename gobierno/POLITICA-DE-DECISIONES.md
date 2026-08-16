@@ -76,6 +76,21 @@ Significado:
 parcial. Esas relaciones se explican en el ADR y, cuando resulte útil, mediante
 enlaces recíprocos.
 
+### Vigencia efectiva del cuerpo
+
+Un ADR con `status: vigente` debe poder leerse literalmente como descripción de
+la decisión actual dentro de su alcance. Cuando una decisión posterior modifica
+solo parte de un ADR vigente, el mismo cambio editorial debe retirar o reescribir
+en el ADR anterior las reglas que hayan dejado de aplicarse y conservar una nota
+de procedencia hacia la decisión modificadora. El historial de la redacción
+anterior pertenece a Git y no se mantiene como semántica afirmativa dentro de un
+ADR vigente.
+
+Cuando una decisión posterior sustituye todo el alcance, no se reescribe el ADR
+anterior como si siempre hubiera dicho otra cosa: se aplica `status: sustituida`
+con `superseded-by` recíproco. `retirada` se reserva para alcance que deja de
+aplicarse sin una regla sustituta.
+
 ## Estados
 
 Estados permitidos:

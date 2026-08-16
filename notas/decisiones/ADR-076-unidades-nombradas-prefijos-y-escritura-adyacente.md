@@ -5,13 +5,15 @@ status: vigente
 date: 2026-08-03
 supersedes: []
 superseded-by: []
-questions: []
+questions:
+  - "Q-054"
 affects:
   - "magnitudes, unidades, léxico, nombres, anclas y tooling de edición"
 ---
 # ADR-076 — Unidades nombradas, prefijos y escritura adyacente
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
+- Responde parcialmente: [[notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054]].
 
 ## Decisión
 

@@ -94,6 +94,26 @@ Y contiene, cuando proceda:
 
 Una pregunta parcialmente decidida no repite como pendiente lo ya resuelto. La sección `Pendiente` debe permitir reconocer objetivamente cuándo puede cerrarse.
 
+### Criterios y evidencia de cierre
+
+Los criterios de cierre que se usen para declarar una pregunta resuelta llevan
+identificadores locales `C1`, `C2`, ... y describen condiciones comprobables, no
+la mera existencia de una decisión enlazada. Una pregunta puede conservar texto
+explicativo adicional, pero el conjunto de criterios identificados constituye la
+lista que debe quedar satisfecha para cerrarla.
+
+Una pregunta `resolved: true` contiene además `## Evidencia de cierre`. Por cada
+criterio existe exactamente una entrada con el mismo identificador que cita la
+evidencia concreta: decisiones, reglas normativas, artefactos mecánicos, casos de
+conformidad o un descarte explícito. El validador comprueba la correspondencia
+estructural entre criterios y evidencia; la revisión semántica humana continúa
+siendo responsable de comprobar que esa evidencia demuestra realmente el
+criterio.
+
+Las preguntas históricas cerradas se migran a esta estructura cuando se adopta
+esta política; una evidencia generada durante la migración no exime de revisar su
+suficiencia cuando el alcance vuelva a tocarse.
+
 ## Apertura
 
 Antes de crear una pregunta se comprueba que:
@@ -110,11 +130,12 @@ La nueva pregunta se añade al índice activo y al frontmatter `questions` de ca
 
 Una pregunta se cierra cuando:
 
-1. Una decisión o evidencia identificada responde todo su alcance.
-2. Se actualizan los documentos normativos y técnicos afectados.
-3. Se retira de `notas/preguntas/README.md`.
-4. Se retira del frontmatter `questions` y de los callouts abiertos de la especificación.
-5. Su archivo conserva la respuesta, la fecha de cierre y los enlaces de procedencia.
+1. Todos sus criterios `C1`, `C2`, ... tienen evidencia identificada y la revisión semántica confirma que esa evidencia responde el criterio.
+2. El conjunto de criterios cubre todo el alcance de la pregunta; un ADR enlazado por sí solo no constituye cierre.
+3. Se actualizan los documentos normativos y técnicos afectados.
+4. Se retira de `notas/preguntas/README.md`.
+5. Se retira del frontmatter `questions` y de los callouts abiertos de la especificación.
+6. Su archivo conserva la respuesta, la fecha de cierre, los criterios, la evidencia y los enlaces de procedencia.
 
 Cerrar no elimina ni recicla el archivo. Las referencias históricas pueden seguir enlazándolo, pero no deben describirlo como pendiente.
 
@@ -129,6 +150,9 @@ Antes de publicar una unidad se verifica:
   preguntas activas según `resolved`;
 - que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
 - que no existan estados parciales sin una enumeración explícita de lo pendiente.
+- que toda pregunta cerrada tenga criterios `C1`, `C2`, ... y una evidencia exactamente correspondiente a cada criterio;
+- que ninguna entrada de evidencia invoque un criterio inexistente;
+- que la revisión de cierre no confunda un enlace a ADR con evidencia suficiente por sí misma.
 
 El índice activo se regenera desde los metadatos y después se valida desde la
 raíz:
