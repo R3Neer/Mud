@@ -2,9 +2,14 @@ from pathlib import Path
 
 p = Path('especificacion/sintaxis/mud-syntax-kinds.yaml')
 text = p.read_text(encoding='utf-8')
-for line in ('      | point-form\n', '      | unit-form\n', '    - point-form\n', '    - unit-form\n'):
+# `rhs` es una cadena YAML con escapes literales \n; `references` usa líneas reales.
+for fragment in ('      | point-form\\n', '      | unit-form\\n'):
+    if fragment not in text:
+        raise SystemExit(f'missing escaped syntax-kinds fragment: {fragment!r}')
+    text = text.replace(fragment, '', 1)
+for line in ('    - point-form\n', '    - unit-form\n'):
     if line not in text:
-        raise SystemExit(f'missing syntax-kinds line: {line!r}')
+        raise SystemExit(f'missing syntax-kinds reference: {line!r}')
     text = text.replace(line, '', 1)
 for block in (
     "  unit-form:\n    rhs: '? forma Unicode de unidad habilitada por una declaración magnitude ?'\n    references: []\n",
