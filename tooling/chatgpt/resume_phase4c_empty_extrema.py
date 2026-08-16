@@ -19,7 +19,6 @@ def replace_once(path: str, old: str, new: str) -> None:
     write(path, text.replace(old, new, 1))
 
 
-# D-093 records the semantic reversal explicitly instead of silently rewriting D-047.
 d93 = '''---
 id: D-093
 title: "Extremos vacíos como ausencia tipada"
@@ -34,7 +33,7 @@ affects:
 # ADR-093 — Extremos vacíos como ausencia tipada
 
 - Modifica: [[ADR-047-cuantificadores-e-iteracion-finita|D-047]].
-- Alinea con: [[ADR-039-colecciones-diccionarios-y-operadores-conjuntistas|D-039]] y [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]].
+- Alinea con: [[ADR-039-colecciones-y-diccionarios|D-039]] y [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]].
 
 ## Contexto
 
@@ -80,7 +79,6 @@ if path.exists():
     raise SystemExit('D-093 already exists')
 path.write_text(d93, encoding='utf-8', newline='\n')
 
-# Keep D-047 literally current and point to the modifying decision.
 path = 'notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita.md'
 replace_once(
     path,
@@ -94,13 +92,8 @@ replace_once(
 )
 replace_once(path, '2. Error de agregación extrema vacía.\n', '2. `empty` y cardinalidad opcional en agregación extrema vacía.\n')
 
-# Normative chapter: make the runtime/type boundary explicit next to quantifier semantics.
 path = 'especificacion/07-gramatica-concreta.md'
-replace_once(
-    path,
-    '  - D-092\n',
-    '  - D-092\n  - D-093\n',
-)
+replace_once(path, '  - D-092\n', '  - D-092\n  - D-093\n')
 needle = '''Una selección devuelve directamente las ocurrencias aceptadas y conserva multiplicidad, unicidad y orden demostrables. Su predicado sigue siendo puro y determinista.
 '''
 addition = '''Una selección devuelve directamente las ocurrencias aceptadas y conserva multiplicidad, unicidad y orden demostrables. Su predicado sigue siendo puro y determinista.
@@ -109,7 +102,6 @@ Sobre cero iteraciones, `forall` produce `true`, `exists` produce `false`, `coun
 '''
 replace_once(path, needle, addition)
 
-# Conformance examples focus on semantic expectations; surface AST remains QuantifierExpr.
 path = 'especificacion/sintaxis/casos/cst-ast.yaml'
 text = read(path)
 if 'id: min-empty-source' in text:
