@@ -31,6 +31,7 @@ Un participante ocupa un rol semántico desempeñado por uno o varios valores. D
 Un `given` es un valor suministrado como parámetro auxiliar; no ocupa un rol semántico aunque su tipo también pudiera aparecer en `for`.
 
 Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilidad exterior ni capacidad interior. Puede declarar un predeterminado estático cerrado conforme a D-063.
+ Su tipo usa la forma general de tipos, incluidos productos y diccionarios; la ausencia de capacidad de escritura se valida sobre todo el árbol de tipo, no mediante una subgramática reducida.
 
 D-025 fija las cabeceras:
 

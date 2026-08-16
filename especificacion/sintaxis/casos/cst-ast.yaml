@@ -66,7 +66,9 @@ cases:
   category: participant
   source: "rule HasEnough for owner: Person\ngiven amount: Money [1 ordered] = 1 {\n    owner.balance >= amount\n}\n"
   cst_root: MudFileSyntax
-  ast: GivenDecl(amount, ReadonlyCollectionSpec([1..1], ordered))
+  ast: GivenDecl(amount, type=TypeExpr(Money [1..1 ordered]))
+  normalizations:
+  - validate-given-type-readonly-recursively
   produces_ast: true
 - id: for-domain
   category: participant
@@ -1775,3 +1777,32 @@ cases:
   - written-to-produces-conversion-expr
   - right-literal-contextually-constructs-PlayerName
   produces_ast: true
+- id: given-exact-dictionary
+  category: participant
+  source: "rule AcceptsLookup given lookup: Key -> Value [*] {\n    true\n}\n"
+  cst_root: MudFileSyntax
+  ast: GivenDecl(lookup, type=TypeExpr(ExactDictionaryType(Key, Value, [*])))
+  normalizations:
+  - given-reuses-complete-type-expression
+  semantic_expectations:
+  - given-is-readonly-dictionary-value
+  produces_ast: true
+- id: given-functional-dictionary
+  category: participant
+  source: "rule AcceptsPolicy given policy: Input --> Output [ordered] {\n    true\n}\n"
+  cst_root: MudFileSyntax
+  ast: GivenDecl(policy, type=TypeExpr(DecisionDictionaryType(Input, Output, FirstMatch)))
+  normalizations:
+  - given-reuses-complete-type-expression
+  semantic_expectations:
+  - given-is-readonly-dictionary-value
+  produces_ast: true
+- id: given-nested-mut-invalid
+  category: validation-before-ast
+  source: "rule RejectsCapability given payload: (Nat [mut], Text) {\n    true\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - given-type-carries-mut-capability
+  semantic_expectations:
+  - mut-rejection-recurses-through-product-type
+  produces_ast: false

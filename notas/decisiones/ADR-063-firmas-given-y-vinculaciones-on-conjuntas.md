@@ -49,6 +49,8 @@ given
 
 Un `given` no admite mutabilidad exterior ni capacidad interior `mut`. Si una acción necesita escribir la colección suministrada o el estado de una `thing` recibida, ese valor constituye un sujeto de la operación y debe declararse mediante `for`.
 
+El tipo de un `given` usa la forma general `type-expression`, incluidos productos y diccionarios exactos o funcionales. La prohibición de capacidad interior se aplica recursivamente a todo el tipo: cualquier modificador de colección `mut` dentro de un producto, valor de diccionario, colección anidada u otra subforma hace inválida la declaración. No se mantiene una gramática paralela de tipos readonly.
+
 El predeterminado:
 
 - Es una expresión estática cerrada, pura y determinista.
