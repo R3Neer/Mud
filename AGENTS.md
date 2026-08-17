@@ -41,11 +41,18 @@ La promoción desde material didáctico hasta norma se rige por `gobierno/CICLO-
 
 La especificación no debe contener ejercicios, pistas ni referencias al proceso personal de aprendizaje. Cuando el autor indique que una parte está revisada, se debe realizar la pasada de publicación antes de marcarla vigente.
 
-## Patches descargables
+## Cambios remotos desde ChatGPT
 
-Cuando el usuario solicite expresamente un patch descargable, o cuando el entorno no permita modificar directamente el repositorio y los cambios deban ser aplicados localmente por el usuario, debe leerse y seguirse `gobierno/USO-DE-REPO-PATCHER.md`.
+Cuando el entorno permita editar directamente el repositorio mediante GitHub, una rama, una pull request o un checkout escribible, se prefiere un flujo Git normal con candidata aislada, validaciones, revisión exhaustiva del diff, commits atómicos y publicación por fast-forward.
 
-Esta regla no se aplica cuando el agente puede editar directamente el repositorio mediante Codex, un checkout escribible, GitHub, una rama o una pull request.
+Si una candidata falla en una capa concreta, debe corregirse esa capa y repetirse la revisión desde el punto afectado. Si `main` cambia durante el trabajo, no se fuerza la referencia: se inspecciona el nuevo estado y se reconstruye la candidata sobre la nueva base.
+
+## Patches descargables y RepoPatcher
+
+RepoPatcher no es el método preferente para cambios remotos desde ChatGPT. Su estado actual es experimental y queda reservado a paquetes descargables, aplicación local controlada o entornos donde no exista acceso directo escribible al repositorio.
+
+Cuando el usuario solicite expresamente un patch descargable basado en RepoPatcher, debe leerse `gobierno/USO-DE-REPO-PATCHER.md` y seguirse su contrato técnico.
+
 ## Preguntas
 
 La apertura, actualización, división y cierre de preguntas se rige por `gobierno/POLITICA-DE-PREGUNTAS.md`.
