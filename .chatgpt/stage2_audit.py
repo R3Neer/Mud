@@ -12,6 +12,13 @@ if (ROOT/'especificacion/sintaxis/mud-resolved-ast.asdl').exists(): raise System
 d93=text('notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado.md')
 for x in ['HIR nominal','no puede contener','mud-nominal-hir.asdl','IR semántico']:
     if x not in d93: raise SystemExit(f'D093 missing {x}')
-for p in ['especificacion/08-sintaxis-abstracta.md','especificacion/09-nombres-y-anclas.md','especificacion/ir/README.md']:
-    if 'HIR nominal' not in text(p): raise SystemExit(f'{p} missing HIR nominal boundary')
+checks={
+ 'especificacion/08-sintaxis-abstracta.md':['HIR nominal','mud-nominal-hir.asdl'],
+ 'especificacion/09-nombres-y-anclas.md':['HIR nominal','mud-nominal-hir.asdl'],
+ 'especificacion/ir/README.md':['mud-nominal-hir.asdl','mud-semantic-ir.asdl'],
+}
+for p, required in checks.items():
+    txt=text(p)
+    for x in required:
+        if x not in txt: raise SystemExit(f'{p} missing {x}')
 print('STAGE2_AUDIT_OK')
