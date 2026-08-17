@@ -17,7 +17,7 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 - [[CICLO-DOCUMENTAL|Ciclo documental]]
 - [[POLITICA-DE-DECISIONES|Política de decisiones]]
 - [[POLITICA-DE-PREGUNTAS|Política de preguntas]]
-- [[USO-DE-REPO-PATCHER|Uso de RepoPatcher]]
+- [[USO-DE-REPO-PATCHER|RepoPatcher experimental para paquetes descargables y aplicación local]]
 - [[notas/decisiones/README|Índice generado de decisiones]]
 
 ## Separación de autoridades
