@@ -86,6 +86,7 @@ def validate(root: Path) -> list[Problem]:
     kinds_path = root / "especificacion/sintaxis/mud-syntax-kinds.yaml"
     coverage_path = root / "especificacion/sintaxis/cobertura-sintactica.yaml"
     asdl_path = root / "especificacion/sintaxis/mud-surface-ast.asdl"
+    nominal_hir_path = root / "especificacion/ir/mud-nominal-hir.asdl"
     semantic_ir_path = root / "especificacion/ir/mud-semantic-ir.asdl"
     retired_resolved_ast_path = root / "especificacion/sintaxis/mud-resolved-ast.asdl"
 
@@ -106,7 +107,12 @@ def validate(root: Path) -> list[Problem]:
     symbols = asdl_symbols(asdl_path)
     asdl_defined, asdl_used = asdl_types_and_uses(asdl_path)
     if retired_resolved_ast_path.exists():
-        problems.append(Problem(str(retired_resolved_ast_path), "contrato retirado: solo existe AST superficial; use IR semántico"))
+        problems.append(Problem(str(retired_resolved_ast_path), "contrato retirado: use HIR nominal + IR semántico"))
+    if not nominal_hir_path.exists():
+        problems.append(Problem(str(nominal_hir_path), "falta el contrato del HIR nominal"))
+        nominal_hir_defined, nominal_hir_used = set(), set()
+    else:
+        nominal_hir_defined, nominal_hir_used = asdl_types_and_uses(nominal_hir_path)
     if not semantic_ir_path.exists():
         problems.append(Problem(str(semantic_ir_path), "falta el contrato del IR semántico"))
         semantic_ir_defined, semantic_ir_used = set(), set()
@@ -153,6 +159,15 @@ def validate(root: Path) -> list[Problem]:
 
     for unknown in sorted(asdl_used - asdl_defined - {"int", "string", "identifier"}):
         problems.append(Problem(str(asdl_path), f"tipo ASDL no definido: {unknown}"))
+    for unknown in sorted(nominal_hir_used - nominal_hir_defined - {"int", "string", "identifier"}):
+        problems.append(Problem(str(nominal_hir_path), f"tipo ASDL no definido: {unknown}"))
+    if nominal_hir_path.exists():
+        hir_text = nominal_hir_path.read_text(encoding="utf-8")
+        if "module MUDNominalHIR" not in hir_text:
+            problems.append(Problem(str(nominal_hir_path), "falta module MUDNominalHIR"))
+        for fragment in ["semantic_type", "effective_domain", "collection_shape", "effective_cardinality", "termination_evidence", "ConversionExpr"]:
+            if fragment in hir_text:
+                problems.append(Problem(str(nominal_hir_path), f"el HIR nominal contiene elaboración prohibida: {fragment}"))
     for unknown in sorted(semantic_ir_used - semantic_ir_defined - {"int", "string", "identifier"}):
         problems.append(Problem(str(semantic_ir_path), f"tipo ASDL no definido: {unknown}"))
     if semantic_ir_path.exists() and "module MUDSemanticIR" not in semantic_ir_path.read_text(encoding="utf-8"):

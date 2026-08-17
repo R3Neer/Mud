@@ -95,9 +95,11 @@ Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaració
 ## Etapas
 
 1. El AST superficial aporta nombres y procedencia.
-2. La resolución nominal crea símbolos y resuelve declaraciones cuya categoría ya es conocida.
-3. El sistema de tipos resuelve uniones, dominios y referencias dependientes del tipo.
-4. La resolución de miembros completa accesos, llamadas y abreviaturas contextuales.
+2. La resolución nominal crea símbolos, scopes, bindings y anclas y los materializa en el HIR nominal de `ir/mud-nominal-hir.asdl`.
+3. El sistema de tipos consume AST superficial + HIR nominal y resuelve uniones, dominios y referencias dependientes del tipo.
+4. La elaboración completa accesos, llamadas, abreviaturas contextuales y demás significado dependiente de tipos en el IR semántico.
+
+El HIR nominal no contiene tipos efectivos, dominios efectivos, cardinalidades ni pruebas de terminación. Es el contrato entre resolución de nombres y tipado, no una copia resuelta del AST superficial.
 
 La norma se expresa mediante entornos y conjuntos de candidatos. Una implementación puede usar scope graphs si reproduce exactamente prioridades, candidatos, ambigüedades y rechazos.
 

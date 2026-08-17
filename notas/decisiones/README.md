@@ -106,7 +106,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-090 | vigente | 2026-08-16 | [[notas/decisiones/ADR-090-ramas-funcionales-sin-ancla-publica|Ramas funcionales sin ancla pública]] |
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados|Datos de family como descriptores anclados]] |
 | D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Disponibilidad estática de propiedades reflectivas]] |
-| D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial único e IR semántico elaborado]] |
+| D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial, HIR nominal e IR semántico elaborado]] |
 | D-094 | vigente | 2026-08-16 | [[notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados|Anclas terminales de metadatos configurados]] |
 | D-095 | vigente | 2026-08-16 | [[notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
 

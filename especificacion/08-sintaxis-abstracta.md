@@ -39,6 +39,7 @@ decisions:
   - D-090
   - D-091
   - D-092
+  - D-093
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -49,7 +50,7 @@ Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva
 
 El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
 
-La resolución nominal opera sobre este AST sin fabricar un segundo árbol normativo: produce símbolos, bindings, anclas y un grafo nominal parcial. Tras tipado y elaboración, el contrato semántico vive en `ir/mud-semantic-ir.asdl`, donde aparecen tipos efectivos, dominios, cardinalidades, dependencias y otras formas elaboradas.
+La resolución nominal opera sobre este AST y produce el HIR normativo `ir/mud-nominal-hir.asdl`, que materializa símbolos, scopes, bindings, anclas y un grafo nominal parcial sin duplicar la sintaxis de fuente. Tras tipado y elaboración, el contrato semántico vive en `ir/mud-semantic-ir.asdl`, donde aparecen tipos efectivos, dominios, cardinalidades, dependencias y otras formas elaboradas.
 
 ## Cadena de representaciones
 
@@ -59,13 +60,17 @@ texto fuente
 → CST sin pérdidas
 → validación sintáctica contextual
 → AST superficial normalizado
-→ resolución nominal: símbolos + bindings + grafo parcial
+→ resolución nominal
+→ HIR nominal: símbolos + scopes + bindings + anclas + grafo parcial
 → tipado y elaboración
-→ IR semántico
+→ IR semántico tipado/elaborado
 ```
 
 > [!rule] MUD-AST-001 — Responsabilidad superficial
 > El AST superficial no contiene símbolos resueltos, anclas, tipos inferidos, efectos calculados ni decisiones que dependan de una declaración encontrada por nombre.
+
+> [!rule] MUD-AST-003 — Frontera del HIR nominal
+> El HIR nominal puede añadir identidad y resolución, pero no significado de tipos: contiene símbolos, scopes, bindings, anclas y aristas nominales. Tipos efectivos, dominios efectivos, cardinalidades, conversiones elaboradas y evidencia de terminación están prohibidos hasta el IR semántico.
 
 > [!rule] MUD-AST-002 — Normalización
 > Dos formas concretas declaradas equivalentes por este capítulo producen la misma forma AST, salvo su procedencia.
