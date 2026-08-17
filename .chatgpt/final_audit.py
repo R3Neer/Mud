@@ -52,8 +52,13 @@ for stale in ['Esta decisión no añade por simetría `~path` ni `~file`', 'no e
         forbid(path, stale)
 
 # 4. Construcción contextual de aliases.
-require('notas/decisiones/ADR-032-tipos-y-aliases.md', 'PlayerName', 'contexto', 'Text')
-for case_id in ['alias-contextual-basic-literal', 'alias-no-implicit-conversion-from-typed-text']:
+require('notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal.md', 'PlayerName', 'construcción contextual', 'expresión ya tipada', 'ContextualAliasConstructionExpr')
+for case_id in [
+    'contextual-basic-alias-literal',
+    'typed-representation-does-not-implicitly-become-alias',
+    'explicit-representation-to-alias',
+    'contextual-alias-comparison-literal',
+]:
     if f'- id: {case_id}' not in cases:
         raise SystemExit(f'cst-ast.yaml: missing alias case {case_id}')
 
