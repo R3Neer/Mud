@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import re
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get("MUD_AUDIT_ROOT", Path(__file__).resolve().parents[1])).resolve()
 
 
 def read(rel: str) -> str:
