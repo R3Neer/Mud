@@ -16,7 +16,7 @@ normative: true
 
 - Estado general: **en preparación**
 - Versión objetivo inicial: **MUD 1.0**
-- Autoridad actual: los capítulos vigentes de este directorio y las decisiones vigentes enlazadas. El historial Git conserva la procedencia retirada, pero no tiene autoridad subsidiaria.
+- Autoridad actual: los capítulos con `status: vigente` y las decisiones vigentes enlazadas. Un archivo con `normative: true` pertenece a la superficie normativa, pero su `status` determina si el capítulo completo ya tiene autoridad consolidada. Los capítulos no vigentes pueden incorporar reglas respaldadas por decisiones vigentes, pero no las sustituyen ni cierran cuestiones abiertas. El historial Git conserva la procedencia retirada, pero no tiene autoridad subsidiaria.
 - Alcance: lenguaje MUD completo, su semántica de ejecución y los criterios de conformidad.
 
 Este directorio contendrá la especificación normativa de MUD. Su objetivo es que dos implementaciones independientes puedan:
@@ -37,12 +37,14 @@ Itinerario didáctico: [[aprendizaje/README|Aprendizaje de formalización de MUD
 
 ## Carácter normativo
 
-Cada contenido tendrá uno de estos estados:
+La superficie y el estado de publicación son ejes distintos. `normative: true` indica que el archivo está destinado a contener reglas de conformidad; no equivale por sí solo a aprobación. El ciclo `esqueleto → borrador → propuesta → en-revision → vigente` determina la autoridad del capítulo como unidad.
 
-- **Normativo**: define la conformidad de una implementación.
-- **Informativo**: explica una norma sin ampliarla.
-- **Propuesta**: texto todavía no aprobado.
-- **Abierto**: cuestión sin semántica definitiva.
+- **Capítulo vigente**: su texto normativo es autoridad consolidada.
+- **Capítulo no vigente**: puede transcribir o explicar contratos ya fijados por decisiones vigentes y artefactos mecánicos coherentes, pero el capítulo completo sigue en preparación y no puede introducir autoridad nueva por encima de esas fuentes.
+- **Contenido informativo**: explica una norma sin ampliarla.
+- **Cuestión abierta**: carece de semántica definitiva hasta que el proceso de decisiones la cierre o la excluya explícitamente del perfil aplicable.
+
+Una contradicción entre un capítulo no vigente y una decisión vigente se considera un defecto documental; no una nueva elección semántica. Una contradicción entre prosa normativa y un artefacto mecánico normativo también es un defecto y debe corregirse, conforme a MUD-EDIT-001.
 
 Las palabras se usarán con este sentido:
 

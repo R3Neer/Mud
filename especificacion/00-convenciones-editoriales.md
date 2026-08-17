@@ -63,6 +63,10 @@ Estados:
 - `vigente`
 - `sustituido`
 
+`normative: true` clasifica el archivo dentro de la superficie normativa, pero no adelanta su estado de publicación. Solo `status: vigente` concede autoridad consolidada al capítulo como unidad. Antes de ese estado, el texto puede incorporar contratos ya cerrados por decisiones vigentes y artefactos mecánicos coherentes, pero no puede modificar esos contratos ni resolver por sí solo una cuestión abierta.
+
+Si un capítulo no vigente contradice una decisión vigente, la contradicción es un defecto editorial que debe corregirse antes de promover el capítulo. No se interpreta como una sustitución tácita de la decisión. La relación entre prosa y artefactos mecánicos normativos sigue regida por MUD-EDIT-001: una divergencia entre ambos es un defecto, no una regla de prioridad silenciosa.
+
 ## 3. Enlaces
 
 Los enlaces internos usarán preferentemente wikilinks:

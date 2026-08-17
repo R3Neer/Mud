@@ -79,6 +79,14 @@ esqueleto
 
 Un capítulo `vigente` puede contener cuestiones abiertas solo si la característica afectada queda marcada fuera de MUD 1.0 o si la cuestión no altera su significado.
 
+### Autoridad durante la promoción
+
+La ubicación en `especificacion/` y `normative: true` indican que un archivo pertenece a la superficie normativa, no que todo su contenido esté ya aprobado. La autoridad del capítulo como unidad aparece al alcanzar `status: vigente`.
+
+Antes de `vigente`, un capítulo puede recoger reglas que ya tengan autoridad por decisiones vigentes y por artefactos mecánicos normativos coherentes. Esa transcripción no concede al capítulo potestad para cambiar esas reglas, cerrar preguntas o introducir una semántica alternativa. Si diverge de una decisión vigente, existe un defecto documental que bloquea la promoción. Si prosa y artefacto mecánico divergen, se aplica la regla editorial MUD-EDIT-001: la divergencia debe resolverse explícitamente y ninguna de las dos superficies adquiere prioridad silenciosa.
+
+Por tanto, la promoción a `vigente` certifica el capítulo completo; no es el mecanismo que hace vigentes retroactivamente las decisiones que ya documentaba.
+
 ## Promoción de material
 
 El aprendizaje no se copia mecánicamente a la especificación. La promoción sigue estos pasos:
