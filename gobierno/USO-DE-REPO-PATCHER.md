@@ -1,6 +1,6 @@
 ---
 title: "Uso de repo-patcher"
-status: vigente
+status: obsoleto
 scope: "Entrega y validación de paquetes descargables"
 repo-patcher-version: "0.2.0"
 package-format: 1
@@ -8,6 +8,16 @@ audited-runtime-commit: "15a9c1f61cd154a5c8dfcfc6500f70f0e9e78c66"
 ---
 
 # Guía técnica autoritativa de `repo-patcher` 0.2.0
+
+## Estado actual
+
+RepoPatcher se conserva como experimento técnico y como mecanismo opcional para paquetes descargables o aplicación local controlada. No es el método preferente para realizar cambios remotos desde ChatGPT cuando existe acceso escribible al repositorio mediante GitHub, una rama, una pull request o un checkout.
+
+La experiencia práctica con cambios transversales de MUD ha mostrado que el flujo RepoPatcher añade fragilidad operacional desproporcionada —anclas textuales exactas, orden de transformaciones, empaquetado, plugins y transporte— sin aportar ventajas frente al flujo Git normal cuando ChatGPT ya puede escribir y revisar el repositorio directamente.
+
+Este documento sigue siendo la referencia técnica para entender y usar la implementación 0.2.0 mientras el experimento permanezca en el repositorio. Su estado `obsoleto` indica que no gobierna el camino preferente de cambio remoto; no significa que el runtime haya sido eliminado ni que todas sus operaciones sean defectuosas.
+
+Para cambios remotos desde ChatGPT se prefiere el procedimiento Git/GitHub descrito por las instrucciones de trabajo del repositorio: candidata aislada sobre un SHA exacto, validaciones, revisión exhaustiva del diff, commits atómicos, comprobación de concurrencia y publicación por fast-forward.
 
 ## 1. Autoridad y versión exacta
 
@@ -453,155 +463,21 @@ En caso de error intenta, por pasos independientes:
 6. restaurar los bytes del índice Git.
 
 La limpieza de directorios nuevos es conservadora: usa `rmdir` y no borra recursivamente un
-directorio que contenga elementos no atribuidos o bloqueados.
+directorio que contenga elementos no atribuidos o bloqueados por el sistema.
 
-Cada paso produce un diagnóstico. Si alguno falla, el error final enumera rutas en estado
-incierto y conserva por separado la causa primaria de la aplicación.
+La restauración es best effort por fase: una fase fallida no impide intentar las restantes.
+El informe de rollback distingue cada paso y muestra errores individuales.
 
-Fuentes: `repo_patcher/transaction.py::RepositoryTransaction`,
-`repo_patcher/transaction.py::FileSnapshot`,
-`repo_patcher/errors.py::RollbackReport` y
-`repo_patcher/errors.py::ApplyRollbackError`.
+## 7. Uso recomendado mientras siga disponible
 
-### Límite sobre archivos ignorados
+RepoPatcher debe usarse solo cuando el usuario quiera deliberadamente un paquete portable o cuando el entorno no permita modificar el repositorio de forma directa. En esos casos:
 
-La transacción registra que las rutas ignoradas preexistían y no las elimina como rutas
-nuevas. Sin embargo, no crea un snapshot general del contenido de todos los archivos
-ignorados. Si un generador o validador modifica directamente un archivo ignorado
-preexistente que no pasó por `PatchContext`, su contenido no está necesariamente restaurado.
+1. fija un SHA exacto de base;
+2. prefiere operaciones declarativas simples;
+3. evita plugins salvo que sean imprescindibles;
+4. ejecuta `package-info`, `explain`, `check` y `apply` sobre un checkout limpio;
+5. ejecuta los generadores y validadores del repositorio;
+6. inspecciona el diff resultante;
+7. conserva el paquete como artefacto reproducible, no como sustituto de la revisión Git.
 
-Por ello se mantiene la recomendación:
-
-```yaml
-compatibility:
-  clean_worktree: true
-```
-
-Y los generadores, validadores y plugins deben limitar sus escrituras a rutas controladas.
-
-## 7. Idempotencia y estados
-
-No existe una base de datos de paquetes aplicados. Un paquete se considera ya aplicado solo
-cuando el plan virtual produce `changed_paths() == []`.
-
-Consecuencias:
-
-- operaciones ya satisfechas pueden ser no-op;
-- un estado parcialmente aplicado puede completar las operaciones restantes;
-- una precondición incompatible produce conflicto;
-- `regex_replace` necesita aserciones o diseño adicional para ser idempotente;
-- un segundo `check` con código cero no prueba por sí mismo el no-op: hay que inspeccionar el
-  plan o usar `build_plan(...).context.changed_paths()`.
-
-Fuentes: `repo_patcher/context.py::changed_paths`, `is_already_applied` y
-`repo_patcher/engine.py::apply_plan`.
-
-## 8. Errores esperados
-
-Jerarquía pública:
-
-```text
-RepoPatcherError
-├── ManifestError
-├── CompatibilityError
-├── PatchConflictError
-├── CommandError
-└── ApplyRollbackError
-```
-
-`CommandError` conserva nombre, argv, código, stdout y stderr. `ApplyRollbackError` conserva
-el error primario y el informe de rollback.
-
-Fuente: `repo_patcher/errors.py`.
-
-## 9. Limitaciones relevantes
-
-- No existe sandbox de plugins.
-- Los campos desconocidos del manifiesto se ignoran.
-- `required_files` no valida por sí mismo que la ruta carezca de `..`.
-- `check` no ejecuta generadores ni validadores.
-- Un plan sin cambios no ejecuta generadores ni validadores durante `apply`.
-- El digest lógico de `package-info` no identifica los bytes exactos del ZIP.
-- El runtime vendorizado no incluye una suite de tests dentro de
-  `tooling/repo-patcher-runtime/`; las garantías deben apoyarse también en validaciones de
-  integración y en el workflow.
-- Los comandos externos pueden realizar acciones que no respeten el contrato; el rollback
-  es defensivo, no un sandbox.
-
-## 10. Validación CI de MUD
-
-El workflow debe ejecutar sobre un checkout desechable del SHA exacto:
-
-```text
-package-info
-explain [--trust-plugin]
-check [--trust-plugin]
-apply [--trust-plugin] --emit-diff ...
-git diff --check
-check [--trust-plugin]
-prueba semántica de changed_paths() == []
-```
-
-Para paquetes con plugin, el consentimiento viaja como booleano `trust_plugin`. Si el plugin
-está presente y el booleano es falso, el workflow debe abortar con un diagnóstico específico
-antes de cargarlo. Si es verdadero, `--trust-plugin` debe añadirse a `explain`, `check` y
-`apply`.
-
-El artifact debe registrar al menos:
-
-```text
-plugin_present
-plugin_authorized
-target_sha
-package_sha256
-```
-
-## 11. Lista de comprobación para generar paquetes
-
-### Manifiesto
-
-- [ ] `schema: 1`.
-- [ ] `id` y `title` no vacíos en la raíz.
-- [ ] `operations`, `plugin` o ambos.
-- [ ] `repository.names` y `repository.remotes` cuando proceda.
-- [ ] `compatibility.clean_worktree: true` salvo justificación explícita.
-- [ ] SHA exacto o antepasado requerido deliberadamente.
-- [ ] `required_files` esenciales.
-- [ ] Ningún campo conceptual que el runtime ignore.
-
-### Operaciones y plugins
-
-- [ ] Cada operación contiene una sola clave.
-- [ ] Reemplazos exactos con cardinalidad conocida.
-- [ ] Precondiciones para detectar estados parciales.
-- [ ] `regex_replace` diseñado explícitamente para idempotencia.
-- [ ] Plugin con firma `(ctx, manifest)` y sin escrituras directas.
-- [ ] Consentimiento explícito antes de validar un plugin.
-
-### Pruebas
-
-- [ ] `package-info`.
-- [ ] `explain`.
-- [ ] `check`.
-- [ ] `apply --emit-diff` sobre copia limpia.
-- [ ] Generadores y validadores realmente ejecutados.
-- [ ] `git diff --check`.
-- [ ] Revisión de `git status`, `git diff --stat` y diff completo.
-- [ ] Segunda planificación con `changed_paths() == []`.
-- [ ] Prueba de rollback con un fallo inyectado en una copia desechable.
-- [ ] Validación remota cuando el workflow esté disponible.
-
-## 12. Cambios principales respecto a la guía de 0.1.0
-
-- La versión auditada es 0.2.0.
-- El rollback usa `RepositoryTransaction`, no limpieza global mediante
-  `git reset --hard` y `git clean -fd`.
-- El rollback es diagnosticable y puede quedar parcialmente incompleto.
-- Se conserva el índice Git.
-- Se preservan archivos no rastreados no ignorados preexistentes.
-- Se eliminan únicamente rutas nuevas atribuidas, de manera conservadora.
-- `PatchContext` incorpora `original_bytes` para la transacción.
-- Los comandos externos informan a la transacción de rutas nuevas.
-- La guía deja de afirmar que el runtime vendorizado contiene los tests de 0.1.0.
-- El consentimiento de plugins se documenta también para CI y debe cubrir `explain`, `check`
-  y `apply`.
+No debe introducirse nueva infraestructura remota específica para RepoPatcher salvo que el experimento se reactive explícitamente.
