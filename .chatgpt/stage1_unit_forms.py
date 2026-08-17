@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import yaml
 
 ROOT = Path(os.environ.get('MUD_TARGET', Path(__file__).resolve().parents[1])).resolve()
 
@@ -42,15 +41,46 @@ t=one(t,'- C2: `D-089` y `MUD-LEX-015`.\n- C3: verificación de D-089 y reglas d
 wr(rel,t)
 
 rel='especificacion/sintaxis/casos/cst-ast.yaml'
-data=yaml.safe_load(rd(rel)); cases=data['cases']; ids={c.get('id') for c in cases}
-new_cases=[
- {'id':'unit-form-multispace-name','category':'validation-after-resolution','source':'magnitude Length {\n    root unit meter {\n        ~name = "long meter"\n        ~plural = "long meters"\n        ~abbreviation = "m"\n    }\n}\nthing Sample {\n    length: Length = 3 long meters\n}\n','cst_root':'MudFileSyntax','produces_ast':True,'semantic_expectations':['unit-form-may-cover-multiple-base-tokens','unit-form-resolves-to-meter']},
- {'id':'unit-form-all-digits-rejected','category':'validation-after-resolution','source':'magnitude Length {\n    root unit meter {\n        ~abbreviation = "123"\n    }\n}\n','cst_root':'MudFileSyntax','produces_ast':True,'expected_diagnostics':['unit-source-form-requires-alphabetic-character']},
- {'id':'unit-form-all-symbols-rejected','category':'validation-after-resolution','source':'magnitude Length {\n    root unit meter {\n        ~abbreviation = "/+"\n    }\n}\n','cst_root':'MudFileSyntax','produces_ast':True,'expected_diagnostics':['unit-source-form-requires-alphabetic-character']},
- {'id':'unit-form-keyword-rejected','category':'validation-after-resolution','source':'magnitude Length {\n    root unit meter {\n        ~name = "in"\n    }\n}\n','cst_root':'MudFileSyntax','produces_ast':True,'expected_diagnostics':['unit-source-form-reserved-word']},
- {'id':'unit-form-prefixed-collision-rejected','category':'validation-after-resolution','source':'magnitude Length {\n    root unit meter {\n        ~name = "meter"\n        ~prefixes = [kilo]\n    }\n    unit kilometer = 1000 meter {\n        ~name = "kilometer"\n    }\n}\n','cst_root':'MudFileSyntax','produces_ast':True,'expected_diagnostics':['duplicate-unit-source-form-after-prefix-expansion']},
-]
-for c in new_cases:
-    if c['id'] not in ids: cases.append(c)
-wr(rel,yaml.safe_dump(data,sort_keys=False,allow_unicode=True,width=120))
+t=rd(rel)
+if 'id: unit-form-multispace-name' not in t:
+    block=r'''
+- id: unit-form-multispace-name
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"long meter\"\n        ~plural = \"long meters\"\n        ~abbreviation = \"m\"\n    }\n}\nthing Sample {\n    length: Length = 3 long meters\n}\n"
+  cst_root: MudFileSyntax
+  semantic_expectations:
+  - unit-form-may-cover-multiple-base-tokens
+  - unit-form-resolves-to-meter
+  produces_ast: true
+- id: unit-form-all-digits-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"123\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unit-source-form-requires-alphabetic-character
+  produces_ast: true
+- id: unit-form-all-symbols-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"/+\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unit-source-form-requires-alphabetic-character
+  produces_ast: true
+- id: unit-form-keyword-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"in\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unit-source-form-reserved-word
+  produces_ast: true
+- id: unit-form-prefixed-collision-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"meter\"\n        ~prefixes = [kilo]\n    }\n    unit kilometer = 1000 meter {\n        ~name = \"kilometer\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - duplicate-unit-source-form-after-prefix-expansion
+  produces_ast: true
+'''
+    t=t.rstrip()+"\n"+block
+wr(rel,t)
 print('STAGE1_OK')
