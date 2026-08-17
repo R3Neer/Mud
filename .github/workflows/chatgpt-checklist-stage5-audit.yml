@@ -40,3 +40,5 @@ jobs:
         env:
           MUD_TARGET: ${{ github.workspace }}\target
         run: python control/.chatgpt/stage5_adr_audit.py
+
+# rerun after contextual-alias stage
