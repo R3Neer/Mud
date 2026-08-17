@@ -1,0 +1,37 @@
+module MUDNominalHIR {
+    source_span = SourceSpan(string file, int start_byte, int end_byte)
+    anchor = Anchor(string value)
+    scope_id = ScopeId(int value)
+
+    symbol_id = AnchoredSymbol(anchor value)
+              | LocalSymbol(anchor owner, string kind, string name, int ordinal)
+
+    surface_ref = SurfaceRef(source_span origin, string role)
+
+    nominal_project = NominalHIR(nominal_symbol* symbols,
+                                 nominal_scope* scopes,
+                                 resolved_reference* bindings,
+                                 nominal_edge* edges)
+
+    nominal_symbol = NominalSymbol(symbol_id identity,
+                                   symbol_id? owner,
+                                   string category,
+                                   string source_name,
+                                   scope_id scope,
+                                   surface_ref declaration)
+
+    nominal_scope = NominalScope(scope_id identity,
+                                 scope_id? parent,
+                                 symbol_id? owner,
+                                 scope_entry* entries)
+
+    scope_entry = ScopeEntry(string name, symbol_id symbol)
+
+    resolved_reference = ResolvedReference(surface_ref occurrence,
+                                           symbol_id target,
+                                           string role)
+
+    nominal_edge = Owns(symbol_id owner, symbol_id member)
+                 | Specializes(symbol_id derived, symbol_id base)
+                 | RefersTo(symbol_id source, symbol_id target)
+}
