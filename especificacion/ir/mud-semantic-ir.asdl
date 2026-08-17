@@ -158,6 +158,7 @@ module MUDSemanticIR {
                                        metadata_property metadata,
                                        semantic_type result_type)
                   | OperationExpr(string operator, semantic_expr* operands)
+                  | ContextualAliasConstructionExpr(semantic_expr literal, anchor target_alias)
                   | ConversionExpr(semantic_expr value, anchor target_type)
                   | TypeTestExpr(semantic_expr value,
                                  anchor tested_type,

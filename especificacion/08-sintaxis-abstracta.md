@@ -18,6 +18,7 @@ depends-on:
 questions:
   - Q-061
 decisions:
+  - D-032
   - D-095
   - D-070
   - D-071
@@ -351,6 +352,10 @@ Un componente estructural:
 Un campo derivado no posee carga asignable, puede declarar forma y capacidad interior y se recalcula desde su expresión. Una sobrescritura local solo puede dirigirse a un componente almacenado heredado y solo reemplaza su predeterminado.
 
 Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto. Por tanto, los miembros del alias solo quedan disponibles después de elaboración contextual o de una conversión nominal explícita.
+
+La misma regla se aplica a literales básicos. Si el contexto espera un alias nominal cuya representación admite el literal, la elaboración construye directamente ese alias sin introducir una conversión implícita general. Por ejemplo, con `alias PlayerName := Text`, `name: PlayerName = "Ada"` es válido. En cambio, una expresión que ya posee tipo `Text`, como una variable `rawName`, no cambia silenciosamente a `PlayerName`; requiere `rawName to PlayerName`.
+
+El IR semántico distingue ambas operaciones: `ContextualAliasConstructionExpr(literal, target_alias)` representa construcción dirigida por el tipo esperado y `ConversionExpr(value, target_type)` representa `to` escrito explícitamente. El AST superficial no añade un nodo de alias contextual porque todavía conserva el literal y el contexto que lo espera.
 
 ## Familias
 

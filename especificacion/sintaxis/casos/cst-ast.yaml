@@ -1859,3 +1859,26 @@ cases:
   expected_diagnostics:
   - metadata-descriptor-has-no-metadata-property
   produces_ast: true
+
+- id: contextual-basic-alias-literal
+  category: validation-after-resolution
+  source: "alias PlayerName := Text\nthing Person {\n    name: PlayerName = \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  semantic_expectations:
+  - elaborate-basic-literal-as-expected-nominal-alias
+  - semantic-ir-uses-contextual-alias-construction
+  produces_ast: true
+- id: typed-representation-does-not-implicitly-become-alias
+  category: validation-after-resolution
+  source: "alias PlayerName := Text\nthing Person {\n    rawName: Text = \"Ada\"\n    name: PlayerName = rawName\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - explicit-nominal-conversion-required
+  produces_ast: true
+- id: explicit-representation-to-alias
+  category: validation-after-resolution
+  source: "alias PlayerName := Text\nthing Person {\n    rawName: Text = \"Ada\"\n    name: PlayerName = rawName to PlayerName\n}\n"
+  cst_root: MudFileSyntax
+  semantic_expectations:
+  - semantic-ir-uses-explicit-conversion
+  produces_ast: true
