@@ -1805,3 +1805,40 @@ cases:
   - result-cardinality-0-or-1
   - empty-source-produces-empty
   produces_ast: true
+
+- id: unit-form-multispace-name
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"long meter\"\n        ~plural = \"long meters\"\n        ~abbreviation = \"m\"\n    }\n}\nthing Sample {\n    length: Length = 3 long meters\n}\n"
+  cst_root: MudFileSyntax
+  semantic_expectations:
+  - unit-form-may-cover-multiple-base-tokens
+  - unit-form-resolves-to-meter
+  produces_ast: true
+- id: unit-form-all-digits-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"123\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unit-source-form-requires-alphabetic-character
+  produces_ast: true
+- id: unit-form-all-symbols-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"/+\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unit-source-form-requires-alphabetic-character
+  produces_ast: true
+- id: unit-form-keyword-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"in\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - unit-source-form-keyword-collision
+  produces_ast: true
+- id: unit-form-prefixed-collision-rejected
+  category: validation-after-resolution
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"meter\"\n        ~prefixes = [kilo]\n    }\n    unit kilometer = 1000 meter {\n        ~name = \"kilometer\"\n    }\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - duplicate-unit-source-form-after-prefix-expansion
+  produces_ast: true

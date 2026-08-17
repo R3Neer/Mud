@@ -22,7 +22,7 @@ superseded-by: []
 
 ## Resolución
 
-D-076 fija catálogo, formas habilitadas, prefijos y adyacencia. D-089 separa el scanner base del clasificador contextual: `UNIT_FORM` se crea únicamente sobre el texto fuente cuando el catálogo semántico ya está resuelto. El tipo esperado restringe candidatos; sin él se exige unicidad global, las coincidencias de distinta longitud usan la forma completa más larga y un mismo span con varios candidatos sigue siendo ambiguo.
+D-076 fija catálogo, formas habilitadas, prefijos y adyacencia. D-089 separa el scanner base del clasificador contextual: `UNIT_FORM` se crea únicamente sobre el texto fuente cuando el catálogo semántico ya está resuelto. El tipo esperado restringe candidatos; sin él se exige unicidad global, las coincidencias de distinta longitud usan la forma completa más larga y un mismo span con varios candidatos sigue siendo ambiguo. `MUD-LEX-016` permite espacios en `~name`, `~plural` y `~abbreviation` cuando actúan como forma fuente, exige al menos un carácter alfabético y excluye cualquier palabra clave de MUD; `MUD-LEX-017` comprueba colisiones dentro de una magnitud después de expandir todas las combinaciones de prefijos permitidas.
 
 ## Criterio de cierre
 
@@ -33,5 +33,5 @@ D-076 fija catálogo, formas habilitadas, prefijos y adyacencia. D-089 separa el
 ## Evidencia de cierre
 
 - C1: `D-089`, `MUD-LEX-012` y `MUD-LEX-013`.
-- C2: `D-089` y `MUD-LEX-015`.
-- C3: verificación de D-089 y reglas de adyacencia de D-076/06-léxico.
+- C2: `D-089`, `MUD-LEX-015`, `MUD-LEX-016` y `MUD-LEX-017`.
+- C3: verificación de D-089 y reglas `MUD-LEX-015` a `MUD-LEX-017`, además de la adyacencia de D-076/06-léxico.

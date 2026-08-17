@@ -40,9 +40,13 @@ La obligación de invertibilidad de D-062 incluye por tanto la delimitación det
 
 ### Formas de unidad
 
-Las formas de unidad se clasifican después de conocer el catálogo semántico de magnitudes y unidades. El clasificador consulta el texto fuente directamente a partir de una posición en la que la gramática de cantidad admite una unidad. Puede producir `UNIT_FORM` para un identificador, `~name`, `~plural`, `~abbreviation` o forma prefijada habilitada.
+Las formas de unidad se clasifican después de conocer el catálogo semántico de magnitudes y unidades. El clasificador consulta el texto fuente directamente a partir de una posición en la que la gramática de cantidad admite una unidad. Puede producir `UNIT_FORM` para el identificador declarado, un `~name`, `~plural` o `~abbreviation` admisible, o una forma prefijada habilitada.
 
-Cuando existe un tipo o magnitud esperada, solo compiten las formas compatibles con ella. Sin tipo esperado, una forma únicamente es válida si el catálogo resuelto determina una unidad de manera unívoca. Dos candidatos semánticos distintos con la misma forma visible son ambiguos salvo cualificación admitida por la gramática.
+El identificador declarado conserva las reglas léxicas ordinarias de identificador de unidad. Los tres valores configurables `~name`, `~plural` y `~abbreviation` comparten, en cambio, el mismo criterio cuando participan como forma fuente: pueden contener espacios U+0020 y puntuación, pero deben contener al menos un carácter alfabético; por tanto no pueden estar formados íntegramente por cifras ni íntegramente por caracteres no alfabéticos. Una forma completa que coincida exactamente con una palabra clave de MUD es inválida como forma fuente. Estas restricciones afectan a su uso como sintaxis y no impiden conservar el mismo valor como presentación cuando no sea admisible como forma fuente.
+
+La validación se realiza sobre el cierre de formas habilitadas de cada magnitud, incluidas todas las combinaciones con prefijos permitidos. Dos unidades distintas de la misma magnitud no pueden producir la misma forma fuente, ni directamente ni después de aplicar un prefijo. Una colisión dentro de la magnitud es un error estático de la declaración y no se difiere al lugar de uso. Entre magnitudes distintas continúa aplicándose la desambiguación contextual descrita a continuación.
+
+Cuando existe un tipo o magnitud esperada, solo compiten las formas compatibles con ella. Sin tipo esperado, una forma únicamente es válida si el catálogo resuelto determina una unidad de manera unívoca. Dos candidatos semánticos distintos con la misma forma visible entre magnitudes distintas son ambiguos salvo cualificación admitida por la gramática.
 
 Si varias formas compatibles comparten prefijo, se elige la coincidencia canónica completa más larga. Dos candidatos distintos que consumen exactamente el mismo span continúan siendo ambiguos; el orden de declaración no desempata. La clasificación contextual puede cubrir varios tokens base y no concede significado léxico nuevo a esa secuencia fuera de una posición de unidad.
 
@@ -70,4 +74,7 @@ La CST sin pérdidas conserva los tokens base y el span fuente suficiente para r
 6. Una forma de unidad única se resuelve sin tipo esperado y una colisión exige contexto o cualificación.
 7. Coincidencias de unidad por prefijo usan la forma completa más larga sin depender del orden de declaración.
 8. `3m` y `3 m` clasifican la misma unidad y el formateador produce la forma canónica espaciada.
-9. CST y round-trip conservan exactamente el texto fuente anterior a la clasificación contextual.
+9. `~name`, `~plural` y `~abbreviation` aceptan espacios, pero una forma fuente íntegramente numérica o no alfabética se rechaza.
+10. Una forma fuente idéntica a una palabra clave de MUD se rechaza.
+11. Las colisiones entre unidades de la misma magnitud se detectan también después de expandir todos los prefijos habilitados.
+12. CST y round-trip conservan exactamente el texto fuente anterior a la clasificación contextual.

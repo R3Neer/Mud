@@ -135,6 +135,12 @@ La forma canónica inserta un espacio entre número y primera unidad. Esta norma
 > [!rule] MUD-LEX-015 — Determinismo de unidad
 > `UNIT_FORM` usa el catálogo semántico ya resuelto. El tipo esperado restringe candidatos; sin él la forma debe ser globalmente unívoca. Entre coincidencias compatibles de distinta longitud gana la forma completa más larga; dos candidatos distintos para el mismo span son ambiguos.
 
+> [!rule] MUD-LEX-016 — Admisibilidad de formas fuente configurables
+> El identificador declarado conserva la gramática ordinaria de identificador de unidad. Los valores no vacíos de `~name`, `~plural` y `~abbreviation` comparten un único criterio cuando participan como `UNIT_FORM`: pueden contener espacios U+0020 y puntuación, pero deben contener al menos un carácter alfabético y no pueden coincidir exactamente con una palabra clave de MUD. Un valor que no cumpla este contrato puede seguir siendo presentación, pero no se incorpora al catálogo de formas fuente.
+
+> [!rule] MUD-LEX-017 — Unicidad intramagnitud tras prefijos
+> Para cada magnitud, el conjunto de formas fuente de sus unidades se cierra bajo todas las combinaciones de prefijos habilitadas antes de comprobar unicidad. Dos unidades distintas no pueden generar la misma forma completa, directamente o por prefijado. La colisión es un error estático de la declaración de la magnitud y no se resuelve por orden de declaración ni por contexto de uso.
+
 La arquitectura concreta puede usar token lattice, re-tokenización localizada o parsing diferido. Esas estrategias no son observables siempre que reproduzcan las reglas anteriores y el round-trip de la CST.
 
 ## Comentarios

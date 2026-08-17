@@ -28,7 +28,9 @@ root unit meter {
 }
 ```
 
-Identificador, nombre, plural, abreviatura y formas prefijadas deben ser inequívocos dentro de una magnitud. Una colisión entre magnitudes se resuelve mediante el tipo esperado o cualificación como `Length.meter`; sin contexto suficiente es un error.
+El identificador declarado conserva las reglas ordinarias de identificador de unidad. `~name`, `~plural` y `~abbreviation` comparten el mismo criterio cuando se habilitan como formas fuente: pueden contener espacios U+0020 y puntuación, pero deben contener al menos un carácter alfabético; por tanto no pueden estar compuestos íntegramente por cifras ni íntegramente por caracteres no alfabéticos. Una forma completa que coincida exactamente con una palabra clave de MUD no es admisible como forma fuente, aunque el mismo valor pueda seguir usándose como presentación.
+
+La unicidad dentro de una magnitud se comprueba sobre identificador, nombre, plural, abreviatura y todas las formas obtenidas después de aplicar cada prefijo permitido. Dos unidades distintas de la misma magnitud no pueden generar la misma forma, ni directamente ni por prefijado. Una colisión entre magnitudes distintas se resuelve mediante el tipo esperado o cualificación como `Length.meter`; sin contexto suficiente es un error.
 
 La forma contextual por identificador es válida y el tooling puede sugerir una abreviatura inequívoca más breve. Una sobrescritura de `~name` idéntica al predeterminado recibe sugerencia de eliminación. Los miembros de `family` usan igualmente el metadato estándar `~name` sin alterar su identidad.
 
