@@ -65,7 +65,7 @@ jobs:
             'notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md': [('~abbreviation =','present'),('\n        abbreviation =','absent')],
             'notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos.md': [('~format =','present'),('\n    format =','absent')],
             'notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas.md': [('D-061 añade `anchor{...}` como forma contextual exclusiva','absent'),('D-087 retira `anchor{...}`','present'),('expression~anchor','present')],
-            'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md': [('puede omitirse','absent'),('debe declarar un identificador fuente explícito','present')],
+            'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md': [('El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse.','absent'),('debe declarar un identificador fuente explícito','present')],
             'notas/decisiones/ADR-037-campos-y-dominios-declarativos.md': [('omitir cardinalidad equivale a `[1]`','absent'),('campo ordinario llamado `name`','present')],
             'notas/decisiones/ADR-039-colecciones-y-diccionarios.md': [('`unique`, cuando se escribe, se aplica a los **valores asociados**','present'),('Leer una clave ausente produce `empty`','present')],
             'notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md': [('No existe la forma plana o mezclada','present')],
