@@ -48,7 +48,7 @@ jobs:
           from pathlib import Path
           checks = {
             'especificacion/README.md': [
-              'Solo `status: vigente` concede autoridad consolidada',
+              '**Capítulo vigente**: su texto normativo es autoridad consolidada',
               'no equivale por sí solo a aprobación',
               'no puede introducir autoridad nueva por encima de esas fuentes',
             ],
