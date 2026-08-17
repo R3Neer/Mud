@@ -68,7 +68,7 @@ rule PingHasNoForParticipants {
 }
 ```
 
-La regla de disponibilidad se aplica también al resto de propiedades reflectivas conforme al conjunto de propietarios de su contrato. Una propiedad cuyo resultado admita ausencia o colección vacía sigue distinguiendo esa ausencia de la inexistencia de la propiedad. En particular, `Metadata` admite su contrato intrínseco incluido `~anchor`, pero no admite `~metadata`: D-094 lo define como descriptor terminal.
+La regla de disponibilidad se aplica también al resto de propiedades reflectivas conforme al conjunto de propietarios de su contrato. Una propiedad cuyo resultado admita ausencia o colección vacía sigue distinguiendo esa ausencia de la inexistencia de la propiedad. En particular, `Metadata` admite su contrato intrínseco, incluidos `~anchor`, `~path` y `~file`, pero no admite `~metadata`: D-094 lo define como descriptor terminal.
 
 ## Consecuencias por fase
 

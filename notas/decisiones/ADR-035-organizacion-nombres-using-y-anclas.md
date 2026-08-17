@@ -66,9 +66,9 @@ El orden textual de archivos y declaraciones `using` no decide empates.
 
 Los identificadores son sensibles a mayúsculas. El catálogo de palabras reservadas no puede usarse como nombre de campo, componente, rol, `given`, variable local o declaración.
 
-D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`; y etiquetas como `name` o `prefixes` lo son dentro de las declaraciones que las definen.
+D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`. Los metadatos como `~name` o `~prefixes` usan la gramática general postfix `~`, no etiquetas contextuales especiales.
 
-`using`, `with`, `family`, `test`, `otherwise`, `ordered` y el tipo incorporado `Thing` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección. `name` es contextual dentro de un cuerpo de `thing` cuando aparece seguido de `=`; no queda reservado en los demás espacios nominales.
+`using`, `with`, `family`, `test`, `otherwise`, `ordered` y el tipo incorporado `Thing` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección. `name` no tiene una excepción sintáctica de cuerpo de `thing`: la presentación estándar se configura como `~name`, en un espacio distinto del de campos ordinarios.
 
 ### Nombres cualificados y anclas
 
@@ -99,7 +99,7 @@ La raíz incorporada usa el ancla reservada `thing::Thing` conforme a D-068.
 
 Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo path. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
 
-D-061 añade `anchor{...}` como forma contextual exclusiva de una plantilla `Text`. Produce la escritura canónica del ancla de una declaración o de un valor con identidad nominal anclada, sin convertir las declaraciones en valores ordinarios ni reservar `anchor` fuera de ese contexto.
+D-087 retira `anchor{...}`. El ancla canónica se obtiene mediante el acceso ordinario `expression~anchor` y una plantilla la interpola como cualquier otra expresión: `"{expression~anchor}"`.
 
 D-076 fija la identidad estable de cada unidad mediante el identificador `lowerCamel` obligatorio de su cabecera.
 
@@ -120,5 +120,5 @@ D-076 fija la identidad estable de cada unidad mediante el identificador `lowerC
 6. Uso ordinario de una palabra contextual fuera de su posición especial.
 7. Estabilidad de anclas.
 8. Separación entre `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
-9. Interpolación contextual de un ancla y uso ordinario de `anchor` fuera de plantillas.
+9. Lectura de un ancla mediante `~anchor` e interpolación mediante un hueco de expresión ordinario.
 10. Rechazo de un `using` posterior a una declaración de primer nivel.

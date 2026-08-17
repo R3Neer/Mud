@@ -96,13 +96,9 @@ La sugerencia conserva exactamente la vinculación y no se emite cuando el orden
 
 ### Receptores `for`
 
-Los roles `for` conservan sus reglas de nombre:
+Todo rol `for` tiene identificador fuente explícito, incluida cardinalidad `[1]`, conforme a D-087. La firma conserva el orden de declaración, pero ese orden no sustituye a la identidad estable del slot.
 
-- Un rol de cardinalidad exactamente `[1]` puede ser anónimo cuando la resolución del cuerpo es unívoca.
-- Un rol colectivo o exteriormente mutable debe tener nombre.
-- Un rol anónimo solo admite vinculación posicional.
-
-La forma de receptor multiparte nombrado continúa siendo exacta, exhaustiva y no mezclable con posiciones. Puede reordenar roles, pero el compilador sugiere el orden de declaración. Los receptores posicionales no pueden omitir roles.
+La forma de receptor multiparte nombrado continúa siendo exacta, exhaustiva y no mezclable con posiciones. Puede reordenar roles, pero el compilador sugiere el orden de declaración. La declaración de la firma nunca contiene participantes anónimos.
 
 ### Capacidad interior inútil
 
@@ -116,7 +112,7 @@ En un diccionario:
 - `[mut]` concede capacidad exclusivamente sobre valores `thing` materialmente asociados.
 - Nunca concede capacidad sobre las claves.
 - No atraviesa aliases ni contenedores anidados y no introduce mutabilidad profunda.
-- Una lectura de clave ausente puede producir el predeterminado ordinario, pero no concede capacidad interior sobre él como si existiera una asociación.
+- Una lectura de clave ausente produce `empty` con la forma declarada y no concede capacidad interior como si existiera una asociación.
 
 Cada nivel anidado conserva sus propias capacidades.
 

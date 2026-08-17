@@ -38,7 +38,8 @@ Tratarla como una variante de `action` confundiría ambas fronteras y haría nat
 ```mud
 test CounterIncreases {
     start with {
-        Counter
+        things { Counter }
+        rules { empty }
     }
 
     then Counter.value += 1
@@ -70,11 +71,7 @@ test-declaration
         "}"
 
 test-start-with
-    ::= "start" "with" "{"
-        [ declaration-reference
-          { "," declaration-reference }
-        ]
-        "}"
+    ::= start-with-declaration
 
 test-after-clause
     ::= "after" test-assertion
@@ -95,13 +92,9 @@ TestAssertion(condition, optionalDiagnostic)
 
 Cada ejecución de un test comienza con un mundo vacío, fresco y aislado. Su `start with` sustituye por completo al `start with` global del programa.
 
-El bloque local conserva la misma naturaleza declarativa que el global:
+El bloque local conserva la misma estructura declarativa que el global de D-085: contiene obligatoriamente las secciones `things { ... }` y `rules { ... }`. Cada una admite contribuciones estáticas de cero, una o varias identidades de su propia categoría mediante referencias, `empty`, colecciones de un nivel o `all` contextual. El orden no es observable y las identidades repetidas se deduplican.
 
-- Es un conjunto finito y no ordenado.
-- Contiene referencias a definiciones canónicas activables de `thing` y reglas.
-- Separa sus referencias mediante comas y no admite coma final.
-- No contiene instrucciones `create`, asignaciones ni otros efectos.
-- Rechaza referencias repetidas, ambiguas o no activables.
+No contiene instrucciones `create`, asignaciones ni otros efectos, y una contribución de categoría incorrecta o una colección anidada es inválida.
 
 Las declaraciones referenciadas se materializan conjuntamente con sus inicializadores canónicos. El mundo se valida y estabiliza antes de ejecutar el `then`.
 

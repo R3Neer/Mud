@@ -39,8 +39,8 @@ displayCost: Money := maintenanceCost
 - `=` introduce carga almacenada.
 - `:=` introduce una expresión calculada y pura.
 - `mut` concede mutabilidad exterior conforme a D-019.
-- Todo campo denota una colección conforme a D-026; omitir cardinalidad equivale a `[1]`.
-- Dentro de una `thing`, `name` designa la propiedad intrínseca fijada por D-068 y no puede declararse como campo ordinario.
+- Todo campo denota una colección conforme a D-026. En un campo almacenado inmutable con inicializador, una cardinalidad omitida se infiere de la forma exterior exacta del valor conforme a D-085; en un campo exteriormente mutable conserva `[1]`.
+- `~name` pertenece al espacio de metadatos de D-087. Un campo ordinario llamado `name` pertenece al espacio de miembros y no lo oculta.
 
 La forma concreta de un campo almacenado es:
 
@@ -48,11 +48,13 @@ La forma concreta de un campo almacenado es:
 [mut] nombre : tipo [in dominio] [especificación-de-colección] [= expresión-estática]
 ```
 
-El dominio precede a la especificación de colección. Un campo calculado usa exclusivamente:
+El dominio precede a la especificación de colección. Un campo calculado usa:
 
 ```text
-nombre [ : tipo ] := expresión
+nombre [ forma-derivada ] := expresión
 ```
+
+donde la forma derivada puede declarar tipo y, conforme a D-075, dominio, cardinalidad y modificadores de colección compatibles con el resultado.
 
 El `mut` exterior pertenece al lugar almacenado y por eso precede al nombre; no es un constructor ni un calificador del tipo. La forma `nombre: mut tipo` es inválida.
 
@@ -95,7 +97,7 @@ La semántica del tipo y las conversiones explícitas se aplican antes de compro
 - Campo fuera de dominio en un estado candidato: la resolución resulta `failed` y revierte.
 - Inicializador constante fuera de dominio: error estático.
 
-Los campos calculados también deben satisfacer el dominio de su tipo estático cuando se evalúan, aunque no puedan declarar una cláusula `in` adicional.
+Los campos calculados deben satisfacer tanto el dominio de su tipo estático como cualquier dominio `in` declarado en su forma derivada. Ese dominio puede ser explícito o derivarse conforme a D-075.
 
 ### Puntos de control
 
@@ -125,10 +127,10 @@ Compartir token no fusiona sus significados.
 
 1. Dominio constante y calculado.
 2. `given` fuera de dominio en regla y action.
-3. Campo almacenado fuera de dominio y rechazo de `in` sobre un campo calculado.
+3. Campo almacenado fuera de dominio y `in` válido sobre un campo calculado conforme a su forma derivada.
 4. Ciclo y dependencia estocástica inválidos.
 5. Campo calculado con tipo declarado, inferido y no inferible unívocamente.
-6. Rechazo de `mut` y de especificaciones de colección en campos calculados.
+6. Rechazo de `mut` exterior en campos calculados y aceptación de capacidad interior/modificadores declarados por su forma derivada cuando sean compatibles.
 7. Rollback sin estado publicable inválido.
 8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
 9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.

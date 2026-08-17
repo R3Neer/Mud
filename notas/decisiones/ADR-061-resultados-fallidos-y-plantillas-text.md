@@ -82,7 +82,7 @@ Si la evaluación del propio diagnóstico falla, la infracción original no desa
 Los literales ordinarios y multilínea de `Text` son plantillas. Dentro de ellos:
 
 - `{e}` evalúa la expresión MUD `e` e inserta la representación textual de su valor;
-- `anchor{d}` inserta el ancla canónica de la entidad designada por `d`;
+- `{e}` también puede interpolar `e~anchor` cuando la categoría estática de `e` expone esa propiedad;
 - `\{` y `\}` insertan llaves literales;
 - una llave sin escapar que no forme un hueco válido es un error;
 - `\u{...}` continúa siendo un escape Unicode indivisible y no abre un hueco.
@@ -151,19 +151,19 @@ time in picosecond                 # coordenada total en picosegundos
 picosecond from second in time     # parte dentro del segundo
 ```
 
-Dentro del `format` de una magnitud de punto, el propio punto es contextual. La sucesión habitual conserva la forma compacta:
+Dentro del `~format` de una magnitud de punto, el propio punto es contextual. La sucesión habitual conserva la forma compacta:
 
 ```mud
-format = "{hour:2}:{minute:2}:{second:2}"
+~format = "{hour:2}:{minute:2}:{second:2}"
 ```
 
 El primer nombre expresa la coordenada en esa unidad —reducida por el ciclo cuando exista— y cada nombre posterior expresa su componente dentro del anterior. Cuando el contenedor no sea obvio o no coincida con esa sucesión, puede escribirse explícitamente:
 
 ```mud
-format = "{week from year:2}"
+~format = "{week from year:2}"
 ```
 
-La forma incompleta `week from year` solo es válida en un hueco del `format` de una magnitud de punto; fuera de él exige el receptor `in punto`.
+La forma incompleta `week from year` solo es válida en un hueco del `~format` de una magnitud de punto; fuera de él exige el receptor `in punto`.
 
 ### Formato numérico
 
@@ -194,7 +194,7 @@ ratio: Num = 12.3
 
 Aplicar un formato numérico a otro tipo o escribir una especificación incompleta es un error estático.
 
-La propiedad `format` de una magnitud `point over` usa esta misma sintaxis, no un segundo lenguaje de llaves. Sus nombres como `hour`, `minute` o `second` se resuelven en el punto contextual; `{hour:2}` solicita dos posiciones a la izquierda.
+El metadato `~format` de una magnitud `point over` usa esta misma sintaxis, no un segundo lenguaje de llaves. Sus nombres como `hour`, `minute` o `second` se resuelven en el punto contextual; `{hour:2}` solicita dos posiciones a la izquierda.
 
 ### Unidades en `look` y `message`
 
@@ -205,30 +205,30 @@ speed := vehicle.speed in km/h
 time := clock.time in second
 ```
 
-Omitirla es legal, pero produce un aviso cuando existe una unidad seleccionable porque hace depender una frontera pública de su proyección canónica. El arreglo sugerido añade explícitamente esa unidad. Una magnitud sin unidades publica su número y no produce el aviso. En una magnitud de punto, un campo directo sin `in` publica la coordenada numérica, no el `format`; para publicar la representación formateada se declara un campo `Text`, por ejemplo `timeText := "{clock.time}"`.
+Omitirla es legal, pero produce un aviso cuando existe una unidad seleccionable porque hace depender una frontera pública de su proyección canónica. El arreglo sugerido añade explícitamente esa unidad. Una magnitud sin unidades publica su número y no produce el aviso. En una magnitud de punto, un campo directo sin `in` publica la coordenada numérica, no el `~format`; para publicar la representación formateada se declara un campo `Text`, por ejemplo `timeText := "{clock.time}"`.
 
 La regla afecta a campos públicos cuyo valor directo es una magnitud. La serialización recursiva de magnitudes contenidas en aliases o colecciones permanece en Q-051.
 
-### Interpolación de anclas
+### Anclas dentro de plantillas
 
-`anchor{...}` es una forma contextual de plantilla, no una función general ni una conversión a `Text`. Admite una referencia a una entidad semántica con ancla o una expresión cuyo valor tenga identidad nominal anclada. Por ejemplo:
+No existe una interpolación especial `anchor{...}`. D-087 hace de `~anchor` una propiedad reflectiva ordinaria y tipada, por lo que se interpola mediante la sintaxis general de expresiones:
 
 ```mud
-"Rule: anchor{CanRecruit}"
-"Kingdom: {kingdom}; identity: anchor{kingdom}"
+"Rule: {CanRecruit~anchor}"
+"Kingdom: {kingdom}; identity: {kingdom~anchor}"
 ```
 
-Esto permite mencionar acciones, reglas, `look`, `message`, tests y tipos sin convertir sus declaraciones en valores ordinarios. Una expresión cuyo resultado carezca de ancla produce error estático.
+El acceso solo es válido cuando la categoría estática del receptor expone `~anchor`. La plantilla no introduce un token especial `anchor`.
 
 ## Consecuencias
 
-- El AST distingue fragmentos literales, huecos de valor, especificaciones numéricas y huecos de ancla.
+- El AST distingue fragmentos literales, huecos de valor y especificaciones numéricas; las anclas usan interpolaciones de expresión ordinarias.
 - El IR conserva la expresión, el formato y la procedencia de cada fragmento.
 - El lexer necesita modos anidados para texto y código.
 - `otherwise` es opcional y localizado; su ausencia produce el diagnóstico de estilo correspondiente.
 - El catálogo de resultados debe proporcionar una razón humana para cada `rejected` y `failed`.
 - La renderización contextual no introduce una conversión implícita general a `Text`.
-- El nombre visible de una `thing` puede diferir de su ancla; `anchor{...}` conserva la identidad canónica.
+- La presentación `~name` puede diferir de `~anchor`; ambas son propiedades reflectivas separadas.
 - `in` sirve tanto para magnitudes lineales como de punto y, en estas últimas, evita el formato.
 - La extracción de componentes no queda limitada por el formato visible.
 
@@ -242,8 +242,8 @@ Esto permite mencionar acciones, reglas, `look`, `message`, tests y tipos sin co
 6. Renderización de `thing`, miembros de `family`, reglas booleanas, intervalos y colecciones anidadas.
 7. Rechazo de declaraciones y constructos sin valor dentro de `{...}`.
 8. Formatos `{n:4}`, `{n::2}` y `{n:4:2}`, incluidos cero, signo, relleno, exceso de cifras y redondeo al par.
-9. Obtención de anclas de declaraciones y valores nominales mediante `anchor{...}`.
-10. Rechazo de `anchor{...}` sobre valores sin identidad anclada.
+9. Obtención de anclas mediante interpolación ordinaria de `expression~anchor`.
+10. Rechazo de `~anchor` cuando la categoría estática del receptor no expone esa propiedad.
 11. Renderización raíz, alternativa y formateada de magnitudes lineales y de punto.
 12. Extracción `picosecond from second in time` independiente del `format`.
 13. Aviso por magnitud pública con unidad seleccionable pero sin presentación explícita, ausencia de aviso cuando no existen unidades y publicación formateada mediante `Text`.

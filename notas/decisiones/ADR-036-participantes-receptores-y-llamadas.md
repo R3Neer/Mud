@@ -46,33 +46,19 @@ Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases
 
 El tipo incorporado `Thing` admite cualquier `thing`. Por tanto, un rol `for` de tipo `Thing` acepta cualquier identidad concreta compatible y `on Thing` enumera todas las `thing` concretas y activas; la raíz abstracta no produce una vinculación propia.
 
-El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse. Los accesos no cualificados dentro del cuerpo se resuelven contra esos participantes anónimos, además de los nombres ordinariamente visibles:
+Todo participante `for`, `on` y `given` debe declarar un identificador fuente explícito. La cardinalidad `[1]` no crea una excepción anónima. Los miembros se acceden a través de ese identificador y no se proyectan implícitamente al ámbito del cuerpo.
 
 ```mud
-rule IsDestroyed for Army {
-    soldiers == 0
+rule IsDestroyed for army: Army {
+    army.soldiers == 0
 }
 
-rule CanGovern for Person, Kingdom {
-    age >= 18 and treasury > 0
+rule CanGovern for person: Person, kingdom: Kingdom {
+    person.age >= 18 and kingdom.treasury > 0
 }
 ```
 
-La omisión es válida únicamente si cada referencia no cualificada posee un solo candidato compatible. Esta resolución se aplica por igual a campos, reglas booleanas y actions accesibles desde los participantes; la firma y los tipos de los argumentos forman parte de la resolución. En el segundo ejemplo, `age` debe resolverse solo contra `Person` y `treasury` solo contra `Kingdom`. Si ambos tipos ofrecieran `name`, una referencia desnuda a `name` sería ambigua y el programa debería cualificarla declarando el nombre del participante correspondiente.
-
-La omisión no crea una variable global ni cambia el tipo de la declaración.
-
-Cuando el cuerpo necesita referirse al participante como valor completo, y no solo resolver un miembro suyo, debe declararle un nombre.
-
-Un valor básico no ofrece miembros que puedan resolverse implícitamente; por tanto, un rol básico anónimo no puede ser utilizado por el cuerpo y el compilador debe sugerir nombrarlo o eliminarlo. Los componentes de un alias estructural y los datos asociados de una `family` sí participan en la resolución implícita cuando esta es unívoca.
-
-Todo rol `for` cuya cardinalidad no sea exactamente `[1]` debe tener nombre. La colección no proyecta implícitamente los campos de sus miembros: el cuerpo debe emplear el nombre en una cuantificación, agregación o iteración explícita.
-
-```mud
-rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {
-    forall person in people: person.age >= 18
-}
-```
+El identificador forma parte del slot de firma y, conforme a D-087, participa junto con la clase de cláusula en su ancla subordinada. Reordenar participantes no cambia esa identidad. Una colección sigue sin proyectar implícitamente los campos de sus miembros.
 
 También son roles válidos los valores sin identidad runtime:
 
@@ -250,7 +236,7 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 ## Consecuencias
 
 - AST e IR separan receptores de argumentos.
-- La omisión del nombre de participante individual es azúcar sometido a resolución estática no ambigua, no una firma distinta.
+- Todo participante tiene nombre y ancla subordinada estable conforme a D-087.
 - Un rol colectivo conserva cardinalidad, modificadores de colección y ambos ejes de capacidad en AST e IR.
 - Una vinculación exteriormente mutable conserva el lugar receptor, no solo su valor.
 - El IR distingue vinculaciones de rol por identidad, por valor y por lugar.
@@ -259,8 +245,8 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 
 ## Verificación futura
 
-1. Participante individual anónimo y nombrado.
-2. Varios participantes individuales anónimos con accesos unívocos y rechazo de un acceso ambiguo.
+1. Participantes `for`, `on` y `given` siempre nombrados y rechazo de la forma anónima.
+2. Acceso a miembros únicamente a través del identificador del participante.
 3. Receptor multiparte posicional y nombrado.
 4. Rol ausente, duplicado, desconocido o mal tipado.
 5. Argumentos `given` posicionales, nombrados y con prefijo posicional seguido por nombres.
@@ -271,7 +257,7 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 10. Diferencia entre la referencia exacta `World` y un participante `on World` o `for World`.
 11. Reflexividad para una raíz concreta y ausencia de vinculación directa para una raíz abstracta.
 12. Rol `for` colectivo con dominio, cardinalidad y cada modificador de colección.
-13. Nombre obligatorio para cardinalidad distinta de `[1]` y para mutabilidad exterior.
+13. Nombre obligatorio para toda cardinalidad, incluida `[1]`, y para mutabilidad exterior.
 14. Receptor colectivo ocupando una sola posición, sin expansión implícita.
 15. Las cuatro combinaciones de mutabilidad exterior e interior.
 16. Aceptación de un lugar mutable y rechazo de literales o expresiones calculadas para `mut nombre`.

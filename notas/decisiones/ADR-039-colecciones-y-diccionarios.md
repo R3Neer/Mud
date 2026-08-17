@@ -159,7 +159,7 @@ La forma:
 Key -> Value [cardinality modifiers]
 ```
 
-declara un diccionario con claves únicas. `unique` no se aplica porque la unicidad de clave es intrínseca y escribirlo es un error estático. Tampoco se reinterpreta como unicidad de valores: esa restricción debe expresarse, si se incorpora en el futuro, mediante una construcción distinta y explícita.
+declara un diccionario con claves intrínsecamente únicas. El modificador `unique`, cuando se escribe, se aplica a los **valores asociados** conforme a D-085: exige que un mismo valor no quede asociado a más de una clave. Una inserción o sustitución que violaría esa unicidad es una no-op completa y no produce `failed`.
 
 ```mud
 stock =
@@ -169,7 +169,7 @@ stock =
 
 Asignar una clave sustituye su valor; escribir una clave ausente materializa la entrada si tipo, dominio, capacidad y cardinalidad lo permiten; retirar una clave ausente es no-op.
 
-Leer una clave ausente produce el predeterminado del tipo de valor cuando la lectura exige un valor. D-017 y Q-047 gobiernan la existencia y selección de ese predeterminado. Los contextos que preserven ausencia deberán hacerlo mediante cardinalidad, no mediante `null`.
+Leer una clave ausente produce `empty` con la forma de salida declarada. La ausencia no produce `failed` por sí misma; solo un contexto posterior cuyo tipo, dominio o cardinalidad no admita cero elementos puede fallar. No se usa `null` ni se sustituye silenciosamente por el predeterminado del tipo de valor.
 
 El acceso encadenado solo es válido cuando el resultado intermedio es otro diccionario.
 
@@ -210,7 +210,7 @@ La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su pre
 1. Cardinalidad omitida y `empty`.
 2. Duplicados, normalización, aviso e idempotencia de `unique`.
 3. Orden natural, de inserción, semántico y `ordered by`, incluida una ruta estable sobre dato asociado y empates por inserción.
-4. Lectura, escritura y retirada de clave ausente.
+4. Lectura ausente como `empty`, escritura y retirada de clave ausente, y `unique` global sobre valores.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.
 7. Multiplicidades de unión, intersección y diferencia; rechazo de `^` sin `unique`.

@@ -84,43 +84,26 @@ Una solicitud `create d` no modifica una declaración ya activa. La aplicabilida
 
 ### Conjunto inicial `start with`
 
-Las definiciones de `thing` y reglas no quedan activas por el mero hecho de aparecer en el programa. Un programa puede contener una única declaración global de primer nivel:
+Las definiciones de `thing` y reglas no quedan activas por aparecer. El único `start with` global separa obligatoriamente ambos universos:
 
 ```mud
 start with {
-    Vegetation,
-    Tree,
-    CanGrow
+    things {
+        Vegetation,
+        Tree
+    }
+
+    rules {
+        CanGrow
+    }
 }
 ```
 
-Su contenido es un conjunto finito y no ordenado de referencias a definiciones canónicas activables. No es una secuencia de instrucciones ni una acción especial.
+No existe la forma plana o mezclada. Cada sección recibe expresiones estáticas que aportan cero, una o varias identidades de su categoría: una referencia aporta una, `empty` aporta cero, una colección aporta sus miembros y `all` denota el catálogo estático correspondiente. Una colección de colecciones es inválida. Las identidades repetidas se deduplican y el orden no es observable.
 
-Por tanto:
+Las expresiones solo pueden depender de información disponible antes de existir mundo runtime. El resultado completo se materializa y valida atómicamente y se estabiliza antes de aceptar acciones externas.
 
-- Solo admite referencias a `thing` y reglas.
-- No admite `create`, `destroy`, `add`, `remove`, asignaciones, condiciones ni bloques `then`.
-- El orden textual de las referencias no es observable.
-- Las referencias se separan mediante comas.
-- No se admite una coma después de la última referencia, conforme a la sintaxis general de colecciones de MUD.
-- Una referencia repetida es un error estático de redundancia.
-- Cada referencia debe resolverse de manera unívoca.
-- El conjunto completo se materializa y valida atómicamente.
-- Si la declaración se omite, ninguna `thing` ni regla está explícitamente activa al comienzo.
-
-Sea $\mathcal L_P$ el conjunto de definiciones con ciclo de vida conocidas por el programa. La declaración determina:
-
-$$
-\operatorname{initiallyActive}_P
-\subseteq
-\mathcal L_P
-$$
-
-El estado inicial se construye materializando conjuntamente las declaraciones de $\operatorname{initiallyActive}_P$, validando sus dependencias y estabilizando las consecuencias iniciales antes de aceptar acciones externas. Conforme a D-041, las vinculaciones reactivas presentes en la primera instantánea materializada usan un anterior virtual falso para su primer `when` booleano; una condición inicialmente verdadera puede producir consecuencias iniciales. Las vinculaciones que nazcan durante esa estabilización siguen la regla ordinaria de línea base sin disparo.
-
-Las acciones, aliases y magnitudes no pertenecen a $\operatorname{initiallyActive}_P$: no poseen este ciclo de vida. Una acción declarada forma parte de la API estática, aunque su invocabilidad efectiva pueda quedar suspendida por dependencias inactivas.
-
-Conforme a D-055, cada test declara además un `start with` local con la misma forma de conjunto de activaciones. Durante ese test, el conjunto local sustituye por completo al global. Los tests no son activables y no pueden aparecer en ninguno de los dos conjuntos.
+Las acciones, aliases y magnitudes no pertenecen a ninguno de esos conjuntos. Cada test declara un `start with` local con las mismas secciones `things` y `rules`; durante ese test sustituye por completo al global.
 
 ### Inicialización y reactivación
 
@@ -146,7 +129,7 @@ No vuelve a ejecutar los inicializadores ni cambia el descriptor.
 
 `always` es contextual delante de `rule`. D-055 introduce `test` y `otherwise` como palabras reservadas.
 
-Las etiquetas reconocidas dentro de una declaración concreta, como `name` y `prefixes` en las declaraciones de unidades o `name =` en un cuerpo de `thing`, son igualmente contextuales y no pertenecen por ello al catálogo general de palabras reservadas.
+Los metadatos estándar como `~name` y `~prefixes` usan la gramática general postfix `~`; `name` y `prefixes` no son etiquetas contextuales especiales por esa razón.
 
 No existe un token único ni una categoría léxica denominada «expresión reservada» para `start with`; es una producción gramatical formada por una palabra contextual y una palabra reservada.
 

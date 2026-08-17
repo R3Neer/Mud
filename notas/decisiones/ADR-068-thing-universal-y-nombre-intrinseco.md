@@ -44,74 +44,42 @@ La interpolación de una `thing` usa hasta ahora su nombre nominal. Ese valor es
 
 `Thing` es una palabra reservada y un tipo incorporado sensible a mayúsculas y minúsculas. La arista efectiva no se duplica ni se serializa como una antecesora semántica adicional cuando el autor escribe el redundante `as Thing`; la CST y el AST superficial sí conservan esa escritura hasta que se aplica la corrección sugerida.
 
-Su ancla canónica es `thing::Thing`; `anchor{Thing}` produce esa escritura. El ancla pertenece al lenguaje y no ocupa un path declarable por el programa.
+Su ancla canónica es `thing::Thing`; `Thing~anchor` produce ese valor reflectivo. El ancla pertenece al lenguaje y no ocupa un path declarable por el programa.
 
 Esta decisión no selecciona un miembro predeterminado para posiciones de tipo `Thing` con cardinalidad mínima positiva. `Thing` es abstracta y la membresía continúa siendo estricta; Q-047 conserva pendiente cuándo debe exigirse un inicializador explícito u otra selección válida.
 
-### Propiedad intrínseca `name`
+### Metadato estándar `~name`
 
-Toda `thing` posee una propiedad intrínseca, pública, inmutable e individual:
-
-```text
-name: Text
-```
-
-No es un campo de esquema, no ocupa una posición mutable del store y no se hereda. Su valor pertenece al descriptor canónico de la identidad.
-
-Si no se escribe una sobrescritura, `name` vale exactamente el nombre nominal no cualificado de la `thing`:
-
-```mud
-thing BlackCastle {}
-```
-
-produce `name = "BlackCastle"`.
-
-El cuerpo puede sobrescribirlo una sola vez mediante:
+D-087 retira la propiedad especial `.name` y la asignación contextual `name = ...`. Toda `thing` expone el metadato estándar `~name: Name`. Si no se configura, se deriva del identificador fuente no cualificado; puede configurarse al comienzo del cuerpo mediante la gramática general de metadatos:
 
 ```mud
 thing BlackCastle {
-    name = "El Castillo Negro"
+    ~name = "El Castillo Negro"
 }
 ```
 
-La parte derecha debe ser un literal `Text` sin interpolaciones. No se admiten `name: Text`, `mut name`, `name :=`, escrituras runtime ni una segunda sobrescritura. Otros contextos que ya usan la etiqueta contextual `name`, como las unidades, conservan sus reglas propias.
-
-La sobrescritura es estrictamente local. Si una antecesora cambia su presentación, una descendiente sin sobrescritura continúa usando su propio nombre nominal:
-
-```mud
-thing Kingdom {
-    name = "Reino"
-}
-
-thing Egypt as Kingdom {}
-```
-
-`Egypt.name` vale `"Egypt"`, no `"Reino"`.
-
-Dos `thing` pueden compartir el mismo `name`; la igualdad, resolución y anclaje continúan usando identidad. En una plantilla, `{value}` para un valor `thing` inserta su `name`, mientras que `anchor{value}` conserva el ancla canónica.
-
-`name` puede leerse como una propiedad estable y usarse donde se admita un `Text`, incluidas claves estables `ordered by name`. No concede acceso a una `thing` inactiva ni convierte el nombre desnudo de una declaración en un valor ordinario.
+`~name` pertenece al descriptor y todo acceso `~` es de solo lectura runtime. No se hereda como valor de presentación: una descendiente sin configuración propia deriva su nombre de su propio `~identifier`. Dos `thing` pueden compartir presentación sin compartir identidad. Un campo ordinario `name` pertenece al espacio de miembros y puede coexistir con `~name`.
 
 ## Consecuencias
 
 - Existe un tipo común garantizado para todas las `thing` y para colecciones heterogéneas.
 - El grafo distingue antecesoras declaradas de la arista implícita de las raíces hacia `Thing`.
 - La presentación humana puede cambiar sin alterar identidad, path de MUD ni ancla.
-- `name` no introduce estado heredado, conflictos de fusión ni escrituras adicionales.
-- Los campos ordinarios llamados `name` dejan de ser válidos dentro de cuerpos de `thing`; aliases, familias y otros contextos conservan sus propios espacios estructurales.
+- `~name` no introduce estado heredado, conflictos de fusión ni escrituras runtime.
+- Un campo ordinario `name` puede coexistir con `~name` porque `.` y `~` pertenecen a espacios distintos.
 
 ## Verificación
 
 1. `T is Thing` para toda `thing` declarada y `Thing is Thing`.
 2. Rechazo de declaración, `create` y `destroy` de `Thing`; aceptación no bloqueante de `as Thing` con sugerencia de eliminación.
-3. Ancla incorporada `thing::Thing` y renderización mediante `anchor{Thing}`.
+3. Ancla incorporada `thing::Thing` y lectura reflectiva mediante `Thing~anchor`.
 4. `on Thing` y roles `for` de tipo `Thing` sobre cualquier `thing` concreta activa.
 5. Colección `Thing [*]` con identidades de ramas no relacionadas.
 6. `name` predeterminado igual al nombre nominal no cualificado.
 7. Sobrescritura mediante un único literal `Text` sin interpolaciones.
 8. Rechazo de redeclaración, mutabilidad, cálculo, escritura runtime e interpolación en la sobrescritura.
 9. Ausencia de herencia del `name` sobrescrito.
-10. `{value}` usa `value.name` y `anchor{value}` conserva la identidad canónica.
+10. `{value~name}` usa la presentación configurada y `{value~anchor}` conserva la identidad canónica.
 11. Nombres visibles duplicados sin fusión de identidades.
 
 ## Aclaración por D-084

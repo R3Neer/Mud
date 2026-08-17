@@ -121,22 +121,22 @@ Una magnitud no derivada que declara unidades contiene exactamente una `root uni
 ```mud
 magnitude Length {
     root unit meter {
-        name = "meter"
-        plural = "meters"
-        abbreviation = "m"
+        ~name = "meter"
+        ~plural = "meters"
+        ~abbreviation = "m"
     }
 }
 ```
 
-El identificador determina el nombre intrínseco y el ancla. `name`, `plural`, `abbreviation` y `prefixes` son opcionales.
+El identificador determina `~identifier` y el ancla. `~name`, `~plural`, `~abbreviation` y `~prefixes` son metadatos configurables conforme a D-076 y D-087.
 
 Una unidad alternativa se declara mediante una equivalencia positiva:
 
 ```mud
 unit minute := 60 seconds {
-    name = "minute"
-    plural = "minutes"
-    abbreviation = "min"
+    ~name = "minute"
+    ~plural = "minutes"
+    ~abbreviation = "min"
 }
 ```
 
@@ -147,7 +147,7 @@ Toda equivalencia de unidad debe:
 3. Reducirse a la unidad raíz.
 4. No participar en ciclos.
 
-La ausencia de la propiedad `prefixes` no habilita prefijos. `prefixes = empty` es equivalente, `prefixes = all` habilita el catálogo decimal SI completo y `prefixes = [p1, p2, ...]` habilita solo el subconjunto enumerado. La forma desnuda `prefixes` no es válida.
+`~prefixes` tiene tipo `Prefix [* unique]` y valor predeterminado `empty`. `~prefixes = all` selecciona el dominio incorporado completo y `~prefixes = [p1, p2, ...]` una colección explícita. No existe una subgramática especial de propiedades de unidad.
 
 ### Magnitudes derivadas
 
@@ -179,9 +179,9 @@ magnitude Speed :=
     Length / Time
 {
     unit fastie := 1 m/s {
-        name = "fastie"
-        plural = "fasties"
-        abbreviation = "fst"
+        ~name = "fastie"
+        ~plural = "fasties"
+        ~abbreviation = "fst"
     }
 }
 ```
