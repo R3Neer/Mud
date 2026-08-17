@@ -1,0 +1,98 @@
+name: ChatGPT checklist authority
+on:
+  push:
+    branches: [chatgpt-checklist-finish-stage6-runner]
+permissions:
+  contents: write
+jobs:
+  authority:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-stage6-runner
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-v1
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Verify stage base
+        shell: pwsh
+        working-directory: target
+        env:
+          EXPECTED: 1260742592aa1bc229f1974dde7ee24d0b006e0a
+        run: |
+          if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED) { throw 'candidate moved before authority stage' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout dirty' }
+      - name: Apply authority policy
+        shell: pwsh
+        env:
+          MUD_TARGET: ${{ github.workspace }}\target
+        run: python control/.chatgpt/stage6_authority.py
+      - name: Validate
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          @'
+          from pathlib import Path
+          import yaml
+          root=Path('.')
+          def text(p): return (root/p).read_text(encoding='utf-8')
+          def fm(p):
+              s=text(p); end=s.find('\n---\n',4)
+              return yaml.safe_load(s[4:end]) or {}
+          gov=text('gobierno/CICLO-DOCUMENTAL.md')
+          if '### Autoridad durante la preparación' not in gov: raise SystemExit('missing authority policy')
+          if '`normative: true` y `status` son ejes distintos' not in gov: raise SystemExit('missing status distinction')
+          readme=text('especificacion/README.md')
+          if 'anclas estables de ramas decisionales' in readme: raise SystemExit('stale public branch anchor in index')
+          if 'no reciben ancla pública conforme a D-090' not in readme: raise SystemExit('missing D090 branch rule in index')
+          if 'Carácter normativo y estado editorial' not in readme: raise SystemExit('missing authority explanation in index')
+          expected={
+            'especificacion/05-texto-fuente.md': [],
+            'especificacion/06-lexico.md': [],
+            'especificacion/07-gramatica-concreta.md': ['Q-022','Q-059','Q-061'],
+            'especificacion/08-sintaxis-abstracta.md': ['Q-061'],
+            'especificacion/09-nombres-y-anclas.md': ['Q-014'],
+          }
+          for p,qs in expected.items():
+              data=fm(p)
+              if data.get('status')!='propuesta': raise SystemExit(f'{p}: status changed')
+              if data.get('questions',[])!=qs: raise SystemExit(f'{p}: questions changed')
+              if '> [!note] Estado editorial' not in text(p): raise SystemExit(f'{p}: missing state note')
+          for p in ['especificacion/01-alcance-y-conformidad.md','especificacion/02-terminologia.md','especificacion/03-notacion.md','especificacion/04-modelo-matematico.md']:
+              if fm(p).get('status')=='vigente': raise SystemExit(f'{p}: unauthorized promotion')
+          print('STAGE6_AUTHORITY_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Commit and push
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git commit -m "docs(spec): explicita autoridad durante la formalizacion"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git push origin HEAD:chatgpt-checklist-finish-v1
+          if ($LASTEXITCODE -ne 0) { exit 1 }
