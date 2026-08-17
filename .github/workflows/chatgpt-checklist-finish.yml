@@ -75,8 +75,11 @@ jobs:
               if s not in Path(p).read_text(encoding='utf-8'): raise SystemExit(f'MISSING {s!r} in {p}')
           need('especificacion/06-lexico.md','MUD-LEX-016')
           need('especificacion/06-lexico.md','MUD-LEX-017')
-          need('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','debe contener al menos un carácter alfabético')
-          need('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','incluidas todas las combinaciones con prefijos permitidos')
+          d89=Path('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md').read_text(encoding='utf-8')
+          for concept in ['carácter alfabético','palabra clave de MUD','combinaciones con prefijos permitidos']:
+              if concept not in d89: raise SystemExit(f'MISSING concept {concept!r} in D-089')
+          if 'El identificador declarado conserva las reglas léxicas ordinarias' not in d89:
+              raise SystemExit('identifier/source-form boundary missing in D-089')
           cases=yaml.safe_load(Path('especificacion/sintaxis/casos/cst-ast.yaml').read_text(encoding='utf-8'))['cases']
           ids={c['id'] for c in cases}
           required={'unit-form-multispace-name','unit-form-all-digits-rejected','unit-form-all-symbols-rejected','unit-form-keyword-rejected','unit-form-prefixed-collision-rejected'}
@@ -99,4 +102,4 @@ jobs:
           git push origin HEAD:chatgpt-checklist-finish-v1
           if ($LASTEXITCODE -ne 0) { throw 'stage 1 push failed' }
 
-# retrigger after candidate rollback and minimal case editing
+# semantic audit after rollback review
