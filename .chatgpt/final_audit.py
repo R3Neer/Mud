@@ -67,9 +67,9 @@ require('especificacion/README.md', '**Capítulo vigente**: su texto normativo e
 require('especificacion/00-convenciones-editoriales.md', 'Solo `status: vigente` concede autoridad consolidada al capítulo como unidad')
 require('gobierno/CICLO-DOCUMENTAL.md', '### Autoridad durante la promoción', 'no es el mecanismo que hace vigentes retroactivamente las decisiones')
 
-# 6. Residuos activos de contratos retirados en superficies normativas principales.
-for path in ['especificacion/06-lexico.md', 'especificacion/07-gramatica-concreta.md', 'especificacion/08-sintaxis-abstracta.md', 'especificacion/09-nombres-y-anclas.md']:
-    forbid(path, 'anchor{')
+# 6. Contratos retirados: la mención negativa es válida y debe permanecer explícita.
+require('especificacion/06-lexico.md', 'No existe `anchor{...}`')
+require('especificacion/07-gramatica-concreta.md', '`anchor{...}` no pertenece al lenguaje')
 for path in ['especificacion/08-sintaxis-abstracta.md', 'especificacion/09-nombres-y-anclas.md']:
     forbid(path, 'AST resuelto')
 
