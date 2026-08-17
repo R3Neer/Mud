@@ -15,8 +15,7 @@ affects:
 # ADR-038 — Familias cerradas de valores
 
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
-
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada además por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
@@ -56,7 +55,7 @@ La declaración introduce un tipo nominal finito y un ancla estática `family::*
 - Es igual a otro miembro si y solo si ambos pertenecen a la misma familia nominal y tienen el mismo nombre.
 - Solo admite operadores de orden si la declaración usa `ordered family`.
 
-Cada miembro posee un `name: Text` intrínseco cuyo predeterminado es su nombre nominal declarado. Puede sobrescribirse mediante `name = "..."` sin cambiar identidad, igualdad, ancla ni orden. Una sobrescritura idéntica recibe sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro produce su `name` efectivo.
+Cada miembro posee el metadato estándar `~name: Name`, cuyo valor predeterminado deriva de su identificador nominal. Puede configurarse mediante `~name = "..."` sin cambiar identidad, igualdad, ancla ni orden. Una configuración idéntica al predeterminado recibe sugerencia de eliminación. En una plantilla `Text`, interpolar un miembro produce la representación textual de su `~name` efectivo.
 
 El orden de declaración es canónico para enumerar cualquier `family`, pero solo forma parte de las relaciones `<`, `<=`, `>` y `>=` cuando aparece `ordered`.
 
@@ -115,7 +114,7 @@ Después de resolver los datos almacenados de un miembro, sus datos calculados s
 En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los valores asociados obtenidos para un miembro, almacenados o calculados:
 
 - Son inmutables.
-- No poseen identidad ni ciclo de vida runtime propios.
+- No poseen identidad ni ciclo de vida runtime propios: son valores efectivos del descriptor uniforme, no declaraciones independientes por miembro.
 - Se consultan como propiedades del valor de familia, por ejemplo `terrain.movementCost`.
 - No alteran la identidad ni la igualdad del miembro: siguen dependiendo de la familia nominal y el nombre del miembro.
 
@@ -162,4 +161,4 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 11. Colección de `ordered family` ordenada por una ruta de datos asociados, con empates por inserción y conservación de multiplicidad.
 12. Inferencia de tipo, evaluación por miembro y dependencias acíclicas de datos calculados.
 13. Rechazo de asignaciones de miembro dirigidas a datos calculados.
-14. Renderización nominal de un miembro y acceso explícito a un dato `Text` alternativo.
+14. Renderización mediante `~name` de un miembro y acceso explícito a un dato `Text` alternativo.
