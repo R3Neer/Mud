@@ -237,6 +237,7 @@ def validate(root: Path) -> list[Problem]:
             "ExactNominalTypeTestExpr(",
             "ExactDictionarySetOperationExpr(",
             "FunctionalDictionarySetOperationExpr(",
+            "ContextualAliasConstructionExpr(",
         ],
     }
     for path, fragments in required_fragments.items():
@@ -307,6 +308,10 @@ def validate(root: Path) -> list[Problem]:
         "any-order-rejected",
         "metadata-path-assignment-rejected",
         "metadata-file-assignment-rejected",
+        "explicit-representation-to-alias",
+        "typed-representation-does-not-implicitly-become-alias",
+        "contextual-alias-comparison-literal",
+        "contextual-basic-alias-literal",
         "iis-negation-equivalence",
         "not-iis-spelling-rejected",
         "is-iis-equality-distinction",

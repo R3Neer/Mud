@@ -1870,15 +1870,27 @@ cases:
   produces_ast: true
 - id: typed-representation-does-not-implicitly-become-alias
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    rawName: Text = \"Ada\"\n    name: PlayerName = rawName\n}\n"
+  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then person.name = rawName\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - explicit-nominal-conversion-required
+  semantic_expectations:
+  - typed-Text-expression-is-not-a-contextual-literal
   produces_ast: true
 - id: explicit-representation-to-alias
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    rawName: Text = \"Ada\"\n    name: PlayerName = rawName to PlayerName\n}\n"
+  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then person.name = rawName to PlayerName\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - semantic-ir-uses-explicit-conversion
+  produces_ast: true
+
+- id: contextual-alias-comparison-literal
+  category: validation-after-resolution
+  source: "alias PlayerName := Text\nthing Person {\n    name: PlayerName = \"Ada\"\n}\nrule IsAda for person: Person {\n    person.name == \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  semantic_expectations:
+  - alias-operand-propagates-expected-type-to-literal
+  - comparison-literal-uses-contextual-alias-construction
+  - both-operands-have-exact-PlayerName-type-after-elaboration
   produces_ast: true
