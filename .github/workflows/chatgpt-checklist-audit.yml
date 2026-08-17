@@ -1,0 +1,46 @@
+name: ChatGPT checklist preflight
+
+on:
+  push:
+    branches:
+      - chatgpt-checklist-audit-20260817
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact main snapshot
+        uses: actions/checkout@v6
+        with:
+          ref: 7a25d21bb6d3a539ddc118384b920ee476258c87
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install validator dependency
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Baseline official validators
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
+      - name: Run checklist audit
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git show chatgpt-checklist-audit-20260817:.chatgpt/checklist_audit.py | Out-File -Encoding utf8 $env:RUNNER_TEMP/checklist_audit.py
+          python $env:RUNNER_TEMP/checklist_audit.py
