@@ -1,0 +1,100 @@
+name: ChatGPT checklist staged integration
+
+on:
+  push:
+    branches:
+      - chatgpt-checklist-finish-runner-v1
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout control
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-runner-v1
+          path: control
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout candidate
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-v1
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
+      - name: Verify candidate starts at approved base
+        shell: pwsh
+        working-directory: target
+        env:
+          BASE: 7a25d21bb6d3a539ddc118384b920ee476258c87
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $base = (git merge-base HEAD $env:BASE).Trim()
+          if ($base -ne $env:BASE) { throw "candidate is not descended from base: $base" }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout is dirty' }
+      - name: Stage 1 - unit source forms
+        shell: pwsh
+        env:
+          MUD_TARGET: ${{ github.workspace }}\target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Copy-Item control/.chatgpt/stage1_unit_forms.py $env:RUNNER_TEMP/stage1.py
+          Push-Location target
+          try { python $env:RUNNER_TEMP/stage1.py }
+          finally { Pop-Location }
+      - name: Validate stage 1
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { throw 'decision validation failed' }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { throw 'question validation failed' }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { throw 'grammar validation failed' }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { throw 'syntax model validation failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'diff check failed' }
+          @'
+          from pathlib import Path
+          import yaml
+          def need(p,s):
+              if s not in Path(p).read_text(encoding='utf-8'): raise SystemExit(f'MISSING {s!r} in {p}')
+          need('especificacion/06-lexico.md','MUD-LEX-016')
+          need('especificacion/06-lexico.md','MUD-LEX-017')
+          need('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','debe contener al menos un carácter alfabético')
+          need('notas/decisiones/ADR-089-clasificacion-contextual-de-formas-fuente.md','incluidas todas las combinaciones con prefijos permitidos')
+          cases=yaml.safe_load(Path('especificacion/sintaxis/casos/cst-ast.yaml').read_text(encoding='utf-8'))['cases']
+          ids={c['id'] for c in cases}
+          required={'unit-form-multispace-name','unit-form-all-digits-rejected','unit-form-all-symbols-rejected','unit-form-keyword-rejected','unit-form-prefixed-collision-rejected'}
+          if not required <= ids: raise SystemExit(f'missing cases: {sorted(required-ids)}')
+          print('STAGE1_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'stage 1 semantic audit failed' }
+      - name: Commit stage 1
+        shell: pwsh
+        working-directory: target
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git config user.name 'ChatGPT'
+          git config user.email 'chatgpt@users.noreply.github.com'
+          git add --all
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { throw 'cached diff check failed' }
+          git commit -m 'spec(lexicon): completa formas fuente de unidades'
+          if ($LASTEXITCODE -ne 0) { throw 'stage 1 commit failed' }
+          git push origin HEAD:chatgpt-checklist-finish-v1
+          if ($LASTEXITCODE -ne 0) { throw 'stage 1 push failed' }
