@@ -1,0 +1,85 @@
+name: ChatGPT checklist authority
+on:
+  push:
+    branches: [chatgpt-checklist-finish-stage6-authority-runner]
+permissions:
+  contents: write
+jobs:
+  authority:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-stage6-authority-runner
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-v1
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Verify stage base
+        shell: pwsh
+        working-directory: target
+        env:
+          EXPECTED: 1260742592aa1bc229f1974dde7ee24d0b006e0a
+        run: |
+          if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED) { throw 'candidate moved before authority stage' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout dirty' }
+      - name: Apply authority clarification
+        shell: pwsh
+        env:
+          MUD_TARGET: ${{ github.workspace }}\target
+        run: |
+          python control/.chatgpt/stage6_authority.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Validate
+        shell: pwsh
+        working-directory: target
+        run: |
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          @'
+          from pathlib import Path
+          checks = {
+            'especificacion/README.md': [
+              'Solo `status: vigente` concede autoridad consolidada',
+              'no equivale por sí solo a aprobación',
+              'no puede introducir autoridad nueva por encima de esas fuentes',
+            ],
+            'especificacion/00-convenciones-editoriales.md': [
+              'Solo `status: vigente` concede autoridad consolidada al capítulo como unidad',
+              'No se interpreta como una sustitución tácita de la decisión',
+            ],
+            'gobierno/CICLO-DOCUMENTAL.md': [
+              '### Autoridad durante la promoción',
+              'La autoridad del capítulo como unidad aparece al alcanzar `status: vigente`',
+              'no es el mecanismo que hace vigentes retroactivamente las decisiones',
+            ],
+          }
+          for path, needles in checks.items():
+              text = Path(path).read_text(encoding='utf-8')
+              for needle in needles:
+                  if needle not in text:
+                      raise SystemExit(f'{path}: missing {needle!r}')
+          print('STAGE6_AUTHORITY_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Commit and push
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add especificacion/README.md especificacion/00-convenciones-editoriales.md gobierno/CICLO-DOCUMENTAL.md
+          git diff --cached --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git commit -m "docs(gobierno): aclara autoridad documental por estado"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git push origin HEAD:chatgpt-checklist-finish-v1
+          if ($LASTEXITCODE -ne 0) { exit 1 }
