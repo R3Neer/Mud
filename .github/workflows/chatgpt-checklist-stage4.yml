@@ -1,0 +1,68 @@
+name: ChatGPT checklist contextual aliases
+on:
+  push:
+    branches: [chatgpt-checklist-finish-stage4-runner]
+permissions:
+  contents: write
+jobs:
+  aliases:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-stage4-runner
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-v1
+          path: target
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Apply alias contract
+        shell: pwsh
+        env:
+          MUD_TARGET: ${{ github.workspace }}\target
+        run: python control/.chatgpt/stage4_alias.py
+      - name: Validate
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          @'
+          from pathlib import Path
+          import yaml
+          ir=Path('especificacion/ir/mud-semantic-ir.asdl').read_text(encoding='utf-8')
+          if 'ContextualAliasConstructionExpr(' not in ir: raise SystemExit('IR node missing')
+          d32=Path('notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal.md').read_text(encoding='utf-8')
+          if 'reserva `ConversionExpr` para un `to` explícito' not in d32: raise SystemExit('D032 distinction missing')
+          cases=yaml.safe_load(Path('especificacion/sintaxis/casos/cst-ast.yaml').read_text(encoding='utf-8'))['cases']
+          ids={c['id'] for c in cases}
+          need={'contextual-basic-alias-literal','typed-representation-does-not-implicitly-become-alias','explicit-representation-to-alias'}
+          if not need <= ids: raise SystemExit('contextual alias cases missing')
+          print('STAGE4_AUDIT_OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Commit and push
+        shell: pwsh
+        working-directory: target
+        run: |
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          git add --all
+          git commit -m 'spec(types): formaliza construcción contextual de aliases'
+          git push origin HEAD:chatgpt-checklist-finish-v1
