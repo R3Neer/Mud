@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-014"
 affects:
-  - "capítulo 09, AST superficial, resolución nominal, tabla de símbolos, anclas, diagnósticos, LSP, grafo nominal e IR semántico"
+  - "capítulo 09, AST superficial, HIR nominal, resolución nominal, tabla de símbolos, anclas, diagnósticos, LSP, grafo nominal e IR semántico"
 ---
 # ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
 
@@ -27,9 +27,9 @@ Poseen ancla las declaraciones globales, campos en su propietario original, comp
 
 Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; un `start with` global no tiene nombre ni ancla.
 
-La resolución nominal crea símbolos, anclas y bindings de referencias cuya categoría ya puede determinarse. Los nombres de tipos se vinculan nominalmente a sus símbolos, pero la comprobación de compatibilidad, uniones, dominios, cardinalidades y miembros dependientes del tipo pertenece al tipado y la elaboración. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad. D-093 retira la idea de materializar un segundo AST normativo como salida de esta fase.
+La resolución nominal crea símbolos, anclas, scopes y bindings de referencias cuya categoría ya puede determinarse y los materializa en el HIR nominal de D-093. Los nombres de tipos se vinculan nominalmente a sus símbolos, pero la comprobación de compatibilidad, uniones, dominios, cardinalidades y miembros dependientes del tipo pertenece al tipado y la elaboración. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
 
-Tras resolver nombres puede construirse el esqueleto del grafo con aristas de propiedad, especialización, referencia, tipo, dominio, inicialización, cálculo y efecto. El tipado completa y valida aristas posteriores sin impedir construir este grafo nominal inicial.
+El HIR nominal contiene únicamente el grafo que esta fase puede justificar: propiedad, especialización y referencias cuyos extremos ya son símbolos resueltos. Las relaciones que dependan de tipo efectivo, dominio, inicialización elaborada, cálculo, efecto o terminación pertenecen al IR semántico posterior.
 
 ## Migraciones
 
@@ -43,7 +43,7 @@ Una ancla cambia con categoría, path o nombre cualificado. El tooling conserva 
 4. Ausencia de sombreado y errores de casing reparables.
 5. Anclas de campos heredados, members, unidades y builtins.
 6. Participantes declarados con ancla pública y símbolos locales ordinarios sin ella.
-7. Grafo nominal construible antes del tipado completo sin requerir un segundo AST.
+7. HIR nominal construible antes del tipado completo y libre de tipos, dominios, cardinalidades y terminación elaborados.
 
 ## Ampliación por D-084
 
