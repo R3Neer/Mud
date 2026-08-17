@@ -37,7 +37,9 @@ action::game.Attack::for::attacker~summary
 
 Las propiedades intrínsecas como `~type`, `~path`, `~file`, `~kind` o el propio `~anchor` no son objetos `Metadata`, no aparecen en `~metadata` y no reciben una ancla de metadata. Un acceso intrínseco sigue siendo reflectivo, pero su existencia no materializa un descriptor configurable.
 
-`Metadata` expone `~anchor: Anchor`. Esta decisión no añade por simetría `~path` ni `~file`; esas propiedades requerirían un contrato semántico propio si se desean en el futuro.
+`Metadata` expone `~anchor: Anchor`, `~path: MudPath` y `~file: MudFile`. `~path` es el path lógico de la entidad propietaria dentro del programa: entrar en el espacio terminal `~<metadata>` no crea un namespace distinto. `~file` identifica el archivo físico en el que está declarada esa configuración de metadata; en una declaración directa coincide normalmente con el archivo del propietario, pero se deriva de la procedencia del propio `Metadata` y no de una copia almacenada del valor del propietario.
+
+Estas tres propiedades son intrínsecas y calculadas del descriptor. No aparecen en `~metadata`, no materializan nuevos objetos `Metadata` y no requieren campos redundantes en el IR cuando puedan derivarse de ancla, propietario y procedencia.
 
 ## Terminalidad
 
@@ -66,5 +68,6 @@ Una propiedad intrínseca nunca se convierte accidentalmente en `SemanticMetadat
 1. `SemanticMetadata` conserva una ancla propia.
 2. `thing::game.Person::health~description` es una ancla válida de metadata configurada.
 3. Ninguna propiedad intrínseca aparece como objeto `Metadata` ni recibe ancla de metadata.
-4. El descriptor `Metadata` expone `~anchor` y no expone `~metadata`.
-5. El AST superficial no cambia por esta decisión.
+4. El descriptor `Metadata` expone `~anchor`, `~path` y `~file` y no expone `~metadata`.
+5. `Metadata~path` conserva el path lógico del propietario y `Metadata~file` conserva la procedencia física de la declaración de metadata.
+6. El AST superficial no cambia por esta decisión.

@@ -231,6 +231,8 @@ Un valor `Metadata` expone al menos:
 ```text
 ~identifier  : Name
 ~anchor      : Anchor
+~path        : MudPath
+~file        : MudFile
 ~type        : Type
 ~domain      : Domain
 ~cardinality : Cardinality
@@ -240,6 +242,8 @@ Un valor `Metadata` expone al menos:
 ```
 
 Las propiedades intrínsecas no se convierten en `Metadata` y no reciben ancla de metadata. Los nombres intrínsecos y estándar reservados no pueden ser ocultados por un metadato de usuario. La ancla de un metadato configurado se deriva como `<ancla-propietario>~<identificador-metadata>`; cambiar su valor no cambia identidad.
+
+Para un descriptor `Metadata`, `~path` conserva el `MudPath` lógico de su propietario y `~file` se deriva de la procedencia física de la declaración de metadata. Ninguna de estas propiedades materializa metadata adicional. `Metadata` continúa siendo terminal y no expone `~metadata`.
 
 ### Colecciones y diccionarios
 

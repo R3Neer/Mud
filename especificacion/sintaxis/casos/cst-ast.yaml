@@ -1842,3 +1842,20 @@ cases:
   expected_diagnostics:
   - duplicate-unit-source-form-after-prefix-expansion
   produces_ast: true
+
+- id: metadata-descriptor-path-file
+  category: validation-after-resolution
+  source: "thing Person {\n    ~summary = \"Person descriptor\"\n}\nrule MetadataLocation {\n    forall metadata in Person~metadata: metadata~path == Person~path and metadata~file == Person~file\n}\n"
+  cst_root: MudFileSyntax
+  semantic_expectations:
+  - configured-metadata-exposes-anchor-path-file
+  - metadata-path-is-owner-logical-path
+  - metadata-file-comes-from-metadata-source-provenance
+  produces_ast: true
+- id: metadata-descriptor-remains-terminal
+  category: validation-after-resolution
+  source: "thing Person {\n    ~summary = \"Person descriptor\"\n}\nrule NoMetadataTower {\n    forall metadata in Person~metadata: metadata~metadata~count == 0\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - metadata-descriptor-has-no-metadata-property
+  produces_ast: true

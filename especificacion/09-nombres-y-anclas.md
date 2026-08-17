@@ -224,7 +224,9 @@ D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es prese
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
 
-Cada valor `Metadata` configurado posee a su vez una ancla terminal formada añadiendo `~<identificador-metadata>` a la ancla del propietario, por ejemplo `thing::game.Person::health~description`. Esa ancla sirve para reflexión y tooling; no convierte a `Metadata` en propietario de otros metadatos. `Metadata~anchor` es válido, mientras `Metadata~metadata` no forma parte del contrato.
+Cada valor `Metadata` configurado posee a su vez una ancla terminal formada añadiendo `~<identificador-metadata>` a la ancla del propietario, por ejemplo `thing::game.Person::health~description`. Esa ancla sirve para reflexión y tooling; no convierte a `Metadata` en propietario de otros metadatos.
+
+`Metadata` expone `~anchor`, `~path` y `~file`. Su `~path` es el path lógico de la entidad propietaria y su `~file` procede del archivo físico donde se declaró esa configuración de metadata. Entrar en `~<identificador-metadata>` cambia la identidad terminal, no el namespace lógico. Estas propiedades son intrínsecas del descriptor y no aparecen en la colección `~metadata`. `Metadata~metadata` no forma parte del contrato.
 
 ## Claves locales de ramas funcionales
 
