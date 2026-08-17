@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v6
         with:
-          ref: 11461e5ca98e2fa350ba279f884b4b3a603a3608
+          ref: 84142accf22f4c71d52954a6e56945e789621ea2
           path: target
           fetch-depth: 0
           persist-credentials: false
@@ -30,7 +30,7 @@ jobs:
         shell: pwsh
         working-directory: target
         env:
-          EXPECTED: 11461e5ca98e2fa350ba279f884b4b3a603a3608
+          EXPECTED: 84142accf22f4c71d52954a6e56945e789621ea2
         run: |
           if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED) { throw 'wrong candidate SHA' }
           if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout dirty' }
