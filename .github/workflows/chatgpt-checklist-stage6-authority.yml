@@ -27,7 +27,7 @@ jobs:
         shell: pwsh
         working-directory: target
         env:
-          EXPECTED: 1260742592aa1bc229f1974dde7ee24d0b006e0a
+          EXPECTED: ef845239437f9bc5dd09654282614de26dda216b
         run: |
           if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED) { throw 'candidate moved before authority stage' }
           if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout dirty' }
