@@ -13,10 +13,17 @@ jobs:
     runs-on: windows-latest
     timeout-minutes: 15
     steps:
+      - name: Checkout control branch
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-audit-20260817
+          path: control
+          fetch-depth: 1
       - name: Checkout exact main snapshot
         uses: actions/checkout@v6
         with:
           ref: 7a25d21bb6d3a539ddc118384b920ee476258c87
+          path: target
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
@@ -26,6 +33,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check "PyYAML==6.0.3"
       - name: Baseline official validators
         shell: pwsh
+        working-directory: target
         run: |
           $ErrorActionPreference = 'Stop'
           python tooling/decisions/manage_decisions.py validate
@@ -40,7 +48,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'git diff --check failed' }
       - name: Run checklist audit
         shell: pwsh
+        env:
+          MUD_AUDIT_ROOT: ${{ github.workspace }}\target
         run: |
           $ErrorActionPreference = 'Stop'
-          git show chatgpt-checklist-audit-20260817:.chatgpt/checklist_audit.py | Out-File -Encoding utf8 $env:RUNNER_TEMP/checklist_audit.py
-          python $env:RUNNER_TEMP/checklist_audit.py
+          python control/.chatgpt/checklist_audit.py
+          if ($LASTEXITCODE -ne 0) { throw 'checklist audit failed' }
