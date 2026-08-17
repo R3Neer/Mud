@@ -1,1 +1,65 @@
-placeholder
+name: ChatGPT checklist final audit
+on:
+  push:
+    branches: [chatgpt-checklist-finish-stage6-runner]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-stage6-runner
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: 11461e5ca98e2fa350ba279f884b4b3a603a3608
+          path: target
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Verify exact candidate
+        shell: pwsh
+        working-directory: target
+        env:
+          EXPECTED: 11461e5ca98e2fa350ba279f884b4b3a603a3608
+        run: |
+          if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED) { throw 'wrong candidate SHA' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'candidate checkout dirty' }
+      - name: Regenerate and require convergence
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py generate
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git diff --exit-code
+          if ($LASTEXITCODE -ne 0) { throw 'generated decision index is stale' }
+      - name: Official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Checklist semantic audit
+        shell: pwsh
+        working-directory: target
+        run: |
+          python ../control/.chatgpt/final_audit.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'audit left candidate dirty' }
