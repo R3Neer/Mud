@@ -98,3 +98,5 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'stage 1 commit failed' }
           git push origin HEAD:chatgpt-checklist-finish-v1
           if ($LASTEXITCODE -ne 0) { throw 'stage 1 push failed' }
+
+# retrigger after candidate rollback and minimal case editing
