@@ -195,7 +195,12 @@ require(
     '`GivenDecl` usa el mismo `TypeExpr` superficial',
     'diccionarios exactos o decisionales',
 )
-require('especificacion/gramatica/mud.ebnf', 'given-parameter', 'type-expression')
+require(
+    'especificacion/gramatica/mud.ebnf',
+    'given-clause',
+    'given-declaration',
+    '::= given-name , { "," , given-name } , ":" , type-expression',
+)
 
 # 9. Empty extrema are ordinary absence with conservative [0..1] result.
 d95 = frontmatter('notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria.md')
