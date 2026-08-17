@@ -1,5 +1,9 @@
 from pathlib import Path
-import os,re,yaml
+import os,re,sys,yaml
+try:
+    sys.stdout.reconfigure(encoding='utf-8', errors='backslashreplace')
+except Exception:
+    pass
 ROOT=Path(os.environ['MUD_TARGET']).resolve()
 patterns={
  'anonymous-participant': re.compile(r'particip.{0,50}(an[oó]nim|sin\s+nombre)|an[oó]nim.{0,50}particip',re.I),
