@@ -1,0 +1,29 @@
+name: ChatGPT checklist inspect ADR gaps
+on:
+  push:
+    branches: [chatgpt-checklist-finish-stage5-runner]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-v1
+      - name: Print target ADRs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for wanted in {'D-021','D-038'}:
+              hits=[]
+              for p in Path('notas/decisiones').glob('ADR-*.md'):
+                  t=p.read_text(encoding='utf-8')
+                  if f'id: {wanted}' in t or f'id: "{wanted}"' in t:
+                      hits.append((p,t))
+              print(f'===== {wanted} hits={len(hits)} =====')
+              for p,t in hits:
+                  print('PATH',p)
+                  print(t)
+          PY
