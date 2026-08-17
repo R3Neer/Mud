@@ -30,3 +30,7 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 | `notas/decisiones/` | Procedencia y ciclo de vida de decisiones |
 | `notas/preguntas/` | Incertidumbres abiertas y trazabilidad de su cierre |
 | `gobierno/` | Procesos editoriales y de control de cambios |
+
+## Herramientas experimentales
+
+RepoPatcher permanece en `tooling/` como experimento de paquetes portables y aplicación local. No define el flujo preferente de cambios remotos desde ChatGPT; ese trabajo sigue la política Git del repositorio y las instrucciones de `AGENTS.md`.
