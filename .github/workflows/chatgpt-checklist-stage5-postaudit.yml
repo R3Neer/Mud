@@ -1,0 +1,42 @@
+name: ChatGPT checklist ADR post-audit
+on:
+  push:
+    branches: [chatgpt-checklist-finish-stage5-postaudit]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-v1
+          path: target
+          fetch-depth: 0
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-finish-stage5-postaudit
+          path: control
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Validate published candidate
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Scan vigente ADRs after sweep
+        shell: pwsh
+        env:
+          MUD_TARGET: ${{ github.workspace }}\target
+        run: python control/.chatgpt/stage5_adr_audit.py
