@@ -159,7 +159,13 @@ if missing:
 
 # 7. Contextual nominal alias construction is explicit in the modern phase contract.
 require('notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal.md', 'ContextualAliasConstructionExpr')
-require('especificacion/08-sintaxis-abstracta.md', '### Construcción contextual de aliases', 'ContextualAliasConstructionExpr(literal, target_alias)', 'ConversionExpr')
+require(
+    'especificacion/08-sintaxis-abstracta.md',
+    'La misma regla se aplica a literales básicos',
+    'requiere `rawName to PlayerName`',
+    'ContextualAliasConstructionExpr(literal, target_alias)',
+    'ConversionExpr(value, target_type)',
+)
 require('especificacion/ir/mud-semantic-ir.asdl', 'ContextualAliasConstructionExpr(', 'ConversionExpr(')
 required_alias_cases = {
     'contextual-basic-alias-literal',
@@ -172,13 +178,23 @@ if missing:
     raise SystemExit(f'item 7: missing alias cases {sorted(missing)}')
 require('especificacion/sintaxis/validate_syntax_model.py', 'ContextualAliasConstructionExpr(', *sorted(required_alias_cases))
 
-# 8. Given uses the full TypeExpr and therefore supports collection/dictionary shapes.
+# 8. Given uses the full TypeExpr and therefore supports exact/decision dictionaries.
 surface = text('especificacion/sintaxis/mud-surface-ast.asdl')
-if not re.search(r'given_decl\s*=\s*GivenDecl\(identifier name,\s*\n\s*type_expr type,', surface):
-    raise SystemExit('item 8: GivenDecl does not carry type_expr')
-for needle in ['dictionary_shape = DictionaryShape(', 'collection_spec', 'type_expr']:
+if not re.search(r'given_decl\s*=\s*GivenDecl\(given_name name,\s*\n\s*type_expr shape,', surface):
+    raise SystemExit('item 8: GivenDecl does not carry the full type_expr shape')
+for needle in [
+    'ExactDictionaryType(type_expr key_type,',
+    'DecisionDictionaryType(type_expr input_type,',
+    'type_expr = TypeExpr(',
+    'collection_spec collection',
+]:
     if needle not in surface:
         raise SystemExit(f'item 8: surface AST missing {needle!r}')
+require(
+    'especificacion/08-sintaxis-abstracta.md',
+    '`GivenDecl` usa el mismo `TypeExpr` superficial',
+    'diccionarios exactos o decisionales',
+)
 require('especificacion/gramatica/mud.ebnf', 'given-parameter', 'type-expression')
 
 # 9. Empty extrema are ordinary absence with conservative [0..1] result.
