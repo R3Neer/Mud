@@ -41,8 +41,7 @@ def case_ids() -> set[str]:
     return {c.get('id') for c in data.get('cases', []) if c.get('id')}
 
 
-# 1. Unit source forms: configurable display forms, spaces, alphabetic content,
-# keyword exclusion, and uniqueness after allowed-prefix closure.
+# 1. Unit source forms.
 require(
     'especificacion/06-lexico.md',
     'MUD-LEX-016',
@@ -70,15 +69,13 @@ if missing:
 # 2. Functional decision branches have local structural identity, not public anchors.
 require(
     'notas/decisiones/ADR-090-ramas-funcionales-sin-ancla-publica.md',
-    'no es una declaración pública',
+    'Una rama de diccionario funcional no posee ancla pública',
+    'no introduce `AnchoredSymbol`',
     'decision_branch_key',
-    'no materializa un `BranchSymbol`',
-    'no expone una ancla pública',
+    'SelectorBranchKey(canonical_selector)',
+    'FallbackBranchKey',
 )
-require(
-    'especificacion/README.md',
-    'no reciben ancla pública conforme a D-090',
-)
+require('especificacion/README.md', 'no reciben ancla pública conforme a D-090')
 
 # 3. Surface AST -> nominal HIR -> typed/elaborated semantic IR.
 hir_path = ROOT / 'especificacion/ir/mud-nominal-hir.asdl'
@@ -86,24 +83,14 @@ if not hir_path.exists():
     raise SystemExit('item 3: missing mud-nominal-hir.asdl')
 hir = hir_path.read_text(encoding='utf-8')
 for needle in [
-    'module MUDNominalHIR',
-    'NominalHIR(',
-    'NominalSymbol(',
-    'NominalScope(',
-    'ResolvedReference(',
-    'Owns(',
-    'Specializes(',
-    'RefersTo(',
+    'module MUDNominalHIR', 'NominalHIR(', 'NominalSymbol(', 'NominalScope(',
+    'ResolvedReference(', 'Owns(', 'Specializes(', 'RefersTo(',
 ]:
     if needle not in hir:
         raise SystemExit(f'item 3: HIR missing {needle!r}')
 for forbidden in [
-    'semantic_type',
-    'effective_domain',
-    'collection_shape',
-    'effective_cardinality',
-    'termination_evidence',
-    'ConversionExpr',
+    'semantic_type', 'effective_domain', 'collection_shape',
+    'effective_cardinality', 'termination_evidence', 'ConversionExpr',
 ]:
     if forbidden in hir:
         raise SystemExit(f'item 3: nominal HIR leaks elaboration via {forbidden!r}')
@@ -111,19 +98,12 @@ if (ROOT / 'especificacion/sintaxis/mud-resolved-ast.asdl').exists():
     raise SystemExit('item 3: retired mud-resolved-ast.asdl reappeared')
 require(
     'notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado.md',
-    'mud-nominal-hir.asdl',
-    'HIR nominal',
-    'no puede contener',
+    'mud-nominal-hir.asdl', 'HIR nominal', 'no puede contener',
 )
-require(
-    'especificacion/08-sintaxis-abstracta.md',
-    'HIR nominal',
-    'IR semántico',
-)
+require('especificacion/08-sintaxis-abstracta.md', 'HIR nominal', 'IR semántico')
 
-# 4. Vigente ADR sweep: assert the corrected contracts and reject the exact old
-# active statements that were found by the independent sweep. Historical/negative
-# mentions remain allowed where they document a withdrawal.
+# 4. Vigente ADR sweep. Historical/negative mentions remain allowed where they
+# document the withdrawal; exact old active statements are forbidden.
 require('notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension.md', 'things {', 'rules {')
 require('notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md', '~name =', '~plural =', '~abbreviation =')
 forbid('notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades.md', '\n        abbreviation =', '\n        prefixes =')
@@ -135,7 +115,7 @@ require('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md', 'debe
 forbid('notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md', 'El nombre de un participante `on`, o de un participante `for` cuya cardinalidad efectiva sea exactamente `[1]`, puede omitirse.')
 require('notas/decisiones/ADR-037-campos-y-dominios-declarativos.md', 'campo ordinario llamado `name`')
 forbid('notas/decisiones/ADR-037-campos-y-dominios-declarativos.md', 'omitir cardinalidad equivale a `[1]`')
-require('notas/decisiones/ADR-038-familias-miembros-y-datos-asociados.md', '~name: Name', '~name =')
+require('notas/decisiones/ADR-038-familias-cerradas-de-valores.md', '~name: Name', '~name =', 'no declaraciones independientes por miembro')
 require('notas/decisiones/ADR-039-colecciones-y-diccionarios.md', '`unique`, cuando se escribe, se aplica a los **valores asociados**', 'Leer una clave ausente produce `empty`')
 require('notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md', 'No existe la forma plana o mezclada')
 require('notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise.md', 'things { Counter }', 'test-start-with\n    ::= start-with-declaration')
@@ -150,27 +130,27 @@ require('notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflect
 # 5. Family data declarations are anchored descriptors; per-member values are payload.
 require(
     'notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md',
-    'declaración de descriptor',
-    'family::game.Status::score',
-    'no introduce otra declaración ni otra ancla',
+    'La declaración de un dato asociado almacenado o calculado es una entidad semántica estable',
+    'ancla subordinada `family::<nombre-cualificado>::<dato>`',
+    'Una `family-data-assignment` dentro del cuerpo de un miembro es únicamente una sobrescritura',
+    'No posee ancla, no admite metadata-body',
 )
 require(
-    'notas/decisiones/ADR-038-familias-miembros-y-datos-asociados.md',
-    'no introduce una declaración independiente',
+    'notas/decisiones/ADR-038-familias-cerradas-de-valores.md',
+    'son valores efectivos del descriptor uniforme, no declaraciones independientes por miembro',
+    'La declaración del dato sí es una entidad semántica estable',
 )
 
 # 6. Metadata descriptors expose path/file but remain terminal.
 require(
     'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
-    '~anchor',
-    '~path',
-    '~file',
+    '~anchor', '~path', '~file',
 )
 require(
     'notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados.md',
-    '`~path: MudPath`',
-    '`~file: MudFile`',
+    '`~anchor: Anchor`, `~path: MudPath` y `~file: MudFile`',
     'descriptor terminal',
+    'no expone `~metadata`',
 )
 required_metadata_cases = {'metadata-descriptor-path-file', 'metadata-descriptor-remains-terminal'}
 missing = required_metadata_cases - ids
@@ -207,9 +187,7 @@ if d95.get('status') != 'vigente':
     raise SystemExit('item 9: D-095 is not vigente')
 require(
     'notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria.md',
-    'producen `empty`',
-    'min : T [0..1]',
-    'max : T [0..1]',
+    'producen `empty`', 'min : T [0..1]', 'max : T [0..1]',
     'no introduce por sí misma `failed`',
 )
 
@@ -247,19 +225,21 @@ for rel in [
 # 12. Authority/readability: normative surface and editorial maturity are orthogonal.
 require(
     'gobierno/CICLO-DOCUMENTAL.md',
-    '### Autoridad durante la preparación',
+    '### Autoridad durante la promoción',
     '`normative: true`',
-    '`status`',
-    'no existe una precedencia silenciosa',
+    'La autoridad del capítulo como unidad aparece al alcanzar `status: vigente`',
+    'ninguna de las dos superficies adquiere prioridad silenciosa',
 )
 require(
     'especificacion/00-convenciones-editoriales.md',
-    '`normative: true`',
-    'estado editorial',
+    '`normative: true` clasifica el archivo dentro de la superficie normativa',
+    'Solo `status: vigente` concede autoridad consolidada al capítulo como unidad',
+    'no una regla de prioridad silenciosa',
 )
 require(
     'especificacion/README.md',
-    'Carácter normativo y estado editorial',
+    '## Carácter normativo',
+    'La superficie y el estado de publicación son ejes distintos',
     'no reciben ancla pública conforme a D-090',
 )
 forbid('especificacion/README.md', 'anclas estables de ramas decisionales')
