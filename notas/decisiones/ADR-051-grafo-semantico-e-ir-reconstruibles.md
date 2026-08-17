@@ -13,7 +13,7 @@ questions:
   - "Q-054"
   - "Q-059"
 affects:
-  - "arquitectura, grafo semántico, IR, conformidad"
+  - "arquitectura, HIR nominal, grafo semántico, IR, conformidad"
 ---
 # ADR-051 — Grafo semántico e IR reconstruibles
 
@@ -33,9 +33,9 @@ El grafo y el IR son fundamentales para impacto, explicación y ejecución, pero
 
 ## Decisión
 
-Los archivos `.mud` y sus decisiones de versión son la única fuente semántica. El AST, la tabla de símbolos, el grafo y el IR se reconstruyen a partir de ella.
+Los archivos `.mud` y sus decisiones de versión son la única fuente semántica. El AST superficial, el HIR nominal, el grafo y el IR semántico se reconstruyen a partir de ellos.
 
-El AST normativo es el AST superficial y conserva forma escrita y procedencia. La resolución nominal produce símbolos, bindings y un grafo parcial sin crear otro AST normativo. Tras tipado y elaboración, el IR semántico conserva el significado resuelto y debe:
+El AST normativo de fuente es el AST superficial y conserva forma escrita y procedencia. La resolución nominal produce el HIR de `ir/mud-nominal-hir.asdl`, con símbolos, scopes, bindings, anclas y un grafo nominal parcial, pero sin conclusiones de tipado o elaboración. Tras tipado y elaboración, el IR semántico conserva el significado elaborado y debe:
 
 - declarar `schemaVersion`;
 - usar anclas resueltas;
@@ -48,10 +48,10 @@ El AST normativo es el AST superficial y conserva forma escrita y procedencia. L
 - distinguir las vinculaciones locales inmutables de los campos, lugares y efectos, conservando su ámbito y orden de evaluación;
 - conservar referencias a archivo y rango de origen;
 - representar actividad lógica y dependencias suspendidas;
-- incluir `look`, `message` y la evaluación diferida de sus salidas.
+- incluir `look`, `message` y la evaluación diferida de sus salidas;
 - distinguir `TestDecl`, su conjunto inicial local, sus efectos, sus aserciones y sus diagnósticos.
 
-El grafo es una proyección consultable del IR. Como mínimo reconoce nodos para declaraciones, componentes, campos, dominios, unidades, participantes, `given`, patrones de vinculación, expresiones `allowed` y consultas `eventually`.
+El grafo semántico final es una proyección consultable del IR. Como mínimo reconoce nodos para declaraciones, componentes, campos, dominios, unidades, participantes, `given`, patrones de vinculación, expresiones `allowed` y consultas `eventually`. El HIR nominal contiene únicamente el subconjunto de propiedad, especialización y referencia que puede conocerse antes de tipado.
 
 Sus familias de aristas incluyen:
 
@@ -75,11 +75,13 @@ Los nombres concretos de campos JSON y aristas se fijarán con el esquema de Q-0
 
 - Una discrepancia se resuelve descartando y reconstruyendo el derivado.
 - Dos herramientas pueden intercambiar IR solo cuando declaren una versión de esquema compatible.
+- El HIR nominal y el IR semántico tienen fronteras distintas y no son intercambiables.
 
 ## Verificación
 
 1. Reconstrucción determinista desde el mismo programa.
-2. Procedencia IR → AST → rango de fuente.
+2. Procedencia IR → HIR nominal → AST superficial → rango de fuente.
 3. Consultas de lectores, escritores, llamadas y dependencias transitivas.
 4. Representación diferenciada de `look`, `message`, tests y las tres reglas.
 5. Rechazo o migración explícita de una versión incompatible.
+6. El HIR nominal no contiene tipos efectivos, dominios efectivos, cardinalidades ni evidencia de terminación.
