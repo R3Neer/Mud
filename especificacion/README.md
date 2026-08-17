@@ -250,7 +250,7 @@ Define:
 - Declaraciones `using` exactas y recursivas.
 - Posición obligatoria de todos los `using` en la cabecera del fichero.
 - Ambigüedad.
-- Formación y unicidad de anclas, incluidas anclas estables de ramas decisionales.
+- Formación y unicidad de anclas públicas; las ramas funcionales de diccionarios decisionales usan claves locales y no reciben ancla pública conforme a D-090.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
 - Identidad ante movimientos de archivo.
 - Migración de path y anclas.
