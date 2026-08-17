@@ -1,0 +1,59 @@
+name: ChatGPT checklist published audit
+on:
+  push:
+    branches: [chatgpt-checklist-published-audit-20260817]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt-checklist-published-audit-20260817
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          path: target
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Verify published SHA
+        shell: pwsh
+        working-directory: target
+        env:
+          EXPECTED: 84142accf22f4c71d52954a6e56945e789621ea2
+        run: |
+          if ((git rev-parse HEAD).Trim() -ne $env:EXPECTED) { throw 'main is not the audited candidate' }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'published checkout dirty before audit' }
+      - name: Official validators
+        shell: pwsh
+        working-directory: target
+        run: |
+          python tooling/decisions/manage_decisions.py validate
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tooling/questions/validate_questions.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/gramatica/validate_grammar.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python especificacion/sintaxis/validate_syntax_model.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - name: Whole checklist audit
+        shell: pwsh
+        env:
+          MUD_TARGET: ${{ github.workspace }}\target
+        run: python control/.chatgpt/final_checklist_audit.py
+      - name: Read-only and whitespace proof
+        shell: pwsh
+        working-directory: target
+        run: |
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          if (git status --porcelain=v1 --untracked-files=all) { throw 'published audit mutated main checkout' }
+          Write-Host 'PUBLISHED_CHECKLIST_AUDIT_OK'
