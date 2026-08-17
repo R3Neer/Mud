@@ -433,7 +433,8 @@ Las rutas recibidas por `PatchContext` no pueden ser absolutas ni contener `..`,
 resuelta debe permanecer bajo la repo.
 
 Fuente: `repo_patcher/context.py::PatchContext`,
-`repo_patcher/models.py::Manifest` y `repo_patcher/plugin.py::load_plugin`.
+`repo_patcher/models.py::Manifest` y
+`repo_patcher/plugin.py::load_plugin`.
 
 ## 6. Transacción y rollback de 0.2.0
 
