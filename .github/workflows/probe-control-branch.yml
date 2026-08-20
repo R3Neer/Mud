@@ -1,0 +1,30 @@
+name: Probe control branch execution
+
+on:
+  push:
+    branches:
+      - control/abstract-thing-initializers
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Publish execution marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Samuel"
+          git config user.email "64842010+R3Neer@users.noreply.github.com"
+          git checkout -B audit/abstract-thing-initializers main
+          mkdir -p .audit
+          printf 'ran-from=%s\nmain=%s\n' "$GITHUB_SHA" "$(git rev-parse HEAD)" > .audit/abstract-thing-initializers-control.txt
+          git add .audit/abstract-thing-initializers-control.txt
+          git commit -m "chore(audit): registra ejecución de control"
+          git push origin HEAD:audit/abstract-thing-initializers
