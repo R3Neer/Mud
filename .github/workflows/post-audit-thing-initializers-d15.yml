@@ -1,0 +1,109 @@
+name: Post-audit D-015 thing initializers
+
+on:
+  push:
+    branches:
+      - control/post-audit-thing-initializers-d15
+
+permissions:
+  contents: write
+
+jobs:
+  audit-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout published HEAD exactly
+        uses: actions/checkout@v4
+        with:
+          ref: 83234608e47c0fe8a68da12573ee57c61f5958ca
+          fetch-depth: 0
+
+      - name: Verify published identity and scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "83234608e47c0fe8a68da12573ee57c61f5958ca"
+          test "$(git rev-parse HEAD^)" = "af461facd8baa04d73645a88edd84f308f0e1873"
+          expected=$(cat <<'EOF'
+          especificacion/07-gramatica-concreta.md
+          especificacion/08-sintaxis-abstracta.md
+          especificacion/gramatica/mud.ebnf
+          especificacion/sintaxis/casos/cst-ast.yaml
+          especificacion/sintaxis/cobertura-sintactica.yaml
+          especificacion/sintaxis/cst-a-ast-superficial.md
+          especificacion/sintaxis/cst-sin-perdidas.md
+          especificacion/sintaxis/mud-surface-ast.asdl
+          especificacion/sintaxis/mud-syntax-kinds.yaml
+          especificacion/sintaxis/validate_syntax_model.py
+          EOF
+          )
+          actual=$(git diff --name-only HEAD^ HEAD | sort)
+          test "$actual" = "$(printf '%s\n' "$expected" | sort)"
+          test ! -e .github/workflows/patch-thing-initializers-d15.yml
+          test ! -e .github/workflows/fix-thing-initializers-d15-candidate.yml
+          test ! -e .github/workflows/fix-thing-initializers-d15-pr.yml
+          test ! -e .github/workflows/post-audit-thing-initializers-d15.yml
+
+      - name: Check patch invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+
+          grammar = Path('especificacion/gramatica/mud.ebnf').read_text(encoding='utf-8')
+          ast = Path('especificacion/sintaxis/mud-surface-ast.asdl').read_text(encoding='utf-8')
+          transform = Path('especificacion/sintaxis/cst-a-ast-superficial.md').read_text(encoding='utf-8')
+          cases_text = Path('especificacion/sintaxis/casos/cst-ast.yaml').read_text(encoding='utf-8')
+          cases = yaml.safe_load(cases_text)['cases']
+          by_id = {case['id']: case for case in cases}
+
+          assert 'thing-initializer\n    ::= field-name , "=" , constant-expression' in grammar
+          assert 'thing_initializer* initializers' in ast
+          assert 'thing_initializer = ThingInitializer(field_name name, expr value)' in ast
+          assert 'legacy-intrinsic-name-override' not in cases_text
+          assert 'La forma antigua `name =` se rechaza antes del AST.' not in transform
+          assert by_id['thing-concrete-initializer']['source'].startswith('thing Kingdom {\n')
+          assert 'treasury = 20\n' in by_id['thing-concrete-initializer']['source']
+          assert 'name = "Ada"\n' in by_id['thing-name-field-initializer']['source']
+          assert by_id['abstract-thing-concrete-initializer-rejected']['produces_ast'] is False
+          assert by_id['abstract-thing-concrete-initializer-rejected']['expected_diagnostics'] == ['abstract-thing-cannot-have-initializer']
+          PY
+
+      - name: Install validator dependencies
+        run: python -m pip install -r especificacion/sintaxis/requirements.txt
+
+      - name: Repeat official validators on published HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          git diff --check HEAD^ HEAD
+
+      - name: Publish audit marker on control branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin control/post-audit-thing-initializers-d15
+          git switch -C control/post-audit-thing-initializers-d15 origin/control/post-audit-thing-initializers-d15
+          mkdir -p .audit
+          cat > .audit/thing-initializers-d15.txt <<'EOF'
+          audited_main=83234608e47c0fe8a68da12573ee57c61f5958ca
+          parent=af461facd8baa04d73645a88edd84f308f0e1873
+          decisions=ok
+          questions=ok
+          grammar=ok
+          syntax_model=ok
+          diff_check=ok
+          invariants=ok
+          temporary_workflows_absent_from_main=ok
+          EOF
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add .audit/thing-initializers-d15.txt
+          git commit -m "chore(control): registra auditoria post-publicacion D-015"
+          git push origin HEAD:control/post-audit-thing-initializers-d15
