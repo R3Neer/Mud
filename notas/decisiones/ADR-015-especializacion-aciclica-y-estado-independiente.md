@@ -36,6 +36,7 @@ La especialización hereda:
 - restricciones;
 - dominios;
 - valores predeterminados efectivos;
+- inicializadores de `thing` aplicables;
 - los demás elementos de esquema que la especificación autorice expresamente.
 
 No hereda, copia ni observa el estado mutable actual de la antecesora.
@@ -44,23 +45,31 @@ La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local
 
 Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
 
-La definición canónica de una `thing` concreta puede declarar antecesoras e inicializadores:
+La definición canónica de una `thing`, concreta o abstracta, puede declarar antecesoras e inicializadores:
 
 ```mud
 thing N as BaseOne, BaseTwo {
-    ...
+    field = value
+}
+
+abstract thing A as BaseOne {
+    field = value
 }
 ```
 
-Al activarla por primera vez mediante `start with` o:
+La forma `field = value` no declara un campo. Debe dirigirse a un campo almacenado ya aportado por el esquema heredado. Una misma definición de `thing` no puede declarar localmente un campo y además inicializarlo mediante otra instrucción `field = value`. La forma `field: Type = value` sigue siendo una única declaración de campo con predeterminado y no cuenta como un inicializador separado.
+
+Una `thing` abstracta no materializa carga propia, pero sus inicializadores forman parte de la especialización y pueden contribuir a la primera materialización de una descendiente concreta. Para un mismo campo, un inicializador declarado en una descendiente más específica sustituye a los inicializadores heredados menos específicos. Si un mismo inicializador original alcanza una descendiente por varias rutas de un diamante, se deduplica por origen; inicializadores independientes e incomparables que compitan por el mismo campo producen conflicto, sin prioridad por el orden escrito de `as`, conforme a D-084.
+
+Al activar por primera vez una `thing` concreta mediante `start with` o:
 
 ```mud
 create N
 ```
 
-la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después las inicializaciones explícitas. No parte de sus estados activos. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
+la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después los inicializadores efectivos. No parte de los estados activos de sus antecesoras. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
 
-Las asignaciones concretas del bloque inicializan $N$, pero no se convierten en predeterminados heredables. Solo una declaración explícita de predeterminado forma parte del esquema.
+Los inicializadores no se convierten en declaraciones de campo ni en predeterminados de esquema. Que un inicializador de una `thing` abstracta pueda heredarse como contribución de inicialización no cambia el predeterminado heredable del campo.
 
 ### Especialización acíclica
 
@@ -121,7 +130,26 @@ thing France as Kingdom {
 }
 ```
 
-Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación no se convierte en predeterminado para futuras descendientes de `France`.
+Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación de una `thing` concreta no se convierte en predeterminado ni en inicializador heredable para futuras descendientes de `France`.
+
+```mud
+abstract thing RichKingdom as Kingdom {
+    treasury = 20
+}
+
+thing Lydia as RichKingdom {}
+```
+
+`RichKingdom` no materializa una tesorería propia. Su inicializador sí contribuye a la primera materialización de `Lydia`, que comienza con `treasury = 20`.
+
+Es inválido declarar e inicializar por separado el mismo campo en una sola definición:
+
+```mud
+thing Broken as Kingdom {
+    treasury: Money = 10
+    treasury = 20
+}
+```
 
 ## Verificación
 
@@ -130,8 +158,10 @@ Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación 
 3. Antisimetría de `is`.
 4. Independencia de estados.
 5. Inicialización desde predeterminados efectivos.
-6. Aplicación de los inicializadores canónicos en la primera activación.
-7. Ausencia de propagación implícita a futuras descendientes.
+6. Aplicación de los inicializadores efectivos en la primera activación.
+7. Herencia de inicializadores desde `thing` abstractas y ausencia de propagación desde inicializadores locales de `thing` concretas.
+8. Rechazo de declarar un campo e inicializarlo por separado dentro de la misma `thing`.
+9. Deduplicación por origen y conflicto sin prioridad para inicializadores abstractos heredados por especialización múltiple.
 
 ## Ampliación por D-084
 

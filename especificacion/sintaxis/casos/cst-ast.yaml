@@ -617,12 +617,20 @@ cases:
   normalizations:
   - treat-name-as-ordinary-field-initializer
   produces_ast: true
-- id: abstract-thing-concrete-initializer-rejected
+- id: abstract-thing-inherited-initializer
+  category: thing
+  source: "thing Being {\n    age: Nat = 0\n}\nabstract thing Adult as Being {\n    age = 18\n}\nthing Clara as Adult\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Adult, isAbstract=Enabled, initializers=[ThingInitializer(age, 18)])
+  normalizations:
+  - preserve-abstract-initializer-for-descendant-materialization
+  produces_ast: true
+- id: thing-local-field-and-initializer-rejected
   category: validation-before-ast
-  source: "abstract thing AbstractCounter {\n    value: Nat\n    value = 1\n}\n"
+  source: "thing Broken {\n    age: Nat = 18\n    age = 20\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
-  - abstract-thing-cannot-have-initializer
+  - thing-field-cannot-be-declared-and-initialized-separately
   produces_ast: false
 - id: arrow-union-precedence
   category: type
