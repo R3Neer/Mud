@@ -262,6 +262,7 @@ def validate(root: Path) -> list[Problem]:
     required_case_ids = {
         "thing-concrete-initializer",
         "thing-name-field-initializer",
+        "abstract-thing-concrete-initializer-rejected",
         "subaction-internal-call",
         "subaction-root-request-rejected",
         "mud-path-not-membership",

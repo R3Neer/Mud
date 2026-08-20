@@ -164,13 +164,13 @@ destroy Alexandria
 
 ### Inicializadores concretos
 
-Una `thing` puede inicializar de forma local un campo almacenado de su esquema efectivo mediante una asignación sin redeclarar el campo:
+Una `thing` concreta puede inicializar de forma local un campo almacenado de su esquema efectivo mediante una asignación sin redeclarar el campo:
 
 ```text
 fieldName = static-expression
 ```
 
-El objetivo se conserva como nombre de campo hasta la resolución y puede corresponder a un campo local o heredado. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada.
+El objetivo se conserva como nombre de campo hasta la resolución y puede corresponder a un campo local o heredado. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada. Una `abstract thing` no posee estado concreto propio y no puede contener esta forma; se rechaza durante la validación previa al AST.
 
 ```mud
 thing Kingdom {

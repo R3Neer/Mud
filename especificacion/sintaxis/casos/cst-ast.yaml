@@ -603,13 +603,7 @@ cases:
   produces_ast: false
 - id: thing-concrete-initializer
   category: thing
-  source: "thing Kingdom {
-    mut treasury: Money = 0
-}
-thing France as Kingdom {
-    treasury = 20
-}
-"
+  source: "thing Kingdom {\n    mut treasury: Money = 0\n}\nthing France as Kingdom {\n    treasury = 20\n}\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(France, initializers=[ThingInitializer(treasury, 20)])
   normalizations:
@@ -617,18 +611,19 @@ thing France as Kingdom {
   produces_ast: true
 - id: thing-name-field-initializer
   category: thing
-  source: "thing Named {
-    name: Text = \"unknown\"
-}
-thing Ada as Named {
-    name = \"Ada\"
-}
-"
+  source: "thing Named {\n    name: Text = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n}\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])
   normalizations:
   - treat-name-as-ordinary-field-initializer
   produces_ast: true
+- id: abstract-thing-concrete-initializer-rejected
+  category: validation-before-ast
+  source: "abstract thing AbstractCounter {\n    value: Nat\n    value = 1\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - abstract-thing-cannot-have-initializer
+  produces_ast: false
 - id: arrow-union-precedence
   category: type
   source: "thing Shapes {\n    exact: A | B -> C | D\n    functional: A | B --> C | D\n}\n"

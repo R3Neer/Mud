@@ -148,7 +148,7 @@ produce `ThingDecl`:
 - Declaraciones `~...` almacenadas o calculadas → secuencia de `metadata_assignment`, normalizada a `StoredMetadataAssignment` o `CalculatedMetadataAssignment`.
 - Cuerpo → metadatos, campos e inicializadores concretos.
 
-`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. Cada `field-declaration` alimenta la secuencia `fields`; cada `thing-initializer` produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`. La omisión del cuerpo y un cuerpo explícito vacío producen las mismas secuencias vacías; el terminador se descarta como layout.
+`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. Cada `field-declaration` alimenta la secuencia `fields`; en una `thing` concreta, cada `thing-initializer` produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`. Una `abstract thing` con `thing-initializer` se rechaza durante la validación previa al AST. La omisión del cuerpo y un cuerpo explícito vacío producen las mismas secuencias vacías; el terminador se descarta como layout.
 
 Una forma `name = valor` ya no recibe un rechazo sintáctico especial. Se proyecta como cualquier otro `ThingInitializer`; la resolución posterior decide si `name` designa realmente un campo almacenado del esquema efectivo. El metadato de presentación continúa escribiéndose `~name = valor`.
 
