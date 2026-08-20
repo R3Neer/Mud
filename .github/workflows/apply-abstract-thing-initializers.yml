@@ -1,0 +1,309 @@
+name: Apply abstract thing initializer semantics
+
+on:
+  push:
+    branches:
+      - control/abstract-thing-initializers
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact main base
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify base
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "83234608e47c0fe8a68da12573ee57c61f5958ca"
+          test -z "$(git status --porcelain)"
+
+      - name: Apply normative changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_between(path: str, start: str, end: str, replacement: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              i = text.index(start)
+              j = text.index(end, i)
+              p.write_text(text[:i] + replacement + text[j:], encoding="utf-8")
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one match, found {count}: {old!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          # D-015: make abstract initializers meaningful and forbid local declaration+initializer pairs.
+          replace_between(
+              "notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md",
+              "### Estado independiente\n",
+              "### Especialización acíclica\n",
+              '''### Estado independiente
+
+La especialización hereda:
+
+- declaraciones de campos;
+- restricciones;
+- dominios;
+- valores predeterminados efectivos;
+- inicializadores de `thing` aplicables;
+- los demás elementos de esquema que la especificación autorice expresamente.
+
+No hereda, copia ni observa el estado mutable actual de la antecesora.
+
+La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local de cada identidad y, si no se sobrescribe, se deriva de su propio nombre nominal.
+
+Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
+
+La definición canónica de una `thing`, concreta o abstracta, puede declarar antecesoras e inicializadores:
+
+```mud
+thing N as BaseOne, BaseTwo {
+    field = value
+}
+
+abstract thing A as BaseOne {
+    field = value
+}
+```
+
+La forma `field = value` no declara un campo. Debe dirigirse a un campo almacenado ya aportado por el esquema heredado. Una misma definición de `thing` no puede declarar localmente un campo y además inicializarlo mediante otra instrucción `field = value`. La forma `field: Type = value` sigue siendo una única declaración de campo con predeterminado y no cuenta como un inicializador separado.
+
+Una `thing` abstracta no materializa carga propia, pero sus inicializadores forman parte de la especialización y pueden contribuir a la primera materialización de una descendiente concreta. Para un mismo campo, un inicializador declarado en una descendiente más específica sustituye a los inicializadores heredados menos específicos. Si un mismo inicializador original alcanza una descendiente por varias rutas de un diamante, se deduplica por origen; inicializadores independientes e incomparables que compitan por el mismo campo producen conflicto, sin prioridad por el orden escrito de `as`, conforme a D-084.
+
+Al activar por primera vez una `thing` concreta mediante `start with` o:
+
+```mud
+create N
+```
+
+la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después los inicializadores efectivos. No parte de los estados activos de sus antecesoras. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
+
+Los inicializadores no se convierten en declaraciones de campo ni en predeterminados de esquema. Que un inicializador de una `thing` abstracta pueda heredarse como contribución de inicialización no cambia el predeterminado heredable del campo.
+
+'''
+          )
+          replace_once(
+              "notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md",
+              "- Actualizada: 2026-07-28 para usar el vocabulario de D-025\n",
+              "- Actualizada: 2026-07-28 para usar el vocabulario de D-025\n- Actualizada: 2026-08-20 para permitir inicializadores heredables en `thing` abstractas y separar declaración local de inicialización.\n",
+          )
+          replace_once(
+              "notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md",
+              "6. Aplicación de los inicializadores canónicos en la primera activación.\n7. Ausencia de propagación implícita a futuras descendientes.\n",
+              "6. Aplicación de los inicializadores efectivos en la primera activación.\n7. Herencia de inicializadores desde `thing` abstractas, con sustitución por una contribución más específica y deduplicación de diamantes por origen.\n8. Rechazo de una declaración local de campo acompañada por un inicializador separado del mismo campo en la misma `thing`.\n9. Ausencia de propagación implícita del estado mutable actual a futuras descendientes.\n",
+          )
+
+          # Concrete grammar prose: same syntax for concrete and abstract things; target must be inherited.
+          replace_between(
+              "especificacion/07-gramatica-concreta.md",
+              "### Inicializadores concretos\n",
+              "## Campos\n",
+              '''### Inicializadores de `thing`
+
+Una `thing`, concreta o abstracta, puede aportar de forma local un inicializador para un campo almacenado de su esquema heredado mediante una asignación sin redeclarar el campo:
+
+```text
+fieldName = static-expression
+```
+
+El objetivo se conserva como nombre de campo hasta la resolución. Debe designar un campo almacenado ya aportado por las antecesoras; no declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada.
+
+Dentro de una misma definición, los nombres declarados como campos y los nombres usados por `thing-initializer` deben ser disjuntos. Por tanto, esto es inválido:
+
+```mud
+thing Broken {
+    age: Nat
+    age = 18
+}
+```
+
+En cambio, una declaración con predeterminado es una sola declaración y es válida:
+
+```mud
+thing Person {
+    age: Nat = 0
+}
+```
+
+Una `abstract thing` puede inicializar un campo heredado:
+
+```mud
+thing Being {
+    age: Nat = 0
+}
+
+abstract thing Adult as Being {
+    age = 18
+}
+```
+
+La abstracta no materializa carga propia. Su `age = 18` se conserva como contribución de inicialización para sus descendientes concretas. Un inicializador más específico sustituye al heredado para ese campo; los diamantes siguen la política de procedencia y ausencia de prioridad fijada por D-084.
+
+```mud
+thing Clara as Adult {
+    age = 67
+}
+```
+
+En `Clara`, `67` es el inicializador efectivo para `age`. Al materializar por primera vez una concreta sin una contribución más específica, se aplica el inicializador heredado correspondiente después de los predeterminados efectivos. Una reactivación posterior a `destroy` conserva la carga almacenada en vez de ejecutar de nuevo los inicializadores.
+
+Los inicializadores no se convierten en predeterminados de esquema. `name = valor` tampoco posee un significado intrínseco especial: si `name` es un campo almacenado heredado, usa esta misma forma; `~name` continúa siendo el metadato de presentación.
+
+'''
+          )
+
+          # Surface AST prose: abstract initializers survive, while same-definition field/initializer collision is rejected locally.
+          replace_between(
+              "especificacion/08-sintaxis-abstracta.md",
+              "### Inicializador concreto\n",
+              "## Campos\n",
+              '''### Inicializador de `thing`
+
+```text
+ThingInitializer(name, value)
+```
+
+Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: el inicializador conserva una contribución de inicialización separada del esquema del campo. `name` permanece como `FieldName` sin resolver y `value` como `expr`.
+
+La validación local exige que ningún nombre aparezca a la vez entre los campos declarados por la misma `ThingDecl` y sus `ThingInitializer`. La resolución posterior comprueba además que el objetivo del inicializador sea un campo almacenado aportado por el esquema heredado y que el valor satisfaga su tipo y dominio.
+
+En una `thing` abstracta el nodo no representa carga propia de la identidad abstracta: se conserva para que la elaboración lo incorpore a las contribuciones heredables de inicialización. En una concreta, los inicializadores efectivos se aplican a su primera materialización después de resolver el esquema y los predeterminados efectivos.
+
+La secuencia de inicializadores se conserva separada de la de campos porque declaración de esquema e inicialización son operaciones distintas. La CST sigue conservando el orden físico intercalado del cuerpo.
+
+'''
+          )
+          replace_once(
+              "especificacion/08-sintaxis-abstracta.md",
+              "- Inicializadores concretos de estado.\n",
+              "- Inicializadores de `thing`.\n",
+          )
+
+          # CST -> AST projection: permit abstract initializers; reject local declaration/initializer collision.
+          replace_between(
+              "especificacion/sintaxis/cst-a-ast-superficial.md",
+              "## `thing`\n",
+              "## Campos\n",
+              '''## `thing`
+
+```ebnf
+thing-declaration
+```
+
+produce `ThingDecl`:
+
+- `abstract` → `Enabled`; omisión → `Disabled`.
+- Nombre → `NominalName`.
+- Antecesores → secuencia de `TypeRef`.
+- Declaraciones `~...` almacenadas o calculadas → secuencia de `metadata_assignment`, normalizada a `StoredMetadataAssignment` o `CalculatedMetadataAssignment`.
+- Cuerpo → metadatos, campos e inicializadores de `thing`.
+
+`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. Cada `field-declaration` alimenta la secuencia `fields`; cada `thing-initializer`, también en una `abstract thing`, produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`.
+
+Antes de producir el AST, la validación local rechaza una definición que declare un campo y contenga además un `thing-initializer` con el mismo `fieldName`. Esta comprobación no requiere resolución. La resolución posterior determina si cada inicializador restante designa un campo almacenado heredado válido.
+
+Una forma `name = valor` no recibe un rechazo sintáctico especial. Se proyecta como cualquier otro `ThingInitializer`; la resolución posterior decide si `name` designa realmente un campo almacenado del esquema heredado. El metadato de presentación continúa escribiéndose `~name = valor`.
+
+Un antecesor explícito `Thing` permanece en esa secuencia superficial. No bloquea la transformación: la resolución posterior emite la redundancia, normaliza la raíz efectiva y puede ofrecer una acción de código que retire el elemento escrito.
+
+'''
+          )
+
+          # Replace the obsolete abstract rejection case with acceptance + local collision rejection.
+          cases_path = Path("especificacion/sintaxis/casos/cst-ast.yaml")
+          cases = cases_path.read_text(encoding="utf-8")
+          start = cases.index("- id: thing-concrete-initializer\n")
+          end = cases.index("- id: arrow-union-precedence\n", start)
+          replacement = r'''- id: thing-concrete-initializer
+  category: thing
+  source: "thing Kingdom {\n    mut treasury: Money = 0\n}\nthing France as Kingdom {\n    treasury = 20\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(France, initializers=[ThingInitializer(treasury, 20)])
+  normalizations:
+  - preserve-concrete-initializer-separate-from-field-default
+  produces_ast: true
+- id: thing-name-field-initializer
+  category: thing
+  source: "thing Named {\n    name: Text = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])
+  normalizations:
+  - treat-name-as-ordinary-field-initializer
+  produces_ast: true
+- id: abstract-thing-initializer
+  category: thing
+  source: "thing Being {\n    age: Nat = 0\n}\nabstract thing Adult as Being {\n    age = 18\n}\nthing Clara as Adult\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Adult, isAbstract=Enabled, initializers=[ThingInitializer(age, 18)])
+  normalizations:
+  - preserve-abstract-initializer-as-inherited-contribution
+  produces_ast: true
+- id: thing-field-declaration-and-initializer-rejected
+  category: validation-before-ast
+  source: "thing Broken {\n    age: Nat\n    age = 18\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - thing-field-declared-and-initialized-separately
+  produces_ast: false
+'''
+          cases_path.write_text(cases[:start] + replacement + cases[end:], encoding="utf-8")
+
+          replace_once(
+              "especificacion/sintaxis/validate_syntax_model.py",
+              '''        "abstract-thing-concrete-initializer-rejected",\n''',
+              '''        "abstract-thing-initializer",\n        "thing-field-declaration-and-initializer-rejected",\n''',
+          )
+
+          # Targeted regression assertions.
+          assert "abstract-thing-cannot-have-initializer" not in cases_path.read_text(encoding="utf-8")
+          assert "thing-field-declared-and-initialized-separately" in cases_path.read_text(encoding="utf-8")
+          assert "Una `thing`, concreta o abstracta" in Path("especificacion/07-gramatica-concreta.md").read_text(encoding="utf-8")
+          assert "no puede declarar localmente un campo y además inicializarlo" in Path("notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md").read_text(encoding="utf-8")
+          PY
+
+      - name: Install validator dependencies
+        run: python -m pip install -r especificacion/sintaxis/requirements.txt
+
+      - name: Validate repository contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          ! grep -R "abstract-thing-cannot-have-initializer" -n especificacion notas
+          git diff --check
+
+      - name: Commit candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Samuel"
+          git config user.email "64842010+R3Neer@users.noreply.github.com"
+          git add -- \
+            notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md \
+            especificacion/07-gramatica-concreta.md \
+            especificacion/08-sintaxis-abstracta.md \
+            especificacion/sintaxis/cst-a-ast-superficial.md \
+            especificacion/sintaxis/casos/cst-ast.yaml \
+            especificacion/sintaxis/validate_syntax_model.py
+          git diff --cached --check
+          git commit -m "spec(language): define inicializadores heredados de thing" \
+            -m "Context:\n- Las abstract thing deben poder aportar inicializadores a campos heredados.\n- Una misma thing no puede declarar un campo y volver a inicializarlo mediante otra instrucción.\n\nChanges:\n- Extiende D-015 a inicializadores en thing abstractas y su herencia por especialización.\n- Prohíbe la colisión local entre field-declaration y thing-initializer del mismo nombre.\n- Sustituye el caso de rechazo de abstractas por aceptación y añade el contraejemplo local.\n\nValidation:\n- manage_decisions.py validate\n- validate_questions.py\n- validate_grammar.py\n- validate_syntax_model.py\n- git diff --check"
+          git push origin HEAD:patch/abstract-thing-initializers
