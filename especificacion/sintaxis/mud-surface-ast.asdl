@@ -117,7 +117,8 @@ module MUDSurface {
                                nominal_name name,
                                type_ref* direct_ancestors,
                                metadata_assignment* metadata,
-                               field_decl* fields)
+                               field_decl* fields,
+                               thing_initializer* initializers)
                    | AliasDecl(nominal_name name,
                                type_ref* direct_ancestors,
                                alias_definition? definition,
@@ -202,6 +203,9 @@ module MUDSurface {
                                      derived_value_shape? shape,
                                      expr value,
                                      metadata_assignment* metadata)
+        attributes (source_origin origin)
+
+    thing_initializer = ThingInitializer(field_name name, expr value)
         attributes (source_origin origin)
 
     public_field_decl = PublicFieldDecl(field_name name,
