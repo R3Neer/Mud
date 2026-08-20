@@ -15,6 +15,7 @@ affects:
 
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
+- Actualizada: 2026-08-20 para permitir inicializadores heredables en `thing` abstractas y separar declaración local de inicialización.
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Preguntas: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
@@ -36,6 +37,7 @@ La especialización hereda:
 - restricciones;
 - dominios;
 - valores predeterminados efectivos;
+- inicializadores de `thing` aplicables;
 - los demás elementos de esquema que la especificación autorice expresamente.
 
 No hereda, copia ni observa el estado mutable actual de la antecesora.
@@ -44,23 +46,31 @@ La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local
 
 Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
 
-La definición canónica de una `thing` concreta puede declarar antecesoras e inicializadores:
+La definición canónica de una `thing`, concreta o abstracta, puede declarar antecesoras e inicializadores:
 
 ```mud
 thing N as BaseOne, BaseTwo {
-    ...
+    field = value
+}
+
+abstract thing A as BaseOne {
+    field = value
 }
 ```
 
-Al activarla por primera vez mediante `start with` o:
+La forma `field = value` no declara un campo. Debe dirigirse a un campo almacenado ya aportado por el esquema heredado. Una misma definición de `thing` no puede declarar localmente un campo y además inicializarlo mediante otra instrucción `field = value`. La forma `field: Type = value` sigue siendo una única declaración de campo con predeterminado y no cuenta como un inicializador separado.
+
+Una `thing` abstracta no materializa carga propia, pero sus inicializadores forman parte de la especialización y pueden contribuir a la primera materialización de una descendiente concreta. Para un mismo campo, un inicializador declarado en una descendiente más específica sustituye a los inicializadores heredados menos específicos. Si un mismo inicializador original alcanza una descendiente por varias rutas de un diamante, se deduplica por origen; inicializadores independientes e incomparables que compitan por el mismo campo producen conflicto, sin prioridad por el orden escrito de `as`, conforme a D-084.
+
+Al activar por primera vez una `thing` concreta mediante `start with` o:
 
 ```mud
 create N
 ```
 
-la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después las inicializaciones explícitas. No parte de sus estados activos. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
+la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después los inicializadores efectivos. No parte de los estados activos de sus antecesoras. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
 
-Las asignaciones concretas del bloque inicializan $N$, pero no se convierten en predeterminados heredables. Solo una declaración explícita de predeterminado forma parte del esquema.
+Los inicializadores no se convierten en declaraciones de campo ni en predeterminados de esquema. Que un inicializador de una `thing` abstracta pueda heredarse como contribución de inicialización no cambia el predeterminado heredable del campo.
 
 ### Especialización acíclica
 
@@ -99,7 +109,9 @@ La reflexividad de `is` pertenece a la clausura y no introduce bucles en $R_{\ma
 
 - El grafo fijado por las definiciones canónicas debe ser acíclico.
 - El IR separa esquema heredable de estado mutable.
-- La inicialización calcula predeterminados efectivos antes de aplicar asignaciones explícitas.
+- La inicialización calcula predeterminados efectivos antes de aplicar inicializadores efectivos.
+- Los inicializadores de abstractas se heredan como contribuciones de inicialización, no como predeterminados de esquema.
+- Una definición no puede declarar y después inicializar separadamente el mismo campo.
 - Escribir sobre una antecesora no añade lecturas ni escrituras implícitas sobre sus descendientes.
 - `is` afecta a sustituibilidad y resolución de esquema, no propaga estado.
 
@@ -123,6 +135,29 @@ thing France as Kingdom {
 
 Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación no se convierte en predeterminado para futuras descendientes de `France`.
 
+```mud
+thing Being {
+    age: Nat = 0
+}
+
+abstract thing Adult as Being {
+    age = 18
+}
+
+thing Clara as Adult {}
+```
+
+`Adult` no materializa una carga propia para `age`, pero aporta `age = 18` a la inicialización efectiva de `Clara`. Una descendiente más específica puede sustituir esa contribución con su propio inicializador.
+
+Es inválido declarar e inicializar separadamente el mismo campo en una única definición:
+
+```mud
+thing Broken {
+    age: Nat
+    age = 18
+}
+```
+
 ## Verificación
 
 1. Rechazo de aristas reflexivas y ciclos no triviales.
@@ -130,8 +165,10 @@ Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación 
 3. Antisimetría de `is`.
 4. Independencia de estados.
 5. Inicialización desde predeterminados efectivos.
-6. Aplicación de los inicializadores canónicos en la primera activación.
-7. Ausencia de propagación implícita a futuras descendientes.
+6. Aplicación de los inicializadores efectivos en la primera activación.
+7. Herencia de inicializadores desde `thing` abstractas, con sustitución por una contribución más específica y deduplicación de diamantes por origen.
+8. Rechazo de una declaración local de campo acompañada por un inicializador separado del mismo campo en la misma `thing`.
+9. Ausencia de propagación implícita del estado mutable actual a futuras descendientes.
 
 ## Ampliación por D-084
 
