@@ -1,0 +1,135 @@
+name: Fix D-015 thing initializer candidate
+
+on:
+  push:
+    branches:
+      - control/patch-thing-initializers-d15-fix
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout discarded candidate for correction
+        uses: actions/checkout@v4
+        with:
+          ref: patch/thing-initializers-d15
+          fetch-depth: 0
+
+      - name: Verify staging identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "b35cd0550e870106100a05b9f56afabba47f283e"
+          test -z "$(git status --porcelain)"
+
+      - name: Correct cases and abstract-thing boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one match, found {count}: {old[:80]!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          cases_path = Path("especificacion/sintaxis/casos/cst-ast.yaml")
+          cases = cases_path.read_text(encoding="utf-8")
+          start = cases.index("- id: thing-concrete-initializer\n")
+          end = cases.index("- id: arrow-union-precedence\n", start)
+          fixed_cases = r'''- id: thing-concrete-initializer
+  category: thing
+  source: "thing Kingdom {\n    mut treasury: Money = 0\n}\nthing France as Kingdom {\n    treasury = 20\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(France, initializers=[ThingInitializer(treasury, 20)])
+  normalizations:
+  - preserve-concrete-initializer-separate-from-field-default
+  produces_ast: true
+- id: thing-name-field-initializer
+  category: thing
+  source: "thing Named {\n    name: Text = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])
+  normalizations:
+  - treat-name-as-ordinary-field-initializer
+  produces_ast: true
+- id: abstract-thing-concrete-initializer-rejected
+  category: validation-before-ast
+  source: "abstract thing AbstractCounter {\n    value: Nat\n    value = 1\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - abstract-thing-cannot-have-initializer
+  produces_ast: false
+'''
+          cases_path.write_text(cases[:start] + fixed_cases + cases[end:], encoding="utf-8")
+
+          replace_once(
+              "especificacion/07-gramatica-concreta.md",
+              "Una `thing` puede inicializar de forma local un campo almacenado de su esquema efectivo mediante una asignación sin redeclarar el campo:",
+              "Una `thing` concreta puede inicializar de forma local un campo almacenado de su esquema efectivo mediante una asignación sin redeclarar el campo:",
+          )
+          replace_once(
+              "especificacion/07-gramatica-concreta.md",
+              "El objetivo se conserva como nombre de campo hasta la resolución y puede corresponder a un campo local o heredado. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada.\n",
+              "El objetivo se conserva como nombre de campo hasta la resolución y puede corresponder a un campo local o heredado. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada. Una `abstract thing` no posee estado concreto propio y no puede contener esta forma; se rechaza durante la validación previa al AST.\n",
+          )
+          replace_once(
+              "especificacion/08-sintaxis-abstracta.md",
+              "Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`. No es un `StoredFieldDecl`",
+              "Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing` concreta. La validación previa al AST rechaza esta forma en una `abstract thing`. No es un `StoredFieldDecl`",
+          )
+          replace_once(
+              "especificacion/sintaxis/cst-a-ast-superficial.md",
+              "Cada `field-declaration` alimenta la secuencia `fields`; cada `thing-initializer` produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`.",
+              "Cada `field-declaration` alimenta la secuencia `fields`; en una `thing` concreta, cada `thing-initializer` produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`. Una `abstract thing` con `thing-initializer` se rechaza durante la validación previa al AST.",
+          )
+          replace_once(
+              "especificacion/sintaxis/validate_syntax_model.py",
+              '''        "thing-name-field-initializer",\n        "subaction-internal-call",\n''',
+              '''        "thing-name-field-initializer",\n        "abstract-thing-concrete-initializer-rejected",\n        "subaction-internal-call",\n''',
+          )
+
+          # Human-review regression checks encoded for the rebuilt tree.
+          cases = cases_path.read_text(encoding="utf-8")
+          assert 'source: "thing Kingdom {\\n    mut treasury: Money = 0\\n}' in cases
+          assert 'source: "thing Named {\\n    name: Text = \\"unknown\\"' in cases
+          assert 'abstract-thing-cannot-have-initializer' in cases
+          assert 'legacy-intrinsic-name-override' not in cases
+          assert 'source: "thing Kingdom {\n' not in cases
+          PY
+
+      - name: Install validator dependencies
+        run: python -m pip install -r especificacion/sintaxis/requirements.txt
+
+      - name: Run official validators
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          git diff --check
+
+      - name: Commit corrected staging tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add -- \
+            especificacion/07-gramatica-concreta.md \
+            especificacion/08-sintaxis-abstracta.md \
+            especificacion/sintaxis/casos/cst-ast.yaml \
+            especificacion/sintaxis/cst-a-ast-superficial.md \
+            especificacion/sintaxis/validate_syntax_model.py
+          git diff --cached --check
+          git commit -m "fix(grammar): corrige casos de inicializadores concretos" -m "Corrección de staging previa al squash: conserva los escapes YAML y fija el rechazo de inicializadores en thing abstractas."
+          git push origin HEAD:patch/thing-initializers-d15
