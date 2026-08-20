@@ -18,7 +18,10 @@ depends-on:
 questions:
   - Q-061
 decisions:
+  - D-015
   - D-032
+  - D-054
+  - D-066
   - D-095
   - D-070
   - D-071
@@ -202,12 +205,23 @@ Una `ThingDecl` contiene:
 - Antecesores directos en orden fuente.
 - Asignaciones de metadatos como `~name`.
 - Campos.
+- Inicializadores concretos de estado.
 
 El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prioridad semántica no elimina su valor como procedencia, formato y diagnóstico.
 
 El AST superficial conserva un `Thing` escrito explícitamente en `as`. La resolución posterior lo normaliza como redundancia de la raíz efectiva y el tooling ofrece retirarlo; el formatter no lo elimina silenciosamente.
 
-El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene campos. `metadata_assignment` distingue `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; conserva únicamente información escrita o normalizada sintácticamente, sin fabricar propiedades intrínsecas. Los metadatos se resuelven y tipan por categoría de propietario y no se convierten en campos ordinarios.
+El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene campos e inicializadores concretos. `metadata_assignment` distingue `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; conserva únicamente información escrita o normalizada sintácticamente, sin fabricar propiedades intrínsecas. Los metadatos se resuelven y tipan por categoría de propietario y no se convierten en campos ordinarios.
+
+### Inicializador concreto
+
+```text
+ThingInitializer(name, value)
+```
+
+Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing` concreta. La validación previa al AST rechaza esta forma en una `abstract thing`. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: D-015 exige que inicialice únicamente el estado propio de esa identidad y que no se convierta en esquema heredable. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado efectivo y que el valor satisfaga su tipo y dominio.
+
+La secuencia de inicializadores se conserva separada de la de campos porque la semántica declarativa aplica primero el esquema y sus predeterminados efectivos y después las inicializaciones concretas. La CST sigue conservando el orden físico intercalado del cuerpo.
 
 ## Campos
 

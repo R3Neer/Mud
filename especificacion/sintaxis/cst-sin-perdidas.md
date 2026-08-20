@@ -17,6 +17,8 @@ depends-on:
   - gramatica/mud.ebnf
 questions: []
 decisions:
+  - D-015
+  - D-054
   - D-070
   - D-071
   - D-085
@@ -212,6 +214,7 @@ Cada producción de `mud.ebnf` posee una categoría `PascalCaseSyntax` inventari
 thing-declaration        → ThingDeclarationSyntax
 thing-body               → ThingBodySyntax
 thing-body-declaration   → ThingBodyDeclarationSyntax
+thing-initializer         → ThingInitializerSyntax
 metadata-assignment       → MetadataAssignmentSyntax
 stored-field-declaration → StoredFieldDeclarationSyntax
 postfix-expression       → PostfixExpressionSyntax

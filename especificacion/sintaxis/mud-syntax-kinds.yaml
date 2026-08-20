@@ -542,9 +542,16 @@ syntax_nodes:
     - thing-body-declaration
   thing-body-declaration:
     kind: ThingBodyDeclarationSyntax
-    rhs: field-declaration
+    rhs: "field-declaration\n      | thing-initializer"
     references:
     - field-declaration
+    - thing-initializer
+  thing-initializer:
+    kind: ThingInitializerSyntax
+    rhs: 'field-name , "=" , constant-expression'
+    references:
+    - field-name
+    - constant-expression
   metadata-assignment:
     kind: MetadataAssignmentSyntax
     rhs: "\"~\" , metadata-name\n        , ( \"=\" , constant-expression\n          | \":\" , type-expression , [ \"=\" , constant-expression ]\n          | [ derived-value-shape ] , \":=\" , value-expression\n          )"

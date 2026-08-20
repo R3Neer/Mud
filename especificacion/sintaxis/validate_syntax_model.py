@@ -232,6 +232,7 @@ def validate(root: Path) -> list[Problem]:
     required_fragments = {
         root / "especificacion/sintaxis/mud-surface-ast.asdl": [
             "ExactTypeTestExpr(",
+            "ThingInitializer(",
         ],
         root / "especificacion/ir/mud-semantic-ir.asdl": [
             "ExactNominalTypeTestExpr(",
@@ -259,6 +260,9 @@ def validate(root: Path) -> list[Problem]:
                     problems.append(Problem(str(cases_path), f"{case.get('id')}: metadato {metadata} sin ~"))
 
     required_case_ids = {
+        "thing-concrete-initializer",
+        "thing-name-field-initializer",
+        "abstract-thing-concrete-initializer-rejected",
         "subaction-internal-call",
         "subaction-root-request-rejected",
         "mud-path-not-membership",

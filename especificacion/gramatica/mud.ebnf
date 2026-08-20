@@ -93,6 +93,11 @@ thing-body
 
 thing-body-declaration
     ::= field-declaration
+      | thing-initializer
+      ;
+
+thing-initializer
+    ::= field-name , "=" , constant-expression
       ;
 
 metadata-assignment
