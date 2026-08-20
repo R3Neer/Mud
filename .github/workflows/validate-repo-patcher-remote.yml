@@ -1,247 +1,305 @@
-name: Validate remote RepoPatcher candidate
-run-name: RepoPatcher remote validation ${{ inputs.request_id || 'self-test' }}
+name: Build abstract thing initializer candidate
 
 on:
-  workflow_dispatch:
-    inputs:
-      protocol:
-        description: Validation protocol version
-        required: true
-        type: string
-      request_id:
-        description: Durable candidate request identifier
-        required: true
-        type: string
-      target_sha:
-        description: Exact repository commit to validate
-        required: true
-        type: string
-      package_sha256:
-        description: SHA-256 of the immutable candidate ZIP
-        required: true
-        type: string
-      package_size:
-        description: Candidate ZIP size in bytes
-        required: true
-        type: string
-      trust_plugin:
-        description: Explicitly authorize a Python plugin
-        required: true
-        type: boolean
-      transport_kind:
-        description: MCP transport that produced the immutable ZIP
-        required: true
-        type: string
   pull_request:
+    branches:
+      - main
     paths:
       - ".github/workflows/validate-repo-patcher-remote.yml"
-      - "tooling/repo-patcher-validator/**"
 
-permissions: {}
-
-concurrency:
-  group: ${{ github.event_name == 'workflow_dispatch' && format('repo-patcher-remote-{0}', inputs.request_id) || format('repo-patcher-remote-pr-{0}', github.event.pull_request.number) }}
-  cancel-in-progress: false
+permissions:
+  contents: write
 
 jobs:
-  self_test:
-    name: Test remote validator and workflow contract
-    if: github.event_name == 'pull_request'
-    runs-on: windows-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
+  build-and-validate:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout exact main base
+        uses: actions/checkout@v4
         with:
-          persist-credentials: false
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-      - name: Install pinned runtime dependency
-        shell: pwsh
-        run: tooling/repo-patcher-validator/Install-PinnedDependencies.ps1
-      - name: Run validator tests
-        shell: pwsh
-        run: tooling/repo-patcher-validator/Test-RemoteWorkflow.ps1
-      - name: Run pinned actionlint
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify base
         shell: bash
         run: |
           set -euo pipefail
-          archive="$RUNNER_TEMP/actionlint.tar.gz"
-          curl -fsSL \
-            "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz" \
-            -o "$archive"
-          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $archive" | sha256sum -c -
-          tar -xzf "$archive" -C "$RUNNER_TEMP"
-          "$RUNNER_TEMP/actionlint" .github/workflows/validate-repo-patcher-remote.yml
+          test "$(git rev-parse HEAD)" = "83234608e47c0fe8a68da12573ee57c61f5958ca"
+          test -z "$(git status --porcelain)"
 
-  validate:
-    name: Validate immutable candidate on Windows
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: windows-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - name: Reject an unexpected dispatch context
-        shell: pwsh
-        env:
-          PROTOCOL: ${{ inputs.protocol }}
-          REQUEST_ID: ${{ inputs.request_id }}
-          TARGET_SHA: ${{ inputs.target_sha }}
-          PACKAGE_SHA256: ${{ inputs.package_sha256 }}
-          PACKAGE_SIZE: ${{ inputs.package_size }}
-          TRANSPORT_KIND: ${{ inputs.transport_kind }}
+      - name: Apply normative changes
+        shell: bash
         run: |
-          $ErrorActionPreference = "Stop"
-          if ($env:GITHUB_REF -ne "refs/heads/main") { throw "Workflow must run from main." }
-          if ($env:PROTOCOL -ne "mud-repo-patcher-validation/v1") { throw "Unsupported protocol." }
-          if ($env:REQUEST_ID -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]{0,95}$') { throw "Invalid request ID." }
-          if ($env:TARGET_SHA -notmatch '^[0-9a-f]{40}$') { throw "Invalid target SHA." }
-          if ($env:PACKAGE_SHA256 -notmatch '^[0-9a-f]{64}$') { throw "Invalid package SHA-256." }
-          if ([long]$env:PACKAGE_SIZE -lt 1 -or [long]$env:PACKAGE_SIZE -gt 10485760) { throw "Invalid package size." }
-          if ($env:TRANSPORT_KIND -notin @('zip_base64', 'logical_files', 'files_staged_v1')) { throw "Invalid transport kind." }
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
 
-      - name: Prepare isolated paths
-        id: paths
-        shell: pwsh
-        env:
-          REQUEST_ID: ${{ inputs.request_id }}
-          WORKFLOW_RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          CONTROL_SHA: ${{ github.workflow_sha }}
+          def replace_between(path: str, start: str, end: str, replacement: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              i = text.index(start)
+              j = text.index(end, i)
+              p.write_text(text[:i] + replacement + text[j:], encoding="utf-8")
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one match, found {count}: {old!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_between(
+              "notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md",
+              "### Estado independiente\n",
+              "### Especialización acíclica\n",
+              '''### Estado independiente
+
+La especialización hereda:
+
+- declaraciones de campos;
+- restricciones;
+- dominios;
+- valores predeterminados efectivos;
+- inicializadores de `thing` aplicables;
+- los demás elementos de esquema que la especificación autorice expresamente.
+
+No hereda, copia ni observa el estado mutable actual de la antecesora.
+
+La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local de cada identidad y, si no se sobrescribe, se deriva de su propio nombre nominal.
+
+Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
+
+La definición canónica de una `thing`, concreta o abstracta, puede declarar antecesoras e inicializadores:
+
+```mud
+thing N as BaseOne, BaseTwo {
+    field = value
+}
+
+abstract thing A as BaseOne {
+    field = value
+}
+```
+
+La forma `field = value` no declara un campo. Debe dirigirse a un campo almacenado ya aportado por el esquema heredado. Una misma definición de `thing` no puede declarar localmente un campo y además inicializarlo mediante otra instrucción `field = value`. La forma `field: Type = value` sigue siendo una única declaración de campo con predeterminado y no cuenta como un inicializador separado.
+
+Una `thing` abstracta no materializa carga propia, pero sus inicializadores forman parte de la especialización y pueden contribuir a la primera materialización de una descendiente concreta. Para un mismo campo, un inicializador declarado en una descendiente más específica sustituye a los inicializadores heredados menos específicos. Si un mismo inicializador original alcanza una descendiente por varias rutas de un diamante, se deduplica por origen; inicializadores independientes e incomparables que compitan por el mismo campo producen conflicto, sin prioridad por el orden escrito de `as`, conforme a D-084.
+
+Al activar por primera vez una `thing` concreta mediante `start with` o:
+
+```mud
+create N
+```
+
+la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después los inicializadores efectivos. No parte de los estados activos de sus antecesoras. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
+
+Los inicializadores no se convierten en declaraciones de campo ni en predeterminados de esquema. Que un inicializador de una `thing` abstracta pueda heredarse como contribución de inicialización no cambia el predeterminado heredable del campo.
+
+'''
+          )
+          replace_once(
+              "notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md",
+              "- Actualizada: 2026-07-28 para usar el vocabulario de D-025\n",
+              "- Actualizada: 2026-07-28 para usar el vocabulario de D-025\n- Actualizada: 2026-08-20 para permitir inicializadores heredables en `thing` abstractas y separar declaración local de inicialización.\n",
+          )
+          replace_once(
+              "notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md",
+              "6. Aplicación de los inicializadores canónicos en la primera activación.\n7. Ausencia de propagación implícita a futuras descendientes.\n",
+              "6. Aplicación de los inicializadores efectivos en la primera activación.\n7. Herencia de inicializadores desde `thing` abstractas, con sustitución por una contribución más específica y deduplicación de diamantes por origen.\n8. Rechazo de una declaración local de campo acompañada por un inicializador separado del mismo campo en la misma `thing`.\n9. Ausencia de propagación implícita del estado mutable actual a futuras descendientes.\n",
+          )
+
+          replace_between(
+              "especificacion/07-gramatica-concreta.md",
+              "### Inicializadores concretos\n",
+              "## Campos\n",
+              '''### Inicializadores de `thing`
+
+Una `thing`, concreta o abstracta, puede aportar de forma local un inicializador para un campo almacenado de su esquema heredado mediante una asignación sin redeclarar el campo:
+
+```text
+fieldName = static-expression
+```
+
+El objetivo se conserva como nombre de campo hasta la resolución. Debe designar un campo almacenado ya aportado por las antecesoras; no declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada.
+
+Dentro de una misma definición, los nombres declarados como campos y los nombres usados por `thing-initializer` deben ser disjuntos. Por tanto, esto es inválido:
+
+```mud
+thing Broken {
+    age: Nat
+    age = 18
+}
+```
+
+En cambio, una declaración con predeterminado es una sola declaración y es válida:
+
+```mud
+thing Person {
+    age: Nat = 0
+}
+```
+
+Una `abstract thing` puede inicializar un campo heredado:
+
+```mud
+thing Being {
+    age: Nat = 0
+}
+
+abstract thing Adult as Being {
+    age = 18
+}
+```
+
+La abstracta no materializa carga propia. Su `age = 18` se conserva como contribución de inicialización para sus descendientes concretas. Un inicializador más específico sustituye al heredado para ese campo; los diamantes siguen la política de procedencia y ausencia de prioridad fijada por D-084.
+
+```mud
+thing Clara as Adult {
+    age = 67
+}
+```
+
+En `Clara`, `67` es el inicializador efectivo para `age`. Al materializar por primera vez una concreta sin una contribución más específica, se aplica el inicializador heredado correspondiente después de los predeterminados efectivos. Una reactivación posterior a `destroy` conserva la carga almacenada en vez de ejecutar de nuevo los inicializadores.
+
+Los inicializadores no se convierten en predeterminados de esquema. `name = valor` tampoco posee un significado intrínseco especial: si `name` es un campo almacenado heredado, usa esta misma forma; `~name` continúa siendo el metadato de presentación.
+
+'''
+          )
+
+          replace_between(
+              "especificacion/08-sintaxis-abstracta.md",
+              "### Inicializador concreto\n",
+              "## Campos\n",
+              '''### Inicializador de `thing`
+
+```text
+ThingInitializer(name, value)
+```
+
+Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: el inicializador conserva una contribución de inicialización separada del esquema del campo. `name` permanece como `FieldName` sin resolver y `value` como `expr`.
+
+La validación local exige que ningún nombre aparezca a la vez entre los campos declarados por la misma `ThingDecl` y sus `ThingInitializer`. La resolución posterior comprueba además que el objetivo del inicializador sea un campo almacenado aportado por el esquema heredado y que el valor satisfaga su tipo y dominio.
+
+En una `thing` abstracta el nodo no representa carga propia de la identidad abstracta: se conserva para que la elaboración lo incorpore a las contribuciones heredables de inicialización. En una concreta, los inicializadores efectivos se aplican a su primera materialización después de resolver el esquema y los predeterminados efectivos.
+
+La secuencia de inicializadores se conserva separada de la de campos porque declaración de esquema e inicialización son operaciones distintas. La CST sigue conservando el orden físico intercalado del cuerpo.
+
+'''
+          )
+          replace_once(
+              "especificacion/08-sintaxis-abstracta.md",
+              "- Inicializadores concretos de estado.\n",
+              "- Inicializadores de `thing`.\n",
+          )
+
+          replace_between(
+              "especificacion/sintaxis/cst-a-ast-superficial.md",
+              "## `thing`\n",
+              "## Campos\n",
+              '''## `thing`
+
+```ebnf
+thing-declaration
+```
+
+produce `ThingDecl`:
+
+- `abstract` → `Enabled`; omisión → `Disabled`.
+- Nombre → `NominalName`.
+- Antecesores → secuencia de `TypeRef`.
+- Declaraciones `~...` almacenadas o calculadas → secuencia de `metadata_assignment`, normalizada a `StoredMetadataAssignment` o `CalculatedMetadataAssignment`.
+- Cuerpo → metadatos, campos e inicializadores de `thing`.
+
+`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. Cada `field-declaration` alimenta la secuencia `fields`; cada `thing-initializer`, también en una `abstract thing`, produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`.
+
+Antes de producir el AST, la validación local rechaza una definición que declare un campo y contenga además un `thing-initializer` con el mismo `fieldName`. Esta comprobación no requiere resolución. La resolución posterior determina si cada inicializador restante designa un campo almacenado heredado válido.
+
+Una forma `name = valor` no recibe un rechazo sintáctico especial. Se proyecta como cualquier otro `ThingInitializer`; la resolución posterior decide si `name` designa realmente un campo almacenado del esquema heredado. El metadato de presentación continúa escribiéndose `~name = valor`.
+
+Un antecesor explícito `Thing` permanece en esa secuencia superficial. No bloquea la transformación: la resolución posterior emite la redundancia, normaliza la raíz efectiva y puede ofrecer una acción de código que retire el elemento escrito.
+
+'''
+          )
+
+          cases_path = Path("especificacion/sintaxis/casos/cst-ast.yaml")
+          cases = cases_path.read_text(encoding="utf-8")
+          start = cases.index("- id: thing-concrete-initializer\n")
+          end = cases.index("- id: arrow-union-precedence\n", start)
+          replacement = r'''- id: thing-concrete-initializer
+  category: thing
+  source: "thing Kingdom {\n    mut treasury: Money = 0\n}\nthing France as Kingdom {\n    treasury = 20\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(France, initializers=[ThingInitializer(treasury, 20)])
+  normalizations:
+  - preserve-concrete-initializer-separate-from-field-default
+  produces_ast: true
+- id: thing-name-field-initializer
+  category: thing
+  source: "thing Named {\n    name: Text = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])
+  normalizations:
+  - treat-name-as-ordinary-field-initializer
+  produces_ast: true
+- id: abstract-thing-initializer
+  category: thing
+  source: "thing Being {\n    age: Nat = 0\n}\nabstract thing Adult as Being {\n    age = 18\n}\nthing Clara as Adult\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Adult, isAbstract=Enabled, initializers=[ThingInitializer(age, 18)])
+  normalizations:
+  - preserve-abstract-initializer-as-inherited-contribution
+  produces_ast: true
+- id: thing-field-declaration-and-initializer-rejected
+  category: validation-before-ast
+  source: "thing Broken {\n    age: Nat\n    age = 18\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - thing-field-declared-and-initialized-separately
+  produces_ast: false
+'''
+          cases_path.write_text(cases[:start] + replacement + cases[end:], encoding="utf-8")
+
+          replace_once(
+              "especificacion/sintaxis/validate_syntax_model.py",
+              '''        "abstract-thing-concrete-initializer-rejected",\n''',
+              '''        "abstract-thing-initializer",\n        "thing-field-declaration-and-initializer-rejected",\n''',
+          )
+
+          assert "abstract-thing-cannot-have-initializer" not in cases_path.read_text(encoding="utf-8")
+          assert "thing-field-declared-and-initialized-separately" in cases_path.read_text(encoding="utf-8")
+          assert "Una `thing`, concreta o abstracta" in Path("especificacion/07-gramatica-concreta.md").read_text(encoding="utf-8")
+          assert "no puede declarar localmente un campo y además inicializarlo" in Path("notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md").read_text(encoding="utf-8")
+          PY
+
+      - name: Install validator dependencies
+        run: python -m pip install -r especificacion/sintaxis/requirements.txt
+
+      - name: Validate repository contracts
+        shell: bash
         run: |
-          $handoff = Join-Path $env:RUNNER_TEMP "repo-patcher-handoff"
-          $validation = Join-Path $env:RUNNER_TEMP "repo-patcher-validation"
-          $evidence = Join-Path $env:RUNNER_TEMP "repo-patcher-evidence"
-          New-Item -ItemType Directory -Path $handoff, $validation, $evidence -Force | Out-Null
-          [ordered]@{
-            protocol = "mud-repo-patcher-infrastructure/v1"
-            request_id = $env:REQUEST_ID
-            state = "runner_started"
-            workflow_run_id = $env:WORKFLOW_RUN_ID
-            run_attempt = $env:RUN_ATTEMPT
-            control_sha = $env:CONTROL_SHA
-          } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $evidence "infrastructure.json") -Encoding utf8NoBOM
-          @(
-            "handoff=$handoff"
-            "validation=$validation"
-            "evidence=$evidence"
-            "package=$(Join-Path $handoff 'candidate.zip')"
-            "request=$(Join-Path $handoff 'request.json')"
-            "download_metadata=$(Join-Path $evidence 'download-metadata.json')"
-          ) | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
+          set -euo pipefail
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          ! grep -R "abstract-thing-cannot-have-initializer" -n especificacion notas
+          git diff --check
 
-      - name: Checkout trusted control plane
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.workflow_sha }}
-          fetch-depth: 1
-          persist-credentials: false
-          path: control
-
-      - name: Checkout exact target source
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.target_sha }}
-          fetch-depth: 0
-          persist-credentials: false
-          path: target-source
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.13"
-
-      - name: Install pinned runtime dependency
-        shell: pwsh
-        run: control/tooling/repo-patcher-validator/Install-PinnedDependencies.ps1
-
-      - name: Download immutable candidate with OIDC
-        shell: pwsh
-        env:
-          WORKER_URL: ${{ vars.REPO_PATCHER_WORKER_URL }}
-          REQUEST_ID: ${{ inputs.request_id }}
-          TARGET_SHA: ${{ inputs.target_sha }}
-          PACKAGE_SHA256: ${{ inputs.package_sha256 }}
-          PACKAGE_SIZE: ${{ inputs.package_size }}
-          TRUST_PLUGIN: ${{ inputs.trust_plugin }}
-          TRANSPORT_KIND: ${{ inputs.transport_kind }}
+      - name: Commit and publish isolated candidate
+        shell: bash
         run: |
-          $ErrorActionPreference = "Stop"
-          try {
-            if (-not $env:WORKER_URL) { throw "Repository variable REPO_PATCHER_WORKER_URL is missing." }
-            control/tooling/repo-patcher-validator/Download-Candidate.ps1 `
-              -WorkerBaseUrl $env:WORKER_URL `
-              -RequestId $env:REQUEST_ID `
-              -TargetSha $env:TARGET_SHA `
-              -PackageSha256 $env:PACKAGE_SHA256 `
-              -PackageSize ([long]$env:PACKAGE_SIZE) `
-              -TrustPlugin ([Convert]::ToBoolean($env:TRUST_PLUGIN)) `
-              -TransportKind $env:TRANSPORT_KIND `
-              -PackageFile '${{ steps.paths.outputs.package }}' `
-              -RequestFile '${{ steps.paths.outputs.request }}' `
-              -MetadataFile '${{ steps.paths.outputs.download_metadata }}'
-          }
-          catch {
-            $_ | Out-String | Set-Content -LiteralPath (Join-Path '${{ steps.paths.outputs.evidence }}' "download-failure.txt") -Encoding utf8NoBOM
-            throw
-          }
-
-      - name: Remove candidate credentials
-        shell: pwsh
-        run: |
-          @(
-            'ACTIONS_ID_TOKEN_REQUEST_URL',
-            'ACTIONS_ID_TOKEN_REQUEST_TOKEN',
-            'GITHUB_TOKEN',
-            'GH_TOKEN'
-          ) | ForEach-Object {
-            Remove-Item -LiteralPath "Env:\$_" -ErrorAction SilentlyContinue
-          }
-          @('ACTIONS_ID_TOKEN_REQUEST_URL', 'ACTIONS_ID_TOKEN_REQUEST_TOKEN') |
-            ForEach-Object { "$_=" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8 }
-
-      - name: Run deterministic validator
-        id: validator
-        shell: pwsh
-        env:
-          TARGET_SHA: ${{ inputs.target_sha }}
-          CONTROL_SHA: ${{ github.workflow_sha }}
-          WORKFLOW_RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-        run: |
-          $ErrorActionPreference = "Continue"
-          python control/tooling/repo-patcher-validator/validate_candidate.py `
-            --control-root control `
-            --target-source target-source `
-            --validation-root '${{ steps.paths.outputs.validation }}' `
-            --package '${{ steps.paths.outputs.package }}' `
-            --request '${{ steps.paths.outputs.request }}' `
-            --output '${{ steps.paths.outputs.evidence }}' `
-            --target-sha $env:TARGET_SHA `
-            --control-sha $env:CONTROL_SHA `
-            --workflow-run-id $env:WORKFLOW_RUN_ID `
-            --run-attempt $env:RUN_ATTEMPT
-          "exit_code=$LASTEXITCODE" | Add-Content -LiteralPath $env:GITHUB_OUTPUT -Encoding utf8
-          exit 0
-
-      - name: Upload validation evidence
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: repo-patcher-validation-${{ inputs.request_id }}-${{ github.run_attempt }}
-          path: ${{ steps.paths.outputs.evidence }}
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Enforce validation conclusion
-        if: always()
-        shell: pwsh
-        env:
-          VALIDATOR_EXIT_CODE: ${{ steps.validator.outputs.exit_code }}
-        run: |
-          if ($env:VALIDATOR_EXIT_CODE -ne "0") {
-            throw "Candidate validation failed; inspect the uploaded result.json and diagnostics."
-          }
+          set -euo pipefail
+          git config user.name "Samuel"
+          git config user.email "64842010+R3Neer@users.noreply.github.com"
+          git add -- \
+            notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente.md \
+            especificacion/07-gramatica-concreta.md \
+            especificacion/08-sintaxis-abstracta.md \
+            especificacion/sintaxis/cst-a-ast-superficial.md \
+            especificacion/sintaxis/casos/cst-ast.yaml \
+            especificacion/sintaxis/validate_syntax_model.py
+          git diff --cached --check
+          git commit -m "spec(language): define inicializadores heredados de thing" \
+            -m "Context:\n- Las abstract thing deben poder aportar inicializadores a campos heredados.\n- Una misma thing no puede declarar un campo y volver a inicializarlo mediante otra instrucción.\n\nChanges:\n- Extiende D-015 a inicializadores en thing abstractas y su herencia por especialización.\n- Prohíbe la colisión local entre field-declaration y thing-initializer del mismo nombre.\n- Sustituye el caso de rechazo de abstractas por aceptación y añade el contraejemplo local.\n\nValidation:\n- manage_decisions.py validate\n- validate_questions.py\n- validate_grammar.py\n- validate_syntax_model.py\n- git diff --check"
+          git push origin HEAD:patch/abstract-thing-initializers
