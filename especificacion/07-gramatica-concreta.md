@@ -162,15 +162,17 @@ create Alexandria
 destroy Alexandria
 ```
 
-### Inicializadores concretos
+### Inicializadores de `thing`
 
-Una `thing` concreta puede inicializar de forma local un campo almacenado de su esquema efectivo mediante una asignación sin redeclarar el campo:
+Una `thing`, concreta o abstracta, puede inicializar un campo almacenado ya aportado por su esquema heredado mediante una asignación sin redeclarar el campo:
 
 ```text
 fieldName = static-expression
 ```
 
-El objetivo se conserva como nombre de campo hasta la resolución y puede corresponder a un campo local o heredado. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada. Una `abstract thing` no posee estado concreto propio y no puede contener esta forma; se rechaza durante la validación previa al AST.
+El objetivo se conserva como nombre de campo hasta la resolución. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. Debe resolver a un campo heredado: una misma `thing` no puede declarar localmente `fieldName` y además contener una instrucción separada `fieldName = ...`. La forma `fieldName: Type = value` es una sola declaración con predeterminado y sigue siendo válida. El valor del inicializador usa `constant-expression`, por lo que debe ser una expresión estática cerrada.
+
+En una `abstract thing`, el inicializador no materializa carga propia; se conserva como contribución heredada para la primera materialización de descendientes concretos. En una `thing` concreta, el inicializador local se aplica a su propia primera materialización y no se hereda por sus descendientes. Un inicializador más específico sustituye a uno heredado menos específico. La especialización múltiple no obtiene prioridad del orden de `as`: el mismo origen se deduplica y contribuciones independientes e incomparables sobre el mismo campo entran en conflicto conforme a D-084.
 
 ```mud
 thing Kingdom {
@@ -182,9 +184,28 @@ thing France as Kingdom {
 }
 ```
 
-En `France`, `20` inicializa únicamente la carga propia de `France.treasury` en su primera materialización. No se convierte en el predeterminado que heredarían descendientes de `France`, y una reactivación posterior a `destroy France` conserva la carga almacenada en vez de ejecutar de nuevo el inicializador. Esta distinción implementa D-015 y el ciclo de primera materialización fijado por D-054.
+En `France`, `20` inicializa únicamente la carga propia de `France.treasury` en su primera materialización. No se convierte en el predeterminado ni en un inicializador heredable para descendientes de `France`, y una reactivación posterior a `destroy France` conserva la carga almacenada en vez de ejecutar de nuevo el inicializador. Esta distinción implementa D-015 y el ciclo de primera materialización fijado por D-054.
 
-`name = valor` no posee un significado intrínseco especial: si `name` es un campo almacenado ordinario del esquema efectivo, usa esta misma forma; `~name` continúa siendo el metadato de presentación.
+```mud
+abstract thing RichKingdom as Kingdom {
+    treasury = 20
+}
+
+thing Lydia as RichKingdom
+```
+
+`RichKingdom` no posee una carga concreta de `treasury`, pero su inicializador participa en la primera materialización de `Lydia`.
+
+Es inválido mezclar declaración e inicializador separado del mismo campo en una definición:
+
+```mud
+thing Broken as Kingdom {
+    treasury: Money = 10
+    treasury = 20
+}
+```
+
+`name = valor` no posee un significado intrínseco especial: si `name` es un campo almacenado heredado del esquema efectivo, usa esta misma forma; `~name` continúa siendo el metadato de presentación.
 
 ## Campos
 

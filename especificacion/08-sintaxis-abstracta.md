@@ -205,7 +205,7 @@ Una `ThingDecl` contiene:
 - Antecesores directos en orden fuente.
 - Asignaciones de metadatos como `~name`.
 - Campos.
-- Inicializadores concretos de estado.
+- Inicializadores de campos heredados.
 
 El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prioridad semántica no elimina su valor como procedencia, formato y diagnóstico.
 
@@ -219,9 +219,11 @@ El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene
 ThingInitializer(name, value)
 ```
 
-Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing` concreta. La validación previa al AST rechaza esta forma en una `abstract thing`. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: D-015 exige que inicialice únicamente el estado propio de esa identidad y que no se convierta en esquema heredable. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado efectivo y que el valor satisfaga su tipo y dominio.
+Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: D-015 mantiene separados el predeterminado de esquema y la contribución de inicialización. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado heredado y que el valor satisfaga su tipo y dominio.
 
-La secuencia de inicializadores se conserva separada de la de campos porque la semántica declarativa aplica primero el esquema y sus predeterminados efectivos y después las inicializaciones concretas. La CST sigue conservando el orden físico intercalado del cuerpo.
+La validación previa al AST rechaza que una misma definición contenga una declaración local de campo y un `ThingInitializer` con el mismo nombre. Una declaración `fieldName: Type = value` conserva su `defaultValue` dentro del `StoredFieldDecl` y no genera `ThingInitializer`.
+
+La secuencia de inicializadores se conserva separada de la de campos. En una `thing` abstracta representa contribuciones heredables de inicialización sin materializar carga propia; en una concreta representa contribuciones a su primera materialización. La CST sigue conservando el orden físico intercalado del cuerpo.
 
 ## Campos
 
