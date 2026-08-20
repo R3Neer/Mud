@@ -1,0 +1,30 @@
+name: Probe pull request workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Publish PR execution marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Samuel"
+          git config user.email "64842010+R3Neer@users.noreply.github.com"
+          git checkout -B audit/abstract-thing-initializers-pr main
+          mkdir -p .audit
+          printf 'event=%s\nsha=%s\nmain=%s\n' "$GITHUB_EVENT_NAME" "$GITHUB_SHA" "$(git rev-parse HEAD)" > .audit/abstract-thing-initializers-pr.txt
+          git add .audit/abstract-thing-initializers-pr.txt
+          git commit -m "chore(audit): registra ejecución PR"
+          git push origin HEAD:audit/abstract-thing-initializers-pr
