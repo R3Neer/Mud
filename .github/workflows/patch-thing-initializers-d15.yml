@@ -1,0 +1,228 @@
+name: Patch D-015 thing initializers
+
+on:
+  push:
+    branches:
+      - control/patch-thing-initializers-d15
+
+permissions:
+  contents: write
+
+jobs:
+  build-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated candidate
+        uses: actions/checkout@v4
+        with:
+          ref: patch/thing-initializers-d15
+          fetch-depth: 0
+
+      - name: Verify candidate identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "af461facd8baa04d73645a88edd84f308f0e1873"
+          test -z "$(git status --porcelain)"
+
+      - name: Apply D-015 syntax alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one match, found {count}: {old[:80]!r}")
+              p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          # EBNF: restore the concrete initializer already required by D-015/D-054.
+          replace_once(
+              "especificacion/gramatica/mud.ebnf",
+              '''thing-body-declaration\n    ::= field-declaration\n      ;\n''',
+              '''thing-body-declaration\n    ::= field-declaration\n      | thing-initializer\n      ;\n\nthing-initializer\n    ::= field-name , "=" , constant-expression\n      ;\n''',
+          )
+
+          # Concrete grammar prose and decision traceability.
+          replace_once(
+              "especificacion/07-gramatica-concreta.md",
+              '''decisions:\n  - D-025\n''',
+              '''decisions:\n  - D-015\n  - D-025\n''',
+          )
+          replace_once(
+              "especificacion/07-gramatica-concreta.md",
+              '''```mud\ncreate Alexandria\ndestroy Alexandria\n```\n\n## Campos\n''',
+              '''```mud\ncreate Alexandria\ndestroy Alexandria\n```\n\n### Inicializadores concretos\n\nUna `thing` puede inicializar de forma local un campo almacenado de su esquema efectivo mediante una asignación sin redeclarar el campo:\n\n```text\nfieldName = static-expression\n```\n\nEl objetivo se conserva como nombre de campo hasta la resolución y puede corresponder a un campo local o heredado. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. El valor usa `constant-expression`, por lo que debe ser una expresión estática cerrada.\n\n```mud\nthing Kingdom {\n    mut treasury: Money = 0\n}\n\nthing France as Kingdom {\n    treasury = 20\n}\n```\n\nEn `France`, `20` inicializa únicamente la carga propia de `France.treasury` en su primera materialización. No se convierte en el predeterminado que heredarían descendientes de `France`, y una reactivación posterior a `destroy France` conserva la carga almacenada en vez de ejecutar de nuevo el inicializador. Esta distinción implementa D-015 y el ciclo de primera materialización fijado por D-054.\n\n`name = valor` no posee un significado intrínseco especial: si `name` es un campo almacenado ordinario del esquema efectivo, usa esta misma forma; `~name` continúa siendo el metadato de presentación.\n\n## Campos\n''',
+          )
+
+          # CST inventory.
+          replace_once(
+              "especificacion/sintaxis/mud-syntax-kinds.yaml",
+              '''  thing-body-declaration:\n    kind: ThingBodyDeclarationSyntax\n    rhs: field-declaration\n    references:\n    - field-declaration\n  metadata-assignment:\n''',
+              '''  thing-body-declaration:\n    kind: ThingBodyDeclarationSyntax\n    rhs: "field-declaration\\n      | thing-initializer"\n    references:\n    - field-declaration\n    - thing-initializer\n  thing-initializer:\n    kind: ThingInitializerSyntax\n    rhs: 'field-name , "=" , constant-expression'\n    references:\n    - field-name\n    - constant-expression\n  metadata-assignment:\n''',
+          )
+
+          # Exhaustive CST→AST coverage.
+          replace_once(
+              "especificacion/sintaxis/cobertura-sintactica.yaml",
+              '''  thing-body-declaration:\n    cst: ThingBodyDeclarationSyntax\n    ast:\n      disposition: inlined\n      reason: alternativa integrada en ThingDecl como nombre intrínseco o campo\n  metadata-assignment:\n''',
+              '''  thing-body-declaration:\n    cst: ThingBodyDeclarationSyntax\n    ast:\n      disposition: inlined\n      reason: alternativa integrada en ThingDecl como campo o inicializador concreto\n  thing-initializer:\n    cst: ThingInitializerSyntax\n    ast:\n      disposition: constructor\n      target: ThingInitializer\n  metadata-assignment:\n''',
+          )
+
+          # Surface AST: an initializer is deliberately not a field default.
+          replace_once(
+              "especificacion/sintaxis/mud-surface-ast.asdl",
+              '''                               metadata_assignment* metadata,\n                               field_decl* fields)\n''',
+              '''                               metadata_assignment* metadata,\n                               field_decl* fields,\n                               thing_initializer* initializers)\n''',
+          )
+          replace_once(
+              "especificacion/sintaxis/mud-surface-ast.asdl",
+              '''    field_decl = StoredFieldDecl(stored_field_data field)\n               | CalculatedFieldDecl(field_name name,\n                                     derived_value_shape? shape,\n                                     expr value,\n                                     metadata_assignment* metadata)\n        attributes (source_origin origin)\n\n    public_field_decl = PublicFieldDecl''',
+              '''    field_decl = StoredFieldDecl(stored_field_data field)\n               | CalculatedFieldDecl(field_name name,\n                                     derived_value_shape? shape,\n                                     expr value,\n                                     metadata_assignment* metadata)\n        attributes (source_origin origin)\n\n    thing_initializer = ThingInitializer(field_name name, expr value)\n        attributes (source_origin origin)\n\n    public_field_decl = PublicFieldDecl''',
+          )
+
+          # AST prose.
+          replace_once(
+              "especificacion/08-sintaxis-abstracta.md",
+              '''decisions:\n  - D-032\n''',
+              '''decisions:\n  - D-015\n  - D-032\n  - D-054\n  - D-066\n''',
+          )
+          replace_once(
+              "especificacion/08-sintaxis-abstracta.md",
+              '''- Asignaciones de metadatos como `~name`.\n- Campos.\n\nEl AST no ordena alfabéticamente''',
+              '''- Asignaciones de metadatos como `~name`.\n- Campos.\n- Inicializadores concretos de estado.\n\nEl AST no ordena alfabéticamente''',
+          )
+          replace_once(
+              "especificacion/08-sintaxis-abstracta.md",
+              '''El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene campos. `metadata_assignment` distingue `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; conserva únicamente información escrita o normalizada sintácticamente, sin fabricar propiedades intrínsecas. Los metadatos se resuelven y tipan por categoría de propietario y no se convierten en campos ordinarios.\n\n## Campos\n''',
+              '''El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene campos e inicializadores concretos. `metadata_assignment` distingue `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; conserva únicamente información escrita o normalizada sintácticamente, sin fabricar propiedades intrínsecas. Los metadatos se resuelven y tipan por categoría de propietario y no se convierten en campos ordinarios.\n\n### Inicializador concreto\n\n```text\nThingInitializer(name, value)\n```\n\nConserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: D-015 exige que inicialice únicamente el estado propio de esa identidad y que no se convierta en esquema heredable. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado efectivo y que el valor satisfaga su tipo y dominio.\n\nLa secuencia de inicializadores se conserva separada de la de campos porque la semántica declarativa aplica primero el esquema y sus predeterminados efectivos y después las inicializaciones concretas. La CST sigue conservando el orden físico intercalado del cuerpo.\n\n## Campos\n''',
+          )
+
+          # CST→AST projection and removal of the obsolete blanket rejection of `name =`.
+          replace_once(
+              "especificacion/sintaxis/cst-a-ast-superficial.md",
+              '''decisions:\n  - D-070\n''',
+              '''decisions:\n  - D-015\n  - D-054\n  - D-066\n  - D-070\n''',
+          )
+          replace_once(
+              "especificacion/sintaxis/cst-a-ast-superficial.md",
+              '''- Cuerpo → metadatos y campos.\n\n`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. La omisión del cuerpo y un cuerpo explícito vacío producen las mismas secuencias vacías; el terminador se descarta como layout. La forma antigua `name =` se rechaza antes del AST.\n''',
+              '''- Cuerpo → metadatos, campos e inicializadores concretos.\n\n`thing-body` y `thing-body-declaration` no generan nodos AST independientes. `metadata-assignment` sí produce un nodo propio y no se convierte en campo. Cada `field-declaration` alimenta la secuencia `fields`; cada `thing-initializer` produce `ThingInitializer(fieldName, value)` en la secuencia `initializers`, sin plegarse dentro de `StoredFieldDecl.defaultValue`. La omisión del cuerpo y un cuerpo explícito vacío producen las mismas secuencias vacías; el terminador se descarta como layout.\n\nUna forma `name = valor` ya no recibe un rechazo sintáctico especial. Se proyecta como cualquier otro `ThingInitializer`; la resolución posterior decide si `name` designa realmente un campo almacenado del esquema efectivo. El metadato de presentación continúa escribiéndose `~name = valor`.\n''',
+          )
+
+          # Lossless CST documentation.
+          replace_once(
+              "especificacion/sintaxis/cst-sin-perdidas.md",
+              '''decisions:\n  - D-070\n''',
+              '''decisions:\n  - D-015\n  - D-054\n  - D-070\n''',
+          )
+          replace_once(
+              "especificacion/sintaxis/cst-sin-perdidas.md",
+              '''thing-body-declaration   → ThingBodyDeclarationSyntax\nmetadata-assignment       → MetadataAssignmentSyntax\n''',
+              '''thing-body-declaration   → ThingBodyDeclarationSyntax\nthing-initializer         → ThingInitializerSyntax\nmetadata-assignment       → MetadataAssignmentSyntax\n''',
+          )
+
+          # Regression cases: the old blanket rejection becomes two positive boundaries.
+          cases_path = Path("especificacion/sintaxis/casos/cst-ast.yaml")
+          cases = cases_path.read_text(encoding="utf-8")
+          legacy_pattern = re.compile(
+              r'- id: legacy-intrinsic-name-rejected\n'
+              r'  category: validation-before-ast\n'
+              r'  source: "thing Person \{\\n    name = \\"Ada\\"\\n\}\\n"\n'
+              r'  cst_root: MudFileSyntax\n'
+              r'  expected_diagnostics:\n'
+              r'  - legacy-intrinsic-name-override\n'
+              r'  produces_ast: false\n'
+          )
+          replacement = '''- id: thing-concrete-initializer\n  category: thing\n  source: "thing Kingdom {\\n    mut treasury: Money = 0\\n}\\nthing France as Kingdom {\\n    treasury = 20\\n}\\n"\n  cst_root: MudFileSyntax\n  ast: ThingDecl(France, initializers=[ThingInitializer(treasury, 20)])\n  normalizations:\n  - preserve-concrete-initializer-separate-from-field-default\n  produces_ast: true\n- id: thing-name-field-initializer\n  category: thing\n  source: "thing Named {\\n    name: Text = \\"unknown\\"\\n}\\nthing Ada as Named {\\n    name = \\"Ada\\"\\n}\\n"\n  cst_root: MudFileSyntax\n  ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])\n  normalizations:\n  - treat-name-as-ordinary-field-initializer\n  produces_ast: true\n'''
+          cases, count = legacy_pattern.subn(replacement, cases)
+          if count != 1:
+              raise SystemExit(f"cst-ast.yaml: expected one legacy intrinsic-name case, replaced {count}")
+          cases_path.write_text(cases, encoding="utf-8")
+
+          # Validator locks in the new abstract distinction and the two boundary cases.
+          replace_once(
+              "especificacion/sintaxis/validate_syntax_model.py",
+              '''        root / "especificacion/sintaxis/mud-surface-ast.asdl": [\n            "ExactTypeTestExpr(",\n        ],\n''',
+              '''        root / "especificacion/sintaxis/mud-surface-ast.asdl": [\n            "ExactTypeTestExpr(",\n            "ThingInitializer(",\n        ],\n''',
+          )
+          replace_once(
+              "especificacion/sintaxis/validate_syntax_model.py",
+              '''    required_case_ids = {\n        "subaction-internal-call",\n''',
+              '''    required_case_ids = {\n        "thing-concrete-initializer",\n        "thing-name-field-initializer",\n        "subaction-internal-call",\n''',
+          )
+
+          # Scope-specific invariants before any official validator runs.
+          ebnf = Path("especificacion/gramatica/mud.ebnf").read_text(encoding="utf-8")
+          ast = Path("especificacion/sintaxis/mud-surface-ast.asdl").read_text(encoding="utf-8")
+          transform = Path("especificacion/sintaxis/cst-a-ast-superficial.md").read_text(encoding="utf-8")
+          case_text = cases_path.read_text(encoding="utf-8")
+          assert 'thing-initializer\n    ::= field-name , "=" , constant-expression' in ebnf
+          assert 'thing_initializer* initializers' in ast
+          assert 'thing_initializer = ThingInitializer(field_name name, expr value)' in ast
+          assert 'legacy-intrinsic-name-override' not in case_text
+          assert 'La forma antigua `name =` se rechaza antes del AST.' not in transform
+          assert case_text.count('id: thing-concrete-initializer') == 1
+          assert case_text.count('id: thing-name-field-initializer') == 1
+          PY
+
+      - name: Install validator dependencies
+        run: python -m pip install -r especificacion/sintaxis/requirements.txt
+
+      - name: Run official validators
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          git diff --check
+
+      - name: Audit exact changed surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$(cat <<'EOF'
+          especificacion/07-gramatica-concreta.md
+          especificacion/08-sintaxis-abstracta.md
+          especificacion/gramatica/mud.ebnf
+          especificacion/sintaxis/casos/cst-ast.yaml
+          especificacion/sintaxis/cobertura-sintactica.yaml
+          especificacion/sintaxis/cst-a-ast-superficial.md
+          especificacion/sintaxis/cst-sin-perdidas.md
+          especificacion/sintaxis/mud-surface-ast.asdl
+          especificacion/sintaxis/mud-syntax-kinds.yaml
+          especificacion/sintaxis/validate_syntax_model.py
+          EOF
+          )
+          actual=$(git diff --name-only | sort)
+          test "$actual" = "$(printf '%s\n' "$expected" | sort)"
+          git diff --stat
+
+      - name: Commit candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git add -- \
+            especificacion/07-gramatica-concreta.md \
+            especificacion/08-sintaxis-abstracta.md \
+            especificacion/gramatica/mud.ebnf \
+            especificacion/sintaxis/casos/cst-ast.yaml \
+            especificacion/sintaxis/cobertura-sintactica.yaml \
+            especificacion/sintaxis/cst-a-ast-superficial.md \
+            especificacion/sintaxis/cst-sin-perdidas.md \
+            especificacion/sintaxis/mud-surface-ast.asdl \
+            especificacion/sintaxis/mud-syntax-kinds.yaml \
+            especificacion/sintaxis/validate_syntax_model.py
+          git diff --cached --check
+          git commit -m "fix(grammar): alinea inicializadores concretos de thing" -m "Context:\n- D-015 y D-054 ya exigen inicializadores concretos en la definición canónica, pero la EBNF solo admitía declaraciones de campo.\n\nChanges:\n- Añade thing-initializer y lo conserva separado de los predeterminados heredables.\n- Propaga la forma por CST, AST superficial, cobertura, transformación, prosa y casos de frontera.\n- Retira el rechazo sintáctico global de name =, que ahora puede inicializar un campo ordinario name.\n\nValidation:\n- manage_decisions.py validate\n- validate_questions.py\n- validate_grammar.py\n- validate_syntax_model.py\n- git diff --check"
+          git status --short
+          git push origin HEAD:patch/thing-initializers-d15
