@@ -579,7 +579,7 @@ cases:
   category: start
   source: "start with {\n        all, empty, CanGrow\n    }\n"
   cst_root: MudFileSyntax
-  ast: GlobalStartDecl(StartSet(contributions=[all, empty, CanGrow]))
+  ast: ModuleStartDecl(StartSet(contributions=[all, empty, CanGrow]))
   produces_ast: true
 - id: decision-fallback
   category: dictionary

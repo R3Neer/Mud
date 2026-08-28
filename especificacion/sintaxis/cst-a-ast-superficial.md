@@ -628,7 +628,7 @@ Las expresiones de unidad y dimensión eliminan paréntesis de agrupación, pero
 
 La forma de una expresión y el bloque de contribuciones de `start with` producen un único `StartSet(contributions)`. El orden fuente se conserva solo como procedencia, no como semántica de activación.
 
-La declaración global añade `GlobalStartDecl`. Dentro de un test, el mismo `StartSet` es un campo de `TestDecl`.
+La declaración de primer nivel del módulo añade `ModuleStartDecl`. Dentro de un test, el mismo `StartSet` es un campo de `TestDecl`.
 
 `after assertion` y `after { assertion... }` producen un `TestAfterBlock` uniforme.
 

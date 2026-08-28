@@ -549,11 +549,11 @@ productions:
     ast:
       disposition: constructor
       target: LocalValueDecl
-  global-start-declaration:
-    cst: GlobalStartDeclarationSyntax
+  module-start-declaration:
+    cst: ModuleStartDeclarationSyntax
     ast:
       disposition: constructor
-      target: GlobalStartDecl
+      target: ModuleStartDecl
   start-with-declaration:
     cst: StartWithDeclarationSyntax
     ast:

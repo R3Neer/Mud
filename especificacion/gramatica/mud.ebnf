@@ -41,7 +41,7 @@ top-level-declaration
       | look-declaration
       | message-declaration
       | test-declaration
-      | global-start-declaration
+      | module-start-declaration
       ;
 
 (* ------------------------------------------------------------------ *)
@@ -611,7 +611,7 @@ local-value-declaration
 (* Activación inicial y tests                                          *)
 (* ------------------------------------------------------------------ *)
 
-global-start-declaration
+module-start-declaration
     ::= start-with-declaration ;
 
 start-with-declaration

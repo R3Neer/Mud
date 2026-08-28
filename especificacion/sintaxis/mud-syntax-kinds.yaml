@@ -435,7 +435,7 @@ syntax_nodes:
     - mud-path
   top-level-declaration:
     kind: TopLevelDeclarationSyntax
-    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n      | boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n      | action-declaration\n      | subaction-declaration\n      | look-declaration\n      | message-declaration\n      | test-declaration\n      | global-start-declaration"
+    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n      | boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n      | action-declaration\n      | subaction-declaration\n      | look-declaration\n      | message-declaration\n      | test-declaration\n      | module-start-declaration"
     references:
     - thing-declaration
     - alias-declaration
@@ -449,7 +449,7 @@ syntax_nodes:
     - look-declaration
     - message-declaration
     - test-declaration
-    - global-start-declaration
+    - module-start-declaration
   mud-path:
     kind: MudPathSyntax
     rhs: lower-name , { "." , lower-name }
@@ -1150,8 +1150,8 @@ syntax_nodes:
     - variable-name
     - derived-value-shape
     - value-expression
-  global-start-declaration:
-    kind: GlobalStartDeclarationSyntax
+  module-start-declaration:
+    kind: ModuleStartDeclarationSyntax
     rhs: start-with-declaration
     references:
     - start-with-declaration

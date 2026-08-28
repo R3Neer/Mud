@@ -196,7 +196,7 @@ No se representa mediante enteros ni strings.
 
 Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales metadata-bearing, unidades, campos, componentes y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
 
-Una cabecera agrupada de participantes se normaliza a varios descriptores y copia la misma secuencia de metadatos a cada uno. `GlobalStartDecl` y el `start with` interno de un test no reciben secuencia propia.
+Una cabecera agrupada de participantes se normaliza a varios descriptores y copia la misma secuencia de metadatos a cada uno. `ModuleStartDecl` y el `start with` interno de un test no reciben secuencia propia.
 
 ## Declaraciones de `thing`
 
@@ -529,7 +529,7 @@ No se reducen a reglas o acciones genéricas porque sus contratos posteriores so
 
 La forma `after expr` produce un bloque sin locales y una aserción. En la forma `after { ... }`, todas las declaraciones locales preceden a la primera aserción.
 
-`start with` global y local comparten `StartSet`, que conserva una única secuencia de contribuciones; solo el primero está envuelto en `GlobalStartDecl`.
+`start with` de módulo y de test comparten `StartSet`, que conserva una única secuencia de contribuciones; solo el primero está envuelto en `ModuleStartDecl`.
 
 ## Bloques de efectos
 

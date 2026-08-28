@@ -55,7 +55,7 @@ La EBNF distingue reconocimiento de elaboración. No intenta comprobar:
 - Compatibilidad de tipos.
 - Constancia de expresiones.
 - Validez de dominios.
-- Clasificación de acciones.
+- Resolución de llamadas candidatas a `action` o `subaction` y comprobación de capacidad de raíz exterior.
 - Selección de receptor múltiple.
 
 Las restricciones concretas no expresadas cómodamente en EBNF se validan después de la CST y antes del AST.

@@ -144,11 +144,11 @@ La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaraci
 
 Los participantes `for`, `on` y `given` no introducen una categoría superior nueva: su ancla es subordinada a la del propietario y deriva además de la clase de cláusula y del identificador, conforme al modelo de descriptores. La posición nunca forma parte de esa identidad.
 
-`start with` global no introduce nombre y, por tanto, no posee ancla. La categoría describe la declaración propietaria: un campo de `look` conserva una ancla como `look::game.Status::score`, no una categoría adicional `field`.
+`start with` de módulo no introduce nombre y, por tanto, no posee ancla. La categoría describe la declaración propietaria: un campo de `look` conserva una ancla como `look::game.Status::score`, no una categoría adicional `field`.
 
 Poseen ancla:
 
-- declaraciones globales;
+- declaraciones nominales de primer nivel;
 - campos, componentes y datos asociados declarados por una `family`;
 - miembros de family;
 - unidades declaradas;
@@ -221,7 +221,7 @@ Las declaraciones `alias` pueden aportar aristas de especialización. El grafo n
 
 ## Metadatos, descriptores y anclas subordinadas
 
-El acceso reflectivo `~` distingue propiedades intrínsecas y metadatos configurados: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el global continúa sin ancla.
+El acceso reflectivo `~` distingue propiedades intrínsecas y metadatos configurados: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el de módulo continúa sin ancla.
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
 

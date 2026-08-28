@@ -188,7 +188,7 @@ module MUDSurface {
                               start_set start,
                               effect_block effects,
                               test_after_block after)
-                   | GlobalStartDecl(start_set start)
+                   | ModuleStartDecl(start_set start)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------

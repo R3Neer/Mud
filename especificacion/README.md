@@ -304,9 +304,9 @@ Archivo previsto: `11-things.md`
 
 Define:
 
-- `Thing` concretas y abstractas.
+- `thing` concretas y abstractas.
 - `Thing` incorporada, abstracta y superior a toda `thing`.
-- `Thing` declaradas y creadas durante la ejecución.
+- Identidad canónica de cada `thing`, actividad y materialización de las concretas.
 - Especialización simple y múltiple.
 - Cabeceras de especialización con `as` y consultas con `is`.
 - Sustituibilidad.
@@ -561,22 +561,20 @@ Define:
 - Valores `given` inmutables, predeterminados estáticos y omisiones posicionales o nominales.
 - `if`, `then` y `after`.
 - Vinculaciones locales `:=` secuenciales y sin referencias adelantadas dentro de `then`.
-- Acciones elementales.
-- Acciones compuestas.
-- Vinculación posicional y nombrada.
-- Receptores-lugar para roles con mutabilidad exterior.
+- `then` unificado: efectos directos, llamadas a `action` o `subaction`, locales y recorridos `for each` en una misma secuencia.
+- Vinculación posicional y nombrada y receptores-lugar para roles con mutabilidad exterior.
+- `action` como capacidad de raíz exterior de escritura y `subaction` como callable sin capacidad de raíz.
 - Aciclicidad de llamadas.
-- Acciones como API externa de escritura.
 - Exclusión de los tests de la API pública.
 - Posibles valores de retorno.
-- `look` como consulta pública pura de un estado estable.
-- Participantes `for` sin `given`.
-- `message` como evento detectado durante las ondas de una acción.
+- Invocación de valores callable sin pre-vincular receptores ni argumentos `given` al almacenar el descriptor.
+- `look` como callable puro con participantes `for` y `given`, consultable desde host y desde contextos MUD compatibles con lectura.
+- Vista coherente de `look` heredada del llamador y resultado único de tipo anónimo.
+- `message` como ocurrencia causal con identidad y multiplicidad, capaz de alimentar triggers de ondas posteriores.
 - Vinculaciones `on` conjuntas, refinamientos nominales, referencias adelantadas y ciclos relacionales finitos.
-- Condición `when` y guarda `if` opcional.
-- Propiedades públicas calculadas con tipo declarado opcionalmente o inferido y acciones auxiliares `subaction` fuera de la API raíz.
-- Evaluación diferida de las propiedades del mensaje tras la estabilización.
-- Multiplicidad, orden, deduplicación, rollback y entrega.
+- Condición `when`, guarda `if` opcional, locales previas y payload público calculado.
+- Proyección causal del payload dentro de MUD y proyección final estable hacia el host; un rollback cancela la entrega exterior.
+- Separación entre bindings `on` y payload en la envoltura host, orden causal entre ondas y orden técnico reproducible dentro de una onda.
 
 
 ## 25. Efectos
@@ -729,7 +727,7 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 Define:
 
 - Definiciones canónicas estáticas de `thing` raíz, abstractas y con especialización múltiple.
-- Conjuntos iniciales no ordenados y separados de `things` y `rules` declarados mediante `start with`.
+- Contribuciones iniciales no ordenadas `thing | rule` reunidas por el `start with` de cada módulo y materializadas conjuntamente.
 - Activación y reactivación mediante `create Nombre`.
 - Inicialización de la primera materialización.
 - Distinción entre almacenamiento retenido y proyección efectiva.
@@ -906,7 +904,7 @@ Archivo previsto: `43-tests-declarativos.md`
 Define:
 
 - Declaraciones `test` con ancla `test::*`.
-- Mundo aislado y sustitución del `start with` global.
+- Mundo aislado construido con el cierre transitivo estático de las contribuciones `start with` de los módulos alcanzables y el `start with` local del test.
 - Materialización y estabilización previas.
 - Semántica de `then`.
 - Vinculaciones locales inmutables y secuenciales mediante `nombre [: Tipo] := expresión`.
@@ -1071,7 +1069,7 @@ Primer ciclo recomendado:
 thing
 → campos básicos
 → regla booleana
-→ acción elemental
+→ action
 → look
 → estado
 → message

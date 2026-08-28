@@ -102,7 +102,6 @@ Son contextuales:
 - `abstract` delante de `thing`.
 - `always` delante de `rule`.
 - `start` como parte de `start with`.
-- `things` y `rules` como etiquetas obligatorias de sus secciones de `start with`.
 - `value` dentro de los selectores y resultados de ramas funcionales `-->`.
 - `type` en las posiciones reflectivas y de tipo que lo admiten.
 - `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` y `format` después de `~` en las posiciones admitidas.

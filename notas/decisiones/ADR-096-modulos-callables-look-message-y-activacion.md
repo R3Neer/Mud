@@ -51,7 +51,7 @@ Una `action` o `subaction` puede invocarse desde cualquier contexto semántico `
 
 ### Módulos y visibilidad
 
-`~private` deja de ser metadato estándar y desaparece también como default de fichero. La visibilidad se deriva de la categoría semántica, el módulo propietario, los contratos entre módulos y el cierre de tipos requerido por esos contratos.
+`~private` deja de ser metadato estándar y desaparece también como default de fichero. El identificador `private` permanece disponible como nombre ordinario de metadata de usuario: una metadata `~private` no recibe significado especial ni controla visibilidad. La visibilidad se deriva de la categoría semántica, el módulo propietario, los contratos entre módulos y el cierre de tipos requerido por esos contratos.
 
 Un módulo es una unidad de encapsulación semántica. Entre módulos, la frontera operacional visible se compone de `action`, `look`, `message` y, solo en contexto de tests, `test`. La frontera de aplicación hacia el host incluye `action`, `look` y `message`, no `test`.
 

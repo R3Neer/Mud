@@ -34,7 +34,7 @@ El contenido normativo todavía no ha sido redactado.
 
 - Programa, módulo, archivo y path de MUD.
 - Declaración, símbolo, nombre y ancla.
-- `Thing` declarada, `thing` creada durante la ejecución, identidad y valor.
+- `thing` abstracta o concreta, identidad canónica, actividad, materialización y valor.
 - Campo, relación y colección.
 - Diccionario exacto, diccionario funcional, asociación, rama, selector y fallback.
 - Unión de tipos, flecha exterior, pertenencia nominal, tipo nominal exacto e igualdad de valores.

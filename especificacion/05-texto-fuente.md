@@ -68,7 +68,7 @@ Un archivo contiene, en este orden:
 
 1. Cero o más defaults almacenados y constantes de metadatos `~...` aplicables al archivo.
 2. Cero o más declaraciones `using`.
-3. Cero o más declaraciones de primer nivel de cualquier categoría, incluida la declaración global `start with`.
+3. Cero o más declaraciones de primer nivel de cualquier categoría, incluido el `start with` del módulo.
 
 El orden físico de archivos no es semántico. Tampoco resuelve duplicidades ni ambigüedades.
 
@@ -162,3 +162,5 @@ Un archivo `battle.mud` puede reunir las `thing`, aliases, diccionarios, reglas,
 Un archivo `.mud` debe pertenecer al módulo determinado por el `mud.module` de su directorio ancestro más cercano. Un `mud.module` anidado abre una nueva frontera y un `.mud` sin ancestro modular es inválido. El nombre lógico del módulo se deriva del MudPath del directorio y no se repite obligatoriamente en el archivo de módulo.
 
 `uses` pertenece a `mud.module` y autoriza dependencias de contrato entre módulos; `using` pertenece a los `.mud` y resuelve/importa nombres. Ninguno sustituye al otro. La gramática completa de `mud.module` permanece abierta en Q-062.
+
+Las dependencias declaradas mediante `uses` pueden formar ciclos. Un ciclo modular es legal, pero el compilador debe advertir del acoplamiento cíclico. Ese ciclo no establece ni permite inferir un orden de inicialización: las contribuciones `start with` de los módulos se materializan conjuntamente según el modelo de activación.

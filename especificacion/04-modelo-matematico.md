@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/normativa
-status: esqueleto
+status: borrador
 normative: true
 depends-on:
   - "[[02-terminologia]]"
@@ -35,9 +35,7 @@ decisions:
 
 ## Estado y propósito
 
-Este capítulo definirá las estructuras matemáticas que representan un programa y un estado del mundo MUD antes de introducir su sintaxis concreta o su ejecución.
-
-El contenido normativo todavía no ha sido redactado.
+Este capítulo define las restricciones matemáticas ya fijadas para representar un programa y un estado del mundo MUD antes de introducir su sintaxis concreta o su ejecución. La estructura matemática completa del mundo permanece en desarrollo y deberá extender estas restricciones sin contradecirlas.
 
 ## Dependencias
 

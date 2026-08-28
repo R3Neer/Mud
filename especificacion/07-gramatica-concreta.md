@@ -1584,7 +1584,6 @@ El parser no decide cuestiones que requieren resolución:
 - Si un camino con puntos atraviesa paths de MUD, declaraciones o miembros.
 - Si un literal estructural usado antes de una llamada representa un receptor único o varios receptores.
 - Si un `postfix-expression` de un efecto es una llamada de acción.
-- Si una acción es elemental o compuesta.
 - Qué tipo contextual selecciona un literal estructural, de unidad, de punto o textual de un único escalar.
 
 La CST conserva la forma concreta y el AST superficial una forma no resuelta. Las fases posteriores realizan la clasificación.
@@ -1623,6 +1622,6 @@ El contexto de tipo también puede construir el alias sin `to`. El compilador no
 Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.
 
 
-### `~private`
+### Metadata de usuario llamada `private`
 
-`~private` no forma parte de la gramática semántica vigente. Una grafía `~private` no adquiere significado estándar por ser léxicamente parecida a un metadato de extensión; la validación contextual debe rechazarla.
+`private` no es un metadato estándar ni controla visibilidad. Como `metadata-name` admite identificadores ordinarios, `~private` puede declararse y consultarse como metadata de usuario cuando el propietario admita metadata configurable. Se comporta como cualquier otra metadata de extensión y no recibe tratamiento especial.
