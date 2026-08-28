@@ -1,1 +1,1 @@
-trigger full D-096 coherence validation
+trigger isolated final D-096 validation
