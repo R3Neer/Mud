@@ -50,4 +50,15 @@ if text.count(q51) == 0 and text.count(q52) == 0:
 elif text.count(q51) != 2 or text.count(q52) != 2:
     raise SystemExit("profiles.toml: inconsistent Q-051/Q-052 exclusions")
 
-print("question closure evidence and export profiles applied")
+syntax_kinds = ROOT / "especificacion/sintaxis/mud-syntax-kinds.yaml"
+text = syntax_kinds.read_text(encoding="utf-8")
+for spelling in ("things", "rules"):
+    entry = f"- spelling: {spelling}\n"
+    count = text.count(entry)
+    if count == 1:
+        text = text.replace(entry, "")
+    elif count != 0:
+        raise SystemExit(f"mud-syntax-kinds.yaml: unexpected count for {spelling!r}: {count}")
+syntax_kinds.write_text(text, encoding="utf-8")
+
+print("question closure evidence, export profiles and syntax token catalog applied")
