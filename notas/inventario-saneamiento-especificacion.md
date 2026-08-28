@@ -22,7 +22,7 @@ No define MUD. La autoridad normativa permanece en `especificacion/` y, transito
 - Etapa 1 — inventario inicial: completada.
 - Etapa 2 — integración editorial semánticamente neutra: completada.
 - Etapa 3 — contradicciones y residuos semánticos en superficies desarrolladas: completada.
-- Etapa 4 — auditoría sistemática de decisiones vigentes contra superficies existentes: pendiente.
+- Etapa 4 — auditoría sistemática de decisiones vigentes contra superficies existentes: completada.
 - Etapa 5 — auditoría exhaustiva del documento fuente de la integración D-096: pendiente.
 - Etapa 6 — revisión semántica del mapa futuro de `especificacion/README.md`: pendiente.
 - Etapa 7 — barrera mecánica contra regresiones editoriales: pendiente.
@@ -47,18 +47,16 @@ Completada. Los puntos E3-01 a E3-08 se cerraron integrando la regla vigente en 
 
 ## Etapa 4 — auditoría de decisiones vigentes
 
-No parte de una lista cerrada de defectos. Debe recorrer todas las decisiones vigentes de forma sistemática.
+Completada. Se recorrieron las 90 decisiones vigentes contra las superficies normativas ya desarrolladas y contra los hogares futuros declarados por el mapa de la especificación.
 
-Para cada decisión vigente:
+La auditoría no encontró nuevas contradicciones `C` o `X`, tratamientos incorrectos de preguntas `Q` ni fortalecimientos no sustentados `U`. La ausencia de una regla en un capítulo todavía no desarrollado se clasificó como `M` cuando correspondía, sin forzarla a una superficie impropia.
 
-1. leer su alcance y superficies afectadas;
-2. determinar qué superficies normativas correspondientes ya están desarrolladas;
-3. comprobar que ninguna las contradiga;
-4. comprobar que la regla esté integrada en su ubicación canónica cuando esa ubicación exista;
-5. clasificar como `M` lo que dependa de una superficie todavía no desarrollada, en lugar de forzarla a un capítulo impropio;
-6. registrar cualquier fortalecimiento o regla no sustentada como `U` para revisión explícita.
+Se detectaron dos integraciones incompletas concentradas en el IR semántico y ambas quedaron corregidas en su superficie canónica:
 
-**Criterio de cierre de la etapa:** toda decisión vigente queda trazada a superficies desarrolladas coherentes o a una obligación `M` explícita para una superficie futura; no quedan contradicciones silenciosas.
+- El IR declara versión de esquema y representa estructuralmente clases declarativas, firmas `for`/`on`/`given`, cuerpos semánticos diferenciados, vinculaciones locales ordenadas, efectos y las familias de dependencias exigidas por el modelo vigente.
+- La activación inicial de módulo dejó de ser un tipo huérfano: cada `SemanticModule` conserva su `SemanticStartSet` junto con sus dependencias `uses`.
+
+Las obligaciones cuya superficie canónica sigue sin desarrollarse permanecen en la sección siguiente o en el alcance explícito de los capítulos futuros del mapa maestro. No constituyen defectos de integración mientras ninguna superficie existente las contradiga.
 
 ## Etapa 5 — auditoría específica de la integración D-096
 
