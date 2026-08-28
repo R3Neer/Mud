@@ -37,4 +37,17 @@ for rel, block in BLOCKS.items():
     if "## Criterio de cierre" not in text:
         path.write_text(text.rstrip() + "\n\n" + block.strip() + "\n", encoding="utf-8")
 
-print("question closure evidence applied")
+profiles = ROOT / "tooling/markdown_export/profiles.toml"
+text = profiles.read_text(encoding="utf-8")
+q51 = '    "notas/preguntas/Q-051-identidad-y-seleccion-de-un-look.md",\n'
+q52 = '    "notas/preguntas/Q-052-entrega-de-message.md",\n'
+if text.count(q51) == 0 and text.count(q52) == 0:
+    marker = '    "notas/preguntas/Q-053-conversiones-explicitas.md",\n'
+    if text.count(marker) != 2:
+        raise SystemExit(f"profiles.toml: expected 2 Q-053 exclusion markers, found {text.count(marker)}")
+    text = text.replace(marker, q51 + q52 + marker)
+    profiles.write_text(text, encoding="utf-8")
+elif text.count(q51) != 2 or text.count(q52) != 2:
+    raise SystemExit("profiles.toml: inconsistent Q-051/Q-052 exclusions")
+
+print("question closure evidence and export profiles applied")
