@@ -45,6 +45,7 @@ jobs:
             python ../control/gobierno/labs/patch_modulos_callables_20260828.py
           fi
           python ../control/gobierno/labs/patch_modulos_callables_postfix_20260828.py
+          python ../control/gobierno/labs/patch_modulos_callables_residuos_20260828.py
 
       - name: Regenerar índices oficiales
         working-directory: candidate
