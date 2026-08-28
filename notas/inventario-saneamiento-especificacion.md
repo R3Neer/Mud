@@ -42,14 +42,6 @@ No define MUD. La autoridad normativa permanece en `especificacion/` y, transito
 
 Las categorías históricas/editoriales `H`, `A` y `D` del inventario inicial se consideran cubiertas por la Etapa 2 salvo que una auditoría posterior demuestre un residuo concreto.
 
-## Decisiones aclaradas durante el saneamiento
-
-### `~private`
-
-`~private` no tiene significado estándar ni controla visibilidad o frontera modular. Sin embargo, `private` puede usarse como nombre de metadata ordinaria de extensión del mismo modo que cualquier otro `identifier` permitido en `metadata-name`.
-
-Por tanto, cualquier regla que reserve o prohíba específicamente la grafía `~private` es un defecto. La corrección no debe reintroducir ninguna semántica estándar de privacidad.
-
 ## Etapa 3 — contradicciones y residuos semánticos
 
 Completada. Los puntos E3-01 a E3-08 se cerraron integrando la regla vigente en sus superficies canónicas y propagando los renombres mecánicos necesarios. El detalle previo queda disponible en Git y no se conserva como deuda activa.

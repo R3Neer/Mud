@@ -281,8 +281,6 @@ Se conservan los metadatos estándar de presentación y configuración con estos
 
 `~name`, `~summary`, `~description` y `~deprecated` están disponibles en todo elemento metadata-bearing compatible. `~name` toma por defecto una presentación derivada de `~identifier`. `~summary` es una descripción breve; `~description` admite Markdown de presentación; `~deprecated` no vacío activa diagnóstico de obsolescencia pero no invalida el uso.
 
-`~private` queda retirado por D-096 y cualquier intento de declararlo como metadato estándar es inválido. La exposición exterior se deriva de la frontera de módulo, la categoría operacional y el cierre de tipos requerido por el contrato; no se expresa mediante un booleano metadata-bearing.
-
 ### Metadatos de usuario
 
 Un nombre no reservado puede declarar metadatos almacenados o calculados:
@@ -313,7 +311,7 @@ No se propagan a campos, componentes, participantes, miembros de familia, declar
 valor explícito del elemento > default de archivo > default del lenguaje
 ```
 
-Un default de archivo no admite `:=`, lecturas runtime ni propiedades intrínsecas. `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. `~private` no existe. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
+Un default de archivo no admite `:=`, lecturas runtime ni propiedades intrínsecas. `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
 
 ### Texto y tooling
 
@@ -348,12 +346,11 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 8. Ausencia de metadatos en `start with`, cláusulas y cuerpos.
 9. Defaults de archivo y precedencia explícito > archivo > lenguaje.
 10. Rechazo de defaults calculados o individuales.
-11. Rechazo de `~private` como nombre estándar retirado y ausencia de ese default de archivo.
-12. `~summary`, `~description` y `~deprecated` en elementos subordinados.
-13. Colecciones y diccionarios con propiedades intrínsecas tipadas.
-14. Narrowing categorial de declaraciones.
-15. Eliminación completa de `anchor{...}`.
+11. `~summary`, `~description` y `~deprecated` en elementos subordinados.
+12. Colecciones y diccionarios con propiedades intrínsecas tipadas.
+13. Narrowing categorial de declaraciones.
+14. Eliminación completa de `anchor{...}`.
 
 ## Modificación vigente por D-096
 
-`~private` queda retirado por completo como metadato estándar y como default de fichero. La visibilidad exterior se deriva de módulo, categoría operacional y cierre de tipos. La reflexión cruzada de módulo solo es válida si su contrato garantiza que no puede devolver entidades invisibles; no se permite filtrar silenciosamente una colección reflectiva para ocultarlas. Tooling completo y reflexión disponible al código MUD siguen siendo superficies distintas.
+La visibilidad exterior se deriva de módulo, categoría operacional y cierre de tipos. La reflexión cruzada de módulo solo es válida si su contrato garantiza que no puede devolver entidades invisibles; no se permite filtrar silenciosamente una colección reflectiva para ocultarlas. Tooling completo y reflexión disponible al código MUD siguen siendo superficies distintas.
