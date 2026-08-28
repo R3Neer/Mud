@@ -61,9 +61,13 @@ jobs:
           python ../control/gobierno/labs/patch_modulos_callables_postfix_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_residuos_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_private_cleanup_20260828.py
-          python ../control/gobierno/labs/patch_modulos_callables_coherence_prep_20260828.py
-          python ../control/gobierno/labs/patch_modulos_callables_coherence_20260828.py
-          python ../control/gobierno/labs/patch_modulos_callables_coherence_post_20260828.py
+          if grep -q '^17\. Navegación LSP desde cada activación a una única definición\.$' notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md; then
+            echo 'La pasada editorial D-054/D-096 ya está en su estado final.'
+          else
+            python ../control/gobierno/labs/patch_modulos_callables_coherence_prep_20260828.py
+            python ../control/gobierno/labs/patch_modulos_callables_coherence_20260828.py
+            python ../control/gobierno/labs/patch_modulos_callables_coherence_post_20260828.py
+          fi
           python ../control/gobierno/labs/patch_modulos_callables_any_cleanup_20260828.py
           rm -f gobierno/labs/d096-v2-trigger.txt
 
