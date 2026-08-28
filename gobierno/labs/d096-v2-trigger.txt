@@ -1,0 +1,1 @@
+Trigger temporal para reconstruir D-096 desde main 7110329086838e63db02bb1e3a58f0c1df67f0db.
