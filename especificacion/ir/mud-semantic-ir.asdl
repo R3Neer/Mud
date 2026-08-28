@@ -331,7 +331,7 @@ module MUDSemanticIR {
                     | Specializes(anchor source, anchor target)
                     | RefersTo(symbol_id source, symbol_id target)
                     | HasType(symbol_id source, anchor target)
-                    | HasDomain(symbol_id source, anchor target)
+                    | HasDomain(symbol_id source, symbol_id target)
                     | InitializesFrom(symbol_id source, symbol_id target)
                     | CalculatesFrom(symbol_id source, symbol_id target)
                     | Reads(symbol_id source, symbol_id target)
