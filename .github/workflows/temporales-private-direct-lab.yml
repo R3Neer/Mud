@@ -34,16 +34,33 @@ jobs:
 
       - name: Eliminar excepcionalidad de private
         run: |
-          python "$RUNNER_TEMP/apply.py" private --root . || true
+          set +e
+          private_output=$(python "$RUNNER_TEMP/apply.py" private --root . 2>&1)
+          private_rc=$?
+          set -e
+          printf '%s\n' "$private_output"
+          if [ "$private_rc" -ne 0 ] && [[ "$private_output" != *"quedan apariciones de ~private: notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md"* ]]; then
+            exit "$private_rc"
+          fi
           python - <<'PY'
           from pathlib import Path
           path = Path('notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md')
           text = path.read_text(encoding='utf-8')
           old = '- No existen modificadores explícitos `public`, `private`, `internal` ni `~private` para controlar la frontera modular.\n'
           new = '- La frontera modular no se controla mediante modificadores explícitos de visibilidad.\n'
-          if old in text:
-              text = text.replace(old, new, 1)
-              path.write_text(text, encoding='utf-8')
+          if old not in text:
+              raise SystemExit('No se encontró el último residuo esperado de visibilidad en D-096')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          for raw in [
+              'especificacion/07-gramatica-concreta.md',
+              'notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md',
+              'notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md',
+              'notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md',
+              'notas/inventario-saneamiento-especificacion.md',
+          ]:
+              p = Path(raw)
+              value = p.read_text(encoding='utf-8')
+              p.write_text(value.rstrip('\n') + '\n', encoding='utf-8')
           PY
           if git grep -n -F '~private' -- .; then
             echo "Quedan menciones explícitas a ~private" >&2
@@ -61,6 +78,21 @@ jobs:
       - name: Establecer gobernanza de temporales
         run: |
           python "$RUNNER_TEMP/apply.py" govern --root .
+          python - <<'PY'
+          from pathlib import Path
+          for raw in [
+              'AGENTS.md',
+              'gobierno/POLITICA-DE-COMMITS.md',
+              'gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md',
+              'gobierno/README.md',
+              'gobierno/temporales.base',
+              'gobierno/validate_temporaries.py',
+              'notas/inventario-saneamiento-especificacion.md',
+          ]:
+              p = Path(raw)
+              value = p.read_text(encoding='utf-8')
+              p.write_text(value.rstrip('\n') + '\n', encoding='utf-8')
+          PY
           python gobierno/validate_temporaries.py
           python - <<'PY'
           import yaml
