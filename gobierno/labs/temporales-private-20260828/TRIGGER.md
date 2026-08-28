@@ -1,0 +1,1 @@
+trigger temporal; no publicar
