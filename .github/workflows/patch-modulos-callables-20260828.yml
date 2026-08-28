@@ -1,13 +1,12 @@
 name: Patch módulos, callables y activación
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - patch/modulos-callables-message-ci-20260828
 
 permissions:
   contents: write
-  pull-requests: read
 
 jobs:
   validate:
