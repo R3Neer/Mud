@@ -1,4 +1,4 @@
-name: Patch módulos, callables y activación
+name: Audit published D-096
 
 on:
   pull_request:
@@ -6,21 +6,21 @@ on:
       - control/patch-modulos-callables-20260828
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
 
 jobs:
-  validate:
+  audit:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout candidata
+      - name: Checkout main publicado
         uses: actions/checkout@v4
         with:
-          ref: patch/modulos-callables-message-20260828-v2
-          path: candidate
-          fetch-depth: 0
+          ref: e91ea5b59212d277c617f7193f7d68d774f43c0b
+          path: published
+          fetch-depth: 2
 
-      - name: Checkout laboratorio
+      - name: Checkout auditores
         uses: actions/checkout@v4
         with:
           ref: control/patch-modulos-callables-20260828
@@ -33,115 +33,43 @@ jobs:
           python-version: '3.12'
 
       - name: Dependencias de validación
-        working-directory: candidate
+        working-directory: published
         run: python -m pip install -r especificacion/sintaxis/requirements.txt
 
-      - name: Materializar D-096 aceptada
-        working-directory: candidate
+      - name: Identidad e invariantes publicados
+        working-directory: published
         shell: bash
         run: |
           set -euo pipefail
-          adr='notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md'
-          source_commit='7a596215eefddd7d1a339f930311bb626ce6f4bc'
-          expected_blob='2b8e9190494fa0337dcf3ccda89fe555fe61429a'
-          git cat-file -e "${source_commit}^{commit}"
-          if [ ! -f "$adr" ]; then
-            git show "${source_commit}:${adr}" > "$adr"
-          fi
-          test "$(git hash-object "$adr")" = "$expected_blob"
-
-      - name: Aplicar transformación determinista
-        working-directory: candidate
-        run: |
-          if grep -q 'StartSet(expr\* contributions)' especificacion/sintaxis/mud-surface-ast.asdl; then
-            echo 'La candidata ya contiene la transformación estructural.'
-          else
-            python ../control/gobierno/labs/patch_modulos_callables_20260828.py
-          fi
-          python ../control/gobierno/labs/patch_modulos_callables_postfix_20260828.py
-          python ../control/gobierno/labs/patch_modulos_callables_residuos_20260828.py
-          python ../control/gobierno/labs/patch_modulos_callables_private_cleanup_20260828.py
-          if grep -q '^17\. Navegación LSP desde cada activación a una única definición\.$' notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md; then
-            echo 'La pasada editorial D-054/D-096 ya está en su estado final.'
-          else
-            python ../control/gobierno/labs/patch_modulos_callables_coherence_prep_20260828.py
-            python ../control/gobierno/labs/patch_modulos_callables_coherence_20260828.py
-            python ../control/gobierno/labs/patch_modulos_callables_coherence_post_20260828.py
-          fi
-          python ../control/gobierno/labs/patch_modulos_callables_any_cleanup_20260828.py
-          rm -f gobierno/labs/d096-v2-trigger.txt
-
-      - name: Regenerar índices oficiales
-        working-directory: candidate
-        run: |
-          python tooling/decisions/manage_decisions.py generate
-          python tooling/questions/validate_questions.py generate
-
-      - name: Invariantes específicos D-096
-        working-directory: candidate
-        shell: bash
-        run: |
-          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 'e91ea5b59212d277c617f7193f7d68d774f43c0b'
+          test "$(git rev-parse 'HEAD^{tree}')" = '24b2294806fa7c408acee3f6d23b0d8ff5e86c9e'
+          test "$(git rev-parse HEAD^)" = '7110329086838e63db02bb1e3a58f0c1df67f0db'
           grep -q '^id: D-096$' notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md
           grep -q '^status: sustituida$' notas/decisiones/ADR-027-salidas-look-y-message.md
-          grep -q '^  - "D-096"$' notas/decisiones/ADR-027-salidas-look-y-message.md
-          grep -q 'StartSet(expr\* contributions)' especificacion/sintaxis/mud-surface-ast.asdl
-          grep -q '| EnumerateAll' especificacion/sintaxis/mud-surface-ast.asdl
-          grep -q 'given_clause? givens' especificacion/sintaxis/mud-surface-ast.asdl
-          grep -q 'semantic_module\* modules' especificacion/ir/mud-semantic-ir.asdl
           ! grep -q 'PrivateMetadata' especificacion/ir/mud-semantic-ir.asdl
-          ! grep -q '"things" , start-contribution-body' especificacion/gramatica/mud.ebnf
-          ! grep -q '"rules" , start-contribution-body' especificacion/gramatica/mud.ebnf
-          grep -q '"allowed" | "all"' especificacion/gramatica/mud.ebnf
+          ! grep -q '^~private      : Bool = false$' notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md
+          grep -q 'descriptores first-class de declaraciones y tipos conforme a D-096' especificacion/07-gramatica-concreta.md
           for q in 062 063 064 065 066 067 068; do
-            grep -q "^id: Q-$q$" notas/preguntas/Q-$q-*.md
-            grep -q '^resolved: false$' notas/preguntas/Q-$q-*.md
+            grep -q "^resolved: false$" notas/preguntas/Q-$q-*.md
           done
           grep -q '^resolved: true$' notas/preguntas/Q-051-identidad-y-seleccion-de-un-look.md
           grep -q '^resolved: true$' notas/preguntas/Q-052-entrega-de-message.md
-          ! grep -q 'gobierno/labs/d096-v2-trigger.txt' < <(git status --short)
           ! find .github/workflows -maxdepth 1 -name 'patch-modulos-callables-20260828.yml' -print -quit | grep -q .
+          test -z "$(git status --porcelain)"
 
-      - name: Validadores oficiales
-        working-directory: candidate
+      - name: Validadores oficiales sobre main
+        working-directory: published
         run: |
           python tooling/decisions/manage_decisions.py validate
           python tooling/questions/validate_questions.py validate
           python especificacion/gramatica/validate_grammar.py
           python especificacion/sintaxis/validate_syntax_model.py
-          git diff --check
+          git diff HEAD^ --check
+          test -z "$(git status --porcelain)"
 
-      - name: Auditorías globales de residuos D-096
-        working-directory: candidate
+      - name: Auditorías globales sobre main
+        working-directory: published
         run: |
           python ../control/gobierno/labs/audit_modulos_callables_residuos_20260828.py
           python ../control/gobierno/labs/audit_modulos_callables_coherence_20260828.py
-
-      - name: Auditoría de superficie generada
-        working-directory: candidate
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo 'Rutas modificadas respecto al HEAD de entrada:'
-          git status --short
-          if grep -R -n --include='*.asdl' 'PrivateMetadata' especificacion; then
-            exit 1
-          fi
-          if grep -R -n --include='*.md' --include='*.ebnf' 'Reglas reactivas, `always`, `look` y `message` no admiten `given`' .; then
-            exit 1
-          fi
-
-      - name: Commit de la candidata cuando haya cambios
-        working-directory: candidate
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name 'MUD Patch Bot'
-            git config user.email 'mud-patch-bot@users.noreply.github.com'
-            git add -A
-            git commit -m 'spec(language): integra módulos, callables y activación'
-            git push origin HEAD:patch/modulos-callables-message-20260828-v2
-          else
-            echo 'La candidata ya coincide con la transformación validada.'
-          fi
+          test -z "$(git status --porcelain)"
