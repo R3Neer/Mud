@@ -48,6 +48,7 @@ jobs:
           python ../control/gobierno/labs/patch_modulos_callables_residuos_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_coherence_prep_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_coherence_20260828.py
+          python ../control/gobierno/labs/patch_modulos_callables_coherence_post_20260828.py
           rm -f gobierno/labs/d096-v2-trigger.txt
 
       - name: Regenerar índices oficiales
