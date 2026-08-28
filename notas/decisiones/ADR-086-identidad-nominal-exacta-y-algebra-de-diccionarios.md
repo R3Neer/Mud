@@ -14,7 +14,7 @@ affects:
 
 - Modifica: [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]], [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]], [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[ADR-052-pipeline-materializadores-y-conformidad|D-052]].
-- Documentos afectados: capítulos 02 y 04 a 09; futuros capítulos 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 y 47; gramática; CST; AST superficial; IR semántico; casos de conformidad.
+- Documentos afectados: capítulos 02 y 04 a 09; futuros capítulos 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 y 47; gramática; CST; AST superficial; representación semántica posterior a tipado y elaboración; casos de conformidad.
 
 ## Contexto
 
@@ -440,9 +440,9 @@ ExactTypeTestExpr(valueExpression, nominalTypeReference, negated)
 - `negated = false` para `iis`.
 - `negated = true` para `iis not`.
 
-El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan durante tipado/elaboración antes de producir la forma correspondiente del IR semántico.
+El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan durante tipado/elaboración antes de producir la forma correspondiente dla futura representación semántica posterior a tipado y elaboración.
 
-Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. El IR semántico distingue:
+Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. La futura representación semántica posterior a tipado y elaboración distingue:
 
 ```text
 ExactDictionarySetOperationExpr(operator, left, right, resultType)
@@ -451,7 +451,7 @@ FunctionalDictionarySetOperationExpr(operator, left, right, resultType)
 
 La aplicación del segundo nodo equivale a aplicar ambos operandos en la misma instantánea y ejecutar después la operación de colección. Nunca se materializa una lista fusionada de ramas ni se intenta demostrar equivalencia lógica entre selectores.
 
-El IR semántico diferencia también:
+La futura representación semántica posterior a tipado y elaboración diferencia también:
 
 ```text
 TypeTestExpr                # pertenencia transitiva de is

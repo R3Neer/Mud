@@ -66,7 +66,7 @@ Un elemento puede poseer metadatos propios únicamente cuando satisface conjunta
 
 Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, unidades, campos almacenados/calculados/públicos, datos asociados almacenados/calculados de una `family`, componentes de alias y participantes `for`/`on`/`given`.
 
-No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. Una rama de diccionario funcional tampoco posee ancla pública: D-090 le asigna únicamente una clave local dentro de su propietario para el IR semántico. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
+No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. Una rama de diccionario funcional tampoco posee ancla pública: D-090 le asigna únicamente una clave local dentro de su propietario para la futura representación semántica posterior a tipado y elaboración. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
 
 Un valor `Metadata` configurado sí posee descriptor y ancla propios para reflexión y tooling, pero es **terminal**: no puede poseer metadata propia y no expone `~metadata`. D-094 fija esta excepción deliberada al principio de admisión.
 
@@ -329,7 +329,7 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 
 - Los participantes anónimos dejan de ser sintaxis válida.
 - Los participantes, campos y componentes anclados pasan a formar parte del grafo nominal como descriptores persistentes.
-- El AST superficial conserva declaraciones de metadatos y cuerpos de metadatos; el IR semántico distingue propiedades intrínsecas de valores `Metadata` configurados.
+- El AST superficial conserva declaraciones de metadatos y cuerpos de metadatos; la futura representación semántica posterior a tipado y elaboración distingue propiedades intrínsecas de valores `Metadata` configurados.
 - Las escrituras runtime a cualquier acceso `~` son errores estáticos.
 - La visibilidad exterior se deriva del módulo propietario, su contrato `uses`, la categoría operacional y el cierre de tipos; el tooling presenta esa frontera, no la inventa.
 - Las contribuciones `start with` de módulos y tests permanecen fuera de la superficie metadata-bearing.

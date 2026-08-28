@@ -161,6 +161,7 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 - Gramática o esquemas verificables cuando existan.
 - Suite de conformidad actualizada cuando corresponda.
 - Validadores editoriales específicos de MUD-EDIT-002 y MUD-EDIT-003 cuando existan.
+- Aplicación de MUD-EDIT-004 y coherencia entre capítulo 09 + HIR nominal cuando el cambio afecte resolución de nombres.
 
 ## Conservación del material didáctico
 

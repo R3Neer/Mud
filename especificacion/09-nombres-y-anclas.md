@@ -26,6 +26,7 @@ decisions:
   - D-093
   - D-094
   - D-096
+  - D-097
 ---
 # 09. Nombres, paths y anclas
 
@@ -91,14 +92,14 @@ En `for each`, la fuente y el `by` opcional se resuelven antes de introducir la 
 
 En una selección o un cuantificador/agregador, `source` y `by` se resuelven igualmente en el entorno exterior. Después se introduce la vinculación y se resuelve el `ExpressionBlock`: cada local ve las vinculaciones exteriores y las locales anteriores; el resultado final ve todas las locales del bloque. La vinculación y esas locales dejan de existir al terminar la expresión propietaria.
 
-Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible. La resolución nominal registra estas vinculaciones como símbolos locales subordinados a su propietario; el IR semántico usa la variante genérica `LocalSymbol(owner, kind, name, ordinal)`. Estas vinculaciones no introducen una clase de símbolo ni una categoría de ancla nuevas.
+Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible. La resolución nominal registra estas vinculaciones en el HIR como `LocalSymbol(owner, kind, name, ordinal)` subordinados a su propietario. Estas vinculaciones no introducen una clase de símbolo ni una categoría de ancla nuevas.
 
 ## Etapas
 
 1. El AST superficial aporta nombres y procedencia.
-2. La resolución nominal crea símbolos, scopes, bindings y anclas y los materializa en el HIR nominal de `ir/mud-nominal-hir.asdl`.
+2. La resolución nominal crea símbolos, scopes, bindings y anclas y los materializa en el HIR nominal de `nombres/mud-nominal-hir.asdl`.
 3. El sistema de tipos consume AST superficial + HIR nominal y resuelve uniones, dominios y referencias dependientes del tipo.
-4. La elaboración completa accesos, llamadas, abreviaturas contextuales y demás significado dependiente de tipos en el IR semántico.
+4. La elaboración completa accesos, llamadas, abreviaturas contextuales y demás significado dependiente de tipos; su representación mecánica posterior todavía no está fijada.
 
 El HIR nominal no contiene tipos efectivos, dominios efectivos, cardinalidades ni pruebas de terminación. Es el contrato entre resolución de nombres y tipado, no una copia resuelta del AST superficial.
 
@@ -196,19 +197,15 @@ El formato externo y ciclo completo del registro siguen abiertos en [[notas/preg
 
 ## Grafo nominal inicial
 
-Después de la resolución nominal puede construirse un grafo parcial con nodos anclados y aristas de:
+Después de la resolución nominal se construye un grafo parcial sobre símbolos resueltos. El HIR nominal conserva exactamente estas familias de aristas:
 
-- propiedad y contención;
-- especialización;
-- referencia nominal;
-- tipo y dominio escritos;
-- inicialización y cálculo;
-- lectura, escritura y efectos;
-- magnitud, unidad y equivalencia.
+- `Owns`: propiedad o contención nominal;
+- `Specializes`: especialización nominal entre declaraciones;
+- `RefersTo`: referencia nominal cuyo origen y destino ya son símbolos resueltos.
 
-El tipado completa o rechaza aristas cuya validez dependa de una unión, una inferencia o un miembro contextual. El grafo parcial no sustituye al AST ni constituye fuente de verdad.
+Tipos y dominios efectivos, inicialización elaborada, cálculos, lecturas, escrituras, efectos, magnitudes derivadas y demás relaciones dependientes de tipos no pertenecen a esta fase. Se determinan, cuando corresponda, durante tipado y elaboración posteriores.
 
-Esta frontera no introduce un segundo AST normativo. La resolución nominal produce tabla de símbolos, bindings y el grafo parcial sobre el AST superficial. En el IR semántico una declaración persistente y todo participante declarado usan `AnchoredSymbol`; los locales e iteradores ordinarios usan `LocalSymbol` subordinado a su propietario. Las ramas funcionales no son símbolos: sus dependencias se reconstruyen mediante el ancla del diccionario propietario y una `decision_branch_key` local.
+El grafo parcial no sustituye al AST ni constituye una fuente de verdad. Su finalidad es materializar exclusivamente las conclusiones de resolución nominal que deben sobrevivir como contrato entre el AST superficial y el sistema de tipos.
 
 ## Conformidad
 
@@ -234,7 +231,7 @@ Cada valor `Metadata` configurado posee a su vez una ancla terminal formada aña
 > [!rule] MUD-NAME-006 — Sin ancla pública de rama
 > Una rama de diccionario funcional no introduce símbolo anclado, nombre público ni propietario de metadatos. Su identidad persistente es la del diccionario que la contiene.
 
-El IR semántico conserva para cada rama una `decision_branch_key` local al diccionario. Para una rama ordinaria, la clave es la forma canónica del selector resuelto. Dos ramas ordinarias con la misma forma canónica dentro del mismo diccionario son inválidas: compartirían la misma clave estructural local. `_` usa una clave `FallbackBranchKey` distinta y única. El ordinal fuente se conserva por separado porque participa en `FirstMatch`, pero tampoco se convierte en ancla.
+Cada rama funcional posee una `decision_branch_key` estructural local al diccionario para las fases que necesiten reconstrucción o dependencias posteriores. Para una rama ordinaria, la clave es la forma canónica del selector resuelto. Dos ramas ordinarias con la misma forma canónica dentro del mismo diccionario son inválidas: compartirían la misma clave estructural local. `_` usa una clave `FallbackBranchKey` distinta y única. Esa clave no es un símbolo, no pertenece al HIR nominal y su representación mecánica posterior no se fija todavía. El ordinal fuente se conserva por separado porque participa en `FirstMatch`, pero tampoco se convierte en ancla.
 
 Las operaciones de tooling que requieran una referencia persistente deben dirigirse al diccionario propietario y expresar después la edición estructural de su conjunto o secuencia de ramas. `CREATE`, `UPDATE`, `REMOVE` y `MOVE` no pueden tratar una rama como entidad global independiente.
 

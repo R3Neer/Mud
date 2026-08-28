@@ -46,6 +46,7 @@ decisions:
   - D-092
   - D-093
   - D-096
+  - D-097
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -56,7 +57,7 @@ Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva
 
 El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
 
-La resolución nominal opera sobre este AST y produce el HIR normativo `ir/mud-nominal-hir.asdl`, que materializa símbolos, scopes, bindings, anclas y un grafo nominal parcial sin duplicar la sintaxis de fuente. Tras tipado y elaboración, el contrato semántico vive en `ir/mud-semantic-ir.asdl`, donde aparecen tipos efectivos, dominios, cardinalidades, dependencias y otras formas elaboradas.
+La resolución nominal opera sobre este AST y produce el HIR normativo `nombres/mud-nominal-hir.asdl`, que materializa símbolos, scopes, bindings, anclas y un grafo nominal parcial sin duplicar la sintaxis de fuente. Los tipos efectivos, dominios, cardinalidades, dependencias y demás conclusiones elaboradas pertenecen a fases posteriores de tipado y elaboración cuya representación mecánica todavía no está fijada.
 
 ## Cadena de representaciones
 
@@ -69,14 +70,14 @@ texto fuente
 → resolución nominal
 → HIR nominal: símbolos + scopes + bindings + anclas + grafo parcial
 → tipado y elaboración
-→ IR semántico tipado/elaborado
+→ representación semántica posterior todavía no formalizada
 ```
 
 > [!rule] MUD-AST-001 — Responsabilidad superficial
 > El AST superficial no contiene símbolos resueltos, anclas, tipos inferidos, efectos calculados ni decisiones que dependan de una declaración encontrada por nombre.
 
 > [!rule] MUD-AST-003 — Frontera del HIR nominal
-> El HIR nominal puede añadir identidad y resolución, pero no significado de tipos: contiene símbolos, scopes, bindings, anclas y aristas nominales. Tipos efectivos, dominios efectivos, cardinalidades, conversiones elaboradas y evidencia de terminación están prohibidos hasta el IR semántico.
+> El HIR nominal puede añadir identidad y resolución, pero no significado de tipos: contiene símbolos, scopes, bindings, anclas y aristas nominales. Tipos efectivos, dominios efectivos, cardinalidades, conversiones elaboradas y evidencia de terminación quedan fuera del HIR nominal y pertenecen a fases posteriores de tipado y elaboración.
 
 > [!rule] MUD-AST-002 — Normalización
 > Dos formas concretas declaradas equivalentes por este capítulo producen la misma forma AST, salvo su procedencia.
@@ -266,7 +267,7 @@ No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colecci
 
 Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
 
-`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o decisionales. `given` es un parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente antes del IR semántico.
+`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o decisionales. `given` es un parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente durante las fases posteriores de validación y tipado.
 
 ## Tipos
 
@@ -289,7 +290,7 @@ Incluye tanto tipos incorporados como tipos declarados por el programa. Que un n
 
 `CallableType(kind, receivers, givens)` conserva la forma de tipos como `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` o `Dragon.look(Detail)`. En esta fase `receivers` siguen siendo `TypeRef` no resueltos y `givens` son `TypeExpr`; el AST no decide compatibilidad ni varianza de firmas, cuestión abierta en Q-063.
 
-`ReflectedType(value)` conserva una expresión escrita en posición de tipo cuya forma termina en `~type`, como `MyDragon.Stats()~type`. La resolución y el tipado deben demostrar que `value` produce estáticamente `Type`; tras elaboración el IR semántico usa directamente el tipo representado. Una llamada ordinaria sin `~type` continúa siendo un valor.
+`ReflectedType(value)` conserva una expresión escrita en posición de tipo cuya forma termina en `~type`, como `MyDragon.Stats()~type`. La resolución y el tipado deben demostrar que `value` produce estáticamente `Type`; la elaboración posterior obtiene directamente el tipo representado. La forma mecánica de esa elaboración todavía no está fijada. Una llamada ordinaria sin `~type` continúa siendo un valor.
 ### Diccionario
 
 ```text
@@ -379,7 +380,7 @@ Los literales estructurales siguen siendo contextuales. `PositionalStructuralLit
 
 La misma regla se aplica a literales básicos. Si el contexto espera un alias nominal cuya representación admite el literal, la elaboración construye directamente ese alias sin introducir una conversión implícita general. Por ejemplo, con `alias PlayerName := Text`, `name: PlayerName = "Ada"` es válido. En cambio, una expresión que ya posee tipo `Text`, como una variable `rawName`, no cambia silenciosamente a `PlayerName`; requiere `rawName to PlayerName`.
 
-El IR semántico distingue ambas operaciones: `ContextualAliasConstructionExpr(literal, target_alias)` representa construcción dirigida por el tipo esperado y `ConversionExpr(value, target_type)` representa `to` escrito explícitamente. El AST superficial no añade un nodo de alias contextual porque todavía conserva el literal y el contexto que lo espera.
+La elaboración posterior debe distinguir la construcción de alias dirigida por el tipo esperado de la conversión nominal `to` escrita explícitamente. El AST superficial no añade un nodo de alias contextual porque todavía conserva el literal y el contexto que lo espera; la representación mecánica de la distinción elaborada se fijará con esa fase.
 
 ## Familias
 

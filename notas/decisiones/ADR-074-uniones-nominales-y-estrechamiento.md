@@ -83,7 +83,7 @@ Una unión que no permita seleccionar un predeterminado nominal único exige ini
 
 ## Consecuencias
 
-- El IR semántico conserva alternativas nominales normalizadas y la alternativa elegida por cada incorporación.
+- La futura representación semántica posterior a tipado y elaboración conserva alternativas nominales normalizadas y la alternativa elegida por cada incorporación.
 - Los análisis booleanos necesitan entornos refinados sensibles al flujo.
 - D-017 debe distinguir tipos válidos de tipos materializables sin inicializador.
 - `|` se desambigua por contexto sintáctico entre unión de tipos y sus usos sobre valores.

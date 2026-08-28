@@ -53,7 +53,7 @@ texto
 → AST superficial
 → resolución nominal: símbolos + bindings + grafo parcial
 → tipado/elaboración
-→ IR semántico
+→ representación semántica posterior a tipado y elaboración
 ```
 
 ## CST
@@ -115,7 +115,7 @@ El AST superficial conserva sin decidir:
 - Llamada postfix frente a llamada de acción.
 - Tipo contextual de literales.
 
-Estas decisiones pertenecen a la resolución nominal cuando dependen solo de identidad y bindings, o al IR semántico cuando requieren tipado o elaboración.
+Estas decisiones pertenecen a la resolución nominal cuando dependen solo de identidad y bindings, o al representación semántica posterior a tipado y elaboración cuando requieren tipado o elaboración.
 
 ## Procedencia
 

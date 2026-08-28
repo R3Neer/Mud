@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "metadatos, reflexión, anclas subordinadas, IR semántico, grafo y tooling"
+  - "metadatos, reflexión, anclas subordinadas, representación semántica posterior a tipado y elaboración, grafo y tooling"
 ---
 
 # ADR-094 — Anclas terminales de metadatos configurados

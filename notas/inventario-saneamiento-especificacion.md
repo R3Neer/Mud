@@ -47,16 +47,11 @@ Completada. Los puntos E3-01 a E3-08 se cerraron integrando la regla vigente en 
 
 ## Etapa 4 — auditoría de decisiones vigentes
 
-Completada. Se recorrieron las 90 decisiones vigentes contra las superficies normativas ya desarrolladas y contra los hogares futuros declarados por el mapa de la especificación.
+Completada. Se recorrieron las decisiones vigentes contra las superficies normativas ya desarrolladas y contra los hogares futuros declarados por el mapa de la especificación.
 
-La auditoría no encontró nuevas contradicciones `C` o `X`, tratamientos incorrectos de preguntas `Q` ni fortalecimientos no sustentados `U`. La ausencia de una regla en un capítulo todavía no desarrollado se clasificó como `M` cuando correspondía, sin forzarla a una superficie impropia.
+La frontera vigente después de D-097 mantiene como superficie mecánica actual el HIR nominal de resolución de nombres y difiere cualquier esquema posterior a tipado/elaboración hasta que esas fases estén desarrolladas. La auditoría exige por tanto coherencia del AST superficial, capítulo 09 y HIR nominal; los requisitos semánticos posteriores se clasifican como `M` cuando todavía no existe su superficie canónica.
 
-Se detectaron dos integraciones incompletas concentradas en el IR semántico y ambas quedaron corregidas en su superficie canónica:
-
-- El IR declara versión de esquema y representa estructuralmente clases declarativas, firmas `for`/`on`/`given`, cuerpos semánticos diferenciados, vinculaciones locales ordenadas, efectos y las familias de dependencias exigidas por el modelo vigente.
-- La activación inicial de módulo dejó de ser un tipo huérfano: cada `SemanticModule` conserva su `SemanticStartSet` junto con sus dependencias `uses`.
-
-Las obligaciones cuya superficie canónica sigue sin desarrollarse permanecen en la sección siguiente o en el alcance explícito de los capítulos futuros del mapa maestro. No constituyen defectos de integración mientras ninguna superficie existente las contradiga.
+El grafo nominal queda limitado a `Owns`, `Specializes` y `RefersTo`. Tipos efectivos, dominios, cardinalidades, efectos y dependencias semánticas no se introducen en el HIR para compensar la ausencia de una representación posterior.
 
 ## Etapa 5 — auditoría específica de la integración D-096
 

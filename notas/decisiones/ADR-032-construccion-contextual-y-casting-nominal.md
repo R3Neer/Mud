@@ -189,7 +189,7 @@ La igualdad `==` y la desigualdad `!=` están disponibles aunque la representaci
 - La elaboración debe distinguir literales sin tipo fijado de expresiones ya tipadas.
 - El IR usa `ContextualAliasConstructionExpr` para la construcción dirigida por tipo esperado y reserva `ConversionExpr` para un `to` explícito.
 - La comparación aporta expectativas en ambas direcciones sin introducir coerciones implícitas.
-- El IR semántico conserva explícitamente la construcción contextual y el alias nominal incluso cuando su representación coincide con otro tipo.
+- La futura representación semántica posterior a tipado y elaboración conserva explícitamente la construcción contextual y el alias nominal incluso cuando su representación coincide con otro tipo.
 - D-030 pasa a describir la rama cuantitativa de `to`; este ADR describe la rama nominal.
 
 ## Verificación futura

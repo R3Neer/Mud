@@ -38,7 +38,7 @@ archivo .mud
 → AST superficial normalizado
 → resolución nominal: símbolos + bindings + grafo parcial
 → tipado/elaboración
-→ IR semántico (`../ir/mud-semantic-ir.asdl`)
+→ representación semántica posterior todavía no formalizada
 ```
 
 ## Generación de código
@@ -122,6 +122,6 @@ Este directorio no define:
 - Evaluación estática.
 - Semántica de efectos.
 - Ondas causales.
-- Forma canónica del IR, cuyo esquema mecánico vive en `../ir/`.
+- Representación mecánica posterior a tipado y elaboración, todavía no formalizada.
 
 Las referencias a esas fases sirven únicamente para impedir que el AST superficial las anticipe.
