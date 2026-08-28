@@ -36,6 +36,20 @@ jobs:
         working-directory: candidate
         run: python -m pip install -r especificacion/sintaxis/requirements.txt
 
+      - name: Materializar D-096 aceptada
+        working-directory: candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          adr='notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md'
+          source_commit='7a596215eefddd7d1a339f930311bb626ce6f4bc'
+          expected_blob='2b8e9190494fa0337dcf3ccda89fe555fe61429a'
+          git cat-file -e "${source_commit}^{commit}"
+          if [ ! -f "$adr" ]; then
+            git show "${source_commit}:${adr}" > "$adr"
+          fi
+          test "$(git hash-object "$adr")" = "$expected_blob"
+
       - name: Aplicar transformación determinista
         working-directory: candidate
         run: |
