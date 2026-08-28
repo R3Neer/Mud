@@ -859,7 +859,7 @@ syntax_nodes:
     - type-reference
   callable-kind:
     kind: CallableKindSyntax
-    rhs: '"action" | "subaction" | "rule" | "look"'
+    rhs: '"action" | "rule" | "look"'
     references: []
   reflected-type:
     kind: ReflectedTypeSyntax

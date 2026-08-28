@@ -118,7 +118,7 @@ Los descriptores son valores first-class y pueden formar parte de `Any`. `Any` e
 Una expresión que ya denota un `Type`, como `Dragon.look(Detail)`, no necesita `~type` para convertirse en tipo.
 
 
-Las formas callable de superficie fijadas por esta decisión son `A.action(B...)`, `(A, C).action(B...)`, `A.subaction(B...)`, `A.rule(B...)` y `A.look(B...)`: la parte izquierda describe los tipos de receptor/participantes y los paréntesis la parte `given` de la firma. Esta forma existe con independencia de que Q-063 mantenga abiertas la varianza y compatibilidad formal entre esos tipos.
+Las formas callable de superficie fijadas por esta decisión son `A.action(B...)`, `(A, C).action(B...)`, `A.rule(B...)` y `A.look(B...)`: la parte izquierda describe los tipos de receptor/participantes y los paréntesis la parte `given` de la firma. `subaction <: action` sigue siendo una relación semántica de descriptores y no introduce por sí sola una grafía de tipo `A.subaction(...)`. Q-063 mantiene abiertas la varianza y compatibilidad formal entre tipos callable.
 Se acepta la relación reflectiva `subaction <: action <: Declaration`, pero la capacidad de raíz exterior es independiente del subtyping. Un valor ampliado a `action` no puede cruzar la frontera exterior si alguna alternativa runtime posible sigue siendo `subaction`; el narrowing puede demostrar que la capacidad exterior es segura. La varianza y compatibilidad formal de callables queda abierta en Q-063.
 
 ### Invocación dinámica de valores callable

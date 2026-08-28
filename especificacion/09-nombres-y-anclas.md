@@ -12,7 +12,6 @@ depends-on:
   - "[[08-sintaxis-abstracta]]"
 questions:
   - Q-014
-  - Q-062
 decisions:
   - D-035
   - D-065

@@ -326,7 +326,7 @@ module MUDSurface {
 
     decision_mode = FirstMatch | AllMatches
 
-    callable_kind = ActionCallable | SubactionCallable | RuleCallable | LookCallable
+    callable_kind = ActionCallable | RuleCallable | LookCallable
 
     action_kind = PublicAction | Subaction
 

@@ -363,7 +363,7 @@ callable-receiver
       ;
 
 callable-kind
-    ::= "action" | "subaction" | "rule" | "look" ;
+    ::= "action" | "rule" | "look" ;
 
 reflected-type
     ::= reflected-type-base , "~" , "type" ;

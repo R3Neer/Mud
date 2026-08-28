@@ -62,7 +62,7 @@ Una resolución termina cuando una onda no produce efectos ni deja nuevas consec
 Solo hay una resolución causal activa por mundo. Las solicitudes externas que llegan durante ella entran en una cola y vinculan participantes, evalúan `given`, dominios e `if` cuando les corresponde comenzar, no cuando fueron encoladas.
 
 Cada `message` ocurrido se conserva como una ocurrencia causal tentativa con identidad, declaración, bindings y vista de nacimiento. Su payload interno se proyecta sobre esa vista causal y la misma ocurrencia queda disponible como trigger en la onda siguiente; hacia el host, tras confirmar, el payload se proyecta sobre el estado estable final. Una reversión cancela toda entrega exterior.
- Las entregas confirmadas conservan el orden causal entre ondas y usan dentro de cada onda un orden técnico estable y reproducible que no constituye prioridad semántica.
+Las entregas confirmadas conservan el orden causal entre ondas y usan dentro de cada onda un orden técnico estable y reproducible que no constituye prioridad semántica.
 
 ## Consecuencias
 

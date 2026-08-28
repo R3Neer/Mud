@@ -401,7 +401,7 @@ Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes
 
 ## Palabras y tokens añadidos
 
-`subaction` es palabra reservada. `Any`, `Name`, `MudPath`, `Anchor` y `MudFile` son nombres incorporados reservados. `value`, `things`, `rules`, `path` y `file` son contextuales en sus producciones propias. `_` es el fallback reservado de una rama funcional.
+`subaction` es palabra reservada. `Any`, `Name`, `MudPath`, `Anchor` y `MudFile` son nombres incorporados reservados. `value`, `type`, `path` y `file` son contextuales en sus posiciones propias. `things` y `rules` no forman parte del vocabulario vigente de `start with`. `_` es el fallback reservado de una rama funcional.
 
 `iis` es palabra operadora reservada. `not in` e `iis not` conservan dos tokens de palabra; el parser agrupa cada pareja dentro de una comparación no encadenable.
 

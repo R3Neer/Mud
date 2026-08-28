@@ -271,7 +271,6 @@ D-096 admite tipos callable escritos a partir de los tipos de receptor/participa
 ```mud
 Dragon.action(Volume)
 (Attacker, Defender).action(Amount)
-Dragon.subaction(Volume)
 Dragon.rule(Limit)
 Dragon.look(Detail)
 ```
