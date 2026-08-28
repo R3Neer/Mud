@@ -32,6 +32,7 @@ En particular:
 - Las decisiones relacionadas se registran mediante `decisions:` y no se narran como procedencia dentro del cuerpo de `especificacion/`.
 - Una pregunta activa puede citarse en el cuerpo solo para delimitar una incertidumbre que afecta al estado actual; debe figurar también en `questions:`.
 - Una decisión vigente debe integrarse en toda superficie normativa ya desarrollada cuya responsabilidad cubra su alcance. Si la ubicación canónica todavía no existe, no se inventa una superficie provisional solo para alojarla, pero ninguna superficie existente puede contradecirla.
+- Si el cambio afecta resolución nominal, debe aplicarse además MUD-EDIT-004 y revisarse `especificacion/09-nombres-y-anclas.md` junto con `especificacion/nombres/mud-nominal-hir.asdl`.
 
 ## Archivos temporales
 

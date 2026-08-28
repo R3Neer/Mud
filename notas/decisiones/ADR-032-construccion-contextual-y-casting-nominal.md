@@ -187,9 +187,9 @@ La igualdad `==` y la desigualdad `!=` están disponibles aunque la representaci
 
 - El tipado de literales es dirigido por el tipo esperado.
 - La elaboración debe distinguir literales sin tipo fijado de expresiones ya tipadas.
-- El IR usa `ContextualAliasConstructionExpr` para la construcción dirigida por tipo esperado y reserva `ConversionExpr` para un `to` explícito.
+- La elaboración distingue la construcción contextual dirigida por el tipo esperado de una conversión nominal `to` explícita.
 - La comparación aporta expectativas en ambas direcciones sin introducir coerciones implícitas.
-- El IR semántico conserva explícitamente la construcción contextual y el alias nominal incluso cuando su representación coincide con otro tipo.
+- El resultado elaborado debe conservar o hacer reconstruibles la construcción contextual y el alias nominal incluso cuando su representación coincide con otro tipo; su codificación mecánica todavía no está fijada.
 - D-030 pasa a describir la rama cuantitativa de `to`; este ADR describe la rama nominal.
 
 ## Verificación futura

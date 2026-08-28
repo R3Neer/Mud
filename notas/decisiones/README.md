@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 91.
-- Vigentes: 90.
+- Total: 92.
+- Vigentes: 91.
 - Propuestas: 0.
 - Sustituidas: 1.
 - Retiradas: 0.
@@ -64,7 +64,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-048 | vigente | 2026-07-28 | [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|Azar reproducible y fallos]] |
 | D-049 | vigente | 2026-07-28 | [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|Operadores, precedencia e intervalos normalizados]] |
 | D-050 | vigente | 2026-07-28 | [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|Comentarios, terminadores, texto y separadores numéricos]] |
-| D-051 | vigente | 2026-07-28 | [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|Grafo semántico e IR reconstruibles]] |
+| D-051 | vigente | 2026-07-28 | [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|Grafo semántico futuro e información reconstruible]] |
 | D-052 | vigente | 2026-07-28 | [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|Pipeline, materializadores y conformidad]] |
 | D-053 | vigente | 2026-07-28 | [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|Operador semántico y flujo de autoría]] |
 | D-054 | vigente | 2026-07-28 | [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|Definiciones canónicas y activación inicial]] |
@@ -106,10 +106,11 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-090 | vigente | 2026-08-16 | [[notas/decisiones/ADR-090-ramas-funcionales-sin-ancla-publica|Ramas funcionales sin ancla pública]] |
 | D-091 | vigente | 2026-08-16 | [[notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados|Datos de family como descriptores anclados]] |
 | D-092 | vigente | 2026-08-16 | [[notas/decisiones/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Disponibilidad estática de propiedades reflectivas]] |
-| D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial, HIR nominal e IR semántico elaborado]] |
+| D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial, HIR nominal y fase semántica posterior]] |
 | D-094 | vigente | 2026-08-16 | [[notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados|Anclas terminales de metadatos configurados]] |
 | D-095 | vigente | 2026-08-16 | [[notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
 | D-096 | vigente | 2026-08-28 | [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|Módulos, callables, `look`, `message` y activación]] |
+| D-097 | vigente | 2026-08-28 | [[notas/decisiones/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|HIR nominal vigente e IR semántico diferido]] |
 
 ## Identificadores reservados
 

@@ -8,19 +8,18 @@ superseded-by: []
 questions:
   - "Q-014"
 affects:
-  - "capítulo 09, AST superficial, HIR nominal, resolución nominal, tabla de símbolos, anclas, diagnósticos, LSP, grafo nominal e IR semántico"
+  - "capítulo 09, AST superficial, HIR nominal, resolución nominal, tabla de símbolos, anclas, diagnósticos, LSP, grafo nominal, tipado y elaboración posteriores"
 ---
 # ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]]
-- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]], [[ADR-096-modulos-callables-look-message-y-activacion|D-096]] y [[ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
 ## Decisión
 
 La norma denomina **path de MUD** a la identidad lógica derivada de las carpetas. No se escribe una cabecera `namespace` ni se reserva `path`. El LSP puede mostrar una cabecera virtual, copiar el nombre cualificado y revelar la procedencia física sin modificar el archivo.
 
-Todas las declaraciones superiores de un path comparten un espacio nominal. La búsqueda de un nombre no cualificado consulta, en orden, entorno léxico, propietario o receptor implícito, path actual, `using` exactos, `using` recursivos e incorporados. Se elige el primer nivel no vacío; una categoría incompatible no habilita continuar. Candidatos con la misma ancla se deduplican y anclas distintas son ambiguas. Un `using` no reexporta. Cuando un candidato pertenece a otro módulo, `using` solo lo aporta a la resolución nominal: alcanzarlo exige además que `uses` autorice la dependencia y que el símbolo pertenezca al cierre visible del contrato modular conforme a D-096. Un nombre cualificado tampoco elude esa frontera.
+Todas las declaraciones superiores de un path comparten un espacio nominal. La búsqueda de un nombre no cualificado consulta, en orden, entorno léxico, propietario o receptor implícito, path actual, `using` exactos, `using` recursivos e incorporados. Se elige el primer nivel no vacío; una categoría incompatible no habilita continuar. Candidatos con la misma ancla se deduplican y anclas distintas son ambiguas. Un `using` no reexporta. Cuando un candidato pertenece a otro módulo, `using` solo lo aporta a la resolución nominal: alcanzarlo exige además que `uses` autorice la dependencia y que el símbolo pertenezca al cierre visible del contrato modular. Un nombre cualificado tampoco elude esa frontera.
 
 No existe sombreado de un nombre visible. Las convenciones `PascalCase`, `lowerCamel` y `lowerCamel` de unidad son requisitos estáticos con arreglo automático.
 
@@ -28,9 +27,11 @@ Poseen ancla las declaraciones nominales de primer nivel, campos en su propietar
 
 Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; una contribución modular `start with` de primer nivel no tiene nombre ni ancla. La pertenencia a módulo es una dimensión de visibilidad y dependencia y no añade un componente al ancla nominal.
 
-La resolución nominal crea símbolos, anclas, scopes y bindings de referencias cuya categoría ya puede determinarse y los materializa en el HIR nominal de D-093. Los nombres de tipos se vinculan nominalmente a sus símbolos, pero la comprobación de compatibilidad, uniones, dominios, cardinalidades y miembros dependientes del tipo pertenece al tipado y la elaboración. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
+La resolución nominal crea símbolos, anclas, scopes y bindings de referencias cuya categoría ya puede determinarse y los materializa en `especificacion/nombres/mud-nominal-hir.asdl`. Los nombres de tipos se vinculan nominalmente a sus símbolos, pero la comprobación de compatibilidad, uniones, dominios, cardinalidades y miembros dependientes del tipo pertenece al tipado y la elaboración. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
 
-El HIR nominal contiene únicamente el grafo que esta fase puede justificar: propiedad, especialización y referencias cuyos extremos ya son símbolos resueltos. Las relaciones que dependan de tipo efectivo, dominio, inicialización elaborada, cálculo, efecto o terminación pertenecen al IR semántico posterior.
+El HIR nominal contiene únicamente las familias de relaciones que esta fase puede justificar: propiedad/contención (`Owns`), especialización (`Specializes`) y referencia nominal (`RefersTo`). Las relaciones que dependan de tipo efectivo, dominio, inicialización elaborada, cálculo, efecto o terminación quedan fuera del HIR y pertenecen a fases posteriores cuya representación mecánica todavía no está fijada.
+
+La especialización nominal incluye `thing` y aliases. Los componentes y campos derivados de un alias poseen ancla bajo la categoría `alias`; un miembro heredado conserva el ancla de su origen. Una sobrescritura de predeterminado no introduce un nuevo miembro público ni una nueva ancla.
 
 ## Migraciones
 
@@ -42,12 +43,9 @@ Una ancla cambia con categoría, path o nombre cualificado. El tooling conserva 
 2. Colisión global entre categorías.
 3. Deduplicación por ancla y ambigüedad real.
 4. Ausencia de sombreado y errores de casing reparables.
-5. Anclas de campos heredados, members, unidades y builtins.
+5. Anclas de campos heredados, miembros, unidades y builtins.
 6. Participantes declarados con ancla pública y símbolos locales ordinarios sin ella.
 7. HIR nominal construible antes del tipado completo y libre de tipos, dominios, cardinalidades y terminación elaborados.
-8. Un `using` o un nombre cualificado no atraviesa una frontera modular sin `uses` y contrato visible.
-9. La pertenencia a módulo no altera el ancla nominal.
-
-## Ampliación por D-084
-
-El grafo nominal incluye aristas `Specializes` entre aliases. Los componentes y campos derivados de un alias poseen ancla bajo la categoría `alias`; un miembro heredado conserva el ancla de su origen. Las sobrescrituras de predeterminado no introducen un nuevo miembro público, sino una relación de inicialización dirigida al componente heredado resuelto.
+8. El grafo HIR se limita a `Owns`, `Specializes` y `RefersTo`.
+9. Un `using` o un nombre cualificado no atraviesa una frontera modular sin `uses` y contrato visible.
+10. La pertenencia a módulo no altera el ancla nominal.

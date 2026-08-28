@@ -11,6 +11,7 @@ depends-on: []
 questions: []
 decisions:
   - D-070
+  - D-097
 ---
 
 # Convenciones editoriales de la especificación MUD
@@ -285,6 +286,11 @@ Convenciones:
 Todo archivo generado debe indicarlo en su cabecera y declarar su fuente. Los esquemas normativos de `especificacion/` se escriben o revisan deliberadamente; el código generado a partir de ellos no adquiere autoridad sobre su fuente.
 
 Un cambio de gramática que afecte a la estructura debe actualizar en el mismo commit el catálogo CST, la cobertura, la transformación y el ASDL correspondientes.
+
+> [!rule] MUD-EDIT-004 — Propagación de resolución nominal
+> Todo cambio que introduzca, elimine o modifique nombres, ámbitos, propietarios, bindings, categorías nominales, anclas, visibilidad nominal, cualificación o especialización debe revisar en el mismo cambio `09-nombres-y-anclas.md` y `nombres/mud-nominal-hir.asdl`. Si afecta a su contrato, ambas superficies y sus validadores deben actualizarse atómicamente.
+
+La revisión debe comprobar al menos qué símbolos se crean, en qué scope viven, qué nombre los resuelve, qué propietario tienen, si reciben ancla pública y qué relaciones `Owns`, `Specializes` o `RefersTo` produce la resolución. Una regla dependiente de tipos, efectos o elaboración no se añade al HIR nominal para satisfacer artificialmente esta obligación.
 
 ## 14. Enlaces a archivos mecánicos
 

@@ -28,6 +28,7 @@ decisions:
   - D-086
   - D-087
   - D-096
+  - D-097
 ---
 
 # Transformación de CST a AST superficial
@@ -253,7 +254,7 @@ La validación previa rechaza:
 
 ### `given`
 
-`given-declaration` proyecta su anotación mediante el mismo `TypeExpr` superficial que los demás contextos de tipo. Esto permite conservar tipos diccionario completos sin introducir una segunda jerarquía de tipos de solo lectura. La presencia de capacidad `mut` puede quedar representada en el AST superficial, pero esa capacidad se rechaza estáticamente para `given` antes de producir IR semántico.
+`given-declaration` proyecta su anotación mediante el mismo `TypeExpr` superficial que los demás contextos de tipo. Esto permite conservar tipos diccionario completos sin introducir una segunda jerarquía de tipos de solo lectura. La presencia de capacidad `mut` puede quedar representada en el AST superficial, pero esa capacidad se rechaza estáticamente para `given` durante las fases posteriores de validación y tipado.
 
 ## Tipos
 
@@ -263,7 +264,7 @@ Todo `type-reference` produce `NamedType(TypeRef(...))`. El AST no clasifica aú
 
 ### Callable y tipos reflejados
 
-`callable-type` produce `CallableType(kind, receivers, givens)` y conserva la categoría y los tipos escritos; Q-063 mantiene abierta la compatibilidad y varianza entre firmas. `reflected-type` consume una `postfix-expression` seguida por `~type` y produce `ReflectedType(value)`; la elaboración posterior exige que la propiedad denote estáticamente `Type` y sustituye esa forma por el tipo representado en el IR semántico.
+`callable-type` produce `CallableType(kind, receivers, givens)` y conserva la categoría y los tipos escritos; Q-063 mantiene abierta la compatibilidad y varianza entre firmas. `reflected-type` consume una `postfix-expression` seguida por `~type` y produce `ReflectedType(value)`; la elaboración posterior exige que la propiedad denote estáticamente `Type` y obtiene el tipo representado. La forma mecánica posterior a tipado y elaboración todavía no está fijada.
 
 ### Productos y diccionarios
 

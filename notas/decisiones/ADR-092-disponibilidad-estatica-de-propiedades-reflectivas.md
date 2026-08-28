@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "reflexión, metadatos, participantes, resolución nominal, tipado, IR semántico, diagnósticos y tooling"
+  - "reflexión, metadatos, participantes, resolución nominal, tipado, representación semántica posterior a tipado y elaboración, diagnósticos y tooling"
 ---
 
 # ADR-092 — Disponibilidad estática de propiedades reflectivas
@@ -82,7 +82,7 @@ Conserva `MetadataAccessExpr(receiver, metadata)` aunque el acceso vaya a result
 
 ### Resolución y tipado
 
-Determinan la categoría estática del receptor, aplican narrowing cuando exista y seleccionan el contrato de propiedad. Si ninguna propiedad compatible existe para todos los casos todavía posibles del receptor, emiten error estático. Solo los accesos válidos se elaboran en el IR semántico con tipo de resultado.
+Determinan la categoría estática del receptor, aplican narrowing cuando exista y seleccionan el contrato de propiedad. Si ninguna propiedad compatible existe para todos los casos todavía posibles del receptor, emiten error estático. Solo los accesos válidos llegan a elaboración, que determina su tipo de resultado; la representación mecánica posterior todavía no está fijada.
 
 ### Ejecución
 
@@ -113,4 +113,4 @@ Descartada porque el receptor es una expresión general y su categoría se conoc
 2. `thing A; A~for` produce AST superficial y después error estático de propiedad no soportada.
 3. Una declaración de categoría compatible sin cláusula concreta devuelve `empty`.
 4. `AssignableExpr` no contiene ningún sufijo de metadata.
-5. El IR semántico solo contiene `MetadataAccessExpr` para propiedades compatibles con la categoría estática resuelta.
+5. Tipado y elaboración solo aceptan accesos de metadata compatibles con la categoría estática resuelta y determinan su tipo de resultado.

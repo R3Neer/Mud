@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "especialización de thing, diagnósticos, resolución nominal, IR semántico, formateadores y acciones de código"
+  - "especialización de thing, diagnósticos, resolución nominal, representación semántica posterior a tipado y elaboración, formateadores y acciones de código"
 ---
 # ADR-073 — `as Thing` explícito válido pero redundante
 
