@@ -44,26 +44,9 @@ jobs:
           python especificacion/gramatica/validate_grammar.py
           python especificacion/sintaxis/validate_syntax_model.py
           git diff --check
-          git add \
-            especificacion/07-gramatica-concreta.md \
-            notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md \
-            notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md \
-            notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md \
-            notas/inventario-saneamiento-especificacion.md
+          git add especificacion/07-gramatica-concreta.md notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior.md notas/decisiones/ADR-091-datos-de-family-como-descriptores-anclados.md notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md notas/inventario-saneamiento-especificacion.md
           git diff --cached --check
-          git commit -m "fix(editorial): elimina la excepcionalidad de private" -m "Context:
-- private es un identificador ordinario de metadata sin tratamiento especial.
-
-Changes:
-- Elimina las menciones normativas e históricas específicas a ~private.
-- Conserva las reglas generales de metadata y visibilidad sin excepciones nominales.
-
-Validation:
-- validate decisions
-- validate questions
-- validate grammar
-- validate syntax model
-- git diff --check"
+          git commit -m "fix(editorial): elimina la excepcionalidad de private"
 
       - name: Establecer gobernanza de temporales
         run: |
@@ -121,29 +104,9 @@ Validation:
           if grep -Fq '> [!warning] Artefacto temporal' notas/inventario-saneamiento-especificacion.md; then exit 1; fi
           if grep -Fq 'eliminar `notas/inventario-saneamiento-especificacion.md`' notas/inventario-saneamiento-especificacion.md; then exit 1; fi
           git diff --check
-          git add \
-            AGENTS.md \
-            gobierno/POLITICA-DE-COMMITS.md \
-            gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md \
-            gobierno/README.md \
-            gobierno/temporales.base \
-            gobierno/validate_temporaries.py \
-            notas/inventario-saneamiento-especificacion.md
+          git add AGENTS.md gobierno/POLITICA-DE-COMMITS.md gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md gobierno/README.md gobierno/temporales.base gobierno/validate_temporaries.py notas/inventario-saneamiento-especificacion.md
           git diff --cached --check
-          git commit -m "govern(git): establece ciclo de archivos temporales" -m "Context:
-- Los documentos temporales intencionadamente versionados necesitan una única fuente de verdad y un gate antes de cada commit.
-
-Changes:
-- Define el contrato temporary:* y su política de ciclo de vida.
-- Añade la Base derivada de Obsidian y un validador mecánico stdlib-only.
-- Integra el gate en AGENTS y la política de commits.
-- Migra el inventario de saneamiento al nuevo contrato sin duplicar su ciclo de vida en el cuerpo.
-
-Validation:
-- validate temporaries
-- fixtures válidos e inválidos del validador
-- parse de gobierno/temporales.base
-- git diff --check"
+          git commit -m "govern(git): establece ciclo de archivos temporales"
 
       - name: Validación integral
         run: |
