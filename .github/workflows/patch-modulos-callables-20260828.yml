@@ -60,6 +60,7 @@ jobs:
           fi
           python ../control/gobierno/labs/patch_modulos_callables_postfix_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_residuos_20260828.py
+          python ../control/gobierno/labs/patch_modulos_callables_private_cleanup_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_coherence_prep_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_coherence_20260828.py
           python ../control/gobierno/labs/patch_modulos_callables_coherence_post_20260828.py
