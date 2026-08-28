@@ -1,0 +1,152 @@
+name: Post-audit published D-096
+
+on:
+  pull_request:
+    branches:
+      - control/post-audit-d096-20260828
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main publicado exacto
+        uses: actions/checkout@v4
+        with:
+          ref: 8b0d2cb78f2bbe721ba6499e61819473368ce287
+          fetch-depth: 0
+
+      - name: Exigir publicación exacta
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '8b0d2cb78f2bbe721ba6499e61819473368ce287'
+          test "$(git rev-parse HEAD^)" = 'e91ea5b59212d277c617f7193f7d68d774f43c0b'
+          test "$(git rev-parse HEAD^{tree})" = 'abfa1bd391788b62f1b20e1128d9c1038eeeb922'
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Dependencias
+        run: python -m pip install -r especificacion/sintaxis/requirements.txt
+
+      - name: Validadores oficiales
+        run: |
+          python tooling/decisions/manage_decisions.py validate
+          python tooling/questions/validate_questions.py validate
+          python especificacion/gramatica/validate_grammar.py
+          python especificacion/sintaxis/validate_syntax_model.py
+          git diff --check e91ea5b59212d277c617f7193f7d68d774f43c0b..HEAD
+
+      - name: Superficie publicada exacta
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import subprocess
+          expected = {
+              'especificacion/02-terminologia.md',
+              'especificacion/04-modelo-matematico.md',
+              'especificacion/05-texto-fuente.md',
+              'especificacion/06-lexico.md',
+              'especificacion/07-gramatica-concreta.md',
+              'especificacion/08-sintaxis-abstracta.md',
+              'especificacion/09-nombres-y-anclas.md',
+              'especificacion/README.md',
+              'especificacion/gramatica/mud-lexico.ebnf',
+              'especificacion/gramatica/mud.ebnf',
+              'especificacion/ir/mud-semantic-ir.asdl',
+              'especificacion/sintaxis/casos/cst-ast.yaml',
+              'especificacion/sintaxis/cobertura-sintactica.yaml',
+              'especificacion/sintaxis/cst-a-ast-superficial.md',
+              'especificacion/sintaxis/mud-surface-ast.asdl',
+              'especificacion/sintaxis/mud-syntax-kinds.yaml',
+              'notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales.md',
+              'notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques.md',
+              'notas/decisiones/ADR-036-participantes-receptores-y-llamadas.md',
+              'notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla.md',
+              'notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola.md',
+              'notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos.md',
+              'notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial.md',
+              'notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo.md',
+              'notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado.md',
+              'notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md',
+              'notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md',
+              'notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md',
+              'notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md',
+              'notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz.md',
+              'notas/preguntas/Q-062-gramatica-completa-de-mud-module.md',
+              'notas/preguntas/Q-065-join-de-resultados-dinamicos-de-look.md',
+          }
+          actual = set(subprocess.check_output([
+              'git','diff','--name-only',
+              'e91ea5b59212d277c617f7193f7d68d774f43c0b..HEAD'
+          ], text=True).splitlines())
+          assert actual == expected, f'unexpected surface: extra={sorted(actual-expected)} missing={sorted(expected-actual)}'
+          PY
+          ! git ls-tree -r --name-only HEAD | grep -E '^gobierno/labs/d096-coherence-trigger'
+          ! git ls-tree -r --name-only HEAD | grep -E '^\.github/workflows/(final|audit|post-audit)-d096'
+
+      - name: Auditoría semántica publicada
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(grep -c '^- spelling: type$' especificacion/sintaxis/mud-syntax-kinds.yaml)" = 1
+          grep -q '^callable-type' especificacion/gramatica/mud.ebnf
+          grep -q '"action" | "rule" | "look"' especificacion/gramatica/mud.ebnf
+          ! grep -q '"action" | "subaction" | "rule" | "look"' especificacion/gramatica/mud.ebnf
+          ! grep -q 'SubactionCallable' especificacion/sintaxis/mud-surface-ast.asdl
+          ! grep -q '\.subaction(' especificacion/07-gramatica-concreta.md
+          grep -q 'subaction.*no introduce por sí sola una grafía de tipo' notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion.md
+          grep -q 'postfix-expression , "~" , "type"' especificacion/gramatica/mud.ebnf
+          ! grep -q '^reflected-type-base' especificacion/gramatica/mud.ebnf
+          grep -q 'ReflectedType(expr value)' especificacion/sintaxis/mud-surface-ast.asdl
+          grep -q 'CallableType(string category' especificacion/ir/mud-semantic-ir.asdl
+          grep -q 'No existe una clasificación semántica de actions elementales frente a compuestas' especificacion/08-sintaxis-abstracta.md
+          grep -q '| `look` | `for` | Sí |' notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques.md
+          grep -q '^TemporalSource$' notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo.md
+          grep -q 'D-096 fija que no existen actions elementales/compuestas' notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md
+          grep -q 'composición secuencial mediante llamadas dentro de `then`' notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md
+          grep -q 'invocaciones de `action` o `subaction` dentro de cualquier contexto semántico `then`' notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos.md
+          grep -q 'deltas de bloques concurrentes que incorporan transitivamente efectos de llamadas internas' notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales.md
+          grep -q 'secuencia `then`, incluidas las aportadas transitivamente por llamadas internas' notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz.md
+          grep -q 'using.*solo lo aporta a la resolución nominal.*uses' notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md
+          grep -q 'Un nombre cualificado tampoco elude esa frontera' notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md
+          grep -q 'La pertenencia a módulo es una dimensión de visibilidad y dependencia y no añade un componente al ancla nominal' notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial.md
+          ! grep -q 'llamadas a acciones únicamente en acciones compuestas' notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos.md
+          ! grep -q 'Interacción exacta con acciones compuestas y sus hojas simultáneas' notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales.md
+          ! grep -q 'disponibilidad mixta dentro de acciones compuestas' notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz.md
+          ! grep -q 'MUD ya dispone de colecciones, diccionarios exactos, acciones compuestas' notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada.md
+          ! grep -q 'contiene exactamente una sección `things` y una sección `rules`' especificacion/07-gramatica-concreta.md
+          ! grep -q 'solo puede invocarse desde otra `action` o `subaction`' especificacion/07-gramatica-concreta.md
+          ! grep -q '`look` y `message` se declaran en MUD pero no se llaman desde MUD' especificacion/07-gramatica-concreta.md
+          for q in 062 063 064 065 066 067 068; do
+            grep -q '^resolved: false$' notas/preguntas/Q-$q-*.md
+          done
+          python - <<'PY'
+          from pathlib import Path
+          for rel in [
+              'especificacion/02-terminologia.md',
+              'especificacion/04-modelo-matematico.md',
+              'especificacion/05-texto-fuente.md',
+              'especificacion/06-lexico.md',
+              'especificacion/07-gramatica-concreta.md',
+              'especificacion/08-sintaxis-abstracta.md',
+              'especificacion/09-nombres-y-anclas.md',
+              'especificacion/sintaxis/cst-a-ast-superficial.md',
+          ]:
+              assert '  - D-096\n' in Path(rel).read_text(encoding='utf-8').split('---', 2)[1], rel
+          for rel in ['especificacion/05-texto-fuente.md','especificacion/07-gramatica-concreta.md']:
+              assert '  - Q-062\n' in Path(rel).read_text(encoding='utf-8').split('---', 2)[1], rel
+          assert '  - Q-062\n' not in Path('especificacion/09-nombres-y-anclas.md').read_text(encoding='utf-8').split('---', 2)[1]
+          for rel in [
+              'notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md',
+              'notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz.md',
+          ]:
+              assert '  - D-096\n' in Path(rel).read_text(encoding='utf-8').split('---', 2)[1], rel
+          PY
