@@ -319,6 +319,31 @@ productions:
     ast:
       disposition: wrapper
       target: declared_type
+  callable-type:
+    cst: CallableTypeSyntax
+    ast:
+      disposition: constructor
+      target: CallableType
+  callable-receiver:
+    cst: CallableReceiverSyntax
+    ast:
+      disposition: inlined
+      reason: los receptores se normalizan dentro de CallableType
+  callable-kind:
+    cst: CallableKindSyntax
+    ast:
+      disposition: normalized
+      target: callable_kind
+  reflected-type:
+    cst: ReflectedTypeSyntax
+    ast:
+      disposition: constructor
+      target: ReflectedType
+  reflected-type-base:
+    cst: ReflectedTypeBaseSyntax
+    ast:
+      disposition: inlined
+      reason: la expresión base se conserva dentro de ReflectedType
   interval-type:
     cst: IntervalTypeSyntax
     ast:

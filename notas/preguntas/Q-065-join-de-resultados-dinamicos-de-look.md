@@ -16,4 +16,4 @@ superseded-by: []
 
 ## Contenido
 
-Definir el resultado estático de una invocación dinámica de `look` cuando el conjunto de alternativas posee varios mínimos comunes incomparables, y precisar cuándo se forma una unión.
+Definir únicamente el caso en que una invocación dinámica de `look` posee varios mínimos comunes incomparables. D-096 ya fija el uso del común más específico cuando es único y la conservación explícita de las alternativas mediante unión cuando no existe un supertipo común más informativo que esa unión; esta pregunta no reabre esas reglas.

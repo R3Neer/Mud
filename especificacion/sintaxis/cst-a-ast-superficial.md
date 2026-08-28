@@ -25,6 +25,7 @@ decisions:
   - D-085
   - D-086
   - D-087
+  - D-096
 ---
 
 # Transformación de CST a AST superficial
@@ -621,7 +622,6 @@ Permanecen pendientes de fases posteriores:
 - Alias concreto de un literal estructural.
 - Receptores múltiples frente a receptor estructural.
 - Llamada ordinaria frente a llamada de regla o acción.
-- Acción elemental frente a compuesta.
 - Tipo de un literal contextual.
 - Constancia de una expresión declarada estática.
 - Compatibilidad de dominios y cardinalidades.
@@ -692,8 +692,10 @@ Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 
 Las unidades usan exactamente la misma proyección: `unit-body` es solo un contenedor de `metadata-assignment`. `~prefixes` permanece una expresión ordinaria cuyo tipo esperado es `Prefix [* unique]`; no existe `UnitProperties`, `PrefixPolicy` ni `MetadataAttachment` lateral.
 
-## D-096 — `look`, locales, `all D` y `start with`
+## D-096 — tipos callable, `look`, locales, `all D` y `start with`
 
+- `callable-type` produce `CallableType(kind, receivers, givens)` conservando literalmente categoría y tipos escritos; la compatibilidad/varianza se difiere a Q-063.
+- `reflected-type` produce `ReflectedType(value)` y la elaboración posterior exige que ese valor termine en `~type` y denote estáticamente `Type`; el IR semántico sustituye esa forma por el tipo representado.
 - `look-declaration` proyecta su `given-clause` opcional a `LookDecl.givens`.
 - Las `local-value-declaration` situadas entre metadatos y cláusulas de action/rule reactiva/message se proyectan a `leading_locals` de su declaración, no al `EffectBlock` posterior.
 - El prefijo `all D` se normaliza como `PrefixExpr(EnumerateAll, D)`; el literal contextual sin operando conserva `AllLiteral`.

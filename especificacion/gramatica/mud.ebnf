@@ -345,8 +345,32 @@ type-alternative-domain
 
 declared-type
     ::= type-reference
+      | callable-type
+      | reflected-type
       | interval-type
       | product-type
+      ;
+
+callable-type
+    ::= callable-receiver , "." , callable-kind
+        , "(" , [ type-expression , { "," , type-expression } ] , ")"
+        ;
+
+callable-receiver
+    ::= type-reference
+      | "(" , type-reference , "," , type-reference
+          , { "," , type-reference } , ")"
+      ;
+
+callable-kind
+    ::= "action" | "subaction" | "rule" | "look" ;
+
+reflected-type
+    ::= reflected-type-base , "~" , "type" ;
+
+reflected-type-base
+    ::= qualified-name , { member-access | index-access | call-arguments }
+      | "(" , expression , ")"
       ;
 
 interval-type

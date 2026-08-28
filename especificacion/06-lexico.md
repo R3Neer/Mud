@@ -30,6 +30,7 @@ decisions:
   - D-086
   - D-087
   - D-089
+  - D-096
 ---
 
 # 06. Estructura léxica

@@ -74,6 +74,9 @@ module MUDSemanticIR {
                               type_alternative* remaining,
                               collection_shape collection)
                   | AnyValueType
+                  | CallableType(string category,
+                                 semantic_type* receivers,
+                                 semantic_type* givens)
                   | PositionalProductType(semantic_type first,
                                           semantic_type second,
                                           semantic_type* remaining)
