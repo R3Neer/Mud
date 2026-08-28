@@ -54,8 +54,6 @@ module MUDSemanticIR {
                        | InferredFromInitializer
                        | DerivedFromDecisionBranches
 
-    mutation_capability = (flag outer, flag inner)
-
     metadata_kind = NameMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
                   | PluralMetadata | AbbreviationMetadata | PrefixesMetadata | FormatMetadata
                   | ExtensionMetadata(string name)
@@ -99,6 +97,7 @@ module MUDSemanticIR {
                                                semantic_type type,
                                                semantic_domain? domain,
                                                collection_shape collection,
+                                               flag outer_mutable,
                                                participant_binding binding,
                                                anchor? nominal_refinement,
                                                semantic_expr? related_source)
@@ -119,6 +118,7 @@ module MUDSemanticIR {
     semantic_member = SemanticMember(symbol_id identity,
                                      string category,
                                      semantic_type? declared_type,
+                                     flag outer_mutable,
                                      semantic_metadata* metadata,
                                      semantic_expr? value)
         attributes (source_span origin)
@@ -172,7 +172,7 @@ module MUDSemanticIR {
                         int? upper,
                         string multiplicity,
                         string order,
-                        mutation_capability capability,
+                        flag member_mutable,
                         cardinality_origin origin)
 
     decision_shape = (decision_mode mode,
@@ -258,7 +258,7 @@ module MUDSemanticIR {
                                                  symbol_id target)
                     | CreateDeclarationEffect(anchor target)
                     | DestroyDeclarationEffect(anchor target)
-                    | CallActionEffect(semantic_call call)
+                    | CallEffect(semantic_call call)
                     | ForEachEffect(semantic_expr source,
                                     semantic_expr? step,
                                     semantic_expression_block? filter,
@@ -331,14 +331,23 @@ module MUDSemanticIR {
                     | Specializes(anchor source, anchor target)
                     | RefersTo(symbol_id source, symbol_id target)
                     | HasType(symbol_id source, anchor target)
-                    | HasDomain(symbol_id source, symbol_id target)
+                    | HasDomain(symbol_id source, anchor target)
                     | InitializesFrom(symbol_id source, symbol_id target)
                     | CalculatesFrom(symbol_id source, symbol_id target)
                     | Reads(symbol_id source, symbol_id target)
                     | ReadsMetadata(symbol_id source, symbol_id target, metadata_kind metadata)
                     | Writes(symbol_id source, symbol_id target)
+                    | QueriesRule(symbol_id source, anchor target)
+                    | WhenDependsOn(symbol_id source, symbol_id target)
+                    | IfDependsOn(symbol_id source, symbol_id target)
+                    | AfterDependsOn(symbol_id source, symbol_id target)
+                    | OldDependsOn(symbol_id source, symbol_id target)
+                    | AlwaysDependsOn(symbol_id source, symbol_id target)
+                    | DomainDependsOn(symbol_id source, symbol_id target)
                     | CallsAction(anchor source, anchor target)
                     | CallsCallable(symbol_id source, symbol_id target)
+                    | CallsTest(anchor source, anchor target)
+                    | BindsParticipant(symbol_id source, symbol_id target)
                     | CallsDecision(anchor source, anchor target)
                     | DecisionDependsOn(anchor dictionary, decision_branch_key branch, symbol_id target)
                     | AllowedDependsOn(symbol_id source, anchor target)
@@ -354,6 +363,8 @@ module MUDSemanticIR {
                     | ProducesMessageField(anchor message, symbol_id field)
                     | ReadsMessage(symbol_id source, anchor message)
                     | TestActivates(anchor test, anchor target)
+                    | TestReads(anchor test, symbol_id target)
+                    | TestWrites(anchor test, symbol_id target)
                     | TestDiagnoses(anchor test, symbol_id target)
                     | DerivesDimension(anchor source, anchor target)
                     | PointOver(anchor point, anchor linear)
