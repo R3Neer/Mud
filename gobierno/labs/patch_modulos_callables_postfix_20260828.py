@@ -61,4 +61,20 @@ for spelling in ("things", "rules"):
         raise SystemExit(f"mud-syntax-kinds.yaml: unexpected count for {spelling!r}: {count}")
 syntax_kinds.write_text(text, encoding="utf-8")
 
-print("question closure evidence, export profiles and syntax token catalog applied")
+abstract = ROOT / "especificacion/08-sintaxis-abstracta.md"
+text = abstract.read_text(encoding="utf-8")
+text = text.replace(
+    "start with {\n        all,\n        empty\n    }",
+    "start with {\n    all,\n    empty\n}",
+)
+text = text.replace(
+    "produce `StartSet(things=[AllLiteral], rules=[EmptyLiteral])`.",
+    "produce `StartSet(contributions=[AllLiteral, EmptyLiteral])`.",
+)
+text = text.replace(
+    "No existe `AnchorInterpolation`. `start with` produce `StartSet(things, rules)` y mantiene ambas contribuciones separadas. `ActionDecl` conserva `PublicAction` o `Subaction`.",
+    "No existe `AnchorInterpolation`. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones. `ActionDecl` conserva `PublicAction` o `Subaction`.",
+)
+abstract.write_text(text, encoding="utf-8")
+
+print("question closure evidence, export profiles, syntax token catalog and AST prose applied")
