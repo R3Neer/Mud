@@ -440,23 +440,13 @@ ExactTypeTestExpr(valueExpression, nominalTypeReference, negated)
 - `negated = false` para `iis`.
 - `negated = true` para `iis not`.
 
-El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan durante tipado/elaboración antes de producir la forma correspondiente dla futura representación semántica posterior a tipado y elaboración.
+El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan durante tipado/elaboración antes de obtener un resultado elaborado válido.
 
-Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. La futura representación semántica posterior a tipado y elaboración distingue:
+Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. La elaboración debe distinguir operaciones sobre diccionarios exactos de operaciones sobre diccionarios funcionales y determinar su tipo de resultado. La forma mecánica posterior de esa distinción todavía no está fijada.
 
-```text
-ExactDictionarySetOperationExpr(operator, left, right, resultType)
-FunctionalDictionarySetOperationExpr(operator, left, right, resultType)
-```
+Una operación conjuntista sobre funcionales equivale a aplicar ambos operandos en la misma instantánea y ejecutar después la operación de colección sobre sus resultados. Nunca se materializa una lista fusionada de ramas ni se intenta demostrar equivalencia lógica entre selectores.
 
-La aplicación del segundo nodo equivale a aplicar ambos operandos en la misma instantánea y ejecutar después la operación de colección. Nunca se materializa una lista fusionada de ramas ni se intenta demostrar equivalencia lógica entre selectores.
-
-La futura representación semántica posterior a tipado y elaboración diferencia también:
-
-```text
-TypeTestExpr                # pertenencia transitiva de is
-ExactNominalTypeTestExpr    # identidad nominal exacta de iis
-```
+La elaboración debe distinguir asimismo la pertenencia nominal transitiva de `is` de la identidad nominal exacta de `iis`. El AST superficial conserva ambas formas; cualquier representación posterior debe preservar o permitir reconstruir esa distinción sin que esta decisión fije nombres concretos de nodos.
 
 ## Diagnósticos requeridos
 

@@ -212,7 +212,7 @@ La omisión de cardinalidad ya no se normaliza universalmente a `[1]` antes de c
 
 Cuando la cardinalidad inferida de un campo inmutable sea distinta de `[1]`, el compilador emite una sugerencia no bloqueante con una corrección que materializa la cardinalidad exacta en el texto fuente.
 
-El AST superficial conserva que la cardinalidad fue omitida; la futura representación semántica posterior a tipado y elaboración elaborado registra la cardinalidad efectiva y su procedencia `InferredFromInitializer`, `OrdinaryScalarDefault` o `Explicit`.
+El AST superficial conserva que la cardinalidad fue omitida; tipado y elaboración determinan la cardinalidad efectiva y deben conservar suficiente procedencia para distinguir `InferredFromInitializer`, `OrdinaryScalarDefault` y `Explicit`. La codificación mecánica posterior todavía no está fijada.
 
 ### Selección
 
@@ -343,7 +343,7 @@ La gramática y los modelos deben distinguir como mínimo:
 - cardinalidad omitida frente a explícita;
 - ausencia del antiguo nombre intrínseco y de la interpolación especial de ancla.
 
-La futura representación semántica posterior a tipado y elaboración registra para cada decisional:
+La elaboración debe determinar para cada diccionario decisional, y cualquier representación posterior debe conservar o permitir reconstruir:
 
 - modo `FirstMatch` o `AllMatches`;
 - orden semántico;

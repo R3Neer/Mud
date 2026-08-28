@@ -19,7 +19,7 @@ affects:
 
 ## Contexto
 
-La separación entre CST, AST superficial, resultados de resolución nominal e representación semántica posterior a tipado y elaboración exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.
+La separación entre CST, AST superficial, resultados de resolución nominal y fases posteriores de tipado y elaboración exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.
 
 Las anclas legibles cambian cuando cambia el nombre cualificado de una declaración. Debe conservarse trazabilidad sin convertir el nombre antiguo en un alias fuente silencioso.
 
