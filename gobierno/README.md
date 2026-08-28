@@ -14,6 +14,8 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 ## Documentos
 
 - [[POLITICA-DE-COMMITS|Política de commits]]
+- [[POLITICA-DE-ARCHIVOS-TEMPORALES|Política de archivos temporales]]
+- [[temporales.base|Vista de temporales activos]]
 - [[CICLO-DOCUMENTAL|Ciclo documental]]
 - [[POLITICA-DE-DECISIONES|Política de decisiones]]
 - [[POLITICA-DE-PREGUNTAS|Política de preguntas]]

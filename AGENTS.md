@@ -33,6 +33,14 @@ En particular:
 - Una pregunta activa puede citarse en el cuerpo solo para delimitar una incertidumbre que afecta al estado actual; debe figurar también en `questions:`.
 - Una decisión vigente debe integrarse en toda superficie normativa ya desarrollada cuya responsabilidad cubra su alcance. Si la ubicación canónica todavía no existe, no se inventa una superficie provisional solo para alojarla, pero ninguna superficie existente puede contradecirla.
 
+## Archivos temporales
+
+Los documentos intencionadamente temporales se rigen por `gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md`. Los archivos efímeros ordinarios no se versionan.
+
+Antes de crear cualquier commit se debe ejecutar `python gobierno/validate_temporaries.py` y revisar el inventario completo de documentos con `temporary: true`. Si la condición `temporary-delete-when` de alguno ya se cumple, debe eliminarse antes de cerrar el commit, salvo que el propio cambio modifique explícitamente su ciclo de vida.
+
+La temporalidad se declara únicamente en el frontmatter del documento; `gobierno/temporales.base` es una vista derivada y no un registro independiente.
+
 ## Git
 
 Antes de modificar archivos se debe leer y seguir `gobierno/POLITICA-DE-COMMITS.md`.

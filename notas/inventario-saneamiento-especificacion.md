@@ -6,14 +6,13 @@ tags:
   - mud/saneamiento
 status: activo
 temporary: true
+temporary-reason: "Checklist operativo del saneamiento de la especificación"
+temporary-delete-when: "Se complete la Etapa 8 del saneamiento de la especificación"
 ---
 
 # Inventario de saneamiento de la especificación
 
 Este documento es un checklist de trabajo no normativo. Resume los defectos y obligaciones todavía relevantes detectados durante la auditoría de `especificacion/` posterior a la integración de módulos, callables, `look`, `message` y activación modular.
-
-> [!warning] Artefacto temporal
-> Este archivo existe únicamente mientras el saneamiento por etapas siga abierto. Debe eliminarse en el mismo cambio que cierre la Etapa 8; Git conserva el historial y este checklist no debe quedar archivado como documentación permanente.
 
 No define MUD. La autoridad normativa permanece en `especificacion/` y, transitoriamente cuando la superficie canónica todavía no existe, en las decisiones vigentes según MUD-EDIT-003.
 
@@ -133,6 +132,5 @@ Antes de considerar cerrado el saneamiento:
 6. comprobar coherencia prosa ↔ EBNF ↔ CST ↔ AST ↔ IR;
 7. ejecutar todos los validadores oficiales y la barrera editorial de Etapa 7;
 8. revisar el diff global del saneamiento para detectar cambios semánticos accidentales;
-9. eliminar `notas/inventario-saneamiento-especificacion.md` en el mismo cambio que cierre la etapa.
 
 **Criterio de cierre global:** una persona puede leer solo las superficies ya desarrolladas de `especificacion/` y obtener el estado formalizado vigente de MUD sin reconstruir historia decisional ni encontrar contradicciones conocidas; las reglas aceptadas cuyo capítulo aún no existe permanecen localizables como autoridad transitoria y obligaciones `M`, no como apéndices impropios.

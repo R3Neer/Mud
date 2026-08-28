@@ -1,0 +1,46 @@
+filters:
+  and:
+    - 'temporary == true'
+
+properties:
+  temporary-reason:
+    displayName: Motivo
+  temporary-delete-when:
+    displayName: Eliminar cuando
+  temporary-delete-after:
+    displayName: Fecha límite
+
+views:
+  - type: table
+    name: Temporales activos
+    order:
+      - file.name
+      - temporary-reason
+      - temporary-delete-when
+      - temporary-delete-after
+
+  - type: table
+    name: Con fecha límite
+    filters:
+      and:
+        - 'file.hasProperty("temporary-delete-after")'
+    order:
+      - file.name
+      - temporary-reason
+      - temporary-delete-when
+      - temporary-delete-after
+    sort:
+      - property: temporary-delete-after
+        direction: ASC
+
+  - type: table
+    name: Metadata incompleta
+    filters:
+      or:
+        - 'note["temporary-reason"].isEmpty()'
+        - 'note["temporary-delete-when"].isEmpty()'
+    order:
+      - file.name
+      - temporary-reason
+      - temporary-delete-when
+      - temporary-delete-after
