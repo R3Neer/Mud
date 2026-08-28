@@ -20,7 +20,7 @@ new = """7. Como máximo un `start with` por módulo y ausencia válida de contr
 13. `Thing` siempre efectiva y no activable.
 14. Reutilización exacta de estado tras `destroy` y nueva activación.
 15. Unión de contribuciones `start with` del cierre transitivo estático de tests alcanzables.
-16. Disparo durante la estabilización inicial de un `when` cuya condición comienza verdadera."""
+16. Navegación LSP desde cada activación a una única definición."""
 text = path.read_text(encoding="utf-8")
 if new not in text:
     if old not in text:
