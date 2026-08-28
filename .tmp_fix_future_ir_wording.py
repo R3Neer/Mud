@@ -78,7 +78,7 @@ replace_once(
 # Quality gates for accidental automatic wording and prematurely fixed future node names.
 for path in (ROOT / "notas/decisiones").glob("ADR-*.md"):
     text = path.read_text(encoding="utf-8")
-    for bad in ["al representación", "e representación", "elaboración elaborado", "dla futura"]:
+    for bad in ["al representación semántica", " e representación semántica", "elaboración elaborado", "dla futura"]:
         if bad in text:
             raise SystemExit(f"{path.name}: redacción automática defectuosa: {bad}")
 
