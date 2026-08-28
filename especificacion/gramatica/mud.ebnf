@@ -345,9 +345,28 @@ type-alternative-domain
 
 declared-type
     ::= type-reference
+      | callable-type
+      | reflected-type
       | interval-type
       | product-type
       ;
+
+callable-type
+    ::= callable-receiver , "." , callable-kind
+        , "(" , [ type-expression , { "," , type-expression } ] , ")"
+        ;
+
+callable-receiver
+    ::= type-reference
+      | "(" , type-reference , "," , type-reference
+          , { "," , type-reference } , ")"
+      ;
+
+callable-kind
+    ::= "action" | "rule" | "look" ;
+
+reflected-type
+    ::= postfix-expression , "~" , "type" ;
 
 interval-type
     ::= type-reference , "Interval" ;

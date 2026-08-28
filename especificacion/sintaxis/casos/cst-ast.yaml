@@ -104,13 +104,13 @@ cases:
   normalizations:
   - defer-multi-receiver-interpretation
   produces_ast: true
-- id: action-classification-deferred
+- id: action-call-resolution-deferred
   category: action
   source: "action Composite for actor: Person {\n    then actor.Move()\n}\n"
   cst_root: MudFileSyntax
   ast: ActionDecl(effects=[ActionCallCandidateEffect(...)])
   normalizations:
-  - defer-elementary-composite-classification
+  - defer-callable-resolution
   produces_ast: true
 - id: then-single-effect
   category: block
@@ -1917,4 +1917,34 @@ cases:
   - alias-operand-propagates-expected-type-to-literal
   - comparison-literal-uses-contextual-alias-construction
   - both-operands-have-exact-PlayerName-type-after-elaboration
+  produces_ast: true
+
+- id: callable-type-single-receiver
+  category: type
+  source: "thing Holder {\n    operation: Dragon.action(Volume)\n}\n"
+  cst_root: MudFileSyntax
+  ast: CallableType(ActionCallable, receivers=[Dragon], givens=[Volume])
+  semantic_expectations:
+  - callable-variance-remains-governed-by-Q-063
+  produces_ast: true
+- id: callable-type-multiple-receivers
+  category: type
+  source: "thing Holder {\n    operation: (Attacker, Defender).action(Amount)\n}\n"
+  cst_root: MudFileSyntax
+  ast: CallableType(ActionCallable, receivers=[Attacker, Defender], givens=[Amount])
+  produces_ast: true
+- id: callable-look-type
+  category: type
+  source: "thing Holder {\n    query: Dragon.look(Detail)\n}\n"
+  cst_root: MudFileSyntax
+  ast: CallableType(LookCallable, receivers=[Dragon], givens=[Detail])
+  produces_ast: true
+- id: reflected-type-alias
+  category: type
+  source: "alias Stats := MyDragon.Stats()~type\n"
+  cst_root: MudFileSyntax
+  ast: AliasDecl(Stats, definition=AliasRepresentation(ReflectedType(...)))
+  semantic_expectations:
+  - reflected-expression-must-statically-denote-Type
+  - reflected-type-elaborates-to-represented-semantic-type
   produces_ast: true

@@ -12,6 +12,7 @@ affects:
 # ADR-025 — Vocabulario de `thing`, cabeceras y bloques
 
 - Relacionada con: [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Modificada por: [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|D-096]]
 - Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`
 
 ## Contexto
@@ -59,9 +60,9 @@ Las cabeceras quedan distribuidas así:
 | `message` | `on` | No |
 | `action` | `for` | Sí |
 | Regla booleana | `for` | Sí |
-| `look` | `for` | No |
+| `look` | `for` | Sí |
 
-`on` declara vinculaciones que el motor observa y construye automáticamente para detectar hechos del mundo. `for` declara participantes proporcionados al solicitar una operación o consulta. `given` aporta valores auxiliares que no son participantes y solo pertenece a acciones y reglas booleanas.
+`on` declara vinculaciones que el motor observa y construye automáticamente para detectar hechos del mundo. `for` declara participantes proporcionados al solicitar una operación o consulta. `given` aporta valores auxiliares que no son participantes y pertenece a actions, reglas booleanas y `look`; reglas reactivas, reglas `always` y `message` no lo admiten.
 
 ### Llaves de las cláusulas
 
@@ -99,7 +100,7 @@ En acciones y reglas, `when`, `if` y `after` contienen una única expresión boo
 - El AST utiliza `ThingDecl` y una lista `directAncestors` introducida por `as`.
 - `is` sigue siendo el único operador de consulta de especialización.
 - El parser puede seleccionar la forma de cabecera a partir de la clase de entidad.
-- El analizador debe rechazar `given` en `look`, `message`, reglas de cambio y reglas `always`.
+- El analizador debe rechazar `given` en `message`, reglas de cambio y reglas `always`; `look` lo admite conforme a D-096.
 - El futuro formateador puede preferir la forma desnuda para cuerpos breves y llaves para expresiones extensas, sin cambiar el AST.
 
 ## Verificación futura

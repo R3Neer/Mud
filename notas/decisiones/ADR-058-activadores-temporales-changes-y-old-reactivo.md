@@ -32,15 +32,13 @@ Tratar `changes` como un `Bool` ordinario tampoco sirve. Si el valor cambia en d
 
 ### Activadores
 
-El IR distingue los activadores temporales de los valores `Bool` ordinarios:
+Para definir la semántica temporal se usa la notación `Rise(e)`, `Temporal(e)` y `Changed(e)`. Estas formas distinguen fuentes temporales de valores `Bool` ordinarios, pero no fijan constructores concretos del IR: D-096 deja abierta la representación interna exacta de los matches causales y de su composición.
 
 ```text
-Trigger
+TemporalSource
     = Rise(BoolExpression)
     | Temporal(BoolExpression)
     | Changed(Expression)
-    | All(Trigger, Trigger)
-    | Any(Trigger, Trigger)
 ```
 
 Para una vinculación $b$, sea $v_n(b,e)$ el valor de la expresión pura $e$ en la instantánea de inicio $W_n$ de la onda $n$.

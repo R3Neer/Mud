@@ -11,7 +11,8 @@ depends-on:
   - "[[01-alcance-y-conformidad]]"
   - "[[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]]"
   - "[[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]"
-questions: []
+questions:
+  - Q-062
 decisions:
   - D-035
   - D-050
@@ -24,6 +25,7 @@ decisions:
   - D-085
   - D-086
   - D-087
+  - D-096
 ---
 
 # 05. Texto fuente y estructura física

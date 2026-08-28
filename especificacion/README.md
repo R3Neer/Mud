@@ -231,7 +231,7 @@ Define las formas semánticamente relevantes después de la CST y de la validaci
 - AST de declaraciones, tipos, dominios, expresiones y efectos.
 - Normalización de cardinalidades, intervalos, bloques y literales contextuales.
 - Distinción estructural entre las tres clases de regla.
-- `ActionDecl` superficial con clase `PublicAction` o `Subaction`, sin clasificar todavía como elemental o compuesta.
+- `ActionDecl` superficial con clase `PublicAction` o `Subaction`; las llamadas candidatas se resuelven después sin introducir ninguna clasificación elemental/compuesta.
 - Nodo propio `TestDecl` y aserciones con diagnóstico opcional.
 - Nodos propios para `look`, `message` y propiedades públicas.
 - Procedencia mediante `SourceOrigin`.
@@ -283,6 +283,7 @@ Define:
 - Colecciones, productos estructurales, diccionarios exactos y diccionarios decisionales.
 - Intervalos.
 - Magnitudes.
+- Tipos callable de `action`, regla booleana y `look`, descriptores first-class y tipos obtenidos estáticamente mediante `~type`, con la varianza formal pendiente de Q-063.
 - Pertenencia nominal mediante `is`, identidad nominal exacta mediante `iis` y narrowing positivo y negativo.
 - Inferencia y ampliación de representaciones en operaciones cuantitativas.
 - Dos familias explícitas de `to`: conversión cuantitativa y casting nominal estructural.
@@ -534,7 +535,7 @@ Archivo previsto: `22-reglas-reactivas.md`
 
 Define:
 
-- Vinculaciones `on` exclusivamente individuales.
+- Cada rol `on` vincula un único valor por vinculación: la forma directa usa el universo implícito de `thing` concretas activas y la forma relacionada obtiene valores de una fuente finita enumerable.
 - Participantes relacionados mediante `in`, con refinamiento nominal opcional, resolución conjunta, referencias adelantadas y ciclos finitos.
 - `when`.
 - Sufijo temporal `changes` y su precedencia.

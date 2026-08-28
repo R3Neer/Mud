@@ -25,6 +25,7 @@ decisions:
   - D-091
   - D-093
   - D-094
+  - D-096
 ---
 # 09. Nombres, paths y anclas
 

@@ -13,19 +13,20 @@ affects:
 # ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
 
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]]
+- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
 ## Decisión
 
 La norma denomina **path de MUD** a la identidad lógica derivada de las carpetas. No se escribe una cabecera `namespace` ni se reserva `path`. El LSP puede mostrar una cabecera virtual, copiar el nombre cualificado y revelar la procedencia física sin modificar el archivo.
 
-Todas las declaraciones superiores de un path comparten un espacio nominal. La búsqueda de un nombre no cualificado consulta, en orden, entorno léxico, propietario o receptor implícito, path actual, `using` exactos, `using` recursivos e incorporados. Se elige el primer nivel no vacío; una categoría incompatible no habilita continuar. Candidatos con la misma ancla se deduplican y anclas distintas son ambiguas. Un `using` no reexporta.
+Todas las declaraciones superiores de un path comparten un espacio nominal. La búsqueda de un nombre no cualificado consulta, en orden, entorno léxico, propietario o receptor implícito, path actual, `using` exactos, `using` recursivos e incorporados. Se elige el primer nivel no vacío; una categoría incompatible no habilita continuar. Candidatos con la misma ancla se deduplican y anclas distintas son ambiguas. Un `using` no reexporta. Cuando un candidato pertenece a otro módulo, `using` solo lo aporta a la resolución nominal: alcanzarlo exige además que `uses` autorice la dependencia y que el símbolo pertenezca al cierre visible del contrato modular conforme a D-096. Un nombre cualificado tampoco elude esa frontera.
 
 No existe sombreado de un nombre visible. Las convenciones `PascalCase`, `lowerCamel` y `lowerCamel` de unidad son requisitos estáticos con arreglo automático.
 
-Poseen ancla las declaraciones globales, campos en su propietario original, componentes, datos asociados declarados por una `family`, miembros de `family`, unidades declaradas, participantes `for`/`on`/`given`, metadatos configurados materializados como `Metadata` y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Iteradores, vinculaciones locales ordinarias y valores globales no nominales solo reciben identidad interna efímera.
+Poseen ancla las declaraciones nominales de primer nivel, campos en su propietario original, componentes, datos asociados declarados por una `family`, miembros de `family`, unidades declaradas, participantes `for`/`on`/`given`, metadatos configurados materializados como `Metadata` y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Iteradores, vinculaciones locales ordinarias y valores globales no nominales solo reciben identidad interna efímera.
 
-Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; un `start with` global no tiene nombre ni ancla.
+Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; una contribución modular `start with` de primer nivel no tiene nombre ni ancla. La pertenencia a módulo es una dimensión de visibilidad y dependencia y no añade un componente al ancla nominal.
 
 La resolución nominal crea símbolos, anclas, scopes y bindings de referencias cuya categoría ya puede determinarse y los materializa en el HIR nominal de D-093. Los nombres de tipos se vinculan nominalmente a sus símbolos, pero la comprobación de compatibilidad, uniones, dominios, cardinalidades y miembros dependientes del tipo pertenece al tipado y la elaboración. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
 
@@ -44,6 +45,8 @@ Una ancla cambia con categoría, path o nombre cualificado. El tooling conserva 
 5. Anclas de campos heredados, members, unidades y builtins.
 6. Participantes declarados con ancla pública y símbolos locales ordinarios sin ella.
 7. HIR nominal construible antes del tipado completo y libre de tipos, dominios, cardinalidades y terminación elaborados.
+8. Un `using` o un nombre cualificado no atraviesa una frontera modular sin `uses` y contrato visible.
+9. La pertenencia a módulo no altera el ancla nominal.
 
 ## Ampliación por D-084
 

@@ -44,6 +44,7 @@ decisions:
   - D-091
   - D-092
   - D-093
+  - D-096
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -282,6 +283,12 @@ NamedType(TypeRef)
 
 Incluye tanto tipos incorporados como tipos declarados por el programa. Que un nombre sea `Nat`, una `thing`, una `family`, un alias o una magnitud se decide después.
 
+
+### Tipos callable y reflejados
+
+`CallableType(kind, receivers, givens)` conserva la forma de tipos como `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` o `Dragon.look(Detail)`. En esta fase `receivers` siguen siendo `TypeRef` no resueltos y `givens` son `TypeExpr`; el AST no decide compatibilidad ni varianza de firmas, cuestión abierta en Q-063.
+
+`ReflectedType(value)` conserva una expresión escrita en posición de tipo cuya forma termina en `~type`, como `MyDragon.Stats()~type`. La resolución y el tipado deben demostrar que `value` produce estáticamente `Type`; tras elaboración el IR semántico usa directamente el tipo representado. Una llamada ordinaria sin `~type` continúa siendo un valor.
 ### Diccionario
 
 ```text
@@ -491,7 +498,7 @@ La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las
 
 El AST superficial usa un único `ActionDecl`.
 
-La clasificación como elemental o compuesta requiere resolver los `ActionCallCandidateEffect`; por ello pertenece al IR semántico después de resolución y elaboración. La forma superficial no inventa una clasificación basada únicamente en la apariencia de un `postfix-expression`.
+No existe una clasificación semántica de actions elementales frente a compuestas. `ActionCallCandidateEffect` solo conserva que un `postfix-expression` ocupa una posición de efecto cuya naturaleza callable debe resolverse después; la resolución decide su destino, no una supuesta clase elemental/compuesta de la action propietaria.
 
 Una acción contiene:
 
@@ -726,7 +733,6 @@ Un AST superficial conforme no puede contener:
 - Dos órdenes de colección.
 - `given` mutable.
 - Declaraciones de metadatos duplicadas en una misma unidad.
-- Acción ya clasificada elemental o compuesta sin resolución.
 - Símbolo o ancla resueltos.
 - Tipo inferido insertado como si se hubiera escrito.
 - Comentarios ordinarios.

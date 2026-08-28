@@ -84,6 +84,7 @@ fixed_tokens:
 - spelling: start
 - spelling: with
 - spelling: test
+- spelling: type
 - spelling: +=
 - spelling: -=
 - spelling: '*='
@@ -354,7 +355,7 @@ lexical_forms:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"things\" | \"rules\" | \"value\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
+    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"value\" | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"
@@ -837,11 +838,34 @@ syntax_nodes:
     - domain-expression
   declared-type:
     kind: DeclaredTypeSyntax
-    rhs: "type-reference\n      | interval-type\n      | product-type"
+    rhs: "type-reference\n      | callable-type\n      | reflected-type\n      | interval-type\n      | product-type"
     references:
     - type-reference
+    - callable-type
+    - reflected-type
     - interval-type
     - product-type
+  callable-type:
+    kind: CallableTypeSyntax
+    rhs: "callable-receiver , \".\" , callable-kind\n        , \"(\" , [ type-expression , { \",\" , type-expression } ] , \")\""
+    references:
+    - callable-receiver
+    - callable-kind
+    - type-expression
+  callable-receiver:
+    kind: CallableReceiverSyntax
+    rhs: "type-reference\n      | \"(\" , type-reference , \",\" , type-reference\n          , { \",\" , type-reference } , \")\""
+    references:
+    - type-reference
+  callable-kind:
+    kind: CallableKindSyntax
+    rhs: '"action" | "rule" | "look"'
+    references: []
+  reflected-type:
+    kind: ReflectedTypeSyntax
+    rhs: 'postfix-expression , "~" , "type"'
+    references:
+    - postfix-expression
   interval-type:
     kind: IntervalTypeSyntax
     rhs: type-reference , "Interval"

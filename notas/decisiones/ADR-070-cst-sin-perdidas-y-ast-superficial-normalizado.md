@@ -15,6 +15,7 @@ affects:
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 - Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 
 ## Estado
 
@@ -112,7 +113,6 @@ El AST superficial conserva sin decidir:
 - Camino cualificado frente a cadena de accesos semánticos.
 - Literal estructural frente a tupla de receptores.
 - Llamada postfix frente a llamada de acción.
-- Acción elemental frente a compuesta.
 - Tipo contextual de literales.
 
 Estas decisiones pertenecen a la resolución nominal cuando dependen solo de identidad y bindings, o al IR semántico cuando requieren tipado o elaboración.
@@ -164,9 +164,9 @@ Rechazada porque obligaría a resolución, tipos y semántica a interpretar cont
 
 Rechazada porque no alteran el significado de un programa y crearían dependencias falsas. La documentación estructurada futura tendrá modelo separado.
 
-### Clasificar acciones en el parser
+### Resolver llamadas callable en el parser
 
-Rechazada porque `action-call-effect ::= postfix-expression` exige resolver nombres para saber si el efecto es realmente una llamada de acción.
+Rechazada porque `action-call-effect ::= postfix-expression` exige resolver nombres y firmas para saber si el efecto es realmente una llamada callable. D-096 elimina la antigua clasificación elemental/compuesta: lo que se difiere es la resolución de la llamada, no una clase de action.
 
 ## Cambios derivados
 

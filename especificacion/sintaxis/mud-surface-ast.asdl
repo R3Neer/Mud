@@ -265,6 +265,11 @@ module MUDSurface {
     -- -----------------------------------------------------------------
 
     declared_type = NamedType(type_ref name)
+                  | CallableType(callable_kind kind,
+                                 type_ref first_receiver,
+                                 type_ref* remaining_receivers,
+                                 type_expr* givens)
+                  | ReflectedType(expr value)
                   | IntervalType(type_ref element_type)
                   | PositionalProductType(type_expr first,
                                           type_expr second,
@@ -320,6 +325,8 @@ module MUDSurface {
     cardinality_origin = WrittenCardinality | OmittedCardinality
 
     decision_mode = FirstMatch | AllMatches
+
+    callable_kind = ActionCallable | RuleCallable | LookCallable
 
     action_kind = PublicAction | Subaction
 

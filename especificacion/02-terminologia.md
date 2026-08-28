@@ -12,10 +12,10 @@ depends-on:
 questions: []
 decisions:
   - D-025
-  - D-027
   - D-055
   - D-085
   - D-086
+  - D-096
 ---
 
 # 02. Terminología

@@ -117,6 +117,8 @@ Los descriptores son valores first-class y pueden formar parte de `Any`. `Any` e
 
 Una expresión que ya denota un `Type`, como `Dragon.look(Detail)`, no necesita `~type` para convertirse en tipo.
 
+
+Las formas callable de superficie fijadas por esta decisión son `A.action(B...)`, `(A, C).action(B...)`, `A.rule(B...)` y `A.look(B...)`: la parte izquierda describe los tipos de receptor/participantes y los paréntesis la parte `given` de la firma. `subaction <: action` sigue siendo una relación semántica de descriptores y no introduce por sí sola una grafía de tipo `A.subaction(...)`. Q-063 mantiene abiertas la varianza y compatibilidad formal entre tipos callable.
 Se acepta la relación reflectiva `subaction <: action <: Declaration`, pero la capacidad de raíz exterior es independiente del subtyping. Un valor ampliado a `action` no puede cruzar la frontera exterior si alguna alternativa runtime posible sigue siendo `subaction`; el narrowing puede demostrar que la capacidad exterior es segura. La varianza y compatibilidad formal de callables queda abierta en Q-063.
 
 ### Invocación dinámica de valores callable
@@ -149,7 +151,7 @@ Cada `look` induce un objeto resultado anónimo formado por sus campos públicos
 
 Una llamada `MyDragon.Stats()` es valor y no puede ocupar directamente una posición de tipo; `MyDragon.Stats()~type` sí denota su tipo estático. En cambio `Dragon.look(Detail)` ya es un tipo callable.
 
-Si una llamada dinámica puede seleccionar varios `look` con resultados distintos, el tipo de resultado debe ser el común más específico que cubra todas las alternativas. La elección formal cuando existen varios mínimos comunes incomparables queda abierta en Q-065; la identidad/igualdad de tipos anónimos queda abierta en Q-068.
+Si una llamada dinámica puede seleccionar varios `look` con resultados distintos, el tipo de resultado debe ser el común más específico que cubra todas las alternativas. Cuando no existe un supertipo común más informativo que conservar explícitamente esas alternativas, el resultado es su unión. La elección formal cuando existen varios mínimos comunes incomparables queda abierta en Q-065; la identidad/igualdad de tipos anónimos queda abierta en Q-068.
 
 ### `message` como ocurrencia causal
 
@@ -169,6 +171,8 @@ El `when` y el `if` del `message` se resuelven en la vista causal que produce la
 
 El tratamiento exterior de participantes que dejan de existir antes del estado final queda abierto en Q-067.
 
+
+La envoltura exterior de una ocurrencia confirmada conserva separados los bindings `on` y el payload público; no se aplana un único objeto en el que los nombres de participantes compitan con los nombres de payload. La entrega conserva el orden causal entre ondas. Dentro de una misma onda se usa un orden técnico estable y reproducible, sin atribuir a ese orden prioridad semántica entre ocurrencias.
 ### Locales previas a cláusulas de comportamiento
 
 Una `action`, una rule reactiva o un `message` puede declarar locales puras mediante `:=` entre los metadatos y sus cláusulas principales. Son inmutables, secuenciales, visibles para locales posteriores y cláusulas posteriores y respetan las reglas ordinarias contra referencias adelantadas, ciclos y sombreado.

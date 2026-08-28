@@ -17,6 +17,7 @@ affects:
 
 - Modificada por: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Ampliada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]]
+- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 - Preguntas relacionadas: Q-002, Q-006, Q-021, Q-046
 - Documentos afectados: efectos, raíz, ondas, conflictos
 
@@ -34,7 +35,7 @@ El catálogo de efectos de MUD comprende:
 - unión, intersección, diferencia simétrica `unique` y diferencia acumulativas;
 - `add` y `remove` sobre colecciones o propiedades;
 - `create` y `destroy`;
-- llamadas a acciones únicamente en acciones compuestas.
+- invocaciones de `action` o `subaction` dentro de cualquier contexto semántico `then`; la llamada incorpora secuencialmente sus efectos al delta privado activo conforme a D-096.
 
 Cada `then` calcula un delta privado secuencial desde una instantánea común. La consolidación de deltas concurrentes es determinista.
 

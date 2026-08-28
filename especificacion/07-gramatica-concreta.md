@@ -14,10 +14,10 @@ questions:
   - Q-022
   - Q-059
   - Q-061
+  - Q-062
 decisions:
   - D-015
   - D-025
-  - D-027
   - D-028
   - D-029
   - D-031
@@ -68,13 +68,14 @@ decisions:
   - D-090
   - D-091
   - D-092
+  - D-096
 ---
 
 # 07. Gramática concreta
 
 ## Estado y propósito
 
-[[gramatica/mud.ebnf]] define la sintaxis completa de MUD 1.0. Este capítulo fija cómo leerla, cómo resolver las construcciones contextuales y cómo agrupar expresiones. Las cuestiones listadas en el frontmatter afectan semántica posterior, no impiden reconocer la forma fuente.
+[[gramatica/mud.ebnf]] define la sintaxis completa de los archivos fuente ordinarios `.mud` de MUD 1.0. La superficie física adicional de `mud.module` se documenta por separado y su gramática completa permanece abierta en Q-062. Este capítulo fija cómo leerla, cómo resolver las construcciones contextuales y cómo agrupar expresiones. Las cuestiones listadas en el frontmatter afectan semántica posterior, no impiden reconocer la forma fuente.
 
 ## Producto del parsing
 
@@ -262,6 +263,21 @@ A -> B -> C           # A -> (B -> C)
 
 Una flecha debe ser la forma exterior completa del tipo. Un diccionario no puede aparecer como alternativa parcial de una unión, ni siquiera mediante paréntesis o a través de un alias cuya forma efectiva sea una flecha.
 
+
+### Tipos callable y tipos obtenidos por reflexión
+
+D-096 admite tipos callable escritos a partir de los tipos de receptor/participantes y de la parte `given` de la firma:
+
+```mud
+Dragon.action(Volume)
+(Attacker, Defender).action(Amount)
+Dragon.rule(Limit)
+Dragon.look(Detail)
+```
+
+La categoría forma parte de la construcción de tipo. Esta superficie no decide por sí sola la varianza ni todas las reglas de compatibilidad entre firmas: Q-063 mantiene abierto ese problema. La capacidad de raíz exterior de `action` tampoco se deduce únicamente del subtyping reflectivo.
+
+Una expresión postfix terminada en `~type` puede ocupar una posición de tipo cuando la elaboración demuestra estáticamente que produce `Type`. Por ejemplo `alias Stats := MyDragon.Stats()~type` es válido; la llamada `MyDragon.Stats()` sin `~type` sigue siendo un valor y no una expresión de tipo. Un tipo callable como `Dragon.look(Detail)` ya denota `Type` y no necesita `~type`.
 Son inválidos:
 
 ```mud
@@ -734,22 +750,32 @@ Sin `~format`, el literal se escribe como una cantidad ordinaria con unidad comp
 
 ## Activación inicial `start with`
 
-`start with` contiene exactamente una sección `things` y una sección `rules`. Cada sección recibe cero o más contribuciones estáticas separadas por comas:
+Cada módulo puede declarar como máximo un `start with`. No es un `main`, no invoca módulos y no establece un orden de inicialización. La ausencia de `start with` en un módulo equivale a una contribución vacía.
+
+La declaración acepta una contribución directa o un bloque unificado:
+
+```mud
+start with Kingdom
+```
 
 ```mud
 start with {
-        all,
-        empty,
-        CanGrow,
-        candidate in GrowthRules: candidate~path in world.growth
-    }
+    Kingdom,
+    Place,
+    CanEnter,
+    empty
+}
 ```
 
-`empty` no aporta elementos. Una colección aporta directamente sus miembros; no se admiten colecciones anidadas. El resultado se deduplica y carece de orden semántico. `Thing` siempre es efectiva y no se añade ni se retira mediante `start with`; `all` sobre categorías de `thing` enumera únicamente identidades concretas declaradas.
+Cada expresión debe ser estática y puede aportar cero, una o varias declaraciones activables `thing | rule`. Una colección aporta directamente sus miembros; no se admiten colecciones anidadas. Las identidades repetidas se deduplican y el orden fuente se conserva solo como procedencia, no como prioridad semántica.
+
+Un `start with` solo puede activar declaraciones con ciclo de vida del mismo módulo. Las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial. `Thing` permanece siempre efectiva y no forma parte de la colección activable.
+
+`all D` puede materializar un dominio enumerable cuando una contribución necesita una colección explícita; `all` sin operando conserva su significado contextual.
 
 ## Participantes
 
-`for` vincula roles suministrados de cualquier tipo de valor declarado. Un rol puede ser individual o colectivo, restringir sus valores mediante `in dominio` y admitir la especificación completa de colección. El dominio se escribe después del tipo y antes de la colección. `on` construye vinculaciones automáticas exclusivamente individuales cuyo tipo debe ser una `thing`.
+`for` vincula roles suministrados de cualquier tipo de valor declarado. Un rol puede ser individual o colectivo, restringir sus valores mediante `in dominio` y admitir la especificación completa de colección. El dominio se escribe después del tipo y antes de la colección. `on nombre: Tipo` usa el universo implícito de `thing` concretas y activas compatibles con ese tipo; en cambio `on nombre[: Tipo] in fuente` vincula desde una fuente finita enumerable y puede por ello relacionar otros valores. La forma relacionada puede escribir el tipo para refinar nominalmente los miembros de la fuente.
 
 ```mud
 rule CanAttack for attacker: Army, defender: Army
@@ -899,6 +925,12 @@ if price > old price and stock < old stock
 when position - old position >= 10 meters
 ```
 
+
+D-096 generaliza además `when` a fuentes declarativas. Una ocurrencia de `message`, el disparo efectivo de una rule reactiva y la evaluación de una rule `always` para una vinculación pueden actuar como trigger. Actions, subactions, `look`, reglas booleanas y tests no son fuentes declarativas de trigger.
+
+Una referencia declarativa usada como trigger no lleva paréntesis: `when Damaged`, `when Dragon.Damaged` o una local que contenga ese descriptor. Los receptores restringen sus bindings `on`; no convierten el trigger en una llamada ordinaria.
+
+Un trigger produce cero o más matches causales. Cada match conserva bindings/testigos e identidades de ocurrencia. `and` realiza natural join de matches compatibles y, cuando no comparten bindings, producto cartesiano; `or` realiza unión. Dos ocurrencias causalmente distintas no se deduplican por compartir payload. El caso puramente booleano anterior es la elevación temporal que produce esos matches cuando aparece el flanco correspondiente.
 Las vinculaciones presentes en la primera instantánea materializada por `start with` comparan `old` y el valor actual contra la misma instantánea: `changes` no pulsa. Las ramas booleanas elevadas conservan, en cambio, el anterior virtual falso y pueden disparar si ya son verdaderas. Toda vinculación nacida después toma su primera onda activa como línea base completa, sin disparar, y comienza a comparar en la siguiente.
 
 ### `always`
@@ -929,9 +961,11 @@ given amount: Nat in 1..100 {
 }
 ```
 
-`then` contiene efectos o llamadas a acciones conforme a la distinción estática entre acciones elementales y compuestas. El `otherwise` opcional de `if` o `after` explica un `rejected`; omitirlo produce una sugerencia y una razón generada. Un `otherwise` asociado al `then` explica el `failed` de su transición atómica completa, se evalúa perezosamente y no recupera ni ejecuta una rama alternativa.
+No existe una clasificación semántica de actions elementales frente a compuestas. Un `then` es una secuencia ordenada de consecuencias y puede mezclar vinculaciones locales `:=`, efectos directos, llamadas a `action` o `subaction` y recorridos `for each`. Una llamada interna se ejecuta en su posición textual sobre el delta privado de la resolución: observa los efectos anteriores visibles, incorpora sus propios efectos a la misma resolución y las sentencias posteriores los observan.
 
-Una `subaction` usa la misma firma y el mismo cuerpo, pero solo puede invocarse desde otra `action` o `subaction`:
+Una `action` puede ser raíz exterior. Una `subaction` nunca puede serlo, pero ambas son callables y pueden invocarse desde cualquier contexto semántico `then`, incluido el `then` de una rule reactiva o de un test cuando ese contexto lo permita. La llamada interna no abre una transacción ni una resolución raíz independiente.
+
+Los `after` de todas las actions/subactions ejecutadas se comprueban contra el estado estable tentativo final de la resolución completa. Un `failed` anidado revierte toda la resolución; un `rejected` interno también la aborta y revierte, conservando la categoría `rejected`. El `otherwise` opcional de `if` o `after` explica el rechazo y el asociado al `then` explica el `failed` de la transición completa.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -949,12 +983,13 @@ given amount: Money {
 }
 ```
 
-No puede constituir una solicitud exterior ni un comando raíz. Toda la cadena comparte una resolución atómica: un rechazo o fallo interno descarta también los efectos privados anteriores de sus llamadores. Su ancla conserva la categoría `action::*`.
+La capacidad exterior y el subtyping reflectivo son propiedades distintas: `subaction <: action`, pero ampliar un descriptor no convierte una alternativa `subaction` en raíz exterior segura.
 
 ## Frontera de salida
 
 ```mud
-look RealmSummary for kingdom: Kingdom {
+look RealmSummary for kingdom: Kingdom
+given locale: Locale {
     name := kingdom~name
     population: Population := kingdom.population in people
 }
@@ -970,7 +1005,11 @@ message KingChanged on kingdom: Kingdom {
 }
 ```
 
-`look` y `message` se declaran en MUD pero no se llaman desde MUD. El exterior consulta un `look`; el runtime detecta y publica un `message`.
+`look` es un callable puro. Puede consultarlo el host, otro módulo cuyo contrato lo haga visible y código MUD en contextos compatibles con lectura, incluido un `then`. Sus campos leen una única vista coherente heredada del llamador: estado estable desde el host, snapshot desde una rule y delta privado visible en el punto textual desde un `then`. Admite `for` y `given` y devuelve exactamente un valor del tipo anónimo formado por sus campos públicos.
+
+Un `message` no se llama. Cada coincidencia de su `when` que supera `if` crea una ocurrencia causal con identidad, declaración, bindings `on` y vista de nacimiento. Esa misma ocurrencia puede alimentar triggers en la onda siguiente. Dentro de MUD su payload se proyecta sobre la vista causal; hacia el host se proyecta, tras commit, sobre el estado estable final. Un rollback cancela la entrega exterior.
+
+La envoltura exterior mantiene separados los bindings `on` que identifican a los participantes y el payload público; no aplana ambos espacios de nombres. Las ocurrencias confirmadas conservan el orden causal entre ondas y, dentro de una misma onda, un orden técnico estable y reproducible que no introduce prioridad semántica entre ellas.
 
 Un campo público cuyo valor directo es una magnitud que admite unidades debe seleccionar preferentemente su presentación con `in`. Omitirla es legal y usa la proyección canónica de unidades, pero produce un aviso por dejar implícita una decisión de la API. Una magnitud sin unidades publica directamente su representación numérica y no produce ese aviso. Una magnitud de punto directa publica su coordenada en la unidad elegida y no su `~format`; para publicar el formato se construye un campo `Text`.
 
@@ -1151,6 +1190,8 @@ Una fuente con enumeración propia no necesita `by`. Cuando la enumeración depe
 
 Selección y `exists`, `forall`, `count`, `sum`, `min`, `max` aceptan `by` cuando la fuente define progresión y mantienen `:` aunque el cuerpo tenga llaves. El bloque contiene locales `:=` seguidas de una expresión final. Selección, `exists`, `forall` y `count` exigen contrato booleano; `sum`, valor agregable; `min`/`max`, valor ordenable.
 
+Una selección produce una colección y por ello no consume directamente un dominio desnudo: si la fuente conceptual es un dominio `D`, debe escribirse `all D`. Los recorridos y cuantificadores que no producen una colección sí pueden consumir directamente un dominio finito enumerable.
+
 ```mud
 selected := x in source by step: {
     threshold := limit
@@ -1167,7 +1208,7 @@ Una selección devuelve directamente las ocurrencias aceptadas y conserva multip
 
 ### `take` e indexación
 
-`take amount from source` conserva su semántica existente. Sobre fuente ordenada o con enumeración canónica toma el prefijo; sobre colección/diccionario no ordenado con elección real muestrea reproduciblemente sin reemplazo. La indexación posicional sigue exigiendo orden observable.
+`take amount from source` conserva su semántica existente. Como produce una colección, un dominio `D` no puede aparecer desnudo como `source`: debe materializarse explícitamente como `all D`. Sobre una colección ordenada o una materialización con enumeración canónica toma el prefijo; sobre colección/diccionario no ordenado con elección real muestrea reproduciblemente sin reemplazo. La indexación posicional sigue exigiendo orden observable.
 
 ## Tipo superior `Any`
 
@@ -1392,7 +1433,7 @@ El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` 
 | `~metadata` | `Metadata [* unique]` | elementos metadata-bearing | no, intrínseco |
 | `~for` | `Participant [* unique ordered]` | regla booleana, `action`, `subaction`, `look` | no, intrínseco |
 | `~on` | `Participant [* unique ordered]` | regla reactiva, regla `always`, `message` | no, intrínseco |
-| `~given` | `Participant [* unique ordered]` | regla booleana, `action`, `subaction` | no, intrínseco |
+| `~given` | `Participant [* unique ordered]` | regla booleana, `action`, `subaction`, `look` | no, intrínseco |
 | `~clauses` | `ClauseKind [* unique]` | declaraciones con cláusulas | no, intrínseco |
 | `~plural` | `Text` | unidades | sí |
 | `~abbreviation` | `Text` | unidades | sí |
@@ -1401,7 +1442,6 @@ El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` 
 | `~summary` | `Text` | elementos metadata-bearing compatibles | sí; default `""` |
 | `~description` | `Text` | elementos metadata-bearing compatibles | sí; default `""` |
 | `~deprecated` | `Text [0..1]` | elementos metadata-bearing compatibles | sí; default `empty` |
-| `~private` | `Bool` | categorías admitidas por D-087 | sí; default `false` |
 
 La columna «Propietarios» es una restricción semántica de disponibilidad, no una descripción de cuándo el resultado es no vacío. Tras resolver y tipar el receptor, un acceso a una propiedad no soportada por su categoría estática es error. En particular, `thing A` hace inválido `A~for`; una `action` sí soporta `~for` aunque omita la cláusula y en ese caso obtiene `empty`. La misma separación entre propiedad inexistente y valor vacío se aplica a `~on` y `~given`.
 
@@ -1453,7 +1493,7 @@ Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e
 
 `anchor{...}` no pertenece al lenguaje. Renderizar `Name`, `MudPath`, `Anchor` o `MudFile` en una plantilla no los convierte implícitamente a `Text` fuera de ese contexto.
 
-Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. El nombre desnudo de una declaración no es un valor; acciones, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}`.
+Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. Los descriptores de declaraciones y tipos son valores MUD first-class conforme a D-096, pero esa condición no les concede una representación textual implícita. Actions, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}` mientras no exista una conversión o proyección textual explícita aplicable.
 
 Una `thing`, un alias nominal y un miembro de `family` se representan mediante su `~name` efectivo. Su ancla canónica se obtiene mediante `~anchor`; modificar `~name` no cambia igualdad, path ni ancla. Un miembro de `family` sin sobrescritura usa inicialmente su nombre nominal. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
 
@@ -1583,7 +1623,7 @@ Los `~...` configurables preceden al contenido ordinario. Campos, componentes y 
 
 ## Actualización de superficie por D-096
 
-D-096 sustituye dentro de este capítulo cualquier formulación anterior incompatible en cuatro puntos: `look` admite `given`; actions, rules reactivas y messages admiten locales `:=` antes de sus cláusulas de comportamiento; `all D` materializa explícitamente un dominio enumerable y convive con el literal contextual `all`; `start with` ya no separa `things` y `rules`, sino que acepta una expresión o un bloque unificado de contribuciones. La EBNF normativa refleja estas formas.
+D-096 gobierna de forma literal la superficie vigente de este capítulo: `look` admite `given`; actions, rules reactivas y messages admiten locales `:=` antes de sus cláusulas de comportamiento; `all D` materializa explícitamente un dominio enumerable; `start with` usa contribuciones unificadas; y los tipos callable y las expresiones terminadas en `~type` pueden aparecer en posición de tipo según las reglas anteriores. La EBNF normativa refleja estas formas.
 
 La sintaxis concreta completa de `mud.module` no se fija aquí mientras Q-062 siga abierta.
 

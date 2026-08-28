@@ -28,6 +28,7 @@ decisions:
   - D-085
   - D-086
   - D-087
+  - D-096
 ---
 
 # 04. Modelo matemático del mundo
