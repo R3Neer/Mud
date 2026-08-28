@@ -1620,8 +1620,3 @@ El contexto de tipo también puede construir el alias sin `to`. El compilador no
 ## Metadatos reflectivos
 
 Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.
-
-
-### Metadata de usuario llamada `private`
-
-`private` no es un metadato estándar ni controla visibilidad. Como `metadata-name` admite identificadores ordinarios, `~private` puede declararse y consultarse como metadata de usuario cuando el propietario admita metadata configurable. Se comporta como cualquier otra metadata de extensión y no recibe tratamiento especial.

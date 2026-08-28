@@ -33,7 +33,7 @@ affects:
 
 ## Contexto
 
-La evolución de MUD había dejado varias fronteras artificialmente separadas: actions elementales frente a compuestas, `look` como consulta esencialmente exterior, `message` como salida diferida al host, privacidad mediante `~private`, activación separada en `things` y `rules` y consumo implícito de dominios en operaciones que producen colecciones. Estas separaciones interactúan mal cuando el lenguaje se organiza en módulos, permite valores callable y usa una resolución causal por ondas.
+La evolución de MUD había dejado varias fronteras artificialmente separadas: actions elementales frente a compuestas, `look` como consulta esencialmente exterior, `message` como salida diferida al host, activación separada en `things` y `rules` y consumo implícito de dominios en operaciones que producen colecciones. Estas separaciones interactúan mal cuando el lenguaje se organiza en módulos, permite valores callable y usa una resolución causal por ondas.
 
 Esta decisión unifica esas piezas sin cerrar las cuestiones de tipado callable, identidad de tipos anónimos ni gramática completa de `mud.module` que siguen abiertas.
 
@@ -51,7 +51,7 @@ Una `action` o `subaction` puede invocarse desde cualquier contexto semántico `
 
 ### Módulos y visibilidad
 
-`~private` deja de ser metadato estándar y desaparece también como default de fichero. El identificador `private` permanece disponible como nombre ordinario de metadata de usuario: una metadata `~private` no recibe significado especial ni controla visibilidad. La visibilidad se deriva de la categoría semántica, el módulo propietario, los contratos entre módulos y el cierre de tipos requerido por esos contratos.
+La visibilidad se deriva de la categoría semántica, el módulo propietario, los contratos entre módulos y el cierre de tipos requerido por esos contratos.
 
 Un módulo es una unidad de encapsulación semántica. Entre módulos, la frontera operacional visible se compone de `action`, `look`, `message` y, solo en contexto de tests, `test`. La frontera de aplicación hacia el host incluye `action`, `look` y `message`, no `test`.
 
@@ -185,7 +185,7 @@ La API anfitriona canónica se organiza alrededor de la identidad de las operaci
 
 ## Restricciones adicionales
 
-- No existen modificadores explícitos `public`, `private`, `internal` ni `~private` para controlar la frontera modular.
+- La frontera modular no se controla mediante modificadores explícitos de visibilidad.
 - La reflexión cruzada debe ser segura por contrato; no se censuran resultados silenciosamente.
 - Una `thing` no puede especializar una `thing` de otro módulo.
 - Una llamada action/subaction interna nunca abre una resolución raíz nueva.
