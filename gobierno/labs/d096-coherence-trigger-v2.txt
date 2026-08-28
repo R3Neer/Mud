@@ -1,1 +1,1 @@
-trigger literal D-096 residual audit final
+trigger literal D-096 residual idempotence
