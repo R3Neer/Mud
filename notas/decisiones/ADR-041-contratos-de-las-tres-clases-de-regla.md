@@ -86,7 +86,7 @@ Los activadores temporales se componen con las palabras `and` y `or`. Un operand
 
 ### Inicialización de la memoria reactiva
 
-Las vinculaciones presentes en la primera instantánea obtenida al materializar conjuntamente el `start with` global o local reciben para cada rama booleana elevada un valor anterior virtual $\mathsf{false}$. Si la rama es verdadera en esa primera instantánea de estabilización, pulsa. Las expresiones temporales, incluidos `changes` y `old`, comparan la instantánea inicial consigo misma: `changes` no pulsa y `old e` vale lo mismo que `e`.
+Las vinculaciones presentes en la primera instantánea obtenida al materializar conjuntamente las contribuciones `start with` de los módulos, o las contribuciones reunidas para el mundo de un test, reciben para cada rama booleana elevada un valor anterior virtual $\mathsf{false}$. Si la rama es verdadera en esa primera instantánea de estabilización, pulsa. Las expresiones temporales, incluidos `changes` y `old`, comparan la instantánea inicial consigo misma: `changes` no pulsa y `old e` vale lo mismo que `e`.
 
 Una vinculación que no estaba presente en esa primera instantánea, ya sea por activación posterior de una regla o por aparición de participantes, no participa en la raíz u onda que la crea. En su primera onda activa memoriza el valor actual sin disparar `when` ni producir un pulso `changes`. Desde la onda siguiente compara normalmente dos instantáneas. En particular, si memoriza $\mathsf{false}$ y la condición es $\mathsf{true}$ en la onda posterior, `when` dispara; si memoriza inicialmente $\mathsf{true}$, esa mera aparición no dispara.
 

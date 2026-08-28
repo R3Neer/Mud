@@ -118,7 +118,7 @@ No vuelve a ejecutar los inicializadores ni cambia el descriptor.
 
 `with` es una palabra reservada.
 
-`start` es una palabra contextual: el parser la reconoce como introductor del `start with` global o del `start with` local de un test.
+`start` es una palabra contextual: el parser la reconoce como introductor de una contribución modular `start with` de primer nivel o del `start with` contenido en un test.
 
 `abstract` también es contextual: el parser lo reconoce como modificador únicamente delante de `thing`. Fuera de esa posición puede usarse como identificador ordinario.
 

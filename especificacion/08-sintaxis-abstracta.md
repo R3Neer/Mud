@@ -498,7 +498,7 @@ La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las
 
 El AST superficial usa un único `ActionDecl`.
 
-La clasificación como elemental o compuesta requiere resolver los `ActionCallCandidateEffect`; por ello pertenece al IR semántico después de resolución y elaboración. La forma superficial no inventa una clasificación basada únicamente en la apariencia de un `postfix-expression`.
+No existe una clasificación semántica de actions elementales frente a compuestas. `ActionCallCandidateEffect` solo conserva que un `postfix-expression` ocupa una posición de efecto cuya naturaleza callable debe resolverse después; la resolución decide su destino, no una supuesta clase elemental/compuesta de la action propietaria.
 
 Una acción contiene:
 
@@ -733,7 +733,6 @@ Un AST superficial conforme no puede contener:
 - Dos órdenes de colección.
 - `given` mutable.
 - Declaraciones de metadatos duplicadas en una misma unidad.
-- Acción ya clasificada elemental o compuesta sin resolución.
 - Símbolo o ancla resueltos.
 - Tipo inferido insertado como si se hubiera escrito.
 - Comentarios ordinarios.

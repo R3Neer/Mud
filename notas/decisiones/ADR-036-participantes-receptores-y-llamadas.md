@@ -19,6 +19,7 @@ affects:
 - Amplía: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
+- Modificada por: [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|D-096]]
 - Preguntas relacionadas: Q-011, Q-012, Q-013
 - Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24
 
@@ -34,7 +35,7 @@ Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilida
 
 D-025 fija las cabeceras:
 
-- `on`: vinculaciones automáticas e individuales de `thing` para reglas reactivas, `always` y `message`.
+- `on`: vinculaciones automáticas de un valor por rol para reglas reactivas, `always` y `message`; la forma directa usa el universo implícito de `thing` concretas activas y la forma relacionada `nombre[: Tipo] in fuente` obtiene valores de una fuente finita enumerable.
 - `for`: roles individuales o colectivos de cualquier tipo declarado, suministrados a reglas booleanas, actions y `look`.
 - `given`: valores auxiliares de reglas booleanas, actions, subactions y `look`.
 
@@ -139,9 +140,9 @@ rule MutualFriends on
 }
 ```
 
-Los nombres son visibles en toda la cabecera y sus restricciones se resuelven conjuntamente, no de izquierda a derecha. Para cada rol se parte de las `thing` concretas y activas de su tipo efectivo; el conjunto de vinculaciones es el join finito que satisface todas las pertenencias. Una solución de tipos ambigua exige anotaciones adicionales. Los ciclos relacionales no son puntos fijos y leen una única instantánea, conforme a D-063.
+Los nombres son visibles en toda la cabecera y sus restricciones se resuelven conjuntamente, no de izquierda a derecha. Cada rol obtiene su universo conforme a su forma: el universo implícito de `thing` concretas activas para `on` directo o los miembros de la fuente finita enumerable para `on ... in fuente`. El conjunto de vinculaciones es el join finito que satisface todas las pertenencias sobre una misma instantánea. Una solución de tipos ambigua exige anotaciones adicionales. Los ciclos relacionales no son puntos fijos y leen una única instantánea, conforme a D-063.
 
-Las asignaciones de roles conservan orientación, permiten que dos roles reciban la misma `thing` y no deduplican automáticamente parejas simétricas. En participantes suministrados mediante `for`, las restricciones relacionales adicionales se expresan mediante tipos o condiciones.
+Las asignaciones de roles conservan orientación, permiten que dos roles reciban el mismo valor cuando satisface ambos contratos y no deduplican automáticamente parejas simétricas. En participantes suministrados mediante `for`, las restricciones relacionales adicionales se expresan mediante tipos o condiciones.
 
 ### Identidad exacta y selección por tipo
 

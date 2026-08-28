@@ -366,12 +366,7 @@ callable-kind
     ::= "action" | "rule" | "look" ;
 
 reflected-type
-    ::= reflected-type-base , "~" , "type" ;
-
-reflected-type-base
-    ::= qualified-name , { member-access | index-access | call-arguments }
-      | "(" , expression , ")"
-      ;
+    ::= postfix-expression , "~" , "type" ;
 
 interval-type
     ::= type-reference , "Interval" ;

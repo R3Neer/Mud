@@ -9,6 +9,7 @@ decisions:
   - D-023
   - D-031
   - D-054
+  - D-096
 affects: []
 superseded-by: []
 ---
@@ -25,7 +26,7 @@ Falta decidir:
 
 - Qué resultado obtiene una acción solicitada en el mismo caso: `rejected`, `failed` u otro resultado.
 - Si una regla con varias creaciones exige que todas sus identidades estén ausentes.
-- Cómo se combinan creaciones de disponibilidad mixta dentro de acciones compuestas.
+- Cómo se combinan creaciones de disponibilidad mixta dentro de una secuencia `then`, incluidas las aportadas transitivamente por llamadas internas.
 
 D-054 exige una única definición completa de primer nivel para cada `thing` y regla. Varias activaciones concurrentes de una misma identidad ausente se consolidan idempotentemente; ya no existen cuerpos ni fragmentos que fusionar. D-031 retira los aliases del sistema de `create` y `destroy`. La activación y destrucción solicitadas por `then` distintos dejan la identidad destruida al cerrar la oleada.
 

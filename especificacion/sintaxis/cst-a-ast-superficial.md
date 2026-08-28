@@ -695,7 +695,7 @@ Las unidades usan exactamente la misma proyección: `unit-body` es solo un conte
 ## D-096 — tipos callable, `look`, locales, `all D` y `start with`
 
 - `callable-type` produce `CallableType(kind, receivers, givens)` conservando literalmente categoría y tipos escritos; la compatibilidad/varianza se difiere a Q-063.
-- `reflected-type` produce `ReflectedType(value)` y la elaboración posterior exige que ese valor termine en `~type` y denote estáticamente `Type`; el IR semántico sustituye esa forma por el tipo representado.
+- `reflected-type` consume una `postfix-expression` seguida por `~type` y produce `ReflectedType(value)`; la elaboración posterior exige que la propiedad reflectiva denote estáticamente `Type` y el IR semántico sustituye esa forma por el tipo representado.
 - `look-declaration` proyecta su `given-clause` opcional a `LookDecl.givens`.
 - Las `local-value-declaration` situadas entre metadatos y cláusulas de action/rule reactiva/message se proyectan a `leading_locals` de su declaración, no al `EffectBlock` posterior.
 - El prefijo `all D` se normaliza como `PrefixExpr(EnumerateAll, D)`; el literal contextual sin operando conserva `AllLiteral`.

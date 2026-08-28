@@ -863,18 +863,9 @@ syntax_nodes:
     references: []
   reflected-type:
     kind: ReflectedTypeSyntax
-    rhs: 'reflected-type-base , "~" , "type"'
+    rhs: 'postfix-expression , "~" , "type"'
     references:
-    - reflected-type-base
-  reflected-type-base:
-    kind: ReflectedTypeBaseSyntax
-    rhs: "qualified-name , { member-access | index-access | call-arguments }\n      | \"(\" , expression , \")\""
-    references:
-    - qualified-name
-    - member-access
-    - index-access
-    - call-arguments
-    - expression
+    - postfix-expression
   interval-type:
     kind: IntervalTypeSyntax
     rhs: type-reference , "Interval"

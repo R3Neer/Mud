@@ -17,6 +17,7 @@ affects:
 
 - Actualizada: 2026-07-28 para usar el vocabulario de D-025
 - Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 - Relacionada con: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
 - Preguntas relacionadas: [[notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos|Q-002]], [[notas/preguntas/Q-006-conflictos|Q-006]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz|Q-046]]
 - Documentos afectados: futuros capítulos 25, 28, 29 y 31
@@ -140,7 +141,7 @@ Las nuevas reglas y suspensiones afectan a la construcción de bindings y evalua
 - Activaciones múltiples dentro de un mismo `then`.
 - Resultado operativo de una acción cuya activación resulta inefectiva.
 - Matriz completa de asignaciones, aritmética y operaciones de colección.
-- Interacción exacta con acciones compuestas y sus hojas simultáneas.
+- Matriz completa de conflictos entre deltas de bloques concurrentes que incorporan transitivamente efectos de llamadas internas ya ejecutadas en secuencia dentro de cada delta privado.
 
 ## Verificación futura
 
