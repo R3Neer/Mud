@@ -83,6 +83,10 @@ jobs:
           python especificacion/sintaxis/validate_syntax_model.py
           git diff --check
 
+      - name: Auditoría global de residuos D-096
+        working-directory: candidate
+        run: python ../control/gobierno/labs/audit_modulos_callables_residuos_20260828.py
+
       - name: Auditoría de superficie generada
         working-directory: candidate
         shell: bash
