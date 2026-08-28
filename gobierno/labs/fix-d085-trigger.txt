@@ -1,1 +1,0 @@
-Trigger temporal del laboratorio D-085. El workflow lo elimina antes de construir el árbol candidato.
