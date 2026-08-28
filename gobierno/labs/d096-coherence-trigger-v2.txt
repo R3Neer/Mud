@@ -1,1 +1,1 @@
-trigger literal D-096 residual idempotence
+trigger full D-096 coherence validation
