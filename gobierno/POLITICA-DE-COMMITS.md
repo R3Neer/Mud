@@ -52,7 +52,9 @@ No se mezclarán:
 - Cambios normativos no relacionados.
 - Reformateo masivo con cambios semánticos.
 - Trabajo del autor ajeno a la tarea.
-- Archivos temporales o estado local de Obsidian.
+- Archivos efímeros ordinarios, builds, logs, caches, volcados o estado local de Obsidian.
+
+Un documento intencionadamente temporal puede permanecer versionado únicamente bajo [[POLITICA-DE-ARCHIVOS-TEMPORALES|la política de archivos temporales]]. Su temporalidad no lo exime de la atomicidad del commit ni convierte residuos efímeros en material versionable.
 
 ## Formato del mensaje
 
@@ -136,6 +138,16 @@ Para cambios normativos se incluirán, cuando proceda:
 - Preguntas cerradas o creadas.
 - Pruebas de conformidad.
 
+## Gate de archivos temporales
+
+Antes de cualquier commit se ejecuta:
+
+```powershell
+python gobierno/validate_temporaries.py
+```
+
+El inventario impreso debe revisarse completo. Si la condición `temporary-delete-when` de algún documento ya se cumple, ese documento debe eliminarse antes de cerrar el commit, salvo que el propio cambio modifique explícitamente su ciclo de vida. Una fecha `temporary-delete-after` vencida bloquea mecánicamente el commit.
+
 ## Proceso previo
 
 Antes de crear un commit, Codex debe:
@@ -144,11 +156,12 @@ Antes de crear un commit, Codex debe:
 2. Revisar `git status`.
 3. Identificar archivos previos o ajenos.
 4. Inspeccionar el diff.
-5. Ejecutar validaciones disponibles.
-6. Añadir únicamente los archivos de la unidad atómica.
-7. Revisar el diff staged.
-8. Crear el commit.
-9. Confirmar que el estado posterior es el esperado.
+5. Ejecutar `python gobierno/validate_temporaries.py` y revisar semánticamente todo su inventario.
+6. Ejecutar las demás validaciones disponibles.
+7. Añadir únicamente los archivos de la unidad atómica.
+8. Revisar el diff staged.
+9. Crear el commit.
+10. Confirmar que el estado posterior es el esperado.
 
 ## Rama principal
 
