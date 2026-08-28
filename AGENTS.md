@@ -22,6 +22,17 @@ Los espacios marcados como trabajo del autor no deben completarse automáticamen
 
 Una explicación didáctica nunca puede introducir silenciosamente una regla normativa.
 
+## Instantánea normativa
+
+Los documentos y artefactos normativos de `especificacion/` describen el estado actual de MUD dentro de su alcance. Antes de modificarlos se deben aplicar íntegramente MUD-EDIT-002 y MUD-EDIT-003 de `especificacion/00-convenciones-editoriales.md`.
+
+En particular:
+
+- La historia de introducción, modificación, sustitución o retirada de una regla no se conserva en el cuerpo normativo; pertenece a ADR, Git y metadatos de trazabilidad.
+- Las decisiones relacionadas se registran mediante `decisions:` y no se narran como procedencia dentro del cuerpo de `especificacion/`.
+- Una pregunta activa puede citarse en el cuerpo solo para delimitar una incertidumbre que afecta al estado actual; debe figurar también en `questions:`.
+- Una decisión vigente debe integrarse en toda superficie normativa ya desarrollada cuya responsabilidad cubra su alcance. Si la ubicación canónica todavía no existe, no se inventa una superficie provisional solo para alojarla, pero ninguna superficie existente puede contradecirla.
+
 ## Git
 
 Antes de modificar archivos se debe leer y seguir `gobierno/POLITICA-DE-COMMITS.md`.

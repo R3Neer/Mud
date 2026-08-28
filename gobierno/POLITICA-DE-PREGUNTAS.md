@@ -18,7 +18,7 @@ Una pregunta identifica una incertidumbre concreta que puede impedir completar l
 
 ## Autoridad
 
-Las preguntas se registran en `notas/preguntas/`. No definen semántica por sí mismas. Una respuesta solo pasa a ser una regla de MUD mediante una decisión aceptada conforme a [[POLITICA-DE-DECISIONES]] y su promoción a `especificacion/` conforme a [[CICLO-DOCUMENTAL]].
+Las preguntas se registran en `notas/preguntas/`. No definen semántica por sí mismas. Una respuesta solo pasa a ser una regla de MUD mediante una decisión aceptada conforme a [[POLITICA-DE-DECISIONES]] y su integración en las superficies normativas correspondientes conforme a [[CICLO-DOCUMENTAL]].
 
 Cada pregunta dispone de un archivo estable:
 
@@ -45,9 +45,7 @@ El campo `resolved` es la única fuente de verdad del estado de una pregunta:
 - `resolved:` (`[-]`): parcialmente decidida; el archivo enumera de forma exacta qué falta.
 - `resolved: true` (`[x]`): cerrada; no queda ninguna incertidumbre dentro de su alcance.
 
-Las preguntas abiertas y parcialmente decididas son activas. Si una pregunta se
-cierra porque fue descartada, la sección `Resolución` explica el motivo. Si fue
-sustituida, `superseded-by` enlaza las preguntas que cubren ahora su alcance.
+Las preguntas abiertas y parcialmente decididas son activas. Si una pregunta se cierra porque fue descartada, la sección `Resolución` explica el motivo. Si fue sustituida, `superseded-by` enlaza las preguntas que cubren ahora su alcance.
 
 ## Contenido mínimo
 
@@ -69,15 +67,9 @@ superseded-by: []
 
 La prioridad es `P0`, `P1` o `P2` y determina la sección del índice activo; no forma parte de la identidad estable de la pregunta.
 
-`opened` contiene en formato `YYYY-MM-DD` la fecha de creación del archivo
-estable de la pregunta y no cambia
-durante su ciclo de vida. En preguntas migradas desde un registro anterior,
-`closed` puede ser anterior a `opened` porque documenta el cierre de la pregunta,
-no la creación posterior de su archivo individual.
+`opened` contiene en formato `YYYY-MM-DD` la fecha de creación del archivo estable de la pregunta y no cambia durante su ciclo de vida. En preguntas migradas desde un registro anterior, `closed` puede ser anterior a `opened` porque documenta el cierre de la pregunta, no la creación posterior de su archivo individual.
 
-`closed` queda vacío mientras la pregunta esté activa. Cuando pasa a un estado
-inactivo contiene la fecha de cierre en formato `YYYY-MM-DD`. Los campos
-`resolved` y `closed` deben actualizarse en el mismo cambio.
+`closed` queda vacío mientras la pregunta esté activa. Cuando pasa a un estado inactivo contiene la fecha de cierre en formato `YYYY-MM-DD`. Los campos `resolved` y `closed` deben actualizarse en el mismo cambio.
 
 Y contiene, cuando proceda:
 
@@ -96,23 +88,25 @@ Una pregunta parcialmente decidida no repite como pendiente lo ya resuelto. La s
 
 ### Criterios y evidencia de cierre
 
-Los criterios de cierre que se usen para declarar una pregunta resuelta llevan
-identificadores locales `C1`, `C2`, ... y describen condiciones comprobables, no
-la mera existencia de una decisión enlazada. Una pregunta puede conservar texto
-explicativo adicional, pero el conjunto de criterios identificados constituye la
-lista que debe quedar satisfecha para cerrarla.
+Los criterios de cierre que se usen para declarar una pregunta resuelta llevan identificadores locales `C1`, `C2`, ... y describen condiciones comprobables, no la mera existencia de una decisión enlazada. Una pregunta puede conservar texto explicativo adicional, pero el conjunto de criterios identificados constituye la lista que debe quedar satisfecha para cerrarla.
 
-Una pregunta `resolved: true` contiene además `## Evidencia de cierre`. Por cada
-criterio existe exactamente una entrada con el mismo identificador que cita la
-evidencia concreta: decisiones, reglas normativas, artefactos mecánicos, casos de
-conformidad o un descarte explícito. El validador comprueba la correspondencia
-estructural entre criterios y evidencia; la revisión semántica humana continúa
-siendo responsable de comprobar que esa evidencia demuestra realmente el
-criterio.
+Una pregunta `resolved: true` contiene además `## Evidencia de cierre`. Por cada criterio existe exactamente una entrada con el mismo identificador que cita la evidencia concreta: decisiones, reglas normativas, artefactos mecánicos, casos de conformidad o un descarte explícito. El validador comprueba la correspondencia estructural entre criterios y evidencia; la revisión semántica humana continúa siendo responsable de comprobar que esa evidencia demuestra realmente el criterio.
 
-Las preguntas históricas cerradas se migran a esta estructura cuando se adopta
-esta política; una evidencia generada durante la migración no exime de revisar su
-suficiencia cuando el alcance vuelva a tocarse.
+Las preguntas históricas cerradas se migran a esta estructura cuando se adopta esta política; una evidencia generada durante la migración no exime de revisar su suficiencia cuando el alcance vuelva a tocarse.
+
+## Referencias desde la especificación
+
+Una pregunta activa puede aparecer explícitamente en el cuerpo de `especificacion/` cuando su existencia sea necesaria para delimitar qué parte del estado actual todavía no está decidida. Esta excepción es informativa sobre la frontera vigente de la norma y no concede semántica a la pregunta.
+
+Toda referencia corporal a una pregunta:
+
+1. debe apuntar a una pregunta activa;
+2. debe expresar de forma local y precisa qué queda abierto;
+3. debe figurar también en el frontmatter `questions:` del documento cuando este disponga de frontmatter;
+4. no debe narrar qué decisiones originaron, modificaron o dejaron abierta la pregunta;
+5. debe retirarse del cuerpo y del frontmatter cuando la pregunta se cierre o deje de afectar al documento.
+
+Una pregunta activa que solo sea relevante para investigación, planificación o un capítulo todavía inexistente no necesita aparecer en un documento normativo ajeno a su ubicación canónica.
 
 ## Apertura
 
@@ -124,7 +118,7 @@ Antes de crear una pregunta se comprueba que:
 4. Identifique los capítulos, decisiones o pruebas afectados.
 5. Distinga alternativas reales cuando ya se conozcan.
 
-La nueva pregunta se añade al índice activo y al frontmatter `questions` de cada capítulo cuyo significado impida cerrar.
+La nueva pregunta se añade al índice activo y al frontmatter `questions` de cada documento normativo desarrollado cuyo estado actual quede delimitado por esa incertidumbre.
 
 ## Cierre
 
@@ -134,28 +128,28 @@ Una pregunta se cierra cuando:
 2. El conjunto de criterios cubre todo el alcance de la pregunta; un ADR enlazado por sí solo no constituye cierre.
 3. Se actualizan los documentos normativos y técnicos afectados.
 4. Se retira de `notas/preguntas/README.md`.
-5. Se retira del frontmatter `questions` y de los callouts abiertos de la especificación.
+5. Se retira del frontmatter `questions` y de las referencias o callouts abiertos de la especificación.
 6. Su archivo conserva la respuesta, la fecha de cierre, los criterios, la evidencia y los enlaces de procedencia.
 
-Cerrar no elimina ni recicla el archivo. Las referencias históricas pueden seguir enlazándolo, pero no deben describirlo como pendiente.
+Cerrar no elimina ni recicla el archivo. Las referencias históricas pueden seguir enlazándolo fuera de la exposición normativa vigente, pero no deben describirlo como pendiente.
 
 ## Comprobaciones editoriales
 
 Antes de publicar una unidad se verifica:
 
 - que todo identificador incluido en `questions` corresponda a una pregunta activa;
-- que toda advertencia normativa sobre una cuestión pendiente enlace una pregunta activa;
-- que una pregunta cerrada no permanezca en el índice activo;
-- que `opened` contenga una fecha válida y que `closed` solo esté vacío en
-  preguntas activas según `resolved`;
+- que toda referencia o advertencia normativa sobre una cuestión pendiente enlace una pregunta activa;
+- que toda pregunta citada en el cuerpo figure también en `questions:` cuando exista ese frontmatter;
+- que una pregunta cerrada no permanezca en el cuerpo normativo, el frontmatter ni el índice activo;
+- que las referencias corporales describan únicamente la incertidumbre presente y no la historia decisional;
+- que `opened` contenga una fecha válida y que `closed` solo esté vacío en preguntas activas según `resolved`;
 - que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
-- que no existan estados parciales sin una enumeración explícita de lo pendiente.
+- que no existan estados parciales sin una enumeración explícita de lo pendiente;
 - que toda pregunta cerrada tenga criterios `C1`, `C2`, ... y una evidencia exactamente correspondiente a cada criterio;
 - que ninguna entrada de evidencia invoque un criterio inexistente;
 - que la revisión de cierre no confunda un enlace a ADR con evidencia suficiente por sí misma.
 
-El índice activo se regenera desde los metadatos y después se valida desde la
-raíz:
+El índice activo se regenera desde los metadatos y después se valida desde la raíz:
 
 ```powershell
 python tooling/questions/validate_questions.py generate

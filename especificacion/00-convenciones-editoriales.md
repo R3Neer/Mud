@@ -67,7 +67,7 @@ Estados:
 
 Si un capítulo no vigente contradice una decisión vigente, la contradicción es un defecto editorial que debe corregirse antes de promover el capítulo. No se interpreta como una sustitución tácita de la decisión. La relación entre prosa y artefactos mecánicos normativos sigue regida por MUD-EDIT-001: una divergencia entre ambos es un defecto, no una regla de prioridad silenciosa.
 
-## 3. Enlaces
+## 3. Enlaces y trazabilidad
 
 Los enlaces internos usarán preferentemente wikilinks:
 
@@ -78,12 +78,46 @@ Los enlaces internos usarán preferentemente wikilinks:
 
 Cada capítulo debe enlazar:
 
-- Sus dependencias.
+- Sus dependencias normativas.
 - Los términos definidos en otro capítulo.
-- Las decisiones que justifican reglas no obvias.
-- Las preguntas abiertas que impiden cerrarlo.
+- Las preguntas activas que delimiten una incertidumbre relevante para su contenido.
 
-No se duplicará una definición para evitar un enlace.
+Las decisiones que sustentan el capítulo se registran en el frontmatter `decisions:`. No se duplicará una definición para evitar un enlace.
+
+### 3.1. Estado vigente e historia
+
+> [!rule] MUD-EDIT-002 — Especificación como estado vigente
+> El cuerpo de todo documento normativo de `especificacion/` debe describir únicamente el estado actual de MUD dentro de su alcance. No debe conservar como parte de la exposición normativa la historia de introducción, modificación, sustitución o retirada de una regla.
+
+La historia y la procedencia pertenecen a los ADR, las preguntas históricas, Git y los metadatos de trazabilidad. En consecuencia:
+
+- El cuerpo normativo no usa identificadores `D-NNN` o `ADR-NNN` para justificar, fechar, introducir, actualizar o sustituir reglas. La relación con decisiones se conserva en `decisions:`.
+- No se crean secciones cuya función sea corregir aditivamente el contenido anterior, como «Actualización por D-NNN», «Revisión por D-NNN», «Tokens retirados» o equivalentes. La regla vigente se integra en su ubicación canónica y la formulación anterior se elimina.
+- Una prohibición o ausencia que forme parte del lenguaje actual puede expresarse directamente, por ejemplo «X es inválido» o «X no forma parte de esta gramática». No se conserva la narración histórica «X se eliminó» salvo que el hecho histórico sea el objeto explícito de un documento no normativo.
+- La misma regla se aplica a los comentarios explicativos de EBNF, ASDL, YAML y demás artefactos normativos mecánicos dentro de `especificacion/`.
+
+Las preguntas activas son una excepción deliberada a la ausencia de identificadores históricos en el cuerpo. Un documento puede citar una `Q-NNN` cuando sea necesario indicar con precisión qué parte de su estado actual permanece sin decidir. Esa referencia:
+
+1. debe corresponder a una pregunta activa;
+2. debe figurar también en el frontmatter `questions:` del documento cuando este disponga de frontmatter;
+3. debe describir la incertidumbre presente, no la historia de las decisiones que la produjeron;
+4. debe retirarse del cuerpo y del frontmatter cuando la pregunta deje de estar activa.
+
+### 3.2. Integración de decisiones en superficies desarrolladas
+
+> [!rule] MUD-EDIT-003 — Integración por superficie desarrollada
+> Una decisión vigente debe quedar integrada en toda superficie normativa ya desarrollada cuya responsabilidad declarada cubra la regla afectada. Si la ubicación canónica todavía no existe como superficie desarrollada, la ausencia de ese futuro capítulo no constituye por sí sola un defecto de integración.
+
+A estos efectos, una superficie está desarrollada cuando existe un documento o artefacto normativo que ya asume responsabilidad sustantiva sobre esa materia. Una mera entrada `Archivo previsto` no obliga a crear anticipadamente el capítulo ni a alojar su semántica en otro capítulo impropio.
+
+Mientras la superficie canónica no exista:
+
+- el ADR vigente puede conservar autoridad transitoria sobre esa parte;
+- ninguna superficie normativa existente puede contradecir la decisión;
+- los índices, mapas y descripciones de capítulos futuros deben ser compatibles con el estado ya decidido y no pueden conservar semántica sustituida;
+- no se considera integrada globalmente una regla solo porque figure en un ADR, pero tampoco se considera defectuosa por no aparecer en un capítulo que aún no existe.
+
+La integración se evalúa por superficie afectada. Cuando una superficie ya desarrollada contiene la materia, debe reescribirse para expresar literalmente el estado vigente y no basta con añadir una nota correctiva al final.
 
 ## 4. Callouts
 
@@ -216,7 +250,7 @@ Formato:
 
 Mientras una pregunta afecte al significado de una construcción, el capítulo no puede pasar a `vigente`.
 
-El frontmatter `questions` enumera solo preguntas en estado `abierta` o `parcialmente-decidida`. Una pregunta cerrada se retira de la lista sin borrar su archivo histórico.
+El frontmatter `questions` enumera solo preguntas en estado `abierta` o `parcialmente-decidida`. Una pregunta cerrada se retira de la lista sin borrar su archivo histórico. Las referencias corporales a preguntas activas siguen además MUD-EDIT-002.
 
 ## 11. Teoremas y demostraciones
 

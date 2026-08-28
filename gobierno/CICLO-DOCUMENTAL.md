@@ -14,7 +14,7 @@ Gestión de cuestiones abiertas: [[POLITICA-DE-PREGUNTAS|Política de preguntas 
 
 ## Propósito
 
-La formalización se aprende de manera didáctica, pero la especificación publicada debe tener apariencia y precisión profesionales. Este proceso impide que ejercicios, ayudas personales o razonamientos provisionales se filtren dentro de la norma.
+La formalización se aprende de manera didáctica, pero la especificación publicada debe tener apariencia y precisión profesionales. Este proceso impide que ejercicios, ayudas personales, razonamientos provisionales o historia decisional se filtren dentro de la exposición de la norma vigente.
 
 ## Dos superficies
 
@@ -47,8 +47,8 @@ Puede contener:
 - Notación formal.
 - Ejemplos y contraejemplos informativos.
 - Teoremas, lemas, demostraciones y conjeturas claramente clasificados.
-- Cuestiones abiertas explícitas.
-- Referencias a decisiones.
+- Cuestiones abiertas explícitas cuando delimitan el estado actual.
+- Metadatos de trazabilidad hacia decisiones y preguntas.
 - Criterios de conformidad.
 
 No puede contener:
@@ -58,8 +58,12 @@ No puede contener:
 - Seguimiento del aprendizaje.
 - Conversación.
 - Explicaciones que presupongan el historial personal del proyecto.
+- Historia de introducción, modificación, sustitución o retirada de reglas como parte de la exposición normativa.
+- Secciones aditivas que corrijan una regla anterior en vez de reescribir su ubicación canónica.
 - Soluciones incompletas presentadas como norma.
 - Simplificaciones didácticas no etiquetadas.
+
+La separación entre estado vigente, decisiones y cuestiones abiertas se rige por MUD-EDIT-002 y MUD-EDIT-003 de [[especificacion/00-convenciones-editoriales]].
 
 ## Estados de un capítulo
 
@@ -87,6 +91,16 @@ Antes de `vigente`, un capítulo puede recoger reglas que ya tengan autoridad po
 
 Por tanto, la promoción a `vigente` certifica el capítulo completo; no es el mecanismo que hace vigentes retroactivamente las decisiones que ya documentaba.
 
+### Integración de decisiones vigentes
+
+La promoción de una decisión no obliga a crear anticipadamente todos los capítulos futuros de la especificación. Se aplica MUD-EDIT-003:
+
+1. Se identifican las superficies normativas ya desarrolladas cuya responsabilidad cubre la decisión.
+2. Todas ellas se actualizan en el mismo cambio o se registra explícitamente un bloqueo que impida hacerlo.
+3. Si la ubicación canónica todavía es solo un capítulo previsto, el ADR vigente mantiene autoridad transitoria sobre esa parte hasta su formalización.
+4. Ningún documento existente, incluidos índices y mapas de capítulos futuros, puede conservar una descripción incompatible con la decisión vigente.
+5. No se considera suficiente añadir al final de un documento una sección de «actualización»: la regla vigente debe quedar integrada en su lugar canónico.
+
 ## Promoción de material
 
 El aprendizaje no se copia mecánicamente a la especificación. La promoción sigue estos pasos:
@@ -98,10 +112,11 @@ El aprendizaje no se copia mecánicamente a la especificación. La promoción si
 5. Se unifica la notación con [[especificacion/03-notacion]].
 6. Se añaden identificadores normativos.
 7. Se comprueban ejemplos, contraejemplos e interacciones.
-8. Se verifican enlaces, dependencias y procedencia.
-9. Se elimina cualquier andamiaje didáctico de la superficie normativa.
-10. El autor revisa el texto publicable.
-11. Se cambia el estado y se crea un commit atómico.
+8. Se verifican enlaces, dependencias y metadatos de trazabilidad.
+9. Se elimina del cuerpo cualquier andamiaje didáctico, historia decisional o procedencia que no forme parte del estado vigente.
+10. Se comprueba la integración en todas las superficies ya desarrolladas afectadas.
+11. El autor revisa el texto publicable.
+12. Se cambia el estado y se crea un commit atómico.
 
 ## Pasada de publicación
 
@@ -112,8 +127,10 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 - Correspondencia entre prosa, fórmulas y ejemplos.
 - Ausencia de casos sin definir.
 - Compatibilidad con capítulos vigentes.
+- Compatibilidad con decisiones vigentes aplicables.
 - Distinción entre norma, propuesta y cuestión abierta.
 - Búsqueda de contraejemplos.
+- Comprobación de que ninguna superficie existente conserve semántica sustituida.
 
 ### Revisión formal
 
@@ -126,6 +143,11 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 ### Revisión editorial
 
 - Eliminación de ejercicios, pistas y referencias al proceso personal.
+- Aplicación de MUD-EDIT-002: el cuerpo describe el estado vigente y no la historia de las decisiones.
+- Ausencia de identificadores `D-NNN` o `ADR-NNN` usados como procedencia o justificación en el cuerpo normativo.
+- Preguntas corporales limitadas a preguntas activas, registradas además en `questions:`, y formuladas como incertidumbre presente.
+- Ausencia de secciones aditivas de actualización o retirada.
+- Aplicación de MUD-EDIT-003 a todas las superficies ya desarrolladas afectadas.
 - Redacción normativa uniforme.
 - Identificadores estables.
 - Wikilinks y referencias.
@@ -138,6 +160,7 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 - Markdown y LaTeX bien delimitados.
 - Gramática o esquemas verificables cuando existan.
 - Suite de conformidad actualizada cuando corresponda.
+- Validadores editoriales específicos de MUD-EDIT-002 y MUD-EDIT-003 cuando existan.
 
 ## Conservación del material didáctico
 
