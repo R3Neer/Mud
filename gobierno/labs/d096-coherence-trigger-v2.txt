@@ -1,1 +1,1 @@
-trigger literal D-096 residual audit
+trigger literal D-096 residual audit retry
