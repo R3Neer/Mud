@@ -58,7 +58,7 @@ Una `family-data-assignment` dentro del cuerpo de un miembro es únicamente una 
 
 El metadata-body se añade después de la forma de declaración del dato calculado que resulte vigente. Esta decisión no determina si dicha forma debe admitir todo `derived-value-shape` o limitarse al tipo opcional descrito por D-038; Q-061 conserva esa elección abierta.
 
-`~private` continúa sin ser válido en datos asociados de `family`: D-087 lo restringe a declaraciones de primer nivel compatibles y a campos pertenecientes a una `thing`.
+`~private` no es válido en datos asociados de `family` ni en ninguna otra declaración: D-096 lo retira del lenguaje.
 
 ## Consecuencias
 
@@ -94,3 +94,7 @@ Descartado porque los metadatos describen el slot declarado, no una ocurrencia d
 ## Cuestión abierta relacionada
 
 [[notas/preguntas/Q-061-forma-de-datos-calculados-de-family|Q-061]] debe reconciliar la forma estrecha de D-038 con el `derived-value-shape` que hoy reconoce la EBNF. Nada en D-091 prejuzga esa resolución.
+
+## Modificación vigente por D-096
+
+La referencia histórica a las ubicaciones donde D-087 permitía `~private` queda reemplazada: `~private` ya no forma parte del lenguaje. El resto del contrato de descriptores de datos de `family` permanece vigente.

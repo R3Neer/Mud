@@ -10,7 +10,7 @@ status: activo
 
 Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
 
-Hay 42 preguntas activas: 20 abiertas y 22 parcialmente decididas.
+Hay 47 preguntas activas: 27 abiertas y 20 parcialmente decididas.
 
 Prioridades:
 
@@ -47,11 +47,16 @@ Prioridades:
 | [[Q-022-valores-de-retorno-de-acciones|Q-022 — Valores de retorno de acciones]] | Abierta |
 | [[Q-023-composicion-dinamica|Q-023 — Composición dinámica]] | Abierta |
 | [[Q-050-borrado-en-operadores-booleanos-restantes|Q-050 — Borrado en operadores booleanos restantes]] | Parcialmente decidida |
-| [[Q-051-identidad-y-seleccion-de-un-look|Q-051 — Identidad y selección de un `look`]] | Parcialmente decidida |
-| [[Q-052-entrega-de-message|Q-052 — Entrega de `message`]] | Parcialmente decidida |
 | [[Q-059-observacion-de-resultados-de-accion-en-tests|Q-059 — Observación de resultados de acción en tests]] | Abierta |
 | [[Q-060-catalogo-reflectivo-de-typekind|Q-060 — Catálogo reflectivo de `TypeKind`]] | Abierta |
 | [[Q-061-forma-de-datos-calculados-de-family|Q-061 — Forma declarable de datos calculados de `family`]] | Abierta |
+| [[Q-062-gramatica-completa-de-mud-module|Q-062 — Gramática completa de `mud.module`]] | Abierta |
+| [[Q-063-varianza-y-compatibilidad-de-callables|Q-063 — Varianza y compatibilidad de tipos callable]] | Abierta |
+| [[Q-064-aliases-y-especializacion-entre-modulos|Q-064 — Aliases y especialización nominal entre módulos]] | Abierta |
+| [[Q-065-join-de-resultados-dinamicos-de-look|Q-065 — Join de resultados dinámicos de `look`]] | Abierta |
+| [[Q-066-binding-nominal-de-descriptores-borrados|Q-066 — Binding nominal de descriptores callable borrados]] | Abierta |
+| [[Q-067-participantes-de-message-inexistentes-al-final|Q-067 — Participantes de `message` inexistentes al estado final]] | Abierta |
+| [[Q-068-identidad-de-tipos-anonimos|Q-068 — Identidad e igualdad estructural de tipos anónimos]] | Abierta |
 
 ## P2 — Producto y operación
 

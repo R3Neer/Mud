@@ -37,10 +37,7 @@ Tratarla como una variante de `action` confundiría ambas fronteras y haría nat
 
 ```mud
 test CounterIncreases {
-    start with {
-        things { Counter }
-        rules { empty }
-    }
+    start with Counter
 
     then Counter.value += 1
 
@@ -56,7 +53,7 @@ Un test:
 - Tiene nombre nominal en `PascalCase`.
 - No declara `for`, `given`, `if`, `when` ni participantes.
 - Declara exactamente un `start with`, un `then` y un `after`.
-- No es invocable como acción ni consultable como regla.
+- No es invocable como `action` ni consultable como regla; en contexto de pruebas puede invocarse como operación `test` desde el `then` de otro test visible conforme a D-096.
 - No puede ser objetivo de `create` o `destroy`.
 - No puede aparecer en un conjunto `start with`.
 
@@ -90,30 +87,28 @@ TestAssertion(condition, optionalDiagnostic)
 
 ### Mundo aislado y `start with`
 
-Cada ejecución de un test comienza con un mundo vacío, fresco y aislado. Su `start with` sustituye por completo al `start with` global del programa.
+Cada ejecución de un test comienza con un mundo vacío, fresco y aislado. El `start with` de un test es una contribución propia de activación y no incorpora por sí mismo el `start with` ordinario de los módulos.
 
-El bloque local conserva la misma estructura declarativa que el global de D-085: contiene obligatoriamente las secciones `things { ... }` y `rules { ... }`. Cada una admite contribuciones estáticas de cero, una o varias identidades de su propia categoría mediante referencias, `empty`, colecciones de un nivel o `all` contextual. El orden no es observable y las identidades repetidas se deduplican.
+La superficie es la misma forma unificada de D-096: una contribución directa o un bloque de expresiones que aportan cero, una o varias declaraciones activables `thing | rule`. El orden no es observable y las identidades repetidas se deduplican. No contiene instrucciones `create`, asignaciones ni otros efectos, y una colección anidada es inválida.
 
-No contiene instrucciones `create`, asignaciones ni otros efectos, y una contribución de categoría incorrecta o una colección anidada es inválida.
+Antes de ejecutar el test raíz se calcula estáticamente el cierre transitivo de tests que puede llamar, respetando `uses`, y se unen las contribuciones `start with` de todos ellos. Una llamada posterior a un test ya incluido no vuelve a materializar su activación; un ciclo ejecutable entre tests es inválido. Las declaraciones resultantes se materializan conjuntamente con sus inicializadores canónicos y el mundo se estabiliza antes del `then` raíz.
 
-Las declaraciones referenciadas se materializan conjuntamente con sus inicializadores canónicos. El mundo se valida y estabiliza antes de ejecutar el `then`.
-
-Sea $\mathcal L_P$ el conjunto de declaraciones activables del programa $P$ y sea $I_t\subseteq\mathcal L_P$ el conjunto local del test $t$. El estado previo al escenario se obtiene mediante:
+Sea $C(t)$ el cierre transitivo estático de tests alcanzables desde el test raíz $t$, sea $I_u$ la contribución de activación de cada test $u$ y sea $I_t^*=\bigcup_{u\in C(t)} I_u$. El estado previo al escenario se obtiene mediante:
 
 $$
 W_t^0
 =
 \operatorname{stabilize}
 \bigl(
-\operatorname{materialize}(P,I_t)
+\operatorname{materialize}(P,I_t^*)
 \bigr)
 $$
 
-El conjunto inicial global del programa no interviene en esta construcción.
+La activación inicial ordinaria de los módulos no interviene en esta construcción.
 
 ### `then` y estado del escenario
 
-`then` utiliza la semántica ordinaria de un bloque de efectos y forma la transición probada. Las asignaciones y demás modificaciones escritas al comienzo de `then` no pertenecen al estado inicial: son efectos de la prueba.
+`then` utiliza la semántica ordinaria de consecuencias y forma la transición probada. Puede mezclar efectos, locales y llamadas permitidas, incluidas operaciones `test` visibles en contexto de pruebas. Las asignaciones y demás modificaciones escritas al comienzo de `then` no pertenecen al estado inicial: son efectos de la prueba. Invocar un test cuyo `start with` ya participó en el cierre inicial no vuelve a materializar esa contribución.
 
 El estado observado por `old e` dentro de `after` es $W_t^0$, anterior al `then` completo. No existe una frontera implícita entre instrucciones de preparación y de ejercicio según su posición textual.
 
@@ -204,12 +199,16 @@ Se descarta porque mezcla comprobación y diagnóstico. `otherwise` conserva amb
 1. Reconocimiento de `test` y `otherwise` como palabras reservadas.
 2. Ancla `test::*` independiente de `action::*`.
 3. Rechazo de `for`, `given`, `if` y `when` en un test.
-4. Sustitución completa del `start with` global.
-5. Rechazo de instrucciones y asignaciones dentro del `start with` local.
-6. Materialización y estabilización antes de `then`.
+4. Unión de `start with` del cierre transitivo estático de tests alcanzables, sin aplicar la activación ordinaria de los módulos.
+5. Rechazo de instrucciones y asignaciones dentro de una contribución `start with` de test.
+6. Materialización y estabilización antes del `then` raíz, llamada posterior sin reactivación y rechazo de ciclos ejecutables entre tests.
 7. Lectura de `old` sobre el estado anterior al `then` completo.
 8. Una y varias aserciones con diagnósticos opcionales.
 9. Evaluación perezosa del diagnóstico `otherwise`.
 10. Distinción entre `passed`, `failed` y `error`.
 11. Descarte incondicional del mundo y de sus salidas.
 12. Anclas `thing::*` para abstractas y `rule::*` para reglas `always`.
+
+## Modificación vigente por D-096
+
+El `start with` de test usa la superficie unificada de D-096. Para un test raíz se calcula estáticamente el cierre transitivo de tests que puede llamar y se unen sus contribuciones de activación antes de ejecutar el cuerpo. Los tests pueden cruzar módulos solo en contexto de pruebas, mediante operaciones de test visibles y dependencias `uses`; una llamada posterior no vuelve a ejecutar el `start with` del test alcanzado.

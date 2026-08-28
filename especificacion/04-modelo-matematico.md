@@ -87,11 +87,11 @@ Las decisiones aceptadas fijan:
 16. `destroy` solo confirma una retirada si todas las cardinalidades y dominios resultantes son válidos; en otro caso produce `failed` y rollback.
 17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes.
 18. `remove` sobre una propiedad elimina su declaración y carga almacenadas, a diferencia de la suspensión reversible producida por `destroy`.
-19. Una única declaración global `start with` determina por separado contribuciones finitas y no ordenadas de `thing` y reglas inicialmente activas mediante las secciones `things { ... }` y `rules { ... }`.
-20. Cada contribución es una expresión estática que produce una declaración o una colección plana de declaraciones de la categoría correspondiente; no admite instrucciones, efectos ni colecciones anidadas.
-21. Si se omite `start with`, ambas contribuciones están vacías. `Thing` continúa siempre efectiva y no forma parte de la colección activable ni del resultado de `all`.
-22. Cada test construye un mundo fresco y aislado cuyo `start with` local sustituye al global.
-23. Los tests no son declaraciones activables ni forman parte del mundo o de su API pública.
+19. Cada módulo puede aportar como máximo un `start with`; sus contribuciones finitas y no ordenadas reúnen en una sola superficie declaraciones activables `thing | rule`, y las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial.
+20. Cada contribución es una expresión estática que produce una declaración activable o una colección plana de ellas; no admite instrucciones, efectos ni colecciones anidadas.
+21. Si un módulo omite `start with`, su contribución es vacía. `Thing` continúa siempre efectiva y no forma parte de la colección activable ni de la enumeración materializada por `all Thing`.
+22. Cada test construye un mundo fresco y aislado; antes del test raíz se calcula el cierre transitivo estático de tests alcanzables y se unen sus contribuciones `start with`.
+23. Los tests no son declaraciones activables ni forman parte del mundo o de la API pública del host; su visibilidad entre módulos existe únicamente en contexto de tests.
 24. El mundo construido para un test y todas sus salidas se descartan al terminar su ejecución.
 25. `Thing` es una `thing` abstracta incorporada, siempre efectiva y superior a toda `thing` mediante `is`.
 26. Una raíz sin `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
@@ -110,8 +110,8 @@ thing Alexandria as City {
 }
 
 start with {
-    things { Alexandria }
-    rules { empty }
+    Alexandria,
+    empty
 }
 
 rule ExactIdentifier given value: Identifier {

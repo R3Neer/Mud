@@ -38,7 +38,7 @@ Para las propiedades de participantes, la matriz es:
 | `RuleKind.Always` | no | sí | no |
 | `ActionKind.Action` | sí | no | sí |
 | `ActionKind.Subaction` | sí | no | sí |
-| `look` | sí | no | no |
+| `look` | sí | no | sí |
 | `message` | no | sí | no |
 | cualquier otra declaración | no | no | no |
 

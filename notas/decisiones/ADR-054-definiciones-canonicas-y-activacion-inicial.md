@@ -84,26 +84,21 @@ Una solicitud `create d` no modifica una declaración ya activa. La aplicabilida
 
 ### Conjunto inicial `start with`
 
-Las definiciones de `thing` y reglas no quedan activas por aparecer. El único `start with` global separa obligatoriamente ambos universos:
+Las definiciones de `thing` y reglas no quedan activas por aparecer. Cada módulo puede aportar como máximo un `start with` unificado:
 
 ```mud
 start with {
-    things {
-        Vegetation,
-        Tree
-    }
-
-    rules {
-        CanGrow
-    }
+    Vegetation,
+    Tree,
+    CanGrow
 }
 ```
 
-No existe la forma plana o mezclada. Cada sección recibe expresiones estáticas que aportan cero, una o varias identidades de su categoría: una referencia aporta una, `empty` aporta cero, una colección aporta sus miembros y `all` denota el catálogo estático correspondiente. Una colección de colecciones es inválida. Las identidades repetidas se deduplican y el orden no es observable.
+Una contribución directa o cada expresión del bloque aporta cero, una o varias declaraciones activables `thing | rule`: una referencia aporta una, `empty` aporta cero y una colección aporta sus miembros. Para materializar un dominio enumerable explícito se usa `all D`; una colección de colecciones es inválida. Las identidades repetidas se deduplican y el orden no es observable.
 
-Las expresiones solo pueden depender de información disponible antes de existir mundo runtime. El resultado completo se materializa y valida atómicamente y se estabiliza antes de aceptar acciones externas.
+Las expresiones solo pueden depender de información disponible antes de existir mundo runtime. Las contribuciones de todos los módulos se combinan, materializan y validan atómicamente y se estabilizan antes de aceptar acciones externas. Cada módulo solo puede activar declaraciones con ciclo de vida del mismo módulo.
 
-Las acciones, aliases y magnitudes no pertenecen a ninguno de esos conjuntos. Cada test declara un `start with` local con las mismas secciones `things` y `rules`; durante ese test sustituye por completo al global.
+Actions, aliases y magnitudes no son declaraciones activables. Cada test declara su propia contribución `start with`; para un test raíz se unen las contribuciones del cierre transitivo estático de tests alcanzables conforme a D-096.
 
 ### Inicialización y reactivación
 
@@ -147,11 +142,10 @@ create-instruction
     ::= "create" declaration-reference
 
 start-with-declaration
-    ::= "start" "with" "{"
-        [ declaration-reference
-          { "," declaration-reference }
-        ]
-        "}"
+    ::= "start" "with"
+        ( expression
+        | "{" [ expression { "," expression } [ "," ] ] "}"
+        )
 ```
 
 La escritura entre comillas en esta EBNF no implica por sí sola que `start` o `abstract` sean palabras reservadas; su clasificación léxica es la fijada en la sección anterior.
@@ -210,17 +204,22 @@ La suite deberá cubrir:
 4. Activación y destrucción de una `thing`.
 5. Reactivación con conservación exacta de descriptor y carga.
 6. Activación idempotente concurrente de una identidad ausente.
-7. Un único `start with` global.
-8. Independencia respecto del orden de su lista.
-9. Rechazo de coma final.
-10. Rechazo de referencias duplicadas o no activables.
-11. Estado inicial vacío cuando se omite la declaración.
-12. Estabilización inicial antes de aceptar acciones externas.
-13. Uso ordinario de `start` y `abstract` como identificadores fuera de sus contextos especiales.
-14. Tratamiento contextual de `always`, `name`, `prefixes` y etiquetas equivalentes.
-15. Sustitución del conjunto global por el `start with` local de cada test.
+7. Como máximo un `start with` por módulo y ausencia válida de contribución en un módulo.
+8. Independencia del orden y deduplicación dentro del conjunto unificado de contribuciones.
+9. Admisión de contribución directa, bloque unificado y coma final opcional.
+10. Rechazo de declaraciones no activables, activación de otro módulo y colecciones anidadas.
+11. Proyecto cuyos módulos omiten `start with`, equivalente a una contribución inicial vacía.
+12. Materialización conjunta de las contribuciones de todos los módulos y estabilización previa a acciones externas.
+13. `Thing` siempre efectiva y no activable.
+14. Reutilización exacta de estado tras `destroy` y nueva activación.
+15. Unión de contribuciones `start with` del cierre transitivo estático de tests alcanzables.
 16. Disparo durante la estabilización inicial de un `when` cuya condición comienza verdadera.
+17. Navegación LSP desde cada activación a una única definición.
 
 ## Modificación sintáctica por D-084
 
 El cuerpo de una `thing` puede omitirse cuando no contiene miembros. `thing A`, `thing A {}` y `thing A;` fijan la misma definición canónica; solo su CST difiere.
+
+## Modificación vigente por D-096
+
+La activación inicial pasa a ser modular. Cada módulo puede contribuir como máximo un `start with`; todas las contribuciones se combinan y materializan conjuntamente antes de la estabilización. `start with` ya no separa `things` y `rules`, no establece orden y solo puede activar declaraciones con ciclo de vida del mismo módulo.

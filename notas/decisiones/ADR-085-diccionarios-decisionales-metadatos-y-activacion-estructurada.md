@@ -44,10 +44,9 @@ given amount: Money {
 }
 ```
 
-- Una `subaction` solo puede invocarse desde el cuerpo de otra `action` o `subaction`.
+- Una `subaction` puede invocarse desde cualquier contexto semántico `then`, incluido el de una rule reactiva.
 - No puede constituir una solicitud externa, un comando raíz ni una entrada de la API pública.
-- Una `action` ordinaria puede invocar acciones ordinarias y subacciones.
-- Una `subaction` puede invocar acciones ordinarias y subacciones, sujeta al mismo análisis de aciclicidad.
+- Una `action` o `subaction` puede invocar actions ordinarias y subactions dentro de la misma resolución, sujeta al análisis de ciclos ejecutables.
 - Toda la cadena participa en una única resolución atómica. Un resultado no aceptado o un fallo de cualquier llamada interna descarta también los efectos privados anteriores de sus llamadores.
 - Su ancla conserva la categoría `action::*`; la clase pública o auxiliar forma parte del descriptor, no del prefijo de ancla.
 
@@ -228,36 +227,27 @@ Conserva multiplicidad, `unique`, orden, criterio de orden y la inferencia conse
 
 ### Activación inicial estructurada
 
-La única forma de `start with` contiene dos secciones obligatorias y separadas:
+D-096 sustituye la separación por categorías por una superficie única. Cada módulo puede aportar como máximo un `start with`, en forma directa o como bloque:
 
 ```mud
 start with {
-    things {
-        ...
-    }
-
-    rules {
-        ...
-    }
+    Kingdom,
+    CanGrow,
+    all ActivableDeclarations
 }
 ```
 
-No existe la forma mezclada ni azúcar equivalente. Cada expresión de una sección aporta cero, una o varias identidades del universo correspondiente:
+Cada expresión aporta cero, una o varias declaraciones activables `thing | rule`: una referencia individual aporta una, `empty` aporta cero, una colección aporta directamente sus miembros y `all D` materializa explícitamente un dominio enumerable. Una colección de colecciones es inválida.
 
-- una referencia individual aporta una;
-- `empty` aporta cero;
-- una colección aporta directamente sus miembros;
-- una colección de colecciones es inválida: solo se incorpora un nivel de contribuciones.
+Las identidades repetidas se deduplican y el orden no es observable. Las expresiones se evalúan solo con información disponible antes del mundo runtime y cada módulo solo puede activar declaraciones con ciclo de vida del mismo módulo. Las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial.
 
-Las identidades repetidas se deduplican y el orden no es observable. En `things`, `all` denota el catálogo estático de declaraciones `thing` activables. En `rules`, `all` denota el catálogo estático de reglas activables. Las expresiones se evalúan solo con metadatos y propiedades disponibles estáticamente; no pueden leer estado runtime todavía inexistente.
-
-El AST conserva `things` y `rules` como conjuntos separados de expresiones de contribución. La elaboración comprueba categoría, profundidad y evaluabilidad estática.
+El AST conserva una única secuencia `StartSet(contributions)`; la elaboración comprueba categoría activable, profundidad y evaluabilidad estática.
 
 ### `Thing` y `Any`
 
 `Thing` continúa siendo la raíz incorporada de todas las `thing`. Está siempre efectiva, no aparece en `start with`, no puede declararse, crearse ni destruirse y queda excluida del catálogo producido por `all` en una sección `things`.
 
-Se incorpora el tipo superior `Any` para todos los valores MUD del proyecto. Su dominio abierto incluye tipos básicos —incluido `Money`—, identidades `thing`, aliases, miembros de familia, magnitudes, intervalos, colecciones, diccionarios y productos estructurales. No incluye acciones, reglas, tests, declaraciones ni nodos sintácticos como valores ordinarios.
+`Any` es el tipo superior de todos los valores MUD. Su dominio abierto incluye tipos básicos —incluido `Money`—, identidades `thing`, aliases, miembros de family, magnitudes, intervalos, colecciones, diccionarios, productos estructurales y descriptores first-class de declaraciones y tipos conforme a D-096. Los nodos sintácticos de implementación no son valores MUD por ese mero hecho.
 
 `Any`:
 
@@ -348,7 +338,7 @@ La gramática y los modelos deben distinguir como mínimo:
 - productos posicionales y nombrados;
 - `MetadataAccessExpr` y ausencia de objetivos asignables de metadato;
 - `NotMembership`;
-- conjuntos separados de activación de `thing` y reglas;
+- un único `StartSet(contributions)` para activación unificada;
 - cardinalidad omitida frente a explícita;
 - ausencia del antiguo nombre intrínseco y de la interpolación especial de ancla.
 
@@ -366,7 +356,7 @@ El IR semántico registra para cada decisional:
 Los diagnósticos mínimos nuevos son:
 
 1. solicitud externa de una `subaction`;
-2. llamada a `subaction` fuera de acción o subacción;
+2. uso de `subaction` como raíz exterior o fuera de un contexto semántico `then`;
 3. `mut` exterior o interior en `-->`;
 4. `_` no final o ramas inalcanzables en `FirstMatch`;
 5. `unique` redundante en `FirstMatch`;
@@ -378,14 +368,14 @@ Los diagnósticos mínimos nuevos son:
 11. intento de asignación o actualización runtime sobre cualquier acceso `~`;
 12. uso semánticamente frágil de `~file`;
 13. forma retirada `.name`, `name =` o `anchor{...}`;
-14. forma mezclada retirada de `start with`.
+14. uso de las secciones retiradas `things`/`rules` dentro de `start with`.
 
 ## Consecuencias
 
 - MUD obtiene políticas puras por casos sin introducir funciones generales.
 - La ausencia se conserva hasta que un contrato exterior exige presencia.
 - La API externa distingue acciones públicas de auxiliares atómicas.
-- La activación inicial no mezcla categorías y admite selecciones estáticas composables.
+- La activación inicial reúne declaraciones activables `thing | rule` por módulo en un conjunto unificado, deduplicado y sin orden semántico.
 - Identidad, presentación y procedencia quedan separadas y tipadas.
 - Las flechas y productos permiten claves y políticas estructurales sin debilitar la nominalidad de aliases.
 - `Any` sirve como frontera universal de valores sin inventar enumeración, orden ni predeterminado universales.
@@ -412,7 +402,7 @@ Se descarta porque el dominio depende del proyecto, mezcla categorías sin un or
 
 La suite debe cubrir al menos:
 
-1. Accesibilidad externa e interna de `action` y `subaction`, ancla compartida y rollback completo.
+1. Capacidad exterior exclusiva de `action`, invocación de `action`/`subaction` desde contextos `then`, ancla compartida y rollback completo.
 2. Tokenización maximal-munch de `-->`, `--` y `->`, y parseo de `not in`.
 3. Consulta ausente exacta, asociación operativa y `unique` de valores como no-op.
 4. Modos decisionales, solapamiento, fallback, cardinalidad derivada, deduplicación y prohibición de mutación o iteración.
@@ -421,10 +411,16 @@ La suite debe cubrir al menos:
 7. Productos posicionales y nombrados, igualdad estructural y uso como clave o entrada.
 8. Inferencia `[0]`, `[1]` y `[n]` de campos almacenados inmutables, sugerencia de explicitación y excepción mutable.
 9. Selección sin envoltura, proyección ni flatten, incluida la pareja de diccionario.
-10. `start with` por secciones, `empty`, colecciones de un nivel, deduplicación, `all` contextual y rechazo de colecciones anidadas.
+10. `start with` unificado por módulo, forma directa y de bloque, `empty`, colecciones de un nivel, deduplicación, `all D` cuando se materializa un dominio y rechazo de colecciones anidadas.
 11. Efectividad permanente y exclusión catalográfica de `Thing`.
 12. `Any`, estrechamiento, igualdad compatible, rechazo de enumeración y exigencia de inicializador.
 13. Lectura y tipos de metadatos; solo lectura runtime de todo acceso `~`, separación de identidad y aviso de `~file`.
 14. Pertenencia reflexiva y segmentada de `MudPath`.
 15. Metadatos de unidades y magnitudes.
 16. Retirada de `.name`, `name =` y `anchor{...}` y sustitución por `~name` y `~anchor`.
+
+## Modificación vigente por D-096
+
+Se sustituye la sección de activación estructurada que exigía bloques separados `things` y `rules`. `start with` acepta una contribución directa o un bloque unificado de expresiones que aportan declaraciones activables `thing | rule`; las identidades se deduplican y el orden no es semántico. La activación se agrega por módulo.
+
+También se amplía `subaction`: puede invocarse desde cualquier contexto `then`, no solo desde otra action/subaction, sin adquirir capacidad de raíz exterior.

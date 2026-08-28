@@ -680,7 +680,7 @@ Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 6. `element~metadata` produce `MetadataAccessExpr`; ningún acceso `~` forma parte de un objetivo asignable runtime.
 7. `not in` produce `NotMembership`.
 8. `action` y `subaction` producen `ActionDecl` con `PublicAction` o `Subaction`.
-9. `start with` produce `StartSet(things, rules)` sin mezclar contribuciones.
+9. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones; la categoría activable se comprueba durante elaboración.
 10. Toda interpolación es `ValueInterpolation`; no existe `AnchorInterpolation`.
 11. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
 12. `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración los especializa según sean colecciones, diccionarios exactos o diccionarios funcionales.
@@ -691,3 +691,10 @@ Estas reglas sustituyen las normalizaciones anteriores incompatibles:
 `MudFile` conserva defaults de archivo y cada propietario estable conserva directamente su secuencia `metadata`. Los grupos de participantes producen un nodo por identificador y copian a cada descriptor las mismas declaraciones con procedencia `NormalizedSugar`. `start with` y los cuerpos de cláusula no reciben metadata propia.
 
 Las unidades usan exactamente la misma proyección: `unit-body` es solo un contenedor de `metadata-assignment`. `~prefixes` permanece una expresión ordinaria cuyo tipo esperado es `Prefix [* unique]`; no existe `UnitProperties`, `PrefixPolicy` ni `MetadataAttachment` lateral.
+
+## D-096 — `look`, locales, `all D` y `start with`
+
+- `look-declaration` proyecta su `given-clause` opcional a `LookDecl.givens`.
+- Las `local-value-declaration` situadas entre metadatos y cláusulas de action/rule reactiva/message se proyectan a `leading_locals` de su declaración, no al `EffectBlock` posterior.
+- El prefijo `all D` se normaliza como `PrefixExpr(EnumerateAll, D)`; el literal contextual sin operando conserva `AllLiteral`.
+- `start-with-declaration` normaliza tanto la forma de una expresión como el bloque de expresiones a un único `StartSet(contributions)` y conserva el orden fuente solo como procedencia, no como semántica de activación.

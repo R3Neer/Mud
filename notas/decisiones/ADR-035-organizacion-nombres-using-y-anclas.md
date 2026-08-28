@@ -53,7 +53,7 @@ Para un nombre no cualificado, la búsqueda sigue:
 3. Declaraciones `using` exactas.
 4. Declaraciones `using` recursivas.
 
-Una referencia completamente cualificada se resuelve directamente. Si dos candidatos importados proporcionan el mismo nombre no cualificado, existe ambigüedad y debe escribirse el nombre cualificado.
+Una referencia completamente cualificada evita ambigüedad de nombres, pero solo se resuelve si la declaración pertenece al cierre modular visible; la cualificación no sustituye la autorización `uses` de D-096. Si dos candidatos importados proporcionan el mismo nombre no cualificado, existe ambigüedad y debe escribirse el nombre cualificado.
 
 El orden textual de archivos y declaraciones `using` no decide empates.
 
@@ -122,3 +122,7 @@ D-076 fija la identidad estable de cada unidad mediante el identificador `lowerC
 8. Separación entre `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
 9. Lectura de un ancla mediante `~anchor` e interpolación mediante un hueco de expresión ordinario.
 10. Rechazo de un `using` posterior a una declaración de primer nivel.
+
+## Modificación vigente por D-096
+
+D-096 introduce el módulo como dimensión semántica de visibilidad sin incorporarlo a las anclas. El MudPath nominal y las anclas existentes conservan su forma. `using` continúa resolviendo/importando nombres dentro de un `.mud`; no concede por sí solo permiso para atravesar una frontera modular, que corresponde a `uses` en `mud.module`.

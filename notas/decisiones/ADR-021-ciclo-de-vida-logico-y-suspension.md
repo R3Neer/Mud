@@ -137,22 +137,17 @@ create Kingdom
 create Place
 ```
 
-Las declaraciones presentes al comienzo se separan por categoría conforme a D-085:
+Las declaraciones presentes al comienzo se aportan mediante el `start with` unificado de D-096:
 
 ```mud
 start with {
-    things {
-        Kingdom,
-        Place
-    }
-
-    rules {
-        CanEnter
-    }
+    Kingdom,
+    Place,
+    CanEnter
 }
 ```
 
-No existe una forma plana que mezcle `thing` y reglas en un mismo conjunto.
+Las contribuciones pueden mezclar declaraciones activables `thing | rule`; se deduplican y su orden no es semántico.
 
 `destroy` solo necesita una referencia que resuelva de manera unívoca:
 

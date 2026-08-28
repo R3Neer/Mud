@@ -46,7 +46,7 @@ La vinculación puede ser simple o una pareja de diccionario, igual que en `for 
     value > 0
 ```
 
-La variable solo está disponible en el predicado. La fuente se captura al comenzar la evaluación. Debe ser finita y enumerable; si esa propiedad no puede demostrarse, la expresión es inválida.
+La variable solo está disponible en el predicado. La fuente se captura al comenzar la evaluación. Debe ser una colección finita y enumerable; si la fuente conceptual es un dominio, se materializa explícitamente como `all D` antes de seleccionar. Si la finitud o enumerabilidad no puede demostrarse, la expresión es inválida.
 
 El resultado:
 
@@ -86,9 +86,11 @@ Un `take` no ordenado es un punto aleatorio aunque no escriba `Rand`: posee iden
 
 `take` se aplica además a:
 
-- dominios finitos enumerables, produciendo una colección de sus primeros valores canónicos;
+- materializaciones `all D` de dominios finitos enumerables, tomando sus primeros valores canónicos;
 - diccionarios, conservando asociaciones completas;
 - `Text`, produciendo el prefijo de hasta `n` valores `Char` como otro `Text`.
+
+Un dominio desnudo no es fuente directa de `take`: al producir una colección, la materialización debe quedar explícita en el programa.
 
 La nominalidad de un alias contenedor no se reconstruye implícitamente: el resultado conserva la colección o secuencia subyacente y necesita una construcción o conversión nominal explícita cuando el contexto exija de nuevo el alias.
 
@@ -155,7 +157,7 @@ Se admiten ampliaciones implícitas únicas, como `Nat` hacia `Int`. No se elimi
 
 1. Filtro ordenado, no ordenado, `unique`, con multiplicidades y sobre diccionario.
 2. Estrechamiento de unión dentro del predicado.
-3. `take` sobre colección ordenada, no ordenada, dominio, diccionario y `Text`.
+3. `take` sobre colección ordenada, no ordenada, `all D`, diccionario y `Text`, y rechazo de un dominio desnudo como fuente productora de colección.
 4. Muestreo sin reemplazo, reproducibilidad y estabilidad por instantánea.
 5. Simplificación determinista cuando no existe elección real.
 6. Composición de `take` antes y después del filtro.
@@ -171,3 +173,7 @@ Una selección usada para definir un campo derivado puede alimentar una colecci�
 ## Modificación por D-088
 
 La selección pura admite `item in source by step: predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.
+
+## Modificación vigente por D-096
+
+Selección y `take` producen colecciones. Cuando su fuente conceptual es un dominio, debe materializarse explícitamente mediante `all D`; por ejemplo `candidate in all Actions: ...` y `take n from all D`. Recorridos y cuantificadores que no producen una colección pueden consumir directamente un dominio finito enumerable.

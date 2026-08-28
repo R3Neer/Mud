@@ -36,13 +36,13 @@ D-025 fija las cabeceras:
 
 - `on`: vinculaciones automáticas e individuales de `thing` para reglas reactivas, `always` y `message`.
 - `for`: roles individuales o colectivos de cualquier tipo declarado, suministrados a reglas booleanas, actions y `look`.
-- `given`: valores auxiliares de reglas booleanas y actions.
+- `given`: valores auxiliares de reglas booleanas, actions, subactions y `look`.
 
-Reglas reactivas, `always`, `look` y `message` no admiten `given`.
+Reglas reactivas, `always` y `message` no admiten `given`. Un `look` sí admite `given` conforme a D-096.
 
 ### Cardinalidad y nombres
 
-Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, un dominio `in` y la especificación completa de colección. El dominio restringe los valores admisibles del rol y se escribe entre el tipo y la especificación de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. `on` continúa vinculando una sola `thing` por rol y no admite otros tipos, cardinalidad ni los modificadores de colección `unique` u `ordered`.
+Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, un dominio `in` y la especificación completa de colección. El dominio restringe los valores admisibles del rol y se escribe entre el tipo y la especificación de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. Un rol `on` vincula un único valor por vinculación y no admite cardinalidad ni los modificadores de colección `unique` u `ordered`: la forma directa sin `in` usa el universo implícito de `thing` concretas activas; la forma relacionada `nombre[: Tipo] in fuente` puede tomar miembros de una fuente finita enumerable conforme a D-096.
 
 El tipo incorporado `Thing` admite cualquier `thing`. Por tanto, un rol `for` de tipo `Thing` acepta cualquier identidad concreta compatible y `on Thing` enumera todas las `thing` concretas y activas; la raíz abstracta no produce una vinculación propia.
 
@@ -268,3 +268,9 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 21. Diferencia entre un valor sujeto `for` y un valor auxiliar `given` del mismo tipo.
 22. Rechazo de mutabilidad exterior e interior en `given`.
 23. Conservación de orientaciones simétricas y de roles reflexivos en `on`.
+
+## Modificación vigente por D-096
+
+Un `look` admite `given` con las reglas generales de binding y defaults. Las declaraciones gobernadas por `on` siguen sin `given` y, cuando se usan como trigger, se referencian sin `()`. Los valores callable almacenados se invocan mediante la forma ordinaria de receptores y argumentos; almacenar el descriptor no pre-vincula roles ni `given`.
+
+Además, un participante relacionado `on nombre: Tipo in fuente` puede vincular valores de una fuente finita enumerable, no solo identidades `thing`. La forma directa sin fuente continúa reservada al universo implícito de `thing`; por tanto `on n: Nat` sin fuente finita es inválido.

@@ -53,22 +53,22 @@ Las vinculaciones se fijan al comienzo de la onda. Cambios de pertenencia, activ
 
 La raíz y cada onda forman lotes causales con la misma frontera de consolidación. Para un destino `Nat`, todos los deltas aditivos compatibles se suman como enteros firmados y el total se satura una sola vez en cero antes de construir la instantánea siguiente. Ninguna regla observa el acumulador firmado.
 
-Para una vinculación con memoria, los disparos comparan valores en las instantáneas de inicio de dos ondas consecutivas conforme a D-041 y D-058. Un `when e` puramente booleano detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$; `e changes` compara directamente ambos valores y puede pulsar en ondas consecutivas. `and` y `or` componen pulsos de cambio y transiciones booleanas sin convertirlos en estado persistente.
+Para una vinculación con memoria, los activadores temporales comparan valores en las instantáneas de inicio de dos ondas consecutivas conforme a D-041 y D-058. Un `when e` puramente booleano detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$ y `e changes` compara directamente ambos valores. D-096 generaliza el resultado de un trigger a cero o más matches causales: `and` realiza natural join de matches compatibles y `or` su unión, conservando bindings, testigos e identidades de ocurrencia.
 
 Una vinculación que no estaba presente en la primera instantánea materializada por `start with` se incorpora al conjunto en la primera onda posterior en que resulte activa. Esa onda inicializa toda su memoria temporal sin dispararla. Su primer disparo posible se produce en la onda siguiente. Las vinculaciones presentes desde la primera instantánea son la excepción expresa: cada rama booleana elevada comienza con anterior virtual `false` y puede pulsar durante la estabilización inicial; `changes` y `old` comparan esa instantánea consigo misma.
 
-Una resolución termina cuando una onda no produce efectos ni nuevas consecuencias pendientes. Un ciclo u oscilación detectados producen `failed`; un límite de recursos es una salvaguarda técnica distinguible, no una definición alternativa de estabilización.
+Una resolución termina cuando una onda no produce efectos ni deja nuevas consecuencias u ocurrencias causales pendientes para la siguiente. Un ciclo u oscilación detectados producen `failed`; un límite de recursos es una salvaguarda técnica distinguible, no una definición alternativa de estabilización.
 
 Solo hay una resolución causal activa por mundo. Las solicitudes externas que llegan durante ella entran en una cola y vinculan participantes, evalúan `given`, dominios e `if` cuando les corresponde comenzar, no cuando fueron encoladas.
 
-Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedades se calculan sobre el estado final y solo se publican al confirmar; una reversión no entrega ninguna.
+Cada `message` ocurrido se conserva como una ocurrencia causal tentativa con identidad, declaración, bindings y vista de nacimiento. Su payload interno se proyecta sobre esa vista causal y la misma ocurrencia queda disponible como trigger en la onda siguiente; hacia el host, tras confirmar, el payload se proyecta sobre el estado estable final. Una reversión cancela toda entrega exterior.
 
 ## Consecuencias
 
 - El orden de ejecución física no altera el resultado.
 - La identidad canónica y la conservación de memoria tras desaparecer una vinculación siguen abiertas en Q-005; su valor inicial ya está fijado.
 - La detección semántica de oscilaciones y la salvaguarda técnica siguen abiertas en Q-020.
-- La multiplicidad, orden y deduplicación de mensajes siguen en Q-052.
+- La multiplicidad de ocurrencias causalmente distintas se conserva y no se deduplica por payload. Q-067 mantiene abierto qué ocurre si un participante ya no existe o no es evaluable en la proyección exterior final.
 
 ## Verificación
 
@@ -84,3 +84,7 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 10. Un cambio unido mediante `or` a una transición booleana preserva cualquiera de los dos pulsos.
 11. Deltas `-2` y `+3` sobre un `Nat` inicial cero producen uno en la siguiente instantánea.
 12. Ninguna instantánea de onda expone un `Nat` negativo.
+
+## Modificación vigente por D-096
+
+Un `message` es una ocurrencia causal con identidad y bindings, no una mera salida cuyos campos se difieren al estado final. La ocurrencia nacida en una onda queda disponible como trigger en la onda siguiente. Dentro de MUD su payload se proyecta sobre la vista causal de nacimiento; hacia el host, tras commit, se proyecta sobre el estado estable final. Ambas proyecciones pertenecen a la misma ocurrencia. La estabilización exige además ausencia de consecuencias/ocurrencias causales pendientes.

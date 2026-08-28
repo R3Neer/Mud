@@ -83,8 +83,6 @@ fixed_tokens:
 - spelling: then
 - spelling: start
 - spelling: with
-- spelling: things
-- spelling: rules
 - spelling: test
 - spelling: +=
 - spelling: -=

@@ -135,9 +135,9 @@ Las restricciones de tipo de toda la cabecera deben poseer una solución nominal
 
 ### Universo y conjunto de vinculaciones
 
-`on` continúa vinculando exclusivamente `thing` individuales. Para cada rol `r` cuyo tipo efectivo sea `T`, su universo es el conjunto finito de `thing` concretas y activas de la instantánea leída que satisfacen `is T`.
+`on` vincula un valor individual por rol. En una forma directa sin `in`, el universo del rol es el conjunto finito de `thing` concretas y activas de la instantánea leída que satisfacen su tipo efectivo. En una forma relacionada `nombre[: Tipo] in fuente`, el universo procede de los miembros de esa fuente finita enumerable y la anotación opcional actúa como refinamiento. Un tipo sin universo implícito finito, por ejemplo `Nat`, no puede usar la forma directa.
 
-Sea `r_1,\ldots,r_n` el orden textual de los roles y sean `U_1,\ldots,U_n` sus universos. La cabecera denota el conjunto:
+Sea `r_1,\ldots,r_n` el orden textual de los roles y sean `U_1,\ldots,U_n` sus universos así obtenidos. La cabecera denota el conjunto:
 
 $$
 B
@@ -165,11 +165,11 @@ Todas las colecciones se leen en la misma instantánea de inicio. Los efectos no
 
 ### Identidad, orientación y orden técnico
 
-Una vinculación es una asignación total de roles. No se impone desigualdad implícita: dos roles pueden recibir la misma `thing` si satisfacen sus restricciones.
+Una vinculación es una asignación total de roles. No se impone desigualdad implícita: dos roles pueden recibir el mismo valor si satisfacen sus restricciones.
 
 Los roles también conservan orientación. Si una relación simétrica admite tanto `(Alice, Bob)` como `(Bob, Alice)`, ambas son vinculaciones distintas. MUD no deduplica parejas por simetría ni presupone que el cuerpo trate los roles de igual manera.
 
-Semánticamente, las vinculaciones de una onda forman un conjunto y su orden no decide los efectos. Para trazas, diagnósticos y serialización, se usa un orden técnico reproducible: orden textual de roles y orden lexicográfico de sus anclas resueltas. Este orden no concede comparación `<` o `>` a las `thing`.
+Semánticamente, las vinculaciones de una onda forman un conjunto y su orden no decide los efectos. Cuando todos los valores vinculados son `thing`, el orden técnico reproducible ya definido por anclas continúa disponible para trazas y diagnósticos; D-096 no convierte esa convención técnica en un orden semántico de los valores `on` generales.
 
 ## Consecuencias
 
@@ -197,5 +197,9 @@ Semánticamente, las vinculaciones de una onda forman un conjunto y su orden no 
 12. Refinamiento `role: Type in expression`.
 13. Join acíclico, ciclo de dos roles y ciclo de tres roles.
 14. Rechazo de inferencia nominal ambigua.
-15. Universo limitado a `thing` concretas y activas.
+15. Universo implícito de `thing` concretas y activas para `on` directo y fuente finita enumerable para `on ... in fuente`, incluido rechazo de un tipo sin universo implícito finito.
 16. Conservación de dos orientaciones simétricas y de una vinculación reflexiva permitida.
+
+## Modificación vigente por D-096
+
+`on` conserva su papel de binding automático y no absorbe las ocurrencias de `message`: la causalidad de messages/rules pertenece a `when`. D-096 amplía la forma relacionada `nombre[: Tipo] in fuente` a valores procedentes de una fuente finita enumerable. La forma directa sin `in` sigue seleccionando identidades `thing` del universo implícito.

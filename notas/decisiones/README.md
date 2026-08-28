@@ -8,10 +8,10 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 90.
+- Total: 91.
 - Vigentes: 90.
 - Propuestas: 0.
-- Sustituidas: 0.
+- Sustituidas: 1.
 - Retiradas: 0.
 - Rechazadas: 0.
 
@@ -40,7 +40,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-023 | vigente | 2026-07-27 | [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|Consolidación de efectos estructurales concurrentes]] |
 | D-025 | vigente | 2026-07-27 | [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|Vocabulario de `thing`, cabeceras y bloques]] |
 | D-026 | vigente | 2026-07-27 | [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|Membresía estricta y cardinalidad por `then`]] |
-| D-027 | vigente | 2026-07-27 | [[notas/decisiones/ADR-027-salidas-look-y-message|Salidas del modelo mediante `look` y `message`]] |
+| D-027 | sustituida | 2026-07-27 | [[notas/decisiones/ADR-027-salidas-look-y-message|Salidas del modelo mediante `look` y `message`]] |
 | D-028 | vigente | 2026-07-28 | [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|Sistema de magnitudes y unidades]] |
 | D-029 | vigente | 2026-07-28 | [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|Intervalos, límites efectivos y ciclos de punto]] |
 | D-030 | vigente | 2026-07-28 | [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|Conversión cuantitativa explícita mediante `to`]] |
@@ -109,6 +109,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-093 | vigente | 2026-08-16 | [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|AST superficial, HIR nominal e IR semántico elaborado]] |
 | D-094 | vigente | 2026-08-16 | [[notas/decisiones/ADR-094-anclas-terminales-de-metadatos-configurados|Anclas terminales de metadatos configurados]] |
 | D-095 | vigente | 2026-08-16 | [[notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
+| D-096 | vigente | 2026-08-28 | [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|Módulos, callables, `look`, `message` y activación]] |
 
 ## Identificadores reservados
 

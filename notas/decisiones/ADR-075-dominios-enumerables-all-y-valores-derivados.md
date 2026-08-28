@@ -85,3 +85,7 @@ Cada transformación es una sugerencia independiente y solo se ofrece cuando con
 ## Modificación por D-088
 
 El paso de un dominio escalonado deja de exigirse positivo. Sigue siendo estático, exacto, compatible y no nulo, pero puede ser firmado. Positivo ancla en el límite inferior y negativo en el superior; un límite inicial abierto avanza una vez antes del primer candidato. El signo puede cambiar la pertenencia, pero no introduce orden en el tipo; `all` usa el orden canónico. `Rum` continúa excluido.
+
+## Modificación vigente por D-096
+
+Además del literal contextual `all`, existe `all D`, que materializa la enumeración canónica completa de un dominio enumerable explícito. Los dominios reflectivos visibles admiten formas como `all action`, `all rule`, `all look` y `all A.action(B)`. `all` sin operando conserva su elaboración contextual.

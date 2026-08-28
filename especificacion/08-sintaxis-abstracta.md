@@ -806,10 +806,13 @@ values: Nat = [1, 2, 3]
 conserva `OmittedCardinality` en el AST superficial y adquiere `[3]` únicamente durante la elaboración del campo.
 
 ```mud
-start with { things { all } rules { empty } }
+start with {
+    all,
+    empty
+}
 ```
 
-produce `StartSet(things=[AllLiteral], rules=[EmptyLiteral])`.
+produce `StartSet(contributions=[AllLiteral, EmptyLiteral])`.
 
 ## Tipos producto y tipos de diccionario
 
@@ -866,4 +869,8 @@ El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la ca
 "{value~anchor}"
 ```
 
-No existe `AnchorInterpolation`. `start with` produce `StartSet(things, rules)` y mantiene ambas contribuciones separadas. `ActionDecl` conserva `PublicAction` o `Subaction`.
+No existe `AnchorInterpolation`. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones. `ActionDecl` conserva `PublicAction` o `Subaction`.
+
+## Actualización de AST por D-096
+
+`LookDecl` conserva `given_clause?`; `ActionDecl`, `ReactiveRuleDecl` y `MessageDecl` conservan sus locales previas; `StartSet` contiene una única secuencia de contribuciones y no dos listas `things`/`rules`; `all D` se conserva como `PrefixExpr(EnumerateAll, D)`, mientras el `all` contextual sigue siendo `AllLiteral`.

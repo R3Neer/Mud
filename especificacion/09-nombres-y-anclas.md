@@ -253,3 +253,7 @@ world.trade not in world.combat                # true
 ## Identidad nominal exacta
 
 `is` consulta la clausura de especialización; `iis` compara el tipo nominal efectivo exacto. El narrowing de `iis not` elimina una única posibilidad nominal y no elimina sus especializaciones. Esta distinción no crea anclas nuevas ni sustituye la igualdad de identidades singleton mediante `==`.
+
+## Módulos, `uses` y anclas (D-096)
+
+La pertenencia a módulo es una dimensión de visibilidad y dependencia, no un componente adicional del ancla nominal. `uses` autoriza el conocimiento del contrato de otro módulo; un `using` no concede esa autorización. La resolución cruzada solo puede alcanzar operaciones y tipos pertenecientes al cierre visible del contrato modular.

@@ -25,6 +25,7 @@ decisions:
   - D-086
   - D-088
   - D-087
+  - D-096
 ---
 
 # CST sin pérdidas
@@ -364,7 +365,7 @@ La CST no realiza:
 - Desazucarado.
 - Resolución de nombres.
 - Inferencia de tipos.
-- Clasificación elemental o compuesta de acciones.
+- Clasificación semántica de invocaciones callable, capacidades exteriores o composición de consecuencias.
 - Interpretación de una tupla como receptores múltiples.
 - Cálculo de predeterminados.
 - Ordenación canónica de archivos.
