@@ -213,3 +213,7 @@ Se descarta porque mezcla comprobación y diagnóstico. `otherwise` conserva amb
 10. Distinción entre `passed`, `failed` y `error`.
 11. Descarte incondicional del mundo y de sus salidas.
 12. Anclas `thing::*` para abstractas y `rule::*` para reglas `always`.
+
+## Modificación vigente por D-096
+
+El `start with` de test usa la superficie unificada de D-096. Para un test raíz se calcula estáticamente el cierre transitivo de tests que puede llamar y se unen sus contribuciones de activación antes de ejecutar el cuerpo. Los tests pueden cruzar módulos solo en contexto de pruebas, mediante operaciones de test visibles y dependencias `uses`; una llamada posterior no vuelve a ejecutar el `start with` del test alcanzado.

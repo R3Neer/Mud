@@ -208,3 +208,7 @@ La transición ya proporciona dos instantáneas completas. Impedir comparaciones
 8. Ausencia de pulso temporal en la línea base inicial y posible pulso inicial de una rama `Rise`.
 9. Una vinculación creada posteriormente establece línea base sin disparar.
 10. Rechazo de `changes by`.
+
+## Modificación vigente por D-096
+
+El álgebra de `Trigger` se generaliza de pulsos booleanos a cero o más matches causales. Un match conserva bindings/testigos e identidad de ocurrencias. `and` realiza natural join de matches compatibles y `or` su unión. Messages, rules reactivas y `always` pueden ser fuentes declarativas de trigger; una referencia a declaración `on` no usa paréntesis de llamada.

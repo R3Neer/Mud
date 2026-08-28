@@ -199,3 +199,7 @@ Semánticamente, las vinculaciones de una onda forman un conjunto y su orden no 
 14. Rechazo de inferencia nominal ambigua.
 15. Universo limitado a `thing` concretas y activas.
 16. Conservación de dos orientaciones simétricas y de una vinculación reflexiva permitida.
+
+## Modificación vigente por D-096
+
+`on` conserva su papel de binding automático y no absorbe las ocurrencias de `message`: la causalidad de messages/rules pertenece a `when`. D-096 amplía la forma relacionada `nombre[: Tipo] in fuente` a valores procedentes de una fuente finita enumerable. La forma directa sin `in` sigue seleccionando identidades `thing` del universo implícito.

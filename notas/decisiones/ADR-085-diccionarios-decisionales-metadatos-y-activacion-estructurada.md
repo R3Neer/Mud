@@ -428,3 +428,9 @@ La suite debe cubrir al menos:
 14. Pertenencia reflexiva y segmentada de `MudPath`.
 15. Metadatos de unidades y magnitudes.
 16. Retirada de `.name`, `name =` y `anchor{...}` y sustitución por `~name` y `~anchor`.
+
+## Modificación vigente por D-096
+
+Se sustituye la sección de activación estructurada que exigía bloques separados `things` y `rules`. `start with` acepta una contribución directa o un bloque unificado de expresiones que aportan declaraciones activables `thing | rule`; las identidades se deduplican y el orden no es semántico. La activación se agrega por módulo.
+
+También se amplía `subaction`: puede invocarse desde cualquier contexto `then`, no solo desde otra action/subaction, sin adquirir capacidad de raíz exterior.

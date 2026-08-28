@@ -224,3 +224,7 @@ La suite deberá cubrir:
 ## Modificación sintáctica por D-084
 
 El cuerpo de una `thing` puede omitirse cuando no contiene miembros. `thing A`, `thing A {}` y `thing A;` fijan la misma definición canónica; solo su CST difiere.
+
+## Modificación vigente por D-096
+
+La activación inicial pasa a ser modular. Cada módulo puede contribuir como máximo un `start with`; todas las contribuciones se combinan y materializan conjuntamente antes de la estabilización. `start with` ya no separa `things` y `rules`, no establece orden y solo puede activar declaraciones con ciclo de vida del mismo módulo.

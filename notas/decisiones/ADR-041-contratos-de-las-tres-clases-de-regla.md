@@ -129,3 +129,7 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 10. Composición de dos cambios y de un cambio con una transición booleana mediante `and` y `or`.
 11. Pulsos consecutivos preservados dentro de una composición temporal.
 12. Aviso para una regla `always` sin `otherwise`, generación de una razón predeterminada y propagación de un diagnóstico explícito al `failed`.
+
+## Modificación vigente por D-096
+
+Una rule reactiva continúa sin ser callable como regla booleana, pero su `then` puede invocar actions y subactions reales dentro de la resolución causal activa. Rules reactivas y `always` pueden además actuar como fuentes declarativas de trigger: la reactiva pulsa cuando dispara efectivamente y la `always` cuando se evalúa para la vinculación/onda correspondiente. Actions, subactions, looks, reglas booleanas y tests no adquieren esa condición de trigger.

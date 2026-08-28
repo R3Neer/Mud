@@ -29,7 +29,7 @@ module MUDSemanticIR {
                        | InferredFromInitializer
                        | DerivedFromDecisionBranches
 
-    metadata_kind = NameMetadata | PrivateMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
+    metadata_kind = NameMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
                   | PluralMetadata | AbbreviationMetadata | PrefixesMetadata | FormatMetadata
                   | ExtensionMetadata(string name)
 
@@ -38,11 +38,16 @@ module MUDSemanticIR {
 
     metadata_evaluation = StoredMetadata | CalculatedMetadata
 
-    semantic_project = SemanticProject(semantic_decl* declarations,
+    semantic_project = SemanticProject(semantic_module* modules,
+                                       semantic_decl* declarations,
                                        semantic_decision_branch* decision_branches,
                                        dependency_edge* dependencies)
 
+    semantic_module = SemanticModule(string logical_path, string* uses)
+        attributes (source_span origin)
+
     semantic_decl = SemanticDecl(anchor identity,
+                                 string module_path,
                                  string category,
                                  action_access? action_visibility,
                                  semantic_type? declared_type,
@@ -126,7 +131,7 @@ module MUDSemanticIR {
                                                        symbol_id* external_reads)
         attributes (source_span origin)
 
-    semantic_start_set = SemanticStartSet(anchor* things, anchor* rules)
+    semantic_start_set = SemanticStartSet(anchor* declarations)
         attributes (source_span origin)
 
     semantic_expr = ReferenceExpr(symbol_id target)
@@ -191,3 +196,8 @@ module MUDSemanticIR {
                     | Destroys(symbol_id source, anchor target)
                     | UnitOf(anchor unit, anchor magnitude)
 }
+
+-- D-096: el modelo elaborado debe preservar pertenencia modular, `uses`,
+-- activación unificada y ausencia de `~private`. La representación exacta de
+-- matches causales de trigger permanece deliberadamente abierta; no se fija aquí
+-- una codificación interna que cierre la decisión provisional de bindings.

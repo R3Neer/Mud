@@ -738,16 +738,11 @@ Sin `~format`, el literal se escribe como una cantidad ordinaria con unidad comp
 
 ```mud
 start with {
-    things {
-        all
-    }
-
-    rules {
+        all,
         empty,
         CanGrow,
         candidate in GrowthRules: candidate~path in world.growth
     }
-}
 ```
 
 `empty` no aporta elementos. Una colección aporta directamente sus miembros; no se admiten colecciones anidadas. El resultado se deduplica y carece de orden semántico. `Thing` siempre es efectiva y no se añade ni se retira mediante `start with`; `all` sobre categorías de `thing` enumera únicamente identidades concretas declaradas.
@@ -1585,3 +1580,13 @@ El contexto de tipo también puede construir el alias sin `to`. El compilador no
 ## Metadatos reflectivos D-087
 
 Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.
+
+## Actualización de superficie por D-096
+
+D-096 sustituye dentro de este capítulo cualquier formulación anterior incompatible en cuatro puntos: `look` admite `given`; actions, rules reactivas y messages admiten locales `:=` antes de sus cláusulas de comportamiento; `all D` materializa explícitamente un dominio enumerable y convive con el literal contextual `all`; `start with` ya no separa `things` y `rules`, sino que acepta una expresión o un bloque unificado de contribuciones. La EBNF normativa refleja estas formas.
+
+La sintaxis concreta completa de `mud.module` no se fija aquí mientras Q-062 siga abierta.
+
+### Retirada de `~private`
+
+`~private` no forma parte de la gramática semántica vigente. Una grafía `~private` no adquiere significado estándar por ser léxicamente parecida a un metadato de extensión; la validación contextual debe rechazarla como nombre reservado retirado.

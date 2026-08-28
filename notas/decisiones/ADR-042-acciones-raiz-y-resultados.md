@@ -119,3 +119,7 @@ La normalización de un intervalo lineal con extremos invertidos a `empty` es un
 8. Distinción entre rechazo por una guarda falsa sobre `empty` y fallo por estado fuera de dominio.
 9. Presencia obligatoria de `reason: Text` en `rejected` y `failed`, y ausencia en `accepted`.
 10. Diagnósticos `otherwise` explícitos y generados para `if` y `after`, incluida la evaluación perezosa.
+
+## Modificación vigente por D-096
+
+Se retira la clasificación semántica entre action elemental y compuesta. Todo `then` es una secuencia ordenada que puede mezclar efectos, locales, llamadas y `for each`. Una llamada interna observa el delta privado del punto textual y aporta sus efectos a la misma resolución. `action` conserva capacidad de raíz exterior; `subaction` es reutilizable desde cualquier `then` pero no puede ser raíz exterior. Los `after` anidados se evalúan contra el estado estable tentativo final de la resolución completa.

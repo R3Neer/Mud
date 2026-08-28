@@ -258,7 +258,7 @@ cases:
   produces_ast: true
 - id: test-after-single
   category: test
-  source: "test CloseDoor {\n    start with {\n    things { Door }\n    rules { empty }\n}\n    then Door.open = false\n    after Door.open == false\n}\n"
+  source: "test CloseDoor {\n    start with {\n        Door, empty\n    }\n    then Door.open = false\n    after Door.open == false\n}\n"
   cst_root: MudFileSyntax
   ast: TestDecl(after=TestAfterBlock(locals=[], assertions=[TestAssertion(...)]))
   normalizations:
@@ -266,7 +266,7 @@ cases:
   produces_ast: true
 - id: test-after-locals
   category: test
-  source: "test Purchase {\n    start with {\n    things { Buyer }\n    rules { empty }\n}\n    then {\n        cost := 5\n        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining >= 0\n        remaining < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
+  source: "test Purchase {\n    start with {\n        Buyer, empty\n    }\n    then {\n        cost := 5\n        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining >= 0\n        remaining < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
   normalizations:
@@ -577,9 +577,9 @@ cases:
   produces_ast: true
 - id: structured-start-with
   category: start
-  source: "start with {\n    things { all }\n    rules { empty, CanGrow }\n}\n"
+  source: "start with {\n        all, empty, CanGrow\n    }\n"
   cst_root: MudFileSyntax
-  ast: GlobalStartDecl(StartSet(things=[all], rules=[empty, CanGrow]))
+  ast: GlobalStartDecl(StartSet(contributions=[all, empty, CanGrow]))
   produces_ast: true
 - id: decision-fallback
   category: dictionary
@@ -781,7 +781,7 @@ cases:
   produces_ast: true
 - id: start-with-nested-contribution-rejected
   category: validation-after-resolution
-  source: "start with {\n    things { [[Madrid]] }\n    rules { empty }\n}\n"
+  source: "start with {\n        [[Madrid]], empty\n    }\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - start-with-requires-flat-contribution
@@ -817,7 +817,7 @@ cases:
   produces_ast: true
 - id: subaction-root-request-rejected
   category: validation-after-resolution
-  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\ntest RootCall {\n    start with { things { Account } rules { empty } }\n    then Account.RemoveMoney(1 money)\n}\n"
+  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\ntest RootCall {\n    start with { Account, empty }\n    then Account.RemoveMoney(1 money)\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - subaction-not-root-callable
@@ -1234,9 +1234,9 @@ cases:
   produces_ast: true
 - id: start-with-empty-one-many-deduplicated
   category: start
-  source: "start with {\n    things { empty, Madrid, [Madrid, Toledo] }\n    rules { empty, CanMove, [CanMove, CanTrade] }\n}\n"
+  source: "start with {\n        empty, Madrid, [Madrid, Toledo], empty, CanMove, [CanMove, CanTrade]\n    }\n"
   cst_root: MudFileSyntax
-  ast: StartSet(things, rules)
+  ast: StartSet(contributions)
   normalizations:
   - flatten-one-contribution-level
   - deduplicate-initial-identities
@@ -1363,17 +1363,17 @@ cases:
   category: typing-after-ast
   source: 'thing Madrid
 
-    start with { things { all Thing } rules { empty } }
+    start with { all Thing, empty }
 
     '
   cst_root: MudFileSyntax
-  ast: StartSet(things=[AllLiteral(Thing)])
+  ast: StartSet(contributions=[PrefixExpr(EnumerateAll, Thing)])
   normalizations:
   - exclude-built-in-abstract-Thing-from-all-Thing
   produces_ast: true
 - id: start-with-static-metadata-selection
   category: start
-  source: "start with {\n    things { candidate in CityDeclarations: candidate~path in world.cities }\n    rules { rule in GameplayRules: rule~path in world.rules }\n}\n"
+  source: "start with {\n        candidate in CityDeclarations: candidate~path in world.cities, rule in GameplayRules: rule~path in world.rules\n    }\n"
   cst_root: MudFileSyntax
   ast: StartSet with SelectionExpr
   normalizations:

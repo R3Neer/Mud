@@ -357,3 +357,7 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 13. Colecciones y diccionarios con propiedades intrínsecas tipadas.
 14. Narrowing categorial de declaraciones.
 15. Eliminación completa de `anchor{...}`.
+
+## Modificación vigente por D-096
+
+`~private` queda retirado por completo como metadato estándar y como default de fichero. La visibilidad exterior se deriva de módulo, categoría operacional y cierre de tipos. La reflexión cruzada de módulo solo es válida si su contrato garantiza que no puede devolver entidades invisibles; no se permite filtrar silenciosamente una colección reflectiva para ocultarlas. Tooling completo y reflexión disponible al código MUD siguen siendo superficies distintas.

@@ -154,3 +154,7 @@ Debe diagnosticarse ausencia de `:`, paso cero, diferencia incompatible, falta d
 ## Verificación
 
 Se verifican fuentes enumerables de todas las clases admitidas, `:` con cuerpo breve y con llaves, filtro breve y con locales, pasos positivos/negativos/runtime, evaluación única del paso, cero estático/runtime, límites abiertos/cerrados, intervalos vacíos/infinitos, dominios escalonados firmados y `all`, `Num`, rechazo de progresión `Rum`, colección explícita de `Rum`, selección y los seis cuantificadores con `by` y bloque, magnitudes con unidades compatibles y diferencia entre filtro ordenado/no ordenado. La verificación concreta de intervalos discontinuos se completa cuando Q-018 cierre su forma fuente consolidada; su semántica queda fijada por esta decisión. El requisito de recorrer como máximo un periodo fundamental de un dominio cíclico pertenece a la verificación de D-082 y no depende de Q-018.
+
+## Modificación vigente por D-096
+
+Las operaciones que producen una colección desde un dominio, incluida la selección, requieren materialización explícita `all D`. Los recorridos `for each` y cuantificadores pueden consumir directamente dominios finitos enumerables porque no materializan por sí mismos una colección. Actions, rules reactivas y messages admiten además locales puras previas entre metadatos y cláusulas de comportamiento.

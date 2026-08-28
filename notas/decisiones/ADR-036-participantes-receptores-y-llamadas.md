@@ -38,7 +38,7 @@ D-025 fija las cabeceras:
 - `for`: roles individuales o colectivos de cualquier tipo declarado, suministrados a reglas booleanas, actions y `look`.
 - `given`: valores auxiliares de reglas booleanas y actions.
 
-Reglas reactivas, `always`, `look` y `message` no admiten `given`.
+Reglas reactivas, `always` y `message` no admiten `given`. Un `look` sí admite `given` conforme a D-096.
 
 ### Cardinalidad y nombres
 
@@ -268,3 +268,9 @@ Una llamada a regla no crea una función general. Una solicitud o composición d
 21. Diferencia entre un valor sujeto `for` y un valor auxiliar `given` del mismo tipo.
 22. Rechazo de mutabilidad exterior e interior en `given`.
 23. Conservación de orientaciones simétricas y de roles reflexivos en `on`.
+
+## Modificación vigente por D-096
+
+Un `look` admite `given` con las reglas generales de binding y defaults. Las declaraciones gobernadas por `on` siguen sin `given` y, cuando se usan como trigger, se referencian sin `()`. Los valores callable almacenados se invocan mediante la forma ordinaria de receptores y argumentos; almacenar el descriptor no pre-vincula roles ni `given`.
+
+Además, un participante relacionado `on nombre: Tipo in fuente` puede vincular valores de una fuente finita enumerable, no solo identidades `thing`. La forma directa sin fuente continúa reservada al universo implícito de `thing`; por tanto `on n: Nat` sin fuente finita es inválido.

@@ -84,3 +84,7 @@ Los `message` detectados se conservan como ocurrencias tentativas. Sus propiedad
 10. Un cambio unido mediante `or` a una transición booleana preserva cualquiera de los dos pulsos.
 11. Deltas `-2` y `+3` sobre un `Nat` inicial cero producen uno en la siguiente instantánea.
 12. Ninguna instantánea de onda expone un `Nat` negativo.
+
+## Modificación vigente por D-096
+
+Un `message` es una ocurrencia causal con identidad y bindings, no una mera salida cuyos campos se difieren al estado final. La ocurrencia nacida en una onda queda disponible como trigger en la onda siguiente. Dentro de MUD su payload se proyecta sobre la vista causal de nacimiento; hacia el host, tras commit, se proyecta sobre el estado estable final. Ambas proyecciones pertenecen a la misma ocurrencia. La estabilización exige además ausencia de consecuencias/ocurrencias causales pendientes.

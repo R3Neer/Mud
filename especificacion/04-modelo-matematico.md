@@ -110,9 +110,9 @@ thing Alexandria as City {
 }
 
 start with {
-    things { Alexandria }
-    rules { empty }
-}
+        Alexandria,
+        empty
+    }
 
 rule ExactIdentifier given value: Identifier {
     value iis PersonId

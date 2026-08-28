@@ -171,3 +171,7 @@ Una selección usada para definir un campo derivado puede alimentar una colecci�
 ## Modificación por D-088
 
 La selección pura admite `item in source by step: predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.
+
+## Modificación vigente por D-096
+
+Selección y `take` producen colecciones. Cuando su fuente conceptual es un dominio, debe materializarse explícitamente mediante `all D`; por ejemplo `candidate in all Actions: ...` y `take n from all D`. Recorridos y cuantificadores que no producen una colección pueden consumir directamente un dominio finito enumerable.

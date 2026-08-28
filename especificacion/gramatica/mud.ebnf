@@ -471,6 +471,7 @@ reactive-rule-declaration
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
+        , { local-value-declaration , required-separation }
         , when-clause
         , required-separation
         , [ if-clause , required-separation ]
@@ -506,6 +507,7 @@ action-signature-body
         , [ given-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
+        , { local-value-declaration , required-separation }
         , [ action-if-clause , required-separation ]
         , then-clause
         , [ required-separation , action-after-clause ]
@@ -516,6 +518,7 @@ action-signature-body
 look-declaration
     ::= "look" , nominal-name
         , [ for-clause ]
+        , [ given-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , [ public-field-declaration
@@ -530,6 +533,7 @@ message-declaration
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
+        , { local-value-declaration , required-separation }
         , when-clause
         , [ required-separation , if-clause ]
         , [ required-separation , public-field-declaration
@@ -593,18 +597,14 @@ global-start-declaration
 
 start-with-declaration
     ::= "start" , "with"
-        , "{" , declaration-layout
-        , "things" , start-contribution-body
-        , required-separation
-        , "rules" , start-contribution-body
-        , declaration-layout , "}"
+        , ( expression | start-contribution-body )
         ;
 
 start-contribution-body
     ::= "{" , declaration-layout
-        , [ expression
-            , { "," , declaration-layout , expression }
-          ]
+        , expression
+        , { "," , declaration-layout , expression }
+        , [ "," ]
         , declaration-layout , "}"
         ;
 
@@ -826,7 +826,7 @@ prefix-expression
     ::= { prefix-operator } , postfix-expression ;
 
 prefix-operator
-    ::= "not" | "+" | "-" | "old" | "allowed" ;
+    ::= "not" | "+" | "-" | "old" | "allowed" | "all" ;
 
 postfix-expression
     ::= primary-expression
