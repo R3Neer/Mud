@@ -1,3 +1,4 @@
 Trigger temporal para reconstruir D-096 desde main 7110329086838e63db02bb1e3a58f0c1df67f0db.
 Reejecución con ADR D-096 materializada desde blob fijado.
 Reejecución con limpieza exacta de ~private.
+Reejecución con contrato Any alineado.
