@@ -183,6 +183,10 @@ Un comentario multilínea conserva sus delimitadores, sangría y saltos internos
 
 Los terminadores ignorados por `layout` continúan presentes como tokens dentro de la CST.
 
+## Otros tokens significativos
+
+La CST conserva los tokens fijos `-->` y `~`, la palabra operadora `iis` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. `not in` e `iis not` conservan dos tokens con trivia propia. No existe `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.
+
 ## Literales `Text`
 
 Los tokens producidos por el scanner modal se conservan:
@@ -383,8 +387,3 @@ Un frontend conforme debe satisfacer:
 5. Distinción entre tokens escritos y sintéticos.
 6. Ausencia de decisiones de resolución o tipado en la CST.
 7. Resultado compatible con las normalizaciones del AST superficial.
-
-
-## Tokens añadidos y retirados por D-085
-
-La CST conserva los tokens fijos `-->` y `~`, la palabra operadora `iis` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. `not in` e `iis not` conservan dos tokens con trivia propia. No existe `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.

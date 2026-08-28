@@ -200,7 +200,6 @@ module MUDSemanticIR {
                     | UnitOf(anchor unit, anchor magnitude)
 }
 
--- D-096: el modelo elaborado debe preservar pertenencia modular, `uses`,
--- activación unificada y ausencia de `~private`. La representación exacta de
--- matches causales de trigger permanece deliberadamente abierta; no se fija aquí
--- una codificación interna que cierre la decisión provisional de bindings.
+-- El modelo elaborado preserva pertenencia modular, `uses` y activación
+-- unificada. La representación exacta de matches causales de trigger no forma
+-- parte todavía de este contrato y no se fija aquí una codificación interna.

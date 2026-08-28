@@ -37,7 +37,7 @@ decisions:
 
 ## Estado y propósito
 
-Este capítulo define el scanner base y la clasificación contextual de formas fuente. El scanner base transforma Unicode en tokens sin consultar el modelo; `POINT_LITERAL` y `UNIT_FORM` se añaden únicamente en una vista contextual posterior conforme a D-089. La gramática léxica base está en [[gramatica/mud-lexico.ebnf]]. La sintaxis que consume las vistas significativas pertenece a [[07-gramatica-concreta]].
+Este capítulo define el scanner base y la clasificación contextual de formas fuente. El scanner base transforma Unicode en tokens sin consultar el modelo; `POINT_LITERAL` y `UNIT_FORM` se añaden únicamente en una vista contextual posterior. La gramática léxica base está en [[gramatica/mud-lexico.ebnf]]. La sintaxis que consume las vistas significativas pertenece a [[07-gramatica-concreta]].
 
 ## Valores escalares Unicode
 
@@ -104,11 +104,14 @@ Son contextuales:
 - `start` como parte de `start with`.
 - `things` y `rules` como etiquetas obligatorias de sus secciones de `start with`.
 - `value` dentro de los selectores y resultados de ramas funcionales `-->`.
+- `type` en las posiciones reflectivas y de tipo que lo admiten.
 - `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` y `format` después de `~` en las posiciones admitidas.
 - `root`, `unit`, `point`, `over` y `cycle` en sus producciones propias.
 - `Interval` inmediatamente después de una referencia de tipo dentro de `interval-type`.
 
 `for`, `on` y `given` continúan siendo palabras reservadas duras, pero `metadata-name` las admite explícitamente después de `~` para las propiedades reflectivas `~for`, `~on` y `~given`. Esta excepción sintáctica no las convierte en `IDENTIFIER` ni permite usarlas como nombres ordinarios.
+
+`things` y `rules` no forman parte del vocabulario vigente de `start with`.
 
 Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador no puede usar esta flexibilidad para aceptar una palabra reservada dura como nombre.
 
@@ -116,9 +119,11 @@ Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador n
 
 `all` es una palabra reservada que sirve tanto como literal contextual sin operando, cuyo dominio enumerable se obtiene del contexto, como prefijo `all D` para materializar explícitamente un dominio enumerable. Su carácter reservado permite distinguir ambas formas de una declaración ordinaria aun antes del tipado.
 
+`iis` es una palabra operadora reservada. `not in` e `iis not` conservan dos tokens de palabra con trivia propia; el parser agrupa cada pareja en la comparación correspondiente.
+
 ## Adyacencia de unidades
 
-El scanner base no necesita conocer unidades para reconocer la frontera posterior a un número. Cuando la gramática de cantidad admite una unidad, el clasificador contextual de D-089 consulta el texto fuente desde ese offset y puede cubrir una forma habilitada sin exigir trivia intermedia. Por ello `3m`, `90km/h` y `r0.1m` obtienen la misma clasificación semántica que sus formas espaciadas. Fuera de una posición de unidad, `R2D2`, `ronto` y cualquier secuencia semejante conservan exclusivamente su tokenización base.
+El scanner base no necesita conocer unidades para reconocer la frontera posterior a un número. Cuando la gramática de cantidad admite una unidad, el clasificador contextual consulta el texto fuente desde ese offset y puede cubrir una forma habilitada sin exigir trivia intermedia. Por ello `3m`, `90km/h` y `r0.1m` obtienen la misma clasificación semántica que sus formas espaciadas. Fuera de una posición de unidad, `R2D2`, `ronto` y cualquier secuencia semejante conservan exclusivamente su tokenización base.
 
 La forma canónica inserta un espacio entre número y primera unidad. Esta normalización pertenece al formateador, no al scanner base ni al resaltador.
 
@@ -131,7 +136,7 @@ La forma canónica inserta un espacio entre número y primera unidad. Esta norma
 > `POINT_LITERAL` y `UNIT_FORM` son clasificaciones contextuales sobre spans del texto original. El clasificador puede cubrir una o varias unidades del tokenizado base, pero debe conservar el intervalo fuente exacto y no puede fabricar caracteres al recomponer tokens.
 
 > [!rule] MUD-LEX-014 — Prioridad dirigida por contexto
-> Una alternativa contextual existe únicamente cuando su contexto semántico satisface el contrato de D-089. Cuando un único tipo de punto esperado reconoce exactamente su `~format`, `POINT_LITERAL` prevalece sobre una interpretación ordinaria del mismo span. Sin contexto suficiente, esa alternativa no existe.
+> Una alternativa contextual existe únicamente cuando su contexto semántico satisface el contrato definido en este capítulo. Cuando un único tipo de punto esperado reconoce exactamente su `~format`, `POINT_LITERAL` prevalece sobre una interpretación ordinaria del mismo span. Sin contexto suficiente, esa alternativa no existe.
 
 > [!rule] MUD-LEX-015 — Determinismo de unidad
 > `UNIT_FORM` usa el catálogo semántico ya resuelto. El tipo esperado restringe candidatos; sin él la forma debe ser globalmente unívoca. Entre coincidencias compatibles de distinta longitud gana la forma completa más larga; dos candidatos distintos para el mismo span son ambiguos.
@@ -360,10 +365,10 @@ Son inválidos `_1`, `1_`, `1__000`, `1_.0`, `1_000000`, `1.123_456789` y `3e1_0
 
 ## Unidades
 
-Las formas de unidad pueden contener Unicode y no son identificadores generales. El scanner base conserva su tokenización textual ordinaria; únicamente el clasificador contextual de D-089 puede superponer `UNIT_FORM` en una posición donde la sintaxis de cantidad admita una unidad.
+Las formas de unidad pueden contener Unicode y no son identificadores generales. El scanner base conserva su tokenización textual ordinaria; únicamente el clasificador contextual puede superponer `UNIT_FORM` en una posición donde la sintaxis de cantidad admita una unidad.
 
 > [!warning]
-> [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] fija el catálogo de prefijos y las formas habilitadas. D-089 fija su reconocimiento sin dependencia circular: `UNIT_FORM` conserva la escritura encontrada y se selecciona contra el catálogo semántico ya resuelto.
+> El catálogo de prefijos y formas habilitadas pertenece al modelo de unidades. `UNIT_FORM` conserva la escritura encontrada y se selecciona contra el catálogo semántico ya resuelto, sin introducir dependencia circular en el scanner base.
 
 `Prefix` es un tipo incorporado. Los nombres SI `quecto`…`quetta` permanecen identificadores ordinarios: en una expresión como `~prefixes = [kilo, milli]` se resuelven como valores incorporados de `Prefix`; no se convierten en palabras reservadas.
 
@@ -376,7 +381,7 @@ Una magnitud `point over` puede habilitar escrituras contextuales mediante su me
 
 Una magnitud de punto sin `~format` usa una cantidad ordinaria con una unidad compatible como coordenada completa. En ambos casos, la coordenada reconstruida debe pertenecer al dominio declarado. Los dominios cíclicos no normalizan literales fuera de rango: un literal equivalente a `26 hours` es inválido para `[0..24 hours) cycle`.
 
-Las reglas completas pertenecen a [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]].
+Este capítulo fija únicamente el reconocimiento léxico de estas formas; su interpretación pertenece al modelo de magnitudes de punto.
 
 ## Spans léxicos
 
@@ -397,37 +402,3 @@ En una misma posición se intenta:
 Se elige la coincidencia válida más larga dentro de la misma categoría. Los comentarios y espacios horizontales se excluyen del flujo significativo, pero se conservan como trivia en el flujo completo; `NEWLINE` se conserva como token significativo para decidir terminación.
 
 Dentro de una plantilla se aplica primero `\u{...}`, después los demás escapes, después `{` y por último el fragmento literal más largo posible. Dentro de una interpolación vuelve a aplicarse la prioridad ordinaria. La secuencia `anchor{` no posee tratamiento léxico especial.
-
-
-## Palabras y tokens añadidos
-
-`subaction` es palabra reservada. `Any`, `Name`, `MudPath`, `Anchor` y `MudFile` son nombres incorporados reservados. `value`, `type`, `path` y `file` son contextuales en sus posiciones propias. `things` y `rules` no forman parte del vocabulario vigente de `start with`. `_` es el fallback reservado de una rama funcional.
-
-`iis` es palabra operadora reservada. `not in` e `iis not` conservan dos tokens de palabra; el parser agrupa cada pareja dentro de una comparación no encadenable.
-
-```mud
-value not in domain
-value iis PersonId
-value iis not PersonId
-```
-
-El scanner reconoce `-->` mediante coincidencia más larga antes que `--` y `->`:
-
-```mud
-selector --> result
-key -> value
-left -- right
-```
-
-`~` es un token postfix independiente:
-
-```mud
-value~name
-value~anchor
-```
-
-Las plantillas solo abren interpolaciones ordinarias `{...}`. La forma especial `anchor{...}` y `ANCHOR_INTERPOLATION_START` no pertenecen al lenguaje. Un ancla se interpola mediante una expresión ordinaria:
-
-```mud
-"Rule: {CanRecruit~anchor}"
-```

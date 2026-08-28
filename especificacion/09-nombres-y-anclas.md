@@ -55,7 +55,7 @@ Mover una declaración entre archivos del mismo path no cambia su nombre cualifi
 
 La categoría esperada no desambigua dos declaraciones superiores homónimas. Los campos y miembros anidados pertenecen al espacio de su propietario y pueden repetir nombres en propietarios distintos.
 
-Participantes `for`, `on` y `given` son símbolos léxicos con ancla subordinada estable según D-087. Iteradores y vinculaciones locales ordinarias continúan sin ancla pública. Los nombres pueden repetirse en ámbitos independientes, pero no pueden sombrear un nombre ya visible.
+Participantes `for`, `on` y `given` son símbolos léxicos con ancla subordinada estable según el modelo de descriptores. Iteradores y vinculaciones locales ordinarias continúan sin ancla pública. Los nombres pueden repetirse en ámbitos independientes, pero no pueden sombrear un nombre ya visible.
 
 > [!rule] MUD-NAME-003 — Convenciones obligatorias
 > Declaraciones nominales y miembros de family usan `PascalCase`; campos, componentes, roles, `given`, variables y segmentos de path usan `lowerCamel`; los identificadores de unidad usan `lowerCamel`. Un incumplimiento es un error estático con arreglo mecánico cuando exista una única corrección segura.
@@ -91,7 +91,7 @@ En `for each`, la fuente y el `by` opcional se resuelven antes de introducir la 
 
 En una selección o un cuantificador/agregador, `source` y `by` se resuelven igualmente en el entorno exterior. Después se introduce la vinculación y se resuelve el `ExpressionBlock`: cada local ve las vinculaciones exteriores y las locales anteriores; el resultado final ve todas las locales del bloque. La vinculación y esas locales dejan de existir al terminar la expresión propietaria.
 
-Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible. La resolución nominal registra estas vinculaciones como símbolos locales subordinados a su propietario; el IR semántico usa la variante genérica `LocalSymbol(owner, kind, name, ordinal)`. D-088 no introduce una clase de símbolo ni una categoría de ancla nuevas.
+Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible. La resolución nominal registra estas vinculaciones como símbolos locales subordinados a su propietario; el IR semántico usa la variante genérica `LocalSymbol(owner, kind, name, ordinal)`. Estas vinculaciones no introducen una clase de símbolo ni una categoría de ancla nuevas.
 
 ## Etapas
 
@@ -142,7 +142,7 @@ La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaraci
 | test | `test` |
 | tipo incorporado | `type` |
 
-Los participantes `for`, `on` y `given` no introducen una categoría superior nueva: su ancla es subordinada a la del propietario y deriva además de la clase de cláusula y del identificador, conforme a D-087. La posición nunca forma parte de esa identidad.
+Los participantes `for`, `on` y `given` no introducen una categoría superior nueva: su ancla es subordinada a la del propietario y deriva además de la clase de cláusula y del identificador, conforme al modelo de descriptores. La posición nunca forma parte de esa identidad.
 
 `start with` global no introduce nombre y, por tanto, no posee ancla. La categoría describe la declaración propietaria: un campo de `look` conserva una ancla como `look::game.Status::score`, no una categoría adicional `field`.
 
@@ -221,7 +221,7 @@ Las declaraciones `alias` pueden aportar aristas de especialización. El grafo n
 
 ## Metadatos, descriptores y anclas subordinadas
 
-D-087 generaliza `~`: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el global continúa sin ancla.
+El acceso reflectivo `~` distingue propiedades intrínsecas y metadatos configurados: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el global continúa sin ancla.
 
 Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
 
@@ -255,6 +255,6 @@ world.trade not in world.combat                # true
 
 `is` consulta la clausura de especialización; `iis` compara el tipo nominal efectivo exacto. El narrowing de `iis not` elimina una única posibilidad nominal y no elimina sus especializaciones. Esta distinción no crea anclas nuevas ni sustituye la igualdad de identidades singleton mediante `==`.
 
-## Módulos, `uses` y anclas (D-096)
+## Módulos, `uses` y anclas
 
 La pertenencia a módulo es una dimensión de visibilidad y dependencia, no un componente adicional del ancla nominal. `uses` autoriza el conocimiento del contrato de otro módulo; un `using` no concede esa autorización. La resolución cruzada solo puede alcanzar operaciones y tipos pertenecientes al cierre visible del contrato modular.

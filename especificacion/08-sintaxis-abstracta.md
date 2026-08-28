@@ -17,6 +17,7 @@ depends-on:
   - sintaxis/mud-surface-ast.asdl
 questions:
   - Q-061
+  - Q-063
 decisions:
   - D-015
   - D-032
@@ -193,7 +194,7 @@ No se representa mediante enteros ni strings.
 
 ## Metadatos en propietarios estables
 
-Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales admitidas por D-087, unidades, campos, componentes y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
+Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales metadata-bearing, unidades, campos, componentes y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
 
 Una cabecera agrupada de participantes se normaliza a varios descriptores y copia la misma secuencia de metadatos a cada uno. `GlobalStartDecl` y el `start with` interno de un test no reciben secuencia propia.
 
@@ -220,7 +221,7 @@ El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene
 ThingInitializer(name, value)
 ```
 
-Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: D-015 mantiene separados el predeterminado de esquema y la contribución de inicialización. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado heredado y que el valor satisfaga su tipo y dominio.
+Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: el AST mantiene separados el predeterminado de esquema y la contribución de inicialización. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado heredado y que el valor satisfaga su tipo y dominio.
 
 La validación previa al AST rechaza que una misma definición contenga una declaración local de campo y un `ThingInitializer` con el mismo nombre. Una declaración `fieldName: Type = value` conserva su `defaultValue` dentro del `StoredFieldDecl` y no genera `ThingInitializer`.
 
@@ -265,7 +266,7 @@ No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colecci
 
 Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
 
-`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o decisionales. D-063 mantiene `given` como parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente antes del IR semántico.
+`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o decisionales. `given` es un parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente antes del IR semántico.
 
 ## Tipos
 
@@ -389,7 +390,7 @@ El IR semántico distingue ambas operaciones: `ContextualAliasConstructionExpr(l
 - Datos almacenados o calculados.
 - Miembros.
 
-Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva `metadata_assignment* metadata` junto a su forma y predeterminado. El dato calculado conserva provisionalmente `derived_value_shape? shape`, su expresión y `metadata_assignment* metadata`; Q-061 decidirá si esa forma debe restringirse al tipo opcional descrito por D-038.
+Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva `metadata_assignment* metadata` junto a su forma y predeterminado. El dato calculado conserva provisionalmente `derived_value_shape? shape`, su expresión y `metadata_assignment* metadata`; Q-061 decidirá si esa forma debe restringirse a una anotación de tipo opcional.
 
 Cada declaración de dato asociado es un propietario metadata-bearing estable y se elabora como descriptor `Field` subordinado a la `family`, con `FieldKind.Stored` o `FieldKind.Calculated`. La proyección `member.data` es un valor, no una copia del descriptor. Por tanto, los metadatos pertenecen al dato declarado una sola vez y no se duplican por miembro.
 
@@ -482,6 +483,7 @@ Las tres clases tienen constructores distintos:
 
 Una regla reactiva almacena:
 
+- Locales puras previas a sus cláusulas de comportamiento.
 - Activador `when` como `ExpressionBlock` con contrato temporal.
 - Guardia `if` opcional como `ExpressionBlock` con contrato booleano.
 - Bloque de efectos.
@@ -504,15 +506,16 @@ Una acción contiene:
 
 - Participantes `for` opcionales.
 - `given` opcionales.
+- Locales puras previas a sus cláusulas de comportamiento.
 - Guardia booleana opcional y diagnóstico.
 - Bloque de efectos.
 - Postcondición booleana `after` opcional y diagnóstico.
 
 ## `look` y `message`
 
-`LookDecl` conserva participantes `for` y propiedades públicas.
+`LookDecl` conserva participantes `for`, `given` y propiedades públicas.
 
-`MessageDecl` conserva participantes `on`, activador booleano, guardia booleana opcional y propiedades públicas.
+`MessageDecl` conserva participantes `on`, locales puras previas a sus cláusulas de comportamiento, activador booleano, guardia booleana opcional y propiedades públicas.
 
 No se reducen a reglas o acciones genéricas porque sus contratos posteriores son distintos.
 
@@ -526,7 +529,7 @@ No se reducen a reglas o acciones genéricas porque sus contratos posteriores so
 
 La forma `after expr` produce un bloque sin locales y una aserción. En la forma `after { ... }`, todas las declaraciones locales preceden a la primera aserción.
 
-`start with` global y local comparten `StartSet`, pero solo el primero está envuelto en `GlobalStartDecl`.
+`start with` global y local comparten `StartSet`, que conserva una única secuencia de contribuciones; solo el primero está envuelto en `GlobalStartDecl`.
 
 ## Bloques de efectos
 
@@ -635,7 +638,7 @@ La composición de ambas formas es estructural. `take n from player in players: 
 
 ### `all`
 
-El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estático o dinámico se determinan durante el tipado; el AST superficial no enumera sus valores.
+El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estático o dinámico se determinan durante el tipado; el AST superficial no enumera sus valores. La forma prefija `all D` produce `PrefixExpr(EnumerateAll, D)` y conserva explícitamente la materialización solicitada.
 
 ### Cuantificadores
 
@@ -869,14 +872,10 @@ El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la ca
 
 ## Metadatos, texto y activación
 
-`element~metadata` produce siempre `MetadataAccessExpr`. No existe `MetadataSuffix` asignable: `AssignableExpr` solo conserva `MemberSuffix` e `IndexSuffix`, de modo que ningún acceso `~` puede ser destino de un efecto. El AST superficial tampoco decide si la propiedad existe para el receptor; D-092 difiere esa comprobación hasta que la categoría estática del receptor ha sido resuelta. Toda interpolación produce `ValueInterpolation`, incluida:
+`element~metadata` produce siempre `MetadataAccessExpr`. No existe `MetadataSuffix` asignable: `AssignableExpr` solo conserva `MemberSuffix` e `IndexSuffix`, de modo que ningún acceso `~` puede ser destino de un efecto. El AST superficial tampoco decide si la propiedad existe para el receptor; esa comprobación se difiere hasta que la categoría estática del receptor ha sido resuelta. Toda interpolación produce `ValueInterpolation`, incluida:
 
 ```mud
 "{value~anchor}"
 ```
 
 No existe `AnchorInterpolation`. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones. `ActionDecl` conserva `PublicAction` o `Subaction`.
-
-## Actualización de AST por D-096
-
-`LookDecl` conserva `given_clause?`; `ActionDecl`, `ReactiveRuleDecl` y `MessageDecl` conservan sus locales previas; `StartSet` contiene una única secuencia de contribuciones y no dos listas `things`/`rules`; `all D` se conserva como `PrefixExpr(EnumerateAll, D)`, mientras el `all` contextual sigue siendo `AllLiteral`.

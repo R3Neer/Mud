@@ -208,7 +208,7 @@ ascii-letter
       ;
 
 (* UNIT_FORM y POINT_LITERAL no son producciones del scanner base.
-   D-089 los define como clasificaciones contextuales sobre spans fuente. *)
+   Se definen como clasificaciones contextuales sobre spans fuente. *)
 
 operator-or-delimiter
     ::= operator-token

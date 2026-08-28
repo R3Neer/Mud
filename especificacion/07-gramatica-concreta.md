@@ -15,6 +15,7 @@ questions:
   - Q-059
   - Q-061
   - Q-062
+  - Q-063
 decisions:
   - D-015
   - D-025
@@ -100,7 +101,7 @@ Un `given` reutiliza la expresión general de tipo, incluidos los diccionarios:
 given prices: Product -> Money
 ```
 
-La gramática puede conservar un modificador `mut` escrito dentro de esa expresión para diagnóstico, pero D-063 lo hace estáticamente inválido: `given` nunca concede capacidad de escritura.
+La gramática puede conservar un modificador `mut` escrito dentro de esa expresión para diagnóstico, pero esa capacidad es estáticamente inválida: `given` nunca concede capacidad de escritura.
 
 ## Transformación abstracta
 
@@ -173,7 +174,7 @@ fieldName = static-expression
 
 El objetivo se conserva como nombre de campo hasta la resolución. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. Debe resolver a un campo heredado: una misma `thing` no puede declarar localmente `fieldName` y además contener una instrucción separada `fieldName = ...`. La forma `fieldName: Type = value` es una sola declaración con predeterminado y sigue siendo válida. El valor del inicializador usa `constant-expression`, por lo que debe ser una expresión estática cerrada.
 
-En una `abstract thing`, el inicializador no materializa carga propia; se conserva como contribución heredada para la primera materialización de descendientes concretos. En una `thing` concreta, el inicializador local se aplica a su propia primera materialización y no se hereda por sus descendientes. Un inicializador más específico sustituye a uno heredado menos específico. La especialización múltiple no obtiene prioridad del orden de `as`: el mismo origen se deduplica y contribuciones independientes e incomparables sobre el mismo campo entran en conflicto conforme a D-084.
+En una `abstract thing`, el inicializador no materializa carga propia; se conserva como contribución heredada para la primera materialización de descendientes concretos. En una `thing` concreta, el inicializador local se aplica a su propia primera materialización y no se hereda por sus descendientes. Un inicializador más específico sustituye a uno heredado menos específico. La especialización múltiple no obtiene prioridad del orden de `as`: el mismo origen se deduplica y contribuciones independientes e incomparables sobre el mismo campo entran en conflicto.
 
 ```mud
 thing Kingdom {
@@ -185,7 +186,7 @@ thing France as Kingdom {
 }
 ```
 
-En `France`, `20` inicializa únicamente la carga propia de `France.treasury` en su primera materialización. No se convierte en el predeterminado ni en un inicializador heredable para descendientes de `France`, y una reactivación posterior a `destroy France` conserva la carga almacenada en vez de ejecutar de nuevo el inicializador. Esta distinción implementa D-015 y el ciclo de primera materialización fijado por D-054.
+En `France`, `20` inicializa únicamente la carga propia de `France.treasury` en su primera materialización. No se convierte en el predeterminado ni en un inicializador heredable para descendientes de `France`, y una reactivación posterior a `destroy France` conserva la carga almacenada en vez de ejecutar de nuevo el inicializador. Esta distinción conserva separados el predeterminado heredable y la contribución de primera materialización.
 
 ```mud
 abstract thing RichKingdom as Kingdom {
@@ -266,7 +267,7 @@ Una flecha debe ser la forma exterior completa del tipo. Un diccionario no puede
 
 ### Tipos callable y tipos obtenidos por reflexión
 
-D-096 admite tipos callable escritos a partir de los tipos de receptor/participantes y de la parte `given` de la firma:
+Los tipos callable se escriben a partir de los tipos de receptor/participantes y de la parte `given` de la firma:
 
 ```mud
 Dragon.action(Volume)
@@ -467,7 +468,7 @@ for products: Product [*], pricing: Product --> Money,
 }
 ```
 
-Las ramas solo cambian mediante edición del modelo sobre el diccionario propietario. Una edición estructural puede insertar antes de `_` por defecto y puede actualizar, retirar o mover una rama, pero ninguna de esas operaciones se dirige a una ancla de rama ni presupone identidad pública independiente; D-090 fija su clave local en la representación resuelta.
+Las ramas solo cambian mediante edición del modelo sobre el diccionario propietario. Una edición estructural puede insertar antes de `_` por defecto y puede actualizar, retirar o mover una rama, pero ninguna de esas operaciones se dirige a una ancla de rama ni presupone identidad pública independiente; su clave local se fija en la representación resuelta.
 
 La aritmética de funcionales es extensional; no fusiona ramas:
 
@@ -648,7 +649,7 @@ family Terrain {
 }
 ```
 
-Los datos aparecen antes del primer miembro. Un dato almacenado puede llevar, después de su predeterminado opcional, un cuerpo inmediato que contenga solo declaraciones `~...`. Un dato calculado puede llevar el mismo metadata-body inmediato. La EBNF conserva por ahora `derived-value-shape` en esta producción, mientras D-038 describe una forma más estrecha `nombre [: Tipo] := expresión`; Q-061 mantiene abierta esa discrepancia y esta decisión no la resuelve.
+Los datos aparecen antes del primer miembro. Un dato almacenado puede llevar, después de su predeterminado opcional, un cuerpo inmediato que contenga solo declaraciones `~...`. Un dato calculado puede llevar el mismo metadata-body inmediato. Q-061 mantiene abierta si esta producción debe conservar `derived-value-shape` o restringirse a la forma `nombre [: Tipo] := expresión`; hasta resolverla, la EBNF conserva la forma más amplia.
 
 El metadata-body describe el descriptor uniforme del dato de la `family`, no el valor concreto proyectado por cada miembro. Por ejemplo:
 
@@ -926,7 +927,7 @@ when position - old position >= 10 meters
 ```
 
 
-D-096 generaliza además `when` a fuentes declarativas. Una ocurrencia de `message`, el disparo efectivo de una rule reactiva y la evaluación de una rule `always` para una vinculación pueden actuar como trigger. Actions, subactions, `look`, reglas booleanas y tests no son fuentes declarativas de trigger.
+`when` admite además fuentes declarativas. Una ocurrencia de `message`, el disparo efectivo de una rule reactiva y la evaluación de una rule `always` para una vinculación pueden actuar como trigger. Actions, subactions, `look`, reglas booleanas y tests no son fuentes declarativas de trigger.
 
 Una referencia declarativa usada como trigger no lleva paréntesis: `when Damaged`, `when Dragon.Damaged` o una local que contenga ese descriptor. Los receptores restringen sus bindings `on`; no convierten el trigger en una llamada ordinaria.
 
@@ -1212,7 +1213,7 @@ Una selección devuelve directamente las ocurrencias aceptadas y conserva multip
 
 ## Tipo superior `Any`
 
-`Any` es el tipo superior abierto de los valores MUD del proyecto. Incluye básicos, valores incorporados como los miembros de `Prefix`, identidades `thing`, aliases, miembros de `family`, magnitudes, intervalos, colecciones, diccionarios, productos estructurales y descriptores first-class de declaraciones y tipos conforme a D-096. Los nodos de AST no son valores MUD por el mero hecho de existir como representación del compilador.
+`Any` es el tipo superior abierto de los valores MUD del proyecto. Incluye básicos, valores incorporados como los miembros de `Prefix`, identidades `thing`, aliases, miembros de `family`, magnitudes, intervalos, colecciones, diccionarios, productos estructurales y descriptores first-class de declaraciones y tipos. Los nodos de AST no son valores MUD por el mero hecho de existir como representación del compilador.
 
 `Any` no es enumerable, no posee orden total universal ni predeterminado. Son inválidos:
 
@@ -1445,9 +1446,9 @@ El acceso se escribe `owner~metadata`, nunca `owner.~metadata`. Todo acceso `~` 
 
 La columna «Propietarios» es una restricción semántica de disponibilidad, no una descripción de cuándo el resultado es no vacío. Tras resolver y tipar el receptor, un acceso a una propiedad no soportada por su categoría estática es error. En particular, `thing A` hace inválido `A~for`; una `action` sí soporta `~for` aunque omita la cláusula y en ese caso obtiene `empty`. La misma separación entre propiedad inexistente y valor vacío se aplica a `~on` y `~given`.
 
-La producción `metadata-name ::= identifier | "for" | "on" | "given"` solo permite que esas keywords duras aparezcan sintácticamente después de `~`. El parser no puede decidir por el nombre textual del receptor si el acceso existe: construye la forma postfix y la resolución/tipado aplica la matriz de D-092.
+La producción `metadata-name ::= identifier | "for" | "on" | "given"` solo permite que esas keywords duras aparezcan sintácticamente después de `~`. El parser no puede decidir por el nombre textual del receptor si el acceso existe: construye la forma postfix y la resolución y el tipado aplican la matriz anterior.
 
-La tabla resume las propiedades comunes y configurables que afectan a la sintaxis de este capítulo. D-087 define además las propiedades reflectivas específicas de cada descriptor, como relaciones de especialización, campos, componentes y propiedades estructurales de colecciones y diccionarios; no se duplican aquí como un segundo catálogo normativo.
+La tabla resume las propiedades comunes y configurables que afectan a la sintaxis de este capítulo. El sistema reflectivo define además las propiedades específicas de cada descriptor, como relaciones de especialización, campos, componentes y propiedades estructurales de colecciones y diccionarios; no se duplican aquí como un segundo catálogo normativo.
 
 `Prefix` es un tipo incorporado. Sus valores SI se escriben como identificadores ordinarios (`kilo`, `milli`, ...), por lo que `~prefixes = [kilo, milli]` no necesita gramática especial.
 
@@ -1493,7 +1494,7 @@ Todo literal `Text`, ordinario o multilínea, es una plantilla. `{e}` evalúa `e
 
 `anchor{...}` no pertenece al lenguaje. Renderizar `Name`, `MudPath`, `Anchor` o `MudFile` en una plantilla no los convierte implícitamente a `Text` fuera de ese contexto.
 
-Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. Los descriptores de declaraciones y tipos son valores MUD first-class conforme a D-096, pero esa condición no les concede una representación textual implícita. Actions, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}` mientras no exista una conversión o proyección textual explícita aplicable.
+Son renderizables directamente `Text`, `Char`, `Bool`, los números básicos, los valores `thing`, los miembros de `family`, los intervalos, las colecciones y las magnitudes. Una llamada a regla booleana también lo es porque produce `Bool`. Los descriptores de declaraciones y tipos son valores MUD first-class, pero esa condición no les concede una representación textual implícita. Actions, reglas reactivas, reglas `always`, `look`, `message`, tests, tipos y declaraciones `family` producen error estático dentro de `{...}` mientras no exista una conversión o proyección textual explícita aplicable.
 
 Una `thing`, un alias nominal y un miembro de `family` se representan mediante su `~name` efectivo. Su ancla canónica se obtiene mediante `~anchor`; modificar `~name` no cambia igualdad, path ni ancla. Un miembro de `family` sin sobrescritura usa inicialmente su nombre nominal. Un intervalo usa su forma canónica normalizada. Una colección omite solo sus corchetes exteriores y separa elementos mediante `, `; toda colección que aparezca como elemento conserva sus propios corchetes:
 
@@ -1564,7 +1565,7 @@ El parser o la elaboración posterior deben resolver sin elección arbitraria:
 | `[expression]` | colección unitaria o intervalo unitario |
 | `1..5 unit` | unidad común del intervalo o extremo derecho de una derivación inválida |
 
-Si nombres, tipos y restricciones de la expresión no determinan una única interpretación válida, el programa es inválido y debe aportar el tipo que falte. No se aplica una preferencia implícita. Por ejemplo, una derivación sin contexto suficiente no puede elegir arbitrariamente si `[3]` es una colección o el intervalo `[3..3]`. D-059 sí fija expresamente `1..5 m` como la forma de unidad común `(1..5) m`; no queda a elección del parser.
+Si nombres, tipos y restricciones de la expresión no determinan una única interpretación válida, el programa es inválido y debe aportar el tipo que falte. No se aplica una preferencia implícita. Por ejemplo, una derivación sin contexto suficiente no puede elegir arbitrariamente si `[3]` es una colección o el intervalo `[3..3]`. La gramática fija expresamente `1..5 m` como la forma de unidad común `(1..5) m`; no queda a elección del parser.
 
 ## Recuperación de errores
 
@@ -1617,16 +1618,11 @@ Los componentes y campos derivados pertenecen al tipo nominal del alias. Una est
 
 El contexto de tipo también puede construir el alias sin `to`. El compilador no busca aliases candidatos a partir del nombre del miembro.
 
-## Metadatos reflectivos D-087
+## Metadatos reflectivos
 
 Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.
 
-## Actualización de superficie por D-096
 
-D-096 gobierna de forma literal la superficie vigente de este capítulo: `look` admite `given`; actions, rules reactivas y messages admiten locales `:=` antes de sus cláusulas de comportamiento; `all D` materializa explícitamente un dominio enumerable; `start with` usa contribuciones unificadas; y los tipos callable y las expresiones terminadas en `~type` pueden aparecer en posición de tipo según las reglas anteriores. La EBNF normativa refleja estas formas.
+### `~private`
 
-La sintaxis concreta completa de `mud.module` no se fija aquí mientras Q-062 siga abierta.
-
-### Retirada de `~private`
-
-`~private` no forma parte de la gramática semántica vigente. Una grafía `~private` no adquiere significado estándar por ser léxicamente parecida a un metadato de extensión; la validación contextual debe rechazarla como nombre reservado retirado.
+`~private` no forma parte de la gramática semántica vigente. Una grafía `~private` no adquiere significado estándar por ser léxicamente parecida a un metadato de extensión; la validación contextual debe rechazarla.

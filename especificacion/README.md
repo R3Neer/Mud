@@ -8,6 +8,8 @@ tags:
   - mud/moc
 status: en-preparacion
 normative: true
+questions:
+  - Q-063
 ---
 
 # Especificación formal de MUD
@@ -250,7 +252,7 @@ Define:
 - Declaraciones `using` exactas y recursivas.
 - Posición obligatoria de todos los `using` en la cabecera del fichero.
 - Ambigüedad.
-- Formación y unicidad de anclas públicas; las ramas funcionales de diccionarios decisionales usan claves locales y no reciben ancla pública conforme a D-090.
+- Formación y unicidad de anclas públicas; las ramas funcionales de diccionarios decisionales usan claves locales y no reciben ancla pública.
 - Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
 - Identidad ante movimientos de archivo.
 - Migración de path y anclas.
@@ -261,9 +263,7 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]] y [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
-Ampliación normativa: [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
 
 ## 10. Sistema de tipos
 
@@ -290,9 +290,7 @@ Define:
 - Redondeo global al más cercano con empates al par.
 - Igualdad y orden por tipo.
 
-Base normativa migrada para aritmética de `Nat`: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
-Base normativa de literales textuales y `Char`: [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]] y [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]].
 
 Juicio principal:
 
@@ -353,7 +351,6 @@ Define:
 - Prohibición de especialización y herencia entre familias.
 - Enumeración finita.
 
-Base normativa migrada: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
 ## 14. Campos, mutabilidad y capacidades
 
@@ -375,7 +372,6 @@ Define:
 - Accesibilidad de escrituras.
 - Ausencia de mutabilidad profunda implícita.
 
-Bases normativas migradas: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ## 15. Cardinalidades y colecciones
 
@@ -397,7 +393,6 @@ Define:
 - Igualdad de colecciones.
 - Instantáneas de iteración.
 
-Bases normativas migradas: [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]], [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]], [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]].
 
 ## 16. Diccionarios
 
@@ -415,7 +410,6 @@ Define:
 - Operaciones totales y aritmética conjuntista de exactos por dominio de claves, con precedencia izquierda, orden, `unique` e inferencia cardinal.
 - Diccionarios funcionales `-->`, modos `FirstMatch` y `AllMatches`, fallback, pureza, dependencias, terminación y aritmética extensional punto a punto.
 
-Bases normativas migradas: [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 17. Dominios e intervalos
 
@@ -438,7 +432,6 @@ Define:
 - Dominios cíclicos `[a..b) cycle` exclusivos de magnitudes de punto.
 - Intervalos `Rum` admitidos como dominios, pero no como fuentes enumerables.
 
-Base normativa migrada: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
 ## 18. Magnitudes, unidades y puntos
 
@@ -464,7 +457,6 @@ Define:
 - Magnitudes temporales.
 - Calendarios y localización.
 
-Base normativa migrada: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]].
 
 ## 19. Expresiones
 
@@ -488,7 +480,6 @@ Define:
 - Elaboración booleana canónica y poda de llamadas a reglas inactivas.
 - Fallos dentro de expresiones.
 
-Base normativa migrada: [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]].
 
 ## 20. Cuantificadores, agregaciones e iteración
 
@@ -507,7 +498,6 @@ Define:
 - Prohibición de enumerar intervalos `Rum`.
 - Enumeración de aliases estructurales como productos cartesianos lexicográficos.
 
-Base normativa migrada: [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]].
 
 ## 21. Reglas booleanas
 
@@ -527,7 +517,6 @@ Define:
 - Dependencias y memorización.
 - Borrado estructural cuando la declaración no sea efectiva.
 
-Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 22. Reglas reactivas
 
@@ -547,7 +536,6 @@ Define:
 - Estado anterior virtual en `start with` y línea base sin disparo para vinculaciones posteriores.
 - Creación y eliminación de vinculaciones.
 
-Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
 ## 23. Reglas `always`
 
@@ -562,7 +550,6 @@ Define:
 - Diagnóstico `otherwise` exterior al cuerpo y visibilidad de sus locales.
 - Dependencias, incluidas lecturas de metadatos y ramas decisionales.
 
-Bases normativas migradas: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-079-diagnostico-exterior-de-reglas-always|D-079]].
 
 ## 24. Frontera pública: `action`, `look` y `message`
 
@@ -591,7 +578,6 @@ Define:
 - Evaluación diferida de las propiedades del mensaje tras la estabilización.
 - Multiplicidad, orden, deduplicación, rollback y entrega.
 
-Bases normativas migradas: [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ## 25. Efectos
 
@@ -622,7 +608,6 @@ $$
 
 donde $R$, $W$, $C$ y $D$ representan anclas leídas, escritas, creadas y destruidas.
 
-Bases normativas migradas: [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ---
 
@@ -679,7 +664,6 @@ Define:
 - Normalización de efectos.
 - Conflictos de raíz.
 
-Base normativa migrada: [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 ## 29. Semántica causal por ondas
 
@@ -705,7 +689,6 @@ $$
 \langle W_{i+1}, B_{i+1}, P_{i+1} \rangle
 $$
 
-Base normativa migrada: [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]].
 
 ## 30. Restricciones, `after` y `old`
 
@@ -790,7 +773,6 @@ Define:
 - Dependencias estocásticas.
 - Propiedades reconstruibles desde el programa.
 
-Base arquitectónica migrada: [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]].
 
 ## 35. Consulta especulativa `allowed`
 
@@ -805,7 +787,6 @@ Define:
 - Aciclicidad del grafo de admisibilidad.
 - Aleatoriedad reproducible.
 
-Base normativa migrada: [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]].
 
 ## 36. Alcanzabilidad `eventually`
 
@@ -821,7 +802,6 @@ Define:
 - Semántica existencial del azar.
 - Estrategia BFS cuando sea normativa.
 
-Base normativa migrada: [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]].
 
 ## 37. Finitud, enumerabilidad y estado relevante
 
@@ -877,7 +857,6 @@ No todas estas propiedades tienen por qué ser demostrables para el lenguaje com
 
 Archivo previsto: `40-diagnosticos.md`
 
-Base normativa parcial: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
 Define:
 
@@ -905,7 +884,6 @@ Define:
 
 El esquema ejecutable vivirá en `esquemas/mud-ir.schema.json`.
 
-Base arquitectónica migrada: [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]].
 
 ## 42. Conformidad de implementaciones
 
@@ -938,7 +916,6 @@ Define:
 - Descarte del mundo y de sus salidas.
 - Ejecución por ancla o path de MUD.
 
-Bases normativas: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]].
 
 ## 44. Suite de conformidad
 
@@ -965,7 +942,6 @@ conformidad/
 └── propiedades/
 ```
 
-Base arquitectónica migrada: [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|D-052]].
 
 Los tests declarativos escritos por una persona usuaria forman parte de MUD, pero no sustituyen esta suite: la suite de conformidad comprueba implementaciones completas del lenguaje.
 
@@ -979,9 +955,9 @@ Apéndice normativo generado o verificado contra `gramatica/mud.ebnf`.
 
 Archivo previsto: `46-palabras-reservadas.md`
 
-Lista normativa, clasificación como palabra reservada o contextual y versión de introducción o retirada.
+Lista normativa y clasificación como palabra reservada o contextual.
 
-Las reglas léxicas ya decididas pertenecen a [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]; el catálogo se derivará de la gramática.
+El catálogo se derivará de la gramática léxica vigente.
 
 ## 47. Ejemplos integrales
 
@@ -1118,23 +1094,3 @@ MUD 1.0 estará formalmente especificado cuando:
 8. Las propiedades prometidas estén demostradas o delimitadas mediante hipótesis explícitas.
 9. Los ejemplos integrales no dependan de comportamiento implícito.
 10. Una implementación pueda declarar de forma objetiva su grado de conformidad.
-
-## Cambios semánticos recientes
-
-La especialización de aliases, los cuerpos vacíos omitibles de `thing`, los campos derivados de alias y las vistas derivadas con capacidad interior se fijan en [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]].
-
-
-## Contratos transversales de diccionarios y metadatos
-
-[[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] modifican los contratos de los capítulos futuros 10 a 20, 24, 26, 32, 34, 38, 40, 41, 44 y 47:
-
-- `Any` es el tipo superior no enumerable de todos los valores y no posee predeterminado universal.
-- Los productos estructurales anónimos y las flechas `->`/`-->` forman tipos completos asociativos a la derecha; una flecha no puede ocultarse como alternativa parcial de una unión.
-- `is` comprueba pertenencia nominal transitiva; `iis` y `iis not` comprueban y niegan identidad nominal exacta con narrowing propio.
-- Los diccionarios exactos devuelven `empty` ante clave ausente y su álgebra opera sobre claves con precedencia izquierda.
-- Los diccionarios funcionales distinguen `FirstMatch` y `AllMatches`; su álgebra combina extensionalmente resultados sobre una misma entrada e instantánea sin fusionar ramas.
-- La cardinalidad omitida de un campo almacenado inmutable con inicializador se infiere exactamente.
-- `start with` separa contribuciones de `things` y `rules`; `Thing` permanece siempre efectiva.
-- `subaction` queda fuera de la API raíz y comparte la atomicidad de la acción exterior.
-- `~name`, `~path`, `~anchor`, `~file` y los metadatos de unidades sustituyen `.name`, `name =` y `anchor{...}`.
-- El grafo registra anclas de rama, lecturas de metadatos, operaciones funcionales, dependencias combinadas y evidencia de terminación.

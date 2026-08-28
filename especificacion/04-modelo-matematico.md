@@ -63,12 +63,10 @@ El contenido normativo todavía no ha sido redactado.
 
 MUD no presupone una separación entre clases y objetos. En particular, una `thing` no tiene instancias. El modelo matemático deberá representar dentro de un mismo dominio conceptual las definiciones canónicas del programa y las identidades activas en cada mundo, sin convertirlas en clase e instancia.
 
-> [!warning] Modelo retirado
-> La representación $W=(\operatorname{kind}_W,\operatorname{store}_W)$ suponía identidades runtime clasificadas por cosas mediante `kind`. Esa separación no corresponde al concepto de `thing` de MUD y no es una estructura candidata.
 
 ## Restricciones confirmadas
 
-Las decisiones aceptadas fijan:
+El modelo vigente fija:
 
 1. Toda `thing` posee identidad semántica.
 2. Toda `thing` concreta denota una cosa concreta con estado propio y puede ser antecesora de otras.
@@ -122,11 +120,8 @@ rule ExactIdentifier given value: Identifier {
 
 `Alexandria is City` consulta especialización, `value iis PersonId` exige el tipo nominal efectivo exacto y `Alexandria == Alexandria` compara identidad de valor. Ninguna de esas relaciones depende de `Alexandria~name`.
 
-Estas restricciones proceden de [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|D-017]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]], [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
 
-## Próximo desarrollo
-
-El siguiente borrador deberá separar formalmente el grafo de `thing`, el esquema heredable y el estado independiente de cada `thing` concreta antes de proponer los componentes definitivos de $W$.
+## Cuestiones abiertas
 
 > [!question] Q-046 — Creación inefectiva
 > Determinar el resultado de acciones y de bloques con varias creaciones. Para una regla con una sola creación ya se ha decidido que la regla completa no se ejecuta si la identidad está activa.
@@ -134,9 +129,9 @@ El siguiente borrador deberá separar formalmente el grafo de `thing`, el esquem
 > [!question] Q-047 — Predeterminados concretos
 > Determinar el valor predeterminado de cada constructor de tipos y su comportamiento cuando el dominio depende del mundo.
 
-## Extensión confirmada para aliases
+## Aliases nominales
 
-D-084 añade un segundo orden parcial nominal sobre aliases. Sus nodos son tipos de valor, no identidades activables. La especialización directa es acíclica y su clausura `is` es reflexiva, transitiva y antisimétrica.
+Los aliases forman un segundo orden parcial nominal. Sus nodos son tipos de valor, no identidades activables. La especialización directa es acíclica y su clausura `is` es reflexiva, transitiva y antisimétrica.
 
 Para un alias nominal con varias antecesoras, el conjunto de valores del descendiente debe estar contenido en la intersección de los conjuntos de valores de todas ellas. La unión `A | B` no satisface esta obligación. Para aliases estructurales, la forma efectiva se obtiene acumulando miembros por origen: un mismo miembro heredado por varias rutas se deduplica y miembros independientes con el mismo nombre producen conflicto.
 

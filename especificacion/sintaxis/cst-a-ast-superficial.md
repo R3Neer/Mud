@@ -13,7 +13,9 @@ depends-on:
   - ../08-sintaxis-abstracta
   - mud-surface-ast.asdl
   - cobertura-sintactica.yaml
-questions: []
+questions:
+  - Q-061
+  - Q-063
 decisions:
   - D-015
   - D-054
@@ -251,13 +253,17 @@ La validación previa rechaza:
 
 ### `given`
 
-`given-declaration` proyecta su anotación mediante el mismo `TypeExpr` superficial que los demás contextos de tipo. Esto permite conservar tipos diccionario completos sin introducir una segunda jerarquía de tipos de solo lectura. La presencia de capacidad `mut` puede quedar representada en el AST superficial, pero D-063 la rechaza estáticamente para `given` antes de producir IR semántico.
+`given-declaration` proyecta su anotación mediante el mismo `TypeExpr` superficial que los demás contextos de tipo. Esto permite conservar tipos diccionario completos sin introducir una segunda jerarquía de tipos de solo lectura. La presencia de capacidad `mut` puede quedar representada en el AST superficial, pero esa capacidad se rechaza estáticamente para `given` antes de producir IR semántico.
 
 ## Tipos
 
 ### Nominal
 
 Todo `type-reference` produce `NamedType(TypeRef(...))`. El AST no clasifica aún el nombre.
+
+### Callable y tipos reflejados
+
+`callable-type` produce `CallableType(kind, receivers, givens)` y conserva la categoría y los tipos escritos; Q-063 mantiene abierta la compatibilidad y varianza entre firmas. `reflected-type` consume una `postfix-expression` seguida por `~type` y produce `ReflectedType(value)`; la elaboración posterior exige que la propiedad denote estáticamente `Type` y sustituye esa forma por el tipo representado en el IR semántico.
 
 ### Productos y diccionarios
 
@@ -290,7 +296,7 @@ Un componente no puede producir mutabilidad exterior. Su colección general sí 
 
 La palabra `ordered` produce `isOrdered = Enabled`.
 
-Las declaraciones de datos se separan en almacenadas y calculadas. Cada declaración puede llevar un cuerpo inmediato formado exclusivamente por `metadata-assignment`; esa secuencia se conserva en `StoredFamilyDataDecl.metadata` o `CalculatedFamilyDataDecl.metadata`. El dato calculado conserva provisionalmente `derived_value_shape? shape`, porque Q-061 mantiene abierta la contradicción entre la EBNF actual y la restricción más estrecha escrita en D-038. Esta transformación no inventa una normalización que resuelva esa cuestión.
+Las declaraciones de datos se separan en almacenadas y calculadas. Cada declaración puede llevar un cuerpo inmediato formado exclusivamente por `metadata-assignment`; esa secuencia se conserva en `StoredFamilyDataDecl.metadata` o `CalculatedFamilyDataDecl.metadata`. El dato calculado conserva provisionalmente `derived_value_shape? shape` porque Q-061 mantiene abierta la elección entre la forma amplia de la EBNF y una forma declarable más estrecha. Esta transformación no inventa una normalización que resuelva esa cuestión.
 
 En el preámbulo de un miembro, cualquier `metadata-assignment` produce `StoredMetadataAssignment` o `CalculatedMetadataAssignment` del descriptor del miembro; las asignaciones ordinarias posteriores se conservan como `FamilyDataAssignment`. Estas asignaciones sustituyen el valor de un dato almacenado para ese miembro, pero no crean descriptor, ancla ni metadata-body propios. Un cuerpo de miembro metadata-only produce `assignments = []` y conserva su secuencia `metadata`.
 
@@ -329,6 +335,8 @@ Una unidad raíz produce `RootUnitDecl(name, metadata)` y una alternativa `Alter
 
 ## Participantes
 
+Una cabecera agrupada produce un nodo por identificador y copia a cada descriptor las mismas declaraciones de metadatos con procedencia `NormalizedSugar`.
+
 ### `for`
 
 Cada participante tiene nombre obligatorio. Se convierten `mut` exterior, `ValueShape` y la secuencia de metadatos del descriptor. Una cabecera agrupada produce un `ForParticipant` por identificador y copia a cada uno el mismo metadata-body.
@@ -351,7 +359,7 @@ El cuerpo se convierte en `ExpressionBlock(locals, result)`. La forma sin declar
 
 ### Regla reactiva
 
-`when` produce un `ExpressionBlock` en `activator`; `if` produce otro en `guard?`; `then` produce `EffectBlock`.
+Las `local-value-declaration` previas a las cláusulas de comportamiento se proyectan a `leading_locals`. `when` produce un `ExpressionBlock` en `activator`; `if` produce otro en `guard?`; `then` produce `EffectBlock`.
 
 ### Regla `always`
 
@@ -359,13 +367,13 @@ El cuerpo se convierte en `ExpressionBlock(locals, result)`. La forma sin declar
 
 ### Acción
 
-`if` produce `ActionGuard` con un `ExpressionBlock`; `after` produce `ActionPostcondition` con otro.
+`action` y `subaction` producen `ActionDecl` con `PublicAction` o `Subaction`. Las `local-value-declaration` previas a las cláusulas de comportamiento se proyectan a `leading_locals`. `if` produce `ActionGuard` con un `ExpressionBlock`; `after` produce `ActionPostcondition` con otro.
 
 No se clasifica la acción como elemental o compuesta.
 
 ### `look` y `message`
 
-Las propiedades públicas se convierten a `PublicFieldDecl` y conservan su orden.
+`look-declaration` proyecta su `given-clause` opcional a `LookDecl.givens`. En `message`, las `local-value-declaration` previas a las cláusulas de comportamiento se proyectan a `leading_locals`. Las propiedades públicas se convierten a `PublicFieldDecl` y conservan su orden.
 
 ## Bloques de expresión y tests
 
@@ -435,6 +443,8 @@ Las producciones por niveles se pliegan conforme a [[07-gramatica-concreta]]:
 
 ### Operadores de palabra y símbolo
 
+`not in` produce `NotMembership`. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
+
 Se conservan enums distintos:
 
 | Concreto | AST |
@@ -450,6 +460,10 @@ Se conservan enums distintos:
 ### `changes`
 
 La presencia del sufijo produce `ChangesExpr(operand)`.
+
+### Materialización `all`
+
+El prefijo `all D` produce `PrefixExpr(EnumerateAll, D)`; el literal contextual sin operando conserva `AllLiteral`.
 
 ### Selección y `take`
 
@@ -469,13 +483,17 @@ player in take m from players: player.score == 2
 → SelectionExpr(player, TakeExpr(m, players), ...)
 ```
 
+### Asociaciones y ramas de diccionario
+
+`a -> b` produce `ExactAssociationExpr(a, b)`; `selector --> resultado` produce `DecisionBranchExpr(selector, resultado)` y `_` produce `FallbackLiteral`. Las operaciones `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración las especializa según los tipos resueltos. Una operación funcional conserva ambos operandos y no se transforma en una lista fusionada de ramas.
+
 ### Conversiones
 
 `to T` produce `TypeConversion`. `in u` produce `UnitConversion`.
 
 ### Postfix
 
-Los sufijos se aplican en orden:
+`element~metadata` produce `MetadataAccessExpr`; ningún acceso `~` forma parte de un objetivo asignable runtime. Los demás sufijos se aplican en orden:
 
 ```text
 base.a[i](x)
@@ -608,7 +626,7 @@ Las expresiones de unidad y dimensión eliminan paréntesis de agrupación, pero
 
 ## `start with` y tests
 
-Las referencias de un `start with` producen `StartSet`.
+La forma de una expresión y el bloque de contribuciones de `start with` producen un único `StartSet(contributions)`. El orden fuente se conserva solo como procedencia, no como semántica de activación.
 
 La declaración global añade `GlobalStartDecl`. Dentro de un test, el mismo `StartSet` es un campo de `TestDecl`.
 
@@ -666,37 +684,3 @@ Cada regla de normalización debe contar con al menos:
 - Caso inválido previo al AST cuando proceda.
 
 El corpus inicial está en `casos/cst-ast.yaml`.
-
-
-## Revisión de transformación por D-085
-
-Estas reglas sustituyen las normalizaciones anteriores incompatibles:
-
-1. Una declaración `~...` produce `StoredMetadataAssignment` o `CalculatedMetadataAssignment` y se conserva en la secuencia `metadata` de su propietario.
-2. La omisión de cardinalidad produce `OmittedCardinality`. La inferencia exacta de un campo almacenado inmutable pertenece a la elaboración y no se simula con `[1]` sintético.
-3. Una cadena `A -> B [m] --> C [n]` se pliega de derecha a izquierda. Cada enlace produce `ExactDictionaryType` o `DecisionDictionaryType` y conserva sus modificadores.
-4. Los productos de tipo producen `PositionalProductType` o `NamedProductType`; los literales estructurales existentes conservan sus nodos de valor.
-5. `a -> b` produce `ExactAssociationExpr`; `selector --> resultado`, `DecisionBranchExpr`; `_`, `FallbackLiteral`.
-6. `element~metadata` produce `MetadataAccessExpr`; ningún acceso `~` forma parte de un objetivo asignable runtime.
-7. `not in` produce `NotMembership`.
-8. `action` y `subaction` producen `ActionDecl` con `PublicAction` o `Subaction`.
-9. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones; la categoría activable se comprueba durante elaboración.
-10. Toda interpolación es `ValueInterpolation`; no existe `AnchorInterpolation`.
-11. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
-12. `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración los especializa según sean colecciones, diccionarios exactos o diccionarios funcionales.
-13. Una operación funcional conserva ambos operandos y nunca se transforma en una lista fusionada de ramas.
-
-## Proyección D-087
-
-`MudFile` conserva defaults de archivo y cada propietario estable conserva directamente su secuencia `metadata`. Los grupos de participantes producen un nodo por identificador y copian a cada descriptor las mismas declaraciones con procedencia `NormalizedSugar`. `start with` y los cuerpos de cláusula no reciben metadata propia.
-
-Las unidades usan exactamente la misma proyección: `unit-body` es solo un contenedor de `metadata-assignment`. `~prefixes` permanece una expresión ordinaria cuyo tipo esperado es `Prefix [* unique]`; no existe `UnitProperties`, `PrefixPolicy` ni `MetadataAttachment` lateral.
-
-## D-096 — tipos callable, `look`, locales, `all D` y `start with`
-
-- `callable-type` produce `CallableType(kind, receivers, givens)` conservando literalmente categoría y tipos escritos; la compatibilidad/varianza se difiere a Q-063.
-- `reflected-type` consume una `postfix-expression` seguida por `~type` y produce `ReflectedType(value)`; la elaboración posterior exige que la propiedad reflectiva denote estáticamente `Type` y el IR semántico sustituye esa forma por el tipo representado.
-- `look-declaration` proyecta su `given-clause` opcional a `LookDecl.givens`.
-- Las `local-value-declaration` situadas entre metadatos y cláusulas de action/rule reactiva/message se proyectan a `leading_locals` de su declaración, no al `EffectBlock` posterior.
-- El prefijo `all D` se normaliza como `PrefixExpr(EnumerateAll, D)`; el literal contextual sin operando conserva `AllLiteral`.
-- `start-with-declaration` normaliza tanto la forma de una expresión como el bloque de expresiones a un único `StartSet(contributions)` y conserva el orden fuente solo como procedencia, no como semántica de activación.

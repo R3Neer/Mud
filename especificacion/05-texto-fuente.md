@@ -9,8 +9,6 @@ status: propuesta
 normative: true
 depends-on:
   - "[[01-alcance-y-conformidad]]"
-  - "[[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]]"
-  - "[[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]"
 questions:
   - Q-062
 decisions:
@@ -159,7 +157,7 @@ village/
 
 Un archivo `battle.mud` puede reunir las `thing`, aliases, diccionarios, reglas, acciones, `look` y `message` que explican conjuntamente una batalla. Separarlos únicamente porque pertenecen a categorías sintácticas distintas dificulta leer el mundo como una unidad conceptual.
 
-## Frontera física de módulo (D-096)
+## Módulos
 
 Un archivo `.mud` debe pertenecer al módulo determinado por el `mud.module` de su directorio ancestro más cercano. Un `mud.module` anidado abre una nueva frontera y un `.mud` sin ancestro modular es inválido. El nombre lógico del módulo se deriva del MudPath del directorio y no se repite obligatoriamente en el archivo de módulo.
 

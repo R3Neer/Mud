@@ -10,6 +10,6 @@ Es el contrato normativo producido por resolución de nombres. Contiene símbolo
 
 Es el esquema normativo posterior a tipado y elaboración. Puede contener tipos efectivos, dominios, cardinalidades, narrowing, dependencias y evidencias de terminación porque se produce después de esas fases.
 
-Ninguna representación intermedia es fuente independiente de verdad. Ambas deben poder descartarse y reconstruirse desde los archivos `.mud`, el AST superficial y las decisiones/versiones aplicables.
+Ninguna representación intermedia es fuente independiente de verdad. Ambas deben poder descartarse y reconstruirse desde los archivos `.mud`, el AST superficial y la norma aplicable.
 
 El único AST normativo de fuente continúa siendo `especificacion/sintaxis/mud-surface-ast.asdl`.
