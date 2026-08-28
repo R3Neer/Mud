@@ -3,7 +3,7 @@ name: Patch módulos, callables y activación
 on:
   pull_request:
     branches:
-      - main
+      - control/patch-modulos-callables-20260828
 
 permissions:
   contents: write
