@@ -326,7 +326,7 @@ Las propiedades especiales de magnitudes y unidades usan la misma familia de met
 ~format = "{hour:2}:{minute:2}:{second:2}"
 ```
 
-Cada metadato conserva su tipo, mutabilidad y restricciones propias. El prefijo `~` no implica mutabilidad.
+Cada metadato conserva su tipo, su modo almacenado o calculado y sus restricciones propias. El prefijo `~` no implica asignabilidad runtime.
 
 ### Plantillas y anclas
 
@@ -346,7 +346,7 @@ La gramática y los modelos deben distinguir como mínimo:
 - `ExactDictionaryType` y `DecisionDictionaryType`;
 - asociaciones exactas y ramas decisionales;
 - productos posicionales y nombrados;
-- `MetadataAccessExpr` y objetivos asignables de metadato;
+- `MetadataAccessExpr` y ausencia de objetivos asignables de metadato;
 - `NotMembership`;
 - conjuntos separados de activación de `thing` y reglas;
 - cardinalidad omitida frente a explícita;
@@ -360,7 +360,7 @@ El IR semántico registra para cada decisional:
 - unicidad de resultados;
 - cardinalidad derivada de aplicación;
 - dependencias externas de selectores y resultados;
-- ancla estable de cada rama;
+- clave local estable de cada rama, sin ancla pública;
 - evidencia de terminación de cada componente recursivo.
 
 Los diagnósticos mínimos nuevos son:
@@ -375,7 +375,7 @@ Los diagnósticos mínimos nuevos son:
 8. cardinalidad inmutable inferida distinta de `[1]`;
 9. `all Any` o enumeración de `Any`;
 10. campo `Any` sin inicializador;
-11. asignación a metadato inmutable;
+11. intento de asignación o actualización runtime sobre cualquier acceso `~`;
 12. uso semánticamente frágil de `~file`;
 13. forma retirada `.name`, `name =` o `anchor{...}`;
 14. forma mezclada retirada de `start with`.
