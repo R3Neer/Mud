@@ -1,40 +1,40 @@
 name: Temporales y private direct lab
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - patch/temporales-private-20260828
 
 permissions:
   contents: write
 
 concurrency:
-  group: temporales-private-direct-${{ github.event.pull_request.head.ref }}
+  group: temporales-private-direct
   cancel-in-progress: false
 
 jobs:
   validate:
-    if: github.event.pull_request.head.ref == 'patch/temporales-private-20260828'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout candidata
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
-      - name: Preparar entorno
+      - name: Preparar entorno y retirar laboratorio del working tree
         run: |
           python -m pip install --quiet pyyaml
           git config user.name "MUD Editorial Bot"
           git config user.email "mud-editorial-bot@users.noreply.github.com"
+          cp gobierno/labs/temporales-private-20260828/apply.py "$RUNNER_TEMP/apply.py"
+          rm -f .github/workflows/temporales-private-direct-lab.yml
+          rm -f gobierno/labs/temporales-private-20260828/apply.py
+          rm -f gobierno/labs/temporales-private-20260828/TRIGGER.md
 
       - name: Eliminar excepcionalidad de private
         run: |
-          if test -f gobierno/labs/temporales-private-20260828/TRIGGER.md; then
-            git rm gobierno/labs/temporales-private-20260828/TRIGGER.md
-          fi
-          python gobierno/labs/temporales-private-20260828/apply.py private --root .
+          python "$RUNNER_TEMP/apply.py" private --root .
           if git grep -n -F '~private' -- .; then
             echo "Quedan menciones explícitas a ~private" >&2
             exit 1
@@ -67,7 +67,7 @@ Validation:
 
       - name: Establecer gobernanza de temporales
         run: |
-          python gobierno/labs/temporales-private-20260828/apply.py govern --root .
+          python "$RUNNER_TEMP/apply.py" govern --root .
           python gobierno/validate_temporaries.py
           python - <<'PY'
           import yaml
@@ -157,12 +157,9 @@ Validation:
 
       - name: Retirar infraestructura de laboratorio
         run: |
-          git rm .github/workflows/temporales-private-direct-lab.yml
-          git rm gobierno/labs/temporales-private-20260828/apply.py
+          git add -u .github/workflows/temporales-private-direct-lab.yml gobierno/labs/temporales-private-20260828/apply.py gobierno/labs/temporales-private-20260828/TRIGGER.md
           git commit -m "chore(lab): retira infraestructura temporal"
           test -z "$(git status --porcelain)"
 
       - name: Publicar candidata validada
-        env:
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-        run: git push origin HEAD:"$HEAD_REF"
+        run: git push origin HEAD:patch/temporales-private-20260828
