@@ -807,12 +807,12 @@ conserva `OmittedCardinality` en el AST superficial y adquiere `[3]` únicamente
 
 ```mud
 start with {
-        all,
-        empty
-    }
+    all,
+    empty
+}
 ```
 
-produce `StartSet(things=[AllLiteral], rules=[EmptyLiteral])`.
+produce `StartSet(contributions=[AllLiteral, EmptyLiteral])`.
 
 ## Tipos producto y tipos de diccionario
 
@@ -869,7 +869,7 @@ El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la ca
 "{value~anchor}"
 ```
 
-No existe `AnchorInterpolation`. `start with` produce `StartSet(things, rules)` y mantiene ambas contribuciones separadas. `ActionDecl` conserva `PublicAction` o `Subaction`.
+No existe `AnchorInterpolation`. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones. `ActionDecl` conserva `PublicAction` o `Subaction`.
 
 ## Actualización de AST por D-096
 
