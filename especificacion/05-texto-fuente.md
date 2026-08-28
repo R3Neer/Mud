@@ -156,3 +156,9 @@ village/
 ```
 
 Un archivo `battle.mud` puede reunir las `thing`, aliases, diccionarios, reglas, acciones, `look` y `message` que explican conjuntamente una batalla. Separarlos únicamente porque pertenecen a categorías sintácticas distintas dificulta leer el mundo como una unidad conceptual.
+
+## Frontera física de módulo (D-096)
+
+Un archivo `.mud` debe pertenecer al módulo determinado por el `mud.module` de su directorio ancestro más cercano. Un `mud.module` anidado abre una nueva frontera y un `.mud` sin ancestro modular es inválido. El nombre lógico del módulo se deriva del MudPath del directorio y no se repite obligatoriamente en el archivo de módulo.
+
+`uses` pertenece a `mud.module` y autoriza dependencias de contrato entre módulos; `using` pertenece a los `.mud` y resuelve/importa nombres. Ninguno sustituye al otro. La gramática completa de `mud.module` permanece abierta en Q-062.

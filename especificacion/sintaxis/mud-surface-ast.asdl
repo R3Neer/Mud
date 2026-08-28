@@ -153,6 +153,7 @@ module MUDSurface {
                    | ReactiveRuleDecl(nominal_name name,
                                       on_clause? participants,
                                       metadata_assignment* metadata,
+                                      local_value_decl* leading_locals,
                                       expression_block activator,
                                       expression_block? guard,
                                       effect_block effects)
@@ -166,16 +167,19 @@ module MUDSurface {
                                 for_clause? participants,
                                 given_clause? givens,
                                 metadata_assignment* metadata,
+                                local_value_decl* leading_locals,
                                 action_guard? guard,
                                 effect_block effects,
                                 action_postcondition? postcondition)
                    | LookDecl(nominal_name name,
                               for_clause? participants,
+                              given_clause? givens,
                               metadata_assignment* metadata,
                               public_field_decl* fields)
                    | MessageDecl(nominal_name name,
                                  on_clause? participants,
                                  metadata_assignment* metadata,
+                                 local_value_decl* leading_locals,
                                  expression_block activator,
                                  expression_block? guard,
                                  public_field_decl* fields)
@@ -418,7 +422,7 @@ module MUDSurface {
                                       expr value)
         attributes (source_origin origin)
 
-    start_set = StartSet(expr* things, expr* rules)
+    start_set = StartSet(expr* contributions)
         attributes (source_origin origin)
 
     test_after_block = TestAfterBlock(local_value_decl* locals,
@@ -557,6 +561,7 @@ module MUDSurface {
                     | UnaryMinus
                     | OldValue
                     | AllowedQuery
+                    | EnumerateAll
 
     binary_operator = Biconditional
                     | Implication

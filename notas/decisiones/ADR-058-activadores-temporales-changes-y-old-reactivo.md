@@ -76,29 +76,17 @@ La equivalencia es semántica; no obliga al compilador a perder la forma origina
 
 ### Composición
 
-`and` y `or` combinan activadores respectivamente mediante `All` y `Any`. Cuando uno de sus operandos ya es temporal, un operando `Bool` ordinario se eleva a `Rise`:
+Un trigger produce cero o más matches causales. Las formas temporales `Rise`, `Temporal` y `Changed` describen cuándo una vinculación aporta un match; cuando un operando ordinario `Bool` participa en una composición temporal se eleva a `Rise` como antes.
 
-```mud
-when position changes or ready
-```
-
-equivale a:
-
-```text
-Any(Changed(position), Rise(ready))
-```
-
-y:
+`and` realiza natural join de los matches compatibles de ambos operandos y, si no comparten bindings, su producto cartesiano. `or` realiza la unión de matches. Las identidades de ocurrencias causales forman parte del match, de modo que dos ocurrencias distintas no se deduplican aunque tengan el mismo payload.
 
 ```mud
 when position changes and velocity changes
 ```
 
-exige que ambas diferencias netas ocurran entre las mismas dos instantáneas de inicio.
+requiere matches compatibles cuyas diferencias netas correspondan al mismo paso entre instantáneas. Una subexpresión booleana ordinaria entre paréntesis se eleva como una unidad: `(ready or authorized) and position changes` usa `Rise(ready or authorized)`, no dos fuentes independientes.
 
-Una subexpresión booleana ordinaria entre paréntesis se eleva como una unidad. Así, `(ready or authorized) and position changes` contiene `Rise(ready or authorized)`, no dos activadores independientes.
-
-Los activadores solo se combinan inicialmente mediante las palabras `and` y `or`. `not`, `xor`, `=>`, `<=>`, `&`, `|` y `^` no aceptan operandos `Trigger`. Esta restricción no impide usar operadores booleanos ordinarios dentro de la expresión booleana de un `Rise` o `Temporal`.
+Los triggers solo se combinan inicialmente mediante las palabras `and` y `or`. `not`, `xor`, `=>`, `<=>`, `&`, `|` y `^` no aceptan operandos `Trigger`. Esta restricción no impide usar operadores booleanos ordinarios dentro de la expresión booleana de un `Rise` o `Temporal`. D-096 añade además como fuentes declarativas ocurrencias de `message`, disparos de rules reactivas y evaluaciones de `always`.
 
 ### Precedencia de `changes`
 
@@ -176,7 +164,7 @@ Una vinculación nacida después de `start with` conserva la política anterior:
 
 ## Consecuencias
 
-- El AST de superficie conserva `changes` como sufijo; el IR representa explícitamente `Rise`, `Temporal`, `Changed`, `All` y `Any`.
+- El AST de superficie conserva `changes` como sufijo y la composición escrita; el modelo semántico debe preservar el comportamiento de cero o más matches, sus bindings/testigos y las identidades causales. D-096 no fija una codificación IR cerrada de esos matches.
 - La memoria reactiva conserva los valores anteriores requeridos por `when` e `if`, no solo un booleano agregado.
 - Los pulsos temporales pueden producirse en ondas consecutivas.
 - Una diferencia cuantitativa utiliza los operadores ordinarios y el sistema de magnitudes.
@@ -199,7 +187,7 @@ La transición ya proporciona dos instantáneas completas. Impedir comparaciones
 ## Verificación
 
 1. `changes` sobre acceso, suma, conversión y comparación con la precedencia acordada.
-2. Unión y coincidencia de activadores mediante `or` y `and`.
+2. Unión de matches mediante `or` y natural join/producto cartesiano compatible mediante `and`, preservando ocurrencias causalmente distintas.
 3. Elevación de un operando booleano ordinario a `Rise` en una composición temporal.
 4. Dos cambios consecutivos producen dos pulsos.
 5. `old` en `when` mide una diferencia y puede pulsar en transiciones consecutivas.
@@ -208,3 +196,7 @@ La transición ya proporciona dos instantáneas completas. Impedir comparaciones
 8. Ausencia de pulso temporal en la línea base inicial y posible pulso inicial de una rama `Rise`.
 9. Una vinculación creada posteriormente establece línea base sin disparar.
 10. Rechazo de `changes by`.
+
+## Modificación vigente por D-096
+
+El álgebra de `Trigger` se generaliza de pulsos booleanos a cero o más matches causales. Un match conserva bindings/testigos e identidad de ocurrencias. `and` realiza natural join de matches compatibles y `or` su unión. Messages, rules reactivas y `always` pueden ser fuentes declarativas de trigger; una referencia a declaración `on` no usa paréntesis de llamada.

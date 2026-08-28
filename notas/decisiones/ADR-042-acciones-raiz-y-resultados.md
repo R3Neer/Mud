@@ -54,29 +54,21 @@ Una acción:
 - puede declarar `if` y `after`;
 - debe declarar `then`;
 - no declara `when` ni se activa automáticamente;
-- puede solicitarse desde el exterior o desde otra acción;
-- inicia una resolución causal y es atómica junto con todas sus ondas.
+- una `action` puede solicitarse desde el exterior y, en ese caso, inicia la resolución causal raíz;
+- una `action` o `subaction` invocada desde un `then` se incorpora a la resolución causal ya activa y no abre una raíz independiente;
+- la resolución completa es atómica junto con todas sus ondas.
 
 Los participantes son receptores y los `given` son argumentos conforme a D-036 y D-063. Al iniciar la acción se vinculan los roles por identidad, valor o lugar según su contrato, se comprueban sus tipos, cardinalidades y capacidades, se completan los `given` omitidos con sus predeterminados estáticos, se evalúan y validan todos ellos, y después se evalúa `if`. Un rol con `mut` exterior conserva el lugar receptor como destino de efectos y exige que sea almacenable y exteriormente mutable. Un `given` fuera de dominio o un `if` falso no producen efectos.
 
 Dentro de un bloque `then`, D-066 permite vinculaciones locales calculadas. Se resuelven en orden textual, leen el delta privado anterior, quedan inmutables y no forman parte del estado del mundo.
 
-### Acciones elementales
+### Secuencia unificada de `then`
 
-Su `then` contiene efectos. Las instrucciones del bloque son secuenciales dentro de su delta privado y la acción es atómica para cualquier observador exterior.
+No existe una clasificación semántica entre actions elementales y compuestas. Un `then` es una secuencia ordenada de consecuencias y puede mezclar vinculaciones locales, efectos directos, llamadas a `action` o `subaction` y recorridos `for each`.
 
-### Acciones compuestas
+Cada sentencia lee el delta privado visible en su posición textual. Una llamada interna se valida y ejecuta en ese punto, observa los efectos privados anteriores, aporta sus propios efectos a la misma resolución atómica y deja esos efectos visibles para las sentencias posteriores. No abre una transacción independiente.
 
-Su `then` contiene exclusivamente llamadas a acciones. No se mezclan llamadas y efectos directos en el mismo `then`.
-
-Todas las hojas de una composición:
-
-1. leen el mismo estado estable inicial;
-2. evalúan participantes, `given`, dominios e `if` sobre ese estado;
-3. generan una raíz simultánea consolidada;
-4. comprueban sus `after` después de estabilizar la resolución completa.
-
-El grafo estático de llamadas entre acciones debe ser acíclico. La selección dinámica de acciones permanece abierta en Q-023.
+Los `after` de todas las actions/subactions ejecutadas se comprueban contra el estado estable tentativo final de la resolución completa. El análisis de llamadas debe impedir ciclos ejecutables; Q-023 conserva abierta la demostración de aciclicidad e impacto cuando la selección del descriptor callable es dinámica, no la posibilidad de invocarlo.
 
 ### `after` y `old`
 
@@ -111,11 +103,15 @@ La normalización de un intervalo lineal con extremos invertidos a `empty` es un
 
 1. Aceptación, rechazo por dominio de `given`, rechazo por `if` y rechazo por `after`.
 2. Rollback completo de una acción rechazada al final.
-3. Acción elemental y compuesta válidas.
-4. Rechazo de un `then` mixto y de un ciclo de llamadas.
+3. `then` mixto con efectos, locales y llamadas en orden textual.
+4. Propagación del delta privado a través de llamadas internas y rechazo de un ciclo ejecutable de llamadas.
 5. `old` observa la acción exterior, no una hoja intermedia.
 6. Vinculación de un receptor-lugar mutable y rechazo de un receptor que sea solo un valor.
 7. Intervalo invertido normalizado a `empty` sin fallo intrínseco.
 8. Distinción entre rechazo por una guarda falsa sobre `empty` y fallo por estado fuera de dominio.
 9. Presencia obligatoria de `reason: Text` en `rejected` y `failed`, y ausencia en `accepted`.
 10. Diagnósticos `otherwise` explícitos y generados para `if` y `after`, incluida la evaluación perezosa.
+
+## Modificación vigente por D-096
+
+Se retira la clasificación semántica entre action elemental y compuesta. Todo `then` es una secuencia ordenada que puede mezclar efectos, locales, llamadas y `for each`. Una llamada interna observa el delta privado del punto textual y aporta sus efectos a la misma resolución. `action` conserva capacidad de raíz exterior; `subaction` es reutilizable desde cualquier `then` pero no puede ser raíz exterior. Los `after` anidados se evalúan contra el estado estable tentativo final de la resolución completa.

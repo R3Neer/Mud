@@ -113,7 +113,7 @@ Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador n
 
 `ordered` es una palabra reservada dura tanto delante de `family` como dentro de una especificación de colección. No puede usarse como identificador en ningún otro contexto.
 
-`all` es un literal contextual que requiere un dominio enumerable esperado. Su carácter reservado permite distinguirlo de una declaración ordinaria aun antes del tipado.
+`all` es una palabra reservada que sirve tanto como literal contextual sin operando, cuyo dominio enumerable se obtiene del contexto, como prefijo `all D` para materializar explícitamente un dominio enumerable. Su carácter reservado permite distinguir ambas formas de una declaración ordinaria aun antes del tipado.
 
 ## Adyacencia de unidades
 

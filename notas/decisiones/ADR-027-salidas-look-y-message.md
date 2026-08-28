@@ -1,10 +1,11 @@
 ---
 id: D-027
 title: "Salidas del modelo mediante `look` y `message`"
-status: vigente
+status: sustituida
 date: 2026-07-27
 supersedes: []
-superseded-by: []
+superseded-by:
+  - "D-096"
 questions:
   - "Q-051"
   - "Q-052"
@@ -138,3 +139,7 @@ Hasta resolver Q-052, la norma solo fija que los campos publicados se evalúan d
 5. Caso donde el valor al detectar difiere del valor estable publicado.
 6. Rollback sin emisión externa prematura.
 7. Aviso por una magnitud pública con unidad seleccionable pero sin `in`, ausencia de aviso cuando no existen unidades y publicación formateada de un punto mediante `Text`.
+
+## Estado posterior
+
+Esta decisión fue **sustituida íntegramente por [[ADR-096-modulos-callables-look-message-y-activacion|D-096]]**. Su descripción de `look` sin `given`, `message` como salida con campos evaluados únicamente al final y la frontera exclusivamente host se conserva aquí solo como historial.

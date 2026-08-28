@@ -151,7 +151,7 @@ Las propiedades de participantes tienen estas capacidades por subcategoría de d
 | regla `always` | no | sí | no |
 | `action` | sí | no | sí |
 | `subaction` | sí | no | sí |
-| `look` | sí | no | no |
+| `look` | sí | no | sí |
 | `message` | no | sí | no |
 | demás declaraciones | no | no | no |
 
@@ -275,16 +275,13 @@ Se conservan los metadatos estándar de presentación y configuración con estos
 ~summary      : Text = ""
 ~description  : Text = ""
 ~deprecated   : Text [0..1] = empty
-~private      : Bool = false
 ```
 
 `Prefix` es un tipo nominal incorporado. El catálogo SI fijado por D-076 proporciona valores incorporados de `Prefix` desde `quecto` hasta `quetta`. Sus nombres son identificadores ordinarios que se resuelven en el nivel de incorporados. Por ello `~prefixes = [kilo, milli]` es una colección MUD ordinaria, `all` enumera el dominio incorporado de `Prefix` y `empty` representa la colección vacía. Las unidades no mantienen `unit-property`, `prefix-selection` ni otra subgramática paralela: su cuerpo contiene exclusivamente declaraciones generales de metadatos.
 
 `~name`, `~summary`, `~description` y `~deprecated` están disponibles en todo elemento metadata-bearing compatible. `~name` toma por defecto una presentación derivada de `~identifier`. `~summary` es una descripción breve; `~description` admite Markdown de presentación; `~deprecated` no vacío activa diagnóstico de obsolescencia pero no invalida el uso.
 
-`~private` solo es válido en declaraciones de primer nivel `thing`, `alias`, `family`, `magnitude` y `rule`, y en campos almacenados/calculados/públicos pertenecientes a una `thing`. No es válido en `action`, `subaction`, `message`, `look`, `unit`, participantes, componentes, miembros de `family`, metadatos ni sintaxis arbitraria.
-
-`~private` controla exposición automática al host: bindings, esquemas, documentación, editores, serializadores generales e interfaces de inspección exterior deben omitir por defecto los elementos privados. No cambia resolución interna, tipos, herencia, reglas, actions, `create`, `destroy`, `start with`, reflexión interna ni materialización. No constituye una frontera de seguridad.
+`~private` queda retirado por D-096 y cualquier intento de declararlo como metadato estándar es inválido. La exposición exterior se deriva de la frontera de módulo, la categoría operacional y el cierre de tipos requerido por el contrato; no se expresa mediante un booleano metadata-bearing.
 
 ### Metadatos de usuario
 
@@ -302,7 +299,6 @@ Pueden declarar tipo, dominio, cardinalidad y modificadores compatibles con valo
 Un archivo puede comenzar, antes de cualquier `using`, con defaults de metadatos almacenados y constantes:
 
 ```mud
-~private = true
 ~stability: Stability = Experimental
 ~summary = "Subsistema interno"
 
@@ -317,7 +313,7 @@ No se propagan a campos, componentes, participantes, miembros de familia, declar
 valor explícito del elemento > default de archivo > default del lenguaje
 ```
 
-Un default de archivo no admite `:=`, lecturas runtime ni propiedades intrínsecas. `~private`, `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
+Un default de archivo no admite `:=`, lecturas runtime ni propiedades intrínsecas. `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. `~private` no existe. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
 
 ### Texto y tooling
 
@@ -337,8 +333,8 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 - Los participantes, campos y componentes anclados pasan a formar parte del grafo nominal como descriptores persistentes.
 - El AST superficial conserva declaraciones de metadatos y cuerpos de metadatos; el IR semántico distingue propiedades intrínsecas de valores `Metadata` configurados.
 - Las escrituras runtime a cualquier acceso `~` son errores estáticos.
-- La visibilidad exterior se vuelve una propiedad de generación/tooling y no una regla de acceso interna.
-- El `start with` global y el local de tests permanecen fuera de la superficie metadata-bearing.
+- La visibilidad exterior se deriva del módulo propietario, su contrato `uses`, la categoría operacional y el cierre de tipos; el tooling presenta esa frontera, no la inventa.
+- Las contribuciones `start with` de módulos y tests permanecen fuera de la superficie metadata-bearing.
 
 ## Verificación futura
 
@@ -352,8 +348,12 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 8. Ausencia de metadatos en `start with`, cláusulas y cuerpos.
 9. Defaults de archivo y precedencia explícito > archivo > lenguaje.
 10. Rechazo de defaults calculados o individuales.
-11. `~private` en categorías permitidas y rechazo en las demás.
+11. Rechazo de `~private` como nombre estándar retirado y ausencia de ese default de archivo.
 12. `~summary`, `~description` y `~deprecated` en elementos subordinados.
 13. Colecciones y diccionarios con propiedades intrínsecas tipadas.
 14. Narrowing categorial de declaraciones.
 15. Eliminación completa de `anchor{...}`.
+
+## Modificación vigente por D-096
+
+`~private` queda retirado por completo como metadato estándar y como default de fichero. La visibilidad exterior se deriva de módulo, categoría operacional y cierre de tipos. La reflexión cruzada de módulo solo es válida si su contrato garantiza que no puede devolver entidades invisibles; no se permite filtrar silenciosamente una colección reflectiva para ocultarlas. Tooling completo y reflexión disponible al código MUD siguen siendo superficies distintas.

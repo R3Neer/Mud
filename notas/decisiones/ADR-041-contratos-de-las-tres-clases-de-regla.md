@@ -60,7 +60,7 @@ rule OpenGate on gate: Gate [mut] {
 }
 ```
 
-Declara vinculaciones automáticas mediante `on`, no admite `given`, exige `when`, admite `if` y produce efectos mediante `then`. No ejecuta acciones reales. Puede consultar reglas booleanas y usar `allowed` si el grafo resultante sigue siendo acíclico.
+Declara vinculaciones automáticas mediante `on`, no admite `given`, exige `when`, admite `if` y produce consecuencias mediante `then`. Ese `then` puede mezclar efectos, locales y llamadas a `action` o `subaction` dentro de la resolución causal activa conforme a D-096. Puede consultar reglas booleanas y usar `allowed` si el grafo resultante sigue siendo admisible.
 
 Los roles de una misma cabecera `on` se resuelven conjuntamente y pueden formar restricciones relacionales cíclicas finitas conforme a D-063.
 
@@ -110,8 +110,9 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 ## Consecuencias
 
 - Una cabecera o combinación de cláusulas que corresponda a más de una variante se rechaza.
-- Solo las reglas booleanas forman llamadas con resultado.
-- Solo las reactivas forman consecuencias causales.
+- Solo las reglas booleanas son callables con resultado booleano.
+- Entre las reglas, solo las reactivas poseen `then` y producen consecuencias que pueden modificar el mundo.
+- Reglas reactivas y `always` pueden además actuar como fuentes declarativas de trigger conforme a D-096.
 - Solo `always` convierte una falsedad en fallo de invariante.
 - Q-005 todavía debe fijar la identidad canónica, la retirada de memoria y su posible conservación cuando una vinculación desaparece y reaparece.
 
@@ -129,3 +130,7 @@ Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `a
 10. Composición de dos cambios y de un cambio con una transición booleana mediante `and` y `or`.
 11. Pulsos consecutivos preservados dentro de una composición temporal.
 12. Aviso para una regla `always` sin `otherwise`, generación de una razón predeterminada y propagación de un diagnóstico explícito al `failed`.
+
+## Modificación vigente por D-096
+
+Una rule reactiva continúa sin ser callable como regla booleana, pero su `then` puede invocar actions y subactions reales dentro de la resolución causal activa. Rules reactivas y `always` pueden además actuar como fuentes declarativas de trigger: la reactiva pulsa cuando dispara efectivamente y la `always` cuando se evalúa para la vinculación/onda correspondiente. Actions, subactions, looks, reglas booleanas y tests no adquieren esa condición de trigger.

@@ -60,3 +60,7 @@ La restricción es sintáctica. No cambia:
 3. Fichero solo con declaraciones.
 4. Varios `using` seguidos de varias declaraciones.
 5. Rechazo de un `using` posterior a la primera declaración de primer nivel.
+
+## Modificación vigente por D-096
+
+`using` sigue siendo una cabecera de resolución de nombres de un `.mud`. La nueva dependencia modular `uses` vive en `mud.module` y autoriza el cruce de la frontera semántica; un `using` no crea esa autorización y un `uses` no importa automáticamente todos los nombres en cada fichero.

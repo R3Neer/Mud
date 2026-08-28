@@ -213,7 +213,7 @@ Define la sintaxis completa de:
 - Efectos.
 - Bloques.
 - Llamadas.
-- Definiciones canónicas de `thing` y reglas, `start with` separado en `things` y `rules`, y activaciones mediante `create Nombre`.
+- Definiciones canónicas de `thing` y reglas, `start with` unificado por módulo y activaciones mediante `create Nombre`.
 - Tests aislados con `start with` local, `then`, `after` y `otherwise`.
 - Diagnóstico `otherwise` opcional después del cuerpo de reglas `always`; omitirlo produce un aviso y una razón predeterminada.
 - Formatos numéricos dentro de interpolaciones `Text`.

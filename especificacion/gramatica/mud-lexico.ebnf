@@ -182,7 +182,7 @@ constant-word
    catálogo sin convertirlo en palabras reservadas duras. *)
 contextual-word
     ::= "abstract" | "always" | "start"
-      | "things" | "rules" | "value"
+      | "value"
       | "name" | "path" | "anchor" | "file"
       | "plural" | "abbreviation" | "prefixes" | "format"
       | "root" | "unit" | "point" | "over" | "cycle"
