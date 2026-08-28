@@ -9,10 +9,27 @@ module MUDSemanticIR {
 
     anchor = (string canonical)
 
+    flag = Disabled | Enabled
+
     symbol_id = AnchoredSymbol(anchor value)
               | LocalSymbol(anchor owner, string kind, string name, int ordinal)
 
-    action_access = PublicAction | Subaction
+    declaration_kind = ThingDeclaration
+                     | AliasDeclaration
+                     | FamilyDeclaration
+                     | MagnitudeDeclaration
+                     | BooleanRuleDeclaration
+                     | ReactiveRuleDeclaration
+                     | AlwaysRuleDeclaration
+                     | ActionDeclaration
+                     | SubactionDeclaration
+                     | LookDeclaration
+                     | MessageDeclaration
+                     | TestDeclaration
+
+    lifecycle_kind = AlwaysEffective | LifecycleControlled
+
+    participant_binding = IdentityBinding | ValueBinding | PlaceBinding
 
     decision_mode = FirstMatch | AllMatches
 
@@ -24,10 +41,20 @@ module MUDSemanticIR {
                             | DictionaryDifference
                             | DictionarySymmetricDifference
 
+    accumulation_operator = AdditiveIncrease
+                          | AdditiveDecrease
+                          | MultiplicativeUpdate
+                          | CollectionUnionUpdate
+                          | CollectionIntersectionUpdate
+                          | CollectionSymmetricDifferenceUpdate
+                          | CollectionDifferenceUpdate
+
     cardinality_origin = ExplicitCardinality
                        | OrdinaryScalarDefault
                        | InferredFromInitializer
                        | DerivedFromDecisionBranches
+
+    mutation_capability = (flag outer, flag inner)
 
     metadata_kind = NameMetadata | SummaryMetadata | DescriptionMetadata | DeprecatedMetadata
                   | PluralMetadata | AbbreviationMetadata | PrefixesMetadata | FormatMetadata
@@ -38,21 +65,55 @@ module MUDSemanticIR {
 
     metadata_evaluation = StoredMetadata | CalculatedMetadata
 
-    semantic_project = SemanticProject(semantic_module* modules,
+    output_evaluation = CallerViewEvaluation
+                      | CausalAndStableHostEvaluation
+
+    semantic_project = SemanticProject(string schema_version,
+                                       semantic_module* modules,
                                        semantic_decl* declarations,
                                        semantic_decision_branch* decision_branches,
                                        dependency_edge* dependencies)
 
-    semantic_module = SemanticModule(string logical_path, string* uses)
+    semantic_module = SemanticModule(string logical_path,
+                                     string* uses,
+                                     semantic_start_set initial_activation)
         attributes (source_span origin)
 
     semantic_decl = SemanticDecl(anchor identity,
                                  string module_path,
-                                 string category,
-                                 action_access? action_visibility,
+                                 declaration_kind kind,
+                                 lifecycle_kind lifecycle,
+                                 semantic_signature signature,
                                  semantic_type? declared_type,
                                  semantic_metadata* metadata,
-                                 semantic_member* members)
+                                 semantic_member* members,
+                                 semantic_behavior? behavior)
+        attributes (source_span origin)
+
+    semantic_signature = SemanticSignature(semantic_participant* for_participants,
+                                           semantic_on_pattern? on_pattern,
+                                           semantic_given* givens)
+
+    semantic_participant = SemanticParticipant(symbol_id identity,
+                                               int source_ordinal,
+                                               semantic_type type,
+                                               semantic_domain? domain,
+                                               collection_shape collection,
+                                               participant_binding binding,
+                                               anchor? nominal_refinement,
+                                               semantic_expr? related_source)
+        attributes (source_span origin)
+
+    semantic_on_pattern = SemanticOnPattern(semantic_participant* participants,
+                                            semantic_expr* joint_constraints)
+        attributes (source_span origin)
+
+    semantic_given = SemanticGiven(symbol_id identity,
+                                   int source_ordinal,
+                                   semantic_type type,
+                                   semantic_domain? domain,
+                                   collection_shape collection,
+                                   semantic_expr? static_default)
         attributes (source_span origin)
 
     semantic_member = SemanticMember(symbol_id identity,
@@ -111,7 +172,7 @@ module MUDSemanticIR {
                         int? upper,
                         string multiplicity,
                         string order,
-                        string capability,
+                        mutation_capability capability,
                         cardinality_origin origin)
 
     decision_shape = (decision_mode mode,
@@ -136,6 +197,85 @@ module MUDSemanticIR {
 
     semantic_start_set = SemanticStartSet(anchor* declarations)
         attributes (source_span origin)
+
+    semantic_behavior = BooleanRuleBehavior(semantic_expression_block condition)
+                      | ReactiveRuleBehavior(semantic_local_binding* leading_locals,
+                                             semantic_expression_block activator,
+                                             semantic_expression_block? guard,
+                                             semantic_effect_block effects)
+                      | AlwaysRuleBehavior(semantic_expression_block invariant,
+                                           semantic_expr? diagnostic)
+                      | ActionBehavior(semantic_local_binding* leading_locals,
+                                       semantic_expression_block? guard,
+                                       semantic_effect_block effects,
+                                       semantic_expression_block? postcondition)
+                      | LookBehavior(semantic_output output)
+                      | MessageBehavior(semantic_local_binding* leading_locals,
+                                        semantic_expression_block activator,
+                                        semantic_expression_block? guard,
+                                        semantic_output output)
+                      | TestBehavior(semantic_start_set initial_activation,
+                                     semantic_effect_block effects,
+                                     semantic_test_assertion* assertions)
+
+    semantic_output = SemanticOutput(output_evaluation evaluation,
+                                     semantic_public_field* fields)
+        attributes (source_span origin)
+
+    semantic_public_field = SemanticPublicField(symbol_id identity,
+                                                semantic_type type,
+                                                semantic_expr value)
+        attributes (source_span origin)
+
+    semantic_test_assertion = SemanticTestAssertion(semantic_expression_block condition,
+                                                     semantic_expr? diagnostic)
+        attributes (source_span origin)
+
+    semantic_expression_block = SemanticExpressionBlock(semantic_local_binding* locals,
+                                                         semantic_expr result)
+        attributes (source_span origin)
+
+    semantic_local_binding = SemanticLocalBinding(symbol_id identity,
+                                                  int source_ordinal,
+                                                  semantic_type type,
+                                                  semantic_expr value)
+        attributes (source_span origin)
+
+    semantic_effect_block = SemanticEffectBlock(semantic_effect_item* items)
+        attributes (source_span origin)
+
+    semantic_effect_item = LocalBindingItem(semantic_local_binding binding)
+                         | EffectItem(semantic_effect effect)
+
+    semantic_effect = AssignmentEffect(symbol_id target,
+                                       semantic_expr value)
+                    | AccumulationEffect(accumulation_operator operator,
+                                         symbol_id target,
+                                         semantic_expr value)
+                    | AddToCollectionEffect(semantic_expr value,
+                                            symbol_id target)
+                    | RemoveFromCollectionEffect(semantic_expr value,
+                                                 symbol_id target)
+                    | CreateDeclarationEffect(anchor target)
+                    | DestroyDeclarationEffect(anchor target)
+                    | CallActionEffect(semantic_call call)
+                    | ForEachEffect(semantic_expr source,
+                                    semantic_expr? step,
+                                    semantic_expression_block? filter,
+                                    string iteration_order,
+                                    semantic_effect_block body)
+        attributes (source_span origin)
+
+    semantic_call = SemanticCall(semantic_expr callable,
+                                 receiver_argument* receivers,
+                                 given_argument* givens)
+        attributes (source_span origin)
+
+    receiver_argument = PositionalReceiver(semantic_expr value)
+                      | NamedReceiver(string name, semantic_expr value)
+
+    given_argument = PositionalGivenArgument(semantic_expr value)
+                   | NamedGivenArgument(string name, semantic_expr value)
 
     semantic_expr = ReferenceExpr(symbol_id target)
                   | LiteralExpr(string kind, string canonical)
@@ -165,6 +305,11 @@ module MUDSemanticIR {
                   | MetadataAccessExpr(semantic_expr receiver,
                                        metadata_property metadata,
                                        semantic_type result_type)
+                  | CallExpr(semantic_call call)
+                  | AllowedExpr(semantic_call call)
+                  | EventuallyExpr(semantic_expr goal,
+                                   anchor* through_actions)
+                  | OldExpr(semantic_expr value)
                   | OperationExpr(string operator, semantic_expr* operands)
                   | ContextualAliasConstructionExpr(semantic_expr literal, anchor target_alias)
                   | ConversionExpr(semantic_expr value, anchor target_type)
@@ -193,13 +338,28 @@ module MUDSemanticIR {
                     | ReadsMetadata(symbol_id source, symbol_id target, metadata_kind metadata)
                     | Writes(symbol_id source, symbol_id target)
                     | CallsAction(anchor source, anchor target)
+                    | CallsCallable(symbol_id source, symbol_id target)
                     | CallsDecision(anchor source, anchor target)
                     | DecisionDependsOn(anchor dictionary, decision_branch_key branch, symbol_id target)
+                    | AllowedDependsOn(symbol_id source, anchor target)
+                    | EventuallyDependsOn(symbol_id source, anchor target)
                     | Creates(symbol_id source, anchor target)
                     | Destroys(symbol_id source, anchor target)
+                    | AddsTo(symbol_id source, symbol_id target)
+                    | RemovesFrom(symbol_id source, symbol_id target)
+                    | StochasticDependsOn(symbol_id source, symbol_id target)
+                    | HardDependsOn(symbol_id source, symbol_id target)
+                    | ProducesLookField(anchor look, symbol_id field)
+                    | ReadsLook(symbol_id source, anchor look)
+                    | ProducesMessageField(anchor message, symbol_id field)
+                    | ReadsMessage(symbol_id source, anchor message)
+                    | TestActivates(anchor test, anchor target)
+                    | TestDiagnoses(anchor test, symbol_id target)
+                    | DerivesDimension(anchor source, anchor target)
+                    | PointOver(anchor point, anchor linear)
+                    | UnitEquivalent(anchor source, anchor target)
                     | UnitOf(anchor unit, anchor magnitude)
 }
 
--- El modelo elaborado preserva pertenencia modular, `uses` y activación
--- unificada. La representación exacta de matches causales de trigger no forma
--- parte todavía de este contrato y no se fija aquí una codificación interna.
+-- La codificación interna de matches causales de trigger permanece fuera de este
+-- contrato mientras no exista una forma normativa que deba conservar el IR.
