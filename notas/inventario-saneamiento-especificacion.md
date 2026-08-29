@@ -24,7 +24,7 @@ No define MUD. La autoridad normativa permanece en `especificacion/` y, transito
 - Etapa 3 — contradicciones y residuos semánticos en superficies desarrolladas: completada.
 - Etapa 4 — auditoría sistemática de decisiones vigentes contra superficies existentes: completada.
 - Etapa 5 — auditoría exhaustiva del documento fuente de la integración D-096: completada.
-- Etapa 6 — revisión semántica del mapa futuro de `especificacion/README.md`: pendiente.
+- Etapa 6 — revisión semántica del mapa futuro de `especificacion/README.md`: completada.
 - Etapa 7 — barrera mecánica contra regresiones editoriales: pendiente.
 - Etapa 8 — validación semántica global final: pendiente.
 
@@ -170,14 +170,22 @@ Cuando aparezca cualquiera de estos capítulos, MUD-EDIT-003 obliga a promover l
 
 ## Etapa 6 — mapa futuro
 
-Además de cerrar E3-08, revisar todas las entradas `Archivo previsto` de `especificacion/README.md` con estas condiciones:
+Completada mediante una revisión íntegra de todas las entradas `Archivo previsto` de `especificacion/README.md`. El mapa se redujo a alcance editorial y obligaciones que los capítulos futuros deberán absorber, evitando que el propio índice actúe como una segunda especificación anticipada.
 
-- describen alcance, no historia de decisiones;
-- no contienen semántica ya sustituida;
-- no actúan como un almacén normativo alternativo al futuro capítulo;
-- reflejan las obligaciones `M` relevantes para que el futuro capítulo no nazca con un diseño anterior ya descartado.
+La revisión detectó y corrigió cuatro residuos semánticos concretos:
 
-**Criterio de cierre:** el mapa futuro es compatible con el estado vigente sin intentar formalizar anticipadamente capítulos inexistentes.
+| ID | Defecto del mapa previo | Corrección |
+| --- | --- | --- |
+| E6-01 | El capítulo 12 todavía prohibía especialización/herencia de aliases. | El mapa refleja especialización nominal simple/múltiple, herencia de representación o miembros y mantiene abierta la frontera intermodular de Q-064. |
+| E6-02 | El capítulo 21 conservaba la regla antigua de nombre obligatorio solo para ciertos roles `for`. | El mapa exige participantes `for` explícitamente nombrados, coherente con el modelo reflectivo vigente. |
+| E6-03 | El capítulo 43 incorporaba activación ordinaria de módulos al mundo inicial de un test. | El mapa limita el cierre inicial a las contribuciones `start with` propias de los tests estáticamente alcanzables; la activación ordinaria de módulos queda fuera. |
+| E6-04 | Los capítulos 41, 44, 48 y el criterio global seguían presuponiendo un IR semántico actual, un JSON Schema y artefactos derivados. | El mapa conserva solo una futura representación posterior a tipado/elaboración, sin fijar esquema, nodos, versión ni serialización actuales; conformidad y migraciones se refieren a artefactos normativos que realmente existan. |
+
+Además se propagaron al alcance de los capítulos futuros las obligaciones `M` de Etapa 5 que podían perderse si el mapa conservaba el diseño anterior: cierre de tipos y reflexión modular segura, límite de especialización de `thing` entre módulos, `all D`, callables almacenados, joins dinámicos de `look`, tipos anónimos, trigger algebra, causalidad de `message`, proyecciones host, ciclos puramente causales y bindings `on` sobre fuentes finitas.
+
+Las preguntas Q-063 a Q-068 aparecen en el frontmatter del índice porque el mapa delimita explícitamente sus incertidumbres presentes. Ninguna se resuelve ni amplía.
+
+**Criterio de cierre cumplido:** el mapa futuro es compatible con el estado vigente, conserva las obligaciones necesarias para los hogares todavía inexistentes y ya no formaliza anticipadamente un IR ni otras estructuras internas no desarrolladas.
 
 ## Etapa 7 — barrera mecánica
 
@@ -206,6 +214,6 @@ Antes de considerar cerrado el saneamiento:
 5. cruzar decisiones vigentes con superficies desarrolladas;
 6. comprobar coherencia prosa ↔ EBNF ↔ CST ↔ AST ↔ HIR nominal y tratar cualquier futura representación posterior solo cuando exista;
 7. ejecutar todos los validadores oficiales y la barrera editorial de Etapa 7;
-8. revisar el diff global del saneamiento para detectar cambios semánticos accidentales;
+8. revisar el diff global del saneamiento para detectar cambios semánticos accidentales.
 
 **Criterio de cierre global:** una persona puede leer solo las superficies ya desarrolladas de `especificacion/` y obtener el estado formalizado vigente de MUD sin reconstruir historia decisional ni encontrar contradicciones conocidas; las reglas aceptadas cuyo capítulo aún no existe permanecen localizables como autoridad transitoria y obligaciones `M`, no como apéndices impropios.

@@ -10,6 +10,11 @@ status: en-preparacion
 normative: true
 questions:
   - Q-063
+  - Q-064
+  - Q-065
+  - Q-066
+  - Q-067
+  - Q-068
 ---
 
 # Especificación formal de MUD
@@ -263,34 +268,19 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-
-
 ## 10. Sistema de tipos
 
 Archivo previsto: `10-sistema-de-tipos.md`
 
-Define:
+Alcance previsto:
 
-- `Text`, `Char` y `Bool` como tipos básicos no numéricos.
-- Comillas dobles comunes para `Text` y `Char`, con preferencia por `Text` y elaboración contextual de un único escalar como `Char`.
-- `"\u{0}"` (`U+0000`) como valor predeterminado contextual de `Char`.
-- `Nat`, `Int`, `Num`, `Rum` y `Money` como representaciones numéricas básicas, no magnitudes.
-- Saturación de la resta pura de `Nat` frente a deltas aditivos firmados.
-- `Num` como racional exacto y `Rum` como IEEE 754 `binary64` explícito.
-- Tipos de `thing`.
-- Tipos nominales de alias.
-- Familias cerradas.
-- Colecciones, productos estructurales, diccionarios exactos y diccionarios decisionales.
-- Intervalos.
-- Magnitudes.
-- Tipos callable de `action`, regla booleana y `look`, descriptores first-class y tipos obtenidos estáticamente mediante `~type`, con la varianza formal pendiente de Q-063.
-- Pertenencia nominal mediante `is`, identidad nominal exacta mediante `iis` y narrowing positivo y negativo.
-- Inferencia y ampliación de representaciones en operaciones cuantitativas.
-- Dos familias explícitas de `to`: conversión cuantitativa y casting nominal estructural.
-- Redondeo global al más cercano con empates al par.
-- Igualdad y orden por tipo.
+- Tipos incorporados, nominales, estructurales, colecciones, diccionarios, intervalos, magnitudes y uniones.
+- `Any`, descriptores first-class, tipos callable y tipos obtenidos estáticamente mediante `~type`.
+- Subtyping, compatibilidad, narrowing, igualdad, orden, conversiones e inferencia.
+- Tipado de resultados anónimos de `look` y payloads de `message`, incluido el join de invocaciones dinámicas.
+- Interacción entre el tipo estático de un descriptor callable y la identidad nominal necesaria para vincular su firma.
 
-
+Las cuestiones de varianza callable, especialización intermodular de aliases, join con mínimos comunes incomparables, binding tras borrado y la identidad de tipos anónimos permanecen delimitadas respectivamente por Q-063, Q-064, Q-065, Q-066 y Q-068.
 
 Juicio principal:
 
@@ -302,456 +292,256 @@ $$
 
 Archivo previsto: `11-things.md`
 
-Define:
+Alcance previsto:
 
-- `thing` concretas y abstractas.
-- `Thing` incorporada, abstracta y superior a toda `thing`.
-- Identidad canónica de cada `thing`, actividad y materialización de las concretas.
-- Especialización simple y múltiple.
-- Cabeceras de especialización con `as` y consultas con `is`.
-- Sustituibilidad.
-- Fusión de campos homónimos.
-- Valores predeterminados heredados.
-- Igualdad de identidad.
-- Canonicalización de identidades de `thing`.
-- Metadatos tipados `~name`, `~path`, `~anchor` y `~file`, separados de campos y de la identidad nominal.
+- Identidad, actividad, materialización y estado independiente de `thing` concretas y abstractas.
+- Especialización simple y múltiple, esquema heredable, predeterminados e inicializadores.
+- Integración de `Thing` como raíz incorporada y de las reglas de igualdad/identidad nominal.
+- Frontera modular de las `thing`: identidad/tipo visible frente a estado ordinario proyectado mediante operaciones públicas y límites de especialización entre módulos.
+- Metadatos y reflexión propios de las `thing` sin confundirlos con campos de estado.
 
 ## 12. Aliases nominales y valores estructurales
 
 Archivo previsto: `12-aliases.md`
 
-Define:
+Alcance previsto:
 
-- Definición de tipo mediante `:=` y bloque estructural.
-- Componentes obligatorios, ordenados, con dominio y sin `mut`.
-- Nominalidad de todos los aliases.
-- Valores inmutables y ausencia de identidad runtime.
-- Prohibición de `create`, `destroy`, abstracción y especialización.
-- Literales contextuales posicionales y nombrados.
-- Predeterminados de componentes y construcción parcial exclusivamente nombrada.
-- Casting nominal mediante `to` y compatibilidad de forma normalizada.
-- Igualdad por alias y contenido.
-- Orden lexicográfico cuando la representación está ordenada.
-- Claves compuestas y azúcar de acceso.
-- Finitud, enumerabilidad y producto cartesiano lexicográfico.
+- Aliases nominales de representación y estructurales, construcción contextual y casting nominal.
+- Especialización nominal simple y múltiple, herencia de representación o miembros, deduplicación por origen y conflictos de miembros independientes.
+- Predeterminados heredados, valores inmutables, igualdad, orden y enumerabilidad cuando correspondan.
+- Frontera entre compatibilidad estructural y adquisición explícita de nominalidad.
+- Reglas de especialización de aliases a través de módulos, cuyo alcance exacto permanece abierto en Q-064.
 
 ## 13. Familias cerradas de valores
 
 Archivo previsto: `13-familias-cerradas.md`
 
-Define:
+Alcance previsto:
 
-- `family`.
-- `ordered` como palabra reservada delante de `family`.
-- Miembros como valores nominales sin identidad ni ciclo de vida runtime.
-- Anclas estáticas `family::*`.
-- Esquema uniforme de datos inmutables, almacenados o calculados por miembro, declarado directamente en la familia.
-- Tipo opcional y dependencias acíclicas para los datos calculados.
-- Valores de miembro explícitos o completados mediante predeterminados.
-- Prohibición de especialización y herencia entre familias.
-- Enumeración finita.
-
+- Declaración, miembros, nominalidad, orden y enumeración de `family`.
+- Esquema uniforme de datos asociados, predeterminados y cálculos por miembro.
+- Igualdad, orden, reflexión y ausencia de ciclo de vida runtime de sus valores.
 
 ## 14. Campos, mutabilidad y capacidades
 
 Archivo previsto: `14-campos-y-mutabilidad.md`
 
-Define:
+Alcance previsto:
 
-- Campos almacenados y calculados.
-- Metadatos postfix separados de los campos ordinarios; todo acceso `~` es de solo lectura durante la ejecución y los metadatos configurables se modifican mediante edición del modelo.
-- Expresiones estáticas cerradas para valores almacenados y predeterminados.
-- Anotación opcional e inferencia unívoca del tipo de campos calculados.
-- `=` frente a `:=`.
-- Mutabilidad exterior.
-- Capacidad interior `[mut]`.
-- Ortogonalidad de ambos permisos también para cardinalidad `[1]`.
-- Posición `mut nombre: Tipo`; rechazo de `nombre: mut Tipo`.
-- Campos derivados como vistas de colección sin mutabilidad exterior.
-- Mutabilidad exterior e interior de participantes `for`, incluidos receptores-lugar.
-- Accesibilidad de escrituras.
-- Ausencia de mutabilidad profunda implícita.
-
+- Campos almacenados y calculados, predeterminados, inicializadores y vistas derivadas.
+- Mutabilidad exterior, capacidad interior `[mut]` y su composición sin mutabilidad profunda implícita.
+- Capacidad de participantes y accesibilidad de escrituras.
+- Metadatos postfix como información separada del estado ordinario y de solo lectura durante ejecución.
 
 ## 15. Cardinalidades y colecciones
 
 Archivo previsto: `15-colecciones.md`
 
-Define:
+Alcance previsto:
 
-- Cardinalidades como intervalos de naturales.
-- Ausencia mediante `empty`.
-- Multiplicidad y `unique`.
-- Membresía estricta de `thing`, con exclusión incondicional del ancla exacta del tipo.
-- Colecciones ordenadas y no ordenadas.
-- Orden natural, de inserción y semántico; orden Unicode fijo para `Char`.
-- `ordered by` sobre una ruta estable con resultado totalmente ordenado y empates por orden de inserción.
-- Álgebra de multiconjuntos mediante unión, intersección y diferencia `--`; diferencia simétrica `^` reservada a colecciones `unique`.
-- Aritmética elevada cuando al menos un operando es opcional o unitario, con `empty` absorbente.
-- Filtrado puro sin proyección ni aplanamiento, `take` ordenado o reproduciblemente aleatorio e indexación posicional exclusiva de colecciones ordenadas.
-- Inferencia de cardinalidad y dominio y propagación de `unique`, `ordered` y capacidad interior `mut`.
-- Igualdad de colecciones.
-- Instantáneas de iteración.
-
+- Cardinalidades, `empty`, multiplicidad, unicidad y orden.
+- Membresía, álgebra de colecciones, indexación, selección y `take`.
+- Inferencia y conservación de cardinalidad, dominio, orden y capacidades.
+- Instantáneas y semántica observable de iteración sobre colecciones.
 
 ## 16. Diccionarios
 
 Archivo previsto: `16-diccionarios.md`
 
-Define:
+Alcance previsto:
 
-- Tipos completos de entrada y salida, incluidos productos y diccionarios anidados.
-- Cardinalidad.
-- Claves compuestas.
-- Consulta exacta ausente mediante `empty`, asociaciones operativas y escritura de claves.
-- Materialización de entradas.
-- Iteración por claves y entradas.
-- Orden canónico.
-- Operaciones totales y aritmética conjuntista de exactos por dominio de claves, con precedencia izquierda, orden, `unique` e inferencia cardinal.
-- Diccionarios funcionales `-->`, modos `FirstMatch` y `AllMatches`, fallback, pureza, dependencias, terminación y aritmética extensional punto a punto.
-
+- Diccionarios exactos y decisionales, sus tipos, cardinalidades y consultas.
+- Asociaciones, claves, iteración, orden y operaciones algebraicas.
+- Modos de selección de ramas, fallback, dependencias, recursión y terminación de diccionarios decisionales.
 
 ## 17. Dominios e intervalos
 
 Archivo previsto: `17-dominios-e-intervalos.md`
 
-Define:
+Alcance previsto:
 
-- Declaraciones `in`.
-- Dominios de campos, aliases y `given`.
-- Dominios calculados.
-- Pertenencia.
-- Intervalos abiertos, cerrados, vacíos y discontinuos.
-- Intervalos de magnitud con unidades locales o una unidad común exterior.
-- Límites efectivos laterales mediante `*` y azúcar `[*]`.
-- Normalización.
-- Normalización de extremos lineales invertidos a `empty`.
-- Finitud y enumerabilidad.
-- Pasos de iteración.
-- Dominios dinámicos.
-- Dominios cíclicos `[a..b) cycle` exclusivos de magnitudes de punto.
-- Intervalos `Rum` admitidos como dominios, pero no como fuentes enumerables.
-
+- Dominios declarados y calculados, pertenencia, normalización, finitud y enumerabilidad.
+- Intervalos lineales, discontinuos, cíclicos y dependientes de magnitudes.
+- Materialización explícita de dominios enumerables mediante `all D` cuando una operación debe producir una colección.
+- Diferencia entre consumir un dominio, materializar su enumeración y producir una colección filtrada, sin conversión implícita de esta última a `Domain`.
 
 ## 18. Magnitudes, unidades y puntos
 
 Archivo previsto: `18-magnitudes.md`
 
-Define:
+Alcance previsto:
 
-- Magnitudes no derivadas, derivadas y de punto.
-- Magnitudes base con unidad raíz o deliberadamente sin unidades, conservando en ambos casos su dimensión nominal.
-- Representaciones numéricas explícitas e inferidas.
-- Magnitudes basadas en `Rum` y omisión contextual del prefijo `r` en cantidades con unidad.
-- Unidades raíz y alternativas con identificador `lowerCamel` y equivalencias mediante `:=`.
-- Prefijos.
-- Normalización.
-- Aritmética dimensional.
-- Inferencia de unidades canónicas derivadas y combinaciones automáticas.
-- Dominios de punto opcionales: completos, lineales o cíclicos.
-- Presentación `in unit` de coordenadas completas y extracción `unit from container in point`.
-- Representación textual raíz, abreviaturas y formatos de punto.
-- Unidades nominales derivadas opcionales.
-- Unidades locales y compartidas en expresiones de intervalo.
-- Declaraciones `point over`, ciclos y formatos.
-- Magnitudes temporales.
-- Calendarios y localización.
-
+- Magnitudes base, derivadas y de punto, sus representaciones y dominios.
+- Unidades, prefijos, equivalencias, normalización y aritmética dimensional.
+- Coordenadas, ciclos, presentación, formatos y extracción de componentes.
+- Magnitudes temporales y las construcciones de calendario/localización que finalmente pertenezcan al perfil MUD 1.0.
 
 ## 19. Expresiones
 
 Archivo previsto: `19-expresiones.md`
 
-Define:
+Alcance previsto:
 
-- Literales racionales exactos, literales `Rum` prefijados con `r` y acceso.
-- Llamadas a reglas.
-- Receptores multiparte.
-- Operadores, incluidos `not in`, `iis`, `iis not` y la aritmética de diccionarios.
-- Precedencia y asociatividad, incluidas las flechas exteriores de tipo.
-- Conversiones.
-- Distinción entre presentación en otra unidad mediante `in`, conversión cuantitativa y casting nominal mediante `to`.
-- Construcción contextual de literales de alias.
-- Propagación bidireccional del tipo esperado entre un alias y un literal en comparaciones.
-- `old`.
-- `allowed`.
-- `eventually`.
-- Pureza.
-- Elaboración booleana canónica y poda de llamadas a reglas inactivas.
-- Fallos dentro de expresiones.
-
+- Literales, operadores, llamadas, acceso, comparación, conversión y construcción contextual.
+- Resolución y elaboración de receptores, argumentos y valores callable.
+- `old`, `allowed`, `eventually`, selección, `take` y materialización `all D` en sus contextos de expresión.
+- Pureza, narrowing, propagación de tipos esperados y fallos de evaluación.
 
 ## 20. Cuantificadores, agregaciones e iteración
 
 Archivo previsto: `20-cuantificadores-e-iteracion.md`
 
-Define:
+Alcance previsto:
 
-- `exists`, `forall`, `count`, `sum`, `min` y `max`.
-- `for each`.
-- Fuentes finitas.
-- Orden de recorrido.
-- Instantánea de pertenencia.
-- Iteraciones secuenciales y simultáneas.
-- Filtros.
-- Terminación de intervalos.
-- Prohibición de enumerar intervalos `Rum`.
-- Enumeración de aliases estructurales como productos cartesianos lexicográficos.
-
+- Cuantificadores y agregadores sobre fuentes finitas enumerables.
+- `for each`, bindings de iteración, orden, filtros, pasos e instantáneas de pertenencia.
+- Consumo directo de dominios finitos cuando no se produce una colección y requisitos de terminación de cada recorrido.
 
 ## 21. Reglas booleanas
 
 Archivo previsto: `21-reglas-booleanas.md`
 
-Define:
+Alcance previsto:
 
-- Roles `for` de cualquier tipo declarado, individuales o colectivos.
-- Vinculación por identidad, valor o lugar y nombre obligatorio para roles colectivos o exteriormente mutables.
-- Ausencia de mutabilidad exterior por pureza.
-- Valores `given` inmutables, con predeterminados estáticos y vinculación posicional o nominal.
-- Receptor único y multiparte.
-- Sugerencia de orden de declaración para receptores y argumentos nombrados desordenados.
-- Pureza.
-- Resultado booleano.
-- Dominios fuera de rango.
-- Dependencias y memorización.
-- Borrado estructural cuando la declaración no sea efectiva.
-
+- Firmas puras con participantes `for` explícitamente nombrados y valores `given` de solo lectura.
+- Vinculación de receptores y argumentos, dominios, predeterminados y capacidades admitidas por una consulta pura.
+- Evaluación booleana, dependencias, memorización y tratamiento de declaraciones no efectivas.
+- Integración con valores callable de tipo regla booleana.
 
 ## 22. Reglas reactivas
 
 Archivo previsto: `22-reglas-reactivas.md`
 
-Define:
+Alcance previsto:
 
-- Cada rol `on` vincula un único valor por vinculación: la forma directa usa el universo implícito de `thing` concretas activas y la forma relacionada obtiene valores de una fuente finita enumerable.
-- Participantes relacionados mediante `in`, con refinamiento nominal opcional, resolución conjunta, referencias adelantadas y ciclos finitos.
-- `when`.
-- Sufijo temporal `changes` y su precedencia.
-- Composición de activadores mediante `and` y `or`.
-- Transición `false → true`, pulsos sin estado y cambios netos entre instantáneas.
-- `old` sobre la onda anterior dentro de `when` e `if`.
-- `if`.
-- `then`.
-- Estado anterior virtual en `start with` y línea base sin disparo para vinculaciones posteriores.
-- Creación y eliminación de vinculaciones.
-
+- Bindings `on` conjuntos, incluidas fuentes relacionadas finitas enumerables y refinamientos nominales.
+- Activadores `when`, `changes`, `old`, guardas `if`, memoria reactiva y consecuencias `then`.
+- Aparición, desaparición e identidad temporal de bindings.
+- Uso de una regla reactiva disparada como fuente causal para otros triggers.
 
 ## 23. Reglas `always`
 
 Archivo previsto: `23-reglas-always.md`
 
-Define:
+Alcance previsto:
 
-- Vinculaciones `on`.
-- Pureza.
-- Estados en que deben comprobarse.
-- Incumplimiento y resultado de resolución.
-- Diagnóstico `otherwise` exterior al cuerpo y visibilidad de sus locales.
-- Dependencias, incluidas lecturas de metadatos y ramas decisionales.
-
+- Bindings `on`, condición pura, puntos de comprobación y diagnósticos.
+- Dependencias, suspensión y efecto de una infracción sobre la resolución.
+- Uso de la evaluación de una `always` como fuente causal de trigger, separado de que su condición resulte verdadera o falsa.
 
 ## 24. Frontera pública: `action`, `look` y `message`
 
 Archivo previsto: `24-frontera-publica.md`
 
-Define:
+Alcance previsto:
 
-- Roles `for` de cualquier tipo, individuales o colectivos.
-- Valores `given` inmutables, predeterminados estáticos y omisiones posicionales o nominales.
-- `if`, `then` y `after`.
-- Vinculaciones locales `:=` secuenciales y sin referencias adelantadas dentro de `then`.
-- `then` unificado: efectos directos, llamadas a `action` o `subaction`, locales y recorridos `for each` en una misma secuencia.
-- Vinculación posicional y nombrada y receptores-lugar para roles con mutabilidad exterior.
-- `action` como capacidad de raíz exterior de escritura y `subaction` como callable sin capacidad de raíz.
-- Aciclicidad de llamadas.
-- Exclusión de los tests de la API pública.
-- Posibles valores de retorno.
-- Invocación de valores callable sin pre-vincular receptores ni argumentos `given` al almacenar el descriptor.
-- `look` como callable puro con participantes `for` y `given`, consultable desde host y desde contextos MUD compatibles con lectura.
-- Vista coherente de `look` heredada del llamador y resultado único de tipo anónimo.
-- `message` como ocurrencia causal con identidad y multiplicidad, capaz de alimentar triggers de ondas posteriores.
-- Vinculaciones `on` conjuntas, refinamientos nominales, referencias adelantadas y ciclos relacionales finitos.
-- Condición `when`, guarda `if` opcional, locales previas y payload público calculado.
-- Proyección causal del payload dentro de MUD y proyección final estable hacia el host; un rollback cancela la entrega exterior.
-- Separación entre bindings `on` y payload en la envoltura host, orden causal entre ondas y orden técnico reproducible dentro de una onda.
+- Contratos visibles entre módulos y hacia el host para `action`, `look` y `message`; `test` solo cruza módulos en contexto de pruebas.
+- Autorización modular mediante `uses`, cierre transitivo de los tipos necesarios para comprender un contrato y reflexión cruzada segura sin filtrado silencioso.
+- API host centrada en la identidad de las operaciones públicas, no en un participante elegido como propietario.
+- Firmas `for`/`given`, capacidad exterior de `action` frente a `subaction`, valores callable y vinculación en el punto de invocación.
+- `look` como consulta pura con vista coherente del llamador y resultado anónimo único.
+- `message` como ocurrencia causal, bindings `on`, payload público y proyecciones causal interna y estable exterior.
+- Separación de bindings y payload, multiplicidad y orden de entrega, así como rollback de salidas exteriores.
 
+El binding nominal de descriptores callable suficientemente borrados y la proyección exterior de un `message` cuyos participantes dejan de existir permanecen abiertos en Q-066 y Q-067.
 
 ## 25. Efectos
 
 Archivo previsto: `25-efectos.md`
 
-Define:
+Alcance previsto:
 
-- Asignaciones.
-- Actualizaciones aritméticas.
-- Deltas firmados para actualizaciones aditivas sobre `Nat`.
-- Operaciones de colección.
-- Adición y retirada dinámica de propiedades.
-- `create`.
-- `destroy`.
-- Resolución de `create Nombre` a la definición canónica de una `thing` o regla.
-- Efectos de bucles.
-- Conjuntos de lectura y escritura.
-- Compatibilidad y conflicto entre efectos.
-- Consolidación determinista de deltas privados de distintos `then`.
-- Suma de deltas antes de normalizar el tipo del destino.
-- Álgebra de composición de efectos.
-
-Juicio previsto:
-
-$$
-\Gamma;\Sigma \vdash b : \mathsf{Effect}(R,W,C,D)
-$$
-
-donde $R$, $W$, $C$ y $D$ representan anclas leídas, escritas, creadas y destruidas.
-
-
----
-
-# Parte III — Semántica dinámica
+- Asignaciones, actualizaciones, operaciones de colección, `create`, `destroy` y modificaciones estructurales permitidas.
+- Llamadas effectful y recorridos dentro de un `then` unificado.
+- Lecturas, escrituras, deltas, conflictos y composición de efectos.
+- Interacción entre efectos directos y llamadas internas que comparten una misma resolución causal.
 
 ## 26. Estado y evaluación de expresiones
 
 Archivo previsto: `26-evaluacion.md`
 
-Define:
+Alcance previsto:
 
-- Entornos de participantes y `given`.
-- Lectura del store.
-- Evaluación determinista.
-- Propagación de `empty` en consultas parciales y fallo solo al infringir el contrato exterior.
-- Poda y cierre de fragmentos booleanos borrados.
-- Evaluación de campos calculados.
-- Estado inicial observado por expresiones.
-
-Juicio previsto:
-
-$$
-\Gamma;\rho;W \vdash e \Downarrow v
-$$
+- Entornos, vistas de lectura, store y evaluación determinista de expresiones.
+- Evaluación de campos calculados, consultas parciales, tipos esperados y fallos.
+- Vistas coherentes heredadas por `look`, incluido el delta privado visible en el punto de llamada.
+- Evaluación de callables y binding efectivo una vez resuelta su firma.
 
 ## 27. Solicitud y resultado de acciones
 
 Archivo previsto: `27-solicitud-de-acciones.md`
 
-Define:
+Alcance previsto:
 
-- Cola externa.
-- Momento de vinculación.
-- Validación de dominios.
-- Evaluación de `if`.
-- `accepted`, `rejected` y `failed`.
-- Objeto externo de resultado y `reason: Text` obligatorio para `rejected` y `failed`.
-- Visibilidad del estado.
-- Atomicidad y rollback.
+- Solicitud exterior, vinculación y validación inicial de una `action` raíz.
+- Resultados `accepted`, `rejected` y `failed`, diagnósticos, estado visible y rollback.
+- Relación entre validación de firma, guardas, estabilización, restricciones finales y publicación exterior.
 
 ## 28. Semántica de la raíz
 
 Archivo previsto: `28-raiz.md`
 
-Define:
+Alcance previsto:
 
-- Evaluación de efectos elementales.
-- Secuencialidad interna.
-- Composición de acciones.
-- Lectura común del estado inicial.
-- Raíz simultánea.
-- Overlays secuenciales privados por `then`.
-- Proyección no negativa de lecturas `Nat` sin recortar el delta privado.
-- Normalización de efectos.
-- Conflictos de raíz.
-
+- Resolución causal raíz, deltas privados y secuencialidad textual dentro de cada `then`.
+- Integración de llamadas internas sin abrir transacciones independientes.
+- Consolidación, normalización y conflictos entre contribuciones concurrentes.
+- Estado observado por cada fase de una resolución.
 
 ## 29. Semántica causal por ondas
 
 Archivo previsto: `29-ondas.md`
 
-Define:
+Alcance previsto:
 
-- Instantánea de una onda.
-- Vinculaciones activas.
-- Evaluación de activadores temporales.
-- Cálculo simultáneo de consecuencias.
-- Combinación de efectos.
-- Normalización de valores después de consolidar cada lote causal.
-- Paso a la onda siguiente.
-- Estado estable.
-- Traza causal.
-
-Se modelará inicialmente como un sistema de transición:
-
-$$
-\langle W_i, B_i, P_i \rangle
-\xrightarrow{\mathsf{wave}}
-\langle W_{i+1}, B_{i+1}, P_{i+1} \rangle
-$$
-
+- Instantáneas, bindings activos, activadores y paso entre ondas.
+- Matches causales con testigos, multiplicidad y composición mediante conjunción/disyunción.
+- Ocurrencias de `message` y disparos de reglas como consecuencias disponibles para ondas posteriores.
+- Combinación de efectos, estabilización y traza causal.
+- Distinción entre orden causal y cualquier orden técnico reproducible dentro de una onda.
 
 ## 30. Restricciones, `after` y `old`
 
 Archivo previsto: `30-restricciones-finales.md`
 
-Define:
+Alcance previsto:
 
-- Prueba estática de cardinalidad al final de cada `then`.
-- Compatibilidad cardinal de la consolidación de varios `then`.
-- Puntos de comprobación de dominios y demás invariantes.
-- Comprobación de reglas `always`.
-- Estado observado por `old`.
-- Momento de evaluación de `after`.
-- Diferencia entre el `after` booleano de una acción y la secuencia de aserciones de un test.
-- Estado observado por `old` dentro de un test.
-- Rechazo final.
-- Restauración completa.
+- Comprobaciones de dominios, cardinalidades, reglas `always` y demás invariantes sobre estados tentativos.
+- `after` de acciones/subactions ejecutadas dentro de una resolución y su evaluación sobre el estado estable tentativo final.
+- Semántica contextual de `old`, incluida la diferencia entre acciones, tests y reglas reactivas.
+- Rechazo/fallo final y restauración del estado anterior cuando corresponda.
 
 ## 31. Conflictos, ciclos y estabilización
 
 Archivo previsto: `31-conflictos-y-estabilizacion.md`
 
-Define:
+Alcance previsto:
 
-- Relación de compatibilidad de efectos.
-- Matriz normativa de conflictos.
-- Consolidación idempotente de activaciones concurrentes de una misma definición canónica.
-- Ciclos causales.
-- Oscilaciones.
-- Detección de repetición.
-- Límites técnicos frente a significado semántico.
-- Condición de estabilización.
+- Compatibilidad y conflicto de efectos, activaciones y otras consecuencias concurrentes.
+- Ciclos ejecutables, oscilaciones y detección de no estabilización.
+- Ciclos puramente causales de mensajes/disparos que pueden mantener consecuencias pendientes aun sin cambio de estado.
+- Condición semántica de estabilización y separación respecto de límites técnicos de implementación.
 
 ## 32. Creación, destrucción e identidad runtime
 
 Archivo previsto: `32-ciclo-de-vida-runtime.md`
 
-Define:
+Alcance previsto:
 
-- Definiciones canónicas estáticas de `thing` raíz, abstractas y con especialización múltiple.
-- Contribuciones iniciales no ordenadas `thing | rule` reunidas por el `start with` de cada módulo y materializadas conjuntamente.
-- Activación y reactivación mediante `create Nombre`.
-- Inicialización de la primera materialización.
-- Distinción entre almacenamiento retenido y proyección efectiva.
-- Suspensión por dependencias.
-- Restauración sin reinicialización.
-- `remove` destructivo frente a `destroy` reversible.
-- Referencias y propiedades latentes.
-- `thing` estáticas.
-- Creación y eliminación de vinculaciones.
+- Actividad, materialización, reactivación y retirada de declaraciones con ciclo de vida.
+- Contribuciones `start with` de módulos, materialización conjunta e inicialización de primera activación.
+- Almacenamiento latente, proyección efectiva, suspensión por dependencias y restauración.
+- Aparición y desaparición de bindings dependientes de actividad.
 
 ## 33. Aleatoriedad
 
 Archivo previsto: `33-aleatoriedad.md`
 
-Define:
+Alcance previsto:
 
-- `Rand` almacenado y calculado.
-- Azar dentro de efectos.
-- Espacio de resultados.
-- Semillas y subsemillas.
-- Identidad de puntos aleatorios.
-- Cachés por instantánea.
-- Reproducibilidad.
-- Interacción con rollback.
+- Valores y puntos aleatorios, semillas, subsemillas y reproducibilidad.
+- Cachés por instantánea, azar en expresiones/efectos y relación con rollback.
+- Condiciones bajo las que una operación aparentemente aleatoria se simplifica a una elección determinista.
 
 ---
 
@@ -761,91 +551,61 @@ Define:
 
 Archivo previsto: `34-grafo-semantico.md`
 
-Define:
+Alcance previsto:
 
-- Clases de nodos.
-- Relaciones.
-- Dependencias.
-- Lecturas y escrituras.
-- Patrones de vinculación.
-- Dependencias estocásticas.
-- Propiedades reconstruibles desde el programa.
-
+- Relaciones semánticas posteriores a resolución nominal que dependan de tipos, dominios, efectos o elaboración.
+- Lecturas, escrituras, dependencias, patrones de binding y dependencias estocásticas.
+- Criterios de reconstrucción desde el programa y relación con el HIR nominal, sin convertir este último en un grafo semántico anticipado.
 
 ## 35. Consulta especulativa `allowed`
 
 Archivo previsto: `35-allowed.md`
 
-Define:
+Alcance previsto:
 
-- Mundo especulativo.
-- Ejecución descartable.
-- Conversión de resultados a booleano.
-- Propagación de fallos.
-- Aciclicidad del grafo de admisibilidad.
-- Aleatoriedad reproducible.
-
+- Construcción y descarte del mundo especulativo.
+- Conversión de resultados a `Bool`, propagación de fallos y dependencia respecto de acciones consultadas.
+- Condiciones de aciclicidad/admisibilidad y reproducibilidad del azar.
 
 ## 36. Alcanzabilidad `eventually`
 
 Archivo previsto: `36-eventually.md`
 
-Define:
+Alcance previsto:
 
-- Sistema de transición explorado.
-- Estado objetivo.
-- Secuencia vacía.
-- Acciones permitidas por `through`.
-- Múltiples acciones.
-- Semántica existencial del azar.
-- Estrategia BFS cuando sea normativa.
-
+- Sistema de transición explorado, estado objetivo y secuencias de acciones permitidas.
+- Semántica del azar y criterios de equivalencia/canonicalización de estados.
+- Estrategias de búsqueda solo en la medida en que formen parte del significado normativo.
 
 ## 37. Finitud, enumerabilidad y estado relevante
 
 Archivo previsto: `37-finitud-y-enumerabilidad.md`
 
-Define:
+Alcance previsto:
 
-- Dominios finitos.
-- Enumeración canónica.
-- Perfil de mundos finitos.
-- Estado relevante.
-- Comparación y canonicalización de estados.
-- Creación acotada.
-- Condiciones suficientes para compilar `eventually`.
+- Finitud y enumeración canónica de dominios y fuentes.
+- Perfiles de mundos finitos, estado relevante y canonicalización de estados.
+- Condiciones suficientes para análisis exhaustivos y para las construcciones que exigen enumerabilidad.
 
 ## 38. Terminación y decidibilidad
 
 Archivo previsto: `38-terminacion.md`
 
-Define:
+Alcance previsto:
 
-- Terminación de iteraciones.
-- Terminación de resoluciones.
-- Análisis conservadores.
-- Frontera entre rechazo estático y fallo runtime.
-- Prueba estática de terminación para todo componente recursivo de diccionarios decisionales.
-- Propiedades decidibles y semidecidibles.
+- Terminación de iteraciones, resoluciones y componentes recursivos.
+- Análisis conservadores y frontera entre rechazo estático, fallo runtime e indecidibilidad.
+- Propiedades decidibles o semidecidibles de las construcciones avanzadas.
 
 ## 39. Propiedades metateóricas
 
 Archivo previsto: `39-propiedades.md`
 
-Objetivos de demostración:
+Alcance previsto:
 
-- Unicidad de resolución de nombres.
-- Preservación de tipos.
-- Progreso para programas bien tipados, sujeto a resultados semánticos explícitos.
-- Determinismo sin azar.
-- Reproducibilidad con azar sembrado.
-- Atomicidad.
-- Independencia del orden de archivos.
-- Independencia del orden interno de estructuras no ordenadas.
-- Corrección de la especulación.
-- Condiciones de terminación de `eventually`.
-
-No todas estas propiedades tienen por qué ser demostrables para el lenguaje completo. La especificación deberá indicar hipótesis y contraejemplos con honestidad.
+- Hipótesis y demostraciones sobre resolución, tipos, progreso, determinismo, reproducibilidad y atomicidad.
+- Independencia de órdenes sin significado semántico y corrección de análisis especulativos.
+- Contraejemplos y límites explícitos cuando una propiedad no sea válida para todo MUD.
 
 ---
 
@@ -855,79 +615,54 @@ No todas estas propiedades tienen por qué ser demostrables para el lenguaje com
 
 Archivo previsto: `40-diagnosticos.md`
 
+Alcance previsto:
 
-Define:
+- Categorías, códigos, localizaciones y anclas relacionadas.
+- Diagnósticos obligatorios frente a libertad de redacción.
+- Recuperación tras errores y relación entre diagnósticos estáticos y dinámicos.
 
-- Categorías y códigos.
-- Errores léxicos, sintácticos, estáticos y dinámicos.
-- Localizaciones y anclas relacionadas.
-- Diagnósticos obligatorios.
-- Libertad de redacción.
-- Recuperación tras errores.
-
-## 41. Representación intermedia canónica
+## 41. Representación semántica posterior
 
 Archivo previsto: `41-ir.md`
 
-Define:
+Alcance previsto:
 
-- Esquema versionado.
-- Normalización.
-- Procedencia.
-- Tipos y anclas resueltos.
-- Participantes y `given`.
-- Efectos.
-- Índices.
-- Compatibilidad.
+- Contrato entre las fases de tipado/elaboración y los consumidores posteriores cuando esas fases estén suficientemente desarrolladas.
+- Información semántica que deba preservarse o pueda reconstruirse, procedencia y criterios de versionado si se adopta una representación serializable.
+- Relación con AST superficial y HIR nominal sin duplicar ni degradar sus responsabilidades.
 
-El esquema ejecutable vivirá en `esquemas/mud-ir.schema.json`.
-
+No se presupone actualmente un esquema ASDL/JSON, nombres concretos de nodos o aristas, una versión de esquema ni una política de almacenamiento frente a reconstrucción. Esos detalles se fijarán solo cuando las superficies de tipado y elaboración permitan justificarlos.
 
 ## 42. Conformidad de implementaciones
 
 Archivo previsto: `42-conformidad.md`
 
-Define:
+Alcance previsto:
 
-- Implementación completa.
-- Implementación de análisis.
-- Runtime conforme.
-- Materializador conforme.
-- Características opcionales.
-- Requisitos de determinismo.
-- Declaración de versión.
+- Perfiles de implementación y requisitos de cada uno.
+- Determinismo, declaración de versión, características opcionales y materialización conforme.
+- Relación entre conformidad del frontend, runtime, análisis y tooling normativo.
 
 ## 43. Tests declarativos
 
 Archivo previsto: `43-tests-declarativos.md`
 
-Define:
+Alcance previsto:
 
-- Declaraciones `test` con ancla `test::*`.
-- Mundo aislado construido con el cierre transitivo estático de las contribuciones `start with` de los módulos alcanzables y el `start with` local del test.
-- Materialización y estabilización previas.
-- Semántica de `then`.
-- Vinculaciones locales inmutables y secuenciales mediante `nombre [: Tipo] := expresión`.
-- Aserciones `after`.
-- Diagnósticos `otherwise`.
-- Resultados `passed`, `failed` y `error`.
-- Descarte del mundo y de sus salidas.
-- Ejecución por ancla o path de MUD.
-
+- Declaraciones `test`, mundo fresco y aislado, ejecución y descarte.
+- Cierre transitivo estático de tests alcanzables y unión de **sus propias** contribuciones `start with`; la activación ordinaria de módulos no forma parte del mundo inicial del test.
+- Materialización/estabilización previas, `then`, `after`, `old`, diagnósticos y resultados del ejecutor.
+- Visibilidad de tests entre módulos exclusivamente en contexto de pruebas.
 
 ## 44. Suite de conformidad
 
 Archivo previsto: `44-suite-de-conformidad.md`
 
-Define:
+Alcance previsto:
 
-- Casos válidos.
-- Casos inválidos.
-- Diagnósticos requeridos.
-- IR esperado.
-- Transiciones y trazas esperadas.
-- Pruebas de propiedades.
-- Casos de regresión normativa.
+- Casos válidos e inválidos, diagnósticos y regresiones normativas.
+- Salidas mecánicas normativas vigentes que corresponda comparar en cada fase.
+- Transiciones, trazas y propiedades observables necesarias para contrastar implementaciones.
 
 El corpus vivirá en:
 
@@ -939,7 +674,6 @@ conformidad/
 ├── diagnosticos/
 └── propiedades/
 ```
-
 
 Los tests declarativos escritos por una persona usuaria forman parte de MUD, pero no sustituyen esta suite: la suite de conformidad comprueba implementaciones completas del lenguaje.
 
@@ -953,9 +687,7 @@ Apéndice normativo generado o verificado contra `gramatica/mud.ebnf`.
 
 Archivo previsto: `46-palabras-reservadas.md`
 
-Lista normativa y clasificación como palabra reservada o contextual.
-
-El catálogo se derivará de la gramática léxica vigente.
+Lista normativa y clasificación como palabra reservada o contextual, derivada de la gramática léxica vigente.
 
 ## 47. Ejemplos integrales
 
@@ -967,13 +699,12 @@ Ejemplos informativos construidos únicamente con reglas ya especificadas. No in
 
 Archivo previsto: `48-compatibilidad.md`
 
-Define:
+Alcance previsto:
 
-- Cambios compatibles e incompatibles.
-- Evolución de anclas.
-- Migración de programas.
-- Migración del IR.
-- Obsolescencia de sintaxis.
+- Cambios compatibles e incompatibles del lenguaje.
+- Evolución de anclas y migración de programas.
+- Compatibilidad de artefactos normativos serializados cuando exista un contrato de serialización aplicable.
+- Obsolescencia de sintaxis y declaraciones de versión.
 
 ## 49. Índice de reglas normativas
 
@@ -1087,7 +818,7 @@ MUD 1.0 estará formalmente especificado cuando:
 3. Todo programa estáticamente válido tenga un comportamiento definido o un fallo explícitamente definido.
 4. Toda interacción entre características esté cubierta o prohibida.
 5. Todas las cuestiones abiertas de MUD 1.0 estén resueltas.
-6. La gramática, la cobertura CST/AST y el esquema IR sean verificables automáticamente.
+6. La gramática, la cobertura CST/AST, el HIR nominal y cualquier otra representación mecánica normativa vigente sean verificables automáticamente.
 7. Exista una suite de conformidad representativa.
 8. Las propiedades prometidas estén demostradas o delimitadas mediante hipótesis explícitas.
 9. Los ejemplos integrales no dependan de comportamiento implícito.
