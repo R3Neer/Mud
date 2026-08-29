@@ -29,6 +29,7 @@ decisions:
   - D-087
   - D-096
   - D-097
+  - D-100
 ---
 
 # Transformación de CST a AST superficial
@@ -243,7 +244,7 @@ order = Unordered
 elementsMutable = Disabled
 ```
 
-`ordered` produce `InsertionOrdered`. `ordered by a.b` produce `OrderedBy([a,b])`.
+`ordered` produce `OrdinaryOrdered`, una marca superficial neutral cuyo criterio semántico se determina durante la elaboración. `ordered by a.b` produce `OrderedBy([a,b])`.
 
 La validación previa rechaza:
 

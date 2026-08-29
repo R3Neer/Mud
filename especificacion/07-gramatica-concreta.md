@@ -437,7 +437,7 @@ Los selectores se escriben de forma explícita. No existe una abreviatura que in
 ```mud
 seasonName: Month --> Text [ordered] =
     value == January --> "winter",
-    value in [March..May] --> "spring",
+    [March..May] has value --> "spring",
     value == June or value == July --> "summer",
     _ --> "other"
 ```

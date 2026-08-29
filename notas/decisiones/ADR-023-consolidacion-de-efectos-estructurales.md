@@ -141,7 +141,7 @@ Las nuevas reglas y suspensiones afectan a la construcción de bindings y evalua
 
 - Activaciones múltiples dentro de un mismo `then`.
 - Resultado operativo de una acción cuya activación resulta inefectiva.
-- Matriz completa de asignaciones, aritmética y operaciones de colección.
+- Casos restantes de Q-006 que todavía carecen de combinación algebraica o composición canónica concreta: diccionarios no cubiertos, propiedades, límites estructurales de cardinalidad y destinos o write-backs parcialmente solapados.
 - Matriz completa de conflictos entre deltas de bloques concurrentes que incorporan transitivamente efectos de llamadas internas ya ejecutadas en secuencia dentro de cada delta privado.
 
 ## Verificación futura

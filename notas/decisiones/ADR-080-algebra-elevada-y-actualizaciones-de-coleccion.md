@@ -16,6 +16,7 @@ affects:
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Ampliada por: [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 - Modifica: [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[ADR-057-gramatica-concreta-y-continuacion|D-057]].
 - Preguntas relacionadas: [[notas/preguntas/Q-006-conflictos|Q-006]] y [[notas/preguntas/Q-019-numeros|Q-019]].
@@ -110,7 +111,7 @@ Las actualizaciones homogéneas sobre un mismo destino se consolidan así cuando
 
 La mezcla de clases distintas de actualización sobre un mismo destino es conflicto salvo que otra decisión fije expresamente una consolidación. La preservación de cardinalidad, dominio, orden y unicidad continúa siendo una obligación estática de cada `then` y de toda consolidación posible.
 
-En una colección ordenada por inserción, varias actualizaciones que incorporen miembros nuevos requieren demostrar un orden consolidado inequívoco; Q-006 mantiene abierta esa parte de la matriz. Las operaciones que solo filtran el destino conservan su orden relativo.
+Cuando varias actualizaciones concurrentes compatibles incorporan miembros nuevos a una colección `ordered` y el criterio semántico existente no determina por sí solo un orden total, la procedencia se completa reproduciblemente conforme a D-100, respetando toda causalidad real. Esta situación ya no constituye por sí sola un caso abierto de Q-006. Las operaciones que solo filtran el destino conservan su orden relativo.
 
 Sobre `Text`, `|=` concatena secuencialmente como `|`. Varias concatenaciones concurrentes no son idempotentes ni conmutativas: solo se consolidan si existe un orden total semánticamente determinado; en otro caso entran en conflicto.
 

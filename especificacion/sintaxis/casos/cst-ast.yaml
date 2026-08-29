@@ -45,7 +45,7 @@ cases:
   category: collection
   source: "thing Group {\n    members: Person [0..*, unique, ordered, mut]\n}\n"
   cst_root: MudFileSyntax
-  ast: CollectionSpec([0..*], unique=Enabled, order=InsertionOrdered, elementsMutable=Enabled)
+  ast: CollectionSpec([0..*], unique=Enabled, order=OrdinaryOrdered, elementsMutable=Enabled)
   normalizations:
   - discard-optional-commas
   produces_ast: true
@@ -898,9 +898,9 @@ cases:
   produces_ast: true
 - id: functional-explicit-interval-selector
   category: dictionary
-  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value in [March..May] --> \"spring\",\n        _ --> \"other\"\n}\n"
+  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        [March..May] has value --> \"spring\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
-  ast: DecisionBranchExpr(selector=ComparisonChainExpr(value, Membership, Interval))
+  ast: DecisionBranchExpr(selector=ComparisonChainExpr(Interval, HasMember, value))
   produces_ast: true
 - id: functional-implicit-selector-rejected
   category: typing-after-ast

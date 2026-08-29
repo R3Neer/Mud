@@ -52,15 +52,14 @@ pair: Person [2 unique] = [Alice, Alice]     # error; tras normalizar solo queda
 
 Fuentes iniciales de orden:
 
-- Básicos: orden de su tipo.
-- `Char`: valor escalar Unicode creciente; `ordered by` está prohibido.
-- `thing`: orden de inserción cuando la colección es `ordered`.
-- `ordered family`: orden declarado.
-- Alias ordenado: orden subyacente o lexicográfico.
+- Cuando el tipo completo posee un orden total semántico intrínseco, `ordered` usa ese orden. Esto incluye los órdenes definidos para básicos, `Char`, `ordered family` y aliases cuando correspondan.
+- Cuando el tipo completo no posee un comparador total común, `ordered` usa la procedencia estable de las ocurrencias; las colecciones de `thing` son el caso ordinario.
+- `Char` usa valor escalar Unicode creciente y no admite `ordered by`.
+- No se inventa un comparador entre ramas de una unión mediante posición textual, tags, nombres nominales o identidad de implementación.
 
-En una colección de valores con campos, componentes o datos asociados, `ordered by ruta` puede sustituir el orden ordinario por una clave obtenida mediante accesos singulares desde cada miembro. La clave debe tener orden semántico total y toda la ruta debe ser transitivamente estable. Una `thing` no es una clave final ordenable. Las claves iguales conservan el orden relativo de inserción. Este orden de colección no modifica la comparación intrínseca entre sus miembros.
+En una colección de valores con campos, componentes o datos asociados, `ordered by ruta` puede sustituir el orden ordinario por una clave obtenida mediante accesos singulares desde cada miembro. La clave debe tener orden semántico total y toda la ruta debe ser transitivamente estable. Una `thing` no es una clave final ordenable. Las claves iguales conservan el orden relativo de procedencia estable. En una historia puramente secuencial esta procedencia coincide con el orden de inserción. Este orden de colección no modifica la comparación intrínseca entre sus miembros.
 
-Cuando el tipo o `ordered by ruta` determina el orden principal, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Entre claves iguales se conserva el orden escrito, que actúa como inserción. Este aviso no se aplica a una colección `thing [ordered]` ordenada enteramente por inserción.
+Cuando el tipo o `ordered by ruta` determina el orden principal, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Entre claves iguales se conserva la procedencia estable; en un literal escrito secuencialmente, el orden escrito aporta esa procedencia. Este aviso no se aplica a una colección `thing [ordered]` cuyo orden ordinario procede enteramente de sus ocurrencias.
 
 ### Álgebra de colecciones
 
@@ -130,13 +129,13 @@ Para `mut`, la tabla se refiere exclusivamente a la capacidad interior sobre mie
 
 Para `ordered`, si solo la intersección conserva orden se filtra el operando ordenado; la diferencia `--` filtra el operando izquierdo. Unión y diferencia simétrica mixtas son no ordenadas porque pueden incorporar miembros exclusivos del operando no ordenado.
 
-Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden por tipo o por una misma ruta `ordered by` normaliza el resultado con ese criterio y preserva inserción entre empates. Para orden de inserción, el resultado es estable respecto del operando izquierdo:
+Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden por tipo o por una misma ruta `ordered by` normaliza el resultado con ese criterio y preserva procedencia estable entre empates. Cuando la operación conserva una secuencia construida por composición de los operandos en vez de sustituirla por uno de esos criterios, el resultado es estable respecto del operando izquierdo:
 
 - La unión recorre primero $A$ y añade después, en el orden de $B$, solo las ocurrencias adicionales necesarias para alcanzar cada multiplicidad máxima.
 - La intersección y la diferencia `--` filtran $A$ sin reordenarlo.
 - La diferencia simétrica conserva primero las ocurrencias excedentes de $A$ y después las de $B$.
 
-En consecuencia, para colecciones ordenadas por inserción, las operaciones conmutativas conservan el mismo multiconjunto al intercambiar operandos, pero pueden producir secuencias observables distintas. La igualdad ordenada continúa comparando la secuencia completa.
+En consecuencia, cuando una operación binaria construye su secuencia observable por composición estable de los operandos, las operaciones conmutativas conservan el mismo multiconjunto al intercambiarlos, pero pueden producir secuencias observables distintas. La igualdad ordenada continúa comparando la secuencia completa.
 
 Ejemplo de inferencia:
 
@@ -212,12 +211,12 @@ La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su pre
 
 1. Cardinalidad omitida y `empty`.
 2. Duplicados, normalización, aviso e idempotencia de `unique`.
-3. Orden natural, de inserción, semántico y `ordered by`, incluida una ruta estable sobre dato asociado y empates por inserción.
+3. Orden semántico intrínseco, por procedencia estable y `ordered by`, incluida una ruta estable sobre dato asociado y empates por procedencia.
 4. Lectura ausente como `empty`, escritura y retirada de clave ausente, y `unique` global sobre valores.
 5. Igualdad independiente de representación interna.
 6. Clave alias ordinaria y azucarada.
 7. Multiplicidades de unión, intersección y diferencia; rechazo de `^` sin `unique`.
 8. Inferencia conservadora y estrechada de cardinalidad y dominio.
 9. Propagación de `unique`, `ordered` y capacidad interior `mut` en las cuatro operaciones admitidas.
-10. Orden canónico y orden estable por inserción, incluida la posible diferencia secuencial al intercambiar operandos.
+10. Orden canónico y secuencia estable construida por composición de operandos, incluida la posible diferencia secuencial al intercambiarlos.
 11. Ausencia de mutabilidad exterior en resultados calculados.

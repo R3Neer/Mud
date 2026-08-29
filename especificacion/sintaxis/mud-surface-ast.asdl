@@ -331,7 +331,7 @@ module MUDSurface {
     action_kind = PublicAction | Subaction
 
     collection_order = Unordered
-                     | InsertionOrdered
+                     | OrdinaryOrdered
                      | OrderedBy(order_key_path key)
         attributes (source_origin origin)
 

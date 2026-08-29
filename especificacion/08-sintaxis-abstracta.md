@@ -322,7 +322,7 @@ El orden es una suma:
 
 ```text
 Unordered
-InsertionOrdered
+OrdinaryOrdered
 OrderedBy(path)
 ```
 
