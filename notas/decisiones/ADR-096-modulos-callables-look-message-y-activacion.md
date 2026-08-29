@@ -27,6 +27,8 @@ affects:
 
 # ADR-096 — Módulos, callables, `look`, `message` y activación
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Sustituye: [[ADR-027-salidas-look-y-message|D-027]].
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-042-acciones-raiz-y-resultados|D-042]], [[ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
 - Preguntas abiertas asociadas: Q-062 a Q-068.
@@ -43,7 +45,7 @@ Esta decisión unifica esas piezas sin cerrar las cuestiones de tipado callable,
 
 ### Un único modelo de `then`
 
-Se elimina la separación semántica entre actions elementales y compuestas. Un `then` es una secuencia ordenada de consecuencias y puede mezclar vinculaciones locales, efectos directos, llamadas a `action` o `subaction` y recorridos `for each`.
+Se elimina la separación semántica entre actions elementales y compuestas. Un `then` es una secuencia ordenada de consecuencias y puede mezclar locales calculadas, variables locales almacenadas inmutables o `mut`, efectos directos, llamadas a `action` o `subaction` y recorridos `for each`. Las locales compartidas escritas antes de las cláusulas de comportamiento continúan siendo exclusivamente vinculaciones calculadas puras `:=`.
 
 Una llamada interna se ejecuta en su posición textual dentro del delta privado de la resolución: observa los efectos anteriores visibles en ese punto, aporta sus efectos a la misma resolución y las sentencias posteriores observan esos efectos. No abre una transacción independiente.
 

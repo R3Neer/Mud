@@ -159,7 +159,7 @@ keyword-word
       | "mut" | "unique" | "ordered"
       | "create" | "destroy" | "add" | "remove" | "from"
       | "each" | "by" | "through" | "take"
-      | "exists" | "forall" | "count" | "sum" | "min" | "max"
+      | "exists" | "forall" | "count" | "min" | "max"
       ;
 
 operator-word

@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-066 — Valores estáticos y vinculaciones locales en `then`
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Ampliada por: [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
 
 - Modifica: [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
@@ -45,7 +47,7 @@ Las referencias nominales permitidas no leen la carga mutable ni la actividad ac
 
 ### Uso de `=`
 
-El valor explícito de un campo almacenado, componente, dato almacenado de `family`, asignación de miembro y predeterminado de `given` debe ser una expresión estática cerrada.
+El valor explícito de un campo almacenado, componente, dato almacenado de `family` o asignación de miembro debe ser estáticamente evaluable; puede escribirse como expresión breve o `ValueBlock` siempre que el cuerpo completo cumpla ese contrato. El predeterminado de `given` permanece específicamente como expresión estática cerrada y no admite `ValueBlock`.
 
 ```mud
 lives: Nat = 3
@@ -70,33 +72,15 @@ score := victories * 3
 
 `=` introduce carga o predeterminado materializable. `:=` declara una dependencia calculada. La distinción no depende de que la expresión escrita parezca sencilla.
 
-### Vinculación local calculada
+### Locales calculadas y almacenadas
 
-Un bloque de `then` puede declarar valores locales:
+Un bloque ejecutable puede declarar una local calculada mediante `x [forma-derivada] := value-body`, una local almacenada inmutable mediante `x: X = value-body` o una local almacenada mutable mediante `mut x: X = value-body`.
 
-```mud
-then {
-    cost := amount * price
-    remaining: Money := kingdom.money - cost
-    kingdom.money -= cost
-}
-```
+La calculada es pura, no asignable y conserva las reglas de inferencia/coerción derivada vigentes. Las almacenadas crean slots del frame de ejecución; solo la forma `mut` puede reasignarse. Su inicializador se evalúa al alcanzar la declaración y puede leer la proyección runtime visible en ese punto. Ninguna de estas locales crea campo, ancla pública ni estado persistente.
 
-La forma es:
+El `value-body` puede ser una expresión breve o `ValueBlock`. Un `ExpressionBlock`, los preámbulos compartidos de comportamiento y `TestAfterBlock` conservan exclusivamente la forma calculada pura con RHS expresión ordinaria; no pueden obtener almacenamiento o mutabilidad por anidamiento.
 
-```text
-nombre [ forma-derivada ] := expresión
-```
-
-Comparte con los campos calculados:
-
-- Inmutabilidad.
-- Expresión pura.
-- Inferencia de tipo cuando existe una solución única.
-- Anotación obligatoria cuando la inferencia es ambigua.
-- El tipo escrito se comprueba estáticamente; dominio, cardinalidad, `unique` u orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y siguen la normalización de las transformaciones locales equivalentes. No pueden introducir `[mut]` ni otra autoridad.
-
-No crea un campo, un lugar asignable ni estado persistente. El AST y el IR la representan como una vinculación local, no como un efecto.
+Una local mutable puede satisfacer un participante `for mut`; la llamada conserva una vinculación temporal al slot y el rollback ordinario revierte sus modificaciones. Las otras locales solo pueden satisfacer participantes readonly o `given` compatibles.
 
 ### Secuencialidad, evaluación y ámbito
 
@@ -130,7 +114,7 @@ then {
 }
 ```
 
-Un bloque de `for each` aplica la misma regla en cada iteración y crea un ámbito local nuevo. Las vinculaciones de una iteración no sobreviven a la siguiente.
+Cada bloque de `for each` crea un ámbito local nuevo por iteración. Las locales de una iteración no sobreviven a la siguiente. Un `LocalForEach` de `ValueBlock` puede modificar slots mutables del mismo `ValueBlock` envolvente; un recorrido ejecutable puede además escribir lugares autorizados del mundo.
 
 Un `then` continúa necesitando al menos un efecto o una llamada a acción; un bloque compuesto únicamente por vinculaciones locales no modifica el mundo y es inválido como cuerpo de acción o consecuencia reactiva.
 

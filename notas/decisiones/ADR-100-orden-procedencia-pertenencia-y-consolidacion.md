@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-100 — Orden lógico, procedencia, pertenencia y consolidación de efectos
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modifica: [[ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-043-consulta-especulativa-allowed|D-043]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-064-orden-por-ruta-estable|D-064]], [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]] y [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 - Preguntas relacionadas: [[../preguntas/Q-006-conflictos|Q-006]] y [[../preguntas/Q-032-aleatoriedad-reproducible|Q-032]].
 
@@ -98,6 +100,13 @@ con identidades `Δ = 0`, `P = 1` y `Q = 1`. La familia aditiva se aplica antes 
 Factores multiplicativos y divisivos se cancelan cuando las leyes del tipo garantizan que la cancelación preserva exactamente la semántica, incluido el caso aceptado `*= 3` junto con `/= 3`. Una simplificación no puede ocultar división por cero, overflow, incumplimientos de dominio, unidades ni otra propiedad observable. Un denominador consolidado inválido produce el fallo que corresponda a la división del tipo y la transición se revierte.
 
 Las asignaciones concurrentes al mismo valor continúan siendo compatibles; asignaciones a valores distintos son conflicto. Una asignación mezclada con actualización aritmética continúa siendo conflicto.
+
+
+### Consolidación de acumuladores locales de `for each`
+
+Una mutable local exterior a un `for each` puede ser escrita por sus iteraciones. Si la fuente posee orden semántico, las iteraciones son secuenciales y cada una observa el valor dejado por la anterior. Si carece de orden semántico, todas parten de la misma proyección previa y sus modificaciones sobre el slot se consolidan como concurrentes mediante las mismas reglas algebraicas que los efectos equivalentes. Por ello varios `+=` compatibles pueden formar una reducción, mientras `x = x + value` produce asignaciones absolutas concurrentes y no recibe semántica especial de acumulador.
+
+El slot sigue siendo almacenamiento del frame local, no estado del mundo; aplicar la misma álgebra no convierte la mutación local en un efecto persistente.
 
 ### Regla general de consolidación
 

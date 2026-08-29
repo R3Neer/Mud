@@ -16,6 +16,8 @@ affects:
 
 # ADR-088 — Iteración, progresiones firmadas y bloques de expresión
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modifica: [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]].
 - Conserva: [[ADR-034-number-exacto-y-rumber-binary64|D-034]], [[ADR-040-semantica-numerica-basica-restante|D-040]] y la prohibición de azar en filtros de [[ADR-048-azar-reproducible-y-fallos|D-048]].
 - Modificada por: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]] en la forma de resultado de `min` y `max` sobre ausencia.
@@ -52,13 +54,13 @@ action AccumulateDoubled for values: Int [* ordered], mut total: Int {
 }
 ```
 
-La forma sin `:` es inválida. Tras `:` el cuerpo puede comenzar en la misma línea o después de una separación física por terminadores; el salto no cambia el AST. El cuerpo de `for each` usa exactamente el contrato ejecutable de `then`: un único efecto o llamada a acción, o un bloque de efectos que puede intercalar vinculaciones locales `:=`.
+La forma sin `:` es inválida. Tras `:` el cuerpo puede comenzar en la misma línea o después de una separación física por terminadores; el salto no cambia el AST. El `for each` ejecutable usa el contrato de `EffectBlock`. Un `for each` escrito dentro de `ValueBlock` usa en cambio `LocalStatementBlock`, sin efectos exteriores y restringido a las sentencias locales de D-101.
 
-Selecciones y cuantificadores/agregadores conservan igualmente su `:` obligatorio. Su cuerpo puede ser una expresión breve o un bloque de expresión con cero o más vinculaciones locales seguidas de una única expresión final.
+Selección y `exists`, `forall`, `count`, `min` y `max` conservan igualmente su `:` obligatorio. Su cuerpo puede ser una expresión breve o un bloque de expresión con cero o más vinculaciones locales seguidas de una única expresión final.
 
 ## Bloque de expresión
 
-Se generaliza el antiguo `BooleanBlock` a `ExpressionBlock(locals, result)`. La estructura no decide el tipo de `result`; lo hace su propietario. Reglas booleanas, guardas `if`, reglas `always`, postcondiciones `after` de acciones, selección, `exists`, `forall` y `count` aplican su contrato booleano; `when` exige un activador admitido; `sum` un valor agregable; `min` y `max` un valor ordenable. El `after` de test conserva su estructura propia de varias aserciones.
+Se generaliza el antiguo `BooleanBlock` a `ExpressionBlock(locals, result)`. La estructura no decide el tipo de `result`; lo hace su propietario. Reglas booleanas, guardas `if`, reglas `always`, postcondiciones `after` de acciones, selección, `exists`, `forall`, `count`, `min` y `max` aplican un contrato booleano a `result`; `when` exige un activador admitido. `min` y `max` usan ese resultado como filtro y devuelven testigos según el orden de la fuente. El `after` de test conserva su estructura propia de varias aserciones.
 
 Las locales son puras, inmutables, secuenciales y no admiten referencias adelantadas, ciclos, redeclaración ni sombreado.
 
@@ -139,7 +141,7 @@ Un dominio cíclico de punto puede enumerarse con diferencia compatible, pero so
 
 ## Otras construcciones con `by`
 
-`by` de progresión se admite también en selección y en `exists`, `forall`, `count`, `sum`, `min` y `max`, siempre que la fuente ofrezca progresión mediante diferencia. Si la selección parte conceptualmente de un dominio, su fuente debe escribirse materializada como `all D`; los recorridos y cuantificadores que no producen una colección pueden consumir el dominio directamente. `by` no significa stride sobre una colección arbitraria. La semántica de ausencia de `min` y `max` es la de D-095: ningún candidato produce `empty` con cardinalidad `[0..1]`. Una fuente futura puede definir expresamente esa capacidad; esta decisión no introduce un protocolo general. `ordered by path` conserva una semántica distinta.
+`by` de progresión se admite también en selección y en `exists`, `forall`, `count`, `min` y `max`, siempre que la fuente ofrezca progresión mediante diferencia. Si la selección parte conceptualmente de un dominio, su fuente debe escribirse materializada como `all D`; los recorridos y cuantificadores que no producen una colección pueden consumir el dominio directamente. `by` no significa stride sobre una colección arbitraria. La semántica de ausencia de `min` y `max` es la de D-095: ningún candidato produce `empty` con cardinalidad `[0..1]`. Una fuente futura puede definir expresamente esa capacidad; esta decisión no introduce un protocolo general. `ordered by path` conserva una semántica distinta.
 
 ## Azar
 
@@ -155,7 +157,7 @@ Debe diagnosticarse ausencia de `:`, paso cero, diferencia incompatible, falta d
 
 ## Verificación
 
-Se verifican fuentes enumerables de todas las clases admitidas, `:` con cuerpo breve y con llaves, filtro breve y con locales, pasos positivos/negativos/runtime, evaluación única del paso, cero estático/runtime, límites abiertos/cerrados, intervalos vacíos/infinitos, dominios escalonados firmados y `all`, `Num`, rechazo de progresión `Rum`, colección explícita de `Rum`, selección y los seis cuantificadores con `by` y bloque, magnitudes con unidades compatibles y diferencia entre filtro ordenado/no ordenado. La verificación concreta de intervalos discontinuos se completa cuando Q-018 cierre su forma fuente consolidada; su semántica queda fijada por esta decisión. El requisito de recorrer como máximo un periodo fundamental de un dominio cíclico pertenece a la verificación de D-082 y no depende de Q-018.
+Se verifican fuentes enumerables de todas las clases admitidas, `:` con cuerpo breve y con llaves, filtro breve y con locales, pasos positivos/negativos/runtime, evaluación única del paso, cero estático/runtime, límites abiertos/cerrados, intervalos vacíos/infinitos, dominios escalonados firmados y `all`, `Num`, rechazo de progresión `Rum`, colección explícita de `Rum`, selección y los cinco cuantificadores con `by` y bloque booleano, magnitudes con unidades compatibles y diferencia entre filtro ordenado/no ordenado. La verificación concreta de intervalos discontinuos se completa cuando Q-018 cierre su forma fuente consolidada; su semántica queda fijada por esta decisión. El requisito de recorrer como máximo un periodo fundamental de un dominio cíclico pertenece a la verificación de D-082 y no depende de Q-018.
 
 ## Modificación vigente por D-096
 

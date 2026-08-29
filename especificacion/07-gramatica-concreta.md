@@ -17,6 +17,7 @@ questions:
   - Q-062
   - Q-063
 decisions:
+  - D-101
   - D-015
   - D-025
   - D-028
@@ -172,10 +173,10 @@ destroy Alexandria
 Una `thing`, concreta o abstracta, puede inicializar un campo almacenado ya aportado por su esquema heredado mediante una asignación sin redeclarar el campo:
 
 ```text
-fieldName = static-expression
+fieldName = value-body
 ```
 
-El objetivo se conserva como nombre de campo hasta la resolución. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. Debe resolver a un campo heredado: una misma `thing` no puede declarar localmente `fieldName` y además contener una instrucción separada `fieldName = ...`. La forma `fieldName: Type = value` es una sola declaración con predeterminado y sigue siendo válida. El valor del inicializador usa `constant-expression`, por lo que debe ser una expresión estática cerrada.
+El objetivo se conserva como nombre de campo hasta la resolución. No declara un campo nuevo, no sustituye su predeterminado heredable y no puede dirigirse a un campo calculado. Debe resolver a un campo heredado: una misma `thing` no puede declarar localmente `fieldName` y además contener una instrucción separada `fieldName = ...`. La forma `fieldName: Type = value` es una sola declaración con predeterminado y sigue siendo válida. El valor del inicializador admite una expresión breve o un `ValueBlock`; el cuerpo completo queda sujeto al contrato estático de materialización del campo heredado.
 
 En una `abstract thing`, el inicializador no materializa carga propia; se conserva como contribución heredada para la primera materialización de descendientes concretos. En una `thing` concreta, el inicializador local se aplica a su propia primera materialización y no se hereda por sus descendientes. Un inicializador más específico sustituye a uno heredado menos específico. La especialización múltiple no obtiene prioridad del orden de `as`: el mismo origen se deduplica y contribuciones independientes e incomparables sobre el mismo campo entran en conflicto.
 
@@ -214,23 +215,26 @@ thing Broken as Kingdom {
 
 ## Campos
 
+Cuando un propietario metadata-bearing con `ValueBlock` usa la forma extensa, sus declaraciones `~...` pueden ocupar un preámbulo integrado al comienzo del mismo cuerpo. El preámbulo pertenece al descriptor, no al `ValueBlock`, y no puede combinarse con un segundo metadata-body. La forma breve conserva el metadata-body separado.
+
+
 Forma almacenada:
 
 ```text
-[mut] fieldName: Type [in domain] [collection-specification] [= static-expression]
+[mut] fieldName: Type [in domain] [collection-specification] [= value-body]
 ```
 
 Forma calculada:
 
 ```text
-fieldName [derived-value-shape] := value-expression
+fieldName [derived-value-shape] := value-body
 ```
 
 `derived-value-shape` puede ser `: Type`, `in domain` con colección opcional, o una especificación de colección sola. Por tanto son válidos tanto `area: Num in 0..* := width * height` como `area in 0..* := width * height`. Si se omite el tipo, debe poder inferirse unívocamente de la expresión, sin prioridades predeterminadas entre representaciones o formas contextuales compatibles. Si hay más de una solución, el tipo debe escribirse. Un campo calculado no admite `mut` exterior. Su forma puede declarar dominio, especificación de colección y capacidad interior `[mut]`.
 
 El `mut` exterior se escribe antes del nombre porque califica el lugar almacenado, no el tipo de sus miembros. `fieldName: mut Type` no pertenece a la sintaxis. Los nombres de campo y los nombres de metadato ocupan espacios sintácticos distintos: `name: Text` declara un campo, mientras `~name = expresión` declara o modifica el metadato de presentación.
 
-El valor de `=` es una expresión estática cerrada: se evalúa por completo al compilar, no lee estado, participantes, `given`, locales ni actividad del mundo y puede combinar literales, valores nominales y operaciones constantes. Por ejemplo:
+El valor de `=` puede ser una expresión breve o un `ValueBlock`. En un campo almacenado, todo el cuerpo debe seguir siendo estático: se evalúa por completo al compilar y no puede leer estado, participantes, `given`, locales exteriores ni actividad del mundo. La mutabilidad temporal creada dentro del propio `ValueBlock` es válida si toda la construcción puede elaborarse estáticamente. Por ejemplo:
 
 ```mud
 allowed: Int Interval = 1..2 | 3..4
@@ -254,6 +258,37 @@ numbers := a * b, d, c / a
 ```
 
 El dominio de un cálculo actúa como contrato. Una posible salida exterior produce warning y comprobación de transición; una salida necesariamente exterior produce error.
+
+## Bloques de expresión y de valor
+
+Un `ExpressionBlock` es una forma declarativa: contiene cero o más locales calculadas puras `:=` seguidas por una expresión final. No admite variables almacenadas, mutación, `for each` como sentencia ni `if` interior. Lo usan condiciones, filtros, cuantificadores y los lados de clave/selector de diccionarios.
+
+Un `ValueBlock` construye un valor y contiene cero o más sentencias locales seguidas por una expresión final. Sus únicas sentencias son declaraciones calculadas, declaraciones almacenadas, mutaciones cuyo footprint permanece dentro del propio bloque y `for each` local. No admite `if`, efectos exteriores, actions/subactions, `create` ni `destroy`.
+
+```mud
+result := {
+    mut total: Money = 0
+    for each item in items if item.taxable:
+        total += item.price
+    total
+}
+```
+
+`ValueBlock` no es una expresión primaria. Solo aparece en los propietarios que lo declaran explícitamente; para usar un cálculo complejo como argumento, índice o RHS de un efecto se vincula primero a una local.
+
+En `then` se admiten además variables locales almacenadas:
+
+```mud
+then {
+    mut remaining: Money = account.balance
+    remaining -= cost
+    account.balance = remaining
+}
+```
+
+La forma `x := ...` no es asignable. `x: X = ...` crea un slot local no reasignable y `mut x: X = ...` uno reasignable. Un `then` sigue necesitando al menos un efecto observable.
+
+El default de `given` conserva `constant-expression` y no admite `ValueBlock`.
 
 ## Uniones de tipos y flechas exteriores
 
@@ -339,6 +374,19 @@ combinedChars := leftChars | rightChars
 ```
 
 `empty` no es un fallo por sí mismo. Una consulta parcial produce `empty`; el fallo aparece únicamente cuando la forma exterior exigida no admite cardinalidad cero.
+
+### Cuerpos de asociaciones y ramas
+
+En una asociación `->`, el lado izquierdo es un `ExpressionBlock` y el derecho un `ValueBlock`. En una rama `-->`, el selector izquierdo es un `ExpressionBlock` booleano y el resultado derecho un `ValueBlock`. Las llaves sustituyen solo al lado extendido, por lo que son válidas las cuatro combinaciones breve/extensa sin keywords auxiliares ni envoltorio exterior.
+
+```mud
+key -> value
+key -> { result }
+{ key } -> value
+{ key } -> { result }
+```
+
+Los scopes de ambos lados son independientes. Las locales de clave/selector no pasan al valor/resultado. Aplicar el diccionario sigue siendo exteriormente puro.
 
 ### Diccionarios exactos `->`
 
@@ -1205,7 +1253,7 @@ Una fuente con enumeración propia no necesita `by`. Cuando la enumeración depe
 
 ### Selección y cuantificadores
 
-Selección y `exists`, `forall`, `count`, `sum`, `min`, `max` aceptan `by` cuando la fuente define progresión y mantienen `:` aunque el cuerpo tenga llaves. El bloque contiene locales `:=` seguidas de una expresión final. Selección, `exists`, `forall` y `count` exigen contrato booleano; `sum`, valor agregable; `min`/`max`, valor ordenable.
+Selección y `exists`, `forall`, `count`, `min`, `max` aceptan `by` cuando la fuente define progresión y mantienen `:` aunque el cuerpo tenga llaves. Todos usan `ExpressionBlock`: el bloque contiene locales `:=` seguidas de una expresión final booleana. En `min` y `max` ese predicado filtra testigos y la operación devuelve respectivamente el primero o el último según el orden semántico de la fuente; una fuente `ordered` sin clave explícita también es válida, una fuente sin orden utilizable se rechaza y ningún testigo aceptado produce `empty`. `sum` no pertenece al lenguaje.
 
 Una selección produce una colección y por ello no consume directamente un dominio desnudo: si la fuente conceptual es un dominio `D`, debe escribirse `all D`. Los recorridos y cuantificadores que no producen una colección sí pueden consumir directamente un dominio finito enumerable.
 
@@ -1215,7 +1263,6 @@ selected := x in source by step: {
     x < threshold
 }
 
-sum x in source by step: {
     adjusted := x.amount - x.exempt
     adjusted
 }

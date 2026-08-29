@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-036 — Participantes, receptores y llamadas
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 
 - Amplía: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
@@ -71,7 +73,7 @@ rule IsWeekend for day: Day {
 
 ### Mutabilidad de participantes `for`
 
-En una action, `mut` antes del nombre de cualquier rol `for`, incluido uno de cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. Ese rol siempre debe tener nombre. El receptor correspondiente debe ser un lugar almacenado exteriormente mutable; un literal o una expresión calculada no son lugares y se rechazan.
+En una action, `mut` antes del nombre de cualquier rol `for`, incluido uno de cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. Ese rol siempre debe tener nombre. El receptor correspondiente debe ser un lugar almacenado exteriormente mutable. Puede ser estado del mundo o un slot local declarado `mut`; un literal, una local calculada `:=` o una local almacenada inmutable no son lugares escribibles compatibles y se rechazan.
 
 El `mut` incluido en la especificación de colección concede capacidad interior sobre los valores miembro que posean estado modificable. Escribirlo cuando el tipo efectivo solo contiene valores inmutables es legal, pero produce una sugerencia porque el permiso es inútil. Ambos permisos son ortogonales conforme a D-019:
 
@@ -101,7 +103,7 @@ El modo de vinculación depende del contrato del rol:
 | --- | --- |
 | `thing` sin `mut` exterior | identidad de cada `thing` |
 | básico, alias, `family`, diccionario u otro valor inmutable | valor |
-| cualquier tipo con `mut` exterior | identidad del lugar almacenado y valor actual |
+| cualquier tipo con `mut` exterior | identidad temporal del lugar almacenado y valor actual; el lugar puede pertenecer al mundo o a un frame local |
 
 Una colección conserva además cardinalidad, multiplicidad y orden. Repetir un valor o una identidad produce tantas ocurrencias como permita el contrato salvo que el rol sea `unique`.
 

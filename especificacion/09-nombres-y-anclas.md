@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-101
   - D-035
   - D-065
   - D-072
@@ -85,15 +86,21 @@ Un `using` exacto importa un path concreto y uno recursivo importa sus descendie
 Los accesos con puntos se elaboran por etapas: primero se resuelve la raíz nominal y después cada miembro con el tipo o propietario obtenido. Una ruta cualificada y una cadena de miembros pueden compartir escritura superficial sin compartir resolución interna.
 
 
-## Ámbitos de iteración y bloques de expresión
+## Ámbitos locales, iteración y bloques
 
-Las vinculaciones de iteración y las declaraciones locales de `ExpressionBlock` son `LocalSymbol`: no reciben ancla pública y obedecen al primer nivel léxico de resolución.
+Las vinculaciones de iteración y todas las declaraciones locales son `LocalSymbol`: no reciben ancla pública y obedecen al primer nivel léxico de resolución. El `kind` del HIR distingue como mínimo iterador, local calculada y local almacenada; la mutabilidad es una capacidad comprobada posteriormente y no una categoría de ancla.
 
-En `for each`, la fuente y el `by` opcional se resuelven antes de introducir la vinculación. La variable simple o ambas variables de una pareja de diccionario pasan a estar visibles en el filtro `if` y en el cuerpo ejecutable. Una local declarada dentro del `ExpressionBlock` del filtro solo amplía el entorno de las locales posteriores y de la expresión final del filtro; no permanece visible en el cuerpo de efectos.
+En `ExpressionBlock` y en los preámbulos compartidos de action/rule/message solo se introducen locales calculadas puras. Cada local es visible desde la declaración siguiente hasta el final del bloque propietario y no puede sombrear un nombre visible.
 
-En una selección o un cuantificador/agregador, `source` y `by` se resuelven igualmente en el entorno exterior. Después se introduce la vinculación y se resuelve el `ExpressionBlock`: cada local ve las vinculaciones exteriores y las locales anteriores; el resultado final ve todas las locales del bloque. La vinculación y esas locales dejan de existir al terminar la expresión propietaria.
+`ValueBlock` crea una frontera léxica propia. Sus declaraciones calculadas y almacenadas se introducen secuencialmente. Un `LocalForEach` resuelve `source` y `by` antes de introducir su binding; el binding es visible en el filtro y en `LocalStatementBlock`. Las locales creadas dentro de una iteración no sobreviven a la siguiente. Una mutación puede referirse a una local mutable de un ámbito envolvente del mismo `ValueBlock`; la comprobación de que el destino final no escape del bloque pertenece a tipado/elaboración.
 
-Ninguno de estos ámbitos permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible. La resolución nominal registra estas vinculaciones en el HIR como `LocalSymbol(owner, kind, name, ordinal)` subordinados a su propietario. Estas vinculaciones no introducen una clase de símbolo ni una categoría de ancla nuevas.
+En el `for each` ejecutable se mantienen las mismas reglas de introducción del binding, pero el cuerpo pertenece al `EffectBlock` y puede escribir lugares exteriores conforme a su autoridad. En una selección o cuantificador, la vinculación solo vive dentro de su `ExpressionBlock`.
+
+En asociaciones `->` y ramas `-->`, el bloque izquierdo y el derecho crean scopes hermanos: las locales de clave/selector no son visibles en valor/resultado. Ambos ven el entorno exterior común y las ramas funcionales conservan además su binding contextual `value` cuando corresponda.
+
+Las locales calculadas y almacenadas siguen sin ancla pública. Una local almacenada mutable puede satisfacer un participante `for mut`; la resolución nominal vincula el nombre al `LocalSymbol`, mientras tipado/elaboración comprueban que la ocurrencia usada como receptor designa un slot escribible. El HIR nominal no necesita una clase de referencia ni de símbolo adicional.
+
+Ningún ámbito local permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible.
 
 ## Etapas
 

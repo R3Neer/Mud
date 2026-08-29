@@ -1963,3 +1963,39 @@ cases:
   source: values [ordered]
   ast: CollectionTransformExpr
   produces_ast: true
+- id: value-block-local-stored
+  category: value-block
+  source: "action A {\n    then {\n        mut x: Int = {\n            y := 1\n            y\n        }\n        World.n += x\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ValueBlock(statements=[LocalCalculatedDecl(y)], result=y) inside LocalStoredDecl(x)
+  produces_ast: true
+- id: value-block-local-for-each
+  category: value-block
+  source: "look Totals {\n    total := {\n        mut n: Int = 0\n        for each x in [1, 2, 3]: n += x\n        n\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ValueBlock(statements=[LocalStoredDecl(n), LocalForEach(body=LocalStatementBlock(...))], result=n)
+  produces_ast: true
+- id: dictionary-extended-both
+  category: dictionary
+  source: "thing T {\n    table: Int -> Int = {\n        {\n            k := 1\n            k\n        } -> {\n            mut v: Int = 2\n            v\n        }\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ExactAssociationExpr(ExpressionBlock(...), ValueBlock(...))
+  produces_ast: true
+- id: decision-extended-both
+  category: dictionary
+  source: "thing T {\n    table: Int --> Int = {\n        {\n            ok := value > 0\n            ok\n        } --> {\n            result := value\n            result\n        }\n    }\n}\n"
+  cst_root: MudFileSyntax
+  ast: DecisionBranchExpr(ExpressionBlock(...), ValueBlock(...))
+  produces_ast: true
+- id: min-predicate-witness
+  category: quantifier
+  source: "rule R {\n    (min x in [1, 2, 3][ordered]: x > 1) == 2\n}\n"
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(Minimum, body=ExpressionBlock(result=x>1))
+  produces_ast: true
+- id: sum-available-as-identifier
+  category: identifier
+  source: "thing SumExample {\n    sum: Int = 1\n}\n"
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(sum)
+  produces_ast: true

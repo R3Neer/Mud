@@ -13,6 +13,8 @@ affects:
 
 # ADR-085 — Diccionarios decisionales, metadatos y activación estructurada
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]]
 - Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
@@ -74,7 +76,7 @@ El tipo ordinario conserva la forma:
 A -> B
 ```
 
-Una asociación se escribe `a -> b` y es un valor operativo. Puede aparecer en un literal de diccionario o añadirse de forma explícita:
+Una asociación se escribe `a -> b` y es un valor operativo. Su clave es un `ExpressionBlock` y su valor un `ValueBlock`; cada lado puede usar su forma breve o entre llaves y los scopes de ambos lados son independientes. Puede aparecer en un literal de diccionario o añadirse de forma explícita:
 
 ```mud
 add (a -> b) to dictionary
@@ -112,13 +114,13 @@ representa una política pura definida por ramas. Una rama se escribe:
 selector --> result
 ```
 
-Dentro del selector y del resultado, `value` es una palabra contextual vinculada a la entrada de tipo `A`.
+Dentro del selector y del resultado, `value` es una palabra contextual vinculada a la entrada de tipo `A`. El selector es un `ExpressionBlock` booleano y el resultado un `ValueBlock`; sus scopes locales son independientes.
 
 Todo selector ordinario debe elaborar directamente a `Bool`. MUD no inserta implícitamente `value`, `==`, `is` ni pertenencia: deben escribirse de forma expresa `value == expresión`, `dominio has value`, `value is Tipo` o cualquier otra condición booleana pura. Una expresión desnuda que no produzca `Bool` es inválida. `_` es el fallback y solo se considera cuando ninguna rama ordinaria aplicable ha producido resultado.
 
 Los resultados y selectores pueden leer estado externo. Cada lectura debe quedar registrada como dependencia de la rama y del diccionario. Todas las llamadas transitivas de una aplicación observan la misma instantánea estable del mundo.
 
-Las ramas son estáticas durante la ejecución ordinaria y no admiten efectos, llamadas a acciones, asignaciones, `create`, `destroy` ni mutación. La edición del modelo puede crear, actualizar, retirar o mover ramas dentro del diccionario propietario, pero una rama no posee ancla pública ni descriptor metadata-bearing propio. El modelo resuelto usa una clave local de rama: el selector normalizado es la clave de una rama ordinaria y no puede repetirse dentro del mismo diccionario; `_` usa una clave de fallback propia y única. Cambiar solo el resultado conserva la clave; cambiar el selector retira estructuralmente la clave anterior y crea la nueva. Una rama nueva se inserta antes de `_` de forma predeterminada; en un decisional ordenado puede declararse una posición concreta.
+Las ramas son exteriormente puras durante la ejecución ordinaria: no admiten efectos sobre el mundo, llamadas a actions/subactions como efectos, `create` ni `destroy`. El `ValueBlock` del resultado sí puede declarar y mutar almacenamiento temporal propio, que desaparece al terminar su evaluación. La edición del modelo puede crear, actualizar, retirar o mover ramas dentro del diccionario propietario, pero una rama no posee ancla pública ni descriptor metadata-bearing propio. El modelo resuelto usa una clave local de rama: el selector normalizado es la clave de una rama ordinaria y no puede repetirse dentro del mismo diccionario; `_` usa una clave de fallback propia y única. Cambiar solo el resultado conserva la clave; cambiar el selector retira estructuralmente la clave anterior y crea la nueva. Una rama nueva se inserta antes de `_` de forma predeterminada; en un decisional ordenado puede declararse una posición concreta.
 
 Un diccionario decisional:
 

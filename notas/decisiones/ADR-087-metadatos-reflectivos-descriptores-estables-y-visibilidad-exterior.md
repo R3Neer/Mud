@@ -12,6 +12,8 @@ affects:
 
 # ADR-087 — Metadatos reflectivos, descriptores estables y visibilidad exterior
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
 - Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]], [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
 - Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] y [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
@@ -222,7 +224,7 @@ Los descriptores `Field` exponen:
 
 Un miembro heredado conserva el ancla, descriptor y metadatos del elemento que lo declaró. No se fabrican copias metadata-bearing por cada descendiente.
 
-Campos, componentes y datos asociados declarados por una `family` pueden llevar inmediatamente un cuerpo que contenga solo declaraciones `~...`. El cuerpo pertenece al descriptor, no al valor proyectado. Una asignación de dato dentro de un miembro de `family` no admite ese cuerpo porque no declara un descriptor nuevo. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
+Campos, componentes y datos asociados declarados por una `family` pueden llevar metadata propia. Con un valor breve conservan el cuerpo inmediato exclusivamente de `~...`; cuando usan `ValueBlock`, esas declaraciones pueden integrarse como preámbulo contiguo al principio del mismo cuerpo. En ambos casos pertenecen al descriptor y no al valor ni a las sentencias del `ValueBlock`. Una declaración no combina simultáneamente ambos lugares de metadata. Una asignación de dato dentro de un miembro de `family` no admite ese cuerpo porque no declara un descriptor nuevo. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
 
 ### Descriptor `Metadata`
 
@@ -311,7 +313,7 @@ No se propagan a campos, componentes, participantes, miembros de familia, declar
 valor explícito del elemento > default de archivo > default del lenguaje
 ```
 
-Un default de archivo no admite `:=`, lecturas runtime ni propiedades intrínsecas. `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
+Un default de archivo no admite `:=`, `ValueBlock`, lecturas runtime ni propiedades intrínsecas. Su forma se mantiene separada de la asignación ordinaria de metadata de un propietario. `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
 
 ### Texto y tooling
 

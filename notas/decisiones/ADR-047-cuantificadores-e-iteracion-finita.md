@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-047 — Cuantificadores e iteración finita
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
 - Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
@@ -35,12 +37,11 @@ Las expresiones admiten:
 exists x in source: predicate
 forall x in source: predicate
 count x in source: predicate
-sum x in source: expression
-min x in source: expression
-max x in source: expression
+min x in source: predicate
+max x in source: predicate
 ```
 
-La fuente debe ser finita y enumerable. La evaluación es pura. `min` y `max` son consultas parciales: sobre una fuente vacía producen `empty` con forma de resultado `T [0..1]`; sobre una fuente no vacía producen un valor de tipo `T`. La ausencia solo falla después si el contexto receptor no admite cardinalidad cero, conforme a D-095.
+La fuente debe ser finita y enumerable. La evaluación es pura. Los cinco cuerpos son predicados booleanos. `min` y `max` devuelven el primer o último testigo aceptado según el orden semántico de la fuente; requieren una fuente con orden utilizable. Son consultas parciales: sin testigos aceptados producen `empty` con cardinalidad `[0..1]` y, en otro caso, un valor del tipo de miembro de la fuente. La ausencia solo falla después si el contexto receptor no admite cardinalidad cero, conforme a D-095.
 
 D-081 añade una selección pura que devuelve los testigos en lugar de consumirlos:
 
@@ -78,7 +79,7 @@ Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmen
 
 ## Verificación
 
-1. Cuantificadores y agregaciones sobre fuente finita.
+1. Cuantificadores sobre fuente finita, incluidos extremos filtrados sobre fuente ordenada.
 2. `min` y `max` vacíos producen `empty` y su incompatibilidad posterior usa las reglas ordinarias de cardinalidad.
 3. Diferencia observable entre bucle ordenado y no ordenado.
 4. Intervalos abiertos, cerrados, discontinuos y con paso.
@@ -87,4 +88,4 @@ Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmen
 
 ## Modificación por D-088
 
-D-088 generaliza `by` a diferencias firmadas compatibles, evaluadas una vez, y distingue filtros ordenados (ven efectos secuenciales anteriores) de no ordenados (leen la instantánea inicial). Los seis cuantificadores/agregadores admiten `by` y bloques de expresión. `Rum` sigue sin ser enumerable y los dominios cíclicos de punto se recorren como máximo durante un periodo fundamental.
+D-088 generaliza `by` a diferencias firmadas compatibles, evaluadas una vez, y distingue filtros ordenados (ven efectos secuenciales anteriores) de no ordenados (leen la instantánea inicial). Los cinco cuantificadores admiten `by` cuando la fuente define progresión y bloques de expresión booleanos. `Rum` sigue sin ser enumerable y los dominios cíclicos de punto se recorren como máximo durante un periodo fundamental.

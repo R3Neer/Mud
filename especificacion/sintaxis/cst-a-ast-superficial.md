@@ -349,11 +349,13 @@ La variante directa produce `DirectOnParticipant(name, type, elementsMutable, me
 
 ### `given`
 
-Se convierten nombre, `TypeExpr`, predeterminado y metadatos. Un tipo diccionario se conserva mediante los constructores ordinarios `ExactDictionaryType` o `DecisionDictionaryType`. El predeterminado continúa siendo `expr`; su carácter constante y la prohibición de cualquier capacidad `mut` del `given` se comprueban después.
+Se convierten nombre, `TypeExpr`, predeterminado y metadatos. Un tipo diccionario se conserva mediante los constructores ordinarios `ExactDictionaryType` o `DecisionDictionaryType`. El predeterminado continúa siendo `expr` y no adquiere `ValueBlock`; su carácter constante y la prohibición de cualquier capacidad `mut` del `given` se comprueban después.
 
 ## Reglas y acciones
 
 El preámbulo metadata-bearing de cada regla, action, subaction, look, message y test se conserva en el campo `metadata` del constructor superior correspondiente. `start with` no obtiene metadata propia.
+
+Los defaults de metadata escritos al comienzo del fichero usan `FileMetadataAssignment(name, type?, value?)`. Su valor permanece `expr?` constante y no se normaliza a `ValueBlock`; esta es la excepción deliberada de los defaults de fichero.
 
 ### Regla booleana
 
@@ -377,15 +379,19 @@ No se clasifica la acción como elemental o compuesta.
 
 `look-declaration` proyecta su `given-clause` opcional a `LookDecl.givens`. En `message`, las `local-value-declaration` previas a las cláusulas de comportamiento se proyectan a `leading_locals`. Las propiedades públicas se convierten a `PublicFieldDecl` y conservan su orden.
 
-## Bloques de expresión y tests
+## Bloques de expresión, valor y tests
 
-Una `local-value-declaration` produce `LocalValueDecl(name, shape?, value)`. `: type-expression` produce `ExplicitDerivedShape`; `in domain [collection]` y `collection` producen `InferredDerivedShape`. Dominio, cardinalidad, `unique` y orden conservados por cualquiera de ambas variantes son coercitivos sobre el resultado durante elaboración; `[mut]` se conserva superficialmente cuando la gramática lo reconoce, pero se rechaza como coerción porque no puede fabricar autoridad.
+Una `local-value-declaration` dentro de `ExpressionBlock`, de los preámbulos compartidos y de `TestAfterBlock` produce `LocalValueDecl(name, shape?, value)`. Su RHS sigue siendo una expresión ordinaria: estas posiciones no pueden recuperar un `ValueBlock` por anidamiento.
 
-Los terminadores opcionales escritos después de `:` en `for each`, selección y cuantificadores son separación concreta: no producen nodos ni cambian `ExpressionBlock`/`EffectBlock`.
+Una forma breve como `if ready` produce `ExpressionBlock([], ready)`. La forma entre llaves recoge solo locales calculadas puras `:=` y exige una única expresión final. `otherwise` queda fuera del bloque AST, aunque la resolución extiende hasta él el entorno de esas locales.
 
-Una forma breve como `if ready` produce `ExpressionBlock([], ready)`. Una forma entre llaves recoge todas las declaraciones locales `:=` iniciales y exige una única expresión final. El `otherwise` asociado queda fuera del bloque AST, pero la resolución posterior extiende hasta él el entorno de esos locales.
+Un `value-body` breve normaliza a `ValueBlock([], value)`. La forma extensa produce `ValueBlock(statements, result)`. Las declaraciones calculadas del bloque producen `LocalCalculatedDecl`, las almacenadas `LocalStoredDecl`, las mutaciones `LocalAssignment`/`LocalAdd`/`LocalRemove` y el recorrido local `LocalForEach`. La validación/elaboración posterior comprueba que toda escritura de `LocalMutation` permanezca dentro del almacenamiento creado por el `ValueBlock`.
 
-En tests, `after expr` produce `TestAfterBlock([], [TestAssertion(expr)])`. La forma entre llaves produce `TestAfterBlock(locals, assertions)`; los locales solo pueden aparecer antes de la primera aserción.
+`LocalForEach` conserva `source`, `step?` y el filtro como `ExpressionBlock?`; su cuerpo breve o entre llaves normaliza a `LocalStatementBlock` y nunca a `EffectBlock`.
+
+Cuando un propietario metadata-bearing usa la forma extensa integrada, las declaraciones `~...` iniciales se extraen hacia el campo `metadata` del descriptor y las sentencias siguientes forman su `ValueBlock`. El preámbulo no produce `ValueStatement`. La forma breve con metadata-body separado converge en el mismo AST. La validación previa al AST rechaza que una misma declaración combine ambos lugares de metadata.
+
+En tests, `after expr` produce `TestAfterBlock([], [TestAssertion(expr)])`. La forma entre llaves conserva sus locales calculadas puras antes de las aserciones y no adquiere `ValueBlock`.
 
 ## `then` y bloques
 
@@ -403,7 +409,7 @@ then {
 
 producen ambos `EffectBlock`, con una sentencia en los casos equivalentes.
 
-Las declaraciones locales anteriores al primer efecto se almacenan en `leadingLocals`; el primer efecto ocupa `firstEffect`; las declaraciones locales y efectos posteriores forman `remainingStatements`.
+Todas las sentencias del bloque se conservan en orden. Las declaraciones calculadas producen `LocalCalculatedStatement`, las almacenadas `LocalStoredStatement` y los efectos `EffectStatement`. La validación posterior exige que exista al menos un efecto observable; por ello un bloque formado solo por locales no es un `then` válido.
 
 ## Efectos
 
@@ -433,7 +439,7 @@ La alternativa con declaración de campo produce `AddFieldEffect`. La declaraci�
 
 ### Iteración
 
-La vinculación simple produce `ValueIterationBinding`. La pareja entre paréntesis produce `DictionaryIterationBinding`. `for each` conserva `by` como `step?`, normaliza `if` a `ExpressionBlock` y convierte tanto el efecto breve como el bloque tras `:` en `EffectBlock`. Dirección, compatibilidad y paso cero pertenecen a fases posteriores.
+La vinculación simple produce `ValueIterationBinding`. La pareja entre paréntesis produce `DictionaryIterationBinding`. El `for each` ejecutable conserva `by` como `step?`, normaliza `if` a `ExpressionBlock` y convierte tanto el efecto breve como el bloque tras `:` en `EffectBlock`. El recorrido escrito dentro de `ValueBlock` es otra producción y produce `LocalForEach` con `LocalStatementBlock`. Dirección, compatibilidad y paso cero pertenecen a fases posteriores.
 
 ## Expresiones
 
@@ -473,7 +479,7 @@ El prefijo `all D` produce `PrefixExpr(EnumerateAll, D)`; el literal contextual 
 
 `binding in source [by step]: predicate` produce `SelectionExpr(binding, source, step?, predicate)`. La vinculación simple o de diccionario reutiliza `ValueIterationBinding` o `DictionaryIterationBinding`; su alcance queda limitado al predicado. La forma breve y `{ locales*; resultado }` convergen en `ExpressionBlock`.
 
-Los cuantificadores/agregadores producen `QuantifierExpr(kind, variable, source, step?, body)`, con `body` como `ExpressionBlock`. La transformación no decide contrato de tipo ni admisibilidad de la progresión.
+`exists`, `forall`, `count`, `min` y `max` producen `QuantifierExpr(kind, variable, source, step?, body)`, con `body` como `ExpressionBlock`. `sum` no pertenece ya al catálogo. La transformación no decide el contrato booleano ni, para `min`/`max`, la validez del orden de la fuente; esas comprobaciones son posteriores.
 
 `take amount from source` produce `TakeExpr(amount, source)`. La forma del nodo no decide si la selección será un prefijo ordenado o una muestra reproducible: esa distinción depende del tipo y del orden resueltos de `source`.
 
@@ -489,7 +495,7 @@ player in take m from players: player.score == 2
 
 ### Asociaciones y ramas de diccionario
 
-`a -> b` produce `ExactAssociationExpr(a, b)`; `selector --> resultado` produce `DecisionBranchExpr(selector, resultado)` y `_` produce `FallbackLiteral`. Las operaciones `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración las especializa según los tipos resueltos. Una operación funcional conserva ambos operandos y no se transforma en una lista fusionada de ramas.
+`a -> b` produce `ExactAssociationExpr(ExpressionBlock([], a), ValueBlock([], b))`; `selector --> resultado` produce `DecisionBranchExpr(ExpressionBlock([], selector), ValueBlock([], resultado))`. El `mapping-key-body` entre llaves conserva sus locales en `ExpressionBlock`; el RHS extenso usa `value-block-body` y conserva sus sentencias en `ValueBlock`. El RHS breve sigue siendo `mapping-expression`, de modo que una coma exterior continúa separando asociaciones y no pasa a formar parte del valor de la primera y `_` produce `FallbackLiteral`. Las operaciones `|`, `&`, `--` y `^` conservan inicialmente `BinaryExpr`; la elaboración las especializa según los tipos resueltos. Una operación funcional conserva ambos operandos y no se transforma en una lista fusionada de ramas.
 
 ### Conversiones
 

@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-071 — Vinculaciones locales en bloques booleanos
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Amplía: [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modifica: [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada después por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
@@ -110,4 +112,4 @@ En los contextos definidos por esta decisión, el propietario exige que `result`
 
 ## Modificación por D-088
 
-La estructura se generaliza a `ExpressionBlock(locals, result)`. Las condiciones mantienen sus contratos booleanos/temporales; selección y cuantificadores/agregadores pueden escribir tras `:` una expresión breve o `{ locales*; resultado }`, con las mismas reglas de pureza, secuencialidad, ámbito y ausencia de referencias adelantadas, ciclos, redeclaración y sombreado.
+La estructura se generaliza a `ExpressionBlock(locals, result)`. Las condiciones mantienen sus contratos booleanos/temporales; selección y `exists`, `forall`, `count`, `min` y `max` pueden escribir tras `:` una expresión breve o `{ locales*; resultado }`, con las mismas reglas de pureza, secuencialidad, ámbito y ausencia de referencias adelantadas, ciclos, redeclaración y sombreado.

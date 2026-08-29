@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-038 — Familias cerradas de valores
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
@@ -90,13 +92,13 @@ family Terrain {
 Un dato asociado puede ser almacenado o calculado. El dato almacenado no admite `mut`:
 
 ```text
-nombre : tipo [in dominio] [especificación-de-colección] [= predeterminado] [metadata-body]
+nombre : tipo [in dominio] [especificación-de-colección] [= value-body] [metadata-body]
 ```
 
 El dato calculado se describe aquí mediante la forma estrecha:
 
 ```text
-nombre [: tipo] := expresión
+nombre [forma-derivada] := value-body
 ```
 
 La anotación de tipo de un dato calculado es opcional. Si se omite, el compilador debe inferir un único tipo estático; si no puede hacerlo, la declaración es inválida. Este ADR afirma que el dato calculado no admite `mut`, `in`, especificación de colección, predeterminado ni almacenamiento propio, mientras la EBNF vigente conserva `derived-value-shape`; Q-061 registra explícitamente esa contradicción pendiente sin elegir una versión. Independientemente de su forma final, D-091 permite que tanto un dato almacenado como uno calculado lleven un cuerpo inmediato formado exclusivamente por declaraciones de metadatos `~...`, perteneciente al descriptor uniforme del dato.
@@ -111,7 +113,7 @@ Para cada dato de cada miembro, el valor se obtiene en este orden:
 
 Por tanto, un miembro puede omitir un dato almacenado siempre que su valor predeterminado pueda determinarse estáticamente. En particular, un dato `Nat` sin predeterminado explícito obtiene `0`. Aunque la omisión sea válida, se recomienda escribir explícitamente los valores cuyo significado sea importante para comprender el modelo.
 
-Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Los predeterminados y las asignaciones de miembro deben ser expresiones estáticas cerradas conforme a D-066. Los datos calculados también se evalúan estáticamente por miembro y deben ser puros, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
+Después de resolver los datos almacenados de un miembro, sus datos calculados se evalúan para ese miembro. La expresión puede consultar mediante nombres no cualificados otros datos asociados de la misma familia, incluidos datos calculados declarados antes o después. Las dependencias entre datos calculados deben ser acíclicas y resolverse sin depender del orden textual de declaración. Los predeterminados y las asignaciones de miembro pueden usar `ValueBlock`, pero todo el cuerpo debe ser evaluable estáticamente conforme a D-066 y D-101. Los datos calculados también se evalúan estáticamente por miembro y deben ser puros, además de satisfacer los tipos y, donde correspondan, el dominio y la colección.
 
 En el ejemplo, `Mountain.costly` es `true`, mientras que `Plain.costly` es `false`. Los valores asociados obtenidos para un miembro, almacenados o calculados:
 

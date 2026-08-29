@@ -50,7 +50,7 @@ module MUDSurface {
     project = MudProject(source_file* files)
 
     source_file = MudFile(file_metadata metadata,
-                          metadata_assignment* metadata_defaults,
+                          file_metadata_assignment* metadata_defaults,
                           using_decl* usings,
                           top_level_decl* declarations)
         attributes (source_origin origin)
@@ -198,23 +198,23 @@ module MUDSurface {
     stored_field_data = (flag collection_mutable,
                          field_name name,
                          value_shape shape,
-                         expr? default_value,
+                         value_block? default_value,
                          metadata_assignment* metadata)
         attributes (source_origin origin)
 
     field_decl = StoredFieldDecl(stored_field_data field)
                | CalculatedFieldDecl(field_name name,
                                      derived_value_shape? shape,
-                                     expr value,
+                                     value_block value,
                                      metadata_assignment* metadata)
         attributes (source_origin origin)
 
-    thing_initializer = ThingInitializer(field_name name, expr value)
+    thing_initializer = ThingInitializer(field_name name, value_block value)
         attributes (source_origin origin)
 
     public_field_decl = PublicFieldDecl(field_name name,
                                         derived_value_shape? shape,
-                                        expr value,
+                                        value_block value,
                                         metadata_assignment* metadata)
         attributes (source_origin origin)
 
@@ -225,25 +225,25 @@ module MUDSurface {
     alias_member = AliasComponentDecl(alias_component component)
                  | AliasCalculatedFieldDecl(field_name name,
                                             derived_value_shape? shape,
-                                            expr value,
+                                            value_block value,
                                             metadata_assignment* metadata)
                  | AliasDefaultOverride(component_name name,
-                                        expr value)
+                                        value_block value)
         attributes (source_origin origin)
 
     alias_component = AliasComponent(component_name name,
                                      value_shape shape,
-                                     expr? default_value,
+                                     value_block? default_value,
                                      metadata_assignment* metadata)
         attributes (source_origin origin)
 
     family_data_decl = StoredFamilyDataDecl(field_name name,
                                             value_shape shape,
-                                            expr? default_value,
+                                            value_block? default_value,
                                             metadata_assignment* metadata)
                      | CalculatedFamilyDataDecl(field_name name,
                                                 derived_value_shape? shape,
-                                                expr value,
+                                                value_block value,
                                                 metadata_assignment* metadata)
         attributes (source_origin origin)
 
@@ -253,11 +253,16 @@ module MUDSurface {
         attributes (source_origin origin)
 
     family_data_assignment = FamilyDataAssignment(field_name name,
-                                                   expr value)
+                                                   value_block value)
         attributes (source_origin origin)
 
-    metadata_assignment = StoredMetadataAssignment(metadata_name name, type_expr? type, expr? value)
-                        | CalculatedMetadataAssignment(metadata_name name, derived_value_shape? shape, expr value)
+    file_metadata_assignment = FileMetadataAssignment(metadata_name name,
+                                                        type_expr? type,
+                                                        expr? value)
+        attributes (source_origin origin)
+
+    metadata_assignment = StoredMetadataAssignment(metadata_name name, type_expr? type, value_block? value)
+                        | CalculatedMetadataAssignment(metadata_name name, derived_value_shape? shape, value_block value)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
@@ -412,6 +417,43 @@ module MUDSurface {
     expression_block = ExpressionBlock(local_value_decl* locals, expr result)
         attributes (source_origin origin)
 
+    value_block = ValueBlock(value_statement* statements, expr result)
+        attributes (source_origin origin)
+
+    value_statement = LocalCalculatedValueStatement(local_calculated_decl value)
+                    | LocalStoredValueStatement(local_stored_decl value)
+                    | LocalMutationValueStatement(local_mutation value)
+                    | LocalForEachValueStatement(local_for_each value)
+        attributes (source_origin origin)
+
+    local_calculated_decl = LocalCalculatedDecl(variable_name name,
+                                                derived_value_shape? shape,
+                                                value_block value)
+        attributes (source_origin origin)
+
+    local_stored_decl = LocalStoredDecl(flag is_mutable,
+                                        variable_name name,
+                                        type_expr type,
+                                        value_block value)
+        attributes (source_origin origin)
+
+    local_mutation = LocalAssignment(assignable_expr target,
+                                     assignment_operator operator,
+                                     expr value)
+                   | LocalAdd(expr value, assignable_expr target)
+                   | LocalRemove(expr value, assignable_expr target)
+        attributes (source_origin origin)
+
+    local_for_each = LocalForEach(iteration_binding binding,
+                                  expr source,
+                                  expr? step,
+                                  expression_block? filter,
+                                  local_statement_block body)
+        attributes (source_origin origin)
+
+    local_statement_block = LocalStatementBlock(value_statement* statements)
+        attributes (source_origin origin)
+
     action_guard = ActionGuard(expression_block condition, expr? diagnostic)
         attributes (source_origin origin)
 
@@ -419,14 +461,14 @@ module MUDSurface {
                                                expr? diagnostic)
         attributes (source_origin origin)
 
-    effect_block = EffectBlock(local_value_decl* leading_locals,
-                               effect first_effect,
+    effect_block = EffectBlock(then_statement first_statement,
                                then_statement* remaining_statements,
                                expr? failure_diagnostic)
         attributes (source_origin origin)
 
     then_statement = EffectStatement(effect value)
-                   | LocalValueStatement(local_value_decl value)
+                   | LocalCalculatedStatement(local_calculated_decl value)
+                   | LocalStoredStatement(local_stored_decl value)
         attributes (source_origin origin)
 
     local_value_decl = LocalValueDecl(variable_name name,
@@ -508,8 +550,8 @@ module MUDSurface {
                                            expr* remaining)
          | NamedStructuralLiteralExpr(named_structural_element first,
                                       named_structural_element* remaining)
-         | ExactAssociationExpr(expr key, expr value)
-         | DecisionBranchExpr(expr selector, expr result)
+         | ExactAssociationExpr(expression_block key, value_block value)
+         | DecisionBranchExpr(expression_block selector, value_block result)
          | IntervalValueExpr(interval_expr interval)
          | QuantityValueExpr(quantity_expr quantity)
          | PointComponentExpr(unit_expr extracted,
@@ -613,7 +655,6 @@ module MUDSurface {
     quantifier_kind = Exists
                     | ForAll
                     | Count
-                    | Sum
                     | Minimum
                     | Maximum
 

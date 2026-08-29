@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-037 — Campos y dominios declarativos
 
+- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Amplía: D-019, D-026
@@ -46,20 +48,20 @@ displayCost: Money := maintenanceCost
 La forma concreta de un campo almacenado es:
 
 ```text
-[mut] nombre : tipo [in dominio] [especificación-de-colección] [= expresión-estática]
+[mut] nombre : tipo [in dominio] [especificación-de-colección] [= value-body]
 ```
 
 El dominio precede a la especificación de colección. Un campo calculado usa:
 
 ```text
-nombre [ forma-derivada ] := expresión
+nombre [ forma-derivada ] := value-body
 ```
 
 donde la forma derivada puede declarar tipo y, conforme a D-075, dominio, cardinalidad y modificadores de colección compatibles con el resultado.
 
 El `mut` exterior pertenece al lugar almacenado y por eso precede al nombre; no es un constructor ni un calificador del tipo. La forma `nombre: mut tipo` es inválida.
 
-El valor explícito de un campo almacenado es una expresión estática cerrada conforme a D-066. Puede combinar literales, valores nominales y operaciones constantes, pero no consultar estado, participantes, `given`, locales ni actividad del mundo. Se evalúa y normaliza durante la compilación.
+El valor explícito de un campo almacenado puede ser una expresión breve o un `ValueBlock`, pero el cuerpo completo debe ser evaluable estáticamente conforme a D-066 y D-101. Puede usar almacenamiento temporal interno si no introduce dependencias runtime ni efectos exteriores. Un campo calculado admite igualmente `ValueBlock` sin adquirir almacenamiento persistente propio.
 
 La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo estático de la expresión; si se escribe, la expresión debe ser compatible con él y la anotación puede aportar el tipo esperado necesario para elaborar literales contextuales. Cuando una expresión sin anotación no tiene un tipo inferible de forma unívoca, la declaración es un error estático y debe escribirlo.
 

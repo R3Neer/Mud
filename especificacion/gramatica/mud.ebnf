@@ -4,7 +4,7 @@
 
 mud-file
     ::= layout
-        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
+        , [ file-metadata-assignment , { required-separation , file-metadata-assignment } , required-separation ]
         , [ using-file-body | declaration-file-body ]
         , EOF
         ;
@@ -97,15 +97,43 @@ thing-body-declaration
       ;
 
 thing-initializer
-    ::= field-name , "=" , constant-expression
+    ::= field-name , "=" , value-body
       ;
 
-metadata-assignment
+file-metadata-assignment
     ::= "~" , metadata-name
         , ( "=" , constant-expression
           | ":" , type-expression , [ "=" , constant-expression ]
-          | [ derived-value-shape ] , ":=" , value-expression
           )
+        ;
+
+metadata-assignment
+    ::= "~" , metadata-name
+        , ( "=" , value-body
+          | ":" , type-expression , [ "=" , value-body ]
+          | [ derived-value-shape ] , ":=" , value-body
+          )
+        ;
+
+metadata-body
+    ::= "{" , declaration-layout
+        , [ metadata-assignment
+            , { required-separation , metadata-assignment }
+            , [ required-separation ]
+          ]
+        , "}"
+        ;
+
+descriptor-value-body
+    ::= value-expression , [ metadata-body ]
+      | "{" , declaration-layout
+        , [ metadata-assignment
+            , { required-separation , metadata-assignment }
+            , required-separation
+          ]
+        , value-block
+        , [ required-separation ]
+        , "}"
         ;
 
 alias-declaration
@@ -144,12 +172,11 @@ alias-body-declaration
 
 component-declaration
     ::= component-name , ":" , type-expression
-        , [ "=" , constant-expression ]
-        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+        , ( "=" , descriptor-value-body | [ metadata-body ] )
         ;
 
 inherited-default-override
-    ::= component-name , "=" , constant-expression ;
+    ::= component-name , "=" , value-body ;
 
 family-declaration
     ::= [ "ordered" ] , "family" , nominal-name
@@ -169,13 +196,11 @@ family-data-declaration
 
 stored-family-data-declaration
     ::= field-name , ":" , type-expression
-        , [ "=" , constant-expression ]
-        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+        , ( "=" , descriptor-value-body | [ metadata-body ] )
         ;
 
 calculated-family-data-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , value-expression
-        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+    ::= field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
         ;
 
 family-member
@@ -199,7 +224,7 @@ family-member-entry
       ;
 
 family-data-assignment
-    ::= field-name , "=" , constant-expression ;
+    ::= field-name , "=" , value-body ;
 
 (* ------------------------------------------------------------------ *)
 (* Magnitudes y unidades                                               *)
@@ -301,18 +326,15 @@ field-declaration
 
 stored-field-declaration
     ::= [ "mut" ] , field-name , ":" , type-expression
-        , [ "=" , constant-expression ]
-        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+        , ( "=" , descriptor-value-body | [ metadata-body ] )
         ;
 
 calculated-field-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , value-expression
-        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+    ::= field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
         ;
 
 public-field-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , value-expression
-        , [ "{" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , "}" ]
+    ::= field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
         ;
 
 derived-value-shape
@@ -485,6 +507,72 @@ expression-block
         , expression
         ;
 
+value-body
+    ::= value-expression
+      | value-block-body
+      ;
+
+value-block-body
+    ::= "{" , declaration-layout , value-block
+        , [ required-separation ] , "}"
+        ;
+
+value-block
+    ::= { value-statement , required-separation }
+        , value-expression
+        ;
+
+value-statement
+    ::= value-local-declaration
+      | local-mutation
+      | local-for-each
+      ;
+
+value-local-declaration
+    ::= local-calculated-declaration
+      | local-stored-declaration
+      ;
+
+local-calculated-declaration
+    ::= variable-name , [ derived-value-shape ] , ":=" , value-body ;
+
+local-stored-declaration
+    ::= [ "mut" ] , variable-name , ":" , type-expression
+        , "=" , value-body
+        ;
+
+local-mutation
+    ::= local-assignment
+      | local-add
+      | local-remove
+      ;
+
+local-assignment
+    ::= assignable-expression , assignment-operator , value-expression ;
+
+local-add
+    ::= "add" , expression , "to" , assignable-expression ;
+
+local-remove
+    ::= "remove" , expression , "from" , assignable-expression ;
+
+local-for-each
+    ::= "for" , "each" , iteration-binding , "in" , expression
+        , [ "by" , expression ]
+        , [ "if" , expression-body ]
+        , ":"
+        , [ required-separation ]
+        , ( value-statement | local-statement-block )
+        ;
+
+local-statement-block
+    ::= "{" , declaration-layout
+        , value-statement
+        , { required-separation , value-statement }
+        , [ required-separation ]
+        , "}"
+        ;
+
 reactive-rule-declaration
     ::= "rule" , nominal-name
         , [ on-clause ]
@@ -592,8 +680,7 @@ then-clause
 
 effect-block
     ::= "{" , declaration-layout
-        , { local-value-declaration , required-separation }
-        , effect
+        , then-statement
         , { required-separation , then-statement }
         , [ required-separation ]
         , "}"
@@ -601,7 +688,7 @@ effect-block
 
 then-statement
     ::= effect
-      | local-value-declaration
+      | value-local-declaration
       ;
 
 local-value-declaration
@@ -718,7 +805,22 @@ expression
     ::= mapping-expression ;
 
 mapping-expression
-    ::= eventually-expression , [ mapping-arrow , mapping-expression ] ;
+    ::= mapping-left , [ mapping-arrow , mapping-right ] ;
+
+mapping-left
+    ::= eventually-expression
+      | mapping-key-body
+      ;
+
+mapping-key-body
+    ::= "{" , declaration-layout , expression-block
+        , [ required-separation ] , "}"
+        ;
+
+mapping-right
+    ::= mapping-expression
+      | value-block-body
+      ;
 
 mapping-arrow
     ::= "->" | "-->" ;
@@ -999,7 +1101,7 @@ quantifier-expression
         ;
 
 quantifier
-    ::= "exists" | "forall" | "count" | "sum" | "min" | "max" ;
+    ::= "exists" | "forall" | "count" | "min" | "max" ;
 
 (* ------------------------------------------------------------------ *)
 (* Intervalos                                                          *)

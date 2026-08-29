@@ -1073,3 +1073,98 @@ productions:
     ast:
       disposition: discarded
       reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+  metadata-body:
+    cst: MetadataBodySyntax
+    ast:
+      disposition: normalized
+      target: metadata_assignment
+  descriptor-value-body:
+    cst: DescriptorValueBodySyntax
+    ast:
+      disposition: normalized
+      target: value_block
+  value-body:
+    cst: ValueBodySyntax
+    ast:
+      disposition: normalized
+      target: value_block
+  value-block:
+    cst: ValueBlockSyntax
+    ast:
+      disposition: constructor
+      target: ValueBlock
+  value-statement:
+    cst: ValueStatementSyntax
+    ast:
+      disposition: normalized
+      target: value_statement
+  value-local-declaration:
+    cst: ValueLocalDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: value_statement
+  local-calculated-declaration:
+    cst: LocalCalculatedDeclarationSyntax
+    ast:
+      disposition: constructor
+      target: LocalCalculatedDecl
+  local-stored-declaration:
+    cst: LocalStoredDeclarationSyntax
+    ast:
+      disposition: constructor
+      target: LocalStoredDecl
+  local-mutation:
+    cst: LocalMutationSyntax
+    ast:
+      disposition: normalized
+      target: local_mutation
+  local-assignment:
+    cst: LocalAssignmentSyntax
+    ast:
+      disposition: constructor
+      target: LocalAssignment
+  local-add:
+    cst: LocalAddSyntax
+    ast:
+      disposition: constructor
+      target: LocalAdd
+  local-remove:
+    cst: LocalRemoveSyntax
+    ast:
+      disposition: constructor
+      target: LocalRemove
+  local-for-each:
+    cst: LocalForEachSyntax
+    ast:
+      disposition: constructor
+      target: LocalForEach
+  local-statement-block:
+    cst: LocalStatementBlockSyntax
+    ast:
+      disposition: constructor
+      target: LocalStatementBlock
+  mapping-left:
+    cst: MappingLeftSyntax
+    ast:
+      disposition: normalized
+      target: expression_block
+  mapping-key-body:
+    cst: MappingKeyBodySyntax
+    ast:
+      disposition: normalized
+      target: ExpressionBlock
+  mapping-right:
+    cst: MappingRightSyntax
+    ast:
+      disposition: normalized
+      target: value_block
+  file-metadata-assignment:
+    cst: FileMetadataAssignmentSyntax
+    ast:
+      disposition: constructor
+      target: FileMetadataAssignment
+  value-block-body:
+    cst: ValueBlockBodySyntax
+    ast:
+      disposition: normalized
+      target: ValueBlock

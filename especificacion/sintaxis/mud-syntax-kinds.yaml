@@ -134,7 +134,6 @@ fixed_tokens:
 - spelling: exists
 - spelling: forall
 - spelling: count
-- spelling: sum
 - spelling: min
 - spelling: max
 named_tokens:
@@ -344,7 +343,7 @@ lexical_forms:
     - builtin-word
     - constant-word
   keyword-word:
-    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\" | \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"sum\" | \"min\" | \"max\""
+    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\" | \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
     references: []
   operator-word:
     rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
@@ -409,10 +408,14 @@ lexical_forms:
 syntax_nodes:
   mud-file:
     kind: MudFileSyntax
-    rhs: "layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ using-file-body | declaration-file-body ]\n        , EOF"
+    rhs: "layout
+        , [ file-metadata-assignment , { required-separation , file-metadata-assignment } , required-separation\
+      \ ]
+        , [ using-file-body | declaration-file-body ]
+        , EOF"
     references:
     - layout
-    - metadata-assignment
+    - file-metadata-assignment
     - required-separation
     - using-file-body
     - declaration-file-body
@@ -548,19 +551,23 @@ syntax_nodes:
     - thing-initializer
   thing-initializer:
     kind: ThingInitializerSyntax
-    rhs: 'field-name , "=" , constant-expression'
+    rhs: field-name , "=" , value-body
     references:
     - field-name
-    - constant-expression
+    - value-body
   metadata-assignment:
     kind: MetadataAssignmentSyntax
-    rhs: "\"~\" , metadata-name\n        , ( \"=\" , constant-expression\n          | \":\" , type-expression , [ \"=\" , constant-expression ]\n          | [ derived-value-shape ] , \":=\" , value-expression\n          )"
+    rhs: "\"~\" , metadata-name
+        , ( \"=\" , value-body
+          | \":\" , type-expression , [ \"=\" , value-body\
+      \ ]
+          | [ derived-value-shape ] , \":=\" , value-body
+          )"
     references:
     - metadata-name
-    - constant-expression
+    - value-body
     - type-expression
     - derived-value-shape
-    - value-expression
   alias-declaration:
     kind: AliasDeclarationSyntax
     rhs: "\"alias\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference } ]\n        , [ alias-definition ]"
@@ -594,20 +601,19 @@ syntax_nodes:
     - inherited-default-override
   component-declaration:
     kind: ComponentDeclarationSyntax
-    rhs: "component-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: "component-name , \":\" , type-expression
+        , ( \"=\" , descriptor-value-body | [ metadata-body ] )"
     references:
     - component-name
     - type-expression
-    - constant-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
+    - descriptor-value-body
+    - metadata-body
   inherited-default-override:
     kind: InheritedDefaultOverrideSyntax
-    rhs: component-name , "=" , constant-expression
+    rhs: component-name , "=" , value-body
     references:
     - component-name
-    - constant-expression
+    - value-body
   family-declaration:
     kind: FamilyDeclarationSyntax
     rhs: "[ \"ordered\" ] , \"family\" , nominal-name\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { family-data-declaration , required-separation }\n        , family-member\n        , { \",\" , declaration-layout , family-member }\n        , [ required-separation ]\n        , \"}\""
@@ -626,24 +632,20 @@ syntax_nodes:
     - calculated-family-data-declaration
   stored-family-data-declaration:
     kind: StoredFamilyDataDeclarationSyntax
-    rhs: "field-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: "field-name , \":\" , type-expression
+        , ( \"=\" , descriptor-value-body | [ metadata-body ] )"
     references:
     - field-name
     - type-expression
-    - constant-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
+    - descriptor-value-body
+    - metadata-body
   calculated-family-data-declaration:
     kind: CalculatedFamilyDataDeclarationSyntax
-    rhs: "field-name , [ derived-value-shape ] , \":=\" , value-expression\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
     references:
     - field-name
     - derived-value-shape
-    - value-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
+    - descriptor-value-body
   family-member:
     kind: FamilyMemberSyntax
     rhs: member-name , [ family-member-body ]
@@ -665,10 +667,10 @@ syntax_nodes:
     - family-data-assignment
   family-data-assignment:
     kind: FamilyDataAssignmentSyntax
-    rhs: field-name , "=" , constant-expression
+    rhs: field-name , "=" , value-body
     references:
     - field-name
-    - constant-expression
+    - value-body
   magnitude-declaration:
     kind: MagnitudeDeclarationSyntax
     rhs: "base-magnitude-declaration\n      | derived-magnitude-declaration\n      | point-magnitude-declaration"
@@ -774,34 +776,28 @@ syntax_nodes:
     - calculated-field-declaration
   stored-field-declaration:
     kind: StoredFieldDeclarationSyntax
-    rhs: "[ \"mut\" ] , field-name , \":\" , type-expression\n        , [ \"=\" , constant-expression ]\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: "[ \"mut\" ] , field-name , \":\" , type-expression
+        , ( \"=\" , descriptor-value-body | [ metadata-body ]\
+      \ )"
     references:
     - field-name
     - type-expression
-    - constant-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
+    - descriptor-value-body
+    - metadata-body
   calculated-field-declaration:
     kind: CalculatedFieldDeclarationSyntax
-    rhs: "field-name , [ derived-value-shape ] , \":=\" , value-expression\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
     references:
     - field-name
     - derived-value-shape
-    - value-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
+    - descriptor-value-body
   public-field-declaration:
     kind: PublicFieldDeclarationSyntax
-    rhs: "field-name , [ derived-value-shape ] , \":=\" , value-expression\n        , [ \"{\" , declaration-layout , [ metadata-assignment , { required-separation , metadata-assignment } , [ required-separation ] ] , \"}\" ]"
+    rhs: field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
     references:
     - field-name
     - derived-value-shape
-    - value-expression
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
+    - descriptor-value-body
   derived-value-shape:
     kind: DerivedValueShapeSyntax
     rhs: "\":\" , type-expression\n      | \"in\" , type-alternative-domain , [ collection-specification ]\n      | collection-specification"
@@ -1008,7 +1004,8 @@ syntax_nodes:
     - expression-block
   expression-block:
     kind: ExpressionBlockSyntax
-    rhs: "{ local-value-declaration , required-separation }\n        , expression"
+    rhs: "{ local-value-declaration , required-separation }
+        , expression"
     references:
     - local-value-declaration
     - required-separation
@@ -1131,19 +1128,23 @@ syntax_nodes:
     - diagnostic-tail
   effect-block:
     kind: EffectBlockSyntax
-    rhs: "\"{\" , declaration-layout\n        , { local-value-declaration , required-separation }\n        , effect\n        , { required-separation , then-statement }\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout
+        , then-statement
+        , { required-separation , then-statement }
+       \
+      \ , [ required-separation ]
+        , \"}\""
     references:
     - declaration-layout
-    - local-value-declaration
-    - required-separation
-    - effect
     - then-statement
+    - required-separation
   then-statement:
     kind: ThenStatementSyntax
-    rhs: "effect\n      | local-value-declaration"
+    rhs: "effect
+      | value-local-declaration"
     references:
     - effect
-    - local-value-declaration
+    - value-local-declaration
   local-value-declaration:
     kind: LocalValueDeclarationSyntax
     rhs: variable-name , [ derived-value-shape ] , ":=" , value-expression
@@ -1276,11 +1277,11 @@ syntax_nodes:
     - mapping-expression
   mapping-expression:
     kind: MappingExpressionSyntax
-    rhs: eventually-expression , [ mapping-arrow , mapping-expression ]
+    rhs: mapping-left , [ mapping-arrow , mapping-right ]
     references:
-    - eventually-expression
+    - mapping-left
     - mapping-arrow
-    - mapping-expression
+    - mapping-right
   mapping-arrow:
     kind: MappingArrowSyntax
     rhs: '"->" | "-->"'
@@ -1664,7 +1665,7 @@ syntax_nodes:
     - expression-body
   quantifier:
     kind: QuantifierSyntax
-    rhs: '"exists" | "forall" | "count" | "sum" | "min" | "max"'
+    rhs: '"exists" | "forall" | "count" | "min" | "max"'
     references: []
   interval-expression:
     kind: IntervalExpressionSyntax
@@ -1752,3 +1753,145 @@ syntax_nodes:
     kind: RequiredSeparationSyntax
     rhs: TERMINATOR , { TERMINATOR }
     references: []
+  descriptor-value-body:
+    kind: DescriptorValueBodySyntax
+    rhs: "value-expression , [ metadata-body ]\n      | \"{\" , declaration-layout\n        , [ metadata-assignment\n      \
+      \      , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , value-block\n\
+      \        , [ required-separation ]\n        , \"}\""
+    references:
+    - value-expression
+    - metadata-body
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
+    - value-block
+  local-add:
+    kind: LocalAddSyntax
+    rhs: '"add" , expression , "to" , assignable-expression'
+    references:
+    - expression
+    - assignable-expression
+  local-assignment:
+    kind: LocalAssignmentSyntax
+    rhs: assignable-expression , assignment-operator , value-expression
+    references:
+    - assignable-expression
+    - assignment-operator
+    - value-expression
+  local-calculated-declaration:
+    kind: LocalCalculatedDeclarationSyntax
+    rhs: variable-name , [ derived-value-shape ] , ":=" , value-body
+    references:
+    - variable-name
+    - derived-value-shape
+    - value-body
+  local-for-each:
+    kind: LocalForEachSyntax
+    rhs: "\"for\" , \"each\" , iteration-binding , \"in\" , expression\n        , [ \"by\" , expression ]\n        , [ \"if\"\
+      \ , expression-body ]\n        , \":\"\n        , [ required-separation ]\n        , ( value-statement | local-statement-block\
+      \ )"
+    references:
+    - iteration-binding
+    - expression
+    - expression-body
+    - required-separation
+    - value-statement
+    - local-statement-block
+  local-mutation:
+    kind: LocalMutationSyntax
+    rhs: "local-assignment\n      | local-add\n      | local-remove"
+    references:
+    - local-assignment
+    - local-add
+    - local-remove
+  local-remove:
+    kind: LocalRemoveSyntax
+    rhs: '"remove" , expression , "from" , assignable-expression'
+    references:
+    - expression
+    - assignable-expression
+  local-statement-block:
+    kind: LocalStatementBlockSyntax
+    rhs: "\"{\" , declaration-layout\n        , value-statement\n        , { required-separation , value-statement }\n     \
+      \   , [ required-separation ]\n        , \"}\""
+    references:
+    - declaration-layout
+    - value-statement
+    - required-separation
+  local-stored-declaration:
+    kind: LocalStoredDeclarationSyntax
+    rhs: "[ \"mut\" ] , variable-name , \":\" , type-expression\n        , \"=\" , value-body"
+    references:
+    - variable-name
+    - type-expression
+    - value-body
+  mapping-key-body:
+    kind: MappingKeyBodySyntax
+    rhs: "\"{\" , declaration-layout , expression-block\n        , [ required-separation ] , \"}\""
+    references:
+    - declaration-layout
+    - expression-block
+    - required-separation
+  mapping-left:
+    kind: MappingLeftSyntax
+    rhs: "eventually-expression\n      | mapping-key-body"
+    references:
+    - eventually-expression
+    - mapping-key-body
+  mapping-right:
+    kind: MappingRightSyntax
+    rhs: "mapping-expression
+      | value-block-body"
+    references:
+    - mapping-expression
+    - value-block-body
+  metadata-body:
+    kind: MetadataBodySyntax
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    references:
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
+  value-block:
+    kind: ValueBlockSyntax
+    rhs: "{ value-statement , required-separation }\n        , value-expression"
+    references:
+    - value-statement
+    - required-separation
+    - value-expression
+  value-body:
+    kind: ValueBodySyntax
+    rhs: "value-expression
+      | value-block-body"
+    references:
+    - value-expression
+    - value-block-body
+  value-local-declaration:
+    kind: ValueLocalDeclarationSyntax
+    rhs: "local-calculated-declaration\n      | local-stored-declaration"
+    references:
+    - local-calculated-declaration
+    - local-stored-declaration
+  value-statement:
+    kind: ValueStatementSyntax
+    rhs: "value-local-declaration\n      | local-mutation\n      | local-for-each"
+    references:
+    - value-local-declaration
+    - local-mutation
+    - local-for-each
+  file-metadata-assignment:
+    kind: FileMetadataAssignmentSyntax
+    rhs: "\"~\" , metadata-name\n        , ( \"=\" , constant-expression\n          | \":\" , type-expression , [ \"=\" , constant-expression\
+      \ ]\n          )"
+    references:
+    - metadata-name
+    - constant-expression
+    - type-expression
+  value-block-body:
+    kind: ValueBlockBodySyntax
+    rhs: "\"{\" , declaration-layout , value-block\n        , [ required-separation ] , \"}\""
+    references:
+    - declaration-layout
+    - value-block
+    - required-separation

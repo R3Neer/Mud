@@ -19,6 +19,7 @@ questions:
   - Q-061
   - Q-063
 decisions:
+  - D-101
   - D-015
   - D-032
   - D-054
@@ -221,10 +222,10 @@ El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene
 ### Inicializador concreto
 
 ```text
-ThingInitializer(name, value)
+ThingInitializer(name, valueBlock)
 ```
 
-Conserva una forma `fieldName = constant-expression` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: el AST mantiene separados el predeterminado de esquema y la contribución de inicialización. `name` permanece como `FieldName` sin resolver y `value` como `expr`; la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado heredado y que el valor satisfaga su tipo y dominio.
+Conserva una forma `fieldName = value-body` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: el AST mantiene separados el predeterminado de esquema y la contribución de inicialización. `name` permanece como `FieldName` sin resolver y el RHS normaliza a `ValueBlock`;  la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado heredado y que el valor satisfaga su tipo y dominio.
 
 La validación previa al AST rechaza que una misma definición contenga una declaración local de campo y un `ThingInitializer` con el mismo nombre. Una declaración `fieldName: Type = value` conserva su `defaultValue` dentro del `StoredFieldDecl` y no genera `ThingInitializer`.
 
@@ -239,7 +240,7 @@ StoredFieldDecl(
     collectionMutable,
     name,
     shape,
-    defaultValue?,
+    defaultValueBlock?,
     metadata*
 )
 ```
@@ -249,14 +250,14 @@ StoredFieldDecl(
 ### Campo calculado
 
 ```text
-CalculatedFieldDecl(name, shape?, value, metadata*)
+CalculatedFieldDecl(name, shape?, valueBlock, metadata*)
 ```
 
 No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colección a la inferencia. `ExplicitDerivedShape` conserva un `TypeExpr` completo; `InferredDerivedShape` conserva un dominio o colección escritos sin inventar un tipo superficial. La elaboración combina esas restricciones con el tipo inferido.
 
 ### Campos públicos
 
-`PublicFieldDecl(name, shape?, value, metadata*)` comparte la forma calculada, pero conserva una categoría propia porque pertenece a la interfaz de `look` y `message`.
+`PublicFieldDecl(name, shape?, valueBlock, metadata*)` comparte la forma calculada, pero conserva una categoría propia porque pertenece a la interfaz de `look` y `message`.
 
 ## Forma de valor
 
@@ -495,9 +496,21 @@ Una regla reactiva almacena:
 
 En una regla `always`, `InvariantBodySyntax` produce exclusivamente el `ExpressionBlock`; el `DiagnosticTailSyntax` posterior a la llave de cierre produce el campo `diagnostic` de `AlwaysRuleDecl`. La regla puede omitirlo y el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
 
-## Bloques de expresión
+Los defaults de metadata de fichero no usan `ValueBlock`: conservan una asignación almacenada constante `FileMetadataAssignment`.
 
-La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las declaraciones `:=` y `result` la única expresión final. Cada `LocalValueDecl` conserva un `DerivedValueShape` opcional. En una declaración derivada, el tipo nominal o estructural escrito aporta el contrato estático, mientras que dominio, cardinalidad, `unique` y orden escritos en su `DerivedValueShape`, exista o no tipo explícito, son coercitivos sobre el resultado y se elaboran con la misma normalización que la transformación local equivalente. `[mut]` no es una coerción derivada admisible porque no puede fabricar autoridad. El nodo no fija el tipo de `result`: el propietario aplica su contrato booleano, temporal, agregable u ordenable. La forma breve normaliza a `ExpressionBlock([], expression)`. Las locales son puras, inmutables, secuenciales y sin referencias adelantadas, ciclos, redeclaración ni sombreado. El `otherwise` asociado no forma parte del bloque.
+## Bloques de expresión y de valor
+
+`ExpressionBlock(locals, result)` contiene solo `LocalValueDecl` calculadas puras y una expresión final. Una forma breve normaliza a `ExpressionBlock([], expression)`. No contiene variables almacenadas, mutación, `LocalForEach` ni `ValueBlock` anidado como expresión primaria.
+
+`ValueBlock(statements, result)` contiene `ValueStatement*` y una expresión final. `ValueStatement` distingue declaración calculada, declaración almacenada, mutación local y `LocalForEach`. Las declaraciones calculadas y almacenadas de un `ValueBlock` conservan a su vez su inicializador como `ValueBlock`, de modo que la forma breve y extensa convergen sin convertir el bloque en `expr`.
+
+`LocalMutation` conserva el destino superficial sin resolver; tipado/elaboración demuestran después que el footprint completo pertenece al almacenamiento creado dentro del `ValueBlock`. `LocalForEach` usa `LocalStatementBlock`, no `EffectBlock`, y conserva filtro `ExpressionBlock?`.
+
+Los propietarios de `ExpressionBlock` son reglas booleanas, `always`, `when`, guardas, `after` de action, filtros de `for each`, selección, `exists`, `forall`, `count`, `min`, `max`, claves exactas y selectores funcionales. Los propietarios de `ValueBlock` son los slots de valor declarados por la gramática: locales, campos, datos/componentes, inicializadores, valores/resultados de diccionario y metadata. `given` conserva un `expr? defaultValue` porque su default no adquiere bloque de valor.
+
+`min` y `max` conservan `QuantifierExpr` y `ExpressionBlock` booleano. La elaboración devuelve el primer/último testigo aceptado según el orden semántico de `source`; `Sum` no existe en `quantifier_kind`.
+
+Cuando metadata y `ValueBlock` comparten físicamente un cuerpo de un descriptor compatible, el AST extrae la metadata al campo `metadata` del propietario y conserva solo las sentencias de valor en `ValueBlock`.
 
 ## Acciones
 
@@ -645,7 +658,7 @@ El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estáti
 
 ### Cuantificadores
 
-`exists`, `forall`, `count`, `sum`, `min` y `max` comparten `QuantifierExpr` con un enum propio, un `step?` opcional y un `ExpressionBlock` como cuerpo.
+`exists`, `forall`, `count`, `min` y `max` comparten `QuantifierExpr` con un enum propio, un `step?` opcional y un `ExpressionBlock` como cuerpo.
 
 ### Operadores de colección
 
