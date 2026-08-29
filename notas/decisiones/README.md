@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 94.
-- Vigentes: 93.
+- Total: 93.
+- Vigentes: 92.
 - Propuestas: 0.
 - Sustituidas: 1.
 - Retiradas: 0.
@@ -56,7 +56,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-040 | vigente | 2026-07-28 | [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|Semántica numérica básica restante]] |
 | D-041 | vigente | 2026-07-28 | [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|Contratos de las tres clases de regla]] |
 | D-042 | vigente | 2026-07-28 | [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|Acciones, raíz y resultados]] |
-| D-043 | vigente | 2026-07-28 | [[notas/decisiones/ADR-043-consulta-especulativa-allowed|`allowed` como especulación descartable]] |
+| D-043 | vigente | 2026-07-28 | [[notas/decisiones/ADR-043-consulta-especulativa-allowed|Consulta especulativa `allowed`]] |
 | D-044 | vigente | 2026-07-28 | [[notas/decisiones/ADR-044-alcanzabilidad-eventually|Alcanzabilidad `eventually`]] |
 | D-045 | vigente | 2026-07-28 | [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|Resolución causal, vinculaciones y cola]] |
 | D-046 | vigente | 2026-07-28 | [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|Álgebra y conflictos de efectos]] |
@@ -112,7 +112,6 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-096 | vigente | 2026-08-28 | [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|Módulos, callables, `look`, `message` y activación]] |
 | D-097 | vigente | 2026-08-28 | [[notas/decisiones/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|HIR nominal vigente e IR semántico diferido]] |
 | D-098 | vigente | 2026-08-28 | [[notas/decisiones/ADR-098-rutas-asignables-y-write-back-de-aliases|Rutas asignables y write-back de aliases inmutables]] |
-| D-099 | vigente | 2026-08-28 | [[notas/decisiones/ADR-099-materializaciones-frescas-tras-destroy-create|Materializaciones frescas tras `destroy` y `create`]] |
 
 ## Identificadores reservados
 
