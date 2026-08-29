@@ -64,23 +64,19 @@ cases:
   produces_ast: true
 - id: given-readonly
   category: participant
-  source: "rule HasEnough for owner: Person\ngiven amount: Money [1 ordered] = 1 {\n\
-    \    owner.balance >= amount\n}\n"
+  source: "rule HasEnough for owner: Person\ngiven amount: Money [1 ordered] = 1 {\n    owner.balance >= amount\n}\n"
   cst_root: MudFileSyntax
   ast: GivenDecl(amount, ReadonlyCollectionSpec([1..1], ordered))
   produces_ast: true
 - id: for-domain
   category: participant
-  source: "rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {\n\
-    \    forall person in people: person.age >= 18\n}\n"
+  source: "rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {\n    forall person in people: person.age >= 18\n}\n"
   cst_root: MudFileSyntax
   ast: ForParticipant(people, domain=EligibleCitizens)
   produces_ast: true
 - id: related-on-forward-reference
   category: participant
-  source: "rule MutualFriends on\n    alice: Person in bob.friends,\n    bob in alice.friends\n\
-    {\n    when alice.mood changes or bob.mood changes\n    then alice.mood = bob.mood\n\
-    }\n"
+  source: "rule MutualFriends on\n    alice: Person in bob.friends,\n    bob in alice.friends\n{\n    when alice.mood changes or bob.mood changes\n    then alice.mood = bob.mood\n}\n"
   cst_root: MudFileSyntax
   ast: ReactiveRuleDecl(on=[RelatedOnParticipant(alice), RelatedOnParticipant(bob)])
   normalizations:
@@ -102,11 +98,9 @@ cases:
   produces_ast: true
 - id: receiver-tuple-contextual
   category: call
-  source: "action Attack for attacker: Army, defender: Army {\n    then (attacker,\
-    \ defender).Resolve()\n}\n"
+  source: "action Attack for attacker: Army, defender: Army {\n    then (attacker, defender).Resolve()\n}\n"
   cst_root: MudFileSyntax
-  ast: ActionCallCandidateEffect(CallExpr(MemberAccessExpr(PositionalStructuralLiteralExpr(...),
-    Resolve), []))
+  ast: ActionCallCandidateEffect(CallExpr(MemberAccessExpr(PositionalStructuralLiteralExpr(...), Resolve), []))
   normalizations:
   - defer-multi-receiver-interpretation
   produces_ast: true
@@ -136,8 +130,7 @@ cases:
   produces_ast: true
 - id: word-and-symbol-and
   category: operator
-  source: "rule Sample on world: World {\n    when world.a changes and world.b changes\n\
-    \    if world.a & world.b\n    then world.c = true\n}\n"
+  source: "rule Sample on world: World {\n    when world.a changes and world.b changes\n    if world.a & world.b\n    then world.c = true\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(WordAnd) and BinaryExpr(SymbolAnd)
   normalizations:
@@ -151,22 +144,17 @@ cases:
   produces_ast: true
 - id: expression-block-with-locals
   category: expression-block
-  source: "rule CanAfford for person: Person given price: Money {\n    available :=\
-    \ person.money\n    available >= price\n}\n"
+  source: "rule CanAfford for person: Person given price: Money {\n    available := person.money\n    available >= price\n}\n"
   cst_root: MudFileSyntax
-  ast: BooleanRuleDecl(condition=ExpressionBlock(locals=[LocalValueDecl(available)],
-    result=ComparisonChainExpr(...)))
+  ast: BooleanRuleDecl(condition=ExpressionBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
   normalizations:
   - expression-block-locals-and-result
   produces_ast: true
 - id: action-condition-locals-visible-in-otherwise
   category: expression-block
-  source: "action Buy for person: Person given price: Money {\n    if {\n        missing\
-    \ := price - person.money\n        missing <= 0\n    } otherwise \"You need {missing}\
-    \ more\"\n    then person.money -= price\n}\n"
+  source: "action Buy for person: Person given price: Money {\n    if {\n        missing := price - person.money\n        missing <= 0\n    } otherwise \"You need {missing} more\"\n    then person.money -= price\n}\n"
   cst_root: MudFileSyntax
-  ast: ActionGuard(condition=ExpressionBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)),
-    diagnostic=TextTemplateExpr(...))
+  ast: ActionGuard(condition=ExpressionBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
   normalizations:
   - extend-boolean-local-environment-through-otherwise
   produces_ast: true
@@ -203,8 +191,7 @@ cases:
   produces_ast: true
 - id: cyclic-point-domain
   category: magnitude
-  source: "magnitude TimeOfDay point over Time in [0..86_400) cycle {\n    ~format\
-    \ = \"{hour:2}:{minute:2}:{second:2}\"\n}\n"
+  source: "magnitude TimeOfDay point over Time in [0..86_400) cycle {\n    ~format = \"{hour:2}:{minute:2}:{second:2}\"\n}\n"
   cst_root: MudFileSyntax
   ast: PointMagnitudeDecl(domain=CyclicPointDomain(...))
   produces_ast: true
@@ -242,8 +229,7 @@ cases:
   produces_ast: false
 - id: unit-prefixes-omitted
   category: unit
-  source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\
-    \n        ~abbreviation = \"m\"\n    }\n}\n"
+  source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\n        ~abbreviation = \"m\"\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(name), StoredMetadataAssignment(abbreviation)])
   normalizations:
@@ -251,16 +237,13 @@ cases:
   produces_ast: true
 - id: unit-prefixes-empty
   category: unit
-  source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\
-    \n        ~abbreviation = \"m\"\n        ~prefixes = empty\n    }\n}\n"
+  source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\n        ~abbreviation = \"m\"\n        ~prefixes = empty\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(name), StoredMetadataAssignment(abbreviation),
-    StoredMetadataAssignment(prefixes, empty)])
+  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(name), StoredMetadataAssignment(abbreviation), StoredMetadataAssignment(prefixes, empty)])
   produces_ast: true
 - id: duplicate-unit-metadata
   category: validation-before-ast
-  source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\
-    \n        ~name = \"metre\"\n        ~abbreviation = \"m\"\n    }\n}\n"
+  source: "magnitude Length: Num {\n    root unit meter {\n        ~name = \"meter\"\n        ~name = \"metre\"\n        ~abbreviation = \"m\"\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - duplicate-metadata-declaration
@@ -275,8 +258,7 @@ cases:
   produces_ast: true
 - id: test-after-single
   category: test
-  source: "test CloseDoor {\n    start with {\n        Door, empty\n    }\n    then\
-    \ Door.open = false\n    after Door.open == false\n}\n"
+  source: "test CloseDoor {\n    start with {\n        Door, empty\n    }\n    then Door.open = false\n    after Door.open == false\n}\n"
   cst_root: MudFileSyntax
   ast: TestDecl(after=TestAfterBlock(locals=[], assertions=[TestAssertion(...)]))
   normalizations:
@@ -284,13 +266,9 @@ cases:
   produces_ast: true
 - id: test-after-locals
   category: test
-  source: "test Purchase {\n    start with {\n        Buyer, empty\n    }\n    then\
-    \ {\n        cost := 5\n        Buyer.money -= cost\n    }\n    after {\n    \
-    \    remaining := Buyer.money\n        remaining >= 0\n        remaining < 10\
-    \ otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
+  source: "test Purchase {\n    start with {\n        Buyer, empty\n    }\n    then {\n        cost := 5\n        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining >= 0\n        remaining < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)],
-    assertions=[TestAssertion(...), TestAssertion(...)]))
+  ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
   normalizations:
   - test-then-locals
   - test-after-locals-before-assertions
@@ -392,75 +370,60 @@ cases:
   category: field
   source: "thing Sample {\n    numbers in 0..100 := a * b, d, c / a\n}\n"
   cst_root: MudFileSyntax
-  ast: CalculatedFieldDecl(numbers, shape=InferredDerivedShape(domain=0..100), value=CollectionLiteralExpr(3
-    elements))
+  ast: CalculatedFieldDecl(numbers, shape=InferredDerivedShape(domain=0..100), value=CollectionLiteralExpr(3 elements))
   normalizations:
   - comma-value-to-derived-collection
   - infer-cardinality-three
   produces_ast: true
 - id: named-units-and-all-prefixes
   category: unit
-  source: "magnitude Length: Num {\n    root unit meter {\n        ~abbreviation =\
-    \ \"m\"\n        ~prefixes = all\n    }\n}\n"
+  source: "magnitude Length: Num {\n    root unit meter {\n        ~abbreviation = \"m\"\n        ~prefixes = all\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(abbreviation, ...),
-    StoredMetadataAssignment(prefixes, AllLiteral)])
+  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(abbreviation, ...), StoredMetadataAssignment(prefixes, AllLiteral)])
   produces_ast: true
 - id: transition-otherwise
   category: action
-  source: "action RemoveBob for mut team: Team {\n    then {\n        destroy Bob\n\
-    \    }\n    otherwise \"Bob is still required by {team}\"\n}\n"
+  source: "action RemoveBob for mut team: Team {\n    then {\n        destroy Bob\n    }\n    otherwise \"Bob is still required by {team}\"\n}\n"
   cst_root: MudFileSyntax
   ast: EffectBlock(failureDiagnostic=TextTemplateExpr(...))
   produces_ast: true
 - id: always-rule-external-otherwise
   category: rule
-  source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n\
-    \    population >= 0 people\n}\notherwise \"Population cannot be negative: {population}\"\
-    \n"
+  source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n    population >= 0 people\n}\notherwise \"Population cannot be negative: {population}\"\n"
   cst_root: MudFileSyntax
-  ast: AlwaysRuleDecl(invariant=ExpressionBlock(locals=[LocalValueDecl(population)],
-    result=...), diagnostic=TextTemplateExpr(...))
+  ast: AlwaysRuleDecl(invariant=ExpressionBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
   normalizations:
   - extend-boolean-local-environment-through-otherwise
   produces_ast: true
 - id: always-rule-internal-otherwise-invalid
   category: validation-before-ast
-  source: "always rule Broken on kingdom: Kingdom {\n    kingdom.population >= 0\n\
-    \    otherwise \"Invalid population\"\n}\n"
+  source: "always rule Broken on kingdom: Kingdom {\n    kingdom.population >= 0\n    otherwise \"Invalid population\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - always-otherwise-must-follow-body
   produces_ast: false
 - id: leading-or-after-complete-when-expression
   category: validation-before-ast
-  source: "rule BrokenAlarm on alarm: Alarm {\n    when {\n        alarm.calendar.day\
-    \ changes\n        or alarm.enabled\n    }\n    then create AlarmTriggered\n}\n"
+  source: "rule BrokenAlarm on alarm: Alarm {\n    when {\n        alarm.calendar.day changes\n        or alarm.enabled\n    }\n    then create AlarmTriggered\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - unexpected-leading-operator-after-terminator
   produces_ast: false
 - id: collection-difference-distinct-from-subtraction
   category: expression
-  source: "thing Difference {\n    removed := left -- right\n    numeric := singletonLeft\
-    \ - singletonRight\n}\n"
+  source: "thing Difference {\n    removed := left -- right\n    numeric := singletonLeft - singletonRight\n}\n"
   cst_root: MudFileSyntax
-  ast: BinaryExpr(left, CollectionDifference, right); BinaryExpr(singletonLeft, Subtract,
-    singletonRight)
+  ast: BinaryExpr(left, CollectionDifference, right); BinaryExpr(singletonLeft, Subtract, singletonRight)
   produces_ast: true
 - id: compound-collection-updates
   category: effect
-  source: "action Update for mut target: Item [* unique] {\n    then {\n        target\
-    \ |= added\n        target &= allowedItems\n        target ^= toggled\n      \
-    \  target --= removed\n    }\n}\n"
+  source: "action Update for mut target: Item [* unique] {\n    then {\n        target |= added\n        target &= allowedItems\n        target ^= toggled\n        target --= removed\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: AssignmentEffect(UnionAssign); AssignmentEffect(IntersectionAssign); AssignmentEffect(SymmetricDifferenceAssign);
-    AssignmentEffect(DifferenceAssign)
+  ast: AssignmentEffect(UnionAssign); AssignmentEffect(IntersectionAssign); AssignmentEffect(SymmetricDifferenceAssign); AssignmentEffect(DifferenceAssign)
   produces_ast: true
 - id: take-after-filter
   category: expression
-  source: "thing Ranking {\n    chosen := take n from player in players: player.score\
-    \ == 2\n}\n"
+  source: "thing Ranking {\n    chosen := take n from player in players: player.score == 2\n}\n"
   cst_root: MudFileSyntax
   ast: TakeExpr(n, SelectionExpr(player, players, BinaryExpr(...)))
   normalizations:
@@ -468,8 +431,7 @@ cases:
   produces_ast: true
 - id: filter-after-take
   category: expression
-  source: "thing Ranking {\n    chosen := player in take m from players: player.score\
-    \ == 2\n}\n"
+  source: "thing Ranking {\n    chosen := player in take m from players: player.score == 2\n}\n"
   cst_root: MudFileSyntax
   ast: SelectionExpr(player, TakeExpr(m, players), BinaryExpr(...))
   normalizations:
@@ -514,22 +476,19 @@ cases:
   produces_ast: true
 - id: structural-alias-specialization-and-derived
   category: alias
-  source: "alias Person {\n    first: Text\n    last: Text\n    full: Text := \"{first}\
-    \ {last}\"\n}\nalias Student as Person {\n    id: Nat\n}\n"
+  source: "alias Person {\n    first: Text\n    last: Text\n    full: Text := \"{first} {last}\"\n}\nalias Student as Person {\n    id: Nat\n}\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(Student, ancestors=[Person], definition=StructuralAlias(...))
   produces_ast: true
 - id: alias-default-override
   category: alias
-  source: "alias Pagination {\n    page: Nat = 1\n    size: Nat = 20\n}\nalias LargePagination\
-    \ as Pagination {\n    size = 100\n}\n"
+  source: "alias Pagination {\n    page: Nat = 1\n    size: Nat = 20\n}\nalias LargePagination as Pagination {\n    size = 100\n}\n"
   cst_root: MudFileSyntax
   ast: AliasDefaultOverride(size, 100)
   produces_ast: true
 - id: alias-derived-mutable-view
   category: alias
-  source: "alias Squad {\n    members: Soldier [*]\n    wounded [* mut] := soldier\
-    \ in members: soldier.health < MaximumHealth\n}\n"
+  source: "alias Squad {\n    members: Soldier [*]\n    wounded [* mut] := soldier in members: soldier.health < MaximumHealth\n}\n"
   cst_root: MudFileSyntax
   ast: AliasCalculatedFieldDecl(wounded, elementsMutable=Enabled, ...)
   produces_ast: true
@@ -555,16 +514,13 @@ cases:
   produces_ast: false
 - id: structural-member-requires-nominal-alias
   category: resolution
-  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat :=\
-    \ first * second\n}\nrule Valid {\n    ((1, 2) to CosoAlias).derived == 2\n}\n"
+  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat := first * second\n}\nrule Valid {\n    ((1, 2) to CosoAlias).derived == 2\n}\n"
   cst_root: MudFileSyntax
-  ast: MemberAccessExpr(ConvertExpr(PositionalStructuralLiteralExpr(...), CosoAlias),
-    derived)
+  ast: MemberAccessExpr(ConvertExpr(PositionalStructuralLiteralExpr(...), CosoAlias), derived)
   produces_ast: true
 - id: structural-literal-does-not-own-alias-member
   category: validation-after-resolution
-  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat :=\
-    \ first * second\n}\nrule Invalid {\n    (1, 2).derived == 2\n}\n"
+  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat := first * second\n}\nrule Invalid {\n    (1, 2).derived == 2\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - member-requires-nominal-alias
@@ -582,8 +538,7 @@ cases:
   produces_ast: true
 - id: subaction-kind-preserved
   category: action
-  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n\
-    \    then account.balance -= amount\n}\n"
+  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\n"
   cst_root: MudFileSyntax
   ast: ActionDecl(kind=Subaction, name=RemoveMoney)
   produces_ast: true
@@ -591,28 +546,25 @@ cases:
   category: type
   source: "thing Tables {\n    table: A -> B [2] --> C [3 ordered]\n}\n"
   cst_root: MudFileSyntax
-  ast: ExactDictionaryType(A, DecisionDictionaryType(B, C, branches=[3], mode=FirstMatch),
-    entries=[2])
+  ast: ExactDictionaryType(A, DecisionDictionaryType(B, C, branches=[3], mode=FirstMatch), entries=[2])
   normalizations:
   - fold-dictionary-chain-right
   produces_ast: true
 - id: anonymous-product-types
   category: type
-  source: "thing Pairs {\n    positional: (Nat, Text)\n    named: (count: Nat, label:\
-    \ Text)\n}\n"
+  source: "thing Pairs {\n    positional: (Nat, Text)\n    named: (count: Nat, label: Text)\n}\n"
   cst_root: MudFileSyntax
   ast: 'PositionalProductType(Nat, Text) and NamedProductType(count: Nat, label: Text)'
   produces_ast: true
 - id: not-in-comparison
   category: expression
-  source: "rule Outside given value: Nat {\n    value not in 1..10\n}\n"
+  source: "rule Outside given value: Nat {\n    1..10 has not value\n}\n"
   cst_root: MudFileSyntax
-  ast: ComparisonChainExpr(value, NotMembership, 1..10)
+  ast: ComparisonChainExpr(1..10, HasNotMember, value)
   produces_ast: true
 - id: metadata-access-and-assignment
   category: validation-before-ast
-  source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora\
-    \ [mut] {\n    then person~name = \"Nora la Roja\"\n}\n"
+  source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora [mut] {\n    then person~name = \"Nora la Roja\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
@@ -621,8 +573,7 @@ cases:
   category: text
   source: "thing Reporter {\n    label: Text = \"Rule: {CanRecruit~anchor}\"\n}\n"
   cst_root: MudFileSyntax
-  ast: TextTemplateExpr([TextFragment, ValueInterpolation(MetadataAccessExpr(CanRecruit,
-    anchor))])
+  ast: TextTemplateExpr([TextFragment, ValueInterpolation(MetadataAccessExpr(CanRecruit, anchor))])
   produces_ast: true
 - id: structured-start-with
   category: start
@@ -632,8 +583,7 @@ cases:
   produces_ast: true
 - id: decision-fallback
   category: dictionary
-  source: "thing Policies {\n    policy: Any --> Text [ordered] =\n        value is\
-    \ Nat --> \"number\",\n        _ --> \"other\"\n}\n"
+  source: "thing Policies {\n    policy: Any --> Text [ordered] =\n        value is Nat --> \"number\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Any, Text, FirstMatch) with DecisionBranchExpr and FallbackLiteral
   produces_ast: true
@@ -653,8 +603,7 @@ cases:
   produces_ast: false
 - id: thing-concrete-initializer
   category: thing
-  source: "thing Kingdom {\n    mut treasury: Money = 0\n}\nthing France as Kingdom\
-    \ {\n    treasury = 20\n}\n"
+  source: "thing Kingdom {\n    mut treasury: Money = 0\n}\nthing France as Kingdom {\n    treasury = 20\n}\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(France, initializers=[ThingInitializer(treasury, 20)])
   normalizations:
@@ -662,8 +611,7 @@ cases:
   produces_ast: true
 - id: thing-name-field-initializer
   category: thing
-  source: "thing Named {\n    name: Text = \"unknown\"\n}\nthing Ada as Named {\n\
-    \    name = \"Ada\"\n}\n"
+  source: "thing Named {\n    name: Text = \"unknown\"\n}\nthing Ada as Named {\n    name = \"Ada\"\n}\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(Ada, initializers=[ThingInitializer(name, TextTemplateExpr(Ada))])
   normalizations:
@@ -671,8 +619,7 @@ cases:
   produces_ast: true
 - id: abstract-thing-inherited-initializer
   category: thing
-  source: "thing Being {\n    age: Nat = 0\n}\nabstract thing Adult as Being {\n \
-    \   age = 18\n}\nthing Clara as Adult\n"
+  source: "thing Being {\n    age: Nat = 0\n}\nabstract thing Adult as Being {\n    age = 18\n}\nthing Clara as Adult\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(Adult, isAbstract=Enabled, initializers=[ThingInitializer(age, 18)])
   normalizations:
@@ -687,8 +634,7 @@ cases:
   produces_ast: false
 - id: arrow-union-precedence
   category: type
-  source: "thing Shapes {\n    exact: A | B -> C | D\n    functional: A | B --> C\
-    \ | D\n}\n"
+  source: "thing Shapes {\n    exact: A | B -> C | D\n    functional: A | B --> C | D\n}\n"
   cst_root: MudFileSyntax
   ast: ArrowTypes((A | B), (C | D))
   normalizations:
@@ -730,8 +676,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-set-union
   category: expression
-  source: "rule Merge for left: Key -> Value, right: Key -> Value {\n    (left | right)\
-    \ == (left | right)\n}\n"
+  source: "rule Merge for left: Key -> Value, right: Key -> Value {\n    (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolOr)
   normalizations:
@@ -739,8 +684,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-symmetric-difference
   category: expression
-  source: "rule Exclusive for left: Key -> Value, right: Key -> Value {\n    (left\
-    \ ^ right) == (left ^ right)\n}\n"
+  source: "rule Exclusive for left: Key -> Value, right: Key -> Value {\n    (left ^ right) == (left ^ right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolXor)
   normalizations:
@@ -748,8 +692,7 @@ cases:
   produces_ast: true
 - id: functional-dictionary-set-operation
   category: expression
-  source: "rule Combine for first: A --> B, second: A --> B {\n    (first | second)\
-    \ == (first | second)\n}\n"
+  source: "rule Combine for first: A --> B, second: A --> B {\n    (first | second) == (first | second)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolOr)
   normalizations:
@@ -757,8 +700,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-intersection-and-difference
   category: expression
-  source: "rule ExactAlgebra for left: Key -> Value, right: Key -> Value {\n    (left\
-    \ & right) == (left & right) and\n    (left -- right) == (left -- right)\n}\n"
+  source: "rule ExactAlgebra for left: Key -> Value, right: Key -> Value {\n    (left & right) == (left & right) and\n    (left -- right) == (left -- right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolAnd) with ExactDictionarySetOperationExpr expectations
   normalizations:
@@ -767,10 +709,7 @@ cases:
   produces_ast: true
 - id: functional-dictionary-all-set-operations
   category: expression
-  source: "rule FunctionalAlgebra\nfor first: A --> B [unique], second: A --> B [unique]\
-    \ {\n    (first | second) == (first | second) and\n    (first & second) == (first\
-    \ & second) and\n    (first -- second) == (first -- second) and\n    (first ^\
-    \ second) == (first ^ second)\n}\n"
+  source: "rule FunctionalAlgebra\nfor first: A --> B [unique], second: A --> B [unique] {\n    (first | second) == (first | second) and\n    (first & second) == (first & second) and\n    (first -- second) == (first -- second) and\n    (first ^ second) == (first ^ second)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr operators elaborated as FunctionalDictionarySetOperationExpr
   normalizations:
@@ -781,27 +720,21 @@ cases:
   produces_ast: true
 - id: mixed-dictionary-classes-rejected
   category: validation-after-resolution
-  source: "rule Broken for exact: A -> B, functional: A --> B {\n    (exact | functional)\
-    \ == exact\n}\n"
+  source: "rule Broken for exact: A -> B, functional: A --> B {\n    (exact | functional) == exact\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - dictionary-set-operation-class-mismatch
   produces_ast: true
 - id: functional-ordered-union-loses-order
   category: validation-after-resolution
-  source: "thing Policies {\n    first: A --> B [ordered] = _ --> FirstValue\n   \
-    \ second: A --> B [ordered] = _ --> SecondValue\n    combined: A --> B [ordered]\
-    \ = first | second\n}\n"
+  source: "thing Policies {\n    first: A --> B [ordered] = _ --> FirstValue\n    second: A --> B [ordered] = _ --> SecondValue\n    combined: A --> B [ordered] = first | second\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-union-does-not-preserve-ordered
   produces_ast: true
 - id: iis-functional-narrowing
   category: dictionary
-  source: "thing Descriptions {\n    describe: Identifier --> Text [ordered] =\n \
-    \       value iis EmployeeId --> \"Employee {value}\",\n        value iis PersonId\
-    \ --> \"Person {value}\",\n        value is Identifier --> \"Identifier {value}\"\
-    \n}\n"
+  source: "thing Descriptions {\n    describe: Identifier --> Text [ordered] =\n        value iis EmployeeId --> \"Employee {value}\",\n        value iis PersonId --> \"Person {value}\",\n        value is Identifier --> \"Identifier {value}\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Identifier, Text, FirstMatch) with ExactTypeTestExpr
   produces_ast: true
@@ -813,40 +746,35 @@ cases:
   produces_ast: true
 - id: iis-singleton-thing-rejected
   category: validation-after-resolution
-  source: "thing Madrid as City\nrule Broken for place: City {\n    place iis Madrid\n\
-    }\n"
+  source: "thing Madrid as City\nrule Broken for place: City {\n    place iis Madrid\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - iis-requires-nominal-type-not-singleton
   produces_ast: true
 - id: iis-chain-rejected
   category: validation-before-ast
-  source: "rule Broken for value: Identifier {\n    value iis PersonId iis Identifier\n\
-    }\n"
+  source: "rule Broken for value: Identifier {\n    value iis PersonId iis Identifier\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - nonchainable-comparison-cannot-chain
   produces_ast: false
 - id: exact-dictionary-input-incompatible
   category: validation-after-resolution
-  source: "rule Broken for left: A -> B, right: C -> B {\n    (left | right) == left\n\
-    }\n"
+  source: "rule Broken for left: A -> B, right: C -> B {\n    (left | right) == left\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - dictionary-set-operation-input-incompatible
   produces_ast: true
 - id: exact-dictionary-output-incompatible
   category: validation-after-resolution
-  source: "rule Broken for left: A -> B, right: A -> C {\n    (left & right) == left\n\
-    }\n"
+  source: "rule Broken for left: A -> B, right: A -> C {\n    (left & right) == left\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - dictionary-set-operation-output-incompatible
   produces_ast: true
 - id: functional-symmetric-difference-requires-unique
   category: validation-after-resolution
-  source: "rule Broken for first: A --> B, second: A --> B {\n    (first ^ second)\
-    \ == (first ^ second)\n}\n"
+  source: "rule Broken for first: A --> B, second: A --> B {\n    (first ^ second) == (first ^ second)\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - symmetric-difference-requires-unique-result
@@ -860,8 +788,7 @@ cases:
   produces_ast: true
 - id: legacy-unit-metadata-rejected
   category: validation-before-ast
-  source: "magnitude Length: Num {\n    root unit meter {\n        name = \"meter\"\
-    \n    }\n}\n"
+  source: "magnitude Length: Num {\n    root unit meter {\n        name = \"meter\"\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - legacy-unit-metadata-without-postfix
@@ -875,17 +802,14 @@ cases:
   produces_ast: false
 - id: immutable-metadata-assignment-rejected
   category: validation-before-ast
-  source: "action BreakIdentity for person: Person [mut] {\n    then person~anchor\
-    \ = OtherAnchor\n}\n"
+  source: "action BreakIdentity for person: Person [mut] {\n    then person~anchor = OtherAnchor\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
   produces_ast: false
 - id: subaction-internal-call
   category: action
-  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n\
-    \    then account.balance -= amount\n}\naction Pay for account: Account [mut]\
-    \ given amount: Money {\n    then account.RemoveMoney(amount)\n}\n"
+  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\naction Pay for account: Account [mut] given amount: Money {\n    then account.RemoveMoney(amount)\n}\n"
   cst_root: MudFileSyntax
   ast: ActionDecl(Subaction) and ActionDecl(PublicAction)
   normalizations:
@@ -893,18 +817,14 @@ cases:
   produces_ast: true
 - id: subaction-root-request-rejected
   category: validation-after-resolution
-  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n\
-    \    then account.balance -= amount\n}\ntest RootCall {\n    start with { Account,\
-    \ empty }\n    then Account.RemoveMoney(1 money)\n}\n"
+  source: "subaction RemoveMoney for account: Account [mut] given amount: Money {\n    then account.balance -= amount\n}\ntest RootCall {\n    start with { Account, empty }\n    then Account.RemoveMoney(1 money)\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - subaction-not-root-callable
   produces_ast: true
 - id: subaction-failure-rolls-back-call-chain
   category: execution-contract
-  source: "subaction Debit for account: Account [mut] {\n    then account.balance\
-    \ -= 10 money\n    after account.balance >= 0 money\n}\naction Transfer for account:\
-    \ Account [mut] {\n    then account.Debit()\n}\n"
+  source: "subaction Debit for account: Account [mut] {\n    then account.balance -= 10 money\n    after account.balance >= 0 money\n}\naction Transfer for account: Account [mut] {\n    then account.Debit()\n}\n"
   cst_root: MudFileSyntax
   ast: AtomicActionCallChain(Subaction)
   normalizations:
@@ -912,21 +832,20 @@ cases:
   produces_ast: true
 - id: mud-path-not-membership
   category: expression
-  source: "rule OutsideCombat {\n    world.trade not in world.combat\n}\n"
+  source: "rule OutsideCombat {\n    world.combat has not world.trade\n}\n"
   cst_root: MudFileSyntax
-  ast: ComparisonChainExpr(NotMembership)
+  ast: ComparisonChainExpr(HasNotMember)
   produces_ast: true
 - id: not-in-chain-rejected
   category: validation-before-ast
-  source: "rule Broken {\n    a not in b not in c\n}\n"
+  source: "rule Broken {\n    a has b has c\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - nonchainable-comparison-cannot-chain
   produces_ast: false
 - id: exact-dictionary-substitution
   category: effect
-  source: "action ChangeCapital for mut capitals: Country -> City {\n    then add\
-    \ (Spain -> Barcelona) to capitals\n}\n"
+  source: "action ChangeCapital for mut capitals: Country -> City {\n    then add (Spain -> Barcelona) to capitals\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(ExactAssociationExpr)
   normalizations:
@@ -934,9 +853,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-keys
   category: iteration
-  source: "action Visit for capitals: Country -> City,\n    mut visited: Country [*\
-    \ unique] {\n    then for each country in capitals: {\n        add country to\
-    \ visited\n    }\n}\n"
+  source: "action Visit for capitals: Country -> City,\n    mut visited: Country [* unique] {\n    then for each country in capitals: {\n        add country to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=country, source=capitals)
   normalizations:
@@ -944,9 +861,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-associations
   category: iteration
-  source: "action Visit for capitals: Country -> City,\n    mut visited: City [* unique]\
-    \ {\n    then for each (country, city) in capitals: {\n        add city to visited\n\
-    \    }\n}\n"
+  source: "action Visit for capitals: Country -> City,\n    mut visited: City [* unique] {\n    then for each (country, city) in capitals: {\n        add city to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=(country, city), source=capitals)
   normalizations:
@@ -954,9 +869,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-unique-collision-noop
   category: execution-contract
-  source: "thing Registry {\n    mut rooms: Person -> Room [unique] = Ana -> BlueRoom\n\
-    }\naction AddRoom for registry: Registry [mut] {\n    then add (Luis -> BlueRoom)\
-    \ to registry.rooms\n}\n"
+  source: "thing Registry {\n    mut rooms: Person -> Room [unique] = Ana -> BlueRoom\n}\naction AddRoom for registry: Registry [mut] {\n    then add (Luis -> BlueRoom) to registry.rooms\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(ExactAssociationExpr)
   normalizations:
@@ -964,8 +877,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-missing-key-empty
   category: expression
-  source: "rule Missing for capitals: Country -> City {\n    capitals[Italy] == empty\n\
-    }\n"
+  source: "rule Missing for capitals: Country -> City {\n    capitals[Italy] == empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(capitals, Italy)
   normalizations:
@@ -974,44 +886,38 @@ cases:
   produces_ast: true
 - id: exact-dictionary-product-key
   category: dictionary
-  source: "thing Distances {\n    distance: (City, City) -> Length =\n        (Madrid,\
-    \ Toledo) -> 74 km\n}\n"
+  source: "thing Distances {\n    distance: (City, City) -> Length =\n        (Madrid, Toledo) -> 74 km\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionaryType(PositionalProductType(City, City), Length)
   produces_ast: true
 - id: functional-explicit-value-selector
   category: dictionary
-  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value\
-    \ == January --> \"winter\",\n        _ --> \"other\"\n}\n"
+  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value == January --> \"winter\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=ComparisonChainExpr(value, Equal, January))
   produces_ast: true
 - id: functional-explicit-interval-selector
   category: dictionary
-  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value\
-    \ in [March..May] --> \"spring\",\n        _ --> \"other\"\n}\n"
+  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value in [March..May] --> \"spring\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=ComparisonChainExpr(value, Membership, Interval))
   produces_ast: true
 - id: functional-implicit-selector-rejected
   category: typing-after-ast
-  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        January\
-    \ --> \"winter\",\n        _ --> \"other\"\n}\n"
+  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        January --> \"winter\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-selector-must-be-bool
   produces_ast: true
 - id: functional-boolean-selector
   category: dictionary
-  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value\
-    \ == June or value == July --> \"summer\",\n        _ --> \"other\"\n}\n"
+  source: "thing Seasons {\n    season: Month --> Text [ordered] =\n        value == June or value == July --> \"summer\",\n        _ --> \"other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionBranchExpr(selector=BooleanExpr)
   produces_ast: true
 - id: functional-applicable-empty-fallback
   category: execution-contract
-  source: "thing Labels {\n    label: Person --> Text [ordered] =\n        value is\
-    \ Person --> value.nickname,\n        _ --> value~name\n}\n"
+  source: "thing Labels {\n    label: Person --> Text [ordered] =\n        value is Person --> value.nickname,\n        _ --> value~name\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Person, Text, FirstMatch)
   normalizations:
@@ -1020,9 +926,7 @@ cases:
   produces_ast: true
 - id: functional-external-read-dependencies
   category: semantic-graph
-  source: "thing Pricing {\n    price: Product --> Money [ordered] =\n        value\
-    \ in Shop.discounted --> value.basePrice * Shop.discount,\n        _ --> value.basePrice\n\
-    }\n"
+  source: "thing Pricing {\n    price: Product --> Money [ordered] =\n        value in Shop.discounted --> value.basePrice * Shop.discount,\n        _ --> value.basePrice\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Product, Money, FirstMatch)
   normalizations:
@@ -1031,16 +935,13 @@ cases:
   produces_ast: true
 - id: functional-apply-over-domain
   category: iteration
-  source: "action Quote for products: Product [*], pricing: Product --> Money,\n \
-    \   mut quotes: Money [*] {\n    then for each product in products: {\n      \
-    \  quote := pricing[product]\n        add quote to quotes\n    }\n}\n"
+  source: "action Quote for products: Product [*], pricing: Product --> Money,\n    mut quotes: Money [*] {\n    then for each product in products: {\n        quote := pricing[product]\n        add quote to quotes\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(source=products) with DecisionApplyExpr
   produces_ast: true
 - id: functional-recursion-decreasing
   category: termination
-  source: "thing Policies {\n    depth: Nat --> Nat [ordered] =\n        0 --> 0,\n\
-    \        value > 0 --> depth[value - 1],\n        _ --> 0\n}\n"
+  source: "thing Policies {\n    depth: Nat --> Nat [ordered] =\n        0 --> 0,\n        value > 0 --> depth[value - 1],\n        _ --> 0\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Nat, Nat, FirstMatch)
   normalizations:
@@ -1048,8 +949,7 @@ cases:
   produces_ast: true
 - id: functional-recursion-without-descent-rejected
   category: validation-after-resolution
-  source: "thing Policies {\n    loop: Nat --> Nat [ordered] =\n        value >= 0\
-    \ --> loop[value]\n}\n"
+  source: "thing Policies {\n    loop: Nat --> Nat [ordered] =\n        value >= 0 --> loop[value]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-recursion-termination-not-proven
@@ -1070,24 +970,21 @@ cases:
   produces_ast: true
 - id: functional-direct-iteration-rejected
   category: validation-after-resolution
-  source: "action Broken for policy: A --> B, mut results: B [*] {\n    then for each\
-    \ result in policy: {\n        add result to results\n    }\n}\n"
+  source: "action Broken for policy: A --> B, mut results: B [*] {\n    then for each result in policy: {\n        add result to results\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-dictionary-not-enumerable
   produces_ast: true
 - id: functional-branch-after-fallback-rejected
   category: validation-before-ast
-  source: "thing Broken {\n    policy: A --> B [ordered] =\n        _ --> DefaultB,\n\
-    \        value is A --> OtherB\n}\n"
+  source: "thing Broken {\n    policy: A --> B [ordered] =\n        _ --> DefaultB,\n        value is A --> OtherB\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - branch-after-fallback-unreachable
   produces_ast: false
 - id: functional-duplicate-fallback-rejected
   category: validation-before-ast
-  source: "thing Broken {\n    policy: A --> B =\n        _ --> FirstB,\n        _\
-    \ --> SecondB\n}\n"
+  source: "thing Broken {\n    policy: A --> B =\n        _ --> FirstB,\n        _ --> SecondB\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - duplicate-functional-fallback
@@ -1102,8 +999,7 @@ cases:
   produces_ast: true
 - id: firstmatch-unique-redundant
   category: diagnostic
-  source: "thing Policies {\n    policy: A --> B [ordered unique] = _ --> DefaultB\n\
-    }\n"
+  source: "thing Policies {\n    policy: A --> B [ordered unique] = _ --> DefaultB\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - redundant-unique-on-first-match
@@ -1111,8 +1007,7 @@ cases:
   produces_ast: true
 - id: allmatches-overlap-deduplicated
   category: dictionary
-  source: "thing Tags {\n    tags: Creature --> Tag [unique] =\n        value is Dragon\
-    \ --> Magical,\n        value is FireCreature --> Magical\n}\n"
+  source: "thing Tags {\n    tags: Creature --> Tag [unique] =\n        value is Dragon --> Magical,\n        value is FireCreature --> Magical\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Creature, Tag, AllMatches)
   normalizations:
@@ -1120,8 +1015,7 @@ cases:
   produces_ast: true
 - id: allmatches-fallback-cardinality
   category: dictionary
-  source: "thing Tags {\n    tags: Creature --> Tag =\n        value is Flying -->\
-    \ Aerial,\n        _ --> Ordinary\n}\n"
+  source: "thing Tags {\n    tags: Creature --> Tag =\n        value is Flying --> Aerial,\n        _ --> Ordinary\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Creature, Tag, AllMatches)
   normalizations:
@@ -1129,24 +1023,20 @@ cases:
   produces_ast: true
 - id: functional-ordered-xor-loses-order
   category: validation-after-resolution
-  source: "thing Policies {\n    first: A --> B [ordered unique] = _ --> FirstB\n\
-    \    second: A --> B [ordered unique] = _ --> SecondB\n    combined: A --> B [ordered\
-    \ unique] = first ^ second\n}\n"
+  source: "thing Policies {\n    first: A --> B [ordered unique] = _ --> FirstB\n    second: A --> B [ordered unique] = _ --> SecondB\n    combined: A --> B [ordered unique] = first ^ second\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - functional-symmetric-difference-does-not-preserve-ordered
   produces_ast: true
 - id: nested-dictionary-application
   category: expression
-  source: "rule Occupied for boardByGame: Game -> Coordinate -> Piece, game: Game,\
-    \ square: Coordinate {\n    boardByGame[game][square] != empty\n}\n"
+  source: "rule Occupied for boardByGame: Game -> Coordinate -> Piece, game: Game, square: Coordinate {\n    boardByGame[game][square] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(IndexExpr(boardByGame, game), square)
   produces_ast: true
 - id: dictionary-composition-by-application
   category: expression
-  source: "rule Weather for capitalOf: Country -> City, weatherOf: City -> Weather,\
-    \ country: Country {\n    weatherOf[capitalOf[country]] != empty\n}\n"
+  source: "rule Weather for capitalOf: Country -> City, weatherOf: City -> Weather, country: Country {\n    weatherOf[capitalOf[country]] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(weatherOf, IndexExpr(capitalOf, country))
   produces_ast: true
@@ -1160,24 +1050,20 @@ cases:
   produces_ast: true
 - id: product-nominal-alias-incompatible
   category: validation-after-resolution
-  source: "alias Coordinate {\n    x: Num\n    y: Num\n}\nthing Broken {\n    raw:\
-    \ (Num, Num) = (1, 2)\n    nominal: Coordinate = raw\n}\n"
+  source: "alias Coordinate {\n    x: Num\n    y: Num\n}\nthing Broken {\n    raw: (Num, Num) = (1, 2)\n    nominal: Coordinate = raw\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - structural-product-not-implicitly-nominal-alias
   produces_ast: true
 - id: product-as-functional-input
   category: dictionary
-  source: "thing Routes {\n    route: (origin: City, destination: City) --> Route\
-    \ [ordered] =\n        value.origin == value.destination --> EmptyRoute,\n   \
-    \     _ --> DefaultRoute\n}\n"
+  source: "thing Routes {\n    route: (origin: City, destination: City) --> Route [ordered] =\n        value.origin == value.destination --> EmptyRoute,\n        _ --> DefaultRoute\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(NamedProductType, Route, FirstMatch)
   produces_ast: true
 - id: selection-direct-filter
   category: selection
-  source: "thing Group {\n    characters := character in coolCharacters: character.coolness\
-    \ < 30\n}\n"
+  source: "thing Group {\n    characters := character in coolCharacters: character.coolness < 30\n}\n"
   cst_root: MudFileSyntax
   ast: SelectionExpr
   normalizations:
@@ -1187,8 +1073,7 @@ cases:
   produces_ast: true
 - id: selection-dictionary-preserves-associations
   category: selection
-  source: "thing Store {\n    available := (product, amount) in stock: amount > 0\n\
-    }\n"
+  source: "thing Store {\n    available := (product, amount) in stock: amount > 0\n}\n"
   cst_root: MudFileSyntax
   ast: SelectionExpr(binding=(product, amount), source=stock)
   normalizations:
@@ -1240,9 +1125,7 @@ cases:
   produces_ast: true
 - id: any-functional-narrowing
   category: dictionary
-  source: "thing Descriptions {\n    describe: Any --> Text [ordered] =\n        value\
-    \ iis PersonId --> \"Person {value}\",\n        value is Nat --> \"Natural {value}\"\
-    ,\n        _ --> \"Other\"\n}\n"
+  source: "thing Descriptions {\n    describe: Any --> Text [ordered] =\n        value iis PersonId --> \"Person {value}\",\n        value is Nat --> \"Natural {value}\",\n        _ --> \"Other\"\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(Any, Text, FirstMatch)
   normalizations:
@@ -1264,8 +1147,7 @@ cases:
   produces_ast: true
 - id: metadata-path-anchor-file-values
   category: metadata
-  source: "look Identity for place: Place {\n    path := place~path\n    anchor :=\
-    \ place~anchor\n    file := place~file\n}\n"
+  source: "look Identity for place: Place {\n    path := place~path\n    anchor := place~anchor\n    file := place~file\n}\n"
   cst_root: MudFileSyntax
   ast: MetadataAccessExpr(path) and MetadataAccessExpr(anchor) and MetadataAccessExpr(file)
   produces_ast: true
@@ -1279,8 +1161,7 @@ cases:
   produces_ast: true
 - id: metadata-explicit-text-conversion
   category: expression
-  source: "look Identity for place: Place {\n    pathText: Text := place~path to Text\n\
-    }\n"
+  source: "look Identity for place: Place {\n    pathText: Text := place~path to Text\n}\n"
   cst_root: MudFileSyntax
   ast: ConversionExpr(MetadataAccessExpr(path), Text)
   produces_ast: true
@@ -1353,8 +1234,7 @@ cases:
   produces_ast: true
 - id: start-with-empty-one-many-deduplicated
   category: start
-  source: "start with {\n        empty, Madrid, [Madrid, Toledo], empty, CanMove,\
-    \ [CanMove, CanTrade]\n    }\n"
+  source: "start with {\n        empty, Madrid, [Madrid, Toledo], empty, CanMove, [CanMove, CanTrade]\n    }\n"
   cst_root: MudFileSyntax
   ast: StartSet(contributions)
   normalizations:
@@ -1380,8 +1260,7 @@ cases:
   produces_ast: true
 - id: functional-branch-edit-operations
   category: semantic-operator
-  source: "thing Policies {\n    policy: A --> B [ordered] =\n        value is SpecialA\
-    \ --> SpecialB,\n        _ --> DefaultB\n}\n"
+  source: "thing Policies {\n    policy: A --> B [ordered] =\n        value is SpecialA --> SpecialB,\n        _ --> DefaultB\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(A, B, FirstMatch)
   normalizations:
@@ -1392,8 +1271,7 @@ cases:
   produces_ast: true
 - id: functional-composed-dependencies-same-snapshot
   category: semantic-graph
-  source: "rule Combined\nfor first: A --> B, second: A --> B, input: A {\n    (first\
-    \ | second)[input] != empty\n}\n"
+  source: "rule Combined\nfor first: A --> B, second: A --> B, input: A {\n    (first | second)[input] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: FunctionalDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1402,9 +1280,7 @@ cases:
   produces_ast: true
 - id: functional-ordered-intersection-preserves-order
   category: dictionary
-  source: "thing Policies {\n    first: A --> B [ordered] = _ --> SharedB\n    second:\
-    \ A --> B [ordered] = _ --> SharedB\n    common: A --> B [ordered] = first & second\n\
-    }\n"
+  source: "thing Policies {\n    first: A --> B [ordered] = _ --> SharedB\n    second: A --> B [ordered] = _ --> SharedB\n    common: A --> B [ordered] = first & second\n}\n"
   cst_root: MudFileSyntax
   ast: FunctionalDictionarySetOperationExpr(DictionaryIntersection)
   normalizations:
@@ -1412,9 +1288,7 @@ cases:
   produces_ast: true
 - id: functional-ordered-difference-preserves-order
   category: dictionary
-  source: "thing Policies {\n    first: A --> B [ordered] = _ --> FirstB\n    second:\
-    \ A --> B [ordered] = _ --> SecondB\n    remaining: A --> B [ordered] = first\
-    \ -- second\n}\n"
+  source: "thing Policies {\n    first: A --> B [ordered] = _ --> FirstB\n    second: A --> B [ordered] = _ --> SecondB\n    remaining: A --> B [ordered] = first -- second\n}\n"
   cst_root: MudFileSyntax
   ast: FunctionalDictionarySetOperationExpr(DictionaryDifference)
   normalizations:
@@ -1422,8 +1296,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-order
   category: dictionary
-  source: "rule Merge for left: Key -> Value [ordered], right: Key -> Value [ordered]\
-    \ {\n    (left | right) == (left | right)\n}\n"
+  source: "rule Merge for left: Key -> Value [ordered], right: Key -> Value [ordered] {\n    (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1432,8 +1305,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-unique-noop
   category: execution-contract
-  source: "rule Merge for left: Key -> Value [unique], right: Key -> Value [unique]\
-    \ {\n    (left | right) == (left | right)\n}\n"
+  source: "rule Merge for left: Key -> Value [unique], right: Key -> Value [unique] {\n    (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1442,8 +1314,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-cardinality-derived
   category: typing-after-ast
-  source: "rule Merge for left: Key -> Value [2..4], right: Key -> Value [3..5] {\n\
-    \    (left | right) == (left | right)\n}\n"
+  source: "rule Merge for left: Key -> Value [2..4], right: Key -> Value [3..5] {\n    (left | right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
   normalizations:
@@ -1451,8 +1322,7 @@ cases:
   produces_ast: true
 - id: firstmatch-no-match-empty
   category: execution-contract
-  source: "thing Policies {\n    policy: A --> B [ordered] = SpecialA --> SpecialB\n\
-    }\n"
+  source: "thing Policies {\n    policy: A --> B [ordered] = SpecialA --> SpecialB\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionDictionaryType(A, B, FirstMatch)
   normalizations:
@@ -1469,24 +1339,21 @@ cases:
   produces_ast: true
 - id: exact-empty-rejected-by-required-result
   category: validation-after-resolution
-  source: "thing Sample {\n    capitals: Country -> City\n    capital: City [1] =\
-    \ capitals[Italy]\n}\n"
+  source: "thing Sample {\n    capitals: Country -> City\n    capital: City [1] = capitals[Italy]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - partial-result-may-violate-required-cardinality
   produces_ast: true
 - id: firstmatch-empty-rejected-by-required-result
   category: validation-after-resolution
-  source: "thing Sample {\n    policy: A --> B [ordered] = SpecialA --> SpecialB\n\
-    \    result: B [1] = policy[OtherA]\n}\n"
+  source: "thing Sample {\n    policy: A --> B [ordered] = SpecialA --> SpecialB\n    result: B [1] = policy[OtherA]\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - partial-result-may-violate-required-cardinality
   produces_ast: true
 - id: allmatches-empty-valid
   category: expression
-  source: "rule EmptyAllowed for policy: A --> B, input: A {\n    policy[input] ==\
-    \ empty\n}\n"
+  source: "rule EmptyAllowed for policy: A --> B, input: A {\n    policy[input] == empty\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionApplyExpr(mode=AllMatches)
   normalizations:
@@ -1506,8 +1373,7 @@ cases:
   produces_ast: true
 - id: start-with-static-metadata-selection
   category: start
-  source: "start with {\n        candidate in CityDeclarations: candidate~path in\
-    \ world.cities, rule in GameplayRules: rule~path in world.rules\n    }\n"
+  source: "start with {\n        candidate in CityDeclarations: candidate~path in world.cities, rule in GameplayRules: rule~path in world.rules\n    }\n"
   cst_root: MudFileSyntax
   ast: StartSet with SelectionExpr
   normalizations:
@@ -1530,40 +1396,35 @@ cases:
   produces_ast: true
 - id: metadata-path-assignment-rejected
   category: validation-before-ast
-  source: "action BreakIdentity for person: Person [mut] {\n    then person~path =\
-    \ OtherPath\n}\n"
+  source: "action BreakIdentity for person: Person [mut] {\n    then person~path = OtherPath\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
   produces_ast: false
 - id: metadata-file-assignment-rejected
   category: validation-before-ast
-  source: "action BreakIdentity for person: Person [mut] {\n    then person~file =\
-    \ OtherFile\n}\n"
+  source: "action BreakIdentity for person: Person [mut] {\n    then person~file = OtherFile\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
   produces_ast: false
 - id: alias-runtime-name-metadata
   category: validation-before-ast
-  source: "alias PersonId := Nat\naction Rename for mut id: PersonId {\n    then id~name\
-    \ = \"identifier\"\n}\n"
+  source: "alias PersonId := Nat\naction Rename for mut id: PersonId {\n    then id~name = \"identifier\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
   produces_ast: false
 - id: family-runtime-name-metadata
   category: validation-before-ast
-  source: "family Color { Red, Green }\naction Rename for mut color: Color {\n   \
-    \ then color~name = \"colour\"\n}\n"
+  source: "family Color { Red, Green }\naction Rename for mut color: Color {\n    then color~name = \"colour\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
   produces_ast: false
 - id: iis-negation-equivalence
   category: expression
-  source: "rule Same given value: Identifier {\n    (value iis not PersonId) == not\
-    \ (value iis PersonId)\n}\n"
+  source: "rule Same given value: Identifier {\n    (value iis not PersonId) == not (value iis PersonId)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactTypeTestExpr negated forms
   normalizations:
@@ -1585,9 +1446,7 @@ cases:
   produces_ast: true
 - id: is-iis-equality-distinction
   category: expression
-  source: "alias Identifier := Nat\nalias PersonId as Identifier\nalias EmployeeId\
-    \ as PersonId\nrule Distinguish given value: EmployeeId {\n    value is PersonId\
-    \ and\n    value iis EmployeeId and\n    value == value\n}\n"
+  source: "alias Identifier := Nat\nalias PersonId as Identifier\nalias EmployeeId as PersonId\nrule Distinguish given value: EmployeeId {\n    value is PersonId and\n    value iis EmployeeId and\n    value == value\n}\n"
   cst_root: MudFileSyntax
   ast: TypeTestExpr and ExactTypeTestExpr and ComparisonChainExpr(Equal)
   normalizations:
@@ -1615,11 +1474,9 @@ cases:
   produces_ast: false
 - id: unit-prefixes-selected-values
   category: unit
-  source: "magnitude Length: Num {\n    root unit meter {\n        ~prefixes = [kilo,\
-    \ milli]\n    }\n}\n"
+  source: "magnitude Length: Num {\n    root unit meter {\n        ~prefixes = [kilo, milli]\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(prefixes, CollectionLiteralExpr([kilo,
-    milli]))])
+  ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(prefixes, CollectionLiteralExpr([kilo, milli]))])
   normalizations:
   - resolve-prefix-identifiers-as-Prefix-builtins-after-ast
   produces_ast: true
@@ -1631,8 +1488,7 @@ cases:
   produces_ast: true
 - id: boolean-rule-metadata-preamble
   category: metadata
-  source: "rule Ready for actor: Person {\n    ~summary = \"ready check\"\n    actor.ready\n\
-    }\n"
+  source: "rule Ready for actor: Person {\n    ~summary = \"ready check\"\n    actor.ready\n}\n"
   cst_root: MudFileSyntax
   ast: BooleanRuleDecl(Ready, metadata=[StoredMetadataAssignment(summary)], condition=ExpressionBlock(...))
   produces_ast: true
@@ -1650,98 +1506,75 @@ cases:
   produces_ast: true
 - id: metadata-clause-properties-use-hard-keywords
   category: metadata
-  source: "look Signature {\n    forRoles := CanAttack~for\n    onRoles := Starve~on\n\
-    \    givens := CanAttack~given\n}\n"
+  source: "look Signature {\n    forRoles := CanAttack~for\n    onRoles := Starve~on\n    givens := CanAttack~given\n}\n"
   cst_root: MudFileSyntax
-  ast: LookDecl(fields=[MetadataAccessExpr(CanAttack, for), MetadataAccessExpr(Starve,
-    on), MetadataAccessExpr(CanAttack, given)])
+  ast: LookDecl(fields=[MetadataAccessExpr(CanAttack, for), MetadataAccessExpr(Starve, on), MetadataAccessExpr(CanAttack, given)])
   produces_ast: true
 - id: for-each-requires-colon
   category: validation-before-ast
-  source: "action Iterate for items: Nat [*], mut total: Nat {\n    then for each\
-    \ i in items {\n        total += i\n    }\n}\n"
+  source: "action Iterate for items: Nat [*], mut total: Nat {\n    then for each i in items {\n        total += i\n    }\n}\n"
   cst_root: MudFileSyntax
-  expected_diagnostics:
-  - for-each-missing-colon
+  expected_diagnostics: [for-each-missing-colon]
   produces_ast: false
 - id: for-each-negative-step
   category: effect
-  source: "action Iterate for mut total: Num {\n    then for each i in [1..8] by -3:\n\
-    \        total += i\n}\n"
+  source: "action Iterate for mut total: Num {\n    then for each i in [1..8] by -3:\n        total += i\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=i, source=1..8, step=PrefixExpr(UnaryMinus, 3), filter=None,
-    body=EffectBlock(...))
+  ast: ForEachEffect(binding=i, source=1..8, step=PrefixExpr(UnaryMinus, 3), filter=None, body=EffectBlock(...))
   produces_ast: true
 - id: for-each-filter-expression-block
   category: effect
-  source: "action Feed for people: Person [* mut] {\n    then for each person in people\
-    \ if {\n        hungry := person.hunger > 0\n        awake := person.state ==\
-    \ Awake\n        hungry and awake\n    }:\n        person.health += 1\n}\n"
+  source: "action Feed for people: Person [* mut] {\n    then for each person in people if {\n        hungry := person.hunger > 0\n        awake := person.state == Awake\n        hungry and awake\n    }:\n        person.health += 1\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(filter=ExpressionBlock(locals=[hungry, awake], result=...), body=EffectBlock(...))
   produces_ast: true
 - id: for-each-static-zero-step
   category: validation-after-resolution
-  source: "action Broken for mut total: Num {\n    then for each i in [1..8] by 0:\n\
-    \        total += i\n}\n"
+  source: "action Broken for mut total: Num {\n    then for each i in [1..8] by 0:\n        total += i\n}\n"
   cst_root: MudFileSyntax
-  expected_diagnostics:
-  - progression-step-zero
+  expected_diagnostics: [progression-step-zero]
   produces_ast: true
 - id: selection-by-expression-block
   category: expression
-  source: "thing Sample {\n    chosen := value in [1..10] by 2: {\n        limit :=\
-    \ 7\n        value < limit\n    }\n}\n"
+  source: "thing Sample {\n    chosen := value in [1..10] by 2: {\n        limit := 7\n        value < limit\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(value, 1..10, step=2, predicate=ExpressionBlock(locals=[limit],
-    result=...))
+  ast: SelectionExpr(value, 1..10, step=2, predicate=ExpressionBlock(locals=[limit], result=...))
   produces_ast: true
 - id: quantifier-by-expression-block
   category: expression
-  source: "rule Enough {\n    count value in [1..10] by 2: {\n        threshold :=\
-    \ 5\n        value >= threshold\n    } > 0\n}\n"
+  source: "rule Enough {\n    count value in [1..10] by 2: {\n        threshold := 5\n        value >= threshold\n    } > 0\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Count, value, 1..10, step=2, body=ExpressionBlock(locals=[threshold],
-    result=...))
+  ast: QuantifierExpr(Count, value, 1..10, step=2, body=ExpressionBlock(locals=[threshold], result=...))
   produces_ast: true
 - id: sum-by-expression-block
   category: expression
-  source: "thing Sample {\n    total := sum value in [1..10] by 2: {\n        doubled\
-    \ := value * 2\n        doubled\n    }\n}\n"
+  source: "thing Sample {\n    total := sum value in [1..10] by 2: {\n        doubled := value * 2\n        doubled\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Sum, value, 1..10, step=2, body=ExpressionBlock(locals=[doubled],
-    result=doubled))
+  ast: QuantifierExpr(Sum, value, 1..10, step=2, body=ExpressionBlock(locals=[doubled], result=doubled))
   produces_ast: true
 - id: negative-stepped-domain-all
   category: domain
   source: "thing Sample {\n    values: Nat in [1..8] by -2 [4] = all\n}\n"
   cst_root: MudFileSyntax
-  ast: StoredFieldDecl(values, domain=SteppedDomain(1..8, PrefixExpr(UnaryMinus, 2)),
-    defaultValue=AllLiteral)
-  normalizations:
-  - signed-domain-step-preserved
-  - all-materializes-domain-in-canonical-order
+  ast: StoredFieldDecl(values, domain=SteppedDomain(1..8, PrefixExpr(UnaryMinus, 2)), defaultValue=AllLiteral)
+  normalizations: [signed-domain-step-preserved, all-materializes-domain-in-canonical-order]
   produces_ast: true
 - id: rumber-stepped-domain-rejected
   category: validation-after-resolution
   source: "thing Sample {\n    value: Rum in [r0..r1] by r0.1\n}\n"
   cst_root: MudFileSyntax
-  expected_diagnostics:
-  - rumber-progression-not-enumerable
+  expected_diagnostics: [rumber-progression-not-enumerable]
   produces_ast: true
 - id: magnitude-step-compatible-units
   category: validation-after-resolution
-  source: "action Walk for mut total: Length {\n    then for each distance in [1 m..10\
-    \ m] by 50 cm:\n        total += distance\n}\n"
+  source: "action Walk for mut total: Length {\n    then for each distance in [1 m..10 m] by 50 cm:\n        total += distance\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(step=QuantityValueExpr(50 cm), ...)
-  normalizations:
-  - elaborate-compatible-difference-units
+  normalizations: [elaborate-compatible-difference-units]
   produces_ast: true
 - id: d088-for-each-body-after-terminator
   category: iteration
-  source: "action Accumulate for values: Int [*], mut total: Int {\n    then for each\
-    \ i in values:\n        total += i\n}\n"
+  source: "action Accumulate for values: Int [*], mut total: Int {\n    then for each i in values:\n        total += i\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=i, source=values, body=EffectBlock(...))
   normalizations:
@@ -1749,8 +1582,7 @@ cases:
   produces_ast: true
 - id: d088-selection-body-after-terminator
   category: expression
-  source: "thing Sample {\n    values: Int [*]\n    selected := x in values:\n   \
-    \     x > 1\n}\n"
+  source: "thing Sample {\n    values: Int [*]\n    selected := x in values:\n        x > 1\n}\n"
   cst_root: MudFileSyntax
   ast: SelectionExpr(binding=x, source=values, predicate=ExpressionBlock([], x > 1))
   normalizations:
@@ -1758,8 +1590,7 @@ cases:
   produces_ast: true
 - id: d088-quantifier-block-after-terminator
   category: expression
-  source: "rule HasLarge for values: Int [*] {\n    exists x in values:\n        {\n\
-    \            limit := 1\n            x > limit\n        }\n}\n"
+  source: "rule HasLarge for values: Int [*] {\n    exists x in values:\n        {\n            limit := 1\n            x > limit\n        }\n}\n"
   cst_root: MudFileSyntax
   ast: QuantifierExpr(Exists, x, values, body=ExpressionBlock([limit], x > limit))
   normalizations:
@@ -1767,8 +1598,7 @@ cases:
   produces_ast: true
 - id: d088-runtime-zero-step-action
   category: runtime
-  source: "action Accumulate for mut total: Num given step: Int {\n    then for each\
-    \ i in [1..8] by step:\n        total += i\n}\n"
+  source: "action Accumulate for mut total: Num given step: Int {\n    then for each i in [1..8] by step:\n        total += i\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=i, source=[1..8], step=step, body=EffectBlock(...))
   semantic_expectations:
@@ -1779,49 +1609,42 @@ cases:
   produces_ast: true
 - id: d088-num-interval-without-step-rejected
   category: validation-after-resolution
-  source: "action SumNum for mut total: Num {\n    then for each value in [0.0..1.0]:\n\
-    \        total += value\n}\n"
+  source: "action SumNum for mut total: Num {\n    then for each value in [0.0..1.0]:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - progression-step-required
   produces_ast: true
 - id: d088-infinite-interval-not-enumerable
   category: validation-after-resolution
-  source: "action Infinite for mut total: Num {\n    then for each value in [0..*]\
-    \ by 1:\n        total += value\n}\n"
+  source: "action Infinite for mut total: Num {\n    then for each value in [0..*] by 1:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - source-not-finitely-enumerable
   produces_ast: true
 - id: d088-arbitrary-collection-by-is-not-stride
   category: validation-after-resolution
-  source: "action Broken for values: Nat [*], mut total: Nat {\n    then for each\
-    \ value in values by 2:\n        total += value\n}\n"
+  source: "action Broken for values: Nat [*], mut total: Nat {\n    then for each value in values by 2:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - source-does-not-support-progression
   produces_ast: true
 - id: d088-filter-must-be-bool
   category: validation-after-resolution
-  source: "action Broken for mut total: Num {\n    then for each value in [1..4] by\
-    \ 1 if value + 1:\n        total += value\n}\n"
+  source: "action Broken for mut total: Num {\n    then for each value in [1..4] by 1 if value + 1:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - iteration-filter-requires-bool
   produces_ast: true
 - id: d088-random-filter-rejected
   category: validation-after-resolution
-  source: "action Broken for mut total: Num {\n    then for each value in [1..4] by\
-    \ 1 if Rand([true, false]):\n        total += value\n}\n"
+  source: "action Broken for mut total: Num {\n    then for each value in [1..4] by 1 if Rand([true, false]):\n        total += value\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - random-not-allowed-in-iteration-filter
   produces_ast: true
 - id: d088-step-evaluated-once
   category: runtime
-  source: "thing Counter {\n    mut step: Int = 2\n    mut total: Num = 0\n}\naction\
-    \ Advance {\n    then for each value in [1..8] by Counter.step: {\n        Counter.step\
-    \ = 1\n        Counter.total += value\n    }\n}\n"
+  source: "thing Counter {\n    mut step: Int = 2\n    mut total: Num = 0\n}\naction Advance {\n    then for each value in [1..8] by Counter.step: {\n        Counter.step = 1\n        Counter.total += value\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(step=MemberAccessExpr(Counter, step), body=EffectBlock(...))
   semantic_expectations:
@@ -1831,8 +1654,7 @@ cases:
   produces_ast: true
 - id: d088-explicit-rum-collection-enumerable
   category: iteration
-  source: "action Visit for values: Rum [*], mut seen: Nat {\n    then for each value\
-    \ in values:\n        seen += 1\n}\n"
+  source: "action Visit for values: Rum [*], mut seen: Nat {\n    then for each value in values:\n        seen += 1\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=value, source=values, step=None, body=EffectBlock(...))
   semantic_expectations:
@@ -1840,9 +1662,7 @@ cases:
   produces_ast: true
 - id: d088-ordered-filter-sees-previous-effects
   category: runtime
-  source: "thing OrderedFilter {\n    mut budget: Int = 1\n    items: Int [2 ordered]\
-    \ = [1, 1]\n}\naction SpendOrdered {\n    then for each value in OrderedFilter.items\
-    \ if OrderedFilter.budget > 0:\n        OrderedFilter.budget -= 1\n}\n"
+  source: "thing OrderedFilter {\n    mut budget: Int = 1\n    items: Int [2 ordered] = [1, 1]\n}\naction SpendOrdered {\n    then for each value in OrderedFilter.items if OrderedFilter.budget > 0:\n        OrderedFilter.budget -= 1\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(filter=ExpressionBlock([], ...), ...)
   semantic_expectations:
@@ -1852,9 +1672,7 @@ cases:
   produces_ast: true
 - id: d088-unordered-filter-sees-initial-snapshot
   category: runtime
-  source: "thing UnorderedFilter {\n    mut budget: Int = 1\n    items: Int [2] =\
-    \ [1, 1]\n}\naction SpendUnordered {\n    then for each value in UnorderedFilter.items\
-    \ if UnorderedFilter.budget > 0:\n        UnorderedFilter.budget -= 1\n}\n"
+  source: "thing UnorderedFilter {\n    mut budget: Int = 1\n    items: Int [2] = [1, 1]\n}\naction SpendUnordered {\n    then for each value in UnorderedFilter.items if UnorderedFilter.budget > 0:\n        UnorderedFilter.budget -= 1\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(filter=ExpressionBlock([], ...), ...)
   semantic_expectations:
@@ -1864,33 +1682,27 @@ cases:
   produces_ast: true
 - id: d088-remaining-quantifiers-with-by
   category: expression
-  source: "thing Quantified {\n    any := exists value in [1..10] by 2: value > 5\n\
-    \    every := forall value in [1..10] by 2: value > 0\n    smallest := min value\
-    \ in [1..10] by 2: value\n    largest := max value in [1..10] by 2: value\n}\n"
+  source: "thing Quantified {\n    any := exists value in [1..10] by 2: value > 5\n    every := forall value in [1..10] by 2: value > 0\n    smallest := min value in [1..10] by 2: value\n    largest := max value in [1..10] by 2: value\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Exists, step=2); QuantifierExpr(ForAll, step=2); QuantifierExpr(Minimum,
-    step=2); QuantifierExpr(Maximum, step=2)
+  ast: QuantifierExpr(Exists, step=2); QuantifierExpr(ForAll, step=2); QuantifierExpr(Minimum, step=2); QuantifierExpr(Maximum, step=2)
   produces_ast: true
 - id: d088-open-lower-positive-step
   category: runtime
-  source: "action OpenLower for mut total: Num {\n    then for each value in (1..8]\
-    \ by 2:\n        total += value\n}\n"
+  source: "action OpenLower for mut total: Num {\n    then for each value in (1..8] by 2:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - visited-values-are-3-5-7
   produces_ast: true
 - id: d088-open-upper-negative-step
   category: runtime
-  source: "action OpenUpper for mut total: Num {\n    then for each value in [1..8)\
-    \ by -2:\n        total += value\n}\n"
+  source: "action OpenUpper for mut total: Num {\n    then for each value in [1..8) by -2:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - visited-values-are-6-4-2
   produces_ast: true
 - id: d088-empty-inverted-interval-zero-iterations
   category: runtime
-  source: "action EmptyLoop for mut total: Num {\n    then for each value in [8..1]\
-    \ by -1:\n        total += value\n}\n"
+  source: "action EmptyLoop for mut total: Num {\n    then for each value in [8..1] by -1:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - interval-normalizes-to-empty
@@ -1898,8 +1710,7 @@ cases:
   produces_ast: true
 - id: d088-step-cannot-see-iteration-binding
   category: validation-after-resolution
-  source: "action Broken for mut total: Num {\n    then for each value in [1..8] by\
-    \ value:\n        total += value\n}\n"
+  source: "action Broken for mut total: Num {\n    then for each value in [1..8] by value:\n        total += value\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=value, step=DottedPathExpr(value), ...)
   expected_diagnostics:
@@ -1909,12 +1720,9 @@ cases:
   produces_ast: true
 - id: d088-filter-local-not-visible-in-body
   category: validation-after-resolution
-  source: "action Broken for values: Int [*], mut total: Int {\n    then for each\
-    \ value in values if {\n        adjusted := value + 1\n        adjusted > 0\n\
-    \    }:\n        total += adjusted\n}\n"
+  source: "action Broken for values: Int [*], mut total: Int {\n    then for each value in values if {\n        adjusted := value + 1\n        adjusted > 0\n    }:\n        total += adjusted\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=value, filter=ExpressionBlock(locals=[adjusted], result=...),
-    body=EffectBlock(...))
+  ast: ForEachEffect(binding=value, filter=ExpressionBlock(locals=[adjusted], result=...), body=EffectBlock(...))
   expected_diagnostics:
   - filter-local-not-visible-in-loop-body
   semantic_expectations:
@@ -1922,60 +1730,47 @@ cases:
   produces_ast: true
 - id: d088-selection-binding-visible-in-expression-block
   category: expression
-  source: "thing Sample {\n    values: Int [*]\n    selected := value in values: {\n\
-    \        adjusted := value + 1\n        adjusted > 0\n    }\n}\n"
+  source: "thing Sample {\n    values: Int [*]\n    selected := value in values: {\n        adjusted := value + 1\n        adjusted > 0\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(binding=value, source=values, predicate=ExpressionBlock(locals=[adjusted],
-    result=...))
+  ast: SelectionExpr(binding=value, source=values, predicate=ExpressionBlock(locals=[adjusted], result=...))
   semantic_expectations:
   - selection-binding-visible-to-expression-block-locals-and-result
   produces_ast: true
 - id: family-data-metadata
   category: family
-  source: "family Terrain {\n    movementCost: Nat = 1 {\n        ~summary = \"Coste\
-    \ base\"\n    }\n    costly: Bool := movementCost >= 3 {\n        ~summary = \"\
-    Costoso\"\n    }\n\n    Plain,\n    Mountain {\n        movementCost = 4\n   \
-    \ }\n}\n"
+  source: "family Terrain {\n    movementCost: Nat = 1 {\n        ~summary = \"Coste base\"\n    }\n    costly: Bool := movementCost >= 3 {\n        ~summary = \"Costoso\"\n    }\n\n    Plain,\n    Mountain {\n        movementCost = 4\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: FamilyDecl(data=[StoredFamilyDataDecl(movementCost, metadata=[StoredMetadataAssignment(summary)]),
-    CalculatedFamilyDataDecl(costly, shape=ExplicitDerivedShape(Bool), metadata=[StoredMetadataAssignment(summary)])])
+  ast: FamilyDecl(data=[StoredFamilyDataDecl(movementCost, metadata=[StoredMetadataAssignment(summary)]), CalculatedFamilyDataDecl(costly, shape=ExplicitDerivedShape(Bool), metadata=[StoredMetadataAssignment(summary)])])
   normalizations:
   - family-data-metadata-belongs-to-schema-descriptor
   produces_ast: true
 - id: family-data-override-metadata-rejected
   category: validation-before-ast
-  source: "family Terrain {\n    movementCost: Nat = 1\n\n    Plain,\n    Mountain\
-    \ {\n        movementCost = 4 {\n            ~summary = \"solo aquí\"\n      \
-    \  }\n    }\n}\n"
+  source: "family Terrain {\n    movementCost: Nat = 1\n\n    Plain,\n    Mountain {\n        movementCost = 4 {\n            ~summary = \"solo aquí\"\n        }\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - family-data-assignment-cannot-have-metadata
   produces_ast: false
 - id: metadata-signature-supported-absent
   category: typing-after-ast
-  source: "thing Seed\naction Spawn {\n    then create Seed\n}\nrule EmptySignatureCheck\
-    \ {\n    Spawn~for == empty and Spawn~given == empty\n}\n"
+  source: "thing Seed\naction Spawn {\n    then create Seed\n}\nrule EmptySignatureCheck {\n    Spawn~for == empty and Spawn~given == empty\n}\n"
   cst_root: MudFileSyntax
-  ast: BooleanRuleDecl(condition=BinaryExpr(MetadataAccessExpr(Spawn, for) == empty,
-    WordAnd, MetadataAccessExpr(Spawn, given) == empty))
+  ast: BooleanRuleDecl(condition=BinaryExpr(MetadataAccessExpr(Spawn, for) == empty, WordAnd, MetadataAccessExpr(Spawn, given) == empty))
   semantic_expectations:
   - action-without-for-yields-empty-for
   - action-without-given-yields-empty-given
   produces_ast: true
 - id: metadata-signature-unsupported-receiver
   category: typing-after-ast
-  source: "thing Seed\nrule InvalidSignatureReflection {\n    Seed~for == empty\n\
-    }\n"
+  source: "thing Seed\nrule InvalidSignatureReflection {\n    Seed~for == empty\n}\n"
   cst_root: MudFileSyntax
-  ast: BooleanRuleDecl(condition=ComparisonChainExpr(MetadataAccessExpr(Seed, for),
-    Equal, empty))
+  ast: BooleanRuleDecl(condition=ComparisonChainExpr(MetadataAccessExpr(Seed, for), Equal, empty))
   expected_diagnostics:
   - metadata-property-not-supported-by-static-receiver
   produces_ast: true
 - id: duplicate-decision-branch-canonical-selector
   category: resolution-after-ast
-  source: "thing PolicyHolder {\n    policy: Nat --> Text = value < 10 --> \"low\"\
-    , value < 10 --> \"alsoLow\"\n}\n"
+  source: "thing PolicyHolder {\n    policy: Nat --> Text = value < 10 --> \"low\", value < 10 --> \"alsoLow\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - duplicate-decision-branch-key
@@ -1998,12 +1793,12 @@ cases:
   - configured-metadata-exposes-anchor
   - metadata-does-not-expose-metadata
   produces_ast: true
+
 - id: given-dictionary-type
   category: participant
   source: "rule HasPrice given prices: Product -> Money {\n    true\n}\n"
   cst_root: MudFileSyntax
-  ast: GivenDecl(prices, TypeExpr(ExactDictionaryType(Product, Money, ...)), defaultValue=None,
-    metadata=[])
+  ast: GivenDecl(prices, TypeExpr(ExactDictionaryType(Product, Money, ...)), defaultValue=None, metadata=[])
   semantic_expectations:
   - given-is-readonly
   produces_ast: true
@@ -2016,11 +1811,9 @@ cases:
   produces_ast: true
 - id: min-empty-is-empty
   category: quantifier-semantics
-  source: "thing Sample {\n    values: Nat [*] = empty\n    minimum := min x in values:\
-    \ x\n}\n"
+  source: "thing Sample {\n    values: Nat [*] = empty\n    minimum := min x in values: x\n}\n"
   cst_root: MudFileSyntax
-  ast: CalculatedFieldDecl(minimum, value=QuantifierExpr(Min, source=values, body=ExpressionBlock([],
-    x)))
+  ast: CalculatedFieldDecl(minimum, value=QuantifierExpr(Min, source=values, body=ExpressionBlock([], x)))
   semantic_expectations:
   - result-type-Nat
   - result-cardinality-0-or-1
@@ -2028,21 +1821,18 @@ cases:
   produces_ast: true
 - id: max-empty-is-empty
   category: quantifier-semantics
-  source: "thing Sample {\n    values: Nat [*] = empty\n    maximum := max x in values:\
-    \ x\n}\n"
+  source: "thing Sample {\n    values: Nat [*] = empty\n    maximum := max x in values: x\n}\n"
   cst_root: MudFileSyntax
-  ast: CalculatedFieldDecl(maximum, value=QuantifierExpr(Max, source=values, body=ExpressionBlock([],
-    x)))
+  ast: CalculatedFieldDecl(maximum, value=QuantifierExpr(Max, source=values, body=ExpressionBlock([], x)))
   semantic_expectations:
   - result-type-Nat
   - result-cardinality-0-or-1
   - empty-source-produces-empty
   produces_ast: true
+
 - id: unit-form-multispace-name
   category: validation-after-resolution
-  source: "magnitude Length {\n    root unit meter {\n        ~name = \"long meter\"\
-    \n        ~plural = \"long meters\"\n        ~abbreviation = \"m\"\n    }\n}\n\
-    thing Sample {\n    length: Length = 3 long meters\n}\n"
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"long meter\"\n        ~plural = \"long meters\"\n        ~abbreviation = \"m\"\n    }\n}\nthing Sample {\n    length: Length = 3 long meters\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - unit-form-may-cover-multiple-base-tokens
@@ -2050,42 +1840,36 @@ cases:
   produces_ast: true
 - id: unit-form-all-digits-rejected
   category: validation-after-resolution
-  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"123\"\
-    \n    }\n}\n"
+  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"123\"\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - unit-source-form-requires-alphabetic-character
   produces_ast: true
 - id: unit-form-all-symbols-rejected
   category: validation-after-resolution
-  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"/+\"\
-    \n    }\n}\n"
+  source: "magnitude Length {\n    root unit meter {\n        ~abbreviation = \"/+\"\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - unit-source-form-requires-alphabetic-character
   produces_ast: true
 - id: unit-form-keyword-rejected
   category: validation-after-resolution
-  source: "magnitude Length {\n    root unit meter {\n        ~name = \"in\"\n   \
-    \ }\n}\n"
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"in\"\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - unit-source-form-keyword-collision
   produces_ast: true
 - id: unit-form-prefixed-collision-rejected
   category: validation-after-resolution
-  source: "magnitude Length {\n    root unit meter {\n        ~name = \"meter\"\n\
-    \        ~prefixes = [kilo]\n    }\n    unit kilometer = 1000 meter {\n      \
-    \  ~name = \"kilometer\"\n    }\n}\n"
+  source: "magnitude Length {\n    root unit meter {\n        ~name = \"meter\"\n        ~prefixes = [kilo]\n    }\n    unit kilometer = 1000 meter {\n        ~name = \"kilometer\"\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - duplicate-unit-source-form-after-prefix-expansion
   produces_ast: true
+
 - id: metadata-descriptor-path-file
   category: validation-after-resolution
-  source: "thing Person {\n    ~summary = \"Person descriptor\"\n}\nrule MetadataLocation\
-    \ {\n    forall metadata in Person~metadata: metadata~path == Person~path and\
-    \ metadata~file == Person~file\n}\n"
+  source: "thing Person {\n    ~summary = \"Person descriptor\"\n}\nrule MetadataLocation {\n    forall metadata in Person~metadata: metadata~path == Person~path and metadata~file == Person~file\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - configured-metadata-exposes-anchor-path-file
@@ -2094,16 +1878,15 @@ cases:
   produces_ast: true
 - id: metadata-descriptor-remains-terminal
   category: validation-after-resolution
-  source: "thing Person {\n    ~summary = \"Person descriptor\"\n}\nrule NoMetadataTower\
-    \ {\n    forall metadata in Person~metadata: metadata~metadata~count == 0\n}\n"
+  source: "thing Person {\n    ~summary = \"Person descriptor\"\n}\nrule NoMetadataTower {\n    forall metadata in Person~metadata: metadata~metadata~count == 0\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-descriptor-has-no-metadata-property
   produces_ast: true
+
 - id: contextual-basic-alias-literal
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    name: PlayerName = \"Ada\"\
-    \n}\n"
+  source: "alias PlayerName := Text\nthing Person {\n    name: PlayerName = \"Ada\"\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - elaborate-basic-literal-as-expected-nominal-alias
@@ -2111,9 +1894,7 @@ cases:
   produces_ast: true
 - id: typed-representation-does-not-implicitly-become-alias
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"\
-    Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then\
-    \ person.name = rawName\n}\n"
+  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then person.name = rawName\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - explicit-nominal-conversion-required
@@ -2122,23 +1903,22 @@ cases:
   produces_ast: true
 - id: explicit-representation-to-alias
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"\
-    Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then\
-    \ person.name = rawName to PlayerName\n}\n"
+  source: "alias PlayerName := Text\nthing Person {\n    mut name: PlayerName = \"Ada\"\n}\naction Rename for mut person: Person given rawName: Text {\n    then person.name = rawName to PlayerName\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - semantic-ir-uses-explicit-conversion
   produces_ast: true
+
 - id: contextual-alias-comparison-literal
   category: validation-after-resolution
-  source: "alias PlayerName := Text\nthing Person {\n    name: PlayerName = \"Ada\"\
-    \n}\nrule IsAda for person: Person {\n    person.name == \"Ada\"\n}\n"
+  source: "alias PlayerName := Text\nthing Person {\n    name: PlayerName = \"Ada\"\n}\nrule IsAda for person: Person {\n    person.name == \"Ada\"\n}\n"
   cst_root: MudFileSyntax
   semantic_expectations:
   - alias-operand-propagates-expected-type-to-literal
   - comparison-literal-uses-contextual-alias-construction
   - both-operands-have-exact-PlayerName-type-after-elaboration
   produces_ast: true
+
 - id: callable-type-single-receiver
   category: type
   source: "thing Holder {\n    operation: Dragon.action(Volume)\n}\n"
@@ -2161,9 +1941,7 @@ cases:
   produces_ast: true
 - id: reflected-type-alias
   category: type
-  source: 'alias Stats := MyDragon.Stats()~type
-
-    '
+  source: "alias Stats := MyDragon.Stats()~type\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(Stats, definition=AliasRepresentation(ReflectedType(...)))
   semantic_expectations:
@@ -2171,14 +1949,17 @@ cases:
   - reflected-type-elaborates-to-represented-semantic-type
   produces_ast: true
 - id: has-membership
+  category: expression
   source: inventory has Key
-  produces_ast: HasMember
-- id: has-not-membership
-  source: inventory has not BrokenKey
-  produces_ast: HasNotMember
+  ast: HasMember
+  produces_ast: true
 - id: local-domain-restriction
+  category: expression
   source: people in Adults
-  produces_ast: DomainRestrictionExpr
+  ast: DomainRestrictionExpr
+  produces_ast: true
 - id: local-ordered-transform
+  category: expression
   source: values [ordered]
-  produces_ast: CollectionTransformExpr
+  ast: CollectionTransformExpr
+  produces_ast: true

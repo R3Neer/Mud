@@ -25,6 +25,7 @@ decisions:
   - D-086
   - D-088
   - D-087
+  - D-100
   - D-096
 ---
 
@@ -185,7 +186,7 @@ Los terminadores ignorados por `layout` continúan presentes como tokens dentro 
 
 ## Otros tokens significativos
 
-La CST conserva los tokens fijos `-->` y `~`, la palabra operadora `iis` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. `not in` e `iis not` conservan dos tokens con trivia propia. No existe `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.
+La CST conserva los tokens fijos `-->` y `~`, la palabra operadora `iis` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. `has not` e `iis not` conservan dos tokens con trivia propia. No existe `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.
 
 ## Literales `Text`
 

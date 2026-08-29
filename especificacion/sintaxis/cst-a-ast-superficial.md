@@ -444,7 +444,7 @@ Las producciones por niveles se pliegan conforme a [[07-gramatica-concreta]]:
 
 ### Operadores de palabra y símbolo
 
-`not in` produce `HasNotMember`. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
+`has not` produce `HasNotMember`. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
 
 Se conservan enums distintos:
 

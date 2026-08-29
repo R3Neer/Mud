@@ -1347,8 +1347,8 @@ De mayor a menor:
 | 2 | prefijos `old`, `allowed`, `not`, signo | derecha |
 | 3 | `*`, `/`, `%` | izquierda |
 | 4 | `+`, `-`, `--` | izquierda |
-| 5 | sufijos `to Type`, `in unit` | acumulativa |
-| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `iis`, `iis not`, `in`, `not in` | restringida |
+| 5 | sufijos `to Type`, `in unit` y restricción `in Domain` | acumulativa |
+| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `iis`, `iis not`, `has`, `has not` | restringida |
 | 7 | sufijo temporal `changes` | no asociativa |
 | 8 | `and`, `&` | izquierda |
 | 9 | `or`, `|` | izquierda |
@@ -1411,7 +1411,7 @@ La igualdad encadenada usa la misma regla. `<=>` produce conjunciones de pares a
 - `!=`
 - `is` e `is not`
 - `iis` e `iis not`
-- pertenencia `in` y `not in`
+- pertenencia `has` y `has not`
 - `=>`
 
 No se mezclan operadores distintos dentro de una misma cadena sin conjunciones explícitas.
