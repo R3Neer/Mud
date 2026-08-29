@@ -44,7 +44,6 @@ Un commit puede modificar varios archivos cuando todos forman parte de la misma 
 
 - Norma, ejemplo y prueba de conformidad de una característica.
 - Decisión y capítulos afectados.
-- Unidad didáctica y actualización de progreso.
 - Política y reglas persistentes que la aplican.
 
 No se mezclarán:
@@ -69,7 +68,6 @@ Tipos:
 | Tipo | Uso |
 | --- | --- |
 | `spec` | Norma, gramática, semántica o conformidad |
-| `learn` | Unidades, ejercicios o seguimiento didáctico |
 | `decision` | ADR o cambio explícito de dirección |
 | `docs` | Documentación informativa sin cambio normativo |
 | `govern` | Procesos editoriales, Git o gobierno |
@@ -90,7 +88,6 @@ actions
 waves
 random
 reachability
-learning
 git
 editorial
 ```
@@ -99,7 +96,6 @@ Ejemplos:
 
 ```text
 spec(types): define nominal equality for aliases
-learn(notation): add partial-function exercise
 decision(language): require full MUD 1.0 specification first
 govern(git): establish atomic commit policy
 fix(waves): clarify binding lifetime after destruction

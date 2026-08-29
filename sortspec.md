@@ -17,28 +17,11 @@ sorting-spec: |
    < a-z
   especificacion
   notas
-  aprendizaje
   gobierno
   referencias
   tooling
   AGENTS
   sortspec
-  ...
-   < a-z
-
-  target-folder: aprendizaje
-  README
-  /:files. ....base
-   < a-z
-  PROGRESO
-  REGLAS-DIDACTICAS
-  PERFIL
-  AUDITORIA-DE-VIGENCIA
-  unidades
-  ejercicios
-  respuestas
-  revisiones
-  historico
   ...
    < a-z
 
@@ -57,14 +40,13 @@ sorting-spec: |
 
 # Orden del explorador de Obsidian
 
-Esta nota configura `Custom File Explorer sorting` con una regla general y tres
+Esta nota configura `Custom File Explorer sorting` con una regla general y dos
 órdenes editoriales concretos:
 
 - en cualquier carpeta, `README.md` aparece primero y los archivos `.base`
   inmediatamente después, ordenados alfabéticamente si hay más de uno;
 
 - en la raíz, primero las superficies documentales y después el soporte técnico;
-- en `aprendizaje/`, primero la orientación y el progreso, después el material;
 - en `gobierno/`, primero las políticas que gobiernan decisiones y preguntas.
 
 Las carpetas de la especificación, los ADR y las preguntas conservan su orden

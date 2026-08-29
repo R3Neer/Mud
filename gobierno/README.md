@@ -27,7 +27,6 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 | Directorio | Autoridad |
 | --- | --- |
 | `especificacion/` | Norma del lenguaje y criterios de conformidad |
-| `aprendizaje/` | Material didáctico, ejercicios y progreso |
 | `notas/` | Análisis, riesgos y planificación no normativos |
 | `notas/decisiones/` | Procedencia y ciclo de vida de decisiones |
 | `notas/preguntas/` | Incertidumbres abiertas y trazabilidad de su cierre |

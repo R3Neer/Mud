@@ -1,7 +1,7 @@
 ---
 title: Ciclo documental de MUD
 aliases:
-  - Promoción a normativa
+  - Publicación normativa
 tags:
   - mud/gobierno
   - mud/especificacion
@@ -14,29 +14,11 @@ Gestión de cuestiones abiertas: [[POLITICA-DE-PREGUNTAS|Política de preguntas 
 
 ## Propósito
 
-La formalización se aprende de manera didáctica, pero la especificación publicada debe tener apariencia y precisión profesionales. Este proceso impide que ejercicios, ayudas personales, razonamientos provisionales o historia decisional se filtren dentro de la exposición de la norma vigente.
+La especificación de MUD debe mantener una separación estricta entre el estado normativo actual, la procedencia de las decisiones y las cuestiones todavía abiertas. Este proceso define cómo se prepara, revisa y publica un documento normativo sin convertir borradores, historia decisional o razonamientos provisionales en parte de la norma vigente.
 
-## Dos superficies
+La separación entre estado vigente, decisiones y cuestiones abiertas se rige por MUD-EDIT-002 y MUD-EDIT-003 de [[especificacion/00-convenciones-editoriales]].
 
-### Superficie de aprendizaje
-
-Ubicación: `aprendizaje/`.
-
-Puede contener:
-
-- Explicaciones graduales.
-- Analogías.
-- Ejercicios.
-- Huecos para completar.
-- Pistas.
-- Soluciones comentadas.
-- Errores frecuentes.
-- Reflexiones del autor.
-- Versiones deliberadamente simplificadas.
-
-Nada de esta superficie es normativo.
-
-### Superficie normativa
+## Superficie normativa
 
 Ubicación: `especificacion/`.
 
@@ -53,17 +35,11 @@ Puede contener:
 
 No puede contener:
 
-- Ejercicios dirigidos al autor.
-- Pistas.
-- Seguimiento del aprendizaje.
 - Conversación.
-- Explicaciones que presupongan el historial personal del proyecto.
+- Razonamientos provisionales presentados como norma.
 - Historia de introducción, modificación, sustitución o retirada de reglas como parte de la exposición normativa.
 - Secciones aditivas que corrijan una regla anterior en vez de reescribir su ubicación canónica.
 - Soluciones incompletas presentadas como norma.
-- Simplificaciones didácticas no etiquetadas.
-
-La separación entre estado vigente, decisiones y cuestiones abiertas se rige por MUD-EDIT-002 y MUD-EDIT-003 de [[especificacion/00-convenciones-editoriales]].
 
 ## Estados de un capítulo
 
@@ -78,7 +54,7 @@ esqueleto
 - **Esqueleto**: estructura sin contenido suficiente.
 - **Borrador**: contenido incompleto que puede cambiar ampliamente.
 - **Propuesta**: semántica completa candidata a revisión.
-- **En revisión**: el autor la ha revisado y se ejecuta la pasada de publicación.
+- **En revisión**: el contenido se considera candidato a publicación y se ejecuta la pasada de publicación.
 - **Vigente**: texto aceptado como norma actual.
 
 Un capítulo `vigente` puede contener cuestiones abiertas solo si la característica afectada queda marcada fuera de MUD 1.0 o si la cuestión no altera su significado.
@@ -101,31 +77,31 @@ La promoción de una decisión no obliga a crear anticipadamente todos los capí
 4. Ningún documento existente, incluidos índices y mapas de capítulos futuros, puede conservar una descripción incompatible con la decisión vigente.
 5. No se considera suficiente añadir al final de un documento una sección de «actualización»: la regla vigente debe quedar integrada en su lugar canónico.
 
-## Promoción de material
+## Flujo de publicación
 
-El aprendizaje no se copia mecánicamente a la especificación. La promoción sigue estos pasos:
+La promoción de un capítulo sigue estos pasos:
 
-1. El autor completa y revisa el ejercicio.
-2. Se identifican las decisiones semánticas que contiene.
-3. Las cuestiones abiertas se resuelven o se registran.
-4. Se redacta de nuevo en estilo normativo.
+1. Se identifica el alcance normativo que el capítulo pretende cubrir.
+2. Se comprueba qué decisiones vigentes y cuestiones abiertas afectan a ese alcance.
+3. Se resuelven o registran las cuestiones que impidan expresar un contrato inequívoco.
+4. Se redacta el estado actual en estilo normativo.
 5. Se unifica la notación con [[especificacion/03-notacion]].
-6. Se añaden identificadores normativos.
+6. Se añaden identificadores normativos cuando correspondan.
 7. Se comprueban ejemplos, contraejemplos e interacciones.
 8. Se verifican enlaces, dependencias y metadatos de trazabilidad.
-9. Se elimina del cuerpo cualquier andamiaje didáctico, historia decisional o procedencia que no forme parte del estado vigente.
+9. Se elimina del cuerpo cualquier historia decisional o procedencia que no forme parte del estado vigente.
 10. Se comprueba la integración en todas las superficies ya desarrolladas afectadas.
-11. El autor revisa el texto publicable.
+11. Se ejecuta la pasada de publicación.
 12. Se cambia el estado y se crea un commit atómico.
 
 ## Pasada de publicación
 
-Cuando el autor indique que ha terminado de revisar o completar una parte, Codex realizará:
+Antes de promover un capítulo a `vigente` se realizan las siguientes revisiones.
 
 ### Revisión semántica
 
 - Correspondencia entre prosa, fórmulas y ejemplos.
-- Ausencia de casos sin definir.
+- Ausencia de casos sin definir dentro del alcance declarado.
 - Compatibilidad con capítulos vigentes.
 - Compatibilidad con decisiones vigentes aplicables.
 - Distinción entre norma, propuesta y cuestión abierta.
@@ -142,7 +118,6 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 
 ### Revisión editorial
 
-- Eliminación de ejercicios, pistas y referencias al proceso personal.
 - Aplicación de MUD-EDIT-002: el cuerpo describe el estado vigente y no la historia de las decisiones.
 - Ausencia de identificadores `D-NNN` o `ADR-NNN` usados como procedencia o justificación en el cuerpo normativo.
 - Preguntas corporales limitadas a preguntas activas, registradas además en `questions:`, y formuladas como incertidumbre presente.
@@ -162,7 +137,3 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 - Suite de conformidad actualizada cuando corresponda.
 - Barrera mecánica de MUD-EDIT-002 y del tratamiento de preguntas mediante `python gobierno/validate_spec_editorial.py`; MUD-EDIT-003 conserva además su revisión semántica por superficies afectadas.
 - Aplicación de MUD-EDIT-004 y coherencia entre capítulo 09 + HIR nominal cuando el cambio afecte resolución de nombres.
-
-## Conservación del material didáctico
-
-La publicación no obliga a borrar `aprendizaje/`. El material puede conservarse como cuaderno de formación y procedencia. Si queda obsoleto, se marca como tal o se mueve a un archivo; no se confunde con la norma.

@@ -40,8 +40,6 @@ La especificación no presupone una arquitectura de compilador, lenguaje de impl
 
 Convenciones de redacción: [[00-convenciones-editoriales]].
 
-Itinerario didáctico: [[aprendizaje/README|Aprendizaje de formalización de MUD]].
-
 ## Carácter normativo
 
 La superficie y el estado de publicación son ejes distintos. `normative: true` indica que el archivo está destinado a contener reglas de conformidad; no equivale por sí solo a aprobación. El ciclo `esqueleto → borrador → propuesta → en-revision → vigente` determina la autoridad del capítulo como unidad.
