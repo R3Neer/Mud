@@ -29,6 +29,7 @@ decisions:
   - D-086
   - D-087
   - D-096
+  - D-099
 ---
 
 # 04. Modelo matemático del mundo
@@ -75,15 +76,15 @@ El modelo vigente fija:
 7. Se heredan declaraciones, restricciones, dominios y predeterminados efectivos, pero no estado mutable activo.
 8. Cada `thing` concreta posee estado independiente.
 9. `create Nombre` solo activa una `thing` o regla definida; no admite categoría, antecesoras ni cuerpo.
-10. Si la identidad canónica está ausente, `create` la activa; tras destruirla, una creación posterior reactiva la misma identidad, descriptor y carga.
+10. Si una `thing` canónica no posee materialización activa, `create` materializa esa misma identidad y descriptor. Tras un `destroy` anterior, la nueva materialización reconstruye el esquema desde la definición canónica y vuelve a aplicar predeterminados e inicializadores; no recupera la carga propia ni las modificaciones estructurales runtime de la materialización destruida.
 11. Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio salvo que una decisión lo excluya expresamente. `Any` no posee predeterminado universal y un campo almacenado de tipo `Any` debe escribir inicializador.
 12. `as` introduce especialización directa; `is` consulta su clausura reflexiva y transitiva; `iis` y `iis not` consultan o excluyen exclusivamente el tipo nominal efectivo indicado.
 13. Una regla que contiene `create A` solo se ejecuta si la identidad canónica `A` está ausente.
 14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
 15. Una colección de `thing` exige siempre membresía estricta: $c\neq T\land c\ \mathsf{is}\ T$. No existe `reflexive`.
 16. `destroy` solo confirma una retirada si todas las cardinalidades y dominios resultantes son válidos; en otro caso produce `failed` y rollback.
-17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes.
-18. `remove` sobre una propiedad elimina su declaración y carga almacenadas, a diferencia de la suspensión reversible producida por `destroy`.
+17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes y esa suspensión derivada no borra su propia carga almacenada. Solo un `destroy` dirigido a la propia declaración aplica el final de materialización fijado por D-099.
+18. `remove` sobre una propiedad elimina su declaración y carga almacenadas dentro de la materialización actual. La suspensión por una dependencia inactiva conserva en cambio la propiedad y su carga; destruir la `thing` propietaria termina toda su materialización y una futura materialización vuelve a partir de la definición canónica.
 19. Cada módulo puede aportar como máximo un `start with`; sus contribuciones finitas y no ordenadas reúnen en una sola superficie declaraciones activables `thing | rule`, y las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial.
 20. Cada contribución es una expresión estática que produce una declaración activable o una colección plana de ellas; no admite instrucciones, efectos ni colecciones anidadas.
 21. Si un módulo omite `start with`, su contribución es vacía. `Thing` continúa siempre efectiva y no forma parte de la colección activable ni de la enumeración materializada por `all Thing`.
@@ -96,8 +97,10 @@ El modelo vigente fija:
 28. Las declaraciones y valores que admiten presentación exponen metadatos postfix tipados; `~name` tiene tipo `Name`, mientras `~path`, `~anchor` y `~file` describen procedencia e identidad.
 29. El valor predeterminado de `~name` deriva del identificador nominal no cualificado cuando la categoría lo define. Puede configurarse mediante la declaración o edición del modelo, pero ningún acceso `~` puede ser destino de una asignación o actualización runtime; los metadatos no se heredan.
 30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. Todo acceso `~` es de solo lectura durante la ejecución; `~path`, `~anchor` y `~file` son además propiedades intrínsecas y no metadatos configurables.
-31. Una relación inmutable conserva latentemente una identidad retirada y la restaura con `create`; una relación `mut` elimina esa pertenencia almacenada.
+31. Una relación inmutable conserva latentemente una identidad retirada y puede restaurar esa pertenencia cuando `create` materializa de nuevo la misma identidad; una relación `mut` elimina esa pertenencia almacenada.
 32. Ningún estado confirmado contiene una colección cuya cardinalidad efectiva contradiga su declaración.
+33. Destruir una `thing` concreta descarta los valores almacenados y las modificaciones estructurales runtime propiedad de su materialización actual, pero no borra cargas pertenecientes a otras declaraciones que solo queden suspendidas por depender de su identidad o tipo.
+34. Destruir explícitamente una rule reactiva descarta la memoria temporal de esa activación. Una activación posterior establece una línea base nueva sin disparar por la mera reactivación; la política de memoria ante suspensiones o desapariciones de bindings no causadas por `destroy` sigue abierta en Q-005.
 
 Ejemplo de las distinciones confirmadas:
 
