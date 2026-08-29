@@ -304,7 +304,7 @@ Todo acceso `~` es runtime-readonly. `~anchor`, `~path` y `~file` son además pr
 
 `~file` puede participar en cualquier expresión válida, pero el compilador emite un aviso cuando escapa de presentación o logging, o cuando su dependencia puede alterar comportamiento del mundo. El uso continúa siendo válido.
 
-Sobre valores `MudPath`, `in` es reflexivo y compara segmentos completos: `p in q` es cierto si `p == q` o si `p` es descendiente de `q`.
+Sobre valores `MudPath`, `q has p` es reflexivo y compara segmentos completos: es cierto si `p == q` o si `p` es descendiente de `q`. La negación usa `q has not p`.
 
 #### Magnitudes y unidades
 
@@ -339,7 +339,7 @@ La gramática y los modelos deben distinguir como mínimo:
 - asociaciones exactas y ramas decisionales;
 - productos posicionales y nombrados;
 - `MetadataAccessExpr` y ausencia de objetivos asignables de metadato;
-- `NotMembership`;
+- `HasMember` y `HasNotMember`;
 - un único `StartSet(contributions)` para activación unificada;
 - cardinalidad omitida frente a explícita;
 - ausencia del antiguo nombre intrínseco y de la interpolación especial de ancla.
@@ -405,7 +405,7 @@ Se descarta porque el dominio depende del proyecto, mezcla categorías sin un or
 La suite debe cubrir al menos:
 
 1. Capacidad exterior exclusiva de `action`, invocación de `action`/`subaction` desde contextos `then`, ancla compartida y rollback completo.
-2. Tokenización maximal-munch de `-->`, `--` y `->`, y parseo de `not in`.
+2. Tokenización maximal-munch de `-->`, `--` y `->`, y parseo de `has` y `has not`.
 3. Consulta ausente exacta, asociación operativa y `unique` de valores como no-op.
 4. Modos decisionales, solapamiento, fallback, cardinalidad derivada, deduplicación y prohibición de mutación o iteración.
 5. Terminación aceptada y rechazada de ciclos decisionales y lectura de una sola instantánea.

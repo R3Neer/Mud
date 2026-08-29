@@ -7,6 +7,7 @@ supersedes: []
 superseded-by: []
 questions:
   - "Q-007"
+  - "Q-032"
   - "Q-035"
   - "Q-053"
 affects:
@@ -14,7 +15,8 @@ affects:
 ---
 # ADR-043 — Consulta especulativa `allowed`
 
-- Preguntas relacionadas: Q-007, Q-035, Q-053
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Preguntas relacionadas: Q-007, Q-032, Q-035, Q-053
 - Documentos afectados: expresiones, acciones, análisis de admisibilidad
 
 ## Contexto
@@ -61,7 +63,7 @@ Cuando la acción declara un rol `for` con mutabilidad exterior, el receptor-lug
 
 - Una implementación puede reutilizar el motor transaccional ordinario, sustituyendo la confirmación por descarte.
 - El coste o un límite de recursos no puede cambiar silenciosamente verdadero por falso.
-- La identidad de subsemillas y la política de caché permanecen en Q-032 y Q-035.
+- La identidad semántica de cada punto aleatorio y su derivación reproducible desde la semilla ya están fijadas. Q-032 conserva abiertas las reglas de caché y reintentos y la exposición de resultados; Q-035 conserva sus cuestiones propias de `allowed`.
 
 ## Verificación
 

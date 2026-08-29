@@ -31,6 +31,8 @@ affects:
 - Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-042-acciones-raiz-y-resultados|D-042]], [[ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
 - Preguntas abiertas asociadas: Q-062 a Q-068.
 
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+
 ## Contexto
 
 La evolución de MUD había dejado varias fronteras artificialmente separadas: actions elementales frente a compuestas, `look` como consulta esencialmente exterior, `message` como salida diferida al host, activación separada en `things` y `rules` y consumo implícito de dominios en operaciones que producen colecciones. Estas separaciones interactúan mal cuando el lenguaje se organiza en módulos, permite valores callable y usa una resolución causal por ondas.
@@ -107,7 +109,7 @@ Además del literal contextual `all`, se acepta `all D` para materializar la enu
 
 Las construcciones que recorren o cuantifican un dominio sin producir una colección pueden consumirlo directamente. Cuando una operación produce una colección a partir de un dominio, la materialización debe ser explícita mediante `all D`. Esto incluye selección y `take`, por ejemplo `take n from all D`.
 
-Los usos de `in` permanecen separados: `x in D` es pertenencia booleana; `a: A in D` es una restricción declarativa de dominio; `x in source: predicate` es selección y produce una colección. No se introduce una conversión implícita de una colección filtrada a `Domain` ni un dominio refinado por predicado.
+Los usos vigentes de `in` permanecen separados: `x in D` restringe localmente un valor al dominio `D`; `a: A in D` es una restricción declarativa de dominio; `x in source: predicate` es selección y produce una colección. La pertenencia booleana se expresa mediante `D has x` o `D has not x`. No se introduce una conversión implícita de una colección filtrada a `Domain` ni un dominio refinado por predicado.
 
 ### Descriptores, `Any`, `is` y `~type`
 

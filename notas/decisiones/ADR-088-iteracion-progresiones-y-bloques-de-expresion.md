@@ -9,6 +9,7 @@ questions:
   - "Q-018"
   - "Q-028"
   - "Q-029"
+  - "Q-032"
 affects:
   - "for each, filtros, cuantificadores, selección, dominios escalonados, intervalos, magnitudes, bloques de expresión, resolución de nombres, gramática, CST y AST"
 ---
@@ -18,7 +19,8 @@ affects:
 - Modifica: [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]].
 - Conserva: [[ADR-034-number-exacto-y-rumber-binary64|D-034]], [[ADR-040-semantica-numerica-basica-restante|D-040]] y la prohibición de azar en filtros de [[ADR-048-azar-reproducible-y-fallos|D-048]].
 - Modificada por: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]] en la forma de resultado de `min` y `max` sobre ausencia.
-- Preguntas relacionadas: [[notas/preguntas/Q-018-intervalos-discontinuos|Q-018]], [[notas/preguntas/Q-028-finitud|Q-028]] y [[notas/preguntas/Q-029-terminacion|Q-029]].
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]] en la identidad y derivación de puntos aleatorios.
+- Preguntas relacionadas: [[notas/preguntas/Q-018-intervalos-discontinuos|Q-018]], [[notas/preguntas/Q-028-finitud|Q-028]], [[notas/preguntas/Q-029-terminacion|Q-029]] y [[notas/preguntas/Q-032-aleatoriedad-reproducible|Q-032]].
 
 ## Contexto
 
@@ -141,7 +143,7 @@ Un dominio cíclico de punto puede enumerarse con diferencia compatible, pero so
 
 ## Azar
 
-D-088 no permite azar en el filtro de una iteración. Se conserva la prohibición de D-048 hasta que Q-032 cierre identidad de puntos aleatorios, subsemillas y caché por ocurrencia.
+D-088 no permite azar en el filtro de una iteración. La identidad semántica y derivación reproducible de los puntos aleatorios ya están fijadas; la prohibición se conserva mientras Q-032 mantenga abiertas las reglas de caché y reintentos por ocurrencia que afectan a la estabilidad observable del filtro.
 
 ## Consecuencias para AST
 

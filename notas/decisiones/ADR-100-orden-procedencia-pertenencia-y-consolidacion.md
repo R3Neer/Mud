@@ -13,7 +13,7 @@ affects:
 ---
 # ADR-100 — Orden lógico, procedencia, pertenencia y consolidación de efectos
 
-- Modifica: [[ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-064-orden-por-ruta-estable|D-064]], [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
+- Modifica: [[ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-043-consulta-especulativa-allowed|D-043]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-064-orden-por-ruta-estable|D-064]], [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]] y [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 - Preguntas relacionadas: [[../preguntas/Q-006-conflictos|Q-006]] y [[../preguntas/Q-032-aleatoriedad-reproducible|Q-032]].
 
 ## Contexto

@@ -470,7 +470,7 @@ La pérdida inferida de `ordered` no es un fallo por sí misma si el contexto pe
 Esta versión incorpora como parte de la misma unidad normativa las brechas documentales y mecánicas que habían quedado fuera de la primera integración de D-085. En particular, la conformidad debe cubrir también:
 
 - llamada interna, inaccesibilidad raíz y rollback atómico de `subaction`;
-- `not in` sobre `MudPath` y rechazo de encadenamientos;
+- `has` y `has not` sobre `MudPath`, con el contenedor a la izquierda, y rechazo de encadenamientos inválidos;
 - consulta, sustitución, iteración por claves y asociaciones, claves producto y no-op de `unique` en exactos;
 - selectores explícitos de igualdad, pertenencia y condiciones booleanas; rechazo de selectores implícitos; fallback, lectura externa, aplicación sobre dominios y terminación de funcionales;
 - cardinalidades y deduplicación de `FirstMatch` y `AllMatches`;

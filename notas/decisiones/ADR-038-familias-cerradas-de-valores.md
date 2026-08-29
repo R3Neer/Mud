@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-038 — Familias cerradas de valores
 
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+
 - Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
@@ -142,7 +144,7 @@ route: Terrain [* ordered by movementCost]
 
 Dentro de `ordered by movementCost`, `movementCost` designa el dato del miembro de `Terrain` que se está ordenando. El resultado debe poseer un orden semántico total. Los datos de una familia son inmutables, por lo que esta ruta es estable. Una fórmula debe declararse primero como dato calculado y ordenarse después por su nombre; `ordered by` no contiene expresiones arbitrarias.
 
-`ordered by` sustituye el orden de declaración como criterio principal de esa colección, pero no cambia los operadores de comparación propios de la familia. Cuando dos ocurrencias producen la misma clave, conservan su orden relativo de inserción. Las ocurrencias repetidas conservan su multiplicidad salvo que la colección sea también `unique`.
+`ordered by` sustituye el orden de declaración como criterio principal de esa colección, pero no cambia los operadores de comparación propios de la familia. Cuando dos ocurrencias producen la misma clave, conservan su orden relativo de procedencia estable; en una historia puramente secuencial coincide con el orden de inserción. Las ocurrencias repetidas conservan su multiplicidad salvo que la colección sea también `unique`.
 
 La selección del miembro predeterminado de la propia familia continúa perteneciendo a Q-047.
 
@@ -158,7 +160,7 @@ La selección del miembro predeterminado de la propia familia continúa pertenec
 8. Esquema uniforme de datos y rechazo de datos específicos no declarados.
 9. Precedencia entre valor de miembro, predeterminado explícito y predeterminado de tipo.
 10. Inmutabilidad y acceso a datos asociados.
-11. Colección de `ordered family` ordenada por una ruta de datos asociados, con empates por inserción y conservación de multiplicidad.
+11. Colección de `ordered family` ordenada por una ruta de datos asociados, con empates por procedencia estable y conservación de multiplicidad.
 12. Inferencia de tipo, evaluación por miembro y dependencias acíclicas de datos calculados.
 13. Rechazo de asignaciones de miembro dirigidas a datos calculados.
 14. Renderización mediante `~name` de un miembro y acceso explícito a un dato `Text` alternativo.

@@ -17,6 +17,7 @@ affects:
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Modificada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]]
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada además por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
@@ -70,7 +71,7 @@ De mayor a menor:
 3. multiplicación, división y módulo;
 4. suma, resta y diferencia conjuntista;
 5. sufijos `to Type` e `in unit`;
-6. comparaciones, `is` y pertenencia `in`;
+6. comparaciones, `is`, `iis`, `has` y `has not`;
 7. sufijo temporal `changes`;
 8. conjunción e intersección;
 9. disyunción, unión y concatenación;
@@ -91,7 +92,7 @@ value to A to B
 
 se agrupan como `(population / regions) to Population`, `(distance + offset) in km` y `(value to A) to B`.
 
-Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `<=>`. `!=`, `is`, pertenencia `in` y `=>` no se encadenan.
+Las cadenas homogéneas de `<`, `<=`, `>`, `>=` y `==` se elaboran como conjunciones de pares adyacentes. Lo mismo ocurre con `<=>`. `!=`, `is`, `iis`, `has`, `has not` y `=>` no se encadenan.
 
 `|` concatena `Text`. Los demás operadores conjuntistas no se aplican a `Text`, ni la concatenación se hereda implícitamente por aliases nominales de `Text`. Sobre colecciones compatibles, `|`, `&` y `--` forman el álgebra de multiconjuntos de D-039; `^` forma diferencia simétrica exclusivamente sobre `unique`. `|` no concatena colecciones.
 

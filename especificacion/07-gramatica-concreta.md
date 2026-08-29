@@ -558,7 +558,7 @@ Una `thing` no posee por sí misma orden total y no puede ser la clave final. To
 
 Si el miembro es una unión, la ruta debe existir sobre todas las alternativas alcanzables. Cada segmento conserva singularidad y estabilidad y las claves finales deben elaborar hacia un único tipo común totalmente ordenado. Una ampliación implícita única es válida; dos aliases meramente representacionales no se unifican. Cuando haga falta adaptar alternativas se declara primero un campo calculado común.
 
-`ordered by` no admite expresiones arbitrarias. Si el criterio necesita una fórmula, se declara como campo o dato calculado y se ordena por su nombre. Las claves iguales conservan el orden relativo de inserción; no se desempatan por ancla, identidad ni orden de declaración de una `family`.
+`ordered by` no admite expresiones arbitrarias. Si el criterio necesita una fórmula, se declara como campo o dato calculado y se ordena por su nombre. Las claves iguales conservan el orden relativo de procedencia estable; en una historia puramente secuencial coincide con el orden de inserción. No se desempatan por ancla, identidad ni orden de declaración de una `family`.
 
 Se prohíbe `ordered by` para `Char`; su orden es Unicode. `Text` no acepta especificaciones de colección.
 

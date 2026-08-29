@@ -740,9 +740,9 @@ cases:
   produces_ast: true
 - id: mud-path-membership
   category: expression
-  source: "rule InCombat {\n    world.combat.melee in world.combat\n}\n"
+  source: "rule InCombat {\n    world.combat has world.combat.melee\n}\n"
   cst_root: MudFileSyntax
-  ast: ComparisonChainExpr(Membership)
+  ast: ComparisonChainExpr(world.combat, HasMember, world.combat.melee)
   produces_ast: true
 - id: iis-singleton-thing-rejected
   category: validation-after-resolution

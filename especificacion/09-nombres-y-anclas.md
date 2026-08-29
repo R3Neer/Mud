@@ -27,6 +27,7 @@ decisions:
   - D-094
   - D-096
   - D-097
+  - D-100
 ---
 # 09. Nombres, paths y anclas
 
@@ -239,13 +240,13 @@ Las operaciones conjuntistas de funcionales no crean ni fusionan claves globales
 
 ## Pertenencia de paths
 
-Sobre `MudPath`, `p in q` es reflexivo y compara segmentos completos:
+Sobre `MudPath`, la pertenencia usa `q has p`: es reflexiva y compara segmentos completos. La forma negativa usa `q has not p`:
 
 ```mud
-world.combat in world.combat                  # true
-world.combat.melee in world.combat            # true
-world.combatant in world.combat                # false
-world.trade not in world.combat                # true
+world.combat has world.combat                  # true
+world.combat has world.combat.melee            # true
+world.combat has world.combatant                # false
+world.combat has not world.trade                # true
 ```
 
 ## Identidad nominal exacta

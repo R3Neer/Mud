@@ -20,6 +20,7 @@ affects:
 - Modificada asimismo por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
 - Modificada finalmente por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 - Modificada después por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]], [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] y [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
 - Cierra: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
 - Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
@@ -45,7 +46,7 @@ La sintaxis de MUD 1.0 queda definida por:
 Las EBNF definen el conjunto de formas sintácticas. No intentan decidir cuestiones que necesitan resolución de nombres o tipos, como distinguir:
 
 - Una llamada a regla de una llamada a acción.
-- Pertenencia mediante `in` de presentación de unidades mediante `in`.
+- Pertenencia booleana mediante `has`/`has not` de presentación de unidades mediante `in`.
 - Un nombre de unidad reconocido de un identificador ordinario.
 - La variante semántica de operadores sobrecargados.
 - Una colección unitaria `[e]` de un intervalo unitario `[e]`.
@@ -84,7 +85,7 @@ equivale a:
 a < b and b < c
 ```
 
-La misma regla se aplica a cadenas homogéneas de igualdad y de `<=>`. No se encadenan `!=`, `is`, pertenencia `in` ni `=>`.
+La misma regla se aplica a cadenas homogéneas de igualdad y de `<=>`. No se encadenan `!=`, `is`, `iis`, `has`, `has not` ni `=>`.
 
 ### Recuperación de errores
 
