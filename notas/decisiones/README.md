@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 96.
-- Vigentes: 95.
+- Total: 97.
+- Vigentes: 96.
 - Propuestas: 0.
 - Sustituidas: 1.
 - Retiradas: 0.
@@ -115,6 +115,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-099 | vigente | 2026-08-28 | [[notas/decisiones/ADR-099-materializaciones-frescas-tras-destroy-create|Materializaciones frescas tras `destroy` y `create`]] |
 | D-100 | vigente | 2026-08-29 | [[notas/decisiones/ADR-100-orden-procedencia-pertenencia-y-consolidacion|Orden lógico, procedencia, pertenencia y consolidación de efectos]] |
 | D-101 | vigente | 2026-08-29 | [[notas/decisiones/ADR-101-bloques-de-valor-variables-locales-y-extremos|Bloques de valor, variables locales almacenadas y extremos por testigos]] |
+| D-102 | vigente | 2026-08-29 | [[notas/decisiones/ADR-102-forma-completa-de-datos-calculados-de-family|Forma completa de datos calculados de family]] |
 
 ## Identificadores reservados
 

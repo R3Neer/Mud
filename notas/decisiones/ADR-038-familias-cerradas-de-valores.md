@@ -14,6 +14,7 @@ affects:
 ---
 # ADR-038 — Familias cerradas de valores
 
+- Modificada por: [[ADR-102-forma-completa-de-datos-calculados-de-family|D-102]].
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
 - Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
@@ -95,13 +96,13 @@ Un dato asociado puede ser almacenado o calculado. El dato almacenado no admite 
 nombre : tipo [in dominio] [especificación-de-colección] [= value-body] [metadata-body]
 ```
 
-El dato calculado se describe aquí mediante la forma estrecha:
+El dato calculado usa la forma completa de campo calculado:
 
 ```text
 nombre [forma-derivada] := value-body
 ```
 
-La anotación de tipo de un dato calculado es opcional. Si se omite, el compilador debe inferir un único tipo estático; si no puede hacerlo, la declaración es inválida. Este ADR afirma que el dato calculado no admite `mut`, `in`, especificación de colección, predeterminado ni almacenamiento propio, mientras la EBNF vigente conserva `derived-value-shape`; Q-061 registra explícitamente esa contradicción pendiente sin elegir una versión. Independientemente de su forma final, D-091 permite que tanto un dato almacenado como uno calculado lleven un cuerpo inmediato formado exclusivamente por declaraciones de metadatos `~...`, perteneciente al descriptor uniforme del dato.
+`forma-derivada` es el `derived-value-shape` ordinario de D-037: puede fijar un tipo, declarar un dominio con forma de colección opcional o declarar directamente una forma de colección. La anotación de tipo es opcional; si se omite, el compilador debe inferir un único tipo estático. El dato calculado no admite `mut` exterior, predeterminado almacenado ni almacenamiento propio. Dominio, cardinalidad, `unique` y orden escritos en la forma derivada reutilizan las coerciones de D-037, y ninguna forma puede fabricar capacidad `[mut]` ni otra autoridad ausente en el resultado de origen. D-091 permite que tanto un dato almacenado como uno calculado lleven un cuerpo inmediato formado exclusivamente por declaraciones de metadatos `~...`, perteneciente al descriptor uniforme del dato.
 
 Todos los miembros comparten exactamente ese esquema. El subbloque opcional de un miembro contiene únicamente asignaciones que sustituyen los valores predeterminados de datos almacenados; no puede declarar datos nuevos, omitir el nombre del dato asignado, modificar su tipo, dominio o especificación de colección ni asignar un dato calculado.
 

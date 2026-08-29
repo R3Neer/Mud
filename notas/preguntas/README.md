@@ -10,7 +10,7 @@ status: activo
 
 Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
 
-Hay 47 preguntas activas: 27 abiertas y 20 parcialmente decididas.
+Hay 46 preguntas activas: 26 abiertas y 20 parcialmente decididas.
 
 Prioridades:
 
@@ -49,7 +49,6 @@ Prioridades:
 | [[Q-050-borrado-en-operadores-booleanos-restantes|Q-050 — Borrado en operadores booleanos restantes]] | Parcialmente decidida |
 | [[Q-059-observacion-de-resultados-de-accion-en-tests|Q-059 — Observación de resultados de acción en tests]] | Abierta |
 | [[Q-060-catalogo-reflectivo-de-typekind|Q-060 — Catálogo reflectivo de `TypeKind`]] | Abierta |
-| [[Q-061-forma-de-datos-calculados-de-family|Q-061 — Forma declarable de datos calculados de `family`]] | Abierta |
 | [[Q-062-gramatica-completa-de-mud-module|Q-062 — Gramática completa de `mud.module`]] | Abierta |
 | [[Q-063-varianza-y-compatibilidad-de-callables|Q-063 — Varianza y compatibilidad de tipos callable]] | Abierta |
 | [[Q-064-aliases-y-especializacion-entre-modulos|Q-064 — Aliases y especialización nominal entre módulos]] | Abierta |

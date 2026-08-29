@@ -16,9 +16,9 @@ depends-on:
   - sintaxis/cst-sin-perdidas
   - sintaxis/mud-surface-ast.asdl
 questions:
-  - Q-061
   - Q-063
 decisions:
+  - D-102
   - D-101
   - D-015
   - D-032
@@ -394,7 +394,7 @@ La elaboración posterior debe distinguir la construcción de alias dirigida por
 - Datos almacenados o calculados.
 - Miembros.
 
-Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva `metadata_assignment* metadata` junto a su forma y predeterminado. El dato calculado conserva provisionalmente `derived_value_shape? shape`, su expresión y `metadata_assignment* metadata`; Q-061 decidirá si esa forma debe restringirse a una anotación de tipo opcional.
+Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva `metadata_assignment* metadata` junto a su forma y predeterminado. El dato calculado conserva `derived_value_shape? shape`, su `ValueBlock` y `metadata_assignment* metadata`; la forma derivada es la misma que en los campos calculados y puede expresar tipo, dominio o forma de colección compatibles.
 
 Cada declaración de dato asociado es un propietario metadata-bearing estable y se elabora como descriptor `Field` subordinado a la `family`, con `FieldKind.Stored` o `FieldKind.Calculated`. La proyección `member.data` es un valor, no una copia del descriptor. Por tanto, los metadatos pertenecen al dato declarado una sola vez y no se duplican por miembro.
 

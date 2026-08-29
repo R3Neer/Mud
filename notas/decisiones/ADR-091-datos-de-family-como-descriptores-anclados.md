@@ -13,6 +13,7 @@ affects:
 
 # ADR-091 — Datos de family como descriptores anclados
 
+- Modificada por: [[ADR-102-forma-completa-de-datos-calculados-de-family|D-102]].
 - Modifica: [[ADR-038-familias-cerradas-de-valores|D-038]].
 - Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
 - Amplía: [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
@@ -21,7 +22,7 @@ affects:
 
 D-038 definió datos asociados uniformes para una `family` y afirmó que no poseían identidad propia, hablando de los valores proyectados por cada miembro. D-087 estableció después que los elementos metadata-bearing necesitan descriptor tipado y ancla pública estable. La especificación de anclas ya clasificaba los datos de `family` bajo la categoría `family`, pero la gramática y el AST superficial no permitían adjuntarles metadatos.
 
-Existe además una contradicción previa entre D-038 y la EBNF sobre la forma exacta del dato calculado. D-091 no la resuelve; queda aislada en Q-061.
+La forma declarable del dato calculado es el `derived-value-shape` completo de los campos calculados, conforme a D-102. Esta decisión de identidad y metadata no altera ese contrato.
 
 ## Decisión
 
@@ -56,7 +57,7 @@ El metadata-body pertenece al descriptor `movementCost` o `costly`, no al valor 
 
 Una `family-data-assignment` dentro del cuerpo de un miembro es únicamente una sobrescritura del valor efectivo de un dato almacenado. No posee ancla, no admite metadata-body y no puede modificar los metadatos del dato declarado.
 
-El metadata-body se añade después de la forma de declaración del dato calculado que resulte vigente. Esta decisión no determina si dicha forma debe admitir todo `derived-value-shape` o limitarse al tipo opcional descrito por D-038; Q-061 conserva esa elección abierta.
+El metadata-body se añade después de la forma ordinaria de declaración del dato calculado. El preámbulo de metadata pertenece al descriptor y no modifica ni restringe su `derived-value-shape`.
 
 
 ## Consecuencias
@@ -65,7 +66,7 @@ El metadata-body se añade después de la forma de declaración del dato calcula
 - Cambiar el valor de un miembro no cambia anclas ni metadatos.
 - Los descriptores de datos participan en `~fields` y `~declaredFields` de la `family` como `Field`.
 - `StoredFamilyDataDecl` y `CalculatedFamilyDataDecl` conservan `metadata_assignment* metadata`.
-- `CalculatedFamilyDataDecl` conserva provisionalmente `derived_value_shape?` hasta resolver Q-061.
+- `CalculatedFamilyDataDecl` conserva `derived_value_shape?` con la misma forma derivada de los campos calculados.
 - `FamilyDataAssignment` permanece sin metadatos.
 
 ## Alternativas descartadas
@@ -85,11 +86,7 @@ Descartado porque los metadatos describen el slot declarado, no una ocurrencia d
 ## Verificación
 
 1. La EBNF admite metadata-body en ambos datos declarados y no lo admite en `family-data-assignment`.
-2. CST, cobertura y proyección AST conservan el metadata-body en el descriptor sin cerrar Q-061.
+2. CST, cobertura y proyección AST conservan el metadata-body y el `derived-value-shape` completo en el descriptor.
 3. El AST superficial almacena metadatos en ambos constructores de datos y no en `FamilyDataAssignment`.
 4. La especificación de anclas identifica el descriptor bajo la categoría `family`.
 5. D-038 distingue la identidad del descriptor de la ausencia de identidad runtime del valor proyectado.
-
-## Cuestión abierta relacionada
-
-[[notas/preguntas/Q-061-forma-de-datos-calculados-de-family|Q-061]] debe reconciliar la forma estrecha de D-038 con el `derived-value-shape` que hoy reconoce la EBNF. Nada en D-091 prejuzga esa resolución.

@@ -13,10 +13,10 @@ depends-on:
 questions:
   - Q-022
   - Q-059
-  - Q-061
   - Q-062
   - Q-063
 decisions:
+  - D-102
   - D-101
   - D-015
   - D-025
@@ -700,7 +700,7 @@ family Terrain {
 }
 ```
 
-Los datos aparecen antes del primer miembro. Un dato almacenado puede llevar, después de su predeterminado opcional, un cuerpo inmediato que contenga solo declaraciones `~...`. Un dato calculado puede llevar el mismo metadata-body inmediato. Q-061 mantiene abierta si esta producción debe conservar `derived-value-shape` o restringirse a la forma `nombre [: Tipo] := expresión`; hasta resolverla, la EBNF conserva la forma más amplia.
+Los datos aparecen antes del primer miembro. Un dato almacenado puede llevar, después de su predeterminado opcional, un cuerpo inmediato que contenga solo declaraciones `~...`. Un dato calculado puede llevar el mismo metadata-body inmediato y usa el `derived-value-shape` completo de los campos calculados: puede fijar tipo, dominio o forma de colección compatibles sin adquirir mutabilidad exterior ni almacenamiento propio.
 
 El metadata-body describe el descriptor uniforme del dato de la `family`, no el valor concreto proyectado por cada miembro. Por ejemplo:
 

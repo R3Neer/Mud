@@ -3,13 +3,14 @@ id: Q-061
 title: Forma declarable de datos calculados de family
 priority: P1
 opened: 2026-08-16
-resolved: false
-closed:
+resolved: true
+closed: 2026-08-29
 decisions:
   - D-037
   - D-038
   - D-085
   - D-091
+  - D-102
 affects:
   - especificacion/07-gramatica-concreta.md
   - especificacion/08-sintaxis-abstracta.md
@@ -22,11 +23,11 @@ superseded-by: []
 
 ## Pregunta
 
-¿Qué forma puede declarar un dato calculado de `family`: solo un tipo opcional antes de `:=`, como afirma D-038, o el `derived-value-shape` más amplio que reconoce actualmente la EBNF?
+¿Qué forma puede declarar un dato calculado de `family`: solo un tipo opcional antes de `:=` o el `derived-value-shape` completo de los campos calculados?
 
 ## Contexto
 
-D-038 escribe `nombre [: tipo] := expresión` y excluye `in` y especificaciones de colección. D-085 modificó D-037 y consolidó para los valores calculados una forma derivada más amplia; la EBNF vigente de `family` usa `[ derived-value-shape ]`, que también reconoce dominio y forma colectiva, y el AST superficial conserva esa forma. No está decidido si D-038 debe mantener su excepción estrecha o alinearse con la ampliación posterior. D-091 añade identidad de descriptor y metadata-body a los datos asociados, pero no necesita elegir entre ambas variantes y por tanto deja esta contradicción abierta.
+D-038 conservaba una excepción estrecha, mientras la EBNF y el AST superficial ya representaban `[ derived-value-shape ]`. D-102 adopta expresamente la forma amplia y elimina la divergencia.
 
 ## Ya decidido
 
@@ -35,18 +36,18 @@ D-038 escribe `nombre [: tipo] := expresión` y excluye `in` y especificaciones 
 - La declaración del dato posee descriptor `Field`, ancla subordinada y metadatos propios conforme a D-091.
 - Una asignación de miembro no puede dirigirse a un dato calculado.
 
-## Pendiente
-
-- C1: decidir si el contrato declarable es `[: tipo]` o todo `derived-value-shape`.
-- C2: si se elige la forma estrecha, fijar qué construcciones cuentan como `tipo` sin reintroducir por dentro dominio o especificación de colección.
-- C3: alinear EBNF, catálogo CST, AST superficial y ejemplos con una única respuesta.
-
 ## Criterio de cierre
 
-- C1: existe una única forma normativa no contradictoria.
-- C2: la gramática expresa esa forma sin aceptar por otra ruta lo que la semántica prohíba.
-- C3: `CalculatedFamilyDataDecl` conserva exactamente las distinciones que sobrevivan al parsing y ninguna forma declarada válida se pierde.
+- C1: existe una única forma normativa no contradictoria para el dato calculado de `family`.
+- C2: la forma completa reutiliza el contrato de `derived-value-shape` de los campos calculados sin conceder mutabilidad exterior ni almacenamiento.
+- C3: EBNF, cobertura CST, proyección AST y AST superficial conservan exactamente esa forma.
 
 ## Resolución
 
-Pendiente.
+Se adopta el `derived-value-shape` completo de los campos calculados. El dato calculado de `family` puede declarar tipo, dominio y forma de colección compatibles como restricciones o coerciones del resultado, pero sigue siendo inmutable, sin `mut` exterior y sin almacenamiento propio.
+
+## Evidencia de cierre
+
+- C1: D-102 fija `nombre [forma-derivada] := value-body` y D-038 incorpora literalmente esa regla.
+- C2: D-102 remite a la semántica de D-037 y conserva explícitamente la ausencia de `mut` exterior, predeterminado almacenado y almacenamiento propio.
+- C3: `especificacion/gramatica/mud.ebnf` conserva `[ derived-value-shape ]`; `cobertura-sintactica.yaml` y `cst-a-ast-superficial.md` proyectan esa forma; `mud-surface-ast.asdl` conserva `derived_value_shape? shape` en `CalculatedFamilyDataDecl`.

@@ -178,7 +178,7 @@ productions:
     ast:
       disposition: constructor
       target: CalculatedFamilyDataDecl
-      reason: conserva la forma derivada vigente, la expresión y el metadata-body del descriptor calculado; Q-061 mantiene abierta su restricción exacta
+      reason: conserva el derived-value-shape completo, el ValueBlock y el metadata-body del descriptor calculado
   family-member:
     cst: FamilyMemberSyntax
     ast:
