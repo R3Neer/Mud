@@ -116,7 +116,7 @@ cases:
   category: block
   source: "action Close for mut door: Door {\n    then door.open = false\n}\n"
   cst_root: MudFileSyntax
-  ast: EffectBlock(leadingLocals=[], firstEffect=AssignmentEffect(...), remaining=[])
+  ast: EffectBlock(firstStatement=EffectStatement(AssignmentEffect(...)), remainingStatements=[])
   normalizations:
   - single-effect-to-block
   produces_ast: true
@@ -268,7 +268,7 @@ cases:
   category: test
   source: "test Purchase {\n    start with {\n        Buyer, empty\n    }\n    then {\n        cost := 5\n        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining >= 0\n        remaining < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: TestDecl(effects=EffectBlock(leadingLocals=[LocalValueDecl(cost)], ...), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
+  ast: TestDecl(effects=EffectBlock(firstStatement=LocalCalculatedStatement(LocalCalculatedDecl(cost)), remainingStatements=[EffectStatement(...)]), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
   normalizations:
   - test-then-locals
   - test-after-locals-before-assertions
@@ -501,17 +501,16 @@ cases:
   expected_diagnostics:
   - alias-requires-ancestor-or-definition
   produces_ast: false
-- id: alias-representation-redeclared-after-as
-  category: validation-before-ast
+- id: alias-representation-refinement-after-as
+  category: alias
   source: 'alias Identifier := Text
 
     alias UserIdentifier as Identifier := Text
 
     '
   cst_root: MudFileSyntax
-  expected_diagnostics:
-  - derived-alias-cannot-redeclare-representation
-  produces_ast: false
+  ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=AliasRepresentation(Text))
+  produces_ast: true
 - id: structural-member-requires-nominal-alias
   category: resolution
   source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    derived: Nat := first * second\n}\nrule Valid {\n    ((1, 2) to CosoAlias).derived == 2\n}\n"

@@ -120,7 +120,7 @@ Un `then` continúa necesitando al menos un efecto o una llamada a acción; un b
 
 ## Consecuencias
 
-- `=` acepta más que literales, pero nunca depende del estado runtime.
+- Los valores almacenados persistentes y predeterminados sujetos al contrato estático de `=` aceptan más que literales, pero no dependen del estado runtime; las locales almacenadas de un bloque ejecutable siguen su contrato runtime propio.
 - Los intervalos discontinuos constantes se asignan directamente y se normalizan al compilar.
 - Los cálculos repetidos dentro de un `then` pueden recibir nombres sin ampliar el store.
 - La resolución de locales es estrictamente textual y no requiere un punto fijo.

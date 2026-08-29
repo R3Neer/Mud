@@ -72,11 +72,9 @@ Cada iteración mantiene su ámbito local independiente.
 
 Usan `ExpressionBlock`: reglas booleanas, `always`, `when`, guardas `if`, `after` de action, filtros de `for each`, selección, `exists`, `forall`, `count`, `min`, `max`, claves de diccionario exacto y selectores de diccionario funcional. Los selectores funcionales y los cuerpos de los cinco cuantificadores indicados elaboran a `Bool`, salvo los contratos temporalmente distintos ya fijados para `when`.
 
-### Retirada de `sum` y extremos por testigos
+### Extremos por testigos
 
-`sum` deja de ser una construcción de MUD y su grafía deja de estar reservada por esa razón. Una reducción aditiva u otra reducción específica se expresa mediante `ValueBlock` y `for each`.
-
-`min` y `max` ya no proyectan una expresión a minimizar/maximizar. Su `ExpressionBlock` es un predicado booleano. Entre los testigos aceptados, `min` devuelve el primero y `max` el último según el orden semántico de la fuente. Una fuente `ordered`, incluso sin clave explícita, proporciona orden suficiente. Una fuente sin orden semántico utilizable es inválida. Ningún candidato aceptado produce `empty` con la cardinalidad parcial ordinaria de los extremos.
+`min` y `max` usan un `ExpressionBlock` como predicado booleano. Entre los testigos aceptados, `min` devuelve el primero y `max` el último según el orden semántico de la fuente. Una fuente `ordered`, incluso sin clave explícita, proporciona orden suficiente. Una fuente sin orden semántico utilizable es inválida. Ningún candidato aceptado produce `empty` con la cardinalidad parcial ordinaria de los extremos.
 
 `by` conserva exclusivamente su significado de progresión cuando la fuente lo admite; `min` y `max` no introducen un criterio de orden propio.
 
@@ -128,9 +126,8 @@ Una declaración no combina simultáneamente el preámbulo integrado y un segund
 4. `LocalForEach` anidado, filtro puro y cuerpo sin resultado obligatorio.
 5. Acumulador ordenado secuencial y acumulador no ordenado consolidado; diferencia entre `+=` y `=`.
 6. Binding readonly y `for mut` de cada clase local, incluido rollback.
-7. Ausencia total de `sum` como keyword, nodo AST y construcción normativa.
-8. `min`/`max` booleanos que devuelven testigos, fuente ordenada sin clave y `empty` sin candidatos.
-9. Las cuatro combinaciones breve/extensa de `->` y `-->`, con scopes independientes.
-10. Metadata integrada proyectada al descriptor y rechazo de una segunda metadata-body.
-11. Default de `given` todavía constante.
-12. `TestAfterBlock`, `start with`, metadata-only bodies y preámbulos compartidos de comportamiento conservan sus contratos especiales.
+7. `min`/`max` booleanos que devuelven testigos, fuente ordenada sin clave y `empty` sin candidatos.
+8. Las cuatro combinaciones breve/extensa de `->` y `-->`, con scopes independientes.
+9. Metadata integrada proyectada al descriptor y rechazo de una segunda metadata-body.
+10. Default de `given` todavía constante.
+11. `TestAfterBlock`, `start with`, metadata-only bodies y preámbulos compartidos de comportamiento conservan sus contratos especiales.

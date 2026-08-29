@@ -549,9 +549,7 @@ La forma `after expr` produce un bloque sin locales y una aserción. En la forma
 
 ## Bloques de efectos
 
-Un `then` con un único efecto se normaliza a `EffectBlock` con `leadingLocals` vacío, ese efecto como `firstEffect`, `remainingStatements` vacío y diagnóstico de fallo opcional.
-
-El bloque conserva por separado las declaraciones locales anteriores al primer efecto, el primer efecto obligatorio y las sentencias restantes. Estas últimas pueden ser `EffectStatement` o `LocalValueStatement`.
+Un `then` breve y un `then` entre llaves se normalizan al mismo `EffectBlock`. El bloque conserva una secuencia no vacía de `then_statement` en orden fuente y un diagnóstico de fallo opcional. Cada sentencia es `EffectStatement`, `LocalCalculatedStatement` o `LocalStoredStatement`; la validación posterior exige al menos un efecto observable.
 
 El AST no presupone ejecución secuencial o simultánea distinta de la definida por capítulos posteriores; solo conserva la estructura declarada.
 

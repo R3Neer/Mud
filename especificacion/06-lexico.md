@@ -31,6 +31,7 @@ decisions:
   - D-087
   - D-089
   - D-100
+  - D-101
   - D-096
 ---
 
@@ -88,7 +89,7 @@ create destroy add to remove from each by take
 eventually through allowed old
 is iis in has
 not and or xor
-exists forall count sum min max
+exists forall count min max
 true false empty all _
 Text Char Bool Thing Any Nat Int Num Rum Money
 Name MudPath Anchor MudFile Prefix Rand
