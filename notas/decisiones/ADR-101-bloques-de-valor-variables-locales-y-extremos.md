@@ -11,7 +11,7 @@ affects:
 ---
 # ADR-101 — Bloques de valor, variables locales almacenadas y extremos por testigos
 
-- Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]], [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]], [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]], [[ADR-096-modulos-callables-look-message-y-activacion|D-096]] y [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Modifica: [[ADR-036-participantes-receptores-y-llamadas|D-036]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]], [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]], [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]], [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]], [[ADR-096-modulos-callables-look-message-y-activacion|D-096]] y [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 - Conserva el default de `given` como expresión estática cerrada conforme a D-063 y D-066.
 
 ## Contexto

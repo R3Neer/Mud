@@ -1222,11 +1222,11 @@ for each value in [0..100] by 5: {
 }
 ```
 
-El `:` es obligatorio. Las llaves pertenecen al cuerpo posterior y no sustituyen el separador. El cuerpo puede comenzar en la misma línea o después de uno o más terminadores; esa separación física no cambia su estructura abstracta. El cuerpo breve debe ser un efecto o llamada a acción; el bloque comparte el contrato de `then`.
+El `:` es obligatorio. Las llaves pertenecen al cuerpo posterior y no sustituyen el separador. El cuerpo puede comenzar en la misma línea o después de uno o más terminadores; esa separación física no cambia su estructura abstracta. En un `for each` ejecutable, el cuerpo breve debe ser un efecto o llamada a action y el bloque usa `EffectBlock`. Dentro de `ValueBlock`, `LocalForEach` usa un `ValueStatement` breve o un `LocalStatementBlock`, admite solo sentencias locales y no puede escapar de la frontera de escritura del bloque de valor.
 
 ### Filtro de iteración
 
-`by` precede a `if`. El filtro puede ser una expresión o un bloque de expresión con locales. Es puro y no estocástico. Con orden semántico se evalúa justo antes de cada iteración y observa efectos secuenciales anteriores; sin orden semántico todos los filtros leen la instantánea inicial y los deltas aceptados se consolidan simultáneamente. Un diccionario exacto puede vincular `(key, value)`.
+`by` precede a `if`. El filtro puede ser una expresión o un bloque de expresión con locales. Es puro y no estocástico. Con orden semántico se evalúa justo antes de cada iteración y observa la proyección secuencial dejada por iteraciones anteriores; sin orden semántico todos los filtros parten de la misma proyección inicial y las modificaciones aceptadas se consolidan simultáneamente conforme al contrato del cuerpo. Un diccionario exacto puede vincular `(key, value)`.
 
 ### Progresión `by`
 
@@ -1261,10 +1261,6 @@ Una selección produce una colección y por ello no consume directamente un domi
 selected := x in source by step: {
     threshold := limit
     x < threshold
-}
-
-    adjusted := x.amount - x.exempt
-    adjusted
 }
 ```
 

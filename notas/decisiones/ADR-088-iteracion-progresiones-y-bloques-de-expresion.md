@@ -69,9 +69,9 @@ Las locales son puras, inmutables, secuenciales y no admiten referencias adelant
 
 `source` y el `by` opcional se resuelven en el entorno exterior, antes de introducir la vinculación de iteración. Por tanto, la variable iterada —o la pareja `(key, value)`— no es visible dentro de `source` ni de `by`.
 
-En `for each`, la vinculación de iteración sí es visible en el filtro `if` y en el cuerpo ejecutable. Si el filtro usa un `ExpressionBlock`, sus locales son visibles únicamente en las locales posteriores y en la expresión final del propio filtro; desaparecen antes de entrar en el cuerpo de efectos.
+En `for each`, la vinculación de iteración sí es visible en el filtro `if` y en el cuerpo subordinado correspondiente. Si el filtro usa un `ExpressionBlock`, sus locales son visibles únicamente en las locales posteriores y en la expresión final del propio filtro; desaparecen antes de entrar en el `EffectBlock` ejecutable o en el `LocalStatementBlock` de un `LocalForEach`.
 
-En selección y cuantificadores/agregadores, la vinculación introducida es visible en las locales y en la expresión final de su `ExpressionBlock`, pero no fuera de él. Cada local se vuelve visible después de su propia declaración, de modo que puede ser usada por locales posteriores y por el resultado final, nunca por su inicializador ni por declaraciones anteriores.
+En selección y cuantificadores, la vinculación introducida es visible en las locales y en la expresión final de su `ExpressionBlock`, pero no fuera de él. Cada local se vuelve visible después de su propia declaración, de modo que puede ser usada por locales posteriores y por el resultado final, nunca por su inicializador ni por declaraciones anteriores.
 
 ## Filtro de `for each`
 

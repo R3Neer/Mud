@@ -614,7 +614,7 @@ Las comparaciones no encadenables producen una única arista en la cadena o un n
 
 ### Selección y cuantificadores
 
-`SelectionExpr(binding, source, step?, predicate)` conserva `step?` y normaliza el predicado a `ExpressionBlock`. `QuantifierExpr(kind, variable, source, step?, body)` hace lo mismo para los seis cuantificadores/agregadores. El AST no decide el contrato de tipo de `body`.
+`SelectionExpr(binding, source, step?, predicate)` conserva `step?` y normaliza el predicado a `ExpressionBlock`. `QuantifierExpr(kind, variable, source, step?, body)` hace lo mismo para los cinco cuantificadores `exists`, `forall`, `count`, `min` y `max`. El AST no decide el contrato booleano de `body` ni la validez del orden exigido por los extremos.
 
 ### Conversiones
 

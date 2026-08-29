@@ -51,7 +51,7 @@ item in source: predicate
 
 Comparte la obligación de finitud y enumerabilidad, pero produce la subcolección aceptada y puede alimentar después un cuantificador, `take` u otra expresión.
 
-`for each` aparece dentro de un `then`:
+El `for each` ejecutable aparece dentro de un `then`; D-101 admite además `LocalForEach` dentro de `ValueBlock`, con `LocalStatementBlock` y sin efectos exteriores. La forma ejecutable conserva:
 
 ```mud
 for each item in source if predicate:
