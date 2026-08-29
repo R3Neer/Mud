@@ -17,6 +17,7 @@ affects:
 - Modifica: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]] y [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]].
 - Reduce: [[notas/preguntas/Q-056-forma-normalizada-y-recursion-de-aliases|Q-056]].
 - Documentos afectados: gramática, AST superficial y resuelto, nombres y anclas, modelo matemático y semántica de colecciones derivadas.
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 ## Contexto
 

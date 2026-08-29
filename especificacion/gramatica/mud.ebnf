@@ -792,7 +792,10 @@ change-expression
     ::= comparison-expression , [ "changes" ] ;
 
 comparison-expression
-    ::= quantitative-expression , [ comparison-tail ] ;
+    ::= restriction-expression , [ comparison-tail ] ;
+
+restriction-expression
+    ::= quantitative-expression , { "in" , type-alternative-domain } ;
 
 comparison-tail
     ::= chainable-comparison , quantitative-expression
@@ -807,11 +810,11 @@ nonchainable-comparison
     ::= "!="
       | "is" , [ "not" ]
       | "iis" , [ "not" ]
-      | membership-in
+      | membership-has
       ;
 
-membership-in
-    ::= "in" | "not" , "in" ;
+membership-has
+    ::= "has" , [ "not" ] ;
 
 (* quantitative-expression admite barreras postfix to/in. El parser
    aplica la tabla de 07-gramatica-concreta y continúa sobre el resultado. *)
@@ -849,8 +852,21 @@ prefix-operator
 
 postfix-expression
     ::= primary-expression
-        , { member-access | metadata-access | index-access | call-arguments }
+        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix }
         ;
+
+collection-transform-suffix
+    ::= "[" , local-collection-transform , "]" ;
+
+local-collection-transform
+    ::= cardinality-bound , ".." , cardinality-bound
+        , [ optional-comma , local-collection-modifier , { optional-comma , local-collection-modifier } ]
+      | cardinality-bound , optional-comma , local-collection-modifier , { optional-comma , local-collection-modifier }
+      | local-collection-modifier , { optional-comma , local-collection-modifier }
+      ;
+
+local-collection-modifier
+    ::= "unique" | "ordered" , [ "by" , order-key-path ] ;
 
 member-access
     ::= "." , identifier ;

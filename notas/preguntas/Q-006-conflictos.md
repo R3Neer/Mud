@@ -12,6 +12,7 @@ decisions:
   - D-060
   - D-080
   - D-098
+  - D-100
 affects: []
 superseded-by: []
 ---

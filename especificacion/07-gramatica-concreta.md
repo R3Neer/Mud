@@ -71,6 +71,7 @@ decisions:
   - D-092
   - D-096
   - D-098
+  - D-100
   - D-099
 ---
 
@@ -1635,3 +1636,8 @@ El contexto de tipo también puede construir el alias sin `to`. El compilador no
 ## Metadatos reflectivos
 
 Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.
+## Pertenencia, restricción y transformaciones locales
+
+La pertenencia booleana usa `contenedor has valor` y `contenedor has not valor`. `in` no es un operador booleano de pertenencia. `valor in Dominio` restringe o filtra localmente el valor; `binding in source: predicate` continúa siendo selección.
+
+Una colección puede transformarse localmente con `values [unique]`, `values [ordered]`, `values [ordered by score]` o `values [1..10, unique, ordered]`. No admite `mut`. La elaboración normaliza dominio, `unique`, orden y cardinalidad. `[n]` continúa siendo indexación; una cardinalidad local exacta sin otro modificador se escribe `[n..n]`.

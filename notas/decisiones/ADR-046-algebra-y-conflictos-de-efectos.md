@@ -20,6 +20,7 @@ affects:
 - Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 - Preguntas relacionadas: Q-002, Q-006, Q-021, Q-046
 - Documentos afectados: efectos, raíz, ondas, conflictos
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 ## Contexto
 

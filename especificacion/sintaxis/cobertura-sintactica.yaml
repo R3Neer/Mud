@@ -178,7 +178,8 @@ productions:
     ast:
       disposition: constructor
       target: CalculatedFamilyDataDecl
-      reason: conserva la forma derivada vigente, la expresión y el metadata-body del descriptor calculado; Q-061 mantiene abierta su restricción exacta
+      reason: conserva la forma derivada vigente, la expresión y el metadata-body
+        del descriptor calculado; Q-061 mantiene abierta su restricción exacta
   family-member:
     cst: FamilyMemberSyntax
     ast:
@@ -258,7 +259,8 @@ productions:
     cst: UnitBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta absorbida por la declaración de unidad; sus metadata-assignment se conservan en el propietario
+      reason: estructura concreta absorbida por la declaración de unidad; sus metadata-assignment
+        se conservan en el propietario
   dimension-expression:
     cst: DimensionExpressionSyntax
     ast:
@@ -685,7 +687,8 @@ productions:
     ast:
       disposition: normalized
       target: expr
-      reason: la alternativa eventually produce EventuallyExpr; la alternativa ordinaria conserva su expresión
+      reason: la alternativa eventually produce EventuallyExpr; la alternativa ordinaria
+        conserva su expresión
   action-reference-list:
     cst: ActionReferenceListSyntax
     ast:
@@ -772,11 +775,6 @@ productions:
     ast:
       disposition: enum-or-property
       target: comparison_operator
-  membership-in:
-    cst: MembershipInSyntax
-    ast:
-      disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
   quantitative-expression:
     cst: QuantitativeExpressionSyntax
     ast:
@@ -977,7 +975,8 @@ productions:
     ast:
       disposition: normalized
       target: interval_expr
-      reason: en posición de expresión se envuelve en IntervalValueExpr; en dominios se conserva directamente
+      reason: en posición de expresión se envuelve en IntervalValueExpr; en dominios
+        se conserva directamente
   shared-unit-interval:
     cst: SharedUnitIntervalSyntax
     ast:
@@ -1053,3 +1052,28 @@ productions:
     ast:
       disposition: discarded
       reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+  restriction-expression:
+    cst: RestrictionExpressionSyntax
+    ast:
+      disposition: normalized
+      target: expr
+  membership-has:
+    cst: MembershipHasSyntax
+    ast:
+      disposition: inlined
+      reason: operador has/has not
+  collection-transform-suffix:
+    cst: CollectionTransformSuffixSyntax
+    ast:
+      disposition: normalized
+      target: CollectionTransformExpr
+  local-collection-transform:
+    cst: LocalCollectionTransformSyntax
+    ast:
+      disposition: constructor
+      target: LocalCollectionTransform
+  local-collection-modifier:
+    cst: LocalCollectionModifierSyntax
+    ast:
+      disposition: enum-or-property
+      target: local_collection_order

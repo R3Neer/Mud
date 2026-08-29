@@ -335,6 +335,11 @@ module MUDSurface {
                      | OrderedBy(order_key_path key)
         attributes (source_origin origin)
 
+    local_collection_transform = LocalCollectionTransform(cardinality? cardinality, flag make_unique, local_collection_order? order)
+        attributes (source_origin origin)
+
+    local_collection_order = OrdinaryLocalOrder | LocalOrderedBy(order_key_path key)
+
     -- -----------------------------------------------------------------
     -- Participantes y givens
     -- -----------------------------------------------------------------
@@ -518,6 +523,8 @@ module MUDSurface {
                          expr source,
                          expr? step,
                          expression_block predicate)
+         | DomainRestrictionExpr(expr value, domain_expr domain)
+         | CollectionTransformExpr(expr source, local_collection_transform transform)
          | QuantifierExpr(quantifier_kind kind,
                           variable_name variable,
                           expr source,
@@ -593,8 +600,8 @@ module MUDSurface {
                         | GreaterOrEqual
                         | IsRelation
                         | IsNotRelation
-                        | Membership
-                        | NotMembership
+                        | HasMember
+                        | HasNotMember
 
     comparison_link = (comparison_operator operator, expr operand)
         attributes (source_origin origin)

@@ -14,6 +14,7 @@ affects:
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 ## Contexto
 

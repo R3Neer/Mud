@@ -30,6 +30,7 @@ decisions:
   - D-086
   - D-087
   - D-089
+  - D-100
   - D-096
 ---
 
@@ -85,7 +86,7 @@ for on given when changes if then after with otherwise
 mut unique ordered
 create destroy add to remove from each by take
 eventually through allowed old
-is iis in
+is iis in has
 not and or xor
 exists forall count sum min max
 true false empty all _
@@ -118,7 +119,7 @@ Fuera de esas posiciones pueden tokenizarse como `IDENTIFIER`. El clasificador n
 
 `all` es una palabra reservada que sirve tanto como literal contextual sin operando, cuyo dominio enumerable se obtiene del contexto, como prefijo `all D` para materializar explícitamente un dominio enumerable. Su carácter reservado permite distinguir ambas formas de una declaración ordinaria aun antes del tipado.
 
-`iis` es una palabra operadora reservada. `not in` e `iis not` conservan dos tokens de palabra con trivia propia; el parser agrupa cada pareja en la comparación correspondiente.
+`iis` es una palabra operadora reservada. `has not` e `iis not` conservan dos tokens de palabra con trivia propia; el parser agrupa cada pareja en la comparación correspondiente. `in` no forma pertenencia booleana: sus usos son de dominio, filtrado, binding o conversión según el contexto.
 
 ## Adyacencia de unidades
 

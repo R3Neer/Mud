@@ -20,6 +20,7 @@ affects:
 - Amplía: D-019, D-026, D-033
 - Preguntas relacionadas: Q-006, Q-047
 - Documentos afectados: futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 ## Decisión
 

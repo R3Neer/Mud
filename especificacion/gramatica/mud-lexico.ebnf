@@ -164,7 +164,7 @@ keyword-word
 
 operator-word
     ::= "to" | "eventually" | "allowed" | "old"
-      | "is" | "iis" | "in"
+      | "is" | "iis" | "in" | "has"
       | "not" | "and" | "or" | "xor"
       ;
 

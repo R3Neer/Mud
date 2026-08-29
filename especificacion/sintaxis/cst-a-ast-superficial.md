@@ -444,7 +444,7 @@ Las producciones por niveles se pliegan conforme a [[07-gramatica-concreta]]:
 
 ### Operadores de palabra y símbolo
 
-`not in` produce `NotMembership`. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
+`not in` produce `HasNotMember`. `e iis T` produce `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
 
 Se conservan enums distintos:
 
@@ -685,3 +685,7 @@ Cada regla de normalización debe contar con al menos:
 - Caso inválido previo al AST cuando proceda.
 
 El corpus inicial está en `casos/cst-ast.yaml`.
+
+## Pertenencia, restricción y transformaciones locales
+
+`a has b` se proyecta a `HasMember`; `a has not b`, a `HasNotMember`. `value in Domain` se proyecta a `DomainRestrictionExpr`; `binding in source: predicate` conserva `SelectionExpr`. `collection-transform-suffix` se pliega como `CollectionTransformExpr`; no existe capacidad interior local.

@@ -47,6 +47,7 @@ decisions:
   - D-093
   - D-096
   - D-097
+  - D-100
   - D-098
 ---
 
@@ -881,3 +882,7 @@ El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la ca
 ```
 
 No existe `AnchorInterpolation`. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones. `ActionDecl` conserva `PublicAction` o `Subaction`.
+
+## Pertenencia, restricción y transformación local de colecciones
+
+`has` y `has not` se normalizan como `HasMember` y `HasNotMember`. `value in Domain` produce `DomainRestrictionExpr`; una selección con binding conserva `SelectionExpr`. Las especificaciones locales producen `CollectionTransformExpr` con `LocalCollectionTransform`, sin capacidad `mut`.
