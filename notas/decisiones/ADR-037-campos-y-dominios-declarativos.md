@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-037 — Campos y dominios declarativos
 
+- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
@@ -67,7 +69,7 @@ La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo es
 
 La inferencia no aplica una prioridad predeterminada entre interpretaciones compatibles. Esto incluye tanto la representación de literales numéricos como las formas contextuales compartidas. Por ejemplo, `[3]` puede elaborar una colección unitaria o el intervalo unitario `[3..3]`: ambas formas se conservan y una declaración calculada sin contexto que permita elegir una sola debe anotar su tipo. La omisión está pensada para los usos comunes en los que las operaciones y dependencias de la expresión determinan un único tipo, no para garantizar que toda expresión aislada sea inferible.
 
-El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable ni admite `mut` exterior. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, `unique` y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos: transforman el resultado con la misma semántica y normalización que las transformaciones locales equivalentes. No pueden introducir capacidad `[mut]` ni otra autoridad que el resultado de origen no posea.
+El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable ni admite `mut` exterior. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, `unique` y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos: transforman el resultado con la misma semántica y normalización que las transformaciones locales equivalentes. `[mut]` no es una coerción creadora de autoridad: actúa como obligación de capacidad y solo se satisface cuando el resultado de origen ya la garantiza a través de transformaciones que preservan la identidad semántica de las `thing` miembros.
 
 Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `Char [0..2]`, `combinedChars := leftChars | rightChars` infiere `Char [1..7]` conforme al álgebra de D-039. El resultado no adquiere modificadores que las reglas de propagación no puedan garantizar.
 
@@ -134,7 +136,7 @@ El parser y el AST distinguen:
 3. Campo almacenado fuera de dominio y `in` válido sobre un campo calculado conforme a su forma derivada.
 4. Ciclo y dependencia estocástica inválidos.
 5. Campo calculado con tipo declarado, inferido y no inferible unívocamente.
-6. Rechazo de `mut` exterior y de `[mut]` coercitivo en campos calculados; aceptación de `in`, cardinalidad, `unique` y orden como coerciones derivadas.
+6. Rechazo de `mut` exterior y de `[mut]` como autoridad fabricada en campos calculados; aceptación de `[mut]` cuando el origen garantiza la capacidad, y de `in`, cardinalidad, `unique` y orden como coerciones derivadas.
 7. Rollback sin estado publicable inválido.
 8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
 9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.

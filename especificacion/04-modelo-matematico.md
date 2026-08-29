@@ -31,6 +31,7 @@ decisions:
   - D-087
   - D-096
   - D-099
+  - D-103
 ---
 
 # 04. Modelo matemático del mundo
@@ -137,4 +138,4 @@ Los aliases forman un segundo orden parcial nominal. Sus nodos son tipos de valo
 
 Para un alias nominal con varias antecesoras, el conjunto de valores del descendiente debe estar contenido en la intersección de los conjuntos de valores de todas ellas. La unión `A | B` no satisface esta obligación. Para aliases estructurales, la forma efectiva se obtiene acumulando miembros por origen: un mismo miembro heredado por varias rutas se deduplica y miembros independientes con el mismo nombre producen conflicto.
 
-Los campos derivados denotan colecciones recalculadas. Su pertenencia se fija durante una instantánea de evaluación y se vuelve a calcular sobre el estado posterior consolidado. La capacidad interior es parte del contrato de la colección derivada y no del linaje de la fuente. Las colecciones almacenadas, en cambio, conservan su pertenencia hasta una modificación estructural explícita.
+Los campos derivados denotan colecciones recalculadas. Su pertenencia se fija durante una instantánea de evaluación y se vuelve a calcular sobre el estado posterior consolidado. La capacidad interior `[mut]` puede formar parte de su contrato, pero no crea autoridad: debe estar garantizada por el valor de origen y conservarse mediante transformaciones que mantengan la identidad semántica de las `thing` miembros. Esa capacidad solo alcanza a miembros inmediatos y no vuelve escribible la pertenencia derivada ni colecciones anidadas. Las colecciones almacenadas, en cambio, conservan su pertenencia hasta una modificación estructural explícita.

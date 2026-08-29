@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-084 — Especialización de aliases, miembros heredados y vistas derivadas
 
+- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 - Modifica: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]], [[notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]] y [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]].
@@ -43,7 +45,7 @@ Los miembros pertenecen al tipo nominal del alias. Una estructura desnuda no los
 
 ### Campos y colecciones derivadas
 
-Un alias estructural puede declarar campos derivados con `:=`. Son puros, no almacenados y no asignables. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, unicidad y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y siguen la normalización de transformaciones locales. No pueden fabricar capacidad interior `[mut]` ni otra autoridad.
+Un alias estructural puede declarar campos derivados con `:=`. Son puros, no almacenados y no asignables. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, unicidad y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y siguen la normalización de transformaciones locales. `[mut]` actúa como obligación de capacidad sobre las `thing` miembros inmediatos: puede conservar autoridad del origen cuando se preserva identidad semántica, pero no fabricarla.
 
 La selección se mantiene fija durante una instantánea de evaluación. Tras consolidar los efectos, la vista se recalcula sobre el nuevo estado y se validan sus contratos; un incumplimiento produce `failed` y rollback. Una colección almacenada no se autopoda ni recalcula su pertenencia.
 
@@ -69,6 +71,6 @@ Se rechaza interpretar el orden de antecesores como prioridad, resolver la espec
 3. Deduplicación de diamantes por origen, fusión de contribuciones independientes equivalentes y resolución explícita de contratos distintos.
 4. Herencia de componentes y derivados, con sobrescritura de predeterminados, refinamientos sustituibles y nueva definición explícita ante colisión de expresiones derivadas independientes.
 5. Acceso a miembros solo después de adquirir el tipo nominal.
-6. Capacidad interior propia de vistas derivadas y pertenencia estable durante cada instantánea.
+6. Capacidad interior exigida y preservada por vistas derivadas sin fabricación de autoridad, y pertenencia estable durante cada instantánea.
 7. Recálculo posterior, validación del contrato y rollback ante incumplimiento.
 8. Equivalencia semántica de las tres formas vacías de `thing`.

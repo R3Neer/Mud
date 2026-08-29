@@ -488,7 +488,7 @@ cases:
   produces_ast: true
 - id: alias-derived-mutable-view
   category: alias
-  source: "alias Squad {\n    members: Soldier [*]\n    wounded [* mut] := soldier in members: soldier.health < MaximumHealth\n}\n"
+  source: "alias Squad {\n    members: Soldier [* mut]\n    wounded [* mut] := soldier in members: soldier.health < MaximumHealth\n}\n"
   cst_root: MudFileSyntax
   ast: AliasCalculatedFieldDecl(wounded, elementsMutable=Enabled, ...)
   produces_ast: true

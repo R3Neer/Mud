@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-100 — Orden lógico, procedencia, pertenencia y consolidación de efectos
 
+- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
 - Modifica: [[ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-038-familias-cerradas-de-valores|D-038]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-043-consulta-especulativa-allowed|D-043]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[ADR-057-gramatica-concreta-y-continuacion|D-057]], [[ADR-064-orden-por-ruta-estable|D-064]], [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]] y [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
@@ -57,7 +59,7 @@ people in Adults
 
 y filtra los miembros que no pertenecen al dominio. `unique` elimina ocurrencias repetidas. `ordered by ruta` establece el orden por la clave indicada y usa procedencia estable para desempatar claves iguales. `ordered` usa el orden total semántico intrínseco del tipo completo cuando existe; si el tipo completo no posee un comparador total común, usa la procedencia de todas las ocurrencias. No se inventa un orden entre ramas de una unión por posición textual, nombre nominal, tag interno o identidad de implementación.
 
-Una cota superior de cardinalidad recorta después de filtrar, deduplicar y ordenar. Una cota inferior exige que existan suficientes miembros y nunca fabrica miembros. Una transformación local no puede introducir capacidad interior `[mut]` ni otra autoridad que la expresión de origen no posea.
+Una cota superior de cardinalidad recorta después de filtrar, deduplicar y ordenar. Una cota inferior exige que existan suficientes miembros y nunca fabrica miembros. Una transformación local no puede introducir capacidad interior `[mut]` ni otra autoridad que la expresión de origen no posea. En una forma derivada, `[mut]` es por tanto una obligación de capacidad: puede conservarse a través de transformaciones que mantengan la identidad semántica de las mismas `thing`, pero nunca se obtiene por coerción.
 
 La escritura de una cardinalidad exacta local que sería indistinguible de una indexación conserva la indexación como forma corta; la transformación exacta puede escribirse como intervalo degenerado, por ejemplo `[2..2]`. Una especificación que contiene `unique` u `ordered` es inequívocamente una transformación.
 

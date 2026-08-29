@@ -14,6 +14,8 @@ affects:
 
 # ADR-081 — Filtrado, `take` e indexación de colecciones
 
+- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
@@ -53,7 +55,7 @@ El resultado:
 - conserva el tipo y la identidad nominal de sus miembros;
 - conserva multiplicidades y `unique`;
 - conserva el orden y su criterio cuando la fuente es ordenada;
-- produce identidades con procedencia; la capacidad interior del lugar derivado que la contiene se decide por su propio contrato conforme a D-084;
+- produce identidades con procedencia y conserva capacidad interior cuando la fuente la garantiza; una forma derivada exterior puede exigir esa capacidad, pero no concederla si falta;
 - nunca adquiere mutabilidad exterior;
 - tiene cardinalidad conservadora `[0..u]` para una fuente `[l..u]`, estrechable por análisis;
 - puede estrechar alternativas mediante pruebas como `is`.
@@ -168,7 +170,7 @@ Se admiten ampliaciones implícitas únicas, como `Nat` hacia `Int`. No se elimi
 
 ## Modificación por D-084
 
-Una selección usada para definir un campo derivado puede alimentar una colección `[mut]` aunque la fuente no conceda capacidad interior. La declaración de la vista concede esa autoridad. La lista seleccionada permanece estable durante la instantánea y se recalcula tras consolidar efectos.
+Una selección usada para definir un campo derivado conserva la capacidad interior de su fuente porque devuelve las mismas identidades aceptadas. Una vista `[mut]` exige que esa capacidad esté disponible; la declaración no la fabrica. La lista seleccionada permanece estable durante la instantánea y se recalcula tras consolidar efectos.
 
 ## Modificación por D-088
 

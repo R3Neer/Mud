@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-019 — Mutabilidad ortogonal de colección y miembros
 
+- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
@@ -76,9 +78,9 @@ La primera forma no equivale a la segunda: omitir `[1]` no desplaza `mut` entre 
 
 Un campo almacenado posee un valor colección cuya estructura solo puede cambiar cuando declara mutabilidad exterior.
 
-Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Sí puede declarar capacidad interior `[mut]` como parte de su propio contrato, con independencia de la capacidad de las fuentes. Esa autoridad solo alcanza a las `thing` directamente contenidas y nunca permite escribir la pertenencia derivada.
+Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Puede declarar capacidad interior `[mut]` como obligación sobre las `thing` directamente contenidas solo cuando el valor de origen ya proporciona esa autoridad y las transformaciones conservan la identidad semántica correspondiente. La forma derivada no fabrica capacidad.
 
-La capacidad interior nunca hace escribible la pertenencia de una colección derivada.
+La capacidad interior nunca hace escribible la pertenencia de una colección derivada, no atraviesa aliases ni contenedores anidados y no concede mutabilidad exterior a una colección que sea miembro de otra colección.
 
 ## Participantes `for`
 
