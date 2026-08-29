@@ -12,6 +12,7 @@ affects:
 # ADR-064 — Orden por ruta estable
 
 - Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 - Modifica: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Documentos afectados: colecciones, familias, aliases, campos, tipos ordenables, normalización e iteración
@@ -77,17 +78,17 @@ Cuando el miembro es una unión, la ruta debe existir y permanecer singular y es
 
 ### Empates
 
-Dos ocurrencias con la misma clave conservan su orden relativo de inserción. La normalización por clave es estable y no introduce un desempate nominal, por identidad, por ancla ni por orden de declaración de una `family`.
+Dos ocurrencias con la misma clave conservan su orden relativo de procedencia estable. En inserciones causalmente secuenciales ese orden coincide con el orden de inserción; cuando las inserciones son concurrentes, la procedencia se completa reproduciblemente conforme a D-100. La normalización por clave no introduce un desempate nominal, por identidad, por ancla ni por orden de declaración de una `family`.
 
 Las ocurrencias repetidas de un mismo valor permanecen contiguas cuando así resulta de la clave y conservan su multiplicidad salvo `unique`.
 
-El criterio completo de dos colecciones `ordered` solo es compatible cuando usan la misma ruta resuelta y el mismo orden del tipo final. La estabilidad relativa de empates forma parte del comportamiento de inserción, no de la identidad sintáctica de la ruta.
+El criterio completo de dos colecciones `ordered` solo es compatible cuando usan la misma ruta resuelta y el mismo orden del tipo final. La estabilidad relativa de empates forma parte de la procedencia de las ocurrencias, no de la identidad sintáctica de la ruta.
 
 ### Ausencias y órdenes personalizados
 
 Una ruta que atraviese una cardinalidad opcional no es válida mientras MUD no defina una posición semántica para `empty` en esa clase de acceso.
 
-MUD 1.0 no incorpora declaraciones personalizadas de comparación ni expresiones de orden. Tampoco infiere una comparación entre `thing`. Esta decisión no añade múltiples claves ni una cláusula de desempate: los empates usan inserción.
+MUD 1.0 no incorpora declaraciones personalizadas de comparación ni expresiones de orden. Tampoco infiere una comparación entre `thing`. Esta decisión no añade múltiples claves ni una cláusula de desempate: los empates usan procedencia estable.
 
 ## Consecuencias
 
@@ -95,7 +96,7 @@ MUD 1.0 no incorpora declaraciones personalizadas de comparación ni expresiones
 - El IR registra cada componente de la ruta, el tipo final y la prueba de estabilidad.
 - Renombrar el cálculo que define una clave obliga a actualizar la ruta, pero concentra la semántica de la fórmula en un campo explicable.
 - Los cambios de estado nunca reordenan implícitamente una colección almacenada.
-- El orden de inserción continúa siendo observable solo entre claves iguales o en colecciones `ordered` sin clave canónica.
+- La procedencia estable continúa siendo observable como orden relativo entre claves iguales o como orden de una colección `ordered` sin clave canónica; en secuencias no concurrentes coincide con el orden de inserción.
 
 ## Verificación
 
@@ -107,5 +108,5 @@ MUD 1.0 no incorpora declaraciones personalizadas de comparación ni expresiones
 6. Rechazo de campo mutable directo.
 7. Rechazo de dependencia mutable transitiva o de acceso intermedio inestable.
 8. Rechazo de ruta opcional sin orden de `empty`.
-9. Conservación del orden de inserción entre empates.
+9. Conservación del orden de procedencia estable entre empates, incluida concurrencia.
 10. Compatibilidad e incompatibilidad entre rutas resueltas.

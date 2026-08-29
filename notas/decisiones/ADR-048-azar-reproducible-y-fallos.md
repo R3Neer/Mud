@@ -17,6 +17,7 @@ affects:
 
 - Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 - Preguntas relacionadas: Q-007, Q-032, Q-035, Q-058
 - Documentos afectados: expresiones, efectos, runtime, diagnósticos
 
@@ -55,7 +56,7 @@ Los límites de recursos y defectos internos de una implementación no deben con
 ## Consecuencias
 
 - Una implementación no puede usar tiempo de máquina ni orden de evaluación como fuente semántica de azar.
-- Las reglas de subsemillas, caché, reintentos y exposición de resultados siguen abiertas en Q-032.
+- Todo punto aleatorio posee identidad semántica estable y su elección debe derivarse de la semilla reproducible y de esa identidad sin depender del consumo secuencial accidental de un PRNG global. El algoritmo concreto de derivación o subsemillas es un detalle de implementación mientras preserve ese contrato. Q-032 mantiene abiertas las reglas de caché y reintentos y la exposición de resultados.
 - La portabilidad aritmética de `Rum` sigue en Q-058.
 - La semántica de errores dentro de expresiones booleanas ordinarias, fuera de `allowed`, requiere una tabla normativa dentro de Q-007.
 

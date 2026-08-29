@@ -7,13 +7,14 @@ supersedes: []
 superseded-by: []
 questions:
   - "Q-006"
+  - "Q-032"
 affects:
   - "aliases, colecciones, pertenencia, gramática, sintaxis, azar, efectos, ondas y conflictos"
 ---
 # ADR-100 — Orden lógico, procedencia, pertenencia y consolidación de efectos
 
-- Modifica: [[ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
-- Pregunta relacionada: [[../preguntas/Q-006-conflictos|Q-006]].
+- Modifica: [[ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[ADR-037-campos-y-dominios-declarativos|D-037]], [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-048-azar-reproducible-y-fallos|D-048]], [[ADR-064-orden-por-ruta-estable|D-064]], [[ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]].
+- Preguntas relacionadas: [[../preguntas/Q-006-conflictos|Q-006]] y [[../preguntas/Q-032-aleatoriedad-reproducible|Q-032]].
 
 ## Contexto
 
@@ -76,7 +77,7 @@ Cuando inserciones concurrentes compatibles necesitan completar una relación de
 
 La elección produce una extensión lineal del orden parcial causal: respeta toda relación causal real y solo decide entre ocurrencias concurrentes. Se elige sobre el grupo concurrente completo; no se implementa mediante comparaciones aleatorias independientes por pares que puedan introducir ciclos. Una vez fijado, el resultado pasa a formar parte de la procedencia estable y no se vuelve a sortear cuando una colección se observa o se transforma posteriormente en `ordered`.
 
-En una colección `unique`, las inserciones concurrentes equivalentes se fusionan antes de completar el orden. La ocurrencia superviviente conserva el conjunto de causas, sin elegir una causa ganadora; la causalidad se contrae sobre las ocurrencias supervivientes y solo después se completa reproduciblemente el orden que falte.
+En una colección `unique`, las inserciones concurrentes equivalentes se fusionan antes de completar el orden. La ocurrencia superviviente conserva conjuntamente todas las causas, sin elegir una causa ganadora. Sobre las ocurrencias supervivientes se induce una relación causal acíclica que preserva las restricciones causales semánticamente válidas de todas las causas fusionadas; solo después se completa reproduciblemente el orden que falte. La representación o el algoritmo concreto para obtener esa relación inducida es un detalle de implementación mientras conserve esas propiedades.
 
 ### Forma normal aritmética concurrente
 
@@ -150,7 +151,7 @@ Se descartan:
 
 ## Cuestiones abiertas
 
-Q-006 continúa parcialmente decidida. Permanecen abiertas las familias para las que todavía no se haya fijado una combinación algebraica o composición canónica concreta, incluidos los casos restantes de diccionarios, propiedades, cardinalidad estructural y write-back parcialmente solapado. También continúa sin fijarse la precisión mínima obligatoria del análisis estático de conflictos.
+Q-006 continúa parcialmente decidida. Permanecen abiertas las familias para las que todavía no se haya fijado una combinación algebraica o composición canónica concreta, incluidos los casos restantes de diccionarios, propiedades, cardinalidad estructural y write-back parcialmente solapado. También continúa sin fijarse la precisión mínima obligatoria del análisis estático de conflictos. Q-032 continúa parcialmente decidida únicamente en las reglas de caché y reintentos y en la exposición de resultados estocásticos; el algoritmo concreto de derivación o subsemillas no requiere una decisión adicional mientras preserve el contrato semántico ya fijado.
 
 ## Verificación
 

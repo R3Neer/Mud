@@ -17,6 +17,7 @@ affects:
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
 - Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
 - Amplía: D-019, D-026
+- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 - Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
@@ -109,12 +110,13 @@ La excepción de estados intermedios concedida por D-026 se refiere a cardinalid
 
 El parser y el AST distinguen:
 
-- Restricción de dominio.
-- Pertenencia booleana.
+- Restricción declarativa de dominio.
+- Restricción local o filtrado de una expresión por dominio.
+- Binding de selección.
 - Participante relacionado.
 - Unidad de presentación de una magnitud.
 
-Compartir token no fusiona sus significados.
+`in` no expresa pertenencia booleana; esa operación usa `has` y `has not`. Compartir token entre los usos restantes de `in` no fusiona sus significados.
 
 ## Consecuencias
 
