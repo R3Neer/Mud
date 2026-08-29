@@ -47,6 +47,7 @@ decisions:
   - D-093
   - D-096
   - D-097
+  - D-098
 ---
 
 # 08. Sintaxis abstracta superficial
@@ -565,7 +566,7 @@ La forma de un solo elemento permanece como esa expresión, no como una colecci�
 
 ### Asignables
 
-`AssignableExpr` conserva una base y sufijos de miembro o índice. La comprobación de que la base designa un lugar escribible pertenece a resolución, tipos y efectos.
+`AssignableExpr` conserva una base y sufijos de miembro o índice. La comprobación de que la ruta termina en un lugar escribible pertenece a resolución, tipos y efectos. El AST superficial no expande una ruta que atraviesa aliases inmutables: conserva sus sufijos, y la elaboración posterior decide si puede reconstruir los valores intermedios y propagar el write-back hasta almacenamiento exteriormente escribible. Una ausencia de clave exacta en un paso intermedio tampoco se reescribe en el AST.
 
 ### Iteración `for each`
 

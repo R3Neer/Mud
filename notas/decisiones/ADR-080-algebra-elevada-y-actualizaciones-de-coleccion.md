@@ -15,6 +15,7 @@ affects:
 # ADR-080 — Álgebra elevada y actualizaciones de colección
 
 - Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Ampliada por: [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
 
 - Modifica: [[ADR-039-colecciones-y-diccionarios|D-039]], [[ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[ADR-057-gramatica-concreta-y-continuacion|D-057]].
 - Preguntas relacionadas: [[notas/preguntas/Q-006-conflictos|Q-006]] y [[notas/preguntas/Q-019-numeros|Q-019]].
@@ -94,7 +95,7 @@ target ^= value
 target --= value
 ```
 
-Una actualización `target op= value` exige que `target` sea un lugar exteriormente mutable, que `target op value` esté bien tipado y que el resultado sea asignable al tipo efectivo del destino. La capacidad interior `[mut]` no sustituye esta exigencia.
+Una actualización `target op= value` exige que `target` designe directamente un lugar exteriormente mutable o una ruta asignable reconstruible cuyo write-back termina en uno, que `target op value` esté bien tipado y que el resultado sea asignable al tipo efectivo de la hoja. Los aliases inmutables intermedios se reconstruyen sin adquirir mutabilidad propia. La capacidad interior `[mut]` no sustituye la exigencia de una raíz exteriormente escribible.
 
 Dentro de un `then`, la actualización observa el valor proyectado por los efectos secuenciales anteriores del mismo delta privado. No se reduce en el AST a una asignación ordinaria porque su operador determina la consolidación concurrente.
 

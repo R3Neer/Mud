@@ -11,6 +11,7 @@ decisions:
   - D-046
   - D-060
   - D-080
+  - D-098
 affects: []
 superseded-by: []
 ---
@@ -23,4 +24,4 @@ superseded-by: []
 
 Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]] y [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]].
 
-Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles, el núcleo estructural, las actualizaciones homogéneas `|=`, `&=`, `^=` y `--=`, y la consolidación idempotente de varias adiciones del mismo valor a una colección `unique`. En `Nat`, los deltas aditivos se suman como enteros firmados y solo después se normalizan a cero. Falta completar la matriz para mezclas entre clases de efecto, adiciones y retiradas combinadas, inserciones distintas con orden por entrada, límites de cardinalidad, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados.
+Ya están fijadas asignaciones iguales o distintas, acumulaciones homogéneas, mezclas aritméticas incompatibles, el núcleo estructural, las actualizaciones homogéneas `|=`, `&=`, `^=` y `--=`, la consolidación idempotente de varias adiciones del mismo valor a una colección `unique` y la semántica secuencial de reconstrucción/write-back de aliases almacenados. En `Nat`, los deltas aditivos se suman como enteros firmados y solo después se normalizan a cero. Falta completar la matriz para mezclas entre clases de efecto, adiciones y retiradas combinadas, inserciones distintas con orden por entrada, límites de cardinalidad, diccionarios, propiedades, ciclo de vida y destinos parcialmente solapados, incluida la compatibilidad entre write-backs concurrentes que alcanzan componentes distintos del mismo valor o combinan una actualización parcial con la sustitución de su contenedor.

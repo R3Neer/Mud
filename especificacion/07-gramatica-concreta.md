@@ -70,6 +70,7 @@ decisions:
   - D-091
   - D-092
   - D-096
+  - D-098
 ---
 
 # 07. Gramática concreta
@@ -1140,9 +1141,20 @@ create Declaration
 destroy Declaration
 ```
 
+Una ruta asignable puede atravesar componentes almacenados de aliases inmutables e indexaciones de diccionarios exactos cuando termina en un lugar raíz exteriormente escribible. Esa escritura no muta los aliases intermedios: la elaboración construye valores nuevos del mismo tipo nominal exacto, conserva sus demás componentes almacenados, recalcula los derivados y propaga las sustituciones hacia fuera hasta el almacenamiento raíz. Por ejemplo:
+
+```mud
+shop.orders[id].status = Shipped
+shop.orders[id].retryCount += 1
+```
+
+Una local que contiene un alias sigue siendo un valor y no adquiere una ruta de retorno a almacenamiento, por lo que `order.status = Shipped` es inválido cuando `order` es solo una vinculación local. Tampoco puede escribirse un campo derivado del alias.
+
+Si una indexación de diccionario exacto usada como paso intermedio no encuentra la clave, la ausencia es `empty` y el efecto parcial es un no-op: no crea la asociación, no fabrica un valor mediante predeterminados y no produce `failed` por esa ausencia. Esto no cambia la asignación directa `shop.orders[id] = order`, que sustituye una asociación completa y puede materializar una clave ausente cuando el contrato lo permite.
+
 La forma `remove name from Owner` se distingue de retirar un valor mediante resolución y tipos. En ambos casos el parser conserva la misma procedencia; el AST elaborado debe producir la variante correcta o un diagnóstico.
 
-`|=`, `&=`, `^=` y `--=` conservan en el AST su clase de actualización. Exigen un destino exteriormente mutable y un resultado asignable. `^=` solo admite colecciones `unique`. Sobre colecciones, las actualizaciones homogéneas se consolidan por unión, intersección, paridad o suma de multiplicidades retiradas; mezclar clases distintas es conflicto salvo regla posterior expresa. Sobre `Text`, `|=` concatena y varias actualizaciones concurrentes requieren un orden total determinado.
+`|=`, `&=`, `^=` y `--=` conservan en el AST su clase de actualización. Exigen un lugar exteriormente mutable o una ruta asignable reconstruible cuyo write-back termine en uno, además de un resultado asignable a la hoja. `^=` solo admite colecciones `unique`. Sobre colecciones, las actualizaciones homogéneas se consolidan por unión, intersección, paridad o suma de multiplicidades retiradas; mezclar clases distintas es conflicto salvo regla posterior expresa. Sobre `Text`, `|=` concatena y varias actualizaciones concurrentes requieren un orden total determinado.
 
 ## `for each`, progresiones, selección y cuantificadores
 

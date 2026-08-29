@@ -14,7 +14,7 @@ affects:
 # ADR-039 — Colecciones y diccionarios
 
 - Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
 - Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
 - Modificada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 - Amplía: D-019, D-026, D-033
@@ -171,7 +171,9 @@ Asignar una clave sustituye su valor; escribir una clave ausente materializa la 
 
 Leer una clave ausente produce `empty` con la forma de salida declarada. La ausencia no produce `failed` por sí misma; solo un contexto posterior cuyo tipo, dominio o cardinalidad no admita cero elementos puede fallar. No se usa `null` ni se sustituye silenciosamente por el predeterminado del tipo de valor.
 
-El acceso encadenado solo es válido cuando el resultado intermedio es otro diccionario.
+Una indexación de diccionario puede ir seguida por acceso a miembros del valor obtenido cuando su tipo lo permite. Otra indexación encadenada exige que el resultado intermedio sea a su vez un diccionario compatible.
+
+Cuando una indexación exacta es un paso intermedio de una ruta asignable que atraviesa un alias inmutable, la elaboración puede reconstruir el alias y propagar la sustitución hasta el diccionario y el lugar exteriormente mutable que lo contiene. Si la clave intermedia está ausente, la consulta produce `empty` y el write-back parcial es un no-op: no materializa la clave, no aplica predeterminados y no produce `failed` por esa ausencia. La asignación directa `dictionary[key] = wholeValue` continúa siendo distinta y puede materializar una clave ausente.
 
 ### Orden e iteración
 

@@ -309,6 +309,7 @@ Alcance previsto:
 - Aliases nominales de representación y estructurales, construcción contextual y casting nominal.
 - Especialización nominal simple y múltiple, herencia de representación o miembros, deduplicación por origen y conflictos de miembros independientes.
 - Predeterminados heredados, valores inmutables, igualdad, orden y enumerabilidad cuando correspondan.
+- Reconstrucción de aliases inmutables mediante write-back desde rutas asignables, sin introducir mutabilidad propia en sus valores.
 - Frontera entre compatibilidad estructural y adquisición explícita de nominalidad.
 - Reglas de especialización de aliases a través de módulos, cuyo alcance exacto permanece abierto en Q-064.
 
@@ -352,6 +353,7 @@ Alcance previsto:
 
 - Diccionarios exactos y decisionales, sus tipos, cardinalidades y consultas.
 - Asociaciones, claves, iteración, orden y operaciones algebraicas.
+- Indexación dentro de rutas asignables, write-back parcial sobre valores asociados y tratamiento de claves ausentes sin confundir actualización parcial con inserción completa.
 - Modos de selección de ramas, fallback, dependencias, recursión y terminación de diccionarios decisionales.
 
 ## 17. Dominios e intervalos
@@ -454,6 +456,7 @@ Alcance previsto:
 - Asignaciones, actualizaciones, operaciones de colección, `create`, `destroy` y modificaciones estructurales permitidas.
 - Llamadas effectful y recorridos dentro de un `then` unificado.
 - Lecturas, escrituras, deltas, conflictos y composición de efectos.
+- Elaboración de rutas asignables reconstruibles y propagación de write-back a través de valores inmutables hasta su almacenamiento raíz.
 - Interacción entre efectos directos y llamadas internas que comparten una misma resolución causal.
 
 ## 26. Estado y evaluación de expresiones

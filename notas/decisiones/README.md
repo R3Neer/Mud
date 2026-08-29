@@ -8,8 +8,8 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 ## Resumen
 
-- Total: 92.
-- Vigentes: 91.
+- Total: 93.
+- Vigentes: 92.
 - Propuestas: 0.
 - Sustituidas: 1.
 - Retiradas: 0.
@@ -111,6 +111,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-095 | vigente | 2026-08-16 | [[notas/decisiones/ADR-095-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
 | D-096 | vigente | 2026-08-28 | [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|Módulos, callables, `look`, `message` y activación]] |
 | D-097 | vigente | 2026-08-28 | [[notas/decisiones/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|HIR nominal vigente e IR semántico diferido]] |
+| D-098 | vigente | 2026-08-28 | [[notas/decisiones/ADR-098-rutas-asignables-y-write-back-de-aliases|Rutas asignables y write-back de aliases inmutables]] |
 
 ## Identificadores reservados
 

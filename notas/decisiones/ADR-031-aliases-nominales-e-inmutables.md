@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
 - Ampliada por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
@@ -89,23 +89,27 @@ alias CityName :=
 
 ### Inmutabilidad
 
-Un valor de alias es inmutable. No puede actualizarse uno de sus componentes:
+Un valor de alias es inmutable. Una vinculación que contiene solo ese valor no puede actualizar uno de sus componentes:
 
 ```mud
+square := Piece.square
 square.file = B # inválido
 ```
 
-Un campo con mutabilidad exterior puede sustituir el valor completo:
+Un lugar con mutabilidad exterior puede sustituir el valor completo y una ruta asignable puede atravesar componentes almacenados del alias mediante reconstrucción y write-back:
 
 ```mud
 thing Piece {
     mut square: Square
 }
 
-square = (B, Four)
+Piece.square = (B, Four)
+Piece.square.file = C
 ```
 
-El `mut` de la especificación de colección de un componente concede capacidad interior sobre las `thing` contenidas directamente por esa colección. No vuelve reemplazable la colección ni permite actualizar el componente: el valor de alias continúa siendo inmutable. La capacidad tampoco atraviesa implícitamente otro alias o contenedor anidado; cada nivel que deba concederla debe declararla expresamente.
+La segunda escritura no muta el valor `Square`: construye otro `Square` del mismo tipo nominal exacto, conserva los componentes no modificados y sustituye el valor almacenado de `Piece.square`. La misma reconstrucción puede propagarse a través de aliases anidados e indexaciones de diccionarios exactos mientras exista una ruta de retorno a un lugar escribible. Los campos derivados se recalculan y no son destinos de write-back.
+
+El `mut` de la especificación de colección de un componente concede capacidad interior sobre las `thing` contenidas directamente por esa colección. No vuelve reemplazable la colección ni convierte por sí solo un valor de alias en lugar escribible: la reconstrucción exige una raíz con mutabilidad exterior suficiente. La capacidad tampoco atraviesa implícitamente otro alias o contenedor anidado; cada nivel que deba concederla debe declararla expresamente cuando la operación ejercida sea capacidad interior.
 
 ### Ausencia de identidad runtime
 
@@ -136,8 +140,8 @@ Los valores se comparan por tipo nominal y contenido. La declaración existe dur
 4. Componente con predeterminado explícito y predeterminado procedente de su tipo.
 5. Rechazo de predeterminado impuro, no estático o fuera de tipo, dominio o colección.
 6. Rechazo de `mut` exterior y aceptación de `[mut]` interior en un componente colectivo de `thing`.
-7. Rechazo de actualización parcial de un valor.
-8. Sustitución completa desde un campo mutable.
+7. Rechazo de actualización parcial sobre una local alias y aceptación de reconstrucción/write-back cuando la ruta termina en almacenamiento escribible.
+8. Sustitución completa desde un campo mutable y conservación de los componentes no modificados durante un write-back parcial.
 9. Rechazo de `create`, `destroy` y `abstract`; aceptación de `as` e `is` como especialización nominal conforme a D-084.
 
 ## Modificación por D-084
