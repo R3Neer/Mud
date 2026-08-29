@@ -60,11 +60,11 @@ Los archivos deberían agrupar preferentemente conceptos, lugares, procesos o si
 
 Esta regla es informativa y no afecta a resolución, identidad, conformidad ni anclas. Una relación transversal puede ocupar un archivo propio cuando represente mejor el dominio.
 
-### Operador `not in`
+### Pertenencia booleana
 
-`not in` es la negación canónica de pertenencia. Se tokeniza como las dos palabras reservadas `not` e `in`, forma un único operador de comparación y tiene la misma precedencia y restricciones de encadenamiento que `in`.
+La pertenencia booleana se escribe con el contenedor a la izquierda: `container has value`. Su negación canónica es `container has not value`. `has` es palabra reservada y `has not` conserva dos tokens de palabra con trivia propia.
 
-No equivale a aplicar el prefijo `not` a una expresión incompleta. El AST conserva `NotMembership` como operador propio.
+`in` no es un operador booleano de pertenencia: se reserva para dominios, restricciones, filtros, bindings y conversiones donde corresponda. El AST representa la pertenencia mediante `HasMember` y `HasNotMember`, no mediante `Membership` o `NotMembership` asociados a `in`.
 
 ### Diccionarios exactos
 
@@ -114,7 +114,7 @@ selector --> result
 
 Dentro del selector y del resultado, `value` es una palabra contextual vinculada a la entrada de tipo `A`.
 
-Todo selector ordinario debe elaborar directamente a `Bool`. MUD no inserta implícitamente `value`, `==`, `is` ni `in`: deben escribirse de forma expresa `value == expresión`, `value in dominio`, `value is Tipo` o cualquier otra condición booleana pura. Una expresión desnuda que no produzca `Bool` es inválida. `_` es el fallback y solo se considera cuando ninguna rama ordinaria aplicable ha producido resultado.
+Todo selector ordinario debe elaborar directamente a `Bool`. MUD no inserta implícitamente `value`, `==`, `is` ni pertenencia: deben escribirse de forma expresa `value == expresión`, `dominio has value`, `value is Tipo` o cualquier otra condición booleana pura. Una expresión desnuda que no produzca `Bool` es inválida. `_` es el fallback y solo se considera cuando ninguna rama ordinaria aplicable ha producido resultado.
 
 Los resultados y selectores pueden leer estado externo. Cada lectura debe quedar registrada como dependencia de la rama y del diccionario. Todas las llamadas transitivas de una aplicación observan la misma instantánea estable del mundo.
 

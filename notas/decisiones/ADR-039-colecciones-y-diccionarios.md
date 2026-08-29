@@ -150,7 +150,7 @@ El tipo estático de `combinedChars` es `Char [1..7]`: no es `unique`, `ordered`
 
 `Text` no equivale a `Char [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
 
-La consolidación simultánea de inserciones distintas con orden observable deberá integrarse en la matriz de Q-006.
+Las inserciones concurrentes compatibles que necesiten completar un orden de procedencia respetan la causalidad y desempatan únicamente ocurrencias concurrentes mediante una elección pseudoaleatoria reproducible con identidad semántica estable. En una colección `unique`, las inserciones equivalentes se fusionan antes de completar ese orden.
 
 ### Diccionarios
 

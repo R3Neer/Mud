@@ -1426,12 +1426,12 @@ alias EmployeeId as PersonId
 
 un `EmployeeId` satisface `value is PersonId`, pero no `value iis PersonId`. `value iis not PersonId` elimina únicamente la posibilidad exacta `PersonId` durante el narrowing. El operando derecho de `iis` debe ser un tipo nominal; productos, diccionarios y la identidad singleton `Madrid` son inválidos.
 
-Sobre `MudPath`, `p in q` es reflexivo y compara segmentos completos:
+Sobre `MudPath`, la pertenencia booleana usa el contenedor a la izquierda, es reflexiva y compara segmentos completos:
 
 ```mud
-world.combat in world.combat          # true
-world.combat.melee in world.combat    # true
-world.combatant in world.combat       # false
+world.combat has world.combat          # true
+world.combat has world.combat.melee    # true
+world.combat has world.combatant       # false
 ```
 
 ## Metadatos postfix
@@ -1572,7 +1572,8 @@ El parser o la elaboración posterior deben resolver sin elección arbitraria:
 
 | Superficie | Distinción |
 | --- | --- |
-| `in` | dominio, participante relacionado, pertenencia o unidad |
+| `in` | dominio, participante relacionado, restricción/filtro o unidad |
+| `has` | pertenencia booleana |
 | `call()` | regla booleana o acción |
 | `remove x from y` | valor de colección o propiedad dinámica |
 | `UNIT_FORM` | unidad habilitada o nombre inválido |

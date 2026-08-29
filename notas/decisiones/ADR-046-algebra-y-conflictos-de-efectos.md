@@ -47,9 +47,9 @@ Reglas mínimas:
 | asignaciones al mismo valor | compatibles, una asignación normalizada |
 | asignaciones a valores distintos | conflicto |
 | actualizaciones aditivas homogéneas | compatibles, suma de deltas antes de normalizar el destino |
-| actualizaciones multiplicativas homogéneas | compatibles, producto de factores |
+| actualizaciones multiplicativas y divisivas homogéneas | compatibles, acumulación en numerador `P` y denominador `Q` |
 | asignación con actualización aritmética | conflicto |
-| actualización aditiva con multiplicativa | conflicto |
+| actualización aditiva con multiplicativa o divisiva | compatibles; forma normal `((x + Δ) * P) / Q` |
 | actualizaciones `|=` homogéneas sobre colecciones | unión de operandos |
 | concatenaciones `|=` homogéneas sobre `Text` | compatibles solo con orden total determinado |
 | actualizaciones `&=` homogéneas | intersección de operandos |
@@ -66,7 +66,7 @@ Para efectos estructurales se aplican D-023, D-026 y D-054:
 - varias adiciones del mismo valor a una colección `unique` se consolidan idempotentemente en una sola presencia;
 - cada `then` y toda consolidación posible deben preservar cardinalidades estáticamente.
 
-Un conflicto demostrable se rechaza estáticamente. Si la coincidencia de destinos solo puede conocerse durante una resolución, el runtime la detecta y produce `failed` con rollback completo.
+Un conflicto verdadero que el compilador demuestra inevitable es error estático. Si demuestra que es posible pero no inevitable, emite warning. Si demuestra que los destinos no pueden coincidir o que los efectos consolidan de forma compatible, no emite diagnóstico de conflicto. Si un conflicto advertido o no decidible estáticamente se materializa durante una resolución, el runtime produce `failed` con rollback completo.
 
 Los deltas aditivos dirigidos a un `Nat` son enteros firmados, aunque el valor del destino nunca pueda ser negativo. Para un valor inicial $n$ y deltas compatibles $\delta_i$, D-060 fija:
 

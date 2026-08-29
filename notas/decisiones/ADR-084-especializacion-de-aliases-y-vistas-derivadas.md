@@ -37,7 +37,7 @@ Una declaración con antecesores puede omitir la definición local. `alias A` si
 
 Los aliases estructurales heredan componentes almacenados y campos derivados. El mismo miembro original alcanzado por varias rutas se deduplica por su ancla; miembros independientes con el mismo nombre producen conflicto, aunque sean textualmente iguales.
 
-Un descendiente puede sobrescribir únicamente el predeterminado de un componente almacenado heredado. No puede cambiar su tipo, dominio, cardinalidad, unicidad, orden o capacidad interior. Los campos derivados heredados no se redefinen.
+Un descendiente puede sobrescribir el predeterminado de un componente almacenado heredado y puede refinar su contrato cuando el refinamiento fortalece garantías sin retirar capacidades observables o de escritura prometidas por sus antecesores. La mutabilidad exterior no cambia por especialización; la capacidad interior puede fortalecerse de ausencia de `[mut]` a presencia de `[mut]`, pero no retirarse. Tipo, dominio, cardinalidad, unicidad y orden se rigen por el mismo criterio de sustituibilidad. Los campos derivados heredados conservan su expresión definitoria y solo pueden fortalecer el contrato de su resultado.
 
 Los miembros pertenecen al tipo nominal del alias. Una estructura desnuda no los obtiene por coincidencia estructural; debe adquirir el alias por contexto o mediante `to`.
 
@@ -69,7 +69,7 @@ Se rechaza interpretar el orden de antecesores como prioridad, resolver la espec
 1. Aceptación de especialización simple y múltiple, y rechazo de ciclos.
 2. Rechazo de representaciones nominales heredadas incompatibles o redeclaradas.
 3. Deduplicación de diamantes por origen y diagnóstico de colisiones independientes.
-4. Herencia de componentes y derivados, con sobrescritura exclusiva de predeterminados almacenados.
+4. Herencia de componentes y derivados, con sobrescritura de predeterminados y refinamientos de contrato únicamente cuando fortalecen garantías sin retirar capacidades heredadas.
 5. Acceso a miembros solo después de adquirir el tipo nominal.
 6. Capacidad interior propia de vistas derivadas y pertenencia estable durante cada instantánea.
 7. Recálculo posterior, validación del contrato y rollback ante incumplimiento.
