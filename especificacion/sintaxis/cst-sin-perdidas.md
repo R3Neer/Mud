@@ -82,7 +82,7 @@ La vista significativa filtra la trivia y es la que consume la gramática:
 token token ... EOF
 ```
 
-Los comentarios se eliminan de la **vista significativa**, no de la representación completa. Por tanto, la frase «los comentarios se eliminan antes del parsing» debe entenderse como «no se presentan al reconocedor como terminales».
+Los comentarios se eliminan únicamente de la **vista significativa**. El reconocedor no los recibe como terminales; la representación completa los conserva como trivia.
 
 ## Modelo abstracto
 
