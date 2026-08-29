@@ -795,7 +795,7 @@ comparison-expression
     ::= restriction-expression , [ comparison-tail ] ;
 
 restriction-expression
-    ::= quantitative-expression , { "in" , type-alternative-domain } ;
+    ::= quantitative-expression , [ "in" , type-alternative-domain ] ;
 
 comparison-tail
     ::= chainable-comparison , quantitative-expression

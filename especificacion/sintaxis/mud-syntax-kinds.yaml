@@ -1413,7 +1413,7 @@ syntax_nodes:
     - membership-has
   restriction-expression:
     kind: RestrictionExpressionSyntax
-    rhs: 'quantitative-expression , { "in" , type-alternative-domain }'
+    rhs: 'quantitative-expression , [ "in" , type-alternative-domain ]'
     references:
     - quantitative-expression
     - type-alternative-domain
