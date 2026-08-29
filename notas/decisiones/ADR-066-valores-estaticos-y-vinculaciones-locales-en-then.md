@@ -85,7 +85,7 @@ then {
 La forma es:
 
 ```text
-nombre [ : tipo ] := expresión
+nombre [ forma-derivada ] := expresión
 ```
 
 Comparte con los campos calculados:
@@ -94,7 +94,7 @@ Comparte con los campos calculados:
 - Expresión pura.
 - Inferencia de tipo cuando existe una solución única.
 - Anotación obligatoria cuando la inferencia es ambigua.
-- Ausencia de `mut`, `in`, cardinalidad y modificadores propios.
+- El tipo escrito se comprueba estáticamente; dominio, cardinalidad, `unique` u orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y siguen la normalización de las transformaciones locales equivalentes. No pueden introducir `[mut]` ni otra autoridad.
 
 No crea un campo, un lugar asignable ni estado persistente. El AST y el IR la representan como una vinculación local, no como un efecto.
 
@@ -154,5 +154,5 @@ Un `then` continúa necesitando al menos un efecto o una llamada a acción; un b
 8. Dependencia de un local anterior.
 9. Rechazo de referencia adelantada, ciclo, redeclaración y sombreado.
 10. Ámbito por bloque e iteración.
-11. Rechazo de `mut`, `in` o especificación de colección en una vinculación local.
+11. Aceptación de `in`, cardinalidad, `unique` y orden como forma coercitiva derivada, y rechazo de `[mut]` como autoridad fabricada.
 12. Rechazo de un `then` sin ningún efecto observable.

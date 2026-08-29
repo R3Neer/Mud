@@ -379,7 +379,7 @@ No se clasifica la acción como elemental o compuesta.
 
 ## Bloques de expresión y tests
 
-Una `local-value-declaration` produce `LocalValueDecl(name, type?, value)`. La anotación opcional procede únicamente de `: type-expression`; no se proyecta mediante `derived-value-shape`, por lo que las formas locales `in domain` o `[collection-specification]` sin tipo no existen.
+Una `local-value-declaration` produce `LocalValueDecl(name, shape?, value)`. `: type-expression` produce `ExplicitDerivedShape`; `in domain [collection]` y `collection` producen `InferredDerivedShape`. Dominio, cardinalidad, `unique` y orden conservados por cualquiera de ambas variantes son coercitivos sobre el resultado durante elaboración; `[mut]` se conserva superficialmente cuando la gramática lo reconoce, pero se rechaza como coerción porque no puede fabricar autoridad.
 
 Los terminadores opcionales escritos después de `:` en `for each`, selección y cuantificadores son separación concreta: no producen nodos ni cambian `ExpressionBlock`/`EffectBlock`.
 

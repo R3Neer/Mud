@@ -28,7 +28,7 @@ MUD ya dispone de vinculaciones locales inmutables mediante `:=` en bloques `the
 
 Un bloque booleano contiene, en este orden:
 
-1. Cero o más vinculaciones locales `nombre [: Tipo] := expresión`.
+1. Cero o más vinculaciones locales `nombre [forma-derivada] := expresión`, con tipo estático opcional y coerciones derivadas admitidas sobre dominio, cardinalidad, unicidad u orden.
 2. Exactamente una expresión final.
 
 La expresión final debe satisfacer el contrato de la construcción propietaria: elabora a `Bool` en reglas booleanas, guardas, invariantes y postcondiciones; en `when`, elabora a un activador admitido por D-058. Toda expresión sin forma de declaración debe ser la última del bloque; una segunda expresión no declarativa es inválida.

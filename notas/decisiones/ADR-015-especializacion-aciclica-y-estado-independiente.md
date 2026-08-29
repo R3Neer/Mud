@@ -165,4 +165,4 @@ thing Broken as Kingdom {
 
 ## Ampliación por D-084
 
-La aciclicidad y la política no ordenada de antecesores se aplican también a aliases. Para miembros heredados, un diamante deduplica el mismo origen; miembros independientes con el mismo nombre entran en conflicto. En aliases no existe estado mutable propio que heredar.
+La aciclicidad y la política no ordenada de antecesores se aplican también a aliases. Para miembros heredados, un diamante deduplica el mismo origen. Contribuciones independientes equivalentes pueden fusionarse; contratos distintos requieren resolución explícita que satisfaga todas las ramas, y las categorías incompatibles continúan siendo conflicto. En aliases no existe estado mutable propio que heredar.

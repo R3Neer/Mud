@@ -24,9 +24,9 @@ MUD ya distingue colecciones ordenadas y no ordenadas, efectos concurrentes calc
 
 ### Refinamiento heredado de campos
 
-Un miembro heredado puede refinar su contrato únicamente cuando el refinamiento fortalece garantías sin retirar ninguna capacidad observable o de escritura prometida por sus antecesores. La mutabilidad exterior de un lugar almacenado no cambia por especialización. La capacidad interior puede fortalecerse de ausencia de `[mut]` a presencia de `[mut]`, pero no retirarse. Ambos ejes continúan siendo independientes.
+Un campo almacenado heredado solo puede refinar su contrato cuando es exteriormente inmutable. Un campo almacenado con `mut` exterior es invariante: su contrato no puede estrecharse ni ampliarse por especialización.
 
-Un campo derivado heredado no sustituye su expresión definitoria; un descendiente solo puede fortalecer su contrato de resultado cuando el nuevo contrato es sustituible por el heredado. La admisibilidad de refinamientos de tipo, dominio, cardinalidad, `unique` u orden se decide por el mismo criterio de fortalecimiento de garantías, no por una lista de sobrescrituras arbitrarias.
+Un campo derivado heredado puede refinar su contrato. Si procede de un único miembro original conserva su expresión definitoria; el descendiente solo fortalece el contrato efectivo. Tipo, dominio, cardinalidad, `unique` y orden se admiten únicamente cuando el nuevo contrato es sustituible por todos los contratos heredados relevantes.
 
 ### Orden lógico y procedencia
 
@@ -38,7 +38,7 @@ Toda operación cuya semántica dependa de orden consume el orden lógico de la 
 
 ### Transformaciones locales de colecciones
 
-Una especificación de colección aplicada localmente a una expresión es una transformación del valor temporal, no un contrato comprobado contra un resultado ya construido. Los contratos escritos en declaraciones y campos derivados conservan su significado declarativo.
+Una especificación de colección aplicada localmente a una expresión es una transformación del valor temporal. En declaraciones de valor, el contrato es verificativo y nunca transforma el valor. En declaraciones derivadas, el tipo nominal o estructural escrito se comprueba estáticamente, mientras que dominio, cardinalidad, `unique` y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y usan la misma normalización que la transformación local equivalente.
 
 Las transformaciones locales se normalizan, con independencia del orden textual de los modificadores, en este orden:
 

@@ -65,7 +65,7 @@ La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo es
 
 La inferencia no aplica una prioridad predeterminada entre interpretaciones compatibles. Esto incluye tanto la representación de literales numéricos como las formas contextuales compartidas. Por ejemplo, `[3]` puede elaborar una colección unitaria o el intervalo unitario `[3..3]`: ambas formas se conservan y una declaración calculada sin contexto que permita elegir una sola debe anotar su tipo. La omisión está pensada para los usos comunes en los que las operaciones y dependencias de la expresión determinan un único tipo, no para garantizar que toda expresión aislada sea inferible.
 
-El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable ni admite `mut` exterior. Puede declarar tipo, dominio y especificación de colección —incluida capacidad interior `[mut]`— como contrato comprobado sobre el resultado. La anotación no transforma la expresión ni crea miembros.
+El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable ni admite `mut` exterior. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, `unique` y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos: transforman el resultado con la misma semántica y normalización que las transformaciones locales equivalentes. No pueden introducir capacidad `[mut]` ni otra autoridad que el resultado de origen no posea.
 
 Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `Char [0..2]`, `combinedChars := leftChars | rightChars` infiere `Char [1..7]` conforme al álgebra de D-039. El resultado no adquiere modificadores que las reglas de propagación no puedan garantizar.
 
@@ -132,7 +132,7 @@ El parser y el AST distinguen:
 3. Campo almacenado fuera de dominio y `in` válido sobre un campo calculado conforme a su forma derivada.
 4. Ciclo y dependencia estocástica inválidos.
 5. Campo calculado con tipo declarado, inferido y no inferible unívocamente.
-6. Rechazo de `mut` exterior en campos calculados y aceptación de capacidad interior/modificadores declarados por su forma derivada cuando sean compatibles.
+6. Rechazo de `mut` exterior y de `[mut]` coercitivo en campos calculados; aceptación de `in`, cardinalidad, `unique` y orden como coerciones derivadas.
 7. Rollback sin estado publicable inválido.
 8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
 9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.
@@ -142,4 +142,4 @@ El parser y el AST distinguen:
 
 ## Modificación por D-084
 
-Los aliases estructurales admiten campos derivados y sobrescrituras de predeterminados heredados. Los derivados pueden declarar una forma colectiva como `wounded [* mut] := ...`. La capacidad interior pertenece al campo derivado y no depende de la fuente.
+Los aliases estructurales admiten campos derivados y sobrescrituras de predeterminados heredados. Sus formas derivadas siguen la distinción vigente entre anotación verificativa y coerciones de dominio/colección; una coerción no puede fabricar capacidad `[mut]`.

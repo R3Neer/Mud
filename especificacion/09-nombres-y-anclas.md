@@ -214,7 +214,7 @@ Una implementación conforme debe producir los mismos candidatos y anclas, recha
 
 ## Especialización de aliases
 
-Las declaraciones `alias` pueden aportar aristas de especialización. El grafo nominal conserva las antecesoras directas escritas y la clausura `is` se calcula durante elaboración. Los miembros heredados mantienen el ancla de su origen; dos miembros independientes con el mismo nombre no se fusionan.
+Las declaraciones `alias` pueden aportar aristas de especialización. El grafo nominal conserva las antecesoras directas escritas y la clausura `is` se calcula durante elaboración. Los miembros heredados mantienen el ancla de su origen. La resolución nominal conserva las contribuciones independientes; su posible fusión por equivalencia o su resolución explícita dependen de tipado y elaboración, no del orden nominal de `as`.
 
 
 ## Metadatos, descriptores y anclas subordinadas

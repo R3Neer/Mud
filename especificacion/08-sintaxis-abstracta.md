@@ -497,7 +497,7 @@ En una regla `always`, `InvariantBodySyntax` produce exclusivamente el `Expressi
 
 ## Bloques de expresión
 
-La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las declaraciones `:=` y `result` la única expresión final. Cada `LocalValueDecl` conserva únicamente un `TypeExpr` opcional escrito tras `:`; una local no usa `DerivedValueShape` y no puede declarar por separado `in`, cardinalidad ni modificadores de colección. El nodo no fija el tipo de `result`: el propietario aplica su contrato booleano, temporal, agregable u ordenable. La forma breve normaliza a `ExpressionBlock([], expression)`. Las locales son puras, inmutables, secuenciales y sin referencias adelantadas, ciclos, redeclaración ni sombreado. El `otherwise` asociado no forma parte del bloque.
+La estructura común es `ExpressionBlock(locals, result)`. `locals` conserva las declaraciones `:=` y `result` la única expresión final. Cada `LocalValueDecl` conserva un `DerivedValueShape` opcional. En una declaración derivada, el tipo nominal o estructural escrito aporta el contrato estático, mientras que dominio, cardinalidad, `unique` y orden escritos en su `DerivedValueShape`, exista o no tipo explícito, son coercitivos sobre el resultado y se elaboran con la misma normalización que la transformación local equivalente. `[mut]` no es una coerción derivada admisible porque no puede fabricar autoridad. El nodo no fija el tipo de `result`: el propietario aplica su contrato booleano, temporal, agregable u ordenable. La forma breve normaliza a `ExpressionBlock([], expression)`. Las locales son puras, inmutables, secuenciales y sin referencias adelantadas, ciclos, redeclaración ni sombreado. El `otherwise` asociado no forma parte del bloque.
 
 ## Acciones
 

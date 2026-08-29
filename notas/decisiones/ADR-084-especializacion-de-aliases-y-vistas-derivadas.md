@@ -29,23 +29,21 @@ Los aliases ya eran tipos nominales e inmutables, pero no estaba fijado cómo es
 
 Todo alias puede declarar una lista no ordenada de antecesores mediante `as`. La relación directa debe ser acíclica y su clausura `is` es reflexiva, transitiva y antisimétrica. El orden escrito no introduce prioridad ni MRO.
 
-Un alias nominal raíz introduce su representación con `:= Tipo`. Un descendiente hereda la representación efectiva y no puede redeclararla. La especialización múltiple exige una intersección compatible de las representaciones de todas las antecesoras; una unión `A | B` no satisface esta obligación.
+Un alias nominal raíz introduce su representación con `:= Tipo`. Un descendiente puede omitirla cuando la representación heredada ya es única y compatible, o declarar `:= Tipo` para refinarla o resolver explícitamente varias contribuciones. La representación local debe refinar simultáneamente todas las representaciones heredadas relevantes. Una unión `A | B` no satisface por sí misma esta obligación.
 
 Una declaración con antecesores puede omitir la definición local. `alias A` sin antecesores ni definición es inválido.
 
 ### Forma estructural heredada
 
-Los aliases estructurales heredan componentes almacenados y campos derivados. El mismo miembro original alcanzado por varias rutas se deduplica por su ancla; miembros independientes con el mismo nombre producen conflicto, aunque sean textualmente iguales.
+Los aliases estructurales heredan componentes almacenados y campos derivados. El mismo miembro original alcanzado por varias rutas se deduplica por su ancla. Contribuciones independientes equivalentes del mismo nombre pueden fusionarse; si sus contratos difieren, el descendiente debe resolverlos explícitamente con un contrato que refine todos los heredados. No existe prioridad por orden de `as`.
 
-Un descendiente puede sobrescribir el predeterminado de un componente almacenado heredado y puede refinar su contrato cuando el refinamiento fortalece garantías sin retirar capacidades observables o de escritura prometidas por sus antecesores. La mutabilidad exterior no cambia por especialización; la capacidad interior puede fortalecerse de ausencia de `[mut]` a presencia de `[mut]`, pero no retirarse. Tipo, dominio, cardinalidad, unicidad y orden se rigen por el mismo criterio de sustituibilidad. Los campos derivados heredados conservan su expresión definitoria y solo pueden fortalecer el contrato de su resultado.
+Un descendiente puede sobrescribir el predeterminado de un componente almacenado heredado y refinar su contrato, pues los valores alias son exteriormente inmutables, siempre que el nuevo contrato refine todas las contribuciones heredadas. Los campos derivados de un único origen conservan su expresión definitoria y pueden refinar su contrato. Si dos campos derivados independientes homónimos aportan expresiones distintas, el descendiente debe proporcionar una nueva definición derivada explícita cuyo contrato satisfaga todas las contribuciones.
 
 Los miembros pertenecen al tipo nominal del alias. Una estructura desnuda no los obtiene por coincidencia estructural; debe adquirir el alias por contexto o mediante `to`.
 
 ### Campos y colecciones derivadas
 
-Un alias estructural puede declarar campos derivados con `:=`. Son puros, no almacenados y no asignables. Pueden declarar tipo, dominio, cardinalidad, unicidad, orden y capacidad interior `[mut]` como contrato del resultado, no como transformación de la expresión.
-
-La capacidad interior de una colección derivada pertenece a esa vista y es independiente de la fuente. Permite modificar las `thing` directamente contenidas, pero no la pertenencia de la colección derivada.
+Un alias estructural puede declarar campos derivados con `:=`. Son puros, no almacenados y no asignables. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, unicidad y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y siguen la normalización de transformaciones locales. No pueden fabricar capacidad interior `[mut]` ni otra autoridad.
 
 La selección se mantiene fija durante una instantánea de evaluación. Tras consolidar los efectos, la vista se recalcula sobre el nuevo estado y se validan sus contratos; un incumplimiento produce `failed` y rollback. Una colección almacenada no se autopoda ni recalcula su pertenencia.
 
@@ -55,7 +53,7 @@ El cuerpo de una `thing` puede omitirse cuando no contiene miembros. `thing A`, 
 
 ## Alternativas
 
-Se rechaza interpretar el orden de antecesores como prioridad, resolver la especialización múltiple mediante unión, fusionar miembros independientes solo por nombre o propagar automáticamente la capacidad interior desde la fuente de una vista.
+Se rechaza interpretar el orden de antecesores como prioridad, resolver la especialización múltiple mediante unión, fusionar miembros independientes incompatibles solo por nombre o fabricar capacidad interior mediante una coerción derivada.
 
 ## Consecuencias
 
@@ -67,9 +65,9 @@ Se rechaza interpretar el orden de antecesores como prioridad, resolver la espec
 ## Verificación
 
 1. Aceptación de especialización simple y múltiple, y rechazo de ciclos.
-2. Rechazo de representaciones nominales heredadas incompatibles o redeclaradas.
-3. Deduplicación de diamantes por origen y diagnóstico de colisiones independientes.
-4. Herencia de componentes y derivados, con sobrescritura de predeterminados y refinamientos de contrato únicamente cuando fortalecen garantías sin retirar capacidades heredadas.
+2. Herencia de representación y resolución explícita mediante `:=` cuando varias contribuciones difieren, exigiendo refinamiento común.
+3. Deduplicación de diamantes por origen, fusión de contribuciones independientes equivalentes y resolución explícita de contratos distintos.
+4. Herencia de componentes y derivados, con sobrescritura de predeterminados, refinamientos sustituibles y nueva definición explícita ante colisión de expresiones derivadas independientes.
 5. Acceso a miembros solo después de adquirir el tipo nominal.
 6. Capacidad interior propia de vistas derivadas y pertenencia estable durante cada instantánea.
 7. Recálculo posterior, validación del contrato y rollback ante incumplimiento.
