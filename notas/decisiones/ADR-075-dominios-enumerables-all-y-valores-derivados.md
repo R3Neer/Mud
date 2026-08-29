@@ -48,7 +48,7 @@ nombre [forma-derivada] ":=" expresión
 
 La forma derivada es una anotación completa `: tipo`, una restricción `in dominio` seguida opcionalmente por colección, o una colección sin tipo ni dominio. Esto permite tanto `a: A in [B, C] := expresión` como `a in [B, C] := expresión` sin fabricar una anotación de tipo superficial.
 
-El dominio declarado es un contrato. Si se demuestra su cumplimiento no hay diagnóstico; si puede incumplirse se emite warning y se inserta una obligación dinámica; si toda evaluación posible queda fuera, o una constante concreta queda fuera, existe error. Una transición que viole una obligación dinámica devuelve `failed` y se revierte.
+El dominio declarado en una forma derivada es coercitivo: filtra el resultado con la misma semántica que la restricción local de dominio. La cardinalidad se comprueba después de esa transformación; una cota inferior que ya no pueda satisfacerse produce la obligación o el fallo correspondiente y nunca fabrica miembros.
 
 Una lista de expresiones separadas por comas construye una colección derivada:
 
