@@ -34,6 +34,8 @@ En particular:
 - Una decisión vigente debe integrarse en toda superficie normativa ya desarrollada cuya responsabilidad cubra su alcance. Si la ubicación canónica todavía no existe, no se inventa una superficie provisional solo para alojarla, pero ninguna superficie existente puede contradecirla.
 - Si el cambio afecta resolución nominal, debe aplicarse además MUD-EDIT-004 y revisarse `especificacion/09-nombres-y-anclas.md` junto con `especificacion/nombres/mud-nominal-hir.asdl`.
 
+La barrera mecánica de MUD-EDIT-002 y del tratamiento de preguntas se ejecuta con `python gobierno/validate_spec_editorial.py`. Todo cambio que toque `especificacion/` o `notas/preguntas/` debe pasarla antes del commit. Si se modifica la propia barrera, se ejecuta además `python gobierno/test_validate_spec_editorial.py`.
+
 ## Archivos temporales
 
 Los documentos intencionadamente temporales se rigen por `gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md`. Los archivos efímeros ordinarios no se versionan.

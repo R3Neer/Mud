@@ -25,7 +25,7 @@ No define MUD. La autoridad normativa permanece en `especificacion/` y, transito
 - Etapa 4 — auditoría sistemática de decisiones vigentes contra superficies existentes: completada.
 - Etapa 5 — auditoría exhaustiva del documento fuente de la integración D-096: completada.
 - Etapa 6 — revisión semántica del mapa futuro de `especificacion/README.md`: completada.
-- Etapa 7 — barrera mecánica contra regresiones editoriales: pendiente.
+- Etapa 7 — barrera mecánica contra regresiones editoriales: completada.
 - Etapa 8 — validación semántica global final: pendiente.
 
 ## Taxonomía de trabajo
@@ -189,19 +189,23 @@ Las preguntas Q-063 a Q-068 aparecen en el frontmatter del índice porque el map
 
 ## Etapa 7 — barrera mecánica
 
-Añadir una comprobación editorial automática para reducir regresiones de MUD-EDIT-002 y del tratamiento de preguntas activas.
+Completada mediante `gobierno/validate_spec_editorial.py` y su suite `gobierno/test_validate_spec_editorial.py`. La barrera recorre Markdown y artefactos mecánicos textuales de `especificacion/` (`.md`, `.ebnf`, `.asdl`, `.yaml` y `.yml`), excluyendo únicamente `00-convenciones-editoriales.md`, que necesariamente contiene los ejemplos y definiciones de la propia regla.
 
-Como mínimo debe poder detectar:
+El validador detecta mecánicamente:
 
-- identificadores `D-NNN` o `ADR-NNN` en cuerpos normativos de `especificacion/`, excluyendo metadatos y el propio documento que define la convención;
-- encabezados del tipo «Actualización/Revisión/Proyección ... D-NNN» y expresiones inequívocas de migración editorial;
-- una referencia corporal a una `Q-NNN` cerrada;
-- una referencia corporal a una Q activa ausente de `questions:` cuando el documento disponga de frontmatter;
-- una pregunta cerrada que permanezca en `questions:`.
+- identificadores `D-NNN` o `ADR-NNN` en el cuerpo de la especificación, separando previamente el frontmatter Markdown;
+- encabezados inequívocos de actualización/revisión/corrección/sustitución editorial y formulaciones que sustituyen explícitamente una regla, redacción o versión anterior;
+- referencias corporales a preguntas inexistentes o inactivas;
+- referencias corporales a preguntas activas ausentes de `questions:` cuando el Markdown dispone de frontmatter;
+- preguntas inexistentes o inactivas conservadas en `questions:`.
 
-No debe intentar decidir mediante regex si cualquier frase negativa es historia o una prohibición vigente; esa distinción necesita revisión semántica.
+La suite contiene diez fixtures representativos: caso válido con Q activa, IDs `D-NNN` y `ADR-NNN` indebidos, encabezado y frase de migración editorial, Q cerrada en cuerpo, Q activa no declarada, Q cerrada en frontmatter, Q inexistente y referencia válida desde un artefacto sin frontmatter. También verifica que el documento de convenciones quede excluido.
 
-**Criterio de cierre:** el validador falla ante fixtures representativos de cada regresión y pasa sobre la especificación saneada.
+Deliberadamente no se intenta decidir por regex si palabras generales como «antes», «anterior», «retirado» o una negación describen historia o una regla vigente. Esa revisión semántica permanece reservada a la Etapa 8.
+
+La barrera queda incorporada al ciclo documental y a `AGENTS.md`: los cambios que afecten `especificacion/` o `notas/preguntas/` deben ejecutarla antes del commit, y los cambios al propio validador deben ejecutar además su suite de fixtures.
+
+**Criterio de cierre cumplido:** los fixtures de regresión fallan con códigos específicos y la especificación saneada pasa la barrera completa.
 
 ## Etapa 8 — auditoría final
 

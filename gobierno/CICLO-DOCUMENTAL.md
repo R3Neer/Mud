@@ -160,7 +160,7 @@ Cuando el autor indique que ha terminado de revisar o completar una parte, Codex
 - Markdown y LaTeX bien delimitados.
 - Gramática o esquemas verificables cuando existan.
 - Suite de conformidad actualizada cuando corresponda.
-- Validadores editoriales específicos de MUD-EDIT-002 y MUD-EDIT-003 cuando existan.
+- Barrera mecánica de MUD-EDIT-002 y del tratamiento de preguntas mediante `python gobierno/validate_spec_editorial.py`; MUD-EDIT-003 conserva además su revisión semántica por superficies afectadas.
 - Aplicación de MUD-EDIT-004 y coherencia entre capítulo 09 + HIR nominal cuando el cambio afecte resolución de nombres.
 
 ## Conservación del material didáctico
