@@ -98,7 +98,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-082 | vigente | 2026-08-04 | [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|`cycle` como modificador de dominio de punto]] |
 | D-083 | vigente | 2026-08-04 | [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|Magnitudes base sin unidades]] |
 | D-084 | vigente | 2026-08-04 | [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|Especialización de aliases, miembros heredados y vistas derivadas]] |
-| D-085 | vigente | 2026-08-05 | [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|Diccionarios decisionales, metadatos y activación estructurada]] |
+| D-085 | vigente | 2026-08-05 | [[notas/decisiones/ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|Diccionarios funcionales, metadatos y activación estructurada]] |
 | D-086 | vigente | 2026-08-05 | [[notas/decisiones/ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|Identidad nominal exacta, flechas exteriores y álgebra de diccionarios]] |
 | D-087 | vigente | 2026-08-15 | [[notas/decisiones/ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|Metadatos reflectivos, descriptores estables y visibilidad exterior]] |
 | D-088 | vigente | 2026-08-15 | [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|Iteración, progresiones firmadas y bloques de expresión]] |

@@ -18,6 +18,7 @@ affects:
 - Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
 - Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+- Ejemplo de pertenencia actualizado por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]]
 - Preguntas relacionadas: Q-005, Q-050
 - Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
 
@@ -94,7 +95,7 @@ Una vinculación que no estaba presente en esa primera instantánea, ya sea por 
 
 ```mud
 always rule ValidPosition on game: Game {
-    game.position in game.board
+    game.board has game.position
 }
 otherwise "A position is outside the board of {game}"
 ```

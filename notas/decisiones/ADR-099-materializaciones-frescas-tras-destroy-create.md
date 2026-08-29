@@ -19,7 +19,7 @@ affects:
 # ADR-099 — Materializaciones frescas tras `destroy` y `create`
 
 - Modifica: [[ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]], [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]].
-- Mantiene abiertas: [[notas/preguntas/Q-005-identidad-y-ciclo-de-vida-de-vinculaciones|Q-005]], Q-046, Q-049 y Q-032 en los aspectos no fijados aquí.
+- Mantiene abiertas: [[notas/preguntas/Q-005-identidad-y-ciclo-de-vida-de-vinculaciones|Q-005]], Q-046 y Q-032 en los aspectos no fijados aquí. Q-049 permanece cerrada; esta decisión conserva su resolución sobre pertenencias y solo precisa la política de materialización propia.
 
 ## Contexto
 

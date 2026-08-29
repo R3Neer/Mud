@@ -1,6 +1,6 @@
 ---
 id: D-085
-title: "Diccionarios decisionales, metadatos y activación estructurada"
+title: "Diccionarios funcionales, metadatos y activación estructurada"
 status: vigente
 date: 2026-08-05
 supersedes: []
@@ -11,7 +11,7 @@ affects:
   - "acciones y subacciones, organización de archivos, operadores, tipos, diccionarios, productos, ausencia, cardinalidad, selección, activación inicial, Thing, Any, metadatos, magnitudes, texto, gramática, CST, AST, IR y diagnósticos"
 ---
 
-# ADR-085 — Diccionarios decisionales, metadatos y activación estructurada
+# ADR-085 — Diccionarios funcionales, metadatos y activación estructurada
 
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
@@ -33,7 +33,7 @@ MUD ya dispone de colecciones, diccionarios exactos, composición secuencial med
 3. Permitir que ausencia y cardinalidad modelen consultas parciales sin convertir la falta de resultado en fallo inmediato.
 4. Hacer explícitas las fronteras entre API pública, auxiliares internas y catálogos iniciales de `thing` y reglas.
 
-Esta decisión consolida esas necesidades y reemplaza toda formulación anterior incompatible dentro de su alcance. Los ADR modificados conservan el historial de las reglas previas.
+Esta decisión consolida esas necesidades y reemplaza toda formulación anterior incompatible dentro de su alcance. Los ADR modificados conservan el historial de las reglas previas. Conforme a D-086, la denominación pública canónica de los tipos `A --> B` es **diccionario funcional**.
 
 ## Decisión
 
@@ -100,7 +100,7 @@ Los diccionarios exactos:
 
 Una inserción o sustitución que haría aparecer el mismo valor bajo más de una clave en un diccionario exacto `unique` es una no-op completa. No modifica ninguna asociación y no produce `failed`.
 
-### Diccionarios decisionales
+### Diccionarios funcionales
 
 El tipo:
 
@@ -120,15 +120,15 @@ Todo selector ordinario debe elaborar directamente a `Bool`. MUD no inserta impl
 
 Los resultados y selectores pueden leer estado externo. Cada lectura debe quedar registrada como dependencia de la rama y del diccionario. Todas las llamadas transitivas de una aplicación observan la misma instantánea estable del mundo.
 
-Las ramas son exteriormente puras durante la ejecución ordinaria: no admiten efectos sobre el mundo, llamadas a actions/subactions como efectos, `create` ni `destroy`. El `ValueBlock` del resultado sí puede declarar y mutar almacenamiento temporal propio, que desaparece al terminar su evaluación. La edición del modelo puede crear, actualizar, retirar o mover ramas dentro del diccionario propietario, pero una rama no posee ancla pública ni descriptor metadata-bearing propio. El modelo resuelto usa una clave local de rama: el selector normalizado es la clave de una rama ordinaria y no puede repetirse dentro del mismo diccionario; `_` usa una clave de fallback propia y única. Cambiar solo el resultado conserva la clave; cambiar el selector retira estructuralmente la clave anterior y crea la nueva. Una rama nueva se inserta antes de `_` de forma predeterminada; en un decisional ordenado puede declararse una posición concreta.
+Las ramas son exteriormente puras durante la ejecución ordinaria: no admiten efectos sobre el mundo, llamadas a actions/subactions como efectos, `create` ni `destroy`. El `ValueBlock` del resultado sí puede declarar y mutar almacenamiento temporal propio, que desaparece al terminar su evaluación. La edición del modelo puede crear, actualizar, retirar o mover ramas dentro del diccionario propietario, pero una rama no posee ancla pública ni descriptor metadata-bearing propio. El modelo resuelto usa una clave local de rama: el selector normalizado es la clave de una rama ordinaria y no puede repetirse dentro del mismo diccionario; `_` usa una clave de fallback propia y única. Cambiar solo el resultado conserva la clave; cambiar el selector retira estructuralmente la clave anterior y crea la nueva. Una rama nueva se inserta antes de `_` de forma predeterminada; en un funcional ordenado puede declararse una posición concreta.
 
-Un diccionario decisional:
+Un diccionario funcional:
 
 - no admite mutabilidad exterior;
 - no admite capacidad interior `[mut]`;
 - rechaza estáticamente cualquier `mut` aplicado a su tipo o lugar;
 - no es una fuente de `for each`;
-- puede referenciar directa o indirectamente otros diccionarios decisionales.
+- puede referenciar directa o indirectamente otros diccionarios funcionales.
 
 Todo componente recursivo del grafo de llamadas debe disponer de una medida bien fundada que disminuya estrictamente en cada arista que continúe el ciclo. El compilador debe demostrar la terminación mediante descenso numérico, reducción de cardinalidad, subestructuras estrictamente menores u otra prueba equivalente. La ausencia de prueba es un error estático.
 
@@ -194,13 +194,13 @@ Se añaden productos estructurales anónimos:
 
 Sus valores se escriben respectivamente `(x, y)` y `(a = x, b = y)`. Son estructurales y se comparan componente a componente. Los nombres de variables que ocupan un producto posicional no crean nombres de componente. Los aliases declarados continúan siendo nominales aunque su representación coincida con un producto anónimo.
 
-Los productos pueden actuar como claves exactas o entradas decisionales.
+Los productos pueden actuar como claves exactas o entradas funcionales.
 
 ### `empty`, consultas parciales y cardinalidad
 
 `empty` representa ausencia o colección vacía y no es un fallo por sí mismo. Toda operación parcial debe producir `empty` cuando no existe resultado. La comprobación posterior contra el tipo, dominio y cardinalidad esperados decide si esa ausencia es válida o causa `failed`.
 
-Una consulta exacta ausente conserva la forma de salida `B`. Una consulta decisional `FirstMatch` sin coincidencia produce `empty`; una consulta `AllMatches` sin coincidencias produce una colección vacía válida.
+Una consulta exacta ausente conserva la forma de salida `B`. Una consulta funcional `FirstMatch` sin coincidencia produce `empty`; una consulta `AllMatches` sin coincidencias produce una colección vacía válida.
 
 ### Cardinalidad omitida de campos almacenados
 
@@ -259,7 +259,7 @@ El AST conserva una única secuencia `StartSet(contributions)`; la elaboración 
 - no posee un orden total universal;
 - compara igualdad solo entre tipos efectivos compatibles y delega en su igualdad;
 - exige estrechamiento antes de una operación específica;
-- conserva el estrechamiento dentro de la rama decisional donde se demostró;
+- conserva el estrechamiento dentro de la rama funcional donde se demostró;
 - no posee predeterminado universal.
 
 `Any` es una excepción explícita a D-017. Todo campo almacenado de tipo `Any` requiere inicializador explícito.
@@ -338,7 +338,7 @@ La gramática y los modelos deben distinguir como mínimo:
 
 - `ActionDecl(PublicAction | Subaction, ...)`;
 - `ExactDictionaryType` y `DecisionDictionaryType`;
-- asociaciones exactas y ramas decisionales;
+- asociaciones exactas y ramas funcionales;
 - productos posicionales y nombrados;
 - `MetadataAccessExpr` y ausencia de objetivos asignables de metadato;
 - `HasMember` y `HasNotMember`;
@@ -346,7 +346,9 @@ La gramática y los modelos deben distinguir como mínimo:
 - cardinalidad omitida frente a explícita;
 - ausencia del antiguo nombre intrínseco y de la interpolación especial de ancla.
 
-La elaboración debe determinar para cada diccionario decisional, y cualquier representación posterior debe conservar o permitir reconstruir:
+`DecisionDictionaryType` conserva su nombre mecánico histórico conforme a D-086; designa el tipo superficial de los diccionarios funcionales y no establece la terminología pública.
+
+La elaboración debe determinar para cada diccionario funcional, y cualquier representación posterior debe conservar o permitir reconstruir:
 
 - modo `FirstMatch` o `AllMatches`;
 - orden semántico;
@@ -364,8 +366,8 @@ Los diagnósticos mínimos nuevos son:
 3. `mut` exterior o interior en `-->`;
 4. `_` no final o ramas inalcanzables en `FirstMatch`;
 5. `unique` redundante en `FirstMatch`;
-6. intento de iterar un decisional;
-7. ciclo decisional sin prueba de descenso;
+6. intento de iterar un diccionario funcional;
+7. ciclo de diccionarios funcionales sin prueba de descenso;
 8. cardinalidad inmutable inferida distinta de `[1]`;
 9. `all Any` o enumeración de `Any`;
 10. campo `Any` sin inicializador;
@@ -392,7 +394,7 @@ Se descarta porque duplica en el operador una restricción que ya expresa la car
 
 ### Introducir una categoría general de función
 
-Se descarta porque las políticas requeridas son valores declarativos, inspeccionables y editables por ramas. Los diccionarios decisionales conservan esa estructura explícita.
+Se descarta porque las políticas requeridas son valores declarativos, inspeccionables y editables por ramas. Los diccionarios funcionales conservan esa estructura explícita.
 
 ### Conservar `.name` y `anchor{...}` como excepciones
 
@@ -409,8 +411,8 @@ La suite debe cubrir al menos:
 1. Capacidad exterior exclusiva de `action`, invocación de `action`/`subaction` desde contextos `then`, ancla compartida y rollback completo.
 2. Tokenización maximal-munch de `-->`, `--` y `->`, y parseo de `has` y `has not`.
 3. Consulta ausente exacta, asociación operativa y `unique` de valores como no-op.
-4. Modos decisionales, solapamiento, fallback, cardinalidad derivada, deduplicación y prohibición de mutación o iteración.
-5. Terminación aceptada y rechazada de ciclos decisionales y lectura de una sola instantánea.
+4. Modos funcionales, solapamiento, fallback, cardinalidad derivada, deduplicación y prohibición de mutación o iteración.
+5. Terminación aceptada y rechazada de ciclos de diccionarios funcionales y lectura de una sola instantánea.
 6. Cadenas de flechas puras y mixtas con modificadores ligados a su flecha.
 7. Productos posicionales y nombrados, igualdad estructural y uso como clave o entrada.
 8. Inferencia `[0]`, `[1]` y `[n]` de campos almacenados inmutables, sugerencia de explicitación y excepción mutable.

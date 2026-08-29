@@ -18,6 +18,7 @@ affects:
 - Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
 - Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Modificada por: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
 - Cierra: [[notas/preguntas/Q-044-identidad-y-referencias-a-thing-futuras|Q-044]], [[notas/preguntas/Q-045-contenido-declarativo-de-create|Q-045]]
 - Documentos afectados: [[notas/preguntas/README|Preguntas activas]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
 
@@ -26,14 +27,15 @@ affects:
 La sintaxis debe separar tres operaciones:
 
 1. Definir qué es una declaración.
-2. Decidir si participa en el mundo actual.
-3. Modificar su estructura.
+2. Decidir si participa en el mundo actual y, para una `thing` concreta, si existe una materialización runtime activa.
+3. Modificar la estructura de una materialización activa.
 
 El modelo de uso adoptado es el de un juego con:
 
 - Un catálogo estático de cosas y reglas posibles.
 - Una selección de declaraciones presentes al comenzar.
-- Operaciones runtime que retiran y vuelven a introducir las mismas identidades.
+- Operaciones runtime que retiran y vuelven a introducir las mismas identidades canónicas.
+- Materializaciones runtime de `thing` concretas que pueden terminar con `destroy` y reconstruirse de forma fresca mediante un `create` posterior.
 
 ## Decisión
 
@@ -61,13 +63,13 @@ La definición fija:
 - En una `thing`, sus antecesoras directas.
 - Su cuerpo declarativo.
 
-Las antecesoras directas de una `thing` no cambian durante la ejecución. `destroy` y `create` modifican su actividad, no su identidad ni su descriptor.
+Las antecesoras directas de una `thing` no cambian durante la ejecución. `destroy` y `create` modifican su actividad y, para una `thing` concreta, terminan o construyen su materialización runtime; no cambian su identidad ni su descriptor canónico.
 
 Dos definiciones completas con la misma ancla son un error estático aunque sus cuerpos sean iguales. El orden de archivos y declaraciones no resuelve la duplicidad.
 
-### `create` solo activa
+### `create` activa una identidad canónica y materializa cuando corresponde
 
-`create` es exclusivamente una instrucción runtime de activación:
+`create` es una instrucción runtime dirigida a una identidad canónica:
 
 ```mud
 create Tree
@@ -76,7 +78,7 @@ create CanGrow
 
 Su objetivo debe resolver estáticamente a una única definición canónica de `thing` o regla. No admite categoría, modificador, lista de antecesoras ni cuerpo.
 
-Una activación posterior a `destroy Tree` recupera la misma identidad `Tree`, con las mismas antecesoras y el mismo descriptor. Conforme a D-021, la carga almacenada se conserva.
+Una activación posterior a `destroy Tree` recupera la misma identidad `Tree`, con las mismas antecesoras y el mismo descriptor. Conforme a D-099, si `Tree` es una `thing` concreta cuya materialización anterior terminó, `create Tree` construye una materialización fresca desde la definición canónica; no recupera la carga ni las modificaciones estructurales propias de la materialización destruida.
 
 Varias solicitudes concurrentes `create d` dirigidas a la misma declaración ausente se consolidan idempotentemente. Ya no existen fragmentos declarativos runtime ni fusión de cuerpos producida por `create`.
 
@@ -100,19 +102,20 @@ Las expresiones solo pueden depender de información disponible antes de existir
 
 Actions, aliases y magnitudes no son declaraciones activables. Cada test declara su propia contribución `start with`; para un test raíz se unen las contribuciones del cierre transitivo estático de tests alcanzables conforme a D-096.
 
-### Inicialización y reactivación
+### Inicialización y rematerialización
 
-Los inicializadores de una definición se aplican cuando se materializa por primera vez su carga, ya sea mediante `start with` o mediante una instrucción `create`.
+Los predeterminados e inicializadores de una `thing` concreta se aplican cuando se construye una materialización desde su definición canónica, tanto en la materialización inicial mediante `start with` o `create` como en una rematerialización posterior a `destroy`.
 
-Después de `destroy d`, una nueva activación:
+Después de un `destroy d` confirmado sobre una `thing` concreta, la carga propia y las modificaciones estructurales runtime de la materialización destruida se descartan. Un `create d` posterior:
 
-$$
-\operatorname{stored}_{W'}(d)
-=
-\operatorname{stored}_{W}(d)
-$$
+- conserva la identidad, el descriptor y las antecesoras canónicas de `d`;
+- reconstruye la estructura desde la definición canónica;
+- vuelve a aplicar predeterminados e inicializadores;
+- no recupera valores ni modificaciones estructurales de la materialización terminada.
 
-No vuelve a ejecutar los inicializadores ni cambia el descriptor.
+Una `thing` abstracta no posee carga concreta propia que reinicializar. Para rules, D-099 fija que la memoria runtime de una activación explícitamente destruida tampoco atraviesa la nueva activación.
+
+La suspensión de una declaración porque una dependencia dura está inactiva no equivale a `destroy`: esa suspensión puede conservar la carga que pertenece a la declaración suspendida.
 
 ### Palabras reservadas y contextuales
 
@@ -162,18 +165,18 @@ CreateReference(anchor)
 DestroyReference(anchor)
 ```
 
-`CreateReference` no contiene un descriptor. `InitialActivationSet` conserva procedencia textual para diagnósticos, pero su significado es un conjunto no ordenado.
+`CreateReference` no contiene un descriptor ni una nueva definición. `InitialActivationSet` conserva procedencia textual para diagnósticos, pero su significado es un conjunto no ordenado.
 
 ## Consecuencias
 
-- El programa determina un catálogo finito de identidades posibles; el mundo determina cuáles están activas.
-- Un mismo nombre no designa encarnaciones runtime distintas.
-- El grafo almacenado de especialización procede de definiciones estáticas, no de fragmentos acumulados durante la ejecución.
-- El bypass de una antecesora inactiva continúa siendo temporal y restaura exactamente las aristas declaradas al reactivarla.
+- El programa determina un catálogo finito de identidades posibles; el mundo determina cuáles están activas y qué materializaciones concretas existen.
+- `destroy` + `create` no introduce una identidad nueva, aunque sí puede terminar una materialización y construir otra de la misma identidad canónica.
+- El grafo declarativo de especialización procede de definiciones estáticas, no de fragmentos acumulados durante la ejecución.
+- El bypass de una antecesora inactiva continúa siendo temporal y restaura las aristas declaradas al reactivarla.
 - Desaparecen los conflictos por fusión de cuerpos de `thing`.
-- La modificación dinámica de propiedades, cuando esté permitida, debe expresarse mediante operaciones explícitas como `add` y `remove`.
+- La modificación dinámica de propiedades, cuando esté permitida, debe expresarse mediante operaciones explícitas como `add` y `remove` y pertenece a la materialización activa correspondiente.
 - Crear cantidades no acotadas de individuos frescos exigiría una característica distinta; `create` no la introduce implícitamente.
-- El LSP puede navegar desde toda activación hasta una única definición.
+- El LSP puede navegar desde toda activación o materialización hasta una única definición canónica.
 - El catálogo de palabras reservadas debe distinguir palabras duras de palabras contextuales.
 
 ## Alternativas descartadas
@@ -181,6 +184,10 @@ DestroyReference(anchor)
 ### Reutilizar un nombre para identidades sucesivas
 
 Se descarta porque obliga a decidir si las referencias existentes siguen a la identidad antigua o se vuelven a enlazar al nuevo ocupante del nombre. La segunda opción puede invalidar dominios y cardinalidades almacenados; la primera conserva identidades ocultas que ya no coinciden con el nombre visible.
+
+### Hibernar la carga propia tras `destroy`
+
+Se descarta conforme a D-099. Conservar la materialización propia haría que `destroy` se comportase como una mera desactivación y evitaría que una nueva materialización partiera del estado declarado.
 
 ### Acumular antecesoras sin permitir retirarlas
 
@@ -202,7 +209,7 @@ La suite deberá cubrir:
 2. Rechazo de dos definiciones con la misma ancla.
 3. Rechazo de `create` con categoría, antecesoras o cuerpo.
 4. Activación y destrucción de una `thing`.
-5. Reactivación con conservación exacta de descriptor y carga.
+5. Rematerialización de una `thing` concreta con conservación exacta de identidad y descriptor, pero reconstrucción de carga desde predeterminados e inicializadores.
 6. Activación idempotente concurrente de una identidad ausente.
 7. Como máximo un `start with` por módulo y ausencia válida de contribución en un módulo.
 8. Independencia del orden y deduplicación dentro del conjunto unificado de contribuciones.
@@ -211,7 +218,7 @@ La suite deberá cubrir:
 11. Proyecto cuyos módulos omiten `start with`, equivalente a una contribución inicial vacía.
 12. Materialización conjunta de las contribuciones de todos los módulos y estabilización previa a acciones externas.
 13. `Thing` siempre efectiva y no activable.
-14. Reutilización exacta de estado tras `destroy` y nueva activación.
+14. Descarte de carga y modificaciones estructurales propias tras `destroy`, sin borrar carga ajena meramente suspendida por dependencia.
 15. Unión de contribuciones `start with` del cierre transitivo estático de tests alcanzables.
 16. Disparo durante la estabilización inicial de un `when` cuya condición comienza verdadera.
 17. Navegación LSP desde cada activación a una única definición.

@@ -17,17 +17,27 @@ Lenguaje natural / CLI / editor
               │
               ▼
           Compilador
- lexer → parser → AST → símbolos → tipos
+ scanner → CST → AST superficial
+              │
+              ▼
+      resolución nominal
+              │
+              ▼
+          HIR nominal
+              │
+              ▼
+      tipado + elaboración
+              │
+              ▼
+ representación semántica futura
               │
       ┌───────┼────────┐
       ▼       ▼        ▼
- grafo     IR canónico diagnósticos
-      │       │
-      │       ├──────────────┐
-      ▼       ▼              ▼
- consultas  runtime      materializadores
-                         TypeScript, docs, tests
+ consultas  runtime  materializadores
+                   TypeScript, docs, tests
 ```
+
+La cadena normativa vigente llega hoy hasta el AST superficial y el HIR nominal. Tipado y elaboración son fases arquitectónicas posteriores, pero la representación semántica que producirán todavía no tiene esquema normativo fijado.
 
 ## Fuente y derivados
 
@@ -41,83 +51,110 @@ Metadatos de gobierno, no semántica del mundo:
 - Registro de decisiones.
 - Configuración del proyecto.
 
-Derivados reconstruibles:
+Derivados reconstruibles ya delimitados:
 
-- Tokens, CST o AST.
-- Tabla de símbolos.
+- Tokens y CST sin pérdidas.
+- AST superficial.
+- Tabla de símbolos, scopes y bindings.
 - Índice de anclas.
-- Grafo semántico.
-- IR.
-- Índices de lectura, escritura, dominios y aleatoriedad.
+- HIR nominal y su grafo nominal de propiedad, especialización y referencia.
+
+Derivados o representaciones posteriores todavía no fijados por un contrato mecánico normativo completo:
+
+- Tipos y contratos efectivos resultantes de tipado y elaboración.
+- Representación semántica posterior a tipado y elaboración.
+- Grafos e índices semánticos posteriores, como lecturas, escrituras, efectos o dependencias elaboradas.
 - Código materializado.
 - Tests y documentación generados.
-- Soporte de editor.
+- Soporte de editor que dependa de fases posteriores.
 
 La agenda y las decisiones no deberían esconder comportamiento del mundo; su función es gobernar la evolución de la especificación.
 
 ## Compilador
 
-Separación recomendada:
+Separación vigente o prevista:
 
-1. **Lexer**: tokens, comentarios, literales y terminadores.
-2. **Parser**: estructura sintáctica y recuperación de errores.
-3. **AST de superficie**: conserva procedencia y forma escrita.
-4. **Resolución**: paths de MUD, declaraciones `using`, nombres y anclas.
-5. **Tipado**: tipos, cardinalidades, dominios, conversiones y mutabilidad.
-6. **Análisis semántico**: pureza, efectos, ciclos, finitud y estocasticidad.
-7. **IR canónico**: representación independiente de la sintaxis.
-8. **Emisores**: grafo, diagnósticos, formateo y materializaciones.
+1. **Scanner y clasificación contextual**: tokens, trivia, comentarios, literales y clasificación léxica dependiente de contexto cuando corresponda.
+2. **Parser**: CST sin pérdidas, estructura sintáctica y recuperación de errores.
+3. **AST superficial**: forma semánticamente relevante de la sintaxis, conservando procedencia suficiente.
+4. **Resolución nominal**: paths de MUD, `using`, nombres, scopes, símbolos, bindings y anclas.
+5. **HIR nominal**: salida normativa actual de resolución, limitada a información nominal.
+6. **Tipado y elaboración**: tipos, cardinalidades, dominios, conversiones, mutabilidad y demás contratos que requieran información posterior a nombres.
+7. **Análisis semánticos posteriores**: pureza, efectos, ciclos, finitud, estocasticidad y otras propiedades elaboradas.
+8. **Representación semántica posterior**: podrá existir cuando las fases anteriores estén suficientemente formalizadas; su esquema concreto no está fijado hoy.
+9. **Consumidores**: runtime, consultas, diagnósticos, materializadores y soporte de editor.
 
-No conviene hacer que el parser produzca directamente el IR. La separación permite conservar localización de errores y evolucionar la sintaxis sin deformar el modelo semántico.
+No conviene que el parser produzca directamente una representación semántica elaborada. La separación permite conservar localización de errores, resolver nombres antes de tipar y evitar que decisiones prematuras sobre un IR condicionen superficies del lenguaje todavía no formalizadas.
 
-## AST e IR
+## AST superficial y HIR nominal
 
-El AST responde “¿qué se escribió y dónde?”. El IR responde “¿qué significa después de resolverlo?”.
+El AST superficial responde principalmente «¿qué construcción semánticamente relevante se escribió y de dónde procede?». El HIR nominal responde «¿qué símbolos, ámbitos, propietarios, bindings, anclas y relaciones nominales resultan después de resolver nombres?».
 
-El IR debe:
+El HIR nominal vigente:
 
-- Usar anclas, no nombres ambiguos.
-- Distinguir explícitamente las tres clases de reglas.
-- Distinguir `TestDecl`, sus activaciones locales, efectos, aserciones y diagnósticos.
-- Conservar participantes y `given` como grupos separados.
-- Conservar por cada rol `for` su tipo, cardinalidad, modificadores, capacidades y modo de vinculación por identidad, valor o lugar.
-- Normalizar tipos, dominios y cardinalidades.
-- Registrar lecturas, escrituras y llamadas.
-- Mantener procedencia hacia archivo y rango del AST.
-- Ser versionado mediante un `schemaVersion`.
+- usa símbolos y referencias resueltas cuando la resolución nominal puede determinarlas;
+- representa scopes y propietarios;
+- representa bindings locales;
+- conserva anclas públicas cuando corresponden;
+- puede registrar relaciones nominales `Owns`, `Specializes` y `RefersTo`;
+- conserva procedencia suficiente para diagnósticos y navegación.
 
-El JSON de la especificación es un ejemplo, no todavía un contrato completo.
+No pertenece al HIR nominal fijar:
 
-El contrato conceptual actualizado del AST, IR y grafo pertenece a [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]]. El pipeline y las obligaciones de materializadores, conformidad y soporte de editor pertenecen a [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|D-052]].
+- tipos efectivos;
+- dominios efectivos;
+- cardinalidades inferidas;
+- conversiones elaboradas;
+- efectos ni conjuntos de lectura/escritura;
+- dependencias semánticas posteriores a tipado;
+- pruebas o evidencia de terminación.
 
-## Grafo semántico
+El contrato vigente de esta frontera pertenece a [[notas/decisiones/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]], que modifica y precisa [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 
-El grafo es una proyección consultable del IR. Sirve para:
+## Representación semántica posterior
 
-- Impacto antes de cambiar.
-- Navegación por anclas.
-- Dependencias directas y transitivas.
-- Detección de ciclos.
-- Identificación de lectores y escritores.
-- Explicación de una resolución.
+Tipado y elaboración necesitarán una representación apta para ejecución, análisis y materialización. Por ahora solo existe como necesidad arquitectónica y conjunto de requisitos, no como un esquema normativo vigente.
 
-No debe convertirse en una segunda fuente de verdad. Si hay discrepancia, se descarta y reconstruye.
+Cuando se diseñe deberá decidirse, a la luz de las superficies de tipos y elaboración ya desarrolladas:
+
+- qué nodos y relaciones necesita;
+- qué información debe almacenarse y qué puede reconstruirse;
+- cómo conserva procedencia;
+- qué proyecciones consultables ofrece;
+- si necesita serialización y, en tal caso, su versionado.
+
+No existe hoy un `schemaVersion` normativo de esa representación ni un ASDL semántico posterior que los consumidores deban implementar.
+
+## Grafos consultables
+
+El HIR nominal ya permite reconstruir un grafo nominal para navegación, propiedad, especialización y referencias. Grafos semánticos más ricos podrán proyectarse de la representación posterior cuando existan tipado y elaboración suficientes.
+
+Cualquier grafo derivado sirve para:
+
+- impacto antes de cambiar;
+- navegación por anclas;
+- dependencias directas y transitivas dentro de la información disponible;
+- detección de ciclos cuando la fase correspondiente los defina;
+- identificación de lectores y escritores cuando esos efectos hayan sido elaborados;
+- explicación de una resolución.
+
+No debe convertirse en una segunda fuente de verdad. Si hay discrepancia con la representación normativa de la fase que lo origina, se descarta y reconstruye.
 
 ## Runtime causal
 
 El runtime necesita al menos:
 
-- Store de estado con snapshots.
-- Evaluador puro de expresiones.
-- Aplicador y normalizador de efectos.
-- Motor de vinculaciones.
-- Planificador de ondas.
-- Detector de conflictos y ciclos.
-- Transacción con confirmación o rollback.
-- Registro de explicación causal.
-- Gestor determinista de semillas.
+- store de estado con snapshots;
+- evaluador puro de expresiones;
+- aplicador y normalizador de efectos;
+- motor de vinculaciones;
+- planificador de ondas;
+- detector de conflictos y ciclos;
+- transacción con confirmación o rollback;
+- registro de explicación causal;
+- gestor determinista de semillas.
 
-El runtime debe consumir IR canónico, no depender de peculiaridades del parser.
+El runtime debe consumir una representación posterior a resolución, tipado y elaboración, no depender de peculiaridades del parser ni usar el HIR nominal como sustituto de información semántica que este deliberadamente no contiene. La forma concreta de esa representación permanece diferida por D-097.
 
 ## Operador semántico
 
@@ -144,7 +181,9 @@ Operaciones mínimas:
 
 ## Materializadores
 
-Cada materializador recibe IR validado y una configuración técnica. Puede producir:
+Cada materializador recibe una representación validada suficiente para su tarea y una configuración técnica. Un consumidor que necesite tipos, efectos o semántica elaborada no puede obtenerlos inventándolos a partir del HIR nominal.
+
+Puede producir:
 
 - Código TypeScript.
 - Contratos de API.

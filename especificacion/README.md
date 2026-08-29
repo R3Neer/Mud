@@ -102,6 +102,7 @@ Glosario normativo de:
 - Declaración, símbolo, nombre y ancla.
 - `thing`, identidad y valor.
 - Campo, relación y colección.
+- Diccionario exacto, diccionario funcional, asociación, rama, selector y fallback.
 - Participante, rol, vinculación y `given`.
 - Regla consultable, reactiva y `always`.
 - Acción, solicitud, raíz, onda y resolución.
@@ -255,8 +256,8 @@ Define:
 - Declaraciones `using` exactas y recursivas.
 - Posición obligatoria de todos los `using` en la cabecera del fichero.
 - Ambigüedad.
-- Formación y unicidad de anclas públicas; las ramas funcionales de diccionarios decisionales usan claves locales y no reciben ancla pública.
-- Categorías `thing::*`, `rule::*`, `action::*` y `test::*`.
+- Formación y unicidad de anclas públicas; las ramas funcionales de diccionarios funcionales usan claves locales y no reciben ancla pública.
+- Categorías `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` y `type::*`.
 - Identidad ante movimientos de archivo.
 - Migración de path y anclas.
 
@@ -349,10 +350,10 @@ Archivo previsto: `16-diccionarios.md`
 
 Alcance previsto:
 
-- Diccionarios exactos y decisionales, sus tipos, cardinalidades y consultas.
+- Diccionarios exactos y funcionales, sus tipos, cardinalidades y consultas.
 - Asociaciones, claves, iteración, orden y operaciones algebraicas.
 - Indexación dentro de rutas asignables, write-back parcial sobre valores asociados y tratamiento de claves ausentes sin confundir actualización parcial con inserción completa.
-- Modos de selección de ramas, fallback, dependencias, recursión y terminación de diccionarios decisionales.
+- Modos de selección de ramas, fallback, dependencias, recursión y terminación de diccionarios funcionales.
 
 ## 17. Dominios e intervalos
 
@@ -508,7 +509,7 @@ Archivo previsto: `30-restricciones-finales.md`
 Alcance previsto:
 
 - Comprobaciones de dominios, cardinalidades, reglas `always` y demás invariantes sobre estados tentativos.
-- `after` de acciones/subactions ejecutadas dentro de una resolución y su evaluación sobre el estado estable tentativo final.
+- `after` de acciones/subacciones ejecutadas dentro de una resolución y su evaluación sobre el estado estable tentativo final.
 - Semántica contextual de `old`, incluida la diferencia entre acciones, tests y reglas reactivas.
 - Rechazo/fallo final y restauración del estado anterior cuando corresponda.
 
@@ -529,9 +530,9 @@ Archivo previsto: `32-ciclo-de-vida-runtime.md`
 
 Alcance previsto:
 
-- Actividad, materialización, reactivación y retirada de declaraciones con ciclo de vida.
+- Actividad, materialización, destrucción de la materialización propia y rematerialización desde la definición canónica.
 - Contribuciones `start with` de módulos, materialización conjunta e inicialización de primera activación.
-- Almacenamiento latente, proyección efectiva, suspensión por dependencias y restauración.
+- Almacenamiento latente de estado ajeno suspendido, proyección efectiva, suspensión por dependencias y restauración.
 - Aparición y desaparición de bindings dependientes de actividad.
 
 ## 33. Aleatoriedad

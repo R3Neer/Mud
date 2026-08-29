@@ -270,7 +270,7 @@ No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colecci
 
 Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
 
-`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o decisionales. `given` es un parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente durante las fases posteriores de validación y tipado.
+`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o funcionales. `given` es un parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente durante las fases posteriores de validación y tipado.
 
 ## Tipos
 
