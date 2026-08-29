@@ -11,6 +11,7 @@ depends-on:
   - "[[02-terminologia]]"
   - "[[03-notacion]]"
 questions:
+  - Q-005
   - Q-046
   - Q-047
 decisions:
@@ -83,7 +84,7 @@ El modelo vigente fija:
 14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
 15. Una colección de `thing` exige siempre membresía estricta: $c\neq T\land c\ \mathsf{is}\ T$. No existe `reflexive`.
 16. `destroy` solo confirma una retirada si todas las cardinalidades y dominios resultantes son válidos; en otro caso produce `failed` y rollback.
-17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes y esa suspensión derivada no borra su propia carga almacenada. Solo un `destroy` dirigido a la propia declaración aplica el final de materialización fijado por D-099.
+17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes y esa suspensión derivada no borra su propia carga almacenada. Solo un `destroy` dirigido a la propia declaración termina su materialización runtime conforme a las reglas vigentes de ciclo de vida.
 18. `remove` sobre una propiedad elimina su declaración y carga almacenadas dentro de la materialización actual. La suspensión por una dependencia inactiva conserva en cambio la propiedad y su carga; destruir la `thing` propietaria termina toda su materialización y una futura materialización vuelve a partir de la definición canónica.
 19. Cada módulo puede aportar como máximo un `start with`; sus contribuciones finitas y no ordenadas reúnen en una sola superficie declaraciones activables `thing | rule`, y las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial.
 20. Cada contribución es una expresión estática que produce una declaración activable o una colección plana de ellas; no admite instrucciones, efectos ni colecciones anidadas.

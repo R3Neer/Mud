@@ -71,6 +71,7 @@ decisions:
   - D-092
   - D-096
   - D-098
+  - D-099
 ---
 
 # 07. Gramática concreta
@@ -187,7 +188,7 @@ thing France as Kingdom {
 }
 ```
 
-En `France`, `20` inicializa únicamente la carga propia de `France.treasury` en su primera materialización. No se convierte en el predeterminado ni en un inicializador heredable para descendientes de `France`, y una reactivación posterior a `destroy France` conserva la carga almacenada en vez de ejecutar de nuevo el inicializador. Esta distinción conserva separados el predeterminado heredable y la contribución de primera materialización.
+En `France`, `20` inicializa la carga propia de `France.treasury` cada vez que se materializa `France` desde su definición canónica. No se convierte en el predeterminado ni en un inicializador heredable para descendientes de `France`. Una destrucción confirmada descarta esa carga propia y un `create France` posterior vuelve a aplicar el inicializador al construir la nueva materialización. Esta distinción conserva separados el predeterminado heredable y la contribución de materialización.
 
 ```mud
 abstract thing RichKingdom as Kingdom {
@@ -1140,6 +1141,8 @@ remove morale from Army
 create Declaration
 destroy Declaration
 ```
+
+`destroy` conserva la identidad y definición canónicas, pero termina la materialización runtime propia de una `thing` concreta. Una destrucción confirmada descarta sus valores almacenados y las modificaciones estructurales runtime cuyo propietario sea esa identidad; un `create` posterior construye una materialización fresca desde el esquema canónico y vuelve a aplicar predeterminados e inicializadores. Esta destrucción propia no borra cargas pertenecientes a otros propietarios que solo queden suspendidas por una dependencia inactiva. Destruir una rule reactiva descarta además la memoria temporal de esa activación; si se crea de nuevo, su primera onda activa establece una línea base nueva sin disparar por la mera reactivación.
 
 Una ruta asignable puede atravesar componentes almacenados de aliases inmutables e indexaciones de diccionarios exactos cuando termina en un lugar raíz exteriormente escribible. Esa escritura no muta los aliases intermedios: la elaboración construye valores nuevos del mismo tipo nominal exacto, conserva sus demás componentes almacenados, recalcula los derivados y propaga las sustituciones hacia fuera hasta el almacenamiento raíz. Por ejemplo:
 

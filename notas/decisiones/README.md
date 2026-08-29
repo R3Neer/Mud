@@ -56,7 +56,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-040 | vigente | 2026-07-28 | [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|Semántica numérica básica restante]] |
 | D-041 | vigente | 2026-07-28 | [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|Contratos de las tres clases de regla]] |
 | D-042 | vigente | 2026-07-28 | [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|Acciones, raíz y resultados]] |
-| D-043 | vigente | 2026-07-28 | [[notas/decisiones/ADR-043-consulta-especulativa-allowed|`allowed` como especulación descartable]] |
+| D-043 | vigente | 2026-07-28 | [[notas/decisiones/ADR-043-consulta-especulativa-allowed|Consulta especulativa `allowed`]] |
 | D-044 | vigente | 2026-07-28 | [[notas/decisiones/ADR-044-alcanzabilidad-eventually|Alcanzabilidad `eventually`]] |
 | D-045 | vigente | 2026-07-28 | [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|Resolución causal, vinculaciones y cola]] |
 | D-046 | vigente | 2026-07-28 | [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|Álgebra y conflictos de efectos]] |

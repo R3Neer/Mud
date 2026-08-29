@@ -294,7 +294,7 @@ Archivo previsto: `11-things.md`
 
 Alcance previsto:
 
-- Identidad, actividad, materialización y estado independiente de `thing` concretas y abstractas.
+- Identidad, actividad, destrucción de la materialización propia, rematerialización desde la definición canónica y estado independiente de `thing` concretas y abstractas.
 - Especialización simple y múltiple, esquema heredable, predeterminados e inicializadores.
 - Integración de `Thing` como raíz incorporada y de las reglas de igualdad/identidad nominal.
 - Frontera modular de las `thing`: identidad/tipo visible frente a estado ordinario proyectado mediante operaciones públicas y límites de especialización entre módulos.
