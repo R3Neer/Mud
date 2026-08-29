@@ -605,7 +605,7 @@ then-statement
       ;
 
 local-value-declaration
-    ::= variable-name , [ derived-value-shape ] , ":=" , value-expression ;
+    ::= variable-name , [ ":" , type-expression ] , ":=" , value-expression ;
 
 (* ------------------------------------------------------------------ *)
 (* Activación inicial y tests                                          *)

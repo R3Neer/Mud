@@ -379,6 +379,8 @@ No se clasifica la acción como elemental o compuesta.
 
 ## Bloques de expresión y tests
 
+Una `local-value-declaration` produce `LocalValueDecl(name, type?, value)`. La anotación opcional procede únicamente de `: type-expression`; no se proyecta mediante `derived-value-shape`, por lo que las formas locales `in domain` o `[collection-specification]` sin tipo no existen.
+
 Los terminadores opcionales escritos después de `:` en `for each`, selección y cuantificadores son separación concreta: no producen nodos ni cambian `ExpressionBlock`/`EffectBlock`.
 
 Una forma breve como `if ready` produce `ExpressionBlock([], ready)`. Una forma entre llaves recoge todas las declaraciones locales `:=` iniciales y exige una única expresión final. El `otherwise` asociado queda fuera del bloque AST, pero la resolución posterior extiende hasta él el entorno de esos locales.

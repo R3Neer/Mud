@@ -430,7 +430,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     local_value_decl = LocalValueDecl(variable_name name,
-                                      derived_value_shape? shape,
+                                      type_expr? type,
                                       expr value)
         attributes (source_origin origin)
 
