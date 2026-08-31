@@ -70,7 +70,6 @@ exports/
 /__pycache__/
 tooling/.deps/
 tooling/obsidian/markdown-export/dist/
-tooling/obsidian/mud-syntax/dist/
 /coverage/
 /.wrangler/
 ```
