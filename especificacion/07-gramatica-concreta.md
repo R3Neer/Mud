@@ -237,7 +237,7 @@ El `mut` exterior se escribe antes del nombre porque califica el lugar almacenad
 El valor de `=` puede ser una expresión breve o un `ValueBlock`. En un campo almacenado, todo el cuerpo debe seguir siendo estático: se evalúa por completo al compilar y no puede leer estado, participantes, `given`, locales exteriores ni actividad del mundo. La mutabilidad temporal creada dentro del propio `ValueBlock` es válida si toda la construcción puede elaborarse estáticamente. Por ejemplo:
 
 ```mud
-allowed: Int Interval = 1..2 | 3..4
+allowedRange: Int Interval = 1..2 | 3..4
 duration: Time = 1 hour + 30 minutes
 ```
 
