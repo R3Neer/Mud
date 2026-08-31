@@ -84,6 +84,14 @@ CodeMirror para archivos fuente, temas semánticos y edición inteligente. MUD,
 EBNF, ASDL y TOML están disponibles, además de perfiles de lenguaje portables.
 El color no sustituye al parser ni valida tipos, dominios o resolución nominal.
 
+Desde la versión 1.1.0, el paquete de MUD distingue las palabras por función
+semántica sin introducir conocimiento de MUD en los adaptadores: declaraciones,
+modificadores de declaración, flujo de control, cuantificadores, efectos y
+cláusulas reciben categorías independientes. En particular, `mut` es un
+modificador de declaración y las dos palabras de `for each` se resaltan como
+cuantificador. Cada tema puede asignar colores distintos a esas categorías y
+los perfiles de otros lenguajes pueden reutilizar el mismo mecanismo.
+
 ## Comprobación manual
 
 Después de recargar Obsidian debe verificarse:
@@ -93,7 +101,9 @@ Después de recargar Obsidian debe verificarse:
 3. El resaltado contextual de `~format` y `cycle`.
 4. El formato compacto de rangos como `[0..10]`.
 5. Los operadores compuestos vigentes del léxico.
-6. La conservación de ajustes, perfiles y temas migrados.
+6. Que `family`, `mut`, `for each`, `then`, `destroy` y `from` se distinguen
+   según su función semántica.
+7. La conservación de ajustes, perfiles y temas migrados.
 
 La release estable actual puede descargarse desde
-[v1.0.0](https://github.com/R3Neer/syntax-highlight/releases/tag/v1.0.0).
+[v1.1.0](https://github.com/R3Neer/syntax-highlight/releases/tag/v1.1.0).
