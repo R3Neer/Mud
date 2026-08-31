@@ -268,7 +268,7 @@ Un `ValueBlock` construye un valor y contiene cero o más sentencias locales seg
 ```mud
 result := {
     mut total: Money = 0
-    for each item in items if item.taxable:
+    for each item in items if item.taxable :
         total += item.price
     total
 }
@@ -420,11 +420,11 @@ for capitalOf: Country -> City [*],
     mut visitedCountries: Country [* unique],
     mut visitedCapitals: City [* unique] {
     then {
-        for each country in capitalOf: {
+        for each country in capitalOf : {
             add country to visitedCountries
         }
 
-        for each (country, capital) in capitalOf: {
+        for each (country, capital) in capitalOf : {
             add country to visitedCountries
             add capital to visitedCapitals
         }
@@ -512,7 +512,7 @@ Para recorrer resultados se recorre un dominio de entradas y se aplica el diccio
 action CollectPrices
 for products: Product [*], pricing: Product --> Money,
     mut prices: Money [*] {
-    then for each product in products: {
+    then for each product in products : {
         price := pricing[product]
         add price to prices
     }
@@ -674,7 +674,7 @@ alias Squad {
     members: Soldier [*]
 
     wounded [* mut] :=
-        soldier in members:
+        soldier in members :
             soldier.health < MaximumHealth
 }
 ```
@@ -836,7 +836,7 @@ given maximumDistance: Length {
 }
 
 rule AllAdults for people: Person in EligibleCitizens [1..*, unique] {
-    forall person in people: person.age >= 18
+    forall person in people : person.age >= 18
 }
 
 rule IsWeekend for day: Day {
@@ -876,7 +876,7 @@ En una action, `mut` antes del nombre de cualquier rol `for`, incluida la cardin
 action Treat for
     mut patients: Person [1..10, unique, mut]
 {
-    then for each patient in patients: {
+    then for each patient in patients : {
         patient.health += 10
     }
 }
@@ -1213,10 +1213,10 @@ La forma `remove name from Owner` se distingue de retirar un valor mediante reso
 `for each` acepta cualquier fuente finita y enumerable: colecciones, diccionarios exactos, intervalos enumerables, dominios finitos enumerables y cualquier otro valor con enumeración canónica. Un intervalo no se convierte en colección por poder recorrerse.
 
 ```mud
-for each person in kingdom.people if person.hungry:
+for each person in kingdom.people if person.hungry :
     person.health -= 1
 
-for each value in [0..100] by 5: {
+for each value in [0..100] by 5 : {
     doubled := value * 2
     total += doubled
 }
@@ -1258,7 +1258,7 @@ Selección y `exists`, `forall`, `count`, `min`, `max` aceptan `by` cuando la fu
 Una selección produce una colección y por ello no consume directamente un dominio desnudo: si la fuente conceptual es un dominio `D`, debe escribirse `all D`. Los recorridos y cuantificadores que no producen una colección sí pueden consumir directamente un dominio finito enumerable.
 
 ```mud
-selected := x in source by step: {
+selected := x in source by step : {
     threshold := limit
     x < threshold
 }
@@ -1400,13 +1400,13 @@ De mayor a menor:
 | 12 | `<=>` | cadena adyacente |
 | 13 | `eventually ... through ...` | exterior |
 
-Las formas `take amount from source`, `binding in source: predicate` y los cuantificadores contienen expresiones completas en sus posiciones delimitadas. El primer `from` no anidado que puede cerrar la cantidad de `take` separa cantidad y fuente; los dos puntos no anidados separan fuente y predicado. Los `from` o `:` encerrados entre paréntesis o dentro de otra construcción completa pertenecen a esa construcción. Esta regla de delimitación contextual evita que el `from` de extracción de componentes absorba accidentalmente el separador de `take`. Por ello:
+Las formas `take amount from source`, `binding in source : predicate` y los cuantificadores contienen expresiones completas en sus posiciones delimitadas. El primer `from` no anidado que puede cerrar la cantidad de `take` separa cantidad y fuente; los dos puntos no anidados separan fuente y predicado. Los `from` o `:` encerrados entre paréntesis o dentro de otra construcción completa pertenecen a esa construcción. Esta regla de delimitación contextual evita que el `from` de extracción de componentes absorba accidentalmente el separador de `take`. Por ello:
 
 ```mud
-take n from player in players: player.ready
+take n from player in players : player.ready
 ```
 
-se agrupa como `take n from (player in players: player.ready)` sin paréntesis.
+se agrupa como `take n from (player in players : player.ready)` sin paréntesis.
 
 `to` y el `in` de unidad transforman el valor completo acumulado a su izquierda. El parser continúa después con el resultado:
 
@@ -1682,6 +1682,6 @@ El contexto de tipo también puede construir el alias sin `to`. El compilador no
 Los `~...` configurables preceden al contenido ordinario. Campos, componentes y participantes pueden llevar un bloque inmediato metadata-only. Todo `for`, `on` y `given` tiene nombre obligatorio; una cabecera agrupada comparte tipo y metadata-body entre sus identificadores. Los defaults de archivo preceden a `using`. `start with` y los cuerpos de `when`/`if`/`then`/`after`/`otherwise` no son propietarios metadata-bearing.
 ## Pertenencia, restricción y transformaciones locales
 
-La pertenencia booleana usa `contenedor has valor` y `contenedor has not valor`. `in` no es un operador booleano de pertenencia. `valor in Dominio` restringe o filtra localmente el valor; `binding in source: predicate` continúa siendo selección.
+La pertenencia booleana usa `contenedor has valor` y `contenedor has not valor`. `in` no es un operador booleano de pertenencia. `valor in Dominio` restringe o filtra localmente el valor; `binding in source : predicate` continúa siendo selección.
 
 Una colección puede transformarse localmente con `values [unique]`, `values [ordered]`, `values [ordered by score]` o `values [1..10, unique, ordered]`. No admite `mut`. La elaboración normaliza dominio, `unique`, orden y cardinalidad. `[n]` continúa siendo indexación; una cardinalidad local exacta sin otro modificador se escribe `[n..n]`.

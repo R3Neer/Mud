@@ -192,7 +192,7 @@ No es enumerable. Por tanto, no puede ser fuente de `for each` ni de otra constr
 
 ```mud
 action InvalidRumIteration for mut total: Rum {
-    then for each value in [r0..r1] by r0.1:
+    then for each value in [r0..r1] by r0.1 :
         total += value
 }
 ```

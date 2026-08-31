@@ -34,7 +34,7 @@ MUD ya dispone de `for each`, cuantificadores, selección pura y dominios escalo
 
 ```mud
 action Accumulate for values: Int [* ordered], mut total: Int {
-    then for each value in values:
+    then for each value in values :
         total += value
 }
 ```
@@ -47,7 +47,7 @@ Cuando una construcción usa `:` para separar una cabecera de un cuerpo subordin
 
 ```mud
 action AccumulateDoubled for values: Int [* ordered], mut total: Int {
-    then for each value in values: {
+    then for each value in values : {
         doubled := value * 2
         total += doubled
     }
@@ -92,13 +92,13 @@ Un paso positivo se ancla en el límite inferior; uno negativo, en el superior. 
 
 ```mud
 action Forward for mut total: Num {
-    then for each value in [1..8] by 2:
+    then for each value in [1..8] by 2 :
         total += value
 }
 # recorrido: 1, 3, 5, 7
 
 action Backward for mut total: Num {
-    then for each value in [1..8] by -3:
+    then for each value in [1..8] by -3 :
         total += value
 }
 # recorrido: 8, 5, 2

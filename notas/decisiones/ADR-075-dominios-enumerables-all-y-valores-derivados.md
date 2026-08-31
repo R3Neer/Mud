@@ -58,7 +58,7 @@ numbers := a * b, d, c / a
 
 Su tipo común y cardinalidad se infieren. La aridad es cardinalidad exacta para colecciones con multiplicidad ordinaria; bajo `unique` solo lo es cuando la distinción de elementos puede demostrarse. Una colección incluida como elemento no se aplana implícitamente.
 
-Una selección `value in source: predicate` y `take amount from source` también producen valores derivados de colección. Conservan los contratos demostrables de su fuente y permiten que la forma derivada declare un dominio o cardinalidad más precisa como obligación independiente.
+Una selección `value in source : predicate` y `take amount from source` también producen valores derivados de colección. Conservan los contratos demostrables de su fuente y permiten que la forma derivada declare un dominio o cardinalidad más precisa como obligación independiente.
 
 ## Diagnósticos de conversión
 

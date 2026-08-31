@@ -64,12 +64,12 @@ Este alias tiene $8\cdot 8=64$ valores y puede usarse como fuente:
 
 ```mud
 action VisitCoordinates for mut visits: Nat {
-    then for each coordinate in Coordinate:
+    then for each coordinate in Coordinate :
         visits += 1
 }
 
 rule HasLeftEdge {
-    exists destination in Coordinate:
+    exists destination in Coordinate :
         destination.horizontal == 0
 }
 ```

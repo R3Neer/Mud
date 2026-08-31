@@ -34,11 +34,11 @@ MUD necesita recorrer conjuntos de dominio sin introducir bucles generales cuya 
 Las expresiones admiten:
 
 ```mud
-exists x in source: predicate
-forall x in source: predicate
-count x in source: predicate
-min x in source: predicate
-max x in source: predicate
+exists x in source : predicate
+forall x in source : predicate
+count x in source : predicate
+min x in source : predicate
+max x in source : predicate
 ```
 
 La fuente debe ser finita y enumerable. La evaluación es pura. Los cinco cuerpos son predicados booleanos. `min` y `max` devuelven el primer o último testigo aceptado según el orden semántico de la fuente; requieren una fuente con orden utilizable. Son consultas parciales: sin testigos aceptados producen `empty` con cardinalidad `[0..1]` y, en otro caso, un valor del tipo de miembro de la fuente. La ausencia solo falla después si el contexto receptor no admite cardinalidad cero, conforme a D-095.
@@ -46,7 +46,7 @@ La fuente debe ser finita y enumerable. La evaluación es pura. Los cinco cuerpo
 D-081 añade una selección pura que devuelve los testigos en lugar de consumirlos:
 
 ```mud
-item in source: predicate
+item in source : predicate
 ```
 
 Comparte la obligación de finitud y enumerabilidad, pero produce la subcolección aceptada y puede alimentar después un cuantificador, `take` u otra expresión.
@@ -54,10 +54,10 @@ Comparte la obligación de finitud y enumerabilidad, pero produce la subcolecci�
 El `for each` ejecutable aparece dentro de un `then`; D-101 admite además `LocalForEach` dentro de `ValueBlock`, con `LocalStatementBlock` y sin efectos exteriores. La forma ejecutable conserva:
 
 ```mud
-for each item in source if predicate:
+for each item in source if predicate :
     iterations += 1
 
-for each value in source by step if predicate:
+for each value in source by step if predicate :
     iterations += 1
 ```
 

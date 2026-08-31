@@ -136,7 +136,7 @@ El análisis puede explotar el grafo explícito de reglas, actions, subactions, 
 
 ## Consecuencias
 
-- El parser y el AST distinguen `has`/`has not`, restricción local `in` y selección `binding in source: predicate`.
+- El parser y el AST distinguen `has`/`has not`, restricción local `in` y selección `binding in source : predicate`.
 - El AST deja de representar pertenencia booleana mediante `Membership`/`NotMembership` asociados a `in`.
 - Las transformaciones locales conservan una representación propia y no admiten `mut`.
 - La procedencia es por ocurrencia, no solo por valor.

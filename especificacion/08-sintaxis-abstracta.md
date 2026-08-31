@@ -644,11 +644,11 @@ como varios receptores o como un único valor estructural queda pendiente de res
 
 ### Selección y `take`
 
-`binding in source [by step]: predicate` posee `SelectionExpr`. Conserva la vinculación, la fuente, el paso opcional y el predicado como `ExpressionBlock` sin materializar la colección resultante. La vinculación solo introduce nombres dentro del predicado.
+`binding in source [by step] : predicate` posee `SelectionExpr`. Conserva la vinculación, la fuente, el paso opcional y el predicado como `ExpressionBlock` sin materializar la colección resultante. La vinculación solo introduce nombres dentro del predicado.
 
 `take amount from source` posee `TakeExpr`. El AST superficial no decide si la fuente es ordenada, texto, diccionario, dominio enumerable o una colección sin orden; esa resolución determina después si se toma un prefijo canónico o una muestra reproducible.
 
-La composición de ambas formas es estructural. `take n from player in players: condition` contiene un `SelectionExpr` como fuente de `TakeExpr`; `player in take m from players: condition` contiene un `TakeExpr` como fuente de `SelectionExpr`.
+La composición de ambas formas es estructural. `take n from player in players : condition` contiene un `SelectionExpr` como fuente de `TakeExpr`; `player in take m from players : condition` contiene un `TakeExpr` como fuente de `SelectionExpr`.
 
 ### `all`
 

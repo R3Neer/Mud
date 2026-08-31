@@ -35,7 +35,7 @@ También faltaba distinguir entre posición observable, selección cuantitativa 
 La forma:
 
 ```mud
-player in players:
+player in players :
     player.score == 2
 ```
 
@@ -44,7 +44,7 @@ es una expresión de selección. Vincula cada miembro enumerable de la fuente, e
 La vinculación puede ser simple o una pareja de diccionario, igual que en `for each`:
 
 ```mud
-(key, value) in stock:
+(key, value) in stock :
     value > 0
 ```
 
@@ -102,22 +102,22 @@ La nominalidad de un alias contenedor no se reconstruye implícitamente: el resu
 
 ```mud
 # Hasta n coincidencias.
-best := take n from player in players:
+best := take n from player in players :
     player.score == 2
 
 # Coincidencias dentro de una selección previa.
-best := player in take m from players:
+best := player in take m from players :
     player.score == 2
 
 # Ambas restricciones.
-best := take n from player in take m from players:
+best := take n from player in take m from players :
     player.score == 2
 ```
 
 La anotación de la declaración es independiente de la selección:
 
 ```mud
-chosen [3] := take 3 from player in players:
+chosen [3] := take 3 from player in players :
     player.score == 2
 ```
 
@@ -174,8 +174,8 @@ Una selección usada para definir un campo derivado conserva la capacidad interi
 
 ## Modificación por D-088
 
-La selección pura admite `item in source by step: predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.
+La selección pura admite `item in source by step : predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.
 
 ## Modificación vigente por D-096
 
-Selección y `take` producen colecciones. Cuando su fuente conceptual es un dominio, debe materializarse explícitamente mediante `all D`; por ejemplo `candidate in all Actions: ...` y `take n from all D`. Recorridos y cuantificadores que no producen una colección pueden consumir directamente un dominio finito enumerable.
+Selección y `take` producen colecciones. Cuando su fuente conceptual es un dominio, debe materializarse explícitamente mediante `all D`; por ejemplo `candidate in all Actions : ...` y `take n from all D`. Recorridos y cuantificadores que no producen una colección pueden consumir directamente un dominio finito enumerable.

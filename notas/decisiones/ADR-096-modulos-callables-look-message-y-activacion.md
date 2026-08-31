@@ -111,7 +111,7 @@ Además del literal contextual `all`, se acepta `all D` para materializar la enu
 
 Las construcciones que recorren o cuantifican un dominio sin producir una colección pueden consumirlo directamente. Cuando una operación produce una colección a partir de un dominio, la materialización debe ser explícita mediante `all D`. Esto incluye selección y `take`, por ejemplo `take n from all D`.
 
-Los usos vigentes de `in` permanecen separados: `x in D` restringe localmente un valor al dominio `D`; `a: A in D` es una restricción declarativa de dominio; `x in source: predicate` es selección y produce una colección. La pertenencia booleana se expresa mediante `D has x` o `D has not x`. No se introduce una conversión implícita de una colección filtrada a `Domain` ni un dominio refinado por predicado.
+Los usos vigentes de `in` permanecen separados: `x in D` restringe localmente un valor al dominio `D`; `a: A in D` es una restricción declarativa de dominio; `x in source : predicate` es selección y produce una colección. La pertenencia booleana se expresa mediante `D has x` o `D has not x`. No se introduce una conversión implícita de una colección filtrada a `Domain` ni un dominio refinado por predicado.
 
 ### Descriptores, `Any`, `is` y `~type`
 

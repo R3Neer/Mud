@@ -222,7 +222,7 @@ El AST superficial conserva que la cardinalidad fue omitida; tipado y elaboraci�
 La expresión:
 
 ```mud
-binding in source: predicate
+binding in source : predicate
 ```
 
 es exclusivamente un filtro. El cuerpo posterior a `:` debe ser booleano. La expresión devuelve directamente los miembros originales aceptados, sin proyección, envoltura adicional ni aplanamiento.

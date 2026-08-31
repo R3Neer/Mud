@@ -477,7 +477,7 @@ El prefijo `all D` produce `PrefixExpr(EnumerateAll, D)`; el literal contextual 
 
 ### Selección y `take`
 
-`binding in source [by step]: predicate` produce `SelectionExpr(binding, source, step?, predicate)`. La vinculación simple o de diccionario reutiliza `ValueIterationBinding` o `DictionaryIterationBinding`; su alcance queda limitado al predicado. La forma breve y `{ locales*; resultado }` convergen en `ExpressionBlock`.
+`binding in source [by step] : predicate` produce `SelectionExpr(binding, source, step?, predicate)`. La vinculación simple o de diccionario reutiliza `ValueIterationBinding` o `DictionaryIterationBinding`; su alcance queda limitado al predicado. La forma breve y `{ locales*; resultado }` convergen en `ExpressionBlock`.
 
 `exists`, `forall`, `count`, `min` y `max` producen `QuantifierExpr(kind, variable, source, step?, body)`, con `body` como `ExpressionBlock`. `sum` no pertenece ya al catálogo. La transformación no decide el contrato booleano ni, para `min`/`max`, la validez del orden de la fuente; esas comprobaciones son posteriores.
 
@@ -486,10 +486,10 @@ El prefijo `all D` produce `PrefixExpr(EnumerateAll, D)`; el literal contextual 
 Ambas construcciones contienen expresiones completas. Por tanto, la composición se conserva por anidamiento explícito del AST:
 
 ```text
-take n from player in players: player.score == 2
+take n from player in players : player.score == 2
 → TakeExpr(n, SelectionExpr(player, players, ...))
 
-player in take m from players: player.score == 2
+player in take m from players : player.score == 2
 → SelectionExpr(player, TakeExpr(m, players), ...)
 ```
 
@@ -697,4 +697,4 @@ El corpus inicial está en `casos/cst-ast.yaml`.
 
 ## Pertenencia, restricción y transformaciones locales
 
-`a has b` se proyecta a `HasMember`; `a has not b`, a `HasNotMember`. `value in Domain` se proyecta a `DomainRestrictionExpr`; `binding in source: predicate` conserva `SelectionExpr`. `collection-transform-suffix` se pliega como `CollectionTransformExpr`; no existe capacidad interior local.
+`a has b` se proyecta a `HasMember`; `a has not b`, a `HasNotMember`. `value in Domain` se proyecta a `DomainRestrictionExpr`; `binding in source : predicate` conserva `SelectionExpr`. `collection-transform-suffix` se pliega como `CollectionTransformExpr`; no existe capacidad interior local.
