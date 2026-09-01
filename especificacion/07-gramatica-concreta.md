@@ -673,9 +673,8 @@ Un campo derivado de alias usa la misma sintaxis que los demás campos calculado
 alias Squad {
     members: Soldier [*]
 
-    wounded [* mut] :=
-        soldier in members :
-            soldier.health < MaximumHealth
+    wounded [* mut] := soldier in members :
+        soldier.health < MaximumHealth
 }
 ```
 
