@@ -184,6 +184,10 @@ remain in development.
 - [`gobierno/`](gobierno/) — editorial and change-control processes;
 - [`tooling/`](tooling/) — supporting and experimental tools.
 
+Repository-specific export profiles live in
+[`markdown-export.toml`](markdown-export.toml) and are consumed by the separate
+[R3 Markdown Export](https://github.com/R3Neer/markdown-export) package.
+
 The canonical specification and project records are currently written in
 Spanish. Mud source vocabulary is English.
 

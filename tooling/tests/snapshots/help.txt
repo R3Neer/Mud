@@ -1,23 +1,3 @@
-SNAPSHOT markdown
-
-====================================================================
- MUD MARKDOWN EXPORT
-====================================================================
-Combine Markdown from an Obsidian vault into portable documents.
-
-USAGE
-  python -m tooling.markdown_export <command> [arguments] [options]
-  python -m tooling.markdown_export <command> --help
-
-EXPORT
-  list-profiles  List configured profiles
-  export         Create a portable Markdown export
-
-INTERFACE
-  serve          Open the local web interface
-
-* Run python -m tooling.markdown_export <command> --help for detailed help.
-
 SNAPSHOT decisions
 
 ====================================================================
@@ -125,71 +105,6 @@ USAGE
   python tooling/translation/render_glossary.py [--check] [--colour MODE] [--ascii]
 
 * Running without --check writes the generated glossary atomically.
-
-SNAPSHOT markdown-list
-
-====================================================================
- LIST-PROFILES
-====================================================================
-List the export profiles available in the selected configuration.
-
-USAGE
-  python -m tooling.markdown_export list-profiles [options]
-
-ARGUMENTS AND OPTIONS
-  --root PATH    Override the configured vault root.
-  --config PATH  Use an alternative TOML configuration.
-
-SNAPSHOT markdown-export
-
-====================================================================
- EXPORT
-====================================================================
-Export selected Markdown as one document, several parts or a path-preserving ZIP.
-
-USAGE
-  python -m tooling.markdown_export export [--profile NAME | --files PATH ...] [options]
-
-ARGUMENTS AND OPTIONS
-  --root PATH          Override the configured vault root.
-  --config PATH        Use an alternative TOML configuration.
-  --profile NAME       Use a configured selection profile.
-  --files PATH ...     Select relative files, folders or patterns.
-  --output PATH        Choose the output path within the vault root.
-  --follow-links       Discover linked documents.
-  --no-follow-links    Do not discover linked documents.
-  --strip-frontmatter  Remove frontmatter from combined output.
-  --keep-frontmatter   Preserve frontmatter in combined output.
-  --source-markers     Add source markers to combined output.
-  --no-source-markers  Do not add source markers.
-  --strict-links       Fail on unresolved or unsupported links.
-  --max-chars N        Split output between documents at the requested size.
-  --timestamp          Append a timestamp to the output name.
-  --zip-tree           Create a path-preserving ZIP.
-  --no-zip-tree        Disable path-preserving ZIP output.
-
-EXAMPLES
-  python -m tooling.markdown_export export --profile specification
-
-SNAPSHOT markdown-serve
-
-====================================================================
- SERVE
-====================================================================
-Serve the local export interface on 127.0.0.1.
-
-USAGE
-  python -m tooling.markdown_export serve [options]
-
-ARGUMENTS AND OPTIONS
-  --root PATH    Override the configured vault root.
-  --config PATH  Use an alternative TOML configuration.
-  --port PORT    Listen on this local port; use 0 for an automatic port.
-  --no-browser   Do not open the browser automatically.
-  --ready-json   Write one machine-readable readiness object to stdout.
-
-NOTES
-* The server is local-only and must not be exposed as a network service.
 
 SNAPSHOT decisions-migrate
 

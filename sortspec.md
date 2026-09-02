@@ -68,7 +68,6 @@ exports/
 /node_modules/
 /__pycache__/
 tooling/.deps/
-tooling/obsidian/markdown-export/dist/
 /coverage/
 /.wrangler/
 ```

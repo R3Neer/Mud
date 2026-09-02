@@ -8,6 +8,8 @@ Install the pinned tooling dependencies with Python 3.11 or later:
 python -m pip install -r tooling/requirements.txt
 ```
 
+R3 Markdown Export is also an independent package. Mud pins it for validating
+the repository-specific profiles in [`markdown-export.toml`](../markdown-export.toml).
 R3Translate remains a separate executable because its lifecycle and dependency
 set are independent from Mud's repository tooling.
 
@@ -19,13 +21,12 @@ focused pages through `<command> --help`. Mud tooling deliberately has no
 `--version` option until it acquires an independent versioning policy.
 
 Progress and diagnostics are written to stderr when stdout carries
-machine-readable data. In particular, Markdown Export's `serve --ready-json`
-prints exactly one undecorated JSON readiness object for the Obsidian plugin.
+machine-readable data.
 
 ## Entry points
 
 ```console
-python -m tooling.markdown_export --help
+markdown-export --help
 python tooling/decisions/manage_decisions.py --help
 python tooling/questions/validate_questions.py --help
 python gobierno/validate_temporaries.py --help
@@ -44,7 +45,6 @@ until the corresponding repository migration phase changes them.
 
 ```console
 python -m unittest discover -s tooling/tests
-python -m unittest discover -s tooling/markdown_export/tests
 python -m unittest discover -s gobierno -p "test_*.py"
 python tooling/translation/test_translation_tooling.py
 ```

@@ -1,3 +1,5 @@
 # R3CLI v0.2.0 (tag commit 1d6e4b3fb245635ec39d1251490cb0f019ccd2fb)
 r3-cli @ https://github.com/R3Neer/R3CLI/archive/1d6e4b3fb245635ec39d1251490cb0f019ccd2fb.zip
+# R3 Markdown Export v0.1.0 (tag commit c8167d1bf0f7390e22b41aef3a6e226e4d5d2ac8)
+r3-markdown-export @ https://github.com/R3Neer/markdown-export/archive/c8167d1bf0f7390e22b41aef3a6e226e4d5d2ac8.zip
 PyYAML>=6.0.3,<7

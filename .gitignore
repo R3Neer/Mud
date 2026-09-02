@@ -11,10 +11,8 @@ exports/
 __pycache__/
 *.py[cod]
 
-# Derivados del plugin local de Obsidian
-tooling/obsidian/markdown-export/node_modules/
-tooling/obsidian/markdown-export/dist/
-tooling/markdown_export/profiles.local.toml
+# Estado personal de R3 Markdown Export
+.markdown-export.local.toml
 tooling/.deps/
 
 # Estado efímero y secretos de la migración con R3Translate

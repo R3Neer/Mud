@@ -1,5 +1,5 @@
 [export]
-root = "../.."
+root = "."
 output_dir = "exports"
 default_profile = "current"
 source_languages = { ebnf = "ebnf", asdl = "asdl", yaml = "yaml" }
@@ -9,7 +9,7 @@ exclude = [
 ]
 
 [profiles.specification]
-title = "Especificación formal"
+title = "Formal specification"
 include = ["especificacion"]
 follow_links = false
 strip_frontmatter = true
@@ -18,7 +18,7 @@ strict_links = false
 max_chars = 0
 
 [profiles.decisions]
-title = "Decisiones e historial de preguntas"
+title = "Decisions and question history"
 include = [
     "notas/preguntas/*.md",
     "notas/decisiones/*.md",
@@ -30,7 +30,7 @@ strict_links = false
 max_chars = 0
 
 [profiles.language]
-title = "Semántica vigente del lenguaje"
+title = "Current language semantics"
 include = [
     "especificacion",
     "notas/vision-y-alcance.md",
@@ -69,7 +69,7 @@ strict_links = false
 max_chars = 0
 
 [profiles.current]
-title = "Corpus vigente completo"
+title = "Complete current corpus"
 include = ["."]
 exclude = [
     "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",

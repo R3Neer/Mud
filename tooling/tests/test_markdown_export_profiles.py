@@ -5,7 +5,7 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 
-from tooling.markdown_export.core import (
+from markdown_export.core import (
     VaultIndex,
     load_config,
     options_from_profile,
@@ -14,9 +14,10 @@ from tooling.markdown_export.core import (
 
 
 class BundledProfileTests(unittest.TestCase):
+    CONFIG = Path(__file__).resolve().parents[2] / "markdown-export.toml"
+
     def test_language_profile_grows_with_normative_directories(self) -> None:
-        config_path = Path(__file__).parents[1] / "profiles.toml"
-        bundled = load_config(config_path)
+        bundled = load_config(self.CONFIG)
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -87,8 +88,7 @@ class BundledProfileTests(unittest.TestCase):
         self.assertNotIn("tooling/README.md", selected)
 
     def test_decisions_profile_preserves_the_complete_question_history(self) -> None:
-        config_path = Path(__file__).parents[1] / "profiles.toml"
-        bundled = load_config(config_path)
+        bundled = load_config(self.CONFIG)
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -125,8 +125,7 @@ class BundledProfileTests(unittest.TestCase):
         self.assertNotIn("especificacion/README.md", selected)
 
     def test_current_profile_excludes_closed_questions(self) -> None:
-        config_path = Path(__file__).parents[1] / "profiles.toml"
-        bundled = load_config(config_path)
+        bundled = load_config(self.CONFIG)
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

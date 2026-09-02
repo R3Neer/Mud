@@ -26,7 +26,7 @@ from tooling.cli_support import (  # noqa: E402
 QUESTION_DIR = ROOT / "notas" / "preguntas"
 INDEX = QUESTION_DIR / "README.md"
 LEGACY = ROOT / "notas" / "08-preguntas-abiertas.md"
-EXPORT_PROFILES = ROOT / "tooling" / "markdown_export" / "profiles.toml"
+EXPORT_PROFILES = ROOT / "markdown-export.toml"
 EXPORT_DIR = ROOT / "exports"
 
 QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")

@@ -16,7 +16,6 @@ from tooling.translation import check_migration
 ROOT = Path(__file__).resolve().parents[2]
 SNAPSHOT = Path(__file__).with_name("snapshots") / "help.txt"
 HELP_CASES = (
-    ("markdown", ("-m", "tooling.markdown_export", "--help")),
     ("decisions", ("tooling/decisions/manage_decisions.py", "--help")),
     ("questions", ("tooling/questions/validate_questions.py", "--help")),
     ("temporaries", ("gobierno/validate_temporaries.py", "--help")),
@@ -25,9 +24,6 @@ HELP_CASES = (
     ("syntax", ("especificacion/sintaxis/validate_syntax_model.py", "--help")),
     ("translation-check", ("tooling/translation/check_migration.py", "--help")),
     ("glossary", ("tooling/translation/render_glossary.py", "--help")),
-    ("markdown-list", ("-m", "tooling.markdown_export", "list-profiles", "--help")),
-    ("markdown-export", ("-m", "tooling.markdown_export", "export", "--help")),
-    ("markdown-serve", ("-m", "tooling.markdown_export", "serve", "--help")),
     ("decisions-migrate", ("tooling/decisions/manage_decisions.py", "migrate", "--help")),
     ("decisions-generate", ("tooling/decisions/manage_decisions.py", "generate", "--help")),
     ("decisions-validate", ("tooling/decisions/manage_decisions.py", "validate", "--help")),
@@ -63,11 +59,6 @@ class HelpSnapshotTests(unittest.TestCase):
             sections.append(f"SNAPSHOT {name}\n{completed.stdout}")
         actual = "".join(sections).rstrip() + "\n"
         self.assertEqual(actual, SNAPSHOT.read_text(encoding="ascii"))
-
-    def test_command_help_does_not_load_missing_configuration(self) -> None:
-        completed = invoke("-m", "tooling.markdown_export", "export", "--config", "missing.toml", "--help")
-        self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertIn(" EXPORT\n", completed.stdout)
 
     def test_short_help_alias_is_supported(self) -> None:
         completed = invoke("gobierno/validate_temporaries.py", "-h")
@@ -115,18 +106,6 @@ class OutputContractTests(unittest.TestCase):
         self.assertEqual(plain.returncode, 0, plain.stderr)
         self.assertNotIn("\x1b[", plain.stdout)
         self.assertTrue(plain.stdout.startswith("+ "))
-
-    def test_narrow_help_keeps_labels_and_descriptions(self) -> None:
-        completed = invoke(
-            "-m",
-            "tooling.markdown_export",
-            "serve",
-            "--help",
-            env={"COLUMNS": "32"},
-        )
-        self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertIn("  --ready-json\n", completed.stdout)
-        self.assertIn("Write one machine-readable", completed.stdout)
 
     def test_missing_r3cli_has_no_traceback(self) -> None:
         completed = subprocess.run(
