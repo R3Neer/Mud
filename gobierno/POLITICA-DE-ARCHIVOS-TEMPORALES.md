@@ -12,13 +12,13 @@ status: vigente
 
 ## Propósito
 
-Esta política regula los documentos que deben permanecer versionados durante varios commits porque coordinan trabajo en curso, pero que no forman parte del estado permanente del proyecto.
+Esta política regula los documentos y artefactos de configuración que deben permanecer versionados durante varios commits porque coordinan trabajo en curso, pero que no forman parte del estado permanente del proyecto.
 
 Un archivo efímero ordinario no se versiona. Logs, builds, caches, volcados, estado local de herramientas y demás residuos reproducibles deben vivir fuera del repositorio o quedar cubiertos por `.gitignore`.
 
 ## Fuente de verdad
 
-El frontmatter del propio documento es la única fuente de verdad sobre su temporalidad. Un documento Markdown intencionadamente temporal usa:
+Los metadatos del propio archivo son la única fuente de verdad sobre su temporalidad. Un documento Markdown intencionadamente temporal usa en su frontmatter:
 
 ```yaml
 temporary: true
@@ -29,6 +29,16 @@ temporary-delete-after: 2026-09-30
 
 `temporary-delete-after` es opcional y solo se usa cuando existe una fecha límite objetiva.
 
+Un archivo TOML intencionadamente temporal usa las mismas propiedades en su
+tabla raíz:
+
+```toml
+temporary = true
+temporary-reason = "Motivo por el que debe permanecer versionado"
+temporary-delete-when = "Condición semántica de eliminación"
+temporary-delete-after = 2026-09-30
+```
+
 No se usa `temporary: false`. Si un documento temporal pasa legítimamente a ser permanente, se eliminan `temporary` y todas las propiedades `temporary-*`. Si deja de ser necesario, se elimina el archivo.
 
 ## Significado de las propiedades
@@ -38,15 +48,20 @@ No se usa `temporary: false`. Si un documento temporal pasa legítimamente a ser
 - `temporary-delete-when`: condición semántica obligatoria que determina cuándo debe eliminarse. Es obligatoria y no puede estar vacía.
 - `temporary-delete-after`: fecha límite opcional en formato ISO `YYYY-MM-DD`. Una fecha ya vencida bloquea el commit.
 
-Las propiedades son planas. No se mantiene un registro manual paralelo de archivos temporales.
+Las propiedades son planas y pertenecen al archivo que regulan. No se mantiene
+un registro manual paralelo de archivos temporales.
 
 ## Alcance
 
-El contrato `temporary:*` se aplica a documentos Markdown intencionadamente versionados. Un artefacto temporal no Markdown no se introduce en `main` mediante esta política; debe mantenerse fuera del repositorio, en una rama de laboratorio o quedar cubierto por una política específica que establezca un ciclo de vida equivalente.
+El contrato `temporary:*` se aplica a documentos Markdown y archivos TOML
+intencionadamente versionados. Otro artefacto temporal no se introduce en
+`main` mediante esta política; debe mantenerse fuera del repositorio, en una
+rama de laboratorio o quedar cubierto por una política específica que
+establezca un ciclo de vida equivalente.
 
 ## Vista de Obsidian
 
-`[[temporales.base|gobierno/temporales.base]]` es una vista humana derivada de las Properties de las notas. No es una segunda fuente de verdad y ningún archivo se añade manualmente a ella.
+`[[temporales.base|gobierno/temporales.base]]` es una vista humana derivada de las Properties de las notas Markdown. No es una segunda fuente de verdad y ningún archivo se añade manualmente a ella. Los TOML temporales aparecen en el inventario completo del validador, aunque Obsidian Bases no los muestre.
 
 La Base ofrece:
 
@@ -64,7 +79,8 @@ python gobierno/validate_temporaries.py
 
 El validador:
 
-- descubre documentos Markdown versionados y no ignorados;
+- descubre documentos Markdown y archivos TOML versionados y no ignorados;
+- lee las propiedades del frontmatter Markdown o de la tabla raíz TOML;
 - imprime siempre el inventario de temporales activos;
 - exige `temporary-reason` y `temporary-delete-when` no vacíos;
 - rechaza `temporary: false` y propiedades `temporary-*` sin `temporary: true`;

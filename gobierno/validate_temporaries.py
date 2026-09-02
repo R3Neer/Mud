@@ -5,6 +5,7 @@ import json
 import re
 import subprocess
 import sys
+import tomllib
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -39,7 +40,7 @@ def scalar(raw: str) -> object:
     return raw
 
 
-def frontmatter(path: Path) -> dict[str, object]:
+def markdown_metadata(path: Path) -> dict[str, object]:
     text = path.read_text(encoding="utf-8")
     if not text.startswith("---\n"):
         return {}
@@ -56,7 +57,7 @@ def frontmatter(path: Path) -> dict[str, object]:
     return result
 
 
-def markdown_files(root: Path) -> list[Path]:
+def candidate_files(root: Path) -> list[Path]:
     try:
         completed = subprocess.run(
             [
@@ -70,15 +71,41 @@ def markdown_files(root: Path) -> list[Path]:
                 "--exclude-standard",
                 "--",
                 "*.md",
+                "*.toml",
             ],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
         )
     except (FileNotFoundError, subprocess.CalledProcessError):
-        return sorted(path for path in root.rglob("*.md") if ".git" not in path.parts)
+        return sorted(
+            path
+            for pattern in ("*.md", "*.toml")
+            for path in root.rglob(pattern)
+            if ".git" not in path.parts
+        )
     paths = (root / item.decode("utf-8") for item in completed.stdout.split(b"\0") if item)
     return sorted(path for path in paths if path.is_file())
+
+
+def toml_metadata(path: Path) -> tuple[dict[str, object], str | None]:
+    text = path.read_text(encoding="utf-8-sig")
+    marker = re.compile(r"(?m)^(?:temporary|temporary-reason|temporary-delete-when|temporary-delete-after)\s*=")
+    if not marker.search(text):
+        return {}, None
+    try:
+        parsed = tomllib.loads(text)
+    except tomllib.TOMLDecodeError as exc:
+        return {}, f"TOML temporal inválido: {exc}"
+    return {key: parsed[key] for key in TEMP_KEYS if key in parsed}, None
+
+
+def metadata(path: Path) -> tuple[dict[str, object], str | None]:
+    if path.suffix.casefold() == ".md":
+        return markdown_metadata(path), None
+    if path.suffix.casefold() == ".toml":
+        return toml_metadata(path)
+    return {}, None
 
 
 def validate(root: Path) -> tuple[list[Temporary], list[str]]:
@@ -86,12 +113,15 @@ def validate(root: Path) -> tuple[list[Temporary], list[str]]:
     errors: list[str] = []
     today = date.today()
 
-    for path in markdown_files(root):
-        data = frontmatter(path)
+    for path in candidate_files(root):
+        data, parse_error = metadata(path)
+        rel = path.relative_to(root)
+        if parse_error:
+            errors.append(f"{rel}: {parse_error}")
+            continue
         present = TEMP_KEYS.intersection(data)
         if not present:
             continue
-        rel = path.relative_to(root)
         flag = data.get("temporary")
 
         if flag is False:
@@ -113,16 +143,17 @@ def validate(root: Path) -> tuple[list[Temporary], list[str]]:
         deadline: date | None = None
         raw_deadline = data.get("temporary-delete-after")
         if raw_deadline is not None:
-            if not isinstance(raw_deadline, str) or not ISO_DATE.fullmatch(raw_deadline):
+            if isinstance(raw_deadline, date):
+                deadline = raw_deadline
+            elif not isinstance(raw_deadline, str) or not ISO_DATE.fullmatch(raw_deadline):
                 errors.append(f"{rel}: temporary-delete-after debe usar YYYY-MM-DD")
             else:
                 try:
                     deadline = date.fromisoformat(raw_deadline)
                 except ValueError:
                     errors.append(f"{rel}: temporary-delete-after no es una fecha válida")
-                else:
-                    if today > deadline:
-                        errors.append(f"{rel}: temporary-delete-after venció el {deadline.isoformat()}")
+            if deadline is not None and today > deadline:
+                errors.append(f"{rel}: temporary-delete-after venció el {deadline.isoformat()}")
 
         active.append(Temporary(rel, reason_text, when_text, deadline))
 
@@ -144,7 +175,7 @@ def print_inventory(active: list[Temporary]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Valida documentos temporales intencionadamente versionados.")
+    parser = argparse.ArgumentParser(description="Valida archivos temporales intencionadamente versionados.")
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     args = parser.parse_args(argv)
     root = args.root.resolve()
