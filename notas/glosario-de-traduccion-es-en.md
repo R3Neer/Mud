@@ -6,6 +6,8 @@ tags:
   - mud/notas
   - mud/traduccion
 status: activo
+decisions:
+  - D-104
 temporary: true
 temporary-reason: "Fijar un vocabulario inglés uniforme y proteger construcciones formales durante la migración integral del repositorio."
 temporary-delete-when: "La migración del contenido y de las rutas al inglés haya concluido y las decisiones terminológicas que deban conservarse estén integradas en una guía permanente o en la especificación."
@@ -98,11 +100,11 @@ indica únicamente cómo explicarlas en prosa.
 | ancla terminal | terminal anchor | |
 | ámbito | scope | |
 | aplicación anfitriona | host application | |
-| autorización | authorization | |
+| autorización | authorisation | |
 | binding / vinculación | binding | Mantener *binding* para evitar confundirlo con una relación del dominio. |
 | causal | causal | |
 | cola | queue | |
-| comportamiento observable | observable behavior | |
+| comportamiento observable | observable behaviour | |
 | consecuencia | consequence | Usar *effect* solo para un efecto semántico escrito o consolidado. |
 | conflicto | conflict | |
 | consolidación | consolidation | |
@@ -132,7 +134,7 @@ indica únicamente cómo explicarlas en prosa.
 | implementación conforme | conforming implementation | |
 | invariante | invariant | La regla se llama `always` rule; la propiedad que mantiene es an invariant. |
 | lector / escritura | reader / write | Preferir *read set* y *write set* para conjuntos de dependencias. |
-| materialización | materialization | No usar *implementation*, *generation* ni *instantiation* como equivalentes generales. |
+| materialización | materialisation | No usar *implementation*, *generation* ni *instantiation* como equivalentes generales. |
 | modelo | model | |
 | mundo | world | |
 | mundo inicial | initial world | |
@@ -185,7 +187,7 @@ indica únicamente cómo explicarlas en prosa.
 | estado tentativo | tentative state | |
 | instantánea | snapshot | |
 | instantánea anterior | previous snapshot | |
-| estabilización | stabilization | |
+| estabilización | stabilisation | |
 | línea base | baseline | Para la memoria temporal reactiva. |
 | memoria reactiva | reactive memory | |
 
@@ -347,14 +349,14 @@ indica únicamente cómo explicarlas en prosa.
 
 ## Decisiones de estilo deliberadas
 
-- Usar inglés estadounidense: *behavior*, *modeling*, *materialization*.
+- Usar inglés británico: *behaviour*, *modelling*, *materialisation*.
 - Mantener *Mud* como nombre propio; usar `.mud` para la extensión y `Mud` en
   prosa, salvo que una construcción de código exija `mud`.
 - Conservar términos Mud entre acentos graves en prosa técnica cuando nombran
   una construcción del lenguaje.
 - Preferir *semantic operator* a *semantic editor*, porque el componente
   consulta, explica y planifica además de editar.
-- Preferir *materializer* a *generator*, porque puede producir código,
+- Preferir *materialiser* a *generator*, porque puede producir código,
   contratos, documentación o tests sin añadir semántica.
 - Distinguir siempre *rule* de *requirement*, *effect* de *consequence*,
   *failure* de *error*, y *rejected* de *failed*.

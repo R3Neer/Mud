@@ -30,7 +30,7 @@ stored, which event triggers it and how it fits the existing architecture.
 Mud moves those questions out of the domain model. A person should be able to
 introduce a thing or a rule because it belongs to the world being described.
 Mud combines it with the rest of the model; compilers, runtimes and
-materializers turn that model into something a particular application can run.
+materialisers turn that model into something a particular application can run.
 
 The architecture adapts to the model. The model does not adapt to the
 architecture.
@@ -43,7 +43,7 @@ A Mud model is not intended to resemble a carefully arranged collection of
 software components. Things, relationships, actions and rules are added as
 they become necessary and mixed into a common semantic substance.
 
-From those declarations, the behavior of the world emerges.
+From those declarations, the behaviour of the world emerges.
 
 That emergence is not intended to be mysterious or unpredictable. Given the
 same model, state, inputs and random seed, a conforming implementation should
@@ -141,12 +141,12 @@ That world is confirmed only if the entire resolution is valid. An action can
 finish as `accepted`, `rejected` or `failed`; every result other than
 `accepted` rolls the complete resolution back.
 
-This is how behavior can emerge from independently declared rules without
+This is how behaviour can emerge from independently declared rules without
 giving up atomicity, determinism or explanation.
 
 ## Source of truth
 
-Files ending in `.mud` are the only source of domain behavior.
+Files ending in `.mud` are the only source of domain behaviour.
 
 Syntax trees, indexes, graphs, generated code, generated documentation and
 runtime representations are reconstructible projections. They may make the
@@ -178,7 +178,7 @@ remain in development.
 - [`notas/vision-y-alcance.md`](notas/vision-y-alcance.md) — product thesis,
   intended users and boundaries;
 - [`notas/arquitectura-del-sistema.md`](notas/arquitectura-del-sistema.md) —
-  compiler, runtime, semantic operator and materialization architecture;
+  compiler, runtime, semantic operator and materialisation architecture;
 - [`notas/decisiones/`](notas/decisiones/) — language and architecture decisions;
 - [`notas/preguntas/`](notas/preguntas/) — open and partially decided questions;
 - [`gobierno/`](gobierno/) — editorial and change-control processes;
@@ -221,7 +221,7 @@ Mud is being designed around these long-term promises:
 - **Reproducibility** — the same model, inputs and seed produce the same result.
 - **Reconstruction** — derived artifacts can be rebuilt from their source.
 - **Traceability** — semantic changes retain their intention and history.
-- **Replaceability** — a technical materialization must not imprison the model.
+- **Replaceability** — a technical materialisation must not imprison the model.
 - **Progressive accessibility** — people can move from natural language to
   direct source editing at their own pace.
 
@@ -237,7 +237,7 @@ language changes, documentation or derived implementations, please contact the
 author so that authorship, licensing and the semantic change process can be
 agreed explicitly.
 
-## License and trademark
+## Licence and trademark
 
 Mud is not currently an open-source project. The contents of this repository
 are published with all rights reserved. See [`LICENSE`](LICENSE).
