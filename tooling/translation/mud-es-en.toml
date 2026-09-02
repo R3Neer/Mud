@@ -1,0 +1,1656 @@
+temporary = true
+temporary-reason = "Aplicar de forma reproducible las decisiones terminológicas durante la migración al inglés."
+temporary-delete-when = "La migración completa del contenido y las rutas al inglés haya concluido y las reglas terminológicas permanentes se hayan integrado en su ubicación definitiva."
+
+[language]
+source = "ES"
+target = "EN-GB"
+
+[protected]
+literals = ["using", "thing", "as", "alias", "family", "magnitude", "rule", "action", "subaction", "look", "message", "test", "for", "on", "given", "when", "changes", "if", "then", "after", "with", "otherwise", "mut", "unique", "ordered", "create", "destroy", "add", "remove", "from", "each", "by", "through", "take", "exists", "forall", "count", "min", "max", "to", "eventually", "allowed", "old", "is", "iis", "in", "has", "not", "and", "or", "xor", "Text", "Char", "Bool", "Thing", "Any", "Nat", "Int", "Num", "Rum", "Money", "Rand", "Name", "MudPath", "Anchor", "MudFile", "Prefix", "true", "false", "empty", "all", "_", "abstract", "always", "start", "value", "type", "name", "path", "anchor", "file", "plural", "abbreviation", "prefixes", "format", "root", "unit", "point", "over", "cycle"]
+patterns = [
+  "\\b(?:D|Q)-\\d{3}\\b",
+  "\\bMUD-[A-Z]+-\\d{3}\\b",
+  "\\bADR-\\d{3}\\b",
+]
+
+[frontmatter]
+translate = ["title", "aliases", "scope", "intent", "temporary-reason", "temporary-delete-when"]
+preserve = ["status", "tags", "decisions", "questions", "chapter", "normative", "version", "authority", "supersedes", "replaced-by", "temporary", "temporary-delete-after"]
+
+[style]
+forbidden = [
+  "behavior", "behaviors", "behavioral",
+  "color", "colors", "colored", "coloring",
+  "modeling", "modeled", "modeler",
+  "materialization", "materialized", "materializing", "materializer",
+  "authorization", "authorized", "unauthorized",
+  "stabilization",
+]
+guidance = [
+  "Use British English: behaviour, modelling, materialisation and authorisation.",
+  "Keep Mud as the proper name, .mud as the extension and mud only where code requires it.",
+  "Keep literal Mud constructs in backticks in technical prose.",
+  "Prefer semantic operator to semantic editor.",
+  "Prefer materialiser to generator.",
+  "Distinguish rule from requirement, effect from consequence, failure from error, and rejected from failed.",
+  "Translate visible chapter, decision and question names, but do not rename their paths or wikilink targets in this phase.",
+]
+
+[checks]
+probable-source = [
+  "para", "pero", "también", "debe", "deben", "puede", "pueden",
+  "cuando", "donde", "desde", "hasta", "sobre", "entre", "según",
+  "esta", "este", "estos", "estas", "cada", "ningún", "ninguna",
+]
+
+[markdown]
+wikilinks = true
+embeds = true
+callouts = true
+
+
+[[terms]]
+source = "alcance"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "scope"
+note = "No usar reach para el alcance documental."
+
+[[terms]]
+source = "autoridad"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "authority"
+note = "Normative authority cuando se refiere a la fuerza de una fuente."
+
+[[terms]]
+source = "autoridad consolidada"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "established authority"
+note = "Evita el falso amigo consolidated authority."
+
+[[terms]]
+source = "autoridad transitoria"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "interim authority"
+
+[[terms]]
+source = "capítulo"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "chapter"
+
+[[terms]]
+source = "conformidad"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "conformance"
+note = "No usar compliance para una implementación de lenguaje."
+
+[[terms]]
+source = "criterio de conformidad"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "conformance criterion"
+
+[[terms]]
+source = "decisión"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "decision"
+note = "Decision record para un ADR como documento."
+
+[[terms]]
+source = "decisión vigente"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "current decision"
+note = "In-force decision solo si el contexto jurídico lo exige."
+
+[[terms]]
+source = "derivado"
+mode = "review"
+category = "Producto, autoridad y documentación"
+target = "derived artifact / projection"
+note = "Usar projection cuando se enfatiza que se reconstruye desde la fuente."
+
+[[terms]]
+source = "documento normativo"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "normative document"
+
+[[terms]]
+source = "estado de publicación"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "publication status"
+
+[[terms]]
+source = "especificación"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "specification"
+
+[[terms]]
+source = "fuente de verdad"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "source of truth"
+
+[[terms]]
+source = "historia / procedencia"
+mode = "review"
+category = "Producto, autoridad y documentación"
+target = "history / provenance"
+note = "Provenance para origen y trazabilidad de una regla o artefacto."
+
+[[terms]]
+source = "índice"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "index"
+
+[[terms]]
+source = "norma"
+mode = "review"
+category = "Producto, autoridad y documentación"
+target = "rule / specification requirement"
+note = "Elegir rule para una regla concreta y requirement para obligación de conformidad."
+
+[[terms]]
+source = "pregunta activa"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "active question"
+note = "No usar issue salvo que sea una issue de GitHub."
+
+[[terms]]
+source = "cuestión abierta"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "open question"
+
+[[terms]]
+source = "requisito"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "requirement"
+
+[[terms]]
+source = "superficie normativa"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "normative surface"
+note = "Mantener esta expresión técnica."
+
+[[terms]]
+source = "trazabilidad"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "traceability"
+
+[[terms]]
+source = "versión objetivo"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "target version"
+
+[[terms]]
+source = "vigente"
+mode = "force"
+category = "Producto, autoridad y documentación"
+target = "current"
+note = "Para status no traducir hasta migrar sus valores y validadores."
+
+[[terms]]
+source = "acción"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "action"
+note = "La construcción se escribe siempre action."
+
+[[terms]]
+source = "activación"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "activation"
+
+[[terms]]
+source = "activación inicial"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "initial activation"
+
+[[terms]]
+source = "admisibilidad"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "admissibility"
+
+[[terms]]
+source = "aleatoriedad"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "randomness"
+note = "Randomness, no randomnessness ni chance como término técnico."
+
+[[terms]]
+source = "ancla"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "anchor"
+note = "No usar link, handle ni label."
+
+[[terms]]
+source = "ancla pública"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "public anchor"
+
+[[terms]]
+source = "ancla terminal"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "terminal anchor"
+
+[[terms]]
+source = "ámbito"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "scope"
+
+[[terms]]
+source = "aplicación anfitriona"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "host application"
+
+[[terms]]
+source = "autorización"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "authorisation"
+
+[[terms]]
+source = "binding / vinculación"
+mode = "review"
+category = "Modelo y semántica del dominio"
+target = "binding"
+note = "Mantener binding para evitar confundirlo con una relación del dominio."
+
+[[terms]]
+source = "causal"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "causal"
+
+[[terms]]
+source = "cola"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "queue"
+
+[[terms]]
+source = "comportamiento observable"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "observable behaviour"
+
+[[terms]]
+source = "consecuencia"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "consequence"
+note = "Usar effect solo para un efecto semántico escrito o consolidado."
+
+[[terms]]
+source = "conflicto"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "conflict"
+
+[[terms]]
+source = "consolidación"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "consolidation"
+
+[[terms]]
+source = "consulta"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "query"
+
+[[terms]]
+source = "consulta especulativa"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "speculative query"
+
+[[terms]]
+source = "contrato"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "contract"
+
+[[terms]]
+source = "declaración"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "declaration"
+
+[[terms]]
+source = "definición canónica"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "canonical definition"
+
+[[terms]]
+source = "delta"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "delta"
+
+[[terms]]
+source = "dependencia dura"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "hard dependency"
+
+[[terms]]
+source = "descriptor"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "descriptor"
+
+[[terms]]
+source = "descriptor callable borrado"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "erased callable descriptor"
+note = "Erased se refiere al borrado de información de tipo, no a una eliminación."
+
+[[terms]]
+source = "determinismo"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "determinism"
+
+[[terms]]
+source = "diagnóstico"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "diagnostic"
+note = "Diagnostic, no diagnosis."
+
+[[terms]]
+source = "dominio"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "domain"
+note = "Domain model para el modelo; domain para la restricción de valores."
+
+[[terms]]
+source = "efecto"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "effect"
+
+[[terms]]
+source = "efecto exterior"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "external effect"
+
+[[terms]]
+source = "efecto pendiente"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "pending effect"
+
+[[terms]]
+source = "explicación"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "explanation"
+
+[[terms]]
+source = "fallo"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "failure"
+note = "Distinguir de error."
+
+[[terms]]
+source = "fallo técnico"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "technical failure"
+
+[[terms]]
+source = "frontera pública"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "public boundary"
+
+[[terms]]
+source = "grafo"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "graph"
+
+[[terms]]
+source = "grafo nominal"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "nominal graph"
+
+[[terms]]
+source = "identidad"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "identity"
+
+[[terms]]
+source = "identidad canónica"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "canonical identity"
+
+[[terms]]
+source = "implementación conforme"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "conforming implementation"
+
+[[terms]]
+source = "invariante"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "invariant"
+note = "La regla se llama always rule; la propiedad que mantiene es an invariant."
+
+[[terms]]
+source = "lector / escritura"
+mode = "review"
+category = "Modelo y semántica del dominio"
+target = "reader / write"
+note = "Preferir read set y write set para conjuntos de dependencias."
+
+[[terms]]
+source = "materialización"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "materialisation"
+note = "No usar implementation, generation ni instantiation como equivalentes generales."
+
+[[terms]]
+source = "modelo"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "model"
+
+[[terms]]
+source = "mundo"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "world"
+
+[[terms]]
+source = "mundo inicial"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "initial world"
+
+[[terms]]
+source = "mundo estable"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "stable world"
+
+[[terms]]
+source = "observación"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "observation"
+
+[[terms]]
+source = "ocurrencia"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "occurrence"
+note = "Para una ocurrencia de message."
+
+[[terms]]
+source = "onda"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "wave"
+
+[[terms]]
+source = "onda causal"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "causal wave"
+
+[[terms]]
+source = "operador semántico"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "semantic operator"
+
+[[terms]]
+source = "orden estable"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "stable order"
+
+[[terms]]
+source = "propietario"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "owner"
+
+[[terms]]
+source = "pureza"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "purity"
+
+[[terms]]
+source = "raíz"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "root"
+
+[[terms]]
+source = "razón"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "reason"
+note = "Campo o explicación de un resultado no aceptado."
+
+[[terms]]
+source = "reacción"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "reaction"
+
+[[terms]]
+source = "regla reactiva"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "reactive rule"
+
+[[terms]]
+source = "regla booleana"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "Boolean rule"
+
+[[terms]]
+source = "regla always"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "always rule"
+note = "No traducir always por always rule."
+
+[[terms]]
+source = "relación"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "relation"
+
+[[terms]]
+source = "resolución"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "resolution"
+
+[[terms]]
+source = "resolución causal"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "causal resolution"
+
+[[terms]]
+source = "resolución nominal"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "nominal resolution"
+
+[[terms]]
+source = "resultado"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "result"
+
+[[terms]]
+source = "retroceso"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "rollback"
+note = "No usar reversal para la operación transaccional."
+
+[[terms]]
+source = "semántica"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "semantics"
+
+[[terms]]
+source = "semántica estática / dinámica"
+mode = "review"
+category = "Modelo y semántica del dominio"
+target = "static / dynamic semantics"
+
+[[terms]]
+source = "semilla"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "seed"
+
+[[terms]]
+source = "solicitud"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "request"
+
+[[terms]]
+source = "suspensión"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "suspension"
+note = "Distinguir de destroy."
+
+[[terms]]
+source = "transición"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "transition"
+
+[[terms]]
+source = "transición atómica"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "atomic transition"
+
+[[terms]]
+source = "valor"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "value"
+
+[[terms]]
+source = "valor predeterminado"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "default value"
+
+[[terms]]
+source = "vinculación conjunta"
+mode = "force"
+category = "Modelo y semántica del dominio"
+target = "joint binding"
+
+[[terms]]
+source = "aceptada / aceptado"
+mode = "review"
+category = "Estados y resultados"
+target = "accepted"
+note = "El literal de Mud conserva minúsculas y acentos graves."
+
+[[terms]]
+source = "rechazada / rechazado"
+mode = "review"
+category = "Estados y resultados"
+target = "rejected"
+note = "Un rechazo es una respuesta válida del dominio."
+
+[[terms]]
+source = "fallida / fallido"
+mode = "review"
+category = "Estados y resultados"
+target = "failed"
+note = "No mezclar con rejected."
+
+[[terms]]
+source = "error"
+mode = "force"
+category = "Estados y resultados"
+target = "error"
+note = "Un error impide evaluar o construir el resultado."
+
+[[terms]]
+source = "pasado"
+mode = "force"
+category = "Estados y resultados"
+target = "passed"
+note = "Resultado de un test."
+
+[[terms]]
+source = "test fallido"
+mode = "force"
+category = "Estados y resultados"
+target = "failed test"
+
+[[terms]]
+source = "test con error"
+mode = "force"
+category = "Estados y resultados"
+target = "errored test"
+note = "Mantener la distinción con un test que simplemente falla."
+
+[[terms]]
+source = "estado"
+mode = "force"
+category = "Estados y resultados"
+target = "state"
+
+[[terms]]
+source = "estado confirmado"
+mode = "force"
+category = "Estados y resultados"
+target = "confirmed state"
+
+[[terms]]
+source = "estado estable"
+mode = "force"
+category = "Estados y resultados"
+target = "stable state"
+
+[[terms]]
+source = "estado tentativo"
+mode = "force"
+category = "Estados y resultados"
+target = "tentative state"
+
+[[terms]]
+source = "instantánea"
+mode = "force"
+category = "Estados y resultados"
+target = "snapshot"
+
+[[terms]]
+source = "instantánea anterior"
+mode = "force"
+category = "Estados y resultados"
+target = "previous snapshot"
+
+[[terms]]
+source = "estabilización"
+mode = "force"
+category = "Estados y resultados"
+target = "stabilisation"
+
+[[terms]]
+source = "línea base"
+mode = "force"
+category = "Estados y resultados"
+target = "baseline"
+note = "Para la memoria temporal reactiva."
+
+[[terms]]
+source = "memoria reactiva"
+mode = "force"
+category = "Estados y resultados"
+target = "reactive memory"
+
+[[terms]]
+source = "thing abstracta / concreta"
+mode = "review"
+category = "Entidades, tipos y datos"
+target = "abstract / concrete thing"
+note = "No traducir la construcción como object, entity o class."
+
+[[terms]]
+source = "Thing incorporada"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "built-in Thing"
+
+[[terms]]
+source = "alias"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "alias"
+
+[[terms]]
+source = "alias nominal"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "nominal alias"
+
+[[terms]]
+source = "alias estructural"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "structural alias"
+
+[[terms]]
+source = "antecesora"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "ancestor"
+
+[[terms]]
+source = "antecesora directa"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "direct ancestor"
+
+[[terms]]
+source = "campo"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "field"
+
+[[terms]]
+source = "campo almacenado"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "stored field"
+
+[[terms]]
+source = "campo calculado"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "computed field"
+
+[[terms]]
+source = "campo derivado"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "derived field"
+
+[[terms]]
+source = "capacidad exterior / interior"
+mode = "review"
+category = "Entidades, tipos y datos"
+target = "outer / inner capability"
+
+[[terms]]
+source = "cardinalidad"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "cardinality"
+
+[[terms]]
+source = "carga propia"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "own stored data"
+note = "No usar payload: ese término se reserva para message."
+
+[[terms]]
+source = "colección"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "collection"
+
+[[terms]]
+source = "colección almacenada / derivada"
+mode = "review"
+category = "Entidades, tipos y datos"
+target = "stored / derived collection"
+
+[[terms]]
+source = "contenido asociado"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "associated data"
+
+[[terms]]
+source = "diccionario exacto / funcional"
+mode = "review"
+category = "Entidades, tipos y datos"
+target = "exact / functional dictionary"
+
+[[terms]]
+source = "enumerabilidad"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "enumerability"
+
+[[terms]]
+source = "familia cerrada"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "closed family"
+note = "La construcción es family."
+
+[[terms]]
+source = "igualdad estructural"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "structural equality"
+
+[[terms]]
+source = "igualdad nominal"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "nominal equality"
+
+[[terms]]
+source = "igualdad de valores"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "value equality"
+
+[[terms]]
+source = "magnitud"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "magnitude"
+
+[[terms]]
+source = "magnitud base / derivada / de punto"
+mode = "review"
+category = "Entidades, tipos y datos"
+target = "base / derived / point magnitude"
+
+[[terms]]
+source = "miembro"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "member"
+
+[[terms]]
+source = "membresía"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "membership"
+
+[[terms]]
+source = "metadato"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "metadata"
+
+[[terms]]
+source = "metadato configurado"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "configured metadata"
+
+[[terms]]
+source = "metadato intrínseco"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "intrinsic metadata"
+
+[[terms]]
+source = "mutabilidad"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "mutability"
+
+[[terms]]
+source = "nombre intrínseco"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "intrinsic name"
+
+[[terms]]
+source = "orden parcial"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "partial order"
+
+[[terms]]
+source = "pertenencia estricta"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "strict membership"
+
+[[terms]]
+source = "punto"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "point"
+note = "En prosa dimensional, point; no confundir con un punto tipográfico."
+
+[[terms]]
+source = "prefijo"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "prefix"
+
+[[terms]]
+source = "presentación"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "presentation"
+
+[[terms]]
+source = "proyección efectiva"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "effective projection"
+
+[[terms]]
+source = "rama"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "branch"
+
+[[terms]]
+source = "rama funcional"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "functional branch"
+
+[[terms]]
+source = "relación inmutable"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "immutable relation"
+
+[[terms]]
+source = "tipo"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "type"
+
+[[terms]]
+source = "tipo anónimo"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "anonymous type"
+
+[[terms]]
+source = "tipo callable"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "callable type"
+
+[[terms]]
+source = "tipo nominal efectivo exacto"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "exact effective nominal type"
+
+[[terms]]
+source = "tipo superior"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "top type"
+
+[[terms]]
+source = "unión"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "union"
+
+[[terms]]
+source = "unidad"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "unit"
+
+[[terms]]
+source = "valor estructural"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "structural value"
+
+[[terms]]
+source = "varianza"
+mode = "force"
+category = "Entidades, tipos y datos"
+target = "variance"
+
+[[terms]]
+source = "analizador léxico"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "scanner"
+note = "Usar scanner para la fase de Mud; lexer solo si se habla genéricamente."
+
+[[terms]]
+source = "analizador sintáctico"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "parser"
+
+[[terms]]
+source = "AST superficial"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "surface AST"
+
+[[terms]]
+source = "ASDL"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "ASDL"
+
+[[terms]]
+source = "clasificación contextual"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "contextual classification"
+
+[[terms]]
+source = "comentario"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "comment"
+
+[[terms]]
+source = "cobertura sintáctica"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "syntax coverage"
+
+[[terms]]
+source = "CST sin pérdidas"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "lossless CST"
+
+[[terms]]
+source = "delimitador"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "delimiter"
+
+[[terms]]
+source = "elaboración"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "elaboration"
+note = "No traducir como development."
+
+[[terms]]
+source = "entorno"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "environment"
+
+[[terms]]
+source = "EBNF"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "EBNF"
+
+[[terms]]
+source = "espacio significativo"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "significant view"
+
+[[terms]]
+source = "gramática concreta"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "concrete grammar"
+
+[[terms]]
+source = "gramática léxica"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "lexical grammar"
+
+[[terms]]
+source = "HIR nominal"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "nominal HIR"
+
+[[terms]]
+source = "inferencia"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "inference"
+
+[[terms]]
+source = "literal"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "literal"
+
+[[terms]]
+source = "origen fuente"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "source origin"
+
+[[terms]]
+source = "palabra contextual"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "contextual word"
+
+[[terms]]
+source = "palabra reservada"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "reserved word"
+
+[[terms]]
+source = "precedencia"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "precedence"
+
+[[terms]]
+source = "procedencia"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "provenance"
+
+[[terms]]
+source = "producción"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "production"
+
+[[terms]]
+source = "representación semántica"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "semantic representation"
+
+[[terms]]
+source = "resolución de nombres"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "name resolution"
+
+[[terms]]
+source = "símbolo"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "symbol"
+
+[[terms]]
+source = "sintaxis abstracta"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "abstract syntax"
+
+[[terms]]
+source = "sintaxis concreta"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "concrete syntax"
+
+[[terms]]
+source = "span"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "span"
+
+[[terms]]
+source = "texto fuente"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "source text"
+
+[[terms]]
+source = "token"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "token"
+
+[[terms]]
+source = "trivia"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "trivia"
+
+[[terms]]
+source = "validación contextual"
+mode = "force"
+category = "Sintaxis, compilación y análisis"
+target = "contextual validation"
+
+[[terms]]
+source = "argumento"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "argument"
+note = "Un given se comporta como argumento, pero la palabra fuente sigue siendo given."
+
+[[terms]]
+source = "cierre de tipos"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "type closure"
+
+[[terms]]
+source = "compatibilidad"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "compatibility"
+
+[[terms]]
+source = "dependencia modular"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "module dependency"
+
+[[terms]]
+source = "entrega"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "delivery"
+note = "Para la entrega exterior de una ocurrencia."
+
+[[terms]]
+source = "frontera de aplicación"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "application boundary"
+
+[[terms]]
+source = "interfaz anfitriona"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "host API"
+
+[[terms]]
+source = "llamada"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "call"
+
+[[terms]]
+source = "módulo"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "module"
+
+[[terms]]
+source = "participante"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "participant"
+note = "No usar parameter cuando denota un rol for u on."
+
+[[terms]]
+source = "payload"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "payload"
+note = "Reservado para los campos públicos de una ocurrencia message."
+
+[[terms]]
+source = "propiedad pública"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "public property"
+
+[[terms]]
+source = "receptor"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "receiver"
+
+[[terms]]
+source = "reflexión"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "reflection"
+
+[[terms]]
+source = "solicitud exterior"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "external request"
+
+[[terms]]
+source = "test declarativo"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "declarative test"
+
+[[terms]]
+source = "visibilidad"
+mode = "force"
+category = "Módulos, interfaz y pruebas"
+target = "visibility"
+
+[[terms]]
+source = "alcanzabilidad"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "reachability"
+
+[[terms]]
+source = "análisis estático"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "static analysis"
+
+[[terms]]
+source = "análisis especulativo"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "speculative analysis"
+
+[[terms]]
+source = "ciclo"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "cycle"
+
+[[terms]]
+source = "ciclo ejecutable"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "executable cycle"
+
+[[terms]]
+source = "decidibilidad"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "decidability"
+
+[[terms]]
+source = "finitud"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "finiteness"
+
+[[terms]]
+source = "oscilación"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "oscillation"
+
+[[terms]]
+source = "perfil de mundos finitos"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "finite-world profile"
+
+[[terms]]
+source = "propiedad metateórica"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "metatheoretic property"
+
+[[terms]]
+source = "prueba de conformidad"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "conformance test"
+
+[[terms]]
+source = "reproducibilidad"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "reproducibility"
+
+[[terms]]
+source = "terminación"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "termination"
+
+[[terms]]
+source = "amenaza"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "threat"
+
+[[terms]]
+source = "permiso"
+mode = "force"
+category = "Análisis avanzado y operación"
+target = "permission"
+
+[[terms]]
+source = "archivo temporal"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "temporary file"
+
+[[terms]]
+source = "bóveda"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "vault"
+note = "En el contexto de Obsidian."
+
+[[terms]]
+source = "cambio semántico"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "semantic change"
+
+[[terms]]
+source = "ciclo documental"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "document lifecycle"
+
+[[terms]]
+source = "commit atómico"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "atomic commit"
+
+[[terms]]
+source = "documento generado"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "generated document"
+
+[[terms]]
+source = "flujo de autoría"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "authoring workflow"
+
+[[terms]]
+source = "gobierno"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "governance"
+
+[[terms]]
+source = "historial Git"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "Git history"
+
+[[terms]]
+source = "política"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "policy"
+
+[[terms]]
+source = "promoción"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "promotion"
+note = "Para elevar un documento en su estado de publicación."
+
+[[terms]]
+source = "repositorio"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "repository"
+
+[[terms]]
+source = "revisión"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "review"
+
+[[terms]]
+source = "ruta"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "path"
+note = "Usar Mud path cuando sea la ruta lógica del lenguaje."
+
+[[terms]]
+source = "validación"
+mode = "force"
+category = "Términos editoriales y de proceso"
+target = "validation"
+
+[[terms]]
+source = "retirada"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "retirement"
+note = "Debe distinguirse de remove y destroy; quizá retirement resulte demasiado jurídico en algunas frases."
+
+[[terms]]
+source = "carga"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "stored data"
+note = "Su sentido depende de si es estado, contenido de una declaración o datos de un mensaje."
+
+[[terms]]
+source = "vista"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "view"
+note = "Puede significar una vista de lectura, una proyección o una interfaz de Obsidian."
+
+[[terms]]
+source = "forma"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "form"
+note = "Puede ser sintáctica, normalizada o declarable."
+
+[[terms]]
+source = "propio"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "own / intrinsic"
+note = "Own para propiedad o datos de una entidad; intrinsic para una propiedad inherente."
+
+[[terms]]
+source = "efectiva"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "effective"
+note = "Debe reservarse para contratos, tipos, dominios o proyecciones resultantes; no equivale a actual en todos los casos."
+
+[[terms]]
+source = "exterior"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "external / outer"
+note = "External para frontera o solicitud; outer para capacidad."
+
+[[terms]]
+source = "activable"
+mode = "review"
+category = "Pendientes de decisión terminológica"
+target = "activatable"
+note = "Confirmar si el término se conserva o se reemplaza por una construcción más legible al redactar."

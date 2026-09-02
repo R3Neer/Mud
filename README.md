@@ -51,7 +51,7 @@ produce the same result and be able to explain how it was reached.
 
 Developers should rarely need to inspect the internal arrangement of the whole
 model. The model simply exists and can be queried, changed, validated and
-materialized. But opacity must never be required: Mud source remains readable,
+materialised. But opacity must never be required: Mud source remains readable,
 diagnosable and editable when a person needs to understand or change it.
 
 ## A language that grows with its user
@@ -76,7 +76,7 @@ anchors, to direct source editing.
 Mud deliberately avoids framing every idea in conventional programming
 terminology:
 
-- `thing` introduces something that exists in the modeled world;
+- `thing` introduces something that exists in the modelled world;
 - `family` describes a closed family of related values;
 - `action` describes something that may be attempted;
 - `look` observes the world without changing it;

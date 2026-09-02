@@ -37,6 +37,7 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 - `python gobierno/validate_temporaries.py`: comprueba el ciclo de vida de documentos temporales.
 - `python gobierno/validate_spec_editorial.py`: aplica la barrera mecánica de MUD-EDIT-002 y verifica la coherencia de referencias `Q-NNN` con sus estados y con `questions:`.
 - `python gobierno/test_validate_spec_editorial.py`: ejecuta los fixtures de regresión de la barrera editorial.
+- `python tooling/translation/check_migration.py`: mientras dure la migración al inglés, combina el perfil de R3Translate, su glosario generado y las barreras editoriales.
 
 ## Herramientas experimentales
 

@@ -27,6 +27,12 @@ tooling/repo-patcher-validator-worker/.dev.vars*
 tooling/markdown_export/profiles.local.toml
 tooling/.deps/
 
+# Estado efímero y secretos de la migración con R3Translate
+*.r3translate.json
+tooling/translation/candidates/
+tooling/translation/.cache/
+tooling/translation/.env*
+
 # Archivos temporales del sistema y editores
 Thumbs.db
 .DS_Store
