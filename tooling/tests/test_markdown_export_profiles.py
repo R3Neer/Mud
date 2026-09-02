@@ -20,7 +20,7 @@ class BundledProfileTests(unittest.TestCase):
         bundled = load_config(self.CONFIG)
 
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             documents = {
                 "especificacion/README.md",
                 "especificacion/05-texto-fuente.md",
@@ -91,7 +91,7 @@ class BundledProfileTests(unittest.TestCase):
         bundled = load_config(self.CONFIG)
 
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             documents = {
                 "notas/decisiones/README.md",
                 "notas/decisiones/ADR-062-lenguaje.md",
@@ -128,7 +128,7 @@ class BundledProfileTests(unittest.TestCase):
         bundled = load_config(self.CONFIG)
 
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             documents = {
                 "notas/preguntas/README.md",
                 "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
