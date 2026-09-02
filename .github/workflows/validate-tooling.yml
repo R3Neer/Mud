@@ -1,0 +1,62 @@
+name: Validate tooling
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Python 3.11 / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: tooling/requirements.txt
+
+      - name: Install tooling dependencies
+        run: python -m pip install -r tooling/requirements.txt
+
+      - name: Compile Python sources
+        run: python -m compileall -q gobierno especificacion tooling
+
+      - name: Run CLI integration tests
+        run: python -m unittest discover -s tooling/tests
+
+      - name: Run governance tests
+        run: python -m unittest discover -s gobierno -p "test_*.py"
+
+      - name: Run Markdown Export tests
+        run: python -m unittest discover -s tooling/markdown_export/tests
+
+      - name: Run translation tooling tests
+        run: python tooling/translation/test_translation_tooling.py
+
+      - name: Run read-only repository gates
+        run: |
+          python tooling/decisions/manage_decisions.py validate --colour never --ascii
+          python tooling/questions/validate_questions.py validate --colour never --ascii
+          python gobierno/validate_temporaries.py --colour never --ascii
+          python gobierno/validate_spec_editorial.py --colour never --ascii
+          python especificacion/gramatica/validate_grammar.py --colour never --ascii
+          python especificacion/sintaxis/validate_syntax_model.py --colour never --ascii
+          python tooling/translation/render_glossary.py --check --colour never --ascii
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Verify tracked files are unchanged
+        run: python -c "import subprocess, sys; value = subprocess.check_output(['git', 'status', '--porcelain'], text=True); print(value, end=''); raise SystemExit(bool(value))"
