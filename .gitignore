@@ -14,16 +14,6 @@ __pycache__/
 # Derivados del plugin local de Obsidian
 tooling/obsidian/markdown-export/node_modules/
 tooling/obsidian/markdown-export/dist/
-tooling/repo-patcher-mcp-probe/node_modules/
-tooling/repo-patcher-mcp-probe/.wrangler/
-tooling/repo-patcher-mcp-probe/coverage/
-tooling/repo-patcher-mcp-probe/.dev.vars*
-!tooling/repo-patcher-mcp-probe/.dev.vars.example
-tooling/repo-patcher-validator-worker/node_modules/
-tooling/repo-patcher-validator-worker/.wrangler/
-tooling/repo-patcher-validator-worker/coverage/
-tooling/repo-patcher-validator-worker/.dev.vars*
-!tooling/repo-patcher-validator-worker/.dev.vars.example
 tooling/markdown_export/profiles.local.toml
 tooling/.deps/
 

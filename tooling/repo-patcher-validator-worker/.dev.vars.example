@@ -1,8 +1,0 @@
-ADAPTER_TOKEN=replace-with-a-random-local-token
-MCP_ROUTE_SECRET=replace-with-a-different-random-route-secret
-GITHUB_DISPATCH_TOKEN=replace-with-a-fine-grained-token
-
-# Alternative to GITHUB_DISPATCH_TOKEN:
-# GITHUB_APP_ID=123456
-# GITHUB_INSTALLATION_ID=12345678
-# GITHUB_APP_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"

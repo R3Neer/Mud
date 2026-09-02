@@ -55,12 +55,6 @@ Cuando el entorno permita editar directamente el repositorio mediante GitHub, un
 
 Si una candidata falla en una capa concreta, debe corregirse esa capa y repetirse la revisión desde el punto afectado. Si `main` cambia durante el trabajo, no se fuerza la referencia: se inspecciona el nuevo estado y se reconstruye la candidata sobre la nueva base.
 
-## Patches descargables y RepoPatcher
-
-RepoPatcher no es el método preferente para cambios remotos desde ChatGPT. Su estado actual es experimental y queda reservado a paquetes descargables, aplicación local controlada o entornos donde no exista acceso directo escribible al repositorio.
-
-Cuando el usuario solicite expresamente un patch descargable basado en RepoPatcher, debe leerse `gobierno/USO-DE-REPO-PATCHER.md` y seguirse su contrato técnico.
-
 ## Preguntas
 
 La apertura, actualización, división y cierre de preguntas se rige por `gobierno/POLITICA-DE-PREGUNTAS.md`.

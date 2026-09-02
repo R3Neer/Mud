@@ -33,7 +33,6 @@ sorting-spec: |
   POLITICA-DE-PREGUNTAS
   CICLO-DOCUMENTAL
   POLITICA-DE-COMMITS
-  USO-DE-REPO-PATCHER
   ...
    < a-z
 ---

@@ -19,7 +19,6 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 - [[CICLO-DOCUMENTAL|Ciclo documental]]
 - [[POLITICA-DE-DECISIONES|Política de decisiones]]
 - [[POLITICA-DE-PREGUNTAS|Política de preguntas]]
-- [[USO-DE-REPO-PATCHER|RepoPatcher experimental para paquetes descargables y aplicación local]]
 - [[notas/decisiones/README|Índice generado de decisiones]]
 
 ## Separación de autoridades
@@ -38,7 +37,3 @@ Este directorio contiene procesos que gobiernan la evolución del proyecto, pero
 - `python gobierno/validate_spec_editorial.py`: aplica la barrera mecánica de MUD-EDIT-002 y verifica la coherencia de referencias `Q-NNN` con sus estados y con `questions:`.
 - `python gobierno/test_validate_spec_editorial.py`: ejecuta los fixtures de regresión de la barrera editorial.
 - `python tooling/translation/check_migration.py`: mientras dure la migración al inglés, combina el perfil de R3Translate, su glosario generado y las barreras editoriales.
-
-## Herramientas experimentales
-
-RepoPatcher permanece en `tooling/` como experimento de paquetes portables y aplicación local. No define el flujo preferente de cambios remotos desde ChatGPT; ese trabajo sigue la política Git del repositorio y las instrucciones de `AGENTS.md`.
