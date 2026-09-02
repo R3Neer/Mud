@@ -45,6 +45,8 @@ class ServeCliTests(unittest.TestCase):
             reader.start()
             try:
                 line = lines.get(timeout=5)
+                self.assertNotIn("\x1b[", line)
+                self.assertEqual(line.count("\n"), 1)
                 ready = json.loads(line)
                 self.assertEqual(ready["event"], "ready")
                 self.assertEqual(ready["protocol_version"], 1)

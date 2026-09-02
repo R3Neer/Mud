@@ -6,7 +6,13 @@ Procede conceptualmente de `export_canon_core.py` y `export_canon_web.py`, cread
 
 ## Uso
 
-No requiere instalar dependencias:
+Requiere las dependencias comunes del tooling de Mud:
+
+```powershell
+python -m pip install -r tooling/requirements.txt
+```
+
+Después puede ejecutarse mediante:
 
 ```powershell
 python -m tooling.markdown_export list-profiles

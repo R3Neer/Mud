@@ -5,8 +5,19 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
+
+
 TEXT_EXTENSIONS = {".md", ".ebnf", ".asdl", ".yaml", ".yml"}
 DECISION_ID = re.compile(r"\b(?:ADR|D)-\d{3}\b")
 QUESTION_ID = re.compile(r"\bQ-\d{3}\b")
@@ -134,7 +145,7 @@ def validate_file(
                 "E_DECISION_BODY",
                 path,
                 line_number(text, body_offset + match.start()),
-                f"identificador decisional {match.group(0)} en cuerpo normativo",
+                f"decision identifier {match.group(0)} in normative body",
             )
         )
 
@@ -150,7 +161,7 @@ def validate_file(
                     "E_EDITORIAL_MIGRATION",
                     path,
                     line_number(text, body_offset + match.start()),
-                    f"narración de migración editorial: {match.group(0).strip()}",
+                    f"editorial migration narrative: {match.group(0).strip()}",
                 )
             )
 
@@ -167,7 +178,7 @@ def validate_file(
                     "E_UNKNOWN_QUESTION_BODY",
                     path,
                     line,
-                    f"pregunta inexistente {question_id} en cuerpo normativo",
+                    f"unknown question {question_id} in normative body",
                 )
             )
         elif not active:
@@ -176,7 +187,7 @@ def validate_file(
                     "E_INACTIVE_QUESTION_BODY",
                     path,
                     line,
-                    f"pregunta inactiva {question_id} en cuerpo normativo",
+                    f"inactive question {question_id} in normative body",
                 )
             )
         elif frontmatter is not None and question_id not in declared_questions:
@@ -185,7 +196,7 @@ def validate_file(
                     "E_QUESTION_NOT_DECLARED",
                     path,
                     line,
-                    f"pregunta activa {question_id} citada en el cuerpo pero ausente de questions",
+                    f"active question {question_id} is cited in the body but absent from questions",
                 )
             )
 
@@ -203,7 +214,7 @@ def validate_file(
                         "E_UNKNOWN_QUESTION_FRONTMATTER",
                         path,
                         line,
-                        f"questions: contiene una pregunta inexistente: {question_id}",
+                        f"questions contains an unknown question: {question_id}",
                     )
                 )
             elif not active:
@@ -212,7 +223,7 @@ def validate_file(
                         "E_INACTIVE_QUESTION_FRONTMATTER",
                         path,
                         line,
-                        f"questions: conserva una pregunta inactiva: {question_id}",
+                        f"questions retains an inactive question: {question_id}",
                     )
                 )
 
@@ -227,19 +238,41 @@ def validate_repository(root: Path = ROOT) -> list[Finding]:
     return findings
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    invocation = "python gobierno/validate_spec_editorial.py"
+    catalogue = HelpCatalogue(
+        product="MUD EDITORIAL GATE",
+        version="",
+        description="Check the normative snapshot and active-question references.",
+        invocation=invocation,
+        groups=(),
+        commands=(),
+        usage=(f"{invocation} [--colour MODE] [--ascii]",),
+        notes=("Running without arguments validates the specification directory.",),
+        show_help_on_empty=False,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.Editorial.InvalidArguments")
+    add_presentation_arguments(parser)
+    parsed = parse_cli(parser, catalogue, argv)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
     findings = validate_repository(ROOT)
     if findings:
         for finding in findings:
-            print(f"ERROR: {finding.render(ROOT)}", file=sys.stderr)
+            failure(
+                parsed.ui,
+                "The editorial gate found a violation.",
+                code=f"Mud.Editorial.{finding.code}",
+                details=finding.render(ROOT),
+            )
         return 1
 
     checked = len(iter_spec_text_files(ROOT)) - 1
     active = sum(1 for state in load_question_states(ROOT).values() if state)
-    print(
-        "Barrera editorial MUD: "
-        f"{checked} archivos de especificación comprobados; "
-        f"{active} preguntas activas reconocidas; sin regresiones MUD-EDIT-002."
+    parsed.ui.success(
+        "Mud editorial gate: "
+        f"{checked} specification files checked; "
+        f"{active} active questions recognised; no MUD-EDIT-002 regressions."
     )
     return 0
 

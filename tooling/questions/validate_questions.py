@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 import sys
 import tomllib
-from argparse import ArgumentParser
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date
@@ -12,6 +11,18 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    CommandHelp,
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
+
 QUESTION_DIR = ROOT / "notas" / "preguntas"
 INDEX = QUESTION_DIR / "README.md"
 LEGACY = ROOT / "notas" / "08-preguntas-abiertas.md"
@@ -127,15 +138,36 @@ def render_index(questions: dict[str, Question]) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    parser = ArgumentParser(description="Genera o valida el registro de preguntas de MUD.")
+def main(argv: list[str] | None = None) -> int:
+    invocation = "python tooling/questions/validate_questions.py"
+    commands = ("validate", "generate")
+    catalogue = HelpCatalogue(
+        product="MUD QUESTIONS",
+        version="",
+        description="Generate or validate Mud's active-question index.",
+        invocation=invocation,
+        groups=("QUESTIONS",),
+        commands=(
+            CommandHelp("validate", "QUESTIONS", "Validate questions and the index", "Validate question metadata, lifecycle, links, export profiles and the active index.", (f"{invocation} validate", f"{invocation}",)),
+            CommandHelp("generate", "QUESTIONS", "Generate the active-question index", "Regenerate the active-question index and then validate the complete question registry.", (f"{invocation} generate",), notes=("The index is written only when source metadata is valid.",)),
+        ),
+        usage=(f"{invocation} [validate|generate] [--colour MODE] [--ascii]", f"{invocation} <command> --help"),
+        notes=("Running without a command performs validation.",),
+        show_help_on_empty=False,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.Questions.InvalidArguments")
     parser.add_argument(
         "command",
         nargs="?",
         choices=("validate", "generate"),
         default="validate",
     )
-    args = parser.parse_args()
+    add_presentation_arguments(parser)
+    parsed = parse_cli(parser, catalogue, argv, executable_commands=commands)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
+    args = parsed.arguments
+    assert args is not None
     errors: list[str] = []
     questions: dict[str, Question] = {}
 
@@ -150,53 +182,53 @@ def main() -> int:
         closed = CLOSED_FIELD.search(text)
 
         if filename is None:
-            errors.append(f"Nombre de archivo inválido: {path.relative_to(ROOT)}")
+            errors.append(f"Invalid filename: {path.relative_to(ROOT)}")
             continue
         if identifier is None or identifier.group(1) != filename.group(1):
-            errors.append(f"ID ausente o distinto del nombre: {path.relative_to(ROOT)}")
+            errors.append(f"Missing ID or ID does not match filename: {path.relative_to(ROOT)}")
             continue
         question_id = identifier.group(1)
         if question_id in questions:
-            errors.append(f"ID duplicado: {question_id}")
+            errors.append(f"Duplicate ID: {question_id}")
         if priority is None:
-            errors.append(f"Prioridad ausente en {path.relative_to(ROOT)}")
+            errors.append(f"Missing priority in {path.relative_to(ROOT)}")
         if heading is None:
-            errors.append(f"Título H1 ausente o inválido en {path.relative_to(ROOT)}")
+            errors.append(f"Missing or invalid H1 title in {path.relative_to(ROOT)}")
         for field in REQUIRED_FIELDS:
             if not re.search(rf"^{re.escape(field)}", text, re.MULTILINE):
-                errors.append(f"Falta {field} en {path.relative_to(ROOT)}")
+                errors.append(f"Missing {field} in {path.relative_to(ROOT)}")
         if opened is None:
-            errors.append(f"Fecha de apertura inválida en {path.relative_to(ROOT)}")
+            errors.append(f"Invalid opening date in {path.relative_to(ROOT)}")
         else:
             try:
                 date.fromisoformat(opened.group(1))
             except ValueError:
                 errors.append(
-                    f"Fecha de apertura inválida en {path.relative_to(ROOT)}: "
+                    f"Invalid opening date in {path.relative_to(ROOT)}: "
                     f"{opened.group(1)}"
                 )
         if resolved is None:
-            errors.append(f"Valor inválido de resolved en {path.relative_to(ROOT)}")
+            errors.append(f"Invalid resolved value in {path.relative_to(ROOT)}")
             continue
         question_state = RESOLVED_STATES[resolved.group(1)]
         if closed is None:
-            errors.append(f"Valor inválido de closed en {path.relative_to(ROOT)}")
+            errors.append(f"Invalid closed value in {path.relative_to(ROOT)}")
         else:
             closed_value = closed.group(1)
             if question_state in ACTIVE_STATES and closed_value is not None:
                 errors.append(
-                    f"Pregunta activa con fecha de cierre en {path.relative_to(ROOT)}"
+                    f"Active question has a closing date in {path.relative_to(ROOT)}"
                 )
             if question_state not in ACTIVE_STATES and closed_value is None:
                 errors.append(
-                    f"Pregunta inactiva sin fecha de cierre en {path.relative_to(ROOT)}"
+                    f"Inactive question has no closing date in {path.relative_to(ROOT)}"
                 )
             if closed_value is not None:
                 try:
                     date.fromisoformat(closed_value)
                 except ValueError:
                     errors.append(
-                        f"Fecha de cierre inválida en {path.relative_to(ROOT)}: {closed_value}"
+                        f"Invalid closing date in {path.relative_to(ROOT)}: {closed_value}"
                     )
         if question_state == "cerrada":
             criterion_match = re.search(
@@ -210,35 +242,35 @@ def main() -> int:
                 re.MULTILINE,
             )
             if criterion_match is None:
-                errors.append(f"Pregunta cerrada sin criterios identificados: {path.relative_to(ROOT)}")
+                errors.append(f"Closed question has no identified criteria: {path.relative_to(ROOT)}")
             if evidence_match is None:
-                errors.append(f"Pregunta cerrada sin evidencia de cierre: {path.relative_to(ROOT)}")
+                errors.append(f"Closed question has no closure evidence: {path.relative_to(ROOT)}")
             if criterion_match is not None and evidence_match is not None:
                 criteria = CRITERION_ENTRY.findall(criterion_match.group(1))
                 evidence = EVIDENCE_ENTRY.findall(evidence_match.group(1))
                 criterion_counts = Counter(criteria)
                 evidence_counts = Counter(evidence)
                 if not criteria:
-                    errors.append(f"Pregunta cerrada sin entradas Cn: {path.relative_to(ROOT)}")
+                    errors.append(f"Closed question has no Cn entries: {path.relative_to(ROOT)}")
                 duplicated_criteria = sorted(k for k, v in criterion_counts.items() if v != 1)
                 duplicated_evidence = sorted(k for k, v in evidence_counts.items() if v != 1)
                 if duplicated_criteria:
                     errors.append(
-                        f"Criterios duplicados en {path.relative_to(ROOT)}: {', '.join(duplicated_criteria)}"
+                        f"Duplicate criteria in {path.relative_to(ROOT)}: {', '.join(duplicated_criteria)}"
                     )
                 if duplicated_evidence:
                     errors.append(
-                        f"Evidencia duplicada en {path.relative_to(ROOT)}: {', '.join(duplicated_evidence)}"
+                        f"Duplicate evidence in {path.relative_to(ROOT)}: {', '.join(duplicated_evidence)}"
                     )
                 missing_evidence = sorted(set(criteria) - set(evidence))
                 unknown_evidence = sorted(set(evidence) - set(criteria))
                 if missing_evidence:
                     errors.append(
-                        f"Criterios sin evidencia en {path.relative_to(ROOT)}: {', '.join(missing_evidence)}"
+                        f"Criteria without evidence in {path.relative_to(ROOT)}: {', '.join(missing_evidence)}"
                     )
                 if unknown_evidence:
                     errors.append(
-                        f"Evidencia para criterios inexistentes en {path.relative_to(ROOT)}: {', '.join(unknown_evidence)}"
+                        f"Evidence for unknown criteria in {path.relative_to(ROOT)}: {', '.join(unknown_evidence)}"
                     )
 
         if priority is not None and heading is not None:
@@ -253,14 +285,14 @@ def main() -> int:
     if args.command == "generate":
         if errors:
             for error in errors:
-                print(f"ERROR: {error}", file=sys.stderr)
+                failure(parsed.ui, "The question index could not be generated.", code="Mud.Questions.InvalidRegistry", details=error)
             return 1
         INDEX.write_text(expected_index, encoding="utf-8", newline="\n")
 
     index_text = read(INDEX)
     if index_text != expected_index:
         errors.append(
-            "El índice de preguntas no coincide con los metadatos; ejecuta "
+            "The question index does not match its metadata; run "
             "python tooling/questions/validate_questions.py generate"
         )
     indexed = INDEX_LINK.findall(index_text)
@@ -271,14 +303,14 @@ def main() -> int:
     missing_index = sorted(active - set(indexed))
     inactive_index = sorted(set(indexed) - active)
     if duplicate_index:
-        errors.append(f"Preguntas duplicadas en el índice: {', '.join(duplicate_index)}")
+        errors.append(f"Duplicate questions in the index: {', '.join(duplicate_index)}")
     if missing_index:
-        errors.append(f"Preguntas activas ausentes del índice: {', '.join(missing_index)}")
+        errors.append(f"Active questions missing from the index: {', '.join(missing_index)}")
     if inactive_index:
-        errors.append(f"Preguntas inactivas presentes en el índice: {', '.join(inactive_index)}")
+        errors.append(f"Inactive questions present in the index: {', '.join(inactive_index)}")
 
     if LEGACY.exists():
-        errors.append("El registro sustituido notas/08-preguntas-abiertas.md todavía existe.")
+        errors.append("The superseded notas/08-preguntas-abiertas.md registry still exists.")
 
     with EXPORT_PROFILES.open("rb") as stream:
         profiles = tomllib.load(stream)["profiles"]
@@ -322,11 +354,11 @@ def main() -> int:
         unexpected = sorted(selected - expected)
         if missing:
             errors.append(
-                f"El perfil {profile_name} omite preguntas requeridas: {', '.join(missing)}"
+                f"Profile {profile_name} omits required questions: {', '.join(missing)}"
             )
         if unexpected:
             errors.append(
-                f"El perfil {profile_name} incluye preguntas impropias: {', '.join(unexpected)}"
+                f"Profile {profile_name} includes unexpected questions: {', '.join(unexpected)}"
             )
 
     for path in (ROOT / "especificacion").glob("*.md"):
@@ -335,7 +367,7 @@ def main() -> int:
             state = question.state if question is not None else None
             if state not in ACTIVE_STATES:
                 errors.append(
-                    f"{path.relative_to(ROOT)} referencia en frontmatter una pregunta inexistente o inactiva: {question_id}"
+                    f"{path.relative_to(ROOT)} references an unknown or inactive question in frontmatter: {question_id}"
                 )
 
     for path in ROOT.rglob("*.md"):
@@ -343,27 +375,27 @@ def main() -> int:
             continue
         text = read(path)
         if "08-preguntas-abiertas" in text:
-            errors.append(f"Enlace al registro sustituido: {path.relative_to(ROOT)}")
+            errors.append(f"Link to the superseded registry: {path.relative_to(ROOT)}")
         for target in QUESTION_LINK.findall(text):
             target_path = ROOT / f"{target}.md"
             if not target_path.is_file():
                 errors.append(
-                    f"Enlace a pregunta inexistente en {path.relative_to(ROOT)}: {target}"
+                    f"Link to an unknown question in {path.relative_to(ROOT)}: {target}"
                 )
 
     counts = Counter(question.state for question in questions.values())
     if errors:
         for error in errors:
-            print(f"ERROR: {error}", file=sys.stderr)
+            failure(parsed.ui, "Question validation failed.", code="Mud.Questions.InvalidRegistry", details=error)
         return 1
 
-    print(
-        "Preguntas MUD: "
-        f"{len(questions)} archivos únicos; "
-        f"{counts['abierta']} abiertas, "
-        f"{counts['parcialmente-decidida']} parcialmente decididas y "
-        f"{counts['cerrada']} cerradas; "
-        f"{len(indexed)} entradas activas verificadas."
+    parsed.ui.success(
+        "Mud questions: "
+        f"{len(questions)} unique files; "
+        f"{counts['abierta']} open, "
+        f"{counts['parcialmente-decidida']} partially decided and "
+        f"{counts['cerrada']} closed; "
+        f"{len(indexed)} active entries verified."
     )
     return 0
 

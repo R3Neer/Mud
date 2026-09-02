@@ -1,0 +1,3 @@
+# R3CLI v0.2.0 (tag commit 1d6e4b3fb245635ec39d1251490cb0f019ccd2fb)
+r3-cli @ https://github.com/R3Neer/R3CLI/archive/1d6e4b3fb245635ec39d1251490cb0f019ccd2fb.zip
+PyYAML>=6.0.3,<7

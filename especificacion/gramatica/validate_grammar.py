@@ -11,6 +11,18 @@ import re
 import sys
 from pathlib import Path
 
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
+
 
 COMMENT = re.compile(r"\(\*.*?\*\)", re.DOTALL)
 SPECIAL = re.compile(r"\?.*?\?", re.DOTALL)
@@ -34,7 +46,7 @@ def productions(source: str) -> list[tuple[str, str]]:
         head = PRODUCTION_HEAD.match(source, position)
         if head is None:
             excerpt = source[position : position + 40].splitlines()[0]
-            raise ValueError(f"texto fuera de una producción: {excerpt!r}")
+            raise ValueError(f"text outside a production: {excerpt!r}")
 
         name = head.group(1)
         cursor = head.end()
@@ -53,7 +65,7 @@ def productions(source: str) -> list[tuple[str, str]]:
                 break
             cursor += 1
         else:
-            raise ValueError(f"producción sin ';': {name}")
+            raise ValueError(f"production without ';': {name}")
 
         while position < len(source) and source[position].isspace():
             position += 1
@@ -100,19 +112,19 @@ def validate(path: Path, start: str) -> list[str]:
     except ValueError as error:
         return [f"{path}: {error}"]
 
-    errors = [f"{path}: producción duplicada: {name}" for name in duplicates]
+    errors = [f"{path}: duplicate production: {name}" for name in duplicates]
     errors.extend(
         f"{path}: metadelimitadores desequilibrados: {name}"
         for name in malformed
     )
 
     if start not in definitions:
-        errors.append(f"{path}: símbolo inicial inexistente: {start}")
+        errors.append(f"{path}: unknown start symbol: {start}")
         return errors
 
     referenced = set().union(*definitions.values()) if definitions else set()
     for name in sorted(referenced - definitions.keys()):
-        errors.append(f"{path}: símbolo indefinido: {name}")
+        errors.append(f"{path}: undefined symbol: {name}")
 
     reachable: set[str] = set()
     pending = [start]
@@ -124,12 +136,29 @@ def validate(path: Path, start: str) -> list[str]:
         pending.extend(definitions[name] - reachable)
 
     for name in sorted(definitions.keys() - reachable):
-        errors.append(f"{path}: producción inalcanzable: {name}")
+        errors.append(f"{path}: unreachable production: {name}")
 
     return errors
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    invocation = "python especificacion/gramatica/validate_grammar.py"
+    catalogue = HelpCatalogue(
+        product="MUD GRAMMAR",
+        version="",
+        description="Validate grammar symbols, uniqueness and reachability.",
+        invocation=invocation,
+        groups=(),
+        commands=(),
+        usage=(f"{invocation} [--colour MODE] [--ascii]",),
+        notes=("Running without arguments validates both normative EBNF grammars.",),
+        show_help_on_empty=False,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.Grammar.InvalidArguments")
+    add_presentation_arguments(parser)
+    parsed = parse_cli(parser, catalogue, argv)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
     root = Path(__file__).resolve().parent
     checks = (
         (root / "mud-lexico.ebnf", "mud-source"),
@@ -138,10 +167,11 @@ def main() -> int:
     errors = [error for path, start in checks for error in validate(path, start)]
 
     if errors:
-        print("\n".join(errors), file=sys.stderr)
+        for error in errors:
+            failure(parsed.ui, "Grammar validation failed.", code="Mud.Grammar.Invalid", details=error)
         return 1
 
-    print("Gramáticas MUD: símbolos definidos, únicos y alcanzables.")
+    parsed.ui.success("Mud grammars: all symbols are defined, unique and reachable.")
     return 0
 
 

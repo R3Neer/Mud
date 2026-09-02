@@ -1,14 +1,25 @@
 from __future__ import annotations
 
-import argparse
 import os
 import tempfile
 import tomllib
+import sys
 from collections import defaultdict
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
+
 PROFILE = Path(__file__).with_name("mud-es-en.toml")
 GLOSSARY = ROOT / "notas" / "glosario-de-traduccion-es-en.md"
 
@@ -92,20 +103,42 @@ def write_atomic(path: Path, value: str) -> None:
         raise
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
+def main(argv: list[str] | None = None) -> int:
+    invocation = "python tooling/translation/render_glossary.py"
+    catalogue = HelpCatalogue(
+        product="MUD TRANSLATION GLOSSARY",
+        version="",
+        description="Generate or verify the temporary human-readable translation glossary.",
+        invocation=invocation,
+        groups=(),
+        commands=(),
+        usage=(f"{invocation} [--check] [--colour MODE] [--ascii]",),
+        notes=("Running without --check writes the generated glossary atomically.",),
+        show_help_on_empty=False,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.TranslationGlossary.InvalidArguments")
     parser.add_argument("--check", action="store_true")
-    arguments = parser.parse_args()
+    add_presentation_arguments(parser)
+    parsed = parse_cli(parser, catalogue, argv)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
+    arguments = parsed.arguments
+    assert arguments is not None
     expected = render()
     current = GLOSSARY.read_text(encoding="utf-8-sig") if GLOSSARY.exists() else ""
     if arguments.check:
         if current != expected:
-            print(f"ERROR: {GLOSSARY.relative_to(ROOT)} is not generated from {PROFILE.relative_to(ROOT)}")
-            return 1
-        print("OK: el glosario temporal coincide con el perfil TOML")
+            return failure(
+                parsed.ui,
+                "The temporary glossary is out of date.",
+                code="Mud.TranslationGlossary.OutOfDate",
+                details=f"{GLOSSARY.relative_to(ROOT)} is not generated from {PROFILE.relative_to(ROOT)}",
+                hint=f"{invocation}",
+            )
+        parsed.ui.success("The temporary glossary matches the TOML profile.")
         return 0
     write_atomic(GLOSSARY, expected)
-    print(f"Generated {GLOSSARY.relative_to(ROOT)}")
+    parsed.ui.success(f"Generated {GLOSSARY.relative_to(ROOT)}")
     return 0
 
 

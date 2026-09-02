@@ -551,12 +551,16 @@ def serve(
     port: int = 8765,
     open_browser: bool = True,
     ready_json: bool = False,
+    ui: Any | None = None,
 ) -> None:
     server, _token = create_server(config, port=port)
     payload = _ready_payload(config, server)
     url = str(payload["url"])
     if ready_json:
         print(json.dumps(payload, ensure_ascii=False), flush=True)
+    elif ui is not None:
+        ui.info(f"Exporter available at {url}")
+        ui.info("Press Ctrl+C to stop it.")
     else:
         print(f"Exportador disponible en {url}", flush=True)
         print("Pulsa Ctrl+C para detenerlo.", flush=True)

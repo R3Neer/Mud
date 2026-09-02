@@ -1,0 +1,50 @@
+# Mud command-line tooling
+
+Mud's repository tools share the visual and help language provided by
+[R3CLI 0.2.0](https://github.com/R3Neer/R3CLI/releases/tag/v0.2.0).
+Install the pinned tooling dependencies with Python 3.11 or later:
+
+```console
+python -m pip install -r tooling/requirements.txt
+```
+
+R3Translate remains a separate executable because its lifecycle and dependency
+set are independent from Mud's repository tooling.
+
+## Interface
+
+Every human-facing command supports `-h`, `--help`,
+`--colour auto|always|never`, `--ascii` and `NO_COLOR`. Command suites provide
+focused pages through `<command> --help`. Mud tooling deliberately has no
+`--version` option until it acquires an independent versioning policy.
+
+Progress and diagnostics are written to stderr when stdout carries
+machine-readable data. In particular, Markdown Export's `serve --ready-json`
+prints exactly one undecorated JSON readiness object for the Obsidian plugin.
+
+## Entry points
+
+```console
+python -m tooling.markdown_export --help
+python tooling/decisions/manage_decisions.py --help
+python tooling/questions/validate_questions.py --help
+python gobierno/validate_temporaries.py --help
+python gobierno/validate_spec_editorial.py --help
+python especificacion/gramatica/validate_grammar.py --help
+python especificacion/sintaxis/validate_syntax_model.py --help
+python tooling/translation/check_migration.py --help
+python tooling/translation/render_glossary.py --help
+```
+
+Human-facing terminal text uses British English. Source documents, generated
+Spanish indexes and other migration content retain their current language
+until the corresponding repository migration phase changes them.
+
+## Tests
+
+```console
+python -m unittest discover -s tooling/tests
+python -m unittest discover -s tooling/markdown_export/tests
+python -m unittest discover -s gobierno -p "test_*.py"
+python tooling/translation/test_translation_tooling.py
+```

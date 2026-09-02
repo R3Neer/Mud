@@ -41,7 +41,7 @@ class TemporaryTomlTests(unittest.TestCase):
 
     def test_reports_malformed_temporary_toml(self) -> None:
         _active, errors = self.validate_files({"profile.toml": "temporary = true ???\n"})
-        self.assertTrue(any("TOML temporal inválido" in error for error in errors))
+        self.assertTrue(any("invalid temporary TOML" in error for error in errors))
 
     def test_rejects_expired_toml_deadline(self) -> None:
         _active, errors = self.validate_files(
@@ -54,7 +54,7 @@ class TemporaryTomlTests(unittest.TestCase):
                 )
             }
         )
-        self.assertTrue(any("venció el 2000-01-01" in error for error in errors))
+        self.assertTrue(any("expired on 2000-01-01" in error for error in errors))
 
     def test_ignores_unrelated_malformed_toml(self) -> None:
         active, errors = self.validate_files({"other.toml": "not valid toml"})

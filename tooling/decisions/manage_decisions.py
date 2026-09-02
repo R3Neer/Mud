@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import json
 import re
 import sys
@@ -11,6 +10,18 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    CommandHelp,
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
+
 DECISION_DIR = ROOT / "notas" / "decisiones"
 QUESTION_DIR = ROOT / "notas" / "preguntas"
 INDEX = DECISION_DIR / "README.md"
@@ -71,10 +82,10 @@ def scalar(value: str) -> str:
 
 def parse_frontmatter(path: Path, text: str) -> tuple[dict[str, object], int]:
     if not text.startswith("---\n"):
-        raise ValueError("falta frontmatter")
+        raise ValueError("frontmatter is missing")
     end = text.find("\n---\n", 4)
     if end < 0:
-        raise ValueError("frontmatter sin cierre")
+        raise ValueError("frontmatter is not closed")
     lines = text[4:end].splitlines()
     result: dict[str, object] = {}
     current_list: str | None = None
@@ -88,7 +99,7 @@ def parse_frontmatter(path: Path, text: str) -> tuple[dict[str, object], int]:
         if not line or line.startswith("#"):
             continue
         if ":" not in line:
-            raise ValueError(f"línea YAML no admitida: {line}")
+            raise ValueError(f"unsupported YAML line: {line}")
         key, raw = line.split(":", 1)
         raw = raw.strip()
         if raw == "[]":
@@ -142,7 +153,7 @@ def normalize_status(raw: str) -> str:
     for status in ALLOWED_STATUSES:
         if normalized.startswith(status):
             return status
-    raise ValueError(f"estado histórico no reconocido: {raw}")
+    raise ValueError(f"unknown historical status: {raw}")
 
 
 def unique_tokens(pattern: re.Pattern[str], text: str) -> list[str]:
@@ -158,7 +169,7 @@ def migrate_file(path: Path) -> bool:
     status_match = LEGACY_STATUS.search(text)
     date_match = LEGACY_DATE.search(text)
     if filename is None or title_match is None or status_match is None or date_match is None:
-        raise ValueError(f"no se puede migrar automáticamente {path.relative_to(ROOT)}")
+        raise ValueError(f"cannot migrate {path.relative_to(ROOT)} automatically")
     header = text.split("\n## Contexto", 1)[0]
     affects_match = LEGACY_AFFECTS.search(header)
     affects = [affects_match.group(1).strip()] if affects_match else []
@@ -187,7 +198,7 @@ def load_reserved() -> set[str]:
         if not value or value.startswith("#"):
             continue
         if not DECISION_ID.fullmatch(value):
-            raise ValueError(f"identificador reservado inválido: {value}")
+            raise ValueError(f"invalid reserved identifier: {value}")
         reserved.add(value)
     return reserved
 
@@ -197,7 +208,7 @@ def load_decisions(errors: list[str]) -> dict[str, Decision]:
     for path in sorted(DECISION_DIR.glob("ADR-*.md")):
         filename = ADR_FILE.fullmatch(path.name)
         if filename is None:
-            errors.append(f"Nombre de ADR inválido: {path.relative_to(ROOT)}")
+            errors.append(f"Invalid ADR filename: {path.relative_to(ROOT)}")
             continue
         text = read(path)
         try:
@@ -208,7 +219,7 @@ def load_decisions(errors: list[str]) -> dict[str, Decision]:
         missing = [field for field in REQUIRED_FIELDS if field not in data]
         if missing:
             errors.append(
-                f"{path.relative_to(ROOT)} omite metadatos: {', '.join(missing)}"
+                f"{path.relative_to(ROOT)} omits metadata: {', '.join(missing)}"
             )
             continue
         identifier = data["id"]
@@ -217,30 +228,30 @@ def load_decisions(errors: list[str]) -> dict[str, Decision]:
         adopted = data["date"]
         list_fields = ("supersedes", "superseded-by", "questions", "affects")
         if not all(isinstance(data[field], list) for field in list_fields):
-            errors.append(f"{path.relative_to(ROOT)} contiene una lista YAML inválida")
+            errors.append(f"{path.relative_to(ROOT)} contains an invalid YAML list")
             continue
         if not all(isinstance(value, str) for value in (identifier, title, status, adopted)):
-            errors.append(f"{path.relative_to(ROOT)} contiene escalares YAML inválidos")
+            errors.append(f"{path.relative_to(ROOT)} contains invalid YAML scalars")
             continue
         expected_id = f"D-{filename.group(1)}"
         if identifier != expected_id:
             errors.append(
-                f"ID distinto del nombre en {path.relative_to(ROOT)}: {identifier}"
+                f"ID does not match the filename in {path.relative_to(ROOT)}: {identifier}"
             )
         if identifier in decisions:
-            errors.append(f"ID de decisión duplicado: {identifier}")
+            errors.append(f"Duplicate decision ID: {identifier}")
         if status not in ALLOWED_STATUSES:
-            errors.append(f"Estado inválido en {path.relative_to(ROOT)}: {status}")
+            errors.append(f"Invalid status in {path.relative_to(ROOT)}: {status}")
         if not ISO_DATE.fullmatch(adopted):
-            errors.append(f"Fecha inválida en {path.relative_to(ROOT)}: {adopted}")
+            errors.append(f"Invalid date in {path.relative_to(ROOT)}: {adopted}")
         else:
             try:
                 date.fromisoformat(adopted)
             except ValueError:
-                errors.append(f"Fecha imposible en {path.relative_to(ROOT)}: {adopted}")
+                errors.append(f"Impossible date in {path.relative_to(ROOT)}: {adopted}")
         heading = H1.search(text)
         if heading is None or heading.group(1).strip() != title:
-            errors.append(f"Título y H1 no coinciden en {path.relative_to(ROOT)}")
+            errors.append(f"Title and H1 do not match in {path.relative_to(ROOT)}")
         decision = Decision(
             path=path,
             identifier=identifier,
@@ -309,7 +320,7 @@ def render_index(decisions: dict[str, Decision], reserved: set[str]) -> str:
     return "\n".join(lines)
 
 
-def validate() -> int:
+def validate(ui=None) -> int:
     errors: list[str] = []
     try:
         reserved = load_reserved()
@@ -320,13 +331,13 @@ def validate() -> int:
     decision_ids = set(decisions)
     overlap = sorted(decision_ids & reserved)
     if overlap:
-        errors.append(f"Identificadores reservados reutilizados: {', '.join(overlap)}")
+        errors.append(f"Reused reserved identifiers: {', '.join(overlap)}")
     if decision_ids:
         maximum = max(int(identifier[2:]) for identifier in decision_ids | reserved)
         expected = {f"D-{number:03d}" for number in range(1, maximum + 1)}
         holes = sorted(expected - decision_ids - reserved)
         if holes:
-            errors.append(f"Huecos de decisión no explicados: {', '.join(holes)}")
+            errors.append(f"Unexplained gaps in decision identifiers: {', '.join(holes)}")
 
     question_paths = {
         f"Q-{match.group(1)}"
@@ -340,24 +351,24 @@ def validate() -> int:
         for related in (*decision.supersedes, *decision.superseded_by):
             if not DECISION_ID.fullmatch(related) or related not in decision_ids:
                 errors.append(
-                    f"{decision.identifier} enlaza una decisión inexistente: {related}"
+                    f"{decision.identifier} links to an unknown decision: {related}"
                 )
         for question in decision.questions:
             if not QUESTION_ID.fullmatch(question) or question not in question_paths:
                 errors.append(
-                    f"{decision.identifier} enlaza una pregunta inexistente: {question}"
+                    f"{decision.identifier} links to an unknown question: {question}"
                 )
         if decision.status == "sustituida" and not decision.superseded_by:
-            errors.append(f"{decision.identifier} está sustituida sin superseded-by")
+            errors.append(f"{decision.identifier} is superseded without superseded-by")
         for older in decision.supersedes:
             if decision.identifier not in decisions[older].superseded_by:
                 errors.append(
-                    f"Sustitución no recíproca: {decision.identifier} -> {older}"
+                    f"Non-reciprocal supersession: {decision.identifier} -> {older}"
                 )
         for newer in decision.superseded_by:
             if decision.identifier not in decisions[newer].supersedes:
                 errors.append(
-                    f"Sustitución no recíproca: {decision.identifier} <- {newer}"
+                    f"Non-reciprocal supersession: {decision.identifier} <- {newer}"
                 )
     for path in QUESTION_DIR.glob("Q-*.md"):
         text = read(path)
@@ -370,7 +381,7 @@ def validate() -> int:
             for token in DECISION_TOKEN.findall(metadata_match.group(1)):
                 if token not in decision_ids:
                     errors.append(
-                        f"{path.relative_to(ROOT)} enlaza una decisión inexistente: {token}"
+                        f"{path.relative_to(ROOT)} links to an unknown decision: {token}"
                     )
 
     export_dir = ROOT / "exports"
@@ -380,63 +391,91 @@ def validate() -> int:
         text = read(path)
         relative = path.relative_to(ROOT)
         if "10-registro-de-decisiones" in text:
-            errors.append(f"Enlace al registro sustituido en {relative}")
+            errors.append(f"Link to the superseded registry in {relative}")
         for target in DECISION_LINK.findall(text):
             if target not in adr_stems:
-                errors.append(f"Enlace a ADR inexistente en {relative}: {target}")
+                errors.append(f"Link to an unknown ADR in {relative}: {target}")
         for target in QUESTION_LINK.findall(text):
             if target not in question_stems:
-                errors.append(f"Enlace a pregunta inexistente en {relative}: {target}")
+                errors.append(f"Link to an unknown question in {relative}: {target}")
         for token in DECISION_TOKEN.findall(text):
             if token not in decision_ids and token not in reserved:
                 errors.append(
-                    f"Referencia a decisión inexistente en {relative}: {token}"
+                    f"Reference to an unknown decision in {relative}: {token}"
                 )
 
     expected_index = render_index(decisions, reserved)
     if not INDEX.is_file() or read(INDEX) != expected_index:
-        errors.append("notas/decisiones/README.md no coincide con el índice generado")
+        errors.append("notas/decisiones/README.md does not match the generated index")
     if LEGACY.exists():
-        errors.append("El registro sustituido notas/10-registro-de-decisiones.md todavía existe")
+        errors.append("The superseded notas/10-registro-de-decisiones.md registry still exists")
 
     if errors:
         for error in errors:
-            print(f"ERROR: {error}", file=sys.stderr)
+            if ui is None:
+                print(f"ERROR: {error}", file=sys.stderr)
+            else:
+                failure(ui, "Decision validation failed.", code="Mud.Decisions.InvalidRegistry", details=error)
         return 1
     counts = Counter(decision.status for decision in decisions.values())
-    print(
-        "Decisiones MUD: "
-        f"{len(decisions)} ADR únicos; "
-        f"{counts['vigente']} vigentes, "
-        f"{counts['propuesta']} propuestas y "
-        f"{len(reserved)} identificadores reservados; "
-        "índice y relaciones verificados."
+    message = (
+        "Mud decisions: "
+        f"{len(decisions)} unique ADRs; "
+        f"{counts['vigente']} current, "
+        f"{counts['propuesta']} proposed and "
+        f"{len(reserved)} reserved identifiers; index and relationships verified."
     )
+    if ui is None:
+        print(message)
+    else:
+        ui.success(message)
     return 0
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Gestiona los ADR de MUD.")
+def main(argv: list[str] | None = None) -> int:
+    invocation = "python tooling/decisions/manage_decisions.py"
+    commands = ("migrate", "generate", "validate")
+    catalogue = HelpCatalogue(
+        product="MUD DECISIONS",
+        version="",
+        description="Manage Mud architecture decision records and their generated index.",
+        invocation=invocation,
+        groups=("DECISIONS",),
+        commands=(
+            CommandHelp("migrate", "DECISIONS", "Migrate legacy ADR metadata", "Migrate legacy ADR metadata to the current frontmatter contract.", (f"{invocation} migrate",), notes=("This command may rewrite ADR files.",)),
+            CommandHelp("generate", "DECISIONS", "Generate the decision index", "Regenerate the decision index from ADR metadata.", (f"{invocation} generate",), notes=("The index is written only after the source records validate.",)),
+            CommandHelp("validate", "DECISIONS", "Validate decisions and relationships", "Validate identifiers, metadata, links, relationships and the generated index.", (f"{invocation} validate",)),
+        ),
+        usage=(f"{invocation} <command> [--colour MODE] [--ascii]", f"{invocation} <command> --help"),
+        notes=(f"Run {invocation} <command> --help for detailed help.",),
+        show_help_on_empty=True,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.Decisions.InvalidArguments")
     parser.add_argument("command", choices=("migrate", "generate", "validate"))
-    args = parser.parse_args()
+    add_presentation_arguments(parser)
+    parsed = parse_cli(parser, catalogue, argv, executable_commands=commands)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
+    args = parsed.arguments
+    assert args is not None
     if args.command == "migrate":
         migrated = 0
         for path in sorted(DECISION_DIR.glob("ADR-*.md")):
             migrated += int(migrate_file(path))
-        print(f"ADR migrados: {migrated}.")
+        parsed.ui.success(f"Migrated {migrated} ADR file(s).")
         return 0
     if args.command == "generate":
         errors: list[str] = []
         decisions = load_decisions(errors)
         if errors:
             for error in errors:
-                print(f"ERROR: {error}", file=sys.stderr)
+                failure(parsed.ui, "The decision index could not be generated.", code="Mud.Decisions.InvalidRegistry", details=error)
             return 1
         content = render_index(decisions, load_reserved())
         INDEX.write_text(content, encoding="utf-8", newline="\n")
-        print(f"Índice generado con {len(decisions)} decisiones.")
+        parsed.ui.success(f"Generated the index with {len(decisions)} decisions.")
         return 0
-    return validate()
+    return validate(parsed.ui)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,10 @@ autoridad normativa ni participará en la futura migración de nombres de rutas.
 La versión mínima es `v0.1.1`, que incluye listas de frontmatter y protecciones
 multilínea.
 
+Los CLI propios de Mud requieren primero `python -m pip install -r
+tooling/requirements.txt`. R3Translate continúa instalándose como ejecutable
+aislado para no mezclar su árbol de dependencias con el de Mud.
+
 - `mud-es-en.toml` es la fuente ejecutable de términos, protecciones,
   frontmatter, inglés británico y hallazgos específicos de Mud.
 - `render_glossary.py` genera la vista humana de

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import json
 import re
 import subprocess
@@ -9,6 +8,18 @@ import tomllib
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
 
 TEMP_KEYS = {
     "temporary",
@@ -96,7 +107,7 @@ def toml_metadata(path: Path) -> tuple[dict[str, object], str | None]:
     try:
         parsed = tomllib.loads(text)
     except tomllib.TOMLDecodeError as exc:
-        return {}, f"TOML temporal inválido: {exc}"
+        return {}, f"invalid temporary TOML: {exc}"
     return {key: parsed[key] for key in TEMP_KEYS if key in parsed}, None
 
 
@@ -125,10 +136,10 @@ def validate(root: Path) -> tuple[list[Temporary], list[str]]:
         flag = data.get("temporary")
 
         if flag is False:
-            errors.append(f"{rel}: no se admite temporary: false; elimina las propiedades temporary-* si el archivo es permanente")
+            errors.append(f"{rel}: temporary: false is not allowed; remove temporary-* properties from permanent files")
             continue
         if flag is not True:
-            errors.append(f"{rel}: las propiedades temporary-* requieren temporary: true")
+            errors.append(f"{rel}: temporary-* properties require temporary: true")
             continue
 
         reason = data.get("temporary-reason")
@@ -136,9 +147,9 @@ def validate(root: Path) -> tuple[list[Temporary], list[str]]:
         reason_text = reason.strip() if isinstance(reason, str) else ""
         when_text = delete_when.strip() if isinstance(delete_when, str) else ""
         if not reason_text:
-            errors.append(f"{rel}: falta temporary-reason no vacío")
+            errors.append(f"{rel}: a non-empty temporary-reason is required")
         if not when_text:
-            errors.append(f"{rel}: falta temporary-delete-when no vacío")
+            errors.append(f"{rel}: a non-empty temporary-delete-when is required")
 
         deadline: date | None = None
         raw_deadline = data.get("temporary-delete-after")
@@ -146,46 +157,63 @@ def validate(root: Path) -> tuple[list[Temporary], list[str]]:
             if isinstance(raw_deadline, date):
                 deadline = raw_deadline
             elif not isinstance(raw_deadline, str) or not ISO_DATE.fullmatch(raw_deadline):
-                errors.append(f"{rel}: temporary-delete-after debe usar YYYY-MM-DD")
+                errors.append(f"{rel}: temporary-delete-after must use YYYY-MM-DD")
             else:
                 try:
                     deadline = date.fromisoformat(raw_deadline)
                 except ValueError:
-                    errors.append(f"{rel}: temporary-delete-after no es una fecha válida")
+                    errors.append(f"{rel}: temporary-delete-after is not a valid date")
             if deadline is not None and today > deadline:
-                errors.append(f"{rel}: temporary-delete-after venció el {deadline.isoformat()}")
+                errors.append(f"{rel}: temporary-delete-after expired on {deadline.isoformat()}")
 
         active.append(Temporary(rel, reason_text, when_text, deadline))
 
     return active, errors
 
 
-def print_inventory(active: list[Temporary]) -> None:
-    print("Temporales activos:")
+def print_inventory(active: list[Temporary], ui) -> None:
+    ui.heading("Active temporary files")
     if not active:
-        print("  ninguno")
+        ui.info("None.")
         return
     for item in sorted(active, key=lambda value: str(value.path)):
-        deadline = item.delete_after.isoformat() if item.delete_after else "—"
-        print(f"- {item.path}")
-        print(f"  motivo: {item.reason or '[FALTA]'}")
-        print(f"  eliminar cuando: {item.delete_when or '[FALTA]'}")
-        print(f"  fecha límite: {deadline}")
-    print("Revisión semántica obligatoria: comprueba si alguna condición 'eliminar cuando' ya se cumple.")
+        deadline = item.delete_after.isoformat() if item.delete_after else ("-" if ui.ascii else "—")
+        ui.section(str(item.path))
+        ui.key_value("Reason", item.reason or "[MISSING]")
+        ui.key_value("Delete when", item.delete_when or "[MISSING]")
+        ui.key_value("Deadline", deadline)
+    ui.warning("Semantic review is required: check whether any delete condition is already satisfied.")
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Valida archivos temporales intencionadamente versionados.")
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
-    args = parser.parse_args(argv)
+    invocation = "python gobierno/validate_temporaries.py"
+    catalogue = HelpCatalogue(
+        product="MUD TEMPORARIES",
+        version="",
+        description="Validate intentionally versioned temporary Markdown and TOML files.",
+        invocation=invocation,
+        groups=(),
+        commands=(),
+        usage=(f"{invocation} [--root PATH] [--colour MODE] [--ascii]",),
+        notes=("Running without arguments validates the current Mud repository.",),
+        show_help_on_empty=False,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.Temporaries.InvalidArguments")
+    parser.add_argument("--root", type=Path, default=ROOT)
+    add_presentation_arguments(parser)
+    parsed = parse_cli(parser, catalogue, argv)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
+    args = parsed.arguments
+    assert args is not None
     root = args.root.resolve()
     active, errors = validate(root)
-    print_inventory(active)
+    print_inventory(active, parsed.ui)
     if errors:
-        print("Errores:", file=sys.stderr)
         for error in errors:
-            print(f"- {error}", file=sys.stderr)
+            failure(parsed.ui, "Temporary-file validation failed.", code="Mud.Temporaries.InvalidMetadata", details=error)
         return 1
+    parsed.ui.success(f"Validated {len(active)} active temporary file(s).")
     return 0
 
 

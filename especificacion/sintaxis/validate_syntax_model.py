@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-import argparse
 import re
 import sys
 from typing import Iterable
@@ -16,7 +15,22 @@ from typing import Iterable
 try:
     import yaml
 except ImportError as exc:  # pragma: no cover
-    raise SystemExit("Se requiere PyYAML para ejecutar este validador") from exc
+    raise SystemExit(
+        "Mud syntax validation requires PyYAML. "
+        "Install it with: python -m pip install -r tooling/requirements.txt"
+    ) from exc
+
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+if str(REPOSITORY_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPOSITORY_ROOT))
+
+from tooling.cli_support import (  # noqa: E402
+    HelpCatalogue,
+    MudArgumentParser,
+    add_presentation_arguments,
+    failure,
+    parse_cli,
+)
 
 
 @dataclass(frozen=True)
@@ -31,7 +45,7 @@ def extract_ebnf_block(path: Path) -> str:
         return text
     match = re.search(r"```ebnf\n(.*?)\n```", text, re.S)
     if not match:
-        raise ValueError(f"{path}: no contiene un bloque ```ebnf```")
+        raise ValueError(f"{path}: does not contain an ```ebnf``` block")
     return match.group(1)
 
 
@@ -97,24 +111,24 @@ def validate(root: Path) -> list[Problem]:
     for path, names in ((grammar, syntax_productions), (lexical, lexical_productions)):
         duplicates = sorted({name for name in names if names.count(name) > 1})
         for name in duplicates:
-            problems.append(Problem(str(path), f"producción duplicada: {name}"))
+            problems.append(Problem(str(path), f"duplicate production: {name}"))
 
     # La gramática léxica contiene cláusulas especiales ?...?... en prosa;
     # la comprobación automática de referencias se aplica a mud.ebnf.
     for name in sorted(grammar_references(grammar) - set(syntax_productions)):
-        problems.append(Problem(str(grammar), f"referencia a producción no definida: {name}"))
+        problems.append(Problem(str(grammar), f"reference to undefined production: {name}"))
     coverage = load_yaml(coverage_path)
     symbols = asdl_symbols(asdl_path)
     asdl_defined, asdl_used = asdl_types_and_uses(asdl_path)
     if retired_resolved_ast_path.exists():
-        problems.append(Problem(str(retired_resolved_ast_path), "contrato retirado: use AST superficial + HIR nominal"))
+        problems.append(Problem(str(retired_resolved_ast_path), "retired contract: use surface AST + nominal HIR"))
     if not nominal_hir_path.exists():
-        problems.append(Problem(str(nominal_hir_path), "falta el contrato del HIR nominal"))
+        problems.append(Problem(str(nominal_hir_path), "the nominal HIR contract is missing"))
         nominal_hir_defined, nominal_hir_used = set(), set()
     else:
         nominal_hir_defined, nominal_hir_used = asdl_types_and_uses(nominal_hir_path)
     if retired_ir_dir.exists():
-        problems.append(Problem(str(retired_ir_dir), "superficie retirada: el HIR nominal vive en especificacion/nombres y no existe todavía un IR semántico normativo"))
+        problems.append(Problem(str(retired_ir_dir), "retired surface: the nominal HIR lives in especificacion/nombres and no normative semantic IR exists yet"))
 
     kind_syntax = kinds.get("syntax_nodes", {})
     kind_lexical = kinds.get("lexical_forms", {})
@@ -122,54 +136,54 @@ def validate(root: Path) -> list[Problem]:
     fixed_tokens = {str(item.get("spelling")) for item in kinds.get("fixed_tokens", [])}
 
     for spelling in sorted(literal_terminals(grammar) - fixed_tokens):
-        problems.append(Problem(str(kinds_path), f"terminal literal sin inventariar: {spelling!r}"))
+        problems.append(Problem(str(kinds_path), f"literal terminal is not inventoried: {spelling!r}"))
     for spelling in sorted(fixed_tokens - literal_terminals(grammar)):
-        problems.append(Problem(str(kinds_path), f"terminal fijo huérfano: {spelling!r}"))
+        problems.append(Problem(str(kinds_path), f"orphaned fixed terminal: {spelling!r}"))
 
     for name in syntax_productions:
         if name not in kind_syntax:
-            problems.append(Problem(str(kinds_path), f"falta la producción sintáctica {name}"))
+            problems.append(Problem(str(kinds_path), f"syntax production is missing: {name}"))
         if name not in covered:
-            problems.append(Problem(str(coverage_path), f"falta cobertura para {name}"))
+            problems.append(Problem(str(coverage_path), f"coverage is missing for {name}"))
 
     for name in lexical_productions:
         if name not in kind_lexical:
-            problems.append(Problem(str(kinds_path), f"falta la producción léxica {name}"))
+            problems.append(Problem(str(kinds_path), f"lexical production is missing: {name}"))
 
     for name in sorted(set(kind_syntax) - set(syntax_productions)):
-        problems.append(Problem(str(kinds_path), f"nodo CST huérfano: {name}"))
+        problems.append(Problem(str(kinds_path), f"orphaned CST node: {name}"))
     for name in sorted(set(kind_lexical) - set(lexical_productions)):
-        problems.append(Problem(str(kinds_path), f"forma léxica huérfana: {name}"))
+        problems.append(Problem(str(kinds_path), f"orphaned lexical form: {name}"))
     for name in sorted(set(covered) - set(syntax_productions)):
-        problems.append(Problem(str(coverage_path), f"entrada de cobertura huérfana: {name}"))
+        problems.append(Problem(str(coverage_path), f"orphaned coverage entry: {name}"))
 
     for name, item in covered.items():
         ast = item.get("ast", {})
         if not ast.get("disposition"):
-            problems.append(Problem(str(coverage_path), f"{name}: falta disposition"))
+            problems.append(Problem(str(coverage_path), f"{name}: disposition is missing"))
         target = ast.get("target")
         if target and target not in symbols:
-            problems.append(Problem(str(coverage_path), f"{name}: destino ASDL desconocido {target}"))
+            problems.append(Problem(str(coverage_path), f"{name}: unknown ASDL target {target}"))
         expected_kind = kind_syntax.get(name, {}).get("kind")
         if expected_kind and item.get("cst") != expected_kind:
             problems.append(Problem(str(coverage_path), f"{name}: CST {item.get('cst')} != {expected_kind}"))
 
     for unknown in sorted(asdl_used - asdl_defined - {"int", "string", "identifier"}):
-        problems.append(Problem(str(asdl_path), f"tipo ASDL no definido: {unknown}"))
+        problems.append(Problem(str(asdl_path), f"undefined ASDL type: {unknown}"))
     for unknown in sorted(nominal_hir_used - nominal_hir_defined - {"int", "string", "identifier"}):
-        problems.append(Problem(str(nominal_hir_path), f"tipo ASDL no definido: {unknown}"))
+        problems.append(Problem(str(nominal_hir_path), f"undefined ASDL type: {unknown}"))
     if nominal_hir_path.exists():
         hir_text = nominal_hir_path.read_text(encoding="utf-8")
         if "module MUDNominalHIR" not in hir_text:
-            problems.append(Problem(str(nominal_hir_path), "falta module MUDNominalHIR"))
+            problems.append(Problem(str(nominal_hir_path), "module MUDNominalHIR is missing"))
         for fragment in ["semantic_type", "effective_domain", "collection_shape", "effective_cardinality", "termination_evidence", "ConversionExpr"]:
             if fragment in hir_text:
-                problems.append(Problem(str(nominal_hir_path), f"el HIR nominal contiene elaboración prohibida: {fragment}"))
+                problems.append(Problem(str(nominal_hir_path), f"the nominal HIR contains forbidden elaboration: {fragment}"))
     if nominal_hir_path.exists():
         hir_text = nominal_hir_path.read_text(encoding="utf-8")
         for fragment in ["Owns(", "Specializes(", "RefersTo("]:
             if fragment not in hir_text:
-                problems.append(Problem(str(nominal_hir_path), f"falta relación nominal requerida: {fragment}"))
+                problems.append(Problem(str(nominal_hir_path), f"required nominal relationship is missing: {fragment}"))
 
     cases_path = root / "especificacion/sintaxis/casos/cst-ast.yaml"
     cases = load_yaml(cases_path)
@@ -177,20 +191,20 @@ def validate(root: Path) -> list[Problem]:
     for case in cases.get("cases", []):
         case_id = case.get("id")
         if not case_id:
-            problems.append(Problem(str(cases_path), "caso sin id"))
+            problems.append(Problem(str(cases_path), "case has no id"))
         elif case_id in seen_case_ids:
-            problems.append(Problem(str(cases_path), f"id de caso duplicado: {case_id}"))
+            problems.append(Problem(str(cases_path), f"duplicate case id: {case_id}"))
         else:
             seen_case_ids.add(case_id)
         if "produces_ast" not in case:
-            problems.append(Problem(str(cases_path), f"{case_id}: falta produces_ast"))
+            problems.append(Problem(str(cases_path), f"{case_id}: produces_ast is missing"))
 
     # Propiedades globales del AST.
     ast_text = asdl_path.read_text(encoding="utf-8")
     required = ["module MUDSurface", "project = MudProject", "source_file = MudFile", "flag = Disabled | Enabled"]
     for snippet in required:
         if snippet not in ast_text:
-            problems.append(Problem(str(asdl_path), f"falta contrato requerido: {snippet}"))
+            problems.append(Problem(str(asdl_path), f"required contract is missing: {snippet}"))
 
     # Regresiones normativas que la mera sincronización de nombres no detecta.
     forbidden_fragments = {
@@ -225,7 +239,7 @@ def validate(root: Path) -> list[Problem]:
         text = path.read_text(encoding="utf-8")
         for fragment in fragments:
             if fragment in text:
-                problems.append(Problem(str(path), f"contrato retirado todavía presente: {fragment}"))
+                problems.append(Problem(str(path), f"retired contract is still present: {fragment}"))
 
     required_fragments = {
         root / "especificacion/sintaxis/mud-surface-ast.asdl": [
@@ -237,7 +251,7 @@ def validate(root: Path) -> list[Problem]:
         text = path.read_text(encoding="utf-8")
         for fragment in fragments:
             if fragment not in text:
-                problems.append(Problem(str(path), f"falta contrato D-086: {fragment}"))
+                problems.append(Problem(str(path), f"D-086 contract is missing: {fragment}"))
 
     for case in cases.get("cases", []):
         source = case.get("source")
@@ -245,11 +259,11 @@ def validate(root: Path) -> list[Problem]:
             continue
         diagnostics = set(case.get("expected_diagnostics", []))
         if "legacy-anchor-interpolation" not in diagnostics and "anchor{" in source:
-            problems.append(Problem(str(cases_path), f"{case.get('id')}: ejemplo válido usa anchor{{...}}"))
+            problems.append(Problem(str(cases_path), f"{case.get('id')}: valid example uses anchor{{...}}"))
         if ("root unit" in source or "point over" in source) and "legacy-unit-metadata-without-postfix" not in diagnostics:
             for metadata in ("name", "plural", "abbreviation", "prefixes", "format"):
                 if re.search(rf"(?m)^\s*{metadata}\s*=", source):
-                    problems.append(Problem(str(cases_path), f"{case.get('id')}: metadato {metadata} sin ~"))
+                    problems.append(Problem(str(cases_path), f"{case.get('id')}: metadata {metadata} has no ~"))
 
     required_case_ids = {
         "thing-concrete-initializer",
@@ -315,22 +329,45 @@ def validate(root: Path) -> list[Problem]:
     }
     present_case_ids = {case.get("id") for case in cases.get("cases", [])}
     for missing in sorted(required_case_ids - present_case_ids):
-        problems.append(Problem(str(cases_path), f"falta caso de cobertura D-086 v4: {missing}"))
+        problems.append(Problem(str(cases_path), f"D-086 v4 coverage case is missing: {missing}"))
 
     return problems
 
 
 def main(argv: Iterable[str] | None = None) -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
-    args = parser.parse_args(argv)
+    invocation = "python especificacion/sintaxis/validate_syntax_model.py"
+    catalogue = HelpCatalogue(
+        product="MUD SYNTAX MODEL",
+        version="",
+        description="Check that the grammar, CST catalogue, coverage and ASDL models agree.",
+        invocation=invocation,
+        groups=(),
+        commands=(),
+        usage=(f"{invocation} [--root PATH] [--colour MODE] [--ascii]",),
+        notes=("Running without arguments validates the current Mud repository.",),
+        show_help_on_empty=False,
+    )
+    parser = MudArgumentParser(prog=invocation, error_code="Mud.Syntax.InvalidArguments")
+    parser.add_argument("--root", type=Path, default=REPOSITORY_ROOT)
+    add_presentation_arguments(parser)
+    values = None if argv is None else tuple(argv)
+    parsed = parse_cli(parser, catalogue, values)
+    if parsed.exit_code is not None:
+        return parsed.exit_code
+    args = parsed.arguments
+    assert args is not None
     problems = validate(args.root)
     if problems:
         for problem in problems:
-            print(f"ERROR {problem.file}: {problem.message}")
-        print(f"\n{len(problems)} problema(s)")
+            failure(
+                parsed.ui,
+                "The syntax model is inconsistent.",
+                code="Mud.Syntax.InconsistentModel",
+                details=f"{problem.file}: {problem.message}",
+            )
+        parsed.ui.failure(f"{len(problems)} problem(s) found.")
         return 1
-    print("OK: gramática, CST, cobertura y ASDL están sincronizados")
+    parsed.ui.success("Grammar, CST, coverage and ASDL are synchronised.")
     return 0
 
 

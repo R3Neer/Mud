@@ -1,0 +1,252 @@
+SNAPSHOT markdown
+
+====================================================================
+ MUD MARKDOWN EXPORT
+====================================================================
+Combine Markdown from an Obsidian vault into portable documents.
+
+USAGE
+  python -m tooling.markdown_export <command> [arguments] [options]
+  python -m tooling.markdown_export <command> --help
+
+EXPORT
+  list-profiles  List configured profiles
+  export         Create a portable Markdown export
+
+INTERFACE
+  serve          Open the local web interface
+
+* Run python -m tooling.markdown_export <command> --help for detailed help.
+
+SNAPSHOT decisions
+
+====================================================================
+ MUD DECISIONS
+====================================================================
+Manage Mud architecture decision records and their generated index.
+
+USAGE
+  python tooling/decisions/manage_decisions.py <command> [--colour MODE] [--ascii]
+  python tooling/decisions/manage_decisions.py <command> --help
+
+DECISIONS
+  migrate   Migrate legacy ADR metadata
+  generate  Generate the decision index
+  validate  Validate decisions and relationships
+
+* Run python tooling/decisions/manage_decisions.py <command> --help for detailed help.
+
+SNAPSHOT questions
+
+====================================================================
+ MUD QUESTIONS
+====================================================================
+Generate or validate Mud's active-question index.
+
+USAGE
+  python tooling/questions/validate_questions.py [validate|generate] [--colour MODE] [--ascii]
+  python tooling/questions/validate_questions.py <command> --help
+
+QUESTIONS
+  validate  Validate questions and the index
+  generate  Generate the active-question index
+
+* Running without a command performs validation.
+
+SNAPSHOT temporaries
+
+====================================================================
+ MUD TEMPORARIES
+====================================================================
+Validate intentionally versioned temporary Markdown and TOML files.
+
+USAGE
+  python gobierno/validate_temporaries.py [--root PATH] [--colour MODE] [--ascii]
+
+* Running without arguments validates the current Mud repository.
+
+SNAPSHOT editorial
+
+====================================================================
+ MUD EDITORIAL GATE
+====================================================================
+Check the normative snapshot and active-question references.
+
+USAGE
+  python gobierno/validate_spec_editorial.py [--colour MODE] [--ascii]
+
+* Running without arguments validates the specification directory.
+
+SNAPSHOT grammar
+
+====================================================================
+ MUD GRAMMAR
+====================================================================
+Validate grammar symbols, uniqueness and reachability.
+
+USAGE
+  python especificacion/gramatica/validate_grammar.py [--colour MODE] [--ascii]
+
+* Running without arguments validates both normative EBNF grammars.
+
+SNAPSHOT syntax
+
+====================================================================
+ MUD SYNTAX MODEL
+====================================================================
+Check that the grammar, CST catalogue, coverage and ASDL models agree.
+
+USAGE
+  python especificacion/sintaxis/validate_syntax_model.py [--root PATH] [--colour MODE] [--ascii]
+
+* Running without arguments validates the current Mud repository.
+
+SNAPSHOT translation-check
+
+====================================================================
+ MUD TRANSLATION CHECK
+====================================================================
+Run Mud's temporary translation and editorial gates.
+
+USAGE
+  python tooling/translation/check_migration.py [CANDIDATE] [--source PATH] [--r3translate PATH] [--colour MODE] [--ascii]
+
+* The default candidate is README.md.
+* R3Translate remains an isolated external executable.
+
+SNAPSHOT glossary
+
+====================================================================
+ MUD TRANSLATION GLOSSARY
+====================================================================
+Generate or verify the temporary human-readable translation glossary.
+
+USAGE
+  python tooling/translation/render_glossary.py [--check] [--colour MODE] [--ascii]
+
+* Running without --check writes the generated glossary atomically.
+
+SNAPSHOT markdown-list
+
+====================================================================
+ LIST-PROFILES
+====================================================================
+List the export profiles available in the selected configuration.
+
+USAGE
+  python -m tooling.markdown_export list-profiles [options]
+
+ARGUMENTS AND OPTIONS
+  --root PATH    Override the configured vault root.
+  --config PATH  Use an alternative TOML configuration.
+
+SNAPSHOT markdown-export
+
+====================================================================
+ EXPORT
+====================================================================
+Export selected Markdown as one document, several parts or a path-preserving ZIP.
+
+USAGE
+  python -m tooling.markdown_export export [--profile NAME | --files PATH ...] [options]
+
+ARGUMENTS AND OPTIONS
+  --root PATH          Override the configured vault root.
+  --config PATH        Use an alternative TOML configuration.
+  --profile NAME       Use a configured selection profile.
+  --files PATH ...     Select relative files, folders or patterns.
+  --output PATH        Choose the output path within the vault root.
+  --follow-links       Discover linked documents.
+  --no-follow-links    Do not discover linked documents.
+  --strip-frontmatter  Remove frontmatter from combined output.
+  --keep-frontmatter   Preserve frontmatter in combined output.
+  --source-markers     Add source markers to combined output.
+  --no-source-markers  Do not add source markers.
+  --strict-links       Fail on unresolved or unsupported links.
+  --max-chars N        Split output between documents at the requested size.
+  --timestamp          Append a timestamp to the output name.
+  --zip-tree           Create a path-preserving ZIP.
+  --no-zip-tree        Disable path-preserving ZIP output.
+
+EXAMPLES
+  python -m tooling.markdown_export export --profile specification
+
+SNAPSHOT markdown-serve
+
+====================================================================
+ SERVE
+====================================================================
+Serve the local export interface on 127.0.0.1.
+
+USAGE
+  python -m tooling.markdown_export serve [options]
+
+ARGUMENTS AND OPTIONS
+  --root PATH    Override the configured vault root.
+  --config PATH  Use an alternative TOML configuration.
+  --port PORT    Listen on this local port; use 0 for an automatic port.
+  --no-browser   Do not open the browser automatically.
+  --ready-json   Write one machine-readable readiness object to stdout.
+
+NOTES
+* The server is local-only and must not be exposed as a network service.
+
+SNAPSHOT decisions-migrate
+
+====================================================================
+ MIGRATE
+====================================================================
+Migrate legacy ADR metadata to the current frontmatter contract.
+
+USAGE
+  python tooling/decisions/manage_decisions.py migrate
+
+NOTES
+* This command may rewrite ADR files.
+
+SNAPSHOT decisions-generate
+
+====================================================================
+ GENERATE
+====================================================================
+Regenerate the decision index from ADR metadata.
+
+USAGE
+  python tooling/decisions/manage_decisions.py generate
+
+NOTES
+* The index is written only after the source records validate.
+
+SNAPSHOT decisions-validate
+
+====================================================================
+ VALIDATE
+====================================================================
+Validate identifiers, metadata, links, relationships and the generated index.
+
+USAGE
+  python tooling/decisions/manage_decisions.py validate
+
+SNAPSHOT questions-validate
+
+====================================================================
+ VALIDATE
+====================================================================
+Validate question metadata, lifecycle, links, export profiles and the active index.
+
+USAGE
+  python tooling/questions/validate_questions.py validate
+  python tooling/questions/validate_questions.py
+
+SNAPSHOT questions-generate
+
+====================================================================
+ GENERATE
+====================================================================
+Regenerate the active-question index and then validate the complete question registry.
+
+USAGE
+  python tooling/questions/validate_questions.py generate
+
+NOTES
+* The index is written only when source metadata is valid.
