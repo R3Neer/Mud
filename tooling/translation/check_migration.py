@@ -26,7 +26,7 @@ def main() -> int:
 
     executable = arguments.r3translate or os.environ.get("R3TRANSLATE") or shutil.which("r3translate")
     if not executable:
-        print("ERROR: r3translate was not found. Install R3Translate v0.1.0 or pass --r3translate.", file=sys.stderr)
+        print("ERROR: r3translate was not found. Install R3Translate v0.1.1 or pass --r3translate.", file=sys.stderr)
         return 2
 
     candidate = arguments.candidate if arguments.candidate.is_absolute() else ROOT / arguments.candidate

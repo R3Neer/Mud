@@ -3,6 +3,8 @@
 Esta carpeta integra temporalmente
 [`R3Translate`](https://github.com/R3Neer/R3Translate) en Mud. No es una nueva
 autoridad normativa ni participará en la futura migración de nombres de rutas.
+La versión mínima es `v0.1.1`, que incluye listas de frontmatter y protecciones
+multilínea.
 
 - `mud-es-en.toml` es la fuente ejecutable de términos, protecciones,
   frontmatter, inglés británico y hallazgos específicos de Mud.
