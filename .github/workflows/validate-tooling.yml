@@ -39,9 +39,6 @@ jobs:
       - name: Run governance tests
         run: python -m unittest discover -s gobierno -p "test_*.py"
 
-      - name: Run Markdown Export tests
-        run: python -m unittest discover -s tooling/markdown_export/tests
-
       - name: Run translation tooling tests
         run: python tooling/translation/test_translation_tooling.py
 
@@ -54,6 +51,7 @@ jobs:
           python especificacion/gramatica/validate_grammar.py --colour never --ascii
           python especificacion/sintaxis/validate_syntax_model.py --colour never --ascii
           python tooling/translation/render_glossary.py --check --colour never --ascii
+          markdown-export --colour never --ascii list-profiles --root . --config markdown-export.toml
 
       - name: Check whitespace
         run: git diff --check
