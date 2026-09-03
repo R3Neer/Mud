@@ -10,14 +10,14 @@ questions:
   - "Q-006"
   - "Q-019"
 affects:
-  - "future chapters `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` and `29-ondas.md`"
+  - "future chapters `10-type-system.md`, `25-effects.md`, `28-action-resolution.md` and `29-waves.md`"
 ---
 # ADR-060 — Additive deltas and `Nat` normalisation
 
 - Amends: [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|D-040]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]] and [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]]
 - Related to: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
 - Related questions: Q-002, Q-006, Q-019
-- Affected documents: future chapters `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` and `29-ondas.md`
+- Affected documents: future chapters `10-type-system.md`, `25-effects.md`, `28-action-resolution.md` and `29-waves.md`
 
 ## Context
 
