@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[specification/04-mathematical-model]], futuro `07-concrete-grammar.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`"
+  - "[[specification/04-mathematical-model]], future `07-concrete-grammar.md`, future `11-things.md`, future `20-reglas.md`, future `21-acciones.md`"
 ---
 # ADR-025 — Vocabulary from `thing`, headings and sections
 

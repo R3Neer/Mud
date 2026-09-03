@@ -10,7 +10,7 @@ questions:
   - "Q-014"
   - "Q-054"
 affects:
-  - "futuro `05-modelo-de-programa.md`, futuro `06-lexicon.md`, futuro `09-names-and-anchors.md`"
+  - "future `05-programme-model.md`, future `06-lexicon.md`, future `09-names-and-anchors.md`"
 ---
 # ADR-035 — Organisation, names, `using` and anchors
 
@@ -23,7 +23,7 @@ affects:
 - Expanded by: [[notes/decisions/ADR-072-resolution-environments-and-explicit-anchor-migrations|D-072]]
 - Further expanded by: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]]
 - Related questions: Q-001, Q-014, Q-054
-- Documents affected: future `05-modelo-de-programa.md`, future `06-lexicon.md`, future `09-names-and-anchors.md`
+- Documents affected: future `05-programme-model.md`, future `06-lexicon.md`, future `09-names-and-anchors.md`
 
 ## Decision
 

@@ -17,7 +17,7 @@ affects:
 - As further amended by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]]
 
 - Related open-ended question: [[notes/questions/Q-047-s-selection-of-defaults-by-type|Q-047]]
-- Documents affected: future `10-sistema-de-tipos.md`, future `14-campos.md`
+- Documents affected: future `10-type-system.md`, future `14-fields.md`
 
 ## Context
 

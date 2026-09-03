@@ -23,7 +23,7 @@ affects:
 - Amended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]]
 - Amended by: [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|D-096]]
 - Related questions: Q-011, Q-012, Q-013
-- Documents affected: future `07-concrete-grammar.md`, future `19-expresiones.md`, forthcoming episodes 21 to 24
+- Documents affected: future `07-concrete-grammar.md`, future `19-expressions.md`, forthcoming episodes 21 to 24
 
 ## Decision
 

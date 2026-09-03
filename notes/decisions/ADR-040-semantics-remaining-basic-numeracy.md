@@ -16,7 +16,7 @@ affects:
 - Read more: D-028, D-030, D-034
 - Amended by: [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
 - Related questions: Q-001, Q-019
-- Documents affected: future `06-lexicon.md`, future `10-sistema-de-tipos.md`, future `17-dominios-e-intervalos.md`
+- Documents affected: future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`
 
 ## Decision
 

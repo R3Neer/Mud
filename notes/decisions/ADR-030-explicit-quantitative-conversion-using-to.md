@@ -9,7 +9,7 @@ questions:
   - "Q-019"
   - "Q-053"
 affects:
-  - "futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`"
+  - "future `10-type-system.md`, future `18-magnitudes.md`, future `19-expressions.md`"
 ---
 # ADR-030 — Explicit quantitative conversion using `to`
 
@@ -18,7 +18,7 @@ affects:
 - Amended by: [[notes/decisions/ADR-034-num-exactly-and-rum-binary64|D-034]]
 - As further amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Subsequently amended by: [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
-- Documents affected: future `10-sistema-de-tipos.md`, future `18-magnitudes.md`, future `19-expresiones.md`
+- Documents affected: future `10-type-system.md`, future `18-magnitudes.md`, future `19-expressions.md`
 
 ## Context
 

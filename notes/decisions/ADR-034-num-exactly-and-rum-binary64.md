@@ -9,14 +9,14 @@ questions:
   - "Q-019"
   - "Q-058"
 affects:
-  - "futuro `06-lexicon.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`, futuro `20-cuantificadores-e-iteracion.md`"
+  - "future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`, future `18-magnitudes.md`, future `19-expressions.md`, future `20-quantifiers-and-iteration.md`"
 ---
 # ADR-034 — `Num` exactly and `Rum` binary64
 
 - Edit: [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]]
 - Related questions: Q-019, Q-058
 - Syntax updated by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
-- Documents affected: future `06-lexicon.md`, future `10-sistema-de-tipos.md`, future `17-dominios-e-intervalos.md`, future `18-magnitudes.md`, future `19-expresiones.md`, future `20-cuantificadores-e-iteracion.md`
+- Documents affected: future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`, future `18-magnitudes.md`, future `19-expressions.md`, future `20-quantifiers-and-iteration.md`
 
 ## Context
 

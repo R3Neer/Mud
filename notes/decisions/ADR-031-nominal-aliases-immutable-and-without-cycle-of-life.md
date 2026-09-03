@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-057"
 affects:
-  - "futuro `12-aliases.md`, futuro `25-efectos.md`"
+  - "future `12-aliases.md`, future `25-efectos.md`"
 ---
 # ADR-031 — Nominal aliases, immutable and without cycle of life
 
