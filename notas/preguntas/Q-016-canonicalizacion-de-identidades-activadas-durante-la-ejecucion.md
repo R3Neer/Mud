@@ -1,6 +1,6 @@
 ---
 id: Q-016
-title: Canonicalización de identidades activadas durante la ejecución
+title: Canonicalisation of identities activated during execution
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-016 — Canonicalización de identidades activadas durante la ejecución
+# Q-016 — Canonicalisation of identities activated during execution
 
-## Contenido
+## Content
 
-Formato estable de la reserva global, snapshots, comparación, referencias y ciclos de activación–destrucción–reactivación.
+Stable format for the global registry, snapshots, comparison, references and activation–destruction–reactivation cycles.
