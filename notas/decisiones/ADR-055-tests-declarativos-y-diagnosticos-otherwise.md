@@ -1,6 +1,6 @@
 ---
 id: D-055
-title: "Tests declarativos y diagnósticos `otherwise`"
+title: "Declarative and diagnostic tests `otherwise`"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -10,30 +10,30 @@ questions:
 affects:
   - "[[notas/preguntas/README|Preguntas activas]], futuros capítulos 06 a 09, 25, 28, 30, 43, 46 y 49"
 ---
-# ADR-055 — Tests declarativos y diagnósticos `otherwise`
+# ADR-055 — Declarative and diagnostic tests `otherwise`
 
-- Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
-- Abre: [[notas/preguntas/Q-059-observacion-de-resultados-de-accion-en-tests|Q-059]]
-- Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
-- Ampliada además por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
-- Documentos afectados: [[notas/preguntas/README|Preguntas activas]], futuros capítulos 06 a 09, 25, 28, 30, 43, 46 y 49
+- Related to: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
+- Open: [[notas/preguntas/Q-059-observacion-de-resultados-de-accion-en-tests|Q-059]]
+- Expanded by: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+- Further expanded by: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
+- Documents concerned: [[notas/preguntas/README|Active questions]], future episodes 06 to 09, 25, 28, 30, 43, 46 and 49
 
-## Contexto
+## Context
 
-MUD necesita pruebas que puedan leer y escribir quienes modelan el mundo, sin obligarlos a abandonar el lenguaje para describir el escenario esperado. Una prueba comparte con una acción el uso de efectos, estabilización y poscondiciones, pero no forma parte de la API del mundo:
+MUD needs tests that can be read and written by those who model the world, without forcing them to abandon the language they use to describe the anticipated scenario. A test shares this with a action the use of effects, stabilisation and postconditions, but it is not part of the API of the world:
 
-- No tiene un solicitante externo.
-- No modifica un mundo persistente.
-- No expresa una operación disponible para personajes o sistemas.
-- Su resultado informa al ejecutor de pruebas.
+- It does not have an external applicant.
+- It does not change a world persistent.
+- It does not represent an operation available to characters or systems.
+- His result inform the test administrator.
 
-Tratarla como una variante de `action` confundiría ambas fronteras y haría natural, aunque incorrecto, asignarle un ancla `action::*`.
+Treat it as a variant of `action` It would blur the distinction between the two and make it natural, albeit incorrect, to assign it a anchor `action::*`.
 
 ## Decisión
 
-### Declaración propia
+### Declaration own
 
-`test` es una palabra reservada que introduce una categoría de declaración propia:
+`test` is a reserved word which introduces a category of declaration own:
 
 ```mud
 test CounterIncreases {
@@ -48,16 +48,16 @@ test CounterIncreases {
 }
 ```
 
-Un test:
+A test:
 
-- Tiene nombre nominal en `PascalCase`.
-- No declara `for`, `given`, `if`, `when` ni participantes.
-- Declara exactamente un `start with`, un `then` y un `after`.
-- No es invocable como `action` ni consultable como regla; en contexto de pruebas puede invocarse como operación `test` desde el `then` de otro test visible conforme a D-096.
-- No puede ser objetivo de `create` o `destroy`.
-- No puede aparecer en un conjunto `start with`.
+- It has a nominal name in `PascalCase`.
+- No statement `for`, `given`, `if`, `when` nor participants.
+- It states exactly one `start with`, a `then` and a `after`.
+- It cannot be invoked as `action` nor can it be queried as a rule; in a testing context, it can be invoked as an operation `test` from the `then` from another test visible in accordance with D-096.
+- It cannot be the aim of `create` o `destroy`.
+- It cannot appear in a set `start with`.
 
-De manera esquemática:
+In brief:
 
 ```ebnf
 test-declaration
@@ -78,22 +78,22 @@ test-assertion
     ::= boolean-expression [ "otherwise" text-expression ]
 ```
 
-`test` no es un modificador contextual de `action`. El AST contiene una forma propia:
+`test` is not a contextual modifier of `action`. The AST contains its own form:
 
 ```text
 TestDecl(anchor, initialActivationSet, thenBody, assertions)
 TestAssertion(condition, optionalDiagnostic)
 ```
 
-### Mundo aislado y `start with`
+### World isolated and `start with`
 
-Cada ejecución de un test comienza con un mundo vacío, fresco y aislado. El `start with` de un test es una contribución propia de activación y no incorpora por sí mismo el `start with` ordinario de los módulos.
+Each execution of a test begins with a world empty, cool and isolated. The `start with` of a test is an original contribution by activation and does not itself incorporate the `start with` standard modules.
 
-La superficie es la misma forma unificada de D-096: una contribución directa o un bloque de expresiones que aportan cero, una o varias declaraciones activables `thing | rule`. El orden no es observable y las identidades repetidas se deduplican. No contiene instrucciones `create`, asignaciones ni otros efectos, y una colección anidada es inválida.
+Area is the standardised term for D-096: a direct contribution or a block of expressions that provide zero, one or more activatable statements `thing | rule`. The order is not observable and duplicate identities are deduplicated. It contains no instructions `create`, assignments or other effects, and a collection The nested one is invalid.
 
-Antes de ejecutar el test raíz se calcula estáticamente el cierre transitivo de tests que puede llamar, respetando `uses`, y se unen las contribuciones `start with` de todos ellos. Una llamada posterior a un test ya incluido no vuelve a materializar su activación; un ciclo ejecutable entre tests es inválido. Las declaraciones resultantes se materializan conjuntamente con sus inicializadores canónicos y el mundo se estabiliza antes del `then` raíz.
+Before running the test root The transitive closure of tests that it may call is calculated statically, whilst respecting `uses`, and the contributions are combined `start with` of all of them. One call following a test once included, it does not materialise again activation; a executable cycle between tests is invalid. The resulting declarations are instantiated together with their canonical initialisers and the world stabilises before the `then` root.
 
-Sea $C(t)$ el cierre transitivo estático de tests alcanzables desde el test raíz $t$, sea $I_u$ la contribución de activación de cada test $u$ y sea $I_t^*=\bigcup_{u\in C(t)} I_u$. El estado previo al escenario se obtiene mediante:
+Be $C(t)$ the static transitive closure of tests reachable from the test root $t$, whether $I_u$ the contribution of activation of each test $u$ and let it be $I_t^*=\bigcup_{u\in C(t)} I_u$. The state The value prior to the scenario is obtained as follows:
 
 $$
 W_t^0
@@ -104,24 +104,24 @@ W_t^0
 \bigr)
 $$
 
-La activación inicial ordinaria de los módulos no interviene en esta construcción.
+The initial activation The ordinary form of the modules does not feature in this construction.
 
-### `then` y estado del escenario
+### `then` y state from the stage
 
-`then` utiliza la semántica ordinaria de consecuencias y forma la transición probada. Puede mezclar efectos, locales y llamadas permitidas, incluidas operaciones `test` visibles en contexto de pruebas. Las asignaciones y demás modificaciones escritas al comienzo de `then` no pertenecen al estado inicial: son efectos de la prueba. Invocar un test cuyo `start with` ya participó en el cierre inicial no vuelve a materializar esa contribución.
+`then` use the semantics ordinary in terms of consequences and form, the transition tested. You can combine effects, local variables and permitted calls, including operations `test` visible in the context of tests. The assignments and other modifications written at the beginning of `then` do not belong to the state Initial: these are effects of the spell. Cast a test whose `start with` if they have already taken part in the initial closing, they do not make that contribution again.
 
-El estado observado por `old e` dentro de `after` es $W_t^0$, anterior al `then` completo. No existe una frontera implícita entre instrucciones de preparación y de ejercicio según su posición textual.
+The state observed by `old e` inside `after` is $W_t^0$, prior to the `then` Complete. There is no implicit boundary between preparation and exercise instructions based on their position in the text.
 
-La resolución del `then` incluye su raíz, sus ondas causales, las reglas `always` y la estabilización. El mundo resultante nunca se publica y se descarta al finalizar el test.
+The resolution from the `then` includes its root, its causal waves, the rules `always` and the stabilisation. The world The resulting figure is never published and is discarded at the end of the test.
 
-### Aserciones y `otherwise`
+### Statements and `otherwise`
 
-El `after` de un test contiene una o más aserciones ordenadas. Cada aserción consta de:
+The `after` of a test contains one or more ordered assertions. Each assertion consists of:
 
-1. Una expresión pura de tipo `Bool`.
-2. Un diagnóstico opcional introducido por la palabra reservada `otherwise`.
+1. A pure expression of type `Bool`.
+2. A diagnostic optional feature introduced by the reserved word `otherwise`.
 
-El diagnóstico debe ser una expresión pura de tipo `Text` y solo se evalúa cuando la condición asociada es falsa. Si se omite, el compilador ofrece una sugerencia y el ejecutor produce un diagnóstico predeterminado a partir de la condición y su procedencia.
+The diagnostic it must be a pure expression of type `Text` and is only evaluated when the associated condition is false. If omitted, the compiler offers a suggestion and the runtime produces a diagnostic default value based on the condition and its provenance.
 
 ```mud
 after condition
@@ -135,29 +135,29 @@ after {
 }
 ```
 
-Todas las condiciones se evalúan sobre el mismo estado final estable y en orden textual. El ejecutor puede informar conjuntamente de todas las condiciones falsas. Una aserción no produce efectos.
+All conditions are assessed on the same basis state stable and in textual order. The executor may report all false conditions together. An assertion has no effect.
 
-`after` no devuelve la unión `Bool | Text`: la condición conserva tipo `Bool` y el diagnóstico conserva tipo `Text`.
+`after` does not return the union `Bool | Text`: the condition remains type `Bool` and the diagnostic preserves type `Text`.
 
-### Resultado y descarte
+### Result and discard
 
-La ejecución de un test produce exactamente uno de estos resultados para el ejecutor:
+The execution of a test produces exactly one of these results for the executor:
 
-| Resultado | Causa |
+| Result | Reason |
 | --- | --- |
-| `passed` | El mundo inicial y el `then` se estabilizan y todas las aserciones son verdaderas |
-| `failed` | Al menos una aserción es falsa y ninguna fase produce un error |
-| `error` | No puede construirse el mundo inicial, falla la resolución del `then` o falla la evaluación de una aserción o diagnóstico |
+| `passed` | The initial world and the `then` they stabilise and all the assertions are true |
+| `failed` | At least one statement is false and no phase produces a error |
+| `error` | The initial world, the resolution from the `then` or the evaluation of an assertion fails, or diagnostic |
 
-`passed`, `failed` y `error` no son valores ordinarios del mundo ni sustituyen a `accepted`, `rejected` y `failed` de las acciones.
+`passed`, `failed` y `error` are not ordinary shares in the world nor do they replace `accepted`, `rejected` y `failed` of the shares.
 
-El estado aislado, los mensajes y cualquier otra salida producida durante el test se descartan siempre. El ejecutor puede conservar únicamente el resultado, los diagnósticos y la traza necesaria para explicarlos.
+The state in isolation, the messages and any other output produced during the test are always discarded. The executor may retain only the result, the diagnostics and the trace required to explain them.
 
-### Palabras y anclas
+### Words and anchors
 
-`test` y `otherwise` son palabras reservadas.
+`test` y `otherwise` These are reserved words.
 
-`abstract` continúa siendo contextual delante de `thing` y `always` es contextual delante de `rule`. Los modificadores y variantes no cambian la categoría del ancla:
+`abstract` remains contextual in the context of `thing` y `always` is contextual before `rule`. Modifiers and variants do not change the category of the anchor:
 
 ```text
 thing::world.Vegetation
@@ -165,50 +165,52 @@ rule::world.ValidWorld
 test::world.CounterIncreases
 ```
 
-Una `abstract thing` usa `thing::*`. Una regla `always` usa `rule::*`. Un test usa `test::*` porque constituye una categoría declarativa distinta.
+One `abstract thing` use `thing::*`. A ruler `always` use `rule::*`. A test use `test::*` because it constitutes a distinct declarative category.
 
-## Consecuencias
+## Consequences
 
-- Los tests forman parte del lenguaje fuente, pero no del mundo ejecutado ni de su API pública.
-- El compilador puede excluir `TestDecl` de una compilación de producción después de validarlo.
-- El ejecutor de tests reutiliza el motor transaccional y causal sin publicar sus efectos.
-- La selección por anclas `test::*` permite ejecutar un test, un path de MUD o un conjunto filtrado.
-- No se infiere una fase de preparación a partir de las primeras instrucciones de `then`.
-- La comprobación explícita del resultado `accepted`, `rejected` o `failed` de una acción invocada queda abierta en Q-059.
+- The tests form part of the source code, but not of the world neither the executable nor its public API.
+- The compiler may exclude `TestDecl` from a compilation of production after validating it.
+- The test runner reuses the transactional engine and causal without publishing the results.
+- Selection by anchors `test::*` allows you to run a test, a path from MUD or a filtered set.
+- No preparatory phase can be inferred from the initial instructions in `then`.
+- The explicit verification of the result `accepted`, `rejected` o `failed` of a action The appeal remains pending in Q-059.
 
-## Alternativas descartadas
+## Options ruled out
 
 ### `test action`
 
-Se descarta porque presenta el test como una variante de la API de escritura y haría incoherente asignarle una categoría de ancla distinta.
+It is ruled out because it presents the test as a variant of the write API, and it would be inconsistent to assign it a category of anchor different.
 
-### `if` como precondición del test
+### `if` as a precondition for the test
 
-Se descarta porque permitiría omitir silenciosamente una prueba cuando el mundo no cumpla la condición. El test construye deliberadamente su mundo mediante `start with`.
+This is ruled out because it would allow a test to be silently skipped when the world does not meet the condition. The test deliberately builds his world by means of `start with`.
 
-### Estado mutable dentro de `start with`
+### State changeable within `start with`
 
-Se descarta porque mezclaría activación inicial y efectos. Los valores específicos del escenario se establecen en `then`.
+It is ruled out because it would lead to a mix-up initial activation and effects. The specific values for the scenario are set out in `then`.
 
-### `after` de tipo `Bool | Text`
+### `after` from type `Bool | Text`
 
-Se descarta porque mezcla comprobación y diagnóstico. `otherwise` conserva ambos tipos separados y permite mensajes distintos para varias condiciones.
+It is ruled out because it combines verification and diagnostic. `otherwise` It keeps the two types separate and allows different messages for various conditions.
 
-## Verificación futura
+## Future verification
 
-1. Reconocimiento de `test` y `otherwise` como palabras reservadas.
-2. Ancla `test::*` independiente de `action::*`.
-3. Rechazo de `for`, `given`, `if` y `when` en un test.
-4. Unión de `start with` del cierre transitivo estático de tests alcanzables, sin aplicar la activación ordinaria de los módulos.
-5. Rechazo de instrucciones y asignaciones dentro de una contribución `start with` de test.
-6. Materialización y estabilización antes del `then` raíz, llamada posterior sin reactivación y rechazo de ciclos ejecutables entre tests.
-7. Lectura de `old` sobre el estado anterior al `then` completo.
-8. Una y varias aserciones con diagnósticos opcionales.
-9. Evaluación perezosa del diagnóstico `otherwise`.
-10. Distinción entre `passed`, `failed` y `error`.
-11. Descarte incondicional del mundo y de sus salidas.
-12. Anclas `thing::*` para abstractas y `rule::*` para reglas `always`.
+1. Recognition of `test` y `otherwise` as reserved words.
+2. Anchor `test::*` regardless of `action::*`.
+3. Rejection of `for`, `given`, `if` y `when` in a test.
+4. Union from `start with` of the static transitive closure of reachable tests, without applying the activation standard configuration of the modules.
+5. Rejection of instructions and assignments within a contribution `start with` from test.
+6. Materialisation y stabilisation before the `then` root, call subsequent without reactivation and rejection of executable cycles between tests.
+7. Reading from `old` on the state prior to the `then` complete.
+8. A single assertion and multiple assertions with optional diagnostics.
+9. A cursory assessment of the diagnostic `otherwise`.
+10. Distinction between `passed`, `failed` y `error`.
+11. Unconditional rejection of the world and their outings.
+12. Anclas `thing::*` for abstracts and `rule::*` for rules `always`.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-El `start with` de test usa la superficie unificada de D-096. Para un test raíz se calcula estáticamente el cierre transitivo de tests que puede llamar y se unen sus contribuciones de activación antes de ejecutar el cuerpo. Los tests pueden cruzar módulos solo en contexto de pruebas, mediante operaciones de test visibles y dependencias `uses`; una llamada posterior no vuelve a ejecutar el `start with` del test alcanzado.
+The `start with` from test use the unified interface of D-096. For a test root The transitive closure of tests that it can call is calculated statically, and their contributions are combined activation before executing the body. Tests may cross modules only within a test context, by means of test visible elements and dependencies `uses`; a call the latter does not run the `start with` from the test achieved.
+
+

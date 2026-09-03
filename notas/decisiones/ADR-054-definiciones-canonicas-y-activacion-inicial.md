@@ -1,6 +1,6 @@
 ---
 id: D-054
-title: "Definiciones canónicas y activación inicial"
+title: "Canonical definitions and initial activation"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -11,37 +11,37 @@ questions:
 affects:
   - "[[notas/preguntas/README|Preguntas activas]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32"
 ---
-# ADR-054 — Definiciones canónicas y activación inicial
+# ADR-054 — Canonical definitions and initial activation
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
-- Modificada por: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
-- Cierra: [[notas/preguntas/Q-044-identidad-y-referencias-a-thing-futuras|Q-044]], [[notas/preguntas/Q-045-contenido-declarativo-de-create|Q-045]]
-- Documentos afectados: [[notas/preguntas/README|Preguntas activas]], [[especificacion/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Related to: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Amended by: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Amended by: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
+- Close: [[notas/preguntas/Q-044-identidad-y-referencias-a-thing-futuras|Q-044]], [[notas/preguntas/Q-045-contenido-declarativo-de-create|Q-045]]
+- Documents concerned: [[notas/preguntas/README|Active questions]], [[especificacion/04-modelo-matematico]], future episodes 06, 07, 08, 09, 11, 21 to 25 and 32
 
-## Contexto
+## Context
 
-La sintaxis debe separar tres operaciones:
+The syntax must distinguish between three operations:
 
-1. Definir qué es una declaración.
-2. Decidir si participa en el mundo actual y, para una `thing` concreta, si existe una materialización runtime activa.
-3. Modificar la estructura de una materialización activa.
+1. Define what a declaration.
+2. Decide whether to take part in the world current and, for a `thing` specifically, if there is a materialisation runtime enabled.
+3. Modify the structure of a materialisation active.
 
-El modelo de uso adoptado es el de un juego con:
+The model The approach adopted is that of a game featuring:
 
-- Un catálogo estático de cosas y reglas posibles.
-- Una selección de declaraciones presentes al comenzar.
-- Operaciones runtime que retiran y vuelven a introducir las mismas identidades canónicas.
-- Materializaciones runtime de `thing` concretas que pueden terminar con `destroy` y reconstruirse de forma fresca mediante un `create` posterior.
+- A static catalogue of possible things and rules.
+- A selection of statements to begin with.
+- Runtime operations that remove and re-introduce the same canonical identifiers.
+- Runtime instantiations of `thing` specific actions that could lead to `destroy` and reinvent itself in a fresh way through a `create` back.
 
 ## Decisión
 
-### Definición canónica única
+### Canonical definition unique
 
-Cada `thing` declarable y cada regla tiene exactamente una definición completa de primer nivel en todo el programa. La raíz incorporada `Thing` es la única `thing` sin definición fuente: su descriptor canónico pertenece al lenguaje, es abstracto y siempre efectivo. No puede redefinirse ni aparecer como objetivo de `create` o `destroy`.
+Every `thing` declarable, and each rule has exactly one complete top-level definition throughout the programme. The root incorporated `Thing` it is the only one `thing` source not specified: his descriptor The canonical belongs to language; it is abstract and always effective. It cannot be redefined, nor can it be regarded as the object of `create` o `destroy`.
 
 ```mud
 abstract thing Vegetation {}
@@ -55,38 +55,38 @@ rule CanGrow on plant: Vegetation {
 }
 ```
 
-La definición fija:
+The standard definition:
 
-- La categoría de la declaración.
-- Su identidad y ancla.
-- En una `thing`, su carácter abstracto o concreto.
-- En una `thing`, sus antecesoras directas.
-- Su cuerpo declarativo.
+- The category of the declaration.
+- His identity y anchor.
+- In a `thing`, whether it is abstract or concrete.
+- In a `thing`, their direct predecessors.
+- Its declarative body.
 
-Las antecesoras directas de una `thing` no cambian durante la ejecución. `destroy` y `create` modifican su actividad y, para una `thing` concreta, terminan o construyen su materialización runtime; no cambian su identidad ni su descriptor canónico.
+The direct predecessors of a `thing` do not change during execution. `destroy` y `create` adjust their behaviour and, for a `thing` specifically, they complete or build their materialisation runtime; they do not change their identity nor his descriptor canonical.
 
-Dos definiciones completas con la misma ancla son un error estático aunque sus cuerpos sean iguales. El orden de archivos y declaraciones no resuelve la duplicidad.
+Two complete definitions with the same anchor are a error static, even if their bodies are the same. The order of files and statements does not resolve the duplication.
 
-### `create` activa una identidad canónica y materializa cuando corresponde
+### `create` activate a canonical identity and carries it out when necessary
 
-`create` es una instrucción runtime dirigida a una identidad canónica:
+`create` is a runtime instruction directed at a canonical identity:
 
 ```mud
 create Tree
 create CanGrow
 ```
 
-Su objetivo debe resolver estáticamente a una única definición canónica de `thing` o regla. No admite categoría, modificador, lista de antecesoras ni cuerpo.
+Its objective must be to solve a single problem statically canonical definition from `thing` or rule. It does not allow for a category, modifier, list of predecessors or body.
 
-Una activación posterior a `destroy Tree` recupera la misma identidad `Tree`, con las mismas antecesoras y el mismo descriptor. Conforme a D-099, si `Tree` es una `thing` concreta cuya materialización anterior terminó, `create Tree` construye una materialización fresca desde la definición canónica; no recupera la carga ni las modificaciones estructurales propias de la materialización destruida.
+One activation following `destroy Tree` restore it to its original state identity `Tree`, with the same predecessors and the same descriptor. In accordance with D-099, if `Tree` is a `thing` specific one whose materialisation the previous one ended, `create Tree` build a materialisation fresh from the canonical definition; it does not restore the load or the structural modifications characteristic of the materialisation destroyed.
 
-Varias solicitudes concurrentes `create d` dirigidas a la misma declaración ausente se consolidan idempotentemente. Ya no existen fragmentos declarativos runtime ni fusión de cuerpos producida por `create`.
+Several concurrent applications `create d` addressed to her declaration absent, they are idempotently consolidated. There are no longer any runtime declarative fragments, nor any merging of bodies caused by `create`.
 
-Una solicitud `create d` no modifica una declaración ya activa. La aplicabilidad de reglas y acciones que solicitan activaciones ya satisfechas continúa bajo Q-046.
+One request `create d` does not change a declaration already active. The applicability of rules and actions that require activations that have already been completed remains subject to Q-046.
 
-### Conjunto inicial `start with`
+### Starting set `start with`
 
-Las definiciones de `thing` y reglas no quedan activas por aparecer. Cada módulo puede aportar como máximo un `start with` unificado:
+The definitions of `thing` and rules do not remain active simply because they appear. Each module can contribute a maximum of one `start with` unified:
 
 ```mud
 start with {
@@ -96,44 +96,44 @@ start with {
 }
 ```
 
-Una contribución directa o cada expresión del bloque aporta cero, una o varias declaraciones activables `thing | rule`: una referencia aporta una, `empty` aporta cero y una colección aporta sus miembros. Para materializar un dominio enumerable explícito se usa `all D`; una colección de colecciones es inválida. Las identidades repetidas se deduplican y el orden no es observable.
+A direct contribution, or each expression in the block, contributes zero, one or several activatable statements `thing | rule`: a reference provides one, `empty` equals zero and one collection contributed by its members. To bring about a domain Explicit enumeration is used `all D`; a collection of collections is invalid. Duplicate identifiers are deduplicated and the order is not observable.
 
-Las expresiones solo pueden depender de información disponible antes de existir mundo runtime. Las contribuciones de todos los módulos se combinan, materializan y validan atómicamente y se estabilizan antes de aceptar acciones externas. Cada módulo solo puede activar declaraciones con ciclo de vida del mismo módulo.
+Expressions can only depend on information available before they exist world runtime. The contributions from all modules are combined, materialised and validated atomically, and stabilised before external actions are accepted. Each module can only trigger statements with cycle its lifespan module.
 
-Actions, aliases y magnitudes no son declaraciones activables. Cada test declara su propia contribución `start with`; para un test raíz se unen las contribuciones del cierre transitivo estático de tests alcanzables conforme a D-096.
+Actions, aliases and magnitudes are not executable statements. Each test declares his own contribution `start with`; for a test root the contributions from the static transitive closure of reachable tests are combined in accordance with D-096.
 
-### Inicialización y rematerialización
+### Initialisation and rematerialisation
 
-Los predeterminados e inicializadores de una `thing` concreta se aplican cuando se construye una materialización desde su definición canónica, tanto en la materialización inicial mediante `start with` o `create` como en una rematerialización posterior a `destroy`.
+The defaults and initialisers for a `thing` These specific rules apply when building a materialisation since its canonical definition, both in the materialisation initial via `start with` o `create` as in a subsequent rematerialisation following `destroy`.
 
-Después de un `destroy d` confirmado sobre una `thing` concreta, la carga propia y las modificaciones estructurales runtime de la materialización destruida se descartan. Un `create d` posterior:
+After a `destroy d` confirmed on a `thing` specifically, the own stored data and the runtime structural modifications to the materialisation Once destroyed, they are discarded. One `create d` back:
 
-- conserva la identidad, el descriptor y las antecesoras canónicas de `d`;
-- reconstruye la estructura desde la definición canónica;
-- vuelve a aplicar predeterminados e inicializadores;
-- no recupera valores ni modificaciones estructurales de la materialización terminada.
+- retains the identity, the descriptor and the canonical predecessors of `d`;
+- reconstructs the structure from the canonical definition;
+- re-apply defaults and initialisers;
+- does not retrieve values or structural changes from the materialisation completed.
 
-Una `thing` abstracta no posee carga concreta propia que reinicializar. Para rules, D-099 fija que la memoria runtime de una activación explícitamente destruida tampoco atraviesa la nueva activación.
+One `thing` abstracta does not have a specific implementation of its own to reset. For rules, D-099 specifies that the runtime memory of a activation nor does the new one pass through the one that has been explicitly destroyed activation.
 
-La suspensión de una declaración porque una dependencia dura está inactiva no equivale a `destroy`: esa suspensión puede conservar la carga que pertenece a la declaración suspendida.
+The suspension of a declaration because one hard dependency 'is inactive' does not mean `destroy`: that suspension can retain the load belonging to the declaration suspended.
 
-### Palabras reservadas y contextuales
+### Reserved and contextual words
 
-`with` es una palabra reservada.
+`with` is a reserved word.
 
-`start` es una palabra contextual: el parser la reconoce como introductor de una contribución modular `start with` de primer nivel o del `start with` contenido en un test.
+`start` is a contextual word: the parser recognises it as the start of a modular contribution `start with` top-tier or the `start with` contained in a test.
 
-`abstract` también es contextual: el parser lo reconoce como modificador únicamente delante de `thing`. Fuera de esa posición puede usarse como identificador ordinario.
+`abstract` It is also context-dependent: the parser recognises it as a modifier only when it precedes `thing`. Outside that position, it can be used as an ordinary identifier.
 
-`always` es contextual delante de `rule`. D-055 introduce `test` y `otherwise` como palabras reservadas.
+`always` is contextual before `rule`. D-055 enter `test` y `otherwise` as reserved words.
 
-Los metadatos estándar como `~name` y `~prefixes` usan la gramática general postfix `~`; `name` y `prefixes` no son etiquetas contextuales especiales por esa razón.
+Standard metadata such as `~name` y `~prefixes` they use Postfix General Grammar `~`; `name` y `prefixes` they are not special contextual tags because of that reason.
 
-No existe un token único ni una categoría léxica denominada «expresión reservada» para `start with`; es una producción gramatical formada por una palabra contextual y una palabra reservada.
+There is no token neither a single lexical category nor one termed ‘reserved expression’ for `start with`; it is a production grammatical, consisting of a contextual word and one reserved word.
 
 ## Sintaxis concreta
 
-De manera esquemática:
+In brief:
 
 ```ebnf
 thing-declaration
@@ -151,11 +151,11 @@ start-with-declaration
         )
 ```
 
-La escritura entre comillas en esta EBNF no implica por sí sola que `start` o `abstract` sean palabras reservadas; su clasificación léxica es la fijada en la sección anterior.
+The text in quotation marks in this EBNF does not in itself imply that `start` o `abstract` are reserved words; their lexical classification is as set out in the previous section.
 
 ## Sintaxis abstracta
 
-El AST debe distinguir, como mínimo:
+The AST must distinguish, as a minimum:
 
 ```text
 ThingDecl(anchor, mode, directAncestors, body)
@@ -165,68 +165,70 @@ CreateReference(anchor)
 DestroyReference(anchor)
 ```
 
-`CreateReference` no contiene un descriptor ni una nueva definición. `InitialActivationSet` conserva procedencia textual para diagnósticos, pero su significado es un conjunto no ordenado.
+`CreateReference` does not contain a descriptor nor a new definition. `InitialActivationSet` preserves provenance textual data for diagnostic purposes, but its meaning is an unordered set.
 
-## Consecuencias
+## Consequences
 
-- El programa determina un catálogo finito de identidades posibles; el mundo determina cuáles están activas y qué materializaciones concretas existen.
-- `destroy` + `create` no introduce una identidad nueva, aunque sí puede terminar una materialización y construir otra de la misma identidad canónica.
-- El grafo declarativo de especialización procede de definiciones estáticas, no de fragmentos acumulados durante la ejecución.
-- El bypass de una antecesora inactiva continúa siendo temporal y restaura las aristas declaradas al reactivarla.
-- Desaparecen los conflictos por fusión de cuerpos de `thing`.
-- La modificación dinámica de propiedades, cuando esté permitida, debe expresarse mediante operaciones explícitas como `add` y `remove` y pertenece a la materialización activa correspondiente.
-- Crear cantidades no acotadas de individuos frescos exigiría una característica distinta; `create` no la introduce implícitamente.
-- El LSP puede navegar desde toda activación o materialización hasta una única definición canónica.
-- El catálogo de palabras reservadas debe distinguir palabras duras de palabras contextuales.
+- The programme determines a finite set of possible identities; the world determines which ones are active and which specific instances exist.
+- `destroy` + `create` does not introduce a identity new, although it can end one materialisation and build another one just like it canonical identity.
+- The graph The specialisation declaration is derived from static definitions, not from fragments accumulated during execution.
+- A bypass of a ancestor The ‘inactive’ status remains temporary and restores the declared edges when reactivated.
+- Conflicts over the merger of organisations are resolved `thing`.
+- Dynamic modification of properties, where permitted, must be expressed using explicit operations such as `add` y `remove` and belongs to the materialisation the relevant asset.
+- Creating an unlimited number of fresh individuals would require a different feature; `create` it does not introduce it implicitly.
+- The LSP can be accessed from anywhere activation o materialisation up to just one canonical definition.
+- The list of reserved words must distinguish between hard words and contextual words.
 
-## Alternativas descartadas
+## Options ruled out
 
-### Reutilizar un nombre para identidades sucesivas
+### Reusing a name for successive identities
 
-Se descarta porque obliga a decidir si las referencias existentes siguen a la identidad antigua o se vuelven a enlazar al nuevo ocupante del nombre. La segunda opción puede invalidar dominios y cardinalidades almacenados; la primera conserva identidades ocultas que ya no coinciden con el nombre visible.
+This is ruled out because it forces a decision on whether the existing references follow the identity either remain as they were or are re-linked to the new holder of the name. The second option may invalidate stored domains and cardinalities; the first preserves hidden identities that no longer match the visible name.
 
-### Hibernar la carga propia tras `destroy`
+### Put the own stored data after `destroy`
 
-Se descarta conforme a D-099. Conservar la materialización propia haría que `destroy` se comportase como una mera desactivación y evitaría que una nueva materialización partiera del estado declarado.
+It is ruled out in accordance with D-099. Preserve the materialisation its own would mean that `destroy` would act simply as a deactivation and would prevent a new materialisation started from the state stated.
 
-### Acumular antecesoras sin permitir retirarlas
+### Accumulate predecessors without allowing them to be removed
 
-Se descarta porque una nueva creación aparenta proporcionar una definición completa, pero conservaría silenciosamente todas las antecesoras anteriores. No resulta natural para lectores sin formación técnica y tampoco coincide con la expectativa habitual de herencia declarativa.
+It is ruled out because a new creation appears to provide a complete definition, but would silently retain all previous predecessors. This does not come across as natural to readers without a technical background, nor does it align with the usual expectation of declarative inheritance.
 
-### Conservar la fusión fragmentaria de `thing`
+### Preserve the fragmentary fusion of `thing`
 
-Se descarta porque hace depender el descriptor de una identidad de qué reglas coinciden y en qué oleadas. Los cambios estructurales deben usar operaciones explícitas.
+It is ruled out because it makes the descriptor of a identity which rules they agree on and in which waves. Structural changes must use explicit operations.
 
-### Modelar `start with` como acción o `then`
+### Modelling `start with` such as action o `then`
 
-Se descarta porque no tiene llamador, participantes, condiciones ni resultado operativo. Su contenido es un conjunto inicial, no una secuencia causal.
+It is ruled out because it has no caller, participants, conditions or result operation. Its content is an initial set, not a sequence causal.
 
-## Verificación futura
+## Future verification
 
-La suite deberá cubrir:
+The suite must cover:
 
-1. Una definición canónica por `thing` y regla.
-2. Rechazo de dos definiciones con la misma ancla.
-3. Rechazo de `create` con categoría, antecesoras o cuerpo.
-4. Activación y destrucción de una `thing`.
-5. Rematerialización de una `thing` concreta con conservación exacta de identidad y descriptor, pero reconstrucción de carga desde predeterminados e inicializadores.
-6. Activación idempotente concurrente de una identidad ausente.
-7. Como máximo un `start with` por módulo y ausencia válida de contribución en un módulo.
-8. Independencia del orden y deduplicación dentro del conjunto unificado de contribuciones.
-9. Admisión de contribución directa, bloque unificado y coma final opcional.
-10. Rechazo de declaraciones no activables, activación de otro módulo y colecciones anidadas.
-11. Proyecto cuyos módulos omiten `start with`, equivalente a una contribución inicial vacía.
-12. Materialización conjunta de las contribuciones de todos los módulos y estabilización previa a acciones externas.
-13. `Thing` siempre efectiva y no activable.
-14. Descarte de carga y modificaciones estructurales propias tras `destroy`, sin borrar carga ajena meramente suspendida por dependencia.
-15. Unión de contribuciones `start with` del cierre transitivo estático de tests alcanzables.
-16. Disparo durante la estabilización inicial de un `when` cuya condición comienza verdadera.
-17. Navegación LSP desde cada activación a una única definición.
+1. One canonical definition by `thing` and a ruler.
+2. Rejection of two definitions with the same anchor.
+3. Rejection of `create` by category, predecessors or body.
+4. Activation and the destruction of a `thing`.
+5. Rematerialisation of a `thing` specific, whilst maintaining the exact identity y descriptor, but load reconstruction from defaults and initialisers.
+6. Activation concurrent idempotent of a identity absent.
+7. At most one `start with` by module and a valid exemption from contribution in a module.
+8. Order independence and deduplication within the unified set of contributions.
+9. Support for direct input, unified block and optional trailing comma.
+10. Rejection of non-activatable declarations, activation from another module and nested collections.
+11. A project in which certain modules are omitted `start with`, equivalent to an empty initial contribution.
+12. Materialisation the combined total of the contributions from all modules and stabilisation prior to external actions.
+13. `Thing` always in force and cannot be activated.
+14. Load reduction and in-house structural modifications following `destroy`, without removing a third party’s charge that has merely been suspended by reason of subordination.
+15. Union of contributions `start with` of the static transitive closure of reachable tests.
+16. Shooting during the stabilisation initial of a `when` whose condition is initially true.
+17. LSP navigation from each activation to a single definition.
 
-## Modificación sintáctica por D-084
+## Syntactic modification by D-084
 
-El cuerpo de una `thing` puede omitirse cuando no contiene miembros. `thing A`, `thing A {}` y `thing A;` fijan la misma definición canónica; solo su CST difiere.
+The body of a `thing` It may be omitted when it contains no members. `thing A`, `thing A {}` y `thing A;` set it at the same level canonical definition; only their CST differs.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-La activación inicial pasa a ser modular. Cada módulo puede contribuir como máximo un `start with`; todas las contribuciones se combinan y materializan conjuntamente antes de la estabilización. `start with` ya no separa `things` y `rules`, no establece orden y solo puede activar declaraciones con ciclo de vida del mismo módulo.
+The initial activation becomes modular. Each module You can contribute a maximum of one `start with`; all contributions are combined and brought together before the stabilisation. `start with` no longer separates `things` y `rules`, does not specify an order and can only trigger statements with cycle its lifespan module.
+
+

@@ -16,55 +16,57 @@ affects:
 ---
 # ADR-053 — Operador semántico y flujo de autoría
 
-- Ampliada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Preguntas relacionadas: Q-008, Q-015, Q-036, Q-039, Q-040
-- Documentos afectados: cambios semánticos, Git, tooling del operador
+- Expanded by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Related questions: Q-008, Q-015, Q-036, Q-039, Q-040
+- Documents affected: semantic changes, Git, operator tooling
 
-## Contexto
+## Context
 
-La interacción en lenguaje natural debe transformar el modelo mediante operaciones comprobables. No puede ocultar reglas nuevas en la IA ni editar `.mud` sin analizar consecuencias.
+Natural language interaction must transform the model through verifiable operations. You cannot hide new rules within the AI or edit `.mud` without considering the consequences.
 
 ## Decisión
 
-Antes de modificar, el operador clasifica la petición al menos por:
+Before making any changes, the operator classifies the request according to at least the following criteria:
 
-- consulta o cambio;
-- `CREATE`, `UPDATE`, `RETIRE` o migración;
-- cambio estructural, de API, causal, de vinculación, dominio, tipo, azar, invariante, admisibilidad o alcanzabilidad;
-- ambigua, incompleta, fuera de alcance o intento de eludir restricciones.
+- query or change;
+- `CREATE`, `UPDATE`, `RETIRE` or migration;
+- structural change, API change, causal, liaison, domain, type, chance, invariant, admissibility o reachability;
+- ambiguous, incomplete, out of scope or an attempt to circumvent restrictions.
 
-Puede aplicar únicamente inferencias mecánicas ya definidas por el lenguaje, como cardinalidad `[1]`, ausencia de `given` cuando no se necesitan valores, `empty`, órdenes canónicos y finitud derivable. No inventa participantes, `given`, dominios, reglas, acciones, `after`, `always` ni significado de `allowed` o `eventually`.
+It can only apply mechanical inferences that have already been defined by the language, such as cardinality `[1]`, absence of `given` when no values are required, `empty`, canonical orders and finiteness derivable. It does not invent participants, `given`, domains, rules, actions, `after`, `always` nor the meaning of `allowed` o `eventually`.
 
-El flujo de una mutación es:
+The flowchart for a mutation is:
 
-1. capturar estado Git y versiones;
-2. resolver intención, nombres y anclas;
-3. consultar decisiones, dudas y grafo;
-4. calcular impacto y ambigüedades;
-5. producir un plan de operaciones;
-6. preparar restauración aislada;
-7. editar fuente y metadatos autorizados;
-8. formatear, compilar y validar;
-9. reconstruir grafo e IR;
-10. materializar y ejecutar pruebas;
-11. contrastar impacto previsto y observado;
-12. inspeccionar diff, rutas y cambios ajenos;
-13. crear un commit atómico.
+1. capture state Git and versions;
+2. resolve intent, names and anchors;
+3. to discuss decisions, queries and graph;
+4. assess the impact and ambiguities;
+5. draw up an operational plan;
+6. prepare an isolated restoration;
+7. edit authorised source and metadata;
+8. format, compile and validate;
+9. rebuild graph and IR;
+10. to plan and carry out tests;
+11. compare the expected and observed impact;
+12. check diffs, paths and changes made by others;
+13. create a atomic commit.
 
-Un fallo anterior al commit restaura el estado inicial. Un worktree sucio no autoriza a modificar ni descartar trabajo ajeno.
+A failure prior to the commit restores the state Initial. A dirty worktree does not authorise you to modify or discard someone else’s work.
 
-Las consultas puras `READ` no crean commit. Si una consulta cierra una duda o modifica documentación, esa modificación es `UPDATE`, no `READ`.
+Pure enquiries `READ` do not create a commit. If a query resolves an issue or amends documentation; that amendment is `UPDATE`, no `READ`.
 
-## Consecuencias
+## Consequences
 
-- Un plugin para Codex es una interfaz posible sobre servicios de consulta, gestión de reglas y gestión de acciones.
-- La agenda conserva estado, procedencia y preguntas, pero no añade semántica al mundo.
-- `RETIRE`, permisos de aprobación y el contrato de explicación siguen abiertos.
+- A Codex plugin is a possible interface to services provided by query, rule management and action management.
+- The diary retains state, provenance and asks questions, but doesn’t add semantics to the world.
+- `RETIRE`, approval permits and the contract from explanation are still open.
 
-## Verificación
+## Verification
 
-1. Clasificación multietiqueta de peticiones representativas.
-2. Rechazo de una inferencia de dominio no autorizada.
-3. Restauración tras fallo en cualquier fase.
-4. Commit limitado al plan y ausencia de commit para `READ`.
-5. Detección de impacto inesperado antes de confirmar.
+1. Multi-label classification of representative queries.
+2. Rejection of a inference from domain unauthorised.
+3. Restoration following failure at any stage.
+4. Commits limited to the plan and no commits for `READ`.
+5. Detection of unexpected impact before confirmation.
+
+
