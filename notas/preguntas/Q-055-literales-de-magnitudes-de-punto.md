@@ -1,6 +1,6 @@
 ---
 id: Q-055
-title: Literales de magnitudes de punto
+title: Point-magnitude literals
 priority: P2
 opened: 2026-07-29
 resolved: true
@@ -16,28 +16,28 @@ affects:
 superseded-by: []
 ---
 
-# Q-055 — Literales de magnitudes de punto
+# Q-055 — Point-magnitude literals
 
-## Pregunta
+## Question
 
-¿Cómo puede `~format` definir simultáneamente la representación canónica y una forma literal fuente directa sin exigir que el scanner inicial conozca ya el tipo esperado y la declaración de magnitud resuelta?
+How can `~format` define both canonical representation and a direct source literal form without requiring the initial scanner to know the expected type and resolved magnitude declaration?
 
-## Resolución
+## Resolution
 
-D-062 conserva la forma fuente directa, la canonicalidad, la inversión y el dominio. D-089 hace que el scanner base ignore `~format`; cuando una posición posee un único tipo de punto esperado, el clasificador contextual lee el span fuente original y puede producir `POINT_LITERAL` con prioridad sobre la tokenización ordinaria del mismo span. Sin tipo esperado único esa alternativa no existe.
+D-062 retains the direct source form, canonicality, inversion and domain. D-089 makes the base scanner ignore `~format`; when a position has one expected point type, the contextual classifier reads the original source span and may produce `POINT_LITERAL` in preference to ordinary tokenisation of that span. Without one expected type, this alternative does not exist.
 
-La inversión estática incluye la capacidad de reconocer de forma determinista el final de la representación completa. Por ello no se necesita un delimitador nuevo y tampoco existe dependencia circular del scanner base.
+Static inversion includes the ability to determine the end of the complete representation deterministically. No new delimiter is therefore needed, and the base scanner has no circular dependency.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: el scanner inicial puede ejecutarse sin consultar declaraciones de magnitud.
-- C2: una secuencia fuente se reclasifica reproduciblemente cuando el tipo esperado identifica una única magnitud de punto.
-- C3: las colisiones con una interpretación ordinaria tienen una prioridad explícita.
-- C4: los artefactos léxicos distinguen scanner base y clasificación contextual.
+- C1: The initial scanner can run without consulting magnitude declarations.
+- C2: A source sequence is reproducibly reclassified when the expected type identifies one point magnitude.
+- C3: Collisions with an ordinary interpretation have an explicit priority.
+- C4: Lexical artefacts distinguish base scanning and contextual classification.
 
-## Evidencia de cierre
+## Closure evidence
 
-- C1: `D-089` y `MUD-LEX-012`.
-- C2: `D-062`, `D-089` y `MUD-LEX-013`.
-- C3: `D-089` y `MUD-LEX-014`.
-- C4: `especificacion/06-lexico.md` y `especificacion/gramatica/mud-lexico.ebnf`.
+- C1: `D-089` and `MUD-LEX-012`.
+- C2: `D-062`, `D-089` and `MUD-LEX-013`.
+- C3: `D-089` and `MUD-LEX-014`.
+- C4: `especificacion/06-lexico.md` and `especificacion/gramatica/mud-lexico.ebnf`.
