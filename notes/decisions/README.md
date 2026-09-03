@@ -105,7 +105,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-089 | current | 2026-08-16 | [[notes/decisions/ADR-089-contextual-source-form-classification-without-circular-scanner-dependency|Contextual classification of source forms without circular scanner dependency]] |
 | D-090 | current | 2026-08-16 | [[notes/decisions/ADR-090-functional-branches-without-public-anchor|Functional branches without a public anchor]] |
 | D-091 | current | 2026-08-16 | [[notes/decisions/ADR-091-family-data-as-anchored-descriptors|Family data as anchored descriptors]] |
-| D-092 | current | 2026-08-16 | [[notes/decisions/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Static availability of reflective properties]] |
+| D-092 | current | 2026-08-16 | [[notes/decisions/ADR-092-static-availability-of-reflective-properties|Static availability of reflective properties]] |
 | D-093 | current | 2026-08-16 | [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|Surface AST, nominal HIR and later semantic phase]] |
 | D-094 | current | 2026-08-16 | [[notes/decisions/ADR-094-anclas-terminales-de-metadatos-configurados|Terminal anchors for configured metadata]] |
 | D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-extremos-vacios-como-ausencia-ordinaria|Empty extrema as ordinary absence]] |

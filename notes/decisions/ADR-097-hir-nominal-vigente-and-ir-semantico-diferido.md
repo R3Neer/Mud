@@ -13,7 +13,7 @@ affects:
 # ADR-097 — Current nominal HIR and deferred semantic IR
 
 - Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
-- Clarifies the phase boundary used by [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]].
+- Clarifies the phase boundary used by [[ADR-092-static-availability-of-reflective-properties|D-092]].
 
 ## Context
 
