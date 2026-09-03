@@ -1,7 +1,7 @@
 ---
 id: D-092
 title: "Disponibilidad estática de propiedades reflectivas"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

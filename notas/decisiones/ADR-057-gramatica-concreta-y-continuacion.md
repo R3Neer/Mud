@@ -1,7 +1,7 @@
 ---
 id: D-057
 title: "Concrete grammar, precedence and continuation"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

@@ -1,7 +1,7 @@
 ---
 id: D-039
 title: "Collections and dictionaries"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

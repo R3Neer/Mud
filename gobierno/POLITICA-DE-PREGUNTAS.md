@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/gobierno
   - mud/preguntas
-status: vigente
+status: current
 ---
 
 # Policy MUD questions

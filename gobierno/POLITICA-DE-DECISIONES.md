@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/gobierno
   - mud/decisiones
-status: vigente
+status: current
 ---
 
 # Policy MUD decisions
@@ -46,7 +46,7 @@ Every ADR begins with:
 ---
 id: D-NNN
 title: "Título"
-status: propuesta
+status: proposed
 date: YYYY-MM-DD
 supersedes: []
 superseded-by: []

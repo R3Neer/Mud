@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/tooling
   - mud/obsidian
-status: implementado
+status: implemented
 verified: 2026-08-31
 ---
 

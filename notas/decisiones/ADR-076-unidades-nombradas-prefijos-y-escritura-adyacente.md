@@ -1,7 +1,7 @@
 ---
 id: D-076
 title: "Named units, prefixes and adjacent notation"
-status: vigente
+status: current
 date: 2026-08-03
 supersedes: []
 superseded-by: []

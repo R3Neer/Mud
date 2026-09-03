@@ -1,7 +1,7 @@
 ---
 id: D-050
 title: "Comments, terminators, text and numeric separators"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

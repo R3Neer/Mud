@@ -1,7 +1,7 @@
 ---
 id: D-079
 title: "Diagnóstico exterior de reglas `always`"
-status: vigente
+status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []

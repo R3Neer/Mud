@@ -1,7 +1,7 @@
 ---
 id: D-046
 title: "Algebra and conflicts of effects"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

@@ -1,7 +1,7 @@
 ---
 id: D-034
 title: "`Num` exactly and `Rum` binary64"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

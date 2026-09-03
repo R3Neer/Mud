@@ -31,7 +31,7 @@ def document(body: str, questions: tuple[str, ...] = ()) -> str:
     return (
         "---\n"
         "title: Fixture\n"
-        "status: propuesta\n"
+        "status: proposed\n"
         "normative: true\n"
         f"{question_field}"
         "---\n"

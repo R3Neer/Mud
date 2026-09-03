@@ -1,7 +1,7 @@
 ---
 id: D-053
 title: "Operador semántico y flujo de autoría"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

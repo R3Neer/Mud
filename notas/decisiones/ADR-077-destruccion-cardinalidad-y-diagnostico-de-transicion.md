@@ -1,7 +1,7 @@
 ---
 id: D-077
 title: "Cardinality-conditioned destruction and transition diagnostics"
-status: vigente
+status: current
 date: 2026-08-03
 supersedes: []
 superseded-by: []

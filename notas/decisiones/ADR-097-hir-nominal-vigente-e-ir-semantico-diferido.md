@@ -1,7 +1,7 @@
 ---
 id: D-097
 title: "HIR nominal vigente e IR semántico diferido"
-status: vigente
+status: current
 date: 2026-08-28
 supersedes: []
 superseded-by: []

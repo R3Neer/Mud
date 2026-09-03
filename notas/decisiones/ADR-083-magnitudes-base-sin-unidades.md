@@ -1,7 +1,7 @@
 ---
 id: D-083
 title: "Magnitudes base sin unidades"
-status: vigente
+status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []

@@ -1,7 +1,7 @@
 ---
 id: D-088
 title: "Iteración, progresiones firmadas y bloques de expresión"
-status: vigente
+status: current
 date: 2026-08-15
 supersedes: []
 superseded-by: []

@@ -6,7 +6,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/moc
-status: en-preparacion
+status: in-preparation
 normative: true
 questions:
   - Q-063

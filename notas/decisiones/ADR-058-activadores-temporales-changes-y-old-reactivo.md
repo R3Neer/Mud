@@ -1,7 +1,7 @@
 ---
 id: D-058
 title: "Temporal triggers, `changes` and reactive `old`"
-status: vigente
+status: current
 date: 2026-07-29
 supersedes: []
 superseded-by: []

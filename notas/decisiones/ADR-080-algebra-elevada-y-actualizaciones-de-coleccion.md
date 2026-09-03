@@ -1,7 +1,7 @@
 ---
 id: D-080
 title: "Álgebra elevada y actualizaciones de colección"
-status: vigente
+status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []

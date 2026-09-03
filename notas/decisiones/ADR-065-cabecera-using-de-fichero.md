@@ -1,7 +1,7 @@
 ---
 id: D-065
 title: "File-level `using` header"
-status: vigente
+status: current
 date: 2026-07-30
 supersedes: []
 superseded-by: []

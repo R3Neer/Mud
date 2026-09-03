@@ -1,7 +1,7 @@
 ---
 id: D-064
 title: "Ordering by stable path"
-status: vigente
+status: current
 date: 2026-07-30
 supersedes: []
 superseded-by: []

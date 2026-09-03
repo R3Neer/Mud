@@ -1,7 +1,7 @@
 ---
 id: D-026
 title: "Membership strict and cardinality by `then`"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

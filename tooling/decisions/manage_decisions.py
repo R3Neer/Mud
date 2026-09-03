@@ -44,7 +44,7 @@ QUESTION_LINK = re.compile(r"(?:notas/)?preguntas/(Q-\d{3}-[^|\]#)]+)")
 DECISION_TOKEN = re.compile(r"\bD-\d{3}\b")
 QUESTION_TOKEN = re.compile(r"\bQ-\d{3}\b")
 
-ALLOWED_STATUSES = {"propuesta", "vigente", "sustituida", "retirada", "rechazada"}
+ALLOWED_STATUSES = {"proposed", "current", "superseded", "withdrawn", "rejected"}
 REQUIRED_FIELDS = (
     "id",
     "title",
@@ -282,11 +282,11 @@ def render_index(decisions: dict[str, Decision], reserved: set[str]) -> str:
         "## Resumen",
         "",
         f"- Total: {len(decisions)}.",
-        f"- Vigentes: {counts['vigente']}.",
-        f"- Propuestas: {counts['propuesta']}.",
-        f"- Sustituidas: {counts['sustituida']}.",
-        f"- Retiradas: {counts['retirada']}.",
-        f"- Rechazadas: {counts['rechazada']}.",
+        f"- Current: {counts['current']}.",
+        f"- Proposed: {counts['proposed']}.",
+        f"- Superseded: {counts['superseded']}.",
+        f"- Withdrawn: {counts['withdrawn']}.",
+        f"- Rejected: {counts['rejected']}.",
         "",
         "## Índice",
         "",
@@ -359,7 +359,7 @@ def validate(ui=None) -> int:
                 errors.append(
                     f"{decision.identifier} links to an unknown question: {question}"
                 )
-        if decision.status == "sustituida" and not decision.superseded_by:
+        if decision.status == "superseded" and not decision.superseded_by:
             errors.append(f"{decision.identifier} is superseded without superseded-by")
         for older in decision.supersedes:
             if decision.identifier not in decisions[older].superseded_by:
@@ -422,8 +422,8 @@ def validate(ui=None) -> int:
     message = (
         "Mud decisions: "
         f"{len(decisions)} unique ADRs; "
-        f"{counts['vigente']} current, "
-        f"{counts['propuesta']} proposed and "
+        f"{counts['current']} current, "
+        f"{counts['proposed']} proposed and "
         f"{len(reserved)} reserved identifiers; index and relationships verified."
     )
     if ui is None:

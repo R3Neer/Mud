@@ -1,7 +1,7 @@
 ---
 id: D-027
 title: "Departures from the model by means of `look` y `message`"
-status: sustituida
+status: superseded
 date: 2026-07-27
 supersedes: []
 superseded-by:

@@ -1,7 +1,7 @@
 ---
 id: D-029
 title: "Intervals, effective limits and cycles of point"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

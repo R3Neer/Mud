@@ -1,7 +1,7 @@
 ---
 id: D-078
 title: "Nominal resolution, anchor catalogue and initial graph"
-status: vigente
+status: current
 date: 2026-08-03
 supersedes: []
 superseded-by: []

@@ -3,7 +3,7 @@ title: Obsidian Explorer ordering
 tags:
   - mud/gobierno
   - mud/obsidian
-status: vigente
+status: current
 sorting-spec: |
   target-folder: /*
   README

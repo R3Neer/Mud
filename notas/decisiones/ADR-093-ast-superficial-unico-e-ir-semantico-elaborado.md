@@ -1,7 +1,7 @@
 ---
 id: D-093
 title: "AST superficial, HIR nominal y fase semántica posterior"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

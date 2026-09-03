@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/notas
   - mud/traduccion
-status: activo
+status: active
 decisions:
   - D-104
 temporary: true

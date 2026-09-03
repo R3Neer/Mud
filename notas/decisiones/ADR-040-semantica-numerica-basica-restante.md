@@ -1,7 +1,7 @@
 ---
 id: D-040
 title: "Semantics remaining basic numeracy"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

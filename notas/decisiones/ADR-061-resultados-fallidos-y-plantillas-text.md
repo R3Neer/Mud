@@ -1,7 +1,7 @@
 ---
 id: D-061
 title: "Non-accepted results and `Text` templates"
-status: vigente
+status: current
 date: 2026-07-29
 supersedes: []
 superseded-by: []

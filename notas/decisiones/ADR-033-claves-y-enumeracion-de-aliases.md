@@ -1,7 +1,7 @@
 ---
 id: D-033
 title: "Composite keys and alias enumeration"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

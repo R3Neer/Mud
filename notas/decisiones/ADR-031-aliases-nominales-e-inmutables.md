@@ -1,7 +1,7 @@
 ---
 id: D-031
 title: "Nominal aliases, immutable and without cycle of life"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

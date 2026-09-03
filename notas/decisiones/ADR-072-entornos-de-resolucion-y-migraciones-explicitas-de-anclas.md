@@ -1,7 +1,7 @@
 ---
 id: D-072
 title: "Resolution environments and explicit anchor migrations"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

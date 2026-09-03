@@ -42,7 +42,7 @@ def render() -> str:
         "tags:",
         "  - mud/notas",
         "  - mud/traduccion",
-        "status: activo",
+        "status: active",
         "decisions:",
         "  - D-104",
         "temporary: true",

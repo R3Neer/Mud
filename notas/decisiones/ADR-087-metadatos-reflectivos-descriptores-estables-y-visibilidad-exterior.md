@@ -1,7 +1,7 @@
 ---
 id: D-087
 title: "Metadatos reflectivos, descriptores estables y visibilidad exterior"
-status: vigente
+status: current
 date: 2026-08-15
 supersedes: []
 superseded-by: []

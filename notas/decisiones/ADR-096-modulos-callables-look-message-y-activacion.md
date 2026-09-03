@@ -1,7 +1,7 @@
 ---
 id: D-096
 title: "Módulos, callables, `look`, `message` y activación"
-status: vigente
+status: current
 date: 2026-08-28
 supersedes:
   - "D-027"

@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/normativa
-status: borrador
+status: draft
 normative: true
 depends-on:
   - "[[00-convenciones-editoriales]]"

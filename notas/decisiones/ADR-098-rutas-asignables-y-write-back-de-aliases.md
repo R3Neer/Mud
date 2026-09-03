@@ -1,7 +1,7 @@
 ---
 id: D-098
 title: "Rutas asignables y write-back de aliases inmutables"
-status: vigente
+status: current
 date: 2026-08-28
 supersedes: []
 superseded-by: []

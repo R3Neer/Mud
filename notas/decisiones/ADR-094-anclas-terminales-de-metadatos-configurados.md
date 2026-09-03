@@ -1,7 +1,7 @@
 ---
 id: D-094
 title: "Anclas terminales de metadatos configurados"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

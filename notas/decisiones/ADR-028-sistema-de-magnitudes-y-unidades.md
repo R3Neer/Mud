@@ -1,7 +1,7 @@
 ---
 id: D-028
 title: "System of quantities and units"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

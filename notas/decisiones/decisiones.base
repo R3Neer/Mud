@@ -23,7 +23,7 @@ views:
     name: Vigentes
     filters:
       and:
-        - status == "vigente"
+        - status == "current"
     order:
       - id
       - title

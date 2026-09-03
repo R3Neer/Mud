@@ -1,7 +1,7 @@
 ---
 id: D-035
 title: "Organisation, names, `using` and anchors"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

@@ -1,7 +1,7 @@
 ---
 id: D-051
 title: "Graph future semantics and reconstructable information"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

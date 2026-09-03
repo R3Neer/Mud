@@ -1,7 +1,7 @@
 ---
 id: D-042
 title: "Shares, root and results"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

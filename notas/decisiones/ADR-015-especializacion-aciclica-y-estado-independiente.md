@@ -1,7 +1,7 @@
 ---
 id: D-015
 title: "Acyclic specialisation and state independent"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

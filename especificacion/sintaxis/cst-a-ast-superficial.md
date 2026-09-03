@@ -6,7 +6,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/sintaxis
-status: propuesta
+status: proposed
 normative: true
 depends-on:
   - cst-sin-perdidas

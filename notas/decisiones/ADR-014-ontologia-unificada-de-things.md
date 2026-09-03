@@ -1,7 +1,7 @@
 ---
 id: D-014
 title: "Unified ontology of `thing`"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

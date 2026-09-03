@@ -1,7 +1,7 @@
 ---
 id: D-104
 title: "Inglés británico para la migración editorial"
-status: vigente
+status: current
 date: 2026-09-02
 supersedes: []
 superseded-by: []

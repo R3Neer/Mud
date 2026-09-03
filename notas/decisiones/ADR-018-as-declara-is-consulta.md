@@ -1,7 +1,7 @@
 ---
 id: D-018
 title: "`as` declares specialisation in `is` the query"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

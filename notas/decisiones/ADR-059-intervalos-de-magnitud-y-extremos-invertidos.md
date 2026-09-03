@@ -1,7 +1,7 @@
 ---
 id: D-059
 title: "Magnitude intervals and inverted endpoints"
-status: vigente
+status: current
 date: 2026-07-29
 supersedes: []
 superseded-by: []

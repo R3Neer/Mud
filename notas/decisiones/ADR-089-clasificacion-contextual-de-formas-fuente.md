@@ -1,7 +1,7 @@
 ---
 id: D-089
 title: "Clasificación contextual de formas fuente sin dependencia circular del scanner"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

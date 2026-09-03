@@ -1,7 +1,7 @@
 ---
 id: D-067
 title: "Short names for numeric types"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

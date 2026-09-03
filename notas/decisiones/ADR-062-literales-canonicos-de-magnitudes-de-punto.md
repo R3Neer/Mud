@@ -1,7 +1,7 @@
 ---
 id: D-062
 title: "Canonical point-magnitude literals"
-status: vigente
+status: current
 date: 2026-07-29
 supersedes: []
 superseded-by: []

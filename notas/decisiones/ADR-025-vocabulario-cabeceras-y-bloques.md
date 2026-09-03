@@ -1,7 +1,7 @@
 ---
 id: D-025
 title: "Vocabulary from `thing`, headings and sections"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

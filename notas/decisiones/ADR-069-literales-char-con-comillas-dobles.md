@@ -1,7 +1,7 @@
 ---
 id: D-069
 title: "`Char` literals with double quotes"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

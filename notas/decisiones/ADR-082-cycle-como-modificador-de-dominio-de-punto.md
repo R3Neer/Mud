@@ -1,7 +1,7 @@
 ---
 id: D-082
 title: "`cycle` como modificador de dominio de punto"
-status: vigente
+status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []

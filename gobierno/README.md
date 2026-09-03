@@ -4,7 +4,7 @@ aliases:
   - MUD governance
 tags:
   - mud/gobierno
-status: vigente
+status: current
 ---
 
 # MUD project governance

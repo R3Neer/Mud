@@ -1,7 +1,7 @@
 ---
 id: D-001
 title: "`.mud` as a source semantics really"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

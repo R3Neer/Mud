@@ -1,7 +1,7 @@
 ---
 id: D-007
 title: "Causal resolution by waves over snapshots"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

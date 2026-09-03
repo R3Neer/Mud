@@ -1,7 +1,7 @@
 ---
 id: D-085
 title: "Diccionarios funcionales, metadatos y activación estructurada"
-status: vigente
+status: current
 date: 2026-08-05
 supersedes: []
 superseded-by: []

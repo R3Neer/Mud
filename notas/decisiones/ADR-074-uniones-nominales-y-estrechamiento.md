@@ -1,7 +1,7 @@
 ---
 id: D-074
 title: "Nominal unions and type narrowing"
-status: vigente
+status: current
 date: 2026-08-03
 supersedes: []
 superseded-by: []

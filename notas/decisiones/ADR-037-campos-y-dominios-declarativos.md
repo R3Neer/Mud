@@ -1,7 +1,7 @@
 ---
 id: D-037
 title: "Fields and declarative domains"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

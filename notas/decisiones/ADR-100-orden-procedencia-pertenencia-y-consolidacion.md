@@ -1,7 +1,7 @@
 ---
 id: D-100
 title: "Orden lógico, procedencia, pertenencia y consolidación de efectos"
-status: vigente
+status: current
 date: 2026-08-29
 supersedes: []
 superseded-by: []

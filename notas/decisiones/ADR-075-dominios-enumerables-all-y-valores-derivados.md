@@ -1,7 +1,7 @@
 ---
 id: D-075
 title: "Enumerable domains, `all` and derived-value form"
-status: vigente
+status: current
 date: 2026-08-03
 supersedes: []
 superseded-by: []

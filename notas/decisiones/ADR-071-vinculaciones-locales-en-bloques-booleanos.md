@@ -1,7 +1,7 @@
 ---
 id: D-071
 title: "Local bindings in Boolean blocks"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

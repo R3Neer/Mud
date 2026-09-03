@@ -1,7 +1,7 @@
 ---
 id: D-041
 title: "Contracts under the three types of rules"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

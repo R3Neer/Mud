@@ -1,7 +1,7 @@
 ---
 id: D-090
 title: "Ramas funcionales sin ancla pública"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/normativa
-status: esqueleto
+status: skeleton
 normative: true
 depends-on:
   - "[[00-convenciones-editoriales]]"

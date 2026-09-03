@@ -1,7 +1,7 @@
 ---
 id: D-084
 title: "Especialización de aliases, miembros heredados y vistas derivadas"
-status: vigente
+status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []

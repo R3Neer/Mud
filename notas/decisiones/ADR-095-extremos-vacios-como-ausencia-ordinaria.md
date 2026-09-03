@@ -1,7 +1,7 @@
 ---
 id: D-095
 title: "Extremos vacíos como ausencia ordinaria"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

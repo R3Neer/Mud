@@ -1,7 +1,7 @@
 ---
 id: D-091
 title: "Datos de family como descriptores anclados"
-status: vigente
+status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []

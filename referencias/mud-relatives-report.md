@@ -1,6 +1,6 @@
 ---
 title: Academic initiatives associated with the MUD
-status: referencia
+status: reference
 recovered-sources: 2026-08-02
 ---
 

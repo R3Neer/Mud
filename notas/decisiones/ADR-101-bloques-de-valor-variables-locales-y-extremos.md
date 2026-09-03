@@ -1,7 +1,7 @@
 ---
 id: D-101
 title: "Bloques de valor, variables locales almacenadas y extremos por testigos"
-status: vigente
+status: current
 date: 2026-08-29
 supersedes: []
 superseded-by: []

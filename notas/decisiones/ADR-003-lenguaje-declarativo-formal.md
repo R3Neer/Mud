@@ -1,7 +1,7 @@
 ---
 id: D-003
 title: "MUD is a formal declarative language"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

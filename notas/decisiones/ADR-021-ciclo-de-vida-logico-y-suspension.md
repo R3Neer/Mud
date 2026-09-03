@@ -1,7 +1,7 @@
 ---
 id: D-021
 title: "Cycle logical lifespan and suspension by department"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

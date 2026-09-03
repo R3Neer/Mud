@@ -1,7 +1,7 @@
 ---
 id: D-011
 title: "Derivatives do not add behaviour of domain"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

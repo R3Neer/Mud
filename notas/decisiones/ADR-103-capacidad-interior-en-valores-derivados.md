@@ -1,7 +1,7 @@
 ---
 id: D-103
 title: "Capacidad interior en valores derivados"
-status: vigente
+status: current
 date: 2026-08-29
 supersedes: []
 superseded-by: []

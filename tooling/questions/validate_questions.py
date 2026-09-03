@@ -43,11 +43,11 @@ QUESTION_LINK = re.compile(r"\[\[(notas/preguntas/Q-[^|\]#]+)")
 CRITERION_ENTRY = re.compile(r"^- (C\d+):\s+\S.*$", re.MULTILINE)
 EVIDENCE_ENTRY = re.compile(r"^- (C\d+):\s+\S.*$", re.MULTILINE)
 
-ACTIVE_STATES = {"abierta", "parcialmente-decidida"}
+ACTIVE_STATES = {"open", "partially-decided"}
 RESOLVED_STATES = {
-    "false": "abierta",
-    None: "parcialmente-decidida",
-    "true": "cerrada",
+    "false": "open",
+    None: "partially-decided",
+    "true": "closed",
 }
 REQUIRED_FIELDS = (
     "id:",
@@ -67,8 +67,8 @@ PRIORITY_HEADINGS = {
     "P2": "Producto y operación",
 }
 STATUS_LABELS = {
-    "abierta": "Abierta",
-    "parcialmente-decidida": "Parcialmente decidida",
+    "open": "Open",
+    "partially-decided": "Partially decided",
 }
 
 
@@ -93,18 +93,18 @@ def render_index(questions: dict[str, Question]) -> str:
     counts = Counter(question.state for question in active.values())
     lines = [
         "---",
-        "title: Preguntas activas de MUD",
+        "title: MUD active questions",
         "tags:",
         "  - mud/notas",
         "  - mud/preguntas",
-        "status: activo",
+        "status: active",
         "---",
         "",
-        "# Preguntas activas de MUD",
+        "# MUD active questions",
         "",
-        "Este índice contiene únicamente preguntas en estado `abierta` o `parcialmente-decidida`. Su gestión se rige por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].",
+        "This index contains only questions in `open` or `partially-decided` state. They are governed by [[gobierno/POLITICA-DE-PREGUNTAS|MUD question policy]].",
         "",
-        f"Hay {len(active)} preguntas activas: {counts['abierta']} abiertas y {counts['parcialmente-decidida']} parcialmente decididas.",
+        f"There are {len(active)} active questions: {counts['open']} open and {counts['partially-decided']} partially decided.",
         "",
         "Prioridades:",
         "",
@@ -133,7 +133,7 @@ def render_index(questions: dict[str, Question]) -> str:
     lines.extend([
         "## Historial",
         "",
-        "Las preguntas cerradas, descartadas o sustituidas no aparecen en este índice. Sus archivos permanecen en esta carpeta con una ubicación estable para conservar la trazabilidad.",
+        "Closed, discarded or superseded questions do not appear in this index. Their files remain in this folder at stable locations for traceability.",
         "",
     ])
     return "\n".join(lines)
@@ -235,14 +235,14 @@ def main(argv: list[str] | None = None) -> int:
                     errors.append(
                         f"Invalid closing date in {path.relative_to(ROOT)}: {closed_value}"
                     )
-        if question_state == "cerrada":
+        if question_state == "closed":
             criterion_match = re.search(
-                r"^## Criterio de cierre\s*$([\s\S]*?)(?=^## |\Z)",
+                r"^## (?:Closure criterion|Criterio de cierre)\s*$([\s\S]*?)(?=^## |\Z)",
                 text,
                 re.MULTILINE,
             )
             evidence_match = re.search(
-                r"^## Evidencia de cierre\s*$([\s\S]*?)(?=^## |\Z)",
+                r"^## (?:Closure evidence|Evidencia de cierre)\s*$([\s\S]*?)(?=^## |\Z)",
                 text,
                 re.MULTILINE,
             )
@@ -397,9 +397,9 @@ def main(argv: list[str] | None = None) -> int:
     parsed.ui.success(
         "Mud questions: "
         f"{len(questions)} unique files; "
-        f"{counts['abierta']} open, "
-        f"{counts['parcialmente-decidida']} partially decided and "
-        f"{counts['cerrada']} closed; "
+        f"{counts['open']} open, "
+        f"{counts['partially-decided']} partially decided and "
+        f"{counts['closed']} closed; "
         f"{len(indexed)} active entries verified."
     )
     return 0

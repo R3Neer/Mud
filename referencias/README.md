@@ -2,7 +2,7 @@
 title: Supplementary MUD references
 tags:
   - mud/referencia
-status: vigente
+status: current
 normative: false
 ---
 

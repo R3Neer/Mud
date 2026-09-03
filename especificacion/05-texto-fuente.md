@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/fuente
-status: propuesta
+status: proposed
 normative: true
 depends-on:
   - "[[01-alcance-y-conformidad]]"

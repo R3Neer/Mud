@@ -1,7 +1,7 @@
 ---
 id: D-012
 title: "Validation and atomic versioning of semantic changes"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

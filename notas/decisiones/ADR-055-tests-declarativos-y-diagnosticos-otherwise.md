@@ -1,7 +1,7 @@
 ---
 id: D-055
 title: "Declarative and diagnostic tests `otherwise`"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

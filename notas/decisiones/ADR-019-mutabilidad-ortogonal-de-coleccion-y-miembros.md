@@ -1,7 +1,7 @@
 ---
 id: D-019
 title: "Mutability orthogonal to collection and members"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

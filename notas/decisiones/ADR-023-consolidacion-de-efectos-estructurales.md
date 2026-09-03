@@ -1,7 +1,7 @@
 ---
 id: D-023
 title: "Consolidation of concurrent structural effects"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

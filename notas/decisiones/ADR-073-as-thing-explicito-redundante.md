@@ -1,7 +1,7 @@
 ---
 id: D-073
 title: "Explicit but redundant `as Thing`"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

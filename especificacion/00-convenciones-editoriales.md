@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/normativa
-status: propuesta
+status: proposed
 normative: true
 depends-on: []
 questions: []
@@ -47,7 +47,7 @@ title:
 aliases: []
 tags:
   - mud/especificacion
-status: borrador
+status: draft
 normative: true
 depends-on: []
 questions: []
@@ -304,7 +304,7 @@ title:
 aliases: []
 tags:
   - mud/especificacion
-status: esqueleto
+status: skeleton
 normative: true
 depends-on: []
 questions: []

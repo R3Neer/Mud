@@ -1,7 +1,7 @@
 ---
 id: D-017
 title: "Everything type well-built has default value"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

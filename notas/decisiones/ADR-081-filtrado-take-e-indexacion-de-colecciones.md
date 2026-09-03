@@ -1,7 +1,7 @@
 ---
 id: D-081
 title: "Filtrado, `take` e indexación de colecciones"
-status: vigente
+status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []

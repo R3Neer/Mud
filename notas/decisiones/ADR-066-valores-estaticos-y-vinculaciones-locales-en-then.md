@@ -1,7 +1,7 @@
 ---
 id: D-066
 title: "Static values and local bindings in `then`"
-status: vigente
+status: current
 date: 2026-07-30
 supersedes: []
 superseded-by: []

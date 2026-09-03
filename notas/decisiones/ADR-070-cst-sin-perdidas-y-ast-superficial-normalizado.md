@@ -1,7 +1,7 @@
 ---
 id: D-070
 title: "Lossless CST and normalised surface AST"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

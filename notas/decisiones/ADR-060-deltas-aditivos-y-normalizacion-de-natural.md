@@ -1,7 +1,7 @@
 ---
 id: D-060
 title: "Additive deltas and `Nat` normalisation"
-status: vigente
+status: current
 date: 2026-07-29
 supersedes: []
 superseded-by: []

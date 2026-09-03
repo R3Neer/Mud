@@ -1,7 +1,7 @@
 ---
 id: D-102
 title: "Forma completa de datos calculados de family"
-status: vigente
+status: current
 date: 2026-08-29
 supersedes: []
 superseded-by: []

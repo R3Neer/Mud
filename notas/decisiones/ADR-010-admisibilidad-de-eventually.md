@@ -1,7 +1,7 @@
 ---
 id: D-010
 title: "Finiteness y termination required by `eventually`"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

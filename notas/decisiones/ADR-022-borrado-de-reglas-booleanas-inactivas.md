@@ -1,7 +1,7 @@
 ---
 id: D-022
 title: "Structural deletion of inactive Boolean rules"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

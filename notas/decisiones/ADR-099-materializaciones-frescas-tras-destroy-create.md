@@ -1,7 +1,7 @@
 ---
 id: D-099
 title: "Materializaciones frescas tras `destroy` y `create`"
-status: vigente
+status: current
 date: 2026-08-28
 supersedes: []
 superseded-by: []

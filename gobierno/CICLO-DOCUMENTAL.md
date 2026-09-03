@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/gobierno
   - mud/especificacion
-status: vigente
+status: current
 ---
 
 # Document lifecycle by MUD

@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/gobierno
   - mud/temporales
-status: vigente
+status: current
 ---
 
 # MUD temporary-file policy

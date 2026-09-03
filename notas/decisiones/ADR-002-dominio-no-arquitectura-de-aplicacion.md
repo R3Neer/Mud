@@ -1,7 +1,7 @@
 ---
 id: D-002
 title: "MUD describes domain, not application architecture"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

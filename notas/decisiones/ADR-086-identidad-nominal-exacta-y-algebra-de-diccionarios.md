@@ -1,7 +1,7 @@
 ---
 id: D-086
 title: "Identidad nominal exacta, flechas exteriores y álgebra de diccionarios"
-status: vigente
+status: current
 date: 2026-08-05
 supersedes: []
 superseded-by: []

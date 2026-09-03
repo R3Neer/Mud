@@ -1,7 +1,7 @@
 ---
 id: D-044
 title: "Alcanzabilidad `eventually`"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

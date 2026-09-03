@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/especificacion
   - mud/nombres
-status: propuesta
+status: proposed
 normative: true
 depends-on:
   - "[[05-texto-fuente]]"

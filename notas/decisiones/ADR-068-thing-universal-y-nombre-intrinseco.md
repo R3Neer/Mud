@@ -1,7 +1,7 @@
 ---
 id: D-068
 title: "Universal `Thing` and intrinsic name"
-status: vigente
+status: current
 date: 2026-08-02
 supersedes: []
 superseded-by: []

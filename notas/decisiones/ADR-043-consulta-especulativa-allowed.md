@@ -1,7 +1,7 @@
 ---
 id: D-043
 title: "Consulta especulativa `allowed`"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

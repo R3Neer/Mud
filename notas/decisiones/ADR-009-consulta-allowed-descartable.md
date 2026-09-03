@@ -1,7 +1,7 @@
 ---
 id: D-009
 title: "`allowed` as a baseless rumour"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

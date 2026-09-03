@@ -1,7 +1,7 @@
 ---
 id: D-056
 title: "`Char`, `Text` and Unicode ordering"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

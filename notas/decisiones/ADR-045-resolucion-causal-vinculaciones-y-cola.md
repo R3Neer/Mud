@@ -1,7 +1,7 @@
 ---
 id: D-045
 title: "Causal resolution, connections and queue"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

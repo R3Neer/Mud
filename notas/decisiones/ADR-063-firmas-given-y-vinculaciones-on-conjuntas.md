@@ -1,7 +1,7 @@
 ---
 id: D-063
 title: "Signatures, `given` and joint `on` bindings"
-status: vigente
+status: current
 date: 2026-07-30
 supersedes: []
 superseded-by: []

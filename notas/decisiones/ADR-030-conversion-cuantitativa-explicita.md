@@ -1,7 +1,7 @@
 ---
 id: D-030
 title: "Explicit quantitative conversion using `to`"
-status: vigente
+status: current
 date: 2026-07-28
 supersedes: []
 superseded-by: []

@@ -1,7 +1,7 @@
 ---
 id: D-008
 title: "Results `accepted`, `rejected` y `failed`"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []

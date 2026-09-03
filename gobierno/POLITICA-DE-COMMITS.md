@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/gobierno
   - mud/git
-status: vigente
+status: current
 ---
 
 # MUD commit policy

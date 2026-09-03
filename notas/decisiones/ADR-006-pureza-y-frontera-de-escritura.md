@@ -1,7 +1,7 @@
 ---
 id: D-006
 title: "Purity Boolean rules and write boundary"
-status: vigente
+status: current
 date: 2026-07-27
 supersedes: []
 superseded-by: []
