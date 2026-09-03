@@ -8,12 +8,12 @@ element_model:
   node: SyntaxNode(kind, children, span, full_span)
   token: SyntaxToken(kind, text, leading_trivia, span, full_span, origin)
   trivia: SyntaxTrivia(kind, text, span)
-  ownership: Toda trivia pertenece al token significativo siguiente; EOF posee la trivia final.
+  ownership: All trivia belongs to the following significant token; EOF owns the final trivia.
 special_node_kinds:
 - kind: ErrorSyntax
   purpose: Groups unexpected elements retained during recovery.
 - kind: SkippedTokensSyntax
-  purpose: Conserva tokens no integrables sin perder texto.
+  purpose: Preserves non-integrable tokens without losing text.
 trivia_kinds:
 - kind: HorizontalWhitespaceTrivia
   source: horizontal-space
@@ -174,7 +174,7 @@ lexical_forms:
     rhs: '? U+FEFF, only as the first character ?'
     references: []
   eof:
-    rhs: '? fin de archivo ?'
+    rhs: '? end of file ?'
     references: []
   horizontal-space:
     rhs: '" " | tab'
@@ -209,17 +209,17 @@ lexical_forms:
     references:
     - closed-comment-character
   line-comment-character:
-    rhs: '? cualquier escalar Unicode salvo NEWLINE ?'
+    rhs: '? any Unicode scalar except NEWLINE ?'
     references: []
   closed-comment-character:
-    rhs: '? cualquier escalar Unicode salvo "#", NEWLINE ?'
+    rhs: '? any Unicode scalar except "#", NEWLINE ?'
     references: []
   multiline-comment:
     rhs: special-multiline-comment
     references:
     - special-multiline-comment
   special-multiline-comment:
-    rhs: '? bloque ### validado por MUD-LEX-020 a MUD-LEX-024 ?'
+    rhs: '? ### block validated by MUD-LEX-020 to MUD-LEX-024 ?'
     references: []
   text-literal:
     rhs: "quote\n        , { text-character\n          | text-escape-sequence\n          | value-template-hole\n          }\n        , [ quote ]"
@@ -246,7 +246,7 @@ lexical_forms:
     references:
     - special-multiline-text
   special-multiline-text:
-    rhs: '? bloque triple comilla validado por MUD-LEX-030 a MUD-LEX-036 ?'
+    rhs: '? triple-quoted block validated by MUD-LEX-030 to MUD-LEX-036 ?'
     references: []
   apostrophe:
     rhs: '? U+0027 COMILLA SIMPLE ?'

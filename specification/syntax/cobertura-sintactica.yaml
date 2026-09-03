@@ -116,7 +116,7 @@ productions:
     cst: ThingBodyDeclarationSyntax
     ast:
       disposition: inlined
-      reason: alternativa integrada en ThingDecl como campo o inicializador concreto
+      reason: alternative integrated in ThingDecl as a field or concrete initialiser
   thing-initializer:
     cst: ThingInitializerSyntax
     ast:
@@ -172,13 +172,13 @@ productions:
     ast:
       disposition: constructor
       target: StoredFamilyDataDecl
-      reason: conserva el metadata-body del descriptor de dato almacenado
+      reason: preserves the metadata-body of the stored datum descriptor
   calculated-family-data-declaration:
     cst: CalculatedFamilyDataDeclarationSyntax
     ast:
       disposition: constructor
       target: CalculatedFamilyDataDecl
-      reason: conserva el derived-value-shape completo, el ValueBlock y el metadata-body del descriptor calculado
+      reason: preserves the complete derived-value-shape, ValueBlock and metadata-body of the computed descriptor
   family-member:
     cst: FamilyMemberSyntax
     ast:
@@ -328,7 +328,7 @@ productions:
     cst: CallableReceiverSyntax
     ast:
       disposition: inlined
-      reason: los receptores se normalizan dentro de CallableType
+      reason: receivers are normalised within CallableType
   callable-kind:
     cst: CallableKindSyntax
     ast:
@@ -751,7 +751,7 @@ productions:
     ast:
       disposition: normalized
       target: expr
-      reason: el sufijo changes produce ChangesExpr; su ausencia conserva el operando
+      reason: the changes suffix produces ChangesExpr; its absence preserves the operand
   comparison-expression:
     cst: ComparisonExpressionSyntax
     ast:
@@ -781,7 +781,7 @@ productions:
     cst: MembershipHasSyntax
     ast:
       disposition: inlined
-      reason: el operador `has`/`has not` se pliega en la comparación
+      reason: the `has`/`has not` operator folds into the comparison
   collection-transform-suffix:
     cst: CollectionTransformSuffixSyntax
     ast:
@@ -866,7 +866,7 @@ productions:
     cst: CallArgumentSyntax
     ast:
       disposition: folded
-      reason: se separa en prefijo posicional y sufijo nombrado de CallExpr
+      reason: separated into the positional prefix and named suffix of CallExpr
   receiver-tuple:
     cst: ReceiverTupleSyntax
     ast:
