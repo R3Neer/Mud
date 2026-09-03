@@ -1,56 +1,56 @@
 ---
 id: D-067
-title: "Nombres breves de los tipos numéricos"
+title: "Short names for numeric types"
 status: vigente
 date: 2026-08-02
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "tipos numéricos incorporados, léxico, gramática concreta, ejemplos, diagnósticos y resaltado sintáctico"
+  - "built-in numeric types, lexicon, concrete grammar, examples, diagnostics and syntax highlighting"
 ---
-# ADR-067 — Nombres breves de los tipos numéricos
+# ADR-067 — Short names for numeric types
 
-- Modifica: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]] y [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
-- Documentos afectados: tipos numéricos incorporados, léxico, gramática concreta, ejemplos, diagnósticos y resaltado sintáctico
+- Amends: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]] and [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
+- Affected documents: built-in numeric types, lexicon, concrete grammar, examples, diagnostics and syntax highlighting
 
-## Contexto
+## Context
 
-Los nombres `Integer`, `Natural`, `Number` y `Rumber` procedían de terminología técnica inglesa y hacían especialmente largo el tipo de uso más frecuente. MUD está dirigido también a personas no programadoras y a la creación infantil de juegos; su vocabulario debe ser breve, reconocible y cómodo de escribir sin perder la distinción entre dominios numéricos.
+The names `Integer`, `Natural`, `Number` and `Rumber` came from technical English terminology and made the most frequently used type unnecessarily long. MUD is also aimed at non-programmers and children creating games; its vocabulary should be short, recognisable and easy to type without losing the distinction between numeric domains.
 
-`Money` ya expresa una idea cotidiana y no necesita abreviarse. El nombre `Rum` no colisiona con ninguna declaración vigente del lenguaje y la distinción entre mayúsculas y minúsculas permite seguir usando `rum` como identificador ordinario.
+`Money` already expresses an everyday idea and needs no abbreviation. The name `Rum` conflicts with no current language declaration, and case sensitivity still permits `rum` as an ordinary identifier.
 
-## Decisión
+## Decision
 
-Los tipos numéricos incorporados se escriben:
+Built-in numeric types are written as follows:
 
-| Nombre anterior | Nombre vigente | Dominio |
+| Former name | Current name | Domain |
 | --- | --- | --- |
-| `Integer` | `Int` | Enteros con signo. |
-| `Natural` | `Nat` | Enteros no negativos. |
-| `Number` | `Num` | Números exactos ordinarios. |
-| `Rumber` | `Rum` | Números de coma flotante `binary64`. |
-| `Money` | `Money` | Cantidades monetarias exactas. |
+| `Integer` | `Int` | Signed integers. |
+| `Natural` | `Nat` | Non-negative integers. |
+| `Number` | `Num` | Ordinary exact numbers. |
+| `Rumber` | `Rum` | `binary64` floating-point numbers. |
+| `Money` | `Money` | Exact monetary amounts. |
 
-`Int`, `Nat`, `Num`, `Rum` y `Money` son palabras reservadas y nombres de tipos incorporados sensibles a mayúsculas y minúsculas.
+`Int`, `Nat`, `Num`, `Rum` and `Money` are reserved words and built-in type names whose spelling is case-sensitive.
 
-Las cuatro formas sustituidas dejan de ser palabras reservadas y no actúan como alias. Un programa que todavía las use como tipos debe recibir un diagnóstico de nombre no resuelto que sugiera la forma vigente cuando la intención resulte inequívoca.
+The four replaced forms cease to be reserved words and do not act as aliases. A program that still uses them as types must receive an unresolved-name diagnostic suggesting the current form when the intention is unambiguous.
 
-Esta decisión cambia el vocabulario concreto, no los dominios, conversiones, operadores, literales ni reglas de normalización definidos para cada tipo.
+This decision changes the concrete vocabulary, not the domains, conversions, operators, literals or normalisation rules defined for each type.
 
-## Consecuencias
+## Consequences
 
-- Las declaraciones y anotaciones resultan más breves.
-- Solo existe un nombre canónico para cada tipo numérico.
-- El cambio es incompatible en el nivel de fuente y exige sustituir las cuatro formas anteriores.
-- La gramática, la documentación y las herramientas deben reconocer y mostrar los nombres vigentes.
-- Los identificadores internos de herramientas pueden conservar nombres históricos cuando no sean visibles y su cambio rompa configuraciones existentes.
+- Declarations and annotations are shorter.
+- There is one canonical name for each numeric type.
+- The change is source-incompatible and requires replacing the four former forms.
+- Grammar, documentation and tools must recognise and display the current names.
+- Internal tool identifiers may retain historical names when they are not visible and changing them would break existing configurations.
 
-## Verificación
+## Verification
 
-1. Reconocimiento de `Int`, `Nat`, `Num`, `Rum` y `Money` como tipos incorporados.
-2. Rechazo de las cuatro formas anteriores como tipos incorporados.
-3. Conservación de la semántica, los literales y las conversiones de cada dominio.
-4. Resaltado de las cinco formas vigentes como tipos incorporados.
-5. Diagnóstico de migración que sugiera el nombre vigente para cada forma anterior.
-6. Ausencia de colisión entre el tipo `Rum` y un identificador ordinario `rum`.
+1. Recognition of `Int`, `Nat`, `Num`, `Rum` and `Money` as built-in types.
+2. Rejection of the four former forms as built-in types.
+3. Preservation of each domain's semantics, literals and conversions.
+4. Highlighting of the five current forms as built-in types.
+5. Migration diagnostic suggesting the current name for each former form.
+6. No collision between type `Rum` and ordinary identifier `rum`.
