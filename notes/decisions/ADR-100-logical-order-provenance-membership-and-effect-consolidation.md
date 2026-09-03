@@ -1,6 +1,6 @@
 ---
 id: D-100
-title: "Orden lógico, procedencia, pertenencia y consolidación de efectos"
+title: "Logical order, provenance, membership and effect consolidation"
 status: current
 date: 2026-08-29
 supersedes: []
@@ -9,63 +9,63 @@ questions:
   - "Q-006"
   - "Q-032"
 affects:
-  - "aliases, colecciones, pertenencia, gramática, sintaxis, azar, efectos, ondas y conflictos"
+  - "aliases, collections, membership, grammar, syntax, randomness, effects, waves and conflicts"
 ---
-# ADR-100 — Orden lógico, procedencia, pertenencia y consolidación de efectos
+# ADR-100 — Logical order, provenance, membership and effect consolidation
 
-- Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
+- Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modifica: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-043-query-especulativa-allowed|D-043]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-064-ordering-by-stable-path|D-064]], [[ADR-080-algebra-higher-and-updates-de-collection|D-080]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]] y [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
-- Preguntas relacionadas: [[../preguntas/Q-006-c-conflicts|Q-006]] y [[../preguntas/Q-032-a-reproducible-randomness|Q-032]].
+- Modifies: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-043-query-especulativa-allowed|D-043]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-064-ordering-by-stable-path|D-064]], [[ADR-080-algebra-higher-and-updates-de-collection|D-080]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]] and [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
+- Related questions: [[../preguntas/Q-006-c-conflicts|Q-006]] and [[../preguntas/Q-032-a-reproducible-randomness|Q-032]].
 
-## Contexto
+## Context
 
-MUD ya distingue colecciones ordenadas y no ordenadas, efectos concurrentes calculados desde una instantánea común y una composición estructural canónica. Quedaban sin unificar la persistencia lógica del orden, la procedencia necesaria para ordenar valores sin comparador común, las transformaciones locales de colecciones, la pertenencia booleana y varias reglas de consolidación concurrente.
+MUD already distinguishes ordered and unordered collections, concurrent effects computed from a common snapshot and canonical structural composition. The logical persistence of order, the provenance needed to order values without a common comparator, local collection transformations, Boolean membership and several concurrent-consolidation rules remained to be unified.
 
-## Decisión
+## Decision
 
-### Refinamiento heredado de campos
+### Inherited field refinement
 
-Un campo almacenado heredado solo puede refinar su contrato cuando es exteriormente inmutable. Un campo almacenado con `mut` exterior es invariante: su contrato no puede estrecharse ni ampliarse por especialización.
+An inherited stored field may refine its contract only when it is externally immutable. A stored field with outer `mut` is invariant: its contract cannot be narrowed or widened by specialisation.
 
-Un campo derivado heredado puede refinar su contrato. Si procede de un único miembro original conserva su expresión definitoria; el descendiente solo fortalece el contrato efectivo. Tipo, dominio, cardinalidad, `unique` y orden se admiten únicamente cuando el nuevo contrato es sustituible por todos los contratos heredados relevantes.
+An inherited derived field may refine its contract. If it comes from a single original member it retains its defining expression; the descendant only strengthens the effective contract. Type, domain, cardinality, `unique` and order are admitted only when the new contract is substitutable for every relevant inherited contract.
 
-### Orden lógico y procedencia
+### Logical order and provenance
 
-El orden de una colección `ordered` forma parte de su valor lógico durante toda su existencia. No se reconstruye cuando una operación decide observarlo. Un filtrado, selección, copia, asignación, paso de valor, vista, serialización o carga que preserve orden debe transportar la misma secuencia lógica, salvo que la operación declare expresamente que elimina o sustituye ese orden.
+The order of an `ordered` collection is part of its logical value throughout its existence. It is not reconstructed when an operation decides to observe it. Filtering, selection, copying, assignment, value passing, viewing, serialisation or loading that preserves order must carry the same logical sequence unless the operation expressly declares that it removes or replaces that order.
 
-Cada ocurrencia conserva además una procedencia estable cuando esta puede llegar a ser semánticamente relevante. La procedencia es distinta del orden lógico actual: una colección no ordenada carece de secuencia lógica, pero puede conservar procedencia de sus ocurrencias. Filtrar o retirar conserva la procedencia de las ocurrencias supervivientes; reordenar cambia la secuencia lógica y no la identidad de procedencia; una ocurrencia nueva recibe procedencia nueva. Una implementación puede omitir físicamente esta información solo cuando demuestre que nunca será observable.
+Each occurrence also retains stable provenance when it may become semantically relevant. Provenance is distinct from current logical order: an unordered collection has no logical sequence but may retain occurrence provenance. Filtering or removal preserves the provenance of surviving occurrences; reordering changes the logical sequence, not provenance identity; a new occurrence receives new provenance. An implementation may omit this information physically only when it proves that it will never be observable.
 
-Toda operación cuya semántica dependa de orden consume el orden lógico de la colección, no el orden de hash, recorrido físico o materialización. No existen prioridades de dominio especiales que reemplacen este principio.
+Every operation whose semantics depend on order consumes the collection's logical order, not hash order, physical traversal or materialisation order. No special domain priorities replace this principle.
 
-### Transformaciones locales de colecciones
+### Local collection transformations
 
-Una especificación de colección aplicada localmente a una expresión es una transformación del valor temporal. En declaraciones de valor, el contrato es verificativo y nunca transforma el valor. En declaraciones derivadas, el tipo nominal o estructural escrito se comprueba estáticamente, mientras que dominio, cardinalidad, `unique` y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y usan la misma normalización que la transformación local equivalente.
+A collection specification applied locally to an expression transforms the temporary value. In value declarations, the contract is verificatory and never transforms the value. In derived declarations, the written nominal or structural type is checked statically, while domain, cardinality, `unique` and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and use the same normalisation as the equivalent local transformation.
 
-Las transformaciones locales se normalizan, con independencia del orden textual de los modificadores, en este orden:
+Local transformations are normalised, regardless of the modifiers' textual order, in this order:
 
-1. restricción de dominio;
+1. domain restriction;
 2. `unique`;
-3. establecimiento o sustitución de orden;
-4. cardinalidad.
+3. establishing or replacing order;
+4. cardinality.
 
-La restricción local de dominio usa la forma:
+Local domain restriction uses the form:
 
 ```mud
 people in Adults
 ```
 
-y filtra los miembros que no pertenecen al dominio. `unique` elimina ocurrencias repetidas. `ordered by ruta` establece el orden por la clave indicada y usa procedencia estable para desempatar claves iguales. `ordered` usa el orden total semántico intrínseco del tipo completo cuando existe; si el tipo completo no posee un comparador total común, usa la procedencia de todas las ocurrencias. No se inventa un orden entre ramas de una unión por posición textual, nombre nominal, tag interno o identidad de implementación.
+and filters out members that do not belong to the domain. `unique` removes repeated occurrences. `ordered by path` establishes order by the indicated key and uses stable provenance to break equal-key ties. `ordered` uses the complete type's intrinsic total semantic order when one exists; if the complete type has no common total comparator, it uses the provenance of all occurrences. No order is invented between union branches by textual position, nominal name, internal tag or implementation identity.
 
-Una cota superior de cardinalidad recorta después de filtrar, deduplicar y ordenar. Una cota inferior exige que existan suficientes miembros y nunca fabrica miembros. Una transformación local no puede introducir capacidad interior `[mut]` ni otra autoridad que la expresión de origen no posea. En una forma derivada, `[mut]` es por tanto una obligación de capacidad: puede conservarse a través de transformaciones que mantengan la identidad semántica de las mismas `thing`, pero nunca se obtiene por coerción.
+An upper cardinality bound truncates after filtering, deduplication and ordering. A lower bound requires enough members to exist and never manufactures members. A local transformation cannot introduce inner `[mut]` capability or any authority not possessed by the source expression. In a derived form, `[mut]` is therefore a capability requirement: it may be preserved through transformations retaining the semantic identity of the same `thing` values, but is never obtained by coercion.
 
-La escritura de una cardinalidad exacta local que sería indistinguible de una indexación conserva la indexación como forma corta; la transformación exacta puede escribirse como intervalo degenerado, por ejemplo `[2..2]`. Una especificación que contiene `unique` u `ordered` es inequívocamente una transformación.
+Writing a local exact cardinality that would be indistinguishable from indexing retains indexing as the short form; the exact transformation may be written as a degenerate interval, for example `[2..2]`. A specification containing `unique` or `ordered` is unambiguously a transformation.
 
-### Pertenencia booleana
+### Boolean membership
 
-La pertenencia booleana se escribe con el contenedor a la izquierda:
+Boolean membership is written with the container on the left:
 
 ```mud
 inventory has Key
@@ -73,23 +73,23 @@ inventory has not BrokenKey
 0..100 has score
 ```
 
-`has` es palabra reservada y `has not` es la negación canónica. `in` no es un operador booleano de pertenencia: se conserva para restricciones, filtros, dominios, bindings y conversiones donde corresponda. `not in` no forma parte de la pertenencia booleana vigente.
+`has` is a reserved word and `has not` is the canonical negation. `in` is not a Boolean membership operator: it remains for restrictions, filters, domains, bindings and conversions where applicable. `not in` is not part of current Boolean membership.
 
-### Inserciones concurrentes y orden de procedencia
+### Concurrent insertions and provenance order
 
-Cuando inserciones concurrentes compatibles necesitan completar una relación de procedencia y no existe criterio semántico natural que prefiera una sobre otra, MUD usa una elección pseudoaleatoria reproducible sobre el mismo sistema de semilla semántica que los demás puntos aleatorios del lenguaje. El punto de elección posee identidad semántica estable y no depende del consumo secuencial accidental de un PRNG global, del scheduler, del orden físico de llegada, de hashes, del tiempo de máquina ni del orden fuente entre `then` concurrentes.
+When compatible concurrent insertions need to complete a provenance relation and no natural semantic criterion prefers one over another, MUD uses a reproducible pseudo-random choice based on the same semantic seed system as the language's other random points. The choice point has stable semantic identity and does not depend on accidental sequential consumption of a global PRNG, the scheduler, physical arrival order, hashes, machine time or source order between concurrent `then` blocks.
 
-La elección produce una extensión lineal del orden parcial causal: respeta toda relación causal real y solo decide entre ocurrencias concurrentes. Se elige sobre el grupo concurrente completo; no se implementa mediante comparaciones aleatorias independientes por pares que puedan introducir ciclos. Una vez fijado, el resultado pasa a formar parte de la procedencia estable y no se vuelve a sortear cuando una colección se observa o se transforma posteriormente en `ordered`.
+The choice produces a linear extension of the causal partial order: it respects every real causal relation and decides only between concurrent occurrences. It is chosen over the complete concurrent group; it is not implemented through independent pairwise random comparisons that could introduce cycles. Once fixed, the result becomes part of stable provenance and is not redrawn when a collection is observed or later transformed to `ordered`.
 
-En una colección `unique`, las inserciones concurrentes equivalentes se fusionan antes de completar el orden. La ocurrencia superviviente conserva conjuntamente todas las causas, sin elegir una causa ganadora. Sobre las ocurrencias supervivientes se induce una relación causal acíclica que preserva las restricciones causales semánticamente válidas de todas las causas fusionadas; solo después se completa reproduciblemente el orden que falte. La representación o el algoritmo concreto para obtener esa relación inducida es un detalle de implementación mientras conserve esas propiedades.
+In a `unique` collection, equivalent concurrent insertions are merged before completing order. The surviving occurrence retains all causes jointly, without selecting a winning cause. An acyclic causal relation is induced over surviving occurrences, preserving the semantically valid causal constraints of all merged causes; only then is any missing order completed reproducibly. The representation or concrete algorithm used to obtain that induced relation is an implementation detail so long as it preserves these properties.
 
-### Forma normal aritmética concurrente
+### Concurrent arithmetic normal form
 
-Los efectos aritméticos concurrentes sobre un mismo destino se normalizan en tres acumuladores:
+Concurrent arithmetic effects on the same target are normalised into three accumulators:
 
-- `Δ`: suma firmada de todos los `+=` y `-=`;
-- `P`: producto de todos los factores `*=`;
-- `Q`: producto de todos los divisores `/=`.
+- `Δ`: signed sum of all `+=` and `-=` operations;
+- `P`: product of all `*=` factors;
+- `Q`: product of all `/=` divisors.
 
 La aplicación canónica es:
 
@@ -97,84 +97,84 @@ La aplicación canónica es:
 x' = ((x + Δ) * P) / Q
 ```
 
-con identidades `Δ = 0`, `P = 1` y `Q = 1`. La familia aditiva se aplica antes que la multiplicativa. No se modela `/=` mediante un inverso obligatorio ni se introducen divisiones o redondeos intermedios derivados de un orden arbitrario entre efectos concurrentes.
+with identities `Δ = 0`, `P = 1` and `Q = 1`. The additive family is applied before the multiplicative family. `/=` is not modelled through a mandatory inverse, and no intermediate divisions or roundings arising from arbitrary ordering between concurrent effects are introduced.
 
-Factores multiplicativos y divisivos se cancelan cuando las leyes del tipo garantizan que la cancelación preserva exactamente la semántica, incluido el caso aceptado `*= 3` junto con `/= 3`. Una simplificación no puede ocultar división por cero, overflow, incumplimientos de dominio, unidades ni otra propiedad observable. Un denominador consolidado inválido produce el fallo que corresponda a la división del tipo y la transición se revierte.
+Multiplicative and divisive factors are cancelled when the type's laws guarantee that cancellation preserves semantics exactly, including the accepted case `*= 3` together with `/= 3`. A simplification cannot hide division by zero, overflow, domain violations, units or any other observable property. An invalid consolidated denominator produces the failure applicable to division of the type and the transition is reverted.
 
-Las asignaciones concurrentes al mismo valor continúan siendo compatibles; asignaciones a valores distintos son conflicto. Una asignación mezclada con actualización aritmética continúa siendo conflicto.
+Concurrent assignments to the same value remain compatible; assignments to different values are a conflict. An assignment mixed with an arithmetic update remains a conflict.
 
 
-### Consolidación de acumuladores locales de `for each`
+### Consolidation of local `for each` accumulators
 
-Una mutable local exterior a un `for each` puede ser escrita por sus iteraciones. Si la fuente posee orden semántico, las iteraciones son secuenciales y cada una observa el valor dejado por la anterior. Si carece de orden semántico, todas parten de la misma proyección previa y sus modificaciones sobre el slot se consolidan como concurrentes mediante las mismas reglas algebraicas que los efectos equivalentes. Por ello varios `+=` compatibles pueden formar una reducción, mientras `x = x + value` produce asignaciones absolutas concurrentes y no recibe semántica especial de acumulador.
+A mutable local outside a `for each` may be written by its iterations. If the source has semantic order, iterations are sequential and each observes the value left by the previous one. Without semantic order, all start from the same prior projection and their slot modifications are consolidated as concurrent using the same algebraic rules as equivalent effects. Thus several compatible `+=` operations may form a reduction, whereas `x = x + value` produces concurrent absolute assignments and receives no special accumulator semantics.
 
-El slot sigue siendo almacenamiento del frame local, no estado del mundo; aplicar la misma álgebra no convierte la mutación local en un efecto persistente.
+The slot remains local-frame storage, not world state; applying the same algebra does not turn local mutation into a persistent effect.
 
-### Regla general de consolidación
+### General consolidation rule
 
-La consolidación de efectos sigue tres niveles:
+Effect consolidation follows three levels:
 
-1. dentro de una misma clase se usa combinación algebraica, idempotente o normalización específica cuando esté definida;
-2. entre clases distintas se usa una composición canónica del lenguaje cuando esté declarada;
-3. si no existe ninguna de las anteriores, la coincidencia es conflicto.
+1. within one class, algebraic combination, idempotent combination or specific normalisation is used where defined;
+2. between different classes, a canonical language composition is used where declared;
+3. if neither exists, the coincidence is a conflict.
 
-No se deduce conflicto solo porque dos efectos parezcan expresar intenciones opuestas, ni compatibilidad por analogía con otra familia.
+Conflict is not inferred merely because two effects appear to express opposing intentions, nor compatibility by analogy with another family.
 
-Para efectos estructurales concurrentes se conserva la composición canónica:
+For concurrent structural effects, canonical composition is retained:
 
 ```text
 create → add → remove → destroy
 ```
 
-Este orden es una normalización declarativa del delta, no una secuencia temporal observable. Por ello `create X || destroy X` deja `X` ausente y `add A || remove A` deja `A` retirada. `unique` no cambia esta regla. Dentro de un único `then`, en cambio, el orden textual sí representa secuencialidad local: `destroy X; create X` termina solicitando activación y `create X; destroy X` termina solicitando destrucción. Una historia como crear, trabajar con una entidad y destruirla debe expresarse causalmente, no inferirse de efectos concurrentes independientes.
+This order is declarative delta normalisation, not an observable temporal sequence. Thus `create X || destroy X` leaves `X` absent and `add A || remove A` leaves `A` removed. `unique` does not change this rule. Within a single `then`, however, textual order represents local sequentiality: `destroy X; create X` ends by requesting activation, while `create X; destroy X` ends by requesting destruction. A history such as creating, working with and destroying an entity must be expressed causally, not inferred from independent concurrent effects.
 
-### Diagnóstico de conflictos
+### Conflict diagnostics
 
-Un conflicto verdadero que el compilador demuestra inevitable es error estático. Si demuestra que el conflicto es posible pero no inevitable, emite warning. Si demuestra que los destinos no pueden coincidir o que los efectos consolidan de forma compatible, no emite diagnóstico de conflicto. Si un conflicto advertido o no decidible estáticamente se materializa en runtime, la resolución produce `failed` y rollback completo.
+A true conflict that the compiler proves inevitable is a static error. If it proves that the conflict is possible but not inevitable, it emits a warning. If it proves that targets cannot coincide or that effects consolidate compatibly, it emits no conflict diagnostic. If a warned or statically undecidable conflict materialises at runtime, resolution produces `failed` and complete rollback.
 
-El análisis puede explotar el grafo explícito de reglas, actions, subactions, bindings, tipos, dominios, guardas y causalidad. La potencia mínima que toda implementación debe alcanzar sigue abierta.
+Analysis may exploit the explicit graph of rules, actions, subactions, bindings, types, domains, guards and causality. The minimum power every implementation must achieve remains open.
 
-## Consecuencias
+## Consequences
 
-- El parser y el AST distinguen `has`/`has not`, restricción local `in` y selección `binding in source : predicate`.
-- El AST deja de representar pertenencia booleana mediante `Membership`/`NotMembership` asociados a `in`.
-- Las transformaciones locales conservan una representación propia y no admiten `mut`.
-- La procedencia es por ocurrencia, no solo por valor.
-- El runtime debe identificar establemente los puntos aleatorios de consolidación y completar orden respetando causalidad.
-- La consolidación aritmética deja de considerar conflictiva la mezcla aditiva/multiplicativa compatible y aplica la forma `(Δ, P, Q)`.
-- La consolidación estructural no expone estados intermedios entre deltas concurrentes.
+- The parser and AST distinguish `has`/`has not`, local `in` restriction and `binding in source : predicate` selection.
+- The AST no longer represents Boolean membership through `Membership`/`NotMembership` associated with `in`.
+- Local transformations retain their own representation and do not admit `mut`.
+- Provenance is per occurrence, not only per value.
+- Runtime must identify consolidation random points stably and complete order while respecting causality.
+- Arithmetic consolidation no longer treats compatible additive/multiplicative mixing as a conflict and applies `(Δ, P, Q)`.
+- Structural consolidation exposes no intermediate states between concurrent deltas.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-Se descartan:
+The following are rejected:
 
-- `in` y `not in` como pertenencia booleana;
-- ordenar ramas heterogéneas por orden textual, tags, nombres o identidades accidentales;
-- un orden total universal entre todos los efectos concurrentes basado en fuente, anclas, hashes, productores o scheduler;
-- diferir indefinidamente el orden de inserciones simultáneas hasta que una operación posterior lo observe;
-- comparadores aleatorios por pares para construir el orden;
-- elegir una asignación distinta ganadora mediante azar, posición fuente o prioridad implícita;
-- políticas locales configurables de `latest wins`, prioridades o resolución de conflictos;
-- convertir toda división concurrente en multiplicación por inversos;
-- tratar automáticamente `add A || remove A` como conflicto;
-- interpretar `create → add → remove → destroy` como tiempo observable;
-- permitir que una transformación local fabrique capacidad `[mut]`.
+- `in` and `not in` as Boolean membership;
+- ordering heterogeneous branches by textual order, tags, names or accidental identities;
+- a universal total order over all concurrent effects based on source, anchors, hashes, producers or scheduler;
+- indefinitely deferring simultaneous insertion order until a later operation observes it;
+- pairwise random comparators to construct order;
+- selecting a different winning assignment through randomness, source position or implicit priority;
+- configurable local `latest wins` policies, priorities or conflict resolution;
+- converting every concurrent division into multiplication by inverses;
+- automatically treating `add A || remove A` as a conflict;
+- interpreting `create → add → remove → destroy` as observable time;
+- allowing a local transformation to manufacture `[mut]` capability.
 
-## Cuestiones abiertas
+## Open questions
 
-Q-006 continúa parcialmente decidida. Permanecen abiertas las familias para las que todavía no se haya fijado una combinación algebraica o composición canónica concreta, incluidos los casos restantes de diccionarios, propiedades, cardinalidad estructural y write-back parcialmente solapado. También continúa sin fijarse la precisión mínima obligatoria del análisis estático de conflictos. Q-032 continúa parcialmente decidida únicamente en las reglas de caché y reintentos y en la exposición de resultados estocásticos; el algoritmo concreto de derivación o subsemillas no requiere una decisión adicional mientras preserve el contrato semántico ya fijado.
+Q-006 remains partially decided. Families for which no concrete algebraic combination or canonical composition has yet been fixed remain open, including remaining cases of dictionaries, properties, structural cardinality and partially overlapping write-back. The mandatory minimum precision of static conflict analysis also remains unfixed. Q-032 remains partially decided only for caching and retry rules and exposure of stochastic results; the concrete derivation or sub-seed algorithm needs no additional decision while it preserves the semantic contract already fixed.
 
-## Verificación
+## Verification
 
-La conformidad deberá cubrir como mínimo:
+Conformance must cover at least:
 
-1. refinamientos heredados que fortalecen garantías y rechazo de los que retiran capacidad;
-2. persistencia del orden lógico a través de filtros, copias y asignaciones;
-3. orden intrínseco de tipos totalmente ordenables y fallback de procedencia para tipos heterogéneos;
-4. normalización local dominio → `unique` → orden → cardinalidad y rechazo de `[mut]` local;
-5. `has` y `has not`, con rechazo de `in` como pertenencia booleana;
-6. fusión previa de inserciones `unique` y extensión lineal reproducible respetuosa con causalidad;
-7. forma aritmética `(Δ, P, Q)`, cancelaciones válidas y fallos preservados;
-8. conflicto entre asignaciones distintas y entre asignación y aritmética;
-9. composición estructural `create → add → remove → destroy` y diferencia con la secuencialidad dentro de un `then`;
-10. error, warning, ausencia de diagnóstico y `failed` runtime según lo demostrable.
+1. inherited refinements that strengthen guarantees and rejection of those that remove capability;
+2. persistence of logical order through filters, copies and assignments;
+3. intrinsic order of totally orderable types and provenance fallback for heterogeneous types;
+4. local normalisation domain → `unique` → order → cardinality and rejection of local `[mut]`;
+5. `has` and `has not`, with rejection of `in` as Boolean membership;
+6. prior merging of `unique` insertions and reproducible causal-respecting linear extension;
+7. arithmetic form `(Δ, P, Q)`, valid cancellations and preserved failures;
+8. conflict between distinct assignments and between assignment and arithmetic;
+9. structural composition `create → add → remove → destroy` and its distinction from sequentiality within a `then`;
+10. error, warning, absence of diagnostic and runtime `failed` according to what can be demonstrated.
