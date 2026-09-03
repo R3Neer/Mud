@@ -1,6 +1,6 @@
 ---
 id: Q-017
-title: Dominios dinámicos circulares
+title: Circular dynamic domains
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-017 — Dominios dinámicos circulares
+# Q-017 — Circular dynamic domains
 
-## Contenido
+## Content
 
-Qué ciclos son inválidos y si existe un punto fijo admisible.
+Which cycles are invalid, and whether an admissible fixed point exists.
