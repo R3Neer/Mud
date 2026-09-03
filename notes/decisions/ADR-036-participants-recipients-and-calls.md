@@ -159,7 +159,7 @@ rule AdvanceCalendar {
 
 Here `World` does not mean ‘all’ `thing` whatever the case may be `World`", but the only one identity `World`.
 
-On the other hand, a participant individual `on World` o `for World` select `thing` active concrete projects whose type meets `is World`. Each member `thing` of a role `for` The group undergoes the same selection process. The selection is a deliberate one: it includes the identity exact `World` when it is concrete and active, in addition to its active specialisations. A `thing` ‘abstract’ does not in itself provide a specific link, although its specialisations may do so. This selection rule does not apply to roles of value.
+On the other hand, an individual participant `on World` or `for World` selects active concrete `thing` instances whose type satisfies `is World`. Each `thing` member of a `for` role group undergoes the same selection process. The selection is deliberate: it includes the exact `World` identity when it is concrete and active, in addition to its active specialisations. An ‘abstract’ `thing` does not itself provide a specific link, although its specialisations may do so. This selection rule does not apply to value roles.
 
 To deliberately exclude the identity root A role must be declared and the condition must be specified:
 
@@ -224,7 +224,7 @@ game.Search(origin, depth = 3)
 game.Search(depth = 3)
 ```
 
-If the firm states `origin = Capital`, `depth` y `exhaustive = false` In that order, both calls are valid. This, however, would not be:
+If the signature declares `origin = Capital`, `depth` and `exhaustive = false` in that order, both calls are valid. This, however, would not be:
 
 ```mud
 game.Search(depth = 3, origin)
@@ -248,7 +248,7 @@ One call A rule does not create a general function. A request or composition of 
 
 ## Future verification
 
-1. Participants `for`, `on` y `given` always named, and a rejection of anonymity.
+1. Participants `for`, `on` and `given` are always named, and anonymous participants are rejected.
 2. Access for members only via the participant.
 3. Receiver a positional, named multi-part entity.
 4. Role missing, duplicated, unknown or misspelt.
@@ -257,13 +257,13 @@ One call A rule does not create a general function. A request or composition of 
 7. Distance between participants and `given`.
 8. Engagement `on` related, refined, advanced and cyclical through `in`.
 9. Rejection of incompatible headers.
-10. Difference between the exact reference `World` and a participant `on World` o `for World`.
+10. Difference between the exact `World` reference and a participant `on World` or `for World`.
 11. Reflexivity for a root specific and the absence of a direct link to a root abstract.
 12. Role `for` group with domain, cardinality and each modifier for collection.
 13. A name is required for all cardinality, including `[1]`, and for mutability outdoors.
 14. Receiver a set occupying a single position, with no implicit extension.
 15. The four combinations of outer mutability and inner capability.
-16. Acceptance of a mutable placeholder and rejection of literals or calculated expressions for `mut nombre`.
+16. Acceptance of a mutable placeholder and rejection of literals or calculated expressions for `mut name`.
 17. Rejection of collections in `on` and of outer mutability in minimal forms.
 18. Roles `for` basic, alias, `family`, dictionary and `thing`.
 19. Link via identity, value and place.
@@ -276,5 +276,5 @@ One call A rule does not create a general function. A request or composition of 
 
 A `look` supports `given` in accordance with the general rules for binding and defaults. Declarations governed by `on` are still not `given` and, when used as triggers, they are referenced without `()`. Stored callable values are invoked using the standard method of receivers and arguments; storing the descriptor does not pre-assign roles or `given`.
 
-Furthermore, a participant related `on nombre: Tipo in fuente` It can map values from a finite, countable source, not just identities `thing`. The direct form without a source remains reserved for the implicit universe of `thing`; therefore `on n: Nat` without a finite source is invalid.
+Furthermore, a related participant `on name: Type in source` can map values from a finite, countable source, not just `thing` identities. The direct form without a source remains reserved for the implicit universe of `thing`; therefore `on n: Nat` without a finite source is invalid.
 

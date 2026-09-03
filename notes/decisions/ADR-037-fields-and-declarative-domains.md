@@ -85,7 +85,7 @@ given amount: Nat in 1..100
 for people: Person in EligibleCitizens [1..* unique]
 ```
 
-It may appear in fields, components of alias, roles `for` y `given`. A domain The calculation must be pure, deterministic, non-stochastic, analysable and free from invalid cycles.
+It may appear in fields, alias components, and `for` and `given` roles. A domain calculation must be pure, deterministic, non-stochastic, analysable and free from invalid cycles.
 
 In a stored field or a role `for`, `in` appears after the type and before the specification from collection:
 
@@ -120,7 +120,7 @@ The parser and the AST distinguish between:
 - Participant related.
 - Unit from presentation of a magnitude.
 
-`in` does not express Boolean membership; that operation uses `has` y `has not`. Share token among the remaining uses of `in` does not merge their meanings.
+`in` does not express Boolean membership; that operation uses `has` and `has not`. Sharing a token among the remaining uses of `in` does not merge their meanings.
 
 ## Consequences
 
@@ -133,7 +133,7 @@ The parser and the AST distinguish between:
 
 1. Domain steady and calculated.
 2. `given` outside domain in good standing and action.
-3. Stored field outside domain y `in` valid on a computed field in accordance with its derived form.
+3. Stored field outside its domain, and valid `in` on a computed field in accordance with its derived form.
 4. Cycle and invalid stochastic dependencies.
 5. Computed field with type stated, inferred and not unambiguously inferable.
 6. Rejection of `mut` external and `[mut]` such as authority manufactured in designated areas; acceptance of `[mut]` when the supplier guarantees the capacity, and `in`, cardinality, `unique` and order as derivative constraints.
@@ -146,4 +146,4 @@ The parser and the AST distinguish between:
 
 ## Amendment by D-084
 
-Structural aliases support derived fields and overrides of inherited defaults. Their derived forms follow the distinction current between a verification note and enforcement measures for domain/colección; Coercion cannot create capacity `[mut]`.
+Structural aliases support derived fields and overrides of inherited defaults. Their derived forms preserve the distinction between a verification constraint and enforcement for domain/collection; coercion cannot create `[mut]` capability.

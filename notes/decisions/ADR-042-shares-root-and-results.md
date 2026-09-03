@@ -64,17 +64,17 @@ Within a block `then`, D-066 allows for calculated local links. They are resolve
 
 ### Unified sequence of `then`
 
-There is no classification semantics between elementary and compound actions. A `then` is an ordered sequence of consequences and may combine local links, direct effects and calls to `action` o `subaction` and routes `for each`.
+There is no semantic distinction between elementary and compound actions. A `then` is an ordered sequence of consequences and may combine local bindings, direct effects, calls to `action` or `subaction`, and `for each` traversals.
 
-Each sentence reads: delta private, visible in its textual position. A call The internal function is validated and executed in that point, takes into account the previous private effects and adds its own effects to them resolution It has atomicity and preserves these effects for subsequent statements. It does not open a separate transaction.
+Each statement reads the private delta visible at its textual position. An internal call is validated and executed there, observes the preceding private effects, and adds its own effects to the resolution. It is atomic and preserves those effects for subsequent statements; it does not open a separate transaction.
 
-The `after` of all the shares/subactions The executed commands are checked against the stable state final attempt at the resolution complete. Call analysis must prevent executable cycles; Q-023 The proof of acyclicity and impact remains open when the selection of the descriptor 'callable' is a dynamic property, not the ability to call it.
+The `after` blocks of all invoked actions and subactions are checked against the final attempted stable state when the complete resolution finishes. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
 
 ### `after` and `old`
 
-`if` y `after` can be attached via `otherwise` one reason `Text` because it is false. Its omission is lawful and implies a suggestion, not a warning, because rejection is a normal response; in that case, this results in a reason based on the condition and its provenance. The diagnostic He is pure and lazy.
+`if` and `after` can be given an `otherwise` reason of type `Text` when false. Omitting it is lawful and implies a suggestion, not a warning, because rejection is a normal response; in that case, the result contains a reason based on the condition and its provenance. The diagnostic is pure and lazy.
 
-`after` is evaluated after all the waves on the stable state attempt. Its falsity results in `rejected`; a error during its assessment, it produces `failed`. A error when assessing `if` o `after` is not captured by `otherwise`, which only accounts for a condition that has been correctly evaluated as false.
+`after` is evaluated after all waves against the attempted stable state. If it is false, the result is `rejected`; an error during its evaluation produces `failed`. An error while evaluating `if` or `after` is not captured by `otherwise`, which applies only when the condition has been successfully evaluated as false.
 
 In the context of actions and tests, `old e` reads `e` in the stable state immediately before the action completes and is permitted only within `after`. D-058 adds a different context for `old` within reactive rules, where it compares wave snapshots.
 
@@ -84,17 +84,17 @@ In the context of actions and tests, `old e` reads `e` in the stable state immed
 | --- | --- |
 | `accepted` | Request valid, root compatible, stabilisation, invariants and `after` satisfied |
 | `rejected` | `given` outside domain, `if` false or `after` false |
-| `failed` | Conflict, cycle u oscillation, invalid operation, domain or invalid references, `always` unfulfilled or failure propagated semantic |
+| `failed` | Conflict, cycle or oscillation, invalid operation, domain or invalid references, unfulfilled `always`, or propagated semantic failure |
 
 The request returns an object to the external caller whose `state` field contains one of those three results. When it contains `rejected` or `failed`, the object also includes the compulsory `reason: Text` field with a human explanation. Any regulatory case other than `accepted` must provide that reason in accordance with D-061; it may be accompanied by codes and structured reasons.
 
-Everything result other than `accepted` restores exactly the stable state previous and does not publish messages or have any other external effects.
+Every result other than `accepted` restores exactly the previous stable state and publishes no messages or other external effects.
 
-The normalisation of a linear interval with inverted endpoints to `empty` is a valid assessment in accordance with D-059 and does not produce `failed` in its own right. A `given` to be excluded from domain or a `if` o `after` which turns out to be false because of that gap, result in `rejected`; a domain that leaves a value invalid storage or a rule `always` unfulfilled lead to `failed` by the tentative state resulting.
+Normalising a linear interval with inverted endpoints to `empty` is valid under D-059 and does not itself produce `failed`. A `given` excluded by its domain, or an `if` or `after` that is false because of that exclusion, produces `rejected`; a domain that leaves a stored value invalid, or an unfulfilled `always` rule, produces `failed` in the tentative state.
 
 ## Consequences
 
-- `rejected` is an answer semantics normal; `failed` indicates that a transition valid.
+- `rejected` is a normal semantic result; `failed` indicates that a valid transition could not be completed.
 - Atomicity includes root, waves, `always`, `after` and upcoming events.
 - Q-004 is now closed: one `after` 'false' reverses the entire resolution.
 - The values of domain returned by a action, if they were to be admitted, they remain open in Q-022.
@@ -108,9 +108,9 @@ The normalisation of a linear interval with inverted endpoints to `empty` is a v
 5. `old` note the action outer layer, not an intermediate layer.
 6. Linking a receiver-a changeable place and the rejection of a receiver let it just be a value.
 7. Normalised inverse interval to `empty` without failure intrinsic.
-8. Distinguishing between rejection on the grounds of a false custody order regarding `empty` y failure by state outside domain.
-9. Compulsory attendance by `reason: Text` in `rejected` y `failed`, and absence from `accepted`.
-10. Diagnostics `otherwise` explicit and generated for `if` y `after`, including lazy evaluation.
+8. Distinguishing rejection caused by a false condition involving `empty` from failure caused by state outside its domain.
+9. Mandatory `reason: Text` for `rejected` and `failed`, and its absence from `accepted`.
+10. Explicit and generated `otherwise` diagnostics for `if` and `after`, including lazy evaluation.
 
 ## Amendment current by D-096
 

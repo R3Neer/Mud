@@ -81,15 +81,15 @@ $$
 v_{n-1}(b,e)\ne v_n(b,e).
 $$
 
-This pulse is calculated directly for each pair of consecutive start snapshots. It is not a stored Boolean value, and is not reset by a change to `false` and does not undergo screening again $\mathsf{false}\rightarrow\mathsf{true}$. If $e$ switch between two consecutive pairs of snapshots, `changes` Click on both waveforms. Only the net change between snapshots matters; transient values within a delta private variables are not observable.
+This pulse is calculated directly for each pair of consecutive snapshots. It is not a stored Boolean value, is not reset by a change to `false`, and does not undergo the $\mathsf{false}\rightarrow\mathsf{true}$ edge test again. If $e$ changes between two consecutive snapshot pairs, `changes` fires on both transitions. Only the net change between snapshots matters; transient values within a private delta are not observable.
 
 Temporary triggers are made up of the words `and` and `or`. An ordinary Boolean operand in a composition is raised to its `false` → `true` transition; it is not interpreted as a sustained level. The grammar, `old` scope and elaboration of these combinations are set out in D-058.
 
 ### Initialisation of the reactive memory
 
-The links found in the first snapshot achieved by bringing together the contributions `start with` of the modules, or the contributions compiled for the world of a test, they receive for each branch a raised Boolean value previous virtual $\mathsf{false}$. If the branch is true in that first snapshot from stabilisation, click. Temporal expressions, including `changes` y `old`, compare the snapshot initially with herself: `changes` do not press and `old e` is the same as `e`.
+The links found in the first snapshot by combining module `start with` contributions, or contributions compiled for a test world, receive a virtual previous Boolean value of $\mathsf{false}$ for each branch. If a branch is true in that first stabilisation snapshot, it fires. Temporal expressions, including `changes` and `old`, compare against the initial snapshot itself: `changes` does not fire and `old e` equals `e`.
 
-A connection that was not present in that first snapshot, whether due to activation following a rule or due to the arrival of participants, does not take part in the root u wave that creates it. In its first wave activa stores the value current without firing `when` nor cause a pulse `changes`. From the wave The following normally compares two snapshots. In particular, if it stores $\mathsf{false}$ and the condition is $\mathsf{true}$ in the wave back, `when` shoot; if it is initially memorised $\mathsf{true}$, that mere appearance does not set it off.
+A connection that was not present in that first snapshot, whether because a rule activated it or because participants arrived, does not take part in the root or wave that creates it. During its first wave it stores the current value without firing `when` or producing a `changes` pulse. Subsequent waves compare two snapshots normally. In particular, if it stores $\mathsf{false}$ and the condition is $\mathsf{true}$ in the next wave, `when` fires; if it is first memorised as $\mathsf{true}$, that mere appearance does not trigger it.
 
 ### Ruler `always`
 
@@ -128,7 +128,7 @@ All three variants fall into the category of anchor `rule::*`. In particular, `a
 7. Absence of a pulse when an expression changes temporarily but remains the same value between snapshots.
 8. Opening shot of a `when` genuine, originating from `start with`.
 9. Initialisation without triggering a binding created outside `start with`.
-10. A combination of two changes and one change with a transition Boolean using `and` y `or`.
+10. A combination of two `changes` expressions and a Boolean transition using `and` and `or`.
 11. Consecutive pulses preserved within a time sequence.
 12. Notice regarding a rule `always` without `otherwise`, generation of a reason default value and propagation of a diagnostic explicitly to the `failed`.
 

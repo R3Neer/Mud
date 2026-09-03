@@ -47,7 +47,7 @@ When a literal intended for a collection `unique` contains duplicates whose equa
 
 ```mud
 members: Person [* unique] = [Alice, Alice]  # aviso; equivale a [Alice]
-pair: Person [2 unique] = [Alice, Alice]     # error; tras normalizar solo queda un valor
+pair: Person [2 unique] = [Alice, Alice]     # error; normalisation leaves only one value
 ```
 
 Initial sources of information:

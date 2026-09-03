@@ -112,14 +112,14 @@ For each piece of data in each member, the value It is obtained in the following
 2. Explicit default for the declaration of the data.
 3. Default setting for the type cash in accordance with D-017.
 
-Therefore, a member you may omit a stored value provided that its default value can be determined statically. In particular, a piece of data `Nat` if no explicit default is specified, it returns `0`. Even if the omission is valid, it is recommended that values whose meaning is important for understanding the model.
+Therefore, a member may omit a stored value provided that its default can be determined statically. In particular, a `Nat` datum with no explicit default receives `0`. Even when omission is valid, values whose meaning is important to understanding the model should be stated explicitly.
 
-After processing the stored data from a member, its calculated data is evaluated for that member. The expression may use unqualified names to access other associated data from the same family, including calculated data declared before or after. Dependencies between calculated data must be acyclic and resolved without relying on the textual order of declaration. The defaults and assignments of member can use `ValueBlock`, but the entire body must be capable of being assessed statically in accordance with D-066 y D-101. The calculated data is also evaluated statically by member and they must be of high quality, as well as meeting the specifications and, where applicable, the domain and the collection.
+After a member's stored data is processed, its calculated data is evaluated for that member. The expression may use unqualified names to access other associated data from the same family, including calculated data declared before or after it. Dependencies between calculated data must be acyclic and resolved without relying on declaration order. Member defaults and assignments may use `ValueBlock`, but the complete body must be statically analysable in accordance with D-066 and D-101. Calculated data is likewise evaluated statically per member and must satisfy its declared type and, where applicable, its domain and collection constraints.
 
 In the example, `Mountain.costly` is `true`, whilst `Plain.costly` is `false`. The associated values obtained for a member, stored or calculated:
 
 - They are unchangeable.
-- They do not have identity nor cycle own runtime values: these are actual values of the descriptor uniform, no separate statements by member.
+- They have neither identity nor an independent runtime lifecycle: they are values of the uniform descriptor, not separate member entities.
 - They are queried as properties of the value family-related, for example `terrain.movementCost`.
 - They do not alter the identity nor the equality of the member: they still depend on the nominal family and the name of the member.
 

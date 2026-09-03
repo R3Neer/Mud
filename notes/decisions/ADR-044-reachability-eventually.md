@@ -37,9 +37,9 @@ eventually game.Checkmate(White)
     through [game.Move, game.Pass]
 ```
 
-The expression is true if there exists a finite sequence of accepted requests for the actions permitted by `through` which leads to a state where the target is true. The empty sequence is included: the state The current one can meet the objective.
+The expression is true if there exists a finite sequence of accepted requests for the actions permitted by `through` that leads to a state where the target is true. The empty sequence is included: the current state may already satisfy the objective.
 
-Each edge explored is a transition MUD complete with validation from request, root, waves, rules `always` y `after`. Rejected requests do not form edges; a failure during a transition does not become a transition valid.
+Each explored edge is a complete MUD transition, including validation of the request, root, waves, and `always` and `after` rules. Rejected requests do not form edges; a failure during a transition does not produce a valid transition.
 
 Participants and all generated `given` values must come from finite, countable domains with a canonical order. For a `for` role, the ‘collective’ section lists complete collections that meet its contract, with non-members kept separate from receiver places. If the role has outer mutability, there must also be a finite, countable and canonical set of candidate stored locations; listing only their current values is insufficient.
 
