@@ -1,6 +1,6 @@
 ---
 id: Q-060
-title: Catálogo reflectivo de TypeKind
+title: Reflective `TypeKind` catalogue
 priority: P1
 opened: 2026-08-16
 resolved: false
@@ -12,34 +12,34 @@ affects:
 superseded-by: []
 ---
 
-# Q-060 — Catálogo reflectivo de `TypeKind`
+# Q-060 — Reflective `TypeKind` catalogue
 
-## Pregunta
+## Question
 
-¿Qué miembros públicos contiene `TypeKind`, qué estabilidad garantiza MUD a ese catálogo reflectivo y cómo se relaciona con las formas internas normalizadas del sistema de tipos?
+Which public members does `TypeKind` contain, what stability does MUD guarantee for this reflective catalogue, and how does it relate to the type system's normalised internal forms?
 
-## Contexto
+## Context
 
-D-087 hace observable `Type~kind`, pero deja deliberadamente el catálogo concreto de `TypeKind` para la especificación del sistema de tipos. Sin una pregunta activa, esa parte de la API reflectiva puede cerrarse accidentalmente al formalizar tipos internos.
+D-087 makes `Type~kind` observable, but deliberately leaves the concrete `TypeKind` catalogue to the type-system specification. Without an active question, this part of the reflective API could be closed accidentally while formalising internal types.
 
-## Ya decidido
+## Already decided
 
-- Todo valor expone `~type: Type`.
-- `Type` expone `~kind`.
-- El catálogo de `TypeKind` es parte de la API reflectiva y no debe confundirse automáticamente con constructores internos del compilador.
+- Every value exposes `~type: Type`.
+- `Type` exposes `~kind`.
+- The `TypeKind` catalogue is part of the reflective API and must not automatically be confused with internal compiler constructors.
 
-## Pendiente
+## Outstanding
 
-- C1: enumerar las categorías públicas mínimas de MUD 1.0.
-- C2: decidir qué cambios del catálogo son compatibles entre versiones.
-- C3: definir la relación entre una categoría pública y las formas internas normalizadas que pueda usar el compilador.
+- C1: Enumerate the minimum public categories of MUD 1.0.
+- C2: Decide which catalogue changes are compatible between versions.
+- C3: Define the relation between a public category and normalised internal forms the compiler may use.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: existe un catálogo normativo completo para MUD 1.0.
-- C2: la especificación declara su estabilidad observable.
-- C3: cada forma interna relevante puede proyectarse de manera determinista a un miembro público de `TypeKind` sin exponer accidentalmente detalles de implementación.
+- C1: A complete normative catalogue exists for MUD 1.0.
+- C2: The specification declares its observable stability.
+- C3: Every relevant internal form can be projected deterministically to a public `TypeKind` member without accidentally exposing implementation details.
 
-## Resolución
+## Resolution
 
-Pendiente.
+Pending.
