@@ -60,7 +60,7 @@ The textual order of files and statements `using` It does not decide draws.
 ### Identifier conventions
 
 - Namespace: segments `lowerCamelCase` separated by full stops.
-- Nominal statements (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `test`, `look` y `message`): `PascalCase`.
+- Nominal statements (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `test`, `look` and `message`): `PascalCase`.
 - Members of a `family`: `PascalCase`.
 - Fields, components, roles, `given` and iteration variables: `lowerCamelCase`.
 

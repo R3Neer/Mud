@@ -96,7 +96,7 @@ For actions and rules, `when`, `if` and `after` contain a single Boolean express
 
 ## Consequences
 
-- The lexer reserves `thing` y `as`; `abstract` is contextual before `thing`, in accordance with D-054; `construct` ceases to be reserved word.
+- The lexer reserves `thing` and `as`; `abstract` is contextual before `thing`, in accordance with D-054; `construct` ceases to be a reserved word.
 - The AST uses `ThingDecl` and a list `directAncestors` introduced by `as`.
 - `is` remains the only operator of query specialisation.
 - The parser can select the header format based on the entity type.

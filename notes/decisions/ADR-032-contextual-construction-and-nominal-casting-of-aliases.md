@@ -53,7 +53,7 @@ A list of cast members:
 - Validate the destination’s restrictions and domains.
 - It does not round off or transform the content.
 
-The statement by D-030 that `to` This is not an open casting call – it is an ongoing process current for non-quantitative values that do not feature in this relation nominal. `to` does not allow arbitrary conversions between `thing`, text and numbers or types that are structurally incompatible.
+The statement by D-030 that `to` is not an open casting call remains in force: it is a defined process for non-quantitative values that participate in this nominal relation. `to` does not allow arbitrary conversions between `thing`, text and numbers, or between structurally incompatible types.
 
 ### Compatibility structural
 

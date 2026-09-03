@@ -45,7 +45,7 @@ Reactive rules, `always` and `message` do not allow `given`. A `look` does allow
 
 ### Cardinality and names
 
-A role `for` accepts any `declared-type`, including basic types, aliases, families, dictionaries and `thing`, a domain `in` and the specification full list of collection. The domain restricts the permissible values for the role and is entered between the type and the specification from collection. The cardinality omitted is equivalent to `[1]` in accordance with D-039. A role `on` links a single value by association and does not allow cardinality nor the modifiers for collection `unique` u `ordered`: the direct form without `in` uses the implicit universe of `thing` active concrete forms; the related form `nombre[: Tipo] in fuente` may take elements from a finite, countable set in accordance with D-096.
+A role `for` accepts any `declared-type`, including basic types, aliases, families, dictionaries and `thing`, together with a domain `in` and a complete collection specification. The domain restricts permissible role values and appears between the type and collection specification. Omitted cardinality is equivalent to `[1]` under D-039. An `on` role links one value by association and permits neither cardinality nor the collection modifiers `unique` or `ordered`: the direct form without `in` uses the implicit universe of active concrete `thing` values; the related form `name[: Type] in source` may take elements from a finite, countable set under D-096.
 
 The type incorporated `Thing` accepts any `thing`. Therefore, a role `for` from type `Thing` accepts any identity specific, compatible and `on Thing` lists all the `thing` concrete and active; the root In the abstract, it does not create a connection of its own.
 

@@ -8,13 +8,13 @@ superseded-by: []
 questions:
   - "Q-056"
 affects:
-  - "futuro `12-aliases.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`, futuro `37-finitud-y-enumerabilidad.md`"
+  - "future `12-aliases.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`, future `37-finiteness-and-enumerability.md`"
 ---
 # ADR-033 — Composite keys and alias enumeration
 
 - Related question: Q-056
 - Syntax updated by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
-- Documents affected: future `12-aliases.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`, future `37-finitud-y-enumerabilidad.md`
+- Documents affected: future `12-aliases.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`, future `37-finiteness-and-enumerability.md`
 
 ## Context
 
