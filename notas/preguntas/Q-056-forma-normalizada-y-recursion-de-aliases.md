@@ -1,6 +1,6 @@
 ---
 id: Q-056
-title: Forma normalizada y recursión de aliases
+title: Normalised form and alias recursion
 priority: P2
 opened: 2026-07-29
 resolved:
@@ -11,21 +11,21 @@ affects: []
 superseded-by: []
 ---
 
-# Q-056 — Forma normalizada y recursión de aliases
+# Q-056 — Normalised form and alias recursion
 
-## Decidido por D-084
+## Decided by D-084
 
-- Especialización simple y múltiple de aliases.
-- Intersección de representaciones nominales y dominios compatibles.
-- Herencia de componentes y campos derivados.
-- Deduplicación de diamantes por origen y conflictos entre nombres independientes.
-- Sobrescritura exclusiva de predeterminados almacenados.
-- Construcción contextual y acceso nominal a miembros.
+- Simple and multiple specialisation of aliases.
+- Intersection of nominal representations and compatible domains.
+- Inheritance of components and derived fields.
+- Diamond deduplication by origin and conflicts between independent names.
+- Exclusive overriding of stored defaults.
+- Contextual construction and nominal member access.
 
-## Pendiente
+## Outstanding
 
-Definición inductiva completa de la forma estructural normalizada cuando existen aliases anidados o recursivos; admisión o rechazo de recursión directa e indirecta; condiciones de productividad; decidibilidad de compatibilidad, predeterminados y enumeración canónica de cada tipo componente.
+Complete inductive definition of normalised structural form for nested or recursive aliases; admission or rejection of direct and indirect recursion; productivity conditions; and decidability of compatibility, defaults and canonical enumeration for each component type.
 
-## Criterio de cierre
+## Closure criterion
 
-Q-056 podrá cerrarse cuando la especificación defina una normalización canónica para aliases anidados, resuelva la recursión y establezca condiciones decidibles de compatibilidad, productividad, predeterminados y enumeración.
+Q-056 can close when the specification defines canonical normalisation for nested aliases, resolves recursion and establishes decidable conditions for compatibility, productivity, defaults and enumeration.
