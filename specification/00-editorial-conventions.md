@@ -288,13 +288,13 @@ Every file generated must state this in its header and declare its source. The `
 Any grammatical change that affects the structure must update the corresponding CST catalogue, coverage, transformation and ASDL in the same commit.
 
 > [!rule] MUD-EDIT-004 — Propagation of nominal resolution
-> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, visibility nominal, qualification or specialisation must be reviewed in the same change `09-names-and-anchors.md` and `nombres/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
+> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, nominal visibility, qualification or specialisation must be reviewed in the same change `09-names-and-anchors.md` and `names/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
 
 review must at least check which symbols are created, in which scope they reside, which name resolves to them, what owner they have, whether they receive public anchor, and which relationships `Owns`, `Specializes` or `RefersTo` the resolution produces. A rule dependent on types, effects or elaboration is not added to the Nominal HIR in order to artificially satisfy this requirement.
 
 ## 14. Links to mechanical files
 
-The chapters will link to the mechanical diagrams by filename. The README files for `gramatica/` and `sintaxis/` contain the inventory and commands from validation. Extensive tables generated within various chapters will not be duplicated where they can be verified from a single source.
+The chapters will link to the mechanical diagrams by filename. The README files for `grammar/` and `syntax/` contain the inventory and commands from validation. Extensive tables generated within various chapters will not be duplicated where they can be verified from a single source.
 
 ## 15. Template from chapter
 

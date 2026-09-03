@@ -13,8 +13,8 @@ depends-on:
   - 05-source-text
   - 06-lexicon
   - 07-concrete-grammar
-  - gramatica/mud-lexico.ebnf
-  - gramatica/mud.ebnf
+  - grammar/mud-lexico.ebnf
+  - grammar/mud.ebnf
 questions: []
 decisions:
   - D-015

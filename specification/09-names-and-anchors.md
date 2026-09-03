@@ -105,7 +105,7 @@ No local scope permits forward references, loops, redeclarations or shading of a
 ## Stages
 
 1.  The Surface AST provides names and provenance.
-2.  The nominal resolution creates symbols, scopes, bindings and anchors, and instantiates them in the Nominal HIR of `nombres/mud-nominal-hir.asdl`.
+2.  The nominal resolution creates symbols, scopes, bindings and anchors, and instantiates them in the Nominal HIR of `names/mud-nominal-hir.asdl`.
 3. The type system consumes Surface AST + Nominal HIR and resolves unions, domains and references dependent on type.
 4. The elaboration covers accesses, calls, contextual abbreviations and other type-dependent meanings; its subsequent mechanical representation has not yet been finalised.
 

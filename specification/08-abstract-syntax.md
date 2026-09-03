@@ -13,8 +13,8 @@ depends-on:
   - 05-source-text
   - 06-lexicon
   - 07-concrete-grammar
-  - sintaxis/cst-sin-perdidas
-  - sintaxis/mud-surface-ast.asdl
+  - syntax/cst-lossless
+  - syntax/mud-surface-ast.asdl
 questions:
   - Q-063
 decisions:
@@ -60,7 +60,7 @@ This chapter defines the normalised Surface AST for MUD 1.0. The AST preserves s
 
 The standard mechanical diagram is [[mud-surface-ast]]. This chapter explains its invariants and how it relates to other representations.
 
-Nominal resolution operates on this AST and produces the normative HIR `nombres/mud-nominal-hir.asdl`, which instantiates symbols, scopes, bindings, anchors and a partial nominal graph without duplicating source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later typing and elaboration stages whose mechanical representation is not yet finalised.
+Nominal resolution operates on this AST and produces the normative HIR `names/mud-nominal-hir.asdl`, which instantiates symbols, scopes, bindings, anchors and a partial nominal graph without duplicating source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later typing and elaboration stages whose mechanical representation is not yet finalised.
 
 ## Representation pipeline
 

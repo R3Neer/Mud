@@ -693,7 +693,7 @@ Each normalisation rule must include at least:
 - Borderline case.
 - Invalid case prior to the AST, where applicable.
 
-The initial corpus is in `casos/cst-ast.yaml`.
+The initial corpus is in `cases/cst-ast.yaml`.
 
 ## Membership, restriction and local transformations
 

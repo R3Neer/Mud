@@ -80,11 +80,11 @@ decisions:
 
 ## State and purpose
 
-[[gramatica/mud.ebnf]] defines the complete syntax of standard `.mud` source files in MUD 1.0. The additional physical format of `mud.module` is documented separately, and its complete grammar remains open in Q-062. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
+[[grammar/mud.ebnf]] defines the complete syntax of standard `.mud` source files in MUD 1.0. The additional physical format of `mud.module` is documented separately, and its complete grammar remains open in Q-062. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
 
 ## Parsing output
 
-The normative parsing result is a lossless CST per file, defined in [[sintaxis/cst-sin-perdidas]]. The EBNF determines grouping and the order of meaningful tokens; the CST also preserves punctuation, terminators and trivia.
+The normative parsing result is a lossless CST per file, defined in [[syntax/cst-lossless]]. The EBNF determines grouping and the order of meaningful tokens; the CST also preserves punctuation, terminators and trivia.
 
 The presence of a CST does not confirm that the file is valid. The recovery process may represent missing or unexpected tokens without discarding them.
 
@@ -109,7 +109,7 @@ The grammar may retain a `mut` modifier written within that expression for diagn
 
 ## AST projection
 
-The AST projection is defined in [[sintaxis/cst-a-ast-superficial]]. Production coverage is recorded mechanically in `sintaxis/cobertura-sintactica.yaml`.
+The AST projection is defined in [[syntax/cst-to-surface-ast]]. Production coverage is recorded mechanically in `syntax/syntax-coverage.yaml`.
 
 ## Programme
 
