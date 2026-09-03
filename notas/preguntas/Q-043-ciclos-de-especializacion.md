@@ -1,6 +1,6 @@
 ---
 id: Q-043
-title: Ciclos de especialización
+title: Specialisation cycles
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -11,22 +11,22 @@ affects: []
 superseded-by: []
 ---
 
-# Q-043 — Ciclos de especialización
+# Q-043 — Specialisation cycles
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-¿Debe rechazarse cualquier ciclo no trivial de especialización directa?
+Should every non-trivial cycle of direct specialisation be rejected?
 
-Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
+Decision: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-Todo ciclo de especialización directa es inválido. La relación semántica `is` es un orden parcial.
+Every direct-specialisation cycle is invalid. The semantic relation `is` is a partial order.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-015`.
