@@ -14,7 +14,7 @@ affects:
 # ADR-098 — Assignable paths and write-back of immutable aliases
 
 - Modifies: [[ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[ADR-039-collections-and-dictionaries|D-039]] and [[ADR-080-higher-order-collection-algebra-and-updates|D-080]].
-- Related to: [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] and [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
+- Related to: [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
 - Keeps [[notes/questions/Q-006-c-conflicts|Q-006]] open for compatibility of concurrent effects on partially overlapping targets.
 
 ## Context

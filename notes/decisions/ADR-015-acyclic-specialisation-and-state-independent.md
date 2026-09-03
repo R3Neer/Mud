@@ -13,7 +13,7 @@ affects:
 ---
 # ADR-015 — Acyclic specialisation and state independent
 
-- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
+- Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Updated: 28 July 2026 to use the terminology from D-025
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 - Questions: [[notes/questions/Q-042-e-specialisation-from-a-concrete-thing|Q-042]], [[notes/questions/Q-043-c-specialisation-cycles|Q-043]]

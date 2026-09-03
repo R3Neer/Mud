@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-032 — Contextual construction and nominal casting of aliases
 
-- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
+- Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Amended by: [[notes/decisions/ADR-069-char-literals-with-double-quotes|D-069]]
 
 - Read more: [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]]
