@@ -1,6 +1,6 @@
 ---
 id: D-009
-title: "`allowed` como especulación descartable"
+title: "`allowed` as a baseless rumour"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -12,20 +12,21 @@ affects:
   - "capítulo de admisibilidad y consultas especulativas"
 ---
 
-# ADR-009 — `allowed` como especulación descartable
+# ADR-009 — `allowed` as a baseless rumour
 
-## Contexto
+## Context
 
-Comprobar solo las precondiciones de una acción puede declarar admisible una
-solicitud cuya resolución completa terminaría en conflicto, invariante
-incumplida o fallo.
+Check only the preconditions for a action may declare a
+request whose resolution 'complete' would end in conflict, invariant
+unfulfilled or failure.
 
 ## Decisión
 
-`allowed` ejecuta especulativamente el protocolo de la acción sobre una copia
-descartable. No confirma estado ni publica salidas. Los fallos no se convierten
-en falsedad: se propagan como fallos de la consulta.
+`allowed` executes the protocol of the action on a copy
+disposable. Not confirmed state nor does it publish outputs. Errors are not converted
+as falsehoods: they are spread as errors of the query.
 
-## Consecuencias
+## Consequences
 
-D-043 desarrolla la semántica completa y sus observaciones.
+D-043 develops the semantics in full, together with his comments.
+

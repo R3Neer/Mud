@@ -1,6 +1,6 @@
 ---
 id: D-013
-title: "Formalización completa antes de continuar la implementación"
+title: "Complete formalisation before continuing with implementation"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -11,26 +11,26 @@ affects:
   - "planificación de implementación"
 ---
 
-# ADR-013 — Formalización completa antes de continuar la implementación
+# ADR-013 — Complete formalisation before continuing with implementation
 
-## Contexto
+## Context
 
-Una implementación temprana resolvería por necesidad ambigüedades todavía
-abiertas y podría convertir elecciones accidentales del código en semántica de
+Early implementation would, by necessity, resolve any ambiguities that still
+open and could turn accidental code choices into semantics from
 MUD.
 
 ## Decisión
 
-La especificación formal de MUD 1.0 se completa antes de continuar la
-implementación del lenguaje. Los prototipos o herramientas editoriales no
-pueden usarse para cerrar silenciosamente cuestiones normativas.
+The specification The MUD 1.0 formalisation must be completed before proceeding with the
+implementation of the language. Prototypes or editorial tools do not
+can be used to quietly resolve regulatory issues.
 
-El criterio de completitud y el orden de capítulos pertenecen a
-[[especificacion/README|la especificación formal]].
+The criteria for completeness and the order of the chapters are set out in
+[[especificacion/README|the specification formally]].
 
-## Consecuencias
+## Consequences
 
-- Las decisiones se promueven primero a una norma revisable.
-- La implementación posterior se evalúa por conformidad con esa norma.
-- Los huecos descubiertos por tooling se registran como preguntas o decisiones,
-  no como comportamiento implícito.
+- Decisions are first elevated to a revisable rule.
+- Subsequent implementation is assessed by conformance under that regulation.
+- Gaps identified by tooling are recorded as questions or decisions,
+  not as an implicit behaviour.

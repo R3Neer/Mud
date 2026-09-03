@@ -1,6 +1,6 @@
 ---
 id: D-010
-title: "Finitud y terminación exigidas por `eventually`"
+title: "Finiteness y termination required by `eventually`"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -16,21 +16,22 @@ affects:
   - "capítulos de alcanzabilidad, finitud y terminación"
 ---
 
-# ADR-010 — Finitud y terminación exigidas por `eventually`
+# ADR-010 — Finiteness y termination required by `eventually`
 
-## Contexto
+## Context
 
-Una búsqueda de alcanzabilidad sin un espacio enumerable y transiciones
-terminantes puede no responder o depender de un límite técnico presentado
-erróneamente como significado del lenguaje.
+A search for reachability without countable space and transitions
+Certain factors may not be addressed or may depend on a technical constraint that has arisen
+mistakenly taken to be the meaning of language.
 
 ## Decisión
 
-`eventually` solo es admisible cuando el análisis puede justificar un espacio
-de búsqueda finito y enumerable y la terminación de cada transición explorada.
-Un presupuesto técnico puede limitar recursos, pero no redefine la verdad de la
-proposición.
+`eventually` It is only permissible when the analysis can justify a space
+finite and countable search space and the termination of each transition explored.
+A technical budget may limit resources, but it does not redefine the truth of the
+proposition.
 
-## Consecuencias
+## Consequences
 
-D-044 desarrolla la alcanzabilidad existencial y su admisibilidad conservadora.
+D-044 develops the reachability existential and its admissibility conservative.
+

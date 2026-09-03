@@ -1,6 +1,6 @@
 ---
 id: D-014
-title: "Ontología unificada de `thing`"
+title: "Unified ontology of `thing`"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -10,39 +10,39 @@ questions:
 affects:
   - "[[especificacion/04-modelo-matematico]], futuro `11-things.md`"
 ---
-# ADR-014 — Ontología unificada de `thing`
+# ADR-014 — Unified ontology of `thing`
 
-- Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
-- Preguntas: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
-- Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
+- Updated: 28 July 2026 to use the terminology from D-025
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Questions: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
+- Documents concerned: [[especificacion/04-modelo-matematico]], future `11-things.md`
 
-## Contexto
+## Context
 
-Hablar de «instancias runtime» puede sugerir una separación entre clases y objetos. Esa separación no corresponde al modelo conceptual de MUD: una formalización basada en una función que asignase a cada objeto su clase introduciría dos dominios que el lenguaje no posee.
+Talking about ‘runtime instances’ may suggest a distinction between classes and objects. That distinction does not correspond to the model MUD’s conceptual model: a formalisation based on a function that assigns a class to each object would introduce two domains that the language does not possess.
 
 ## Decisión
 
-MUD tiene un único dominio conceptual de `thing`.
+The MUD has a single domain conceptual aspect of `thing`.
 
-1. Una `thing` no tiene instancias.
-2. Toda `thing` posee identidad semántica.
-3. Toda `thing` concreta denota además una cosa concreta con estado propio y puede servir como antecesora de otras.
-4. Una `thing` abstracta pertenece al mismo dominio y posee identidad, pero no denota por sí misma una cosa concreta con estado propio.
-5. Cada `thing` declarable tiene una única definición canónica; `as` fija en ella cero o varias relaciones declaradas y `create Nombre` solo activa esa identidad, según [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
-6. La relación semántica `is` es reflexiva y transitiva.
-7. `Thing` es la identidad abstracta incorporada superior a toda `thing`; no posee definición fuente ni ciclo de vida controlable por el programa.
+1. One `thing` It has no instances.
+2. All `thing` has identity semantics.
+3. All `thing` 'concrete' also denotes a concrete thing with state its own and can serve as ancestor from others.
+4. One `thing` 'abstracta' belongs to the same domain and has identity, but does not in itself denote a specific thing with state its own.
+5. Every `thing` 'declarable' has only one canonical definition; `as` sets one or more declared relationships on it and `create Nombre` just enable that one identity, according to [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
+6. The relation semantics `is` It is reflexive and transitive.
+7. `Thing` is the identity an abstract concept that transcends all others `thing`; it has no source definition or cycle with a programme-controlled lifespan.
 
-La procedencia —declaración estática o activación durante la ejecución— y el ciclo de vida no originan categorías ontológicas distintas.
+The provenance —declaration static or activation during the execution— and the cycle of life do not give rise to distinct ontological categories.
 
-## Distinción formal
+## Formal distinction
 
-`as` e `is` operan sobre niveles distintos:
+`as` e `is` operate at different levels:
 
-- `as` introduce antecesores directos en la cabecera de una `thing` estática o creada.
-- `is` es un operador de expresión que consulta la relación semántica derivada.
+- `as` insert direct ancestors at the top of a `thing` static or created.
+- `is` is an expression operator that query the relation semantics derived.
 
-Sea $R_{\mathrm{decl}}$ la relación de especialización declarada con `as`. D-068 añade una arista implícita desde cada raíz declarada hacia `Thing`; su unión forma $R_{\mathrm{dir}}$. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]] la completa con:
+Be $R_{\mathrm{decl}}$ the relation declared specialism with `as`. D-068 adds an implicit edge from each root declared towards `Thing`; his union form $R_{\mathrm{dir}}$. [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]] complete it with:
 
 $$
 R_{\mathsf{is}}
@@ -50,7 +50,7 @@ R_{\mathsf{is}}
 R_{\mathrm{dir}}^*.
 $$
 
-Por tanto:
+Therefore:
 
 $$
 t\mathrel{R_{\mathsf{is}}}t
@@ -66,32 +66,32 @@ t_2\mathrel{R_{\mathrm{dir}}}t_3
 t_1\mathrel{R_{\mathsf{is}}}t_3.
 $$
 
-La relación directa es acíclica; su clausura reflexiva y transitiva es un orden parcial.
+The relation direct is acyclic; its reflexive and transitive closure is a partial order.
 
-## Alternativas
+## Alternatives
 
-### Clases separadas de instancias
+### Classes distinct from instances
 
-Se descarta. Obliga a decidir si una `thing` es clase u objeto y no representa que una `thing` concreta pueda ser simultáneamente una cosa y una antecesora.
+It is ruled out. It forces a decision on whether a `thing` It is a class or an object and does not represent just one `thing` a particular thing can be both one thing and another ancestor.
 
-### Una sola palabra para declaración y consulta
+### Just one word for declaration y query
 
-Se descarta. Aunque el parser pudiera distinguir los contextos, ocultaría la diferencia entre añadir una arista directa y consultar una clausura. La sintaxis vigente usa `as` e `is`, conforme a [[notas/decisiones/ADR-018-as-declara-is-consulta|ADR-018]] y D-025.
+This is ruled out. Even if the parser were able to distinguish between the contexts, it would obscure the difference between adding a direct edge and checking for a closure. The syntax current use `as` e `is`, in accordance with [[notas/decisiones/ADR-018-as-declara-is-consulta|ADR-018]] y D-025.
 
-### `is` estricto e irreflexivo
+### `is` strict and thoughtless
 
-Se descarta. La especialización directa es estricta, pero `is` consulta su clausura reflexiva.
+This is ruled out. Direct specialisation is strict, but `is` query its contemplative closing ceremony.
 
-## Consecuencias
+## Consequences
 
-- El lexer distingue `as` e `is`.
-- El parser usa `as` en cabeceras e `is` en expresiones.
-- El AST representa los antecesores en la declaración y la consulta en `IsExpression`.
-- La resolución comprueba que los nombres posteriores a `as` designan `thing`.
-- `create` amplía el conjunto activo y la relación directa activa sin introducir otra clase de identidad.
-- La reflexividad no requiere almacenar bucles $t\to t$.
+- The lexer distinguishes between `as` e `is`.
+- The parser uses `as` in headers and `is` in expressions.
+- The AST represents the predecessors in the declaration and the query in `IsExpression`.
+- The resolution checks that the names following `as` appoint `thing`.
+- `create` expands the active set and the relation active direct without introducing any other kind of identity.
+- Reflexivity does not require the storage of loops $t\to t$.
 
-## Ejemplo
+## Example
 
 ```mud
 thing Kingdom as Place {}
@@ -99,7 +99,7 @@ thing Kingdom as Place {}
 thing Egypt as Kingdom {}
 ```
 
-De esas cabeceras se derivan:
+The following are derived from these headings:
 
 ```mud
 Egypt is Kingdom
@@ -107,14 +107,15 @@ Egypt is Place
 Egypt is Egypt
 ```
 
-La documentación debe presentar `is` como «es la misma `thing` o una especialización suya», no como «hereda directamente de».
+The following documents must be submitted `is` as ‘it’s the same’ `thing` or ‘an area in which he specialises’, not ‘derives directly from’.
 
-## Verificación
+## Verification
 
-1. Reflexividad: `T is T`.
-2. Relación directa: `thing B as A {}` implica `B is A`.
-3. Transitividad.
-4. `thing N as C {}` declara verdadera `N is C` cuando ambas identidades son efectivas; `thing N {}` no añade antecesores declarados y sí satisface `N is Thing`.
-5. Destruir y recrear `N` conserva la identidad.
-6. Dos nombres distintos siguen siendo distintos aunque compartan antecesores y estado.
-7. Separación de `as` e `is` en el AST.
+1. Reflexivity: `T is T`.
+2. Relation direct: `thing B as A {}` implies `B is A`.
+3. Transitivity.
+4. `thing N as C {}` declares to be true `N is C` when both identities hold; `thing N {}` it does not add declared ancestors, but it does satisfy `N is Thing`.
+5. Destroy and recreate `N` retains the identity.
+6. Two different names remain distinct even if they share common ancestors and state.
+7. Separation of `as` e `is` at the AST.
+

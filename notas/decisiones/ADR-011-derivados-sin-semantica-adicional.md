@@ -1,6 +1,6 @@
 ---
 id: D-011
-title: "Los derivados no añaden comportamiento de dominio"
+title: "Derivatives do not add behaviour of domain"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -13,21 +13,22 @@ affects:
   - "arquitectura de AST, IR, grafo, materializadores y editor"
 ---
 
-# ADR-011 — Los derivados no añaden comportamiento de dominio
+# ADR-011 — Derivatives do not add behaviour of domain
 
-## Contexto
+## Context
 
-Un generador, un IR o un plugin pueden convertirse accidentalmente en una
-segunda fuente de reglas si completan silencios de `.mud` o introducen
-validaciones y efectos propios.
+A generator, an IR or a plugin may accidentally become a
+second source of rules if they fill in gaps in `.mud` or enter
+validations and their own effects.
 
 ## Decisión
 
-Los derivados interpretan, conservan, consultan o materializan la semántica de
-la fuente, pero no añaden comportamiento de dominio. Toda distinción necesaria
-para una ejecución conforme debe proceder de la fuente y de la especificación.
+Derivatives interpret, preserve, consult or give concrete form to the semantics from
+the source, but they do not include behaviour of domain. Any necessary distinction
+For the code to run correctly, it must come from the source and from the specification.
 
-## Consecuencias
+## Consequences
 
-D-051 define el contrato reconstruible de AST, grafo e IR. D-052 define la
-frontera del pipeline, materializadores, editor y conformidad.
+D-051 defines the contract AST’s rebuildable, graph and IR. D-052 defines the
+pipeline boundary, materialisers, editor and conformance.
+

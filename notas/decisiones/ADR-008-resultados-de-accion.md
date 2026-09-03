@@ -1,6 +1,6 @@
 ---
 id: D-008
-title: "Resultados `accepted`, `rejected` y `failed`"
+title: "Results `accepted`, `rejected` y `failed`"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -11,26 +11,27 @@ affects:
   - "capítulos de acciones, resultados y diagnósticos"
 ---
 
-# ADR-008 — Resultados `accepted`, `rejected` y `failed`
+# ADR-008 — Results `accepted`, `rejected` y `failed`
 
-## Contexto
+## Context
 
-Una solicitud inadmisible y un fallo de resolución no expresan la misma
-situación. Confundirlos impide distinguir una negativa normal del dominio de un
-problema que invalida la ejecución tentativa.
+One request unacceptable and a failure from resolution do not express the same thing
+situation. Confusing the two makes it difficult to distinguish a normal refusal from the domain of a
+a problem that prevents the attempted execution from taking place.
 
 ## Decisión
 
-Una acción produce exclusivamente:
+One action produces exclusively:
 
-- `accepted`, cuando confirma su transición;
-- `rejected`, cuando la solicitud no se admite sin constituir un fallo técnico
-  o semántico de la resolución;
-- `failed`, cuando la resolución no puede producir un estado confirmable.
+- `accepted`, when he confirms his transition;
+- `rejected`, when the request is not permitted without constituting a technical failure
+  or semantic aspect of the resolution;
+- `failed`, when the resolution cannot produce a state verifiable.
 
-Los resultados no aceptados no publican cambios parciales.
+Rejected results do not publish partial changes.
 
-## Consecuencias
+## Consequences
 
-D-042 define el protocolo completo de las acciones. D-061 exige una razón
-`Text` para todo resultado no aceptado.
+D-042 defines the complete protocol for the actions. D-061 requires a reason
+`Text` for everything result Not accepted.
+

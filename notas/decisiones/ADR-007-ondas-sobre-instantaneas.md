@@ -1,6 +1,6 @@
 ---
 id: D-007
-title: "Resolución causal por ondas sobre instantáneas"
+title: "Causal resolution by waves over snapshots"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -12,23 +12,24 @@ affects:
   - "capítulos de resolución causal y ondas"
 ---
 
-# ADR-007 — Resolución causal por ondas sobre instantáneas
+# ADR-007 — Causal resolution by waves over snapshots
 
-## Contexto
+## Context
 
-Evaluar reacciones mientras se muta el mismo estado introduce resultados
-dependientes del orden de recorrido y permite que una regla observe una
-resolución parcial.
+Assess reactions whilst mutating the same state enter results
+depend on the order in which they are traversed and allow a rule to observe a
+resolution partial.
 
 ## Decisión
 
-Las consecuencias causales se resuelven por ondas. Cada onda evalúa sus
-condiciones sobre una instantánea definida y consolida sus efectos antes de
-producir la instantánea observada por la onda siguiente.
+Causal consequences are resolved by waves. Each wave assesses its
+conditions relating to a snapshot is defined and its effects are consolidated before
+to produce the snapshot observed by the wave Next.
 
-Ningún estado parcial de una onda se publica como estado estable.
+None state part of a wave is published as stable state.
 
-## Consecuencias
+## Consequences
 
-D-045 desarrolla vinculaciones, memoria reactiva y cola causal. D-046 y D-060
-precisan la consolidación determinista de efectos.
+D-045 builds partnerships, reactive memory y queue causal. D-046 y D-060
+specify the consolidation deterministic model of effects.
+

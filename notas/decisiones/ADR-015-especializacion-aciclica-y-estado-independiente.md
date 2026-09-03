@@ -1,6 +1,6 @@
 ---
 id: D-015
-title: "Especialización acíclica y estado independiente"
+title: "Acyclic specialisation and state independent"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -11,41 +11,41 @@ questions:
 affects:
   - "[[especificacion/04-modelo-matematico]], futuro `11-things.md`"
 ---
-# ADR-015 — Especialización acíclica y estado independiente
+# ADR-015 — Acyclic specialisation and state independent
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
-- Preguntas: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
-- Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `11-things.md`
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Updated: 28 July 2026 to use the terminology from D-025
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Questions: [[notas/preguntas/Q-042-especializacion-desde-una-thing-concreta|Q-042]], [[notas/preguntas/Q-043-ciclos-de-especializacion|Q-043]]
+- Documents concerned: [[especificacion/04-modelo-matematico]], future `11-things.md`
 
-## Contexto
+## Context
 
-[[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]] establece que toda `thing` concreta es simultáneamente una cosa con estado propio y una posible antecesora. Esto obliga a precisar:
+[[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]] provides that every `thing` A concrete thing is simultaneously a thing with state its own and a possible ancestor. This makes it necessary to clarify:
 
-1. Si una descendiente observa o copia el estado mutable actual de una antecesora concreta.
-2. Si la relación de especialización directa admite ciclos entre identidades distintas.
+1. If a descendant observes or copies the state current value of a ancestor specific.
+2. If the relation Direct specialisation allows cycles between distinct identities.
 
 ## Decisión
 
-### Estado independiente
+### State independent
 
-La especialización hereda:
+Specialisation entails:
 
-- declaraciones de campos;
-- restricciones;
-- dominios;
-- valores predeterminados efectivos;
-- inicializadores de `thing` aplicables;
-- los demás elementos de esquema que la especificación autorice expresamente.
+- field declarations;
+- restrictions;
+- domains;
+- effective default values;
+- initiators of `thing` applicable;
+- the other elements of the diagram that the specification expressly authorise.
 
-No hereda, copia ni observa el estado mutable actual de la antecesora.
+It does not inherit, copy or observe the state current value of the ancestor.
 
-La propiedad intrínseca `name` tampoco se hereda. Pertenece al descriptor local de cada identidad y, si no se sobrescribe, se deriva de su propio nombre nominal.
+Intrinsic property `name` nor is it inherited. It belongs to the descriptor premises of each identity and, if it is not overwritten, it is derived from its own nominal name.
 
-Cada `thing` concreta posee estado independiente. Mutar una `thing` no modifica por sí solo el estado de sus descendientes.
+Every `thing` specifically possesses state independent. Mutate a `thing` does not in itself alter the state of their descendants.
 
-La definición canónica de una `thing`, concreta o abstracta, puede declarar antecesoras e inicializadores:
+The canonical definition of a `thing`, whether concrete or abstract, may declare predecessors and initialisers:
 
 ```mud
 thing N as BaseOne, BaseTwo {
@@ -57,28 +57,28 @@ abstract thing A as BaseOne {
 }
 ```
 
-La forma `field = value` no declara un campo. Debe dirigirse a un campo almacenado ya aportado por el esquema heredado. Una misma definición de `thing` no puede declarar localmente un campo y además inicializarlo mediante otra instrucción `field = value`. La forma `field: Type = value` sigue siendo una única declaración de campo con predeterminado y no cuenta como un inicializador separado.
+The shape `field = value` does not declare a field. You should contact a stored field already provided by the legacy scheme. A single definition of `thing` You cannot declare a field and also initialise it using another statement `field = value`. The form `field: Type = value` it remains a single one declaration from field with a default value and does not count as a separate initialiser.
 
-Una `thing` abstracta no materializa carga propia, pero sus inicializadores forman parte de la especialización y pueden contribuir a la primera materialización de una descendiente concreta. Para un mismo campo, un inicializador declarado en una descendiente más específica sustituye a los inicializadores heredados menos específicos. Si un mismo inicializador original alcanza una descendiente por varias rutas de un diamante, se deduplica por origen; inicializadores independientes e incomparables que compitan por el mismo campo producen conflicto, sin prioridad por el orden escrito de `as`, conforme a D-084.
+One `thing` abstract does not materialise own stored data, but their initialisers form part of the specialisation and may contribute to the first materialisation of a specific descendant. For the same field, an initialiser declared in a more specific descendant overrides the less specific inherited initialisers. If the same original initialiser reaches a descendant via several paths in a diamond, it is deduplicated by origin; independent and incomparable initialisers that compete for the same field produce conflict, with no priority based on the written order of `as`, in accordance with D-084.
 
-Al activar por primera vez una `thing` concreta mediante `start with` o:
+When you first activate a `thing` specifically through `start with` o:
 
 ```mud
 create N
 ```
 
-la inicialización de $N$ parte de los predeterminados efectivos de sus antecesoras, incorpora las declaraciones locales y aplica después los inicializadores efectivos. No parte de los estados activos de sus antecesoras. Sin antecesoras, los campos sin predeterminado explícito emplean el de su tipo. Una reactivación conserva la carga almacenada conforme a D-021.
+the initialisation of $N$ It takes the effective defaults from its predecessors, incorporates the local declarations and then applies the effective initialisers. It does not take the active states from its predecessors. If there are no predecessors, fields without an explicit default use the default from its type. A reactivation preserves the stored charge in accordance with D-021.
 
-Los inicializadores no se convierten en declaraciones de campo ni en predeterminados de esquema. Que un inicializador de una `thing` abstracta pueda heredarse como contribución de inicialización no cambia el predeterminado heredable del campo.
+Initialisers do not become declarations of field nor in schema defaults. That an initialiser of a `thing` The fact that an abstract class can be inherited as an initialisation argument does not alter the default inheritability of the field.
 
-### Especialización acíclica
+### Acyclic specialisation
 
-La relación directa $R_{\mathrm{dir}}$ no contiene ciclos:
+The relation direct $R_{\mathrm{dir}}$ does not contain any cycles:
 
-- no admite $(t,t)$;
-- no admite ningún camino no vacío que empiece y termine en la misma `thing`.
+- does not support $(t,t)$;
+- does not admit any non-empty path that begins and ends at the same point `thing`.
 
-La relación:
+The relation:
 
 $$
 R_{\mathsf{is}}
@@ -86,7 +86,7 @@ R_{\mathsf{is}}
 R_{\mathrm{dir}}^*
 $$
 
-es reflexiva, transitiva y antisimétrica. Por tanto:
+is reflexive, transitive and antisymmetric. Therefore:
 
 $$
 t_1\mathrel{R_{\mathsf{is}}}t_2
@@ -96,23 +96,23 @@ t_2\mathrel{R_{\mathsf{is}}}t_1
 t_1=t_2.
 $$
 
-La reflexividad de `is` pertenece a la clausura y no introduce bucles en $R_{\mathrm{dir}}$.
+The reflexivity of `is` belongs to the closure and does not introduce loops in $R_{\mathrm{dir}}$.
 
-## Alternativas descartadas
+## Options ruled out
 
-- **Delegación viva al estado de la antecesora:** produciría cambios no locales y complicaría ondas, rollback y explicación.
-- **Copia del estado actual al activar:** haría que una misma primera activación dependiera de estado mutable ajeno.
-- **Ciclos:** convertirían `is` en un preorden e impedirían resolver campos y predeterminados de forma bien fundada.
+- **A vibrant delegation to the state of the ancestor:** would cause non-local changes and complicate waves, rollbacks and explanation.
+- **Copy of the state current when activated:** would mean that the same first activation depended on state someone else’s changeability.
+- **Cycles:** would convert `is` in a pre-order and would prevent fields and default values from being set in a well-founded manner.
 
-## Consecuencias
+## Consequences
 
-- El grafo fijado por las definiciones canónicas debe ser acíclico.
-- El IR separa esquema heredable de estado mutable.
-- La inicialización calcula predeterminados efectivos antes de aplicar asignaciones explícitas.
-- Escribir sobre una antecesora no añade lecturas ni escrituras implícitas sobre sus descendientes.
-- `is` afecta a sustituibilidad y resolución de esquema, no propaga estado.
+- The graph as defined by the canonical definitions, it must be acyclic.
+- The IR separates the inheritable schema from state changeable.
+- Initialisation calculates effective defaults before applying explicit assignments.
+- Writing about a ancestor It does not impose any implicit obligations regarding their descendants.
+- `is` affects substitutability and resolution schematic, does not propagate state.
 
-## Ejemplo
+## Example
 
 ```mud
 thing Kingdom {
@@ -122,7 +122,7 @@ thing Kingdom {
 thing Egypt as Kingdom {}
 ```
 
-Al activarse por primera vez, `Egypt` empieza con `treasury = 0`. Una escritura posterior sobre `Kingdom.treasury` no modifica `Egypt.treasury`.
+When it is switched on for the first time, `Egypt` starts with `treasury = 0`. A later text on `Kingdom.treasury` does not change `Egypt.treasury`.
 
 ```mud
 thing France as Kingdom {
@@ -130,7 +130,7 @@ thing France as Kingdom {
 }
 ```
 
-Al activarse por primera vez, `France.treasury` vale `20`, pero esa asignación de una `thing` concreta no se convierte en predeterminado ni en inicializador heredable para futuras descendientes de `France`.
+When it is activated for the first time, `France.treasury` OK `20`, but that allocation of a `thing` This specific constructor does not become the default constructor or an inheritable constructor for future descendants of `France`.
 
 ```mud
 abstract thing RichKingdom as Kingdom {
@@ -140,9 +140,9 @@ abstract thing RichKingdom as Kingdom {
 thing Lydia as RichKingdom {}
 ```
 
-`RichKingdom` no materializa una tesorería propia. Su inicializador sí contribuye a la primera materialización de `Lydia`, que comienza con `treasury = 20`.
+`RichKingdom` It does not generate its own cash flow. Its initiator does, however, contribute to the first materialisation from `Lydia`, which begins with `treasury = 20`.
 
-Es inválido declarar e inicializar por separado el mismo campo en una sola definición:
+It is invalid to declare and initialise the same variable separately field in a single definition:
 
 ```mud
 thing Broken as Kingdom {
@@ -151,18 +151,19 @@ thing Broken as Kingdom {
 }
 ```
 
-## Verificación
+## Verification
 
-1. Rechazo de aristas reflexivas y ciclos no triviales.
-2. Especialización múltiple acíclica.
-3. Antisimetría de `is`.
-4. Independencia de estados.
-5. Inicialización desde predeterminados efectivos.
-6. Aplicación de los inicializadores efectivos en la primera activación.
-7. Herencia de inicializadores desde `thing` abstractas y ausencia de propagación desde inicializadores locales de `thing` concretas.
-8. Rechazo de declarar un campo e inicializarlo por separado dentro de la misma `thing`.
-9. Deduplicación por origen y conflicto sin prioridad para inicializadores abstractos heredados por especialización múltiple.
+1. Rejection of reflective edges and non-trivial cycles.
+2. Non-cyclic multiple specialisation.
+3. Antisymmetry of `is`.
+4. Independence of states.
+5. Initialisation using the current defaults.
+6. Application of the effective initialisers in the first activation.
+7. Inheritance of initialisers from `thing` abstract types and the absence of propagation from local initialisers of `thing` specific.
+8. Refusal to declare a field and initialise it separately within the same one `thing`.
+9. Deduplication by source and conflict no priority for abstract constructors inherited through multiple specialisation.
 
-## Ampliación por D-084
+## Extension by D-084
 
-La aciclicidad y la política no ordenada de antecesores se aplican también a aliases. Para miembros heredados, un diamante deduplica el mismo origen. Contribuciones independientes equivalentes pueden fusionarse; contratos distintos requieren resolución explícita que satisfaga todas las ramas, y las categorías incompatibles continúan siendo conflicto. En aliases no existe estado mutable propio que heredar.
+Acyclicity and the policy The rules for unordered ancestors also apply to aliases. For inherited members, a diamond deduplicates the same origin. Equivalent independent contributions may be merged; distinct contracts require resolution an explicit solution that satisfies all branches, whilst the incompatible categories remain conflict. It does not exist in aliases state a mutable property to inherit.
+

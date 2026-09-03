@@ -22,16 +22,16 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-001 | vigente | 2026-07-27 | [[notas/decisiones/ADR-001-fuente-semantica-mud|`.mud` as a source semantics really]] |
 | D-002 | vigente | 2026-07-27 | [[notas/decisiones/ADR-002-dominio-no-arquitectura-de-aplicacion|MUD describes domain, not application architecture]] |
 | D-003 | vigente | 2026-07-27 | [[notas/decisiones/ADR-003-lenguaje-declarativo-formal|MUD is a formal declarative language]] |
-| D-006 | vigente | 2026-07-27 | [[notas/decisiones/ADR-006-pureza-y-frontera-de-escritura|Pureza de reglas booleanas y frontera de escritura]] |
-| D-007 | vigente | 2026-07-27 | [[notas/decisiones/ADR-007-ondas-sobre-instantaneas|Resolución causal por ondas sobre instantáneas]] |
-| D-008 | vigente | 2026-07-27 | [[notas/decisiones/ADR-008-resultados-de-accion|Resultados `accepted`, `rejected` y `failed`]] |
-| D-009 | vigente | 2026-07-27 | [[notas/decisiones/ADR-009-consulta-allowed-descartable|`allowed` como especulación descartable]] |
-| D-010 | vigente | 2026-07-27 | [[notas/decisiones/ADR-010-admisibilidad-de-eventually|Finitud y terminación exigidas por `eventually`]] |
-| D-011 | vigente | 2026-07-27 | [[notas/decisiones/ADR-011-derivados-sin-semantica-adicional|Los derivados no añaden comportamiento de dominio]] |
-| D-012 | vigente | 2026-07-27 | [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|Validación y versionado atómico de cambios semánticos]] |
-| D-013 | vigente | 2026-07-27 | [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|Formalización completa antes de continuar la implementación]] |
-| D-014 | vigente | 2026-07-27 | [[notas/decisiones/ADR-014-ontologia-unificada-de-things|Ontología unificada de `thing`]] |
-| D-015 | vigente | 2026-07-27 | [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|Especialización acíclica y estado independiente]] |
+| D-006 | vigente | 2026-07-27 | [[notas/decisiones/ADR-006-pureza-y-frontera-de-escritura|Purity Boolean rules and write boundary]] |
+| D-007 | vigente | 2026-07-27 | [[notas/decisiones/ADR-007-ondas-sobre-instantaneas|Causal resolution by waves over snapshots]] |
+| D-008 | vigente | 2026-07-27 | [[notas/decisiones/ADR-008-resultados-de-accion|Results `accepted`, `rejected` y `failed`]] |
+| D-009 | vigente | 2026-07-27 | [[notas/decisiones/ADR-009-consulta-allowed-descartable|`allowed` as a baseless rumour]] |
+| D-010 | vigente | 2026-07-27 | [[notas/decisiones/ADR-010-admisibilidad-de-eventually|Finiteness y termination required by `eventually`]] |
+| D-011 | vigente | 2026-07-27 | [[notas/decisiones/ADR-011-derivados-sin-semantica-adicional|Derivatives do not add behaviour of domain]] |
+| D-012 | vigente | 2026-07-27 | [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|Validation and atomic versioning of semantic changes]] |
+| D-013 | vigente | 2026-07-27 | [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|Complete formalisation before continuing with implementation]] |
+| D-014 | vigente | 2026-07-27 | [[notas/decisiones/ADR-014-ontologia-unificada-de-things|Unified ontology of `thing`]] |
+| D-015 | vigente | 2026-07-27 | [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|Acyclic specialisation and state independent]] |
 | D-017 | vigente | 2026-07-27 | [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|Todo tipo bien formado tiene valor predeterminado]] |
 | D-018 | vigente | 2026-07-27 | [[notas/decisiones/ADR-018-as-declara-is-consulta|`as` declara especialización e `is` la consulta]] |
 | D-019 | vigente | 2026-07-27 | [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|Mutabilidad ortogonal de colección y miembros]] |

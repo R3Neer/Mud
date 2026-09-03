@@ -1,6 +1,6 @@
 ---
 id: D-006
-title: "Pureza de reglas booleanas y frontera de escritura"
+title: "Purity Boolean rules and write boundary"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -10,29 +10,29 @@ affects:
   - "capítulos de reglas, acciones y API pública"
 ---
 
-# ADR-006 — Pureza de reglas booleanas y frontera de escritura
+# ADR-006 — Purity Boolean rules and write boundary
 
-## Contexto
+## Context
 
-Una consulta que modifica el mundo vuelve dependiente del orden de evaluación
-la respuesta obtenida. Permitir escrituras externas fuera de operaciones
-identificables también impide validar y revertir una mutación como unidad.
+One query amending the world returns depending on the evaluation order
+the response received. Allow external writes outside of operations
+The lack of identifiable markers also makes it impossible to validate and reverse a mutation such as unit.
 
 ## Decisión
 
-Las reglas booleanas son puras. Las modificaciones externas del mundo se
-solicitan mediante acciones, que forman su API de escritura.
+Boolean rules are pure. External modifications to the world is
+They make requests via actions, which form part of their write API.
 
-Las reglas reactivas y `always` participan en la resolución causal conforme a
-sus contratos propios; no convierten una consulta booleana en una operación con
-efectos.
+Reactive rules and `always` take part in the causal resolution in accordance with
+their own contracts; they do not turn a query Boolean in an operation with
+effects.
 
-## Consecuencias
+## Consequences
 
-D-041 precisa las tres clases de regla y D-042 desarrolla las acciones como
-transacciones causales atómicas.
+D-041 specifies the three types of ruler and D-042 carries out the following activities, such as
+atomic causal transactions.
 
-## Verificación
+## Verification
 
-El análisis estático rechaza efectos en reglas booleanas y cualquier frontera
-externa de escritura que no invoque una acción conforme.
+The static analysis Rejects effects on Boolean rules and any boundary
+an external write operation that does not invoke a action Agreed.

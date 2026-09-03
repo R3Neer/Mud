@@ -1,6 +1,6 @@
 ---
 id: D-012
-title: "Validación y versionado atómico de cambios semánticos"
+title: "Validation and atomic versioning of semantic changes"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -13,23 +13,24 @@ affects:
   - "flujo de autoría del operador semántico"
 ---
 
-# ADR-012 — Validación y versionado atómico de cambios semánticos
+# ADR-012 — Validation and atomic versioning of semantic changes
 
-## Contexto
+## Context
 
-Una modificación de la fuente puede afectar varias anclas y derivados. Publicar
-solo una parte, confirmar un cambio inválido o incluir trabajo ajeno destruye la
-correspondencia entre intención, modelo e historial.
+A change to the source may affect several anchors and derivatives. Publish
+Even just one part – confirming an invalid change or including someone else’s work – destroys the
+correspondence between intention, model and history.
 
 ## Decisión
 
-Cada cambio semántico válido se prepara, analiza, aplica, valida y versiona como
-una unidad atómica. Un fallo anterior a la confirmación no publica un estado
-parcial. El commit incluye únicamente los archivos pertenecientes al cambio.
+Every semantic change A valid test is prepared, analysed, applied, validated and versioned as
+one unit atomic. A failure prior to confirmation, it does not publish a state
+partial. The commit includes only the files relating to the change.
 
-Una consulta `READ` pura no crea commit porque no modifica estado.
+One query `READ` `pura` does not create a commit because it does not make any changes state.
 
-## Consecuencias
+## Consequences
 
-D-053 desarrolla el flujo del operador. La política de commits gobierna la
-atomicidad y el tratamiento de cambios previos del repositorio.
+D-053 improves the operator’s workflow. The policy the number of commits determines the
+atomicity and the handling of previous changes to the repository.
+
