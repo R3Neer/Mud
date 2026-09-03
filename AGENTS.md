@@ -28,7 +28,7 @@ Documents that are intended to be temporary are governed by `governance/POLITICA
 
 Before creating any commit, you must run `python governance/validate_temporaries.py` and check the complete inventory of documents using `temporary: true`. If the `temporary-delete-when` condition for any document is already met, it must be removed before closing the commit, unless the change itself explicitly modifies its cycle lifespan.
 
-Temporality is declared solely in the document’s frontmatter; `governance/temporales.base` is a derived view and not a separate record.
+Temporality is declared solely in the document’s frontmatter; `governance/temporaries.base` is a derived view and not a separate record.
 
 ## Git
 
@@ -47,7 +47,7 @@ You must not push or overwrite the history without an explicit request.
 
 The publication and promotion of regulatory documents is governed by `governance/CICLO-DOCUMENTAL.md`.
 
-Before marking a chapter as `vigente`, the publication process must be carried out and it must be checked that its content reflects only the current regulatory state within its scope.
+Before marking a chapter as `current`, the publication process must be carried out and it must be checked that its content reflects only the current regulatory state within its scope.
 
 ## Remote changes via ChatGPT
 
