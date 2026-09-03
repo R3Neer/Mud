@@ -243,11 +243,11 @@ The suite must cover:
 
 1. A rule that is inactive as an outward expression.
 2. Rule inactive under external and nested negation.
-3. Left and right positions of `and` y `or`.
+3. Left and right positions of `and` and `or`.
 4. Two operands deleted.
 5. Antecedent and consequent of implication.
 6. Both sides of a Boolean equality.
-7. Lack of dynamic assessment of receiver y `given` deleted.
+7. No dynamic evaluation of a deleted receiver or `given`.
 8. Reinstatement of the rule and resumption of the standard assessment.
 9. Rejection of optimisations that alter the canonical pruning.
 

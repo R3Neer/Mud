@@ -40,7 +40,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-023 | current | 2026-07-27 | [[notes/decisions/ADR-023-consolidation-of-concurrent-structural-effects|Consolidation of concurrent structural effects]] |
 | D-025 | current | 2026-07-27 | [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|Vocabulary from `thing`, headings and sections]] |
 | D-026 | current | 2026-07-27 | [[notes/decisions/ADR-026-membership-strict-and-cardinality-by-then|Membership strict and cardinality by `then`]] |
-| D-027 | superseded | 2026-07-27 | [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|Departures from the model by means of `look` y `message`]] |
+| D-027 | superseded | 2026-07-27 | [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|Departures from the model by means of `look` and `message`]] |
 | D-028 | current | 2026-07-28 | [[notes/decisions/ADR-028-system-of-quantities-and-units|System of quantities and units]] |
 | D-029 | current | 2026-07-28 | [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|Intervals, effective limits and cycles of point]] |
 | D-030 | current | 2026-07-28 | [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|Explicit quantitative conversion using `to`]] |

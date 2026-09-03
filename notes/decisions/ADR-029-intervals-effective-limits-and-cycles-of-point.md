@@ -34,7 +34,7 @@ The four defined shapes are:
 (n..m]
 ```
 
-`n..m` is equivalent to `[n..m]` y `[n]` is equivalent to `[n..n]`.
+`n..m` is equivalent to `[n..m]` and `[n]` is equivalent to `[n..n]`.
 
 D-059 adds local and shared units to ordinary interval expressions and specifies that a linear interval with inverted effective limits is normalised to `empty`. This inversion does not indicate a descending order, nor cycle.
 
@@ -47,7 +47,7 @@ The shape `[n]` it also coincides, on the surface, with a collection unitary. Ne
 ```mud
 Nat [*..10]  # [0..10]
 Nat [1..*]   # [1..+∞]
-[*..*]           # dominio efectivo completo
+[*..*]           # complete effective domain
 ```
 
 `[*]` is sugar from `[*..*]`. In a cardinality ordinary, `Thing[*]` starts at zero and goes up to the maximum permitted limit.
@@ -109,7 +109,7 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 It represents positions on a magnitude linear and uses its units. You cannot declare units or `root unit`.
 Without `in`, admits the domain the full range of the underlying coordinate. With a linear interval, it is bounded without wrapping. With `[a..b) cycle`, it is limited and cyclically normalised.
 
-You can file your tax return via the metadata `~format` optional: a special textual representation. If omitted, it is rendered like any magnitude ordinary: coordinate at the unit root followed by the abbreviation or name of that unit. In accordance with D-061, `~format` use a template `Text`: `hour`, `minute` y `second` are contextual expressions of the point, y `:2` move two positions to the left. D-061 It also specifies the explicit extraction `minute from hour in time`; D-062 demands that `~format` if it is invertible, it uses it as a form literal canonical and rejects it before normalising any literal outside the domain.
+The point may optionally define a `~format` metadata template: a special textual representation. If omitted, it is rendered like any ordinary magnitude, as a coordinate at the root unit followed by that unit's abbreviation or name. In accordance with D-061, `~format` uses a `Text` template: `hour`, `minute` and `second` are contextual expressions of the point, and `:2` shifts two positions to the left. D-061 also specifies the explicit extraction `minute from hour in time`; D-062 requires an invertible `~format` to serve as the canonical literal form and to reject literals outside the domain before normalisation.
 
 His maths is as follows:
 

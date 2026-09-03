@@ -43,7 +43,7 @@ For example, a property:
 kingdom: Kingdom[1]
 ```
 
-may contain `Panama` if `Panama is Kingdom` y `Panama != Kingdom`. It must not contain `Kingdom`.
+may contain `Panama` if `Panama is Kingdom` and `Panama != Kingdom`. It must not contain `Kingdom`.
 
 This condition compares the member with the anchor from type, not with the identity the owner of the property. If `Alice is Person`, a property owned by `Alice` classified as `Person` it may contain `Alice`, because `Alice != Person`.
 

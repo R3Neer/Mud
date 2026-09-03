@@ -65,7 +65,7 @@ Two representations are compatible when they have the same normalised form. For 
 4. Type underlying component of each component.
 5. Cardinalities.
 6. Structure of collections and dictionaries.
-7. Structural modifiers such as `ordered` y `unique`.
+7. Structural modifiers such as `ordered` and `unique`.
 
 Domains and component defaults do not alter this minimal form: they are validated or applied when the target is constructed. The complete inductive definition of normalisation and its possible cycles are set out in Q-056.
 
@@ -81,8 +81,8 @@ The type As expected, you can build the value nominal:
 
 ```mud
 square: Square = (E, Four)
-game.Move((E, Four)) # si el `given` esperado es Square
-board[E, Four]       # si la clave esperada es Square
+game.Move((E, Four)) # when the expected `given` type is Square
+board[E, Four]       # when the expected key type is Square
 ```
 
 The same applies to basic literals:
@@ -181,7 +181,7 @@ Two values are equal if they have the same nominal alias and the same content.
 
 Simple aliases inherit their order from their type underlying, but they are only compared with values from the same alias. A structural alias It supports order comparisons if all its components are ordered; the order is lexicographical according to the declaration.
 
-Equality `==` and inequality `!=` are available even if the representation is not in any particular order. `<`, `<=`, `>` y `>=` require a structured presentation.
+Equality `==` and inequality `!=` are available even if the representation has no particular order. `<`, `<=`, `>` and `>=` require an ordered representation.
 
 ## Consequences
 

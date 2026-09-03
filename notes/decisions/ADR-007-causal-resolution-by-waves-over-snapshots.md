@@ -30,6 +30,6 @@ None state part of a wave is published as stable state.
 
 ## Consequences
 
-D-045 builds partnerships, reactive memory y queue causal. D-046 y D-060
+D-045 builds connections, reactive memory and a causal queue. D-046 and D-060
 specify the consolidation deterministic model of effects.
 

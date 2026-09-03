@@ -21,7 +21,7 @@ MUD terminology and headers must address three issues:
 
 1. `construct` It sounded like a linguistic construct rather than something from the world.
 2. `from` claimed to be a specialist, although natural reading for children is ‘`A` it’s like `B`».
-3. `on` y `for` were assigned in a way that ran counter to the distinction one wishes to draw between observational statements and requested operations.
+3. `on` and `for` were assigned in a way that conflicted with the intended distinction between observational statements and requested operations.
 
 Furthermore, the documentation did not distinguish with sufficient clarity between instances where the keys are part of a clause and those where they are mandatory.
 
@@ -47,7 +47,7 @@ thing Alexandria as City {}
 
 The list following `as` continues to denote a finite set of direct predecessors with no priority based on position. The Boolean operator `is` retains its semantics: query the reflective and transitive closure of that relation.
 
-`as` it ceases to be an explicit conversion operator. D-030 subsequently sets the branch quantitative analysis of `to` y D-032 Add the nominal casting of compatible aliases.
+`as` ceases to be an explicit conversion operator. D-030 subsequently defines the quantitative branch of `to`, and D-032 adds nominal casting of compatible aliases.
 
 ### List of participants
 
@@ -62,11 +62,11 @@ The headings are arranged as follows:
 | Boolean rule | `for` | Yes |
 | `look` | `for` | Yes |
 
-`on` declares relationships that the engine automatically detects and constructs in order to identify events in the world. `for` declares the number of participants provided when requesting a transaction or query. `given` provides auxiliary values that are not participants and belongs to actions, Boolean rules and `look`; reactive rules, rules `always` y `message` They do not admit it.
+`on` declares relationships that the engine automatically detects and constructs in order to identify events in the world. `for` declares the participants supplied when requesting a transaction or query. `given` provides auxiliary values that are not participants and belongs to actions, Boolean rules and `look`; reactive rules, `always` rules and `message` do not admit it.
 
 ### Key clauses
 
-The clauses `when`, `if`, `after` y `then` They can take a ‘naked’ form when their body consists of a single element:
+The clauses `when`, `if`, `after` and `then` can take a ‘naked’ form when their body consists of a single element:
 
 ```mud
 when door.open
@@ -92,7 +92,7 @@ then {
 }
 ```
 
-In terms of actions and rules, `when`, `if` y `after` contain a single Boolean expression, even if that expression is compound. The `after` of a test, defined by D-055, contains one or more ordered assertions and requires curly brackets when it contains more than one. `then` It also requires curly brackets when it contains several statements.
+For actions and rules, `when`, `if` and `after` contain a single Boolean expression, even when compound. A test's `after`, defined by D-055, contains one or more ordered assertions and requires braces when it contains more than one. `then` likewise requires braces when it contains several statements.
 
 ## Consequences
 
@@ -105,7 +105,7 @@ In terms of actions and rules, `when`, `if` y `after` contain a single Boolean e
 
 ## Future verification
 
-1. Declaration root, abstract and covering a wide range of specialisms, with `thing` y `as`.
+1. Root, abstract and broad specialisation declarations using `thing` and `as`.
 2. Rejection of `construct` and from `from` as specialisation introducers; other grammatical uses of `from`, such as `remove x from c`, do not change.
 3. Rejection of `as` as an explicit conversion.
 4. One positive test and one negative test for each row of the matrix of participants.

@@ -85,7 +85,7 @@ speed in km/h
 
 It applies to both linear quantities and quantities of point. In a magnitude from point transforms the full coordinate and prevents its `format`: yes `time` is 1.30 pm, `time in hour` expresses `13.5 h`, not the time component `13`.
 
-The presentation The selected data can be observed by subsequently converting it to a numerical representation and interpolating it in `Text` or publish it in a field from `look` o `message`:
+The selected value can be observed by converting it to a numerical representation and interpolating it in `Text`, or by publishing it in a field of `look` or `message`:
 
 ```mud
 speed in km/h to Rum
@@ -116,7 +116,7 @@ amount to Money
 2. Conversion to a magnitude compatible.
 3. Rejection of incompatible dimensions.
 4. Rejection of values outside the domain after rounding.
-5. A noticeable difference between `quantity in unit` y `quantity to type`.
+5. A clear distinction between `quantity in unit` and `quantity to type`.
 6. Presentation of a magnitude from point in a unit without applying its `format`.
 7. Materialisation of a magnitude unitless basis and rejection between different nominal quantities.
 

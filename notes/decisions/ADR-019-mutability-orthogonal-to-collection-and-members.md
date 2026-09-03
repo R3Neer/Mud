@@ -127,7 +127,7 @@ The suite must check the four combinations in the table for both `[1]` as well a
 5. Rejection of outer `mut` on a derived field.
 6. Inference of inner capability retention in a derived collection.
 7. Roles `for` from cardinality `[1]` and collective, with the four capacity combinations.
-8. Rejection of a literal o result calculated as receiver of a role that is outwardly changeable.
+8. Rejection of a literal or calculated result as the receiver of an externally mutable role.
 9. Rejection of outer mutability in Boolean rules, `look` and `on` roles.
 10. Outer mutability of a collection of immutable values without any inner capability.
 11. A suggestion for removing a demonstrably useless inner capability from immutable values.

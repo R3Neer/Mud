@@ -128,7 +128,7 @@ magnitude Length {
 }
 ```
 
-The identifier determines `~identifier` and the anchor. `~name`, `~plural`, `~abbreviation` y `~prefixes` are configurable metadata in accordance with D-076 y D-087.
+The identifier determines `~identifier` and the anchor. `~name`, `~plural`, `~abbreviation` and `~prefixes` are configurable metadata in accordance with D-076 and D-087.
 
 One unit An alternative is stated by means of a positive equivalence:
 
@@ -147,7 +147,7 @@ Any equivalence of unit must:
 3. To be reduced to the unit root.
 4. Do not participate in cycles.
 
-`~prefixes` has type `Prefix [* unique]` y default value `empty`. `~prefixes = all` select the domain fully integrated and `~prefixes = [p1, p2, ...]` one collection explicit. There is no special sub-grammar of properties of unit.
+`~prefixes` has type `Prefix [* unique]` and default value `empty`. `~prefixes = all` selects the complete domain, while `~prefixes = [p1, p2, ...]` specifies an explicit collection. There is no special sub-grammar for unit properties.
 
 ### Derived quantities
 

@@ -66,7 +66,7 @@ The textual order of files and statements `using` It does not decide draws.
 
 Identifiers are case-sensitive. The list of reserved words cannot be used as the name of a field, component, role, `given`, local variable or declaration.
 
-D-038, D-054 y D-055 distinguish between reserved words and contextual words. A contextual word It is recognised only in a specific grammatical position and may be an ordinary identifier outside that position. `start` is contextual in `start with`; `abstract` it is in front of `thing`; `always` it is in front of `rule`. Metadata such as `~name` o `~prefixes` they use Postfix General Grammar `~`, not special contextual tags.
+D-038, D-054 and D-055 distinguish between reserved words and contextual words. A contextual word is recognised only in a specific grammatical position and may be an ordinary identifier outside that position. `start` is contextual in `start with`; `abstract` is contextual before `thing`; `always` is contextual before `rule`. Metadata such as `~name` or `~prefixes` uses the general postfix grammar `~`, not special contextual tags.
 
 `using`, `with`, `family`, `test`, `otherwise`, `ordered` and the type incorporated `Thing` These are reserved words. In particular, `ordered` It cannot be used as an identifier, even if it appears outside a declaration `family` or a specification from collection. `name` does not have a syntactic exception for the body of `thing`: the presentation The standard is configured as follows: `~name`, in a space distinct from that of ordinary fields.
 
@@ -119,7 +119,7 @@ D-076 sets the identity stable for each unit using the identifier `lowerCamel` m
 5. Capital letter collision and reserved word.
 6. Common use of a contextual word outside his special position.
 7. Anchor stability.
-8. Separation between `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
+8. Separation between `action::*`, `test::*`, `rule::*`, `family::*` and `thing::*`.
 9. Reading of a anchor by means of `~anchor` and interpolation using a standard expression slot.
 10. Rejection of a `using` following a declaration top-class.
 

@@ -1,6 +1,6 @@
 ---
 id: D-027
-title: "Departures from the model by means of `look` y `message`"
+title: "Departures from the model by means of `look` and `message`"
 status: superseded
 date: 2026-07-27
 supersedes: []
@@ -12,7 +12,7 @@ questions:
 affects:
   - "futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`"
 ---
-# ADR-027 — Departures from the model by means of `look` y `message`
+# ADR-027 — Departures from the model by means of `look` and `message`
 
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Subsequently amended by: [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
@@ -21,7 +21,7 @@ affects:
 
 ## Context
 
-Actions allow you to submit requests to a model MUD, but it lacked a symmetrical, typed surface from which to extract information. Reading directly from the store or the implementation artefacts would break the separation between semantics y materialisation.
+Actions allow requests to be submitted to a MUD model, but the model lacked a symmetrical, typed surface for extracting information. Reading directly from storage or implementation artefacts would break the separation between semantics and materialisation.
 
 MUD includes two output entities:
 
@@ -44,8 +44,8 @@ look RealmSummary for kingdom: Kingdom {
 Conceptual form:
 
 ```text
-look nombre for participantes {
-    propiedad-publica [ : tipo ] := expresión
+look name for participants {
+    public-property [ : type ] := expression
     ...
 }
 ```
@@ -69,10 +69,10 @@ message KingChanged on kingdom: Kingdom {
 Conceptual form:
 
 ```text
-message nombre on participantes {
-    when expresión-booleana
-    [if expresión-booleana]
-    propiedad-publica [ : tipo ] := expresión
+message name on participants {
+    when boolean-expression
+    [if boolean-expression]
+    public-property [ : type ] := expression
     ...
 }
 ```
@@ -83,7 +83,7 @@ This separation requires the runtime to maintain a occurrence pending the necess
 
 ### Border semantics
 
-`action`, `look` y `message` form the explicit boundary of the model:
+`action`, `look` and `message` form the explicit boundary of the model:
 
 - `action`: a post that could change the world.
 - `look`: extract taken from the stable state.

@@ -147,7 +147,7 @@ It is recommended that you omit `r` in quantities of unit because the magnitude 
 
 ### Separation and conversions
 
-`Num` y `Rum` They are not implicitly combined in arithmetic or comparison:
+`Num` and `Rum` are not implicitly combined in arithmetic or comparison:
 
 ```mud
 exactValue + rapidValue
@@ -217,7 +217,7 @@ That loop is invalid. The restriction prevents the approximate accumulation from
 3. Promotion before an observable integer overflow.
 4. Recognition and rejection of literal forms with `r`.
 5. Omission of `r` only under a unit from magnitude `Rum`.
-6. Rejection of implicit mixtures between `Num` y `Rum`.
+6. Rejection of implicit mixtures between `Num` and `Rum`.
 7. Conversions in both directions with known exact results.
 8. Close conversion ties were settled as draws.
 9. Division by zero error and non-finite results.
