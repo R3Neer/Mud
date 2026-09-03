@@ -98,7 +98,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-082 | current | 2026-08-04 | [[notes/decisions/ADR-082-cycle-as-point-domain-modifier|`cycle` as a point-domain modifier]] |
 | D-083 | current | 2026-08-04 | [[notes/decisions/ADR-083-unitless-base-quantities|Unitless base quantities]] |
 | D-084 | current | 2026-08-04 | [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|Alias specialisation, inherited members and derived views]] |
-| D-085 | current | 2026-08-05 | [[notes/decisions/ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|Functional dictionaries, metadata and structured activation]] |
+| D-085 | current | 2026-08-05 | [[notes/decisions/ADR-085-functional-dictionaries-metadata-and-structured-activation|Functional dictionaries, metadata and structured activation]] |
 | D-086 | current | 2026-08-05 | [[notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|Exact nominal identity, outer arrows and dictionary algebra]] |
 | D-087 | current | 2026-08-15 | [[notes/decisions/ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|Reflective metadata, stable descriptors and external visibility]] |
 | D-088 | current | 2026-08-15 | [[notes/decisions/ADR-088-iteration-signed-progressions-and-expression-blocks|Iteration, signed progressions and expression blocks]] |

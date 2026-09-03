@@ -16,7 +16,7 @@ affects:
 
 - Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Modified by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Modified by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Modified by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Modified by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 - Modifies: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-056-char-text-and-unicode-ordering|D-056]], [[ADR-064-ordering-by-stable-path|D-064]] and [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]].

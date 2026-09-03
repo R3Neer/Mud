@@ -12,7 +12,7 @@ affects:
 
 # ADR-090 — Functional branches without a public anchor
 
-- Modifies: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
+- Modifies: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]].
 - Clarifies: [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]].
 - Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 

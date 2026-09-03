@@ -13,7 +13,7 @@ affects:
 ---
 # ADR-039 — Collections and dictionaries
 
-- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
 - Amended by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]] and [[ADR-081-collection-filtering-take-and-indexing|D-081]]

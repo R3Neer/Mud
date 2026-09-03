@@ -11,7 +11,7 @@ affects:
 ---
 # ADR-101 — Value blocks, stored local variables and witness extrema
 
-- Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], [[ADR-095-empty-extrema-as-ordinary-absence|D-095]], [[ADR-096-modules-callables-look-message-and-activation|D-096]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], [[ADR-095-empty-extrema-as-ordinary-absence|D-095]], [[ADR-096-modules-callables-look-message-and-activation|D-096]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Retains the `given` default as a closed static expression in accordance with D-063 and D-066.
 
 ## Context

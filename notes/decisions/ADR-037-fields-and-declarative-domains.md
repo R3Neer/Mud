@@ -18,7 +18,7 @@ affects:
 
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
-- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Read more: D-019, D-026
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].

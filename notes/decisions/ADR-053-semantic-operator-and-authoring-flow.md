@@ -16,7 +16,7 @@ affects:
 ---
 # ADR-053 — Semantic operator and authoring flow
 
-- Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Expanded by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Related questions: Q-008, Q-015, Q-036, Q-039, Q-040
 - Documents affected: semantic changes, Git, operator tooling
 

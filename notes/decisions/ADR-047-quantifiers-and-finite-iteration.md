@@ -16,7 +16,7 @@ affects:
 
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
-- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]
 - Expanded by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]

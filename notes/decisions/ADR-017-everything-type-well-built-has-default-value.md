@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-017 — Everything type well-built has default value
 
-- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[notes/decisions/ADR-069-char-literals-with-double-quotes|D-069]]
 - As further amended by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]]
 

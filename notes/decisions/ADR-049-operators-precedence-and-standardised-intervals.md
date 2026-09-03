@@ -14,7 +14,7 @@ affects:
 ---
 # ADR-049 — Operators, precedence and standardised intervals
 
-- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Amended by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]]
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
