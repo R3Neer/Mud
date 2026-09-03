@@ -1,6 +1,6 @@
 ---
 id: Q-045
-title: Contenido declarativo de create
+title: Declarative content of `create`
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -11,30 +11,30 @@ affects: []
 superseded-by: []
 ---
 
-# Q-045 — Contenido declarativo de `create`
+# Q-045 — Declarative content of `create`
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-¿Dónde se define el contenido declarativo de una identidad activada mediante `create`?
+Where is the declarative content of an identity activated through `create` defined?
 
-Decisión vigente: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
+Current decision: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
 ```mud
 abstract thing B as A {
-    # Única definición canónica.
+    # Single canonical definition.
 }
 
 create B
 ```
 
-`create` no admite bloque, categoría, antecesoras ni contenido declarativo. La definición canónica contiene todas las propiedades, restricciones, predeterminados y antecesoras. La activación solo las incorpora a la proyección efectiva.
+`create` accepts no block, category, ancestors or declarative content. The canonical definition contains all properties, constraints, defaults and ancestors. Activation merely incorporates them into the effective projection.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-054`.
