@@ -68,5 +68,3 @@ Pure enquiries `READ` do not create a commit. If a query resolves an issue or am
 3. Restoration following failure at any stage.
 4. Commits limited to the plan and no commits for `READ`.
 5. Detection of unexpected impact before confirmation.
-
-

@@ -212,5 +212,3 @@ It is ruled out because it combines verification and diagnostic. `otherwise` It 
 ## Amendment current by D-096
 
 The `start with` from test use the unified interface of D-096. For a test root The transitive closure of tests that it can call is calculated statically, and their contributions are combined activation before executing the body. Tests may cross modules only within a test context, by means of test visible elements and dependencies `uses`; a call the latter does not run the `start with` from the test achieved.
-
-

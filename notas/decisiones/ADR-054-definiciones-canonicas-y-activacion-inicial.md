@@ -230,5 +230,3 @@ The body of a `thing` It may be omitted when it contains no members. `thing A`, 
 ## Amendment current by D-096
 
 The initial activation becomes modular. Each module You can contribute a maximum of one `start with`; all contributions are combined and brought together before the stabilisation. `start with` no longer separates `things` y `rules`, does not specify an order and can only trigger statements with cycle its lifespan module.
-
-
