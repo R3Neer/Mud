@@ -1,6 +1,6 @@
-(* MUD 1.0 — gramática léxica normativa.
-   Dialecto descrito en README.md.
-   Las producciones SPECIAL_* remiten a algoritmos normativos de 06-lexico.md. *)
+(* MUD 1.0 — normative lexical grammar.
+   Dialect described in README.md.
+   SPECIAL_* productions refer to the normative algorithms in 06-lexicon.md. *)
 
 mud-source ::= [ bom ] , { lexical-element } , eof ;
 
@@ -17,7 +17,7 @@ lexical-element
       | operator-or-delimiter
       ;
 
-bom              ::= ? U+FEFF, únicamente como primer carácter ? ;
+bom              ::= ? U+FEFF, only as the first character ? ;
 eof              ::= ? fin de archivo ? ;
 horizontal-space ::= " " | tab ;
 tab              ::= ? U+0009 ? ;
@@ -25,7 +25,7 @@ newline          ::= cr , [ lf ] | lf ;
 cr               ::= ? U+000D ? ;
 lf               ::= ? U+000A ? ;
 
-(* El scanner intenta las formas multilínea antes que las ordinarias. *)
+(* The scanner tries multiline forms before ordinary forms. *)
 comment
     ::= multiline-comment
       | closed-line-comment
@@ -48,10 +48,10 @@ multiline-comment
     ::= special-multiline-comment ;
 
 special-multiline-comment
-    ::= ? bloque ### validado por MUD-LEX-020 a MUD-LEX-024 ? ;
+    ::= ? ### block validated by MUD-LEX-020 to MUD-LEX-024 ? ;
 
-(* Las formas SPECIAL_TEMPLATE_HOLE vuelven al léxico ordinario y emiten
-   delimitadores separados para que mud.ebnf analice la expresión interior. *)
+(* SPECIAL_TEMPLATE_HOLE forms return to ordinary lexing and emit separate
+   delimiters so that mud.ebnf can analyse the inner expression. *)
 text-literal
     ::= quote
         , { text-character
@@ -70,14 +70,14 @@ value-template-hole
     ::= special-value-template-hole ;
 
 special-value-template-hole
-    ::= ? bloque {...} equilibrado según MUD-LEX-036 ? ;
+    ::= ? balanced {...} block according to MUD-LEX-036 ? ;
 
 
 multiline-text-literal
     ::= special-multiline-text ;
 
 special-multiline-text
-    ::= ? bloque triple comilla validado por MUD-LEX-030 a MUD-LEX-036 ? ;
+    ::= ? triple-quoted block validated by MUD-LEX-030 to MUD-LEX-036 ? ;
 
 apostrophe ::= ? U+0027 COMILLA SIMPLE ? ;
 
@@ -177,9 +177,9 @@ builtin-word
 constant-word
     ::= "true" | "false" | "empty" | "all" | "_" ;
 
-(* Estas formas se emiten como IDENTIFIER fuera de las posiciones que
-   mud.ebnf reserva contextualmente. La producción hace inventariable el
-   catálogo sin convertirlo en palabras reservadas duras. *)
+(* These forms are emitted as IDENTIFIER outside the positions that
+   mud.ebnf reserves contextually. The production makes the catalogue
+   enumerable without turning entries into hard reserved words. *)
 contextual-word
     ::= "abstract" | "always" | "start"
       | "value" | "type"
@@ -207,8 +207,8 @@ ascii-letter
       | "v" | "w" | "x" | "y" | "z"
       ;
 
-(* UNIT_FORM y POINT_LITERAL no son producciones del scanner base.
-   Se definen como clasificaciones contextuales sobre spans fuente. *)
+(* UNIT_FORM and POINT_LITERAL are not productions of the base scanner.
+   They are defined as contextual classifications over source spans. *)
 
 operator-or-delimiter
     ::= operator-token

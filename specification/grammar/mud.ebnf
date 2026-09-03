@@ -1,6 +1,6 @@
-(* MUD 1.0 — gramática concreta normativa.
-   Los terminales en MAYÚSCULAS proceden de mud-lexico.ebnf o del
-   clasificador contextual descrito en 06-lexico.md. *)
+(* MUD 1.0 — normative concrete grammar.
+   Upper-case terminals come from mud-lexico.ebnf or the contextual
+   classifier described in 06-lexicon.md. *)
 
 mud-file
     ::= layout
@@ -69,7 +69,7 @@ type-reference    ::= qualified-name ;
 
 identifier ::= IDENTIFIER ;
 
-(* PascalCase/lowerCamelCase y palabras prohibidas son reglas estáticas. *)
+(* PascalCase/lowerCamelCase and forbidden words are static rules. *)
 
 (* ------------------------------------------------------------------ *)
 (* Declaraciones nominales                                             *)
@@ -455,7 +455,7 @@ collection-modifier
 optional-comma ::= [ "," ] ;
 
 (* ------------------------------------------------------------------ *)
-(* Participantes, given y declaraciones de comportamiento              *)
+(* Participants, given and behaviour declarations                       *)
 (* ------------------------------------------------------------------ *)
 
 for-clause
@@ -695,7 +695,7 @@ local-value-declaration
     ::= variable-name , [ derived-value-shape ] , ":=" , value-expression ;
 
 (* ------------------------------------------------------------------ *)
-(* Activación inicial y tests                                          *)
+(* Initial activation and tests                                         *)
 (* ------------------------------------------------------------------ *)
 
 module-start-declaration
@@ -918,8 +918,8 @@ nonchainable-comparison
 membership-has
     ::= "has" , [ "not" ] ;
 
-(* quantitative-expression admite barreras postfix to/in. El parser
-   aplica la tabla de 07-gramatica-concreta y continúa sobre el resultado. *)
+(* quantitative-expression admits postfix to/in barriers. The parser
+   applies the table from 07-concrete-grammar and continues over the result. *)
 quantitative-expression
     ::= arithmetic-expression
         , { conversion-suffix , [ arithmetic-continuation ] }
@@ -1166,7 +1166,7 @@ expression-without-interval
     ::= quantitative-expression ;
 
 (* ------------------------------------------------------------------ *)
-(* Separación física                                                   *)
+(* Physical separation                                                  *)
 (* ------------------------------------------------------------------ *)
 
 layout
