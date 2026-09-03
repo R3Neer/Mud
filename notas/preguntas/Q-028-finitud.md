@@ -1,6 +1,6 @@
 ---
 id: Q-028
-title: Finitud
+title: Finiteness
 priority: P2
 opened: 2026-07-29
 resolved:
@@ -14,12 +14,12 @@ affects: []
 superseded-by: []
 ---
 
-# Q-028 — Finitud
+# Q-028 — Finiteness
 
-## Contenido
+## Content
 
-Límites del análisis, aproximaciones conservadoras y mensajes cuando no puede demostrarse.
+Analysis limits, conservative approximations and messages when finiteness cannot be proven.
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]], [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]] y [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
+Status: **partially decided** by [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]], [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|D-047]], [[notas/decisiones/ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]] and [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
 
-La incapacidad de demostrar finitud o enumerabilidad rechaza estáticamente el uso que las exige; no produce una respuesta negativa en runtime. La misma obligación se aplica a filtros y `take`. D-088 mantiene esa exigencia para `for each`, selección y cuantificadores/agregadores, y limita los dominios cíclicos recorribles a un único periodo fundamental. Falta definir el análisis y sus diagnósticos.
+Failure to prove finiteness or enumerability statically rejects a use that requires it; it does not produce a negative runtime answer. The same obligation applies to filters and `take`. D-088 retains this requirement for `for each`, selection and quantifiers/aggregators, and limits traversable cyclic domains to one fundamental period. The analysis and its diagnostics remain to be defined.
