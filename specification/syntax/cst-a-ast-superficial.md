@@ -10,7 +10,7 @@ status: proposed
 normative: true
 depends-on:
   - cst-sin-perdidas
-  - ../08-sintaxis-abstracta
+  - ../08-abstract-syntax
   - mud-surface-ast.asdl
   - cobertura-sintactica.yaml
 questions:
@@ -445,7 +445,7 @@ Simple binding produces `ValueIterationBinding`. The bracketed pair yields `Dict
 
 ### Folding of precedence
 
-Each precedence level is folded according to [[07-gramatica-concreta]]:
+Each precedence level is folded according to [[07-concrete-grammar]]:
 
 - Ordinary binary operators: left.
 - Implication: right.

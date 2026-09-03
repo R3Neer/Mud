@@ -8,9 +8,9 @@ tags:
 status: draft
 normative: true
 depends-on:
-  - "[[00-convenciones-editoriales]]"
-  - "[[01-alcance-y-conformidad]]"
-  - "[[02-terminologia]]"
+  - "[[00-editorial-conventions]]"
+  - "[[01-scope-and-conformance]]"
+  - "[[02-terminology]]"
 questions: []
 decisions:
   - D-070
@@ -32,9 +32,9 @@ This chapter is a draft. The conventions defined here may be used in other draft
 
 ## Sub-units
 
-- [[00-convenciones-editoriales|Stylistic conventions of the specification MUD]].
-- [[01-alcance-y-conformidad|Scope, conformance and versions ]].
-- [[02-terminologia|Terminology]].
+- [[00-editorial-conventions|Stylistic conventions of the specification MUD]].
+- [[01-scope-and-conformance|Scope, conformance and versions ]].
+- [[02-terminology|Terminology]].
 
 ## 1. Typographical conventions
 

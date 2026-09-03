@@ -8,8 +8,8 @@ tags:
 status: draft
 normative: true
 depends-on:
-  - "[[02-terminologia]]"
-  - "[[03-notacion]]"
+  - "[[02-terminology]]"
+  - "[[03-notation]]"
 questions:
   - Q-005
   - Q-046
@@ -42,8 +42,8 @@ This chapter defines the mathematical constraints already established for repres
 
 ## Sub-units
 
-- [[02-terminologia|Terminology]].
-- [[03-notacion|Mathematical notation and metalanguage]].
+- [[02-terminology|Terminology]].
+- [[03-notation|Mathematical notation and metalanguage]].
 
 ## Planned content
 

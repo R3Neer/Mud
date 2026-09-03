@@ -8,7 +8,7 @@ tags:
 status: skeleton
 normative: true
 depends-on:
-  - "[[01-alcance-y-conformidad]]"
+  - "[[01-scope-and-conformance]]"
 questions: []
 decisions:
   - D-025
@@ -28,7 +28,7 @@ The regulatory text has not yet been drafted.
 
 ## Sub-units
 
-- [[01-alcance-y-conformidad|Scope, conformance and versions ]].
+- [[01-scope-and-conformance|Scope, conformance and versions ]].
 
 ## Planned terminology families
 

@@ -10,7 +10,7 @@ These instructions apply to the entire repository.
 
 ## Normative snapshot
 
-The normative documents and artefacts in `specification/` describe the current state for MUD within its scope. Before modifying them, MUD-EDIT-002 and MUD-EDIT-003 of `specification/00-convenciones-editoriales.md` must be applied in full.
+The normative documents and artefacts in `specification/` describe the current state for MUD within its scope. Before modifying them, MUD-EDIT-002 and MUD-EDIT-003 of `specification/00-editorial-conventions.md` must be applied in full.
 
 In particular:
 
@@ -18,7 +18,7 @@ In particular:
 - Related decisions are recorded using `decisions:` and are not described as provenance within the body of `specification/`.
 - An active question may be cited in the main text solely to highlight an uncertainty affecting the current state; it must also appear in `questions:`.
 - A current decision must be integrated into any normative surface that has already been developed and whose remit covers its scope. If the canonical location does not yet exist, a temporary surface must not be created solely to accommodate it, but no existing surface may contradict it.
-- If the change affects nominal resolution, MUD-EDIT-004 must also be applied and `specification/09-nombres-y-anclas.md` must be reviewed together with `specification/names/mud-nominal-hir.asdl`.
+- If the change affects nominal resolution, MUD-EDIT-004 must also be applied and `specification/09-names-and-anchors.md` must be reviewed together with `specification/names/mud-nominal-hir.asdl`.
 
 The mechanical barrier for MUD-EDIT-002 and question handling is executed using `python governance/validate_spec_editorial.py`. Any change affecting `specification/` or `notes/questions/` must pass this check before committing. If the barrier itself is modified, `python governance/test_validate_spec_editorial.py` is also executed.
 

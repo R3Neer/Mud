@@ -38,7 +38,7 @@ Este directorio contendrá la especificación normativa de MUD. Su objetivo es q
 
 La especificación no presupone una arquitectura de compilador, lenguaje de implementación, base de datos, motor gráfico o framework.
 
-Convenciones de redacción: [[00-convenciones-editoriales]].
+Convenciones de redacción: [[00-editorial-conventions]].
 
 ## Carácter normativo
 
@@ -80,7 +80,7 @@ El compilador, el plugin conversacional, Git y los materializadores tendrán spe
 
 ## 01. Alcance, conformidad y versiones
 
-Capítulo: [[01-alcance-y-conformidad]].
+Capítulo: [[01-scope-and-conformance]].
 
 Define:
 
@@ -94,7 +94,7 @@ Define:
 
 ## 02. Terminología
 
-Capítulo: [[02-terminologia]].
+Capítulo: [[02-terminology]].
 
 Glosario normativo de:
 
@@ -113,7 +113,7 @@ Glosario normativo de:
 
 ## 03. Notación matemática y metalenguaje
 
-Capítulo: [[03-notacion]].
+Capítulo: [[03-notation]].
 
 Fija la simbología utilizada en el resto de la norma:
 
@@ -156,7 +156,7 @@ $$
 
 ## 04. Modelo matemático del mundo
 
-Capítulo: [[04-modelo-matematico]].
+Capítulo: [[04-mathematical-model]].
 
 Define, antes de hablar de sintaxis:
 
@@ -174,7 +174,7 @@ Define, antes de hablar de sintaxis:
 
 ## 05. Texto fuente y estructura física
 
-Capítulo: [[05-texto-fuente]].
+Capítulo: [[05-source-text]].
 
 Define:
 
@@ -187,7 +187,7 @@ Define:
 
 ## 06. Estructura léxica
 
-Capítulo: [[06-lexico]].
+Capítulo: [[06-lexicon]].
 
 Define:
 
@@ -205,7 +205,7 @@ La gramática léxica ejecutable vivirá en `gramatica/mud-lexico.ebnf`.
 
 ## 07. Gramática concreta
 
-Capítulo: [[07-gramatica-concreta]].
+Capítulo: [[07-concrete-grammar]].
 
 Define la sintaxis completa de:
 
@@ -229,7 +229,7 @@ La gramática completa ejecutable vive en `gramatica/mud.ebnf`. El parsing produ
 
 ## 08. Sintaxis abstracta superficial
 
-Capítulo: [[08-sintaxis-abstracta]].
+Capítulo: [[08-abstract-syntax]].
 
 Define las formas semánticamente relevantes después de la CST y de la validación sintáctica contextual:
 
@@ -247,7 +247,7 @@ Artefactos mecánicos y de transformación: `sintaxis/`.
 
 ## 09. Paths, `using`, nombres y anclas
 
-Capítulo: [[09-nombres-y-anclas]].
+Capítulo: [[09-names-and-anchors]].
 
 Define:
 

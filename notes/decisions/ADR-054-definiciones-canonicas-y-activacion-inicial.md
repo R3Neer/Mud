@@ -9,7 +9,7 @@ questions:
   - "Q-044"
   - "Q-045"
 affects:
-  - "[[notes/questions/README|Preguntas activas]], [[specification/04-modelo-matematico]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32"
+  - "[[notes/questions/README|Preguntas activas]], [[specification/04-mathematical-model]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32"
 ---
 # ADR-054 — Canonical definitions and initial activation
 
@@ -20,7 +20,7 @@ affects:
 - Amended by: [[notes/decisions/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Amended by: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
 - Close: [[notes/questions/Q-044-identidad-y-references-a-thing-futuras|Q-044]], [[notes/questions/Q-045-contenido-declarativo-de-create|Q-045]]
-- Documents concerned: [[notes/questions/README|Active questions]], [[specification/04-modelo-matematico]], future episodes 06, 07, 08, 09, 11, 21 to 25 and 32
+- Documents concerned: [[notes/questions/README|Active questions]], [[specification/04-mathematical-model]], future episodes 06, 07, 08, 09, 11, 21 to 25 and 32
 
 ## Context
 

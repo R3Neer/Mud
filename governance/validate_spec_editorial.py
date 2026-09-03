@@ -128,7 +128,7 @@ def validate_file(
     root: Path,
     question_states: dict[str, bool],
 ) -> list[Finding]:
-    conventions = root / "specification" / "00-convenciones-editoriales.md"
+    conventions = root / "specification" / "00-editorial-conventions.md"
     if path.resolve() == conventions.resolve():
         return []
 

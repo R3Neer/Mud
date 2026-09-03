@@ -12,8 +12,8 @@ decisions:
   - D-091
   - D-102
 affects:
-  - specification/07-gramatica-concreta.md
-  - specification/08-sintaxis-abstracta.md
+  - specification/07-concrete-grammar.md
+  - specification/08-abstract-syntax.md
   - specification/grammar/mud.ebnf
   - specification/syntax/mud-surface-ast.asdl
 superseded-by: []

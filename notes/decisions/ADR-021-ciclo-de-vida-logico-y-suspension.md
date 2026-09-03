@@ -9,7 +9,7 @@ questions:
   - "Q-048"
   - "Q-049"
 affects:
-  - "[[specification/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32"
+  - "[[specification/04-mathematical-model]], futuros capítulos 11, 21 a 25 y 32"
 ---
 # ADR-021 — Cycle logical lifespan and suspension by department
 
@@ -20,7 +20,7 @@ affects:
 - As further amended by: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
 - Example updated by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
 - Questions affected: [[notes/questions/Q-048-destruccion-con-descendientes-activos|Q-048]], [[notes/questions/Q-049-destruccion-y-colecciones-de-thing|Q-049]]
-- Documents concerned: [[specification/04-modelo-matematico]], future chapters 11, 21 to 25 and 32
+- Documents concerned: [[specification/04-mathematical-model]], future chapters 11, 21 to 25 and 32
 
 ## Context
 

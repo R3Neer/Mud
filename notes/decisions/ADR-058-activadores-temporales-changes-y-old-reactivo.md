@@ -8,14 +8,14 @@ superseded-by: []
 questions:
   - "Q-005"
 affects:
-  - "[[specification/07-gramatica-concreta]], `specification/grammar/mud.ebnf`"
+  - "[[specification/07-concrete-grammar]], `specification/grammar/mud.ebnf`"
 ---
 # ADR-058 — Temporal triggers, `changes` and reactive `old`
 
 - Amends: [[notes/decisions/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notes/decisions/ADR-042-acciones-raiz-y-resultados|D-042]], [[notes/decisions/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notes/decisions/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notes/decisions/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] and [[notes/decisions/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Related questions: Q-005
 - Extended by: [[notes/decisions/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
-- Affected documents: [[specification/07-gramatica-concreta]], `specification/grammar/mud.ebnf`
+- Affected documents: [[specification/07-concrete-grammar]], `specification/grammar/mud.ebnf`
 
 ## Context
 

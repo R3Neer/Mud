@@ -16,7 +16,7 @@ Management of outstanding issues: [[POLITICA-DE-PREGUNTAS|Policy regarding MUD q
 
 MUD’s specification must maintain a strict separation between the current normative state, the provenance on decisions, and issues that are still open. This process defines how an normative document is prepared, reviewed and published without incorporating drafts, the decision-making history or provisional reasoning into the current standard.
 
-The distinction between state current, decisions and outstanding issues is governed by MUD-EDIT-002 and MUD-EDIT-003 of [[specification/00-convenciones-editoriales]].
+The distinction between state current, decisions and outstanding issues is governed by MUD-EDIT-002 and MUD-EDIT-003 of [[specification/00-editorial-conventions]].
 
 ## Superficie normativa
 
@@ -85,7 +85,7 @@ The promotion of an chapter follows these steps:
 2. A check is carried out to determine which current decisions and outstanding issues affect that scope.
 3. Any issues preventing the expression of an unambiguous contract are resolved or recorded.
 4.  The current state is drafted in a prescriptive style.
-5. The notation is standardised with [[specification/03-notacion]].
+5. The notation is standardised with [[specification/03-notation]].
 6. Regulatory identifiers are added where applicable.
 7. Examples, counterexamples and interactions are examined.
 8.  Links, dependencies and metadata for traceability are being checked.

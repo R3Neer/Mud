@@ -10,14 +10,14 @@ questions:
   - "Q-021"
   - "Q-047"
 affects:
-  - "[[specification/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`"
+  - "[[specification/04-mathematical-model]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`"
 ---
 # ADR-026 — Membership strict and cardinality by `then`
 
 - Expanded by: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
 
 - Questions affected: [[notes/questions/Q-003-puntos-de-validacion|Q-003]], [[notes/questions/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notes/questions/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
-- Documents affected: [[specification/04-modelo-matematico]], future `10-sistema-de-tipos.md`, future `15-colecciones.md`
+- Documents affected: [[specification/04-mathematical-model]], future `10-sistema-de-tipos.md`, future `15-colecciones.md`
 
 ## Context
 

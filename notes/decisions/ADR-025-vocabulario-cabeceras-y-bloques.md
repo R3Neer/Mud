@@ -7,13 +7,13 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[specification/04-modelo-matematico]], futuro `07-gramatica-concreta.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`"
+  - "[[specification/04-mathematical-model]], futuro `07-concrete-grammar.md`, futuro `11-things.md`, futuro `20-reglas.md`, futuro `21-acciones.md`"
 ---
 # ADR-025 — Vocabulary from `thing`, headings and sections
 
 - Related to: [[notes/decisions/ADR-018-as-declara-is-consulta|D-018]], [[notes/decisions/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notes/decisions/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
 - Amended by: [[notes/decisions/ADR-096-modulos-callables-look-message-y-activacion|D-096]]
-- Documents affected: [[specification/04-modelo-matematico]], future `07-gramatica-concreta.md`, future `11-things.md`, future `20-reglas.md`, future `21-acciones.md`
+- Documents affected: [[specification/04-mathematical-model]], future `07-concrete-grammar.md`, future `11-things.md`, future `20-reglas.md`, future `21-acciones.md`
 
 ## Context
 

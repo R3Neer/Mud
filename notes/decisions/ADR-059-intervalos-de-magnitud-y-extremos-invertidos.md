@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-018"
 affects:
-  - "[[specification/07-gramatica-concreta]], `specification/grammar/mud.ebnf`"
+  - "[[specification/07-concrete-grammar]], `specification/grammar/mud.ebnf`"
 ---
 # ADR-059 — Magnitude intervals and inverted endpoints
 
@@ -16,7 +16,7 @@ affects:
 - Amends: [[notes/decisions/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notes/decisions/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notes/decisions/ADR-042-acciones-raiz-y-resultados|D-042]], [[notes/decisions/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] and [[notes/decisions/ADR-057-gramatica-concreta-y-continuacion|D-057]]
 - Related to: [[notes/decisions/ADR-037-campos-y-dominios-declarativos|D-037]]
 - Related questions: Q-018
-- Affected documents: [[specification/07-gramatica-concreta]], `specification/grammar/mud.ebnf`
+- Affected documents: [[specification/07-concrete-grammar]], `specification/grammar/mud.ebnf`
 
 ## Context
 

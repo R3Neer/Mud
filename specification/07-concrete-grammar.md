@@ -8,8 +8,8 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - "[[05-texto-fuente]]"
-  - "[[06-lexico]]"
+  - "[[05-source-text]]"
+  - "[[06-lexicon]]"
 questions:
   - Q-022
   - Q-059

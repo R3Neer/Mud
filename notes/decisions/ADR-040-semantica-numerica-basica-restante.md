@@ -9,14 +9,14 @@ questions:
   - "Q-001"
   - "Q-019"
 affects:
-  - "futuro `06-lexico.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`"
+  - "futuro `06-lexicon.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`"
 ---
 # ADR-040 — Semantics remaining basic numeracy
 
 - Read more: D-028, D-030, D-034
 - Amended by: [[notes/decisions/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
 - Related questions: Q-001, Q-019
-- Documents affected: future `06-lexico.md`, future `10-sistema-de-tipos.md`, future `17-dominios-e-intervalos.md`
+- Documents affected: future `06-lexicon.md`, future `10-sistema-de-tipos.md`, future `17-dominios-e-intervalos.md`
 
 ## Decisión
 

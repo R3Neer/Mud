@@ -16,7 +16,7 @@ verified: 2026-08-31
 > supplies the reference language; Obsidian is only one of its adapters.
 
 This document is informative. The normative grammar belongs to
-[[specification/06-lexico]] and [[specification/07-gramatica-concreta]].
+[[specification/06-lexicon]] and [[specification/07-concrete-grammar]].
 
 ## Independent project
 

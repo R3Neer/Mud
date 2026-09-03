@@ -9,7 +9,7 @@ decisions:
   - D-076
   - D-089
 affects:
-  - specification/06-lexico.md
+  - specification/06-lexicon.md
   - specification/grammar/mud-lexico.ebnf
 superseded-by: []
 ---
@@ -34,4 +34,4 @@ D-076 fixes the catalogue, enabled forms, prefixes and adjacency. D-089 separate
 
 - C1: `D-089`, `MUD-LEX-012` and `MUD-LEX-013`.
 - C2: `D-089`, `MUD-LEX-015`, `MUD-LEX-016` and `MUD-LEX-017`.
-- C3: D-089 verification and `MUD-LEX-015` through `MUD-LEX-017`, together with D-076/06-lexico adjacency.
+- C3: D-089 verification and `MUD-LEX-015` through `MUD-LEX-017`, together with D-076/06-lexicon adjacency.

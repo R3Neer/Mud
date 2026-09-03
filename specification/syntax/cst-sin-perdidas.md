@@ -9,10 +9,10 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - 03-notacion
-  - 05-texto-fuente
-  - 06-lexico
-  - 07-gramatica-concreta
+  - 03-notation
+  - 05-source-text
+  - 06-lexicon
+  - 07-concrete-grammar
   - gramatica/mud-lexico.ebnf
   - gramatica/mud.ebnf
 questions: []
@@ -43,8 +43,8 @@ Authority is distributed as follows:
 
 - [[mud-lexico]] defines which sequences constitute lexical items.
 - [[mud]] defines syntactic productions.
-- [[06-lexico]] defines lexical algorithms and rules that do not fit within EBNF.
-- [[07-gramatica-concreta]] defines precedence, associativity and contextual parsing constraints.
+- [[06-lexicon]] defines lexical algorithms and rules that do not fit within EBNF.
+- [[07-concrete-grammar]] defines precedence, associativity and contextual parsing constraints.
 - `mud-syntax-kinds.yaml` maintains the mechanical inventory for the CST categories.
 - This document defines the common model, text preservation and recovery.
 
@@ -171,7 +171,7 @@ The minimum catalogue is:
 - `MultilineCommentTrivia`.
 - `SkippedTokensTrivia`, for recovery purposes only.
 
-A multiline comment preserves its delimiters, indentation and internal line breaks in a single trivia element. Its line breaks do not produce `TERMINATOR`, in accordance with [[06-lexico]].
+A multiline comment preserves its delimiters, indentation and internal line breaks in a single trivia element. Its line breaks do not produce `TERMINATOR`, in accordance with [[06-lexicon]].
 
 ## `TERMINATOR`
 

@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-001"
 affects:
-  - "[[specification/05-texto-fuente]], [[specification/06-lexico]], [[specification/07-gramatica-concreta]], `specification/grammar/`"
+  - "[[specification/05-source-text]], [[specification/06-lexicon]], [[specification/07-concrete-grammar]], `specification/grammar/`"
 ---
 # ADR-057 — Concrete grammar, precedence and continuation
 
@@ -23,7 +23,7 @@ affects:
 - Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 - Subsequently amended by: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]], [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] and [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
 - Closes: [[notes/questions/Q-001-gramatica-y-saltos-de-linea|Q-001]]
-- Affected documents: [[specification/05-texto-fuente]], [[specification/06-lexico]], [[specification/07-gramatica-concreta]], `specification/grammar/`
+- Affected documents: [[specification/05-source-text]], [[specification/06-lexicon]], [[specification/07-concrete-grammar]], `specification/grammar/`
 
 ## Context
 
@@ -41,7 +41,7 @@ The syntax of MUD 1.0 is defined by:
 
 1. [[specification/grammar/mud-lexico.ebnf|The lexical grammar]].
 2. [[specification/grammar/mud.ebnf|The concrete grammar]].
-3. The contextual constraints and grouping algorithm in [[specification/07-gramatica-concreta]].
+3. The contextual constraints and grouping algorithm in [[specification/07-concrete-grammar]].
 
 The EBNF grammars define the set of syntactic forms. They do not attempt to decide matters that require name or type resolution, including the distinction between:
 
@@ -71,7 +71,7 @@ The exhaustive list of introductory words and operators is derived from the gram
 
 ### Operators
 
-Precedence and chaining are set out in [[specification/07-gramatica-concreta#Precedencia y agrupación]]. `to` and the display form of `in` are postfix operators that transform the entire value accumulated to their left; new operators may then be applied to the converted result. `changes` is a temporal suffix below comparisons and above `and` and `or`, in accordance with D-058.
+Precedence and chaining are set out in [[specification/07-concrete-grammar#Precedencia y agrupación]]. `to` and the display form of `in` are postfix operators that transform the entire value accumulated to their left; new operators may then be applied to the converted result. `changes` is a temporal suffix below comparisons and above `and` and `or`, in accordance with D-058.
 
 Permitted chains are elaborated as adjacent pairs:
 

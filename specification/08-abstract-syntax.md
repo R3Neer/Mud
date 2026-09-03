@@ -9,10 +9,10 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - 03-notacion
-  - 05-texto-fuente
-  - 06-lexico
-  - 07-gramatica-concreta
+  - 03-notation
+  - 05-source-text
+  - 06-lexicon
+  - 07-concrete-grammar
   - sintaxis/cst-sin-perdidas
   - sintaxis/mud-surface-ast.asdl
 questions:

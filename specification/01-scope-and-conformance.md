@@ -8,7 +8,7 @@ tags:
 status: skeleton
 normative: true
 depends-on:
-  - "[[00-convenciones-editoriales]]"
+  - "[[00-editorial-conventions]]"
 questions: []
 decisions: []
 ---
@@ -23,7 +23,7 @@ The regulatory text has not yet been drafted.
 
 ## Subordinates
 
-- [[00-convenciones-editoriales|Stylistic conventions of the specification MUD]].
+- [[00-editorial-conventions|Stylistic conventions of the specification MUD]].
 
 ## Scope planned
 

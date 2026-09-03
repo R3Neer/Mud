@@ -8,14 +8,14 @@ superseded-by: []
 questions:
   - "Q-041"
 affects:
-  - "[[specification/04-modelo-matematico]], futuro `11-things.md`"
+  - "[[specification/04-mathematical-model]], futuro `11-things.md`"
 ---
 # ADR-014 — Unified ontology of `thing`
 
 - Updated: 28 July 2026 to use the terminology from D-025
 - Amended by: [[notes/decisions/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 - Questions: [[notes/questions/Q-041-ontologia-de-thing|Q-041]]
-- Documents concerned: [[specification/04-modelo-matematico]], future `11-things.md`
+- Documents concerned: [[specification/04-mathematical-model]], future `11-things.md`
 
 ## Context
 

@@ -10,8 +10,8 @@ decisions:
   - D-062
   - D-089
 affects:
-  - specification/06-lexico.md
-  - specification/07-gramatica-concreta.md
+  - specification/06-lexicon.md
+  - specification/07-concrete-grammar.md
   - specification/grammar/mud-lexico.ebnf
 superseded-by: []
 ---
@@ -40,4 +40,4 @@ Static inversion includes the ability to determine the end of the complete repre
 - C1: `D-089` and `MUD-LEX-012`.
 - C2: `D-062`, `D-089` and `MUD-LEX-013`.
 - C3: `D-089` and `MUD-LEX-014`.
-- C4: `specification/06-lexico.md` and `specification/grammar/mud-lexico.ebnf`.
+- C4: `specification/06-lexicon.md` and `specification/grammar/mud-lexico.ebnf`.

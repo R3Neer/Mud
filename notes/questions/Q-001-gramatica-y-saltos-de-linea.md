@@ -21,7 +21,7 @@ Status: **closed** by [[notes/decisions/ADR-050-comentarios-terminadores-y-separ
 
 An instruction ends with `;` or a line break. A line break continues when the prefix cannot yet form a complete syntactic unit but admits a valid continuation; indentation has no role.
 
-The complete syntax lives in `specification/grammar/`; [[specification/07-gramatica-concreta]] fixes precedence, open prefixes and contextual distinctions. Error recovery may vary between implementations, but never expands the accepted language.
+The complete syntax lives in `specification/grammar/`; [[specification/07-concrete-grammar]] fixes precedence, open prefixes and contextual distinctions. Error recovery may vary between implementations, but never expands the accepted language.
 
 ## Closure criterion
 

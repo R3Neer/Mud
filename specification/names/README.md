@@ -1,6 +1,6 @@
 # Nominal resolution from the MUD
 
-This directory contains the contract regulatory mechanism for the name resolution. Add [[../09-nombres-y-anclas|09. Names, paths and anchors]] and does not define a type or semantics dynamics.
+This directory contains the contract regulatory mechanism for the name resolution. Add [[../09-names-and-anchors|09. Names, paths and anchors]] and does not define a type or semantics dynamics.
 
 ## `mud-nominal-hir.asdl`
 

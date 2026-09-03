@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "specification/01-alcance-y-conformidad.md"
+  - "specification/01-scope-and-conformance.md"
   - "arquitectura de compilador, runtime y materializadores"
 ---
 

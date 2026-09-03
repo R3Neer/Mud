@@ -33,7 +33,7 @@ max_chars = 0
 title = "Current language semantics"
 include = [
     "specification",
-    "notes/vision-y-alcance.md",
+    "notes/vision-and-scope.md",
     "notes/decisions/*.md",
     "notes/questions/*.md",
 ]

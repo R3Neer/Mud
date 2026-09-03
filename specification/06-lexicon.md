@@ -8,7 +8,7 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - "[[05-texto-fuente]]"
+  - "[[05-source-text]]"
 questions: []
 decisions:
   - D-034
@@ -39,7 +39,7 @@ decisions:
 
 ## State and purpose
 
-This chapter defines the base scanner and the contextual classification for font shapes. The base scanner transforms Unicode into tokens without consulting model; `POINT_LITERAL` and `UNIT_FORM` are added only in a subsequent contextual view. The base lexical grammar is in [[gramatica/mud-lexico.ebnf]]. The syntax that processes the significant views belongs to [[07-gramatica-concreta]].
+This chapter defines the base scanner and the contextual classification for font shapes. The base scanner transforms Unicode into tokens without consulting model; `POINT_LITERAL` and `UNIT_FORM` are added only in a subsequent contextual view. The base lexical grammar is in [[gramatica/mud-lexico.ebnf]]. The syntax that processes the significant views belongs to [[07-concrete-grammar]].
 
 ## Unicode scalar values
 

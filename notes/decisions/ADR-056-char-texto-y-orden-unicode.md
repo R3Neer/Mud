@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-001"
 affects:
-  - "[[specification/06-lexico]], [[specification/07-gramatica-concreta]], future chapters 10 and 15"
+  - "[[specification/06-lexicon]], [[specification/07-concrete-grammar]], future chapters 10 and 15"
 ---
 # ADR-056 — `Char`, `Text` and Unicode ordering
 
@@ -17,7 +17,7 @@ affects:
 - Amended by: [[notes/decisions/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
 - Amended by: [[notes/decisions/ADR-069-literales-char-con-comillas-dobles|D-069]]
 - Partially closes: [[notes/questions/Q-001-gramatica-y-saltos-de-linea|Q-001]]
-- Affected documents: [[specification/06-lexico]], [[specification/07-gramatica-concreta]], future chapters 10 and 15
+- Affected documents: [[specification/06-lexicon]], [[specification/07-concrete-grammar]], future chapters 10 and 15
 
 ## Context
 

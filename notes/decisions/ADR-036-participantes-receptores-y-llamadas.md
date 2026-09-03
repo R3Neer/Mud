@@ -10,7 +10,7 @@ questions:
   - "Q-012"
   - "Q-013"
 affects:
-  - "futuro `07-gramatica-concreta.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24"
+  - "futuro `07-concrete-grammar.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24"
 ---
 # ADR-036 — Participants, recipients and calls
 
@@ -23,7 +23,7 @@ affects:
 - Amended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
 - Amended by: [[notes/decisions/ADR-096-modulos-callables-look-message-y-activacion|D-096]]
 - Related questions: Q-011, Q-012, Q-013
-- Documents affected: future `07-gramatica-concreta.md`, future `19-expresiones.md`, forthcoming episodes 21 to 24
+- Documents affected: future `07-concrete-grammar.md`, future `19-expresiones.md`, forthcoming episodes 21 to 24
 
 ## Decisión
 

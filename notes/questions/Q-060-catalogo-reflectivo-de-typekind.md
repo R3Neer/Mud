@@ -8,7 +8,7 @@ closed:
 decisions:
   - D-087
 affects:
-  - specification/08-sintaxis-abstracta.md
+  - specification/08-abstract-syntax.md
 superseded-by: []
 ---
 

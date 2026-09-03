@@ -8,7 +8,7 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - "[[01-alcance-y-conformidad]]"
+  - "[[01-scope-and-conformance]]"
 questions:
   - Q-062
 decisions:
@@ -30,7 +30,7 @@ decisions:
 
 ## State and purpose
 
-This chapter defines the physical unit received by a MUD processor. The identity semantics of the statements is defined in [[09-nombres-y-anclas]]; the lexical structure belongs to [[06-lexico]].
+This chapter defines the physical unit received by a MUD processor. The identity semantics of the statements is defined in [[09-names-and-anchors]]; the lexical structure belongs to [[06-lexicon]].
 
 ## Files
 

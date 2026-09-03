@@ -213,20 +213,20 @@ def validate(root: Path) -> list[Problem]:
             "AnchorInterpolation(",
             "intrinsic_name_override",
         ],
-        root / "specification/06-lexico.md": [
+        root / "specification/06-lexicon.md": [
             "después `anchor{` y `{`",
         ],
-        root / "specification/04-modelo-matematico.md": [
+        root / "specification/04-mathematical-model.md": [
             "`name: Text` intrínseco",
             "Una única declaración global `start with` determina un conjunto finito",
         ],
-        root / "specification/07-gramatica-concreta.md": [
+        root / "specification/07-concrete-grammar.md": [
             "propiedad intrínseca e inmutable `name: Text`",
             "`unique` se prohíbe estáticamente en diccionarios",
             "Los paréntesis son obligatorios para anidar un diccionario como valor",
             "`anchor{d}` inserta el ancla canónica",
         ],
-        root / "specification/08-sintaxis-abstracta.md": [
+        root / "specification/08-abstract-syntax.md": [
             "sobrescritura opcional del `name` intrínseco",
             "`prefixes = empty` → `NoPrefixes`",
         ],

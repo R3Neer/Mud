@@ -23,11 +23,11 @@ class BundledProfileTests(unittest.TestCase):
             root = Path(directory).resolve()
             documents = {
                 "specification/README.md",
-                "specification/05-texto-fuente.md",
+                "specification/05-source-text.md",
                 "specification/grammar/mud.ebnf",
                 "specification/asdl/acciones.asdl",
                 "specification/syntax/modelo.yaml",
-                "notes/vision-y-alcance.md",
+                "notes/vision-and-scope.md",
                 "notes/questions/README.md",
                 "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
                 "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
@@ -37,7 +37,7 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/decisions/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
                 "notes/decisions/ADR-052-pipeline-materializadores-y-conformidad.md",
                 "notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria.md",
-                "notes/riesgos-y-restricciones.md",
+                "notes/risks-and-constraints.md",
                 "tooling/README.md",
             }
             for relative in documents:
@@ -57,11 +57,11 @@ class BundledProfileTests(unittest.TestCase):
                 for path in select_paths(options, index)
             }
 
-        self.assertIn("specification/05-texto-fuente.md", selected)
+        self.assertIn("specification/05-source-text.md", selected)
         self.assertIn("specification/grammar/mud.ebnf", selected)
         self.assertIn("specification/asdl/acciones.asdl", selected)
         self.assertIn("specification/syntax/modelo.yaml", selected)
-        self.assertIn("notes/vision-y-alcance.md", selected)
+        self.assertIn("notes/vision-and-scope.md", selected)
         self.assertIn("notes/decisions/ADR-055-nueva-decision.md", selected)
         self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
@@ -84,7 +84,7 @@ class BundledProfileTests(unittest.TestCase):
             "notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria.md",
             selected,
         )
-        self.assertNotIn("notes/riesgos-y-restricciones.md", selected)
+        self.assertNotIn("notes/risks-and-constraints.md", selected)
         self.assertNotIn("tooling/README.md", selected)
 
     def test_decisions_profile_preserves_the_complete_question_history(self) -> None:

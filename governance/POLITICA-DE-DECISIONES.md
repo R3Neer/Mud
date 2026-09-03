@@ -105,7 +105,7 @@ An decision semantics must be precise enough to identify what was chosen. Its fi
 
 ## Integration into the specification
 
-The integration continues from MUD-EDIT-003 to [[specification/00-convenciones-editoriales]].
+The integration continues from MUD-EDIT-003 to [[specification/00-editorial-conventions]].
 
 For each current decision:
 

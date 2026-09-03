@@ -59,7 +59,7 @@ def main() -> int:
         write(root / "notes/questions/Q-001-activa.md", question("Q-001", "false"))
         write(root / "notes/questions/Q-002-cerrada.md", question("Q-002", "true"))
         write(
-            root / "specification/00-convenciones-editoriales.md",
+            root / "specification/00-editorial-conventions.md",
             document("Ejemplos permitidos aquí: D-999, ADR-998 y Q-002."),
         )
 

@@ -175,9 +175,9 @@ remain in development.
 
 - [`specification/`](specification/) — the normative language specification
   and checked syntax artefacts;
-- [`notes/vision-y-alcance.md`](notes/vision-y-alcance.md) — product thesis,
+- [`notes/vision-and-scope.md`](notes/vision-and-scope.md) — product thesis,
   intended users and boundaries;
-- [`notes/arquitectura-del-sistema.md`](notes/arquitectura-del-sistema.md) —
+- [`notes/system-architecture.md`](notes/system-architecture.md) —
   compiler, runtime, semantic operator and materialisation architecture;
 - [`notes/decisions/`](notes/decisions/) — language and architecture decisions;
 - [`notes/questions/`](notes/questions/) — open and partially decided questions;

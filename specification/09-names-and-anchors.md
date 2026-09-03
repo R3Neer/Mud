@@ -8,8 +8,8 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - "[[05-texto-fuente]]"
-  - "[[08-sintaxis-abstracta]]"
+  - "[[05-source-text]]"
+  - "[[08-abstract-syntax]]"
 questions:
   - Q-014
 decisions:

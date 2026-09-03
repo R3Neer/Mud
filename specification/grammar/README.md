@@ -19,7 +19,7 @@ terminal    ::= "texto exacto" ;
 especial    ::= ? condición definida en prosa ? ;
 ```
 
-The normative details of the dialect can be found in [[../03-notacion]].
+The normative details of the dialect can be found in [[../03-notation]].
 
 Symbol initial:
 
@@ -28,7 +28,7 @@ Symbol initial:
 
 ## Products
 
-`mud-lexico.ebnf` This does not mean that an implementation must ignore comments or spaces. [[../06-lexico]] define a complete workflow using trivia and an important insight into grammar.
+`mud-lexico.ebnf` This does not mean that an implementation must ignore comments or spaces. [[../06-lexicon]] define a complete workflow using trivia and an important insight into grammar.
 
 `mud.ebnf` is produced by the group listed in:
 
@@ -37,13 +37,13 @@ Symbol initial:
 
 Abstract projection is defined as:
 
-- `../08-sintaxis-abstracta.md`.
+- `../08-abstract-syntax.md`.
 - `../sintaxis/mud-surface-ast.asdl`.
 - `../sintaxis/cst-a-ast-superficial.md`.
 
 ## Modal scanner
 
-The templates `Text` require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../06-lexico]] define the algorithm; `mud.ebnf` analyses the tokens issued within interpolations.
+The templates `Text` require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../06-lexicon]] define the algorithm; `mud.ebnf` analyses the tokens issued within interpolations.
 
 The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 
@@ -81,7 +81,7 @@ The first check identifies duplicate, undefined or unachievable production targe
 Any structural alteration to a production You must update this in the same commit:
 
 1. The EBNF.
-2. The explanation from [[../07-gramatica-concreta]].
+2. The explanation from [[../07-concrete-grammar]].
 3. `mud-syntax-kinds.yaml`.
 4. `cobertura-sintactica.yaml`.
 5. The CST → AST transformation, where applicable.

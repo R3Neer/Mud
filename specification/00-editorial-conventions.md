@@ -73,7 +73,7 @@ If an chapter that is not an current contradicts an current decision, the contra
 Internal links should preferably use wikilinks:
 
 ```markdown
-[[03-notacion|notación matemática]]
+[[03-notation|notación matemática]]
 [[29-ondas#Configuración de una onda]]
 ```
 
@@ -201,7 +201,7 @@ Conventions:
 - Greek characters for environments and typefaces where conventional: $\Gamma$, $\rho$, $\tau$.
 - Bold or sans serif for formal category names where appropriate: $\mathsf{accepted}$.
 
-The final conventions will belong to [[03-notacion]].
+The final conventions will belong to [[03-notation]].
 
 ## 8. Rules of inference
 
@@ -288,7 +288,7 @@ Every file generated must state this in its header and declare its source. The `
 Any grammatical change that affects the structure must update the corresponding CST catalogue, coverage, transformation and ASDL in the same commit.
 
 > [!rule] MUD-EDIT-004 — Propagation of nominal resolution
-> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, visibility nominal, qualification or specialisation must be reviewed in the same change `09-nombres-y-anclas.md` and `nombres/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
+> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, visibility nominal, qualification or specialisation must be reviewed in the same change `09-names-and-anchors.md` and `nombres/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
 
 review must at least check which symbols are created, in which scope they reside, which name resolves to them, what owner they have, whether they receive public anchor, and which relationships `Owns`, `Specializes` or `RefersTo` the resolution produces. A rule dependent on types, effects or elaboration is not added to the Nominal HIR in order to artificially satisfy this requirement.
 
