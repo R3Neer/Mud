@@ -1,24 +1,24 @@
 ---
-title: Política de archivos temporales de MUD
+title: Policy of MUD temporary files
 aliases:
-  - Archivos temporales
+  - Temporary files
 tags:
   - mud/gobierno
   - mud/temporales
 status: vigente
 ---
 
-# Política de archivos temporales de MUD
+# Policy of MUD temporary files
 
-## Propósito
+## Purpose
 
-Esta política regula los documentos y artefactos de configuración que deben permanecer versionados durante varios commits porque coordinan trabajo en curso, pero que no forman parte del estado permanente del proyecto.
+This policy governs configuration documents and artefacts that must remain versioned across multiple commits because they coordinate work in progress, but which do not form part of the project’s permanent state.
 
-Un archivo efímero ordinario no se versiona. Logs, builds, caches, volcados, estado local de herramientas y demás residuos reproducibles deben vivir fuera del repositorio o quedar cubiertos por `.gitignore`.
+An ordinary ephemeral file is not versioned. Logs, builds, caches, dumps, local tool state files and other reproducible debris must be stored outside the repository or be covered by `.gitignore`.
 
 ## Fuente de verdad
 
-Los metadatos del propio archivo son la única fuente de verdad sobre su temporalidad. Un documento Markdown intencionadamente temporal usa en su frontmatter:
+The metadata within the file itself is the only source of truth regarding its temporal nature. A Markdown document that is intentionally time-sensitive uses the following in its frontmatter:
 
 ```yaml
 temporary: true
@@ -27,10 +27,10 @@ temporary-delete-when: "Condición semántica de eliminación"
 temporary-delete-after: 2026-09-30
 ```
 
-`temporary-delete-after` es opcional y solo se usa cuando existe una fecha límite objetiva.
+`temporary-delete-after` is optional and is only used when there is a specific deadline.
 
-Un archivo TOML intencionadamente temporal usa las mismas propiedades en su
-tabla raíz:
+A TOML file that is intended to be temporary uses the same properties in its
+table root:
 
 ```toml
 temporary = true
@@ -39,60 +39,61 @@ temporary-delete-when = "Condición semántica de eliminación"
 temporary-delete-after = 2026-09-30
 ```
 
-No se usa `temporary: false`. Si un documento temporal pasa legítimamente a ser permanente, se eliminan `temporary` y todas las propiedades `temporary-*`. Si deja de ser necesario, se elimina el archivo.
+`temporary: false` is not used. If a temporary document is legitimately converted into a permanent one, `temporary` and all `temporary-*` properties are removed. If it is no longer required, the file is deleted.
 
-## Significado de las propiedades
+## Meaning of the properties
 
-- `temporary: true`: el documento debe desaparecer eventualmente o abandonar explícitamente su ciclo temporal convirtiéndose en permanente.
-- `temporary-reason`: explica por qué merece estar versionado mientras tanto. Es obligatorio y no puede estar vacío.
-- `temporary-delete-when`: condición semántica obligatoria que determina cuándo debe eliminarse. Es obligatoria y no puede estar vacía.
-- `temporary-delete-after`: fecha límite opcional en formato ISO `YYYY-MM-DD`. Una fecha ya vencida bloquea el commit.
+- `temporary: true`: the document must eventually be deleted or explicitly cease to be temporary cycle, thereby becoming permanent.
+- `temporary-reason`: explains why it deserves to be versioned in the meantime. This is mandatory and must not be left blank.
+- `temporary-delete-when`: mandatory semantics condition that determines when it must be removed. It is mandatory and cannot be left blank.
+- `temporary-delete-after`: optional deadline in ISO format `YYYY-MM-DD`. A date that has already passed will block the commit.
 
-Las propiedades son planas y pertenecen al archivo que regulan. No se mantiene
-un registro manual paralelo de archivos temporales.
+The properties are flat and belong to the file they govern. They are not retained
+a parallel manual log of temporary files.
 
 ## Alcance
 
-El contrato `temporary:*` se aplica a documentos Markdown y archivos TOML
-intencionadamente versionados. Otro artefacto temporal no se introduce en
-`main` mediante esta política; debe mantenerse fuera del repositorio, en una
-rama de laboratorio o quedar cubierto por una política específica que
-establezca un ciclo de vida equivalente.
+The contract `temporary:*` applies to Markdown documents and TOML files
+deliberately adapted. No other time artefact is introduced into
+`main` via this policy; it must remain outside the repository, in a
+branch in the laboratory or be covered by a specific policy that
+establish an equivalent cycle lifespan.
 
-## Vista de Obsidian
+## View of Obsidian
 
-`[[temporales.base|gobierno/temporales.base]]` es una vista humana derivada de las Properties de las notas Markdown. No es una segunda fuente de verdad y ningún archivo se añade manualmente a ella. Los TOML temporales aparecen en el inventario completo del validador, aunque Obsidian Bases no los muestre.
+`[[temporales.base|gobierno/temporales.base]]` is a human-readable view derived from the properties of Markdown notes. It is not a second source of truth and no files are added to it manually. Temporary TOML files appear in the validator’s full inventory, even though Obsidian Bases does not display them.
 
-La Base ofrece:
+The Centre offers:
 
-- **Temporales activos**: todos los documentos con `temporary: true`.
-- **Con fecha límite**: temporales que declaran `temporary-delete-after`, ordenados por fecha.
-- **Metadata incompleta**: temporales sin motivo o sin condición de eliminación.
+- **Active temporary records**: all documents with `temporary: true`.
+- **With a deadline**: weather reports issued by `temporary-delete-after`, sorted by date.
+- **Incomplete metadata**: temporary records without a reason or without a condition for deletion.
 
-## Validación mecánica
+## Validation mechanical
 
-Desde la raíz del repositorio:
+From root of repository:
 
 ```powershell
 python gobierno/validate_temporaries.py
 ```
 
-El validador:
+The validator:
 
-- descubre documentos Markdown y archivos TOML versionados y no ignorados;
-- lee las propiedades del frontmatter Markdown o de la tabla raíz TOML;
-- imprime siempre el inventario de temporales activos;
-- exige `temporary-reason` y `temporary-delete-when` no vacíos;
-- rechaza `temporary: false` y propiedades `temporary-*` sin `temporary: true`;
-- valida `temporary-delete-after` como fecha ISO cuando existe;
-- falla si una fecha límite ya ha vencido.
+- detects versioned Markdown documents and TOML files that have not been ignored;
+-  reads the properties from the Markdown frontmatter or the root TOML table;
+-  always prints the list of active temporary records;
+-  requires `temporary-reason` and `temporary-delete-when` to be non-empty;
+-  rejects `temporary: false` and properties `temporary-*` without `temporary: true`;
+-  validates `temporary-delete-after` as an ISO date where it exists;
+-  fails if a deadline has already passed.
 
-El validador no intenta interpretar condiciones semánticas arbitrarias como «se complete la Etapa 8». La persona o agente que prepara el commit debe revisar el inventario impreso y decidir si alguna condición ya se cumple.
+The validator does not attempt to interpret arbitrary semantic conditions such as ‘Stage 8 is completed’. The person or agent preparing the commit must check the printed inventory and decide whether any condition has already been met.
 
-## Gate antes de cada commit
+## Gate before every commit
 
-Antes de crear cualquier commit se ejecuta el validador y se revisa el inventario de `temporary: true`.
+Before creating any commit, the validator is run and the inventory of `temporary: true` is checked.
 
-Si la condición `temporary-delete-when` de un documento ya se cumple, el documento debe eliminarse antes de cerrar el commit, salvo que el propio cambio esté modificando explícitamente su ciclo de vida. Una fecha `temporary-delete-after` vencida es un bloqueo mecánico y no puede ignorarse mediante una excepción informal.
+If a document’s `temporary-delete-when` condition is already met, the document must be deleted before the commit is finalised, unless the change itself is explicitly modifying its cycle lifecycle. An expired `temporary-delete-after` date is a mechanical block and cannot be ignored by means of an informal exception.
 
-La revisión se aplica a todos los temporales activos, no solo a los archivos modificados por el commit.
+review applies to all active temporary files, not just those modified by the commit.
+

@@ -1,5 +1,5 @@
 ---
-title: Orden del explorador de Obsidian
+title: Obsidian Explorer Command
 tags:
   - mud/gobierno
   - mud/obsidian
@@ -37,31 +37,31 @@ sorting-spec: |
    < a-z
 ---
 
-# Orden del explorador de Obsidian
+# Obsidian Scout Order
 
-Esta nota configura `Custom File Explorer sorting` con una regla general y dos
-órdenes editoriales concretos:
+This note configures `Custom File Explorer sorting` with one general rule and two
+specific editorial instructions:
 
-- en cualquier carpeta, `README.md` aparece primero y los archivos `.base`
-  inmediatamente después, ordenados alfabéticamente si hay más de uno;
+-  in any folder, `README.md` appears first and the `.base` files
+  immediately afterwards, listed in alphabetical order if there is more than one;
 
-- en la raíz, primero las superficies documentales y después el soporte técnico;
-- en `gobierno/`, primero las políticas que gobiernan decisiones y preguntas.
+-  in the root, first the documentary aspects and then the technical support;
+-  in `gobierno/`, first the policies that govern decisions and queries.
 
-Las carpetas de la especificación, los ADR y las preguntas conservan su orden
-natural por identificador. Sus prefijos forman parte de la navegación portable
-y no deben eliminarse solo para mejorar la presentación en Obsidian.
+The folders for specification, the ADRs and the questions remain in the same order
+natural by identifier. Their prefixes form part of portable navigation
+and they should not be removed simply to improve the presentation in Obsidian.
 
-## Configuración local
+## Local settings
 
-El plugin se instala y activa con:
+The plugin is installed and activated as follows:
 
 ```powershell
 obsidian plugin:install id=custom-sort enable
 ```
 
-La configuración de `.obsidian/` no se versiona. Para evitar que dependencias y
-salidas generadas contaminen las búsquedas, el vault local excluye al menos:
+The configuration of `.obsidian/` is not versioned. To prevent dependencies and
+To prevent generated outputs from skewing search results, the local vault excludes at least the following:
 
 ```text
 exports/
@@ -71,3 +71,4 @@ tooling/.deps/
 /coverage/
 /.wrangler/
 ```
+

@@ -1,30 +1,30 @@
-# Mud command-line tooling
+# Mud command-line tools
 
-Mud's repository tools share the visual and help language provided by
+Mud’s repository tools share the visual and help language provided by
 [R3CLI 0.4.1](https://github.com/R3Neer/R3CLI/releases/tag/v0.4.1).
-Install the pinned tooling dependencies with Python 3.11 or later:
+Install the pinned tooling dependencies with Python 3.11 or or later:
 
 ```console
 python -m pip install -r tooling/requirements.txt
 ```
 
-R3 Markdown Export is also an independent package. Mud pins it for validating
+R3 Markdown Export is is also an independent package. Mud links to it for and validates it
 the repository-specific profiles in [`markdown-export.toml`](../markdown-export.toml).
-R3Translate remains a separate executable because its lifecycle and dependency
-set are independent from Mud's repository tooling.
+R3Translate remains a separate executable because of its lifecycle and dependency
+set are independent from Mud's repository tools.
 
 ## Interface
 
-Every human-facing command supports `-h`, `--help`,
+Every user-facing command supports `-h`, `--help`,
 `--colour auto|always|never`, `--ascii` and `NO_COLOR`. Command suites provide
-focused pages through `<command> --help`. Mud tooling deliberately has no
-`--version` option until it acquires an independent versioning policy.
+focused pages through `<command> --help`. Mud tooling deliberately has not
+`--version` option until it has its own versioning policy.
 
-Every operational argument and option is documented in the rendered help:
-single-action validators use `GLOBAL OPTIONS`, while command suites describe
-command-specific inputs in focused pages.
+Every operational argument and option is documented in the help text displayed:
+single-action validators use `GLOBAL OPTIONS`, whilst command suites describe
+command-specific inputs in dedicated pages.
 
-Progress and diagnostics are written to stderr when stdout carries
+Progress and diagnostics are written to to stderr; when stdout carries
 machine-readable data.
 
 ## Entry points
@@ -41,9 +41,9 @@ python tooling/translation/check_migration.py --help
 python tooling/translation/render_glossary.py --help
 ```
 
-Human-facing terminal text uses British English. Source documents, generated
-Spanish indexes and other migration content retain their current language
-until the corresponding repository migration phase changes them.
+Text displayed to users is in British English. Source documents, generated
+Spanish indexes and and other migration content retain their current language
+until the corresponding repository migration phase changes is completed.
 
 ## Tests
 
@@ -52,3 +52,4 @@ python -m unittest discover -s tooling/tests
 python -m unittest discover -s gobierno -p "test_*.py"
 python tooling/translation/test_translation_tooling.py
 ```
+

@@ -1,47 +1,47 @@
 ---
-title: Ciclo documental de MUD
+title: Document lifecycle by MUD
 aliases:
-  - Publicación normativa
+  - Regulatory publication
 tags:
   - mud/gobierno
   - mud/especificacion
 status: vigente
 ---
 
-# Ciclo documental de MUD
+# Document lifecycle by MUD
 
-Gestión de cuestiones abiertas: [[POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
+Management of outstanding issues: [[POLITICA-DE-PREGUNTAS|Policy regarding MUD queries ]].
 
-## Propósito
+## Purpose
 
-La especificación de MUD debe mantener una separación estricta entre el estado normativo actual, la procedencia de las decisiones y las cuestiones todavía abiertas. Este proceso define cómo se prepara, revisa y publica un documento normativo sin convertir borradores, historia decisional o razonamientos provisionales en parte de la norma vigente.
+MUD’s specification must maintain a strict separation between the current normative state, the provenance on decisions, and issues that are still open. This process defines how an normative document is prepared, reviewed and published without incorporating drafts, the decision-making history or provisional reasoning into the current standard.
 
-La separación entre estado vigente, decisiones y cuestiones abiertas se rige por MUD-EDIT-002 y MUD-EDIT-003 de [[especificacion/00-convenciones-editoriales]].
+The distinction between state current, decisions and outstanding issues is governed by MUD-EDIT-002 and MUD-EDIT-003 of [[especificacion/00-convenciones-editoriales]].
 
 ## Superficie normativa
 
-Ubicación: `especificacion/`.
+Location: `especificacion/`.
 
-Puede contener:
+May contain:
 
-- Definiciones.
-- Reglas normativas identificadas.
-- Notación formal.
-- Ejemplos y contraejemplos informativos.
-- Teoremas, lemas, demostraciones y conjeturas claramente clasificados.
-- Cuestiones abiertas explícitas cuando delimitan el estado actual.
-- Metadatos de trazabilidad hacia decisiones y preguntas.
-- Criterios de conformidad.
+- Definitions.
+- Identified regulatory rules.
+- Formal notation.
+- Informative examples and counterexamples.
+- Clearly categorised theorems, lemmas, proofs and conjectures.
+-  Explicit open questions when they define the current state.
+- Metadata from traceability for decision-making and queries.
+-  Criteria from conformance.
 
-No puede contener:
+Must not contain:
 
-- Conversación.
-- Razonamientos provisionales presentados como norma.
-- Historia de introducción, modificación, sustitución o retirada de reglas como parte de la exposición normativa.
-- Secciones aditivas que corrijan una regla anterior en vez de reescribir su ubicación canónica.
-- Soluciones incompletas presentadas como norma.
+- Conversation.
+- Provisional reasoning presented as a rule.
+- History of the introduction, amendment, replacement or withdrawal of rules as part of the regulatory process.
+- Additive sections that amend a previous rule rather than overwriting its canonical form.
+- Incomplete solutions presented as the standard.
 
-## Estados de un capítulo
+##  States of a chapter
 
 ```text
 esqueleto
@@ -51,89 +51,90 @@ esqueleto
 → vigente
 ```
 
-- **Esqueleto**: estructura sin contenido suficiente.
-- **Borrador**: contenido incompleto que puede cambiar ampliamente.
-- **Propuesta**: semántica completa candidata a revisión.
-- **En revisión**: el contenido se considera candidato a publicación y se ejecuta la pasada de publicación.
-- **Vigente**: texto aceptado como norma actual.
+- **Skeleton**: structure without sufficient content.
+- **Draft**: incomplete content that may change significantly.
+- **Proposal**: semantics is a complete candidate for review.
+- **In review**: the content is considered a candidate for publication and the publication process is carried out.
+- **Current**: text accepted as the current standard.
 
-Un capítulo `vigente` puede contener cuestiones abiertas solo si la característica afectada queda marcada fuera de MUD 1.0 o si la cuestión no altera su significado.
+An chapter `vigente` may contain open issues only if the affected feature is marked as outside the scope of MUD 1.0 or if the issue does not alter its meaning.
 
-### Autoridad durante la promoción
+### Authority during the promotion
 
-La ubicación en `especificacion/` y `normative: true` indican que un archivo pertenece a la superficie normativa, no que todo su contenido esté ya aprobado. La autoridad del capítulo como unidad aparece al alcanzar `status: vigente`.
+The location at `especificacion/` and `normative: true` indicates that a file belongs to normative surface, not that all of its content has already been approved. The authority of the chapter, as unit, appears upon reaching `status: vigente`.
 
-Antes de `vigente`, un capítulo puede recoger reglas que ya tengan autoridad por decisiones vigentes y por artefactos mecánicos normativos coherentes. Esa transcripción no concede al capítulo potestad para cambiar esas reglas, cerrar preguntas o introducir una semántica alternativa. Si diverge de una decisión vigente, existe un defecto documental que bloquea la promoción. Si prosa y artefacto mecánico divergen, se aplica la regla editorial MUD-EDIT-001: la divergencia debe resolverse explícitamente y ninguna de las dos superficies adquiere prioridad silenciosa.
+Prior to `vigente`, an chapter may incorporate rules that already have authority through existing decisions and consistent regulatory mechanisms. That transcription does not grant the chapter the authority to change those rules, close questions or introduce an alternative semantics. If it diverges from an current decision, there is a documentary defect that blocks the promotion. If the text and the mechanical artefact diverge, the editorial rule MUD-EDIT-001 applies: the divergence must be explicitly resolved, and neither of the two interpretations is given tacit priority.
 
-Por tanto, la promoción a `vigente` certifica el capítulo completo; no es el mecanismo que hace vigentes retroactivamente las decisiones que ya documentaba.
+Therefore, promotion to `vigente` certifies the complete chapter; it is not the mechanism that gives retroactive effect to the decisions it had already documented.
 
-### Integración de decisiones vigentes
+### Integration of current decisions
 
-La promoción de una decisión no obliga a crear anticipadamente todos los capítulos futuros de la especificación. Se aplica MUD-EDIT-003:
+The promotion of an decision does not require all future chapters of the specification to be created in advance. MUD-EDIT-003 applies:
 
-1. Se identifican las superficies normativas ya desarrolladas cuya responsabilidad cubre la decisión.
-2. Todas ellas se actualizan en el mismo cambio o se registra explícitamente un bloqueo que impida hacerlo.
-3. Si la ubicación canónica todavía es solo un capítulo previsto, el ADR vigente mantiene autoridad transitoria sobre esa parte hasta su formalización.
-4. Ningún documento existente, incluidos índices y mapas de capítulos futuros, puede conservar una descripción incompatible con la decisión vigente.
-5. No se considera suficiente añadir al final de un documento una sección de «actualización»: la regla vigente debe quedar integrada en su lugar canónico.
+1. The regulatory areas already developed, for which decision is responsible, are identified.
+2. Either they are all updated in the same transaction, or a lock is explicitly set to prevent this from happening.
+3. If the canonical location is still only a planned chapter, the ADR current retains interim authority over that part until it is formalised.
+4. No existing document, including tables of contents and maps of future chapters, may contain a description that is inconsistent with current decision.
+5. It is not considered sufficient to add an ‘update’ section at the end of a document: rule current must be incorporated into its canonical location.
 
-## Flujo de publicación
+## Publication workflow
 
-La promoción de un capítulo sigue estos pasos:
+The promotion of an chapter follows these steps:
 
-1. Se identifica el alcance normativo que el capítulo pretende cubrir.
-2. Se comprueba qué decisiones vigentes y cuestiones abiertas afectan a ese alcance.
-3. Se resuelven o registran las cuestiones que impidan expresar un contrato inequívoco.
-4. Se redacta el estado actual en estilo normativo.
-5. Se unifica la notación con [[especificacion/03-notacion]].
-6. Se añaden identificadores normativos cuando correspondan.
-7. Se comprueban ejemplos, contraejemplos e interacciones.
-8. Se verifican enlaces, dependencias y metadatos de trazabilidad.
-9. Se elimina del cuerpo cualquier historia decisional o procedencia que no forme parte del estado vigente.
-10. Se comprueba la integración en todas las superficies ya desarrolladas afectadas.
-11. Se ejecuta la pasada de publicación.
-12. Se cambia el estado y se crea un commit atómico.
+1. The regulatory scope that chapter is intended to cover is identified.
+2. A check is carried out to determine which current decisions and outstanding issues affect that scope.
+3. Any issues preventing the expression of an unambiguous contract are resolved or recorded.
+4.  The current state is drafted in a prescriptive style.
+5. The notation is standardised with [[especificacion/03-notacion]].
+6. Regulatory identifiers are added where applicable.
+7. Examples, counterexamples and interactions are examined.
+8.  Links, dependencies and metadata for traceability are being checked.
+9. Any decision history or provenance that is not part of the state current is removed from the body.
+10. Integration is checked across all the affected surfaces that have already been developed.
+11. The publication run is being executed.
+12.  The state is replaced and a atomic commit is created.
 
-## Pasada de publicación
+## Publication date
 
-Antes de promover un capítulo a `vigente` se realizan las siguientes revisiones.
+Before promoting an chapter to `vigente`, the following checks are carried out.
 
 ### Revisión semántica
 
-- Correspondencia entre prosa, fórmulas y ejemplos.
-- Ausencia de casos sin definir dentro del alcance declarado.
-- Compatibilidad con capítulos vigentes.
-- Compatibilidad con decisiones vigentes aplicables.
-- Distinción entre norma, propuesta y cuestión abierta.
-- Búsqueda de contraejemplos.
-- Comprobación de que ninguna superficie existente conserve semántica sustituida.
+- Correspondence between prose, formulas and examples.
+- No undefined cases within the reported scope.
+- Compatibility with current sections.
+- Compatibility with applicable decisions currently in force.
+- Distinction between a standard, a proposal and open question.
+- Search for counterexamples.
+- Check that no existing surface retains semantics as a replacement.
 
-### Revisión formal
+### Review formal
 
-- Símbolos definidos antes de usarse.
-- Juicios y reglas bien formados.
-- Hipótesis explícitas.
-- Cuantificadores y dominios inequívocos.
-- Nombres consistentes.
+- Symbols defined before they are used.
+- Well-formed judgements and rules.
+- Explicit hypotheses.
+- Quantifiers and unambiguous domains.
+- Consistent names.
 
-### Revisión editorial
+### Review editorial
 
-- Aplicación de MUD-EDIT-002: el cuerpo describe el estado vigente y no la historia de las decisiones.
-- Ausencia de identificadores `D-NNN` o `ADR-NNN` usados como procedencia o justificación en el cuerpo normativo.
-- Preguntas corporales limitadas a preguntas activas, registradas además en `questions:`, y formuladas como incertidumbre presente.
-- Ausencia de secciones aditivas de actualización o retirada.
-- Aplicación de MUD-EDIT-003 a todas las superficies ya desarrolladas afectadas.
-- Redacción normativa uniforme.
-- Identificadores estables.
-- Wikilinks y referencias.
-- Frontmatter y estado correctos.
-- Ejemplos informativos claramente marcados.
+- Application of MUD-EDIT-002: the body describes the state current and not the history of the decisions.
+-  Absence of identifiers `D-NNN` or `ADR-NNN` used as provenance or justification in the text of the regulation.
+-  Bodily questions limited to active questions, also recorded in `questions:`, and formulated as present-tense uncertainty.
+- No additive update or removal sections.
+- Apply MUD-EDIT-003 to all affected surfaces that have already been developed.
+- Standardised drafting.
+- Stable identifiers.
+- Wiki links and references.
+-  Correct frontmatter and state.
+- Clearly marked illustrative examples.
 
-### Revisión mecánica
+### Review mechanical
 
-- Enlaces resolubles.
-- Markdown y LaTeX bien delimitados.
-- Gramática o esquemas verificables cuando existan.
-- Suite de conformidad actualizada cuando corresponda.
-- Barrera mecánica de MUD-EDIT-002 y del tratamiento de preguntas mediante `python gobierno/validate_spec_editorial.py`; MUD-EDIT-003 conserva además su revisión semántica por superficies afectadas.
-- Aplicación de MUD-EDIT-004 y coherencia entre capítulo 09 + HIR nominal cuando el cambio afecte resolución de nombres.
+- Resolvable links.
+- Properly delimited Markdown and LaTeX.
+- Grammar or verifiable outlines, where available.
+-  A follow-up to conformance, updated where necessary.
+- Mechanical barrier of MUD-EDIT-002 and the processing of queries via `python gobierno/validate_spec_editorial.py`; MUD-EDIT-003 also retains its review semantics in terms of affected surfaces.
+- Application of MUD-EDIT-004 and consistency between chapter 09 and Nominal HIR where the change affects name resolution.
+

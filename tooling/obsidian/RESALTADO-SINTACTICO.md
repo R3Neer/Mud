@@ -1,7 +1,7 @@
 ---
-title: Resaltado sintáctico de MUD
+title: MUD’s syntactic highlighting
 aliases:
-  - Coloreado sintáctico de MUD
+  - Syntax highlighting in MUDs
 tags:
   - mud/tooling
   - mud/obsidian
@@ -9,101 +9,102 @@ status: implementado
 verified: 2026-08-31
 ---
 
-# Resaltado sintáctico de MUD
+# Syntax highlighting in MUD
 
 > [!abstract]
-> El resaltador y formateador es un proyecto independiente y reutilizable. MUD
-> aporta el lenguaje de referencia; Obsidian es solo uno de sus adaptadores.
+> The highlighter and formatter is an independent, reusable project. MUD
+>  provides the reference language; Obsidian is just one of its adapters.
 
-Este documento es informativo. La gramática normativa pertenece a
+This document is for information purposes only. The standard grammar is set out in
 [[especificacion/06-lexico]] y [[especificacion/07-gramatica-concreta]].
 
-## Proyecto independiente
+## Independent project
 
-El código fuente, el historial y las releases públicas están en
-[R3Neer/syntax-highlight](https://github.com/R3Neer/syntax-highlight). La copia
-antigua bajo `tooling/obsidian/mud-syntax/` ya no forma parte de este repositorio.
+The source code, version history and public releases can be found at
+[R3Neer/syntax-highlight](https://github.com/R3Neer/syntax-highlight). The copy
+The former `tooling/obsidian/mud-syntax/` is no longer part of this repository.
 
-La arquitectura separa el conocimiento del lenguaje de los consumidores:
+The architecture separates knowledge from the language used by consumers:
 
-- `@r3nner/syntax-highlight-core`: contratos de lenguajes, spans y ediciones;
-- `@r3nner/syntax-highlight-language-mud`: tokenización y formato de MUD;
-- `@r3nner/syntax-highlight-html`: HTML escapado y CSS temático;
-- `@r3nner/syntax-highlight-codemirror`: integración con CodeMirror 6;
-- `@r3nner/syntax-highlight-mcp`: recursos y resultados para MCP Apps;
-- `@r3nner/syntax-highlight-cli`: resaltado y formato sin interfaz;
-- `@r3nner/syntax-highlight-obsidian`: adaptador para Obsidian.
+- `@r3nner/syntax-highlight-core`: language, span and edition contracts;
+- `@r3nner/syntax-highlight-language-mud`: tokenisation and MUD formatting;
+- `@r3nner/syntax-highlight-html`: Escaped HTML and themed CSS;
+- `@r3nner/syntax-highlight-codemirror`: integration with CodeMirror 6;
+- `@r3nner/syntax-highlight-mcp`: resources and results for MCP Apps;
+- `@r3nner/syntax-highlight-cli`: highlighting and formatting without an interface;
+- `@r3nner/syntax-highlight-obsidian`: adapter for Obsidian.
 
-Todos los paquetes se publican públicamente en npm bajo el ámbito `@r3nner`.
-Así, el mismo paquete de MUD puede usarse en Obsidian, en aplicaciones basadas
-en CodeMirror, en servidores, en una MCP App o desde la línea de comandos.
+All packages are published publicly on npm under scope `@r3nner`.
+Thus, the same MUD package can be used in Obsidian, in applications based on
+in CodeMirror, on servers, in an MCP App or from the command line.
 
-## Relación con la gramática normativa
+## Relation in accordance with the standard grammar
 
-El paquete de MUD incluye una instantánea validada de:
+The MUD package includes a validated snapshot of:
 
 - [[especificacion/gramatica/mud-lexico.ebnf]]
 - [[especificacion/gramatica/mud.ebnf]]
 
-Las palabras, los operadores y sus formas compuestas se derivan del léxico. La
-inferencia de palabras contextuales calcula también relaciones indirectas de la
-gramática, por lo que formas normativas como `~format` y `cycle` no dependen de
-una tabla manual de vecinos inmediatos.
+Words, operators and their compound forms are derived from the lexicon. The
+inference for contextual words also calculates indirect relationships from the
+grammar, so standard forms such as `~format` and `cycle` do not depend on
+a manual table of immediate neighbours.
 
-Después de modificar cualquiera de las dos gramáticas, debe comprobarse la
-compatibilidad desde un checkout de `syntax-highlight`:
+After modifying either of the two grammars, the
+compatibility from a checkout of `syntax-highlight`:
 
 ```powershell
 node scripts/check-mud-compat.mjs --mud-root "D:\OneDrive\Documentos Samuel\Herramientas software\Mud"
 ```
 
-La comprobación exige que las gramáticas incorporadas coincidan exactamente
-con las normativas. Actualizar el lenguaje publicado y aumentar su versión
-corresponde al repositorio independiente.
+The check requires that the embedded grammars match exactly
+in accordance with the regulations. Update the published text and increase its version number
+corresponds to the standalone repository.
 
 ## Obsidian
 
-El plugin instalado usa el identificador `syntax-highlight` y reside localmente
-en `.obsidian/plugins/syntax-highlight/`. El identificador anterior era
-`mud-syntax-highlighter`; su directorio se conserva durante la migración para
-permitir recuperación manual, pero no debe quedar activo a la vez.
+The installed plugin uses the identifier `syntax-highlight` and is stored locally
+in `.obsidian/plugins/syntax-highlight/`. The previous identifier was
+`mud-syntax-highlighter`; its directory is retained during migration so that
+allow manual recovery, but it must not be active at the same time.
 
-Para desarrollar o reinstalar desde un checkout del proyecto independiente:
+To build or reinstall from a standalone project checkout:
 
 ```powershell
 npm ci
 npm run install:obsidian -- --vault "D:\OneDrive\Documentos Samuel\Herramientas software\Mud"
 ```
 
-El instalador exige una bóveda explícita, migra `data.json` cuando procede,
-actualiza `community-plugins.json` y no borra la instalación antigua. Después
-de ejecutarlo debe recargarse Obsidian.
+The installer requires an explicit vault and migrates to `data.json` where appropriate,
+updates `community-plugins.json` without deleting the old installation. Afterwards
+To run it, you must restart Obsidian.
 
-El adaptador ofrece resaltado de fences en lectura y edición, una vista de
-CodeMirror para archivos fuente, temas semánticos y edición inteligente. MUD,
-EBNF, ASDL y TOML están disponibles, además de perfiles de lenguaje portables.
-El color no sustituye al parser ni valida tipos, dominios o resolución nominal.
+The adapter provides fence highlighting during reading and editing, a view of
+CodeMirror for source files, semantic themes and intelligent editing. MUD,
+EBNF, ASDL and TOML are available, as well as portable language profiles.
+The colour does not replace the parser, nor does it validate types, domains or nominal resolution.
 
-Desde la versión 1.1.0, el paquete de MUD distingue las palabras por función
-semántica sin introducir conocimiento de MUD en los adaptadores: declaraciones,
-modificadores de declaración, flujo de control, cuantificadores, efectos y
-cláusulas reciben categorías independientes. En particular, `mut` es un
-modificador de declaración y las dos palabras de `for each` se resaltan como
-cuantificador. Cada tema puede asignar colores distintos a esas categorías y
-los perfiles de otros lenguajes pueden reutilizar el mismo mecanismo.
+From version 1.1.0 onwards, the MUD package distinguishes between words based on their function
+semantics without incorporating MUD knowledge into the adaptors: declarations,
+modifiers for declaration, control flow, quantifiers, effects and
+These clauses are assigned separate categories. In particular, `mut` is a
+The modifier for declaration and the two words in `for each` are highlighted as
+quantifier. Each topic can assign different colours to these categories and
+Profiles in other languages can reuse the same mechanism.
 
-## Comprobación manual
+## Manual check
 
-Después de recargar Obsidian debe verificarse:
+After reloading Obsidian, the following should be checked:
 
-1. Un bloque `mud` en lectura y en Live Preview.
-2. Un archivo `.mud` abierto en la vista de código.
-3. El resaltado contextual de `~format` y `cycle`.
-4. El formato compacto de rangos como `[0..10]`.
-5. Los operadores compuestos vigentes del léxico.
-6. Que `family`, `mut`, `for each`, `then`, `destroy` y `from` se distinguen
-   según su función semántica.
-7. La conservación de ajustes, perfiles y temas migrados.
+1. A block `mud` in read-only mode and in Live Preview.
+2. An `.mud` file open in code view.
+3. Contextual highlighting of `~format` and `cycle`.
+4. The compact range format, such as `[0..10]`.
+5. The compound operators currently in use in the lexicon.
+6. That `family`, `mut`, `for each`, `then`, `destroy` and `from` are distinguished
+   according to its function semantics.
+7. Preserving settings, profiles and themes that have been migrated.
 
-La release estable actual puede descargarse desde
+The current stable release can be downloaded from
 [v1.1.0](https://github.com/R3Neer/syntax-highlight/releases/tag/v1.1.0).
+

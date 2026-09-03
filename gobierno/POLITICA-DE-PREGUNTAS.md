@@ -1,55 +1,55 @@
 ---
-title: Política de preguntas de MUD
+title: Policy MUD questions
 aliases:
-  - Ciclo de preguntas
+  - Cycle questions
 tags:
   - mud/gobierno
   - mud/preguntas
 status: vigente
 ---
 
-# Política de preguntas de MUD
+# Policy MUD questions
 
-Decisiones relacionadas: [[POLITICA-DE-DECISIONES|Política de decisiones de MUD]].
+Related decisions: [[POLITICA-DE-DECISIONES|Policy from MUD decisions ]].
 
-## Propósito
+## Purpose
 
-Una pregunta identifica una incertidumbre concreta que puede impedir completar la especificación, una decisión o una prueba de conformidad. No sustituye a una decisión ni conserva indefinidamente como «abierto» un problema ya resuelto.
+A question identifies a specific uncertainty that may prevent the completion of an specification, an decision or an conformance test. It does not replace an decision nor does it keep a problem that has already been solved ‘open’ indefinitely.
 
 ## Autoridad
 
-Las preguntas se registran en `notas/preguntas/`. No definen semántica por sí mismas. Una respuesta solo pasa a ser una regla de MUD mediante una decisión aceptada conforme a [[POLITICA-DE-DECISIONES]] y su integración en las superficies normativas correspondientes conforme a [[CICLO-DOCUMENTAL]].
+Questions are recorded in `notas/preguntas/`. They do not, in themselves, define semantics. An answer only becomes a MUD rule through an decision accepted in accordance with [[POLITICA-DE-DECISIONES]] and its incorporation into the relevant regulatory frameworks in accordance with [[CICLO-DOCUMENTAL]].
 
-Cada pregunta dispone de un archivo estable:
+Each question has a stable file:
 
 ```text
 notas/preguntas/Q-NNN-titulo-breve.md
 ```
 
-El archivo no se mueve al cambiar de estado. Su ubicación estable evita romper enlaces y conserva la trazabilidad.
+The file is not moved when state is changed. Its fixed location prevents broken links and preserves traceability.
 
-`notas/preguntas/README.md` enumera únicamente las preguntas activas.
+`notas/preguntas/README.md` lists only active questions.
 
 ## Identidad
 
-- El identificador `Q-NNN` es único y no se reutiliza.
-- El título puede precisarse sin cambiar el identificador cuando la investigación revele la duda real.
-- Si una pregunta contiene incertidumbres independientes, se divide y cada nueva pregunta enlaza su procedencia.
-- Una decisión puede resolver varias preguntas y una pregunta puede requerir varias decisiones.
+- The identifier `Q-NNN` is unique and is not reused.
+- The title may be clarified without changing the identifier when the investigation reveals genuine doubt.
+- If a question contains independent uncertainties, it is split, and each new question links to its provenance.
+- An decision can resolve several questions, and a single question may require several decisions.
 
-## Estado de resolución
+## State from resolution
 
-El campo `resolved` es la única fuente de verdad del estado de una pregunta:
+The field `resolved` is the only source of truth of the state in a question:
 
-- `resolved: false` (`[ ]`): abierta; no existe una respuesta aceptada suficiente.
-- `resolved:` (`[-]`): parcialmente decidida; el archivo enumera de forma exacta qué falta.
-- `resolved: true` (`[x]`): cerrada; no queda ninguna incertidumbre dentro de su alcance.
+- `resolved: false` (`[ ]`): open; there is no sufficiently accepted answer.
+- `resolved:` (`[-]`): partially resolved; the file lists exactly what is missing.
+- `resolved: true` (`[x]`): closed; there is no uncertainty remaining within its scope.
 
-Las preguntas abiertas y parcialmente decididas son activas. Si una pregunta se cierra porque fue descartada, la sección `Resolución` explica el motivo. Si fue sustituida, `superseded-by` enlaza las preguntas que cubren ahora su alcance.
+Open and partially resolved questions are active. If a question is closed because it has been discarded, section `Resolución` explains the reason. If it has been superseded, `superseded-by` links to the questions that now cover its scope.
 
-## Contenido mínimo
+## Minimum content
 
-Cada archivo usa:
+Each file uses:
 
 ```yaml
 ---
@@ -65,13 +65,13 @@ superseded-by: []
 ---
 ```
 
-La prioridad es `P0`, `P1` o `P2` y determina la sección del índice activo; no forma parte de la identidad estable de la pregunta.
+The priority is `P0`, `P1` or `P2` and determines the section of the active index; it is not part of the stable identity in the question.
 
-`opened` contiene en formato `YYYY-MM-DD` la fecha de creación del archivo estable de la pregunta y no cambia durante su ciclo de vida. En preguntas migradas desde un registro anterior, `closed` puede ser anterior a `opened` porque documenta el cierre de la pregunta, no la creación posterior de su archivo individual.
+`opened` contains, in `YYYY-MM-DD` format, the creation date of the question’s stable record and does not change throughout its cycle lifetime. For questions migrated from a previous database, `closed` may predate `opened` because it records the closure of the question, not the subsequent creation of its individual record.
 
-`closed` queda vacío mientras la pregunta esté activa. Cuando pasa a un estado inactivo contiene la fecha de cierre en formato `YYYY-MM-DD`. Los campos `resolved` y `closed` deben actualizarse en el mismo cambio.
+`closed` remains blank whilst the query is active. When it changes to an inactive state, it contains the closing date in `YYYY-MM-DD` format. The `resolved` and `closed` fields must be updated in the same transaction.
 
-Y contiene, cuando proceda:
+And it contains, where applicable:
 
 ```markdown
 # Q-NNN — Título
@@ -84,78 +84,79 @@ Y contiene, cuando proceda:
 ## Resolución
 ```
 
-Una pregunta parcialmente decidida no repite como pendiente lo ya resuelto. La sección `Pendiente` debe permitir reconocer objetivamente cuándo puede cerrarse.
+A partially resolved query does not list what has already been resolved as pending. Section `Pendiente` should make it possible to determine objectively when it can be closed.
 
-### Criterios y evidencia de cierre
+### Closure criteria and evidence
 
-Los criterios de cierre que se usen para declarar una pregunta resuelta llevan identificadores locales `C1`, `C2`, ... y describen condiciones comprobables, no la mera existencia de una decisión enlazada. Una pregunta puede conservar texto explicativo adicional, pero el conjunto de criterios identificados constituye la lista que debe quedar satisfecha para cerrarla.
+The closure criteria used to mark a question as resolved have local identifiers `C1`, `C2`, … and describe verifiable conditions, not merely the existence of a linked decision. A question may retain additional explanatory text, but the set of identified criteria constitutes the list that must be met in order to close it.
 
-Una pregunta `resolved: true` contiene además `## Evidencia de cierre`. Por cada criterio existe exactamente una entrada con el mismo identificador que cita la evidencia concreta: decisiones, reglas normativas, artefactos mecánicos, casos de conformidad o un descarte explícito. El validador comprueba la correspondencia estructural entre criterios y evidencia; la revisión semántica humana continúa siendo responsable de comprobar que esa evidencia demuestra realmente el criterio.
+A question `resolved: true` also contains `## Evidencia de cierre`. For each criterion, there is exactly one entry with the same identifier that cites the specific evidence: decisions, regulatory rules, mechanical devices, instances of conformance or an explicit rejection. The validator checks the structural correspondence between criteria and evidence; the human review semantics remains responsible for verifying that this evidence actually demonstrates the criterion.
 
-Las preguntas históricas cerradas se migran a esta estructura cuando se adopta esta política; una evidencia generada durante la migración no exime de revisar su suficiencia cuando el alcance vuelva a tocarse.
+Closed historical questions are migrated to this structure when this policy is adopted; evidence generated during the migration does not exempt one from reviewing its adequacy when the scope is revisited.
 
-## Referencias desde la especificación
+## References from specification
 
-Una pregunta activa puede aparecer explícitamente en el cuerpo de `especificacion/` cuando su existencia sea necesaria para delimitar qué parte del estado actual todavía no está decidida. Esta excepción es informativa sobre la frontera vigente de la norma y no concede semántica a la pregunta.
+An active question may appear explicitly in the body of `especificacion/` when its existence is necessary to define which part of the current state has not yet been decided. This exception provides guidance on the scope current of the rule and does not grant semantics to the question.
 
-Toda referencia corporal a una pregunta:
+Any reference to a part of the body in a question:
 
-1. debe apuntar a una pregunta activa;
-2. debe expresar de forma local y precisa qué queda abierto;
-3. debe figurar también en el frontmatter `questions:` del documento cuando este disponga de frontmatter;
-4. no debe narrar qué decisiones originaron, modificaron o dejaron abierta la pregunta;
-5. debe retirarse del cuerpo y del frontmatter cuando la pregunta se cierre o deje de afectar al documento.
+1.  must point to an active question;
+2.  must state, in a local and precise manner, what remains open;
+3.  must also appear in the frontmatter `questions:` of the document where the document has frontmatter;
+4.  must not describe which decisions gave rise to, altered or left the question open;
+5.  must be removed from the main text and the front matter once the question is closed or no longer relates to the document.
 
-Una pregunta activa que solo sea relevante para investigación, planificación o un capítulo todavía inexistente no necesita aparecer en un documento normativo ajeno a su ubicación canónica.
+An active question that is only relevant for research, planning or a chapter that does not yet exist does not need to appear in an normative document other than its canonical location.
 
-## Apertura
+## Opening
 
-Antes de crear una pregunta se comprueba que:
+Before creating a question, the following is checked:
 
-1. La incertidumbre no esté ya resuelta por la especificación o una decisión vigente.
-2. No sea un duplicado de otra pregunta.
-3. Su alcance sea suficientemente pequeño para recibir una respuesta comprobable.
-4. Identifique los capítulos, decisiones o pruebas afectados.
-5. Distinga alternativas reales cuando ya se conozcan.
+1. The uncertainty has not already been resolved by specification or a current decision.
+2. Please ensure this is not a duplicate of another question.
+3. Ensure that your scope is small enough to elicit a verifiable response.
+4. Identify the relevant sections, decisions or tests.
+5. Identify viable alternatives where these are already known.
 
-La nueva pregunta se añade al índice activo y al frontmatter `questions` de cada documento normativo desarrollado cuyo estado actual quede delimitado por esa incertidumbre.
+The new question is added to the active index and the frontmatter `questions` of each developed normative document whose current state is bounded by that uncertainty.
 
-## Cierre
+## Closure
 
-Una pregunta se cierra cuando:
+A question is closed when:
 
-1. Todos sus criterios `C1`, `C2`, ... tienen evidencia identificada y la revisión semántica confirma que esa evidencia responde el criterio.
-2. El conjunto de criterios cubre todo el alcance de la pregunta; un ADR enlazado por sí solo no constituye cierre.
-3. Se actualizan los documentos normativos y técnicos afectados.
-4. Se retira de `notas/preguntas/README.md`.
-5. Se retira del frontmatter `questions` y de las referencias o callouts abiertos de la especificación.
-6. Su archivo conserva la respuesta, la fecha de cierre, los criterios, la evidencia y los enlaces de procedencia.
+1. All of its criteria `C1`, `C2`, … have identified evidence, and review semantics confirms that this evidence meets the criterion.
+2. The set of criteria covers the entire scope of the question; a linked ADR on its own does not constitute closure.
+3. The relevant regulatory and technical documents are updated.
+4.  Withdrawn from `notas/preguntas/README.md`.
+5. Remove from the frontmatter `questions` and from any open references or callouts in the specification.
+6. This file contains the response, the closure date, the criteria, the evidence and the links from provenance.
 
-Cerrar no elimina ni recicla el archivo. Las referencias históricas pueden seguir enlazándolo fuera de la exposición normativa vigente, pero no deben describirlo como pendiente.
+Closing does not delete or recycle the file. Historical references may continue to link to it outside the regulatory framework current, but should not describe it as pending.
 
-## Comprobaciones editoriales
+## Editorial checks
 
-Antes de publicar una unidad se verifica:
+Before publishing an unit, the following is checked:
 
-- que todo identificador incluido en `questions` corresponda a una pregunta activa;
-- que toda referencia o advertencia normativa sobre una cuestión pendiente enlace una pregunta activa;
-- que toda pregunta citada en el cuerpo figure también en `questions:` cuando exista ese frontmatter;
-- que una pregunta cerrada no permanezca en el cuerpo normativo, el frontmatter ni el índice activo;
-- que las referencias corporales describan únicamente la incertidumbre presente y no la historia decisional;
-- que `opened` contenga una fecha válida y que `closed` solo esté vacío en preguntas activas según `resolved`;
-- que las decisiones que abren, responden o sustituyen preguntas mantengan enlaces recíprocos;
-- que no existan estados parciales sin una enumeración explícita de lo pendiente;
-- que toda pregunta cerrada tenga criterios `C1`, `C2`, ... y una evidencia exactamente correspondiente a cada criterio;
-- que ninguna entrada de evidencia invoque un criterio inexistente;
-- que la revisión de cierre no confunda un enlace a ADR con evidencia suficiente por sí misma.
+-  that every identifier included in `questions` corresponds to a active question;
+- that any reference or regulatory warning regarding a pending issue should link to a active question;
+- that every question cited in the body also appears in `questions:` where such frontmatter exists;
+- that a closed question should not remain in the main text, the frontmatter or the index active section;
+- that body references describe only the current uncertainty and not the decision-making history;
+-  that `opened` contains a valid date and that `closed` is only empty for active questions, according to `resolved`;
+- that decisions which introduce, answer or replace questions should maintain reciprocal links;
+- that there are no partial states without an explicit listing of what remains to be done;
+- that every closed question must meet criteria `C1`, `C2`, … and provide evidence that corresponds exactly to each criterion;
+- that no piece of evidence should invoke a non-existent criterion;
+-  that the concluding review should not be confused with a link to ADR being sufficient evidence in itself.
 
-El índice activo se regenera desde los metadatos y después se valida desde la raíz:
+The active index is regenerated from the metadata and then validated against the root:
 
 ```powershell
 python tooling/questions/validate_questions.py generate
 python tooling/questions/validate_questions.py
 ```
 
-## Relación con Git
+## Relation with Git
 
-La apertura, división, sustitución o cierre de una pregunta forma parte del mismo commit atómico que la decisión o cambio documental que la provoca, salvo que la pregunta se descubra durante una auditoría independiente.
+The opening, splitting, replacement or closure of a query forms part of the same atomic commit as the decision or documentary change that gives rise to it, unless the query is identified during an independent audit.
+

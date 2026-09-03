@@ -1,82 +1,82 @@
 ---
-title: Política de commits de MUD
+title: Policy MUD commits
 aliases:
-  - Política Git
+  - Policy Git
 tags:
   - mud/gobierno
   - mud/git
 status: vigente
 ---
 
-# Política de commits de MUD
+# Policy MUD commits
 
-## Objetivo
+## Objective
 
-El historial Git debe permitir reconstruir la evolución conceptual, normativa y técnica de MUD. Un commit representa una unidad coherente que puede entenderse y revertirse de manera independiente.
+The Git history should make it possible to trace the conceptual, regulatory and technical evolution of MUD. A commit represents a coherent unit that can be understood and reverted independently.
 
-## Responsabilidad
+## Liability
 
-Codex se encargará de preparar y crear los commits del repositorio.
+Codex will be responsible for preparing and creating the commits for repository.
 
-El autor no necesita indicar expresamente “haz commit” después de cada tarea. Cuando una modificación solicitada:
+The author does not need to explicitly state “commit” after each task. When a change is requested:
 
-1. Esté completa dentro de su alcance.
-2. Haya sido revisada en proporción a su riesgo.
-3. No contenga cambios ajenos.
-4. Mantenga el repositorio en un estado coherente.
+1. This is complete within its scope.
+2. It has been reviewed in line with its risk.
+3. Do not include any unauthorised changes.
+4. Keep the repository in a coherent state.
 
-Codex debe crear el commit correspondiente antes de cerrar la tarea.
+Codex must create the relevant commit before closing the task.
 
-No se hará commit cuando:
+A commit will not be made when:
 
-- El autor pida explícitamente dejarlo sin confirmar.
-- El trabajo esté incompleto o no pueda validarse.
-- Exista una cuestión bloqueante que cambie sustancialmente el resultado.
-- El diff incluya trabajo ajeno que no pueda aislarse con seguridad.
+- The author has explicitly asked for this to remain unconfirmed.
+- The work is incomplete or cannot be validated.
+- There is a blocking issue that substantially alters the result.
+- The diff includes work by others that cannot be reliably isolated.
 
-En esos casos, Codex informará de qué queda sin confirmar y por qué.
+In such cases, Codex will state what remains unconfirmed and why.
 
-## Atomicidad
+## Atomicity
 
-Cada commit debe tener una única razón principal para existir.
+Each commit must have a single main reason to exist.
 
-Un commit puede modificar varios archivos cuando todos forman parte de la misma decisión, por ejemplo:
+A commit may modify several files when they are all part of the same decision, for example:
 
-- Norma, ejemplo y prueba de conformidad de una característica.
-- Decisión y capítulos afectados.
-- Política y reglas persistentes que la aplican.
+- Standard, example and conformance test of a characteristic.
+- Decision and the relevant sections.
+- Policy and persistent rules that implement it.
 
-No se mezclarán:
+The following must not be mixed:
 
-- Cambios normativos no relacionados.
-- Reformateo masivo con cambios semánticos.
-- Trabajo del autor ajeno a la tarea.
-- Archivos efímeros ordinarios, builds, logs, caches, volcados o estado local de Obsidian.
+- Unrelated regulatory changes.
+- Mass reformatting with semantic changes.
+- Work by the author unrelated to the assignment.
+-  Ordinary temporary files, builds, logs, caches, dumps or state Obsidian’s local data.
 
-Un documento intencionadamente temporal puede permanecer versionado únicamente bajo [[POLITICA-DE-ARCHIVOS-TEMPORALES|la política de archivos temporales]]. Su temporalidad no lo exime de la atomicidad del commit ni convierte residuos efímeros en material versionable.
+A document that is intentionally temporary may only be versioned under [[POLITICA-DE-ARCHIVOS-TEMPORALES| the policy of temporary files ]]. Its temporary nature does not exempt it from commit atomicity, nor does it convert ephemeral data into versionable material.
 
-## Formato del mensaje
+## Message format
 
-Primera línea:
+First line:
 
 ```text
 tipo(ámbito): resumen imperativo
 ```
 
-Tipos:
+Types:
 
-| Tipo | Uso |
+| Type | Use |
 | --- | --- |
-| `spec` | Norma, gramática, semántica o conformidad |
-| `decision` | ADR o cambio explícito de dirección |
-| `docs` | Documentación informativa sin cambio normativo |
-| `govern` | Procesos editoriales, Git o gobierno |
-| `fix` | Corrección de un error |
-| `refactor` | Reorganización sin cambio de significado |
-| `test` | Suite o casos de conformidad |
-| `chore` | Infraestructura y mantenimiento |
+| `spec` | Standard, grammar, semantics or conformance |
+| `decision` | ADR or explicit change of address |
+| `docs` | Informative documentation with no regulatory changes |
+| `govern` | Editorial processes, Git or governance |
+| `fix` | Correction of a error |
+| `refactor` | Reorganisation without any change in meaning |
+| `test` | Series or cases of conformance |
+| `chore` | Infrastructure and maintenance |
 
-Ámbitos frecuentes:
+Common areas:
 
 ```text
 language
@@ -92,7 +92,7 @@ git
 editorial
 ```
 
-Ejemplos:
+Examples:
 
 ```text
 spec(types): define nominal equality for aliases
@@ -101,16 +101,16 @@ govern(git): establish atomic commit policy
 fix(waves): clarify binding lifetime after destruction
 ```
 
-El resumen:
+Summary:
 
-- Se escribe en presente imperativo.
-- No termina en punto.
-- Describe el resultado, no la actividad genérica.
-- Evita mensajes como `changes`, `updates` o `work`.
+- It is written in the present imperative.
+- It does not end in point.
+- Describes the result, not the generic activity.
+- Avoid messages such as `changes`, `updates` or `work`.
 
-## Cuerpo del commit
+## Commit body
 
-Se añadirá cuando el motivo no sea evidente. Estructura recomendada:
+This should be added when the reason is not obvious. Recommended structure:
 
 ```text
 Context:
@@ -126,70 +126,70 @@ Open questions:
 - ...
 ```
 
-Para cambios normativos se incluirán, cuando proceda:
+In the case of regulatory changes, the following shall be included, where applicable:
 
-- Reglas o anclas afectadas.
-- Decisión relacionada.
+- Rules or anchors affected.
+- Decision related.
 - Compatibilidad.
-- Preguntas cerradas o creadas.
-- Pruebas de conformidad.
+- Closed or newly created questions.
+- Tests for conformance.
 
-## Gate de archivos temporales
+## Temporary files gate
 
-Antes de cualquier commit se ejecuta:
+Before any commit, the following is executed:
 
 ```powershell
 python gobierno/validate_temporaries.py
 ```
 
-El inventario impreso debe revisarse completo. Si la condición `temporary-delete-when` de algún documento ya se cumple, ese documento debe eliminarse antes de cerrar el commit, salvo que el propio cambio modifique explícitamente su ciclo de vida. Una fecha `temporary-delete-after` vencida bloquea mecánicamente el commit.
+The printed inventory must be checked in full. If the `temporary-delete-when` condition for any document is already met, that document must be removed before the commit is finalised, unless the change itself explicitly modifies its cycle lifecycle. An expired `temporary-delete-after` date automatically blocks the commit.
 
-## Proceso previo
+## Preliminary process
 
-Antes de crear un commit, Codex debe:
+Before creating a commit, Codex must:
 
-1. Leer las instrucciones aplicables.
-2. Revisar `git status`.
-3. Identificar archivos previos o ajenos.
-4. Inspeccionar el diff.
-5. Ejecutar `python gobierno/validate_temporaries.py` y revisar semánticamente todo su inventario.
-6. Ejecutar las demás validaciones disponibles.
-7. Añadir únicamente los archivos de la unidad atómica.
-8. Revisar el diff staged.
-9. Crear el commit.
-10. Confirmar que el estado posterior es el esperado.
+1. Read the relevant instructions.
+2. Check `git status`.
+3. Identify previous or external files.
+4. Check the diff.
+5. Run `python gobierno/validate_temporaries.py` and carry out a semantic check of your entire inventory.
+6. Run the other available validation checks.
+7. Add only the files from the unit atomic file.
+8. Review the staged diff.
+9. Create the commit.
+10. Confirm that the subsequent state is as expected.
 
-## Rama principal
+## Branch main
 
-La rama principal local se denomina `main`.
+The main local branch is called `main`.
 
-Mientras solo exista trabajo local y un único flujo de autoría, pueden crearse commits directamente en `main`. Cuando aparezcan cambios experimentales, implementación paralela o colaboración externa, se adoptarán ramas temáticas.
+As long as there is only local work and a single authoring workflow, commits can be made directly to `main`. When experimental changes, parallel implementation or external collaboration arise, thematic branches will be adopted.
 
-## Reescritura de historial
+## History rewrite
 
-Codex no debe:
+Codex must not:
 
-- Ejecutar `git reset --hard`.
-- Forzar un push.
-- Reescribir commits publicados.
-- Hacer `commit --amend` sobre trabajo que pueda pertenecer a otra persona.
+- Execute `git reset --hard`.
+- Force a push.
+- Rewrite published commits.
+- Create `commit --amend` for work that may belong to someone else.
 
-Una corrección ordinaria se registra en un commit nuevo. La limpieza de historia antes de publicar se realizará solo por petición explícita del autor y después de comprobar los límites exactos.
+A routine correction is recorded in a new commit. History clean-up prior to publication will only be carried out at the author’s explicit request and after the exact boundaries have been verified.
 
-## Publicación remota
+## Remote publication
 
-Esta política autoriza commits locales, no:
+This policy allows local commits, but not:
 
-- Crear repositorios remotos.
-- Hacer push.
-- Abrir pull requests.
-- Publicar versiones.
+- Create remote repositories.
+- Push.
+- Open pull requests.
+- Publish versions.
 
-Esas acciones requieren una petición explícita.
+Such actions require an explicit request.
 
-## Relación con los cambios semánticos futuros
+## Relation with future semantic changes
 
-Cuando el repositorio contenga modelos `.mud`, los commits que cambien semántica deberán añadir en el cuerpo operaciones como:
+When repository contains `.mud` models, commits that modify semantics must include operations such as the following in the body:
 
 ```text
 Operations:
@@ -198,4 +198,5 @@ Operations:
 - RETIRE construct::warfare.LegacyArmy
 ```
 
-Una consulta `READ` pura no produce commit.
+A pure query `READ` does not result in a commit.
+

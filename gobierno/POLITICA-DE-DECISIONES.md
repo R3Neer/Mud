@@ -1,46 +1,46 @@
 ---
-title: Política de decisiones de MUD
+title: Policy on MUD decisions
 aliases:
-  - Ciclo de decisiones
+  - Cycle decision-making
 tags:
   - mud/gobierno
   - mud/decisiones
 status: vigente
 ---
 
-# Política de decisiones de MUD
+# Policy MUD decisions
 
-## Propósito
+## Purpose
 
-Una decisión registra una elección aceptada que condiciona el lenguaje, su arquitectura, el producto o el proceso editorial. Explica el contexto y la justificación de la elección, pero no sustituye su integración en las superficies normativas ya desarrolladas que entren en su alcance.
+An decision records an accepted choice that influences the language, its architecture, the product or the editorial process. It explains the context and rationale for the choice, but does not replace its integration into the existing normative frameworks that fall within its scope.
 
-Cuando la ubicación canónica de una regla todavía no exista como superficie desarrollada de `especificacion/`, un ADR vigente puede conservar autoridad transitoria hasta que esa superficie se redacte. Esta situación no autoriza a mantener contradicciones en documentos ya existentes ni obliga a crear un capítulo provisional en una ubicación impropia.
+Where the canonical location of a rule does not yet exist as a developed surface of `especificacion/`, an ADR current may retain interim authority until that surface is drawn up. This situation does not authorise the retention of contradictions in existing documents, nor does it require the creation of a provisional chapter in an inappropriate location.
 
 ## Autoridad
 
-Cada decisión dispone de un archivo estable:
+Each decision has a stable archive:
 
 ```text
 notas/decisiones/ADR-NNN-titulo-breve.md
 ```
 
-El archivo es la fuente de verdad sobre la identidad, estado, procedencia y relaciones de la decisión. `notas/decisiones/README.md` es un índice generado: puede reconstruirse y nunca se edita manualmente.
+The file is the source of truth based on the identity, state, provenance and decision relationships. `notas/decisiones/README.md` is a generated index: it can be reconstructed and is never edited manually.
 
-La especificación prevalece como norma del lenguaje dentro de las superficies ya formalizadas. Un ADR conserva el porqué de una regla y sirve de autoridad transitoria mientras su ubicación normativa canónica aún no haya sido desarrollada.
+The specification prevails as the linguistic norm within already formalised domains. An ADR preserves the rationale behind a rule and serves as an interim authority until its canonical normative status has been established.
 
-La relación de un documento de `especificacion/` con las decisiones que lo sustentan se registra mediante su frontmatter `decisions:`. La historia decisional no se conserva en el cuerpo normativo, conforme a MUD-EDIT-002.
+The relation of a `especificacion/` document, together with the decisions on which it is based, is recorded via its frontmatter `decisions:`. The decision-making history is not retained in the body of the legislation, in accordance with MUD-EDIT-002.
 
 ## Identidad
 
-- El identificador `D-NNN` es único y no se reutiliza.
-- El archivo correspondiente usa el mismo número con el prefijo `ADR-`.
-- El título puede precisarse sin cambiar el identificador.
-- Los números omitidos se declaran en `notas/decisiones/identificadores-reservados.txt`.
-- Una decisión nueva recibe el siguiente identificador libre; no rellena un hueco histórico.
+- The identifier `D-NNN` is unique and is not reused.
+- The corresponding file uses the same number as prefix and `ADR-`.
+- The title can be clarified without changing the identifier.
+- The omitted numbers are set out in `notas/decisiones/identificadores-reservados.txt`.
+- A new decision is assigned the following free identifier; it does not fill a historical gap.
 
-## Metadatos obligatorios
+## Mandatory metadata
 
-Cada ADR comienza con:
+Every ADR begins with:
 
 ```yaml
 ---
@@ -55,42 +55,42 @@ affects: []
 ---
 ```
 
-Significado:
+Meaning:
 
-- `id`: identidad estable.
-- `title`: título sin el prefijo `ADR-NNN`.
-- `status`: estado del ADR.
-- `date`: fecha de adopción o apertura.
-- `supersedes`: decisiones sustituidas por completo por esta.
-- `superseded-by`: decisiones que sustituyen por completo esta.
-- `questions`: identificadores `Q-NNN` relacionados.
-- `affects`: documentos, capítulos, artefactos o dominios que deben incorporar o comprobar la decisión cuando esas superficies existan.
+- `id`: identity stable.
+- `title`: title without prefix `ADR-NNN`.
+- `status`: state of the ADR.
+- `date`: date of adoption or commencement.
+- `supersedes`: decisions wholly superseded by this one.
+- `superseded-by`: decisions which completely supersede this one.
+- `questions`: related identifiers `Q-NNN`.
+- `affects`: documents, chapters, artefacts or domains that must incorporate or verify the decision where such surfaces exist.
 
-`supersedes` no se usa para una mera ampliación, precisión o modificación parcial. Esas relaciones se explican en el ADR y, cuando resulte útil, mediante enlaces recíprocos.
+`supersedes` is not used for mere extensions, clarifications or partial modifications. These relationships are explained in the ADR and, where appropriate, via reciprocal links.
 
-### Vigencia efectiva del cuerpo
+### Effective date of the body
 
-Un ADR con `status: vigente` debe poder leerse literalmente como descripción de la decisión actual dentro de su alcance. Cuando una decisión posterior modifica solo parte de un ADR vigente, el mismo cambio editorial debe retirar o reescribir en el ADR anterior las reglas que hayan dejado de aplicarse y conservar una nota de procedencia hacia la decisión modificadora. El historial de la redacción anterior pertenece a Git y no se mantiene como semántica afirmativa dentro de un ADR vigente.
+An ADR with `status: vigente` must be able to be read literally as a description of the current decision within its scope. When a subsequent decision amends only part of an ADR current, the same editorial change must remove or rewrite, within the previous ADR, any rules that are no longer applicable and retain a note from provenance referring to the modifying decision. The history of the previous draft belongs to Git and is not maintained as an affirmative semantics within an ADR current.
 
-Cuando una decisión posterior sustituye todo el alcance, no se reescribe el ADR anterior como si siempre hubiera dicho otra cosa: se aplica `status: sustituida` con `superseded-by` recíproco. `retirada` se reserva para alcance que deja de aplicarse sin una regla sustituta.
+When a subsequent decision replaces the entire scope, the previous ADR is not rewritten as if it had always stated something else: `status: sustituida` is applied with the reciprocal `superseded-by`. `retirada` is reserved for scope, which ceases to apply without a replacement rule.
 
-## Estados
+## States
 
-Estados permitidos:
+Permitted states:
 
-- `propuesta`: todavía no aceptada.
-- `vigente`: elección aceptada.
-- `sustituida`: otra decisión reemplaza todo su alcance.
-- `retirada`: dejó de aplicarse sin ser reemplazada por otra regla.
-- `rechazada`: alternativa evaluada y no aceptada.
+- `propuesta`: not yet accepted.
+- `vigente`: selection accepted.
+- `sustituida`: another decision replaces all of its scope.
+- `retirada`: ceased to apply without being replaced by another rule.
+- `rechazada`: alternative considered but not accepted.
 
-Una decisión `sustituida` debe declarar `superseded-by`. Una decisión que declare `supersedes` debe aparecer recíprocamente en `superseded-by` de cada decisión sustituida.
+An decision `sustituida` must declare `superseded-by`. An decision that declares `supersedes` must also be declared in `superseded-by` for each decision that is substituted.
 
-Los matices como «vigente en su núcleo» o «esquema exacto abierto» se explican en el cuerpo y mediante preguntas activas; no crean estados adicionales.
+Nuances such as ‘current at its core’ or ‘exact open schema’ are explained in the main text and through active questions; they do not create additional states.
 
-## Contenido
+## Contents
 
-Un ADR incluye, cuando proceda:
+An ADR shall include, where applicable:
 
 ```markdown
 ## Contexto
@@ -101,66 +101,67 @@ Un ADR incluye, cuando proceda:
 ## Verificación
 ```
 
-Una decisión semántica debe ser suficientemente precisa para reconocer qué se eligió. Su redacción normativa final pertenece a la superficie canónica de `especificacion/` cuando esa superficie exista.
+An decision semantics must be precise enough to identify what was chosen. Its final normative formulation belongs to the canonical surface of `especificacion/` where such a surface exists.
 
-## Integración en la especificación
+## Integration into the specification
 
-La integración sigue MUD-EDIT-003 de [[especificacion/00-convenciones-editoriales]].
+The integration continues from MUD-EDIT-003 to [[especificacion/00-convenciones-editoriales]].
 
-Para cada decisión vigente:
+For each current decision:
 
-1. Se identifican las superficies normativas ya desarrolladas cuya responsabilidad declarada cubre su alcance.
-2. Esas superficies deben expresar literalmente el estado resultante de la decisión y no conservar la formulación sustituida.
-3. La integración no se satisface añadiendo una sección posterior que explique que una decisión cambia el contenido anterior.
-4. Si la superficie canónica todavía no existe, la regla se clasifica como semántica aceptada pendiente de formalización; no se fuerza dentro de otro capítulo por conveniencia documental.
-5. Mientras esté pendiente de formalización, ninguna superficie existente puede contradecirla y los índices o descripciones de capítulos futuros deben permanecer compatibles con ella.
-6. Cuando se cree finalmente la superficie canónica, la regla se promueve allí y el ADR conserva contexto y procedencia, no una segunda copia normativa destinada a competir con la especificación.
+1. The regulatory areas that have already been developed and for which responsibility is stated to cover their scope are identified.
+2. These surfaces must literally represent the state resulting from the decision and must not retain the substituted formulation.
+3. Integration is not achieved simply by adding a subsequent section explaining that an decision changes the preceding content.
+4. If the canonical surface does not yet exist, the rule is classified as semantics ‘accepted pending formalisation’; it is not nested within another chapter for documentary convenience.
+5. Whilst it is pending formalisation, no existing content may contradict it, and the headings or descriptions of future chapters must remain consistent with it.
+6. When the canonical surface is finally created, the rule is promoted to it and the ADR retains context and provenance, rather than a second normative copy intended to compete with the specification.
 
-La integración es por superficie afectada, no una propiedad binaria de la decisión completa: una misma decisión puede estar integrada en gramática y AST y seguir pendiente de formalización en semántica dinámica si el capítulo correspondiente aún no existe.
+Integration is based on the affected surface area, not a binary property of the complete decision: a single decision may be integrated into the grammar and AST whilst still awaiting formalisation in the dynamic semantics if the corresponding chapter does not yet exist.
 
-## Apertura y aceptación
+## Opening and acceptance
 
-Antes de crear una decisión:
+Before creating an decision:
 
-1. Se comprueba que no exista otra con el mismo alcance.
-2. Se identifican las preguntas que responde.
-3. Se describen alternativas y consecuencias relevantes.
-4. Se asigna un identificador nuevo.
-5. Se actualizan las preguntas y superficies ya desarrolladas afectadas en el mismo cambio.
-6. Se comprueba que los índices o mapas de superficies futuras no queden contradiciendo la decisión.
+1. A check is carried out to ensure that there is no other one with the same scope.
+2. The questions it answers are identified.
+3. Relevant alternatives and consequences are described.
+4. A new identifier is assigned.
+5. The questions and areas already developed that are affected by the same change are updated.
+6. It must be ensured that the indices or maps of future surfaces do not contradict decision.
 
-Una propuesta pasa a `vigente` cuando el autor acepta la elección. Si todavía quedan incertidumbres independientes, se conservan como preguntas abiertas.
+A proposal is moved to `vigente` once the author accepts the choice. If there are still any unresolved issues, these are retained as open questions.
 
-## Sustitución y retirada
+## Replacement and withdrawal
 
-Los ADR no se eliminan al dejar de estar vigentes. La sustitución:
+ADRs are not cancelled when they cease to be valid. Replacement:
 
-1. crea o acepta la nueva decisión;
-2. actualiza `supersedes` y `superseded-by` de forma recíproca;
-3. cambia el estado anterior a `sustituida`;
-4. actualiza las superficies desarrolladas, preguntas e índices afectados.
+1.  creates or accepts the new decision;
+2.  updates `supersedes` and `superseded-by` reciprocally;
+3.  replaces the previous state with `sustituida`;
+4.  updates the net areas, queries and relevant indices.
 
-La retirada usa `retirada`, explica el motivo y conserva el archivo como trazabilidad.
+The rollback uses `retirada`, explains the reason and retains the file as traceability.
 
-## Índice y comprobación mecánica
+## Index and mechanical checks
 
-Desde la raíz:
+From root:
 
 ```powershell
 python tooling/decisions/manage_decisions.py generate
 python tooling/decisions/manage_decisions.py validate
 ```
 
-`generate` reconstruye `notas/decisiones/README.md`. `validate` comprueba:
+`generate` reconstructs `notas/decisiones/README.md`. `validate` checks:
 
-- nombres, identificadores y metadatos obligatorios;
-- estados y fechas;
-- unicidad y huecos de numeración;
-- existencia de preguntas y decisiones enlazadas;
-- reciprocidad de sustituciones;
-- correspondencia exacta del índice generado;
-- ausencia del antiguo registro manual.
+- mandatory names, identifiers and metadata;
+- statuses and dates;
+-  uniqueness and gaps in numbering;
+- the existence of linked questions and decisions;
+- reciprocity of substitutions;
+-  exact match for the generated index;
+-  absence of the old manual register.
 
-## Relación con publicación y Git
+## Relation with publishing and Git
 
-La integración en norma sigue [[CICLO-DOCUMENTAL]]. La creación, aceptación, sustitución o retirada de una decisión forma parte del mismo commit atómico que sus preguntas y superficies ya desarrolladas afectadas, salvo que una auditoría independiente descubra una inconsistencia preexistente.
+Integration into the standard follows [[CICLO-DOCUMENTAL]]. The creation, acceptance, replacement or withdrawal of an decision forms part of the same atomic commit as its questions and any affected, already developed surfaces, unless an independent audit uncovers a pre-existing inconsistency.
+
