@@ -1,6 +1,6 @@
 ---
 id: D-023
-title: "Consolidación de efectos estructurales concurrentes"
+title: "Consolidation of concurrent structural effects"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -13,72 +13,72 @@ questions:
 affects:
   - "futuros capítulos 25, 28, 29 y 31"
 ---
-# ADR-023 — Consolidación de efectos estructurales concurrentes
+# ADR-023 — Consolidation of concurrent structural effects
 
-- Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
-- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
-- Relacionada con: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
-- Preguntas relacionadas: [[notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos|Q-002]], [[notas/preguntas/Q-006-conflictos|Q-006]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz|Q-046]]
-- Documentos afectados: futuros capítulos 25, 28, 29 y 31
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Updated: 28 July 2026 to use the terminology from D-025
+- Amended by: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Amended by: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
+- Related to: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
+- Related questions: [[notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos|Q-002]], [[notas/preguntas/Q-006-conflictos|Q-006]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-046-creacion-inefectiva-dentro-de-una-raiz|Q-046]]
+- Documents affected: future chapters 25, 28, 29 and 31
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
-## Contexto
+## Context
 
-Varias reglas pueden solicitar en la misma oleada:
+Several rules may be requested in the same batch:
 
-- La activación de la misma `thing` mediante `create`.
-- La activación de la misma regla.
-- Activaciones y destrucciones incompatibles.
-- Adiciones y retiradas sobre una misma estructura.
+- The activation of the same `thing` by means of `create`.
+- The activation of the same rule.
+- Incompatible activations and destructions.
+- Additions and removals to the same structure.
 
-No siempre es decidible estáticamente si dos reglas producirán efectos en la misma oleada. La semántica tampoco puede depender del orden real en que hilos o estructuras internas recorran los `then`.
+It is not always possible to determine statically whether two rules will take effect in the same wave. The semantics nor can it depend on the actual order in which threads or internal structures traverse the `then`.
 
-Al mismo tiempo, las instrucciones escritas dentro de un único `then` deben conservar su secuencialidad.
+At the same time, the written instructions contained within a single `then` they must retain their sequence.
 
-## Decisión: dos niveles de evaluación
+## Decision: two levels of assessment
 
-Sea $W_i$ la instantánea común de una raíz u oleada y sean:
+Be $W_i$ the snapshot common feature of a root or a wave, and these are:
 
 $$
 t_1,\ldots,t_n
 $$
 
-los bloques `then` aplicables.
+the blocks `then` applicable.
 
-Cada $t_j$ se interpreta secuencialmente sobre una superposición privada:
+Every $t_j$ is interpreted sequentially on a private overlay:
 
 $$
 \Delta_j
 $$
 
-que comienza sobre $W_i$. Una instrucción posterior del mismo `then` puede observar los efectos anteriores de ese bloque.
+which begins on $W_i$. A subsequent instruction from the same `then` You can see the previous effects of that block.
 
-Ningún `then` observa durante la misma oleada el delta parcial de otro `then`. La implementación puede intercalar o paralelizar su cálculo, pero esa planificación no es observable.
+None `then` notes that during the same wave, the delta part of another `then`. The implementation may interleave or parallelise the computation, but this scheduling is not observable.
 
-Una vinculación local `nombre [: tipo] := expresión` se evalúa una vez en su posición textual y puede leer la superposición privada producida por instrucciones anteriores del mismo bloque. No produce un delta y las instrucciones posteriores no recalculan su valor, conforme a D-066.
+A local connection `nombre [: tipo] := expresión` It is evaluated once in its textual position and can read the private overlay produced by previous instructions in the same block. It does not produce a delta and the subsequent instructions do not recalculate its value, in accordance with D-066.
 
-Al terminar todos los bloques, se normaliza cada delta privado y después se consolidan:
+Once all the blocks have been completed, each one is normalised delta private and are then consolidated:
 
 $$
 \operatorname{merge}_{W_i}
 (\Delta_1,\ldots,\Delta_n)
 $$
 
-La consolidación produce un único delta tentativo o un conflicto que hace fallar y revertir la resolución.
+The consolidation produces a single delta attempt or a conflict which causes the resolution.
 
-## Orden estructural entre bloques
+## Structural order between blocks
 
-Después de respetar y normalizar el orden interno de cada `then`, los efectos estructurales de bloques distintos se consolidan en este orden:
+After respecting and normalising the internal order of each `then`, the structural effects of different blocks are consolidated in the following order:
 
-1. Activaciones `create` supervivientes.
-2. Adiciones supervivientes.
-3. Retiradas supervivientes.
-4. Destrucciones supervivientes.
+1. Activations `create` survivors.
+2. Surviving additions.
+3. Surviving withdrawals.
+4. Surviving ruins.
 
-Por tanto, si un `then` solicita `create A` y otro solicita `destroy A`, el resultado consolidado deja `A` destruida.
+Therefore, if a `then` requests `create A` and another asks `destroy A`, the result consolidated leaves `A` destroyed.
 
-Dentro de un único bloque sigue mandando el orden escrito:
+Within a single block, the written order still prevails:
 
 ```mud
 then {
@@ -87,7 +87,7 @@ then {
 }
 ```
 
-termina con una solicitud local de destrucción.
+ends with a request destruction site.
 
 ```mud
 then {
@@ -96,15 +96,15 @@ then {
 }
 ```
 
-termina con una solicitud local de activación. La normalización local debe conservar cualquier efecto intermedio observable dentro del propio bloque antes de calcular su estado final.
+ends with a request premises of activation. Local normalisation must preserve any effect observable interval within the block itself before calculating its state end.
 
-Esta regla no introduce una prioridad temporal oculta entre reglas: define una operación de consolidación declarativa sobre sus deltas.
+This rule does not introduce a hidden temporal priority between rules: it defines an operation of consolidation declarative regarding their deltas.
 
-## Varias activaciones de la misma declaración
+## Several activations of the same declaration
 
-Cada `thing` y regla posee una única definición canónica de primer nivel; toda aparición `create d` es una referencia de activación al mismo descriptor. Los aliases quedan fuera del sistema de activación.
+Every `thing` and the rule has only one canonical definition top-class; every appearance `create d` is a benchmark for activation to the same descriptor. Aliases are excluded from the activation.
 
-Varias solicitudes concurrentes se consolidan idempotentemente:
+Several concurrent requests are idempotently merged:
 
 $$
 \{
@@ -116,40 +116,41 @@ $$
 \operatorname{create}(d)
 $$
 
-Dos definiciones completas no llegan al runtime: son un error de buena formación, incluso si sus cuerpos son iguales. Si la declaración ya estaba activa en $W_i$, una regla cuya aplicabilidad exige esa activación no publica ninguno de sus efectos. Q-046 mantiene abiertos los casos generales de acciones y bloques con varias activaciones de disponibilidad mixta.
+Two complete definitions do not reach runtime: they are a error well-built, even if their bodies are the same. If the declaration it was already active in $W_i$, a rule whose applicability requires that activation It does not publish any of its results. Q-046 keeps general action and block cases open where there are multiple activations with mixed availability.
 
-## Efectividad temporal
+## Temporary validity
 
-Las activaciones y destrucciones consolidadas producen la proyección efectiva de $W_{i+1}$. No alteran retrospectivamente:
+Consolidated capitalisations and write-offs result in the effective projection from $W_{i+1}$. They do not alter matters retrospectively:
 
-- La instantánea leída por los `then` de la oleada actual.
-- Los bindings fijados al comienzo de esa oleada.
-- La memoria anterior usada por `when` durante esa oleada.
+- The snapshot read by the `then` of the current wave.
+- The bindings secured at the start of that wave.
+- The previous memory used by `when` during that wave.
 
-Las nuevas reglas y suspensiones afectan a la construcción de bindings y evaluación de la oleada siguiente.
+The new rules and suspensions affect the construction of bindings and the assessment of the next wave.
 
-## Consecuencias para análisis y runtime
+## Implications for analysis and runtime
 
-- El compilador puede usar análisis conservadores sin tener que decidir toda coincidencia dinámica.
-- El runtime necesita agrupar solicitudes por identidad y clase de efecto.
-- Cada activación debe conservar procedencia para explicar su causa.
-- La secuencialidad local puede implementarse mediante overlays sin publicar estados parciales.
-- La traza causal debe indicar qué solicitudes idempotentes se consolidaron.
-- Un conflicto dinámico estructural no produce commit ni estado parcial.
+- The compiler can use conservative analysis without having to resolve every dynamic match.
+- The runtime needs to group requests by identity and type of effect.
+- Every activation must be retained provenance to explain the reason for it.
+- Local sequentiality can be implemented using overlays without publishing partial states.
+- The outline causal It must specify which idempotent requests were consolidated.
+- A conflict Structural dynamic does not produce a commit or state partial.
 
-## Cuestiones abiertas
+## Unresolved issues
 
-- Activaciones múltiples dentro de un mismo `then`.
-- Resultado operativo de una acción cuya activación resulta inefectiva.
-- Casos restantes de Q-006 que todavía carecen de combinación algebraica o composición canónica concreta: diccionarios no cubiertos, propiedades, límites estructurales de cardinalidad y destinos o write-backs parcialmente solapados.
-- Matriz completa de conflictos entre deltas de bloques concurrentes que incorporan transitivamente efectos de llamadas internas ya ejecutadas en secuencia dentro de cada delta privado.
+- Multiple activations within the same `then`.
+- Result operation of a action whose activation is ineffective.
+- Remaining cases of Q-006 which as yet lack a specific algebraic combination or canonical composition: unaccounted-for dictionaries, properties, structural limits of cardinality and partially overlapping destinations or write-backs.
+- Complete conflict matrix between concurrent block deltas that transitively incorporate the effects of internal calls already executed in sequence within each delta private.
 
-## Verificación futura
+## Future verification
 
-La suite deberá cubrir:
+The suite must cover:
 
-1. Rechazo estático de dos definiciones de una misma `thing` o regla.
-2. Consolidación idempotente de varias activaciones de una misma definición ausente.
-3. Creación y destrucción desde bloques distintos, con destrucción final.
-4. Orden inverso dentro de un único `then`.
-5. Efectos visibles únicamente en la oleada siguiente.
+1. Static rejection of two definitions of the same thing `thing` or ruler.
+2. Consolidation idempotent with respect to multiple invocations of the same missing definition.
+3. Creation and destruction from different blocks, with final destruction.
+4. Reverse order within a single `then`.
+5. Effects only visible in the next wave.
+

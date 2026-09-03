@@ -1,6 +1,6 @@
 ---
 id: D-026
-title: "Membresía estricta y cardinalidad por `then`"
+title: "Membership strict and cardinality by `then`"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -12,22 +12,22 @@ questions:
 affects:
   - "[[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`"
 ---
-# ADR-026 — Membresía estricta y cardinalidad por `then`
+# ADR-026 — Membership strict and cardinality by `then`
 
-- Ampliada por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
+- Expanded by: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
 
-- Preguntas afectadas: [[notas/preguntas/Q-003-puntos-de-validacion|Q-003]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
-- Documentos afectados: [[especificacion/04-modelo-matematico]], futuro `10-sistema-de-tipos.md`, futuro `15-colecciones.md`
+- Questions affected: [[notas/preguntas/Q-003-puntos-de-validacion|Q-003]], [[notas/preguntas/Q-021-analisis-estatico-de-conflictos|Q-021]], [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
+- Documents affected: [[especificacion/04-modelo-matematico]], future `10-sistema-de-tipos.md`, future `15-colecciones.md`
 
-## Contexto
+## Context
 
-Una colección tipada por una `thing` contiene especializaciones suyas, no la propia identidad que actúa como tipo. También es necesario fijar si una modificación de colección debe respetar la cardinalidad después de cada instrucción o al completar una unidad atómica de efectos.
+One collection characterised by a `thing` contains his own specialisations, not the subject itself identity which acts as type. It is also necessary to determine whether a change to collection must comply with the cardinality after each instruction or upon completion of one unit atomic effects.
 
 ## Decisión
 
-### Membresía de `thing`
+### Membership from `thing`
 
-Sea $T$ la `thing` que aparece como tipo de miembro y sea $c$ una identidad candidata. La pertenencia es válida exactamente cuando:
+Be $T$ the `thing` which appears as type from member and let it be $c$ one identity candidate. Membership is valid precisely when:
 
 $$
 c\neq T
@@ -35,23 +35,23 @@ c\neq T
 c\ \mathsf{is}\ T
 $$
 
-No existe `reflexive` ni otro modificador que permita el caso $c=T$.
+It does not exist `reflexive` nor any other modifier that would allow for this case $c=T$.
 
-Por ejemplo, una propiedad:
+For example, a property:
 
 ```mud
 kingdom: Kingdom[1]
 ```
 
-puede contener `Panama` si `Panama is Kingdom` y `Panama != Kingdom`. No puede contener `Kingdom`.
+may contain `Panama` if `Panama is Kingdom` y `Panama != Kingdom`. It must not contain `Kingdom`.
 
-Esta condición compara el miembro con el ancla de tipo, no con la identidad propietaria de la propiedad. Si `Alice is Person`, una propiedad de `Alice` tipada como `Person` sí puede contener `Alice`, porque `Alice != Person`.
+This condition compares the member with the anchor from type, not with the identity the owner of the property. If `Alice is Person`, a property owned by `Alice` classified as `Person` it may contain `Alice`, because `Alice != Person`.
 
-### Punto de comprobación local
+### Point on-site verification
 
-Las instrucciones de un mismo `then` se evalúan secuencialmente sobre su delta privado. Los estados intermedios de ese delta no tienen que satisfacer los límites de cardinalidad. Al terminar el `then`, cada colección modificada debe respetar su cardinalidad declarada.
+The instructions for the same `then` are evaluated sequentially with respect to their delta private. The intermediate states of that delta do not have to meet the limits of cardinality. Once the `then`, every collection The modified version must comply with its cardinality declared.
 
-Así, para una colección de cardinalidad `[1]`, este patrón puede ser válido dentro de un único bloque:
+Thus, for a collection from cardinality `[1]`, this pattern may be valid within a single block:
 
 ```mud
 then {
@@ -60,11 +60,11 @@ then {
 }
 ```
 
-No es válido repartir la sustitución entre dos `then`. Cada `then` debe preservar por sí mismo la cardinalidad; ninguno puede depender de un efecto concurrente ajeno para reparar su resultado.
+It is not valid to split the substitution between two `then`. Each `then` must preserve the cardinality; no one can rely on a effect a third party to repair their result.
 
-### Obligación estática
+### Static obligation
 
-La comprobación es una obligación de prueba del análisis estático. Para cada `then` $t$, cada colección afectada $p$ y todo estado de entrada bien formado permitido por los tipos y guardas, el compilador debe demostrar:
+Verification is an obligation on the part of the static analysis. For each `then` $t$, every collection affected $p$ and everything state For a well-formed input permitted by the types and guards, the compiler must demonstrate:
 
 $$
 \ell_p
@@ -74,43 +74,44 @@ $$
 u_p
 $$
 
-donde $[\ell_p,u_p]$ es la cardinalidad declarada y $\operatorname{apply}(t,p)$ es el contenido final de $p$ en el delta privado de $t$.
+where $[\ell_p,u_p]$ is the cardinality declared and $\operatorname{apply}(t,p)$ is the final content of $p$ in the delta deprived of $t$.
 
-El análisis debe ser sensible, como mínimo, a:
+The analysis must, as a minimum, take into account:
 
-- El intervalo inicial posible de tamaños.
-- La presencia o ausencia demostrable del miembro retirado.
-- La unicidad y multiplicidad de la colección.
-- Las guardas y ramas de control.
-- La secuencia completa de efectos del `then`.
+- The possible initial range of sizes.
+- The demonstrable presence or absence of the member withdrawn.
+- The oneness and multiplicity of the collection.
+- Guard rails and control arms.
+- The complete sequence of effects of the `then`.
 
-Si la obligación no puede demostrarse, el programa se rechaza conservadoramente. No se difiere una posible infracción local al runtime.
+If the constraint cannot be proven, the programme is rejected as a precaution. A potential local violation is not deferred until runtime.
 
-### Compatibilidad entre `then`
+### Compatibility between `then`
 
-La prueba local no basta cuando varios `then` pueden modificar la misma colección en una oleada. El análisis de conflictos debe demostrar que su consolidación también conserva la cardinalidad, o demostrar que los bloques son mutuamente excluyentes. Si no puede probar ninguna de las dos cosas, el programa se rechaza.
+Local evidence is not enough when several `then` they can amend it collection in a wave. Conflict analysis must demonstrate that its consolidation it also retains the cardinality, or demonstrate that the blocks are mutually exclusive. If you cannot prove either of these, the programme is rejected.
 
-Por ejemplo, dos bloques que añaden elementos distintos a una colección vacía `[0..1]` son válidos localmente, pero no pueden coexistir en una misma oleada salvo que el compilador demuestre exclusión mutua.
+For example, two blocks that add different elements to a collection empty `[0..1]` They are valid locally, but cannot co-exist within the same wave unless the compiler demonstrates mutual exclusion.
 
-## Consecuencias
+## Consequences
 
-- No existe un modificador `reflexive` en el léxico, la gramática, el AST ni el IR.
-- La cardinalidad es una propiedad de salida de cada `then`, no de cada estado intermedio de su delta.
-- Las reglas estáticas necesitan un análisis abstracto de intervalos y efectos de colección.
-- La aceptación del lenguaje es deliberadamente conservadora: un programa seguro pero no demostrable puede ser rechazado.
-- La consolidación conserva una comprobación de bien formación como defensa del runtime, pero alcanzarla indicaría un defecto del compilador o una entrada externa inválida, no un conflicto semántico esperado.
+- There is no modifier `reflexive` in the lexicon, grammar, AST or IR.
+- The cardinality is an output property of each `then`, not of every state in the middle of his delta.
+- Static rules require an abstract analysis of intervals and effects of collection.
+- The language’s acceptance criteria are deliberately conservative: a programme that is safe but cannot be proven may be rejected.
+- The consolidation It retains a type-checking mechanism as a runtime safeguard, but failing this check would indicate a compiler error or an invalid external input, not a conflict expected semantic meaning.
 
-## Interacción con valores predeterminados
+## Interaction with default values
 
-Una colección de `thing` con mínimo positivo necesita un valor predeterminado que sea una especialización estricta del tipo escrito. D-017 sigue exigiendo que todo tipo bien formado tenga predeterminado; Q-047 debe determinar cuándo tal tipo es bien formado y cuándo se exige un inicializador explícito.
+One collection from `thing` with a minimum positive result requires a default value that it is a strict specialisation of the type written. D-017 continues to demand that all type has a well-formed default; Q-047 must determine when such type it is well-formed and when an explicit initialiser is required.
 
-## Verificación futura
+## Future verification
 
-1. Aceptación de un descendiente estricto.
-2. Rechazo del ancla exacta.
-3. Rechazo léxico o sintáctico de `reflexive`.
-4. Sustitución `remove`–`add` válida dentro del mismo `then`.
-5. Rechazo de cada mitad de esa sustitución en `then` separados.
-6. Análisis de ramas que conservan y que rompen los límites.
-7. Rechazo de dos efectos localmente válidos cuya consolidación puede desbordar.
-8. Aceptación cuando se demuestra exclusión mutua.
+1. Acceptance of a direct descendant.
+2. Rejection of the anchor exact.
+3. Lexical or syntactic rejection of `reflexive`.
+4. Replacement `remove`–`add` valid within the same `then`.
+5. Rejection of each half of that substitution in `then` separate.
+6. An analysis of branches that preserve and break boundaries.
+7. Rejection of two locally valid effects whose consolidation it may overflow.
+8. Acceptance when mutual exclusivity is demonstrated.
+

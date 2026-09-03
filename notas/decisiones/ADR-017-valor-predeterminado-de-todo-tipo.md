@@ -1,6 +1,6 @@
 ---
 id: D-017
-title: "Todo tipo bien formado tiene valor predeterminado"
+title: "Everything type well-built has default value"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -10,24 +10,24 @@ questions:
 affects:
   - "futuro `10-sistema-de-tipos.md`, futuro `14-campos.md`"
 ---
-# ADR-017 — Todo tipo bien formado tiene valor predeterminado
+# ADR-017 — Everything type well-built has default value
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
-- Modificada además por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Amended by: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+- As further amended by: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 
-- Pregunta abierta relacionada: [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
-- Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `14-campos.md`
+- Related open-ended question: [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
+- Documents affected: future `10-sistema-de-tipos.md`, future `14-campos.md`
 
-## Contexto
+## Context
 
-MUD permite declarar propiedades sin escribir siempre un inicializador explícito. La semántica necesita determinar su valor inicial sin introducir ausencia implícita ni dejar posiciones obligatorias sin valor.
+MUD allows you to declare properties without always having to write an explicit initialiser. The semantics You need to determine your value initial without introducing an implicit absence or leaving any mandatory positions unfilled value.
 
 ## Decisión
 
-Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio semántico.
+Everything type well-built has a default value belonging to his domain semantic.
 
-Sea $\mathcal T_P$ el conjunto de tipos bien formados de un programa resuelto y sea $\mathcal V_P$ su universo de valores. Existe una función total:
+Be $\mathcal T_P$ the set of well-formed types of a solved programme, and let $\mathcal V_P$ its value space. There is a total function:
 
 $$
 \operatorname{default}_P:
@@ -36,7 +36,7 @@ $$
 \mathcal V_P
 $$
 
-tal que:
+such that:
 
 $$
 \forall\tau\in\mathcal T_P:
@@ -45,7 +45,7 @@ $$
 \llbracket\tau\rrbracket_P
 $$
 
-Por tanto, todo tipo bien formado es habitable:
+Therefore, everything type If it is well-built, it is habitable:
 
 $$
 \forall\tau\in\mathcal T_P:
@@ -54,67 +54,68 @@ $$
 \varnothing
 $$
 
-Una construcción de tipos cuyo dominio fuese vacío no podría aceptarse como tipo bien formado.
+A construction of types whose domain if it were empty, it could not be accepted as type well-built.
 
-## Casos ya fijados
+## Cases already scheduled
 
-Los casos básicos, actualizados por D-028, son:
+The basic cases, updated by D-028, are:
 
-| Tipo o familia | Valor predeterminado |
+| Type or family | Default value |
 | --- | --- |
 | `Bool` | `false` |
 | `Nat` | `0` |
 | `Int` | `0` |
 | `Num` | `0` |
 | `Rum` | `r0` |
-| `Char` | `"\u{0}"` (`U+0000`) en contexto `Char` |
+| `Char` | `"\u{0}"` (`U+0000`) in context `Char` |
 | `Text` | `""` |
-| `Money` | `0` en contexto `Money` |
-| Colecciones | `empty` |
-| Diccionarios | `empty` |
-| Intervalos | `empty` |
+| `Money` | `0` in context `Money` |
+| Collections | `empty` |
+| Dictionaries | `empty` |
+| Intervals | `empty` |
 
-Estos casos no resuelven por sí solos tipos refinados que excluyan el valor base ni colecciones cuya cardinalidad mínima sea positiva.
+These cases do not, on their own, resolve the issue of refined types that exclude the value database or collections whose cardinality the minimum is positive.
 
-## Precedencia durante la inicialización
+## Precedence during initialisation
 
-Para una propiedad almacenada, el valor inicial se obtiene en este orden conceptual:
+For a stored property, the value The initial result is obtained in the following conceptual order:
 
-1. Predeterminado explícito efectivo de la propiedad, si existe.
-2. Valor predeterminado de su tipo efectivo, en otro caso.
-3. Asignación o inicialización explícita de la creación, cuando la sintaxis correspondiente la permita.
+1. The property’s effective explicit default value, if any.
+2. Default value of his type in cash, otherwise.
+3. Explicit assignment or initialisation upon creation, where the relevant syntax permits this.
 
-La tercera fase sustituye el valor inicial de esa creación; no modifica por ello el predeterminado heredable de la propiedad ni el del tipo.
+The third phase replaces the value initial creation of that property; it does not, therefore, alter the default rules governing the inheritance of that property or those of the type.
 
-D-038 aplica la misma precedencia a cada dato asociado de un miembro de `family`: asignación del miembro, predeterminado explícito del dato y predeterminado de su tipo.
+D-038 apply the same precedence for each associated data item of a member from `family`: allocation of the member, the explicit default value for the data and the default value for its type.
 
-D-031 aplica esta composición a los aliases estructurales: cada componente usa su predeterminado explícito o, si no existe, el predeterminado de su tipo efectivo. El valor predeterminado del alias contiene todos los componentes.
+D-031 Apply this composition to structural aliases: each component uses its explicit default or, if none exists, the default of its type cash. The default value from the alias contains all the components.
 
-## Consecuencias
+## Consequences
 
-- Una propiedad almacenada obligatoria puede inicializarse aunque omita un predeterminado explícito.
-- Los refinamientos, intervalos, familias, aliases no estructurales, colecciones y tipos que dependan de `thing` deben definir cómo obtienen un elemento distinguido de su dominio.
-- La comprobación de buena formación debe garantizar que el predeterminado satisface todas las restricciones del tipo.
-- Los materializadores deben reproducir el valor de MUD y no elegir predeterminados propios de la tecnología destino.
+- A mandatory stored property may be initialised even if an explicit default value is omitted.
+- Refinements, intervals, families, non-structural aliases, collections and types that depend on `thing` they must define how they extract a specific element from its domain.
+- The validity check must ensure that the default value satisfies all the constraints of the type.
+- Materialisers must reproduce the value from MUD rather than selecting the destination technology’s own default settings.
 
-## Cuestiones abiertas
+## Unresolved issues
 
-Q-047 determinará:
+Q-047 shall determine:
 
-- La regla para aliases no estructurales y colecciones restringidas; la composición de aliases estructurales queda fijada por D-031.
-- La selección dentro de intervalos, familias cerradas y refinamientos.
-- El tratamiento de tipos cuyo dominio pueda depender del mundo activo.
-- Si otras clases de tipo derivado pueden reemplazar explícitamente su predeterminado intrínseco.
+- The rule for non-structural aliases and restricted collections; the composition of structural aliases is determined by D-031.
+- Selection within intervals, closed families and refinements.
+- Dealing with people whose domain may depend on the world asset.
+- If other types of type Derivatives can explicitly override their intrinsic default values.
 
-## Verificación futura
+## Future verification
 
-La suite deberá comprobar:
+The suite must verify:
 
-1. Existencia y pertenencia al dominio del predeterminado de cada tipo conforme.
-2. Rechazo de tipos con dominio vacío.
-3. Uso del predeterminado del tipo cuando una propiedad no declara otro.
-4. Prioridad del predeterminado explícito de propiedad.
-5. Prioridad final de una inicialización explícita de creación.
-6. Independencia respecto a los valores predeterminados de la tecnología materializada.
-7. Composición del predeterminado de un alias estructural a partir de sus componentes.
-8. Predeterminado `"\u{0}"` de `Char`.
+1. Existence and membership of the domain from the default setting for each type Agreed.
+2. Interest rate cut with domain empty.
+3. Using the default type when a property does not declare another.
+4. Priority of the explicit default property.
+5. Final priority of an explicit creation initialisation.
+6. Independence from the default settings of the implemented technology.
+7. Composition of the default value for a structural alias based on its components.
+8. Default `"\u{0}"` from `Char`.
+

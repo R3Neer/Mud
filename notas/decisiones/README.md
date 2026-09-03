@@ -32,14 +32,14 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-013 | vigente | 2026-07-27 | [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|Complete formalisation before continuing with implementation]] |
 | D-014 | vigente | 2026-07-27 | [[notas/decisiones/ADR-014-ontologia-unificada-de-things|Unified ontology of `thing`]] |
 | D-015 | vigente | 2026-07-27 | [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|Acyclic specialisation and state independent]] |
-| D-017 | vigente | 2026-07-27 | [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|Todo tipo bien formado tiene valor predeterminado]] |
-| D-018 | vigente | 2026-07-27 | [[notas/decisiones/ADR-018-as-declara-is-consulta|`as` declara especialización e `is` la consulta]] |
-| D-019 | vigente | 2026-07-27 | [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|Mutabilidad ortogonal de colección y miembros]] |
-| D-021 | vigente | 2026-07-27 | [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|Ciclo de vida lógico y suspensión por dependencias]] |
-| D-022 | vigente | 2026-07-27 | [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|Borrado estructural de reglas booleanas inactivas]] |
-| D-023 | vigente | 2026-07-27 | [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|Consolidación de efectos estructurales concurrentes]] |
-| D-025 | vigente | 2026-07-27 | [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|Vocabulario de `thing`, cabeceras y bloques]] |
-| D-026 | vigente | 2026-07-27 | [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|Membresía estricta y cardinalidad por `then`]] |
+| D-017 | vigente | 2026-07-27 | [[notas/decisiones/ADR-017-valor-predeterminado-de-todo-tipo|Everything type well-built has default value]] |
+| D-018 | vigente | 2026-07-27 | [[notas/decisiones/ADR-018-as-declara-is-consulta|`as` declares specialisation in `is` the query]] |
+| D-019 | vigente | 2026-07-27 | [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|Mutability orthogonal to collection and members]] |
+| D-021 | vigente | 2026-07-27 | [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|Cycle logical lifespan and suspension by department]] |
+| D-022 | vigente | 2026-07-27 | [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|Structural deletion of inactive Boolean rules]] |
+| D-023 | vigente | 2026-07-27 | [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|Consolidation of concurrent structural effects]] |
+| D-025 | vigente | 2026-07-27 | [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|Vocabulary from `thing`, headings and sections]] |
+| D-026 | vigente | 2026-07-27 | [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|Membership strict and cardinality by `then`]] |
 | D-027 | sustituida | 2026-07-27 | [[notas/decisiones/ADR-027-salidas-look-y-message|Salidas del modelo mediante `look` y `message`]] |
 | D-028 | vigente | 2026-07-28 | [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|Sistema de magnitudes y unidades]] |
 | D-029 | vigente | 2026-07-28 | [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|Intervalos, límites efectivos y ciclos de punto]] |

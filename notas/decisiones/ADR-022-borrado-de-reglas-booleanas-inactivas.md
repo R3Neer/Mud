@@ -1,6 +1,6 @@
 ---
 id: D-022
-title: "Borrado estructural de reglas booleanas inactivas"
+title: "Structural deletion of inactive Boolean rules"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -10,17 +10,17 @@ questions:
 affects:
   - "futuros capítulos 19, 21 y 26"
 ---
-# ADR-022 — Borrado estructural de reglas booleanas inactivas
+# ADR-022 — Structural deletion of inactive Boolean rules
 
-- Pregunta abierta relacionada: [[notas/preguntas/Q-050-borrado-en-operadores-booleanos-restantes|Q-050]]
-- Decisión relacionada: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
-- Documentos afectados: futuros capítulos 19, 21 y 26
+- Related open-ended question: [[notas/preguntas/Q-050-borrado-en-operadores-booleanos-restantes|Q-050]]
+- Decision related: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]]
+- Documents affected: future Chapters 19, 21 and 26
 
-## Contexto
+## Context
 
-Una regla booleana puede quedar inactiva por `destroy` o por la suspensión de una dependencia. Sus llamadas no deben convertirse siempre en `true` ni provocar que toda declaración dependiente sea inválida. La intención es que la expresión se comporte como si se hubiera borrado la proposición que invocaba la regla.
+One Boolean rule may become inactive due to `destroy` or by the suspension of a branch. Their calls should not always turn into `true` nor cause the whole declaration is invalid. The intention is that the expression should behave as if the clause invoking the rule had been deleted.
 
-El elemento neutro necesario depende del operador exterior:
+The required neutral element depends on the external operator:
 
 $$
 p\land\top=p
@@ -30,19 +30,19 @@ $$
 p\lor\bot=p
 $$
 
-Por tanto, ningún valor booleano ordinario representa por sí solo el borrado en todos los contextos.
+Therefore, no value A standard Boolean value represents deletion on its own in all contexts.
 
 ## Decisión
 
-La evaluación introduce una marca metalingüística:
+The assessment introduces a metalinguistic marker:
 
 $$
 \mathsf{erased}
 $$
 
-que significa «este fragmento sintáctico ha sido borrado». No es un valor de MUD, no puede almacenarse y no pertenece a `Bool`.
+which means ‘this syntactic fragment has been deleted’. It is not a value from MUD, cannot be stored and does not belong to `Bool`.
 
-Antes del borrado, las expresiones booleanas se elaboran a un núcleo canónico:
+Before erasure, Boolean expressions are reduced to a canonical form:
 
 $$
 b ::=
@@ -59,7 +59,7 @@ b\land b
 b\lor b
 $$
 
-Una llamada a una regla booleana que no sea efectiva en $W$ se poda:
+One call to one Boolean rule which is not effective in $W$ It is pruned:
 
 $$
 \operatorname{prune}_W(R(\bar e))
@@ -70,11 +70,11 @@ $$
 \neg\operatorname{effective}_W(R)
 $$
 
-El receptor y los argumentos de una llamada borrada no se evalúan dinámicamente. Sí deben estar bien resueltos y tipados estáticamente porque la regla puede volver a ser efectiva en otro mundo.
+The receiver and the arguments of a call deleted rules are not evaluated dynamically. They must, however, be correctly resolved and statically typed, as the rule may become effective again in another world.
 
-## Reglas de poda
+## Pruning guidelines
 
-La negación conserva el hueco:
+Negation preserves the void:
 
 $$
 \operatorname{prune}_W(\neg\mathsf{erased})
@@ -82,7 +82,7 @@ $$
 \mathsf{erased}
 $$
 
-La conjunción y la disyunción eliminan un operando borrado:
+Conjunction and disjunction eliminate a deleted operand:
 
 $$
 \mathsf{erased}\land b=b
@@ -96,7 +96,7 @@ $$
 b\lor\mathsf{erased}=b
 $$
 
-Si ambos operandos están borrados:
+If both operands are cleared:
 
 $$
 \mathsf{erased}\land\mathsf{erased}
@@ -110,7 +110,7 @@ $$
 \mathsf{erased}
 $$
 
-Cuando la expresión exterior completa queda borrada, se cierra como verdadera:
+When the entire external expression is erased, it is recognised as true:
 
 $$
 \operatorname{close}(\mathsf{erased})
@@ -118,17 +118,17 @@ $$
 \top
 $$
 
-Esto representa que una condición eliminada no impone ninguna restricción.
+This means that a deleted condition imposes no restrictions.
 
-## Negación
+## Negation
 
-Si `R` está inactiva:
+Yes `R` is inactive:
 
 ```mud
 not R(x)
 ```
 
-se reduce:
+is reduced:
 
 $$
 \neg\mathsf{erased}
@@ -138,19 +138,19 @@ $$
 \top
 $$
 
-si es la expresión exterior.
+if it is the outward expression.
 
-Dentro de:
+In:
 
 ```mud
 P(x) and not R(x)
 ```
 
-el resultado residual es `P(x)`.
+the result residual is `P(x)`.
 
-## Implicación
+## Involvement
 
-La implicación se elabora antes de podar:
+The plan is drawn up before pruning:
 
 $$
 p\Rightarrow q
@@ -158,7 +158,7 @@ p\Rightarrow q
 \neg p\lor q
 $$
 
-Si se borra el antecedente:
+If the previous entry is deleted:
 
 $$
 \neg\mathsf{erased}\lor q
@@ -166,7 +166,7 @@ $$
 q
 $$
 
-Si se borra el consecuente:
+If the consequent is deleted:
 
 $$
 \neg p\lor\mathsf{erased}
@@ -174,9 +174,9 @@ $$
 \neg p
 $$
 
-## Bicondicional e igualdad booleana
+## Biconditional and Boolean equality
 
-La igualdad entre booleanos y el bicondicional se elaboran canónicamente como:
+Boolean equality and the biconditional are canonically defined as:
 
 $$
 p\Leftrightarrow q
@@ -184,7 +184,7 @@ p\Leftrightarrow q
 (p\land q)\lor(\neg p\land\neg q)
 $$
 
-Si se borra $p$:
+If it is deleted $p$:
 
 $$
 (\mathsf{erased}\land q)
@@ -192,7 +192,7 @@ $$
 (\neg\mathsf{erased}\land\neg q)
 $$
 
-se reduce a:
+can be summarised as:
 
 $$
 q\lor\neg q
@@ -200,53 +200,54 @@ q\lor\neg q
 \top
 $$
 
-Por tanto, una igualdad booleana con uno de sus operandos borrado resulta verdadera con independencia del otro operando.
+Therefore, a Boolean equality in which one of the operands is omitted evaluates to true regardless of the other operand.
 
-## Dependencia de la forma canónica
+## Dependence on the canonical form
 
-La poda no respeta necesariamente todas las equivalencias del álgebra booleana clásica. Dos árboles clásicamente equivalentes pueden producir residuos diferentes si se reescriben antes de eliminar una regla.
+Pruning does not necessarily preserve all equivalences in classical Boolean algebra. Two classically equivalent trees may produce different residues if they are rewritten before a rule is applied.
 
-La conformidad exige:
+The conformance requires:
 
-1. Resolver y tipar la expresión original.
-2. Elaborar operadores derivados a una forma núcleo canónica.
-3. Podar llamadas a reglas inactivas.
-4. Cerrar un residuo exterior borrado con $\top$.
-5. Evaluar la expresión booleana residual.
+1. Solve and type out the original expression.
+2. Derive operators in canonical kernel form.
+3. Prune calls to inactive rules.
+4. Close a deleted external record using $\top$.
+5. Evaluate the residual Boolean expression.
 
-Un optimizador no puede aplicar una reescritura clásica que cambie el resultado de este procedimiento.
+An optimiser cannot apply a classic rewrite that changes the result of this procedure.
 
-## Alternativas
+## Alternatives
 
-### Regla inactiva igual a `true`
+### Inactive rule equals `true`
 
-Se descarta porque `P or R` se volvería siempre verdadero y `not R` se volvería falso, aunque la intención sea retirar la condición.
+It is ruled out because `P or R` would always be true and `not R` it would become false, even if the intention is to remove the condition.
 
-### Neutro elegido directamente por el padre
+### A gender-neutral name chosen directly by the father
 
-Describe bien la intuición, pero no basta para negación, implicación o igualdad. La marca `erased` generaliza la misma idea a un recorrido estructural.
+It describes intuition well, but it is not sufficient for negation, implication or equality. The mark `erased` It generalises the same idea to a structural path.
 
-### Suspender toda declaración que llama a la regla
+### Suspend all declaration which calls for the ruler
 
-Se descarta porque impediría que una fórmula continuase funcionando con las demás condiciones que aún conserva.
+It is ruled out because it would prevent a formula from continuing to function under the other conditions that still apply.
 
-## Cuestiones abiertas
+## Unresolved issues
 
-- Elaboración exacta de `!=`, `xor` y otros comparadores booleanos.
-- Poda dentro de cuantificadores y agregaciones booleanas.
-- Interacción con `allowed`, `eventually` y fallos de subexpresiones que desaparecen.
-- Diagnósticos o advertencias para fórmulas especialmente sensibles a su forma sintáctica.
+- Elaboration exact translation of `!=`, `xor` and other Boolean operators.
+- Pruning within quantifiers and Boolean aggregations.
+- Interaction with `allowed`, `eventually` and sub-expression errors that disappear.
+- Diagnostics or warnings for expressions that are particularly sensitive to their syntactic form.
 
-## Verificación futura
+## Future verification
 
-La suite deberá cubrir:
+The suite must cover:
 
-1. Regla inactiva como expresión exterior.
-2. Regla inactiva bajo negación exterior y anidada.
-3. Posiciones izquierda y derecha de `and` y `or`.
-4. Dos operandos borrados.
-5. Antecedente y consecuente de implicación.
-6. Ambos lados de igualdad booleana.
-7. Ausencia de evaluación dinámica de receptor y `given` borrados.
-8. Reactivación de la regla y recuperación de la evaluación ordinaria.
-9. Rechazo de optimizaciones que alteren la poda canónica.
+1. A rule that is inactive as an outward expression.
+2. Rule inactive under external and nested negation.
+3. Left and right positions of `and` y `or`.
+4. Two operands deleted.
+5. Antecedent and consequent of implication.
+6. Both sides of a Boolean equality.
+7. Lack of dynamic assessment of receiver y `given` deleted.
+8. Reinstatement of the rule and resumption of the standard assessment.
+9. Rejection of optimisations that alter the canonical pruning.
+

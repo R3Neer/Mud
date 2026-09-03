@@ -1,6 +1,6 @@
 ---
 id: D-018
-title: "`as` declara especialización e `is` la consulta"
+title: "`as` declares specialisation in `is` the query"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -9,23 +9,23 @@ questions: []
 affects:
   - "futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`"
 ---
-# ADR-018 — `as` declara especialización e `is` la consulta
+# ADR-018 — `as` declares specialisation in `is` the query
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Actualizada: 2026-07-28
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
-- Modificada además por: [[notas/decisiones/ADR-073-as-thing-explicito-redundante|D-073]]
-- Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `08-sintaxis-abstracta.md`, futuro `11-things.md`
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Updated: 28 July 2026
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- As further amended by: [[notas/decisiones/ADR-073-as-thing-explicito-redundante|D-073]]
+- Documents affected: future `07-gramatica-concreta.md`, future `08-sintaxis-abstracta.md`, future `11-things.md`
 
-## Contexto
+## Context
 
-La declaración de especialización y su consulta necesitan formas distintas para que una cabecera no se confunda con una expresión. D-025 fija `as` para la declaración y conserva `is` como operador.
+The declaration area of specialisation and its query Different formats are needed to ensure that a header is not confused with an expression. D-025 fixed `as` for the declaration and preserves `is` as an operator.
 
-Aunque el parser podría distinguir una cabecera de una expresión, ambas operaciones tienen significado diferente: una añade aristas directas y la otra consulta una relación derivada.
+Although the parser could distinguish between a header and an expression, the two operations have different meanings: one adds direct edges and the other query one relation derived.
 
 ## Decisión
 
-Toda declaración de especialización utiliza `as`:
+All declaration specialisation uses `as`:
 
 ```mud
 thing A {}
@@ -37,24 +37,24 @@ thing D as A, B, C {}
 thing E as D {}
 ```
 
-`is` queda reservado para expresiones:
+`is` is reserved for expressions:
 
 ```mud
 D is A
 E is B
 ```
 
-Las formas conceptuales son:
+The conceptual forms are:
 
 ```text
 [abstract] thing nombre [as lista-de-antecesores] bloque
 ```
 
-La lista posterior a `as` es finita y su posición no establece prioridad. Una declaración sin `as` conserva cero antecesoras declaradas y recibe semánticamente la raíz incorporada `Thing`. D-073 admite `as Thing` explícito como redundancia no bloqueante y sugiere eliminarlo.
+The list following `as` is finite and its position does not indicate priority. A declaration without `as` It retains zero declared predecessors and semantically receives the root incorporated `Thing`. D-073 supports `as Thing` It is explicitly identified as non-blocking redundancy and it is suggested that it be removed.
 
-## Correspondencia semántica
+## Correspondence semantics
 
-Una cabecera `thing D as A, B` aporta:
+A header `thing D as A, B` contributes:
 
 $$
 (\mathsf D,\mathsf A),\quad
@@ -70,32 +70,33 @@ $$
 R_{\mathrm{dir}}^*.
 $$
 
-Por tanto:
+Therefore:
 
-- `as` aporta relaciones directas;
-- `is` consulta su clausura reflexiva y transitiva.
+- `as` provides direct links;
+- `is` query its reflective and transitive conclusion.
 
-## Consecuencias
+## Consequences
 
-- El lexer reserva `as` e `is`; `abstract` es contextual delante de `thing`, conforme a D-054; `construct` no es palabra reservada y `from` no introduce especialización.
-- El AST usa una lista de antecesores en `ThingDecl`; `CreateReference` no contiene antecesores ni cuerpo.
-- La ausencia de antecesores en `ThingDecl` se conserva en el AST; la arista hacia `Thing` se incorpora durante la elaboración semántica.
-- `IsExpression` es el nodo asociado a la consulta `is`.
-- Los diagnósticos hablan de «antecesores declarados con `as`».
-- Las cabeceras estáticas y las de `create` son paralelas.
+- The lexer reserves `as` e `is`; `abstract` is contextual before `thing`, in accordance with D-054; `construct` it is not reserved word y `from` It does not introduce specialisation.
+- The AST uses a list of predecessors in `ThingDecl`; `CreateReference` It contains neither antecedents nor a body.
+- The absence of predecessors in `ThingDecl` is preserved in the AST; the edge towards `Thing` is added during the elaboration semantics.
+- `IsExpression` is the node associated with the query `is`.
+- The medical records refer to ‘relatives reported to have `as`».
+- Static headers and those from `create` are parallel.
 
-El token `from` puede seguir existiendo en otras producciones independientes, como `remove x from collection`; eso no lo convierte en cláusula de especialización.
+The token `from` may still exist in other independent productions, such as `remove x from collection`; that does not make it a specialisation clause.
 
-## Verificación
+## Verification
 
-1. `thing` raíz sin `as`, con cero antecesoras declaradas y `is Thing` verdadero.
-2. Declaraciones abstractas y concretas con una o varias antecesoras.
-3. Activación mediante `create Nombre` sin alterar las antecesoras declaradas.
-4. Rechazo de `is` como cláusula de cabecera.
-5. Aceptación de `is` como expresión.
-6. Correspondencia entre aristas `as` y resultados de `is`.
-7. Diagnóstico no bloqueante y corrección sugerida para `as Thing` explícito.
+1. `thing` root without `as`, with no declared predecessors and `is Thing` true.
+2. Abstract and concrete statements with one or more antecedents.
+3. Activation by means of `create Nombre` without altering the previously stated predecessors.
+4. Rejection of `is` as a header clause.
+5. Acceptance of `is` as an expression.
+6. Correspondence between edges `as` and results from `is`.
+7. Diagnostic non-blocking and suggested correction for `as Thing` explicit.
 
-## Ampliación por D-084
+## Extension by D-084
 
-`as` e `is` se aplican también a aliases. En un alias nominal o estructural, `as` declara especialización directa entre tipos de valor; `is` consulta la clausura nominal conservando el tipo concreto del valor. La especialización múltiple no establece prioridad textual.
+`as` e `is` also apply to aliases. In a nominal alias or structural, `as` declares a direct specialisation between types of value; `is` query the nominal closure whilst retaining the type specifically regarding the value. Multiple specialisations do not establish textual priority.
+

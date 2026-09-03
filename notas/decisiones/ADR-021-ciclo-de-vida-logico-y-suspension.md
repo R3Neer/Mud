@@ -1,6 +1,6 @@
 ---
 id: D-021
-title: "Ciclo de vida lógico y suspensión por dependencias"
+title: "Cycle logical lifespan and suspension by department"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -11,88 +11,88 @@ questions:
 affects:
   - "[[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32"
 ---
-# ADR-021 — Ciclo de vida lógico y suspensión por dependencias
+# ADR-021 — Cycle logical lifespan and suspension by department
 
-- Actualizada: 2026-07-28 para usar el vocabulario de D-025
-- Relacionada con: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada además por: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
-- Modificada además por: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
-- Ejemplo actualizado por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Preguntas afectadas: [[notas/preguntas/Q-048-destruccion-con-descendientes-activos|Q-048]], [[notas/preguntas/Q-049-destruccion-y-colecciones-de-thing|Q-049]]
-- Documentos afectados: [[especificacion/04-modelo-matematico]], futuros capítulos 11, 21 a 25 y 32
+- Updated: 28 July 2026 to use the terminology of D-025
+- Related to: [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
+- Amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- As further amended by: [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]]
+- As further amended by: [[ADR-099-materializaciones-frescas-tras-destroy-create|D-099]]
+- Example updated by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Questions affected: [[notas/preguntas/Q-048-destruccion-con-descendientes-activos|Q-048]], [[notas/preguntas/Q-049-destruccion-y-colecciones-de-thing|Q-049]]
+- Documents concerned: [[especificacion/04-modelo-matematico]], future chapters 11, 21 to 25 and 32
 
-## Contexto
+## Context
 
-El ciclo de vida debe distinguir dos fenómenos que son reversibles por razones diferentes:
+The cycle In life, one must distinguish between two phenomena that are reversible for different reasons:
 
-- Destruir explícitamente una `thing` o una rule retira su activación y termina la materialización o memoria runtime que le pertenece.
-- Hacer que otra declaración deje de ser interpretable porque una dependencia suya está inactiva solo la suspende; esa suspensión no destruye el estado que pertenece a la declaración dependiente.
+- Explicitly destroy a `thing` or a rule withdraws its activation and ends the materialisation or the runtime memory associated with it.
+- Make another one declaration It ceases to be interpretable because one of its dependencies is inactive; this merely suspends it; that suspension does not destroy the state which belongs to the declaration dependent.
 
-La definición canónica y la identidad de una declaración sobreviven a `destroy`. Por tanto, si `King.kingdom` contiene `Panama` y se destruye el tipo `Kingdom`, la propiedad de `King` puede conservar latentemente su carga mientras el tipo no sea efectivo. En cambio, si la propia `Kingdom` concreta poseía carga runtime o modificaciones estructurales propias, esas pertenecían a la materialización destruida y no reaparecen al crearla de nuevo.
+The canonical definition and the identity of a declaration survive `destroy`. Therefore, if `King.kingdom` contains `Panama` and the type `Kingdom`, the ownership of `King` it can retain its charge in a latent state whilst the type is not effective. On the other hand, if the `Kingdom` If a particular one had its own runtime payload or structural modifications, these belonged to the materialisation destroyed and do not reappear when you recreate them.
 
-Esta separación evita tanto la poda destructiva de estado ajeno como una interpretación de `destroy` como mera hibernación de la materialización propia.
+This separation prevents both the destructive pruning of state foreign as an interpretation of `destroy` as a mere hibernation of the materialisation its own.
 
 ## Decisión
 
-El modelo distingue:
+The model distinguishes:
 
-1. Un catálogo de **definiciones canónicas** del programa, que conserva identidades, descriptores y aristas `as` estáticas.
-2. El estado runtime de las materializaciones y declaraciones activas, junto con la información almacenada de declaraciones que puedan quedar meramente suspendidas por dependencias.
-3. Una proyección **efectiva**, que contiene únicamente las partes que participan actualmente en el juego.
+1. A catalogue of **canonical definitions** of the programme, which preserves identities, descriptors and edges `as` static.
+2. The state the runtime of materialisations and active declarations, together with the stored information on declarations that may simply be suspended due to dependencies.
+3. A projection **effective**, which contains only the pieces currently in play.
 
-Sea $\mathcal D_P$ el conjunto de declaraciones conocidas por el programa y sea $\mathcal L_P\subseteq\mathcal D_P$ el subconjunto con ciclo de vida explícito. Un estado $W$ mantiene, como mínimo, información de activación:
+Be $\mathcal D_P$ the set of statements recognised by the programme, and that it is $\mathcal L_P\subseteq\mathcal D_P$ the subset with cycle explicit way of life. A state $W$ maintains, as a minimum, information on activation:
 
 $$
 \operatorname{active}_W:
 \mathcal L_P\to\mathbb B
 $$
 
-y el estado runtime de las materializaciones o memorias actualmente existentes. La proyección efectiva:
+and the state runtime of the currently existing materialisations or memories. The effective projection:
 
 $$
 \operatorname{Effective}(W)
 $$
 
-se deriva de esos componentes y de las dependencias entre declaraciones.
+is derived from those components and the dependencies between declarations.
 
-`destroy d` cambia la activación de $d$ sin modificar su definición canónica:
+`destroy d` change the activation from $d$ without altering its canonical definition:
 
 $$
 \operatorname{active}_{W'}(d)=\bot
 $$
 
-Cuando $d$ es una `thing` concreta, una destrucción confirmada termina además su materialización runtime actual. Se descartan los valores almacenados propios de esa materialización y las modificaciones estructurales runtime cuyo propietario sea $d$. Cuando $d$ es una rule, se descarta la memoria runtime que pertenezca a esa activación conforme a D-099.
+When $d$ is a `thing` Specifically, confirmed destruction also brings an end to its materialisation current runtime. The stored values specific to that materialisation and runtime structural modifications whose owner be $d$. When $d$ is a rule, the runtime memory associated with that is discarded activation in accordance with D-099.
 
-`create d` vuelve a activar la misma identidad declarativa. Para una `thing` concreta que ya no posee materialización activa, crea una materialización fresca desde la definición canónica: reconstruye su estructura declarada y aplica de nuevo predeterminados e inicializadores. No recupera la carga ni las modificaciones estructurales propias de la materialización destruida.
+`create d` re-enable the same one identity declarative. For a `thing` specifically that it no longer owns materialisation active, create a materialisation fresh from the canonical definition: reconstructs its declared structure and reapplies defaults and initialisers. It does not restore the load or the structural modifications specific to the materialisation destroyed.
 
-Una `thing` abstracta no posee carga concreta propia que reinicializar; su ciclo de vida conserva la retirada y restauración estructural que corresponda. Para rules, una activación posterior reconstruye la memoria temporal conforme a D-099 y no recupera la memoria de la activación destruida.
+One `thing` abstracta does not have its own specific payload to reset; its cycle The building’s lifespan depends on appropriate maintenance and structural restoration. For rules, a activation The posterior region reconstructs temporal memory in accordance with D-099 and does not retrieve the memory of the activation destroyed.
 
-Los inicializadores de una `thing` concreta se aplican cada vez que debe materializarse de nuevo desde su definición canónica, ya sea en la materialización inicial o tras un `destroy` confirmado seguido de `create`.
+The initiators of a `thing` Specific rules are applied whenever it needs to be recreated from its canonical definition, whether in the materialisation initially or following a `destroy` confirmed followed by `create`.
 
-La conservación de identidad canónica no implica conservación de materialización propia.
+The conservation of canonical identity does not involve the preservation of materialisation its own.
 
-## Categorías con ciclo de vida
+## Categories with cycle of life
 
-`create` y `destroy` pueden operar sobre:
+`create` y `destroy` can trade in:
 
-- `thing` concretas.
-- `thing` abstractas.
-- Reglas booleanas.
-- Reglas reactivas.
-- Reglas `always`.
+- `thing` specific.
+- `thing` abstract.
+- Boolean rules.
+- Reactive rules.
+- Rules `always`.
 
-No operan sobre:
+They do not operate on:
 
 - Aliases.
-- Acciones.
-- Magnitudes.
+- Shares.
+- Quantities.
 
-Las acciones forman la API estable de escritura. Las magnitudes forman parte del sistema dimensional estático.
+The actions form the stable writing API. The quantities form part of the static dimensional system.
 
-## Sintaxis superficial
+## Surface syntax
 
-Conforme a D-054, toda `thing` y regla posee una única definición canónica de primer nivel:
+In accordance with D-054, all `thing` and the rule has only one canonical definition top-class:
 
 ```mud
 thing Kingdom {}
@@ -113,7 +113,7 @@ always rule ValidKingdom on kingdom: Kingdom {
 otherwise "Invalid population in {kingdom}"
 ```
 
-Las activaciones runtime omiten categoría y cuerpo:
+Runtime activations omit the category and body:
 
 ```mud
 create CanEnter
@@ -121,14 +121,14 @@ create OpenGate
 create ValidKingdom
 ```
 
-La misma forma activa una `thing` y, cuando procede, crea su nueva materialización:
+This form triggers a `thing` and, where appropriate, creates its new materialisation:
 
 ```mud
 create Kingdom
 create Place
 ```
 
-Las declaraciones presentes al comienzo se aportan mediante el `start with` unificado de D-096:
+The statements at the beginning are provided by means of the `start with` unified D-096:
 
 ```mud
 start with {
@@ -138,28 +138,28 @@ start with {
 }
 ```
 
-Las contribuciones pueden mezclar declaraciones activables `thing | rule`; se deduplican y su orden no es semántico.
+Contributions may include statements that trigger action `thing | rule`; they are deduplicated and their order is not semantic.
 
-`destroy` solo necesita una referencia que resuelva de manera unívoca:
+`destroy` It just needs a reference that resolves unambiguously:
 
 ```mud
 destroy Kingdom
 destroy CanEnter
 ```
 
-Los nombres de declaraciones comparten el espacio necesario para que esa resolución sea inequívoca. Una referencia ambigua debe diagnosticarse; `destroy` no elige una categoría por prioridad.
+Declaration names share the space required for that resolution be unambiguous. An ambiguous reference must be identified; `destroy` It does not select a category based on priority.
 
-El compilador puede elaborar internamente estas formas como definición canónica, activación inicial, materialización runtime y desactivación. `activate` y `deactivate` no se introducen como palabras de la superficie MUD.
+The compiler can internally generate these forms as canonical definition, initial activation, materialisation runtime and deactivation. `activate` y `deactivate` are not entered as words in the MUD surface.
 
-## Suspensión por dependencias
+## Suspension by department
 
-Una declaración puede no ser efectiva aunque su propia marca explícita siga activa. Sea:
+One declaration it may not be effective even though its own explicit brand remains active. For example:
 
 $$
 \operatorname{HardDep}_P(d)
 $$
 
-el conjunto de dependencias cuya ausencia impide usar $d$. De manera esquemática:
+the set of dependencies the absence of which prevents the use of $d$. In brief:
 
 $$
 \operatorname{effective}_W(d)
@@ -170,13 +170,13 @@ $$
 \operatorname{effective}_W(e)
 $$
 
-Para una propiedad almacenada $p$, son dependencias duras:
+For a stored property $p$, these are hard dependencies:
 
-- Su propietario.
-- Su tipo declarado.
-- Las declaraciones necesarias para interpretar su dominio y forma.
+- His owner.
+- His type stated.
+- The statements required to interpret its domain and shape.
 
-Por tanto, si:
+Therefore, if:
 
 ```mud
 thing King {
@@ -184,40 +184,40 @@ thing King {
 }
 ```
 
-y se ejecuta:
+and is executed:
 
 ```mud
 destroy Kingdom
 ```
 
-la propiedad `King.kingdom` deja de pertenecer a $\operatorname{Effective}(W)$, pero continúa almacenada junto con `Panama` porque esa carga pertenece a `King`, no a la materialización destruida de `Kingdom`. Al crear de nuevo `Kingdom`, la propiedad puede volver a ser efectiva con la misma carga, siempre que la transición completa sea válida.
+the property `King.kingdom` ceases to belong to $\operatorname{Effective}(W)$, but it remains stored alongside `Panama` because that load belongs to `King`, not to the materialisation destroyed from `Kingdom`. When creating a new one `Kingdom`, the title may once again take effect subject to the same encumbrance, provided that the transition is complete and valid.
 
-La estructura propia de una `thing` destruida desaparece de la proyección efectiva. Su definición canónica permanece en el programa, pero la carga y las modificaciones runtime propias de la materialización destruida no permanecen almacenadas para una futura reactivación. Una nueva materialización parte de la definición canónica.
+The structure of a `thing` destroyed, it disappears from the effective projection. His canonical definition remains in the programme, but the loading and runtime modifications specific to the materialisation Once destroyed, they are not stored for future reactivation. A new materialisation part of the canonical definition.
 
-## Participantes y declaraciones dependientes
+## Participants and dependent declarations
 
-Si el tipo de un participante deja de ser efectivo, no se elimina solo ese parámetro de la firma. Se suspende la declaración que necesita la firma completa:
+If the type of a participant When it ceases to be effective, it is not just that parameter that is removed from the signature. The declaration which requires a full signature:
 
-- Una regla reactiva no produce bindings.
-- Una regla `always` no impone temporalmente su invariante.
-- Una regla booleana se considera inactiva a efectos de evaluación.
-- Una acción dependiente deja temporalmente de ser invocable, aunque las acciones no sean destruibles directamente.
+- One reactive rule It does not produce bindings.
+- A ruler `always` does not temporarily impose its invariant.
+- One Boolean rule It is considered inactive for assessment purposes.
+- One action The dependent temporarily ceases to be targetable, even though the cards cannot be destroyed directly.
 
-Esta suspensión conserva aridad, nombres de roles y referencias internas. Recrear la dependencia restaura la declaración sin reescribirla.
+This suspension retains arity, role names and internal references. Recreating the dependency restores the declaration without rewriting it.
 
-## Especialización y descendientes
+## Specialisation and descendants
 
-Las aristas declaradas mediante `as` permanecen en la definición canónica del programa. En la proyección efectiva, un descendiente activo no se suspende necesariamente porque una de sus antecesoras esté destruida.
+Edges declared using `as` remain in the canonical definition of the programme. In the effective projection, an active descendant is not necessarily suspended simply because one of its predecessors has been destroyed.
 
-Cuando un camino declarado:
+When a path is declared:
 
 $$
 c = n_0,\ldots,n_k = p
 $$
 
-tiene extremos activos y todos sus nodos interiores inactivos, la proyección efectiva puede conectar $c$ con el antecesor activo más próximo $p$. No se atraviesa un antecesor intermedio que continúe activo.
+has active endpoints and all its internal nodes are inactive; the effective projection can connect $c$ with the most recent active predecessor $p$. There is no intermediate ancestor that remains active.
 
-Así, al destruir `Kingdom`:
+Thus, by destroying `Kingdom`:
 
 ```text
 Thing
@@ -225,36 +225,36 @@ Thing
     └── Panama
 ```
 
-la proyección efectiva puede ser:
+the effective projection It could be:
 
 ```text
 Thing
 └── Panama
 ```
 
-Las propiedades declaradas por `Kingdom` dejan de heredarse mientras esté destruido. Las propiedades propias de `Panama` permanecen si sus dependencias siguen efectivas. Al crear de nuevo `Kingdom`, reaparecen las aristas y propiedades procedentes de su definición canónica; no se restauran modificaciones estructurales runtime pertenecientes a la materialización destruida de `Kingdom`.
+The properties declared by `Kingdom` are no longer inherited whilst it is destroyed. The properties inherent in `Panama` remain in force if their provisions remain in force. Upon re-establishment `Kingdom`, the edges and properties derived from its canonical definition; runtime structural modifications belonging to the materialisation destroyed from `Kingdom`.
 
-La dependencia de especialización declarada con `as` es atravesable en la proyección efectiva y no una dependencia dura que destruya en cascada a todos los descendientes.
+The specialisation unit declared with `as` it can be crossed at the effective projection and not just one hard dependency which will cause a chain reaction that destroys all the descendants.
 
-## `add` y `remove` sobre propiedades
+## `add` y `remove` about properties
 
-`add` y `remove` también operan sobre propiedades. La palabra `property` no es necesaria:
+`add` y `remove` They also operate on properties. The word `property` is not necessary:
 
 ```mud
 add kingdom: Kingdom[1] = Panama to King
 remove kingdom from King
 ```
 
-Los dos puntos distinguen la adición de una declaración de propiedad de la adición de un miembro:
+The colon indicates the addition of a declaration resulting from the addition of a member:
 
 ```mud
 add Panama to King.kingdoms
 remove Panama from King.kingdoms
 ```
 
-`remove kingdom from King` elimina la propiedad y su carga almacenada. Volver a añadir una propiedad homónima no recupera automáticamente `Panama`.
+`remove kingdom from King` Removes the property and its stored data. Re-adding a property with the same name does not automatically restore it `Panama`.
 
-Por tanto:
+Therefore:
 
 $$
 \operatorname{remove}(p)
@@ -262,7 +262,7 @@ $$
 p\notin\operatorname{Stored}(W')
 $$
 
-mientras que destruir una dependencia dura ajena a la propiedad solo la suspende:
+whereas destroying one hard dependency It does not transfer ownership, but merely suspends it:
 
 $$
 \operatorname{destroy}(T)
@@ -277,61 +277,62 @@ p\notin\operatorname{Effective}(W')
 \end{cases}
 $$
 
-Esta conservación no se aplica a los campos o modificaciones estructurales cuya carga pertenece a la propia materialización concreta destruida.
+This preservation does not apply to fields or structural modifications whose load belongs to the materialisation a specific one destroyed.
 
-## Ausencia de capturas implícitas
+## Absence of implicit captures
 
-Una declaración introducida por `create` no captura variables libres del `then`, acción o binding que ejecuta la creación.
+One declaration introduced by `create` does not capture free variables from the `then`, action or a binding that performs the creation.
 
-Puede declarar y utilizar:
+You may declare and use:
 
-- Sus propios participantes `on` o `for`.
-- Sus propios valores `given` cuando su clase de regla los admita.
-- Nombres y anclas globales resolubles.
+- Its own participants `on` o `for`.
+- Their own values `given` when their rule class permits it.
+- Resolvable global names and anchors.
 
-No puede retener implícitamente un participante ni un `given` perteneciente al contexto creador. Si una ley necesita recordar un dato, ese dato debe representarse explícitamente en el estado del mundo.
+It cannot implicitly retain a participant not even a `given` belonging to the creative context. If a law needs to refer to a piece of data, that data must be explicitly represented in the state from the world.
 
-Esta regla evita que la misma identidad global reciba cierres diferentes según qué binding la active.
+This rule prevents the same identity The global variable should have different closures depending on which binding activates it.
 
-## Alternativas descartadas
+## Options ruled out
 
-### Poda destructiva indiscriminada
+### Indiscriminate, destructive pruning
 
-Se descarta eliminar automáticamente y de la misma forma todos los miembros de colecciones. D-077 adopta una retirada condicionada: debe conservar la cardinalidad final, las relaciones inmutables retienen pertenencia latente y las relaciones `mut` eliminan la pertenencia almacenada.
+The option to automatically remove all members of collections in the same way is ruled out. D-077 adopts a conditional withdrawal: it must retain the cardinality Ultimately, unchanging relationships retain a latent sense of belonging, and relationships `mut` they delete the stored membership.
 
-### Hibernación de la materialización propia
+### Hibernation of the materialisation own
 
-Se descarta conservar la carga y las modificaciones estructurales runtime pertenecientes a una `thing` concreta después de `destroy`. D-099 exige que un `create` posterior construya una materialización fresca de la misma identidad canónica.
+The option of retaining the payload and runtime structural modifications associated with a `thing` specifically after `destroy`. D-099 requires that a `create` subsequently build a materialisation fresh from the source canonical identity.
 
-### Cascada destructiva
+### Destructive waterfall
 
-Se descarta destruir automáticamente descendientes y dependientes. La suspensión derivada basta para retirarlos de la proyección cuando sea necesario y conserva la reversibilidad del estado que les pertenece.
+Automatic deletion of descendants and dependants is not permitted. The suspension derivative is sufficient to remove them from the projection when necessary and preserves the reversibility of the state which belongs to them.
 
-### `activate` y `deactivate` en la superficie
+### `activate` y `deactivate` on the surface
 
-Se conservan como posible vocabulario interno para aspectos de actividad, pero se descartan como vocabulario principal. `create`, `destroy`, `add` y `remove` describen de forma más directa las reglas de un mundo.
+They are retained as potential internal terminology for aspects of the activity, but are excluded from the main terminology. `create`, `destroy`, `add` y `remove` describe the rules of a world.
 
-### Capturas condicionadas a unicidad
+### Catches subject to the uniqueness condition
 
-Se descartan. Exigirían definir cuándo se demuestra la unicidad, qué ocurre si cambia y cómo se resuelven dos cargas distintas para una misma identidad.
+These are ruled out. They would require defining when uniqueness is demonstrated, what happens if it changes, and how to resolve two different loads for the same identity.
 
-## Cuestiones todavía abiertas
+## Issues still to be resolved
 
-- Operaciones permitidas sobre propiedades suspendidas.
-- Serialización e introspección de la representación almacenada y de las materializaciones runtime.
+- Permitted transactions involving suspended properties.
+- Serialisation and introspection of the stored representation and runtime instantiations.
 
-## Verificación futura
+## Future verification
 
-La suite deberá cubrir:
+The suite must cover:
 
-1. Descarte de la carga propia de una `thing` concreta destruida y rematerialización desde predeterminados e inicializadores al crearla de nuevo.
-2. Conservación de una propiedad ajena y su carga cuando se destruye una dependencia dura como su tipo declarado.
-3. Restauración de esa propiedad suspendida con la misma carga cuando la dependencia vuelve a materializarse y la transición es válida.
-4. Pérdida de carga tras `remove`.
-5. Suspensión completa de reglas y acciones con participantes de tipo inactivo.
-6. Rechazo de `create` y `destroy` aplicados a un alias, conforme a D-031.
-7. Compresión y restauración del grafo efectivo.
-8. Conservación de propiedades propias de descendientes cuando sus dependencias siguen efectivas.
-9. Ausencia de capturas implícitas.
-10. Resolución inequívoca de `destroy`.
-11. Rechazo de `create` o `destroy` sobre acciones y magnitudes.
+1. Disposal of the own stored data of a `thing` the destruction of a specific instance and its rematerialisation based on predetermined settings and initialisers when recreating it.
+2. Maintenance of another person’s property and the liability arising from its destruction hard dependency as his type stated.
+3. Restoration of that property, subject to the same encumbrance, when the dependency arises again and the transition is valid.
+4. Pressure drop downstream of `remove`.
+5. Suspension a comprehensive list of rules and actions involving participants from type inactive.
+6. Rejection of `create` y `destroy` applied to a alias, in accordance with D-031.
+7. Compression and restoration of the graph cash.
+8. Retention of property rights by descendants where their tenancies remain in force.
+9. No implicit captures.
+10. Resolution unequivocal indication of `destroy`.
+11. Rejection of `create` o `destroy` on actions and quantities.
+

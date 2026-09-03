@@ -1,6 +1,6 @@
 ---
 id: D-019
-title: "Mutabilidad ortogonal de colección y miembros"
+title: "Mutability orthogonal to collection and members"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -9,129 +9,130 @@ questions: []
 affects:
   - "futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`"
 ---
-# ADR-019 — Mutabilidad ortogonal de colección y miembros
+# ADR-019 — Mutability orthogonal to collection and members
 
-- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+- Amended by: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
-- Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Amended by: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Documents affected: future `14-campos-y-mutabilidad.md`, future `15-colecciones.md`
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
-## Contexto
+## Context
 
-Todo campo MUD se interpreta uniformemente como una colección con cardinalidad. La cardinalidad omitida equivale a `[1]`; no convierte el campo en una categoría semántica distinta.
+Everything field MUD is consistently interpreted as a collection with cardinality. The cardinality omitted is equivalent to `[1]`; it does not convert the field in a category semantics different.
 
-MUD distingue dos permisos:
+MUD distinguishes between two types of permission:
 
-1. Cambiar la colección almacenada: añadir, retirar, sustituir o reordenar miembros.
-2. Modificar las `thing` alcanzadas como miembros de la colección.
+1. Change the collection stored: add, remove, replace or reorder elements.
+2. Amend the `thing` achieved as members of the collection.
 
-La formulación previa sugería una excepción para cardinalidad singular por la que:
+The previous wording suggested an exception for cardinality a unique feature whereby:
 
 ```mud
 mut capital: City [1]
 ```
 
-podía interpretarse como:
+could be interpreted as:
 
 ```mud
 capital: City [1 mut]
 ```
 
-Esa equivalencia colapsaba dos permisos distintos precisamente en el caso `[1]`.
+That equivalence conflated two distinct permissions precisely in this case `[1]`.
 
 ## Decisión
 
-Los dos ejes son ortogonales para toda cardinalidad, incluida `[1]`.
+The two axes are orthogonal for all cardinality, including `[1]`.
 
-- `mut` antes del nombre concede mutabilidad exterior de la colección almacenada.
-- `mut` dentro de la especificación de cardinalidad concede capacidad interior sobre sus miembros.
-- Ninguna posición implica la otra.
-- No existe una excepción para campos singulares.
-- El `mut` exterior califica un lugar almacenable, no el tipo de miembro: se escribe `mut nombre: Tipo`; `nombre: mut Tipo` es inválido.
+- `mut` before the name, it grants mutability outside the collection stored.
+- `mut` inside the specification from cardinality bestows inner strength upon its members.
+- Neither position implies the other.
+- There is no exception for singular fields.
+- The `mut` 'exterior' refers to a storage area, not the type from member: it is written `mut nombre: Tipo`; `nombre: mut Tipo` is invalid.
 
-| Declaración | Cambiar colección | Modificar miembros |
+| Declaration | Change collection | Edit members |
 | --- | --- | --- |
 | `capital: City [1]` | No | No |
-| `mut capital: City [1]` | Sí | No |
-| `capital: City [1 mut]` | No | Sí |
-| `mut capital: City [1 mut]` | Sí | Sí |
+| `mut capital: City [1]` | Yes | No |
+| `capital: City [1 mut]` | No | Yes |
+| `mut capital: City [1 mut]` | Yes | Yes |
 
-La cardinalidad omitida mantiene exactamente la misma regla:
+The cardinality The omitted one follows exactly the same rule:
 
 ```mud
 mut capital: City
 capital: City [mut]
 ```
 
-equivalen, respectivamente, a:
+are equivalent, respectively, to:
 
 ```mud
 mut capital: City [1]
 capital: City [1 mut]
 ```
 
-La primera forma no equivale a la segunda: omitir `[1]` no desplaza `mut` entre los dos ejes.
+The first form is not the same as the second: to omit `[1]` does not displace `mut` between the two axes.
 
-## Campos almacenados y derivados
+## Stored fields and derived fields
 
-Un campo almacenado posee un valor colección cuya estructura solo puede cambiar cuando declara mutabilidad exterior.
+A stored field has a value collection whose structure can only change when it declares mutability outdoors.
 
-Un campo derivado también produce semánticamente una colección, pero su pertenencia se recalcula a partir de su expresión. No admite mutabilidad exterior porque no existe una colección almacenada que escribir. Puede declarar capacidad interior `[mut]` como obligación sobre las `thing` directamente contenidas solo cuando el valor de origen ya proporciona esa autoridad y las transformaciones conservan la identidad semántica correspondiente. La forma derivada no fabrica capacidad.
+A derived field it also results, semantically, in a collection, but its membership is recalculated based on its expression. It does not support mutability external because there is no collection stored rather than written. It can specify internal capacity `[mut]` as a liability on the `thing` directly contained only when the value The source already provides that authority and the transformations preserve the identity semantics relevant. The derived form does not generate capacity.
 
-La capacidad interior nunca hace escribible la pertenencia de una colección derivada, no atraviesa aliases ni contenedores anidados y no concede mutabilidad exterior a una colección que sea miembro de otra colección.
+Inner capacity never makes one’s sense of belonging collection derived, does not traverse aliases or nested containers, and does not grant mutability outside a collection whatever the case may be member another collection.
 
-## Participantes `for`
+## Participants `for`
 
-Todo rol `for`, incluido el individual de cardinalidad `[1]`, conserva los mismos dos ejes. En una action:
+Any role `for`, including the singles event at cardinality `[1]`, retains the same two axes. In a action:
 
 ```mud
 mut patients: Person [1..10, unique, mut]
 ```
 
-el primer `mut` permite cambiar la colección suministrada y el segundo permite modificar las `Person` miembro. La mutabilidad exterior vincula el rol por referencia a un lugar almacenado: el receptor de la llamada debe designar una colección exteriormente mutable. Un literal, una unión u otra colección calculada son valores y no pueden satisfacer ese contrato.
+the first `mut` allows you to change the collection provided, and the second allows you to modify the `Person` member. The mutability The external key links the role by reference to a stored location: the receiver of the call must appoint a collection outwardly changeable. A literal, a union or another collection The calculated values are just that – values – and cannot satisfy that contract.
 
-Sin `mut` exterior, el rol recibe el valor de cualquier expresión de colección compatible. La capacidad interior sigue comprobándose con independencia de que la colección proceda de un lugar o de una expresión. Cuando el tipo efectivo no contiene valores con estado modificable, escribir `[mut]` continúa siendo legal, pero el compilador sugiere retirarlo porque la capacidad no puede ejercerse. D-063 sustituye el rechazo anterior por esta sugerencia.
+Without `mut` externally, the role receives the value of any expression of collection compatible. The internal capacity continues to be verified regardless of whether the collection comes from a place or an expression. When the type The cash does not contain any amounts with state editable, write `[mut]` It remains legal, but the compiler suggests removing it because the capability cannot be exercised. D-063 Replace the previous rejection with this suggestion.
 
-La mutabilidad exterior se aplica también a lugares que almacenan básicos, aliases, miembros de `family`, diccionarios o colecciones de esos valores. Permite sustituir o reorganizar el contenido, pero no vuelve mutables los valores contenidos:
+The mutability 'external' also applies to locations that store basics, aliases, members of `family`, dictionaries or collections of such values. It allows the content to be replaced or reorganised, but does not make the values it contains mutable:
 
 ```mud
 mut observations: Num [*]
 ```
 
-Reglas booleanas y `look` son puros y no admiten mutabilidad exterior en sus roles `for`. Los roles automáticos `on` continúan siendo individuales y solo pueden declarar capacidad interior sobre la `thing` vinculada. Los `given` no admiten ninguno de los dos permisos.
+Boolean rules and `look` they are pure and do not tolerate mutability outwardly in their roles `for`. Automatic roles `on` They remain individual and can only declare their internal capacity in relation to the `thing` related. The `given` They do not accept either of these permits.
 
-## Consecuencias
+## Consequences
 
-- Sustituir el único miembro de `[1]` es una mutación exterior.
-- Modificar campos del único miembro exige capacidad interior.
-- Una acción puede necesitar ambos permisos y debe declararlos de forma explícita.
-- La omisión de `[1]` es únicamente azúcar de cardinalidad; no cambia permisos.
-- El AST y el IR deben almacenar por separado `outerMutable` e `elementMutable`.
-- La fusión hereditaria debe comparar ambos ejes independientemente.
-- Una llamada con un rol `for` exteriormente mutable exige un receptor-lugar y conserva en el IR la referencia al destino escrito.
+- Replace the only one member from `[1]` It is an external mutation.
+- Modify fields in the unique table member requires inner strength.
+- One action It may require both permissions and must declare them explicitly.
+- The omission of `[1]` It is simply sugar from cardinality; it does not change permissions.
+- The AST and the IR must be stored separately `outerMutable` e `elementMutable`.
+- Heritable linkage must be analysed independently for both axes.
+- One call in a role `for` externally changeable requires a receiver-enter the location and retain the reference to the written destination in the IR.
 
 ## Compatibilidad
 
-Se retira cualquier interpretación que equipare las dos formas singulares. Antes de una versión estable no se requiere migración de programas publicados; los ejemplos internos deben interpretarse conforme a esta decisión.
+Any interpretation that equates the two singular forms is hereby withdrawn. Until a stable version is released, no migration of published programmes is required; internal examples should be interpreted in accordance with this decision.
 
-## Verificación futura
+## Future verification
 
-La suite deberá comprobar las cuatro combinaciones de la tabla tanto para `[1]` como para cardinalidades múltiples, además de:
+The suite must check the four combinations in the table for both `[1]` as well as for multiple cardinalities, in addition to:
 
-1. Rechazo de sustitución sin mutabilidad exterior.
-2. Rechazo de modificación del miembro sin capacidad interior.
-3. Ausencia de capacidad interior implícita en `mut field: T`.
-4. Ausencia de mutabilidad exterior implícita en `field: T [mut]`.
-5. Rechazo de `mut` exterior sobre un campo derivado.
-6. Inferencia conservadora de capacidad interior en una colección derivada.
-7. Roles `for` de cardinalidad `[1]` y colectiva con las cuatro combinaciones de capacidad.
-8. Rechazo de un literal o resultado calculado como receptor de un rol exteriormente mutable.
-9. Rechazo de mutabilidad exterior en reglas booleanas, `look` y roles `on`.
-10. Mutabilidad exterior de una colección de valores inmutables sin capacidad interior.
-11. Sugerencia para retirar una capacidad interior demostrablemente inútil sobre valores inmutables.
+1. Rejection of substitution without mutability outdoors.
+2. Rejection of the amendment to the member with no interior capacity.
+3. Lack of an implicit inner capacity in `mut field: T`.
+4. Absence of mutability external implicit in `field: T [mut]`.
+5. Rejection of `mut` exterior on a derived field.
+6. Inference internal capacity retention in a collection derived.
+7. Roles `for` from cardinality `[1]` and collective, with the four capacity combinations.
+8. Rejection of a literal o result calculated as receiver of a role that is outwardly changeable.
+9. Rejection of mutability exterior in Boolean rules, `look` and roles `on`.
+10. Mutability outside of a collection of unchanging values without any inner capacity.
+11. A suggestion for removing a demonstrably useless internal capability relating to immutable values.
 
-## Modificación por D-084
+## Amended by D-084
 
-La pertenencia de una colección derivada se fija para la instantánea en evaluación y se recalcula después de consolidar efectos. Los miembros pueden entrar o salir automáticamente. Las colecciones almacenadas no se autopodan. Los contratos del resultado derivado se validan tras el recálculo y su incumplimiento falla la transición.
+The ownership of a collection The derivative is set for the snapshot under review and is recalculated after effects have been consolidated. Members may join or leave automatically. Stored collections are not automatically pruned. Contracts in the result Derivatives are validated following recalculation; if they do not comply, the transition.
+
