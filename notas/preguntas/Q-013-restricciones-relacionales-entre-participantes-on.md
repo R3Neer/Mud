@@ -1,6 +1,6 @@
 ---
 id: Q-013
-title: Restricciones relacionales entre participantes on
+title: Relational constraints between `on` participants
 priority: P1
 opened: 2026-07-29
 resolved: true
@@ -12,18 +12,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-013 — Restricciones relacionales entre participantes `on`
+# Q-013 — Relational constraints between `on` participants
 
-## Contenido
+## Content
 
-Estado: **cerrada** de nuevo mediante [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]], que modifica [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
+Status: **closed** again by [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]], which amends [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]].
 
-La cabecera puede construir participantes relacionados mediante `role [: Type] in expression`. La anotación refina nominalmente el elemento de la colección. Todos los nombres son visibles en la cabecera completa y sus tipos y restricciones se resuelven conjuntamente, por lo que se admiten referencias adelantadas y ciclos. El universo de cada rol son las `thing` concretas y activas de su tipo efectivo; las vinculaciones forman el join finito que satisface todas las restricciones en una misma instantánea. Los roles conservan orientación y no se impone desigualdad ni deduplicación simétrica. Las condiciones adicionales se expresan en `if`; `given` no está permitido en declaraciones `on`.
+The header may construct related participants through `role [: Type] in expression`. The annotation nominally refines the collection element. All names are visible throughout the complete header and their types and constraints are resolved jointly, so forward references and cycles are admitted. Each role's universe is the concrete active `thing` values of its effective type; bindings form the finite join satisfying every constraint in one snapshot. Roles retain orientation, and neither inequality nor symmetric deduplication is imposed. Additional conditions are expressed in `if`; `given` is not permitted in `on` declarations.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-036`, `D-063`.
