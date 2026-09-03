@@ -1,6 +1,6 @@
 ---
 id: Q-052
-title: Entrega de message
+title: `message` delivery
 priority: P1
 opened: 2026-07-29
 resolved: true
@@ -12,22 +12,22 @@ affects: []
 superseded-by: []
 ---
 
-# Q-052 — Entrega de `message`
+# Q-052 — `message` delivery
 
-Estado: **resuelta** mediante [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|D-096]].
+Status: **resolved** by [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 
-D-096 fija la multiplicidad por ocurrencias causales, la ausencia de deduplicación por payload, el orden causal por ondas, la evaluación causal de `when`/`if`, la propagación a la onda siguiente y la cancelación de entrega exterior cuando la resolución revierte. MUD y el host observan la misma identidad de ocurrencia, con proyección causal interna y proyección final exterior.
+D-096 fixes multiplicity by causal occurrences, no payload-based deduplication, causal order by waves, causal evaluation of `when`/`if`, propagation to the next wave and cancellation of external delivery when the resolution rolls back. MUD and the host observe the same occurrence identity, with an internal causal projection and a final external projection.
 
-El único borde material no resuelto de la antigua pregunta se separa en Q-067: qué proyección exterior corresponde cuando un participante deja de existir antes del estado final.
+The only material unresolved edge of the former question is separated into Q-067: which external projection applies when a participant ceases to exist before final state.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: fijar multiplicidad, deduplicación y orden causal de ocurrencias.
-- C2: fijar el momento de evaluación de `when`, `if` y payload.
-- C3: fijar el comportamiento exterior ante commit y rollback.
+- C1: Fix multiplicity, deduplication and causal order of occurrences.
+- C2: Fix when `when`, `if` and payload are evaluated.
+- C3: Fix external behaviour on commit and rollback.
 
-## Evidencia de cierre
+## Closure evidence
 
-- C1: D-096 modela ocurrencias causales con identidad propia, conserva multiplicidad y las propaga por ondas sin deduplicación por payload.
-- C2: D-096 evalúa `when` e `if` en la vista causal y distingue proyección causal interna de proyección final exterior.
-- C3: D-096 entrega al host solo después de commit y cancela toda entrega exterior si la resolución revierte; el borde de participantes inexistentes se separa en Q-067.
+- C1: D-096 models causal occurrences with their own identity, retains multiplicity and propagates them across waves without payload deduplication.
+- C2: D-096 evaluates `when` and `if` in the causal view and distinguishes internal causal from final external projection.
+- C3: D-096 delivers to the host only after commit and cancels all external delivery if the resolution rolls back; the missing-participant edge is separated into Q-067.
