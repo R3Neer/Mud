@@ -93,7 +93,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-077 | current | 2026-08-03 | [[notes/decisions/ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|Cardinality-conditioned destruction and transition diagnostics]] |
 | D-078 | current | 2026-08-03 | [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|Nominal resolution, anchor catalogue and initial graph]] |
 | D-079 | current | 2026-08-04 | [[notes/decisions/ADR-079-diagnostic-exterior-de-rules-always|External diagnostics for `always` rules]] |
-| D-080 | current | 2026-08-04 | [[notes/decisions/ADR-080-algebra-higher-and-updates-de-collection|Álgebra elevada y actualizaciones de colección]] |
+| D-080 | current | 2026-08-04 | [[notes/decisions/ADR-080-algebra-higher-and-updates-de-collection|Higher algebra and collection updates]] |
 | D-081 | current | 2026-08-04 | [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|Filtrado, `take` e indexación de colecciones]] |
 | D-082 | current | 2026-08-04 | [[notes/decisions/ADR-082-cycle-as-point-domain-modifier|`cycle` como modificador de dominio de punto]] |
 | D-083 | current | 2026-08-04 | [[notes/decisions/ADR-083-unitless-base-quantities|Magnitudes base sin unidades]] |

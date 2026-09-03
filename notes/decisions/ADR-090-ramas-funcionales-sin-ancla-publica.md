@@ -1,58 +1,58 @@
 ---
 id: D-090
-title: "Ramas funcionales sin ancla pública"
+title: "Functional branches without a public anchor"
 status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "diccionarios funcionales, anclas, representación semántica posterior a tipado y elaboración, grafo de dependencias, operador semántico y tooling"
+  - "functional dictionaries, anchors, post-typing and elaboration semantic representation, dependency graph, semantic operator and tooling"
 ---
 
-# ADR-090 — Ramas funcionales sin ancla pública
+# ADR-090 — Functional branches without a public anchor
 
-- Modifica: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
-- Amplía: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
+- Modifies: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
+- Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
-## Contexto
+## Context
 
-D-085 asignaba anclas propias a las ramas de diccionarios funcionales para poder editarlas de forma independiente. D-087 fijó después un principio más estricto: una entidad metadata-bearing necesita descriptor tipado y ancla pública estable, y excluyó expresamente las ramas funcionales por carecer de descriptor estable. Mantener una ancla pública de rama conservaría dos modelos de identidad incompatibles.
+D-085 assigned functional-dictionary branches their own anchors so that they could be edited independently. D-087 subsequently established a stricter principle: a metadata-bearing entity needs a typed descriptor and a stable public anchor, and it expressly excluded functional branches because they lack a stable descriptor. Retaining a public branch anchor would preserve two incompatible identity models.
 
-## Decisión
+## Decision
 
-Una rama de diccionario funcional no posee ancla pública, no introduce `AnchoredSymbol` y no puede poseer metadatos propios. La entidad persistente es el diccionario propietario.
+A functional-dictionary branch has no public anchor, does not introduce `AnchoredSymbol`, and cannot have metadata of its own. The persistent entity is the owning dictionary.
 
-Cada rama posee una clave estructural local al diccionario propietario. Para una rama ordinaria, la clave deriva de la forma canónica de su selector después de la resolución y normalización semántica necesarias; el fallback `_` usa una variante local distinta y única. Dentro de un mismo diccionario no pueden existir dos ramas ordinarias con el mismo selector canónico. La codificación mecánica concreta de esa clave en una representación posterior queda sin fijar.
+Each branch has a structural key local to the owning dictionary. For an ordinary branch, the key derives from the canonical form of its selector after the necessary resolution and semantic normalisation; the `_` fallback uses a distinct and unique local variant. Two ordinary branches with the same canonical selector cannot exist in one dictionary. The concrete mechanical encoding of that key in a later representation is left unspecified.
 
-La clave local debe distinguir estructuralmente una rama ordinaria del fallback sin requerir una segunda identidad persistente. El ordinal fuente se conserva por separado. En `FirstMatch` forma parte del valor funcional porque decide prioridad; en `AllMatches` conserva procedencia y diagnóstico, pero no se convierte en identidad persistente. La representación futura puede elegir su codificación mientras preserve estas propiedades.
+The local key must structurally distinguish an ordinary branch from the fallback without requiring a second persistent identity. The source ordinal is retained separately. In `FirstMatch` it is part of the functional value because it determines priority; in `AllMatches` it retains provenance and diagnostics but does not become a persistent identity. A future representation may choose its encoding while preserving these properties.
 
-Las dependencias de una rama se representan mediante el par formado por el ancla del diccionario propietario y su clave local. Una operación externa que necesite persistencia se dirige al diccionario y expresa la edición de sus ramas como estructura interna del propietario; no puede tratar la rama como entidad global independiente.
+Branch dependencies are represented by the pair formed by the owning dictionary's anchor and its local key. An external operation that needs persistence targets the dictionary and expresses branch editing as internal structure of the owner; it cannot treat the branch as an independent global entity.
 
-## Consecuencias
+## Consequences
 
-- Se elimina la contradicción entre D-085 y el principio de admisión de D-087.
-- Mover una rama ordenada puede cambiar semántica sin requerir migración de ancla.
-- Cambiar el selector puede cambiar la clave local sin constituir un renombrado de entidad pública.
-- Dos selectores canónicamente iguales dentro del mismo diccionario son inválidos porque representarían la misma clave estructural local.
-- Las operaciones conjuntistas de diccionarios funcionales siguen siendo extensionales y no fusionan identidad de ramas.
+- The contradiction between D-085 and D-087's admission principle is removed.
+- Moving an ordered branch may change semantics without requiring anchor migration.
+- Changing a selector may change the local key without constituting a public-entity rename.
+- Two canonically equal selectors in one dictionary are invalid because they would represent the same local structural key.
+- Set operations on functional dictionaries remain extensional and do not merge branch identities.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Mantener anclas subordinadas por posición
+### Retain position-based subordinate anchors
 
-Descartada porque reordenar ramas de `FirstMatch` cambiaría identidad además de semántica y porque D-087 excluye la rama como entidad con descriptor estable.
+Rejected because reordering `FirstMatch` branches would change identity as well as semantics, and because D-087 excludes the branch as an entity with a stable descriptor.
 
-### Permitir selectores canónicamente duplicados mediante un índice local
+### Allow canonically duplicate selectors through a local index
 
-Descartada porque la rama ya posee una clave estructural natural: su selector canónico. Introducir un índice permitiría dos entradas con la misma clave y haría depender las operaciones editoriales de una distinción que no existe en el modelo del diccionario.
+Rejected because the branch already has a natural structural key: its canonical selector. Introducing an index would allow two entries with the same key and make editorial operations depend on a distinction that does not exist in the dictionary model.
 
-## Verificación
+## Verification
 
-1. Ninguna rama funcional recibe ancla pública ni `AnchoredSymbol`.
-2. La identidad local distingue rama ordinaria y fallback sin un segundo identificador persistente contradictorio.
-3. Las dependencias de rama pueden reconstruirse mediante el ancla del diccionario propietario y su clave estructural local, sin índice global de colisión.
-4. El catálogo de anclas no enumera ramas funcionales como entidades públicas.
-5. D-085 ya no promete `CREATE`, `UPDATE`, `REMOVE` o `MOVE` dirigidos a una ancla de rama.
-6. D-087 mantiene las ramas fuera de la superficie metadata-bearing.
+1. No functional branch receives a public anchor or `AnchoredSymbol`.
+2. Local identity distinguishes an ordinary branch and the fallback without a contradictory second persistent identifier.
+3. Branch dependencies can be reconstructed through the owning dictionary's anchor and its local structural key, without a global collision index.
+4. The anchor catalogue does not enumerate functional branches as public entities.
+5. D-085 no longer promises `CREATE`, `UPDATE`, `REMOVE` or `MOVE` directed at a branch anchor.
+6. D-087 keeps branches outside the metadata-bearing surface.

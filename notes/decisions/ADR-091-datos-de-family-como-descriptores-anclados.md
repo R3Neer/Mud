@@ -1,6 +1,6 @@
 ---
 id: D-091
-title: "Datos de family como descriptores anclados"
+title: "Family data as anchored descriptors"
 status: current
 date: 2026-08-16
 supersedes: []
@@ -8,34 +8,34 @@ superseded-by: []
 questions:
   - "Q-061"
 affects:
-  - "family, datos asociados, metadatos, anclas, gramática, CST, AST superficial, representación semántica posterior a tipado y elaboración, reflexión y tooling"
+  - "family, associated data, metadata, anchors, grammar, CST, superficial AST, post-typing and elaboration semantic representation, reflection and tooling"
 ---
 
-# ADR-091 — Datos de family como descriptores anclados
+# ADR-091 — Family data as anchored descriptors
 
-- Modificada por: [[ADR-102-complete-form-of-computed-family-data|D-102]].
-- Modifica: [[ADR-038-close-knit-families-with-strong-values|D-038]].
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
-- Amplía: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
+- Modified by: [[ADR-102-complete-form-of-computed-family-data|D-102]].
+- Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]].
+- Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Extends: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
-## Contexto
+## Context
 
-D-038 definió datos asociados uniformes para una `family` y afirmó que no poseían identidad propia, hablando de los valores proyectados por cada miembro. D-087 estableció después que los elementos metadata-bearing necesitan descriptor tipado y ancla pública estable. La especificación de anclas ya clasificaba los datos de `family` bajo la categoría `family`, pero la gramática y el AST superficial no permitían adjuntarles metadatos.
+D-038 defined uniform associated data for a `family` and stated that it had no identity of its own, referring to the values projected by each member. D-087 subsequently established that metadata-bearing elements need a typed descriptor and a stable public anchor. The anchor specification already classified `family` data under the `family` category, but the grammar and superficial AST did not allow metadata to be attached to it.
 
-La forma declarable del dato calculado es el `derived-value-shape` completo de los campos calculados, conforme a D-102. Esta decisión de identidad y metadata no altera ese contrato.
+The declarable form of computed data is the complete `derived-value-shape` of computed fields, in accordance with D-102. This identity and metadata decision does not alter that contract.
 
-## Decisión
+## Decision
 
-La declaración de un dato asociado almacenado o calculado es una entidad semántica estable del esquema uniforme de la `family`. Posee:
+The declaration of stored or computed associated data is a stable semantic entity in the `family`'s uniform schema. It has:
 
-- descriptor reflectivo `Field`;
-- `FieldKind.Stored` o `FieldKind.Calculated`;
-- ancla subordinada `family::<nombre-cualificado>::<dato>`;
-- secuencia propia de metadatos.
+- reflective `Field` descriptor;
+- `FieldKind.Stored` or `FieldKind.Calculated`;
+- subordinate anchor `family::<qualified-name>::<data>`;
+- its own metadata sequence.
 
-No se introduce `FamilyDataKind` ni una categoría de ancla nueva.
+No `FamilyDataKind` or new anchor category is introduced.
 
-Un dato puede llevar inmediatamente un cuerpo formado exclusivamente por declaraciones `~...`:
+A datum may be followed immediately by a body consisting exclusively of `~...` declarations:
 
 ```mud
 family Terrain {
@@ -53,40 +53,40 @@ family Terrain {
 }
 ```
 
-El metadata-body pertenece al descriptor `movementCost` o `costly`, no al valor obtenido para `Plain`, `Mountain` u otro miembro. Consultar `Mountain.movementCost` produce el valor asociado; no crea un descriptor nuevo por miembro.
+The metadata body belongs to the `movementCost` or `costly` descriptor, not to the value obtained for `Plain`, `Mountain` or another member. Querying `Mountain.movementCost` produces the associated value; it does not create a new descriptor per member.
 
-Una `family-data-assignment` dentro del cuerpo de un miembro es únicamente una sobrescritura del valor efectivo de un dato almacenado. No posee ancla, no admite metadata-body y no puede modificar los metadatos del dato declarado.
+A `family-data-assignment` within a member body is only an override of the effective value of stored data. It has no anchor, does not admit a metadata body and cannot modify the metadata of the declared datum.
 
-El metadata-body se añade después de la forma ordinaria de declaración del dato calculado. El preámbulo de metadata pertenece al descriptor y no modifica ni restringe su `derived-value-shape`.
+The metadata body is added after the ordinary declaration form of computed data. The metadata preamble belongs to the descriptor and does not modify or restrict its `derived-value-shape`.
 
 
-## Consecuencias
+## Consequences
 
-- Renombrar un dato asociado cambia el ancla de su descriptor.
-- Cambiar el valor de un miembro no cambia anclas ni metadatos.
-- Los descriptores de datos participan en `~fields` y `~declaredFields` de la `family` como `Field`.
-- `StoredFamilyDataDecl` y `CalculatedFamilyDataDecl` conservan `metadata_assignment* metadata`.
-- `CalculatedFamilyDataDecl` conserva `derived_value_shape?` con la misma forma derivada de los campos calculados.
-- `FamilyDataAssignment` permanece sin metadatos.
+- Renaming associated data changes its descriptor's anchor.
+- Changing a member's value changes neither anchors nor metadata.
+- Data descriptors participate in a `family`'s `~fields` and `~declaredFields` as `Field`.
+- `StoredFamilyDataDecl` and `CalculatedFamilyDataDecl` retain `metadata_assignment* metadata`.
+- `CalculatedFamilyDataDecl` retains `derived_value_shape?` with the same derived form as computed fields.
+- `FamilyDataAssignment` remains without metadata.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Descriptor independiente por miembro y dato
+### Independent descriptor per member and datum
 
-Descartado porque multiplicaría artificialmente entidades que comparten un único esquema y haría que una sobrescritura de valor pareciese una declaración.
+Rejected because it would artificially multiply entities that share a single schema and make a value override look like a declaration.
 
-### Nueva categoría reflectiva `FamilyData`
+### New reflective `FamilyData` category
 
-Descartada porque el contrato ya coincide con `Field` y `FieldKind`; añadir otra familia reflectiva no aporta una diferencia semántica.
+Rejected because the contract already matches `Field` and `FieldKind`; adding another reflective family provides no semantic difference.
 
-### Permitir metadata-body en una sobrescritura de miembro
+### Allow a metadata body in a member override
 
-Descartado porque los metadatos describen el slot declarado, no una ocurrencia de su valor.
+Rejected because metadata describes the declared slot, not an occurrence of its value.
 
-## Verificación
+## Verification
 
-1. La EBNF admite metadata-body en ambos datos declarados y no lo admite en `family-data-assignment`.
-2. CST, cobertura y proyección AST conservan el metadata-body y el `derived-value-shape` completo en el descriptor.
-3. El AST superficial almacena metadatos en ambos constructores de datos y no en `FamilyDataAssignment`.
-4. La especificación de anclas identifica el descriptor bajo la categoría `family`.
-5. D-038 distingue la identidad del descriptor de la ausencia de identidad runtime del valor proyectado.
+1. The EBNF admits a metadata body on both declared data forms and does not admit it on `family-data-assignment`.
+2. CST, coverage and AST projection retain the metadata body and complete `derived-value-shape` in the descriptor.
+3. The superficial AST stores metadata in both data constructors and not in `FamilyDataAssignment`.
+4. The anchor specification identifies the descriptor under the `family` category.
+5. D-038 distinguishes descriptor identity from the absence of runtime identity for the projected value.

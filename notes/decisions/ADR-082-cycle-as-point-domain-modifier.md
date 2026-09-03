@@ -1,6 +1,6 @@
 ---
 id: D-082
-title: "`cycle` como modificador de dominio de punto"
+title: "`cycle` as a point-domain modifier"
 status: current
 date: 2026-08-04
 supersedes: []
@@ -8,60 +8,60 @@ superseded-by: []
 questions:
   - "Q-018"
 affects:
-  - "magnitudes de punto, intervalos, gramática, CST y AST"
+  - "point magnitudes, intervals, grammar, CST and AST"
 ---
 
-# ADR-082 — `cycle` como modificador de dominio de punto
+# ADR-082 — `cycle` as a point-domain modifier
 
-- Modifica: [[ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] y [[ADR-062-canonical-point-magnitude-literals|D-062]].
-- Pregunta relacionada: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]].
-- Modificada por: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
+- Modifies: [[ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] and [[ADR-062-canonical-point-magnitude-literals|D-062]].
+- Related question: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]].
+- Modified by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 
-## Contexto
+## Context
 
-La forma `[a..b cycle)` colocaba `cycle` dentro de los delimitadores de un intervalo aunque no determina la inclusión del extremo. Esto mezclaba la notación matemática del dominio con una propiedad exclusiva de las magnitudes de punto y sugería que `cycle` formaba parte de la expresión general de intervalo.
+The form `[a..b cycle)` placed `cycle` inside the delimiters of an interval even though it does not determine endpoint inclusion. This mixed the domain's mathematical notation with a property exclusive to point magnitudes and suggested that `cycle` was part of the general interval expression.
 
-Las cardinalidades de colección no comparten este problema: su forma `[cardinalidad modificadores]` es una especificación especializada cuyos límites son siempre cerrados y naturales.
+Collection cardinalities do not share this problem: their `[cardinality modifiers]` form is a specialised specification whose bounds are always closed and natural.
 
-## Decisión
+## Decision
 
-`cycle` pasa a ser un modificador posterior del dominio completo de una magnitud de punto:
+`cycle` becomes a trailing modifier of the complete domain of a point magnitude:
 
 ```mud
 magnitude TimeOfDay point over Time in [0..86_400) cycle {
 }
 ```
 
-La forma anterior `[a..b cycle)` deja de ser válida.
+The former `[a..b cycle)` form is no longer valid.
 
-El modificador continúa siendo exclusivo de `point over`. El intervalo que precede a `cycle` debe ser finito, contiguo, no vacío, cerrado a la izquierda y abierto a la derecha. Su periodo es la diferencia entre el límite superior y el inferior y debe ser estrictamente positivo.
+The modifier remains exclusive to `point over`. The interval preceding `cycle` must be finite, contiguous, non-empty, closed on the left and open on the right. Its period is the difference between the upper and lower bounds and must be strictly positive.
 
-`cycle` modifica la normalización del dominio de punto, no el valor intervalo. Por ello `[a..b)` conserva el mismo AST de intervalo ordinario y la presencia posterior de `cycle` selecciona `CyclicPointDomain` durante la transformación del dominio.
+`cycle` modifies point-domain normalisation, not the interval value. Therefore `[a..b)` retains the same ordinary-interval AST, and the subsequent presence of `cycle` selects `CyclicPointDomain` during domain transformation.
 
-La sintaxis de cardinalidad no cambia:
+Cardinality syntax is unchanged:
 
 ```mud
 players: Player [1..3 unique mut]
 ```
 
-No se admiten intervalos abiertos ni intervalos anidados como cardinalidad.
+Open or nested intervals are not admitted as cardinalities.
 
-## Consecuencias
+## Consequences
 
-- Los delimitadores `[` `(` `]` `)` vuelven a describir únicamente la pertenencia de los extremos del intervalo.
-- La fuente distingue visualmente el dominio `[a..b)` de su comportamiento `cycle`.
-- La gramática puede diagnosticar por separado un dominio cíclico con forma de intervalo inadecuada.
-- El AST semántico `OrdinaryPointDomain` / `CyclicPointDomain` no cambia.
+- The delimiters `[` `(` `]` `)` once again describe only interval endpoint membership.
+- The source visibly distinguishes the `[a..b)` domain from its `cycle` behaviour.
+- The grammar can diagnose a cyclic domain with an unsuitable interval form separately.
+- The semantic AST `OrdinaryPointDomain` / `CyclicPointDomain` is unchanged.
 
-## Verificación
+## Verification
 
-1. Aceptación de `in [a..b) cycle` en una magnitud de punto.
-2. Rechazo de la forma retirada `in [a..b cycle)`.
-3. Rechazo de `cycle` en magnitudes no puntuales.
-4. Rechazo de `cycle` tras intervalos cerrados, abiertos a la izquierda, infinitos, vacíos o degenerados.
-5. Conservación de las formas de cardinalidad `[1]`, `[1..3]` y `[1..3 mut]`.
-6. Una progresión sobre un dominio cíclico de punto visita como máximo un periodo fundamental y nunca se envuelve indefinidamente.
+1. Acceptance of `in [a..b) cycle` in a point magnitude.
+2. Rejection of the retired `in [a..b cycle)` form.
+3. Rejection of `cycle` in non-point magnitudes.
+4. Rejection of `cycle` after closed, left-open, infinite, empty or degenerate intervals.
+5. Preservation of the cardinality forms `[1]`, `[1..3]` and `[1..3 mut]`.
+6. A progression over a cyclic point domain visits at most one fundamental period and never wraps indefinitely.
 
-## Modificación por D-088
+## Amendment by D-088
 
-Un dominio cíclico de punto puede alimentar una progresión exacta mediante diferencia compatible. La enumeración cubre un único periodo fundamental y nunca repite el ciclo indefinidamente. El signo y los límites se aplican al intervalo fundamental `[a..b)`.
+A cyclic point domain can feed an exact progression through a compatible difference. Enumeration covers a single fundamental period and never repeats the cycle indefinitely. The sign and bounds apply to the fundamental interval `[a..b)`.

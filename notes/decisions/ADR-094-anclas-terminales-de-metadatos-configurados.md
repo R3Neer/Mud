@@ -1,23 +1,23 @@
 ---
 id: D-094
-title: "Anclas terminales de metadatos configurados"
+title: "Terminal anchors for configured metadata"
 status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "metadatos, reflexión, anclas subordinadas, representación semántica posterior a tipado y elaboración, grafo y tooling"
+  - "metadata, reflection, subordinate anchors, post-typing and elaboration semantic representation, graph and tooling"
 ---
 
-# ADR-094 — Anclas terminales de metadatos configurados
+# ADR-094 — Terminal anchors for configured metadata
 
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
-- Amplía: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Extends: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 
-## Decisión
+## Decision
 
-Cada metadato configurado o definido por el autor que se materializa como valor `Metadata` posee una ancla pública subordinada a la de su propietario. La grafía canónica usa el mismo separador `~` del acceso reflectivo:
+Each configured or author-defined metadata item materialised as a `Metadata` value has a public anchor subordinate to its owner's. The canonical spelling uses the same `~` separator as reflective access:
 
 ```text
 <ancla-del-propietario>~<identificador-metadata>
@@ -33,41 +33,41 @@ family::game.Status::score~summary
 action::game.Attack::for::attacker~summary
 ```
 
-`::` continúa navegando por entidades semánticas subordinadas; `~` entra en el espacio de metadata del propietario. El identificador posterior a `~` es la forma canónica del nombre del metadato y no introduce una categoría superior `metadata`.
+`::` continues to navigate subordinate semantic entities; `~` enters the owner's metadata space. The identifier after `~` is the canonical form of the metadata name and does not introduce a higher `metadata` category.
 
-Las propiedades intrínsecas como `~type`, `~path`, `~file`, `~kind` o el propio `~anchor` no son objetos `Metadata`, no aparecen en `~metadata` y no reciben una ancla de metadata. Un acceso intrínseco sigue siendo reflectivo, pero su existencia no materializa un descriptor configurable.
+Intrinsic properties such as `~type`, `~path`, `~file`, `~kind` or `~anchor` itself are not `Metadata` objects, do not appear in `~metadata` and do not receive a metadata anchor. Intrinsic access remains reflective, but its existence does not materialise a configurable descriptor.
 
-`Metadata` expone `~anchor: Anchor`, `~path: MudPath` y `~file: MudFile`. `~path` es el path lógico de la entidad propietaria dentro del programa: entrar en el espacio terminal `~<metadata>` no crea un namespace distinto. `~file` identifica el archivo físico en el que está declarada esa configuración de metadata; en una declaración directa coincide normalmente con el archivo del propietario, pero se deriva de la procedencia del propio `Metadata` y no de una copia almacenada del valor del propietario.
+`Metadata` exposes `~anchor: Anchor`, `~path: MudPath` and `~file: MudFile`. `~path` is the owning entity's logical path within the program: entering the terminal `~<metadata>` space does not create a distinct namespace. `~file` identifies the physical file in which that metadata configuration is declared; in a direct declaration it normally matches the owner's file, but it is derived from the `Metadata` value's own provenance rather than from a stored copy of the owner's value.
 
-Estas tres propiedades son intrínsecas y calculadas del descriptor. No aparecen en `~metadata`, no materializan nuevos objetos `Metadata` y no requieren campos redundantes en el IR cuando puedan derivarse de ancla, propietario y procedencia.
+These three properties are intrinsic and computed from the descriptor. They do not appear in `~metadata`, do not materialise new `Metadata` objects and do not require redundant IR fields when they can be derived from anchor, owner and provenance.
 
-## Terminalidad
+## Terminality
 
-`Metadata` es un descriptor terminal. Aunque sea una entidad estable y anclada, **no puede poseer metadata propia** y no expone `~metadata`. Esta es una excepción deliberada al principio general de admisión de D-087 y evita una torre recursiva `owner~meta~meta...`.
+`Metadata` is a terminal descriptor. Although it is a stable, anchored entity, it **cannot have metadata of its own** and does not expose `~metadata`. This is a deliberate exception to D-087's general admission principle and avoids a recursive `owner~meta~meta...` tower.
 
-## IR y resolución
+## IR and resolution
 
-La resolución deriva la ancla del objeto `Metadata` a partir de la ancla resuelta del propietario y del identificador canónico del metadato. No aparece sintaxis fuente nueva ni cambia el AST superficial.
+Resolution derives the `Metadata` object's anchor from the owner's resolved anchor and the metadata's canonical identifier. No new source syntax appears and the superficial AST does not change.
 
-El IR distingue:
+The IR distinguishes:
 
-- `metadata_kind`: categoría de objetos `Metadata` configurados;
-- `metadata_property`: propiedad postfix elaborada, que puede ser intrínseca o referir un `metadata_kind` configurable.
+- `metadata_kind`: category of configured `Metadata` objects;
+- `metadata_property`: elaborated postfix property, which may be intrinsic or refer to a configurable `metadata_kind`.
 
-Una propiedad intrínseca nunca se convierte accidentalmente en `SemanticMetadata`.
+An intrinsic property is never accidentally converted into `SemanticMetadata`.
 
-## Consecuencias
+## Consequences
 
-- Los objetos `Metadata` pueden ser referenciados de forma estable por tooling y grafo.
-- Renombrar un metadato de usuario cambia su ancla; cambiar su valor no.
-- Renombrar/mover el propietario cambia también la ancla subordinada del metadato conforme a la migración ordinaria de anclas.
-- La metadata de un miembro de `family` posee ancla bajo el miembro; la sobrescritura de un dato de `family` sigue sin ser un descriptor y no puede poseer metadata.
+- `Metadata` objects can be referenced stably by tooling and the graph.
+- Renaming user metadata changes its anchor; changing its value does not.
+- Renaming or moving the owner also changes the metadata's subordinate anchor according to ordinary anchor migration.
+- Metadata on a `family` member has an anchor under the member; overriding a `family` datum remains not a descriptor and cannot have metadata.
 
-## Verificación
+## Verification
 
-1. `SemanticMetadata` conserva una ancla propia.
-2. `thing::game.Person::health~description` es una ancla válida de metadata configurada.
-3. Ninguna propiedad intrínseca aparece como objeto `Metadata` ni recibe ancla de metadata.
-4. El descriptor `Metadata` expone `~anchor`, `~path` y `~file` y no expone `~metadata`.
-5. `Metadata~path` conserva el path lógico del propietario y `Metadata~file` conserva la procedencia física de la declaración de metadata.
-6. El AST superficial no cambia por esta decisión.
+1. `SemanticMetadata` retains its own anchor.
+2. `thing::game.Person::health~description` is a valid anchor for configured metadata.
+3. No intrinsic property appears as a `Metadata` object or receives a metadata anchor.
+4. The `Metadata` descriptor exposes `~anchor`, `~path` and `~file` and does not expose `~metadata`.
+5. `Metadata~path` retains the owner's logical path and `Metadata~file` retains the physical provenance of the metadata declaration.
+6. The superficial AST does not change because of this decision.

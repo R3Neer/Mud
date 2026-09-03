@@ -1,61 +1,61 @@
 ---
 id: D-097
-title: "HIR nominal vigente e IR semántico diferido"
+title: "Current nominal HIR and deferred semantic IR"
 status: current
 date: 2026-08-28
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "pipeline, resolución nominal, HIR nominal, tipado, elaboración, futura representación semántica, capítulo 09, validadores y artefactos mecánicos"
+  - "pipeline, nominal resolution, nominal HIR, typing, elaboration, future semantic representation, chapter 09, validators and mechanical artefacts"
 ---
 
-# ADR-097 — HIR nominal vigente e IR semántico diferido
+# ADR-097 — Current nominal HIR and deferred semantic IR
 
-- Modifica: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
-- Precisa la frontera de fases usada por [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]].
+- Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Clarifies the phase boundary used by [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]].
 
-## Contexto
+## Context
 
-La arquitectura de MUD distingue correctamente el AST superficial, la resolución nominal y las fases posteriores de tipado y elaboración. Sin embargo, el repositorio había fijado un esquema ASDL detallado para la salida semántica posterior antes de disponer de una especificación desarrollada del sistema de tipos y de la elaboración que deberían producirla. Eso convertía decisiones todavía futuras sobre representación interna en un contrato normativo prematuro.
+MUD's architecture correctly distinguishes the superficial AST, nominal resolution and the later typing and elaboration phases. However, the repository had fixed a detailed ASDL schema for the later semantic output before a developed specification of the type system and elaboration that should produce it was available. This turned still-future decisions about internal representation into a premature normative contract.
 
-La resolución nominal sí está suficientemente delimitada: nombres, scopes, símbolos, bindings, anclas y las relaciones nominales de propiedad, especialización y referencia pueden definirse sin resolver tipos efectivos ni semántica dinámica.
+Nominal resolution is sufficiently delimited: names, scopes, symbols, bindings, anchors and the nominal relations of ownership, specialisation and reference can be defined without resolving effective types or dynamic semantics.
 
-## Decisión
+## Decision
 
-MUD mantiene actualmente dos representaciones normativas en la cadena de frontend:
+MUD currently maintains two normative representations in the frontend chain:
 
-1. el AST superficial de `specification/syntax/mud-surface-ast.asdl`;
-2. el HIR nominal producido por resolución de nombres, en `specification/names/mud-nominal-hir.asdl`.
+1. the Surface AST in `specification/syntax/mud-surface-ast.asdl`;
+2. the Nominal HIR produced by name resolution in `specification/names/mud-nominal-hir.asdl`.
 
-El HIR nominal contiene únicamente información justificable por resolución nominal. Su grafo admite propiedad, especialización y referencia nominal. No contiene tipos efectivos, dominios efectivos, cardinalidades inferidas, conversiones elaboradas, efectos, dependencias semánticas ni evidencia de terminación.
+The nominal HIR contains only information justifiable by nominal resolution. Its graph admits ownership, specialisation and nominal reference. It contains no effective types, effective domains, inferred cardinalities, elaborated conversions, effects, semantic dependencies or termination evidence.
 
-El tipado y la elaboración siguen siendo fases arquitectónicas posteriores y podrán producir una representación semántica propia. Esa representación se denomina de forma conceptual **IR semántico futuro**, pero MUD no fija todavía:
+Typing and elaboration remain later architectural phases and may produce their own semantic representation. That representation is conceptually called **future semantic IR**, but MUD does not yet fix:
 
-- un archivo ASDL para ella;
-- un esquema de serialización;
-- nombres concretos de nodos o aristas;
-- una `schemaVersion` actual;
-- qué información derivada debe almacenarse materialmente frente a reconstruirse.
+- an ASDL file for it;
+- a serialisation schema;
+- concrete node or edge names;
+- a current `schemaVersion`;
+- which derived information must be stored materially rather than reconstructed.
 
-El catálogo conceptual de D-051 pasa a ser un conjunto de requisitos que deberá revisarse cuando exista una superficie desarrollada de tipado y elaboración suficiente para diseñar esa representación. No obliga a mantener hoy un esquema mecánico anticipado.
+The conceptual catalogue from D-051 becomes a set of requirements to be reviewed when a sufficiently developed typing and elaboration surface exists to design that representation. It does not require maintaining an anticipated mechanical schema today.
 
-El directorio genérico `specification/ir/` deja de ser una superficie normativa. El HIR nominal se ubica junto a la resolución de nombres en `specification/names/`.
+The generic `specification/ir/` directory is no longer a normative surface. The nominal HIR is located alongside name resolution in `specification/names/`.
 
-Todo cambio futuro que introduzca o modifique nombres, scopes, propietarios, bindings, categorías nominales, anclas, visibilidad nominal o especialización debe revisar en el mismo cambio el capítulo 09 y el HIR nominal, conforme a MUD-EDIT-004.
+Every future change that introduces or modifies names, scopes, owners, bindings, nominal categories, anchors, nominal visibility or specialisation must review chapter 09 and the nominal HIR in the same change, in accordance with MUD-EDIT-004.
 
-## Consecuencias
+## Consequences
 
-- Ningún validador puede exigir la existencia de `mud-semantic-ir.asdl`.
-- Ningún documento de la especificación actual presenta como existente un contrato posterior a tipado y elaboración.
-- El HIR nominal continúa siendo un contrato mecánico normativo y reconstruible desde AST superficial + reglas de resolución.
-- Las decisiones que necesitan una distinción semántica posterior pueden conservarla como requisito de elaboración futura sin fijar por adelantado su codificación.
-- Diseñar el futuro IR requerirá integrar las superficies de tipos y elaboración que existan entonces y podrá adoptar una estructura distinta a cualquier esquema experimental previo.
+- No validator may require `mud-semantic-ir.asdl` to exist.
+- No current specification document presents a post-typing and elaboration contract as existing.
+- The nominal HIR remains a normative mechanical contract reconstructible from the superficial AST and resolution rules.
+- Decisions requiring a later semantic distinction may retain it as a future elaboration requirement without fixing its encoding in advance.
+- Designing the future IR will require integrating the typing and elaboration surfaces that exist then and may adopt a structure different from any previous experimental schema.
 
-## Verificación
+## Verification
 
-1. `specification/ir/` no existe.
-2. `specification/names/mud-nominal-hir.asdl` existe y solo modela información nominal.
-3. Los validadores no requieren ningún IR semántico actual.
-4. El pipeline documental distingue HIR nominal vigente de representación semántica futura todavía no formalizada.
-5. Los cambios que afecten resolución nominal tienen una obligación editorial explícita de revisar capítulo 09 + HIR nominal.
+1. `specification/ir/` does not exist.
+2. `specification/names/mud-nominal-hir.asdl` exists and models only nominal information.
+3. Validators require no current semantic IR.
+4. The documentation pipeline distinguishes the current nominal HIR from the future semantic representation, which is not yet formalised.
+5. Changes affecting nominal resolution have an explicit editorial obligation to review chapter 09 and the nominal HIR.

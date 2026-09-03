@@ -1,63 +1,63 @@
 ---
 id: D-103
-title: "Capacidad interior en valores derivados"
+title: "Inner capability in derived values"
 status: current
 date: 2026-08-29
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "colecciones, valores derivados, capacidad interior, identidad semántica y elaboración"
+  - "collections, derived values, inner capability, semantic identity and elaboration"
 ---
-# ADR-103 — Capacidad interior en valores derivados
+# ADR-103 — Inner capability in derived values
 
-- Modifica: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] y [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
-- Se apoya en la forma de colecciones derivadas de [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]] y conserva sin cambios las reglas algebraicas de propagación de `mut` de [[ADR-039-collections-and-dictionaries|D-039]].
+- Modifies: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Relies on the derived collection form from [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]] and leaves D-039's algebraic `mut` propagation rules unchanged.
 
-## Contexto
+## Context
 
-Todo valor MUD denota una colección. La capacidad interior `[mut]` es distinta de la mutabilidad exterior del lugar que almacena una colección y solo tiene efecto sobre `thing` miembros inmediatos. Las formas derivadas ya podían declarar cardinalidad y modificadores, pero coexistían formulaciones incompatibles sobre si una vista podía conceder capacidad interior ausente en su origen.
+Every MUD value denotes a collection. Inner `[mut]` capability is distinct from the outer mutability of the place storing a collection and affects only immediate `thing` members. Derived forms could already declare cardinality and modifiers, but incompatible formulations coexisted about whether a view could grant inner capability absent from its source.
 
-## Decisión
+## Decision
 
-### Cardinalidad derivada
+### Derived cardinality
 
-Una declaración derivada de cardinalidad `[n]` produce una única colección cuyo resultado debe tener exactamente `n` miembros después de las transformaciones aplicables. Una lista de expresiones separadas por comas construye los miembros exteriores de esa colección. Una expresión que produzca otra colección ocupa un miembro y no se aplana implícitamente.
+A derived cardinality declaration `[n]` produces a single collection whose result must have exactly `n` members after applicable transformations. A comma-separated list of expressions constructs that collection's outer members. An expression producing another collection occupies one member and is not implicitly flattened.
 
-### Capacidad interior
+### Inner capability
 
-`[mut]` es una garantía de la colección, no mutabilidad exterior de su pertenencia. En una forma derivada actúa como obligación de capacidad: solo puede satisfacerse cuando el valor de origen ya proporciona la autoridad necesaria y las transformaciones conservan la identidad semántica de las mismas `thing`. La forma derivada nunca fabrica autoridad.
+`[mut]` is a collection guarantee, not outer mutability of its contents. In a derived form it acts as a capability requirement: it can be satisfied only when the source value already provides the necessary authority and transformations preserve the semantic identity of the same `thing` values. The derived form never manufactures authority.
 
-La capacidad se razona como garantía de la colección resultante, no como un mapa superficial de permisos por ocurrencia. Una transformación puede conservarla cuando el resultado sigue conteniendo las mismas identidades semánticas con autoridad suficiente. Filtrado, selección, `take`, indexación, secciones, deduplicación, reordenación y cambios de vista nominal son operaciones preservadoras cuando cumplen esa condición. Una proyección o cálculo que produce otros valores no conserva la capacidad de la entidad de origen.
+Capability is reasoned about as a guarantee of the resulting collection, not as a superficial permission map per occurrence. A transformation may preserve it when the result still contains the same semantic identities with sufficient authority. Filtering, selection, `take`, indexing, slicing, deduplication, reordering and nominal view changes are preserving operations when they meet that condition. A projection or calculation producing other values does not preserve the source entity's capability.
 
-### Álgebra de colecciones
+### Collection algebra
 
-Esta decisión no sustituye las reglas específicas de propagación de capacidad interior del álgebra de colecciones. `|`, `&`, `--` y `^` conservan exactamente las reglas fijadas por D-039, incluida la capacidad que una intersección puede obtener de uno de sus operandos y la que una diferencia conserva desde su operando izquierdo.
+This decision does not replace the collection algebra's specific inner-capability propagation rules. `|`, `&`, `--` and `^` retain exactly the rules fixed by D-039, including the capability an intersection may obtain from one operand and the capability a difference retains from its left operand.
 
-### Contenedores anidados
+### Nested containers
 
-`[mut]` no es recursivo. Solo alcanza a las `thing` que sean miembros inmediatos de la colección calificada. No atraviesa aliases, estructuras ni otros contenedores y no concede mutabilidad exterior a una colección que aparezca como miembro de otra colección.
+`[mut]` is not recursive. It reaches only `thing` values that are immediate members of the qualified collection. It does not cross aliases, structures or other containers and does not grant outer mutability to a collection appearing as a member of another collection.
 
-Cuando el tipo efectivo de miembro no contiene valores con estado modificable, `[mut]` sigue siendo legal conforme a la política general de capacidad inoperante, pero no habilita ninguna escritura adicional.
+When the effective member type contains no values with modifiable state, `[mut]` remains legal under the general inoperative-capability policy, but it enables no additional writes.
 
-## Consecuencias
+## Consequences
 
-- Una colección derivada nunca posee mutabilidad exterior por declarar `[mut]`.
-- Una derivada `[n mut]` combina una obligación de cardinalidad con una obligación de capacidad sobre sus `thing` miembros inmediatos.
-- Una vista que conserve identidad semántica puede conservar capacidad ya disponible, pero no crearla.
-- Una proyección o cálculo que produzca valores distintos pierde la capacidad de las entidades de origen.
-- Las colecciones anidadas mantienen sus propios ejes de mutabilidad; el `[mut]` de la colección exterior no vuelve exteriormente mutable una colección interior.
-- El álgebra de multiconjuntos mantiene sus reglas especializadas de D-039 y no se reduce a una regla binaria uniforme.
+- A derived collection never has outer mutability merely by declaring `[mut]`.
+- A `[n mut]` derived form combines a cardinality requirement with a capability requirement on its immediate `thing` members.
+- A view that preserves semantic identity may retain already available capability, but cannot create it.
+- A projection or calculation producing different values loses the source entities' capability.
+- Nested collections retain their own mutability axes; outer `[mut]` does not make an inner collection externally mutable.
+- Multiset algebra retains D-039's specialised rules and is not reduced to a uniform binary rule.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-Se descarta que una vista derivada conceda capacidad interior ausente en su fuente, que `[mut]` atraviese contenedores o se convierta en mutabilidad exterior de una colección anidada, y que esta decisión reemplace las reglas de propagación algebraica ya fijadas para operaciones de colecciones.
+It is rejected that a derived view should grant inner capability absent from its source, that `[mut]` should cross containers or become outer mutability of a nested collection, or that this decision should replace the algebraic propagation rules already fixed for collection operations.
 
-## Verificación
+## Verification
 
-1. Una forma derivada `[mut]` solo se acepta cuando el origen y las transformaciones pueden garantizar la capacidad requerida.
-2. Selección, `take`, indexación, secciones, deduplicación, ordenación y cambios de vista preservan capacidad cuando conservan identidad semántica y autoridad.
-3. Proyecciones y cálculos que producen otros valores no fabrican ni conservan por ese hecho la capacidad de la `thing` de origen.
-4. D-039 conserva literalmente sus reglas de propagación de `mut` para `|`, `&`, `--` y `^`.
-5. `[mut]` no vuelve escribible una colección derivada ni una colección anidada que sea miembro de otra.
-6. Una lista derivada conserva su cardinalidad exterior y no aplana colecciones usadas como miembros.
+1. A derived `[mut]` form is accepted only when the source and transformations can guarantee the required capability.
+2. Selection, `take`, indexing, slicing, deduplication, ordering and view changes preserve capability when they preserve semantic identity and authority.
+3. Projections and calculations producing other values do not thereby manufacture or preserve the source `thing`'s capability.
+4. D-039 literally retains its `mut` propagation rules for `|`, `&`, `--` and `^`.
+5. `[mut]` does not make a derived collection or a nested collection that is another collection's member writable.
+6. A derived list retains its outer cardinality and does not flatten collections used as members.

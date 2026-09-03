@@ -1,6 +1,6 @@
 ---
 id: D-104
-title: "Inglés británico para la migración editorial"
+title: "British English for the editorial migration"
 status: current
 date: 2026-09-02
 supersedes: []
@@ -11,51 +11,50 @@ affects:
   - "README.md"
   - "LICENSE"
   - "TRADEMARKS.md"
-  - "migración integral del contenido y de las rutas al inglés"
+  - "complete migration of content and paths to English"
 ---
 
-# ADR-104 — Inglés británico para la migración editorial
+# ADR-104 — British English for the editorial migration
 
-## Contexto
+## Context
 
-Mud comienza una migración editorial integral del español al inglés. Los
-primeros documentos públicos en inglés y el glosario temporal ya establecen
-parte del vocabulario que utilizará esa migración.
+Mud is beginning a complete editorial migration from Spanish to English. The
+first public documents in English and the temporary glossary already establish
+some of the vocabulary that the migration will use.
 
-Sin una variedad de referencia, las traducciones independientes pueden mezclar
-grafías y formas equivalentes, haciendo que el repositorio parezca incoherente
-y que el glosario deje de ser una fuente fiable.
+Without a reference variety, independent translations may mix spellings and
+equivalent forms, making the repository appear inconsistent and causing the
+glossary to cease being a reliable source.
 
-## Decisión
+## Decision
 
-El inglés británico será la variedad canónica de toda la migración editorial de
-Mud. La decisión se aplica al texto visible, títulos, metadatos traducidos,
-glosarios, documentación pública y futuros nombres de archivo o carpeta que
-sean palabras naturales.
+British English will be the canonical variety for Mud's entire editorial
+migration. This decision applies to visible text, titles, translated metadata,
+glossaries, public documentation and future file or folder names that are
+natural words.
 
-En particular, se preferirán sistemáticamente formas como *behaviour*,
-*modelling*, *materialisation*, *normalisation*, *stabilisation*,
-*organisation* y *authorisation*.
+In particular, forms such as *behaviour*, *modelling*, *materialisation*,
+*normalisation*, *stabilisation*, *organisation* and *authorisation* will be
+preferred consistently.
 
-Los identificadores, construcciones de Mud, extensiones, formatos,
-dependencias, comandos, nombres propios externos y rutas sujetas a un contrato
-técnico conservarán su grafía establecida. `LICENSE`, por ejemplo, sigue siendo
-el nombre convencional del archivo aunque el sustantivo en la prosa sea
-*licence*.
+Identifiers, Mud constructs, extensions, formats, dependencies, commands,
+external proper names and paths subject to a technical contract will retain
+their established spelling. `LICENSE`, for example, remains the conventional
+file name even though the noun in prose is *licence*.
 
-## Consecuencias
+## Consequences
 
-- El glosario temporal fija las formas británicas y las traducciones futuras
-  deben consultarlo antes de automatizarse o revisarse.
-- Los documentos ingleses ya publicados se corrigen para no introducir una
-  excepción inicial.
-- La revisión de cada lote de traducción debe detectar y resolver grafías
-  estadounidenses accidentales, salvo en los elementos técnicos excluidos.
-- Esta decisión no modifica la sintaxis de Mud ni traduce texto dentro de
-  bloques de código o identificadores que formen parte de la especificación.
+- The temporary glossary fixes the British forms, and future translations must
+  consult it before being automated or reviewed.
+- Already published English documents are corrected so as not to introduce an
+  initial exception.
+- Each translation batch review must detect and resolve accidental American
+  spellings, except in the excluded technical elements.
+- This decision does not modify Mud syntax or translate text inside code blocks
+  or identifiers that form part of the specification.
 
-## Alternativas consideradas
+## Alternatives considered
 
-- Inglés estadounidense: descartado por preferencia editorial del autor.
-- Mezclar variantes según el documento o el traductor: descartado porque
-  debilita la consistencia que debe garantizar el glosario.
+- American English: rejected because of the author's editorial preference.
+- Mixing variants by document or translator: rejected because it weakens the
+  consistency that the glossary must guarantee.

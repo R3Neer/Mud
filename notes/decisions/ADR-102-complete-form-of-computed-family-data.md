@@ -1,6 +1,6 @@
 ---
 id: D-102
-title: "Forma completa de datos calculados de family"
+title: "Complete form of computed family data"
 status: current
 date: 2026-08-29
 supersedes: []
@@ -8,33 +8,33 @@ superseded-by: []
 questions:
   - "Q-061"
 affects:
-  - "family, datos calculados, forma derivada, gramática, CST y AST superficial"
+  - "family, computed data, derived form, grammar, CST and superficial AST"
 ---
-# ADR-102 — Forma completa de datos calculados de family
+# ADR-102 — Complete form of computed family data
 
-- Resuelve: [[notes/questions/Q-061-f-declarable-form-of-computed-family-data|Q-061]].
-- Modifica: [[ADR-038-close-knit-families-with-strong-values|D-038]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
-- Aplica a los datos calculados de `family` la forma derivada de [[ADR-037-fields-and-declarative-domains|D-037]].
+- Resolves: [[notes/questions/Q-061-f-declarable-form-of-computed-family-data|Q-061]].
+- Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]] and [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
+- Applies the derived form from [[ADR-037-fields-and-declarative-domains|D-037]] to computed `family` data.
 
-## Contexto
+## Context
 
-Los datos calculados de `family` ya se representaban en EBNF y AST con `derived-value-shape`, mientras D-038 conservaba una excepción más estrecha que solo pretendía admitir tipo opcional y excluía dominio y forma colectiva. Q-061 aisló esa divergencia.
+Computed `family` data was already represented in EBNF and the AST with `derived-value-shape`, while D-038 retained a narrower exception that only intended to admit an optional type and excluded domain and collection form. Q-061 isolated that divergence.
 
-## Decisión
+## Decision
 
-Un dato calculado de `family` usa la misma forma declarable completa que un campo calculado:
+Computed `family` data uses the same complete declarable form as a computed field:
 
 ```text
 nombre [forma-derivada] := value-body
 ```
 
-`forma-derivada` es el `derived-value-shape` ordinario: puede fijar un `type-expression`, declarar un dominio con forma de colección opcional o declarar directamente una forma de colección. Si no fija tipo, el tipo debe inferirse unívocamente.
+`derived-form` is the ordinary `derived-value-shape`: it may fix a `type-expression`, declare a domain with an optional collection form, or declare a collection form directly. If it does not fix a type, the type must be inferred uniquely.
 
-El dato calculado continúa siendo inmutable, no posee almacenamiento propio, no admite `mut` exterior, no tiene predeterminado almacenado y no puede ser destino de una asignación de miembro. La forma derivada describe y, donde corresponda, coacciona el valor producido; no convierte el dato en un slot escribible.
+Computed data remains immutable, has no storage of its own, does not admit outer `mut`, has no stored default, and cannot be the target of a member assignment. The derived form describes and, where appropriate, coerces the produced value; it does not turn the data into a writable slot.
 
-Tipo explícito, dominio, cardinalidad, `unique` y orden reutilizan exactamente la semántica general de campos calculados de D-037. Una forma derivada no puede fabricar capacidad interior `[mut]` ni otra autoridad ausente en el valor de origen.
+Explicit type, domain, cardinality, `unique` and order reuse exactly the general semantics of D-037's computed fields. A derived form cannot manufacture inner `[mut]` capability or any other authority absent from the source value.
 
-El RHS admite la expresión breve o el `ValueBlock` ya definido para datos calculados de `family`; esta decisión no modifica su contrato de pureza ni su evaluación estática por miembro.
+The RHS admits the short expression or the `ValueBlock` already defined for computed `family` data; this decision does not modify its purity contract or its static per-member evaluation.
 
 ## Ejemplos
 
@@ -49,24 +49,24 @@ family Tier {
 }
 ```
 
-Las tres declaraciones son calculadas e inmutables. Las formas escritas restringen o normalizan el resultado conforme al contrato ordinario de `derived-value-shape`.
+All three declarations are computed and immutable. The written forms constrain or normalise the result according to the ordinary `derived-value-shape` contract.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Limitar los datos calculados de `family` a `[: tipo]`
+### Limit computed `family` data to `[: type]`
 
-Descartado. Introduciría una excepción sin diferencia de mutabilidad o almacenamiento que la justifique y perdería las coerciones declarativas disponibles en otros campos calculados.
+Rejected. It would introduce an exception without a mutability or storage difference to justify it and lose the declarative coercions available in other computed fields.
 
-## Consecuencias
+## Consequences
 
-- Q-061 queda cerrada.
-- La EBNF vigente no necesita cambiar: ya usa `[ derived-value-shape ]`.
-- `CalculatedFamilyDataDecl` conserva definitivamente `derived_value_shape? shape`; deja de ser una representación provisional.
-- La gramática, CST y AST de `family` quedan alineados con la forma general de campo calculado.
+- Q-061 is closed.
+- The current EBNF needs no change: it already uses `[ derived-value-shape ]`.
+- `CalculatedFamilyDataDecl` definitively retains `derived_value_shape? shape`; it is no longer a provisional representation.
+- The grammar, CST and AST for `family` are aligned with the general computed-field form.
 
-## Verificación
+## Verification
 
-1. Un dato calculado de `family` acepta tipo explícito, dominio o forma de colección mediante `derived-value-shape`.
-2. La forma sigue rechazando `mut` exterior y no crea almacenamiento.
-3. La EBNF y `CalculatedFamilyDataDecl` conservan la forma derivada completa.
-4. Q-061 desaparece de las superficies normativas como cuestión activa.
+1. Computed `family` data accepts an explicit type, domain or collection form through `derived-value-shape`.
+2. The form continues to reject outer `mut` and creates no storage.
+3. The EBNF and `CalculatedFamilyDataDecl` retain the complete derived form.
+4. Q-061 disappears from normative surfaces as an active question.

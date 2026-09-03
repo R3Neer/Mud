@@ -1,34 +1,34 @@
 ---
 id: D-083
-title: "Magnitudes base sin unidades"
+title: "Unitless base quantities"
 status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "magnitudes, tipos, conversiones cuantitativas, plantillas `Text` y frontera pública"
+  - "magnitudes, types, quantitative conversions, `Text` templates and public boundary"
 ---
-# ADR-083 — Magnitudes base sin unidades
+# ADR-083 — Unitless base quantities
 
-- Modificada por: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
-- Modifica: [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]], [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]] y [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]].
-- Documentos afectados: magnitudes, tipos, conversiones cuantitativas, plantillas `Text` y frontera pública.
+- Modified by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Modifies: [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]], [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]].
+- Affected documents: magnitudes, types, quantitative conversions, `Text` templates and public boundary.
 
-## Contexto
+## Context
 
-La gramática y el AST ya permitían omitir `root unit` en una magnitud base, y `Probability` aparecía como ejemplo normativo. Sin embargo, las reglas de presentación y de campos públicos suponían después que toda magnitud lineal poseía una unidad raíz o una composición de unidades raíz. Quedaba sin fijar si la omisión era deliberada, cómo se construía un valor así y si perder la escritura de unidad eliminaba también su identidad dimensional.
+The grammar and AST already allowed `root unit` to be omitted from a base magnitude, and `Probability` appeared as a normative example. However, presentation and public-field rules then assumed that every linear magnitude had a root unit or a composition of root units. It remained undefined whether the omission was deliberate, how such a value was constructed, and whether losing unit notation also removed its dimensional identity.
 
-Exigir una unidad raíz obligaría a inventar etiquetas ceremoniales para cantidades como probabilidad, opacidad o dificultad. Tratar todas ellas como el mismo número adimensional, por otra parte, perdería la separación nominal que justifica declararlas como magnitudes diferentes.
+Requiring a root unit would force ceremonial labels for quantities such as probability, opacity or difficulty. Treating all of them as the same dimensionless number, on the other hand, would lose the nominal separation that justifies declaring them as different magnitudes.
 
-## Decisión
+## Decision
 
-### Declaración
+### Declaration
 
-Una magnitud base declara una de estas dos formas:
+A base magnitude declares one of these two forms:
 
-1. **Con unidades**: contiene exactamente una `root unit` y puede contener unidades alternativas.
-2. **Sin unidades**: su cuerpo está vacío y no puede contener unidades alternativas.
+1. **With units**: it contains exactly one `root unit` and may contain alternative units.
+2. **Unitless**: its body is empty and it cannot contain alternative units.
 
 ```mud
 magnitude Probability: Num in [0..1] {}
@@ -38,83 +38,83 @@ magnitude Length: Num in [0..*] {
 }
 ```
 
-La ausencia de `root unit` es una elección semántica completa, no una unidad anónima ni una declaración incompleta.
+The absence of `root unit` is a complete semantic choice, not an anonymous unit or an incomplete declaration.
 
-### Identidad cuantitativa
+### Quantitative identity
 
-Una magnitud base sin unidades conserva una dimensión nominal independiente. No se identifica con su representación numérica ni con otra magnitud sin unidades:
+A unitless base magnitude retains an independent nominal dimension. It is not identified with its numeric representation or with another unitless magnitude:
 
 ```mud
 magnitude Probability: Num in [0..1] {}
 magnitude Opacity: Num in [0..1] {}
 ```
 
-`Probability`, `Opacity` y `Num` continúan siendo tipos distintos y no se convierten implícitamente entre sí. La ausencia de unidad visible tampoco significa que el factor desaparezca del álgebra dimensional. Una multiplicación o división conserva el factor nominal de la magnitud y la normalización no lo confunde con el elemento neutro dimensional.
+`Probability`, `Opacity` and `Num` remain distinct types and are not implicitly converted between one another. The absence of a visible unit does not mean that the factor disappears from dimensional algebra. A multiplication or division retains the magnitude's nominal factor, and normalisation does not confuse it with the dimensional identity element.
 
-La representación interna de una dimensión distingue, por tanto, sus factores nominales de su **proyección de unidades**. Los factores cuyas magnitudes poseen unidad raíz contribuyen a esa proyección; los factores sin unidades permanecen en la dimensión, pero no producen texto de unidad. Dos dimensiones con la misma proyección visible pueden seguir siendo incompatibles.
+The internal representation of a dimension therefore distinguishes its nominal factors from its **unit projection**. Factors whose magnitudes have a root unit contribute to that projection; unitless factors remain in the dimension but produce no unit text. Two dimensions with the same visible projection may still be incompatible.
 
-### Construcción y conversión
+### Construction and conversion
 
-Un literal numérico desnudo puede elaborarse como una magnitud sin unidades cuando el contexto esperado determina una única magnitud:
+A bare numeric literal may be elaborated as a unitless magnitude when the expected context determines a single magnitude:
 
 ```mud
 chance: Probability = 0.75
 ```
 
-Sin ese contexto, el literal conserva un tipo numérico básico. Una expresión numérica ordinaria no adquiere implícitamente una magnitud. La materialización explícita usa `to`:
+Without that context, the literal retains a basic numeric type. An ordinary numeric expression does not implicitly acquire a magnitude. Explicit materialisation uses `to`:
 
 ```mud
 chance := ratio to Probability
 ```
 
-Esta rama de `to` exige una representación numérica compatible y comprueba el dominio de destino. No autoriza convertir una magnitud nominal distinta solo porque ambas carezcan de unidad.
+This branch of `to` requires a compatible numeric representation and checks the target domain. It does not authorise converting a different nominal magnitude merely because both are unitless.
 
-Una cantidad que escribe una unidad, como `5 m`, adquiere únicamente los factores determinados por esa unidad. El contexto no añade factores sin unidad de manera silenciosa. Esos factores deben proceder de un operando ya tipado o de una conversión explícita válida.
+A quantity that writes a unit, such as `5 m`, acquires only the factors determined by that unit. The context does not silently add unitless factors. Those factors must come from an already typed operand or a valid explicit conversion.
 
-### Presentación
+### Presentation
 
-La forma canónica de una magnitud base sin unidades es la forma canónica de su valor numérico, sin sufijo ni espacio final:
+The canonical form of a unitless base magnitude is the canonical form of its numeric value, without a suffix or trailing space:
 
 ```mud
 chance: Probability = 0.75
 text := "Chance: {chance}"  # Chance: 0.75
 ```
 
-En una magnitud derivada, la presentación canónica escribe la proyección de unidades de su dimensión. Los factores procedentes de magnitudes sin unidades conservan su significado estático, pero no añaden una etiqueta visible. Si la proyección es vacía, se escribe solo el número.
+For a derived magnitude, canonical presentation writes the unit projection of its dimension. Factors from unitless magnitudes retain their static meaning but add no visible label. If the projection is empty, only the number is written.
 
-El operador de presentación `in` no puede aplicarse a una magnitud base sin unidades. Sobre una magnitud derivada puede cambiar la proyección expresable mediante unidades sin retirar ni sustituir sus factores nominales sin unidad.
+The presentation operator `in` cannot be applied to a unitless base magnitude. On a derived magnitude it may change the projection expressible through units without removing or replacing its unitless nominal factors.
 
-Un campo público cuyo valor directo sea una magnitud sin unidades no recibe el aviso por omitir `in`: no existe una decisión de unidad que hacer explícita. La regla ordinaria de aviso continúa aplicándose cuando la magnitud sí admite una presentación mediante unidades.
+A public field whose direct value is a unitless magnitude does not receive the warning for omitting `in`: there is no unit choice to make explicit. The ordinary warning rule continues to apply when the magnitude does admit presentation through units.
 
-## Alternativas
+## Alternatives
 
-### Exigir siempre una unidad raíz
+### Always require a root unit
 
-Se rechaza porque convertiría etiquetas como `probability` o `scorePoint` en ceremonia obligatoria y haría menos natural la escritura habitual de esas cantidades.
+Rejected because it would make labels such as `probability` or `scorePoint` mandatory ceremony and make the usual notation of those quantities less natural.
 
-### Tratar la ausencia de unidad como dimensión neutra
+### Treat unit absence as the neutral dimension
 
-Se rechaza porque haría compatibles por dimensión magnitudes nominalmente distintas como `Probability` y `Opacity`, y borraría factores al participar en expresiones derivadas.
+Rejected because it would make nominally distinct magnitudes such as `Probability` and `Opacity` dimensionally compatible, and would erase factors when they participate in derived expressions.
 
-### Usar aliases en todos los casos sin unidad
+### Use aliases for every unitless case
 
-Se rechaza como obligación. Un alias sigue siendo apropiado para envolver datos sin semántica cuantitativa dimensional, pero una magnitud sin unidades conserva dominios, representación numérica y participación en el álgebra de magnitudes.
+Rejected as an obligation. An alias remains appropriate for wrapping data without quantitative dimensional semantics, but a unitless magnitude retains domains, numeric representation and participation in magnitude algebra.
 
-## Consecuencias
+## Consequences
 
-- La opcionalidad de `root_unit` en `BaseMagnitudeDecl` es semántica e intencionada.
-- El resolvedor dimensional debe conservar factores nominales aunque no tengan forma de unidad.
-- La presentación de una dimensión es una proyección y no determina por sí sola su identidad.
-- Los diagnósticos de API solo sugieren `in` cuando existe una unidad seleccionable.
-- Una implementación no puede inventar una unidad sintética observable para completar una magnitud sin unidades.
+- The optionality of `root_unit` in `BaseMagnitudeDecl` is semantic and intentional.
+- The dimensional resolver must retain nominal factors even when they have no unit form.
+- Presentation of a dimension is a projection and does not by itself determine its identity.
+- API diagnostics suggest `in` only when a selectable unit exists.
+- An implementation cannot invent an observable synthetic unit to complete a unitless magnitude.
 
-## Verificación
+## Verification
 
-1. Aceptación de una magnitud base con cuerpo vacío y rechazo de unidades alternativas sin raíz.
-2. Elaboración contextual de `0.75` como `Probability` y conservación numérica sin contexto.
-3. Materialización explícita `ratio to Probability`, incluida la comprobación de dominio.
-4. Rechazo de conversión implícita entre dos magnitudes sin unidades.
-5. Conservación del factor nominal sin unidad en productos y cocientes derivados.
-6. Renderización sin sufijo de una magnitud cuya proyección de unidades sea vacía.
-7. Ausencia de aviso de unidad en un campo público de magnitud sin unidades.
-8. Rechazo de `chance in unit` para una magnitud base sin unidades.
+1. Acceptance of a base magnitude with an empty body and rejection of alternative units without a root.
+2. Contextual elaboration of `0.75` as `Probability` and numeric retention without context.
+3. Explicit materialisation `ratio to Probability`, including domain checking.
+4. Rejection of implicit conversion between two unitless magnitudes.
+5. Retention of the unitless nominal factor in derived products and quotients.
+6. Rendering without a suffix of a magnitude whose unit projection is empty.
+7. Absence of a unit warning on a public field of a unitless magnitude.
+8. Rejection of `chance in unit` for a unitless base magnitude.

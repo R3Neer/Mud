@@ -1,50 +1,50 @@
 ---
 id: D-095
-title: "Extremos vacíos como ausencia ordinaria"
+title: "Empty extrema as ordinary absence"
 status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "min, max, cuantificadores, empty, cardinalidad, fallos y conformidad"
+  - "min, max, quantifiers, empty, cardinality, failures and conformance"
 ---
-# ADR-095 — Extremos vacíos como ausencia ordinaria
+# ADR-095 — Empty extrema as ordinary absence
 
-- Modifica: [[ADR-047-quantifiers-and-finite-iteration|D-047]].
-- Amplía: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]].
+- Extends: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
+- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-## Contexto
+## Context
 
-D-047 remitía `min` y `max` sobre fuente vacía a un supuesto error especial de agregación vacía que nunca fue definido. MUD ya usa `empty` para representar consultas parciales sin convertir la ausencia en fallo inmediato.
+D-047 referred `min` and `max` over an empty source to a supposed special empty-aggregation error that was never defined. MUD already uses `empty` to represent partial queries without turning absence into an immediate failure.
 
-## Decisión
+## Decision
 
-`min` y `max` sobre una fuente finita, enumerable y ordenada sin candidatos aceptados por su predicado producen `empty` con el tipo miembro de la fuente. Su forma de resultado admite cardinalidad `[0..1]`:
+`min` and `max` over a finite, enumerable and ordered source with no candidates accepted by its predicate produce `empty` with the source's member type. Their result form permits cardinality `[0..1]`:
 
 ```text
 min : T [0..1]
 max : T [0..1]
 ```
 
-Sobre una fuente con al menos un candidato aceptado producen exactamente un valor de tipo `T`: `min`, el primer testigo aceptado; `max`, el último, siempre según el orden semántico de la fuente. El `ExpressionBlock` solo filtra y no calcula un criterio de orden. La operación de extremo no introduce por sí misma `failed`.
+Over a source with at least one accepted candidate they produce exactly one value of type `T`: `min`, the first accepted witness; `max`, the last, always according to the source's semantic order. The `ExpressionBlock` only filters and does not compute an ordering criterion. The extrema operation does not itself introduce `failed`.
 
-Si el contexto receptor exige cardinalidad `[1]`, un resultado `empty` se somete a la comprobación ordinaria de tipo, dominio y cardinalidad y puede producir el mismo fallo normal que cualquier otra ausencia incompatible. No existe una categoría especial de «error de agregación extrema vacía».
+If the receiving context requires cardinality `[1]`, an `empty` result undergoes the ordinary type, domain and cardinality checks and may produce the same normal failure as any other incompatible absence. There is no special category of “empty-extrema aggregation error”.
 
-La cardinalidad estática puede estrecharse cuando el compilador demuestra que existe al menos un candidato aceptado por el predicado; en ausencia de esa prueba debe conservar la posibilidad `[0..1]`.
+Static cardinality may be narrowed when the compiler proves that at least one candidate is accepted by the predicate; without that proof it must retain the possibility `[0..1]`.
 
-## Consecuencias
+## Consequences
 
-- `min` y `max` se comportan como consultas parciales composicionales.
-- una variable `[0..1]` puede recibir directamente un extremo ausente;
-- una variable `[1]` no obliga a la operación de extremo a inventar un error propio: la incompatibilidad se resuelve en el contexto ordinario;
-- desaparece la referencia normativa a un error de agregación vacía inexistente.
+- `min` and `max` behave as compositional partial queries.
+- A `[0..1]` variable can receive an absent extremum directly.
+- A `[1]` variable does not force the extrema operation to invent its own error: the incompatibility is resolved in the ordinary context.
+- The normative reference to a nonexistent empty-aggregation error disappears.
 
-## Verificación
+## Verification
 
-1. `min` y `max` sin testigos aceptados, incluida una fuente no vacía cuyo predicado rechaza todos sus miembros, producen `empty`.
-2. La forma conservadora de resultado es `T [0..1]`.
-3. Una recepción `[0..1]` acepta la ausencia.
-4. Una recepción `[1]` falla por la regla ordinaria de cardinalidad, no por un diagnóstico especial del agregador.
-5. Una prueba de que existe al menos un testigo aceptado puede estrechar el resultado a `[1]`.
+1. `min` and `max` without accepted witnesses, including a non-empty source whose predicate rejects all members, produce `empty`.
+2. The conservative result form is `T [0..1]`.
+3. A `[0..1]` receiving context accepts absence.
+4. A `[1]` receiving context fails under the ordinary cardinality rule, not through a special aggregator diagnostic.
+5. A proof that at least one witness is accepted may narrow the result to `[1]`.

@@ -1,50 +1,50 @@
 ---
 id: D-092
-title: "Disponibilidad estática de propiedades reflectivas"
+title: "Static availability of reflective properties"
 status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "reflexión, metadatos, participantes, resolución nominal, tipado, representación semántica posterior a tipado y elaboración, diagnósticos y tooling"
+  - "reflection, metadata, participants, nominal resolution, typing, post-typing and elaboration semantic representation, diagnostics and tooling"
 ---
 
-# ADR-092 — Disponibilidad estática de propiedades reflectivas
+# ADR-092 — Static availability of reflective properties
 
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
-- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
-- Precisa la terminalidad de `Metadata` conforme a [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
-- Amplía: [[ADR-074-nominal-unions-and-type-narrowing|D-074]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
+- Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Aligned with the phase boundary of [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Clarifies `Metadata` terminality in accordance with [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
+- Extends: [[ADR-074-nominal-unions-and-type-narrowing|D-074]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
-## Contexto
+## Context
 
-La sintaxis postfix `expression~property` debe poder reconocer nombres que son keywords duras, como `for`, `on` y `given`. La regla concreta `metadata-name ::= identifier | "for" | "on" | "given"` permite esa escritura, pero no puede determinar durante el parsing qué categoría denota una expresión receptora.
+The postfix syntax `expression~property` must recognise names that are hard keywords, such as `for`, `on` and `given`. The concrete rule `metadata-name ::= identifier | "for" | "on" | "given"` permits this spelling, but cannot determine during parsing which category a receiver expression denotes.
 
-D-087 decía además que una cláusula ausente produce `empty`. Leída sin la restricción de propietario, esa frase permite interpretar erróneamente que cualquier declaración tiene siempre `~for`, `~on` y `~given`. Eso haría válido, por ejemplo, `thing A; A~for`, aunque una `thing` no posee firma `for`.
+D-087 also stated that an absent clause produces `empty`. Read without the owner restriction, that sentence could be misinterpreted to mean that every declaration always has `~for`, `~on` and `~given`. That would make, for example, `thing A; A~for` valid even though a `thing` has no `for` signature.
 
-## Decisión
+## Decision
 
-La existencia de una propiedad reflectiva se comprueba estáticamente después de resolver y tipar el receptor. Cada propiedad tiene un conjunto de categorías o descriptores propietarios. Si la categoría estática del receptor no garantiza pertenencia a ese conjunto, el acceso es un error estático.
+The existence of a reflective property is checked statically after resolving and typing the receiver. Each property has a set of owning categories or descriptors. If the receiver's static category does not guarantee membership in that set, the access is a static error.
 
-El reconocimiento sintáctico del nombre después de `~` no concede la propiedad. No existe lookup dinámico por nombre, fallback a `empty` ni metadato de usuario implícito para una propiedad no soportada. Un narrowing que haga suficientemente precisa la categoría del receptor puede volver válido un acceso que antes no estaba garantizado.
+Syntactically recognising the name after `~` does not grant the property. There is no dynamic name lookup, fallback to `empty` or implicit user metadata for an unsupported property. Narrowing that makes the receiver's category sufficiently precise may make valid an access that was previously not guaranteed.
 
-Para las propiedades de participantes, la matriz es:
+For participant properties, the matrix is:
 
 | Subcategoría resuelta | `~for` | `~on` | `~given` |
 | --- | --- | --- | --- |
-| `RuleKind.Boolean` | sí | no | sí |
-| `RuleKind.Reactive` | no | sí | no |
-| `RuleKind.Always` | no | sí | no |
-| `ActionKind.Action` | sí | no | sí |
-| `ActionKind.Subaction` | sí | no | sí |
-| `look` | sí | no | sí |
-| `message` | no | sí | no |
-| cualquier otra declaración | no | no | no |
+| `RuleKind.Boolean` | yes | no | yes |
+| `RuleKind.Reactive` | no | yes | no |
+| `RuleKind.Always` | no | yes | no |
+| `ActionKind.Action` | yes | no | yes |
+| `ActionKind.Subaction` | yes | no | yes |
+| `look` | yes | no | yes |
+| `message` | no | yes | no |
+| any other declaration | no | no | no |
 
-La matriz describe capacidad de la subcategoría, no presencia concreta de la cláusula. Cuando una propiedad está soportada y la cláusula opcional fue omitida en esa declaración, el acceso es válido y devuelve `empty` con tipo `Participant [* unique ordered]`. Cuando la cláusula está presente, devuelve sus descriptores en orden de firma.
+The matrix describes subcategory capability, not the concrete presence of the clause. When a property is supported and the optional clause was omitted from that declaration, the access is valid and returns `empty` with type `Participant [* unique ordered]`. When the clause is present, it returns its descriptors in signature order.
 
-Por tanto, este programa alcanza el AST superficial pero contiene un error estático en el acceso reflectivo:
+Therefore, this program reaches the superficial AST but contains a static error in reflective access:
 
 ```mud
 thing A
@@ -54,7 +54,7 @@ rule InvalidForReflection {
 }
 ```
 
-En cambio, una categoría compatible puede omitir la cláusula y producir `empty`:
+By contrast, a compatible category may omit the clause and produce `empty`:
 
 ```mud
 thing A
@@ -68,49 +68,49 @@ rule PingHasNoForParticipants {
 }
 ```
 
-La regla de disponibilidad se aplica también al resto de propiedades reflectivas conforme al conjunto de propietarios de su contrato. Una propiedad cuyo resultado admita ausencia o colección vacía sigue distinguiendo esa ausencia de la inexistencia de la propiedad. En particular, `Metadata` admite su contrato intrínseco, incluidos `~anchor`, `~path` y `~file`, pero no admite `~metadata`: D-094 lo define como descriptor terminal.
+The availability rule also applies to the remaining reflective properties according to their contract's set of owners. A property whose result permits absence or an empty collection still distinguishes that absence from the property's non-existence. In particular, `Metadata` admits its intrinsic contract, including `~anchor`, `~path` and `~file`, but does not admit `~metadata`: D-094 defines it as a terminal descriptor.
 
-## Consecuencias por fase
+## Phase consequences
 
-### Parser y CST
+### Parser and CST
 
-No cambian. Deben aceptar la forma postfix siempre que el nombre sea sintácticamente válido. En particular, `for`, `on` y `given` siguen admitiéndose tras `~` porque son keywords duras.
+They do not change. They must accept the postfix form whenever the name is syntactically valid. In particular, `for`, `on` and `given` remain admitted after `~` because they are hard keywords.
 
-### AST superficial
+### Superficial AST
 
-Conserva `MetadataAccessExpr(receiver, metadata)` aunque el acceso vaya a resultar semánticamente inválido. No posee información suficiente para aplicar la matriz.
+It retains `MetadataAccessExpr(receiver, metadata)` even when the access will prove semantically invalid. It does not have enough information to apply the matrix.
 
-### Resolución y tipado
+### Resolution and typing
 
-Determinan la categoría estática del receptor, aplican narrowing cuando exista y seleccionan el contrato de propiedad. Si ninguna propiedad compatible existe para todos los casos todavía posibles del receptor, emiten error estático. Solo los accesos válidos llegan a elaboración, que determina su tipo de resultado; la representación mecánica posterior todavía no está fijada.
+They determine the receiver's static category, apply narrowing where available and select the property contract. If no compatible property exists for every receiver case still possible, they emit a static error. Only valid accesses reach elaboration, which determines their result type; the later mechanical representation is not yet fixed.
 
-### Ejecución
+### Execution
 
-No realiza búsqueda dinámica para rescatar un acceso inválido. `empty` aparece únicamente como valor de un contrato válido que lo permita.
+It performs no dynamic lookup to rescue an invalid access. `empty` appears only as the value of a valid contract that permits it.
 
-## Casos frontera
+## Boundary cases
 
-- `thing A; A~for` es inválido.
-- Una `action` sin `for` tiene `ActionName~for == empty`.
-- Una regla booleana sin `given` tiene `RuleName~given == empty`.
-- Una regla reactiva sin `on` tiene `RuleName~on == empty`.
-- `ActionName~on` es inválido aunque la acción no tenga participantes.
-- Un receptor estático demasiado amplio debe estrecharse antes de acceder a una propiedad que no esté garantizada por todas sus alternativas posibles.
+- `thing A; A~for` is invalid.
+- An `action` without `for` has `ActionName~for == empty`.
+- A Boolean rule without `given` has `RuleName~given == empty`.
+- A reactive rule without `on` has `RuleName~on == empty`.
+- `ActionName~on` is invalid even if the action has no participants.
+- An overly broad static receiver must be narrowed before accessing a property not guaranteed by all its possible alternatives.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Todas las propiedades de firma existen y las no aplicables devuelven `empty`
+### All signature properties exist and inapplicable ones return `empty`
 
-Descartada porque borra la diferencia entre una categoría que admite una cláusula opcional y otra que carece de ese concepto.
+Rejected because it erases the distinction between a category that admits an optional clause and one that lacks the concept entirely.
 
-### Rechazo durante parsing según el texto del receptor
+### Reject during parsing based on receiver text
 
-Descartada porque el receptor es una expresión general y su categoría se conoce después de resolución; vincular la gramática al nombre textual rompería aliases, references cualificadas y narrowing.
+Rejected because the receiver is a general expression and its category is known only after resolution; tying the grammar to the textual name would break aliases, qualified references and narrowing.
 
-## Verificación
+## Verification
 
-1. La EBNF sigue aceptando `for`, `on` y `given` como `metadata-name`.
-2. `thing A; A~for` produce AST superficial y después error estático de propiedad no soportada.
-3. Una declaración de categoría compatible sin cláusula concreta devuelve `empty`.
-4. `AssignableExpr` no contiene ningún sufijo de metadata.
-5. Tipado y elaboración solo aceptan accesos de metadata compatibles con la categoría estática resuelta y determinan su tipo de resultado.
+1. The EBNF continues to accept `for`, `on` and `given` as `metadata-name`.
+2. `thing A; A~for` produces a superficial AST and then a static unsupported-property error.
+3. A compatible-category declaration without a concrete clause returns `empty`.
+4. `AssignableExpr` contains no metadata suffix.
+5. Typing and elaboration accept only metadata accesses compatible with the resolved static category and determine their result type.

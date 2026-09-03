@@ -1,6 +1,6 @@
 ---
 id: D-080
-title: "Álgebra elevada y actualizaciones de colección"
+title: "Higher algebra and collection updates"
 status: current
 date: 2026-08-04
 supersedes: []
@@ -9,31 +9,31 @@ questions:
   - "Q-006"
   - "Q-019"
 affects:
-  - "colecciones, operadores, efectos, gramática, AST y análisis de cardinalidad"
+  - "collections, operators, effects, grammar, AST and cardinality analysis"
 ---
 
-# ADR-080 — Álgebra elevada y actualizaciones de colección
+# ADR-080 — Higher algebra and collection updates
 
-- Modificada por: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
-- Ampliada por: [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
-- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Extended by: [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
+- Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
-- Modifica: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]] y [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
-- Preguntas relacionadas: [[notes/questions/Q-006-c-conflicts|Q-006]] y [[notes/questions/Q-019-n-numbers|Q-019]].
+- Modifies: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]] and [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
+- Related questions: [[notes/questions/Q-006-c-conflicts|Q-006]] and [[notes/questions/Q-019-n-numbers|Q-019]].
 
-## Contexto
+## Context
 
-Todo campo MUD denota una colección y la cardinalidad omitida equivale a `[1]`. Faltaba determinar cómo reciben los operadores aritméticos esos valores, separar la resta numérica de la diferencia de colecciones y completar las actualizaciones compuestas correspondientes al álgebra de colecciones.
+Every MUD field denotes a collection, and an omitted cardinality is equivalent to `[1]`. It remained necessary to determine how arithmetic operators receive those values, to distinguish numeric subtraction from collection difference, and to complete the compound updates corresponding to collection algebra.
 
-La diferencia simétrica de multiconjuntos definida por diferencia absoluta de multiplicidades tampoco era asociativa. Esa propiedad impedía consolidar `^=` y hacía que una cadena de `^` pareciera poseer las leyes habituales de XOR cuando no las poseía.
+The symmetric difference of multisets defined by absolute multiplicity difference was not associative either. That property prevented `^=` from being consolidated and made a chain of `^` appear to have XOR's usual laws when it did not.
 
-## Decisión
+## Decision
 
-### Elevación aritmética restringida
+### Restricted arithmetic lifting
 
-Los operadores aritméticos binarios `+`, `-`, `*`, `/` y `%` se elevan sobre colecciones cuando al menos uno de los operandos tiene límite superior estático de cardinalidad menor o igual que uno.
+The binary arithmetic operators `+`, `-`, `*`, `/` and `%` are lifted over collections when at least one operand has a static upper cardinality bound less than or equal to one.
 
-Para un operador de miembros `\odot`:
+For a member operator `\odot`:
 
 $$
 A\mathbin{\odot}B
@@ -41,23 +41,23 @@ A\mathbin{\odot}B
 [\,a\mathbin{\odot}b\mid a\in A,\ b\in B\,].
 $$
 
-La colección conserva una ocurrencia por cada pareja de ocurrencias. Si las cardinalidades son $[\ell_A..u_A]$ y $[\ell_B..u_B]$, la cardinalidad anterior a cualquier normalización `unique` es:
+The collection retains one occurrence for each pair of occurrences. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, the cardinality before any `unique` normalisation is:
 
 $$
 [\ell_A\ell_B..u_Au_B].
 $$
 
-Por tanto, `empty` es absorbente: si cualquiera de los operandos está vacío no existe ninguna pareja ni se evalúa una operación de miembros. En particular, `empty / [0]` produce `empty` sin efectuar una división por cero.
+Therefore, `empty` is absorbing: if either operand is empty, no pair exists and no member operation is evaluated. In particular, `empty / [0]` produces `empty` without performing a division by zero.
 
-Dos operandos cuyos límites superiores puedan superar uno no admiten elevación aritmética implícita. MUD no elige silenciosamente entre emparejamiento posicional, producto cartesiano completo, reducción o difusión mutua.
+Two operands whose upper bounds may exceed one do not permit implicit arithmetic lifting. MUD does not silently choose between positional pairing, a full Cartesian product, reduction or mutual broadcasting.
 
-Cuando intervienen uniones, cada pareja posible de alternativas debe admitir el operador de miembros y sus resultados deben formar un tipo unión bien formado. Un estrechamiento previo puede retirar parejas imposibles.
+When unions are involved, every possible pair of alternatives must support the member operator and their results must form a well-formed union type. Prior narrowing may remove impossible pairs.
 
-Si solo un operando puede ser múltiple, el resultado conserva su orden cuando este era observable. `unique` solo se conserva cuando el análisis demuestra que la operación no puede colapsar miembros distintos; en otro caso el resultado conserva multiplicidad ordinaria.
+If only one operand can be multiple, the result preserves its order whenever that order was observable. `unique` is retained only when analysis demonstrates that the operation cannot collapse distinct members; otherwise the result retains ordinary multiplicity.
 
-### Diferencia de colecciones
+### Collection difference
 
-`--` es la diferencia de colecciones. Para cada valor $v$:
+`--` is collection difference. For each value $v$:
 
 $$
 \mu_{A\mathbin{--}B}(v)
@@ -65,7 +65,7 @@ $$
 \max(\mu_A(v)-\mu_B(v),0).
 $$
 
-`-` deja de denotar diferencia de colecciones y queda reservado a la resta aritmética elevada. Así, sobre colecciones unitarias numéricas:
+`-` no longer denotes collection difference and is reserved for lifted arithmetic subtraction. Thus, over unit cardinality numeric collections:
 
 ```text
 [5] -  [3] = [2]
@@ -73,19 +73,19 @@ $$
 [5] -- [5] = empty
 ```
 
-`--` tiene la misma precedencia y asociación izquierda que `+` y `-`. La escritura `a--b` forma un único operador; la resta de un valor negativo se escribe `a - -b` o `a - (-b)`.
+`--` has the same precedence and left associativity as `+` and `-`. The spelling `a--b` forms one operator; subtracting a negative value is written `a - -b` or `a - (-b)`.
 
-### Diferencia simétrica
+### Symmetric difference
 
-`^` y `^=` solo se admiten cuando todos sus operandos efectivos son colecciones `unique`. Conservan entonces la diferencia simétrica ordinaria de conjuntos y sus leyes asociativa, conmutativa e involutiva.
+`^` and `^=` are admitted only when all their effective operands are `unique` collections. They then retain ordinary set symmetric difference and its associative, commutative and involutive laws.
 
-La diferencia absoluta binaria de dos multiconjuntos continúa siendo expresable sin introducir un operador engañosamente asociativo:
+The binary absolute difference of two multisets remains expressible without introducing a misleadingly associative operator:
 
 ```mud
 (left -- right) | (right -- left)
 ```
 
-### Actualizaciones compuestas
+### Compound updates
 
 La gramática admite:
 
@@ -96,45 +96,45 @@ target ^= value
 target --= value
 ```
 
-Una actualización `target op= value` exige que `target` designe directamente un lugar exteriormente mutable o una ruta asignable reconstruible cuyo write-back termina en uno, que `target op value` esté bien tipado y que el resultado sea asignable al tipo efectivo de la hoja. Los aliases inmutables intermedios se reconstruyen sin adquirir mutabilidad propia. La capacidad interior `[mut]` no sustituye la exigencia de una raíz exteriormente escribible.
+An update `target op= value` requires `target` to designate either a directly externally mutable location or a reconstructible assignable path whose write-back terminates at one, that `target op value` be well typed, and that the result be assignable to the leaf's effective type. Intermediate immutable aliases are reconstructed without acquiring mutability of their own. Inner `[mut]` capability does not replace the requirement for an externally writable root.
 
-Dentro de un `then`, la actualización observa el valor proyectado por los efectos secuenciales anteriores del mismo delta privado. No se reduce en el AST a una asignación ordinaria porque su operador determina la consolidación concurrente.
+Within a `then`, the update observes the value projected by the same private delta's preceding sequential effects. It is not reduced in the AST to an ordinary assignment because its operator determines concurrent consolidation.
 
-Las actualizaciones homogéneas sobre un mismo destino se consolidan así cuando el orden observable y las restricciones del destino también pueden preservarse:
+Homogeneous updates to the same target are consolidated as follows when observable order and the target's constraints can also be preserved:
 
-| Operador | Consolidación |
+| Operator | Consolidation |
 | --- | --- |
-| `|=` sobre colección | Unión de todos los operandos; idempotente |
-| `&=` | Intersección de todos los operandos; idempotente |
-| `--=` | Suma de multiplicidades retiradas y un único truncado en cero |
-| `^=` | Diferencia simétrica por paridad; solo sobre `unique` |
+| `|=` on a collection | Union of all operands; idempotent |
+| `&=` | Intersection of all operands; idempotent |
+| `--=` | Sum of removed multiplicities and a single truncation at zero |
+| `^=` | Symmetric difference by parity; only over `unique` |
 
-La mezcla de clases distintas de actualización sobre un mismo destino es conflicto salvo que otra decisión fije expresamente una consolidación. La preservación de cardinalidad, dominio, orden y unicidad continúa siendo una obligación estática de cada `then` y de toda consolidación posible.
+Mixing different update classes on the same target is a conflict unless another decision expressly fixes a consolidation. Preserving cardinality, domain, order and uniqueness remains a static obligation of each `then` and of every possible consolidation.
 
-Cuando varias actualizaciones concurrentes compatibles incorporan miembros nuevos a una colección `ordered` y el criterio semántico existente no determina por sí solo un orden total, la procedencia se completa reproduciblemente conforme a D-100, respetando toda causalidad real. Esta situación ya no constituye por sí sola un caso abierto de Q-006. Las operaciones que solo filtran el destino conservan su orden relativo.
+When several compatible concurrent updates add new members to an `ordered` collection and the existing semantic criterion does not by itself determine a total order, provenance is completed reproducibly in accordance with D-100, while respecting all real causality. This situation no longer constitutes an open case of Q-006 on its own. Operations that only filter the target preserve its relative order.
 
-Sobre `Text`, `|=` concatena secuencialmente como `|`. Varias concatenaciones concurrentes no son idempotentes ni conmutativas: solo se consolidan si existe un orden total semánticamente determinado; en otro caso entran en conflicto.
+For `Text`, `|=` concatenates sequentially like `|`. Several concurrent concatenations are neither idempotent nor commutative: they are consolidated only when a semantically determined total order exists; otherwise they conflict.
 
-### Sobrecarga tipada
+### Typed overloading
 
-`|=`, `&=` y `^=` siguen la operación simbólica resuelta por tipos, sin ampliar por sí mismos los dominios de `|`, `&` o `^`. En particular, no sustituyen a los operadores booleanos de palabra. `|=` puede corresponder a concatenación de `Text` o unión de colecciones; `&=` y `^=` corresponden a las operaciones de colección allí donde estén definidas, y `^=` conserva la exigencia `unique`. `--=` solo corresponde a diferencia de colecciones.
+`|=`, `&=` and `^=` follow the symbolic operation resolved by types, without themselves extending the domains of `|`, `&` or `^`. In particular, they do not replace word boolean operators. `|=` may denote `Text` concatenation or collection union; `&=` and `^=` denote collection operations wherever defined, and `^=` retains the `unique` requirement. `--=` denotes collection difference only.
 
-## Consecuencias
+## Consequences
 
-- La cardinalidad singular deja de necesitar una categoría escalar distinta.
-- La aritmética sobre una colección múltiple y otra opcional o unitaria tiene significado uniforme.
-- `empty` absorbe toda aritmética elevada sin evaluar parejas inexistentes.
-- La resta numérica y la diferencia de colecciones dejan de competir por `-`.
-- XOR conserva las leyes que un lector espera porque solo opera sobre conjuntos `unique`.
-- Los nuevos operadores compuestos conservan intención algebraica hasta el IR.
+- Singular cardinality no longer needs a separate scalar category.
+- Arithmetic over a multiple collection and an optional or unit collection has uniform meaning.
+- `empty` absorbs all lifted arithmetic without evaluating nonexistent pairs.
+- Numeric subtraction and collection difference no longer compete for `-`.
+- XOR retains the laws a reader expects because it operates only on `unique` sets.
+- The new compound operators preserve algebraic intent through to the IR.
 
-## Verificación
+## Verification
 
-1. Elevación `[1]` con `[n..m]` en ambos órdenes.
-2. Elevación `[0..1]` y absorción por `empty`.
-3. Rechazo cuando ambos límites superiores pueden superar uno.
-4. Matriz de alternativas nominales y estrechamiento previo.
-5. Distinción entre `-`, `--`, `-=` y `--=`.
-6. Rechazo de `^` y `^=` sobre colecciones no `unique`.
-7. Consolidación homogénea de `|=`, `&=`, `^=` y `--=`.
-8. Conflicto entre clases distintas y preservación de cardinalidad y orden.
+1. Lifting `[1]` with `[n..m]` in both orders.
+2. Lifting `[0..1]` and absorption by `empty`.
+3. Rejection when both upper bounds may exceed one.
+4. Matrix of nominal alternatives and prior narrowing.
+5. Distinction between `-`, `--`, `-=` and `--=`.
+6. Rejection of `^` and `^=` over non-`unique` collections.
+7. Homogeneous consolidation of `|=`, `&=`, `^=` and `--=`.
+8. Conflict between different classes and preservation of cardinality and order.
