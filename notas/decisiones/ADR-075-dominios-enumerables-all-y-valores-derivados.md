@@ -1,6 +1,6 @@
 ---
 id: D-075
-title: "Dominios enumerables, `all` y forma de valores derivados"
+title: "Enumerable domains, `all` and derived-value form"
 status: vigente
 date: 2026-08-03
 supersedes: []
@@ -8,61 +8,61 @@ superseded-by: []
 questions:
   - "Q-047"
 affects:
-  - "dominios, colecciones, campos, vinculaciones locales, AST y conformidad"
+  - "domains, collections, fields, local bindings, AST and conformance"
 ---
-# ADR-075 — Dominios enumerables, `all` y forma de valores derivados
+# ADR-075 — Enumerable domains, `all` and derived-value form
 
-- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
-- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Extended by: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Amended by: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 
-## Contexto
+## Context
 
-Los intervalos no bastan para restringir valores enumerados, escalonados o nominales. Además, la forma de colección de un valor calculado debe poder expresarse e inferirse igual que en un valor almacenado.
+Intervals alone cannot constrain enumerated, stepped or nominal values. The collection form of a computed value must also be expressible and inferable in the same way as for a stored value.
 
-## Decisión
+## Decision
 
-### Dominios
+### Domains
 
-El modelo distingue dominios de intervalos, dominios finitos, dominios escalonados, dominios nombrados y composiciones mediante unión, intersección, diferencia y diferencia simétrica.
+The model distinguishes interval, finite, stepped and named domains, and compositions using union, intersection, difference and symmetric difference.
 
 ```mud
 colors: Color in [Red, White] [2] = all
 numbers: Num in 0..1 by 0.2 [6] = all
 ```
 
-`by` convierte un intervalo lineal en un dominio discreto. Su paso es estático, firmado, no nulo, exacto y compatible con el tipo o dimensión. Un paso positivo se ancla en el límite inferior y uno negativo en el superior conforme a D-088. `Num` usa aritmética racional exacta; un dominio `Rum` no se considera enumerable. La cardinalidad siempre usa corchetes y es independiente del dominio.
+`by` turns a linear interval into a discrete domain. Its step is static, signed, non-zero, exact and compatible with the type or dimension. A positive step anchors at the lower bound and a negative step at the upper bound, in accordance with D-088. `Num` uses exact rational arithmetic; a `Rum` domain is not enumerable. Cardinality always uses square brackets and is independent of the domain.
 
-### Literal contextual `all`
+### Contextual `all` literal
 
-`all` denota la enumeración canónica completa del dominio esperado y requiere contexto. Se admite para `Bool`, families, aliases finitos, dominios finitos, dominios escalonados, el catálogo de prefijos y tipos `thing`. Para un tipo `thing` reúne sus descendientes estrictos activos compatibles; con `Thing` reúne todas las declaraciones `thing` activas salvo el propio tipo incorporado. Cada identidad aparece una sola vez.
+`all` denotes the canonical complete enumeration of its expected domain and requires context. It is admitted for `Bool`, families, finite aliases, finite and stepped domains, the prefix catalogue and `thing` types. For a `thing` type it gathers compatible active strict descendants; with `Thing` it gathers every active `thing` declaration except the built-in type itself. Each identity appears once.
 
-Cuando la enumeración depende del mundo, como `all` sobre `thing`, solo puede alimentar un valor calculado `:=`. La cardinalidad se comprueba sobre el resultado de cada evaluación.
+When enumeration depends on the world, such as `all` over `thing`, it may feed only a computed `:=` value. Cardinality is checked on each evaluation's result.
 
-### Valores derivados
+### Derived values
 
-Campos calculados, datos calculados de families, vinculaciones locales y campos públicos de `look` y `message` comparten esta forma:
+Computed fields, computed family data, local bindings and public `look` and `message` fields share this form:
 
 ```text
-nombre [forma-derivada] ":=" expresión
+name [derived-form] ":=" expression
 ```
 
-La forma derivada es una anotación completa `: tipo`, una restricción `in dominio` seguida opcionalmente por colección, o una colección sin tipo ni dominio. Esto permite tanto `a: A in [B, C] := expresión` como `a in [B, C] := expresión` sin fabricar una anotación de tipo superficial.
+The derived form is a complete `: type` annotation, an `in domain` constraint optionally followed by a collection specification, or a collection without type or domain. Thus both `a: A in [B, C] := expression` and `a in [B, C] := expression` are possible without fabricating a superficial type annotation.
 
-El dominio declarado en una forma derivada es coercitivo: filtra el resultado con la misma semántica que la restricción local de dominio. La cardinalidad se comprueba después de esa transformación; una cota inferior que ya no pueda satisfacerse produce la obligación o el fallo correspondiente y nunca fabrica miembros.
+The declared domain in a derived form is coercive: it filters the result with the same semantics as a local domain constraint. Cardinality is checked after that transformation; an unsatisfiable lower bound produces the corresponding obligation or failure and never fabricates members.
 
-Una lista de expresiones separadas por comas construye una colección derivada:
+A comma-separated list of expressions constructs a derived collection:
 
 ```mud
 numbers := a * b, d, c / a
 ```
 
-Su tipo común y cardinalidad se infieren. La aridad es cardinalidad exacta para colecciones con multiplicidad ordinaria; bajo `unique` solo lo es cuando la distinción de elementos puede demostrarse. Una colección incluida como elemento no se aplana implícitamente.
+Its common type and cardinality are inferred. Arity is exact cardinality for ordinary multiplicity collections; under `unique` it is exact only when element distinction can be proved. A collection included as an element is not implicitly flattened.
 
-Una selección `value in source : predicate` y `take amount from source` también producen valores derivados de colección. Conservan los contratos demostrables de su fuente y permiten que la forma derivada declare un dominio o cardinalidad más precisa como obligación independiente.
+A selection `value in source : predicate` and `take amount from source` also produce derived collection values. They retain demonstrable source contracts and allow the derived form to declare a more precise domain or cardinality as an independent obligation.
 
-## Diagnósticos de conversión
+## Conversion diagnostics
 
-Cuando `to` solo aporta un contexto de tipo, el tooling sugiere trasladarlo a la declaración. Si la conversión es constante y segura, también normaliza el valor:
+When `to` supplies only a type context, tooling suggests moving it to the declaration. If the conversion is constant and safe, it also normalises the value:
 
 ```mud
 value := 3.7 to Nat
@@ -70,22 +70,22 @@ value: Nat := 4
 value: Nat = 4
 ```
 
-Cada transformación es una sugerencia independiente y solo se ofrece cuando conserva dominios y comportamiento de fallo.
+Each transformation is an independent suggestion and is offered only when it preserves domains and failure behaviour.
 
-## Verificación
+## Verification
 
-1. Dominios finitos de families, things y cantidades.
-2. Cuadrículas exactas y rechazo de pasos inválidos.
-3. `all` estático y dinámico con cardinalidad.
-4. Dominios y colecciones en toda declaración calculada.
-5. Inferencia de listas calculadas, multiplicidad y `unique`.
-6. Tres resultados del análisis de dominios derivados.
-7. Sugerencias escalonadas de `to`.
+1. Finite domains of families, things and quantities.
+2. Exact grids and rejection of invalid steps.
+3. Static and dynamic `all` with cardinality.
+4. Domains and collections in every computed declaration.
+5. Inference of computed lists, multiplicity and `unique`.
+6. Three outcomes of derived-domain analysis.
+7. Staged `to` suggestions.
 
-## Modificación por D-088
+## Amendment by D-088
 
-El paso de un dominio escalonado deja de exigirse positivo. Sigue siendo estático, exacto, compatible y no nulo, pero puede ser firmado. Positivo ancla en el límite inferior y negativo en el superior; un límite inicial abierto avanza una vez antes del primer candidato. El signo puede cambiar la pertenencia, pero no introduce orden en el tipo; `all` usa el orden canónico. `Rum` continúa excluido.
+The step of a stepped domain no longer has to be positive. It remains static, exact, compatible and non-zero, but may be signed. Positive steps anchor at the lower bound and negative steps at the upper; an open initial bound advances once before the first candidate. The sign may change membership but does not introduce order into the type; `all` uses canonical order. `Rum` remains excluded.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-Además del literal contextual `all`, existe `all D`, que materializa la enumeración canónica completa de un dominio enumerable explícito. Los dominios reflectivos visibles admiten formas como `all action`, `all rule`, `all look` y `all A.action(B)`. `all` sin operando conserva su elaboración contextual.
+Alongside the contextual `all` literal, `all D` materialises the canonical complete enumeration of an explicit enumerable domain. Visible reflective domains admit forms such as `all action`, `all rule`, `all look` and `all A.action(B)`. `all` without an operand retains contextual elaboration.
