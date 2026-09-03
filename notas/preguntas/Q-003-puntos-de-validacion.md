@@ -1,6 +1,6 @@
 ---
 id: Q-003
-title: Puntos de validación
+title: Validation points
 priority: P0
 opened: 2026-07-29
 resolved:
@@ -12,14 +12,14 @@ affects: []
 superseded-by: []
 ---
 
-# Q-003 — Puntos de validación
+# Q-003 — Validation points
 
-## Contenido
+## Content
 
-¿En qué momento exacto se validan dominios, cardinalidades y `always`: tras cada escritura, al cerrar la raíz, al cerrar cada onda o en varios de esos puntos?
+At exactly what point are domains, cardinalities and `always` validated: after each write, when the root closes, when each wave closes, or at several of these points?
 
-La respuesta afecta qué estados tentativos son observables para reglas posteriores.
+The answer affects which tentative states are observable to later rules.
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]] y [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]].
+Status: **partially decided** by [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|D-026]] and [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]].
 
-La cardinalidad final se demuestra estáticamente para cada `then` y para toda consolidación concurrente posible. Los estados intermedios dentro del delta privado de un `then` pueden incumplirla. Los dominios se preservan en inicialización, materialización, especialización, escrituras, raíces, ondas y estados publicables. Siguen abiertos la formulación operacional unificada, el tratamiento exacto de referencias suspendidas y los puntos de comprobación de reglas `always`.
+Final cardinality is proven statically for each `then` and for every possible concurrent consolidation. Intermediate states inside a `then`'s private delta may violate it. Domains are preserved during initialisation, materialisation, specialisation, writes, roots, waves and publishable states. A unified operational formulation, the exact treatment of suspended references and the checking points for `always` rules remain open.
