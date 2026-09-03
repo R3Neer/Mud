@@ -1,6 +1,6 @@
 ---
 id: D-099
-title: "Materializaciones frescas tras `destroy` y `create`"
+title: "Fresh materialisations after `destroy` and `create`"
 status: current
 date: 2026-08-28
 supersedes: []
@@ -11,47 +11,47 @@ questions:
   - Q-049
   - Q-032
 affects:
-  - "ciclo de vida de `thing`, materialización, estado almacenado, suspensión por dependencias, estructura runtime y memoria reactiva"
-  - "D-021, D-041, D-054, D-058 y D-077"
-  - "capítulo 04 y futuros capítulos 11, 21 a 25 y 32"
+  - "`thing` lifecycle, materialisation, stored state, dependency suspension, runtime structure and reactive memory"
+  - "D-021, D-041, D-054, D-058 and D-077"
+  - "chapter 04 and future chapters 11, 21 to 25 and 32"
 ---
 
-# ADR-099 — Materializaciones frescas tras `destroy` y `create`
+# ADR-099 — Fresh materialisations after `destroy` and `create`
 
-- Modifica: [[ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] y [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]].
-- Mantiene abiertas: [[notes/questions/Q-005-i-binding-identity-and-lifecycle|Q-005]], Q-046 y Q-032 en los aspectos no fijados aquí. Q-049 permanece cerrada; esta decisión conserva su resolución sobre pertenencias y solo precisa la política de materialización propia.
+- Modifies: [[ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]].
+- Keeps open: [[notes/questions/Q-005-i-binding-identity-and-lifecycle|Q-005]], Q-046 and Q-032 on aspects not fixed here. Q-049 remains closed; this decision retains its resolution on membership and only clarifies the policy for the materialisation itself.
 
-## Contexto
+## Context
 
-D-021 y D-054 hacían que `destroy d` retirase una declaración de la proyección efectiva pero conservase también la carga runtime propia de una `thing`; un `create d` posterior reactivaba esa misma carga sin ejecutar de nuevo inicializadores. Esa regla resolvía correctamente un problema distinto: cuando otra declaración deja de ser interpretable porque depende de una declaración destruida, su estado no debe borrarse por el mero hecho de quedar suspendido.
+D-021 and D-054 made `destroy d` remove a declaration from the effective projection while also retaining a `thing`'s own runtime load; a later `create d` reactivated that same load without running initialisers again. That rule correctly addressed a different problem: when another declaration becomes uninterpretable because it depends on a destroyed declaration, its state must not be erased merely because it is suspended.
 
-Ambas situaciones no necesitan compartir política. Si `King.kingdom` almacena `Panama` y se destruye el tipo `Kingdom`, la propiedad pertenece a `King`: puede conservar su carga de forma latente mientras su tipo no es efectivo. En cambio, si se destruye una `thing` concreta cuyo propio campo `health` vale `2`, conservar ese `2` después de `create` convierte `destroy` en una desactivación temporal y hace que una nueva materialización no vuelva a su estado declarado.
+The two situations need not share a policy. If `King.kingdom` stores `Panama` and the `Kingdom` type is destroyed, the property belongs to `King`: it may retain its load latently while its type is not effective. By contrast, if a concrete `thing` whose own `health` field is `2` is destroyed, retaining that `2` after `create` turns `destroy` into temporary deactivation and prevents a new materialisation from returning to its declared state.
 
-La misma distinción afecta a modificaciones estructurales runtime propias de una `thing` y a la memoria temporal de una rule explícitamente destruida.
+The same distinction applies to runtime structural modifications owned by a `thing` and to the temporary memory of an explicitly destroyed rule.
 
-## Decisión
+## Decision
 
-### Identidad canónica y materialización
+### Canonical identity and materialisation
 
-La definición canónica y la identidad semántica de una `thing` sobreviven a `destroy`. Lo que no sobrevive es su materialización runtime propia.
+The canonical definition and semantic identity of a `thing` survive `destroy`. Its own runtime materialisation does not.
 
-Para una `thing` concreta activa se distingue conceptualmente entre:
+For an active concrete `thing`, the following are conceptually distinct:
 
-1. su definición e identidad canónicas, pertenecientes al programa;
-2. su materialización runtime actual, que contiene su carga de campos almacenados y las modificaciones estructurales runtime cuyo propietario es esa `thing`;
-3. las cargas de otras declaraciones que pueden referirse a su identidad o depender de su tipo.
+1. its canonical definition and identity, belonging to the program;
+2. its current runtime materialisation, containing its stored-field load and runtime structural modifications owned by that `thing`;
+3. the loads of other declarations that may refer to its identity or depend on its type.
 
-`destroy d`, cuando la transición completa es válida, termina la materialización actual de la `thing` concreta `d`. La identidad, descriptor, antecesoras declaradas y definición canónica permanecen disponibles para una futura materialización.
+`destroy d`, when the complete transition is valid, ends the current materialisation of concrete `thing` `d`. Its identity, descriptor, declared ancestors and canonical definition remain available for a future materialisation.
 
-Una `thing` abstracta no posee carga concreta propia que reinicializar; su `destroy` conserva la semántica de retirada de actividad y suspensión estructural que corresponda.
+An abstract `thing` has no concrete own load to reinitialise; its `destroy` retains the applicable activity-removal and structural-suspension semantics.
 
-### Carga propia y estructura runtime
+### Own load and runtime structure
 
-Al confirmarse `destroy d` sobre una `thing` concreta se descartan:
+When `destroy d` is confirmed for a concrete `thing`, the following are discarded:
 
-- los valores almacenados propios de su materialización actual;
-- las modificaciones runtime de estructura cuyo propietario sea `d`, incluidos campos añadidos durante esa materialización;
-- las retiradas runtime de propiedades canónicas de `d`: una futura materialización vuelve a partir de la definición canónica, no de la estructura editada de la materialización terminada.
+- stored values belonging to its current materialisation;
+- runtime structural modifications owned by `d`, including fields added during that materialisation;
+- runtime removals of `d`'s canonical properties: a future materialisation starts from the canonical definition, not from the edited structure of the ended materialisation.
 
 Por tanto, si:
 
@@ -61,25 +61,25 @@ thing Goblin {
 }
 ```
 
-alcanza `health = 2`, después de una secuencia confirmada `destroy Goblin` seguida más tarde por `create Goblin`, la nueva materialización comienza otra vez con `health = 10`.
+reaches `health = 2`, after a confirmed sequence of `destroy Goblin` followed later by `create Goblin`, the new materialisation starts again with `health = 10`.
 
-Esta regla no introduce identidades sucesivas: ambas materializaciones corresponden a la misma identidad canónica `Goblin`.
+This rule does not introduce successive identities: both materialisations correspond to the same canonical identity `Goblin`.
 
-### Nueva materialización mediante `create`
+### New materialisation through `create`
 
-`create d` sobre una `thing` canónica sin materialización activa crea una materialización fresca usando las reglas ordinarias de primera materialización:
+`create d` on a canonical `thing` without an active materialisation creates a fresh materialisation using the ordinary first-materialisation rules:
 
-- se reconstruye el esquema efectivo desde la definición canónica y sus contribuciones heredadas aplicables;
-- se aplican de nuevo predeterminados e inicializadores;
-- no se recuperan valores ni modificaciones estructurales de la materialización destruida.
+- the effective schema is reconstructed from the canonical definition and its applicable inherited contributions;
+- defaults and initialisers are applied again;
+- no values or structural modifications from the destroyed materialisation are recovered.
 
-La política de semillas y resultados de inicializadores estocásticos continúa bajo Q-032; esta decisión solo exige que la operación sea una nueva materialización y no una recuperación de carga anterior.
+The seed and result policy for stochastic initialisers remains under Q-032; this decision only requires the operation to be a new materialisation rather than recovery of a previous load.
 
-La aplicabilidad de `create` cuando la declaración ya está activa continúa bajo Q-046.
+The applicability of `create` when the declaration is already active remains under Q-046.
 
-### Suspensión por dependencia no es destrucción
+### Dependency suspension is not destruction
 
-Que una declaración deje de ser efectiva porque una dependencia dura está inactiva no destruye su materialización ni su carga. Solo un `destroy` dirigido a la propia declaración aplica el descarte de carga definido aquí.
+When a declaration ceases to be effective because a hard dependency is inactive, its materialisation and load are not destroyed. Only a `destroy` directed at the declaration itself applies the load-discard defined here.
 
 En particular:
 
@@ -95,81 +95,81 @@ seguido por:
 destroy Kingdom
 ```
 
-hace que `King.kingdom` deje temporalmente de pertenecer a la proyección efectiva mientras su tipo declarado no sea efectivo. La propiedad y su carga `Panama` pertenecen a `King` y permanecen almacenadas. Si `create Kingdom` confirma una nueva materialización de `Kingdom`, `King.kingdom` puede volver a ser efectiva con el mismo valor `Panama`.
+makes `King.kingdom` temporarily cease to belong to the effective projection while its declared type is not effective. The property and its `Panama` load belong to `King` and remain stored. If `create Kingdom` confirms a new materialisation of `Kingdom`, `King.kingdom` may become effective again with the same `Panama` value.
 
-Esta conservación ajena no implica conservar la carga propia de la materialización destruida de `Kingdom`.
+This external preservation does not imply retaining the own load of `Kingdom`'s destroyed materialisation.
 
-### Referencias y membresías a la identidad destruida
+### References and membership of the destroyed identity
 
-Las references latentes continúan apuntando a la misma identidad canónica y pueden volver a ser efectivas cuando exista una nueva materialización compatible.
+Latent references continue to point to the same canonical identity and may become effective again when a compatible new materialisation exists.
 
-La política de colecciones de D-077 se conserva:
+D-077's collection policy is retained:
 
-- una relación sin capacidad `mut` puede retener latentemente una pertenencia a la identidad retirada y restaurarla con la nueva materialización;
-- una relación `mut` elimina esa pertenencia almacenada al destruir la identidad y `create` no la recompone por sí solo;
-- destruir el tipo declarado de una propiedad suspende la propiedad completa y conserva su carga, porque esa carga pertenece al propietario de la propiedad y no al tipo destruido.
+- a relation without `mut` capability may retain membership of the removed identity latently and restore it with the new materialisation;
+- a `mut` relation removes that stored membership when the identity is destroyed, and `create` does not rebuild it by itself;
+- destroying a property's declared type suspends the complete property and retains its load, because that load belongs to the property's owner, not to the destroyed type.
 
-Toda retirada, restauración de membresías y reaparición de cargas suspendidas continúa sometida a validación atómica de cardinalidad y dominio.
+Every removal, membership restoration and reappearance of suspended loads remains subject to atomic cardinality and domain validation.
 
-### Atomicidad de la nueva materialización
+### Atomicity of the new materialisation
 
-Una `create d` que materializa de nuevo una `thing` debe validar conjuntamente:
+A `create d` that materialises a `thing` again must validate jointly:
 
-- la nueva carga propia obtenida de definición, predeterminados e inicializadores;
-- las pertenencias latentes que D-077 pueda restaurar;
-- las declaraciones y propiedades ajenas que vuelvan a ser efectivas al reaparecer la dependencia.
+- the new own load obtained from the definition, defaults and initialisers;
+- latent memberships that D-077 may restore;
+- external declarations and properties that become effective again when the dependency reappears.
 
-Si el estado resultante no es bien formado, la transición produce `failed` y rollback. No queda confirmada una materialización parcial.
+If the resulting state is not well formed, the transition produces `failed` and rollback. No partial materialisation is confirmed.
 
-### Memoria de rules explícitamente destruidas
+### Memory of explicitly destroyed rules
 
-`destroy r` sobre una rule termina también la memoria runtime perteneciente a esa activación de la rule. En una rule reactiva se descartan sus líneas base y memoria temporal de bindings asociadas a la activación destruida.
+`destroy r` on a rule also ends the runtime memory belonging to that rule activation. For a reactive rule, its baselines and temporary binding memory associated with the destroyed activation are discarded.
 
-Si `create r` la activa de nuevo después de `start with`, se trata temporalmente como una activación posterior: su primera onda activa establece la línea base actual sin disparar `when`, `changes` ni expresiones temporales únicamente por la reactivación. Desde la onda siguiente compara normalmente con esa nueva línea base.
+If `create r` activates it again after `start with`, it is treated as a later activation for temporal purposes: its first active wave establishes the current baseline without triggering `when`, `changes` or temporal expressions merely because of reactivation. From the next wave onwards it compares normally with that new baseline.
 
-Una rule booleana no conserva memoria temporal de este tipo. Una `always` vuelve a imponer su invariante conforme a sus puntos ordinarios de validación.
+A Boolean rule does not retain this kind of temporal memory. An `always` reasserts its invariant at its ordinary validation points.
 
-Esta decisión fija el efecto de un `destroy` explícito sobre la memoria de la rule. Q-005 permanece abierta para la identidad canónica de bindings y para la política de memoria cuando una vinculación desaparece o una rule queda meramente suspendida por causas distintas de su destrucción explícita.
+This decision fixes the effect of an explicit `destroy` on rule memory. Q-005 remains open for the canonical identity of bindings and for the memory policy when a binding disappears or a rule is merely suspended for reasons other than explicit destruction.
 
-## Consecuencias
+## Consequences
 
-- `destroy` deja de ser una mera desactivación con hibernación de la carga propia de una `thing` concreta.
-- `create` después de `destroy` materializa de nuevo la misma identidad canónica, no una identidad nueva ni una recuperación de la carga anterior.
-- Los resets de respawn que coincidan con los predeterminados e inicializadores declarados salen naturalmente de `destroy` + `create`; reglas de respawn que necesiten conservar o modificar información adicional siguen siendo lógica de dominio explícita.
-- La suspensión por dependencia conserva su carácter reversible y no borra estado ajeno.
-- Las ediciones estructurales runtime propias de una materialización no sobreviven a su destrucción.
-- La memoria temporal de una rule explícitamente destruida no atraviesa su nueva activación.
+- `destroy` is no longer mere deactivation with hibernation of a concrete `thing`'s own load.
+- `create` after `destroy` materialises the same canonical identity again, not a new identity or recovery of the previous load.
+- Respawn resets matching declared defaults and initialisers naturally arise from `destroy` + `create`; respawn rules needing to retain or modify additional information remain explicit domain logic.
+- Dependency suspension remains reversible and does not erase external state.
+- Runtime structural edits belonging to a materialisation do not survive its destruction.
+- The temporary memory of an explicitly destroyed rule does not cross into its new activation.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Conservar toda carga propia tras `destroy`
+### Retain all own load after `destroy`
 
-Se descarta la política anterior. Hace que `destroy` se comporte como `deactivate` y obliga a expresar aparte incluso la reinicialización ordinaria de una nueva materialización.
+Rejected. It makes `destroy` behave like `deactivate` and forces even ordinary reinitialisation of a new materialisation to be expressed separately.
 
-### Borrar también cargas ajenas suspendidas
+### Also erase suspended external loads
 
-Se descarta. La desaparición de un tipo o dependencia no convierte en propiedad suya los datos almacenados por otras identidades. La suspensión estructural sigue siendo reversible.
+Rejected. The disappearance of a type or dependency does not make data stored by other identities its property. Structural suspension remains reversible.
 
-### Crear una identidad runtime nueva
+### Create a new runtime identity
 
-Se descarta. `create` sigue operando sobre una identidad canónica predeclarada y no introduce instanciación, IDs frescos ni encarnaciones nominales distintas.
+Rejected. `create` continues to operate on a predeclared canonical identity and introduces no instantiation, fresh IDs or distinct nominal incarnations.
 
-### Conservar modificaciones estructurales de la materialización destruida
+### Retain structural modifications from the destroyed materialisation
 
-Se descarta. Una nueva materialización reconstruye su estructura desde la definición canónica; conservar `add`/`remove` anteriores mezclaría una materialización terminada con la siguiente.
+Rejected. A new materialisation reconstructs its structure from the canonical definition; retaining earlier `add`/`remove` operations would mix an ended materialisation with the next.
 
-### Conservar la memoria temporal de una rule destruida
+### Retain the temporary memory of a destroyed rule
 
-Se descarta. Una rule que dejó explícitamente de existir en el mundo no debe comparar su nueva activación con una instantánea perteneciente a la activación anterior.
+Rejected. A rule explicitly removed from the world must not compare its new activation with a snapshot belonging to the previous activation.
 
-## Verificación
+## Verification
 
-1. Una `thing` destruida y recreada conserva identidad y descriptor, pero recupera valores iniciales en vez de su carga anterior.
-2. Los campos añadidos runtime a la materialización destruida no reaparecen; las propiedades canónicas retiradas runtime sí reaparecen desde la definición.
-3. Una propiedad ajena suspendida por destruir su tipo conserva exactamente su carga y vuelve a proyectarse al recrear el tipo.
-4. La suspensión derivada de una dependencia no borra la carga propia de la declaración suspendida.
-5. Las relaciones inmutables y `mut` conservan la diferencia de restauración fijada por D-077.
-6. Una nueva materialización que haría inválida una cardinalidad o dominio produce `failed` y rollback completo.
-7. Una rule reactiva destruida y recreada establece una línea base nueva sin disparar por la mera reactivación.
-8. Q-005 continúa abierta para desapariciones de bindings y suspensiones no causadas por `destroy` explícito.
-9. Q-032 continúa gobernando la reproducibilidad concreta de inicializadores aleatorios entre materializaciones.
+1. A destroyed and recreated `thing` retains its identity and descriptor but recovers initial values instead of its previous load.
+2. Runtime fields added to the destroyed materialisation do not reappear; runtime-removed canonical properties do reappear from the definition.
+3. An external property suspended by destroying its type retains exactly its load and is projected again when the type is recreated.
+4. Suspension caused by a dependency does not erase the suspended declaration's own load.
+5. Immutable and `mut` relations retain the restoration distinction fixed by D-077.
+6. A new materialisation that would invalidate cardinality or domain produces `failed` and complete rollback.
+7. A destroyed and recreated reactive rule establishes a new baseline without triggering merely because of reactivation.
+8. Q-005 remains open for binding disappearances and suspensions not caused by explicit `destroy`.
+9. Q-032 continues to govern the concrete reproducibility of random initialisers between materialisations.
