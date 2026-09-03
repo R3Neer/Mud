@@ -1,6 +1,6 @@
 ---
 id: Q-049
-title: Destrucción y colecciones de thing
+title: Destruction and `thing` collections
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -12,18 +12,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-049 — Destrucción y colecciones de `thing`
+# Q-049 — Destruction and `thing` collections
 
-## Resolución
+## Resolution
 
-[[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] conserva propiedades completas cuando se destruye una dependencia estructural. [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] resuelve las identidades contenidas: la retirada solo se confirma si todas las cardinalidades y dominios finales son válidos; una relación inmutable conserva pertenencia latente y una relación `mut` la elimina permanentemente. `create` restaura únicamente la primera y vuelve a validar la transición.
+[[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] retains complete properties when a structural dependency is destroyed. [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] resolves contained identities: removal is committed only if all final cardinalities and domains are valid; an immutable relationship retains latent membership, while a `mut` relationship removes it permanently. `create` restores only the former and validates the transition again.
 
-No existe una colección efectiva cardinalmente degradada: un incumplimiento produce `failed` y rollback.
+There is no effectively cardinality-degraded collection: a violation produces `failed` and rollback.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-021`, `D-077`.
