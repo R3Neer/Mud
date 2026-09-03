@@ -63,7 +63,7 @@ REQUIRED_FIELDS = (
 
 PRIORITY_HEADINGS = {
     "P0": "Before freezing the core",
-    "P1": "Antes de ampliar el lenguaje",
+    "P1": "Before extending the language",
     "P2": "Product and operation",
 }
 STATUS_LABELS = {
@@ -106,10 +106,10 @@ def render_index(questions: dict[str, Question]) -> str:
         "",
         f"There are {len(active)} active questions: {counts['open']} open and {counts['partially-decided']} partially decided.",
         "",
-        "Prioridades:",
+        "Priorities:",
         "",
         "- **P0**: blocks the v0 core or may force a nearby rewrite.",
-        "- **P1**: bloquea una fase posterior concreta.",
+        "- **P1**: blocks a specific later phase.",
         "- **P2**: may be deferred without misrepresenting the core.",
         "",
     ]
@@ -117,7 +117,7 @@ def render_index(questions: dict[str, Question]) -> str:
         lines.extend([
             f"## {priority} — {heading}",
             "",
-            "| Pregunta | Estado |",
+            "| Question | Status |",
             "| --- | --- |",
         ])
         for question_id in sorted(active):

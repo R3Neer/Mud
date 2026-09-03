@@ -26,19 +26,18 @@ RESOLVED_FIELD = re.compile(r"^resolved:\s*(true|false)?\s*$", re.MULTILINE)
 QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")
 MIGRATION_PATTERNS = (
     re.compile(
-        r"^#{1,6}\s+(?:Actualización|Revisión|Corrección|Sustitución|Update|Review|Correction|Replacement)\s+"
-        r"(?:por|según|tras|from|according|after)\b.*$",
+        r"^#{1,6}\s+(?:Update|Review|Correction|Replacement)\s+"
+        r"(?:from|according|after)\b.*$",
         re.IGNORECASE | re.MULTILINE,
     ),
     re.compile(
-        r"\b(?:(?:la|el)\s+(?:regla|formulación|redacción|versión)|the\s+(?:rule|wording|version))\s+"
-        r"(?:anterior|previa)\s+(?:se\s+)?"
-        r"(?:sustituye|reemplaza|actualiza|corrige|replaces|replaced|updates|corrects)\b",
+        r"\bthe\s+(?:previous|prior)\s+(?:rule|wording|version)\s+"
+        r"(?:replaces|updates|corrects)\b",
         re.IGNORECASE,
     ),
     re.compile(
-        r"\b(?:se\s+)?(?:sustituye|reemplaza|actualiza|corrige|is\s+replaced|replaces|updates|corrects)\s+"
-        r"(?:(?:la|el)\s+(?:regla|formulación|redacción|versión)\s+(?:anterior|previa)|the\s+(?:previous|prior)\s+(?:rule|wording|version))\b",
+        r"\b(?:is\s+replaced|replaces|updates|corrects)\s+"
+        r"the\s+(?:previous|prior)\s+(?:rule|wording|version)\b",
         re.IGNORECASE,
     ),
     re.compile(r"\bthe\s+previous\s+(?:rule|wording|version)\s+is\s+replaced\b", re.IGNORECASE),

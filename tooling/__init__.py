@@ -1,1 +1,1 @@
-"""Herramientas auxiliares del repositorio MUD."""
+"""Auxiliary tools for the MUD repository."""

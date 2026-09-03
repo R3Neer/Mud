@@ -2,7 +2,7 @@
 title: MUD active questions
 tags:
   - mud/notes
-  - mud/questions
+  - mud/preguntas
 status: active
 ---
 
@@ -14,13 +14,13 @@ There are 46 active questions: 26 open and 20 partially decided.
 
 Priorities:
 
-- **P0**: blocks the v0 core or may force a near-term rewrite.
+- **P0**: blocks the v0 core or may force a nearby rewrite.
 - **P1**: blocks a specific later phase.
 - **P2**: may be deferred without misrepresenting the core.
 
 ## P0 — Before freezing the core
 
-| Question | State |
+| Question | Status |
 | --- | --- |
 | [[Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002 — Exact model of sequential and simultaneous effects]] | Partially decided |
 | [[Q-003-p-validation-points|Q-003 — Validation points]] | Partially decided |
@@ -34,7 +34,7 @@ Priorities:
 
 ## P1 — Before extending the language
 
-| Question | State |
+| Question | Status |
 | --- | --- |
 | [[Q-014-m-anchor-migration|Q-014 — Anchor migration]] | Partially decided |
 | [[Q-015-r-retirement|Q-015 — Retirement]] | Open |
@@ -59,7 +59,7 @@ Priorities:
 
 ## P2 — Product and operation
 
-| Question | State |
+| Question | Status |
 | --- | --- |
 | [[Q-026-v-multiple-actions-in-eventually|Q-026 — Multiple actions in `eventually`]] | Partially decided |
 | [[Q-027-e-relevant-state|Q-027 — Relevant state]] | Open |
@@ -79,6 +79,6 @@ Priorities:
 | [[Q-056-f-normalised-form-and-alias-recursion|Q-056 — Normalised form and alias recursion]] | Partially decided |
 | [[Q-058-e-portable-evaluation-of-rum|Q-058 — Portable evaluation of `Rum`]] | Open |
 
-## History
+## Historial
 
 Closed, discarded or superseded questions do not appear in this index. Their files remain in this folder at stable locations for traceability.
