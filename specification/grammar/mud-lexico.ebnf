@@ -39,10 +39,10 @@ closed-line-comment
     ::= "#" , { closed-comment-character } , "#" ;
 
 line-comment-character
-    ::= ? cualquier escalar Unicode salvo NEWLINE ? ;
+    ::= ? any Unicode scalar except NEWLINE ? ;
 
 closed-comment-character
-    ::= ? cualquier escalar Unicode salvo "#", NEWLINE ? ;
+    ::= ? any Unicode scalar except "#", NEWLINE ? ;
 
 multiline-comment
     ::= special-multiline-comment ;
