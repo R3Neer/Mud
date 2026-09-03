@@ -41,7 +41,7 @@ min x in source : predicate
 max x in source : predicate
 ```
 
-The domain must be finite and countable. The evaluation is pure. The five bodies are Boolean predicates. `min` y `max` They return the first or last accepted witness according to the semantic order of the source; they require a source with a usable order. These are partial queries: if no witnesses are accepted, they produce `empty` with cardinality `[0..1]` and, in another case, a value from the type from member from the source. The omission only becomes a problem later on if the context receiver does not support cardinality zero, in accordance with D-095.
+The domain must be finite and countable. Evaluation is pure. The five bodies are Boolean predicates. `min` and `max` return the first or last accepted witness according to the source's semantic order; they require a source with a usable order. These are partial queries: if no witness is accepted, they produce `empty` with cardinality `[0..1]`; otherwise they produce a value of the source member type. The result is a problem only when a later receiving context does not support cardinality zero, in accordance with D-095.
 
 D-081 Add a pure selection that returns the flags rather than consuming them:
 
@@ -65,7 +65,7 @@ The clause `by` 'optional' always precedes `if`. A dictionary can link a pair by
 
 Membership of `source` is taken as snapshot at the start of the loop. The filter is pure, deterministic and cannot depend on computed randomness. In a source with semantic order, each filter is evaluated immediately before its iteration and observes the previous sequential effects within the delta private. In a source with no semantic order, all filters read the same snapshot The initial value and the deltas from the accepted iterations are combined as simultaneous effects; a conflict reverses the resolution complete.
 
-The canonical enumeration is derived from the type: declared order of a closed family, a lexicographical entry for a structural alias, dictionary order or collection, or the ascending order of an interval when it is canonically realised. The order in which an explicit progression is traversed is independent: `by` The negative value decreases from the upper limit towards lower values in accordance with D-088 without altering the canonical order of the type o domain.
+The canonical enumeration is derived from the type: declared order of a closed family, lexicographic order for a structural alias, dictionary or collection order, or ascending order for a canonically realised interval. The traversal order of an explicit progression is independent: a negative `by` value moves from the upper limit towards the lower limit in accordance with D-088 without altering the canonical order of the type or domain.
 
 When an enumeration is obtained by progression, the finite intervals of `Nat` e `Int` use default step one and `Money`, step `0.01`. Sources that already have their own numbering do not need to create a step. A general range of `Num` requires an explicit, exact step size. The intervals of `Rum` can never be enumerated. The last one value it is the latest point generated and falling within the interval; the endpoints are not included by default.
 

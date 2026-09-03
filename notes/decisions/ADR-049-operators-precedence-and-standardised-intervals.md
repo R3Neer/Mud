@@ -44,9 +44,9 @@ The reference contained the list of operators and their precedence, but it preda
 
 Shared tokens are resolved by type and syntactic context; they do not permit type coercion between Booleans, numbers, collections and intervals.
 
-Each operation has a single canonical record. `not`, `and`, `or` y `xor` are purely logical. `|`, `&` y `^` do not apply to `Bool`: they mean, respectively union, intersection and symmetric difference on intervals or sets, except for the concatenation of `Text` as already mentioned. When operating on collections, `^` requires operands `unique`; the symmetric difference of intervals preserves its contract its own. `--` shows the differences between collections and `-` is reserved for quantitative subtraction. `=>` conveys commitment and `<=>`, biconditional.
+Each operation has a single canonical spelling. `not`, `and`, `or` and `xor` are purely logical. `|`, `&` and `^` do not apply to `Bool`: they mean union, intersection and symmetric difference on intervals or sets, respectively, except for `Text` concatenation as noted above. On collections, `^` requires `unique` operands; symmetric difference of intervals retains its own contract. `--` denotes collection difference and `-` is reserved for quantitative subtraction. `=>` conveys commitment and `<=>` is biconditional.
 
-They are removed from the source code `!`, `implies`, `iff`, `union`, `intersection` y `except`. Reserved words are no longer reserved and may be used as identifiers. The token `!=` remains an independent inequality and does not presuppose the existence of a unitary operator `!`.
+The spellings `!`, `implies`, `iff`, `union`, `intersection` and `except` are removed from source code. Those words are no longer reserved and may be used as identifiers. The token `!=` remains an independent inequality and does not presuppose a unary `!` operator.
 
 Equality is defined by the type of value:
 
@@ -71,7 +71,7 @@ From highest to lowest:
 3. multiplication, division and module;
 4. set-theoretic sum, subtraction and difference;
 5. suffixes `to Type` e `in unit`;
-6. comparisons, `is`, `iis`, `has` y `has not`;
+6. comparisons, `is`, `iis`, `has` and `has not`;
 7. temporal suffix `changes`;
 8. union and intersection;
 9. disjunction, union and concatenation;
@@ -80,7 +80,7 @@ From highest to lowest:
 12. biconditional;
 13. `eventually ... through ...`.
 
-In a `when` temporary, just the words `and` y `or` make up activators. The symbols `&` y `|` retain their standard typed operations and are rejected if they receive a trigger; nor do they apply to these `not`, `xor`, `^`, `=>` nor `<=>`. D-058 defines the exponentiation of Boolean operands and the semantics of the composition.
+In a `when` trigger, only the words `and` and `or` form activators. The symbols `&` and `|` retain their standard typed operations and are rejected when given a trigger; so are `not`, `xor`, `^`, `=>` and `<=>`. D-058 defines Boolean exponentiation and composition semantics.
 
 `to` and the `in` from unit apply to the value cumulative total to its left. The parser then continues onto the result converted:
 
@@ -90,11 +90,11 @@ distance + offset in km
 value to A to B
 ```
 
-are grouped as `(population / regions) to Population`, `(distance + offset) in km` y `(value to A) to B`.
+are grouped as `(population / regions) to Population`, `(distance + offset) in km` and `(value to A) to B`.
 
-Homogeneous chains of `<`, `<=`, `>`, `>=` y `==` are formed as combinations of adjacent pairs. The same applies to `<=>`. `!=`, `is`, `iis`, `has`, `has not` y `=>` They are not linked.
+Homogeneous chains of `<`, `<=`, `>`, `>=` and `==` are formed from adjacent pairs. The same applies to `<=>`. `!=`, `is`, `iis`, `has`, `has not` and `=>` do not chain.
 
-`|` concatenates `Text`. The other conjunctive operators do not apply to `Text`, nor is concatenation implicitly inherited by nominal aliases of `Text`. Regarding compatible collections, `|`, `&` y `--` form the multiset algebra of D-039; `^` symmetric differential form defined exclusively on `unique`. `|` It does not concatenate collections.
+`|` concatenates `Text`. The other conjunctive operators do not apply to `Text`, nor is concatenation implicitly inherited by nominal aliases of `Text`. For compatible collections, `|`, `&` and `--` form the multiset algebra of D-039; `^` is defined only for `unique` collections as symmetric difference. `|` does not concatenate collections.
 
 ### Intervals
 
@@ -122,8 +122,8 @@ D-059 includes intervals of magnitude with local units or a unit external common
 8. Resolution of the four joint operators on compatible sets.
 9. Rejection of the withdrawn aliases and of `!` isolated, whilst preserving `!=`.
 10. Static separation between `xor` logical and `^` collectivist.
-11. Precedence from `changes` below comparisons and above `and` y `or`.
-12. Rejection of operators other than words `and` y `or` on temporary triggers.
+11. Precedence of `changes` below comparisons and above `and` and `or`.
+12. Rejection of operators other than `and` and `or` on trigger expressions.
 13. Equivalent normalisation of intervals of magnitude with local and shared drives.
 14. Normalisation to `empty` of inverted or degenerate open linear endpoints.
 

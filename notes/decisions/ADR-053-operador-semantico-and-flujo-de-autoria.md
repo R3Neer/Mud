@@ -33,7 +33,7 @@ Before making any changes, the operator classifies the request according to at l
 - structural change, API change, causal, liaison, domain, type, chance, invariant, admissibility o reachability;
 - ambiguous, incomplete, out of scope or an attempt to circumvent restrictions.
 
-It can only apply mechanical inferences that have already been defined by the language, such as cardinality `[1]`, absence of `given` when no values are required, `empty`, canonical orders and finiteness derivable. It does not invent participants, `given`, domains, rules, actions, `after`, `always` nor the meaning of `allowed` o `eventually`.
+It can apply only mechanical inferences already defined by the language, such as cardinality `[1]`, omission of `given` when no values are required, `empty`, canonical orders and derivable finiteness. It does not invent participants, `given`, domains, rules, actions, `after`, `always`, or the meanings of `allowed` or `eventually`.
 
 The flowchart for a mutation is:
 

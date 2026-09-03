@@ -151,7 +151,7 @@ start-with-declaration
         )
 ```
 
-The text in quotation marks in this EBNF does not in itself imply that `start` o `abstract` are reserved words; their lexical classification is as set out in the previous section.
+The text in quotation marks in this EBNF does not in itself imply that `start` or `abstract` are reserved words; their lexical classification is set out in the previous section.
 
 ## Sintaxis abstracta
 
@@ -209,7 +209,7 @@ The suite must cover:
 2. Rejection of two definitions with the same anchor.
 3. Rejection of `create` by category, predecessors or body.
 4. Activation and the destruction of a `thing`.
-5. Rematerialisation of a `thing` specific, whilst maintaining the exact identity y descriptor, but load reconstruction from defaults and initialisers.
+5. Rematerialisation of a specific `thing` while retaining its exact identity and descriptor, but reconstructing its stored data from defaults and initialisers.
 6. Activation concurrent idempotent of a identity absent.
 7. At most one `start with` by module and a valid exemption from contribution in a module.
 8. Order independence and deduplication within the unified set of contributions.
@@ -225,8 +225,8 @@ The suite must cover:
 
 ## Syntactic modification by D-084
 
-The body of a `thing` It may be omitted when it contains no members. `thing A`, `thing A {}` y `thing A;` set it at the same level canonical definition; only their CST differs.
+The body of a `thing` may be omitted when it contains no members. `thing A`, `thing A {}` and `thing A;` establish the same canonical definition level; only their CST differs.
 
 ## Amendment current by D-096
 
-The initial activation becomes modular. Each module You can contribute a maximum of one `start with`; all contributions are combined and brought together before the stabilisation. `start with` no longer separates `things` y `rules`, does not specify an order and can only trigger statements with cycle its lifespan module.
+Initial activation becomes modular. Each module may contribute at most one `start with`; all contributions are combined before stabilisation. `start with` no longer separates `things` and `rules`, does not specify an order, and can activate only declarations whose lifecycle belongs to that module.

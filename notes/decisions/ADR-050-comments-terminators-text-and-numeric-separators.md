@@ -103,13 +103,13 @@ D-057 and the consolidated grammar bring it to a close Q-001.
 
 ### Number separators
 
-Scientific notation uses `e` o `E`: a mantis $m$ followed by an integer exponent $n$ denotes $m\times 10^n$. The optional character following `e` o `E` belongs to the exponent; the sign of the value It remains a foreign operator in its entirety.
+Scientific notation uses `e` or `E`: a mantissa $m$ followed by an integer exponent $n$ denotes $m\times 10^n$. An optional sign following `e` or `E` belongs to the exponent; the sign is part of the exponent token.
 
 `_` It can group figures for ease of reading and does not alter the value. The whole part of the mantissa, its fractional part and the exponent are grouped independently: use `_` Just because it’s included in one component doesn’t mean you have to use it in the others.
 
 When a component contains `_`, the figures must be grouped in full. The whole part and the exponent are grouped from the right, with the first group consisting of one to three digits and the remaining groups of three. The fractional part is grouped from the point decimal places to the right, in groups of three, except for the last one, which may contain between one and three digits.
 
-Therefore, `1_000.123456e1000`, `1000.123_456` y `3e1_000` are valid. `1_000000`, `1.123_456789` y `3e1_000000` are invalid because they fail to group figures from the same component. The prefix `r` is governed by D-034 and does not alter these rules.
+Therefore, `1_000.123456e1000`, `1000.123_456` and `3e1_000` are valid. `1_000000`, `1.123_456789` and `3e1_000000` are invalid because they fail to group digits within the same component. The `r` prefix is governed by D-034 and does not alter these rules.
 
 ## Consequences
 
