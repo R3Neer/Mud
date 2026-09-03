@@ -93,7 +93,7 @@ A value from alias is unchangeable. A link that contains only that value It is u
 
 ```mud
 square := Piece.square
-square.file = B # inválido
+square.file = B # invalid
 ```
 
 An outer-mutable place can replace the complete value, and an assignable path may traverse stored alias components through reconstruction and write-back:

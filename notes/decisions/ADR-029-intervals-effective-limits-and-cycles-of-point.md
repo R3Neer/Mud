@@ -79,7 +79,7 @@ magnitude Speed in [0..*] :=
 In a magnitude non-derivative; the optional numerical representation always precedes the domain:
 
 ```text
-magnitude nombre [: representación-numérica] [in intervalo] bloque
+magnitude name [: numeric-representation] [in interval] block
 ```
 
 Boundaries are written as bare numbers. In a magnitude non-derivative are interpreted in their unit root; in a derivative, in the canonical combination inferred from the units root components.

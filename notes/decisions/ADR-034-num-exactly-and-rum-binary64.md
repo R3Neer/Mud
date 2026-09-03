@@ -121,7 +121,7 @@ value: Rum = r0.1
 Nor are exact and rapid literals mixed together:
 
 ```mud
-r0.1 + 0.2 # inválido
+r0.1 + 0.2 # invalid
 ```
 
 ### Quantities based on `Rum`

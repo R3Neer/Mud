@@ -11,7 +11,7 @@ questions:
   - "Q-021"
   - "Q-046"
 affects:
-  - "futuros capítulos 25, 28, 29 y 31"
+  - "future chapters 25, 28, 29 and 31"
 ---
 # ADR-023 — Consolidation of concurrent structural effects
 

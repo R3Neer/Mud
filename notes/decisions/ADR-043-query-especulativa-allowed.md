@@ -11,7 +11,7 @@ questions:
   - "Q-035"
   - "Q-053"
 affects:
-  - "expresiones, acciones, análisis de admisibilidad"
+  - "expressions, actions and admissibility analysis"
 ---
 # ADR-043 — Speculative query with `allowed`
 

@@ -111,7 +111,7 @@ magnitude Population: Nat in [*] {
 Its header therefore follows this order:
 
 ```text
-magnitude nombre [: representación-numérica] [in intervalo] bloque
+magnitude name [: numeric-representation] [in interval] block
 ```
 
 The endpoints of the header interval are plain numbers in the canonical representation of the magnitude. When there is a unit root, are performed there; the unit It is not written within the interval. This restriction on declaration does not prevent ordinary interval expressions from using local units or a unit common in accordance with D-059.

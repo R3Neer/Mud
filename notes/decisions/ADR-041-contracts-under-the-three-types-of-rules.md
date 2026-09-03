@@ -9,7 +9,7 @@ questions:
   - "Q-005"
   - "Q-050"
 affects:
-  - "modelo del lenguaje, semántica estática, semántica dinámica"
+  - "language model, static semantics, dynamic semantics"
 ---
 # ADR-041 — Contracts under the three types of rules
 

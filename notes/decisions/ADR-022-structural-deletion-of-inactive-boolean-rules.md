@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-050"
 affects:
-  - "futuros capítulos 19, 21 y 26"
+  - "future chapters 19, 21 and 26"
 ---
 # ADR-022 — Structural deletion of inactive Boolean rules
 

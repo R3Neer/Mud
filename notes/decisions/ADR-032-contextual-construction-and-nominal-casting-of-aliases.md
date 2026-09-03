@@ -119,8 +119,8 @@ The full form can list all the components in the order of declaration:
 The positional form must provide all components, even if some are predefined. There is no such thing as a partial positional construction:
 
 ```mud
-pagination: Pagination = (2, 30) # válido: forma posicional completa
-pagination: Pagination = (2)     # inválido: falta size y no está nombrado
+pagination: Pagination = (2, 30) # valid: complete positional form
+pagination: Pagination = (2)     # invalid: size is missing and unnamed
 ```
 
 The named form may omit components. Each omitted component takes its explicit default value or, if it has none, the default value of its type cash in accordance with D-017:
@@ -139,7 +139,7 @@ Full construction renders all components before producing the value nominal. The
 Two bare structural literals cannot be compared because neither provides a type expected:
 
 ```mud
-(E, Four) == (E, Four) # inválido
+(E, Four) == (E, Four) # invalid
 ```
 
 If an operand has already been evaluated as a alias and the other is a literal a syntactically compatible construction that can still be inferred from context, the type The nominal value is passed on as an expectation to the literal:

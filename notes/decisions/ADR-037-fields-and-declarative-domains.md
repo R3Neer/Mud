@@ -50,13 +50,13 @@ displayCost: Money := maintenanceCost
 The specific form of a stored field is:
 
 ```text
-[mut] nombre : tipo [in dominio] [especificación-de-colección] [= value-body]
+[mut] name : type [in domain] [collection-specification] [= value-body]
 ```
 
 The domain precedes the specification from collection. A computed field usa:
 
 ```text
-nombre [ forma-derivada ] := value-body
+name [ derived-form ] := value-body
 ```
 
 where the derived form may declare type and, in accordance with D-075, domain, cardinality and modifiers for collection compatible with the result.

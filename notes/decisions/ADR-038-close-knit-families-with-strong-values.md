@@ -93,13 +93,13 @@ family Terrain {
 An associated data item may be stored or calculated. Stored data does not support `mut`:
 
 ```text
-nombre : tipo [in dominio] [especificación-de-colección] [= value-body] [metadata-body]
+name : type [in domain] [collection-specification] [= value-body] [metadata-body]
 ```
 
 The calculated figure uses the full form of computed field:
 
 ```text
-nombre [forma-derivada] := value-body
+name [derived-form] := value-body
 ```
 
 `forma-derivada` is the `derived-value-shape` ordinary of D-037: you can set a type, declare a domain shaped like collection optional, or declare a form of collection. The entry for type is optional; if omitted, the compiler must infer a single type static. The calculated value does not allow for `mut` external, pre-stored or self-hosted storage. Domain, cardinality, `unique` and commands written in the derived form reuse the constraints of D-037, and no form can create capacity `[mut]` nor any other authority absent from the result of origin. D-091 allows both stored and calculated data to have an immediate body consisting solely of metadata declarations `~...`, belonging to the descriptor data standardisation.
