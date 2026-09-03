@@ -1,6 +1,6 @@
 ---
 id: Q-066
-title: Binding nominal de descriptores callable borrados
+title: Nominal binding of erased callable descriptors
 priority: P1
 opened: 2026-08-28
 resolved: false
@@ -8,12 +8,12 @@ closed:
 decisions:
   - D-096
 affects:
-  - callables, resolución, binding
+  - callables, resolution, binding
 superseded-by: []
 ---
 
-# Q-066 — Binding nominal de descriptores callable borrados
+# Q-066 — Nominal binding of erased callable descriptors
 
-## Contenido
+## Content
 
-Definir cómo se recuperan o exigen los nombres de roles `for` y `given` al invocar un descriptor callable cuyo tipo estático ha borrado parte de la identidad nominal de la declaración concreta.
+Define how `for` and `given` role names are recovered or required when invoking a callable descriptor whose static type has erased part of the concrete declaration's nominal identity.
