@@ -1,6 +1,6 @@
 ---
 id: Q-036
-title: Unidad de interacción humana
+title: Human-interaction unit
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-036 — Unidad de interacción humana
+# Q-036 — Human-interaction unit
 
-## Contenido
+## Content
 
-¿La persona aprueba un plan completo, cada operación o solo los cambios clasificados como peligrosos?
+Does the person approve an entire plan, each operation, or only changes classified as dangerous?
