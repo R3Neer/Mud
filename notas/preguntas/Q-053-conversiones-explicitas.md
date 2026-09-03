@@ -1,6 +1,6 @@
 ---
 id: Q-053
-title: Conversiones explícitas
+title: Explicit conversions
 priority: P1
 opened: 2026-07-29
 resolved: true
@@ -16,18 +16,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-053 — Conversiones explícitas
+# Q-053 — Explicit conversions
 
-## Contenido
+## Content
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
+Status: **closed** by [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] and [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-`as` queda reservado para especialización. `to` convierte valores cuantitativos compatibles o cambia el tipo nominal entre representaciones estructuralmente compatibles; `in` cambia la unidad de expresión de magnitudes lineales y de punto. En un punto transforma la coordenada completa y evita su `format`; la extracción de partes usa `unidad from contenedor in punto`. Un `given` fuera de dominio produce `rejected`, mientras un estado tentativo con un campo fuera de dominio produce `failed`. La normalización de un intervalo invertido a `empty` no es por sí misma una violación.
+`as` is reserved for specialisation. `to` converts compatible quantitative values or changes nominal type between structurally compatible representations; `in` changes the expression unit of linear and point magnitudes. On a point it transforms the complete coordinate and avoids its `format`; extracting parts uses `unit from container in point`. A `given` outside its domain produces `rejected`, while tentative state with an out-of-domain field produces `failed`. Normalising an inverted interval to `empty` is not itself a violation.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-030`, `D-032`, `D-037`, `D-042`, `D-059`, `D-061`.
