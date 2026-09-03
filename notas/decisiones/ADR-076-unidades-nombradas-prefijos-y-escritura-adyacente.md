@@ -1,6 +1,6 @@
 ---
 id: D-076
-title: "Unidades nombradas, prefijos y escritura adyacente"
+title: "Named units, prefixes and adjacent notation"
 status: vigente
 date: 2026-08-03
 supersedes: []
@@ -8,16 +8,16 @@ superseded-by: []
 questions:
   - "Q-054"
 affects:
-  - "magnitudes, unidades, léxico, nombres, anclas y tooling de edición"
+  - "magnitudes, units, lexicon, names, anchors and editing tooling"
 ---
-# ADR-076 — Unidades nombradas, prefijos y escritura adyacente
+# ADR-076 — Named units, prefixes and adjacent notation
 
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] y [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]].
-- Cierra junto con D-089: [[notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054]].
+- Amended by: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]] and [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]].
+- Closes with D-089: [[notas/preguntas/Q-054-catalogo-y-resolucion-lexica-de-unidades-y-prefijos|Q-054]].
 
-## Decisión
+## Decision
 
-Toda unidad declara un identificador `lowerCamel` que participa en su ancla. D-087 integra la configuración de la unidad en el sistema general de metadatos: `~name: Name`, `~plural: Text`, `~abbreviation: Text` y `~prefixes: Prefix [* unique] = empty`. Ninguna de estas propiedades usa una producción sintáctica especial de unidad.
+Every unit declares a `lowerCamel` identifier that participates in its anchor. D-087 integrates unit configuration into the general metadata system: `~name: Name`, `~plural: Text`, `~abbreviation: Text` and `~prefixes: Prefix [* unique] = empty`. None of these properties uses a special unit syntax production.
 
 ```mud
 root unit meter {
@@ -28,21 +28,21 @@ root unit meter {
 }
 ```
 
-El identificador declarado conserva las reglas ordinarias de identificador de unidad. `~name`, `~plural` y `~abbreviation` comparten el mismo criterio cuando se habilitan como formas fuente: pueden contener espacios U+0020 y puntuación, pero deben contener al menos un carácter alfabético; por tanto no pueden estar compuestos íntegramente por cifras ni íntegramente por caracteres no alfabéticos. Una forma completa que coincida exactamente con una palabra clave de MUD no es admisible como forma fuente, aunque el mismo valor pueda seguir usándose como presentación.
+The declared identifier retains ordinary unit-identifier rules. `~name`, `~plural` and `~abbreviation` share the same criteria when enabled as source forms: they may contain U+0020 spaces and punctuation but must contain at least one alphabetic character; they therefore may not consist entirely of digits or entirely of non-alphabetic characters. A complete form that exactly matches a MUD keyword is not admissible as source spelling, although the same value may remain a presentation.
 
-La unicidad dentro de una magnitud se comprueba sobre identificador, nombre, plural, abreviatura y todas las formas obtenidas después de aplicar cada prefijo permitido. Dos unidades distintas de la misma magnitud no pueden generar la misma forma, ni directamente ni por prefijado. Una colisión entre magnitudes distintas se resuelve mediante el tipo esperado o cualificación como `Length.meter`; sin contexto suficiente es un error.
+Uniqueness within a magnitude is checked over identifier, name, plural, abbreviation and every form obtained by applying each permitted prefix. Two distinct units of one magnitude may not generate the same form, directly or through prefixing. A collision between different magnitudes is resolved by expected type or qualification such as `Length.meter`; without sufficient context it is an error.
 
-La forma contextual por identificador es válida y el tooling puede sugerir una abreviatura inequívoca más breve. Una sobrescritura de `~name` idéntica al predeterminado recibe sugerencia de eliminación. Los miembros de `family` usan igualmente el metadato estándar `~name` sin alterar su identidad.
+The contextual identifier form is valid and tooling may suggest an unambiguous shorter abbreviation. An override of `~name` identical to the default receives a removal suggestion. `family` members likewise use standard `~name` metadata without changing their identity.
 
-### Prefijos
+### Prefixes
 
-`Prefix` es un tipo nominal incorporado. Los nombres del catálogo SI (`quecto`, `ronto`, ..., `quetta`) son valores incorporados de tipo `Prefix`; se tokenizan como identificadores ordinarios y se resuelven en el nivel de incorporados, no como palabras reservadas nuevas.
+`Prefix` is a built-in nominal type. SI catalogue names (`quecto`, `ronto`, ..., `quetta`) are built-in `Prefix` values; they tokenise as ordinary identifiers and resolve at the built-in level, not as new reserved words.
 
-`~prefixes` tiene tipo `Prefix [* unique]` y default de lenguaje `empty`. Por tanto, omitirlo y escribir `~prefixes = empty` admiten ninguno; `~prefixes = all` usa todos los valores incorporados de `Prefix`; una colección como `~prefixes = [kilo, milli]` selecciona exactamente ese subconjunto. Micro acepta `µ`, `μ` y `u` como entrada de forma de unidad y normaliza a `µ`. No existen prefijos binarios ni composición de prefijos.
+`~prefixes` has type `Prefix [* unique]` and language default `empty`. Omitting it and writing `~prefixes = empty` therefore admit none; `~prefixes = all` uses every built-in `Prefix`; a collection such as `~prefixes = [kilo, milli]` selects exactly that subset. Micro accepts `µ`, `μ` and `u` as unit-form input and normalises to `µ`. Binary prefixes and prefix composition do not exist.
 
-El catálogo normativo es el siguiente. Los símbolos distinguen mayúsculas y minúsculas:
+The normative catalogue is:
 
-| Nombre | Símbolo canónico | Factor |
+| Name | Canonical symbol | Factor |
 |---|---:|---:|
 | `quecto` | `q` | 10^-30 |
 | `ronto` | `r` | 10^-27 |
@@ -69,11 +69,11 @@ El catálogo normativo es el siguiente. Los símbolos distinguen mayúsculas y m
 | `ronna` | `R` | 10^27 |
 | `quetta` | `Q` | 10^30 |
 
-Las unidades prefijadas se elaboran estructuralmente y no reciben anclas adicionales. Los valores `Prefix` tampoco son declaraciones de unidad.
+Prefixed units are elaborated structurally and receive no additional anchors. `Prefix` values are not unit declarations.
 
-### Adyacencia y formato
+### Adjacency and formatting
 
-El clasificador contextual de D-089 acepta una unidad inmediatamente después del literal numérico, sin exigir al scanner base conocer el catálogo:
+D-089's contextual classifier accepts a unit immediately after a numeric literal without requiring the base scanner to know the catalogue:
 
 ```mud
 3m
@@ -81,7 +81,7 @@ El clasificador contextual de D-089 acepta una unidad inmediatamente después de
 r0.1m
 ```
 
-La forma canónica inserta exactamente un espacio después del número y conserva compactos los productos y cocientes:
+Canonical form inserts exactly one space after the number and keeps products and quotients compact:
 
 ```mud
 3 m
@@ -89,25 +89,25 @@ La forma canónica inserta exactamente un espacio después del número y conserv
 r0.1 m
 ```
 
-La vista contextual reconoce número y unidad como tokens distintos aun sin espacio; el tokenizado base permanece independiente del catálogo. La edición inteligente y el formateador insertan el espacio; el mero resaltado nunca modifica el archivo.
+The contextual view recognises number and unit as separate tokens even without a space; base tokenisation remains independent of the catalogue. Smart editing and the formatter insert the space; highlighting alone never modifies the file.
 
-Las cantidades con unidades pueden ser miembros de colecciones. Las declaraciones de unidad como valores de primera clase quedan fuera de MUD 1.0.
+Quantities with units may be collection members. Unit declarations as first-class values are outside MUD 1.0.
 
-## Anclas
+## Anchors
 
-Una unidad usa una forma estable derivada de la magnitud y el identificador, por ejemplo:
+A unit uses a stable form derived from magnitude and identifier, for example:
 
 ```text
 unit::physics.Length::meter
 ```
 
-Cambiar metadatos no cambia el ancla; renombrar el identificador sí y requiere migración explícita.
+Changing metadata does not change the anchor; renaming the identifier does and requires explicit migration.
 
-## Verificación
+## Verification
 
-1. Metadatos opcionales y colisiones locales o contextuales.
-2. Catálogo SI completo y tres entradas de micro.
-3. `empty`, `all` y subconjuntos de prefijos.
-4. Literales adyacentes exactos, `Rum` y expresiones compuestas.
-5. Normalización de espacios sin partir identificadores con dígitos.
-6. Ancla estable y ausencia de anclas para unidades prefijadas.
+1. Optional metadata and local or contextual collisions.
+2. Complete SI catalogue and three micro inputs.
+3. `empty`, `all` and prefix subsets.
+4. Exact adjacent literals, `Rum` and compound expressions.
+5. Space normalisation without splitting identifiers containing digits.
+6. Stable anchor and no anchors for prefixed units.
