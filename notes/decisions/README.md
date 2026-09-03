@@ -117,7 +117,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-101 | current | 2026-08-29 | [[notes/decisions/ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|Value blocks, stored local variables and witness extrema]] |
 | D-102 | current | 2026-08-29 | [[notes/decisions/ADR-102-complete-form-of-computed-family-data|Complete form of computed family data]] |
 | D-103 | current | 2026-08-29 | [[notes/decisions/ADR-103-inner-capability-in-derived-values|Inner capability in derived values]] |
-| D-104 | current | 2026-09-02 | [[notes/decisions/ADR-104-ingles-british-english-for-editorial-migration|British English for the editorial migration]] |
+| D-104 | current | 2026-09-02 | [[notes/decisions/ADR-104-british-english-editorial-migration|British English for the editorial migration]] |
 
 ## Reserved identifiers
 
