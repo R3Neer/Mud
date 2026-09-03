@@ -1,6 +1,6 @@
 ---
 id: Q-025
-title: Destrucción de thing estáticas
+title: Destruction of static `thing` values
 priority: P1
 opened: 2026-07-29
 resolved: true
@@ -12,18 +12,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-025 — Destrucción de `thing` estáticas
+# Q-025 — Destruction of static `thing` values
 
-## Contenido
+## Content
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] y [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
+Status: **closed** by [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]] and [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
-Toda `thing` se define estáticamente y puede activarse mediante `start with` o `create Nombre`. `destroy` suspende su identidad canónica sin borrar ancla, descriptor, aristas ni carga; una activación posterior restaura la misma declaración.
+Every `thing` is defined statically and may be activated through `start with` or `create Name`. `destroy` suspends its canonical identity without deleting its anchor, descriptor, edges or payload; a later activation restores the same declaration.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-021`, `D-054`.
