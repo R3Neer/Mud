@@ -1,23 +1,23 @@
 ---
 id: D-079
-title: "Diagnóstico exterior de reglas `always`"
+title: "External diagnostics for `always` rules"
 status: current
 date: 2026-08-04
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "reglas always, gramática, CST, AST, ejemplos y diagnósticos"
+  - "always rules, grammar, CST, AST, examples and diagnostics"
 ---
-# ADR-079 — Diagnóstico exterior de reglas `always`
+# ADR-079 — External diagnostics for `always` rules
 
-## Contexto
+## Context
 
-El diagnóstico `otherwise` de una regla `always` se escribía dentro de las llaves que contienen sus locales y su expresión final. Esa posición hacía parecer que el diagnóstico era otro elemento del bloque booleano y rompía la forma compartida por los diagnósticos de `if`, `after` y `then`.
+The `otherwise` diagnostic of an `always` rule was written inside the braces containing its locals and final expression. That position made the diagnostic appear to be another element of the Boolean block and broke the form shared by `if`, `after` and `then` diagnostics.
 
-## Decisión
+## Decision
 
-El cuerpo entre llaves de una regla `always` contiene exclusivamente cero o más vinculaciones locales seguidas por una única expresión booleana final. Su `otherwise` opcional se escribe después de la llave de cierre:
+The braced body of an `always` rule contains only zero or more local bindings followed by a single final Boolean expression. Its optional `otherwise` is written after the closing brace:
 
 ```mud
 always rule ValidPopulation on kingdom: Kingdom {
@@ -27,18 +27,18 @@ always rule ValidPopulation on kingdom: Kingdom {
 otherwise "Population cannot be negative: {population}"
 ```
 
-El diagnóstico sigue perteneciendo a la regla completa, se evalúa perezosamente solo cuando la invariante es falsa y puede resolver las vinculaciones locales del cuerpo. Un `otherwise` situado dentro de las llaves es inválido.
+The diagnostic remains part of the complete rule, is evaluated lazily only when the invariant is false, and may resolve the body's local bindings. An `otherwise` placed inside the braces is invalid.
 
-## Consecuencias
+## Consequences
 
-- `InvariantBodySyntax` deja de contener el diagnóstico.
-- `AlwaysRuleDeclarationSyntax` conserva el `DiagnosticTailSyntax` opcional posterior al cuerpo.
-- `AlwaysRuleDecl` no cambia: continúa almacenando por separado el bloque booleano y el diagnóstico opcional.
-- Las reglas de terminadores continúan siendo uniformes; las llaves no convierten varias expresiones completas en una sola.
+- `InvariantBodySyntax` no longer contains the diagnostic.
+- `AlwaysRuleDeclarationSyntax` retains the optional `DiagnosticTailSyntax` after the body.
+- `AlwaysRuleDecl` is unchanged: it continues to store the Boolean block and optional diagnostic separately.
+- Terminator rules remain uniform; braces do not turn several complete expressions into one.
 
-## Verificación
+## Verification
 
-1. Regla con diagnóstico exterior en la misma línea y en la siguiente.
-2. Regla sin diagnóstico y aviso correspondiente.
-3. Rechazo de `otherwise` dentro del cuerpo.
-4. Visibilidad de locales del cuerpo en el diagnóstico exterior.
+1. A rule with an external diagnostic on the same line and on the following line.
+2. A rule without a diagnostic and the corresponding warning.
+3. Rejection of `otherwise` inside the body.
+4. Visibility of body locals from the external diagnostic.
