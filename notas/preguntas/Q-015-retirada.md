@@ -1,6 +1,6 @@
 ---
 id: Q-015
-title: Retirada
+title: Retirement
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-015 — Retirada
+# Q-015 — Retirement
 
-## Contenido
+## Content
 
-¿`RETIRE` marca obsolescencia, exige reemplazo, elimina físicamente o admite varias fases?
+Does `RETIRE` mark obsolescence, require a replacement, physically remove the item, or support several phases?
