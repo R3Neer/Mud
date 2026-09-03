@@ -100,7 +100,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-084 | current | 2026-08-04 | [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|Alias specialisation, inherited members and derived views]] |
 | D-085 | current | 2026-08-05 | [[notes/decisions/ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|Functional dictionaries, metadata and structured activation]] |
 | D-086 | current | 2026-08-05 | [[notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|Exact nominal identity, outer arrows and dictionary algebra]] |
-| D-087 | current | 2026-08-15 | [[notes/decisions/ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|Reflective metadata, stable descriptors and external visibility]] |
+| D-087 | current | 2026-08-15 | [[notes/decisions/ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|Reflective metadata, stable descriptors and external visibility]] |
 | D-088 | current | 2026-08-15 | [[notes/decisions/ADR-088-iteration-signed-progressions-and-expression-blocks|Iteration, signed progressions and expression blocks]] |
 | D-089 | current | 2026-08-16 | [[notes/decisions/ADR-089-contextual-source-form-classification-without-circular-scanner-dependency|Contextual classification of source forms without circular scanner dependency]] |
 | D-090 | current | 2026-08-16 | [[notes/decisions/ADR-090-functional-branches-without-public-anchor|Functional branches without a public anchor]] |
@@ -109,12 +109,12 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-093 | current | 2026-08-16 | [[notes/decisions/ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|Surface AST, nominal HIR and later semantic phase]] |
 | D-094 | current | 2026-08-16 | [[notes/decisions/ADR-094-terminal-anchors-for-configured-metadata|Terminal anchors for configured metadata]] |
 | D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-empty-extrema-as-ordinary-absence|Empty extrema as ordinary absence]] |
-| D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|Modules, callables, `look`, `message` and activation]] |
+| D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modules-callables-look-message-and-activation|Modules, callables, `look`, `message` and activation]] |
 | D-097 | current | 2026-08-28 | [[notes/decisions/ADR-097-current-nominal-hir-and-deferred-semantic-ir|Current nominal HIR and deferred semantic IR]] |
 | D-098 | current | 2026-08-28 | [[notes/decisions/ADR-098-assignable-paths-and-write-back-of-immutable-aliases|Assignable paths and write-back of immutable aliases]] |
 | D-099 | current | 2026-08-28 | [[notes/decisions/ADR-099-fresh-materialisations-after-destroy-and-create|Fresh materialisations after `destroy` and `create`]] |
 | D-100 | current | 2026-08-29 | [[notes/decisions/ADR-100-logical-order-provenance-membership-and-effect-consolidation|Logical order, provenance, membership and effect consolidation]] |
-| D-101 | current | 2026-08-29 | [[notes/decisions/ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|Value blocks, stored local variables and witness extrema]] |
+| D-101 | current | 2026-08-29 | [[notes/decisions/ADR-101-value-blocks-stored-local-variables-and-witness-extrema|Value blocks, stored local variables and witness extrema]] |
 | D-102 | current | 2026-08-29 | [[notes/decisions/ADR-102-complete-form-of-computed-family-data|Complete form of computed family data]] |
 | D-103 | current | 2026-08-29 | [[notes/decisions/ADR-103-inner-capability-in-derived-values|Inner capability in derived values]] |
 | D-104 | current | 2026-09-02 | [[notes/decisions/ADR-104-british-english-editorial-migration|British English for the editorial migration]] |

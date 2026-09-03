@@ -773,7 +773,7 @@ This serialisation is used for snapshots, caching and tooling. It is not MUD cod
 Every production from [[mud]] must appear in:
 
 - `mud-syntax-kinds.yaml`.
-- `cobertura-sintactica.yaml`.
+- `syntax-coverage.yaml`.
 
 The coverage specifies whether the production:
 
@@ -790,7 +790,7 @@ The coverage specifies whether the production:
 A conforming Surface AST implementation must:
 
 1. Generate constructors equivalent to `mud-surface-ast.asdl`.
-2. Apply all standardisations from [[cst-a-ast-superficial]].
+2. Apply all standardisations from [[cst-to-surface-ast]].
 3. Reject the excluded states before the AST.
 4. Preserve provenance.
 5. Do not anticipate resolution, typing or IR.

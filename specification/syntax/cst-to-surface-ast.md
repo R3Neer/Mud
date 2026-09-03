@@ -9,10 +9,10 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - cst-sin-perdidas
+  - cst-lossless
   - ../08-abstract-syntax
   - mud-surface-ast.asdl
-  - cobertura-sintactica.yaml
+  - syntax-coverage.yaml
 questions:
   - Q-063
 decisions:
@@ -38,7 +38,7 @@ decisions:
 
 This document defines the normative projection from a validated CST to the normalised Surface AST. It does not define name resolution, inference, static analysis or dynamic semantics.
 
-The exhaustive production-by-production matrix is in `cobertura-sintactica.yaml`. This document sets out the required general rules and conventions.
+The exhaustive production-by-production matrix is in `syntax-coverage.yaml`. This document sets out the required general rules and conventions.
 
 ## Precondition
 
@@ -668,7 +668,7 @@ A failure of names or types is not a diagnostic of this phase.
 
 ## Mechanical table
 
-`cobertura-sintactica.yaml` is exhaustive. Each production states:
+`syntax-coverage.yaml` is exhaustive. Each production states:
 
 - `cst`: specific category.
 - `ast.disposition`.

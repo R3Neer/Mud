@@ -375,7 +375,7 @@ The CST does not:
 - Calculation of default values.
 - Canonically order files.
 
-The normative transformation is defined in [[cst-a-ast-superficial]].
+The normative transformation is defined in [[cst-to-surface-ast]].
 
 ## Conformance
 

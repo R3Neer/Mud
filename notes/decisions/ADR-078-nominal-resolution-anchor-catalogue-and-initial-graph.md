@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-078 — Nominal resolution, anchor catalogue and initial graph
 
-- Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]], [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]], [[ADR-096-modulos-callables-look-message-and-activation|D-096]] and [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
+- Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]], [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]], [[ADR-096-modules-callables-look-message-and-activation|D-096]] and [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]] and [[ADR-072-resolution-environments-and-explicit-anchor-migrations|D-072]].
 
 ## Decision

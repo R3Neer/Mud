@@ -22,7 +22,7 @@ The files complement one another; there is no general rule that ‘the latest on
 2. `mud.ebnf` and `07-concrete-grammar.md` determine concrete grouping.
 3. `lossless-cst.md` determines preservation, trivia and recovery.
 4. `mud-surface-ast.asdl` defines the abstract constructors.
-5. `cst-a-ast-superficial.md` determines the projection.
+5. `cst-to-surface-ast.md` determines the projection.
 6. YAML files make it possible to list and verify the correspondence.
 
 A contradiction is a fault in the proposal and must be resolved in all the files concerned.

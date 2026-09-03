@@ -13,9 +13,9 @@ affects:
 # ADR-070 — Lossless CST and normalised surface AST
 
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
-- Extended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]]
+- Extended by: [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]]
 - Adjusted to the phase boundary of [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
-- Amended by: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
+- Amended by: [[ADR-096-modules-callables-look-message-and-activation|D-096]].
 
 ## Status
 
@@ -127,12 +127,12 @@ A synthesised node retains an anchoring span and a synthesis reason.
 
 The decision is embodied in:
 
-- `specification/syntax/cst-sin-perdidas.md`.
+- `specification/syntax/cst-lossless.md`.
 - `specification/syntax/mud-syntax-kinds.yaml`.
 - `specification/08-abstract-syntax.md`.
 - `specification/syntax/mud-surface-ast.asdl`.
-- `specification/syntax/cst-a-ast-superficial.md`.
-- `specification/syntax/cobertura-sintactica.yaml`.
+- `specification/syntax/cst-to-surface-ast.md`.
+- `specification/syntax/syntax-coverage.yaml`.
 
 ## Positive consequences
 

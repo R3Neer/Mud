@@ -99,7 +99,7 @@ def validate(root: Path) -> list[Problem]:
     grammar = root / "specification/grammar/mud.ebnf"
     lexical = root / "specification/grammar/mud-lexico.ebnf"
     kinds_path = root / "specification/syntax/mud-syntax-kinds.yaml"
-    coverage_path = root / "specification/syntax/cobertura-sintactica.yaml"
+    coverage_path = root / "specification/syntax/syntax-coverage.yaml"
     asdl_path = root / "specification/syntax/mud-surface-ast.asdl"
     nominal_hir_path = root / "specification/names/mud-nominal-hir.asdl"
     retired_ir_dir = root / "specification/ir"
@@ -230,7 +230,7 @@ def validate(root: Path) -> list[Problem]:
             "optional override of intrinsic `name`",
             "`prefixes = empty` → `NoPrefixes`",
         ],
-        root / "specification/syntax/cst-a-ast-superficial.md": [
+        root / "specification/syntax/cst-to-surface-ast.md": [
             "`intrinsic_name_override`",
             "produces a synthetic collection:",
             "| `name = e` | `name = e` |",

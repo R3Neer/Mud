@@ -14,7 +14,7 @@ superseded-by: []
 
 # Q-052 — `message` delivery
 
-Status: **resolved** by [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|D-096]].
+Status: **resolved** by [[notes/decisions/ADR-096-modules-callables-look-message-and-activation|D-096]].
 
 D-096 fixes multiplicity by causal occurrences, no payload-based deduplication, causal order by waves, causal evaluation of `when`/`if`, propagation to the next wave and cancellation of external delivery when the resolution rolls back. MUD and the host observe the same occurrence identity, with an internal causal projection and a final external projection.
 

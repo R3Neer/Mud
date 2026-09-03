@@ -15,7 +15,7 @@ affects:
 
 - Modified by: [[ADR-102-complete-form-of-computed-family-data|D-102]].
 - Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]].
-- Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Clarifies: [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]].
 - Extends: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
 ## Context

@@ -13,7 +13,7 @@ affects:
 
 - Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]].
 - Extends: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
-- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 ## Context
 

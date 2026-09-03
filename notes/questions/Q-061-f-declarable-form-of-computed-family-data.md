@@ -50,4 +50,4 @@ The complete `derived-value-shape` of computed fields is adopted. Computed `fami
 
 - C1: D-102 fixes `name [derived-form] := value-body`, and D-038 incorporates that rule literally.
 - C2: D-102 refers to D-037 semantics and explicitly retains the absence of outer `mut`, stored default and own storage.
-- C3: `specification/grammar/mud.ebnf` retains `[ derived-value-shape ]`; `cobertura-sintactica.yaml` and `cst-a-ast-superficial.md` project that form; `mud-surface-ast.asdl` retains `derived_value_shape? shape` in `CalculatedFamilyDataDecl`.
+- C3: `specification/grammar/mud.ebnf` retains `[ derived-value-shape ]`; `syntax-coverage.yaml` and `cst-to-surface-ast.md` project that form; `mud-surface-ast.asdl` retains `derived_value_shape? shape` in `CalculatedFamilyDataDecl`.

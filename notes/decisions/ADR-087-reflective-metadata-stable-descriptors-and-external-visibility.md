@@ -12,7 +12,7 @@ affects:
 
 # ADR-087 — Reflective metadata, stable descriptors and external visibility
 
-- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]] and [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].

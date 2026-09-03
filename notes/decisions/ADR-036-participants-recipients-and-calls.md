@@ -14,14 +14,14 @@ affects:
 ---
 # ADR-036 — Participants, recipients and calls
 
-- Amended by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 
 - Read more: [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]]
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
-- Amended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]]
-- Amended by: [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|D-096]]
+- Amended by: [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]]
+- Amended by: [[notes/decisions/ADR-096-modules-callables-look-message-and-activation|D-096]]
 - Related questions: Q-011, Q-012, Q-013
 - Documents affected: future `07-concrete-grammar.md`, future `19-expressions.md`, forthcoming episodes 21 to 24
 

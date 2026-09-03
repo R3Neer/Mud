@@ -14,7 +14,7 @@ affects:
 ---
 # ADR-047 — Quantifiers and finite iteration
 
-- Amended by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]

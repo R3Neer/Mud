@@ -16,7 +16,7 @@ affects:
 
 # ADR-088 — Iteration, signed progressions and expression blocks
 
-- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-collection-filtering-take-and-indexing|D-081]] and [[ADR-082-cycle-as-point-domain-modifier|D-082]].
 - Retains: [[ADR-034-num-exactly-and-rum-binary64|D-034]], [[ADR-040-semantics-remaining-basic-numeracy|D-040]] and D-048's prohibition on randomness in filters of [[ADR-048-reproducible-randomness-and-errors|D-048]].

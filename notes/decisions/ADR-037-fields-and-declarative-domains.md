@@ -16,7 +16,7 @@ affects:
 
 - Amended by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Amended by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]

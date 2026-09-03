@@ -142,5 +142,5 @@ Until further notice Q-052, the standard merely stipulates that the published fi
 
 ## State rear
 
-This decision was **replaced in its entirety by [[ADR-096-modulos-callables-look-message-and-activation|D-096]]**. Its description of `look` without `given`, `message` as an output where fields are evaluated only at the end, and the ‘host-only’ boundary is retained here solely for historical purposes.
+This decision was **replaced in its entirety by [[ADR-096-modules-callables-look-message-and-activation|D-096]]**. Its description of `look` without `given`, `message` as an output where fields are evaluated only at the end, and the ‘host-only’ boundary is retained here solely for historical purposes.
 

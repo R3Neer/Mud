@@ -12,7 +12,7 @@ affects:
 
 # ADR-094 — Terminal anchors for configured metadata
 
-- Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Clarifies: [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]].
 - Extends: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 
 ## Decision
