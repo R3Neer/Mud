@@ -1,6 +1,6 @@
 ---
 id: Q-042
-title: Especialización desde una thing concreta
+title: Specialisation from a concrete `thing`
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -11,22 +11,22 @@ affects: []
 superseded-by: []
 ---
 
-# Q-042 — Especialización desde una `thing` concreta
+# Q-042 — Specialisation from a concrete `thing`
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-Cuando una `thing` concreta $B$ se especializa a partir de otra `thing` concreta $A$, ¿hereda solo las declaraciones, restricciones y valores predeterminados de $A$, o copia u observa también su estado mutable actual?
+When a concrete `thing` $B$ specialises from another concrete `thing` $A$, does it inherit only $A$'s declarations, constraints and defaults, or does it also copy or observe its current mutable state?
 
-Decisión: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
+Decision: [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-Se heredan esquema y predeterminados efectivos, nunca estado activo. Cada `thing` concreta posee estado independiente y su primera activación inicializa desde predeterminados antes de aplicar sus asignaciones explícitas.
+Schema and effective defaults are inherited, never active state. Each concrete `thing` has independent state, and its first activation initialises it from defaults before applying its explicit assignments.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-015`.
