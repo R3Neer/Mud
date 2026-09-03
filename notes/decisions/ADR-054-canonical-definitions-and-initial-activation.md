@@ -174,9 +174,9 @@ DestroyReference(anchor)
 - The graph The specialisation declaration is derived from static definitions, not from fragments accumulated during execution.
 - A bypass of a ancestor The ‘inactive’ status remains temporary and restores the declared edges when reactivated.
 - Conflicts over the merger of organisations are resolved `thing`.
-- Dynamic modification of properties, where permitted, must be expressed using explicit operations such as `add` y `remove` and belongs to the materialisation the relevant asset.
+- Dynamic modification of properties, where permitted, must use explicit operations such as `add` and `remove` and belongs to the materialisation of the relevant asset.
 - Creating an unlimited number of fresh individuals would require a different feature; `create` it does not introduce it implicitly.
-- The LSP can be accessed from anywhere activation o materialisation up to just one canonical definition.
+- The LSP can be accessed from any activation or materialisation up to one canonical definition.
 - The list of reserved words must distinguish between hard words and contextual words.
 
 ## Options ruled out
@@ -197,7 +197,7 @@ It is ruled out because a new creation appears to provide a complete definition,
 
 It is ruled out because it makes the descriptor of a identity which rules they agree on and in which waves. Structural changes must use explicit operations.
 
-### Modelling `start with` such as action o `then`
+### Modelling `start with` as an action or `then`
 
 It is ruled out because it has no caller, participants, conditions or result operation. Its content is an initial set, not a sequence causal.
 

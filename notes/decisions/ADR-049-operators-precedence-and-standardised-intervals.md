@@ -19,7 +19,7 @@ affects:
 - Amended by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]]
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
-- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] y [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
+- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Amended further by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]]
 - Related questions: Q-001, Q-018, Q-050
 - Documents affected: expressions, ranges, grammar

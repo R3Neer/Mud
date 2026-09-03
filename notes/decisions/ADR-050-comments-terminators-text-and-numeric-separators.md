@@ -79,11 +79,11 @@ A statement ends with `;` or a line break.
 
 The jump does not act as a terminator when it appears within a syntactically open construct. A prefix it is open when it is not yet able to form a unit syntactically complete, but can be supplemented with subsequent tokens. The grammar of D-057 provides an exhaustive list. It includes:
 
-- A delimiter `(` o `[` still open.
+- An unclosed delimiter `(` or `[`.
 - A headline that still needs participants, arguments or other content.
 - A line ending with a comma or an operator that requires a subsequent operand.
-- A heading or clause ending in a word that requires content, such as `for`, `given`, `if`, `then` o `:=`.
-- The contents of a literal o comment multi-line.
+- A heading or clause ending in a word that requires content, such as `for`, `given`, `if`, `then` or `:=`.
+- The contents of a multi-line literal or comment.
 
 The keys `{}` they do not remove the terminators within them: a block contains instructions or statements separated by jumps or `;`.
 
@@ -116,7 +116,7 @@ Therefore, `1_000.123456e1000`, `1000.123_456` and `3e1_000` are valid. `1_00000
 - The lexer removes comments and outputs skip tokens; the parser determines which are terminators based on whether the prefix The syntactic structure is complete.
 - The highlighter can implement the lexicon without knowing the model semantic.
 - The list of reserved words is generated from the consolidated grammar.
-- The catalogue distinguishes between reserved words and contextual words in accordance with D-035, D-054 y D-055. `using`, `with`, `test`, `otherwise` y `ordered` are reserved; `start`, `abstract`, `always`, `name` y `prefixes` are contextual in their grammatical functions.
+- The catalogue distinguishes between reserved and contextual words in accordance with D-035, D-054 and D-055. `using`, `with`, `test`, `otherwise` and `ordered` are reserved; `start`, `abstract`, `always`, `name` and `prefixes` are contextual in their grammatical functions.
 
 ## Verification
 

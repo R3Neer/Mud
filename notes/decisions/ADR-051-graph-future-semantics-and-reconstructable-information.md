@@ -19,7 +19,7 @@ affects:
 
 - Amended by: [[ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]].
 - Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]] and [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
-- Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]].
 
 ## Context
@@ -49,7 +49,7 @@ When designing this future representation, it must be capable of preserving or r
 - derivation of dimensions, quantities, units and equivalences;
 - general departments, including domain, stochastic and hard when they form part of the defined analysis.
 
-The decision Which information is explicitly stored, what is derived and how it is serialised are matters for the future design of the typing system/elaboración. If a persistent exchange format is introduced, it must have a compatible schema version and allow for deterministic reconstruction from the previous normative sources.
+Which information is explicitly stored, what is derived and how it is serialised are matters for the future design of the typing system and elaboration. If a persistent exchange format is introduced, it must have a compatible schema version and allow deterministic reconstruction from the previous normative sources.
 
 Q-009 It leaves the external format and specific names open for when such a representation comes into existence; that question does not require it to be created in advance.
 
@@ -63,7 +63,7 @@ Q-009 It leaves the external format and specific names open for when such a repr
 ## Verification
 
 1. The Nominal HIR can be reconstructed from Surface AST + nominal resolution.
-2. The Nominal HIR remains free of typing conclusions/elaboración.
+2. The nominal HIR remains free of typing conclusions and elaboration.
 3. There is no regulatory framework for semantic IR until its production phases have been developed.
 4. The conceptual requirements set out above remain available for use in reviewing future designs without specifying their technical implementation at this stage.
 

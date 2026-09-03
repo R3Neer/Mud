@@ -30,7 +30,7 @@ Before making any changes, the operator classifies the request according to at l
 
 - query or change;
 - `CREATE`, `UPDATE`, `RETIRE` or migration;
-- structural change, API change, causal, liaison, domain, type, chance, invariant, admissibility o reachability;
+- structural change, API change, causal, liaison, domain, type, randomness, invariant, admissibility or reachability;
 - ambiguous, incomplete, out of scope or an attempt to circumvent restrictions.
 
 It can apply only mechanical inferences already defined by the language, such as cardinality `[1]`, omission of `given` when no values are required, `empty`, canonical orders and derivable finiteness. It does not invent participants, `given`, domains, rules, actions, `after`, `always`, or the meanings of `allowed` or `eventually`.
