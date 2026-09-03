@@ -84,7 +84,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-068 | vigente | 2026-08-02 | [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|Universal `Thing` and intrinsic name]] |
 | D-069 | vigente | 2026-08-02 | [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|`Char` literals with double quotes]] |
 | D-070 | vigente | 2026-08-02 | [[notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|Lossless CST and normalised surface AST]] |
-| D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Vinculaciones locales en bloques booleanos]] |
+| D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Local bindings in Boolean blocks]] |
 | D-072 | vigente | 2026-08-02 | [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|Entornos de resolución y migraciones explícitas de anclas]] |
 | D-073 | vigente | 2026-08-02 | [[notas/decisiones/ADR-073-as-thing-explicito-redundante|`as Thing` explícito válido pero redundante]] |
 | D-074 | vigente | 2026-08-03 | [[notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento|Uniones nominales y estrechamiento de tipos]] |

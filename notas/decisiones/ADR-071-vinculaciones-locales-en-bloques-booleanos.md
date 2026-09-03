@@ -1,39 +1,38 @@
 ---
 id: D-071
-title: "Vinculaciones locales en bloques booleanos"
+title: "Local bindings in Boolean blocks"
 status: vigente
 date: 2026-08-02
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "reglas booleanas, when, if, after, always, tests, gramática, CST, AST y resolución de nombres locales"
+  - "Boolean rules, when, if, after, always, tests, grammar, CST, AST and local name resolution"
 ---
-# ADR-071 — Vinculaciones locales en bloques booleanos
+# ADR-071 — Local bindings in Boolean blocks
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Amended by: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Extends: [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Amends: [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] and [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
+- Subsequently amended by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Amended by: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
 
-- Amplía: [[ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
-- Modifica: [[ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]]
-- Modificada después por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+## Context
 
-## Contexto
+MUD conditions may need readable intermediate calculations. Repeating them inside a Boolean expression harms readability, while turning them into fields would introduce state that does not belong to the world.
 
-Las condiciones de MUD pueden necesitar cálculos intermedios legibles. Repetirlos dentro de una expresión booleana dificulta su lectura, mientras que convertirlos en campos introduciría estado que no pertenece al mundo.
+MUD already has immutable local bindings via `:=` in `then` blocks. The same vocabulary must extend to conditions without making it ambiguous which Boolean value decides the clause.
 
-MUD ya dispone de vinculaciones locales inmutables mediante `:=` en bloques `then`. Falta extender el mismo vocabulario a condiciones sin volver ambiguo qué valor booleano decide la cláusula.
+## Decision
 
-## Decisión
+### Boolean block
 
-### Bloque booleano
+A Boolean block contains, in this order:
 
-Un bloque booleano contiene, en este orden:
+1. Zero or more local bindings `name [derived-form] := expression`, with an optional static type and derived coercions over domain, cardinality, uniqueness or order.
+2. Exactly one final expression.
 
-1. Cero o más vinculaciones locales `nombre [forma-derivada] := expresión`, con tipo estático opcional y coerciones derivadas admitidas sobre dominio, cardinalidad, unicidad u orden.
-2. Exactamente una expresión final.
-
-La expresión final debe satisfacer el contrato de la construcción propietaria: elabora a `Bool` en reglas booleanas, guardas, invariantes y postcondiciones; en `when`, elabora a un activador admitido por D-058. Toda expresión sin forma de declaración debe ser la última del bloque; una segunda expresión no declarativa es inválida.
+The final expression must satisfy the owning construct's contract: it elaborates to `Bool` in Boolean rules, guards, invariants and postconditions; in `when`, it elaborates to an activator admitted by D-058. An expression without declaration form must be the last expression in the block; a second non-declarative expression is invalid.
 
 ```mud
 if {
@@ -43,33 +42,19 @@ if {
 }
 ```
 
-Los bloques booleanos se admiten en:
+Boolean blocks are admitted in Boolean rule bodies, `when` and `if` clauses, `always` rule bodies, action `after` postconditions and test assertions where their concrete form permits it. The braced-less form with one expression remains valid and normalises to a block with no locals.
 
-- Cuerpos de reglas booleanas.
-- Cláusulas `when`.
-- Cláusulas `if`.
-- Cuerpos de reglas `always`.
-- Postcondiciones `after` de acciones.
-- Aserciones de tests cuando su forma concreta lo permita.
+### Evaluation and scope
 
-La forma sin llaves y una única expresión continúa siendo válida y se normaliza a un bloque sin locales.
+Local bindings are pure, immutable and evaluated sequentially once per clause evaluation, against the same snapshot observed by the condition. They create no persistent state and survive no other evaluation.
 
-### Evaluación y ámbito
+Each name is visible from the following declaration through the final Boolean expression and its associated `otherwise`, if any. It is not visible in `then`, another clause or outside the block. D-066's prohibitions remain: no forward references, cycles, redeclaration or shadowing.
 
-Las vinculaciones locales son puras, inmutables y se evalúan secuencialmente una vez por evaluación de la cláusula, contra la misma instantánea que observa la condición. No crean estado persistente ni sobreviven a otra evaluación.
+In a `when`, a local used by `changes` or `old` is evaluated from its defining expression in each required snapshot; the binding itself stores no value between waves.
 
-Cada nombre es visible desde la declaración siguiente hasta:
+### Test `after`
 
-- La expresión booleana final.
-- El `otherwise` asociado, si existe.
-
-No es visible en `then`, en otra cláusula ni fuera del bloque. Se mantienen las prohibiciones de D-066: no hay referencias adelantadas, ciclos, redeclaración ni sombreado.
-
-En un `when`, una local usada por `changes` u `old` se interpreta evaluando su expresión definitoria en cada instantánea requerida; la vinculación no almacena por sí misma un valor entre ondas.
-
-### `after` de tests
-
-El bloque `after` de un test no es una única condición, sino una secuencia no vacía de aserciones. Puede comenzar con cero o más vinculaciones locales comunes, seguidas por una o más aserciones. Las locales son visibles en todas las aserciones y sus `otherwise`.
+A test's `after` block is a non-empty sequence of assertions, not one condition. It may begin with zero or more common local bindings, followed by one or more assertions. Locals are visible in every assertion and its `otherwise`.
 
 ```mud
 after {
@@ -79,37 +64,31 @@ after {
 }
 ```
 
-No pueden intercalarse nuevas declaraciones locales después de la primera aserción. El `then` de un test conserva los bloques de efectos y las vinculaciones locales definidos por D-066.
+No new local declaration may be interleaved after the first assertion. A test's `then` retains the effect blocks and local bindings defined by D-066.
 
-### Representación abstracta
+### Abstract representation
 
-D-088 generaliza la representación común. El AST superficial normaliza toda condición a:
+D-088 generalises the common representation. The surface AST normalises every condition to `ExpressionBlock(locals, result)`. In these contexts the owner requires `result` to satisfy the corresponding Boolean or temporal contract. The `otherwise` diagnostic belongs to the owning construct and may resolve local names. A test `after` uses its own block with common locals and a non-empty sequence of `TestAssertion` nodes.
 
-```text
-ExpressionBlock(locals, result)
-```
+## Consequences
 
-En los contextos definidos por esta decisión, el propietario exige que `result` cumpla el contrato booleano o temporal correspondiente. El diagnóstico `otherwise` pertenece a la construcción propietaria y puede resolver los nombres de `locals`. Un `after` de test usa un bloque propio con locales comunes y una secuencia no vacía de `TestAssertion`.
+- Intermediate calculations are not duplicated or added to the store.
+- The final expression unambiguously identifies the condition's result.
+- One model serves rules, guards, postconditions and tests.
+- Visibility in `otherwise` enables informative diagnostics without creating anchors for locals.
 
-## Consecuencias
+## Verification
 
-- Los cálculos intermedios no se duplican ni amplían el store.
-- La última expresión identifica sin ambigüedad el resultado de la condición.
-- El mismo modelo sirve para reglas, guardas, postcondiciones y tests.
-- La visibilidad en `otherwise` permite diagnósticos informativos sin crear anclas para locales.
+1. Block without locals equivalent to the short form.
+2. One or more locals before the final expression.
+3. Rejection of a block without a final expression or with two non-declarative expressions.
+4. Sequential use of an earlier local.
+5. Rejection of forward reference, cycle, redeclaration and shadowing.
+6. Visibility in `otherwise` and no visibility in `then`.
+7. Temporal re-evaluation of locals used by `changes` or `old`.
+8. Common locals in test `after` with one or more assertions.
+9. Rejection of a local after the first test assertion.
 
-## Verificación
+## Amendment by D-088
 
-1. Bloque sin locales equivalente a la forma breve.
-2. Una o varias locales antes de la expresión final.
-3. Rechazo de bloque sin expresión final o con dos expresiones no declarativas.
-4. Uso secuencial de una local anterior.
-5. Rechazo de referencia adelantada, ciclo, redeclaración y sombreado.
-6. Visibilidad en `otherwise` y ausencia de visibilidad en `then`.
-7. Reevaluación temporal de locales usadas por `changes` u `old`.
-8. Locales comunes en `after` de test con una o varias aserciones.
-9. Rechazo de una local posterior a la primera aserción de test.
-
-## Modificación por D-088
-
-La estructura se generaliza a `ExpressionBlock(locals, result)`. Las condiciones mantienen sus contratos booleanos/temporales; selección y `exists`, `forall`, `count`, `min` y `max` pueden escribir tras `:` una expresión breve o `{ locales*; resultado }`, con las mismas reglas de pureza, secuencialidad, ámbito y ausencia de referencias adelantadas, ciclos, redeclaración y sombreado.
+The structure generalises to `ExpressionBlock(locals, result)`. Conditions retain their Boolean/temporal contracts; `select`, `exists`, `forall`, `count`, `min` and `max` may write a short expression or `{ locals*; result }` after `:`, with the same rules for purity, sequencing, scope and the absence of forward references, cycles, redeclaration and shadowing.
