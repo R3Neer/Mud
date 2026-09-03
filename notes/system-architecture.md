@@ -5,74 +5,74 @@ Architecture must make a boundary visible: `.mud` contains semantics; everything
 ## View by component
 
 ```text
-Lenguaje natural / CLI / editor
+Natural language / CLI / editor
               │
               ▼
-      Operador semántico
-   intención, impacto, operaciones
+      Semantic operator
+   intent, impact, operations
               │
               ▼
-       Servicio de modelo
- archivos .mud + agenda + transacción
+       Model service
+ .mud files + agenda + transaction
               │
               ▼
-          Compilador
- scanner → CST → AST superficial
+          Compiler
+ scanner → CST → Surface AST
               │
               ▼
-      resolución nominal
+      nominal resolution
               │
               ▼
-          HIR nominal
+          nominal HIR
               │
               ▼
       tipado + elaboración
               │
               ▼
- representación semántica futura
+ future semantic representation
               │
       ┌───────┼────────┐
       ▼       ▼        ▼
- consultas  runtime  materializadores
+ queries  runtime  materialisers
                    TypeScript, docs, tests
 ```
 
-The regulatory chain current It runs until Surface AST and the Nominal HIR. Typing and elaboration These are later architectural phases, but the semantic representation There is as yet no regulatory framework in place for what they will produce.
+The current regulatory chain runs through the Surface AST and Nominal HIR. Typing and elaboration are later architectural phases; no regulatory framework yet defines the semantic representation they will produce.
 
 ## Source and derivatives
 
 Source semantics:
 
-- Archives `.mud`.
+- `.mud` files.
 
 Metadata for governance, no semantics from the world:
 
-- Calendar of specification.
-- Record of decisions.
+- Specification roadmap.
+- Decision record.
 - Project settings.
 
 Reconstructible derivatives already defined:
 
-- Tokens and Lossless CST.
-- AST superficial.
+- Tokens and lossless CST.
+- Surface AST.
 - Table of symbols, scopes and bindings.
-- Index anchors.
+- Anchor index.
 - Nominal HIR and its nominal graph ownership, specialisation and reference.
 
-Derivatives or subsequent representations not yet established by a contract full regulatory mechanism:
+Derivatives or subsequent representations not yet established by a complete contractual regulatory mechanism:
 
 - Types and effective contracts resulting from classification and elaboration.
 - Semantic representation after typing and elaboration.
-- Subsequent semantic graphs and indices, such as readings, writings, effects or elaborate dependencies.
+- Subsequent semantic graphs and indices, such as reads, writes, effects or elaborated dependencies.
 - Materialised code.
-- Tests and documentation generated.
+- Generated tests and documentation.
 - Editor support that depends on later stages.
 
-The agenda and decisions should not conceal the behaviour of the world; its function is to govern the evolution of the specification.
+The roadmap and decisions should not conceal world behaviour; their function is to govern the evolution of the specification.
 
 ## Compiler
 
-Separation current or planned:
+Current or planned separation:
 
 1. **Scanner and contextual classification**: tokens, trivia, comments, verbatim quotations and context-dependent lexical classification where applicable.
 2. **Parser**: Lossless CST, syntactic structure and error correction.
@@ -81,39 +81,39 @@ Separation current or planned:
 5. **Nominal HIR**: current regulatory framework for resolution, limited to nominal information.
 6. **Classification and elaboration**: types, cardinalities, domains, conversions, mutability and other contracts that require information in addition to names.
 7. **Subsequent semantic analyses**: purity, effects, cycles, finiteness, stochasticity and other advanced properties.
-8. **Semantic representation rear**: this may come into effect once the preceding stages have been sufficiently formalised; the specific details have not yet been finalised.
+8. **Later semantic representation**: this may come into effect once the preceding stages have been sufficiently formalised; its specific details have not yet been finalised.
 9. **Consumers**: runtime, queries, diagnostics, materialisers and editor support.
 
-It is not advisable for the parser to directly generate a semantic representation elaborate. This separation makes it possible to track down errors, resolve names before typing, and prevent premature decisions regarding an IR from influencing aspects of the language that have not yet been formalised.
+The parser should not directly generate an elaborated semantic representation. This separation makes it possible to trace errors, resolve names before typing and prevent premature IR decisions from influencing language aspects not yet formalised.
 
-## AST superficial y HIR nominal
+## Surface AST and Nominal HIR
 
-The Surface AST It primarily answers the question: ‘Which semantically relevant construction was written, and where does it come from?’. The Nominal HIR It asks: ‘Which symbols, scopes, owners, bindings, anchors and nominal relations result after name resolution?’.
+The Surface AST primarily answers: ‘Which semantically relevant construction was written, and where does it come from?’ The Nominal HIR asks: ‘Which symbols, scopes, owners, bindings, anchors and nominal relations result after name resolution?’
 
 The Nominal HIR current:
 
-- uses symbols and clear references when the nominal resolution can determine them;
+- uses symbols and explicit references when nominal resolution can determine them;
 - represents scopes and owners;
 - represents local bindings;
 - retains public anchors where appropriate;
-- can record nominal relationships `Owns`, `Specializes` y `RefersTo`;
+- can record nominal relationships `Owns`, `Specializes` and `RefersTo`;
 - preserves provenance enough for diagnostics and navigation.
 
 It does not belong to the Nominal HIR set:
 
-- effective rates;
+- effective types;
 - effective domains;
 - inferred cardinalities;
 - complex conversions;
-- effects or reading sets/escritura;
+- effects or read/write sets;
 - post-typing semantic dependencies;
 - evidence of termination.
 
-The contract current this part of the border belongs to [[notes/decisions/ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]], which amends and clarifies [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] y [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+The current contract for this boundary is [[notes/decisions/ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]], which amends and clarifies [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 
-## Semantic representation rear
+## Later semantic representation
 
-Classification and elaboration they will need a representation suitable for execution, analysis and materialisation. For the time being, it exists only as an architectural necessity and a set of requirements, not as a regulatory framework current.
+Classification and elaboration will need a representation suitable for execution, analysis and materialisation. For now, it exists only as an architectural necessity and set of requirements, not as a current regulatory framework.
 
 When designing, a decision must be made, taking into account the typefaces and elaboration already developed:
 
@@ -123,51 +123,51 @@ When designing, a decision must be made, taking into account the typefaces and e
 - what searchable projections it offers;
 - whether serialisation is required and, if so, its versioning.
 
-There is currently no `schemaVersion` regulatory framework for that representation, nor a ASDL subsequent semantic processing that consumers must carry out.
+There is currently no `schemaVersion` contract for that representation, nor a normative ASDL for subsequent semantic processing that consumers must perform.
 
 ## Searchable graphs
 
-The Nominal HIR it is now possible to reconstruct a nominal graph for navigation, ownership, specialisation and references. Richer semantic graphs may be projected from the subsequent representation where typing and elaboration sufficient.
+The Nominal HIR now makes it possible to reconstruct a nominal graph for navigation, ownership, specialisation and references. Richer semantic graphs may be projected from the later representation once typing and elaboration provide sufficient information.
 
-Any graph A derivative is used for:
+Any derived graph is used for:
 
 - impact before making a change;
 - anchor navigation;
 - direct and transitive dependencies within the available information;
 - detection of cycles when defined by the relevant phase;
-- identification of readers and writers once these works have been produced;
+- identification of readers and writers once these have been produced;
 - explanation of a resolution.
 
 It must not become a second source of truth. If there is a discrepancy with the normative representation of the phase that gave rise to it, it is discarded and reconstructed.
 
-## Runtime causal
+## Causal runtime
 
 The runtime requires at least:
 
-- shop at state with snapshots;
+- state store with snapshots;
 - pure expression evaluator;
 - effect applicator and normaliser;
-- link engine;
+- trigger engine;
 - wave planner;
 - conflict and cycle detector;
 - transaction with confirmation or rollback;
-- register of explanation causal;
+- causal explanation registry;
 - deterministic seed manager.
 
-The runtime must consume a representation following resolution, typed and elaboration, not to rely on the parser’s specific behaviour or use the Nominal HIR as a substitute for information semantics which it deliberately does not contain. The specific form of that representation remains deferred by D-097.
+The runtime must consume a representation produced after resolution, typing and elaboration. It must not rely on parser-specific behaviour or use the Nominal HIR as a substitute for semantic information that it deliberately does not contain. The specific form of that representation remains deferred by D-097.
 
-## Operador semántico
+## Semantic operator
 
 The natural language processing layer should not edit text arbitrarily. It should produce a structured plan:
 
 ```text
-intención
-→ clasificación
-→ anclas objetivo
-→ precondiciones
-→ operaciones semánticas
-→ impacto previsto
-→ parche textual derivado
+intent
+→ classification
+→ target anchors
+→ preconditions
+→ semantic operations
+→ expected impact
+→ derived text patch
 ```
 
 Minimal operations:
@@ -177,11 +177,11 @@ Minimal operations:
 - `RETIRE anchor`
 - `MOVE anchor` or explicit migration
 
-`READ` is an operation of query and does not produce a commit on its own. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] and implemented by [[governance/COMMITS-POLICY|the policy commits]].
+`READ` is a query operation and does not produce a commit by itself. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] and implemented by [[governance/COMMITS-POLICY|the commits policy]].
 
 ## Materialisers
 
-Each materialiser receives a validated representation that is sufficient for its task, along with a technical configuration. A consumer requiring types, effects or semantics A sophisticated mind cannot obtain them by inventing them from the Nominal HIR.
+Each materialiser receives a validated representation sufficient for its task, together with technical configuration. A consumer requiring types, effects or advanced semantics cannot obtain them by inventing them from the Nominal HIR.
 
 It can produce:
 
@@ -191,12 +191,12 @@ It can produce:
 - Documentation.
 - Adapters for a motor.
 
-You cannot:
+It cannot:
 
-- Inferring rules from domain new.
-- Convert a `failed` in `false`.
-- Collapse participants and `given`.
-- Change atomicity, order causal o identity.
+- infer rules from a new domain;
+- convert `failed` to `false`;
+- collapse participants and `given`;
+- change atomicity, causal ordering or identity.
 
 ## Early interfaces
 
@@ -211,17 +211,17 @@ mud run <action> --state <file>
 mud impact <operation-plan>
 ```
 
-The conversational integration and the plugin should be developed once these operations have stable contracts. This ensures that the AI utilises verifiable capabilities rather than containing semantics special.
+Conversational integration and the plugin should be developed once these operations have stable contracts. This ensures that AI uses verifiable capabilities rather than containing special-case semantics.
 
-The policy current the operator’s classification, permitted inferences and atomic flow belong to [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
+The current policy for operator classification, permitted inferences and atomic flow belongs to [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
 
-## Persistence of the state runtime
+## Runtime-state persistence
 
-The specification rules out the persistence of the semantics MUD, but a materialisation It will need to save states. A distinction must be made between:
+The specification rules out persistence of MUD semantics, but a materialisation will need to save states. A distinction must be made between:
 
-- The model `.mud`, which states that the world possible.
-- An instance of state runtime.
+- The `.mud` model, which states what the world may be.
+- A runtime-state instance.
 - The technology used to keep that instance running.
 
-Declarative tests written in MUD conform to the language as defined by D-055 and should not be confused with tests generated by a materialiser. The technical format of additional snapshots or fixtures can be defined within the tooling without imposing a database on the language.
+Declarative tests written in MUD conform to the language as defined by D-055 and should not be confused with tests generated by a materialiser. The technical format of additional snapshots or fixtures may be defined within tooling without imposing a database on the language.
 
