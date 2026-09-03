@@ -177,7 +177,7 @@ Minimal operations:
 - `RETIRE anchor`
 - `MOVE anchor` or explicit migration
 
-`READ` is a query operation and does not produce a commit by itself. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] and implemented by [[governance/COMMITS-POLICY|the commits policy]].
+`READ` is a query operation and does not produce a commit by itself. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], developed by [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|D-053]] and implemented by [[governance/COMMITS-POLICY|the commits policy]].
 
 ## Materialisers
 
@@ -213,7 +213,7 @@ mud impact <operation-plan>
 
 Conversational integration and the plugin should be developed once these operations have stable contracts. This ensures that AI uses verifiable capabilities rather than containing special-case semantics.
 
-The current policy for operator classification, permitted inferences and atomic flow belongs to [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
+The current policy for operator classification, permitted inferences and atomic flow belongs to [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|D-053]].
 
 ## Runtime-state persistence
 

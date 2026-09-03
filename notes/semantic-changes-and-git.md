@@ -1,6 +1,6 @@
 # Semantic changes and Git
 
-This document describes the safety protocol for modifying the model. Authority for the workflow belongs to [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] and [[governance/COMMITS-POLICY|the commit policy]]. This differs from running an action inside a world: here the `.mud` definition is changed outside the world.
+This document describes the safety protocol for modifying the model. Authority for the workflow belongs to [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|D-053]] and [[governance/COMMITS-POLICY|the commit policy]]. This differs from running an action inside a world: here the `.mud` definition is changed outside the world.
 
 ## Two types of transaction
 
@@ -64,7 +64,7 @@ The exact format is open to discussion, but it must distinguish between human in
 
 If any step prior to the commit fails, the exact state at the start of the transaction.
 
-This flow, the classification and the operator’s inference limit are consolidated in [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
+This flow, the classification and the operator’s inference limit are consolidated in [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|D-053]].
 
 ## Policy for repositories with previous changes
 

@@ -38,7 +38,7 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
-    "notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria.md",
+    "notes/decisions/ADR-053-semantic-operator-and-authoring-flow.md",
     "notes/questions/Q-001-g-grammar-and-line-breaks.md",
     "notes/questions/Q-004-r-rollback-of-rejected.md",
     "notes/questions/Q-010-e-state-of-source-decisions.md",

@@ -36,7 +36,7 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/decisions/ADR-055-nueva-decision.md",
                 "notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information.md",
                 "notes/decisions/ADR-052-pipelines-renderers-and-conformance.md",
-                "notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria.md",
+                "notes/decisions/ADR-053-semantic-operator-and-authoring-flow.md",
                 "notes/risks-and-constraints.md",
                 "tooling/README.md",
             }
@@ -81,7 +81,7 @@ class BundledProfileTests(unittest.TestCase):
             selected,
         )
         self.assertNotIn(
-            "notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria.md",
+            "notes/decisions/ADR-053-semantic-operator-and-authoring-flow.md",
             selected,
         )
         self.assertNotIn("notes/risks-and-constraints.md", selected)

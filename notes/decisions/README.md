@@ -66,7 +66,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-050 | current | 2026-07-28 | [[notes/decisions/ADR-050-comments-terminators-text-and-numeric-separators|Comments, terminators, text and numeric separators]] |
 | D-051 | current | 2026-07-28 | [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|Graph future semantics and reconstructable information]] |
 | D-052 | current | 2026-07-28 | [[notes/decisions/ADR-052-pipelines-renderers-and-conformance|Pipelines, renderers and conformance]] |
-| D-053 | current | 2026-07-28 | [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|Semantic operator and authoring flow]] |
+| D-053 | current | 2026-07-28 | [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|Semantic operator and authoring flow]] |
 | D-054 | current | 2026-07-28 | [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|Canonical definitions and initial activation]] |
 | D-055 | current | 2026-07-28 | [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|Declarative and diagnostic tests `otherwise`]] |
 | D-056 | current | 2026-07-28 | [[notes/decisions/ADR-056-char-text-and-unicode-ordering|`Char`, `Text` and Unicode ordering]] |
