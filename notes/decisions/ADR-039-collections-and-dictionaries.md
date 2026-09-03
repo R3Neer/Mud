@@ -14,12 +14,12 @@ affects:
 # ADR-039 — Collections and dictionaries
 
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
-- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]] y [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
-- Amended by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]] y [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Amended by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]] and [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
 - Read more: D-019, D-026, D-033
 - Related questions: Q-006, Q-047
-- Documents affected: future `15-colecciones.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`
+- Documents affected: future `15-collections.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Decision
@@ -59,7 +59,7 @@ Initial sources of information:
 
 In a collection values with associated fields, components or data, `ordered by ruta` may replace the standard sort order with a key derived from unique accesses from each member. The key must have full semantic order and the entire path must be transitively stable. A `thing` It is not a sortable primary key. Keys that are equal retain the relative order of provenance stable. In a purely sequential narrative, this provenance corresponds to the order of insertion. This order of collection it does not alter the intrinsic comparison between its members.
 
-When the type o `ordered by ruta` determines the main order, a literal When written in a different order, it is normalised and produces a non-blocking warning. Among identical keys, the provenance stable; in a literal written sequentially, the order in which it is written conveys that provenance. This notice does not apply to a collection `thing [ordered]` whose usual order stems entirely from his own ideas.
+When the type or `ordered by path` determines the main order, a literal written in a different order is normalised and produces a non-blocking warning. Among identical keys, provenance remains stable; in a sequentially written literal, the writing order conveys that provenance. This notice does not apply to a `thing [ordered]` collection whose ordinary order derives entirely from its own values.
 
 ### Set Algebra
 
@@ -67,7 +67,7 @@ Set operators also apply to compatible sets:
 
 | Operation | Form |
 | --- | --- |
-| Unión | `A | B` |
+| Union | `A | B` |
 | Intersection | `A & B` |
 | Difference | `A -- B` |
 | Symmetric difference of sets `unique` | `A ^ B` |
@@ -90,7 +90,7 @@ Therefore, the union it is idempotent even without `unique`: `A | A == A`. It is
 
 #### Cardinality and domain inferred
 
-Sean $[a..b]$ y $[c..d]$ the static cardinalities of $A$ y $B$. Without further information on overlap, the compiler can guarantee:
+Let $[a..b]$ and $[c..d]$ be the static cardinalities of $A$ and $B$. Without further information about overlap, the compiler can guarantee:
 
 | Result | Cardinality conservative |
 | --- | --- |
@@ -101,7 +101,7 @@ Sean $[a..b]$ y $[c..d]$ the static cardinalities of $A$ y $B$. Without further 
 
 The arithmetic of limits is conservative `*` as an effective upper bound. The analysis must narrow these intervals where it can demonstrate disjunction, inclusion, equality, or a domain finite or any other relevant restriction.
 
-Yes $D_A$ y $D_B$ These are the semantic domains of the members:
+Let $D_A$ and $D_B$ be the semantic domains of the members:
 
 | Result | Domain from member |
 | --- | --- |
@@ -169,7 +169,7 @@ stock =
 
 Assigning a key replaces its value; entering a missing key triggers the input if type, domain, capacity and cardinality if permitted; removing a missing key is a no-op.
 
-Reading a missing key results in `empty` in accordance with the declared exit procedure. Absence does not result in `failed` in its own right; merely a later context whose type, domain o cardinality If it does not accept zero elements, it may fail. It is not used `null` nor is it quietly replaced by the default setting from the type from value.
+Reading a missing key results in `empty` in accordance with the declared result form. Absence does not itself produce `failed`; a later context may fail only when its type, domain or cardinality does not accept zero elements. `null` is not used, nor is absence silently replaced by a type default.
 
 A dictionary lookup may be followed by access to members of the value obtained when its type allows this. Another chained indexing method requires that the result the intermediate dictionary is itself a compatible dictionary.
 
@@ -216,7 +216,7 @@ The general rule is that the absence of `unique` It retains its multiplicity, ye
 5. Equality irrespective of internal representation.
 6. Key alias plain and sweetened.
 7. Multitudes of union, intersection and difference; rejection of `^` without `unique`.
-8. Inference conservative and narrow-minded cardinality y domain.
+8. Conservative, narrow inference of cardinality and domain.
 9. Propagation of `unique`, `ordered` and interior capacity `mut` in the four permitted operations.
 10. Canonical order and stable sequence constructed by composing operands, including any possible sequential difference resulting from swapping them.
 11. Absence of mutability external in calculated results.
