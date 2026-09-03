@@ -71,7 +71,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-055 | vigente | 2026-07-28 | [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|Declarative and diagnostic tests `otherwise`]] |
 | D-056 | vigente | 2026-07-28 | [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|`Char`, `Text` and Unicode ordering]] |
 | D-057 | vigente | 2026-07-28 | [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|Concrete grammar, precedence and continuation]] |
-| D-058 | vigente | 2026-07-29 | [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|Activadores temporales, `changes` y `old` reactivo]] |
+| D-058 | vigente | 2026-07-29 | [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|Temporal triggers, `changes` and reactive `old`]] |
 | D-059 | vigente | 2026-07-29 | [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|Intervalos de magnitud y extremos invertidos]] |
 | D-060 | vigente | 2026-07-29 | [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|Deltas aditivos y normalización de `Nat`]] |
 | D-061 | vigente | 2026-07-29 | [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|Resultados no aceptados y plantillas `Text`]] |

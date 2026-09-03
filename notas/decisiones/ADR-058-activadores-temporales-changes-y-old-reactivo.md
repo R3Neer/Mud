@@ -1,6 +1,6 @@
 ---
 id: D-058
-title: "Activadores temporales, `changes` y `old` reactivo"
+title: "Temporal triggers, `changes` and reactive `old`"
 status: vigente
 date: 2026-07-29
 supersedes: []
@@ -10,29 +10,29 @@ questions:
 affects:
   - "[[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`"
 ---
-# ADR-058 — Activadores temporales, `changes` y `old` reactivo
+# ADR-058 — Temporal triggers, `changes` and reactive `old`
 
-- Modifica: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Preguntas relacionadas: Q-005
-- Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
-- Documentos afectados: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`
+- Amends: [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Related questions: Q-005
+- Extended by: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+- Affected documents: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`
 
-## Contexto
+## Context
 
-D-041 distinguía dos formas completas de `when`: `when e`, que detectaba `false → true`, y `when e changes`, que comparaba valores consecutivos. Aunque la prosa llamaba postfijo a `changes`, la gramática solo lo admitía al final de toda la cláusula. No podían expresarse activadores como:
+D-041 distinguished two complete forms of `when`: `when e`, which detected `false → true`, and `when e changes`, which compared consecutive values. Although the prose described `changes` as postfix, the grammar permitted it only at the end of the entire clause. It could not express triggers such as:
 
 ```mud
 when position changes or ready
 when position changes and velocity changes
 ```
 
-Tratar `changes` como un `Bool` ordinario tampoco sirve. Si el valor cambia en dos transiciones consecutivas, el pulso sería verdadero en ambas y una segunda detección exterior `false → true` perdería la segunda.
+Treating `changes` as an ordinary `Bool` would not work either. If the value changes in two consecutive transitions, the pulse would be true in both, and a second outer `false → true` detection would miss the second one.
 
-## Decisión
+## Decision
 
-### Activadores
+### Triggers
 
-Para definir la semántica temporal se usa la notación `Rise(e)`, `Temporal(e)` y `Changed(e)`. Estas formas distinguen fuentes temporales de valores `Bool` ordinarios, pero no fijan constructores concretos del IR: D-096 deja abierta la representación interna exacta de los matches causales y de su composición.
+The temporal semantics use the notation `Rise(e)`, `Temporal(e)` and `Changed(e)`. These forms distinguish temporal sources from ordinary `Bool` values, but do not prescribe concrete IR constructors: D-096 leaves the exact internal representation of causal matches and their composition open.
 
 ```text
 TemporalSource
@@ -41,9 +41,9 @@ TemporalSource
     | Changed(Expression)
 ```
 
-Para una vinculación $b$, sea $v_n(b,e)$ el valor de la expresión pura $e$ en la instantánea de inicio $W_n$ de la onda $n$.
+For a binding $b$, let $v_n(b,e)$ be the value of the pure expression $e$ in the initial snapshot $W_n$ of wave $n$.
 
-Un `when e` que no contiene `old` ni `changes` se elabora como un único `Rise(e)`:
+A `when e` containing neither `old` nor `changes` is elaborated as a single `Rise(e)`:
 
 $$
 \operatorname{Rise}_n(b,e)
@@ -51,11 +51,11 @@ $$
 \neg v_{n-1}(b,e)\land v_n(b,e).
 $$
 
-Por tanto, los operadores booleanos interiores continúan formando primero una condición de nivel. En particular, `when ready and authorized` detecta que la conjunción completa pasa de falsa a verdadera.
+Its inner Boolean operators therefore continue first to form a level condition. In particular, `when ready and authorized` detects that the complete conjunction changes from false to true.
 
-Una expresión booleana de `when` que usa `old` forma un activador `Temporal`: se evalúa directamente sobre el par $(W_{n-1},W_n)$ y pulsa en cada transición donde resulte verdadera. No se somete después a otra detección `false → true`.
+A Boolean `when` expression using `old` forms a `Temporal` trigger: it is evaluated directly over the pair $(W_{n-1},W_n)$ and pulses on every transition for which it is true. It is not then subjected to another `false → true` detection.
 
-`e changes` forma:
+`e changes` forms:
 
 $$
 \operatorname{Changed}_n(b,e)
@@ -63,32 +63,32 @@ $$
 v_{n-1}(b,e)\ne v_n(b,e),
 $$
 
-y exige que el tipo de $e$ tenga igualdad definida. Es azúcar temporal equivalente a comparar el valor anterior y el actual:
+and requires the type of $e$ to have defined equality. It is temporal sugar equivalent to comparing the previous and current values:
 
 ```mud
 e changes
 old e != e
 ```
 
-La equivalencia es semántica; no obliga al compilador a perder la forma original ni su procedencia en el AST.
+The equivalence is semantic; it does not require the compiler to discard the original form or its provenance in the AST.
 
-### Composición
+### Composition
 
-Un trigger produce cero o más matches causales. Las formas temporales `Rise`, `Temporal` y `Changed` describen cuándo una vinculación aporta un match; cuando un operando ordinario `Bool` participa en una composición temporal se eleva a `Rise` como antes.
+A trigger produces zero or more causal matches. The temporal forms `Rise`, `Temporal` and `Changed` describe when a binding contributes a match; when an ordinary `Bool` operand participates in a temporal composition, it is raised to `Rise` as before.
 
-`and` realiza natural join de los matches compatibles de ambos operandos y, si no comparten bindings, su producto cartesiano. `or` realiza la unión de matches. Las identidades de ocurrencias causales forman parte del match, de modo que dos ocurrencias distintas no se deduplican aunque tengan el mismo payload.
+`and` performs a natural join of compatible matches from both operands and, if they share no bindings, their Cartesian product. `or` performs the union of matches. The identities of causal occurrences form part of a match, so two distinct occurrences are not deduplicated even when they have the same payload.
 
 ```mud
 when position changes and velocity changes
 ```
 
-requiere matches compatibles cuyas diferencias netas correspondan al mismo paso entre instantáneas. Una subexpresión booleana ordinaria entre paréntesis se eleva como una unidad: `(ready or authorized) and position changes` usa `Rise(ready or authorized)`, no dos fuentes independientes.
+requires compatible matches whose net differences correspond to the same step between snapshots. A parenthesised ordinary Boolean subexpression is raised as a unit: `(ready or authorized) and position changes` uses `Rise(ready or authorized)`, not two independent sources.
 
-Los triggers solo se combinan inicialmente mediante las palabras `and` y `or`. `not`, `xor`, `=>`, `<=>`, `&`, `|` y `^` no aceptan operandos `Trigger`. Esta restricción no impide usar operadores booleanos ordinarios dentro de la expresión booleana de un `Rise` o `Temporal`. D-096 añade además como fuentes declarativas ocurrencias de `message`, disparos de rules reactivas y evaluaciones de `always`.
+Triggers are initially combined only through `and` and `or`. `not`, `xor`, `=>`, `<=>`, `&`, `|` and `^` do not accept `Trigger` operands. This restriction does not prevent ordinary Boolean operators from being used within the Boolean expression of a `Rise` or `Temporal`. D-096 additionally introduces occurrences of `message`, firings of reactive rules and evaluations of `always` as declarative sources.
 
-### Precedencia de `changes`
+### Precedence of `changes`
 
-`changes` es un operador sufijo de la capa temporal. Tiene menos precedencia que las operaciones aritméticas, las conversiones y las comparaciones, pero más que `and` y `or`:
+`changes` is a postfix operator in the temporal layer. It has lower precedence than arithmetic operations, conversions and comparisons, but higher precedence than `and` and `or`:
 
 ```mud
 when position + offset changes
@@ -96,7 +96,7 @@ when temperature > limit changes
 when position changes or ready
 ```
 
-se agrupan respectivamente como:
+These are grouped respectively as:
 
 ```text
 (position + offset) changes
@@ -104,15 +104,15 @@ se agrupan respectivamente como:
 (position changes) or ready
 ```
 
-Para cambiar el alcance lógico se usan paréntesis:
+Parentheses alter the logical scope:
 
 ```mud
 when (ready and authorized) changes
 ```
 
-`changes` solo es válido dentro del `when` de una regla reactiva o de un `message`. No produce un valor almacenable, retornable ni utilizable en `if`, `then`, `after`, campos calculados o reglas booleanas.
+`changes` is valid only within the `when` of a reactive rule or a `message`. It does not produce a value that may be stored, returned or used in `if`, `then`, `after`, calculated fields or Boolean rules.
 
-En la forma de bloque, el operador pertenece a la expresión interior:
+In block form, the operator belongs to the inner expression:
 
 ```mud
 when {
@@ -120,81 +120,81 @@ when {
 }
 ```
 
-### `old` en reglas reactivas
+### `old` in reactive rules
 
-Dentro del `when` y el `if` de una regla reactiva:
+Within the `when` and `if` of a reactive rule:
 
 ```text
 old e
 ```
 
-evalúa la expresión pura $e$ en $W_{n-1}$ y conserva su tipo. La expresión debe ser evaluable tanto en $W_{n-1}$ como en $W_n$. No se restringe a la expresión observada por `changes`:
+evaluates the pure expression $e$ in $W_{n-1}$ and retains its type. The expression must be evaluable in both $W_{n-1}$ and $W_n$. It is not limited to the expression observed by `changes`:
 
 ```mud
 when price changes
 if price > old price and stock < old stock
 ```
 
-El `if` sin `old` se evalúa sobre $W_n$. `old` no se admite dentro de `then`: D-058 incorpora observación temporal, no efectos retrospectivos.
+An `if` without `old` is evaluated over $W_n$. `old` is not permitted within `then`: D-058 introduces temporal observation, not retrospective effects.
 
-Dentro del `after` de una acción o test, `old` conserva la semántica de D-042 y D-055: observa el estado estable anterior a la resolución completa, no la onda anterior. Fuera de esos contextos y del `when` o `if` reactivo, `old` es un error estático.
+Within the `after` of an action or test, `old` retains the semantics of D-042 and D-055: it observes the stable state preceding the complete resolution, not the preceding wave. Outside those contexts and a reactive `when` or `if`, `old` is a static error.
 
-Una comparación temporal puede medir cambios cuantitativos sin sintaxis adicional:
+A temporal comparison can measure quantitative changes without additional syntax:
 
 ```mud
 when position - old position >= 10 meters
 ```
 
-Por ello MUD 1.0 no introduce `changes by`. Los tipos que admitan resta determinan el tipo y significado de la diferencia; `changes` continúa disponible para cualquier tipo con igualdad.
+MUD 1.0 therefore introduces no `changes by`. The types that permit subtraction determine the type and meaning of the difference; `changes` remains available for every type with equality.
 
-### Línea base
+### Baseline
 
-Para las vinculaciones presentes en la primera instantánea materializada por `start with`:
+For bindings present in the first snapshot materialised by `start with`:
 
-- cada lectura temporal `old e` toma inicialmente el mismo valor que $e$ en $W_0$;
-- `Changed` y `Temporal` memorizan esa línea base y no pulsan por sí mismos;
-- un `Rise` conserva el anterior virtual falso de D-041 y puede pulsar si su condición inicial es verdadera;
-- en una composición, las ramas temporales no pulsan y las ramas `Rise` se evalúan con ese anterior virtual.
+- each temporal reading `old e` initially takes the same value as $e$ in $W_0$;
+- `Changed` and `Temporal` retain that baseline and do not pulse by themselves;
+- a `Rise` retains the virtual previous false value from D-041 and may pulse when its initial condition is true;
+- in a composition, temporal branches do not pulse and `Rise` branches are evaluated with that virtual previous value.
 
-Si una rama `Rise` provoca un disparo inicial, un `old e` usado por el `if` de la regla lee la línea base $W_0$ y por tanto coincide inicialmente con el valor actual de $e$.
+If a `Rise` branch causes an initial firing, an `old e` used by the rule's `if` reads the baseline $W_0$ and therefore initially matches the current value of $e$.
 
-Una vinculación nacida después de `start with` conserva la política anterior: su primera onda activa establece toda su línea base sin disparar ningún activador y comienza a comparar en la siguiente.
+A binding created after `start with` retains the previous policy: its first active wave establishes its complete baseline without firing any trigger, and comparison begins in the following wave.
 
-## Consecuencias
+## Consequences
 
-- El AST de superficie conserva `changes` como sufijo y la composición escrita; el modelo semántico debe preservar el comportamiento de cero o más matches, sus bindings/testigos y las identidades causales. D-096 no fija una codificación IR cerrada de esos matches.
-- La memoria reactiva conserva los valores anteriores requeridos por `when` e `if`, no solo un booleano agregado.
-- Los pulsos temporales pueden producirse en ondas consecutivas.
-- Una diferencia cuantitativa utiliza los operadores ordinarios y el sistema de magnitudes.
-- La identidad y conservación de esta memoria cuando desaparece una vinculación permanecen en Q-005.
+- The surface AST retains `changes` as a suffix and the written composition; the semantic model must preserve the behaviour of zero or more matches, their bindings/witnesses and causal identities. D-096 does not prescribe a closed IR encoding for those matches.
+- Reactive memory retains the previous values required by `when` and `if`, not merely an aggregate Boolean.
+- Temporal pulses may occur in consecutive waves.
+- A quantitative difference uses the ordinary operators and the magnitude system.
+- The identity and preservation of this memory when a binding disappears remain in Q-005.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Precedencia máxima
+### Maximum precedence
 
-Haría que `position + offset changes` intentase combinar `position` con un activador aplicado solo a `offset`. `changes` debe recibir primero el valor completo construido a su izquierda.
+This would make `position + offset changes` attempt to combine `position` with a trigger applied only to `offset`. `changes` must first receive the complete value constructed to its left.
 
 ### `changes by`
 
-No fija si la diferencia es firmada, absoluta, exacta o mínima y solo tendría significado directo para algunos tipos. `old` y los operadores ordinarios expresan la comprobación sin una segunda sintaxis.
+It does not establish whether the difference is signed, absolute, exact or minimal, and would have direct meaning only for some types. `old` and the ordinary operators express the check without a second syntax.
 
-### `old` solo sobre la expresión cambiada
+### `old` only on the changed expression
 
-La transición ya proporciona dos instantáneas completas. Impedir comparaciones cruzadas como precio actual frente a stock anterior no añade seguridad ni simplifica el runtime.
+The transition already provides two complete snapshots. Preventing cross-comparisons such as current price against previous stock neither adds safety nor simplifies the runtime.
 
-## Verificación
+## Verification
 
-1. `changes` sobre acceso, suma, conversión y comparación con la precedencia acordada.
-2. Unión de matches mediante `or` y natural join/producto cartesiano compatible mediante `and`, preservando ocurrencias causalmente distintas.
-3. Elevación de un operando booleano ordinario a `Rise` en una composición temporal.
-4. Dos cambios consecutivos producen dos pulsos.
-5. `old` en `when` mide una diferencia y puede pulsar en transiciones consecutivas.
-6. `old` en `if` consulta cualquier expresión pura disponible en ambas instantáneas.
-7. Rechazo de `changes` fuera de `when`, de `old` reactivo dentro de `then` y de operadores temporales no admitidos.
-8. Ausencia de pulso temporal en la línea base inicial y posible pulso inicial de una rama `Rise`.
-9. Una vinculación creada posteriormente establece línea base sin disparar.
-10. Rechazo de `changes by`.
+1. `changes` on access, addition, conversion and comparison with the agreed precedence.
+2. Union of matches through `or`, and compatible natural join/Cartesian product through `and`, while preserving causally distinct occurrences.
+3. Raising an ordinary Boolean operand to `Rise` in a temporal composition.
+4. Two consecutive changes produce two pulses.
+5. `old` in `when` measures a difference and may pulse in consecutive transitions.
+6. `old` in `if` queries any pure expression available in both snapshots.
+7. Rejection of `changes` outside `when`, reactive `old` within `then`, and unsupported temporal operators.
+8. No temporal pulse at the initial baseline, and a possible initial pulse from a `Rise` branch.
+9. A subsequently created binding establishes its baseline without firing.
+10. Rejection of `changes by`.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-El álgebra de `Trigger` se generaliza de pulsos booleanos a cero o más matches causales. Un match conserva bindings/testigos e identidad de ocurrencias. `and` realiza natural join de matches compatibles y `or` su unión. Messages, rules reactivas y `always` pueden ser fuentes declarativas de trigger; una referencia a declaración `on` no usa paréntesis de llamada.
+The `Trigger` algebra is generalised from Boolean pulses to zero or more causal matches. A match retains bindings/witnesses and occurrence identity. `and` performs a natural join of compatible matches and `or` their union. Messages, reactive rules and `always` may be declarative trigger sources; an `on` declaration reference takes no call parentheses.
