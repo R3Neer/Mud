@@ -11,8 +11,8 @@ affects:
 ---
 # ADR-083 — Magnitudes base sin unidades
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modifica: [[notes/decisions/ADR-027-salidas-look-y-message|D-027]], [[notes/decisions/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notes/decisions/ADR-030-conversion-cuantitativa-explicita|D-030]] y [[notes/decisions/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
+- Modificada por: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
+- Modifica: [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]], [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]] y [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]].
 - Documentos afectados: magnitudes, tipos, conversiones cuantitativas, plantillas `Text` y frontera pública.
 
 ## Contexto

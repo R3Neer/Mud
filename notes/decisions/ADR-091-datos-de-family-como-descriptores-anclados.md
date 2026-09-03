@@ -14,9 +14,9 @@ affects:
 # ADR-091 — Datos de family como descriptores anclados
 
 - Modificada por: [[ADR-102-forma-completa-de-datos-calculados-de-family|D-102]].
-- Modifica: [[ADR-038-familias-cerradas-de-valores|D-038]].
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
-- Amplía: [[ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|D-070]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
+- Modifica: [[ADR-038-close-knit-families-with-strong-values|D-038]].
+- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Amplía: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
 ## Contexto
 

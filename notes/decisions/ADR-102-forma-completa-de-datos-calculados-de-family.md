@@ -12,9 +12,9 @@ affects:
 ---
 # ADR-102 — Forma completa de datos calculados de family
 
-- Resuelve: [[notes/questions/Q-061-forma-de-datos-calculados-de-family|Q-061]].
-- Modifica: [[ADR-038-familias-cerradas-de-valores|D-038]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
-- Aplica a los datos calculados de `family` la forma derivada de [[ADR-037-campos-y-dominios-declarativos|D-037]].
+- Resuelve: [[notes/questions/Q-061-f-declarable-form-of-computed-family-data|Q-061]].
+- Modifica: [[ADR-038-close-knit-families-with-strong-values|D-038]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
+- Aplica a los datos calculados de `family` la forma derivada de [[ADR-037-fields-and-declarative-domains|D-037]].
 
 ## Contexto
 

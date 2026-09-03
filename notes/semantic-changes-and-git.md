@@ -1,6 +1,6 @@
 # Semantic changes and Git
 
-This document describes the safety protocol relating to a modification of the model. The authority of the flow belongs to [[notes/decisions/ADR-012-cambios-semanticos-atomicos|D-012]], [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y [[governance/COMMITS-POLICY|the policy commits]]. It is different from running a action inside a world: the definition is changed here `.mud` from the world.
+This document describes the safety protocol relating to a modification of the model. The authority of the flow belongs to [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] y [[governance/COMMITS-POLICY|the policy commits]]. It is different from running a action inside a world: the definition is changed here `.mud` from the world.
 
 ## Two types of transaction
 
@@ -64,7 +64,7 @@ The exact format is open to discussion, but it must distinguish between human in
 
 If any step prior to the commit fails, the exact state at the start of the transaction.
 
-This flow, the classification and the operator’s inference limit are consolidated in [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+This flow, the classification and the operator’s inference limit are consolidated in [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
 
 ## Policy for repositories with previous changes
 
@@ -120,7 +120,7 @@ If you wish to version control knowledge acquired during a query —for example,
 - Allow anchor migration.
 - Only physically remove it when it is safe to do so.
 
-The semantics Exacta remains open at [[notes/questions/Q-015-retirada|Q-015]]. Until it has been resolved, the operator must not automatically equate `RETIRE` by removing one declaration.
+The semantics Exacta remains open at [[notes/questions/Q-015-r-retirement|Q-015]]. Until it has been resolved, the operator must not automatically equate `RETIRE` by removing one declaration.
 
 ## Validation of the impact
 

@@ -109,7 +109,7 @@ It does not belong to the Nominal HIR set:
 - post-typing semantic dependencies;
 - evidence of termination.
 
-The contract current this part of the border belongs to [[notes/decisions/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]], which amends and clarifies [[notes/decisions/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notes/decisions/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+The contract current this part of the border belongs to [[notes/decisions/ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]], which amends and clarifies [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] y [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 
 ## Semantic representation rear
 
@@ -177,7 +177,7 @@ Minimal operations:
 - `RETIRE anchor`
 - `MOVE anchor` or explicit migration
 
-`READ` is an operation of query and does not produce a commit on its own. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-cambios-semanticos-atomicos|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] and implemented by [[governance/COMMITS-POLICY|the policy commits]].
+`READ` is an operation of query and does not produce a commit on its own. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] and implemented by [[governance/COMMITS-POLICY|the policy commits]].
 
 ## Materialisers
 
@@ -213,7 +213,7 @@ mud impact <operation-plan>
 
 The conversational integration and the plugin should be developed once these operations have stable contracts. This ensures that the AI utilises verifiable capabilities rather than containing semantics special.
 
-The policy current the operator’s classification, permitted inferences and atomic flow belong to [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+The policy current the operator’s classification, permitted inferences and atomic flow belong to [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
 
 ## Persistence of the state runtime
 

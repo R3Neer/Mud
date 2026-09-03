@@ -29,14 +29,14 @@ class BundledProfileTests(unittest.TestCase):
                 "specification/syntax/modelo.yaml",
                 "notes/vision-and-scope.md",
                 "notes/questions/README.md",
-                "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
-                "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+                "notes/questions/Q-001-g-grammar-and-line-breaks.md",
+                "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
                 "notes/decisions/README.md",
                 "notes/decisions/ADR-054-lenguaje.md",
                 "notes/decisions/ADR-055-nueva-decision.md",
-                "notes/decisions/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
-                "notes/decisions/ADR-052-pipeline-materializadores-y-conformidad.md",
-                "notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria.md",
+                "notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information.md",
+                "notes/decisions/ADR-052-pipelines-renderers-and-conformance.md",
+                "notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria.md",
                 "notes/risks-and-constraints.md",
                 "tooling/README.md",
             }
@@ -65,23 +65,23 @@ class BundledProfileTests(unittest.TestCase):
         self.assertIn("notes/decisions/ADR-055-nueva-decision.md", selected)
         self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
-            "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+            "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
             selected,
         )
         self.assertNotIn(
-            "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
+            "notes/questions/Q-001-g-grammar-and-line-breaks.md",
             selected,
         )
         self.assertIn(
-            "notes/decisions/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
+            "notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information.md",
             selected,
         )
         self.assertIn(
-            "notes/decisions/ADR-052-pipeline-materializadores-y-conformidad.md",
+            "notes/decisions/ADR-052-pipelines-renderers-and-conformance.md",
             selected,
         )
         self.assertNotIn(
-            "notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria.md",
+            "notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria.md",
             selected,
         )
         self.assertNotIn("notes/risks-and-constraints.md", selected)
@@ -96,8 +96,8 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/decisions/README.md",
                 "notes/decisions/ADR-062-lenguaje.md",
                 "notes/questions/README.md",
-                "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
-                "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+                "notes/questions/Q-001-g-grammar-and-line-breaks.md",
+                "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
                 "specification/README.md",
             }
             for relative in documents:
@@ -115,11 +115,11 @@ class BundledProfileTests(unittest.TestCase):
 
         self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
-            "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
+            "notes/questions/Q-001-g-grammar-and-line-breaks.md",
             selected,
         )
         self.assertIn(
-            "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+            "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
             selected,
         )
         self.assertNotIn("specification/README.md", selected)
@@ -131,8 +131,8 @@ class BundledProfileTests(unittest.TestCase):
             root = Path(directory).resolve()
             documents = {
                 "notes/questions/README.md",
-                "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
-                "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+                "notes/questions/Q-001-g-grammar-and-line-breaks.md",
+                "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
                 "exports/current.md",
                 "tooling/example/node_modules/dependency/README.md",
             }
@@ -151,11 +151,11 @@ class BundledProfileTests(unittest.TestCase):
 
         self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
-            "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+            "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
             selected,
         )
         self.assertNotIn(
-            "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
+            "notes/questions/Q-001-g-grammar-and-line-breaks.md",
             selected,
         )
         self.assertNotIn("exports/current.md", selected)

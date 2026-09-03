@@ -12,8 +12,8 @@ affects:
 
 # ADR-094 — Anclas terminales de metadatos configurados
 
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
-- Amplía: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]] y [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Amplía: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 
 ## Decisión
 

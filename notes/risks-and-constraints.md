@@ -24,7 +24,7 @@ Mitigation: after each operation, any lasting effect must remain in the source o
 
 The specification It combines compilation, reactive runtime, state tracking, generation, AI integration and Git. Implementing it horizontally can produce many components without a contract verifiable.
 
-Mitigation: first complete the formalisation of MUD 1.0 in accordance with [[notes/decisions/ADR-013-formalizacion-completa-antes-de-implementar|D-013]] and then validate the implementation using vertical sections and scenarios of conformance.
+Mitigation: first complete the formalisation of MUD 1.0 in accordance with [[notes/decisions/ADR-013-complete-formalisation-before-continuing-with-implementation|D-013]] and then validate the implementation using vertical sections and scenarios of conformance.
 
 ## Semantic risks
 
@@ -96,7 +96,7 @@ Mitigation: outline version, compatibility declared and migration evidence.
 
 Optimise for readability before stabilising the semantics leads to costly migration.
 
-Mitigation: addressing the grammar established by [[notes/decisions/ADR-057-gramatica-concreta-y-continuacion|D-057]] as a regulatory proposal subject to document lifecycle; validate real-world examples and record any changes through standardisation, decision y conformance.
+Mitigation: addressing the grammar established by [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]] as a regulatory proposal subject to document lifecycle; validate real-world examples and record any changes through standardisation, decision y conformance.
 
 ### Silent decisions during implementation
 

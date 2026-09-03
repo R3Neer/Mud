@@ -12,10 +12,10 @@ affects:
 
 # ADR-092 — Disponibilidad estática de propiedades reflectivas
 
-- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]].
-- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
+- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 - Precisa la terminalidad de `Metadata` conforme a [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
-- Amplía: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]] y [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]].
+- Amplía: [[ADR-074-nominal-unions-and-type-narrowing|D-074]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
 ## Contexto
 

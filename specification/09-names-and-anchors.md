@@ -201,7 +201,7 @@ severity: Severity = Critical
 
 Renaming, changing the category or moving between paths alters the anchor. The tooling records a directed mapping from the previous one to current. This mapping can migrate persistent references and history, but never converts the old name to alias, which is supported by the compiler.
 
-The external format and the complete cycle record remain open in [[notes/questions/Q-014-migracion-de-anclas|Q-014]].
+The external format and the complete cycle record remain open in [[notes/questions/Q-014-m-anchor-migration|Q-014]].
 
 ## Nominal graph initial
 

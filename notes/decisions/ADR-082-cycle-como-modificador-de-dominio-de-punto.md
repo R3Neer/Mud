@@ -13,9 +13,9 @@ affects:
 
 # ADR-082 — `cycle` como modificador de dominio de punto
 
-- Modifica: [[ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]].
-- Pregunta relacionada: [[notes/questions/Q-018-intervalos-discontinuos|Q-018]].
-- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Modifica: [[ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] y [[ADR-062-canonical-point-magnitude-literals|D-062]].
+- Pregunta relacionada: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]].
+- Modificada por: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
 
 ## Contexto
 
