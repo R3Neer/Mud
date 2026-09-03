@@ -2,7 +2,7 @@
 title: MUD active questions
 tags:
   - mud/notes
-  - mud/preguntas
+  - mud/questions
 status: active
 ---
 
@@ -12,15 +12,15 @@ This index contains only questions in `open` or `partially-decided` state. They 
 
 There are 46 active questions: 26 open and 20 partially decided.
 
-Prioridades:
+Priorities:
 
-- **P0**: bloquea el núcleo v0 o puede forzar una reescritura cercana.
-- **P1**: bloquea una fase posterior concreta.
-- **P2**: puede aplazarse sin falsear el núcleo.
+- **P0**: blocks the v0 core or may force a near-term rewrite.
+- **P1**: blocks a specific later phase.
+- **P2**: may be deferred without misrepresenting the core.
 
-## P0 — Antes de congelar el núcleo
+## P0 — Before freezing the core
 
-| Pregunta | Estado |
+| Question | State |
 | --- | --- |
 | [[Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002 — Exact model of sequential and simultaneous effects]] | Partially decided |
 | [[Q-003-p-validation-points|Q-003 — Validation points]] | Partially decided |
@@ -32,9 +32,9 @@ Prioridades:
 | [[Q-046-c-ineffective-creation-inside-a-root|Q-046 — Ineffective creation inside a root]] | Partially decided |
 | [[Q-047-s-selection-of-defaults-by-type|Q-047 — Selection of defaults by type]] | Partially decided |
 
-## P1 — Antes de ampliar el lenguaje
+## P1 — Before extending the language
 
-| Pregunta | Estado |
+| Question | State |
 | --- | --- |
 | [[Q-014-m-anchor-migration|Q-014 — Anchor migration]] | Partially decided |
 | [[Q-015-r-retirement|Q-015 — Retirement]] | Open |
@@ -57,9 +57,9 @@ Prioridades:
 | [[Q-067-p-message-participants-absent-in-final-state|Q-067 — `message` participants absent in final state]] | Open |
 | [[Q-068-i-identity-and-structural-equality-of-anonymous-types|Q-068 — Identity and structural equality of anonymous types]] | Open |
 
-## P2 — Producto y operación
+## P2 — Product and operation
 
-| Pregunta | Estado |
+| Question | State |
 | --- | --- |
 | [[Q-026-v-multiple-actions-in-eventually|Q-026 — Multiple actions in `eventually`]] | Partially decided |
 | [[Q-027-e-relevant-state|Q-027 — Relevant state]] | Open |
@@ -79,6 +79,6 @@ Prioridades:
 | [[Q-056-f-normalised-form-and-alias-recursion|Q-056 — Normalised form and alias recursion]] | Partially decided |
 | [[Q-058-e-portable-evaluation-of-rum|Q-058 — Portable evaluation of `Rum`]] | Open |
 
-## Historial
+## History
 
 Closed, discarded or superseded questions do not appear in this index. Their files remain in this folder at stable locations for traceability.
