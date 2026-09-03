@@ -1,6 +1,6 @@
 ---
 id: Q-004
-title: Rollback de rejected
+title: Rollback of rejected
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -11,18 +11,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-004 — Rollback de `rejected`
+# Q-004 — Rollback of `rejected`
 
-## Contenido
+## Content
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
+Status: **closed** by [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]].
 
-Todo resultado distinto de `accepted`, incluido un `after` falso, restaura exactamente el estado estable anterior y no publica mensajes ni efectos externos.
+Every result other than `accepted`, including a false `after`, restores exactly the preceding stable state and publishes neither messages nor external effects.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-042`.
