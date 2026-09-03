@@ -90,7 +90,7 @@ Any role `for`, including the singles event at cardinality `[1]`, retains the sa
 mut patients: Person [1..10, unique, mut]
 ```
 
-the first `mut` allows you to change the collection provided, and the second allows you to modify the `Person` member. The mutability The external key links the role by reference to a stored location: the receiver of the call must appoint a collection outwardly changeable. A literal, a union or another collection The calculated values are just that – values – and cannot satisfy that contract.
+the first `mut` allows the supplied collection to change, and the second allows the `Person` member to be modified. External mutability links the role by reference to a stored location: the call receiver must provide an externally mutable collection. A literal, a union or another calculated collection is only a value and cannot satisfy that contract.
 
 Without `mut` externally, the role receives the value of any expression of collection compatible. The internal capacity continues to be verified regardless of whether the collection comes from a place or an expression. When the type The cash does not contain any amounts with state editable, write `[mut]` It remains legal, but the compiler suggests removing it because the capability cannot be exercised. D-063 Replace the previous rejection with this suggestion.
 

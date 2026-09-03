@@ -58,7 +58,7 @@ Equality is defined by the type of value:
 - intervals: standardised set;
 - collection sorted: sequence;
 - collection unordered: multiplicity;
-- dictionary: a set of key–value pairs–value.
+- dictionary: a set of key–value pairs.
 
 `is` query the relation reflexive and transitive specialisation between `thing` and, in accordance with D-074, the nominal alternative to a union. `is not` is its canonical compound negation. Neither is equality nor casting.
 
