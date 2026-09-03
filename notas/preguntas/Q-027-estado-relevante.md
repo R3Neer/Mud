@@ -1,6 +1,6 @@
 ---
 id: Q-027
-title: Estado relevante
+title: Relevant state
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-027 — Estado relevante
+# Q-027 — Relevant state
 
-## Contenido
+## Content
 
-Cómo calcular la proyección mínima de estado que conserva la verdad de una consulta de alcanzabilidad.
+How to calculate the minimum state projection that preserves the truth of a reachability query.
