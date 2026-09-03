@@ -1,16 +1,17 @@
-# Casos CST → AST
+# CST cases → AST
 
-`cst-ast.yaml` contiene casos declarativos iniciales. Cada entrada puede incluir:
+`cst-ast.yaml` contains initial declarative cases. Each entry may include:
 
-- `id` estable.
+- `id` stable.
 - `category`.
 - `source` MUD.
-- `cst_root` esperado.
-- `ast` resumido.
+- `cst_root` expected.
+- `ast` in summary.
 - `normalizations`.
 - `expected_diagnostics`.
 - `produces_ast`.
 
-La forma `ast` no pretende sustituir a una serialización ASDL definitiva. Es un resumen legible para revisar el contrato.
+The shape `ast` is not intended to replace serialisation ASDL final version. It is a clear summary for reviewing the contract.
 
-Una implementación futura puede convertir estos casos a snapshots concretos. Los casos inválidos deben conservar una CST sin pérdidas y pueden no producir AST normativo.
+A future implementation may map these cases to specific snapshots. Invalid cases must retain a Lossless CST and may not produce AST in accordance with the standard.
+

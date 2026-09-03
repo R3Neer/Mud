@@ -1,13 +1,13 @@
-# Gramáticas normativas de MUD
+# MUD prescriptive grammars
 
-Este directorio contiene las gramáticas de referencia de MUD 1.0:
+This directory contains the MUD 1.0 reference grammars:
 
-- `mud-lexico.ebnf`: transformación de Unicode fuente en tokens significativos y formas léxicas.
-- `mud.ebnf`: transformación de tokens significativos en sintaxis concreta.
+- `mud-lexico.ebnf`: conversion of Unicode source text into meaningful tokens and lexical forms.
+- `mud.ebnf`: conversion of significant tokens into concrete syntax.
 
-La representación sin pérdidas, el catálogo de nodos CST y el AST superficial se documentan en [[../sintaxis/README|sintaxis/]].
+Lossless representation, the CST node catalogue and the Surface AST are documented in [[../sintaxis/README|syntax/]].
 
-Ambas usan este dialecto EBNF:
+Both use this dialect EBNF:
 
 ```text
 regla       ::= expresión ;
@@ -19,73 +19,74 @@ terminal    ::= "texto exacto" ;
 especial    ::= ? condición definida en prosa ? ;
 ```
 
-Los detalles normativos del dialecto se encuentran en [[../03-notacion]].
+The normative details of the dialect can be found in [[../03-notacion]].
 
-Símbolo inicial:
+Symbol initial:
 
-- Léxico: `mud-source`.
-- Concreto: `mud-file`.
+- Glossary: `mud-source`.
+- Concrete: `mud-file`.
 
-## Productos
+## Products
 
-`mud-lexico.ebnf` no implica que una implementación deba descartar comentarios o espacios. [[../06-lexico]] define un flujo completo con trivia y una vista significativa para la gramática.
+`mud-lexico.ebnf` This does not mean that an implementation must ignore comments or spaces. [[../06-lexico]] define a complete workflow using trivia and an important insight into grammar.
 
-`mud.ebnf` produce la agrupación inventariada en:
+`mud.ebnf` is produced by the group listed in:
 
 - `../sintaxis/mud-syntax-kinds.yaml`.
 - `../sintaxis/cst-sin-perdidas.md`.
 
-La proyección abstracta se define en:
+Abstract projection is defined as:
 
 - `../08-sintaxis-abstracta.md`.
 - `../sintaxis/mud-surface-ast.asdl`.
 - `../sintaxis/cst-a-ast-superficial.md`.
 
-## Scanner modal
+## Modal scanner
 
-Las plantillas `Text` requieren modos anidados. `mud-lexico.ebnf` mantiene el inventario de las formas especiales; [[../06-lexico]] define el algoritmo; `mud.ebnf` analiza los tokens emitidos dentro de interpolaciones.
+The templates `Text` require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../06-lexico]] define the algorithm; `mud.ebnf` analyses the tokens issued within interpolations.
 
-Las formas de unidad y de magnitud de punto también son contextuales. Que exista un token contextual no anticipa su resolución semántica.
+The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 
-## Separación de responsabilidades
+## Separation of responsibilities
 
-La EBNF distingue reconocimiento de elaboración. No intenta comprobar:
+The EBNF distinguishes between recognition of elaboration. It does not attempt to check:
 
-- Existencia de nombres.
-- Compatibilidad de tipos.
-- Constancia de expresiones.
-- Validez de dominios.
-- Resolución de llamadas candidatas a `action` o `subaction` y comprobación de capacidad de raíz exterior.
-- Selección de receptor múltiple.
+- Existence of names.
+- Compatibility of types.
+- Record of statements.
+- Validity of domains.
+- Resolution from potential calls to `action` o `subaction` and verification of the capacity of root outdoors.
+- Selection of receiver multiple.
 
-Las restricciones concretas no expresadas cómodamente en EBNF se validan después de la CST y antes del AST.
+The specific restrictions that are not clearly set out in EBNF are validated after the CST and before the AST.
 
-Validación editorial:
+Validation editorial:
 
 ```powershell
 python especificacion/gramatica/validate_grammar.py
 ```
 
-La comprobación detecta producciones duplicadas, indefinidas o inalcanzables. No sustituye las futuras pruebas de conformidad del parser.
+The check detects duplicate, undefined or unachievable outputs. It does not replace future tests of conformance of the parser.
 
-Comprobación conjunta de gramática, CST y AST:
+Joint checking of grammar, CST and AST:
 
 ```powershell
 python especificacion/sintaxis/validate_syntax_model.py
 ```
 
-La primera comprobación detecta producciones duplicadas, indefinidas o inalcanzables. La segunda comprueba inventario CST, cobertura y destinos ASDL. Ninguna sustituye las pruebas de conformidad de un parser.
+The first check identifies duplicate, undefined or unachievable production targets. The second checks CST stock levels, coverage and destinations ASDL. None of them replace the tests for conformance of a parser.
 
-## Política de cambio
+## Policy exchange
 
-Toda modificación estructural de una producción debe actualizar en el mismo commit:
+Any structural alteration to a production You must update this in the same commit:
 
-1. La EBNF.
-2. La explicación de [[../07-gramatica-concreta]].
+1. The EBNF.
+2. The explanation from [[../07-gramatica-concreta]].
 3. `mud-syntax-kinds.yaml`.
 4. `cobertura-sintactica.yaml`.
-5. La transformación CST → AST cuando proceda.
-6. El ASDL cuando cambie una distinción abstracta.
-7. Los casos de frontera afectados.
+5. The CST → AST transformation, where applicable.
+6. The ASDL when an abstract distinction changes.
+7. The affected border cases.
 
-Las implementaciones pueden usar cualquier técnica de scanning o parsing si producen la misma CST observable, los mismos rechazos y el mismo AST superficial normalizado.
+Implementations may use any scanning or parsing technique provided they produce the same observable CST, the same rejections and the same Surface AST standardised.
+

@@ -1,7 +1,7 @@
 ---
 title: CST sin pérdidas
 aliases:
-  - Árbol de sintaxis concreta
+  - Tree of concrete syntax
   - Lossless CST
 tags:
   - mud/especificacion
@@ -31,63 +31,63 @@ decisions:
 
 # CST sin pérdidas
 
-## Estado y propósito
+## State and purpose
 
-Este documento define la estructura concreta que conserva un archivo MUD después del análisis léxico y sintáctico. La CST permite reconstruir el flujo original de bytes, mantener comentarios y formato, ofrecer diagnósticos locales y sostener herramientas de edición sin atribuir significado semántico a la disposición física del texto.
+This document defines the specific structure retained by a MUD file following lexical and syntactic analysis. The CST enables the original byte stream to be reconstructed, preserves comments and formatting, provides local diagnostics and supports editing tools without attributing any semantic meaning to the physical layout of the text.
 
-La CST es **por archivo**. Un proyecto puede contener varias CST, pero no existe una única CST que abarque físicamente varios archivos.
+The CST is **by file**. A project may contain several CSTs, but there is no single CST that physically spans multiple files.
 
-## Dependencias y autoridad
+## Branches and authority
 
-La autoridad se reparte de esta manera:
+The authority It is distributed as follows:
 
-- [[mud-lexico]] define qué secuencias forman elementos léxicos.
-- [[mud]] define las producciones sintácticas.
-- [[06-lexico]] define los algoritmos modales y las reglas que no caben en EBNF.
-- [[07-gramatica-concreta]] define precedencia, asociatividad y restricciones contextuales de parsing.
-- `mud-syntax-kinds.yaml` mantiene el inventario mecánico de las categorías CST.
-- Este documento define el modelo común, la conservación de texto y la recuperación.
+- [[mud-lexico]] defines which sequences constitute lexical items.
+- [[mud]] defines syntactic productions.
+- [[06-lexico]] defines the modal algorithms and rules that do not fit within EBNF.
+- [[07-gramatica-concreta]] define precedence, associativity and contextual constraints on parsing.
+- `mud-syntax-kinds.yaml` maintains the mechanical inventory for the CST categories.
+- This document defines the model common, text preservation and retrieval.
 
-Una divergencia entre esos archivos es un defecto de la especificación y debe detectarse mediante `validate_syntax_model.py`.
+A discrepancy between these files is a fault in the specification and must be detected by means of `validate_syntax_model.py`.
 
-Entre las categorías concretas inventariadas se encuentra `ExpressionBlockSyntax`, que conserva en orden las declaraciones locales iniciales y la expresión final. La categoría no fija por sí sola el contrato de esa expresión: el propietario decide si debe ser booleana, temporal, agregable u ordenable. En `for each`, selección y cuantificadores, los `TERMINATOR` escritos entre `:` y el comienzo del cuerpo permanecen en la CST como separación concreta y desaparecen al proyectar el AST. La CST no amplía por sí sola su ámbito hasta `otherwise`; esa relación se establece al proyectar y resolver la construcción propietaria.
+Among the specific categories listed are `ExpressionBlockSyntax`, which keeps the initial local declarations and the final expression in order. The category does not, on its own, determine the contract of that expression: the owner decide whether it should be Boolean, temporal, aggregatable or sortable. In `for each`, selection and quantifiers, the `TERMINATOR` written between `:` and the beginning of the body remain in the CST as a concrete separation and disappear when the AST is projected. The CST does not, of its own accord, extend its scope up to `otherwise`; that relation It is determined when planning and finalising the owner-occupied property.
 
-## Terminología
+## Terminology
 
-> [!definition] Token significativo
-> Elemento léxico que consume la gramática concreta: palabras, identificadores, literales, operadores, delimitadores, `TERMINATOR` y `EOF`.
+> [!definition] Token significant
+> A lexical element that consumes the concrete grammar: words, identifiers, literals, operators, delimiters, `TERMINATOR` y `EOF`.
 
 > [!definition] Trivia
-> Texto fuente conservado que no participa como terminal de la gramática: espacio horizontal y comentarios. La trivia mantiene su escritura exacta, incluidos delimitadores y saltos interiores.
+> Source text preserved elements that do not function as grammatical terminals: horizontal space and comments. The trivia retains the exact formatting, including delimiters and line breaks within the text.
 
-> [!definition] Anchura completa
-> Intervalo desde el comienzo de la trivia inicial de un elemento hasta el final de su último token o hijo.
+> [!definition] Full width
+> Time elapsed since the start of the trivia from the start of an element to the end of its last token or son.
 
-> [!definition] Span sintáctico
-> Intervalo de los tokens significativos propios del elemento, sin incluir la trivia inicial que pertenece al primer token.
+> [!definition] Span syntactic
+> The range of significant tokens specific to the element, excluding the trivia initial, belonging to the first token.
 
-> [!definition] Token sintético
-> Token de anchura cero introducido por una regla normativa —como un `TEXT_END` implícito— o por recuperación de errores.
+> [!definition] Token synthetic
+> Token zero width introduced by a regulatory provision — such as a `TEXT_END` implicit— or through error recovery.
 
-## Dos vistas del análisis léxico
+## Two perspectives on lexical analysis
 
-El scanner produce conceptualmente un flujo completo:
+Conceptually, the scanner produces a complete flow:
 
 ```text
 trivia* token trivia* token ... trivia* EOF
 ```
 
-La vista significativa filtra la trivia y es la que consume la gramática:
+The meaningful view filters the trivia and it is this that consumes grammar:
 
 ```text
 token token ... EOF
 ```
 
-Los comentarios se eliminan únicamente de la **vista significativa**. El reconocedor no los recibe como terminales; la representación completa los conserva como trivia.
+Comments are only deleted from the **significant view**. The recogniser does not treat them as terminals; the representation retains them as trivia.
 
-## Modelo abstracto
+## Model abstract
 
-Una implementación conforme puede usar árboles verdes, árboles rojos, arenas, índices o clases ordinarias. Debe ser observacionalmente equivalente al modelo siguiente:
+One conforming implementation You can use green trees, red trees, arrays, indices or ordinary classes. It must be observationally equivalent to the model next:
 
 ```text
 SyntaxTree
@@ -119,38 +119,38 @@ SyntaxTrivia
     span: SourceSpan
 ```
 
-`SyntaxNode.children` conserva el orden físico. La puntuación y las palabras clave son hijos reales; no se reconstruyen mediante conocimiento del `kind`.
+`SyntaxNode.children` preserves the physical order. The punctuation and keywords are actual children; they are not reconstructed on the basis of knowledge of the `kind`.
 
-## Propiedad de pérdida cero
+## Zero-loss property
 
-Sea `bytes(t)` la concatenación, en recorrido de izquierda a derecha, de:
+Be `bytes(t)` the concatenation, read from left to right, of:
 
-1. La trivia inicial de cada token.
-2. El texto del token cuando su origen sea `Written`.
-3. Ningún byte para tokens sintéticos.
+1. The trivia first letter of each token.
+2. The text of the token when its origin is `Written`.
+3. No bytes for synthetic tokens.
 
-Para toda entrada UTF-8 aceptada léxicamente:
+For every lexically accepted UTF-8 input:
 
 ```text
 bytes(CST(source)) = sourceBytesWithoutConsumedBOM
 ```
 
-El BOM se conserva como metadato de archivo porque solo puede aparecer antes del primer elemento. La forma física de los saltos (`LF`, `CRLF` o `CR`) permanece en los bytes de los tokens `TERMINATOR` o de la trivia que los contiene.
+The BOM is retained as metadata file-level because it can only appear before the first element. The physical form of the jumps (`LF`, `CRLF` o `CR`) remains in the token bytes `TERMINATOR` or the trivia which contains them.
 
-## Asignación de trivia
+## Allocation of trivia
 
-MUD usa una regla única y determinista:
+MUD uses a single, deterministic rule:
 
-> [!rule] MUD-CST-001 — Propiedad de trivia
-> Toda trivia situada entre dos tokens significativos pertenece como `leadingTrivia` al token de la derecha. La trivia anterior al primer token pertenece a ese token. La trivia posterior al último token pertenece a `EOF`.
+> [!rule] MUD-CST-001 — Owned by trivia
+> All trivia a value situated between two significant tokens is classified as `leadingTrivia` to the token on the right. The trivia prior to the first token belongs to that token. The trivia following the last one token belongs to `EOF`.
 
-Ejemplo:
+Example:
 
 ```mud
 health # explicación # : Nat
 ```
 
-se representa conceptualmente:
+It is represented conceptually as follows:
 
 ```text
 IDENTIFIER("health")
@@ -159,38 +159,38 @@ IDENTIFIER("Nat", leadingTrivia = [" "])
 EOF
 ```
 
-Esta regla evita decisiones dependientes de la clase de comentario. Una implementación puede ofrecer una vista derivada de trivia final, pero la serialización normativa utiliza la propiedad anterior.
+This rule prevents decisions that depend on the class of comment. An implementation may provide a derived view of trivia finally, but standard serialisation uses the previous property.
 
-## Clases de trivia
+## Types of trivia
 
-El catálogo mínimo es:
+The minimum catalogue is:
 
 - `HorizontalWhitespaceTrivia`.
 - `OpenLineCommentTrivia`.
 - `ClosedLineCommentTrivia`.
 - `MultilineCommentTrivia`.
-- `SkippedTokensTrivia`, únicamente para recuperación.
+- `SkippedTokensTrivia`, for recovery purposes only.
 
-Un comentario multilínea conserva sus delimitadores, sangría y saltos internos en un solo elemento de trivia. Sus saltos no producen `TERMINATOR`, conforme a [[06-lexico]].
+A comment multiline preserves its delimiters, indentation and internal line breaks within a single element of trivia. His jumps do not produce `TERMINATOR`, in accordance with [[06-lexico]].
 
 ## `TERMINATOR`
 
-`TERMINATOR` es un token significativo porque interviene en `required-separation`. Su texto conserva la escritura física que lo originó:
+`TERMINATOR` is a token significant because it plays a part in `required-separation`. The text retains the handwritten form in which it was originally written:
 
 - `LF`.
 - `CRLF`.
 - `CR`.
-- `;` cuando la gramática y el scanner lo clasifiquen como terminador.
+- `;` when the grammar checker and the scanner classify it as a terminator.
 
-Los terminadores ignorados por `layout` continúan presentes como tokens dentro de la CST.
+Terminators ignored by `layout` they remain present as tokens within the CST.
 
-## Otros tokens significativos
+## Other significant tokens
 
-La CST conserva los tokens fijos `-->` y `~`, la palabra operadora `iis` y las palabras contextuales escritas en sus posiciones ordinarias. La coincidencia más larga debe impedir que `-->` se divida en `--` y `>` o en `-` y `->`. `has not` e `iis not` conservan dos tokens con trivia propia. No existe `ANCHOR_INTERPOLATION_START`; una expresión `~anchor` dentro de `{...}` usa los mismos nodos y tokens que fuera de una plantilla.
+The CST retains the fixed tokens `-->` y `~`, the operator word `iis` and the contextual words written in their usual positions. The longest match must prevent `-->` is divided into `--` y `>` or in `-` y `->`. `has not` e `iis not` they keep two tokens with trivia its own. There is no such thing as `ANCHOR_INTERPOLATION_START`; an expression `~anchor` inside `{...}` It uses the same nodes and tokens as when not using a template.
 
-## Literales `Text`
+## Literal expressions `Text`
 
-Los tokens producidos por el scanner modal se conservan:
+The tokens generated by the modal scanner are retained:
 
 - `TEXT_START`.
 - `TEXT_FRAGMENT`.
@@ -198,23 +198,23 @@ Los tokens producidos por el scanner modal se conservan:
 - `INTERPOLATION_END`.
 - `TEXT_END`.
 
-Un cierre implícito ante salto o fin de archivo produce un `TEXT_END` sintético de anchura cero con origen `ImplicitTextEnd`. La CST conserva así la distinción concreta entre:
+An implicit closure following a jump or the end of a file results in a `TEXT_END` zero-width synthetic with origin `ImplicitTextEnd`. The CST thus maintains the specific distinction between:
 
 ```mud
 "Ada"
 ```
 
-y la forma cerrada implícitamente:
+and the implicit closed form:
 
 ```mud
 "Ada
 ```
 
-El AST superficial normaliza ambas al mismo valor de plantilla.
+The Surface AST normalises both at the same time value permanent staff.
 
-## Categorías CST
+## CST Categories
 
-Cada producción de `mud.ebnf` posee una categoría `PascalCaseSyntax` inventariada en `mud-syntax-kinds.yaml`. Por ejemplo:
+Every production from `mud.ebnf` belongs to a category `PascalCaseSyntax` listed in `mud-syntax-kinds.yaml`. For example:
 
 ```text
 thing-declaration        → ThingDeclarationSyntax
@@ -226,40 +226,40 @@ stored-field-declaration → StoredFieldDeclarationSyntax
 postfix-expression       → PostfixExpressionSyntax
 ```
 
-Las producciones auxiliares también tienen categoría, aunque una implementación optimizada pueda representarlas mediante vistas tipadas sobre un nodo genérico.
+Auxiliary productions also have a category, although an optimised implementation may represent them using typed views on a generic node.
 
-El catálogo no obliga a generar una clase física por producción. Sí obliga a que:
+The catalogue does not require a physical class to be created for production. It does, however, require that:
 
-- La agrupación sea observable.
-- Los hijos puedan recorrerse en orden.
-- Los tokens concretos sean recuperables.
-- La categoría declarada sea identificable.
+- The grouping must be observable.
+- The children can go through them in order.
+- The specific tokens must be recoverable.
+- The category declared must be identifiable.
 
-## Nodos especiales de recuperación
+## Special recovery nodes
 
-Además de las producciones gramaticales existen:
+In addition to grammatical constructions, there are also:
 
 ### `ErrorSyntax`
 
-Agrupa una región para la que el parser no pudo seleccionar una producción válida, sin descartar sus tokens.
+It groups together a region for which the parser was unable to select one production valid, without discarding its tokens.
 
 ### `SkippedTokensSyntax`
 
-Conserva tokens inesperados que se saltaron hasta un punto de sincronización.
+Retains unexpected tokens that were skipped up to a point synchronisation.
 
-Una implementación puede codificar `SkippedTokensSyntax` como `SkippedTokensTrivia` cuando no cambie:
+An implementation may encode `SkippedTokensSyntax` such as `SkippedTokensTrivia` when it doesn’t change:
 
-- La reconstrucción exacta.
-- El orden.
-- Los spans.
-- La capacidad de emitir el diagnóstico en la posición correcta.
+- The exact reconstruction.
+- The order.
+- Spans.
+- The ability to issue the diagnostic in the correct position.
 
-## Tokens ausentes
+## Missing tokens
 
-> [!rule] MUD-CST-002 — Token ausente
-> Cuando la recuperación presuponga un token obligatorio no escrito, la CST contendrá un token del tipo esperado, texto vacío, span de anchura cero y origen `MissingForRecovery`.
+> [!rule] MUD-CST-002 — Token absent
+> When recovery involves a token as an unwritten requirement, the CST shall contain a token from the type as expected, empty text, span zero width and origin `MissingForRecovery`.
 
-Ejemplo:
+Example:
 
 ```mud
 thing Person {
@@ -267,27 +267,27 @@ thing Person {
 }
 ```
 
-puede representarse con un `COLON` ausente entre `label` y `Text` y un diagnóstico asociado.
+can be represented by a `COLON` absent from `label` y `Text` and a diagnostic associate.
 
-Un token ausente nunca se serializa como si lo hubiera escrito el usuario.
+A token 'absent' is never serialised as if the user had written it.
 
-## Puntos de sincronización
+## Synchronisation points
 
-El parser puede sincronizar en:
+The parser can synchronise to:
 
-- `TERMINATOR` al nivel de declaraciones y sentencias.
-- `,` dentro de listas.
-- `)`, `]` o `}` para la construcción delimitada correspondiente.
-- El comienzo inequívoco de otra declaración de primer nivel.
+- `TERMINATOR` at the level of statements and judgements.
+- `,` within lists.
+- `)`, `]` o `}` for the relevant defined construction.
+- The unmistakable beginning of another declaration top-class.
 - `EOF`.
 
-La elección concreta puede variar si conserva la misma región de error y no produce un AST normativo para una construcción inválida.
+The specific choice may vary depending on whether you keep the same region of error and does not produce a valid AST for an invalid construction.
 
-## CST de archivos inválidos
+## CST for invalid files
 
-La construcción de CST no implica validez. Debe ser posible obtener una CST para entradas con errores sintácticos recuperables.
+The construction of a CST does not imply validity. It must be possible to obtain a CST for inputs with recoverable syntactic errors.
 
-La cadena de fases es:
+The phase sequence is:
 
 ```text
 bytes UTF-8
@@ -297,94 +297,95 @@ bytes UTF-8
 → AST superficial normalizado
 ```
 
-Un archivo puede tener CST y no producir un AST superficial completo.
+A file may contain CST and not produce a Surface AST complete.
 
-## Validación sintáctica contextual
+## Validation contextual syntax
 
-La validación situada después de la CST y antes del AST comprueba condiciones que no merece la pena codificar como expansión EBNF, entre ellas:
+The validation Located after the CST and before the AST, it checks conditions that are not worth encoding as an expansion EBNF, including:
 
-- Modificadores de colección duplicados.
-- Dos criterios `ordered` incompatibles.
-- Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.
-- Propiedades obligatorias ausentes.
-- Mezcla de argumentos posicionales después de un argumento nombrado.
-- Combinaciones que la prosa de sintaxis concreta prohíba.
-- Capitalización exigida por categoría cuando todavía se clasifique como regla sintáctica contextual.
+- Modifiers of collection duplicates.
+- Two criteria `ordered` incompatible.
+- Duplicate metadata declarations within the same owner, including the units.
+- Missing required properties.
+- Mixing positional arguments after a argument appointed.
+- Combinations that the prose of concrete syntax prohibit.
+- Capitalisation required by category when it is still classified as a contextual syntactic rule.
 
-La validación de nombres existentes, tipos, dominios y efectos pertenece a fases posteriores.
+The validation The definition of existing names, types, domains and effects is dealt with in later stages.
 
 ## Spans
 
-Los offsets de `SourceSpan` son:
+The offsets of `SourceSpan` are:
 
-- Basados en cero.
-- Medidos en bytes UTF-8.
-- De extremo final exclusivo.
+- Zero-based.
+- Measured in UTF-8 bytes.
+- Exclusive end piece.
 
-Las líneas y columnas también comienzan en cero. La columna cuenta valores escalares Unicode desde el inicio lógico de la línea. Una interfaz LSP convierte a unidades UTF-16 en su frontera; esa conversión no modifica el modelo normativo.
+Lines and columns also start at zero. The column counts Unicode scalar values from the logical start of the line. An LSP interface converts UTF-16 units at its boundary; that conversion does not alter the model regulatory.
 
-Para un token escrito:
+For a token written:
 
 ```text
 span.start.byteOffset < span.end.byteOffset
 ```
 
-salvo tokens textualmente vacíos permitidos. Para un token sintético:
+except for permitted empty tokens. For a token summary:
 
 ```text
 span.start = span.end
 ```
 
-`fullSpan` comienza en la primera trivia inicial y termina al final del token. El `span` de un nodo va desde el primer token significativo hasta el último. Si todos sus tokens son sintéticos, se ancla en el punto de recuperación.
+`fullSpan` starts on the first trivia starts at the beginning and ends at the end of the token. The `span` from a node runs from the first token significant right up to the very last one. If all its tokens are synthetic, it anchor in the point recovery.
 
-## Orden y archivos
+## Order and files
 
-La CST conserva siempre el orden fuente:
+CST always retains the source order:
 
 - `using`.
-- Declaraciones.
-- Antecesores.
-- Campos.
-- Miembros.
-- Argumentos.
-- Efectos.
-- Aserciones.
+- Statements.
+- Predecessors.
+- Fields.
+- Members.
+- Arguments.
+- Effects.
+- Statements.
 
-La ausencia de significado semántico del orden de ciertas listas no autoriza a ordenarlas en la CST.
+The fact that the order of certain lists has no semantic significance does not justify ordering them in the CST.
 
-## Comentarios documentales futuros
+## Future documentary commentary
 
-MUD 1.0 no define comentarios documentales estructurados. Todos los comentarios actuales son trivia ordinaria. Una extensión futura puede:
+MUD 1.0 does not define structured documentation comments. All current comments are trivia standard. A future extension may:
 
-- Clasificar una forma de comentario como documentación.
-- Construir un árbol documental separado.
-- Asociarlo a un propietario sintáctico.
-- Resolver referencias breves a anclas.
+- Classify a form of comment as supporting documentation.
+- Create a separate document tree.
+- Link it to a owner syntactic.
+- Resolve short references to anchors.
 
-Esa extensión no convertirá los comentarios ordinarios en declaraciones del AST ejecutable.
+That extension will not convert ordinary comments into executable AST statements.
 
-## Correspondencia con el AST
+## Correspondence with the AST
 
-La CST no realiza:
+The CST does not:
 
-- Desazucarado.
+- Sugar-free.
 - Resolución de nombres.
-- Inferencia de tipos.
-- Clasificación semántica de invocaciones callable, capacidades exteriores o composición de consecuencias.
-- Interpretación de una tupla como receptores múltiples.
-- Cálculo de predeterminados.
-- Ordenación canónica de archivos.
+- Inference of types.
+- Ranking semantics Callable invocations, external capabilities or the composition of consequences.
+- Interpreting a tuple as multiple receivers.
+- Calculation of default values.
+- Canonical organisation of archives.
 
-La transformación normativa está en [[cst-a-ast-superficial]].
+Regulatory reform is underway [[cst-a-ast-superficial]].
 
 ## Conformidad
 
-Un frontend conforme debe satisfacer:
+A compliant frontend must meet the following requirements:
 
-1. Reconstrucción exacta del archivo, salvo el BOM separado como metadato.
-2. Inventario de todas las producciones alcanzables.
-3. Conservación de trivia y tokens inesperados.
-4. Spans coherentes y finales exclusivos.
-5. Distinción entre tokens escritos y sintéticos.
-6. Ausencia de decisiones de resolución o tipado en la CST.
-7. Resultado compatible con las normalizaciones del AST superficial.
+1. Exact reconstruction of the file, except for the separate BOM as metadata.
+2. A list of all available productions.
+3. Conservation of trivia and unexpected tokens.
+4. Consistent spans and unique endpoints.
+5. The distinction between written tokens and synthetic tokens.
+6. Lack of decisions on resolution or typed into the CST.
+7. Result compliant with the standards set out in the Surface AST.
+

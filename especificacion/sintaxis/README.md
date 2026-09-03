@@ -1,33 +1,33 @@
-# Modelos sintácticos de MUD
+# Syntactic models of MUD
 
-Este directorio contiene los artefactos normativos y verificables que conectan la gramática concreta con el AST superficial.
+This directory contains the standardised and verifiable artefacts that link the concrete grammar with the Surface AST.
 
-## Archivos
+## Archives
 
-| Archivo | Estado | Función |
+| Archive | State | Function |
 |---|---|---|
-| `cst-sin-perdidas.md` | Normativo | Modelo de CST, trivia, spans y recuperación. |
-| `mud-syntax-kinds.yaml` | Normativo mecánico | Inventario de producciones, tokens, trivia y categorías CST. |
-| `mud-surface-ast.asdl` | Normativo mecánico | Esquema del AST superficial normalizado. |
-| `cst-a-ast-superficial.md` | Normativo | Transformación y normalizaciones. |
-| `cobertura-sintactica.yaml` | Normativo mecánico | Mapeo exhaustivo EBNF → CST → AST. |
-| `validate_syntax_model.py` | Herramienta editorial | Detecta divergencias entre los artefactos anteriores. |
-| `casos/cst-ast.yaml` | Suite inicial | Casos de transformación y rechazo previo al AST. |
+| `cst-sin-perdidas.md` | Regulations | Model from CST, trivia, spans and recovery. |
+| `mud-syntax-kinds.yaml` | Mechanical regulations | List of productions, tokens, trivia and CST categories. |
+| `mud-surface-ast.asdl` | Mechanical regulations | Outline of the Surface AST standardised. |
+| `cst-a-ast-superficial.md` | Regulations | Transformation and standardisation. |
+| `cobertura-sintactica.yaml` | Mechanical regulations | Comprehensive mapping EBNF → CST → AST. |
+| `validate_syntax_model.py` | Publishing tool | Detects discrepancies between the previous artefacts. |
+| `casos/cst-ast.yaml` | Starter Suite | Cases of transformation and rejection prior to AST. |
 
-## Orden de autoridad
+## Order of authority
 
-Los archivos se complementan; no se usa una regla general de «el último gana».
+The files complement one another; there is no general rule that ‘the latest one takes precedence’.
 
-1. `mud-lexico.ebnf` y `06-lexico.md` determinan el reconocimiento léxico.
-2. `mud.ebnf` y `07-gramatica-concreta.md` determinan la agrupación concreta.
-3. `cst-sin-perdidas.md` determina conservación, trivia y recuperación.
-4. `mud-surface-ast.asdl` determina los constructores abstractos.
-5. `cst-a-ast-superficial.md` determina la proyección.
-6. Los YAML hacen inventariable y comprobable la correspondencia.
+1. `mud-lexico.ebnf` y `06-lexico.md` determine lexical recognition.
+2. `mud.ebnf` y `07-gramatica-concreta.md` determine the specific grouping.
+3. `cst-sin-perdidas.md` determines conservation, trivia and recovery.
+4. `mud-surface-ast.asdl` defines the abstract constructors.
+5. `cst-a-ast-superficial.md` determines the projection.
+6. YAML files make it possible to list and verify the correspondence.
 
-Una contradicción es un defecto de la propuesta y debe resolverse en todos los archivos afectados.
+A contradiction is a fault in the proposal and must be resolved in all the files concerned.
 
-## Flujo
+## Flow
 
 ```text
 archivo .mud
@@ -41,87 +41,88 @@ archivo .mud
 → representación semántica posterior todavía no formalizada
 ```
 
-## Generación de código
+## Code generation
 
-`mud-surface-ast.asdl` puede alimentar generadores de:
+`mud-surface-ast.asdl` can power generators from:
 
-- Clases o structs.
-- Visitantes.
-- Serializadores.
-- Comparadores estructurales.
-- Builders validados.
+- Classes or structs.
+- Visitors.
+- Serialisers.
+- Structural comparators.
+- Validated builders.
 
-`mud-syntax-kinds.yaml` puede alimentar:
+`mud-syntax-kinds.yaml` can power:
 
-- Enumeraciones de `SyntaxKind`.
-- Wrappers tipados de nodos CST.
-- Tests de cobertura del parser.
-- Documentación de producciones.
+- Lists of `SyntaxKind`.
+- Typed wrappers for CST nodes.
+- Parser coverage tests.
+- Production documentation.
 
-La generación no debe convertir los archivos mecánicos en derivados sin autoridad. Los archivos generados se guardarán fuera de `especificacion/` o se marcarán expresamente como tales.
+Generation must not convert mechanical files into derivatives without authority. The generated files will be saved outside `especificacion/` or they will be expressly marked as such.
 
 ## Validación
 
-Dependencia del validador:
+Validator dependency:
 
 ```powershell
 python -m pip install -r especificacion/sintaxis/requirements.txt
 ```
 
-Desde la raíz del repositorio:
+From the root from the repository:
 
 ```bash
 python especificacion/sintaxis/validate_syntax_model.py
 ```
 
-El comando comprueba:
+The command checks:
 
-- Cobertura de todas las producciones sintácticas.
-- Inventario de todas las producciones léxicas.
-- Ausencia de entradas huérfanas.
-- Correspondencia entre categorías CST y cobertura.
-- Existencia de destinos ASDL declarados.
-- Presencia de contratos básicos del esquema.
+- Coverage of all syntactic constructions.
+- An inventory of all lexical productions.
+- No orphaned entries.
+- Correlation between CST categories and coverage.
+- Availability of destinations ASDL as stated.
+- Existence of standard contracts under the scheme.
 
-No comprueba todavía:
+Not yet verified:
 
-- Ambigüedad LL/LR.
-- Semántica estática.
-- Corrección de ejemplos MUD mediante un parser real.
-- Propiedades dinámicas.
+- Ambiguity LL/LR.
+- Semantics static.
+- Correcting MUD examples using a real parser.
+- Dynamic properties.
 
-## Política de cambios
+## Policy of changes
 
-Un cambio de gramática debe actualizar, en el mismo commit:
+A change to the grammar must be updated, in the same commit:
 
-1. La EBNF afectada.
-2. El catálogo CST.
-3. La cobertura.
-4. La transformación cuando cambie la normalización.
-5. El ASDL cuando aparezca o desaparezca una distinción abstracta.
-6. Los casos de prueba relevantes.
+1. The EBNF affected.
+2. The CST catalogue.
+3. The coverage.
+4. The transformation when the standardisation changes.
+5. The ASDL when an abstract distinction appears or disappears.
+6. Relevant test cases.
 
-Un cambio interno que no altere comportamiento observable puede modificar una implementación sin cambiar estos archivos.
+An internal change that does not affect observable behaviour You can modify an implementation without changing these files.
 
-## Convenciones de nombre
+## Naming conventions
 
 - Producción EBNF: `kebab-case`.
-- Categoría CST: `PascalCaseSyntax`.
+- CST category: `PascalCaseSyntax`.
 - Tipo ASDL: `snake_case`.
-- Constructor ASDL: `PascalCase`.
+- Builder ASDL: `PascalCase`.
 - Campo ASDL: `snake_case`.
-- Flag conceptual: `Disabled | Enabled`.
+- Conceptual flag: `Disabled | Enabled`.
 
-## Límites
+## Limits
 
-Este directorio no define:
+This directory does not define:
 
-- Resolución de nombres y anclas.
-- Subtipado.
-- Inferencia de tipos.
-- Evaluación estática.
-- Semántica de efectos.
-- Ondas causales.
-- Representación mecánica posterior a tipado y elaboración, todavía no formalizada.
+- Name resolution and anchors.
+- Subtyped.
+- Inference of types.
+- Static assessment.
+- Semantics effects.
+- Causal waves.
+- Mechanical representation following typing and elaboration, which has not yet been formalised.
 
-Las referencias a esas fases sirven únicamente para impedir que el AST superficial las anticipe.
+References to these phases serve solely to prevent the Surface AST anticipate them.
+

@@ -1,11 +1,12 @@
-# Resolución nominal de MUD
+# Nominal resolution from the MUD
 
-Este directorio contiene el contrato mecánico normativo de la fase de resolución de nombres. Complementa [[../09-nombres-y-anclas|09. Nombres, paths y anclas]] y no define tipado ni semántica dinámica.
+This directory contains the contract regulatory mechanism for the name resolution. Add [[../09-nombres-y-anclas|09. Names, paths and anchors]] and does not define a type or semantics dynamics.
 
 ## `mud-nominal-hir.asdl`
 
-Es la salida normativa de resolución nominal sobre el AST superficial. Conserva símbolos, scopes, bindings, anclas y las relaciones nominales `Owns`, `Specializes` y `RefersTo`.
+It is the regulatory solution to nominal resolution on the Surface AST. It preserves symbols, scopes, bindings, anchors and nominal relationships `Owns`, `Specializes` y `RefersTo`.
 
-No puede contener tipos efectivos, dominios efectivos, cardinalidades inferidas, narrowing, conversiones elaboradas, efectos, dependencias semánticas ni evidencia de terminación. Esas conclusiones pertenecen a fases posteriores todavía no formalizadas mecánicamente.
+It must not contain effective types, effective domains, inferred cardinalities, narrowing, elaborate conversions, effects, semantic dependencies or evidence of termination. These conclusions relate to later stages that have not yet been formalised in technical terms.
 
-El HIR nominal es derivado y reconstruible: no constituye una fuente semántica independiente.
+The Nominal HIR It is derived and reconstructible: it does not constitute a source semantics independent.
+
