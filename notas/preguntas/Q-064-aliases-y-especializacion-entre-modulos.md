@@ -1,6 +1,6 @@
 ---
 id: Q-064
-title: Aliases y especialización nominal entre módulos
+title: Aliases and nominal specialisation between modules
 priority: P1
 opened: 2026-08-28
 resolved: false
@@ -8,12 +8,12 @@ closed:
 decisions:
   - D-096
 affects:
-  - módulos, aliases, tipos
+  - modules, aliases, types
 superseded-by: []
 ---
 
-# Q-064 — Aliases y especialización nominal entre módulos
+# Q-064 — Aliases and nominal specialisation between modules
 
-## Contenido
+## Content
 
-Decidir qué especialización nominal de aliases puede atravesar una frontera modular y qué cierre de contrato exige, sin trasladar automáticamente la prohibición ya fijada para herencia de `thing`.
+Decide which nominal alias specialisation may cross a module boundary and what contract closure it requires, without automatically extending the prohibition already fixed for `thing` inheritance.
