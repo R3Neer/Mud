@@ -2,21 +2,21 @@
 
 This directory contains the MUD 1.0 reference grammars:
 
-- `mud-lexico.ebnf`: conversion of Unicode source text into meaningful tokens and lexical forms.
+- `mud-lexicon.ebnf`: conversion of Unicode source text into meaningful tokens and lexical forms.
 - `mud.ebnf`: conversion of significant tokens into concrete syntax.
 
-Lossless representation, the CST node catalogue and the Surface AST are documented in [[../sintaxis/README|syntax/]].
+Lossless representation, the CST node catalogue and the Surface AST are documented in [[../syntax/README|syntax/]].
 
 Both use this dialect EBNF:
 
 ```text
-regla       ::= expresión ;
-alternativa ::= a | b ;
-opcional    ::= [ a ] ;
-repetición  ::= { a } ;
-grupo       ::= ( a | b ) ;
-terminal    ::= "texto exacto" ;
-especial    ::= ? condición definida en prosa ? ;
+rule        ::= expression ;
+alternative ::= a | b ;
+optional    ::= [ a ] ;
+repetition  ::= { a } ;
+group       ::= ( a | b ) ;
+terminal    ::= "exact text" ;
+special     ::= ? condition defined in prose ? ;
 ```
 
 The normative details of the dialect can be found in [[../03-notation]].
@@ -28,22 +28,22 @@ Symbol initial:
 
 ## Products
 
-`mud-lexico.ebnf` This does not mean that an implementation must ignore comments or spaces. [[../06-lexicon]] define a complete workflow using trivia and an important insight into grammar.
+`mud-lexicon.ebnf` does not mean that an implementation must ignore comments or spaces. [[../06-lexicon]] defines a complete workflow using trivia and a significant grammar insight.
 
-`mud.ebnf` is produced by the group listed in:
+`mud.ebnf` is produced from the artefacts listed in:
 
-- `../sintaxis/mud-syntax-kinds.yaml`.
-- `../sintaxis/cst-sin-perdidas.md`.
+- `../syntax/mud-syntax-kinds.yaml`.
+- `../syntax/lossless-cst.md`.
 
-Abstract projection is defined as:
+Abstract projection is defined by:
 
 - `../08-abstract-syntax.md`.
-- `../sintaxis/mud-surface-ast.asdl`.
-- `../sintaxis/cst-a-ast-superficial.md`.
+- `../syntax/mud-surface-ast.asdl`.
+- `../syntax/cst-to-surface-ast.md`.
 
 ## Modal scanner
 
-The templates `Text` require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../06-lexicon]] define the algorithm; `mud.ebnf` analyses the tokens issued within interpolations.
+`Text` templates require nested modes. `mud-lexicon.ebnf` maintains the inventory of special forms; [[../06-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
 
 The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 
@@ -55,7 +55,7 @@ The EBNF distinguishes between recognition of elaboration. It does not attempt t
 - Compatibility of types.
 - Record of statements.
 - Validity of domains.
-- Resolution from potential calls to `action` o `subaction` and verification of the capacity of root outdoors.
+- Resolution of potential calls to `action` or `subaction` and verification of external root capability.
 - Selection of receiver multiple.
 
 The specific restrictions that are not clearly set out in EBNF are validated after the CST and before the AST.
@@ -83,7 +83,7 @@ Any structural alteration to a production You must update this in the same commi
 1. The EBNF.
 2. The explanation from [[../07-concrete-grammar]].
 3. `mud-syntax-kinds.yaml`.
-4. `cobertura-sintactica.yaml`.
+4. `syntax-coverage.yaml`.
 5. The CST → AST transformation, where applicable.
 6. The ASDL when an abstract distinction changes.
 7. The affected border cases.

@@ -1,39 +1,39 @@
-# Migración temporal español-inglés
+# Temporary Spanish-to-English migration
 
-Esta carpeta integra temporalmente
-[`R3Translate`](https://github.com/R3Neer/R3Translate) en Mud. No es una nueva
-autoridad normativa ni participará en la futura migración de nombres de rutas.
-La versión mínima es `v0.1.1`, que incluye listas de frontmatter y protecciones
-multilínea.
+This directory temporarily integrates
+[`R3Translate`](https://github.com/R3Neer/R3Translate) into Mud. It is not a new
+normative authority and will not participate in the future migration of route
+names. The minimum version is `v0.1.1`, which includes frontmatter lists and
+multiline protections.
 
-Los CLI propios de Mud requieren primero `python -m pip install -r
-tooling/requirements.txt`. R3Translate continúa instalándose como ejecutable
-aislado para no mezclar su árbol de dependencias con el de Mud.
+Mud's own CLIs first require `python -m pip install -r
+tooling/requirements.txt`. R3Translate continues to be installed as an isolated
+executable so that its dependency tree is not mixed with Mud's.
 
-- `mud-es-en.toml` es la fuente ejecutable de términos, protecciones,
-  frontmatter, inglés británico y hallazgos específicos de Mud.
-- `render_glossary.py` genera la vista humana de
-  `notes/glosario-de-traduccion-es-en.md` y `--check` impide divergencias.
-- `check_migration.py` combina `r3translate check` con las barreras editoriales
-  y de temporalidad existentes.
+- `mud-es-en.toml` is the executable source for terms, protections, frontmatter,
+  British English and Mud-specific findings.
+- `render_glossary.py` generates the human-readable view of
+  `notes/glosario-de-traduccion-es-en.md`, and `--check` prevents divergence.
+- `check_migration.py` combines `r3translate check` with the existing editorial
+  and temporality barriers.
 
-Ejemplo sobre el README representativo:
+Example using the representative README:
 
 ```powershell
 python tooling/translation/render_glossary.py --check
 python tooling/translation/check_migration.py
 ```
 
-Para comparar un candidato con su fuente y detectar enlaces, identificadores o
-protecciones alterados:
+To compare a candidate with its source and detect altered links, identifiers or
+protections:
 
 ```powershell
 python tooling/translation/check_migration.py ruta/candidato.md --source ruta/original.md
 ```
 
-Si `r3translate` no está en `PATH`, se puede usar `--r3translate RUTA` o la
-variable `R3TRANSLATE`. La clave de DeepL se proporciona exclusivamente como
-`DEEPL_AUTH_KEY`; nunca se escribe en esta carpeta.
+If `r3translate` is not on `PATH`, use `--r3translate PATH` or the
+`R3TRANSLATE` variable. The DeepL key is supplied exclusively as
+`DEEPL_AUTH_KEY`; it is never written to this directory.
 
-El perfil y el glosario se eliminarán juntos cuando se cumpla su condición
-`temporary-delete-when`.
+The profile and glossary will be removed together when their
+`temporary-delete-when` condition is met.

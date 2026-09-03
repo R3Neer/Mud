@@ -1,26 +1,26 @@
-# Syntactic models of MUD
+# MUD syntactic models
 
 This directory contains the standardised and verifiable artefacts that link the concrete grammar with the Surface AST.
 
-## Archives
+## Artefacts
 
 | Archive | State | Function |
 |---|---|---|
-| `cst-sin-perdidas.md` | Regulations | Model from CST, trivia, spans and recovery. |
+| `lossless-cst.md` | Normative | Model of CST, trivia, spans and recovery. |
 | `mud-syntax-kinds.yaml` | Mechanical regulations | List of productions, tokens, trivia and CST categories. |
 | `mud-surface-ast.asdl` | Mechanical regulations | Outline of the Surface AST standardised. |
-| `cst-a-ast-superficial.md` | Regulations | Transformation and standardisation. |
-| `cobertura-sintactica.yaml` | Mechanical regulations | Comprehensive mapping EBNF → CST → AST. |
+| `cst-to-surface-ast.md` | Normative | Transformation and standardisation. |
+| `syntax-coverage.yaml` | Mechanical normative | Comprehensive EBNF → CST → AST mapping. |
 | `validate_syntax_model.py` | Publishing tool | Detects discrepancies between the previous artefacts. |
-| `casos/cst-ast.yaml` | Starter Suite | Cases of transformation and rejection prior to AST. |
+| `cases/cst-ast.yaml` | Starter suite | Transformation and pre-AST rejection cases. |
 
 ## Order of authority
 
 The files complement one another; there is no general rule that ‘the latest one takes precedence’.
 
-1. `mud-lexico.ebnf` y `06-lexicon.md` determine lexical recognition.
-2. `mud.ebnf` y `07-concrete-grammar.md` determine the specific grouping.
-3. `cst-sin-perdidas.md` determines conservation, trivia and recovery.
+1. `mud-lexicon.ebnf` and `06-lexicon.md` determine lexical recognition.
+2. `mud.ebnf` and `07-concrete-grammar.md` determine concrete grouping.
+3. `lossless-cst.md` determines preservation, trivia and recovery.
 4. `mud-surface-ast.asdl` defines the abstract constructors.
 5. `cst-a-ast-superficial.md` determines the projection.
 6. YAML files make it possible to list and verify the correspondence.
@@ -33,12 +33,12 @@ A contradiction is a fault in the proposal and must be resolved in all the files
 archivo .mud
 → scanner completo
 → tokens significativos + trivia
-→ CST sin pérdidas
-→ validación sintáctica contextual
-→ AST superficial normalizado
-→ resolución nominal: símbolos + bindings + grafo parcial
-→ tipado/elaboración
-→ representación semántica posterior todavía no formalizada
+→ lossless CST
+→ contextual syntactic validation
+→ normalised Surface AST
+→ nominal resolution: symbols + bindings + partial graph
+→ typing/elaboration
+→ later semantic representation not yet formalised
 ```
 
 ## Code generation
@@ -60,7 +60,7 @@ archivo .mud
 
 Generation must not convert mechanical files into derivatives without authority. The generated files will be saved outside `specification/` or they will be expressly marked as such.
 
-## Validación
+## Validation
 
 Validator dependency:
 
@@ -90,7 +90,7 @@ Not yet verified:
 - Correcting MUD examples using a real parser.
 - Dynamic properties.
 
-## Policy of changes
+## Change policy
 
 A change to the grammar must be updated, in the same commit:
 
@@ -101,11 +101,11 @@ A change to the grammar must be updated, in the same commit:
 5. The ASDL when an abstract distinction appears or disappears.
 6. Relevant test cases.
 
-An internal change that does not affect observable behaviour You can modify an implementation without changing these files.
+An internal change that does not affect observable behaviour may modify an implementation without changing these files.
 
 ## Naming conventions
 
-- Producción EBNF: `kebab-case`.
+- EBNF production: `kebab-case`.
 - CST category: `PascalCaseSyntax`.
 - Tipo ASDL: `snake_case`.
 - Builder ASDL: `PascalCase`.
@@ -117,10 +117,10 @@ An internal change that does not affect observable behaviour You can modify an i
 This directory does not define:
 
 - Name resolution and anchors.
-- Subtyped.
+- Subtyping.
 - Inference of types.
-- Static assessment.
-- Semantics effects.
+- Static analysis.
+- Effect semantics.
 - Causal waves.
 - Mechanical representation following typing and elaboration, which has not yet been formalised.
 
