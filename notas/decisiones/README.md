@@ -90,7 +90,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-074 | vigente | 2026-08-03 | [[notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento|Nominal unions and type narrowing]] |
 | D-075 | vigente | 2026-08-03 | [[notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados|Enumerable domains, `all` and derived-value form]] |
 | D-076 | vigente | 2026-08-03 | [[notas/decisiones/ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|Named units, prefixes and adjacent notation]] |
-| D-077 | vigente | 2026-08-03 | [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|Destrucción condicionada por cardinalidad y diagnóstico de transición]] |
+| D-077 | vigente | 2026-08-03 | [[notas/decisiones/ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|Cardinality-conditioned destruction and transition diagnostics]] |
 | D-078 | vigente | 2026-08-03 | [[notas/decisiones/ADR-078-resolucion-nominal-anclas-y-grafo-inicial|Resolución nominal, catálogo de anclas y grafo inicial]] |
 | D-079 | vigente | 2026-08-04 | [[notas/decisiones/ADR-079-diagnostico-exterior-de-reglas-always|Diagnóstico exterior de reglas `always`]] |
 | D-080 | vigente | 2026-08-04 | [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|Álgebra elevada y actualizaciones de colección]] |

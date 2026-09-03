@@ -1,6 +1,6 @@
 ---
 id: D-077
-title: "Destrucción condicionada por cardinalidad y diagnóstico de transición"
+title: "Cardinality-conditioned destruction and transition diagnostics"
 status: vigente
 date: 2026-08-03
 supersedes: []
@@ -8,17 +8,17 @@ superseded-by: []
 questions:
   - "Q-049"
 affects:
-  - "ciclo de vida, colecciones, efectos, resultados y `otherwise`"
+  - "lifecycle, collections, effects, results and `otherwise`"
 ---
-# ADR-077 — Destrucción condicionada por cardinalidad y diagnóstico de transición
+# ADR-077 — Cardinality-conditioned destruction and transition diagnostics
 
-## Contexto
+## Context
 
-Ocultar miembros destruidos y permitir que la cardinalidad efectiva diverja de la declarada rompe las garantías de consumidores posteriores. Cambiar dinámicamente el tipo o propagar colecciones degradadas tampoco es aceptable.
+Hiding destroyed members and allowing effective cardinality to diverge from its declaration breaks guarantees for later consumers. Dynamically changing the type or propagating degraded collections is likewise unacceptable.
 
-## Decisión
+## Decision
 
-`destroy c` calcula la transición completa y valida todas las propiedades afectadas. Si retirar `c` de la proyección efectiva infringe una cardinalidad o dominio, la transición devuelve `failed` y se revierte por completo:
+`destroy c` computes the complete transition and validates every affected property. If removing `c` from the effective projection violates a cardinality or domain, the transition returns `failed` and is rolled back in full:
 
 ```mud
 members: Person [2] = Alice, Bob
@@ -26,15 +26,15 @@ members: Person [2] = Alice, Bob
 destroy Bob # failed
 ```
 
-No existe un estado confirmado cuya cardinalidad efectiva contradiga la declaración.
+There is no committed state whose effective cardinality contradicts its declaration.
 
-Cuando la retirada es válida, una relación sin capacidad `mut` conserva latentemente la pertenencia y `create c` la restaura. Una relación `mut` elimina la pertenencia almacenada y `create c` no la recompone. `remove` autorizado elimina también una pertenencia latente. Toda restauración de `create` se valida de forma atómica y puede devolver `failed`.
+When removal is valid, a relationship without `mut` capability retains membership latently and `create c` restores it. A `mut` relationship removes stored membership and `create c` does not recreate it. Authorised `remove` also removes latent membership. Every `create` restoration is validated atomically and may return `failed`.
 
-Destruir el tipo declarado de una propiedad mantiene la suspensión estructural de D-021: la propiedad completa y su carga permanecen almacenadas. Esta suspensión se distingue de destruir una identidad que aparece como valor.
+Destroying the declared type of a property preserves D-021's structural suspension: the complete property and its payload remain stored. This differs from destroying an identity used as a value.
 
-### `otherwise` de transición
+### Transition `otherwise`
 
-Un bloque `then` puede terminar con un diagnóstico `otherwise`:
+A `then` block may end with an `otherwise` diagnostic:
 
 ```mud
 then {
@@ -43,21 +43,21 @@ then {
 otherwise "Bob is still required by {team}"
 ```
 
-El texto se evalúa perezosamente solo cuando la transición atómica resulta `failed`. No recupera, no ejecuta una rama alternativa y no convierte `failed` en `rejected`. El diagnóstico debe identificar además la propiedad, cardinalidad o dominio que bloqueó la operación.
+The text is evaluated lazily only when the atomic transition returns `failed`. It does not recover, execute an alternative branch or turn `failed` into `rejected`. The diagnostic must also identify the property, cardinality or domain that blocked the operation.
 
-## Consecuencias
+## Consequences
 
-- D-021 deja de descartar que `mut` afecte a la retirada de miembros.
-- La comprobación de D-026 incluye efectos de ciclo de vida y su consolidación.
-- No hay cascadas de estados cardinalmente degradados: hay commit válido o rollback.
-- `otherwise` pertenece al resultado del `then` completo, no a una instrucción individual.
+- D-021 no longer rules out `mut` affecting member removal.
+- D-026's check includes lifecycle effects and their consolidation.
+- There are no cascades of cardinality-degraded states: there is a valid commit or rollback.
+- `otherwise` belongs to the result of the complete `then`, not to an individual instruction.
 
-## Verificación
+## Verification
 
-1. `destroy` bloqueado por cardinalidad exacta.
-2. Retirada válida dentro de un rango.
-3. Restauración inmutable y retirada permanente `mut`.
-4. Rollback con varias colecciones afectadas.
-5. Restauración de `create` que excede un máximo.
-6. Distinción entre identidad destruida y tipo destruido.
-7. Evaluación perezosa de `otherwise` y diagnóstico de la causa.
+1. `destroy` blocked by exact cardinality.
+2. Valid removal within a range.
+3. Immutable restoration and permanent `mut` removal.
+4. Rollback with several affected collections.
+5. `create` restoration exceeding a maximum.
+6. Distinction between a destroyed identity and a destroyed type.
+7. Lazy `otherwise` evaluation and diagnosis of the cause.
