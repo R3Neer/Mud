@@ -1,94 +1,94 @@
 ---
 id: D-101
-title: "Bloques de valor, variables locales almacenadas y extremos por testigos"
+title: "Value blocks, stored local variables and witness extrema"
 status: current
 date: 2026-08-29
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "ExpressionBlock, ValueBlock, EffectBlock, variables locales, for each, fields, aliases, family, diccionarios, metadata, participantes, min, max, gramática, CST, AST, resolución y consolidación"
+  - "ExpressionBlock, ValueBlock, EffectBlock, local variables, for each, fields, aliases, family, dictionaries, metadata, participants, min, max, grammar, CST, AST, resolution and consolidation"
 ---
-# ADR-101 — Bloques de valor, variables locales almacenadas y extremos por testigos
+# ADR-101 — Value blocks, stored local variables and witness extrema
 
-- Modifica: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]], [[ADR-096-modulos-callables-look-message-and-activation|D-096]] y [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
-- Conserva el default de `given` como expresión estática cerrada conforme a D-063 y D-066.
+- Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]], [[ADR-096-modulos-callables-look-message-and-activation|D-096]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Retains the `given` default as a closed static expression in accordance with D-063 and D-066.
 
-## Contexto
+## Context
 
-MUD ya distinguía bloques declarativos de expresión y bloques ejecutables de efectos, pero esa división dejaba sin una forma propia la construcción de un valor mediante almacenamiento temporal local. Tampoco permitía variables locales almacenadas en `then`, obligaba a modelar todos los `for each` como efectos y mantenía `sum`, `min` y `max` con una familia de agregación demasiado heterogénea.
+MUD already distinguished declarative expression blocks and executable effect blocks, but that division left no dedicated form for constructing a value through temporary local storage. It also did not allow stored local variables in `then`, forced every `for each` to be modelled as an effect, and left `sum`, `min` and `max` in an overly heterogeneous aggregation family.
 
-La ampliación debe conservar dos fronteras deliberadas del lenguaje: un cálculo de valor no puede adquirir efectos observables y `if` no se convierte en una sentencia general dentro de bloques de cálculo.
+The extension must preserve two deliberate language boundaries: a value computation cannot acquire observable effects, and `if` does not become a general statement inside calculation blocks.
 
-## Decisión
+## Decision
 
-### Tres contratos de cuerpo
+### Three body contracts
 
-`ExpressionBlock` contiene cero o más locales calculadas puras `:=` y exactamente una expresión final. No admite variables almacenadas, mutación, `for each` como sentencia ni `if` interior.
+`ExpressionBlock` contains zero or more pure calculated locals `:=` and exactly one final expression. It admits no stored variables, mutation, `for each` as a statement or inner `if`.
 
-`ValueBlock` construye exactamente un valor mediante cero o más `ValueStatement` y una expresión final. Su catálogo de sentencias queda cerrado a:
+`ValueBlock` constructs exactly one value through zero or more `ValueStatement` items and a final expression. Its statement catalogue is closed to:
 
-1. declaración calculada local;
-2. declaración almacenada local, mutable o inmutable;
-3. mutación local;
+1. local calculated declaration;
+2. local stored declaration, mutable or immutable;
+3. local mutation;
 4. `LocalForEach`.
 
-`EffectBlock` ejecuta consecuencias observables. Admite las declaraciones locales calculadas y almacenadas anteriores, además de efectos ordinarios. Un `then` sigue siendo inválido si no contiene al menos un efecto observable o llamada ejecutable.
+`EffectBlock` executes observable consequences. It admits the calculated and stored local declarations above, in addition to ordinary effects. A `then` remains invalid if it contains neither an observable effect nor an executable call.
 
-Los bloques no son expresiones primarias generales. Solo aparecen en slots propietarios explícitos. Argumentos, índices, elementos de literales, RHS ordinarios de efectos y demás posiciones `expression` no adquieren bloques inline.
+Blocks are not general primary expressions. They appear only in explicit owner slots. Arguments, indices, literal elements, ordinary effect RHSs and other `expression` positions do not acquire inline blocks.
 
-### Pureza exterior de `ValueBlock`
+### Outer purity of `ValueBlock`
 
-Un `ValueBlock` puede modificar únicamente almacenamiento creado dentro de su propia frontera. La comprobación usa el footprint final del destino, no solo el identificador inicial: una local que conduzca a estado exterior no autoriza a escribir ese estado.
+A `ValueBlock` may modify only storage created within its own boundary. The check uses the target's final footprint, not merely the initial identifier: a local leading to external state does not authorise writing that state.
 
-No admite efectos sobre el mundo, `create`, `destroy` ni llamadas a actions/subactions como efectos. Una variable local declarada en un ámbito envolvente del mismo `ValueBlock` sí puede ser modificada desde un `LocalForEach` interior.
+It admits no effects on the world, `create`, `destroy` or calls to actions/subactions as effects. A local variable declared in an enclosing scope of the same `ValueBlock` may be modified from an inner `LocalForEach`.
 
-No existe sentencia `if` dentro de `ExpressionBlock`, `ValueBlock` ni `LocalStatementBlock`. Elección de valores, filtrado, extremos, ausencia y narrowing continúan expresándose con las construcciones declarativas de MUD.
+There is no `if` statement inside `ExpressionBlock`, `ValueBlock` or `LocalStatementBlock`. Value choice, filtering, extrema, absence and narrowing continue to be expressed with MUD's declarative constructs.
 
-### Variables locales almacenadas
+### Stored local variables
 
-Además de `x := value-body` se admiten:
+In addition to `x := value-body`, the following are admitted:
 
 ```mud
 x: X = value-body
 mut x: X = value-body
 ```
 
-`:=` no crea un lugar asignable. `x: X =` crea un slot local almacenado no reasignable y `mut x: X =` uno reasignable. El inicializador local se evalúa al alcanzar la declaración y puede leer estado runtime cuando el contexto lo permita.
+`:=` does not create an assignable location. `x: X =` creates a non-reassignable stored local slot and `mut x: X =` a reassignable one. The local initialiser is evaluated when the declaration is reached and may read runtime state when the context permits.
 
-Las variables almacenadas admiten la forma completa del tipo/valor compatible con su propietario. La mutabilidad del slot y la capacidad interior de su valor son ortogonales.
+Stored variables admit the complete type/value form compatible with their owner. Slot mutability and the inner capability of its value are orthogonal.
 
-Una local calculada puede ser `given` o participante `for` readonly. Una local almacenada inmutable puede ser `given` o `for` readonly. Una local almacenada mutable puede además satisfacer `for mut`. La llamada vincula temporalmente el participante al slot; no introduce references de primera clase ni copy-in/copy-out, y un fallo revierte también las modificaciones de ese slot conforme a la atomicidad ordinaria.
+A calculated local may be a `given` or a readonly `for` participant. An immutable stored local may be a `given` or readonly `for`. A mutable stored local may also satisfy `for mut`. The call temporarily binds the participant to the slot; it introduces neither first-class references nor copy-in/copy-out, and a failure also reverts modifications to that slot under ordinary atomicity.
 
-### `for each` local
+### Local `for each`
 
-Dentro de `ValueBlock`, `for each` usa `LocalStatementBlock`, que contiene únicamente `ValueStatement` y no posee expresión final propia. Su filtro sigue siendo un `ExpressionBlock` booleano.
+Within `ValueBlock`, `for each` uses `LocalStatementBlock`, which contains only `ValueStatement` items and has no final expression of its own. Its filter remains a Boolean `ExpressionBlock`.
 
-En una iteración con orden semántico, una mutable exterior al bucle pero interior al cuerpo propietario se observa secuencialmente entre iteraciones. En una iteración sin orden semántico, todas las iteraciones parten de la misma proyección previa y sus modificaciones sobre una mutable exterior se consolidan como concurrentes. Un conjunto de `+=` compatibles usa la consolidación aritmética general; varias asignaciones absolutas `=` no adquieren por ello semántica de acumulador.
+In an iteration with semantic order, a mutable outside the loop but inside the owning body is observed sequentially between iterations. In an iteration without semantic order, all iterations start from the same prior projection and their modifications to an outer mutable are consolidated as concurrent. A set of compatible `+=` operations uses general arithmetic consolidation; several absolute `=` assignments do not thereby acquire accumulator semantics.
 
-Cada iteración mantiene su ámbito local independiente.
+Each iteration retains an independent local scope.
 
-### Propietarios de `ExpressionBlock`
+### `ExpressionBlock` owners
 
-Usan `ExpressionBlock`: reglas booleanas, `always`, `when`, guardas `if`, `after` de action, filtros de `for each`, selección, `exists`, `forall`, `count`, `min`, `max`, claves de diccionario exacto y selectores de diccionario funcional. Los selectores funcionales y los cuerpos de los cinco cuantificadores indicados elaboran a `Bool`, salvo los contratos temporalmente distintos ya fijados para `when`.
+The following use `ExpressionBlock`: Boolean rules, `always`, `when`, `if` guards, action `after`, `for each` filters, selection, `exists`, `forall`, `count`, `min`, `max`, exact-dictionary keys and functional-dictionary selectors. Functional selectors and the bodies of the five quantifiers listed elaborate to `Bool`, except for the temporally distinct contracts already fixed for `when`.
 
-### Extremos por testigos
+### Witness extrema
 
-`min` y `max` usan un `ExpressionBlock` como predicado booleano. Entre los testigos aceptados, `min` devuelve el primero y `max` el último según el orden semántico de la fuente. Una fuente `ordered`, incluso sin clave explícita, proporciona orden suficiente. Una fuente sin orden semántico utilizable es inválida. Ningún candidato aceptado produce `empty` con la cardinalidad parcial ordinaria de los extremos.
+`min` and `max` use an `ExpressionBlock` as a Boolean predicate. Among accepted witnesses, `min` returns the first and `max` the last according to the source's semantic order. An `ordered` source, even without an explicit key, provides sufficient order. A source without usable semantic order is invalid. No accepted candidate produces `empty` with the ordinary partial cardinality of extrema.
 
-`by` conserva exclusivamente su significado de progresión cuando la fuente lo admite; `min` y `max` no introducen un criterio de orden propio.
+`by` retains exclusively its progression meaning when the source admits it; `min` and `max` introduce no ordering criterion of their own.
 
-### Propietarios de `ValueBlock`
+### `ValueBlock` owners
 
-Pueden usar una forma breve o `ValueBlock`: locales calculadas y almacenadas; campos almacenados, calculados y públicos; inicializadores heredados de `thing`; datos almacenados/calculados de `family`; asignaciones de datos de miembros; defaults y overrides de componentes de alias; campos calculados de alias; valores de diccionario exacto; resultados de diccionario funcional; metadata almacenada o calculada.
+The following may use a short form or `ValueBlock`: calculated and stored locals; stored, computed and public fields; inherited `thing` initialisers; stored/computed `family` data; member-data assignments; alias-component defaults and overrides; alias computed fields; exact-dictionary values; functional-dictionary results; stored or computed metadata.
 
-Las restricciones del propietario siguen vigentes. Cuando un campo, componente, dato, asignación de miembro u otro slot exige inicialización estática, todo su `ValueBlock` debe poder evaluarse estáticamente. El default de `given` es una excepción deliberada: continúa siendo `constant-expression` y no admite `ValueBlock`.
+The owner's constraints remain in force. When a field, component, datum, member assignment or other slot requires static initialisation, its entire `ValueBlock` must be statically evaluable. The `given` default is a deliberate exception: it remains a `constant-expression` and does not admit `ValueBlock`.
 
-### Diccionarios
+### Dictionaries
 
-Una asociación exacta tiene `ExpressionBlock` a la izquierda y `ValueBlock` a la derecha. Una rama funcional tiene `ExpressionBlock<Bool>` a la izquierda y `ValueBlock` a la derecha. Los scopes de ambos lados son independientes; las locales del lado izquierdo no pasan al derecho. El entorno exterior común y el `value` contextual funcional siguen disponibles conforme a sus contratos.
+An exact association has `ExpressionBlock` on the left and `ValueBlock` on the right. A functional branch has `ExpressionBlock<Bool>` on the left and `ValueBlock` on the right. The scopes on both sides are independent; locals on the left do not pass to the right. The common outer environment and contextual functional `value` remain available under their contracts.
 
-Las llaves sustituyen solo al operando extendido. Se admiten libremente las cuatro combinaciones breve/extensa:
+Braces replace only the extended operand. All four short/extended combinations are freely admitted:
 
 ```mud
 key -> value
@@ -97,37 +97,37 @@ key -> { result }
 { key } -> { result }
 ```
 
-y las equivalentes con `-->`. No se introducen keywords auxiliares ni wrapper exterior obligatorio. Un bloque trivial de una sola expresión es válido aunque el tooling pueda sugerir abreviarlo.
+and their `-->` equivalents. No auxiliary keywords or mandatory outer wrapper are introduced. A trivial single-expression block is valid even if tooling may suggest shortening it.
 
-Aplicar un diccionario sigue siendo exteriormente puro aunque el resultado use mutabilidad temporal local.
+Applying a dictionary remains externally pure even when the result uses temporary local mutability.
 
-### Metadata integrada
+### Integrated metadata
 
-Todo propietario que tenga simultáneamente descriptor metadata-bearing propio y `ValueBlock` puede escribir sus declaraciones `~...` como preámbulo contiguo al comienzo del cuerpo extenso. Ese preámbulo se proyecta al descriptor y no forma parte de `ValueBlock`.
+Any owner that simultaneously has its own metadata-bearing descriptor and `ValueBlock` may write its `~...` declarations as a contiguous preamble at the start of the extended body. That preamble is projected to the descriptor and is not part of `ValueBlock`.
 
-Se aplica a campos almacenados/calculados/públicos, componentes y campos calculados de alias, y datos almacenados/calculados de `family`. No se aplica a `ThingInitializer`, overrides, asignaciones de miembro, locales, `given` ni a `Metadata` misma. `Metadata` sigue siendo terminal.
+This applies to stored/computed/public fields, alias components and computed fields, and stored/computed `family` data. It does not apply to `ThingInitializer`, overrides, member assignments, locals, `given` or `Metadata` itself. `Metadata` remains terminal.
 
-Una declaración no combina simultáneamente el preámbulo integrado y un segundo metadata-body. La forma breve puede conservar el metadata-body separado existente. Los defaults de metadata de fichero mantienen su contrato constante y no adquieren `ValueBlock`.
+A declaration does not combine the integrated preamble with a second metadata body. The short form may retain the existing separate metadata body. File metadata defaults retain their constant contract and do not acquire `ValueBlock`.
 
-## Consecuencias
+## Consequences
 
-- `ExpressionBlock` permanece declarativo y no puede recuperar mutabilidad por anidamiento de un bloque de valor como expresión primaria.
-- La construcción imperativa local de un valor no obliga a convertir el cálculo en efecto del mundo.
-- `EffectBlock` y `ValueBlock` comparten declaraciones locales, pero difieren por su frontera de escritura y por la presencia obligatoria de un resultado en el segundo.
-- Los slots locales mutables pueden satisfacer participantes `for mut` sin crear un sistema general de references.
-- `min` y `max` componen filtrado y orden ya existente en vez de inventar una expresión de clave propia.
-- La metadata integrada es azúcar de superficie; el AST conserva metadata y valor en campos separados del mismo propietario.
+- `ExpressionBlock` remains declarative and cannot regain mutability by nesting a value block as a primary expression.
+- Imperative local construction of a value does not require turning the computation into a world effect.
+- `EffectBlock` and `ValueBlock` share local declarations but differ in their writing boundary and in the second block's mandatory result.
+- Mutable local slots may satisfy `for mut` participants without creating a general reference system.
+- `min` and `max` compose existing filtering and order instead of inventing their own key expression.
+- Integrated metadata is surface sugar; the AST retains metadata and value in separate fields of the same owner.
 
-## Verificación
+## Verification
 
-1. Forma breve y extensa de cada propietario de `ExpressionBlock` y `ValueBlock`.
-2. Rechazo de `if`, efectos exteriores y mutación que escape de `ValueBlock`.
-3. Declaraciones `:=`, `=` y `mut ... =` locales con ámbitos y sombreado correctos.
-4. `LocalForEach` anidado, filtro puro y cuerpo sin resultado obligatorio.
-5. Acumulador ordenado secuencial y acumulador no ordenado consolidado; diferencia entre `+=` y `=`.
-6. Binding readonly y `for mut` de cada clase local, incluido rollback.
-7. `min`/`max` booleanos que devuelven testigos, fuente ordenada sin clave y `empty` sin candidatos.
-8. Las cuatro combinaciones breve/extensa de `->` y `-->`, con scopes independientes.
-9. Metadata integrada proyectada al descriptor y rechazo de una segunda metadata-body.
-10. Default de `given` todavía constante.
-11. `TestAfterBlock`, `start with`, metadata-only bodies y preámbulos compartidos de comportamiento conservan sus contratos especiales.
+1. Short and extended forms of every `ExpressionBlock` and `ValueBlock` owner.
+2. Rejection of `if`, outer effects and mutation escaping `ValueBlock`.
+3. Local `:=`, `=` and `mut ... =` declarations with correct scopes and shadowing.
+4. Nested `LocalForEach`, pure filter and body without a mandatory result.
+5. Sequential ordered accumulator and consolidated unordered accumulator; distinction between `+=` and `=`.
+6. Readonly binding and `for mut` for each local class, including rollback.
+7. Boolean `min`/`max` returning witnesses, ordered source without a key and `empty` without candidates.
+8. All four short/extended combinations of `->` and `-->`, with independent scopes.
+9. Integrated metadata projected to the descriptor and rejection of a second metadata body.
+10. `given` default remains constant.
+11. `TestAfterBlock`, `start with`, metadata-only bodies and shared behaviour preambles retain their special contracts.
