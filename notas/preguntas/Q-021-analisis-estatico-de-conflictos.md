@@ -1,6 +1,6 @@
 ---
 id: Q-021
-title: Análisis estático de conflictos
+title: Static conflict analysis
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -15,12 +15,12 @@ affects: []
 superseded-by: []
 ---
 
-# Q-021 — Análisis estático de conflictos
+# Q-021 — Static conflict analysis
 
-## Contenido
+## Content
 
-Qué conflictos pueden probarse en compilación y cuáles solo en una resolución concreta.
+Which conflicts can be proven at compile time, and which only in a concrete resolution?
 
-D-023 y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] establecen el criterio inicial: un conflicto que el compilador pueda demostrar se rechaza estáticamente; la coincidencia que no pueda decidir se valida en runtime y revierte la transacción si llega a ocurrir. D-054 retira de esta categoría las activaciones coincidentes de una misma `thing` o regla: son idempotentes porque sus definiciones son únicas. D-031 hace inaplicable el caso de aliases.
+D-023 and [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]] establish the initial criterion: a conflict the compiler can prove is rejected statically; a coincidence it cannot decide is checked at runtime, and the transaction is rolled back if it occurs. D-054 removes matching activations of one `thing` or rule from this category: they are idempotent because their definitions are unique. D-031 makes the alias case inapplicable.
 
-D-026 endurece el caso de cardinalidad: el compilador debe demostrar la preservación local y consolidada; si no puede, rechaza conservadoramente el programa en vez de diferir el caso al runtime.
+D-026 strengthens the cardinality case: the compiler must prove local and consolidated preservation; if it cannot, it conservatively rejects the programme instead of deferring the case to runtime.
