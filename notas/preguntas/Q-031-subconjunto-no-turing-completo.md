@@ -1,6 +1,6 @@
 ---
 id: Q-031
-title: Subconjunto no Turing completo
+title: Non-Turing-complete subset
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-031 — Subconjunto no Turing completo
+# Q-031 — Non-Turing-complete subset
 
-## Contenido
+## Content
 
-Si merece la pena definirlo, qué garantías ofrece y cómo convive con el lenguaje general.
+Whether it is worth defining one, which guarantees it offers and how it coexists with the general language.
