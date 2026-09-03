@@ -1,6 +1,6 @@
 ---
 id: Q-035
-title: Coste de allowed
+title: Cost of `allowed`
 priority: P2
 opened: 2026-07-29
 resolved:
@@ -11,14 +11,14 @@ affects: []
 superseded-by: []
 ---
 
-# Q-035 — Coste de `allowed`
+# Q-035 — Cost of `allowed`
 
-## Contenido
+## Content
 
-Memorización, profundidad especulativa, ciclos y límites de recursos sin cambiar su verdad semántica.
+Memoisation, speculative depth, cycles and resource limits without changing semantic truth.
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]].
+Status: **partially decided** by [[notas/decisiones/ADR-043-consulta-especulativa-allowed|D-043]].
 
-El grafo de admisibilidad es acíclico y un límite de recursos no puede transformarse silenciosamente en falso. Falta definir memorización, presupuestos y diagnóstico.
+The admissibility graph is acyclic, and a resource limit may not be silently turned into false. Memoisation, budgets and diagnostics remain to be defined.
 
-## Preguntas de producto adicionales
+## Additional product questions
