@@ -232,7 +232,7 @@ lexical_forms:
     rhs: '? U+0022 COMILLA DOBLE ?'
     references: []
   text-character:
-    rhs: '? escalar Unicode salvo ''"'', "\", "{", "}", CR y LF ?'
+    rhs: '? Unicode scalar except ''"'', "\", "{", "}", CR and LF ?'
     references: []
   value-template-hole:
     rhs: special-value-template-hole
