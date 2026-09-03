@@ -1,6 +1,6 @@
 ---
 id: D-078
-title: "Resolución nominal, catálogo de anclas y grafo inicial"
+title: "Nominal resolution, anchor catalogue and initial graph"
 status: vigente
 date: 2026-08-03
 supersedes: []
@@ -8,44 +8,44 @@ superseded-by: []
 questions:
   - "Q-014"
 affects:
-  - "capítulo 09, AST superficial, HIR nominal, resolución nominal, tabla de símbolos, anclas, diagnósticos, LSP, grafo nominal, tipado y elaboración posteriores"
+  - "chapter 09, surface AST, nominal HIR, nominal resolution, symbol table, anchors, diagnostics, LSP, nominal graph, later typing and elaboration"
 ---
-# ADR-078 — Resolución nominal, catálogo de anclas y grafo inicial
+# ADR-078 — Nominal resolution, anchor catalogue and initial graph
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]], [[ADR-096-modulos-callables-look-message-y-activacion|D-096]] y [[ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]].
-- Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]], [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]], [[ADR-096-modulos-callables-look-message-y-activacion|D-096]] and [[ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]].
+- Extends: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]] and [[ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]].
 
-## Decisión
+## Decision
 
-La norma denomina **path de MUD** a la identidad lógica derivada de las carpetas. No se escribe una cabecera `namespace` ni se reserva `path`. El LSP puede mostrar una cabecera virtual, copiar el nombre cualificado y revelar la procedencia física sin modificar el archivo.
+The specification calls the logical identity derived from folders a **MUD path**. There is no `namespace` header and `path` is not reserved. LSP may show a virtual header, copy the qualified name and reveal physical provenance without modifying the file.
 
-Todas las declaraciones superiores de un path comparten un espacio nominal. La búsqueda de un nombre no cualificado consulta, en orden, entorno léxico, propietario o receptor implícito, path actual, `using` exactos, `using` recursivos e incorporados. Se elige el primer nivel no vacío; una categoría incompatible no habilita continuar. Candidatos con la misma ancla se deduplican y anclas distintas son ambiguas. Un `using` no reexporta. Cuando un candidato pertenece a otro módulo, `using` solo lo aporta a la resolución nominal: alcanzarlo exige además que `uses` autorice la dependencia y que el símbolo pertenezca al cierre visible del contrato modular. Un nombre cualificado tampoco elude esa frontera.
+All top-level declarations in a path share one nominal namespace. An unqualified name is searched in this order: lexical environment, owner or implicit receiver, current path, exact `using`, recursive `using` and built-ins. The first non-empty level is selected; an incompatible category does not permit continuing. Candidates with the same anchor are deduplicated and distinct anchors are ambiguous. A `using` does not re-export. When a candidate belongs to another module, `using` contributes it only to nominal resolution: reaching it also requires `uses` to authorise the dependency and the symbol to belong to the visible closure of the modular contract. A qualified name cannot bypass this boundary.
 
-No existe sombreado de un nombre visible. Las convenciones `PascalCase`, `lowerCamel` y `lowerCamel` de unidad son requisitos estáticos con arreglo automático.
+There is no shadowing of a visible name. `PascalCase`, `lowerCamel` and the unit `lowerCamel` convention are static requirements with an automatic fix.
 
-Poseen ancla las declaraciones nominales de primer nivel, campos en su propietario original, componentes, datos asociados declarados por una `family`, miembros de `family`, unidades declaradas, participantes `for`/`on`/`given`, metadatos configurados materializados como `Metadata` y tipos incorporados. Un campo heredado conserva el ancla declarativa del antecesor aunque su estado sea independiente en cada `thing`. Iteradores, vinculaciones locales ordinarias y valores globales no nominales solo reciben identidad interna efímera.
+Anchors belong to top-level nominal declarations, fields in their original owner, components, associated data declared by a `family`, `family` members, declared units, `for`/`on`/`given` participants, configured metadata materialised as `Metadata`, and built-in types. An inherited field retains its ancestor's declarative anchor although its state is independent in each `thing`. Iterators, ordinary local bindings and non-nominal global values receive only ephemeral internal identity.
 
-Las categorías canónicas son `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` y `type`. Las declaraciones anidadas prolongan el ancla del propietario con `::<miembro>`; una contribución modular `start with` de primer nivel no tiene nombre ni ancla. La pertenencia a módulo es una dimensión de visibilidad y dependencia y no añade un componente al ancla nominal.
+Canonical categories are `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` and `type`. Nested declarations extend the owner's anchor with `::<member>`; a first-level modular `start with` contribution has neither name nor anchor. Module membership is a visibility and dependency dimension, not an additional nominal-anchor component.
 
-La resolución nominal crea símbolos, anclas, scopes y bindings de referencias cuya categoría ya puede determinarse y los materializa en `especificacion/nombres/mud-nominal-hir.asdl`. Los nombres de tipos se vinculan nominalmente a sus símbolos, pero la comprobación de compatibilidad, uniones, dominios, cardinalidades y miembros dependientes del tipo pertenece al tipado y la elaboración. La norma usa entornos y conjuntos de candidatos; un scope graph es una implementación posible, no autoridad.
+Nominal resolution creates symbols, anchors, scopes and reference bindings whose category can already be determined, materialising them in `especificacion/nombres/mud-nominal-hir.asdl`. Type names are nominally bound to symbols, but compatibility, unions, domains, cardinalities and type-dependent members belong to typing and elaboration. The specification uses environments and candidate sets; a scope graph is an implementation option, not authority.
 
-El HIR nominal contiene únicamente las familias de relaciones que esta fase puede justificar: propiedad/contención (`Owns`), especialización (`Specializes`) y referencia nominal (`RefersTo`). Las relaciones que dependan de tipo efectivo, dominio, inicialización elaborada, cálculo, efecto o terminación quedan fuera del HIR y pertenecen a fases posteriores cuya representación mecánica todavía no está fijada.
+The nominal HIR contains only relationship families this phase can justify: ownership/containment (`Owns`), specialisation (`Specializes`) and nominal reference (`RefersTo`). Relationships depending on effective type, domain, elaborated initialisation, computation, effects or termination remain outside the HIR and belong to later phases whose mechanical representation is not yet fixed.
 
-La especialización nominal incluye `thing` y aliases. Los componentes y campos derivados de un alias poseen ancla bajo la categoría `alias`; un miembro heredado conserva el ancla de su origen. Una sobrescritura de predeterminado no introduce un nuevo miembro público ni una nueva ancla.
+Nominal specialisation includes `thing` and aliases. Components and fields derived from an alias have anchors under the `alias` category; an inherited member retains its origin anchor. Overriding a default introduces neither a new public member nor a new anchor.
 
-## Migraciones
+## Migrations
 
-Una ancla cambia con categoría, path o nombre cualificado. El tooling conserva una correspondencia dirigida explícita para migrar referencias persistentes, pero el ancla anterior no se convierte en alias fuente. Q-014 conserva abiertos el formato externo, composición, colisiones, conservación y aplicación sobre mundos persistidos.
+An anchor changes with category, path or qualified name. Tooling retains an explicit directed correspondence for migrating persistent references, but the former anchor does not become a source alias. Q-014 remains open on external format, composition, collisions, retention and application to persisted worlds.
 
-## Verificación
+## Verification
 
-1. Primer nivel no vacío y categoría incompatible sin caída posterior.
-2. Colisión global entre categorías.
-3. Deduplicación por ancla y ambigüedad real.
-4. Ausencia de sombreado y errores de casing reparables.
-5. Anclas de campos heredados, miembros, unidades y builtins.
-6. Participantes declarados con ancla pública y símbolos locales ordinarios sin ella.
-7. HIR nominal construible antes del tipado completo y libre de tipos, dominios, cardinalidades y terminación elaborados.
-8. El grafo HIR se limita a `Owns`, `Specializes` y `RefersTo`.
-9. Un `using` o un nombre cualificado no atraviesa una frontera modular sin `uses` y contrato visible.
-10. La pertenencia a módulo no altera el ancla nominal.
+1. First non-empty level and incompatible category without falling through.
+2. Global collision between categories.
+3. Anchor deduplication and genuine ambiguity.
+4. No shadowing and repairable casing errors.
+5. Anchors for inherited fields, members, units and built-ins.
+6. Declared participants with public anchors and ordinary local symbols without them.
+7. Nominal HIR constructible before complete typing and free of elaborated types, domains, cardinalities and termination.
+8. HIR graph limited to `Owns`, `Specializes` and `RefersTo`.
+9. `using` or a qualified name cannot cross a module boundary without `uses` and a visible contract.
+10. Module membership does not alter the nominal anchor.
