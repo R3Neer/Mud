@@ -1,6 +1,6 @@
 ---
 id: Q-026
-title: Varias acciones en eventually
+title: Multiple actions in `eventually`
 priority: P2
 opened: 2026-07-29
 resolved:
@@ -12,10 +12,10 @@ affects: []
 superseded-by: []
 ---
 
-# Q-026 — Varias acciones en `eventually`
+# Q-026 — Multiple actions in `eventually`
 
-## Contenido
+## Content
 
-Estado: **parcialmente cerrada** mediante [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
+Status: **partially closed** by [[notas/decisiones/ADR-044-alcanzabilidad-eventually|D-044]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
 
-`through` acepta una colección contextual, con corchetes opcionales, de referencias a acciones. Falta fijar el orden canónico de enumeración de solicitudes y su posible efecto en testigos y diagnósticos; no afecta a la verdad existencial.
+`through` accepts a contextual collection, with optional square brackets, of action references. The canonical enumeration order for requests and its possible effect on witnesses and diagnostics remain to be fixed; this does not affect existential truth.
