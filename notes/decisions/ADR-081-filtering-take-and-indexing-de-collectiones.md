@@ -1,6 +1,6 @@
 ---
 id: D-081
-title: "Filtrado, `take` e indexación de colecciones"
+title: "Filtering, `take` and collection indexing"
 status: current
 date: 2026-08-04
 supersedes: []
@@ -9,173 +9,173 @@ questions:
   - "Q-028"
   - "Q-032"
 affects:
-  - "colecciones, diccionarios, Text, dominios, azar, orden, gramática y AST"
+  - "collections, dictionaries, Text, domains, randomness, ordering, grammar and AST"
 ---
 
-# ADR-081 — Filtrado, `take` e indexación de colecciones
+# ADR-081 — Filtering, `take` and collection indexing
 
 - Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Modificada por: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
-- Modificada por: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
-- Modificada por: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
-- Modifica: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-056-char-text-and-unicode-ordering|D-056]], [[ADR-064-ordering-by-stable-path|D-064]] y [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]].
-- Preguntas relacionadas: [[notes/questions/Q-028-f-finiteness|Q-028]] y [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
+- Modified by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Modified by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
+- Modified by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
+- Modifies: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-056-char-text-and-unicode-ordering|D-056]], [[ADR-064-ordering-by-stable-path|D-064]] and [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]].
+- Related questions: [[notes/questions/Q-028-f-finiteness|Q-028]] and [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 
-## Contexto
+## Context
 
-`for each ... if ...` selecciona participantes para producir efectos, pero no construye una colección pura reutilizable. Los cuantificadores consumen testigos para producir booleanos o agregados y `all` enumera un dominio completo; ninguna de esas formas devuelve la subcolección que satisface un predicado.
+`for each ... if ...` selects participants to produce effects, but does not build a reusable pure collection. Quantifiers consume witnesses to produce booleans or aggregates and `all` enumerates a complete domain; none of these forms returns the subcollection satisfying a predicate.
 
-También faltaba distinguir entre posición observable, selección cuantitativa y elección aleatoria reproducible sin obligar a escribir `Rand` cuando la regla solo dice que se tomen algunos miembros.
+There was also no distinction between observable position, quantitative selection and reproducible random choice, without forcing `Rand` when the rule merely says to take some members.
 
-## Decisión
+## Decision
 
-### Filtrado como expresión
+### Filtering as an expression
 
-La forma:
+The form is:
 
 ```mud
 player in players :
     player.score == 2
 ```
 
-es una expresión de selección. Vincula cada miembro enumerable de la fuente, evalúa un predicado puro y determinista y devuelve las ocurrencias para las que el predicado es `true`.
+is a selection expression. It binds each enumerable member of the source, evaluates a pure deterministic predicate and returns the occurrences for which the predicate is `true`.
 
-La vinculación puede ser simple o una pareja de diccionario, igual que en `for each`:
+The binding may be simple or a dictionary pair, as in `for each`:
 
 ```mud
 (key, value) in stock :
     value > 0
 ```
 
-La variable solo está disponible en el predicado. La fuente se captura al comenzar la evaluación. Debe ser una colección finita y enumerable; si la fuente conceptual es un dominio, se materializa explícitamente como `all D` antes de seleccionar. Si la finitud o enumerabilidad no puede demostrarse, la expresión es inválida.
+The variable is available only in the predicate. The source is captured when evaluation begins. It must be a finite enumerable collection; if the conceptual source is a domain, it is explicitly materialised as `all D` before selection. If finiteness or enumerability cannot be demonstrated, the expression is invalid.
 
-El resultado:
+The result:
 
-- conserva el tipo y la identidad nominal de sus miembros;
-- conserva multiplicidades y `unique`;
-- conserva el orden y su criterio cuando la fuente es ordenada;
-- produce identidades con procedencia y conserva capacidad interior cuando la fuente la garantiza; una forma derivada exterior puede exigir esa capacidad, pero no concederla si falta;
-- nunca adquiere mutabilidad exterior;
-- tiene cardinalidad conservadora `[0..u]` para una fuente `[l..u]`, estrechable por análisis;
-- puede estrechar alternativas mediante pruebas como `is`.
+- preserves the type and nominal identity of its members;
+- preserves multiplicity and `unique`;
+- preserves ordering and its criterion when the source is ordered;
+- produces identities with provenance and preserves inner capability when the source guarantees it; an external derived form may require that capability, but cannot grant it when absent;
+- never acquires external mutability;
+- has conservative cardinality `[0..u]` for a source `[l..u]`, narrowable by analysis;
+- can narrow alternatives through tests such as `is`.
 
-Sobre un diccionario, una vinculación por pareja devuelve un diccionario con las asociaciones aceptadas.
+On a dictionary, pair binding returns a dictionary containing the accepted associations.
 
-### Expresión general `take`
+### General `take` expression
 
-La forma general es:
+The general form is:
 
 ```mud
 take amount from source
 ```
 
-`amount` debe elaborar a un `Nat [1]`. La fuente debe ser finita y enumerable. Si contiene $k$ ocurrencias y la cantidad es $n$, el resultado contiene $\min(k,n)$ ocurrencias.
+`amount` must elaborate to a `Nat [1]`. The source must be finite and enumerable. If it contains $k$ occurrences and the amount is $n$, the result contains $\min(k,n)$ occurrences.
 
 - `take 0 from source` produce `empty`.
 - `take n from empty` produce `empty`.
-- La falta de miembros nunca falla por sí misma; un contrato exterior puede exigir una cardinalidad mayor.
+- A lack of members never fails by itself; an external contract may require a greater cardinality.
 
-Para una fuente con cardinalidad estática $[l..u]$ y una cantidad constante $n$, el resultado posee:
+For a source with static cardinality $[l..u]$ and a constant amount $n$, the result has:
 
 $$
 [\min(l,n)..\min(u,n)].
 $$
 
-Si la fuente posee orden semántico observable o una enumeración canónica propia, `take` conserva su prefijo. Si la fuente es una colección o diccionario sin orden observable, selecciona uniformemente y sin reemplazo entre ocurrencias mediante la semilla reproducible. El resultado no adquiere orden por el orden interno del muestreo.
+If the source has observable semantic ordering or its own canonical enumeration, `take` preserves its prefix. If the source is a collection or dictionary without observable ordering, it selects uniformly and without replacement among occurrences using the reproducible seed. The result does not acquire ordering from the sample's internal order.
 
-Un `take` no ordenado es un punto aleatorio aunque no escriba `Rand`: posee identidad semántica, caché por instantánea y las mismas restricciones contextuales. Es determinista y no consume azar cuando `n=0` o cuando puede demostrarse que la fuente contiene como máximo `n` ocurrencias.
+An unordered `take` is a random point even though it does not write `Rand`: it has semantic identity, snapshot caching and the same contextual restrictions. It is deterministic and consumes no randomness when `n=0` or when the source can be shown to contain at most `n` occurrences.
 
-`take` se aplica además a:
+`take` also applies to:
 
-- materializaciones `all D` de dominios finitos enumerables, tomando sus primeros valores canónicos;
-- diccionarios, conservando asociaciones completas;
-- `Text`, produciendo el prefijo de hasta `n` valores `Char` como otro `Text`.
+- `all D` materialisations of finite enumerable domains, taking their first canonical values;
+- dictionaries, preserving complete associations;
+- `Text`, producing a prefix of up to `n` `Char` values as another `Text`.
 
-Un dominio desnudo no es fuente directa de `take`: al producir una colección, la materialización debe quedar explícita en el programa.
+A bare domain is not a direct source for `take`: when producing a collection, materialisation must be explicit in the programme.
 
-La nominalidad de un alias contenedor no se reconstruye implícitamente: el resultado conserva la colección o secuencia subyacente y necesita una construcción o conversión nominal explícita cuando el contexto exija de nuevo el alias.
+The nominality of a container alias is not reconstructed implicitly: the result preserves the underlying collection or sequence and needs an explicit nominal construction or conversion when the context again requires the alias.
 
-### Composición
+### Composition
 
-`take` y la selección son expresiones ordinarias y se componen sin azúcar exclusivo:
+`take` and selection are ordinary expressions and compose without exclusive syntactic sugar:
 
 ```mud
-# Hasta n coincidencias.
+# Up to n matches.
 best := take n from player in players :
     player.score == 2
 
-# Coincidencias dentro de una selección previa.
+# Matches within a previous selection.
 best := player in take m from players :
     player.score == 2
 
-# Ambas restricciones.
+# Both constraints.
 best := take n from player in take m from players :
     player.score == 2
 ```
 
-La anotación de la declaración es independiente de la selección:
+The declaration annotation is independent of the selection:
 
 ```mud
 chosen [3] := take 3 from player in players :
     player.score == 2
 ```
 
-`take 3` selecciona hasta tres; `[3]` exige exactamente tres.
+`take 3` selects up to three; `[3]` requires exactly three.
 
-### Indexación y secciones
+### Indexing and sections
 
-Una colección solo admite acceso posicional cuando posee orden observable. Los índices comienzan en uno.
+A collection admits positional access only when it has observable ordering. Indices start at one.
 
 ```mud
 queue[1]
 queue[2..5]
 ```
 
-Un índice singular produce una colección `[1]` si la cardinalidad de la fuente demuestra que la posición existe y `[0..1]` en otro caso. Un intervalo de índices produce las posiciones existentes dentro del intervalo y nunca falla por exceder el final. Conserva orden, multiplicidad, tipo de miembro y capacidad interior.
+A singular index produces a `[1]` collection when the source cardinality proves that the position exists, and `[0..1]` otherwise. An index range produces the positions existing within the range and never fails for exceeding the end. It preserves ordering, multiplicity, member type and inner capability.
 
-Sobre una colección no ordenada, el acceso posicional es inválido; se usa `take` cuando la intención es seleccionar una cantidad. Los diccionarios conservan la indexación por clave y `Text` conserva su indexación de secuencia; la resolución por tipos distingue esas formas.
+On an unordered collection, positional access is invalid; use `take` when the intent is to select a quantity. Dictionaries retain key indexing and `Text` retains sequence indexing; type resolution distinguishes these forms.
 
-### `ordered by` sobre uniones
+### `ordered by` over unions
 
-Cuando el miembro de una colección es una unión, cada ruta `ordered by` debe ser total sobre todas las alternativas posibles:
+When a collection member is a union, every `ordered by` path must be total over all possible alternatives:
 
-1. Cada segmento existe en cada alternativa alcanzable.
-2. Cada acceso intermedio es singular.
-3. Toda la ruta es transitivamente estable.
-4. Las claves finales elaboran hacia un único tipo común con orden semántico total.
+1. Every segment exists in every reachable alternative.
+2. Every intermediate access is singular.
+3. The entire path is transitively stable.
+4. Final keys elaborate to one common type with total semantic ordering.
 
-Se admiten ampliaciones implícitas únicas, como `Nat` hacia `Int`. No se eliminan identidades nominales de aliases ni se elige entre varias conversiones. Si hace falta adaptar una alternativa, se declara primero un campo calculado común y se ordena por él.
+Unique implicit widenings, such as `Nat` to `Int`, are admitted. Nominal alias identities are not removed and no choice is made among several conversions. If an alternative needs adapting, first declare a common calculated field and order by it.
 
-## Consecuencias
+## Consequences
 
-- Las consultas pueden construir grupos definidos por una regla sin introducir variables mutables ni efectos auxiliares.
-- `for each` continúa siendo la forma de actuar sobre miembros; la selección es la forma de obtenerlos como valor.
-- `take` expresa una restricción cuantitativa general y usa orden o semilla según la semántica de la fuente.
-- La indexación nunca inventa posiciones para colecciones no ordenadas.
-- Una unión no puede hacer parcial una clave `ordered by`.
+- Queries can build groups defined by a rule without introducing mutable variables or auxiliary effects.
+- `for each` remains the way to act on members; selection is the way to obtain them as a value.
+- `take` expresses a general quantitative constraint and uses ordering or a seed according to source semantics.
+- Indexing never invents positions for unordered collections.
+- A union cannot make an `ordered by` key partial.
 
-## Verificación
+## Verification
 
-1. Filtro ordenado, no ordenado, `unique`, con multiplicidades y sobre diccionario.
-2. Estrechamiento de unión dentro del predicado.
-3. `take` sobre colección ordenada, no ordenada, `all D`, diccionario y `Text`, y rechazo de un dominio desnudo como fuente productora de colección.
-4. Muestreo sin reemplazo, reproducibilidad y estabilidad por instantánea.
-5. Simplificación determinista cuando no existe elección real.
-6. Composición de `take` antes y después del filtro.
-7. Separación entre selección y contrato de cardinalidad.
-8. Índice y sección ordenados, incluidos límites fuera de rango.
-9. Rechazo de indexación posicional no ordenada.
-10. Ruta `ordered by` total e inválida sobre alternativas de unión.
+1. Ordered and unordered filtering, `unique`, multiplicities and dictionaries.
+2. Union narrowing within the predicate.
+3. `take` over ordered and unordered collections, `all D`, dictionaries and `Text`, and rejection of a bare domain as a collection-producing source.
+4. Sampling without replacement, reproducibility and snapshot stability.
+5. Deterministic simplification when no real choice exists.
+6. Composition of `take` before and after filtering.
+7. Separation between selection and cardinality contract.
+8. Ordered index and section, including out-of-range bounds.
+9. Rejection of unordered positional indexing.
+10. Total and invalid `ordered by` paths over union alternatives.
 
-## Modificación por D-084
+## Amendment by D-084
 
-Una selección usada para definir un campo derivado conserva la capacidad interior de su fuente porque devuelve las mismas identidades aceptadas. Una vista `[mut]` exige que esa capacidad esté disponible; la declaración no la fabrica. La lista seleccionada permanece estable durante la instantánea y se recalcula tras consolidar efectos.
+A selection used to define a derived field retains the inner capability of its source because it returns the same accepted identities. A `[mut]` view requires that capability to be available; the declaration does not manufacture it. The selected list remains stable during the snapshot and is recalculated after effects are consolidated.
 
-## Modificación por D-088
+## Amendment by D-088
 
-La selección pura admite `item in source by step : predicate` cuando la fuente define progresión por diferencia. No es stride sobre una colección arbitraria. El predicado puede ser una expresión breve o un `ExpressionBlock` con locales y sigue siendo puro y determinista. El AST conserva `step?` y el predicado como `ExpressionBlock`.
+Pure selection admits `item in source by step : predicate` when the source defines progression by difference. It is not a stride over an arbitrary collection. The predicate may be a short expression or an `ExpressionBlock` with locals and remains pure and deterministic. The AST retains `step?` and the predicate as an `ExpressionBlock`.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-Selección y `take` producen colecciones. Cuando su fuente conceptual es un dominio, debe materializarse explícitamente mediante `all D`; por ejemplo `candidate in all Actions : ...` y `take n from all D`. Recorridos y cuantificadores que no producen una colección pueden consumir directamente un dominio finito enumerable.
+Selection and `take` produce collections. When their conceptual source is a domain, it must be explicitly materialised through `all D`; for example `candidate in all Actions : ...` and `take n from all D`. Traversals and quantifiers that do not produce a collection may consume a finite enumerable domain directly.
