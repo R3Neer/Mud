@@ -1,6 +1,6 @@
 ---
 id: Q-054
-title: Catálogo y resolución léxica de unidades y prefijos
+title: Catalogue and lexical resolution of units and prefixes
 priority: P2
 opened: 2026-07-29
 resolved: true
@@ -14,24 +14,24 @@ affects:
 superseded-by: []
 ---
 
-# Q-054 — Catálogo y resolución léxica de unidades y prefijos
+# Q-054 — Catalogue and lexical resolution of units and prefixes
 
-## Pregunta
+## Question
 
-¿Cómo se reconocen las formas de unidad configuradas por declaraciones del propio programa sin hacer depender el scanner inicial de una magnitud ya parseada y resuelta, y qué colisiones léxicas son admisibles?
+How are unit forms configured by the programme's own declarations recognised without making the initial scanner depend on an already parsed and resolved magnitude, and which lexical collisions are admissible?
 
-## Resolución
+## Resolution
 
-D-076 fija catálogo, formas habilitadas, prefijos y adyacencia. D-089 separa el scanner base del clasificador contextual: `UNIT_FORM` se crea únicamente sobre el texto fuente cuando el catálogo semántico ya está resuelto. El tipo esperado restringe candidatos; sin él se exige unicidad global, las coincidencias de distinta longitud usan la forma completa más larga y un mismo span con varios candidatos sigue siendo ambiguo. `MUD-LEX-016` permite espacios en `~name`, `~plural` y `~abbreviation` cuando actúan como forma fuente, exige al menos un carácter alfabético y excluye cualquier palabra clave de MUD; `MUD-LEX-017` comprueba colisiones dentro de una magnitud después de expandir todas las combinaciones de prefijos permitidas.
+D-076 fixes the catalogue, enabled forms, prefixes and adjacency. D-089 separates the base scanner from the contextual classifier: `UNIT_FORM` is created only over source text once the semantic catalogue is resolved. The expected type restricts candidates; without it, global uniqueness is required, candidates of different lengths use the longest complete form, and one span with several candidates remains ambiguous. `MUD-LEX-016` permits spaces in `~name`, `~plural` and `~abbreviation` when used as source forms, requires at least one alphabetic character and excludes every MUD keyword; `MUD-LEX-017` checks collisions within a magnitude after expanding all permitted prefix combinations.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: el pipeline separa de forma explícita el reconocimiento inicial de la resolución contextual de formas de unidad.
-- C2: toda forma fuente de unidad tiene una regla determinista de delimitación y desambiguación.
-- C3: la norma exige conformidad para colisiones, contexto esperado y adyacencia.
+- C1: The pipeline explicitly separates initial recognition from contextual resolution of unit forms.
+- C2: Every unit source form has a deterministic delimitation and disambiguation rule.
+- C3: The specification requires conformance for collisions, expected context and adjacency.
 
-## Evidencia de cierre
+## Closure evidence
 
-- C1: `D-089`, `MUD-LEX-012` y `MUD-LEX-013`.
-- C2: `D-089`, `MUD-LEX-015`, `MUD-LEX-016` y `MUD-LEX-017`.
-- C3: verificación de D-089 y reglas `MUD-LEX-015` a `MUD-LEX-017`, además de la adyacencia de D-076/06-léxico.
+- C1: `D-089`, `MUD-LEX-012` and `MUD-LEX-013`.
+- C2: `D-089`, `MUD-LEX-015`, `MUD-LEX-016` and `MUD-LEX-017`.
+- C3: D-089 verification and `MUD-LEX-015` through `MUD-LEX-017`, together with D-076/06-lexico adjacency.
