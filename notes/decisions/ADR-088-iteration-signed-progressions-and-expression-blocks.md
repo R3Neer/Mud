@@ -20,7 +20,7 @@ affects:
 
 - Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-collection-filtering-take-and-indexing|D-081]] and [[ADR-082-cycle-as-point-domain-modifier|D-082]].
 - Retains: [[ADR-034-num-exactly-and-rum-binary64|D-034]], [[ADR-040-semantics-remaining-basic-numeracy|D-040]] and D-048's prohibition on randomness in filters of [[ADR-048-reproducible-randomness-and-errors|D-048]].
-- Modified by: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]] in the result form of `min` and `max` on absence.
+- Modified by: [[ADR-095-empty-extrema-as-ordinary-absence|D-095]] in the result form of `min` and `max` on absence.
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] in the identity and derivation of random points.
 - Related questions: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]], [[notes/questions/Q-028-f-finiteness|Q-028]], [[notes/questions/Q-029-t-termination|Q-029]] and [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 

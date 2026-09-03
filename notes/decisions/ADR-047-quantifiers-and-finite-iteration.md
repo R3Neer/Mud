@@ -20,7 +20,7 @@ affects:
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]
 - Expanded by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
-- Amended by: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]]
+- Amended by: [[ADR-095-empty-extrema-as-ordinary-absence|D-095]]
 
 - Related questions: Q-018, Q-028, Q-029
 - Documents affected: expressions, ranges, iteration

@@ -108,7 +108,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-092 | current | 2026-08-16 | [[notes/decisions/ADR-092-static-availability-of-reflective-properties|Static availability of reflective properties]] |
 | D-093 | current | 2026-08-16 | [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|Surface AST, nominal HIR and later semantic phase]] |
 | D-094 | current | 2026-08-16 | [[notes/decisions/ADR-094-terminal-anchors-for-configured-metadata|Terminal anchors for configured metadata]] |
-| D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-extremos-vacios-como-ausencia-ordinaria|Empty extrema as ordinary absence]] |
+| D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-empty-extrema-as-ordinary-absence|Empty extrema as ordinary absence]] |
 | D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|Modules, callables, `look`, `message` and activation]] |
 | D-097 | current | 2026-08-28 | [[notes/decisions/ADR-097-current-nominal-hir-and-deferred-semantic-ir|Current nominal HIR and deferred semantic IR]] |
 | D-098 | current | 2026-08-28 | [[notes/decisions/ADR-098-assignable-paths-and-write-back-of-immutable-aliases|Assignable paths and write-back of immutable aliases]] |
