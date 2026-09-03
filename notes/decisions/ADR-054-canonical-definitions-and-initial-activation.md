@@ -58,7 +58,7 @@ rule CanGrow on plant: Vegetation {
 The standard definition:
 
 - The category of the declaration.
-- His identity y anchor.
+- Its identity and anchor.
 - In a `thing`, whether it is abstract or concrete.
 - In a `thing`, their direct predecessors.
 - Its declarative body.

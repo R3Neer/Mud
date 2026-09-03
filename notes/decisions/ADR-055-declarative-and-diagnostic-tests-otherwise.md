@@ -54,7 +54,7 @@ A test:
 - No statement `for`, `given`, `if`, `when` nor participants.
 - It states exactly one `start with`, a `then` and a `after`.
 - It cannot be invoked as `action` nor can it be queried as a rule; in a testing context, it can be invoked as an operation `test` from the `then` from another test visible in accordance with D-096.
-- It cannot be the aim of `create` o `destroy`.
+- It cannot be the target of `create` or `destroy`.
 - It cannot appear in a set `start with`.
 
 In brief:
@@ -106,7 +106,7 @@ $$
 
 The initial activation The ordinary form of the modules does not feature in this construction.
 
-### `then` y state from the stage
+### `then` and state from the stage
 
 `then` use the semantics ordinary in terms of consequences and form, the transition tested. You can combine effects, local variables and permitted calls, including operations `test` visible in the context of tests. The assignments and other modifications written at the beginning of `then` do not belong to the state Initial: these are effects of the spell. Cast a test whose `start with` if they have already taken part in the initial closing, they do not make that contribution again.
 
@@ -149,7 +149,7 @@ The execution of a test produces exactly one of these results for the executor:
 | `failed` | At least one statement is false and no phase produces a error |
 | `error` | The initial world, the resolution from the `then` or the evaluation of an assertion fails, or diagnostic |
 
-`passed`, `failed` y `error` are not ordinary shares in the world nor do they replace `accepted`, `rejected` y `failed` of the shares.
+`passed`, `failed` and `error` are not ordinary values in the world, nor do they replace the `accepted`, `rejected` and `failed` results of actions.
 
 The state in isolation, the messages and any other output produced during the test are always discarded. The executor may retain only the result, the diagnostics and the trace required to explain them.
 

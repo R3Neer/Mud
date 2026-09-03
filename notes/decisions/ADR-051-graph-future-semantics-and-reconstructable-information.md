@@ -18,7 +18,7 @@ affects:
 # ADR-051 — Graph future semantics and reconstructable information
 
 - Amended by: [[ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]].
-- Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]] y [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
+- Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]] and [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]].
 
@@ -37,14 +37,14 @@ When designing this future representation, it must be capable of preserving or r
 - provenance up to the source file and range;
 - symbols and anchors resolved;
 - the three types of ruler;
-- participants `for` y `on`, values `given`, cardinality, mutability and types of relationship;
+- participants `for` and `on`, values `given`, cardinality, mutability and relationship types;
 - pre-defined types, aliases, domains, cardinalities, units and intervals;
 - local links and the order in which they are assessed;
 - effects, readings, writings, calls and dependencies;
 - logical activity and suspended dependencies;
 - `look`, `message`, its outflows and deferred liabilities;
 - tests, activation local, effects, assertions and diagnoses;
-- dependencies of `allowed`, `eventually`, `when`, `if`, `after`, `old` y `always`;
+- dependencies of `allowed`, `eventually`, `when`, `if`, `after`, `old` and `always`;
 - structural effects `create`, `destroy`, the addition and removal of collections;
 - derivation of dimensions, quantities, units and equivalences;
 - general departments, including domain, stochastic and hard when they form part of the defined analysis.
