@@ -11,7 +11,7 @@ affects:
 ---
 # ADR-103 — Capacidad interior en valores derivados
 
-- Modifica: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]], [[ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]] y [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Modifica: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] y [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Se apoya en la forma de colecciones derivadas de [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]] y conserva sin cambios las reglas algebraicas de propagación de `mut` de [[ADR-039-collections-and-dictionaries|D-039]].
 
 ## Contexto

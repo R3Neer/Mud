@@ -11,8 +11,8 @@ affects:
 ---
 # ADR-064 — Ordering by stable path
 
-- Extended by: [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]]
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Extended by: [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Amends: [[notes/decisions/ADR-038-close-knit-families-with-strong-values|D-038]], [[notes/decisions/ADR-039-collections-and-dictionaries|D-039]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Affected documents: collections, families, aliases, fields, orderable types, normalisation and iteration

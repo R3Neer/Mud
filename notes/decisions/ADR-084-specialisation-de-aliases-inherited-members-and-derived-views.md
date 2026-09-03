@@ -12,14 +12,14 @@ affects:
 ---
 # ADR-084 — Especialización de aliases, miembros heredados y vistas derivadas
 
-- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+- Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Modificada por: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]]
-- Modifica: [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|D-015]], [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[notes/decisions/ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[notes/decisions/ADR-032-contextual-construction-and-nominal-casting-of-aliases|D-032]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]], [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]], [[notes/decisions/ADR-074-nominal-unions-and-type-narrowing|D-074]], [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[notes/decisions/ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]].
+- Modificada por: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Modificada por: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Modifica: [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|D-015]], [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[notes/decisions/ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[notes/decisions/ADR-032-contextual-construction-and-nominal-casting-of-aliases|D-032]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]], [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]], [[notes/decisions/ADR-074-nominal-unions-and-type-narrowing|D-074]], [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|D-081]].
 - Reduce: [[notes/questions/Q-056-f-normalised-form-and-alias-recursion|Q-056]].
 - Documentos afectados: gramática, AST superficial y resuelto, nombres y anclas, modelo matemático y semántica de colecciones derivadas.
-- Modificada por: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Contexto
 

@@ -16,10 +16,10 @@ affects:
 
 - Amended by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Amended by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]
-- Expanded by: [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]]
-- Amended by: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
+- Expanded by: [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 - Amended by: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]]
 
 - Related questions: Q-018, Q-028, Q-029

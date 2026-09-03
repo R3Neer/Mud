@@ -14,11 +14,11 @@ affects:
 # ADR-041 — Contracts under the three types of rules
 
 - Related to: [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
-- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] y [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] y [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
 - As further amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Also amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
 - Expanded by: [[notes/decisions/ADR-071-local-bindings-in-boolean-blocks|D-071]]
-- Example of membership updated by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]]
+- Example of membership updated by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]]
 - Related questions: Q-005, Q-050
 - Documents concerned: model of language, semantics static, semantics dynamic
 

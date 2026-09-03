@@ -14,8 +14,8 @@ affects:
 - Amended by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 - Extends: [[ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Amends: [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]] and [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]]
-- Subsequently amended by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Amended by: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
+- Subsequently amended by: [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
+- Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 
 ## Context
 

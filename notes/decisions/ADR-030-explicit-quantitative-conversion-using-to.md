@@ -17,7 +17,7 @@ affects:
 - Expanded by: [[notes/decisions/ADR-032-contextual-construction-and-nominal-casting-of-aliases|D-032]]
 - Amended by: [[notes/decisions/ADR-034-num-exactly-and-rum-binary64|D-034]]
 - As further amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
-- Subsequently amended by: [[notes/decisions/ADR-083-magnitudes-base-sin-unidades|D-083]]
+- Subsequently amended by: [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
 - Documents affected: future `10-sistema-de-tipos.md`, future `18-magnitudes.md`, future `19-expresiones.md`
 
 ## Context

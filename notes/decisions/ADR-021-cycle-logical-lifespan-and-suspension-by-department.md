@@ -17,8 +17,8 @@ affects:
 - Related to: [[notes/decisions/ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]]
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - As further amended by: [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]]
-- As further amended by: [[ADR-099-materializaciones-frescas-tras-destroy-and-create|D-099]]
-- Example updated by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- As further amended by: [[ADR-099-fresh-materialisations-after-destroy-and-create|D-099]]
+- Example updated by: [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
 - Questions affected: [[notes/questions/Q-048-d-destruction-with-active-descendants|Q-048]], [[notes/questions/Q-049-d-destruction-and-thing-collections|Q-049]]
 - Documents concerned: [[specification/04-mathematical-model]], future chapters 11, 21 to 25 and 32
 

@@ -14,11 +14,11 @@ affects:
 
 # ADR-081 — Filtrado, `take` e indexación de colecciones
 
-- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+- Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Modificada por: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
-- Modificada por: [[notes/decisions/ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]]
-- Modificada por: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
+- Modificada por: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Modificada por: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
+- Modificada por: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 - Modifica: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-056-char-text-and-unicode-ordering|D-056]], [[ADR-064-ordering-by-stable-path|D-064]] y [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]].
 - Preguntas relacionadas: [[notes/questions/Q-028-f-finiteness|Q-028]] y [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 

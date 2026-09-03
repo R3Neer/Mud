@@ -15,7 +15,7 @@ affects:
 
 - Modifica: [[ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] y [[ADR-062-canonical-point-magnitude-literals|D-062]].
 - Pregunta relacionada: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]].
-- Modificada por: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
+- Modificada por: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 
 ## Contexto
 

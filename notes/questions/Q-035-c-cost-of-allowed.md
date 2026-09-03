@@ -17,7 +17,7 @@ superseded-by: []
 
 Memoisation, speculative depth, cycles and resource limits without changing semantic truth.
 
-Status: **partially decided** by [[notes/decisions/ADR-043-consulta-especulativa-allowed|D-043]].
+Status: **partially decided** by [[notes/decisions/ADR-043-query-especulativa-allowed|D-043]].
 
 The admissibility graph is acyclic, and a resource limit may not be silently turned into false. Memoisation, budgets and diagnostics remain to be defined.
 

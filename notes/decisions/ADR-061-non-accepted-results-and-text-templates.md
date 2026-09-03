@@ -14,11 +14,11 @@ affects:
 ---
 # ADR-061 — Non-accepted results and `Text` templates
 
-- Amended by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Amends: [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]], [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]], [[notes/decisions/ADR-035-organisation-names-using-and-anchors|D-035]], [[notes/decisions/ADR-038-close-knit-families-with-strong-values|D-038]], [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-048-reproducible-randomness-and-errors|D-048]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[notes/decisions/ADR-050-comments-terminators-text-and-numeric-separators|D-050]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]] and [[notes/decisions/ADR-056-char-text-and-unicode-ordering|D-056]]
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
-- Subsequently amended by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Further amended by: [[notes/decisions/ADR-083-magnitudes-base-sin-unidades|D-083]]
+- Subsequently amended by: [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
+- Further amended by: [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Related questions: Q-007, [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]], Q-059
 - Affected documents: action results, `always` rules, lexicon, grammar, `Text` evaluation, diagnostics and the external boundary

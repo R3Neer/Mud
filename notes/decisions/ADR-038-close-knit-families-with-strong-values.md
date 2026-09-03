@@ -14,13 +14,13 @@ affects:
 ---
 # ADR-038 — Close-knit families with strong values
 
-- Amended by: [[ADR-102-forma-completa-de-datos-calculados-de-family|D-102]].
+- Amended by: [[ADR-102-complete-form-of-computed-family-data|D-102]].
 - Amended by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Expanded by: [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]]
-- Amended by: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
 - As further amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]

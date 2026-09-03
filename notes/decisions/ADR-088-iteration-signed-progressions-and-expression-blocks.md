@@ -18,10 +18,10 @@ affects:
 
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modifica: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]].
+- Modifica: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]] y [[ADR-082-cycle-as-point-domain-modifier|D-082]].
 - Conserva: [[ADR-034-num-exactly-and-rum-binary64|D-034]], [[ADR-040-semantics-remaining-basic-numeracy|D-040]] y la prohibición de azar en filtros de [[ADR-048-reproducible-randomness-and-errors|D-048]].
 - Modificada por: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]] en la forma de resultado de `min` y `max` sobre ausencia.
-- Modificada por: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]] en la identidad y derivación de puntos aleatorios.
+- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] en la identidad y derivación de puntos aleatorios.
 - Preguntas relacionadas: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]], [[notes/questions/Q-028-f-finiteness|Q-028]], [[notes/questions/Q-029-t-termination|Q-029]] y [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 
 ## Contexto

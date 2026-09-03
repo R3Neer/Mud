@@ -13,11 +13,11 @@ affects:
 ---
 # ADR-100 — Orden lógico, procedencia, pertenencia y consolidación de efectos
 
-- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+- Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modifica: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-043-consulta-especulativa-allowed|D-043]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-064-ordering-by-stable-path|D-064]], [[ADR-080-algebra-elevada-and-actualizaciones-de-coleccion|D-080]], [[ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]], [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]], [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]] y [[ADR-096-modulos-callables-look-message-and-activacion|D-096]].
+- Modifica: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-043-query-especulativa-allowed|D-043]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-064-ordering-by-stable-path|D-064]], [[ADR-080-algebra-higher-and-updates-de-collection|D-080]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]] y [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
 - Preguntas relacionadas: [[../preguntas/Q-006-c-conflicts|Q-006]] y [[../preguntas/Q-032-a-reproducible-randomness|Q-032]].
 
 ## Contexto

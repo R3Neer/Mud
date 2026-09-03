@@ -56,8 +56,8 @@ por [[governance/DECISIONS-POLICY|la política de decisiones]].
 | D-040 | current | 2026-07-28 | [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|Semantics remaining basic numeracy]] |
 | D-041 | current | 2026-07-28 | [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|Contracts under the three types of rules]] |
 | D-042 | current | 2026-07-28 | [[notes/decisions/ADR-042-shares-root-and-results|Shares, root and results]] |
-| D-043 | current | 2026-07-28 | [[notes/decisions/ADR-043-consulta-especulativa-allowed|Consulta especulativa `allowed`]] |
-| D-044 | current | 2026-07-28 | [[notes/decisions/ADR-044-alcanzabilidad-eventually|Alcanzabilidad `eventually`]] |
+| D-043 | current | 2026-07-28 | [[notes/decisions/ADR-043-query-especulativa-allowed|Consulta especulativa `allowed`]] |
+| D-044 | current | 2026-07-28 | [[notes/decisions/ADR-044-reachability-eventually|Alcanzabilidad `eventually`]] |
 | D-045 | current | 2026-07-28 | [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|Causal resolution, connections and queue]] |
 | D-046 | current | 2026-07-28 | [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|Algebra and conflicts of effects]] |
 | D-047 | current | 2026-07-28 | [[notes/decisions/ADR-047-quantifiers-and-finite-iteration|Quantifiers and finite iteration]] |
@@ -92,32 +92,32 @@ por [[governance/DECISIONS-POLICY|la política de decisiones]].
 | D-076 | current | 2026-08-03 | [[notes/decisions/ADR-076-named-units-prefixes-and-adjacent-notation|Named units, prefixes and adjacent notation]] |
 | D-077 | current | 2026-08-03 | [[notes/decisions/ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|Cardinality-conditioned destruction and transition diagnostics]] |
 | D-078 | current | 2026-08-03 | [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|Nominal resolution, anchor catalogue and initial graph]] |
-| D-079 | current | 2026-08-04 | [[notes/decisions/ADR-079-diagnostico-exterior-de-reglas-always|Diagnóstico exterior de reglas `always`]] |
-| D-080 | current | 2026-08-04 | [[notes/decisions/ADR-080-algebra-elevada-and-actualizaciones-de-coleccion|Álgebra elevada y actualizaciones de colección]] |
-| D-081 | current | 2026-08-04 | [[notes/decisions/ADR-081-filtrado-take-and-indexacion-de-colecciones|Filtrado, `take` e indexación de colecciones]] |
-| D-082 | current | 2026-08-04 | [[notes/decisions/ADR-082-cycle-como-modificador-de-dominio-de-punto|`cycle` como modificador de dominio de punto]] |
-| D-083 | current | 2026-08-04 | [[notes/decisions/ADR-083-magnitudes-base-sin-unidades|Magnitudes base sin unidades]] |
-| D-084 | current | 2026-08-04 | [[notes/decisions/ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|Especialización de aliases, miembros heredados y vistas derivadas]] |
-| D-085 | current | 2026-08-05 | [[notes/decisions/ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|Diccionarios funcionales, metadatos y activación estructurada]] |
-| D-086 | current | 2026-08-05 | [[notes/decisions/ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|Identidad nominal exacta, flechas exteriores y álgebra de diccionarios]] |
+| D-079 | current | 2026-08-04 | [[notes/decisions/ADR-079-diagnostic-exterior-de-rules-always|Diagnóstico exterior de reglas `always`]] |
+| D-080 | current | 2026-08-04 | [[notes/decisions/ADR-080-algebra-higher-and-updates-de-collection|Álgebra elevada y actualizaciones de colección]] |
+| D-081 | current | 2026-08-04 | [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|Filtrado, `take` e indexación de colecciones]] |
+| D-082 | current | 2026-08-04 | [[notes/decisions/ADR-082-cycle-as-point-domain-modifier|`cycle` como modificador de dominio de punto]] |
+| D-083 | current | 2026-08-04 | [[notes/decisions/ADR-083-unitless-base-quantities|Magnitudes base sin unidades]] |
+| D-084 | current | 2026-08-04 | [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|Especialización de aliases, miembros heredados y vistas derivadas]] |
+| D-085 | current | 2026-08-05 | [[notes/decisions/ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|Diccionarios funcionales, metadatos y activación estructurada]] |
+| D-086 | current | 2026-08-05 | [[notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|Identidad nominal exacta, flechas exteriores y álgebra de diccionarios]] |
 | D-087 | current | 2026-08-15 | [[notes/decisions/ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|Metadatos reflectivos, descriptores estables y visibilidad exterior]] |
-| D-088 | current | 2026-08-15 | [[notes/decisions/ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|Iteración, progresiones firmadas y bloques de expresión]] |
-| D-089 | current | 2026-08-16 | [[notes/decisions/ADR-089-clasificacion-contextual-de-formas-fuente-sin-dependencia-circular-del-scanner|Clasificación contextual de formas fuente sin dependencia circular del scanner]] |
+| D-088 | current | 2026-08-15 | [[notes/decisions/ADR-088-iteration-signed-progressions-and-expression-blocks|Iteración, progresiones firmadas y bloques de expresión]] |
+| D-089 | current | 2026-08-16 | [[notes/decisions/ADR-089-contextual-source-form-classification-without-circular-scanner-dependency|Clasificación contextual de formas fuente sin dependencia circular del scanner]] |
 | D-090 | current | 2026-08-16 | [[notes/decisions/ADR-090-ramas-funcionales-sin-ancla-publica|Ramas funcionales sin ancla pública]] |
 | D-091 | current | 2026-08-16 | [[notes/decisions/ADR-091-datos-de-family-como-descriptores-anclados|Datos de family como descriptores anclados]] |
 | D-092 | current | 2026-08-16 | [[notes/decisions/ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|Disponibilidad estática de propiedades reflectivas]] |
 | D-093 | current | 2026-08-16 | [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|AST superficial, HIR nominal y fase semántica posterior]] |
 | D-094 | current | 2026-08-16 | [[notes/decisions/ADR-094-anclas-terminales-de-metadatos-configurados|Anclas terminales de metadatos configurados]] |
 | D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-extremos-vacios-como-ausencia-ordinaria|Extremos vacíos como ausencia ordinaria]] |
-| D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modulos-callables-look-message-and-activacion|Módulos, callables, `look`, `message` y activación]] |
+| D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|Módulos, callables, `look`, `message` y activación]] |
 | D-097 | current | 2026-08-28 | [[notes/decisions/ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|HIR nominal vigente e IR semántico diferido]] |
-| D-098 | current | 2026-08-28 | [[notes/decisions/ADR-098-rutas-asignables-and-write-back-de-aliases-inmutables|Rutas asignables y write-back de aliases inmutables]] |
-| D-099 | current | 2026-08-28 | [[notes/decisions/ADR-099-materializaciones-frescas-tras-destroy-and-create|Materializaciones frescas tras `destroy` y `create`]] |
-| D-100 | current | 2026-08-29 | [[notes/decisions/ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|Orden lógico, procedencia, pertenencia y consolidación de efectos]] |
+| D-098 | current | 2026-08-28 | [[notes/decisions/ADR-098-assignable-paths-and-write-back-of-immutable-aliases|Rutas asignables y write-back de aliases inmutables]] |
+| D-099 | current | 2026-08-28 | [[notes/decisions/ADR-099-fresh-materialisations-after-destroy-and-create|Materializaciones frescas tras `destroy` y `create`]] |
+| D-100 | current | 2026-08-29 | [[notes/decisions/ADR-100-logical-order-provenance-membership-and-effect-consolidation|Orden lógico, procedencia, pertenencia y consolidación de efectos]] |
 | D-101 | current | 2026-08-29 | [[notes/decisions/ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|Bloques de valor, variables locales almacenadas y extremos por testigos]] |
-| D-102 | current | 2026-08-29 | [[notes/decisions/ADR-102-forma-completa-de-datos-calculados-de-family|Forma completa de datos calculados de family]] |
-| D-103 | current | 2026-08-29 | [[notes/decisions/ADR-103-capacidad-interior-en-valores-derivados|Capacidad interior en valores derivados]] |
-| D-104 | current | 2026-09-02 | [[notes/decisions/ADR-104-ingles-britanico-para-la-migracion-editorial|Inglés británico para la migración editorial]] |
+| D-102 | current | 2026-08-29 | [[notes/decisions/ADR-102-complete-form-of-computed-family-data|Forma completa de datos calculados de family]] |
+| D-103 | current | 2026-08-29 | [[notes/decisions/ADR-103-inner-capability-in-derived-values|Capacidad interior en valores derivados]] |
+| D-104 | current | 2026-09-02 | [[notes/decisions/ADR-104-ingles-british-english-for-editorial-migration|Inglés británico para la migración editorial]] |
 
 ## Identificadores reservados
 

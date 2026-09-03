@@ -30,10 +30,10 @@ affects:
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
 - Sustituye: [[ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]].
-- Modifica: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-045-causal-resolution-connections-and-queue|D-045]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]], [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]].
+- Modifica: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-045-causal-resolution-connections-and-queue|D-045]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
 - Preguntas abiertas asociadas: Q-062 a Q-068.
 
-- Modificada por: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Contexto
 

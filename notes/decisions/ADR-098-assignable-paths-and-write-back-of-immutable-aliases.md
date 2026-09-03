@@ -13,8 +13,8 @@ affects:
 
 # ADR-098 — Rutas asignables y write-back de aliases inmutables
 
-- Modifica: [[ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[ADR-039-collections-and-dictionaries|D-039]] y [[ADR-080-algebra-elevada-and-actualizaciones-de-coleccion|D-080]].
-- Relacionada con: [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]] y [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]].
+- Modifica: [[ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[ADR-039-collections-and-dictionaries|D-039]] y [[ADR-080-algebra-higher-and-updates-de-collection|D-080]].
+- Relacionada con: [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] y [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
 - Mantiene abierta: [[notes/questions/Q-006-c-conflicts|Q-006]] para la compatibilidad de efectos concurrentes sobre destinos parcialmente solapados.
 
 ## Contexto

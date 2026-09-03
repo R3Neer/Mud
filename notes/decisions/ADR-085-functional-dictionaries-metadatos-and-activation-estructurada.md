@@ -15,14 +15,14 @@ affects:
 
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modificada por: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]]
+- Modificada por: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
 - Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]]
-- Modificada por: [[ADR-096-modulos-callables-look-message-and-activacion|D-096]].
+- Modificada por: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
 
-- Modifica: [[ADR-017-everything-type-well-built-has-default-value|D-017]], [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-061-non-accepted-results-and-text-templates|D-061]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]], [[ADR-083-magnitudes-base-sin-unidades|D-083]] y [[ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]].
+- Modifica: [[ADR-017-everything-type-well-built-has-default-value|D-017]], [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-061-non-accepted-results-and-text-templates|D-061]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-083-unitless-base-quantities|D-083]] y [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]].
 - Amplía: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-052-pipelines-renderers-and-conformance|D-052]] y [[ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
 - Documentos afectados: capítulos 05 a 09, futuros capítulos 10 a 20, 24, 26, 32, 34 y 38, gramática, modelos sintácticos, diagnósticos y operaciones semánticas.
-- Modificada por: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Contexto
 

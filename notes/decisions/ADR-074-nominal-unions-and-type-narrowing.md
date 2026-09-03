@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-074 — Nominal unions and type narrowing
 
-- Amended by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]], [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]] and [[notes/decisions/ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]]
+- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]] and [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
 - Adjusted to the phase boundary of [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 
 ## Context

@@ -14,9 +14,9 @@ affects:
 
 # ADR-080 — Álgebra elevada y actualizaciones de colección
 
-- Modificada por: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]]
-- Ampliada por: [[ADR-098-rutas-asignables-and-write-back-de-aliases-inmutables|D-098]]
-- Modificada por: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Modificada por: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Ampliada por: [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
+- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Modifica: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]] y [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
 - Preguntas relacionadas: [[notes/questions/Q-006-c-conflicts|Q-006]] y [[notes/questions/Q-019-n-numbers|Q-019]].

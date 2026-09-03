@@ -13,12 +13,12 @@ affects:
 ---
 # ADR-054 — Canonical definitions and initial activation
 
-- Amended by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
-- Amended by: [[notes/decisions/ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]]
+- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
 - Related to: [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[notes/decisions/ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-035-organisation-names-using-and-anchors|D-035]], [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]]
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
-- Amended by: [[ADR-099-materializaciones-frescas-tras-destroy-and-create|D-099]]
+- Amended by: [[ADR-099-fresh-materialisations-after-destroy-and-create|D-099]]
 - Close: [[notes/questions/Q-044-i-identity-and-references-to-future-thing-values|Q-044]], [[notes/questions/Q-045-c-declarative-content-of-create|Q-045]]
 - Documents concerned: [[notes/questions/README|Active questions]], [[specification/04-mathematical-model]], future episodes 06, 07, 08, 09, 11, 21 to 25 and 32
 

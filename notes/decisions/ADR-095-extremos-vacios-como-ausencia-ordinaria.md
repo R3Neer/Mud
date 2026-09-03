@@ -12,7 +12,7 @@ affects:
 # ADR-095 — Extremos vacíos como ausencia ordinaria
 
 - Modifica: [[ADR-047-quantifiers-and-finite-iteration|D-047]].
-- Amplía: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]].
+- Amplía: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
 ## Contexto

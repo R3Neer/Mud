@@ -18,7 +18,7 @@ affects:
 ---
 # ADR-042 — Shares, root and results
 
-- Amended by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
+- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]], [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Further amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]] y [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]

@@ -14,7 +14,7 @@ affects:
 
 - Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modifica: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]] y [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]].
+- Modifica: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]] y [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
 - Amplía: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 - Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] y [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
 

@@ -20,7 +20,7 @@ superseded-by: []
 
 How is an `on` binding identified canonically, when is its memory removed, and what happens if an equivalent binding disappears and reappears?
 
-Status: **partially decided** by [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]], [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[notes/decisions/ADR-099-materializaciones-frescas-tras-destroy-and-create|D-099]].
+Status: **partially decided** by [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]], [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[notes/decisions/ADR-099-fresh-materialisations-after-destroy-and-create|D-099]].
 
 Temporal memory belongs to the binding; bindings are fixed at the start of each wave and additions or removals take effect in the next. A binding present in the first snapshot materialised by `start with` uses a false virtual predecessor for Boolean branches and the snapshot itself for `changes` and `old`; one created later uses its first active wave to establish the complete baseline without firing.
 

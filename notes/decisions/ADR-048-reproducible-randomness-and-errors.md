@@ -16,8 +16,8 @@ affects:
 # ADR-048 — Reproducible randomness and errors
 
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
-- Expanded by: [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]]
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Expanded by: [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Related questions: Q-007, Q-032, Q-035, Q-058
 - Documents affected: expressions, effects, runtime, diagnostics
 

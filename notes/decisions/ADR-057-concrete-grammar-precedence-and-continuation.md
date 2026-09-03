@@ -12,16 +12,16 @@ affects:
 ---
 # ADR-057 — Concrete grammar, precedence and continuation
 
-- Amended by: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
 
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]]
 - Further amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
 - Also amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
 - Also amended by: [[notes/decisions/ADR-065-file-level-using-header|D-065]]
 - Finally amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
-- Amended by: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
-- Subsequently amended by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]] and [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Subsequently amended by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]] and [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
 - Closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
 - Affected documents: [[specification/05-source-text]], [[specification/06-lexicon]], [[specification/07-concrete-grammar]], `specification/grammar/`
 

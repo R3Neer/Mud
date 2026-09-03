@@ -13,7 +13,7 @@ affects:
 # ADR-033 — Composite keys and alias enumeration
 
 - Related question: Q-056
-- Syntax updated by: [[ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]]
+- Syntax updated by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 - Documents affected: future `12-aliases.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`, future `37-finitud-y-enumerabilidad.md`
 
 ## Context

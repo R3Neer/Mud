@@ -13,14 +13,14 @@ affects:
 ---
 # ADR-039 — Collections and dictionaries
 
-- Amended by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]]
-- Amended by: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]] y [[ADR-098-rutas-asignables-and-write-back-de-aliases-inmutables|D-098]]
+- Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]] y [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
-- Amended by: [[ADR-080-algebra-elevada-and-actualizaciones-de-coleccion|D-080]] y [[ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]]
+- Amended by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]] y [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
 - Read more: D-019, D-026, D-033
 - Related questions: Q-006, Q-047
 - Documents affected: future `15-colecciones.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Decisión
 

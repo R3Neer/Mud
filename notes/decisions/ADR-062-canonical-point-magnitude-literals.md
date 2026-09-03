@@ -12,9 +12,9 @@ affects:
 ---
 # ADR-062 — Canonical point-magnitude literals
 
-- Amended by: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] and [[ADR-089-clasificacion-contextual-de-formas-fuente-sin-dependencia-circular-del-scanner|D-089]]
+- Amended by: [[ADR-082-cycle-as-point-domain-modifier|D-082]] and [[ADR-089-contextual-source-form-classification-without-circular-scanner-dependency|D-089]]
 - Extends: [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
-- Jointly closed by this decision and [[ADR-089-clasificacion-contextual-de-formas-fuente-sin-dependencia-circular-del-scanner|D-089]]: [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]]
+- Jointly closed by this decision and [[ADR-089-contextual-source-form-classification-without-circular-scanner-dependency|D-089]]: [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]]
 - Affected documents: lexicon, concrete grammar, point magnitudes, scanner, parser and conformance tests
 
 ## Context

@@ -11,12 +11,12 @@ affects:
 ---
 # ADR-019 — Mutability orthogonal to collection and members
 
-- Amended by: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+- Amended by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Amended by: [[notes/decisions/ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]]
+- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
 - Documents affected: future `14-campos-y-mutabilidad.md`, future `15-colecciones.md`
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Context
 

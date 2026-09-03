@@ -12,7 +12,7 @@ affects:
 # ADR-025 — Vocabulary from `thing`, headings and sections
 
 - Related to: [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
-- Amended by: [[notes/decisions/ADR-096-modulos-callables-look-message-and-activacion|D-096]]
+- Amended by: [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|D-096]]
 - Documents affected: [[specification/04-mathematical-model]], future `07-concrete-grammar.md`, future `11-things.md`, future `20-reglas.md`, future `21-acciones.md`
 
 ## Context

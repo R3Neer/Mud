@@ -18,7 +18,7 @@ affects:
 # ADR-051 — Graph future semantics and reconstructable information
 
 - Amended by: [[ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]].
-- Expanded by: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]] y [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]].
+- Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]] y [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]].
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]].
 

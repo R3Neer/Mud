@@ -11,7 +11,7 @@ affects:
 ---
 # ADR-018 — `as` declares specialisation in `is` the query
 
-- Amended by: [[notes/decisions/ADR-084-especializacion-de-aliases-miembros-heredados-and-vistas-derivadas|D-084]]
+- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]
 - Updated: 28 July 2026
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 - As further amended by: [[notes/decisions/ADR-073-explicit-but-redundant-as-thing|D-073]]

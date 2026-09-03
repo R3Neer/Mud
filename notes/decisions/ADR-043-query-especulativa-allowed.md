@@ -15,7 +15,7 @@ affects:
 ---
 # ADR-043 — Consulta especulativa `allowed`
 
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Related questions: Q-007, Q-032, Q-035, Q-053
 - Documents concerned: expressions, actions, analysis of admissibility
 

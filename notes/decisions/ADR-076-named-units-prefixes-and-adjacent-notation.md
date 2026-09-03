@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-076 — Named units, prefixes and adjacent notation
 
-- Amended by: [[ADR-086-identidad-nominal-exacta-flechas-exteriores-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] and [[ADR-089-clasificacion-contextual-de-formas-fuente-sin-dependencia-circular-del-scanner|D-089]].
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] and [[ADR-089-contextual-source-form-classification-without-circular-scanner-dependency|D-089]].
 - Closes with D-089: [[notes/questions/Q-054-c-catalogue-and-lexical-resolution-of-units-and-prefixes|Q-054]].
 
 ## Decision

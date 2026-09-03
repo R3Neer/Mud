@@ -12,7 +12,7 @@ affects:
 
 # ADR-090 — Ramas funcionales sin ancla pública
 
-- Modifica: [[ADR-085-diccionarios-funcionales-metadatos-and-activacion-estructurada|D-085]].
+- Modifica: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
 - Precisa: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
 - Amplía: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 

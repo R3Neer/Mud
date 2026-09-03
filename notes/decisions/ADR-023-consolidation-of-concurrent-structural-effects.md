@@ -17,11 +17,11 @@ affects:
 
 - Updated: 28 July 2026 to use the terminology from D-025
 - Amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
-- Amended by: [[ADR-096-modulos-callables-look-message-and-activacion|D-096]].
+- Amended by: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
 - Related to: [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]]
 - Related questions: [[notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002]], [[notes/questions/Q-006-c-conflicts|Q-006]], [[notes/questions/Q-021-a-static-conflict-analysis|Q-021]], [[notes/questions/Q-046-c-ineffective-creation-inside-a-root|Q-046]]
 - Documents affected: future chapters 25, 28, 29 and 31
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Context
 

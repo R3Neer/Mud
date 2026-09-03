@@ -15,7 +15,7 @@ superseded-by: []
 
 # Q-051 — Identity and selection of a `look`
 
-Status: **resolved** by [[notes/decisions/ADR-096-modulos-callables-look-message-and-activacion|D-096]].
+Status: **resolved** by [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|D-096]].
 
 A `look` is a pure callable with `for` participants and `given` parameters. A call returns exactly one anonymous result object, not a special sequence of rows. Its read view comes from the call context: stable state from the host, a rule snapshot or the private delta visible from a `then`.
 

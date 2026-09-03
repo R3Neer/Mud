@@ -16,11 +16,11 @@ affects:
 # ADR-046 — Algebra and conflicts of effects
 
 - Amended by: [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
-- Expanded by: [[ADR-080-algebra-elevada-and-actualizaciones-de-coleccion|D-080]]
-- Amended by: [[ADR-096-modulos-callables-look-message-and-activacion|D-096]].
+- Expanded by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]]
+- Amended by: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
 - Related questions: Q-002, Q-006, Q-021, Q-046
 - Documents affected: effects, root, waves, conflicts
-- Amended by: [[ADR-100-orden-logico-procedencia-pertenencia-and-consolidacion-de-efectos|D-100]].
+- Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Context
 

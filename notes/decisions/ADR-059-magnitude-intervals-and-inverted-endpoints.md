@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-059 — Magnitude intervals and inverted endpoints
 
-- Amended by: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
+- Amended by: [[ADR-082-cycle-as-point-domain-modifier|D-082]]
 - Amends: [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Related to: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
 - Related questions: Q-018

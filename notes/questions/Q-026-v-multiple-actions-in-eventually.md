@@ -16,6 +16,6 @@ superseded-by: []
 
 ## Content
 
-Status: **partially closed** by [[notes/decisions/ADR-044-alcanzabilidad-eventually|D-044]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
+Status: **partially closed** by [[notes/decisions/ADR-044-reachability-eventually|D-044]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
 
 `through` accepts a contextual collection, with optional square brackets, of action references. The canonical enumeration order for requests and its possible effect on witnesses and diagnostics remain to be fixed; this does not affect existential truth.

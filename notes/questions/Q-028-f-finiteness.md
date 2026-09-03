@@ -20,6 +20,6 @@ superseded-by: []
 
 Analysis limits, conservative approximations and messages when finiteness cannot be proven.
 
-Status: **partially decided** by [[notes/decisions/ADR-044-alcanzabilidad-eventually|D-044]], [[notes/decisions/ADR-047-quantifiers-and-finite-iteration|D-047]], [[notes/decisions/ADR-081-filtrado-take-and-indexacion-de-colecciones|D-081]] and [[notes/decisions/ADR-088-iteracion-progresiones-firmadas-and-bloques-de-expresion|D-088]].
+Status: **partially decided** by [[notes/decisions/ADR-044-reachability-eventually|D-044]], [[notes/decisions/ADR-047-quantifiers-and-finite-iteration|D-047]], [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|D-081]] and [[notes/decisions/ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
 
 Failure to prove finiteness or enumerability statically rejects a use that requires it; it does not produce a negative runtime answer. The same obligation applies to filters and `take`. D-088 retains this requirement for `for each`, selection and quantifiers/aggregators, and limits traversable cyclic domains to one fundamental period. The analysis and its diagnostics remain to be defined.
