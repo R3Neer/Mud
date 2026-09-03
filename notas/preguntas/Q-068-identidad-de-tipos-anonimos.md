@@ -1,6 +1,6 @@
 ---
 id: Q-068
-title: Identidad e igualdad estructural de tipos anónimos
+title: Identity and structural equality of anonymous types
 priority: P1
 opened: 2026-08-28
 resolved: false
@@ -8,12 +8,12 @@ closed:
 decisions:
   - D-096
 affects:
-  - tipos anónimos, reflexión, look, message
+  - anonymous types, reflection, look, message
 superseded-by: []
 ---
 
-# Q-068 — Identidad e igualdad estructural de tipos anónimos
+# Q-068 — Identity and structural equality of anonymous types
 
-## Contenido
+## Content
 
-Definir cuándo dos tipos anónimos estructuralmente iguales, incluidos resultados de `look` y payloads de `message`, son el mismo tipo para igualdad, hashing, cachés y reflexión.
+Define when two structurally equal anonymous types, including `look` results and `message` payloads, are the same type for equality, hashing, caches and reflection.
