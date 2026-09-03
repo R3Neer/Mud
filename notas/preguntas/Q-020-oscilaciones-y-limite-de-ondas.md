@@ -1,6 +1,6 @@
 ---
 id: Q-020
-title: Oscilaciones y límite de ondas
+title: Oscillations and wave limit
 priority: P1
 opened: 2026-07-29
 resolved:
@@ -11,12 +11,12 @@ affects: []
 superseded-by: []
 ---
 
-# Q-020 — Oscilaciones y límite de ondas
+# Q-020 — Oscillations and wave limit
 
-## Contenido
+## Content
 
-Detección semántica, salvaguarda técnica, diagnósticos y reproducibilidad.
+Semantic detection, technical safeguard, diagnostics and reproducibility.
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
+Status: **partially decided** by [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]].
 
-Una oscilación semántica produce `failed`; un límite de recursos es una salvaguarda técnica distinguible. Falta el algoritmo normativo de detección, la configuración portable y los diagnósticos.
+A semantic oscillation produces `failed`; a resource limit is a distinguishable technical safeguard. The normative detection algorithm, portable configuration and diagnostics remain to be defined.
