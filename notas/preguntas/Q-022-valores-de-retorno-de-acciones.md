@@ -1,6 +1,6 @@
 ---
 id: Q-022
-title: Valores de retorno de acciones
+title: Action return values
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-022 — Valores de retorno de acciones
+# Q-022 — Action return values
 
-## Contenido
+## Content
 
-¿Además del resultado operativo, una acción puede producir valores de dominio? Si sí, ¿cómo interactúan con atomicidad y composición?
+Besides an operational result, may an action produce domain values? If so, how do they interact with atomicity and composition?
