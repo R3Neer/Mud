@@ -1,6 +1,6 @@
 ---
 id: Q-010
-title: Estado de las decisiones de la fuente
+title: State of source decisions
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -10,24 +10,24 @@ affects: []
 superseded-by: []
 ---
 
-# Q-010 — Estado de las decisiones de la fuente
+# Q-010 — State of source decisions
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-Las 78 secciones fueron migradas, sustituidas o retiradas de forma explícita. Ninguna fórmula como «se mantiene vigente» conserva autoridad propia ni presupone texto ausente: el contenido actual debe existir en una decisión, nota dueña, capítulo o pregunta abierta.
+All 78 sections were explicitly migrated, replaced or withdrawn. No wording such as “remains current” retains authority of its own or presupposes absent text: current content must exist in a decision, owning note, chapter or open question.
 
-La evidencia histórica puede recuperarse en Git:
+Historical evidence can be recovered in Git:
 
-- `0d39195`: auditoría completa de cobertura de la especificación inicial.
-- `095d115`: retirada de la especificación inicial después de su migración.
-- `5ce7ee8`: consolidación final de la auditoría junto a la instantánea en el archivo histórico antes de eliminarlas del árbol vigente.
+- `0d39195`: complete coverage audit of the initial specification.
+- `095d115`: withdrawal of the initial specification after migration.
+- `5ce7ee8`: final consolidation of the audit with the snapshot in the historical file before removing them from the current tree.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
-- C1: sección `Resolución` de esta pregunta.
+- C1: `Resolution` section of this question.
