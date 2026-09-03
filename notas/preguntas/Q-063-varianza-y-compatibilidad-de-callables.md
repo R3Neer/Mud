@@ -1,6 +1,6 @@
 ---
 id: Q-063
-title: Varianza y compatibilidad de tipos callable
+title: Variance and callable type compatibility
 priority: P1
 opened: 2026-08-28
 resolved: false
@@ -8,12 +8,12 @@ closed:
 decisions:
   - D-096
 affects:
-  - tipado callable, subtyping, narrowing
+  - callable typing, subtyping, narrowing
 superseded-by: []
 ---
 
-# Q-063 — Varianza y compatibilidad de tipos callable
+# Q-063 — Variance and callable type compatibility
 
-## Contenido
+## Content
 
-Formalizar compatibilidad y varianza de tipos callable en entradas, salidas, lugares mutables y uniones, manteniendo separada la capacidad exterior de `action` frente a `subaction`.
+Formalise compatibility and variance of callable types in inputs, outputs, mutable locations and unions, while keeping an `action`'s outer capability separate from `subaction`.
