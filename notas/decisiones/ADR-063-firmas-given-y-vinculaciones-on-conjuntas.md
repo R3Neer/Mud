@@ -1,6 +1,6 @@
 ---
 id: D-063
-title: "Firmas, `given` y vinculaciones `on` conjuntas"
+title: "Signatures, `given` and joint `on` bindings"
 status: vigente
 date: 2026-07-30
 supersedes: []
@@ -10,20 +10,20 @@ questions:
   - "Q-012"
   - "Q-013"
 affects:
-  - "firmas, llamadas, capacidades, vinculaciones automáticas, análisis de nombres, AST, IR y diagnósticos"
+  - "signatures, calls, capabilities, automatic bindings, name analysis, AST, IR and diagnostics"
 ---
-# ADR-063 — Firmas, `given` y vinculaciones `on` conjuntas
+# ADR-063 — Signatures, `given` and joint `on` bindings
 
-- Modifica: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Amplía: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
-- Cierra de nuevo: [[notas/preguntas/Q-011-vinculacion-nombrada-de-participantes|Q-011]], [[notas/preguntas/Q-012-valores-given-nombrados|Q-012]] y [[notas/preguntas/Q-013-restricciones-relacionales-entre-participantes-on|Q-013]]
-- Documentos afectados: firmas, llamadas, capacidades, vinculaciones automáticas, análisis de nombres, AST, IR y diagnósticos
+- Amends: [[notas/decisiones/ADR-019-mutabilidad-ortogonal-de-coleccion-y-miembros|D-019]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Extends: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
+- Closes again: [[notas/preguntas/Q-011-vinculacion-nombrada-de-participantes|Q-011]], [[notas/preguntas/Q-012-valores-given-nombrados|Q-012]] and [[notas/preguntas/Q-013-restricciones-relacionales-entre-participantes-on|Q-013]]
+- Affected documents: signatures, calls, capabilities, automatic bindings, name analysis, AST, IR and diagnostics
 
-## Contexto
+## Context
 
-MUD separa los sujetos de una operación, declarados mediante `for`, de sus parámetros auxiliares `given`. La vinculación posicional original de `given` impedía omitir un valor predeterminado intermedio y trataba `nombre = expresión` como una etiqueta que no vinculaba por nombre.
+MUD separates the subjects of an operation, declared with `for`, from its auxiliary `given` parameters. The original positional binding of `given` made it impossible to omit an intermediate default value and treated `name = expression` as a label rather than a name binding.
 
-Las cabeceras `on` relacionadas también se resolvían de izquierda a derecha. Esa restricción impedía expresar relaciones simétricas o cíclicas aunque el mundo activo y todas las colecciones observadas fueran finitos:
+Related `on` headers were also resolved from left to right. That restriction prevented expressing symmetric or cyclic relationships even though the active world and all observed collections were finite:
 
 ```mud
 rule MutualFriends on
@@ -34,11 +34,11 @@ rule MutualFriends on
 }
 ```
 
-## Decisión
+## Decision
 
-### Valores `given`
+### `given` values
 
-Todo `given` tiene nombre obligatorio, es de solo lectura y puede declarar un valor predeterminado estático:
+Every `given` has a mandatory name, is read-only and may declare a static default value:
 
 ```mud
 given
@@ -47,113 +47,113 @@ given
     exhaustive: Bool = false
 ```
 
-Un `given` no admite mutabilidad exterior ni capacidad interior `mut`. Si una acción necesita escribir la colección suministrada o el estado de una `thing` recibida, ese valor constituye un sujeto de la operación y debe declararse mediante `for`.
+A `given` permits neither external mutability nor an inner `mut` capability. If an action needs to write to the supplied collection or to the state of a received `thing`, that value is an operation subject and must be declared with `for`.
 
-La anotación de un `given` admite la expresión general de tipo, incluidos tipos diccionario exactos y decisionales. Por ejemplo, `given prices: Product -> Money` es válido. La posibilidad de escribir un diccionario no concede capacidad: todas sus colecciones y valores siguen sometidos a la prohibición anterior de `mut` en `given`.
+The annotation of a `given` accepts the general type expression, including exact and decision-based dictionary types. For example, `given prices: Product -> Money` is valid. Being able to write a dictionary grants no capability: all its collections and values remain subject to the prohibition on `mut` in `given`.
 
-El predeterminado:
+The default:
 
-- Es una expresión estática cerrada, pura y determinista.
-- No puede consultar participantes, otros `given`, valores locales ni estado del mundo.
-- Puede usar literales, valores nominales conocidos estáticamente y operaciones entre constantes.
-- Se elabora con el tipo esperado y debe satisfacer el dominio y la especificación de colección del `given`.
+- Is a closed, pure and deterministic static expression.
+- Cannot consult participants, other `given` values, local values or world state.
+- May use literals, statically known nominal values and operations between constants.
+- Is elaborated against the expected type and must satisfy the `given`'s domain and collection specification.
 
-Los `given` con predeterminado pueden aparecer en cualquier posición de la firma.
+`given` parameters with defaults may appear in any position of the signature.
 
-### Argumentos posicionales y nombrados
+### Positional and named arguments
 
-Una llamada puede usar:
+A call may use:
 
-1. Argumentos exclusivamente posicionales.
-2. Un prefijo posicional seguido por argumentos nombrados.
-3. Argumentos exclusivamente nombrados.
+1. Positional arguments only.
+2. A positional prefix followed by named arguments.
+3. Named arguments only.
 
-Después del primer argumento nombrado no puede aparecer uno posicional.
+After the first named argument, no positional argument may appear.
 
-Los argumentos posicionales vinculan los `given` aún no vinculados en orden de declaración. Solo puede omitirse posicionalmente un sufijo completo cuyos `given` tengan predeterminado.
+Positional arguments bind as-yet-unbound `given` parameters in declaration order. Only a complete suffix whose `given` parameters have defaults may be omitted positionally.
 
-Un argumento `nombre = expresión` realiza vinculación nominal real. Puede:
+An argument of the form `name = expression` performs a genuine named binding. It may:
 
-- Vincular cualquier `given` todavía no vinculado.
-- Omitir un `given` intermedio que tenga predeterminado.
-- Aparecer en un orden distinto al de la firma.
+- Bind any `given` parameter not yet bound.
+- Omit an intermediate `given` parameter that has a default.
+- Appear in an order different from that of the signature.
 
-No puede repetir un nombre ni usar uno desconocido. Al terminar la llamada, todo `given` sin predeterminado debe estar vinculado exactamente una vez.
+It may not repeat a name or use an unknown one. When the call ends, every `given` without a default must have been bound exactly once.
 
-La forma desordenada es válida, pero el compilador sugiere ordenar los argumentos nombrados según la declaración:
+The non-canonical order is valid, but the compiler suggests ordering named arguments as declared:
 
 ```mud
 game.Search(depth = 3, origin = Capital)
 ```
 
-se sugiere como:
+is suggested as:
 
 ```mud
 game.Search(origin = Capital, depth = 3)
 ```
 
-La sugerencia conserva exactamente la vinculación y no se emite cuando el orden ya es canónico.
+The suggestion preserves exactly the same bindings and is not emitted when the order is already canonical.
 
-### Receptores `for`
+### `for` receivers
 
-Todo rol `for` tiene identificador fuente explícito, incluida cardinalidad `[1]`, conforme a D-087. La firma conserva el orden de declaración, pero ese orden no sustituye a la identidad estable del slot.
+Every `for` role has an explicit source identifier, including cardinality `[1]`, in accordance with D-087. The signature retains declaration order, but that order does not replace the slot's stable identity.
 
-La forma de receptor multiparte nombrado continúa siendo exacta, exhaustiva y no mezclable con posiciones. Puede reordenar roles, pero el compilador sugiere el orden de declaración. La declaración de la firma nunca contiene participantes anónimos.
+The named multipart receiver form remains exact, exhaustive and non-mixable with positional arguments. Roles may be reordered, but the compiler suggests declaration order. A signature declaration never contains anonymous participants.
 
-### Capacidad interior inútil
+### Useless inner capability
 
-La capacidad interior `[mut]` expresa permiso, no la garantía de que el tipo ofrezca estado modificable. Por tanto, escribirla sobre una colección o un diccionario cuyos valores efectivos sean básicos, aliases, miembros de `family` u otros valores inmutables es legal.
+The inner capability `[mut]` expresses permission, not a guarantee that the type provides mutable state. It is therefore legal to write it on a collection or dictionary whose effective values are basic values, aliases, `family` members or other immutable values.
 
-Cuando el análisis pueda demostrar que ningún valor accesible mediante esa capacidad puede ser mutable, el compilador emite una sugerencia para retirar `[mut]`. No es un aviso: el programa es correcto, no existe riesgo y la retirada conserva su comportamiento efectivo.
+When analysis can prove that no value accessible through that capability can be mutable, the compiler emits a suggestion to remove `[mut]`. This is not a warning: the program is correct, there is no risk, and removing it preserves effective behaviour.
 
-En un diccionario:
+In a dictionary:
 
-- El `mut` exterior permite crear o retirar asociaciones y sustituir el valor de una clave existente.
-- `[mut]` concede capacidad exclusivamente sobre valores `thing` materialmente asociados.
-- Nunca concede capacidad sobre las claves.
-- No atraviesa aliases ni contenedores anidados y no introduce mutabilidad profunda.
-- Una lectura de clave ausente produce `empty` con la forma declarada y no concede capacidad interior como si existiera una asociación.
+- Outer `mut` permits creating or removing associations and replacing the value of an existing key.
+- `[mut]` grants capability exclusively over materially associated `thing` values.
+- It never grants capability over keys.
+- It does not cross aliases or nested containers and does not introduce deep mutability.
+- Reading an absent key produces `empty` with the declared shape and does not grant inner capability as if an association existed.
 
-Cada nivel anidado conserva sus propias capacidades.
+Each nested level retains its own capabilities.
 
-### Cabeceras `on` conjuntas
+### Joint `on` headers
 
-Los nombres declarados en una cabecera `on` son visibles en toda la cabecera, incluso antes de su posición textual. La elaboración ocurre en dos fases:
+Names declared in an `on` header are visible throughout the header, even before their textual position. Elaboration occurs in two phases:
 
-1. Se recogen los roles, nombres, anotaciones y restricciones.
-2. Se resuelven conjuntamente sus tipos y dominios.
+1. Roles, names, annotations and constraints are collected.
+2. Their types and domains are resolved jointly.
 
-Un participante relacionado admite una anotación que refine nominalmente los miembros de la colección:
+A related participant may have an annotation that nominally refines the members of its collection:
 
 ```mud
 alice: Person in bob.friends
 ```
 
-La anotación no declara el tipo de `bob.friends`. Exige que `alice` satisfaga simultáneamente el tipo de miembro de esa colección y `is Person`. Así puede seleccionar una especialización dentro de una colección declarada con una raíz más general.
+The annotation does not declare the type of `bob.friends`. It requires `alice` to satisfy both the collection member type and `is Person`. This permits selecting a specialisation within a collection declared with a more general root.
 
-Las restricciones de tipo de toda la cabecera deben poseer una solución nominal única. Si existen varias soluciones o ninguna, el programa es inválido y debe añadir anotaciones suficientes.
+Type constraints for the whole header must have one unique nominal solution. If there are several solutions or none, the program is invalid and must add sufficient annotations.
 
-### Universo y conjunto de vinculaciones
+### Universe and binding set
 
-`on` vincula un valor individual por rol. En una forma directa sin `in`, el universo del rol es el conjunto finito de `thing` concretas y activas de la instantánea leída que satisfacen su tipo efectivo. En una forma relacionada `nombre[: Tipo] in fuente`, el universo procede de los miembros de esa fuente finita enumerable y la anotación opcional actúa como refinamiento. Un tipo sin universo implícito finito, por ejemplo `Nat`, no puede usar la forma directa.
+`on` binds one individual value per role. In a direct form without `in`, the role's universe is the finite set of concrete, active `thing` values in the read snapshot that satisfy its effective type. In a related form `name[: Type] in source`, the universe comes from the members of that finite enumerable source and the optional annotation acts as a refinement. A type without an implicit finite universe, such as `Nat`, cannot use the direct form.
 
-Sea `r_1,\ldots,r_n` el orden textual de los roles y sean `U_1,\ldots,U_n` sus universos así obtenidos. La cabecera denota el conjunto:
+Let `r_1,\\ldots,r_n` be the textual role order and `U_1,\\ldots,U_n` their resulting universes. The header denotes the set:
 
 $$
 B
 =
-\{
-(v_1,\ldots,v_n)\in U_1\times\cdots\times U_n
-\mid
-\text{todas las restricciones relacionales son verdaderas}
-\}.
+\\{
+(v_1,\\ldots,v_n)\\in U_1\\times\\cdots\\times U_n
+\\mid
+\\text{all relational constraints are true}
+\\}.
 $$
 
-Las restricciones se interpretan conjuntamente. Una pertenencia repetida por multiplicidad no duplica una misma asignación de roles.
+Constraints are interpreted jointly. Repeated membership by multiplicity does not duplicate the same role assignment.
 
-Esta definición es un join relacional finito, no un punto fijo. La implementación puede usar productos filtrados, índices, joins u otra estrategia siempre que produzca el mismo conjunto.
+This is a finite relational join, not a fixed point. An implementation may use filtered products, indexes, joins or another strategy, provided that it produces the same set.
 
-Un ciclo de restricciones no constituye un ciclo de cálculo:
+A cycle of constraints is not a calculation cycle:
 
 ```mud
 a in b.neighbours,
@@ -161,45 +161,45 @@ b in c.neighbours,
 c in a.neighbours
 ```
 
-Todas las colecciones se leen en la misma instantánea de inicio. Los efectos no alteran retroactivamente las vinculaciones de la onda; pueden producir vinculaciones distintas en la siguiente. Los ciclos entre campos calculados continúan sometidos a sus reglas propias y no se legitiman por aparecer en `on`.
+All collections are read in the same starting snapshot. Effects do not retroactively alter the wave's bindings; they may produce different bindings in the next wave. Cycles between computed fields remain subject to their own rules and are not legitimised merely by appearing in `on`.
 
-### Identidad, orientación y orden técnico
+### Identity, orientation and technical order
 
-Una vinculación es una asignación total de roles. No se impone desigualdad implícita: dos roles pueden recibir el mismo valor si satisfacen sus restricciones.
+A binding is a total assignment of roles. No implicit inequality is imposed: two roles may receive the same value if their constraints permit it.
 
-Los roles también conservan orientación. Si una relación simétrica admite tanto `(Alice, Bob)` como `(Bob, Alice)`, ambas son vinculaciones distintas. MUD no deduplica parejas por simetría ni presupone que el cuerpo trate los roles de igual manera.
+Roles also retain orientation. If a symmetric relation admits both `(Alice, Bob)` and `(Bob, Alice)`, these are distinct bindings. MUD does not deduplicate pairs by symmetry or assume that the body treats the roles identically.
 
-Semánticamente, las vinculaciones de una onda forman un conjunto y su orden no decide los efectos. Cuando todos los valores vinculados son `thing`, el orden técnico reproducible ya definido por anclas continúa disponible para trazas y diagnósticos; D-096 no convierte esa convención técnica en un orden semántico de los valores `on` generales.
+Semantically, a wave's bindings form a set and their order does not determine effects. When all bound values are `thing`, the reproducible technical order already defined by anchors remains available for traces and diagnostics; D-096 does not turn that technical convention into a semantic order for general `on` values.
 
-## Consecuencias
+## Consequences
 
-- Las etiquetas de `given` pasan a ser vinculaciones nominales.
-- Añadir un `given` con predeterminado puede conservar llamadas anteriores.
-- Los predeterminados no introducen dependencias entre parámetros.
-- `given` no transporta ninguna capacidad de escritura.
-- Los ciclos de `on` son restricciones finitas y no evaluación recursiva.
-- AST e IR conservan predeterminados, modo de vinculación, orden escrito, orden canónico sugerido, refinamientos nominales y el conjunto resuelto de restricciones.
-- El análisis de capacidades distingue asociación presente de lectura predeterminada de una clave ausente.
+- `given` labels become named bindings.
+- Adding a `given` with a default can preserve existing calls.
+- Defaults introduce no dependencies between parameters.
+- `given` carries no write capability.
+- `on` cycles are finite constraints, not recursive evaluation.
+- AST and IR retain defaults, binding mode, written order, suggested canonical order, nominal refinements and the resolved constraint set.
+- Capability analysis distinguishes an existing association from a default read of an absent key.
 
-## Verificación
+## Verification
 
-1. `given` con predeterminado inicial, intermedio y final.
-2. Omisión posicional exclusiva de un sufijo predeterminado.
-3. Omisión nominal de un predeterminado intermedio.
-4. Prefijo posicional seguido de nombres y rechazo de una posición posterior.
-5. Rechazo de argumento repetido, desconocido o requerido ausente.
-6. Sugerencia de orden canónico en argumentos y receptores nombrados.
-7. Rechazo de ambos `mut` en `given`.
-8. Sugerencia, no aviso ni error, para `[mut]` demostrablemente inútil.
-9. Escritura exterior de colecciones y diccionarios de valores inmutables mediante `for mut`.
-10. Capacidad interior sobre valores `thing` presentes y ausencia de capacidad sobre claves, aliases, niveles anidados o valores predeterminados de claves ausentes.
-11. Referencia adelantada entre roles `on`.
-12. Refinamiento `role: Type in expression`.
-13. Join acíclico, ciclo de dos roles y ciclo de tres roles.
-14. Rechazo de inferencia nominal ambigua.
-15. Universo implícito de `thing` concretas y activas para `on` directo y fuente finita enumerable para `on ... in fuente`, incluido rechazo de un tipo sin universo implícito finito.
-16. Conservación de dos orientaciones simétricas y de una vinculación reflexiva permitida.
+1. `given` with an initial, intermediate and final default.
+2. Positional omission of a complete defaulted suffix only.
+3. Named omission of an intermediate default.
+4. Positional prefix followed by names, and rejection of a later positional argument.
+5. Rejection of a repeated or unknown argument, or a missing required argument.
+6. Canonical-order suggestions for named arguments and receivers.
+7. Rejection of both forms of `mut` in `given`.
+8. A suggestion, not a warning or error, for demonstrably useless `[mut]`.
+9. Outer writing of collections and dictionaries of immutable values through `for mut`.
+10. Inner capability over present `thing` values, and no capability over keys, aliases, nested levels or defaults for absent keys.
+11. Forward references between `on` roles.
+12. `role: Type in expression` refinement.
+13. Acyclic joins, two-role cycles and three-role cycles.
+14. Rejection of ambiguous nominal inference.
+15. Implicit universes of concrete active `thing` values for direct `on`, and finite enumerable sources for `on ... in source`, including rejection of a type without an implicit finite universe.
+16. Preservation of both symmetric orientations and an allowed reflexive binding.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-`on` conserva su papel de binding automático y no absorbe las ocurrencias de `message`: la causalidad de messages/rules pertenece a `when`. D-096 amplía la forma relacionada `nombre[: Tipo] in fuente` a valores procedentes de una fuente finita enumerable. La forma directa sin `in` sigue seleccionando identidades `thing` del universo implícito.
+`on` retains its automatic binding role and does not absorb `message` occurrences: message/rule causality belongs to `when`. D-096 extends the related form `name[: Type] in source` to values from a finite enumerable source. The direct form without `in` continues to select `thing` identities from the implicit universe.
