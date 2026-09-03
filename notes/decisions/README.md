@@ -110,7 +110,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-094 | current | 2026-08-16 | [[notes/decisions/ADR-094-terminal-anchors-for-configured-metadata|Terminal anchors for configured metadata]] |
 | D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-extremos-vacios-como-ausencia-ordinaria|Empty extrema as ordinary absence]] |
 | D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modulos-callables-look-message-and-activation|Modules, callables, `look`, `message` and activation]] |
-| D-097 | current | 2026-08-28 | [[notes/decisions/ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|Current nominal HIR and deferred semantic IR]] |
+| D-097 | current | 2026-08-28 | [[notes/decisions/ADR-097-current-nominal-hir-and-deferred-semantic-ir|Current nominal HIR and deferred semantic IR]] |
 | D-098 | current | 2026-08-28 | [[notes/decisions/ADR-098-assignable-paths-and-write-back-of-immutable-aliases|Assignable paths and write-back of immutable aliases]] |
 | D-099 | current | 2026-08-28 | [[notes/decisions/ADR-099-fresh-materialisations-after-destroy-and-create|Fresh materialisations after `destroy` and `create`]] |
 | D-100 | current | 2026-08-29 | [[notes/decisions/ADR-100-logical-order-provenance-membership-and-effect-consolidation|Logical order, provenance, membership and effect consolidation]] |

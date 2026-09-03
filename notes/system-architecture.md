@@ -109,7 +109,7 @@ It does not belong to the Nominal HIR set:
 - post-typing semantic dependencies;
 - evidence of termination.
 
-The current contract for this boundary is [[notes/decisions/ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]], which amends and clarifies [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+The current contract for this boundary is [[notes/decisions/ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]], which amends and clarifies [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[notes/decisions/ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
 
 ## Later semantic representation
 
