@@ -1,6 +1,6 @@
 ---
 id: Q-038
-title: Compatibilidad entre versiones del lenguaje
+title: Compatibility between language versions
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-038 — Compatibilidad entre versiones del lenguaje
+# Q-038 — Compatibility between language versions
 
-## Contenido
+## Content
 
-¿Cómo se declara la versión MUD de un proyecto y cómo se migran fuente, IR y materializaciones?
+How is a project's MUD version declared, and how are source, IR and materialisations migrated?
