@@ -1,6 +1,6 @@
 ---
 id: Q-011
-title: Vinculación nombrada de participantes
+title: Named participant binding
 priority: P1
 opened: 2026-07-29
 resolved: true
@@ -12,18 +12,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-011 — Vinculación nombrada de participantes
+# Q-011 — Named participant binding
 
-## Contenido
+## Content
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], modificada por [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
+Status: **closed** by [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], amended by [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]].
 
-Una llamada puede usar un receptor posicional o un receptor nombrado entre paréntesis. La forma nombrada debe ser exacta, exhaustiva y no mezclable con posiciones: no admite roles ausentes, repetidos ni desconocidos. Puede reordenar roles, pero el compilador sugiere el orden de declaración. Los roles `for` pueden contener cualquier tipo de valor; una colección ocupa una sola posición y no se expande. Una `thing` se vincula por identidad, un valor inmutable por valor y un rol exteriormente mutable por lugar almacenado. Los argumentos posteriores corresponden exclusivamente a `given`.
+A call may use a positional receiver or a named receiver in parentheses. The named form must be exact, exhaustive and non-mixable with positional arguments: it permits no missing, repeated or unknown roles. Roles may be reordered, but the compiler suggests declaration order. `for` roles may contain values of any type; a collection occupies one position and is not expanded. A `thing` is bound by identity, an immutable value by value, and an externally mutable role by stored location. Subsequent arguments correspond exclusively to `given` parameters.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-036`, `D-063`.
