@@ -1,6 +1,6 @@
 ---
 id: D-068
-title: "`Thing` universal y nombre intrínseco"
+title: "Universal `Thing` and intrinsic name"
 status: vigente
 date: 2026-08-02
 supersedes: []
@@ -9,79 +9,76 @@ questions:
   - "Q-041"
   - "Q-047"
 affects:
-  - "ontología de thing, especialización, tipos incorporados, cuerpos de thing, representación Text y herramientas"
+  - "thing ontology, specialisation, built-in types, thing bodies, Text representation and tools"
 ---
-# ADR-068 — `Thing` universal y nombre intrínseco
+# ADR-068 — Universal `Thing` and intrinsic name
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Modificada por: [[ADR-073-as-thing-explicito-redundante|D-073]]
-- Modifica: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Pregunta relacionada: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
-- Cuestión pendiente relacionada: [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
-- Documentos afectados: ontología de `thing`, especialización, tipos incorporados, cuerpos de `thing`, representación `Text` y herramientas
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]], [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] and [[ADR-073-as-thing-explicito-redundante|D-073]]
+- Amends: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|D-014]], [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|D-015]], [[notas/decisiones/ADR-018-as-declara-is-consulta|D-018]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|D-036]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]] and [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Related question: [[notas/preguntas/Q-041-ontologia-de-thing|Q-041]]
+- Related pending question: [[notas/preguntas/Q-047-seleccion-de-predeterminados-por-tipo|Q-047]]
+- Affected documents: `thing` ontology, specialisation, built-in types, `thing` bodies, `Text` representation and tools
 
-## Contexto
+## Context
 
-MUD necesita expresar operaciones que acepten cualquier `thing`, colecciones heterogéneas y un tipo común para identidades sin una antecesora declarada compartida. Dejar que cada programa declare su propia raíz no garantiza que módulos independientes compartan la misma ni permite que las herramientas reconozcan universalmente ese contrato.
+MUD needs operations that accept any `thing`, heterogeneous collections and a common identity type without a declared shared ancestor. Letting each programme declare its own root does not ensure independent modules share it or let tools recognise the contract universally.
 
-La interpolación de una `thing` usa hasta ahora su nombre nominal. Ese valor es estable para identidad y resolución, pero un juego puede necesitar una presentación humana distinta sin renombrar anclas ni introducir un campo mutable repetido en cada declaración.
+Interpolating a `thing` currently uses its nominal name. That value is stable for identity and resolution, but a game may need a different human presentation without renaming anchors or adding a repeated mutable field to every declaration.
 
-## Decisión
+## Decision
 
-### Tipo superior `Thing`
+### `Thing` supertype
 
-`Thing` es una `thing` abstracta incorporada, distinguida y siempre efectiva. Pertenece al mismo dominio conceptual que las demás `thing`, pero no posee cuerpo fuente, estado concreto ni ciclo de vida controlable por el programa.
+`Thing` is a distinguished, always-effective built-in abstract `thing`. It belongs to the same conceptual domain as other `thing` values, but has no source body, concrete state or programme-controlled lifecycle.
 
-- Toda `thing` satisface `is Thing`.
-- Una `thing` sin cláusula `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
-- Una `thing` con antecesoras declaradas alcanza `Thing` transitivamente.
-- `Thing is Thing` por reflexividad.
-- `Thing` no puede declararse, redefinirse, activarse ni destruirse. D-073 permite escribirla explícitamente en `as`, pero la forma es redundante y recibe una sugerencia de eliminación.
-- `Thing` sí puede usarse como tipo de campos, roles, argumentos, colecciones y demás posiciones de tipo compatibles.
-- `on Thing` selecciona todas las `thing` concretas y activas; la identidad abstracta `Thing` no constituye por sí misma una vinculación.
+- Every `thing` satisfies `is Thing`.
+- A `thing` without an `as` clause retains zero declared ancestors and receives an implicit semantic edge to `Thing`.
+- A `thing` with declared ancestors reaches `Thing` transitively.
+- `Thing is Thing` by reflexivity.
+- `Thing` cannot be declared, redefined, activated or destroyed. D-073 permits writing it explicitly in `as`, but the form is redundant and receives a removal suggestion.
+- `Thing` may be used as the type of fields, roles, arguments, collections and other compatible type positions.
+- `on Thing` selects all concrete active `thing` values; the abstract `Thing` identity is not itself a binding.
 
-`Thing` es una palabra reservada y un tipo incorporado sensible a mayúsculas y minúsculas. La arista efectiva no se duplica ni se serializa como una antecesora semántica adicional cuando el autor escribe el redundante `as Thing`; la CST y el AST superficial sí conservan esa escritura hasta que se aplica la corrección sugerida.
+`Thing` is a case-sensitive reserved word and built-in type. The effective edge is neither duplicated nor serialised as an additional semantic ancestor when the author writes redundant `as Thing`; CST and superficial AST retain that spelling until the suggested correction is applied.
 
-Su ancla canónica es `thing::Thing`; `Thing~anchor` produce ese valor reflectivo. El ancla pertenece al lenguaje y no ocupa un path declarable por el programa.
+Its canonical anchor is `thing::Thing`; `Thing~anchor` produces that reflective value. The anchor belongs to the language and is not a path declarable by a programme.
 
-Esta decisión no selecciona un miembro predeterminado para posiciones de tipo `Thing` con cardinalidad mínima positiva. `Thing` es abstracta y la membresía continúa siendo estricta; Q-047 conserva pendiente cuándo debe exigirse un inicializador explícito u otra selección válida.
+This decision does not select a default member for positive-minimum cardinality positions typed `Thing`. `Thing` is abstract and membership remains strict; Q-047 remains pending on when an explicit initialiser or other valid selection is required.
 
-### Metadato estándar `~name`
+### Standard `~name` metadata
 
-D-087 retira la propiedad especial `.name` y la asignación contextual `name = ...`. Toda `thing` expone el metadato estándar `~name: Name`. Si no se configura, se deriva del identificador fuente no cualificado; puede configurarse al comienzo del cuerpo mediante la gramática general de metadatos:
+D-087 removes the special `.name` property and contextual assignment `name = ...`. Every `thing` exposes standard metadata `~name: Name`. If not configured, it is derived from the unqualified source identifier; it may be configured at the start of the body using the general metadata grammar:
 
 ```mud
 thing BlackCastle {
-    ~name = "El Castillo Negro"
+    ~name = "The Black Castle"
 }
 ```
 
-`~name` pertenece al descriptor y todo acceso `~` es de solo lectura runtime. No se hereda como valor de presentación: una descendiente sin configuración propia deriva su nombre de su propio `~identifier`. Dos `thing` pueden compartir presentación sin compartir identidad. Un campo ordinario `name` pertenece al espacio de miembros y puede coexistir con `~name`.
+`~name` belongs to the descriptor and every `~` access is runtime read-only. It is not inherited as presentation: a descendant without its own setting derives its name from its own `~identifier`. Two `thing` values may share a presentation without sharing identity. An ordinary `name` member may coexist with `~name`.
 
-## Consecuencias
+## Consequences
 
-- Existe un tipo común garantizado para todas las `thing` y para colecciones heterogéneas.
-- El grafo distingue antecesoras declaradas de la arista implícita de las raíces hacia `Thing`.
-- La presentación humana puede cambiar sin alterar identidad, path de MUD ni ancla.
-- `~name` no introduce estado heredado, conflictos de fusión ni escrituras runtime.
-- Un campo ordinario `name` puede coexistir con `~name` porque `.` y `~` pertenecen a espacios distintos.
+- Every `thing` and heterogeneous collection has a guaranteed common type.
+- The graph distinguishes declared ancestors from the implicit edge from roots to `Thing`.
+- Human presentation can change without altering identity, MUD path or anchor.
+- `~name` introduces no inherited state, merge conflicts or runtime writes.
+- An ordinary `name` member may coexist with `~name` because `.` and `~` occupy different namespaces.
 
-## Verificación
+## Verification
 
-1. `T is Thing` para toda `thing` declarada y `Thing is Thing`.
-2. Rechazo de declaración, `create` y `destroy` de `Thing`; aceptación no bloqueante de `as Thing` con sugerencia de eliminación.
-3. Ancla incorporada `thing::Thing` y lectura reflectiva mediante `Thing~anchor`.
-4. `on Thing` y roles `for` de tipo `Thing` sobre cualquier `thing` concreta activa.
-5. Colección `Thing [*]` con identidades de ramas no relacionadas.
-6. `name` predeterminado igual al nombre nominal no cualificado.
-7. Sobrescritura mediante un único literal `Text` sin interpolaciones.
-8. Rechazo de redeclaración, mutabilidad, cálculo, escritura runtime e interpolación en la sobrescritura.
-9. Ausencia de herencia del `name` sobrescrito.
-10. `{value~name}` usa la presentación configurada y `{value~anchor}` conserva la identidad canónica.
-11. Nombres visibles duplicados sin fusión de identidades.
+1. `T is Thing` for every declared `thing`, and `Thing is Thing`.
+2. Rejection of declaration, `create` and `destroy` of `Thing`; non-blocking acceptance of `as Thing` with a removal suggestion.
+3. Built-in anchor `thing::Thing` and reflective reading through `Thing~anchor`.
+4. `on Thing` and `for` roles typed `Thing` over any concrete active `thing`.
+5. `Thing [*]` collection containing identities from unrelated branches.
+6. Default `name` equal to the unqualified nominal name.
+7. Override using one interpolation-free `Text` literal.
+8. Rejection of redeclaration, mutability, computation, runtime writing and interpolation in the override.
+9. No inheritance of an overridden `name`.
+10. `{value~name}` uses configured presentation and `{value~anchor}` retains canonical identity.
+11. Duplicate visible names without identity merging.
 
-## Aclaración por D-084
+## Clarification by D-084
 
-Los aliases no reciben una propiedad intrínseca `name`. Su declaración conserva un nombre nominal y un ancla de tipo, pero cada valor alias solo posee los componentes declarados. Un alias estructural puede declarar un componente ordinario `name: Text`. Los miembros de `family` conservan su nombre intrínseco propio.
+Aliases do not receive an intrinsic `name` property. Their declaration retains a nominal name and type anchor, but each alias value has only its declared components. A structural alias may declare an ordinary `name: Text` component. `family` members retain their own intrinsic name.
