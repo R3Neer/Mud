@@ -14,7 +14,7 @@ affects:
 
 - Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
 - Aligned with the phase boundary of [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
-- Clarifies `Metadata` terminality in accordance with [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
+- Clarifies `Metadata` terminality in accordance with [[ADR-094-terminal-anchors-for-configured-metadata|D-094]].
 - Extends: [[ADR-074-nominal-unions-and-type-narrowing|D-074]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 
 ## Context
