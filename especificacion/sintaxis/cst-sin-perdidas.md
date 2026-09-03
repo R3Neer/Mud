@@ -358,7 +358,7 @@ MUD 1.0 does not define structured documentation comments. All current comments 
 
 - Classify a form of comment as supporting documentation.
 - Create a separate document tree.
-- Link it to a owner syntactic.
+- Attach it to a syntactic owner.
 - Resolve short references to anchors.
 
 That extension will not convert ordinary comments into executable AST statements.
@@ -388,4 +388,3 @@ A compliant frontend must meet the following requirements:
 5. The distinction between written tokens and synthetic tokens.
 6. Lack of decisions on resolution or typed into the CST.
 7. Result compliant with the standards set out in the Surface AST.
-

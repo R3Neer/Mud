@@ -93,8 +93,8 @@ The presence of a CST does not confirm that the file is valid. The recovery proc
 Once the CST has been constructed, the contextual syntactic constraints required to produce a normalised AST are checked, including:
 
 - Modifiers of collection duplicates.
-- Duplicate statements by the same person metadata in a owner, including the units.
-- A argument a position following that of a named person.
+- Duplicate declarations of the same metadata on an owner, including units.
+- A positional argument following a named argument.
 - Specific combinations prohibited by this chapter.
 
 The name resolution, types, domains and effects do not belong to this validation.
@@ -122,7 +122,7 @@ using physics.*
 
 There is no declaration from path; it is derived from the path. `using`, no `import`, is the only building in visibility between MUD paths.
 
-All the `using` must appear before the first declaration top-class. Mixing them in is a error and never believe scope local or sequential. The order between several `using` It does not resolve ambiguities.
+All `using` declarations must appear before the first top-level declaration. Mixing them in is an error and never creates local or sequential scope. The order of multiple `using` declarations does not resolve ambiguities.
 
 The top-level categories are:
 
@@ -215,7 +215,7 @@ thing Broken as Kingdom {
 
 ## Fields
 
-When a owner metadata-bearing with `ValueBlock` use the full form, his statements `~...` may take the form of a preamble incorporated at the beginning of the main text. The preamble forms part of the descriptor, not the `ValueBlock`, and cannot be combined with a second metadata-body. The short form retains the separate metadata-body.
+When a metadata-bearing owner with a `ValueBlock` uses the expanded form, its initial `~...` declarations may form an integrated preamble at the beginning of the same body. The preamble belongs to the descriptor, not to the `ValueBlock`, and cannot be combined with a second metadata body. The short form retains the separate metadata body.
 
 
 Stored format:
@@ -249,7 +249,7 @@ density := population / area
 displayDensity: Density := density
 ```
 
-If the expression of a computed field is also statically closed; the compiler must suggest the immutable stored form. It is not a error nor an automatic rewrite, and the suggestion does not appear when the calculation depends on state runtime.
+If a calculated field's expression is also statically closed, the compiler must suggest the immutable stored form. This is neither an error nor an automatic rewrite, and the suggestion does not appear when the calculation depends on runtime state.
 
 A comma-separated list forms a collection calculated and inferred type y cardinality where these can be demonstrated:
 
@@ -316,7 +316,7 @@ Dragon.look(Detail)
 
 The category forms part of the construction of type. This surface alone does not determine the variance nor all the rules of compatibility between companies: Q-063 keeps that issue open. The ability to root outside of `action` nor can it be deduced solely from reflective subtyping.
 
-A postfix expression ending in `~type` may hold a position as type when the elaboration proves statically that it produces `Type`. For example `alias Stats := MyDragon.Stats()~type` is valid; the call `MyDragon.Stats()` without `~type` it remains a value and not an expression of type. A callable type such as `Dragon.look(Detail)` already implies `Type` and doesn't need `~type`.
+A postfix expression ending in `~type` may occupy a type position when elaboration proves statically that it produces `Type`. For example, `alias Stats := MyDragon.Stats()~type` is valid; the call `MyDragon.Stats()` without `~type` remains a value rather than a type expression. A callable type such as `Dragon.look(Detail)` already denotes `Type` and does not need `~type`.
 The following are invalid:
 
 ```mud
@@ -641,7 +641,7 @@ alias LargePagination as Pagination {
 }
 ```
 
-One declaration from alias You can write an unordered list of ancestors using `as`. The local definition is optional when the antecedents determine a complete effective form. Therefore, both are valid: `alias UserName as PlayerName` such as `alias PositionedCoordinate as Coordinate`. `alias A` without predecessors or a definition is a error static.
+An alias declaration may write an unordered list of ancestors using `as`. The local definition is optional when the ancestors determine a complete effective form. Therefore, both `alias UserName as PlayerName` and `alias PositionedCoordinate as Coordinate` are valid. `alias A` without ancestors or a definition is a static error.
 
 `:= tipo` simply enter the representation of a nominal alias root. A nominal alias Upon succeeding their predecessors, they inherit the effective representation and cannot re-declare it. In particular, `alias UserName as PlayerName := Text` is invalid.
 
@@ -994,7 +994,7 @@ always rule ValidPopulation on kingdom: Kingdom {
 otherwise "Population cannot be negative: {population}"
 ```
 
-The body directly contains the condition, without `if`. The `otherwise` An optional element is written after the closing brace; it forms part of the complete rule and can take the form of an expression `Text`. The diagnostic it is only evaluated if the condition is false, on the same tentative state and with the same links that breached the rule. Their value becomes the reason from the result `failed`. Omitting it is legal, but it triggers a warning and a reason default. Writing it inside the curly brackets is a error.
+The body directly contains the condition, without `if`. The optional `otherwise` is written after the closing brace, forms part of the complete rule, and accepts a `Text` expression. Its diagnostic is evaluated only when the condition is false, over the same tentative state and bindings that breached the rule. Its value becomes the reason for the `failed` result. Omitting it is legal, but produces a warning and a default reason. Writing it inside the braces is an error.
 
 ## Shares
 
@@ -1569,7 +1569,7 @@ A numeric gap allows for `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derecha
 "{ratio:4:2}"   # 0012.30
 ```
 
-Left-hand precision is supported for all basic numeric types. Right-hand precision is supported for types that can display a fractional part: `Num`, `Rum` y `Money`. Any numeric format over another type is a error static.
+Left-hand precision is supported for all basic numeric types. Right-hand precision is supported for types that can display a fractional part: `Num`, `Rum` and `Money`. A numeric format over any other type is a static error.
 
 One magnitude linear without `in` represents the number followed by the canonical projection of units of its dimension. If that projection is empty, it represents only the number. Nominal factors without unit they are not printed, but remain in the type. A magnitude from point use its `~format` if it has one, and if not, the standard rule for its magnitude underlying. `{magnitude in unit}` select one presentation available and, for a point, avoid the `~format` and represents the complete coordinate. It is invalid to apply `in` to a magnitude base without units. When there is unit, the abbreviation is used if one exists; otherwise, the singular form of `1` y `-1`, and the plural for the other values.
 
@@ -1628,7 +1628,7 @@ If the names, types and constraints of the expression do not determine a single 
 
 ## Error recovery
 
-An implementation may synchronise after a error in:
+An implementation may synchronise after an error at:
 
 - `TERMINATOR`
 - `}`
@@ -1684,4 +1684,3 @@ The `~...` Configurable elements appear before the standard content. Fields, com
 Boolean membership uses `contenedor has valor` y `contenedor has not valor`. `in` It is not a Boolean membership operator. `valor in Dominio` locally restricts or filters the value; `binding in source : predicate` It remains a selection.
 
 One collection can be transformed locally using `values [unique]`, `values [ordered]`, `values [ordered by score]` o `values [1..10, unique, ordered]`. Does not support `mut`. The elaboration normalises domain, `unique`, order and cardinality. `[n]` is still indexing; a cardinality An exact local without any other modifiers is written as `[n..n]`.
-

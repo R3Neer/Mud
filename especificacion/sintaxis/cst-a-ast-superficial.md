@@ -389,7 +389,7 @@ A `value-body` briefly normalises to `ValueBlock([], value)`. The full form prod
 
 `LocalForEach` preserves `source`, `step?` and the filter as `ExpressionBlock?`; its short body or text in brackets normalises to `LocalStatementBlock` and never to `EffectBlock`.
 
-When a owner metadata-bearing uses the built-in expanded form; the declarations `~...` The initials are extracted towards the field `metadata` from the descriptor and the following sentences make up its `ValueBlock`. The preamble does not produce `ValueStatement`. The short form with a separate metadata-body converges to the same AST. The validation prior to the AST, it rejects the idea that the same declaration Combine the metadata from both locations.
+When a metadata-bearing owner uses the integrated expanded form, its initial `~...` declarations are extracted to the descriptor's `metadata` field and the following statements form its `ValueBlock`. The preamble does not produce `ValueStatement`. The short form with a separate metadata body converges on the same AST. Validation before AST construction rejects a declaration that combines metadata from both locations.
 
 In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The expression in curly brackets retains its pure calculated values prior to the assertions and does not take on `ValueBlock`.
 
@@ -525,7 +525,7 @@ CallExpr(
 
 Unlabelled arguments form the prefix `positionalArguments`. Arguments with `name =` form the suffix of `NamedCallArgument`.
 
-The validation Contextual syntax rejects a position following the first element mentioned, so `CallExpr` you don’t need to represent that state invalid.
+Contextual syntax validation rejects a positional argument following the first named argument, so `CallExpr` need not represent that invalid state.
 
 ### Ambiguity regarding recipients
 
@@ -698,4 +698,3 @@ The initial corpus is in `casos/cst-ast.yaml`.
 ## Belonging, restriction and local transformations
 
 `a has b` is projected onto `HasMember`; `a has not b`, a `HasNotMember`. `value in Domain` is projected onto `DomainRestrictionExpr`; `binding in source : predicate` preserve `SelectionExpr`. `collection-transform-suffix` folds like `CollectionTransformExpr`; there is no local in-house capacity.
-

@@ -198,7 +198,7 @@ It cannot be represented as an integer or a string.
 
 ## Metadata in stable owners
 
-Any superficial builder who directly represents a owner metadata-bearing preserves a sequence `metadata_assignment* metadata`. This includes metadata-bearing nominal declarations, units, fields, components and participants. The specific bodies merely delimit the preamble; a `MetadataAttachment` side, nor is the `SourceSpan` such as identity from the owner.
+Every surface builder that directly represents a metadata-bearing owner preserves a `metadata_assignment*` sequence. This includes metadata-bearing nominal declarations, units, fields, components and participants. The specific bodies merely delimit the preamble; a separate `MetadataAttachment` is not produced, nor is the owner's identity or `SourceSpan` lost.
 
 A grouped header of participants is standardised across several descriptors and the same metadata sequence is copied to each one. `ModuleStartDecl` and the `start with` inside a test do not receive their own sequence.
 
@@ -396,9 +396,9 @@ The elaboration The latter must distinguish the construction of alias led by the
 
 The associated data do not support mutability external. The stored data retains `metadata_assignment* metadata` along with its format and default value. The calculated data retains `derived_value_shape? shape`, his `ValueBlock` y `metadata_assignment* metadata`; the derived form is the same as in calculated fields and can express type, domain or a way of collection compatible.
 
-Every declaration An associated data item is a owner stable metadata-bearing and is produced as descriptor `Field` subject to the `family`, with `FieldKind.Stored` o `FieldKind.Calculated`. The screening `member.data` is a value, not a copy of the descriptor. Therefore, metadata relates to data that is declared only once and is not duplicated because member.
+Every declaration of associated data is a stable metadata-bearing owner and produces a `Field` descriptor belonging to the `family`, with `FieldKind.Stored` or `FieldKind.Calculated`. The `member.data` selection is a value, not a copy of the descriptor. Metadata therefore belongs to data declared only once and is not duplicated per member.
 
-Every `FamilyMember` retains metadata assignments, such as `~name`, and assignments to stored data. `FamilyDataAssignment` deliberately remains without field `metadata`: a rewriting of member just select the value the actual value of the stored slot and does not create a owner metadata-bearing. An omitted block results in both sequences being empty.
+Every `FamilyMember` retains metadata assignments, such as `~name`, and assignments to stored data. `FamilyDataAssignment` deliberately has no `metadata` field: a member override merely selects the actual value of the stored slot and does not create a metadata-bearing owner. An omitted block makes both sequences empty.
 
 ## Result from `min` y `max`
 
@@ -516,7 +516,7 @@ When metadata and `ValueBlock` physically share the body of a descriptor If comp
 
 The Surface AST use a single `ActionDecl`.
 
-There is no classification semantics elementary actions versus compound actions. `ActionCallCandidateEffect` it only retains one `postfix-expression` holds a position as effect whose callable nature must be resolved later; the resolution It is you who decide your own destiny, not some so-called elemental class/compuesta of the action owner.
+There is no semantic classification of elementary versus compound actions. `ActionCallCandidateEffect` retains only a `postfix-expression` occupying an effect position whose callable nature must be resolved later; that resolution decides its meaning, not an alleged elementary or compound class of the action owner.
 
 One action contains:
 
@@ -897,4 +897,3 @@ It does not exist `AnchorInterpolation`. `start with` produces `StartSet(contrib
 ## Ownership, restrictions and local adaptation of collections
 
 `has` y `has not` are normalised as `HasMember` y `HasNotMember`. `value in Domain` produces `DomainRestrictionExpr`; a selection with the original binding `SelectionExpr`. Local specifications result in `CollectionTransformExpr` with `LocalCollectionTransform`, without capacity `mut`.
-
