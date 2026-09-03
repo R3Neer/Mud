@@ -1,6 +1,6 @@
 ---
 id: D-088
-title: "Iteración, progresiones firmadas y bloques de expresión"
+title: "Iteration, signed progressions and expression blocks"
 status: current
 date: 2026-08-15
 supersedes: []
@@ -11,26 +11,26 @@ questions:
   - "Q-029"
   - "Q-032"
 affects:
-  - "for each, filtros, cuantificadores, selección, dominios escalonados, intervalos, magnitudes, bloques de expresión, resolución de nombres, gramática, CST y AST"
+  - "for each, filters, quantifiers, selection, stepped domains, intervals, magnitudes, expression blocks, name resolution, grammar, CST and AST"
 ---
 
-# ADR-088 — Iteración, progresiones firmadas y bloques de expresión
+# ADR-088 — Iteration, signed progressions and expression blocks
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modifica: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]] y [[ADR-082-cycle-as-point-domain-modifier|D-082]].
-- Conserva: [[ADR-034-num-exactly-and-rum-binary64|D-034]], [[ADR-040-semantics-remaining-basic-numeracy|D-040]] y la prohibición de azar en filtros de [[ADR-048-reproducible-randomness-and-errors|D-048]].
-- Modificada por: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]] en la forma de resultado de `min` y `max` sobre ausencia.
-- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] en la identidad y derivación de puntos aleatorios.
-- Preguntas relacionadas: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]], [[notes/questions/Q-028-f-finiteness|Q-028]], [[notes/questions/Q-029-t-termination|Q-029]] y [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
+- Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]] and [[ADR-082-cycle-as-point-domain-modifier|D-082]].
+- Retains: [[ADR-034-num-exactly-and-rum-binary64|D-034]], [[ADR-040-semantics-remaining-basic-numeracy|D-040]] and D-048's prohibition on randomness in filters of [[ADR-048-reproducible-randomness-and-errors|D-048]].
+- Modified by: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]] in the result form of `min` and `max` on absence.
+- Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] in the identity and derivation of random points.
+- Related questions: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]], [[notes/questions/Q-028-f-finiteness|Q-028]], [[notes/questions/Q-029-t-termination|Q-029]] and [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 
-## Contexto
+## Context
 
-MUD ya dispone de `for each`, cuantificadores, selección pura y dominios escalonados, pero las reglas anteriores mezclaban enumerabilidad, progresión mediante una diferencia y estructura del cuerpo posterior a `:`. D-075 exigía además un paso positivo y D-047 no distinguía con precisión cuándo el filtro de una iteración ordenada puede observar efectos anteriores.
+MUD already has `for each`, quantifiers, pure selection and stepped domains, but the earlier rules mixed enumerability, progression by a difference and the structure of the body after `:`. D-075 also required a positive step, and D-047 did not precisely distinguish when an ordered iteration's filter can observe earlier effects.
 
-## Fuentes enumerables y `for each`
+## Enumerable sources and `for each`
 
-`for each` acepta cualquier fuente cuya finitud y enumerabilidad puedan demostrarse: colecciones, diccionarios exactos, intervalos enumerables, dominios finitos enumerables y cualquier otro valor con enumeración canónica definida. Un intervalo sigue siendo un intervalo; poder enumerarlo no lo convierte en colección.
+`for each` accepts any source whose finiteness and enumerability can be demonstrated: collections, exact dictionaries, enumerable intervals, finite enumerable domains and any other value with a defined canonical enumeration. An interval remains an interval; being enumerable does not turn it into a collection.
 
 ```mud
 action Accumulate for values: Int [* ordered], mut total: Int {
@@ -39,11 +39,11 @@ action Accumulate for values: Int [* ordered], mut total: Int {
 }
 ```
 
-La pertenencia de la fuente se captura al comenzar el bucle. Un intervalo vacío produce cero iteraciones. Un intervalo infinito no puede alimentar una construcción que exija enumeración exhaustiva.
+The source membership is captured when the loop starts. An empty interval produces zero iterations. An infinite interval cannot feed a construction requiring exhaustive enumeration.
 
-## Separador `:` y cuerpos
+## Separator `:` and bodies
 
-Cuando una construcción usa `:` para separar una cabecera de un cuerpo subordinado, las llaves pertenecen al cuerpo posterior y nunca sustituyen al separador.
+When a construct uses `:` to separate a header from a subordinate body, braces belong to the following body and never replace the separator.
 
 ```mud
 action AccumulateDoubled for values: Int [* ordered], mut total: Int {
@@ -54,71 +54,71 @@ action AccumulateDoubled for values: Int [* ordered], mut total: Int {
 }
 ```
 
-La forma sin `:` es inválida. Tras `:` el cuerpo puede comenzar en la misma línea o después de una separación física por terminadores; el salto no cambia el AST. El `for each` ejecutable usa el contrato de `EffectBlock`. Un `for each` escrito dentro de `ValueBlock` usa en cambio `LocalStatementBlock`, sin efectos exteriores y restringido a las sentencias locales de D-101.
+The form without `:` is invalid. After `:`, the body may begin on the same line or after physical separation by terminators; the line break does not change the AST. Executable `for each` uses the `EffectBlock` contract. A `for each` written inside `ValueBlock` instead uses `LocalStatementBlock`, without outer effects and restricted to D-101's local statements.
 
-Selección y `exists`, `forall`, `count`, `min` y `max` conservan igualmente su `:` obligatorio. Su cuerpo puede ser una expresión breve o un bloque de expresión con cero o más vinculaciones locales seguidas de una única expresión final.
+Selection and `exists`, `forall`, `count`, `min` and `max` likewise retain their mandatory `:`. Their body may be a short expression or an expression block with zero or more local bindings followed by a single final expression.
 
-## Bloque de expresión
+## Expression block
 
-Se generaliza el antiguo `BooleanBlock` a `ExpressionBlock(locals, result)`. La estructura no decide el tipo de `result`; lo hace su propietario. Reglas booleanas, guardas `if`, reglas `always`, postcondiciones `after` de acciones, selección, `exists`, `forall`, `count`, `min` y `max` aplican un contrato booleano a `result`; `when` exige un activador admitido. `min` y `max` usan ese resultado como filtro y devuelven testigos según el orden de la fuente. El `after` de test conserva su estructura propia de varias aserciones.
+The former `BooleanBlock` is generalised to `ExpressionBlock(locals, result)`. The structure does not determine the type of `result`; its owner does. Boolean rules, `if` guards, `always` rules, action `after` postconditions, selection, `exists`, `forall`, `count`, `min` and `max` apply a Boolean contract to `result`; `when` requires an admitted trigger. `min` and `max` use that result as a filter and return witnesses according to source order. Test `after` retains its own structure of several assertions.
 
-Las locales son puras, inmutables, secuenciales y no admiten references adelantadas, ciclos, redeclaración ni sombreado.
+Locals are pure, immutable and sequential, and do not admit forward references, cycles, redeclaration or shadowing.
 
 
-## Ámbitos de iteración y bloques de expresión
+## Iteration scopes and expression blocks
 
-`source` y el `by` opcional se resuelven en el entorno exterior, antes de introducir la vinculación de iteración. Por tanto, la variable iterada —o la pareja `(key, value)`— no es visible dentro de `source` ni de `by`.
+`source` and optional `by` are resolved in the outer environment before introducing the iteration binding. Therefore, the iterated variable—or the `(key, value)` pair—is not visible inside `source` or `by`.
 
-En `for each`, la vinculación de iteración sí es visible en el filtro `if` y en el cuerpo subordinado correspondiente. Si el filtro usa un `ExpressionBlock`, sus locales son visibles únicamente en las locales posteriores y en la expresión final del propio filtro; desaparecen antes de entrar en el `EffectBlock` ejecutable o en el `LocalStatementBlock` de un `LocalForEach`.
+In `for each`, the iteration binding is visible in the `if` filter and the corresponding subordinate body. If the filter uses an `ExpressionBlock`, its locals are visible only in later locals and the filter's final expression; they disappear before entering the executable `EffectBlock` or the `LocalStatementBlock` of a `LocalForEach`.
 
-En selección y cuantificadores, la vinculación introducida es visible en las locales y en la expresión final de su `ExpressionBlock`, pero no fuera de él. Cada local se vuelve visible después de su propia declaración, de modo que puede ser usada por locales posteriores y por el resultado final, nunca por su inicializador ni por declaraciones anteriores.
+In selection and quantifiers, the introduced binding is visible in the locals and final expression of their `ExpressionBlock`, but not outside it. Each local becomes visible after its own declaration, so it may be used by later locals and the final result, never by its initialiser or earlier declarations.
 
-## Filtro de `for each`
+## `for each` filter
 
-El `if` opcional aparece después de `by` y puede ser una expresión o un bloque de expresión. El predicado es puro y no estocástico conforme a D-048.
+The optional `if` appears after `by` and may be an expression or expression block. The predicate is pure and non-stochastic in accordance with D-048.
 
-- Con orden semántico, cada filtro se evalúa inmediatamente antes de su iteración y observa los efectos secuenciales producidos por iteraciones anteriores.
-- Sin orden semántico, todos los filtros observan la misma instantánea inicial y las iteraciones aceptadas producen deltas que se consolidan como simultáneos.
+- With semantic order, each filter is evaluated immediately before its iteration and observes sequential effects produced by earlier iterations.
+- Without semantic order, all filters observe the same initial snapshot and accepted iterations produce deltas consolidated as simultaneous.
 
-Por ello `for each ... if ...` no se define universalmente como desazucaración literal a una selección materializada previa.
+Therefore, `for each ... if ...` is not universally defined as literal desugaring to a pre-materialised selection.
 
-## `by` como progresión
+## `by` as progression
 
-`by δ` recibe una expresión ordinaria cuyo valor es una diferencia firmada compatible con la fuente. En construcciones runtime se evalúa exactamente una vez antes de comenzar el recorrido y su valor queda fijado durante esa ejecución.
+`by δ` takes an ordinary expression whose value is a signed difference compatible with the source. In runtime constructs it is evaluated exactly once before traversal begins and its value remains fixed during that execution.
 
-La compatibilidad se determina por la operación de avance y por las conversiones implícitas exactas admitidas, no por igualdad nominal del tipo recorrido y la diferencia. Un intervalo `Nat` puede usar una diferencia `Int`; un intervalo `Num`, `Nat`, `Int` o `Num` compatibles; una magnitud puede usar otra unidad compatible. En magnitudes de punto el paso es una diferencia de la magnitud lineal subyacente, no otro punto.
+Compatibility is determined by the advance operation and the admitted exact implicit conversions, not by nominal equality between the traversed type and the difference. A `Nat` interval may use an `Int` difference; an interval of `Num` may use compatible `Nat`, `Int` or `Num`; a magnitude may use another compatible unit. For point magnitudes, the step is a difference of the underlying linear magnitude, not another point.
 
-Un paso positivo se ancla en el límite inferior; uno negativo, en el superior. Si el límite inicial es abierto, se aplica una vez el paso antes de comprobar el primer candidato. Tras cada valor emitido se suma el paso y el recorrido termina antes del primer candidato exterior. No es necesario alcanzar exactamente el extremo opuesto.
+A positive step is anchored at the lower bound; a negative one at the upper bound. If the initial bound is open, the step is applied once before checking the first candidate. After each emitted value the step is added and traversal ends before the first outside candidate. Reaching the opposite endpoint exactly is not required.
 
 ```mud
 action Forward for mut total: Num {
     then for each value in [1..8] by 2 :
         total += value
 }
-# recorrido: 1, 3, 5, 7
+# traversal: 1, 3, 5, 7
 
 action Backward for mut total: Num {
     then for each value in [1..8] by -3 :
         total += value
 }
-# recorrido: 8, 5, 2
+# traversal: 8, 5, 2
 ```
 
-Los extremos invertidos continúan normalizándose a `empty`; nunca expresan recorrido descendente.
+Inverted endpoints continue to normalise to `empty`; they never express descending traversal.
 
-## Paso cero
+## Zero step
 
-Si un paso runtime es demostrablemente cero, existe error estático. Si no puede demostrarse y finalmente evalúa a cero, se produce un fallo de evaluación `progression-step-zero`. Dentro de una acción real ese fallo produce `failed` y rollback conforme a la taxonomía de D-048 y D-061; en un contexto puro se propaga conforme al contrato de fallos de expresiones, sin convertirse en `false`. En un dominio escalonado el paso es estático, por lo que cero siempre es error de elaboración.
+If a runtime step is demonstrably zero, it is a static error. If this cannot be demonstrated and it eventually evaluates to zero, evaluation fails with `progression-step-zero`. Inside a real action that failure produces `failed` and rollback under the taxonomy of D-048 and D-061; in a pure context it propagates under the expression-failure contract without becoming `false`. In a stepped domain the step is static, so zero is always an elaboration error.
 
-## Pasos predeterminados
+## Default steps
 
-Una fuente que ya posee enumeración propia —por ejemplo una colección, un diccionario exacto o un dominio nominal finito— no necesita `by` para recorrerse. Los pasos predeterminados solo intervienen cuando la enumeración se construye como progresión. En una fuente cuya enumeración se construye como progresión puede omitirse `by` únicamente cuando el tipo recorrido define una diferencia sucesora canónica. MUD fija `Nat -> 1`, `Int -> 1` y `Money -> 0.01`; omitir `by` selecciona siempre esa diferencia positiva. Otros tipos de progresión exacta requieren paso explícito salvo decisión que defina un sucesor canónico.
+A source that already has its own enumeration—for example a collection, exact dictionary or finite nominal domain—does not need `by` to be traversed. Default steps apply only when enumeration is constructed as a progression. In a source whose enumeration is constructed as a progression, `by` may be omitted only when the traversed type defines a canonical successor difference. MUD fixes `Nat -> 1`, `Int -> 1` and `Money -> 0.01`; omitting `by` always selects that positive difference. Other exact-progression types require an explicit step unless a decision defines a canonical successor.
 
-`Num` admite progresión con paso exacto explícito, pero un intervalo general de `Num` sin paso es inválido. `Rum` conserva la prohibición de D-034: sus intervalos nunca son enumerables y no admiten progresión `by`, ni en iteración ni en dominio escalonado. Una colección explícita de valores `Rum` sí puede enumerarse sin `by` porque su enumeración procede de la colección, no de una progresión numérica.
+`Num` admits progression with an explicit exact step, but a general `Num` interval without a step is invalid. `Rum` retains D-034's prohibition: its intervals are never enumerable and do not admit `by` progression, either in iteration or stepped domains. An explicit collection of `Rum` values may be enumerated without `by` because its enumeration comes from the collection, not a numeric progression.
 
-## Dominios escalonados
+## Stepped domains
 
-`interval by δ` define un dominio mediante la misma progresión exacta. El paso debe ser estático, no nulo y compatible, y puede ser negativo.
+`interval by δ` defines a domain through the same exact progression. The step must be static, non-zero and compatible, and may be negative.
 
 ```text
 [1..8] by 2   -> {1, 3, 5, 7}
@@ -127,38 +127,38 @@ Una fuente que ya posee enumeración propia —por ejemplo una colección, un di
 [1..8) by -2  -> {2, 4, 6}
 ```
 
-El signo determina el anclaje y puede cambiar los miembros del dominio, pero el orden de generación no forma parte del tipo. `all` materializa los miembros en el orden canónico del tipo.
+The sign determines the anchor and may change the domain's members, but generation order is not part of the type. `all` materialises members in the type's canonical order.
 
-Los dominios escalonados pueden aparecer en cualquier contexto que admita un dominio: campos, componentes, participantes, `given`, formas derivadas, campos públicos y otros propietarios compatibles.
+Stepped domains may appear in any context admitting a domain: fields, components, participants, `given`, derived forms, public fields and other compatible owners.
 
-## Intervalos discontinuos y dominios cíclicos de punto
+## Discontinuous intervals and cyclic point domains
 
-En una forma normalizada con varios segmentos disjuntos el paso se reinicia en cada segmento. Un paso positivo recorre segmentos de menor a mayor y se ancla en el extremo inferior; uno negativo recorre de mayor a menor y se ancla en el superior.
+In a normalised form with several disjoint segments, the step restarts in each segment. A positive step traverses segments from lower to higher and anchors at the lower endpoint; a negative one traverses from higher to lower and anchors at the upper endpoint.
 
-La sintaxis consolidada de intervalos discontinuos sigue abierta en Q-018. D-088 cierra el recorrido descendente explícito: se expresa mediante paso negativo, nunca invirtiendo extremos.
+The consolidated syntax of discontinuous intervals remains open in Q-018. D-088 settles explicit descending traversal: it is expressed by a negative step, never by reversing endpoints.
 
-Un dominio cíclico de punto puede enumerarse con diferencia compatible, pero solo durante un periodo fundamental. No se envuelve indefinidamente.
+A cyclic point domain may be enumerated with a compatible difference, but only for one fundamental period. It never wraps indefinitely.
 
-## Otras construcciones con `by`
+## Other constructs with `by`
 
-`by` de progresión se admite también en selección y en `exists`, `forall`, `count`, `min` y `max`, siempre que la fuente ofrezca progresión mediante diferencia. Si la selección parte conceptualmente de un dominio, su fuente debe escribirse materializada como `all D`; los recorridos y cuantificadores que no producen una colección pueden consumir el dominio directamente. `by` no significa stride sobre una colección arbitraria. La semántica de ausencia de `min` y `max` es la de D-095: ningún candidato produce `empty` con cardinalidad `[0..1]`. Una fuente futura puede definir expresamente esa capacidad; esta decisión no introduce un protocolo general. `ordered by path` conserva una semántica distinta.
+Progression `by` is also admitted in selection and in `exists`, `forall`, `count`, `min` and `max`, provided that the source offers progression by difference. If selection conceptually starts from a domain, its source must be written materialised as `all D`; traversals and quantifiers that do not produce a collection may consume the domain directly. `by` does not mean stride over an arbitrary collection. The absence semantics of `min` and `max` is D-095's: no candidate produces `empty` with cardinality `[0..1]`. A future source may define that capability explicitly; this decision introduces no general protocol. `ordered by path` retains different semantics.
 
-## Azar
+## Randomness
 
-D-088 no permite azar en el filtro de una iteración. La identidad semántica y derivación reproducible de los puntos aleatorios ya están fijadas; la prohibición se conserva mientras Q-032 mantenga abiertas las reglas de caché y reintentos por ocurrencia que afectan a la estabilidad observable del filtro.
+D-088 does not permit randomness in an iteration filter. The semantic identity and reproducible derivation of random points are already fixed; the prohibition remains while Q-032 keeps open the per-occurrence caching and retry rules affecting the filter's observable stability.
 
-## Consecuencias para AST
+## AST consequences
 
-El AST superficial reemplaza `BooleanBlock` por `ExpressionBlock`. `ForEachEffect` conserva `step?`, conserva su filtro opcional como `ExpressionBlock?` y normaliza tanto el efecto breve como el bloque ejecutable al mismo `EffectBlock` que usa `then`. `SelectionExpr` y `QuantifierExpr` conservan `step?` y su predicado/cuerpo como `ExpressionBlock`. `by -2` no necesita nodo especial para el signo.
+The Surface AST replaces `BooleanBlock` with `ExpressionBlock`. `ForEachEffect` retains `step?`, retains its optional filter as `ExpressionBlock?`, and normalises both the short effect and executable block to the same `EffectBlock` used by `then`. `SelectionExpr` and `QuantifierExpr` retain `step?` and their predicate/body as `ExpressionBlock`. `by -2` needs no special sign node.
 
-## Diagnósticos
+## Diagnostics
 
-Debe diagnosticarse ausencia de `:`, paso cero, diferencia incompatible, falta de paso cuando una progresión no tenga sucesor predeterminado, fuente infinita/no enumerable, intento de progresión sobre un intervalo `Rum`, `by` sobre fuente sin progresión, filtro no booleano, azar en filtro y uso de extremos invertidos como supuesto descenso.
+The implementation must diagnose a missing `:`, zero step, incompatible difference, missing step when a progression has no default successor, an infinite/non-enumerable source, attempted progression over a `Rum` interval, `by` on a source without progression, a non-Boolean filter, randomness in a filter, and use of inverted endpoints as presumed descent.
 
-## Verificación
+## Verification
 
-Se verifican fuentes enumerables de todas las clases admitidas, `:` con cuerpo breve y con llaves, filtro breve y con locales, pasos positivos/negativos/runtime, evaluación única del paso, cero estático/runtime, límites abiertos/cerrados, intervalos vacíos/infinitos, dominios escalonados firmados y `all`, `Num`, rechazo de progresión `Rum`, colección explícita de `Rum`, selección y los cinco cuantificadores con `by` y bloque booleano, magnitudes con unidades compatibles y diferencia entre filtro ordenado/no ordenado. La verificación concreta de intervalos discontinuos se completa cuando Q-018 cierre su forma fuente consolidada; su semántica queda fijada por esta decisión. El requisito de recorrer como máximo un periodo fundamental de un dominio cíclico pertenece a la verificación de D-082 y no depende de Q-018.
+Verification covers enumerable sources of every admitted class, `:` with short and braced bodies, short filters and filters with locals, positive/negative/runtime steps, single step evaluation, static/runtime zero, open/closed bounds, empty/infinite intervals, signed stepped domains and `all`, `Num`, rejection of `Rum` progression, explicit `Rum` collections, selection and the five quantifiers with `by` and Boolean blocks, magnitudes with compatible units, and the distinction between ordered and unordered filters. Concrete verification of discontinuous intervals is completed when Q-018 closes its consolidated source form; their semantics are fixed by this decision. The requirement to traverse at most one fundamental period of a cyclic domain belongs to D-082's verification and does not depend on Q-018.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-Las operaciones que producen una colección desde un dominio, incluida la selección, requieren materialización explícita `all D`. Los recorridos `for each` y cuantificadores pueden consumir directamente dominios finitos enumerables porque no materializan por sí mismos una colección. Actions, rules reactivas y messages admiten además locales puras previas entre metadatos y cláusulas de comportamiento.
+Operations that produce a collection from a domain, including selection, require explicit `all D` materialisation. `for each` traversals and quantifiers may consume finite enumerable domains directly because they do not themselves materialise a collection. Actions, reactive rules and messages also admit preceding pure locals between metadata and behaviour clauses.
