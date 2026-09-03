@@ -16,7 +16,7 @@ affects:
 
 - Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]] and [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
-- Further clarified by: [[ADR-090-functional-branches-without-public-anchor|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] and [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
+- Further clarified by: [[ADR-090-functional-branches-without-public-anchor|D-090]], [[ADR-091-family-data-as-anchored-descriptors|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] and [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
 
 ## Context
 

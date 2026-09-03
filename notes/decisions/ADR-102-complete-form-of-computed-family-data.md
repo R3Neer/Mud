@@ -13,7 +13,7 @@ affects:
 # ADR-102 — Complete form of computed family data
 
 - Resolves: [[notes/questions/Q-061-f-declarable-form-of-computed-family-data|Q-061]].
-- Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]] and [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
+- Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]] and [[ADR-091-family-data-as-anchored-descriptors|D-091]].
 - Applies the derived form from [[ADR-037-fields-and-declarative-domains|D-037]] to computed `family` data.
 
 ## Context
