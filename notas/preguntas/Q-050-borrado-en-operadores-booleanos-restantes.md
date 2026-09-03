@@ -1,6 +1,6 @@
 ---
 id: Q-050
-title: Borrado en operadores booleanos restantes
+title: Pruning in remaining Boolean operators
 priority: P1
 opened: 2026-07-29
 resolved:
@@ -11,10 +11,10 @@ affects: []
 superseded-by: []
 ---
 
-# Q-050 — Borrado en operadores booleanos restantes
+# Q-050 — Pruning in remaining Boolean operators
 
-## Contenido
+## Content
 
-Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
+Premise status: **decided** by [[notas/decisiones/ADR-022-borrado-de-reglas-booleanas-inactivas|D-022]].
 
-Las llamadas a reglas booleanas inactivas se podan después de un desazucarado canónico a `not`, `and` y `or`. Falta fijar la elaboración de `!=`, `xor`, cuantificadores booleanos y las interacciones con `allowed`, `eventually` y fallos internos.
+Calls to inactive Boolean rules are pruned after canonical desugaring to `not`, `and` and `or`. Elaboration of `!=`, `xor`, Boolean quantifiers and interactions with `allowed`, `eventually` and internal failures remains to be fixed.
