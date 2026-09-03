@@ -16,7 +16,7 @@ affects:
 # ADR-052 — Pipelines, renderers and conformance
 
 - Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
-- Expanded by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Expanded by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Related questions: Q-007, Q-009, Q-037, Q-038
 - Documents affected: architecture, tooling, conformance

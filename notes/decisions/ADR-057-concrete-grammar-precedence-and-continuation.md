@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-057 — Concrete grammar, precedence and continuation
 
-- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]]
 - Further amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]

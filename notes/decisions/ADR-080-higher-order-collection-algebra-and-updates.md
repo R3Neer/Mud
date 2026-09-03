@@ -14,7 +14,7 @@ affects:
 
 # ADR-080 — Higher algebra and collection updates
 
-- Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Extended by: [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 

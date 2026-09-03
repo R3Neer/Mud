@@ -12,7 +12,7 @@ affects:
 
 # ADR-070 — Lossless CST and normalised surface AST
 
-- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Extended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]]
 - Adjusted to the phase boundary of [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 - Amended by: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].

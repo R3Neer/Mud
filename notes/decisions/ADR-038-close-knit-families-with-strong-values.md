@@ -20,7 +20,7 @@ affects:
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Expanded by: [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]]
-- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] and [[ADR-091-family-data-as-anchored-descriptors|D-091]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] and [[ADR-091-family-data-as-anchored-descriptors|D-091]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
 - As further amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
