@@ -4,7 +4,7 @@ This directory contains the contract regulatory mechanism for the name resolutio
 
 ## `mud-nominal-hir.asdl`
 
-It is the regulatory solution to nominal resolution on the Surface AST. It preserves symbols, scopes, bindings, anchors and nominal relationships `Owns`, `Specializes` y `RefersTo`.
+It is the regulatory solution to nominal resolution on the Surface AST. It preserves symbols, scopes, bindings, anchors and nominal relationships `Owns`, `Specializes` and `RefersTo`.
 
 It must not contain effective types, effective domains, inferred cardinalities, narrowing, elaborate conversions, effects, semantic dependencies or evidence of termination. These conclusions relate to later stages that have not yet been formalised in technical terms.
 

@@ -1,19 +1,19 @@
--- MUD 1.0 — AST superficial normalizado
+-- MUD 1.0 — Normalised surface AST
 --
--- Dialecto ASDL-MUD definido en specification/03-notacion.md.
--- Este esquema es normativo respecto de las distinciones semánticas que
--- sobreviven al parsing, no respecto de la representación en memoria.
+-- MUD ASDL dialect defined in specification/03-notation.md.
+-- This schema is normative for the semantic distinctions that survive
+-- parsing, not for the in-memory representation.
 --
--- Convenciones:
---   T?  = cero o un valor T
---   T*  = secuencia finita ordenada de valores T
---   identifier, string e int son escalares incorporados.
---   Todo nodo sintáctico lleva source_origin salvo MudProject.
+-- Conventions:
+--   T?  = zero or one T value
+--   T*  = finite ordered sequence of T values
+--   identifier, string and int are built-in scalars.
+--   Every syntax node carries source_origin except MudProject.
 
 module MUDSurface {
 
     -- -----------------------------------------------------------------
-    -- Procedencia y escalares comunes
+    -- Provenance and common scalars
     -- -----------------------------------------------------------------
 
     flag = Disabled | Enabled
@@ -44,7 +44,7 @@ module MUDSurface {
     newline_style = LF | CRLF | CR | MixedNewlines | NoNewline
 
     -- -----------------------------------------------------------------
-    -- Raíces
+    -- Roots
     -- -----------------------------------------------------------------
 
     project = MudProject(source_file* files)
@@ -59,7 +59,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
-    -- Nombres todavía no resueltos
+    -- Names not yet resolved
     -- -----------------------------------------------------------------
 
     mud_path = (lower_name* segments)
@@ -192,7 +192,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
-    -- Campos, aliases y familias
+    -- Fields, aliases and families
     -- -----------------------------------------------------------------
 
     stored_field_data = (flag collection_mutable,
@@ -266,7 +266,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
-    -- Tipos, dominios y colecciones
+    -- Types, domains and collections
     -- -----------------------------------------------------------------
 
     declared_type = NamedType(type_ref name)
@@ -346,7 +346,7 @@ module MUDSurface {
     local_collection_order = OrdinaryLocalOrder | LocalOrderedBy(order_key_path key)
 
     -- -----------------------------------------------------------------
-    -- Participantes y givens
+    -- Participants and givens
     -- -----------------------------------------------------------------
 
     for_clause = ForClause(for_participant first, for_participant* remaining)
@@ -382,7 +382,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
-    -- Magnitudes y unidades
+    -- Magnitudes and units
     -- -----------------------------------------------------------------
 
     point_domain = OrdinaryPointDomain(interval_expr interval)
@@ -411,7 +411,7 @@ module MUDSurface {
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------
-    -- Cuerpos, condiciones y tests
+    -- Bodies, conditions and tests
     -- -----------------------------------------------------------------
 
     expression_block = ExpressionBlock(local_value_decl* locals, expr result)
@@ -659,7 +659,7 @@ module MUDSurface {
                     | Maximum
 
     -- -----------------------------------------------------------------
-    -- Intervalos, cantidades y unidades
+    -- Intervals, quantities and units
     -- -----------------------------------------------------------------
 
     interval_expr = Interval(interval_bound lower,
