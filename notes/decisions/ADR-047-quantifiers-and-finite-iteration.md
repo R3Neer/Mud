@@ -27,7 +27,7 @@ affects:
 
 ## Context
 
-MUD needs to iterate through sets of domain without introducing general loops whose termination o result depend on the inner container.
+MUD needs to iterate through domain sets without introducing general loops whose termination or result depends on the inner container.
 
 ## Decision
 
@@ -49,7 +49,7 @@ D-081 Add a pure selection that returns the flags rather than consuming them:
 item in source : predicate
 ```
 
-Shares the responsibility for finiteness y enumerability, but it produces the accepted subcollection and can subsequently feed into a quantifier, `take` or another expression.
+It shares responsibility for finiteness and enumerability, produces the accepted subcollection, and can subsequently feed into a quantifier, `take` or another expression.
 
 The `for each` The executable appears inside a `then`; D-101 also allows for `LocalForEach` inside `ValueBlock`, with `LocalStatementBlock` and has no external effects. The executable form retains:
 
@@ -75,12 +75,12 @@ A discontinuous interval is normalised into disjoint segments and traversed segm
 
 - There is no implicit iteration over infinite or uncountable domains.
 - The established syntax for discontinuous intervals continues in Q-018; the explicit downward path is expressed by `by` negative in accordance with D-088.
-- The tests for finiteness y termination may be conservative.
+- Tests for finiteness and termination may be conservative.
 
 ## Verification
 
 1. Quantifiers over finite sources, including filtered extremes over ordered sources.
-2. `min` y `max` gaps cause `empty` and its subsequent incompatibility follows the standard rules of cardinality.
+2. Gaps for `min` and `max` cause `empty`; any subsequent incompatibility follows the standard cardinality rules.
 3. A noticeable difference between an ordered and an unordered loop.
 4. Open, closed, discontinuous and stepped intervals.
 5. Rejection of a list `Rum` or infinite.

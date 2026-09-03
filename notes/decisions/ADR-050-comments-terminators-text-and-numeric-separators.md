@@ -34,10 +34,10 @@ The MUD states:
 3. Comment multi-line, of which delimiter the opening and closing times are `###`.
 
 ```mud
-soldiers = 1_000 # hasta fin de línea
-soldiers = 1_000 # comentario # morale = 100
+soldiers = 1_000 # to end of line
+soldiers = 1_000 # comment # morale = 100
 ###
-Comentario multilínea.
+Multiline comment.
 ###
 ```
 

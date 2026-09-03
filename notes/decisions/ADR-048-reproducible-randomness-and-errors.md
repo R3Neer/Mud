@@ -33,7 +33,7 @@ MUD 1.0 sets out an explicitly random method of sampling:
 Rand(source)
 ```
 
-The source must be a collection o domain demonstrable. There are as yet no compelling arguments regarding weights, distributions or policy local.
+The source must be a demonstrable collection or domain. There are as yet no compelling arguments regarding weights, distributions or local policy.
 
 D-081 add `take amount from source`. Based on a source with no discernible order and with more occurrences than `amount`, `take` is a point reproducible randomness even if I don’t write anything `Rand`: selects uniformly without replacement. It has the same identity, cache by snapshot and contextual constraints. When dealing with a well-organised source, or when there is no real choice, `take` It is deterministic and does not involve chance.
 

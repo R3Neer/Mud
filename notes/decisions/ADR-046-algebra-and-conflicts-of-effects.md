@@ -34,9 +34,9 @@ The MUD effects catalogue includes:
 - cumulative addition and subtraction;
 - cumulative multiplication;
 - union, intersection, symmetric difference `unique` and cumulative differences;
-- `add` y `remove` regarding collections or properties;
-- `create` y `destroy`;
-- invocations of `action` o `subaction` within any semantic context `then`; the call sequentially incorporates its effects into the delta private asset in accordance with D-096.
+- `add` and `remove` regarding collections or properties;
+- `create` and `destroy`;
+- invocations of `action` or `subaction` within any semantic `then` context; the call sequentially incorporates its effects into the private delta in accordance with D-096.
 
 Every `then` calculate a delta sequential private from a snapshot common. The consolidation of concurrent deltas is deterministic.
 
@@ -57,11 +57,11 @@ Minimum standards:
 | updates `^=` consistent data on `unique` | symmetric difference by parity |
 | different types of update collection | conflict |
 
-For structural purposes, the following apply D-023, D-026 y D-054:
+For structural purposes, the following apply D-023, D-026 and D-054:
 
 - compatible activations via `create` precede additions;
 - withdrawals precede destruction;
-- `create` y `destroy` The shells leave the target destroyed as the wave;
+- `create` and `destroy` shells leave the target destroyed for the wave;
 - several activations of the same canonical definition when absent, they consolidate idempotently;
 - several additions to it value to one collection `unique` are idempotently consolidated into a single presence;
 - each `then` and all consolidation where possible, they should preserve cardinalities statically.
