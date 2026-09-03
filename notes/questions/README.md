@@ -2,7 +2,7 @@
 title: MUD active questions
 tags:
   - mud/notes
-  - mud/preguntas
+  - mud/questions
 status: active
 ---
 
