@@ -60,7 +60,7 @@ A local binding containing only an alias value does not become a writable locati
 
 ```mud
 order := orders[id]
-order.status = Shipped # inválido
+order.status = Shipped # invalid
 ```
 
 The second line attempts to modify an immutable value without a path back to storage. Likewise, a derived alias field cannot be a target: only stored components may be replaced during reconstruction.
@@ -75,7 +75,7 @@ When exact-dictionary indexing appears as an intermediate step of a write-back p
 - does not construct an alias from its defaults;
 - does not itself produce `failed`.
 
-Por tanto:
+Therefore:
 
 ```mud
 orders[missingId].status = Shipped

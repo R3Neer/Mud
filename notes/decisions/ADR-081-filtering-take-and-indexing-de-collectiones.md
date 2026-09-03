@@ -14,7 +14,7 @@ affects:
 
 # ADR-081 — Filtering, `take` and collection indexing
 
-- Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
+- Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
 - Modified by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Modified by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]]

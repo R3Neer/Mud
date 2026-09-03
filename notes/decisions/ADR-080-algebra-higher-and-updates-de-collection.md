@@ -87,7 +87,7 @@ The binary absolute difference of two multisets remains expressible without intr
 
 ### Compound updates
 
-La gramática admite:
+The grammar admits:
 
 ```mud
 target |= value

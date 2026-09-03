@@ -31,7 +31,7 @@ Syntactically recognising the name after `~` does not grant the property. There 
 
 For participant properties, the matrix is:
 
-| Subcategoría resuelta | `~for` | `~on` | `~given` |
+| Resolved subcategory | `~for` | `~on` | `~given` |
 | --- | --- | --- | --- |
 | `RuleKind.Boolean` | yes | no | yes |
 | `RuleKind.Reactive` | no | yes | no |

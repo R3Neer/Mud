@@ -41,15 +41,15 @@ No derived artefact is an independent semantic source: it is reconstructed from 
 ## Pipeline
 
 ```text
-texto fuente
-→ scanner y clasificación contextual
-→ CST sin pérdidas
-→ AST superficial
-→ resolución nominal
-→ HIR nominal: símbolos + scopes + bindings + anclas + grafo nominal parcial
-→ tipado y elaboración
-→ representación semántica posterior por formalizar
-→ análisis posteriores / ejecución
+source text
+→ scanner and contextual classification
+→ lossless CST
+→ Surface AST
+→ nominal resolution
+→ nominal HIR: symbols + scopes + bindings + anchors + partial nominal graph
+→ typing and elaboration
+→ later semantic representation to be formalised
+→ later analysis / execution
 ```
 
 The nominal HIR is deliberately smaller than a complete resolved AST and does not anticipate type conclusions.

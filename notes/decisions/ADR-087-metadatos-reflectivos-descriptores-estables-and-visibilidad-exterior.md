@@ -83,7 +83,7 @@ Depending on the receiver's static category, the following are exposed where mea
 ~anchor     : Anchor
 ~path       : MudPath
 ~file       : MudFile
-~kind       : family reflectiva específica
+~kind       : specific reflective family
 ```
 
 `~identifier` is the source identifier. `~name` is configurable human presentation and does not participate in resolution, equality or anchor formation.
@@ -151,10 +151,10 @@ Participant properties have these capabilities by declaration subcategory:
 | Boolean rule | yes | no | yes |
 | Reactive rule | no | yes | no |
 | `always` rule | no | yes | no |
-| `action` | sí | no | sí |
-| `subaction` | sí | no | sí |
-| `look` | sí | no | sí |
-| `message` | no | sí | no |
+| `action` | yes | no | yes |
+| `subaction` | yes | no | yes |
+| `look` | yes | no | yes |
+| `message` | no | yes | no |
 | other declarations | no | no | no |
 
 When a property is supported by the subcategory but the concrete declaration omits its optional clause, the value is `empty` with the corresponding collection type. When the property is not supported by the static subcategory, access is a static error; it does not produce `empty` or a default value. For example, `thing A` makes `A~for` invalid, whereas an `action` without a `for` clause admits `ActionName~for` and returns `empty`.
@@ -173,7 +173,7 @@ Every `for`, `on` and `given` participant must have an explicit source identifie
 Each participant has a public anchor derived from:
 
 ```text
-ancla-del-propietario + clase-de-cláusula + identifier
+owner-anchor + clause-class + identifier
 ```
 
 Position is never used as identity. Reordering participants does not change their anchors. Two same-named participants in different clauses remain distinct because the `For`, `On` or `Given` class forms part of the derivation.
@@ -310,7 +310,7 @@ These lines are not `MudFile` metadata; they are syntactic sugar applied to top-
 They do not propagate to fields, components, participants, family members, imported declarations or descendants from other files. Precedence is:
 
 ```text
-valor explícito del elemento > default de archivo > default del lenguaje
+explicit element value > file default > language default
 ```
 
 A file default does not admit `:=`, `ValueBlock`, runtime reads or intrinsic properties. Its form remains separate from ordinary metadata assignment on an owner. `~summary`, `~description` and `~deprecated` may be used as defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` and `~format` cannot be used as file defaults because they are inherently individual. User metadata is admitted as defaults unless its definition is explicitly restricted in future.

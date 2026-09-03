@@ -85,7 +85,7 @@ Each module may contribute at most one `start with`. It is not `main`, does not 
 
 A module's `start with` may activate only declarations with a lifecycle in the same module. The mandatory separation between `things` and `rules` sections is removed: the conceptual set contains activatable `thing | rule` declarations, is unordered and deduplicated, and is not interpreted as `for each create`.
 
-Se aceptan una contribución directa y un bloque de contribuciones:
+One direct contribution and one contribution block are admitted:
 
 ```mud
 start with Kingdom

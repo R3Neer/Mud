@@ -91,7 +91,7 @@ Concurrent arithmetic effects on the same target are normalised into three accum
 - `P`: product of all `*=` factors;
 - `Q`: product of all `/=` divisors.
 
-La aplicación canónica es:
+The canonical application is:
 
 ```text
 x' = ((x + Δ) * P) / Q

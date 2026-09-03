@@ -53,7 +53,7 @@ When `destroy d` is confirmed for a concrete `thing`, the following are discarde
 - runtime structural modifications owned by `d`, including fields added during that materialisation;
 - runtime removals of `d`'s canonical properties: a future materialisation starts from the canonical definition, not from the edited structure of the ended materialisation.
 
-Por tanto, si:
+Therefore, if:
 
 ```mud
 thing Goblin {
