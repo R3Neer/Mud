@@ -1,6 +1,6 @@
 ---
 id: D-057
-title: "Gramática concreta, precedencia y continuación"
+title: "Concrete grammar, precedence and continuation"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -10,107 +10,107 @@ questions:
 affects:
   - "[[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`"
 ---
-# ADR-057 — Gramática concreta, precedencia y continuación
+# ADR-057 — Concrete grammar, precedence and continuation
 
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Amended by: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
 
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
-- Modificada además por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
-- Modificada también por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
-- Modificada asimismo por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
-- Modificada finalmente por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
-- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
-- Modificada después por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]], [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] y [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Cierra: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
-- Documentos afectados: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
+- Amended by: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]]
+- Further amended by: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Also amended by: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
+- Also amended by: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
+- Finally amended by: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Amended by: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Subsequently amended by: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]], [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]], [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]], [[ADR-077-destruccion-cardinalidad-y-diagnostico-de-transicion|D-077]] and [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Closes: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
+- Affected documents: [[especificacion/05-texto-fuente]], [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/`
 
-## Contexto
+## Context
 
-Las decisiones de MUD ya fijaban las construcciones principales, pero no existía una gramática consolidada. Esto dejaba sin una única respuesta:
+MUD decisions had already established the principal constructions, but no consolidated grammar existed. This left no single answer to the following questions:
 
-- Qué formas pertenecen al lenguaje fuente.
-- Qué palabras son reservadas o contextuales.
-- Cuándo un salto de línea termina una construcción.
-- Cómo se agrupan operadores, conversiones y encadenamientos.
-- Qué distinciones se resuelven por sintaxis y cuáles por análisis estático.
+- Which forms belong to the source language.
+- Which words are reserved or contextual.
+- When a line break terminates a construction.
+- How operators, conversions and chains are grouped.
+- Which distinctions are resolved by syntax and which by static analysis.
 
-## Decisión
+## Decision
 
-La sintaxis de MUD 1.0 queda definida por:
+The syntax of MUD 1.0 is defined by:
 
-1. [[especificacion/gramatica/mud-lexico.ebnf|La gramática léxica]].
-2. [[especificacion/gramatica/mud.ebnf|La gramática concreta]].
-3. Las restricciones contextuales y el algoritmo de agrupación de [[especificacion/07-gramatica-concreta]].
+1. [[especificacion/gramatica/mud-lexico.ebnf|The lexical grammar]].
+2. [[especificacion/gramatica/mud.ebnf|The concrete grammar]].
+3. The contextual constraints and grouping algorithm in [[especificacion/07-gramatica-concreta]].
 
-Las EBNF definen el conjunto de formas sintácticas. No intentan decidir cuestiones que necesitan resolución de nombres o tipos, como distinguir:
+The EBNF grammars define the set of syntactic forms. They do not attempt to decide matters that require name or type resolution, including the distinction between:
 
-- Una llamada a regla de una llamada a acción.
-- Pertenencia booleana mediante `has`/`has not` de presentación de unidades mediante `in`.
-- Un nombre de unidad reconocido de un identificador ordinario.
-- La variante semántica de operadores sobrecargados.
-- Una colección unitaria `[e]` de un intervalo unitario `[e]`.
+- A rule call and an action call.
+- Boolean membership through `has`/`has not` and the display of units through `in`.
+- A recognised unit name and an ordinary identifier.
+- The semantic variant of an overloaded operator.
+- A singleton collection `[e]` and a unit interval `[e]`.
 
-Esas distinciones producen nodos distintos durante la elaboración y deben diagnosticarse estáticamente cuando sean ambiguas o inválidas.
+These distinctions produce distinct nodes during elaboration and must be diagnosed statically when they are ambiguous or invalid.
 
-D-059 añade otra distinción contextual: `1..5 m` se elabora como un intervalo numérico con unidad común, mientras `1 m..5 km` contiene dos extremos de magnitud ordinarios. Una unidad común solo puede seguir a una forma cuyos extremos finitos sean literales numéricos sin unidad.
+D-059 adds another contextual distinction: `1..5 m` is elaborated as a numeric interval with a common unit, whereas `1 m..5 km` contains two ordinary magnitude endpoints. A common unit may follow only a form whose finite endpoints are unitless numeric literals.
 
-Las cabeceras usan producciones distintas para participantes `for`, `on` y `given`. La EBNF permite que `for` use cualquier `declared-type`, declare un dominio `in`, escriba una especificación de colección y declare un `mut` exterior. `given` también admite dominio, cardinalidad, unicidad y orden, pero su producción excluye tanto `mut` exterior como capacidad interior. `on` conserva únicamente una referencia de tipo individual y su capacidad interior opcional. El análisis estático exige que ese tipo `on` resuelva a una `thing`; las restricciones de nombre obligatorio, pureza y receptor-lugar pertenecen también a D-036.
+Headers use distinct productions for `for`, `on` and `given` participants. The EBNF permits `for` to use any `declared-type`, declare an `in` domain, write a collection specification and declare an outer `mut`. `given` also permits domain, cardinality, uniqueness and ordering, but its production excludes both outer `mut` and inner capacity. `on` retains only an individual type reference and its optional inner capacity. Static analysis requires the type in `on` to resolve to a `thing`; the required-name, purity and receiver-place constraints also belong to D-036.
 
-### Terminadores
+### Terminators
 
-El lexer emite `NEWLINE` y `SEMICOLON`. El parser los convierte en `TERMINATOR`, salvo cuando el salto aparece:
+The lexer emits `NEWLINE` and `SEMICOLON`. The parser turns them into `TERMINATOR`, except where a line break occurs:
 
-- Dentro de `()`, `[]` o una construcción delimitada todavía abierta.
-- Después de una coma.
-- Después de un operador que exige operando.
-- Después de una palabra introductora que exige contenido.
-- Dentro de un literal o comentario multilínea.
+- Within `()`, `[]` or another delimited construction that remains open.
+- After a comma.
+- After an operator that requires an operand.
+- After an introductory word that requires content.
+- Within a literal or multiline comment.
 
-La enumeración exhaustiva de introductores y operadores procede de la propia gramática. La sangría no participa en esta decisión.
+The exhaustive list of introductory words and operators is derived from the grammar itself. Indentation plays no part in this decision.
 
-### Operadores
+### Operators
 
-La precedencia y los encadenamientos se fijan en [[especificacion/07-gramatica-concreta#Precedencia y agrupación]]. `to` y el `in` de presentación son operadores postfix que transforman todo el valor acumulado a su izquierda; después del sufijo pueden aparecer operadores nuevos sobre el resultado convertido. `changes` es un sufijo temporal situado por debajo de comparaciones y por encima de `and` y `or`, conforme a D-058.
+Precedence and chaining are set out in [[especificacion/07-gramatica-concreta#Precedencia y agrupación]]. `to` and the display form of `in` are postfix operators that transform the entire value accumulated to their left; new operators may then be applied to the converted result. `changes` is a temporal suffix below comparisons and above `and` and `or`, in accordance with D-058.
 
-Los encadenamientos admitidos se elaboran por pares adyacentes:
+Permitted chains are elaborated as adjacent pairs:
 
 ```mud
 a < b < c
 ```
 
-equivale a:
+is equivalent to:
 
 ```mud
 a < b and b < c
 ```
 
-La misma regla se aplica a cadenas homogéneas de igualdad y de `<=>`. No se encadenan `!=`, `is`, `iis`, `has`, `has not` ni `=>`.
+The same rule applies to homogeneous chains of equality and `<=>`. The operators `!=`, `is`, `iis`, `has`, `has not` and `=>` are not chainable.
 
-### Recuperación de errores
+### Error recovery
 
-La recuperación concreta no forma parte del lenguaje aceptado. Una implementación puede recuperar en `TERMINATOR`, `}` o en el comienzo inequívoco de una declaración, pero no puede aceptar por recuperación una forma rechazada por la gramática.
+Concrete error recovery is not part of the accepted language. An implementation may recover at `TERMINATOR`, `}` or the unambiguous beginning of a declaration, but it may not use recovery to accept a form rejected by the grammar.
 
-## Consecuencias
+## Consequences
 
-- Q-001 deja de ser una cuestión de diseño abierta.
-- La gramática puede evolucionar por cambios normativos explícitos y pruebas de conformidad.
-- Un parser puede usar descenso recursivo, Pratt, PEG u otra técnica si acepta y agrupa exactamente las mismas formas.
-- Las decisiones semánticas todavía abiertas no impiden reconocer programas ni construir su AST de superficie.
+- Q-001 is no longer an open design question.
+- The grammar may evolve through explicit normative changes and conformance tests.
+- A parser may use recursive descent, Pratt parsing, PEG or another technique, provided that it accepts and groups exactly the same forms.
+- Semantic decisions that remain open do not prevent programs from being recognised or their surface AST from being constructed.
 
-## Verificación
+## Verification
 
-1. Todas las producciones referenciadas están definidas.
-2. Todos los símbolos alcanzables parten de `mud-file`.
-3. Ejemplos válidos e inválidos por declaración.
-4. Terminación y continuación en cada clase de prefijo.
-5. Agrupación de cada nivel de precedencia.
-6. Diagnósticos de las ambigüedades contextuales.
-7. Separación sintáctica de roles `for` colectivos y vinculaciones `on` individuales.
-8. Elaboración de intervalos con unidad compartida frente a unidades locales.
-9. Rechazo sintáctico de capacidad interior `mut` en `given`.
-10. Dominio situado entre el tipo y la colección de un rol `for`.
+1. Every referenced production is defined.
+2. Every reachable symbol starts from `mud-file`.
+3. Valid and invalid examples for each declaration.
+4. Termination and continuation for every prefix class.
+5. Grouping at every precedence level.
+6. Diagnostics for contextual ambiguities.
+7. Syntactic separation between collective `for` roles and individual `on` bindings.
+8. Elaboration of intervals with a shared unit rather than local units.
+9. Syntactic rejection of inner `mut` capacity in `given`.
+10. A domain placed between the type and collection of a `for` role.
 
-## Modificación por D-088
+## Amendment by D-088
 
-`:` es separador obligatorio en toda construcción que lo usa para introducir un cuerpo subordinado; las llaves no lo sustituyen. `for each` pasa a escribir siempre `:` antes de su efecto o bloque. Selecciones y cuantificadores conservan `:` también con `{ ... }`. La gramática añade `by` opcional a selección/cuantificadores y generaliza `boolean-block` a `expression-block`.
+`:` is the required separator in every construction that uses it to introduce a subordinate body; braces do not replace it. `for each` must always write `:` before its effect or block. Selections and quantifiers retain `:` even with `{ ... }`. The grammar adds optional `by` to selections and quantifiers, and generalises `boolean-block` to `expression-block`.
