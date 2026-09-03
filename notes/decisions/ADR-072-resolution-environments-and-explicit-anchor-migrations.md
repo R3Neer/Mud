@@ -14,7 +14,7 @@ affects:
 
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]]
 - Extended by: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]]
-- Adjusted to the phase boundary of [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Adjusted to the phase boundary of [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 - Partially decides: [[../preguntas/Q-014-m-anchor-migration|Q-014]]
 
 ## Context

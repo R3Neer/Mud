@@ -13,7 +13,7 @@ affects:
 # ADR-094 — Terminal anchors for configured metadata
 
 - Clarifies: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]].
-- Extends: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Extends: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 
 ## Decision
 

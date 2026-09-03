@@ -12,7 +12,7 @@ affects:
 # ADR-073 — Explicit but redundant `as Thing`
 
 - Amends: [[ADR-018-as-declares-specialisation-in-is-the-query|D-018]] and [[ADR-068-universal-thing-and-intrinsic-name|D-068]]
-- Adjusted to the phase boundary of [[ADR-093-ast-superficial-hir-nominal-and-fase-semantica-posterior|D-093]].
+- Adjusted to the phase boundary of [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 
 ## Context
 
