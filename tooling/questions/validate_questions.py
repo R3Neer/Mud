@@ -315,7 +315,7 @@ def main(argv: list[str] | None = None) -> int:
         errors.append(f"Inactive questions present in the index: {', '.join(inactive_index)}")
 
     if LEGACY.exists():
-        errors.append("The superseded notes/08-preguntas-abiertas.md registry still exists.")
+        errors.append("The superseded notes/08-open-questions.md registry still exists.")
 
     with EXPORT_PROFILES.open("rb") as stream:
         profiles = tomllib.load(stream)["profiles"]
@@ -379,7 +379,7 @@ def main(argv: list[str] | None = None) -> int:
         if path.is_relative_to(EXPORT_DIR):
             continue
         text = read(path)
-        if "08-preguntas-abiertas" in text:
+        if "08-open-questions" in text:
             errors.append(f"Link to the superseded registry: {path.relative_to(ROOT)}")
         for target in QUESTION_LINK.findall(text):
             target_path = ROOT / f"{target}.md"

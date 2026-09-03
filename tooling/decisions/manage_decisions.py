@@ -27,7 +27,7 @@ DECISION_DIR = ROOT / "notes" / "decisions"
 QUESTION_DIR = ROOT / "notes" / "questions"
 INDEX = DECISION_DIR / "README.md"
 RESERVED = DECISION_DIR / "reserved-identifiers.txt"
-LEGACY = ROOT / "notes" / "10-registro-de-decisiones.md"
+LEGACY = ROOT / "notes" / "10-decision-register.md"
 
 ADR_FILE = re.compile(r"^ADR-(\d{3})-(.+)\.md$")
 DECISION_ID = re.compile(r"^D-\d{3}$")
@@ -391,7 +391,7 @@ def validate(ui=None) -> int:
             continue
         text = read(path)
         relative = path.relative_to(ROOT)
-        if "10-registro-de-decisiones" in text:
+        if "10-decision-register" in text:
             errors.append(f"Link to the superseded registry in {relative}")
         for target in DECISION_LINK.findall(text):
             if target not in adr_stems:
@@ -409,7 +409,7 @@ def validate(ui=None) -> int:
     if not INDEX.is_file() or read(INDEX) != expected_index:
         errors.append("notes/decisions/README.md does not match the generated index")
     if LEGACY.exists():
-        errors.append("The superseded notes/10-registro-de-decisiones.md registry still exists")
+        errors.append("The superseded notes/10-decision-register.md registry still exists")
 
     if errors:
         for error in errors:
