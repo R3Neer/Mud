@@ -1,6 +1,6 @@
 ---
 id: Q-040
-title: Amenazas y permisos
+title: Threats and permissions
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,19 +10,19 @@ affects: []
 superseded-by: []
 ---
 
-# Q-040 — Amenazas y permisos
+# Q-040 — Threats and permissions
 
-## Contenido
+## Content
 
-¿Qué operaciones puede ejecutar automáticamente la IA y cuáles requieren autorización por afectar Git, archivos, materializaciones o sistemas externos?
+Which operations may the AI execute automatically, and which require authorisation because they affect Git, files, materialisations or external systems?
 
-## Formato para cerrar una pregunta
+## Format for closing a question
 
-Al resolver una cuestión:
+When resolving an issue:
 
-1. Crear un ADR conforme a [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
-2. Incluir alternativas y consecuencias.
-3. Actualizar el documento dueño.
-4. Añadir ejemplos y contraejemplos.
-5. Añadir pruebas de conformidad si ya existe implementación.
-6. Marcar aquí la pregunta como cerrada con enlace a la decisión.
+1. Create an ADR in accordance with [[gobierno/POLITICA-DE-DECISIONES|the decision policy]].
+2. Include alternatives and consequences.
+3. Update the owning document.
+4. Add examples and counterexamples.
+5. Add conformance tests if an implementation already exists.
+6. Mark the question closed here with a link to the decision.
