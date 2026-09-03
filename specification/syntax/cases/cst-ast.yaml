@@ -563,7 +563,7 @@ cases:
   produces_ast: true
 - id: metadata-access-and-assignment
   category: validation-before-ast
-  source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora [mut] {\n    then person~name = \"Nora la Roja\"\n}\n"
+  source: "thing Nora {\n    ~name = \"Nora\"\n}\n\naction Rename for person: Nora [mut] {\n    then person~name = \"Nora the Red\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - metadata-runtime-write
@@ -1132,7 +1132,7 @@ cases:
   produces_ast: true
 - id: thing-alias-family-metadata-name
   category: metadata
-  source: 'thing Alexandria { ~name = "Alejandría" }
+  source: 'thing Alexandria { ~name = "Alexandria" }
 
     alias PersonId := Nat
 
@@ -1737,7 +1737,7 @@ cases:
   produces_ast: true
 - id: family-data-metadata
   category: family
-  source: "family Terrain {\n    movementCost: Nat = 1 {\n        ~summary = \"Coste base\"\n    }\n    costly: Bool := movementCost >= 3 {\n        ~summary = \"Costoso\"\n    }\n\n    Plain,\n    Mountain {\n        movementCost = 4\n    }\n}\n"
+  source: "family Terrain {\n    movementCost: Nat = 1 {\n        ~summary = \"Base cost\"\n    }\n    costly: Bool := movementCost >= 3 {\n        ~summary = \"Costly\"\n    }\n\n    Plain,\n    Mountain {\n        movementCost = 4\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: FamilyDecl(data=[StoredFamilyDataDecl(movementCost, metadata=[StoredMetadataAssignment(summary)]), CalculatedFamilyDataDecl(costly, shape=ExplicitDerivedShape(Bool), metadata=[StoredMetadataAssignment(summary)])])
   normalizations:
@@ -1745,7 +1745,7 @@ cases:
   produces_ast: true
 - id: family-data-override-metadata-rejected
   category: validation-before-ast
-  source: "family Terrain {\n    movementCost: Nat = 1\n\n    Plain,\n    Mountain {\n        movementCost = 4 {\n            ~summary = \"solo aquí\"\n        }\n    }\n}\n"
+  source: "family Terrain {\n    movementCost: Nat = 1\n\n    Plain,\n    Mountain {\n        movementCost = 4 {\n            ~summary = \"only here\"\n        }\n    }\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - family-data-assignment-cannot-have-metadata
@@ -1776,7 +1776,7 @@ cases:
   produces_ast: true
 - id: configured-metadata-anchor
   category: metadata
-  source: "thing Nora {\n    ~summary = \"Persona principal\"\n}\n"
+  source: "thing Nora {\n    ~summary = \"Main person\"\n}\n"
   cst_root: MudFileSyntax
   ast: StoredMetadataAssignment(summary, ...)
   normalizations:
@@ -1785,7 +1785,7 @@ cases:
   produces_ast: true
 - id: metadata-descriptor-terminal
   category: reflection-contract
-  source: "thing Nora {\n    ~summary = \"Persona principal\"\n}\n"
+  source: "thing Nora {\n    ~summary = \"Main person\"\n}\n"
   cst_root: MudFileSyntax
   ast: StoredMetadataAssignment(summary, ...)
   semantic_expectations:
