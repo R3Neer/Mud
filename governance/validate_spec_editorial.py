@@ -26,18 +26,18 @@ RESOLVED_FIELD = re.compile(r"^resolved:\s*(true|false)?\s*$", re.MULTILINE)
 QUESTION_FILE = re.compile(r"^(Q-\d{3})-.+\.md$")
 MIGRATION_PATTERNS = (
     re.compile(
-        r"^#{1,6}\s+(?:Actualización|Revisión|Corrección|Sustitución)\s+"
+        r"^#{1,6}\s+(?:Actualización|Revisión|Corrección|Sustitución|Update|Review|Correction|Replacement)\s+"
         r"(?:por|según|tras)\b.*$",
         re.IGNORECASE | re.MULTILINE,
     ),
     re.compile(
         r"\b(?:la|el)\s+(?:regla|formulación|redacción|versión)\s+"
         r"(?:anterior|previa)\s+(?:se\s+)?"
-        r"(?:sustituye|reemplaza|actualiza|corrige)\b",
+        r"(?:sustituye|reemplaza|actualiza|corrige|replaces|replaced|updates|corrects)\b",
         re.IGNORECASE,
     ),
     re.compile(
-        r"\b(?:se\s+)?(?:sustituye|reemplaza|actualiza|corrige)\s+"
+        r"\b(?:se\s+)?(?:sustituye|reemplaza|actualiza|corrige|is\s+replaced|replaces|updates|corrects)\s+"
         r"(?:la|el)\s+(?:regla|formulación|redacción|versión)\s+"
         r"(?:anterior|previa)\b",
         re.IGNORECASE,
