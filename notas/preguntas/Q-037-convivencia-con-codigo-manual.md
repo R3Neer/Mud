@@ -1,6 +1,6 @@
 ---
 id: Q-037
-title: Convivencia con código manual
+title: Coexistence with hand-written code
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-037 — Convivencia con código manual
+# Q-037 — Coexistence with hand-written code
 
-## Contenido
+## Content
 
-¿Qué partes de una materialización pueden editarse a mano y cómo se evita que una regeneración las destruya o introduzca semántica oculta?
+Which parts of a materialisation may be edited by hand, and how can regeneration be prevented from destroying them or introducing hidden semantics?
