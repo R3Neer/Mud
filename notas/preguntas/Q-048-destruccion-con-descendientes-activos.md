@@ -1,6 +1,6 @@
 ---
 id: Q-048
-title: Destrucción con descendientes activos
+title: Destruction with active descendants
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -11,20 +11,20 @@ affects: []
 superseded-by: []
 ---
 
-# Q-048 — Destrucción con descendientes activos
+# Q-048 — Destruction with active descendants
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-Decisión: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
+Decision: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]].
 
-Las aristas declaradas se conservan en el almacenamiento. La proyección efectiva atraviesa antecesores inactivos y conecta cada descendiente activo con sus antecesores activos más próximos. El descendiente conserva sus propiedades propias, pierde temporalmente lo heredado desde el nodo destruido y recupera la estructura original al recrearlo.
+Declared edges are retained in storage. The effective projection crosses inactive ancestors and connects each active descendant to its nearest active ancestors. The descendant retains its own properties, temporarily loses what it inherited from the destroyed node and recovers the original structure when that node is recreated.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-021`.
