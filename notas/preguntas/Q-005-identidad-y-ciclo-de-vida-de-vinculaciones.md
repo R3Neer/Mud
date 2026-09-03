@@ -1,6 +1,6 @@
 ---
 id: Q-005
-title: Identidad y ciclo de vida de vinculaciones
+title: Binding identity and lifecycle
 priority: P0
 opened: 2026-07-29
 resolved:
@@ -14,14 +14,14 @@ affects: []
 superseded-by: []
 ---
 
-# Q-005 — Identidad y ciclo de vida de vinculaciones
+# Q-005 — Binding identity and lifecycle
 
-## Contenido
+## Content
 
-¿Cómo se identifica canónicamente una vinculación `on`, cuándo se elimina su memoria y qué ocurre si una vinculación equivalente desaparece y reaparece?
+How is an `on` binding identified canonically, when is its memory removed, and what happens if an equivalent binding disappears and reappears?
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[notas/decisiones/ADR-099-materializaciones-frescas-tras-destroy-create|D-099]].
+Status: **partially decided** by [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]], [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] and [[notas/decisiones/ADR-099-materializaciones-frescas-tras-destroy-create|D-099]].
 
-La memoria temporal pertenece a la vinculación; estas se fijan al inicio de cada onda y sus altas o bajas surten efecto en la siguiente. Una vinculación presente en la primera instantánea materializada por `start with` usa un anterior virtual falso para ramas booleanas y la propia instantánea para `changes` y `old`; una nacida después usa su primera onda activa para establecer toda la línea base sin disparar.
+Temporal memory belongs to the binding; bindings are fixed at the start of each wave and additions or removals take effect in the next. A binding present in the first snapshot materialised by `start with` uses a false virtual predecessor for Boolean branches and the snapshot itself for `changes` and `old`; one created later uses its first active wave to establish the complete baseline without firing.
 
-D-099 fija un caso de eliminación: `destroy` explícito de una rule descarta la memoria temporal de esa activación y un `create` posterior establece una línea base nueva sin disparar por la mera reactivación. Sigue faltando definir la identidad canónica de una vinculación y la política de memoria cuando desaparece por cambios de participantes o cuando la rule queda meramente suspendida por una dependencia, sin `destroy` explícito.
+D-099 fixes one removal case: explicit `destroy` of a rule discards that activation's temporal memory, and a later `create` establishes a new baseline without firing merely because it was reactivated. The canonical identity of a binding, and the memory policy when it disappears through participant changes or when the rule is merely suspended by a dependency without explicit `destroy`, remain undefined.
