@@ -37,11 +37,11 @@ Everything `given` has a mandatory name, is read-only and does not allow mutabil
 
 D-025 sets the headers:
 
-- `on`: automatic links from a value by role for reactive rules, `always` y `message`; the direct form uses the implicit universe of `thing` active concrete forms and the related form `nombre[: Tipo] in fuente` retrieves values from a finite, countable source.
+- `on`: automatic links from a value by role for reactive rules, `always` and `message`; the direct form uses the implicit universe of active concrete `thing` forms, while the related form `name[: Type] in source` retrieves values from a finite, countable source.
 - `for`: individual or collective roles in any type declared, supplied to Boolean rules, actions and `look`.
 - `given`: auxiliary values for Boolean rules, actions, sub-actions and `look`.
 
-Reactive rules, `always` y `message` do not allow `given`. A `look` it does allow `given` in accordance with D-096.
+Reactive rules, `always` and `message` do not allow `given`. A `look` does allow `given` in accordance with D-096.
 
 ### Cardinality and names
 
@@ -49,7 +49,7 @@ A role `for` accepts any `declared-type`, including basic types, aliases, famili
 
 The type incorporated `Thing` accepts any `thing`. Therefore, a role `for` from type `Thing` accepts any identity specific, compatible and `on Thing` lists all the `thing` concrete and active; the root In the abstract, it does not create a connection of its own.
 
-Everything participant `for`, `on` y `given` You must declare an explicit source identifier. The cardinality `[1]` It does not create an anonymous exception. The members are accessed via that identifier and are not implicitly projected onto the scope of the body.
+Every `for`, `on` and `given` participant must declare an explicit source identifier. Cardinality `[1]` does not create an anonymous exception. Members are accessed through that identifier and are not implicitly projected into the body scope.
 
 ```mud
 rule IsDestroyed for army: Army {
@@ -184,7 +184,7 @@ game.InCheck(White)
 
 The standard enrolment of participants and `given` It may be positional. Reorder the declaration changes the canonical order of the API.
 
-The separation does not depend on the type. A value is `for` when it constitutes a semantic subject of the declaration y `given` when it merely sets the parameters for the operation:
+The separation does not depend on the type. A value is `for` when it constitutes a semantic subject of the declaration, and `given` when it merely sets the operation's parameters:
 
 ```mud
 action Record for mut observations: Num [*]

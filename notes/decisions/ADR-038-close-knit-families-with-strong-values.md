@@ -20,7 +20,7 @@ affects:
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Expanded by: [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]]
-- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
+- Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] and [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
 - As further amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
@@ -62,7 +62,7 @@ The declaration enter a type finite nominal and a anchor static `family::*`. Eac
 
 Every member has the metadata standard `~name: Name`, whose default value is derived from its name identifier. It can be configured via `~name = "..."` without changing identity, equality, anchor or order. A configuration identical to the default is flagged for deletion. In a template `Text`, interpolate a member generates the textual representation of its `~name` cash.
 
-The order of declaration It is standard practice to list any `family`, but it’s only one aspect of relationships `<`, `<=`, `>` y `>=` when it appears `ordered`.
+The declaration order is the default listing order for a `family`, but it is only one aspect of the `<`, `<=`, `>` and `>=` relationships available when `ordered` appears.
 
 The statements `family` do not specialise, nor can they inherit from other families. An open hierarchy of `thing` abstract subjects and specialisms are not a closed family and does not acquire enumerability automatic.
 
@@ -104,7 +104,7 @@ name [derived-form] := value-body
 
 `forma-derivada` is the `derived-value-shape` ordinary of D-037: you can set a type, declare a domain shaped like collection optional, or declare a form of collection. The entry for type is optional; if omitted, the compiler must infer a single type static. The calculated value does not allow for `mut` external, pre-stored or self-hosted storage. Domain, cardinality, `unique` and commands written in the derived form reuse the constraints of D-037, and no form can create capacity `[mut]` nor any other authority absent from the result of origin. D-091 allows both stored and calculated data to have an immediate body consisting solely of metadata declarations `~...`, belonging to the descriptor data standardisation.
 
-All members follow exactly this pattern. The optional sub-block of a member contains only assignments that replace the default values of stored data; it cannot declare new data, omit the name of the assigned data, or modify its type, domain o specification from collection nor assign a calculated value.
+All members follow exactly this pattern. A member's optional sub-block contains only assignments replacing stored-data defaults; it cannot declare new data, omit the assigned datum's name, modify its type, domain or collection specification, or assign a calculated value.
 
 For each piece of data in each member, the value It is obtained in the following order:
 

@@ -40,7 +40,7 @@ A purely arithmetic operation that would result in a negative integer under this
 
 This saturation does not apply to `to Nat`: D-030 requires rounding and then validation, without corrective saturation.
 
-D-060 distinguishes the effects from this pure operation `+=` y `-=`. These produce signed integer deltas; they are added together before saturation, and only then do they form the next one value `Nat`. Therefore, they cannot be expanded into an assignment that applies saturated subtraction separately.
+D-060 distinguishes the effects from the pure operations `+=` and `-=`. These produce signed integer deltas; the deltas are added before saturation, and only then do they form the next `Nat` value. They therefore cannot be expanded into an assignment that applies saturated subtraction separately.
 
 ### `Money`
 
@@ -76,14 +76,14 @@ Interval values are normalised with respect to the set they denote. D-029 govern
 ## Consequences
 
 - The inference Exacta does not permit approximate mixing.
-- Saturation of `Nat` y validation from domain They are different stages.
+- Saturation of `Nat` and domain validation are different stages.
 - `Money` stop relying on lexical suffixes.
 - The IR must preserve value, not written separators.
 
 ## Future verification
 
 1. Exact expansion chain.
-2. Implicit mix rejection with `Rum` y `Money`.
+2. Rejection of implicit mixing between `Rum` and `Money`.
 3. Saturation of pure arithmetic of `Nat`, consolidation preliminary analysis of additive deltas and non-saturation of `to Nat`.
 4. Scaling and rounding of `Money`.
 5. Valid and invalid separators.

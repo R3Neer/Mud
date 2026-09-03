@@ -26,7 +26,7 @@ affects:
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]
 - Related questions: Q-003, Q-017
-- Documents affected: future `14-campos-y-mutabilidad.md`, future `17-dominios-e-intervalos.md`, future `30-restricciones-finales.md`
+- Documents affected: future `14-fields-and-mutability.md`, future `17-domains-and-intervals.md`, future `30-final-constraints.md`
 
 ## Decision
 
@@ -63,7 +63,7 @@ where the derived form may declare type and, in accordance with D-075, domain, c
 
 Outer `mut` refers to the stored location and therefore precedes the name; it is neither a constructor nor a qualifier of the type. The form `name: mut type` is invalid.
 
-The value explicit reference to a stored field It can be a short phrase or a `ValueBlock`, but the entire body must be capable of being assessed statically in accordance with D-066 y D-101. You can use internal temporary storage provided you do not introduce any runtime dependencies or external effects. A computed field also allows for `ValueBlock` without acquiring its own persistent storage.
+An explicit stored-field value may be a short expression or a `ValueBlock`, but the entire body must be statically evaluable in accordance with D-066 and D-101. It may use internal temporary storage provided that it introduces no runtime dependencies or external effects. A computed field may likewise use a `ValueBlock` without acquiring persistent storage.
 
 The entry for type is optional. If omitted, the compiler infers the type static nature of the expression; if written, the expression must be compatible with it, and the annotation may provide the type necessary to generate contextual phrases. When an unannotated expression does not have a type cannot be inferred unambiguously, the declaration is a error It is static and you must type it out.
 
@@ -71,7 +71,7 @@ The inference It does not apply a default priority between compatible interpreta
 
 The computed field always has a statically resolved type, whether declared or inferred. It has no assignable storage and does not support outer `mut`. Explicit nominal or structural types are checked statically. Domain, cardinality, `unique` and order declared in the derived form are coercive: they transform the result with the same semantics and normalisation as equivalent local transformations. `[mut]` is not a coercion that creates authority; it is an obligation based on capability and is fulfilled only when the result is already guaranteed by source-preserving transformations over the `thing` members.
 
-For example, if `leftChars` has type `Char [1..5]` y `rightChars` has type `Char [0..2]`, `combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with the algebra of D-039. The result It does not acquire modifiers that the propagation rules cannot guarantee.
+For example, if `leftChars` has type `Char [1..5]` and `rightChars` has type `Char [0..2]`, `combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with D-039. The result does not acquire modifiers that the propagation rules cannot guarantee.
 
 When the context of declaration also supports a stored field and if the evaluated expression is statically closed, the compiler must suggest the equivalent immutable stored form. The suggestion is conservative; it does not alter the validity of the programme and does not authorise an automatic rewriting. It does not apply if the expression depends on state or whether storing it would affect its dependencies or its evaluation time.
 
