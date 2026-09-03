@@ -1,6 +1,6 @@
 ---
 id: D-059
-title: "Intervalos de magnitud y extremos invertidos"
+title: "Magnitude intervals and inverted endpoints"
 status: vigente
 date: 2026-07-29
 supersedes: []
@@ -10,36 +10,36 @@ questions:
 affects:
   - "[[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`"
 ---
-# ADR-059 — Intervalos de magnitud y extremos invertidos
+# ADR-059 — Magnitude intervals and inverted endpoints
 
-- Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
-- Modifica: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
-- Preguntas relacionadas: Q-018
-- Documentos afectados: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`
+- Amended by: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
+- Amends: [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Related to: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
+- Related questions: Q-018
+- Affected documents: [[especificacion/07-gramatica-concreta]], `especificacion/gramatica/mud.ebnf`
 
-## Contexto
+## Context
 
-Los extremos de un intervalo pueden ser literales o expresiones ya tipadas. Exigir una unidad en cada literal resulta repetitivo cuando todos comparten unidad:
+The endpoints of an interval may be literals or already typed expressions. Requiring a unit on every literal is repetitive when they all share one unit:
 
 ```mud
 [1 m..5 m]
 ```
 
-Sin embargo, eliminar las unidades locales impediría intervalos con presentaciones distintas y casos mixtos:
+However, removing local units would prevent intervals with different representations and mixed cases:
 
 ```mud
 [1 m..5 km]
 [minimumDistance..5 m]
 ```
 
-También faltaba fijar qué significa un intervalo lineal cuyos extremos dependen del estado y pasan a aparecer en orden inverso.
+It was also necessary to define the meaning of a linear interval whose state-dependent endpoints become inverted.
 
-## Decisión
+## Decision
 
-### Dos formas de aportar unidades
+### Two ways to provide units
 
-Un intervalo de magnitud admite unidades locales en sus extremos:
+A magnitude interval permits local units on its endpoints:
 
 ```mud
 [1 m..5 m]
@@ -49,9 +49,9 @@ Un intervalo de magnitud admite unidades locales en sus extremos:
 [minimumDistance..maximumDistance]
 ```
 
-Cada extremo finito es una expresión ordinaria. Tras resolver nombres y tipos, ambos extremos deben pertenecer a la misma magnitud y usar representaciones numéricas compatibles. Las cantidades se normalizan a la unidad canónica de esa magnitud antes de compararlas.
+Each finite endpoint is an ordinary expression. After name and type resolution, both endpoints must belong to the same magnitude and use compatible numeric representations. Quantities are normalised to that magnitude's canonical unit before they are compared.
 
-Cuando todos los extremos finitos escritos son literales numéricos sin unidad, una única expresión de unidad puede seguir al intervalo:
+When every written finite endpoint is a unitless numeric literal, one unit expression may follow the interval:
 
 ```mud
 [1..5] m
@@ -62,122 +62,122 @@ Cuando todos los extremos finitos escritos son literales numéricos sin unidad, 
 [] m
 ```
 
-La unidad exterior se distribuye sobre todos los extremos finitos. Las formas anteriores se elaboran respectivamente como intervalos de cantidades, y `[] unit` produce directamente el intervalo vacío de la magnitud identificada por `unit`.
+The outer unit is distributed over every finite endpoint. The preceding forms are elaborated respectively as quantity intervals, while `[] unit` directly produces the empty interval of the magnitude identified by `unit`.
 
-La forma cerrada sin delimitadores conserva el azúcar de D-029. En particular:
+The undelimited closed form retains the sugar from D-029. In particular:
 
 ```mud
 1..5 m
 ```
 
-se agrupa como:
+is grouped as:
 
 ```text
 (1..5) m
 ```
 
-y no como `1..(5 m)`.
+not as `1..(5 m)`.
 
-La unidad exterior no completa intervalos mixtos ni intervalos cuyos extremos sean expresiones:
-
-```mud
-[minimumDistance..5] m   # inválido
-[minimumDistance..5 m]   # válido
-[1 m..5 m] m             # inválido
-```
-
-Un literal numérico situado junto a una expresión de magnitud debe llevar su propia unidad. Dentro de una forma delimitada, una unidad escrita antes del cierre pertenece únicamente a ese extremo:
+An outer unit does not complete mixed intervals or intervals with expression endpoints:
 
 ```mud
-[1..5 m]                 # inválido: Num frente a Length
-[1 m..5 m]               # válido
+[minimumDistance..5] m   # invalid
+[minimumDistance..5 m]   # valid
+[1 m..5 m] m             # invalid
 ```
 
-### Forma preferida
+A numeric literal next to a magnitude expression must carry its own unit. Within a delimited form, a unit written before the closing delimiter belongs only to that endpoint:
 
-Cuando todos los extremos finitos son literales escritos en la misma unidad, la serialización canónica usa una sola unidad exterior:
+```mud
+[1..5 m]                 # invalid: Num versus Length
+[1 m..5 m]               # valid
+```
+
+### Preferred form
+
+When all finite endpoints are literals written in the same unit, canonical serialisation uses one outer unit:
 
 ```mud
 [1..5] m
 ```
 
-La forma repetida `[1 m..5 m]` continúa siendo válida. Las unidades locales son necesarias para conservar presentaciones distintas como `[1 m..5 km]` y para combinar literales con expresiones ya tipadas.
+The repeated form `[1 m..5 m]` remains valid. Local units are necessary to preserve different representations such as `[1 m..5 km]` and to combine literals with already typed expressions.
 
-La separación léxica ordinaria entre número y unidad se conserva: las formas canónicas son `1 m` y `5 km`.
+The ordinary lexical separation between number and unit remains: the canonical forms are `1 m` and `5 km`.
 
-### Normalización de intervalos lineales
+### Normalisation of linear intervals
 
-Sea $l$ el límite inferior efectivo y sea $u$ el límite superior efectivo de un intervalo lineal, después de evaluar expresiones y normalizar unidades.
+Let $l$ be the effective lower bound and $u$ the effective upper bound of a linear interval, after expressions have been evaluated and units normalised.
 
-- Si $l<u$, el intervalo conserva sus extremos abiertos o cerrados.
-- Si $l=u$ y ambos lados son cerrados, el resultado es el intervalo unitario.
-- Si $l=u$ y algún lado es abierto, el resultado es `empty`.
-- Si $l>u$, el resultado es `empty`.
+- If $l<u$, the interval retains its open or closed endpoints.
+- If $l=u$ and both sides are closed, the result is the singleton interval.
+- If $l=u$ and either side is open, the result is `empty`.
+- If $l>u$, the result is `empty`.
 
-Estas reglas fijan la normalización por orden de extremos. No excluyen otros intervalos vacíos por contenido; por ejemplo, un tipo discreto puede no contener ningún valor entre dos extremos abiertos consecutivos.
+These rules define normalisation by endpoint order. They do not exclude other empty intervals by content; for example, a discrete type may contain no value between two consecutive open endpoints.
 
-La inversión no denota recorrido descendente ni envoltura. El posible orden descendente de enumeración permanece separado en Q-018.
+Inversion does not denote descending traversal or wraparound. The possible descending enumeration order remains separate in Q-018.
 
-Construir `empty` de esta manera es una operación válida y total. Un campo calculado cuyos extremos se crucen pasa a denotar el intervalo vacío; el cruce no es por sí mismo un error de evaluación.
+Constructing `empty` this way is a valid, total operation. A calculated field whose endpoints cross denotes the empty interval; crossing is not itself an evaluation error.
 
-### Interacción con acciones y restricciones
+### Interaction with actions and constraints
 
-Una acción no produce `failed` por el mero hecho de que un intervalo evaluado durante su resolución se vuelva vacío.
+An action does not produce `failed` merely because an interval evaluated during its resolution becomes empty.
 
-El resultado depende del uso posterior:
+The result depends on later use:
 
-- un `given` que no pertenezca al intervalo vacío produce `rejected`;
-- un `if` que compruebe pertenencia en él puede resultar falso y producir `rejected`;
-- un `after` que exija que no esté vacío y resulte falso produce `rejected`;
-- si el intervalo forma un dominio y deja un valor almacenado fuera de dominio, el estado tentativo es inválido y produce `failed`;
-- si provoca el incumplimiento de una regla `always`, produce `failed`.
+- a `given` that does not belong to the empty interval produces `rejected`;
+- an `if` that tests membership in it may be false and produce `rejected`;
+- an `after` that requires it not to be empty and is false produces `rejected`;
+- if the interval forms a domain and leaves a stored value outside that domain, the tentative state is invalid and produces `failed`;
+- if it causes an `always` rule to be violated, it produces `failed`.
 
-Un error real al evaluar un extremo —por ejemplo, una referencia inválida— conserva la taxonomía ordinaria de fallos y no se convierte en `empty`.
+A genuine error while evaluating an endpoint — for example, an invalid reference — retains the ordinary failure taxonomy and does not become `empty`.
 
-### Ciclos
+### Cycles
 
-La normalización a `empty` se aplica a intervalos lineales. No introduce semántica cíclica implícita.
+Normalisation to `empty` applies to linear intervals. It introduces no implicit cyclic semantics.
 
-La forma `[a..b) cycle` de D-029 y D-082 continúa siendo exclusiva del dominio de una magnitud de punto. Debe definir un periodo estrictamente positivo y conserva sus límites numéricos desnudos en la representación canónica; las nuevas unidades locales o exteriores no se admiten en esa cabecera.
+The `[a..b) cycle` form from D-029 and D-082 remains exclusive to the domain of a point magnitude. It must define a strictly positive period and retains bare numeric bounds in its canonical representation; the new local and outer units are not permitted in that header.
 
-## Consecuencias
+## Consequences
 
-- El AST distingue intervalos con extremos ordinarios de intervalos numéricos con unidad compartida.
-- `[] unit` aporta tipo de magnitud al intervalo vacío sin depender de un contexto exterior.
-- La elaboración de `1..5 unit` debe resolver la unidad como común al intervalo completo.
-- La normalización de unidades precede a la comparación y a la normalización por orden de extremos.
-- Los intervalos lineales son valores totales: cruzar sus extremos produce `empty`, no una excepción.
-- La invalidez de un estado se decide por sus dominios e invariantes, no por la mera existencia de un intervalo vacío.
+- The AST distinguishes intervals with ordinary endpoints from numeric intervals with a shared unit.
+- `[] unit` supplies a magnitude type to the empty interval without relying on an outer context.
+- Elaborating `1..5 unit` must resolve the unit as common to the complete interval.
+- Unit normalisation precedes comparison and normalisation by endpoint order.
+- Linear intervals are total values: crossing their endpoints produces `empty`, not an exception.
+- State invalidity is determined by its domains and invariants, not by the mere presence of an empty interval.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Prohibir las unidades locales
+### Prohibit local units
 
-Impediría expresar intervalos con unidades diferentes o con un literal junto a un campo de magnitud.
+This would prevent intervals with different units or a literal alongside a magnitude field from being expressed.
 
-### Aplicar la unidad exterior a expresiones mixtas
+### Apply the outer unit to mixed expressions
 
-Formas como `[minimumDistance..5] m` ocultarían qué subexpresiones reciben contexto de unidad y complicarían la elaboración. El literal local debe ser una cantidad completa.
+Forms such as `[minimumDistance..5] m` would obscure which subexpressions receive a unit context and complicate elaboration. The local literal must be a complete quantity.
 
-### Fallar al invertir extremos
+### Fail on inverted endpoints
 
-Haría parcial la construcción de intervalos y convertiría una operación conjuntista normal en un error de resolución. El conjunto definido por límites lineales invertidos es vacío; las restricciones que no toleren ese vacío ya producen el resultado operativo correspondiente.
+This would make interval construction partial and turn an ordinary set operation into a resolution error. The set defined by inverted linear bounds is empty; constraints that cannot tolerate that emptiness already produce the corresponding operational result.
 
-### Interpretar la inversión como descenso o ciclo
+### Interpret inversion as descent or a cycle
 
-Mezclaría contenido del intervalo, orden de enumeración y topología cíclica. MUD conserva esas tres decisiones separadas.
+This would conflate interval content, enumeration order and cyclic topology. MUD keeps those three decisions separate.
 
-## Verificación
+## Verification
 
-1. Unidad compartida en formas cerradas, abiertas, unitarias, ilimitadas y vacías.
-2. Agrupación de `1..5 m` como unidad común al intervalo.
-3. Unidades locales iguales y distintas con normalización dimensional.
-4. Campo de magnitud y literal con unidad local obligatoria.
-5. Rechazo de `[field..5] m`, `[1..5 m]` y de una segunda unidad exterior.
-6. Rechazo de extremos de magnitudes distintas o representaciones incompatibles.
-7. Extremos iguales cerrados producen un unitario; con algún lado abierto producen `empty`.
-8. Extremos invertidos dinámicamente producen `empty` sin fallo por construcción.
-9. Dominio vacío que excluye un valor almacenado produce `failed`.
-10. `if`, `given` o `after` falsos a causa del vacío producen `rejected`.
-11. Ausencia de interpretación descendente o cíclica implícita.
-12. Conservación de las restricciones especiales de dominios de magnitud y de `[a..b) cycle`.
+1. A shared unit in closed, open, singleton, unbounded and empty forms.
+2. Grouping `1..5 m` with a unit common to the interval.
+3. Equal and distinct local units with dimensional normalisation.
+4. A magnitude field and a literal with a compulsory local unit.
+5. Rejection of `[field..5] m`, `[1..5 m]` and a second outer unit.
+6. Rejection of endpoints from different magnitudes or with incompatible representations.
+7. Equal closed endpoints produce a singleton; with either side open they produce `empty`.
+8. Dynamically inverted endpoints produce `empty` without construction failure.
+9. An empty domain that excludes a stored value produces `failed`.
+10. An `if`, `given` or `after` made false by emptiness produces `rejected`.
+11. No implicit descending or cyclic interpretation.
+12. Preservation of the special domain constraints for magnitudes and `[a..b) cycle`.
