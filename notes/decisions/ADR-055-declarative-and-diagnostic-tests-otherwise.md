@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-059"
 affects:
-  - "[[notes/questions/README|Preguntas activas]], futuros capítulos 06 a 09, 25, 28, 30, 43, 46 y 49"
+  - "[[notes/questions/README|Active questions]], future chapters 06 to 09, 25, 28, 30, 43, 46 and 49"
 ---
 # ADR-055 — Declarative and diagnostic tests `otherwise`
 
@@ -110,7 +110,7 @@ The initial activation The ordinary form of the modules does not feature in this
 
 `then` use the semantics ordinary in terms of consequences and form, the transition tested. You can combine effects, local variables and permitted calls, including operations `test` visible in the context of tests. The assignments and other modifications written at the beginning of `then` do not belong to the state Initial: these are effects of the spell. Cast a test whose `start with` if they have already taken part in the initial closing, they do not make that contribution again.
 
-The state observed by `old e` inside `after` is $W_t^0$, prior to the `then` Complete. There is no implicit boundary between preparation and exercise instructions based on their position in the text.
+The state observed by `old e` inside `after` is $W_t^0$, before the `then` block completes. There is no implicit boundary between preparation and execution instructions based on their position in the text.
 
 The resolution from the `then` includes its root, its causal waves, the rules `always` and the stabilisation. The world The resulting figure is never published and is discarded at the end of the test.
 
@@ -155,9 +155,9 @@ The state in isolation, the messages and any other output produced during the te
 
 ### Words and anchors
 
-`test` y `otherwise` These are reserved words.
+`test` and `otherwise` are reserved words.
 
-`abstract` remains contextual in the context of `thing` y `always` is contextual before `rule`. Modifiers and variants do not change the category of the anchor:
+`abstract` remains contextual before `thing`, and `always` is contextual before `rule`. Modifiers and variants do not change the category of the anchor:
 
 ```text
 thing::world.Vegetation
@@ -174,7 +174,7 @@ One `abstract thing` use `thing::*`. A ruler `always` use `rule::*`. A test use 
 - The test runner reuses the transactional engine and causal without publishing the results.
 - Selection by anchors `test::*` allows you to run a test, a path from MUD or a filtered set.
 - No preparatory phase can be inferred from the initial instructions in `then`.
-- The explicit verification of the result `accepted`, `rejected` o `failed` of a action The appeal remains pending in Q-059.
+- Explicit verification of an action's `accepted`, `rejected` or `failed` result remains pending in Q-059.
 
 ## Options ruled out
 
@@ -196,16 +196,16 @@ It is ruled out because it combines verification and diagnostic. `otherwise` It 
 
 ## Future verification
 
-1. Recognition of `test` y `otherwise` as reserved words.
+1. Recognition of `test` and `otherwise` as reserved words.
 2. Anchor `test::*` regardless of `action::*`.
-3. Rejection of `for`, `given`, `if` y `when` in a test.
+3. Rejection of `for`, `given`, `if` and `when` in a test.
 4. Union from `start with` of the static transitive closure of reachable tests, without applying the activation standard configuration of the modules.
 5. Rejection of instructions and assignments within a contribution `start with` from test.
-6. Materialisation y stabilisation before the `then` root, call subsequent without reactivation and rejection of executable cycles between tests.
+6. Materialisation and stabilisation before the root `then`, subsequent calls without reactivation, and rejection of executable cycles between tests.
 7. Reading from `old` on the state prior to the `then` complete.
 8. A single assertion and multiple assertions with optional diagnostics.
 9. A cursory assessment of the diagnostic `otherwise`.
-10. Distinction between `passed`, `failed` y `error`.
+10. Distinction between `passed`, `failed` and `error`.
 11. Unconditional rejection of the world and their outings.
 12. Anclas `thing::*` for abstracts and `rule::*` for rules `always`.
 

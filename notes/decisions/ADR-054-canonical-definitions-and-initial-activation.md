@@ -9,7 +9,7 @@ questions:
   - "Q-044"
   - "Q-045"
 affects:
-  - "[[notes/questions/README|Preguntas activas]], [[specification/04-mathematical-model]], futuros capítulos 06, 07, 08, 09, 11, 21 a 25 y 32"
+  - "[[notes/questions/README|Active questions]], [[specification/04-mathematical-model]], future chapters 06, 07, 08, 09, 11, 21 to 25 and 32"
 ---
 # ADR-054 — Canonical definitions and initial activation
 
@@ -41,7 +41,7 @@ The model The approach adopted is that of a game featuring:
 
 ### Canonical definition unique
 
-Every `thing` declarable, and each rule has exactly one complete top-level definition throughout the programme. The root incorporated `Thing` it is the only one `thing` source not specified: his descriptor The canonical belongs to language; it is abstract and always effective. It cannot be redefined, nor can it be regarded as the object of `create` o `destroy`.
+Every declarable `thing` and each rule has exactly one complete top-level definition throughout the programme. The built-in `Thing` is the only `thing` source not declared by the programme: its canonical descriptor belongs to the language, is abstract and is always effective. It cannot be redefined or treated as the target of `create` or `destroy`.
 
 ```mud
 abstract thing Vegetation {}
@@ -63,7 +63,7 @@ The standard definition:
 - In a `thing`, their direct predecessors.
 - Its declarative body.
 
-The direct predecessors of a `thing` do not change during execution. `destroy` y `create` adjust their behaviour and, for a `thing` specifically, they complete or build their materialisation runtime; they do not change their identity nor his descriptor canonical.
+The direct predecessors of a `thing` do not change during execution. `destroy` and `create` adjust its behaviour and, for a specific `thing`, end or build its runtime materialisation; they do not change its identity or canonical descriptor.
 
 Two complete definitions with the same anchor are a error static, even if their bodies are the same. The order of files and statements does not resolve the duplication.
 
@@ -104,7 +104,7 @@ Actions, aliases and magnitudes are not executable statements. Each test declare
 
 ### Initialisation and rematerialisation
 
-The defaults and initialisers for a `thing` These specific rules apply when building a materialisation since its canonical definition, both in the materialisation initial via `start with` o `create` as in a subsequent rematerialisation following `destroy`.
+The defaults and initialisers for a `thing` apply when building a materialisation from its canonical definition, both during initial materialisation via `start with` or `create` and during a subsequent rematerialisation after `destroy`.
 
 After a `destroy d` confirmed on a `thing` specifically, the own stored data and the runtime structural modifications to the materialisation Once destroyed, they are discarded. One `create d` back:
 
@@ -125,9 +125,9 @@ The suspension of a declaration because one hard dependency 'is inactive' does n
 
 `abstract` It is also context-dependent: the parser recognises it as a modifier only when it precedes `thing`. Outside that position, it can be used as an ordinary identifier.
 
-`always` is contextual before `rule`. D-055 enter `test` y `otherwise` as reserved words.
+`always` is contextual before `rule`. D-055 introduces `test` and `otherwise` as reserved words.
 
-Standard metadata such as `~name` y `~prefixes` they use Postfix General Grammar `~`; `name` y `prefixes` they are not special contextual tags because of that reason.
+Standard metadata such as `~name` and `~prefixes` use the postfix `~` grammar; `name` and `prefixes` are not special contextual tags for that reason.
 
 There is no token neither a single lexical category nor one termed ‘reserved expression’ for `start with`; it is a production grammatical, consisting of a contextual word and one reserved word.
 
