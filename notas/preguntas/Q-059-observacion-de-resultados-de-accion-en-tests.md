@@ -1,6 +1,6 @@
 ---
 id: Q-059
-title: Observación de resultados de acción en tests
+title: Observing action results in tests
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -12,16 +12,16 @@ affects: []
 superseded-by: []
 ---
 
-# Q-059 — Observación de resultados de acción en tests
+# Q-059 — Observing action results in tests
 
-## Contenido
+## Content
 
-Estado: **abierta** a partir de [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
+Status: **open** from [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] and [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]].
 
-¿Cómo comprueba un test que una acción solicitada produjo `accepted`, `rejected` o `failed` sin confundir esos resultados con `passed`, `failed` y `error` del propio test?
+How does a test check that a requested action produced `accepted`, `rejected` or `failed` without confusing those results with the test's own `passed`, `failed` and `error` states?
 
-Debe decidirse:
+The following must be decided:
 
-- Si una solicitud de acción dentro de `then` puede vincular su resultado a un nombre local.
-- Si una acción `rejected` constituye por defecto un error del escenario o un resultado observable.
-- Cómo se enlaza el `reason` externo ya definido para `rejected` y `failed`, junto con su traza, sin convertir diagnósticos en valores ordinarios del mundo.
+- Whether an action request inside `then` may bind its result to a local name.
+- Whether a `rejected` action is by default a scenario error or an observable result.
+- How the external `reason` already defined for `rejected` and `failed`, together with its trace, is linked without turning diagnostics into ordinary world values.
