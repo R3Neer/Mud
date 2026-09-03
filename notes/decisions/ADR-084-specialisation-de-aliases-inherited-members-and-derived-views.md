@@ -1,6 +1,6 @@
 ---
 id: D-084
-title: "Especialización de aliases, miembros heredados y vistas derivadas"
+title: "Alias specialisation, inherited members and derived views"
 status: current
 date: 2026-08-04
 supersedes: []
@@ -8,69 +8,69 @@ superseded-by: []
 questions:
   - Q-056
 affects:
-  - "aliases, gramática, sintaxis, resolución nominal, colecciones derivadas y cuerpos vacíos de `thing`"
+  - "aliases, grammar, syntax, nominal resolution, derived collections and empty `thing` bodies"
 ---
-# ADR-084 — Especialización de aliases, miembros heredados y vistas derivadas
+# ADR-084 — Alias specialisation, inherited members and derived views
 
-- Modificada por: [[ADR-103-inner-capability-in-derived-values|D-103]].
+- Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
-- Modificada por: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
-- Modificada por: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
-- Modifica: [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|D-015]], [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[notes/decisions/ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[notes/decisions/ADR-032-contextual-construction-and-nominal-casting-of-aliases|D-032]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]], [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]], [[notes/decisions/ADR-074-nominal-unions-and-type-narrowing|D-074]], [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] y [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|D-081]].
-- Reduce: [[notes/questions/Q-056-f-normalised-form-and-alias-recursion|Q-056]].
-- Documentos afectados: gramática, AST superficial y resuelto, nombres y anclas, modelo matemático y semántica de colecciones derivadas.
-- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Modified by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
+- Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Modifies: [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|D-015]], [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[notes/decisions/ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[notes/decisions/ADR-032-contextual-construction-and-nominal-casting-of-aliases|D-032]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]], [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]], [[notes/decisions/ADR-074-nominal-unions-and-type-narrowing|D-074]], [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|D-081]].
+- Reduces: [[notes/questions/Q-056-f-normalised-form-and-alias-recursion|Q-056]].
+- Affected documents: grammar, superficial and resolved AST, names and anchors, mathematical model and derived-collection semantics.
+- Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
-## Contexto
+## Context
 
-Los aliases ya eran tipos nominales e inmutables, pero no estaba fijado cómo especializarlos, combinar representaciones heredadas ni heredar una forma estructural. Los campos derivados tampoco podían declarar de manera uniforme un contrato colectivo con capacidad interior propia. Además, la sintaxis exigía un cuerpo de `thing` incluso cuando estaba vacío.
+Aliases were already nominal and immutable types, but it was not fixed how to specialise them, combine inherited representations or inherit a structural form. Derived fields also could not uniformly declare a collection contract with its own inner capability. In addition, the syntax required a `thing` body even when it was empty.
 
-## Decisión
+## Decision
 
-### Especialización nominal
+### Nominal specialisation
 
-Todo alias puede declarar una lista no ordenada de antecesores mediante `as`. La relación directa debe ser acíclica y su clausura `is` es reflexiva, transitiva y antisimétrica. El orden escrito no introduce prioridad ni MRO.
+Every alias may declare an unordered list of ancestors using `as`. The direct relation must be acyclic and its `is` closure is reflexive, transitive and antisymmetric. Written order introduces neither priority nor MRO.
 
-Un alias nominal raíz introduce su representación con `:= Tipo`. Un descendiente puede omitirla cuando la representación heredada ya es única y compatible, o declarar `:= Tipo` para refinarla o resolver explícitamente varias contribuciones. La representación local debe refinar simultáneamente todas las representaciones heredadas relevantes. Una unión `A | B` no satisface por sí misma esta obligación.
+A root nominal alias introduces its representation with `:= Type`. A descendant may omit it when the inherited representation is already unique and compatible, or declare `:= Type` to refine it or explicitly resolve several contributions. The local representation must refine all relevant inherited representations simultaneously. A union `A | B` does not by itself satisfy this obligation.
 
-Una declaración con antecesores puede omitir la definición local. `alias A` sin antecesores ni definición es inválido.
+A declaration with ancestors may omit the local definition. `alias A` without ancestors or a definition is invalid.
 
-### Forma estructural heredada
+### Inherited structural form
 
-Los aliases estructurales heredan componentes almacenados y campos derivados. El mismo miembro original alcanzado por varias rutas se deduplica por su ancla. Contribuciones independientes equivalentes del mismo nombre pueden fusionarse; si sus contratos difieren, el descendiente debe resolverlos explícitamente con un contrato que refine todos los heredados. No existe prioridad por orden de `as`.
+Structural aliases inherit stored components and derived fields. The same original member reached through several paths is deduplicated by its anchor. Equivalent independent contributions with the same name may be merged; if their contracts differ, the descendant must resolve them explicitly with a contract that refines all inherited ones. There is no priority based on `as` order.
 
-Un descendiente puede sobrescribir el predeterminado de un componente almacenado heredado y refinar su contrato, pues los valores alias son exteriormente inmutables, siempre que el nuevo contrato refine todas las contribuciones heredadas. Los campos derivados de un único origen conservan su expresión definitoria y pueden refinar su contrato. Si dos campos derivados independientes homónimos aportan expresiones distintas, el descendiente debe proporcionar una nueva definición derivada explícita cuyo contrato satisfaga todas las contribuciones.
+A descendant may override the default of an inherited stored component and refine its contract, because alias values are externally immutable, provided that the new contract refines all inherited contributions. Derived fields from a single source retain their defining expression and may refine their contract. If two independent derived fields with the same name provide different expressions, the descendant must provide a new explicit derived definition whose contract satisfies all contributions.
 
-Los miembros pertenecen al tipo nominal del alias. Una estructura desnuda no los obtiene por coincidencia estructural; debe adquirir el alias por contexto o mediante `to`.
+Members belong to the alias's nominal type. A bare structure does not obtain them through structural matching; it must acquire the alias through context or `to`.
 
-### Campos y colecciones derivadas
+### Derived fields and collections
 
-Un alias estructural puede declarar campos derivados con `:=`. Son puros, no almacenados y no asignables. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, unicidad y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos sobre el resultado y siguen la normalización de transformaciones locales. `[mut]` actúa como obligación de capacidad sobre las `thing` miembros inmediatos: puede conservar autoridad del origen cuando se preserva identidad semántica, pero no fabricarla.
+A structural alias may declare derived fields with `:=`. They are pure, unstored and not assignable. The explicit nominal or structural type is checked statically. Domain, cardinality, uniqueness and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and follow local-transformation normalisation. `[mut]` acts as a capability requirement on immediate `thing` members: it may retain source authority when semantic identity is preserved, but cannot manufacture it.
 
-La selección se mantiene fija durante una instantánea de evaluación. Tras consolidar los efectos, la vista se recalcula sobre el nuevo estado y se validan sus contratos; un incumplimiento produce `failed` y rollback. Una colección almacenada no se autopoda ni recalcula su pertenencia.
+Selection remains fixed during an evaluation snapshot. After effects are consolidated, the view is recomputed over the new state and its contracts are validated; a violation produces `failed` and rollback. A stored collection does not self-prune or recompute its membership.
 
-### Cuerpos vacíos de `thing`
+### Empty `thing` bodies
 
-El cuerpo de una `thing` puede omitirse cuando no contiene miembros. `thing A`, `thing A {}` y `thing A;` producen el mismo AST e IR, aunque la CST conserva la forma escrita.
+A `thing` body may be omitted when it contains no members. `thing A`, `thing A {}` and `thing A;` produce the same AST and IR, although the CST retains the written form.
 
-## Alternativas
+## Alternatives
 
-Se rechaza interpretar el orden de antecesores como prioridad, resolver la especialización múltiple mediante unión, fusionar miembros independientes incompatibles solo por nombre o fabricar capacidad interior mediante una coerción derivada.
+It is rejected to interpret ancestor order as priority, resolve multiple specialisation through a union, merge incompatible independent members by name alone, or manufacture inner capability through a derived coercion.
 
-## Consecuencias
+## Consequences
 
-- El grafo nominal incorpora aristas de especialización entre aliases.
-- La elaboración calcula representaciones y miembros efectivos antes de habilitar el acceso nominal.
-- La CST, los AST y los catálogos sintácticos representan antecesores, definiciones opcionales, campos derivados y sobrescrituras.
-- [[notes/questions/Q-056-f-normalised-form-and-alias-recursion|Q-056]] queda limitada a normalización y recursión de aliases.
+- The nominal graph includes specialisation edges between aliases.
+- Elaboration computes effective representations and members before enabling nominal access.
+- The CST, ASTs and syntax catalogues represent ancestors, optional definitions, derived fields and overrides.
+- [[notes/questions/Q-056-f-normalised-form-and-alias-recursion|Q-056]] is limited to alias normalisation and recursion.
 
-## Verificación
+## Verification
 
-1. Aceptación de especialización simple y múltiple, y rechazo de ciclos.
-2. Herencia de representación y resolución explícita mediante `:=` cuando varias contribuciones difieren, exigiendo refinamiento común.
-3. Deduplicación de diamantes por origen, fusión de contribuciones independientes equivalentes y resolución explícita de contratos distintos.
-4. Herencia de componentes y derivados, con sobrescritura de predeterminados, refinamientos sustituibles y nueva definición explícita ante colisión de expresiones derivadas independientes.
-5. Acceso a miembros solo después de adquirir el tipo nominal.
-6. Capacidad interior exigida y preservada por vistas derivadas sin fabricación de autoridad, y pertenencia estable durante cada instantánea.
-7. Recálculo posterior, validación del contrato y rollback ante incumplimiento.
-8. Equivalencia semántica de las tres formas vacías de `thing`.
+1. Acceptance of simple and multiple specialisation, and rejection of cycles.
+2. Inheritance of representation and explicit resolution through `:=` when contributions differ, requiring common refinement.
+3. Diamond deduplication by origin, merging of equivalent independent contributions and explicit resolution of distinct contracts.
+4. Inheritance of components and derived members, with default overrides, substitutable refinements and a new explicit definition when independent derived expressions collide.
+5. Member access only after acquiring the nominal type.
+6. Inner capability required and preserved by derived views without manufacturing authority, with stable membership during each snapshot.
+7. Subsequent recomputation, contract validation and rollback on violation.
+8. Semantic equivalence of the three empty `thing` forms.
