@@ -8,7 +8,7 @@ superseded-by: []
 questions: []
 affects:
   - "specification/01-scope-and-conformance.md"
-  - "arquitectura de compilador, runtime y materializadores"
+  - "compiler architecture, runtime and materialisers"
 ---
 
 # ADR-001 — `.mud` as a source semantics really
@@ -20,7 +20,7 @@ configuration and documentation. If several of these representations can be adde
 taken separately, there is no source from which to reconstruct or
 to audit the entire process.
 
-## Decisión
+## Decision
 
 The files `.mud` are the only source semantics on the behaviour of domain
 represented by MUD. AST, IR, graphs, generated code, indexes, documentation

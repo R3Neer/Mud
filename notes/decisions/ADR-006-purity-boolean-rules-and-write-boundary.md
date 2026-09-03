@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "capítulos de reglas, acciones y API pública"
+  - "rules, actions and public API chapters"
 ---
 
 # ADR-006 — Purity Boolean rules and write boundary
@@ -18,7 +18,7 @@ One query amending the world returns depending on the evaluation order
 the response received. Allow external writes outside of operations
 The lack of identifiable markers also makes it impossible to validate and reverse a mutation such as unit.
 
-## Decisión
+## Decision
 
 Boolean rules are pure. External modifications to the world is
 They make requests via actions, which form part of their write API.

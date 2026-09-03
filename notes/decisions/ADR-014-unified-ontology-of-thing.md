@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-041"
 affects:
-  - "[[specification/04-mathematical-model]], futuro `11-things.md`"
+  - "[[specification/04-mathematical-model]], future `11-things.md`"
 ---
 # ADR-014 — Unified ontology of `thing`
 
@@ -21,7 +21,7 @@ affects:
 
 Talking about ‘runtime instances’ may suggest a distinction between classes and objects. That distinction does not correspond to the model MUD’s conceptual model: a formalisation based on a function that assigns a class to each object would introduce two domains that the language does not possess.
 
-## Decisión
+## Decision
 
 The MUD has a single domain conceptual aspect of `thing`.
 

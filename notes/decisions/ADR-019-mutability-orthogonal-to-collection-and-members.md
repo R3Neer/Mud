@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "futuro `14-campos-y-mutabilidad.md`, futuro `15-colecciones.md`"
+  - "future `14-fields-and-mutability.md`, future `15-collections.md`"
 ---
 # ADR-019 — Mutability orthogonal to collection and members
 
@@ -41,7 +41,7 @@ capital: City [1 mut]
 
 That equivalence conflated two distinct permissions precisely in this case `[1]`.
 
-## Decisión
+## Decision
 
 The two axes are orthogonal for all cardinality, including `[1]`.
 
@@ -49,7 +49,7 @@ The two axes are orthogonal for all cardinality, including `[1]`.
 - `mut` inside the specification from cardinality bestows inner strength upon its members.
 - Neither position implies the other.
 - There is no exception for singular fields.
-- The `mut` 'exterior' refers to a storage area, not the type from member: it is written `mut nombre: Tipo`; `nombre: mut Tipo` is invalid.
+- Outer `mut` refers to a storage location, not to the member type: it is written `mut name: Type`; `name: mut Type` is invalid.
 
 | Declaration | Change collection | Edit members |
 | --- | --- | --- |
@@ -124,13 +124,13 @@ The suite must check the four combinations in the table for both `[1]` as well a
 2. Rejection of the amendment to the member with no interior capacity.
 3. Lack of an implicit inner capacity in `mut field: T`.
 4. Absence of mutability external implicit in `field: T [mut]`.
-5. Rejection of `mut` exterior on a derived field.
-6. Inference internal capacity retention in a collection derived.
+5. Rejection of outer `mut` on a derived field.
+6. Inference of inner capability retention in a derived collection.
 7. Roles `for` from cardinality `[1]` and collective, with the four capacity combinations.
 8. Rejection of a literal o result calculated as receiver of a role that is outwardly changeable.
-9. Rejection of mutability exterior in Boolean rules, `look` and roles `on`.
-10. Mutability outside of a collection of unchanging values without any inner capacity.
-11. A suggestion for removing a demonstrably useless internal capability relating to immutable values.
+9. Rejection of outer mutability in Boolean rules, `look` and `on` roles.
+10. Outer mutability of a collection of immutable values without any inner capability.
+11. A suggestion for removing a demonstrably useless inner capability from immutable values.
 
 ## Amended by D-084
 

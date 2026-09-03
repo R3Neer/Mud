@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-047"
 affects:
-  - "futuro `10-sistema-de-tipos.md`, futuro `14-campos.md`"
+  - "future `10-type-system.md`, future `14-fields.md`"
 ---
 # ADR-017 — Everything type well-built has default value
 
@@ -23,7 +23,7 @@ affects:
 
 MUD allows you to declare properties without always having to write an explicit initialiser. The semantics You need to determine your value initial without introducing an implicit absence or leaving any mandatory positions unfilled value.
 
-## Decisión
+## Decision
 
 Everything type well-built has a default value belonging to his domain semantic.
 

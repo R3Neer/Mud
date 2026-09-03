@@ -1,6 +1,6 @@
 ---
 id: D-010
-title: "Finiteness y termination required by `eventually`"
+title: "Finiteness and termination required by `eventually`"
 status: current
 date: 2026-07-27
 supersedes: []
@@ -13,7 +13,7 @@ questions:
   - "Q-030"
   - "Q-031"
 affects:
-  - "capítulos de alcanzabilidad, finitud y terminación"
+  - "reachability, finiteness and termination chapters"
 ---
 
 # ADR-010 — Finiteness y termination required by `eventually`
@@ -24,7 +24,7 @@ A search for reachability without countable space and transitions
 Certain factors may not be addressed or may depend on a technical constraint that has arisen
 mistakenly taken to be the meaning of language.
 
-## Decisión
+## Decision
 
 `eventually` It is only permissible when the analysis can justify a space
 finite and countable search space and the termination of each transition explored.

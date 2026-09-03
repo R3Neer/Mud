@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "futuro `07-concrete-grammar.md`, futuro `08-abstract-syntax.md`, futuro `11-things.md`"
+  - "future `07-concrete-grammar.md`, future `08-abstract-syntax.md`, future `11-things.md`"
 ---
 # ADR-018 — `as` declares specialisation in `is` the query
 
@@ -23,7 +23,7 @@ The declaration area of specialisation and its query Different formats are neede
 
 Although the parser could distinguish between a header and an expression, the two operations have different meanings: one adds direct edges and the other query one relation derived.
 
-## Decisión
+## Decision
 
 All declaration specialisation uses `as`:
 

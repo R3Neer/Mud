@@ -8,7 +8,7 @@ superseded-by: []
 questions: []
 affects:
   - "specification/01-scope-and-conformance.md"
-  - "frontera entre lenguaje y materializadores"
+  - "boundary between language and materialisers"
 ---
 
 # ADR-002 — MUD describes domain, not application architecture
@@ -19,12 +19,12 @@ MUD needs to represent rules, state and causality without going into the details
 a specific interface, database or framework in semantics from the
 language.
 
-## Decisión
+## Decision
 
 The MUD describes the domain and its observable behaviour. It does not prescribe the
 the overall architecture of the application that hosts it, its user interface, its
 network protocol, its database or the framework used by a
-materialización.
+materialisation.
 
 The specification it can put in place the structures needed to carry out
 MUD in accordance with the rules, such as identity, atomicity, order, logical time or chance

@@ -9,7 +9,7 @@ questions:
   - "Q-005"
   - "Q-020"
 affects:
-  - "capítulos de resolución causal y ondas"
+  - "causal resolution and wave chapters"
 ---
 
 # ADR-007 — Causal resolution by waves over snapshots
@@ -20,7 +20,7 @@ Assess reactions whilst mutating the same state enter results
 depend on the order in which they are traversed and allow a rule to observe a
 resolution partial.
 
-## Decisión
+## Decision
 
 Causal consequences are resolved by waves. Each wave assesses its
 conditions relating to a snapshot is defined and its effects are consolidated before

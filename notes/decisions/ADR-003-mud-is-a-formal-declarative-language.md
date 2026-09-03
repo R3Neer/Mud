@@ -8,7 +8,7 @@ superseded-by: []
 questions: []
 affects:
   - "specification/01-scope-and-conformance.md"
-  - "interacción del operador semántico"
+  - "semantic operator interaction"
 ---
 
 # ADR-003 — MUD is a formal declarative language
@@ -19,7 +19,7 @@ The main interaction may begin in natural language, but using that
 Treating conversation as a persistent representation would introduce ambiguity and
 hidden meaning.
 
-## Decisión
+## Decision
 
 MUD is a formal declarative language, not a controlled natural language. The
 a person or a tool can express an intention in natural language,

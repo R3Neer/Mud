@@ -8,7 +8,7 @@ superseded-by: []
 questions: []
 affects:
   - "specification/README.md"
-  - "planificación de implementación"
+  - "implementation planning"
 ---
 
 # ADR-013 — Complete formalisation before continuing with implementation
@@ -19,7 +19,7 @@ Early implementation would, by necessity, resolve any ambiguities that still
 open and could turn accidental code choices into semantics from
 MUD.
 
-## Decisión
+## Decision
 
 The specification The MUD 1.0 formalisation must be completed before proceeding with the
 implementation of the language. Prototypes or editorial tools do not

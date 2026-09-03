@@ -9,7 +9,7 @@ questions:
   - "Q-007"
   - "Q-035"
 affects:
-  - "capítulo de admisibilidad y consultas especulativas"
+  - "admissibility and speculative query chapter"
 ---
 
 # ADR-009 — `allowed` as a baseless rumour
@@ -20,7 +20,7 @@ Check only the preconditions for a action may declare a
 request whose resolution 'complete' would end in conflict, invariant
 unfulfilled or failure.
 
-## Decisión
+## Decision
 
 `allowed` executes the protocol of the action on a copy
 disposable. Not confirmed state nor does it publish outputs. Errors are not converted

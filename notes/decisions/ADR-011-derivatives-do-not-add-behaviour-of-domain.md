@@ -10,7 +10,7 @@ questions:
   - "Q-037"
   - "Q-038"
 affects:
-  - "arquitectura de AST, IR, grafo, materializadores y editor"
+  - "AST, IR, graph, materialisers and editor architecture"
 ---
 
 # ADR-011 — Derivatives do not add behaviour of domain
@@ -21,7 +21,7 @@ A generator, an IR or a plugin may accidentally become a
 second source of rules if they fill in gaps in `.mud` or enter
 validations and their own effects.
 
-## Decisión
+## Decision
 
 Derivatives interpret, preserve, consult or give concrete form to the semantics from
 the source, but they do not include behaviour of domain. Any necessary distinction

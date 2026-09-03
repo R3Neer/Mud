@@ -1,6 +1,6 @@
 ---
 id: D-008
-title: "Results `accepted`, `rejected` y `failed`"
+title: "Results `accepted`, `rejected` and `failed`"
 status: current
 date: 2026-07-27
 supersedes: []
@@ -8,10 +8,10 @@ superseded-by: []
 questions:
   - "Q-007"
 affects:
-  - "capítulos de acciones, resultados y diagnósticos"
+  - "actions, results and diagnostics chapters"
 ---
 
-# ADR-008 — Results `accepted`, `rejected` y `failed`
+# ADR-008 — Results `accepted`, `rejected` and `failed`
 
 ## Context
 
@@ -19,7 +19,7 @@ One request unacceptable and a failure from resolution do not express the same t
 situation. Confusing the two makes it difficult to distinguish a normal refusal from the domain of a
 a problem that prevents the attempted execution from taking place.
 
-## Decisión
+## Decision
 
 One action produces exclusively:
 

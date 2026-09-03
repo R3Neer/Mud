@@ -9,7 +9,7 @@ questions:
   - "Q-042"
   - "Q-043"
 affects:
-  - "[[specification/04-mathematical-model]], futuro `11-things.md`"
+  - "[[specification/04-mathematical-model]], future `11-things.md`"
 ---
 # ADR-015 — Acyclic specialisation and state independent
 
@@ -26,7 +26,7 @@ affects:
 1. If a descendant observes or copies the state current value of a ancestor specific.
 2. If the relation Direct specialisation allows cycles between distinct identities.
 
-## Decisión
+## Decision
 
 ### State independent
 

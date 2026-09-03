@@ -10,7 +10,7 @@ questions:
   - "Q-015"
 affects:
   - "governance/COMMITS-POLICY.md"
-  - "flujo de autoría del operador semántico"
+  - "semantic operator authoring flow"
 ---
 
 # ADR-012 — Validation and atomic versioning of semantic changes
@@ -21,7 +21,7 @@ A change to the source may affect several anchors and derivatives. Publish
 Even just one part – confirming an invalid change or including someone else’s work – destroys the
 correspondence between intention, model and history.
 
-## Decisión
+## Decision
 
 Every semantic change A valid test is prepared, analysed, applied, validated and versioned as
 one unit atomic. A failure prior to confirmation, it does not publish a state
