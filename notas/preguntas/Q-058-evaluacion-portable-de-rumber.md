@@ -1,6 +1,6 @@
 ---
 id: Q-058
-title: Evaluación portable de Rum
+title: Portable evaluation of `Rum`
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-058 — Evaluación portable de `Rum`
+# Q-058 — Portable evaluation of `Rum`
 
-## Contenido
+## Content
 
-Fijar la conversión de la escritura decimal de un literal al patrón `binary64`, el modo de redondeo de cada operación, tratamiento de subnormales y underflow, prohibición o semántica de contracción FMA, precisión de resultados intermedios, canonicalización en IR y reglas de inferencia para magnitudes derivadas cuyos componentes usan `Rum`.
+Define conversion from a literal's decimal spelling to the `binary64` pattern, the rounding mode of each operation, treatment of subnormals and underflow, prohibition or semantics of FMA contraction, intermediate-result precision, IR canonicalisation and inference rules for derived magnitudes whose components use `Rum`.
