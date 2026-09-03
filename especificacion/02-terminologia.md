@@ -1,7 +1,7 @@
 ---
-title: Terminología
+title: Terminology
 aliases:
-  - Glosario normativo de MUD
+  - MUD Regulatory Glossary
 tags:
   - mud/especificacion
   - mud/normativa
@@ -18,39 +18,40 @@ decisions:
   - D-096
 ---
 
-# 02. Terminología
+# 02. Terminology
 
-## Estado y propósito
+## State and purpose
 
-Este capítulo fijará el vocabulario normativo empleado por la especificación. Cada término tendrá una única definición canónica; los demás capítulos enlazarán a ella en lugar de repetirla.
+This chapter will set out the standard terminology used by the specification. Each term will have a single canonical definition; the other chapters will link to it rather than repeating it.
 
-El contenido normativo todavía no ha sido redactado.
+The regulatory text has not yet been drafted.
 
-## Dependencias
+## Sub-units
 
-- [[01-alcance-y-conformidad|Alcance, conformidad y versiones]].
+- [[01-alcance-y-conformidad|Scope, conformance and versions ]].
 
-## Familias terminológicas previstas
+## Planned terminology families
 
-- Programa, módulo, archivo y path de MUD.
-- Declaración, símbolo, nombre y ancla.
-- `thing` abstracta o concreta, identidad canónica, actividad, materialización y valor.
+-  MUD programme, module file and path.
+- Declaration, symbol, name and anchor.
+- `thing` abstract or concrete, canonical identity, activity, materialisation and value.
 - Campo, relación y colección.
-- Diccionario exacto, diccionario funcional, asociación, rama, selector y fallback.
-- Unión de tipos, flecha exterior, pertenencia nominal, tipo nominal exacto e igualdad de valores.
-- Participante, rol, vinculación y valor proporcionado.
-- Regla consultable, regla reactiva y regla `always`.
-- Acción, test, aserción, diagnóstico `otherwise`, `look`, `message`, solicitud, observación, ocurrencia, raíz, onda y resolución.
+- Exact dictionary, functional dictionary, association, branch, selector and fallback.
+- Union of types, external arrow, nominal membership, type exact nominal and value equality.
+- Participant, role, relationship and value provided.
+- Reference rule, reactive rule and rule `always`.
+- Action, test, assertion, diagnostic `otherwise`, `look`, `message`, request, observation, occurrence, root, wave and resolution.
 - Estado, instantánea, efecto y conflicto.
-- Dominio, restricción, condición e invariante.
-- Aceptación, rechazo y fallo de acciones; paso, fallo y error de tests.
+- Domain, restriction, condition and invariant.
+- Acceptance, rejection and failure of actions; passing, failure and error of tests.
 
-## Criterios de redacción
+## Writing guidelines
 
-- Un término se introducirá antes de usarse normativamente.
-- Los sinónimos admitidos remitirán al término canónico.
-- Las diferencias entre el vocabulario de MUD y el uso habitual en otros lenguajes se harán explícitas.
+- A term will be introduced before it is used in a regulatory context.
+- Accepted synonyms will link to the canonical term.
+- The differences between MUD vocabulary and common usage in other languages will be made explicit.
 
-## Cuestiones abiertas
+## Unresolved issues
 
-Las cuestiones terminológicas se registrarán aquí cuando comience la redacción del capítulo.
+Terminology issues will be recorded here once the drafting of chapter begins.
+

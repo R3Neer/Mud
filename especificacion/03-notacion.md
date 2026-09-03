@@ -1,7 +1,7 @@
 ---
-title: Notación matemática y metalenguaje
+title: Mathematical notation and metalanguage
 aliases:
-  - Notación formal de MUD
+  - Formal notation of MUD
 tags:
   - mud/especificacion
   - mud/normativa
@@ -16,41 +16,41 @@ decisions:
   - D-070
 ---
 
-# 03. Notación matemática y metalenguaje
+# 03. Mathematical notation and metalanguage
 
-## Estado y propósito
+## State and purpose
 
-Este capítulo fija el metalenguaje empleado para definir MUD. Su función es evitar que una misma construcción matemática cambie de significado entre capítulos y distinguir con claridad:
+This chapter defines the metalanguage used to define MUD. Its purpose is to ensure that the same mathematical construct does not change in meaning from one chapter to the next and to clearly distinguish between:
 
-- La sintaxis que una persona escribe en un archivo `.mud`.
-- Las estructuras matemáticas utilizadas para describirla.
-- Los juicios con los que la especificación formula sus propiedades.
+- The syntax that a person writes in a file `.mud`.
+- The mathematical structures used to describe it.
+- The propositions with which the specification formulates its properties.
 
-Las fórmulas de este capítulo pertenecen a la especificación, no a la sintaxis de MUD. Una implementación no está obligada a representar internamente los objetos mediante estas mismas estructuras, pero su comportamiento observable deberá respetar las definiciones que se construyan con ellas.
+The formulas in this chapter belong to specification, not to the MUD syntax. An implementation is not obliged to represent objects internally using these same structures, but its observable behaviour must comply with the definitions constructed using them.
 
-Este capítulo es un borrador. Las convenciones aquí definidas pueden utilizarse en otros borradores, pero no adquieren estado vigente hasta completar el ciclo de revisión.
+This chapter is a draft. The conventions defined here may be used in other drafts, but they do not acquire state current until the cycle of review is completed.
 
-## Dependencias
+## Sub-units
 
-- [[00-convenciones-editoriales|Convenciones editoriales de la especificación MUD]].
-- [[01-alcance-y-conformidad|Alcance, conformidad y versiones]].
-- [[02-terminologia|Terminología]].
+- [[00-convenciones-editoriales|Stylistic conventions of the specification MUD]].
+- [[01-alcance-y-conformidad|Scope, conformance and versions ]].
+- [[02-terminologia|Terminology]].
 
-## 1. Convenciones tipográficas
+## 1. Typographical conventions
 
-La tipografía aporta información, pero nunca será la única forma de distinguir dos categorías semánticas.
+Typography conveys information, but it will never be the only way to distinguish between two semantic categories.
 
-| Forma | Uso principal | Ejemplos |
+| Form | Main use | Examples |
 | --- | --- | --- |
-| $\mathcal A,\mathcal C,\mathcal V$ | Universos y conjuntos destacados | Universo de anclas |
-| $A,B,R,W$ | Conjuntos, relaciones y estructuras concretas | Estado de mundo |
-| $a,c,v,w$ | Elementos y valores | Un ancla o un valor |
-| $\Gamma,\Sigma,\rho$ | Entornos y asignaciones | Entorno de nombres |
-| $\tau,\sigma$ | Tipos | Tipo de una expresión |
-| $\mathsf{accepted}$ | Categorías formales y nombres literales del metalenguaje | Resultado de una solicitud |
-| $\operatorname{dom}(f)$ | Operaciones con nombre | Dominio de una función |
+| $\mathcal A,\mathcal C,\mathcal V$ | Notable universes and sets | Universe of anchors |
+| $A,B,R,W$ | Sets, relations and concrete structures | State of world |
+| $a,c,v,w$ | Elements and values | An anchor or an value |
+| $\Gamma,\Sigma,\rho$ | Environments and name assignments | Environment |
+| $\tau,\sigma$ | Types | Type of an expression |
+| $\mathsf{accepted}$ | Formal categories and literal names in the metalanguage | Result of a request |
+| $\operatorname{dom}(f)$ | Named operations | Domain of a function |
 
-Los nombres concretos utilizados en ejemplos matemáticos pueden escribirse en sans serif:
+Specific names used in mathematical examples may be written in sans serif:
 
 $$
 \mathsf{Gate}
@@ -58,54 +58,54 @@ $$
 \mathsf{open}
 $$
 
-Una metavariable se introduce en prosa o mediante un cuantificador antes de utilizarse. El subíndice identifica el objeto respecto al cual se interpreta una cantidad:
+A metavariable is introduced in prose or by means of a quantifier before it is used. The subscript identifies the object in relation to which a quantity is interpreted:
 
 $$
 R_W
 $$
 
-se lee «la relación $R$ correspondiente a $W$». Cambiar el subíndice puede cambiar el objeto designado.
+It reads ‘the relation $R$ corresponding to $W$’. Changing the subscript may change the object referred to.
 
-## 2. Igualdad, definición y lógica
+## 2. Equality, definition and logic
 
-La igualdad matemática se escribe:
+The mathematical equality is written as:
 
 $$
 x=y
 $$
 
-La desigualdad se escribe:
+The inequality is written as:
 
 $$
 x\neq y
 $$
 
-El símbolo `:=` introduce una definición en el metalenguaje:
+The symbol `:=` introduces a definition into the metalanguage:
 
 $$
 A:=\{x\in B\mid P(x)\}
 $$
 
-La fórmula se lee «$A$ se define como el conjunto de elementos $x$ de $B$ que satisfacen $P$». `:=` no es el operador `:=` que pueda aparecer en la sintaxis concreta de MUD; el contexto matemático y el bloque de código los distinguen.
+The formula reads: ‘$A$ is defined as the set of elements $x$ of $B$ that satisfy $P$’. `:=` is not the operator `:=` that may appear in the concrete syntax of MUD; the mathematical context and the code block distinguish between them.
 
-Se emplean los conectores habituales:
+Standard connectors are used:
 
-| Notación | Lectura |
+| Notation | Reading |
 | --- | --- |
-| $\neg P$ | no $P$ |
+| $\neg P$ | not $P$ |
 | $P\land Q$ | $P$ y $Q$ |
 | $P\lor Q$ | $P$ o $Q$ |
-| $P\Rightarrow Q$ | si $P$, entonces $Q$ |
-| $P\Leftrightarrow Q$ | $P$ si y solo si $Q$ |
-| $\forall x\in A.\ P(x)$ | para todo $x$ de $A$, se cumple $P(x)$ |
-| $\exists x\in A.\ P(x)$ | existe algún $x$ de $A$ que satisface $P(x)$ |
-| $\exists!x\in A.\ P(x)$ | existe un único $x$ de $A$ que satisface $P(x)$ |
+| $P\Rightarrow Q$ | if $P$, then $Q$ |
+| $P\Leftrightarrow Q$ | $P$ if and only if $Q$ |
+| $\forall x\in A.\ P(x)$ | for all $x$ of $A$, $P(x)$ | holds
+| $\exists x\in A.\ P(x)$ | there exists some $x$ of $A$ that satisfies $P(x)$ |
+| $\exists!x\in A.\ P(x)$ | there exists a unique $x$ of $A$ that satisfies $P(x)$ |
 
-Los puntos que siguen al dominio de un cuantificador son separadores, no operadores de MUD.
+The characters following the domain in a quantifier are separators, not MUD operators.
 
-## 3. Conjuntos
+## 3. Sets
 
-La pertenencia y la no pertenencia se escriben:
+Membership and non-membership are written as:
 
 $$
 x\in A
@@ -113,7 +113,7 @@ x\in A
 x\notin A
 $$
 
-El conjunto vacío es $\varnothing$. Las inclusiones se escriben:
+The empty set is $\varnothing$. Inclusions are written as:
 
 $$
 A\subset B
@@ -121,46 +121,46 @@ A\subset B
 A\subseteq B
 $$
 
-En esta especificación, $A\subset B$ exige que $A$ sea un subconjunto estricto de $B$. La forma $A\subseteq B$ permite que ambos conjuntos sean iguales. Esta convención se mantendrá incluso cuando una fuente matemática externa utilice $\subset$ con un sentido no estricto.
+In this specification, $A\subset B$ requires that $A$ be a strict subset of $B$. The form $A\subseteq B$ allows both sets to be equal. This convention will be maintained even when an external mathematical source uses $\subset$ in a non-strict sense.
 
-Las operaciones de conjuntos son:
+Set operations are:
 
-| Notación | Operación |
+| Notation | Operation |
 | --- | --- |
 | $A\cup B$ | Unión |
-| $A\cap B$ | Intersección |
-| $A\setminus B$ | Diferencia |
-| $\mathcal P(A)$ | Conjunto potencia |
-| $\mathcal P_{\mathrm{fin}}(A)$ | Subconjuntos finitos de $A$ |
-| $\lvert A\rvert$ | Cardinalidad de $A$ |
+| $A\cap B$ | Intersection |
+| $A\setminus B$ | Difference |
+| $\mathcal P(A)$ | Power unit |
+| $\mathcal P_{\mathrm{fin}}(A)$ | Finite subsets of $A$ |
+| $\lvert A\rvert$ | Cardinality of $A$ |
 
-La comprensión:
+Understanding:
 
 $$
 \{x\in A\mid P(x)\}
 $$
 
-denota el subconjunto de $A$ cuyos elementos satisfacen $P$. La notación:
+denotes the subset of $A$ whose elements satisfy $P$. The notation:
 
 $$
 \{e(x)\mid x\in A\land P(x)\}
 $$
 
-denota las imágenes $e(x)$ obtenidas de los elementos que satisfacen la condición. Las repeticiones no producen elementos adicionales.
+denotes the images $e(x)$ obtained from the elements that satisfy the condition. Repetitions do not produce any additional elements.
 
-Un conjunto parametrizado por un objeto utiliza un subíndice. Por ejemplo, $\mathcal A_P$ puede designar el conjunto de anclas proporcionado por un programa $P$, siempre que el capítulo correspondiente lo defina.
+A set parameterised by an object uses a subscript. For example, $\mathcal A_P$ may denote the set of anchors provided by a programme $P$, provided that the corresponding chapter defines it.
 
-## 4. Tuplas y productos cartesianos
+## 4. Tuples and Cartesian products
 
-Una tupla ordenada se escribe:
+An ordered pair is written as:
 
 $$
 (x_1,\ldots,x_n)
 $$
 
-El orden y la posición de sus componentes forman parte de su significado. Los paréntesis de una tupla no denotan un conjunto.
+The order and position of its components form part of its meaning. The parentheses in a tuple do not denote a set.
 
-El producto cartesiano es:
+The Cartesian product is:
 
 $$
 A\times B
@@ -168,39 +168,39 @@ A\times B
 \{(a,b)\mid a\in A\land b\in B\}
 $$
 
-Para una estructura matemática puede utilizarse:
+For a mathematical structure, the following can be used:
 
 $$
 S=(A,R,f)
 $$
 
-La igualdad entre dos estructuras de esta forma exige la igualdad componente a componente, salvo que el capítulo que las define establezca explícitamente otra noción de equivalencia.
+Equality between two structures of this form requires equality component by component, unless the chapter that defines them explicitly establishes another notion of equivalence.
 
-Los corchetes angulares:
+Angle brackets:
 
 $$
 \langle X,e\rangle
 $$
 
-se reservan preferentemente para configuraciones de evaluación o transición. Siguen siendo una agrupación ordenada; su forma tipográfica ayuda a distinguir una configuración operacional de una tupla de datos.
+They are preferably reserved for evaluation configurations or transition. They remain an ordered grouping; their typographical form helps to distinguish an operational configuration from a data tuple.
 
-## 5. Funciones totales y parciales
+## 5. Total and partial functions
 
-Una función total se declara:
+A total function is declared as follows:
 
 $$
 f:A\to B
 $$
 
-y debe asignar a cada $a\in A$ un único valor $f(a)\in B$.
+and must assign a unique value $f(a)\in B$ to each $a\in A$.
 
-Una función parcial se declara:
+A partial function is defined as follows:
 
 $$
 f:A\rightharpoonup B
 $$
 
-y puede no estar definida para algunos elementos de $A$. Su dominio efectivo y su imagen son:
+and may not be defined for some elements of $A$. Its effective domain and its image are:
 
 $$
 \operatorname{dom}(f)
@@ -214,7 +214,7 @@ $$
 \{f(a)\mid a\in\operatorname{dom}(f)\}
 $$
 
-Que la aplicación esté definida se abrevia:
+The abbreviation for ‘the application is defined’ is:
 
 $$
 f(a)\downarrow
@@ -222,7 +222,7 @@ f(a)\downarrow
 a\in\operatorname{dom}(f)
 $$
 
-La ausencia de resultado se abrevia:
+The absence of result is abbreviated as:
 
 $$
 f(a)\uparrow
@@ -230,9 +230,9 @@ f(a)\uparrow
 a\notin\operatorname{dom}(f)
 $$
 
-En estas fórmulas, $\downarrow$ y $\uparrow$ solo afirman si la aplicación está definida. No significan por sí mismos aceptación, rechazo, fallo ni terminación de una ejecución.
+In these expressions, $\downarrow$ and $\uparrow$ merely state whether the application is defined. They do not in themselves imply acceptance, rejection, failure or termination of an execution.
 
-Una función parcial es finita cuando su dominio efectivo es finito:
+A partial function is finite if its effective domain is finite:
 
 $$
 f:A\rightharpoonup B
@@ -240,7 +240,7 @@ f:A\rightharpoonup B
 \lvert\operatorname{dom}(f)\rvert<\infty
 $$
 
-Un mapa finito puede mostrarse por extensión:
+A finite map can be displayed in full:
 
 $$
 f=
@@ -251,9 +251,9 @@ a_n\mapsto b_n
 \}
 $$
 
-La flecha $\mapsto$ se lee «se asocia con». Cada clave debe aparecer como máximo una vez.
+The arrow $\mapsto$ means ‘is associated with’. Each key must appear no more than once.
 
-Dos funciones parciales son iguales cuando tienen el mismo dominio efectivo y coinciden en todas sus entradas:
+Two partial functions are equal if they have the same effective domain and match in all their inputs:
 
 $$
 f=g
@@ -263,15 +263,15 @@ f=g
 \forall x\in\operatorname{dom}(f).\ f(x)=g(x)
 $$
 
-## 6. Relaciones
+## 6. Relationships
 
-Una relación binaria entre $A$ y $B$ es un subconjunto:
+A binary relation between $A$ and $B$ is a subset:
 
 $$
 R\subseteq A\times B
 $$
 
-Las expresiones:
+The expressions:
 
 $$
 (a,b)\in R
@@ -279,9 +279,9 @@ $$
 a\,R\,b
 $$
 
-son equivalentes cuando la segunda resulte legible.
+they are equivalent provided that the second one is legible.
 
-La relación identidad sobre $A$ es:
+The relation identity over $A$ is:
 
 $$
 \operatorname{Id}_A
@@ -289,7 +289,7 @@ $$
 \{(a,a)\mid a\in A\}
 $$
 
-Si $R\subseteq A\times B$ y $S\subseteq B\times C$, su composición es:
+If $R\subseteq A\times B$ and $S\subseteq B\times C$, their composition is:
 
 $$
 S\circ R
@@ -301,32 +301,32 @@ S\circ R
 \}
 $$
 
-Para una relación $R\subseteq A\times A$:
+For an relation $R\subseteq A\times A$:
 
-- $R^+$ denota su clausura transitiva.
-- $R^*$ denota su clausura reflexiva y transitiva.
+- $R^+$ denotes its transitive closure.
+- $R^*$ denotes its reflexive and transitive closure.
 
-Estas clausuras no presuponen que una relación concreta de MUD sea herencia, pertenencia o subtipo. Cada capítulo deberá declarar el significado de su propia relación.
+These closures do not imply that a specific relation in MUD is an inheritance, a member or a subtype. Each chapter must declare the meaning of its own relation.
 
-## 7. Secuencias y multiconjuntos
+## 7. Sequences and multisets
 
-$A^*$ denota el conjunto de secuencias finitas de elementos de $A$. La secuencia vacía se escribe $\epsilon$ y una secuencia concreta:
+$A^*$ denotes the set of finite sequences of elements of $A$. The empty sequence is written as $\epsilon$ and a specific sequence:
 
 $$
 \langle a_1,\ldots,a_n\rangle
 $$
 
-La longitud de una secuencia $s$ se escribe $\lvert s\rvert$. La concatenación se escribe $s\mathbin{\cdot}t$. Salvo indicación contraria, los índices de una secuencia comienzan en $1$.
+The length of a sequence $s$ is written as $\lvert s\rvert$. Concatenation is written as $s\mathbin{\cdot}t$. Unless otherwise stated, the indices of a sequence start at $1$.
 
-El superíndice $*$ está sobrecargado de manera convencional: en $A^*$ forma secuencias finitas y en $R^*$ forma la clausura reflexiva y transitiva de una relación. El tipo de la base deberá hacer inequívoca cada aparición.
+The superscript $*$ is overloaded in the conventional manner: in $A^*$ it forms finite sequences, and in $R^*$ it forms the reflexive and transitive closure of an relation. The type in the base must ensure that each occurrence is unambiguous.
 
-Un multiconjunto finito sobre $A$ se modela como una función:
+A finite multiset over $A$ is modelled as a function:
 
 $$
 m:A\to\mathbb{N}
 $$
 
-con soporte finito, donde $m(a)$ es la multiplicidad de $a$ y:
+with finite support, where $m(a)$ is the multiplicity of $a$ and:
 
 $$
 \operatorname{supp}(m)
@@ -334,65 +334,65 @@ $$
 \{a\in A\mid m(a)>0\}
 $$
 
-es finito. Esta representación distingue un multiconjunto de un conjunto sin imponerle un orden.
+It is finite. This representation distinguishes a multiset from a set without imposing any order on it.
 
-## 8. Grafos y caminos
+## 8. Graphs and paths
 
-Un grafo dirigido es una pareja:
+A directed graph is a pair:
 
 $$
 G=(N,E)
 $$
 
-donde $N$ es el conjunto de nodos y $E\subseteq N\times N$ es la relación de aristas.
+where $N$ is the set of nodes and $E\subseteq N\times N$ is the relation of edges.
 
-Un camino finito de $n_0$ a $n_k$ es una secuencia:
+A finite path from $n_0$ to $n_k$ is a sequence:
 
 $$
 \langle n_0,\ldots,n_k\rangle
 $$
 
-tal que:
+such that:
 
 $$
 \forall j\in\{1,\ldots,k\}.\ (n_{j-1},n_j)\in E
 $$
 
-Un camino de longitud cero contiene un único nodo. Los capítulos que necesiten caminos simples, ciclos o grafos etiquetados introducirán esas restricciones explícitamente.
+A path of length zero contains a single node. Chapters dealing with simple paths, cycles or labelled graphs will explicitly state these constraints.
 
-## 9. Juicios
+## 9. Trials
 
-Un juicio expresa una afirmación definida por la especificación. Su forma y sus parámetros deben declararse antes de utilizarlo.
+A judgement expresses a statement defined by specification. Its form and parameters must be declared before it is used.
 
-Por ejemplo:
+For example:
 
 $$
 \Gamma\vdash e:\tau
 $$
 
-puede leerse «en el entorno $\Gamma$, la expresión $e$ tiene tipo $\tau$», si el capítulo del sistema de tipos lo define así.
+it may be read as ‘in environment $\Gamma$, the expression $e$ has type $\tau$’, if the chapter of the type system defines it that way.
 
-El símbolo $\vdash$ separa el contexto de la afirmación juzgada. No implica por sí solo tipado: también puede emplearse para resolución de nombres, validez estática u otras relaciones derivables.
+The symbol $\vdash$ separates the context from the statement being judged. It does not in itself imply typing: it can also be used for name resolution, static validity or other derivable relations.
 
-El símbolo:
+The symbol:
 
 $$
 M\models P
 $$
 
-se reserva para indicar que una estructura $M$ satisface una propiedad semántica $P$, cuando el capítulo correspondiente defina esa relación de satisfacción.
+is reserved to indicate that a structure $M$ satisfies a property semantics $P$, where the corresponding chapter defines that relation of satisfaction.
 
-Los contextos múltiples se separan mediante punto y coma:
+Multiple contexts are separated by point and a comma:
 
 $$
 \Gamma;\Sigma\vdash e:\tau
 $$
 
-El punto y coma forma parte del metalenguaje del juicio, no de la sintaxis de MUD.
+The point and comma form part of the trial’s metalanguage, not of MUD’s syntax.
 
-## 10. Reglas de inferencia y derivaciones
+## 10. Rules of inference and derivatives
 
-Una regla de inferencia tiene la forma:
+A rule in inference takes the following form:
 
 $$
 \frac{
@@ -407,20 +407,20 @@ J
 \;\mathsf{Nombre\text{-}De\text{-}Regla}
 $$
 
-$J_1,\ldots,J_n$ son las premisas y $J$ es la conclusión. Una regla sin premisas es un axioma:
+$J_1,\ldots,J_n$ are the premises and $J$ is the conclusion. A rule without premises is an axiom:
 
 $$
 \frac{\ }{J}
 \;\mathsf{Nombre\text{-}De\text{-}Axioma}
 $$
 
-Los nombres de regla son únicos dentro de la especificación y se escriben con `\mathsf`. Una derivación es un árbol finito cuyas hojas son axiomas o hipótesis admitidas y cuya raíz es el juicio demostrado.
+Rule names are unique within specification and are written using `\mathsf`. A derivation is a finite tree whose leaves are axioms or accepted hypotheses and whose root is the proven proposition.
 
-Las condiciones laterales que no sean juicios se escriben junto a las premisas y se explican en prosa. Ninguna premisa necesaria quedará implícita por el ejemplo que acompaña a la regla.
+Conditions other than judgements are written alongside the premises and explained in prose. No necessary premise shall be implied by the example accompanying the rule.
 
-## 11. Semántica operacional
+## 11. Semantics operational
 
-Una evaluación completa puede representarse mediante un juicio de paso grande:
+A complete evaluation can be represented by a large-step judgement:
 
 $$
 \langle X,e\rangle
@@ -428,82 +428,82 @@ $$
 \langle X',r\rangle
 $$
 
-La flecha $\Downarrow$ indica que la configuración de la izquierda produce el resultado completo de la derecha conforme a las reglas que definan ese juicio.
+The arrow $\Downarrow$ indicates that the configuration on the left produces the complete result on the right, in accordance with the rules defining that judgement.
 
-Un paso elemental puede representarse:
+A basic step can be illustrated as follows:
 
 $$
 K\to K'
 $$
 
-o, cuando el paso tenga una etiqueta observable:
+or, where the step has a visible label:
 
 $$
 K\xrightarrow{\ell}K'
 $$
 
-La clausura reflexiva y transitiva de la transición se escribe:
+The reflexive and transitive closure of transition is written as:
 
 $$
 K\to^*K'
 $$
 
-Estas flechas no garantizan terminación, determinismo ni ausencia de fallos. Cada sistema de transición deberá definir sus configuraciones, etiquetas y estados terminales.
+These arrows do not guarantee termination, determinism or fault-free operation. Each transition system must define its own configurations, labels and terminal states.
 
 ## 12. EBNF
 
-La gramática concreta utilizará el siguiente dialecto EBNF:
+The concrete grammar will use the following EBNF dialect:
 
-| Forma | Significado |
+| Form | Meaning |
 | --- | --- |
 | `"token"` | Terminal literal |
-| `nombre` | Referencia a una producción no terminal |
-| `a, b` | Concatenación |
-| `a \| b` | Alternativa |
-| `[ a ]` | Aparición opcional |
-| `{ a }` | Cero o más apariciones |
-| `( a )` | Agrupación |
-| `nombre = a ;` | Definición de una producción |
+| `nombre` | Reference to a non-terminal production |
+| `a, b` | Concatenation |
+| `a \| b` | Alternative |
+| `[ a ]` | Optional appearance |
+| `{ a }` | Zero or more occurrences |
+| `( a )` | Group |
+| `nombre = a ;` | Definition of a production |
 
-Una o más apariciones de `a` se escribirán:
+One or more occurrences of `a` will be written as:
 
 ```ebnf
 a, { a }
 ```
 
-Los símbolos EBNF pertenecen al metalenguaje. Cuando uno de ellos sea también un token de MUD aparecerá entre comillas.
+The symbols EBNF belong to the metalanguage. When one of them is also a MUD token, it will appear in quotation marks.
 
-La ausencia de ambigüedad no se presume por haber escrito una EBNF. El capítulo de gramática deberá fijar además precedencia, asociatividad y cualquier restricción contextual necesaria.
+The absence of ambiguity cannot be assumed simply because a EBNF has been written. The chapter for grammar must also specify precedence, associativity and any necessary contextual restrictions.
 
 ## 13. ASDL-MUD
 
-El AST superficial se describe mediante un dialecto ASDL explícito.
+The Surface AST is described using an explicit ASDL dialect.
 
-| Forma | Significado |
+| Form | Meaning |
 |---|---|
-| `t = C(a x) \| D` | Tipo suma con constructores. |
-| `t = (a x, b y)` | Tipo producto. |
-| `T?` | Cero o un valor. |
-| `T*` | Secuencia finita ordenada. |
-| `attributes (...)` | Atributos comunes de todos los constructores del tipo. |
+| `t = C(a x) \| D` | Type sum with constructors. |
+| `t = (a x, b y)` | Type product. |
+| `T?` | Zero or one value. |
+| `T*` | Finite ordered sequence. |
+| `attributes (...)` | Attributes common to all constructors of type. |
 
-Escalares incorporados:
+Built-in scalars:
 
-- `identifier`: texto ya validado como identificador léxico.
-- `string`: cadena Unicode.
-- `int`: entero matemático no acotado en el esquema.
+- `identifier`: text already validated as a lexical identifier.
+- `string`: Unicode string.
+- `int`: a mathematical integer that is unbounded in the schema.
 
-MUD añade el tipo declarado:
+MUD adds the declared type:
 
 ```asdl
 flag = Disabled | Enabled
 ```
 
-ASDL describe distinciones normativas, no una disposición concreta de memoria. Una implementación puede usar índices, referencias, interning o estructuras compactas si conserva el mismo contenido observable.
+ASDL describes normative distinctions, not a specific memory layout. An implementation may use indices, references, interning or compact structures, provided that the observable content remains the same.
 
-## 14. Notación de CST
+## 14. CST notation
 
-El catálogo CST usa las nociones:
+The CST catalogue uses the following terms:
 
 ```text
 SyntaxNode(kind, children, span, fullSpan)
@@ -511,40 +511,41 @@ SyntaxToken(kind, text, leadingTrivia, span, fullSpan, origin)
 SyntaxTrivia(kind, text, span)
 ```
 
-Una categoría terminada en `Syntax` corresponde a una producción o a un nodo especial de recuperación. La CST conserva tokens y trivia; el AST no.
+A category ending in `Syntax` corresponds to an production or a special recovery node. The CST retains tokens and trivia; the AST does not.
 
-`SourceSpan` usa posiciones basadas en cero, offsets en bytes UTF-8 y extremo final exclusivo. La columna cuenta valores escalares Unicode.
+`SourceSpan` uses zero-based indexing, UTF-8 byte offsets and an exclusive trailing end. The column contains scalar Unicode values.
 
-## 15. Ausencia, indefinición y resultados
+## 15. Absence, lack of clarity and results
 
-La especificación distinguirá siempre:
+The specification will always distinguish between:
 
-- La ausencia de un elemento en un conjunto.
-- Una función parcial no definida para una entrada.
-- Un valor de dominio que represente ausencia, si MUD llegase a definirlo.
-- Un cálculo que no termina.
-- Un resultado semántico como $\mathsf{rejected}$ o $\mathsf{failed}$.
-- Un error de una implementación.
+- The absence of an element from a set.
+- A partial function is not defined for a given input.
+-  An value of domain representing absence, should MUD ever define it.
+- A never-ending calculation.
+- A semantic result such as $\mathsf{rejected}$ or $\mathsf{failed}$.
+- An error from a particular implementation.
 
-Ninguna de estas situaciones se identificará con otra sin una regla explícita.
+None of these situations will be identified as another without an explicit rule.
 
-## 16. Disciplina de uso
+## 16. Terms of use
 
-Todo capítulo deberá:
+All chapter must:
 
-1. Introducir sus universos y metavariables antes de usarlos.
-2. Indicar el dominio de cada cuantificador.
-3. Distinguir funciones totales de parciales.
-4. Definir el significado de cada juicio y flecha.
-5. Mantener los subíndices de forma consistente.
-6. Separar igualdad, equivalencia observacional e identidad cuando no coincidan.
-7. Declarar si una colección es conjunto, secuencia o multiconjunto.
-8. Explicar cualquier sobrecarga de notación.
+1. Define your universes and metavariables before using them.
+2. Specify the domain for each quantifier.
+3. Distinguish between total and partial functions.
+4. Define the meaning of each judgement and arrow.
+5. Ensure that subscripts are used consistently.
+6. Distinguish between equality, observational equivalence and identity where they do not coincide.
+7. Determine whether an collection is a set, a sequence or a multiset.
+8. Explain any notation overloading.
 
-## 17. Notación pendiente de introducción
+## 17. Notation to be introduced
 
-Los órdenes parciales, puntos fijos, medidas de probabilidad y variables aleatorias se definirán cuando un capítulo normativo los necesite por primera vez. Hasta entonces no se fija una notación propia para ellos.
+Partial orders, fixed points, probability measures and random variables will be defined when a normative chapter first requires them. Until then, no specific notation will be assigned to them.
 
-## Cuestiones abiertas
+## Open questions
 
-No hay cuestiones abiertas que bloqueen el núcleo de notación definido en este borrador. Su suficiencia deberá revisarse al redactar cada capítulo que lo utilice.
+There are no outstanding issues that prevent the notation core defined in this draft from being adopted. Its adequacy should be reviewed when drafting each chapter that utilises it.
+

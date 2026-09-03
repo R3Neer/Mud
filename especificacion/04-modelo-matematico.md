@@ -1,7 +1,7 @@
 ---
-title: Modelo matemático del mundo
+title: Model mathematician from world
 aliases:
-  - Modelo formal del mundo MUD
+  - Model official version of the world MUD
 tags:
   - mud/especificacion
   - mud/normativa
@@ -34,77 +34,77 @@ decisions:
   - D-103
 ---
 
-# 04. Modelo matemático del mundo
+# 04. Model mathematician from world
 
-## Estado y propósito
+## State and purpose
 
-Este capítulo define las restricciones matemáticas ya fijadas para representar un programa y un estado del mundo MUD antes de introducir su sintaxis concreta o su ejecución. La estructura matemática completa del mundo permanece en desarrollo y deberá extender estas restricciones sin contradecirlas.
+This chapter defines the mathematical constraints already established for representing a programme and an state of the world MUD before introducing its concrete syntax or its execution. The complete mathematical structure of the world remains under development and must extend these constraints without contradicting them.
 
-## Dependencias
+## Sub-units
 
-- [[02-terminologia|Terminología]].
-- [[03-notacion|Notación matemática y metalenguaje]].
+- [[02-terminologia|Terminology]].
+- [[03-notacion|Mathematical notation and metalanguage]].
 
-## Contenido previsto
+## Planned content
 
-- Definiciones canónicas del programa e identidades activas en cada mundo.
-- Conjunto inicial `start with`, creación, destrucción y reactivación.
-- Identidad de `thing`.
-- Relación de especialización `is`.
-- Store de campos y relaciones.
-- Información almacenada y proyección efectiva.
-- Suspensión transitiva por dependencias duras.
-- Identidad frente a igualdad estructural.
-- Estados bien formados.
-- Estados estables y tentativos.
-- Observaciones semánticamente visibles.
-- Mundos aislados y descartables de los tests.
+- Canonical programme definitions and active identities in each world.
+- Initial set `start with`, creation, destruction and reactivation.
+- Identity from `thing`.
+- Relation specialisation `is`.
+- Fields and relationships store.
+- Stored information and effective projection.
+- Suspension transitive via hard dependencies.
+- Identity versus structural equality.
+- Well-established states.
+- Stable and tentative states.
+- Semantically visible comments.
+- Isolated and disposable worlds from the tests.
 
-## Restricción del modelo
+## Restriction on model
 
-MUD no presupone una separación entre clases y objetos. En particular, una `thing` no tiene instancias. El modelo matemático deberá representar dentro de un mismo dominio conceptual las definiciones canónicas del programa y las identidades activas en cada mundo, sin convertirlas en clase e instancia.
+MUD does not presuppose a distinction between classes and objects. In particular, an `thing` has no instances. The mathematical model must represent, within a single conceptual domain, both the canonical definitions of the programme and the active identities in each world, without converting them into classes and instances.
 
 
-## Restricciones confirmadas
+## Confirmed restrictions
 
-El modelo vigente fija:
+The model current stipulates:
 
-1. Toda `thing` posee identidad semántica.
-2. Toda `thing` concreta denota una cosa concreta con estado propio y puede ser antecesora de otras.
-3. Una `thing` abstracta pertenece al mismo dominio, pero no denota directamente una cosa concreta con estado propio.
-4. Cada `thing` tiene una única definición canónica de primer nivel, que fija su carácter abstracto o concreto, sus antecesoras directas y su cuerpo.
-5. La relación semántica `is` es reflexiva y transitiva.
-6. La especialización directa es acíclica, por lo que `is` es también antisimétrica y forma un orden parcial.
-7. Se heredan declaraciones, restricciones, dominios y predeterminados efectivos, pero no estado mutable activo.
-8. Cada `thing` concreta posee estado independiente.
-9. `create Nombre` solo activa una `thing` o regla definida; no admite categoría, antecesoras ni cuerpo.
-10. Si una `thing` canónica no posee materialización activa, `create` materializa esa misma identidad y descriptor. Tras un `destroy` anterior, la nueva materialización reconstruye el esquema desde la definición canónica y vuelve a aplicar predeterminados e inicializadores; no recupera la carga propia ni las modificaciones estructurales runtime de la materialización destruida.
-11. Todo tipo bien formado posee un valor predeterminado perteneciente a su dominio salvo que una decisión lo excluya expresamente. `Any` no posee predeterminado universal y un campo almacenado de tipo `Any` debe escribir inicializador.
-12. `as` introduce especialización directa; `is` consulta su clausura reflexiva y transitiva; `iis` y `iis not` consultan o excluyen exclusivamente el tipo nominal efectivo indicado.
-13. Una regla que contiene `create A` solo se ejecuta si la identidad canónica `A` está ausente.
-14. Todo campo denota una colección; su mutabilidad exterior y la capacidad sobre sus miembros son permisos ortogonales incluso con cardinalidad `[1]`.
-15. Una colección de `thing` exige siempre membresía estricta: $c\neq T\land c\ \mathsf{is}\ T$. No existe `reflexive`.
-16. `destroy` solo confirma una retirada si todas las cardinalidades y dominios resultantes son válidos; en otro caso produce `failed` y rollback.
-17. Una declaración con una dependencia dura inactiva se suspende completa; no se reescriben parcialmente sus campos ni participantes y esa suspensión derivada no borra su propia carga almacenada. Solo un `destroy` dirigido a la propia declaración termina su materialización runtime conforme a las reglas vigentes de ciclo de vida.
-18. `remove` sobre una propiedad elimina su declaración y carga almacenadas dentro de la materialización actual. La suspensión por una dependencia inactiva conserva en cambio la propiedad y su carga; destruir la `thing` propietaria termina toda su materialización y una futura materialización vuelve a partir de la definición canónica.
-19. Cada módulo puede aportar como máximo un `start with`; sus contribuciones finitas y no ordenadas reúnen en una sola superficie declaraciones activables `thing | rule`, y las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial.
-20. Cada contribución es una expresión estática que produce una declaración activable o una colección plana de ellas; no admite instrucciones, efectos ni colecciones anidadas.
-21. Si un módulo omite `start with`, su contribución es vacía. `Thing` continúa siempre efectiva y no forma parte de la colección activable ni de la enumeración materializada por `all Thing`.
-22. Cada test construye un mundo fresco y aislado; antes del test raíz se calcula el cierre transitivo estático de tests alcanzables y se unen sus contribuciones `start with`.
-23. Los tests no son declaraciones activables ni forman parte del mundo o de la API pública del host; su visibilidad entre módulos existe únicamente en contexto de tests.
-24. El mundo construido para un test y todas sus salidas se descartan al terminar su ejecución.
-25. `Thing` es una `thing` abstracta incorporada, siempre efectiva y superior a toda `thing` mediante `is`.
-26. Una raíz sin `as` conserva cero antecesoras declaradas y recibe una arista semántica implícita hacia `Thing`.
-27. `Thing` no posee estado concreto ni ciclo de vida controlable por el programa.
-28. Las declaraciones y valores que admiten presentación exponen metadatos postfix tipados; `~name` tiene tipo `Name`, mientras `~path`, `~anchor` y `~file` describen procedencia e identidad.
-29. El valor predeterminado de `~name` deriva del identificador nominal no cualificado cuando la categoría lo define. Puede configurarse mediante la declaración o edición del modelo, pero ningún acceso `~` puede ser destino de una asignación o actualización runtime; los metadatos no se heredan.
-30. La identidad, el tipo nominal efectivo, el path y el ancla no dependen de `~name`; varias entidades pueden compartir la misma presentación. Todo acceso `~` es de solo lectura durante la ejecución; `~path`, `~anchor` y `~file` son además propiedades intrínsecas y no metadatos configurables.
-31. Una relación inmutable conserva latentemente una identidad retirada y puede restaurar esa pertenencia cuando `create` materializa de nuevo la misma identidad; una relación `mut` elimina esa pertenencia almacenada.
-32. Ningún estado confirmado contiene una colección cuya cardinalidad efectiva contradiga su declaración.
-33. Destruir una `thing` concreta descarta los valores almacenados y las modificaciones estructurales runtime propiedad de su materialización actual, pero no borra cargas pertenecientes a otras declaraciones que solo queden suspendidas por depender de su identidad o tipo.
-34. Destruir explícitamente una rule reactiva descarta la memoria temporal de esa activación. Una activación posterior establece una línea base nueva sin disparar por la mera reactivación; la política de memoria ante suspensiones o desapariciones de bindings no causadas por `destroy` sigue abierta en Q-005.
+1.  Every `thing` has identity semantics.
+2. Every specific `thing` denotes a specific thing with its own state and may be ancestor from others.
+3. An abstract `thing` belongs to the same domain, but does not directly denote a specific thing with its own state.
+4. Each `thing` has a single top-level canonical definition, which determines whether it is abstract or concrete, its direct predecessors and its body.
+5. The relation semantics `is` is reflexive and transitive.
+6. Direct specialisation is acyclic, so `is` is also antisymmetric and forms a partial order.
+7. Declarations, constraints, domains and effective defaults are inherited, but not state active mutable variables.
+8. Each specific `thing` has its own state.
+9. `create Nombre` only activates a single `thing` or defined rule; it does not support categories, predecessors or the body.
+10. If a canonical `thing` does not have an active materialisation, `create` instantiates that same identity and descriptor. Following a previous `destroy`, the new materialisation reconstructs the schema from the canonical definition and reapplies defaults and initialisers; it does not restore the own stored data or the runtime structural modifications of the destroyed materialisation.
+11. Every well-formed type has an default value belonging to its domain, unless a decision expressly excludes it. `Any` has no universal default, and an stored field of type type `Any` must have an initialiser.
+12. `as` introduces direct specialisation; `is` query its reflexive and transitive closure; `iis` and `iis not` exclusively refer to or exclude the specified nominal effect type.
+13. A rule containing `create A` is only executed if canonical identity `A` is absent.
+14. Every field denotes a collection; its outer mutability and the capacity over its members are orthogonal permissions even with cardinality `[1]`.
+15.  A collection of `thing` always requires strict membership: $c\neq T\land c\ \mathsf{is}\ T$. There is no `reflexive`.
+16. `destroy` only commits a withdrawal if all the resulting cardinalities and domains are valid; otherwise, it produces `failed` and a rollback.
+17.  A declaration with an inactive hard dependency is suspended entirely; its fields and participants are not partially rewritten, and that derived suspension does not clear its own stored payload. Only a `destroy` directed at the declaration itself terminates its materialisation runtime in accordance with the current cycle lifetime rules.
+18. `remove` on a property removes its declaration and load stored within the current materialisation. A suspension via an inactive dependency, on the other hand, retains the property and its payload; destroying the owning `thing` terminates all its materialisations, and a future materialisation restarts from the canonical definition.
+19. Each module may contribute at most one `start with`; their finite, unordered contributions are combined into a single surface of activatable statements `thing | rule`, and the contributions of all modules are materialised jointly prior to the initial stabilisation.
+20. Each contribution is a static expression that produces either an activatable declaration or a flat collection; it does not support instructions, effects or nested collections.
+21. If a module omits `start with`, its contribution is empty. `Thing` remains in effect at all times and forms no part of the activatable collection nor of the enumeration materialised by `all Thing`.
+22. Each test constructs a fresh, isolated world; before the test root, the static transitive closure of reachable tests is computed and their contributions are combined in `start with`.
+23. Tests are not executable statements, nor do they form part of world or the host’s public API; their visibility between modules exists solely in the context of tests.
+24. The world constructed for a test and all its outputs are discarded upon completion of its execution.
+25. `Thing` is an embedded abstract `thing`, which is always effective and takes precedence over any `thing` via `is`.
+26. A root without an `as` retains zero declared predecessors and receives an implicit semantic edge towards `Thing`.
+27. `Thing` has no specific state nor a cycle whose lifespan can be controlled by the programme.
+28. The declarations and values supported by presentation specify typed postfix metadata; `~name` has type `Name`, whilst `~path`, `~anchor` and `~file` describe provenance and identity.
+29.  The default value of `~name` is derived from the unqualified nominal identifier when the category defines it. It can be configured using the declaration or by editing the model, but no `~` access may be the target of a runtime assignment or update; metadata is not inherited.
+30. The identity, the effective nominal type, the path and the anchor do not depend on `~name`; multiple entities may share the same presentation. All access to `~` is read-only during execution; `~path`, `~anchor` and `~file` are also intrinsic properties and not configurable metadata.
+31. An immutable relation retains a withdrawn identity in a latent state and can restore that membership when `create` re-materialises the same identity; a relation `mut` removes that stored affiliation.
+32.  No confirmed state contains a collection whose effective cardinality contradicts its declaration.
+33. Destroying a specific `thing` discards the stored values and runtime structural modifications belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
+34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
 
-Ejemplo de las distinciones confirmadas:
+Examples of confirmed distinctions:
 
 ```mud
 thing Alexandria as City {
@@ -121,21 +121,21 @@ rule ExactIdentifier given value: Identifier {
 }
 ```
 
-`Alexandria is City` consulta especialización, `value iis PersonId` exige el tipo nominal efectivo exacto y `Alexandria == Alexandria` compara identidad de valor. Ninguna de esas relaciones depende de `Alexandria~name`.
+`Alexandria is City` query specialisation, `value iis PersonId` requires exact effective nominal type and `Alexandria == Alexandria` compares identity with value. None of these relationships depends on `Alexandria~name`.
 
 
-## Cuestiones abiertas
+## Open questions
 
-> [!question] Q-046 — Creación inefectiva
-> Determinar el resultado de acciones y de bloques con varias creaciones. Para una regla con una sola creación ya se ha decidido que la regla completa no se ejecuta si la identidad está activa.
+> [!question] Q-046 — Invalid creation
+> Determine the result for actions and blocks with multiple creations. For a rule with a single creation, it has already been decided that the entire rule is not executed if the identity is active.
 
-> [!question] Q-047 — Predeterminados concretos
-> Determinar el valor predeterminado de cada constructor de tipos y su comportamiento cuando el dominio depende del mundo.
+> [!question] Q-047 — Specific defaults
+>  Determine the default value for each type constructor and its behaviour when the domain depends on the world.
 
-## Aliases nominales
+## Nominal aliases
 
-Los aliases forman un segundo orden parcial nominal. Sus nodos son tipos de valor, no identidades activables. La especialización directa es acíclica y su clausura `is` es reflexiva, transitiva y antisimétrica.
+Aliases form a second nominal partial order. Their nodes are types of value, not activatable identities. Direct specialisation is acyclic, and its closure `is` is reflexive, transitive and antisymmetric.
 
-Para un alias nominal con varias antecesoras, el conjunto de valores del descendiente debe estar contenido en la intersección de los conjuntos de valores de todas ellas. La unión `A | B` no satisface esta obligación. Para aliases estructurales, la forma efectiva se obtiene acumulando miembros por origen: un mismo miembro heredado por varias rutas se deduplica y miembros independientes con el mismo nombre producen conflicto.
+For an nominal alias with several predecessors, the set of values of the descendant must be contained within the intersection of the sets of values of all of them. The union `A | B` does not satisfy this requirement. For structural aliases, the effective form is obtained by aggregating members by origin: a single member inherited via multiple paths is deduplicated, and independent members with the same name produce conflict.
 
-Los campos derivados denotan colecciones recalculadas. Su pertenencia se fija durante una instantánea de evaluación y se vuelve a calcular sobre el estado posterior consolidado. La capacidad interior `[mut]` puede formar parte de su contrato, pero no crea autoridad: debe estar garantizada por el valor de origen y conservarse mediante transformaciones que mantengan la identidad semántica de las `thing` miembros. Esa capacidad solo alcanza a miembros inmediatos y no vuelve escribible la pertenencia derivada ni colecciones anidadas. Las colecciones almacenadas, en cambio, conservan su pertenencia hasta una modificación estructural explícita.
+Derived fields denote recalculated collections. Their membership is determined during an snapshot evaluation and is recalculated based on the subsequent consolidated state. The internal capacity `[mut]` may form part of its contract, but does not create authority: it must be guaranteed by the source value and preserved through transformations that maintain the identity semantics of the member `thing`s. This capability applies only to immediate members and does not make derived membership or nested collections writable. Stored collections, on the other hand, retain their membership until an explicit structural modification is made.

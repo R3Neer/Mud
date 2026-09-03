@@ -1,7 +1,7 @@
 ---
-title: Alcance, conformidad y versiones
+title: Scope, conformance and versions
 aliases:
-  - Alcance de la especificación MUD
+  - Scope from the specification MUD
 tags:
   - mud/especificacion
   - mud/normativa
@@ -13,29 +13,30 @@ questions: []
 decisions: []
 ---
 
-# 01. Alcance, conformidad y versiones
+# 01. Scope, conformance and versions
 
-## Estado y propósito
+## State and purpose
 
-Este capítulo delimitará qué aspectos de MUD define la especificación, qué significa conformarse con ella y cómo se identifican sus versiones.
+This chapter will set out which aspects of MUD are defined by specification, what it means to comply with it, and how its versions are identified.
 
-El contenido normativo todavía no ha sido redactado.
+The regulatory text has not yet been drafted.
 
-## Dependencias
+## Subordinates
 
-- [[00-convenciones-editoriales|Convenciones editoriales de la especificación MUD]].
+- [[00-convenciones-editoriales|Stylistic conventions of the specification MUD]].
 
-## Alcance previsto
+## Scope planned
 
-- Objeto y límites de la especificación del lenguaje.
-- Relación entre el modelo MUD y sus implementaciones.
-- Elementos normativos e informativos.
-- Perfiles y declaraciones de conformidad.
-- Características obligatorias, opcionales y experimentales.
-- Extensiones de implementación.
-- Compatibilidad entre versiones.
-- Tratamiento de cuestiones abiertas.
+- Scope and limits of the specification of language.
+- Relation between the model MUD and its implementations.
+- Regulatory and informative elements.
+- Profiles and statements by conformance.
+- Mandatory, optional and experimental features.
+- Implementation extensions.
+- Compatibility between versions.
+- Dealing with outstanding issues.
 
-## Cuestiones abiertas
+## Unresolved issues
 
-Las cuestiones normativas se registrarán aquí cuando comience la redacción del capítulo.
+Policy issues will be recorded here once drafting of chapter begins.
+

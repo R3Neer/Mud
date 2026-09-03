@@ -1,7 +1,7 @@
 ---
-title: Convenciones editoriales de la especificación MUD
+title: Editorial conventions for the specification MUD
 aliases:
-  - Convenciones editoriales
+  - Publishing conventions
 tags:
   - mud/especificacion
   - mud/normativa
@@ -14,32 +14,32 @@ decisions:
   - D-097
 ---
 
-# Convenciones editoriales de la especificación MUD
+#  Editorial conventions for the specification MUD
 
 > [!note]
-> Este documento regula cómo se redacta la especificación. No define el comportamiento de los programas MUD.
+> This document sets out the rules for drafting the specification. It does not define the behaviour of MUD programmes.
 
-Proceso de publicación: [[gobierno/CICLO-DOCUMENTAL|Ciclo documental de MUD]].
+Publication process: [[gobierno/CICLO-DOCUMENTAL|Document lifecycle by MUD]].
 
-## 1. Dialecto Markdown
+## 1. Markdown dialect
 
-La documentación usará Markdown compatible con Obsidian y, cuando sea posible, legible en renderizadores Markdown comunes.
+The documentation will use Markdown that is compatible with Obsidian and, where possible, readable in common Markdown renderers.
 
-Se permiten:
+The following are permitted:
 
-- Propiedades YAML.
+- YAML properties.
 - `[[wikilinks]]`.
-- Enlaces Markdown ordinarios cuando deban funcionar fuera del vault.
-- Callouts de Obsidian.
-- Fórmulas LaTeX con `$...$` y `$$...$$`.
-- Bloques de código con lenguaje indicado.
-- Referencias a encabezados y bloques cuando sean estables.
+- Standard Markdown links where they need to work outside the vault.
+- Obsidian callouts.
+- LaTeX equations using `$...$` and `$$...$$`.
+- Code snippets with the language specified.
+- References to headings and blocks once they are finalised.
 
-Se evitarán plugins de Obsidian necesarios para comprender el contenido normativo.
+Obsidian plugins required to understand regulatory content will be avoided.
 
-## 2. Propiedades mínimas
+## 2. Minimum properties
 
-Cada capítulo usará:
+Each chapter will use:
 
 ```yaml
 ---
@@ -55,7 +55,7 @@ decisions: []
 ---
 ```
 
-Estados:
+States:
 
 - `esqueleto`
 - `borrador`
@@ -64,95 +64,95 @@ Estados:
 - `vigente`
 - `sustituido`
 
-`normative: true` clasifica el archivo dentro de la superficie normativa, pero no adelanta su estado de publicación. Solo `status: vigente` concede autoridad consolidada al capítulo como unidad. Antes de ese estado, el texto puede incorporar contratos ya cerrados por decisiones vigentes y artefactos mecánicos coherentes, pero no puede modificar esos contratos ni resolver por sí solo una cuestión abierta.
+`normative: true` classifies the file within normative surface, but does not advance its publication status. Only `status: vigente` grants established authority to chapter as unit. Prior to that state, the text may incorporate contracts already concluded by existing decisions and coherent mechanical artefacts, but it may not modify those contracts or resolve a open question on its own.
 
-Si un capítulo no vigente contradice una decisión vigente, la contradicción es un defecto editorial que debe corregirse antes de promover el capítulo. No se interpreta como una sustitución tácita de la decisión. La relación entre prosa y artefactos mecánicos normativos sigue regida por MUD-EDIT-001: una divergencia entre ambos es un defecto, no una regla de prioridad silenciosa.
+If an chapter that is not an current contradicts an current decision, the contradiction is an editorial error that must be corrected before the chapter is promoted. It is not interpreted as a tacit replacement of decision. The relation between prose and normative mechanical artefacts remains governed by MUD-EDIT-001: a divergence between the two is a defect, not an unstated rule of priority.
 
-## 3. Enlaces y trazabilidad
+## 3. Links and traceability
 
-Los enlaces internos usarán preferentemente wikilinks:
+Internal links should preferably use wikilinks:
 
 ```markdown
 [[03-notacion|notación matemática]]
 [[29-ondas#Configuración de una onda]]
 ```
 
-Cada capítulo debe enlazar:
+Each chapter must link to:
 
-- Sus dependencias normativas.
-- Los términos definidos en otro capítulo.
-- Las preguntas activas que delimiten una incertidumbre relevante para su contenido.
+- Its regulatory bodies.
+- Terms defined elsewhere chapter.
+- Active questions that define a uncertainty relevant to their content.
 
-Las decisiones que sustentan el capítulo se registran en el frontmatter `decisions:`. No se duplicará una definición para evitar un enlace.
+The decisions underpinning chapter are recorded in the frontmatter `decisions:`. A definition will not be duplicated in order to avoid a link.
 
-### 3.1. Estado vigente e historia
+### 3.1. State current and history
 
-> [!rule] MUD-EDIT-002 — Especificación como estado vigente
-> El cuerpo de todo documento normativo de `especificacion/` debe describir únicamente el estado actual de MUD dentro de su alcance. No debe conservar como parte de la exposición normativa la historia de introducción, modificación, sustitución o retirada de una regla.
+> [!rule] MUD-EDIT-002 — Specification as state current
+> The body of every normative document of `especificacion/` must describe only the current state of the MUD within its scope. It must not include, as part of the regulatory text, the history of a rule’s introduction, amendment, replacement or withdrawal.
 
-La historia y la procedencia pertenecen a los ADR, las preguntas históricas, Git y los metadatos de trazabilidad. En consecuencia:
+The history and provenance relate to ADRs, historical queries, Git and the metadata for traceability. In consequence:
 
-- El cuerpo normativo no usa identificadores `D-NNN` o `ADR-NNN` para justificar, fechar, introducir, actualizar o sustituir reglas. La relación con decisiones se conserva en `decisions:`.
-- No se crean secciones cuya función sea corregir aditivamente el contenido anterior, como «Actualización por D-NNN», «Revisión por D-NNN», «Tokens retirados» o equivalentes. La regla vigente se integra en su ubicación canónica y la formulación anterior se elimina.
-- Una prohibición o ausencia que forme parte del lenguaje actual puede expresarse directamente, por ejemplo «X es inválido» o «X no forma parte de esta gramática». No se conserva la narración histórica «X se eliminó» salvo que el hecho histórico sea el objeto explícito de un documento no normativo.
-- La misma regla se aplica a los comentarios explicativos de EBNF, ASDL, YAML y demás artefactos normativos mecánicos dentro de `especificacion/`.
+- The regulatory body does not use identifiers `D-NNN` or `ADR-NNN` to justify, date, introduce, update or replace rules. The relation containing decisions is retained in `decisions:`.
+- Do not create sections intended to additively amend the preceding content, such as ‘Update by D-NNN’, ‘Review by D-NNN’, ‘Tokens removed’ or equivalent. Rule current is incorporated into its canonical location and the previous wording is deleted.
+- A prohibition or omission that forms part of the current language may be expressed directly, for example ‘X is invalid’ or ‘X is not part of this grammar’. The historical narrative ‘X was removed’ is not retained unless the historical fact is the explicit subject of a non-normative document.
+- The same rule applies to explanatory comments in EBNF, ASDL, YAML and other mechanical specification artefacts within `especificacion/`.
 
-Las preguntas activas son una excepción deliberada a la ausencia de identificadores históricos en el cuerpo. Un documento puede citar una `Q-NNN` cuando sea necesario indicar con precisión qué parte de su estado actual permanece sin decidir. Esa referencia:
+Active questions are a deliberate exception to the absence of historical identifiers in the main body. A document may cite an `Q-NNN` where it is necessary to indicate precisely which part of its current state remains undecided. That reference:
 
-1. debe corresponder a una pregunta activa;
-2. debe figurar también en el frontmatter `questions:` del documento cuando este disponga de frontmatter;
-3. debe describir la incertidumbre presente, no la historia de las decisiones que la produjeron;
-4. debe retirarse del cuerpo y del frontmatter cuando la pregunta deje de estar activa.
+1.  must correspond to an active question;
+2.  must also appear in the frontmatter `questions:` of the document where the document has frontmatter;
+3. should describe the current uncertainty, not the history of the decisions that led to it;
+4.  must be removed from the body and the front matter once the question is no longer active.
 
-### 3.2. Integración de decisiones en superficies desarrolladas
+### 3.2. Integration of decisions on developed surfaces
 
-> [!rule] MUD-EDIT-003 — Integración por superficie desarrollada
-> Una decisión vigente debe quedar integrada en toda superficie normativa ya desarrollada cuya responsabilidad declarada cubra la regla afectada. Si la ubicación canónica todavía no existe como superficie desarrollada, la ausencia de ese futuro capítulo no constituye por sí sola un defecto de integración.
+> [!rule] MUD-EDIT-003 — Integration over the surface area
+> An current decision must be integrated into any normative surface that has already been developed and whose stated responsibility covers the rule in question. If the canonical location does not yet exist as a developed surface, the absence of that future chapter does not in itself constitute a defect in integration.
 
-A estos efectos, una superficie está desarrollada cuando existe un documento o artefacto normativo que ya asume responsabilidad sustantiva sobre esa materia. Una mera entrada `Archivo previsto` no obliga a crear anticipadamente el capítulo ni a alojar su semántica en otro capítulo impropio.
+For these purposes, an area is considered to have been developed when there is a regulatory document or instrument that already assumes substantive responsibility for that matter. A mere entry `Archivo previsto` does not require the chapter to be created in advance, nor does it require its semantics to be hosted on another chapter that is unsuitable.
 
-Mientras la superficie canónica no exista:
+As long as the canonical surface does not exist:
 
-- el ADR vigente puede conservar autoridad transitoria sobre esa parte;
-- ninguna superficie normativa existente puede contradecir la decisión;
-- los índices, mapas y descripciones de capítulos futuros deben ser compatibles con el estado ya decidido y no pueden conservar semántica sustituida;
-- no se considera integrada globalmente una regla solo porque figure en un ADR, pero tampoco se considera defectuosa por no aparecer en un capítulo que aún no existe.
+-  the ADR current may retain interim authority on that part;
+-  no existing normative surface may contradict the decision;
+- the indexes, maps and descriptions of future chapters must be compatible with the state already decided upon and must not retain the semantics that has been replaced;
+-  A rule is not considered to be fully integrated simply because it appears in an ADR, but nor is it considered flawed because it does not appear in a chapter that does not yet exist.
 
-La integración se evalúa por superficie afectada. Cuando una superficie ya desarrollada contiene la materia, debe reescribirse para expresar literalmente el estado vigente y no basta con añadir una nota correctiva al final.
+Integration is assessed on the basis of the area affected. Where an already developed area contains the material, it must be rewritten to state state current verbatim; it is not sufficient simply to add a corrective note at the end.
 
 ## 4. Callouts
 
-Uso previsto:
+Intended use:
 
 > [!definition]
-> Definición normativa.
+>  Regulatory definition.
 
 > [!rule]
-> Regla normativa.
+> Regulatory rule.
 
 > [!example]
-> Ejemplo informativo.
+> Informative example.
 
 > [!failure]
-> Contraejemplo o programa inválido.
+> Counterexample or invalid programme.
 
 > [!warning]
-> Interacción peligrosa o limitación.
+> Hazardous interaction or restriction.
 
 > [!question]
 > Cuestión abierta.
 
 > [!proof]
-> Demostración.
+> Demonstration.
 
 > [!intuition]
-> Explicación no normativa.
+> Explanation non-normative.
 
-El texto del callout debe indicar explícitamente si el renderer no reconoce el tipo personalizado.
+The callout text must explicitly state whether the renderer does not recognise the custom type.
 
-## 5. Identificadores normativos
+## 5. Regulatory identifiers
 
-Las reglas que afecten a conformidad tendrán identificador:
+Rules affecting conformance will have the identifier:
 
 ```text
 MUD-LEX-001
@@ -170,48 +170,48 @@ MUD-TEST-001
 MUD-CONF-001
 ```
 
-Un identificador retirado no se reutiliza con otro significado.
+A retired identifier is not reused with a different meaning.
 
-## 6. Bloques normativos
+## 6. Regulatory blocks
 
-Formato recomendado:
+Recommended format:
 
-> [!rule] MUD-ACTION-001 — Participantes de una acción
-> Una acción debe declarar sus participantes mediante `for`. Una acción no puede declarar participantes mediante `on`.
+> [!rule] MUD-ACTION-001 — Participants in a action
+>  An action must declare its participants using `for`. An action cannot declare participants via `on`.
 
-Después pueden aparecer:
+The following may then occur:
 
-- Justificación informativa.
-- Ejemplo válido.
-- Contraejemplo.
-- Diagnóstico relacionado.
-- Consecuencias para AST o IR.
+- Justification for information purposes.
+- Valid example.
+- Counterexample.
+- Diagnostic related.
+- Implications for AST or IR.
 
-## 7. Definiciones matemáticas
+## 7. Mathematical definitions
 
-Toda metavariable se introduce antes de usarse. Por ejemplo:
+Every metavariable must be defined before it is used. For example:
 
-> Sea $\mathcal A$ el conjunto de anclas y sea $W$ un estado de mundo bien formado.
+> Let $\mathcal A$ be the set of anchors and let $W$ be a well-formed state of world.
 
-Convenciones:
+Conventions:
 
-- Letras caligráficas para universos o conjuntos destacados: $\mathcal A$, $\mathcal T$.
-- Mayúsculas latinas para estados, conjuntos o estructuras: $W$, $R$, $G$.
-- Minúsculas para elementos: $a$, $v$, $e$.
-- Letras griegas para entornos y tipos cuando sea convencional: $\Gamma$, $\rho$, $\tau$.
-- Negrita o sans serif para nombres de categorías formales cuando ayude: $\mathsf{accepted}$.
+- Calligraphic lettering for highlighted universes or sets: $\mathcal A$, $\mathcal T$.
+- Latin capital letters for states, groups or structures: $W$, $R$, $G$.
+- Lower-case designations for elements: $a$, $v$, $e$.
+- Greek characters for environments and typefaces where conventional: $\Gamma$, $\rho$, $\tau$.
+- Bold or sans serif for formal category names where appropriate: $\mathsf{accepted}$.
 
-Las convenciones definitivas pertenecerán a [[03-notacion]].
+The final conventions will belong to [[03-notacion]].
 
-## 8. Reglas de inferencia
+## 8. Rules of inference
 
-Cada regla tendrá:
+Each rule will have:
 
-- Nombre único.
-- Premisas.
-- Conclusión.
-- Explicación en prosa.
-- Ejemplo de aplicación cuando no sea inmediata.
+-  Unique name.
+- Premises.
+- Conclusion.
+- Explanation in prose.
+- Example of use when the application is not immediate.
 
 ```laTeX
 $$
@@ -226,77 +226,77 @@ $$
 $$
 ```
 
-Los nombres de reglas usarán `\mathsf{...}`. No se empleará `\textsc`, aunque exista en LaTeX completo, porque no está soportado de forma uniforme por MathJax en Obsidian.
+Rule names will use `\mathsf{...}`. `\textsc` will not be used, even though it exists in full LaTeX, because it is not consistently supported by MathJax in Obsidian.
 
-## 9. Ejemplos
+## 9. Examples
 
-Los ejemplos se clasifican:
+The examples are categorised as follows:
 
-- `minimal`: aísla una regla.
-- `representative`: muestra uso realista.
-- `boundary`: cubre un límite.
-- `invalid`: debe rechazarse.
-- `interaction`: combina características.
+- `minimal`: isolates a ruler.
+- `representative`: demonstrates realistic use.
+- `boundary`: covers a boundary.
+- `invalid`: this should be rejected.
+- `interaction`: combines features.
 
-Un ejemplo informativo nunca puede ser la única definición de una regla.
+An illustrative example can never be the sole definition of a rule.
 
-## 10. Cuestiones abiertas
+## 10. Unresolved issues
 
-El ciclo de vida, los estados y el archivo estable de cada pregunta se rigen por [[gobierno/POLITICA-DE-PREGUNTAS|Política de preguntas de MUD]].
+The cycle lifecycle, statuses and stable archive for each question are governed by the [[gobierno/POLITICA-DE-PREGUNTAS|Policy for MUD questions ]].
 
-Formato:
+Format:
 
-> [!question] Q-NNN — Título
-> Pregunta precisa, alternativas conocidas y capítulos afectados.
+> [!question] Q-NNN — Title
+> Specific question, known alternatives and relevant sections.
 
-Mientras una pregunta afecte al significado de una construcción, el capítulo no puede pasar a `vigente`.
+As long as a question affects the meaning of a construction, chapter cannot proceed to `vigente`.
 
-El frontmatter `questions` enumera solo preguntas en estado `abierta` o `parcialmente-decidida`. Una pregunta cerrada se retira de la lista sin borrar su archivo histórico. Las referencias corporales a preguntas activas siguen además MUD-EDIT-002.
+The frontmatter `questions` lists only questions in state, `abierta` or `parcialmente-decidida`. A closed question is removed from the list without deleting its history. In-text references to active questions also follow MUD-EDIT-002.
 
-## 11. Teoremas y demostraciones
+## 11. Theorems and proofs
 
-Se distinguirán:
+The following shall be distinguished:
 
-- **Proposición**: resultado local.
-- **Lema**: resultado usado para demostrar otro.
-- **Teorema**: garantía principal.
-- **Corolario**: consecuencia directa.
-- **Conjetura**: afirmación todavía no demostrada.
-- **Contraejemplo**: caso que refuta una afirmación.
+- **Proposition**: result local.
+- **Lemma**: result used to prove another.
+- **Theorem**: principal guarantee.
+- **Corollary**: consequence direct.
+- **Conjecture**: a statement that has not yet been proven.
+- **Counterexample**: a case that refutes a claim.
 
-Una propiedad no demostrada no se llamará teorema.
+A property that has not been proved shall not be called a theorem.
 
-## 12. Artefactos normativos mecánicos
+## 12. Mechanical rule-based artefacts
 
-Además de Markdown, la especificación puede contener EBNF, ASDL, YAML y scripts de validación. Cada archivo debe declarar su función en el README del subdirectorio correspondiente.
+As well as Markdown, the specification may contain EBNF, ASDL, YAML and validation scripts. Each file must declare its purpose in the README file within the relevant subdirectory.
 
-> [!rule] MUD-EDIT-001 — Autoridad complementaria
-> Un artefacto mecánico normativo y la prosa que lo explica son complementarios. Una contradicción entre ambos es un defecto; no se resuelve suponiendo que uno tenga prioridad silenciosa.
+> [!rule] MUD-EDIT-001 — Authority (supplementary)
+> A normative mechanical artefact and the prose explaining it are complementary. A contradiction between the two is a flaw; it is not resolved by assuming that one takes silent precedence.
 
-Convenciones:
+Conventions:
 
-- EBNF: producciones `kebab-case`.
-- CST: categorías `PascalCaseSyntax`.
-- ASDL: tipos `snake_case`, constructores `PascalCase`, campos `snake_case`.
-- YAML: claves estables y orden legible; no se depende del orden de mapas para el significado.
-- Python editorial: debe fallar con código distinto de cero ante divergencias.
+- EBNF: productions `kebab-case`.
+- CST: categories `PascalCaseSyntax`.
+- ASDL: types `snake_case`, constructors `PascalCase`, fields `snake_case`.
+- YAML: stable keys and human-readable order; meaning does not depend on the order of maps.
+- Python editor: should return a non-zero error in the event of discrepancies.
 
-## 13. Archivos escritos y generados
+## 13. Written and generated files
 
-Todo archivo generado debe indicarlo en su cabecera y declarar su fuente. Los esquemas normativos de `especificacion/` se escriben o revisan deliberadamente; el código generado a partir de ellos no adquiere autoridad sobre su fuente.
+Every file generated must state this in its header and declare its source. The `especificacion/` specification schemas are written or reviewed deliberately; the code generated from them does not acquire authority regarding its source.
 
-Un cambio de gramática que afecte a la estructura debe actualizar en el mismo commit el catálogo CST, la cobertura, la transformación y el ASDL correspondientes.
+Any grammatical change that affects the structure must update the corresponding CST catalogue, coverage, transformation and ASDL in the same commit.
 
-> [!rule] MUD-EDIT-004 — Propagación de resolución nominal
-> Todo cambio que introduzca, elimine o modifique nombres, ámbitos, propietarios, bindings, categorías nominales, anclas, visibilidad nominal, cualificación o especialización debe revisar en el mismo cambio `09-nombres-y-anclas.md` y `nombres/mud-nominal-hir.asdl`. Si afecta a su contrato, ambas superficies y sus validadores deben actualizarse atómicamente.
+> [!rule] MUD-EDIT-004 — Propagation of nominal resolution
+> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, visibility nominal, qualification or specialisation must be reviewed in the same change `09-nombres-y-anclas.md` and `nombres/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
 
-La revisión debe comprobar al menos qué símbolos se crean, en qué scope viven, qué nombre los resuelve, qué propietario tienen, si reciben ancla pública y qué relaciones `Owns`, `Specializes` o `RefersTo` produce la resolución. Una regla dependiente de tipos, efectos o elaboración no se añade al HIR nominal para satisfacer artificialmente esta obligación.
+review must at least check which symbols are created, in which scope they reside, which name resolves to them, what owner they have, whether they receive public anchor, and which relationships `Owns`, `Specializes` or `RefersTo` the resolution produces. A rule dependent on types, effects or elaboration is not added to the Nominal HIR in order to artificially satisfy this requirement.
 
-## 14. Enlaces a archivos mecánicos
+## 14. Links to mechanical files
 
-Los capítulos enlazarán por nombre de archivo a los esquemas mecánicos. Los README de `gramatica/` y `sintaxis/` mantienen el inventario y los comandos de validación. No se copiarán tablas extensas generadas dentro de varios capítulos cuando puedan verificarse desde una única fuente.
+The chapters will link to the mechanical diagrams by filename. The README files for `gramatica/` and `sintaxis/` contain the inventory and commands from validation. Extensive tables generated within various chapters will not be duplicated where they can be verified from a single source.
 
-## 15. Plantilla de capítulo
+## 15. Template from chapter
 
 ```markdown
 ---
@@ -340,4 +340,5 @@ decisions: []
 ## Cuestiones abiertas
 ```
 
-Las secciones inaplicables pueden omitirse.
+Sections that do not apply may be omitted.
+
