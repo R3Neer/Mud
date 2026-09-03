@@ -71,7 +71,7 @@ The exhaustive list of introductory words and operators is derived from the gram
 
 ### Operators
 
-Precedence and chaining are set out in [[specification/07-concrete-grammar#Precedencia y agrupación]]. `to` and the display form of `in` are postfix operators that transform the entire value accumulated to their left; new operators may then be applied to the converted result. `changes` is a temporal suffix below comparisons and above `and` and `or`, in accordance with D-058.
+Precedence and chaining are set out in [[specification/07-concrete-grammar#Precedence and grouping]]. `to` and the display form of `in` are postfix operators that transform the entire value accumulated to their left; new operators may then be applied to the converted result. `changes` is a temporal suffix below comparisons and above `and` and `or`, in accordance with D-058.
 
 Permitted chains are elaborated as adjacent pairs:
 
