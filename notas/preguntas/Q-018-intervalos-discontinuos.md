@@ -1,6 +1,6 @@
 ---
 id: Q-018
-title: Intervalos discontinuos
+title: Discontinuous intervals
 priority: P1
 opened: 2026-07-29
 resolved:
@@ -14,10 +14,10 @@ affects: []
 superseded-by: []
 ---
 
-# Q-018 — Intervalos discontinuos
+# Q-018 — Discontinuous intervals
 
-## Contenido
+## Content
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] y [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
+Status: **partially decided** by [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] and [[notas/decisiones/ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]].
 
-Los intervalos se normalizan por contenido. En los lineales, extremos efectivos invertidos producen `empty` y no implican recorrido descendente ni ciclo. `cycle` es un modificador posterior exclusivo de un dominio de punto `[a..b)`, no parte de la expresión intervalo. Permanece abierta la sintaxis consolidada de intervalos discontinuos y sus claves. D-088 cierra el recorrido descendente explícito: se expresa mediante `by` con diferencia negativa, nunca invirtiendo extremos.
+Intervals are normalised by content. For linear intervals, inverted effective endpoints produce `empty` and imply neither descending traversal nor a cycle. `cycle` is a later modifier exclusive to a point domain `[a..b)`, not part of the interval expression. The consolidated syntax and keys for discontinuous intervals remain open. D-088 closes explicit descending traversal: it is expressed with `by` and a negative difference, never by inverting endpoints.
