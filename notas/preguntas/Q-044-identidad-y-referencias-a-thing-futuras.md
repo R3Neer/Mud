@@ -1,6 +1,6 @@
 ---
 id: Q-044
-title: Identidad y referencias a thing futuras
+title: Identity and references to future `thing` values
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -11,24 +11,24 @@ affects: []
 superseded-by: []
 ---
 
-# Q-044 — Identidad y referencias a `thing` futuras
+# Q-044 — Identity and references to future `thing` values
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-¿Qué designa el nombre activado por `create A`?
+What does the name activated by `create A` designate?
 
-Decisión vigente: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
+Current decision: [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]].
 
-`A` posee una única definición canónica de primer nivel y es resoluble antes de estar activa. `create A` solo solicita su activación. Tras `destroy A`, una ejecución posterior reactiva la misma identidad; nunca fabrica un segundo `A` ni modifica sus antecesoras.
+`A` has one canonical top-level definition and is resolvable before it is active. `create A` only requests its activation. After `destroy A`, a later execution reactivates the same identity; it never fabricates a second `A` or changes its ancestors.
 
-Las operaciones que requieran presencia activa deben comprobarla. El nacimiento y la memoria de las vinculaciones `on` continúan coordinados con Q-005.
+Operations requiring active presence must check it. The birth and memory of `on` bindings remain coordinated with Q-005.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-054`.
