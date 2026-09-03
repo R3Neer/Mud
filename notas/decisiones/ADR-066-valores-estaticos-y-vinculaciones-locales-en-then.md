@@ -1,53 +1,37 @@
 ---
 id: D-066
-title: "Valores estáticos y vinculaciones locales en `then`"
+title: "Static values and local bindings in `then`"
 status: vigente
 date: 2026-07-30
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "campos almacenados y calculados, familias, predeterminados, acciones, tests, bloques de efectos, AST e IR"
+  - "stored and computed fields, families, defaults, actions, tests, effect blocks, AST and IR"
 ---
-# ADR-066 — Valores estáticos y vinculaciones locales en `then`
+# ADR-066 — Static values and local bindings in `then`
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Amended by: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Extended by: [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+- Amends: [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Extends: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Affected documents: stored and computed fields, families, defaults, actions, tests, effect blocks, AST and IR
 
-- Ampliada por: [[ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+## Context
 
-- Modifica: [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Amplía: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
-- Documentos afectados: campos almacenados y calculados, familias, predeterminados, acciones, tests, bloques de efectos, AST e IR
+MUD uses `=` for stored or default values and `:=` for computed values. It was unclear whether a value written with `=` could be an expression, and how to name intermediate calculations in a `then` without turning them into world state.
 
-## Contexto
+A restriction to literal tokens would be too narrow. Expressions such as `1..2 | 3..4` are constant even when they combine literals and operators. Conversely, allowing `=` to read changing state would confuse “starts as” with “is calculated as”.
 
-MUD usa `=` para valores almacenados o predeterminados y `:=` para valores calculados. Faltaba delimitar si un valor escrito con `=` podía ser una expresión y cómo nombrar cálculos intermedios dentro de un `then` sin convertirlos en estado del mundo.
+## Decision
 
-Una restricción a tokens literales sería demasiado estrecha. Expresiones como:
+### Closed static expression
 
-```mud
-1..2 | 3..4
-```
+A closed static expression is pure, deterministic and non-stochastic; can be fully evaluated at compile time; and does not consult state fields, participants, `given`, local values or world activity. It may use literals, `family` members, nominal anchors denoting statically known values, constructors and operations between constants. When a context supplies an expected type, it is elaborated against that type. Permitted nominal references do not read mutable payload or current activity of a `thing`.
 
-son constantes aunque combinen varios literales y operadores. A la vez, permitir que `=` leyera estado cambiante confundiría «empieza siendo» con «se calcula como».
+### Use of `=`
 
-## Decisión
-
-### Expresión estática cerrada
-
-Una expresión estática cerrada:
-
-- Es pura, determinista y no estocástica.
-- Puede evaluarse por completo durante la compilación.
-- No consulta campos de estado, participantes, `given`, valores locales ni actividad del mundo.
-- Puede usar literales, miembros de `family`, anclas nominales que denotan valores conocidos estáticamente, constructores y operaciones entre constantes.
-- Se elabora bajo el tipo esperado cuando el contexto lo proporciona.
-
-Las referencias nominales permitidas no leen la carga mutable ni la actividad actual de una `thing`.
-
-### Uso de `=`
-
-El valor explícito de un campo almacenado, componente, dato almacenado de `family` o asignación de miembro debe ser estáticamente evaluable; puede escribirse como expresión breve o `ValueBlock` siempre que el cuerpo completo cumpla ese contrato. El predeterminado de `given` permanece específicamente como expresión estática cerrada y no admite `ValueBlock`.
+The explicit value of a stored field, component, stored `family` datum or member assignment must be statically evaluable. It may be a short expression or `ValueBlock`, provided the complete body meets this contract. A `given` default remains specifically a closed static expression and does not accept `ValueBlock`.
 
 ```mud
 lives: Nat = 3
@@ -56,45 +40,28 @@ allowed: Int Interval = 1..2 | 3..4
 duration: Time = 1 hour + 30 minutes
 ```
 
-La unión de intervalos produce un único valor normalizado de intervalo discontinuo; no constituye una excepción especial.
-
-Esto es inválido si `victories` es estado:
+The interval union produces one normalised discontinuous interval value; it is not a special exception. If `victories` is state, `initialScore: Nat = victories * 3` is invalid; the computed form is `score := victories * 3`. `=` introduces materialisable storage or a default, whereas `:=` declares a computed dependency. The distinction does not depend on how simple the expression looks.
 
 ```mud
-initialScore: Nat = victories * 3
-```
-
-La forma calculada es:
-
-```mud
+initialScore: Nat = victories * 3   # invalid when victories is state
 score := victories * 3
 ```
 
-`=` introduce carga o predeterminado materializable. `:=` declara una dependencia calculada. La distinción no depende de que la expresión escrita parezca sencilla.
+### Computed and stored locals
 
-### Locales calculadas y almacenadas
+An executable block may declare a computed local with `x [derived-form] := value-body`, an immutable stored local with `x: X = value-body`, or a mutable stored local with `mut x: X = value-body`.
 
-Un bloque ejecutable puede declarar una local calculada mediante `x [forma-derivada] := value-body`, una local almacenada inmutable mediante `x: X = value-body` o una local almacenada mutable mediante `mut x: X = value-body`.
+The computed form is pure and not assignable, retaining the applicable inference and coercion rules. Stored forms create execution-frame slots; only `mut` may be reassigned. An initializer is evaluated when execution reaches its declaration and may read the runtime projection visible there. None of these locals creates a field, public anchor or persistent state.
 
-La calculada es pura, no asignable y conserva las reglas de inferencia/coerción derivada vigentes. Las almacenadas crean slots del frame de ejecución; solo la forma `mut` puede reasignarse. Su inicializador se evalúa al alcanzar la declaración y puede leer la proyección runtime visible en ese punto. Ninguna de estas locales crea campo, ancla pública ni estado persistente.
+`value-body` may be a short expression or `ValueBlock`. `ExpressionBlock`, shared behaviour preambles and `TestAfterBlock` retain only the pure computed form with an ordinary expression RHS; nesting cannot provide storage or mutability.
 
-El `value-body` puede ser una expresión breve o `ValueBlock`. Un `ExpressionBlock`, los preámbulos compartidos de comportamiento y `TestAfterBlock` conservan exclusivamente la forma calculada pura con RHS expresión ordinaria; no pueden obtener almacenamiento o mutabilidad por anidamiento.
+A mutable local may satisfy a `for mut` participant. The call keeps a temporary binding to the slot and ordinary rollback reverts its changes. Other locals may satisfy only read-only participants or compatible `given` parameters.
 
-Una local mutable puede satisfacer un participante `for mut`; la llamada conserva una vinculación temporal al slot y el rollback ordinario revierte sus modificaciones. Las otras locales solo pueden satisfacer participantes readonly o `given` compatibles.
+### Sequencing, evaluation and scope
 
-### Secuencialidad, evaluación y ámbito
+The declaration is evaluated exactly once when execution reaches its textual position, reading the private sequential projection produced by earlier instructions in the same `then`. Its value is fixed; later effects do not re-evaluate it even if they change fields used by the expression.
 
-La declaración se evalúa exactamente una vez cuando la ejecución alcanza su posición textual. Lee la proyección secuencial privada producida por las instrucciones anteriores del mismo `then`.
-
-El valor queda fijado. Los efectos posteriores no provocan su reevaluación aunque cambien campos consultados por la expresión.
-
-El nombre:
-
-- Es visible desde la instrucción posterior a su declaración hasta el final de su bloque.
-- No es visible antes de la declaración.
-- Puede ser usado por vinculaciones locales posteriores.
-- No puede sombrear otro nombre visible ni redeclararse en el mismo ámbito.
-- No admite referencias adelantadas ni ciclos.
+The name is visible from the instruction after its declaration to the end of its block; not before the declaration; usable by later local bindings; and unable to shadow or redeclare another visible name. Forward references and cycles are forbidden.
 
 ```mud
 then {
@@ -104,7 +71,7 @@ then {
 }
 ```
 
-Esto es inválido:
+This is invalid because `tax` is referenced before its declaration:
 
 ```mud
 then {
@@ -114,29 +81,29 @@ then {
 }
 ```
 
-Cada bloque de `for each` crea un ámbito local nuevo por iteración. Las locales de una iteración no sobreviven a la siguiente. Un `LocalForEach` de `ValueBlock` puede modificar slots mutables del mismo `ValueBlock` envolvente; un recorrido ejecutable puede además escribir lugares autorizados del mundo.
+Each `for each` block creates a new local scope per iteration. Locals do not survive into the next iteration. A `LocalForEach` in a `ValueBlock` may modify mutable slots in the enclosing `ValueBlock`; an executable traversal may additionally write authorised world locations.
 
-Un `then` continúa necesitando al menos un efecto o una llamada a acción; un bloque compuesto únicamente por vinculaciones locales no modifica el mundo y es inválido como cuerpo de acción o consecuencia reactiva.
+A `then` still requires at least one effect or action call. A block consisting only of local bindings changes no world state and is invalid as an action body or reactive consequence.
 
-## Consecuencias
+## Consequences
 
-- Los valores almacenados persistentes y predeterminados sujetos al contrato estático de `=` aceptan más que literales, pero no dependen del estado runtime; las locales almacenadas de un bloque ejecutable siguen su contrato runtime propio.
-- Los intervalos discontinuos constantes se asignan directamente y se normalizan al compilar.
-- Los cálculos repetidos dentro de un `then` pueden recibir nombres sin ampliar el store.
-- La resolución de locales es estrictamente textual y no requiere un punto fijo.
-- Las trazas pueden mostrar el valor local calculado, pero este no recibe ancla ni se publica como estado.
+- Persistent stored values and defaults under the static `=` contract accept more than literals but never depend on runtime state; stored locals in executable blocks follow their own runtime contract.
+- Constant discontinuous intervals are assigned directly and normalised at compile time.
+- Repeated calculations in a `then` can be named without extending the store.
+- Local resolution is strictly textual and needs no fixed point.
+- Traces may show a computed local's value, but it receives no anchor and is not published as state.
 
-## Verificación
+## Verification
 
-1. Literal, constructor nominal y operación constante con `=`.
-2. Unión, intersección, diferencia y diferencia simétrica de intervalos constantes.
-3. Rechazo de lectura de estado, participante, `given`, local o azar en una expresión estática.
-4. Valor local con tipo inferido y anotado.
-5. Rechazo de inferencia ambigua.
-6. Lectura local de un efecto secuencial anterior.
-7. Conservación del valor frente a efectos posteriores.
-8. Dependencia de un local anterior.
-9. Rechazo de referencia adelantada, ciclo, redeclaración y sombreado.
-10. Ámbito por bloque e iteración.
-11. Aceptación de `in`, cardinalidad, `unique` y orden como forma coercitiva derivada, y rechazo de `[mut]` como autoridad fabricada.
-12. Rechazo de un `then` sin ningún efecto observable.
+1. Literal, nominal constructor and constant operation with `=`.
+2. Union, intersection, difference and symmetric difference of constant intervals.
+3. Rejection of state, participant, `given`, local or random reads in a static expression.
+4. Local value with inferred and annotated type.
+5. Rejection of ambiguous inference.
+6. Local read of a preceding sequential effect.
+7. Preservation of a local value across later effects.
+8. Dependency on an earlier local.
+9. Rejection of forward reference, cycle, redeclaration and shadowing.
+10. Scope by block and iteration.
+11. Acceptance of `in`, cardinality, `unique` and ordering as derived coercions, and rejection of `[mut]` as fabricated authority.
+12. Rejection of a `then` without an observable effect.
