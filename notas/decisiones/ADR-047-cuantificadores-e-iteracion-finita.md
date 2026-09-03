@@ -1,6 +1,6 @@
 ---
 id: D-047
-title: "Cuantificadores e iteración finita"
+title: "Quantifiers and finite iteration"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -12,26 +12,26 @@ questions:
 affects:
   - "expresiones, intervalos, iteración"
 ---
-# ADR-047 — Cuantificadores e iteración finita
+# ADR-047 — Quantifiers and finite iteration
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Amended by: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
-- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
-- Modificada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
-- Modificada por: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]]
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Expanded by: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
+- Expanded by: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Amended by: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Amended by: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]]
 
-- Preguntas relacionadas: Q-018, Q-028, Q-029
-- Documentos afectados: expresiones, intervalos, iteración
+- Related questions: Q-018, Q-028, Q-029
+- Documents affected: expressions, ranges, iteration
 
-## Contexto
+## Context
 
-MUD necesita recorrer conjuntos de dominio sin introducir bucles generales cuya terminación o resultado dependan del contenedor interno.
+MUD needs to iterate through sets of domain without introducing general loops whose termination o result depend on the inner container.
 
 ## Decisión
 
-Las expresiones admiten:
+Expressions allow:
 
 ```mud
 exists x in source : predicate
@@ -41,17 +41,17 @@ min x in source : predicate
 max x in source : predicate
 ```
 
-La fuente debe ser finita y enumerable. La evaluación es pura. Los cinco cuerpos son predicados booleanos. `min` y `max` devuelven el primer o último testigo aceptado según el orden semántico de la fuente; requieren una fuente con orden utilizable. Son consultas parciales: sin testigos aceptados producen `empty` con cardinalidad `[0..1]` y, en otro caso, un valor del tipo de miembro de la fuente. La ausencia solo falla después si el contexto receptor no admite cardinalidad cero, conforme a D-095.
+The domain must be finite and countable. The evaluation is pure. The five bodies are Boolean predicates. `min` y `max` They return the first or last accepted witness according to the semantic order of the source; they require a source with a usable order. These are partial queries: if no witnesses are accepted, they produce `empty` with cardinality `[0..1]` and, in another case, a value from the type from member from the source. The omission only becomes a problem later on if the context receiver does not support cardinality zero, in accordance with D-095.
 
-D-081 añade una selección pura que devuelve los testigos en lugar de consumirlos:
+D-081 Add a pure selection that returns the flags rather than consuming them:
 
 ```mud
 item in source : predicate
 ```
 
-Comparte la obligación de finitud y enumerabilidad, pero produce la subcolección aceptada y puede alimentar después un cuantificador, `take` u otra expresión.
+Shares the responsibility for finiteness y enumerability, but it produces the accepted subcollection and can subsequently feed into a quantifier, `take` or another expression.
 
-El `for each` ejecutable aparece dentro de un `then`; D-101 admite además `LocalForEach` dentro de `ValueBlock`, con `LocalStatementBlock` y sin efectos exteriores. La forma ejecutable conserva:
+The `for each` The executable appears inside a `then`; D-101 also allows for `LocalForEach` inside `ValueBlock`, with `LocalStatementBlock` and has no external effects. The executable form retains:
 
 ```mud
 for each item in source if predicate :
@@ -61,31 +61,32 @@ for each value in source by step if predicate :
     iterations += 1
 ```
 
-La cláusula `by` opcional precede siempre a `if`. Un diccionario puede vincular un par mediante `(key, value)`.
+The clause `by` 'optional' always precedes `if`. A dictionary can link a pair by means of `(key, value)`.
 
-La pertenencia a `source` se toma como instantánea al comienzo del bucle. El filtro es puro, determinista y no puede depender de azar calculado. En una fuente con orden semántico, cada filtro se evalúa inmediatamente antes de su iteración y observa los efectos secuenciales anteriores dentro del delta privado. En una fuente sin orden semántico, todos los filtros leen la misma instantánea inicial y los deltas de las iteraciones aceptadas se consolidan como efectos simultáneos; un conflicto revierte la resolución completa.
+Membership of `source` is taken as snapshot at the start of the loop. The filter is pure, deterministic and cannot depend on computed randomness. In a source with semantic order, each filter is evaluated immediately before its iteration and observes the previous sequential effects within the delta private. In a source with no semantic order, all filters read the same snapshot The initial value and the deltas from the accepted iterations are combined as simultaneous effects; a conflict reverses the resolution complete.
 
-La enumeración canónica procede del tipo: orden declarado de una familia cerrada, producto lexicográfico de un alias estructural, orden del diccionario o colección, u orden ascendente de un intervalo cuando se materializa canónicamente. El orden de recorrido de una progresión explícita es independiente: `by` negativo recorre desde el límite superior hacia valores menores conforme a D-088 sin cambiar el orden canónico del tipo o dominio.
+The canonical enumeration is derived from the type: declared order of a closed family, a lexicographical entry for a structural alias, dictionary order or collection, or the ascending order of an interval when it is canonically realised. The order in which an explicit progression is traversed is independent: `by` The negative value decreases from the upper limit towards lower values in accordance with D-088 without altering the canonical order of the type o domain.
 
-Cuando una enumeración se obtiene mediante progresión, los intervalos finitos de `Nat` e `Int` usan paso predeterminado uno y `Money`, paso `0.01`. Las fuentes que ya poseen enumeración propia no necesitan fabricar un paso. Un intervalo general de `Num` requiere paso exacto explícito. Los intervalos de `Rum` nunca son enumerables. El último valor es el último punto generado que pertenece al intervalo; no se fuerza la inclusión del extremo.
+When an enumeration is obtained by progression, the finite intervals of `Nat` e `Int` use default step one and `Money`, step `0.01`. Sources that already have their own numbering do not need to create a step. A general range of `Num` requires an explicit, exact step size. The intervals of `Rum` can never be enumerated. The last one value it is the latest point generated and falling within the interval; the endpoints are not included by default.
 
-Un intervalo discontinuo se normaliza en segmentos disjuntos y se recorre segmento a segmento, reiniciando el paso en cada segmento. Un intervalo vacío produce cero iteraciones.
+A discontinuous interval is normalised into disjoint segments and traversed segment by segment, with the step being reset in each segment. An empty interval results in zero iterations.
 
-## Consecuencias
+## Consequences
 
-- No existe iteración implícita sobre dominios infinitos o no enumerables.
-- La sintaxis consolidada de intervalos discontinuos sigue en Q-018; el recorrido descendente explícito se expresa mediante `by` negativo conforme a D-088.
-- Las pruebas de finitud y terminación pueden ser conservadoras.
+- There is no implicit iteration over infinite or uncountable domains.
+- The established syntax for discontinuous intervals continues in Q-018; the explicit downward path is expressed by `by` negative in accordance with D-088.
+- The tests for finiteness y termination may be conservative.
 
-## Verificación
+## Verification
 
-1. Cuantificadores sobre fuente finita, incluidos extremos filtrados sobre fuente ordenada.
-2. `min` y `max` vacíos producen `empty` y su incompatibilidad posterior usa las reglas ordinarias de cardinalidad.
-3. Diferencia observable entre bucle ordenado y no ordenado.
-4. Intervalos abiertos, cerrados, discontinuos y con paso.
-5. Rechazo de una enumeración `Rum` o infinita.
-6. Orden sintáctico `by` antes de `if` y vinculación de pares de diccionario.
+1. Quantifiers over finite sources, including filtered extremes over ordered sources.
+2. `min` y `max` gaps cause `empty` and its subsequent incompatibility follows the standard rules of cardinality.
+3. A noticeable difference between an ordered and an unordered loop.
+4. Open, closed, discontinuous and stepped intervals.
+5. Rejection of a list `Rum` or infinite.
+6. Syntactic order `by` before `if` and linking dictionary pairs.
 
-## Modificación por D-088
+## Amendment by D-088
 
-D-088 generaliza `by` a diferencias firmadas compatibles, evaluadas una vez, y distingue filtros ordenados (ven efectos secuenciales anteriores) de no ordenados (leen la instantánea inicial). Los cinco cuantificadores admiten `by` cuando la fuente define progresión y bloques de expresión booleanos. `Rum` sigue sin ser enumerable y los dominios cíclicos de punto se recorren como máximo durante un periodo fundamental.
+D-088 generalises `by` compatible signed differences, evaluated once, and distinguishes between ordered filters (which see previous sequential effects) and unordered filters (which read the snapshot (initial). The five quantifiers support `by` when the source defines progression and Boolean expression blocks. `Rum` remains uncountable, and the cyclic domains of point are covered over a maximum of one fundamental period.
+

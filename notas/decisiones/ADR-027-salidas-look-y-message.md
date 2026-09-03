@@ -1,6 +1,6 @@
 ---
 id: D-027
-title: "Salidas del modelo mediante `look` y `message`"
+title: "Departures from the model by means of `look` y `message`"
 status: sustituida
 date: 2026-07-27
 supersedes: []
@@ -12,27 +12,27 @@ questions:
 affects:
   - "futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`"
 ---
-# ADR-027 — Salidas del modelo mediante `look` y `message`
+# ADR-027 — Departures from the model by means of `look` y `message`
 
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada después por: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
-- Preguntas abiertas: Q-051, Q-052
-- Documentos afectados: futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`
+- Amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Subsequently amended by: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
+- Open questions: Q-051, Q-052
+- Documents affected: future `22-looks-y-messages.md`, future `42-api-publica.md`
 
-## Contexto
+## Context
 
-Las acciones permiten introducir solicitudes en un modelo MUD, pero faltaba una superficie simétrica y tipada para extraer información. Leer directamente el store o los artefactos de implementación rompería la separación entre semántica y materialización.
+Actions allow you to submit requests to a model MUD, but it lacked a symmetrical, typed surface from which to extract information. Reading directly from the store or the implementation artefacts would break the separation between semantics y materialisation.
 
-MUD incorpora dos entidades de salida:
+MUD includes two output entities:
 
-- `look`, para observar el estado estable actual bajo demanda.
-- `message`, para publicar que ocurrió un hecho durante la resolución de una acción.
+- `look`, to observe the stable state currently available on demand.
+- `message`, to report that an incident took place during the resolution of a action.
 
 ## Decisión
 
 ### `look`
 
-Un `look` declara participantes explícitos con `for`, no admite `given` y publica propiedades calculadas:
+A `look` declares explicit participants with `for`, does not support `given` and publishes calculated properties:
 
 ```mud
 look RealmSummary for kingdom: Kingdom {
@@ -41,7 +41,7 @@ look RealmSummary for kingdom: Kingdom {
 }
 ```
 
-Forma conceptual:
+Conceptual form:
 
 ```text
 look nombre for participantes {
@@ -50,11 +50,11 @@ look nombre for participantes {
 }
 ```
 
-Cada expresión puede ser una lectura de propiedad o cualquier expresión pura bien tipada, incluidas las equivalentes a propiedades derivadas. Un `look` no modifica el mundo. Sus campos se evalúan sobre un único estado estable.
+Each expression may be a property reading or any well-typed pure expression, including those equivalent to derived properties. A `look` does not alter the world. Its fields are evaluated over a single stable state.
 
 ### `message`
 
-Un `message` declara vinculaciones automáticas con `on`, una condición `when`, una guarda `if` opcional y propiedades públicas calculadas:
+A `message` declares automatic links with `on`, a condition `when`, a guard `if` Optional and calculated public properties:
 
 ```mud
 message KingChanged on kingdom: Kingdom {
@@ -66,7 +66,7 @@ message KingChanged on kingdom: Kingdom {
 }
 ```
 
-Forma conceptual:
+Conceptual form:
 
 ```text
 message nombre on participantes {
@@ -77,69 +77,70 @@ message nombre on participantes {
 }
 ```
 
-La detección del mensaje pertenece a la secuencia de oleadas causada por una acción. Sus propiedades públicas no se materializan con los valores del instante de detección. Se evalúan sobre el estado estable tentativo alcanzado al terminar toda la secuencia de oleadas de esa acción.
+The detection of the message forms part of the sequence of waves caused by a action. Its public properties are not calculated using the values at the time of detection. They are evaluated over the stable state the target achieved upon completion of the entire sequence of waves of that action.
 
-Esta separación requiere que el runtime conserve una ocurrencia pendiente con las vinculaciones de participantes necesarias y difiera la evaluación de las expresiones públicas.
+This separation requires the runtime to maintain a occurrence pending the necessary links between participants, and the assessment of public statements is deferred.
 
-### Frontera semántica
+### Border semantics
 
-`action`, `look` y `message` forman la frontera explícita del modelo:
+`action`, `look` y `message` form the explicit boundary of the model:
 
-- `action`: entrada que puede cambiar el mundo.
-- `look`: salida consultada del estado estable.
-- `message`: salida eventual causada por un cambio.
+- `action`: a post that could change the world.
+- `look`: extract taken from the stable state.
+- `message`: a temporary departure caused by a change.
 
-Ninguna de estas entidades autoriza a observar detalles de arquitectura, framework, base de datos o materialización.
+None of these organisations authorises the examination of details relating to architecture, frameworks, databases or materialisation.
 
-## Reglas estáticas iniciales
+## Initial static rules
 
-- Los nombres de propiedades públicas son únicos dentro de su entidad.
-- Toda propiedad pública posee un tipo estático, declarado opcionalmente o inferido de su expresión.
-- La expresión asignada debe ser pura. Si el tipo se declara, debe ser compatible con él; si se omite, su tipo debe poder inferirse unívocamente.
-- Un `look` no admite `on`, `given`, `when`, `if`, `then` ni `after`.
-- Un `message` no admite `for`, `given`, `then` ni `after`.
-- Un `message` exige exactamente un `when` y como máximo un `if`.
-- Las expresiones públicas de un `message` deben seguir siendo evaluables en el estado estable final para las vinculaciones conservadas.
-- Un campo público cuyo valor directo sea una magnitud puede elegir una presentación disponible mediante `in`. Si admite unidades y la omite, la salida usa la proyección canónica y el compilador emite un aviso. Una magnitud sin unidades publica su número sin aviso.
-- Una magnitud de punto publicada directamente es una coordenada numérica en la unidad elegida; su `format` solo se publica construyendo explícitamente un campo `Text`.
+- The names of public properties are unique within their entity.
+- All public property has a type static, either declared explicitly or inferred from its expression.
+- The assigned expression must be pure. If the type If it is declared, it must be compatible with it; if it is omitted, its type it must be possible to infer it unambiguously.
+- A `look` does not support `on`, `given`, `when`, `if`, `then` nor `after`.
+- A `message` does not support `for`, `given`, `then` nor `after`.
+- A `message` requires exactly one `when` and no more than one `if`.
+- Public statements by a `message` must continue to be assessable in the stable state end date for retained links.
+- A field audience whose value direct is a magnitude you can choose one presentation available via `in`. If units are supported and this is omitted, the output uses the canonical projection and the compiler issues a warning. A magnitude 'Sin Unidades' publishes its issue without prior notice.
+- One magnitude from point published directly is a numerical coordinate in the unit chosen; her `format` It is only published by explicitly constructing a field `Text`.
 
-## Cuestiones todavía abiertas
+## Issues still to be resolved
 
-### Q-051 — Identidad y selección de un `look`
+### Q-051 — Identity and selection of a `look`
 
-Falta definir cómo se proporcionan participantes, qué resultado se obtiene cuando no están activos, si una consulta puede devolver varias filas y cómo se serializan cardinalidades, aliases y magnitudes anidadas. D-061 ya fija la presentación de una magnitud usada como valor directo de un campo público.
+It remains to be defined how participants are selected, what result is obtained when they are not active, if a query It may return multiple rows, and explains how cardinalities, aliases and nested magnitudes are serialised. D-061 already sets the presentation of a magnitude used as value directly from a field public.
 
-### Q-052 — Entrega de `message`
+### Q-052 — Delivery from `message`
 
-Falta decidir:
+Still to be decided:
 
-- Si una misma vinculación puede producir una o varias ocurrencias durante una acción.
-- Cómo se ordenan mensajes distintos y ocurrencias múltiples.
-- Si se deduplican detecciones repetidas.
-- Qué ocurre con una detección si la acción termina `rejected` o `failed`.
-- Qué ocurre si un participante queda inactivo antes del estado estable.
-- Si la guarda `if` se evalúa al detectar, al estabilizar o en ambos momentos.
+- If a single relationship can result in one or more occurrences during a action.
+- How different messages and multiple occurrences are sorted.
+- If duplicate detections are deduplicated.
+- What happens with a detection if the action end `rejected` o `failed`.
+- What happens if a participant becomes inactive before the stable state.
+- If you keep it `if` It is assessed upon detection, upon stabilisation, or at both stages.
 
-Hasta resolver Q-052, la norma solo fija que los campos publicados se evalúan después de la estabilización; no fija todavía el protocolo de entrega.
+Until further notice Q-052, the standard merely stipulates that the published fields are evaluated after the stabilisation; the protocol for delivery.
 
-## Consecuencias
+## Consequences
 
-- El AST incorpora `LookDecl`, `MessageDecl` y `PublicFieldDecl`.
-- El runtime necesita una cola transaccional de ocurrencias pendientes, separada de un bus o transporte concreto.
-- El grafo semántico incorpora dependencias de lectura desde las expresiones públicas.
-- Los mensajes no deben materializarse como efectos externos antes de que la resolución sea confirmable.
-- Las materializaciones pueden convertir looks y mensajes en endpoints, consultas, eventos o callbacks, pero esos mecanismos no forman parte de MUD.
+- The AST incorporates `LookDecl`, `MessageDecl` y `PublicFieldDecl`.
+- The runtime requires a queue transactional record of pending incidents, separate from any specific bus or transport service.
+- The graph Semantic incorporates reading dependencies from public expressions.
+- Messages must not manifest as external effects before the resolution can be verified.
+- Materialisations can convert looks and messages into endpoints, queries, events or callbacks, but these mechanisms are not part of MUD.
 
-## Verificación futura
+## Future verification
 
-1. `look` puro con propiedades de tipo declarado e inferido y con una expresión compuesta.
-2. Rechazo de `given` en `look`.
-3. `message` con y sin `if`.
-4. Rechazo de cabeceras y cláusulas incompatibles.
-5. Caso donde el valor al detectar difiere del valor estable publicado.
-6. Rollback sin emisión externa prematura.
-7. Aviso por una magnitud pública con unidad seleccionable pero sin `in`, ausencia de aviso cuando no existen unidades y publicación formateada de un punto mediante `Text`.
+1. `look` cigar with properties of type explicit and implicit, and with a compound expression.
+2. Rejection of `given` in `look`.
+3. `message` with and without `if`.
+4. Rejection of headings and incompatible clauses.
+5. A case where the value when detecting, it differs from the value published stable version.
+6. Rollback without premature external output.
+7. Notice regarding a magnitude public with unit selectable but without `in`, no notification when there are no units available, and formatted display of a point by means of `Text`.
 
-## Estado posterior
+## State rear
 
-Esta decisión fue **sustituida íntegramente por [[ADR-096-modulos-callables-look-message-y-activacion|D-096]]**. Su descripción de `look` sin `given`, `message` como salida con campos evaluados únicamente al final y la frontera exclusivamente host se conserva aquí solo como historial.
+This decision was **replaced in its entirety by [[ADR-096-modulos-callables-look-message-y-activacion|D-096]]**. His description of `look` without `given`, `message` as an output where fields are evaluated only at the end, and the ‘host-only’ boundary is retained here solely for historical purposes.
+

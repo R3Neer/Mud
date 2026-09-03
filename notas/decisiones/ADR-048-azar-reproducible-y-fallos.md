@@ -1,6 +1,6 @@
 ---
 id: D-048
-title: "Azar reproducible y fallos"
+title: "Reproducible randomness and errors"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -13,58 +13,59 @@ questions:
 affects:
   - "expresiones, efectos, runtime, diagnósticos"
 ---
-# ADR-048 — Azar reproducible y fallos
+# ADR-048 — Reproducible randomness and errors
 
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
-- Preguntas relacionadas: Q-007, Q-032, Q-035, Q-058
-- Documentos afectados: expresiones, efectos, runtime, diagnósticos
+- Amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Expanded by: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Related questions: Q-007, Q-032, Q-035, Q-058
+- Documents affected: expressions, effects, runtime, diagnostics
 
-## Contexto
+## Context
 
-MUD admite azar, pero no permite que este o los errores introduzcan resultados dependientes de la plataforma ni conviertan consultas fallidas en falsedades.
+MUD allows for randomness, but does not permit this or errors to introduce platform-dependent results or to turn failed queries into falsehoods.
 
 ## Decisión
 
-MUD 1.0 expone una forma explícitamente aleatoria de muestreo:
+MUD 1.0 sets out an explicitly random method of sampling:
 
 ```mud
 Rand(source)
 ```
 
-La fuente debe ser una colección o dominio muestreable. No existen todavía argumentos de pesos, distribuciones ni política local.
+The source must be a collection o domain demonstrable. There are as yet no compelling arguments regarding weights, distributions or policy local.
 
-D-081 añade `take amount from source`. Sobre una fuente sin orden observable y con más ocurrencias que `amount`, `take` es un punto aleatorio reproducible aunque no escriba `Rand`: selecciona uniformemente y sin reemplazo. Posee la misma identidad, caché por instantánea y restricciones contextuales. Sobre una fuente ordenada, o cuando no existe elección real, `take` es determinista y no consume azar.
+D-081 add `take amount from source`. Based on a source with no discernible order and with more occurrences than `amount`, `take` is a point reproducible randomness even if I don’t write anything `Rand`: selects uniformly without replacement. It has the same identity, cache by snapshot and contextual constraints. When dealing with a well-organised source, or when there is no real choice, `take` It is deterministic and does not involve chance.
 
-`Rand` puede intervenir de tres formas:
+`Rand` It can intervene in three ways:
 
-- campo almacenado inicializado aleatoriamente mediante `=`;
-- campo calculado aleatorio mediante `:=`;
-- muestreo dentro de un efecto.
+- stored field initialised randomly using `=`;
+- computed field randomly using `:=`;
+- sampling within a effect.
 
-Todo punto aleatorio posee identidad semántica y deriva su resultado de una semilla reproducible. Un campo calculado aleatorio conserva el mismo resultado dentro de una misma instantánea de evaluación. No puede leerse directamente desde reglas booleanas, dominios, `if`, `when`, `always` ni filtros de iteración.
+Everything point random has identity semantics and derives its result of a seed reproducible. A computed field 'random' remains the same result within the same snapshot evaluation. It cannot be read directly from Boolean rules, domains, `if`, `when`, `always` nor iteration filters.
 
-`allowed` usa una rama concreta, sembrada y descartable. `eventually` cuantifica existencialmente sobre resultados de probabilidad positiva conforme a D-044.
+`allowed` use a branch specific, planted and disposable. `eventually` quantifies existentially on outcomes with a positive probability in accordance with D-044.
 
-Los resultados no finitos de `Rum`, la división por cero, una referencia no disponible, una operación fuera de dominio y cualquier efecto que no pueda producir un estado bien formado son fallos. Dentro de una acción real producen `failed` y rollback. Dentro de `allowed` se propagan como fallo de evaluación y no equivalen a falso.
+The non-finite results of `Rum`, division by zero, an unavailable reference, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `failed` and rollback. Within `allowed` they spread like failure assessment purposes and do not amount to falsehood.
 
-Cada uno de esos fallos debe tener un diagnóstico humano `Text`. Cuando alcanza la frontera de una acción real, ese diagnóstico forma el `reason` obligatorio de su resultado `failed` conforme a D-061.
+Each of these errors must have a diagnostic human `Text`. When it reaches the boundary of a action real, that one diagnostic forms the `reason` mandatory for its result `failed` in accordance with D-061.
 
-Los límites de recursos y defectos internos de una implementación no deben confundirse con un `failed` semántico. Q-007 debe fijar su representación externa y la frontera exacta entre ambas categorías.
+Resource constraints and internal flaws in an implementation should not be confused with a `failed` semantic. Q-007 It must define their external representation and the exact boundary between the two categories.
 
-## Consecuencias
+## Consequences
 
-- Una implementación no puede usar tiempo de máquina ni orden de evaluación como fuente semántica de azar.
-- Todo punto aleatorio posee identidad semántica estable y su elección debe derivarse de la semilla reproducible y de esa identidad sin depender del consumo secuencial accidental de un PRNG global. El algoritmo concreto de derivación o subsemillas es un detalle de implementación mientras preserve ese contrato. Q-032 mantiene abiertas las reglas de caché y reintentos y la exposición de resultados.
-- La portabilidad aritmética de `Rum` sigue en Q-058.
-- La semántica de errores dentro de expresiones booleanas ordinarias, fuera de `allowed`, requiere una tabla normativa dentro de Q-007.
+- An implementation must not use machine time or evaluation order as a source semantics of chance.
+- Everything point random possesses identity semantics stable, and its selection must be based on the seed reproducible and of that identity without relying on the accidental sequential consumption of a global PRNG. The specific derivation or sub-seeding algorithm is a matter of implementation, provided that it preserves that contract. Q-032 It keeps the cache and retry rules, as well as the display of results, active.
+- The arithmetic portability of `Rum` continues at Q-058.
+- The semantics errors within ordinary Boolean expressions, outside `allowed`, requires a table of regulations within Q-007.
 
-## Verificación
+## Verification
 
-1. Repetición con la misma semilla y divergencia controlada con otra.
-2. Estabilidad de un campo calculado aleatorio dentro de una instantánea.
-3. Prohibición en condiciones y filtros.
-4. Aislamiento del azar especulativo.
-5. Rollback y propagación de fallos.
-6. Aceptación de `Rand(source)`, rechazo de firmas adicionales y clasificación contextual de `take` ordenado o estocástico.
+1. Repetition with the same seed and controlled divergence from another.
+2. Stability of a computed field random within a snapshot.
+3. Restrictions on conditions and filters.
+4. Protection against speculative risk.
+5. Rollback and fault propagation.
+6. Acceptance of `Rand(source)`, rejection of additional signatures and contextual classification from `take` ordered or stochastic.
+

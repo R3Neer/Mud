@@ -1,6 +1,6 @@
 ---
 id: D-042
-title: "Acciones, raíz y resultados"
+title: "Shares, root and results"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -16,18 +16,18 @@ questions:
 affects:
   - "frontera pública, efectos, solicitud de acciones, semántica de la raíz"
 ---
-# ADR-042 — Acciones, raíz y resultados
+# ADR-042 — Shares, root and results
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada además por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
-- Preguntas relacionadas: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
-- Documentos afectados: frontera pública, efectos, solicitud de acciones, semántica de la raíz
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Related to: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Amended by: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Further amended by: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]] y [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Related questions: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
+- Documents concerned: public boundary, effects, request shares, semantics of the root
 
-## Contexto
+## Context
 
-Una acción es la frontera de escritura de MUD. Su contrato debe separar la inadmisibilidad esperable de una solicitud de los errores que impiden obtener un estado válido.
+One action is the MUD’s writing boundary. Its contract one must distinguish between expected inadmissibility and that of a request the errors that prevent one from obtaining a state valid.
 
 ## Decisión
 
@@ -47,71 +47,72 @@ given
 }
 ```
 
-Una acción:
+One action:
 
-- declara participantes mediante `for`;
-- puede declarar valores `given` y sus dominios;
-- puede declarar `if` y `after`;
-- debe declarar `then`;
-- no declara `when` ni se activa automáticamente;
-- una `action` puede solicitarse desde el exterior y, en ese caso, inicia la resolución causal raíz;
-- una `action` o `subaction` invocada desde un `then` se incorpora a la resolución causal ya activa y no abre una raíz independiente;
-- la resolución completa es atómica junto con todas sus ondas.
+- declares participants via `for`;
+- can declare values `given` and its domains;
+- may state `if` y `after`;
+- must state `then`;
+- does not state `when` nor does it activate automatically;
+- one `action` It can be applied for from abroad and, in that case, the causal resolution root;
+- one `action` o `subaction` invoked from a `then` joins the causal resolution is already active and does not open a root independent;
+- the resolution It is atomic in its entirety, together with all its waves.
 
-Los participantes son receptores y los `given` son argumentos conforme a D-036 y D-063. Al iniciar la acción se vinculan los roles por identidad, valor o lugar según su contrato, se comprueban sus tipos, cardinalidades y capacidades, se completan los `given` omitidos con sus predeterminados estáticos, se evalúan y validan todos ellos, y después se evalúa `if`. Un rol con `mut` exterior conserva el lugar receptor como destino de efectos y exige que sea almacenable y exteriormente mutable. Un `given` fuera de dominio o un `if` falso no producen efectos.
+The participants are recipients and the `given` these are arguments in accordance with D-036 y D-063. When starting the action the roles are linked by identity, value or place, depending on its contract, their types, cardinalities and capacities are checked, and the `given` If they are omitted and their static defaults are used, they are all evaluated and validated, and then the following is evaluated `if`. A role with `mut` The exterior retains its original appearance receiver as the destination for effects and requires it to be storable and externally mutable. A `given` outside domain or a `if` False ones have no effect.
 
-Dentro de un bloque `then`, D-066 permite vinculaciones locales calculadas. Se resuelven en orden textual, leen el delta privado anterior, quedan inmutables y no forman parte del estado del mundo.
+Within a block `then`, D-066 allows for calculated local links. They are resolved in textual order, reading the delta previous private provision, remain unchanged and do not form part of the state from the world.
 
-### Secuencia unificada de `then`
+### Unified sequence of `then`
 
-No existe una clasificación semántica entre actions elementales y compuestas. Un `then` es una secuencia ordenada de consecuencias y puede mezclar vinculaciones locales, efectos directos, llamadas a `action` o `subaction` y recorridos `for each`.
+There is no classification semantics between elementary and compound actions. A `then` is an ordered sequence of consequences and may combine local links, direct effects and calls to `action` o `subaction` and routes `for each`.
 
-Cada sentencia lee el delta privado visible en su posición textual. Una llamada interna se valida y ejecuta en ese punto, observa los efectos privados anteriores, aporta sus propios efectos a la misma resolución atómica y deja esos efectos visibles para las sentencias posteriores. No abre una transacción independiente.
+Each sentence reads: delta private, visible in its textual position. A call The internal function is validated and executed in that point, takes into account the previous private effects and adds its own effects to them resolution It has atomicity and preserves these effects for subsequent statements. It does not open a separate transaction.
 
-Los `after` de todas las actions/subactions ejecutadas se comprueban contra el estado estable tentativo final de la resolución completa. El análisis de llamadas debe impedir ciclos ejecutables; Q-023 conserva abierta la demostración de aciclicidad e impacto cuando la selección del descriptor callable es dinámica, no la posibilidad de invocarlo.
+The `after` of all the shares/subactions The executed commands are checked against the stable state final attempt at the resolution complete. Call analysis must prevent executable cycles; Q-023 The proof of acyclicity and impact remains open when the selection of the descriptor 'callable' is a dynamic property, not the ability to call it.
 
 ### `after` y `old`
 
-`if` y `after` pueden adjuntar mediante `otherwise` una razón `Text` para su falsedad. Su omisión es legal y produce una sugerencia, no un aviso, porque el rechazo es una respuesta normal; en ese caso se genera una razón a partir de la condición y su procedencia. El diagnóstico es puro y perezoso.
+`if` y `after` can be attached via `otherwise` one reason `Text` because it is false. Its omission is lawful and implies a suggestion, not a warning, because rejection is a normal response; in that case, this results in a reason based on the condition and its provenance. The diagnostic He is pure and lazy.
 
-`after` se evalúa tras todas las ondas sobre el estado estable tentativo. Su falsedad produce `rejected`; un error durante su evaluación produce `failed`. Un error al evaluar `if` o `after` no queda capturado por `otherwise`, que solo explica una condición evaluada correctamente como falsa.
+`after` is evaluated after all the waves on the stable state attempt. Its falsity results in `rejected`; a error during its assessment, it produces `failed`. A error when assessing `if` o `after` is not captured by `otherwise`, which only accounts for a condition that has been correctly evaluated as false.
 
-En el contexto de acciones y tests, `old e` lee `e` en el estado estable inmediatamente anterior a la acción exterior completa y solo está admitido dentro de `after`. D-058 añade un contexto distinto para `old` dentro de reglas reactivas, donde compara instantáneas de onda.
+In the context of actions and tests, `old e` read `e` in the stable state immediately prior to the action complete exterior and is only permitted within `after`. D-058 adds a different context for `old` within reactive rules, where it compares snapshots of wave.
 
-### Resultados
+### Results
 
-| Resultado | Causa |
+| Result | Reason |
 | --- | --- |
-| `accepted` | Solicitud válida, raíz compatible, estabilización, invariantes y `after` satisfechos |
-| `rejected` | `given` fuera de dominio, `if` falso o `after` falso |
-| `failed` | Conflicto, ciclo u oscilación, operación inválida, dominio o referencia inválidos, `always` incumplida o fallo semántico propagado |
+| `accepted` | Request valid, root compatible, stabilisation, invariants and `after` satisfied |
+| `rejected` | `given` outside domain, `if` false or `after` false |
+| `failed` | Conflict, cycle u oscillation, invalid operation, domain or invalid references, `always` unfulfilled or failure propagated semantic |
 
-La solicitud devuelve al invocador externo un objeto cuyo campo `state` contiene uno de esos tres resultados. Cuando contiene `rejected` o `failed`, el objeto incluye además un campo obligatorio `reason: Text` con la explicación humana. Todo caso normativo distinto de `accepted` debe proporcionar esa razón conforme a D-061; pueden acompañarla códigos y causas estructuradas.
+The request returns to the external caller an object whose field `state` contains one of those three results. When it contains `rejected` o `failed`, the item also includes a field compulsory `reason: Text` with the explanation human. Any regulatory case other than `accepted` must provide that reason in accordance with D-061; it may be accompanied by codes and structured reasons.
 
-Todo resultado distinto de `accepted` restaura exactamente el estado estable anterior y no publica mensajes ni otros efectos externos.
+Everything result other than `accepted` restores exactly the stable state previous and does not publish messages or have any other external effects.
 
-La normalización de un intervalo lineal con extremos invertidos a `empty` es una evaluación válida conforme a D-059 y no produce `failed` por sí misma. Un `given` que quede fuera de dominio o un `if` o `after` que resulte falso a causa de ese vacío producen `rejected`; un dominio que deje un valor almacenado inválido o una regla `always` incumplida producen `failed` por el estado tentativo resultante.
+The normalisation of a linear interval with inverted endpoints to `empty` is a valid assessment in accordance with D-059 and does not produce `failed` in its own right. A `given` to be excluded from domain or a `if` o `after` which turns out to be false because of that gap, result in `rejected`; a domain that leaves a value invalid storage or a rule `always` unfulfilled lead to `failed` by the tentative state resulting.
 
-## Consecuencias
+## Consequences
 
-- `rejected` es una respuesta semántica normal; `failed` indica que no se pudo formar una transición válida.
-- La atomicidad incluye raíz, ondas, `always`, `after` y salidas pendientes.
-- Q-004 queda cerrada: un `after` falso revierte toda la resolución.
-- Los valores de dominio devueltos por una acción, si llegaran a admitirse, siguen abiertos en Q-022.
+- `rejected` is an answer semantics normal; `failed` indicates that a transition valid.
+- Atomicity includes root, waves, `always`, `after` and upcoming events.
+- Q-004 is now closed: one `after` 'false' reverses the entire resolution.
+- The values of domain returned by a action, if they were to be admitted, they remain open in Q-022.
 
-## Verificación
+## Verification
 
-1. Aceptación, rechazo por dominio de `given`, rechazo por `if` y rechazo por `after`.
-2. Rollback completo de una acción rechazada al final.
-3. `then` mixto con efectos, locales y llamadas en orden textual.
-4. Propagación del delta privado a través de llamadas internas y rechazo de un ciclo ejecutable de llamadas.
-5. `old` observa la acción exterior, no una hoja intermedia.
-6. Vinculación de un receptor-lugar mutable y rechazo de un receptor que sea solo un valor.
-7. Intervalo invertido normalizado a `empty` sin fallo intrínseco.
-8. Distinción entre rechazo por una guarda falsa sobre `empty` y fallo por estado fuera de dominio.
-9. Presencia obligatoria de `reason: Text` en `rejected` y `failed`, y ausencia en `accepted`.
-10. Diagnósticos `otherwise` explícitos y generados para `if` y `after`, incluida la evaluación perezosa.
+1. Acceptance, rejection of domain from `given`, rejection due to `if` and rejection of `after`.
+2. Full rollback of a action rejected in the end.
+3. `then` a mixture of effects, local elements and calls in textual order.
+4. Spread of the delta private via internal calls and the rejection of a executable cycle calls.
+5. `old` note the action outer layer, not an intermediate layer.
+6. Linking a receiver-a changeable place and the rejection of a receiver let it just be a value.
+7. Normalised inverse interval to `empty` without failure intrinsic.
+8. Distinguishing between rejection on the grounds of a false custody order regarding `empty` y failure by state outside domain.
+9. Compulsory attendance by `reason: Text` in `rejected` y `failed`, and absence from `accepted`.
+10. Diagnostics `otherwise` explicit and generated for `if` y `after`, including lazy evaluation.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-Se retira la clasificación semántica entre action elemental y compuesta. Todo `then` es una secuencia ordenada que puede mezclar efectos, locales, llamadas y `for each`. Una llamada interna observa el delta privado del punto textual y aporta sus efectos a la misma resolución. `action` conserva capacidad de raíz exterior; `subaction` es reutilizable desde cualquier `then` pero no puede ser raíz exterior. Los `after` anidados se evalúan contra el estado estable tentativo final de la resolución completa.
+The classification is withdrawn semantics between action elementary and compound. All `then` is an ordered sequence that can combine effects, locations, calls and `for each`. A call Internal observes the delta deprived of the point verbatim and contributes to its effects resolution. `action` retains the ability to root outdoor; `subaction` can be reused from any `then` but that can’t be right root exterior. The `after` Nested ones are evaluated against the stable state final attempt at the resolution complete.
+

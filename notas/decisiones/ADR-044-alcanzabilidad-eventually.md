@@ -17,12 +17,12 @@ affects:
 ---
 # ADR-044 — Alcanzabilidad `eventually`
 
-- Preguntas relacionadas: Q-026 a Q-031
-- Documentos afectados: expresiones, alcanzabilidad, finitud, terminación
+- Related questions: Q-026 a Q-031
+- Documents affected: expressions, reachability, finiteness, termination
 
-## Contexto
+## Context
 
-`eventually` expresa una pregunta de alcanzabilidad sobre el propio modelo. Para conservar una respuesta decidible no puede ejecutarse sobre un espacio arbitrario.
+`eventually` expresses a question about reachability on the subject of model. In order to ensure a decidable response, it cannot be executed on an arbitrary space.
 
 ## Decisión
 
@@ -37,21 +37,21 @@ eventually game.Checkmate(White)
     through [game.Move, game.Pass]
 ```
 
-La expresión es verdadera si existe una secuencia finita de solicitudes aceptadas de las acciones admitidas por `through` que conduce a un estado donde el objetivo es verdadero. La secuencia vacía está incluida: el estado actual puede satisfacer el objetivo.
+The expression is true if there exists a finite sequence of accepted requests for the actions permitted by `through` which leads to a state where the target is true. The empty sequence is included: the state The current one can meet the objective.
 
-Cada arista explorada es una transición MUD completa con validación de solicitud, raíz, ondas, reglas `always` y `after`. Las solicitudes rechazadas no forman aristas; un fallo durante una transición no se convierte en una transición válida.
+Each edge explored is a transition MUD complete with validation from request, root, waves, rules `always` y `after`. Rejected requests do not form edges; a failure during a transition does not become a transition valid.
 
-Los participantes y todos los `given` que deban generarse tienen que proceder de dominios finitos, enumerables y con orden canónico. Para un rol `for` colectivo se enumeran colecciones completas que satisfacen su contrato, no miembros que ocupen posiciones de receptor separadas. Si el rol posee mutabilidad exterior, también debe existir un conjunto finito, enumerable y canónico de lugares almacenados candidatos; no basta con enumerar sus valores actuales.
+The participants and everyone `given` any that are to be generated must come from finite, countable domains with a canonical order. For a role `for` The ‘collective’ section lists complete collections that meet your contract, non-members holding positions of receiver separate. If the role has mutability exterior, there must also be a finite, countable and canonical set of candidate stored locations; it is not enough simply to list their current values.
 
-El compilador solo admite la expresión cuando demuestra, conservadoramente:
+The compiler only accepts the expression when it can be shown, conservatively, that:
 
-- finitud del espacio de estado relevante;
-- enumerabilidad de todas las solicitudes;
-- terminación de cada transición;
-- comparabilidad y canonicalización de estados;
-- ausencia de creación no acotada.
+- finiteness of the space of state relevant;
+- enumerability of all applications;
+- termination of each transition;
+- comparability and standardisation of states;
+- the absence of unbounded creation.
 
-Si existe azar, la cuantificación es existencial sobre secuencias de resultados posibles de probabilidad positiva:
+If chance exists, quantification is existential with regard to sequences of possible outcomes with positive probability:
 
 $$
 \exists \vec a,\vec r.\;
@@ -62,20 +62,21 @@ W \xRightarrow[\vec r]{\vec a} W'
 W'\models goal.
 $$
 
-`through` acepta una o varias referencias a acciones mediante la sintaxis contextual de colección, con corchetes opcionales. Sus elementos son referencias a acciones, no llamadas con participantes y `given` ya fijados: el análisis enumera las solicitudes admisibles a partir de sus dominios.
+`through` accepts one or more references to actions using the contextual syntax of collection, with optional square brackets. Its elements are references to actions, not calls with participants, and `given` already defined: the analysis lists the admissible requests based on their domains.
 
-El orden textual de las referencias no cambia la verdad de la consulta. El orden canónico de enumeración y la estrategia concreta de búsqueda no forman parte todavía del significado normativo, siempre que el algoritmo sea completo para el perfil admitido y termine. No se introduce recursión general en el lenguaje fuente.
+The order in which the references appear does not alter the truth of the query. The canonical order of enumeration and the specific search strategy are not yet part of the normative meaning, provided that the algorithm is complete for the permitted profile and terminates. General recursion is not introduced into the source language.
 
-## Consecuencias
+## Consequences
 
-- La incapacidad de demostrar las condiciones rechaza estáticamente el uso de `eventually`; no responde falso.
-- El orden canónico de enumeración y la definición mínima de estado relevante siguen abiertos.
-- La implementación inicial puede usar búsqueda en anchura, pero la elección solo será normativa si se decide que afecta a diagnósticos o testigos.
+- The inability to demonstrate that the conditions are met categorically precludes the use of `eventually`; it does not return a false result.
+- The canonical order of enumeration and the minimal definition of state The relevant issues remain unresolved.
+- The initial implementation may use breadth-first search, but this choice will only be standard if it is decided that it affects diagnostics or test cases.
 
-## Verificación
+## Verification
 
-1. Objetivo verdadero mediante secuencia vacía.
-2. Camino finito existente e inexistente.
-3. Rechazo de un `given` infinito o no enumerable.
-4. Rechazo de creación no acotada.
-5. Caso aleatorio con resultado de probabilidad positiva.
+1. True target via an empty sequence.
+2. A finite path that exists and does not exist.
+3. Rejection of a `given` infinite or uncountable.
+4. Rejection of an unrestricted creation.
+5. Random case with result with a positive probability.
+

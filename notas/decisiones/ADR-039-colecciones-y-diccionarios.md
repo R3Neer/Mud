@@ -1,6 +1,6 @@
 ---
 id: D-039
-title: "Colecciones y diccionarios"
+title: "Collections and dictionaries"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -11,22 +11,22 @@ questions:
 affects:
   - "futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`"
 ---
-# ADR-039 — Colecciones y diccionarios
+# ADR-039 — Collections and dictionaries
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
-- Modificada por: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
-- Modificada por: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
-- Amplía: D-019, D-026, D-033
-- Preguntas relacionadas: Q-006, Q-047
-- Documentos afectados: futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Amended by: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] y [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
+- Amended by: [[notas/decisiones/ADR-064-orden-por-ruta-estable|D-064]]
+- Amended by: [[ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]] y [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Read more: D-019, D-026, D-033
+- Related questions: Q-006, Q-047
+- Documents affected: future `15-colecciones.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
 ## Decisión
 
-### Colecciones
+### Collections
 
-La cardinalidad usa intervalos de naturales:
+The cardinality uses whole-note intervals:
 
 ```mud
 T[n]
@@ -35,46 +35,46 @@ T[min..*]
 T[*]
 ```
 
-Omitirla equivale a `[1]`; `[n]` equivale a `[n..n]`; `[*]` usa la semántica de límite efectivo de D-029 y normalmente equivale a `[0..*]`.
+To omit it is tantamount to `[1]`; `[n]` is equivalent to `[n..n]`; `[*]` use the semantics effective limit of D-029 and is usually equivalent to `[0..*]`.
 
-`empty` representa ausencia sin `null`.
+`empty` means 'absence of' `null`.
 
-Las colecciones admiten duplicados salvo `unique`. `ordered` conserva un orden observable y `ordered by ruta` declara una clave semántica estable conforme a D-064.
+Collections allow duplicates, except `unique`. `ordered` retains an observable order and `ordered by ruta` declare a key semantics stable in accordance with D-064.
 
-Añadir a una colección `unique` un valor que ya está presente es un no-op. La operación es idempotente: una o varias adiciones del mismo valor producen una sola presencia, también cuando proceden de efectos concurrentes compatibles.
+Add to a collection `unique` a value if it is already present, it is a no-op. The operation is idempotent: one or more additions of the same value they produce a single presence, even when they result from compatible concurrent effects.
 
-Cuando un literal destinado a una colección `unique` contiene duplicados cuya igualdad puede demostrarse estáticamente, el compilador los normaliza a una sola presencia y emite un aviso no bloqueante. Si la colección normalizada incumple su cardinalidad, el programa contiene además un error estático de cardinalidad y no es válido:
+When a literal intended for a collection `unique` contains duplicates whose equality can be proven statically, the compiler normalises them to a single occurrence and issues a non-blocking warning. If the collection standardised fails to comply with its cardinality, the programme also includes a error static of cardinality and the following is not valid:
 
 ```mud
 members: Person [* unique] = [Alice, Alice]  # aviso; equivale a [Alice]
 pair: Person [2 unique] = [Alice, Alice]     # error; tras normalizar solo queda un valor
 ```
 
-Fuentes iniciales de orden:
+Initial sources of information:
 
-- Cuando el tipo completo posee un orden total semántico intrínseco, `ordered` usa ese orden. Esto incluye los órdenes definidos para básicos, `Char`, `ordered family` y aliases cuando correspondan.
-- Cuando el tipo completo no posee un comparador total común, `ordered` usa la procedencia estable de las ocurrencias; las colecciones de `thing` son el caso ordinario.
-- `Char` usa valor escalar Unicode creciente y no admite `ordered by`.
-- No se inventa un comparador entre ramas de una unión mediante posición textual, tags, nombres nominales o identidad de implementación.
+- When the type The whole possesses an intrinsic semantic order, `ordered` Use that order. This includes the orders defined for basic items, `Char`, `ordered family` and aliases where applicable.
+- When the type The complete version does not have a common overall comparator, `ordered` use the provenance a stable record of occurrences; collections of `thing` are the usual cases.
+- `Char` use value ascending Unicode scale and does not support `ordered by`.
+- You don’t invent a comparator between branches of a union by means of text position, tags, proper nouns or identity implementation.
 
-En una colección de valores con campos, componentes o datos asociados, `ordered by ruta` puede sustituir el orden ordinario por una clave obtenida mediante accesos singulares desde cada miembro. La clave debe tener orden semántico total y toda la ruta debe ser transitivamente estable. Una `thing` no es una clave final ordenable. Las claves iguales conservan el orden relativo de procedencia estable. En una historia puramente secuencial esta procedencia coincide con el orden de inserción. Este orden de colección no modifica la comparación intrínseca entre sus miembros.
+In a collection values with associated fields, components or data, `ordered by ruta` may replace the standard sort order with a key derived from unique accesses from each member. The key must have full semantic order and the entire path must be transitively stable. A `thing` It is not a sortable primary key. Keys that are equal retain the relative order of provenance stable. In a purely sequential narrative, this provenance corresponds to the order of insertion. This order of collection it does not alter the intrinsic comparison between its members.
 
-Cuando el tipo o `ordered by ruta` determina el orden principal, un literal escrito en otro orden se normaliza y produce un aviso no bloqueante. Entre claves iguales se conserva la procedencia estable; en un literal escrito secuencialmente, el orden escrito aporta esa procedencia. Este aviso no se aplica a una colección `thing [ordered]` cuyo orden ordinario procede enteramente de sus ocurrencias.
+When the type o `ordered by ruta` determines the main order, a literal When written in a different order, it is normalised and produces a non-blocking warning. Among identical keys, the provenance stable; in a literal written sequentially, the order in which it is written conveys that provenance. This notice does not apply to a collection `thing [ordered]` whose usual order stems entirely from his own ideas.
 
-### Álgebra de colecciones
+### Set Algebra
 
-Los operadores conjuntistas se aplican también a colecciones compatibles:
+Set operators also apply to compatible sets:
 
-| Operación | Forma |
+| Operation | Form |
 | --- | --- |
 | Unión | `A | B` |
-| Intersección | `A & B` |
-| Diferencia | `A -- B` |
-| Diferencia simétrica de conjuntos `unique` | `A ^ B` |
+| Intersection | `A & B` |
+| Difference | `A -- B` |
+| Symmetric difference of sets `unique` | `A ^ B` |
 
-Dos operandos son compatibles cuando poseen el mismo tipo efectivo de miembro. Los refinamientos de dominio y los modificadores de colección pueden diferir y se combinan conforme a las reglas siguientes; no se introducen conversiones implícitas entre tipos distintos.
+Two operands are compatible when they have the same type number of member. The refinements of domain and the modifiers for collection They may differ and are combined in accordance with the following rules; no implicit conversions are performed between different types.
 
-Sea $\mu_C(v)\in\mathbb N$ la multiplicidad del valor $v$ en la colección $C$. Las operaciones se definen punto a punto:
+Be $\mu_C(v)\in\mathbb N$ the multiplicity of the value $v$ in the collection $C$. Operations are defined point a point:
 
 $$
 \begin{aligned}
@@ -84,60 +84,60 @@ $$
 \end{aligned}
 $$
 
-Por tanto, la unión es idempotente incluso sin `unique`: `A | A == A`. No es concatenación ni suma de bolsas. Si ambos operandos son `unique`, estas definiciones coinciden con la unión, intersección y diferencia ordinarias de conjuntos.
+Therefore, the union it is idempotent even without `unique`: `A | A == A`. It is neither concatenation nor the sum of bags. If both operands are `unique`, these definitions correspond to the union, ordinary intersection and difference of sets.
 
-`^` exige que ambos operandos sean `unique` y aplica la diferencia simétrica ordinaria. No se define mediante diferencia absoluta de multiplicidades porque esa operación no es asociativa. La forma binaria equivalente sobre multiconjuntos se escribe `(A -- B) | (B -- A)`.
+`^` requires both operands to be `unique` and applies the ordinary symmetric difference. It is not defined via the absolute difference of multiplicities because that operation is not associative. The equivalent binary form on multisets is written as `(A -- B) | (B -- A)`.
 
-#### Cardinalidad y dominio inferidos
+#### Cardinality y domain inferred
 
-Sean $[a..b]$ y $[c..d]$ las cardinalidades estáticas de $A$ y $B$. Sin información adicional sobre solapamiento, el compilador puede garantizar:
+Sean $[a..b]$ y $[c..d]$ the static cardinalities of $A$ y $B$. Without further information on overlap, the compiler can guarantee:
 
-| Resultado | Cardinalidad conservadora |
+| Result | Cardinality conservative |
 | --- | --- |
 | `A | B` | $[\max(a,c)..b+d]$ |
 | `A & B` | $[0..\min(b,d)]$ |
 | `A -- B` | $[\max(0,a-d)..b]$ |
 | `A ^ B` (`unique`) | $[\max(0,a-d,c-b)..b+d]$ |
 
-La aritmética de límites conserva `*` como límite superior efectivo. El análisis debe estrechar estos intervalos cuando pueda demostrar disjunción, inclusión, igualdad, un dominio finito o cualquier otra restricción relevante.
+The arithmetic of limits is conservative `*` as an effective upper bound. The analysis must narrow these intervals where it can demonstrate disjunction, inclusion, equality, or a domain finite or any other relevant restriction.
 
-Si $D_A$ y $D_B$ son los dominios semánticos de los miembros:
+Yes $D_A$ y $D_B$ These are the semantic domains of the members:
 
-| Resultado | Dominio de miembro |
+| Result | Domain from member |
 | --- | --- |
 | `A | B` | $D_A\cup D_B$ |
 | `A & B` | $D_A\cap D_B$ |
 | `A -- B` | $D_A$ |
 | `A ^ B` (`unique`) | $D_A\cup D_B$ |
 
-El IR conserva el dominio resultante aunque su forma más precisa no posea una escritura superficial abreviada.
+The IR retains the domain resulting form, even though its most precise form does not have an abbreviated surface script.
 
-#### Propagación de modificadores
+#### Propagation of modifiers
 
-Para cada modificador $m$ de `unique`, `ordered` o capacidad interior `mut`, su presencia en el resultado se obtiene mediante la misma tabla:
+For each modifier $m$ from `unique`, `ordered` or interior capacity `mut`, its presence in the result is obtained from the same table:
 
-| Resultado | Presencia de $m$ |
+| Result | Presence of $m$ |
 | --- | --- |
 | `A | B` | $m(A)\land m(B)$ |
 | `A & B` | $m(A)\lor m(B)$ |
 | `A -- B` | $m(A)$ |
-| `A ^ B` | $m(A)\land m(B)$; `unique` está garantizado |
+| `A ^ B` | $m(A)\land m(B)$; `unique` it is guaranteed |
 
-Para `unique`, la tabla se deduce directamente de las multiplicidades: la intersección es única si cualquiera de los operandos limita cada multiplicidad a uno y la unión necesita esa garantía en ambos lados. La diferencia simétrica ya exige `unique` en sus operandos.
+For `unique`, the table follows directly from the multiplicities: the intersection is unique if any of the operands restricts each multiplicity to one and the union It needs that guarantee on both sides. The symmetric difference already requires `unique` in its operands.
 
-Para `mut`, la tabla se refiere exclusivamente a la capacidad interior sobre miembros, nunca a la mutabilidad exterior de un campo almacenado. Una unión o diferencia simétrica mixta podría contener un miembro alcanzado únicamente desde el operando sin capacidad; una intersección, en cambio, solo contiene miembros que también son alcanzables desde el operando con capacidad. Una diferencia `--` solo conserva miembros del operando izquierdo. Un campo calculado no adquiere mutabilidad exterior.
+For `mut`, the table refers exclusively to the internal load-bearing capacity of members, never to the mutability outside of a stored field. A union A mixed symmetric difference could contain a member accessible only from the operand without capacity; an intersection, on the other hand, contains only members that are also accessible from the operand with capacity. A difference `--` It only retains elements from the left-hand operand. A computed field does not acquire mutability outdoors.
 
-Para `ordered`, si solo la intersección conserva orden se filtra el operando ordenado; la diferencia `--` filtra el operando izquierdo. Unión y diferencia simétrica mixtas son no ordenadas porque pueden incorporar miembros exclusivos del operando no ordenado.
+For `ordered`, if only the intersection preserves the order, the ordered operand is filtered; the difference `--` filters the left-hand operand. Union and mixed symmetric differences are unordered because they may contain elements that are exclusive to the unordered operand.
 
-Cuando ambos operandos son `ordered`, deben usar criterios de orden compatibles. Si sus claves o modos de orden son incompatibles, la operación es un error estático. Un orden por tipo o por una misma ruta `ordered by` normaliza el resultado con ese criterio y preserva procedencia estable entre empates. Cuando la operación conserva una secuencia construida por composición de los operandos en vez de sustituirla por uno de esos criterios, el resultado es estable respecto del operando izquierdo:
+When both operands are `ordered`, must use compatible sort criteria. If their sort keys or sort modes are incompatible, the operation is a error static. An order by type or by the same one path `ordered by` normalises the result based on that criterion and preserves provenance stable amongst ties. When the operation retains a sequence constructed by composing the operands rather than replacing it with one of those criteria, the result it is stable with respect to the left-hand operand:
 
-- La unión recorre primero $A$ y añade después, en el orden de $B$, solo las ocurrencias adicionales necesarias para alcanzar cada multiplicidad máxima.
-- La intersección y la diferencia `--` filtran $A$ sin reordenarlo.
-- La diferencia simétrica conserva primero las ocurrencias excedentes de $A$ y después las de $B$.
+- The union go through first $A$ and then adds, in the order of $B$, only the additional occurrences required to achieve each maximum multiplicity.
+- The intersection and the difference `--` leak $A$ without rearranging it.
+- The symmetric difference first preserves the excess occurrences of $A$ and then those from $B$.
 
-En consecuencia, cuando una operación binaria construye su secuencia observable por composición estable de los operandos, las operaciones conmutativas conservan el mismo multiconjunto al intercambiarlos, pero pueden producir secuencias observables distintas. La igualdad ordenada continúa comparando la secuencia completa.
+In consequence, when a binary operation constructs its observable sequence through stable composition of the operands, commutative operations retain the same multiset when the operands are swapped, but may produce different observable sequences. The ordered equality continues to compare the complete sequence.
 
-Ejemplo de inferencia:
+Example of inference:
 
 ```mud
 leftChars: Char [1..5] = ["a"]
@@ -145,21 +145,21 @@ rightChars: Char [0..2] = empty
 combinedChars := leftChars | rightChars
 ```
 
-El tipo estático de `combinedChars` es `Char [1..7]`: no es `unique`, `ordered` ni `mut`, y su dominio de miembro es el dominio completo de `Char`.
+The type static of `combinedChars` is `Char [1..7]`: it isn't `unique`, `ordered` nor `mut`, and its domain from member is the domain full list of `Char`.
 
-`Text` no equivale a `Char [* ordered]`: conserva el orden posicional de sus caracteres y no admite modificadores de colección. D-056 fija esta distinción.
+`Text` is not the same as `Char [* ordered]`: retains the positional order of its characters and does not support modifiers for collection. D-056 establishes this distinction.
 
-Las inserciones concurrentes compatibles que necesiten completar un orden de procedencia respetan la causalidad y desempatan únicamente ocurrencias concurrentes mediante una elección pseudoaleatoria reproducible con identidad semántica estable. En una colección `unique`, las inserciones equivalentes se fusionan antes de completar ese orden.
+Compatible concurrent insertions that need to complete an order of provenance They respect causality and resolve ties only between concurrent events by means of a reproducible pseudo-random selection using identity semantics stable. In a collection `unique`, equivalent insertions are merged before that order is completed.
 
-### Diccionarios
+### Dictionaries
 
-La forma:
+The form:
 
 ```mud
 Key -> Value [cardinality modifiers]
 ```
 
-declara un diccionario con claves intrínsecamente únicas. El modificador `unique`, cuando se escribe, se aplica a los **valores asociados** conforme a D-085: exige que un mismo valor no quede asociado a más de una clave. Una inserción o sustitución que violaría esa unicidad es una no-op completa y no produce `failed`.
+declares a dictionary with intrinsically unique keys. The modifier `unique`, when written, applies to the **associated values** in accordance with D-085: requires that the same value is not associated with more than one key. An insertion or replacement that would violate this uniqueness is a complete no-op and does not produce `failed`.
 
 ```mud
 stock =
@@ -167,56 +167,57 @@ stock =
     Bronze -> 500
 ```
 
-Asignar una clave sustituye su valor; escribir una clave ausente materializa la entrada si tipo, dominio, capacidad y cardinalidad lo permiten; retirar una clave ausente es no-op.
+Assigning a key replaces its value; entering a missing key triggers the input if type, domain, capacity and cardinality if permitted; removing a missing key is a no-op.
 
-Leer una clave ausente produce `empty` con la forma de salida declarada. La ausencia no produce `failed` por sí misma; solo un contexto posterior cuyo tipo, dominio o cardinalidad no admita cero elementos puede fallar. No se usa `null` ni se sustituye silenciosamente por el predeterminado del tipo de valor.
+Reading a missing key results in `empty` in accordance with the declared exit procedure. Absence does not result in `failed` in its own right; merely a later context whose type, domain o cardinality If it does not accept zero elements, it may fail. It is not used `null` nor is it quietly replaced by the default setting from the type from value.
 
-Una indexación de diccionario puede ir seguida por acceso a miembros del valor obtenido cuando su tipo lo permite. Otra indexación encadenada exige que el resultado intermedio sea a su vez un diccionario compatible.
+A dictionary lookup may be followed by access to members of the value obtained when its type allows this. Another chained indexing method requires that the result the intermediate dictionary is itself a compatible dictionary.
 
-Cuando una indexación exacta es un paso intermedio de una ruta asignable que atraviesa un alias inmutable, la elaboración puede reconstruir el alias y propagar la sustitución hasta el diccionario y el lugar exteriormente mutable que lo contiene. Si la clave intermedia está ausente, la consulta produce `empty` y el write-back parcial es un no-op: no materializa la clave, no aplica predeterminados y no produce `failed` por esa ausencia. La asignación directa `dictionary[key] = wholeValue` continúa siendo distinta y puede materializar una clave ausente.
+When exact indexing is an intermediate step in a path allocable that passes through a alias unchangeable, the elaboration can reconstruct the alias and extend the substitution to the dictionary and the externally mutable location that contains it. If the intermediate key is absent, the query produces `empty` and the partial write-back is a no-op: it does not commit the key, does not apply defaults and does not produce `failed` because of that absence. The direct allocation `dictionary[key] = wholeValue` It remains distinct and may provide a missing clue.
 
-### Orden e iteración
+### Order and iteration
 
-Un diccionario `ordered` recorre claves según su orden canónico. Puede recorrerse por claves o por pares `(key, value)`.
+A dictionary `ordered` It iterates through keys in their canonical order. It can be iterated through by keys or by pairs `(key, value)`.
 
-Un alias estructural puede actuar como una única clave compuesta y usar el azúcar definido en D-033:
+A structural alias it can act as a single composite key and use the sugar defined in D-033:
 
 ```mud
 board[(E, Four)]
 board[E, Four]
 ```
 
-### Igualdad
+### Equality
 
-- Colección ordenada: misma secuencia y multiplicidad.
-- Colección no ordenada: mismo multiconjunto.
-- Diccionario: mismas asociaciones clave–valor; el orden de almacenamiento no altera igualdad.
+- Collection ordered: same sequence and multiplicity.
+- Collection unordered: same multiset.
+- Dictionary: the same key associations–value; the order in which they are stored does not affect equality.
 
-## Consecuencias
+## Consequences
 
-- Cardinalidad, orden, unicidad y mutabilidad son ejes separados.
-- Los diccionarios no exponen `null`.
-- La iteración no depende del hash o estructura interna del materializador.
-- Las operaciones de colección y diccionario deben ser totales donde esta decisión lo indica.
+- Cardinality, order, uniqueness and mutability They are separate axes.
+- Dictionaries do not explain `null`.
+- The iteration does not depend on the hash or internal structure of the materialiser.
+- Operations relating to collection and the dictionary must be complete; where is it? decision as indicated.
 
-## Alternativa descartada
+## Option ruled out
 
-### Unicidad predeterminada
+### Default uniqueness
 
-Se descarta hacer `unique` implícito, tanto para todas las colecciones como en función del tipo de miembro. La multiplicidad es información observable y necesaria en colecciones como `Num [*]`; eliminarla de manera predeterminada cambiaría el significado de datos que representan observaciones, tiradas o frecuencias. Un valor predeterminado dependiente del tipo haría además que una misma forma de colección cambiara de semántica entre código genérico, aliases y conversiones.
+It has been ruled out that `unique` implicit, both for all collections and depending on the type from member. Multiplicity is observable and necessary information in collections such as `Num [*]`; removing it by default would alter the meaning of data representing observations, runs or frequencies. A default value depending on the type It would also mean that the same form of collection change from semantics between generic code, aliases and conversions.
 
-La regla uniforme es que la ausencia de `unique` conserva multiplicidad y su presencia impone una sola ocurrencia por valor.
+The general rule is that the absence of `unique` It retains its multiplicity, yet its presence commands a singular occurrence by value.
 
-## Verificación futura
+## Future verification
 
-1. Cardinalidad omitida y `empty`.
-2. Duplicados, normalización, aviso e idempotencia de `unique`.
-3. Orden semántico intrínseco, por procedencia estable y `ordered by`, incluida una ruta estable sobre dato asociado y empates por procedencia.
-4. Lectura ausente como `empty`, escritura y retirada de clave ausente, y `unique` global sobre valores.
-5. Igualdad independiente de representación interna.
-6. Clave alias ordinaria y azucarada.
-7. Multiplicidades de unión, intersección y diferencia; rechazo de `^` sin `unique`.
-8. Inferencia conservadora y estrechada de cardinalidad y dominio.
-9. Propagación de `unique`, `ordered` y capacidad interior `mut` en las cuatro operaciones admitidas.
-10. Orden canónico y secuencia estable construida por composición de operandos, incluida la posible diferencia secuencial al intercambiarlos.
-11. Ausencia de mutabilidad exterior en resultados calculados.
+1. Cardinality omitted and `empty`.
+2. Duplicates, normalisation, notice and idempotence of `unique`.
+3. Intrinsic semantic order, by provenance stable and `ordered by`, including one path stable on associated data and ties by provenance.
+4. Missing reading such as `empty`, writing and retrieval of a missing password, and `unique` global values.
+5. Equality irrespective of internal representation.
+6. Key alias plain and sweetened.
+7. Multitudes of union, intersection and difference; rejection of `^` without `unique`.
+8. Inference conservative and narrow-minded cardinality y domain.
+9. Propagation of `unique`, `ordered` and interior capacity `mut` in the four permitted operations.
+10. Canonical order and stable sequence constructed by composing operands, including any possible sequential difference resulting from swapping them.
+11. Absence of mutability external in calculated results.
+

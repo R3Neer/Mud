@@ -1,6 +1,6 @@
 ---
 id: D-033
-title: "Claves compuestas y enumeración de aliases"
+title: "Composite keys and alias enumeration"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -10,21 +10,21 @@ questions:
 affects:
   - "futuro `12-aliases.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`, futuro `37-finitud-y-enumerabilidad.md`"
 ---
-# ADR-033 — Claves compuestas y enumeración de aliases
+# ADR-033 — Composite keys and alias enumeration
 
-- Pregunta relacionada: Q-056
-- Sintaxis actualizada por: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
-- Documentos afectados: futuro `12-aliases.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`, futuro `37-finitud-y-enumerabilidad.md`
+- Related question: Q-056
+- Syntax updated by: [[ADR-088-iteracion-progresiones-y-bloques-de-expresion|D-088]]
+- Documents affected: future `12-aliases.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`, future `37-finitud-y-enumerabilidad.md`
 
-## Contexto
+## Context
 
-Los aliases estructurales deben poder actuar como valores compuestos ordinarios: claves de diccionario, fuentes de iteración y dominios de cuantificación. Para que dos implementaciones coincidan, la finitud y el orden de enumeración no pueden quedar implícitos.
+Structural aliases must be able to act as ordinary composite values: dictionary keys, iteration sources and quantification domains. For two implementations to be equivalent, the finiteness and the order of enumeration cannot be implied.
 
 ## Decisión
 
-### Claves compuestas
+### Compound keys
 
-Un alias puede ser el tipo único de clave de un diccionario:
+A alias it could be the type unique key in a dictionary:
 
 ```mud
 alias Square {
@@ -35,23 +35,23 @@ alias Square {
 board: Square -> Piece [0..32 ordered]
 ```
 
-El acceso ordinario construye una única clave contextual:
+Ordinary access constructs a single contextual key:
 
 ```mud
 board[(E, Four)]
 ```
 
-La forma:
+The form:
 
 ```mud
 board[E, Four]
 ```
 
-es azúcar sintáctico del mismo acceso. No convierte el diccionario en uno con varias claves ni modifica la identidad nominal de `Square`.
+It is syntactic sugar for the same operation. It does not turn the dictionary into one with multiple keys, nor does it modify the identity nominal value of `Square`.
 
 ### Finitud
 
-Un alias estructural es finito y enumerable cuando todos sus componentes poseen dominios finitos y enumerables:
+A structural alias is finite and countable if all its components have finite and countable domains:
 
 ```mud
 alias Coordinate {
@@ -60,7 +60,7 @@ alias Coordinate {
 }
 ```
 
-Este alias tiene $8\cdot 8=64$ valores y puede usarse como fuente:
+This alias has $8\cdot 8=64$ values and can be used as a source:
 
 ```mud
 action VisitCoordinates for mut visits: Nat {
@@ -74,11 +74,11 @@ rule HasLeftEdge {
 }
 ```
 
-Si algún componente carece de dominio finito y enumerable, el alias sigue siendo un tipo válido, pero su dominio completo no puede recorrerse ni cuantificarse exhaustivamente.
+If any component is missing domain finite and countable, the alias it remains a type valid, but its domain It cannot be fully explored or quantified in its entirety.
 
-### Orden de enumeración
+### Order of numbering
 
-La enumeración de un alias estructural es el producto cartesiano lexicográfico de las enumeraciones de sus componentes, en orden de declaración. Para `Coordinate`:
+The listing of a structural alias is the lexicographic Cartesian product of the enumerations of its components, in the order of declaration. To `Coordinate`:
 
 ```text
 (0, 0)
@@ -90,19 +90,20 @@ La enumeración de un alias estructural es el producto cartesiano lexicográfico
 (7, 7)
 ```
 
-La enumerabilidad exige que cada componente proporcione no solo un conjunto finito, sino una enumeración canónica finita. La normalización formal de esa propiedad pertenece a Q-056.
+The enumerability requires that each component provides not only a finite set, but a finite canonical enumeration. The formal normalisation of this property belongs to Q-056.
 
-## Consecuencias
+## Consequences
 
-- El azúcar de clave múltiple se elabora antes de resolver el acceso al diccionario.
-- El compilador puede calcular la cardinalidad de un producto finito.
-- Los cuantificadores y `for each` comparten la misma enumeración canónica del alias.
-- El orden de los componentes afecta tanto a nominalidad estructural como a comparación y enumeración.
+- Multi-key sugar is generated before resolving access to the dictionary.
+- The compiler can calculate the cardinality of a finished product.
+- Quantifiers and `for each` share the same canonical numbering of the alias.
+- The order of the components affects both structural nominality and comparison and enumeration.
 
-## Verificación futura
+## Future verification
 
-1. Acceso ordinario y azucarado a una clave alias.
-2. Rechazo del azúcar cuando el tipo de clave no acepta esa forma estructural.
-3. Cardinalidad de productos finitos.
-4. Orden lexicográfico de enumeración.
-5. Rechazo de iteración exhaustiva cuando un componente no es finito o enumerable.
+1. Ordinary and ‘sweetened’ access to a password alias.
+2. Aversion to sugar when the type The key does not accept that structural form.
+3. Cardinality of finished products.
+4. Lexicographical order of listing.
+5. Rejection of exhaustive iteration when a component is not finite or enumerable.
+

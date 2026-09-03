@@ -1,6 +1,6 @@
 ---
 id: D-037
-title: "Campos y dominios declarativos"
+title: "Fields and declarative domains"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -12,25 +12,25 @@ questions:
 affects:
   - "futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`"
 ---
-# ADR-037 — Campos y dominios declarativos
+# ADR-037 — Fields and declarative domains
 
-- Modificada por: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
+- Amended by: [[ADR-103-capacidad-interior-en-valores-derivados|D-103]].
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Amended by: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Amplía: D-019, D-026
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
-- Modificada por: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
-- Ampliada por: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
-- Preguntas relacionadas: Q-003, Q-017
-- Documentos afectados: futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Read more: D-019, D-026
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Amended by: [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]]
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Expanded by: [[ADR-075-dominios-enumerables-all-y-valores-derivados|D-075]]
+- Related questions: Q-003, Q-017
+- Documents affected: future `14-campos-y-mutabilidad.md`, future `17-dominios-e-intervalos.md`, future `30-restricciones-finales.md`
 
 ## Decisión
 
-### Clases de campo
+### Types of field
 
 ```mud
 title: Text = ""
@@ -41,43 +41,43 @@ maintenanceCost := soldiers * 2
 displayCost: Money := maintenanceCost
 ```
 
-- `=` introduce carga almacenada.
-- `:=` introduce una expresión calculada y pura.
-- `mut` concede mutabilidad exterior conforme a D-019.
-- Todo campo denota una colección conforme a D-026. En un campo almacenado inmutable con inicializador, una cardinalidad omitida se infiere de la forma exterior exacta del valor conforme a D-085; en un campo exteriormente mutable conserva `[1]`.
-- `~name` pertenece al espacio de metadatos de D-087. Un campo ordinario llamado `name` pertenece al espacio de miembros y no lo oculta.
+- `=` Enter the stored load.
+- `:=` Enter a calculated, pure expression.
+- `mut` grants mutability exterior in accordance with D-019.
+- Everything field denotes a collection in accordance with D-026. In a stored field immutable with an initialiser, a cardinality The omitted part can be inferred from the exact external shape of the value in accordance with D-085; in a field outwardly changeable yet enduring `[1]`.
+- `~name` belongs to the metadata space of D-087. A field ordinary roll call `name` It is part of the members’ area and makes no secret of it.
 
-La forma concreta de un campo almacenado es:
+The specific form of a stored field is:
 
 ```text
 [mut] nombre : tipo [in dominio] [especificación-de-colección] [= value-body]
 ```
 
-El dominio precede a la especificación de colección. Un campo calculado usa:
+The domain precedes the specification from collection. A computed field usa:
 
 ```text
 nombre [ forma-derivada ] := value-body
 ```
 
-donde la forma derivada puede declarar tipo y, conforme a D-075, dominio, cardinalidad y modificadores de colección compatibles con el resultado.
+where the derived form may declare type and, in accordance with D-075, domain, cardinality and modifiers for collection compatible with the result.
 
-El `mut` exterior pertenece al lugar almacenado y por eso precede al nombre; no es un constructor ni un calificador del tipo. La forma `nombre: mut tipo` es inválida.
+The `mut` 'exterior' refers to the stored location and therefore precedes the name; it is neither a constructor nor a qualifier of the type. The form `nombre: mut tipo` is invalid.
 
-El valor explícito de un campo almacenado puede ser una expresión breve o un `ValueBlock`, pero el cuerpo completo debe ser evaluable estáticamente conforme a D-066 y D-101. Puede usar almacenamiento temporal interno si no introduce dependencias runtime ni efectos exteriores. Un campo calculado admite igualmente `ValueBlock` sin adquirir almacenamiento persistente propio.
+The value explicit reference to a stored field It can be a short phrase or a `ValueBlock`, but the entire body must be capable of being assessed statically in accordance with D-066 y D-101. You can use internal temporary storage provided you do not introduce any runtime dependencies or external effects. A computed field also allows for `ValueBlock` without acquiring its own persistent storage.
 
-La anotación de tipo es opcional. Si se omite, el compilador infiere el tipo estático de la expresión; si se escribe, la expresión debe ser compatible con él y la anotación puede aportar el tipo esperado necesario para elaborar literales contextuales. Cuando una expresión sin anotación no tiene un tipo inferible de forma unívoca, la declaración es un error estático y debe escribirlo.
+The entry for type is optional. If omitted, the compiler infers the type static nature of the expression; if written, the expression must be compatible with it, and the annotation may provide the type necessary to generate contextual phrases. When an unannotated expression does not have a type cannot be inferred unambiguously, the declaration is a error It is static and you must type it out.
 
-La inferencia no aplica una prioridad predeterminada entre interpretaciones compatibles. Esto incluye tanto la representación de literales numéricos como las formas contextuales compartidas. Por ejemplo, `[3]` puede elaborar una colección unitaria o el intervalo unitario `[3..3]`: ambas formas se conservan y una declaración calculada sin contexto que permita elegir una sola debe anotar su tipo. La omisión está pensada para los usos comunes en los que las operaciones y dependencias de la expresión determinan un único tipo, no para garantizar que toda expresión aislada sea inferible.
+The inference It does not apply a default priority between compatible interpretations. This includes both the representation of numeric literals and shared contextual forms. For example, `[3]` can draw up a collection the unit interval or the unit interval `[3..3]`: both forms are retained and one declaration calculated without sufficient context to allow a single choice to be made; you must note down your type. This omission is intended for common uses where the operations and dependencies of the expression determine a single type, not to ensure that every isolated expression is inferable.
 
-El campo calculado siempre conserva en el IR un tipo estático resuelto, haya sido declarado o inferido. No posee carga asignable ni admite `mut` exterior. El tipo nominal o estructural explícito se comprueba estáticamente. Dominio, cardinalidad, `unique` y orden declarados en la forma derivada, exista o no tipo explícito, son coercitivos: transforman el resultado con la misma semántica y normalización que las transformaciones locales equivalentes. `[mut]` no es una coerción creadora de autoridad: actúa como obligación de capacidad y solo se satisface cuando el resultado de origen ya la garantiza a través de transformaciones que preservan la identidad semántica de las `thing` miembros.
+The computed field always keep a type static resolved, whether declared or inferred. It has no assignable charge and does not support `mut` exterior. The type Explicit nominal or structural values are checked statically. Domain, cardinality, `unique` and order declared in the derived form, whether or not type explicitly, they are coercive: they transform the result with the same semantics and normalisation as equivalent to local transformations. `[mut]` it is not a form of coercion that creates authority: it functions as an obligation based on capacity and is only fulfilled when the result It is already guaranteed at source through processing methods that preserve the identity semantics of the `thing` members.
 
-Por ejemplo, si `leftChars` tiene tipo `Char [1..5]` y `rightChars` tiene tipo `Char [0..2]`, `combinedChars := leftChars | rightChars` infiere `Char [1..7]` conforme al álgebra de D-039. El resultado no adquiere modificadores que las reglas de propagación no puedan garantizar.
+For example, if `leftChars` has type `Char [1..5]` y `rightChars` has type `Char [0..2]`, `combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with the algebra of D-039. The result It does not acquire modifiers that the propagation rules cannot guarantee.
 
-Cuando el contexto de declaración también admita un campo almacenado y la expresión calculada sea estática cerrada, el compilador debe sugerir la forma almacenada inmutable equivalente. La sugerencia es conservadora, no cambia la validez del programa y no autoriza una reescritura automática. No procede si la expresión depende de estado o si almacenarla alteraría sus dependencias o su momento de evaluación.
+When the context of declaration also supports a stored field and if the evaluated expression is statically closed, the compiler must suggest the equivalent immutable stored form. The suggestion is conservative; it does not alter the validity of the programme and does not authorise an automatic rewriting. It does not apply if the expression depends on state or whether storing it would affect its dependencies or its evaluation time.
 
-### Dominios
+### Domains
 
-`in` restringe valores admisibles:
+`in` restricts permissible values:
 
 ```mud
 age: Nat in 0..150
@@ -85,65 +85,65 @@ given amount: Nat in 1..100
 for people: Person in EligibleCitizens [1..* unique]
 ```
 
-Puede aparecer en campos, componentes de alias, roles `for` y `given`. Un dominio calculado debe ser puro, determinista, no estocástico, analizable y libre de ciclos inválidos.
+It may appear in fields, components of alias, roles `for` y `given`. A domain The calculation must be pure, deterministic, non-stochastic, analysable and free from invalid cycles.
 
-En un campo almacenado o un rol `for`, `in` aparece después del tipo y antes de la especificación de colección:
+In a stored field or a role `for`, `in` appears after the type and before the specification from collection:
 
 ```mud
 citizens: Person in EligibleCitizens [1..* unique]
 ```
 
-La semántica del tipo y las conversiones explícitas se aplican antes de comprobar pertenencia al dominio.
+The semantics from the type and explicit conversions are applied before checking for membership of the domain.
 
-### Resultados por contexto
+### Results by context
 
-- `given` fuera de dominio al solicitar una action: `rejected` antes de evaluar `if`, raíz u ondas.
-- `given` fuera de dominio al consultar una regla booleana: resultado `false`; si es constante, puede diagnosticarse estáticamente.
-- Campo fuera de dominio en un estado candidato: la resolución resulta `failed` y revierte.
-- Inicializador constante fuera de dominio: error estático.
+- `given` outside domain when applying for a action: `rejected` before assessing `if`, root or waves.
+- `given` outside domain when looking up a Boolean rule: result `false`; if it is constant, it can be diagnosed statically.
+- Field outside domain in a state candidate: the resolution it turns out `failed` and reverses.
+- Constant initialiser outside domain: error static.
 
-Los campos calculados deben satisfacer tanto el dominio de su tipo estático como cualquier dominio `in` declarado en su forma derivada. Ese dominio puede ser explícito o derivarse conforme a D-075.
+Calculated fields must satisfy both the domain of his type static, just like any other domain `in` declared in its derived form. That domain it may be explicit or be derived in accordance with D-075.
 
-### Puntos de control
+### Checkpoints
 
-Los dominios se preservan en inicialización, materialización, especialización, escrituras, raíces, ondas y estados publicables. Q-003 deberá expresar estos puntos mediante una única semántica operacional y decidir qué estados tentativos internos pueden existir sin ser observables.
+Domains are preserved during initialisation, materialisation, specialisation, deeds, title deeds, waves and publishable statuses. Q-003 must set out these points in a single semantics operational and determine which internal tentative states may exist without being observable.
 
-La excepción de estados intermedios concedida por D-026 se refiere a cardinalidad dentro del delta privado de un `then`; no elimina la obligación final de dominio.
+The intermediate state exception granted by D-026 refers to cardinality inside the delta deprived of a `then`; it does not remove the ultimate obligation to domain.
 
-### Significados contextuales de `in`
+### Contextual meanings of `in`
 
-El parser y el AST distinguen:
+The parser and the AST distinguish between:
 
-- Restricción declarativa de dominio.
-- Restricción local o filtrado de una expresión por dominio.
-- Binding de selección.
-- Participante relacionado.
-- Unidad de presentación de una magnitud.
+- Declarative restriction of domain.
+- Local restriction or filtering of an expression by domain.
+- Selection binding.
+- Participant related.
+- Unit from presentation of a magnitude.
 
-`in` no expresa pertenencia booleana; esa operación usa `has` y `has not`. Compartir token entre los usos restantes de `in` no fusiona sus significados.
+`in` does not express Boolean membership; that operation uses `has` y `has not`. Share token among the remaining uses of `in` does not merge their meanings.
 
-## Consecuencias
+## Consequences
 
-- Los dominios forman parte del tipo refinado y del grafo de dependencias.
-- La validación de entradas se separa de `if`.
-- Una escritura inválida nunca publica estado parcial.
-- Los dominios finitos alimentan interfaces, tests, enumeración y `eventually`.
+- Domains form part of the type refined and the graph of departments.
+- The validation 'entries' is separated from `if`.
+- An invalid deed is never registered state partial.
+- Finite domains power interfaces, tests, enumeration and `eventually`.
 
-## Verificación futura
+## Future verification
 
-1. Dominio constante y calculado.
-2. `given` fuera de dominio en regla y action.
-3. Campo almacenado fuera de dominio y `in` válido sobre un campo calculado conforme a su forma derivada.
-4. Ciclo y dependencia estocástica inválidos.
-5. Campo calculado con tipo declarado, inferido y no inferible unívocamente.
-6. Rechazo de `mut` exterior y de `[mut]` como autoridad fabricada en campos calculados; aceptación de `[mut]` cuando el origen garantiza la capacidad, y de `in`, cardinalidad, `unique` y orden como coerciones derivadas.
-7. Rollback sin estado publicable inválido.
-8. Literal contextual `[3]` resuelto por tipo esperado y rechazado sin una inferencia unívoca.
-9. Sugerencia de campo almacenado para un cálculo demostrablemente invariante y ausencia de sugerencia cuando dependa de estado cambiante.
-10. Inferencia de cardinalidad, dominio y modificadores en un campo calculado mediante operadores de colección.
-11. Expresión estática compuesta como valor almacenado y rechazo de dependencias runtime.
-12. Rol `for` individual o colectivo restringido por dominio.
+1. Domain steady and calculated.
+2. `given` outside domain in good standing and action.
+3. Stored field outside domain y `in` valid on a computed field in accordance with its derived form.
+4. Cycle and invalid stochastic dependencies.
+5. Computed field with type stated, inferred and not unambiguously inferable.
+6. Rejection of `mut` external and `[mut]` such as authority manufactured in designated areas; acceptance of `[mut]` when the supplier guarantees the capacity, and `in`, cardinality, `unique` and order as derivative constraints.
+7. Rollback without state Invalid publication.
+8. Literal contextual `[3]` resolved by type expected and rejected without a inference unambiguous.
+9. Suggested by stored field for a demonstrably accurate calculation invariant and the absence of any suggestion when it depends on state ever-changing.
+10. Inference from cardinality, domain and modifiers in a computed field using operators from collection.
+11. A compound static expression such as value stored and rejected runtime dependencies.
+12. Role `for` individual or restricted group, limited by domain.
 
-## Modificación por D-084
+## Amendment by D-084
 
-Los aliases estructurales admiten campos derivados y sobrescrituras de predeterminados heredados. Sus formas derivadas siguen la distinción vigente entre anotación verificativa y coerciones de dominio/colección; una coerción no puede fabricar capacidad `[mut]`.
+Structural aliases support derived fields and overrides of inherited defaults. Their derived forms follow the distinction current between a verification note and enforcement measures for domain/colección; Coercion cannot create capacity `[mut]`.

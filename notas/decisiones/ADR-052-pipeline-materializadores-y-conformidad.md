@@ -1,6 +1,6 @@
 ---
 id: D-052
-title: "Pipeline, materializadores y conformidad"
+title: "Pipelines, renderers and conformance"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -13,57 +13,58 @@ questions:
 affects:
   - "arquitectura, tooling, conformidad"
 ---
-# ADR-052 — Pipeline, materializadores y conformidad
+# ADR-052 — Pipelines, renderers and conformance
 
-- Ampliada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Ampliada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Preguntas relacionadas: Q-007, Q-009, Q-037, Q-038
-- Documentos afectados: arquitectura, tooling, conformidad
+- Expanded by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Expanded by: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Related to: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Related questions: Q-007, Q-009, Q-037, Q-038
+- Documents affected: architecture, tooling, conformance
 
-## Contexto
+## Context
 
-La referencia mezclaba requisitos del lenguaje con una implementación TypeScript, un plugin y soporte de editor. MUD necesita exigir conservación semántica sin imponer esas tecnologías.
+The example combined language requirements with a TypeScript implementation, a plugin and editor support. MUD needs to enforce conservation semantics without imposing those technologies.
 
 ## Decisión
 
-El pipeline conceptual separa:
+The conceptual pipeline separates:
 
 1. lexer;
 2. parser;
-3. AST de superficie;
-4. resolución de paths de MUD, declaraciones `using`, nombres y anclas;
-5. sistema de tipos, aliases, dominios, cardinalidades, mutabilidad y magnitudes;
-6. análisis de pureza, efectos, ciclos, finitud, terminación y estocasticidad;
-7. IR canónico;
-8. grafo, diagnósticos, formateo y materializaciones.
+3. Surface AST;
+4. resolution MUD paths, statements `using`, names and anchors;
+5. system of types, aliases, domains, cardinalities, mutability and quantities;
+6. analysis of purity, effects, cycles, finiteness, termination and stochasticity;
+7. Canonical IR;
+8. graph, diagnostics, formatting and media creation.
 
-El parser no produce directamente IR: debe conservarse procedencia suficiente para diagnósticos, formato y evolución sintáctica.
+The parser does not directly produce IR: it must be retained provenance sufficient for diagnosis, syntax and syntactic development.
 
-Un materializador puede usar funciones, parámetros, tuplas, mapas, transacciones, copias especulativas o exploración exhaustiva. No puede:
+A materialiser can use functions, parameters, tuples, maps, transactions, speculative copies or exhaustive exploration. It cannot:
 
-- inventar reglas de dominio;
-- cambiar identidad, nominalidad o especialización;
-- confundir participantes con `given`;
-- cambiar atomicidad, orden causal o resultados;
-- convertir `failed` en falso;
-- usar coma flotante para la semántica observable de `Num`;
-- adelantar la publicación de `message`.
+- to make up rules for domain;
+- change identity, nominality or specialisation;
+- to confuse participants with `given`;
+- change atomicity, order causal or results;
+- convert `failed` false;
+- use a floating decimal point for the semantics observable of `Num`;
+- bring forward the publication of `message`.
 
-La conformidad se prueba mediante programas válidos e inválidos, diagnósticos requeridos, IR esperado, transiciones, trazas y propiedades. El soporte de editor debe diferenciar participantes `on`, roles `for` vinculados por identidad, valor o lugar, `given`, dominios, variantes de regla y firmas públicas, pero no constituye semántica.
+The conformance It is tested using valid and invalid programmes, required diagnostics, expected IR, transitions, traces and properties. The editor must distinguish between participants `on`, roles `for` linked by identity, value or place, `given`, domains, rule variants and public signatures, but it does not constitute semantics.
 
-El compilador valida las declaraciones `test`. Un perfil de producción puede retirarlas después del análisis; un ejecutor de tests conserva su IR, construye sus mundos aislados y descarta todos sus efectos y salidas. Los tests escritos en MUD no sustituyen la suite de conformidad de una implementación.
+The compiler validates the declarations `test`. A profile of production You can remove them after the analysis; a test runner retains their IR, constructs their isolated worlds and discards all their effects and outputs. Tests written in MUD do not replace the suite of conformance of an implementation.
 
-## Consecuencias
+## Consequences
 
-- TypeScript es un destino posible, no una parte de MUD.
-- El catálogo de palabras reservadas se genera o verifica contra la gramática normativa, no se mantiene manualmente como lista provisional.
+- TypeScript is a possible destination, not part of MUD.
+- The list of reserved words is generated or checked against the standard grammar; it is not maintained manually as a provisional list.
 
-## Verificación
+## Verification
 
-1. Dos materializadores distintos producen observaciones equivalentes.
-2. AST e IR conservan funciones distintas.
-3. Casos de conformidad para participantes, `given`, acciones, reglas y salidas.
-4. El editor muestra la firma semántica resuelta.
-5. Ningún artefacto derivado es necesario para reconstruir el modelo.
-6. Separación entre tests de usuario, ejecución de producción y suite de conformidad.
+1. Two different materialisers produce equivalent observations.
+2. AST and IR have distinct functions.
+3. Cases of conformance for participants, `given`, actions, rules and exits.
+4. The editor displays the signature semantics resolved.
+5. No derived artefact is required to reconstruct the model.
+6. Separation between user tests, execution of production and suite of conformance.
+

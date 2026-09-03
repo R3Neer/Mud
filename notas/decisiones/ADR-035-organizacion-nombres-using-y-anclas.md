@@ -1,6 +1,6 @@
 ---
 id: D-035
-title: "Organización, nombres, `using` y anclas"
+title: "Organisation, names, `using` and anchors"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -12,74 +12,74 @@ questions:
 affects:
   - "futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`"
 ---
-# ADR-035 — Organización, nombres, `using` y anclas
+# ADR-035 — Organisation, names, `using` and anchors
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada además por: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
-- Ampliada por: [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]]
-- Ampliada además por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
-- Preguntas relacionadas: Q-001, Q-014, Q-054
-- Documentos afectados: futuro `05-modelo-de-programa.md`, futuro `06-lexico.md`, futuro `09-nombres-y-anclas.md`
+- Related to: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- As further amended by: [[notas/decisiones/ADR-065-cabecera-using-de-fichero|D-065]]
+- Expanded by: [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|D-072]]
+- Further expanded by: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
+- Related questions: Q-001, Q-014, Q-054
+- Documents affected: future `05-modelo-de-programa.md`, future `06-lexico.md`, future `09-nombres-y-anclas.md`
 
 ## Decisión
 
-### Archivos y paths de MUD
+### MUD files and paths
 
-El path de MUD se deriva de la ruta relativa dentro de la raíz MUD y no se declara en el archivo. `namespace` no es vocabulario de superficie y `path` no se reserva. Un archivo puede contener declaraciones `using` y varias declaraciones de cualquier categoría.
+The path MUD is derived from the path relative within the root MUD and is not declared in the file. `namespace` it is not just superficial vocabulary and `path` is not reserved. A file may contain statements `using` and various statements of all kinds.
 
-El archivo es una unidad física, no una unidad de identidad semántica. Cada declaración conserva por separado ancla, dependencias, nodo de grafo, procedencia e historial.
+The file is a unit physical, not a unit from identity semantics. Each declaration store separately anchor, dependencies, node of graph, provenance and history.
 
-Mover una declaración entre archivos del mismo path no cambia su ancla. Moverla a otro path sí la cambia, salvo una migración explícita todavía definida por Q-014.
+Move a declaration between files within the same path does not change its anchor. Move it to another one path it does change it, unless an explicit migration is still defined by Q-014.
 
-### Declaraciones `using`
+### Statements `using`
 
-Se admiten declaraciones `using` exactas y recursivas:
+Statements are accepted `using` exact and recursive:
 
 ```mud
 using warfare.armies
 using warfare.armies.*
 ```
 
-Todas las declaraciones `using` forman la cabecera del fichero y deben aparecer antes de cualquier declaración de primer nivel. Después de la primera declaración nominal o `start with` no puede aparecer otro `using`. Su orden dentro de la cabecera no introduce alcance secuencial.
+All statements `using` These form the header of the file and must appear before any declaration top-class. After the first declaration nominal or `start with` no other one can appear `using`. Its order within the header does not introduce scope sequential.
 
-Para un nombre no cualificado, la búsqueda sigue:
+For an unqualified name, the search continues:
 
-1. Declaraciones locales.
-2. Mismo path de MUD.
-3. Declaraciones `using` exactas.
-4. Declaraciones `using` recursivas.
+1. Local statements.
+2. Same path from the MUD.
+3. Statements `using` exact.
+4. Statements `using` recursive.
 
-Una referencia completamente cualificada evita ambigüedad de nombres, pero solo se resuelve si la declaración pertenece al cierre modular visible; la cualificación no sustituye la autorización `uses` de D-096. Si dos candidatos importados proporcionan el mismo nombre no cualificado, existe ambigüedad y debe escribirse el nombre cualificado.
+A fully qualified reference avoids name ambiguity, but is only resolved if the declaration is part of the visible modular closure; this classification does not replace the authorisation `uses` from D-096. If two imported candidates provide the same unqualified name, there is ambiguity and the qualified name must be specified.
 
-El orden textual de archivos y declaraciones `using` no decide empates.
+The textual order of files and statements `using` It does not decide draws.
 
-### Convenciones de identificadores
+### Identifier conventions
 
-- Namespace: segmentos `lowerCamelCase` separados por puntos.
-- Declaraciones nominales (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `test`, `look` y `message`): `PascalCase`.
-- Miembros de una `family`: `PascalCase`.
-- Campos, componentes, roles, `given` y variables de iteración: `lowerCamelCase`.
+- Namespace: segments `lowerCamelCase` separated by full stops.
+- Nominal statements (`thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `test`, `look` y `message`): `PascalCase`.
+- Members of a `family`: `PascalCase`.
+- Fields, components, roles, `given` and iteration variables: `lowerCamelCase`.
 
-Los identificadores son sensibles a mayúsculas. El catálogo de palabras reservadas no puede usarse como nombre de campo, componente, rol, `given`, variable local o declaración.
+Identifiers are case-sensitive. The list of reserved words cannot be used as the name of a field, component, role, `given`, local variable or declaration.
 
-D-038, D-054 y D-055 distinguen las palabras reservadas de las contextuales. Una palabra contextual se reconoce únicamente en una posición gramatical concreta y puede ser un identificador ordinario fuera de ella. `start` es contextual en `start with`; `abstract` lo es delante de `thing`; `always` lo es delante de `rule`. Los metadatos como `~name` o `~prefixes` usan la gramática general postfix `~`, no etiquetas contextuales especiales.
+D-038, D-054 y D-055 distinguish between reserved words and contextual words. A contextual word It is recognised only in a specific grammatical position and may be an ordinary identifier outside that position. `start` is contextual in `start with`; `abstract` it is in front of `thing`; `always` it is in front of `rule`. Metadata such as `~name` o `~prefixes` they use Postfix General Grammar `~`, not special contextual tags.
 
-`using`, `with`, `family`, `test`, `otherwise`, `ordered` y el tipo incorporado `Thing` son palabras reservadas. En particular, `ordered` no puede usarse como identificador aunque aparezca fuera de una declaración `family` o de una especificación de colección. `name` no tiene una excepción sintáctica de cuerpo de `thing`: la presentación estándar se configura como `~name`, en un espacio distinto del de campos ordinarios.
+`using`, `with`, `family`, `test`, `otherwise`, `ordered` and the type incorporated `Thing` These are reserved words. In particular, `ordered` It cannot be used as an identifier, even if it appears outside a declaration `family` or a specification from collection. `name` does not have a syntactic exception for the body of `thing`: the presentation The standard is configured as follows: `~name`, in a space distinct from that of ordinary fields.
 
-### Nombres cualificados y anclas
+### Qualified names and anchors
 
-Los nombres cualificados usan puntos:
+Qualified names use full stops:
 
 ```text
 warfare.armies.Army
 geometry.Square
 ```
 
-Las anclas usan `::` y no contienen el archivo:
+Anchors use `::` and do not contain the file:
 
 ```text
 thing::warfare.armies.Army
@@ -95,34 +95,35 @@ look::warfare.armies.Summary
 message::warfare.armies.Destroyed
 ```
 
-La raíz incorporada usa el ancla reservada `thing::Thing` conforme a D-068.
+The root Incorporated uses the anchor confidential `thing::Thing` in accordance with D-068.
 
-Una ancla es globalmente única, sensible a mayúsculas y estable frente a movimientos dentro del mismo path. Se utiliza en el grafo, IR, consultas, diagnósticos, trazabilidad y operaciones semánticas.
+One anchor is globally unique, case-sensitive and stable with respect to changes within the same path. It is used in the graph, IR, consultations, diagnoses, traceability and semantic operations.
 
-D-087 retira `anchor{...}`. El ancla canónica se obtiene mediante el acceso ordinario `expression~anchor` y una plantilla la interpola como cualquier otra expresión: `"{expression~anchor}"`.
+D-087 withdraw `anchor{...}`. The anchor Canonical access is obtained through the standard method `expression~anchor` and a template interpolates it just like any other expression: `"{expression~anchor}"`.
 
-D-076 fija la identidad estable de cada unidad mediante el identificador `lowerCamel` obligatorio de su cabecera.
+D-076 sets the identity stable for each unit using the identifier `lowerCamel` mandatory for its masthead.
 
-## Consecuencias
+## Consequences
 
-- La resolución de nombres no depende del orden de archivos.
-- La procedencia física y la identidad semántica son dimensiones distintas.
-- El compilador debe detectar ambigüedades en vez de elegir silenciosamente.
-- La migración de path necesita una operación explícita, no un simple movimiento de archivo.
+- The name resolution It does not depend on the order of the files.
+- The provenance physics and the identity semantics They are different dimensions.
+- The compiler should detect ambiguities rather than making a choice silently.
+- The migration of path It requires an explicit operation, not simply moving a file.
 
-## Verificación futura
+## Future verification
 
-1. Varias declaraciones por archivo.
-2. Movimiento dentro y fuera del path.
-3. Declaración `using` exacta, recursiva y ambigua.
-4. Resolución cualificada.
-5. Colisión por mayúsculas y palabra reservada.
-6. Uso ordinario de una palabra contextual fuera de su posición especial.
-7. Estabilidad de anclas.
-8. Separación entre `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
-9. Lectura de un ancla mediante `~anchor` e interpolación mediante un hueco de expresión ordinario.
-10. Rechazo de un `using` posterior a una declaración de primer nivel.
+1. Several statements per file.
+2. Movement in and out of the path.
+3. Declaration `using` precise, recursive and ambiguous.
+4. Resolution qualified.
+5. Capital letter collision and reserved word.
+6. Common use of a contextual word outside his special position.
+7. Anchor stability.
+8. Separation between `action::*`, `test::*`, `rule::*`, `family::*` y `thing::*`.
+9. Reading of a anchor by means of `~anchor` and interpolation using a standard expression slot.
+10. Rejection of a `using` following a declaration top-class.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-D-096 introduce el módulo como dimensión semántica de visibilidad sin incorporarlo a las anclas. El MudPath nominal y las anclas existentes conservan su forma. `using` continúa resolviendo/importando nombres dentro de un `.mud`; no concede por sí solo permiso para atravesar una frontera modular, que corresponde a `uses` en `mud.module`.
+D-096 enter the module as a dimension semantics from visibility without incorporating it into the anchors. The MudPath nominal, and the existing anchors retain their shape. `using` continues to resolve/importando names within a `.mud`; it does not grant on its own permission to cross a modular boundary, which corresponds to `uses` in `mud.module`.
+

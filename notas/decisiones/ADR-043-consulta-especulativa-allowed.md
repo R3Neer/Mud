@@ -15,13 +15,13 @@ affects:
 ---
 # ADR-043 — Consulta especulativa `allowed`
 
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
-- Preguntas relacionadas: Q-007, Q-032, Q-035, Q-053
-- Documentos afectados: expresiones, acciones, análisis de admisibilidad
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Related questions: Q-007, Q-032, Q-035, Q-053
+- Documents concerned: expressions, actions, analysis of admissibility
 
-## Contexto
+## Context
 
-Una regla debe poder preguntar si una acción sería admisible sin ejecutar una versión simplificada de ella ni alterar el mundo.
+A rule must be able to check whether a action would be admissible without implementing a simplified version of it or altering the world.
 
 ## Decisión
 
@@ -30,18 +30,18 @@ allowed game.Move(origin, destination)
 allowed (source, destination).Transfer(amount)
 ```
 
-`allowed call` evalúa la acción indicada mediante el mismo protocolo completo que una solicitud real, pero en una copia especulativa:
+`allowed call` assesses the action specified using the same complete protocol as a request the original, but in a speculative copy:
 
-1. vincula participantes;
-2. suministra y valida `given`;
-3. evalúa `if`;
-4. calcula y consolida la raíz;
-5. ejecuta ondas hasta estabilizar;
-6. comprueba `always`;
-7. evalúa `after`;
-8. descarta la copia.
+1. brings participants together;
+2. provides and validates `given`;
+3. assesses `if`;
+4. calculates and consolidates the root;
+5. generate waves until they stabilise;
+6. check `always`;
+7. assesses `after`;
+8. Discard the copy.
 
-La traducción de resultado es:
+The translation of result is:
 
 $$
 \begin{aligned}
@@ -51,23 +51,24 @@ $$
 \end{aligned}
 $$
 
-Un fallo no se degrada a falso.
+A failure it is not downgraded to ‘false’.
 
-La evaluación especulativa no modifica el mundo, la cola de acciones, los logs, el azar global ni el identificador de resolución. Si interviene azar, utiliza una rama concreta, sembrada y reproducible que no consume la rama de la ejecución real.
+Speculative valuation does not alter the world, the queue actions, logs, global randomness or the identifier for resolution. If chance comes into play, use a branch concrete, established and reproducible, which does not consume the branch of the actual execution.
 
-Cuando la acción declara un rol `for` con mutabilidad exterior, el receptor-lugar se resuelve dentro de la copia especulativa. Sus efectos nunca conservan una referencia de escritura hacia el mundo real.
+When the action declare a role `for` with mutability exterior, the receiver-the location is resolved within the speculative copy. Its effects never retain a reference to the world real.
 
-`allowed` puede aparecer en reglas booleanas, `if`, `after`, `when`, reglas `always` y cuantificadores, siempre dentro de una expresión pura. El grafo de dependencias de admisibilidad debe ser acíclico.
+`allowed` may appear in Boolean rules, `if`, `after`, `when`, rules `always` and quantifiers, always within a pure expression. The graph of departments of admissibility it must be acyclic.
 
-## Consecuencias
+## Consequences
 
-- Una implementación puede reutilizar el motor transaccional ordinario, sustituyendo la confirmación por descarte.
-- El coste o un límite de recursos no puede cambiar silenciosamente verdadero por falso.
-- La identidad semántica de cada punto aleatorio y su derivación reproducible desde la semilla ya están fijadas. Q-032 conserva abiertas las reglas de caché y reintentos y la exposición de resultados; Q-035 conserva sus cuestiones propias de `allowed`.
+- An implementation may reuse the standard transactional engine, replacing confirmation with discard.
+- Cost or a resource limit cannot silently change ‘true’ to ‘false’.
+- The identity semantics of each point random and its reproducible derivation from the seed have already been set. Q-032 maintains the cache rules, retry rules and result display; Q-035 retains its own characteristics of `allowed`.
 
-## Verificación
+## Verification
 
-1. Correspondencia de los tres resultados.
-2. Igualdad de la traza interna entre ejecución real y especulativa con la misma rama.
-3. Ausencia de mutaciones, mensajes y consumo de azar global.
-4. Rechazo estático de ciclos de admisibilidad.
+1. Correlation between the three results.
+2. Equality of the internal trace between the actual and speculative executions with the same branch.
+3. Absence of mutations, messages and global randomness.
+4. Static rejection of cycles of admissibility.
+

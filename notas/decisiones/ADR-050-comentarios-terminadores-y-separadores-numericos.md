@@ -1,6 +1,6 @@
 ---
 id: D-050
-title: "Comentarios, terminadores, texto y separadores numéricos"
+title: "Comments, terminators, text and numeric separators"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -10,28 +10,28 @@ questions:
 affects:
   - "[[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formateador"
 ---
-# ADR-050 — Comentarios, terminadores, texto y separadores numéricos
+# ADR-050 — Comments, terminators, text and numeric separators
 
-- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+- Amended by: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
 
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
-- Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formateador
+- Related to: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]], [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Partially closes: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
+- Documents concerned: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], formatter
 
-## Contexto
+## Context
 
-Estas reglas léxicas son independientes de la ontología y deben quedar fijadas sin mantener manualmente un catálogo paralelo de palabras clave. Los delimitadores de comentario y texto siguen una simetría deliberada entre formas ordinarias y multilínea.
+These lexical rules are independent of the ontology and must be set in stone without the need to manually maintain a parallel catalogue of keywords. The delimiters for comment and the text follows a deliberate symmetry between standard and multiline fonts.
 
 ## Decisión
 
-### Comentarios
+### Comments
 
-MUD admite:
+The MUD states:
 
-1. Comentario de línea desde `#` hasta el salto de línea.
-2. Comentario de línea cerrado por un segundo `#` antes del salto.
-3. Comentario multilínea cuyo delimitador de apertura y cierre es `###`.
+1. Comment line from `#` up to the line break.
+2. Comment line disconnected for a second `#` before the jump.
+3. Comment multi-line, of which delimiter the opening and closing times are `###`.
 
 ```mud
 soldiers = 1_000 # hasta fin de línea
@@ -41,26 +41,26 @@ Comentario multilínea.
 ###
 ```
 
-El `###` de apertura debe ser el último elemento no blanco de su línea. El contenido comienza en la línea siguiente. El `###` de cierre debe aparecer solo, salvo espacio horizontal, en su propia línea. La línea de apertura y la de cierre no forman parte del comentario. La forma `### comentario ###` es inválida.
+The `###` The opening tag must be the last non-blank element on the line. The content begins on the following line. The `###` The closing tag must appear on its own line, with no horizontal spacing. The opening and closing tags do not form part of the comment. The form `### comentario ###` is invalid.
 
-Los comentarios multilínea no se anidan. El lexer reconoce `###` antes que `#`. Dentro de una forma textual entre comillas dobles, se elabore como `Text` o como `Char`, los delimitadores de comentario no tienen significado léxico.
+Multi-line comments are not nested. The lexer recognises `###` rather than `#`. Within a textual element enclosed in double quotation marks, it should be written as `Text` or as `Char`, the delimiters for comment have no lexical meaning.
 
-El contenido de un comentario no genera tokens, instrucciones ni terminadores. Después de retirarlo, el texto restante debe seguir siendo sintácticamente válido.
+The content of a comment It does not generate tokens, instructions or terminators. After removing it, the remaining text must remain syntactically valid.
 
-Un comentario de línea cerrado explícitamente no atraviesa un salto. Un delimitador multilínea sin pareja, un inicio con contenido en su misma línea o un cierre que no esté aislado producen diagnóstico.
+A comment A line that is explicitly closed does not cross a jump. A delimiter a multi-line entry without a matching line, a start containing text on the same line, or a closing line that is not isolated results in diagnostic.
 
-### Formas textuales
+### Textual forms
 
-Un literal ordinario comienza con `"` y prefiere el tipo `Text`. Puede cerrarse con otro `"` en la misma línea o cerrarse implícitamente al llegar al salto:
+A literal 'ordinary' begins with `"` and prefers the type `Text`. It can be closed with another one `"` along the same line, or close implicitly upon reaching the break:
 
 ```mud
 name = "Ada"
 name = "Ada
 ```
 
-Ambas formas producen el mismo valor. El cierre explícito es obligatorio cuando deben aparecer otros tokens en esa línea.
+Both forms produce the same result value. An explicit closing token is required when other tokens are to appear on that line.
 
-Un literal multilínea utiliza `"""`. El delimitador de apertura debe ser el último elemento no blanco de su línea; el contenido comienza en la siguiente. El cierre debe aparecer aislado, salvo espacio horizontal, en su propia línea.
+A literal multi-line uses `"""`. The delimiter The opening tag must be the last non-blank character on its line; the content begins on the next line. The closing tag must appear on its own line, separated only by horizontal space.
 
 ```mud
 description = """
@@ -69,25 +69,25 @@ description = """
     """
 ```
 
-La sangría del delimitador de cierre define el margen que se retira de cada línea no vacía. Una línea no vacía con menos sangría que el margen es un error. La primera línea posterior al inicio y el salto inmediatamente anterior al cierre son estructurales y no forman parte del valor. La sangría adicional se conserva. Los escapes y las interpolaciones de D-061 continúan activos.
+The haemorrhage from the delimiter The closing tag defines the margin that is removed from each non-empty line. A non-empty line with less indentation than the margin is a error. The first line following the start and the line immediately preceding the close are structural and do not form part of the value. The additional indentation is retained. The omissions and insertions of D-061 remain active.
 
-Un literal ordinario entre comillas dobles prefiere `Text` y puede elaborarse como `Char` cuando el contexto lo exige y contiene exactamente un valor escalar Unicode conforme a D-069. Las comillas simples no delimitan literales.
+A literal 'ordinary' in double quotation marks prefers `Text` and can be prepared as `Char` when the context requires it and contains exactly one value Unicode scaling in accordance with D-069. Single quotation marks do not delimit literals.
 
-### Terminadores
+### Terminators
 
-Una instrucción termina mediante `;` o un salto de línea.
+A statement ends with `;` or a line break.
 
-El salto no actúa como terminador cuando aparece dentro de una construcción sintácticamente abierta. Un prefijo está abierto cuando todavía no puede formar una unidad sintáctica completa, pero puede completarse con tokens posteriores. La gramática de D-057 proporciona la enumeración exhaustiva. Incluye:
+The jump does not act as a terminator when it appears within a syntactically open construct. A prefix it is open when it is not yet able to form a unit syntactically complete, but can be supplemented with subsequent tokens. The grammar of D-057 provides an exhaustive list. It includes:
 
-- Un delimitador `(` o `[` todavía sin cerrar.
-- Una cabecera que todavía exige participantes, argumentos u otro contenido.
-- Una línea terminada en coma u operador que exige un operando posterior.
-- Una cabecera o cláusula terminada en una palabra que exige contenido, como `for`, `given`, `if`, `then` o `:=`.
-- El contenido de un literal o comentario multilínea.
+- A delimiter `(` o `[` still open.
+- A headline that still needs participants, arguments or other content.
+- A line ending with a comma or an operator that requires a subsequent operand.
+- A heading or clause ending in a word that requires content, such as `for`, `given`, `if`, `then` o `:=`.
+- The contents of a literal o comment multi-line.
 
-Las llaves `{}` no suprimen los terminadores de su interior: un bloque contiene instrucciones o declaraciones separadas por saltos o `;`.
+The keys `{}` they do not remove the terminators within them: a block contains instructions or statements separated by jumps or `;`.
 
-Si el prefijo anterior al salto ya puede formar una unidad completa, el salto la termina aunque la línea siguiente pudiera comenzar otra expresión. La continuación nunca depende de la sangría.
+If the prefix prior to the jump, it can already form a unit A complete expression is terminated by a jump, even if the following line might begin another expression. Continuation never depends on indentation.
 
 ```mud
 rule CanAttack for
@@ -99,40 +99,40 @@ rule CanAttack for
 }
 ```
 
-D-057 y la gramática consolidada cierran Q-001.
+D-057 and the consolidated grammar bring it to a close Q-001.
 
-### Separadores numéricos
+### Number separators
 
-La notación científica usa `e` o `E`: una mantisa $m$ seguida de un exponente entero $n$ denota $m\times 10^n$. El signo opcional situado tras `e` o `E` pertenece al exponente; el signo del valor completo continúa siendo un operador exterior.
+Scientific notation uses `e` o `E`: a mantis $m$ followed by an integer exponent $n$ denotes $m\times 10^n$. The optional character following `e` o `E` belongs to the exponent; the sign of the value It remains a foreign operator in its entirety.
 
-`_` puede agrupar cifras para lectura y no altera el valor. La parte entera de la mantisa, su parte fraccionaria y las cifras del exponente se agrupan independientemente: usar `_` en un componente no obliga a usarlo en los demás.
+`_` It can group figures for ease of reading and does not alter the value. The whole part of the mantissa, its fractional part and the exponent are grouped independently: use `_` Just because it’s included in one component doesn’t mean you have to use it in the others.
 
-Cuando un componente contiene `_`, su agrupación debe ser completa. La parte entera y el exponente se agrupan desde la derecha, con un primer grupo de una a tres cifras y los restantes de tres. La parte fraccionaria se agrupa desde el punto decimal hacia la derecha, con grupos de tres salvo el último, que puede contener de una a tres cifras.
+When a component contains `_`, the figures must be grouped in full. The whole part and the exponent are grouped from the right, with the first group consisting of one to three digits and the remaining groups of three. The fractional part is grouped from the point decimal places to the right, in groups of three, except for the last one, which may contain between one and three digits.
 
-Por tanto, `1_000.123456e1000`, `1000.123_456` y `3e1_000` son válidos. `1_000000`, `1.123_456789` y `3e1_000000` son inválidos por dejar sin agrupar cifras del mismo componente. El prefijo `r` se rige por D-034 y no modifica estas reglas.
+Therefore, `1_000.123456e1000`, `1000.123_456` y `3e1_000` are valid. `1_000000`, `1.123_456789` y `3e1_000000` are invalid because they fail to group figures from the same component. The prefix `r` is governed by D-034 and does not alter these rules.
 
-## Consecuencias
+## Consequences
 
-- El lexer retira comentarios y emite tokens de salto; el parser determina cuáles son terminadores a partir de si el prefijo sintáctico está completo.
-- El resaltador puede implementar el léxico sin conocer el modelo semántico.
-- El catálogo de palabras reservadas se genera desde la gramática consolidada.
-- El catálogo distingue palabras reservadas de palabras contextuales conforme a D-035, D-054 y D-055. `using`, `with`, `test`, `otherwise` y `ordered` están reservadas; `start`, `abstract`, `always`, `name` y `prefixes` son contextuales en sus posiciones gramaticales.
+- The lexer removes comments and outputs skip tokens; the parser determines which are terminators based on whether the prefix The syntactic structure is complete.
+- The highlighter can implement the lexicon without knowing the model semantic.
+- The list of reserved words is generated from the consolidated grammar.
+- The catalogue distinguishes between reserved words and contextual words in accordance with D-035, D-054 y D-055. `using`, `with`, `test`, `otherwise` y `ordered` are reserved; `start`, `abstract`, `always`, `name` y `prefixes` are contextual in their grammatical functions.
 
-## Verificación
+## Verification
 
-1. Las tres formas de comentario.
-2. Apertura y cierre multilínea en líneas propias.
-3. Delimitadores dentro de cadenas.
-4. Prioridad de `###` y rechazo del anidamiento.
-5. Texto ordinario con cierre explícito e implícito.
-6. Margen, líneas estructurales y escapes del texto multilínea.
-7. `Char` con exactamente un escalar.
-8. Símbolos sintácticos inocuos dentro de comentarios.
-9. Terminación por `;` y por salto.
-10. Continuación tras delimitador, coma, operador y palabra introductora.
-11. Terminación cuando el prefijo anterior ya es completo.
-12. Independencia respecto de la sangría fuera de literales multilínea.
-13. Literales sin separadores y con agrupación completa independiente en la parte entera, fraccionaria y exponencial.
-14. Rechazo de agrupaciones parciales, grupos interiores de tamaño distinto de tres y `_` en los extremos o duplicado.
-15. Equivalencia decimal de exponentes positivos, negativos y con signo explícito en literales exactos y `Rum`.
-16. Modos anidados de texto y código, escapes de llaves y rechazo de un cierre implícito con interpolación abierta.
+1. The three ways of comment.
+2. Multi-line opening and closing on own lines.
+3. Delimiters within strings.
+4. Priority of `###` and rejection of nesting.
+5. Run-on text with explicit and implicit endings.
+6. Margins, structural lines and line breaks in multi-line text.
+7. `Char` with exactly one scalar.
+8. Harmless syntactic symbols within comments.
+9. Termination by `;` and by jump.
+10. Continued from delimiter, comma, operator and introductory word.
+11. Termination when the prefix The previous one is now complete.
+12. Independence from indentation outside multi-line blocks.
+13. Literals without separators, with the integer, fractional and exponential parts grouped entirely independently.
+14. Rejection of partial clusters, internal groups of a size other than three and `_` at the ends or duplicated.
+15. Decimal equivalence of positive, negative and explicitly signed exponents in exact literals and `Rum`.
+16. Nested text and code modes, curly brace escapes and the suppression of an implicit closure with open interpolation.

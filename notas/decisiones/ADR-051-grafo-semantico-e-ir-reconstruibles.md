@@ -1,6 +1,6 @@
 ---
 id: D-051
-title: "Grafo semántico futuro e información reconstruible"
+title: "Graph future semantics and reconstructable information"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -15,54 +15,55 @@ questions:
 affects:
   - "arquitectura, HIR nominal, futuro grafo semántico, futura representación posterior a tipado y elaboración, conformidad"
 ---
-# ADR-051 — Grafo semántico futuro e información reconstruible
+# ADR-051 — Graph future semantics and reconstructable information
 
-- Modificada por: [[ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]].
-- Ampliada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]].
-- Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]], [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]], [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]] y [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
+- Amended by: [[ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]].
+- Expanded by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]] y [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]].
+- Amended by: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]], [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|D-066]], [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]] y [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Related to: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]].
 
-## Contexto
+## Context
 
-Los análisis de impacto, explicación y ejecución necesitarán información semántica derivada, pero esa información no debe convertirse en una fuente alternativa de verdad ni fijarse mecánicamente antes de que las fases que la producen estén formalizadas.
+Impact assessments, explanation and implementation will require information semantics derived, but that information must not become an alternative source of truth, nor should it be mechanically established before the stages by which it is produced have been formalised.
 
 ## Decisión
 
-Los archivos `.mud` y las decisiones de versión son la fuente semántica. El AST superficial y el HIR nominal son derivados reconstruibles actuales. La resolución nominal produce `especificacion/nombres/mud-nominal-hir.asdl`, con símbolos, scopes, bindings, anclas y relaciones nominales, sin conclusiones de tipado o elaboración.
+The files `.mud` and versioning decisions are the source semantics. The Surface AST and the Nominal HIR are current reconstructible derivatives. The nominal resolution produces `especificacion/nombres/mud-nominal-hir.asdl`, with symbols, scopes, bindings, anchors and nominal relations, without type inferences or elaboration.
 
-Tras tipado y elaboración podrá existir una representación semántica posterior y un grafo semántico consultable derivado de ella. Su codificación concreta queda deliberadamente sin fijar mientras esas fases no dispongan de superficies normativas desarrolladas suficientes.
+After typing and elaboration there may be a semantic representation rear and a graph a searchable semantic model derived from it. Its specific encoding is deliberately left undefined until such time as these phases have sufficiently developed normative frameworks.
 
-Cuando se diseñe esa representación futura deberá poder conservar o reconstruir, según corresponda, al menos estas distinciones conceptuales:
+When designing this future representation, it must be capable of preserving or reconstructing, as appropriate, at least the following conceptual distinctions:
 
-- procedencia hasta archivo y rango de origen;
-- símbolos y anclas resueltos;
-- las tres variantes de regla;
-- participantes `for` y `on`, valores `given`, cardinalidad, mutabilidad y modos de vinculación;
-- tipos, aliases, dominios, cardinalidades, unidades e intervalos ya elaborados;
-- vinculaciones locales y su orden de evaluación;
-- efectos, lecturas, escrituras, llamadas y dependencias;
-- actividad lógica y dependencias suspendidas;
-- `look`, `message`, sus salidas y dependencias diferidas;
-- tests, activación local, efectos, aserciones y diagnósticos;
-- dependencias de `allowed`, `eventually`, `when`, `if`, `after`, `old` y `always`;
-- efectos estructurales `create`, `destroy`, adición y retirada de colecciones;
-- derivación dimensional, magnitudes, unidades y equivalencias;
-- dependencias generales, de dominio, estocásticas y duras cuando formen parte del análisis definido.
+- provenance up to the source file and range;
+- symbols and anchors resolved;
+- the three types of ruler;
+- participants `for` y `on`, values `given`, cardinality, mutability and types of relationship;
+- pre-defined types, aliases, domains, cardinalities, units and intervals;
+- local links and the order in which they are assessed;
+- effects, readings, writings, calls and dependencies;
+- logical activity and suspended dependencies;
+- `look`, `message`, its outflows and deferred liabilities;
+- tests, activation local, effects, assertions and diagnoses;
+- dependencies of `allowed`, `eventually`, `when`, `if`, `after`, `old` y `always`;
+- structural effects `create`, `destroy`, the addition and removal of collections;
+- derivation of dimensions, quantities, units and equivalences;
+- general departments, including domain, stochastic and hard when they form part of the defined analysis.
 
-La decisión de qué información se almacena explícitamente, qué se deriva y cómo se serializa pertenece al diseño futuro de tipado/elaboración. Si se introduce un formato de intercambio persistente, deberá llevar versión de esquema compatible y permitir reconstrucción determinista desde las fuentes normativas anteriores.
+The decision Which information is explicitly stored, what is derived and how it is serialised are matters for the future design of the typing system/elaboración. If a persistent exchange format is introduced, it must have a compatible schema version and allow for deterministic reconstruction from the previous normative sources.
 
-Q-009 conserva abierto el formato externo y los nombres concretos cuando llegue a existir tal representación; esa pregunta no obliga a crearla anticipadamente.
+Q-009 It leaves the external format and specific names open for when such a representation comes into existence; that question does not require it to be created in advance.
 
-## Consecuencias
+## Consequences
 
-- Una discrepancia en un derivado se resuelve descartándolo y reconstruyéndolo desde las fuentes normativas.
-- No existe actualmente un contrato mecánico de IR semántico ni un grafo semántico final normativo.
-- El HIR nominal no puede absorber tipos efectivos, dominios efectivos, cardinalidades inferidas, efectos ni evidencia de terminación para compensar esa ausencia.
-- Las futuras herramientas de análisis deben esperar a la superficie semántica correspondiente o derivar únicamente información autorizada por las fases ya formalizadas.
+- A discrepancy in a derivative is resolved by discarding it and reconstructing it from the regulatory sources.
+- There is currently no contract neither a semantic IR mechanism nor a graph normative final semantics.
+- The Nominal HIR cannot absorb effective types, effective domains, inferred cardinalities, effects or evidence of termination to make up for that absence.
+- Future analysis tools must wait until they reach the surface semantics relevant information or to provide only information authorised by the stages that have already been completed.
 
-## Verificación
+## Verification
 
-1. El HIR nominal es reconstruible desde AST superficial + resolución nominal.
-2. El HIR nominal permanece libre de conclusiones de tipado/elaboración.
-3. No existe un esquema normativo de IR semántico mientras no estén desarrolladas sus fases productoras.
-4. Las obligaciones conceptuales anteriores permanecen disponibles para auditar el diseño futuro sin fijar hoy su representación mecánica.
+1. The Nominal HIR can be reconstructed from Surface AST + nominal resolution.
+2. The Nominal HIR remains free of typing conclusions/elaboración.
+3. There is no regulatory framework for semantic IR until its production phases have been developed.
+4. The conceptual requirements set out above remain available for use in reviewing future designs without specifying their technical implementation at this stage.
+

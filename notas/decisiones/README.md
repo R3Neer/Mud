@@ -40,32 +40,32 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-023 | vigente | 2026-07-27 | [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|Consolidation of concurrent structural effects]] |
 | D-025 | vigente | 2026-07-27 | [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|Vocabulary from `thing`, headings and sections]] |
 | D-026 | vigente | 2026-07-27 | [[notas/decisiones/ADR-026-membresia-estricta-y-cardinalidad-por-then|Membership strict and cardinality by `then`]] |
-| D-027 | sustituida | 2026-07-27 | [[notas/decisiones/ADR-027-salidas-look-y-message|Salidas del modelo mediante `look` y `message`]] |
-| D-028 | vigente | 2026-07-28 | [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|Sistema de magnitudes y unidades]] |
-| D-029 | vigente | 2026-07-28 | [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|Intervalos, límites efectivos y ciclos de punto]] |
-| D-030 | vigente | 2026-07-28 | [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|Conversión cuantitativa explícita mediante `to`]] |
-| D-031 | vigente | 2026-07-28 | [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|Aliases nominales, inmutables y sin ciclo de vida]] |
-| D-032 | vigente | 2026-07-28 | [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|Construcción contextual y casting nominal de aliases]] |
-| D-033 | vigente | 2026-07-28 | [[notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases|Claves compuestas y enumeración de aliases]] |
-| D-034 | vigente | 2026-07-28 | [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|`Num` exacto y `Rum` binary64]] |
-| D-035 | vigente | 2026-07-28 | [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|Organización, nombres, `using` y anclas]] |
-| D-036 | vigente | 2026-07-28 | [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|Participantes, receptores y llamadas]] |
-| D-037 | vigente | 2026-07-28 | [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|Campos y dominios declarativos]] |
-| D-038 | vigente | 2026-07-28 | [[notas/decisiones/ADR-038-familias-cerradas-de-valores|Familias cerradas de valores]] |
-| D-039 | vigente | 2026-07-28 | [[notas/decisiones/ADR-039-colecciones-y-diccionarios|Colecciones y diccionarios]] |
-| D-040 | vigente | 2026-07-28 | [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|Semántica numérica básica restante]] |
-| D-041 | vigente | 2026-07-28 | [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|Contratos de las tres clases de regla]] |
-| D-042 | vigente | 2026-07-28 | [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|Acciones, raíz y resultados]] |
+| D-027 | sustituida | 2026-07-27 | [[notas/decisiones/ADR-027-salidas-look-y-message|Departures from the model by means of `look` y `message`]] |
+| D-028 | vigente | 2026-07-28 | [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|System of quantities and units]] |
+| D-029 | vigente | 2026-07-28 | [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|Intervals, effective limits and cycles of point]] |
+| D-030 | vigente | 2026-07-28 | [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|Explicit quantitative conversion using `to`]] |
+| D-031 | vigente | 2026-07-28 | [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|Nominal aliases, immutable and without cycle of life]] |
+| D-032 | vigente | 2026-07-28 | [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|Contextual construction and nominal casting of aliases]] |
+| D-033 | vigente | 2026-07-28 | [[notas/decisiones/ADR-033-claves-y-enumeracion-de-aliases|Composite keys and alias enumeration]] |
+| D-034 | vigente | 2026-07-28 | [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|`Num` exactly and `Rum` binary64]] |
+| D-035 | vigente | 2026-07-28 | [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|Organisation, names, `using` and anchors]] |
+| D-036 | vigente | 2026-07-28 | [[notas/decisiones/ADR-036-participantes-receptores-y-llamadas|Participants, recipients and calls]] |
+| D-037 | vigente | 2026-07-28 | [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|Fields and declarative domains]] |
+| D-038 | vigente | 2026-07-28 | [[notas/decisiones/ADR-038-familias-cerradas-de-valores|Close-knit families with strong values]] |
+| D-039 | vigente | 2026-07-28 | [[notas/decisiones/ADR-039-colecciones-y-diccionarios|Collections and dictionaries]] |
+| D-040 | vigente | 2026-07-28 | [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|Semantics remaining basic numeracy]] |
+| D-041 | vigente | 2026-07-28 | [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|Contracts under the three types of rules]] |
+| D-042 | vigente | 2026-07-28 | [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|Shares, root and results]] |
 | D-043 | vigente | 2026-07-28 | [[notas/decisiones/ADR-043-consulta-especulativa-allowed|Consulta especulativa `allowed`]] |
 | D-044 | vigente | 2026-07-28 | [[notas/decisiones/ADR-044-alcanzabilidad-eventually|Alcanzabilidad `eventually`]] |
-| D-045 | vigente | 2026-07-28 | [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|Resolución causal, vinculaciones y cola]] |
-| D-046 | vigente | 2026-07-28 | [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|Álgebra y conflictos de efectos]] |
-| D-047 | vigente | 2026-07-28 | [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|Cuantificadores e iteración finita]] |
-| D-048 | vigente | 2026-07-28 | [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|Azar reproducible y fallos]] |
-| D-049 | vigente | 2026-07-28 | [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|Operadores, precedencia e intervalos normalizados]] |
-| D-050 | vigente | 2026-07-28 | [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|Comentarios, terminadores, texto y separadores numéricos]] |
-| D-051 | vigente | 2026-07-28 | [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|Grafo semántico futuro e información reconstruible]] |
-| D-052 | vigente | 2026-07-28 | [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|Pipeline, materializadores y conformidad]] |
+| D-045 | vigente | 2026-07-28 | [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|Causal resolution, connections and queue]] |
+| D-046 | vigente | 2026-07-28 | [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|Algebra and conflicts of effects]] |
+| D-047 | vigente | 2026-07-28 | [[notas/decisiones/ADR-047-cuantificadores-e-iteracion-finita|Quantifiers and finite iteration]] |
+| D-048 | vigente | 2026-07-28 | [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|Reproducible randomness and errors]] |
+| D-049 | vigente | 2026-07-28 | [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|Operators, precedence and standardised intervals]] |
+| D-050 | vigente | 2026-07-28 | [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|Comments, terminators, text and numeric separators]] |
+| D-051 | vigente | 2026-07-28 | [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|Graph future semantics and reconstructable information]] |
+| D-052 | vigente | 2026-07-28 | [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|Pipelines, renderers and conformance]] |
 | D-053 | vigente | 2026-07-28 | [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|Operador semántico y flujo de autoría]] |
 | D-054 | vigente | 2026-07-28 | [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|Definiciones canónicas y activación inicial]] |
 | D-055 | vigente | 2026-07-28 | [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|Tests declarativos y diagnósticos `otherwise`]] |

@@ -1,6 +1,6 @@
 ---
 id: D-041
-title: "Contratos de las tres clases de regla"
+title: "Contracts under the three types of rules"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -11,24 +11,24 @@ questions:
 affects:
   - "modelo del lenguaje, semántica estática, semántica dinámica"
 ---
-# ADR-041 — Contratos de las tres clases de regla
+# ADR-041 — Contracts under the three types of rules
 
-- Relacionada con: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada también por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
-- Ampliada por: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
-- Ejemplo de pertenencia actualizado por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]]
-- Preguntas relacionadas: Q-005, Q-050
-- Documentos afectados: modelo del lenguaje, semántica estática, semántica dinámica
+- Related to: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Amended by: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]] y [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- As further amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Also amended by: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Expanded by: [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|D-071]]
+- Example of membership updated by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]]
+- Related questions: Q-005, Q-050
+- Documents concerned: model of language, semantics static, semantics dynamic
 
-## Contexto
+## Context
 
-MUD utiliza una sola palabra declarativa, `rule`, para tres mecanismos distintos. Compartir nombre no debe permitir cuerpos ambiguos ni una variante general con combinaciones arbitrarias de cláusulas.
+MUD uses a single declarative word, `rule`, for three different mechanisms. Sharing a name must not allow for ambiguous bodies or a general variant with arbitrary combinations of clauses.
 
 ## Decisión
 
-El AST contiene tres variantes distintas: regla booleana, regla reactiva y regla `always`.
+The AST comprises three distinct variants: Boolean rule, reactive rule and ruler `always`.
 
 ### Regla booleana
 
@@ -43,13 +43,13 @@ given
 }
 ```
 
-Declara participantes mediante `for`, puede declarar `given`, es pura y devuelve `Bool`. Puede usar cuantificadores, agregaciones booleanas, `allowed` y, cuando el análisis lo admita, `eventually`.
+Register participants via `for`, may state `given`, is pure and returns `Bool`. You can use quantifiers, Boolean aggregations, `allowed` and, where the analysis so permits, `eventually`.
 
-Sus `given` son valores de solo lectura y pueden declarar predeterminados estáticos. Las llamadas los vinculan por posición o por nombre conforme a D-063.
+Their `given` They are read-only values and can be declared as static defaults. Calls bind them by position or by name in accordance with D-063.
 
-No puede escribir estado, ejecutar efectos, crear, destruir ni leer directamente un campo estocástico calculado. Se consulta explícitamente mediante el protocolo de receptores y argumentos de D-036.
+You cannot type state, apply effects, create, destroy or read a field calculated stochastic. It query explicitly via the protocol for receivers and arguments of D-036.
 
-Una regla booleana no efectiva se elabora conforme a la poda estructural de D-022, no como una llamada que devuelve un booleano fijo.
+One Boolean rule Non-productive pruning is carried out in accordance with the structural pruning of D-022, not as a call which returns a fixed Boolean value.
 
 ### Regla reactiva
 
@@ -61,19 +61,19 @@ rule OpenGate on gate: Gate [mut] {
 }
 ```
 
-Declara vinculaciones automáticas mediante `on`, no admite `given`, exige `when`, admite `if` y produce consecuencias mediante `then`. Ese `then` puede mezclar efectos, locales y llamadas a `action` o `subaction` dentro de la resolución causal activa conforme a D-096. Puede consultar reglas booleanas y usar `allowed` si el grafo resultante sigue siendo admisible.
+Declare automatic links via `on`, does not support `given`, requires `when`, admits `if` and has consequences through `then`. That `then` You can combine effects, locals and calls to `action` o `subaction` inside the causal resolution in accordance with D-096. You can look up Boolean rules and use `allowed` if the graph The resulting figure is still acceptable.
 
-Los roles de una misma cabecera `on` se resuelven conjuntamente y pueden formar restricciones relacionales cíclicas finitas conforme a D-063.
+Roles within the same header `on` are solved jointly and may form finite cyclic relational constraints in accordance with D-063.
 
-Sea $W_n$ la instantánea leída al comienzo de la onda $n$ y sea $v_n(b,e)$ el valor de la expresión $e$ para la vinculación $b$ en esa instantánea. Para una vinculación que ya posea memoria, un `when e` puramente booleano dispara únicamente cuando:
+Be $W_n$ the snapshot read at the beginning of the wave $n$ and let it be $v_n(b,e)$ the value of the expression $e$ for recruitment $b$ in that snapshot. For a link that already has a history, a `when e` 'Purely Boolean' only fires when:
 
 $$
 \neg v_{n-1}(b,e)\land v_n(b,e).
 $$
 
-Por tanto, solo dispara en la transición $\mathsf{false}\longrightarrow\mathsf{true}$. El runtime conserva el valor anterior por identidad de vinculación.
+Therefore, only shoot in the transition $\mathsf{false}\longrightarrow\mathsf{true}$. The runtime retains the value previous by identity of engagement.
 
-El sufijo `changes` admite cualquier expresión pura con igualdad definida y produce en la onda $n$ el pulso:
+The suffix `changes` accepts any pure expression with a defined equality and produces, in the wave $n$ the pulse:
 
 $$
 \operatorname{changes}_n(b,e)
@@ -81,17 +81,17 @@ $$
 v_{n-1}(b,e)\ne v_n(b,e).
 $$
 
-Este pulso se calcula directamente para cada par de instantáneas de inicio consecutivas. No es un booleano almacenado, no se restablece mediante un cambio a `false` y no se somete de nuevo a la detección $\mathsf{false}\rightarrow\mathsf{true}$. Si $e$ cambia entre dos pares consecutivos de instantáneas, `changes` pulsa en ambas ondas. Solo importa el cambio neto entre instantáneas; los valores transitorios dentro de un delta privado no son observables.
+This pulse is calculated directly for each pair of consecutive start snapshots. It is not a stored Boolean value, and is not reset by a change to `false` and does not undergo screening again $\mathsf{false}\rightarrow\mathsf{true}$. If $e$ switch between two consecutive pairs of snapshots, `changes` Click on both waveforms. Only the net change between snapshots matters; transient values within a delta private variables are not observable.
 
-Los activadores temporales se componen con las palabras `and` y `or`. Un operando booleano ordinario de una composición se eleva a su transición `false` → `true`; no se interpreta como un nivel sostenido. La gramática, el alcance de `old` y la elaboración formal de estas combinaciones se fijan en D-058.
+Temporary triggers are made up of the words `and` y `or`. An ordinary Boolean operand in a composition is raised to its transition `false` → `true`; it is not interpreted as a sustained level. Grammar, the scope from `old` and the elaboration The formal aspects of these combinations are set out in D-058.
 
-### Inicialización de la memoria reactiva
+### Initialisation of the reactive memory
 
-Las vinculaciones presentes en la primera instantánea obtenida al materializar conjuntamente las contribuciones `start with` de los módulos, o las contribuciones reunidas para el mundo de un test, reciben para cada rama booleana elevada un valor anterior virtual $\mathsf{false}$. Si la rama es verdadera en esa primera instantánea de estabilización, pulsa. Las expresiones temporales, incluidos `changes` y `old`, comparan la instantánea inicial consigo misma: `changes` no pulsa y `old e` vale lo mismo que `e`.
+The links found in the first snapshot achieved by bringing together the contributions `start with` of the modules, or the contributions compiled for the world of a test, they receive for each branch a raised Boolean value previous virtual $\mathsf{false}$. If the branch is true in that first snapshot from stabilisation, click. Temporal expressions, including `changes` y `old`, compare the snapshot initially with herself: `changes` do not press and `old e` is the same as `e`.
 
-Una vinculación que no estaba presente en esa primera instantánea, ya sea por activación posterior de una regla o por aparición de participantes, no participa en la raíz u onda que la crea. En su primera onda activa memoriza el valor actual sin disparar `when` ni producir un pulso `changes`. Desde la onda siguiente compara normalmente dos instantáneas. En particular, si memoriza $\mathsf{false}$ y la condición es $\mathsf{true}$ en la onda posterior, `when` dispara; si memoriza inicialmente $\mathsf{true}$, esa mera aparición no dispara.
+A connection that was not present in that first snapshot, whether due to activation following a rule or due to the arrival of participants, does not take part in the root u wave that creates it. In its first wave activa stores the value current without firing `when` nor cause a pulse `changes`. From the wave The following normally compares two snapshots. In particular, if it stores $\mathsf{false}$ and the condition is $\mathsf{true}$ in the wave back, `when` shoot; if it is initially memorised $\mathsf{true}$, that mere appearance does not set it off.
 
-### Regla `always`
+### Ruler `always`
 
 ```mud
 always rule ValidPosition on game: Game {
@@ -100,38 +100,38 @@ always rule ValidPosition on game: Game {
 otherwise "A position is outside the board of {game}"
 ```
 
-Declara vinculaciones automáticas mediante `on`, no admite `given`, no es invocable y no produce efectos. Su cuerpo contiene una condición pura; el diagnóstico `Text` opcional mediante `otherwise` se escribe después de la llave de cierre conforme a D-079. La condición se comprueba automáticamente en los puntos normativos de validación. Una infracción evalúa perezosamente el diagnóstico sobre el estado tentativo infractor y produce `failed` con esa causa, nunca `rejected`, conforme a D-061. Si se omite, el compilador emite un aviso y el runtime genera una razón predeterminada.
+Declare automatic links via `on`, does not support `given`, cannot be invoked and has no effect. His body contains a pure condition; the diagnostic `Text` optional via `otherwise` is written after the closing brace in accordance with D-079. The condition is automatically checked at the regulatory points in validation. An offence is half-heartedly assessed in the diagnostic on the tentative state offender and results in `failed` with that cause, never `rejected`, in accordance with D-061. If omitted, the compiler issues a warning and the runtime generates a reason default.
 
-### Ciclo de vida común
+### Cycle of communal life
 
-Las tres variantes poseen una definición canónica única de primer nivel, pueden activarse mediante `start with` o `create Nombre` y suspenderse mediante `destroy`, conforme a D-021 y D-054. Conservan su variante al reactivarse. La suspensión de una regla `always` retira temporalmente su obligación; la reactivación no permite publicar un estado que la incumpla.
+All three variants have a canonical definition a single top-tier option, which can be activated via `start with` o `create Nombre` and be suspended by means of `destroy`, in accordance with D-021 y D-054. They retain their variant when reactivated. The suspension of a ruler `always` temporarily waives this obligation; reactivation does not allow the publication of a state that it fails to comply with it.
 
-Las tres variantes comparten la categoría de ancla `rule::*`. En particular, `always` es una palabra contextual delante de `rule`, no una categoría nominal ni un prefijo de ancla independiente.
+All three variants fall into the category of anchor `rule::*`. In particular, `always` is a contextual word in front of `rule`, neither a nominal category nor a prefix from anchor independent.
 
-## Consecuencias
+## Consequences
 
-- Una cabecera o combinación de cláusulas que corresponda a más de una variante se rechaza.
-- Solo las reglas booleanas son callables con resultado booleano.
-- Entre las reglas, solo las reactivas poseen `then` y producen consecuencias que pueden modificar el mundo.
-- Reglas reactivas y `always` pueden además actuar como fuentes declarativas de trigger conforme a D-096.
-- Solo `always` convierte una falsedad en fallo de invariante.
-- Q-005 todavía debe fijar la identidad canónica, la retirada de memoria y su posible conservación cuando una vinculación desaparece y reaparece.
+- A heading or combination of clauses that corresponds to more than one variant is rejected.
+- Only Boolean rules can be called using result Boolean.
+- Of all the rules, only the multiple-choice questions contain `then` and have consequences that may alter the world.
+- Reactive rules and `always` They may also act as declarative trigger sources in accordance with D-096.
+- Alone `always` turns a falsehood into failure from invariant.
+- Q-005 the [... ] still needs to be set canonical identity, the withdrawal of memory and its possible preservation when a connection disappears and reappears.
 
-## Verificación
+## Verification
 
-1. Un ejemplo válido y otro inválido por cada variante.
-2. Rechazo de `given` en una regla `on`.
-3. Rechazo de efectos en reglas booleanas y `always`.
-4. Disparo de un `when` puramente booleano únicamente en `false → true`.
-5. Poda de una llamada booleana suspendida.
-6. `changes` pulsa en cambios consecutivos sin una onda falsa intermedia.
-7. Ausencia de pulso cuando una expresión cambia transitoriamente pero conserva el mismo valor entre instantáneas.
-8. Disparo inicial de un `when` verdadero procedente de `start with`.
-9. Inicialización sin disparo de una vinculación creada fuera de `start with`.
-10. Composición de dos cambios y de un cambio con una transición booleana mediante `and` y `or`.
-11. Pulsos consecutivos preservados dentro de una composición temporal.
-12. Aviso para una regla `always` sin `otherwise`, generación de una razón predeterminada y propagación de un diagnóstico explícito al `failed`.
+1. One valid example and one invalid example for each variant.
+2. Rejection of `given` on a ruler `on`.
+3. Rejection of effects in Boolean rules and `always`.
+4. A shot from a `when` purely Boolean only in `false → true`.
+5. Pruning a call suspended Boolean.
+6. `changes` click on consecutive changes without a wave false intermediate.
+7. Absence of a pulse when an expression changes temporarily but remains the same value between snapshots.
+8. Opening shot of a `when` genuine, originating from `start with`.
+9. Initialisation without triggering a binding created outside `start with`.
+10. A combination of two changes and one change with a transition Boolean using `and` y `or`.
+11. Consecutive pulses preserved within a time sequence.
+12. Notice regarding a rule `always` without `otherwise`, generation of a reason default value and propagation of a diagnostic explicitly to the `failed`.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-Una rule reactiva continúa sin ser callable como regla booleana, pero su `then` puede invocar actions y subactions reales dentro de la resolución causal activa. Rules reactivas y `always` pueden además actuar como fuentes declarativas de trigger: la reactiva pulsa cuando dispara efectivamente y la `always` cuando se evalúa para la vinculación/onda correspondiente. Actions, subactions, looks, reglas booleanas y tests no adquieren esa condición de trigger.
+One rule reactive remains non-callable as Boolean rule, but his `then` can invoke actual actions and sub-actions within the causal resolution active. Reactive rules and `always` They can also act as declarative trigger sources: the reactive one fires when it is actually triggered, and the `always` when being assessed for recruitment/onda relevant. Actions, sub-actions, looks, Boolean rules and tests do not act as triggers.

@@ -1,6 +1,6 @@
 ---
 id: D-040
-title: "Semántica numérica básica restante"
+title: "Semantics remaining basic numeracy"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -11,18 +11,18 @@ questions:
 affects:
   - "futuro `06-lexico.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`"
 ---
-# ADR-040 — Semántica numérica básica restante
+# ADR-040 — Semantics remaining basic numeracy
 
-- Amplía: D-028, D-030, D-034
-- Modificada por: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
-- Preguntas relacionadas: Q-001, Q-019
-- Documentos afectados: futuro `06-lexico.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`
+- Read more: D-028, D-030, D-034
+- Amended by: [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
+- Related questions: Q-001, Q-019
+- Documents affected: future `06-lexico.md`, future `10-sistema-de-tipos.md`, future `17-dominios-e-intervalos.md`
 
 ## Decisión
 
-### Ampliaciones exactas
+### Exact extensions
 
-Se admiten las ampliaciones implícitas:
+Implicit expansions are permitted:
 
 $$
 \mathsf{Nat}
@@ -32,36 +32,36 @@ $$
 \mathsf{Num}
 $$
 
-No se extienden a `Rum` ni a `Money`. Una operación mixta usa la representación exacta común menos ampliada. Los estrechamientos requieren `to`.
+They do not extend to `Rum` nor to `Money`. A mixed operation uses the least-expanded common exact representation. Narrowing operations require `to`.
 
 ### `Nat`
 
-Una operación aritmética pura que produciría un entero negativo bajo representación `Nat` satura en cero antes de comprobar el dominio declarado.
+A purely arithmetic operation that would result in a negative integer under this representation `Nat` reset to zero before checking the domain stated.
 
-Esta saturación no se aplica a `to Nat`: D-030 exige redondear y después validar, sin saturación correctiva.
+This saturation does not apply to `to Nat`: D-030 requires rounding and then validation, without corrective saturation.
 
-D-060 distingue de esta operación pura los efectos `+=` y `-=`. Estos producen deltas enteros firmados, se suman antes de saturar y solo entonces forman el siguiente valor `Nat`. Por tanto, no pueden expandirse a una asignación que aplique la resta saturada por separado.
+D-060 distinguishes the effects from this pure operation `+=` y `-=`. These produce signed integer deltas; they are added together before saturation, and only then do they form the next one value `Nat`. Therefore, they cannot be expanded into an assignment that applies saturated subtraction separately.
 
 ### `Money`
 
-`Money` usa aritmética decimal exacta con escala de dos cifras decimales. El contexto aporta el tipo de sus literales.
+`Money` uses exact decimal arithmetic with two decimal places. The context provides the type of its clauses.
 
-Cuando una operación o conversión necesita reducir escala, se aplica la política global de empates al par fijada por D-034. Las reglas de overflow, división y combinación con magnitudes permanecen en Q-019.
+When an operation or conversion needs to be scaled down, the policy overall number of draws set by D-034. The rules for overflow, division and combining with magnitudes remain in Q-019.
 
-### Separadores numéricos
+### Number separators
 
-`_` puede agrupar cifras para legibilidad, incluidas formas exactas y `Rum`:
+`_` You can group figures for clarity, including exact forms and `Rum`:
 
 ```mud
 1_000
 r1_000
 ```
 
-No altera el valor. La gramática exacta de posiciones admitidas y diagnósticos pertenece a Q-001; los ejemplos canónicos agrupan de tres en tres.
+It does not alter the value. The precise rules governing permitted positions and diagnoses are set out in Q-001; the standard examples are grouped in threes.
 
-### Intervalos tipados
+### Typed intervals
 
-La forma nominal de tipo de intervalo es:
+The nominal form of type The interval is:
 
 ```text
 Nat Interval
@@ -71,20 +71,21 @@ Rum Interval
 Money Interval
 ```
 
-Los valores de intervalo se normalizan por el conjunto que denotan. D-029 gobierna límites y D-034 prohíbe enumerar intervalos `Rum`.
+Interval values are normalised with respect to the set they denote. D-029 governs limits and D-034 prohibits the listing of intervals `Rum`.
 
-## Consecuencias
+## Consequences
 
-- La inferencia exacta no autoriza mezcla aproximada.
-- Saturación de `Nat` y validación de dominio son fases distintas.
-- `Money` deja de depender de sufijos léxicos.
-- El IR debe preservar valor, no separadores escritos.
+- The inference Exacta does not permit approximate mixing.
+- Saturation of `Nat` y validation from domain They are different stages.
+- `Money` stop relying on lexical suffixes.
+- The IR must preserve value, not written separators.
 
-## Verificación futura
+## Future verification
 
-1. Cadena de ampliación exacta.
-2. Rechazo de mezcla implícita con `Rum` y `Money`.
-3. Saturación de la aritmética pura de `Nat`, consolidación previa de deltas aditivos y no saturación de `to Nat`.
-4. Escala y redondeo de `Money`.
-5. Separadores válidos e inválidos.
-6. Normalización de tipos de intervalo.
+1. Exact expansion chain.
+2. Implicit mix rejection with `Rum` y `Money`.
+3. Saturation of pure arithmetic of `Nat`, consolidation preliminary analysis of additive deltas and non-saturation of `to Nat`.
+4. Scaling and rounding of `Money`.
+5. Valid and invalid separators.
+6. Normalisation of interval types.
+

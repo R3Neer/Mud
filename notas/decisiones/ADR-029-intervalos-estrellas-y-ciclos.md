@@ -1,6 +1,6 @@
 ---
 id: D-029
-title: "Intervalos, límites efectivos y ciclos de punto"
+title: "Intervals, effective limits and cycles of point"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -11,21 +11,21 @@ questions:
 affects:
   - "futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`"
 ---
-# ADR-029 — Intervalos, límites efectivos y ciclos de punto
+# ADR-029 — Intervals, effective limits and cycles of point
 
-- Modificada por: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]], [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
-- Preguntas relacionadas: Q-018, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
-- Documentos afectados: futuro `15-colecciones.md`, futuro `17-dominios-e-intervalos.md`, futuro `18-magnitudes.md`
+- Amended by: [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]], [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]], [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|D-062]] y [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]]
+- Related questions: Q-018, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
+- Documents affected: future `15-colecciones.md`, future `17-dominios-e-intervalos.md`, future `18-magnitudes.md`
 
-## Contexto
+## Context
 
-MUD usa intervalos para dominios numéricos, magnitudes y cardinalidades. La referencia inicial no fijaba de forma uniforme el significado lateral de `*` ni integraba el ciclo de una magnitud de punto en su dominio.
+MUD uses intervals for numerical domains, magnitudes and cardinalities. The original reference did not uniformly define the lateral meaning of `*` nor was it part of the cycle of a magnitude from point in his domain.
 
 ## Decisión
 
-### Formas de intervalo
+### Interval forms
 
-Las cuatro formas delimitadas son:
+The four defined shapes are:
 
 ```mud
 [n..m]
@@ -34,15 +34,15 @@ Las cuatro formas delimitadas son:
 (n..m]
 ```
 
-`n..m` equivale a `[n..m]` y `[n]` equivale a `[n..n]`.
+`n..m` is equivalent to `[n..m]` y `[n]` is equivalent to `[n..n]`.
 
-D-059 añade unidades locales y compartidas a las expresiones ordinarias de intervalo y fija que un intervalo lineal con límites efectivos invertidos se normaliza a `empty`. Esta inversión no expresa orden descendente ni ciclo.
+D-059 adds local and shared units to ordinary interval expressions and specifies that a linear interval with inverted effective limits is normalised to `empty`. This inversion does not indicate a descending order, nor cycle.
 
-La forma `[n]` también coincide superficialmente con una colección unitaria. No se elimina ninguno de los dos usos ni se concede prioridad a uno: el tipo esperado y las restricciones de la expresión deben producir una única elaboración. Si una derivación sin tipo admite ambas, debe declarar el tipo explícitamente conforme a D-037.
+The shape `[n]` it also coincides, on the surface, with a collection unitary. Neither of the two uses is eliminated, nor is priority given to either: the type expected, and the restrictions on expression must produce a single elaboration. If a shunt without type If it supports both, you must declare the type explicitly in accordance with D-037.
 
-### Límites efectivos
+### Effective limits
 
-`*` representa el límite efectivo del lado en el que aparece. Los dos lados no tienen por qué denotar el mismo valor:
+`*` represents the effective boundary of the side on which it appears. The two sides do not necessarily denote the same value:
 
 ```mud
 Nat [*..10]  # [0..10]
@@ -50,9 +50,9 @@ Nat [1..*]   # [1..+∞]
 [*..*]           # dominio efectivo completo
 ```
 
-`[*]` es azúcar de `[*..*]`. En una cardinalidad ordinaria, `Thing[*]` comienza en cero y llega hasta el límite superior permitido.
+`[*]` is sugar from `[*..*]`. In a cardinality ordinary, `Thing[*]` starts at zero and goes up to the maximum permitted limit.
 
-Todo lado escrito con `*` debe ser cerrado:
+Every line written with `*` must be closed:
 
 ```mud
 [*..10]
@@ -61,11 +61,11 @@ Todo lado escrito con `*` debe ser cerrado:
 [*]
 ```
 
-Son inválidos `(*..10]`, `[1..*)`, `(*..*)` y cualquier otra forma que deje abierto un extremo escrito con `*`.
+They are invalid `(*..10]`, `[1..*)`, `(*..*)` and any other form that leaves one end open, written as `*`.
 
-### Dominios de magnitud
+### Domains from magnitude
 
-Una magnitud puede declarar su dominio en la cabecera:
+One magnitude can declare their domain in the header:
 
 ```mud
 magnitude PlayerCount: Nat in 1..8 {
@@ -76,19 +76,19 @@ magnitude Speed in [0..*] :=
     Length / Time
 ```
 
-En una magnitud no derivada, la representación numérica opcional precede siempre al dominio:
+In a magnitude non-derivative; the optional numerical representation always precedes the domain:
 
 ```text
 magnitude nombre [: representación-numérica] [in intervalo] bloque
 ```
 
-Los límites se escriben como números desnudos. En una magnitud no derivada se interpretan en su unidad raíz; en una derivada, en la combinación canónica inferida de las unidades raíz componentes.
+Boundaries are written as bare numbers. In a magnitude non-derivative are interpreted in their unit root; in a derivative, in the canonical combination inferred from the units root components.
 
-Por tanto, si la unidad canónica de `Speed` es `m/s`, `[0..100]` significa de `0 m/s` a `100 m/s`. No se admiten unidades explícitas ni unidades alternativas dentro de esos límites. Los valores escritos posteriormente con otra unidad se normalizan antes de comprobar el dominio.
+Therefore, if the unit canonical of `Speed` is `m/s`, `[0..100]` means 'of' `0 m/s` a `100 m/s`. Neither explicit units nor alternative units are permitted within these limits. Values entered subsequently using another unit are normalised before checking the domain.
 
-### Magnitudes de punto
+### Magnitudes of point
 
-Una magnitud de punto se declara con `point over` en la cabecera. Su dominio es opcional:
+One magnitude from point is declared with `point over` at the top. Its domain is optional:
 
 ```mud
 magnitude RawInstant point over Time {}
@@ -106,14 +106,14 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 }
 ```
 
-Representa posiciones sobre una magnitud lineal y utiliza sus unidades. No puede declarar unidades ni `root unit`.
-Sin `in`, admite el dominio completo de la coordenada subyacente. Con un intervalo lineal, queda acotada sin envolvimiento. Con `[a..b) cycle`, queda acotada y se normaliza cíclicamente.
+It represents positions on a magnitude linear and uses its units. You cannot declare units or `root unit`.
+Without `in`, admits the domain the full range of the underlying coordinate. With a linear interval, it is bounded without wrapping. With `[a..b) cycle`, it is limited and cyclically normalised.
 
-Puede declarar mediante el metadato `~format` opcional una representación textual especial. Si lo omite, se representa como cualquier magnitud ordinaria: coordenada en la unidad raíz seguida de la abreviatura o nombre de esa unidad. Conforme a D-061, `~format` usa una plantilla `Text`: `hour`, `minute` y `second` son expresiones contextuales del punto, y `:2` solicita dos posiciones a la izquierda. D-061 fija además la extracción explícita `minute from hour in time`; D-062 exige que `~format` sea invertible, lo usa como forma literal canónica y rechaza antes de normalizar cualquier literal fuera del dominio.
+You can file your tax return via the metadata `~format` optional: a special textual representation. If omitted, it is rendered like any magnitude ordinary: coordinate at the unit root followed by the abbreviation or name of that unit. In accordance with D-061, `~format` use a template `Text`: `hour`, `minute` y `second` are contextual expressions of the point, y `:2` move two positions to the left. D-061 It also specifies the explicit extraction `minute from hour in time`; D-062 demands that `~format` if it is invertible, it uses it as a form literal canonical and rejects it before normalising any literal outside the domain.
 
-Su aritmética es:
+His maths is as follows:
 
-| Operación | Resultado |
+| Operation | Result |
 | --- | --- |
 | $P-P$ | $M$ |
 | $P+M$ | $P$ |
@@ -121,15 +121,15 @@ Su aritmética es:
 | $P-M$ | $P$ |
 | $P+P$ | error |
 
-Solo una magnitud `point over` puede ser cíclica. Conforme a D-082, `cycle` aparece después del intervalo completo y la única forma cíclica válida es:
+Just one magnitude `point over` it may be cyclical. In accordance with D-082, `cycle` appears after the full interval, and the only valid cyclic form is:
 
 ```mud
 [a..b) cycle
 ```
 
-El dominio debe ser finito, contiguo, no vacío, cerrado a la izquierda y abierto a la derecha. Su periodo es $b-a$ y todo valor se normaliza módulo ese periodo respecto de $a$.
+The domain It must be finite, contiguous, non-empty, closed on the left and open on the right. Its period is $b-a$ and everything value is normalised module that period in relation to $a$.
 
-Para `[0..360) cycle`:
+For `[0..360) cycle`:
 
 ```text
 360  → 0
@@ -137,26 +137,27 @@ Para `[0..360) cycle`:
 -10  → 350
 ```
 
-`cycle` modifica la normalización del dominio de punto. No altera la semántica ni la iteración de los intervalos generales. Su periodo debe ser estrictamente positivo: la normalización a `empty` de D-059 no repara un dominio cíclico invertido o degenerado.
-Tampoco resuelve ni modifica los ciclos de dependencia entre dominios calculados tratados por Q-017.
+`cycle` modifies the normalisation of the domain from point. It does not alter the semantics nor the iteration of the general intervals. Its period must be strictly positive: normalisation to `empty` from D-059 does not repair a domain inverted or degenerate cyclic.
+Nor does it resolve or modify the cycles of dependency between computed domains addressed by Q-017.
 
-## Consecuencias
+## Consequences
 
-- El AST de intervalos representará cada límite como concreto o efectivo y conservará la apertura de cada lado.
-- La comprobación de dominios de magnitud se realizará después de normalizar unidades.
-- Una magnitud de punto no necesita ser cíclica ni declarar dominio.
-- Cuando existe, el ciclo forma parte del dominio de una magnitud de punto, no es una propiedad independiente del bloque.
+- The interval AST will treat each limit as a specific or actual value and will retain the opening on each side.
+- Domain verification for magnitude will be carried out after standardising the units.
+- One magnitude from point it does not need to be cyclical or be declared domain.
+- Where it exists, the cycle is part of the domain of a magnitude from point, it is not a property independent of the block.
 
-## Verificación futura
+## Future verification
 
-1. Expansión contextual de `[*]` para tipos, magnitudes y cardinalidades.
-2. Rechazo de todos los extremos abiertos escritos con `*`.
-3. Interpretación canónica de límites desnudos.
-4. Rechazo de unidades explícitas en la cabecera `in` de una magnitud.
-5. Normalización cíclica con límite inferior distinto de cero.
-6. Rechazo de ciclos en magnitudes no puntuales y dominios no semiabiertos.
-7. Resolución contextual de `[n]` como intervalo unitario y rechazo cuando también sea viable como colección sin tipo esperado suficiente.
-8. Normalización de intervalos lineales invertidos a `empty` sin interpretación descendente.
-9. Rechazo de un periodo cíclico nulo o negativo.
-10. Magnitudes de punto sin dominio, con dominio lineal y con dominio cíclico.
-11. `~format` opcional y representación cuantitativa ordinaria, con unidad, cuando se omite.
+1. Contextual expansion of `[*]` for types, magnitudes and cardinalities.
+2. Rejection of all open-ended questions written in `*`.
+3. Canonical interpretation of bare boundaries.
+4. Rejection of explicit units in the header `in` of a magnitude.
+5. Cyclic normalisation with a non-zero lower bound.
+6. Rejection of cycles in non-point-wise quantities and non-semi-open domains.
+7. Resolution contextual of `[n]` as a unit interval and rejection when it is also viable as collection without type waited long enough.
+8. Normalisation of inverted linear intervals to `empty` without top-down interpretation.
+9. Rejection of a zero or negative cycle period.
+10. Magnitudes of point without domain, with domain linear and with domain cyclical.
+11. `~format` optional and standard quantitative representation, with unit, when it is omitted.
+

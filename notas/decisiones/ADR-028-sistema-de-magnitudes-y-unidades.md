@@ -1,6 +1,6 @@
 ---
 id: D-028
-title: "Sistema de magnitudes y unidades"
+title: "System of quantities and units"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -13,29 +13,29 @@ questions:
 affects:
   - "futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`"
 ---
-# ADR-028 — Sistema de magnitudes y unidades
+# ADR-028 — System of quantities and units
 
-- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
-- Ampliada por: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
-- Preguntas relacionadas: Q-019, Q-034, Q-054, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
-- Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
+- Amended by: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|D-059]] y [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
+- Expanded by: [[ADR-076-unidades-nombradas-prefijos-y-escritura-adyacente|D-076]]
+- Related questions: Q-019, Q-034, Q-054, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
+- Documents affected: future `10-sistema-de-tipos.md`, future `18-magnitudes.md`, future `19-expresiones.md`
 
-## Contexto
+## Context
 
-La referencia inicial mezclaba representación numérica, dimensión, unidad y sintaxis léxica. También trataba `Percentage` como tipo básico, usaba sufijos para algunos tipos y exigía declarar manualmente unidades compuestas que pueden deducirse dimensionalmente.
+The original reference combined numerical representation, dimension, unit and lexical syntax. It also dealt with `Percentage` such as type In its basic form, it used suffixes for certain types and required users to manually declare compound units that could be deduced from the dimensions.
 
-MUD necesita distinguir:
+MUD needs to distinguish between:
 
-- Cómo se representa un número.
-- Qué cantidad física o conceptual representa.
-- En qué unidad se escribe.
-- Qué dimensión resulta de combinar cantidades.
+- How a number is represented.
+- What physical or conceptual quantity does it represent?
+- What unit It is written.
+- What dimension results from combining quantities?
 
 ## Decisión
 
-### Tipos básicos
+### Basic types
 
-Los tipos básicos no numéricos son:
+The basic non-numeric data types are:
 
 ```mud
 Text
@@ -43,7 +43,7 @@ Bool
 Char
 ```
 
-Los tipos numéricos básicos son:
+The basic numeric types are:
 
 ```mud
 Nat
@@ -53,7 +53,7 @@ Rum
 Money
 ```
 
-Los cinco tipos numéricos son representaciones, no magnitudes. Pueden usarse directamente o ser la representación numérica de una magnitud:
+The five numerical types are representations, not magnitudes. They can be used directly or serve as the numerical representation of a magnitude:
 
 ```mud
 attempts: Nat
@@ -64,9 +64,9 @@ magnitude Population: Nat {
 }
 ```
 
-`Percentage` deja de ser un tipo básico. Un concepto porcentual deberá modelarse mediante el sistema de magnitudes y dominios. D-034 fija `Num` como racional exacto y añade `Rum` como representación aproximada `binary64`.
+`Percentage` is no longer a type basic. A percentage concept must be modelled using the system of quantities and domains. D-034 fixed `Num` as an exact rational number, and adds `Rum` as an approximate representation `binary64`.
 
-Los literales numéricos no llevan sufijos de tipo. No existen `30N`, `30I`, `30M` ni formas equivalentes. El contexto de tipado determina la representación exacta. Los literales `Rum` puros constituyen una familia distinta con prefijo `r`, según D-034:
+Numeric literals do not have suffixes of type. There aren't any `30N`, `30I`, `30M` or equivalent forms. The type context determines the exact representation. Literals `Rum` Cigars form a distinct family with prefix `r`, according to D-034:
 
 ```mud
 balance: Money = 30
@@ -74,9 +74,9 @@ population: Population = 30 people
 rapid: Rum = r0.1
 ```
 
-### Magnitudes no derivadas
+### Non-derived quantities
 
-Una magnitud no derivada representa una cantidad independiente:
+One magnitude A non-derivative represents an independent quantity:
 
 ```mud
 magnitude Length {
@@ -84,7 +84,7 @@ magnitude Length {
 }
 ```
 
-Si omite la representación numérica, usa `Num`. Puede declararla mediante `:`:
+If you omit the numerical representation, use `Num`. You can declare it via `:`:
 
 ```mud
 magnitude Population: Nat {
@@ -96,7 +96,7 @@ magnitude Temperature: Int {
 }
 ```
 
-Puede restringir su dominio mediante `in`, situado después de la representación numérica opcional y antes del bloque:
+You can restrict your domain by means of `in`, situated after the optional numerical representation and before the block:
 
 ```mud
 magnitude Probability: Num in [0..1] {
@@ -108,15 +108,15 @@ magnitude Population: Nat in [*] {
 }
 ```
 
-Su cabecera sigue por tanto este orden:
+Its header therefore follows this order:
 
 ```text
 magnitude nombre [: representación-numérica] [in intervalo] bloque
 ```
 
-Los límites del intervalo de la cabecera son números desnudos en la representación canónica de la magnitud. Cuando existe una unidad raíz, se interpretan en ella; la unidad no se escribe dentro del intervalo. Esta restricción de declaración no impide que las expresiones ordinarias de intervalo usen unidades locales o una unidad común conforme a D-059.
+The endpoints of the header interval are plain numbers in the canonical representation of the magnitude. When there is a unit root, are performed there; the unit It is not written within the interval. This restriction on declaration does not prevent ordinary interval expressions from using local units or a unit common in accordance with D-059.
 
-Una magnitud no derivada que declara unidades contiene exactamente una `root unit`. D-076 exige un identificador `lowerCamel` en su cabecera:
+One magnitude a non-derivative function that declares units contains exactly one `root unit`. D-076 requires an identifier `lowerCamel` in its header:
 
 ```mud
 magnitude Length {
@@ -128,9 +128,9 @@ magnitude Length {
 }
 ```
 
-El identificador determina `~identifier` y el ancla. `~name`, `~plural`, `~abbreviation` y `~prefixes` son metadatos configurables conforme a D-076 y D-087.
+The identifier determines `~identifier` and the anchor. `~name`, `~plural`, `~abbreviation` y `~prefixes` are configurable metadata in accordance with D-076 y D-087.
 
-Una unidad alternativa se declara mediante una equivalencia positiva:
+One unit An alternative is stated by means of a positive equivalence:
 
 ```mud
 unit minute := 60 seconds {
@@ -140,18 +140,18 @@ unit minute := 60 seconds {
 }
 ```
 
-Toda equivalencia de unidad debe:
+Any equivalence of unit must:
 
-1. Ser estrictamente positiva.
-2. Pertenecer a la misma magnitud.
-3. Reducirse a la unidad raíz.
-4. No participar en ciclos.
+1. To be strictly positive.
+2. To belong to the same magnitude.
+3. To be reduced to the unit root.
+4. Do not participate in cycles.
 
-`~prefixes` tiene tipo `Prefix [* unique]` y valor predeterminado `empty`. `~prefixes = all` selecciona el dominio incorporado completo y `~prefixes = [p1, p2, ...]` una colección explícita. No existe una subgramática especial de propiedades de unidad.
+`~prefixes` has type `Prefix [* unique]` y default value `empty`. `~prefixes = all` select the domain fully integrated and `~prefixes = [p1, p2, ...]` one collection explicit. There is no special sub-grammar of properties of unit.
 
-### Magnitudes derivadas
+### Derived quantities
 
-`:=` define una relación dimensional, no herencia ni conversión:
+`:=` define a relation dimensional, not inheritance or conversion:
 
 ```mud
 magnitude Speed :=
@@ -161,7 +161,7 @@ magnitude Area :=
     Length * Length
 ```
 
-Una magnitud derivada no puede declarar `root unit`. Su unidad canónica se obtiene combinando las unidades raíz de las magnitudes componentes. Las expresiones de unidad dimensionalmente compatibles son válidas automáticamente:
+One magnitude A derived class cannot declare `root unit`. His unit The canonical form is obtained by combining the units root of the component quantities. The expressions for unit that are dimensionally compatible are automatically valid:
 
 ```mud
 10 m/s
@@ -170,9 +170,9 @@ Una magnitud derivada no puede declarar `root unit`. Su unidad canónica se obti
 5 cm/min
 ```
 
-Los prefijos habilitados en las unidades componentes siguen disponibles en esas expresiones. No es necesario declarar cada producto o cociente nominalmente.
+The prefixes enabled in the component units remain available in these expressions. It is not necessary to specify each product or quotient by name.
 
-Una magnitud derivada puede añadir una forma nominal para una equivalencia que ya sea dimensionalmente válida:
+One magnitude A derived quantity may be expressed in terms of a nominal quantity for an equivalence that is already dimensionally valid:
 
 ```mud
 magnitude Speed :=
@@ -186,11 +186,11 @@ magnitude Speed :=
 }
 ```
 
-Esa unidad no se convierte en raíz ni restringe las demás expresiones compatibles.
+That unit does not become root nor does it restrict other compatible forms of expression.
 
-### Inferencia de representación
+### Inference representative
 
-Una magnitud derivada sin tipo explícito elige la representación menos ampliada capaz de representar la operación. Para la jerarquía ordinaria:
+One magnitude derived without type Explicitly choose the least expanded representation capable of representing the operation. For the ordinary hierarchy:
 
 $$
 \mathsf{Nat}
@@ -200,41 +200,42 @@ $$
 \mathsf{Num}
 $$
 
-se aplican inicialmente estas reglas:
+The following rules are initially applied:
 
-| Operación de representaciones | Resultado |
+| Representation operations | Result |
 | --- | --- |
 | `Nat * Nat` | `Nat` |
 | `Nat * Int` | `Int` |
 | `Int * Int` | `Int` |
-| Cualquier operación con `Num` | `Num` |
-| Cualquier división | `Num` |
+| Any transaction involving `Num` | `Num` |
+| Any division | `Num` |
 
-Puede declararse una representación explícita:
+An explicit representation can be declared as follows:
 
 ```mud
 magnitude DiscreteArea: Nat :=
     Width * Height
 ```
 
-La tabla describe operaciones exactas. Operaciones cuyos operandos sean todos `Rum` producen `Rum`; `Rum` no se mezcla implícitamente con representaciones exactas. La inferencia de magnitudes derivadas que combinen componentes `Rum` se completará en Q-058.
+The table describes exact operations. Operations in which all operands are `Rum` produce `Rum`; `Rum` is not implicitly conflated with exact representations. The inference of derived quantities that combine components `Rum` will be completed in Q-058.
 
-La anotación explícita no introduce redondeo. El programa debe satisfacer las reglas estáticas de representabilidad correspondientes. Las reglas de `Money` y la matriz completa de operadores permanecen abiertas en Q-019.
+Explicit annotation does not introduce rounding. The programme must satisfy the corresponding static representability rules. The rules for `Money` and the complete matrix of operators remains open in Q-019.
 
-## Consecuencias
+## Consequences
 
-- El AST separará `NumericType`, `MagnitudeDecl`, `UnitDecl` y expresiones dimensionales.
-- El análisis estático necesitará normalizar dimensiones y factores de escala.
-- Las unidades derivadas son expresiones estructurales, no una enumeración nominal.
-- El lexer y el resolvedor deberán distinguir identificadores, nombres, plurales, abreviaturas y prefijos bajo el contexto de magnitud.
-- `r` es un prefijo de literal aproximado.
+- The AST will separate `NumericType`, `MagnitudeDecl`, `UnitDecl` and dimensional expressions.
+- The static analysis You will need to normalise dimensions and scale factors.
+- Derived units are structural expressions, not a nominal list.
+- The lexer and the resolver must distinguish between identifiers, names, plurals, abbreviations and prefixes within the context of magnitude.
+- `r` is a prefix from literal approximate.
 
-## Verificación futura
+## Future verification
 
-1. Magnitud no derivada con representación predeterminada, explícita y dominio opcional en el orden canónico.
-2. Rechazo de cero, signo negativo y ciclos en equivalencias.
-3. Normalización de `km/h` a la unidad canónica de `Speed`.
-4. Inferencia de cada combinación ordinaria de tipos numéricos.
-5. Rechazo de `root unit` en una magnitud derivada.
-6. Equivalencia entre una unidad nominal derivada y su expresión estructural.
-7. Ningún prefijo por omisión o `empty`, catálogo completo mediante `all` y subconjunto mediante una colección explícita.
+1. Magnitude non-derivative with a predetermined, explicit representation and domain optional in the canonical order.
+2. Zero rejection, negative signs and cycles in equivalences.
+3. Standardisation of `km/h` to the unit canonical of `Speed`.
+4. Inference of each ordinary combination of numeric types.
+5. Rejection of `root unit` in a magnitude derived.
+6. Equivalence between a unit Derived noun and its structural form.
+7. None prefix by default or `empty`, full catalogue available via `all` and subset using a collection explicit.
+

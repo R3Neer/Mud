@@ -1,6 +1,6 @@
 ---
 id: D-045
-title: "Resolución causal, vinculaciones y cola"
+title: "Causal resolution, connections and queue"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -13,19 +13,19 @@ questions:
 affects:
   - "semántica dinámica, reglas reactivas, mensajes"
 ---
-# ADR-045 — Resolución causal, vinculaciones y cola
+# ADR-045 — Causal resolution, connections and queue
 
-- Modificada por: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
-- Preguntas relacionadas: Q-003, Q-005, Q-020, Q-052
-- Documentos afectados: semántica dinámica, reglas reactivas, mensajes
+- Amended by: [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|D-058]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]]
+- Related questions: Q-003, Q-005, Q-020, Q-052
+- Documents concerned: semantics dynamics, reactive rules, messages
 
-## Contexto
+## Context
 
-El resultado de MUD no puede depender del orden de evaluación de reglas, archivos, hilos o estructuras internas. Las reacciones se organizan en ondas sobre instantáneas.
+The result MUD behaviour cannot depend on the order in which rules, files, threads or internal structures are evaluated. Reactions are organised into waves based on snapshots.
 
 ## Decisión
 
-Una resolución sigue esta secuencia:
+One resolution Follow this sequence:
 
 ```text
 estado estable anterior
@@ -39,53 +39,53 @@ estado estable anterior
 → confirmar o revertir
 ```
 
-En cada onda:
+In each wave:
 
-1. se construye el conjunto de vinculaciones `on` activas;
-2. todas las reglas leen la misma instantánea de inicio;
-3. se evalúan los activadores temporales de `when`;
-4. cada `then` produce secuencialmente un delta privado;
-5. los deltas se consolidan mediante D-023, D-046 y D-060;
-6. los valores se normalizan a sus tipos básicos y se validan;
-7. el estado resultante, si es válido, alimenta la onda siguiente.
+1. the set of links is constructed `on` active;
+2. All the rules say the same thing snapshot home page;
+3. the temporal activators of are evaluated `when`;
+4. each `then` produces, in sequence, a delta private;
+5. Deltas are consolidated by means of D-023, D-046 y D-060;
+6. the values are normalised to their base types and validated;
+7. the state The resulting expression, if valid, feeds into the wave Next.
 
-Las vinculaciones se fijan al comienzo de la onda. Cambios de pertenencia, activaciones o suspensiones producidos durante ella solo alteran la siguiente. Ningún bloque observa deltas parciales de otro bloque.
+The links are set at the start of the wave. Changes in ownership, activations or suspensions occurring during a block only affect the next block. No block takes account of partial deltas from another block.
 
-La raíz y cada onda forman lotes causales con la misma frontera de consolidación. Para un destino `Nat`, todos los deltas aditivos compatibles se suman como enteros firmados y el total se satura una sola vez en cero antes de construir la instantánea siguiente. Ninguna regla observa el acumulador firmado.
+The root and every wave form causal blocks with the same boundary of consolidation. For a destination `Nat`, all compatible additive deltas are summed as signed integers and the total is clipped to zero just once before constructing the snapshot Next. No rule monitors the signed accumulator.
 
-Para una vinculación con memoria, los activadores temporales comparan valores en las instantáneas de inicio de dos ondas consecutivas conforme a D-041 y D-058. Un `when e` puramente booleano detecta únicamente $\mathsf{false}\rightarrow\mathsf{true}$ y `e changes` compara directamente ambos valores. D-096 generaliza el resultado de un trigger a cero o más matches causales: `and` realiza natural join de matches compatibles y `or` su unión, conservando bindings, testigos e identidades de ocurrencia.
+For memory-based association, the temporal activators compare values in the initial snapshots of two consecutive waves in accordance with D-041 y D-058. A `when e` Purely Boolean detects only $\mathsf{false}\rightarrow\mathsf{true}$ y `e changes` compares the two values directly. D-096 generalises the result from a trigger to zero or more causal matches: `and` performs a natural join on compatible matches and `or` his union, whilst retaining bindings, markers and identifiers from occurrence.
 
-Una vinculación que no estaba presente en la primera instantánea materializada por `start with` se incorpora al conjunto en la primera onda posterior en que resulte activa. Esa onda inicializa toda su memoria temporal sin dispararla. Su primer disparo posible se produce en la onda siguiente. Las vinculaciones presentes desde la primera instantánea son la excepción expresa: cada rama booleana elevada comienza con anterior virtual `false` y puede pulsar durante la estabilización inicial; `changes` y `old` comparan esa instantánea consigo misma.
+A connection that was not present in the first one snapshot as evidenced by `start with` joins the group in the first wave subsequent instance in which it is active. That wave initialises all its temporary memory without firing it. Its first possible firing occurs at the wave Next. The connections that have been present since the very beginning snapshot are the express exception: each branch High Boolean begins with ‘previous virtual’ `false` and you can press during the stabilisation initial; `changes` y `old` compare that snapshot with itself.
 
-Una resolución termina cuando una onda no produce efectos ni deja nuevas consecuencias u ocurrencias causales pendientes para la siguiente. Un ciclo u oscilación detectados producen `failed`; un límite de recursos es una salvaguarda técnica distinguible, no una definición alternativa de estabilización.
+One resolution ends when a wave has no effect and leaves no new consequences or pending causal events for the next one. A cycle u oscillation detected cases result in `failed`; a resource limit is a distinct technical safeguard, not an alternative definition of stabilisation.
 
-Solo hay una resolución causal activa por mundo. Las solicitudes externas que llegan durante ella entran en una cola y vinculan participantes, evalúan `given`, dominios e `if` cuando les corresponde comenzar, no cuando fueron encoladas.
+There’s only one causal resolution activated by world. External applications received during this period are placed in a queue and bring participants together, assess `given`, domains and `if` when they are due to start, not when they were glued on.
 
-Cada `message` ocurrido se conserva como una ocurrencia causal tentativa con identidad, declaración, bindings y vista de nacimiento. Su payload interno se proyecta sobre esa vista causal y la misma ocurrencia queda disponible como trigger en la onda siguiente; hacia el host, tras confirmar, el payload se proyecta sobre el estado estable final. Una reversión cancela toda entrega exterior.
-Las entregas confirmadas conservan el orden causal entre ondas y usan dentro de cada onda un orden técnico estable y reproducible que no constituye prioridad semántica.
+Every `message` what has happened is preserved as a occurrence causal attempt with identity, declaration, bindings and birth view. Its payload The interior is projected onto that view causal and the same occurrence is available as a trigger in the wave next; to the host, after confirmation, the payload is projected onto the stable state end. A reversal cancels everything delivery outdoor.
+Confirmed deliveries retain their order causal between waves and are used within each wave a stable and reproducible technical process that is not a priority semantics.
 
-## Consecuencias
+## Consequences
 
-- El orden de ejecución física no altera el resultado.
-- La identidad canónica y la conservación de memoria tras desaparecer una vinculación siguen abiertas en Q-005; su valor inicial ya está fijado.
-- La detección semántica de oscilaciones y la salvaguarda técnica siguen abiertas en Q-020.
-- La multiplicidad de ocurrencias causalmente distintas se conserva y no se deduplica por payload. Q-067 mantiene abierto qué ocurre si un participante ya no existe o no es evaluable en la proyección exterior final.
+- The order in which the operations are physically executed does not alter the result.
+- The canonical identity and the retention of memory after a link has been severed remain open in Q-005; his value The starting price has already been set.
+- Detection semantics fluctuations and technical safeguards remain open in Q-020.
+- The multiplicity of causally distinct occurrences is preserved and is not deduplicated by payload. Q-067 leaves open the question of what happens if a participant no longer exists or cannot be assessed in the final external projection.
 
-## Verificación
+## Verification
 
-1. Permutaciones del orden físico producen la misma transición.
-2. Una vinculación creada en una onda solo participa en la siguiente.
-3. Una acción encolada se valida contra el estado en que comienza.
-4. Una oscilación no confirma estado parcial.
-5. Una resolución revertida no publica mensajes.
-6. Una vinculación inicial verdadera dispara durante la estabilización de `start with`.
-7. Una vinculación creada en una onda toma línea base en la siguiente y solo puede disparar a partir de la posterior.
-8. Dos cambios netos consecutivos producen dos pulsos `changes`.
-9. Dos activadores unidos por `and` solo disparan cuando ambos pulsan en la misma onda.
-10. Un cambio unido mediante `or` a una transición booleana preserva cualquiera de los dos pulsos.
-11. Deltas `-2` y `+3` sobre un `Nat` inicial cero producen uno en la siguiente instantánea.
-12. Ninguna instantánea de onda expone un `Nat` negativo.
+1. Permutations of the physical order produce the same result transition.
+2. A link created in a wave Just take part in the next one.
+3. One action The pasted text is validated against the state where it begins.
+4. One oscillation does not confirm state partial.
+5. One resolution revertida does not publish messages.
+6. A genuine initial connection takes hold during the stabilisation from `start with`.
+7. A link created in a wave take baseline on the next one, and can only fire from the one after that.
+8. Two consecutive net changes produce two pulses `changes`.
+9. Two activators linked by `and` They only fire when both press the same button wave.
+10. A change brought about by `or` to a transition The Boolean signal preserves either of the two pulses.
+11. Deltas `-2` y `+3` on a `Nat` A zero at the start produces a one in the next one snapshot.
+12. None snapshot from wave sets out a `Nat` negative.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-Un `message` es una ocurrencia causal con identidad y bindings, no una mera salida cuyos campos se difieren al estado final. La ocurrencia nacida en una onda queda disponible como trigger en la onda siguiente. Dentro de MUD su payload se proyecta sobre la vista causal de nacimiento; hacia el host, tras commit, se proyecta sobre el estado estable final. Ambas proyecciones pertenecen a la misma ocurrencia. La estabilización exige además ausencia de consecuencias/ocurrencias causales pendientes.
+A `message` is a occurrence causal with identity and bindings, not merely an output whose fields are deferred to the state end. The occurrence born in a wave is available as a trigger in the wave next. Within the MUD, its payload is projected onto the view causal from the start; to the host, after commit, it is projected onto the stable state final. Both projections belong to the same occurrence. The stabilisation it also requires that there be no consequences/ocurrencias pending cases.

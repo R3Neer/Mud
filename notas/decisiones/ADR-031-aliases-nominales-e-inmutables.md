@@ -1,6 +1,6 @@
 ---
 id: D-031
-title: "Aliases nominales, inmutables y sin ciclo de vida"
+title: "Nominal aliases, immutable and without cycle of life"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -10,24 +10,24 @@ questions:
 affects:
   - "futuro `12-aliases.md`, futuro `25-efectos.md`"
 ---
-# ADR-031 — Aliases nominales, inmutables y sin ciclo de vida
+# ADR-031 — Nominal aliases, immutable and without cycle of life
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
-- Ampliada por: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]] y [[ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]]
+- Expanded by: [[ADR-074-uniones-nominales-y-estrechamiento|D-074]]
 
-- Relacionada con: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
-- Resuelve: [[notas/preguntas/Q-057-capacidad-interior-dentro-de-valores-de-alias|Q-057]]
-- Documentos afectados: futuro `12-aliases.md`, futuro `25-efectos.md`
+- Related to: [[notas/decisiones/ADR-021-ciclo-de-vida-logico-y-suspension|D-021]], [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|D-054]]
+- Resolves: [[notas/preguntas/Q-057-capacidad-interior-dentro-de-valores-de-alias|Q-057]]
+- Documents affected: future `12-aliases.md`, future `25-efectos.md`
 
-## Contexto
+## Context
 
-Un alias debe proporcionar identidad nominal a valores, no identidad runtime ni estado mutable. Por tanto, su declaración es estática y no participa en el ciclo de vida del mundo.
+A alias must provide identity nominal value of securities, no identity runtime or state changeable. Therefore, its declaration it is static and does not take part in the cycle lifespan of the world.
 
 ## Decisión
 
-### Definición de tipo
+### Definition of type
 
-Un alias definido mediante una expresión de tipo usa `:=`:
+A alias defined by an expression of type USA `:=`:
 
 ```mud
 alias PlayerName :=
@@ -40,9 +40,9 @@ alias Path :=
     Position [* ordered]
 ```
 
-En este contexto, `:=` introduce una definición estática de tipo. No declara un campo calculado ni una evaluación runtime.
+In this context, `:=` introduces a static definition of type. It does not declare a computed field nor a runtime evaluation.
 
-Un alias estructural declara un bloque ordenado de componentes:
+A structural alias declares an ordered block of components:
 
 ```mud
 alias Square {
@@ -56,26 +56,26 @@ alias Pagination {
 }
 ```
 
-Cada componente:
+Each component:
 
-1. Forma parte obligatoria de todo valor construido.
-2. Ocupa una posición semántica según el orden de declaración.
-3. Forma parte de la estructura del alias.
-4. Puede declarar un dominio.
-5. No puede declarar mutabilidad exterior: la forma `mut nombre: tipo` no existe para componentes.
-6. Puede declarar capacidad interior `[mut]` sobre las `thing` contenidas directamente por una colección.
-7. Puede declarar un valor predeterminado mediante `=`.
+1. It is an essential part of everything value built.
+2. Take up a position semantics in the order of declaration.
+3. It forms part of the structure of the alias.
+4. You can declare a domain.
+5. He cannot give evidence mutability exterior: the shape `mut nombre: tipo` does not exist for components.
+6. It can accommodate indoor use `[mut]` on the `thing` contained directly by a collection.
+7. You can declare a default value by means of `=`.
 
-El predeterminado explícito debe ser una expresión pura evaluable estáticamente y satisfacer el tipo, dominio y especificación de colección del componente. El valor predeterminado de un alias estructural se obtiene componente a componente:
+The explicit default must be a pure expression that can be evaluated statically and must satisfy the type, domain y specification from collection of the component. The default value of a structural alias It is obtained component by component:
 
-1. Predeterminado explícito del componente, si existe.
-2. Predeterminado del tipo efectivo del componente conforme a D-017, en otro caso.
+1. Explicit default for the component, if one exists.
+2. Default for the type actual component in accordance with D-017, in another case.
 
-Los predeterminados no eliminan componentes de la representación. Después de construir un valor, todos están presentes y participan normalmente en igualdad y orden.
+The defaults do not remove any components from the representation. After constructing a value, everyone is present and takes part as normal, in a spirit of equality and order.
 
-### Nominalidad
+### Nominality
 
-Todo alias introduce un tipo nominal nuevo. Dos aliases distintos no son intercambiables automáticamente aunque sus representaciones normalizadas coincidan:
+Everything alias enter a type New name. Two different aliases are not automatically interchangeable, even if their standardised representations match:
 
 ```mud
 alias PlayerName :=
@@ -85,18 +85,18 @@ alias CityName :=
     Text
 ```
 
-`PlayerName`, `CityName` y `Text` son tres tipos diferentes. La representación común permite una conversión nominal explícita conforme a D-032, no una asignación implícita.
+`PlayerName`, `CityName` y `Text` There are three different types. The common representation allows for an explicit nominal conversion in accordance with D-032, not an implicit assignment.
 
-### Inmutabilidad
+### Immutability
 
-Un valor de alias es inmutable. Una vinculación que contiene solo ese valor no puede actualizar uno de sus componentes:
+A value from alias is unchangeable. A link that contains only that value It is unable to update one of its components:
 
 ```mud
 square := Piece.square
 square.file = B # inválido
 ```
 
-Un lugar con mutabilidad exterior puede sustituir el valor completo y una ruta asignable puede atravesar componentes almacenados del alias mediante reconstrucción y write-back:
+A place with mutability exterior can replace the value complete and a path an assignable variable may traverse stored components of the alias by means of reconstruction and write-back:
 
 ```mud
 thing Piece {
@@ -107,43 +107,43 @@ Piece.square = (B, Four)
 Piece.square.file = C
 ```
 
-La segunda escritura no muta el valor `Square`: construye otro `Square` del mismo tipo nominal exacto, conserva los componentes no modificados y sustituye el valor almacenado de `Piece.square`. La misma reconstrucción puede propagarse a través de aliases anidados e indexaciones de diccionarios exactos mientras exista una ruta de retorno a un lugar escribible. Los campos derivados se recalculan y no son destinos de write-back.
+The second deed does not transfer the value `Square`: build another one `Square` of the same type exact nominal value, retains the unmodified components and replaces the value stored in `Piece.square`. The same reconstruction can propagate through nested aliases and exact dictionary indexing as long as there is a path back to a writable location. Derived fields are recalculated and are not write-back destinations.
 
-El `mut` de la especificación de colección de un componente concede capacidad interior sobre las `thing` contenidas directamente por esa colección. No vuelve reemplazable la colección ni convierte por sí solo un valor de alias en lugar escribible: la reconstrucción exige una raíz con mutabilidad exterior suficiente. La capacidad tampoco atraviesa implícitamente otro alias o contenedor anidado; cada nivel que deba concederla debe declararla expresamente cuando la operación ejercida sea capacidad interior.
+The `mut` of the specification from collection A component’s internal capacity is determined by the `thing` contained directly by that collection. It does not make the collection nor does it, on its own, make a value from alias in a writable location: the reconstruction requires a root with mutability sufficient external capacity. Nor does capacity implicitly encompass another alias or nested container; each level required to grant it must expressly declare it when the operation being performed is ‘internal capacity’.
 
-### Ausencia de identidad runtime
+### Absence of identity runtime
 
-La declaración posee un ancla estática para resolución y nominalidad, pero sus valores no poseen identidad runtime. Un alias:
+The declaration has a anchor static for resolution and nominality, but their values do not possess identity runtime. A alias:
 
-- No puede aparecer como objetivo de `create`.
-- No puede aparecer como objetivo de `destroy`.
-- No puede ser `abstract`.
-- Participa en especialización nominal acíclica conforme a D-084, sin adquirir identidad ni ciclo de vida runtime.
-- No mantiene estado mutable propio.
+- It cannot appear as a target for `create`.
+- It cannot appear as a target for `destroy`.
+- That can’t be right `abstract`.
+- Participates in acyclic nominal specialisation in accordance with D-084, without purchasing identity nor cycle runtime.
+- It does not maintain state its own mutable variable.
 
-Los valores se comparan por tipo nominal y contenido. La declaración existe durante todo el programa bien formado y no forma parte de la proyección de actividad del mundo.
+The values are compared by type nominal value and content. The declaration It is present throughout the programme in its fully developed form and does not form part of the projected activity of the world.
 
-## Consecuencias
+## Consequences
 
-- D-021 gobierna el ciclo de vida de `thing` y reglas; los aliases no pertenecen a esas categorías.
-- D-054 exige definiciones canónicas de primer nivel y reserva `create Nombre` para activar `thing` y reglas; los aliases quedan fuera de ese ciclo de vida.
-- El AST solo necesita `AliasDecl`; elimina `DefineAndCreateAlias` y cualquier efecto `create`/`destroy` de alias.
-- El runtime no necesita marcas de actividad, almacenamiento latente ni restauración para aliases.
-- Las propiedades y declaraciones que usan un alias no pueden quedar suspendidas por inactividad de ese alias.
-- La inmutabilidad del contenedor alias es compatible con autoridad explícita para modificar las `thing` alcanzadas mediante un componente colectivo `[mut]`.
+- D-021 governs the cycle lifespan of `thing` and rules; aliases do not fall into these categories.
+- D-054 requires top-level canonical definitions and reservations `create Nombre` to activate `thing` and rules; aliases are excluded from that cycle of life.
+- The AST only needs `AliasDecl`; delete `DefineAndCreateAlias` and any effect `create`/`destroy` from alias.
+- The runtime does not require activity markers, caching or restoration for aliases.
+- Properties and declarations that use a alias cannot be suspended due to inactivity on the part of that alias.
+- The immutability of the container alias is compatible with authority explicit instruction to modify the `thing` achieved through a collective component `[mut]`.
 
-## Verificación futura
+## Future verification
 
-1. Alias simple mediante `:=`.
-2. Alias de colección y diccionario mediante `:=`.
-3. Alias estructural con componentes ordenados.
-4. Componente con predeterminado explícito y predeterminado procedente de su tipo.
-5. Rechazo de predeterminado impuro, no estático o fuera de tipo, dominio o colección.
-6. Rechazo de `mut` exterior y aceptación de `[mut]` interior en un componente colectivo de `thing`.
-7. Rechazo de actualización parcial sobre una local alias y aceptación de reconstrucción/write-back cuando la ruta termina en almacenamiento escribible.
-8. Sustitución completa desde un campo mutable y conservación de los componentes no modificados durante un write-back parcial.
-9. Rechazo de `create`, `destroy` y `abstract`; aceptación de `as` e `is` como especialización nominal conforme a D-084.
+1. Alias simply by means of `:=`.
+2. Alias from collection and using a dictionary `:=`.
+3. Structural alias with components arranged in order.
+4. Component with an explicit default and a default derived from its type.
+5. Rejection of a default value that is impure, non-static or outside type, domain o collection.
+6. Rejection of `mut` external and acceptance of `[mut]` internal aspect of a collective component of `thing`.
+7. Rejection of a partial update regarding a branch alias and agreement to reconstruction/write-back when the path ends up in writable storage.
+8. Complete replacement from a field mutable and preservation of unmodified components during a partial write-back.
+9. Rejection of `create`, `destroy` y `abstract`; acceptance of `as` e `is` as a nominal specialisation in accordance with D-084.
 
-## Modificación por D-084
+## Amended by D-084
 
-Los aliases pueden declarar especialización simple o múltiple. Los nominales raíz conservan `:= tipo`; los descendientes heredan una representación efectiva común. Los estructurales heredan componentes y campos derivados. Un descendiente puede sobrescribir el predeterminado de un componente almacenado heredado y refinar contratos heredados cuando el refinamiento fortalece garantías sin retirar capacidades observables o de escritura: la mutabilidad exterior no cambia, la capacidad interior puede fortalecerse de ausencia de `[mut]` a presencia de `[mut]` y tipo, dominio, cardinalidad, `unique` y orden se rigen por sustituibilidad. Los campos derivados heredados conservan su expresión definitoria y solo pueden fortalecer el contrato de su resultado. Esta modificación no introduce identidad runtime ni mutabilidad del valor alias.
+Aliases may declare single or multiple specialisations. The nominal forms root retain `:= tipo`; descendants inherit a common effective representation. Structural types inherit components and derived fields. A descendant may override the default value of an inherited stored component and refine inherited contracts where such refinement strengthens guarantees without removing observable or write capabilities: the mutability The exterior remains unchanged, whilst the interior capacity may be enhanced in the absence of `[mut]` the presence of `[mut]` y type, domain, cardinality, `unique` and order are governed by substitutability. Inherited derived fields retain their defining expression and can only strengthen the contract of his result. This amendment does not introduce identity runtime ni mutability from the value alias.

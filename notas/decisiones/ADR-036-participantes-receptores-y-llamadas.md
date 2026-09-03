@@ -1,6 +1,6 @@
 ---
 id: D-036
-title: "Participantes, receptores y llamadas"
+title: "Participants, recipients and calls"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -12,44 +12,44 @@ questions:
 affects:
   - "futuro `07-gramatica-concreta.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24"
 ---
-# ADR-036 — Participantes, receptores y llamadas
+# ADR-036 — Participants, recipients and calls
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
+- Amended by: [[ADR-101-bloques-de-valor-variables-locales-y-extremos|D-101]].
 
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
 
-- Amplía: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
-- Modificada por: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
-- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
-- Modificada por: [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|D-096]]
-- Preguntas relacionadas: Q-011, Q-012, Q-013
-- Documentos afectados: futuro `07-gramatica-concreta.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24
+- Read more: [[notas/decisiones/ADR-025-vocabulario-cabeceras-y-bloques|D-025]]
+- Amended by: [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|D-063]]
+- Amended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
+- Amended by: [[notas/decisiones/ADR-096-modulos-callables-look-message-y-activacion|D-096]]
+- Related questions: Q-011, Q-012, Q-013
+- Documents affected: future `07-gramatica-concreta.md`, future `19-expresiones.md`, forthcoming episodes 21 to 24
 
 ## Decisión
 
-### Participantes y `given`
+### Participants and `given`
 
-Un participante ocupa un rol semántico desempeñado por uno o varios valores. Determina los sujetos de la operación y, cuando el rol posee capacidades, el acceso a estado o a un lugar de escritura.
+A participant occupies a semantic role filled by one or more values. It determines the subjects of the operation and, where the role has capabilities, access to state or a place to write.
 
-Un `given` es un valor suministrado como parámetro auxiliar; no ocupa un rol semántico aunque su tipo también pudiera aparecer en `for`.
+A `given` is a value provided as an auxiliary parameter; it has no semantic role, although its type it might also appear in `for`.
 
-Todo `given` tiene nombre obligatorio, es de solo lectura y no admite mutabilidad exterior ni capacidad interior. Puede declarar un predeterminado estático cerrado conforme a D-063.
+Everything `given` has a mandatory name, is read-only and does not allow mutability external or internal capacity. You may declare a static closed default in accordance with D-063.
 
-D-025 fija las cabeceras:
+D-025 sets the headers:
 
-- `on`: vinculaciones automáticas de un valor por rol para reglas reactivas, `always` y `message`; la forma directa usa el universo implícito de `thing` concretas activas y la forma relacionada `nombre[: Tipo] in fuente` obtiene valores de una fuente finita enumerable.
-- `for`: roles individuales o colectivos de cualquier tipo declarado, suministrados a reglas booleanas, actions y `look`.
-- `given`: valores auxiliares de reglas booleanas, actions, subactions y `look`.
+- `on`: automatic links from a value by role for reactive rules, `always` y `message`; the direct form uses the implicit universe of `thing` active concrete forms and the related form `nombre[: Tipo] in fuente` retrieves values from a finite, countable source.
+- `for`: individual or collective roles in any type declared, supplied to Boolean rules, actions and `look`.
+- `given`: auxiliary values for Boolean rules, actions, sub-actions and `look`.
 
-Reglas reactivas, `always` y `message` no admiten `given`. Un `look` sí admite `given` conforme a D-096.
+Reactive rules, `always` y `message` do not allow `given`. A `look` it does allow `given` in accordance with D-096.
 
-### Cardinalidad y nombres
+### Cardinality and names
 
-Un rol `for` admite cualquier `declared-type`, incluidos tipos básicos, aliases, familias, diccionarios y `thing`, un dominio `in` y la especificación completa de colección. El dominio restringe los valores admisibles del rol y se escribe entre el tipo y la especificación de colección. La cardinalidad omitida equivale a `[1]` conforme a D-039. Un rol `on` vincula un único valor por vinculación y no admite cardinalidad ni los modificadores de colección `unique` u `ordered`: la forma directa sin `in` usa el universo implícito de `thing` concretas activas; la forma relacionada `nombre[: Tipo] in fuente` puede tomar miembros de una fuente finita enumerable conforme a D-096.
+A role `for` accepts any `declared-type`, including basic types, aliases, families, dictionaries and `thing`, a domain `in` and the specification full list of collection. The domain restricts the permissible values for the role and is entered between the type and the specification from collection. The cardinality omitted is equivalent to `[1]` in accordance with D-039. A role `on` links a single value by association and does not allow cardinality nor the modifiers for collection `unique` u `ordered`: the direct form without `in` uses the implicit universe of `thing` active concrete forms; the related form `nombre[: Tipo] in fuente` may take elements from a finite, countable set in accordance with D-096.
 
-El tipo incorporado `Thing` admite cualquier `thing`. Por tanto, un rol `for` de tipo `Thing` acepta cualquier identidad concreta compatible y `on Thing` enumera todas las `thing` concretas y activas; la raíz abstracta no produce una vinculación propia.
+The type incorporated `Thing` accepts any `thing`. Therefore, a role `for` from type `Thing` accepts any identity specific, compatible and `on Thing` lists all the `thing` concrete and active; the root In the abstract, it does not create a connection of its own.
 
-Todo participante `for`, `on` y `given` debe declarar un identificador fuente explícito. La cardinalidad `[1]` no crea una excepción anónima. Los miembros se acceden a través de ese identificador y no se proyectan implícitamente al ámbito del cuerpo.
+Everything participant `for`, `on` y `given` You must declare an explicit source identifier. The cardinality `[1]` It does not create an anonymous exception. The members are accessed via that identifier and are not implicitly projected onto the scope of the body.
 
 ```mud
 rule IsDestroyed for army: Army {
@@ -61,9 +61,9 @@ rule CanGovern for person: Person, kingdom: Kingdom {
 }
 ```
 
-El identificador forma parte del slot de firma y, conforme a D-087, participa junto con la clase de cláusula en su ancla subordinada. Reordenar participantes no cambia esa identidad. Una colección sigue sin proyectar implícitamente los campos de sus miembros.
+The identifier forms part of the signature slot and, in accordance with D-087, takes part alongside the clause class in its anchor subordinate. Reordering participants does not change that identity. A collection it still does not implicitly project the fields of its members.
 
-También son roles válidos los valores sin identidad runtime:
+Values without identity runtime:
 
 ```mud
 rule IsWeekend for day: Day {
@@ -71,22 +71,22 @@ rule IsWeekend for day: Day {
 }
 ```
 
-### Mutabilidad de participantes `for`
+### Mutability of participants `for`
 
-En una action, `mut` antes del nombre de cualquier rol `for`, incluido uno de cardinalidad `[1]`, concede mutabilidad exterior sobre la colección suministrada. Ese rol siempre debe tener nombre. El receptor correspondiente debe ser un lugar almacenado exteriormente mutable. Puede ser estado del mundo o un slot local declarado `mut`; un literal, una local calculada `:=` o una local almacenada inmutable no son lugares escribibles compatibles y se rechazan.
+In a action, `mut` before the name of any role `for`, including one from cardinality `[1]`, grants mutability external on the collection supplied. That role must always have a name. The receiver The corresponding item must be an externally stored, mutable object. It may be state from the world or a declared local slot `mut`; a literal, a calculated move `:=` or a stored immutable local variable are not compatible writable locations and are rejected.
 
-El `mut` incluido en la especificación de colección concede capacidad interior sobre los valores miembro que posean estado modificable. Escribirlo cuando el tipo efectivo solo contiene valores inmutables es legal, pero produce una sugerencia porque el permiso es inútil. Ambos permisos son ortogonales conforme a D-019:
+The `mut` included in the specification from collection provides an inner understanding of values member who possess state editable. Type it when the type An array that contains only immutable values is valid, but it raises a warning because the permission It is pointless. Both permissions are orthogonal in accordance with D-019:
 
-| Declaración | Cambiar colección | Modificar miembros |
+| Declaration | Change collection | Edit members |
 | --- | --- | --- |
 | `patients: Person [*]` | No | No |
-| `mut patients: Person [*]` | Sí | No |
-| `patients: Person [* mut]` | No | Sí |
-| `mut patients: Person [* mut]` | Sí | Sí |
+| `mut patients: Person [*]` | Yes | No |
+| `patients: Person [* mut]` | No | Yes |
+| `mut patients: Person [* mut]` | Yes | Yes |
 
-Reglas booleanas y `look` no admiten `mut` exterior porque son puros. Los participantes `on` tampoco lo admiten: su `[mut]` opcional es exclusivamente capacidad interior sobre la `thing` individual vinculada. Los `given` no admiten ninguna forma de `mut`.
+Boolean rules and `look` do not allow `mut` outside because they are pure. The participants `on` nor do they admit it: their `[mut]` The optional feature relates exclusively to the interior capacity of the `thing` related individual. The `given` do not allow any form of `mut`.
 
-La mutabilidad exterior no exige que los miembros sean `thing`: modifica el lugar que contiene la colección, no los valores inmutables contenidos. Por ejemplo:
+The mutability The organisation does not require its members to be `thing`: changes the location containing the collection, not the fixed values they contain. For example:
 
 ```mud
 action Record for mut observations: Num [*]
@@ -95,21 +95,21 @@ given value: Num {
 }
 ```
 
-### Modos de vinculación
+### Types of employment
 
-El modo de vinculación depende del contrato del rol:
+The linking method depends on the contract from the role:
 
-| Rol | Modo |
+| Role | Mode |
 | --- | --- |
-| `thing` sin `mut` exterior | identidad de cada `thing` |
-| básico, alias, `family`, diccionario u otro valor inmutable | valor |
-| cualquier tipo con `mut` exterior | identidad temporal del lugar almacenado y valor actual; el lugar puede pertenecer al mundo o a un frame local |
+| `thing` without `mut` outdoor | identity of each `thing` |
+| basic, alias, `family`, dictionary or other value unchangeable | value |
+| any type with `mut` outdoor | identity time of the stored location and value current; the place may belong to the world or to a local frame |
 
-Una colección conserva además cardinalidad, multiplicidad y orden. Repetir un valor o una identidad produce tantas ocurrencias como permita el contrato salvo que el rol sea `unique`.
+One collection it also retains cardinality, multiplicity and order. To repeat a value or a identity produces as many ideas as the contract unless the role is `unique`.
 
-### Varios participantes
+### Several participants
 
-Varios participantes declaran roles ordenados. El orden forma parte de la API semántica:
+Several participants declare ordered roles. The order forms part of the API semantics:
 
 ```mud
 rule CanAttack for
@@ -120,7 +120,7 @@ rule CanAttack for
 }
 ```
 
-Los participantes relacionados automáticamente pueden usar `in`:
+Automatically linked participants can use `in`:
 
 ```mud
 rule ApplyStarvation on
@@ -131,7 +131,7 @@ rule ApplyStarvation on
 }
 ```
 
-La anotación puede conservarse delante de `in` para refinar nominalmente el elemento:
+The entry may be kept in front of `in` to refine the element nominally:
 
 ```mud
 rule MutualFriends on
@@ -142,13 +142,13 @@ rule MutualFriends on
 }
 ```
 
-Los nombres son visibles en toda la cabecera y sus restricciones se resuelven conjuntamente, no de izquierda a derecha. Cada rol obtiene su universo conforme a su forma: el universo implícito de `thing` concretas activas para `on` directo o los miembros de la fuente finita enumerable para `on ... in fuente`. El conjunto de vinculaciones es el join finito que satisface todas las pertenencias sobre una misma instantánea. Una solución de tipos ambigua exige anotaciones adicionales. Los ciclos relacionales no son puntos fijos y leen una única instantánea, conforme a D-063.
+The names are visible across the entire header and their restrictions are resolved collectively, not from left to right. Each role is assigned its own universe according to its form: the implicit universe of `thing` specific actions to `on` directly or the members of the countably finite set for `on ... in fuente`. The set of relationships is the finite join that satisfies all membership conditions on a single snapshot. An ambiguous type solution requires additional annotations. Relational cycles are not fixed points and read a single snapshot, in accordance with D-063.
 
-Las asignaciones de roles conservan orientación, permiten que dos roles reciban el mismo valor cuando satisface ambos contratos y no deduplican automáticamente parejas simétricas. En participantes suministrados mediante `for`, las restricciones relacionales adicionales se expresan mediante tipos o condiciones.
+Role assignments retain orientation and allow two roles to be assigned the same value when both contracts are fulfilled and symmetrical pairs are not automatically deduplicated. In participants supplied via `for`, additional relational constraints are expressed using types or conditions.
 
-### Identidad exacta y selección por tipo
+### Identity exact and selection by type
 
-Una referencia cualificada escrita en el cuerpo sin cabecera de participantes designa la identidad canónica exacta:
+A qualified reference written in the body of the document (without a header listing the participants) refers to the canonical identity exact:
 
 ```mud
 rule AdvanceCalendar {
@@ -157,11 +157,11 @@ rule AdvanceCalendar {
 }
 ```
 
-Aquí `World` no significa «toda `thing` que sea `World`», sino la única identidad `World`.
+Here `World` does not mean ‘all’ `thing` whatever the case may be `World`", but the only one identity `World`.
 
-En cambio, un participante individual `on World` o `for World` selecciona `thing` concretas activas cuyo tipo satisface `is World`. Cada miembro `thing` de un rol `for` colectivo se somete a la misma selección. La selección es reflexiva: incluye la identidad exacta `World` cuando es concreta y activa, además de sus especializaciones activas. Una `thing` abstracta no aporta por sí misma una vinculación concreta, aunque sus especializaciones sí puedan aportarla. Esta regla de selección no se aplica a roles de valor.
+On the other hand, a participant individual `on World` o `for World` select `thing` active concrete projects whose type meets `is World`. Each member `thing` of a role `for` The group undergoes the same selection process. The selection is a deliberate one: it includes the identity exact `World` when it is concrete and active, in addition to its active specialisations. A `thing` ‘abstract’ does not in itself provide a specific link, although its specialisations may do so. This selection rule does not apply to roles of value.
 
-Para excluir deliberadamente la identidad raíz debe declararse un rol y expresarse la condición:
+To deliberately exclude the identity root A role must be declared and the condition must be specified:
 
 ```mud
 rule DescendantOnly for world: World {
@@ -169,11 +169,11 @@ rule DescendantOnly for world: World {
 }
 ```
 
-La selección por tipo nunca sustituye una referencia nominal exacta escrita fuera de una cabecera.
+Selection by type It never replaces an exact nominal reference written outside a heading.
 
-### Receptores y argumentos
+### Recipients and arguments
 
-Los receptores vinculan participantes; los argumentos vinculan `given`.
+Recipients connect participants; storylines connect `given`.
 
 ```mud
 army.IsDestroyed()
@@ -182,9 +182,9 @@ game.InCheck(White)
 (source, destination).Transfer(amount)
 ```
 
-La vinculación ordinaria de participantes y `given` puede ser posicional. Reordenar la declaración cambia el orden canónico de la API.
+The standard enrolment of participants and `given` It may be positional. Reorder the declaration changes the canonical order of the API.
 
-La separación no depende del tipo. Un valor es `for` cuando constituye un sujeto semántico de la declaración y `given` cuando solo parametriza la operación:
+The separation does not depend on the type. A value is `for` when it constitutes a semantic subject of the declaration y `given` when it merely sets the parameters for the operation:
 
 ```mud
 action Record for mut observations: Num [*]
@@ -193,9 +193,9 @@ given value: Num {
 }
 ```
 
-Una expresión de colección ocupa una sola posición de receptor cuando el rol correspondiente es colectivo; no se expande en varios receptores. Si el rol declara mutabilidad exterior, la expresión debe ser un lugar mutable compatible y la vinculación conserva ese destino para los efectos de la action.
+An expression of collection holds a single position as receiver when the corresponding role is a group role; it is not propagated to multiple recipients. If the role declares mutability externally, the expression must be a compatible mutable location, and the binding retains that destination for the purposes of the action.
 
-Un receptor multiparte puede usar forma nombrada:
+A receiver A multi-part form can use a named form:
 
 ```mud
 (
@@ -204,76 +204,77 @@ Un receptor multiparte puede usar forma nombrada:
 ).CanAttack()
 ```
 
-Debe nombrar roles existentes exactamente una vez, ser exhaustivo y aportar tipos compatibles. Los nombres permiten reordenar roles en esta construcción de llamada; no se confunden con la regla de orden de componentes nombrados de alias.
+You must name existing roles exactly once, be exhaustive, and provide compatible types. The names allow roles to be reordered in this construction of call; these should not be confused with the rule governing the order of named components in alias.
 
-La forma nombrada es válida en cualquier orden, pero el compilador sugiere el orden de declaración. No puede mezclarse con receptores posicionales.
+The specified form is valid in any order, but the compiler recommends the order of declaration. It cannot be combined with positional receptors.
 
-Los argumentos `given` pueden vincularse realmente por nombre mediante `=` dentro de los paréntesis:
+The arguments `given` can actually be linked by name using `=` inside the brackets:
 
 ```mud
 game.InCheck(color = White)
 (source, destination).Transfer(amount = 10)
 ```
 
-Una llamada admite posiciones, nombres o un prefijo posicional seguido por nombres. Después del primer nombre no puede aparecer una posición. Los nombres pueden reordenar los `given`, aunque el compilador sugiere el orden de declaración.
+One call accepts positions, names or a prefix a positional term followed by names. A positional term cannot appear after the first name. The names may be reordered `given`, although the compiler suggests the order of declaration.
 
-Los predeterminados estáticos permiten omisiones. Posicionalmente solo puede omitirse un sufijo completo de `given` predeterminados; los nombres permiten omitir cualquier predeterminado intermedio:
+Static defaults allow omissions. In terms of position, only a complete suffix of `given` defaults; the names allow you to skip any intermediate defaults:
 
 ```mud
 game.Search(origin, depth = 3)
 game.Search(depth = 3)
 ```
 
-Si la firma declara `origin = Capital`, `depth` y `exhaustive = false` en ese orden, ambas llamadas son válidas. Esto no lo sería:
+If the firm states `origin = Capital`, `depth` y `exhaustive = false` In that order, both calls are valid. This, however, would not be:
 
 ```mud
 game.Search(depth = 3, origin)
 ```
 
-porque una posición no puede aparecer después del primer argumento nombrado.
+because a position cannot appear after the first argument appointed.
 
-### Naturaleza de la llamada
+### Nature of the call
 
-Una llamada a regla no crea una función general. Una solicitud o composición de action tampoco permite invocar código arbitrario. Ambas elaboran una vinculación semántica comprobable hacia una declaración conocida.
+One call A rule does not create a general function. A request or composition of action nor does it allow arbitrary code to be executed. Both create a link semantics verifiable towards a declaration well-known.
 
-## Consecuencias
+## Consequences
 
-- AST e IR separan receptores de argumentos.
-- Todo participante tiene nombre y ancla subordinada estable conforme a D-087.
-- Un rol colectivo conserva cardinalidad, modificadores de colección y ambos ejes de capacidad en AST e IR.
-- Una vinculación exteriormente mutable conserva el lugar receptor, no solo su valor.
-- El IR distingue vinculaciones de rol por identidad, por valor y por lugar.
-- D-025 y esta decisión resuelven Q-011 para participantes nombrados.
-- El compilador puede reconstruir lecturas, escrituras y dependencias desde la firma.
+- AST and IR separate argument receivers.
+- Everything participant has a name and anchor stable subordinate in accordance with D-087.
+- A collective role preserves cardinality, modifiers of collection and both capacity axes in AST and IR.
+- An externally mutable connection preserves the location receiver, not just its value.
+- The IR distinguishes between role-based relationships by identity, by value and by location.
+- D-025 and this one decision resolve Q-011 for nominated participants.
+- The compiler can reconstruct reads, writes and dependencies from the signature.
 
-## Verificación futura
+## Future verification
 
-1. Participantes `for`, `on` y `given` siempre nombrados y rechazo de la forma anónima.
-2. Acceso a miembros únicamente a través del identificador del participante.
-3. Receptor multiparte posicional y nombrado.
-4. Rol ausente, duplicado, desconocido o mal tipado.
-5. Argumentos `given` posicionales, nombrados y con prefijo posicional seguido por nombres.
-6. Omisión de predeterminados finales por posición e intermedios por nombre.
-7. Separación entre participantes y `given`.
-8. Vinculación `on` relacionada, refinada, adelantada y cíclica mediante `in`.
-9. Rechazo de cabeceras incompatibles.
-10. Diferencia entre la referencia exacta `World` y un participante `on World` o `for World`.
-11. Reflexividad para una raíz concreta y ausencia de vinculación directa para una raíz abstracta.
-12. Rol `for` colectivo con dominio, cardinalidad y cada modificador de colección.
-13. Nombre obligatorio para toda cardinalidad, incluida `[1]`, y para mutabilidad exterior.
-14. Receptor colectivo ocupando una sola posición, sin expansión implícita.
-15. Las cuatro combinaciones de mutabilidad exterior e interior.
-16. Aceptación de un lugar mutable y rechazo de literales o expresiones calculadas para `mut nombre`.
-17. Rechazo de colecciones en `on` y de mutabilidad exterior en construcciones puras.
-18. Roles `for` básicos, alias, `family`, diccionario y `thing`.
-19. Vinculación por identidad, valor y lugar.
-20. Sugerencia para capacidad interior demostrablemente inútil sobre valores inmutables.
-21. Diferencia entre un valor sujeto `for` y un valor auxiliar `given` del mismo tipo.
-22. Rechazo de mutabilidad exterior e interior en `given`.
-23. Conservación de orientaciones simétricas y de roles reflexivos en `on`.
+1. Participants `for`, `on` y `given` always named, and a rejection of anonymity.
+2. Access for members only via the participant.
+3. Receiver a positional, named multi-part entity.
+4. Role missing, duplicated, unknown or misspelt.
+5. Arguments `given` positional, appointed and with prefix positional followed by nouns.
+6. Omission of final defaults by position and intermediate defaults by name.
+7. Distance between participants and `given`.
+8. Engagement `on` related, refined, advanced and cyclical through `in`.
+9. Rejection of incompatible headers.
+10. Difference between the exact reference `World` and a participant `on World` o `for World`.
+11. Reflexivity for a root specific and the absence of a direct link to a root abstract.
+12. Role `for` group with domain, cardinality and each modifier for collection.
+13. A name is required for all cardinality, including `[1]`, and for mutability outdoors.
+14. Receiver a set occupying a single position, with no implicit extension.
+15. The four combinations of mutability exterior and interior.
+16. Acceptance of a mutable placeholder and rejection of literals or calculated expressions for `mut nombre`.
+17. Rejection of collections in `on` and from mutability exterior in minimalist buildings.
+18. Roles `for` basic, alias, `family`, dictionary and `thing`.
+19. Link via identity, value and place.
+20. A suggestion regarding an demonstrably useless internal capacity relating to immutable values.
+21. Difference between a value subject `for` and a value auxiliary `given` of the same type.
+22. Rejection of mutability exterior and interior in `given`.
+23. Preservation of symmetrical orientations and reflexive roles in `on`.
 
-## Modificación vigente por D-096
+## Amendment current by D-096
 
-Un `look` admite `given` con las reglas generales de binding y defaults. Las declaraciones gobernadas por `on` siguen sin `given` y, cuando se usan como trigger, se referencian sin `()`. Los valores callable almacenados se invocan mediante la forma ordinaria de receptores y argumentos; almacenar el descriptor no pre-vincula roles ni `given`.
+A `look` supports `given` in accordance with the general rules for binding and defaults. Declarations governed by `on` are still not `given` and, when used as triggers, they are referenced without `()`. Stored callable values are invoked using the standard method of receivers and arguments; storing the descriptor does not pre-assign roles or `given`.
 
-Además, un participante relacionado `on nombre: Tipo in fuente` puede vincular valores de una fuente finita enumerable, no solo identidades `thing`. La forma directa sin fuente continúa reservada al universo implícito de `thing`; por tanto `on n: Nat` sin fuente finita es inválido.
+Furthermore, a participant related `on nombre: Tipo in fuente` It can map values from a finite, countable source, not just identities `thing`. The direct form without a source remains reserved for the implicit universe of `thing`; therefore `on n: Nat` without a finite source is invalid.
+

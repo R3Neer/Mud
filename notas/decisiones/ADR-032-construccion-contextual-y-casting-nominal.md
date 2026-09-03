@@ -1,6 +1,6 @@
 ---
 id: D-032
-title: "Construcción contextual y casting nominal de aliases"
+title: "Contextual construction and nominal casting of aliases"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -10,33 +10,33 @@ questions:
 affects:
   - "futuro `10-sistema-de-tipos.md`, futuro `12-aliases.md`, futuro `19-expresiones.md`"
 ---
-# ADR-032 — Construcción contextual y casting nominal de aliases
+# ADR-032 — Contextual construction and nominal casting of aliases
 
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+- Amended by: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Amended by: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
 
-- Amplía: [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
-- Pregunta relacionada: Q-056
-- Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `12-aliases.md`, futuro `19-expresiones.md`
+- Read more: [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]]
+- Related question: Q-056
+- Documents affected: future `10-sistema-de-tipos.md`, future `12-aliases.md`, future `19-expresiones.md`
 
-## Contexto
+## Context
 
-La nominalidad de los aliases exige distinguir:
+The nominal nature of aliases requires us to distinguish between:
 
-- La construcción directa de un valor bajo un tipo esperado.
-- La conversión de un valor que ya posee otro tipo.
-- La comparación de literales todavía no tipados.
+- The direct construction of a value under a type expected.
+- The conversion of a value who already has another one type.
+- Comparing literals that have not yet been typed.
 
-Sin esta separación, escribir valores ordinarios sería innecesariamente pesado o se perdería la garantía nominal.
+Without this separation, writing ordinary values would be unnecessarily cumbersome, or the nominal guarantee would be lost.
 
 ## Decisión
 
-### Dos familias de `to`
+### Two families from `to`
 
-`to` posee dos familias estáticamente distinguibles:
+`to` It comprises two families that can be distinguished on the basis of their structure:
 
-1. Conversión cuantitativa, definida por D-030.
-2. Casting nominal entre un alias y una representación estructuralmente compatible.
+1. Quantitative conversion, defined as D-030.
+2. Nominal casting between one alias and a structurally compatible representation.
 
 ```mud
 rawText to PlayerName
@@ -45,39 +45,39 @@ cityName to PlayerName
 coordinate to Square
 ```
 
-Un casting nominal:
+A list of cast members:
 
-- Conserva el valor subyacente.
-- Cambia la identidad nominal del tipo.
-- Exige compatibilidad estructural.
-- Valida las restricciones y dominios del destino.
-- No redondea ni transforma el contenido.
+- Keep the value underlying.
+- Change the identity nominal value of the type.
+- Demand compatibility structural.
+- Validate the destination’s restrictions and domains.
+- It does not round off or transform the content.
 
-La afirmación de D-030 de que `to` no es un casting general continúa vigente para valores no cuantitativos que no participan en esta relación nominal. `to` no habilita conversiones arbitrarias entre `thing`, texto y números o tipos estructuralmente incompatibles.
+The statement by D-030 that `to` This is not an open casting call – it is an ongoing process current for non-quantitative values that do not feature in this relation nominal. `to` does not allow arbitrary conversions between `thing`, text and numbers or types that are structurally incompatible.
 
-### Compatibilidad estructural
+### Compatibility structural
 
-Dos representaciones son compatibles cuando tienen la misma forma normalizada. Para aliases estructurales deben coincidir, como mínimo:
+Two representations are compatible when they have the same normalised form. For structural aliases, the following must match, at a minimum:
 
-1. Número de componentes.
-2. Nombre de cada componente.
-3. Orden de los componentes.
-4. Tipo subyacente de cada componente.
-5. Cardinalidades.
-6. Estructura de colecciones y diccionarios.
-7. Modificadores estructurales como `ordered` y `unique`.
+1. Number of components.
+2. Name of each component.
+3. Order of the components.
+4. Type underlying component of each component.
+5. Cardinalities.
+6. Structure of collections and dictionaries.
+7. Structural modifiers such as `ordered` y `unique`.
 
-Los dominios y los predeterminados de componentes no cambian esa forma mínima: se validan o aplican al construir el destino. La definición inductiva completa de normalización y sus posibles ciclos quedan en Q-056.
+Domains and component defaults do not alter this minimal form: they are validated or applied when the target is constructed. The complete inductive definition of normalisation and its possible cycles are set out in Q-056.
 
-### Literales contextuales
+### Contextual quotes
 
-Un literal estructural desnudo no posee por sí solo identidad de alias:
+A literal The structural form, in and of itself, does not possess identity from alias:
 
 ```mud
 (E, Four)
 ```
 
-El tipo esperado puede construir directamente el valor nominal:
+The type As expected, you can build the value nominal:
 
 ```mud
 square: Square = (E, Four)
@@ -85,13 +85,13 @@ game.Move((E, Four)) # si el `given` esperado es Square
 board[E, Four]       # si la clave esperada es Square
 ```
 
-Lo mismo se aplica a literales básicos:
+The same applies to basic literals:
 
 ```mud
 playerName: PlayerName = "Ada"
 ```
 
-Esta construcción contextual no requiere `to`. En cambio, una expresión ya tipada conserva su tipo y necesita conversión explícita:
+This contextual construction does not require `to`. By contrast, a type-checked expression retains its type and requires explicit conversion:
 
 ```mud
 rawName: Text = "Ada"
@@ -99,15 +99,15 @@ playerName: PlayerName =
     rawName to PlayerName
 ```
 
-### Literales estructurales posicionales y nombrados
+### Positional and named structural literals
 
-La forma posicional sigue el orden de declaración:
+The positional form follows the order of declaration:
 
 ```mud
 (E, Four)
 ```
 
-La forma nombrada completa puede escribir todos los componentes en el orden de declaración:
+The full form can list all the components in the order of declaration:
 
 ```mud
 (
@@ -116,96 +116,97 @@ La forma nombrada completa puede escribir todos los componentes en el orden de d
 )
 ```
 
-La forma posicional debe proporcionar todos los componentes, aunque alguno tenga predeterminado. No existe construcción posicional parcial:
+The positional form must provide all components, even if some are predefined. There is no such thing as a partial positional construction:
 
 ```mud
 pagination: Pagination = (2, 30) # válido: forma posicional completa
 pagination: Pagination = (2)     # inválido: falta size y no está nombrado
 ```
 
-La forma nombrada puede omitir componentes. Cada componente omitido toma su predeterminado explícito o, si no lo tiene, el predeterminado de su tipo efectivo conforme a D-017:
+The named form may omit components. Each omitted component takes its explicit default value or, if it has none, the default value of its type cash in accordance with D-017:
 
 ```mud
 pagination: Pagination = (size = 30) # page conserva 1
 pagination: Pagination = (page = 2)  # size conserva 20
 ```
 
-Por tanto, si no aparecen todos los componentes, todos los que sí aparecen deben estar nombrados. No se pueden mezclar posiciones y nombres. Los componentes escritos conservan el orden relativo de declaración, aunque se omitan componentes anteriores o intermedios. Duplicados, componentes desconocidos o reordenación de los componentes presentes son errores estáticos.
+Therefore, if not all components are listed, all those that are listed must be named. Positions and names must not be mixed. The components listed retain the relative order of declaration, even if earlier or intermediate components are omitted. Duplicates, unknown components or the reordering of existing components are static errors.
 
-La construcción completa materializa todos los componentes antes de producir el valor nominal. Los predeterminados no alteran su igualdad, orden lexicográfico ni forma normalizada.
+Full construction renders all components before producing the value nominal. The defaults do not alter their equality, lexicographical order or standardised form.
 
-### Contexto de comparación
+### Context for comparison
 
-Dos literales estructurales desnudos no pueden compararse porque ninguno aporta un tipo esperado:
+Two bare structural literals cannot be compared because neither provides a type expected:
 
 ```mud
 (E, Four) == (E, Four) # inválido
 ```
 
-Si un operando ya está resuelto como un alias y el otro es un literal sintáctico compatible todavía construible por contexto, el tipo nominal se propaga como expectativa al literal:
+If an operand has already been evaluated as a alias and the other is a literal a syntactically compatible construction that can still be inferred from context, the type The nominal value is passed on as an expectation to the literal:
 
 ```mud
 (E, Four) to Square == (E, Four)
 (E, Four) == (E, Four) to Square
 ```
 
-La propagación es bidireccional respecto de la posición izquierda o derecha y se aplica tanto a literales básicos como estructurales. Solo construye literales; no convierte silenciosamente variables, accesos, llamadas ni otras expresiones que ya tengan tipo.
+Spread is bidirectional with respect to the left or right position and applies to both basic and structural literals. It only constructs literals; it does not silently convert variables, accesses, calls or other expressions that already have type.
 
-Por ejemplo, si `playerName` tiene tipo `PlayerName`, el literal de:
+For example, if `playerName` has type `PlayerName`, the literal from:
 
 ```mud
 playerName == "Ada"
 ```
 
-puede construirse contextualmente como `PlayerName`. En cambio, si `rawText` es una variable de tipo `Text`, `playerName == rawText` continúa siendo inválido sin `to`.
+can be constructed contextually as `PlayerName`. On the other hand, if `rawText` is a variable of type `Text`, `playerName == rawText` remains invalid without `to`.
 
-Los literales de `Bool` y los tipos numéricos básicos poseen tipo básico contextual suficiente para compararse directamente. Una forma ordinaria entre comillas dobles prefiere `Text`, pero puede elaborarse como `Char` cuando el contexto exige exactamente un escalar conforme a D-069.
+The text of `Bool` and the basic numeric types have type sufficient contextual basis to allow for a direct comparison. A standard form in double quotation marks is preferred `Text`, but it can be prepared as `Char` when the context requires precisely a scalar in accordance with D-069.
 
-Después de resolver los literales, ambos operandos deben tener exactamente el mismo tipo nominal. Comparar aliases diferentes o un alias con una expresión ya tipada como su representación subyacente es un error:
+After evaluating the expressions, both operands must be exactly the same type nominal. Compare different aliases or a alias where the expression is already typed as its underlying representation is a error:
 
 ```mud
 square == coordinate
 playerName == rawText
 ```
 
-Debe convertirse explícitamente uno de los operandos:
+One of the operands must be explicitly converted:
 
 ```mud
 square == coordinate to Square
 playerName to Text == rawText
 ```
 
-### Igualdad y orden
+### Equality and order
 
-Dos valores son iguales si poseen el mismo alias nominal y el mismo contenido.
+Two values are equal if they have the same nominal alias and the same content.
 
-Los aliases simples heredan la disponibilidad de orden de su tipo subyacente, pero solo se comparan con valores del mismo alias. Un alias estructural admite comparaciones de orden si todos sus componentes están ordenados; el orden es lexicográfico según la declaración.
+Simple aliases inherit their order from their type underlying, but they are only compared with values from the same alias. A structural alias It supports order comparisons if all its components are ordered; the order is lexicographical according to the declaration.
 
-La igualdad `==` y la desigualdad `!=` están disponibles aunque la representación no posea orden. `<`, `<=`, `>` y `>=` requieren una representación ordenada.
+Equality `==` and inequality `!=` are available even if the representation is not in any particular order. `<`, `<=`, `>` y `>=` require a structured presentation.
 
-## Consecuencias
+## Consequences
 
-- El tipado de literales es dirigido por el tipo esperado.
-- La elaboración debe distinguir literales sin tipo fijado de expresiones ya tipadas.
-- La elaboración distingue la construcción contextual dirigida por el tipo esperado de una conversión nominal `to` explícita.
-- La comparación aporta expectativas en ambas direcciones sin introducir coerciones implícitas.
-- El resultado elaborado debe conservar o hacer reconstruibles la construcción contextual y el alias nominal incluso cuando su representación coincide con otro tipo; su codificación mecánica todavía no está fijada.
-- D-030 pasa a describir la rama cuantitativa de `to`; este ADR describe la rama nominal.
+- The typing of literals is controlled by the type expected.
+- The elaboration it must distinguish between literals without type setting of pre-typed expressions.
+- The elaboration distinguishes the contextual construction guided by the type expected from a nominal conversion `to` explicit.
+- The comparison raises expectations in both directions without introducing any implicit coercion.
+- The result The work must preserve, or ensure that the contextual structure and the nominal alias even when its representation coincides with another type; its mechanical coding has not yet been finalised.
+- D-030 goes on to describe the branch quantitative analysis of `to`; this ADR describes the branch nominal.
 
-## Verificación futura
+## Future verification
 
-1. Construcción contextual simple y estructural.
-2. Casting en ambos sentidos entre alias y representación.
-3. Casting entre aliases compatibles.
-4. Rechazo por forma incompatible o dominio de destino.
-5. Formas posicional y nombrada completas.
-6. Forma nombrada parcial con omisión de componentes anteriores e intermedios.
-7. Rechazo de forma posicional parcial, mezcla de posiciones y nombres, reordenación, duplicado y componente extra.
-8. Comparación con propagación desde ambos lados.
-9. Rechazo de dos literales estructurales desnudos.
-10. Rechazo de aliases nominales distintos sin `to`.
-11. Igualdad y orden lexicográfico independiente de los predeterminados.
+1. Simple contextual and structural construction.
+2. Casting in both directions between alias and representation.
+3. Casting between compatible aliases.
+4. Rejection on the grounds of incompatibility or domain of destination.
+5. Full positional and nominal forms.
+6. A partial form of the name, with the omission of preceding and intermediate components.
+7. Partial positional rejection, mixing of positions and names, reordering, duplication and an extra component.
+8. Comparison with propagation from both sides.
+9. Rejection of two exposed structural members.
+10. Rejection of distinct nominal aliases without `to`.
+11. Equality and a lexical order independent of the default settings.
 
-## Ampliación por D-084
+## Extension by D-084
 
-Los componentes y campos derivados de un alias solo están disponibles después de que un literal estructural haya adquirido ese tipo nominal por contexto o `to`. `(1, 2).derived` es inválido; `((1, 2) to CosoAlias).derived` es válido. La resolución no busca aliases candidatos por el nombre del miembro.
+The components and fields derived from a alias are only available after a literal structural change has led to that type nominal by context or `to`. `(1, 2).derived` is invalid; `((1, 2) to CosoAlias).derived` is valid. The resolution does not search for candidate aliases by the name of the member.
+

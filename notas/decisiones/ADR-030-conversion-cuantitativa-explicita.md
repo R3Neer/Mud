@@ -1,6 +1,6 @@
 ---
 id: D-030
-title: "Conversión cuantitativa explícita mediante `to`"
+title: "Explicit quantitative conversion using `to`"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -11,22 +11,22 @@ questions:
 affects:
   - "futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`"
 ---
-# ADR-030 — Conversión cuantitativa explícita mediante `to`
+# ADR-030 — Explicit quantitative conversion using `to`
 
-- Preguntas relacionadas: Q-019, Q-053
-- Ampliada por: [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]]
-- Modificada por: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]
-- Modificada además por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada después por: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
-- Documentos afectados: futuro `10-sistema-de-tipos.md`, futuro `18-magnitudes.md`, futuro `19-expresiones.md`
+- Related questions: Q-019, Q-053
+- Expanded by: [[notas/decisiones/ADR-032-construccion-contextual-y-casting-nominal|D-032]]
+- Amended by: [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]]
+- As further amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Subsequently amended by: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
+- Documents affected: future `10-sistema-de-tipos.md`, future `18-magnitudes.md`, future `19-expresiones.md`
 
-## Contexto
+## Context
 
-`as` queda reservado para declarar especialización de `thing`, por lo que no puede seguir expresando conversiones. MUD necesita distinguir el cambio de unidad de una cantidad de la conversión de su representación numérica.
+`as` reserves the right to declare specialisation in `thing`, so it cannot continue to express conversions. MUD needs to distinguish the change from unit of a quantity obtained by converting its numerical representation.
 
 ## Decisión
 
-`to` es el operador de conversión cuantitativa explícita:
+`to` is the explicit quantitative conversion operator:
 
 ```mud
 value to Int
@@ -36,21 +36,21 @@ value to Population
 value to Price
 ```
 
-Puede convertir:
+You can convert:
 
-1. Entre representaciones numéricas compatibles.
-2. Una cantidad a una magnitud dimensionalmente compatible.
-3. Una expresión cuantitativa más amplia a la representación declarada por la magnitud de destino.
-4. Una expresión numérica básica a una magnitud base sin unidades, como materialización nominal explícita.
+1. Between compatible numerical representations.
+2. One amount to one magnitude dimensionally compatible.
+3. A more general quantitative expression of the representation stated by the magnitude of destination.
+4. A basic numerical expression to one magnitude a base without units, such as materialisation explicit nominal.
 
-La cuarta forma, fijada por D-083, comprueba la compatibilidad de la representación y el dominio de destino. No permite convertir entre dos magnitudes nominales distintas por el mero hecho de que ninguna tenga unidad.
+The fourth form, as set out by D-083, check the compatibility of representation and the domain of destination. It does not allow conversion between two different nominal quantities simply because neither has unit.
 
 ```mud
 averagePopulation: Population :=
     population / regions to Population
 ```
 
-En su rama cuantitativa, `to` no es un casting general. D-032 añade por separado el casting nominal de aliases estructuralmente compatibles. Continúan rechazándose conversiones como:
+In his branch quantitative, `to` It is not an open casting call. D-032 It adds the nominal casting of structurally compatible aliases separately. Conversions such as the following continue to be rejected:
 
 ```mud
 army to Kingdom
@@ -60,41 +60,41 @@ distance to Time
 Bool to Nat
 ```
 
-### Redondeo y validación
+### Rounding and validation
 
-Cuando la representación de destino no puede conservar una fracción, `to` aplica la única política global de redondeo de MUD. La sintaxis no permite seleccionar una política local:
+When the target representation cannot retain a fractional part, `to` apply the only one policy MUD rounding rule. The syntax does not allow you to select a policy local:
 
 ```mud
 value to Int
 ```
 
-La política global, fijada por D-034, es redondeo al más cercano con empates al par (`roundTiesToEven`).
+The policy global, set by D-034, is rounding to the nearest whole number, with ties treated as even (`roundTiesToEven`).
 
-Después del redondeo, el resultado debe pertenecer al dominio de destino. `to` no satura ni corrige automáticamente un valor fuera de dominio.
+After rounding, the result must belong to the domain of destination. `to` It does not automatically saturate or correct a value outside domain.
 
-`Num to Rum` redondea al valor `binary64` más cercano. `Rum to Num` recupera exactamente el racional representado por el valor binario almacenado. Ambas formas son explícitas.
+`Num to Rum` round up to value `binary64` nearest. `Rum to Num` accurately reproduces the rationale represented by the value stored binary. Both forms are explicit.
 
-### Diferencia respecto de `in`
+### Difference from `in`
 
-`in` cambia la unidad con la que se expresa una cantidad, sin cambiar su magnitud:
+`in` change the unit which is used to express a quantity, without changing its magnitude:
 
 ```mud
 distance in kilometers
 speed in km/h
 ```
 
-Se aplica tanto a magnitudes lineales como a magnitudes de punto. En una magnitud de punto transforma la coordenada completa y evita su `format`: si `time` representa las 13:30, `time in hour` expresa `13.5 h`, no el componente horario `13`.
+It applies to both linear quantities and quantities of point. In a magnitude from point transforms the full coordinate and prevents its `format`: yes `time` is 1.30 pm, `time in hour` expresses `13.5 h`, not the time component `13`.
 
-La presentación seleccionada es observable al convertirla después a una representación numérica, interpolarla en `Text` o publicarla en un campo de `look` o `message`:
+The presentation The selected data can be observed by subsequently converting it to a numerical representation and interpolating it in `Text` or publish it in a field from `look` o `message`:
 
 ```mud
 speed in km/h to Rum
 "{distance in kilometer}"
 ```
 
-Si ninguna operación posterior observa la presentación, el compilador puede sugerir retirar un `in` redundante. La extracción de una parte de un punto usa la forma distinta `picosecond from second in time`, fijada por D-061.
+If no subsequent operation observes the presentation, the compiler may suggest removing a `in` redundant. Extracting part of a point use the alternative form `picosecond from second in time`, set by D-061.
 
-`to` cambia la representación numérica o materializa una magnitud cuantitativamente compatible:
+`to` changes the numerical representation or renders a magnitude quantitatively compatible:
 
 ```mud
 average to Int
@@ -102,20 +102,21 @@ averagePopulation to Population
 amount to Money
 ```
 
-## Consecuencias
+## Consequences
 
-- El AST distingue `UnitPresentationExpr` de `QuantitativeConversionExpr`.
-- El sistema de tipos debe probar compatibilidad numérica y dimensional antes de aceptar `to`.
-- Una conversión inválida conocida estáticamente se diagnostica en compilación; una violación dependiente del valor deberá tener un resultado dinámico explícito todavía por integrar con la semántica general de fallos.
-- `as` deja definitivamente de participar en conversiones.
-- D-032 añade la rama nominal sin alterar estas reglas cuantitativas.
+- The AST distinguishes `UnitPresentationExpr` from `QuantitativeConversionExpr`.
+- The type system must verify compatibility numerical and dimensional checks before acceptance `to`.
+- A statically known invalid conversion is detected at compile-time; a violation dependent on the value must have a result explicit dynamic, yet to be integrated with the semantics overview of faults.
+- `as` stops taking part in conversions altogether.
+- D-032 adds the branch nominal, without altering these quantitative rules.
 
-## Verificación futura
+## Future verification
 
-1. Ampliaciones y estrechamientos entre representaciones numéricas.
-2. Conversión a una magnitud compatible.
-3. Rechazo de dimensiones incompatibles.
-4. Rechazo de valores fuera del dominio tras redondear.
-5. Diferencia observable entre `quantity in unit` y `quantity to type`.
-6. Presentación de una magnitud de punto en una unidad sin aplicar su `format`.
-7. Materialización de una magnitud base sin unidades y rechazo entre magnitudes nominales distintas.
+1. Extensions and contractions between numerical representations.
+2. Conversion to a magnitude compatible.
+3. Rejection of incompatible dimensions.
+4. Rejection of values outside the domain after rounding.
+5. A noticeable difference between `quantity in unit` y `quantity to type`.
+6. Presentation of a magnitude from point in a unit without applying its `format`.
+7. Materialisation of a magnitude unitless basis and rejection between different nominal quantities.
+
