@@ -13,7 +13,7 @@ aislado para no mezclar su árbol de dependencias con el de Mud.
 - `mud-es-en.toml` es la fuente ejecutable de términos, protecciones,
   frontmatter, inglés británico y hallazgos específicos de Mud.
 - `render_glossary.py` genera la vista humana de
-  `notas/glosario-de-traduccion-es-en.md` y `--check` impide divergencias.
+  `notes/glosario-de-traduccion-es-en.md` y `--check` impide divergencias.
 - `check_migration.py` combina `r3translate check` con las barreras editoriales
   y de temporalidad existentes.
 

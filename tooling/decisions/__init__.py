@@ -1,1 +1,1 @@
-"""Herramientas de gobierno para las decisiones de MUD."""
+"""Herramientas de governance para las decisiones de MUD."""

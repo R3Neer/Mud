@@ -1,7 +1,7 @@
 ---
 title: Obsidian Explorer ordering
 tags:
-  - mud/gobierno
+  - mud/governance
   - mud/obsidian
 status: current
 sorting-spec: |
@@ -15,17 +15,17 @@ sorting-spec: |
   README
   /:files. ....base
    < a-z
-  especificacion
-  notas
-  gobierno
-  referencias
+  specification
+  notes
+  governance
+  references
   tooling
   AGENTS
   sortspec
   ...
    < a-z
 
-  target-folder: gobierno
+  target-folder: governance
   README
   /:files. ....base
    < a-z
@@ -45,7 +45,7 @@ two specific editorial orderings:
 - in any folder, `README.md` appears first and `.base` files immediately
   afterwards, in alphabetical order when there is more than one;
 - at the root, documentation surfaces come first, followed by technical support;
-- in `gobierno/`, the policies governing decisions and questions come first.
+- in `governance/`, the policies governing decisions and questions come first.
 
 Specification folders, ADRs and questions retain their natural identifier
 order. Their prefixes are part of portable navigation and must not be removed

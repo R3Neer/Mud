@@ -18,10 +18,10 @@ SNAPSHOT = Path(__file__).with_name("snapshots") / "help.txt"
 HELP_CASES = (
     ("decisions", ("tooling/decisions/manage_decisions.py", "--help")),
     ("questions", ("tooling/questions/validate_questions.py", "--help")),
-    ("temporaries", ("gobierno/validate_temporaries.py", "--help")),
-    ("editorial", ("gobierno/validate_spec_editorial.py", "--help")),
-    ("grammar", ("especificacion/gramatica/validate_grammar.py", "--help")),
-    ("syntax", ("especificacion/sintaxis/validate_syntax_model.py", "--help")),
+    ("temporaries", ("governance/validate_temporaries.py", "--help")),
+    ("editorial", ("governance/validate_spec_editorial.py", "--help")),
+    ("grammar", ("specification/grammar/validate_grammar.py", "--help")),
+    ("syntax", ("specification/syntax/validate_syntax_model.py", "--help")),
     ("translation-check", ("tooling/translation/check_migration.py", "--help")),
     ("glossary", ("tooling/translation/render_glossary.py", "--help")),
     ("decisions-migrate", ("tooling/decisions/manage_decisions.py", "migrate", "--help")),
@@ -61,12 +61,12 @@ class HelpSnapshotTests(unittest.TestCase):
         self.assertEqual(actual, SNAPSHOT.read_text(encoding="ascii"))
 
     def test_short_help_alias_is_supported(self) -> None:
-        completed = invoke("gobierno/validate_temporaries.py", "-h")
+        completed = invoke("governance/validate_temporaries.py", "-h")
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertIn(" MUD TEMPORARIES\n", completed.stdout)
 
     def test_help_does_not_regenerate_glossary(self) -> None:
-        glossary = ROOT / "notas" / "glosario-de-traduccion-es-en.md"
+        glossary = ROOT / "notes" / "glosario-de-traduccion-es-en.md"
         before = glossary.read_bytes()
         completed = invoke("tooling/translation/render_glossary.py", "--help")
         self.assertEqual(completed.returncode, 0, completed.stderr)
@@ -75,14 +75,14 @@ class HelpSnapshotTests(unittest.TestCase):
 
 class OutputContractTests(unittest.TestCase):
     def test_invalid_global_help_is_actionable(self) -> None:
-        completed = invoke("gobierno/validate_temporaries.py", "--help", "extra")
+        completed = invoke("governance/validate_temporaries.py", "--help", "extra")
         self.assertEqual(completed.returncode, 2)
         self.assertEqual(completed.stdout, "")
         self.assertIn("R3CLI.Help.InvalidArguments", completed.stderr)
         self.assertIn("Try:", completed.stderr)
 
     def test_version_is_intentionally_unknown(self) -> None:
-        completed = invoke("gobierno/validate_temporaries.py", "--version")
+        completed = invoke("governance/validate_temporaries.py", "--version")
         self.assertEqual(completed.returncode, 2)
         self.assertIn("unrecognized arguments: --version", completed.stderr)
 
@@ -109,7 +109,7 @@ class OutputContractTests(unittest.TestCase):
 
     def test_missing_r3cli_has_no_traceback(self) -> None:
         completed = subprocess.run(
-            [sys.executable, "-E", "-S", "gobierno/validate_temporaries.py", "--help"],
+            [sys.executable, "-E", "-S", "governance/validate_temporaries.py", "--help"],
             cwd=ROOT,
             check=False,
             capture_output=True,

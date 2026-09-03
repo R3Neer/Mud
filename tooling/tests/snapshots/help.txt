@@ -49,7 +49,7 @@ SNAPSHOT temporaries
 Validate intentionally versioned temporary Markdown and TOML files.
 
 USAGE
-  python gobierno/validate_temporaries.py [--root PATH] [--colour MODE] [--ascii]
+  python governance/validate_temporaries.py [--root PATH] [--colour MODE] [--ascii]
 
 GLOBAL OPTIONS
   --root PATH                 Repository root to inspect. Default: the current Mud repository.
@@ -66,7 +66,7 @@ SNAPSHOT editorial
 Check the normative snapshot and active-question references.
 
 USAGE
-  python gobierno/validate_spec_editorial.py [--colour MODE] [--ascii]
+  python governance/validate_spec_editorial.py [--colour MODE] [--ascii]
 
 GLOBAL OPTIONS
   --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
@@ -82,7 +82,7 @@ SNAPSHOT grammar
 Validate grammar symbols, uniqueness and reachability.
 
 USAGE
-  python especificacion/gramatica/validate_grammar.py [--colour MODE] [--ascii]
+  python specification/grammar/validate_grammar.py [--colour MODE] [--ascii]
 
 GLOBAL OPTIONS
   --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
@@ -98,7 +98,7 @@ SNAPSHOT syntax
 Check that the grammar, CST catalogue, coverage and ASDL models agree.
 
 USAGE
-  python especificacion/sintaxis/validate_syntax_model.py [--root PATH] [--colour MODE] [--ascii]
+  python specification/syntax/validate_syntax_model.py [--root PATH] [--colour MODE] [--ascii]
 
 GLOBAL OPTIONS
   --root PATH                 Repository root to inspect. Default: the current Mud repository.

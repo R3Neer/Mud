@@ -16,7 +16,7 @@ verified: 2026-08-31
 > supplies the reference language; Obsidian is only one of its adapters.
 
 This document is informative. The normative grammar belongs to
-[[especificacion/06-lexico]] and [[especificacion/07-gramatica-concreta]].
+[[specification/06-lexico]] and [[specification/07-gramatica-concreta]].
 
 ## Independent project
 
@@ -42,8 +42,8 @@ servers, an MCP App or from the command line.
 
 The MUD package includes a validated snapshot of:
 
-- [[especificacion/gramatica/mud-lexico.ebnf]]
-- [[especificacion/gramatica/mud.ebnf]]
+- [[specification/grammar/mud-lexico.ebnf]]
+- [[specification/grammar/mud.ebnf]]
 
 Words, operators and their compound forms are derived from the lexicon. The
 contextual-word inference also calculates indirect grammar relationships, so

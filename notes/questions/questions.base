@@ -1,0 +1,94 @@
+filters:
+  and:
+    - file.inFolder("notes/questions")
+    - file.ext == "md"
+    - id != null
+properties:
+  file.name:
+    displayName: Archivo
+  id:
+    displayName: Pregunta
+  title:
+    displayName: Título
+  priority:
+    displayName: Prioridad
+  opened:
+    displayName: Apertura
+  resolved:
+    displayName: Resuelta
+  closed:
+    displayName: Cierre
+  decisions:
+    displayName: Decisiones
+  affects:
+    displayName: Afecta a
+views:
+  - type: table
+    name: Activas por prioridad
+    filters:
+      or:
+        - resolved == false
+        - resolved == null
+    groupBy:
+      property: priority
+      direction: ASC
+    order:
+      - id
+      - title
+      - opened
+      - resolved
+      - decisions
+      - affects
+    sort:
+      - property: id
+        direction: ASC
+  - type: table
+    name: Abiertas
+    filters:
+      and:
+        - resolved == false
+    order:
+      - id
+      - title
+      - priority
+      - opened
+      - resolved
+      - decisions
+    sort:
+      - property: priority
+        direction: ASC
+      - property: id
+        direction: ASC
+  - type: table
+    name: Parcialmente decididas
+    filters:
+      and:
+        - resolved == null
+    order:
+      - id
+      - title
+      - priority
+      - opened
+      - resolved
+      - decisions
+    sort:
+      - property: priority
+        direction: ASC
+      - property: id
+        direction: ASC
+  - type: table
+    name: Historial
+    filters:
+      and:
+        - resolved == true
+    order:
+      - id
+      - title
+      - priority
+      - opened
+      - resolved
+      - closed
+      - decisions
+    sort:
+      - property: id
+        direction: DESC

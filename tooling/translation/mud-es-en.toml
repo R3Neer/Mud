@@ -1550,7 +1550,7 @@ category = "Términos editoriales y de proceso"
 target = "authoring workflow"
 
 [[terms]]
-source = "gobierno"
+source = "governance"
 mode = "force"
 category = "Términos editoriales y de proceso"
 target = "governance"

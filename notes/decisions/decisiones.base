@@ -1,0 +1,60 @@
+filters:
+  and:
+    - file.inFolder("notes/decisions")
+    - file.ext == "md"
+    - id != null
+properties:
+  file.name:
+    displayName: ADR
+  id:
+    displayName: Decisión
+  title:
+    displayName: Título
+  status:
+    displayName: Estado
+  date:
+    displayName: Fecha
+  questions:
+    displayName: Preguntas
+  superseded-by:
+    displayName: Sustituida por
+views:
+  - type: table
+    name: Vigentes
+    filters:
+      and:
+        - status == "current"
+    order:
+      - id
+      - title
+      - date
+      - questions
+    sort:
+      - property: id
+        direction: DESC
+  - type: table
+    name: Con preguntas
+    filters:
+      and:
+        - "!questions.isEmpty()"
+    order:
+      - id
+      - title
+      - status
+      - questions
+    sort:
+      - property: id
+        direction: DESC
+  - type: table
+    name: Historial completo
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - id
+      - title
+      - date
+      - superseded-by
+    sort:
+      - property: id
+        direction: DESC

@@ -118,8 +118,8 @@ def main(argv: list[str] | None = None) -> int:
     presentation = ["--colour", arguments.colour] + (["--ascii"] if arguments.ascii else [])
     commands = [
         [sys.executable, str(Path(__file__).with_name("render_glossary.py")), "--check", *presentation],
-        [sys.executable, str(ROOT / "gobierno" / "validate_temporaries.py"), *presentation],
-        [sys.executable, str(ROOT / "gobierno" / "validate_spec_editorial.py"), *presentation],
+        [sys.executable, str(ROOT / "governance" / "validate_temporaries.py"), *presentation],
+        [sys.executable, str(ROOT / "governance" / "validate_spec_editorial.py"), *presentation],
     ]
     result = run_translation(translation, parsed.ui)
     for command in commands:

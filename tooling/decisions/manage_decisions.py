@@ -23,11 +23,11 @@ from tooling.cli_support import (  # noqa: E402
     parse_cli,
 )
 
-DECISION_DIR = ROOT / "notas" / "decisiones"
-QUESTION_DIR = ROOT / "notas" / "preguntas"
+DECISION_DIR = ROOT / "notes" / "decisions"
+QUESTION_DIR = ROOT / "notes" / "questions"
 INDEX = DECISION_DIR / "README.md"
-RESERVED = DECISION_DIR / "identificadores-reservados.txt"
-LEGACY = ROOT / "notas" / "10-registro-de-decisiones.md"
+RESERVED = DECISION_DIR / "reserved-identifiers.txt"
+LEGACY = ROOT / "notes" / "10-registro-de-decisiones.md"
 
 ADR_FILE = re.compile(r"^ADR-(\d{3})-(.+)\.md$")
 DECISION_ID = re.compile(r"^D-\d{3}$")
@@ -38,9 +38,9 @@ LEGACY_STATUS = re.compile(r"^- Estado: (.+)$", re.MULTILINE)
 LEGACY_DATE = re.compile(r"^- Fecha: (\d{4}-\d{2}-\d{2})$", re.MULTILINE)
 LEGACY_AFFECTS = re.compile(r"^- Documentos afectados: (.+)$", re.MULTILINE)
 DECISION_LINK = re.compile(
-    r"(?:notas/)?decisiones/(ADR-\d{3}-[^|\]#)]+)"
+    r"(?:notes/)?decisions/(ADR-\d{3}-[^|\]#)]+)"
 )
-QUESTION_LINK = re.compile(r"(?:notas/)?preguntas/(Q-\d{3}-[^|\]#)]+)")
+QUESTION_LINK = re.compile(r"(?:notes/)?questions/(Q-\d{3}-[^|\]#)]+)")
 DECISION_TOKEN = re.compile(r"\bD-\d{3}\b")
 QUESTION_TOKEN = re.compile(r"\bQ-\d{3}\b")
 
@@ -277,7 +277,7 @@ def render_index(decisions: dict[str, Decision], reserved: set[str]) -> str:
         "# Decisiones de MUD",
         "",
         "Cada decisión tiene un ADR estable. El ciclo de vida y los metadatos se rigen",
-        "por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].",
+        "por [[governance/POLITICA-DE-DECISIONES|la política de decisiones]].",
         "",
         "## Resumen",
         "",
@@ -298,7 +298,7 @@ def render_index(decisions: dict[str, Decision], reserved: set[str]) -> str:
         stem = decision.path.stem
         lines.append(
             f"| {identifier} | {decision.status} | {decision.adopted} | "
-            f"[[notas/decisiones/{stem}|{decision.title}]] |"
+            f"[[notes/decisions/{stem}|{decision.title}]] |"
         )
     lines.extend(
         [
@@ -407,9 +407,9 @@ def validate(ui=None) -> int:
 
     expected_index = render_index(decisions, reserved)
     if not INDEX.is_file() or read(INDEX) != expected_index:
-        errors.append("notas/decisiones/README.md does not match the generated index")
+        errors.append("notes/decisions/README.md does not match the generated index")
     if LEGACY.exists():
-        errors.append("The superseded notas/10-registro-de-decisiones.md registry still exists")
+        errors.append("The superseded notes/10-registro-de-decisiones.md registry still exists")
 
     if errors:
         for error in errors:

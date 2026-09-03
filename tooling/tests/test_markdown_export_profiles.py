@@ -22,22 +22,22 @@ class BundledProfileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             documents = {
-                "especificacion/README.md",
-                "especificacion/05-texto-fuente.md",
-                "especificacion/gramatica/mud.ebnf",
-                "especificacion/asdl/acciones.asdl",
-                "especificacion/sintaxis/modelo.yaml",
-                "notas/vision-y-alcance.md",
-                "notas/preguntas/README.md",
-                "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
-                "notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
-                "notas/decisiones/README.md",
-                "notas/decisiones/ADR-054-lenguaje.md",
-                "notas/decisiones/ADR-055-nueva-decision.md",
-                "notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
-                "notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad.md",
-                "notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria.md",
-                "notas/riesgos-y-restricciones.md",
+                "specification/README.md",
+                "specification/05-texto-fuente.md",
+                "specification/grammar/mud.ebnf",
+                "specification/asdl/acciones.asdl",
+                "specification/syntax/modelo.yaml",
+                "notes/vision-y-alcance.md",
+                "notes/questions/README.md",
+                "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
+                "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+                "notes/decisions/README.md",
+                "notes/decisions/ADR-054-lenguaje.md",
+                "notes/decisions/ADR-055-nueva-decision.md",
+                "notes/decisions/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
+                "notes/decisions/ADR-052-pipeline-materializadores-y-conformidad.md",
+                "notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria.md",
+                "notes/riesgos-y-restricciones.md",
                 "tooling/README.md",
             }
             for relative in documents:
@@ -57,34 +57,34 @@ class BundledProfileTests(unittest.TestCase):
                 for path in select_paths(options, index)
             }
 
-        self.assertIn("especificacion/05-texto-fuente.md", selected)
-        self.assertIn("especificacion/gramatica/mud.ebnf", selected)
-        self.assertIn("especificacion/asdl/acciones.asdl", selected)
-        self.assertIn("especificacion/sintaxis/modelo.yaml", selected)
-        self.assertIn("notas/vision-y-alcance.md", selected)
-        self.assertIn("notas/decisiones/ADR-055-nueva-decision.md", selected)
-        self.assertIn("notas/preguntas/README.md", selected)
+        self.assertIn("specification/05-texto-fuente.md", selected)
+        self.assertIn("specification/grammar/mud.ebnf", selected)
+        self.assertIn("specification/asdl/acciones.asdl", selected)
+        self.assertIn("specification/syntax/modelo.yaml", selected)
+        self.assertIn("notes/vision-y-alcance.md", selected)
+        self.assertIn("notes/decisions/ADR-055-nueva-decision.md", selected)
+        self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
-            "notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+            "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
             selected,
         )
         self.assertNotIn(
-            "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
+            "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
             selected,
         )
         self.assertIn(
-            "notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
+            "notes/decisions/ADR-051-grafo-semantico-e-ir-reconstruibles.md",
             selected,
         )
         self.assertIn(
-            "notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad.md",
+            "notes/decisions/ADR-052-pipeline-materializadores-y-conformidad.md",
             selected,
         )
         self.assertNotIn(
-            "notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria.md",
+            "notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria.md",
             selected,
         )
-        self.assertNotIn("notas/riesgos-y-restricciones.md", selected)
+        self.assertNotIn("notes/riesgos-y-restricciones.md", selected)
         self.assertNotIn("tooling/README.md", selected)
 
     def test_decisions_profile_preserves_the_complete_question_history(self) -> None:
@@ -93,12 +93,12 @@ class BundledProfileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             documents = {
-                "notas/decisiones/README.md",
-                "notas/decisiones/ADR-062-lenguaje.md",
-                "notas/preguntas/README.md",
-                "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
-                "notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
-                "especificacion/README.md",
+                "notes/decisions/README.md",
+                "notes/decisions/ADR-062-lenguaje.md",
+                "notes/questions/README.md",
+                "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
+                "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+                "specification/README.md",
             }
             for relative in documents:
                 path = root / relative
@@ -113,16 +113,16 @@ class BundledProfileTests(unittest.TestCase):
                 for path in select_paths(options, index)
             }
 
-        self.assertIn("notas/preguntas/README.md", selected)
+        self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
-            "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
+            "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
             selected,
         )
         self.assertIn(
-            "notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+            "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
             selected,
         )
-        self.assertNotIn("especificacion/README.md", selected)
+        self.assertNotIn("specification/README.md", selected)
 
     def test_current_profile_excludes_closed_questions(self) -> None:
         bundled = load_config(self.CONFIG)
@@ -130,9 +130,9 @@ class BundledProfileTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             documents = {
-                "notas/preguntas/README.md",
-                "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
-                "notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+                "notes/questions/README.md",
+                "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
+                "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
                 "exports/current.md",
                 "tooling/example/node_modules/dependency/README.md",
             }
@@ -149,13 +149,13 @@ class BundledProfileTests(unittest.TestCase):
                 for path in select_paths(options, index)
             }
 
-        self.assertIn("notas/preguntas/README.md", selected)
+        self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
-            "notas/preguntas/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
+            "notes/questions/Q-002-modelo-exacto-de-efectos-secuenciales-y-simultaneos.md",
             selected,
         )
         self.assertNotIn(
-            "notas/preguntas/Q-001-gramatica-y-saltos-de-linea.md",
+            "notes/questions/Q-001-gramatica-y-saltos-de-linea.md",
             selected,
         )
         self.assertNotIn("exports/current.md", selected)

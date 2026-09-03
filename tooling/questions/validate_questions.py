@@ -24,9 +24,9 @@ from tooling.cli_support import (  # noqa: E402
     parse_cli,
 )
 
-QUESTION_DIR = ROOT / "notas" / "preguntas"
+QUESTION_DIR = ROOT / "notes" / "questions"
 INDEX = QUESTION_DIR / "README.md"
-LEGACY = ROOT / "notas" / "08-preguntas-abiertas.md"
+LEGACY = ROOT / "notes" / "08-open-questions.md"
 EXPORT_PROFILES = ROOT / "markdown-export.toml"
 EXPORT_DIR = ROOT / "exports"
 
@@ -39,7 +39,7 @@ RESOLVED_FIELD = re.compile(r"^resolved:(?: (true|false))?$", re.MULTILINE)
 CLOSED_FIELD = re.compile(r"^closed:(?: (\d{4}-\d{2}-\d{2}))?$", re.MULTILINE)
 INDEX_LINK = re.compile(r"\[\[[^|\]]+\|(Q-\d{3}) —")
 SPEC_QUESTION = re.compile(r"^  - (Q-\d{3})$", re.MULTILINE)
-QUESTION_LINK = re.compile(r"\[\[(notas/preguntas/Q-[^|\]#]+)")
+QUESTION_LINK = re.compile(r"\[\[(notes/questions/Q-[^|\]#]+)")
 CRITERION_ENTRY = re.compile(r"^- (C\d+):\s+\S.*$", re.MULTILINE)
 EVIDENCE_ENTRY = re.compile(r"^- (C\d+):\s+\S.*$", re.MULTILINE)
 
@@ -95,14 +95,14 @@ def render_index(questions: dict[str, Question]) -> str:
         "---",
         "title: MUD active questions",
         "tags:",
-        "  - mud/notas",
+        "  - mud/notes",
         "  - mud/preguntas",
         "status: active",
         "---",
         "",
         "# MUD active questions",
         "",
-        "This index contains only questions in `open` or `partially-decided` state. They are governed by [[gobierno/POLITICA-DE-PREGUNTAS|MUD question policy]].",
+        "This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/POLITICA-DE-PREGUNTAS|MUD question policy]].",
         "",
         f"There are {len(active)} active questions: {counts['open']} open and {counts['partially-decided']} partially decided.",
         "",
@@ -315,7 +315,7 @@ def main(argv: list[str] | None = None) -> int:
         errors.append(f"Inactive questions present in the index: {', '.join(inactive_index)}")
 
     if LEGACY.exists():
-        errors.append("The superseded notas/08-preguntas-abiertas.md registry still exists.")
+        errors.append("The superseded notes/08-preguntas-abiertas.md registry still exists.")
 
     with EXPORT_PROFILES.open("rb") as stream:
         profiles = tomllib.load(stream)["profiles"]
@@ -366,7 +366,7 @@ def main(argv: list[str] | None = None) -> int:
                 f"Profile {profile_name} includes unexpected questions: {', '.join(unexpected)}"
             )
 
-    for path in (ROOT / "especificacion").glob("*.md"):
+    for path in (ROOT / "specification").glob("*.md"):
         for question_id in SPEC_QUESTION.findall(read(path)):
             question = questions.get(question_id)
             state = question.state if question is not None else None

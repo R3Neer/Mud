@@ -22,7 +22,7 @@ from tooling.cli_support import (  # noqa: E402
 )
 
 PROFILE = Path(__file__).with_name("mud-es-en.toml")
-GLOSSARY = ROOT / "notas" / "glosario-de-traduccion-es-en.md"
+GLOSSARY = ROOT / "notes" / "glosario-de-traduccion-es-en.md"
 
 
 def escape(value: object) -> str:
@@ -40,7 +40,7 @@ def render() -> str:
         "aliases:",
         "  - Glosario de migración al inglés",
         "tags:",
-        "  - mud/notas",
+        "  - mud/notes",
         "  - mud/traduccion",
         "status: active",
         "decisions:",

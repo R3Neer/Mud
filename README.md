@@ -173,15 +173,15 @@ remain in development.
 
 ## Repository guide
 
-- [`especificacion/`](especificacion/) — the normative language specification
+- [`specification/`](specification/) — the normative language specification
   and checked syntax artefacts;
-- [`notas/vision-y-alcance.md`](notas/vision-y-alcance.md) — product thesis,
+- [`notes/vision-y-alcance.md`](notes/vision-y-alcance.md) — product thesis,
   intended users and boundaries;
-- [`notas/arquitectura-del-sistema.md`](notas/arquitectura-del-sistema.md) —
+- [`notes/arquitectura-del-sistema.md`](notes/arquitectura-del-sistema.md) —
   compiler, runtime, semantic operator and materialisation architecture;
-- [`notas/decisiones/`](notas/decisiones/) — language and architecture decisions;
-- [`notas/preguntas/`](notas/preguntas/) — open and partially decided questions;
-- [`gobierno/`](gobierno/) — editorial and change-control processes;
+- [`notes/decisions/`](notes/decisions/) — language and architecture decisions;
+- [`notes/questions/`](notes/questions/) — open and partially decided questions;
+- [`governance/`](governance/) — editorial and change-control processes;
 - [`tooling/`](tooling/) — supporting and experimental tools.
 
 Repository-specific export profiles live in
