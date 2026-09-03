@@ -1,6 +1,6 @@
 ---
 id: D-085
-title: "Diccionarios funcionales, metadatos y activación estructurada"
+title: "Functional dictionaries, metadata and structured activation"
 status: current
 date: 2026-08-05
 supersedes: []
@@ -8,38 +8,38 @@ superseded-by: []
 questions:
   - "Q-061"
 affects:
-  - "acciones y subacciones, organización de archivos, operadores, tipos, diccionarios, productos, ausencia, cardinalidad, selección, activación inicial, Thing, Any, metadatos, magnitudes, texto, gramática, CST, AST, IR y diagnósticos"
+  - "actions and subactions, file organisation, operators, types, dictionaries, products, absence, cardinality, selection, initial activation, Thing, Any, metadata, magnitudes, text, grammar, CST, AST, IR and diagnostics"
 ---
 
-# ADR-085 — Diccionarios funcionales, metadatos y activación estructurada
+# ADR-085 — Functional dictionaries, metadata and structured activation
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modificada por: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
-- Modificada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] y [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]]
-- Modificada por: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
+- Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
+- Modified by: [[ADR-087-metadatos-reflectivos-descriptores-estables-and-visibilidad-exterior|D-087]] and [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]]
+- Modified by: [[ADR-096-modulos-callables-look-message-and-activation|D-096]].
 
-- Modifica: [[ADR-017-everything-type-well-built-has-default-value|D-017]], [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-061-non-accepted-results-and-text-templates|D-061]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-083-unitless-base-quantities|D-083]] y [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]].
-- Amplía: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-052-pipelines-renderers-and-conformance|D-052]] y [[ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
-- Documentos afectados: capítulos 05 a 09, futuros capítulos 10 a 20, 24, 26, 32, 34 y 38, gramática, modelos sintácticos, diagnósticos y operaciones semánticas.
-- Modificada por: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Modifies: [[ADR-017-everything-type-well-built-has-default-value|D-017]], [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-061-non-accepted-results-and-text-templates|D-061]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-083-unitless-base-quantities|D-083]] and [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]].
+- Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-052-pipelines-renderers-and-conformance|D-052]] and [[ADR-053-operador-semantico-and-flujo-de-autoria|D-053]].
+- Affected documents: chapters 05 to 09, future chapters 10 to 20, 24, 26, 32, 34 and 38, grammar, syntax models, diagnostics and semantic operations.
+- Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
-## Contexto
+## Context
 
-MUD ya dispone de colecciones, diccionarios exactos, composición secuencial mediante llamadas dentro de `then`, nombres nominales, activación inicial y plantillas `Text`. Varias decisiones posteriores muestran cuatro necesidades relacionadas:
+MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `Text` templates. Several later decisions show four related needs:
 
-1. Expresar políticas puras definidas por casos sin introducir una categoría general de función.
-2. Separar de manera uniforme el contenido del mundo de los metadatos nominales y de procedencia.
-3. Permitir que ausencia y cardinalidad modelen consultas parciales sin convertir la falta de resultado en fallo inmediato.
-4. Hacer explícitas las fronteras entre API pública, auxiliares internas y catálogos iniciales de `thing` y reglas.
+1. Express pure policies defined by cases without introducing a general function category.
+2. Uniformly separate world content from nominal and provenance metadata.
+3. Allow absence and cardinality to model partial queries without turning a missing result into an immediate failure.
+4. Make the boundaries between public API, internal helpers and initial catalogues of `thing` and rules explicit.
 
-Esta decisión consolida esas necesidades y reemplaza toda formulación anterior incompatible dentro de su alcance. Los ADR modificados conservan el historial de las reglas previas. Conforme a D-086, la denominación pública canónica de los tipos `A --> B` es **diccionario funcional**.
+This decision consolidates those needs and replaces all incompatible earlier wording within its scope. Modified ADRs retain the history of previous rules. In accordance with D-086, the canonical public name for `A --> B` types is **functional dictionary**.
 
-## Decisión
+## Decision
 
-### Acciones auxiliares `subaction`
+### Auxiliary `subaction` actions
 
-Una declaración `subaction` posee el mismo contrato de participantes, `given`, guardas, efectos, postcondiciones, atomicidad y anclaje que una `action`, con una diferencia de accesibilidad:
+A `subaction` declaration has the same participant, `given`, guard, effect, postcondition, atomicity and anchoring contract as an `action`, with one accessibility difference:
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -48,190 +48,190 @@ given amount: Money {
 }
 ```
 
-- Una `subaction` puede invocarse desde cualquier contexto semántico `then`, incluido el de una rule reactiva.
-- No puede constituir una solicitud externa, un comando raíz ni una entrada de la API pública.
-- Una `action` o `subaction` puede invocar actions ordinarias y subactions dentro de la misma resolución, sujeta al análisis de ciclos ejecutables.
-- Toda la cadena participa en una única resolución atómica. Un resultado no aceptado o un fallo de cualquier llamada interna descarta también los efectos privados anteriores de sus llamadores.
-- Su ancla conserva la categoría `action::*`; la clase pública o auxiliar forma parte del descriptor, no del prefijo de ancla.
+- A `subaction` may be invoked from any semantic `then` context, including that of a reactive rule.
+- It cannot constitute an external request, a root command or a public API entry point.
+- An `action` or `subaction` may invoke ordinary actions and subactions within the same resolution, subject to executable-cycle analysis.
+- The entire chain participates in one atomic resolution. An unaccepted result or failure in any internal call also discards the callers' preceding private effects.
+- Its anchor retains the `action::*` category; the public or auxiliary class forms part of the descriptor, not the anchor prefix.
 
-El AST superficial conserva explícitamente la clase `PublicAction` o `Subaction`. La comprobación de accesibilidad se realiza después de resolver la llamada.
+The surface AST explicitly retains the `PublicAction` or `Subaction` class. Accessibility is checked after resolving the call.
 
-### Organización editorial de archivos
+### Editorial file organisation
 
-Los archivos deberían agrupar preferentemente conceptos, lugares, procesos o situaciones del mundo, no categorías sintácticas. Un archivo como `battle.mud` puede reunir `thing`, aliases, reglas, acciones, vistas y mensajes que describan conjuntamente la batalla.
+Files should preferably group world concepts, places, processes or situations, not syntactic categories. A file such as `battle.mud` may bring together `thing`, aliases, rules, actions, views and messages that jointly describe the battle.
 
-Esta regla es informativa y no afecta a resolución, identidad, conformidad ni anclas. Una relación transversal puede ocupar un archivo propio cuando represente mejor el dominio.
+This rule is informative and does not affect resolution, identity, conformance or anchors. A cross-cutting relationship may occupy its own file when that better represents the domain.
 
-### Pertenencia booleana
+### Boolean membership
 
-La pertenencia booleana se escribe con el contenedor a la izquierda: `container has value`. Su negación canónica es `container has not value`. `has` es palabra reservada y `has not` conserva dos tokens de palabra con trivia propia.
+Boolean membership is written with the container on the left: `container has value`. Its canonical negation is `container has not value`. `has` is a reserved word and `has not` retains two word tokens with their own trivia.
 
-`in` no es un operador booleano de pertenencia: se reserva para dominios, restricciones, filtros, bindings y conversiones donde corresponda. El AST representa la pertenencia mediante `HasMember` y `HasNotMember`, no mediante `Membership` o `NotMembership` asociados a `in`.
+`in` is not a Boolean membership operator: it is reserved for domains, constraints, filters, bindings and conversions where applicable. The AST represents membership through `HasMember` and `HasNotMember`, not through `Membership` or `NotMembership` associated with `in`.
 
-### Diccionarios exactos
+### Exact dictionaries
 
-El tipo ordinario conserva la forma:
+The ordinary type retains the form:
 
 ```mud
 A -> B
 ```
 
-Una asociación se escribe `a -> b` y es un valor operativo. Su clave es un `ExpressionBlock` y su valor un `ValueBlock`; cada lado puede usar su forma breve o entre llaves y los scopes de ambos lados son independientes. Puede aparecer en un literal de diccionario o añadirse de forma explícita:
+An association is written `a -> b` and is an operational value. Its key is an `ExpressionBlock` and its value a `ValueBlock`; either side may use its short form or braces, and the scopes of both sides are independent. It may appear in a dictionary literal or be added explicitly:
 
 ```mud
 add (a -> b) to dictionary
 ```
 
-Los paréntesis pueden omitirse cuando la precedencia no resulte ambigua.
+Parentheses may be omitted when precedence is unambiguous.
 
-La aplicación por clave exacta es parcial:
+Exact-key application is partial:
 
-- una clave presente produce su valor asociado;
-- una clave ausente produce `empty` con la forma de salida declarada;
-- la ausencia no produce `failed` por sí misma;
-- el fallo aparece únicamente cuando el resultado vacío no pertenece al tipo, dominio o cardinalidad exigidos por el contexto.
+- a present key produces its associated value;
+- a missing key produces `empty` with the declared output form;
+- absence does not produce `failed` by itself;
+- failure appears only when the empty result does not belong to the type, domain or cardinality required by the context.
 
-Los diccionarios exactos:
+Exact dictionaries:
 
-- conservan mutabilidad exterior;
-- continúan siendo enumerables por claves o asociaciones;
-- admiten `ordered` con su semántica ordinaria;
-- admiten `unique`, que exige unicidad global de valores asociados.
+- retain external mutability;
+- remain enumerable by keys or associations;
+- admit `ordered` with its ordinary semantics;
+- admit `unique`, which requires global uniqueness of associated values.
 
-Una inserción o sustitución que haría aparecer el mismo valor bajo más de una clave en un diccionario exacto `unique` es una no-op completa. No modifica ninguna asociación y no produce `failed`.
+An insertion or replacement that would make the same value appear under more than one key in a `unique` exact dictionary is a complete no-op. It modifies no association and produces no `failed`.
 
-### Diccionarios funcionales
+### Functional dictionaries
 
-El tipo:
+The type:
 
 ```mud
 A --> B
 ```
 
-representa una política pura definida por ramas. Una rama se escribe:
+represents a pure policy defined by branches. A branch is written:
 
 ```mud
 selector --> result
 ```
 
-Dentro del selector y del resultado, `value` es una palabra contextual vinculada a la entrada de tipo `A`. El selector es un `ExpressionBlock` booleano y el resultado un `ValueBlock`; sus scopes locales son independientes.
+Within the selector and result, `value` is a contextual word bound to the input of type `A`. The selector is a Boolean `ExpressionBlock` and the result a `ValueBlock`; their local scopes are independent.
 
-Todo selector ordinario debe elaborar directamente a `Bool`. MUD no inserta implícitamente `value`, `==`, `is` ni pertenencia: deben escribirse de forma expresa `value == expresión`, `dominio has value`, `value is Tipo` o cualquier otra condición booleana pura. Una expresión desnuda que no produzca `Bool` es inválida. `_` es el fallback y solo se considera cuando ninguna rama ordinaria aplicable ha producido resultado.
+Every ordinary selector must elaborate directly to `Bool`. MUD does not implicitly insert `value`, `==`, `is` or membership: `value == expression`, `domain has value`, `value is Type` or another pure Boolean condition must be written explicitly. A bare expression that does not produce `Bool` is invalid. `_` is the fallback and is considered only when no applicable ordinary branch has produced a result.
 
-Los resultados y selectores pueden leer estado externo. Cada lectura debe quedar registrada como dependencia de la rama y del diccionario. Todas las llamadas transitivas de una aplicación observan la misma instantánea estable del mundo.
+Results and selectors may read external state. Every read must be recorded as a dependency of the branch and dictionary. All transitive calls of an application observe the same stable snapshot of the world.
 
-Las ramas son exteriormente puras durante la ejecución ordinaria: no admiten efectos sobre el mundo, llamadas a actions/subactions como efectos, `create` ni `destroy`. El `ValueBlock` del resultado sí puede declarar y mutar almacenamiento temporal propio, que desaparece al terminar su evaluación. La edición del modelo puede crear, actualizar, retirar o mover ramas dentro del diccionario propietario, pero una rama no posee ancla pública ni descriptor metadata-bearing propio. El modelo resuelto usa una clave local de rama: el selector normalizado es la clave de una rama ordinaria y no puede repetirse dentro del mismo diccionario; `_` usa una clave de fallback propia y única. Cambiar solo el resultado conserva la clave; cambiar el selector retira estructuralmente la clave anterior y crea la nueva. Una rama nueva se inserta antes de `_` de forma predeterminada; en un funcional ordenado puede declararse una posición concreta.
+Branches are externally pure during ordinary execution: they admit no effects on the world, calls to actions/subactions as effects, `create` or `destroy`. The result `ValueBlock` may declare and mutate its own temporary storage, which disappears when evaluation ends. Model editing may create, update, withdraw or move branches within the owning dictionary, but a branch has neither a public anchor nor its own metadata-bearing descriptor. The resolved model uses a local branch key: the normalised selector is the key of an ordinary branch and may not be repeated within the same dictionary; `_` uses its own unique fallback key. Changing only the result preserves the key; changing the selector structurally withdraws the old key and creates the new one. A new branch is inserted before `_` by default; an ordered functional dictionary may declare a specific position.
 
-Un diccionario funcional:
+A functional dictionary:
 
-- no admite mutabilidad exterior;
-- no admite capacidad interior `[mut]`;
-- rechaza estáticamente cualquier `mut` aplicado a su tipo o lugar;
-- no es una fuente de `for each`;
-- puede referenciar directa o indirectamente otros diccionarios funcionales.
+- admits no external mutability;
+- admits no inner `[mut]` capability;
+- statically rejects any `mut` applied to its type or location;
+- is not a source for `for each`;
+- may refer directly or indirectly to other functional dictionaries.
 
-Todo componente recursivo del grafo de llamadas debe disponer de una medida bien fundada que disminuya estrictamente en cada arista que continúe el ciclo. El compilador debe demostrar la terminación mediante descenso numérico, reducción de cardinalidad, subestructuras estrictamente menores u otra prueba equivalente. La ausencia de prueba es un error estático.
+Every recursive component of the call graph must have a well-founded measure that decreases strictly along every edge continuing the cycle. The compiler must prove termination through numeric descent, cardinality reduction, strictly smaller substructures or an equivalent proof. Absence of proof is a static error.
 
-#### Modo `ordered`
+#### `ordered` mode
 
 ```mud
 A --> B [ordered]
 ```
 
-- Las ramas ordinarias se prueban en orden fuente.
-- Gana la primera coincidencia.
-- Los selectores pueden solaparse y el orden forma parte del valor.
-- `_` debe ser la última rama efectiva; toda rama posterior es inalcanzable.
-- Sin coincidencia ni fallback, la aplicación tiene cardinalidad derivada `[0..1]` y produce `empty` cuando no hay resultado.
-- Con fallback, la cardinalidad derivada es `[1]`.
-- `unique` es válido pero redundante; produce una sugerencia de eliminación.
+- Ordinary branches are tested in source order.
+- The first match wins.
+- Selectors may overlap and ordering forms part of the value.
+- `_` must be the last effective branch; every later branch is unreachable.
+- Without a match or fallback, application has derived cardinality `[0..1]` and produces `empty` when there is no result.
+- With a fallback, derived cardinality is `[1]`.
+- `unique` is valid but redundant; it produces a removal suggestion.
 
-El modo elaborado se denomina `FirstMatch`.
+The elaborated mode is called `FirstMatch`.
 
-#### Modo no ordenado
+#### Unordered mode
 
 ```mud
 A --> B
 ```
 
-- Se evalúan todas las ramas ordinarias.
-- Cada rama coincidente aporta un resultado.
-- Los selectores pueden solaparse.
-- El orden fuente no es semántico.
-- Sin coincidencias se obtiene la colección vacía.
-- `_` aporta exactamente un resultado solo cuando ninguna rama ordinaria coincide.
-- La cardinalidad derivada es `[0..n]`, donde `n` es la cota máxima demostrable de ramas ordinarias coincidentes; con fallback la cota inferior pasa a `1`.
-- `unique` deduplica resultados producidos por ramas distintas.
+- All ordinary branches are evaluated.
+- Each matching branch contributes a result.
+- Selectors may overlap.
+- Source order is not semantic.
+- Without matches, the empty collection is obtained.
+- `_` contributes exactly one result only when no ordinary branch matches.
+- Derived cardinality is `[0..n]`, where `n` is the demonstrable maximum of matching ordinary branches; with a fallback, the lower bound becomes `1`.
+- `unique` deduplicates results produced by different branches.
 
-El modo elaborado se denomina `AllMatches`.
+The elaborated mode is called `AllMatches`.
 
-### Flechas, composición y productos
+### Arrows, composition and products
 
-`->` y `-->` aceptan expresiones de tipo completas a ambos lados. Las cadenas son asociativas a la derecha:
+`->` and `-->` accept complete type expressions on both sides. Chains are right-associative:
 
 ```mud
 A -> B -> C
 ```
 
-se elabora como `A -> (B -> C)`. Lo mismo se aplica a cadenas mixtas. Cada cardinalidad o modificador pertenece exclusivamente a la flecha inmediatamente anterior:
+is elaborated as `A -> (B -> C)`. The same applies to mixed chains. Each cardinality or modifier belongs exclusively to the immediately preceding arrow:
 
 ```mud
 A -> B [2] -> C [3]
 ```
 
-se elabora como `A -> (B -> C [3]) [2]`.
+is elaborated as `A -> (B -> C [3]) [2]`.
 
-Los paréntesis continúan siendo obligatorios para cambiar esa agrupación, para usar un diccionario completo como clave o para aplicar una colección exterior al valor diccionario completo.
+Parentheses remain mandatory to change that grouping, to use a complete dictionary as a key, or to apply an outer collection to the complete dictionary value.
 
-No se introduce una categoría separada de función. La composición se expresa aplicando el resultado de un diccionario como entrada de otro; la aplicación encadenada `table[a][b]` consume diccionarios anidados.
+No separate function category is introduced. Composition is expressed by applying one dictionary's result as another's input; chained application `table[a][b]` consumes nested dictionaries.
 
-Se añaden productos estructurales anónimos:
+Anonymous structural products are added:
 
 ```mud
 (A, B)
 (a: A, b: B)
 ```
 
-Sus valores se escriben respectivamente `(x, y)` y `(a = x, b = y)`. Son estructurales y se comparan componente a componente. Los nombres de variables que ocupan un producto posicional no crean nombres de componente. Los aliases declarados continúan siendo nominales aunque su representación coincida con un producto anónimo.
+Their values are written respectively `(x, y)` and `(a = x, b = y)`. They are structural and compared component by component. Variable names occupying a positional product do not create component names. Declared aliases remain nominal even when their representation matches an anonymous product.
 
-Los productos pueden actuar como claves exactas o entradas funcionales.
+Products may act as exact keys or functional inputs.
 
-### `empty`, consultas parciales y cardinalidad
+### `empty`, partial queries and cardinality
 
-`empty` representa ausencia o colección vacía y no es un fallo por sí mismo. Toda operación parcial debe producir `empty` cuando no existe resultado. La comprobación posterior contra el tipo, dominio y cardinalidad esperados decide si esa ausencia es válida o causa `failed`.
+`empty` represents absence or an empty collection and is not a failure by itself. Every partial operation must produce `empty` when no result exists. Subsequent checking against the expected type, domain and cardinality decides whether that absence is valid or causes `failed`.
 
-Una consulta exacta ausente conserva la forma de salida `B`. Una consulta funcional `FirstMatch` sin coincidencia produce `empty`; una consulta `AllMatches` sin coincidencias produce una colección vacía válida.
+A missing exact query retains output form `B`. A functional `FirstMatch` query without a match produces `empty`; an `AllMatches` query without matches produces a valid empty collection.
 
-### Cardinalidad omitida de campos almacenados
+### Cardinality omitted from stored fields
 
-La omisión de cardinalidad ya no se normaliza universalmente a `[1]` antes de conocer el contexto del campo.
+Cardinality omission is no longer universally normalised to `[1]` before the field context is known.
 
-- En un campo almacenado sin mutabilidad exterior y con inicializador, se infiere la cardinalidad exterior exacta del valor inicial.
-- Un valor unitario infiere `[1]`, una colección literal de tres miembros infiere `[3]` y `empty` infiere `[0]`.
-- El contenido interno de un diccionario no altera la cardinalidad exterior: un diccionario es un valor aunque contenga varias asociaciones o ramas.
-- En un campo con mutabilidad exterior, la omisión conserva `[1]`.
-- Un campo almacenado sin inicializador usa la regla ordinaria del tipo y de su predeterminado, salvo las excepciones explícitas como `Any`.
-- Los campos calculados `:=` conservan la forma inferida de su expresión o la forma declarada.
+- In a stored field without external mutability and with an initialiser, the exact external cardinality of the initial value is inferred.
+- A unit value infers `[1]`, a literal collection of three members infers `[3]` and `empty` infers `[0]`.
+- The internal contents of a dictionary do not alter external cardinality: a dictionary is one value even when it contains several associations or branches.
+- In a field with external mutability, omission retains `[1]`.
+- A stored field without an initialiser uses the ordinary rule for its type and default, except for explicit exceptions such as `Any`.
+- Calculated fields `:=` retain the form inferred from their expression or the declared form.
 
-Cuando la cardinalidad inferida de un campo inmutable sea distinta de `[1]`, el compilador emite una sugerencia no bloqueante con una corrección que materializa la cardinalidad exacta en el texto fuente.
+When the inferred cardinality of an immutable field differs from `[1]`, the compiler emits a non-blocking suggestion with a correction that materialises the exact cardinality in the source text.
 
-El AST superficial conserva que la cardinalidad fue omitida; tipado y elaboración determinan la cardinalidad efectiva y deben conservar suficiente procedencia para distinguir `InferredFromInitializer`, `OrdinaryScalarDefault` y `Explicit`. La codificación mecánica posterior todavía no está fijada.
+The surface AST retains that cardinality was omitted; typing and elaboration determine effective cardinality and must retain sufficient provenance to distinguish `InferredFromInitializer`, `OrdinaryScalarDefault` and `Explicit`. The subsequent mechanical encoding is not yet fixed.
 
-### Selección
+### Selection
 
-La expresión:
+The expression:
 
 ```mud
 binding in source : predicate
 ```
 
-es exclusivamente un filtro. El cuerpo posterior a `:` debe ser booleano. La expresión devuelve directamente los miembros originales aceptados, sin proyección, envoltura adicional ni aplanamiento.
+is exclusively a filter. The body after `:` must be Boolean. The expression directly returns the accepted original members, without projection, additional wrapping or flattening.
 
-Conserva multiplicidad, `unique`, orden, criterio de orden y la inferencia conservadora de cardinalidad de la fuente. Sobre un diccionario exacto, una vinculación por pareja produce otro diccionario con las asociaciones aceptadas.
+It preserves multiplicity, `unique`, ordering, ordering criterion and the source's conservative cardinality inference. On an exact dictionary, pair binding produces another dictionary with the accepted associations.
 
-### Activación inicial estructurada
+### Structured initial activation
 
-D-096 sustituye la separación por categorías por una superficie única. Cada módulo puede aportar como máximo un `start with`, en forma directa o como bloque:
+D-096 replaces category separation with a single surface. Each module may provide at most one `start with`, either directly or as a block:
 
 ```mud
 start with {
@@ -241,32 +241,32 @@ start with {
 }
 ```
 
-Cada expresión aporta cero, una o varias declaraciones activables `thing | rule`: una referencia individual aporta una, `empty` aporta cero, una colección aporta directamente sus miembros y `all D` materializa explícitamente un dominio enumerable. Una colección de colecciones es inválida.
+Each expression contributes zero, one or more activatable `thing | rule` declarations: an individual reference contributes one, `empty` contributes zero, a collection contributes its members directly and `all D` explicitly materialises an enumerable domain. A collection of collections is invalid.
 
-Las identidades repetidas se deduplican y el orden no es observable. Las expresiones se evalúan solo con información disponible antes del mundo runtime y cada módulo solo puede activar declaraciones con ciclo de vida del mismo módulo. Las contribuciones de todos los módulos se materializan conjuntamente antes de la estabilización inicial.
+Repeated identities are deduplicated and ordering is not observable. Expressions are evaluated only with information available before runtime, and each module may activate only declarations with the same module lifecycle. Contributions from all modules are materialised jointly before initial stabilisation.
 
-El AST conserva una única secuencia `StartSet(contributions)`; la elaboración comprueba categoría activable, profundidad y evaluabilidad estática.
+The AST retains a single `StartSet(contributions)` sequence; elaboration checks activatable category, depth and static evaluability.
 
-### `Thing` y `Any`
+### `Thing` and `Any`
 
-`Thing` continúa siendo la raíz incorporada de todas las `thing`. Está siempre efectiva, no aparece en `start with`, no puede declararse, crearse ni destruirse y queda excluida del catálogo producido por `all` en una sección `things`.
+`Thing` remains the built-in root of all `thing`s. It is always effective, does not appear in `start with`, cannot be declared, created or destroyed, and is excluded from the catalogue produced by `all` in a `things` section.
 
-`Any` es el tipo superior de todos los valores MUD. Su dominio abierto incluye tipos básicos —incluido `Money`—, identidades `thing`, aliases, miembros de family, magnitudes, intervalos, colecciones, diccionarios, productos estructurales y descriptores first-class de declaraciones y tipos conforme a D-096. Los nodos sintácticos de implementación no son valores MUD por ese mero hecho.
+`Any` is the top type of all MUD values. Its open domain includes basic types—including `Money`—, `thing` identities, aliases, family members, magnitudes, intervals, collections, dictionaries, structural products and first-class descriptors of declarations and types in accordance with D-096. Implementation syntax nodes are not MUD values merely by virtue of existing.
 
 `Any`:
 
-- no es enumerable y rechaza `all Any`;
-- no posee un orden total universal;
-- compara igualdad solo entre tipos efectivos compatibles y delega en su igualdad;
-- exige estrechamiento antes de una operación específica;
-- conserva el estrechamiento dentro de la rama funcional donde se demostró;
-- no posee predeterminado universal.
+- is not enumerable and rejects `all Any`;
+- has no universal total ordering;
+- compares equality only between compatible effective types and delegates to their equality;
+- requires narrowing before a specific operation;
+- retains narrowing within the functional branch where it was proven;
+- has no universal default.
 
-`Any` es una excepción explícita a D-017. Todo campo almacenado de tipo `Any` requiere inicializador explícito.
+`Any` is an explicit exception to D-017. Every stored field of type `Any` requires an explicit initialiser.
 
-### Metadatos postfix
+### Postfix metadata
 
-El acceso a metadatos usa el operador postfix `~` sin punto:
+Metadata access uses the dotless postfix `~` operator:
 
 ```mud
 value~name
@@ -275,42 +275,42 @@ value~anchor
 value~file
 ```
 
-`value.~name` es inválido. El operador distingue metadatos nominales o de procedencia de campos ordinarios del mundo y tiene la misma precedencia postfix que `.`, `[]` y llamadas.
+`value.~name` is invalid. The operator distinguishes nominal or provenance metadata from ordinary world fields and has the same postfix precedence as `.`, `[]` and calls.
 
-Los tipos incorporados iniciales son:
+The initial built-in types are:
 
-- `Name` para `~name`;
-- `MudPath` para `~path`;
-- `Anchor` para `~anchor`;
-- `MudFile` para `~file`.
+- `Name` for `~name`;
+- `MudPath` for `~path`;
+- `Anchor` for `~anchor`;
+- `MudFile` for `~file`.
 
-Son tipos nominales, no aliases implícitos de `Text`. Pueden declarar conversiones explícitas a `Text`. Las plantillas pueden renderizarlos contextualmente sin introducir compatibilidad nominal general.
+They are nominal types, not implicit aliases of `Text`. They may declare explicit conversions to `Text`. Templates may render them contextually without introducing general nominal compatibility.
 
 #### `~name`
 
-Se elimina la propiedad intrínseca `.name` y la forma especial `name = ...`. El metadato de presentación se declara o sobrescribe como:
+The intrinsic `.name` property and special `name = ...` form are removed. Presentation metadata is declared or overridden as:
 
 ```mud
 ~name = "El Castillo Negro"
 ```
 
-Si se omite, su valor inicial deriva del nombre nominal no cualificado. `~name` no modifica identificador fuente, igualdad, orden nominal, `~anchor`, `~path` ni `~file`.
+If omitted, its initial value is derived from the unqualified nominal name. `~name` does not modify the source identifier, equality, nominal ordering, `~anchor`, `~path` or `~file`.
 
-D-087 sustituye la mutabilidad runtime que esta decisión había introducido para `~name`. `~name` es un metadato configurable del modelo, pero todo acceso postfix `~` es de solo lectura durante la ejecución. Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime; los cambios configurables se realizan mediante edición del modelo y nueva elaboración. En aliases y miembros de `family`, los metadatos continúan separados del payload inmutable y no alteran igualdad estructural ni datos asociados.
+D-087 replaces the runtime mutability that this decision had introduced for `~name`. `~name` is configurable model metadata, but every postfix `~` access is read-only during execution. No `~` property may appear as the target of a runtime assignment or update; configurable changes are made through model editing and new elaboration. In aliases and `family` members, metadata remains separate from the immutable payload and does not alter structural equality or associated data.
 
-La interpolación ordinaria de esos valores usa su `~name` efectivo.
+Ordinary interpolation of these values uses their effective `~name`.
 
-#### Identidad y procedencia
+#### Identity and provenance
 
-Todo acceso `~` es runtime-readonly. `~anchor`, `~path` y `~file` son además propiedades intrínsecas, no configurables ni declarables: `~anchor` produce el ancla pública canónica; `~path`, el path MUD; `~file`, la procedencia física.
+Every `~` access is runtime-read-only. `~anchor`, `~path` and `~file` are also intrinsic, non-configurable and non-declarable properties: `~anchor` produces the canonical public anchor; `~path` the MUD path; `~file` the physical provenance.
 
-`~file` puede participar en cualquier expresión válida, pero el compilador emite un aviso cuando escapa de presentación o logging, o cuando su dependencia puede alterar comportamiento del mundo. El uso continúa siendo válido.
+`~file` may participate in any valid expression, but the compiler emits a warning when it escapes presentation or logging, or when its dependency may alter world behaviour. Use remains valid.
 
-Sobre valores `MudPath`, `q has p` es reflexivo y compara segmentos completos: es cierto si `p == q` o si `p` es descendiente de `q`. La negación usa `q has not p`.
+For `MudPath` values, `q has p` is reflective and compares complete segments: it is true if `p == q` or if `p` descends from `q`. Negation uses `q has not p`.
 
-#### Magnitudes y unidades
+#### Magnitudes and units
 
-Las propiedades especiales de magnitudes y unidades usan la misma familia de metadatos:
+Special magnitude and unit properties use the same metadata family:
 
 ```mud
 ~name = "metro"
@@ -320,113 +320,113 @@ Las propiedades especiales de magnitudes y unidades usan la misma familia de met
 ~format = "{hour:2}:{minute:2}:{second:2}"
 ```
 
-Cada metadato conserva su tipo, su modo almacenado o calculado y sus restricciones propias. El prefijo `~` no implica asignabilidad runtime.
+Each metadata item retains its type, stored or calculated mode and own constraints. The `~` prefix does not imply runtime assignability.
 
-### Plantillas y anclas
+### Templates and anchors
 
-Se elimina `anchor{expression}`. El ancla se interpola mediante una expresión ordinaria:
+`anchor{expression}` is removed. An anchor is interpolated through an ordinary expression:
 
 ```mud
 "{expression~anchor}"
 ```
 
-`~anchor` es además un valor tipado utilizable fuera de plantillas. El AST de plantilla conserva solo fragmentos e interpolaciones de valor; desaparece `AnchorInterpolation` y el token especial correspondiente.
+`~anchor` is also a typed value usable outside templates. The template AST retains only fragments and value interpolations; `AnchorInterpolation` and its corresponding special token disappear.
 
-## Modelo sintáctico y semántico
+## Syntactic and semantic model
 
-La gramática y los modelos deben distinguir como mínimo:
+The grammar and models must distinguish at least:
 
 - `ActionDecl(PublicAction | Subaction, ...)`;
 - `ExactDictionaryType` y `DecisionDictionaryType`;
-- asociaciones exactas y ramas funcionales;
-- productos posicionales y nombrados;
-- `MetadataAccessExpr` y ausencia de objetivos asignables de metadato;
-- `HasMember` y `HasNotMember`;
-- un único `StartSet(contributions)` para activación unificada;
-- cardinalidad omitida frente a explícita;
-- ausencia del antiguo nombre intrínseco y de la interpolación especial de ancla.
+- exact associations and functional branches;
+- positional and named products;
+- `MetadataAccessExpr` and the absence of assignable metadata targets;
+- `HasMember` and `HasNotMember`;
+- a single `StartSet(contributions)` for unified activation;
+- omitted versus explicit cardinality;
+- absence of the former intrinsic name and special anchor interpolation.
 
-`DecisionDictionaryType` conserva su nombre mecánico histórico conforme a D-086; designa el tipo superficial de los diccionarios funcionales y no establece la terminología pública.
+`DecisionDictionaryType` retains its historical mechanical name in accordance with D-086; it denotes the surface type of functional dictionaries and does not establish public terminology.
 
-La elaboración debe determinar para cada diccionario funcional, y cualquier representación posterior debe conservar o permitir reconstruir:
+Elaboration must determine for each functional dictionary, and any later representation must retain or allow reconstruction of:
 
-- modo `FirstMatch` o `AllMatches`;
-- orden semántico;
+- `FirstMatch` or `AllMatches` mode;
+- semantic ordering;
 - fallback;
-- unicidad de resultados;
-- cardinalidad derivada de aplicación;
-- dependencias externas de selectores y resultados;
-- clave local estable de cada rama, sin ancla pública;
-- evidencia de terminación de cada componente recursivo.
+- result uniqueness;
+- cardinality derived from application;
+- external dependencies of selectors and results;
+- stable local key for each branch, without a public anchor;
+- termination evidence for each recursive component.
 
-Los diagnósticos mínimos nuevos son:
+The minimum new diagnostics are:
 
-1. solicitud externa de una `subaction`;
-2. uso de `subaction` como raíz exterior o fuera de un contexto semántico `then`;
-3. `mut` exterior o interior en `-->`;
-4. `_` no final o ramas inalcanzables en `FirstMatch`;
-5. `unique` redundante en `FirstMatch`;
-6. intento de iterar un diccionario funcional;
-7. ciclo de diccionarios funcionales sin prueba de descenso;
-8. cardinalidad inmutable inferida distinta de `[1]`;
-9. `all Any` o enumeración de `Any`;
-10. campo `Any` sin inicializador;
-11. intento de asignación o actualización runtime sobre cualquier acceso `~`;
-12. uso semánticamente frágil de `~file`;
-13. forma retirada `.name`, `name =` o `anchor{...}`;
-14. uso de las secciones retiradas `things`/`rules` dentro de `start with`.
+1. external request for a `subaction`;
+2. use of `subaction` as an external root or outside a semantic `then` context;
+3. external or inner `mut` in `-->`;
+4. non-final `_` or unreachable branches in `FirstMatch`;
+5. redundant `unique` in `FirstMatch`;
+6. attempt to iterate a functional dictionary;
+7. functional-dictionary cycle without a descent proof;
+8. inferred immutable cardinality different from `[1]`;
+9. `all Any` or enumeration of `Any`;
+10. `Any` field without an initialiser;
+11. attempt to assign to or update any `~` access at runtime;
+12. semantically fragile use of `~file`;
+13. removed `.name`, `name =` or `anchor{...}` form;
+14. use of the removed `things`/`rules` sections within `start with`.
 
-## Consecuencias
+## Consequences
 
-- MUD obtiene políticas puras por casos sin introducir funciones generales.
-- La ausencia se conserva hasta que un contrato exterior exige presencia.
-- La API externa distingue acciones públicas de auxiliares atómicas.
-- La activación inicial reúne declaraciones activables `thing | rule` por módulo en un conjunto unificado, deduplicado y sin orden semántico.
-- Identidad, presentación y procedencia quedan separadas y tipadas.
-- Las flechas y productos permiten claves y políticas estructurales sin debilitar la nominalidad de aliases.
-- `Any` sirve como frontera universal de valores sin inventar enumeración, orden ni predeterminado universales.
+- MUD gains pure case-based policies without introducing general functions.
+- Absence is retained until an external contract requires presence.
+- The external API distinguishes public actions from atomic auxiliaries.
+- Initial activation gathers activatable `thing | rule` declarations per module into one deduplicated set without semantic ordering.
+- Identity, presentation and provenance are separated and typed.
+- Arrows and products allow structural keys and policies without weakening alias nominality.
+- `Any` serves as a universal value boundary without inventing universal enumeration, ordering or defaults.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Hacer fallar inmediatamente una consulta parcial
+### Fail a partial query immediately
 
-Se descarta porque duplica en el operador una restricción que ya expresa la cardinalidad esperada y rompe la composición con filtros, fallbacks y tipos opcionales.
+Rejected because it duplicates in the operator a constraint that already expresses expected cardinality and breaks composition with filters, fallbacks and optional types.
 
-### Introducir una categoría general de función
+### Introduce a general function category
 
-Se descarta porque las políticas requeridas son valores declarativos, inspeccionables y editables por ramas. Los diccionarios funcionales conservan esa estructura explícita.
+Rejected because the required policies are declarative values that can be inspected and edited by branch. Functional dictionaries retain that explicit structure.
 
-### Conservar `.name` y `anchor{...}` como excepciones
+### Retain `.name` and `anchor{...}` as exceptions
 
-Se descarta porque obliga a mantener dos mecanismos paralelos para información que pertenece a una misma dimensión de metadatos.
+Rejected because it would require two parallel mechanisms for information belonging to the same metadata dimension.
 
-### Hacer `Any` enumerable o darle un predeterminado arbitrario
+### Make `Any` enumerable or give it an arbitrary default
 
-Se descarta porque el dominio depende del proyecto, mezcla categorías sin un orden universal y no contiene un valor distinguido estable.
+Rejected because the domain depends on the project, mixes categories without universal ordering and contains no stable distinguished value.
 
-## Verificación
+## Verification
 
-La suite debe cubrir al menos:
+The suite must cover at least:
 
-1. Capacidad exterior exclusiva de `action`, invocación de `action`/`subaction` desde contextos `then`, ancla compartida y rollback completo.
-2. Tokenización maximal-munch de `-->`, `--` y `->`, y parseo de `has` y `has not`.
-3. Consulta ausente exacta, asociación operativa y `unique` de valores como no-op.
-4. Modos funcionales, solapamiento, fallback, cardinalidad derivada, deduplicación y prohibición de mutación o iteración.
-5. Terminación aceptada y rechazada de ciclos de diccionarios funcionales y lectura de una sola instantánea.
-6. Cadenas de flechas puras y mixtas con modificadores ligados a su flecha.
-7. Productos posicionales y nombrados, igualdad estructural y uso como clave o entrada.
-8. Inferencia `[0]`, `[1]` y `[n]` de campos almacenados inmutables, sugerencia de explicitación y excepción mutable.
-9. Selección sin envoltura, proyección ni flatten, incluida la pareja de diccionario.
-10. `start with` unificado por módulo, forma directa y de bloque, `empty`, colecciones de un nivel, deduplicación, `all D` cuando se materializa un dominio y rechazo de colecciones anidadas.
-11. Efectividad permanente y exclusión catalográfica de `Thing`.
-12. `Any`, estrechamiento, igualdad compatible, rechazo de enumeración y exigencia de inicializador.
-13. Lectura y tipos de metadatos; solo lectura runtime de todo acceso `~`, separación de identidad y aviso de `~file`.
-14. Pertenencia reflexiva y segmentada de `MudPath`.
-15. Metadatos de unidades y magnitudes.
-16. Retirada de `.name`, `name =` y `anchor{...}` y sustitución por `~name` y `~anchor`.
+1. Exclusive external capability of `action`, invocation of `action`/`subaction` from `then` contexts, shared anchor and complete rollback.
+2. Maximal-munch tokenisation of `-->`, `--` and `->`, and parsing of `has` and `has not`.
+3. Missing exact query, operational association and `unique` values as a no-op.
+4. Functional modes, overlap, fallback, derived cardinality, deduplication and prohibition of mutation or iteration.
+5. Accepted and rejected termination of functional-dictionary cycles and reading one snapshot.
+6. Pure and mixed arrow chains with modifiers bound to their arrow.
+7. Positional and named products, structural equality and use as key or input.
+8. `[0]`, `[1]` and `[n]` inference for immutable stored fields, explicitness suggestion and mutable exception.
+9. Selection without wrapping, projection or flattening, including dictionary pairs.
+10. Module-unified `start with`, direct and block forms, `empty`, one-level collections, deduplication, `all D` when materialising a domain and rejection of nested collections.
+11. Permanent effectiveness and catalogue exclusion of `Thing`.
+12. `Any`, narrowing, compatible equality, enumeration rejection and initialiser requirement.
+13. Metadata reading and types; runtime read-only access for all `~`, separation of identity and `~file` warning.
+14. Reflective, segment-wise membership of `MudPath`.
+15. Unit and magnitude metadata.
+16. Removal of `.name`, `name =` and `anchor{...}`, replaced by `~name` and `~anchor`.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-Se sustituye la sección de activación estructurada que exigía bloques separados `things` y `rules`. `start with` acepta una contribución directa o un bloque unificado de expresiones que aportan declaraciones activables `thing | rule`; las identidades se deduplican y el orden no es semántico. La activación se agrega por módulo.
+The structured activation section requiring separate `things` and `rules` blocks is replaced. `start with` accepts a direct contribution or a unified expression block providing activatable `thing | rule` declarations; identities are deduplicated and ordering is not semantic. Activation is aggregated per module.
 
-También se amplía `subaction`: puede invocarse desde cualquier contexto `then`, no solo desde otra action/subaction, sin adquirir capacidad de raíz exterior.
+`subaction` is also broadened: it may be invoked from any `then` context, not only from another action/subaction, without acquiring external root capability.
