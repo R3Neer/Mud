@@ -1,131 +1,131 @@
 ---
 id: D-070
-title: "CST sin pérdidas y AST superficial normalizado"
+title: "Lossless CST and normalised surface AST"
 status: vigente
 date: 2026-08-02
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "texto fuente, léxico, gramática concreta, CST, AST superficial y validación editorial"
+  - "source text, lexicon, concrete grammar, CST, surface AST and editorial validation"
 ---
 
-# ADR-070 — CST sin pérdidas y AST superficial normalizado
+# ADR-070 — Lossless CST and normalised surface AST
 
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
-- Ampliada por: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
-- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
-- Modificada por: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
+- Amended by: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
+- Extended by: [[ADR-087-metadatos-reflectivos-descriptores-estables-y-visibilidad-exterior|D-087]]
+- Adjusted to the phase boundary of [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Amended by: [[ADR-096-modulos-callables-look-message-y-activacion|D-096]].
 
-## Estado
+## Status
 
-Vigente.
+Current.
 
-Esta decisión se ha actualizado al vocabulario y a la gramática vigentes: usa los tipos numéricos breves de [[ADR-067-nombres-breves-de-tipos-numericos|D-067]], integra el `name` intrínseco de [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]] y representa los literales de comillas dobles conforme a [[ADR-069-literales-char-con-comillas-dobles|D-069]]. En particular, el AST superficial no inventa un nodo léxico distinto para `Char`; esa elaboración requiere contexto de tipos.
+This decision has been updated to the current vocabulary and grammar: it uses the short numeric types from [[ADR-067-nombres-breves-de-tipos-numericos|D-067]], incorporates the intrinsic `name` from [[ADR-068-thing-universal-y-nombre-intrinseco|D-068]] and represents double-quoted literals in accordance with [[ADR-069-literales-char-con-comillas-dobles|D-069]]. In particular, the surface AST does not invent a distinct lexical node for `Char`; that elaboration requires type context.
 
-## Contexto
+## Context
 
-La gramática concreta de MUD define qué programas pueden reconocerse, pero no basta para:
+MUD's concrete grammar defines which programmes can be recognised, but is not enough to:
 
-- Reconstruir exactamente un archivo.
-- Conservar comentarios y formato.
-- Implementar un formateador o refactorizador.
-- Distinguir puntuación de estructura semántica.
-- Fijar qué azúcares sobreviven al parsing.
-- Evitar que resolución y tipado se mezclen con el parser.
+- Reconstruct a file exactly.
+- Preserve comments and formatting.
+- Implement a formatter or refactoring tool.
+- Distinguish punctuation from semantic structure.
+- Specify which syntactic sugar survives parsing.
+- Keep name resolution and typing out of the parser.
 
-Un único árbol no satisface simultáneamente esas necesidades. Un árbol completamente concreto es incómodo para análisis semántico; uno normalizado pierde información necesaria para edición.
+One tree cannot meet all these needs. A fully concrete tree is awkward for semantic analysis; a normalised one loses information required for editing.
 
-## Decisión
+## Decision
 
-MUD define dos representaciones sintácticas normativas y separadas:
+MUD defines two separate normative syntactic representations:
 
-1. Una **CST sin pérdidas por archivo**.
-2. Un **AST superficial normalizado**, agregable en `MudProject`.
+1. A **per-file lossless CST**.
+2. A **normalised surface AST**, aggregatable in `MudProject`.
 
-La cadena de fases es:
+The phase chain is:
 
 ```text
-texto
-→ scanner completo
-→ CST sin pérdidas
-→ validación sintáctica contextual
-→ AST superficial
-→ resolución nominal: símbolos + bindings + grafo parcial
-→ tipado/elaboración
-→ representación semántica posterior a tipado y elaboración
+text
+→ complete scanner
+→ lossless CST
+→ contextual syntactic validation
+→ surface AST
+→ nominal resolution: symbols + bindings + partial graph
+→ typing/elaboration
+→ semantic representation after typing and elaboration
 ```
 
 ## CST
 
-La CST:
+The CST:
 
-- Conserva todos los tokens escritos.
-- Conserva espacios y comentarios como trivia.
-- Conserva la forma física de saltos.
-- Conserva cierres explícitos e implícitos de `Text`.
-- Puede representar entradas inválidas mediante tokens ausentes y regiones de error.
-- Permite reconstruir los bytes originales salvo el BOM, conservado como metadato.
-- No resuelve nombres ni tipos.
+- Preserves every written token.
+- Preserves whitespace and comments as trivia.
+- Preserves the physical form of line breaks.
+- Preserves explicit and implicit closing of `Text`.
+- Can represent invalid input through missing tokens and error regions.
+- Reconstructs the original bytes except for the BOM, which is retained as metadata.
+- Does not resolve names or types.
 
-Toda trivia pertenece al token significativo siguiente. `EOF` posee la trivia final.
+All trivia belongs to the following significant token. `EOF` owns the final trivia.
 
-## AST superficial
+## Surface AST
 
-El AST superficial:
+The surface AST:
 
-- Elimina trivia, delimitadores y terminadores.
-- Normaliza cardinalidades, intervalos, bloques y azúcares declarados.
-- Conserva el orden fuente de listas internas.
-- Conserva nombres no resueltos.
-- Conserva operadores distintos cuando su escritura tiene significado.
-- Usa `flag = Disabled | Enabled` para propiedades booleanas.
-- Lleva procedencia en todos sus nodos salvo `MudProject`.
-- No contiene comentarios ordinarios.
+- Removes trivia, delimiters and terminators.
+- Normalises cardinalities, intervals, blocks and declared sugar.
+- Preserves source order for internal lists.
+- Preserves unresolved names.
+- Preserves distinct operators when their spelling carries meaning.
+- Uses `flag = Disabled | Enabled` for boolean properties.
+- Carries provenance on every node except `MudProject`.
+- Contains no ordinary comments.
 
-## Proyecto y archivo
+## Project and file
 
-La CST solo tiene raíz por archivo. El proyecto es una agregación semántica de archivos, no un texto concreto.
+The CST has a root only per file. The project is a semantic aggregation of files, not concrete text.
 
-`MudProject` ordena archivos canónicamente por ruta normalizada únicamente para serialización estructural. El orden no adquiere significado semántico.
+`MudProject` orders files canonically by normalised path solely for structural serialisation. The order has no semantic meaning.
 
-## Comentarios
+## Comments
 
-Los comentarios actuales son trivia ordinaria. Se eliminan del flujo significativo que consume la gramática, pero no de la CST.
+Current comments are ordinary trivia. They are removed from the significant stream consumed by the grammar, but not from the CST.
 
-Una documentación estructurada futura usará un árbol documental separado y referencias resolubles a anclas; no convertirá comentarios ordinarios en declaraciones del AST ejecutable.
+A future structured documentation system will use a separate document tree and resolvable references to anchors; it will not turn ordinary comments into executable AST declarations.
 
-## Validación entre CST y AST
+## CST-to-AST validation
 
-Las formas que la EBNF puede reconocer pero que no caben unívocamente en el AST normalizado se validan antes de construirlo. Ejemplos:
+Forms that the EBNF can recognise but that cannot be represented unambiguously in the normalised AST are validated before it is built. Examples include:
 
-- Modificadores duplicados.
-- Declaraciones de metadatos duplicadas en un mismo propietario, incluidas las unidades.
-- Propiedades obligatorias ausentes.
-- Orden inválido de argumentos.
+- Duplicate modifiers.
+- Duplicate metadata declarations for one owner, including units.
+- Missing mandatory properties.
+- Invalid argument order.
 
-La resolución de nombres y el tipado siguen fuera de esta fase.
+Name resolution and typing remain outside this phase.
 
-## Ambigüedades diferidas
+## Deferred ambiguities
 
-El AST superficial conserva sin decidir:
+The surface AST retains these undecided:
 
-- Camino cualificado frente a cadena de accesos semánticos.
-- Literal estructural frente a tupla de receptores.
-- Llamada postfix frente a llamada de acción.
-- Tipo contextual de literales.
+- Qualified path versus a chain of semantic accesses.
+- Structural literal versus receiver tuple.
+- Postfix call versus action call.
+- Contextual type of literals.
 
-Estas decisiones pertenecen a la resolución nominal cuando dependen solo de identidad y bindings, o a las fases posteriores de tipado y elaboración cuando requieren tipos u otras conclusiones elaboradas.
+These decisions belong to nominal resolution when they depend only on identity and bindings, or to later typing and elaboration phases when they require types or other elaborated conclusions.
 
-## Procedencia
+## Provenance
 
-`SourceSpan` usa offsets de bytes UTF-8, posiciones basadas en cero y final exclusivo. La columna cuenta valores escalares Unicode. LSP convierte a UTF-16 en la frontera.
+`SourceSpan` uses UTF-8 byte offsets, zero-based positions and an exclusive end. The column counts Unicode scalar values. LSP converts to UTF-16 at the boundary.
 
-Un nodo sintetizado conserva un span de anclaje y una razón de síntesis.
+A synthesised node retains an anchoring span and a synthesis reason.
 
-## Artefactos normativos
+## Normative artefacts
 
-La decisión se materializa en:
+The decision is embodied in:
 
 - `especificacion/sintaxis/cst-sin-perdidas.md`.
 - `especificacion/sintaxis/mud-syntax-kinds.yaml`.
@@ -134,44 +134,44 @@ La decisión se materializa en:
 - `especificacion/sintaxis/cst-a-ast-superficial.md`.
 - `especificacion/sintaxis/cobertura-sintactica.yaml`.
 
-## Consecuencias positivas
+## Positive consequences
 
-- El parser y el IDE comparten una representación sin pérdida.
-- El análisis semántico no depende de puntuación.
-- Las normalizaciones son auditables.
-- La cobertura de gramática puede validarse automáticamente.
-- Las refactorizaciones futuras pueden conservar comentarios y formato.
-- La resolución no se introduce prematuramente en el parser.
+- Parser and IDE share a lossless representation.
+- Semantic analysis does not depend on punctuation.
+- Normalisations are auditable.
+- Grammar coverage can be validated automatically.
+- Future refactorings can preserve comments and formatting.
+- Resolution is not introduced prematurely into the parser.
 
-## Costes
+## Costs
 
-- Existen dos árboles y una transformación normativa.
-- La recuperación de errores debe conservar texto.
-- Los cambios gramaticales requieren actualizar varios artefactos.
-- Una implementación mínima necesita más infraestructura inicial.
+- There are two trees and one normative transformation.
+- Error recovery must preserve text.
+- Grammar changes require updating several artefacts.
+- Even a minimal implementation needs more initial infrastructure.
 
-## Alternativas rechazadas
+## Rejected alternatives
 
-### Solo AST
+### AST only
 
-Rechazada porque perdería comentarios, espaciado, puntuación y formas concretas necesarias para tooling.
+Rejected because it would lose comments, spacing, punctuation and concrete forms needed by tooling.
 
-### Solo CST
+### CST only
 
-Rechazada porque obligaría a resolución, tipos y semántica a interpretar continuamente puntuación y azúcares.
+Rejected because resolution, types and semantics would have to interpret punctuation and sugar continuously.
 
-### Comentarios dentro del AST ejecutable
+### Comments inside the executable AST
 
-Rechazada porque no alteran el significado de un programa y crearían dependencias falsas. La documentación estructurada futura tendrá modelo separado.
+Rejected because comments do not alter programme meaning and would create false dependencies. Future structured documentation will have a separate model.
 
-### Resolver llamadas callable en el parser
+### Resolving callable calls in the parser
 
-Rechazada porque `action-call-effect ::= postfix-expression` exige resolver nombres y firmas para saber si el efecto es realmente una llamada callable. D-096 elimina la antigua clasificación elemental/compuesta: lo que se difiere es la resolución de la llamada, no una clase de action.
+Rejected because `action-call-effect ::= postfix-expression` requires resolving names and signatures to determine whether the effect is really a callable call. D-096 removes the former elementary/compound classification: what is deferred is call resolution, not an action class.
 
-## Cambios derivados
+## Derived changes
 
-- `06-lexico.md` debe distinguir flujo completo y significativo.
-- `07-gramatica-concreta.md` debe declarar que el parsing produce CST.
-- `08-sintaxis-abstracta.md` sustituye el esqueleto previsto.
-- Los README deben incorporar la nueva cadena de fases.
-- La representación numérica de magnitudes usa sintaxis de tipo declarada y se valida estáticamente como numérica.
+- `06-lexico.md` must distinguish complete and significant streams.
+- `07-gramatica-concreta.md` must state that parsing produces a CST.
+- `08-sintaxis-abstracta.md` replaces the planned skeleton.
+- READMEs must incorporate the new phase chain.
+- The numeric representation of magnitudes uses declared type syntax and is statically validated as numeric.
