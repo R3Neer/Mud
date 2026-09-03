@@ -1,42 +1,42 @@
 ---
 id: D-093
-title: "AST superficial, HIR nominal y fase semántica posterior"
+title: "Surface AST, nominal HIR and later semantic phase"
 status: current
 date: 2026-08-16
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "pipeline, AST superficial, HIR nominal, resolución de nombres, tabla de símbolos, grafo nominal, tipado, elaboración, futura representación semántica y validadores"
+  - "pipeline, Surface AST, nominal HIR, name resolution, symbol table, nominal graph, typing, elaboration, future semantic representation and validators"
 ---
 
-# ADR-093 — AST superficial, HIR nominal y fase semántica posterior
+# ADR-093 — Surface AST, nominal HIR and later semantic phase
 
-- Modifica: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
-- Modificada por: [[ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]].
-- Precisa: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]] y [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
+- Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
+- Modified by: [[ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]].
+- Clarifies: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]] and [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
 
-## Contexto
+## Context
 
-Una representación que mezcle resolución nominal con tipos efectivos, dominios elaborados, cardinalidades inferidas y pruebas de terminación borra fronteras de fase útiles. La arquitectura debe distinguir la forma fuente, el resultado de resolución nominal y el significado que solo puede conocerse después de tipado y elaboración, sin obligar a fijar prematuramente la representación de esta última fase.
+A representation mixing nominal resolution with effective types, elaborated domains, inferred cardinalities and termination proofs erases useful phase boundaries. The architecture must distinguish source form, nominal-resolution results and meaning that can only be known after typing and elaboration, without prematurely fixing the representation of the latter phase.
 
-## Decisión
+## Decision
 
-MUD posee un único AST de fuente: el **AST superficial** producido a partir de la CST sin pérdidas. Conserva la forma abstracta escrita y su procedencia sin anticipar resolución, tipado ni elaboración.
+MUD has a single source AST: the **Surface AST** produced from the lossless CST. It retains the written abstract form and provenance without anticipating resolution, typing or elaboration.
 
-La resolución de nombres consume ese AST y produce un **HIR nominal** normativo. El HIR no duplica toda la sintaxis de fuente: registra exclusivamente información cuya existencia depende de resolución nominal:
+Name resolution consumes that AST and produces a normative **nominal HIR**. The HIR does not duplicate all source syntax; it records only information whose existence depends on nominal resolution:
 
-- símbolos anclados y `LocalSymbol`;
-- propietarios y ámbitos léxicos;
-- bindings de cada referencia superficial a un símbolo;
-- anclas públicas;
-- aristas nominales de propiedad, especialización y referencia.
+- anchored symbols and `LocalSymbol`;
+- owners and lexical scopes;
+- bindings from each surface reference to a symbol;
+- public anchors;
+- nominal ownership, specialisation and reference edges.
 
-El HIR nominal no puede contener tipos efectivos, narrowing, dominios efectivos, formas de colección, cardinalidades efectivas o inferidas, conversiones elaboradas, pruebas de terminación ni ninguna otra conclusión que requiera tipado o elaboración. Su esquema normativo vive en `specification/names/mud-nominal-hir.asdl`.
+The nominal HIR cannot contain effective types, narrowing, effective domains, collection forms, effective or inferred cardinalities, elaborated conversions, termination proofs or any other conclusion requiring typing or elaboration. Its normative schema lives in `specification/names/mud-nominal-hir.asdl`.
 
-El tipado y la elaboración consumen el AST superficial junto con el HIR nominal. Su resultado semántico pertenece a una fase arquitectónica posterior, pero el repositorio no fija todavía un esquema mecánico normativo para representarlo. Ese contrato se diseñará cuando las superficies de tipos y elaboración estén suficientemente desarrolladas.
+Typing and elaboration consume the Surface AST together with the nominal HIR. Their semantic result belongs to a later architectural phase, but the repository does not yet fix a normative mechanical schema for representing it. That contract will be designed when the typing and elaboration surfaces are sufficiently developed.
 
-Ningún artefacto derivado es una fuente semántica independiente: se reconstruye desde los archivos `.mud`, las decisiones de versión y las fases anteriores aplicables.
+No derived artefact is an independent semantic source: it is reconstructed from `.mud` files, version decisions and applicable earlier phases.
 
 ## Pipeline
 
@@ -52,21 +52,21 @@ texto fuente
 → análisis posteriores / ejecución
 ```
 
-El HIR nominal es deliberadamente menor que un AST resuelto completo y no anticipa conclusiones de tipos.
+The nominal HIR is deliberately smaller than a complete resolved AST and does not anticipate type conclusions.
 
-## Consecuencias
+## Consequences
 
-- `mud-surface-ast.asdl` continúa siendo el único esquema AST de fuente.
-- `specification/names/mud-nominal-hir.asdl` es el contrato de salida de resolución nominal.
-- No existe actualmente un ASDL normativo posterior a tipado/elaboración.
-- D-078 describe la construcción del HIR nominal y no promete tipos o dominios elaborados.
-- Los validadores deben comprobar la autoconsistencia del HIR nominal y prohibir en él conceptos reservados a elaboración.
+- `mud-surface-ast.asdl` remains the only source AST schema.
+- `specification/names/mud-nominal-hir.asdl` is the output contract of nominal resolution.
+- No normative ASDL currently exists after typing/elaboration.
+- D-078 describes construction of the nominal HIR and does not promise elaborated types or domains.
+- Validators must check nominal-HIR self-consistency and prohibit concepts reserved for elaboration.
 
-## Verificación
+## Verification
 
-1. El directorio de sintaxis contiene un único esquema AST de fuente: `mud-surface-ast.asdl`.
-2. El pipeline contiene explícitamente `Surface AST → HIR nominal → tipado/elaboración → representación semántica futura`.
-3. El HIR nominal representa símbolos, scopes, bindings, anclas y `Owns | Specializes | RefersTo`.
-4. El HIR nominal no contiene tipos efectivos, dominios efectivos, cardinalidades ni evidencia de terminación.
-5. No se exige un esquema semántico posterior antes de formalizar las fases que lo producen.
-6. El validador rechaza tipos ASDL desconocidos y conceptos elaborados dentro del HIR nominal.
+1. The syntax directory contains a single source AST schema: `mud-surface-ast.asdl`.
+2. The pipeline explicitly contains `Surface AST → nominal HIR → typing/elaboration → future semantic representation`.
+3. The nominal HIR represents symbols, scopes, bindings, anchors and `Owns | Specializes | RefersTo`.
+4. The nominal HIR contains no effective types, effective domains, cardinalities or termination evidence.
+5. No later semantic schema is required before the phases producing it are formalised.
+6. The validator rejects unknown ASDL types and elaborated concepts inside the nominal HIR.
