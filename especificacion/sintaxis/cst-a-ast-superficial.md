@@ -36,28 +36,28 @@ decisions:
 
 ## State and purpose
 
-This document defines the regulatory projection based on a validated CST to the Surface AST normalised. It does not define name resolution, inference, static assessment or semantics dynamics.
+This document defines the normative projection from a validated CST to the normalised Surface AST. It does not define name resolution, inference, static analysis or dynamic semantics.
 
-The exhaustive matrix production by production is in `cobertura-sintactica.yaml`. This document sets out the general rules and standards required explanation.
+The exhaustive production-by-production matrix is in `cobertura-sintactica.yaml`. This document sets out the required general rules and conventions.
 
 ## Precondition
 
 The transformation takes the following form:
 
-- One `MudFileSyntax` complete.
+- A complete `MudFileSyntax`.
 - Tokens and nodes with consistent spans.
 - Absence of blocking syntactic errors in the transformed sub-tree.
-- Contextual validation duplicates and prohibited combinations.
+- Contextual validation of duplicates and prohibited combinations.
 - Physical metadata of the file.
 
-The existence of tokens `MissingForRecovery`, `ErrorSyntax` o `SkippedTokensSyntax` inside a declaration prevents the corresponding policy node from being generated, unless an implementation also provides a non-policy-based, fault-tolerant AST.
+The presence of `MissingForRecovery`, `ErrorSyntax` or `SkippedTokensSyntax` inside a declaration prevents the corresponding normative node from being generated, unless an implementation also provides a non-normative fault-tolerant AST.
 
-## Resultado
+## Result
 
 The transformation produces a `MudFile` featuring:
 
 ```text
-metadata físico
+physical metadata
 metadataDefaults[]
 usings[]
 declarations[]
@@ -66,7 +66,7 @@ origin
 
 The metadata for fields, components, participants, units and other stable entities is stored directly in the constructor of the owner. There is no side table for `MetadataAttachment` by span.
 
-The build aggregator then builds `MudProject` and organises its files by path normalised for canonical serialisation.
+The build aggregator then constructs `MudProject` and orders its files by normalised path for canonical serialisation.
 
 ## Common rules
 
@@ -74,12 +74,12 @@ The build aggregator then builds `MudProject` and organises its files by path no
 
 All trivia is ignored. Ordinary comments do not produce AST nodes.
 
-### Score
+### Punctuation
 
 The following are excluded:
 
 - Commas.
-- Two points on syntax.
+- Colons.
 - Braces, square brackets and round brackets.
 - Terminators.
 - Keywords whose presence is encoded by the constructor.
@@ -90,9 +90,9 @@ A keyword that distinguishes operators or variants is converted to the correspon
 
 The source order of all elements that are converted into AST sequences is preserved. The transformation does not reorder lists based on their meaning.
 
-### Procedencia
+### Provenance
 
-A directly represented node uses the span of the complete CST structure, excluding the trivia initial.
+A directly represented node uses the span of the complete CST structure, excluding leading trivia.
 
 A synthesised node uses:
 
@@ -102,14 +102,14 @@ Synthetic(anchorSpan, reason)
 
 The `anchorSpan` is the narrowest specific position that explains the synthesis.
 
-## Archive and `using`
+## File and `using`
 
 ```text
 mud-file → MudFile
 using-declaration → UsingDecl
 ```
 
-The concrete body `using-file-body` o `declaration-file-body` disappears. The transformation separates the file metadata defaults from the header `using` and the declarations. The subordinate metadata remains in the constructor of its owner, not in a side table.
+The concrete body `using-file-body` or `declaration-file-body` disappears. The transformation separates file metadata defaults from the `using` header and declarations. Subordinate metadata remains in its owner's constructor, not in a side table.
 
 ```mud
 using physics.*
@@ -125,7 +125,7 @@ The absence of `.*` produces `Disabled`.
 
 ## Names
 
-Every production A nominal generates its corresponding wrapper. Qualified names retain segments, not a string with dots.
+Every nominal production generates its corresponding wrapper. Qualified names retain segments rather than a dotted string.
 
 ```mud
 world.people.Person
@@ -137,7 +137,7 @@ conceptually produces:
 QualifiedName([world, people, Person])
 ```
 
-A path of expression consisting solely of segments with point produces `DottedPathExpr` until the resolution determine its category.
+An expression path made solely of dotted segments produces `DottedPathExpr` until resolution determines its category.
 
 ## `thing`
 
@@ -150,18 +150,18 @@ produces `ThingDecl`:
 - `abstract` → `Enabled`; omission → `Disabled`.
 - Name → `NominalName`.
 - Predecessors → sequence of `TypeRef`.
-- Statements `~...` stored or calculated → sequence of `metadata_assignment`, normalised to `StoredMetadataAssignment` o `CalculatedMetadataAssignment`.
+- Stored or calculated `~...` statements → `metadata_assignment` sequence, normalised to `StoredMetadataAssignment` or `CalculatedMetadataAssignment`.
 - Body → metadata, fields and specific initialisers.
 
-`thing-body` y `thing-body-declaration` do not generate independent AST nodes. `metadata-assignment` it does produce its own node and does not become field. Each `field-declaration` feed the sequence `fields`; every `thing-initializer`, both in a `thing` whether concrete or abstract, it produces `ThingInitializer(fieldName, value)` in the sequence `initializers`, without folding in on itself `StoredFieldDecl.defaultValue`. If the same definition locally declares a field and contains a `thing-initializer` of the same name, is rejected during the validation prior to the AST. Omitting the body and an explicit empty body produce the same empty sequences; the terminator is discarded as a layout.
+`thing-body` and `thing-body-declaration` do not generate independent AST nodes. `metadata-assignment` does produce its own node and does not become a field. Each `field-declaration` feeds the `fields` sequence; every `thing-initializer`, in either a concrete or abstract `thing`, produces `ThingInitializer(fieldName, value)` in `initializers`, without being folded into `StoredFieldDecl.defaultValue`. A definition that locally declares a field and contains a `thing-initializer` with the same name is rejected during validation before AST construction. Omitting the body and writing an explicit empty body produce the same empty sequences; the terminator is discarded as layout.
 
-A way `name = valor` It does not trigger any specific syntactic rejection. It is treated like any other `ThingInitializer`; the resolution The latter decides whether `name` actually refers to a stored field inherited from the existing scheme. If the same `thing` declares a field ordinary `name`, the combination is rejected under the general rule that prevents the same variable from being declared and initialised separately field. The metadata from presentation it is still being written `~name = valor`.
+A `name = value` form does not trigger any specific syntactic rejection. It is treated like any other `ThingInitializer`; later resolution determines whether `name` actually refers to a stored field inherited from the effective schema. If the same `thing` declares an ordinary `name` field, the combination is rejected by the general rule preventing the same field from being declared and initialised separately. Presentation metadata is still written as `~name = value`.
 
-An explicit predecessor `Thing` remains at that superficial level. It does not hinder the transformation: the resolution the latter outputs the redundancy, normalises the root effective and can offer a action a piece of code that removes the text.
+An explicit `Thing` predecessor remains at the surface level. It does not hinder transformation: later resolution reports the redundancy, normalises the effective root, and may offer a code action that removes the text.
 
 ## Fields
 
-### In stock
+### Stored
 
 ```mud
 mut population: Population in [0..*] [1] = 10 people
@@ -182,13 +182,13 @@ StoredFieldDecl(
 )
 ```
 
-The domain in the form of value and the specification from collection They are standardised nodes, not text fragments.
+The value-form domain and collection specification are normalised nodes, not text fragments.
 
 ### Calculated and public
 
-The entry for type What is missing remains missing. The type inferred.
+An omitted type entry remains absent. The type is inferred.
 
-## Standardisation of collections
+## Collection normalisation
 
 ### Cardinality omitted
 
@@ -197,9 +197,9 @@ value: Nat
 values: Nat = [1, 2, 3]
 ```
 
-Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST does not manufacture `[1]` nor does it imply `[3]`. The elaboration the latter uses the owner and the initialiser: an ordinary scalar with no evidence of conservation `[1]`; a stored field An immutable type with a finite initialiser can yield a cardinality exact with provenance `InferredFromInitializer`.
+Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST neither manufactures `[1]` nor infers `[3]`. Later elaboration uses the owner and initialiser: an ordinary scalar without evidence to the contrary preserves `[1]`; an immutable stored field with a finite initialiser may yield an exact cardinality with provenance `InferredFromInitializer`.
 
-### Cardinality exact
+### Exact cardinality
 
 ```mud
 values: Nat [5]
@@ -211,7 +211,7 @@ produces:
 [5..5]
 ```
 
-### Exact star
+### Bare star
 
 ```mud
 values: Nat [*]
@@ -227,7 +227,7 @@ The left-hand end is not yet replaced by zero.
 
 ### Modifiers
 
-The two specific forms:
+The two concrete forms:
 
 ```mud
 [0..* unique ordered mut]
@@ -246,26 +246,26 @@ elementsMutable = Disabled
 
 `ordered` produces `OrdinaryOrdered`, a neutral surface feature whose semantic meaning is determined during the elaboration. `ordered by a.b` produces `OrderedBy([a,b])`.
 
-The validation previous rejection:
+Pre-AST validation rejects:
 
-- Repeat of `unique`.
-- Repeat of `mut`.
+- Repeated `unique`.
+- Repeated `mut`.
 - More than one `ordered`.
-- `ordered` y `ordered by` simultaneous.
+- Simultaneous `ordered` and `ordered by`.
 
 ### `given`
 
-`given-declaration` displays its entry using the same method `TypeExpr` more superficial than other contexts of type. This makes it possible to preserve complete dictionary types without introducing a second, read-only type hierarchy. The presence of capacity `mut` can be represented in the Surface AST, but that capacity is statically rejected for `given` during the later stages of validation and typed.
+`given-declaration` represents its input with the same surface `TypeExpr` used by other type contexts. This preserves complete dictionary types without introducing a second read-only type hierarchy. A written `mut` capability may be represented in the Surface AST, but later validation and typing reject it statically for `given`.
 
 ## Types
 
 ### Nominal
 
-Everything `type-reference` produces `NamedType(TypeRef(...))`. The AST has not yet classified the name.
+Every `type-reference` produces `NamedType(TypeRef(...))`. The AST has not yet classified the name.
 
 ### Callables and reflected types
 
-`callable-type` produces `CallableType(kind, receivers, givens)` and retains the category and the types specified; Q-063 keeps the compatibility y variance between companies. `reflected-type` consumes one `postfix-expression` followed by `~type` and produces `ReflectedType(value)`; the elaboration The latter requires that the property be statically denoted `Type` and obtains the type represented. The mechanical form following typing and elaboration It has not yet been decided.
+`callable-type` produces `CallableType(kind, receivers, givens)` and retains the specified category and types; Q-063 keeps signature compatibility and variance open. `reflected-type` consumes a `postfix-expression` followed by `~type` and produces `ReflectedType(value)`; later elaboration requires the expression to statically denote `Type` and obtains the represented type. The mechanical form after typing and elaboration remains undecided.
 
 ### Products and dictionaries
 
@@ -274,37 +274,37 @@ Name -> Coordinate -> Piece [*]
 A -> B [2] --> C [3 ordered]
 ```
 
-The arrow chains fold inwards from the right. The first shape produces a `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; the second produces a number whose value is a `DecisionDictionaryType(B, C, FirstMatch, [3])`, y `[2]` belongs to the outer arrow.
+Arrow chains fold inwards from the right. The first shape produces `ExactDictionaryType(Name, ExactDictionaryType(Coordinate, Piece, [*]), ...)`; the second produces an outer dictionary whose value is `DecisionDictionaryType(B, C, FirstMatch, [3])`, and `[2]` belongs to the outer arrow.
 
-`(A, B)` y `(name: A, value: B)` produce, respectively `PositionalProductType` y `NamedProductType`. The parentheses forming the product are retained by the constructor; parentheses used purely for grouping are discarded.
+`(A, B)` and `(name: A, value: B)` produce `PositionalProductType` and `NamedProductType`, respectively. Parentheses forming the product are retained by the constructor; parentheses used solely for grouping are discarded.
 
-CST can recognise a parented arrow within an alternative, but the contextual validation or the resolution rejects the idea that an arrow is a partial alternative to `|`, even when the external form derives from a alias.
+The CST can recognise a parenthesised arrow inside an alternative, but contextual validation or resolution rejects an arrow as one branch of a `|` alternative, even when the outer form derives from an alias.
 
 ## Aliases
 
-The list drawn up after `as` is preserved as `direct_ancestors`. The alternative `:= type-expression` produces `AliasRepresentation`; its combination with predecessors is rejected prior to the AST. The lack of definition results in `definition = None` and it is only valid if there is at least one ancestor. A metadata-only body following `:= type-expression` feeds `AliasDecl.metadata` and does not create structural members.
+The list written after `as` is preserved as `direct_ancestors`. The `:= type-expression` alternative produces `AliasRepresentation`; combining it with ancestors is rejected before AST construction. An absent definition produces `definition = None` and is valid only when at least one ancestor exists. A metadata-only body following `:= type-expression` feeds `AliasDecl.metadata` and creates no structural members.
 
-`type-expression` normalises one or more `type-alternative` separated by `|` in a single `TypeExpr`. Redundant groupings are removed, identical alternatives are deduplicated, and each nominal alternative is retained even if its domain is contained within another. The specification from collection external is associated with the `TypeExpr` complete.
+`type-expression` normalises one or more `type-alternative` values separated by `|` into a single `TypeExpr`. Redundant groupings are removed, identical alternatives are deduplicated, and every nominal alternative is retained even when its domain is contained within another. The outer collection specification is associated with the complete `TypeExpr`.
 
-`derived-value-shape` with `: type-expression` produces `ExplicitDerivedShape`. Shapes without type, `in domain [collection]` y `collection`, produce `InferredDerivedShape`; a collection If omitted, it defaults to the cardinality climbing and the type is not devised until the stage of inference.
+`derived-value-shape` with `: type-expression` produces `ExplicitDerivedShape`. Shapes without a type, `in domain [collection]` and `collection`, produce `InferredDerivedShape`; when the collection is omitted, it defaults to scalar cardinality and the type is deferred to inference.
 
 A restriction `interval-expression by constant-expression` produces `SteppedDomain`; the other restrictions result in `ExpressionDomain`. Brackets that do not alter the grouping do not reach the Surface AST.
 
-The structural body produces `StructuralAlias` with `AliasMember` in source order. A `component-declaration` produces `AliasComponentDecl`; a `calculated-field-declaration`, `AliasCalculatedFieldDecl`; y `inherited-default-override`, `AliasDefaultOverride`.
+The structural body produces `StructuralAlias` with `AliasMember` in source order. A `component-declaration` produces `AliasComponentDecl`; a `calculated-field-declaration` produces `AliasCalculatedFieldDecl`; and `inherited-default-override` produces `AliasDefaultOverride`.
 
-A component cannot produce mutability exterior. Its collection In general, it can produce `elementsMutable = Enabled`. A derived field may also state `elementsMutable = Enabled`; that capacity belongs to the collection derived and not inferred from the sources from which it is expressed.
+A component cannot produce outer mutability. Its collection specification may produce `elementsMutable = Enabled`. A calculated field may also state `elementsMutable = Enabled`; that capability belongs to the calculated collection and is not inferred from the sources used by its expression.
 
 ## Families
 
 The word `ordered` produces `isOrdered = Enabled`.
 
-Data declarations are divided into stored and calculated declarations. Each declaration may consist of an immediate body comprising solely `metadata-assignment`; that sequence is preserved in `StoredFamilyDataDecl.metadata` o `CalculatedFamilyDataDecl.metadata`. The calculated figure retains `derived_value_shape? shape` using the same standardisation as a computed field: `ExplicitDerivedShape` for type written and `InferredDerivedShape` for domain o collection without type a made-up superficiality.
+Data declarations are divided into stored and calculated declarations. Each may consist of an immediate body containing only `metadata-assignment`; that sequence is preserved in `StoredFamilyDataDecl.metadata` or `CalculatedFamilyDataDecl.metadata`. A calculated declaration retains `derived_value_shape?` using the same normalisation as a calculated field: `ExplicitDerivedShape` for a written type and `InferredDerivedShape` for a domain or collection without an invented surface type.
 
-In the preamble to a member, any `metadata-assignment` produces `StoredMetadataAssignment` o `CalculatedMetadataAssignment` from the descriptor from the member; subsequent ordinary allocations are retained as `FamilyDataAssignment`. These assignments replace the value of a piece of data stored for that member, but don’t believe it descriptor, anchor nor their own metadata-body. A body of member metadata-only produces `assignments = []` and retains its sequence `metadata`.
+In a member preamble, each `metadata-assignment` produces `StoredMetadataAssignment` or `CalculatedMetadataAssignment` on the member's descriptor; subsequent ordinary assignments are retained as `FamilyDataAssignment`. These replace the value of stored data for that member, but do not create a descriptor, anchor or metadata body of their own. A metadata-only member body produces `assignments = []` and retains its `metadata` sequence.
 
 The comma between clauses is removed. The absence of a final comma has already been validated by the grammar rules.
 
-## Quantities
+## Magnitudes
 
 ### Representation
 
@@ -314,26 +314,26 @@ The optional annotation uses `DeclaredType`. The numerical representation check 
 
 The body is divided into:
 
-- Unit root optional.
+- Optional root unit.
 - Subsequent alternative units.
 
-### Derivative
+### Derived
 
-The dimensional expression is expanded from left to right in `DimensionProduct` y `DimensionLink` whilst retaining multiplication and division.
+The dimensional expression is expanded from left to right into `DimensionProduct` and `DimensionLink`, retaining multiplication and division.
 
-### Punto
+### Point
 
-The domain ordinary produces `OrdinaryPointDomain`; the presence of `cycle` after the expression ‘interval’ comes `CyclicPointDomain`. The token is not included in the range as a delimiter nor as part of its ends.
+An ordinary domain produces `OrdinaryPointDomain`; `cycle` after the interval expression produces `CyclicPointDomain`. The token is not included in the range as a delimiter or as part of its endpoints.
 
-`~format` What is absent remains absent.
+An omitted `~format` remains absent.
 
 ## Units
 
-The units are not standardised `UnitProperties` separate. `unit-body` is ruled out as a specific packaging material, and each `metadata-assignment` is preserved in the sequence `metadata` from `RootUnitDecl` o `AlternativeUnitDecl`.
+Units are not normalised into separate `UnitProperties`. `unit-body` is discarded as a specific wrapper, and each `metadata-assignment` is preserved in the `metadata` sequence of `RootUnitDecl` or `AlternativeUnitDecl`.
 
-`~prefixes = empty`, `~prefixes = all` y `~prefixes = [kilo, milli]` follow the standard transformation of expressions. The Surface AST does not manufacture `NoPrefixes`, `AllPrefixes` nor `SelectedPrefixes`; the elaboration the following applies type expected `Prefix [* unique]` and the default `empty`.
+`~prefixes = empty`, `~prefixes = all` and `~prefixes = [kilo, milli]` follow ordinary expression transformation. The Surface AST does not manufacture `NoPrefixes`, `AllPrefixes` or `SelectedPrefixes`; later elaboration applies the expected type `Prefix [* unique]` and default `empty`.
 
-One unit root produces `RootUnitDecl(name, metadata)` and an alternative `AlternativeUnitDecl(name, equivalence, metadata)`. The metadata for presentation Those omitted are still missing at this stage.
+A root unit produces `RootUnitDecl(name, metadata)` and an alternative unit produces `AlternativeUnitDecl(name, equivalence, metadata)`. Omitted presentation metadata remains absent at this stage.
 
 ## Participants
 
@@ -341,7 +341,7 @@ A grouped header produces one node per identifier and copies to each descriptor 
 
 ### `for`
 
-Every participant has a required name. They are converted `mut` outdoor, `ValueShape` and the metadata sequence of the descriptor. A grouped header produces a `ForParticipant` by identifier, and copies the same metadata body to each one.
+Every participant has a required name. The outer `mut`, `ValueShape` and descriptor metadata sequence are converted. A grouped header produces one `ForParticipant` per identifier and copies the same metadata body to each.
 
 ### `on`
 
@@ -349,49 +349,49 @@ The direct variant produces `DirectOnParticipant(name, type, elementsMutable, me
 
 ### `given`
 
-The name is converted, `TypeExpr`, default and metadata. A type The dictionary is maintained using the standard constructors `ExactDictionaryType` o `DecisionDictionaryType`. The default remains `expr` and does not acquire `ValueBlock`; its permanent nature and the prohibition of any capacity `mut` from the `given` are checked afterwards.
+The name, `TypeExpr`, default and metadata are converted. A dictionary type uses the ordinary `ExactDictionaryType` or `DecisionDictionaryType` constructors. The default remains an `expr` and does not acquire a `ValueBlock`; its static nature and the prohibition of any `mut` capability in `given` are checked later.
 
 ## Rules and actions
 
-The metadata-bearing preamble of each rule, action, subaction, look, message y test is kept in the field `metadata` of the corresponding parent constructor. `start with` It does not generate its own metadata.
+The metadata-bearing preamble of every rule, action, subaction, look, message and test is retained in the `metadata` field of the corresponding parent constructor. `start with` does not generate metadata of its own.
 
-The default metadata written at the start of the file uses `FileMetadataAssignment(name, type?, value?)`. His value remains `expr?` constant and is not normalised to `ValueBlock`; this is a deliberate exception to the file defaults.
+Default metadata written at the start of the file uses `FileMetadataAssignment(name, type?, value?)`. Its value remains a static `expr?` and is not normalised to `ValueBlock`; this is a deliberate exception for file defaults.
 
-### Regla booleana
+### Boolean rule
 
 The body becomes `ExpressionBlock(locals, result)`. The form without local declarations produces `locals = []`.
 
-### Regla reactiva
+### Reactive rule
 
-The `local-value-declaration` The provisions preceding the conduct clauses apply to `leading_locals`. `when` produces a `ExpressionBlock` in `activator`; `if` produces another one in `guard?`; `then` produces `EffectBlock`.
+`local-value-declaration` forms preceding behavioural clauses become `leading_locals`. `when` produces an `ExpressionBlock` in `activator`; `if` produces another in `guard?`; `then` produces `EffectBlock`.
 
-### Ruler `always`
+### `always` rule
 
-`InvariantBodySyntax`, enclosed in brackets, produces a `ExpressionBlock`. The `DiagnosticTailSyntax` The exterior produces the diagnostic from `AlwaysRuleDecl`; if it is missing, it is retained `diagnostic = absent`. The default text of the warning is not inserted here.
+`InvariantBodySyntax`, enclosed in braces, produces an `ExpressionBlock`. The outer `DiagnosticTailSyntax` produces the `AlwaysRuleDecl` diagnostic; if absent, the AST retains `diagnostic = absent`. The warning's default text is not inserted here.
 
-### Acción
+### Action
 
-`action` y `subaction` produce `ActionDecl` with `PublicAction` o `Subaction`. The `local-value-declaration` The provisions preceding the conduct clauses apply to `leading_locals`. `if` produces `ActionGuard` with a `ExpressionBlock`; `after` produces `ActionPostcondition` with another.
+`action` and `subaction` produce `ActionDecl` with `PublicAction` or `Subaction`. `local-value-declaration` forms preceding behavioural clauses become `leading_locals`. `if` produces `ActionGuard` with an `ExpressionBlock`; `after` produces `ActionPostcondition` with another.
 
-The following is not classified as action as either elementary or compound.
+The action is not classified as either elementary or compound.
 
-### `look` y `message`
+### `look` and `message`
 
-`look-declaration` projects its `given-clause` optional to `LookDecl.givens`. In `message`, the `local-value-declaration` The provisions preceding the conduct clauses apply to `leading_locals`. Public properties are converted to `PublicFieldDecl` and remain in the same order.
+`look-declaration` projects its optional `given-clause` to `LookDecl.givens`. In `message`, local-value declarations preceding behavioural clauses become `leading_locals`. Public fields are converted to `PublicFieldDecl` and retain their order.
 
-## Expression blocks, value and tests
+## Expression blocks, value blocks and tests
 
-One `local-value-declaration` inside `ExpressionBlock`, of the shared preambles and of `TestAfterBlock` produces `LocalValueDecl(name, shape?, value)`. Its RHS remains an ordinary expression: these positions cannot recover a `ValueBlock` by nesting.
+A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `LocalValueDecl(name, shape?, value)`. Its RHS remains an ordinary expression: these positions cannot acquire a `ValueBlock` through nesting.
 
-A short way of saying `if ready` produces `ExpressionBlock([], ready)`. The expression in curly brackets contains only pure local derivatives `:=` and requires a single final expression. `otherwise` is outside the AST block, although the resolution extends to him the environment of those local ones.
+The short form `if ready` produces `ExpressionBlock([], ready)`. The brace form contains only pure local `:=` declarations and requires a single final expression. `otherwise` lies outside the AST block, although resolution extends those locals' environment to it.
 
-A `value-body` briefly normalises to `ValueBlock([], value)`. The full form produces `ValueBlock(statements, result)`. The bloc’s calculated statements result in `LocalCalculatedDecl`, those stored `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove` and the local route `LocalForEach`. The validation/elaboración subsequently verifies that every deed of `LocalMutation` remain within the storage created by the `ValueBlock`.
+A short `value-body` normalises to `ValueBlock([], value)`. The expanded form produces `ValueBlock(statements, result)`. Calculated statements produce `LocalCalculatedDecl`, stored ones `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove`, and local iteration `LocalForEach`. Later validation and elaboration verify that every `LocalMutation` stays within storage created by the `ValueBlock`.
 
 `LocalForEach` preserves `source`, `step?` and the filter as `ExpressionBlock?`; its short body or text in brackets normalises to `LocalStatementBlock` and never to `EffectBlock`.
 
 When a metadata-bearing owner uses the integrated expanded form, its initial `~...` declarations are extracted to the descriptor's `metadata` field and the following statements form its `ValueBlock`. The preamble does not produce `ValueStatement`. The short form with a separate metadata body converges on the same AST. Validation before AST construction rejects a declaration that combines metadata from both locations.
 
-In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The expression in curly brackets retains its pure calculated values prior to the assertions and does not take on `ValueBlock`.
+In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The braced form retains its pure calculated values before the assertions and does not become a `ValueBlock`.
 
 ## `then` and blocks
 
@@ -399,7 +399,7 @@ In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The
 then effect
 ```
 
-y:
+and:
 
 ```mud
 then {
@@ -407,15 +407,15 @@ then {
 }
 ```
 
-both produce `EffectBlock`, with a judgement in similar cases.
+both produce `EffectBlock`, with one statement in equivalent cases.
 
-All the statements in the block are kept in order. The calculated expressions produce `LocalCalculatedStatement`, those stored `LocalStoredStatement` and the effects `EffectStatement`. The validation The latter requires that there be at least one effect observable; therefore, a block consisting solely of local variables is not a `then` valid.
+All block statements are retained in order. Calculated declarations produce `LocalCalculatedStatement`, stored declarations `LocalStoredStatement`, and effects `EffectStatement`. Later validation requires at least one observable effect; a block made solely of local values is therefore not a valid `then`.
 
 ## Effects
 
-### Allocation
+### Assignment
 
-The specific operator is converted to:
+The concrete operator is converted to:
 
 - `Assign`.
 - `AddAssign`.
@@ -431,29 +431,29 @@ The specific operator is converted to:
 
 The alternative using an expression produces `AddValueEffect`.
 
-The alternative with declaration from field produces `AddFieldEffect`. The declaration nested is transformed as stored field.
+The alternative with a field declaration produces `AddFieldEffect`. The nested declaration is transformed as a stored field.
 
-### Candidate for call
+### Call candidate
 
-`action-call-effect` produces `ActionCallCandidateEffect(expr)`. The resolution The following must confirm that the expression ends with a call a action valid.
+`action-call-effect` produces `ActionCallCandidateEffect(expr)`. Later resolution must confirm that the expression ends in a valid action call.
 
 ### Iteration
 
-Simple linking produces `ValueIterationBinding`. The pair in brackets yields `DictionaryIterationBinding`. The `for each` executable retains `by` such as `step?`, normalise `if` a `ExpressionBlock` and converts both the effect as short as the block behind `:` in `EffectBlock`. The route written inside `ValueBlock` is another one production and produces `LocalForEach` with `LocalStatementBlock`. Address, compatibility and step zero belong to later phases.
+Simple binding produces `ValueIterationBinding`. The bracketed pair yields `DictionaryIterationBinding`. Executable `for each` retains `by` as `step?`, normalises `if` to `ExpressionBlock`, and converts both its short effect and the block after `:` to `EffectBlock`. Iteration inside a `ValueBlock` is another production and produces `LocalForEach` with `LocalStatementBlock`. Addressability, compatibility and zero steps belong to later phases.
 
 ## Expressions
 
 ### Folding of precedence
 
-Output by level is broken down in accordance with [[07-gramatica-concreta]]:
+Each precedence level is folded according to [[07-gramatica-concreta]]:
 
-- Ordinary iterative operators: left.
+- Ordinary binary operators: left.
 - Implication: right.
 - Chainable comparisons: `ComparisonChainExpr`.
 
-### Word operators and symbol
+### Word and symbolic operators
 
-`has not` produces `HasNotMember`. `e iis T` produces `ExactTypeTestExpr(e, T, Disabled)` y `e iis not T`, `ExactTypeTestExpr(e, T, Enabled)`.
+`has not` produces `HasNotMember`. `e iis T` produces `ExactTypeTestExpr(e, T, Disabled)` and `e iis not T` produces `ExactTypeTestExpr(e, T, Enabled)`.
 
 Various enums are retained:
 
@@ -471,17 +471,17 @@ Various enums are retained:
 
 The presence of the suffix results in `ChangesExpr(operand)`.
 
-### Materialización `all`
+### `all` materialisation
 
-The prefix `all D` produces `PrefixExpr(EnumerateAll, D)`; the literal contextual without an operand is retained `AllLiteral`.
+The prefix `all D` produces `PrefixExpr(EnumerateAll, D)`; the contextual literal without an operand remains `AllLiteral`.
 
 ### Selection and `take`
 
-`binding in source [by step] : predicate` produces `SelectionExpr(binding, source, step?, predicate)`. Simple or dictionary linking reuses `ValueIterationBinding` o `DictionaryIterationBinding`; his scope is limited to the predicate. The short form and `{ locales*; resultado }` converge on `ExpressionBlock`.
+`binding in source [by step] : predicate` produces `SelectionExpr(binding, source, step?, predicate)`. Simple or dictionary binding reuses `ValueIterationBinding` or `DictionaryIterationBinding`; its scope is limited to the predicate. The short form and `{ locals*; result }` converge on `ExpressionBlock`.
 
-`exists`, `forall`, `count`, `min` y `max` produce `QuantifierExpr(kind, variable, source, step?, body)`, with `body` such as `ExpressionBlock`. `sum` It is no longer in the catalogue. The transformation does not determine the contract Boolean nor, for `min`/`max`, the validity of the source order; these checks are carried out at a later stage.
+`exists`, `forall`, `count`, `min` and `max` produce `QuantifierExpr(kind, variable, source, step?, body)`, with an `ExpressionBlock` body. `sum` is no longer in the catalogue. The transformation does not determine the Boolean contract or, for `min`/`max`, the validity of the source order; these checks occur later.
 
-`take amount from source` produces `TakeExpr(amount, source)`. The shape of the node does not determine whether the selection will be a prefix ordered or a reproducible sample: that distinction depends on the type and the resolved cases of `source`.
+`take amount from source` produces `TakeExpr(amount, source)`. The node's shape does not determine whether the selection is an ordered prefix or a reproducible sample: that distinction depends on the type and resolved properties of `source`.
 
 Both constructs contain complete expressions. Therefore, composition is preserved through explicit nesting of the AST:
 
@@ -495,7 +495,7 @@ player in take m from players : player.score == 2
 
 ### Dictionary associations and branches
 
-`a -> b` produces `ExactAssociationExpr(ExpressionBlock([], a), ValueBlock([], b))`; `selector --> resultado` produces `DecisionBranchExpr(ExpressionBlock([], selector), ValueBlock([], resultado))`. The `mapping-key-body` 'entre llaves' retains its premises at `ExpressionBlock`; the extended RHS uses `value-block-body` and stores its judgements in `ValueBlock`. The short RHS remains `mapping-expression`, so that an external comma continues to separate clauses and does not become part of the value of the first and `_` produces `FallbackLiteral`. Operations `|`, `&`, `--` y `^` are initially retained `BinaryExpr`; the elaboration It specialises them according to the resolved types. A functional operation preserves both operands and does not transform into a merged list of branches.
+`a -> b` produces `ExactAssociationExpr(ExpressionBlock([], a), ValueBlock([], b))`; `selector --> result` produces `DecisionBranchExpr(ExpressionBlock([], selector), ValueBlock([], result))`. The brace-form `mapping-key-body` retains its premises in `ExpressionBlock`; the expanded RHS uses `value-block-body` and stores its statements in `ValueBlock`. The short RHS remains `mapping-expression`, so an outer comma continues to separate clauses rather than becoming part of the first value. `_` produces `FallbackLiteral`. Operations `|`, `&`, `--` and `^` are initially retained as `BinaryExpr`; elaboration specialises them according to resolved types. A functional operation preserves both operands and does not become a merged branch list.
 
 ### Conversions
 
@@ -523,27 +523,27 @@ CallExpr(
 
 ### Arguments
 
-Unlabelled arguments form the prefix `positionalArguments`. Arguments with `name =` form the suffix of `NamedCallArgument`.
+Unlabelled arguments form the `positionalArguments` prefix. Arguments written with `name =` form the `NamedCallArgument` suffix.
 
 Contextual syntax validation rejects a positional argument following the first named argument, so `CallExpr` need not represent that invalid state.
 
-### Ambiguity regarding recipients
+### Receiver ambiguity
 
-`receiver-tuple` y `structural-literal` converge in one of two ways: `PositionalStructuralLiteralExpr` o `NamedStructuralLiteralExpr`. The `MemberAccessExpr` y `CallExpr` subsequent ones retain their full form. The resolution select a signature, then choose from receiver a single structural unit and multiple receptors.
+`receiver-tuple` and `structural-literal` converge on one of two forms: `PositionalStructuralLiteralExpr` or `NamedStructuralLiteralExpr`. Subsequent `MemberAccessExpr` and `CallExpr` retain the complete form. Resolution selects a signature and then chooses between one structural receiver and multiple receivers.
 
-### Roads
+### Paths
 
-A `qualified-name` When used as an expression, it produces `DottedPathExpr`, not a resolved reference.
+A `qualified-name` used as an expression produces `DottedPathExpr`, not a resolved reference.
 
 ## Literal expressions
 
 ### Exact and `Rum`
 
-They are deleted `_` and the exponent and mantissa are normalised to canonical form. The provenance to the lexeme CST.
+Underscores are removed and exponent and mantissa are normalised to canonical form. Provenance to the CST lexeme is retained.
 
-### `Char` y `Text`
+### `Char` and `Text`
 
-Everything literal The word ‘ordinary’ in double quotation marks initially produces `TextTemplateExpr`. The elaboration subsequent contextual information turns it into `Char` when the type as expected, and the decoded text contains exactly one Unicode scalar. Single quotation marks do not produce any token literal.
+Every ordinary double-quoted literal initially produces `TextTemplateExpr`. Later contextual elaboration turns it into `Char` when the expected type is `Char` and the decoded text contains exactly one Unicode scalar value. Single quotation marks do not produce a character literal.
 
 ### Booleans
 
@@ -557,17 +557,17 @@ Produces `EmptyLiteral`.
 
 ### `POINT_LITERAL`
 
-It retains its original shape in `PointLiteral`; his magnitude The issue has still not been resolved, as expected.
+It retains its original form in `PointLiteral`; its magnitude remains unresolved, as expected.
 
 ## Templates
 
-`TEXT_FRAGMENT` It is decoded after escape sequences and margin normalisation.
+`TEXT_FRAGMENT` is decoded after escape processing and margin normalisation.
 
 The difference between explicit and implicit closure disappears.
 
-Any interpolation produces `ValueInterpolation`; `anchor{...}` does not belong to language.
+Every interpolation produces `ValueInterpolation`; `anchor{...}` does not belong to the language.
 
-Within the `format` of a magnitude from point, `unidad from contenedor` produces `ContextualPointComponentExpr`; you don’t just make up a receiver which wasn’t written.
+Within a point magnitude's `format`, `unit from container` produces `ContextualPointComponentExpr`; no unwritten receiver is invented.
 
 ## Structural literals
 
@@ -575,7 +575,7 @@ The positional form produces `PositionalStructuralLiteralExpr` with two mandator
 
 The named form produces `NamedStructuralLiteralExpr` with one or more `NamedStructuralElement`.
 
-The selection of alias, positional completeness and component defaults belong to validation/resolución later, as required type expected.
+Alias selection, positional completeness and component defaults belong to later validation and resolution, guided by the expected type.
 
 ## Values separated by commas
 
@@ -587,12 +587,12 @@ value-expression ::= expression , [ "," , expression , { "," , expression } ] ;
 
 is transformed as follows:
 
-- No comma: original wording.
+- No comma: the original expression.
 - With one or more commas: `CollectionLiteralExpr` of all expressions.
 
 ## Intervals
 
-### Closed (abbreviated)
+### Closed shorthand
 
 ```mud
 a..b
@@ -616,65 +616,65 @@ produces `lower = a`, `upper = a`, both of which are closed.
 
 produces `EmptyInterval(UnitProduct(...))`.
 
-### Unit shared
+### Shared unit
 
-The unit The final moves to the field `sharedUnit`; it is not duplicated at either end.
+The final unit moves to the `sharedUnit` field; it is not duplicated on either endpoint.
 
-### Cyclical
+### Cyclic
 
-The `cycle` behind the `PointDomainSyntax` select `CyclicPointDomain`; it does not alter the `Interval` content. The validation The condition prior to the AST requires that the preceding interval be finite, non-empty, closed on the left and open on the right.
+The `cycle` following `PointDomainSyntax` selects `CyclicPointDomain`; it does not alter the `Interval` content. Pre-AST validation requires the preceding interval to be finite, non-empty, closed on the left and open on the right.
 
-### Stars
+### `*` endpoints
 
 `*` produces `EffectiveIntervalBound`, without yet converting it to infinity or to a value dependent on the domain.
 
-## Quantities and units
+## Quantity values and units
 
-A literal a number followed by unit produces `QuantityValueExpr(Quantity(...))`.
+A numeric literal followed by a unit produces `QuantityValueExpr(Quantity(...))`.
 
-Expressions of unit and dimension remove grouping brackets, but retain the tree structure imposed by multiplication and division.
+Unit and dimension expressions remove grouping parentheses but retain the tree structure imposed by multiplication and division.
 
 ## `start with` and tests
 
-The form of an expression and the contributions block of `start with` produce a single `StartSet(contributions)`. The source order is retained only as provenance, not like semantics from activation.
+The expression form and block form of `start with` produce a single `StartSet(contributions)`. Source order is retained only as provenance, not as activation semantics.
 
-The declaration top-tier of the module add `ModuleStartDecl`. Within a test, the same `StartSet` is a field from `TestDecl`.
+The module-level declaration adds `ModuleStartDecl`. Within a test, the same `StartSet` is a field of `TestDecl`.
 
-`after assertion` y `after { assertion... }` produce a `TestAfterBlock` uniform.
+`after assertion` and `after { assertion... }` produce a uniform `TestAfterBlock`.
 
-## Elements that have not yet been standardised
+## Elements not yet normalised
 
 The following are still pending for subsequent phases:
 
 - Qualified names versus semantic access.
-- Alias specific example of a literal structural.
-- Multiple receivers versus receiver structural.
-- Call ordinary versus call as a rule, or action.
-- Type of a literal contextual.
+- Specific alias selected for a structural literal.
+- Multiple receivers versus a structural receiver.
+- Ordinary call versus rule or action call.
+- Type of a contextual literal.
 - Evidence of a declared static expression.
 - Compatibility of domains and cardinalities.
-- Resolution units and prefixes.
+- Resolution of units and prefixes.
 
 ## Transformation diagnostics
 
 The transformation can only generate its own diagnostics when:
 
-- The CST violates a invariant context required for normalisation.
+- The CST violates a contextual invariant required for normalisation.
 - A property required to build an AST product is missing.
-- Two specific ways of writing the same thing field standardised.
-- One production The deck has no transformation rule.
+- Two concrete spellings normalise to the same field.
+- A grammar production has no transformation rule.
 
 A failure of names or types is not a diagnostic of this phase.
 
 ## Mechanical table
 
-`cobertura-sintactica.yaml` It is comprehensive. Each production states:
+`cobertura-sintactica.yaml` is exhaustive. Each production states:
 
 - `cst`: specific category.
 - `ast.disposition`.
-- `ast.target` o reason discard/pliegue.
+- `ast.target` or a reason for discarding/folding.
 
-The provisions are as follows:
+The possible dispositions are:
 
 - `constructor`.
 - `wrapper`.
@@ -695,6 +695,6 @@ Each normalisation rule must include at least:
 
 The initial corpus is in `casos/cst-ast.yaml`.
 
-## Belonging, restriction and local transformations
+## Membership, restriction and local transformations
 
-`a has b` is projected onto `HasMember`; `a has not b`, a `HasNotMember`. `value in Domain` is projected onto `DomainRestrictionExpr`; `binding in source : predicate` preserve `SelectionExpr`. `collection-transform-suffix` folds like `CollectionTransformExpr`; there is no local in-house capacity.
+`a has b` projects to `HasMember`; `a has not b` projects to `HasNotMember`. `value in Domain` projects to `DomainRestrictionExpr`; `binding in source : predicate` preserves `SelectionExpr`. `collection-transform-suffix` folds to `CollectionTransformExpr`; local transforms provide no internal `mut` capability.

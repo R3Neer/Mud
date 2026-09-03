@@ -1,7 +1,7 @@
 ---
-title: Gramática concreta
+title: Concrete grammar
 aliases:
-  - Concrete syntax from the MUD
+  - MUD concrete syntax
 tags:
   - mud/especificacion
   - mud/gramatica
@@ -76,15 +76,15 @@ decisions:
   - D-099
 ---
 
-# 07. Gramática concreta
+# 07. Concrete grammar
 
 ## State and purpose
 
-[[gramatica/mud.ebnf]] defines the complete syntax of standard source files `.mud` from MUD 1.0. The additional physical area of `mud.module` is documented separately and its full grammar remains open in Q-062. This chapter It specifies how to read it, how to interpret contextual constructs and how to group expressions. The issues listed in the frontmatter affect semantics However, they do not prevent us from recognising the source form.
+[[gramatica/mud.ebnf]] defines the complete syntax of standard `.mud` source files in MUD 1.0. The additional physical format of `mud.module` is documented separately, and its complete grammar remains open in Q-062. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
 
 ## Parsing output
 
-The result The parsing specification is a Lossless CST by file, defined in [[sintaxis/cst-sin-perdidas]]. The EBNF determines the grouping and order of meaningful tokens; the CST also preserves punctuation, terminators and trivia.
+The normative parsing result is a lossless CST per file, defined in [[sintaxis/cst-sin-perdidas]]. The EBNF determines grouping and the order of meaningful tokens; the CST also preserves punctuation, terminators and trivia.
 
 The presence of a CST does not confirm that the file is valid. The recovery process may represent missing or unexpected tokens without discarding them.
 
@@ -92,7 +92,7 @@ The presence of a CST does not confirm that the file is valid. The recovery proc
 
 Once the CST has been constructed, the contextual syntactic constraints required to produce a normalised AST are checked, including:
 
-- Modifiers of collection duplicates.
+- Duplicate collection modifiers.
 - Duplicate declarations of the same metadata on an owner, including units.
 - A positional argument following a named argument.
 - Specific combinations prohibited by this chapter.
@@ -105,11 +105,11 @@ A `given` reuses the general expression for type, including dictionaries:
 given prices: Product -> Money
 ```
 
-The grammar may retain a modifier `mut` written within that expression to diagnostic, but that capacity is statically invalid: `given` It never grants write access.
+The grammar may retain a `mut` modifier written within that expression for diagnostics, but the capability is statically invalid: `given` never grants write access.
 
-## Abstract transformation
+## AST projection
 
-The AST projection is at [[sintaxis/cst-a-ast-superficial]]. Production is covered mechanically in `sintaxis/cobertura-sintactica.yaml`.
+The AST projection is defined in [[sintaxis/cst-a-ast-superficial]]. Production coverage is recorded mechanically in `sintaxis/cobertura-sintactica.yaml`.
 
 ## Programme
 
@@ -120,7 +120,7 @@ using world.people
 using physics.*
 ```
 
-There is no declaration from path; it is derived from the path. `using`, no `import`, is the only building in visibility between MUD paths.
+There is no path declaration; the path is derived from the file path. `using`, not `import`, is the only construct that establishes visibility between MUD paths.
 
 All `using` declarations must appear before the first top-level declaration. Mixing them in is an error and never creates local or sequential scope. The order of multiple `using` declarations does not resolve ambiguities.
 
@@ -146,39 +146,39 @@ thing World
 abstract thing Place
 
 thing Alexandria as City, Place {
-    ~name = "Alejandría"
+    ~name = "Alexandria"
 }
 ```
 
-`Thing` is the `thing` an embedded abstract concept that acts as top type. All `thing` meets `is Thing`. A root without `as` It retains zero declared predecessors, but receives an edge semantics implicit towards `Thing`. It is acceptable to write `as Thing`, but it’s redundant: a conforming implementation must issue a diagnostic non-blocking and offer to remove it. `Thing` It cannot be declared, created or destroyed:
+`Thing` is the intrinsic abstract `thing` that acts as the top type. Every `thing` satisfies `is Thing`. A root without `as` retains no declared ancestors, but receives an implicit semantic edge to `Thing`. Writing `as Thing` is accepted but redundant: a conforming implementation must issue a non-blocking diagnostic and offer to remove it. `Thing` cannot be declared, created or destroyed:
 
 ```mud
-create Thing   # error estático
-destroy Thing  # error estático
+create Thing   # static error
+destroy Thing  # static error
 ```
 
-`Thing` is always true without appearing in `start with`, y `all Thing` lists only the `thing` concrete, effective measures, never the abstract concept.
+`Thing` is always active without appearing in `start with`, and `all Thing` lists only effective concrete `thing` values, never the abstract concept.
 
-All `thing` displays properties and Postfix metadata separately from their fields. `~identifier` retains the source identifier and `~name` is presentation configurable. All access `~` is read-only during execution; no metadata It is an assignable destination. Metadata are not ordinary fields.
+Every `thing` exposes postfix properties and metadata separately from its fields. `~identifier` retains the source identifier and `~name` is configurable presentation text. Every `~` access is read-only during execution; metadata cannot be an assignable destination. Metadata are not ordinary fields.
 
-The list following `as` does not indicate priority. `create` It does not accept a body here or anywhere else:
+The list following `as` does not indicate priority. `create` accepts no body here or anywhere else:
 
 ```mud
 create Alexandria
 destroy Alexandria
 ```
 
-### Initiators of `thing`
+### `thing` initialisers
 
-One `thing`, whether concrete or abstract, can initialise a stored field already contributed through its inherited scheme by means of an allocation without re-declaring the field:
+A `thing`, whether concrete or abstract, can initialise a stored field already contributed by its inherited schema through an assignment without redeclaring the field:
 
 ```text
 fieldName = value-body
 ```
 
-The objective is retained as the name of field up to the resolution. It does not declare a field new; it does not replace its inheritable default and cannot be addressed as a computed field. It must result in a field inherited: the same `thing` cannot be declared locally `fieldName` and also contain a separate instruction `fieldName = ...`. The form `fieldName: Type = value` it’s just one declaration is set by default and remains valid. The value The initialiser supports a shorthand expression or a `ValueBlock`; the entire body is subject to the contract static of materialisation from the field inherited.
+The target is retained as a field name until resolution. It does not declare a new field, replace its inheritable default, or target a calculated field. It must resolve to an inherited field: the same `thing` cannot locally declare `fieldName` and also contain a separate `fieldName = ...` initialiser. The form `fieldName: Type = value` is a single declaration with a default and remains valid. The initialiser value accepts a short expression or `ValueBlock`; the entire body is subject to the inherited field's static materialisation contract.
 
-In a `abstract thing`, the initialiser does not materialise own stored data; it is preserved as a legacy contribution to the first materialisation of specific descendants. In a `thing` Specifically, the local initialiser is applied to its own first materialisation and is not inherited by its descendants. A more specific initialiser takes precedence over a less specific inherited one. Multiple specialisation does not take precedence based on the order of `as`: the same source is duplicated, and there are separate and incomparable contributions on the same subject field fall under conflict.
+In an `abstract thing`, the initialiser does not materialise its own stored data; it is preserved as an inherited contribution to the first materialisation of concrete descendants. In a concrete `thing`, the local initialiser applies to its own first materialisation and is not inherited by its descendants. A more specific initialiser takes precedence over a less specific inherited one. Multiple specialisation does not establish precedence from the order of `as`: if the same source is duplicated and separate, incomparable contributions target the same field, they conflict.
 
 ```mud
 thing Kingdom {
@@ -190,7 +190,7 @@ thing France as Kingdom {
 }
 ```
 
-In `France`, `20` initialises the own stored data from `France.treasury` every time it comes to pass `France` since its canonical definition. It does not become the default, nor does it become an inheritable initialiser for descendants of `France`. Confirmed destruction rules that out own stored data and a `create France` subsequently reapplies the initialiser when constructing the new one materialisation. This distinction keeps the inheritable default and the contribution from materialisation.
+In `France`, `20` initialises `France.treasury` whenever `France` is materialised from its canonical definition. It does not become the field default or an inheritable initialiser for descendants of `France`. Confirmed destruction removes that stored data, and a subsequent `create France` reapplies the initialiser when constructing the new materialisation. This distinction keeps inheritable defaults separate from materialisation contributions.
 
 ```mud
 abstract thing RichKingdom as Kingdom {
@@ -200,9 +200,9 @@ abstract thing RichKingdom as Kingdom {
 thing Lydia as RichKingdom
 ```
 
-`RichKingdom` does not have a specific load of `treasury`, but its initialiser is involved in the first materialisation from `Lydia`.
+`RichKingdom` has no concrete `treasury` storage, but its initialiser contributes to `Lydia`'s first materialisation.
 
-It is not permitted to mix declaration and its separate initialiser field in a definition:
+Mixing a field declaration with its separate initialiser in one definition is not permitted:
 
 ```mud
 thing Broken as Kingdom {
@@ -211,7 +211,7 @@ thing Broken as Kingdom {
 }
 ```
 
-`name = valor` has no special intrinsic meaning: if `name` is a stored field Inherited from the existing scheme, it uses this same format; `~name` remains the metadata from presentation.
+`name = value` has no special intrinsic meaning: if `name` is a stored field inherited from the effective schema, it uses this same form; `~name` remains presentation metadata.
 
 ## Fields
 
@@ -230,11 +230,11 @@ Calculated form:
 fieldName [derived-value-shape] := value-body
 ```
 
-`derived-value-shape` it could be `: Type`, `in domain` with collection optional, or a specification from collection alone. Therefore, both are valid: `area: Num in 0..* := width * height` such as `area in 0..* := width * height`. If the type, must be unambiguously inferred from the expression, without any predetermined preference between compatible representations or contextual forms. If there is more than one solution, the type must be written. A computed field does not support `mut` external. Its form may specify domain, specification from collection and interior capacity `[mut]`.
+`derived-value-shape` may be `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Therefore, both `area: Num in 0..* := width * height` and `area in 0..* := width * height` are valid. If the type is omitted, it must be inferred unambiguously from the expression, without a predetermined preference between compatible representations or contextual forms. If more than one solution exists, the type must be written. A calculated field does not support outer `mut`; its shape may specify a domain, a collection specification and internal `[mut]` capability.
 
-The `mut` 'exterior' is written before the name because it describes the location where it is stored, not the type of its members. `fieldName: mut Type` is not part of the syntax. The names of field and the names of metadata they occupy different syntactic positions: `name: Text` declares a field, whilst `~name = expresión` declares or amends the metadata from presentation.
+Outer `mut` is written before the name because it describes the storage location, not the type of its members. `fieldName: mut Type` is not part of the syntax. Field names and metadata names occupy different syntactic positions: `name: Text` declares a field, whereas `~name = expression` declares or amends presentation metadata.
 
-The value from `=` It can be a short phrase or a `ValueBlock`. In a stored field, the entire body must remain static: it is fully evaluated at compile-time and cannot be read state, participants, `given`, outdoor venues or activities at the world. The mutability temporary structure created within the `ValueBlock` It is valid if the entire structure can be designed statically. For example:
+The value after `=` may be a short expression or a `ValueBlock`. In a stored field, the complete body must remain static: it is fully evaluated at compile time and cannot read world state, participants, `given` values, external locations or activities. Temporary mutable structures created within the `ValueBlock` are valid when the complete structure can be constructed statically. For example:
 
 ```mud
 allowedRange: Int Interval = 1..2 | 3..4
@@ -251,19 +251,19 @@ displayDensity: Density := density
 
 If a calculated field's expression is also statically closed, the compiler must suggest the immutable stored form. This is neither an error nor an automatic rewrite, and the suggestion does not appear when the calculation depends on runtime state.
 
-A comma-separated list forms a collection calculated and inferred type y cardinality where these can be demonstrated:
+A comma-separated list forms a calculated collection and infers type and cardinality where they can be proven:
 
 ```mud
 numbers := a * b, d, c / a
 ```
 
-The domain in a calculation, it acts as contract. A potential external output triggers a warning and a check of transition; an output that must be external results in error.
+The domain on a calculated value acts as a contract. A potentially out-of-domain result triggers a warning and a runtime transition check; a result that is provably outside the domain is an error.
 
 ## Expression blocks and value
 
-A `ExpressionBlock` is a declarative form: it contains zero or more pure calculated locals `:=` followed by a final expression. It does not support stored variables or mutation, `for each` as a sentence or `if` internal. It is used by conditions, filters, quantifiers and key sides/selector dictionaries.
+An `ExpressionBlock` is a declarative form: it contains zero or more pure calculated locals declared with `:=`, followed by a final expression. It does not support stored variables, mutation, `for each` as a statement or an internal `if`. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
 
-A `ValueBlock` build a value and contains zero or more local statements followed by a final expression. Its only statements are evaluated declarations, stored declarations, and assignments whose footprint remains within the block itself, and `for each` local. Does not support `if`, external effects, actions/subactions, `create` nor `destroy`.
+A `ValueBlock` constructs a value and contains zero or more local statements followed by a final expression. Its only statements are calculated declarations, stored declarations, assignments whose footprint remains within the block, and local `for each`. It does not support `if`, external effects, actions, subactions, `create` or `destroy`.
 
 ```mud
 result := {
@@ -274,9 +274,9 @@ result := {
 }
 ```
 
-`ValueBlock` It is not a primary expression. It only appears in owners who explicitly declare it; to use a complex calculation such as argument, index or the right-hand side of a effect It is first linked to a local one.
+`ValueBlock` is not a primary expression. It appears only in owners that explicitly declare it; to use a complex calculation as an argument, index or effect RHS, bind it to a local first.
 
-In `then` Stored local variables are also permitted:
+Stored local variables are also permitted in `then`:
 
 ```mud
 then {
@@ -286,13 +286,13 @@ then {
 }
 ```
 
-The shape `x := ...` It cannot be allocated. `x: X = ...` creates a non-reallocable local slot and `mut x: X = ...` one that can be reassigned. A `then` it still needs at least one effect observable.
+The form `x := ...` cannot be assigned to. `x: X = ...` creates a local slot that cannot be reassigned, and `mut x: X = ...` creates one that can. A `then` still requires at least one observable effect.
 
 The default of `given` preserves `constant-expression` and does not allow `ValueBlock`.
 
-## Type joints and external arrows
+## Type unions and outer arrows
 
-`|` combines non-arrow alternatives and has greater precedence that `->` y `-->`. Both arrows have the same precedence and are grouped from the right:
+`|` combines non-arrow alternatives and has greater precedence than `->` and `-->`. Both arrows have the same precedence and group from the right:
 
 ```mud
 A | B -> C | D       # (A | B) -> (C | D)
@@ -300,7 +300,7 @@ A | B --> C | D      # (A | B) --> (C | D)
 A -> B -> C           # A -> (B -> C)
 ```
 
-An arrow must be the complete outer shape of the type. A dictionary cannot be regarded as a partial alternative to a union, not even in brackets or by means of a alias whose actual shape is that of an arrow.
+An arrow must be the complete outer shape of a type. A dictionary cannot be a partial union alternative, even inside parentheses or through an alias whose effective shape is an arrow.
 
 
 ### Callable types and types obtained by reflection
@@ -314,7 +314,7 @@ Dragon.rule(Limit)
 Dragon.look(Detail)
 ```
 
-The category forms part of the construction of type. This surface alone does not determine the variance nor all the rules of compatibility between companies: Q-063 keeps that issue open. The ability to root outside of `action` nor can it be deduced solely from reflective subtyping.
+The category forms part of the type construction. This surface alone determines neither variance nor every compatibility rule between callables: Q-063 keeps that issue open. The ability to root outside `action` likewise cannot be deduced solely from reflective subtyping.
 
 A postfix expression ending in `~type` may occupy a type position when elaboration proves statically that it produces `Type`. For example, `alias Stats := MyDragon.Stats()~type` is valid; the call `MyDragon.Stats()` without `~type` remains a value rather than a type expression. A callable type such as `Dragon.look(Detail)` already denotes `Type` and does not need `~type`.
 The following are invalid:
@@ -337,7 +337,7 @@ value: (A | B) --> (C | D)
 value: A -> Lookup
 ```
 
-The alias restriction is checked after the nominal resolution. Each non-arrow alternative may declare domain and just one specification from collection The end belongs to the union full:
+The alias restriction is checked after nominal resolution. Each non-arrow alternative may declare a domain and at most one collection specification. The final collection specification belongs to the complete union:
 
 ```mud
 values: Nat in 0..10 | Int in -10..-1 [1..*] = [2 to Nat]
@@ -347,25 +347,25 @@ Cardinalities by alternative are not permitted. If a contextual expression fits 
 
 ## Collections and dictionaries
 
-The cardinality, when it appears, it is placed at the start of the square brackets. Modifiers may be separated by a space or a comma:
+Cardinality, when present, is placed at the start of the square brackets. Modifiers may be separated by spaces or commas:
 
 ```mud
 citizens: Person [0..* unique ordered mut]
 citizens: Person [0..*, unique, ordered, mut]
 ```
 
-A final comma is not permitted. In a stored field immutable with an initialiser, a cardinality An omitted element is retained as omitted in the AST and is inferred as the cardinality exact exterior of the value initial:
+A trailing comma is not permitted. In an immutable stored field with an initialiser, an omitted cardinality remains omitted in the AST and is inferred as the initial value's exact outer cardinality:
 
 ```mud
 one: Nat = 1                 # [1]
 three: Nat = [1, 2, 3]      # [3]
 none: Nat = empty            # [0]
-table: A -> B = AValue -> BValue # [1]: el diccionario completo es un valor
+table: A -> B = AValue -> BValue # [1]: the complete dictionary is one value
 ```
 
-A field with `mut` exterior retains `[1]` when it is omitted. Calculated fields `:=` retain the inferred form of their expression. A cardinality an inferred immutable value distinct from `[1]` prompts you to write it out explicitly.
+A field with outer `mut` retains `[1]` when cardinality is omitted. Calculated fields declared with `:=` retain the inferred shape of their expression. An inferred immutable cardinality other than `[1]` prompts the author to write it explicitly.
 
-Compatible collections support `|`, `&` y `--`. `^` demands that the result comply with the uniqueness rules. They operate on multiplicities or membership; they do not concatenate:
+Compatible collections support `|`, `&` and `--`. `^` requires the result to comply with uniqueness rules. They operate on multiplicities or membership; they do not concatenate:
 
 ```mud
 leftChars: Char [1..5] = ["a"]
@@ -373,11 +373,11 @@ rightChars: Char [0..2] = empty
 combinedChars := leftChars | rightChars
 ```
 
-`empty` it is not a failure by itself. A query partial produces `empty`; the failure appears only when the required external form does not allow for cardinality zero.
+`empty` is not a failure by itself. A partial query produces `empty`; failure appears only when the required outer shape does not permit cardinality zero.
 
 ### Associations and branches
 
-In an association `->`, the left-hand side is a `ExpressionBlock` and on the right, a `ValueBlock`. In a branch `-->`, the left-hand selector is a `ExpressionBlock` Boolean and the result first `ValueBlock`. The keys only replace the extended side, so all four short combinations are valid/extensa without any auxiliary keywords or external packaging.
+In an association `->`, the left side is an `ExpressionBlock` and the right side a `ValueBlock`. In a branch `-->`, the left selector is a Boolean `ExpressionBlock` and the result is a `ValueBlock`. Braces replace only the expanded side, so all four short and expanded combinations are valid without auxiliary keywords or outer wrapping.
 
 ```mud
 key -> value
@@ -386,11 +386,11 @@ key -> { result }
 { key } -> { result }
 ```
 
-The scopes on both sides are independent. The local scopes/selector do not proceed to the value/resultado. The application of the dictionary remains outwardly flawless.
+The scopes on both sides are independent. Key or selector locals do not flow into the value or result. Dictionary application remains externally pure.
 
-### Precise dictionaries `->`
+### Exact dictionaries `->`
 
-An accurate dictionary query by key equality, it is countable and admits mutability external. Associations are written using the same arrow:
+An exact dictionary is queried by key equality, is countable and permits outer mutability. Associations are written with the same arrow:
 
 ```mud
 capitalOf: Country -> City [2 ordered] =
@@ -398,13 +398,13 @@ capitalOf: Country -> City [2 ordered] =
     France -> Paris
 ```
 
-A missing key results in `empty`. A complete association can be inserted as value operational:
+A missing key produces `empty`. A complete association may be inserted as a runtime value:
 
 ```mud
 then add (Portugal -> Lisbon) to capitalOf
 ```
 
-`unique` requires the associated values to be globally unique. An insertion or substitution that would duplicate a value A two-key operation is a complete no-op: it does not modify any associations and does not produce `failed`.
+`unique` requires associated values to be globally unique. An insertion or replacement that would duplicate one value under two keys is a complete no-op: it changes no association and does not produce `failed`.
 
 Adding an association whose key already exists atomically replaces the previous association when the result respects the contract:
 
@@ -432,10 +432,10 @@ for capitalOf: Country -> City [*],
 }
 ```
 
-One query 'absent' retains the optional output format:
+An absent lookup retains the optional result shape:
 
 ```mud
-capitalOf[Italy] # City [0..1], produce empty si Italy no está
+capitalOf[Italy] # City [0..1], produces empty if Italy is absent
 ```
 
 The key elements may be structural components:
@@ -446,7 +446,7 @@ distance: (City, City) -> Length =
     (Madrid, Segovia) -> 91 km
 ```
 
-Set-theoretic operators on sets act on keys. For a common key, `|` y `&` retain the value left:
+Set-theoretic operators on dictionaries act on keys. For a common key, `|` and `&` retain the left-hand value:
 
 ```mud
 left: Key -> Nat = AKey -> 1, BKey -> 2
@@ -458,11 +458,11 @@ left -- right  # AKey -> 1
 left ^ right   # AKey -> 1, CKey -> 3
 ```
 
-`|` y `&` They are not necessarily commutative, as with dictionaries. The insertion order preserves the left-hand content first; `ordered by` normalises after calculating the content.
+`|` and `&` are not necessarily commutative, as with dictionaries. Insertion order preserves left-hand content first; `ordered by` normalises after calculating the content.
 
 ### Functional dictionaries `-->`
 
-A functional dictionary is a policy case-defined purity. `value` refers to the input within the selector and the result; `_` This is the fallback:
+A functional dictionary is a pure case-defined policy. `value` refers to the input within both the selector and the result; `_` is the fallback:
 
 ```mud
 dangerOf: Creature --> Danger [ordered] =
@@ -471,7 +471,7 @@ dangerOf: Creature --> Danger [ordered] =
     _ --> Low
 ```
 
-`ordered` means `FirstMatch`: wins the first one branch applicable, and the application results in `[0..1]`, o `[1]` with a fallback. Without `ordered` all ordinary branches are evaluated and a result is obtained result by chance; `unique` removes duplicates from results:
+`ordered` means `FirstMatch`: the first applicable branch wins, and application yields `[0..1]`, or `[1]` with a fallback. Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results:
 
 ```mud
 traitsOf: Creature --> Trait [unique] =
@@ -480,7 +480,7 @@ traitsOf: Creature --> Trait [unique] =
     value is Magical --> Magical
 ```
 
-Selectors are written explicitly. There is no shorthand that implicitly inserts `value`, `==`, `is` o `in`:
+Selectors are written explicitly. No shorthand implicitly inserts `value`, `==`, `is` or `in`:
 
 ```mud
 seasonName: Month --> Text [ordered] =
@@ -490,11 +490,11 @@ seasonName: Month --> Text [ordered] =
     _ --> "other"
 ```
 
-Therefore, `January --> "winter"`, `[March..May] --> "spring"`, `Dragon --> Extreme` y `shop.discounted --> DiscountedPrice` They do not automatically take on the meaning of a selector. The full comparison or membership must be written out.
+Therefore, `January --> "winter"`, `[March..May] --> "spring"`, `Dragon --> Extreme` and `shop.discounted --> DiscountedPrice` do not automatically acquire selector meaning. The complete comparison or membership must be written.
 
-Applicability and production from result are recorded separately. One branch whose selector is applicable may produce `empty`; the fallback `_` it merely contributes result when there is none branch The applicable ordinary law has produced one. In `FirstMatch` the order of evidence is retained; in `AllMatches` all the results actually produced are recorded.
+Applicability and result production are tracked separately. A branch whose selector applies may produce `empty`; the `_` fallback contributes a result only when no applicable ordinary branch has produced one. `FirstMatch` preserves evidence order; `AllMatches` records every result actually produced.
 
-You can view the fixtures and results state purely external:
+Selectors and results may read external state purely:
 
 ```mud
 priceOf: Product --> Money [ordered] =
@@ -502,11 +502,11 @@ priceOf: Product --> Money [ordered] =
     _ --> value.basePrice
 ```
 
-These readings create explicit dependencies on `shop.discounted`, `shop.discount` y `basePrice`. All transitive calls follow the same snapshot.
+These readings create explicit dependencies on `shop.discounted`, `shop.discount` and `basePrice`. All transitive calls use the same snapshot.
 
-Does not support `mut` exterior or `[mut]`, it is not traversed directly via `for each` and every recursion must have a demonstrably well-founded measure. Valid proofs include numerical descent and strict reduction of cardinality or the transition to a strictly minor substructure; a cycle without demonstrable evidence is error.
+It supports neither outer `mut` nor `[mut]`, is not traversed directly with `for each`, and every recursion must have a demonstrably well-founded measure. Valid proofs include numeric descent, strict cardinality reduction, or transition to a strict substructure; a cycle without such evidence is an error.
 
-To iterate through results, you iterate through a domain entries and the dictionary is applied:
+To iterate over results, iterate over an input domain and apply the dictionary:
 
 ```mud
 action CollectPrices
@@ -519,7 +519,7 @@ for products: Product [*], pricing: Product --> Money,
 }
 ```
 
-Branches can only be changed by editing the model About the dictionary owner. A structural edit can be inserted before `_` by default, and you can update, remove or move a branch, but none of those operations are directed at a anchor from branch nor does it presuppose identity independent public sphere; its local key is anchored in the resolved representation.
+Branches can be changed only by editing the model at the owning dictionary. By default, a structural edit may insert before `_`, and may update, remove or move a branch, but none of these operations targets a branch anchor or assumes an independent public identity; the local key is grounded in the resolved representation.
 
 Functional calculus is extensional; it does not merge branches:
 
@@ -527,15 +527,15 @@ Functional calculus is extensional; it does not merge branches:
 (F op G)[x] = F[x] op G[x]
 ```
 
-`F | G`, `F & G`, `F -- G` y `F ^ G` combine the sets obtained by applying both operands to `x`. Its fallbacks are evaluated independently. The union and the symmetric difference of two functionals `ordered` they can produce two outcomes and lose `ordered` in general; the intersection and the difference may preserve it.
+`F | G`, `F & G`, `F -- G` and `F ^ G` combine the sets obtained by applying both operands to `x`. Their fallbacks are evaluated independently. The union and symmetric difference of two `ordered` functionals may produce two outcomes and generally lose `ordered`; intersection and difference may preserve it.
 
 It is not permitted to combine an exact match with a functional match directly.
 
 ### `FirstMatch`, `AllMatches`, fallback and cardinality
 
-In a functional `[ordered]`, `unique` It is valid but redundant and triggers a suggestion to remove it. Without a fallback, the application has `[0..1]`; with a fallback, `[1]`.
+In a functional `[ordered]` dictionary, `unique` is valid but redundant and triggers a suggestion to remove it. Without a fallback, application has cardinality `[0..1]`; with a fallback, `[1]`.
 
-In an unordered functional, each branch An ordinary coincidence contributes a maximum of one result. With `n` potentially matching branches; the conservative approach is `[0..n]`; a fallback raises the lower bound to `1`. `unique` It deduplicates matching results from different branches without changing which branches were applicable.
+In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback raises the lower bound to `1`. `unique` deduplicates equal results from different branches without changing which branches applied.
 
 ```mud
 tagsOf: Creature --> Tag [unique] =
@@ -545,7 +545,7 @@ tagsOf: Creature --> Tag [unique] =
     _ --> Ordinary
 ```
 
-For a fire-breathing dragon, `Magical` appears only once. The union or the symmetric difference of two functionals `ordered` loses `ordered` when it can produce two different results; the intersection and the difference are preserved when the quota is maintained `[0..1]`.
+For a fire-breathing dragon, `Magical` appears only once. The union or symmetric difference of two `ordered` functional dictionaries loses `ordered` when it may produce two distinct results; intersection and difference preserve it when cardinality remains `[0..1]`.
 
 ### Chaining dictionary types
 
@@ -557,7 +557,7 @@ nested: Name -> Coordinate -> Piece [*]
 policyByMode: Mode -> Product --> Money [2..4 ordered]
 ```
 
-The second example is equivalent to `Name -> (Coordinate -> Piece [*])`. Each specification from collection refers to the immediately preceding arrow. Brackets are only necessary to alter the natural grouping or to delimit another complete construction.
+The second example is equivalent to `Name -> (Coordinate -> Piece [*])`. Each collection specification applies to the immediately preceding arrow. Parentheses are needed only to alter the natural grouping or delimit another complete construction.
 
 The chained application processes each level in turn:
 
@@ -565,15 +565,15 @@ The chained application processes each level in turn:
 piece := boardByGame[game][coordinate]
 ```
 
-Composition does not introduce an abstract category of function. It is expressed by applying the result from one dictionary as an entry in another:
+Composition does not introduce an abstract function category. It is expressed by applying one dictionary's result as input to another:
 
 ```mud
 weather := weatherOf[capitalOf[country]]
 ```
 
-### Unbranded structural products
+### Anonymous structural products
 
-The lads `(A, B)` y `(a: A, b: B)` They are structural products. Their elements are `(x, y)` y `(a = x, b = y)`. They are compared component by component and can act as exact keys or functional entries:
+`(A, B)` and `(a: A, b: B)` are structural products. Their values are `(x, y)` and `(a = x, b = y)`. They are compared component by component and can act as exact keys or functional entries:
 
 ```mud
 distance: (City, City) -> Length
@@ -581,7 +581,7 @@ label: (name: Text, count: Nat)
 routePolicy: (origin: City, destination: City) --> Route
 ```
 
-Variable names do not create component names: `(x, y)` it remains positional even if the variables are named `x` e `y`. A alias The figure remains nominal, although its payload has the same shape:
+Variable names do not create component names: `(x, y)` remains positional even when its variables are named `x` and `y`. An alias remains nominal even when its payload has the same shape:
 
 ```mud
 alias Coordinate {
@@ -593,22 +593,22 @@ raw: (Num, Num) = (1, 2)
 nominal: Coordinate = (x = 1, y = 2)
 ```
 
-`raw` y `nominal` are not interchangeable without an explicit nominal conversion. The compatibility Anonymous products require the same consistency, compatible component names where these exist, and a component-to-component correspondence.
+`raw` and `nominal` are not interchangeable without an explicit nominal conversion. Anonymous-product compatibility requires the same arity, compatible component names where present, and component-by-component correspondence.
 
-`ordered by ruta` belongs to collections whose members offer a path fixed set of fields, components or associated data. Each intermediate access must be unique and the value The final version must have complete semantic order:
+`ordered by path` applies to collections whose members expose a fixed path of fields, components or associated data. Every intermediate access must be unique and the final value must have a total semantic order:
 
 ```mud
 route: Terrain [* ordered by movementCost]
 teams: Team [* ordered by captain.age]
 ```
 
-One `thing` does not in itself possess total order and cannot be the ultimate key. The whole path it must be transitively stable: mutable stored fields, calculations with mutable dependencies and intermediate accesses whose state subsequent action may alter the key. A path The optional element is also rejected as long as there is no defined position for `empty`.
+A `thing` has no total order by itself and cannot be the final key. The complete path must be transitively stable: mutable stored fields, calculations with mutable dependencies and intermediate accesses whose state a later action may alter are invalid keys. An optional path is also rejected unless a defined position exists for `empty`.
 
-If the member is a union, the path must exist across all feasible alternatives. Each segment retains its uniqueness and stability, and the final keys must be worked out towards a single type a fully ordered set. A single implicit extension is valid; two purely representational aliases are not unified. When alternatives need to be adapted, a computed field common.
+If a member is a union, the path must exist across all feasible alternatives. Every segment must remain unique and stable, and the final key must elaborate to a single totally ordered type. A single implicit widening is valid; two purely representational aliases are not unified. When alternatives need adaptation, a common calculated field must be provided.
 
-`ordered by` does not allow arbitrary expressions. If the criterion requires a formula, it is declared as field or a calculated value, and is sorted by name. Keys with the same value retain their relative order within provenance stable; in a purely sequential story, it corresponds to the order in which they appear. They are not resolved by anchor, identity nor an order to declaration of a `family`.
+`ordered by` does not permit arbitrary expressions. If the criterion requires a formula, it is declared as a field or calculated value and referenced by name. Keys with the same value retain their relative order under stable provenance; in a purely sequential source, this is their order of appearance. Ties are not resolved by anchor, identity or `family` declaration order.
 
-It is prohibited `ordered by` for `Char`; its encoding is Unicode. `Text` does not accept specifications for collection.
+`ordered by` is prohibited for `Char`; its encoding is Unicode. `Text` does not accept collection specifications.
 
 ## Aliases
 
@@ -643,11 +643,11 @@ alias LargePagination as Pagination {
 
 An alias declaration may write an unordered list of ancestors using `as`. The local definition is optional when the ancestors determine a complete effective form. Therefore, both `alias UserName as PlayerName` and `alias PositionedCoordinate as Coordinate` are valid. `alias A` without ancestors or a definition is a static error.
 
-`:= tipo` simply enter the representation of a nominal alias root. A nominal alias Upon succeeding their predecessors, they inherit the effective representation and cannot re-declare it. In particular, `alias UserName as PlayerName := Text` is invalid.
+`:= type` introduces the representation of a root nominal alias. Nominal aliases with ancestors inherit the effective representation and cannot redeclare it. In particular, `alias UserName as PlayerName := Text` is invalid.
 
-A performance `:= tipo` may be followed by an immediate body containing only metadata from the alias. So a alias A representational model can be documented or configured without incorporating structural components.
+A `:= type` representation may be followed by an immediate body containing only alias metadata. A representational alias can therefore be documented or configured without acquiring structural components.
 
-The structural body may contain stored components, derived fields and overrides of inherited defaults. An override `nombre = valor` It only changes the default value: it cannot alter type, domain, cardinality, order, uniqueness or inner capacity.
+The structural body may contain stored components, calculated fields and inherited-default overrides. An override `name = value` changes only the default value: it cannot alter type, domain, cardinality, order, uniqueness or inner capability.
 
 Structural literals are contextual:
 
@@ -660,14 +660,14 @@ Structural literals are contextual:
 The positional form must provide all components. If any are omitted, the form must be fully qualified: the omitted components take their explicit default value or the default value of their type. The components listed may skip previous or intermediate components, but those listed retain the relative order of declaration. You are not allowed to mix positions and names:
 
 ```mud
-pagination: Pagination = (2, 30) # válido
-pagination: Pagination = (2)     # inválido: posición parcial
-pagination: Pagination = (size = 30) # válido: page conserva 1
+pagination: Pagination = (2, 30) # valid
+pagination: Pagination = (2)     # invalid: partial positional form
+pagination: Pagination = (size = 30) # valid: page retains 1
 ```
 
-A component does not support `mut` outside because the value from alias and each of its components is immutable. You can, however, write `[mut]` in his specification from collection to provide internal capacity on the `thing` contained directly; this capacity does not allow the collection.
+A component does not support outer `mut` because the alias value and each component are immutable. Its collection specification may nevertheless contain `[mut]` to grant internal capability over directly contained `thing` values; this capability does not make the collection itself assignable.
 
-A derived field from alias It uses the same syntax as the other calculated fields, including an optional declared form:
+A calculated alias component uses the same syntax as other calculated fields, including an optional declared shape:
 
 ```mud
 alias Squad {
@@ -678,7 +678,7 @@ alias Squad {
 }
 ```
 
-The collection A derived collection is not a stored sub-collection of `members`: has contract its own. `[mut]` grants internal capacity even if the source does not. The selection is set for the snapshot under review; once the effects have been consolidated, it is recalculated on the basis of the new state, so members can join or leave automatically. A collection Stored data is never pruned by this reason.
+A calculated collection is not a stored subcollection of `members`: it has its own contract. `[mut]` grants internal capability even if the source does not. The selection is fixed for the snapshot being evaluated; once effects have been consolidated, it is recalculated from the new state, so members can join or leave automatically. A stored collection is never pruned for this reason.
 
 ## Families
 
@@ -699,14 +699,14 @@ family Terrain {
 }
 ```
 
-The data appears before the first member. A stored value may be followed, after its optional default, by an immediate body containing only statements `~...`. A calculated value may contain the same immediate metadata body and uses the `derived-value-shape` full list of calculated fields: you can set type, domain or a form of collection compatible without having to buy them mutability no external facilities or on-site storage.
+Data declarations appear before the first member. A stored datum may be followed, after its optional default, by an immediate body containing only `~...` statements. A calculated datum may contain the same immediate metadata body and uses the complete `derived-value-shape` of calculated fields: it may specify a compatible type, domain or collection shape without acquiring outer mutability or local storage.
 
-The metadata-body describes the descriptor data standardisation of the `family`, not the value sprayed concrete per member. For example:
+The metadata body describes the canonical `family` data descriptor, not the concrete value supplied by each member. For example:
 
 ```mud
 family Terrain {
     movementCost: Nat = 1 {
-        ~summary = "Coste base de movimiento"
+        ~summary = "Base movement cost"
     }
     costly := movementCost >= 3 {
         ~summary = "Indica terreno costoso"
@@ -719,11 +719,11 @@ family Terrain {
 }
 ```
 
-The allocation `movementCost = 4` from the member it is simply an overwrite of value of the stored data. It does not support metadata-body, nor does it introduce any other anchor and does not alter the metadata of the descriptor `movementCost`. The expression of a calculated value is evaluated statically for each member After resolving the stored data, you can query other associated data using unqualified names, and the data must have acyclic dependencies. The block of a member It can only assign stored data.
+The member assignment `movementCost = 4` simply overrides the stored datum's value. It does not support a metadata body, introduce another anchor or alter the metadata of the `movementCost` descriptor. A calculated value expression is evaluated statically for each member after stored data have been resolved; it may query other associated data through unqualified names, and those data must have acyclic dependencies. A member block may assign only stored data.
 
-The items are separated by commas and do not take a final comma. `ordered family` compares its members in order of declaration and allows associated data paths, including stable calculated ones, to be used as keys for `ordered by` in collections.
+Members are separated by commas and do not permit a trailing comma. `ordered family` makes its members comparable by declaration order and allows associated-data paths, including stable calculated data, to serve as `ordered by` keys in collections.
 
-## Quantities
+## Magnitudes
 
 Magnitude base:
 
@@ -750,7 +750,7 @@ magnitude Speed: Num in [0..*] := Length / Time {
 }
 ```
 
-Magnitude from point:
+Point magnitude:
 
 ```mud
 magnitude RawInstant point over Time {}
@@ -768,22 +768,22 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 }
 ```
 
-One magnitude A base can take one of two forms: an empty set with no elements, or exactly one `root unit nombre` followed by zero or more alternative units. You cannot declare an alternative without root. The absence of root it is a choice semantics complete: the magnitude it retains an independent nominal dimension, but its values do not appear unit. It is not the same as its numerical representation, or any other magnitude without units or the dimensional neutral element.
+A base magnitude has one of two forms: an empty body, or exactly one `root unit name` followed by zero or more alternative units. An alternative cannot be declared without a root. Absence of a root is a complete semantic choice: the magnitude retains an independent nominal dimension, but its values display no unit. It is not identical to its numeric representation, another unitless magnitude, or the dimensionless element.
 
 ```mud
 chance: Probability = 0.75
 explicitChance := ratio to Probability
 ```
 
-A literal A bare numeric value can take the type of a magnitude without units when the expected context uniquely determines them. A general numerical expression requires `to` to bring it into being. Arithmetic retains the nominal factor even if it has no form of unit; the visible projection of units may coincide across statically distinct dimensions. A quantity that does write unit It only takes into account the factors it has identified: the context does not introduce any hidden factors.
+A bare numeric literal may take the type of a unitless magnitude when the expected context determines it uniquely. A general numeric expression requires `to` to construct that magnitude. Arithmetic retains the nominal factor even when it has no unit form; the visible unit projection may coincide across statically distinct dimensions. A quantity that explicitly writes a unit includes only the factors that unit identifies: context introduces no hidden factors.
 
-One magnitude The derived variable only declares alternative nominal units `unit nombre := equivalencia`; a magnitude from point does not specify units. In the latter, `in` and the domain are optional: without them, the domain The full value of the underlying coordinate; an ordinary interval bounds it without enclosing it, and `[a..b) cycle` adds cyclical normalisation. `cycle` amend the domain 'complete' is not part of the term 'interval', and only one magnitude from point He admits it.
+A derived magnitude declares only nominal alternative units as `unit name := equivalence`; a point magnitude declares no units. For the latter, `in` and its domain are optional: without them, the domain is the full underlying coordinate space; an ordinary interval bounds it without wrapping, and `[a..b) cycle` adds cyclic normalisation. `cycle` modifies the complete domain rather than the interval term, and only a point magnitude accepts it.
 
-The body of a unit contains only general statements `~...`; it does not exist `unit-property`. `~prefixes: Prefix [* unique] = empty` use the type incorporated `Prefix`: leave it out or write `empty` does not enable any, `all` enables the full decimal SI catalogue and a collection such as `[kilo, milli]` select those pre-set values. `~name`, `~plural` y `~abbreviation` they use the same general metadata system and all runtime access via `~` It is read-only.
+A unit body contains only ordinary `~...` statements; there is no `unit-property`. `~prefixes: Prefix [* unique] = empty` uses the built-in `Prefix` type: omitting it or writing `empty` enables none, `all` enables the full decimal SI catalogue, and a collection such as `[kilo, milli]` selects those predefined values. `~name`, `~plural` and `~abbreviation` use the same general metadata system, and every runtime `~` access is read-only.
 
-A number may omit the space before it unit, but the formatter inserts it: `3m` y `3 m` have the same AST, and the second one is canonical.
+A number may omit the space before its unit, but the formatter inserts it: `3m` and `3 m` have the same AST, and the latter is canonical.
 
-`~format` is optional and uses the general template syntax `Text`: the spaces are code and `:2` set two positions here to the left of the point. Without it, there is no special representation of point: the ordinary textual representation of a magnitude, with the coordinate at the unit root and the abbreviation or name of that unit. In this case, the first component is the coordinate at that unit —reduced by the cycle, if it exists— and each subsequent component is extracted within the previous one. A non-obvious container is made explicit, for example `~format = "{week from year:2}"`.
+`~format` is optional and uses the general `Text` template syntax: spaces are literal, and `:2` sets two places to the left of the point here. Without it, a point has no special representation: it uses the ordinary textual representation of a magnitude, with the coordinate in the root unit and that unit's abbreviation or name. In this case, the first component is the coordinate in that unit—reduced by the cycle, if one exists—and each subsequent component is extracted within the preceding one. A non-obvious container is made explicit, for example `~format = "{week from year:2}"`.
 
 Outside `~format`, extraction requires the point:
 
@@ -793,15 +793,15 @@ picosecond from second in time
 week from year in date
 ```
 
-The form is a single syntactic construction. The receiver it must be a magnitude from point; both units belong to his magnitude underlying; the unit the extracted material does not exceed the capacity of the container; the result is `Nat`. The canonical origin and Euclidean remainder are used, with a possible final partial component when the units do not divide exactly. The extraction does not depend on `~format`.
+The form is one syntactic construct. Its receiver must be a point magnitude; both units belong to its underlying magnitude; the extracted unit is no larger than the container unit; and the result is `Nat`. It uses the canonical origin and Euclidean remainder, with a possible final partial component when the units do not divide exactly. Extraction does not depend on `~format`.
 
-The shapes produced by `~format` occupy the token contextual `POINT_LITERAL`. The type 'Expected' selects a single magnitude from point and the literal It must exactly reproduce its canonical form. A format that cannot be unambiguously inverted is invalid. Components finer than the last one shown take value zero.
+Forms produced by `~format` occupy the contextual token `POINT_LITERAL`. The expected type selects a single point magnitude, and the literal must reproduce its canonical form exactly. A format that cannot be inverted unambiguously is invalid. Components finer than the last one shown take the value zero.
 
-Without `~format`, the literal is written as an ordinary quantity with unit compatible. Everything literal must belong to the domain before applying cyclical normalisation; for example, `26:00:00` is invalid for `TimeOfDay`.
+Without `~format`, the literal is written as an ordinary quantity with a compatible unit. Every literal must belong to the domain before cyclic normalisation is applied; for example, `26:00:00` is invalid for `TimeOfDay`.
 
-## Activación inicial `start with`
+## Initial activation with `start with`
 
-Every module You may declare a maximum of one `start with`. It isn't a `main`, does not call any modules and does not specify an initialisation order. The absence of `start with` in a module is equivalent to an empty contribution.
+Each module may declare at most one `start with`. It is not a `main`, does not invoke modules and does not specify an initialisation order. Omitting `start with` from a module is equivalent to an empty contribution.
 
 The declaration accepts a direct contribution or a unified block:
 
@@ -818,15 +818,15 @@ start with {
 }
 ```
 
-Each expression must be static and may contain zero, one or more activatable statements `thing | rule`. A collection is supplied directly by its members; nested collections are not permitted. Duplicate identities are deduplicated and the source order is retained only as provenance, not as a priority semantics.
+Each expression must be static and may contain zero, one or more activatable `thing | rule` declarations. A collection contributes its members directly; nested collections are not permitted. Duplicate identities are deduplicated, and source order is retained only as provenance, not as priority.
 
-A `start with` can only trigger statements with cycle its lifespan module. The contributions from all the modules are combined before the stabilisation initial. `Thing` remains in force at all times and does not form part of the collection can be enabled.
+A `start with` may activate only declarations whose lifecycle is module-scoped. Contributions from all modules are combined before initial stabilisation. `Thing` is always active and is not part of the activatable collection.
 
-`all D` can bring about a domain countable when a contribution requires a collection explicit; `all` Without an operand, it retains its contextual meaning.
+`all D` may materialise a countable domain when a contribution requires an explicit collection; `all` without an operand retains its contextual meaning.
 
 ## Participants
 
-`for` links predefined roles from any type from value declared. A role may be individual or collective; its values may be restricted by `in dominio` and acknowledge the specification full list of collection. The domain is written after the type and before the collection. `on nombre: Tipo` uses the implicit universe of `thing` specific and proactive measures compatible with that type; on the other hand `on nombre[: Tipo] in fuente` It links from a finite, countable source and can therefore relate other values. The related form can write the type to refine the source elements nominally.
+`for` binds predefined roles of any declared value type. A role may be individual or collective; its values may be restricted by `in domain` and may use the complete collection specification. The domain is written after the type and before the collection specification. `on name: Type` uses the implicit universe of concrete, active `thing` values compatible with that type, whereas `on name[: Type] in source` binds from a finite, countable source and may therefore relate other values. The related form may write the type to refine the source elements nominally.
 
 ```mud
 rule CanAttack for attacker: Army, defender: Army
@@ -851,9 +851,9 @@ rule Starve on
 }
 ```
 
-The type can be inferred from a participant related: that is usually enough `kingdom in world.kingdoms`.
+The type may be inferred from a related participant: `kingdom in world.kingdoms` is usually sufficient.
 
-It can also be written as the type to refine, in name only, the members of the collection, not necessarily to repeat his type stated:
+The type may also be written only to refine the names of collection members, without necessarily repeating their declared type:
 
 ```mud
 rule MutualFriends on
@@ -865,11 +865,11 @@ rule MutualFriends on
 }
 ```
 
-All the names in a header `on` are visible throughout the entire header. Their types and constraints are resolved jointly, so that forward references and cycles are permitted where there is a unique nominal solution. Each role starts from the `thing` concrete and active actions on the part of its type effective; the relationships are the finite join that satisfies all membership conditions on the same snapshot. It is not the case that different roles must be assigned different identities, nor do two symmetrical orientations constitute different relationships.
+All names in an `on` header are visible throughout that header. Their types and constraints are resolved jointly, so forward references and cycles are permitted when they have a unique nominal solution. Each role ranges over active concrete `thing` values of its effective type; relationships are the finite join satisfying all membership conditions in the same snapshot. Different roles need not bind different identities, and two symmetric orientations do not constitute different relationships.
 
-Everything participant `for`, `on` y `given` has an explicit identifier. It does not exist participant anonymous, nor with cardinality effective `[1]`. A header can group together identifiers that share type and metadata-body, for example `for attacker, target: Fighter { ... }`; the group is sugar and each descriptor retains its own anchor.
+Every `for`, `on` and `given` participant has an explicit identifier. There is no anonymous participant, nor one with effective cardinality `[1]`. A header may group identifiers sharing a type and metadata body, for example `for attacker, target: Fighter { ... }`; the group is sugar and each descriptor retains its own anchor.
 
-In a action, `mut` before the name of any role `for`, including the cardinality `[1]`, grants mutability external on the collection supplied. The receiver The relevant location must be a storage facility with that capacity; a literal or a collection calculated values do not meet the contract. The `mut` of the specification from collection continues to provide internal capacity on the `thing` member:
+In an action, `mut` before any `for` role name, including cardinality `[1]`, grants outer mutability over the supplied collection. The corresponding receiver must be a stored location with that capability; a literal or calculated collection does not satisfy the contract. The `mut` in the collection specification continues to grant internal capability over member `thing` values:
 
 ```mud
 action Treat for
@@ -881,11 +881,11 @@ action Treat for
 }
 ```
 
-The declaration The previous one may change the membership or an order from the collection received stored data and modify its members. `mut patients: Person [*]` grants only the first capacity; `patients: Person [*, mut]`, only the second one.
+The preceding declaration may change membership or order in the stored collection and may modify its members. `mut patients: Person [*]` grants only the first capability; `patients: Person [*, mut]` grants only the second.
 
-Declaring an internal capacity based on immutable values is valid, but the compiler suggests removing it when it can demonstrate that it will never be exercisable. The suggestion preserves the meaning and does not constitute a warning. In a strict dictionary, the `mut` external changes associations and `[mut]` only grants authorisation in respect of securities `thing` materially associated; never on keys, aliases, nested levels or the value absent. A functional dictionary prohibits both forms of `mut`.
+Declaring internal capability over immutable values is valid, but the compiler suggests removing it when it can prove that the capability can never be exercised. The suggestion preserves meaning and is not a warning. In an exact dictionary, outer `mut` changes associations, while `[mut]` grants authority only over materially associated `thing` values—never over keys, aliases, nested levels or an absent value. A functional dictionary prohibits both forms of `mut`.
 
-The mutability 'exterior' can indeed be applied to a collection of any type:
+Outer mutability can be applied to a collection of any type:
 
 ```mud
 action Record for mut observations: Num [*]
@@ -894,15 +894,15 @@ given value: Num {
 }
 ```
 
-Boolean rules and `look`, because they are pure, they do not allow `mut` exterior. None `given` supports mutability neither outside nor inside: its specification from collection may state cardinality, `unique` y `ordered`, but his production excludes `mut`.
+Boolean rules and `look`, being pure, do not allow outer `mut`. No `given` supports mutability outside or inside: its collection specification may state cardinality, `unique` and `ordered`, but its production excludes `mut`.
 
-An ordinary reference to `World` refers to the identity exact. `on World` and a role `for World` reflectively select the `thing` specific, active measures that meet `is World`, including the one itself `World` if it is specific. This selection only applies when the type of the role is a `thing`.
+An ordinary reference to `World` denotes that exact identity. `on World` and a `for World` role reflectively select the concrete, active `thing` values that satisfy `is World`, including `World` itself if it is concrete. This selection applies only when the role's type is a `thing`.
 
 The link depends on the role category:
 
 - one `thing` is linked by identity;
-- a staple, alias, member from `family`, dictionary or other value 'immutable' is linked to value;
-- a role with `mut` exterior is linked by identity from the storage location and also retains its value current.
+- a built-in value, alias, `family` member, dictionary or other immutable value is bound by value;
+- a role with outer `mut` is bound by storage-location identity and also retains its current value.
 
 ## Rules
 
@@ -923,7 +923,7 @@ rule CanAfford for person: Person given price: Money {
 
 It doesn’t have `if`.
 
-### Reactivate
+### Reactive
 
 ```mud
 rule OpenGate on gate: Gate [mut] {
@@ -953,9 +953,9 @@ when {
 }
 ```
 
-The subsequent jump to `changes` ends a complete expression; curly brackets do not suppress terminators, and the `or` there is no left-hand operand. To place the operator at the start of the second line, the expression would need to be kept open using brackets.
+The newline after `changes` ends a complete expression; braces do not suppress terminators, so `or` has no left operand. To place the operator at the start of the second line, the expression must be kept open with parentheses.
 
-It has fewer precedence than arithmetic, conversions and comparisons, but more than `and` y `or`. Therefore:
+It has lower precedence than arithmetic, conversions and comparisons, but higher precedence than `and` and `or`. Therefore:
 
 ```text
 position + offset changes  ≡  (position + offset) changes
@@ -963,9 +963,9 @@ temperature > limit changes  ≡  (temperature > limit) changes
 position changes or ready  ≡  (position changes) or ready
 ```
 
-Within `when`, every `e changes` produces a temporary trigger that pulses when `e` has different values in the two consecutive start snapshots. The standard Boolean operands of `and` y `or` amount to transition `false` → `true`; this allows changes and conditions to be combined so that they become true without missing any consecutive pulses. Only the words `and` y `or` consist of temporal activators; their symbolic variants and the other logical operators retain their ordinary meaning when applied to values.
+Within `when`, every `e changes` produces a temporal trigger that pulses when `e` has different values in two consecutive initial snapshots. Ordinary Boolean operands of `and` and `or` represent a `false` → `true` transition; this allows changes and conditions to be combined without missing consecutive pulses. Only the words `and` and `or` compose temporal triggers; their symbolic variants and the other logical operators retain their ordinary value meaning.
 
-A `when e` Purely Boolean detects the transition `false` → `true` of the full expression. `old e` may appear in `when` and in `if` of a reactive rule when `e` It is pure and can be evaluated in both snapshots; see the previous one. It is not permitted in its `then`. To measure a variation, an explicit condition is written; for example `position - old position >= 10 meters`; it does not exist `changes by`.
+A purely Boolean `when e` detects the complete expression's `false` → `true` transition. `old e` may appear in a reactive rule's `when` and `if` when `e` is pure and evaluable in both snapshots; it is not permitted in `then`. A variation is measured with an explicit condition such as `position - old position >= 10 meters`; `changes by` does not exist.
 
 ```mud
 when position changes and velocity changes
@@ -977,12 +977,12 @@ when position - old position >= 10 meters
 ```
 
 
-`when` It also supports declarative sources. A occurrence from `message`, the effective firing of a rule reactive and the assessment of a rule `always` for a link, they can act as a trigger. Actions, sub-actions, `look`, Boolean rules and tests are not declarative sources of triggers.
+`when` also supports declarative sources. A `message` occurrence, the effective firing of a reactive rule and the evaluation of an `always` rule for a binding may act as triggers. Actions, subactions, `look`, Boolean rules and tests are not declarative trigger sources.
 
-A declarative reference used as a trigger does not take parentheses: `when Damaged`, `when Dragon.Damaged` or a local variable containing that descriptor. Receptors restrict their binding sites `on`; they do not turn the trigger into a call ordinary.
+A declarative reference used as a trigger takes no parentheses: `when Damaged`, `when Dragon.Damaged`, or a local containing that descriptor. Receivers restrict its `on` bindings; they do not turn the trigger into an ordinary call.
 
-A trigger produces zero or more causal matches. Each match retains its bindings/testigos and the identities of occurrence. `and` performs a natural join on compatible matches and, where they do not share bindings, a Cartesian product; `or` carries out union. Two causally distinct events are not considered duplicates simply because they share payload. The purely Boolean case described above is the temporary rise in voltage that triggers these matches when the corresponding edge occurs.
-The links found in the first snapshot as evidenced by `start with` compare `old` and the value current one against the same one snapshot: `changes` does not fire. The elevated Boolean branches, on the other hand, retain the previous false virtual value and may fire if they are already true. Any link created subsequently takes its first wave active as baseline Complete it without taking a shot, and start comparing on the next one.
+A trigger produces zero or more causal matches. Each match retains its bindings or witnesses and occurrence identities. `and` performs a natural join on compatible matches and, where they share no bindings, a Cartesian product; `or` performs union. Two causally distinct events are not duplicates merely because they share a payload. The purely Boolean case described above is the temporal rising edge that creates these matches when the corresponding transition occurs.
+Bindings found in the first snapshot established by `start with` compare `old` and the current value against that same snapshot, so `changes` does not fire. Rising Boolean branches instead retain a virtual previous value of `false` and may fire when already true. Any binding created later takes its first active wave as a complete baseline without firing, and begins comparison on the next wave.
 
 ### `always`
 
@@ -996,7 +996,7 @@ otherwise "Population cannot be negative: {population}"
 
 The body directly contains the condition, without `if`. The optional `otherwise` is written after the closing brace, forms part of the complete rule, and accepts a `Text` expression. Its diagnostic is evaluated only when the condition is false, over the same tentative state and bindings that breached the rule. Its value becomes the reason for the `failed` result. Omitting it is legal, but produces a warning and a default reason. Writing it inside the braces is an error.
 
-## Shares
+## Actions
 
 ```mud
 action Recruit for kingdom: Kingdom [mut]
@@ -1012,11 +1012,11 @@ given amount: Nat in 1..100 {
 }
 ```
 
-There is no classification semantics elementary actions as opposed to compound actions. A `then` is an ordered sequence of consequences and may incorporate local connections `:=`, direct effects, calls to `action` o `subaction` and routes `for each`. A call The internal function is executed at its textual position on the delta deprived of the resolution: observe the visible effects shown above, and add your own effects to them resolution and subsequent judgements comply with them.
+There is no semantic classification of elementary versus compound actions. A `then` is an ordered sequence of consequences and may contain local `:=` bindings, direct effects, `action` or `subaction` calls, and `for each` iteration. An internal call executes at its textual position over the resolution's private delta: it observes preceding visible effects, adds its own effects to that resolution, and its subsequent judgements observe them.
 
-One `action` it could be root exterior. A `subaction` It can never be the case, but both are omissible and can be invoked from any semantic context `then`, including the `then` of a rule reactive or a test when the context allows. The call The internal process does not open a transaction or a resolution root independent.
+An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
-The `after` of all the shares/subactions The executed operations are checked against the stable state final attempt at the resolution complete. A `failed` 'nested' reverses the entire resolution; a `rejected` internal processes also abort and reverse it, whilst retaining the category `rejected`. The `otherwise` optional from `if` o `after` explains the rejection and the associated `then` explains the `failed` of the transition complete.
+The `after` clauses of every executed action and subaction are checked against the final stable state of the complete tentative resolution. A nested `failed` reverses the entire resolution; an internal `rejected` also aborts and reverses it while retaining the `rejected` category. The optional `otherwise` of `if` or `after` explains rejection, and the associated `then` explains failure of the complete transition.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -1034,9 +1034,9 @@ given amount: Money {
 }
 ```
 
-External capacity and reflective subtyping are distinct properties: `subaction <: action`, but to expand a descriptor does not provide an alternative `subaction` in root safe outdoor space.
+External eligibility and reflective subtyping are distinct properties: `subaction <: action`, but widening a descriptor does not make a `subaction` a safe external root.
 
-## Point of exit
+## `look` and `message`
 
 ```mud
 look RealmSummary for kingdom: Kingdom
@@ -1056,17 +1056,17 @@ message KingChanged on kingdom: Kingdom {
 }
 ```
 
-`look` It is a pure callable. It can be accessed by the host, another module whose contract make it visible and MUD code in contexts suitable for reading, including a `then`. Its fields read a single, coherent view inherited from the caller: stable state from the host, a snapshot from a rule y delta private, visible on the point verbatim from a `then`. Supports `for` y `given` and returns exactly one value from the anonymous type comprising its public fields.
+`look` is a pure callable. It may be accessed by the host, by another module whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the anonymous type made from its public fields.
 
-A `message` It isn't called that. Every instance of its `when` which exceeds `if` create a occurrence causal with identity, declaration, bindings `on` and birth certificate. That very same occurrence can feed triggers into the wave next. Within the MUD, its payload is projected onto the view causal; after a commit, it is projected to the host via the stable state final. A rollback cancels the delivery outdoors.
+A `message` is not called directly. Every instance of its `when` that passes `if` creates a causal occurrence with an identity, declaration, `on` bindings and birth wave. That occurrence may feed triggers in the next wave. Within MUD, its payload is projected onto the causal view; after commit, it is projected to the host from the final stable state. A rollback cancels external delivery.
 
-The outer casing keeps the bindings separate `on` which identify the participants and the payload public; it does not merge the two namespaces. Confirmed occurrences retain their order causal between waves and, within the same wave, a stable and reproducible technical order that does not introduce any priority semantics among them.
+The outer envelope keeps the `on` bindings that identify participants separate from the public payload; it does not merge the two namespaces. Confirmed occurrences retain causal order between waves and, within one wave, a stable reproducible technical order that introduces no priority semantics among them.
 
-A field audience whose value 'direct' is a magnitude which supports drives should preferably select its presentation with `in`. Omitting it is legal and uses the canonical unit projection, but triggers a warning because it implies a decision of the API. A magnitude Without units, it displays the numerical value directly and does not produce that warning. A magnitude from point directa publishes its coordinates on the unit chosen, and not his `~format`; to publish the format, a field `Text`.
+A public field whose direct value is a magnitude supporting units should preferably select its representation with `in`. Omitting it is legal and uses the canonical unit projection, but triggers a warning because it implies an API decision. A unitless magnitude displays its numeric value directly without that warning. A direct point magnitude publishes its coordinate in the chosen unit, not its `~format`; publishing the format requires a `Text` field.
 
 ## Clauses and keys
 
-`when`, `if`, `then` y `after` You can always use keys. You can omit them when there is only one element. A `then` with more than one effect and a `after` from test If there is more than one assertion, they must be used.
+`when`, `if`, `then` and `after` may always use braces. They may omit them when there is only one element. A `then` with more than one effect and a test `after` with more than one assertion must use them.
 
 ```mud
 if ready
@@ -1080,9 +1080,9 @@ otherwise "Available: {available}"
 
 Braces do not suppress terminators between elements within a block.
 
-### Local values under the right conditions
+### Local values in conditions
 
-Boolean rule blocks, `when`, `if`, rules `always` y `after` Action expressions may contain zero or more local bindings followed by exactly one final expression:
+Boolean-rule blocks, `when`, `if`, `always` rules and action `after` expressions may contain zero or more local bindings followed by exactly one final expression:
 
 ```mud
 when {
@@ -1092,11 +1092,11 @@ when {
 }
 ```
 
-Links use `nombre [: Tipo] := expresión`, are pure, immutable and sequential, and do not allow forward references, loops, redeclaration or shading. They are recalculated on every evaluation of the clause and do not store state between waves.
+Bindings use `name [: Type] := expression`, are pure, immutable and sequential, and permit no forward references, cycles, redeclaration or shadowing. They are recalculated on every evaluation of the clause and store no state between waves.
 
-His scope reaches the `otherwise` associated, but not `then` nor any other clause. In a `when`, `changes` y `old` they evaluate the defining expression of a local variable in each snapshot necessary.
+Its scope reaches the associated `otherwise`, but not `then` or any other clause. In a `when`, `changes` and `old` evaluate a local's defining expression in every required snapshot.
 
-An unstructured expression of declaration It must be the last one. It must be drawn up to `Bool`, except in `when`, where you must create an activator supported by your contract temporal. An empty block, a block consisting solely of local variables, or a second non-declarative expression are invalid.
+The single non-declaration expression must come last. It must elaborate to `Bool`, except in `when`, where it must produce an activator supported by the temporal contract. An empty block, a block containing only local bindings or a second non-declaration expression is invalid.
 
 The block `after` of a test retains one or more assertions. It may begin with common locals, visible in all assertions and their `otherwise`; after the first assertion, no further local assertions may be declared:
 
@@ -1120,11 +1120,11 @@ then {
 }
 ```
 
-The shape `name [derived-value-shape] := value-expression` declares a value immutable local variable. The derived form allows `: Type`, `in domain` with collection optional, or a collection alone. The type and the cardinality are inferred when there is a unique solution; otherwise, they must be written out. It does not allow `mut` outdoors.
+The form `name [derived-value-shape] := value-expression` declares an immutable local value. The derived shape permits `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Type and cardinality are inferred when a unique solution exists; otherwise, they must be written explicitly. Outer `mut` is not permitted.
 
-The expression is pure and is evaluated only once when execution reaches the declaration. Read the previous sequential effects of the same delta private and retains its value even if subsequent instructions change their dependencies.
+The expression is pure and evaluated only once when execution reaches the declaration. It reads preceding sequential effects from the same private delta and retains its value even if later statements change its dependencies.
 
-The name has only been available since its declaration until the end of the block. It may be used in subsequent statements, but not before it appears; there are no forward references, loops, redeclarations or shading. Each iteration creates a scope new. A `then` must retain at least one effect o call: a block consisting solely of local variables is invalid.
+The name is available only from its declaration to the end of the block. It may be used in later statements, but not before it appears; there are no forward references, cycles, redeclarations or shadowing. Each iteration creates a new scope. A `then` must retain at least one effect or call: a block containing only locals is invalid.
 
 ## Calls
 
@@ -1139,13 +1139,13 @@ army.IsDestroyed()
 ).CanAttack()
 ```
 
-The named receivers may reorder roles provided they are accurate and exhaustive.
+Named receivers may reorder roles provided their names are exact and exhaustive.
 
-An expression of collection holds a single position as receiver when the relevant role is a collective role; it is not broken down into several roles. If the role declares `mut` externally, that expression must also be a compatible, mutable space.
+A collection expression occupies a single receiver position when the corresponding role is collective; it is not split across several roles. If the role declares outer `mut`, that expression must also denote a compatible mutable location.
 
-That a type may appear in `for` does not require all the arguments in that type as roles. `for` identifies the semantic subjects of the operation; `given`, its auxiliary parameters.
+A type's appearance in `for` does not require every argument of that type to be a role. `for` identifies the operation's semantic subjects; `given` identifies its auxiliary parameters.
 
-The `given` They must have a name, are read-only, and can declare a closed static default:
+Every `given` must have a name, is read-only and may declare a closed static default:
 
 ```mud
 given origin: Square = Capital,
@@ -1153,7 +1153,7 @@ given origin: Square = Capital,
       exhaustive: Bool = false
 ```
 
-Arguments can be positional, named or a prefix positional, followed by nouns. After the first argument A positional form cannot appear in a named form. In positional usage, only a complete suffix can be omitted with a default; in named forms, intermediate defaults may be omitted and the order rearranged:
+Arguments may be positional, named or a positional prefix followed by named arguments. After the first named argument, no positional argument may appear. In positional use, only a complete suffix with defaults may be omitted; in named use, intermediate defaults may be omitted and arguments reordered:
 
 ```mud
 game.Search(Capital, 3)
@@ -1161,7 +1161,7 @@ game.Search(depth = 3)
 game.Search(exhaustive = true, depth = 3)
 ```
 
-The latter form is valid, but the compiler suggests writing `depth` before `exhaustive` to follow the order of declaration. A name cannot be repeated or be unknown, and every `given` If no default value is specified, it must remain linked.
+The latter form is valid, but the compiler suggests writing `depth` before `exhaustive` to follow declaration order. A name cannot be repeated or unknown, and every `given` without a default must remain bound.
 
 Fully-qualified multi-part receivers can also reorder roles and are subject to the same canonical order suggestion. They remain exact and exhaustive, and are not mixed with positional receivers.
 
@@ -1190,26 +1190,26 @@ create Declaration
 destroy Declaration
 ```
 
-`destroy` retains the identity and canonical definitions, but the materialisation the runtime specific to a `thing` specific. Confirmed destruction discards its stored values and any runtime structural modifications, the owner whichever that may be identity; a `create` the latter constructs a materialisation frees itself from the standard scheme and reapplies defaults and initialisers. This self-destruction does not delete loads belonging to other owners that are merely suspended by an inactive dependency. To destroy a rule Reactiva also rules out the temporary storage of that activation; if it is created again, its first wave activa establishes a baseline new without firing, simply as a result of the reactivation.
+`destroy` preserves identity and canonical definitions, but removes the runtime materialisation of a concrete `thing`. Confirmed destruction discards its stored values and runtime structural modifications regardless of owner identity; a later `create` constructs a fresh materialisation from the effective schema and reapplies defaults and initialisers. This destruction does not delete capabilities owned elsewhere that are merely suspended by an inactive dependency. Destroying a reactive rule also discards that activation's temporal memory; if recreated, its first active wave establishes a new baseline without firing solely because of reactivation.
 
-One path An assignable value can traverse stored components of immutable aliases and exact dictionary indexings when it terminates at a location root externally writable. This write operation does not alter the intermediate aliases: the elaboration constructs new values from it type exact nominal value, retains its other stored components, recalculates the derivatives and propagates the substitutions outwards to the storage root. For example:
+An assignable path may traverse stored components of immutable aliases and exact-dictionary indices when it ends at an externally writable root location. This write does not mutate intermediate aliases: elaboration constructs new values of the exact nominal type, preserves their other stored components, recalculates derived values, and propagates replacements outwards to the storage root. For example:
 
 ```mud
 shop.orders[id].status = Shipped
 shop.orders[id].retryCount += 1
 ```
 
-A local that contains a alias it remains a value and does not take on a path back to storage, so `order.status = Shipped` is invalid when `order` It is just a local link. Nor can you write a derived field from the alias.
+A local containing an alias remains a value and acquires no path back to storage, so `order.status = Shipped` is invalid when `order` is merely a local binding. A derived alias field is likewise not writable.
 
-If an exact dictionary lookup used as an intermediate step fails to find the key, the absence is `empty` and the effect partial is a no-op: it does not create the association, nor does it generate a value using default settings and does not produce `failed` because of that absence. This does not affect the direct allocation `shop.orders[id] = order`, which replaces an entire association and can generate a missing key when the contract allows it.
+If an exact dictionary lookup used as an intermediate step does not find its key, the absence is `empty` and the partial effect is a no-op: it neither creates the association nor synthesises a default value, and does not produce `failed` merely because of that absence. This does not affect the direct assignment `shop.orders[id] = order`, which replaces a complete association and may create a missing key when the contract permits it.
 
-The shape `remove name from Owner` is different from removing a value by means of resolution and types. In both cases, the parser retains the same provenance; the AST produced must generate the correct variant or a diagnostic.
+Resolution and typing distinguish `remove name from Owner` from removing a value. In both cases the parser retains the same provenance; AST construction must produce the correct variant or a diagnostic.
 
-`|=`, `&=`, `^=` y `--=` retain their update class in the AST. They require an externally mutable location or a path a reconstructible assignable whose write-back ends in one, plus a result assignable to the sheet. `^=` only accepts collections `unique`. With regard to collections, uniform updates are consolidated by union, intersection, parity or sum of removed multiplicities; mixing different classes is conflict unless otherwise expressly stated. Regarding `Text`, `|=` Chaining operations and several concurrent updates require a specific overall order.
+`|=`, `&=`, `^=` and `--=` retain their update class in the AST. They require an externally mutable location or a reconstructible assignable path whose write-back ends in one, and a result assignable to the location. `^=` accepts only `unique` collections. For collections, homogeneous updates consolidate by union, intersection, parity or summed removed multiplicities; mixing different classes is a conflict unless explicitly specified otherwise. For `Text`, `|=` is concatenation and multiple concurrent updates require a defined global order.
 
 ## `for each`, progressions, selection and quantifiers
 
-`for each` accepts any finite and countable source: sets, exact dictionaries, countable intervals, finite countable domains and any other value with canonical enumeration. An interval does not become collection because it can be explored.
+`for each` accepts any finite, countable source: collections, exact dictionaries, countable intervals, finite countable domains and any other value with canonical enumeration. An interval does not become a collection merely because it can be traversed.
 
 ```mud
 for each person in kingdom.people if person.hungry :
@@ -1221,15 +1221,15 @@ for each value in [0..100] by 5 : {
 }
 ```
 
-The `:` is mandatory. The brackets form part of the main body and do not replace the separator. The main body may begin on the same line or after one or more terminators; this physical separation does not alter its abstract structure. In a `for each` executable; the short body must be a effect o call a action and the block uses `EffectBlock`. Within `ValueBlock`, `LocalForEach` use a `ValueStatement` brief or a `LocalStatementBlock`, accepts only local statements and cannot extend beyond the scope of the block’s value.
+The `:` is mandatory. Braces form part of the body and do not replace the separator. The body may begin on the same line or after one or more terminators; this physical separation does not alter its abstract structure. In executable `for each`, the short body must be an effect or action call and the braced body uses `EffectBlock`. Within `ValueBlock`, `LocalForEach` uses a short `ValueStatement` or a `LocalStatementBlock`, accepts only local statements, and cannot outlive the value block's scope.
 
 ### Iteration filter
 
-`by` precedes `if`. The filter can be an expression or a block of expressions with local variables. It is pure and non-stochastic. With semantic order, it is evaluated immediately before each iteration and takes into account the sequential projection left by previous iterations; without semantic order, all filters start from the same initial projection and the accepted modifications are consolidated simultaneously in accordance with the contract of the body. An accurate dictionary can link `(key, value)`.
+`by` precedes `if`. The filter may be an expression or an expression block with local values. It is pure and non-stochastic. With semantic order, it is evaluated immediately before each iteration and observes the sequential projection left by preceding iterations; without semantic order, all filters start from the same initial projection and accepted modifications are consolidated simultaneously under the body's contract. An exact dictionary may bind `(key, value)`.
 
 ### Progression `by`
 
-`by` A signed, compatible difference is received and evaluated once before runtime. Positive anchor at the lower boundary and negative at the upper boundary. An open initial boundary advances once before the first candidate. The progression ends before the first external candidate and does not need to reach the opposite end. The inverted ends continue to produce `empty`.
+`by` takes a signed compatible difference that is evaluated once before runtime. A positive step anchors at the lower bound and a negative step at the upper bound. An open initial bound advances once before the first candidate. The progression ends before the first out-of-range candidate and need not reach the opposite bound. Inverted endpoints still produce `empty`.
 
 ```text
 [1..8] by 2   -> 1, 3, 5, 7
@@ -1238,23 +1238,23 @@ The `:` is mandatory. The brackets form part of the main body and do not replace
 [1..8) by -2  -> 6, 4, 2
 ```
 
-A demonstrably zero runtime step is error static; if it can vary and ultimately equals zero, it produces the failure assessment `progression-step-zero`. In a action that one failure ends as `failed` and rollback; in a pure expression, it propagates as failure evaluation and never becomes `false`. In a domain zero-stage is always error static. The compatibility uses the advance operation and exact implicit conversions, not identity nominal: `Nat` can proceed via `Int`, `Num` by exact differences that are compatible, and quantities in compatible units. In a magnitude from point The step is a linear difference.
+A provably zero runtime step is a static error; if it may vary and evaluates to zero, it produces the evaluation failure `progression-step-zero`. In an action that failure yields `failed` and rollback; in a pure expression it propagates as evaluation failure and never becomes `false`. A zero domain step is always a static error. Compatibility uses the advance operation and exact implicit conversions rather than nominal identity: `Nat` may advance through `Int`, `Num` through compatible exact differences, and quantities through compatible units. For a point magnitude, the step is a linear difference.
 
-`by` It is not a stride over arbitrary collections. `ordered by ruta` keeps another one semantics.
+`by` is not a stride over arbitrary collections. `ordered by path` has separate semantics.
 
 ### Default steps and numbers
 
-A source with its own numbering does not need `by`. When the enumeration is based on a sequence, `Nat` e `Int` are used by default `1` y `Money`, `0.01`; omit `by` Always choose that positive difference. Other types of exact progression require an explicit step, unless a canonical successor is defined. `Num` supports explicit exact steps and a general range of `Num` without a step is invalid. The intervals of `Rum` they never allow progression `by`, neither in iteration nor in staggered domains; a collection explicit statement of values `Rum` it is countable without `by`.
+A source with its own enumeration order does not need `by`. For sequence-based enumeration, `Nat` and `Int` default to `1`, and `Money` to `0.01`; omitting `by` always selects that positive difference. Other exact progression types require an explicit step unless they define a canonical successor. `Num` supports explicit exact steps, and a general `Num` interval without a step is invalid. `Rum` intervals never permit `by` progression, in iteration or stepped domains; an explicit collection of `Rum` values is enumerable without `by`.
 
-### Tiered domains
+### Stepped domains
 
-`interval by step` It uses the same progression to define membership, and the static step may be negative. The sign may change the terms, but the order is not part of the type. `all` is realised in canonical order; `Nat in [1..8] by -2 = all` produces `2, 4, 6, 8`. In discontinuous intervals, the iteration is restarted for each segment; for positive values, the segments are traversed from smallest to largest, and for negative values, the order is reversed. A domain cyclical point It covers no more than one fundamental period.
+`interval by step` uses the same progression to define membership, and a static step may be negative. Its sign may change the members, but order is not part of the type. `all` materialises in canonical order; `Nat in [1..8] by -2 = all` produces `2, 4, 6, 8`. In discontinuous intervals, iteration restarts for each segment; positive steps traverse segments from lowest to highest, while negative steps reverse that order. A cyclic point domain covers at most one fundamental period.
 
 ### Selection and quantifiers
 
-Selection and `exists`, `forall`, `count`, `min`, `max` accept `by` when the source defines progression and maintains it `:` even if the body has keys. Everyone uses `ExpressionBlock`: the block contains premises `:=` followed by a final Boolean expression. In `min` y `max` that predicate filters witnesses, and the operation returns the first or the last, respectively, according to the semantic order of the source; a source `ordered` without an explicit key is also valid; a source without a usable order is rejected, and no accepted witness produces `empty`. `sum` does not belong to language.
+Selections and `exists`, `forall`, `count`, `min` and `max` accept `by` when the source defines a progression, and retain `:` even when the body uses braces. All use `ExpressionBlock`: the block contains `:=` premises followed by a final Boolean expression. For `min` and `max`, that predicate filters witnesses and the operation returns the first or last respectively in the source's semantic order; an `ordered` source without an explicit key is also valid. A source without usable order is rejected, and no accepted witness produces `empty`. `sum` is not part of the language.
 
-A selection produces a collection and therefore does not directly consume a domain naked: if the conceptual source is a domain `D`, it should be written as `all D`. Iterations and quantifiers that do not produce a collection they can eat a domain finite and countable.
+A selection produces a collection and therefore does not consume a bare domain directly: if the conceptual source is a domain `D`, it must be written `all D`. Iterations and quantifiers that do not produce a collection may consume a finite, countable domain directly.
 
 ```mud
 selected := x in source by step : {
@@ -1267,20 +1267,20 @@ A selection directly returns the accepted instances and preserves provable multi
 
 ### `take` and indexing
 
-`take amount from source` retains its semantics existing. As it produces a collection, a domain `D` he cannot appear naked as `source`: it must be explicitly implemented as `all D`. On a collection sorted or a materialisation with canonical numbering, it takes the prefix; on collection/diccionario A non-ordered sample drawn from a random sample is reproducible without replacement. Positional indexing still requires an observable order.
+`take amount from source` retains its existing semantics. Because it produces a collection, a domain `D` cannot appear bare as `source`: it must be explicitly materialised as `all D`. On an ordered collection or a materialisation with canonical enumeration, it takes the prefix; on an unordered collection or dictionary, it takes a reproducible sample without replacement. Positional indexing still requires an observable order.
 
-## Tipo superior `Any`
+## Top type `Any`
 
-`Any` is the top type open view of the project’s MUD values. This includes basic values and incorporated values such as the members of `Prefix`, identities `thing`, aliases, members of `family`, magnitudes, intervals, collections, dictionaries, structural products and first-class descriptors of statements and types. AST nodes are not MUD values simply by virtue of existing as a compiler representation.
+`Any` is the open top type over the project's MUD values. This includes basic and built-in values such as `Prefix` members, `thing` identities, aliases, `family` members, magnitudes, intervals, collections, dictionaries, structural products and first-class declaration and type descriptors. AST nodes are not MUD values merely because they exist as compiler representations.
 
-`Any` It is not countable; it has no universal or predetermined order. The following are invalid:
+`Any` is not enumerable; it has no universal or predefined order. The following are invalid:
 
 ```mud
 all Any
 unknown: Any
 ```
 
-A stored field `Any` You must write an initialiser. The equality operator requires compatible effective types and relies on the equality of the type effective. Any specific operation requires narrowing:
+A stored field of type `Any` must provide an initialiser. Equality requires compatible effective types and uses the effective type's equality relation. Any more specific operation requires narrowing:
 
 ```mud
 rule Positive given value: Any {
@@ -1288,7 +1288,7 @@ rule Positive given value: Any {
 }
 ```
 
-Inside a functional branch, `is` e `iis` retain the narrowing in the result:
+Inside a functional branch, `is` and `iis` retain their narrowing in the result:
 
 ```mud
 describeAny: Any --> Text [ordered] =
@@ -1297,9 +1297,9 @@ describeAny: Any --> Text [ordered] =
     _ --> "Other"
 ```
 
-`Money` It remains a staple, incorporated because of its rules of materialisation, not an exception to the opening of `Any`.
+`Money` remains a built-in type because of its materialisation rules, not as an exception to the openness of `Any`.
 
-## Contextual values
+## Contextual literals
 
 Collections may be written in square brackets. In places where a comma does not conflict with another construction, the contextual form may omit them:
 
@@ -1307,7 +1307,7 @@ Collections may be written in square brackets. In places where a comma does not 
 [A, B, C]
 ```
 
-Brackets are required for nesting and for using the collection as a single argument. `empty` needs a type expected; compare `empty == empty` Without context, it is invalid.
+Brackets are required for nesting and for using the collection as a single argument. `empty` needs an expected type; `empty == empty` is invalid without context.
 
 A dictionary with a key structural alias supports:
 
@@ -1318,7 +1318,7 @@ board[E, Four]
 
 ## Intervals
 
-The specific form of a type The interval operator first writes the type of its limits and then the contextual word `Interval`:
+The type form for an interval first writes the endpoint type and then the contextual word `Interval`:
 
 ```mud
 Nat Interval
@@ -1328,7 +1328,7 @@ Rum Interval
 Money Interval
 ```
 
-The grammar retains any `type-reference` in that position; the static phase requires that it be resolved to an accepted numerical representation. `Interval` it is not a declaration nominal amount checked via name resolution in this building.
+The grammar retains any `type-reference` in that position; the static phase requires it to resolve to an accepted numeric representation. `Interval` is not a nominal declaration looked up by name resolution in this construct.
 
 Forms:
 
@@ -1341,9 +1341,9 @@ a..b
 [a]
 ```
 
-`a..b` is equivalent to `[a..b]`; `[a]`, a `[a..a]`. A winger `*` must be closed on its side. The exclusive cyclic form of magnitudes of point is a full range followed by the modifier: `[a..b) cycle`.
+`a..b` is equivalent to `[a..b]`; `[a]` is equivalent to `[a..a]`. A `*` endpoint must be open on its side. The only cyclic form for point magnitudes is a complete interval followed by the modifier: `[a..b) cycle`.
 
-Finite terms are complete expressions and must be evaluated in the same way type sorted. Within an interval of magnitude They may be expressed in local units – even different ones – which are standardised before comparison:
+Finite endpoints are complete expressions and must elaborate to the same ordered type. Within a magnitude interval, they may be expressed in local units—even different ones—which are normalised before comparison:
 
 ```mud
 [1 m..5 km]
@@ -1352,7 +1352,7 @@ Finite terms are complete expressions and must be evaluated in the same way type
 [minimumDistance..maximumDistance]
 ```
 
-A literal located next to a field from magnitude must bring their own unit. Therefore, `[minimumDistance..5] m` is invalid and is written as `[minimumDistance..5 m]`.
+A literal next to a magnitude-valued expression must carry its own unit. Therefore, `[minimumDistance..5] m` is invalid and must be written `[minimumDistance..5 m]`.
 
 When all finite endpoints are numeric literals without unit, just one unit may follow the interval:
 
@@ -1365,19 +1365,19 @@ When all finite endpoints are numeric literals without unit, just one unit may f
 [] m
 ```
 
-`1..5 m` is categorised as `(1..5) m`. The unit 'exterior' is not distributed across fields or quantities that already have unit. `[1..5 m]` is invalid because it conflicts with `Num` with a magnitude, y `[1 m..5 m] m` add a second one unit Invalid external link.
+`1..5 m` is grouped as `(1..5) m`. The outer unit is not distributed over fields or quantities that already carry a unit. `[1..5 m]` is invalid because it combines `Num` with a magnitude, and `[1 m..5 m] m` adds an invalid second outer unit.
 
-The canonical serialisation of literals that share unit use `[1..5] m`, although `[1 m..5 m]` is also valid. If the units differ or one side is an expression that has already been typed, local units are used.
+The canonical serialisation of literal endpoints that share a unit uses `[1..5] m`, although `[1 m..5 m]` is also valid. If the units differ or one endpoint is an expression that already has a type, local units are used.
 
 After evaluating and normalising the effective extremes of a linear interval:
 
 - a lower bound that is less than the upper bound preserves the written sides;
-- Two equal boundaries form a single unit only if both sides are closed and produce `empty` otherwise;
+- equal endpoints form a singleton only if both sides are closed, and produce `empty` otherwise;
 - a lower bound greater than the upper bound results in `empty`.
 
-The investment does not imply a downward trend or cycle. Filling that gap never fails to resolution on their own; they only produce `failed` restrictions that render the tentative state, such as a value stored in such a way that it is outside its domain or a ruler `always` unfulfilled. A `given` outside domain and a `if` o `after` Fakes retain their result `rejected`.
+Inversion does not imply descending traversal or a cycle. Producing that empty interval never fails a resolution by itself; only constraints that make the tentative state invalid produce `failed`, such as a stored value outside its domain or an unsatisfied `always` rule. An out-of-domain `given` and a false `if` or `after` retain the `rejected` result.
 
-The domains declared in the header of a magnitude retain the bare numerical bounds as interpreted in their canonical representation: in the unit root when it exists, and directly in the numerical representation when there are no units. The form `[a..b) cycle` It also retains this restriction and requires a strictly positive period. Other sides, such as infinities or empty intervals, are invalid with `cycle`.
+Domains declared in a magnitude header retain bare numeric bounds interpreted in their canonical representation: in the root unit when one exists, and directly in the numeric representation when there are no units. The form `[a..b) cycle` retains this restriction and requires a strictly positive period. Other endpoint forms, such as infinities or empty intervals, are invalid with `cycle`.
 
 ## Precedence and grouping
 
@@ -1385,7 +1385,7 @@ From highest to lowest:
 
 | Level | Shapes | Group |
 | ---: | --- | --- |
-| 1 | access `.`, metadata `~`, index `[]`, call `()` y `unit from container in point` | left or full form |
+| 1 | access `.`, metadata `~`, index `[]`, call `()` and `unit from container in point` | left or complete form |
 | 2 | prefixes `old`, `allowed`, `not`, sign | right |
 | 3 | `*`, `/`, `%` | left |
 | 4 | `+`, `-`, `--` | left |
@@ -1397,9 +1397,9 @@ From highest to lowest:
 | 10 | `xor`, `^` | left |
 | 11 | `=>` | right |
 | 12 | `<=>` | adjacent chain |
-| 13 | `eventually ... through ...` | outdoor |
+| 13 | `eventually ... through ...` | outer |
 
-Shapes `take amount from source`, `binding in source : predicate` and the quantifiers contain complete expressions in their delimited positions. The first `from` non-nested that can limit the number of `take` separates quantity and source; the non-nested colon separates source and predicate. The `from` o `:` words enclosed in brackets or within another complete construction belong to that construction. This rule of contextual delimitation prevents the `from` the component extraction process accidentally absorbs the separator from `take`. Therefore:
+The forms `take amount from source`, `binding in source : predicate` and the quantifiers contain complete expressions in their delimited positions. The first unnested `from` that can delimit `take` separates amount from source; the unnested colon separates source from predicate. A `from` or `:` inside delimiters or another complete construct belongs to that construct. This contextual delimitation prevents the `from` in component extraction from accidentally consuming the `take` separator. Therefore:
 
 ```mud
 take n from player in players : player.ready
@@ -1407,7 +1407,7 @@ take n from player in players : player.ready
 
 is categorised as `take n from (player in players : player.ready)` without brackets.
 
-`to` and the `in` from unit transform the value cumulative tail on its left. The parser then continues with the result:
+`to` and unit conversion with `in` transform the accumulated value on their left. The parser then continues with the result:
 
 ```mud
 population / regions to Population
@@ -1423,9 +1423,9 @@ are grouped as follows:
 (value to A) to B
 ```
 
-If another operator appears next, use the result already converted. This rule is naturally implemented using a Pratt parser that allows for a shorter postfix precedence followed by new operators.
+If another operator follows, it consumes the already converted result. A Pratt parser can implement this rule by ending the postfix parse at the appropriate precedence before accepting subsequent operators.
 
-`in` from unit consumes the expression of unit complete, including products, quotients and parentheses:
+Unit conversion with `in` consumes the complete unit expression, including products, quotients and parentheses:
 
 ```mud
 speed in km/h
@@ -1448,17 +1448,17 @@ are produced as follows:
 a < b and b < c
 ```
 
-Chained equality follows the same rule. `<=>` It produces combinations of adjacent pairs. They do not form chains:
+Chained equality follows the same rule. `<=>` produces comparisons between adjacent pairs. The following do not form chains:
 
 - `!=`
-- `is` e `is not`
-- `iis` e `iis not`
-- belonging `has` y `has not`
+- `is` and `is not`
+- `iis` and `iis not`
+- membership `has` and `has not`
 - `=>`
 
 Different operators are not combined within the same chain without explicit conjunctions.
 
-`iis` check the exact effective nominal type; `is` includes specialisations. For:
+`iis` checks the exact effective nominal type; `is` includes specialisations. Given:
 
 ```mud
 alias Identifier := Nat
@@ -1466,7 +1466,7 @@ alias PersonId as Identifier
 alias EmployeeId as PersonId
 ```
 
-a `EmployeeId` meets `value is PersonId`, but no `value iis PersonId`. `value iis not PersonId` eliminates only the exact possibility `PersonId` during the narrowing. The right-hand operand of `iis` it must be a type nominal; products, dictionaries and the identity singleton `Madrid` are invalid.
+an `EmployeeId` satisfies `value is PersonId`, but not `value iis PersonId`. `value iis not PersonId` eliminates only the exact `PersonId` possibility during narrowing. The right operand of `iis` must be a nominal type; products, dictionaries and the singleton identity `Madrid` are invalid.
 
 About `MudPath`, Boolean membership uses the container on the left, is reflexive and compares entire segments:
 
@@ -1497,18 +1497,18 @@ The access is written `owner~metadata`, never `owner.~metadata`. All access `~` 
 | `~plural` | `Text` | units | yes |
 | `~abbreviation` | `Text` | units | yes |
 | `~prefixes` | `Prefix [* unique]` | units | yes; default `empty` |
-| `~format` | `Text` | magnitudes of point | yes |
+| `~format` | `Text` | point magnitudes | yes |
 | `~summary` | `Text` | compatible metadata-bearing elements | yes; default `""` |
 | `~description` | `Text` | compatible metadata-bearing elements | yes; default `""` |
 | `~deprecated` | `Text [0..1]` | compatible metadata-bearing elements | yes; default `empty` |
 
-The ‘Owners’ column is a restriction semantics availability information, not a description of when the result is non-empty. After solving and classifying the receiver, an access to a property that is not supported by its static category is error. In particular, `thing A` invalidates `A~for`; a `action` it does support `~for` even if you omit the clause, in which case you get `empty`. The very distinction between non-existent property and value 'empty' refers to `~on` y `~given`.
+The “Owners” column is a semantic availability restriction, not a description of when the result is non-empty. After resolving and classifying the receiver, accessing a property unsupported by its static category is an error. In particular, `thing A` makes `A~for` invalid; an `action` supports `~for` even when it omits the clause, in which case the result is `empty`. The same distinction between an unavailable property and an `empty` value applies to `~on` and `~given`.
 
-The production `metadata-name ::= identifier | "for" | "on" | "given"` only allows those ‘hard’ keywords to appear syntactically after `~`. The parser cannot determine the textual name of the receiver if the entry exists: construct the postfix form and the resolution and the typing process applies the above matrix.
+The production `metadata-name ::= identifier | "for" | "on" | "given"` merely allows those hard keywords to appear syntactically after `~`. The parser cannot determine whether the receiver has the named entry: it constructs the postfix form, and resolution and typing apply the matrix above.
 
 The table summarises the common and configurable properties that affect the syntax of this chapter. The reflective system also defines the specific properties of each descriptor, such as specialisation relationships, fields, components and structural properties of collections and dictionaries; these are not duplicated here as a second authoritative catalogue.
 
-`Prefix` is a type built-in. Its SI values are written as ordinary identifiers (`kilo`, `milli`, ...), so `~prefixes = [kilo, milli]` It doesn’t require any special grammar.
+`Prefix` is a built-in type. Its SI values are written as ordinary identifiers (`kilo`, `milli`, ...), so `~prefixes = [kilo, milli]` requires no special grammar.
 
 General conversions are explicit when the following apply:
 
@@ -1516,7 +1516,7 @@ General conversions are explicit when the following apply:
 pathText: Text = Alexandria~path to Text
 ```
 
-Templates can render metadata types directly without creating compatibility overall nominal figure with `Text`. `~file` It is valid in any expression, but triggers a warning when it appears outside text or purely informative public output, and its value may affect behaviour:
+Templates can render metadata types directly without establishing general nominal compatibility with `Text`. `~file` is valid in any expression, but triggers a warning when it appears outside text or purely informative public output and its value may affect behaviour:
 
 ```mud
 look SourceInfo {
@@ -1524,11 +1524,11 @@ look SourceInfo {
 }
 
 rule Fragile given expected: MudFile {
-    Alexandria~file == expected # válido con advertencia
+    Alexandria~file == expected # valid with a warning
 }
 ```
 
-`~name` and any other metadata These settings can be changed by editing the model and reworking it; never by means of a effect runtime. This edition remains unchanged payload, equality, path nor anchor unless the source identifier is changed by some other means.
+`~name` and any other configurable metadata may be changed by editing and re-elaborating the model, never by a runtime effect. Such an edit changes neither payload, equality, path nor anchor unless the source identifier is changed separately.
 
 ## `Text` and operators
 
@@ -1538,9 +1538,9 @@ rule Fragile given expected: MudFile {
 "Hello, " | name
 ```
 
-The following are not permitted `&`, `^` nor `-` on `Text`. `xor` is entirely logical and `^` exclusively conjunctive. The nominal aliases of `Text` do not undergo implicit concatenation.
+The operators `&`, `^` and `-` are not permitted on `Text`. `xor` is exclusively logical and `^` exclusively set-like. Nominal aliases of `Text` do not undergo implicit concatenation.
 
-Everything literal `Text`, whether standard or multi-line, is a template. `{e}` assesses `e` and insert the canonical textual representation of the value. Metadata are ordinary expressions:
+Every `Text` literal, whether ordinary or multiline, is a template. `{e}` evaluates `e` and inserts the value's canonical textual representation. Metadata are ordinary expressions:
 
 ```mud
 "Kingdom: {kingdom}"
@@ -1550,18 +1550,18 @@ Everything literal `Text`, whether standard or multi-line, is a template. `{e}` 
 "Literal braces: \{example\}"
 ```
 
-`anchor{...}` does not belong to the language. Render `Name`, `MudPath`, `Anchor` o `MudFile` in a template does not implicitly convert them to `Text` outside that context.
+`anchor{...}` is not part of the language. Rendering `Name`, `MudPath`, `Anchor` or `MudFile` in a template does not implicitly convert it to `Text` outside that context.
 
-They can be rendered directly `Text`, `Char`, `Bool`, basic numbers, values `thing`, the members of `family`, intervals, sets and magnitudes. A call a Boolean rule It is also so because it produces `Bool`. Statement and type descriptors are first-class MUD values, but this does not mean they have an implicit textual representation. Actions, reactive rules, rules `always`, `look`, `message`, tests, types and declarations `family` produce error static within `{...}` as long as there is no applicable explicit textual conversion or projection.
+`Text`, `Char`, `Bool`, basic numbers, `thing` values, `family` members, intervals, collections and magnitudes can be rendered directly. A call to a Boolean rule can also be rendered because it produces `Bool`. Statement and type descriptors are first-class MUD values, but that does not give them an implicit textual representation. Actions, reactive rules, `always` rules, `look`, `message`, tests, types and `family` declarations produce a static error inside `{...}` unless an applicable explicit textual conversion or projection exists.
 
-One `thing`, a nominal alias and a member from `family` are represented by their `~name` effective. Its anchor A canonical form is obtained by `~anchor`; edit `~name` does not change equality, path nor anchor. A member from `family` Without overwriting, it initially uses its nominal name. An interval uses its normalised canonical form. A collection It omits only the outer square brackets and separates elements using `, `; all collection if it appears as an element, it retains its own square brackets:
+A `thing`, a nominal alias and a `family` member are represented by their effective `~name`. Their canonical anchor is obtained through `~anchor`; editing `~name` changes neither equality, path nor anchor. A `family` member without an override initially uses its nominal name. An interval uses its normalised canonical form. A collection omits only its outer square brackets and separates elements with `, `; any collection that appears as an element retains its own square brackets:
 
 ```mud
 "{[1, 2, 3]}"          # 1, 2, 3
 "{[[1, 2], [3, 4]]}"   # [1, 2], [3, 4]
 ```
 
-A numeric gap allows for `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derecha}`. The left-hand precision is the minimum of the figures preceding the point and pads with zeros without taking the sign into account or truncating. The right-hand side precisely determines the subsequent digits, adds zeros or rounds to the nearest whole number, with ties being treated as even:
+A numeric placeholder accepts `{e:left}`, `{e::right}` and `{e:left:right}`. Left precision is the minimum number of digits before the point and pads with zeroes without counting the sign or truncating. Right precision determines the following digits, adding zeroes or rounding to nearest with ties to even:
 
 ```mud
 "{count:4}"     # 0012
@@ -1571,7 +1571,7 @@ A numeric gap allows for `{e:izquierda}`, `{e::derecha}` y `{e:izquierda:derecha
 
 Left-hand precision is supported for all basic numeric types. Right-hand precision is supported for types that can display a fractional part: `Num`, `Rum` and `Money`. A numeric format over any other type is a static error.
 
-One magnitude linear without `in` represents the number followed by the canonical projection of units of its dimension. If that projection is empty, it represents only the number. Nominal factors without unit they are not printed, but remain in the type. A magnitude from point use its `~format` if it has one, and if not, the standard rule for its magnitude underlying. `{magnitude in unit}` select one presentation available and, for a point, avoid the `~format` and represents the complete coordinate. It is invalid to apply `in` to a magnitude base without units. When there is unit, the abbreviation is used if one exists; otherwise, the singular form of `1` y `-1`, and the plural for the other values.
+A linear magnitude without `in` renders the number followed by the canonical unit projection of its dimension. If that projection is empty, it renders only the number. Unitless nominal factors are not printed, but remain in the type. A point magnitude uses its `~format` when present and otherwise follows the ordinary rule for its underlying magnitude. `{magnitude in unit}` selects an available representation and, for a point, bypasses `~format` to render the complete coordinate. Applying `in` to a unitless base magnitude is invalid. When a unit is present, its abbreviation is used if available; otherwise, the singular name is used for `1` and `-1`, and the plural for all other values.
 
 `time in picosecond` expresses the total coordinate; `picosecond from second in time` extracts the part within the second. The second method is valid even if the displayed format does not include picoseconds.
 
@@ -1589,42 +1589,42 @@ eventually game.Checkmate(White)
 Rand([1..6])
 ```
 
-Tickets for `through` These are references to actions, not specific calls. The list, with or without square brackets, represents the same thing collection contextual. MUD 1.0 only supports `Rand(source)`; it does not yet include syntax for weights or distributions.
+Operands of `through` are action references, not concrete calls. The list, with or without square brackets, represents the same contextual collection. MUD 1.0 supports only `Rand(source)`; it does not yet include syntax for weights or distributions.
 
-## Open endings and prefixes
+## Open line endings and prefixes
 
-`TERMINATOR` comes from `;` or of `NEWLINE`. A jump continues when the following appears:
+`TERMINATOR` comes from `;` or `NEWLINE`. A line break continues the expression when it follows:
 
-1. Within `()` o `[]`.
+1. Within `()` or `[]`.
 2. After `,`.
 3. Following an incomplete binary operator or assignment.
-4. After `:`, `:=`, `->`, `-->`, `.` o `~` when its operand is missing or member.
-5. After `using`, `as`, `for`, `on`, `given`, `when`, `if`, `then`, `after`, `otherwise`, `to`, `in`, `through`, `by`, `from`, `over`, `root` o `point` when the production requires content.
+4. After `:`, `:=`, `->`, `-->`, `.` or `~` when its operand or member is missing.
+5. After `using`, `as`, `for`, `on`, `given`, `when`, `if`, `then`, `after`, `otherwise`, `to`, `in`, `through`, `by`, `from`, `over`, `root` or `point` when the production requires content.
 6. Within a header which, according to the EBNF, it can’t be over yet.
-7. Inside a literal o comment multi-line.
+7. Inside a literal or multiline comment.
 
-A jump after a unit That one’s already finished unit. The bleeding never decides.
+A newline after a unit terminates that unit. Line wrapping never determines semantics.
 
 > [!example]
-> In `value = first` The jump terminates the assignment. In `value = first +` It doesn't complete the operation because the right-hand operand is missing.
+> In `value = first`, the newline terminates the assignment. In `value = first +`, it does not complete the operation because the right-hand operand is missing.
 
 ## Contextual distinctions
 
-The parser or the elaboration The following issues must be resolved without arbitrary decision-making:
+The parser or elaborator must resolve the following issues without arbitrary choices:
 
 | Area | Distinction |
 | --- | --- |
-| `in` | domain, participant related, restriction/filtro o unit |
+| `in` | domain, related participant, restriction/filter or unit |
 | `has` | Boolean membership |
-| `call()` | regla booleana o acción |
-| `remove x from y` | value from collection or dynamic property |
+| `call()` | Boolean rule or action |
+| `remove x from y` | collection value or dynamic property |
 | `UNIT_FORM` | unit enabled or invalid name |
 | shared operators | logical, arithmetic, textual or set-theoretic operation |
 | literal structural | alias expected |
 | `[expression]` | collection unitary or unit interval |
-| `1..5 unit` | unit common to the interval or right-hand end of an invalid lead |
+| `1..5 unit` | unit shared by the interval, or the right endpoint of an invalid construction |
 
-If the names, types and constraints of the expression do not determine a single valid interpretation, the programme is invalid and must provide the type is missing. No implicit preference applies. For example, a derivation without sufficient context cannot arbitrarily choose whether `[3]` is a collection or the interval `[3..3]`. The grammar expressly states `1..5 m` as a way of unit common `(1..5) m`; it is not up to the parser to decide.
+If the names, types and constraints of an expression do not determine a single valid interpretation, the programme is invalid and must supply the missing type information. No implicit preference applies. For example, elaboration without sufficient context cannot arbitrarily choose whether `[3]` is a collection or the interval `[3..3]`. The grammar explicitly defines `1..5 m` as the common-unit form `(1..5) m`; the parser does not choose between them.
 
 ## Error recovery
 
@@ -1634,22 +1634,22 @@ An implementation may synchronise after an error at:
 - `}`
 - A clear-cut start to a declaration higher
 
-Recovery only improves diagnoses. It cannot be carried out silently semantics nor accept a form that does not conform to the rules of grammar.
+Recovery only improves diagnostics. It cannot silently change semantics or accept a form that does not conform to the grammar.
 
 ## Preserved contextual structures
 
 The parser does not decide on matters that require resolution:
 
-- If a path with dots intersects MUD paths, statements or members.
-- If a literal structural, used before a call represents a receiver one or more recipients.
-- If a `postfix-expression` of a effect is a call from action.
-- What type contextual selects a literal structural, of unit, by point or a literal consisting of a single scalar.
+- Whether a dotted path traverses MUD paths, declarations or members.
+- Whether a structural literal before a call represents one receiver or several receivers.
+- Whether an effect's `postfix-expression` is an action call.
+- Which contextual type selects a structural, unit, point or single-scalar literal.
 
-The CST retains the specific form and the Surface AST an unresolved form. The subsequent stages carry out the classification.
+The CST retains the concrete form and the Surface AST retains an unresolved form. Later stages perform the classification.
 
-## Representation of quantities
+## Magnitude representation
 
-The optional entry of a magnitude use the general syntax `declared-type`. A subsequent static rule requires that the type provided that it is a permitted numerical representation. The grammar does not maintain a duplicate, closed list of numerical types.
+A magnitude's optional representation uses the general `declared-type` syntax. A later static rule requires the resolved type to be a permitted numeric representation. The grammar does not maintain a duplicate closed list of numeric types.
 
 ## Empty bodies omitted
 
@@ -1663,24 +1663,24 @@ abstract thing Root
 thing B as Root
 ```
 
-The point and a comma does not introduce a new rule: it is already a `TERMINATOR` explicit and allows, for example, `thing A; thing B; thing C as A`.
+The semicolon introduces no new rule: it is already an explicit `TERMINATOR` and permits, for example, `thing A; thing B; thing C as A`.
 
-## Nominal access for members of alias
+## Nominal access to alias members
 
-Derived components and fields belong to the type nominal value of the alias. A bare structure does not acquire members by coincidence of form:
+Calculated components and fields belong to the alias's nominal value type. A bare structure does not acquire members merely by matching its shape:
 
 ```mud
-(1, 2).derived                    # inválido
-((1, 2) to CosoAlias).derived     # válido
+(1, 2).derived                    # invalid
+((1, 2) to CosoAlias).derived     # valid
 ```
 
-The context of type you can also build the alias without `to`. The compiler does not look for candidate aliases based on the name of the member.
+An expected type may also construct the alias without `to`. The compiler does not search for candidate aliases by member name.
 
 ## Reflective metadata
 
-The `~...` Configurable elements appear before the standard content. Fields, components and participants may contain an immediate metadata-only block. All `for`, `on` y `given` has a required name; a grouped header shares type and metadata-body amongst its identifiers. The file defaults precede `using`. `start with` and the bodies of `when`/`if`/`then`/`after`/`otherwise` They are not metadata-bearing owners.
-## Belonging, restriction and local transformations
+Configurable `~...` elements appear before ordinary content. Fields, components and participants may contain an immediate metadata-only body. Every `for`, `on` and `given` has a required name; a grouped header shares its type and metadata body among its identifiers. File defaults precede `using`. `start with` and the bodies of `when`/`if`/`then`/`after`/`otherwise` are not metadata-bearing owners.
+## Membership, restriction and local transformations
 
-Boolean membership uses `contenedor has valor` y `contenedor has not valor`. `in` It is not a Boolean membership operator. `valor in Dominio` locally restricts or filters the value; `binding in source : predicate` It remains a selection.
+Boolean membership uses `container has value` and `container has not value`. `in` is not a Boolean membership operator. `value in Domain` locally restricts or filters the value; `binding in source : predicate` remains a selection.
 
-One collection can be transformed locally using `values [unique]`, `values [ordered]`, `values [ordered by score]` o `values [1..10, unique, ordered]`. Does not support `mut`. The elaboration normalises domain, `unique`, order and cardinality. `[n]` is still indexing; a cardinality An exact local without any other modifiers is written as `[n..n]`.
+A collection may be transformed locally with `values [unique]`, `values [ordered]`, `values [ordered by score]` or `values [1..10, unique, ordered]`. This form does not support `mut`. Elaboration normalises domain, `unique`, order and cardinality. `[n]` remains indexing; an exact local cardinality without other modifiers is written `[n..n]`.

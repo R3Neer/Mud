@@ -1,6 +1,6 @@
 ---
 id: Q-030
-title: Perfil de mundos finitos
+title: Finite-world profile
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-030 — Perfil de mundos finitos
+# Q-030 — Finite-world profile
 
-## Contenido
+## Content
 
-Conjunto explícito de restricciones que habilita `eventually`.
+An explicit set of constraints that enables `eventually`.
