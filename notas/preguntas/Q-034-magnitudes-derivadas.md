@@ -1,6 +1,6 @@
 ---
 id: Q-034
-title: Magnitudes derivadas
+title: Derived magnitudes
 priority: P2
 opened: 2026-07-29
 resolved:
@@ -11,10 +11,10 @@ affects: []
 superseded-by: []
 ---
 
-# Q-034 — Magnitudes derivadas
+# Q-034 — Derived magnitudes
 
-## Contenido
+## Content
 
-Estado de la premisa: **decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]].
+Premise status: **decided** by [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]].
 
-`:=` define composición dimensional; la representación canónica combina unidades raíz y las expresiones compatibles de unidad se admiten automáticamente. Falta concretar el algoritmo de normalización dimensional, sus diagnósticos y las interacciones especiales con `Money`.
+`:=` defines dimensional composition; canonical representation combines root units, and compatible unit expressions are admitted automatically. The dimensional-normalisation algorithm, its diagnostics and special interactions with `Money` remain to be specified.
