@@ -1,6 +1,6 @@
 ---
 id: D-074
-title: "Uniones nominales y estrechamiento de tipos"
+title: "Nominal unions and type narrowing"
 status: vigente
 date: 2026-08-03
 supersedes: []
@@ -8,54 +8,52 @@ superseded-by: []
 questions:
   - "Q-047"
 affects:
-  - "gramática, AST, sistema de tipos, aliases, expresiones y diagnósticos"
+  - "grammar, AST, type system, aliases, expressions and diagnostics"
 ---
-# ADR-074 — Uniones nominales y estrechamiento de tipos
+# ADR-074 — Nominal unions and type narrowing
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modificada por: [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]]
-- Modificada por: [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
-- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]], [[ADR-086-identidad-nominal-exacta-y-algebra-de-diccionarios|D-086]] and [[notas/decisiones/ADR-084-especializacion-de-aliases-y-vistas-derivadas|D-084]]
+- Adjusted to the phase boundary of [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 
-## Contexto
+## Context
 
-MUD necesita expresar que un valor puede pertenecer a varias alternativas sin perder la identidad nominal elegida. La misma necesidad aparece en campos, participantes, valores `given`, vinculaciones locales y aliases.
+MUD needs to express that a value may belong to several alternatives without losing its chosen nominal identity. The same need occurs in fields, participants, `given` values, local bindings and aliases.
 
-## Decisión
+## Decision
 
-`|` forma una unión de tipos en cualquier posición de tipo:
+`|` forms a type union in every type position:
 
 ```mud
 value: Nat | Text
 alias Result := Nat | Text
 ```
 
-Una alternativa puede declarar su propio dominio. La especificación de colección solo puede aparecer una vez, al final, y se aplica a la unión completa:
+An alternative may declare its own domain. Collection specification may appear only once, at the end, and applies to the complete union:
 
 ```mud
 values: Nat in 0..10 | Int in -10..-1 [1..*]
 ```
 
-Los paréntesis pueden agrupar, pero la forma canónica los elimina cuando no cambian la asociación. No existen cardinalidades por alternativa.
+Parentheses may group alternatives, but canonical form removes them when they do not change association. There are no per-alternative cardinalities.
 
-La unión es asociativa, conmutativa e idempotente respecto de alternativas idénticas. No elimina una alternativa nominal por estar su dominio contenido en el de otra: `Nat | Int` conserva ambas alternativas.
+The union is associative, commutative and idempotent with respect to identical alternatives. It does not remove a nominal alternative merely because its domain is contained in another's: `Nat | Int` retains both.
 
-### Elección de alternativa
+### Alternative selection
 
-Una expresión se incorpora implícitamente cuando posee una única alternativa compatible. Si un literal o expresión todavía construible por contexto satisface varias, existe ambigüedad:
+An expression is implicitly incorporated when it has one compatible alternative. If a literal or contextually constructible expression satisfies several, it is ambiguous:
 
 ```mud
-value: Nat | Int = 2        # inválido
-value: Nat | Int = 2 to Int # válido
+value: Nat | Int = 2        # invalid
+value: Nat | Int = 2 to Int # valid
 ```
 
-La regla es especialmente importante para aliases distintos con la misma representación. El valor unido conserva la alternativa nominal por la que entró. Una unión de tipos `thing` conserva la identidad original y es compatible con `Thing` exactamente cuando todas sus alternativas lo son.
+This is especially important for distinct aliases with the same representation. A union value retains the nominal alternative through which it entered. A union of `thing` types retains the original identity and is compatible with `Thing` exactly when all its alternatives are.
 
-`Thing` continúa siendo universal solo para declaraciones `thing`; no incorpora aliases, families, magnitudes ni otros tipos nominales por el hecho de existir `|`. Cuando se necesite reunir categorías distintas se escribe una unión explícita.
+`Thing` remains universal only for `thing` declarations; the existence of `|` does not include aliases, families, magnitudes or other nominal types. To combine different categories, write an explicit union.
 
-### Operaciones y estrechamiento
+### Operations and narrowing
 
-Sin información adicional solo se admiten operaciones válidas con resultado compatible para todas las alternativas posibles. `is` se amplía para comprobar pertenencia nominal a una alternativa y `is not` se incorpora como operador compuesto canónico con la misma precedencia:
+Without further information, only operations with a result compatible with every possible alternative are admitted. `is` is extended to test nominal membership of an alternative, and `is not` is added as a canonical compound operator with the same precedence:
 
 ```mud
 rule IsPositive given value: Nat | Text {
@@ -63,41 +61,41 @@ rule IsPositive given value: Nat | Text {
 }
 ```
 
-Una condición verdadera estrecha el entorno de la parte cuya evaluación depende de ella: el operando derecho de `and`, la expresión final de un bloque booleano y el `then` gobernado por el `if` de una acción o regla. `is not A` elimina las alternativas o porciones que satisfacen `A`; en tipos solapados no equivale necesariamente a seleccionar una alternativa completa.
+A true condition narrows the environment for the part whose evaluation depends on it: the right operand of `and`, the final expression of a Boolean block and the `then` governed by an action or rule's `if`. `is not A` removes alternatives or portions satisfying `A`; with overlapping types it does not necessarily select a complete alternative.
 
-`is` observa el tipo nominal, no la inclusión matemática del contenido. Un valor `2 to Int` no satisface `is Nat` por ser no negativo.
+`is` observes nominal type, not mathematical inclusion of the content. A value `2 to Int` does not satisfy `is Nat` merely because it is non-negative.
 
-### Aliases estructurales
+### Structural aliases
 
-Un componente estructural puede tener tipo unión. No se admite unir cuerpos estructurales anónimos después de `}`. Las formas deben nombrarse y después unirse:
+A structural component may have a union type. Anonymous structural bodies may not be unioned after `}`. The forms must be named and then united:
 
 ```mud
 alias Coordinate := GridCoordinate | NumericCoordinate
 ```
 
-La definición simple de alias conserva `:=`; `:` continúa siendo anotación de un valor.
+Simple alias definition retains `:=`; `:` remains value annotation.
 
-### Predeterminados
+### Defaults
 
-Una unión que no permita seleccionar un predeterminado nominal único exige inicializador explícito en todo contexto que necesite materializar un valor. El orden textual de alternativas nunca selecciona el predeterminado.
+A union that cannot select one unique nominal default requires an explicit initialiser in every context that must materialise a value. The textual order of alternatives never selects the default.
 
-## Consecuencias
+## Consequences
 
-- La elaboración determina las alternativas nominales normalizadas y la alternativa elegida por cada incorporación; cualquier representación posterior debe conservarlas o permitir reconstruirlas.
-- Los análisis booleanos necesitan entornos refinados sensibles al flujo.
-- D-017 debe distinguir tipos válidos de tipos materializables sin inicializador.
-- `|` se desambigua por contexto sintáctico entre unión de tipos y sus usos sobre valores.
+- Elaboration determines normalised nominal alternatives and the alternative selected by each incorporation; later representations must retain or reconstruct them.
+- Boolean analysis needs flow-sensitive refined environments.
+- D-017 must distinguish valid types from types materialisable without an initialiser.
+- `|` is disambiguated by syntactic context between type unions and its value-level uses.
 
-## Verificación
+## Verification
 
-1. Uniones en todas las posiciones de tipo.
-2. Dominios locales y una única colección exterior.
-3. Normalización sin paréntesis redundantes.
-4. Ambigüedad de literales y aliases representacionalmente iguales.
-5. Estrechamiento mediante `is` e `is not`.
-6. Solapamiento por especialización múltiple.
-7. Rechazo de cuerpos estructurales anónimos unidos.
+1. Unions in every type position.
+2. Local domains and one outer collection specification.
+3. Normalisation without redundant parentheses.
+4. Ambiguity of literals and aliases with the same representation.
+5. Narrowing through `is` and `is not`.
+6. Overlap through multiple specialisation.
+7. Rejection of unioned anonymous structural bodies.
 
-## Aclaración por D-084
+## Clarification by D-084
 
-La unión `A | B` expresa alternativas. No resuelve una especialización múltiple `alias C as A, B`: esta exige que cada valor de `C` satisfaga simultáneamente ambas antecesoras y, por tanto, una representación efectiva común obtenida por intersección compatible.
+The union `A | B` expresses alternatives. It does not resolve multiple specialisation `alias C as A, B`: that requires every `C` value to satisfy both ancestors simultaneously and therefore requires one compatible effective representation obtained by intersection.
