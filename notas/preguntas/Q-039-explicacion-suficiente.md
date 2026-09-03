@@ -1,6 +1,6 @@
 ---
 id: Q-039
-title: Explicación suficiente
+title: Sufficient explanation
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-039 — Explicación suficiente
+# Q-039 — Sufficient explanation
 
-## Contenido
+## Content
 
-¿Qué evidencia mínima debe presentar el sistema antes y después de un cambio para que una persona pueda confiar en él?
+What minimum evidence must the system present before and after a change for a person to trust it?
