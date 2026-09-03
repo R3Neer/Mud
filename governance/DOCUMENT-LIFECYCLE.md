@@ -18,7 +18,7 @@ MUD’s specification must maintain a strict separation between the current norm
 
 The distinction between state current, decisions and outstanding issues is governed by MUD-EDIT-002 and MUD-EDIT-003 of [[specification/00-editorial-conventions]].
 
-## Superficie normativa
+## Normative surface
 
 Location: `specification/`.
 
@@ -44,11 +44,11 @@ Must not contain:
 ##  States of a chapter
 
 ```text
-esqueleto
-→ borrador
-→ propuesta
-→ en-revisión
-→ vigente
+skeleton
+→ draft
+→ proposed
+→ in-review
+→ current
 ```
 
 - **Skeleton**: structure without sufficient content.
@@ -57,15 +57,15 @@ esqueleto
 - **In review**: the content is considered a candidate for publication and the publication process is carried out.
 - **Current**: text accepted as the current standard.
 
-An chapter `vigente` may contain open issues only if the affected feature is marked as outside the scope of MUD 1.0 or if the issue does not alter its meaning.
+A chapter `current` may contain open issues only if the affected feature is marked as outside the scope of MUD 1.0 or if the issue does not alter its meaning.
 
 ### Authority during the promotion
 
-The location at `specification/` and `normative: true` indicates that a file belongs to normative surface, not that all of its content has already been approved. The authority of the chapter, as unit, appears upon reaching `status: vigente`.
+The location at `specification/` and `normative: true` indicates that a file belongs to the normative surface, not that all of its content has already been approved. The chapter's authority as a unit begins upon reaching `status: current`.
 
-Prior to `vigente`, an chapter may incorporate rules that already have authority through existing decisions and consistent regulatory mechanisms. That transcription does not grant the chapter the authority to change those rules, close questions or introduce an alternative semantics. If it diverges from an current decision, there is a documentary defect that blocks the promotion. If the text and the mechanical artefact diverge, the editorial rule MUD-EDIT-001 applies: the divergence must be explicitly resolved, and neither of the two interpretations is given tacit priority.
+Prior to `current`, a chapter may incorporate rules that already have authority through existing decisions and consistent regulatory mechanisms. That transcription does not grant the chapter authority to change those rules, close questions or introduce alternative semantics. If it diverges from a current decision, there is a documentary defect that blocks promotion. If the text and mechanical artefact diverge, editorial rule MUD-EDIT-001 applies: the divergence must be explicitly resolved, and neither interpretation receives tacit priority.
 
-Therefore, promotion to `vigente` certifies the complete chapter; it is not the mechanism that gives retroactive effect to the decisions it had already documented.
+Therefore, promotion to `current` certifies the complete chapter; it is not the mechanism that gives retroactive effect to decisions it had already documented.
 
 ### Integration of current decisions
 
@@ -96,9 +96,9 @@ The promotion of an chapter follows these steps:
 
 ## Publication date
 
-Before promoting an chapter to `vigente`, the following checks are carried out.
+Before promoting a chapter to `current`, the following checks are carried out.
 
-### Revisión semántica
+### Semantic review
 
 - Correspondence between prose, formulas and examples.
 - No undefined cases within the reported scope.
@@ -108,7 +108,7 @@ Before promoting an chapter to `vigente`, the following checks are carried out.
 - Search for counterexamples.
 - Check that no existing surface retains semantics as a replacement.
 
-### Review formal
+### Formal review
 
 - Symbols defined before they are used.
 - Well-formed judgements and rules.
@@ -116,7 +116,7 @@ Before promoting an chapter to `vigente`, the following checks are carried out.
 - Quantifiers and unambiguous domains.
 - Consistent names.
 
-### Review editorial
+### Editorial review
 
 - Application of MUD-EDIT-002: the body describes the state current and not the history of the decisions.
 -  Absence of identifiers `D-NNN` or `ADR-NNN` used as provenance or justification in the text of the regulation.
@@ -129,7 +129,7 @@ Before promoting an chapter to `vigente`, the following checks are carried out.
 -  Correct frontmatter and state.
 - Clearly marked illustrative examples.
 
-### Review mechanical
+### Mechanical review
 
 - Resolvable links.
 - Properly delimited Markdown and LaTeX.

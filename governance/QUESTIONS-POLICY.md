@@ -4,7 +4,7 @@ aliases:
   - Cycle questions
 tags:
   - mud/governance
-  - mud/preguntas
+  - mud/questions
 status: current
 ---
 
@@ -16,7 +16,7 @@ Related decisions: [[DECISIONS-POLICY|Policy from MUD decisions ]].
 
 A question identifies a specific uncertainty that may prevent the completion of an specification, an decision or an conformance test. It does not replace an decision nor does it keep a problem that has already been solved ‘open’ indefinitely.
 
-## Autoridad
+## Authority
 
 Questions are recorded in `notes/questions/`. They do not, in themselves, define semantics. An answer only becomes a MUD rule through an decision accepted in accordance with [[DECISIONS-POLICY]] and its incorporation into the relevant regulatory frameworks in accordance with [[DOCUMENT-LIFECYCLE]].
 
@@ -30,22 +30,22 @@ The file is not moved when state is changed. Its fixed location prevents broken 
 
 `notes/questions/README.md` lists only active questions.
 
-## Identidad
+## Identity
 
 - The identifier `Q-NNN` is unique and is not reused.
 - The title may be clarified without changing the identifier when the investigation reveals genuine doubt.
 - If a question contains independent uncertainties, it is split, and each new question links to its provenance.
 - An decision can resolve several questions, and a single question may require several decisions.
 
-## State from resolution
+## Resolution state
 
 The field `resolved` is the only source of truth of the state in a question:
 
-- `resolved: false` (`[ ]`): open; there is no sufficiently accepted answer.
-- `resolved:` (`[-]`): partially resolved; the file lists exactly what is missing.
-- `resolved: true` (`[x]`): closed; there is no uncertainty remaining within its scope.
+  - `resolved: false` (`[ ]`): open; there is no sufficiently accepted answer.
+  - `resolved:` (`[-]`): partially resolved; the file lists exactly what is missing.
+  - `resolved: true` (`[x]`): closed; no uncertainty remains within its scope.
 
-Open and partially resolved questions are active. If a question is closed because it has been discarded, section `Resolución` explains the reason. If it has been superseded, `superseded-by` links to the questions that now cover its scope.
+Open and partially resolved questions are active. If a question is closed because it has been discarded, section `Resolution` explains the reason. If it has been superseded, `superseded-by` links to the questions that now cover its scope.
 
 ## Minimum content
 
@@ -74,23 +74,23 @@ The priority is `P0`, `P1` or `P2` and determines the section of the active inde
 And it contains, where applicable:
 
 ```markdown
-# Q-NNN — Título
+# Q-NNN — Title
 
-## Pregunta
-## Contexto
-## Ya decidido
-## Pendiente
-## Criterio de cierre
-## Resolución
+## Question
+## Context
+## Already decided
+## Pending
+## Closure criteria
+## Resolution
 ```
 
-A partially resolved query does not list what has already been resolved as pending. Section `Pendiente` should make it possible to determine objectively when it can be closed.
+A partially resolved question does not list what has already been resolved as pending. Section `Pending` should make it possible to determine objectively when it can be closed.
 
 ### Closure criteria and evidence
 
 The closure criteria used to mark a question as resolved have local identifiers `C1`, `C2`, … and describe verifiable conditions, not merely the existence of a linked decision. A question may retain additional explanatory text, but the set of identified criteria constitutes the list that must be met in order to close it.
 
-A question `resolved: true` also contains `## Evidencia de cierre`. For each criterion, there is exactly one entry with the same identifier that cites the specific evidence: decisions, regulatory rules, mechanical devices, instances of conformance or an explicit rejection. The validator checks the structural correspondence between criteria and evidence; the human review semantics remains responsible for verifying that this evidence actually demonstrates the criterion.
+A question `resolved: true` also contains `## Closure evidence`. For each criterion, there is exactly one entry with the same identifier citing specific evidence: decisions, regulatory rules, mechanical artefacts, conformance instances or an explicit rejection. The validator checks the structural correspondence between criteria and evidence; human review remains responsible for verifying that this evidence actually demonstrates the criterion.
 
 Closed historical questions are migrated to this structure when this policy is adopted; evidence generated during the migration does not exempt one from reviewing its adequacy when the scope is revisited.
 

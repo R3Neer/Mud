@@ -4,7 +4,7 @@ aliases:
   - Cycle decision-making
 tags:
   - mud/governance
-  - mud/decisiones
+  - mud/decisions
 status: current
 ---
 
@@ -16,7 +16,7 @@ An decision records an accepted choice that influences the language, its archite
 
 Where the canonical location of a rule does not yet exist as a developed surface of `specification/`, an ADR current may retain interim authority until that surface is drawn up. This situation does not authorise the retention of contradictions in existing documents, nor does it require the creation of a provisional chapter in an inappropriate location.
 
-## Autoridad
+## Authority
 
 Each decision has a stable archive:
 
@@ -30,7 +30,7 @@ The specification prevails as the linguistic norm within already formalised doma
 
 The relation of a `specification/` document, together with the decisions on which it is based, is recorded via its frontmatter `decisions:`. The decision-making history is not retained in the body of the legislation, in accordance with MUD-EDIT-002.
 
-## Identidad
+## Identity
 
 - The identifier `D-NNN` is unique and is not reused.
 - The corresponding file uses the same number as prefix and `ADR-`.
@@ -45,7 +45,7 @@ Every ADR begins with:
 ```yaml
 ---
 id: D-NNN
-title: "Título"
+title: "Title"
 status: proposed
 date: YYYY-MM-DD
 supersedes: []
@@ -57,8 +57,8 @@ affects: []
 
 Meaning:
 
-- `id`: identity stable.
-- `title`: title without prefix `ADR-NNN`.
+- `id`: stable identity.
+- `title`: title without the `ADR-NNN` prefix.
 - `status`: state of the ADR.
 - `date`: date of adoption or commencement.
 - `supersedes`: decisions wholly superseded by this one.
@@ -68,23 +68,23 @@ Meaning:
 
 `supersedes` is not used for mere extensions, clarifications or partial modifications. These relationships are explained in the ADR and, where appropriate, via reciprocal links.
 
-### Effective date of the body
+### Effective status of the body
 
-An ADR with `status: vigente` must be able to be read literally as a description of the current decision within its scope. When a subsequent decision amends only part of an ADR current, the same editorial change must remove or rewrite, within the previous ADR, any rules that are no longer applicable and retain a note from provenance referring to the modifying decision. The history of the previous draft belongs to Git and is not maintained as an affirmative semantics within an ADR current.
+An ADR with `status: current` must be readable literally as a description of the current decision within its scope. When a subsequent decision amends only part of a current ADR, the same editorial change must remove or rewrite, within the previous ADR, any rules that are no longer applicable and retain a provenance note referring to the modifying decision. The history of the previous draft belongs to Git and is not maintained as affirmative semantics within a current ADR.
 
-When a subsequent decision replaces the entire scope, the previous ADR is not rewritten as if it had always stated something else: `status: sustituida` is applied with the reciprocal `superseded-by`. `retirada` is reserved for scope, which ceases to apply without a replacement rule.
+When a subsequent decision replaces the entire scope, the previous ADR is not rewritten as if it had always stated something else: `status: superseded` is applied with the reciprocal `superseded-by`. `withdrawn` is reserved for a scope that ceases to apply without a replacement rule.
 
 ## States
 
 Permitted states:
 
-- `propuesta`: not yet accepted.
-- `vigente`: selection accepted.
-- `sustituida`: another decision replaces all of its scope.
-- `retirada`: ceased to apply without being replaced by another rule.
-- `rechazada`: alternative considered but not accepted.
+- `proposed`: not yet accepted.
+- `current`: choice accepted.
+- `superseded`: another decision replaces its entire scope.
+- `withdrawn`: ceased to apply without being replaced by another rule.
+- `rejected`: alternative considered but not accepted.
 
-An decision `sustituida` must declare `superseded-by`. An decision that declares `supersedes` must also be declared in `superseded-by` for each decision that is substituted.
+An decision `superseded` must declare `superseded-by`. A decision that declares `supersedes` must also be declared in `superseded-by` for each decision it supersedes.
 
 Nuances such as ‘current at its core’ or ‘exact open schema’ are explained in the main text and through active questions; they do not create additional states.
 
@@ -93,12 +93,12 @@ Nuances such as ‘current at its core’ or ‘exact open schema’ are explain
 An ADR shall include, where applicable:
 
 ```markdown
-## Contexto
-## Decisión
-## Alternativas
-## Consecuencias
-## Ejemplos
-## Verificación
+## Context
+## Decision
+## Alternatives
+## Consequences
+## Examples
+## Verification
 ```
 
 An decision semantics must be precise enough to identify what was chosen. Its final normative formulation belongs to the canonical surface of `specification/` where such a surface exists.
@@ -129,7 +129,7 @@ Before creating an decision:
 5. The questions and areas already developed that are affected by the same change are updated.
 6. It must be ensured that the indices or maps of future surfaces do not contradict decision.
 
-A proposal is moved to `vigente` once the author accepts the choice. If there are still any unresolved issues, these are retained as open questions.
+A proposal is moved to `current` once the author accepts the choice. If there are still any unresolved issues, these are retained as open questions.
 
 ## Replacement and withdrawal
 
@@ -137,10 +137,10 @@ ADRs are not cancelled when they cease to be valid. Replacement:
 
 1.  creates or accepts the new decision;
 2.  updates `supersedes` and `superseded-by` reciprocally;
-3.  replaces the previous state with `sustituida`;
+3.  replaces the previous state with `superseded`;
 4.  updates the net areas, queries and relevant indices.
 
-The rollback uses `retirada`, explains the reason and retains the file as traceability.
+Rollback uses `withdrawn`, explains the reason and retains the file for traceability.
 
 ## Index and mechanical checks
 
