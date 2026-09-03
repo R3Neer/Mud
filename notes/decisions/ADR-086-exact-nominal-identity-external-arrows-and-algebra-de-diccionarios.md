@@ -1,48 +1,48 @@
 ---
 id: D-086
-title: "Identidad nominal exacta, flechas exteriores y álgebra de diccionarios"
+title: "Exact nominal identity, outer arrows and dictionary algebra"
 status: current
 date: 2026-08-05
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "operadores de tipo, narrowing nominal, diccionarios exactos y funcionales, cardinalidad, orden, unicidad, AST, IR, diagnósticos y ejemplos normativos"
+  - "type operators, nominal narrowing, exact and functional dictionaries, cardinality, ordering, uniqueness, AST, IR, diagnostics and normative examples"
 ---
 
-# ADR-086 — Identidad nominal exacta, flechas exteriores y álgebra de diccionarios
+# ADR-086 — Exact nominal identity, outer arrows and dictionary algebra
 
-- Modifica: [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-080-algebra-higher-and-updates-de-collection|D-080]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] y [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
-- Amplía: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] y [[ADR-052-pipelines-renderers-and-conformance|D-052]].
-- Documentos afectados: capítulos 02 y 04 a 09; futuros capítulos 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 y 47; gramática; CST; AST superficial; representación semántica posterior a tipado y elaboración; casos de conformidad.
+- Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-080-algebra-higher-and-updates-de-collection|D-080]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] and [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
+- Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-052-pipelines-renderers-and-conformance|D-052]].
+- Affected documents: chapters 02 and 04 to 09; future chapters 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 and 47; grammar; CST; Surface AST; semantic representation after typing and elaboration; conformance cases.
 
-## Contexto
+## Context
 
-D-085 introdujo tipos de diccionario exactos `A -> B` y diccionarios definidos mediante ramas `A --> B`, junto con productos anónimos, ausencia mediante `empty`, metadatos postfix y asociación derecha de flechas. La primera integración dejó tres asuntos incompletos:
+D-085 introduced exact dictionary types `A -> B` and branch-defined dictionaries `A --> B`, together with anonymous products, absence through `empty`, postfix metadata and right-associative arrows. The first integration left three issues incomplete:
 
-1. La relación entre uniones y flechas no impedía de forma expresa que un diccionario apareciese como alternativa parcial de una unión, incluso después de resolver aliases.
-2. `is` no permite distinguir pertenencia nominal transitiva de identidad nominal exacta, distinción necesaria al ordenar ramas que refinan aliases especializados.
-3. Los operadores conjuntistas ya existentes carecían de una semántica específica para diccionarios exactos y para diccionarios definidos por ramas.
+1. The relationship between unions and arrows did not expressly prevent a dictionary from appearing as a partial alternative of a union, even after aliases were resolved.
+2. `is` cannot distinguish transitive nominal membership from exact nominal identity, a distinction needed when ordering branches that refine specialised aliases.
+3. The existing conjunctive operators lacked semantics specific to exact dictionaries and branch-defined dictionaries.
 
-Además, la documentación numerada conservaba ejemplos y explicaciones incompatibles con D-085. Esta decisión fija la semántica nueva; la corrección de esos ejemplos forma parte de su integración documental, pero no crea decisiones adicionales.
+In addition, the numbered documentation retained examples and explanations incompatible with D-085. This decision fixes the new semantics; correcting those examples is part of its documentary integration, but creates no additional decisions.
 
-## Terminología
+## Terminology
 
-La denominación pública canónica de `A --> B` pasa a ser **diccionario funcional**. La expresión **diccionario decisional** permanece como término histórico de D-085 y como descripción de su implementación por ramas, pero no es el nombre preferido en la especificación vigente.
+The canonical public name of `A --> B` becomes **functional dictionary**. The expression **decision dictionary** remains as D-085's historical term and as a description of its branch-based implementation, but is not the preferred name in the current specification.
 
-Los identificadores mecánicos `DecisionDictionaryType`, `DecisionBranchExpr` y `DecisionApplyExpr` se conservan en la primera versión de los esquemas para no introducir una migración nominal sin valor semántico. Deben interpretarse como la representación de los diccionarios funcionales definidos por casos.
+The mechanical identifiers `DecisionDictionaryType`, `DecisionBranchExpr` and `DecisionApplyExpr` are retained in the first version of the schemas to avoid introducing a nominal migration without semantic value. They should be understood as the representation of case-defined functional dictionaries.
 
-## Decisión
+## Decision
 
-### Precedencia de `|`, `->` y `-->` en tipos
+### Precedence of `|`, `->` and `-->` in types
 
-El operador de unión de tipos `|` tiene mayor precedencia que `->` y `-->`. Las dos flechas poseen la misma precedencia y son asociativas a la derecha.
+The type-union operator `|` has higher precedence than `->` and `-->`. The two arrows have the same precedence and are right-associative.
 
 ```mud
 A | B -> C | D
 ```
 
-equivale a:
+is equivalent to:
 
 ```mud
 (A | B) -> (C | D)
@@ -52,7 +52,7 @@ equivale a:
 A | B --> C | D
 ```
 
-equivale a:
+is equivalent to:
 
 ```mud
 (A | B) --> (C | D)
@@ -62,29 +62,29 @@ equivale a:
 A -> B -> C
 ```
 
-equivale a:
+is equivalent to:
 
 ```mud
 A -> (B -> C)
 ```
 
-Cada especificación de cardinalidad, orden, unicidad o capacidad pertenece exclusivamente a la flecha inmediatamente anterior:
+Each cardinality, ordering, uniqueness or capability specification belongs exclusively to the immediately preceding arrow:
 
 ```mud
 A -> B [2] --> C [3 ordered]
 ```
 
-se elabora como:
+is elaborated as:
 
 ```mud
 A -> (B --> C [3 ordered]) [2]
 ```
 
-### La flecha como forma exterior completa
+### The arrow as a complete outer form
 
-Una flecha debe constituir la forma exterior completa del tipo en el que aparece. Un diccionario exacto o funcional no puede ser una alternativa parcial de una unión. Los paréntesis no eluden esta restricción.
+An arrow must constitute the complete outer form of the type in which it appears. An exact or functional dictionary cannot be a partial alternative of a union. Parentheses do not bypass this restriction.
 
-Son inválidos:
+The following are invalid:
 
 ```mud
 value: A | (B -> C)
@@ -93,7 +93,7 @@ value: A | (B --> C) | D
 value: (A -> B) | (C -> D)
 ```
 
-Son válidos:
+The following are valid:
 
 ```mud
 value: (A | B) -> C
@@ -102,42 +102,42 @@ value: (A | B) --> (C | D)
 value: A -> (B -> C)
 ```
 
-La restricción se comprueba después de resolver aliases. Si la forma exterior efectiva de un alias es una flecha, tampoco puede emplearse como alternativa de una unión:
+The restriction is checked after resolving aliases. If an alias's effective outer form is an arrow, it likewise cannot be used as a union alternative:
 
 ```mud
 alias Lookup := B -> C
 
-value: A | Lookup       # inválido
-value: A -> Lookup      # válido
+value: A | Lookup       # invalid
+value: A -> Lookup      # valid
 ```
 
-La EBNF puede conservar agrupaciones parentizadas para producir una CST útil; la validación posterior a la resolución rechaza las formas exteriores prohibidas.
+The EBNF may retain parenthesised groupings to produce a useful CST; validation after resolution rejects the prohibited outer forms.
 
-### Operador nominal exacto `iis`
+### Exact nominal operator `iis`
 
-`iis` es un operador infijo no encadenable cuyo resultado es `Bool`. El operando izquierdo es un valor y el derecho debe resolver a un tipo nominal.
+`iis` is a non-chainable infix operator whose result is `Bool`. The left operand is a value and the right operand must resolve to a nominal type.
 
 ```mud
 value iis PersonId
 ```
 
-es verdadero solo cuando el tipo nominal efectivo del valor es exactamente `PersonId`.
+is true only when the value's effective nominal type is exactly `PersonId`.
 
-`is` y `iis` son distintos:
+`is` and `iis` are distinct:
 
 ```mud
 value is T
 ```
 
-comprueba pertenencia a `T`, incluidas sus especializaciones.
+checks membership in `T`, including its specialisations.
 
 ```mud
 value iis T
 ```
 
-comprueba identidad nominal exacta.
+checks exact nominal identity.
 
-Sean:
+Let:
 
 ```mud
 alias Identifier := Nat
@@ -145,7 +145,7 @@ alias PersonId as Identifier
 alias EmployeeId as PersonId
 ```
 
-Para un valor cuyo tipo exacto es `EmployeeId`:
+For a value whose exact type is `EmployeeId`:
 
 ```mud
 value is Identifier    # true
@@ -157,52 +157,52 @@ value iis PersonId     # false
 value iis EmployeeId   # true
 ```
 
-La misma regla se aplica con especialización múltiple. Para `alias C as A, B`, un valor exacto `C` satisface `is A`, `is B` e `is C`, pero solo `iis C`.
+The same rule applies with multiple specialisation. For `alias C as A, B`, an exact `C` value satisfies `is A`, `is B` and `is C`, but only `iis C`.
 
-### Negación exacta `iis not`
+### Exact negation `iis not`
 
-`iis not` es la forma derivada directa de la negación del test exacto:
+`iis not` is the direct derived form of negating the exact test:
 
 ```mud
 value iis not PersonId
 ```
 
-equivale a:
+is equivalent to:
 
 ```mud
 not (value iis PersonId)
 ```
 
-No se añade `not iis`. El parser conserva si se escribió `iis` o `iis not` mediante la polaridad del nodo exacto; el formateador puede preservar la forma fuente.
+`not iis` is not added. The parser retains whether `iis` or `iis not` was written through the polarity of the exact node; the formatter may preserve the source form.
 
 ### Narrowing
 
-- `value is T` conserva `T` y sus especializaciones posibles.
-- `value iis T` conserva únicamente la posibilidad nominal exacta `T`.
-- `not (value is T)` elimina `T` y todas sus especializaciones.
-- `not (value iis T)` y `value iis not T` eliminan solo la posibilidad exacta `T`; las especializaciones continúan siendo posibles.
+- `value is T` retains `T` and its possible specialisations.
+- `value iis T` retains only the exact nominal possibility `T`.
+- `not (value is T)` removes `T` and all its specialisations.
+- `not (value iis T)` and `value iis not T` remove only the exact possibility `T`; specialisations remain possible.
 
-El análisis de flujo debe aplicar estas reglas a uniones nominales y a especialización múltiple.
+Flow analysis must apply these rules to nominal unions and multiple specialisation.
 
-`iis` no sustituye a `==`. La igualdad compara valores conforme a su tipo y contenido; `iis` solo inspecciona el tipo nominal efectivo del operando izquierdo.
+`iis` does not replace `==`. Equality compares values according to their type and content; `iis` only inspects the left operand's effective nominal type.
 
-La identidad exacta de una `thing` singleton continúa comprobándose mediante `==`:
+The exact identity of a singleton `thing` continues to be checked through `==`:
 
 ```mud
 place == Madrid
 ```
 
-La pertenencia de una `thing` a una categoría se comprueba mediante `is`:
+Membership of a `thing` in a category is checked through `is`:
 
 ```mud
 place is City
 ```
 
-El operando derecho de `iis` no puede ser un producto anónimo, una unión estructural, un diccionario, una expresión de tipo no nominal ni una identidad singleton como `Madrid`.
+The right operand of `iis` cannot be an anonymous product, structural union, dictionary, non-nominal type expression or singleton identity such as `Madrid`.
 
-### `iis` en diccionarios funcionales
+### `iis` in functional dictionaries
 
-`iis` puede seleccionar una rama y estrecha `value` dentro de su resultado:
+`iis` may select a branch and narrow `value` within its result:
 
 ```mud
 describe: Identifier --> Text [ordered] =
@@ -211,13 +211,13 @@ describe: Identifier --> Text [ordered] =
     value is Identifier --> "Identifier {value}"
 ```
 
-El orden es significativo porque un `EmployeeId` también satisface `value is PersonId`.
+Order is significant because an `EmployeeId` also satisfies `value is PersonId`.
 
-## Álgebra de diccionarios exactos
+## Exact-dictionary algebra
 
-Los operadores `|`, `&`, `--` y `^` actúan sobre el dominio de claves de dos diccionarios exactos compatibles. Cuando una operación conserva una clave presente en ambos operandos, prevalece la asociación del operando izquierdo.
+The `|`, `&`, `--` and `^` operators act on the key domains of two compatible exact dictionaries. When an operation retains a key present in both operands, the left operand's association prevails.
 
-Sean:
+Let:
 
 ```mud
 left: Key -> Value =
@@ -229,13 +229,13 @@ right: Key -> Value =
     c -> 3
 ```
 
-### Unión exacta `|`
+### Exact union `|`
 
 ```mud
 left | right
 ```
 
-produce:
+produces:
 
 ```mud
 a -> 1,
@@ -243,78 +243,78 @@ b -> 2,
 c -> 3
 ```
 
-Formalmente:
+Formally:
 
 ```text
 domain(L | R) = domain(L) ∪ domain(R)
-(L | R)[k] = L[k] si k ∈ domain(L); R[k] en otro caso
+(L | R)[k] = L[k] if k ∈ domain(L); R[k] otherwise
 ```
 
-No es necesariamente conmutativa como valor de diccionario.
+It is not necessarily commutative as a dictionary value.
 
-### Intersección exacta `&`
+### Exact intersection `&`
 
 ```mud
 left & right
 ```
 
-produce:
+produces:
 
 ```mud
 b -> 2
 ```
 
-Formalmente:
+Formally:
 
 ```text
 domain(L & R) = domain(L) ∩ domain(R)
 (L & R)[k] = L[k]
 ```
 
-Tiene el mismo conjunto de claves que `R & L`, pero no necesariamente las mismas asociaciones.
+It has the same key set as `R & L`, but not necessarily the same associations.
 
-### Diferencia exacta `--`
+### Exact difference `--`
 
 ```mud
 left -- right
 ```
 
-produce:
+produces:
 
 ```mud
 a -> 1
 ```
 
-Conserva las asociaciones izquierdas cuyas claves no aparecen a la derecha.
+It retains left associations whose keys do not appear on the right.
 
-### Diferencia simétrica exacta `^`
+### Exact symmetric difference `^`
 
 ```mud
 left ^ right
 ```
 
-produce:
+produces:
 
 ```mud
 a -> 1,
 c -> 3
 ```
 
-Solo conserva las claves presentes en exactamente un operando. `^` está admitido sobre diccionarios exactos aunque sus claves ya sean inherentemente únicas, porque opera sobre la pertenencia de claves y no exige reinterpretar la unicidad de los valores.
+It retains only keys present in exactly one operand. `^` is admitted on exact dictionaries even though their keys are inherently unique, because it operates on key membership and does not require reinterpreting value uniqueness.
 
-### Propiedades y orden
+### Properties and ordering
 
-- `|` y `&` son asociativos y conmutativos respecto al conjunto de claves, pero no necesariamente como valores de diccionario por la precedencia izquierda.
-- `--` no es asociativo ni conmutativo.
-- `^` es asociativo y conmutativo.
-- `L | R` conserva primero las asociaciones de `L` y añade después las claves nuevas de `R`.
-- `L & R` y `L -- R` filtran `L` sin reordenarlo.
-- `L ^ R` conserva primero las asociaciones exclusivas de `L` y después las exclusivas de `R`.
-- Un criterio `ordered by` normaliza el contenido después de calcularlo.
+- `|` and `&` are associative and commutative with respect to the key set, but not necessarily as dictionary values because of left precedence.
+- `--` is neither associative nor commutative.
+- `^` is associative and commutative.
+- `L | R` retains `L` associations first and then adds `R`'s new keys.
+- `L & R` and `L -- R` filter `L` without reordering it.
+- `L ^ R` retains `L`'s exclusive associations first and then `R`'s exclusive associations.
+- An `ordered by` criterion normalises the content after calculating it.
 
-### Interacción con `unique`
+### Interaction with `unique`
 
-En un diccionario exacto `[unique]`, ningún valor puede quedar asociado a dos claves distintas. La operación incorpora primero las asociaciones izquierdas y después las derechas que correspondan. Una asociación derecha que violaría `unique` se omite como no-op y no produce `failed`.
+In an exact `[unique]` dictionary, no value may be associated with two different keys. The operation incorporates left associations first and then the corresponding right associations. A right association that would violate `unique` is omitted as a no-op and produces no `failed`.
 
 ```mud
 left: Person -> Room [unique] =
@@ -325,73 +325,73 @@ right: Person -> Room [unique] =
     Marta -> RedRoom
 ```
 
-`left | right` produce `Ana -> BlueRoom, Marta -> RedRoom`.
+`left | right` produces `Ana -> BlueRoom, Marta -> RedRoom`.
 
-Los tipos de clave y valor de ambos operandos deben ser compatibles. El resultado conserva los tipos comunes, la unicidad exigida, el orden demostrable y una cardinalidad derivada conservadoramente.
+The key and value types of both operands must be compatible. The result retains common types, required uniqueness, demonstrable ordering and conservatively derived cardinality.
 
-## Álgebra de diccionarios funcionales
+## Functional-dictionary algebra
 
-Los operadores conjuntistas no comparan ni fusionan ramas, selectores, fallbacks u órdenes fuente. Su semántica es extensional y punto a punto sobre el resultado de aplicar ambos diccionarios a una misma entrada.
+Set operators do not compare or merge branches, selectors, fallbacks or source orderings. Their semantics are extensional and pointwise over the result of applying both dictionaries to the same input.
 
-Para cualquier operador `op` entre `|`, `&`, `--` y `^`:
+For any operator `op` among `|`, `&`, `--` and `^`:
 
 ```text
 (F op G)[x] = F[x] op G[x]
 ```
 
-La operación de la derecha es el operador ordinario de colecciones. `F[x]` y `G[x]` se calculan sobre la misma entrada y la misma instantánea del mundo antes de combinarlos.
+The right-hand operation is the ordinary collection operator. `F[x]` and `G[x]` are computed on the same input and snapshot of the world before being combined.
 
-### Unión funcional `|`
+### Functional union `|`
 
 ```text
 (F | G)[x] = F[x] | G[x]
 ```
 
-Incluye los resultados producidos por cualquiera de los operandos. No existe precedencia izquierda entre resultados funcionales.
+It includes results produced by either operand. There is no left precedence between functional results.
 
-### Intersección funcional `&`
+### Functional intersection `&`
 
 ```text
 (F & G)[x] = F[x] & G[x]
 ```
 
-Conserva los resultados producidos por ambos.
+It retains results produced by both.
 
-### Diferencia funcional `--`
+### Functional difference `--`
 
 ```text
 (F -- G)[x] = F[x] -- G[x]
 ```
 
-Retira de los resultados de `F` las multiplicidades producidas por `G`.
+It removes from `F`'s results the multiplicities produced by `G`.
 
-### Diferencia simétrica funcional `^`
+### Functional symmetric difference `^`
 
 ```text
 (F ^ G)[x] = F[x] ^ G[x]
 ```
 
-Conserva los resultados producidos por exactamente uno de los dos operandos y mantiene las restricciones ordinarias de unicidad de la diferencia simétrica de colecciones.
+It retains results produced by exactly one of the operands and preserves the ordinary uniqueness constraints of collection symmetric difference.
 
-### Orden y cardinalidad
+### Ordering and cardinality
 
-Dos funcionales `ordered` producen individualmente como máximo un resultado. Su combinación conserva `ordered` solo cuando la cardinalidad máxima por aplicación continúa siendo `[0..1]`.
+Two `ordered` functionals individually produce at most one result. Their combination retains `ordered` only when maximum cardinality per application remains `[0..1]`.
 
-- `F | G` puede producir dos resultados distintos y pierde `ordered` en general.
-- `F & G` produce como máximo uno y puede conservar `ordered`.
-- `F -- G` produce como máximo el resultado de `F` y puede conservar `ordered`.
-- `F ^ G` puede producir dos y pierde `ordered` en general.
+- `F | G` may produce two distinct results and generally loses `ordered`.
+- `F & G` produces at most one and may retain `ordered`.
+- `F -- G` produces at most `F`'s result and may retain `ordered`.
+- `F ^ G` may produce two and generally loses `ordered`.
 
-Si uno o ambos operandos no son `ordered`, el compilador puede conservarlo únicamente cuando demuestre la misma cota máxima.
+If one or both operands are not `ordered`, the compiler may retain it only when it proves the same maximum bound.
 
-Para:
+For:
 
 ```text
 F[x] : B [fmin..fmax]
 G[x] : B [gmin..gmax]
 ```
 
-se admiten inicialmente las aproximaciones conservadoras:
+the following conservative approximations are initially admitted:
 
 ```text
 F | G  : B [max(fmin, gmin)..fmax + gmax]
@@ -400,134 +400,134 @@ F -- G : B [0..fmax]
 F ^ G  : B [0..fmax + gmax]
 ```
 
-El análisis puede estrecharlas con `unique`, dominios finitos o información de solapamiento demostrable.
+Analysis may narrow them using `unique`, finite domains or demonstrable overlap information.
 
-### `unique`, fallback y dependencias
+### `unique`, fallback and dependencies
 
-`unique` deduplica la colección producida por cada aplicación. Puede ser relevante al combinar dos funcionales `ordered`, aunque fuera redundante en cada operando aislado.
+`unique` deduplicates the collection produced by each application. It may matter when combining two `ordered` functionals, even if redundant on each isolated operand.
 
-Los fallbacks pertenecen a cada operando. Se evalúan primero `F[x]` y `G[x]` con sus propias ramas y `_`; después se combinan los resultados. No se crea ni fusiona un fallback conjunto.
+Fallbacks belong to each operand. `F[x]` and `G[x]` are first evaluated with their own branches and `_`; the results are then combined. No joint fallback is created or merged.
 
-Las dependencias externas del compuesto son la unión de las dependencias transitivas de ambos operandos:
+The compound's external dependencies are the union of both operands' transitive dependencies:
 
 ```text
 dependencies(F op G) = dependencies(F) ∪ dependencies(G)
 ```
 
-La operación continúa siendo pura y determinista respecto a la instantánea común.
+The operation remains pure and deterministic with respect to the common snapshot.
 
-### Igualdad
+### Equality
 
-Definir la aritmética de forma extensional no convierte la igualdad general de funcionales en una prueba de equivalencia para todas las entradas. `F == G` continúa sujeto a las reglas nominales o estructurales que se definan separadamente.
+Defining the algebra extensionally does not turn general functional equality into an equivalence proof for every input. `F == G` remains subject to nominal or structural rules defined separately.
 
-## Restricciones comunes
+## Common restrictions
 
-- Solo se combinan diccionarios de la misma clase: exacto con exacto y funcional con funcional.
-- No se combina directamente `->` con `-->`.
-- Los tipos de entrada y salida deben ser compatibles.
-- Los operadores son puros y no producen efectos.
-- La evaluación conserva la instantánea y la atomicidad ordinarias.
-- No se introduce un operador que seleccione el izquierdo si produce algo y el derecho en caso contrario.
+- Only dictionaries of the same class are combined: exact with exact and functional with functional.
+- `->` and `-->` are not combined directly.
+- Input and output types must be compatible.
+- Operators are pure and produce no effects.
+- Evaluation retains ordinary snapshot and atomicity.
+- No operator is introduced that selects the left side if it produces something and the right side otherwise.
 
-## Representación sintáctica y semántica
+## Syntactic and semantic representation
 
-El AST superficial conserva `iis` mediante:
+The surface AST retains `iis` through:
 
 ```text
 ExactTypeTestExpr(valueExpression, nominalTypeReference, negated)
 ```
 
-- `negated = false` para `iis`.
-- `negated = true` para `iis not`.
+- `negated = false` for `iis`.
+- `negated = true` for `iis not`.
 
-El operador derecho se resuelve durante la elaboración. Los tipos estructurales y las identidades singleton se rechazan durante tipado/elaboración antes de obtener un resultado elaborado válido.
+The right operand is resolved during elaboration. Structural types and singleton identities are rejected during typing/elaboration before a valid elaborated result is obtained.
 
-Las operaciones conjuntistas pueden conservarse como `BinaryExpr` en el AST superficial porque su clase depende de los tipos resueltos. La elaboración debe distinguir operaciones sobre diccionarios exactos de operaciones sobre diccionarios funcionales y determinar su tipo de resultado. La forma mecánica posterior de esa distinción todavía no está fijada.
+Set operations may remain `BinaryExpr` in the surface AST because their class depends on resolved types. Elaboration must distinguish operations on exact dictionaries from operations on functional dictionaries and determine their result type. The subsequent mechanical form of that distinction is not yet fixed.
 
-Una operación conjuntista sobre funcionales equivale a aplicar ambos operandos en la misma instantánea y ejecutar después la operación de colección sobre sus resultados. Nunca se materializa una lista fusionada de ramas ni se intenta demostrar equivalencia lógica entre selectores.
+A set operation on functionals is equivalent to applying both operands in the same snapshot and then applying the collection operation to their results. A merged list of branches is never materialised and no attempt is made to prove logical equivalence between selectors.
 
-La elaboración debe distinguir asimismo la pertenencia nominal transitiva de `is` de la identidad nominal exacta de `iis`. El AST superficial conserva ambas formas; cualquier representación posterior debe preservar o permitir reconstruir esa distinción sin que esta decisión fije nombres concretos de nodos.
+Elaboration must likewise distinguish the transitive nominal membership of `is` from the exact nominal identity of `iis`. The surface AST retains both forms; any later representation must preserve or allow reconstruction of that distinction without this decision fixing concrete node names.
 
-## Diagnósticos requeridos
+## Required diagnostics
 
-Una implementación debe diagnosticar, como mínimo:
+An implementation must diagnose at least:
 
-- flecha usada como alternativa parcial de unión;
-- alias cuya forma exterior efectiva es una flecha dentro de una unión;
-- operando derecho no nominal de `iis`;
-- identidad singleton a la derecha de `iis`;
-- encadenamiento de `iis` o `iis not`;
-- combinación de diccionario exacto y funcional;
-- tipos de entrada incompatibles;
-- tipos de salida incompatibles;
-- pérdida demostrada de `ordered` cuando una forma declarada lo exige;
-- uso de `^` cuando el tipo de colección resultante no satisface sus requisitos de unicidad.
+- an arrow used as a partial union alternative;
+- an alias whose effective outer form is an arrow inside a union;
+- a non-nominal right operand of `iis`;
+- a singleton identity to the right of `iis`;
+- chaining `iis` or `iis not`;
+- combining an exact and a functional dictionary;
+- incompatible input types;
+- incompatible output types;
+- demonstrated loss of `ordered` when a declared form requires it;
+- use of `^` when the resulting collection type does not satisfy its uniqueness requirements.
 
-La pérdida inferida de `ordered` no es un fallo por sí misma si el contexto permite el tipo no ordenado; sí debe explicarse en el diagnóstico de incompatibilidad cuando una anotación exterior exige conservarlo.
+Inferred loss of `ordered` is not a failure by itself when the context permits an unordered type; it must, however, be explained in the incompatibility diagnostic when an outer annotation requires retaining it.
 
-## Cierre de cobertura de D-085
+## D-085 coverage closure
 
-Esta versión incorpora como parte de la misma unidad normativa las brechas documentales y mecánicas que habían quedado fuera de la primera integración de D-085. En particular, la conformidad debe cubrir también:
+This version incorporates, as part of the same normative unit, the documentary and mechanical gaps left outside D-085's first integration. In particular, conformance must also cover:
 
-- llamada interna, inaccesibilidad raíz y rollback atómico de `subaction`;
-- `has` y `has not` sobre `MudPath`, con el contenedor a la izquierda, y rechazo de encadenamientos inválidos;
-- consulta, sustitución, iteración por claves y asociaciones, claves producto y no-op de `unique` en exactos;
-- selectores explícitos de igualdad, pertenencia y condiciones booleanas; rechazo de selectores implícitos; fallback, lectura externa, aplicación sobre dominios y terminación de funcionales;
-- cardinalidades y deduplicación de `FirstMatch` y `AllMatches`;
-- aplicación encadenada y composición de diccionarios;
-- compatibilidad estructural de productos y separación frente a aliases nominales;
-- selección como filtro directo que no proyecta, aplana ni envuelve y que conserva asociaciones de exactos;
-- errores `create Thing`, `destroy Thing` y `all Any`;
-- catálogo, tipado, mutabilidad y advertencias de los metadatos postfix;
-- inferencia de cardinalidad `[0]`, `[1]` y cardinalidades mayores, incluidos diccionarios como un único valor exterior;
-- `iis` con especialización múltiple y narrowing exacto.
+- internal calls, root inaccessibility and atomic rollback of `subaction`;
+- `has` and `has not` on `MudPath`, with the container on the left, and rejection of invalid chains;
+- querying, replacement, key and association iteration, product keys and `unique` no-op in exact dictionaries;
+- explicit equality, membership and Boolean-condition selectors; rejection of implicit selectors; fallback, external reads, domain application and functional termination;
+- cardinalities and deduplication of `FirstMatch` and `AllMatches`;
+- chained application and dictionary composition;
+- structural product compatibility and separation from nominal aliases;
+- selection as a direct filter that neither projects, flattens nor wraps and that preserves exact associations;
+- `create Thing`, `destroy Thing` and `all Any` errors;
+- catalogue, typing, mutability and warnings for postfix metadata;
+- inference of `[0]`, `[1]` and greater cardinalities, including dictionaries as one outer value;
+- `iis` with multiple specialisation and exact narrowing.
 
-Los ejemplos normativos correspondientes pertenecen a los capítulos numerados 05 a 09. Los capítulos futuros enumerados en el índice deberán conservarlos o refinarlos al redactarse, pero no pueden remitir únicamente a este ADR.
+The corresponding normative examples belong to numbered chapters 05 to 09. Future chapters listed in the index must retain or refine them when drafted, but may not refer only to this ADR.
 
-## Consecuencias
+## Consequences
 
-- Las flechas mantienen una lectura uniforme y no pueden ocultarse dentro de uniones mediante aliases.
-- `iis` permite ordenar ramas desde casos nominales exactos hasta pertenencias más generales sin confundir igualdad de valores.
-- El álgebra exacta sigue la identidad de claves y conserva precedencia izquierda.
-- El álgebra funcional compone políticas sin inspeccionar su implementación por ramas.
-- La inferencia de orden y cardinalidad forma parte del tipo elaborado del resultado.
-- Los ejemplos normativos de los capítulos numerados deben mostrar casos positivos, combinados e inválidos.
+- Arrows retain a uniform reading and cannot be hidden inside unions through aliases.
+- `iis` allows branches to be ordered from exact nominal cases to more general membership without confusing value equality.
+- Exact algebra follows key identity and retains left precedence.
+- Functional algebra composes policies without inspecting their branch implementation.
+- Ordering and cardinality inference form part of the result's elaborated type.
+- Normative examples in numbered chapters must show positive, combined and invalid cases.
 
-## Alternativas rechazadas
+## Rejected alternatives
 
-### Interpretar `F | G` como preferencia izquierda
+### Interpret `F | G` as left preference
 
-Rechazada porque confundiría unión con una operación de fallback. La unión funcional combina colecciones de resultados.
+Rejected because it would confuse union with a fallback operation. Functional union combines result collections.
 
-### Fusionar ramas funcionales
+### Merge functional branches
 
-Rechazada porque exigiría equivalencia lógica de selectores, tratamiento especial de `_` y normalización de órdenes fuente.
+Rejected because it would require logical equivalence of selectors, special handling of `_` and source-order normalisation.
 
-### Representar `iis` como `==` sobre descriptores de tipo expuestos
+### Represent `iis` as `==` on exposed type descriptors
 
-Rechazada porque filtraría una representación de implementación y perdería reglas de narrowing propias.
+Rejected because it would expose an implementation representation and lose `iis`-specific narrowing rules.
 
-### Permitir flechas parentizadas dentro de uniones
+### Allow parenthesised arrows inside unions
 
-Rechazada porque haría depender la consultabilidad de un diccionario de agrupaciones difíciles de elaborar y permitiría eludir la restricción mediante aliases.
+Rejected because it would make dictionary queryability depend on groupings that are difficult to elaborate and would allow the restriction to be bypassed through aliases.
 
-## Verificación
+## Verification
 
-La suite debe cubrir:
+The suite must cover:
 
-1. precedencia y asociación de flechas;
-2. rechazo superficial y tras resolución de aliases;
-3. `is`, `iis`, `iis not` y `==` sobre cadenas y diamantes de especialización;
-4. narrowing positivo y negativo exacto;
-5. las cuatro operaciones sobre diccionarios exactos con colisiones;
-6. orden e interacción con `unique`;
-7. las cuatro operaciones funcionales sobre resultados con y sin solapamiento;
-8. pérdida y conservación de `ordered`;
-9. unión de dependencias y misma instantánea;
-10. rechazo de mezcla exacto/funcional;
-11. AST e IR esperados sin fusión de ramas;
-12. ausencia de las construcciones retiradas por D-085 en ejemplos válidos y esquemas;
-13. llamada y rollback de `subaction`;
-14. selectores, fallback, dependencias y terminación funcional;
-15. selección directa, `Any`, metadatos y matriz de cardinalidad omitida;
-16. casos positivos y negativos enumerados por el validador de cobertura D-086 v4.
+1. arrow precedence and associativity;
+2. rejection at the surface and after alias resolution;
+3. `is`, `iis`, `iis not` and `==` over specialisation chains and diamonds;
+4. positive and negative exact narrowing;
+5. the four operations on exact dictionaries with collisions;
+6. ordering and interaction with `unique`;
+7. the four functional operations on results with and without overlap;
+8. loss and retention of `ordered`;
+9. dependency union and the same snapshot;
+10. rejection of exact/functional mixing;
+11. expected AST and IR without branch merging;
+12. absence of constructions removed by D-085 in valid examples and schemas;
+13. `subaction` calls and rollback;
+14. selectors, fallback, dependencies and functional termination;
+15. direct selection, `Any`, metadata and the omitted-cardinality matrix;
+16. positive and negative cases enumerated by the D-086 v4 coverage validator.
