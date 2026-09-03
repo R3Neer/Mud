@@ -1,6 +1,6 @@
 ---
 id: D-062
-title: "Literales canónicos de magnitudes de punto"
+title: "Canonical point-magnitude literals"
 status: vigente
 date: 2026-07-29
 supersedes: []
@@ -8,75 +8,75 @@ superseded-by: []
 questions:
   - "Q-055"
 affects:
-  - "léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad"
+  - "lexicon, concrete grammar, point magnitudes, scanner, parser and conformance tests"
 ---
-# ADR-062 — Literales canónicos de magnitudes de punto
+# ADR-062 — Canonical point-magnitude literals
 
-- Modificada por: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] y [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]]
-- Amplía: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] y [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Cerrada conjuntamente por esta decisión y [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]]: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
-- Documentos afectados: léxico, gramática concreta, magnitudes de punto, scanner, parser y pruebas de conformidad
+- Amended by: [[ADR-082-cycle-como-modificador-de-dominio-de-punto|D-082]] and [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]]
+- Extends: [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]] and [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Jointly closed by this decision and [[ADR-089-clasificacion-contextual-de-formas-fuente|D-089]]: [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]]
+- Affected documents: lexicon, concrete grammar, point magnitudes, scanner, parser and conformance tests
 
-## Contexto
+## Context
 
-El metadato `~format` ya determina cómo se representa una magnitud de punto. La gramática reservaba `POINT_LITERAL`, pero no fijaba si el formato era solo de salida ni cómo reconstruir un punto cuando omitía precisión, coincidía con el formato de otro tipo o describía un valor fuera del dominio.
+The `~format` metadata already determines how a point magnitude is represented. The grammar reserved `POINT_LITERAL`, but did not establish whether a format was only for output or how to reconstruct a point when it omitted precision, coincided with another type's format, or described a value outside its domain.
 
-## Decisión
+## Decision
 
-### Selección contextual
+### Contextual selection
 
-`POINT_LITERAL` es un literal contextual. Solo se admite cuando el contexto exige un único tipo de magnitud `point over`. Si el tipo esperado no existe o no es unívoco, el programa contiene un error estático.
+`POINT_LITERAL` is a contextual literal. It is permitted only where the context requires one point-magnitude `point over` type. If the expected type does not exist or is not unique, the program contains a static error.
 
-La selección por tipo ocurre antes de interpretar el formato. Por tanto, dos magnitudes pueden producir la misma secuencia visible sin colisionar cuando el contexto determina una de ellas.
+Selection by type occurs before format interpretation. Two magnitudes may therefore produce the same visible sequence without colliding when the context determines one of them.
 
-### Magnitud con `~format`
+### Magnitude with `~format`
 
-Cuando el tipo esperado declara `~format`, el literal debe coincidir exactamente con la representación canónica que ese formato produciría. Debe contener:
+When the expected type declares `~format`, the literal must exactly match the canonical representation that the format would produce. It must contain:
 
-- todos los fragmentos fijos;
-- todos los componentes, en el orden declarado;
-- los separadores y caracteres exactos;
-- la forma numérica canónica determinada por cada especificación de anchura y precisión.
+- every fixed fragment;
+- every component, in declared order;
+- the exact separators and characters;
+- the canonical numeric form determined by every width and precision specification.
 
-No se aceptan escrituras alternativas aunque produzcan los mismos componentes. Por ejemplo, si el formato canónico produce `07:05:00`, `7:05:00` no es el mismo literal.
+Alternative spellings are not accepted even if they produce the same components. For example, where the canonical format produces `07:05:00`, `7:05:00` is not the same literal.
 
-Un `~format` de punto debe ser estáticamente invertible: sus fragmentos y huecos deben permitir reconstruir un único punto. Una declaración cuyo formato no tenga una inversión unívoca es inválida. Esta obligación restringe el uso de expresiones arbitrarias dentro del `~format` de una magnitud de punto, aunque esas expresiones sean renderizables en una plantilla `Text` ordinaria.
+A point `~format` must be statically invertible: its fragments and holes must make it possible to reconstruct one point. A declaration whose format does not have an unambiguous inverse is invalid. This obligation constrains arbitrary expressions within a point magnitude's `~format`, even when they are renderable in an ordinary `Text` template.
 
-La comprobación canónica equivale a:
+The canonical check is equivalent to:
 
-1. reconocer los fragmentos y componentes del formato;
-2. reconstruir el punto;
-3. representarlo de nuevo con el mismo formato;
-4. exigir igualdad exacta con el texto fuente.
+1. recognise the format's fragments and components;
+2. reconstruct the point;
+3. render it again with the same format;
+4. require exact equality with the source text.
 
-### Precisión omitida
+### Omitted precision
 
-Todo componente de precisión inferior a la menor unidad representada por el formato toma valor cero. Así, un formato que termina en segundos construye un punto con cero fracciones de segundo, incluidos milisegundos, microsegundos, nanosegundos y picosegundos cuando esas unidades existan.
+Every precision component smaller than the least unit represented by the format has value zero. Thus, a format ending in seconds constructs a point with zero fractions of a second, including milliseconds, microseconds, nanoseconds and picoseconds where those units exist.
 
-La omisión no redondea ni conserva información implícita.
+Omission neither rounds nor retains implicit information.
 
-### Magnitud sin `~format`
+### Magnitude without `~format`
 
-Cuando el tipo esperado no declara `~format`, su literal usa la sintaxis ordinaria de cantidad y debe escribir una unidad compatible habilitada para la magnitud subyacente. La cantidad se interpreta como la coordenada completa del punto respecto de su origen canónico.
+When the expected type declares no `~format`, its literal uses ordinary quantity syntax and must write a compatible unit enabled for the underlying magnitude. The quantity is interpreted as the point's complete coordinate relative to its canonical origin.
 
-### Dominio
+### Domain
 
-Después de reconstruir la coordenada, el compilador comprueba que pertenezca al dominio declarado por la magnitud de punto. Un literal fuera del dominio es un error de compilación.
+After reconstructing the coordinate, the compiler checks that it belongs to the point magnitude's declared domain. A literal outside the domain is a compilation error.
 
-La comprobación se realiza antes de cualquier normalización cíclica. Un dominio `[0..86_400) cycle` cuya unidad raíz sea el segundo no autoriza un literal de `26 hour` ni su equivalente formateado; los valores fuente fuera de rango no se envuelven.
+The check occurs before any cyclic normalisation. A `[0..86_400) cycle` domain whose root unit is the second does not authorise a `26 hour` literal or its formatted equivalent; out-of-range source values do not wrap around.
 
-La normalización cíclica continúa aplicándose a las operaciones runtime según las reglas de magnitudes de punto, pero no corrige un literal inválido.
+Cyclic normalisation continues to apply to runtime operations under the point-magnitude rules, but does not repair an invalid literal.
 
-## Consecuencias
+## Consequences
 
-- `~format` es simultáneamente la representación canónica y, cuando existe, la forma fuente del tipo de punto.
-- `POINT_LITERAL` es una clasificación contextual de D-089 sobre el span fuente; el scanner base no requiere el tipo esperado ni la declaración de magnitud resuelta.
-- Los formatos de punto tienen una restricción de invertibilidad que no afecta a las plantillas `Text` generales.
-- Las colisiones entre formatos se resuelven por el tipo esperado, no por prioridad léxica global.
-- La precisión no escrita tiene un valor definido y reproducible.
-- Los ciclos no convierten errores fuente en valores válidos.
+- `~format` is both the canonical representation and, when present, the source form of the point type.
+- `POINT_LITERAL` is a D-089 contextual classification over the source span; the base scanner does not require the expected type or the resolved magnitude declaration.
+- Point formats have an invertibility constraint that does not affect general `Text` templates.
+- Format collisions are resolved by expected type, not global lexical priority.
+- Unwritten precision has a defined, reproducible value.
+- Cycles do not turn source errors into valid values.
 
-## Ejemplos
+## Examples
 
 ```mud
 magnitude TimeOfDay point over Time in [0..86_400) cycle {
@@ -86,14 +86,14 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 opening: TimeOfDay = 07:05:00
 ```
 
-El valor de `opening` tiene cero fracciones de segundo.
+The value of `opening` has zero fractional seconds.
 
 ```mud
-opening: TimeOfDay = 7:05:00   # inválido: no es la forma canónica
-opening: TimeOfDay = 26:00:00  # inválido: queda fuera del dominio
+opening: TimeOfDay = 7:05:00   # invalid: not the canonical form
+opening: TimeOfDay = 26:00:00  # invalid: outside the domain
 ```
 
-Sin formato:
+Without a format:
 
 ```mud
 magnitude Timestamp point over Time {}
@@ -101,13 +101,13 @@ magnitude Timestamp point over Time {}
 created: Timestamp = 90 second
 ```
 
-## Verificación
+## Verification
 
-1. Aceptación de la representación canónica exacta.
-2. Rechazo de variantes de anchura, separadores o componentes.
-3. Inicialización a cero de toda precisión inferior omitida.
-4. Resolución de formatos coincidentes mediante tipos esperados distintos.
-5. Rechazo sin tipo esperado o con tipo ambiguo.
-6. Rechazo estático de formatos no invertibles.
-7. Literal con unidad para una magnitud sin `~format`.
-8. Rechazo de coordenadas fuera de dominios lineales y cíclicos.
+1. Acceptance of the exact canonical representation.
+2. Rejection of width, separator or component variants.
+3. Initialisation to zero of every omitted lower precision.
+4. Resolution of coincident formats through distinct expected types.
+5. Rejection without an expected type or with an ambiguous type.
+6. Static rejection of non-invertible formats.
+7. A literal with a unit for a magnitude without `~format`.
+8. Rejection of coordinates outside linear and cyclic domains.

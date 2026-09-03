@@ -75,7 +75,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-059 | vigente | 2026-07-29 | [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|Magnitude intervals and inverted endpoints]] |
 | D-060 | vigente | 2026-07-29 | [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|Additive deltas and `Nat` normalisation]] |
 | D-061 | vigente | 2026-07-29 | [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|Non-accepted results and `Text` templates]] |
-| D-062 | vigente | 2026-07-29 | [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|Literales canónicos de magnitudes de punto]] |
+| D-062 | vigente | 2026-07-29 | [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|Canonical point-magnitude literals]] |
 | D-063 | vigente | 2026-07-30 | [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|Firmas, `given` y vinculaciones `on` conjuntas]] |
 | D-064 | vigente | 2026-07-30 | [[notas/decisiones/ADR-064-orden-por-ruta-estable|Orden por ruta estable]] |
 | D-065 | vigente | 2026-07-30 | [[notas/decisiones/ADR-065-cabecera-using-de-fichero|Cabecera `using` de fichero]] |
