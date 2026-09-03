@@ -1,6 +1,6 @@
 ---
 id: Q-057
-title: Capacidad interior dentro de valores de alias
+title: Inner capability within alias values
 priority: P2
 opened: 2026-07-29
 resolved: true
@@ -8,26 +8,26 @@ closed: 2026-07-30
 decisions:
   - "D-031"
 affects:
-  - "aliases estructurales, capacidades y gramática concreta"
+  - "structural aliases, capabilities and concrete grammar"
 superseded-by: []
 ---
 
-# Q-057 — Capacidad interior dentro de valores de alias
+# Q-057 — Inner capability within alias values
 
-## Pregunta
+## Question
 
-Si una representación de alias contiene una colección de `thing`, decidir si puede declarar capacidad interior `[mut]` aunque el valor de alias sea inmutable, qué autoridad concede y cómo se conserva la distinción entre modificar un miembro alcanzado y reemplazar la colección contenida.
+If an alias representation contains a collection of `thing` values, decide whether it may declare an inner `[mut]` capability even when the alias value is immutable, what authority it grants and how to preserve the distinction between modifying a reached member and replacing the contained collection.
 
-## Resolución
+## Resolution
 
-Sí. Un componente de alias no admite `mut` exterior, pero su especificación de colección puede declarar `[mut]`. Esa capacidad permite modificar las `thing` contenidas directamente sin volver reemplazable la colección ni actualizable el componente. No se propaga implícitamente a través de aliases o contenedores anidados.
+Yes. An alias component permits no outer `mut`, but its collection specification may declare `[mut]`. That capability permits modifying contained `thing` values directly without making the collection replaceable or the component updateable. It does not propagate implicitly through aliases or nested containers.
 
-La decisión queda incorporada en [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]] y en la gramática concreta.
+The decision is incorporated in [[notas/decisiones/ADR-031-aliases-nominales-e-inmutables|D-031]] and the concrete grammar.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
-- C1: `D-031`, `aliases estructurales, capacidades y gramática concreta`.
+- C1: `D-031`, `structural aliases, capabilities and concrete grammar`.
