@@ -21,7 +21,7 @@ affects:
 - Finally amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
-- Subsequently amended by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]] and [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
+- Subsequently amended by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]] and [[ADR-079-external-diagnostics-for-always-rules|D-079]]
 - Closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
 - Affected documents: [[specification/05-source-text]], [[specification/06-lexicon]], [[specification/07-concrete-grammar]], `specification/grammar/`
 

@@ -14,7 +14,7 @@ affects:
 # ADR-041 — Contracts under the three types of rules
 
 - Related to: [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
-- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
+- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-079-external-diagnostics-for-always-rules|D-079]]
 - As further amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Also amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
 - Expanded by: [[notes/decisions/ADR-071-local-bindings-in-boolean-blocks|D-071]]

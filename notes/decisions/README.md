@@ -92,7 +92,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-076 | current | 2026-08-03 | [[notes/decisions/ADR-076-named-units-prefixes-and-adjacent-notation|Named units, prefixes and adjacent notation]] |
 | D-077 | current | 2026-08-03 | [[notes/decisions/ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|Cardinality-conditioned destruction and transition diagnostics]] |
 | D-078 | current | 2026-08-03 | [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|Nominal resolution, anchor catalogue and initial graph]] |
-| D-079 | current | 2026-08-04 | [[notes/decisions/ADR-079-diagnostic-exterior-de-rules-always|External diagnostics for `always` rules]] |
+| D-079 | current | 2026-08-04 | [[notes/decisions/ADR-079-external-diagnostics-for-always-rules|External diagnostics for `always` rules]] |
 | D-080 | current | 2026-08-04 | [[notes/decisions/ADR-080-algebra-higher-and-updates-de-collection|Higher algebra and collection updates]] |
 | D-081 | current | 2026-08-04 | [[notes/decisions/ADR-081-filtering-take-and-indexing-de-collectiones|Filtering, `take` and collection indexing]] |
 | D-082 | current | 2026-08-04 | [[notes/decisions/ADR-082-cycle-as-point-domain-modifier|`cycle` as a point-domain modifier]] |
