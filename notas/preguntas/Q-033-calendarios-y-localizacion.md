@@ -1,6 +1,6 @@
 ---
 id: Q-033
-title: Calendarios y localización
+title: Calendars and localisation
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-033 — Calendarios y localización
+# Q-033 — Calendars and localisation
 
-## Contenido
+## Content
 
-Calendario civil inicial, zonas horarias, formatos, idiomas y separación entre valor y presentación.
+Initial civil calendar, time zones, formats, languages and separation between value and presentation.
