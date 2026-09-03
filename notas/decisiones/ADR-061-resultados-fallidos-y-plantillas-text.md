@@ -1,6 +1,6 @@
 ---
 id: D-061
-title: "Resultados no aceptados y plantillas `Text`"
+title: "Non-accepted results and `Text` templates"
 status: vigente
 date: 2026-07-29
 supersedes: []
@@ -10,30 +10,30 @@ questions:
   - "Q-055"
   - "Q-059"
 affects:
-  - "resultados de acción, reglas `always`, léxico, gramática, evaluación de `Text`, diagnósticos y frontera externa"
+  - "action results, `always` rules, lexicon, grammar, `Text` evaluation, diagnostics and the external boundary"
 ---
-# ADR-061 — Resultados no aceptados y plantillas `Text`
+# ADR-061 — Non-accepted results and `Text` templates
 
-- Modificada por: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
-- Modifica: [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] y [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]]
-- Modificada por: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
-- Modificada después por: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
-- Modificada además por: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
-- Relacionada con: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
-- Preguntas relacionadas: Q-007, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]], Q-059
-- Documentos afectados: resultados de acción, reglas `always`, léxico, gramática, evaluación de `Text`, diagnósticos y frontera externa
+- Amended by: [[ADR-085-diccionarios-decisionales-metadatos-y-activacion-estructurada|D-085]]
+- Amends: [[notas/decisiones/ADR-027-salidas-look-y-message|D-027]], [[notas/decisiones/ADR-029-intervalos-estrellas-y-ciclos|D-029]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]], [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-041-contratos-de-las-tres-clases-de-regla|D-041]], [[notas/decisiones/ADR-042-acciones-raiz-y-resultados|D-042]], [[notas/decisiones/ADR-048-azar-reproducible-y-fallos|D-048]], [[notas/decisiones/ADR-049-operadores-precedencia-e-intervalos-normalizados|D-049]], [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]] and [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]]
+- Amended by: [[notas/decisiones/ADR-068-thing-universal-y-nombre-intrinseco|D-068]]
+- Subsequently amended by: [[ADR-079-diagnostico-exterior-de-reglas-always|D-079]]
+- Further amended by: [[notas/decisiones/ADR-083-magnitudes-base-sin-unidades|D-083]]
+- Related to: [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|D-055]]
+- Related questions: Q-007, [[notas/preguntas/Q-055-literales-de-magnitudes-de-punto|Q-055]], Q-059
+- Affected documents: action results, `always` rules, lexicon, grammar, `Text` evaluation, diagnostics and the external boundary
 
-## Contexto
+## Context
 
-El resultado público de una acción ya distingue `accepted`, `rejected` y `failed`, pero los estados no aceptados no transportaban todavía una explicación uniforme. Las reglas `always` podían provocar un fallo sin declarar el diagnóstico propio de la invariante.
+An action's public result already distinguishes `accepted`, `rejected` and `failed`, but non-accepted states did not yet carry a uniform explanation. `always` rules could cause a failure without declaring the invariant's own diagnostic.
 
-Al mismo tiempo, los literales `Text` necesitan incorporar valores sin recurrir a concatenaciones manuales ni confundir una declaración con el valor que una expresión produce.
+At the same time, `Text` literals need to incorporate values without resorting to manual concatenation or confusing a declaration with the value produced by an expression.
 
-## Decisión
+## Decision
 
-### Resultado externo de una acción
+### External result of an action
 
-Una solicitud de acción devuelve al invocador externo un objeto con una de estas formas:
+An action request returns to its external caller an object in one of these forms:
 
 ```text
 { state: accepted }
@@ -41,28 +41,28 @@ Una solicitud de acción devuelve al invocador externo un objeto con una de esta
 { state: failed, reason: Text }
 ```
 
-El campo `reason` es obligatorio en todo resultado distinto de `accepted`. Todo caso normativo capaz de producir `rejected` o `failed` debe definir un diagnóstico humano de tipo `Text` que explique su causa. La implementación puede conservar además código estable, ancla, procedencia, onda, traza y causas estructuradas, pero ninguna de esas propiedades sustituye al `reason`.
+The `reason` field is required in every result other than `accepted`. Every normative case capable of producing `rejected` or `failed` must define a human-readable `Text` diagnostic explaining its cause. An implementation may additionally retain a stable code, anchor, provenance, wave, trace and structured causes, but none of those properties substitutes for `reason`.
 
-Cuando concurren varias causas, el objeto continúa exponiendo un único `reason` que las representa. Q-007 debe fijar la estructura y el orden canónicos de esa agregación, además de la frontera externa de límites de recursos y defectos del runtime. Un `given` fuera de dominio genera su razón a partir del argumento y el dominio infringido.
+When several causes concur, the object still exposes one `reason` representing them. Q-007 must define the canonical structure and order of that aggregation, as well as the external boundary for resource limits and runtime defects. A `given` outside its domain generates its reason from the argument and the infringed domain.
 
-Los errores estáticos y los fallos técnicos no se convierten por ello en resultados de acción. Toda superficie que los publique debe acompañarlos también de un texto humano, pero conserva su categoría propia.
+Static errors and technical failures do not thereby become action results. Every surface that publishes them must also provide human-readable text, but retains their own category.
 
-El resultado externo no es todavía un valor ordinario de MUD. En particular, una acción no puede invocarse dentro de una expresión ni de una interpolación. Q-059 conserva abierta su observación explícita desde tests.
+The external result is not yet an ordinary MUD value. In particular, an action cannot be invoked inside an expression or an interpolation. Q-059 retains explicit observation from tests as an open question.
 
-### Comprobaciones diagnosticadas
+### Diagnosed checks
 
-`otherwise` adjunta perezosamente un diagnóstico `Text` a una comprobación booleana concreta. No es un operador general de expresiones, no captura resultados ni errores y no introduce excepciones ni clases de fallo.
+`otherwise` lazily attaches a `Text` diagnostic to a particular Boolean check. It is not a general expression operator, does not capture results or errors, and introduces neither exceptions nor classes of failure.
 
-Se admite en estos lugares:
+It is permitted in these locations:
 
-| Comprobación | Resultado de la falsedad | Omisión de `otherwise` |
+| Check | Result when false | Omission of `otherwise` |
 | --- | --- | --- |
-| Regla `always` | `failed` | Aviso |
-| `if` de acción | `rejected` | Sugerencia |
-| `after` de acción | `rejected` | Sugerencia |
-| Aserción `after` de test | `failed` del test | Sugerencia |
+| `always` rule | `failed` | Warning |
+| Action `if` | `rejected` | Suggestion |
+| Action `after` | `rejected` | Suggestion |
+| Test `after` assertion | Test `failed` | Suggestion |
 
-Por tanto, una regla `always` puede declarar su explicación:
+An `always` rule may therefore declare its explanation:
 
 ```mud
 always rule ValidPopulation on kingdom: Kingdom {
@@ -71,117 +71,117 @@ always rule ValidPopulation on kingdom: Kingdom {
 otherwise "Population cannot be negative in {kingdom}"
 ```
 
-Si falta, el compilador emite un aviso y el runtime genera una razón predeterminada a partir de la condición y su procedencia. En `if`, `after` de acción y `after` de test la omisión solo produce una sugerencia porque la falsedad puede ser una salida normal prevista.
+If it is absent, the compiler emits a warning and the runtime generates a default reason from the condition and its provenance. In action `if`, action `after` and test `after`, omission produces only a suggestion because falsity may be a normal anticipated outcome.
 
-El diagnóstico se evalúa solo cuando la condición es falsa, con las mismas vinculaciones y sobre el estado que produjo el resultado. No puede producir efectos. Un error al evaluar la condición no se redirige a `otherwise`: conserva su propia causa y produce `failed` —o `error` en un test—.
+The diagnostic is evaluated only when the condition is false, with the same bindings and over the state that produced the result. It cannot produce effects. An error while evaluating the condition is not redirected to `otherwise`: it retains its own cause and produces `failed` — or `error` in a test.
 
-Si la evaluación del propio diagnóstico falla, la infracción original no desaparece ni se transforma en `rejected`: el runtime produce el diagnóstico canónico correspondiente al fallo de explicación y conserva la causa original en su información estructurada.
+If evaluating the diagnostic itself fails, the original violation neither disappears nor becomes `rejected`: the runtime produces the canonical diagnostic for the explanatory failure and retains the original cause in its structured information.
 
-### Plantillas `Text`
+### `Text` templates
 
-Los literales ordinarios y multilínea de `Text` son plantillas. Dentro de ellos:
+Ordinary and multiline `Text` literals are templates. Within them:
 
-- `{e}` evalúa la expresión MUD `e` e inserta la representación textual de su valor;
-- `{e}` también puede interpolar `e~anchor` cuando la categoría estática de `e` expone esa propiedad;
-- `\{` y `\}` insertan llaves literales;
-- una llave sin escapar que no forme un hueco válido es un error;
-- `\u{...}` continúa siendo un escape Unicode indivisible y no abre un hueco.
+- `{e}` evaluates the MUD expression `e` and inserts the textual representation of its value;
+- `{e}` may also interpolate `e~anchor` when the static category of `e` exposes that property;
+- `\{` and `\}` insert literal braces;
+- an unescaped brace that does not form a valid hole is an error;
+- `\u{...}` remains an indivisible Unicode escape and does not open a hole.
 
-`anchor` es contextual únicamente dentro de una plantilla y no se convierte en palabra reservada general. Fuera de ella puede seguir siendo un identificador ordinario.
+`anchor` is contextual only within a template and does not become a generally reserved word. Outside a template it may remain an ordinary identifier.
 
-El scanner usa una pila de modos: el contenido de `{...}` vuelve al léxico ordinario de expresiones y sus delimitadores se equilibran normalmente. Un literal `Text` anidado dentro de esa expresión abre a su vez su propio modo de plantilla. El salto o fin de archivo solo puede cerrar implícitamente un texto ordinario cuando no queda ningún hueco abierto.
+The scanner uses a mode stack: the contents of `{...}` return to ordinary expression lexing and their delimiters balance normally. A `Text` literal nested within that expression opens its own template mode. A line break or end of file can implicitly close ordinary text only when no hole remains open.
 
-### Valores renderizables
+### Renderable values
 
-La representación de un hueco depende del valor evaluado, no del nombre escrito:
+The representation of a hole depends on the evaluated value, not the written name:
 
-| Valor | Representación |
+| Value | Representation |
 | --- | --- |
-| `Text` | Sus caracteres, sin comillas |
-| `Char` | El escalar que contiene |
-| `Bool` | `true` o `false` |
-| Número básico | Su representación numérica canónica o el formato explícito |
-| `thing` | El valor de su propiedad intrínseca `name` |
-| Miembro de `family` | El nombre nominal del miembro |
-| Intervalo | Su forma canónica normalizada |
-| Colección | Sus elementos separados por `, `, sin los corchetes exteriores |
-| Magnitud lineal | Su número y la proyección canónica de unidades; si esta es vacía, solo el número |
-| Magnitud de punto | Su `format`, si existe; en otro caso, la representación ordinaria de su coordenada como magnitud |
+| `Text` | Its characters, without quotes |
+| `Char` | Its contained scalar |
+| `Bool` | `true` or `false` |
+| Basic number | Its canonical numeric representation or the explicit format |
+| `thing` | The value of its intrinsic `name` property |
+| `family` member | The member's nominal name |
+| Interval | Its normalised canonical form |
+| Collection | Its elements separated by `, `, without outer brackets |
+| Linear magnitude | Its number and the canonical projection of its units; if that is empty, the number alone |
+| Point magnitude | Its `format`, when present; otherwise the ordinary representation of its coordinate as a magnitude |
 
-Si un elemento de una colección es a su vez una colección, esa colección interior conserva sus corchetes. La regla se aplica recursivamente:
+If a collection element is itself a collection, the inner collection retains its brackets. The rule applies recursively:
 
 ```mud
 "{[1, 2, 3]}"          # 1, 2, 3
 "{[[1, 2], [3, 4]]}"   # [1, 2], [3, 4]
 ```
 
-Una colección vacía aporta el texto vacío. `ordered`, `unique`, `mut` y la cardinalidad pertenecen al tipo o forma de colección y no se imprimen. Una colección ordenada usa su orden; una no ordenada usa su enumeración canónica.
+An empty collection contributes empty text. `ordered`, `unique`, `mut` and cardinality belong to the collection type or shape and are not printed. An ordered collection uses its order; an unordered collection uses its canonical enumeration.
 
-Una llamada a regla booleana es renderizable porque produce `Bool`. El nombre desnudo de una declaración no es un valor. Acciones, reglas reactivas, reglas `always`, `look`, `message` y `test` no producen valores interpolables. Los tipos, familias como declaraciones y cualquier otra categoría sin representación decidida producen error estático en `{...}`.
+A Boolean rule call is renderable because it produces `Bool`. The bare name of a declaration is not a value. Actions, reactive rules, `always` rules, `look`, `message` and `test` do not produce interpolable values. Types, families as declarations and every other category without a decided representation produce a static error in `{...}`.
 
-La representación de una magnitud escribe la abreviatura de la unidad cuando exista. En otro caso usa su nombre singular para `1` y `-1`, y el plural declarado para los demás valores; si no hay plural, reutiliza el nombre. Las unidades derivadas usan la proyección canónica de sus factores con unidad. Los factores nominales sin unidad permanecen en el tipo, pero no producen texto; si la proyección completa es vacía se escribe solo el número. Una magnitud de punto sin `format` no introduce una excepción: representa su coordenada mediante estas mismas reglas.
+The representation of a magnitude writes the unit abbreviation where one exists. Otherwise it uses the singular name for `1` and `-1`, and the declared plural for every other value; if no plural exists, it reuses the name. Derived units use the canonical projection of their factors with units. Nominal factors without units remain in the type but produce no text; if the complete projection is empty, only the number is written. A point magnitude without `format` is no exception: it represents its coordinate under these same rules.
 
-Una presentación explícita selecciona la unidad:
+An explicit display selects the unit:
 
 ```mud
 "Distance: {distance in kilometer}"
 "Time coordinate: {time in hour}"
 ```
 
-En una magnitud de punto, `in` transforma la coordenada completa y omite su `format`: las 13:30 expresadas `in hour` producen `13.5 h`, no el componente `13`.
+For a point magnitude, `in` transforms the complete coordinate and omits its `format`: 13:30 expressed `in hour` produces `13.5 h`, not component `13`.
 
-### Componentes de una magnitud de punto
+### Components of a point magnitude
 
-La expresión:
+The expression:
 
 ```mud
 picosecond from second in time
 ```
 
-extrae del punto `time` el componente medido en `picosecond` contenido en el `second` correspondiente. La forma general es `unidad-extraída from unidad-contenedora in punto`. Es una construcción sintáctica única, no la composición de tres operadores independientes.
+extracts from point `time` the `picosecond` component contained in the corresponding `second`. Its general form is `extracted-unit from containing-unit in point`. It is a single syntactic construction, not the composition of three independent operators.
 
-El receptor debe ser una magnitud de punto. Ambas unidades deben pertenecer a su magnitud subyacente y la unidad extraída no puede ser mayor que la contenedora. El resultado es `Nat`, se calcula respecto del origen canónico mediante resto euclídeo y no depende de las unidades escritas en `format`. Por tanto, pueden extraerse picosegundos de un tiempo cuyo formato solo muestre horas, minutos y segundos.
+The receiver must be a point magnitude. Both units must belong to its underlying magnitude, and the extracted unit cannot be larger than the containing one. The result is `Nat`, is calculated from the canonical origin by Euclidean remainder, and does not depend on the units written in `format`. Picoseconds can therefore be extracted from a time whose format displays only hours, minutes and seconds.
 
-Cuando la relación no contiene un número entero de unidades menores, el último componente puede ser parcial. En un calendario regular de 360 días, `week from year in date` produce índices de `0` a `51`; el último designa la semana parcial final.
+When the relation does not contain an integral number of smaller units, the final component may be partial. In a regular calendar of 360 days, `week from year in date` produces indices from `0` to `51`; the last denotes the final partial week.
 
-No debe confundirse:
+The following must not be confused:
 
 ```mud
-time in picosecond                 # coordenada total en picosegundos
-picosecond from second in time     # parte dentro del segundo
+time in picosecond                 # total coordinate in picoseconds
+picosecond from second in time     # part within the second
 ```
 
-Dentro del `~format` de una magnitud de punto, el propio punto es contextual. La sucesión habitual conserva la forma compacta:
+Within a point magnitude's `~format`, the point itself is contextual. The usual succession retains the compact form:
 
 ```mud
 ~format = "{hour:2}:{minute:2}:{second:2}"
 ```
 
-El primer nombre expresa la coordenada en esa unidad —reducida por el ciclo cuando exista— y cada nombre posterior expresa su componente dentro del anterior. Cuando el contenedor no sea obvio o no coincida con esa sucesión, puede escribirse explícitamente:
+The first name expresses the coordinate in that unit — reduced by the cycle where applicable — and each later name expresses its component within the preceding one. When the container is not obvious or does not match that succession, it may be written explicitly:
 
 ```mud
 ~format = "{week from year:2}"
 ```
 
-La forma incompleta `week from year` solo es válida en un hueco del `~format` de una magnitud de punto; fuera de él exige el receptor `in punto`.
+The incomplete form `week from year` is valid only in a point magnitude's `~format` hole; elsewhere it requires the `in point` receiver.
 
-### Formato numérico
+### Numeric format
 
-Un hueco numérico admite:
+A numeric hole permits:
 
 ```text
-{e:izquierda}
-{e::derecha}
-{e:izquierda:derecha}
+{e:left}
+{e::right}
+{e:left:right}
 ```
 
-`izquierda` y `derecha` son enteros naturales escritos en decimal:
+`left` and `right` are decimal natural integers:
 
-- `izquierda` fija el mínimo de cifras a la izquierda del punto y rellena con ceros; el signo no cuenta y nunca se eliminan cifras si el valor excede ese mínimo;
-- `derecha` fija exactamente las cifras a la derecha del punto, añade ceros o redondea al más cercano con empates al par conforme a D-034;
-- si `derecha` es cero, no se escribe punto decimal.
+- `left` sets the minimum number of digits to the left of the point and pads with zeroes; the sign does not count, and digits are never removed if the value exceeds the minimum;
+- `right` sets exactly the digits to the right of the point, adding zeroes or rounding to nearest with ties to even in accordance with D-034;
+- when `right` is zero, no decimal point is written.
 
-La precisión izquierda se admite para todos los tipos numéricos básicos. La precisión derecha solo se admite para los tipos que pueden mostrar parte fraccionaria: `Num`, `Rum` y `Money`. El formato modifica exclusivamente el `Text` producido, nunca el valor ni su tipo.
+Left precision is permitted for every basic numeric type. Right precision is permitted only for types that can show a fractional part: `Num`, `Rum` and `Money`. Formatting changes exclusively the produced `Text`, never the value or its type.
 
 ```mud
 count: Nat = 12
@@ -192,58 +192,58 @@ ratio: Num = 12.3
 "{ratio:4:2}"   # 0012.30
 ```
 
-Aplicar un formato numérico a otro tipo o escribir una especificación incompleta es un error estático.
+Applying a numeric format to another type or writing an incomplete specification is a static error.
 
-El metadato `~format` de una magnitud `point over` usa esta misma sintaxis, no un segundo lenguaje de llaves. Sus nombres como `hour`, `minute` o `second` se resuelven en el punto contextual; `{hour:2}` solicita dos posiciones a la izquierda.
+The `~format` metadata of a `point over` magnitude uses this same syntax, not a second brace language. Its names such as `hour`, `minute` and `second` resolve in the contextual point; `{hour:2}` requests two positions to the left.
 
-### Unidades en `look` y `message`
+### Units in `look` and `message`
 
-Un campo público cuyo valor sea una magnitud puede seleccionar su presentación con `in`:
+A public field whose value is a magnitude may select its display with `in`:
 
 ```mud
 speed := vehicle.speed in km/h
 time := clock.time in second
 ```
 
-Omitirla es legal, pero produce un aviso cuando existe una unidad seleccionable porque hace depender una frontera pública de su proyección canónica. El arreglo sugerido añade explícitamente esa unidad. Una magnitud sin unidades publica su número y no produce el aviso. En una magnitud de punto, un campo directo sin `in` publica la coordenada numérica, no el `~format`; para publicar la representación formateada se declara un campo `Text`, por ejemplo `timeText := "{clock.time}"`.
+Omitting it is legal, but produces a warning where a unit can be selected because it makes a public boundary depend on its canonical projection. The suggested fix explicitly adds that unit. A magnitude without units publishes its number and produces no warning. For a point magnitude, a direct field without `in` publishes the numeric coordinate, not `~format`; to publish the formatted representation, declare a `Text` field, for example `timeText := "{clock.time}"`.
 
-La regla afecta a campos públicos cuyo valor directo es una magnitud. La serialización recursiva de magnitudes contenidas en aliases o colecciones permanece en Q-051.
+The rule applies to public fields whose direct value is a magnitude. Recursive serialisation of magnitudes contained in aliases or collections remains in Q-051.
 
-### Anclas dentro de plantillas
+### Anchors within templates
 
-No existe una interpolación especial `anchor{...}`. D-087 hace de `~anchor` una propiedad reflectiva ordinaria y tipada, por lo que se interpola mediante la sintaxis general de expresiones:
+There is no special `anchor{...}` interpolation. D-087 makes `~anchor` an ordinary, typed reflective property, so it is interpolated through the general expression syntax:
 
 ```mud
 "Rule: {CanRecruit~anchor}"
 "Kingdom: {kingdom}; identity: {kingdom~anchor}"
 ```
 
-El acceso solo es válido cuando la categoría estática del receptor expone `~anchor`. La plantilla no introduce un token especial `anchor`.
+The access is valid only when the receiver's static category exposes `~anchor`. A template introduces no special `anchor` token.
 
-## Consecuencias
+## Consequences
 
-- El AST distingue fragmentos literales, huecos de valor y especificaciones numéricas; las anclas usan interpolaciones de expresión ordinarias.
-- El IR conserva la expresión, el formato y la procedencia de cada fragmento.
-- El lexer necesita modos anidados para texto y código.
-- `otherwise` es opcional y localizado; su ausencia produce el diagnóstico de estilo correspondiente.
-- El catálogo de resultados debe proporcionar una razón humana para cada `rejected` y `failed`.
-- La renderización contextual no introduce una conversión implícita general a `Text`.
-- La presentación `~name` puede diferir de `~anchor`; ambas son propiedades reflectivas separadas.
-- `in` sirve tanto para magnitudes lineales como de punto y, en estas últimas, evita el formato.
-- La extracción de componentes no queda limitada por el formato visible.
+- The AST distinguishes literal fragments, value holes and numeric specifications; anchors use ordinary expression interpolation.
+- The IR retains the expression, format and provenance of every fragment.
+- The lexer requires nested modes for text and code.
+- `otherwise` is optional and localised; its absence produces the relevant style diagnostic.
+- The result catalogue must provide a human-readable reason for every `rejected` and `failed`.
+- Contextual rendering introduces no general implicit conversion to `Text`.
+- The `~name` display may differ from `~anchor`; they are separate reflective properties.
+- `in` serves both linear and point magnitudes and, for the latter, bypasses the format.
+- Component extraction is not limited by the visible format.
 
-## Verificación
+## Verification
 
-1. Resultados externos `rejected` y `failed` con `reason` obligatorio y ausencia del campo en `accepted`.
-2. Aviso de una regla `always` sin `otherwise`, sugerencia en `if` y `after`, y rechazo de un diagnóstico que no sea `Text`.
-3. Evaluación perezosa del diagnóstico sobre el estado tentativo infractor.
-4. Interpolación ordinaria y multilínea con expresiones anidadas.
-5. Escapes `\{`, `\}`, `\"`, `\'` y `\u{...}`.
-6. Renderización de `thing`, miembros de `family`, reglas booleanas, intervalos y colecciones anidadas.
-7. Rechazo de declaraciones y constructos sin valor dentro de `{...}`.
-8. Formatos `{n:4}`, `{n::2}` y `{n:4:2}`, incluidos cero, signo, relleno, exceso de cifras y redondeo al par.
-9. Obtención de anclas mediante interpolación ordinaria de `expression~anchor`.
-10. Rechazo de `~anchor` cuando la categoría estática del receptor no expone esa propiedad.
-11. Renderización raíz, alternativa y formateada de magnitudes lineales y de punto.
-12. Extracción `picosecond from second in time` independiente del `format`.
-13. Aviso por magnitud pública con unidad seleccionable pero sin presentación explícita, ausencia de aviso cuando no existen unidades y publicación formateada mediante `Text`.
+1. External `rejected` and `failed` results with mandatory `reason`, and absence of that field in `accepted`.
+2. A warning for an `always` rule without `otherwise`, a suggestion in `if` and `after`, and rejection of a diagnostic that is not `Text`.
+3. Lazy evaluation of the diagnostic over the infringing tentative state.
+4. Ordinary and multiline interpolation with nested expressions.
+5. The escapes `\{`, `\}`, `\"`, `\'` and `\u{...}`.
+6. Rendering of `thing`, `family` members, Boolean rules, intervals and nested collections.
+7. Rejection of declarations and valueless constructs within `{...}`.
+8. Formats `{n:4}`, `{n::2}` and `{n:4:2}`, including zero, sign, padding, excess digits and ties-to-even rounding.
+9. Obtaining anchors by ordinary interpolation of `expression~anchor`.
+10. Rejection of `~anchor` where the receiver's static category does not expose that property.
+11. Root, alternative and formatted rendering of linear and point magnitudes.
+12. Extraction `picosecond from second in time` independently of `format`.
+13. A warning for a public magnitude with a selectable unit but no explicit display, no warning where no units exist, and formatted publication through `Text`.
