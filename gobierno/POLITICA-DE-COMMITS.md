@@ -1,82 +1,89 @@
 ---
-title: Policy MUD commits
+title: MUD commit policy
 aliases:
-  - Policy Git
+  - Git policy
 tags:
   - mud/gobierno
   - mud/git
 status: vigente
 ---
 
-# Policy MUD commits
+# MUD commit policy
 
-## Objective
+## Aim
 
-The Git history should make it possible to trace the conceptual, regulatory and technical evolution of MUD. A commit represents a coherent unit that can be understood and reverted independently.
+Git history must allow MUD's conceptual, normative and technical evolution to
+be reconstructed. A commit represents a coherent unit that can be understood
+and reverted independently.
 
-## Liability
+## Responsibility
 
-Codex will be responsible for preparing and creating the commits for repository.
+Codex is responsible for preparing and creating repository commits.
 
-The author does not need to explicitly state “commit” after each task. When a change is requested:
+The author need not explicitly say "make a commit" after every task. When a
+requested change:
 
-1. This is complete within its scope.
-2. It has been reviewed in line with its risk.
-3. Do not include any unauthorised changes.
-4. Keep the repository in a coherent state.
+1. Is complete within its scope.
+2. Has been reviewed in proportion to its risk.
+3. Contains no unrelated changes.
+4. Leaves the repository in a coherent state.
 
-Codex must create the relevant commit before closing the task.
+Codex must create the corresponding commit before closing the task.
 
-A commit will not be made when:
+No commit is made when:
 
-- The author has explicitly asked for this to remain unconfirmed.
+- The author explicitly asks to leave the work uncommitted.
 - The work is incomplete or cannot be validated.
-- There is a blocking issue that substantially alters the result.
-- The diff includes work by others that cannot be reliably isolated.
+- A blocking question would substantially change the result.
+- The diff includes unrelated work that cannot safely be isolated.
 
-In such cases, Codex will state what remains unconfirmed and why.
+In those cases, Codex reports what remains uncommitted and why.
 
 ## Atomicity
 
-Each commit must have a single main reason to exist.
+Every commit must have one main reason to exist.
 
-A commit may modify several files when they are all part of the same decision, for example:
+A commit may modify several files when they all form part of the same decision,
+for example:
 
-- Standard, example and conformance test of a characteristic.
-- Decision and the relevant sections.
-- Policy and persistent rules that implement it.
+- A rule, example and conformance test for a feature.
+- A decision and the chapters it affects.
+- A policy and the persistent rules that implement it.
 
 The following must not be mixed:
 
-- Unrelated regulatory changes.
-- Mass reformatting with semantic changes.
-- Work by the author unrelated to the assignment.
--  Ordinary temporary files, builds, logs, caches, dumps or state Obsidian’s local data.
+- Unrelated normative changes.
+- Bulk reformatting with semantic changes.
+- Author work unrelated to the task.
+- Ordinary ephemeral files, builds, logs, caches, dumps or local Obsidian state.
 
-A document that is intentionally temporary may only be versioned under [[POLITICA-DE-ARCHIVOS-TEMPORALES| the policy of temporary files ]]. Its temporary nature does not exempt it from commit atomicity, nor does it convert ephemeral data into versionable material.
+An intentionally temporary document may remain versioned only under the
+[[POLITICA-DE-ARCHIVOS-TEMPORALES|temporary-file policy]]. Its temporariness
+does not exempt it from commit atomicity or make ephemeral residue suitable for
+version control.
 
 ## Message format
 
 First line:
 
 ```text
-tipo(ámbito): resumen imperativo
+type(scope): imperative summary
 ```
 
 Types:
 
 | Type | Use |
 | --- | --- |
-| `spec` | Standard, grammar, semantics or conformance |
-| `decision` | ADR or explicit change of address |
-| `docs` | Informative documentation with no regulatory changes |
-| `govern` | Editorial processes, Git or governance |
-| `fix` | Correction of a error |
-| `refactor` | Reorganisation without any change in meaning |
-| `test` | Series or cases of conformance |
+| `spec` | Rules, grammar, semantics or conformance |
+| `decision` | ADR or explicit change of direction |
+| `docs` | Informative documentation without a normative change |
+| `govern` | Editorial, Git or governance processes |
+| `fix` | Correction of an error |
+| `refactor` | Reorganisation without a change of meaning |
+| `test` | Suite or conformance cases |
 | `chore` | Infrastructure and maintenance |
 
-Common areas:
+Common scopes:
 
 ```text
 language
@@ -101,16 +108,16 @@ govern(git): establish atomic commit policy
 fix(waves): clarify binding lifetime after destruction
 ```
 
-Summary:
+The summary:
 
-- It is written in the present imperative.
-- It does not end in point.
-- Describes the result, not the generic activity.
-- Avoid messages such as `changes`, `updates` or `work`.
+- Is written in the imperative present tense.
+- Does not end with a full stop.
+- Describes the result, not generic activity.
+- Avoids messages such as `changes`, `updates` or `work`.
 
 ## Commit body
 
-This should be added when the reason is not obvious. Recommended structure:
+Add one when the reason is not self-evident. Recommended structure:
 
 ```text
 Context:
@@ -126,70 +133,78 @@ Open questions:
 - ...
 ```
 
-In the case of regulatory changes, the following shall be included, where applicable:
+For normative changes, include where applicable:
 
-- Rules or anchors affected.
-- Decision related.
-- Compatibilidad.
-- Closed or newly created questions.
-- Tests for conformance.
+- Affected rules or anchors.
+- Related decision.
+- Compatibility.
+- Questions closed or created.
+- Conformance tests.
 
-## Temporary files gate
+## Temporary-file gate
 
-Before any commit, the following is executed:
+Before every commit, run:
 
 ```powershell
 python gobierno/validate_temporaries.py
 ```
 
-The printed inventory must be checked in full. If the `temporary-delete-when` condition for any document is already met, that document must be removed before the commit is finalised, unless the change itself explicitly modifies its cycle lifecycle. An expired `temporary-delete-after` date automatically blocks the commit.
+Review the complete printed inventory. If any document's
+`temporary-delete-when` condition is already met, delete it before closing the
+commit unless the change itself explicitly modifies its lifecycle. An expired
+`temporary-delete-after` date mechanically blocks the commit.
 
-## Preliminary process
+## Preparation process
 
 Before creating a commit, Codex must:
 
-1. Read the relevant instructions.
-2. Check `git status`.
-3. Identify previous or external files.
-4. Check the diff.
-5. Run `python gobierno/validate_temporaries.py` and carry out a semantic check of your entire inventory.
-6. Run the other available validation checks.
-7. Add only the files from the unit atomic file.
+1. Read the applicable instructions.
+2. Review `git status`.
+3. Identify pre-existing or unrelated files.
+4. Inspect the diff.
+5. Run `python gobierno/validate_temporaries.py` and semantically review its complete inventory.
+6. Run the other available validations.
+7. Add only the files in the atomic unit.
 8. Review the staged diff.
 9. Create the commit.
-10. Confirm that the subsequent state is as expected.
+10. Confirm that the resulting state is as expected.
 
-## Branch main
+## Main branch
 
-The main local branch is called `main`.
+The local main branch is named `main`.
 
-As long as there is only local work and a single authoring workflow, commits can be made directly to `main`. When experimental changes, parallel implementation or external collaboration arise, thematic branches will be adopted.
+While work is local and there is a single authorship stream, commits may be
+created directly on `main`. When experimental changes, parallel implementation
+or external collaboration appear, topic branches are adopted.
 
-## History rewrite
+## History rewriting
 
 Codex must not:
 
-- Execute `git reset --hard`.
-- Force a push.
+- Run `git reset --hard`.
+- Force-push.
 - Rewrite published commits.
-- Create `commit --amend` for work that may belong to someone else.
+- Run `commit --amend` on work that may belong to someone else.
 
-A routine correction is recorded in a new commit. History clean-up prior to publication will only be carried out at the author’s explicit request and after the exact boundaries have been verified.
+An ordinary correction is recorded in a new commit. History clean-up before
+publication occurs only at the author's explicit request and after checking the
+exact boundaries.
 
 ## Remote publication
 
-This policy allows local commits, but not:
+This policy authorises local commits, but not:
 
-- Create remote repositories.
-- Push.
-- Open pull requests.
-- Publish versions.
+- Creating remote repositories.
+- Pushing.
+- Opening pull requests.
+- Publishing releases.
 
-Such actions require an explicit request.
+Those actions require an explicit request.
 
-## Relation with future semantic changes
+## Relationship with future semantic changes
 
-When repository contains `.mud` models, commits that modify semantics must include operations such as the following in the body:
+When the repository contains `.mud` models, commits that change semantics must
+add operations such as these to their body:
 
 ```text
 Operations:
@@ -198,5 +213,4 @@ Operations:
 - RETIRE construct::warfare.LegacyArmy
 ```
 
-A pure query `READ` does not result in a commit.
-
+A pure `READ` query does not produce a commit.
