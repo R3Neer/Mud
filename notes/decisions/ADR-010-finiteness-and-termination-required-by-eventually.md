@@ -16,7 +16,7 @@ affects:
   - "reachability, finiteness and termination chapters"
 ---
 
-# ADR-010 — Finiteness y termination required by `eventually`
+# ADR-010 — Finiteness and termination required by `eventually`
 
 ## Context
 

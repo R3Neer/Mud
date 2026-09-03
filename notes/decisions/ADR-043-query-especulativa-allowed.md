@@ -1,6 +1,6 @@
 ---
 id: D-043
-title: "Consulta especulativa `allowed`"
+title: "Speculative query with `allowed`"
 status: current
 date: 2026-07-28
 supersedes: []
@@ -13,7 +13,7 @@ questions:
 affects:
   - "expresiones, acciones, análisis de admisibilidad"
 ---
-# ADR-043 — Consulta especulativa `allowed`
+# ADR-043 — Speculative query with `allowed`
 
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Related questions: Q-007, Q-032, Q-035, Q-053

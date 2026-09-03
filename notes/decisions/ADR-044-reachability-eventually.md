@@ -1,6 +1,6 @@
 ---
 id: D-044
-title: "Alcanzabilidad `eventually`"
+title: "Reachability with `eventually`"
 status: current
 date: 2026-07-28
 supersedes: []
@@ -15,7 +15,7 @@ questions:
 affects:
   - "expressions, reachability, finiteness and termination"
 ---
-# ADR-044 — Alcanzabilidad `eventually`
+# ADR-044 — Reachability with `eventually`
 
 - Related questions: Q-026 a Q-031
 - Documents affected: expressions, reachability, finiteness, termination
