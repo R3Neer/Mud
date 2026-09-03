@@ -40,10 +40,10 @@ A datum may be followed immediately by a body consisting exclusively of `~...` d
 ```mud
 family Terrain {
     movementCost: Nat = 1 {
-        ~summary = "Coste base de movimiento"
+        ~summary = "Base movement cost"
     }
     costly := movementCost >= 3 {
-        ~summary = "Indica terreno costoso"
+        ~summary = "Indicates costly terrain"
     }
 
     Plain,

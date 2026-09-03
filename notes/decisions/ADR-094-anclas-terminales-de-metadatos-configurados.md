@@ -20,10 +20,10 @@ affects:
 Each configured or author-defined metadata item materialised as a `Metadata` value has a public anchor subordinate to its owner's. The canonical spelling uses the same `~` separator as reflective access:
 
 ```text
-<ancla-del-propietario>~<identificador-metadata>
+<owner-anchor>~<metadata-identifier>
 ```
 
-Ejemplos:
+Examples:
 
 ```text
 thing::game.Person~summary

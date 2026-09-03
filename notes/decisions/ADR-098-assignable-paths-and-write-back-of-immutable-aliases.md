@@ -29,7 +29,7 @@ This surface convenience must not turn aliases into mutable objects or introduce
 
 An assignable path may traverse one or more immutable structural alias values when an externally writable storage location exists to which the replacement can ultimately be propagated. Once that root location is found by the ordinary assignability rules, the steps this decision adds as reconstructible are exclusively accesses to stored alias components and exact-dictionary indexing. Each step must be well typed and unambiguously determine which value is to be reconstructed; no implicit write-back is granted to other selection classes.
 
-La escritura:
+The write:
 
 ```mud
 orders[id].status = Shipped

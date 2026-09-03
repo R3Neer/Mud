@@ -47,7 +47,7 @@ Configurable and user metadata is written at the start of the owner's body, befo
 ```mud
 thing Nora as Person {
     ~name = "Nora"
-    ~summary = "Persona principal del ejemplo"
+    ~summary = "Main person in the example"
     ~author: Text = "Samuel"
 
     mut health: Nat = 100
@@ -322,10 +322,10 @@ A file default does not admit `:=`, `ValueBlock`, runtime reads or intrinsic pro
 The LSP and official tooling preferentially present, when available:
 
 1. `~name` o `~identifier`;
-2. firma estructural;
+2. structural signature;
 3. `~summary`;
 4. `~description`;
-5. advertencia de `~deprecated`.
+5. warning for `~deprecated`.
 
 ## Consequences
 

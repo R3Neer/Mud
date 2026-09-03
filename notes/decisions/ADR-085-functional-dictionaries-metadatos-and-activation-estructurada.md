@@ -337,7 +337,7 @@ Each metadata item retains its type, stored or calculated mode and own constrain
 The grammar and models must distinguish at least:
 
 - `ActionDecl(PublicAction | Subaction, ...)`;
-- `ExactDictionaryType` y `DecisionDictionaryType`;
+- `ExactDictionaryType` and `DecisionDictionaryType`;
 - exact associations and functional branches;
 - positional and named products;
 - `MetadataAccessExpr` and the absence of assignable metadata targets;

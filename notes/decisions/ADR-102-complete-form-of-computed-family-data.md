@@ -36,7 +36,7 @@ Explicit type, domain, cardinality, `unique` and order reuse exactly the general
 
 The RHS admits the short expression or the `ValueBlock` already defined for computed `family` data; this decision does not modify its purity contract or its static per-member evaluation.
 
-## Ejemplos
+## Examples
 
 ```mud
 family Tier {
