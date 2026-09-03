@@ -1,48 +1,48 @@
 ---
 id: D-087
-title: "Metadatos reflectivos, descriptores estables y visibilidad exterior"
+title: "Reflective metadata, stable descriptors and external visibility"
 status: current
 date: 2026-08-15
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "metadatos postfix, reflexión, anclas subordinadas, participantes, campos y componentes, documentación, visibilidad exterior, defaults de archivo, gramática, CST, AST, IR, diagnósticos y tooling"
+  - "postfix metadata, reflection, subordinate anchors, participants, fields and components, documentation, external visibility, file defaults, grammar, CST, AST, IR, diagnostics and tooling"
 ---
 
-# ADR-087 — Metadatos reflectivos, descriptores estables y visibilidad exterior
+# ADR-087 — Reflective metadata, stable descriptors and external visibility
 
-- Modificada por: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
+- Modified by: [[ADR-101-bloques-de-valor-variables-locales-almacenadas-and-extremos-por-testigos|D-101]].
 
-- Modifica: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]] y [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
-- Amplía: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] y [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
-- Precisada por: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] y [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
+- Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]] and [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]].
+- Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
+- Further clarified by: [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]], [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]], [[ADR-092-disponibilidad-estatica-de-propiedades-reflectivas|D-092]] and [[ADR-094-anclas-terminales-de-metadatos-configurados|D-094]].
 
-## Contexto
+## Context
 
-D-085 introdujo los metadatos postfix `~name`, `~path`, `~anchor` y `~file`, pero no fijó un sistema general de reflexión ni una regla uniforme para metadatos definidos por el autor. También conservó escrituras runtime de `~name` y participantes individuales anónimos. La ampliación actual necesita descriptores estables para declaraciones y elementos subordinados, documentación estructurada, defaults de archivo y una frontera explícita entre estado del mundo y metadatos del modelo.
+D-085 introduced postfix metadata `~name`, `~path`, `~anchor` and `~file`, but did not fix a general reflection system or a uniform rule for author-defined metadata. It also retained runtime writes to `~name` and anonymous individual participants. The current extension needs stable descriptors for declarations and subordinate elements, structured documentation, file defaults and an explicit boundary between world state and model metadata.
 
-## Decisión
+## Decision
 
-### Operador postfix `~`
+### Postfix `~` operator
 
-La única forma de acceso es:
+The only access form is:
 
 ```mud
 expression~property
 ```
 
-`expression.~property` y `~~` no pertenecen a MUD. El espacio `~` es distinto del espacio de campos ordinarios.
+`expression.~property` and `~~` are not part of MUD. The `~` space is distinct from the ordinary-field space.
 
-Todo acceso `~` es de solo lectura durante la ejecución. Ninguna propiedad `~` puede aparecer como destino de una asignación o actualización runtime. Esto sustituye la autorización anterior de D-085 para escribir `~name` durante una action. Los metadatos configurables cambian mediante edición del modelo y nueva elaboración, no mediante efectos del mundo.
+Every `~` access is read-only during execution. No `~` property may appear as the target of a runtime assignment or update. This replaces D-085's former authorisation to write `~name` during an action. Configurable metadata changes through model editing and new elaboration, not through world effects.
 
-`mut` es inválido en una declaración de metadato. Un metadato puede ser almacenado mediante `=` o calculado mediante `:=`. El calculado puede depender de valores que cambien y reevaluarse con ellos, pero continúa sin ser asignable.
+`mut` is invalid in a metadata declaration. Metadata may be stored through `=` or computed through `:=`. Computed metadata may depend on changing values and be reevaluated with them, but remains non-assignable.
 
-Los metadatos no forman parte del payload de alias, igualdad de valores, construcción de valores, campos ordinarios, cardinalidad exterior ni store ordinario de una `thing`. Existen aunque el propietario esté inactivo. `create` y `destroy` no crean ni eliminan metadatos.
+Metadata is not part of an alias payload, value equality, value construction, ordinary fields, outer cardinality or ordinary `thing` storage. It exists even when its owner is inactive. `create` and `destroy` do not create or remove metadata.
 
-### Preámbulo del propietario
+### Owner preamble
 
-Los metadatos configurables y de usuario se escriben al comienzo del cuerpo del propietario, antes de campos, componentes, miembros, participantes, cláusulas o contenido ordinario:
+Configurable and user metadata is written at the start of the owner's body, before fields, components, members, participants, clauses or ordinary content:
 
 ```mud
 thing Nora as Person {
@@ -54,29 +54,29 @@ thing Nora as Person {
 }
 ```
 
-Una declaración `~...` que aparezca después del primer contenido ordinario del mismo cuerpo es inválida. Los metadatos intrínsecos no se declaran.
+A `~...` declaration appearing after the first ordinary content of the same body is invalid. Intrinsic metadata is not declared.
 
-### Principio de admisión
+### Admission principle
 
-Un elemento puede poseer metadatos propios únicamente cuando satisface conjuntamente:
+An element may have metadata of its own only when it jointly satisfies:
 
-1. existe como entidad semántica estable después de resolución;
-2. posee descriptor tipado propio;
-3. posee ancla pública estable;
-4. el metadato describe al elemento completo y no una ocurrencia sintáctica accidental;
-5. su existencia no depende de una ejecución concreta.
+1. it exists as a stable semantic entity after resolution;
+2. it has its own typed descriptor;
+3. it has a stable public anchor;
+4. the metadata describes the complete element, not an accidental syntactic occurrence;
+5. its existence does not depend on a particular execution.
 
-Por ello pueden ser metadata-bearing las declaraciones nominales ancladas, miembros de `family`, unidades, campos almacenados/calculados/públicos, datos asociados almacenados/calculados de una `family`, componentes de alias y participantes `for`/`on`/`given`.
+Accordingly, anchored nominal declarations, `family` members, units, stored/computed/public fields, stored/computed associated `family` data, alias components and `for`/`on`/`given` participants may be metadata-bearing.
 
-No lo son expresiones, sentencias, operandos, condiciones, cuerpos de cláusula, tokens, nodos arbitrarios del AST ni ramas funcionales sin descriptor estable. Una rama de diccionario funcional tampoco posee ancla pública: su identidad estructural local pertenece al diccionario propietario y sirve para reconstrucción y análisis posteriores, sin convertirse en ancla ni símbolo. `when`, `if`, `then`, `after` y `otherwise` pueden reflejarse como clases presentes mediante `~clauses`, pero sus cuerpos no se convierten en objetos metadata-bearing.
+Expressions, statements, operands, conditions, clause bodies, tokens, arbitrary AST nodes and functional branches without a stable descriptor are not. A functional-dictionary branch likewise has no public anchor: its local structural identity belongs to the owning dictionary and serves later reconstruction and analysis without becoming an anchor or symbol. `when`, `if`, `then`, `after` and `otherwise` may be reflected as present classes through `~clauses`, but their bodies do not become metadata-bearing objects.
 
-Un valor `Metadata` configurado sí posee descriptor y ancla propios para reflexión y tooling, pero es **terminal**: no puede poseer metadata propia y no expone `~metadata`. D-094 fija esta excepción deliberada al principio de admisión.
+A configured `Metadata` value does have its own descriptor and anchor for reflection and tooling, but is **terminal**: it cannot have metadata of its own and does not expose `~metadata`. D-094 fixes this deliberate exception to the admission principle.
 
-La declaración global `start with` continúa sin nombre y sin ancla pública, por lo que no admite metadatos. El `start with` local de un `test` es parte del descriptor del test, no una declaración independiente, y tampoco admite metadatos.
+The global `start with` declaration remains unnamed and without a public anchor, so it does not admit metadata. A test's local `start with` is part of the test descriptor, not an independent declaration, and likewise does not admit metadata.
 
-### Propiedades intrínsecas comunes
+### Common intrinsic properties
 
-Según la categoría estática del receptor se exponen, cuando tengan sentido:
+Depending on the receiver's static category, the following are exposed where meaningful:
 
 ```text
 ~identifier : Name
@@ -86,13 +86,13 @@ Según la categoría estática del receptor se exponen, cuando tengan sentido:
 ~kind       : family reflectiva específica
 ```
 
-`~identifier` es el identificador fuente. `~name` es presentación humana configurable y no participa en resolución, igualdad ni formación de anclas.
+`~identifier` is the source identifier. `~name` is configurable human presentation and does not participate in resolution, equality or anchor formation.
 
-`~file` puede leerse en expresiones. Si una lectura de `~file` influye en una condición, cálculo o efecto que altere comportamiento del mundo, se conserva el warning de fragilidad física fijado por D-085.
+`~file` may be read in expressions. If reading `~file` influences a condition, calculation or effect that alters world behaviour, the physical-fragility warning fixed by D-085 is retained.
 
-### Reflexión de declaraciones
+### Declaration reflection
 
-Las declaraciones ancladas exponen, según categoría:
+Anchored declarations expose, by category:
 
 ```text
 ~metadata           : Metadata [* unique]
@@ -110,13 +110,13 @@ Las declaraciones ancladas exponen, según categoría:
 ~declaredComponents  : Component [* unique]
 ```
 
-`~parents` devuelve solo padres directos; `~ancestors`, el cierre transitivo estricto y nunca al receptor. `~children` y `~descendants` son las relaciones inversas. Los metadatos estándar o de usuario no aparecen en `~fields`.
+`~parents` returns only direct parents; `~ancestors` returns the strict transitive closure and never the receiver. `~children` and `~descendants` are the inverse relations. Standard or user metadata does not appear in `~fields`.
 
-`~metadata` materializa únicamente metadatos estándar configurados y metadatos de usuario del receptor. Las propiedades intrínsecas no aparecen como valores `Metadata`.
+`~metadata` materialises only configured standard metadata and the receiver's user metadata. Intrinsic properties do not appear as `Metadata` values.
 
-### Familias reflectivas
+### Reflective families
 
-Se incorporan las familias conceptuales:
+The following conceptual families are introduced:
 
 ```mud
 family DeclarationKind {
@@ -132,32 +132,32 @@ family ParticipantClause { For, On, Given }
 family MetadataKind { Standard, User }
 ```
 
-`Start` puede describir la categoría de la declaración global en tooling/reflexión de proyecto, pero no implica que esa construcción posea ancla o `~metadata`.
+`Start` may describe the category of a global declaration in project tooling/reflection, but does not imply that the construct has an anchor or `~metadata`.
 
-Las keywords duras de categoría ya presentes en la gramática pueden aparecer desnudas en posición de expresión como valores de `DeclarationKind`: `thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `subaction`, `look`, `message` y `test`. La forma superficial se conserva como un valor categorial, no como una referencia nominal. Los miembros de `DeclarationKind` que no poseen keyword dura propia no reciben por esta decisión una grafía literal nueva.
+Category hard keywords already present in the grammar may appear bare in expression position as `DeclarationKind` values: `thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `subaction`, `look`, `message` and `test`. The surface form is retained as a categorical value, not as a nominal reference. `DeclarationKind` members without their own hard keyword do not receive a new literal spelling under this decision.
 
-El narrowing categorial admite formas como `declaration is rule`, `declaration is action`, `declaration is subaction` y `declaration is thing`. `~type` no sustituye esta clasificación.
+Categorical narrowing admits forms such as `declaration is rule`, `declaration is action`, `declaration is subaction` and `declaration is thing`. `~type` does not replace this classification.
 
-El catálogo completo de miembros de `TypeKind` pertenece a la especificación del sistema de tipos; esta decisión no inventa dicho catálogo.
+The complete catalogue of `TypeKind` members belongs to the type-system specification; this decision does not invent that catalogue.
 
-### Firmas y participantes
+### Signatures and participants
 
-La disponibilidad de una propiedad reflectiva depende de la categoría estática compatible del receptor. Que la gramática pueda reconocer `expression~name` no hace que ese nombre exista para todo receptor. D-092 fija esta frontera de lookup.
+The availability of a reflective property depends on the receiver's compatible static category. The fact that the grammar can recognise `expression~name` does not make that name exist for every receiver. D-092 sets this lookup boundary.
 
-Las propiedades de participantes tienen estas capacidades por subcategoría de declaración:
+Participant properties have these capabilities by declaration subcategory:
 
-| Subcategoría | `~for` | `~on` | `~given` |
+| Subcategory | `~for` | `~on` | `~given` |
 | --- | --- | --- | --- |
-| regla booleana | sí | no | sí |
-| regla reactiva | no | sí | no |
-| regla `always` | no | sí | no |
+| Boolean rule | yes | no | yes |
+| Reactive rule | no | yes | no |
+| `always` rule | no | yes | no |
 | `action` | sí | no | sí |
 | `subaction` | sí | no | sí |
 | `look` | sí | no | sí |
 | `message` | no | sí | no |
-| demás declaraciones | no | no | no |
+| other declarations | no | no | no |
 
-Cuando una propiedad está soportada por la subcategoría pero la declaración concreta omite su cláusula opcional, el valor es `empty` con el tipo de colección correspondiente. Cuando la propiedad no está soportada por la subcategoría estática, el acceso es un error estático; no produce `empty` ni un valor predeterminado. Por ejemplo, `thing A` hace inválido `A~for`, mientras que una `action` sin cláusula `for` admite `ActionName~for` y devuelve `empty`.
+When a property is supported by the subcategory but the concrete declaration omits its optional clause, the value is `empty` with the corresponding collection type. When the property is not supported by the static subcategory, access is a static error; it does not produce `empty` or a default value. For example, `thing A` makes `A~for` invalid, whereas an `action` without a `for` clause admits `ActionName~for` and returns `empty`.
 
 ```text
 ~for     : Participant [* unique ordered]
@@ -166,19 +166,19 @@ Cuando una propiedad está soportada por la subcategoría pero la declaración c
 ~clauses : ClauseKind [* unique]
 ```
 
-`~clauses` informa solo de presencia de clases, nunca expone el AST del cuerpo. Su disponibilidad sigue igualmente el contrato de propietario de la propiedad; la regla anterior sobre `empty` no convierte `~clauses` ni ninguna otra propiedad en universal.
+`~clauses` reports only the presence of clause classes; it never exposes the body AST. Its availability likewise follows the property's owner contract; the preceding rule about `empty` does not make `~clauses` or any other property universal.
 
-Todo participante `for`, `on` y `given` debe tener identificador fuente explícito. Queda retirada la forma anónima admitida por D-036. El orden continúa formando parte de la firma, pero no de la identidad persistente.
+Every `for`, `on` and `given` participant must have an explicit source identifier. The anonymous form admitted by D-036 is withdrawn. Order remains part of the signature, but not of persistent identity.
 
-Cada participante posee ancla pública derivada de:
+Each participant has a public anchor derived from:
 
 ```text
 ancla-del-propietario + clase-de-cláusula + identifier
 ```
 
-La posición nunca se usa como identidad. Reordenar participantes no cambia sus anclas. Dos participantes homónimos en cláusulas distintas siguen siendo distintos porque la clase `For`, `On` o `Given` forma parte de la derivación.
+Position is never used as identity. Reordering participants does not change their anchors. Two same-named participants in different clauses remain distinct because the `For`, `On` or `Given` class forms part of the derivation.
 
-`Participant` expone:
+`Participant` exposes:
 
 ```text
 ~identifier       : Name
@@ -198,9 +198,9 @@ La posición nunca se usa como identidad. Reordenar participantes no cambia sus 
 ~metadata         : Metadata [* unique]
 ```
 
-Un `metadata-body` unido a un participante describe el slot de la firma, no el valor recibido.
+A `metadata-body` attached to a participant describes the signature slot, not the received value.
 
-Una cabecera puede agrupar varios identificadores con un tipo y un único `metadata-body`:
+A header may group several identifiers with a type and a single `metadata-body`:
 
 ```mud
 for attacker, target: Fighter {
@@ -208,11 +208,11 @@ for attacker, target: Fighter {
 }
 ```
 
-El cuerpo se copia semánticamente a cada descriptor. El grupo no introduce descriptor ni ancla adicional. Participantes con metadatos distintos se escriben como elementos separados de la misma cláusula, separados por coma.
+The body is copied semantically to each descriptor. The group introduces neither an additional descriptor nor an additional anchor. Participants with different metadata are written as separate elements of the same clause, separated by commas.
 
-### Campos y componentes
+### Fields and components
 
-Los descriptores `Field` exponen:
+`Field` descriptors expose:
 
 ```text
 ~identifier ~anchor ~kind ~type ~domain ~cardinality
@@ -220,15 +220,15 @@ Los descriptores `Field` exponen:
 ~inherited ~declaredBy ~metadata
 ```
 
-`~kind` usa `FieldKind`. Los datos asociados declarados por una `family` reutilizan `Field`: un dato almacenado usa `FieldKind.Stored` y uno calculado `FieldKind.Calculated`. No se crea `FamilyDataKind`. Su ancla es subordinada a la `family`; el valor proyectado por cada miembro no obtiene descriptor ni metadatos propios. Los componentes de alias exponen el mismo contrato estructural salvo que `~mutable` es siempre `false`; esta decisión no crea una `ComponentKind` nueva.
+`~kind` uses `FieldKind`. Associated data declared by a `family` reuses `Field`: stored data uses `FieldKind.Stored` and calculated data uses `FieldKind.Calculated`. No `FamilyDataKind` is created. Its anchor is subordinate to the `family`; the value projected by each member obtains neither a descriptor nor its own metadata. Alias components expose the same structural contract except that `~mutable` is always `false`; this decision does not create a new `ComponentKind`.
 
-Un miembro heredado conserva el ancla, descriptor y metadatos del elemento que lo declaró. No se fabrican copias metadata-bearing por cada descendiente.
+An inherited member retains the anchor, descriptor and metadata of the element that declared it. No metadata-bearing copies are manufactured for each descendant.
 
-Campos, componentes y datos asociados declarados por una `family` pueden llevar metadata propia. Con un valor breve conservan el cuerpo inmediato exclusivamente de `~...`; cuando usan `ValueBlock`, esas declaraciones pueden integrarse como preámbulo contiguo al principio del mismo cuerpo. En ambos casos pertenecen al descriptor y no al valor ni a las sentencias del `ValueBlock`. Una declaración no combina simultáneamente ambos lugares de metadata. Una asignación de dato dentro de un miembro de `family` no admite ese cuerpo porque no declara un descriptor nuevo. Un campo añadido dinámicamente por un efecto no puede adquirir metadatos persistentes porque no satisface el principio de admisión.
+Fields, components and associated data declared by a `family` may carry their own metadata. With a short value, they retain the immediate body exclusively from `~...`; when they use `ValueBlock`, those declarations may be integrated as a preamble contiguous with the beginning of the same body. In both cases they belong to the descriptor, not to the value or to the `ValueBlock` statements. A declaration does not combine both metadata locations simultaneously. A data assignment within a `family` member does not admit this body because it declares no new descriptor. A field added dynamically by an effect cannot acquire persistent metadata because it does not satisfy the admission principle.
 
-### Descriptor `Metadata`
+### `Metadata` descriptor
 
-Un valor `Metadata` expone al menos:
+A `Metadata` value exposes at least:
 
 ```text
 ~identifier  : Name
@@ -243,13 +243,13 @@ Un valor `Metadata` expone al menos:
 ~calculated  : Bool
 ```
 
-Las propiedades intrínsecas no se convierten en `Metadata` y no reciben ancla de metadata. Los nombres intrínsecos y estándar reservados no pueden ser ocultados por un metadato de usuario. La ancla de un metadato configurado se deriva como `<ancla-propietario>~<identificador-metadata>`; cambiar su valor no cambia identidad.
+Intrinsic properties do not become `Metadata` and receive no metadata anchor. Reserved intrinsic and standard names cannot be hidden by user metadata. The anchor of configured metadata is derived as `<owner-anchor>~<metadata-identifier>`; changing its value does not change identity.
 
-Para un descriptor `Metadata`, `~path` conserva el `MudPath` lógico de su propietario y `~file` se deriva de la procedencia física de la declaración de metadata. Ninguna de estas propiedades materializa metadata adicional. `Metadata` continúa siendo terminal y no expone `~metadata`.
+For a `Metadata` descriptor, `~path` retains its owner's logical `MudPath` and `~file` is derived from the physical provenance of the metadata declaration. Neither property materialises additional metadata. `Metadata` remains terminal and does not expose `~metadata`.
 
-### Colecciones y diccionarios
+### Collections and dictionaries
 
-Las colecciones exponen:
+Collections expose:
 
 ```text
 ~count       : Nat
@@ -260,13 +260,13 @@ Las colecciones exponen:
 ~order       : Order [0..1]
 ```
 
-Los diccionarios exactos añaden `~keyDomain` y `~valueDomain`. Los funcionales exponen `~inputDomain`, `~outputDomain`, `~resultCardinality`, `~recursive` y `~count`, donde `~count` cuenta ramas.
+Exact dictionaries add `~keyDomain` and `~valueDomain`. Functionals expose `~inputDomain`, `~outputDomain`, `~resultCardinality`, `~recursive` and `~count`, where `~count` counts branches.
 
-Todo valor MUD expone `~type: Type`. Los descriptores `Type` exponen `~kind`, `~domain` y `~cardinality`; el catálogo concreto de `TypeKind` se fija con el sistema de tipos.
+Every MUD value exposes `~type: Type`. `Type` descriptors expose `~kind`, `~domain` and `~cardinality`; the concrete `TypeKind` catalogue is fixed by the type system.
 
-### Metadatos estándar configurables
+### Configurable standard metadata
 
-Se conservan los metadatos estándar de presentación y configuración con estos contratos principales:
+Standard presentation and configuration metadata are retained with these principal contracts:
 
 ```text
 ~name         : Name
@@ -279,24 +279,24 @@ Se conservan los metadatos estándar de presentación y configuración con estos
 ~deprecated   : Text [0..1] = empty
 ```
 
-`Prefix` es un tipo nominal incorporado. El catálogo SI fijado por D-076 proporciona valores incorporados de `Prefix` desde `quecto` hasta `quetta`. Sus nombres son identificadores ordinarios que se resuelven en el nivel de incorporados. Por ello `~prefixes = [kilo, milli]` es una colección MUD ordinaria, `all` enumera el dominio incorporado de `Prefix` y `empty` representa la colección vacía. Las unidades no mantienen `unit-property`, `prefix-selection` ni otra subgramática paralela: su cuerpo contiene exclusivamente declaraciones generales de metadatos.
+`Prefix` is a built-in nominal type. The SI catalogue fixed by D-076 provides built-in `Prefix` values from `quecto` to `quetta`. Their names are ordinary identifiers resolved at the built-in level. Therefore `~prefixes = [kilo, milli]` is an ordinary MUD collection, `all` enumerates the built-in `Prefix` domain and `empty` represents the empty collection. Units retain neither `unit-property`, `prefix-selection` nor another parallel subgrammar: their body contains only general metadata declarations.
 
-`~name`, `~summary`, `~description` y `~deprecated` están disponibles en todo elemento metadata-bearing compatible. `~name` toma por defecto una presentación derivada de `~identifier`. `~summary` es una descripción breve; `~description` admite Markdown de presentación; `~deprecated` no vacío activa diagnóstico de obsolescencia pero no invalida el uso.
+`~name`, `~summary`, `~description` and `~deprecated` are available on every compatible metadata-bearing element. `~name` defaults to a presentation derived from `~identifier`. `~summary` is a brief description; `~description` accepts presentation Markdown; a non-empty `~deprecated` activates a deprecation diagnostic but does not invalidate use.
 
-### Metadatos de usuario
+### User metadata
 
-Un nombre no reservado puede declarar metadatos almacenados o calculados:
+A non-reserved name may declare stored or calculated metadata:
 
 ```mud
 ~author: Text = "Samuel"
 ~important := Nora~path in world.main
 ```
 
-Pueden declarar tipo, dominio, cardinalidad y modificadores compatibles con valores de solo lectura. No admiten `mut`, no se heredan y no alteran la forma del valor descrito.
+They may declare type, domain, cardinality and modifiers compatible with read-only values. They do not admit `mut`, are not inherited and do not alter the shape of the described value.
 
-### Defaults de archivo
+### File defaults
 
-Un archivo puede comenzar, antes de cualquier `using`, con defaults de metadatos almacenados y constantes:
+A file may begin, before any `using`, with defaults for stored metadata and constants:
 
 ```mud
 ~stability: Stability = Experimental
@@ -305,21 +305,21 @@ Un archivo puede comenzar, antes de cualquier `using`, con defaults de metadatos
 using world.shared
 ```
 
-Estas líneas no son metadatos de `MudFile`; son azúcar aplicado a declaraciones de primer nivel escritas directamente en ese archivo y compatibles con el metadato.
+These lines are not `MudFile` metadata; they are syntactic sugar applied to top-level declarations written directly in that file and compatible with the metadata.
 
-No se propagan a campos, componentes, participantes, miembros de familia, declaraciones importadas ni descendientes de otros archivos. La precedencia es:
+They do not propagate to fields, components, participants, family members, imported declarations or descendants from other files. Precedence is:
 
 ```text
 valor explícito del elemento > default de archivo > default del lenguaje
 ```
 
-Un default de archivo no admite `:=`, `ValueBlock`, lecturas runtime ni propiedades intrínsecas. Su forma se mantiene separada de la asignación ordinaria de metadata de un propietario. `~summary`, `~description` y `~deprecated` pueden usarse como defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` y `~format` no pueden usarse como defaults de archivo por ser inherentemente individuales. Los metadatos de usuario son admitidos como defaults salvo restricción futura explícita de su definición.
+A file default does not admit `:=`, `ValueBlock`, runtime reads or intrinsic properties. Its form remains separate from ordinary metadata assignment on an owner. `~summary`, `~description` and `~deprecated` may be used as defaults. `~name`, `~plural`, `~abbreviation`, `~prefixes` and `~format` cannot be used as file defaults because they are inherently individual. User metadata is admitted as defaults unless its definition is explicitly restricted in future.
 
-### Texto y tooling
+### Text and tooling
 
-Las plantillas `Text` interpolan una expresión ordinaria y usan la conversión textual canónica de su valor. No existe una interpolación especial `anchor{...}`.
+`Text` templates interpolate an ordinary expression and use the canonical textual conversion of its value. No special `anchor{...}` interpolation exists.
 
-El LSP y el tooling oficial presentan preferentemente, cuando existan:
+The LSP and official tooling preferentially present, when available:
 
 1. `~name` o `~identifier`;
 2. firma estructural;
@@ -327,32 +327,32 @@ El LSP y el tooling oficial presentan preferentemente, cuando existan:
 4. `~description`;
 5. advertencia de `~deprecated`.
 
-## Consecuencias
+## Consequences
 
-- Los participantes anónimos dejan de ser sintaxis válida.
-- Los participantes, campos y componentes anclados pasan a formar parte del grafo nominal como descriptores persistentes.
-- El AST superficial conserva declaraciones y cuerpos de metadatos; tipado y elaboración distinguen propiedades intrínsecas de valores `Metadata` configurados. La codificación mecánica posterior de esa distinción todavía no está fijada.
-- Las escrituras runtime a cualquier acceso `~` son errores estáticos.
-- La visibilidad exterior se deriva del módulo propietario, su contrato `uses`, la categoría operacional y el cierre de tipos; el tooling presenta esa frontera, no la inventa.
-- Las contribuciones `start with` de módulos y tests permanecen fuera de la superficie metadata-bearing.
+- Anonymous participants are no longer valid syntax.
+- Anchored participants, fields and components become part of the nominal graph as persistent descriptors.
+- The surface AST retains metadata declarations and bodies; typing and elaboration distinguish intrinsic properties from configured `Metadata` values. The subsequent mechanical encoding of that distinction is not yet fixed.
+- Runtime writes to any `~` access are static errors.
+- External visibility is derived from the owning module, its `uses` contract, the operational category and type closure; tooling presents that boundary, it does not invent it.
+- `start with` contributions from modules and tests remain outside the metadata-bearing surface.
 
-## Verificación futura
+## Future verification
 
-1. Lectura postfix sin punto y rechazo de escritura runtime.
-2. Preámbulo antes de contenido ordinario y rechazo de metadatos tardíos.
-3. Metadatos almacenados y calculados de usuario.
-4. Reflexión de `~metadata` sin propiedades intrínsecas.
-5. Nombres obligatorios y anclas estables de `for`, `on` y `given` ante reordenación.
-6. Metadata-body de campos, componentes y participantes, incluido grupo copiado.
-7. Herencia de campos sin copia de descriptor ni metadatos.
-8. Ausencia de metadatos en `start with`, cláusulas y cuerpos.
-9. Defaults de archivo y precedencia explícito > archivo > lenguaje.
-10. Rechazo de defaults calculados o individuales.
-11. `~summary`, `~description` y `~deprecated` en elementos subordinados.
-12. Colecciones y diccionarios con propiedades intrínsecas tipadas.
-13. Narrowing categorial de declaraciones.
-14. Eliminación completa de `anchor{...}`.
+1. Dotless postfix reads and rejection of runtime writes.
+2. Preamble before ordinary content and rejection of late metadata.
+3. Stored and calculated user metadata.
+4. `~metadata` reflection without intrinsic properties.
+5. Mandatory names and stable `for`, `on` and `given` anchors under reordering.
+6. Field, component and participant metadata-bodies, including copied groups.
+7. Field inheritance without descriptor or metadata copies.
+8. Absence of metadata in `start with`, clauses and bodies.
+9. File defaults and explicit > file > language precedence.
+10. Rejection of calculated or individual defaults.
+11. `~summary`, `~description` and `~deprecated` on subordinate elements.
+12. Collections and dictionaries with typed intrinsic properties.
+13. Categorical narrowing of declarations.
+14. Complete removal of `anchor{...}`.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-La visibilidad exterior se deriva de módulo, categoría operacional y cierre de tipos. La reflexión cruzada de módulo solo es válida si su contrato garantiza que no puede devolver entidades invisibles; no se permite filtrar silenciosamente una colección reflectiva para ocultarlas. Tooling completo y reflexión disponible al código MUD siguen siendo superficies distintas.
+External visibility is derived from module, operational category and type closure. Cross-module reflection is valid only if its contract guarantees that it cannot return invisible entities; silently filtering a reflective collection to hide them is not permitted. Full tooling and reflection available to MUD code remain distinct surfaces.
