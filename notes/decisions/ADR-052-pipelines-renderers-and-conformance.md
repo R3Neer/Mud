@@ -25,7 +25,7 @@ affects:
 
 The example combined language requirements with a TypeScript implementation, a plugin and editor support. MUD needs to enforce conservation semantics without imposing those technologies.
 
-## Decisión
+## Decision
 
 The conceptual pipeline separates:
 

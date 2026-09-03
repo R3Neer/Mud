@@ -10,7 +10,7 @@ questions:
   - "Q-028"
   - "Q-029"
 affects:
-  - "expresiones, intervalos, iteración"
+  - "expressions, intervals and iteration"
 ---
 # ADR-047 — Quantifiers and finite iteration
 
@@ -29,7 +29,7 @@ affects:
 
 MUD needs to iterate through sets of domain without introducing general loops whose termination o result depend on the inner container.
 
-## Decisión
+## Decision
 
 Expressions allow:
 

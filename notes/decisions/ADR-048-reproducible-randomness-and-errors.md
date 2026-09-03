@@ -11,7 +11,7 @@ questions:
   - "Q-035"
   - "Q-058"
 affects:
-  - "expresiones, efectos, runtime, diagnósticos"
+  - "expressions, effects, runtime and diagnostics"
 ---
 # ADR-048 — Reproducible randomness and errors
 
@@ -25,7 +25,7 @@ affects:
 
 MUD allows for randomness, but does not permit this or errors to introduce platform-dependent results or to turn failed queries into falsehoods.
 
-## Decisión
+## Decision
 
 MUD 1.0 sets out an explicitly random method of sampling:
 

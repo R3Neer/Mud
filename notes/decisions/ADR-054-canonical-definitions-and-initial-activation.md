@@ -37,7 +37,7 @@ The model The approach adopted is that of a game featuring:
 - Runtime operations that remove and re-introduce the same canonical identifiers.
 - Runtime instantiations of `thing` specific actions that could lead to `destroy` and reinvent itself in a fresh way through a `create` back.
 
-## Decisión
+## Decision
 
 ### Canonical definition unique
 

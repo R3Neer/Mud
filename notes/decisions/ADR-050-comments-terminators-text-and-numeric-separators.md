@@ -23,7 +23,7 @@ affects:
 
 These lexical rules are independent of the ontology and must be set in stone without the need to manually maintain a parallel catalogue of keywords. The delimiters for comment and the text follows a deliberate symmetry between standard and multiline fonts.
 
-## Decisión
+## Decision
 
 ### Comments
 

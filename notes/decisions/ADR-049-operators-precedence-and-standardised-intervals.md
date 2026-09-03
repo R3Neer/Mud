@@ -10,7 +10,7 @@ questions:
   - "Q-018"
   - "Q-050"
 affects:
-  - "expresiones, intervalos, gramática"
+  - "expressions, intervals and grammar"
 ---
 # ADR-049 — Operators, precedence and standardised intervals
 
@@ -28,7 +28,7 @@ affects:
 
 The reference contained the list of operators and their precedence, but it predates `to`, to the full nominalisation of aliases and to the current system of units.
 
-## Decisión
+## Decision
 
 ### Operators’ families
 

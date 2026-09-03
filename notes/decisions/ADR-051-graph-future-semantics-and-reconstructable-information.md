@@ -13,7 +13,7 @@ questions:
   - "Q-054"
   - "Q-059"
 affects:
-  - "arquitectura, HIR nominal, futuro grafo semántico, futura representación posterior a tipado y elaboración, conformidad"
+  - "architecture, nominal HIR, future semantic graph, future post-typing and elaboration representation, conformance"
 ---
 # ADR-051 — Graph future semantics and reconstructable information
 
@@ -26,7 +26,7 @@ affects:
 
 Impact assessments, explanation and implementation will require information semantics derived, but that information must not become an alternative source of truth, nor should it be mechanically established before the stages by which it is produced have been formalised.
 
-## Decisión
+## Decision
 
 The files `.mud` and versioning decisions are the source semantics. The Surface AST and the Nominal HIR are current reconstructible derivatives. The nominal resolution produces `specification/names/mud-nominal-hir.asdl`, with symbols, scopes, bindings, anchors and nominal relations, without type inferences or elaboration.
 

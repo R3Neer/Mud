@@ -29,7 +29,7 @@ MUD needs tests that can be read and written by those who model the world, witho
 
 Treat it as a variant of `action` It would blur the distinction between the two and make it natural, albeit incorrect, to assign it a anchor `action::*`.
 
-## Decisión
+## Decision
 
 ### Declaration own
 

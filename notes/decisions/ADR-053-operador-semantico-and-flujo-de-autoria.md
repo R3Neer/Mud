@@ -1,6 +1,6 @@
 ---
 id: D-053
-title: "Operador semántico y flujo de autoría"
+title: "Semantic operator and authoring flow"
 status: current
 date: 2026-07-28
 supersedes: []
@@ -12,9 +12,9 @@ questions:
   - "Q-039"
   - "Q-040"
 affects:
-  - "cambios semánticos, Git, tooling del operador"
+  - "semantic changes, Git and operator tooling"
 ---
-# ADR-053 — Operador semántico y flujo de autoría
+# ADR-053 — Semantic operator and authoring flow
 
 - Expanded by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Related questions: Q-008, Q-015, Q-036, Q-039, Q-040
@@ -24,7 +24,7 @@ affects:
 
 Natural language interaction must transform the model through verifiable operations. You cannot hide new rules within the AI or edit `.mud` without considering the consequences.
 
-## Decisión
+## Decision
 
 Before making any changes, the operator classifies the request according to at least the following criteria:
 

@@ -11,7 +11,7 @@ questions:
   - "Q-021"
   - "Q-046"
 affects:
-  - "efectos, raíz, ondas, conflictos"
+  - "effects, root, waves and conflicts"
 ---
 # ADR-046 — Algebra and conflicts of effects
 
@@ -26,7 +26,7 @@ affects:
 
 Concurrent effects must be combined according to their meaning, not according to the arbitrary order in which an implementation encounters them.
 
-## Decisión
+## Decision
 
 The MUD effects catalogue includes:
 
