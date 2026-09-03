@@ -89,7 +89,7 @@ thing King {
 }
 ```
 
-seguido por:
+followed by:
 
 ```mud
 destroy Kingdom

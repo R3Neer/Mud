@@ -321,7 +321,7 @@ A file default does not admit `:=`, `ValueBlock`, runtime reads or intrinsic pro
 
 The LSP and official tooling preferentially present, when available:
 
-1. `~name` o `~identifier`;
+1. `~name` or `~identifier`;
 2. structural signature;
 3. `~summary`;
 4. `~description`;

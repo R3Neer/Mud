@@ -25,7 +25,7 @@ Computed `family` data was already represented in EBNF and the AST with `derived
 Computed `family` data uses the same complete declarable form as a computed field:
 
 ```text
-nombre [forma-derivada] := value-body
+name [derived-form] := value-body
 ```
 
 `derived-form` is the ordinary `derived-value-shape`: it may fix a `type-expression`, declare a domain with an optional collection form, or declare a collection form directly. If it does not fix a type, the type must be inferred uniquely.
