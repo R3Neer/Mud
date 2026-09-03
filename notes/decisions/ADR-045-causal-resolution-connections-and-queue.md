@@ -29,14 +29,14 @@ One resolution Follow this sequence:
 
 ```text
 estado estable anterior
-→ validación de la solicitud
-→ raíz tentativa
+→ request validation
+→ tentative root
 → onda 1
 → onda 2
 → …
 → estado estable tentativo
-→ always y after
-→ confirmar o revertir
+→ always and after
+→ confirm or roll back
 ```
 
 In each wave:
@@ -45,7 +45,7 @@ In each wave:
 2. All the rules say the same thing snapshot home page;
 3. the temporal activators of are evaluated `when`;
 4. each `then` produces, in sequence, a delta private;
-5. Deltas are consolidated by means of D-023, D-046 y D-060;
+5. Deltas are consolidated by means of D-023, D-046 and D-060;
 6. the values are normalised to their base types and validated;
 7. the state The resulting expression, if valid, feeds into the wave Next.
 

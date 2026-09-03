@@ -14,7 +14,7 @@ affects:
 # ADR-041 — Contracts under the three types of rules
 
 - Related to: [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
-- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] y [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
+- Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-079-diagnostic-exterior-de-rules-always|D-079]]
 - As further amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Also amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
 - Expanded by: [[notes/decisions/ADR-071-local-bindings-in-boolean-blocks|D-071]]
@@ -61,7 +61,7 @@ rule OpenGate on gate: Gate [mut] {
 }
 ```
 
-Declare automatic links via `on`, does not support `given`, requires `when`, admits `if` and has consequences through `then`. That `then` You can combine effects, locals and calls to `action` o `subaction` inside the causal resolution in accordance with D-096. You can look up Boolean rules and use `allowed` if the graph The resulting figure is still acceptable.
+It declares automatic links through `on`, does not support `given`, requires `when`, admits `if` and has consequences through `then`. The `then` block can combine effects, locals and calls to `action` or `subaction` within causal resolution, in accordance with D-096. Boolean rules can be queried with `allowed` when the resulting graph remains acceptable.
 
 Roles within the same header `on` are solved jointly and may form finite cyclic relational constraints in accordance with D-063.
 
@@ -83,7 +83,7 @@ $$
 
 This pulse is calculated directly for each pair of consecutive start snapshots. It is not a stored Boolean value, and is not reset by a change to `false` and does not undergo screening again $\mathsf{false}\rightarrow\mathsf{true}$. If $e$ switch between two consecutive pairs of snapshots, `changes` Click on both waveforms. Only the net change between snapshots matters; transient values within a delta private variables are not observable.
 
-Temporary triggers are made up of the words `and` y `or`. An ordinary Boolean operand in a composition is raised to its transition `false` → `true`; it is not interpreted as a sustained level. Grammar, the scope from `old` and the elaboration The formal aspects of these combinations are set out in D-058.
+Temporary triggers are made up of the words `and` and `or`. An ordinary Boolean operand in a composition is raised to its `false` → `true` transition; it is not interpreted as a sustained level. The grammar, `old` scope and elaboration of these combinations are set out in D-058.
 
 ### Initialisation of the reactive memory
 
@@ -104,7 +104,7 @@ Declare automatic links via `on`, does not support `given`, cannot be invoked an
 
 ### Cycle of communal life
 
-All three variants have a canonical definition a single top-tier option, which can be activated via `start with` o `create Nombre` and be suspended by means of `destroy`, in accordance with D-021 y D-054. They retain their variant when reactivated. The suspension of a ruler `always` temporarily waives this obligation; reactivation does not allow the publication of a state that it fails to comply with it.
+All three variants have one canonical top-level definition, which can be activated via `start with` or `create Name` and suspended by `destroy`, in accordance with D-021 and D-054. They retain their variant when reactivated. Suspending an `always` rule temporarily waives this obligation; reactivation cannot publish a state that violates it.
 
 All three variants fall into the category of anchor `rule::*`. In particular, `always` is a contextual word in front of `rule`, neither a nominal category nor a prefix from anchor independent.
 

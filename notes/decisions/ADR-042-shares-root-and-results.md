@@ -21,7 +21,7 @@ affects:
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]], [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
-- Further amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]] y [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
+- Further amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]] and [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Related questions: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documents concerned: public boundary, effects, request shares, semantics of the root
 
@@ -51,11 +51,11 @@ One action:
 
 - declares participants via `for`;
 - can declare values `given` and its domains;
-- may state `if` y `after`;
+- may state `if` and `after`;
 - must state `then`;
 - does not state `when` nor does it activate automatically;
 - one `action` It can be applied for from abroad and, in that case, the causal resolution root;
-- one `action` o `subaction` invoked from a `then` joins the causal resolution is already active and does not open a root independent;
+- an `action` or `subaction` invoked from a `then` joins the already active causal resolution and does not open an independent root;
 - the resolution It is atomic in its entirety, together with all its waves.
 
 Participants are recipients, while `given` values are arguments in accordance with D-036 and D-063. When an action starts, roles are linked by identity, value or place according to their contract; types, cardinalities and capabilities are checked. Omitted `given` values use their static defaults, which are evaluated and validated before `if`. A role with outer `mut` retains its original receiver place as the destination for effects and requires that place to be storable and externally mutable. A `given` value outside its domain or a false `if` has no effect.
@@ -70,7 +70,7 @@ Each sentence reads: delta private, visible in its textual position. A call The 
 
 The `after` of all the shares/subactions The executed commands are checked against the stable state final attempt at the resolution complete. Call analysis must prevent executable cycles; Q-023 The proof of acyclicity and impact remains open when the selection of the descriptor 'callable' is a dynamic property, not the ability to call it.
 
-### `after` y `old`
+### `after` and `old`
 
 `if` y `after` can be attached via `otherwise` one reason `Text` because it is false. Its omission is lawful and implies a suggestion, not a warning, because rejection is a normal response; in that case, this results in a reason based on the condition and its provenance. The diagnostic He is pure and lazy.
 
@@ -86,7 +86,7 @@ In the context of actions and tests, `old e` reads `e` in the stable state immed
 | `rejected` | `given` outside domain, `if` false or `after` false |
 | `failed` | Conflict, cycle u oscillation, invalid operation, domain or invalid references, `always` unfulfilled or failure propagated semantic |
 
-The request returns to the external caller an object whose field `state` contains one of those three results. When it contains `rejected` o `failed`, the item also includes a field compulsory `reason: Text` with the explanation human. Any regulatory case other than `accepted` must provide that reason in accordance with D-061; it may be accompanied by codes and structured reasons.
+The request returns an object to the external caller whose `state` field contains one of those three results. When it contains `rejected` or `failed`, the object also includes the compulsory `reason: Text` field with a human explanation. Any regulatory case other than `accepted` must provide that reason in accordance with D-061; it may be accompanied by codes and structured reasons.
 
 Everything result other than `accepted` restores exactly the stable state previous and does not publish messages or have any other external effects.
 
