@@ -155,13 +155,13 @@ The specific architecture may use the token lattice, localised re-tokenisation o
 ### Comment up to the jump
 
 ```mud
-# Todo lo restante de la línea es comentario
+# Everything else on the line is a comment
 ```
 
 ### Comment – line closed
 
 ```mud
-value = 1 # explicación # + 2
+value = 1 # explanation # + 2
 ```
 
 The second `#` resumes tokenisation from the same line. This form never crosses a line break.
@@ -170,7 +170,7 @@ The second `#` resumes tokenisation from the same line. This form never crosses 
 
 ```mud
 ###
-El contenido puede ocupar varias líneas.
+The content may span several lines.
 No se anida.
 ###
 ```

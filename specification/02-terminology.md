@@ -35,13 +35,13 @@ The regulatory text has not yet been drafted.
 -  MUD programme, module file and path.
 - Declaration, symbol, name and anchor.
 - `thing` abstract or concrete, canonical identity, activity, materialisation and value.
-- Campo, relación y colección.
+- Field, relation and collection.
 - Exact dictionary, functional dictionary, association, branch, selector and fallback.
 - Union of types, external arrow, nominal membership, type exact nominal and value equality.
 - Participant, role, relationship and value provided.
 - Reference rule, reactive rule and rule `always`.
 - Action, test, assertion, diagnostic `otherwise`, `look`, `message`, request, observation, occurrence, root, wave and resolution.
-- Estado, instantánea, efecto y conflicto.
+- State, snapshot, effect and conflict.
 - Domain, restriction, condition and invariant.
 - Acceptance, rejection and failure of actions; passing, failure and error of tests.
 

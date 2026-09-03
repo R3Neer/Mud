@@ -127,7 +127,7 @@ Set operations are:
 
 | Notation | Operation |
 | --- | --- |
-| $A\cup B$ | Unión |
+| $A\cup B$ | Union |
 | $A\cap B$ | Intersection |
 | $A\setminus B$ | Difference |
 | $\mathcal P(A)$ | Power unit |
@@ -205,7 +205,7 @@ and may not be defined for some elements of $A$. Its effective domain and its im
 $$
 \operatorname{dom}(f)
 :=
-\{a\in A\mid f(a)\text{ está definida}\}
+\{a\in A\mid f(a)\text{ is defined}\}
 $$
 
 $$

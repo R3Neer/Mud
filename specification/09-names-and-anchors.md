@@ -92,13 +92,13 @@ Iteration bindings and all local declarations are `LocalSymbol`: they do not rec
 
 In `ExpressionBlock` and in the shared preambles of action/rule/message, only pure computed locals are introduced. Each local variable is visible from the next declaration until the end of the block owner and cannot shadow a visible name.
 
-`ValueBlock` creates its own lexical scope. Its computed and stored declarations are introduced sequentially. An `LocalForEach` resolves `source` and `by` before introducing its binding; the binding is visible in the filter and in `LocalStatementBlock`. Locals created within an iteration do not survive into the next one. A mutation may refer to a mutable local variable of an enclosing scope of the same `ValueBlock`; the check that the final destination does not escape the block is part of type checking /elaboración.
+`ValueBlock` creates its own lexical scope. Its computed and stored declarations are introduced sequentially. An `LocalForEach` resolves `source` and `by` before introducing its binding; the binding is visible in the filter and in `LocalStatementBlock`. Locals created within an iteration do not survive into the next one. A mutation may refer to a mutable local variable of an enclosing scope of the same `ValueBlock`; the check that the final destination does not escape the block is part of type checking/elaboration.
 
 In the `for each` executable, the same rules for introducing bindings apply, but the body belongs to `EffectBlock` and can write to external locations in accordance with its authority. In a selection or quantifier, the binding exists only within its `ExpressionBlock`.
 
 In associations `->` and branches `-->`, the left and right blocks create sibling scopes: the /selector-scoped locals are not visible in value/resultado. Both can see the common outer environment, and the function branches also retain their contextual bindings `value` where applicable.
 
-The calculated and stored locals still do not satisfy public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst /elaboración type checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
+The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
 No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
 
@@ -115,7 +115,7 @@ The specification is expressed in terms of environments and sets of candidates. 
 
 ## Anchors
 
-> [!definition] MUD-NAME-005 — Ancla pública
+> [!definition] MUD-NAME-005 — Public anchor
 > An anchor is the human-readable, global, case-sensitive identity of a semantics to which the specification assigns a public identity.
 
 Typical forms:
@@ -135,7 +135,7 @@ type::Prefix
 thing::game.people.Person::friends~summary
 ```
 
-The canonical form is `<categoría>::<nombre-cualificado>` and, for a nested declaration, `::<miembro>` is added for each owner. An configured metadata adds `~<identificador-metadata>` to the anchor of its owner. MUD identifiers do not contain `::` and `~` belongs to the reserved postfix space, so both separators are unambiguous. The MUD 1.0 category catalogue is:
+The canonical form is `<category>::<qualified-name>` and, for a nested declaration, `::<member>` is added for each owner. Configured metadata adds `~<metadata-identifier>` to its owner's anchor. MUD identifiers do not contain `::` and `~` belongs to the reserved postfix space, so both separators are unambiguous. The MUD 1.0 category catalogue is:
 
 | Declaration | Category: anchor |
 |---|---|
