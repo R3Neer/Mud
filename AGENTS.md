@@ -1,62 +1,62 @@
-# Instrucciones de trabajo del repositorio MUD
+# Operating instructions for the MUD repository
 
-Estas instrucciones se aplican a todo el repositorio.
+These instructions apply to the entire repository.
 
-## Autoridad
+## Authority
 
-- `especificacion/` contendrá la norma de MUD.
-- `notas/` contendrá análisis, planificación, riesgos y decisiones.
-- `gobierno/` contendrá procesos editoriales y de control de cambios.
+- `especificacion/` will contain the MUD rules.
+- `notas/` will contain analysis, planning, risks and decisions.
+- `gobierno/` will contain editorial and version control processes.
 
-## Instantánea normativa
+## Normative snapshot
 
-Los documentos y artefactos normativos de `especificacion/` describen el estado actual de MUD dentro de su alcance. Antes de modificarlos se deben aplicar íntegramente MUD-EDIT-002 y MUD-EDIT-003 de `especificacion/00-convenciones-editoriales.md`.
+The normative documents and artefacts in `especificacion/` describe the current state for MUD within its scope. Before modifying them, MUD-EDIT-002 and MUD-EDIT-003 of `especificacion/00-convenciones-editoriales.md` must be applied in full.
 
-En particular:
+In particular:
 
-- La historia de introducción, modificación, sustitución o retirada de una regla no se conserva en el cuerpo normativo; pertenece a ADR, Git y metadatos de trazabilidad.
-- Las decisiones relacionadas se registran mediante `decisions:` y no se narran como procedencia dentro del cuerpo de `especificacion/`.
-- Una pregunta activa puede citarse en el cuerpo solo para delimitar una incertidumbre que afecta al estado actual; debe figurar también en `questions:`.
-- Una decisión vigente debe integrarse en toda superficie normativa ya desarrollada cuya responsabilidad cubra su alcance. Si la ubicación canónica todavía no existe, no se inventa una superficie provisional solo para alojarla, pero ninguna superficie existente puede contradecirla.
-- Si el cambio afecta resolución nominal, debe aplicarse además MUD-EDIT-004 y revisarse `especificacion/09-nombres-y-anclas.md` junto con `especificacion/nombres/mud-nominal-hir.asdl`.
+- The history of the introduction, amendment, replacement or withdrawal of a rule is not recorded within the body of the regulations; it is contained in ADR, Git and the metadata for traceability.
+- Related decisions are recorded using `decisions:` and are not described as provenance within the body of `especificacion/`.
+- An active question may be cited in the main text solely to highlight an uncertainty affecting the current state; it must also appear in `questions:`.
+- A current decision must be integrated into any normative surface that has already been developed and whose remit covers its scope. If the canonical location does not yet exist, a temporary surface must not be created solely to accommodate it, but no existing surface may contradict it.
+- If the change affects nominal resolution, MUD-EDIT-004 must also be applied and `especificacion/09-nombres-y-anclas.md` must be reviewed together with `especificacion/nombres/mud-nominal-hir.asdl`.
 
-La barrera mecánica de MUD-EDIT-002 y del tratamiento de preguntas se ejecuta con `python gobierno/validate_spec_editorial.py`. Todo cambio que toque `especificacion/` o `notas/preguntas/` debe pasarla antes del commit. Si se modifica la propia barrera, se ejecuta además `python gobierno/test_validate_spec_editorial.py`.
+The mechanical barrier for MUD-EDIT-002 and question handling is executed using `python gobierno/validate_spec_editorial.py`. Any change affecting `especificacion/` or `notas/preguntas/` must pass this check before committing. If the barrier itself is modified, `python gobierno/test_validate_spec_editorial.py` is also executed.
 
-## Archivos temporales
+## Temporary files
 
-Los documentos intencionadamente temporales se rigen por `gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md`. Los archivos efímeros ordinarios no se versionan.
+Documents that are intended to be temporary are governed by `gobierno/POLITICA-DE-ARCHIVOS-TEMPORALES.md`. Ordinary temporary files are not versioned.
 
-Antes de crear cualquier commit se debe ejecutar `python gobierno/validate_temporaries.py` y revisar el inventario completo de documentos con `temporary: true`. Si la condición `temporary-delete-when` de alguno ya se cumple, debe eliminarse antes de cerrar el commit, salvo que el propio cambio modifique explícitamente su ciclo de vida.
+Before creating any commit, you must run `python gobierno/validate_temporaries.py` and check the complete inventory of documents using `temporary: true`. If the `temporary-delete-when` condition for any document is already met, it must be removed before closing the commit, unless the change itself explicitly modifies its cycle lifespan.
 
-La temporalidad se declara únicamente en el frontmatter del documento; `gobierno/temporales.base` es una vista derivada y no un registro independiente.
+Temporality is declared solely in the document’s frontmatter; `gobierno/temporales.base` is a derived view and not a separate record.
 
 ## Git
 
-Antes de modificar archivos se debe leer y seguir `gobierno/POLITICA-DE-COMMITS.md`.
+Before editing files, you must read and follow `gobierno/POLITICA-DE-COMMITS.md`.
 
-Después de completar y validar una unidad coherente de trabajo, Codex debe:
+After completing and validating a consistent working unit, Codex must:
 
-1. Revisar el estado y el diff.
-2. Añadir únicamente los archivos pertenecientes a la tarea.
-3. Crear un commit atómico conforme a la política.
-4. Verificar el estado posterior.
+1. Check the state and the diff.
+2. Add only the files relating to the task.
+3. Create an atomic commit in accordance with policy.
+4. Check the resulting status.
 
-No se debe hacer push ni reescribir historial sin petición explícita.
+You must not push or overwrite the history without an explicit request.
 
-## Publicación documental
+## Document publication
 
-La publicación y promoción de documentos normativos se rige por `gobierno/CICLO-DOCUMENTAL.md`.
+The publication and promotion of regulatory documents is governed by `gobierno/CICLO-DOCUMENTAL.md`.
 
-Antes de marcar un capítulo como `vigente` se debe realizar la pasada de publicación y comprobar que su contenido expresa únicamente el estado normativo actual dentro de su alcance.
+Before marking a chapter as `vigente`, the publication process must be carried out and it must be checked that its content reflects only the current regulatory state within its scope.
 
-## Cambios remotos desde ChatGPT
+## Remote changes via ChatGPT
 
-Cuando el entorno permita editar directamente el repositorio mediante GitHub, una rama, una pull request o un checkout escribible, se prefiere un flujo Git normal con candidata aislada, validaciones, revisión exhaustiva del diff, commits atómicos y publicación por fast-forward.
+When environment allows repository to be edited directly via GitHub, a branch, a pull request or a writable checkout, a standard Git workflow is preferred, involving an isolated candidate, validations, a thorough review of the diff, atomic commits and fast-forward publishing.
 
-Si una candidata falla en una capa concreta, debe corregirse esa capa y repetirse la revisión desde el punto afectado. Si `main` cambia durante el trabajo, no se fuerza la referencia: se inspecciona el nuevo estado y se reconstruye la candidata sobre la nueva base.
+If a candidate fails at a specific layer, that layer must be corrected and the review must be repeated from the affected point. If `main` changes during the process, the reference is not forced: the new state is inspected and the candidate is reconstructed on the new basis.
 
-## Preguntas
+## Questions
 
-La apertura, actualización, división y cierre de preguntas se rige por `gobierno/POLITICA-DE-PREGUNTAS.md`.
+The opening, updating, splitting and closing of questions are governed by `gobierno/POLITICA-DE-PREGUNTAS.md`.
 
-Las preguntas cerradas no deben permanecer en índices activos ni en el frontmatter `questions` de la especificación. Su archivo estable se conserva como trazabilidad y enlaza las decisiones o evidencias que las resolvieron.
+Closed questions must not remain in active indexes or in the frontmatter `questions` of specification. Their stable archive is retained as traceability and links to the decisions or evidence that resolved them.
