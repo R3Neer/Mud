@@ -1,31 +1,31 @@
 ---
 id: D-065
-title: "Cabecera `using` de fichero"
+title: "File-level `using` header"
 status: vigente
 date: 2026-07-30
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "modelo de fichero, gramática concreta, parser y diagnósticos"
+  - "file model, concrete grammar, parser and diagnostics"
 ---
-# ADR-065 — Cabecera `using` de fichero
+# ADR-065 — File-level `using` header
 
-- Modifica: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Documentos afectados: modelo de fichero, gramática concreta, parser y diagnósticos
+- Amends: [[notas/decisiones/ADR-035-organizacion-nombres-using-y-anclas|D-035]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Affected documents: file model, concrete grammar, parser and diagnostics
 
-## Contexto
+## Context
 
-Las declaraciones `using` poseen alcance de fichero y su posición textual no modifica la resolución. Permitirlas entre declaraciones de primer nivel sugería falsamente un alcance local o secuencial.
+`using` declarations have file scope and their textual position does not affect resolution. Allowing them between top-level declarations falsely suggested a local or sequential scope.
 
-## Decisión
+## Decision
 
-Un fichero MUD consta, en este orden, de:
+A MUD file consists, in this order, of:
 
-1. Cero o más declaraciones `using`.
-2. Cero o más declaraciones de primer nivel.
+1. Zero or more `using` declarations.
+2. Zero or more top-level declarations.
 
-Después de la primera declaración de primer nivel no puede aparecer ningún `using`.
+After the first top-level declaration, no `using` may appear.
 
 ```mud
 using world.people
@@ -40,27 +40,27 @@ action Move {
 }
 ```
 
-La restricción es sintáctica. No cambia:
+The restriction is syntactic. It does not change:
 
-- El alcance de fichero de cada `using`.
-- La precedencia de resolución.
-- La independencia respecto del orden textual entre varios `using`.
-- La identidad o ancla de las declaraciones.
+- The file scope of each `using`.
+- Resolution precedence.
+- Independence from textual order among several `using` declarations.
+- The identity or anchor of declarations.
 
-## Consecuencias
+## Consequences
 
-- Las herramientas pueden tratar los `using` como una cabecera física única.
-- Un `using` intercalado es un error, no un cambio de alcance.
-- Mover un `using` existente a la cabecera conserva el significado cuando el fichero no contenía otra ambigüedad independiente.
+- Tools may treat `using` declarations as one physical header.
+- An interleaved `using` is an error, not a scope change.
+- Moving an existing `using` to the header preserves meaning when the file has no other independent ambiguity.
 
-## Verificación
+## Verification
 
-1. Fichero vacío.
-2. Fichero solo con `using`.
-3. Fichero solo con declaraciones.
-4. Varios `using` seguidos de varias declaraciones.
-5. Rechazo de un `using` posterior a la primera declaración de primer nivel.
+1. Empty file.
+2. File containing only `using` declarations.
+3. File containing only declarations.
+4. Several `using` declarations followed by several declarations.
+5. Rejection of a `using` after the first top-level declaration.
 
-## Modificación vigente por D-096
+## Current amendment by D-096
 
-`using` sigue siendo una cabecera de resolución de nombres de un `.mud`. La nueva dependencia modular `uses` vive en `mud.module` y autoriza el cruce de la frontera semántica; un `using` no crea esa autorización y un `uses` no importa automáticamente todos los nombres en cada fichero.
+`using` remains the name-resolution header of a `.mud` file. The new modular dependency `uses` lives in `mud.module` and authorises crossing the semantic boundary; `using` does not grant that authorisation and `uses` does not automatically import every name into each file.
