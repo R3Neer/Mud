@@ -42,8 +42,8 @@ python tooling/translation/render_glossary.py --help
 ```
 
 Text displayed to users is in British English. Source documents, generated
-Spanish indexes and other migration content retain their current language
-until the corresponding repository migration phase changes them.
+migration indexes and other temporary migration content retain their current
+language until the corresponding repository migration phase changes them.
 
 ## Tests
 
