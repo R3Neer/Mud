@@ -1,7 +1,7 @@
 ---
-title: Nombres, paths y anclas
+title: Names, paths and anchors
 aliases:
-  - Resolución de nombres de MUD
+  - Name resolution by MUD
 tags:
   - mud/especificacion
   - mud/nombres
@@ -30,95 +30,95 @@ decisions:
   - D-097
   - D-100
 ---
-# 09. Nombres, paths y anclas
+# 09. Names, paths and anchors
 
-## Estado y propósito
+## State and purpose
 
-Este capítulo define qué nombres introduce un programa, cómo se resuelven y cuáles poseen identidad persistente. Un archivo y una declaración son entidades distintas: la ruta aporta contexto lógico, pero no forma parte de la sintaxis escrita del archivo.
+This chapter defines which names a programme introduces, how they are resolved, and which ones have persistent identity. A file and an declaration are distinct entities: the path provides logical context, but is not part of the file’s written syntax.
 
-## Paths de MUD
+## MUD Paths
 
 > [!definition] MUD-NAME-001 — Path de MUD
-> El path de un archivo es la secuencia de segmentos `lowerCamel` derivada de su ruta relativa bajo la raíz del programa, excluyendo el nombre del archivo y su extensión.
+> The path of a file is the sequence of segments `lowerCamel` derived from its relative path under the programme’s root, excluding the file name and its extension.
 
-No existe una declaración `namespace` ni una palabra reservada `path`. Un editor puede mostrar el path como cabecera virtual y ofrecer acciones para copiar nombres cualificados o anclas, pero esa presentación no pertenece al texto fuente.
+There is no declaration `namespace` or reserved word `path`. An editor may display the path as a virtual header and offer options to copy qualified names or anchors, but that presentation does not belong to the source text.
 
-Un nombre cualificado concatena path y nombre nominal mediante puntos:
+A qualified name concatenates path and the nominal name using dots:
 
 ```text
 game.combat.Heal
 ```
 
-Mover una declaración entre archivos del mismo path no cambia su nombre cualificado. Moverla entre paths sí.
+Moving an declaration between files within the same path does not change its qualified name. Moving it between paths does.
 
-## Símbolos y espacios de nombres
+## Symbols and namespaces
 
-> [!rule] MUD-NAME-002 — Espacio nominal superior único
-> Todas las declaraciones de primer nivel de un mismo path deben tener nombres distintos, con independencia de su categoría.
+> [!rule] MUD-NAME-002 — Single upper nominal space
+> All top-level declarations within the same path must have distinct names, regardless of their category.
 
-La categoría esperada no desambigua dos declaraciones superiores homónimas. Los campos y miembros anidados pertenecen al espacio de su propietario y pueden repetir nombres en propietarios distintos.
+The expected category does not resolve ambiguity between two homonymous parent statements. Nested fields and members belong to the scope of their owner and may have the same name under different owners.
 
-Participantes `for`, `on` y `given` son símbolos léxicos con ancla subordinada estable según el modelo de descriptores. Iteradores y vinculaciones locales ordinarias continúan sin ancla pública. Los nombres pueden repetirse en ámbitos independientes, pero no pueden sombrear un nombre ya visible.
+Participants `for`, `on` and `given` are lexical symbols with a stable subordinate anchor according to the model of descriptors. Iterators and ordinary local bindings continue without public anchor. Names may be repeated in independent scopes, but may not shadow a name that is already in scope.
 
-> [!rule] MUD-NAME-003 — Convenciones obligatorias
-> Declaraciones nominales y miembros de family usan `PascalCase`; campos, componentes, roles, `given`, variables y segmentos de path usan `lowerCamel`; los identificadores de unidad usan `lowerCamel`. Un incumplimiento es un error estático con arreglo mecánico cuando exista una única corrección segura.
+> [!rule] MUD-NAME-003 — Mandatory conventions
+> Nominal declarations and members of family use `PascalCase`; fields, components, roles, `given`, variables and segments of path use `lowerCamel`; identifiers in unit use `lowerCamel`. A violation is a static error with a mechanical fix when there is a single safe correction.
 
-## Entornos de resolución
+## Environments of resolution
 
-Sea $Gamma$ un entorno y sea $n$ un nombre no cualificado. La resolución consulta estos niveles:
+Let $Gamma$ be an environment and let $n$ be an unqualified name. The resolution query has the following levels:
 
-1. Símbolos del ámbito léxico.
-2. Miembros del propietario o receptor implícito.
-3. Declaraciones del path actual.
-4. Declaraciones aportadas por `using` exactos.
-5. Declaraciones aportadas por `using` recursivos.
-6. Nombres incorporados.
+1.  Symbols from the scope lexicon.
+2. Members of the implicit owner or receiver.
+3. Statements by the current path.
+4. Statements provided by `using` are accurate.
+5. Statements provided by recursive `using`s.
+6.  Names included.
 
-> [!rule] MUD-NAME-004 — Primer nivel no vacío
-> La resolución usa exclusivamente el primer nivel que produzca candidatos. Si ninguno de sus candidatos pertenece a la categoría exigida, la referencia es inválida; no continúa en niveles posteriores.
+> [!rule] MUD-NAME-004 — First non-empty level
+> The resolution uses only the first level that produces candidates. If none of its candidates belong to the required category, the reference is invalid; it does not proceed to subsequent levels.
 
-Candidatos que designan la misma ancla se deduplican. Dos anclas distintas en el mismo nivel producen ambigüedad. El orden textual de archivos y `using` no decide empates.
+Candidates that refer to the same anchor are deduplicated. Two different anchors at the same level result in ambiguity. The textual order of files and `using` does not resolve ties.
 
-Un `using` exacto importa un path concreto y uno recursivo importa sus descendientes. Ninguno reexporta los `using` contenidos en los archivos alcanzados. Una referencia completamente cualificada evita la búsqueda por niveles.
+An exact `using` imports a specific path, whilst a recursive one imports its descendants. Neither re-exports the `using`s contained in the files reached. A fully qualified reference avoids level-by-level searching.
 
-`Prefix` participa en el último nivel como tipo incorporado. Los nombres SI `quecto`…`quetta` también se resuelven allí como constantes incorporadas de `Prefix`; no introducen declaraciones ni anclas propias.
+`Prefix` appears at the top-level as an embedded type. The SI names `quecto`…`quetta` are also resolved there as built-in constants of `Prefix`; they do not introduce declarations or anchors of their own.
 
-Los accesos con puntos se elaboran por etapas: primero se resuelve la raíz nominal y después cada miembro con el tipo o propietario obtenido. Una ruta cualificada y una cadena de miembros pueden compartir escritura superficial sin compartir resolución interna.
+Access paths with nodes are constructed in stages: first, the nominal root is resolved, and then each member is resolved using the resulting type or owner. A qualified path and a chain of members may share surface writing without sharing internal resolution.
 
 
-## Ámbitos locales, iteración y bloques
+## Local scopes, iteration and blocks
 
-Las vinculaciones de iteración y todas las declaraciones locales son `LocalSymbol`: no reciben ancla pública y obedecen al primer nivel léxico de resolución. El `kind` del HIR distingue como mínimo iterador, local calculada y local almacenada; la mutabilidad es una capacidad comprobada posteriormente y no una categoría de ancla.
+Iteration bindings and all local declarations are `LocalSymbol`: they do not receive public anchor and are subject to the first lexical level of resolution. The HIR’s `kind` distinguishes, at a minimum, between iterators, computed locals and stored locals; mutability is a capability checked at a later stage and not a category of anchor.
 
-En `ExpressionBlock` y en los preámbulos compartidos de action/rule/message solo se introducen locales calculadas puras. Cada local es visible desde la declaración siguiente hasta el final del bloque propietario y no puede sombrear un nombre visible.
+In `ExpressionBlock` and in the shared preambles of action/rule/message, only pure computed locals are introduced. Each local variable is visible from the next declaration until the end of the block owner and cannot shadow a visible name.
 
-`ValueBlock` crea una frontera léxica propia. Sus declaraciones calculadas y almacenadas se introducen secuencialmente. Un `LocalForEach` resuelve `source` y `by` antes de introducir su binding; el binding es visible en el filtro y en `LocalStatementBlock`. Las locales creadas dentro de una iteración no sobreviven a la siguiente. Una mutación puede referirse a una local mutable de un ámbito envolvente del mismo `ValueBlock`; la comprobación de que el destino final no escape del bloque pertenece a tipado/elaboración.
+`ValueBlock` creates its own lexical scope. Its computed and stored declarations are introduced sequentially. An `LocalForEach` resolves `source` and `by` before introducing its binding; the binding is visible in the filter and in `LocalStatementBlock`. Locals created within an iteration do not survive into the next one. A mutation may refer to a mutable local variable of an enclosing scope of the same `ValueBlock`; the check that the final destination does not escape the block is part of type checking /elaboración.
 
-En el `for each` ejecutable se mantienen las mismas reglas de introducción del binding, pero el cuerpo pertenece al `EffectBlock` y puede escribir lugares exteriores conforme a su autoridad. En una selección o cuantificador, la vinculación solo vive dentro de su `ExpressionBlock`.
+In the `for each` executable, the same rules for introducing bindings apply, but the body belongs to `EffectBlock` and can write to external locations in accordance with its authority. In a selection or quantifier, the binding exists only within its `ExpressionBlock`.
 
-En asociaciones `->` y ramas `-->`, el bloque izquierdo y el derecho crean scopes hermanos: las locales de clave/selector no son visibles en valor/resultado. Ambos ven el entorno exterior común y las ramas funcionales conservan además su binding contextual `value` cuando corresponda.
+In associations `->` and branches `-->`, the left and right blocks create sibling scopes: the /selector-scoped locals are not visible in value/resultado. Both can see the common outer environment, and the function branches also retain their contextual bindings `value` where applicable.
 
-Las locales calculadas y almacenadas siguen sin ancla pública. Una local almacenada mutable puede satisfacer un participante `for mut`; la resolución nominal vincula el nombre al `LocalSymbol`, mientras tipado/elaboración comprueban que la ocurrencia usada como receptor designa un slot escribible. El HIR nominal no necesita una clase de referencia ni de símbolo adicional.
+The calculated and stored locals still do not satisfy public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst /elaboración type checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
-Ningún ámbito local permite referencias adelantadas, ciclos, redeclaración o sombreado de un nombre ya visible.
+No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
 
-## Etapas
+## Stages
 
-1. El AST superficial aporta nombres y procedencia.
-2. La resolución nominal crea símbolos, scopes, bindings y anclas y los materializa en el HIR nominal de `nombres/mud-nominal-hir.asdl`.
-3. El sistema de tipos consume AST superficial + HIR nominal y resuelve uniones, dominios y referencias dependientes del tipo.
-4. La elaboración completa accesos, llamadas, abreviaturas contextuales y demás significado dependiente de tipos; su representación mecánica posterior todavía no está fijada.
+1.  The Surface AST provides names and provenance.
+2.  The nominal resolution creates symbols, scopes, bindings and anchors, and instantiates them in the Nominal HIR of `nombres/mud-nominal-hir.asdl`.
+3. The type system consumes Surface AST + Nominal HIR and resolves unions, domains and references dependent on type.
+4. The elaboration covers accesses, calls, contextual abbreviations and other type-dependent meanings; its subsequent mechanical representation has not yet been finalised.
 
-El HIR nominal no contiene tipos efectivos, dominios efectivos, cardinalidades ni pruebas de terminación. Es el contrato entre resolución de nombres y tipado, no una copia resuelta del AST superficial.
+The Nominal HIR does not contain effective types, effective domains, cardinalities or proofs from termination. It is the contract between name resolution and typed, not a resolved copy of Surface AST.
 
-La norma se expresa mediante entornos y conjuntos de candidatos. Una implementación puede usar scope graphs si reproduce exactamente prioridades, candidatos, ambigüedades y rechazos.
+The specification is expressed in terms of environments and sets of candidates. An implementation may use scope graphs provided that it accurately reproduces priorities, candidates, ambiguities and rejections.
 
-## Anclas
+## Anchors
 
 > [!definition] MUD-NAME-005 — Ancla pública
-> Una ancla es la identidad legible, global y sensible a mayúsculas de una entidad semántica persistente a la que la especificación asigna identidad pública.
+> An anchor is the human-readable, global, case-sensitive identity of a semantics to which the specification assigns a public identity.
 
-Formas representativas:
+Typical forms:
 
 ```text
 thing::game.people.Person
@@ -135,119 +135,119 @@ type::Prefix
 thing::game.people.Person::friends~summary
 ```
 
-La forma canónica es `<categoría>::<nombre-cualificado>` y, para una declaración anidada, añade `::<miembro>` por cada propietario. Un metadato configurado añade `~<identificador-metadata>` a la ancla de su propietario. Los identificadores de MUD no contienen `::` y `~` pertenece al espacio postfix reservado, de modo que ambas separaciones son inequívocas. El catálogo de categorías de MUD 1.0 es:
+The canonical form is `<categoría>::<nombre-cualificado>` and, for a nested declaration, `::<miembro>` is added for each owner. An configured metadata adds `~<identificador-metadata>` to the anchor of its owner. MUD identifiers do not contain `::` and `~` belongs to the reserved postfix space, so both separators are unambiguous. The MUD 1.0 category catalogue is:
 
-| Declaración | Categoría de ancla |
+| Declaration | Category: anchor |
 |---|---|
-| `thing` y sus campos | `thing` |
-| alias, sus componentes y sus campos derivados | `alias` |
-| family, datos y miembros | `family` |
+| `thing` and their fields | `thing` |
+| alias, their components and their derived fields | `alias` |
+| family, data and members | `family` |
 | magnitude | `magnitude` |
-| unidad declarada | `unit` |
-| cualquiera de las tres clases de rule | `rule` |
+| unit declared | `unit` |
+| any of the three types of rule | `rule` |
 | action | `action` |
 | look | `look` |
 | message | `message` |
 | test | `test` |
-| tipo incorporado | `type` |
+| type incorporated | `type` |
 
-Los participantes `for`, `on` y `given` no introducen una categoría superior nueva: su ancla es subordinada a la del propietario y deriva además de la clase de cláusula y del identificador, conforme al modelo de descriptores. La posición nunca forma parte de esa identidad.
+The participants `for`, `on` and `given` do not introduce a new superordinate category: their anchor is subordinate to that of owner and is also derived from the clause class and the identifier, in accordance with the model of descriptors. The position is never part of that identity.
 
-`start with` de módulo no introduce nombre y, por tanto, no posee ancla. La categoría describe la declaración propietaria: un campo de `look` conserva una ancla como `look::game.Status::score`, no una categoría adicional `field`.
+`start with` of module does not introduce a name and therefore does not have anchor. The category describes the parent declaration: an field of `look` retains an anchor as `look::game.Status::score`, not an additional category `field`.
 
-Poseen ancla:
+They have anchor:
 
-- declaraciones nominales de primer nivel;
-- campos, componentes y datos asociados declarados por una `family`;
-- miembros de family;
-- unidades declaradas;
-- participantes `for`, `on` y `given`;
-- metadatos configurados y de usuario materializados como `Metadata`;
-- tipos incorporados.
+- first-order nominal statements;
+-  fields, components and associated data declared by an `family`;
+-  members of family;
+-  units reported;
+-  participants `for`, `on` and `given`;
+-  configured and user metadata represented as `Metadata`;
+-  built-in types.
 
-No poseen ancla pública:
+They do not have public anchor:
 
-- variables locales o de iteración;
-- vinculaciones temporales que no sean participantes declarados;
-- resultados intermedios;
-- unidades creadas estructuralmente por prefijos;
-- los valores incorporados `Prefix`, que se elaboran como constantes y no como declaraciones;
-- las ramas de diccionarios funcionales, que se identifican solo de forma local dentro de su diccionario propietario;
-- las propiedades reflectivas intrínsecas, que no materializan objetos `Metadata`.
+-  local or iteration variables;
+-  temporary appointments other than registered participants;
+- interim results;
+- units created structurally by prefixes;
+-  the built-in values `Prefix`, which are defined as constants rather than declarations;
+-  the branches of functional dictionaries, which are identified only locally within their dictionary owner;
+- intrinsic reflective properties, which do not materialise objects `Metadata`.
 
-Un dato asociado declarado por una `family` posee un ancla subordinada estable formada con la categoría `family`, el nombre cualificado de la familia y el identificador del dato. Esa ancla identifica el descriptor del esquema uniforme, no cada valor obtenido al consultar un miembro. Una asignación dentro del cuerpo de un miembro no introduce ancla y no cambia la del dato declarado.
+An associated data item declared by an `family` has a stable subordinate anchor formed from the category `family`, the qualified family name and the data identifier. That anchor identifies the descriptor of the uniform schema, not every value obtained by querying an member. An assignment within the body of an member does not introduce an anchor and does not alter that of the declared data.
 
-Un miembro heredado conserva el ancla del propietario que lo declaró. En `thing` esto no comparte estado; en aliases identifica el origen usado para deduplicar diamantes. Una sobrescritura de predeterminado no introduce un miembro ni un ancla nuevos.
+An inherited member retains the anchor of the owner that declared it. In `thing`, this does not share state; in aliases, it identifies the source used to deduplicate diamonds. A default override does not introduce a new member or anchor.
 
-Un diagnóstico puede describir un símbolo local mediante el ancla de su propietario:
+An diagnostic can describe a local symbol using the anchor of its owner:
 
 ```text
 action::game.combat.Heal - given amount
 ```
 
-La descripción completa no constituye una ancla nueva.
+The full description does not constitute a new anchor.
 
-## Nombres contextuales de valores
+## Contextual value names
 
-Un miembro de family puede abreviarse cuando el tipo esperado determina la family:
+An member of family may be abbreviated when the expected type determines the family:
 
 ```mud
 severity: Severity = Critical
 ```
 
-`Severity.Critical` continúa disponible. Las unidades aplican la misma regla con magnitud, identificador, `name`, plural y abreviatura. Si dos magnitudes continúan siendo posibles, se exige cualificación.
+`Severity.Critical` remains available. Units follow the same rule for magnitude, identifier, `name`, plural and abbreviation. If two values remain possible, further specification is required.
 
-## Migración
+## Migration
 
-Renombrar, cambiar de categoría o mover entre paths cambia el ancla. El tooling registra una correspondencia dirigida desde la anterior hacia la vigente. Esa correspondencia puede migrar referencias persistentes e historial, pero nunca convierte el nombre antiguo en alias admitido por el compilador.
+Renaming, changing the category or moving between paths alters the anchor. The tooling records a directed mapping from the previous one to current. This mapping can migrate persistent references and history, but never converts the old name to alias, which is supported by the compiler.
 
-El formato externo y ciclo completo del registro siguen abiertos en [[notas/preguntas/Q-014-migracion-de-anclas|Q-014]].
+The external format and the complete cycle record remain open in [[notas/preguntas/Q-014-migracion-de-anclas|Q-014]].
 
-## Grafo nominal inicial
+## Nominal graph initial
 
-Después de la resolución nominal se construye un grafo parcial sobre símbolos resueltos. El HIR nominal conserva exactamente estas familias de aristas:
+After the nominal resolution, a partial graph is constructed using resolved symbols. The Nominal HIR retains exactly these edge families:
 
-- `Owns`: propiedad o contención nominal;
-- `Specializes`: especialización nominal entre declaraciones;
-- `RefersTo`: referencia nominal cuyo origen y destino ya son símbolos resueltos.
+- `Owns`: nominal property or containment;
+- `Specializes`: nominal specialisation between declarations;
+- `RefersTo`: a nominal reference whose source and destination are already resolved symbols.
 
-Tipos y dominios efectivos, inicialización elaborada, cálculos, lecturas, escrituras, efectos, magnitudes derivadas y demás relaciones dependientes de tipos no pertenecen a esta fase. Se determinan, cuando corresponda, durante tipado y elaboración posteriores.
+Types and effective domains, elaborate initialisation, calculations, reads, writes, effects, derived magnitudes and other type-dependent relationships do not belong to this phase. They are determined, where applicable, during subsequent typing and elaboration phases.
 
-El grafo parcial no sustituye al AST ni constituye una fuente de verdad. Su finalidad es materializar exclusivamente las conclusiones de resolución nominal que deben sobrevivir como contrato entre el AST superficial y el sistema de tipos.
+The partial graph does not replace the AST nor does it constitute an source of truth. Its sole purpose is to implement the conclusions of nominal resolution that are to be retained as contract between Surface AST and the type system.
 
 ## Conformidad
 
-Una implementación conforme debe producir los mismos candidatos y anclas, rechazar el sombreado y las colisiones indicadas, conservar la procedencia y permitir reconstruir el grafo nominal desde el programa fuente.
+An conforming implementation must produce the same candidates and anchors, reject the shading and collisions indicated, preserve the provenance and allow the nominal graph to be reconstructed from the source programme.
 
-## Especialización de aliases
+## Alias specialisation
 
-Las declaraciones `alias` pueden aportar aristas de especialización. El grafo nominal conserva las antecesoras directas escritas y la clausura `is` se calcula durante elaboración. Los miembros heredados mantienen el ancla de su origen. La resolución nominal conserva las contribuciones independientes; su posible fusión por equivalencia o su resolución explícita dependen de tipado y elaboración, no del orden nominal de `as`.
+`alias` declarations can provide specialisation aspects. nominal graph retains the written direct predecessors, and the closure `is` is computed during elaboration. Inherited members retain the anchor of their origin. The nominal resolution preserves independent contributions; their possible fusion by equivalence or their explicit resolution depend on typing and elaboration, not on the nominal order of `as`.
 
 
-## Metadatos, descriptores y anclas subordinadas
+## Metadata, descriptors and subordinate anchors
 
-El acceso reflectivo `~` distingue propiedades intrínsecas y metadatos configurados: `~identifier` es el identificador fuente, `~name` es presentación configurable y todo acceso `~` es runtime-readonly. Solo poseen metadatos propios entidades semánticas estables con descriptor tipado y ancla pública: declaraciones nominales, miembros de `family`, unidades, campos, componentes y participantes. Se excluyen expresiones, cuerpos de cláusula y ambos `start with` como propietarios; el de módulo continúa sin ancla.
+Reflective access `~` distinguishes between intrinsic properties and configured metadata: `~identifier` is the source identifier, `~name` is configurable presentation, and all `~` accesses are runtime-readonly. Only stable semantic entities with descriptor typing and public anchor possess their own metadata: nominal declarations, members of `family`, units, fields, components and participants. Expressions, clause bodies and both `start with` are excluded as owners; that of module remains without anchor.
 
-Todo participante `for`, `on` y `given` tiene nombre y ancla subordinada basada en propietario, clase de cláusula e identificador. La posición no forma parte de la identidad. Los participantes son símbolos anclados; los locales ordinarios continúan como `LocalSymbol`. Los miembros heredados conservan descriptor, ancla y metadatos de su declaración original. `~metadata` enumera solo metadatos configurados, nunca propiedades intrínsecas.
+All participant `for`, `on` and `given` have a name and a subordinate anchor based on owner, a clause type and an identifier. The position is not part of identity. Participants are anchored symbols; ordinary locals remain as `LocalSymbol`. Inherited members retain descriptor, anchor and metadata from their original declaration. `~metadata` lists only configured metadata, never intrinsic properties.
 
-Cada valor `Metadata` configurado posee a su vez una ancla terminal formada añadiendo `~<identificador-metadata>` a la ancla del propietario, por ejemplo `thing::game.Person::health~description`. Esa ancla sirve para reflexión y tooling; no convierte a `Metadata` en propietario de otros metadatos.
+Each configured value `Metadata` in turn has an terminal anchor formed by adding `~<identificador-metadata>` to the anchor of the owner, for example `thing::game.Person::health~description`. That anchor is used for reflection and tooling; it does not convert `Metadata` into owner from other metadata.
 
-`Metadata` expone `~anchor`, `~path` y `~file`. Su `~path` es el path lógico de la entidad propietaria y su `~file` procede del archivo físico donde se declaró esa configuración de metadata. Entrar en `~<identificador-metadata>` cambia la identidad terminal, no el namespace lógico. Estas propiedades son intrínsecas del descriptor y no aparecen en la colección `~metadata`. `Metadata~metadata` no forma parte del contrato.
+`Metadata` specifies `~anchor`, `~path` and `~file`. Its `~path` is the logical path of the owning entity, and its `~file` comes from the physical file where that metadata configuration was declared. Entering `~<identificador-metadata>` changes the terminal identity, not the logical namespace. These properties are intrinsic to the descriptor and do not appear in the collection `~metadata`. `Metadata~metadata` is not part of the contract.
 
-## Claves locales de ramas funcionales
+## Local keys for functional branches
 
-> [!rule] MUD-NAME-006 — Sin ancla pública de rama
-> Una rama de diccionario funcional no introduce símbolo anclado, nombre público ni propietario de metadatos. Su identidad persistente es la del diccionario que la contiene.
+> [!rule] MUD-NAME-006 — Without public anchor from branch
+>  A functional dictionary branch does not introduce an anchored symbol, a public name or a metadata owner. Its persistent identity is that of the dictionary in which it is contained.
 
-Cada rama funcional posee una `decision_branch_key` estructural local al diccionario para las fases que necesiten reconstrucción o dependencias posteriores. Para una rama ordinaria, la clave es la forma canónica del selector resuelto. Dos ramas ordinarias con la misma forma canónica dentro del mismo diccionario son inválidas: compartirían la misma clave estructural local. `_` usa una clave `FallbackBranchKey` distinta y única. Esa clave no es un símbolo, no pertenece al HIR nominal y su representación mecánica posterior no se fija todavía. El ordinal fuente se conserva por separado porque participa en `FirstMatch`, pero tampoco se convierte en ancla.
+Each functional branch has a structural `decision_branch_key` local to the dictionary for phases requiring reconstruction or subsequent dependencies. For an ordinary branch, the key is the canonical form of the resolved selector. Two ordinary branches with the same canonical form within the same dictionary are invalid: they would share the same local structural key. `_` uses a distinct and unique `FallbackBranchKey` key. That key is not an symbol, does not belong to the Nominal HIR and its subsequent mechanical representation is not yet fixed. The source ordinal is retained separately because it features in `FirstMatch`, but it is not converted to anchor either.
 
-Las operaciones de tooling que requieran una referencia persistente deben dirigirse al diccionario propietario y expresar después la edición estructural de su conjunto o secuencia de ramas. `CREATE`, `UPDATE`, `REMOVE` y `MOVE` no pueden tratar una rama como entidad global independiente.
+Tooling operations requiring a persistent reference must refer to the owner dictionary and then specify the structural edition of its set or sequence of branches. `CREATE`, `UPDATE`, `REMOVE` and `MOVE` cannot treat an branch as an independent global entity.
 
-Las operaciones conjuntistas de funcionales no crean ni fusionan claves globales de rama: el nodo compuesto conserva referencias a ambos operandos y su grafo de dependencias es la unión transitiva de los dos.
+Functional join operations do not create or merge global keys of branch: the composite node retains references to both operands, and its graph dependency is the transitive union of the two.
 
-## Pertenencia de paths
+## Path ownership
 
-Sobre `MudPath`, la pertenencia usa `q has p`: es reflexiva y compara segmentos completos. La forma negativa usa `q has not p`:
+Regarding `MudPath`, the membership operator uses `q has p`: it is reflexive and compares entire segments. The negation form uses `q has not p`:
 
 ```mud
 world.combat has world.combat                  # true
@@ -256,10 +256,11 @@ world.combat has world.combatant                # false
 world.combat has not world.trade                # true
 ```
 
-## Identidad nominal exacta
+## Identity exact nominal
 
-`is` consulta la clausura de especialización; `iis` compara el tipo nominal efectivo exacto. El narrowing de `iis not` elimina una única posibilidad nominal y no elimina sus especializaciones. Esta distinción no crea anclas nuevas ni sustituye la igualdad de identidades singleton mediante `==`.
+`is` query specialisation closure; `iis` compares exact effective nominal type. The narrowing of `iis not` eliminates a single nominal possibility and does not eliminate its specialisations. This distinction does not create new anchors nor does it replace the singleton identity equality via `==`.
 
-## Módulos, `uses` y anclas
+## Modules, `uses` and anchors
 
-La pertenencia a módulo es una dimensión de visibilidad y dependencia, no un componente adicional del ancla nominal. `uses` autoriza el conocimiento del contrato de otro módulo; un `using` no concede esa autorización. La resolución cruzada solo puede alcanzar operaciones y tipos pertenecientes al cierre visible del contrato modular.
+Membership of module is a dimension of visibility and a dependency, not an additional component of the nominal anchor. `uses` authorises knowledge of the contract of another module; an `using` does not grant that authorisation. Cross-resolution can only reach operations and types belonging to the visible closure of the modular contract.
+
