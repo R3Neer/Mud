@@ -1,6 +1,6 @@
 ---
 id: Q-041
-title: Ontología de thing
+title: `thing` ontology
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -14,24 +14,24 @@ affects: []
 superseded-by: []
 ---
 
-# Q-041 — Ontología de `thing`
+# Q-041 — `thing` ontology
 
-## Contenido
+## Content
 
-Estado: **cerrada**.
+Status: **closed**.
 
-¿Cuál es la estructura matemática común de las `thing` declaradas y las activadas durante la ejecución, y qué añade `create` al mundo?
+What is the common mathematical structure of `thing` values declared and activated during execution, and what does `create` add to the world?
 
-Decisión: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]].
+Decision: [[notas/decisiones/ADR-014-ontologia-unificada-de-things|ADR-014]].
 
-MUD tiene un único dominio conceptual de `thing`. Toda `thing` concreta es una cosa con identidad y estado propio que también puede ser antecesora. Las abstractas pertenecen al mismo dominio, pero no denotan directamente una cosa concreta. D-054 precisa que las declaraciones del programa se definen canónicamente en el nivel superior; `start with` o `create Nombre` las activan sin cambiar su identidad. D-068 incorpora la raíz abstracta `Thing`, superior a todas las demás y sin ciclo de vida controlable por el programa, además de separar el `name` visible de la identidad. `is` es reflexivo y transitivo.
+MUD has one conceptual `thing` domain. Every concrete `thing` is a thing with its own identity and state that may also be an ancestor. Abstract values belong to the same domain but do not directly denote a concrete thing. D-054 specifies that programme declarations are defined canonically at the top level; `start with` or `create Name` activates them without changing identity. D-068 adds the abstract root `Thing`, above all others and with no programme-controlled lifecycle, and separates visible `name` from identity. `is` is reflexive and transitive.
 
-Las consecuencias se separaron en Q-042 y Q-043 y quedaron resueltas mediante [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
+The consequences were split into Q-042 and Q-043 and resolved by [[notas/decisiones/ADR-015-especializacion-aciclica-y-estado-independiente|ADR-015]].
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-014`, `D-015`, `D-054`, `D-068`.
