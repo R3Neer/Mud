@@ -1,6 +1,6 @@
 ---
 id: D-056
-title: "`Char`, `Text` y orden Unicode"
+title: "`Char`, `Text` and Unicode ordering"
 status: vigente
 date: 2026-07-28
 supersedes: []
@@ -8,33 +8,33 @@ superseded-by: []
 questions:
   - "Q-001"
 affects:
-  - "[[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], futuros capítulos 10 y 15"
+  - "[[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], future chapters 10 and 15"
 ---
-# ADR-056 — `Char`, `Text` y orden Unicode
+# ADR-056 — `Char`, `Text` and Unicode ordering
 
-- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Extended by: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
 
-- Modificada por: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
-- Modificada por: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
-- Cierra parcialmente: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
-- Documentos afectados: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], futuros capítulos 10 y 15
+- Amended by: [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|D-061]]
+- Amended by: [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|D-069]]
+- Partially closes: [[notas/preguntas/Q-001-gramatica-y-saltos-de-linea|Q-001]]
+- Affected documents: [[especificacion/06-lexico]], [[especificacion/07-gramatica-concreta]], future chapters 10 and 15
 
-## Contexto
+## Context
 
-Modelar `Text` literalmente como `Char [* ordered]` confundiría dos conceptos distintos:
+Modelling `Text` literally as `Char [* ordered]` would conflate two distinct concepts:
 
-1. La posición de los caracteres en un texto.
-2. La ordenación canónica de una colección.
+1. The position of characters in a text.
+2. The canonical ordering of a collection.
 
-Si ambas cosas fueran equivalentes, un texto ordinario como `"cba"` tendría que normalizarse o rechazarse por no estar ordenado.
+If they were equivalent, ordinary text such as `"cba"` would have to be normalised or rejected because it was not ordered.
 
-## Decisión
+## Decision
 
 ### `Char`
 
-`Char` es un tipo básico no numérico. Cada valor denota exactamente un valor escalar Unicode; no admite puntos de código sustitutos aislados.
+`Char` is a non-numeric basic type. Each value denotes exactly one Unicode scalar value; isolated surrogate code points are not permitted.
 
-Sus literales usan la forma ordinaria entre comillas dobles y requieren un contexto `Char`:
+Its literals use the ordinary double-quoted form and require a `Char` context:
 
 ```mud
 "a"
@@ -44,37 +44,37 @@ Sus literales usan la forma ordinaria entre comillas dobles y requieren un conte
 "\u{1F642}"
 ```
 
-Después de interpretar escapes, un literal debe contener exactamente un valor escalar Unicode. La forma `Char` exige cierre explícito y no admite interpolaciones; sin un contexto que exija `Char`, incluso `"a"` tiene tipo `Text`.
+After escape sequences have been interpreted, a literal must contain exactly one Unicode scalar value. The `Char` form requires an explicit closing quote and does not permit interpolation; without a context requiring `Char`, even `"a"` has type `Text`.
 
-ASCII es el subconjunto de Unicode comprendido entre `U+0000` y `U+007F`. No constituye un tipo separado.
+ASCII is the subset of Unicode from `U+0000` to `U+007F`. It is not a separate type.
 
-El valor predeterminado de `Char` es el escalar `U+0000`, escrito `"\u{0}"` en contexto `Char`. Es un valor ordinario de `Char`, no ausencia ni terminador de texto. MUD no introduce el escape especial `\0`; la escritura Unicode general ya expresa el valor sin importar una convención específica de C.
+The default value of `Char` is the `U+0000` scalar, written `"\u{0}"` in a `Char` context. It is an ordinary `Char` value, neither absence nor a text terminator. MUD does not introduce the special escape `\0`; the general Unicode notation already expresses the value without relying on a C-specific convention.
 
-### Orden
+### Ordering
 
-El orden natural de `Char` es el orden creciente de su valor escalar Unicode. Por tanto, en una colección:
+The natural order of `Char` is the ascending order of its Unicode scalar value. Therefore, in a collection:
 
 ```mud
 letters: Char [* ordered] = "abc"
 ```
 
-`ordered` exige ese orden canónico. Esta inicialización es inválida:
+`ordered` requires that canonical order. The following initialisation is invalid:
 
 ```mud
 letters: Char [* ordered] = "cba"
 ```
 
-`ordered by` no se admite para `Char`: no puede reemplazar su orden Unicode natural.
+`ordered by` is not permitted for `Char`: it cannot replace the natural Unicode order.
 
 ### `Text`
 
-`Text` continúa siendo un tipo básico distinto. Denota una secuencia finita de valores `Char` y conserva el orden posicional escrito:
+`Text` remains a distinct basic type. It denotes a finite sequence of `Char` values and preserves their written positional order:
 
 ```mud
 word: Text = "cba"
 ```
 
-Este valor sigue siendo `"cba"`. En particular:
+This value remains `"cba"`. In particular:
 
 $$
 \mathsf{Text}
@@ -82,30 +82,30 @@ $$
 \mathsf{Char}[\ast\ \mathsf{ordered}]
 $$
 
-`Text` puede exponer operaciones de secuencia como indexación, pertenencia, longitud e iteración sin convertirse por ello en una colección ordenada canónicamente. No admite modificadores de colección ni `ordered by`.
+`Text` may expose sequence operations such as indexing, membership, length and iteration without thereby becoming a canonically ordered collection. It does not permit collection modifiers or `ordered by`.
 
-`take n from text` produce otro `Text` formado por sus primeros `n` valores `Char`, o el texto completo si contiene menos. Es determinista porque la posición forma parte de `Text`; no convierte el resultado en `Char [* ordered]`.
+`take n from text` produces another `Text` containing its first `n` `Char` values, or the entire text if it contains fewer. It is deterministic because position is part of `Text`; it does not convert the result into `Char [* ordered]`.
 
-El operador `|` concatena valores `Text`. Los operadores conjuntistas `&`, `^` y `-` no se aplican a `Text`. Un alias nominal basado en `Text` necesita una conversión explícita a `Text` para concatenar y otra al alias de destino.
+The `|` operator concatenates `Text` values. The set operators `&`, `^` and `-` do not apply to `Text`. A nominal alias based on `Text` requires an explicit conversion to `Text` for concatenation and another conversion to the destination alias.
 
-Los literales `Text` son además plantillas conforme a D-061. Sus fragmentos literales y los valores interpolados producen una única secuencia de `Char`; esta elaboración no convierte `Text` en una colección ni introduce conversiones implícitas generales.
+Under D-061, `Text` literals are also templates. Their literal fragments and interpolated values produce a single sequence of `Char`; this elaboration neither converts `Text` into a collection nor introduces general implicit conversions.
 
-## Consecuencias
+## Consequences
 
-- El lexer incorpora una forma textual común; la elaboración estática distingue `Char` de `Text`.
-- El sistema de tipos incorpora `Char` entre los tipos básicos no numéricos.
-- La iteración de `Text` conserva posición; la enumeración de `Char [* ordered]` usa Unicode.
-- Una materialización no puede ordenar texto como efecto de su representación.
-- El orden Unicode se define por escalares, no por idioma, colación, grafema visible ni normalización cultural.
+- The lexer provides a common textual form; static elaboration distinguishes `Char` from `Text`.
+- The type system includes `Char` among the non-numeric basic types.
+- Iteration over `Text` preserves position; enumeration of `Char [* ordered]` uses Unicode ordering.
+- Materialisation cannot order text as an effect of its representation.
+- Unicode ordering is defined by scalar values, not by language, collation, visible grapheme or cultural normalisation.
 
-## Verificación
+## Verification
 
-1. Literales ASCII y no ASCII válidos.
-2. Rechazo de cero o varios escalares tras interpretar escapes.
-3. Rechazo de sustitutos Unicode aislados.
-4. Confirmación de que ASCII ocupa `U+0000`–`U+007F`.
-5. Conservación de `"cba"` como `Text`.
-6. Rechazo de `"cba"` como valor de `Char [* ordered]`.
-7. Rechazo de `ordered by` para `Char` y de modificadores de colección sobre `Text`.
-8. Predeterminado `"\u{0}"` de `Char` y rechazo de `"\0"` como escape no declarado.
-9. Conservación posicional de fragmentos literales e interpolados dentro de una plantilla.
+1. Valid ASCII and non-ASCII literals.
+2. Rejection of zero or multiple scalar values after interpreting escape sequences.
+3. Rejection of isolated Unicode surrogates.
+4. Confirmation that ASCII occupies `U+0000`–`U+007F`.
+5. Preservation of `"cba"` as `Text`.
+6. Rejection of `"cba"` as a value of `Char [* ordered]`.
+7. Rejection of `ordered by` for `Char` and of collection modifiers on `Text`.
+8. The default `"\u{0}"` for `Char`, and rejection of `"\0"` as an undeclared escape.
+9. Positional preservation of literal and interpolated fragments within a template.

@@ -67,9 +67,9 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-051 | vigente | 2026-07-28 | [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|Graph future semantics and reconstructable information]] |
 | D-052 | vigente | 2026-07-28 | [[notas/decisiones/ADR-052-pipeline-materializadores-y-conformidad|Pipelines, renderers and conformance]] |
 | D-053 | vigente | 2026-07-28 | [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|Operador semántico y flujo de autoría]] |
-| D-054 | vigente | 2026-07-28 | [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|Definiciones canónicas y activación inicial]] |
-| D-055 | vigente | 2026-07-28 | [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|Tests declarativos y diagnósticos `otherwise`]] |
-| D-056 | vigente | 2026-07-28 | [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|`Char`, `Text` y orden Unicode]] |
+| D-054 | vigente | 2026-07-28 | [[notas/decisiones/ADR-054-definiciones-canonicas-y-activacion-inicial|Canonical definitions and initial activation]] |
+| D-055 | vigente | 2026-07-28 | [[notas/decisiones/ADR-055-tests-declarativos-y-diagnosticos-otherwise|Declarative and diagnostic tests `otherwise`]] |
+| D-056 | vigente | 2026-07-28 | [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|`Char`, `Text` and Unicode ordering]] |
 | D-057 | vigente | 2026-07-28 | [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|Gramática concreta, precedencia y continuación]] |
 | D-058 | vigente | 2026-07-29 | [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|Activadores temporales, `changes` y `old` reactivo]] |
 | D-059 | vigente | 2026-07-29 | [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|Intervalos de magnitud y extremos invertidos]] |
