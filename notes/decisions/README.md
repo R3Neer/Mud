@@ -56,7 +56,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-040 | current | 2026-07-28 | [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|Semantics remaining basic numeracy]] |
 | D-041 | current | 2026-07-28 | [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|Contracts under the three types of rules]] |
 | D-042 | current | 2026-07-28 | [[notes/decisions/ADR-042-shares-root-and-results|Shares, root and results]] |
-| D-043 | current | 2026-07-28 | [[notes/decisions/ADR-043-query-especulativa-allowed|Speculative query with `allowed`]] |
+| D-043 | current | 2026-07-28 | [[notes/decisions/ADR-043-speculative-query-with-allowed|Speculative query with `allowed`]] |
 | D-044 | current | 2026-07-28 | [[notes/decisions/ADR-044-reachability-eventually|Reachability with `eventually`]] |
 | D-045 | current | 2026-07-28 | [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|Causal resolution, connections and queue]] |
 | D-046 | current | 2026-07-28 | [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|Algebra and conflicts of effects]] |
