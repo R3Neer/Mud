@@ -197,8 +197,8 @@ Comments do not emit tokens that are significant for the grammar, but are preser
 The scanner offers two synchronised views:
 
 ```text
-flujo completo      = trivia y tokens significativos en orden fuente
-flujo significativo = tokens que consume mud.ebnf
+complete stream     = trivia and significant tokens in source order
+significant stream  = tokens consumed by mud.ebnf
 ```
 
 CST is built using the complete flow. The grammar consumes the meaningful view.

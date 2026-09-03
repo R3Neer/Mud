@@ -167,7 +167,7 @@ timeline
     2005 : ReactiveML brings synchrony to higher-order ML
     2009 : Dedalus adds explicit time to Datalog
     2010 : K Framework consolidates executable semantics with tooling
-         : TLA+ ya dispone de ecosistema maduro con TLC
+         : TLA+ already has a mature ecosystem with TLC
     2011 : fUML enters as a standard basis for executable UML
     2013 : xMOF proposes executable DSMLs based on fUML
     2014 : IDP makes logic explicit as a modelling language

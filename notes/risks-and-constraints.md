@@ -48,7 +48,7 @@ Mitigation: semantics Small-scale operational testing in stages and comprehensiv
 
 ### Combinatorial explosion
 
-Multiple links, calculated fields, `allowed` y `eventually` can grow exponentially.
+Multiple links, calculated fields, `allowed` and `eventually` can grow exponentially.
 
 Mitigation: metrics, conservative analysis, transparent technical specifications and advanced features outside the core.
 
@@ -96,7 +96,7 @@ Mitigation: outline version, compatibility declared and migration evidence.
 
 Optimise for readability before stabilising the semantics leads to costly migration.
 
-Mitigation: addressing the grammar established by [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]] as a regulatory proposal subject to document lifecycle; validate real-world examples and record any changes through standardisation, decision y conformance.
+Mitigation: treat the grammar established by [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]] as a regulatory proposal subject to the document lifecycle; validate real-world examples and record any changes through standardisation, decision and conformance.
 
 ### Silent decisions during implementation
 

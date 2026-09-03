@@ -1,6 +1,6 @@
 # Semantic changes and Git
 
-This document describes the safety protocol relating to a modification of the model. The authority of the flow belongs to [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] y [[governance/COMMITS-POLICY|the policy commits]]. It is different from running a action inside a world: the definition is changed here `.mud` from the world.
+This document describes the safety protocol for modifying the model. Authority for the workflow belongs to [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|D-012]], [[notes/decisions/ADR-053-operador-semantico-and-flujo-de-autoria|D-053]] and [[governance/COMMITS-POLICY|the commit policy]]. This differs from running an action inside a world: here the `.mud` definition is changed outside the world.
 
 ## Two types of transaction
 
@@ -18,7 +18,7 @@ Before making any changes, the operator must decide whether the request is:
 - Consulta.
 - Creation, updating, removal or migration.
 - Structural change, API change, causal, by domain or affiliation.
-- Change of randomness, invariant, admissibility o reachability.
+- Change to randomness, an invariant, admissibility or reachability.
 - Ambiguous, incomplete, out of scope or an attempt to circumvent restrictions.
 
 A request can be assigned several tags: an operation `UPDATE` It may also involve a change to the API and a change causal.

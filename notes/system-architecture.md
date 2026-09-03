@@ -26,7 +26,7 @@ Natural language / CLI / editor
           nominal HIR
               │
               ▼
-      tipado + elaboración
+      typing + elaboration
               │
               ▼
  future semantic representation

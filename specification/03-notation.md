@@ -93,8 +93,8 @@ Standard connectors are used:
 | Notation | Reading |
 | --- | --- |
 | $\neg P$ | not $P$ |
-| $P\land Q$ | $P$ y $Q$ |
-| $P\lor Q$ | $P$ o $Q$ |
+| $P\land Q$ | $P$ and $Q$ |
+| $P\lor Q$ | $P$ or $Q$ |
 | $P\Rightarrow Q$ | if $P$, then $Q$ |
 | $P\Leftrightarrow Q$ | $P$ if and only if $Q$ |
 | $\forall x\in A.\ P(x)$ | for all $x$ of $A$, $P(x)$ | holds
@@ -457,13 +457,13 @@ The concrete grammar will use the following EBNF dialect:
 | Form | Meaning |
 | --- | --- |
 | `"token"` | Terminal literal |
-| `nombre` | Reference to a non-terminal production |
+| `name` | Reference to a non-terminal production |
 | `a, b` | Concatenation |
 | `a \| b` | Alternative |
 | `[ a ]` | Optional appearance |
 | `{ a }` | Zero or more occurrences |
 | `( a )` | Group |
-| `nombre = a ;` | Definition of a production |
+| `name = a ;` | Definition of a production |
 
 One or more occurrences of `a` will be written as:
 
