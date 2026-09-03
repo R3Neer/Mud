@@ -26,7 +26,7 @@ affects:
 
 MUD uses a single declarative word, `rule`, for three different mechanisms. Sharing a name must not allow for ambiguous bodies or a general variant with arbitrary combinations of clauses.
 
-## Decisión
+## Decision
 
 The AST comprises three distinct variants: Boolean rule, reactive rule and ruler `always`.
 

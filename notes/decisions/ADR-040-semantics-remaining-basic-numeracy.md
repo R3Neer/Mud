@@ -9,7 +9,7 @@ questions:
   - "Q-001"
   - "Q-019"
 affects:
-  - "futuro `06-lexicon.md`, futuro `10-sistema-de-tipos.md`, futuro `17-dominios-e-intervalos.md`"
+  - "future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`"
 ---
 # ADR-040 — Semantics remaining basic numeracy
 
@@ -18,7 +18,7 @@ affects:
 - Related questions: Q-001, Q-019
 - Documents affected: future `06-lexicon.md`, future `10-sistema-de-tipos.md`, future `17-dominios-e-intervalos.md`
 
-## Decisión
+## Decision
 
 ### Exact extensions
 

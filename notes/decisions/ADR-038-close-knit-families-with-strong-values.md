@@ -10,7 +10,7 @@ questions:
   - "Q-047"
   - "Q-061"
 affects:
-  - "futuro `13-familias-cerradas.md`"
+  - "future `13-closed-families.md`"
 ---
 # ADR-038 — Close-knit families with strong values
 
@@ -27,7 +27,7 @@ affects:
 - Related question: Q-024
 - Documents affected: future `13-familias-cerradas.md`
 
-## Decisión
+## Decision
 
 The MUD admits `family` such as declaration top-level domain independent of `thing`:
 

@@ -9,7 +9,7 @@ questions:
   - "Q-006"
   - "Q-047"
 affects:
-  - "futuro `15-colecciones.md`, futuro `16-diccionarios.md`, futuro `20-cuantificadores-e-iteracion.md`"
+  - "future `15-collections.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`"
 ---
 # ADR-039 — Collections and dictionaries
 
@@ -22,7 +22,7 @@ affects:
 - Documents affected: future `15-colecciones.md`, future `16-diccionarios.md`, future `20-cuantificadores-e-iteracion.md`
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
-## Decisión
+## Decision
 
 ### Collections
 
@@ -88,7 +88,7 @@ Therefore, the union it is idempotent even without `unique`: `A | A == A`. It is
 
 `^` requires both operands to be `unique` and applies the ordinary symmetric difference. It is not defined via the absolute difference of multiplicities because that operation is not associative. The equivalent binary form on multisets is written as `(A -- B) | (B -- A)`.
 
-#### Cardinality y domain inferred
+#### Cardinality and domain inferred
 
 Sean $[a..b]$ y $[c..d]$ the static cardinalities of $A$ y $B$. Without further information on overlap, the compiler can guarantee:
 

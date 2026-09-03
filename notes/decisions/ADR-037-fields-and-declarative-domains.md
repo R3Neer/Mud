@@ -10,7 +10,7 @@ questions:
   - "Q-017"
   - "Q-061"
 affects:
-  - "futuro `14-campos-y-mutabilidad.md`, futuro `17-dominios-e-intervalos.md`, futuro `30-restricciones-finales.md`"
+  - "future `14-fields-and-mutability.md`, future `17-domains-and-intervals.md`, future `30-final-constraints.md`"
 ---
 # ADR-037 — Fields and declarative domains
 
@@ -28,7 +28,7 @@ affects:
 - Related questions: Q-003, Q-017
 - Documents affected: future `14-campos-y-mutabilidad.md`, future `17-dominios-e-intervalos.md`, future `30-restricciones-finales.md`
 
-## Decisión
+## Decision
 
 ### Types of field
 
@@ -43,7 +43,7 @@ displayCost: Money := maintenanceCost
 
 - `=` Enter the stored load.
 - `:=` Enter a calculated, pure expression.
-- `mut` grants mutability exterior in accordance with D-019.
+- `mut` grants outer mutability in accordance with D-019.
 - Everything field denotes a collection in accordance with D-026. In a stored field immutable with an initialiser, a cardinality The omitted part can be inferred from the exact external shape of the value in accordance with D-085; in a field outwardly changeable yet enduring `[1]`.
 - `~name` belongs to the metadata space of D-087. A field ordinary roll call `name` It is part of the members’ area and makes no secret of it.
 
@@ -61,7 +61,7 @@ nombre [ forma-derivada ] := value-body
 
 where the derived form may declare type and, in accordance with D-075, domain, cardinality and modifiers for collection compatible with the result.
 
-The `mut` 'exterior' refers to the stored location and therefore precedes the name; it is neither a constructor nor a qualifier of the type. The form `nombre: mut tipo` is invalid.
+Outer `mut` refers to the stored location and therefore precedes the name; it is neither a constructor nor a qualifier of the type. The form `name: mut type` is invalid.
 
 The value explicit reference to a stored field It can be a short phrase or a `ValueBlock`, but the entire body must be capable of being assessed statically in accordance with D-066 y D-101. You can use internal temporary storage provided you do not introduce any runtime dependencies or external effects. A computed field also allows for `ValueBlock` without acquiring its own persistent storage.
 
@@ -69,7 +69,7 @@ The entry for type is optional. If omitted, the compiler infers the type static 
 
 The inference It does not apply a default priority between compatible interpretations. This includes both the representation of numeric literals and shared contextual forms. For example, `[3]` can draw up a collection the unit interval or the unit interval `[3..3]`: both forms are retained and one declaration calculated without sufficient context to allow a single choice to be made; you must note down your type. This omission is intended for common uses where the operations and dependencies of the expression determine a single type, not to ensure that every isolated expression is inferable.
 
-The computed field always keep a type static resolved, whether declared or inferred. It has no assignable charge and does not support `mut` exterior. The type Explicit nominal or structural values are checked statically. Domain, cardinality, `unique` and order declared in the derived form, whether or not type explicitly, they are coercive: they transform the result with the same semantics and normalisation as equivalent to local transformations. `[mut]` it is not a form of coercion that creates authority: it functions as an obligation based on capacity and is only fulfilled when the result It is already guaranteed at source through processing methods that preserve the identity semantics of the `thing` members.
+The computed field always has a statically resolved type, whether declared or inferred. It has no assignable storage and does not support outer `mut`. Explicit nominal or structural types are checked statically. Domain, cardinality, `unique` and order declared in the derived form are coercive: they transform the result with the same semantics and normalisation as equivalent local transformations. `[mut]` is not a coercion that creates authority; it is an obligation based on capability and is fulfilled only when the result is already guaranteed by source-preserving transformations over the `thing` members.
 
 For example, if `leftChars` has type `Char [1..5]` y `rightChars` has type `Char [0..2]`, `combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with the algebra of D-039. The result It does not acquire modifiers that the propagation rules cannot guarantee.
 

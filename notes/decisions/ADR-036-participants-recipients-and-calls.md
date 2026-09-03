@@ -10,7 +10,7 @@ questions:
   - "Q-012"
   - "Q-013"
 affects:
-  - "futuro `07-concrete-grammar.md`, futuro `19-expresiones.md`, futuros capítulos 21 a 24"
+  - "future `07-concrete-grammar.md`, future `19-expressions.md`, future chapters 21 to 24"
 ---
 # ADR-036 — Participants, recipients and calls
 
@@ -25,7 +25,7 @@ affects:
 - Related questions: Q-011, Q-012, Q-013
 - Documents affected: future `07-concrete-grammar.md`, future `19-expresiones.md`, forthcoming episodes 21 to 24
 
-## Decisión
+## Decision
 
 ### Participants and `given`
 
@@ -262,14 +262,14 @@ One call A rule does not create a general function. A request or composition of 
 12. Role `for` group with domain, cardinality and each modifier for collection.
 13. A name is required for all cardinality, including `[1]`, and for mutability outdoors.
 14. Receiver a set occupying a single position, with no implicit extension.
-15. The four combinations of mutability exterior and interior.
+15. The four combinations of outer mutability and inner capability.
 16. Acceptance of a mutable placeholder and rejection of literals or calculated expressions for `mut nombre`.
-17. Rejection of collections in `on` and from mutability exterior in minimalist buildings.
+17. Rejection of collections in `on` and of outer mutability in minimal forms.
 18. Roles `for` basic, alias, `family`, dictionary and `thing`.
 19. Link via identity, value and place.
 20. A suggestion regarding an demonstrably useless internal capacity relating to immutable values.
 21. Difference between a value subject `for` and a value auxiliary `given` of the same type.
-22. Rejection of mutability exterior and interior in `given`.
+22. Rejection of outer mutability and inner capability in `given`.
 23. Preservation of symmetrical orientations and reflexive roles in `on`.
 
 ## Amendment current by D-096

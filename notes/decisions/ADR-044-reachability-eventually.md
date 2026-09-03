@@ -13,7 +13,7 @@ questions:
   - "Q-030"
   - "Q-031"
 affects:
-  - "expresiones, alcanzabilidad, finitud, terminación"
+  - "expressions, reachability, finiteness and termination"
 ---
 # ADR-044 — Alcanzabilidad `eventually`
 
@@ -24,7 +24,7 @@ affects:
 
 `eventually` expresses a question about reachability on the subject of model. In order to ensure a decidable response, it cannot be executed on an arbitrary space.
 
-## Decisión
+## Decision
 
 ```mud
 eventually game.Checkmate(White)
@@ -41,7 +41,7 @@ The expression is true if there exists a finite sequence of accepted requests fo
 
 Each edge explored is a transition MUD complete with validation from request, root, waves, rules `always` y `after`. Rejected requests do not form edges; a failure during a transition does not become a transition valid.
 
-The participants and everyone `given` any that are to be generated must come from finite, countable domains with a canonical order. For a role `for` The ‘collective’ section lists complete collections that meet your contract, non-members holding positions of receiver separate. If the role has mutability exterior, there must also be a finite, countable and canonical set of candidate stored locations; it is not enough simply to list their current values.
+Participants and all generated `given` values must come from finite, countable domains with a canonical order. For a `for` role, the ‘collective’ section lists complete collections that meet its contract, with non-members kept separate from receiver places. If the role has outer mutability, there must also be a finite, countable and canonical set of candidate stored locations; listing only their current values is insufficient.
 
 The compiler only accepts the expression when it can be shown, conservatively, that:
 

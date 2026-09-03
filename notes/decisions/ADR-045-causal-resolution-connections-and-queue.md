@@ -11,7 +11,7 @@ questions:
   - "Q-020"
   - "Q-052"
 affects:
-  - "semántica dinámica, reglas reactivas, mensajes"
+  - "dynamic semantics, reactive rules and messages"
 ---
 # ADR-045 — Causal resolution, connections and queue
 
@@ -23,7 +23,7 @@ affects:
 
 The result MUD behaviour cannot depend on the order in which rules, files, threads or internal structures are evaluated. Reactions are organised into waves based on snapshots.
 
-## Decisión
+## Decision
 
 One resolution Follow this sequence:
 

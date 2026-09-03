@@ -23,7 +23,7 @@ affects:
 
 A rule must be able to check whether a action would be admissible without implementing a simplified version of it or altering the world.
 
-## Decisión
+## Decision
 
 ```mud
 allowed game.Move(origin, destination)
@@ -55,7 +55,7 @@ A failure it is not downgraded to ‘false’.
 
 Speculative valuation does not alter the world, the queue actions, logs, global randomness or the identifier for resolution. If chance comes into play, use a branch concrete, established and reproducible, which does not consume the branch of the actual execution.
 
-When the action declare a role `for` with mutability exterior, the receiver-the location is resolved within the speculative copy. Its effects never retain a reference to the world real.
+When an action declares a `for` role with outer mutability, its receiver place is resolved within the speculative copy. Its effects never retain a reference to the real world.
 
 `allowed` may appear in Boolean rules, `if`, `after`, `when`, rules `always` and quantifiers, always within a pure expression. The graph of departments of admissibility it must be acyclic.
 

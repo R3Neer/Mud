@@ -14,7 +14,7 @@ questions:
   - "Q-046"
   - "Q-059"
 affects:
-  - "frontera pública, efectos, solicitud de acciones, semántica de la raíz"
+  - "public boundary, effects, action requests and root semantics"
 ---
 # ADR-042 — Shares, root and results
 
@@ -29,7 +29,7 @@ affects:
 
 One action is the MUD’s writing boundary. Its contract one must distinguish between expected inadmissibility and that of a request the errors that prevent one from obtaining a state valid.
 
-## Decisión
+## Decision
 
 ```mud
 action Recruit for kingdom: Kingdom [mut]
@@ -58,7 +58,7 @@ One action:
 - one `action` o `subaction` invoked from a `then` joins the causal resolution is already active and does not open a root independent;
 - the resolution It is atomic in its entirety, together with all its waves.
 
-The participants are recipients and the `given` these are arguments in accordance with D-036 y D-063. When starting the action the roles are linked by identity, value or place, depending on its contract, their types, cardinalities and capacities are checked, and the `given` If they are omitted and their static defaults are used, they are all evaluated and validated, and then the following is evaluated `if`. A role with `mut` The exterior retains its original appearance receiver as the destination for effects and requires it to be storable and externally mutable. A `given` outside domain or a `if` False ones have no effect.
+Participants are recipients, while `given` values are arguments in accordance with D-036 and D-063. When an action starts, roles are linked by identity, value or place according to their contract; types, cardinalities and capabilities are checked. Omitted `given` values use their static defaults, which are evaluated and validated before `if`. A role with outer `mut` retains its original receiver place as the destination for effects and requires that place to be storable and externally mutable. A `given` value outside its domain or a false `if` has no effect.
 
 Within a block `then`, D-066 allows for calculated local links. They are resolved in textual order, reading the delta previous private provision, remain unchanged and do not form part of the state from the world.
 
@@ -76,7 +76,7 @@ The `after` of all the shares/subactions The executed commands are checked again
 
 `after` is evaluated after all the waves on the stable state attempt. Its falsity results in `rejected`; a error during its assessment, it produces `failed`. A error when assessing `if` o `after` is not captured by `otherwise`, which only accounts for a condition that has been correctly evaluated as false.
 
-In the context of actions and tests, `old e` read `e` in the stable state immediately prior to the action complete exterior and is only permitted within `after`. D-058 adds a different context for `old` within reactive rules, where it compares snapshots of wave.
+In the context of actions and tests, `old e` reads `e` in the stable state immediately before the action completes and is permitted only within `after`. D-058 adds a different context for `old` within reactive rules, where it compares wave snapshots.
 
 ### Results
 
@@ -114,5 +114,5 @@ The normalisation of a linear interval with inverted endpoints to `empty` is a v
 
 ## Amendment current by D-096
 
-The classification is withdrawn semantics between action elementary and compound. All `then` is an ordered sequence that can combine effects, locations, calls and `for each`. A call Internal observes the delta deprived of the point verbatim and contributes to its effects resolution. `action` retains the ability to root outdoor; `subaction` can be reused from any `then` but that can’t be right root exterior. The `after` Nested ones are evaluated against the stable state final attempt at the resolution complete.
+The distinction between elementary and compound actions is removed from the semantics. Every `then` is an ordered sequence that can combine effects, places, calls and `for each`. An internal call observes the exact delta and contributes to effect resolution. `action` retains the ability to operate at the root; `subaction` can be reused from any `then` but cannot operate at the root. Nested `after` blocks are evaluated against the final stable state of the completed resolution.
 
