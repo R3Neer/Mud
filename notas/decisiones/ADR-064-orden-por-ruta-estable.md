@@ -1,112 +1,112 @@
 ---
 id: D-064
-title: "Orden por ruta estable"
+title: "Ordering by stable path"
 status: vigente
 date: 2026-07-30
 supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "colecciones, familias, aliases, campos, tipos ordenables, normalización e iteración"
+  - "collections, families, aliases, fields, orderable types, normalisation and iteration"
 ---
-# ADR-064 — Orden por ruta estable
+# ADR-064 — Ordering by stable path
 
-- Ampliada por: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
-- Modificada por: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+- Extended by: [[ADR-081-filtrado-take-e-indexacion-de-colecciones|D-081]]
+- Amended by: [[ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
-- Modifica: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
-- Documentos afectados: colecciones, familias, aliases, campos, tipos ordenables, normalización e iteración
+- Amends: [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]]
+- Affected documents: collections, families, aliases, fields, orderable types, normalisation and iteration
 
-## Contexto
+## Context
 
-`ordered by expression` permitía una expresión arbitraria como clave. Esa libertad dificultaba:
+`ordered by expression` allowed an arbitrary expression as the key. That freedom made it difficult to:
 
-- Explicar el criterio como una propiedad del mundo.
-- Garantizar que la clave permaneciera estable.
-- Reconstruir y comparar criterios de orden.
-- Evitar cálculos equivalentes escritos de formas distintas.
+- Explain the criterion as a property of the world.
+- Guarantee that the key remained stable.
+- Reconstruct and compare ordering criteria.
+- Avoid equivalent calculations written in different ways.
 
-MUD favorece que las reglas del mundo nombren sus conceptos. Si un criterio requiere un cálculo, ese cálculo debe declararse primero como campo o dato calculado y la colección se ordena después por ese nombre.
+MUD favours rules that name the world's concepts. If a criterion requires a calculation, that calculation must first be declared as a field or computed datum, and the collection is then ordered by that name.
 
-## Decisión
+## Decision
 
-### Forma de la clave
+### Key form
 
-`ordered by` acepta exclusivamente una ruta no vacía de campos, componentes o datos asociados:
+`ordered by` accepts only a non-empty path of fields, components or associated data:
 
 ```mud
 route: Terrain [* ordered by movementCost]
 teams: Team [* ordered by captain.age]
 ```
 
-No acepta operadores, llamadas, literales, cuantificadores ni otras expresiones arbitrarias.
+It accepts no operators, calls, literals, quantifiers or other arbitrary expressions.
 
-Cada acceso intermedio debe ser singular y resolverse unívocamente sobre el elemento anterior. La ruta se interpreta desde cada miembro de la colección.
+Each intermediate access must be singular and resolve unambiguously on the preceding element. The path is interpreted from each collection member.
 
-Cuando el criterio natural sea una fórmula, se le da un nombre:
+When the natural criterion is a formula, it is given a name:
 
 ```mud
 priority := baseValue * rarityWeight
 cards: Card [* ordered by priority]
 ```
 
-En este ejemplo, `baseValue` y `rarityWeight` deben ser transitivamente inmutables.
+In this example, `baseValue` and `rarityWeight` must be transitively immutable.
 
-### Tipo ordenable
+### Orderable type
 
-El resultado final de la ruta debe poseer un orden semántico total. Una `thing` carece por sí misma de ese orden y no puede ser la clave final:
+The path's final result must have a total semantic order. A `thing` has no such order by itself and cannot be the final key:
 
 ```mud
-players: Player [* ordered by team]       # inválido si team es una thing
-players: Player [* ordered by team.name]  # puede ser válido
+players: Player [* ordered by team]       # invalid if team is a thing
+players: Player [* ordered by team.name]  # may be valid
 ```
 
-Los tipos básicos, magnitudes, familias ordenadas y aliases solo son claves cuando sus reglas de tipo les conceden un orden total. La mera existencia de `<` o `>` en otro contexto no introduce automáticamente una clave válida.
+Basic types, magnitudes, ordered families and aliases are keys only when their type rules grant them a total order. The mere existence of `<` or `>` in another context does not automatically make a valid key.
 
-### Estabilidad
+### Stability
 
-Toda la ruta debe ser estable durante la vida de la colección:
+The entire path must remain stable throughout the collection's lifetime:
 
-- Ningún campo almacenado consultado puede ser exteriormente mutable.
-- Un campo o dato calculado solo es válido si todas sus dependencias transitivas son estables.
-- Una referencia singular intermedia a una `thing` no basta por ser inmutable si algún campo posterior puede cambiar.
-- Ninguna lectura puede depender de azar, actividad cambiante ni estado cuya variación altere la clave.
+- No consulted stored field may be externally mutable.
+- A field or computed datum is valid only if all its transitive dependencies are stable.
+- An intermediate singular reference to a `thing` is not sufficient merely because it is immutable if a later field can change.
+- No read may depend on randomness, changing activity or state whose variation alters the key.
 
-La comprobación es transitiva. Si no puede demostrarse la estabilidad, la colección es inválida.
+The check is transitive. If stability cannot be demonstrated, the collection is invalid.
 
-Cuando el miembro es una unión, la ruta debe existir y permanecer singular y estable sobre todas las alternativas alcanzables. Las claves finales deben elaborar hacia un único tipo común con orden total mediante, como máximo, una ampliación implícita única. La coincidencia representacional de aliases nominales no basta. Si una alternativa necesita adaptación, se declara un campo calculado común y se ordena por él.
+When the member is a union, the path must exist and remain singular and stable for every reachable alternative. Final keys must elaborate to one common type with a total order through at most one implicit widening. Representational coincidence between nominal aliases is insufficient. If an alternative requires adaptation, declare a common computed field and order by it.
 
-### Empates
+### Ties
 
-Dos ocurrencias con la misma clave conservan su orden relativo de procedencia estable. En inserciones causalmente secuenciales ese orden coincide con el orden de inserción; cuando las inserciones son concurrentes, la procedencia se completa reproduciblemente conforme a D-100. La normalización por clave no introduce un desempate nominal, por identidad, por ancla ni por orden de declaración de una `family`.
+Two occurrences with the same key retain their stable provenance order. For causally sequential insertions this is the insertion order; when insertions are concurrent, provenance is completed reproducibly in accordance with D-100. Key normalisation does not introduce a nominal, identity, anchor or `family` declaration-order tie-breaker.
 
-Las ocurrencias repetidas de un mismo valor permanecen contiguas cuando así resulta de la clave y conservan su multiplicidad salvo `unique`.
+Repeated occurrences of the same value remain contiguous when the key gives that result and retain their multiplicity unless `unique` is used.
 
-El criterio completo de dos colecciones `ordered` solo es compatible cuando usan la misma ruta resuelta y el mismo orden del tipo final. La estabilidad relativa de empates forma parte de la procedencia de las ocurrencias, no de la identidad sintáctica de la ruta.
+The complete criterion of two `ordered` collections is compatible only when they use the same resolved path and the same order for the final type. Relative tie stability is part of occurrence provenance, not the path's syntactic identity.
 
-### Ausencias y órdenes personalizados
+### Absences and custom orders
 
-Una ruta que atraviese una cardinalidad opcional no es válida mientras MUD no defina una posición semántica para `empty` en esa clase de acceso.
+A path crossing optional cardinality is invalid until MUD defines a semantic position for `empty` in that access class.
 
-MUD 1.0 no incorpora declaraciones personalizadas de comparación ni expresiones de orden. Tampoco infiere una comparación entre `thing`. Esta decisión no añade múltiples claves ni una cláusula de desempate: los empates usan procedencia estable.
+MUD 1.0 provides no custom comparison declarations or ordering expressions. Nor does it infer a comparison between `thing` values. This decision adds neither multiple keys nor a tie-break clause: ties use stable provenance.
 
-## Consecuencias
+## Consequences
 
-- El AST conserva una ruta resuelta, no una expresión general.
-- El IR registra cada componente de la ruta, el tipo final y la prueba de estabilidad.
-- Renombrar el cálculo que define una clave obliga a actualizar la ruta, pero concentra la semántica de la fórmula en un campo explicable.
-- Los cambios de estado nunca reordenan implícitamente una colección almacenada.
-- La procedencia estable continúa siendo observable como orden relativo entre claves iguales o como orden de una colección `ordered` sin clave canónica; en secuencias no concurrentes coincide con el orden de inserción.
+- The AST retains a resolved path, not a general expression.
+- The IR records each path component, the final type and the stability proof.
+- Renaming the calculation that defines a key requires updating the path, but concentrates the formula's semantics in an explainable field.
+- State changes never implicitly reorder a stored collection.
+- Stable provenance remains observable as relative order among equal keys or as the order of an `ordered` collection without a canonical key; in non-concurrent sequences it matches insertion order.
 
-## Verificación
+## Verification
 
-1. Ruta simple sobre dato de `family`.
-2. Ruta anidada singular.
-3. Rechazo de una expresión aritmética directa y aceptación del campo calculado equivalente.
-4. Rechazo de una `thing` como clave final.
-5. Clave final básica, magnitud, familia ordenada y alias lexicográfico.
-6. Rechazo de campo mutable directo.
-7. Rechazo de dependencia mutable transitiva o de acceso intermedio inestable.
-8. Rechazo de ruta opcional sin orden de `empty`.
-9. Conservación del orden de procedencia estable entre empates, incluida concurrencia.
-10. Compatibilidad e incompatibilidad entre rutas resueltas.
+1. Simple path over `family` data.
+2. Nested singular path.
+3. Rejection of a direct arithmetic expression and acceptance of the equivalent computed field.
+4. Rejection of a `thing` as the final key.
+5. Final key of a basic type, magnitude, ordered family and lexicographic alias.
+6. Rejection of a directly mutable field.
+7. Rejection of a transitively mutable dependency or unstable intermediate access.
+8. Rejection of an optional path without an ordering for `empty`.
+9. Preservation of stable provenance order among ties, including concurrency.
+10. Compatibility and incompatibility between resolved paths.

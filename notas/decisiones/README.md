@@ -77,7 +77,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-061 | vigente | 2026-07-29 | [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|Non-accepted results and `Text` templates]] |
 | D-062 | vigente | 2026-07-29 | [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|Canonical point-magnitude literals]] |
 | D-063 | vigente | 2026-07-30 | [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|Signatures, `given` and joint `on` bindings]] |
-| D-064 | vigente | 2026-07-30 | [[notas/decisiones/ADR-064-orden-por-ruta-estable|Orden por ruta estable]] |
+| D-064 | vigente | 2026-07-30 | [[notas/decisiones/ADR-064-orden-por-ruta-estable|Ordering by stable path]] |
 | D-065 | vigente | 2026-07-30 | [[notas/decisiones/ADR-065-cabecera-using-de-fichero|Cabecera `using` de fichero]] |
 | D-066 | vigente | 2026-07-30 | [[notas/decisiones/ADR-066-valores-estaticos-y-vinculaciones-locales-en-then|Valores estáticos y vinculaciones locales en `then`]] |
 | D-067 | vigente | 2026-08-02 | [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|Nombres breves de los tipos numéricos]] |
