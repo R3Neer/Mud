@@ -107,43 +107,6 @@ GLOBAL OPTIONS
 
 * Running without arguments validates the current Mud repository.
 
-SNAPSHOT translation-check
-
-====================================================================
- MUD TRANSLATION CHECK
-====================================================================
-Run Mud's temporary translation and editorial gates.
-
-USAGE
-  python tooling/translation/check_migration.py [CANDIDATE] [--source PATH] [--r3translate PATH] [--colour MODE] [--ascii]
-
-GLOBAL OPTIONS
-  CANDIDATE                   Translated Markdown candidate to check. Default: README.md.
-  --source PATH               Optional Spanish source paired with the translated candidate.
-  --r3translate PATH          Explicit R3Translate executable. Otherwise use R3TRANSLATE or PATH.
-  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
-  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
-
-* The default candidate is README.md.
-* R3Translate remains an isolated external executable.
-
-SNAPSHOT glossary
-
-====================================================================
- MUD TRANSLATION GLOSSARY
-====================================================================
-Generate or verify the temporary human-readable translation glossary.
-
-USAGE
-  python tooling/translation/render_glossary.py [--check] [--colour MODE] [--ascii]
-
-GLOBAL OPTIONS
-  --check                     Verify the generated glossary without writing it.
-  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
-  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
-
-* Running without --check writes the generated glossary atomically.
-
 SNAPSHOT decisions-migrate
 
 ====================================================================

@@ -37,8 +37,6 @@ python governance/validate_temporaries.py --help
 python governance/validate_spec_editorial.py --help
 python specification/grammar/validate_grammar.py --help
 python specification/syntax/validate_syntax_model.py --help
-python tooling/translation/check_migration.py --help
-python tooling/translation/render_glossary.py --help
 ```
 
 Text displayed to users is in British English. Source documents, generated
@@ -50,5 +48,4 @@ language until the corresponding repository migration phase changes them.
 ```console
 python -m unittest discover -s tooling/tests
 python -m unittest discover -s governance -p "test_*.py"
-python tooling/translation/test_translation_tooling.py
 ```

@@ -17,9 +17,6 @@ tooling/.deps/
 
 # Ephemeral state and secrets for the R3Translate migration
 *.r3translate.json
-tooling/translation/candidates/
-tooling/translation/.cache/
-tooling/translation/.env*
 
 # Temporary system and editor files
 Thumbs.db

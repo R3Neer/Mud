@@ -37,4 +37,3 @@ not define the language's meaning.
 - `python governance/validate_temporaries.py`: checks the lifecycle of temporary documents.
 - `python governance/validate_spec_editorial.py`: applies the MUD-EDIT-002 mechanical barrier and checks that `Q-NNN` references agree with their statuses and with `questions:`.
 - `python governance/test_validate_spec_editorial.py`: runs the editorial barrier's regression fixtures.
-- `python tooling/translation/check_migration.py`: while the migration to English continues, combines the R3Translate profile, its generated glossary and the editorial barriers.

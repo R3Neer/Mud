@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "notes/glosario-de-traduccion-es-en.md"
+  - "temporary translation glossary and profile (removed after migration)"
   - "README.md"
   - "LICENSE"
   - "TRADEMARKS.md"

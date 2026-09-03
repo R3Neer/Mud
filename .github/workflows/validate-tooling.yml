@@ -39,9 +39,6 @@ jobs:
       - name: Run governance tests
         run: python -m unittest discover -s governance -p "test_*.py"
 
-      - name: Run translation tooling tests
-        run: python tooling/translation/test_translation_tooling.py
-
       - name: Run read-only repository gates
         run: |
           python tooling/decisions/manage_decisions.py validate --colour never --ascii
@@ -50,7 +47,6 @@ jobs:
           python governance/validate_spec_editorial.py --colour never --ascii
           python specification/grammar/validate_grammar.py --colour never --ascii
           python specification/syntax/validate_syntax_model.py --colour never --ascii
-          python tooling/translation/render_glossary.py --check --colour never --ascii
           markdown-export --colour never --ascii list-profiles --root . --config markdown-export.toml
 
       - name: Check whitespace
