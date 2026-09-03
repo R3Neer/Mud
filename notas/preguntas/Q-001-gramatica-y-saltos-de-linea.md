@@ -1,6 +1,6 @@
 ---
 id: Q-001
-title: Gramática y saltos de línea
+title: Grammar and line breaks
 priority: P0
 opened: 2026-07-29
 resolved: true
@@ -13,20 +13,20 @@ affects: []
 superseded-by: []
 ---
 
-# Q-001 — Gramática y saltos de línea
+# Q-001 — Grammar and line breaks
 
-## Contenido
+## Content
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]] y [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
+Status: **closed** by [[notas/decisiones/ADR-050-comentarios-terminadores-y-separadores-numericos|D-050]], [[notas/decisiones/ADR-056-char-texto-y-orden-unicode|D-056]] and [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]].
 
-Una instrucción termina mediante `;` o salto de línea. El salto continúa cuando el prefijo todavía no puede formar una unidad sintáctica completa pero admite una continuación válida; la sangría no interviene.
+An instruction ends with `;` or a line break. A line break continues when the prefix cannot yet form a complete syntactic unit but admits a valid continuation; indentation has no role.
 
-La sintaxis completa vive en `especificacion/gramatica/`; [[especificacion/07-gramatica-concreta]] fija precedencia, prefijos abiertos y distinciones contextuales. La recuperación de errores puede variar entre implementaciones, pero nunca amplía el lenguaje aceptado.
+The complete syntax lives in `especificacion/gramatica/`; [[especificacion/07-gramatica-concreta]] fixes precedence, open prefixes and contextual distinctions. Error recovery may vary between implementations, but never expands the accepted language.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-050`, `D-056`, `D-057`.
