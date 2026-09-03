@@ -4,7 +4,7 @@ aliases:
   - Publishing conventions
 tags:
   - mud/specification
-  - mud/normativa
+  - mud/governance
 status: proposed
 normative: true
 depends-on: []
@@ -57,14 +57,14 @@ decisions: []
 
 States:
 
-- `esqueleto`
-- `borrador`
-- `propuesta`
+- `skeleton`
+- `draft`
+- `proposed`
 - `en-revision`
-- `vigente`
-- `sustituido`
+- `current`
+- `superseded`
 
-`normative: true` classifies the file within normative surface, but does not advance its publication status. Only `status: vigente` grants established authority to chapter as unit. Prior to that state, the text may incorporate contracts already concluded by existing decisions and coherent mechanical artefacts, but it may not modify those contracts or resolve a open question on its own.
+`normative: true` classifies the file within the normative surface, but does not advance its publication status. Only `status: current` grants established authority to the chapter as a unit. Prior to that state, the text may incorporate contracts already concluded by existing decisions and coherent mechanical artefacts, but it may not modify those contracts or resolve an open question on its own.
 
 If an chapter that is not an current contradicts an current decision, the contradiction is an editorial error that must be corrected before the chapter is promoted. It is not interpreted as a tacit replacement of decision. The relation between prose and normative mechanical artefacts remains governed by MUD-EDIT-001: a divergence between the two is a defect, not an unstated rule of priority.
 
@@ -73,8 +73,8 @@ If an chapter that is not an current contradicts an current decision, the contra
 Internal links should preferably use wikilinks:
 
 ```markdown
-[[03-notation|notación matemática]]
-[[29-ondas#Configuración de una onda]]
+[[03-notation|mathematical notation]]
+[[29-waves#Wave configuration]]
 ```
 
 Each chapter must link to:
@@ -140,7 +140,7 @@ Intended use:
 > Hazardous interaction or restriction.
 
 > [!question]
-> Cuestión abierta.
+> Open question.
 
 > [!proof]
 > Demonstration.
@@ -249,9 +249,9 @@ Format:
 > [!question] Q-NNN — Title
 > Specific question, known alternatives and relevant sections.
 
-As long as a question affects the meaning of a construction, chapter cannot proceed to `vigente`.
+As long as a question affects the meaning of a construction, the chapter cannot proceed to `current`.
 
-The frontmatter `questions` lists only questions in state, `abierta` or `parcialmente-decidida`. A closed question is removed from the list without deleting its history. In-text references to active questions also follow MUD-EDIT-002.
+The frontmatter `questions` lists only questions in state `open` or `partially-decided`. A closed question is removed from the list without deleting its history. In-text references to active questions also follow MUD-EDIT-002.
 
 ## 11. Theorems and proofs
 
@@ -311,33 +311,33 @@ questions: []
 decisions: []
 ---
 
-# NN. Título
+# NN. Title
 
-## Estado y propósito
+## Status and purpose
 
 ## Dependencias
 
-## Terminología
+## Terminology
 
-## Definiciones
+## Definitions
 
 ## Sintaxis concreta
 
 ## Sintaxis abstracta
 
-## Reglas estáticas
+## Static rules
 
-## Semántica
+## Semantics
 
-## Propiedades
+## Properties
 
 ## Ejemplos
 
-## Contraejemplos
+## Counterexamples
 
-## Diagnósticos
+## Diagnostics
 
-## Cuestiones abiertas
+## Open questions
 ```
 
 Sections that do not apply may be omitted.
