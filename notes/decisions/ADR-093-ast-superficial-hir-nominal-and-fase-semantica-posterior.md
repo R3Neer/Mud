@@ -14,7 +14,7 @@ affects:
 
 - Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 - Modified by: [[ADR-097-hir-nominal-vigente-and-ir-semantico-diferido|D-097]].
-- Clarifies: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-090-ramas-funcionales-sin-ancla-publica|D-090]] and [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
+- Clarifies: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]], [[ADR-090-functional-branches-without-public-anchor|D-090]] and [[ADR-091-datos-de-family-como-descriptores-anclados|D-091]].
 
 ## Context
 
