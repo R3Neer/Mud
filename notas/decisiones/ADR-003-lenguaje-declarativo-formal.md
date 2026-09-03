@@ -1,6 +1,6 @@
 ---
 id: D-003
-title: "MUD es un lenguaje declarativo formal"
+title: "MUD is a formal declarative language"
 status: vigente
 date: 2026-07-27
 supersedes: []
@@ -11,23 +11,24 @@ affects:
   - "interacción del operador semántico"
 ---
 
-# ADR-003 — MUD es un lenguaje declarativo formal
+# ADR-003 — MUD is a formal declarative language
 
-## Contexto
+## Context
 
-La interacción principal puede comenzar en lenguaje natural, pero usar esa
-conversación como representación persistente introduciría ambigüedad y
-significado invisible.
+The main interaction may begin in natural language, but using that
+Treating conversation as a persistent representation would introduce ambiguity and
+hidden meaning.
 
 ## Decisión
 
-MUD es un lenguaje declarativo formal, no un lenguaje natural controlado. La
-persona o una herramienta pueden expresar una intención en lenguaje natural,
-pero el resultado duradero debe convertirse en operaciones comprobables y en
-fuente `.mud` conforme.
+MUD is a formal declarative language, not a controlled natural language. The
+a person or a tool can express an intention in natural language,
+but the result Sustainability must translate into verifiable actions and into
+source `.mud` Agreed.
 
-## Consecuencias
+## Consequences
 
-- El lenguaje natural es una interfaz de autoría, no la fuente del mundo.
-- El operador no puede inventar silenciosamente reglas ausentes.
-- D-053 define el flujo de interpretación, impacto, validación y commit.
+- Natural language is an authoring interface, not the source of the world.
+- The operator cannot quietly make up rules that do not exist.
+- D-053 defines the process of interpretation, impact, validation and commit.
+

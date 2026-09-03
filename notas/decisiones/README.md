@@ -19,9 +19,9 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 
 | ID | Estado | Fecha | Decisión |
 | --- | --- | --- | --- |
-| D-001 | vigente | 2026-07-27 | [[notas/decisiones/ADR-001-fuente-semantica-mud|`.mud` como fuente semántica de verdad]] |
-| D-002 | vigente | 2026-07-27 | [[notas/decisiones/ADR-002-dominio-no-arquitectura-de-aplicacion|MUD describe dominio, no arquitectura de aplicación]] |
-| D-003 | vigente | 2026-07-27 | [[notas/decisiones/ADR-003-lenguaje-declarativo-formal|MUD es un lenguaje declarativo formal]] |
+| D-001 | vigente | 2026-07-27 | [[notas/decisiones/ADR-001-fuente-semantica-mud|`.mud` as a source semantics really]] |
+| D-002 | vigente | 2026-07-27 | [[notas/decisiones/ADR-002-dominio-no-arquitectura-de-aplicacion|MUD describes domain, not application architecture]] |
+| D-003 | vigente | 2026-07-27 | [[notas/decisiones/ADR-003-lenguaje-declarativo-formal|MUD is a formal declarative language]] |
 | D-006 | vigente | 2026-07-27 | [[notas/decisiones/ADR-006-pureza-y-frontera-de-escritura|Pureza de reglas booleanas y frontera de escritura]] |
 | D-007 | vigente | 2026-07-27 | [[notas/decisiones/ADR-007-ondas-sobre-instantaneas|Resolución causal por ondas sobre instantáneas]] |
 | D-008 | vigente | 2026-07-27 | [[notas/decisiones/ADR-008-resultados-de-accion|Resultados `accepted`, `rejected` y `failed`]] |
