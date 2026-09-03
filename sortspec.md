@@ -1,5 +1,5 @@
 ---
-title: Obsidian Explorer Command
+title: Obsidian Explorer ordering
 tags:
   - mud/gobierno
   - mud/obsidian
@@ -37,31 +37,30 @@ sorting-spec: |
    < a-z
 ---
 
-# Obsidian Scout Order
+# Obsidian Explorer ordering
 
-This note configures `Custom File Explorer sorting` with one general rule and two
-specific editorial instructions:
+This note configures `Custom File Explorer sorting` with one general rule and
+two specific editorial orderings:
 
--  in any folder, `README.md` appears first and the `.base` files
-  immediately afterwards, listed in alphabetical order if there is more than one;
+- in any folder, `README.md` appears first and `.base` files immediately
+  afterwards, in alphabetical order when there is more than one;
+- at the root, documentation surfaces come first, followed by technical support;
+- in `gobierno/`, the policies governing decisions and questions come first.
 
--  in the root, first the documentary aspects and then the technical support;
--  in `gobierno/`, first the policies that govern decisions and queries.
+Specification folders, ADRs and questions retain their natural identifier
+order. Their prefixes are part of portable navigation and must not be removed
+solely to improve their presentation in Obsidian.
 
-The folders for specification, the ADRs and the questions remain in the same order
-natural by identifier. Their prefixes form part of portable navigation
-and they should not be removed simply to improve the presentation in Obsidian.
+## Local configuration
 
-## Local settings
-
-The plugin is installed and activated as follows:
+Install and enable the plugin with:
 
 ```powershell
 obsidian plugin:install id=custom-sort enable
 ```
 
-The configuration of `.obsidian/` is not versioned. To prevent dependencies and
-To prevent generated outputs from skewing search results, the local vault excludes at least the following:
+The `.obsidian/` configuration is not versioned. To keep dependencies and
+generated output out of searches, the local vault excludes at least:
 
 ```text
 exports/
@@ -71,4 +70,3 @@ tooling/.deps/
 /coverage/
 /.wrangler/
 ```
-

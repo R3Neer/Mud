@@ -1,40 +1,40 @@
 ---
-title: Governance from the MUD project
+title: MUD project governance
 aliases:
-  - Gobierno
+  - MUD governance
 tags:
   - mud/gobierno
 status: vigente
 ---
 
-# Governance from the MUD project
+# MUD project governance
 
-This directory contains processes that govern the project’s development, but do not define the meaning of the language.
+This directory contains processes that govern the project's evolution, but do
+not define the language's meaning.
 
 ## Documents
 
-- [[POLITICA-DE-COMMITS|Policy commits]]
-- [[POLITICA-DE-ARCHIVOS-TEMPORALES|Policy of temporary files]]
-- [[temporales.base|Overview of active storms]]
-- [[CICLO-DOCUMENTAL|Ciclo documental]]
-- [[POLITICA-DE-DECISIONES|Policy decisions]]
-- [[POLITICA-DE-PREGUNTAS|Policy questions]]
-- [[notas/decisiones/README|Index generated from decisions]]
+- [[POLITICA-DE-COMMITS|Commit policy]]
+- [[POLITICA-DE-ARCHIVOS-TEMPORALES|Temporary-file policy]]
+- [[temporales.base|Active-temporaries view]]
+- [[CICLO-DOCUMENTAL|Document lifecycle]]
+- [[POLITICA-DE-DECISIONES|Decision policy]]
+- [[POLITICA-DE-PREGUNTAS|Question policy]]
+- [[notas/decisiones/README|Generated decision index]]
 
-## Separation of powers
+## Separation of authorities
 
 | Directory | Authority |
 | --- | --- |
-| `especificacion/` | Language standards and criteria for conformance |
-| `notas/` | Non-regulatory analysis, risks and planning |
-| `notas/decisiones/` | Provenance and cycle on decision-making |
-| `notas/preguntas/` | Outstanding uncertainties and traceability their resolution |
-| `gobierno/` | Editorial and change control processes |
+| `especificacion/` | Language rules and conformance criteria |
+| `notas/` | Non-normative analysis, risks and planning |
+| `notas/decisiones/` | Decision provenance and lifecycle |
+| `notas/preguntas/` | Open uncertainties and traceability of their closure |
+| `gobierno/` | Editorial and change-control processes |
 
 ## Validators
 
-- `python gobierno/validate_temporaries.py`: checks the cycle retention period for temporary documents.
-- `python gobierno/validate_spec_editorial.py`: applies the mechanical barrier from MUD-EDIT-002 and checks that the references `Q-NNN` are consistent with their states and with `questions:`.
-- `python gobierno/test_validate_spec_editorial.py`: runs the regression fixtures for the publishing barrier.
-- `python tooling/translation/check_migration.py`: whilst the migration to English is underway, combine the R3Translate profile, its generated glossary and the editorial barriers.
-
+- `python gobierno/validate_temporaries.py`: checks the lifecycle of temporary documents.
+- `python gobierno/validate_spec_editorial.py`: applies the MUD-EDIT-002 mechanical barrier and checks that `Q-NNN` references agree with their statuses and with `questions:`.
+- `python gobierno/test_validate_spec_editorial.py`: runs the editorial barrier's regression fixtures.
+- `python tooling/translation/check_migration.py`: while the migration to English continues, combines the R3Translate profile, its generated glossary and the editorial barriers.
