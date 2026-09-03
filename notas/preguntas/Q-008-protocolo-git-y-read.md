@@ -1,6 +1,6 @@
 ---
 id: Q-008
-title: Protocolo Git y READ
+title: Git and READ protocol
 priority: P0
 opened: 2026-07-29
 resolved:
@@ -11,12 +11,12 @@ affects: []
 superseded-by: []
 ---
 
-# Q-008 — Protocolo Git y `READ`
+# Q-008 — Git and `READ` protocol
 
-## Contenido
+## Content
 
-¿Qué operaciones producen commit? Propuesta: consultas `READ` no; CREATE, UPDATE, RETIRE y migraciones sí.
+Which operations produce a commit? Proposal: `READ` queries do not; `CREATE`, `UPDATE`, `RETIRE` and migrations do.
 
-Estado: **parcialmente decidida** mediante [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+Status: **partially decided** by [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
 
-Las consultas `READ` puras no producen commit y todo cambio confirmado se limita al plan sin descartar trabajo ajeno. Falta fijar el formato estable del mensaje, el aislamiento técnico y qué derivados se versionan.
+Pure `READ` queries produce no commit, and every confirmed change is limited to the plan without discarding other work. The stable message format, technical isolation and which derived artefacts are versioned remain to be fixed.
