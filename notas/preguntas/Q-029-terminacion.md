@@ -1,6 +1,6 @@
 ---
 id: Q-029
-title: Terminación
+title: Termination
 priority: P2
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-029 — Terminación
+# Q-029 — Termination
 
-## Contenido
+## Content
 
-Qué clases de acciones y reglas puede certificar el compilador.
+Which classes of actions and rules can the compiler certify?
