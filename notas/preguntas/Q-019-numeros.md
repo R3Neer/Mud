@@ -1,6 +1,6 @@
 ---
 id: Q-019
-title: Números
+title: Numbers
 priority: P1
 opened: 2026-07-29
 resolved:
@@ -17,14 +17,14 @@ affects: []
 superseded-by: []
 ---
 
-# Q-019 — Números
+# Q-019 — Numbers
 
-## Contenido
+## Content
 
-Estado de la premisa: **parcialmente decidida** mediante [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]], [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|D-067]] y [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]].
+Premise status: **partially decided** by [[notas/decisiones/ADR-028-sistema-de-magnitudes-y-unidades|D-028]], [[notas/decisiones/ADR-030-conversion-cuantitativa-explicita|D-030]], [[notas/decisiones/ADR-034-number-exacto-y-rumber-binary64|D-034]], [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]], [[notas/decisiones/ADR-067-nombres-breves-de-tipos-numericos|D-067]] and [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]].
 
-`Nat`, `Int`, `Num`, `Rum` y `Money` son representaciones numéricas básicas. `Num` es racional exacto; `Rum` es `binary64`; no se mezclan implícitamente. `Money` usa decimal exacto de escala dos, no tiene sufijo literal y aplica el redondeo global al más cercano con empates al par. La ampliación exacta ordinaria sigue `Nat → Int → Num`. La resta pura de naturales satura en cero; los efectos aditivos suman deltas firmados antes de una única normalización. D-080 eleva la aritmética sobre colecciones cuando al menos un operando tiene límite superior uno y hace `empty` absorbente. Falta fijar:
+`Nat`, `Int`, `Num`, `Rum` and `Money` are basic numeric representations. `Num` is exact rational; `Rum` is `binary64`; they are not implicitly mixed. `Money` uses exact decimal scale two, has no literal suffix and applies global round-to-nearest, ties-to-even. Ordinary exact widening follows `Nat → Int → Num`. Pure natural subtraction saturates at zero; additive effects sum signed deltas before one normalisation. D-080 lifts arithmetic over collections when at least one operand has upper bound one and makes `empty` absorbing. The following remain to be fixed:
 
-- Los límites de representación y overflow de `Nat`, `Int` y `Money`.
-- La matriz completa de inferencia de `Money` frente a otras representaciones y magnitudes.
-- Los fallos aritméticos no cubiertos expresamente por D-034.
+- Representation limits and overflow for `Nat`, `Int` and `Money`.
+- The complete inference matrix for `Money` against other representations and magnitudes.
+- Arithmetic failures not expressly covered by D-034.
