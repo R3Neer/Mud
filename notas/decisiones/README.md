@@ -85,7 +85,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-069 | vigente | 2026-08-02 | [[notas/decisiones/ADR-069-literales-char-con-comillas-dobles|`Char` literals with double quotes]] |
 | D-070 | vigente | 2026-08-02 | [[notas/decisiones/ADR-070-cst-sin-perdidas-y-ast-superficial-normalizado|Lossless CST and normalised surface AST]] |
 | D-071 | vigente | 2026-08-02 | [[notas/decisiones/ADR-071-vinculaciones-locales-en-bloques-booleanos|Local bindings in Boolean blocks]] |
-| D-072 | vigente | 2026-08-02 | [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|Entornos de resolución y migraciones explícitas de anclas]] |
+| D-072 | vigente | 2026-08-02 | [[notas/decisiones/ADR-072-entornos-de-resolucion-y-migraciones-explicitas-de-anclas|Resolution environments and explicit anchor migrations]] |
 | D-073 | vigente | 2026-08-02 | [[notas/decisiones/ADR-073-as-thing-explicito-redundante|`as Thing` explícito válido pero redundante]] |
 | D-074 | vigente | 2026-08-03 | [[notas/decisiones/ADR-074-uniones-nominales-y-estrechamiento|Uniones nominales y estrechamiento de tipos]] |
 | D-075 | vigente | 2026-08-03 | [[notas/decisiones/ADR-075-dominios-enumerables-all-y-valores-derivados|Dominios enumerables, `all` y forma de valores derivados]] |

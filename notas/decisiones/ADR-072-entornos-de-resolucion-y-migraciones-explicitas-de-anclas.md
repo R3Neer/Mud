@@ -1,6 +1,6 @@
 ---
 id: D-072
-title: "Entornos de resolución y migraciones explícitas de anclas"
+title: "Resolution environments and explicit anchor migrations"
 status: vigente
 date: 2026-08-02
 supersedes: []
@@ -8,75 +8,75 @@ superseded-by: []
 questions:
   - "Q-014"
 affects:
-  - "nombres cualificados, ámbitos, anclas, diagnósticos, migraciones, futuro capítulo 09 y tooling"
+  - "qualified names, scopes, anchors, diagnostics, migrations, future chapter 09 and tooling"
 ---
-# ADR-072 — Entornos de resolución y migraciones explícitas de anclas
+# ADR-072 — Resolution environments and explicit anchor migrations
 
-- Amplía: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]]
-- Ampliada por: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
-- Ajustada a la frontera de fases de [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
-- Decide parcialmente: [[../preguntas/Q-014-migracion-de-anclas|Q-014]]
+- Extends: [[ADR-035-organizacion-nombres-using-y-anclas|D-035]]
+- Extended by: [[ADR-078-resolucion-nominal-anclas-y-grafo-inicial|D-078]]
+- Adjusted to the phase boundary of [[ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+- Partially decides: [[../preguntas/Q-014-migracion-de-anclas|Q-014]]
 
-## Contexto
+## Context
 
-La separación entre CST, AST superficial, resultados de resolución nominal y fases posteriores de tipado y elaboración exige fijar cómo se representan ámbitos y candidatos. También debe distinguirse qué nombres poseen identidad semántica persistente y qué nombres solo vinculan valores dentro de una declaración.
+Separating the CST, surface AST, nominal-resolution results and later typing and elaboration phases requires fixing how scopes and candidates are represented. It must also distinguish names with persistent semantic identity from names that merely bind values within a declaration.
 
-Las anclas legibles cambian cuando cambia el nombre cualificado de una declaración. Debe conservarse trazabilidad sin convertir el nombre antiguo en un alias fuente silencioso.
+Readable anchors change when a declaration's qualified name changes. Traceability must be retained without turning the old name into a silent source alias.
 
-## Decisión
+## Decision
 
-### Espacios de nombres
+### Name spaces
 
-Todas las declaraciones superiores comparten un único espacio de nombres nominal, con independencia de su categoría. Dentro de un mismo path de MUD no pueden coexistir dos declaraciones con el mismo nombre nominal, aunque una sea `thing` y otra `action`, `rule` u otra categoría.
+All top-level declarations share one nominal namespace, regardless of category. Within one MUD path, two declarations may not have the same nominal name, even if one is a `thing` and the other an `action`, `rule` or another category.
 
-Los campos se identifican dentro de su propietario y pueden repetir su nombre en propietarios distintos. Su ancla incorpora el ancla del propietario. Los demás miembros anidados obedecen el ámbito de su declaración propietaria.
+Fields are identified within their owner and may repeat their name in different owners. Their anchor includes the owner's anchor. Other nested members obey the scope of their owning declaration.
 
-Roles, `given`, variables de iteración y vinculaciones locales son símbolos léxicos sin ancla. Pueden repetir nombre en declaraciones o bloques independientes, pero no dentro de un mismo ámbito ni mediante sombreado de un nombre visible.
+Roles, `given` parameters, iteration variables and local bindings are lexical symbols without anchors. They may reuse names in independent declarations or blocks, but not within one scope or by shadowing a visible name.
 
-### Modelo normativo de resolución
+### Normative resolution model
 
-La norma define la resolución mediante entornos y conjuntos de candidatos ordenados. Para un nombre no cualificado se consulta, por niveles, el ámbito léxico, el propietario correspondiente, el mismo path de MUD, los `using` exactos y los `using` recursivos. Se toma el primer nivel no vacío y se exige un único candidato compatible con la categoría requerida.
+The specification defines resolution through environments and ordered candidate sets. For an unqualified name, levels are consulted in order: lexical scope, the relevant owner, the same MUD path, exact `using` declarations and recursive `using` declarations. The first non-empty level is selected, and exactly one candidate compatible with the required category is required.
 
-Los scope graphs pueden usarse como representación de implementación o explicación, pero no son la autoridad normativa de MUD 1.0. Una implementación debe conservar los mismos candidatos, prioridades, ambigüedades y rechazos definidos por los juicios de resolución.
+Scope graphs may be used as an implementation or explanatory representation, but are not the normative authority of MUD 1.0. An implementation must preserve the same candidates, priorities, ambiguities and rejections defined by the resolution judgements.
 
-### Referencias diagnósticas
+### Diagnostic references
 
-Un símbolo sin ancla puede describirse combinando el ancla de su propietario con una etiqueta humana:
+A symbol without an anchor may be described by combining its owner's anchor with a human label:
 
 ```text
 action::game.Heal - given amount
 ```
 
-La escritura completa es información diagnóstica, no una ancla nueva. Cuando existe fuente disponible, el span continúa siendo la localización principal.
+The complete spelling is diagnostic information, not a new anchor. When source is available, the span remains the primary location.
 
-### Migración de anclas
+### Anchor migration
 
-MUD conserva anclas legibles derivadas de categoría y nombre cualificado. Un cambio de path, nombre o categoría cambia el ancla. El tooling registra explícitamente una correspondencia dirigida entre el ancla anterior y la nueva para migrar referencias persistentes, historial y datos asociados.
+MUD retains readable anchors derived from category and qualified name. A path, name or category change changes the anchor. Tooling explicitly records a directed correspondence between the old and new anchors to migrate persistent references, history and associated data.
 
 ```text
 thing::world.people.Person
 → thing::world.characters.Person
 ```
 
-La correspondencia no convierte el ancla antigua en alias admitido por la resolución ordinaria de código fuente. El compilador del programa actualizado produce y resuelve únicamente el ancla vigente.
+The correspondence does not turn the old anchor into an alias accepted by ordinary source resolution. The updated programme produces and resolves only the current anchor.
 
-Q-014 permanece parcialmente decidida hasta fijar el formato y ubicación del registro, composición de varias migraciones, colisiones, periodo de conservación y aplicación concreta sobre mundos persistidos.
+Q-014 remains partially decided pending the format and location of the record, composition of multiple migrations, collisions, retention period and concrete application to persisted worlds.
 
-## Consecuencias
+## Consequences
 
-- Una categoría esperada nunca permite reutilizar un nombre superior ya ocupado.
-- Los símbolos efímeros no contaminan el espacio global de anclas.
-- La resolución puede especificarse y probarse sin imponer una estructura interna al compilador.
-- Los movimientos mantienen trazabilidad mediante una operación explícita de tooling.
-- La compatibilidad histórica no altera silenciosamente el significado del código fuente.
+- An expected category never permits reusing an occupied top-level name.
+- Ephemeral symbols do not pollute the global anchor space.
+- Resolution can be specified and tested without imposing an internal compiler structure.
+- Moves retain traceability through an explicit tooling operation.
+- Historical compatibility does not silently alter source-code meaning.
 
-## Verificación
+## Verification
 
-1. Rechazo de dos declaraciones superiores homónimas de igual o distinta categoría dentro del mismo path.
-2. Campos homónimos válidos en propietarios distintos y anclas propietarias distintas.
-3. Ausencia de ancla para roles, `given`, iteradores y locales.
-4. Reutilización de un nombre local en ámbitos independientes.
-5. Determinismo e independencia del orden físico mediante niveles de candidatos.
-6. Diagnóstico descriptivo de un símbolo local sin fabricar una ancla.
-7. Cambio de ancla al renombrar o mover entre paths.
-8. Migración explícita de referencias persistentes sin alias fuente implícito.
+1. Rejection of two homonymous top-level declarations of the same or different category in one path.
+2. Homonymous fields valid in different owners, with different owner anchors.
+3. No anchor for roles, `given`, iterators or locals.
+4. Reuse of a local name in independent scopes.
+5. Determinism and independence from physical order through candidate levels.
+6. Descriptive diagnostic for a local symbol without fabricating an anchor.
+7. Anchor change when renaming or moving between paths.
+8. Explicit migration of persistent references without an implicit source alias.
