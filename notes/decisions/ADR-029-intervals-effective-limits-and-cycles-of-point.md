@@ -13,7 +13,7 @@ affects:
 ---
 # ADR-029 — Intervals, effective limits and cycles of point
 
-- Amended by: [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]], [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]], [[notes/decisions/ADR-062-canonical-point-magnitude-literals|D-062]] y [[ADR-082-cycle-as-point-domain-modifier|D-082]]
+- Amended by: [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]], [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]], [[notes/decisions/ADR-062-canonical-point-magnitude-literals|D-062]] and [[ADR-082-cycle-as-point-domain-modifier|D-082]]
 - Related questions: Q-018, [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]]
 - Documents affected: future `15-colecciones.md`, future `17-dominios-e-intervalos.md`, future `18-magnitudes.md`
 

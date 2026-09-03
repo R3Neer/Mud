@@ -74,9 +74,9 @@ The relation direct is acyclic; its reflexive and transitive closure is a partia
 
 It is ruled out. It forces a decision on whether a `thing` It is a class or an object and does not represent just one `thing` a particular thing can be both one thing and another ancestor.
 
-### Just one word for declaration y query
+### One word for declaration and query
 
-This is ruled out. Even if the parser were able to distinguish between the contexts, it would obscure the difference between adding a direct edge and checking for a closure. The syntax current use `as` e `is`, in accordance with [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|ADR-018]] y D-025.
+This is ruled out. Even if the parser could distinguish the contexts, it would obscure the difference between adding a direct edge and checking for a closure. The current syntax uses `as` and `is`, in accordance with [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|ADR-018]] and D-025.
 
 ### `is` strict and thoughtless
 

@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-031 — Nominal aliases, immutable and without cycle of life
 
-- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] y [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
+- Amended by: [[notes/decisions/ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Expanded by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]]
 
 - Related to: [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]]

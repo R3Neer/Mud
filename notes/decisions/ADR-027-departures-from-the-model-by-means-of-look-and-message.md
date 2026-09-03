@@ -10,14 +10,14 @@ questions:
   - "Q-051"
   - "Q-052"
 affects:
-  - "futuro `22-looks-y-messages.md`, futuro `42-api-publica.md`"
+  - "future `22-looks-and-messages.md`, future `42-public-api.md`"
 ---
 # ADR-027 — Departures from the model by means of `look` and `message`
 
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Subsequently amended by: [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
 - Open questions: Q-051, Q-052
-- Documents affected: future `22-looks-y-messages.md`, future `42-api-publica.md`
+- Documents affected: future `22-looks-and-messages.md`, future `42-public-api.md`
 
 ## Context
 
@@ -116,7 +116,7 @@ Still to be decided:
 - If a single relationship can result in one or more occurrences during a action.
 - How different messages and multiple occurrences are sorted.
 - If duplicate detections are deduplicated.
-- What happens with a detection if the action end `rejected` o `failed`.
+- What happens to a detection if the action ends as `rejected` or `failed`.
 - What happens if a participant becomes inactive before the stable state.
 - If you keep it `if` It is assessed upon detection, upon stabilisation, or at both stages.
 
@@ -124,7 +124,7 @@ Until further notice Q-052, the standard merely stipulates that the published fi
 
 ## Consequences
 
-- The AST incorporates `LookDecl`, `MessageDecl` y `PublicFieldDecl`.
+- The AST incorporates `LookDecl`, `MessageDecl` and `PublicFieldDecl`.
 - The runtime requires a queue transactional record of pending incidents, separate from any specific bus or transport service.
 - The graph Semantic incorporates reading dependencies from public expressions.
 - Messages must not manifest as external effects before the resolution can be verified.

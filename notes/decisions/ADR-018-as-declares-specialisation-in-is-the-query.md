@@ -47,7 +47,7 @@ E is B
 The conceptual forms are:
 
 ```text
-[abstract] thing nombre [as lista-de-antecesores] bloque
+[abstract] thing name [as ancestor-list] body
 ```
 
 The list following `as` is finite and its position does not indicate priority. A declaration without `as` It retains zero declared predecessors and semantically receives the root incorporated `Thing`. D-073 supports `as Thing` It is explicitly identified as non-blocking redundancy and it is suggested that it be removed.
@@ -77,7 +77,7 @@ Therefore:
 
 ## Consequences
 
-- The lexer reserves `as` e `is`; `abstract` is contextual before `thing`, in accordance with D-054; `construct` it is not reserved word y `from` It does not introduce specialisation.
+- The lexer reserves `as` and `is`; `abstract` is contextual before `thing`, in accordance with D-054; `construct` is not reserved, and `from` does not introduce specialisation.
 - The AST uses a list of predecessors in `ThingDecl`; `CreateReference` It contains neither antecedents nor a body.
 - The absence of predecessors in `ThingDecl` is preserved in the AST; the edge towards `Thing` is added during the elaboration semantics.
 - `IsExpression` is the node associated with the query `is`.

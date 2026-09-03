@@ -61,7 +61,7 @@ The shape `field = value` does not declare a field. You should contact a stored 
 
 One `thing` abstract does not materialise own stored data, but their initialisers form part of the specialisation and may contribute to the first materialisation of a specific descendant. For the same field, an initialiser declared in a more specific descendant overrides the less specific inherited initialisers. If the same original initialiser reaches a descendant via several paths in a diamond, it is deduplicated by origin; independent and incomparable initialisers that compete for the same field produce conflict, with no priority based on the written order of `as`, in accordance with D-084.
 
-When you first activate a `thing` specifically through `start with` o:
+When you first activate a specific `thing` through `start with` or:
 
 ```mud
 create N

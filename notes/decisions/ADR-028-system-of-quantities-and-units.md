@@ -15,7 +15,7 @@ affects:
 ---
 # ADR-028 — System of quantities and units
 
-- Amended by: [[notes/decisions/ADR-034-num-exactly-and-rum-binary64|D-034]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] y [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
+- Amended by: [[notes/decisions/ADR-034-num-exactly-and-rum-binary64|D-034]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] and [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
 - Expanded by: [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]]
 - Related questions: Q-019, Q-034, Q-054, [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]]
 - Documents affected: future `10-sistema-de-tipos.md`, future `18-magnitudes.md`, future `19-expresiones.md`

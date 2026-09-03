@@ -35,7 +35,7 @@ are interpreted by the source, but do not form part of the state of a world MUD.
 - An implementation must be able to reconstruct its derivatives from the source.
 - Lasting meaning cannot lie solely in prompts, caches or
   manual code.
-- D-011, D-051 y D-052 specify the terms of the derivatives contracts.
+- D-011, D-051 and D-052 specify the terms of the derived contracts.
 
 ## Verification
 

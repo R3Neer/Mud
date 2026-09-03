@@ -285,7 +285,7 @@ One declaration introduced by `create` does not capture free variables from the 
 
 You may declare and use:
 
-- Its own participants `on` o `for`.
+- Its own participants `on` or `for`.
 - Their own values `given` when their rule class permits it.
 - Resolvable global names and anchors.
 
