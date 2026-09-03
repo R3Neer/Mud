@@ -1,5 +1,5 @@
 ---
-title: Sintaxis abstracta superficial
+title: Abstract syntax superficial
 aliases:
   - AST superficial
   - Surface AST
@@ -52,17 +52,17 @@ decisions:
   - D-098
 ---
 
-# 08. Sintaxis abstracta superficial
+# 08. Abstract syntax superficial
 
-## Estado y propósito
+## State and purpose
 
-Este capítulo define el AST superficial normalizado de MUD 1.0. El AST conserva las distinciones sintácticas que afectan a fases posteriores y elimina puntuación, trivia, agrupaciones concretas y azúcares cuya interpretación no depende de resolución de nombres o tipos.
+This chapter defines the Surface AST standardised MUD 1.0. The AST preserves the syntactic distinctions that affect subsequent stages and removes punctuation, trivia, specific groups and sugars whose interpretation does not depend on name resolution or types.
 
-El esquema mecánico normativo es [[mud-surface-ast]]. Este capítulo explica sus invariantes y la frontera con otras representaciones.
+The standard mechanical diagram is [[mud-surface-ast]]. This chapter explains its invariants and how it relates to other representations.
 
-La resolución nominal opera sobre este AST y produce el HIR normativo `nombres/mud-nominal-hir.asdl`, que materializa símbolos, scopes, bindings, anclas y un grafo nominal parcial sin duplicar la sintaxis de fuente. Los tipos efectivos, dominios, cardinalidades, dependencias y demás conclusiones elaboradas pertenecen a fases posteriores de tipado y elaboración cuya representación mecánica todavía no está fijada.
+The nominal resolution operates on this AST and produces the regulatory HIR `nombres/mud-nominal-hir.asdl`, which instantiates symbols, scopes, bindings, anchors and a nominal graph partial without duplicating the source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later stages of typing and elaboration the mechanical representation of which has not yet been finalised.
 
-## Cadena de representaciones
+## A series of performances
 
 ```text
 texto fuente
@@ -76,81 +76,81 @@ texto fuente
 → representación semántica posterior todavía no formalizada
 ```
 
-> [!rule] MUD-AST-001 — Responsabilidad superficial
-> El AST superficial no contiene símbolos resueltos, anclas, tipos inferidos, efectos calculados ni decisiones que dependan de una declaración encontrada por nombre.
+> [!rule] MUD-AST-001 — Superficial responsibility
+> The Surface AST does not contain resolved symbols, anchors, inferred types, computed effects or decisions that depend on a declaration found by name.
 
-> [!rule] MUD-AST-003 — Frontera del HIR nominal
-> El HIR nominal puede añadir identidad y resolución, pero no significado de tipos: contiene símbolos, scopes, bindings, anclas y aristas nominales. Tipos efectivos, dominios efectivos, cardinalidades, conversiones elaboradas y evidencia de terminación quedan fuera del HIR nominal y pertenecen a fases posteriores de tipado y elaboración.
+> [!rule] MUD-AST-003 — Border of the Nominal HIR
+> The Nominal HIR you can add identity y resolution, but no type semantics: it contains symbols, scopes, bindings, anchors and named edges. Effect types, effect domains, cardinalities, elaborate conversions and evidence of termination are excluded from the Nominal HIR and belong to later stages of typology and elaboration.
 
-> [!rule] MUD-AST-002 — Normalización
-> Dos formas concretas declaradas equivalentes por este capítulo producen la misma forma AST, salvo su procedencia.
+> [!rule] MUD-AST-002 — Standardisation
+> Two specific forms declared equivalent by this chapter produce the same AST form, except for their provenance.
 
-## Relación con la CST
+## Relation with the CST
 
-La CST conserva:
+The CST preserves:
 
-- Palabras clave.
-- Delimitadores.
-- Comas y terminadores.
-- Paréntesis de agrupación.
-- Comentarios y espacios.
-- Escritura exacta de literales.
-- Tokens ausentes o inesperados de recuperación.
+- Keywords.
+- Delimiters.
+- Commas and terminators.
+- Grouping brackets.
+- Comments and spaces.
+- Exact notation of literals.
+- Missing or unexpected recovery tokens.
 
-El AST conserva:
+The AST preserves:
 
-- Categoría de declaración.
-- Nombres escritos, todavía sin resolver.
-- Orden fuente de listas semánticamente relevantes.
-- Dominios, cardinalidades y permisos.
-- Estructura de expresiones y efectos.
-- Diferencias léxicas que tienen significado, como `and` frente a `&`.
-- Procedencia suficiente para diagnósticos y transformaciones.
+- Category of declaration.
+- Names written down, still unresolved.
+- Order semantically relevant lists.
+- Domains, cardinalities and permissions.
+- Structure of expressions and effects.
+- Lexical differences that carry meaning, such as `and` opposite `&`.
+- Provenance sufficient for diagnostics and transformations.
 
-Un archivo con errores sintácticos puede tener CST sin producir un AST completo.
+A file containing syntactic errors may have a CST without producing a complete AST.
 
-## Raíces
+## Roots
 
 ### `MudProject`
 
-`MudProject` agrega los archivos que forman una compilación. No procede de una producción de un único archivo y no posee un `SourceSpan` único.
+`MudProject` adds the files that make up a compilation. It does not come from a production consists of a single file and does not have a `SourceSpan` unique.
 
-Sus archivos se serializan canónicamente por `relativePath` normalizada. Esa ordenación no modifica el orden interno de cada archivo ni atribuye significado semántico al orden físico de archivos.
+Its files are serialised canonically by `relativePath` standardised. This arrangement does not alter the internal order of each file, nor does it attribute any semantic meaning to the physical order of the files.
 
 ### `MudFile`
 
-Cada `MudFile` contiene:
+Every `MudFile` contains:
 
-- Metadatos físicos.
-- Los defaults de metadatos de archivo en orden fuente.
-- La lista de `using`.
-- La lista de declaraciones de primer nivel.
+- Physical metadata.
+- The default file metadata in source order.
+- The list of `using`.
+- The list of top-level declarations.
 
-Los metadatos de propietarios subordinados se almacenan directamente en sus constructores AST, no en una tabla lateral por `SourceSpan`. Los `using` se almacenan separados de las declaraciones porque la gramática exige que formen una cabecera. Ambos grupos conservan su orden fuente.
+Metadata for subordinate owners is stored directly in their AST constructors, not in a side table because `SourceSpan`. The `using` They are stored separately from the declarations because the grammar requires them to form a header. Both groups retain their source order.
 
-El path de MUD derivado de la ruta es metadato y no una declaración AST.
+The path from the MUD derived from the path is metadata and not just one declaration AST.
 
 ## Procedencia
 
-Todos los nodos salvo `MudProject` poseen `SourceOrigin`:
+All nodes except `MudProject` possess `SourceOrigin`:
 
 ```text
 Written(span)
 Synthetic(basis, reason)
 ```
 
-`Written` indica una región concreta. `Synthetic` se usa para elementos realmente introducidos por normalización. Una cardinalidad omitida no se convierte en `[1..1]` en el AST superficial: conserva `OmittedCardinality` y la elaboración decide su forma según el propietario y el inicializador.
+`Written` indicates a specific region. `Synthetic` is used for elements that are actually introduced by standardisation. A cardinality omitted does not become `[1..1]` in the Surface AST: preserve `OmittedCardinality` and the elaboration determines its shape according to the owner and the initialiser.
 
-Las posiciones:
+The positions:
 
-- Comienzan en cero.
-- Usan offsets de bytes UTF-8.
-- Tienen extremo final exclusivo.
-- Cuentan columnas mediante valores escalares Unicode.
+- They start from scratch.
+- They use UTF-8 byte offsets.
+- They have a unique end cap.
+- Columns are counted using Unicode scalar values.
 
-## Nombres
+## Names
 
-El AST usa wrappers distintos para evitar mezclar categorías antes de la resolución:
+AST uses different wrappers to prevent categories from being mixed up before the resolution:
 
 - `MudPath`.
 - `QualifiedName`.
@@ -164,74 +164,74 @@ El AST usa wrappers distintos para evitar mezclar categorías antes de la resolu
 - `TypeRef`.
 - `DeclarationRef`.
 
-La capitalización se valida según el contexto, pero el texto original del identificador se conserva.
+Capitalisation is adjusted according to the context, but the original text of the identifier is retained.
 
-### Caminos con punto
+### We walk with point
 
-Una secuencia de identificadores enlazados exclusivamente mediante `.` se representa como `DottedPathExpr`. La resolución posterior decidirá si sus segmentos denotan:
+A sequence of identifiers linked exclusively by means of `.` is written as `DottedPathExpr`. The resolution It will then determine whether its segments denote:
 
-- Path de MUD y declaración.
+- MUD path and declaration.
 - Declaración y miembro.
 - Participante y campo.
-- Una combinación de los anteriores.
+- A combination of the above.
 
-Cuando la cadena contiene llamadas, índices u otros postfix, se usan `MemberAccessExpr`, `IndexExpr` y `CallExpr`.
+When the string contains calls, indices or other postfixes, the following are used `MemberAccessExpr`, `IndexExpr` y `CallExpr`.
 
 ## Flags
 
-ASDL-MUD define:
+ASDL- The MUD defines:
 
 ```text
 flag = Disabled | Enabled
 ```
 
-Se usa para propiedades conceptualmente booleanas como:
+It is used for conceptually Boolean properties such as:
 
 - `isAbstract`.
-- `isOrdered` de una `family`.
-- Mutabilidad exterior.
-- Capacidad sobre miembros.
-- Unicidad.
-- Ciclicidad de un intervalo.
+- `isOrdered` of a `family`.
+- Mutability outdoors.
+- Capacity regarding members.
+- Uniqueness.
+- The periodicity of an interval.
 
-No se representa mediante enteros ni strings.
+It cannot be represented as an integer or a string.
 
-## Metadatos en propietarios estables
+## Metadata in stable owners
 
-Todo constructor superficial que represente directamente un propietario metadata-bearing conserva una secuencia `metadata_assignment* metadata`. Esto incluye declaraciones nominales metadata-bearing, unidades, campos, componentes y participantes. Los cuerpos concretos solo delimitan el preámbulo; no se crea un `MetadataAttachment` lateral ni se usa el `SourceSpan` como identidad del propietario.
+Any superficial builder who directly represents a owner metadata-bearing preserves a sequence `metadata_assignment* metadata`. This includes metadata-bearing nominal declarations, units, fields, components and participants. The specific bodies merely delimit the preamble; a `MetadataAttachment` side, nor is the `SourceSpan` such as identity from the owner.
 
-Una cabecera agrupada de participantes se normaliza a varios descriptores y copia la misma secuencia de metadatos a cada uno. `ModuleStartDecl` y el `start with` interno de un test no reciben secuencia propia.
+A grouped header of participants is standardised across several descriptors and the same metadata sequence is copied to each one. `ModuleStartDecl` and the `start with` inside a test do not receive their own sequence.
 
-## Declaraciones de `thing`
+## Statements by `thing`
 
-Una `ThingDecl` contiene:
+One `ThingDecl` contains:
 
 - `isAbstract`.
-- Nombre nominal fuente.
-- Antecesores directos en orden fuente.
-- Asignaciones de metadatos como `~name`.
-- Campos.
-- Inicializadores de campos heredados.
+- Nominal source name.
+- Direct predecessors in source order.
+- Metadata assignments such as `~name`.
+- Fields.
+- Inherited field initialisers.
 
-El AST no ordena alfabéticamente los antecesores. Que su orden carezca de prioridad semántica no elimina su valor como procedencia, formato y diagnóstico.
+The AST does not list predecessors in alphabetical order. The order in which they appear is not ranked in order of priority semantics does not remove its value such as provenance, format and diagnostic.
 
-El AST superficial conserva un `Thing` escrito explícitamente en `as`. La resolución posterior lo normaliza como redundancia de la raíz efectiva y el tooling ofrece retirarlo; el formatter no lo elimina silenciosamente.
+The Surface AST retains a `Thing` explicitly stated in `as`. The resolution The latter treats it as a redundancy of the root It is valid, and the tooling allows it to be removed; the formatter does not silently remove it.
 
-El preámbulo contiene declaraciones de metadatos y el resto del cuerpo contiene campos e inicializadores concretos. `metadata_assignment` distingue `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; conserva únicamente información escrita o normalizada sintácticamente, sin fabricar propiedades intrínsecas. Los metadatos se resuelven y tipan por categoría de propietario y no se convierten en campos ordinarios.
+The preamble contains metadata declarations, whilst the rest of the body contains specific fields and initialisers. `metadata_assignment` distinguish `StoredMetadataAssignment` y `CalculatedMetadataAssignment`; it retains only written or syntactically standardised information, without inventing any intrinsic properties. Metadata is resolved and categorised by category of owner and do not become ordinary fields.
 
-### Inicializador concreto
+### Concrete initialiser
 
 ```text
 ThingInitializer(name, valueBlock)
 ```
 
-Conserva una forma `fieldName = value-body` escrita en el cuerpo de una `thing`, sea concreta o abstracta. No es un `StoredFieldDecl` y no se incorpora a `defaultValue`: el AST mantiene separados el predeterminado de esquema y la contribución de inicialización. `name` permanece como `FieldName` sin resolver y el RHS normaliza a `ValueBlock`;  la resolución y elaboración posteriores comprueban que el objetivo sea un campo almacenado heredado y que el valor satisfaga su tipo y dominio.
+It retains its shape `fieldName = value-body` written on the body of a `thing`, whether concrete or abstract. It is not a `StoredFieldDecl` and is not included in `defaultValue`: AST keeps the schema default and the initialisation contribution separate. `name` remains as `FieldName` unresolved, and the RHS normalises to `ValueBlock`;  the resolution y elaboration Subsequent checks ensure that the target is a stored field inherited and that the value satisfy his type y domain.
 
-La validación previa al AST rechaza que una misma definición contenga una declaración local de campo y un `ThingInitializer` con el mismo nombre. Una declaración `fieldName: Type = value` conserva su `defaultValue` dentro del `StoredFieldDecl` y no genera `ThingInitializer`.
+The validation The AST preliminary ruling rejects the idea that a single definition could contain a declaration premises of field and a `ThingInitializer` of the same name. A declaration `fieldName: Type = value` retains its `defaultValue` inside the `StoredFieldDecl` and does not generate `ThingInitializer`.
 
-La secuencia de inicializadores se conserva separada de la de campos. En una `thing` abstracta representa contribuciones heredables de inicialización sin materializar carga propia; en una concreta representa contribuciones a su primera materialización. La CST sigue conservando el orden físico intercalado del cuerpo.
+The sequence of initialisers is kept separate from that of the fields. In a `thing` abstracta represents inheritable initialisation contributions that are not instantiated own stored data; in one particular instance, it shows contributions to his first materialisation. The CST continues to preserve the body’s natural, interwoven physical structure.
 
-## Campos
+## Fields
 
 ### Campo almacenado
 
@@ -245,7 +245,7 @@ StoredFieldDecl(
 )
 ```
 
-`ValueShape` contiene un `TypeExpr` normalizado con alternativas nominales, dominio opcional por alternativa y una única especificación de colección exterior.
+`ValueShape` contains a `TypeExpr` normalised using nominal alternatives, domain optional per alternative and a single one specification from collection outdoors.
 
 ### Campo calculado
 
@@ -253,62 +253,62 @@ StoredFieldDecl(
 CalculatedFieldDecl(name, shape?, valueBlock, metadata*)
 ```
 
-No contiene mutabilidad exterior. `shape` ausente delega tipo, dominio y colección a la inferencia. `ExplicitDerivedShape` conserva un `TypeExpr` completo; `InferredDerivedShape` conserva un dominio o colección escritos sin inventar un tipo superficial. La elaboración combina esas restricciones con el tipo inferido.
+Does not contain mutability outdoors. `shape` absent proxy type, domain y collection to the inference. `ExplicitDerivedShape` retains a `TypeExpr` complete; `InferredDerivedShape` retains a domain o collection written without making up a type superficial. The elaboration combines these restrictions with the type inferred.
 
-### Campos públicos
+### Public fields
 
-`PublicFieldDecl(name, shape?, valueBlock, metadata*)` comparte la forma calculada, pero conserva una categoría propia porque pertenece a la interfaz de `look` y `message`.
+`PublicFieldDecl(name, shape?, valueBlock, metadata*)` It shares the calculated form, but retains its own category because it belongs to the interface of `look` y `message`.
 
-## Forma de valor
+## How to value
 
-`ValueShape` es una estructura reutilizada por:
+`ValueShape` is a structure reused by:
 
-- Campos almacenados.
-- Componentes de alias.
-- Datos almacenados de `family`.
-- Participantes `for`.
+- Stored fields.
+- Components of alias.
+- Data stored from `family`.
+- Participants `for`.
 
-Contiene la expresión de tipo completa, pero no predeterminado ni mutabilidad exterior. Esos aspectos pertenecen al contexto propietario.
+It contains the expression of type complete, but not predetermined or mutability external. These aspects form part of the context owner.
 
-`GivenDecl` usa el mismo `TypeExpr` superficial que los demás contextos de tipo, por lo que puede representar diccionarios exactos o funcionales. `given` es un parámetro de solo lectura: cualquier `mut` que aparezca en esa forma se conserva únicamente para diagnóstico y se rechaza estáticamente durante las fases posteriores de validación y tipado.
+`GivenDecl` use the same one `TypeExpr` more superficial than other contexts of type, so it can represent exact or functional dictionaries. `given` is a read-only parameter: any `mut` the fact that it appears in that form is retained solely for diagnostic and is statically rejected during the subsequent stages of validation and typed.
 
-## Tipos
+## Types
 
-### Uniones nominales
+### Nominal joints
 
-`TypeExpr` contiene una secuencia no vacía de `TypeAlternative` y una sola especificación de colección exterior. El AST superficial aplana agrupaciones, elimina duplicados idénticos y conserva el orden de la primera aparición para procedencia y formato. La unión elaborada es asociativa, conmutativa e idempotente, pero no elimina una alternativa por inclusión de dominio. Los paréntesis redundantes no sobreviven.
+`TypeExpr` contains a non-empty sequence of `TypeAlternative` and just one specification from collection exterior. The Surface AST flattens groupings, removes identical duplicates and retains the order of the first occurrence for provenance and format. The union The operation is associative, commutative and idempotent, but it does not eliminate an alternative by inclusion of domain. Redundant brackets are not preserved.
 
-Cada `TypeAlternative` contiene un `DeclaredType` y un `DomainExpr` opcional. `SteppedDomain` conserva por separado intervalo y paso; los demás dominios superficiales usan `ExpressionDomain` hasta su elaboración semántica.
+Every `TypeAlternative` contains a `DeclaredType` and a `DomainExpr` optional. `SteppedDomain` separately retains the interval and step; the other surface domains use `ExpressionDomain` until his elaboration semantics.
 
-### Tipo nominal
+### Type nominal
 
 ```text
 NamedType(TypeRef)
 ```
 
-Incluye tanto tipos incorporados como tipos declarados por el programa. Que un nombre sea `Nat`, una `thing`, una `family`, un alias o una magnitud se decide después.
+It includes both built-in types and types declared by the programme. Whether a name is `Nat`, a `thing`, a `family`, a alias or a magnitude That will be decided later.
 
 
-### Tipos callable y reflejados
+### Callable and reflected types
 
-`CallableType(kind, receivers, givens)` conserva la forma de tipos como `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` o `Dragon.look(Detail)`. En esta fase `receivers` siguen siendo `TypeRef` no resueltos y `givens` son `TypeExpr`; el AST no decide compatibilidad ni varianza de firmas, cuestión abierta en Q-063.
+`CallableType(kind, receivers, givens)` retains the form of types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` o `Dragon.look(Detail)`. At this stage `receivers` remain `TypeRef` unresolved and `givens` are `TypeExpr`; the AST does not decide compatibility nor variance signatures, open question in Q-063.
 
-`ReflectedType(value)` conserva una expresión escrita en posición de tipo cuya forma termina en `~type`, como `MyDragon.Stats()~type`. La resolución y el tipado deben demostrar que `value` produce estáticamente `Type`; la elaboración posterior obtiene directamente el tipo representado. La forma mecánica de esa elaboración todavía no está fijada. Una llamada ordinaria sin `~type` continúa siendo un valor.
-### Diccionario
+`ReflectedType(value)` contains a written expression in the position of type whose form ends in `~type`, such as `MyDragon.Stats()~type`. The resolution and the typing must demonstrate that `value` generates statically `Type`; the elaboration The latter obtains the type represented. The mechanical form of that elaboration has not yet been set. A call ordinary without `~type` remains a value.
+### Dictionary
 
 ```text
 DictionaryType(keyType, valueTypeExpression)
 ```
 
-El valor conserva su `TypeExpr`, por lo que puede contener dominio y colección propios. La colección escrita después del diccionario completo pertenece al `TypeExpr` exterior.
+The value retains its `TypeExpr`, so it may contain domain y collection their own. The collection written after the comprehensive dictionary belongs to the `TypeExpr` outdoors.
 
-Los paréntesis exigidos por la gramática para un diccionario anidado no sobreviven al AST.
+The brackets required by the grammar for a nested dictionary are not preserved by the AST.
 
-Las ramas de un diccionario funcional permanecen nodos de valor en el AST superficial y no reciben `AnchoredSymbol` ni ancla sintética. La resolución conserva su orden fuente y deriva una `decision_branch_key` local al diccionario a partir del selector normalizado; esa clave sirve para reconstrucción y dependencias internas, no para resolución nominal ni metadatos.
+The branches of a functional dictionary remain nodes of value in the Surface AST and do not receive `AnchoredSymbol` nor anchor synthetic. The resolution retains its source order and derives a `decision_branch_key` local to the dictionary based on the normalised selector; that key is used for reconstruction and internal dependencies, not for nominal resolution nor metadata.
 
-## Colecciones
+## Collections
 
-La forma normalizada es:
+The standard form is:
 
 ```text
 CollectionSpec(
@@ -319,7 +319,7 @@ CollectionSpec(
 )
 ```
 
-El orden es una suma:
+The order is a sum:
 
 ```text
 Unordered
@@ -327,41 +327,41 @@ OrdinaryOrdered
 OrderedBy(path)
 ```
 
-No se usa una combinación de booleano más ruta opcional porque permitiría estados inválidos.
+A Boolean ‘plus’ operator is not used path optional because it would allow invalid states.
 
 ### Cardinalidad
 
-`CollectionSpec` conserva la procedencia de la cardinalidad. Si no se escribe ninguna, `cardinalityOrigin = OmittedCardinality`: el AST superficial no sintetiza `[1..1]` ni infiere todavía una cardinalidad efectiva. La elaboración posterior la determina según el propietario y, cuando corresponda, su inicializador.
+`CollectionSpec` retains the provenance of the cardinality. If none is entered, `cardinalityOrigin = OmittedCardinality`: the Surface AST does not summarise `[1..1]` nor does it yet imply a cardinality effective. The elaboration The latter determines it according to the owner and, where applicable, its initialiser.
 
-Las formas explícitas se normalizan así:
+Explicit forms are normalised as follows:
 
 - `[a]` → `[a..a]`.
 - `[*]` → `[*..*]`.
-- `[a..b]` conserva ambos extremos.
+- `[a..b]` retains both ends.
 
-Un extremo `*` escrito permanece como `EffectiveCardinality` en el AST superficial. La elaboración posterior aplica su valor efectivo según el lado y el contexto.
+A winger `*` the text remains as `EffectiveCardinality` in the Surface AST. The elaboration The latter applies its value effective depending on the perspective and context.
 
-### Modificadores duplicados
+### Duplicate modifiers
 
-La CST puede representar `unique unique`; la validación previa al AST lo rechaza. El AST solo contiene una propiedad `isUnique`.
+The CST can represent `unique unique`; the validation prior to the AST rejects it. The AST contains only one property `isUnique`.
 
 ## Aliases
 
-`AliasDecl` contiene:
+`AliasDecl` contains:
 
-- Nombre nominal.
-- Secuencia fuente de antecesores directos todavía no resueltos.
-- Definición local opcional.
-- Metadatos del alias en orden fuente.
+- Nominal name.
+- Sequence of direct ancestors that have not yet been resolved.
+- Optional local definition.
+- Metadata for the alias in source order.
 
-La definición local es una de:
+The local definition is one of the following:
 
 ```text
 AliasRepresentation(TypeExpr)
 StructuralAlias(AliasMember*)
 ```
 
-Los miembros estructurales pueden ser:
+Structural members may include:
 
 ```text
 AliasComponentDecl(AliasComponent)
@@ -369,464 +369,464 @@ AliasCalculatedFieldDecl(nombre, forma?, expresión)
 AliasDefaultOverride(nombre, valor)
 ```
 
-La ausencia de definición se conserva cuando existe `as`; la validación previa al AST rechaza `alias A` sin antecesores ni definición. Un cuerpo vacío explícito y la omisión de cuerpo son formas concretas distintas, pero ambos producen una secuencia local vacía.
+The lack of definition persists when it exists `as`; the validation prior to the AST, rejects `alias A` without antecedents or definition. An explicit empty body and the omission of a body are distinct concrete forms, but both produce a local empty sequence.
 
-Un componente estructural:
+A structural component:
 
-- No admite mutabilidad exterior.
-- Puede contener capacidad interior `[mut]` en su colección.
-- Puede tener dominio y predeterminado estático.
+- Does not support mutability outdoors.
+- It may have internal capacity `[mut]` in his collection.
+- It may have domain and static default.
 
-Un campo derivado no posee carga asignable, puede declarar forma y capacidad interior y se recalcula desde su expresión. Una sobrescritura local solo puede dirigirse a un componente almacenado heredado y solo reemplaza su predeterminado.
+A derived field If it has no assignable load, it can specify the shape and internal capacity, and the value is recalculated based on this expression. A local override can only target a legacy stored component and only replaces its default value.
 
-Los literales estructurales siguen siendo contextuales. `PositionalStructuralLiteralExpr` exige al menos dos valores y `NamedStructuralLiteralExpr` conserva uno o más componentes nombrados; no se selecciona todavía un alias concreto. Por tanto, los miembros del alias solo quedan disponibles después de elaboración contextual o de una conversión nominal explícita.
+Structural literals remain contextual. `PositionalStructuralLiteralExpr` requires at least two values and `NamedStructuralLiteralExpr` retains one or more named components; a alias specifically. Therefore, the members of the alias are only available after elaboration contextual or the result of an explicit nominal conversion.
 
-La misma regla se aplica a literales básicos. Si el contexto espera un alias nominal cuya representación admite el literal, la elaboración construye directamente ese alias sin introducir una conversión implícita general. Por ejemplo, con `alias PlayerName := Text`, `name: PlayerName = "Ada"` es válido. En cambio, una expresión que ya posee tipo `Text`, como una variable `rawName`, no cambia silenciosamente a `PlayerName`; requiere `rawName to PlayerName`.
+The same rule applies to basic literals. If the context expects a nominal alias whose representation is supported by the literal, the elaboration builds that directly alias without introducing a general implicit conversion. For example, with `alias PlayerName := Text`, `name: PlayerName = "Ada"` is valid. On the other hand, an expression that already contains type `Text`, as a variable `rawName`, it does not silently switch to `PlayerName`; requires `rawName to PlayerName`.
 
-La elaboración posterior debe distinguir la construcción de alias dirigida por el tipo esperado de la conversión nominal `to` escrita explícitamente. El AST superficial no añade un nodo de alias contextual porque todavía conserva el literal y el contexto que lo espera; la representación mecánica de la distinción elaborada se fijará con esa fase.
+The elaboration The latter must distinguish the construction of alias led by the type expected nominal conversion `to` explicitly stated. The Surface AST does not add a node of alias contextual because it still retains the literal and the context that awaits it; the mechanical representation of the distinction that has been established will be fixed at that stage.
 
-## Familias
+## Families
 
-`FamilyDecl` contiene:
+`FamilyDecl` contains:
 
-- Flag de orden por declaración.
-- Metadatos de la family en orden fuente.
-- Datos almacenados o calculados.
-- Miembros.
+- Order flag for declaration.
+- Metadata for the family in source order.
+- Stored or calculated data.
+- Members.
 
-Los datos asociados no admiten mutabilidad exterior. El dato almacenado conserva `metadata_assignment* metadata` junto a su forma y predeterminado. El dato calculado conserva `derived_value_shape? shape`, su `ValueBlock` y `metadata_assignment* metadata`; la forma derivada es la misma que en los campos calculados y puede expresar tipo, dominio o forma de colección compatibles.
+The associated data do not support mutability external. The stored data retains `metadata_assignment* metadata` along with its format and default value. The calculated data retains `derived_value_shape? shape`, his `ValueBlock` y `metadata_assignment* metadata`; the derived form is the same as in calculated fields and can express type, domain or a way of collection compatible.
 
-Cada declaración de dato asociado es un propietario metadata-bearing estable y se elabora como descriptor `Field` subordinado a la `family`, con `FieldKind.Stored` o `FieldKind.Calculated`. La proyección `member.data` es un valor, no una copia del descriptor. Por tanto, los metadatos pertenecen al dato declarado una sola vez y no se duplican por miembro.
+Every declaration An associated data item is a owner stable metadata-bearing and is produced as descriptor `Field` subject to the `family`, with `FieldKind.Stored` o `FieldKind.Calculated`. The screening `member.data` is a value, not a copy of the descriptor. Therefore, metadata relates to data that is declared only once and is not duplicated because member.
 
-Cada `FamilyMember` conserva asignaciones de metadatos, como `~name`, y asignaciones a datos almacenados. `FamilyDataAssignment` permanece deliberadamente sin campo `metadata`: una sobrescritura de miembro solo selecciona el valor efectivo del slot almacenado y no crea un propietario metadata-bearing. Un bloque omitido produce ambas secuencias vacías.
+Every `FamilyMember` retains metadata assignments, such as `~name`, and assignments to stored data. `FamilyDataAssignment` deliberately remains without field `metadata`: a rewriting of member just select the value the actual value of the stored slot and does not create a owner metadata-bearing. An omitted block results in both sequences being empty.
 
-## Resultado de `min` y `max`
+## Result from `min` y `max`
 
-`QuantifierExpr(Min|Max, ...)` no necesita un constructor superficial especial para ausencia. La elaboración asigna al resultado el tipo elemento y una cardinalidad conservadora `[0..1]`; un recorrido sin candidatos produce el valor ordinario `empty`. Solo un contexto posterior incompatible con cero elementos introduce el fallo normal de cardinalidad.
+`QuantifierExpr(Min|Max, ...)` It does not require a special default constructor. The elaboration assigns to the result the type element and a cardinality conservative `[0..1]`; a round without candidates results in the value ordinary `empty`. Only a subsequent context that is incompatible with zero elements introduces the failure normal for cardinality.
 
-## Magnitudes
+## Quantities
 
-Existen constructores separados:
+There are separate constructors:
 
 - `BaseMagnitudeDecl`.
 - `DerivedMagnitudeDecl`.
 - `PointMagnitudeDecl`.
 
-La representación numérica opcional se almacena mediante `DeclaredType`, no mediante una enumeración cerrada. Una regla estática posterior exige que el tipo resuelto sea una representación numérica permitida.
+The optional numerical representation is stored using `DeclaredType`, rather than through a closed enumeration. A subsequent static rule requires that the type provided that the solution is a valid numerical representation.
 
-En `BaseMagnitudeDecl`, `root_unit` ausente representa deliberadamente una magnitud base sin unidades; no es un nodo incompleto ni solicita una unidad sintética posterior. En ese caso `units` debe estar vacío. La dimensión nominal se incorpora durante la elaboración y no se deduce de la presencia de una forma de unidad.
+In `BaseMagnitudeDecl`, `root_unit` 'absent' deliberately represents a magnitude base without units; it is not an incomplete node nor does it request a unit subsequent synthesis. In that case `units` must be empty. The nominal dimension is incorporated during the elaboration and it cannot be inferred from the presence of a form of unit.
 
-### Dimensiones
+### Dimensions
 
-Las expresiones dimensionales usan nodos propios y no expresiones aritméticas generales:
+Dimensional expressions use dedicated nodes rather than general arithmetic expressions:
 
 ```text
 DimensionProduct(first, links)
 DimensionLink(MultiplyDimension | DivideDimension, term)
 ```
 
-### Unidades
+### Units
 
-Una unidad raíz y una alternativa son variantes diferentes porque la segunda posee equivalencia cuantitativa:
+One unit root and one alternative consists of different variants because the second has quantitative equivalence:
 
 ```text
 RootUnitDecl(name, metadata*)
 AlternativeUnitDecl(name, equivalence, metadata*)
 ```
 
-No existe `UnitProperties` ni `PrefixPolicy` en el AST superficial. El cuerpo de unidad es un preámbulo general de `metadata_assignment` y cada declaración se conserva sin convertirla a una estructura paralela.
+It does not exist `UnitProperties` nor `PrefixPolicy` in the Surface AST. The body of unit is a general introduction to `metadata_assignment` and every declaration is retained without being converted to a parallel structure.
 
-`~prefixes` es metadata almacenada de tipo `Prefix [* unique]` cuyo default de lenguaje es `empty`. `empty`, `all` y `[kilo, milli]` permanecen expresiones MUD ordinarias en el AST; la resolución posterior identifica `kilo`, `milli`, etc. como valores incorporados de `Prefix`. La ausencia de `~plural` o `~abbreviation` también se conserva, sin sintetizar presentación en esta fase.
+`~prefixes` is metadata stored from type `Prefix [* unique]` whose default language is `empty`. `empty`, `all` y `[kilo, milli]` Ordinary MUD expressions remain in the AST; the resolution the following identifies `kilo`, `milli`, etc., as inherent values of `Prefix`. The absence of `~plural` o `~abbreviation` it is also preserved, without being synthesised presentation at this stage.
 
-## Participantes
+## Participants
 
 ### `for`
 
-`ForParticipant` contiene:
+`ForParticipant` contains:
 
-- Mutabilidad exterior.
-- Nombre obligatorio.
-- `ValueShape` completo.
-- Metadatos del descriptor en orden fuente.
+- Mutability outdoors.
+- Name is required.
+- `ValueShape` complete.
+- Metadata for the descriptor in source order.
 
-No admite predeterminado.
+Does not support a default value.
 
 ### `on`
 
-Hay dos variantes:
+There are two variants:
 
 ```text
 DirectOnParticipant(name, type, elementsMutable, metadata*)
 RelatedOnParticipant(name, refinement?, source, elementsMutable, metadata*)
 ```
 
-Las referencias entre participantes, incluidas referencias adelantadas y ciclos, se conservan como expresiones. Su resolución conjunta no pertenece al AST superficial.
+References between participants, including forward references and cycles, are preserved as expressions. Their resolution joint does not belong to the Surface AST.
 
 ### `given`
 
-`GivenDecl` contiene:
+`GivenDecl` contains:
 
-- Nombre obligatorio.
-- Forma de valor de solo lectura.
-- Predeterminado opcional.
-- Metadatos del descriptor en orden fuente.
+- Name is required.
+- How to value read-only.
+- Optional default.
+- Metadata for the descriptor in source order.
 
-No puede representar mutabilidad exterior ni interior.
+It cannot represent mutability neither outside nor inside.
 
-### Cláusulas
+### Clauses
 
-`ForClause`, `OnClause` y `GivenClause` son nodos propios. Una cláusula omitida es ausencia, no una cláusula sintética vacía.
+`ForClause`, `OnClause` y `GivenClause` are distinct nodes. An omitted clause is an absence, not an empty synthetic clause.
 
-## Reglas
+## Rules
 
-Las tres clases tienen constructores distintos:
+The three classes have different constructors:
 
 - `BooleanRuleDecl`.
 - `ReactiveRuleDecl`.
 - `AlwaysRuleDecl`.
 
-Una regla reactiva almacena:
+One reactive rule stores:
 
-- Locales puras previas a sus cláusulas de comportamiento.
-- Activador `when` como `ExpressionBlock` con contrato temporal.
-- Guardia `if` opcional como `ExpressionBlock` con contrato booleano.
-- Bloque de efectos.
+- Pure local variables preceding their behaviour clauses.
+- Activator `when` such as `ExpressionBlock` with contract temporary.
+- Guard `if` optional, such as `ExpressionBlock` with contract Boolean.
+- Effects block.
 
-`changes` es un nodo de expresión, no una variante separada de cláusula `when`.
+`changes` It is a node of expression, not a separate clause variant `when`.
 
-En una regla `always`, `InvariantBodySyntax` produce exclusivamente el `ExpressionBlock`; el `DiagnosticTailSyntax` posterior a la llave de cierre produce el campo `diagnostic` de `AlwaysRuleDecl`. La regla puede omitirlo y el AST conserva `diagnostic = absent`. El warning y el diagnóstico predeterminado pertenecen a validación y elaboración.
+In a nutshell `always`, `InvariantBodySyntax` is produced exclusively by the `ExpressionBlock`; the `DiagnosticTailSyntax` following the locking mechanism, this results in the field `diagnostic` from `AlwaysRuleDecl`. The rule may omit it, and the AST retains `diagnostic = absent`. The warning and the diagnostic The default settings belong to validation y elaboration.
 
-Los defaults de metadata de fichero no usan `ValueBlock`: conservan una asignación almacenada constante `FileMetadataAssignment`.
+The default file metadata settings do not use `ValueBlock`: they retain a constant stored allocation `FileMetadataAssignment`.
 
-## Bloques de expresión y de valor
+## Expression blocks and value
 
-`ExpressionBlock(locals, result)` contiene solo `LocalValueDecl` calculadas puras y una expresión final. Una forma breve normaliza a `ExpressionBlock([], expression)`. No contiene variables almacenadas, mutación, `LocalForEach` ni `ValueBlock` anidado como expresión primaria.
+`ExpressionBlock(locals, result)` contains only `LocalValueDecl` pure calculations and a final expression. A shorthand form normalises to `ExpressionBlock([], expression)`. It contains no stored variables, mutation, `LocalForEach` nor `ValueBlock` nested as a primary expression.
 
-`ValueBlock(statements, result)` contiene `ValueStatement*` y una expresión final. `ValueStatement` distingue declaración calculada, declaración almacenada, mutación local y `LocalForEach`. Las declaraciones calculadas y almacenadas de un `ValueBlock` conservan a su vez su inicializador como `ValueBlock`, de modo que la forma breve y extensa convergen sin convertir el bloque en `expr`.
+`ValueBlock(statements, result)` contains `ValueStatement*` and a final remark. `ValueStatement` distinguish declaration calculated, declaration stored, local mutation and `LocalForEach`. The calculated and stored expressions of a `ValueBlock` in turn retain their initialiser as `ValueBlock`, so that the short and long forms converge without turning the block into `expr`.
 
-`LocalMutation` conserva el destino superficial sin resolver; tipado/elaboración demuestran después que el footprint completo pertenece al almacenamiento creado dentro del `ValueBlock`. `LocalForEach` usa `LocalStatementBlock`, no `EffectBlock`, y conserva filtro `ExpressionBlock?`.
+`LocalMutation` retains the unresolved surface destination; typed/elaboración They then demonstrate that the complete footprint belongs to the storage created within the `ValueBlock`. `LocalForEach` use `LocalStatementBlock`, no `EffectBlock`, and keep the filter `ExpressionBlock?`.
 
-Los propietarios de `ExpressionBlock` son reglas booleanas, `always`, `when`, guardas, `after` de action, filtros de `for each`, selección, `exists`, `forall`, `count`, `min`, `max`, claves exactas y selectores funcionales. Los propietarios de `ValueBlock` son los slots de valor declarados por la gramática: locales, campos, datos/componentes, inicializadores, valores/resultados de diccionario y metadata. `given` conserva un `expr? defaultValue` porque su default no adquiere bloque de valor.
+The owners of `ExpressionBlock` these are Boolean rules, `always`, `when`, guards, `after` from action, filters for `for each`, selection, `exists`, `forall`, `count`, `min`, `max`, exact keys and functional selectors. The owners of `ValueBlock` are the slots from value declared by the grammar: locals, fields, data/componentes, initialisers, values/resultados dictionary and metadata. `given` retains a `expr? defaultValue` because its default value does not take a block of value.
 
-`min` y `max` conservan `QuantifierExpr` y `ExpressionBlock` booleano. La elaboración devuelve el primer/último testigo aceptado según el orden semántico de `source`; `Sum` no existe en `quantifier_kind`.
+`min` y `max` retain `QuantifierExpr` y `ExpressionBlock` Boolean. The elaboration returns the first/último witness accepted in accordance with the semantic order of `source`; `Sum` does not exist in `quantifier_kind`.
 
-Cuando metadata y `ValueBlock` comparten físicamente un cuerpo de un descriptor compatible, el AST extrae la metadata al campo `metadata` del propietario y conserva solo las sentencias de valor en `ValueBlock`.
+When metadata and `ValueBlock` physically share the body of a descriptor If compatible, AST extracts the metadata from the field `metadata` from the owner and retains only the sentences from value in `ValueBlock`.
 
-## Acciones
+## Shares
 
-El AST superficial usa un único `ActionDecl`.
+The Surface AST use a single `ActionDecl`.
 
-No existe una clasificación semántica de actions elementales frente a compuestas. `ActionCallCandidateEffect` solo conserva que un `postfix-expression` ocupa una posición de efecto cuya naturaleza callable debe resolverse después; la resolución decide su destino, no una supuesta clase elemental/compuesta de la action propietaria.
+There is no classification semantics elementary actions versus compound actions. `ActionCallCandidateEffect` it only retains one `postfix-expression` holds a position as effect whose callable nature must be resolved later; the resolution It is you who decide your own destiny, not some so-called elemental class/compuesta of the action owner.
 
-Una acción contiene:
+One action contains:
 
-- Participantes `for` opcionales.
-- `given` opcionales.
-- Locales puras previas a sus cláusulas de comportamiento.
-- Guardia booleana opcional y diagnóstico.
-- Bloque de efectos.
-- Postcondición booleana `after` opcional y diagnóstico.
+- Participants `for` optional.
+- `given` optional.
+- Pure local functions preceding their behavioural clauses.
+- Optional Boolean guard and diagnostic.
+- Effects block.
+- Boolean postcondition `after` optional and diagnostic.
 
 ## `look` y `message`
 
-`LookDecl` conserva participantes `for`, `given` y propiedades públicas.
+`LookDecl` retains participants `for`, `given` and public property.
 
-`MessageDecl` conserva participantes `on`, locales puras previas a sus cláusulas de comportamiento, activador booleano, guardia booleana opcional y propiedades públicas.
+`MessageDecl` retains participants `on`, pure local variables preceding their behaviour clauses, Boolean activator, optional Boolean guard and public properties.
 
-No se reducen a reglas o acciones genéricas porque sus contratos posteriores son distintos.
+They cannot be reduced to generic rules or actions because their subsequent contracts are different.
 
 ## Tests
 
-`TestDecl` contiene:
+`TestDecl` contains:
 
-- Conjunto inicial local.
-- Bloque de efectos.
-- Un `TestAfterBlock` con declaraciones locales iniciales y una secuencia no vacía de aserciones.
+- Home starting line-up.
+- Effects block.
+- A `TestAfterBlock` with initial local declarations and a non-empty sequence of assertions.
 
-La forma `after expr` produce un bloque sin locales y una aserción. En la forma `after { ... }`, todas las declaraciones locales preceden a la primera aserción.
+The shape `after expr` produces a block with no statements and an assertion. In the form `after { ... }`, all local declarations precede the first assertion.
 
-`start with` de módulo y de test comparten `StartSet`, que conserva una única secuencia de contribuciones; solo el primero está envuelto en `ModuleStartDecl`.
+`start with` from module and from test share `StartSet`, which retains a single sequence of contributions; only the first one is wrapped in `ModuleStartDecl`.
 
-## Bloques de efectos
+## Effect blocks
 
-Un `then` breve y un `then` entre llaves se normalizan al mismo `EffectBlock`. El bloque conserva una secuencia no vacía de `then_statement` en orden fuente y un diagnóstico de fallo opcional. Cada sentencia es `EffectStatement`, `LocalCalculatedStatement` o `LocalStoredStatement`; la validación posterior exige al menos un efecto observable.
+A `then` brief and a `then` those in brackets are standardised to the same `EffectBlock`. The block retains a non-empty sequence of `then_statement` in source order and a diagnostic from failure optional. Each statement is `EffectStatement`, `LocalCalculatedStatement` o `LocalStoredStatement`; the validation The latter requires at least one effect observable.
 
-El AST no presupone ejecución secuencial o simultánea distinta de la definida por capítulos posteriores; solo conserva la estructura declarada.
+The AST does not assume sequential or simultaneous execution other than that defined in subsequent chapters; it merely preserves the declared structure.
 
-## Efectos
+## Effects
 
-Hay nodos propios para:
+There are specific nodes for:
 
-- Asignación.
-- Adición de valor.
-- Adición de campo.
-- Eliminación.
-- Creación.
-- Destrucción.
-- Candidato a llamada de acción.
-- Iteración `for each`.
+- Allocation.
+- Addition of value.
+- Addition of field.
+- Deletion.
+- Creation.
+- Destruction.
+- Candidate for call from action.
+- Iteration `for each`.
 
-### Valores separados por comas
+### Values separated by commas
 
-`value-expression` con varios elementos se normaliza a:
+`value-expression` with several elements, it is normalised to:
 
 ```text
 CollectionLiteralExpr(elements)
 ```
 
-La forma de un solo elemento permanece como esa expresión, no como una colección sintética.
+The form of a single element remains as that expression, not as a collection synthetic.
 
-### Asignables
+### Allocable
 
-`AssignableExpr` conserva una base y sufijos de miembro o índice. La comprobación de que la ruta termina en un lugar escribible pertenece a resolución, tipos y efectos. El AST superficial no expande una ruta que atraviesa aliases inmutables: conserva sus sufijos, y la elaboración posterior decide si puede reconstruir los valores intermedios y propagar el write-back hasta almacenamiento exteriormente escribible. Una ausencia de clave exacta en un paso intermedio tampoco se reescribe en el AST.
+`AssignableExpr` retains a root and suffixes of member o index. The verification that the path ends in a writable location belongs to resolution, types and effects. The Surface AST does not expand a path which traverses immutable aliases: it retains their suffixes, and the elaboration The subsequent stage decides whether it can reconstruct the intermediate values and propagate the write-back to externally writable storage. If an exact key is missing at an intermediate stage, this is not rewritten in the AST either.
 
-### Iteración `for each`
+### Iteration `for each`
 
-`ForEachEffect(binding, source, step?, filter?, body)` conserva la expresión `by`, el filtro como `ExpressionBlock` y normaliza efecto breve/bloque posterior a `:` a `EffectBlock`. Dirección, paso predeterminado, compatibilidad, orden del filtro y paso cero pertenecen a elaboración.
+`ForEachEffect(binding, source, step?, filter?, body)` retains the expression `by`, the filter as `ExpressionBlock` and normalises effect brief/bloque following `:` a `EffectBlock`. Address, default step, compatibility, filter order and zero-pass belong to elaboration.
 
-## Expresiones
+## Expressions
 
-### Operadores
+### Operators
 
-El AST conserva operadores léxicamente distintos cuando MUD les atribuye contratos diferentes:
+The AST preserves lexically distinct operators when MUD assigns them different contracts:
 
-- `WordAnd` frente a `SymbolAnd`.
-- `WordOr` frente a `SymbolOr`.
-- `WordXor` frente a `SymbolXor`.
+- `WordAnd` opposite `SymbolAnd`.
+- `WordOr` opposite `SymbolOr`.
+- `WordXor` opposite `SymbolXor`.
 
-Esto permite que `when` distinga composición temporal mediante palabras de booleanos ordinarios mediante símbolos.
+This allows `when` distinguish between temporal composition using ordinary Boolean words and that using symbols.
 
-### Comparaciones
+### Comparisons
 
-Una cadena como:
+A string such as:
 
 ```mud
 0 <= x < 10
 ```
 
-se representa mediante `ComparisonChainExpr`, no como asociaciones binarias arbitrarias.
+is represented by `ComparisonChainExpr`, rather than arbitrary binary pairings.
 
-Las comparaciones no encadenables producen una única arista en la cadena o un nodo equivalente validado.
+Non-chainable comparisons result in a single edge in the chain or an equivalent validated node.
 
-`is not` produce `IsNotRelation`; no se pierde como un `not` exterior porque el estrechamiento nominal necesita reconocer directamente la prueba negativa.
+`is not` produces `IsNotRelation`; it doesn’t get lost like a `not` external, because the nominal narrowing must directly confirm the negative test result.
 
-### Selección y cuantificadores
+### Selection and quantifiers
 
-`SelectionExpr(binding, source, step?, predicate)` conserva `step?` y normaliza el predicado a `ExpressionBlock`. `QuantifierExpr(kind, variable, source, step?, body)` hace lo mismo para los cinco cuantificadores `exists`, `forall`, `count`, `min` y `max`. El AST no decide el contrato booleano de `body` ni la validez del orden exigido por los extremos.
+`SelectionExpr(binding, source, step?, predicate)` preserves `step?` and normalises the predicate to `ExpressionBlock`. `QuantifierExpr(kind, variable, source, step?, body)` Do the same for all five quantifiers `exists`, `forall`, `count`, `min` y `max`. The AST does not decide on the contract Boolean of `body` nor the validity of the order required by the provisions.
 
-### Conversiones
+### Conversions
 
-`to Type` y `in unit` producen `ConversionExpr` con destinos distintos. La barrera postfix de la gramática ya ha decidido su agrupación, pero no la compatibilidad.
+`to Type` y `in unit` produce `ConversionExpr` with different destinations. The postfix barrier in the grammar has already determined their grouping, but not the compatibility.
 
-### Postfix y llamadas
+### Postfix and calls
 
-`MemberAccessExpr`, `IndexExpr` y `CallExpr` se construyen de izquierda a derecha.
+`MemberAccessExpr`, `IndexExpr` y `CallExpr` They are constructed from left to right.
 
-`CallExpr` conserva:
+`CallExpr` retains:
 
-- La expresión llamada.
-- El prefijo de argumentos posicionales.
-- El sufijo de argumentos nombrados.
+- The expression call.
+- The prefix of positional arguments.
+- The named-argument suffix.
 
-La separación impide representar un posicional posterior a un nombrado.
+The separator prevents a positional element from being placed after a named element.
 
-La posible interpretación de:
+A possible interpretation of:
 
 ```mud
 (attacker, defender).CanAttack()
 ```
 
-como varios receptores o como un único valor estructural queda pendiente de resolución de firma. El AST superficial conserva la forma estructural y el encadenamiento postfix.
+as several receivers or as a single one structural value is still pending resolution signature. The Surface AST retains the structural form and the postfix chaining.
 
 ### `Rand`
 
-`Rand(expr)` posee `RandomExpr`; no es un tipo ni una llamada ordinaria.
+`Rand(expr)` has `RandomExpr`; it is not a type not even one call ordinary.
 
-### Selección y `take`
+### Selection and `take`
 
-`binding in source [by step] : predicate` posee `SelectionExpr`. Conserva la vinculación, la fuente, el paso opcional y el predicado como `ExpressionBlock` sin materializar la colección resultante. La vinculación solo introduce nombres dentro del predicado.
+`binding in source [by step] : predicate` has `SelectionExpr`. It retains the link, the source, the optional step and the predicate as `ExpressionBlock` without realising the collection resulting. Binding only introduces names into the predicate.
 
-`take amount from source` posee `TakeExpr`. El AST superficial no decide si la fuente es ordenada, texto, diccionario, dominio enumerable o una colección sin orden; esa resolución determina después si se toma un prefijo canónico o una muestra reproducible.
+`take amount from source` has `TakeExpr`. The Surface AST does not determine whether the source is a list, text or dictionary, domain countable or one collection in no particular order; that resolution It then determines whether to take a prefix canonical or a reproducible sample.
 
-La composición de ambas formas es estructural. `take n from player in players : condition` contiene un `SelectionExpr` como fuente de `TakeExpr`; `player in take m from players : condition` contiene un `TakeExpr` como fuente de `SelectionExpr`.
+The composition of both forms is structural. `take n from player in players : condition` contains a `SelectionExpr` as a source of `TakeExpr`; `player in take m from players : condition` contains a `TakeExpr` as a source of `SelectionExpr`.
 
 ### `all`
 
-El literal contextual `all` produce `AllLiteral`. Su dominio y carácter estático o dinámico se determinan durante el tipado; el AST superficial no enumera sus valores. La forma prefija `all D` produce `PrefixExpr(EnumerateAll, D)` y conserva explícitamente la materialización solicitada.
+The literal contextual `all` produces `AllLiteral`. His domain and whether they are static or dynamic is determined during type checking; the Surface AST does not list its values. The prefix form `all D` produces `PrefixExpr(EnumerateAll, D)` and explicitly preserves the materialisation requested.
 
-### Cuantificadores
+### Quantifiers
 
-`exists`, `forall`, `count`, `min` y `max` comparten `QuantifierExpr` con un enum propio, un `step?` opcional y un `ExpressionBlock` como cuerpo.
+`exists`, `forall`, `count`, `min` y `max` share `QuantifierExpr` with its own enum, a `step?` optional and a `ExpressionBlock` as a body.
 
-### Operadores de colección
+### Operators of collection
 
-`--` produce `CollectionDifference`, distinto de `Subtract`. Las actualizaciones `|=`, `&=`, `^=` y `--=` producen respectivamente `UnionAssign`, `IntersectionAssign`, `SymmetricDifferenceAssign` y `DifferenceAssign`; no se reducen a `Assign` porque la clase de actualización participa en la consolidación concurrente.
+`--` produces `CollectionDifference`, other than `Subtract`. The updates `|=`, `&=`, `^=` y `--=` produce, respectively `UnionAssign`, `IntersectionAssign`, `SymmetricDifferenceAssign` y `DifferenceAssign`; they are not limited to `Assign` because the update class participates in the consolidation concurrent.
 
-## Plantillas `Text`
+## Templates `Text`
 
-Una plantilla es una secuencia ordenada de:
+A template is an ordered sequence of:
 
-- `TextFragment` con texto decodificado.
+- `TextFragment` with decoded text.
 - `ValueInterpolation`.
 
-El AST no conserva:
+The AST does not retain:
 
-- Comilla final explícita o implícita.
-- Margen físico del literal multilínea.
-- Escapes usados para obtener el mismo carácter.
+- Explicit or implicit closing quotation marks.
+- Physical margin of the literal multi-line.
+- Escape sequences used to achieve the same effect.
 
-La CST sí los conserva.
+The CST does keep them.
 
-La escritura ordinaria entre comillas dobles siempre llega al AST superficial como `TextTemplateExpr`. La elaboración posterior puede convertirla en un valor `Char` cuando el contexto exige `Char`, no contiene interpolaciones y su valor decodificado es exactamente un escalar Unicode. Por ello el AST superficial no posee un constructor léxico separado `CharLiteral`.
+Ordinary text enclosed in double quotation marks always appears in the Surface AST such as `TextTemplateExpr`. The elaboration subsequent action may turn it into a value `Char` when the context requires it `Char`, contains no interpolations and its value The decoded value is exactly a Unicode scalar. Therefore, the Surface AST it does not have a separate lexical constructor `CharLiteral`.
 
-`NumericTextFormat` representa anchuras enteras y fraccionarias opcionales sin conservar los dos puntos concretos.
+`NumericTextFormat` displays whole and optional fractional widths without retaining the specific colons.
 
-Dentro del `format` de una magnitud de punto, `unidad from contenedor` produce `ContextualPointComponentExpr`; no se inventa un receptor explícito que no aparece en la fuente.
+Within the `format` of a magnitude from point, `unidad from contenedor` produces `ContextualPointComponentExpr`; you don’t just make up a receiver explicit information that does not appear in the source.
 
-## Intervalos
+## Intervals
 
-Todas las formas se normalizan a:
+All forms are standardised to:
 
 ```text
 Interval(lower, lowerBoundary, upper, upperBoundary, sharedUnit?)
 EmptyInterval(sharedUnit?)
 ```
 
-Normalizaciones:
+Standardisation:
 
-- `a..b` → intervalo cerrado.
-- `[a]` → intervalo cerrado con ambos extremos iguales.
-- Formas con unidad compartida → unidad en `sharedUnit`.
+- `a..b` → closed interval.
+- `[a]` → a closed interval with both endpoints included.
+- Shapes with unit shared → unit in `sharedUnit`.
 - `[] unit` → `EmptyInterval(unit)`.
-- `[a..b) cycle` → `CyclicPointDomain` sobre el intervalo semiabierto declarado.
+- `[a..b) cycle` → `CyclicPointDomain` over the specified semi-open interval.
 
-Los paréntesis y corchetes solo sobreviven como `OpenBoundary` o `ClosedBoundary`.
+Parentheses and square brackets only survive as `OpenBoundary` o `ClosedBoundary`.
 
-Los extremos `*` permanecen como `EffectiveIntervalBound` hasta elaboración.
+The wingers `*` remain as `EffectiveIntervalBound` up to elaboration.
 
-## Cantidades y unidades
+## Quantities and units
 
-`QuantityValueExpr` contiene un literal numérico y una `UnitProduct`.
+`QuantityValueExpr` contains a literal numerical and a `UnitProduct`.
 
-La expresión de unidad y la de dimensión poseen árboles separados aunque ambas usen `*`, `/` y paréntesis en la sintaxis concreta.
+The expression of unit and the dimensional one has separate trees, even though both use `*`, `/` and parentheses in the concrete syntax.
 
-Una forma `UNIT_FORM` se conserva como texto fuente contextual. Su resolución contra el catálogo pertenece a fases posteriores.
+A way `UNIT_FORM` is preserved as source text contextual. Its resolution The catalogue entry relates to later phases.
 
-La ausencia de espacio entre número y unidad no altera el AST. `3m` y `3 m` producen la misma cantidad; la forma fuente exacta permanece disponible en la CST y el formateador emite la segunda.
+The absence of a space between the number and unit does not affect AST. `3m` y `3 m` produce the same output; the exact source form remains available in the CST and the formatter outputs the second one.
 
-## Literales numéricos
+## Numeric literals
 
-El AST conserva una escritura canónica del valor, no necesariamente el lexema exacto. Por ejemplo:
+The AST holds a canonical document from the value, not necessarily the exact lexeme. For example:
 
 ```mud
 1_000
 1000
 ```
 
-pueden producir el mismo `ExactNumberLiteral("1000")`.
+may produce the same `ExactNumberLiteral("1000")`.
 
-La exactitud matemática de `Num` y la interpretación binary64 de `Rum` se elaboran después.
+The mathematical accuracy of `Num` and the binary64 interpretation of `Rum` are prepared afterwards.
 
-## Orden preservado y orden canónico
+## Preserved order and canonical order
 
-Se conserva el orden fuente de:
+The source order is preserved:
 
-- Declaraciones dentro de un archivo.
-- Antecesores.
-- Campos y componentes.
-- Datos y miembros de familias.
-- Participantes y `given`.
-- Argumentos.
-- Efectos y aserciones.
+- Statements within a file.
+- Predecessors.
+- Fields and components.
+- Family details and members.
+- Participants and `given`.
+- Arguments.
+- Effects and assertions.
 
-Solo `MudProject` define una serialización canónica de archivos por ruta. Ninguna otra lista se ordena automáticamente en el AST superficial salvo que una normalización concreta lo declare.
+Alone `MudProject` defines a canonical file serialisation by path. No other list is automatically sorted in the Surface AST unless a specific standard states otherwise.
 
-## Estados inválidos excluidos
+## Invalid states excluded
 
-Un AST superficial conforme no puede contener:
+A Surface AST It must not contain:
 
-- Cardinalidad ausente.
-- Dos modificadores `unique`.
-- Dos órdenes de colección.
-- `given` mutable.
-- Declaraciones de metadatos duplicadas en una misma unidad.
-- Símbolo o ancla resueltos.
-- Tipo inferido insertado como si se hubiera escrito.
-- Comentarios ordinarios.
-- Tokens de recuperación.
+- Cardinality absent.
+- Two modifiers `unique`.
+- Two orders of collection.
+- `given` changeable.
+- Duplicate metadata declarations within the same unit.
+- Symbol o anchor resolved.
+- Type implied, inserted as if it had been written.
+- Ordinary comments.
+- Recovery tokens.
 
-## Serialización estructural
+## Structural serialisation
 
-La serialización canónica de AST:
+The canonical serialisation of AST:
 
-1. Ordena archivos por ruta normalizada.
-2. Conserva el orden de las secuencias internas.
-3. Usa los nombres de constructores ASDL.
-4. Omite trivia y puntuación.
-5. Incluye `SourceOrigin` salvo en vistas de comparación que lo excluyan expresamente.
-6. Serializa enums por su nombre canónico.
+1. Sort files by path standardised.
+2. It preserves the order of the internal sequences.
+3. Use constructor names ASDL.
+4. Skip trivia and punctuation.
+5. Includes `SourceOrigin` except in comparison views where this is expressly excluded.
+6. Serialise enums by their canonical name.
 
-Esta serialización sirve para snapshots, caché y tooling. No es código MUD y no sustituye al pretty-printer.
+This serialisation is used for snapshots, caching and tooling. It is not MUD code and does not replace the pretty-printer.
 
-## Cobertura
+## Coverage
 
-Toda producción de [[mud]] debe aparecer en:
+All production from [[mud]] must appear in:
 
 - `mud-syntax-kinds.yaml`.
 - `cobertura-sintactica.yaml`.
 
-La cobertura declara si la producción:
+The coverage specifies whether the production:
 
-- Construye un nodo.
-- Se normaliza.
-- Se pliega en el padre.
-- Se descarta como layout.
-- Queda contextual hasta resolución.
+- Build a node.
+- It’s returning to normal.
+- He turns to his father.
+- It is ruled out as a layout.
+- It remains contextual up to resolution.
 
-`validate_syntax_model.py` comprueba esa correspondencia.
+`validate_syntax_model.py` Check that it matches.
 
 ## Conformidad
 
-Una implementación conforme del AST superficial debe:
+One conforming implementation from the Surface AST must:
 
-1. Producir constructores equivalentes a `mud-surface-ast.asdl`.
-2. Aplicar todas las normalizaciones de [[cst-a-ast-superficial]].
-3. Rechazar antes del AST los estados excluidos.
-4. Conservar procedencia.
-5. No anticipar resolución, tipado o IR.
-6. Mantener las diferencias de operadores exigidas.
-7. Permitir generar una forma estructural estable para pruebas.
+1. Generate constructors equivalent to `mud-surface-ast.asdl`.
+2. Apply all standardisations from [[cst-a-ast-superficial]].
+3. Reject the excluded states before the AST.
+4. Preserve provenance.
+5. Do not anticipate resolution, typed or IR.
+6. Maintain the required operator differences.
+7. Enable the creation of a stable structural form for testing.
 
-## Normalización de cuerpos vacíos de `thing`
+## Normalisation of empty bodies of `thing`
 
-`thing A`, `thing A;` y `thing A {}` producen el mismo `ThingDecl` con cero campos y sin sobrescritura intrínseca. La CST conserva el cuerpo y el terminador escritos; el AST no fabrica un nodo de cuerpo vacío.
+`thing A`, `thing A;` y `thing A {}` produce the same `ThingDecl` with zero fields and no intrinsic overwriting. The CST preserves the written body and terminator; the AST does not create an empty body node.
 
 
-## Ejemplos fuente → AST
+## Source examples → AST
 
 ```mud
 A -> B -> C
 ```
 
-se normaliza como `ExactDictionaryType(A, ExactDictionaryType(B, C))`.
+is normalised as `ExactDictionaryType(A, ExactDictionaryType(B, C))`.
 
 ```mud
 value iis not PersonId
 ```
 
-produce `ExactTypeTestExpr(value, PersonId, Enabled)`.
+produces `ExactTypeTestExpr(value, PersonId, Enabled)`.
 
 ```mud
 "{value~anchor}"
 ```
 
-produce `TextTemplateExpr([ValueInterpolation(MetadataAccessExpr(value, anchor))])`.
+produces `TextTemplateExpr([ValueInterpolation(MetadataAccessExpr(value, anchor))])`.
 
 ```mud
 values: Nat = [1, 2, 3]
 ```
 
-conserva `OmittedCardinality` en el AST superficial y adquiere `[3]` únicamente durante la elaboración del campo.
+preserves `OmittedCardinality` in the Surface AST and buy `[3]` only during the elaboration from the field.
 
 ```mud
 start with {
@@ -835,19 +835,19 @@ start with {
 }
 ```
 
-produce `StartSet(contributions=[AllLiteral, EmptyLiteral])`.
+produces `StartSet(contributions=[AllLiteral, EmptyLiteral])`.
 
-## Tipos producto y tipos de diccionario
+## Product types and dictionary types
 
-`PositionalProductType` y `NamedProductType` conservan los componentes de los productos estructurales anónimos. `ExactDictionaryType` y `DecisionDictionaryType` representan respectivamente los diccionarios exactos y los diccionarios funcionales definidos por ramas. El nombre mecánico `Decision` se conserva por estabilidad del esquema.
+`PositionalProductType` y `NamedProductType` retain the components of the anonymous structural products. `ExactDictionaryType` y `DecisionDictionaryType` represent, respectively, exact dictionaries and functional dictionaries defined by branches. The mechanical name `Decision` is retained for the sake of the scheme’s stability.
 
-Una cadena se pliega por la derecha:
+A chain folds inwards from the right:
 
 ```text
 A -> B [2] --> C [3 ordered]
 ```
 
-produce conceptualmente:
+conceptually produces:
 
 ```text
 ExactDictionaryType(
@@ -857,43 +857,44 @@ ExactDictionaryType(
 )
 ```
 
-La validación posterior a la resolución rechaza una flecha como alternativa parcial de una unión, incluso cuando aparece a través de un alias.
+The validation following the resolution rejects an arrow as a partial alternative to a union, even when it appears via a alias.
 
-## Cardinalidad omitida
+## Cardinality omitted
 
-`CollectionSpec` conserva `WrittenCardinality` u `OmittedCardinality`. Para:
+`CollectionSpec` preserves `WrittenCardinality` u `OmittedCardinality`. To:
 
 ```mud
 values: Nat = [1, 2, 3]
 ```
 
-el AST superficial conserva la omisión. La elaboración de un campo almacenado inmutable infiere después `[3]` y registra `InferredFromInitializer`; no fabrica esa información durante el parsing.
+the Surface AST retains the omission. The elaboration of a stored field 'immutable' implies subsequently `[3]` and log in `InferredFromInitializer`; it does not generate that information during parsing.
 
-## Comparaciones nominales
+## Nominal comparisons
 
-`is` continúa representándose mediante la comparación nominal transitiva. `iis` produce un nodo propio porque su narrowing es distinto:
+`is` It continues to be represented by means of transitive nominal comparison. `iis` It produces its own node because its narrowing is different:
 
 ```text
 ExactTypeTestExpr(value, PersonId, negated=Disabled)
 ExactTypeTestExpr(value, PersonId, negated=Enabled)
 ```
 
-La segunda forma corresponde a `value iis not PersonId`. La resolución exige que el operando derecho sea un tipo nominal.
+The second form corresponds to `value iis not PersonId`. The resolution requires the right-hand operand to be a type nominal.
 
-## Operaciones conjuntistas de diccionarios
+## Dictionary set operations
 
-El AST superficial conserva `|`, `&`, `--` y `^` como `BinaryExpr`, porque la categoría exacta depende de los tipos resueltos. La elaboración los especializa como operación de diccionario exacto o funcional. Una operación funcional conserva sus operandos; no crea una lista nueva de ramas.
+The Surface AST preserves `|`, `&`, `--` y `^` such as `BinaryExpr`, because the exact category depends on the resolved types. The elaboration This specialises them as exact or functional dictionary operations. A functional operation preserves its operands; it does not create a new list of branches.
 
-## Metadatos, texto y activación
+## Metadata, text and activation
 
-`element~metadata` produce siempre `MetadataAccessExpr`. No existe `MetadataSuffix` asignable: `AssignableExpr` solo conserva `MemberSuffix` e `IndexSuffix`, de modo que ningún acceso `~` puede ser destino de un efecto. El AST superficial tampoco decide si la propiedad existe para el receptor; esa comprobación se difiere hasta que la categoría estática del receptor ha sido resuelta. Toda interpolación produce `ValueInterpolation`, incluida:
+`element~metadata` always produces `MetadataAccessExpr`. It does not exist `MetadataSuffix` allocable: `AssignableExpr` only retains `MemberSuffix` e `IndexSuffix`, so that no access `~` may be the destination of a effect. The Surface AST nor does it determine whether the property exists for the receiver; that check is deferred until the static category of the receiver has been resolved. Any interpolation produces `ValueInterpolation`, including:
 
 ```mud
 "{value~anchor}"
 ```
 
-No existe `AnchorInterpolation`. `start with` produce `StartSet(contributions)` con una única secuencia de contribuciones. `ActionDecl` conserva `PublicAction` o `Subaction`.
+It does not exist `AnchorInterpolation`. `start with` produces `StartSet(contributions)` with a single series of contributions. `ActionDecl` preserves `PublicAction` o `Subaction`.
 
-## Pertenencia, restricción y transformación local de colecciones
+## Ownership, restrictions and local adaptation of collections
 
-`has` y `has not` se normalizan como `HasMember` y `HasNotMember`. `value in Domain` produce `DomainRestrictionExpr`; una selección con binding conserva `SelectionExpr`. Las especificaciones locales producen `CollectionTransformExpr` con `LocalCollectionTransform`, sin capacidad `mut`.
+`has` y `has not` are normalised as `HasMember` y `HasNotMember`. `value in Domain` produces `DomainRestrictionExpr`; a selection with the original binding `SelectionExpr`. Local specifications result in `CollectionTransformExpr` with `LocalCollectionTransform`, without capacity `mut`.
+
