@@ -366,7 +366,7 @@ The following are invalid: `_1`, `1_`, `1__000`, `1_.0`, `1_000000`, `1.123_4567
 
 ## Units
 
-unit forms may contain Unicode and are not general identifiers. The base scanner retains its standard textual tokenisation; only the context-sensitive classifier may superimpose `UNIT_FORM` at a position where the quantity syntax permits an unit.
+Unit forms may contain Unicode and are not general identifiers. The base scanner retains its ordinary textual tokenisation; only the contextual classifier may overlay `UNIT_FORM` where the quantity syntax permits a unit.
 
 > [!warning]
 > The catalogue of prefixes and permitted forms belongs to the model catalogue of units. `UNIT_FORM` retains the found spelling and checks it against the already resolved semantic catalogue, without introducing a circular dependency in the base scanner.
@@ -403,4 +403,3 @@ In a single position, the aim is to:
 The longest valid match within the same category is selected. Comments and horizontal spaces are excluded from the meaningful stream, but are retained as trivia in the complete stream; `NEWLINE` is retained as token in the meaningful stream to determine termination.
 
 Within a template, `\u{...}` is applied first, followed by the other escape sequences, then `{` and, finally, the longest possible fragment literal. Within an interpolation, the standard priority applies once again. The sequence `anchor{` does not receive any special lexical treatment.
-
