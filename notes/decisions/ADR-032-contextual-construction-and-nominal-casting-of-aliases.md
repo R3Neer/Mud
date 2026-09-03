@@ -29,7 +29,7 @@ The nominal nature of aliases requires us to distinguish between:
 
 Without this separation, writing ordinary values would be unnecessarily cumbersome, or the nominal guarantee would be lost.
 
-## Decisión
+## Decision
 
 ### Two families from `to`
 

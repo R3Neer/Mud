@@ -21,7 +21,7 @@ affects:
 
 MUD uses intervals for numerical domains, magnitudes and cardinalities. The original reference did not uniformly define the lateral meaning of `*` nor was it part of the cycle of a magnitude from point in his domain.
 
-## Decisión
+## Decision
 
 ### Interval forms
 

@@ -23,7 +23,7 @@ affects:
 
 A alias must provide identity nominal value of securities, no identity runtime or state changeable. Therefore, its declaration it is static and does not take part in the cycle lifespan of the world.
 
-## Decisión
+## Decision
 
 ### Definition of type
 
@@ -62,7 +62,7 @@ Each component:
 2. Take up a position semantics in the order of declaration.
 3. It forms part of the structure of the alias.
 4. You can declare a domain.
-5. He cannot give evidence mutability exterior: the shape `mut nombre: tipo` does not exist for components.
+5. It cannot expose outer mutability: the form `mut name: type` does not exist for components.
 6. It can accommodate indoor use `[mut]` on the `thing` contained directly by a collection.
 7. You can declare a default value by means of `=`.
 
@@ -96,7 +96,7 @@ square := Piece.square
 square.file = B # inválido
 ```
 
-A place with mutability exterior can replace the value complete and a path an assignable variable may traverse stored components of the alias by means of reconstruction and write-back:
+An outer-mutable place can replace the complete value, and an assignable path may traverse stored alias components through reconstruction and write-back:
 
 ```mud
 thing Piece {
@@ -146,4 +146,4 @@ The values are compared by type nominal value and content. The declaration It is
 
 ## Amended by D-084
 
-Aliases may declare single or multiple specialisations. The nominal forms root retain `:= tipo`; descendants inherit a common effective representation. Structural types inherit components and derived fields. A descendant may override the default value of an inherited stored component and refine inherited contracts where such refinement strengthens guarantees without removing observable or write capabilities: the mutability The exterior remains unchanged, whilst the interior capacity may be enhanced in the absence of `[mut]` the presence of `[mut]` y type, domain, cardinality, `unique` and order are governed by substitutability. Inherited derived fields retain their defining expression and can only strengthen the contract of his result. This amendment does not introduce identity runtime ni mutability from the value alias.
+Aliases may declare one or more specialisations. Root nominal forms retain `:= type`; descendants inherit a common effective representation. Structural types inherit components and derived fields. A descendant may override the default value of an inherited stored component and refine inherited contracts where that strengthens guarantees without removing observable or write capabilities. Outer mutability remains unchanged, while inner capability may be enhanced in the absence of `[mut]`; the presence of `[mut]`, type, domain, cardinality, `unique` and order remain governed by substitutability. Inherited derived fields retain their defining expression and may only strengthen the contract of their result. This amendment introduces neither runtime identity nor mutability to alias values.

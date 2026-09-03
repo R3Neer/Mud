@@ -25,7 +25,7 @@ affects:
 - Related questions: Q-001, Q-014, Q-054
 - Documents affected: future `05-modelo-de-programa.md`, future `06-lexicon.md`, future `09-names-and-anchors.md`
 
-## Decisión
+## Decision
 
 ### MUD files and paths
 

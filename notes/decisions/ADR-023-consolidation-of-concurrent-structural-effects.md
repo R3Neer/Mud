@@ -56,7 +56,7 @@ which begins on $W_i$. A subsequent instruction from the same `then` You can see
 
 None `then` notes that during the same wave, the delta part of another `then`. The implementation may interleave or parallelise the computation, but this scheduling is not observable.
 
-A local connection `nombre [: tipo] := expresión` It is evaluated once in its textual position and can read the private overlay produced by previous instructions in the same block. It does not produce a delta and the subsequent instructions do not recalculate its value, in accordance with D-066.
+A local binding `name [: type] := expression` is evaluated once at its textual position and can read the private overlay produced by previous instructions in the same block. It does not produce a delta and subsequent instructions do not recalculate its value, in accordance with D-066.
 
 Once all the blocks have been completed, each one is normalised delta private and are then consolidated:
 

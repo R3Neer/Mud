@@ -28,7 +28,7 @@ MUD includes two output entities:
 - `look`, to observe the stable state currently available on demand.
 - `message`, to report that an incident took place during the resolution of a action.
 
-## Decisión
+## Decision
 
 ### `look`
 

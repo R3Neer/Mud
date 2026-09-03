@@ -28,7 +28,7 @@ A single type A general number cannot offer the following at the same time:
 
 MUD distinguishes between these needs. `Num` is the type default and exact general; `Rum`, short for *rapid number*, is a deliberate choice to use approximate arithmetic.
 
-## Decisión
+## Decision
 
 ### `Num`
 

@@ -24,7 +24,7 @@ affects:
 
 `as` reserves the right to declare specialisation in `thing`, so it cannot continue to express conversions. MUD needs to distinguish the change from unit of a quantity obtained by converting its numerical representation.
 
-## Decisión
+## Decision
 
 `to` is the explicit quantitative conversion operator:
 

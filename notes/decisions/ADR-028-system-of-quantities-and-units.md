@@ -31,7 +31,7 @@ MUD needs to distinguish between:
 - What unit It is written.
 - What dimension results from combining quantities?
 
-## Decisión
+## Decision
 
 ### Basic types
 

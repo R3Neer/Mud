@@ -32,7 +32,7 @@ $$
 
 Therefore, no value A standard Boolean value represents deletion on its own in all contexts.
 
-## Decisión
+## Decision
 
 The assessment introduces a metalinguistic marker:
 

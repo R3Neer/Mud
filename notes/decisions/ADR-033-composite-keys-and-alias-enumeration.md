@@ -20,7 +20,7 @@ affects:
 
 Structural aliases must be able to act as ordinary composite values: dictionary keys, iteration sources and quantification domains. For two implementations to be equivalent, the finiteness and the order of enumeration cannot be implied.
 
-## Decisión
+## Decision
 
 ### Compound keys
 

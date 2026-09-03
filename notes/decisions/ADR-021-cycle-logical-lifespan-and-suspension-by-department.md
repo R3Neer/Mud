@@ -9,7 +9,7 @@ questions:
   - "Q-048"
   - "Q-049"
 affects:
-  - "[[specification/04-mathematical-model]], futuros capítulos 11, 21 a 25 y 32"
+  - "[[specification/04-mathematical-model]], future chapters 11, 21 to 25 and 32"
 ---
 # ADR-021 — Cycle logical lifespan and suspension by department
 
@@ -33,7 +33,7 @@ The canonical definition and the identity of a declaration survive `destroy`. Th
 
 This separation prevents both the destructive pruning of state foreign as an interpretation of `destroy` as a mere hibernation of the materialisation its own.
 
-## Decisión
+## Decision
 
 The model distinguishes:
 
@@ -74,7 +74,7 @@ The conservation of canonical identity does not involve the preservation of mate
 
 ## Categories with cycle of life
 
-`create` y `destroy` can trade in:
+`create` and `destroy` can trade in:
 
 - `thing` specific.
 - `thing` abstract.
@@ -149,7 +149,7 @@ destroy CanEnter
 
 Declaration names share the space required for that resolution be unambiguous. An ambiguous reference must be identified; `destroy` It does not select a category based on priority.
 
-The compiler can internally generate these forms as canonical definition, initial activation, materialisation runtime and deactivation. `activate` y `deactivate` are not entered as words in the MUD surface.
+The compiler can internally generate these forms as canonical definition, initial activation, runtime materialisation and deactivation. `activate` and `deactivate` are not entered as words in the MUD surface.
 
 ## Suspension by department
 
@@ -236,9 +236,9 @@ The properties declared by `Kingdom` are no longer inherited whilst it is destro
 
 The specialisation unit declared with `as` it can be crossed at the effective projection and not just one hard dependency which will cause a chain reaction that destroys all the descendants.
 
-## `add` y `remove` about properties
+## `add` and `remove` about properties
 
-`add` y `remove` They also operate on properties. The word `property` is not necessary:
+`add` and `remove` also operate on properties. The word `property` is not necessary:
 
 ```mud
 add kingdom: Kingdom[1] = Panama to King
@@ -307,9 +307,9 @@ The option of retaining the payload and runtime structural modifications associa
 
 Automatic deletion of descendants and dependants is not permitted. The suspension derivative is sufficient to remove them from the projection when necessary and preserves the reversibility of the state which belongs to them.
 
-### `activate` y `deactivate` on the surface
+### `activate` and `deactivate` on the surface
 
-They are retained as potential internal terminology for aspects of the activity, but are excluded from the main terminology. `create`, `destroy`, `add` y `remove` describe the rules of a world.
+They are retained as potential internal terminology for aspects of the activity, but are excluded from the main terminology. `create`, `destroy`, `add` and `remove` describe the rules of a world.
 
 ### Catches subject to the uniqueness condition
 
@@ -329,10 +329,10 @@ The suite must cover:
 3. Restoration of that property, subject to the same encumbrance, when the dependency arises again and the transition is valid.
 4. Pressure drop downstream of `remove`.
 5. Suspension a comprehensive list of rules and actions involving participants from type inactive.
-6. Rejection of `create` y `destroy` applied to a alias, in accordance with D-031.
+6. Rejection of `create` and `destroy` applied to an alias, in accordance with D-031.
 7. Compression and restoration of the graph cash.
 8. Retention of property rights by descendants where their tenancies remain in force.
 9. No implicit captures.
 10. Resolution unequivocal indication of `destroy`.
-11. Rejection of `create` o `destroy` on actions and quantities.
+11. Rejection of `create` or `destroy` on actions and quantities.
 

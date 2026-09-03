@@ -25,9 +25,9 @@ MUD terminology and headers must address three issues:
 
 Furthermore, the documentation did not distinguish with sufficient clarity between instances where the keys are part of a clause and those where they are mandatory.
 
-## Decisión
+## Decision
 
-### `thing` y `as`
+### `thing` and `as`
 
 `thing` replaces `construct` such as reserved word:
 

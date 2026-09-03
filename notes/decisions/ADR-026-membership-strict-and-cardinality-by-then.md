@@ -23,7 +23,7 @@ affects:
 
 One collection characterised by a `thing` contains his own specialisations, not the subject itself identity which acts as type. It is also necessary to determine whether a change to collection must comply with the cardinality after each instruction or upon completion of one unit atomic effects.
 
-## Decisión
+## Decision
 
 ### Membership from `thing`
 
