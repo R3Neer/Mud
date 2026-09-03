@@ -1,6 +1,6 @@
 ---
 id: Q-006
-title: Conflictos
+title: Conflicts
 priority: P0
 opened: 2026-07-29
 resolved:
@@ -17,29 +17,29 @@ affects: []
 superseded-by: []
 ---
 
-# Q-006 — Conflictos
+# Q-006 — Conflicts
 
-## Pregunta
+## Question
 
-¿Cuál es la matriz completa de compatibilidad entre asignaciones, incrementos, multiplicaciones y operaciones estructurales concurrentes?
+What is the complete compatibility matrix for assignments, increments, multiplications and concurrent structural operations?
 
-## Ya decidido
+## Already decided
 
-La pregunta está **parcialmente decidida** mediante [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]], [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[notas/decisiones/ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]] y [[notas/decisiones/ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
+The question is **partially decided** by [[notas/decisiones/ADR-023-consolidacion-de-efectos-estructurales|D-023]], [[notas/decisiones/ADR-039-colecciones-y-diccionarios|D-039]], [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]], [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|D-060]], [[notas/decisiones/ADR-080-algebra-elevada-y-actualizaciones-de-coleccion|D-080]], [[notas/decisiones/ADR-098-rutas-asignables-y-write-back-de-aliases|D-098]] and [[notas/decisiones/ADR-100-orden-procedencia-pertenencia-y-consolidacion|D-100]].
 
-Ya están fijadas las asignaciones iguales o distintas; la forma aritmética concurrente `(Δ, P, Q)` con bloque aditivo previo al multiplicativo; el núcleo estructural `create → add → remove → destroy`; la composición de `add` y `remove` sobre una misma presencia; las actualizaciones homogéneas `|=`, `&=`, `^=` y `--=` ya decididas; la consolidación idempotente de varias adiciones del mismo valor a una colección `unique`; el desempate reproducible de procedencia para inserciones concurrentes; y la semántica secuencial de reconstrucción/write-back de aliases almacenados. En `Nat`, los deltas aditivos se suman como enteros firmados y solo después se normalizan a cero.
+Equal and unequal assignments; concurrent arithmetic `(Δ, P, Q)` with an additive block before the multiplicative one; the structural core `create → add → remove → destroy`; composition of `add` and `remove` on one presence; homogeneous updates `|=`, `&=`, `^=` and `--=`; idempotent consolidation of multiple additions of one value to a `unique` collection; reproducible provenance tie-breaking for concurrent insertions; and sequential reconstruction/write-back semantics for stored aliases are fixed. In `Nat`, additive deltas are summed as signed integers and only then normalised to zero.
 
-## Pendiente
+## Outstanding
 
-Queda completar las familias para las que todavía no existe combinación algebraica ni composición canónica concreta, incluidos los casos restantes de diccionarios, propiedades, límites estructurales de cardinalidad y destinos o write-backs parcialmente solapados. También queda por fijar la precisión mínima obligatoria del análisis estático que distingue conflicto inevitable, posible e imposible.
+The families for which no algebraic combination or canonical composition yet exists remain to be completed, including remaining dictionary cases, properties, structural cardinality limits, and partially overlapping destinations or write-backs. The minimum required precision of static analysis distinguishing inevitable, possible and impossible conflict also remains to be fixed.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1. Existe una clasificación completa para las combinaciones concurrentes restantes de diccionarios que puedan coincidir sobre un mismo destino semántico.
-- C2. Existe una clasificación completa para operaciones sobre propiedades y límites estructurales de cardinalidad que todavía carezcan de combinación algebraica o composición canónica.
-- C3. Existe una regla completa para destinos y write-backs parcialmente solapados, incluida la condición que distingue composición válida de conflicto.
-- C4. Está fijada la precisión mínima obligatoria del análisis estático para distinguir conflicto inevitable, posible e imposible.
+- C1. A complete classification exists for remaining concurrent dictionary combinations that can coincide on one semantic destination.
+- C2. A complete classification exists for operations on properties and structural cardinality limits lacking an algebraic combination or canonical composition.
+- C3. A complete rule exists for partially overlapping destinations and write-backs, including the condition distinguishing valid composition from conflict.
+- C4. The minimum required precision of static analysis distinguishing inevitable, possible and impossible conflict is fixed.
 
-## Resolución
+## Resolution
 
-Pendiente de satisfacer C1-C4.
+Pending satisfaction of C1–C4.
