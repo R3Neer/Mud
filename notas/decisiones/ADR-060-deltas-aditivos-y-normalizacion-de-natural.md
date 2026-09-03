@@ -1,6 +1,6 @@
 ---
 id: D-060
-title: "Deltas aditivos y normalización de `Nat`"
+title: "Additive deltas and `Nat` normalisation"
 status: vigente
 date: 2026-07-29
 supersedes: []
@@ -10,78 +10,78 @@ questions:
   - "Q-006"
   - "Q-019"
 affects:
-  - "futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`"
+  - "future chapters `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` and `29-ondas.md`"
 ---
-# ADR-060 — Deltas aditivos y normalización de `Nat`
+# ADR-060 — Additive deltas and `Nat` normalisation
 
-- Modifica: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]] y [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
-- Relacionada con: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
-- Preguntas relacionadas: Q-002, Q-006, Q-019
-- Documentos afectados: futuros capítulos `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` y `29-ondas.md`
+- Amends: [[notas/decisiones/ADR-040-semantica-numerica-basica-restante|D-040]], [[notas/decisiones/ADR-045-resolucion-causal-vinculaciones-y-cola|D-045]] and [[notas/decisiones/ADR-046-algebra-y-conflictos-de-efectos|D-046]]
+- Related to: [[notas/decisiones/ADR-037-campos-y-dominios-declarativos|D-037]]
+- Related questions: Q-002, Q-006, Q-019
+- Affected documents: future chapters `10-sistema-de-tipos.md`, `25-efectos.md`, `28-resolucion-de-acciones.md` and `29-ondas.md`
 
-## Contexto
+## Context
 
-D-040 establecía que la aritmética de `Nat` satura en cero. D-046 establecía a la vez que las actualizaciones aditivas compatibles se consolidan sumando deltas. Sin precisar el punto de saturación, estas reglas admitían dos resultados distintos:
+D-040 established that `Nat` arithmetic saturates at zero. D-046 also established that compatible additive updates are consolidated by summing deltas. Without specifying the point of saturation, these rules allowed two distinct results:
 
 ```mud
-# counter vale 0
+# counter is 0
 counter -= 2
 counter += 3
 ```
 
-Saturar cada actualización produciría `3`; sumar primero los deltas y saturar una sola vez produciría `1`. La primera alternativa depende del orden y contradice el propósito conmutativo de los efectos aditivos.
+Saturating each update would produce `3`; summing the deltas first and saturating only once would produce `1`. The first alternative depends on order and contradicts the commutative purpose of additive effects.
 
-## Decisión
+## Decision
 
-### Valores y deltas
+### Values and deltas
 
-Un valor de tipo `Nat` nunca es negativo. Los estados almacenados, las instantáneas de onda y toda lectura de una expresión `Nat` pertenecen a:
+A value of type `Nat` is never negative. Stored states, wave snapshots and every reading of a `Nat` expression belong to:
 
 $$
 \mathbb N=\{0,1,2,\ldots\}.
 $$
 
-Un delta aditivo dirigido a un `Nat` no es a su vez un valor `Nat`. El IR lo representa como un entero con signo:
+An additive delta targeting a `Nat` is not itself a `Nat` value. The IR represents it as a signed integer:
 
 $$
 \delta\in\mathbb Z.
 $$
 
-Por tanto, `counter -= 2` aporta el delta $-2$ y no almacena el valor $-2$.
+Therefore, `counter -= 2` contributes the $-2$ delta; it does not store the value $-2$.
 
-### Aritmética pura
+### Pure arithmetic
 
-La resta ordinaria de valores `Nat` conserva la saturación inmediata de D-040:
+Ordinary subtraction of `Nat` values retains the immediate saturation from D-040:
 
 $$
 a-_{\mathsf N}b=\max(0,a-b).
 $$
 
-Una expresión pura siempre produce un valor de su tipo. En particular:
+A pure expression always produces a value of its type. In particular:
 
 ```mud
 result: Nat := 0 - 2
 ```
 
-produce `0`.
+produces `0`.
 
-### Efectos acumulativos
+### Accumulative effects
 
-Las instrucciones acumulativas no son azúcar de asignación:
+Accumulative instructions are not assignment sugar:
 
 ```mud
 target += amount
 target -= amount
 ```
 
-producen respectivamente deltas aditivos positivos y negativos. No se elaboran como:
+They produce positive and negative additive deltas respectively. They are not elaborated as:
 
 ```mud
 target = target + amount
 target = target - amount
 ```
 
-Sean $n\in\mathbb N$ el valor del destino en la instantánea común y $\delta_1,\ldots,\delta_k\in\mathbb Z$ todos los deltas aditivos compatibles dirigidos a él durante un mismo lote causal. El valor que alimenta la instantánea siguiente es:
+Let $n\in\mathbb N$ be the target's value in the common snapshot and let $\delta_1,\ldots,\delta_k\in\mathbb Z$ be every compatible additive delta targeting it during one causal batch. The value fed into the following snapshot is:
 
 $$
 n'=
@@ -91,92 +91,92 @@ n+\sum_{i=1}^{k}\delta_i
 \right).
 $$
 
-La suma de deltas ocurre antes de la normalización. Esta regla se aplica al consolidar la raíz y al cerrar cada onda, antes de construir la instantánea que podrá leer el lote siguiente.
+Deltas are summed before normalisation. This rule applies when consolidating the root and when closing each wave, before constructing the snapshot that the following batch can read.
 
-En el ejemplo inicial:
+In the opening example:
 
 $$
 \max(0,0-2+3)=1.
 $$
 
-El resultado es el mismo para cualquier permutación de los deltas.
+The result is the same for every permutation of the deltas.
 
-### Overlay secuencial de un `then`
+### Sequential overlay within a `then`
 
-Cada `then` conserva su orden textual para evaluar los operandos de efectos posteriores. Sea $\Delta_j$ la suma firmada de los deltas que ese mismo `then` ya ha emitido sobre un destino `Nat` después de sus primeras $j$ instrucciones.
+Each `then` retains its textual order when evaluating operands for subsequent effects. Let $\Delta_j$ be the signed sum of the deltas already emitted by that same `then` against a `Nat` target after its first $j$ instructions.
 
-Una lectura posterior del destino dentro del mismo delta privado observa:
+A subsequent reading of the target within that private delta observes:
 
 $$
 \operatorname{read}_{j}(n)=\max(0,n+\Delta_j).
 $$
 
-La proyección no sustituye ni recorta $\Delta_j$. El delta interno puede seguir siendo negativo aunque la lectura visible sea cero:
+This projection neither replaces nor truncates $\Delta_j$. The internal delta may remain negative even when the visible reading is zero:
 
 ```mud
-# counter vale 0
+# counter is 0
 counter -= 2
 snapshot = counter
 counter += 3
 ```
 
-La lectura de `counter` para calcular `snapshot` produce `0`, pero el delta acumulado final es $-2+3=1$ y el siguiente estado contiene `counter == 1`.
+Reading `counter` to calculate `snapshot` produces `0`, but the final accumulated delta is $-2+3=1$, and the next state contains `counter == 1`.
 
-Un `then` nunca observa deltas privados de otros `then`. Todos ellos parten de la misma instantánea común y solo sus deltas finales se consolidan.
+A `then` never observes another `then`'s private deltas. They all start from the same common snapshot, and only their final deltas are consolidated.
 
-### Dominios y observación
+### Domains and observation
 
-Tras normalizar el resultado al tipo `Nat`, se comprueba el dominio refinado del destino conforme a D-037. Si el dominio excluye el valor normalizado, el estado tentativo es inválido y la resolución produce `failed`.
+After the result has been normalised to `Nat`, the target's refined domain is checked in accordance with D-037. If the domain excludes the normalised value, the tentative state is invalid and resolution produces `failed`.
 
-Ninguna regla reactiva, mensaje, `look`, `old` ni `changes` observa deltas negativos o valores intermedios de un `then`. Las ondas solo comparan instantáneas ya consolidadas y normalizadas.
+No reactive rule, message, `look`, `old` or `changes` observes negative deltas or intermediate values of a `then`. Waves compare only snapshots that have already been consolidated and normalised.
 
-### Alcance
+### Scope
 
-D-060 fija únicamente las actualizaciones aditivas homogéneas. Permanecen vigentes:
+D-060 defines only homogeneous additive updates. The following remain in force:
 
-- el conflicto entre asignación y actualización aritmética;
-- el conflicto entre actualización aditiva y multiplicativa;
-- la composición por producto de actualizaciones multiplicativas compatibles;
-- las preguntas abiertas de D-046 sobre efectos estructurales y destinos parcialmente solapados.
+- the conflict between assignment and arithmetic update;
+- the conflict between additive and multiplicative update;
+- composition by product of compatible multiplicative updates;
+- D-046's open questions about structural effects and partially overlapping targets.
 
-## Consecuencias
+## Consequences
 
-- La saturación de `Nat` no rompe la conmutatividad de los deltas aditivos.
-- El IR distingue valores naturales de deltas enteros firmados.
-- El orden físico de reglas o hilos no altera el resultado consolidado.
-- La secuencialidad privada afecta a las lecturas usadas para calcular efectos posteriores, no al punto global de normalización.
-- `+=` y `-=` no pueden reescribirse mediante una asignación ordinaria.
-- Los límites inferiores de dominios refinados se comprueban después de normalizar al tipo básico.
+- `Nat` saturation does not break the commutativity of additive deltas.
+- The IR distinguishes natural values from signed integer deltas.
+- The physical order of rules or threads does not alter the consolidated result.
+- Private sequentiality affects readings used to calculate subsequent effects, not the global point of normalisation.
+- `+=` and `-=` cannot be rewritten as ordinary assignment.
+- The lower bounds of refined domains are checked after normalisation to the basic type.
 
-## Alternativas descartadas
+## Rejected alternatives
 
-### Saturar cada actualización
+### Saturate every update
 
-Para un valor inicial cero, aplicar `-2` y `+3` produciría `3` o `1` según el orden. Esto haría que efectos declarados compatibles dejaran de ser conmutativos.
+For an initial value of zero, applying `-2` and `+3` would produce `3` or `1` according to order. That would make declared compatible effects non-commutative.
 
-### Exponer el acumulador negativo
+### Expose the negative accumulator
 
-Permitiría que una expresión de tipo `Nat` produjera temporalmente un entero negativo y filtraría detalles del IR a la semántica observable.
+This would permit a `Nat` expression temporarily to produce a negative integer and would leak IR details into observable semantics.
 
-### Recortar también el delta privado
+### Also truncate the private delta
 
-Si una lectura proyectada a cero reemplazara el delta $-2$ por cero, se perdería la compensación posterior con $+3$ y reaparecería la saturación por instrucción.
+If a reading projected to zero replaced the $-2$ delta with zero, the later compensation by $+3$ would be lost and per-instruction saturation would reappear.
 
-### Equiparar `-=` con asignación
+### Equate `-=` with assignment
 
-Confundiría el efecto acumulativo con el cálculo puro saturado y haría imposible consolidar actualizaciones procedentes de reglas distintas mediante suma de deltas.
+This would conflate the accumulative effect with saturated pure calculation and make it impossible to consolidate updates from distinct rules by summing deltas.
 
-## Verificación
+## Verification
 
-1. `Nat` nunca contiene ni expone un valor negativo.
-2. La resta pura `0 - 2` produce `0`.
-3. Sobre valor inicial `0`, los deltas `-2` y `+3` producen `1`.
-4. Toda permutación de deltas aditivos produce el mismo resultado.
-5. Un total todavía negativo se normaliza a `0`.
-6. Una lectura privada tras un delta negativo observa `0` sin recortar el delta pendiente.
-7. Una lectura privada posterior a varios deltas observa la proyección de su suma acumulada.
-8. Un `then` no observa deltas de otro `then`.
-9. Raíz y ondas entregan a la instantánea siguiente únicamente valores normalizados.
-10. Un dominio refinado se comprueba después de la normalización básica.
-11. Rechazo de la expansión de `+=` o `-=` a una asignación.
-12. Conservación de los conflictos entre familias de efectos incompatibles.
+1. `Nat` never contains or exposes a negative value.
+2. Pure subtraction `0 - 2` produces `0`.
+3. With initial value `0`, the `-2` and `+3` deltas produce `1`.
+4. Every permutation of additive deltas produces the same result.
+5. A still-negative total is normalised to `0`.
+6. A private reading after a negative delta observes `0` without truncating the pending delta.
+7. A private reading after several deltas observes the projection of their accumulated sum.
+8. A `then` does not observe deltas from another `then`.
+9. The root and waves deliver only normalised values to the following snapshot.
+10. A refined domain is checked after basic normalisation.
+11. Rejection of expanding `+=` or `-=` into an assignment.
+12. Preservation of conflicts between incompatible effect families.

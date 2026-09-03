@@ -73,7 +73,7 @@ por [[gobierno/POLITICA-DE-DECISIONES|la política de decisiones]].
 | D-057 | vigente | 2026-07-28 | [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|Concrete grammar, precedence and continuation]] |
 | D-058 | vigente | 2026-07-29 | [[notas/decisiones/ADR-058-activadores-temporales-changes-y-old-reactivo|Temporal triggers, `changes` and reactive `old`]] |
 | D-059 | vigente | 2026-07-29 | [[notas/decisiones/ADR-059-intervalos-de-magnitud-y-extremos-invertidos|Magnitude intervals and inverted endpoints]] |
-| D-060 | vigente | 2026-07-29 | [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|Deltas aditivos y normalización de `Nat`]] |
+| D-060 | vigente | 2026-07-29 | [[notas/decisiones/ADR-060-deltas-aditivos-y-normalizacion-de-natural|Additive deltas and `Nat` normalisation]] |
 | D-061 | vigente | 2026-07-29 | [[notas/decisiones/ADR-061-resultados-fallidos-y-plantillas-text|Resultados no aceptados y plantillas `Text`]] |
 | D-062 | vigente | 2026-07-29 | [[notas/decisiones/ADR-062-literales-canonicos-de-magnitudes-de-punto|Literales canónicos de magnitudes de punto]] |
 | D-063 | vigente | 2026-07-30 | [[notas/decisiones/ADR-063-firmas-given-y-vinculaciones-on-conjuntas|Firmas, `given` y vinculaciones `on` conjuntas]] |
