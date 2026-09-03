@@ -7,9 +7,9 @@ properties:
   file.name:
     displayName: ADR
   id:
-    displayName: Decisión
+    displayName: Decision
   title:
-    displayName: Título
+    displayName: Title
   status:
     displayName: Estado
   date:
@@ -17,7 +17,7 @@ properties:
   questions:
     displayName: Preguntas
   superseded-by:
-    displayName: Sustituida por
+    displayName: Superseded by
 views:
   - type: table
     name: Vigentes

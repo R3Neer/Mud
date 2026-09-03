@@ -1,5 +1,5 @@
-# Identificadores históricos que no contienen una decisión recuperable.
-# No se reutilizan. Un hueco nuevo no incluido aquí hace fallar la validación.
+# Historical identifiers without a recoverable decision.
+# They are not reused. A new gap not listed here fails validation.
 D-004
 D-005
 D-016

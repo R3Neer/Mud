@@ -5,9 +5,9 @@ properties:
   temporary-reason:
     displayName: Motivo
   temporary-delete-when:
-    displayName: Eliminar cuando
+    displayName: Delete when
   temporary-delete-after:
-    displayName: Fecha límite
+    displayName: Deadline
 views:
   - type: table
     name: Temporales activos
@@ -17,7 +17,7 @@ views:
       - temporary-delete-when
       - temporary-delete-after
   - type: table
-    name: Con fecha límite
+    name: With deadline
     filters:
       and:
         - file.hasProperty("temporary-delete-after")

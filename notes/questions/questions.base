@@ -9,7 +9,7 @@ properties:
   id:
     displayName: Pregunta
   title:
-    displayName: Título
+    displayName: Title
   priority:
     displayName: Prioridad
   opened:
@@ -24,7 +24,7 @@ properties:
     displayName: Afecta a
 views:
   - type: table
-    name: Activas por prioridad
+    name: Active by priority
     filters:
       or:
         - resolved == false

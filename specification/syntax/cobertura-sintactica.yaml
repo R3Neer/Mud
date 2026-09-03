@@ -11,12 +11,12 @@ productions:
     cst: UsingFileBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   declaration-file-body:
     cst: DeclarationFileBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   using-declaration:
     cst: UsingDeclarationSyntax
     ast:
@@ -101,7 +101,7 @@ productions:
     cst: IdentifierSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   thing-declaration:
     cst: ThingDeclarationSyntax
     ast:
@@ -111,7 +111,7 @@ productions:
     cst: ThingBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   thing-body-declaration:
     cst: ThingBodyDeclarationSyntax
     ast:
@@ -141,7 +141,7 @@ productions:
     cst: StructuralAliasBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   alias-body-declaration:
     cst: AliasBodyDeclarationSyntax
     ast:
@@ -188,7 +188,7 @@ productions:
     cst: FamilyMemberBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   family-member-entry:
     cst: FamilyMemberEntrySyntax
     ast:
@@ -258,7 +258,7 @@ productions:
     cst: UnitBodySyntax
     ast:
       disposition: discarded
-      reason: estructura concreta absorbida por la declaración de unidad; sus metadata-assignment se conservan en el propietario
+      reason: concrete structure absorbed by the unit declaration; its metadata assignments are retained by the owner
   dimension-expression:
     cst: DimensionExpressionSyntax
     ast:
@@ -408,7 +408,7 @@ productions:
     cst: OptionalCommaSyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   for-clause:
     cst: ForClauseSyntax
     ast:
@@ -433,7 +433,7 @@ productions:
     cst: MemberCapabilitySyntax
     ast:
       disposition: folded
-      reason: producción auxiliar preservada por la CST y absorbida durante la normalización
+      reason: auxiliary production preserved by the CST and absorbed during normalisation
   given-clause:
     cst: GivenClauseSyntax
     ast:
@@ -638,7 +638,7 @@ productions:
     cst: ExpressionSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   mapping-expression:
     cst: MappingExpressionSyntax
     ast:
@@ -654,27 +654,27 @@ productions:
     ast:
       disposition: normalized
       target: expr
-      reason: una sola expresión se conserva; dos o más se convierten en CollectionLiteralExpr
+      reason: one expression is retained; two or more become CollectionLiteralExpr
   boolean-expression:
     cst: BooleanExpressionSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   text-expression:
     cst: TextExpressionSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   constant-expression:
     cst: ConstantExpressionSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   domain-expression:
     cst: DomainExpressionSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   stepped-domain:
     cst: SteppedDomainSyntax
     ast:
@@ -685,7 +685,7 @@ productions:
     ast:
       disposition: normalized
       target: expr
-      reason: la alternativa eventually produce EventuallyExpr; la alternativa ordinaria conserva su expresión
+      reason: the eventually alternative produces EventuallyExpr; the ordinary alternative retains its expression
   action-reference-list:
     cst: ActionReferenceListSyntax
     ast:
@@ -811,7 +811,7 @@ productions:
     cst: ArithmeticContinuationSyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   arithmetic-operator:
     cst: ArithmeticOperatorSyntax
     ast:
@@ -876,7 +876,7 @@ productions:
     cst: ReceiverEntrySyntax
     ast:
       disposition: inlined
-      reason: alias gramatical o componente plegado en una construcción mayor
+      reason: grammar alias or component folded into a larger construct
   primary-expression:
     cst: PrimaryExpressionSyntax
     ast:
@@ -997,7 +997,7 @@ productions:
     ast:
       disposition: normalized
       target: interval_expr
-      reason: en posición de expresión se envuelve en IntervalValueExpr; en dominios se conserva directamente
+      reason: in expression position it is wrapped in IntervalValueExpr; in domains it is retained directly
   shared-unit-interval:
     cst: SharedUnitIntervalSyntax
     ast:
@@ -1062,17 +1062,17 @@ productions:
     cst: LayoutSyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   declaration-layout:
     cst: DeclarationLayoutSyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   required-separation:
     cst: RequiredSeparationSyntax
     ast:
       disposition: discarded
-      reason: estructura concreta, layout o agrupación absorbida por el nodo padre
+      reason: concrete structure, layout or grouping absorbed by the parent node
   metadata-body:
     cst: MetadataBodySyntax
     ast:

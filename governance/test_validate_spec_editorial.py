@@ -121,7 +121,7 @@ def main() -> int:
         mechanical = root / "specification/names/fixture.asdl"
         write(mechanical, "-- Q-001 remains open in this artefact.\n")
         if validator.validate_repository(root):
-            raise AssertionError("una Q activa en artefacto sin frontmatter debe ser válida")
+            raise AssertionError("an active Q in an artefact without frontmatter must be valid")
         mechanical.unlink()
 
     print("Editorial-barrier fixtures: 10 cases verified.")

@@ -62,9 +62,9 @@ REQUIRED_FIELDS = (
 )
 
 PRIORITY_HEADINGS = {
-    "P0": "Antes de congelar el núcleo",
+    "P0": "Before freezing the core",
     "P1": "Antes de ampliar el lenguaje",
-    "P2": "Producto y operación",
+    "P2": "Product and operation",
 }
 STATUS_LABELS = {
     "open": "Open",
@@ -108,9 +108,9 @@ def render_index(questions: dict[str, Question]) -> str:
         "",
         "Prioridades:",
         "",
-        "- **P0**: bloquea el núcleo v0 o puede forzar una reescritura cercana.",
+        "- **P0**: blocks the v0 core or may force a nearby rewrite.",
         "- **P1**: bloquea una fase posterior concreta.",
-        "- **P2**: puede aplazarse sin falsear el núcleo.",
+        "- **P2**: may be deferred without misrepresenting the core.",
         "",
     ]
     for priority, heading in PRIORITY_HEADINGS.items():

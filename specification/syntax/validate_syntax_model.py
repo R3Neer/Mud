@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Valida la coherencia editorial entre EBNF, catálogo CST, cobertura y ASDL.
+"""Validate editorial consistency between EBNF, the CST catalogue, coverage and ASDL.
 
-No implementa el parser de MUD ni valida semántica. Su objetivo es impedir que
-una producción quede sin inventariar o que los archivos mecánicos diverjan.
+This does not implement the MUD parser or validate semantics. Its purpose is to
+prevent an unlisted production or divergence between mechanical files.
 """
 from __future__ import annotations
 
@@ -74,7 +74,7 @@ def asdl_symbols(path: Path) -> set[str]:
     text = re.sub(r"--.*", "", path.read_text(encoding="utf-8"))
     symbols = set(re.findall(r"(?m)^\s*([a-z][a-z0-9_]*)\s*=", text))
     symbols.update(re.findall(r"\b([A-Z][A-Za-z0-9_]*)\s*(?:\(|\||\n)", text))
-    # Constructores sin parámetros antes de | o fin de línea.
+    # Parameterless constructors before | or end of line.
     symbols.update(re.findall(r"(?:=|\|)\s*([A-Z][A-Za-z0-9_]*)\b", text))
     symbols.update({"int", "string", "identifier"})
     return symbols
@@ -114,8 +114,8 @@ def validate(root: Path) -> list[Problem]:
         for name in duplicates:
             problems.append(Problem(str(path), f"duplicate production: {name}"))
 
-    # La gramática léxica contiene cláusulas especiales ?...?... en prosa;
-    # la comprobación automática de references se aplica a mud.ebnf.
+    # The lexical grammar contains special ?...?... prose clauses;
+    # automatic reference checking applies to mud.ebnf.
     for name in sorted(grammar_references(grammar) - set(syntax_productions)):
         problems.append(Problem(str(grammar), f"reference to undefined production: {name}"))
     coverage = load_yaml(coverage_path)
@@ -200,39 +200,39 @@ def validate(root: Path) -> list[Problem]:
         if "produces_ast" not in case:
             problems.append(Problem(str(cases_path), f"{case_id}: produces_ast is missing"))
 
-    # Propiedades globales del AST.
+    # Global AST properties.
     ast_text = asdl_path.read_text(encoding="utf-8")
     required = ["module MUDSurface", "project = MudProject", "source_file = MudFile", "flag = Disabled | Enabled"]
     for snippet in required:
         if snippet not in ast_text:
             problems.append(Problem(str(asdl_path), f"required contract is missing: {snippet}"))
 
-    # Regresiones normativas que la mera sincronización de nombres no detecta.
+    # Normative regressions not detected by name synchronisation alone.
     forbidden_fragments = {
         root / "specification/syntax/mud-surface-ast.asdl": [
             "AnchorInterpolation(",
             "intrinsic_name_override",
         ],
         root / "specification/06-lexicon.md": [
-            "después `anchor{` y `{`",
+            "after `anchor{` and `{`",
         ],
         root / "specification/04-mathematical-model.md": [
-            "`name: Text` intrínseco",
-            "Una única declaración global `start with` determina un conjunto finito",
+            "intrinsic `name: Text`",
+            "A single global `start with` declaration determines a finite set",
         ],
         root / "specification/07-concrete-grammar.md": [
-            "propiedad intrínseca e inmutable `name: Text`",
-            "`unique` se prohíbe estáticamente en diccionarios",
-            "Los paréntesis son obligatorios para anidar un diccionario como valor",
-            "`anchor{d}` inserta el ancla canónica",
+            "intrinsic and immutable `name: Text` property",
+            "`unique` is statically forbidden in dictionaries",
+            "Parentheses are mandatory when nesting a dictionary as a value",
+            "`anchor{d}` inserts the canonical anchor",
         ],
         root / "specification/08-abstract-syntax.md": [
-            "sobrescritura opcional del `name` intrínseco",
+            "optional override of intrinsic `name`",
             "`prefixes = empty` → `NoPrefixes`",
         ],
         root / "specification/syntax/cst-a-ast-superficial.md": [
             "`intrinsic_name_override`",
-            "produce una colección sintética:",
+            "produces a synthetic collection:",
             "| `name = e` | `name = e` |",
         ],
     }

@@ -11,7 +11,7 @@ element_model:
   ownership: Toda trivia pertenece al token significativo siguiente; EOF posee la trivia final.
 special_node_kinds:
 - kind: ErrorSyntax
-  purpose: Agrupa elementos inesperados conservados durante recuperación.
+  purpose: Groups unexpected elements retained during recovery.
 - kind: SkippedTokensSyntax
   purpose: Conserva tokens no integrables sin perder texto.
 trivia_kinds:
@@ -171,7 +171,7 @@ lexical_forms:
     - identifier
     - operator-or-delimiter
   bom:
-    rhs: '? U+FEFF, únicamente como primer carácter ?'
+    rhs: '? U+FEFF, only as the first character ?'
     references: []
   eof:
     rhs: '? fin de archivo ?'
@@ -239,7 +239,7 @@ lexical_forms:
     references:
     - special-value-template-hole
   special-value-template-hole:
-    rhs: '? bloque {...} equilibrado según MUD-LEX-036 ?'
+    rhs: '? balanced {...} block according to MUD-LEX-036 ?'
     references: []
   multiline-text-literal:
     rhs: special-multiline-text

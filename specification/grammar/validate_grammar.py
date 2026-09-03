@@ -1,8 +1,7 @@
-"""Comprobaciones estructurales para las gramáticas EBNF de MUD.
+"""Structural checks for MUD EBNF grammars.
 
-No sustituye a un parser EBNF. Detecta los errores editoriales que más fácilmente
-rompen una gramática mantenida a mano: símbolos duplicados, indefinidos o
-inalcanzables desde el símbolo inicial.
+This is not an EBNF parser. It detects the editorial errors most likely to break
+a hand-maintained grammar: duplicate, undefined or unreachable symbols.
 """
 
 from __future__ import annotations
@@ -33,7 +32,7 @@ REFERENCE = re.compile(r"\b[a-z][a-z0-9-]*\b")
 
 
 def productions(source: str) -> list[tuple[str, str]]:
-    """Separa producciones sin confundir el terminal ";" con su cierre."""
+    """Split productions without confusing the ``;`` terminal with its terminator."""
 
     result: list[tuple[str, str]] = []
     position = 0
