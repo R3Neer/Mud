@@ -1,6 +1,6 @@
 ---
 id: Q-023
-title: Composición dinámica
+title: Dynamic composition
 priority: P1
 opened: 2026-07-29
 resolved: false
@@ -10,8 +10,8 @@ affects: []
 superseded-by: []
 ---
 
-# Q-023 — Composición dinámica
+# Q-023 — Dynamic composition
 
-## Contenido
+## Content
 
-Si una acción puede seleccionar dinámicamente otras acciones, cómo se conserva aciclicidad y análisis de impacto.
+If an action can dynamically select other actions, how are acyclicity and impact analysis preserved?
