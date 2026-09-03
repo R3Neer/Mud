@@ -1,113 +1,114 @@
-# Visión y alcance
+# Vision and scope
 
-## Tesis del producto
+## Product proposition
 
-MUD propone que la lógica de un sistema tenga una representación propia, explícita y estable, independiente de la implementación que la ejecuta. Esa representación vive en archivos `.mud`; el código generado, los índices y el grafo son proyecciones sustituibles.
+MUD proposes that the logic of a system should have its own explicit and stable representation, independent of the implementation that executes it. This representation is stored in files `.mud`; the generated code, the indexes and the graph are interchangeable projections.
 
-La interacción ordinaria no tiene por qué parecerse a programar en MUD. La persona expresa una intención en lenguaje natural y el sistema:
+Ordinary interaction does not have to resemble programming in a MUD. The user expresses an intention in natural language and the system:
 
-1. Localiza las anclas afectadas.
-2. Consulta dependencias y decisiones previas.
-3. Expone ambigüedades e impacto.
-4. Formula operaciones semánticas.
-5. Modifica el modelo de forma atómica.
-6. Valida el nuevo estado.
-7. Regenera derivados.
-8. Registra el cambio en Git.
+1. Identify the affected anchors.
+2. Query dependencies and previous decisions.
+3. It highlights ambiguities and their impact.
+4. Formulate semantic operations.
+5. Edit the model atom by atom.
+6. Validate the new one state.
+7. Regenerates derivatives.
+8. Commit the change to Git.
 
-El lenguaje es, por tanto, una interfaz interna estable entre intención humana e implementación técnica.
+Language is, therefore, a stable internal interface between human intention and technical implementation.
 
-## Problema que intenta resolver
+## Problem it aims to solve
 
-En un sistema convencional, el significado del dominio queda repartido entre código, base de datos, tests, documentación, configuración y decisiones implícitas. Cambiar de arquitectura puede obligar a reconstruir ese significado a partir de sus efectos.
+In a conventional system, the meaning of the domain is distributed across code, the database, tests, documentation, configuration and implicit decisions. Changing the architecture may require reconstructing that meaning based on its effects.
 
-MUD intenta invertir esa relación:
+The MUD is trying to reverse that relation:
 
-- La semántica de dominio se declara una sola vez.
-- Las dependencias pueden consultarse antes de modificar.
-- El historial describe cambios semánticos, no solo líneas editadas.
-- Una implementación puede regenerarse sin redefinir el mundo.
-- Una IA puede operar sobre elementos con identidad estable en vez de improvisar cambios textuales.
+- The semantics from domain It is declared only once.
+- Dependencies can be checked before making any changes.
+- The history shows semantic changes, not just edited lines.
+- An implementation can be regenerated without redefining the world.
+- An AI can operate on elements with identity consistent rather than making ad hoc changes to the text.
 
-## Usuarios y casos iniciales
+## Users and initial cases
 
-El caso de uso inicial son videojuegos y simulaciones con muchas reglas relacionadas. Es una buena frontera de aprendizaje porque exige:
+The initial use case is video games and simulations with many interrelated rules. It is a good learning curve because it requires:
 
-- Estado mutable.
-- Relaciones y colecciones.
-- Reglas reactivas.
-- Invariantes.
-- Acciones rechazables.
-- Consecuencias encadenadas.
-- Azar reproducible.
-- Preguntas hipotéticas.
+- State changeable.
+- Relationships and collections.
+- Reactive rules.
+- Invariants.
+- Reprehensible actions.
+- A chain reaction of consequences.
+- Reproducible randomness.
+- Hypothetical questions.
 
-La primera experiencia de usuario es la de una persona diseñadora de dominio asistida por IA, no la de una persona que escribe cada declaración manualmente. Aun así, el lenguaje debe ser legible, diagnosticable y editable por humanos, porque es la fuente de verdad y la última superficie de inspección.
+The first user experience is that of a designer of domain AI-assisted, not written by a person who writes every declaration manually. Even so, the language must be readable, diagnosable and editable by humans, because it is the source of truth and the final inspection area.
 
-## Límites del dominio
+## Limits of the domain
 
-MUD describe:
+MUD describes:
 
-- Qué cosas y valores existen.
-- Qué propiedades y relaciones poseen.
-- Qué condiciones pueden consultarse.
-- Qué acciones pueden intentarse.
-- Qué efectos y reacciones producen.
-- Qué restricciones deben conservarse.
-- Qué resultado estable se obtiene.
+- What a variety of things and values there are.
+- What properties and relationships do they have?
+- Which terms and conditions can be viewed?
+- What legal actions can be taken?
+- What effects and reactions do they cause?
+- Which restrictions should be retained?
+- What result A stable result is obtained.
 
-MUD no describe:
+MUD does not describe:
 
-- Interfaz gráfica.
-- Persistencia.
-- Red.
-- Autenticación.
-- Infraestructura.
-- Arquitectura de aplicación.
-- Frameworks, motores o plataformas.
-- Algoritmos de presentación o despliegue.
+- Graphical user interface.
+- Perseverance.
+- Network.
+- Authentication.
+- Infrastructure.
+- Application architecture.
+- Frameworks, engines or platforms.
+- Algorithms for presentation or deployment.
 
-Una materialización puede decidir todo lo anterior, pero no puede añadir comportamiento de dominio ausente del modelo.
+One materialisation You can decide on all of the above, but you cannot add behaviour from domain absent from the model.
 
-## Capas del producto
+## Product layers
 
-Conviene hablar de cuatro capas para evitar confundir objetivos:
+It is best to refer to four layers to avoid any confusion over objectives:
 
-1. **Modelo**: archivos `.mud` y sus reglas normativas.
-2. **Motor semántico**: compilación, validación y ejecución causal.
-3. **Operador semántico**: herramientas que consultan y modifican el modelo mediante anclas.
-4. **Materialización**: código o contratos para una tecnología concreta.
+1. **Model**: files `.mud` and its regulatory rules.
+2. **Semantic engine**: compilation, validation and implementation causal.
+3. **Semantic operator**: tools that query and modify the model using anchors.
+4. **Materialisation**: code or contracts relating to a specific technology.
 
-La interfaz en lenguaje natural está encima del operador semántico; no forma parte de la gramática MUD.
+The natural language interface sits on top of the semantic operator; it is not part of MUD grammar.
 
-## Promesas esenciales
+## Essential promises
 
-Si el proyecto funciona, debería poder prometer:
+If the project is successful, I should be able to promise:
 
-- **Conservación de significado**: la lógica relevante está en `.mud`.
-- **Atomicidad**: nunca se publica medio cambio.
-- **Explicabilidad**: se pueden enumerar anclas leídas, escritas y afectadas.
-- **Reproducibilidad**: el mismo modelo, entradas y semilla producen el mismo resultado.
-- **Reconstrucción**: los derivados se regeneran desde la fuente.
-- **Trazabilidad**: cada cambio válido tiene intención, operaciones y commit.
-- **Sustituibilidad**: la materialización no aprisiona el modelo.
+- **Preservation of meaning**: the relevant logic is in `.mud`.
+- **Atomicity**: half a change is never published.
+- **Explainability**: You can list read, written and affected anchors.
+- **Reproducibility**: the same model, tickets and seed produce the same result.
+- **Reconstruction**: derivatives are regenerated from the source.
+- **Traceability**: every valid change has an intention, operations and a commit.
+- **Substitutability**: the materialisation does not imprison the model.
 
-## Criterios de éxito de una primera versión
+## Criteria for the success of a first version
 
-La primera versión no necesita expresar toda la especificación. Sí necesita demostrar de extremo a extremo que:
+The first version does not need to express all the specification. You do need to demonstrate, from start to finish, that:
 
-1. Un modelo pequeño puede escribirse y validarse.
-2. Sus símbolos y anclas son estables.
-3. Una acción produce un cambio causal determinista o revierte.
-4. El impacto puede explicarse antes de editar.
-5. Un cambio semántico puede aplicarse, probarse y convertirse en un commit aislado.
-6. Un derivado sencillo puede regenerarse sin ser fuente de comportamiento.
+1. A model A small one can be written and validated.
+2. Its symbols and anchors are stable.
+3. One action brings about a change causal deterministic or reverses.
+4. The impact can be explained before editing.
+5. A semantic change It can be applied, tested and turned into a standalone commit.
+6. A simple derivative can be regenerated without being a source of behaviour.
 
-## No objetivos tempranos
+## No early targets
 
-- Ser un lenguaje de propósito general.
-- Sustituir todos los lenguajes de implementación.
-- Generar una aplicación completa.
-- Resolver desde el inicio `eventually`, azar, calendarios y herencia múltiple.
-- Aceptar cualquier petición ambigua sin intervención humana.
-- Garantizar propiedades formales que todavía no han sido demostradas.
+- To be a general-purpose language.
+- Replace all implementation languages.
+- Create a complete application.
+- Deal with it from the outset `eventually`, chance, calendars and multiple inheritance.
+- To accept any ambiguous request without human intervention.
+- To guarantee formal properties that have not yet been proven.
+

@@ -1,131 +1,132 @@
-# Riesgos y restricciones
+# Risks and restrictions
 
-## Riesgos conceptuales
+## Conceptual risks
 
-### Confundir representación semántica con independencia total de arquitectura
+### To confuse semantic representation completely architecture-independent
 
-Toda semántica ejecutable presupone decisiones: identidad, atomicidad, concurrencia, error, tiempo y azar. MUD puede evitar React o una base de datos, pero no puede ser neutral respecto a su propio modelo operacional.
+All semantics An executable implies decisions: identity, atomicity, concurrency, error, time and chance. MUD can do without React or a database, but it cannot be neutral with regard to its own model operational.
 
-Mitigación: tratar esas decisiones como semántica explícita y probarlas con implementaciones diferentes.
+Mitigation: treat those decisions as semantics explicitly define them and test them using different implementations.
 
-### Prometer regeneración sin especificar las fronteras
+### Promising regeneration without specifying the boundaries
 
-El código generado puede necesitar integración manual. Si esa integración contiene reglas de dominio, `.mud` deja de ser la fuente de verdad.
+The generated code may require manual integration. If that integration contains rules for domain, `.mud` is no longer the source of truth.
 
-Mitigación: contratos claros, zonas generadas, adaptadores explícitos y tests que comparen comportamiento.
+Mitigation: clear contracts, generated zones, explicit adaptors and tests that compare behaviour.
 
-### Lenguaje natural como fuente accidental
+### Natural language as an incidental source
 
-Si la IA “recuerda” una intención que no quedó en `.mud` o en metadatos versionados, el sistema adquiere semántica invisible.
+If the AI ‘remembers’ an intention that was not recorded in `.mud` or in versioned metadata, the system retrieves semantics invisible.
 
-Mitigación: después de cada operación, todo significado duradero debe quedar en fuente o decisión versionada.
+Mitigation: after each operation, any lasting effect must remain in the source or decision revised.
 
-### Sobreextensión temprana
+### Early overextension
 
-La especificación combina compilación, runtime reactivo, búsqueda de estados, generación, integración con IA y Git. Implementarlo horizontalmente puede producir muchas piezas sin un contrato verificable.
+The specification It combines compilation, reactive runtime, state tracking, generation, AI integration and Git. Implementing it horizontally can produce many components without a contract verifiable.
 
-Mitigación: completar primero la formalización de MUD 1.0 conforme a [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|D-013]] y validar después la implementación mediante cortes verticales y escenarios de conformidad.
+Mitigation: first complete the formalisation of MUD 1.0 in accordance with [[notas/decisiones/ADR-013-formalizacion-completa-antes-de-implementar|D-013]] and then validate the implementation using vertical sections and scenarios of conformance.
 
-## Riesgos semánticos
+## Semantic risks
 
-### No determinismo accidental
+### No determinism accidental
 
-Puede entrar por orden de mapas, recorrido de colecciones, resolución de declaraciones `using`, concurrencia o azar.
+You can browse by map, explore the collections, resolution statements `using`, coincidence or chance.
 
-Mitigación: orden canónico, semillas explícitas, tests repetidos y comparación de IR y trazas byte a byte.
+Mitigation: canonical order, explicit seeds, repeated tests and byte-by-byte comparison of IR and traces.
 
-### No terminación
+### No termination
 
-Reglas reactivas pueden oscilar o simular computación no acotada.
+Reactive rules can fluctuate or simulate unbounded computation.
 
-Mitigación: detección de ciclos, perfiles restringidos y diagnósticos que separen límite técnico de contradicción semántica.
+Mitigation: cycle detection, restricted profiles and diagnostics that distinguish between technical limitations and contradictions semantics.
 
-### Estados intermedios inválidos
+### Invalid intermediate states
 
-Validar en momentos distintos puede cambiar qué reglas se activan y qué acciones se aceptan.
+Validating at different times can affect which rules are triggered and which actions are accepted.
 
-Mitigación: semántica operacional pequeña por pasos y pruebas de trazas completas.
+Mitigation: semantics Small-scale operational testing in stages and comprehensive trace testing.
 
-### Explosión combinatoria
+### Combinatorial explosion
 
-Vinculaciones múltiples, dominios calculados, `allowed` y `eventually` pueden crecer exponencialmente.
+Multiple links, calculated fields, `allowed` y `eventually` can grow exponentially.
 
-Mitigación: índices, análisis conservador, presupuestos técnicos visibles y funciones avanzadas fuera del núcleo.
+Mitigation: metrics, conservative analysis, transparent technical specifications and advanced features outside the core.
 
-### Identidad inestable
+### Identity unstable
 
-Renombrar o mover paths de MUD cambia anclas y puede romper historial, referencias y estados persistidos.
+Renaming or moving MUD paths changes anchors and may break history, references and persisted states.
 
-Mitigación: migraciones de anclas de primera clase antes de permitir refactors automáticos.
+Mitigation: Migrate first-class anchors before allowing automatic refactoring.
 
-## Riesgos de tooling
+## Tooling risks
 
-### Derivados desincronizados
+### Desynchronised derivatives
 
-Grafo, IR, código o documentación pueden no corresponder al mismo modelo.
+Graph, tax reference number, code or documentation may not correspond to the same one model.
 
-Mitigación: huella del contenido fuente y versión de compilador en cada derivado; reconstrucción completa disponible.
+Mitigation: source content and compiler version are recorded in each derivative; full reconstruction is available.
 
-### Commits contaminados
+### Corrupted commits
 
-Una automatización puede incluir cambios previos del usuario o artefactos no relacionados.
+An automation may include previous changes made by the user or unrelated artefacts.
 
-Mitigación: índice o worktree aislado, allowlist de archivos y comparación del diff con el plan.
+Mitigation: index An isolated worktree, a file allowlist and a comparison of the diff against the plan.
 
-### Rollback incompleto
+### Incomplete rollback
 
-Editar fuente, generar archivos y ejecutar formateadores deja varias superficies que restaurar.
+Editing source code, generating files and running formatters leaves several areas that need to be restored.
 
-Mitigación: staging transaccional en un área temporal y publicación solo tras validar, en vez de “deshacer” mutaciones parciales.
+Mitigation: transactional staging in a temporary area and publication only after validation, rather than ‘undoing’ partial changes.
 
-### Diagnósticos insuficientes
+### Inadequate diagnostics
 
-Un `failed` sin cadena causal vuelve opaca la principal promesa de MUD.
+A `failed` without a chain causal The MUD’s main promise is once again in doubt.
 
-Mitigación: códigos de error estables, anclas, rangos, ondas, lecturas/escrituras y sugerencias de corrección.
+Mitigation: codes for error stables, anchors, ranges, waves, readings/escrituras and suggestions for corrections.
 
-## Riesgos de evolución
+## Risks associated with future developments
 
-### IR convertido en API accidental
+### IR has become an accidental API
 
-Materializadores y plugins pueden acoplarse a detalles provisionales.
+Materialisers and plug-ins can be linked to placeholder details.
 
-Mitigación: versión de esquema, compatibilidad declarada y pruebas de migración.
+Mitigation: outline version, compatibility declared and migration evidence.
 
-### Sintaxis congelada demasiado pronto
+### Syntax frozen too soon
 
-Optimizar por legibilidad antes de estabilizar la semántica genera migraciones costosas.
+Optimise for readability before stabilising the semantics leads to costly migration.
 
-Mitigación: tratar la gramática consolidada por [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]] como propuesta normativa sujeta al ciclo documental; validar ejemplos reales y registrar cualquier cambio mediante norma, decisión y conformidad.
+Mitigation: addressing the grammar established by [[notas/decisiones/ADR-057-gramatica-concreta-y-continuacion|D-057]] as a regulatory proposal subject to document lifecycle; validate real-world examples and record any changes through standardisation, decision y conformance.
 
-### Decisiones silenciosas en la implementación
+### Silent decisions during implementation
 
-Un desarrollador resolverá inevitables huecos si los tests lo exigen.
+A developer will fix any inevitable gaps if the tests require it.
 
-Mitigación: la implementación debe poder marcar “no especificado” y enlazar la pregunta abierta, no elegir un comportamiento arbitrario.
+Mitigation: the implementation must be able to select ‘not specified’ and link to the open-ended question, rather than choosing an arbitrary behaviour.
 
-## Restricciones no negociables
+## Non-negotiable restrictions
 
-- `.mud` es la única fuente de comportamiento de dominio.
-- No se publican estados parciales.
-- Un cambio inválido no produce commit.
-- Los derivados son reconstruibles.
-- Las reglas booleanas son puras.
-- La escritura externa pasa por acciones.
-- Participantes y `given` permanecen separados.
-- El resultado no depende de orden accidental.
-- Las cuestiones abiertas no se cierran sin procedencia.
-- La implementación no puede ampliar silenciosamente el lenguaje.
+- `.mud` is the sole source of behaviour for domain.
+- Interim results are not published.
+- An invalid change does not result in a commit.
+- Derivatives can be reconstructed.
+- Boolean rules are pure.
+- External writing is expressed through actions.
+- Participants and `given` remain apart.
+- The result It does not depend on random order.
+- Unresolved issues are not resolved without provenance.
+- The implementation cannot silently extend the language.
 
-## Señales de alarma durante el desarrollo
+## Warning signs during development
 
-Detener y revisar si aparece cualquiera de estas situaciones:
+Stop and check whether any of the following situations occur:
 
-- “Por ahora el orden será el que dé el diccionario”.
-- “El generador puede añadir esta validación”.
-- “Este caso devuelve falso porque es más cómodo”.
-- “Guardaremos esta regla solo en el prompt”.
-- “Ya migraremos las anclas después”.
-- “El límite de ondas define el significado”.
-- “El parser decidirá por contexto aunque la gramática sea ambigua”.
-- “El commit también incluye estos cambios, pero parecen relacionados”.
+- “For the time being, the order will be as given in the dictionary.”
+- “The generator can add this validation”.
+- “This case returns a false result because it’s easier.”
+- “We’ll only keep this rule in the prompt.”
+- “We’ll migrate the anchors later.”
+- “The boundary of waves defines meaning.”
+- “The parser will make a decision based on context, even if the grammar is ambiguous.”
+- “The commit also includes these changes, but they appear to be related.”
+

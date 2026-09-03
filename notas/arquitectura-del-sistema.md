@@ -1,8 +1,8 @@
-# Arquitectura del sistema
+# System architecture
 
-La arquitectura debe hacer visible una frontera: `.mud` contiene semántica; todo lo demás interpreta, verifica, consulta o materializa esa semántica.
+Architecture must make a boundary visible: `.mud` contains semantics; everything else interprets, verifies, query or brings that about semantics.
 
-## Vista por componentes
+## View by component
 
 ```text
 Lenguaje natural / CLI / editor
@@ -37,128 +37,128 @@ Lenguaje natural / CLI / editor
                    TypeScript, docs, tests
 ```
 
-La cadena normativa vigente llega hoy hasta el AST superficial y el HIR nominal. Tipado y elaboración son fases arquitectónicas posteriores, pero la representación semántica que producirán todavía no tiene esquema normativo fijado.
+The regulatory chain current It runs until Surface AST and the Nominal HIR. Typing and elaboration These are later architectural phases, but the semantic representation There is as yet no regulatory framework in place for what they will produce.
 
-## Fuente y derivados
+## Source and derivatives
 
-Fuente semántica:
+Source semantics:
 
-- Archivos `.mud`.
+- Archives `.mud`.
 
-Metadatos de gobierno, no semántica del mundo:
+Metadata for governance, no semantics from the world:
 
-- Agenda de especificación.
-- Registro de decisiones.
-- Configuración del proyecto.
+- Calendar of specification.
+- Record of decisions.
+- Project settings.
 
-Derivados reconstruibles ya delimitados:
+Reconstructible derivatives already defined:
 
-- Tokens y CST sin pérdidas.
+- Tokens and Lossless CST.
 - AST superficial.
-- Tabla de símbolos, scopes y bindings.
-- Índice de anclas.
-- HIR nominal y su grafo nominal de propiedad, especialización y referencia.
+- Table of symbols, scopes and bindings.
+- Index anchors.
+- Nominal HIR and its nominal graph ownership, specialisation and reference.
 
-Derivados o representaciones posteriores todavía no fijados por un contrato mecánico normativo completo:
+Derivatives or subsequent representations not yet established by a contract full regulatory mechanism:
 
-- Tipos y contratos efectivos resultantes de tipado y elaboración.
-- Representación semántica posterior a tipado y elaboración.
-- Grafos e índices semánticos posteriores, como lecturas, escrituras, efectos o dependencias elaboradas.
-- Código materializado.
-- Tests y documentación generados.
-- Soporte de editor que dependa de fases posteriores.
+- Types and effective contracts resulting from classification and elaboration.
+- Semantic representation after typing and elaboration.
+- Subsequent semantic graphs and indices, such as readings, writings, effects or elaborate dependencies.
+- Materialised code.
+- Tests and documentation generated.
+- Editor support that depends on later stages.
 
-La agenda y las decisiones no deberían esconder comportamiento del mundo; su función es gobernar la evolución de la especificación.
+The agenda and decisions should not conceal the behaviour of the world; its function is to govern the evolution of the specification.
 
-## Compilador
+## Compiler
 
-Separación vigente o prevista:
+Separation current or planned:
 
-1. **Scanner y clasificación contextual**: tokens, trivia, comentarios, literales y clasificación léxica dependiente de contexto cuando corresponda.
-2. **Parser**: CST sin pérdidas, estructura sintáctica y recuperación de errores.
-3. **AST superficial**: forma semánticamente relevante de la sintaxis, conservando procedencia suficiente.
-4. **Resolución nominal**: paths de MUD, `using`, nombres, scopes, símbolos, bindings y anclas.
-5. **HIR nominal**: salida normativa actual de resolución, limitada a información nominal.
-6. **Tipado y elaboración**: tipos, cardinalidades, dominios, conversiones, mutabilidad y demás contratos que requieran información posterior a nombres.
-7. **Análisis semánticos posteriores**: pureza, efectos, ciclos, finitud, estocasticidad y otras propiedades elaboradas.
-8. **Representación semántica posterior**: podrá existir cuando las fases anteriores estén suficientemente formalizadas; su esquema concreto no está fijado hoy.
-9. **Consumidores**: runtime, consultas, diagnósticos, materializadores y soporte de editor.
+1. **Scanner and contextual classification**: tokens, trivia, comments, verbatim quotations and context-dependent lexical classification where applicable.
+2. **Parser**: Lossless CST, syntactic structure and error correction.
+3. **Surface AST**: a semantically relevant form of the syntax, retaining provenance enough.
+4. **Nominal resolution**: MUD paths, `using`, names, scopes, symbols, bindings and anchors.
+5. **Nominal HIR**: current regulatory framework for resolution, limited to nominal information.
+6. **Classification and elaboration**: types, cardinalities, domains, conversions, mutability and other contracts that require information in addition to names.
+7. **Subsequent semantic analyses**: purity, effects, cycles, finiteness, stochasticity and other advanced properties.
+8. **Semantic representation rear**: this may come into effect once the preceding stages have been sufficiently formalised; the specific details have not yet been finalised.
+9. **Consumers**: runtime, queries, diagnostics, materialisers and editor support.
 
-No conviene que el parser produzca directamente una representación semántica elaborada. La separación permite conservar localización de errores, resolver nombres antes de tipar y evitar que decisiones prematuras sobre un IR condicionen superficies del lenguaje todavía no formalizadas.
+It is not advisable for the parser to directly generate a semantic representation elaborate. This separation makes it possible to track down errors, resolve names before typing, and prevent premature decisions regarding an IR from influencing aspects of the language that have not yet been formalised.
 
 ## AST superficial y HIR nominal
 
-El AST superficial responde principalmente «¿qué construcción semánticamente relevante se escribió y de dónde procede?». El HIR nominal responde «¿qué símbolos, ámbitos, propietarios, bindings, anclas y relaciones nominales resultan después de resolver nombres?».
+The Surface AST It primarily answers the question: ‘Which semantically relevant construction was written, and where does it come from?’. The Nominal HIR It asks: ‘Which symbols, scopes, owners, bindings, anchors and nominal relations result after name resolution?’.
 
-El HIR nominal vigente:
+The Nominal HIR current:
 
-- usa símbolos y referencias resueltas cuando la resolución nominal puede determinarlas;
-- representa scopes y propietarios;
-- representa bindings locales;
-- conserva anclas públicas cuando corresponden;
-- puede registrar relaciones nominales `Owns`, `Specializes` y `RefersTo`;
-- conserva procedencia suficiente para diagnósticos y navegación.
+- uses symbols and clear references when the nominal resolution can determine them;
+- represents scopes and owners;
+- represents local bindings;
+- retains public anchors where appropriate;
+- can record nominal relationships `Owns`, `Specializes` y `RefersTo`;
+- preserves provenance enough for diagnostics and navigation.
 
-No pertenece al HIR nominal fijar:
+It does not belong to the Nominal HIR set:
 
-- tipos efectivos;
-- dominios efectivos;
-- cardinalidades inferidas;
-- conversiones elaboradas;
-- efectos ni conjuntos de lectura/escritura;
-- dependencias semánticas posteriores a tipado;
-- pruebas o evidencia de terminación.
+- effective rates;
+- effective domains;
+- inferred cardinalities;
+- complex conversions;
+- effects or reading sets/escritura;
+- post-typing semantic dependencies;
+- evidence of termination.
 
-El contrato vigente de esta frontera pertenece a [[notas/decisiones/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]], que modifica y precisa [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
+The contract current this part of the border belongs to [[notas/decisiones/ADR-097-hir-nominal-vigente-e-ir-semantico-diferido|D-097]], which amends and clarifies [[notas/decisiones/ADR-051-grafo-semantico-e-ir-reconstruibles|D-051]] y [[notas/decisiones/ADR-093-ast-superficial-unico-e-ir-semantico-elaborado|D-093]].
 
-## Representación semántica posterior
+## Semantic representation rear
 
-Tipado y elaboración necesitarán una representación apta para ejecución, análisis y materialización. Por ahora solo existe como necesidad arquitectónica y conjunto de requisitos, no como un esquema normativo vigente.
+Classification and elaboration they will need a representation suitable for execution, analysis and materialisation. For the time being, it exists only as an architectural necessity and a set of requirements, not as a regulatory framework current.
 
-Cuando se diseñe deberá decidirse, a la luz de las superficies de tipos y elaboración ya desarrolladas:
+When designing, a decision must be made, taking into account the typefaces and elaboration already developed:
 
-- qué nodos y relaciones necesita;
-- qué información debe almacenarse y qué puede reconstruirse;
-- cómo conserva procedencia;
-- qué proyecciones consultables ofrece;
-- si necesita serialización y, en tal caso, su versionado.
+- which nodes and relationships it requires;
+- what information should be stored and what can be reconstructed;
+- how it preserves provenance;
+- what searchable projections it offers;
+- whether serialisation is required and, if so, its versioning.
 
-No existe hoy un `schemaVersion` normativo de esa representación ni un ASDL semántico posterior que los consumidores deban implementar.
+There is currently no `schemaVersion` regulatory framework for that representation, nor a ASDL subsequent semantic processing that consumers must carry out.
 
-## Grafos consultables
+## Searchable graphs
 
-El HIR nominal ya permite reconstruir un grafo nominal para navegación, propiedad, especialización y referencias. Grafos semánticos más ricos podrán proyectarse de la representación posterior cuando existan tipado y elaboración suficientes.
+The Nominal HIR it is now possible to reconstruct a nominal graph for navigation, ownership, specialisation and references. Richer semantic graphs may be projected from the subsequent representation where typing and elaboration sufficient.
 
-Cualquier grafo derivado sirve para:
+Any graph A derivative is used for:
 
-- impacto antes de cambiar;
-- navegación por anclas;
-- dependencias directas y transitivas dentro de la información disponible;
-- detección de ciclos cuando la fase correspondiente los defina;
-- identificación de lectores y escritores cuando esos efectos hayan sido elaborados;
-- explicación de una resolución.
+- impact before making a change;
+- anchor navigation;
+- direct and transitive dependencies within the available information;
+- detection of cycles when defined by the relevant phase;
+- identification of readers and writers once these works have been produced;
+- explanation of a resolution.
 
-No debe convertirse en una segunda fuente de verdad. Si hay discrepancia con la representación normativa de la fase que lo origina, se descarta y reconstruye.
+It must not become a second source of truth. If there is a discrepancy with the normative representation of the phase that gave rise to it, it is discarded and reconstructed.
 
 ## Runtime causal
 
-El runtime necesita al menos:
+The runtime requires at least:
 
-- store de estado con snapshots;
-- evaluador puro de expresiones;
-- aplicador y normalizador de efectos;
-- motor de vinculaciones;
-- planificador de ondas;
-- detector de conflictos y ciclos;
-- transacción con confirmación o rollback;
-- registro de explicación causal;
-- gestor determinista de semillas.
+- shop at state with snapshots;
+- pure expression evaluator;
+- effect applicator and normaliser;
+- link engine;
+- wave planner;
+- conflict and cycle detector;
+- transaction with confirmation or rollback;
+- register of explanation causal;
+- deterministic seed manager.
 
-El runtime debe consumir una representación posterior a resolución, tipado y elaboración, no depender de peculiaridades del parser ni usar el HIR nominal como sustituto de información semántica que este deliberadamente no contiene. La forma concreta de esa representación permanece diferida por D-097.
+The runtime must consume a representation following resolution, typed and elaboration, not to rely on the parser’s specific behaviour or use the Nominal HIR as a substitute for information semantics which it deliberately does not contain. The specific form of that representation remains deferred by D-097.
 
 ## Operador semántico
 
-La capa que atiende lenguaje natural no debería editar texto de forma libre. Debería producir un plan estructurado:
+The natural language processing layer should not edit text arbitrarily. It should produce a structured plan:
 
 ```text
 intención
@@ -170,37 +170,37 @@ intención
 → parche textual derivado
 ```
 
-Operaciones mínimas:
+Minimal operations:
 
 - `CREATE anchor`
 - `UPDATE anchor`
 - `RETIRE anchor`
-- `MOVE anchor` o migración explícita
+- `MOVE anchor` or explicit migration
 
-`READ` es una operación de consulta y no produce commit por sí sola. Esta separación entre consultas y cambios versionables está fijada por [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|D-012]], desarrollada por [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y aplicada por [[gobierno/POLITICA-DE-COMMITS|la política de commits]].
+`READ` is an operation of query and does not produce a commit on its own. This separation between queries and versionable changes is determined by [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|D-012]], developed by [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] and implemented by [[gobierno/POLITICA-DE-COMMITS|the policy commits]].
 
-## Materializadores
+## Materialisers
 
-Cada materializador recibe una representación validada suficiente para su tarea y una configuración técnica. Un consumidor que necesite tipos, efectos o semántica elaborada no puede obtenerlos inventándolos a partir del HIR nominal.
+Each materialiser receives a validated representation that is sufficient for its task, along with a technical configuration. A consumer requiring types, effects or semantics A sophisticated mind cannot obtain them by inventing them from the Nominal HIR.
 
-Puede producir:
+It can produce:
 
-- Código TypeScript.
-- Contratos de API.
-- Fixtures y tests.
-- Documentación.
-- Adaptadores para un motor.
+- TypeScript code.
+- API contracts.
+- Fixtures and tests.
+- Documentation.
+- Adapters for a motor.
 
-No puede:
+You cannot:
 
-- Inferir reglas de dominio nuevas.
-- Convertir un `failed` en `false`.
-- Colapsar participantes y `given`.
-- Cambiar atomicidad, orden causal o identidad.
+- Inferring rules from domain new.
+- Convert a `failed` in `false`.
+- Collapse participants and `given`.
+- Change atomicity, order causal o identity.
 
-## Interfaces tempranas
+## Early interfaces
 
-Un primer ejecutable puede ser una CLI con comandos equivalentes a:
+A first executable could be a CLI with commands equivalent to:
 
 ```text
 mud check
@@ -211,16 +211,17 @@ mud run <action> --state <file>
 mud impact <operation-plan>
 ```
 
-La integración conversacional y el plugin deberían construirse después de que estas operaciones tengan contratos estables. Así la IA utiliza capacidades comprobables en vez de contener semántica especial.
+The conversational integration and the plugin should be developed once these operations have stable contracts. This ensures that the AI utilises verifiable capabilities rather than containing semantics special.
 
-La política vigente de clasificación, inferencias permitidas y flujo atómico del operador pertenece a [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+The policy current the operator’s classification, permitted inferences and atomic flow belong to [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
 
-## Persistencia del estado runtime
+## Persistence of the state runtime
 
-La especificación excluye persistencia de la semántica MUD, pero una materialización necesitará guardar estados. Debe distinguirse:
+The specification rules out the persistence of the semantics MUD, but a materialisation It will need to save states. A distinction must be made between:
 
-- El modelo `.mud`, que declara el mundo posible.
-- Una instancia de estado runtime.
-- La tecnología usada para persistir esa instancia.
+- The model `.mud`, which states that the world possible.
+- An instance of state runtime.
+- The technology used to keep that instance running.
 
-Los tests declarativos escritos en MUD pertenecen al lenguaje conforme a D-055 y no deben confundirse con tests generados por un materializador. El formato técnico de snapshots o fixtures adicionales puede definirse dentro del tooling sin imponer una base de datos al lenguaje.
+Declarative tests written in MUD conform to the language as defined by D-055 and should not be confused with tests generated by a materialiser. The technical format of additional snapshots or fixtures can be defined within the tooling without imposing a database on the language.
+

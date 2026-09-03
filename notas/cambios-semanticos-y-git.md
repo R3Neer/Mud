@@ -1,31 +1,31 @@
-# Cambios semánticos y Git
+# Semantic changes and Git
 
-Este documento describe el protocolo de seguridad alrededor de una modificación del modelo. La autoridad del flujo pertenece a [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|D-012]], [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y [[gobierno/POLITICA-DE-COMMITS|la política de commits]]. Es distinto de ejecutar una acción dentro de un mundo: aquí se cambia la definición `.mud` del mundo.
+This document describes the safety protocol relating to a modification of the model. The authority of the flow belongs to [[notas/decisiones/ADR-012-cambios-semanticos-atomicos|D-012]], [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y [[gobierno/POLITICA-DE-COMMITS|the policy commits]]. It is different from running a action inside a world: the definition is changed here `.mud` from the world.
 
-## Dos clases de transacción
+## Two types of transaction
 
-MUD contiene dos atomicidades relacionadas pero diferentes:
+MUD contains two related but distinct atomicities:
 
-1. **Transacción runtime**: una acción transforma una instancia del mundo o revierte.
-2. **Transacción de autoría**: una petición transforma los archivos `.mud` y sus derivados o revierte.
+1. **Runtime transaction**: one action converts an instance of the world or reverses.
+2. **Authorship transaction**: a request transforms the files `.mud` and its derivatives, or reverses.
 
-Ambas comparten la filosofía de no publicar estados parciales, pero tienen participantes, validaciones y diagnósticos distintos.
+Both share the philosophy of not publishing partial statuses, but they have different participants, validations and diagnostics.
 
-## Clasificación de una petición
+## Classification of a request
 
-Antes de modificar, el operador debe decidir si la petición es:
+Before making any changes, the operator must decide whether the request is:
 
 - Consulta.
-- Creación, actualización, retirada o migración.
-- Cambio estructural, de API, causal, de dominio o de vinculación.
-- Cambio de aleatoriedad, invariante, admisibilidad o alcanzabilidad.
-- Ambigua, incompleta, fuera de alcance o intento de eludir restricciones.
+- Creation, updating, removal or migration.
+- Structural change, API change, causal, by domain or affiliation.
+- Change of randomness, invariant, admissibility o reachability.
+- Ambiguous, incomplete, out of scope or an attempt to circumvent restrictions.
 
-Una petición puede recibir varias etiquetas: una operación `UPDATE` puede ser además cambio de API y cambio causal.
+A request can be assigned several tags: an operation `UPDATE` It may also involve a change to the API and a change causal.
 
-## Plan de operaciones
+## Operations plan
 
-La IA debería producir primero un artefacto estructurado y revisable:
+AI should first produce a structured and verifiable artefact:
 
 ```yaml
 intent: "Limitar el reclutamiento diario"
@@ -40,54 +40,54 @@ expected_impacts:
 open_questions: []
 ```
 
-El formato exacto está abierto, pero debe distinguir la intención humana, las operaciones, las anclas leídas y las consecuencias previstas.
+The exact format is open to discussion, but it must distinguish between human intent, operations, observed anchors and anticipated consequences.
 
-## Flujo atómico
+## Atomic flux
 
-1. Capturar el estado Git y la versión del compilador.
-2. Clasificar la petición.
-3. Resolver nombres a anclas.
-4. Consultar dependencias directas y transitivas.
-5. Detectar ambigüedades y decisiones abiertas.
-6. Construir el plan de operaciones.
-7. Preparar un punto de restauración aislado.
-8. Aplicar cambios solo a `.mud` y metadatos autorizados.
-9. Formatear.
-10. Compilar y validar.
-11. Reconstruir grafo e IR.
-12. Regenerar materializaciones afectadas.
-13. Ejecutar tests.
-14. Comparar impacto previsto con impacto observado.
-15. Inspeccionar el diff.
-16. Confirmar que no se incluyeron cambios ajenos.
-17. Crear un commit atómico.
+1. Capture the state Git and the compiler version.
+2. Classify the request.
+3. Resolve names to anchors.
+4. See direct and transitive dependencies.
+5. Identify ambiguities and open-ended decisions.
+6. Draw up the operational plan.
+7. Prepare a point an isolated catering establishment.
+8. Apply changes only to `.mud` and authorised metadata.
+9. Format.
+10. Compile and validate.
+11. Rebuild graph and IR.
+12. Regenerate the affected instancements.
+13. Run tests.
+14. Compare the predicted impact with the observed impact.
+15. Check the differential.
+16. Please confirm that no unauthorised changes have been included.
+17. Create a atomic commit.
 
-Si falla cualquier paso anterior al commit, se restaura exactamente el estado inicial de la transacción.
+If any step prior to the commit fails, the exact state at the start of the transaction.
 
-Este flujo, la clasificación y el límite de inferencias del operador quedan consolidados en [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
+This flow, the classification and the operator’s inference limit are consolidated in [[notas/decisiones/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]].
 
-## Política para repositorios con cambios previos
+## Policy for repositories with previous changes
 
-El operador no puede asumir que un worktree sucio le pertenece. Opciones seguras:
+The operator must not assume that a ‘dirty’ worktree belongs to them. Safe options:
 
-- Rechazar la mutación hasta aislar cambios.
-- Usar un worktree o índice temporal.
-- Limitar el parche a archivos y hunks conocidos.
+- Reject the mutation until changes are isolated.
+- Use a worktree or index temporary.
+- Restrict the patch to known files and hunks.
 
-Nunca debe hacer reset destructivo de trabajo ajeno. El commit final solo incluye cambios que pertenecen al plan semántico.
+You must never perform a destructive reset of someone else’s work. The final commit should only include changes that form part of the semantic plan.
 
-## Commits semánticos
+## Semantic commits
 
-Un commit debería responder:
+A commit should state:
 
-- Qué intención se atendió.
-- Qué operaciones se realizaron.
-- Qué anclas cambiaron.
-- Si hubo cambio de API, causalidad o dominio.
-- Qué validaciones se ejecutaron.
-- Qué decisiones o migraciones están relacionadas.
+- Which intention was addressed?
+- What operations were carried out?
+- Which anchors were changed?
+- Whether there was a change to the API, causality or domain.
+- Which validations were carried out.
+- Which decisions or migrations are related?
 
-Ejemplo de mensaje:
+Example message:
 
 ```text
 UPDATE action::warfare.armies.Recruit recruitment limit
@@ -102,48 +102,49 @@ Impact:
 - Data migration: none
 ```
 
-El formato general de los commits se rige por [[gobierno/POLITICA-DE-COMMITS|la política de commits]]. Antes de automatizar parsers de historial debe fijarse además un contrato estable para los campos semánticos legibles por máquina.
+The general format of commits is governed by [[gobierno/POLITICA-DE-COMMITS|the policy commits]]. Before automating log parsers, you must also set a contract a standard for machine-readable semantic fields.
 
-## ¿Debe `READ` crear un commit?
+## Should `READ` create a commit?
 
-No. Una consulta puede quedar en logs de auditoría, pero no modifica la fuente semántica. D-012, D-053 y la política de commits reservan los commits para CREATE, UPDATE, RETIRE, migraciones u otras modificaciones persistentes, no para una lectura aislada.
+No. One query It may appear in audit logs, but it does not alter the source semantics. D-012, D-053 and the policy Commits are reserved for CREATE, UPDATE, RETIRE, migrations or other persistent changes, not for an isolated read.
 
-Si se desea versionar conocimiento obtenido durante una consulta —por ejemplo, cerrar una decisión— eso sería un `UPDATE` sobre metadatos de especificación, no un `READ`.
+If you wish to version control knowledge acquired during a query —for example, closing a decision— that would be a `UPDATE` on metadata from specification, not a `READ`.
 
-## Retirada frente a borrado
+## Withdrawal versus deletion
 
-`RETIRE` sugiere una semántica más rica que borrar texto:
+`RETIRE` suggests a semantics more useful than deleting text:
 
-- Comprobar referencias.
-- Impedir nuevas dependencias.
-- Registrar reemplazo o motivo.
-- Permitir migración de anclas.
-- Eliminar físicamente solo cuando sea seguro.
+- Check references.
+- Prevent further dependencies.
+- Enter the replacement or reason.
+- Allow anchor migration.
+- Only physically remove it when it is safe to do so.
 
-La semántica exacta sigue abierta en [[notas/preguntas/Q-015-retirada|Q-015]]. Hasta resolverla, el operador no debe equiparar automáticamente `RETIRE` con eliminar una declaración.
+The semantics Exacta remains open at [[notas/preguntas/Q-015-retirada|Q-015]]. Until it has been resolved, the operator must not automatically equate `RETIRE` by removing one declaration.
 
-## Validación del impacto
+## Validation of the impact
 
-El impacto previsto debe contrastarse con:
+The expected impact should be compared with:
 
-- Anclas añadidas, modificadas, retiradas o migradas.
-- Cambios de firma de reglas y acciones.
-- Lecturas y escrituras nuevas.
-- Alteraciones de dominios y cardinalidades.
-- Ciclos nuevos.
-- Cambios de estocasticidad.
-- Materializaciones y tests afectados.
+- Anchors added, modified, removed or migrated.
+- Changes to rules and actions.
+- New readings and writings.
+- Changes to domains and cardinalities.
+- New cycles.
+- Changes in stochasticity.
+- Affected deployments and tests.
 
-Una diferencia inesperada entre impacto previsto y real debe detener el commit o pedir revisión.
+An unexpected discrepancy between the predicted and actual impact should halt the commit or trigger a request review.
 
 ## Reproducibilidad
 
-El commit debería permitir reconstruir:
+The commit should allow the following to be reconstructed:
 
-- Versión de la especificación.
-- Versión del compilador y esquema IR.
+- Version of the specification.
+- Compiler version and IR schema.
 - Modelo `.mud`.
-- Derivados relevantes.
-- Resultados de validación.
+- Relevant derivatives.
+- Results from validation.
 
-No todos los derivados necesitan versionarse. La decisión debe basarse en coste, auditabilidad y facilidad de reconstrucción, manteniendo claro que nunca son autoridad semántica.
+Not all derivatives need to be versioned. The decision must be based on cost, auditability and ease of reconstruction, whilst bearing in mind that they are never authority semantics.
+

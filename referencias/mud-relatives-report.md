@@ -1,29 +1,29 @@
 ---
-title: Iniciativas académicas afines a MUD
+title: Academic initiatives associated with the MUD
 status: referencia
 recovered-sources: 2026-08-02
 ---
 
-# Iniciativas académicas afines a MUD
+# Academic initiatives associated with the MUD
 
-> [!note] Procedencia y reconstrucción
-> Este informe se conservó a partir de un borrador de investigación que contenía marcadores internos de citas sin sus URL. El 2 de agosto de 2026 se retiraron esos marcadores y se reconstruyó la bibliografía inferior con publicaciones primarias, especificaciones y sitios oficiales. La correspondencia exacta de cada marcador original no era recuperable; por ello, el texto debe tratarse como panorama orientativo y no como revisión sistemática cerrada.
+> [!note] Provenance and reconstruction
+> This report was compiled from a draft research document containing internal citation markers without their URLs. On 2 August 2026, those markers were removed and the reference list below was reconstructed using primary publications, specifications and official websites. The exact correspondence of each original marker could not be recovered; therefore, the text should be treated as a general overview rather than as review closed system.
 
-## Resumen ejecutivo
+## Executive summary
 
-Tomando como referencia la instantánea de MUD que has compartido, el proyecto parece aspirar a un **lenguaje ejecutable de dominio** donde la semántica del problema sea la pieza central, con **reglas reactivas**, una **ontología operativa**, preocupación por **verificación integrada** y un formato suficientemente estructurado como para ofrecer **trazabilidad útil a herramientas automáticas e IA**. En esa formulación, MUD no se parece tanto a “otro lenguaje de programación” como a un intento de unificar, en una sola capa, **modelado, ejecución, validación y explicación** del dominio.
+Taking as a reference the snapshot from the MUD that has As far as I can tell, the project seems to be aiming for a **executable language of domain** where the semantics the problem is the centrepiece, with **reactive rules**, a **operational ontology**, concern about **integrated verification** and a format that is sufficiently structured to provide **traceability useful for automated tools and AI**. In this formulation, MUD is not so much like ‘another programming language’ as it is an attempt to unify, within a single layer, **modelling, implementation, validation y explanation** from the domain.
 
-La conclusión principal de la revisión es clara: **sí existen muchas líneas académicas que atacan partes importantes del problema de MUD, pero casi ninguna reúne todas a la vez**. La literatura está fragmentada entre, por un lado, lenguajes reactivos síncronos como **Lustre, Esterel, SIGNAL y ReactiveML**; por otro, marcos de **semántica ejecutable** como **Maude** y **K**; además de ecosistemas de **verificación integrada** como **Event-B/Rodin, Alloy y TLA+**; sistemas de **representación declarativa del conocimiento** como **IDP** o **GOLOG**; y DSLs orientados a **juegos/simulación** como **Ceptre, GDL, RBG o Ludii**.
+The main conclusion of the review is clear: **Whilst there are indeed many academic approaches that tackle key aspects of the MUD problem, almost none of them address all of them at once**. The literature is divided between, on the one hand, synchronous reactive languages such as **Lustre, Esterel, SIGNAL and ReactiveML**; on the other hand, frameworks for **semantics executable** such as **Maude** y **K**; as well as ecosystems of **integrated verification** such as **Event-B/Rodin, Alloy and TLA+**; systems for **declarative representation of knowledge** such as **IDP** o **GOLOG**; and DSLs aimed at **games/simulación** such as **Ceptre, GDL, RBG or Ludii**.
 
-Eso significa que MUD **no parece un “bonito entretenimiento intelectual” sin genealogía**, sino una recombinación ambiciosa de problemas muy reales y muy estudiados: cómo expresar reglas del dominio sin enterrarlas en código accidental; cómo ejecutar esa especificación; cómo verificarla; cómo separar semántica e implementación; y cómo hacerla inspeccionable por humanos y máquinas. La **novedad potencial** de MUD no estaría en inventar de cero una familia inédita, sino en **integrar** mejor que otros trabajos esas piezas, sobre todo si de verdad logra que el mismo artefacto sirva como semántica, runtime, base de verificación y contrato legible para IA. Esto es una inferencia apoyada en el panorama revisado y en la descripción de MUD.
+That means that MUD **It does not seem like a ‘nice bit of intellectual entertainment’ with no history behind it**, but rather an ambitious recombination of very real and well-studied problems: how to express rules of the domain without burying them in accidental code; how to execute that specification; how to check it; how to separate it semantics and implementation; and how to make it verifiable by both humans and machines. The **potential development** The MUD’s aim would not be to invent a completely new family from scratch, but rather to **integrate** those pieces are better than other works, especially if he really manages to make the artefact itself serve as semantics, runtime, verification base and contract AI-readable. This is a inference based on the revised overview and MUD’s description.
 
-También hay una limitación importante: **no he encontrado una iniciativa académica canónica que combine simultáneamente “reglas reactivas por ondas”, “ontología ejecutable”, “model checking incorporado”, “separación limpia entre semántica de dominio e implementación” y “trazabilidad específica para IA”**. Lo que sí aparece es un mosaico de acercamientos parciales y muy fértiles. Esa ausencia, lejos de ser mala noticia, es precisamente lo que hace que un TFG bien acotado pueda tener recorrido.
+There is also a significant limitation: **I have not come across a standard academic initiative that simultaneously combines ‘wave-based reactive rules’, ‘executable ontology’, ‘built-in model checking’ and ‘a clear separation between semantics from domain "implementation" and "traceability “specific to AI”**. What does emerge, however, is a mosaic of partial yet highly fruitful approaches. Far from being bad news, this absence is precisely what gives a well-defined final-year project the potential to go places.
 
-## Qué problema comparten MUD y las iniciativas más cercanas
+## What problem do the MUD and its closest allies share?
 
-Si abstraigo MUD a sus tensiones de diseño, la problemática compartida con la literatura se puede resumir así: **el dominio quiere hablar con su propio vocabulario**, pero al mismo tiempo debe ser **ejecutable**, **verificable**, **reactivo** y **analizable**. Eso es exactamente lo que persiguen, desde ángulos distintos, los lenguajes síncronos para sistemas reactivos, los marcos de semántica ejecutable, los sistemas de conocimiento declarativo y los entornos de especificación formal con comprobación automática.
+If I strip MUD down to its underlying design tensions, the issues it shares with literature can be summarised as follows: **the domain wants to speak using his own vocabulary**, but at the same time it must be **executable**, **verifiable**, **reactive** y **analysable**. That is precisely what synchronous languages for reactive systems and frameworks aim to achieve, from different perspectives, semantics executable, declarative knowledge systems and environments for specification formal with automatic verification.
 
-La relación conceptual entre esas familias puede verse así:
+The relation The conceptual relationship between these families can be seen as follows:
 
 ```mermaid
 flowchart LR
@@ -62,95 +62,95 @@ flowchart LR
     A --> A3[Dafny plus LLM]
 ```
 
-El mejor encaje con MUD no está en una sola obra, sino en una **composición**. Para “reglas reactivas por ondas”, las referencias más cercanas son la tradición **síncrona/reactiva**; para “semántica del dominio separada de la implementación”, lo más cercano son **Maude, K y xMOF/fUML**; para “ontología ejecutable” y múltiples inferencias, **IDP, GOLOG, SWRL/OWL RL/SHACL**; para “verificación integrada”, **Event-B, Alloy y TLA+**; y para “modelado de juegos/simulación”, **Ceptre, GDL, RBG y Ludii**.
+The best example of MUD’s application is not found in a single work, but in one **composition**. For ‘wave-reactive rules’, the closest references are the tradition **synchronous/reactiva**; for “semantics from the domain 'separate from the implementation', the closest equivalents are **Maude, K and xMOF/fUML**; for ‘executable ontology’ and multiple inferences, **IDP, GOLOG, SWRL/OWL RL/SHACL**; for “integrated verification”, **Event-B, Alloy and TLA+**; and for “game modelling”/simulación”, **Ceptre, GDL, RBG and Ludii**.
 
-## Panorama comparativo de iniciativas relevantes
+## A comparative overview of relevant initiatives
 
-### Tabla de referencia principal
+### Main reference table
 
-| Proyecto o línea | Investigador o equipo | Institución principal | Objetivo | Enfoque técnico | Estado | Fuente reconstruida |
+| Project or line | Researcher or team | Lead organisation | Objective | Technical approach | State | Reconstructed fountain |
 |---|---|---|---|---|---|---|
-| Statecharts | David Harel | Weizmann Institute | Modelar sistemas reactivos complejos | Formalismo visual con jerarquía, concurrencia y comunicación | Implementado e influyente | [Artículo](https://doi.org/10.1016/0167-6423(87)90035-9) |
-| Lustre | Halbwachs, Caspi, Raymond, Pilaud | Verimag / Grenoble | Programar control reactivo síncrono | Dataflow declarativo sincronizado; propiedades cercanas a lógica temporal | Implementado e industrializado | [Publicación](https://verimag.fr/details.html?lang=en&pub_id=lesar-tse) |
-| SIGNAL / Polychrony | Le Guernic y col. | Inria / IRISA | Sistemas reactivos multirreloj | Dataflow síncrono policrónico; compilador y verificación asociados | Implementado | [Inria](https://radar.inria.fr/rapportsactivite/RA2013/espresso/uid34.html) |
-| Esterel | Berry, Gonthier | École des Mines de Paris / Inria Sophia | Sistemas reactivos de control | Lenguaje síncrono imperativo; compilación a software/hardware; semántica constructiva | Implementado | [Inria](https://www-sop.inria.fr/esterel.org/files/Html/About/AboutEsterel.htm) |
-| ReactiveML | Mandel, Pouzet y col. | Inria Paris / IBM Research | Reacción síncrona de orden superior | Extensión ML con instantes lógicos, paralelismo síncrono y compilación eficiente | Implementado | [Artículo](https://doi.org/10.1145/2790449.2790509) |
-| Maude | Clavel, Durán, Eker, Martí-Oliet, Meseguer | Ecosistema SRI / UCM | Especificación y programación ejecutable | Rewriting logic reflexiva; módulos; estrategias; model checking LTL | Implementado | [Sitio oficial](https://maude.cs.illinois.edu/) |
-| K Framework | Roșu, Șerbănuță y col. | University of Illinois | Definir semánticas ejecutables y derivar herramientas | Reglas de reescritura con celdas; ejecución, verificación y herramientas derivadas | Implementado | [Manual oficial](https://kframework.org/docs/user_manual/) |
-| GOLOG / ConGolog / ElGolog | Levesque, Reiter, Lespérance, De Giacomo y col. | Univ. of Toronto / York / Sapienza | Programación de acciones en dominios dinámicos | Situation calculus; control de agentes; memoria de historia en ElGolog | Prototipo e implementaciones académicas | [Artículo](https://doi.org/10.1016/S0743-1066(96)00121-5) |
-| Event-B / Rodin | Abrial y comunidad Rodin | Event-B.org / University of Southampton | Desarrollo correcto por construcción | Máquinas/eventos, refinamiento, prueba mecánica, plugins de model checking y trazabilidad | Implementado | [Documentación](https://wiki.event-b.org/index.php/Main_Page) |
-| Alloy | Daniel Jackson | MIT | Explorar diseños y encontrar contraejemplos | Lógica relacional y análisis totalmente automático | Implementado | [Sitio oficial](https://alloytools.org/about) |
-| TLA+ | Leslie Lamport | Microsoft Research | Especificar y verificar sistemas, sobre todo distribuidos | Lógica temporal de acciones + TLC model checker | Implementado | [Libro y materiales](https://lamport.azurewebsites.net/tla/book.html) |
-| IDP | Denecker, Bogaerts y col. | KU Leuven | Usar la lógica como lenguaje de modelado e inferencia múltiple | FO(.)/FO(ID); expansión de modelos, propagación, configuración interactiva | Implementado | [Proyecto](https://people.cs.kuleuven.be/~marc.denecker/) |
-| Dedalus | Alvaro, Hellerstein y col. | UC Berkeley | Datalog con tiempo para sistemas distribuidos | Tiempo explícito, estado mutable, asincronía y estratificación temporal | Fundacional con prototipos | [Informe técnico](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-173.html) |
-| xMOF + fUML + Alf | Mayerhofer, Langer, Wimmer; OMG | TU Wien / OMG | DSLs ejecutables con semántica modelada | Semántica conductual sobre fUML y sintaxis textual Alf | Prototipo apoyado en estándar | [xMOF](https://doi.org/10.1007/978-3-319-02654-1_4) |
-| SWRL / OWL 2 RL / SHACL | Horrocks y col.; W3C | W3C / comunidad Semantic Web | Reglas, inferencia y validación sobre RDF/OWL | Reglas tipo Horn, perfiles rule-based, validación cerrada de grafos | Estándares implementados | [W3C](https://www.w3.org/TR/shacl/) |
-| Ceptre | Chris Martens | Carnegie Mellon University | Prototipar sistemas interactivos generativos | Reglas inspiradas en lógica lineal para juego, narrativa y simulación | Prototipo académico | [Artículo](https://doi.org/10.1609/aiide.v11i1.12784) |
-| GDL-II / GDL-III | Michael Thielscher | UNSW | Describir juegos arbitrarios para GGP | Formalismo declarativo de reglas de juego, información imperfecta y epistemicidad | Implementado en investigación | [GDL-III](https://doi.org/10.24963/ijcai.2017/177) |
-| Regular Boardgames | Kowalski, Mika, Sutowicz, Szykuła | Univ. of Wrocław | GDL eficiente y natural para juegos de tablero | Lenguajes regulares y forward model eficiente | Implementado | [Artículo](https://doi.org/10.1609/aaai.v33i01.33011699) |
-| Ludii | Piette, Soemers, Browne y col. | Maastricht University | Sistema general de juegos comprensible y eficiente | Ludemes de alto nivel, ejecución y comparación empírica | Implementado | [Artículo](https://doi.org/10.3233/FAIA200120) |
+| Statecharts | David Harel | Weizmann Institute | Modelling complex reactive systems | Visual formalism with hierarchy, convergence and communication | Established and influential | [Article](https://doi.org/10.1016/0167-6423(87)90035-9) |
+| Chandelier | Halbwachs, Caspi, Raymond, Pilaud | Verimag / Grenoble | Programming synchronous reactive control | Synchronised declarative dataflow; properties closely related to temporal logic | Implemented and scaled up | [Publication](https://verimag.fr/details.html?lang=en&pub_id=lesar-tse) |
+| SIGNAL / Polychrony | Le Guernic et al. | Inria / IRISA | Multi-clock reactive systems | Polychronous synchronous dataflow; associated compiler and verification | Implemented | [Inria](https://radar.inria.fr/rapportsactivite/RA2013/espresso/uid34.html) |
+| Esterel | Berry, Gonthier | École des Mines de Paris / Inria Sophia | Reactive control systems | Synchronous imperative language; compilation to software/hardware; semantics constructive | Implemented | [Inria](https://www-sop.inria.fr/esterel.org/files/Html/About/AboutEsterel.htm) |
+| ReactiveML | Mandel, Pouzet et al. | Inria Paris / IBM Research | Reaction higher-order synchronous | ML extension with logical instants, synchronous parallelism and efficient compilation | Implemented | [Article](https://doi.org/10.1145/2790449.2790509) |
+| Maude | Clavel, Durán, Eker, Martí-Oliet, Meseguer | SRI / UCM Ecosystem | Specification and executable code | Reflexive rewriting logic; modules; strategies; LTL model checking | Implemented | [Official website](https://maude.cs.illinois.edu/) |
+| K Framework | Roșu, Șerbănuță et al. | University of Illinois | Defining executable semantics and deriving tools | Rewriting rules using cells; execution, verification and derived tools | Implemented | [Official handbook](https://kframework.org/docs/user_manual/) |
+| GOLOG / ConGolog / ElGolog | Levesque, Reiter, Lespérance, De Giacomo et al. | University of Toronto / York / Sapienza | Scheduling actions in dynamic domains | Situation calculus; agent control; history memory in ElGolog | Prototype and academic implementations | [Article](https://doi.org/10.1016/S0743-1066(96)00121-5) |
+| Event-B / Rodin | Abrial and the Rodin community | Event-B.org / University of Southampton | Correct development by design | Machines/eventos, refinement, mechanical testing, model-checking plugins and traceability | Implemented | [Documentation](https://wiki.event-b.org/index.php/Main_Page) |
+| Alloy | Daniel Jackson | MIT | Explore designs and find counterexamples | Relational logic and fully automated analysis | Implemented | [Official website](https://alloytools.org/about) |
+| TLA+ | Leslie Lamport | Microsoft Research | Specify and verify systems, particularly distributed systems | Temporal logic of actions + TLC model checker | Implemented | [Book and materials](https://lamport.azurewebsites.net/tla/book.html) |
+| IDP | Denecker, Bogaerts et al. | KU Leuven | Using logic as a modelling language and inference multiple | FO(.)/FO(ID); model expansion, propagation, interactive configuration | Implemented | [Project](https://people.cs.kuleuven.be/~marc.denecker/) |
+| Dedalus | Alvaro, Hellerstein et al. | UC Berkeley | Datalog with time for distributed systems | Explicit time, state mutability, asynchrony and temporal stratification | Foundational with prototypes | [Technical report](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-173.html) |
+| xMOF + fUML + Alf | Mayerhofer, Langer, Wimmer; OMG | TU Wien / OMG | Executable DSLs with semantics modelled | Semantics behavioural model of fUML and the Alf textual syntax | Standard-based prototype | [xMOF](https://doi.org/10.1007/978-3-319-02654-1_4) |
+| SWRL / OWL 2 RL / SHACL | Horrocks et al.; W3C | W3C / Semantic Web community | Rules, inference y validation about RDF/OWL | Rules type Horn, profiles rule-based, validation graph closure | Standards implemented | [W3C](https://www.w3.org/TR/shacl/) |
+| Sceptre | Chris Martens | Carnegie Mellon University | Prototyping generative interactive systems | Rules inspired by linear logic for games, storytelling and simulation | Academic prototype | [Article](https://doi.org/10.1609/aiide.v11i1.12784) |
+| GDL-II / GDL-III | Michael Thielscher | UNSW | Describe arbitrary games for GGP | Declarative formalism of game rules, imperfect information and epistemicity | Used in research | [GDL-III](https://doi.org/10.24963/ijcai.2017/177) |
+| Standard Board Games | Kowalski, Mika, Sutowicz, Szykuła | University of Wrocław | An efficient and natural GDL for board games | Regular languages and an efficient forward model | Implemented | [Article](https://doi.org/10.1609/aaai.v33i01.33011699) |
+| Ludii | Piette, Soemers, Browne et al. | Maastricht University | A comprehensive and efficient overall gaming system | High-level games, implementation and empirical comparison | Implemented | [Article](https://doi.org/10.3233/FAIA200120) |
 
-### Síntesis analítica de los trabajos más cercanos a MUD
+### An analytical summary of the works most closely related to MUD
 
-**Statecharts** introdujo una idea que sigue siendo central: el comportamiento reactivo complejo necesita una notación con **jerarquía, concurrencia y comunicación** en lugar de estados planos. Se relaciona con MUD porque muestra cómo una semántica de dominio puede preservarse en una representación relativamente legible, aunque está más orientado a control que a ontología o verificación integrada.
+**Statecharts** He introduced an idea that remains central: complex reactive behaviour requires a notation with **hierarchy, concurrence and communication** rather than flat states. It is related to MUD because it shows how a semantics from domain It can be preserved in a relatively readable representation, although it is geared more towards control than towards ontology or integrated verification.
 
-**Lustre** es muy relevante porque convierte el tiempo lógico y la reacción continua en parte del lenguaje, no en un detalle de implementación. Su cercanía con MUD está en que **el modelo del dominio y la ejecución comparten formalismo**, y además abrió la puerta a expresar propiedades dentro del mismo ecosistema.
+**Chandelier** It is very important because it converts logical time and the reaction It is a matter of language, not an implementation detail. Its similarity to MUD lies in the fact that **the model from the domain and the performance share a formalistic approach**, and it also paved the way for expressing properties within the same ecosystem.
 
-**SIGNAL** se acerca especialmente a la idea de “ondas” o ritmos distintos porque trabaja con **múltiples relojes** y especificaciones policrónicas. Si MUD quiere reglas reactivas no uniformes, SIGNAL es una lectura prioritaria: enseña cómo tratar sincronización parcial sin perder declaratividad.
+**SIGNAL** It relates particularly closely to the idea of ‘waves’ or different rhythms because it works with **multiple watches** and polychronous specifications. If MUD wants non-uniform reactive rules, SIGNAL is essential reading: it explains how to handle partial synchronisation without losing declarativeness.
 
-**Esterel** representa la versión más control-dominada de la tradición síncrona. Su relación con MUD no está en la ontología, sino en la **claridad semántica de los instantes** y en la idea de que un lenguaje reactivo puede ser a la vez ejecutable y susceptible de razonamiento formal.
+**Esterel** represents the most control-oriented version of the synchronic tradition. Its relation with MUD is not in the ontology, but in the **clarity semantics of the moments** and on the idea that a reactive language can be both executable and amenable to formal reasoning.
 
-**ReactiveML** extiende ese mundo reactivo hacia estructuras de datos más ricas y una programación más “de alto nivel”. Para MUD esto importa mucho: sugiere que no hay por qué elegir entre reactividad formal y expresividad práctica.
+**ReactiveML** extend that world reactive towards richer data structures and more ‘high-level’ programming. For MUD, this is very important: it suggests that there is no need to choose between formal reactivity and practical expressiveness.
 
-**Maude** es probablemente una de las comparaciones más fuertes. Propone que la semántica misma sea **ejecutable** mediante reglas de reescritura, y sobre esa base añade reflexión, estrategias y model checking. Se parece a MUD en la ambición de que la frontera entre “especificar” e “implementar” sea mucho más delgada.
+**Maude** It is probably one of the most striking comparisons. It suggests that the semantics even if it is **executable** using rewriting rules, and on that basis adds reflection, strategies and model checking. It resembles MUD in its ambition to make the boundary between ‘specifying’ and ‘implementing’ much more blurred.
 
-**K Framework** lleva esa intuición todavía más lejos: desde una semántica formal se derivan intérpretes y verificadores. Para MUD, K es una referencia clave si la tesis central es que **la semántica de dominio debería generar tooling** y no quedarse como mera documentación.
+**K Framework** takes that intuition even further: starting from a semantics Interpreters and verifiers are formally derived. For MUD, K is a key reference point if the central thesis is that **the semantics from domain should generate tooling** and not just remain as mere documentation.
 
-**GOLOG, ConGolog y ElGolog** son muy cercanos en otro eje: el de representar dominios dinámicos ricos con acciones, historia y decisiones. Su punto fuerte no es el model checking generalista, sino la **ejecución de teorías de acción**; por eso interesan a MUD si la ontología debe ser verdaderamente operativa y no sólo taxonómica.
+**GOLOG, ConGolog and ElGolog** are very similar in another respect: that of depicting dynamic worlds rich in action, story and choices. Their point Its strength lies not in general-purpose model checking, but in the **implementation of theories of action**; that is why they are of interest to MUD if the ontology is to be truly operational and not merely taxonomic.
 
-**Event-B/Rodin** ofrece una lección distinta: cómo estructurar un proyecto en niveles de abstracción mediante **refinamiento** y obligar a justificar su corrección. Se relaciona con MUD porque aborda directamente la separación entre modelo conceptual y realización, con trazabilidad formal entre capas.
+**Event-B/Rodin** offers a different lesson: how to structure a project into levels of abstraction by means of **refinement** and force them to justify its correctness. It is linked to MUD because it directly addresses the distinction between model concept and production, with traceability formally between layers.
 
-**Alloy** no es un runtime de dominio, pero sí un ejemplo sobresaliente de **análisis automático inmediato** sobre especificaciones compactas. Para MUD es menos modelo operativo y más modelo de “feedback formal rápido”: una idea potentísima para validar reglas de dominio antes de ejecutarlas.
+**Alloy** it is not a runtime for domain, but it is an outstanding example of **immediate automated analysis** on compact specifications. For MUD, it is less model operational and more model ‘rapid formal feedback’: a hugely powerful idea for validating rules of domain before running them.
 
-**TLA+** es decisivo si MUD quiere entrar en propiedades de seguridad, progreso y comportamiento temporal global. Su gran lección es que la especificación puede ser relativamente cercana al razonamiento humano y, al mismo tiempo, contrastarse con un model checker industrializable como TLC.
+**TLA+** It is crucial if the MUD wishes to address issues of security, progress and overall temporal behaviour. The key lesson is that the specification It may be relatively close to human reasoning and, at the same time, be contrasted with an industrialisable model checker such as TLC.
 
-**IDP** es quizá la referencia más clara para la idea de **ontología ejecutable** entendida como “base declarativa con múltiples formas de inferencia”. Se acerca mucho a MUD en espíritu: la teoría no es un programa procedimental, sino una descripción del dominio reutilizable por distintos motores inferenciales.
+**IDP** is perhaps the clearest example of the idea of **executable ontology** understood as a ‘declarative base with multiple forms of inference”. It is very much in the spirit of MUD: the theory is not a procedural programme, but a description of the domain reusable by different inference engines.
 
-**Dedalus** demuestra cómo introducir **tiempo explícito** y asincronía en Datalog sin salir del terreno declarativo. Si MUD quiere reglas reactivas con memoria y evolución incremental, Dedalus es una referencia muy seria para no reinventar mal la dimensión temporal.
+**Dedalus** shows how to enter **explicit time** and asynchrony in Datalog without straying from the declarative realm. If MUD requires reactive rules with memory and incremental evolution, Dedalus is a very strong contender to ensure the temporal dimension is not poorly re-engineered.
 
-**xMOF, fUML y Alf** atacan frontalmente la pregunta: “¿puede una semántica de lenguaje de dominio vivir en modelos estándar y seguir siendo ejecutable?”. Para MUD son esenciales porque muestran cómo separar **abstract syntax**, **behavioral semantics** y tooling.
+**xMOF, fUML and Alf** they tackle the question head-on: “Can a semantics language of domain “to live within standard models and still remain executable?”. For MUD, they are essential because they show how to separate **abstract syntax**, **behavioural semantics** and tooling.
 
-**SWRL, OWL 2 RL y SHACL** cubren el triángulo ontología-reglas-validación. No son un sustituto completo de MUD porque suelen quedar cortos en dinámica compleja o reactividad temporal, pero son fundamentales para entender qué significa tener una ontología con inferencia y con restricciones verificables.
+**SWRL, OWL 2 RL and SHACL** cover the ontology-rules-triangle-validation. They are not a complete substitute for MUDs because they tend to fall short in terms of complex dynamics or temporal reactivity, but they are essential for understanding what it means to have an ontology with inference and with verifiable restrictions.
 
-**Ceptre** es una referencia excelente para el lado “simulación/juego”. Su mérito está en expresar mecánicas y evolución con reglas que pueden **inspeccionarse, depurarse y jugarse**. Para MUD, esto es relevante si una de sus salidas naturales son microworlds o juegos de mesa simulables.
+**Sceptre** is an excellent resource for the ‘simulation’ aspect/juego”. Its merit lies in expressing mechanics and progression through rules that can **to be inspected, cleaned and played**. For MUD, this is relevant if one of its natural outputs is microworlds or simulable board games.
 
-**GDL-II/GDL-III, RBG y Ludii** muestran tres maneras distintas de crear lenguajes de dominio para juegos con vocación general. Son importantes para MUD porque prueban que un DSL de reglas puede aspirar a **generalidad, eficiencia y legibilidad** a la vez, aunque cada uno privilegia una combinación distinta de esas tres cosas.
+**GDL-II/GDL-III, RBG and Ludii** show three different ways of creating languages for domain for general-purpose games. They are important for MUDs because they demonstrate that a DSL for rules can aspire to **generality, efficiency and readability** At the same time, although each person prioritises a different combination of those three things.
 
-## Solapamientos y diferencias clave frente a MUD
+## Key overlaps and differences compared with the MUD
 
-### Dónde hay mayor solapamiento
+### Where is there the greatest overlap?
 
-El mayor solapamiento con MUD aparece en cuatro zonas. La primera es la **reactividad temporal**, dominada por Lustre, Esterel, SIGNAL y ReactiveML. La segunda es la **semántica ejecutable derivadora de herramientas**, donde Maude y K son especialmente fuertes. La tercera es la **descripción declarativa del dominio con inferencias múltiples**, donde destacan IDP y, en clave distinta, GOLOG. La cuarta es la **verificación integrada o casi integrada**, donde Event-B, Alloy y TLA+ son la referencia evidente.
+The greatest overlap with the MUD is found in four areas. The first is the **temporary reactivity**, dominated by Lustre, Esterel, SIGNAL and ReactiveML. The second is the **semantics tool deriver executable**, where Maude and K are particularly strong. The third is the **declarative description of the domain with multiple inferences**, notably IDP and, in a different vein, GOLOG. The fourth is the **integrated or quasi-integrated verification**, where Event-B, Alloy and TLA+ are the obvious benchmarks.
 
-### Dónde MUD parece diferente
+### Where the MUD seems different
 
-La diferencia más clara es que MUD, tal como lo describes, no parece querer sólo un lenguaje reactivo, ni sólo un modelador formal, ni sólo una ontología con reglas. Parece querer un **artefacto único** que haga de **lenguaje del dominio**, **runtime**, **espacio de validación**, **soporte para simulación** y **superficie de trazabilidad para IA**. Esa combinación exacta no aparece de forma consolidada en lo revisado.
+The most obvious difference is that MUD, as you describe it, does not seem to want merely a reactive language, nor merely a formal modeller, nor merely an ontology with rules. It seems to want a **unique artefact** to act as **language of the domain**, **runtime**, **space for validation**, **simulation support** y **area of traceability for AI**. That exact combination does not appear in a consolidated form in the material reviewed.
 
-### Mapa de áreas de solapamiento
+### Map of overlapping areas
 
-| Área | Qué ofrece la literatura | Qué le faltaría a MUD si copiara sólo esa vía | Valor para MUD |
+| Area | What literature has to offer | What would the MUD be missing if it were to follow only that path? | Value for MUD |
 |---|---|---|---|
-| Tipos dependientes | Idris y F* dan garantías muy fuertes a nivel de programas y especificaciones | Suelen exigir más pericia formal y no resuelven por sí solos ontología/reactividad de dominio | Alto para invariantes finos, medio para ergonomía de dominio |
-| Datalog / lógica declarativa | IDP, Dedalus, Datafun y afines dan inferencia, fijpoints y, a veces, tiempo explícito | Menor naturalidad para semánticas operacionales ricas o simulación interactiva compleja | Muy alto para ontología operativa e inferencia incremental |
-| FRP y reactividad síncrona | Fran y ReactiveML modelan tiempo, eventos y evolución reactiva con mucha elegancia | Verificación y ontología suelen quedar fuera o sólo parcialmente integradas | Alto si “ondas” y causalidad temporal son nucleares |
-| Event sourcing | Aporta trazas inmutables, replay y observabilidad | Normalmente no aporta semántica formal ni verificación potente integrada | Medio como capa de trazabilidad, bajo como núcleo semántico |
-| Model checking | Alloy, TLA+, Maude y plugins de Rodin dan contraejemplos y exploración automática | El precio suele ser modelado adicional o restricciones de expresividad | Muy alto si MUD quiere depuración semántica temprana |
-| Ontologías ejecutables | SWRL, OWL RL, SHACL y Event-B+ontologías permiten inferencia/validación sobre conocimiento | La dinámica temporal y la ejecución rica son más limitadas | Alto si MUD quiere ser contrato semántico interoperable | |
-| DSLs para juegos y simulación | Ceptre, GDL, RBG y Ludii dan bancos de pruebas excelentes para reglas y estados | No siempre separan semántica profunda e implementación como MUD querría | Muy alto como terreno experimental y demostrador de valor |
+| Dependent types | Idris and F* they provide very strong assurances in terms of programmes and specifications | They tend to require greater formal expertise and do not resolve ontology on their own/reactividad from domain | High for fine details, medium for ergonomics of domain |
+| Datalog / declarative logic | IDP, Dedalus, Datafun and similar organisations provide inference, fixed points and, sometimes, explicit time | Less naturalness for rich operational semantics or complex interactive simulation | Far too high for operational ontology and inference incremental |
+| FRP and synchronous reactivity | Fran and ReactiveML model time, events and reactive evolution with great elegance | Verification and ontology are often left out or only partially integrated | Stop if ‘waves’ and temporal causality are fundamental |
+| Event sourcing | Provides immutable traces, replay and observability | It doesn’t usually contribute semantics no formal or robust built-in verification | A sort of layer of traceability, ‘low’ as the semantic core |
+| Model checking | Alloy, TLA+, Maude and Rodin plugins provide counterexamples and automatic exploration | The price is usually modelled as an additional factor or a constraint on expressiveness | A very high hurdle if the MUD wants a purge semantics early |
+| Executable ontologies | SWRL, OWL RL, SHACL and Event-B+ ontologies enable inference/validación on knowledge | The temporal dynamics and rich performance are more limited | Stop if the MUD wants to be contract interoperable semantic | |
+| DSLs for gaming and simulation | Ceptre, GDL, RBG and Ludii provide excellent testbeds for rules and states | They don’t always separate semantics in-depth and as the MUD would like it to be implemented | Highly significant as a test bed and demonstration site for value |
 
-A mi juicio, la combinación **IDP + Dedalus + Maude/K + Event-B/TLA+ + Ludii/Ceptre** describe bastante bien el “espacio MUD”. No porque MUD deba parecerse del todo a ninguna de esas piezas, sino porque ahí están casi todos sus problemas difíciles: representación declarativa, tiempo, ejecución, prueba, contraejemplos y simulación. Esta síntesis es inferencial, pero está apoyada por las familias comparadas.
+In my view, the combination **IDP + Dedalus + Maude/K + Event-B/TLA+ + Ludii/Ceptre** It describes the ‘MUD space’ quite well. Not because MUD must resemble any of those systems exactly, but because almost all of its difficult problems are found there: declarative representation, time, execution, testing, counterexamples and simulation. This synthesis is inferential, but it is supported by the families under comparison.
 
-### Línea temporal de hitos relevantes
+### Timeline of key milestones
 
 ```mermaid
 timeline
@@ -179,103 +179,104 @@ timeline
     2026 : TLA-Prover y TLA+-Bench hacen explícita la agenda IA más verificación
 ```
 
-Los hitos de los años recientes sugieren otra cosa importante: la **trazabilidad para IA** es todavía un frente emergente y hoy suele construirse **encima** de lenguajes formales ya existentes, no dentro de un lenguaje de dominio nuevo. En ese sentido, MUD podría llegar “antes de tiempo” a una convergencia que la literatura apenas empieza a explorar.
+Developments in recent years suggest something else important: the **traceability for AI** It is still an emerging field and is usually built today **on top of** of existing formal languages, not within a language of domain new. In that sense, the MUD could arrive ‘ahead of schedule’ at a convergence that the literature is only just beginning to explore.
 
-## Recomendaciones de lectura prioritaria y posibles líneas de TFG
+## Recommended priority reading and possible topics for the final-year project
 
-### Lecturas que priorizaría
+### Books I would prioritise
 
-**Maude + K Framework.** Si la apuesta fuerte de MUD es que la semántica sea ejecutable y genere tooling, aquí está la lectura más estructural. Maude aporta la lógica de reescritura y K la idea práctica de derivar analizadores, intérpretes y verificadores desde una semántica formal.
+**Maude + K Framework.** If the MUD’s main strategy is that the semantics if it is executable and generates tooling, here is the more structural overview. Maude provides the rewriting logic and K the practical approach to deriving analysers, interpreters and verifiers from a semantics formally.
 
-**Lustre + SIGNAL + Esterel + ReactiveML.** Si “reglas reactivas por ondas” es una intuición central, esta familia enseña casi todo lo importante sobre tiempo lógico, relojes, sincronía, causalidad y composicionalidad reactiva. Aquí hay muchísimo conocimiento ya depurado.
+**Lustre + SIGNAL + Esterel + ReactiveML.** If ‘wave-reactive rules’ are a central insight, this family teaches us almost everything of importance about logical time, clocks, synchrony, causality and reactive compositionality. There is a great deal of well-refined knowledge here.
 
-**IDP + Dedalus.** Si MUD quiere una ontología verdaderamente ejecutable y no sólo un esquema, esta pareja es muy instructiva: IDP por la idea de teoría declarativa con múltiples inferencias, Dedalus por la entrada explícita del tiempo y la evolución.
+**IDP + Dedalus.** If the MUD wants a truly executable ontology rather than just a schema, this pair is very instructive: IDP for the idea of a declarative theory with multiple inferences, and Dedalus for the explicit inclusion of time and evolution.
 
-**Event-B/Rodin + TLA+ + Alloy.** Esta tríada no define “un runtime de dominio” en el sentido de MUD, pero sí enseña cómo insertar prueba, model checking y contraejemplos en el flujo de diseño. Para un TFG serio, al menos una comparación con estas herramientas sería casi obligatoria.
+**Event-B/Rodin + TLA+ + Alloy.** This triad does not define “a runtime for domain” in the sense of MUD, but it does show how to incorporate testing, model checking and counterexamples into the design process. For a serious final-year project, at least a comparison with these tools would be almost essential.
 
-**xMOF / fUML / Alf.** Si la pregunta es cómo separar formalmente la semántica del dominio de una implementación concreta sin perder ejecutabilidad, aquí hay respuestas muy pertinentes desde MDE y DSL engineering.
+**xMOF / fUML / Alf.** If the question is how to formally separate the semantics from the domain Regarding a specific implementation without compromising on executability, here are some very relevant answers from MDE and DSL Engineering.
 
-**Ceptre + Ludii o RBG.** Si Samuel quiere demostrar MUD con algo tangible y evaluable, el territorio de juegos de mesa o simulaciones discretas es ideal: estados, reglas, reactividad, trazas, explicabilidad y comparación objetiva entre descripciones.
+**Ceptre + Ludii or RBG.** If Samuel wants to demonstrate MUD using something tangible and measurable, the field of board games or discrete simulations is ideal: states, rules, reactivity, traces, explainability and objective comparison between descriptions.
 
-### Tres posibles líneas de TFG
+### Three possible topics for the final-year project
 
-**Un núcleo mínimo de MUD con semántica ejecutable y verificación de alcance acotado.**
-Tema: definir un subconjunto pequeño de MUD y darle una semántica formal ejecutable en Maude o K. Entregable: intérprete, trazas de ejecución y comprobación de propiedades de seguridad o alcanzabilidad. Valor académico: demostrar si MUD puede ser “semántica primero” sin colapsar en complejidad accidental.
+**A minimal MUD core with semantics executable and verification of scope delimited.**
+Topic: defining a small subset of MUD and assigning it a semantics An executable file in Maude or K. Deliverables: interpreter, execution traces and verification of safety properties, or reachability. Value academic: to demonstrate whether MUD can be “semantics “first” without becoming bogged down in unintended complexity.
 
-**MUD como lenguaje reactivo-temporal de dominio comparado con la escuela síncrona.**
-Tema: formalizar las “ondas” de MUD y compararlas con instantes lógicos, relojes y policronía de Lustre/SIGNAL/ReactiveML. Entregable: semántica operacional pequeña, ejemplos reproducibles y comparación de expresividad para dominios discretos. Valor académico: ubicar rigurosamente la novedad real de MUD en tiempo y reactividad.
+**MUD as a reactive-temporal language for domain compared with face-to-face teaching.**
+Topic: Formalising MUD ‘waves’ and comparing them with logical instants, clocks and Lustre’s polychrony/SIGNAL/ReactiveML. Deliverable: semantics small-scale operational implementation, reproducible examples and a comparison of expressiveness for discrete domains. Value academic: to rigorously pinpoint the true novelty of MUD in terms of timing and responsiveness.
 
-**MUD como DSL para juegos/simulación con trazabilidad para IA.**
-Tema: modelar varios juegos sencillos en MUD y compararlos con Ceptre, RBG o Ludii. Entregable: corpus de modelos, medidas de concisión, trazabilidad de cambios, explicaciones automáticas de estados/reglas y quizá traducción a representación auxiliar para LLM. Valor académico: evaluación empírica clara y muy defendible en un TFG.
+**MUD as a DSL for games/simulación with traceability for AI.**
+Topic: modelling several simple games in MUD and comparing them with Ceptre, RBG or Ludii. Deliverable: a corpus of models, conciseness metrics, traceability changes, automatic status explanations/reglas and perhaps translation into an auxiliary representation for LLMs. Value Academic: a clear and highly defensible empirical assessment in a final-year project.
 
-### Criterios para decidir si una iniciativa es aplicable a MUD
+### Criteria for determining whether an initiative is applicable to MUD
 
-| Criterio | Pregunta que conviene hacer |
+| Criterion | A question worth asking |
 |---|---|
-| Compatibilidad semántica | ¿Puede expresar entidades de dominio, colecciones, temporalidad y disparos reactivos sin codificación artificiosa? |
-| Escalabilidad | ¿El modelo sigue siendo ejecutable y analizable cuando crecen reglas, estados y trazas? |
-| Herramientas | ¿Hay parser, editor, simulador, verificador, contraejemplos, depuración y perfiles de rendimiento? |
-| Comunidad y madurez | ¿Existe masa crítica de publicaciones, ejemplos, mantenimiento y discusión técnica? |
-| Licencia e interoperabilidad | ¿Es usable en un TFG o prototipo abierto? ¿Permite integración con otros runtimes, estándares o exportadores? |
-| Trazabilidad para IA | ¿La semántica es estable, serializable, explicable y apta para producir evidencias verificables o loops de reparación? |
+| Compatibility semantics | Can it represent entities of domain, collections, temporality and reactive shots without artificial coding? |
+| Scalability | Is the model Does it remain executable and analysable as the number of rules, states and traces increases? |
+| Tools | Are there parsers, editors, simulators, verifiers, counterexamples, debugging tools and performance profiles? |
+| Community and maturity | Is there a critical mass of publications, examples, maintenance and technical discussion? |
+| Licensing and interoperability | Can it be used for a final-year project or an open-source prototype? Does it allow integration with other runtimes, standards or exporters? |
+| Traceability for AI | Is the semantics Is it stable, serialisable, explainable and capable of producing verifiable evidence or repair loops? |
 
-Aplicando esos criterios, mi valoración sintética es esta: **Maude/K** puntúan muy alto en semántica ejecutable; **Event-B/TLA+/Alloy** puntúan muy alto en verificación; **IDP/Dedalus** muy alto en declaratividad inferencial; **Lustre/SIGNAL/ReactiveML** muy alto en reactividad temporal; **Ceptre/Ludii/RBG** muy alto como banco experimental de reglas; y **SWRL/OWL RL/SHACL** muy alto en interoperabilidad semántica estructurada. Lo que aún falta en casi todos es la combinación completa en un solo diseño.
+Applying those criteria, my overall assessment is as follows: **Maude/K** score very highly in semantics executable; **Event-B/TLA+/Alloy** score very highly in verification; **IDP/Dedalus** very high in inferential expressiveness; **Chandelier/SIGNAL/ReactiveML** very high in terms of temporal reactivity; **Sceptre/Ludii/RBG** very high as an experimental rule-based system; and **SWRL/OWL RL/SHACL** very high in terms of interoperability semantics structured. What is still missing in almost all of them is the complete combination within a single design.
 
-## Juicio final sobre el recorrido académico de MUD
+## Final assessment of the MUD’s academic record
 
-Mi juicio, con la evidencia disponible, es favorable pero con una condición fuerte de alcance. **Sí hay un problema serio detrás**: la dispersión entre modelado declarativo, reactividad, ontología operativa, verificación y trazabilidad. **Sí hay espacio de TFG**: de hecho, precisamente porque la literatura está fragmentada. Pero el recorrido académico de MUD no estará en presentar “el lenguaje total” de una vez, sino en **elegir un fragmento**, compararlo con una o dos familias próximas, formalizar su semántica y evaluar si ofrece una mejora clara en uno de estos puntos: expresividad del dominio, claridad semántica, facilidad de verificación, o trazabilidad para automatización/IA.
+My assessment, based on the available evidence, is favourable, but subject to one key condition: scope. **There is indeed a serious problem underlying this**: the overlap between declarative modelling, reactivity, operational ontology, verification and traceability. **There are places available for the final-year project**: in fact, precisely because literature is fragmented. But MUD’s academic approach will not be to present ‘the total language’ all at once, but rather to **choose a passage**, compare it with one or two neighbouring families, and formalise its semantics and assess whether it offers a clear improvement in one of the following areas: expressiveness of the domain, clarity semantics, ease of verification, or traceability for automation/IA.
 
-Donde la información sigue siendo insuficiente es en dos frentes. Primero, no he visto todavía una especificación pública suficientemente madura de MUD como para comparar formalmente su semántica con, por ejemplo, la de Dedalus o K. Segundo, tampoco he encontrado bibliografía primaria que use exactamente la noción de **“reglas reactivas por ondas”** con ese nombre; lo más cercano son la tradición síncrona, la policronía y algunos modelos reactivos con múltiples escalas temporales. Esa laguna conviene verla con honestidad: es una oportunidad de originalidad, pero también una señal de que cualquier TFG deberá **definir con mucho rigor** qué significa “onda” en MUD.
+There are still two areas where information remains insufficient. Firstly, I have not yet seen a specification a sufficiently mature public stance on the part of the MUD to formally compare its semantics such as, for example, that of Dedalus or K. Secondly, I have not come across any primary literature that uses precisely the concept of **“wave-reactive rules”** under that name; the closest equivalents are synchronous tradition, polychrony and certain reactive models involving multiple time scales. It is important to view this gap honestly: it is an opportunity for originality, but also a sign that any final-year project will need to **define very precisely** What does “wave” in MUD.
 
-## Fuentes primarias y oficiales reconstruidas
+## Reconstructed primary and official sources
 
-### Reactividad y tiempo
+### Reactivity and time
 
-- David Harel, [“Statecharts: A Visual Formalism for Complex Systems”](https://doi.org/10.1016/0167-6423(87)90035-9), *Science of Computer Programming*, 1987.
-- Halbwachs, Lagnier y Ratel, [“Programming and Verifying Critical Systems by Means of the Synchronous Data-Flow Programming Language Lustre”](https://verimag.fr/details.html?lang=en&pub_id=lesar-tse), 1992.
-- Inria, [actividad y documentación del toolset Polychrony/Signal](https://radar.inria.fr/rapportsactivite/RA2013/espresso/uid34.html).
-- Inria, [presentación, semántica y herramientas de Esterel](https://www-sop.inria.fr/esterel.org/files/Html/About/AboutEsterel.htm).
-- Mandel, Pasteur y Pouzet, [“ReactiveML, Ten Years Later”](https://doi.org/10.1145/2790449.2790509), PPDP 2015.
-- Alvaro et al., [“Dedalus: Datalog in Time and Space”](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-173.html), UC Berkeley, 2009.
-- Idris, [sitio y documentación oficial](https://idris-lang.org/).
-- F*, [sitio y bibliografía oficial](https://fstar-lang.org/).
+- David Harel, [“Statecharts: A Visual Formalism” for “Complex Systems”](https://doi.org/10.1016/0167-6423(87)90035-9), *The Science of Computer Programming*, 1987.
+- Halbwachs, Lagnier and Ratel, [“Programming and Verifying Critical Systems by “Means of the Lustre Synchronous Data-Flow Programming Language”](https://verimag.fr/details.html?lang=en&pub_id=lesar-tse), 1992.
+- Inria, [Polychrony toolset: functionality and documentation/Signal](https://radar.inria.fr/rapportsactivite/RA2013/espresso/uid34.html).
+- Inria, [presentation, semantics and Esterel tools](https://www-sop.inria.fr/esterel.org/files/Html/About/AboutEsterel.htm).
+- Mandel, Pasteur and Pouzet, [“ReactiveML, Ten Years On”](https://doi.org/10.1145/2790449.2790509), PPDP 2015.
+- Alvaro et al., [“Dedalus: Datalog in Time and "Space"](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2009/EECS-2009-173.html), UC Berkeley, 2009.
+- Idris, [website and official documentation](https://idris-lang.org/).
+- F*, [official website and bibliography](https://fstar-lang.org/).
 
-### Semántica ejecutable, acciones y modelado
+### Semantics executable, actions and modelling
 
-- Maude Team, [sitio, manual y publicaciones oficiales de Maude](https://maude.cs.illinois.edu/).
-- K Framework, [manual oficial del marco de semántica ejecutable](https://kframework.org/docs/user_manual/).
-- Levesque et al., [“GOLOG: A Logic Programming Language for Dynamic Domains”](https://doi.org/10.1016/S0743-1066(96)00121-5), 1997.
-- Cognitive Robotics Group, University of Toronto, [archivo oficial de GOLOG](https://www.cs.toronto.edu/~fritz/golog/).
-- Mayerhofer et al., [“xMOF: Executable DSMLs Based on fUML”](https://doi.org/10.1007/978-3-319-02654-1_4), SLE 2013.
+- Maude Team, [Maude’s website, manual and official publications](https://maude.cs.illinois.edu/).
+- K Framework, [official framework manual semantics executable](https://kframework.org/docs/user_manual/).
+- Levesque et al., [“GOLOG: A Logic Programming Language” for “Dynamic Domains”](https://doi.org/10.1016/S0743-1066(96)00121-5), 1997.
+- Cognitive Robotics Group, University of Toronto, [GOLOG’s official archive](https://www.cs.toronto.edu/~fritz/golog/).
+- Mayerhofer et al., [“xMOF: Executable DSMLs Based on on “fUML”](https://doi.org/10.1007/978-3-319-02654-1_4), SLE 2013.
 - Object Management Group, [Foundational UML — fUML 1.5](https://www.omg.org/spec/FUML/).
-- Marc Denecker, [IDP y FO(.)](https://people.cs.kuleuven.be/~marc.denecker/).
-- Arntzenius y Krishnaswami, [“Datafun: a Functional Datalog”](https://doi.org/10.1145/3022670.2951948), ICFP 2016.
+- Marc Denecker, [IDP and FO(.)](https://people.cs.kuleuven.be/~marc.denecker/).
+- Arntzenius and Krishnaswami, [“Datafun: a Functional Datalog”](https://doi.org/10.1145/3022670.2951948), ICFP 2016.
 
-### Verificación y conocimiento
+### Verification and knowledge
 
-- Event-B/Rodin, [documentación oficial](https://wiki.event-b.org/index.php/Main_Page).
-- Daniel Jackson y Alloy Team, [sitio oficial de Alloy](https://alloytools.org/about).
-- Daniel Jackson, [“Alloy: A Language and Tool for Exploring Software Designs”](https://doi.org/10.1145/3338843), 2019.
-- Leslie Lamport, [*Specifying Systems* y materiales oficiales de TLA+](https://lamport.azurewebsites.net/tla/book.html).
-- Yu, Manolios y Lamport, [“Model Checking TLA+ Specifications”](https://lamport.org/pubs/yuanyu-model-checking.pdf).
-- W3C, [OWL 2 Profiles, incluido OWL 2 RL](https://www.w3.org/TR/owl2-profiles/).
+- Event-B/Rodin, [official documentation](https://wiki.event-b.org/index.php/Main_Page).
+- Daniel Jackson and Alloy Team, [Alloy’s official website](https://alloytools.org/about).
+- Daniel Jackson, [“Alloy: A Language and Tool for “Exploring Software Designs”](https://doi.org/10.1145/3338843), 2019.
+- Leslie Lamport, [*Specifying Systems* and official TLA+ materials](https://lamport.azurewebsites.net/tla/book.html).
+- Yu, Manolios and Lamport, [“Model Checking TLA+ Specifications”](https://lamport.org/pubs/yuanyu-model-checking.pdf).
+- W3C, [OWL 2 Profiles, including OWL 2 RL](https://www.w3.org/TR/owl2-profiles/).
 - W3C, [SWRL](https://www.w3.org/submissions/SWRL/).
 - W3C, [Shapes Constraint Language — SHACL](https://www.w3.org/TR/shacl/).
 
-### Juegos y simulación
+### Games and simulation
 
-- Chris Martens, [“Ceptre: A Language for Modeling Generative Interactive Systems”](https://doi.org/10.1609/aiide.v11i1.12784), AIIDE 2015.
-- Michael Thielscher, [“A General Game Description Language for Incomplete Information Games”](https://cgi.cse.unsw.edu.au/~mit/Papers/AAAI10a.pdf), 2010.
-- Michael Thielscher, [“GDL-III: A Description Language for Epistemic General Game Playing”](https://doi.org/10.24963/ijcai.2017/177), IJCAI 2017.
-- Kowalski et al., [“Regular Boardgames”](https://doi.org/10.1609/aaai.v33i01.33011699), AAAI 2019.
+- Chris Martens, [“Ceptre: A Language for “Modelling Generative Interactive Systems”](https://doi.org/10.1609/aiide.v11i1.12784), AIIDE 2015.
+- Michael Thielscher, [“A General Game Description Language” for “Incomplete Information Games”](https://cgi.cse.unsw.edu.au/~mit/Papers/AAAI10a.pdf), 2010.
+- Michael Thielscher, [“GDL-III: A Description Language for “Epistemic General Game Playing”](https://doi.org/10.24963/ijcai.2017/177), IJCAI 2017.
+- Kowalski et al., [“Regular Board Games”](https://doi.org/10.1609/aaai.v33i01.33011699), AAAI 2019.
 - Piette et al., [“Ludii — The Ludemic General Game System”](https://doi.org/10.3233/FAIA200120), ECAI 2020.
-- Digital Ludeme Project, [sitio oficial](https://ludeme.eu/).
+- Digital Ludeme Project, [official website](https://ludeme.eu/).
 
-### IA y asistencia a la verificación
+### AI and verification support
 
 - Mugnier et al., [“Laurel: Generating Dafny Assertions Using Large Language Models”](https://arxiv.org/abs/2405.16792), 2024.
-- Poesia, Loughridge y Amin, [“dafny-annotator: AI-Assisted Verification of Dafny Programs”](https://arxiv.org/abs/2411.15143), 2024.
+- Poetry, Loughridge and Amin, [“dafny-annotator: AI-Assisted Verification of Dafny Programmes”](https://arxiv.org/abs/2411.15143), 2024.
 - [“TLA-Prover: Verifiable TLA+ Specification Synthesis”](https://arxiv.org/abs/2606.06133), 2026.
 - [“TLA+-Bench: An Execution-Grounded Benchmark”](https://arxiv.org/abs/2607.23425), 2026.
 
-Estas fuentes sostienen las familias y comparaciones principales del informe. Las afirmaciones sobre una ausencia total de trabajos equivalentes a MUD y las recomendaciones concretas de TFG siguen siendo síntesis e inferencias del informe, no resultados demostrados por una única publicación.
+These sources underpin the report’s main findings and comparisons. The claims regarding a total absence of jobs equivalent to those in the MUD and the specific recommendations made by TFG remain summaries and inferences drawn from the report, not findings demonstrated by a single publication.
+

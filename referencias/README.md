@@ -1,28 +1,29 @@
 ---
-title: Referencias auxiliares de MUD
+title: Supplementary MUD references
 tags:
   - mud/referencia
 status: vigente
 normative: false
 ---
 
-# Referencias
+# References
 
-Esta carpeta contiene informes y materiales auxiliares que **no forman parte de la especificación normativa**.
+This folder contains reports and supporting materials which **are not part of the specification regulations**.
 
-## Regla de autoridad
+## Rule of authority
 
-Una referencia:
+For reference:
 
-- No se usa directamente para implementar.
-- No introduce reglas del lenguaje.
-- No convierte una afirmación en vigente por describirla.
-- Debe señalar las fuentes normativas o decisiones en las que se apoya.
+- It is not used directly for implementation.
+- It does not introduce any rules of language.
+- It does not turn a statement into current for describing it.
+- You must cite the legal sources or decisions on which you are relying.
 
-La autoridad actual se consulta en este orden:
+The authority current is query in this order:
 
-1. [[especificacion/README|Especificación formal]].
-2. [[notas/decisiones/README|Decisiones vigentes]] y sus ADR.
-3. [[notas/preguntas/README|Preguntas activas]].
+1. [[especificacion/README|Specification formally]].
+2. [[notas/decisiones/README|Decisions currently in force]] and its ADRs.
+3. [[notas/preguntas/README|Active questions]].
 
-Las instantáneas y auditorías retiradas se conservan en el historial Git. La evidencia de cierre de su migración está registrada en [[notas/preguntas/Q-010-estado-de-las-decisiones-de-la-fuente|Q-010]].
+The snapshots and audits that have been removed are stored in the Git history. Evidence of the end of their migration is recorded in [[notas/preguntas/Q-010-estado-de-las-decisiones-de-la-fuente|Q-010]].
+
