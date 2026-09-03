@@ -10,7 +10,7 @@ status: current
 
 # Policy MUD questions
 
-Related decisions: [[POLITICA-DE-DECISIONES|Policy from MUD decisions ]].
+Related decisions: [[DECISIONS-POLICY|Policy from MUD decisions ]].
 
 ## Purpose
 
@@ -18,7 +18,7 @@ A question identifies a specific uncertainty that may prevent the completion of 
 
 ## Autoridad
 
-Questions are recorded in `notes/questions/`. They do not, in themselves, define semantics. An answer only becomes a MUD rule through an decision accepted in accordance with [[POLITICA-DE-DECISIONES]] and its incorporation into the relevant regulatory frameworks in accordance with [[CICLO-DOCUMENTAL]].
+Questions are recorded in `notes/questions/`. They do not, in themselves, define semantics. An answer only becomes a MUD rule through an decision accepted in accordance with [[DECISIONS-POLICY]] and its incorporation into the relevant regulatory frameworks in accordance with [[DOCUMENT-LIFECYCLE]].
 
 Each question has a stable file:
 

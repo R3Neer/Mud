@@ -177,7 +177,7 @@ Minimal operations:
 - `RETIRE anchor`
 - `MOVE anchor` or explicit migration
 
-`READ` is an operation of query and does not produce a commit on its own. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-cambios-semanticos-atomicos|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] and implemented by [[governance/POLITICA-DE-COMMITS|the policy commits]].
+`READ` is an operation of query and does not produce a commit on its own. This separation between queries and versionable changes is determined by [[notes/decisions/ADR-012-cambios-semanticos-atomicos|D-012]], developed by [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] and implemented by [[governance/COMMITS-POLICY|the policy commits]].
 
 ## Materialisers
 

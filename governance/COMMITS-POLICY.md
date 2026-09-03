@@ -58,7 +58,7 @@ The following must not be mixed:
 - Ordinary ephemeral files, builds, logs, caches, dumps or local Obsidian state.
 
 An intentionally temporary document may remain versioned only under the
-[[POLITICA-DE-ARCHIVOS-TEMPORALES|temporary-file policy]]. Its temporariness
+[[TEMPORARY-FILES-POLICY|temporary-file policy]]. Its temporariness
 does not exempt it from commit atomicity or make ephemeral residue suitable for
 version control.
 

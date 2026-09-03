@@ -24,7 +24,7 @@ The mechanical barrier for MUD-EDIT-002 and question handling is executed using 
 
 ## Temporary files
 
-Documents that are intended to be temporary are governed by `governance/POLITICA-DE-ARCHIVOS-TEMPORALES.md`. Ordinary temporary files are not versioned.
+Documents that are intended to be temporary are governed by `governance/TEMPORARY-FILES-POLICY.md`. Ordinary temporary files are not versioned.
 
 Before creating any commit, you must run `python governance/validate_temporaries.py` and check the complete inventory of documents using `temporary: true`. If the `temporary-delete-when` condition for any document is already met, it must be removed before closing the commit, unless the change itself explicitly modifies its cycle lifespan.
 
@@ -32,7 +32,7 @@ Temporality is declared solely in the document’s frontmatter; `governance/temp
 
 ## Git
 
-Before editing files, you must read and follow `governance/POLITICA-DE-COMMITS.md`.
+Before editing files, you must read and follow `governance/COMMITS-POLICY.md`.
 
 After completing and validating a consistent working unit, Codex must:
 
@@ -45,7 +45,7 @@ You must not push or overwrite the history without an explicit request.
 
 ## Document publication
 
-The publication and promotion of regulatory documents is governed by `governance/CICLO-DOCUMENTAL.md`.
+The publication and promotion of regulatory documents is governed by `governance/DOCUMENT-LIFECYCLE.md`.
 
 Before marking a chapter as `current`, the publication process must be carried out and it must be checked that its content reflects only the current regulatory state within its scope.
 
@@ -57,6 +57,6 @@ If a candidate fails at a specific layer, that layer must be corrected and the r
 
 ## Questions
 
-The opening, updating, splitting and closing of questions are governed by `governance/POLITICA-DE-PREGUNTAS.md`.
+The opening, updating, splitting and closing of questions are governed by `governance/QUESTIONS-POLICY.md`.
 
 Closed questions must not remain in active indexes or in the frontmatter `questions` of specification. Their stable archive is retained as traceability and links to the decisions or evidence that resolved them.

@@ -102,7 +102,7 @@ def render_index(questions: dict[str, Question]) -> str:
         "",
         "# MUD active questions",
         "",
-        "This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/POLITICA-DE-PREGUNTAS|MUD question policy]].",
+        "This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].",
         "",
         f"There are {len(active)} active questions: {counts['open']} open and {counts['partially-decided']} partially decided.",
         "",

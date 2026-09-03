@@ -14,12 +14,12 @@ not define the language's meaning.
 
 ## Documents
 
-- [[POLITICA-DE-COMMITS|Commit policy]]
-- [[POLITICA-DE-ARCHIVOS-TEMPORALES|Temporary-file policy]]
+- [[COMMITS-POLICY|Commit policy]]
+- [[TEMPORARY-FILES-POLICY|Temporary-file policy]]
 - [[temporales.base|Active-temporaries view]]
-- [[CICLO-DOCUMENTAL|Document lifecycle]]
-- [[POLITICA-DE-DECISIONES|Decision policy]]
-- [[POLITICA-DE-PREGUNTAS|Question policy]]
+- [[DOCUMENT-LIFECYCLE|Document lifecycle]]
+- [[DECISIONS-POLICY|Decision policy]]
+- [[QUESTIONS-POLICY|Question policy]]
 - [[notes/decisions/README|Generated decision index]]
 
 ## Separation of authorities

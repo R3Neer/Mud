@@ -19,7 +19,7 @@ decisions:
 > [!note]
 > This document sets out the rules for drafting the specification. It does not define the behaviour of MUD programmes.
 
-Publication process: [[governance/CICLO-DOCUMENTAL|Document lifecycle by MUD]].
+Publication process: [[governance/DOCUMENT-LIFECYCLE|Document lifecycle by MUD]].
 
 ## 1. Markdown dialect
 
@@ -242,7 +242,7 @@ An illustrative example can never be the sole definition of a rule.
 
 ## 10. Unresolved issues
 
-The cycle lifecycle, statuses and stable archive for each question are governed by the [[governance/POLITICA-DE-PREGUNTAS|Policy for MUD questions ]].
+The cycle lifecycle, statuses and stable archive for each question are governed by the [[governance/QUESTIONS-POLICY|Policy for MUD questions ]].
 
 Format:
 

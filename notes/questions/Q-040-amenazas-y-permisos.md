@@ -20,7 +20,7 @@ Which operations may the AI execute automatically, and which require authorisati
 
 When resolving an issue:
 
-1. Create an ADR in accordance with [[governance/POLITICA-DE-DECISIONES|the decision policy]].
+1. Create an ADR in accordance with [[governance/DECISIONS-POLICY|the decision policy]].
 2. Include alternatives and consequences.
 3. Update the owning document.
 4. Add examples and counterexamples.

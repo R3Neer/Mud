@@ -10,7 +10,7 @@ status: current
 
 # Document lifecycle by MUD
 
-Management of outstanding issues: [[POLITICA-DE-PREGUNTAS|Policy regarding MUD queries ]].
+Management of outstanding issues: [[QUESTIONS-POLICY|Policy regarding MUD queries ]].
 
 ## Purpose
 

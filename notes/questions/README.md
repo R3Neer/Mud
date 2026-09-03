@@ -8,7 +8,7 @@ status: active
 
 # MUD active questions
 
-This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/POLITICA-DE-PREGUNTAS|MUD question policy]].
+This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
 There are 46 active questions: 26 open and 20 partially decided.
 

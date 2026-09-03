@@ -1,6 +1,6 @@
 # Semantic changes and Git
 
-This document describes the safety protocol relating to a modification of the model. The authority of the flow belongs to [[notes/decisions/ADR-012-cambios-semanticos-atomicos|D-012]], [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y [[governance/POLITICA-DE-COMMITS|the policy commits]]. It is different from running a action inside a world: the definition is changed here `.mud` from the world.
+This document describes the safety protocol relating to a modification of the model. The authority of the flow belongs to [[notes/decisions/ADR-012-cambios-semanticos-atomicos|D-012]], [[notes/decisions/ADR-053-operador-semantico-y-flujo-de-autoria|D-053]] y [[governance/COMMITS-POLICY|the policy commits]]. It is different from running a action inside a world: the definition is changed here `.mud` from the world.
 
 ## Two types of transaction
 
@@ -102,7 +102,7 @@ Impact:
 - Data migration: none
 ```
 
-The general format of commits is governed by [[governance/POLITICA-DE-COMMITS|the policy commits]]. Before automating log parsers, you must also set a contract a standard for machine-readable semantic fields.
+The general format of commits is governed by [[governance/COMMITS-POLICY|the policy commits]]. Before automating log parsers, you must also set a contract a standard for machine-readable semantic fields.
 
 ## Should `READ` create a commit?
 

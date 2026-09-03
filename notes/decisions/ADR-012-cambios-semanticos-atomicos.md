@@ -9,7 +9,7 @@ questions:
   - "Q-008"
   - "Q-015"
 affects:
-  - "governance/POLITICA-DE-COMMITS.md"
+  - "governance/COMMITS-POLICY.md"
   - "flujo de autoría del operador semántico"
 ---
 

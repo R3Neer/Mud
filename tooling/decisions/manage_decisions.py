@@ -277,7 +277,7 @@ def render_index(decisions: dict[str, Decision], reserved: set[str]) -> str:
         "# Decisiones de MUD",
         "",
         "Cada decisión tiene un ADR estable. El ciclo de vida y los metadatos se rigen",
-        "por [[governance/POLITICA-DE-DECISIONES|la política de decisiones]].",
+        "por [[governance/DECISIONS-POLICY|la política de decisiones]].",
         "",
         "## Resumen",
         "",

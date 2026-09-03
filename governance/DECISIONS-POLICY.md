@@ -163,5 +163,5 @@ python tooling/decisions/manage_decisions.py validate
 
 ## Relation with publishing and Git
 
-Integration into the standard follows [[CICLO-DOCUMENTAL]]. The creation, acceptance, replacement or withdrawal of an decision forms part of the same atomic commit as its questions and any affected, already developed surfaces, unless an independent audit uncovers a pre-existing inconsistency.
+Integration into the standard follows [[DOCUMENT-LIFECYCLE]]. The creation, acceptance, replacement or withdrawal of an decision forms part of the same atomic commit as its questions and any affected, already developed surfaces, unless an independent audit uncovers a pre-existing inconsistency.
 
