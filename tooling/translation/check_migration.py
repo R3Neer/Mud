@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
 
 from tooling.cli_support import (  # noqa: E402
     HelpCatalogue,
+    HelpItem,
     MudArgumentParser,
     add_presentation_arguments,
     failure,
@@ -83,6 +84,13 @@ def main(argv: list[str] | None = None) -> int:
         groups=(),
         commands=(),
         usage=(f"{invocation} [CANDIDATE] [--source PATH] [--r3translate PATH] [--colour MODE] [--ascii]",),
+        global_items=(
+            HelpItem("CANDIDATE", "Translated Markdown candidate to check. Default: README.md."),
+            HelpItem("--source PATH", "Optional Spanish source paired with the translated candidate."),
+            HelpItem("--r3translate PATH", "Explicit R3Translate executable. Otherwise use R3TRANSLATE or PATH."),
+            HelpItem("--colour auto|always|never", "Control colour for human output. Default: auto; NO_COLOR disables it."),
+            HelpItem("--ascii", "Use ASCII status symbols when Unicode is unsuitable."),
+        ),
         notes=("The default candidate is README.md.", "R3Translate remains an isolated external executable."),
         show_help_on_empty=False,
     )

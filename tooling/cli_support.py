@@ -17,6 +17,7 @@ try:
         Level,
         add_output_arguments,
         resolve_help_request,
+        validate_argparse_catalogue,
     )
 except ImportError:
     print(
@@ -91,6 +92,7 @@ def parse_cli(
     ui = ConsoleUI(colour=colour, ascii=ascii_output)
     try:
         catalogue.validate(executable_commands)
+        validate_argparse_catalogue(parser, catalogue)
         request = resolve_help_request(values, catalogue)
         if request is not None:
             ui.help(catalogue, request.command)

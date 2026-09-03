@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 
 from tooling.cli_support import (  # noqa: E402
     HelpCatalogue,
+    HelpItem,
     MudArgumentParser,
     add_presentation_arguments,
     failure,
@@ -195,6 +196,11 @@ def main(argv: list[str] | None = None) -> int:
         groups=(),
         commands=(),
         usage=(f"{invocation} [--root PATH] [--colour MODE] [--ascii]",),
+        global_items=(
+            HelpItem("--root PATH", "Repository root to inspect. Default: the current Mud repository."),
+            HelpItem("--colour auto|always|never", "Control colour for human output. Default: auto; NO_COLOR disables it."),
+            HelpItem("--ascii", "Use ASCII status symbols when Unicode is unsuitable."),
+        ),
         notes=("Running without arguments validates the current Mud repository.",),
         show_help_on_empty=False,
     )

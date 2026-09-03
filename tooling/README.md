@@ -1,7 +1,7 @@
 # Mud command-line tooling
 
 Mud's repository tools share the visual and help language provided by
-[R3CLI 0.2.0](https://github.com/R3Neer/R3CLI/releases/tag/v0.2.0).
+[R3CLI 0.4.1](https://github.com/R3Neer/R3CLI/releases/tag/v0.4.1).
 Install the pinned tooling dependencies with Python 3.11 or later:
 
 ```console
@@ -19,6 +19,10 @@ Every human-facing command supports `-h`, `--help`,
 `--colour auto|always|never`, `--ascii` and `NO_COLOR`. Command suites provide
 focused pages through `<command> --help`. Mud tooling deliberately has no
 `--version` option until it acquires an independent versioning policy.
+
+Every operational argument and option is documented in the rendered help:
+single-action validators use `GLOBAL OPTIONS`, while command suites describe
+command-specific inputs in focused pages.
 
 Progress and diagnostics are written to stderr when stdout carries
 machine-readable data.

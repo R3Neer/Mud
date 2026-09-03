@@ -9,6 +9,10 @@ USAGE
   python tooling/decisions/manage_decisions.py <command> [--colour MODE] [--ascii]
   python tooling/decisions/manage_decisions.py <command> --help
 
+GLOBAL OPTIONS
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
+
 DECISIONS
   migrate   Migrate legacy ADR metadata
   generate  Generate the decision index
@@ -27,6 +31,10 @@ USAGE
   python tooling/questions/validate_questions.py [validate|generate] [--colour MODE] [--ascii]
   python tooling/questions/validate_questions.py <command> --help
 
+GLOBAL OPTIONS
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
+
 QUESTIONS
   validate  Validate questions and the index
   generate  Generate the active-question index
@@ -43,6 +51,11 @@ Validate intentionally versioned temporary Markdown and TOML files.
 USAGE
   python gobierno/validate_temporaries.py [--root PATH] [--colour MODE] [--ascii]
 
+GLOBAL OPTIONS
+  --root PATH                 Repository root to inspect. Default: the current Mud repository.
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
+
 * Running without arguments validates the current Mud repository.
 
 SNAPSHOT editorial
@@ -54,6 +67,10 @@ Check the normative snapshot and active-question references.
 
 USAGE
   python gobierno/validate_spec_editorial.py [--colour MODE] [--ascii]
+
+GLOBAL OPTIONS
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
 
 * Running without arguments validates the specification directory.
 
@@ -67,6 +84,10 @@ Validate grammar symbols, uniqueness and reachability.
 USAGE
   python especificacion/gramatica/validate_grammar.py [--colour MODE] [--ascii]
 
+GLOBAL OPTIONS
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
+
 * Running without arguments validates both normative EBNF grammars.
 
 SNAPSHOT syntax
@@ -78,6 +99,11 @@ Check that the grammar, CST catalogue, coverage and ASDL models agree.
 
 USAGE
   python especificacion/sintaxis/validate_syntax_model.py [--root PATH] [--colour MODE] [--ascii]
+
+GLOBAL OPTIONS
+  --root PATH                 Repository root to inspect. Default: the current Mud repository.
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
 
 * Running without arguments validates the current Mud repository.
 
@@ -91,6 +117,13 @@ Run Mud's temporary translation and editorial gates.
 USAGE
   python tooling/translation/check_migration.py [CANDIDATE] [--source PATH] [--r3translate PATH] [--colour MODE] [--ascii]
 
+GLOBAL OPTIONS
+  CANDIDATE                   Translated Markdown candidate to check. Default: README.md.
+  --source PATH               Optional Spanish source paired with the translated candidate.
+  --r3translate PATH          Explicit R3Translate executable. Otherwise use R3TRANSLATE or PATH.
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
+
 * The default candidate is README.md.
 * R3Translate remains an isolated external executable.
 
@@ -103,6 +136,11 @@ Generate or verify the temporary human-readable translation glossary.
 
 USAGE
   python tooling/translation/render_glossary.py [--check] [--colour MODE] [--ascii]
+
+GLOBAL OPTIONS
+  --check                     Verify the generated glossary without writing it.
+  --colour auto|always|never  Control colour for human output. Default: auto; NO_COLOR disables it.
+  --ascii                     Use ASCII status symbols when Unicode is unsuitable.
 
 * Running without --check writes the generated glossary atomically.
 

@@ -17,6 +17,7 @@ if str(ROOT) not in sys.path:
 from tooling.cli_support import (  # noqa: E402
     CommandHelp,
     HelpCatalogue,
+    HelpItem,
     MudArgumentParser,
     add_presentation_arguments,
     failure,
@@ -152,6 +153,10 @@ def main(argv: list[str] | None = None) -> int:
             CommandHelp("generate", "QUESTIONS", "Generate the active-question index", "Regenerate the active-question index and then validate the complete question registry.", (f"{invocation} generate",), notes=("The index is written only when source metadata is valid.",)),
         ),
         usage=(f"{invocation} [validate|generate] [--colour MODE] [--ascii]", f"{invocation} <command> --help"),
+        global_items=(
+            HelpItem("--colour auto|always|never", "Control colour for human output. Default: auto; NO_COLOR disables it."),
+            HelpItem("--ascii", "Use ASCII status symbols when Unicode is unsuitable."),
+        ),
         notes=("Running without a command performs validation.",),
         show_help_on_empty=False,
     )
