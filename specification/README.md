@@ -1,7 +1,7 @@
 ---
-title: Especificación formal de MUD
+title: MUD formal specification
 aliases:
-  - Índice de la especificación MUD
+  - MUD specification index
   - MUD 1.0
 tags:
   - mud/specification
@@ -17,116 +17,116 @@ questions:
   - Q-068
 ---
 
-# Especificación formal de MUD
+# MUD formal specification
 
-## Estado del documento
+## Document status
 
-- Estado general: **en preparación**
-- Versión objetivo inicial: **MUD 1.0**
-- Autoridad actual: los capítulos con `status: vigente` y las decisiones vigentes enlazadas. Un archivo con `normative: true` pertenece a la superficie normativa, pero su `status` determina si el capítulo completo ya tiene autoridad consolidada. Los capítulos no vigentes pueden incorporar reglas respaldadas por decisiones vigentes, pero no las sustituyen ni cierran cuestiones abiertas. El historial Git conserva la procedencia retirada, pero no tiene autoridad subsidiaria.
-- Alcance: lenguaje MUD completo, su semántica de ejecución y los criterios de conformidad.
+- Overall status: **in preparation**
+- Initial target version: **MUD 1.0**
+- Current authority: chapters with `status: current` and their linked current decisions. A file with `normative: true` belongs to the normative surface, but its `status` determines whether the complete chapter has consolidated authority. Non-current chapters may incorporate rules backed by current decisions, but do not replace them or close open questions. Git history retains withdrawn provenance but has no subsidiary authority.
+- Scope: the complete MUD language, its execution semantics and conformance criteria.
 
-Este directorio contendrá la especificación normativa de MUD. Su objetivo es que dos implementaciones independientes puedan:
+This directory contains the normative MUD specification. Its objective is that two independent implementations can:
 
-1. Reconocer los mismos programas.
-2. Resolver los mismos nombres y anclas.
-3. Asignar los mismos tipos.
-4. Rechazar los mismos programas estáticamente.
-5. Producir las mismas transiciones semánticas observables.
-6. Clasificar de la misma manera `accepted`, `rejected` y `failed`.
-7. Coincidir en los análisis de admisibilidad y alcanzabilidad cuando sean decidibles para el programa.
+1. Recognise the same programmes.
+2. Resolve the same names and anchors.
+3. Assign the same types.
+4. Reject the same programmes statically.
+5. Produce the same observable semantic transitions.
+6. Classify `accepted`, `rejected` and `failed` in the same way.
+7. Agree on admissibility and reachability analyses when they are decidable for the programme.
 
-La especificación no presupone una arquitectura de compilador, lenguaje de implementación, base de datos, motor gráfico o framework.
+The specification presupposes no compiler architecture, implementation language, database, graphics engine or framework.
 
-Convenciones de redacción: [[00-editorial-conventions]].
+Drafting conventions: [[00-editorial-conventions]].
 
-## Carácter normativo
+## Normative character
 
-La superficie y el estado de publicación son ejes distintos. `normative: true` indica que el archivo está destinado a contener reglas de conformidad; no equivale por sí solo a aprobación. El ciclo `esqueleto → borrador → propuesta → en-revision → vigente` determina la autoridad del capítulo como unidad.
+Surface and publication status are distinct axes. `normative: true` indicates that the file is intended to contain conformance rules; it does not by itself amount to approval. The `skeleton → draft → proposed → in-review → current` cycle determines the chapter's authority as a unit.
 
-- **Capítulo vigente**: su texto normativo es autoridad consolidada.
-- **Capítulo no vigente**: puede transcribir o explicar contratos ya fijados por decisiones vigentes y artefactos mecánicos coherentes, pero el capítulo completo sigue en preparación y no puede introducir autoridad nueva por encima de esas fuentes.
-- **Contenido informativo**: explica una norma sin ampliarla.
-- **Cuestión abierta**: carece de semántica definitiva hasta que el proceso de decisiones la cierre o la excluya explícitamente del perfil aplicable.
+- **Current chapter**: its normative text is consolidated authority.
+- **Non-current chapter**: it may transcribe or explain contracts already fixed by current decisions and coherent mechanical artefacts, but the complete chapter remains in preparation and cannot introduce new authority above those sources.
+- **Informative content**: explains a rule without extending it.
+- **Open question**: has no definitive semantics until the decision process closes it or explicitly excludes it from the applicable profile.
 
-Una contradicción entre un capítulo no vigente y una decisión vigente se considera un defecto documental; no una nueva elección semántica. Una contradicción entre prosa normativa y un artefacto mecánico normativo también es un defecto y debe corregirse, conforme a MUD-EDIT-001.
+Contradiction between a non-current chapter and a current decision is a documentary defect, not a new semantic choice. Contradiction between normative prose and a normative mechanical artefact is likewise a defect and must be corrected in accordance with MUD-EDIT-001.
 
-Las palabras se usarán con este sentido:
+The words are used with these meanings:
 
-- **debe**: requisito de conformidad.
-- **no puede**: prohibición de conformidad.
-- **puede**: comportamiento permitido.
-- **debería**: recomendación no normativa.
+- **must**: conformance requirement.
+- **must not**: conformance prohibition.
+- **may**: permitted behaviour.
+- **should**: non-normative recommendation.
 
-Una implementación no puede elegir silenciosamente un comportamiento para una cuestión marcada como abierta y seguir declarándose conforme con esa característica.
+An implementation must not silently choose behaviour for a question marked open and continue to claim conformance for that feature.
 
-## Arquitectura de la especificación
+## Specification architecture
 
-La especificación se organizará en cinco partes. La separación es conceptual: algunos capítulos dependen de definiciones anteriores, pero ninguna parte puede contradecir las demás.
+The specification is organised into five parts. The separation is conceptual: some chapters depend on earlier definitions, but no part may contradict another.
 
 ```text
-Parte I    Fundamentos y notación
-Parte II   Lenguaje estático
-Parte III  Semántica dinámica
-Parte IV   Análisis semánticos avanzados
-Parte V    Conformidad y apéndices normativos
+Part I    Foundations and notation
+Part II   Static language
+Part III  Dynamic semantics
+Part IV   Advanced semantic analyses
+Part V    Conformance and normative appendices
 ```
 
-El compilador, el plugin conversacional, Git y los materializadores tendrán specificationes propias. Se apoyan en el lenguaje, pero no definen su significado.
+The compiler, conversational plugin, Git and materialisers have their own specifications. They rely on the language but do not define its meaning.
 
 ---
 
-# Parte I — Fundamentos y notación
+# Part I — Foundations and notation
 
-## 01. Alcance, conformidad y versiones
+## 01. Scope, conformance and versions
 
-Capítulo: [[01-scope-and-conformance]].
+Chapter: [[01-scope-and-conformance]].
 
-Define:
+Defines:
 
-- Objeto de la especificación.
-- Qué significa implementar MUD.
-- Perfiles de conformidad.
-- Extensiones y características experimentales.
-- Compatibilidad entre versiones.
-- Autoridad de ejemplos, notes y apéndices.
-- Tratamiento normativo de cuestiones abiertas.
+- Purpose of the specification.
+- What it means to implement MUD.
+- Conformance profiles.
+- Extensions and experimental features.
+- Compatibility between versions.
+- Authority of examples, notes and appendices.
+- Normative treatment of open questions.
 
-## 02. Terminología
+## 02. Terminology
 
-Capítulo: [[02-terminology]].
+Chapter: [[02-terminology]].
 
-Glosario normativo de:
+Normative glossary of:
 
-- Programa, módulo, archivo y path de MUD.
-- Declaración, símbolo, nombre y ancla.
-- `thing`, identidad y valor.
-- Campo, relación y colección.
-- Diccionario exacto, diccionario funcional, asociación, rama, selector y fallback.
-- Participante, rol, vinculación y `given`.
-- Regla consultable, reactiva y `always`.
-- Acción, solicitud, raíz, onda y resolución.
-- Test, aserción y diagnóstico.
-- Estado, instantánea, efecto y conflicto.
-- Dominio, restricción, condición e invariante.
-- Aceptación, rechazo y fallo.
+- MUD programme, module, file and path.
+- Declaration, symbol, name and anchor.
+- `thing`, identity and value.
+- Field, relation and collection.
+- Exact dictionary, functional dictionary, association, branch, selector and fallback.
+- Participant, role, binding and `given`.
+- Queryable, reactive and `always` rule.
+- Action, request, root, wave and resolution.
+- Test, assertion and diagnostic.
+- State, snapshot, effect and conflict.
+- Domain, constraint, condition and invariant.
+- Acceptance, rejection and failure.
 
-## 03. Notación matemática y metalenguaje
+## 03. Mathematical notation and metalanguage
 
-Capítulo: [[03-notation]].
+Chapter: [[03-notation]].
 
-Fija la simbología utilizada en el resto de la norma:
+Fixes the notation used throughout the standard:
 
-- Conjuntos, secuencias, multiconjuntos y mapas finitos.
-- Relaciones, funciones parciales y clausuras transitivas.
-- Grafos dirigidos.
-- Gramáticas EBNF.
-- Juicios de tipado.
-- Reglas de inferencia.
-- Semántica operacional.
-- Sistemas de transición etiquetados.
-- Órdenes parciales y puntos fijos.
-- Probabilidad y semillas reproducibles.
+- Sets, sequences, multisets and finite maps.
+- Relations, partial functions and transitive closures.
+- Directed graphs.
+- EBNF grammars.
+- Typing judgements.
+- Inference rules.
+- Operational semantics.
+- Labelled transition systems.
+- Partial orders and fixed points.
+- Probability and reproducible seeds.
 
 Juicios previstos:
 
@@ -134,132 +134,132 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-«En el entorno $\Gamma$, el nombre $n$ se resuelve al ancla $a$».
+“In environment $\Gamma$, name $n$ resolves to anchor $a$.”
 
 $$
 \Gamma;\Sigma \vdash e : \tau
 $$
 
-«En los entornos $\Gamma$ y $\Sigma$, la expresión $e$ tiene tipo $\tau$».
+“In environments $\Gamma$ and $\Sigma$, expression $e$ has type $\tau$.”
 
 $$
 \Gamma;\Sigma \vdash e\ \mathsf{reads}\ R
 $$
 
-«La expresión $e$ puede leer el conjunto de anclas $R$».
+“Expression $e$ may read the set of anchors $R$.”
 
 $$
 \langle W, q \rangle \Downarrow \langle W', r, T \rangle
 $$
 
-«La solicitud $q$ sobre el mundo $W$ termina en el mundo $W'$, con resultado $r$ y traza causal $T$».
+“Request $q$ on world $W$ terminates in world $W'$, with result $r$ and causal trace $T$.”
 
-## 04. Modelo matemático del mundo
+## 04. Mathematical model of the world
 
-Capítulo: [[04-mathematical-model]].
+Chapter: [[04-mathematical-model]].
 
-Define, antes de hablar de sintaxis:
+Defines, before discussing syntax:
 
-- Universos de anclas, `thing` y valores.
-- Estado del mundo.
-- Store de campos y relaciones.
-- Identidad frente a igualdad estructural.
-- Estados bien formados.
-- Instantáneas estables y tentativas.
-- Observaciones semánticamente visibles.
+- Universes of anchors, `thing` and values.
+- World state.
+- Field and relation store.
+- Identity versus structural equality.
+- Well-formed states.
+- Stable and tentative snapshots.
+- Semantically visible observations.
 
 ---
 
-# Parte II — Lenguaje estático
+# Part II — Static language
 
-## 05. Texto fuente y estructura física
+## 05. Source text and physical structure
 
-Capítulo: [[05-source-text]].
+Chapter: [[05-source-text]].
 
-Define:
+Defines:
 
-- Codificación.
+- Encoding.
 - Archivos `.mud`.
-- Derivación de paths de MUD desde rutas.
-- Varias declaraciones por archivo.
-- Independencia semántica respecto al orden de archivos.
-- Terminadores de línea.
+- Derivation of MUD paths from routes.
+- Multiple declarations per file.
+- Semantic independence from file ordering.
+- Line terminators.
 
-## 06. Estructura léxica
+## 06. Lexical structure
 
-Capítulo: [[06-lexicon]].
+Chapter: [[06-lexicon]].
 
-Define:
+Defines:
 
-- Categorías de caracteres.
-- Identificadores y sensibilidad a mayúsculas.
-- Palabras reservadas.
-- Literales numéricos, monetarios y porcentuales.
-- Plantillas `Text` ordinarias y multilínea, interpolaciones ordinarias, escapes y acceso tipado `~anchor`.
-- Comentarios `#`, `#...#` y `###...###`.
-- Espacio en blanco.
-- Tokens, trivia, spans y errores léxicos.
-- Flujo completo y vista significativa.
+- Character categories.
+- Identifiers and case sensitivity.
+- Reserved words.
+- Numeric, monetary and percentage literals.
+- Ordinary and multiline `Text` templates, ordinary interpolations, escapes and typed `~anchor` access.
+- `#`, `#...#` and `###...###` comments.
+- Whitespace.
+- Tokens, trivia, spans and lexical errors.
+- Complete stream and significant view.
 
-La gramática léxica ejecutable vivirá en `gramatica/mud-lexico.ebnf`.
+The executable lexical grammar lives in `grammar/mud-lexicon.ebnf`.
 
-## 07. Gramática concreta
+## 07. Concrete grammar
 
-Capítulo: [[07-concrete-grammar]].
+Chapter: [[07-concrete-grammar]].
 
-Define la sintaxis completa de:
+Defines the complete syntax of:
 
-- Cabecera de declaraciones `using`, situada antes de cualquier declaración de primer nivel.
-- Declaraciones.
-- Tipos.
-- Campos.
-- Participantes.
-- Valores `given`.
-- Expresiones.
-- Efectos.
-- Bloques.
-- Llamadas.
-- Definiciones canónicas de `thing` y reglas, `start with` unificado por módulo y activaciones mediante `create Nombre`.
-- Tests aislados con `start with` local, `then`, `after` y `otherwise`.
-- Diagnóstico `otherwise` opcional después del cuerpo de reglas `always`; omitirlo produce un aviso y una razón predeterminada.
-- Formatos numéricos dentro de interpolaciones `Text`.
-- Cuantificadores e iteraciones.
+- `using` declaration header, placed before any top-level declaration.
+- Declarations.
+- Types.
+- Fields.
+- Participants.
+- `given` values.
+- Expressions.
+- Effects.
+- Blocks.
+- Calls.
+- Canonical definitions of `thing` and rules, module-unified `start with` and activation through `create Name`.
+- Isolated tests with local `start with`, `then`, `after` and `otherwise`.
+- Optional `otherwise` diagnostic after an `always` rule body; omitting it produces a warning and a default reason.
+- Numeric formats within `Text` interpolations.
+- Quantifiers and iterations.
 
-La gramática completa ejecutable vive en `gramatica/mud.ebnf`. El parsing produce una CST sin pérdidas; este capítulo explica ambigüedades, precedencia, validación contextual y la frontera con el desazucarado, pero no repite toda la EBNF.
+The complete executable grammar lives in `grammar/mud.ebnf`. Parsing produces a lossless CST; this chapter explains ambiguities, precedence, contextual validation and the boundary with desugaring, but does not repeat the entire EBNF.
 
-## 08. Sintaxis abstracta superficial
+## 08. Surface abstract syntax
 
-Capítulo: [[08-abstract-syntax]].
+Chapter: [[08-abstract-syntax]].
 
-Define las formas semánticamente relevantes después de la CST y de la validación sintáctica contextual:
+Defines the semantically relevant forms after the CST and contextual syntactic validation:
 
-- Raíces `MudFile` y `MudProject`.
-- AST de declaraciones, tipos, dominios, expresiones y efectos.
-- Normalización de cardinalidades, intervalos, bloques y literales contextuales.
-- Distinción estructural entre las tres clases de regla.
-- `ActionDecl` superficial con clase `PublicAction` o `Subaction`; las llamadas candidatas se resuelven después sin introducir ninguna clasificación elemental/compuesta.
-- Nodo propio `TestDecl` y aserciones con diagnóstico opcional.
-- Nodos propios para `look`, `message` y propiedades públicas.
-- Procedencia mediante `SourceOrigin`.
-- Ambigüedades que se conservan hasta resolución.
+- `MudFile` and `MudProject` roots.
+- AST of declarations, types, domains, expressions and effects.
+- Normalisation of cardinalities, intervals, blocks and contextual literals.
+- Structural distinction among the three rule classes.
+- Surface `ActionDecl` with `PublicAction` or `Subaction` class; candidate calls are resolved later without introducing an elementary/compound classification.
+- Dedicated `TestDecl` node and assertions with optional diagnostics.
+- Dedicated nodes for `look`, `message` and public properties.
+- Provenance through `SourceOrigin`.
+- Ambiguities retained until resolution.
 
-Artefactos mecánicos y de transformación: `sintaxis/`.
+Mechanical and transformation artefacts: `syntax/`.
 
-## 09. Paths, `using`, nombres y anclas
+## 09. Paths, `using`, names and anchors
 
-Capítulo: [[09-names-and-anchors]].
+Chapter: [[09-names-and-anchors]].
 
-Define:
+Defines:
 
-- Ámbitos.
-- Resolución local y cualificada.
-- Declaraciones `using` exactas y recursivas.
-- Posición obligatoria de todos los `using` en la cabecera del fichero.
-- Ambigüedad.
-- Formación y unicidad de anclas públicas; las ramas funcionales de diccionarios funcionales usan claves locales y no reciben ancla pública.
-- Categorías `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` y `type::*`.
-- Identidad ante movimientos de archivo.
-- Migración de path y anclas.
+- Scopes.
+- Local and qualified resolution.
+- Exact and recursive `using` declarations.
+- Mandatory placement of all `using` declarations in the file header.
+- Ambiguity.
+- Formation and uniqueness of public anchors; functional-dictionary branches use local keys and receive no public anchor.
+- Categories `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` and `type::*`.
+- Identity under file moves.
+- Path and anchor migration.
 
 Juicio principal:
 
@@ -267,19 +267,19 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-## 10. Sistema de tipos
+## 10. Type system
 
-Archivo previsto: `10-sistema-de-tipos.md`
+Planned file: `10-type-system.md`
 
-Alcance previsto:
+Planned scope:
 
-- Tipos incorporados, nominales, estructurales, colecciones, diccionarios, intervalos, magnitudes y uniones.
-- `Any`, descriptores first-class, tipos callable y tipos obtenidos estáticamente mediante `~type`.
-- Subtyping, compatibilidad, narrowing, igualdad, orden, conversiones e inferencia.
-- Tipado de resultados anónimos de `look` y payloads de `message`, incluido el join de invocaciones dinámicas.
-- Interacción entre el tipo estático de un descriptor callable y la identidad nominal necesaria para vincular su firma.
+- Built-in, nominal, structural, collection, dictionary, interval, magnitude and union types.
+- `Any`, first-class descriptors, callable types and types obtained statically through `~type`.
+- Subtyping, compatibility, narrowing, equality, ordering, conversions and inference.
+- Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
+- Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 
-Las cuestiones de varianza callable, especialización intermodular de aliases, join con mínimos comunes incomparables, binding tras borrado y la identidad de tipos anónimos permanecen delimitadas respectivamente por Q-063, Q-064, Q-065, Q-066 y Q-068.
+Questions of callable variance, inter-module alias specialisation, joins with incomparable common minima, binding after deletion and anonymous-type identity remain delimited respectively by Q-063, Q-064, Q-065, Q-066 and Q-068.
 
 Juicio principal:
 
@@ -287,432 +287,432 @@ $$
 \Gamma;\Sigma \vdash e : \tau
 $$
 
-## 11. `Thing`, especialización e identidad
+## 11. `Thing`, specialisation and identity
 
-Archivo previsto: `11-things.md`
+Planned file: `11-things.md`
 
-Alcance previsto:
+Planned scope:
 
-- Identidad, actividad, destrucción de la materialización propia, rematerialización desde la definición canónica y estado independiente de `thing` concretas y abstractas.
-- Especialización simple y múltiple, esquema heredable, predeterminados e inicializadores.
-- Integración de `Thing` como raíz incorporada y de las reglas de igualdad/identidad nominal.
-- Frontera modular de las `thing`: identidad/tipo visible frente a estado ordinario proyectado mediante operaciones públicas y límites de especialización entre módulos.
-- Metadatos y reflexión propios de las `thing` sin confundirlos con campos de estado.
+- Identity, activity, destruction of a materialisation's own load, rematerialisation from the canonical definition and independent state of concrete and abstract `thing`s.
+- Single and multiple specialisation, inheritable schema, defaults and initialisers.
+- Integration of `Thing` as the built-in root and of nominal identity/equality rules.
+- Modular boundary of `thing`s: visible identity/type versus ordinary state projected through public operations and inter-module specialisation limits.
+- `thing` metadata and reflection without confusing them with state fields.
 
-## 12. Aliases nominales y valores estructurales
+## 12. Nominal aliases and structural values
 
-Archivo previsto: `12-aliases.md`
+Planned file: `12-aliases.md`
 
-Alcance previsto:
+Planned scope:
 
-- Aliases nominales de representación y estructurales, construcción contextual y casting nominal.
-- Especialización nominal simple y múltiple, herencia de representación o miembros, deduplicación por origen y conflictos de miembros independientes.
-- Predeterminados heredados, valores inmutables, igualdad, orden y enumerabilidad cuando correspondan.
-- Reconstrucción de aliases inmutables mediante write-back desde rutas asignables, sin introducir mutabilidad propia en sus valores.
-- Frontera entre compatibilidad estructural y adquisición explícita de nominalidad.
-- Reglas de especialización de aliases a través de módulos, cuyo alcance exacto permanece abierto en Q-064.
+- Nominal and structural representation aliases, contextual construction and nominal casting.
+- Single and multiple nominal specialisation, inheritance of representation or members, provenance-based deduplication and conflicts between independent members.
+- Inherited defaults, immutable values, equality, ordering and enumerability where applicable.
+- Reconstruction of immutable aliases through write-back from assignable paths, without introducing mutability into their values.
+- Boundary between structural compatibility and explicit acquisition of nominality.
+- Alias-specialisation rules across modules, whose exact scope remains open in Q-064.
 
-## 13. Familias cerradas de valores
+## 13. Closed value families
 
-Archivo previsto: `13-familias-cerradas.md`
+Planned file: `13-closed-families.md`
 
-Alcance previsto:
+Planned scope:
 
-- Declaración, miembros, nominalidad, orden y enumeración de `family`.
-- Esquema uniforme de datos asociados, predeterminados y cálculos por miembro.
-- Igualdad, orden, reflexión y ausencia de ciclo de vida runtime de sus valores.
+- Declaration, members, nominality, ordering and enumeration of `family`.
+- Uniform schema for associated data, defaults and per-member calculations.
+- Equality, ordering, reflection and absence of runtime lifecycle for its values.
 
-## 14. Campos, mutabilidad y capacidades
+## 14. Fields, mutability and capabilities
 
-Archivo previsto: `14-campos-y-mutabilidad.md`
+Planned file: `14-fields-and-mutability.md`
 
-Alcance previsto:
+Planned scope:
 
-- Campos almacenados y calculados, predeterminados, inicializadores y vistas derivadas.
-- Mutabilidad exterior, capacidad interior `[mut]` y su composición sin mutabilidad profunda implícita.
-- Capacidad de participantes y accesibilidad de escrituras.
-- Metadatos postfix como información separada del estado ordinario y de solo lectura durante ejecución.
+- Stored and calculated fields, defaults, initialisers and derived views.
+- External mutability, inner `[mut]` capability and its composition without implicit deep mutability.
+- Participant capability and write accessibility.
+- Postfix metadata as information separate from ordinary state and read-only during execution.
 
-## 15. Cardinalidades y colecciones
+## 15. Cardinalities and collections
 
-Archivo previsto: `15-colecciones.md`
+Planned file: `15-collections.md`
 
-Alcance previsto:
+Planned scope:
 
-- Cardinalidades, `empty`, multiplicidad, unicidad y orden.
-- Membresía, álgebra de colecciones, indexación, selección y `take`.
-- Inferencia y conservación de cardinalidad, dominio, orden y capacidades.
-- Instantáneas y semántica observable de iteración sobre colecciones.
+- Cardinalities, `empty`, multiplicity, uniqueness and ordering.
+- Membership, collection algebra, indexing, selection and `take`.
+- Inference and preservation of cardinality, domain, ordering and capabilities.
+- Snapshots and observable semantics of collection iteration.
 
-## 16. Diccionarios
+## 16. Dictionaries
 
-Archivo previsto: `16-diccionarios.md`
+Planned file: `16-dictionaries.md`
 
-Alcance previsto:
+Planned scope:
 
-- Diccionarios exactos y funcionales, sus tipos, cardinalidades y consultas.
-- Asociaciones, claves, iteración, orden y operaciones algebraicas.
-- Indexación dentro de rutas asignables, write-back parcial sobre valores asociados y tratamiento de claves ausentes sin confundir actualización parcial con inserción completa.
-- Modos de selección de ramas, fallback, dependencias, recursión y terminación de diccionarios funcionales.
+- Exact and functional dictionaries, their types, cardinalities and queries.
+- Associations, keys, iteration, ordering and algebraic operations.
+- Indexing within assignable paths, partial write-back on associated values and treatment of missing keys without confusing partial update with complete insertion.
+- Branch-selection modes, fallback, dependencies, recursion and termination of functional dictionaries.
 
-## 17. Dominios e intervalos
+## 17. Domains and intervals
 
-Archivo previsto: `17-dominios-e-intervalos.md`
+Planned file: `17-domains-and-intervals.md`
 
-Alcance previsto:
+Planned scope:
 
-- Dominios declarados y calculados, pertenencia, normalización, finitud y enumerabilidad.
-- Intervalos lineales, discontinuos, cíclicos y dependientes de magnitudes.
-- Materialización explícita de dominios enumerables mediante `all D` cuando una operación debe producir una colección.
-- Diferencia entre consumir un dominio, materializar su enumeración y producir una colección filtrada, sin conversión implícita de esta última a `Domain`.
+- Declared and calculated domains, membership, normalisation, finiteness and enumerability.
+- Linear, discontinuous, cyclic and magnitude-dependent intervals.
+- Explicit materialisation of enumerable domains through `all D` when an operation must produce a collection.
+- Difference between consuming a domain, materialising its enumeration and producing a filtered collection, without implicit conversion of the latter to `Domain`.
 
-## 18. Magnitudes, unidades y puntos
+## 18. Magnitudes, units and points
 
-Archivo previsto: `18-magnitudes.md`
+Planned file: `18-magnitudes.md`
 
-Alcance previsto:
+Planned scope:
 
-- Magnitudes base, derivadas y de punto, sus representaciones y dominios.
-- Unidades, prefijos, equivalencias, normalización y aritmética dimensional.
-- Coordenadas, ciclos, presentación, formatos y extracción de componentes.
-- Magnitudes temporales y las construcciones de calendario/localización que finalmente pertenezcan al perfil MUD 1.0.
+- Base, derived and point magnitudes, their representations and domains.
+- Units, prefixes, equivalences, normalisation and dimensional arithmetic.
+- Coordinates, cycles, presentation, formats and component extraction.
+- Temporal magnitudes and calendar/localisation constructs that ultimately belong to the MUD 1.0 profile.
 
-## 19. Expresiones
+## 19. Expressions
 
-Archivo previsto: `19-expresiones.md`
+Planned file: `19-expressions.md`
 
-Alcance previsto:
+Planned scope:
 
-- Literales, operadores, llamadas, acceso, comparación, conversión y construcción contextual.
-- Resolución y elaboración de receptores, argumentos y valores callable.
-- `old`, `allowed`, `eventually`, selección, `take` y materialización `all D` en sus contextos de expresión.
-- Pureza, narrowing, propagación de tipos esperados y fallos de evaluación.
+- Literals, operators, calls, access, comparison, conversion and contextual construction.
+- Resolution and elaboration of receivers, arguments and callable values.
+- `old`, `allowed`, `eventually`, selection, `take` and `all D` materialisation in expression contexts.
+- Purity, narrowing, expected-type propagation and evaluation failures.
 
-## 20. Cuantificadores, agregaciones e iteración
+## 20. Quantifiers, aggregations and iteration
 
-Archivo previsto: `20-cuantificadores-e-iteracion.md`
+Planned file: `20-quantifiers-and-iteration.md`
 
-Alcance previsto:
+Planned scope:
 
-- Cuantificadores y agregadores sobre fuentes finitas enumerables.
-- `for each`, bindings de iteración, orden, filtros, pasos e instantáneas de pertenencia.
-- Consumo directo de dominios finitos cuando no se produce una colección y requisitos de terminación de cada recorrido.
+- Quantifiers and aggregators over finite enumerable sources.
+- `for each`, iteration bindings, ordering, filters, steps and membership snapshots.
+- Direct consumption of finite domains when no collection is produced and termination requirements for every traversal.
 
-## 21. Reglas booleanas
+## 21. Boolean rules
 
-Archivo previsto: `21-reglas-booleanas.md`
+Planned file: `21-boolean-rules.md`
 
-Alcance previsto:
+Planned scope:
 
-- Firmas puras con participantes `for` explícitamente nombrados y valores `given` de solo lectura.
-- Vinculación de receptores y argumentos, dominios, predeterminados y capacidades admitidas por una consulta pura.
-- Evaluación booleana, dependencias, memorización y tratamiento de declaraciones no efectivas.
-- Integración con valores callable de tipo regla booleana.
+- Pure signatures with explicitly named `for` participants and read-only `given` values.
+- Binding of receivers and arguments, domains, defaults and capabilities admitted by a pure query.
+- Boolean evaluation, dependencies, memoisation and treatment of non-effective declarations.
+- Integration with callable values of Boolean-rule type.
 
-## 22. Reglas reactivas
+## 22. Reactive rules
 
-Archivo previsto: `22-reglas-reactivas.md`
+Planned file: `22-reactive-rules.md`
 
-Alcance previsto:
+Planned scope:
 
-- Bindings `on` conjuntos, incluidas fuentes relacionadas finitas enumerables y refinamientos nominales.
-- Activadores `when`, `changes`, `old`, guardas `if`, memoria reactiva y consecuencias `then`.
-- Aparición, desaparición e identidad temporal de bindings.
-- Uso de una regla reactiva disparada como fuente causal para otros triggers.
+- Set-valued `on` bindings, including finite enumerable related sources and nominal refinements.
+- `when`, `changes` and `old` triggers, `if` guards, reactive memory and `then` consequences.
+- Appearance, disappearance and temporal identity of bindings.
+- Use of a triggered reactive rule as a causal source for other triggers.
 
-## 23. Reglas `always`
+## 23. `always` rules
 
-Archivo previsto: `23-reglas-always.md`
+Planned file: `23-always-rules.md`
 
-Alcance previsto:
+Planned scope:
 
-- Bindings `on`, condición pura, puntos de comprobación y diagnósticos.
-- Dependencias, suspensión y efecto de una infracción sobre la resolución.
-- Uso de la evaluación de una `always` como fuente causal de trigger, separado de que su condición resulte verdadera o falsa.
+- `on` bindings, pure condition, checkpoints and diagnostics.
+- Dependencies, suspension and the effect of a violation on resolution.
+- Use of `always` evaluation as a causal trigger source, separately from whether its condition is true or false.
 
-## 24. Frontera pública: `action`, `look` y `message`
+## 24. Public boundary: `action`, `look` and `message`
 
-Archivo previsto: `24-frontera-publica.md`
+Planned file: `24-public-boundary.md`
 
-Alcance previsto:
+Planned scope:
 
-- Contratos visibles entre módulos y hacia el host para `action`, `look` y `message`; `test` solo cruza módulos en contexto de pruebas.
-- Autorización modular mediante `uses`, cierre transitivo de los tipos necesarios para comprender un contrato y reflexión cruzada segura sin filtrado silencioso.
-- API host centrada en la identidad de las operaciones públicas, no en un participante elegido como propietario.
-- Firmas `for`/`given`, capacidad exterior de `action` frente a `subaction`, valores callable y vinculación en el punto de invocación.
-- `look` como consulta pura con vista coherente del llamador y resultado anónimo único.
-- `message` como ocurrencia causal, bindings `on`, payload público y proyecciones causal interna y estable exterior.
-- Separación de bindings y payload, multiplicidad y orden de entrega, así como rollback de salidas exteriores.
+- Contracts visible between modules and to the host for `action`, `look` and `message`; `test` crosses modules only in a test context.
+- Modular authorisation through `uses`, transitive closure of the types needed to understand a contract and safe cross-module reflection without silent filtering.
+- Host API centred on the identity of public operations, not on a participant chosen as owner.
+- `for`/`given` signatures, external capability of `action` versus `subaction`, callable values and binding at the invocation point.
+- `look` as a pure query with a coherent caller view and one anonymous result.
+- `message` as a causal occurrence, `on` bindings, public payload and internal causal and external stable projections.
+- Separation of bindings and payload, multiplicity and delivery ordering, and rollback of external outputs.
 
-El binding nominal de descriptores callable suficientemente borrados y la proyección exterior de un `message` cuyos participantes dejan de existir permanecen abiertos en Q-066 y Q-067.
+Nominal binding of sufficiently erased callable descriptors and external projection of a `message` whose participants cease to exist remain open in Q-066 and Q-067.
 
-## 25. Efectos
+## 25. Effects
 
-Archivo previsto: `25-efectos.md`
+Planned file: `25-effects.md`
 
-Alcance previsto:
+Planned scope:
 
-- Asignaciones, actualizaciones, operaciones de colección, `create`, `destroy` y modificaciones estructurales permitidas.
-- Llamadas effectful y recorridos dentro de un `then` unificado.
-- Lecturas, escrituras, deltas, conflictos y composición de efectos.
-- Elaboración de rutas asignables reconstruibles y propagación de write-back a través de valores inmutables hasta su almacenamiento raíz.
-- Interacción entre efectos directos y llamadas internas que comparten una misma resolución causal.
+- Assignments, updates, collection operations, `create`, `destroy` and permitted structural modifications.
+- Effectful calls and traversals within a unified `then`.
+- Reads, writes, deltas, conflicts and effect composition.
+- Elaboration of reconstructible assignable paths and propagation of write-back through immutable values to their root storage.
+- Interaction between direct effects and internal calls sharing one causal resolution.
 
-## 26. Estado y evaluación de expresiones
+## 26. State and expression evaluation
 
-Archivo previsto: `26-evaluacion.md`
+Planned file: `26-evaluation.md`
 
-Alcance previsto:
+Planned scope:
 
-- Entornos, vistas de lectura, store y evaluación determinista de expresiones.
-- Evaluación de campos calculados, consultas parciales, tipos esperados y fallos.
-- Vistas coherentes heredadas por `look`, incluido el delta privado visible en el punto de llamada.
-- Evaluación de callables y binding efectivo una vez resuelta su firma.
+- Environments, read views, store and deterministic expression evaluation.
+- Evaluation of calculated fields, partial queries, expected types and failures.
+- Coherent views inherited by `look`, including the private delta visible at the call site.
+- Evaluation of callables and effective binding once their signature is resolved.
 
-## 27. Solicitud y resultado de acciones
+## 27. Action requests and results
 
-Archivo previsto: `27-solicitud-de-acciones.md`
+Planned file: `27-action-requests.md`
 
-Alcance previsto:
+Planned scope:
 
-- Solicitud exterior, vinculación y validación inicial de una `action` raíz.
-- Resultados `accepted`, `rejected` y `failed`, diagnósticos, estado visible y rollback.
-- Relación entre validación de firma, guardas, estabilización, restricciones finales y publicación exterior.
+- External request, binding and initial validation of a root `action`.
+- `accepted`, `rejected` and `failed` results, diagnostics, visible state and rollback.
+- Relationship among signature validation, guards, stabilisation, final constraints and external publication.
 
-## 28. Semántica de la raíz
+## 28. Root semantics
 
-Archivo previsto: `28-raiz.md`
+Planned file: `28-root.md`
 
-Alcance previsto:
+Planned scope:
 
-- Resolución causal raíz, deltas privados y secuencialidad textual dentro de cada `then`.
-- Integración de llamadas internas sin abrir transacciones independientes.
-- Consolidación, normalización y conflictos entre contribuciones concurrentes.
-- Estado observado por cada fase de una resolución.
+- Root causal resolution, private deltas and textual sequencing within each `then`.
+- Integration of internal calls without opening independent transactions.
+- Consolidation, normalisation and conflicts among concurrent contributions.
+- State observed by each phase of a resolution.
 
-## 29. Semántica causal por ondas
+## 29. Wave-based causal semantics
 
-Archivo previsto: `29-ondas.md`
+Planned file: `29-waves.md`
 
-Alcance previsto:
+Planned scope:
 
-- Instantáneas, bindings activos, activadores y paso entre ondas.
-- Matches causales con testigos, multiplicidad y composición mediante conjunción/disyunción.
-- Ocurrencias de `message` y disparos de reglas como consecuencias disponibles para ondas posteriores.
-- Combinación de efectos, estabilización y traza causal.
-- Distinción entre orden causal y cualquier orden técnico reproducible dentro de una onda.
+- Snapshots, active bindings, triggers and progression between waves.
+- Causal matches with witnesses, multiplicity and conjunction/disjunction composition.
+- `message` occurrences and rule firings as consequences available to later waves.
+- Effect combination, stabilisation and causal trace.
+- Distinction between causal ordering and any reproducible technical ordering within a wave.
 
-## 30. Restricciones, `after` y `old`
+## 30. Constraints, `after` and `old`
 
-Archivo previsto: `30-restricciones-finales.md`
+Planned file: `30-final-constraints.md`
 
-Alcance previsto:
+Planned scope:
 
-- Comprobaciones de dominios, cardinalidades, reglas `always` y demás invariantes sobre estados tentativos.
-- `after` de acciones/subacciones ejecutadas dentro de una resolución y su evaluación sobre el estado estable tentativo final.
-- Semántica contextual de `old`, incluida la diferencia entre acciones, tests y reglas reactivas.
-- Rechazo/fallo final y restauración del estado anterior cuando corresponda.
+- Checks of domains, cardinalities, `always` rules and other invariants over tentative states.
+- `after` for actions/subactions executed within a resolution and its evaluation over the final tentative stable state.
+- Contextual semantics of `old`, including the difference between actions, tests and reactive rules.
+- Final rejection/failure and restoration of the previous state where applicable.
 
-## 31. Conflictos, ciclos y estabilización
+## 31. Conflicts, cycles and stabilisation
 
-Archivo previsto: `31-conflictos-y-estabilizacion.md`
+Planned file: `31-conflicts-and-stabilisation.md`
 
-Alcance previsto:
+Planned scope:
 
-- Compatibilidad y conflicto de efectos, activaciones y otras consecuencias concurrentes.
-- Ciclos ejecutables, oscilaciones y detección de no estabilización.
-- Ciclos puramente causales de mensajes/disparos que pueden mantener consecuencias pendientes aun sin cambio de estado.
-- Condición semántica de estabilización y separación respecto de límites técnicos de implementación.
+- Compatibility and conflict of effects, activations and other concurrent consequences.
+- Executable cycles, oscillations and detection of non-stabilisation.
+- Purely causal message/firing cycles that may keep consequences pending even without state change.
+- Semantic stabilisation condition and separation from technical implementation limits.
 
-## 32. Creación, destrucción e identidad runtime
+## 32. Runtime creation, destruction and identity
 
-Archivo previsto: `32-ciclo-de-vida-runtime.md`
+Planned file: `32-runtime-lifecycle.md`
 
-Alcance previsto:
+Planned scope:
 
-- Actividad, materialización, destrucción de la materialización propia y rematerialización desde la definición canónica.
-- Contribuciones `start with` de módulos, materialización conjunta e inicialización de primera activación.
-- Almacenamiento latente de estado ajeno suspendido, proyección efectiva, suspensión por dependencias y restauración.
-- Aparición y desaparición de bindings dependientes de actividad.
+- Activity, materialisation, destruction of a materialisation's own load and rematerialisation from the canonical definition.
+- Module `start with` contributions, joint materialisation and first-activation initialisation.
+- Latent storage of suspended foreign state, effective projection, dependency suspension and restoration.
+- Appearance and disappearance of activity-dependent bindings.
 
-## 33. Aleatoriedad
+## 33. Randomness
 
-Archivo previsto: `33-aleatoriedad.md`
+Planned file: `33-randomness.md`
 
-Alcance previsto:
+Planned scope:
 
-- Valores y puntos aleatorios, semillas, subsemillas y reproducibilidad.
-- Cachés por instantánea, azar en expresiones/efectos y relación con rollback.
-- Condiciones bajo las que una operación aparentemente aleatoria se simplifica a una elección determinista.
+- Random values and points, seeds, sub-seeds and reproducibility.
+- Snapshot caches, randomness in expressions/effects and its relationship to rollback.
+- Conditions under which an apparently random operation simplifies to a deterministic choice.
 
 ---
 
-# Parte IV — Análisis semánticos avanzados
+# Part IV — Advanced semantic analyses
 
-## 34. Grafo semántico
+## 34. Semantic graph
 
-Archivo previsto: `34-grafo-semantico.md`
+Planned file: `34-semantic-graph.md`
 
-Alcance previsto:
+Planned scope:
 
-- Relaciones semánticas posteriores a resolución nominal que dependan de tipos, dominios, efectos o elaboración.
-- Lecturas, escrituras, dependencias, patrones de binding y dependencias estocásticas.
-- Criterios de reconstrucción desde el programa y relación con el HIR nominal, sin convertir este último en un grafo semántico anticipado.
+- Semantic relations after nominal resolution that depend on types, domains, effects or elaboration.
+- Reads, writes, dependencies, binding patterns and stochastic dependencies.
+- Reconstruction criteria from the programme and relation to the Nominal HIR, without turning the latter into a prematurely semantic graph.
 
-## 35. Consulta especulativa `allowed`
+## 35. Speculative query `allowed`
 
-Archivo previsto: `35-allowed.md`
+Planned file: `35-allowed.md`
 
-Alcance previsto:
+Planned scope:
 
-- Construcción y descarte del mundo especulativo.
-- Conversión de resultados a `Bool`, propagación de fallos y dependencia respecto de acciones consultadas.
-- Condiciones de aciclicidad/admisibilidad y reproducibilidad del azar.
+- Construction and disposal of the speculative world.
+- Conversion of results to `Bool`, failure propagation and dependence on queried actions.
+- Acyclicity/admissibility conditions and reproducibility of randomness.
 
-## 36. Alcanzabilidad `eventually`
+## 36. Reachability `eventually`
 
-Archivo previsto: `36-eventually.md`
+Planned file: `36-eventually.md`
 
-Alcance previsto:
+Planned scope:
 
-- Sistema de transición explorado, estado objetivo y secuencias de acciones permitidas.
-- Semántica del azar y criterios de equivalencia/canonicalización de estados.
-- Estrategias de búsqueda solo en la medida en que formen parte del significado normativo.
+- Explored transition system, target state and permitted action sequences.
+- Randomness semantics and state equivalence/canonicalisation criteria.
+- Search strategies only insofar as they form part of normative meaning.
 
-## 37. Finitud, enumerabilidad y estado relevante
+## 37. Finiteness, enumerability and relevant state
 
-Archivo previsto: `37-finitud-y-enumerabilidad.md`
+Planned file: `37-finiteness-and-enumerability.md`
 
-Alcance previsto:
+Planned scope:
 
-- Finitud y enumeración canónica de dominios y fuentes.
-- Perfiles de mundos finitos, estado relevante y canonicalización de estados.
-- Condiciones suficientes para análisis exhaustivos y para las construcciones que exigen enumerabilidad.
+- Finiteness and canonical enumeration of domains and sources.
+- Finite-world profiles, relevant state and state canonicalisation.
+- Sufficient conditions for exhaustive analysis and constructs requiring enumerability.
 
-## 38. Terminación y decidibilidad
+## 38. Termination and decidability
 
-Archivo previsto: `38-terminacion.md`
+Planned file: `38-termination.md`
 
-Alcance previsto:
+Planned scope:
 
-- Terminación de iteraciones, resoluciones y componentes recursivos.
-- Análisis conservadores y frontera entre rechazo estático, fallo runtime e indecidibilidad.
-- Propiedades decidibles o semidecidibles de las construcciones avanzadas.
+- Termination of iterations, resolutions and recursive components.
+- Conservative analyses and the boundary between static rejection, runtime failure and undecidability.
+- Decidable or semi-decidable properties of advanced constructs.
 
-## 39. Propiedades metateóricas
+## 39. Metatheoretic properties
 
-Archivo previsto: `39-propiedades.md`
+Planned file: `39-properties.md`
 
-Alcance previsto:
+Planned scope:
 
-- Hipótesis y demostraciones sobre resolución, tipos, progreso, determinismo, reproducibilidad y atomicidad.
-- Independencia de órdenes sin significado semántico y corrección de análisis especulativos.
-- Contraejemplos y límites explícitos cuando una propiedad no sea válida para todo MUD.
+- Hypotheses and proofs about resolution, types, progress, determinism, reproducibility and atomicity.
+- Independence from orderings without semantic meaning and correctness of speculative analyses.
+- Counterexamples and explicit limits where a property is not valid for all MUD.
 
 ---
 
-# Parte V — Conformidad y apéndices
+# Part V — Conformance and appendices
 
-## 40. Diagnósticos
+## 40. Diagnostics
 
-Archivo previsto: `40-diagnosticos.md`
+Planned file: `40-diagnostics.md`
 
-Alcance previsto:
+Planned scope:
 
-- Categorías, códigos, localizaciones y anclas relacionadas.
-- Diagnósticos obligatorios frente a libertad de redacción.
-- Recuperación tras errores y relación entre diagnósticos estáticos y dinámicos.
+- Categories, codes, locations and related anchors.
+- Mandatory diagnostics versus drafting freedom.
+- Error recovery and relationship between static and dynamic diagnostics.
 
-## 41. Representación semántica posterior
+## 41. Later semantic representation
 
-Archivo previsto: `41-ir.md`
+Planned file: `41-ir.md`
 
-Alcance previsto:
+Planned scope:
 
-- Contrato entre las fases de tipado/elaboración y los consumidores posteriores cuando esas fases estén suficientemente desarrolladas.
-- Información semántica que deba preservarse o pueda reconstruirse, procedencia y criterios de versionado si se adopta una representación serializable.
-- Relación con AST superficial y HIR nominal sin duplicar ni degradar sus responsabilidades.
+- Contract between typing/elaboration phases and later consumers once those phases are sufficiently developed.
+- Semantic information that must be preserved or may be reconstructed, provenance and versioning criteria if a serialisable representation is adopted.
+- Relationship with Surface AST and Nominal HIR without duplicating or degrading their responsibilities.
 
-No se presupone actualmente un esquema ASDL/JSON, nombres concretos de nodos o aristas, una versión de esquema ni una política de almacenamiento frente a reconstrucción. Esos detalles se fijarán solo cuando las superficies de tipado y elaboración permitan justificarlos.
+No ASDL/JSON schema, concrete node or edge names, schema version or storage-versus-reconstruction policy is currently assumed. These details will be fixed only when typing and elaboration surfaces make them justifiable.
 
-## 42. Conformidad de implementaciones
+## 42. Implementation conformance
 
-Archivo previsto: `42-conformidad.md`
+Planned file: `42-conformance.md`
 
-Alcance previsto:
+Planned scope:
 
-- Perfiles de implementación y requisitos de cada uno.
-- Determinismo, declaración de versión, características opcionales y materialización conforme.
-- Relación entre conformidad del frontend, runtime, análisis y tooling normativo.
+- Implementation profiles and each one's requirements.
+- Determinism, version declaration, optional features and conforming materialisation.
+- Relationship between frontend, runtime, analysis and normative tooling conformance.
 
-## 43. Tests declarativos
+## 43. Declarative tests
 
-Archivo previsto: `43-tests-declarativos.md`
+Planned file: `43-declarative-tests.md`
 
-Alcance previsto:
+Planned scope:
 
-- Declaraciones `test`, mundo fresco y aislado, ejecución y descarte.
-- Cierre transitivo estático de tests alcanzables y unión de **sus propias** contribuciones `start with`; la activación ordinaria de módulos no forma parte del mundo inicial del test.
-- Materialización/estabilización previas, `then`, `after`, `old`, diagnósticos y resultados del ejecutor.
-- Visibilidad de tests entre módulos exclusivamente en contexto de pruebas.
+- `test` declarations, fresh isolated world, execution and disposal.
+- Static transitive closure of reachable tests and union of **their own** `start with` contributions; ordinary module activation is not part of a test's initial world.
+- Prior materialisation/stabilisation, `then`, `after`, `old`, diagnostics and executor results.
+- Test visibility between modules exclusively in a test context.
 
-## 44. Suite de conformidad
+## 44. Conformance suite
 
-Archivo previsto: `44-suite-de-conformidad.md`
+Planned file: `44-conformance-suite.md`
 
-Alcance previsto:
+Planned scope:
 
-- Casos válidos e inválidos, diagnósticos y regresiones normativas.
-- Salidas mecánicas normativas vigentes que corresponda comparar en cada fase.
-- Transiciones, trazas y propiedades observables necesarias para contrastar implementaciones.
+- Valid and invalid cases, diagnostics and normative regressions.
+- Current normative mechanical outputs to compare at each phase.
+- Transitions, traces and observable properties needed to contrast implementations.
 
-El corpus vivirá en:
+The corpus will live in:
 
 ```text
-conformidad/
-├── validos/
-├── invalidos/
-├── ejecucion/
-├── diagnosticos/
-└── propiedades/
+conformance/
+├── valid/
+├── invalid/
+├── execution/
+├── diagnostics/
+└── properties/
 ```
 
-Los tests declarativos escritos por una persona usuaria forman parte de MUD, pero no sustituyen esta suite: la suite de conformidad comprueba implementaciones completas del lenguaje.
+Declarative tests written by a user are part of MUD, but do not replace this suite: the conformance suite checks complete language implementations.
 
-## 45. Gramática consolidada
+## 45. Consolidated grammar
 
-Archivo previsto: `45-gramatica-consolidada.md`
+Planned file: `45-consolidated-grammar.md`
 
-Apéndice normativo generado o verificado contra `gramatica/mud.ebnf`.
+Normative appendix generated or verified against `grammar/mud.ebnf`.
 
-## 46. Catálogo de palabras reservadas
+## 46. Reserved-word catalogue
 
-Archivo previsto: `46-palabras-reservadas.md`
+Planned file: `46-reserved-words.md`
 
-Lista normativa y clasificación como palabra reservada o contextual, derivada de la gramática léxica vigente.
+Normative list and classification as reserved or contextual words, derived from the current lexical grammar.
 
-## 47. Ejemplos integrales
+## 47. End-to-end examples
 
-Archivo previsto: `47-ejemplos-integrales.md`
+Planned file: `47-end-to-end-examples.md`
 
-Ejemplos informativos construidos únicamente con reglas ya especificadas. No introducen comportamiento nuevo.
+Informative examples built only from rules already specified. They introduce no new behaviour.
 
-## 48. Compatibilidad y migraciones
+## 48. Compatibility and migrations
 
-Archivo previsto: `48-compatibilidad.md`
+Planned file: `48-compatibility.md`
 
-Alcance previsto:
+Planned scope:
 
-- Cambios compatibles e incompatibles del lenguaje.
-- Evolución de anclas y migración de programas.
-- Compatibilidad de artefactos normativos serializados cuando exista un contrato de serialización aplicable.
-- Obsolescencia de sintaxis y declaraciones de versión.
+- Compatible and incompatible language changes.
+- Anchor evolution and programme migration.
+- Compatibility of serialised normative artefacts where an applicable serialisation contract exists.
+- Deprecation of syntax and version declarations.
 
-## 49. Índice de reglas normativas
+## 49. Normative-rule index
 
-Archivo previsto: `49-indice-normativo.md`
+Planned file: `49-normative-index.md`
 
-Índice generado de requisitos con identificadores estables, por ejemplo:
+Generated index of requirements with stable identifiers, for example:
 
 ```text
 MUD-LEX-001
@@ -727,101 +727,101 @@ MUD-TEST-003
 
 ---
 
-# Especificaciones relacionadas, pero separadas
+# Related but separate specifications
 
-Estos documentos no forman parte de la definición del lenguaje:
+These documents are not part of the language definition:
 
 ```text
 tooling/
-├── compilador.md
+├── compiler.md
 ├── cli.md
-├── soporte-de-editor.md
-├── operador-semantico.md
-├── protocolo-git.md
-├── materializacion-typescript.md
+├── editor-support.md
+├── semantic-operator.md
+├── git-protocol.md
+├── typescript-materialisation.md
 └── plugin-codex.md
 ```
 
-La separación evita que una decisión de arquitectura se convierta accidentalmente en una regla de MUD.
+This separation prevents an architectural decision from accidentally becoming a MUD rule.
 
-## Artefactos sintácticos verificables
+## Verifiable syntax artefacts
 
-El subdirectorio `sintaxis/` contiene el contrato de CST, el ASDL superficial, la transformación, la cobertura producción por producción y su validador editorial.
+The `syntax/` subdirectory contains the CST contract, Surface ASDL, transformation, production-by-production coverage and editorial validator.
 
 ```text
-sintaxis/
-├── cst-sin-perdidas.md
+syntax/
+├── lossless-cst.md
 ├── mud-syntax-kinds.yaml
 ├── mud-surface-ast.asdl
-├── cst-a-ast-superficial.md
-├── cobertura-sintactica.yaml
+├── cst-to-surface-ast.md
+├── syntax-coverage.yaml
 ├── validate_syntax_model.py
-└── casos/
+└── cases/
 ```
 
-## Dependencias principales
+## Main dependencies
 
 ```text
-notación
+notation
    │
-   ├──► modelo matemático
+   ├──► mathematical model
    │       │
-   │       ├──► tipos y valores
-   │       └──► estado y efectos
+   │       ├──► types and values
+   │       └──► state and effects
    │
-léxico ─► CST sin pérdidas ─► AST superficial
+lexicon ─► lossless CST ─► Surface AST
                          │
-              ┌──────────┴──────────┐
+               ┌──────────┴──────────┐
               ▼                     ▼
-      semántica estática     semántica dinámica
+       static semantics       dynamic semantics
               │                     │
               └──────────┬──────────┘
-                         ▼
-              análisis avanzados
+               ▼
+               advanced analyses
                          │
                          ▼
-                   conformidad
+                    conformance
 ```
 
-## Orden de redacción
+## Drafting order
 
-El orden numérico es el orden de lectura final, no el orden estricto de escritura. Se trabajará en ciclos verticales:
+Numerical order is the final reading order, not the strict writing order. Work proceeds in vertical cycles:
 
-1. Definir notación mínima.
-2. Elegir una construcción de MUD.
-3. Formalizar su sintaxis concreta y abstracta.
-4. Formalizar sus reglas estáticas.
-5. Formalizar su comportamiento dinámico.
-6. Escribir ejemplos y contraejemplos.
-7. Añadir pruebas de conformidad.
-8. Revisar dependencias y cuestiones abiertas.
+1. Define minimal notation.
+2. Choose a MUD construct.
+3. Formalise its concrete and abstract syntax.
+4. Formalise its static rules.
+5. Formalise its dynamic behaviour.
+6. Write examples and counterexamples.
+7. Add conformance tests.
+8. Review dependencies and open questions.
 
-Primer ciclo recomendado:
+Recommended first cycle:
 
 ```text
 thing
-→ campos básicos
-→ regla booleana
+→ basic fields
+→ Boolean rule
 → action
 → look
-→ estado
+→ state
 → message
 → accepted/rejected/failed
 ```
 
-Esto permite formalizar el lenguaje completo progresivamente sin empezar la implementación ni posponer todas las comprobaciones hasta el final.
+This allows the complete language to be formalised progressively without starting implementation or postponing every check until the end.
 
-## Criterio de “especificación completa”
+## “Complete specification” criterion
 
-MUD 1.0 estará formalmente especificado cuando:
+MUD 1.0 will be formally specified when:
 
-1. No quede ninguna producción gramatical sin semántica.
-2. Toda construcción tenga reglas estáticas.
-3. Todo programa estáticamente válido tenga un comportamiento definido o un fallo explícitamente definido.
-4. Toda interacción entre características esté cubierta o prohibida.
-5. Todas las cuestiones abiertas de MUD 1.0 estén resueltas.
-6. La gramática, la cobertura CST/AST, el HIR nominal y cualquier otra representación mecánica normativa vigente sean verificables automáticamente.
-7. Exista una suite de conformidad representativa.
-8. Las propiedades prometidas estén demostradas o delimitadas mediante hipótesis explícitas.
-9. Los ejemplos integrales no dependan de comportamiento implícito.
-10. Una implementación pueda declarar de forma objetiva su grado de conformidad.
+1. No grammar production remains without semantics.
+2. Every construct has static rules.
+3. Every statically valid programme has defined behaviour or an explicitly defined failure.
+4. Every interaction between features is covered or prohibited.
+5. All open MUD 1.0 questions are resolved.
+6. The grammar, CST/AST coverage, Nominal HIR and every other current normative mechanical representation are automatically verifiable.
+7. A representative conformance suite exists.
+8. Promised properties are proved or delimited by explicit hypotheses.
+9. End-to-end examples do not depend on implicit behaviour.
+10. An implementation can objectively declare its degree of conformance.
