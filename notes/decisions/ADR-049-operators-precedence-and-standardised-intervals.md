@@ -16,7 +16,7 @@ affects:
 
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]]
-- Amended by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]]
+- Amended by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]]
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]

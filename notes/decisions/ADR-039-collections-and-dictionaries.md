@@ -16,7 +16,7 @@ affects:
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-algebra-de-diccionarios|D-086]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
-- Amended by: [[ADR-080-algebra-higher-and-updates-de-collection|D-080]] and [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Amended by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]] and [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
 - Read more: D-019, D-026, D-033
 - Related questions: Q-006, Q-047
 - Documents affected: future `15-collections.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`
