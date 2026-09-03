@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-056 — `Char`, `Text` and Unicode ordering
 
-- Extended by: [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Extended by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Amended by: [[notes/decisions/ADR-069-char-literals-with-double-quotes|D-069]]

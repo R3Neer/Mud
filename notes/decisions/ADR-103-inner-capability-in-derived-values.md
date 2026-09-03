@@ -11,7 +11,7 @@ affects:
 ---
 # ADR-103 — Inner capability in derived values
 
-- Modifies: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
+- Modifies: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-081-collection-filtering-take-and-indexing|D-081]], [[ADR-084-specialisation-de-aliases-inherited-members-and-derived-views|D-084]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Relies on the derived collection form from [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]] and leaves D-039's algebraic `mut` propagation rules unchanged.
 
 ## Context

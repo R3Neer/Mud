@@ -18,7 +18,7 @@ affects:
 
 - Amended by: [[ADR-085-functional-dictionaries-metadatos-and-activation-estructurada|D-085]]
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]
-- Expanded by: [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Expanded by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 - Amended by: [[ADR-095-extremos-vacios-como-ausencia-ordinaria|D-095]]
 

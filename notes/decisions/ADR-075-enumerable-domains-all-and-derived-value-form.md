@@ -12,7 +12,7 @@ affects:
 ---
 # ADR-075 — Enumerable domains, `all` and derived-value form
 
-- Extended by: [[ADR-081-filtering-take-and-indexing-de-collectiones|D-081]]
+- Extended by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 
 ## Context
