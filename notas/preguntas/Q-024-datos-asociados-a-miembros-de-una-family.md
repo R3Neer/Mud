@@ -1,6 +1,6 @@
 ---
 id: Q-024
-title: Datos asociados a miembros de una family
+title: Data associated with `family` members
 priority: P1
 opened: 2026-07-29
 resolved: true
@@ -11,18 +11,18 @@ affects: []
 superseded-by: []
 ---
 
-# Q-024 — Datos asociados a miembros de una `family`
+# Q-024 — Data associated with `family` members
 
-## Contenido
+## Content
 
-Estado: **cerrada** mediante [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
+Status: **closed** by [[notas/decisiones/ADR-038-familias-cerradas-de-valores|D-038]].
 
-Una `family` puede declarar directamente un esquema uniforme de datos inmutables, almacenados o calculados, antes de sus miembros. Cada miembro puede sustituir valores almacenados en un subbloque; los omitidos proceden primero del predeterminado explícito del dato y después del predeterminado de su tipo. Los datos calculados se evalúan estáticamente para cada miembro, tienen tipo opcional si puede inferirse de forma unívoca, admiten dependencias acíclicas con otros datos asociados y no pueden sustituirse en el miembro. Los datos no alteran la identidad ni la igualdad nominal del miembro.
+A `family` may directly declare a uniform schema of immutable, stored or computed data before its members. Each member may override stored values in a sub-block; omitted values come first from the data's explicit default and then from its type's default. Computed data is evaluated statically for each member, has an optional type when it can be inferred uniquely, permits acyclic dependencies on other associated data and cannot be overridden by the member. Data does not alter the member's identity or nominal equality.
 
-## Criterio de cierre
+## Closure criterion
 
-- C1: La resolución aceptada cubre todo el alcance formulado por la pregunta y los artefactos afectados reflejan esa respuesta.
+- C1: The accepted resolution covers the full scope stated by the question and the affected artefacts reflect that answer.
 
-## Evidencia de cierre
+## Closure evidence
 
 - C1: `D-038`.
