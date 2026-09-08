@@ -12,6 +12,8 @@ affects:
 
 # ADR-086 — Exact nominal identity, outer arrows and dictionary algebra
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]].
 - Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-052-pipelines-renderers-and-conformance|D-052]].
 - Affected documents: chapters 02 and 04 to 09; future chapters 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 and 47; grammar; CST; Surface AST; semantic representation after typing and elaboration; conformance cases.
@@ -312,9 +314,11 @@ It retains only keys present in exactly one operand. `^` is admitted on exact di
 - `L ^ R` retains `L`'s exclusive associations first and then `R`'s exclusive associations.
 - An `ordered by` criterion normalises the content after calculating it.
 
-### Interaction with `unique`
+### Interaction with value uniqueness
 
-In an exact `[unique]` dictionary, no value may be associated with two different keys. The operation incorporates left associations first and then the corresponding right associations. A right association that would violate `unique` is omitted as a no-op and produces no `failed`.
+In an exact `[unique]` dictionary, no whole value may be associated with two different keys. In an exact `[unique by path]` dictionary, no two associated values may have the same projected semantic key. `path` is interpreted from the associated value, never from the dictionary key.
+
+Exact-dictionary operations retain their established association order: left associations are incorporated first and then the corresponding right associations. Whenever the effective result carries a value-uniqueness criterion, a later association that would violate it is omitted as a no-op and produces no `failed`. Thus ordinary `unique` keeps its existing behaviour and keyed uniqueness applies the same first-survivor rule to projected value keys.
 
 ```mud
 left: Person -> Room [unique] =
@@ -325,9 +329,9 @@ right: Person -> Room [unique] =
     Marta -> RedRoom
 ```
 
-`left | right` produces `Ana -> BlueRoom, Marta -> RedRoom`.
+`left | right` produces `Ana -> BlueRoom, Marta -> RedRoom`. With `[unique by building]`, the same incorporation order would omit a later association whose room has the same `building` key as an already retained room.
 
-The key and value types of both operands must be compatible. The result retains common types, required uniqueness, demonstrable ordering and conservatively derived cardinality.
+The key and value types of both operands must be compatible. Result uniqueness is inferred conservatively: subset-producing operations may preserve a criterion from the operand they filter; a composition does not invent a keyed criterion when incompatible or cross-operand values can violate it. When a result criterion is present, association incorporation enforces it by the no-op rule above.
 
 ## Functional-dictionary algebra
 
@@ -404,7 +408,7 @@ Analysis may narrow them using `unique`, finite domains or demonstrable overlap 
 
 ### `unique`, fallback and dependencies
 
-`unique` deduplicates the collection produced by each application. It may matter when combining two `ordered` functionals, even if redundant on each isolated operand.
+`unique` deduplicates equal whole values in the collection produced by each application. `unique by path` deduplicates by the stable projected result key, retaining the first stable-provenance result. Either may matter when combining two `ordered` functionals, even if redundant on each isolated operand. Pointwise algebra uses the ordinary collection uniqueness rules.
 
 Fallbacks belong to each operand. `F[x]` and `G[x]` are first evaluated with their own branches and `_`; the results are then combined. No joint fallback is created or merged.
 

@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 99.
-- Current: 98.
+- Total: 100.
+- Current: 99.
 - Proposed: 0.
 - Superseded: 1.
 - Withdrawn: 0.
@@ -118,6 +118,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-102 | current | 2026-08-29 | [[notes/decisions/ADR-102-complete-form-of-computed-family-data|Complete form of computed family data]] |
 | D-103 | current | 2026-08-29 | [[notes/decisions/ADR-103-inner-capability-in-derived-values|Inner capability in derived values]] |
 | D-104 | current | 2026-09-02 | [[notes/decisions/ADR-104-british-english-editorial-migration|British English for the editorial migration]] |
+| D-105 | current | 2026-09-08 | [[notes/decisions/ADR-105-keyed-uniqueness-by-stable-path|Keyed uniqueness by stable path]] |
 
 ## Reserved identifiers
 

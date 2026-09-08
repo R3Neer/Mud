@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-039 — Collections and dictionaries
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Amended by: [[notes/decisions/ADR-064-ordering-by-stable-path|D-064]]
@@ -39,15 +41,16 @@ To omit it is tantamount to `[1]`; `[n]` is equivalent to `[n..n]`; `[*]` use th
 
 `empty` means 'absence of' `null`.
 
-Collections allow duplicates, except `unique`. `ordered` retains an observable order and `ordered by ruta` declare a key semantics stable in accordance with D-064.
+Collections allow duplicates unless a uniqueness mode is present. `unique` retains at most one occurrence of each whole value. `unique by path` retains at most one occurrence for each semantically equal key obtained from the stable path, with the first occurrence by stable provenance surviving. `unique` and `unique by path` are alternative forms of one uniqueness axis. `ordered` retains an observable order and `ordered by path` declares stable key semantics in accordance with D-064.
 
-Add to a collection `unique` a value if it is already present, it is a no-op. The operation is idempotent: one or more additions of the same value they produce a single presence, even when they result from compatible concurrent effects.
+Adding a value already present in a `unique` collection is a no-op. Adding to a `unique by path` collection is also a no-op when an existing occurrence has the same projected key. The operations are idempotent under their respective criteria, including compatible concurrent effects; distinct concurrent values with one keyed-uniqueness key are resolved by stable provenance rather than by conflict or replacement.
 
-When a literal intended for a collection `unique` contains duplicates whose equality can be proven statically, the compiler normalises them to a single occurrence and issues a non-blocking warning. If the collection standardised fails to comply with its cardinality, the programme also includes a error static of cardinality and the following is not valid:
+When a literal intended for a collection with uniqueness contains a collision that can be proven statically, the compiler normalises it and issues a non-blocking warning. Ordinary `unique` compares whole values; `unique by path` compares the projected semantic key. In both cases the first occurrence by stable provenance survives, and the warning identifies the exact retained source occurrence and the colliding later occurrence or occurrences. If the normalised collection fails its cardinality, the programme also has a static cardinality error:
 
 ```mud
-members: Person [* unique] = [Alice, Alice]  # aviso; equivale a [Alice]
-pair: Person [2 unique] = [Alice, Alice]     # error; normalisation leaves only one value
+members: Person [* unique] = [Alice, Alice]  # warning; retains the first Alice
+pair: Person [2 unique] = [Alice, Alice]     # error; normalisation leaves one value
+contacts: Person [* unique by email] = [Alice, Bob]  # if the e-mails are provably equal, warning; retains Alice
 ```
 
 Initial sources of information:
@@ -86,7 +89,7 @@ $$
 
 Therefore, the union it is idempotent even without `unique`: `A | A == A`. It is neither concatenation nor the sum of bags. If both operands are `unique`, these definitions correspond to the union, ordinary intersection and difference of sets.
 
-`^` requires both operands to be `unique` and applies the ordinary symmetric difference. It is not defined via the absolute difference of multiplicities because that operation is not associative. The equivalent binary form on multisets is written as `(A -- B) | (B -- A)`.
+`^` requires both operands to guarantee whole-value uniqueness. Ordinary `unique` and `unique by path` both provide that guarantee. The operation applies ordinary symmetric difference by whole value; it is not defined via the absolute difference of multiplicities because that operation is not associative. The equivalent binary form on multisets is written as `(A -- B) | (B -- A)`.
 
 #### Cardinality and domain inferred
 
@@ -114,16 +117,23 @@ The IR retains the domain resulting form, even though its most precise form does
 
 #### Propagation of modifiers
 
-For each modifier $m$ from `unique`, `ordered` or interior capacity `mut`, its presence in the result is obtained from the same table:
+Uniqueness is not a Boolean modifier after D-105. Let `N` be no uniqueness guarantee, `V` ordinary whole-value uniqueness and `K(p)` keyed uniqueness by resolved path `p`; every `K(p)` also guarantees `V`. Collection algebra remains defined by whole-value multiplicity and uses these conservative result guarantees:
 
-| Result | Presence of $m$ |
+- `A | B` yields at least `V` exactly when both operands guarantee at least `V`; it does not automatically retain `K(p)` because distinct cross-operand values may share a key.
+- `A & B` preserves a sole keyed criterion `K(p)` because the result is a subset of that operand. Equal keyed criteria also remain `K(p)`. Different keyed criteria conservatively expose `V` rather than arbitrarily preferring one. Without a keyed criterion, `V` is guaranteed when either operand guarantees it.
+- `A -- B` preserves the exact uniqueness mode of `A`.
+- `A ^ B` requires both operands to guarantee at least `V` and conservatively yields `V`.
+
+Analysis may strengthen these results when it proves that cross-operand key collisions are impossible. It never keyed-normalises `|` or `^` merely to keep a modifier.
+
+For `ordered` and interior capability `mut`, presence in the result continues to follow this table:
+
+| Result | Presence of the modifier |
 | --- | --- |
 | `A | B` | $m(A)\land m(B)$ |
 | `A & B` | $m(A)\lor m(B)$ |
 | `A -- B` | $m(A)$ |
-| `A ^ B` | $m(A)\land m(B)$; `unique` it is guaranteed |
-
-For `unique`, the table follows directly from the multiplicities: the intersection is unique if any of the operands restricts each multiplicity to one and the union It needs that guarantee on both sides. The symmetric difference already requires `unique` in its operands.
+| `A ^ B` | $m(A)\land m(B)$ |
 
 For `mut`, the table refers exclusively to the internal load-bearing capacity of members, never to the mutability outside of a stored field. A union A mixed symmetric difference could contain a member accessible only from the operand without capacity; an intersection, on the other hand, contains only members that are also accessible from the operand with capacity. A difference `--` It only retains elements from the left-hand operand. A computed field does not acquire mutability outdoors.
 
@@ -159,7 +169,7 @@ The form:
 Key -> Value [cardinality modifiers]
 ```
 
-declares a dictionary with intrinsically unique keys. The modifier `unique`, when written, applies to the **associated values** in accordance with D-085: requires that the same value is not associated with more than one key. An insertion or replacement that would violate this uniqueness is a complete no-op and does not produce `failed`.
+declares a dictionary with intrinsically unique keys. A written uniqueness modifier applies to the **associated values** in accordance with D-085. `unique` requires that the same whole value is not associated with more than one key; `unique by path` requires that no two associated values have the same projected semantic key, with `path` interpreted from the value rather than the dictionary key. An insertion or replacement that would violate the effective value-uniqueness criterion is a complete no-op and does not produce `failed`.
 
 ```mud
 stock =
@@ -210,7 +220,7 @@ The general rule is that the absence of `unique` It retains its multiplicity, ye
 ## Future verification
 
 1. Cardinality omitted and `empty`.
-2. Duplicates, normalisation, notice and idempotence of `unique`.
+2. Duplicates and keyed collisions, normalisation, warning, first-survivor provenance and idempotence of both uniqueness modes.
 3. Intrinsic semantic order, by provenance stable and `ordered by`, including one path stable on associated data and ties by provenance.
 4. Missing reading such as `empty`, writing and retrieval of a missing password, and `unique` global values.
 5. Equality irrespective of internal representation.

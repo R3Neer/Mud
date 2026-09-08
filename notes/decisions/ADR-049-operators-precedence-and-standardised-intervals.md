@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-049 — Operators, precedence and standardised intervals
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Amended by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]]
@@ -94,7 +96,7 @@ are grouped as `(population / regions) to Population`, `(distance + offset) in k
 
 Homogeneous chains of `<`, `<=`, `>`, `>=` and `==` are formed from adjacent pairs. The same applies to `<=>`. `!=`, `is`, `iis`, `has`, `has not` and `=>` do not chain.
 
-`|` concatenates `Text`. The other conjunctive operators do not apply to `Text`, nor is concatenation implicitly inherited by nominal aliases of `Text`. For compatible collections, `|`, `&` and `--` form the multiset algebra of D-039; `^` is defined only for `unique` collections as symmetric difference. `|` does not concatenate collections.
+`|` concatenates `Text`. The other conjunctive operators do not apply to `Text`, nor is concatenation implicitly inherited by nominal aliases of `Text`. For compatible collections, `|`, `&` and `--` form the multiset algebra of D-039; `^` is defined only for collections that guarantee whole-value uniqueness; both ordinary `unique` and `unique by path` satisfy that precondition. It remains symmetric difference by whole value. `|` does not concatenate collections.
 
 ### Intervals
 

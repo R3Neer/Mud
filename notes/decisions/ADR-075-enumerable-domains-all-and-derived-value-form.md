@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-075 — Enumerable domains, `all` and derived-value form
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Extended by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 
@@ -56,7 +58,7 @@ A comma-separated list of expressions constructs a derived collection:
 numbers := a * b, d, c / a
 ```
 
-Its common type and cardinality are inferred. Arity is exact cardinality for ordinary multiplicity collections; under `unique` it is exact only when element distinction can be proved. A collection included as an element is not implicitly flattened.
+Its common type and cardinality are inferred. Arity is exact cardinality for ordinary multiplicity collections; under ordinary `unique` it is exact only when whole-value distinction can be proved, and under `unique by path` only when distinction of the projected keys can be proved. A collection included as an element is not implicitly flattened.
 
 A selection `value in source : predicate` and `take amount from source` also produce derived collection values. They retain demonstrable source contracts and allow the derived form to declare a more precise domain or cardinality as an independent obligation.
 

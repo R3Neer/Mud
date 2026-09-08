@@ -13,6 +13,8 @@ affects:
 
 # ADR-085 — Functional dictionaries, metadata and structured activation
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
@@ -96,9 +98,10 @@ Exact dictionaries:
 - retain external mutability;
 - remain enumerable by keys or associations;
 - admit `ordered` with its ordinary semantics;
-- admit `unique`, which requires global uniqueness of associated values.
+- admit ordinary `unique`, which requires global whole-value uniqueness of associated values;
+- admit `unique by path`, which requires global uniqueness of associated values by the stable projected value key.
 
-An insertion or replacement that would make the same value appear under more than one key in a `unique` exact dictionary is a complete no-op. It modifies no association and produces no `failed`.
+For both modes, the uniqueness criterion is applied to associated values, never to the intrinsically unique dictionary keys. An insertion or replacement that would violate the effective value-uniqueness criterion is a complete no-op. It modifies no association and produces no `failed`.
 
 ### Functional dictionaries
 
@@ -144,7 +147,7 @@ A --> B [ordered]
 - `_` must be the last effective branch; every later branch is unreachable.
 - Without a match or fallback, application has derived cardinality `[0..1]` and produces `empty` when there is no result.
 - With a fallback, derived cardinality is `[1]`.
-- `unique` is valid but redundant; it produces a removal suggestion.
+- ordinary `unique` and `unique by path` are valid but redundant because at most one result is produced; either produces a removal suggestion.
 
 The elaborated mode is called `FirstMatch`.
 
@@ -161,7 +164,7 @@ A --> B
 - Without matches, the empty collection is obtained.
 - `_` contributes exactly one result only when no ordinary branch matches.
 - Derived cardinality is `[0..n]`, where `n` is the demonstrable maximum of matching ordinary branches; with a fallback, the lower bound becomes `1`.
-- `unique` deduplicates results produced by different branches.
+- `unique` deduplicates equal whole-value results produced by different branches; `unique by path` deduplicates equal projected keys and retains the first result by stable occurrence provenance.
 
 The elaborated mode is called `AllMatches`.
 
@@ -227,7 +230,7 @@ binding in source : predicate
 
 is exclusively a filter. The body after `:` must be Boolean. The expression directly returns the accepted original members, without projection, additional wrapping or flattening.
 
-It preserves multiplicity, `unique`, ordering, ordering criterion and the source's conservative cardinality inference. On an exact dictionary, pair binding produces another dictionary with the accepted associations.
+It preserves multiplicity, the exact uniqueness criterion, ordering, ordering criterion and the source's conservative cardinality inference. On an exact dictionary, pair binding produces another dictionary with the accepted associations.
 
 ### Structured initial activation
 

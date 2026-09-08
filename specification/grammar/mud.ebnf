@@ -59,7 +59,7 @@ lower-name        ::= identifier ;
 member-name       ::= identifier ;
 field-name        ::= identifier ;
 metadata-name     ::= identifier | "for" | "on" | "given" ;
-order-key-path    ::= field-name , { "." , field-name } ;
+collection-key-path    ::= field-name , { "." , field-name } ;
 role-name         ::= identifier ;
 given-name        ::= identifier ;
 component-name    ::= identifier ;
@@ -447,8 +447,8 @@ cardinality-bound
     ::= exact-integer | "*" ;
 
 collection-modifier
-    ::= "unique"
-      | "ordered" , [ "by" , order-key-path ]
+    ::= "unique" , [ "by" , collection-key-path ]
+      | "ordered" , [ "by" , collection-key-path ]
       | "mut"
       ;
 
@@ -968,7 +968,9 @@ local-collection-transform
       ;
 
 local-collection-modifier
-    ::= "unique" | "ordered" , [ "by" , order-key-path ] ;
+    ::= "unique" , [ "by" , collection-key-path ]
+      | "ordered" , [ "by" , collection-key-path ]
+      ;
 
 member-access
     ::= "." , identifier ;

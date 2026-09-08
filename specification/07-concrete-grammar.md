@@ -74,6 +74,7 @@ decisions:
   - D-098
   - D-100
   - D-099
+  - D-105
 ---
 
 # 07. Concrete grammar
@@ -352,7 +353,10 @@ Cardinality, when present, is placed at the start of the square brackets. Modifi
 ```mud
 citizens: Person [0..* unique ordered mut]
 citizens: Person [0..*, unique, ordered, mut]
+contacts: Person [0..* unique by email]
 ```
+
+`unique` and `unique by path` are alternative forms of one uniqueness modifier. More than one uniqueness form in the same collection specification is rejected before AST construction. The keyed path is non-empty, is interpreted from each member and must be singular and transitively stable. Its final value needs semantic equality but not a total order; `ordered by` retains the stronger total-order requirement.
 
 A trailing comma is not permitted. In an immutable stored field with an initialiser, an omitted cardinality remains omitted in the AST and is inferred as the initial value's exact outer cardinality:
 
@@ -404,7 +408,7 @@ A missing key produces `empty`. A complete association may be inserted as a runt
 then add (Portugal -> Lisbon) to capitalOf
 ```
 
-`unique` requires associated values to be globally unique. An insertion or replacement that would duplicate one value under two keys is a complete no-op: it changes no association and does not produce `failed`.
+`unique` requires associated values to be globally unique by whole value. `unique by path` instead requires global uniqueness by the stable key projected from each associated value; the path never starts from the dictionary key. An insertion or replacement that would violate the effective associated-value uniqueness criterion is a complete no-op: it changes no association and does not produce `failed`.
 
 Adding an association whose key already exists atomically replaces the previous association when the result respects the contract:
 
@@ -533,9 +537,9 @@ It is not permitted to combine an exact match with a functional match directly.
 
 ### `FirstMatch`, `AllMatches`, fallback and cardinality
 
-In a functional `[ordered]` dictionary, `unique` is valid but redundant and triggers a suggestion to remove it. Without a fallback, application has cardinality `[0..1]`; with a fallback, `[1]`.
+In a functional `[ordered]` dictionary, ordinary `unique` and `unique by path` are valid but redundant and trigger a suggestion to remove the uniqueness modifier. Without a fallback, application has cardinality `[0..1]`; with a fallback, `[1]`.
 
-In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback raises the lower bound to `1`. `unique` deduplicates equal results from different branches without changing which branches applied.
+In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback raises the lower bound to `1`. `unique` deduplicates equal whole-value results from different branches. `unique by path` deduplicates equal projected result keys and retains the first result by stable occurrence provenance. Neither changes which branches applied.
 
 ```mud
 tagsOf: Creature --> Tag [unique] =
@@ -1683,4 +1687,4 @@ Configurable `~...` elements appear before ordinary content. Fields, components 
 
 Boolean membership uses `container has value` and `container has not value`. `in` is not a Boolean membership operator. `value in Domain` locally restricts or filters the value; `binding in source : predicate` remains a selection.
 
-A collection may be transformed locally with `values [unique]`, `values [ordered]`, `values [ordered by score]` or `values [1..10, unique, ordered]`. This form does not support `mut`. Elaboration normalises domain, `unique`, order and cardinality. `[n]` remains indexing; an exact local cardinality without other modifiers is written `[n..n]`.
+A collection may be transformed locally with `values [unique]`, `values [unique by email]`, `values [ordered]`, `values [ordered by score]` or `values [1..10, unique, ordered]`. This form does not support `mut`. Elaboration normalises domain, uniqueness, order and cardinality. `[n]` remains indexing; an exact local cardinality without other modifiers is written `[n..n]`.
