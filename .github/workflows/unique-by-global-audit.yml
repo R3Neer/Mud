@@ -1,0 +1,63 @@
+name: Audit unique-by candidate globally
+
+on:
+  push:
+    branches:
+      - chatgpt/unique-by-audit-control-9473013
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Audit exact candidate
+        env:
+          CANDIDATE_SHA: 9473013df1bf5801df5b4b9f654b67a52a2a0767
+          BASE_SHA: 7a1f8fcd61028aa00dd0564ca644b501f6da67d3
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "$CANDIDATE_SHA"
+          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+
+          echo '=== exact changed paths ==='
+          git diff --name-only "$BASE_SHA"..HEAD
+
+          echo '=== suspicious whole-value-only wording ==='
+          grep -R -n -E 'requires .*`unique`|only .*`unique`|`unique` (removes|deduplicates|is retained|is preserved)|both operands are `unique`|without `unique`|`unique` sets|under `unique`|in a `unique` collection|collection `unique`' notes specification || true
+
+          echo '=== all keyed uniqueness mentions ==='
+          grep -R -n --fixed-strings 'unique by' notes specification || true
+
+          echo '=== retired structural forms ==='
+          if grep -R -n -E 'order-key-path|order_key_path|flag is_unique|flag make_unique|OrderKeyPathSyntax' specification; then
+            echo 'retired structural form remains' >&2
+            exit 1
+          fi
+
+          echo '=== known stale current-state phrases ==='
+          stale=0
+          for phrase in \
+            'Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results.' \
+            'Symmetric difference of sets `unique`' \
+            'rejection of `^` without `unique`' \
+            'On collections, `^` requires `unique` operands' \
+            '`^` is reserved for `unique` sets.' \
+            'A source literal or statically materialised initial value'; do
+            if grep -R -n --fixed-strings "$phrase" notes specification; then
+              stale=1
+            fi
+          done
+          echo "known_stale=$stale"
+
+          echo '=== temporary infrastructure in candidate tree ==='
+          if git ls-tree -r --name-only HEAD | grep -E 'MUD-PATCH|unique-by-(lab|v6|global-audit)|fix-d086-unique-domain-lab'; then
+            echo 'temporary infrastructure present in candidate tree' >&2
+            exit 1
+          fi
