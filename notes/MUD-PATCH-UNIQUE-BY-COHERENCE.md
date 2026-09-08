@@ -17,6 +17,7 @@ temporary-delete-when: "The published unique-by change has completed its post-pu
 - `unique` and `unique by path` are mutually exclusive forms of one uniqueness axis.
 - The key path has the same non-empty, singular and transitively stable path shape used by `ordered by`; unlike an ordering key, its final value needs semantic equality but not a total order.
 - `unique by` is available anywhere the collection uniqueness modifier is available, including local collection transformations and derived collection shapes.
+- On dictionaries, the uniqueness axis continues to constrain associated values. `unique by path` interprets `path` from each associated/result value, never from the dictionary key. Exact-dictionary insertions or replacements that collide on that projected key are no-ops; functional results use the same per-application normalisation rule.
 
 ## Open questions
 
@@ -28,6 +29,7 @@ None block this patch. Existing unrelated open questions must remain open. Q-006
 - Replacing the first occurrence with the last occurrence.
 - Allowing both ordinary `unique` and `unique by ...` simultaneously as independent modifiers.
 - Requiring a total ordering merely because a key is used for uniqueness.
+- Reinterpreting `unique by` on a dictionary as a second uniqueness constraint on dictionary keys.
 
 ## Expected interactions and invariants
 
@@ -36,7 +38,7 @@ None block this patch. Existing unrelated open questions must remain open. Q-006
 - Stable provenance remains distinct from logical order and is the source of the first-survivor rule.
 - `unique by` implies ordinary whole-value uniqueness because equal values necessarily yield the same stable key, but it carries an additional keyed invariant.
 - Binary collection algebra remains defined over whole-value multiplicities. Result uniqueness metadata must be conservative: keyed uniqueness is retained only when the result is guaranteed to preserve that exact invariant without inventing a new criterion. Union and symmetric difference may therefore degrade a keyed guarantee to ordinary value uniqueness rather than silently deduplicating by key.
-- Dictionary `unique` continues to mean uniqueness of associated values; this patch does not reinterpret dictionary keys or their intrinsic uniqueness.
+- Exact-dictionary algebra retains its established left-association precedence and no-op enforcement of result value uniqueness; keyed uniqueness applies the same mechanism to projected value keys. Functional-dictionary algebra remains pointwise collection algebra.
 - No new keyword is introduced: `unique` and `by` are already reserved.
 - No new declaration, scope, owner or public anchor is introduced. Existing name-resolution surfaces must nevertheless be checked because the new keyed path contains member references.
 
@@ -49,8 +51,8 @@ None block this patch. Existing unrelated open questions must remain open. Q-006
 | Questions | modificar | Q-006 must cite D-105 and record keyed-collision insertion compatibility while remaining partially decided. Other open questions remain unchanged. |
 | Lexicon | validar sin cambios | `unique` and `by` already exist as reserved words. |
 | Concrete grammar / EBNF | modificar | `unique by path` must be recognised in stored and local collection modifiers; genericise the shared key-path production. |
-| Concrete grammar prose | modificar | Document syntax, duplicate-modifier rules and keyed normalisation diagnostics. |
-| Lossless CST model | validar sin cambios | Existing collection-modifier CST nodes already preserve modifier tokens and path children; verify no catalogue contract contradicts the extension. |
+| Concrete grammar prose | modificar | Document syntax, duplicate-modifier rules, dictionary interpretation and keyed normalisation diagnostics. |
+| Lossless CST model | modificar | Existing nodes can preserve the form, but contextual validation prose must treat ordinary and keyed uniqueness as one axis. |
 | Syntax kinds catalogue | modificar | Mirror the EBNF and shared key-path production. |
 | Syntax coverage | modificar | Rename/generalise the path mapping and preserve modifier coverage. |
 | CST -> Surface AST | modificar | Project ordinary and keyed uniqueness into distinct AST constructors and reject duplicate uniqueness-axis forms. |
@@ -62,9 +64,9 @@ None block this patch. Existing unrelated open questions must remain open. Q-006
 | Collection algebra semantics | modificar | Generalise result uniqueness guarantees conservatively across value-unique and keyed-unique operands. |
 | Local transformation semantics | modificar | Deduplicate by key in provenance order before ordering/cardinality. |
 | Concurrent effect semantics | modificar | Key collisions use stable provenance to select one survivor rather than conflict/merge. |
-| Dictionary semantics | validar sin cambios | Dictionary `unique` retains its existing associated-value meaning. |
+| Dictionary semantics and algebra | modificar | Extend associated-value uniqueness and pointwise functional results to keyed criteria without changing intrinsic dictionary-key uniqueness. |
 | Reflection / metadata | validar sin cambios | No existing reflective contract currently exposes collection uniqueness criteria; global search must confirm. |
-| Validators / generators | validar sin cambios | Run official generators/gates; modify only if they encode the old AST/grammar shape explicitly. |
+| Validators / generators | modificar | Run official generators/gates and extend persistent syntax coverage checks for the new cases; otherwise preserve validator semantics. |
 | Residue search | modificar | Search for `is_unique`, `make_unique`, `order_key_path`, `order-key-path`, prose stating uniqueness is only whole-value, and duplicate-modifier assumptions. |
 
 ## Fixed-point audit checklist
@@ -76,5 +78,6 @@ None block this patch. Existing unrelated open questions must remain open. Q-006
 - Keyed collisions in literals, sequential additions and concurrency all select the same first-by-provenance survivor.
 - Ordering and uniqueness path requirements differ only at the final-key comparator requirement.
 - Algebra never claims a keyed invariant that an operation can violate through cross-operand collisions.
+- Exact and functional dictionaries interpret keyed uniqueness on associated/result values, not dictionary keys.
 - Q-006 records the newly fixed compatibility without closing unrelated conflict work.
 - No temporary control file or workflow is present in the publication commit.
