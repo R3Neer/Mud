@@ -1,0 +1,48 @@
+name: Build unique-by candidate v2
+
+on:
+  push:
+    branches:
+      - chatgpt/unique-by-work-20260908-a1a85b9
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reuse corrected isolated build script
+        env:
+          BASE_SHA: a1a85b90592e4621d8ddc28af4a2b03bb6f54e59
+          CANDIDATE_BRANCH: chatgpt/unique-by-candidate-20260908-a1a85b9
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          source = Path('.github/workflows/unique-by-lab.yml').read_text(encoding='utf-8')
+          marker = '        run: |\n'
+          start = source.index(marker) + len(marker)
+          body_lines = []
+          for line in source[start:].splitlines():
+              if line.startswith('          '):
+                  body_lines.append(line[10:])
+              elif not line.strip():
+                  body_lines.append('')
+              else:
+                  break
+          body = '\n'.join(body_lines) + '\n'
+          old = "# ADR-075 — Enumerable domains, `all` and derived value form\\n"
+          new = "# ADR-075 — Enumerable domains, `all` and derived-value form\\n"
+          if body.count(old) != 1:
+              raise SystemExit(f'expected one D-075 heading marker in reused build script, found {body.count(old)}')
+          body = body.replace(old, new, 1)
+          Path('/tmp/unique-by-build.sh').write_text(body, encoding='utf-8')
+          PY
+          bash /tmp/unique-by-build.sh
