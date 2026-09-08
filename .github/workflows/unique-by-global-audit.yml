@@ -15,10 +15,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
       - name: Audit exact candidate
         env:
-          CANDIDATE_SHA: 9473013df1bf5801df5b4b9f654b67a52a2a0767
+          CANDIDATE_SHA: 6d71f5289c0f9e51fb6cc21da450ed684a109c44
           BASE_SHA: 7a1f8fcd61028aa00dd0564ca644b501f6da67d3
         shell: bash
         run: |
@@ -29,35 +28,31 @@ jobs:
           echo '=== exact changed paths ==='
           git diff --name-only "$BASE_SHA"..HEAD
 
-          echo '=== suspicious whole-value-only wording ==='
+          echo '=== suspicious wording for human review ==='
           grep -R -n -E 'requires .*`unique`|only .*`unique`|`unique` (removes|deduplicates|is retained|is preserved)|both operands are `unique`|without `unique`|`unique` sets|under `unique`|in a `unique` collection|collection `unique`' notes specification || true
 
-          echo '=== all keyed uniqueness mentions ==='
+          echo '=== keyed uniqueness mentions ==='
           grep -R -n --fixed-strings 'unique by' notes specification || true
 
-          echo '=== retired structural forms ==='
-          if grep -R -n -E 'order-key-path|order_key_path|flag is_unique|flag make_unique|OrderKeyPathSyntax' specification; then
-            echo 'retired structural form remains' >&2
-            exit 1
-          fi
+          echo '=== forbidden retired structural forms ==='
+          ! grep -R -n -E 'order-key-path|order_key_path|flag is_unique|flag make_unique|OrderKeyPathSyntax' specification
 
-          echo '=== known stale current-state phrases ==='
-          stale=0
-          for phrase in \
-            'Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results.' \
-            'Symmetric difference of sets `unique`' \
-            'rejection of `^` without `unique`' \
-            'On collections, `^` requires `unique` operands' \
-            '`^` is reserved for `unique` sets.' \
-            'A source literal or statically materialised initial value'; do
-            if grep -R -n --fixed-strings "$phrase" notes specification; then
-              stale=1
-            fi
-          done
-          echo "known_stale=$stale"
+          echo '=== forbidden stale current-state phrases ==='
+          ! grep -R -n --fixed-strings 'Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results' notes specification
+          ! grep -R -n --fixed-strings '`^=` accepts only `unique` collections' notes specification
+          ! grep -R -n --fixed-strings 'operates only on `unique` sets' notes specification
+          ! grep -R -n --fixed-strings 'Symmetric difference of sets `unique`' notes specification
+          ! grep -R -n --fixed-strings 'rejection of `^` without `unique`' notes specification
+          ! grep -R -n --fixed-strings 'On collections, `^` requires `unique` operands' notes specification
+          ! grep -R -n --fixed-strings '`^` is reserved for `unique` sets' notes specification
+          ! grep -R -n --fixed-strings 'A source literal or statically materialised initial value' notes specification
+
+          echo '=== required final invariants ==='
+          grep -q --fixed-strings 'unique by path' notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md
+          grep -q --fixed-strings 'an already-computed collection assigned to a declared uniqueness contract is verified rather than rewritten' notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md
+          grep -q --fixed-strings '`L & R` preserves the exact uniqueness mode of `L`' notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md
+          grep -q --fixed-strings 'ordinary `unique` and `unique by path` both satisfy that precondition' specification/07-concrete-grammar.md
+          grep -q --fixed-strings 'collections that guarantee whole-value uniqueness' notes/decisions/ADR-080-higher-order-collection-algebra-and-updates.md
 
           echo '=== temporary infrastructure in candidate tree ==='
-          if git ls-tree -r --name-only HEAD | grep -E 'MUD-PATCH|unique-by-(lab|v6|global-audit)|fix-d086-unique-domain-lab'; then
-            echo 'temporary infrastructure present in candidate tree' >&2
-            exit 1
-          fi
+          ! git ls-tree -r --name-only HEAD | grep -E 'MUD-PATCH|unique-by-(lab|v6|v7|global-audit)|fix-d086-unique-domain-lab'
