@@ -20,7 +20,7 @@ temporary-delete-when: "The published unique-by change has completed its post-pu
 
 ## Open questions
 
-None block this patch. Existing unrelated open questions must remain open.
+None block this patch. Existing unrelated open questions must remain open. Q-006 remains partially decided, but its already-decided inventory must be extended to cover keyed-uniqueness insertions; the remaining closure criteria are unchanged.
 
 ## Rejected alternatives
 
@@ -35,7 +35,7 @@ None block this patch. Existing unrelated open questions must remain open.
 - `ordered by` retains its existing total-order requirement; `unique by` does not weaken it.
 - Stable provenance remains distinct from logical order and is the source of the first-survivor rule.
 - `unique by` implies ordinary whole-value uniqueness because equal values necessarily yield the same stable key, but it carries an additional keyed invariant.
-- Binary collection algebra remains defined over whole-value multiplicities. Result uniqueness metadata must be conservative: keyed uniqueness is retained only when the result is guaranteed to preserve that exact invariant without inventing a new criterion.
+- Binary collection algebra remains defined over whole-value multiplicities. Result uniqueness metadata must be conservative: keyed uniqueness is retained only when the result is guaranteed to preserve that exact invariant without inventing a new criterion. Union and symmetric difference may therefore degrade a keyed guarantee to ordinary value uniqueness rather than silently deduplicating by key.
 - Dictionary `unique` continues to mean uniqueness of associated values; this patch does not reinterpret dictionary keys or their intrinsic uniqueness.
 - No new keyword is introduced: `unique` and `by` are already reserved.
 - No new declaration, scope, owner or public anchor is introduced. Existing name-resolution surfaces must nevertheless be checked because the new keyed path contains member references.
@@ -46,7 +46,7 @@ None block this patch. Existing unrelated open questions must remain open.
 | --- | --- | --- |
 | Accepted decision archive | modificar | Record D-105 and reciprocal/current-state amendments where existing ADR wording would otherwise be incomplete. |
 | Decision index | regenerar | New D-105 must appear in the generated index. |
-| Questions | validar sin cambios | No material uncertainty remains and no existing question is closed by this feature. |
+| Questions | modificar | Q-006 must cite D-105 and record keyed-collision insertion compatibility while remaining partially decided. Other open questions remain unchanged. |
 | Lexicon | validar sin cambios | `unique` and `by` already exist as reserved words. |
 | Concrete grammar / EBNF | modificar | `unique by path` must be recognised in stored and local collection modifiers; genericise the shared key-path production. |
 | Concrete grammar prose | modificar | Document syntax, duplicate-modifier rules and keyed normalisation diagnostics. |
@@ -76,4 +76,5 @@ None block this patch. Existing unrelated open questions must remain open.
 - Keyed collisions in literals, sequential additions and concurrency all select the same first-by-provenance survivor.
 - Ordering and uniqueness path requirements differ only at the final-key comparator requirement.
 - Algebra never claims a keyed invariant that an operation can violate through cross-operand collisions.
+- Q-006 records the newly fixed compatibility without closing unrelated conflict work.
 - No temporary control file or workflow is present in the publication commit.
