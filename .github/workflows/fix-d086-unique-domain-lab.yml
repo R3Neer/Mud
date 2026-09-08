@@ -1,0 +1,115 @@
+name: Fix D086 value-uniqueness domain contradiction
+
+on:
+  push:
+    branches:
+      - chatgpt/fix-d086-control-20260908-a1a85b9
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: tooling/requirements.txt
+
+      - name: Install tooling dependencies
+        run: python -m pip install -r tooling/requirements.txt
+
+      - name: Build and validate isolated fix
+        env:
+          BASE_SHA: a1a85b90592e4621d8ddc28af4a2b03bb6f54e59
+          FIX_BRANCH: chatgpt/fix-exact-dictionary-unique-union-20260908
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "$BASE_SHA"
+          git switch -C "$FIX_BRANCH"
+
+          cat > .mud-patch-fix-d086-plan.md <<'EOF'
+          ---
+          temporary: true
+          temporary-reason: "Control plan for the pre-existing D-086 consistency fix found during the unique-by patch."
+          temporary-delete-when: "The isolated D-086 fix has been published and audited."
+          ---
+
+          # D-086 exact-dictionary uniqueness consistency fix
+
+          - Existing decision: exact-dictionary key algebra first selects candidate associations; `[unique]` then rejects later associations whose associated value is already represented.
+          - Existing contradiction: the union section called the pre-normalisation candidate key union the final `domain(L | R)`, while the same ADR's uniqueness example removes a right-hand key.
+          - Required correction: label the set-theoretic equations as candidate composition and state that an enforced value-uniqueness criterion may reduce the final key domain.
+          - Preserve existing left-first incorporation and no-op semantics. Introduce no new uniqueness inference rule.
+          - No grammar, AST, names, questions or diagnostics change.
+          EOF
+
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md')
+          text = p.read_text(encoding='utf-8')
+
+          old = '''Formally:\n\n```text\ndomain(L | R) = domain(L) ∪ domain(R)\n(L | R)[k] = L[k] if k ∈ domain(L); R[k] otherwise\n```\n\nIt is not necessarily commutative as a dictionary value.'''
+          new = '''Before enforcing any value-uniqueness criterion carried by the result, the candidate composition is:\n\n```text\ncandidate-domain(L | R) = domain(L) ∪ domain(R)\ncandidate(L | R)[k] = L[k] if k ∈ domain(L); R[k] otherwise\n```\n\nIf the effective result requires associated-value uniqueness, that criterion is applied afterwards in the association-incorporation order defined below. It may omit a later association, so the final key domain may be a strict subset of this candidate union.\n\nThe resulting dictionary is not necessarily commutative.'''
+          if text.count(old) != 1:
+              raise SystemExit(f'union formula marker count: {text.count(old)}')
+          text = text.replace(old, new, 1)
+
+          old = '''- `|` and `&` are associative and commutative with respect to the key set, but not necessarily as dictionary values because of left precedence.\n- `--` is neither associative nor commutative.\n- `^` is associative and commutative.'''
+          new = '''- Before any associated-value uniqueness normalisation, `|` and `&` have associative and commutative candidate key sets; the resulting dictionaries need not be commutative because of left precedence.\n- `--` is neither associative nor commutative.\n- Before any associated-value uniqueness normalisation, `^` has an associative and commutative candidate key set. A result constraint may remove later associations and therefore make the final key set depend on incorporation order.'''
+          if text.count(old) != 1:
+              raise SystemExit(f'properties marker count: {text.count(old)}')
+          text = text.replace(old, new, 1)
+
+          old = '''In an exact `[unique]` dictionary, no value may be associated with two different keys. The operation incorporates left associations first and then the corresponding right associations. A right association that would violate `unique` is omitted as a no-op and produces no `failed`.'''
+          new = '''In an exact `[unique]` dictionary, no value may be associated with two different keys. Set-theoretic key selection first determines the candidate associations described above. Whenever the effective result requires value uniqueness, those candidate associations are then incorporated in the operation's established order: left surviving associations first, followed by any right surviving associations. A later association that would violate `unique` is omitted as a no-op and produces no `failed`. This normalisation is part of the final dictionary value and may therefore remove a candidate key.'''
+          if text.count(old) != 1:
+              raise SystemExit(f'unique interaction marker count: {text.count(old)}')
+          text = text.replace(old, new, 1)
+
+          p.write_text(text, encoding='utf-8')
+          PY
+
+          python -m compileall -q governance specification tooling
+          python -m unittest discover -s tooling/tests
+          python -m unittest discover -s governance -p "test_*.py"
+          python tooling/decisions/manage_decisions.py validate --colour never --ascii
+          python tooling/questions/validate_questions.py validate --colour never --ascii
+          python governance/validate_temporaries.py --colour never --ascii
+          python governance/validate_spec_editorial.py --colour never --ascii
+          python specification/grammar/validate_grammar.py --colour never --ascii
+          python specification/syntax/validate_syntax_model.py --colour never --ascii
+          markdown-export --colour never --ascii list-profiles --root . --config markdown-export.toml >/dev/null
+          git diff --check
+
+          test "$(git diff --name-only)" = "notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md"
+          grep -q 'candidate-domain(L | R)' notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md
+          grep -q 'final key domain may be a strict subset' notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md
+
+          git add notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md
+          git diff --cached --check
+          git config user.name 'ChatGPT MUD patch'
+          git config user.email 'chatgpt-mud-patch@users.noreply.github.com'
+          git commit -m 'fix(collections): clarify exact dictionary unique normalisation' \
+            -m 'Context:\n- D-086 described exact union key-domain equations as final while its own [unique] rule can omit later associations.\n\nChanges:\n- Distinguish candidate key composition from subsequent associated-value uniqueness normalisation.\n- Qualify algebraic key-set properties when a result uniqueness constraint can remove candidate associations.\n\nValidation:\n- official decision, question, temporary, editorial, grammar and syntax gates\n- tooling and governance tests\n- git diff --check'
+
+          python tooling/decisions/manage_decisions.py validate --colour never --ascii
+          python tooling/questions/validate_questions.py validate --colour never --ascii
+          python governance/validate_temporaries.py --colour never --ascii
+          python governance/validate_spec_editorial.py --colour never --ascii
+          python specification/grammar/validate_grammar.py --colour never --ascii
+          python specification/syntax/validate_syntax_model.py --colour never --ascii
+          git diff --check "$BASE_SHA"..HEAD
+          test -z "$(git status --porcelain --untracked-files=no)"
+          test -f .mud-patch-fix-d086-plan.md
+          ! git ls-files --error-unmatch .mud-patch-fix-d086-plan.md >/dev/null 2>&1
+
+          echo "fix_sha=$(git rev-parse HEAD)"
+          git push origin HEAD:"refs/heads/$FIX_BRANCH"
