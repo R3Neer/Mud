@@ -1,4 +1,4 @@
-name: Build unique-by candidate v7 via existing lab path
+name: Build unique-by candidate v7
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
           cache-dependency-path: tooling/requirements.txt
       - name: Install tooling dependencies
         run: python -m pip install -r tooling/requirements.txt
-      - name: Rebuild reviewed candidate with residue fixes
+      - name: Build and validate candidate
         env:
           BASE_SHA: 7a1f8fcd61028aa00dd0564ca644b501f6da67d3
           V6_SHA: 9473013df1bf5801df5b4b9f654b67a52a2a0767
@@ -30,47 +30,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cp .github/scripts/unique-by-v7-fix.py /tmp/unique-by-v7-fix.py
           git show origin/chatgpt/unique-by-work-20260908-a1a85b9:notes/MUD-PATCH-UNIQUE-BY-COHERENCE.md > /tmp/plan.md
           mapfile -t changed_paths < <(git diff --name-only "$BASE_SHA" "$V6_SHA")
           git checkout --detach "$BASE_SHA"
           git switch -C "$CANDIDATE_BRANCH"
           cp /tmp/plan.md .mud-patch-unique-by-plan.md
           git checkout "$V6_SHA" -- "${changed_paths[@]}"
-
-          python - <<'PY'
-          from pathlib import Path
-
-          def replace(path, old, new):
-              p = Path(path)
-              text = p.read_text(encoding='utf-8')
-              if text.count(old) != 1:
-                  raise SystemExit(f'{path}: expected exactly one residue, found {text.count(old)}: {old!r}')
-              p.write_text(text.replace(old, new, 1), encoding='utf-8')
-
-          replace(
-              'specification/07-concrete-grammar.md',
-              'Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results:',
-              'Without `ordered`, every ordinary branch is evaluated and all results are obtained; the effective uniqueness modifier then normalises them: ordinary `unique` removes repeated whole values and `unique by path` removes later equal-key results:'
-          )
-          replace(
-              'specification/07-concrete-grammar.md',
-              '`^=` accepts only `unique` collections.',
-              '`^=` accepts only collections that guarantee whole-value uniqueness; ordinary `unique` and `unique by path` both satisfy that precondition.'
-          )
-          replace(
-              'notes/decisions/ADR-080-higher-order-collection-algebra-and-updates.md',
-              '- XOR retains the laws a reader expects because it operates only on `unique` sets.',
-              '- XOR retains the laws a reader expects because it operates only on collections that guarantee whole-value uniqueness.'
-          )
-          plan = Path('.mud-patch-unique-by-plan.md')
-          plan.write_text(plan.read_text(encoding='utf-8') + '''
-
-## Findings from the second full review
-
-- Replaced the stale `AllMatches` summary that mentioned only ordinary `unique`.
-- Generalised the remaining `^=` and XOR summaries from the `unique` spelling to the whole-value-uniqueness precondition supplied by either uniqueness mode.
-''', encoding='utf-8')
-          PY
+          python /tmp/unique-by-v7-fix.py
 
           python tooling/decisions/manage_decisions.py generate
           python -m compileall -q governance specification tooling
