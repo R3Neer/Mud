@@ -51,12 +51,6 @@ replace_exact(
     'For either uniqueness mode, a collection literal contextually intended for that mode and whose collision can be proved at compile time is normalised immediately and produces a non-blocking warning. The diagnostic identifies the exact retained source occurrence and the colliding later occurrence or occurrences. Cardinality is checked after that normalisation, exactly as with ordinary `unique`. This literal-construction rule does not turn a value declaration into a coercion: an already-computed collection assigned to a declared uniqueness contract is verified rather than rewritten, in accordance with D-100. Local and derived transformations remain coercive as defined below.'
 )
 
-replace_exact(
-    'notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md',
-    'Exact-dictionary algebra retains its established left-association precedence and no-op enforcement of result value uniqueness; keyed uniqueness applies the same mechanism to projected value keys. Functional-dictionary algebra remains pointwise collection algebra.',
-    'Exact-dictionary algebra first selects candidate associations by its established key algebra and left-association precedence, then enforces any value-uniqueness criterion that the result can guarantee. Because exact intersection retains the left operand’s associated values rather than intersecting values, its uniqueness inference is intentionally not the same as collection intersection. Functional-dictionary algebra remains pointwise collection algebra.'
-)
-
 old_dict = '''In an exact dictionary, `unique by path` interprets `path` from the associated value. An insertion or replacement whose projected value key is already represented under another dictionary key is a complete no-op, just as an ordinary `[unique]` value collision already is. Exact-dictionary algebra retains its established association precedence and applies the result's value-uniqueness criterion in that order.
 
 In a functional dictionary, `unique by path` normalises the result collection of each application.'''
