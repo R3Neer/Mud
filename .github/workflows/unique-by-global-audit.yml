@@ -1,4 +1,4 @@
-name: Audit unique-by candidate globally
+name: Audit published unique-by main
 
 on:
   push:
@@ -15,24 +15,19 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Audit exact candidate
+      - name: Audit exact published main
         env:
-          CANDIDATE_SHA: 6d71f5289c0f9e51fb6cc21da450ed684a109c44
+          EXPECTED_MAIN: 6d71f5289c0f9e51fb6cc21da450ed684a109c44
           BASE_SHA: 7a1f8fcd61028aa00dd0564ca644b501f6da67d3
         shell: bash
         run: |
           set -euo pipefail
-          git checkout --detach "$CANDIDATE_SHA"
-          test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+          git fetch origin main
+          git checkout --detach origin/main
+          test "$(git rev-parse HEAD)" = "$EXPECTED_MAIN"
 
-          echo '=== exact changed paths ==='
+          echo '=== published changed paths ==='
           git diff --name-only "$BASE_SHA"..HEAD
-
-          echo '=== suspicious wording for human review ==='
-          grep -R -n -E 'requires .*`unique`|only .*`unique`|`unique` (removes|deduplicates|is retained|is preserved)|both operands are `unique`|without `unique`|`unique` sets|under `unique`|in a `unique` collection|collection `unique`' notes specification || true
-
-          echo '=== keyed uniqueness mentions ==='
-          grep -R -n --fixed-strings 'unique by' notes specification || true
 
           echo '=== forbidden retired structural forms ==='
           ! grep -R -n -E 'order-key-path|order_key_path|flag is_unique|flag make_unique|OrderKeyPathSyntax' specification
@@ -47,12 +42,16 @@ jobs:
           ! grep -R -n --fixed-strings '`^` is reserved for `unique` sets' notes specification
           ! grep -R -n --fixed-strings 'A source literal or statically materialised initial value' notes specification
 
-          echo '=== required final invariants ==='
+          echo '=== required published invariants ==='
           grep -q --fixed-strings 'unique by path' notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md
           grep -q --fixed-strings 'an already-computed collection assigned to a declared uniqueness contract is verified rather than rewritten' notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md
           grep -q --fixed-strings '`L & R` preserves the exact uniqueness mode of `L`' notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md
           grep -q --fixed-strings 'ordinary `unique` and `unique by path` both satisfy that precondition' specification/07-concrete-grammar.md
           grep -q --fixed-strings 'collections that guarantee whole-value uniqueness' notes/decisions/ADR-080-higher-order-collection-algebra-and-updates.md
+          grep -q --fixed-strings 'The question is **partially decided**' notes/questions/Q-006-c-conflicts.md
+          grep -q --fixed-strings 'D-105' notes/questions/Q-006-c-conflicts.md
 
-          echo '=== temporary infrastructure in candidate tree ==='
-          ! git ls-tree -r --name-only HEAD | grep -E 'MUD-PATCH|unique-by-(lab|v6|v7|global-audit)|fix-d086-unique-domain-lab'
+          echo '=== no patch infrastructure published ==='
+          ! git ls-tree -r --name-only HEAD | grep -E 'MUD-PATCH|unique-by-(lab|v6|v7|global-audit|crossplatform)|fix-d086-unique-domain-lab'
+          test "$(find .github/workflows -maxdepth 1 -type f -printf '%f\n' | sort)" = 'validate-tooling.yml'
+          git diff --check "$BASE_SHA"..HEAD
