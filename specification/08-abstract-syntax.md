@@ -50,6 +50,7 @@ decisions:
   - D-097
   - D-100
   - D-098
+  - D-105
 ---
 
 # 08. Surface abstract syntax
@@ -191,7 +192,6 @@ It is used for conceptually Boolean properties such as:
 - `isOrdered` of a `family`.
 - Outer mutability.
 - Capability over members.
-- Uniqueness.
 - Whether an interval is cyclic.
 
 It cannot be represented as an integer or a string.
@@ -313,13 +313,23 @@ The standard form is:
 ```text
 CollectionSpec(
     cardinality,
-    isUnique,
+    uniqueness,
     order,
     elementsMutable
 )
 ```
 
-The order is a sum:
+Uniqueness is a sum rather than a Boolean:
+
+```text
+NonUnique
+UniqueByValue
+UniqueBy(path)
+```
+
+`UniqueByValue` represents ordinary `unique`; `UniqueBy(path)` represents `unique by path`. This prevents the AST from losing the criterion required by future insertions and algebra. The path uses the shared `CollectionKeyPath` wrapper.
+
+The order is a separate sum:
 
 ```text
 Unordered
@@ -327,7 +337,7 @@ OrdinaryOrdered
 OrderedBy(path)
 ```
 
-An optional Boolean flag is not used because it would permit invalid states.
+An optional Boolean flag is not used for either axis because it would permit invalid or information-losing states.
 
 ### Cardinality
 
@@ -343,7 +353,7 @@ A written `*` remains `EffectiveCardinality` in the Surface AST. Later elaborati
 
 ### Duplicate modifiers
 
-The CST can represent `unique unique`; pre-AST validation rejects it. The AST contains only one `isUnique` property.
+The CST can represent `unique unique`, `unique unique by email` or two `unique by` criteria; pre-AST validation rejects every case with more than one uniqueness-axis modifier. The AST contains exactly one `collection_uniqueness` value.
 
 ## Aliases
 
@@ -746,7 +756,7 @@ Only `MudProject` defines canonical file serialisation by path. No other list is
 A Surface AST must not contain:
 
 - A missing cardinality value.
-- Two modifiers `unique`.
+- More than one uniqueness modifier (`unique` or `unique by ...`).
 - Two collection-order modifiers.
 - Mutable `given` parameters.
 - Duplicate metadata declarations within the same unit.
@@ -896,4 +906,4 @@ The Surface AST preserves `|`, `&`, `--` and `^` as `BinaryExpr`, because their 
 
 ## Ownership, restrictions and local adaptation of collections
 
-`has` and `has not` normalise to `HasMember` and `HasNotMember`. `value in Domain` produces `DomainRestrictionExpr`; a selection retains `SelectionExpr` with its original binding. Local specifications produce `CollectionTransformExpr` with `LocalCollectionTransform`, without `mut` capability.
+`has` and `has not` normalise to `HasMember` and `HasNotMember`. `value in Domain` produces `DomainRestrictionExpr`; a selection retains `SelectionExpr` with its original binding. Local specifications produce `CollectionTransformExpr` with `LocalCollectionTransform`, without `mut` capability. Their optional uniqueness is `OrdinaryLocalUnique` or `LocalUniqueBy(path)`, so a keyed local transformation survives projection without becoming a Boolean flag.

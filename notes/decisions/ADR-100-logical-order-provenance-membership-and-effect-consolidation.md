@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-100 — Logical order, provenance, membership and effect consolidation
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
@@ -30,7 +32,7 @@ MUD already distinguishes ordered and unordered collections, concurrent effects 
 
 An inherited stored field may refine its contract only when it is externally immutable. A stored field with outer `mut` is invariant: its contract cannot be narrowed or widened by specialisation.
 
-An inherited derived field may refine its contract. If it comes from a single original member it retains its defining expression; the descendant only strengthens the effective contract. Type, domain, cardinality, `unique` and order are admitted only when the new contract is substitutable for every relevant inherited contract.
+An inherited derived field may refine its contract. If it comes from a single original member it retains its defining expression; the descendant only strengthens the effective contract. Type, domain, cardinality, uniqueness (`unique` or `unique by path`) and order are admitted only when the new contract is substitutable for every relevant inherited contract.
 
 ### Logical order and provenance
 
@@ -42,12 +44,12 @@ Every operation whose semantics depend on order consumes the collection's logica
 
 ### Local collection transformations
 
-A collection specification applied locally to an expression transforms the temporary value. In value declarations, the contract is verificatory and never transforms the value. In derived declarations, the written nominal or structural type is checked statically, while domain, cardinality, `unique` and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and use the same normalisation as the equivalent local transformation.
+A collection specification applied locally to an expression transforms the temporary value. In value declarations, the contract is verificatory and never transforms the value. In derived declarations, the written nominal or structural type is checked statically, while domain, cardinality, uniqueness (`unique` or `unique by path`) and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and use the same normalisation as the equivalent local transformation.
 
 Local transformations are normalised, regardless of the modifiers' textual order, in this order:
 
 1. domain restriction;
-2. `unique`;
+2. uniqueness (`unique` or `unique by path`);
 3. establishing or replacing order;
 4. cardinality.
 
@@ -57,7 +59,7 @@ Local domain restriction uses the form:
 people in Adults
 ```
 
-and filters out members that do not belong to the domain. `unique` removes repeated occurrences. `ordered by path` establishes order by the indicated key and uses stable provenance to break equal-key ties. `ordered` uses the complete type's intrinsic total semantic order when one exists; if the complete type has no common total comparator, it uses the provenance of all occurrences. No order is invented between union branches by textual position, nominal name, internal tag or implementation identity.
+and filters out members that do not belong to the domain. `unique` removes later occurrences of the same whole value. `unique by path` removes later occurrences whose projected semantic key equals one already retained, using stable provenance to decide the first survivor. `ordered by path` establishes order by the indicated key and uses stable provenance to break equal-key ties. `ordered` uses the complete type's intrinsic total semantic order when one exists; if the complete type has no common total comparator, it uses the provenance of all occurrences. No order is invented between union branches by textual position, nominal name, internal tag or implementation identity.
 
 An upper cardinality bound truncates after filtering, deduplication and ordering. A lower bound requires enough members to exist and never manufactures members. A local transformation cannot introduce inner `[mut]` capability or any authority not possessed by the source expression. In a derived form, `[mut]` is therefore a capability requirement: it may be preserved through transformations retaining the semantic identity of the same `thing` values, but is never obtained by coercion.
 
@@ -82,6 +84,8 @@ When compatible concurrent insertions need to complete a provenance relation and
 The choice produces a linear extension of the causal partial order: it respects every real causal relation and decides only between concurrent occurrences. It is chosen over the complete concurrent group; it is not implemented through independent pairwise random comparisons that could introduce cycles. Once fixed, the result becomes part of stable provenance and is not redrawn when a collection is observed or later transformed to `ordered`.
 
 In a `unique` collection, equivalent concurrent insertions are merged before completing order. The surviving occurrence retains all causes jointly, without selecting a winning cause. An acyclic causal relation is induced over surviving occurrences, preserving the semantically valid causal constraints of all merged causes; only then is any missing order completed reproducibly. The representation or concrete algorithm used to obtain that induced relation is an implementation detail so long as it preserves these properties.
+
+For a `unique by path` collection, distinct concurrent insertions whose projected keys are equal do not merge and do not conflict. After any semantically equal occurrences have been merged, the same causal-respecting stable provenance order determines which equal-key occurrence is first; that occurrence survives and the later ones are discarded.
 
 ### Concurrent arithmetic normal form
 
@@ -126,7 +130,7 @@ For concurrent structural effects, canonical composition is retained:
 create → add → remove → destroy
 ```
 
-This order is declarative delta normalisation, not an observable temporal sequence. Thus `create X || destroy X` leaves `X` absent and `add A || remove A` leaves `A` removed. `unique` does not change this rule. Within a single `then`, however, textual order represents local sequentiality: `destroy X; create X` ends by requesting activation, while `create X; destroy X` ends by requesting destruction. A history such as creating, working with and destroying an entity must be expressed causally, not inferred from independent concurrent effects.
+This order is declarative delta normalisation, not an observable temporal sequence. Thus `create X || destroy X` leaves `X` absent and `add A || remove A` leaves `A` removed. The uniqueness mode does not change this rule. Within a single `then`, however, textual order represents local sequentiality: `destroy X; create X` ends by requesting activation, while `create X; destroy X` ends by requesting destruction. A history such as creating, working with and destroying an entity must be expressed causally, not inferred from independent concurrent effects.
 
 ### Conflict diagnostics
 
@@ -171,9 +175,9 @@ Conformance must cover at least:
 1. inherited refinements that strengthen guarantees and rejection of those that remove capability;
 2. persistence of logical order through filters, copies and assignments;
 3. intrinsic order of totally orderable types and provenance fallback for heterogeneous types;
-4. local normalisation domain → `unique` → order → cardinality and rejection of local `[mut]`;
+4. local normalisation domain → uniqueness (`unique` or `unique by`) → order → cardinality and rejection of local `[mut]`;
 5. `has` and `has not`, with rejection of `in` as Boolean membership;
-6. prior merging of `unique` insertions and reproducible causal-respecting linear extension;
+6. prior merging of semantically equal ordinary-`unique` insertions, first-by-stable-provenance resolution of keyed collisions, and reproducible causal-respecting linear extension;
 7. arithmetic form `(Δ, P, Q)`, valid cancellations and preserved failures;
 8. conflict between distinct assignments and between assignment and arithmetic;
 9. structural composition `create → add → remove → destroy` and its distinction from sequentiality within a `then`;

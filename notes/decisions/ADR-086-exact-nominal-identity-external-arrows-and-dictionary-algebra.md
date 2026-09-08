@@ -12,6 +12,8 @@ affects:
 
 # ADR-086 — Exact nominal identity, outer arrows and dictionary algebra
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]].
 - Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-052-pipelines-renderers-and-conformance|D-052]].
 - Affected documents: chapters 02 and 04 to 09; future chapters 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 and 47; grammar; CST; Surface AST; semantic representation after typing and elaboration; conformance cases.
@@ -314,9 +316,18 @@ It retains only keys present in exactly one operand. `^` is admitted on exact di
 - `L ^ R` retains `L`'s exclusive associations first and then `R`'s exclusive associations.
 - An `ordered by` criterion normalises the content after calculating it.
 
-### Interaction with `unique`
+### Interaction with value uniqueness
 
-In an exact `[unique]` dictionary, no value may be associated with two different keys. Set-theoretic key selection first determines the candidate associations described above. Whenever the effective result requires value uniqueness, those candidate associations are then incorporated in the operation's established order: left surviving associations first, followed by any right surviving associations. A later association that would violate `unique` is omitted as a no-op and produces no `failed`. This normalisation is part of the final dictionary value and may therefore remove a candidate key.
+Dictionary keys remain intrinsically unique. A written value-uniqueness modifier constrains associated values: ordinary `unique` compares whole values and `unique by path` compares the stable semantic key projected by `path` from each associated value, never from the dictionary key.
+
+Set-theoretic key selection first determines candidate associations. Result value-uniqueness is inferred conservatively:
+
+- `L | R` guarantees whole-value uniqueness exactly when both operands do; a keyed criterion is not automatically retained across operands.
+- `L & R` preserves the exact uniqueness mode of `L`, because it filters `L` by dictionary key and retains `L`'s associated values.
+- `L -- R` preserves the exact uniqueness mode of `L`.
+- `L ^ R` remains valid regardless of value uniqueness because it operates on dictionary-key membership. It guarantees whole-value uniqueness exactly when both operands do, and does not automatically retain a keyed criterion across the exclusive sides.
+
+Analysis may strengthen those guarantees only when it proves the required absence of cross-association collisions. Whenever the effective result has a value-uniqueness criterion, candidate associations are incorporated in the operation's established order: surviving left associations first, then surviving right associations where that operation includes them. A later association that violates ordinary `unique` or the projected `unique by` key is omitted as a no-op and produces no `failed`.
 
 ```mud
 left: Person -> Room [unique] =
@@ -327,9 +338,11 @@ right: Person -> Room [unique] =
     Marta -> RedRoom
 ```
 
-`left | right` produces `Ana -> BlueRoom, Marta -> RedRoom`.
+`left | right` produces `Ana -> BlueRoom, Marta -> RedRoom`. With `[unique by building]`, the same incorporation order omits a later association whose room projects to a `building` key already represented.
 
-The key and value types of both operands must be compatible. The result retains common types, required uniqueness, demonstrable ordering and conservatively derived cardinality.
+The asymmetry of exact intersection is intentional: a value-uniqueness guarantee of `R` alone cannot constrain the values of `L & R`, because those values come from `L`. This differs from ordinary collection intersection, whose values form a subset of both operands.
+
+The key and value types of both operands must remain compatible. Ordering and cardinality continue to be inferred independently.
 
 ## Functional-dictionary algebra
 
@@ -406,7 +419,7 @@ Analysis may narrow them using `unique`, finite domains or demonstrable overlap 
 
 ### `unique`, fallback and dependencies
 
-`unique` deduplicates the collection produced by each application. It may matter when combining two `ordered` functionals, even if redundant on each isolated operand.
+`unique` deduplicates equal whole values in the collection produced by each application. `unique by path` deduplicates equal projected result keys and retains the first stable-provenance result. Either may matter when combining two `ordered` functionals, even if redundant on each isolated operand. Pointwise functional-dictionary algebra follows the ordinary collection uniqueness rules.
 
 Fallbacks belong to each operand. `F[x]` and `G[x]` are first evaluated with their own branches and `_`; the results are then combined. No joint fallback is created or merged.
 

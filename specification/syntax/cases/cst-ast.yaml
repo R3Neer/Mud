@@ -45,7 +45,7 @@ cases:
   category: collection
   source: "thing Group {\n    members: Person [0..*, unique, ordered, mut]\n}\n"
   cst_root: MudFileSyntax
-  ast: CollectionSpec([0..*], unique=Enabled, order=OrdinaryOrdered, elementsMutable=Enabled)
+  ast: CollectionSpec([0..*], uniqueness=UniqueByValue, order=OrdinaryOrdered, elementsMutable=Enabled)
   normalizations:
   - discard-optional-commas
   produces_ast: true
@@ -56,6 +56,25 @@ cases:
   expected_diagnostics:
   - duplicate-collection-modifier
   produces_ast: false
+- id: unique-by-path
+  category: collection
+  source: "thing Registry {\n    contacts: Person [* unique by email]\n}\n"
+  cst_root: MudFileSyntax
+  ast: CollectionSpec([*..*], uniqueness=UniqueBy([email]))
+  produces_ast: true
+- id: duplicate-unique-axis
+  category: validation-before-ast
+  source: "thing Registry {\n    contacts: Person [* unique unique by email]\n}\n"
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - duplicate-collection-modifier
+  produces_ast: false
+- id: local-unique-by-path
+  category: collection
+  source: "thing Registry {\n    contacts := people [unique by email]\n}\n"
+  cst_root: MudFileSyntax
+  ast: LocalCollectionTransform(uniqueness=LocalUniqueBy([email]))
+  produces_ast: true
 - id: ordered-by-path
   category: collection
   source: "thing League {\n    teams: Team [* ordered by captain.age]\n}\n"

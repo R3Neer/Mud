@@ -489,8 +489,8 @@ syntax_nodes:
     rhs: 'identifier | "for" | "on" | "given"'
     references:
     - identifier
-  order-key-path:
-    kind: OrderKeyPathSyntax
+  collection-key-path:
+    kind: CollectionKeyPathSyntax
     rhs: field-name , { "." , field-name }
     references:
     - field-name
@@ -930,9 +930,9 @@ syntax_nodes:
     - exact-integer
   collection-modifier:
     kind: CollectionModifierSyntax
-    rhs: "\"unique\"\n      | \"ordered\" , [ \"by\" , order-key-path ]\n      | \"mut\""
+    rhs: "\"unique\" , [ \"by\" , collection-key-path ]\n      | \"ordered\" , [ \"by\" , collection-key-path ]\n      | \"mut\""
     references:
-    - order-key-path
+    - collection-key-path
   optional-comma:
     kind: OptionalCommaSyntax
     rhs: '[ "," ]'
@@ -1436,9 +1436,9 @@ syntax_nodes:
     - local-collection-modifier
   local-collection-modifier:
     kind: LocalCollectionModifierSyntax
-    rhs: '"unique" | "ordered" , [ "by" , order-key-path ]'
+    rhs: '"unique" , [ "by" , collection-key-path ] | "ordered" , [ "by" , collection-key-path ]'
     references:
-    - order-key-path
+    - collection-key-path
   quantitative-expression:
     kind: QuantitativeExpressionSyntax
     rhs: "arithmetic-expression\n        , { conversion-suffix , [ arithmetic-continuation ] }"

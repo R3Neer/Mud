@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-037 — Fields and declarative domains
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Amended by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
@@ -69,7 +71,7 @@ The entry for type is optional. If omitted, the compiler infers the type static 
 
 The inference It does not apply a default priority between compatible interpretations. This includes both the representation of numeric literals and shared contextual forms. For example, `[3]` can draw up a collection the unit interval or the unit interval `[3..3]`: both forms are retained and one declaration calculated without sufficient context to allow a single choice to be made; you must note down your type. This omission is intended for common uses where the operations and dependencies of the expression determine a single type, not to ensure that every isolated expression is inferable.
 
-The computed field always has a statically resolved type, whether declared or inferred. It has no assignable storage and does not support outer `mut`. Explicit nominal or structural types are checked statically. Domain, cardinality, `unique` and order declared in the derived form are coercive: they transform the result with the same semantics and normalisation as equivalent local transformations. `[mut]` is not a coercion that creates authority; it is an obligation based on capability and is fulfilled only when the result is already guaranteed by source-preserving transformations over the `thing` members.
+The computed field always has a statically resolved type, whether declared or inferred. It has no assignable storage and does not support outer `mut`. Explicit nominal or structural types are checked statically. Domain, cardinality, uniqueness (`unique` or `unique by path`) and order declared in the derived form are coercive: they transform the result with the same semantics and normalisation as equivalent local transformations. `[mut]` is not a coercion that creates authority; it is an obligation based on capability and is fulfilled only when the result is already guaranteed by source-preserving transformations over the `thing` members.
 
 For example, if `leftChars` has type `Char [1..5]` and `rightChars` has type `Char [0..2]`, `combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with D-039. The result does not acquire modifiers that the propagation rules cannot guarantee.
 
@@ -136,7 +138,7 @@ The parser and the AST distinguish between:
 3. Stored field outside its domain, and valid `in` on a computed field in accordance with its derived form.
 4. Cycle and invalid stochastic dependencies.
 5. Computed field with type stated, inferred and not unambiguously inferable.
-6. Rejection of `mut` external and `[mut]` such as authority manufactured in designated areas; acceptance of `[mut]` when the supplier guarantees the capacity, and `in`, cardinality, `unique` and order as derivative constraints.
+6. Rejection of `mut` external and `[mut]` such as authority manufactured in designated areas; acceptance of `[mut]` when the supplier guarantees the capacity, and `in`, cardinality, ordinary or keyed uniqueness, and order as derivative constraints.
 7. Rollback without state Invalid publication.
 8. Literal contextual `[3]` resolved by type expected and rejected without a inference unambiguous.
 9. Suggested by stored field for a demonstrably accurate calculation invariant and the absence of any suggestion when it depends on state ever-changing.
