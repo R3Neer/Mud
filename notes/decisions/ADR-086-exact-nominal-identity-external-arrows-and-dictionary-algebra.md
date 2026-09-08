@@ -243,14 +243,16 @@ b -> 2,
 c -> 3
 ```
 
-Formally:
+Before enforcing any value-uniqueness criterion carried by the result, the candidate composition is:
 
 ```text
-domain(L | R) = domain(L) ∪ domain(R)
-(L | R)[k] = L[k] if k ∈ domain(L); R[k] otherwise
+candidate-domain(L | R) = domain(L) ∪ domain(R)
+candidate(L | R)[k] = L[k] if k ∈ domain(L); R[k] otherwise
 ```
 
-It is not necessarily commutative as a dictionary value.
+If the effective result requires associated-value uniqueness, that criterion is applied afterwards in the association-incorporation order defined below. It may omit a later association, so the final key domain may be a strict subset of this candidate union.
+
+The resulting dictionary is not necessarily commutative.
 
 ### Exact intersection `&`
 
@@ -304,9 +306,9 @@ It retains only keys present in exactly one operand. `^` is admitted on exact di
 
 ### Properties and ordering
 
-- `|` and `&` are associative and commutative with respect to the key set, but not necessarily as dictionary values because of left precedence.
+- Before any associated-value uniqueness normalisation, `|` and `&` have associative and commutative candidate key sets; the resulting dictionaries need not be commutative because of left precedence.
 - `--` is neither associative nor commutative.
-- `^` is associative and commutative.
+- Before any associated-value uniqueness normalisation, `^` has an associative and commutative candidate key set. A result constraint may remove later associations and therefore make the final key set depend on incorporation order.
 - `L | R` retains `L` associations first and then adds `R`'s new keys.
 - `L & R` and `L -- R` filter `L` without reordering it.
 - `L ^ R` retains `L`'s exclusive associations first and then `R`'s exclusive associations.
@@ -314,7 +316,7 @@ It retains only keys present in exactly one operand. `^` is admitted on exact di
 
 ### Interaction with `unique`
 
-In an exact `[unique]` dictionary, no value may be associated with two different keys. The operation incorporates left associations first and then the corresponding right associations. A right association that would violate `unique` is omitted as a no-op and produces no `failed`.
+In an exact `[unique]` dictionary, no value may be associated with two different keys. Set-theoretic key selection first determines the candidate associations described above. Whenever the effective result requires value uniqueness, those candidate associations are then incorporated in the operation's established order: left surviving associations first, followed by any right surviving associations. A later association that would violate `unique` is omitted as a no-op and produces no `failed`. This normalisation is part of the final dictionary value and may therefore remove a candidate key.
 
 ```mud
 left: Person -> Room [unique] =
