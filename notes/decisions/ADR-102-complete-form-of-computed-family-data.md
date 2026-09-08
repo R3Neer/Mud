@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-102 — Complete form of computed family data
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Resolves: [[notes/questions/Q-061-f-declarable-form-of-computed-family-data|Q-061]].
 - Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]] and [[ADR-091-family-data-as-anchored-descriptors|D-091]].
 - Applies the derived form from [[ADR-037-fields-and-declarative-domains|D-037]] to computed `family` data.
@@ -32,7 +34,7 @@ name [derived-form] := value-body
 
 Computed data remains immutable, has no storage of its own, does not admit outer `mut`, has no stored default, and cannot be the target of a member assignment. The derived form describes and, where appropriate, coerces the produced value; it does not turn the data into a writable slot.
 
-Explicit type, domain, cardinality, `unique` and order reuse exactly the general semantics of D-037's computed fields. A derived form cannot manufacture inner `[mut]` capability or any other authority absent from the source value.
+Explicit type, domain, cardinality, uniqueness (`unique` or `unique by path`) and order reuse exactly the general semantics of D-037's computed fields. A derived form cannot manufacture inner `[mut]` capability or any other authority absent from the source value.
 
 The RHS admits the short expression or the `ValueBlock` already defined for computed `family` data; this decision does not modify its purity contract or its static per-member evaluation.
 

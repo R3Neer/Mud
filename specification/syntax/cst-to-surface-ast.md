@@ -30,6 +30,7 @@ decisions:
   - D-096
   - D-097
   - D-100
+  - D-105
 ---
 
 # Conversion from CST to Surface AST
@@ -239,16 +240,16 @@ produce the same `CollectionSpec`.
 Omitting modifiers results in:
 
 ```text
-isUnique = Disabled
+uniqueness = NonUnique
 order = Unordered
 elementsMutable = Disabled
 ```
 
-`ordered` produces `OrdinaryOrdered`, a neutral surface feature whose semantic meaning is determined during the elaboration. `ordered by a.b` produces `OrderedBy([a,b])`.
+`unique` produces `UniqueByValue`; `unique by a.b` produces `UniqueBy([a,b])`. Independently, `ordered` produces `OrdinaryOrdered`, a neutral surface feature whose semantic meaning is determined during elaboration, and `ordered by a.b` produces `OrderedBy([a,b])`. The two keyed forms share `CollectionKeyPath` syntax but retain different final-key semantic requirements.
 
 Pre-AST validation rejects:
 
-- Repeated `unique`.
+- More than one uniqueness-axis modifier, including ordinary `unique` combined with `unique by` or two keyed criteria.
 - Repeated `mut`.
 - More than one `ordered`.
 - Simultaneous `ordered` and `ordered by`.

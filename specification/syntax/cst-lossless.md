@@ -27,6 +27,7 @@ decisions:
   - D-087
   - D-100
   - D-096
+  - D-105
 ---
 
 # Lossless CST
@@ -303,7 +304,7 @@ A file may have a CST without producing a complete Surface AST.
 
 The validation step between the CST and AST checks conditions that should not be encoded by expanding the EBNF, including:
 
-- Duplicate collection modifiers.
+- More than one uniqueness-axis modifier (`unique` or `unique by ...`) and other duplicate collection modifiers.
 - Two incompatible `ordered` criteria.
 - Duplicate metadata declarations within the same owner, including units.
 - Missing required properties.

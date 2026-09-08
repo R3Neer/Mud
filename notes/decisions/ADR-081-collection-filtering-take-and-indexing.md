@@ -14,6 +14,8 @@ affects:
 
 # ADR-081 — Filtering, `take` and collection indexing
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
 - Modified by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
@@ -53,7 +55,7 @@ The variable is available only in the predicate. The source is captured when eva
 The result:
 
 - preserves the type and nominal identity of its members;
-- preserves multiplicity and `unique`;
+- preserves the multiplicity of surviving occurrences and the exact uniqueness criterion, including `unique by path`;
 - preserves ordering and its criterion when the source is ordered;
 - produces identities with provenance and preserves inner capability when the source guarantees it; an external derived form may require that capability, but cannot grant it when absent;
 - never acquires external mutability;
@@ -132,7 +134,7 @@ queue[1]
 queue[2..5]
 ```
 
-A singular index produces a `[1]` collection when the source cardinality proves that the position exists, and `[0..1]` otherwise. An index range produces the positions existing within the range and never fails for exceeding the end. It preserves ordering, multiplicity, member type and inner capability.
+A singular index produces a `[1]` collection when the source cardinality proves that the position exists, and `[0..1]` otherwise. An index range produces the positions existing within the range and never fails for exceeding the end. It preserves ordering, multiplicity, the exact uniqueness criterion, member type and inner capability.
 
 On an unordered collection, positional access is invalid; use `take` when the intent is to select a quantity. Dictionaries retain key indexing and `Text` retains sequence indexing; type resolution distinguishes these forms.
 
@@ -147,6 +149,10 @@ When a collection member is a union, every `ordered by` path must be total over 
 
 Unique implicit widenings, such as `Nat` to `Int`, are admitted. Nominal alias identities are not removed and no choice is made among several conversions. If an alternative needs adapting, first declare a common calculated field and order by it.
 
+### `unique by` over unions
+
+A `unique by` path over a union obeys the same totality, singularity and transitive-stability requirements as an `ordered by` path. Every reachable alternative must provide the path, but the final keys need only elaborate to one common type with semantic equality. A total semantic order is not required. The same unique implicit-widening and no-arbitrary-conversion rules apply.
+
 ## Consequences
 
 - Queries can build groups defined by a rule without introducing mutable variables or auxiliary effects.
@@ -157,7 +163,7 @@ Unique implicit widenings, such as `Nat` to `Int`, are admitted. Nominal alias i
 
 ## Verification
 
-1. Ordered and unordered filtering, `unique`, multiplicities and dictionaries.
+1. Ordered and unordered filtering, exact uniqueness criteria, multiplicities and dictionaries.
 2. Union narrowing within the predicate.
 3. `take` over ordered and unordered collections, `all D`, dictionaries and `Text`, and rejection of a bare domain as a collection-producing source.
 4. Sampling without replacement, reproducibility and snapshot stability.

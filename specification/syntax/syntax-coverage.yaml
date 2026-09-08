@@ -62,11 +62,11 @@ productions:
     ast:
       disposition: wrapper
       target: metadata_name
-  order-key-path:
-    cst: OrderKeyPathSyntax
+  collection-key-path:
+    cst: CollectionKeyPathSyntax
     ast:
       disposition: wrapper
-      target: order_key_path
+      target: collection_key_path
   role-name:
     cst: RoleNameSyntax
     ast:

@@ -69,7 +69,7 @@ module MUDSurface {
                       identifier_name* remaining)
         attributes (source_origin origin)
 
-    order_key_path = (field_name first,
+    collection_key_path = (field_name first,
                       field_name* remaining)
         attributes (source_origin origin)
 
@@ -315,7 +315,7 @@ module MUDSurface {
 
     collection_spec = (cardinality cardinality,
                        cardinality_origin origin,
-                       flag is_unique,
+                       collection_uniqueness uniqueness,
                        collection_order order,
                        flag elements_mutable)
         attributes (source_origin origin)
@@ -329,6 +329,11 @@ module MUDSurface {
 
     cardinality_origin = WrittenCardinality | OmittedCardinality
 
+    collection_uniqueness = NonUnique
+                          | UniqueByValue
+                          | UniqueBy(collection_key_path key)
+        attributes (source_origin origin)
+
     decision_mode = FirstMatch | AllMatches
 
     callable_kind = ActionCallable | RuleCallable | LookCallable
@@ -337,13 +342,15 @@ module MUDSurface {
 
     collection_order = Unordered
                      | OrdinaryOrdered
-                     | OrderedBy(order_key_path key)
+                     | OrderedBy(collection_key_path key)
         attributes (source_origin origin)
 
-    local_collection_transform = LocalCollectionTransform(cardinality? cardinality, flag make_unique, local_collection_order? order)
+    local_collection_transform = LocalCollectionTransform(cardinality? cardinality, local_collection_uniqueness? uniqueness, local_collection_order? order)
         attributes (source_origin origin)
 
-    local_collection_order = OrdinaryLocalOrder | LocalOrderedBy(order_key_path key)
+    local_collection_uniqueness = OrdinaryLocalUnique | LocalUniqueBy(collection_key_path key)
+
+    local_collection_order = OrdinaryLocalOrder | LocalOrderedBy(collection_key_path key)
 
     -- -----------------------------------------------------------------
     -- Participants and givens

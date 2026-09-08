@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-046 — Algebra and conflicts of effects
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Amended by: [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
 - Expanded by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]]
 - Amended by: [[ADR-096-modules-callables-look-message-and-activation|D-096]].
@@ -33,7 +35,7 @@ The MUD effects catalogue includes:
 - allocation `=`;
 - cumulative addition and subtraction;
 - cumulative multiplication;
-- union, intersection, symmetric difference `unique` and cumulative differences;
+- union, intersection, symmetric difference over value-unique collections and cumulative differences;
 - `add` and `remove` regarding collections or properties;
 - `create` and `destroy`;
 - invocations of `action` or `subaction` within any semantic `then` context; the call sequentially incorporates its effects into the private delta in accordance with D-096.
@@ -54,7 +56,7 @@ Minimum standards:
 | concatenations `|=` consistent data on `Text` | compatible only with a specific total order amount |
 | updates `&=` homogeneous | intersection of operands |
 | updates `--=` homogeneous | sum of removed multiplicities and final truncation |
-| updates `^=` consistent data on `unique` | symmetric difference by parity |
+| updates `^=` consistent data with a whole-value uniqueness guarantee | symmetric difference by parity |
 | different types of update collection | conflict |
 
 For structural purposes, the following apply D-023, D-026 and D-054:
@@ -63,7 +65,7 @@ For structural purposes, the following apply D-023, D-026 and D-054:
 - withdrawals precede destruction;
 - `create` and `destroy` shells leave the target destroyed for the wave;
 - several activations of the same canonical definition when absent, they consolidate idempotently;
-- several additions to it value to one collection `unique` are idempotently consolidated into a single presence;
+- repeated additions of one whole value to a `unique` collection are idempotently consolidated into one presence; in `unique by path`, additions sharing a projected key retain the earliest stable-provenance occurrence and do not conflict;
 - each `then` and all consolidation where possible, they should preserve cardinalities statically.
 
 A conflict It is certainly true that the compiler proves this to be inevitable error static. If it demonstrates that it is possible but not inevitable, it issues a warning. If it demonstrates that the destinations cannot match or that the effects consolidate in a compatible manner, it does not issue diagnostic from conflict. If a conflict Whether it is signalled or cannot be determined statically, it occurs during a resolution, the runtime produces `failed` with a full rollback.

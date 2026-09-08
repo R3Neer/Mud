@@ -14,6 +14,8 @@ affects:
 
 # ADR-080 — Higher algebra and collection updates
 
+- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
+
 - Modified by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Extended by: [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
@@ -41,7 +43,7 @@ A\mathbin{\odot}B
 [\,a\mathbin{\odot}b\mid a\in A,\ b\in B\,].
 $$
 
-The collection retains one occurrence for each pair of occurrences. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, the cardinality before any `unique` normalisation is:
+The collection retains one occurrence for each pair of occurrences. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, the cardinality before any uniqueness normalisation is:
 
 $$
 [\ell_A\ell_B..u_Au_B].
@@ -53,7 +55,7 @@ Two operands whose upper bounds may exceed one do not permit implicit arithmetic
 
 When unions are involved, every possible pair of alternatives must support the member operator and their results must form a well-formed union type. Prior narrowing may remove impossible pairs.
 
-If only one operand can be multiple, the result preserves its order whenever that order was observable. `unique` is retained only when analysis demonstrates that the operation cannot collapse distinct members; otherwise the result retains ordinary multiplicity.
+If only one operand can be multiple, the result preserves its order whenever that order was observable. Whole-value uniqueness is retained only when analysis demonstrates that the operation cannot collapse distinct members; otherwise the result retains ordinary multiplicity. A keyed criterion `unique by path` is preserved only when the result still consists of members for which the same path is meaningful and analysis proves that no new projected-key collision can be introduced; otherwise any safe guarantee is degraded to ordinary whole-value uniqueness.
 
 ### Collection difference
 
@@ -77,7 +79,7 @@ $$
 
 ### Symmetric difference
 
-`^` and `^=` are admitted only when all their effective operands are `unique` collections. They then retain ordinary set symmetric difference and its associative, commutative and involutive laws.
+`^` and `^=` are admitted only when all their effective operands guarantee whole-value uniqueness. Ordinary `unique` and `unique by path` both satisfy that precondition. They retain ordinary set symmetric difference by whole value and its associative, commutative and involutive laws; a keyed criterion is not generally preserved across exclusive sides.
 
 The binary absolute difference of two multisets remains expressible without introducing a misleadingly associative operator:
 
@@ -107,7 +109,7 @@ Homogeneous updates to the same target are consolidated as follows when observab
 | `|=` on a collection | Union of all operands; idempotent |
 | `&=` | Intersection of all operands; idempotent |
 | `--=` | Sum of removed multiplicities and a single truncation at zero |
-| `^=` | Symmetric difference by parity; only over `unique` |
+| `^=` | Symmetric difference by parity; only with a whole-value uniqueness guarantee |
 
 Mixing different update classes on the same target is a conflict unless another decision expressly fixes a consolidation. Preserving cardinality, domain, order and uniqueness remains a static obligation of each `then` and of every possible consolidation.
 
@@ -117,7 +119,7 @@ For `Text`, `|=` concatenates sequentially like `|`. Several concurrent concaten
 
 ### Typed overloading
 
-`|=`, `&=` and `^=` follow the symbolic operation resolved by types, without themselves extending the domains of `|`, `&` or `^`. In particular, they do not replace word boolean operators. `|=` may denote `Text` concatenation or collection union; `&=` and `^=` denote collection operations wherever defined, and `^=` retains the `unique` requirement. `--=` denotes collection difference only.
+`|=`, `&=` and `^=` follow the symbolic operation resolved by types, without themselves extending the domains of `|`, `&` or `^`. In particular, they do not replace word boolean operators. `|=` may denote `Text` concatenation or collection union; `&=` and `^=` denote collection operations wherever defined, and `^=` retains the whole-value uniqueness requirement, which may be supplied by ordinary or keyed uniqueness. `--=` denotes collection difference only.
 
 ## Consequences
 
@@ -125,7 +127,7 @@ For `Text`, `|=` concatenates sequentially like `|`. Several concurrent concaten
 - Arithmetic over a multiple collection and an optional or unit collection has uniform meaning.
 - `empty` absorbs all lifted arithmetic without evaluating nonexistent pairs.
 - Numeric subtraction and collection difference no longer compete for `-`.
-- XOR retains the laws a reader expects because it operates only on `unique` sets.
+- XOR retains the laws a reader expects because it operates only on collections that guarantee whole-value uniqueness.
 - The new compound operators preserve algebraic intent through to the IR.
 
 ## Verification
