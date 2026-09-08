@@ -1,0 +1,349 @@
+name: Build unique-by candidate v6
+
+on:
+  push:
+    branches:
+      - chatgpt/unique-by-v6-control-20260908-7a1f8fc
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: tooling/requirements.txt
+
+      - name: Install official tooling dependencies
+        run: python -m pip install -r tooling/requirements.txt
+
+      - name: Rebuild and validate unique-by from current main
+        env:
+          BASE_SHA: 7a1f8fcd61028aa00dd0564ca644b501f6da67d3
+          OLD_BASE_SHA: a1a85b90592e4621d8ddc28af4a2b03bb6f54e59
+          V5_SHA: 71b45ddeb4292144cffa25e557cf3529bcd12d15
+          CANDIDATE_BRANCH: chatgpt/unique-by-candidate-v6-20260908-7a1f8fc
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git show origin/chatgpt/unique-by-work-20260908-a1a85b9:notes/MUD-PATCH-UNIQUE-BY-COHERENCE.md > /tmp/MUD-PATCH-UNIQUE-BY-COHERENCE.md
+          git checkout --detach "$BASE_SHA"
+          git switch -C "$CANDIDATE_BRANCH"
+          cp /tmp/MUD-PATCH-UNIQUE-BY-COHERENCE.md .mud-patch-unique-by-plan.md
+
+          # Reuse every reviewed v5 surface except D-086, whose current-main fix must be preserved.
+          mapfile -t changed_paths < <(git diff --name-only "$OLD_BASE_SHA" "$V5_SHA")
+          reuse_paths=()
+          for path in "${changed_paths[@]}"; do
+            if [[ "$path" != "notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md" ]]; then
+              reuse_paths+=("$path")
+            fi
+          done
+          git checkout "$V5_SHA" -- "${reuse_paths[@]}"
+
+          python - <<'PY'
+          from pathlib import Path
+
+          ROOT = Path('.')
+
+          def read(path):
+              return (ROOT / path).read_text(encoding='utf-8')
+
+          def write(path, text):
+              (ROOT / path).write_text(text, encoding='utf-8')
+
+          def replace_exact(path, old, new, count=1):
+              text = read(path)
+              actual = text.count(old)
+              if actual != count:
+                  raise SystemExit(f'{path}: expected {count} occurrence(s), found {actual}: {old[:140]!r}')
+              write(path, text.replace(old, new, count))
+
+          def replace_if_present(path, old, new):
+              text = read(path)
+              if old in text:
+                  write(path, text.replace(old, new))
+
+          def insert_after(path, marker, addition, count=1):
+              text = read(path)
+              actual = text.count(marker)
+              if actual != count:
+                  raise SystemExit(f'{path}: expected {count} marker occurrence(s), found {actual}: {marker[:140]!r}')
+              write(path, text.replace(marker, marker + addition, count))
+
+          def replace_between(path, start, end, replacement):
+              text = read(path)
+              i = text.find(start)
+              if i < 0:
+                  raise SystemExit(f'{path}: start marker missing: {start!r}')
+              j = text.find(end, i + len(start))
+              if j < 0:
+                  raise SystemExit(f'{path}: end marker missing: {end!r}')
+              write(path, text[:i] + replacement + text[j:])
+
+          # D-105: contextual literal normalisation, not declaration-contract coercion.
+          replace_exact(
+              'notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md',
+              'A source literal or statically materialised initial value whose key collision can be proved at compile time is normalised immediately and produces a non-blocking warning. The diagnostic identifies the exact retained source occurrence and the colliding later occurrence or occurrences. Cardinality is checked after that normalisation, exactly as with ordinary `unique`.',
+              'For either uniqueness mode, a collection literal contextually intended for that mode and whose collision can be proved at compile time is normalised immediately and produces a non-blocking warning. The diagnostic identifies the exact retained source occurrence and the colliding later occurrence or occurrences. Cardinality is checked after that normalisation, exactly as with ordinary `unique`. This literal-construction rule does not turn a value declaration into a coercion: an already-computed collection assigned to a declared uniqueness contract is verified rather than rewritten, in accordance with D-100. Local and derived transformations remain coercive as defined below.'
+          )
+
+          # D-105: exact dictionaries need rules based on retained associations, not collection intersection by value.
+          replace_exact(
+              'notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md',
+              'Exact-dictionary algebra retains its established left-association precedence and no-op enforcement of result value uniqueness; keyed uniqueness applies the same mechanism to projected value keys. Functional-dictionary algebra remains pointwise collection algebra.',
+              'Exact-dictionary algebra first selects candidate associations by its established key algebra and left-association precedence, then enforces any value-uniqueness criterion that the result can guarantee. Because exact intersection retains the left operand’s associated values rather than intersecting values, its uniqueness inference is intentionally not the same as collection intersection. Functional-dictionary algebra remains pointwise collection algebra.'
+          )
+          old_dict = '''In an exact dictionary, `unique by path` interprets `path` from the associated value. An insertion or replacement whose projected value key is already represented under another dictionary key is a complete no-op, just as an ordinary `[unique]` value collision already is. Exact-dictionary algebra retains its established association precedence and applies the result's value-uniqueness criterion in that order.
+
+In a functional dictionary, `unique by path` normalises the result collection of each application.'''
+          new_dict = '''In an exact dictionary, `unique by path` interprets `path` from the associated value. An insertion or replacement whose projected value key is already represented under another dictionary key is a complete no-op, just as an ordinary `[unique]` value collision already is. A statically provable collision inside a contextual exact-dictionary literal follows the same first-association warning rule.
+
+For exact-dictionary algebra, let `N`, `V` and `K(p)` have the meanings defined for collections, while remembering that the operators first select associations by **dictionary key**:
+
+- `L | R` guarantees `V` exactly when both operands guarantee at least `V`; it does not automatically retain `K(p)`, even for the same path, because distinct values introduced from opposite operands may share that projected key.
+- `L & R` preserves the exact uniqueness mode of `L`, because it filters `L` by key and retains `L`'s associated values. A uniqueness guarantee of `R` alone says nothing about those retained values.
+- `L -- R` preserves the exact uniqueness mode of `L` for the same reason.
+- `L ^ R` remains admitted regardless of associated-value uniqueness because exact symmetric difference is defined on dictionary keys. Its result guarantees `V` exactly when both operands guarantee at least `V`; otherwise it is `N`. It does not automatically retain `K(p)` across the two exclusive sides.
+
+Analysis may strengthen these conservative guarantees only when it proves the necessary absence of projected-value collisions. Whenever the inferred exact-dictionary result has a value-uniqueness criterion, candidate associations are incorporated in D-086's established order and any later association violating that criterion is omitted as a no-op. In particular, the exact-dictionary `&` rule deliberately differs from ordinary collection `&`: the former keeps left associated values, while the latter is a subset of both operand values.
+
+In a functional dictionary, `unique by path` normalises the result collection of each application.'''
+          replace_exact('notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md', old_dict, new_dict)
+          replace_exact(
+              'notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md',
+              '10. Exact-dictionary projected-value collision no-op and functional `AllMatches` keyed result normalisation.',
+              '10. Exact-dictionary projected-value collision no-op, result-uniqueness inference for `|`, `&`, `--` and `^`, and functional `AllMatches` keyed result normalisation.'
+          )
+
+          # D-086: start from the fixed current-main version and add the new exact semantics precisely.
+          p = 'notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md'
+          insert_after(p, '# ADR-086 — Exact nominal identity, outer arrows and dictionary algebra\n', '\n- Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].\n')
+          replace_between(
+              p,
+              '### Interaction with `unique`\n\n',
+              '## Functional-dictionary algebra',
+              '''### Interaction with value uniqueness
+
+Dictionary keys remain intrinsically unique. A written value-uniqueness modifier constrains associated values: ordinary `unique` compares whole values and `unique by path` compares the stable semantic key projected by `path` from each associated value, never from the dictionary key.
+
+Set-theoretic key selection first determines candidate associations. Result value-uniqueness is inferred conservatively:
+
+- `L | R` guarantees whole-value uniqueness exactly when both operands do; a keyed criterion is not automatically retained across operands.
+- `L & R` preserves the exact uniqueness mode of `L`, because it filters `L` by dictionary key and retains `L`'s associated values.
+- `L -- R` preserves the exact uniqueness mode of `L`.
+- `L ^ R` remains valid regardless of value uniqueness because it operates on dictionary-key membership. It guarantees whole-value uniqueness exactly when both operands do, and does not automatically retain a keyed criterion across the exclusive sides.
+
+Analysis may strengthen those guarantees only when it proves the required absence of cross-association collisions. Whenever the effective result has a value-uniqueness criterion, candidate associations are incorporated in the operation's established order: surviving left associations first, then surviving right associations where that operation includes them. A later association that violates ordinary `unique` or the projected `unique by` key is omitted as a no-op and produces no `failed`.
+
+```mud
+left: Person -> Room [unique] =
+    Ana -> BlueRoom
+
+right: Person -> Room [unique] =
+    Luis -> BlueRoom,
+    Marta -> RedRoom
+```
+
+`left | right` produces `Ana -> BlueRoom, Marta -> RedRoom`. With `[unique by building]`, the same incorporation order omits a later association whose room projects to a `building` key already represented.
+
+The asymmetry of exact intersection is intentional: a value-uniqueness guarantee of `R` alone cannot constrain the values of `L & R`, because those values come from `L`. This differs from ordinary collection intersection, whose values form a subset of both operands.
+
+The key and value types of both operands must remain compatible. Ordering and cardinality continue to be inferred independently.
+
+'''
+          )
+          replace_exact(
+              p,
+              '`unique` deduplicates the collection produced by each application. It may matter when combining two `ordered` functionals, even if redundant on each isolated operand.',
+              '`unique` deduplicates equal whole values in the collection produced by each application. `unique by path` deduplicates equal projected result keys and retains the first stable-provenance result. Either may matter when combining two `ordered` functionals, even if redundant on each isolated operand. Pointwise functional-dictionary algebra follows the ordinary collection uniqueness rules.'
+          )
+
+          # D-039: remove whole-value-only shorthand where it purports to describe the whole uniqueness axis.
+          p = 'notes/decisions/ADR-039-collections-and-dictionaries.md'
+          replace_if_present(p, 'Symmetric difference of sets `unique`', 'Symmetric difference of whole-value-unique sets')
+          replace_if_present(p, '`A ^ B` (`unique`)', '`A ^ B` (whole-value-unique)')
+          replace_if_present(p, 'If both operands are `unique`, these definitions correspond to the union, ordinary intersection and difference of sets.', 'If both operands guarantee whole-value uniqueness, these definitions correspond to the union, ordinary intersection and difference of sets.')
+          replace_if_present(p, 'It has been ruled out that `unique` implicit, both for all collections and depending on the type from member.', 'It has been ruled out that any uniqueness mode be implicit, either for all collections or depending on the member type.')
+          replace_if_present(p, 'The general rule is that the absence of `unique` It retains its multiplicity, yet its presence commands a singular occurrence by value.', 'The general rule is that absence of a uniqueness mode retains multiplicity. Ordinary `unique` retains one occurrence per whole value; `unique by path` retains one occurrence per projected semantic key.')
+          replace_if_present(p, 'rejection of `^` without `unique`', 'rejection of `^` without a whole-value uniqueness guarantee')
+          replace_if_present(p, 'Propagation of `unique`, `ordered` and interior capacity `mut`', 'Propagation of uniqueness criteria, `ordered` and interior capacity `mut`')
+          replace_if_present(p, 'and `unique` global values.', 'and associated-value uniqueness criteria.')
+
+          # Concrete grammar: AllMatches summary must cover keyed uniqueness too.
+          replace_if_present(
+              'specification/07-concrete-grammar.md',
+              'Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results.',
+              'Without `ordered`, every ordinary branch is evaluated and all results are obtained; the effective uniqueness modifier then normalises the result under its criterion: ordinary `unique` removes repeated whole values and `unique by path` removes later equal-key results.'
+          )
+
+          # Other current decisions: generalise stale whole-value-only summaries.
+          replace_if_present('notes/decisions/ADR-049-operators-precedence-and-standardised-intervals.md',
+                             'On collections, `^` requires `unique` operands;',
+                             'On collections, `^` requires operands that guarantee whole-value uniqueness;')
+
+          p = 'notes/decisions/ADR-080-higher-order-collection-algebra-and-updates.md'
+          replace_if_present(p, '`^` is reserved for `unique` sets.', '`^` is reserved for collections that guarantee whole-value uniqueness.')
+          replace_if_present(p, '`unique` / non-`unique`', 'ordinary/keyed uniqueness modes and non-unique collections')
+          replace_if_present(p, '`^` only on `unique`', '`^` only with a whole-value uniqueness guarantee')
+
+          p = 'notes/decisions/ADR-081-collection-filtering-take-and-indexing.md'
+          replace_if_present(p, 'Ordered and unordered filtering, `unique`, multiplicities and dictionaries.', 'Ordered and unordered filtering, exact uniqueness criteria, multiplicities and dictionaries.')
+
+          p = 'notes/decisions/ADR-037-fields-and-declarative-domains.md'
+          replace_if_present(p, 'and `in`, cardinality, `unique` and order as derivative constraints.', 'and `in`, cardinality, ordinary or keyed uniqueness, and order as derivative constraints.')
+
+          p = 'notes/decisions/ADR-075-enumerable-domains-all-and-derived-value-form.md'
+          replace_if_present(p, 'Inference of computed lists, multiplicity and `unique`.', 'Inference of computed lists, multiplicity, ordinary uniqueness and keyed uniqueness.')
+
+          p = 'notes/decisions/ADR-085-functional-dictionaries-metadata-and-structured-activation.md'
+          replace_if_present(p, 'redundant `unique` in `FirstMatch`;', 'redundant uniqueness modifier in `FirstMatch`;')
+          replace_if_present(p, 'Missing exact query, operational association and `unique` values as a no-op.', 'Missing exact query, operational association and ordinary or keyed associated-value uniqueness as a no-op.')
+
+          p = 'notes/decisions/ADR-100-logical-order-provenance-membership-and-effect-consolidation.md'
+          replace_if_present(p, '`unique` does not change this rule.', 'The uniqueness mode does not change this rule.')
+          replace_if_present(p, 'prior merging of `unique` insertions and reproducible causal-respecting linear extension;', 'prior merging of semantically equal ordinary-`unique` insertions, first-by-stable-provenance resolution of keyed collisions, and reproducible causal-respecting linear extension;')
+
+          # Update the temporary audit plan with the material review findings before revalidation.
+          plan = Path('.mud-patch-unique-by-plan.md')
+          plan_text = plan.read_text(encoding='utf-8')
+          plan_text += '''
+
+## Findings from the first full candidate review
+
+- Corrected a pre-existing D-086 contradiction about candidate versus final key domains in an independent published commit before rebuilding this candidate.
+- Exact-dictionary `L & R` must preserve the left operand's value-uniqueness mode; it cannot inherit a right-only keyed criterion because it retains left associated values.
+- Contextual collection literals normalise collisions like ordinary `unique`, but value-declaration contracts remain verificatory under D-100 and do not coerce an already-computed collection.
+- Removed current-state prose that used ordinary `unique` as if it named the entire uniqueness axis.
+'''
+          plan.write_text(plan_text, encoding='utf-8')
+
+          # Specific fixed-point residue assertions.
+          stale = {
+              'notes/decisions/ADR-039-collections-and-dictionaries.md': [
+                  'Symmetric difference of sets `unique`',
+                  '`A ^ B` (`unique`)',
+                  'rejection of `^` without `unique`',
+              ],
+              'specification/07-concrete-grammar.md': [
+                  'Without `ordered`, every ordinary branch is evaluated and all results are obtained; `unique` removes duplicate results.',
+              ],
+              'notes/decisions/ADR-049-operators-precedence-and-standardised-intervals.md': [
+                  'On collections, `^` requires `unique` operands',
+              ],
+              'notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md': [
+                  'A source literal or statically materialised initial value',
+              ],
+          }
+          for path, fragments in stale.items():
+              text = read(path)
+              for fragment in fragments:
+                  if fragment in text:
+                      raise SystemExit(f'{path}: stale whole-value-only/current-state fragment remains: {fragment}')
+
+          # Mechanical retired forms must be completely absent from the normative syntax surfaces.
+          retired = {
+              'specification/syntax/mud-surface-ast.asdl': ['flag is_unique', 'flag make_unique', 'order_key_path'],
+              'specification/grammar/mud.ebnf': ['order-key-path'],
+              'specification/syntax/mud-syntax-kinds.yaml': ['order-key-path', 'OrderKeyPathSyntax'],
+              'specification/syntax/syntax-coverage.yaml': ['order-key-path', 'OrderKeyPathSyntax', 'order_key_path'],
+          }
+          for path, fragments in retired.items():
+              text = read(path)
+              for fragment in fragments:
+                  if fragment in text:
+                      raise SystemExit(f'{path}: retired structural form remains: {fragment}')
+
+          # Positive invariants demanded by the accepted semantics and review.
+          d105 = read('notes/decisions/ADR-105-keyed-uniqueness-by-stable-path.md')
+          required_d105 = [
+              'an already-computed collection assigned to a declared uniqueness contract is verified rather than rewritten',
+              '`L & R` preserves the exact uniqueness mode of `L`',
+              '`L ^ R` remains admitted regardless of associated-value uniqueness',
+              'the exact-dictionary `&` rule deliberately differs from ordinary collection `&`',
+          ]
+          for fragment in required_d105:
+              if fragment not in d105:
+                  raise SystemExit(f'D-105 missing reviewed invariant: {fragment}')
+
+          d086 = read('notes/decisions/ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra.md')
+          for fragment in [
+              'candidate-domain(L | R)',
+              '`L & R` preserves the exact uniqueness mode of `L`',
+              'A value-uniqueness guarantee of `R` alone cannot constrain the values of `L & R`',
+          ]:
+              if fragment not in d086:
+                  raise SystemExit(f'D-086 missing reviewed invariant: {fragment}')
+
+          # Nominal HIR remains intentionally free of semantic collection-shape detail.
+          hir = read('specification/names/mud-nominal-hir.asdl')
+          for forbidden in ('collection_uniqueness', 'UniqueBy', 'collection_key_path'):
+              if forbidden in hir:
+                  raise SystemExit(f'nominal HIR unexpectedly contains semantic uniqueness detail: {forbidden}')
+          PY
+
+          # D-105 already came with the regenerated index from v5; regenerate from this exact base anyway.
+          python tooling/decisions/manage_decisions.py generate
+
+          python -m compileall -q governance specification tooling
+          python -m unittest discover -s tooling/tests
+          python -m unittest discover -s governance -p "test_*.py"
+          python tooling/decisions/manage_decisions.py validate --colour never --ascii
+          python tooling/questions/validate_questions.py validate --colour never --ascii
+          python governance/validate_temporaries.py --colour never --ascii
+          python governance/validate_spec_editorial.py --colour never --ascii
+          python specification/grammar/validate_grammar.py --colour never --ascii
+          python specification/syntax/validate_syntax_model.py --colour never --ascii
+          markdown-export --colour never --ascii list-profiles --root . --config markdown-export.toml >/dev/null
+          git diff --check
+
+          # Exact surface: same intended semantic files as v5, with D-086 rebuilt from current main.
+          git status --short
+          test -f .mud-patch-unique-by-plan.md
+          ! git ls-files --error-unmatch .mud-patch-unique-by-plan.md >/dev/null 2>&1
+          if git diff --name-only | grep -E '^\.github/|MUD-PATCH-UNIQUE-BY-COHERENCE'; then
+            echo 'temporary infrastructure leaked into candidate diff' >&2
+            exit 1
+          fi
+
+          # No positive retired spellings anywhere in specification.
+          ! grep -R --line-number --fixed-strings 'flag is_unique' specification
+          ! grep -R --line-number --fixed-strings 'flag make_unique' specification
+          ! grep -R --line-number --fixed-strings 'order-key-path' specification
+          ! grep -R --line-number --fixed-strings 'order_key_path' specification
+
+          git add notes/decisions notes/questions specification
+          if git diff --cached --name-only | grep -E '^\.github/|MUD-PATCH'; then
+            echo 'temporary infrastructure was staged' >&2
+            exit 1
+          fi
+          git diff --cached --check
+
+          git config user.name 'ChatGPT MUD patch'
+          git config user.email 'chatgpt-mud-patch@users.noreply.github.com'
+          git commit -m 'spec(collections): add keyed uniqueness by stable path' \
+            -m 'Context:\n- Add unique by path as a first-by-provenance keyed uniqueness mode while preserving ordinary unique.\n\nChanges:\n- Define D-105 and propagate collection, dictionary, concurrency and algebra semantics.\n- Generalise grammar/CST key paths and represent uniqueness explicitly in the Surface AST.\n- Add syntax cases for keyed and duplicate-axis forms.\n\nValidation:\n- decision/question/editorial/temporary gates\n- grammar and syntax-model validators\n- tooling and governance tests\n- git diff --check'
+
+          # Validate exact committed tree after the last correction.
+          python tooling/decisions/manage_decisions.py validate --colour never --ascii
+          python tooling/questions/validate_questions.py validate --colour never --ascii
+          python governance/validate_temporaries.py --colour never --ascii
+          python governance/validate_spec_editorial.py --colour never --ascii
+          python specification/grammar/validate_grammar.py --colour never --ascii
+          python specification/syntax/validate_syntax_model.py --colour never --ascii
+          git diff --check "$BASE_SHA"..HEAD
+          test -z "$(git status --porcelain --untracked-files=no)"
+          test -f .mud-patch-unique-by-plan.md
+          ! git ls-files --error-unmatch .mud-patch-unique-by-plan.md >/dev/null 2>&1
+
+          echo "candidate_sha=$(git rev-parse HEAD)"
+          git push origin HEAD:"refs/heads/$CANDIDATE_BRANCH"
