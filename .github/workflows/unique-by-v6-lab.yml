@@ -35,6 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           cp .github/scripts/unique-by-v6-transform.py /tmp/unique-by-v6-transform.py
+          sed -i 's/A value-uniqueness guarantee of `R` alone/value-uniqueness guarantee of `R` alone/' /tmp/unique-by-v6-transform.py
           git show origin/chatgpt/unique-by-work-20260908-a1a85b9:notes/MUD-PATCH-UNIQUE-BY-COHERENCE.md > /tmp/MUD-PATCH-UNIQUE-BY-COHERENCE.md
 
           git checkout --detach "$BASE_SHA"
