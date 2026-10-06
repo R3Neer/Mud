@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-068 — Universal `Thing` and intrinsic name
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]], [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-073-explicit-but-redundant-as-thing|D-073]]
 - Amends: [[notes/decisions/ADR-014-unified-ontology-of-thing|D-014]], [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|D-015]], [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|D-018]], [[notes/decisions/ADR-035-organisation-names-using-and-anchors|D-035]], [[notes/decisions/ADR-036-participants-recipients-and-calls|D-036]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Related question: [[notes/questions/Q-041-o-thing-ontology|Q-041]]
@@ -43,7 +45,7 @@ Interpolating a `thing` currently uses its nominal name. That value is stable fo
 
 Its canonical anchor is `thing::Thing`; `Thing~anchor` produces that reflective value. The anchor belongs to the language and is not a path declarable by a programme.
 
-This decision does not select a default member for positive-minimum cardinality positions typed `Thing`. `Thing` is abstract and membership remains strict; Q-047 remains pending on when an explicit initialiser or other valid selection is required.
+Thing is abstract and membership remains strict. Positive-minimum collections require explicit values; the world supplies no default member.
 
 ### Standard `~name` metadata
 

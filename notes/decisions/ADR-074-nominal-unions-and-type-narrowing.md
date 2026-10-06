@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-074 — Nominal unions and type narrowing
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]] and [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Adjusted to the phase boundary of [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 
@@ -77,13 +79,13 @@ Simple alias definition retains `:=`; `:` remains value annotation.
 
 ### Defaults
 
-A union that cannot select one unique nominal default requires an explicit initialiser in every context that must materialise a value. The textual order of alternatives never selects the default.
+Stored fields require explicit initialisation and required components must be supplied. Unions select no alternative by textual order or type default.
 
 ## Consequences
 
 - Elaboration determines normalised nominal alternatives and the alternative selected by each incorporation; later representations must retain or reconstruct them.
 - Boolean analysis needs flow-sensitive refined environments.
-- D-017 must distinguish valid types from types materialisable without an initialiser.
+- Type validity is distinct from supplying the values required by storage or construction.
 - `|` is disambiguated by syntactic context between type unions and its value-level uses.
 
 ## Verification

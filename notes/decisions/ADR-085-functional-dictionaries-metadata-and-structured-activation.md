@@ -13,6 +13,8 @@ affects:
 
 # ADR-085 — Functional dictionaries, metadata and structured activation
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
@@ -213,7 +215,7 @@ Cardinality omission is no longer universally normalised to `[1]` before the fie
 - A unit value infers `[1]`, a literal collection of three members infers `[3]` and `empty` infers `[0]`.
 - The internal contents of a dictionary do not alter external cardinality: a dictionary is one value even when it contains several associations or branches.
 - In a field with external mutability, omission retains `[1]`.
-- A stored field without an initialiser uses the ordinary rule for its type and default, except for explicit exceptions such as `Any`.
+- Every stored field declaration requires an explicit initialiser, including Any.
 - Calculated fields `:=` retain the form inferred from their expression or the declared form.
 
 When the inferred cardinality of an immutable field differs from `[1]`, the compiler emits a non-blocking suggestion with a correction that materialises the exact cardinality in the source text.
@@ -265,7 +267,7 @@ The AST retains a single `StartSet(contributions)` sequence; elaboration checks 
 - retains narrowing within the functional branch where it was proven;
 - has no universal default.
 
-`Any` is an explicit exception to D-017. Every stored field of type `Any` requires an explicit initialiser.
+Every stored field of type Any requires an explicit initialiser under the general storage rule.
 
 ### Postfix metadata
 

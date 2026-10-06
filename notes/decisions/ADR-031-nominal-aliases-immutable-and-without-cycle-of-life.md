@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-031 — Nominal aliases, immutable and without cycle of life
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
 - Expanded by: [[ADR-074-nominal-unions-and-type-narrowing|D-074]]
 
@@ -66,10 +68,7 @@ Each component:
 6. It can accommodate indoor use `[mut]` on the `thing` contained directly by a collection.
 7. You can declare a default value by means of `=`.
 
-The explicit default must be a pure expression that can be evaluated statically and must satisfy the component's type, domain and collection specification. The default value of a structural alias is obtained component by component:
-
-1. Explicit default for the component, if one exists.
-2. Default for the type actual component in accordance with D-017, in another case.
+An explicit component default must be pure, statically evaluable and satisfy the complete component contract. Construction supplies each component or uses its explicit effective default; a component without one is required. No value is selected from its type.
 
 The defaults do not remove any components from the representation. After constructing a value, everyone is present and takes part as normal, in a spirit of equality and order.
 
@@ -137,7 +136,7 @@ The values are compared by type nominal value and content. The declaration It is
 1. Alias simply by means of `:=`.
 2. Alias from collection and using a dictionary `:=`.
 3. Structural alias with components arranged in order.
-4. Component with an explicit default and a default derived from its type.
+4. Required component and component with an explicit default.
 5. Rejection of a default value that is impure, non-static, or outside its type, domain or collection specification.
 6. Rejection of `mut` external and acceptance of `[mut]` internal aspect of a collective component of `thing`.
 7. Rejection of a partial update regarding a branch alias and agreement to reconstruction/write-back when the path ends up in writable storage.

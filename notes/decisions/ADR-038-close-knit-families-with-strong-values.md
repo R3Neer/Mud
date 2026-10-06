@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-038 — Close-knit families with strong values
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[ADR-102-complete-form-of-computed-family-data|D-102]].
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
@@ -106,13 +108,7 @@ name [derived-form] := value-body
 
 All members follow exactly this pattern. A member's optional sub-block contains only assignments replacing stored-data defaults; it cannot declare new data, omit the assigned datum's name, modify its type, domain or collection specification, or assign a calculated value.
 
-For each piece of data in each member, the value It is obtained in the following order:
-
-1. Explicit assignment in the sub-block of the member.
-2. Explicit default for the declaration of the data.
-3. Default setting for the type cash in accordance with D-017.
-
-Therefore, a member may omit a stored value provided that its default can be determined statically. In particular, a `Nat` datum with no explicit default receives `0`. Even when omission is valid, values whose meaning is important to understanding the model should be stated explicitly.
+Every stored datum in every member uses its explicit member assignment, otherwise its explicit schema default. If neither exists, the member is invalid. Type annotation never selects a value. Both forms remain statically evaluable and checked against the complete datum contract.
 
 After a member's stored data is processed, its calculated data is evaluated for that member. The expression may use unqualified names to access other associated data from the same family, including calculated data declared before or after it. Dependencies between calculated data must be acyclic and resolved without relying on declaration order. Member defaults and assignments may use `ValueBlock`, but the complete body must be statically analysable in accordance with D-066 and D-101. Calculated data is likewise evaluated statically per member and must satisfy its declared type and, where applicable, its domain and collection constraints.
 
@@ -149,7 +145,7 @@ Within `ordered by movementCost`, `movementCost` refers to the data from the mem
 
 `ordered by` replaces the order of declaration as the main criterion for that collection, but it does not change the comparison operators specific to the family. When two occurrences produce the same key, they retain their relative order of provenance stable; in a purely sequential narrative, it corresponds to the order of insertion. Repeated occurrences retain their multiplicity unless the collection or `unique`.
 
-The selection of the member The family’s default setting continues to belong to Q-047.
+A family type does not select a default member.
 
 ## Future verification
 
@@ -161,7 +157,7 @@ The selection of the member The family’s default setting continues to belong t
 6. Distinction with regard to an open hierarchy of `thing`.
 7. Anchor formation and stability `family::*`.
 8. A standardised data format and the rejection of specific, undeclared data.
-9. Precedence between value from member, explicit default and default of type.
+9. Member assignment before explicit schema default; rejection of an uninitialised datum.
 10. Immutability and access to associated data.
 11. Collection from `ordered family` sorted by one path associated data, with ties due to provenance stability and preservation of multiplicity.
 12. Inference from type, assessment by member and acyclic dependencies on computed data.

@@ -19,7 +19,7 @@ cases:
   produces_ast: true
 - id: cardinality-omitted
   category: collection
-  source: "thing Counter {\n    value: Nat\n}\n"
+  source: "thing Counter {\n    value: Nat = 0\n}\n"
   cst_root: MudFileSyntax
   ast: StoredFieldDecl(value, cardinalityOrigin=OmittedCardinality)
   normalizations:
@@ -27,7 +27,7 @@ cases:
   produces_ast: true
 - id: cardinality-singleton
   category: collection
-  source: "thing Group {\n    members: Person [5]\n}\n"
+  source: "thing Group {\n    members: Person [5] = [Alice, Bob, Carol, Dora, Eve]\n}\n"
   cst_root: MudFileSyntax
   ast: StoredFieldDecl(members, cardinality=[5..5])
   normalizations:
@@ -35,7 +35,7 @@ cases:
   produces_ast: true
 - id: cardinality-star
   category: collection
-  source: "thing Group {\n    members: Person [*]\n}\n"
+  source: "thing Group {\n    members: Person [*] = empty\n}\n"
   cst_root: MudFileSyntax
   ast: StoredFieldDecl(members, cardinality=[*..*])
   normalizations:
@@ -43,7 +43,7 @@ cases:
   produces_ast: true
 - id: collection-modifier-spacing
   category: collection
-  source: "thing Group {\n    members: Person [0..*, unique, ordered, mut]\n}\n"
+  source: "thing Group {\n    members: Person [0..*, unique, ordered, mut] = empty\n}\n"
   cst_root: MudFileSyntax
   ast: CollectionSpec([0..*], uniqueness=UniqueByValue, order=OrdinaryOrdered, elementsMutable=Enabled)
   normalizations:
@@ -51,20 +51,20 @@ cases:
   produces_ast: true
 - id: duplicate-unique
   category: validation-before-ast
-  source: "thing Group {\n    members: Person [* unique unique]\n}\n"
+  source: "thing Group {\n    members: Person [* unique unique] = empty\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - duplicate-collection-modifier
   produces_ast: false
 - id: unique-by-path
   category: collection
-  source: "thing Registry {\n    contacts: Person [* unique by email]\n}\n"
+  source: "thing Registry {\n    contacts: Person [* unique by email] = empty\n}\n"
   cst_root: MudFileSyntax
   ast: CollectionSpec([*..*], uniqueness=UniqueBy([email]))
   produces_ast: true
 - id: duplicate-unique-axis
   category: validation-before-ast
-  source: "thing Registry {\n    contacts: Person [* unique unique by email]\n}\n"
+  source: "thing Registry {\n    contacts: Person [* unique unique by email] = empty\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - duplicate-collection-modifier
@@ -77,7 +77,7 @@ cases:
   produces_ast: true
 - id: ordered-by-path
   category: collection
-  source: "thing League {\n    teams: Team [* ordered by captain.age]\n}\n"
+  source: "thing League {\n    teams: Team [* ordered by captain.age] = empty\n}\n"
   cst_root: MudFileSyntax
   ast: OrderedBy([captain, age])
   produces_ast: true
@@ -2331,3 +2331,34 @@ cases:
   - foreign-schema-write
   diagnostic_phase: adapter-effects
   required_contract: native adapter cannot introduce a MUD field declaration even within an effect block
+- id: stored-field-requires-initializer
+  category: validation-before-ast
+  source: 'thing Counter { count: Nat }
+
+    '
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - missing-stored-initializer
+  produces_ast: false
+- id: alias-required-component
+  category: typing
+  source: 'alias Point { x: Int; y: Int = 0 }
+
+    thing Board { point: Point = (y = 1) }
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasComponent(required=x, explicitDefault=y)
+  expected_diagnostics:
+  - missing-required-component
+  produces_ast: true
+- id: family-required-datum
+  category: typing
+  source: 'family Season { duration: Nat; Winter, Summer { duration = 3 } }
+
+    '
+  cst_root: MudFileSyntax
+  ast: StoredFamilyDataDecl(duration, default=absent)
+  expected_diagnostics:
+  - uninitialized-family-datum
+  produces_ast: true

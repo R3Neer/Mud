@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-026 — Membership strict and cardinality by `then`
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Expanded by: [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]]
 
 - Questions affected: [[notes/questions/Q-003-p-validation-points|Q-003]], [[notes/questions/Q-021-a-static-conflict-analysis|Q-021]], [[notes/questions/Q-047-s-selection-of-defaults-by-type|Q-047]]
@@ -102,7 +104,7 @@ For example, two blocks that add different elements to a collection empty `[0..1
 
 ## Interaction with default values
 
-One collection from `thing` with a minimum positive result requires a default value that it is a strict specialisation of the type written. D-017 continues to demand that all type has a well-formed default; Q-047 must determine when such type it is well-formed and when an explicit initialiser is required.
+A positive-minimum collection requires an explicit initialiser containing enough strict descendants. The written anchor is not an implicit candidate; type validity supplies no initialiser.
 
 ## Future verification
 

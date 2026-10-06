@@ -13,7 +13,6 @@ depends-on:
 questions:
   - Q-005
   - Q-046
-  - Q-047
 decisions:
   - D-111
   - D-110
@@ -34,6 +33,7 @@ decisions:
   - D-096
   - D-099
   - D-103
+  - D-112
 ---
 
 # 04. Model mathematician from world
@@ -81,7 +81,7 @@ The model current stipulates:
 8. Each specific `thing` has its own state.
 9. `create Nombre` only activates a single `thing` or defined rule; it does not support categories, predecessors or the body.
 10. If a canonical `thing` does not have an active materialisation, `create` instantiates that same identity and descriptor. Following a previous `destroy`, the new materialisation reconstructs the schema from the canonical definition and reapplies defaults and initialisers; it does not restore the own stored data of the destroyed materialisation.
-11. Every well-formed type has an default value belonging to its domain, unless a decision expressly excludes it. `Any` has no universal default, and an stored field of type type `Any` must have an initialiser.
+11. Every newly declared stored field has an explicit initialiser; descendants inherit its schema initialisation. Required alias components and family data must receive explicit values or explicit effective defaults. Types never select default values.
 12. `as` introduces direct specialisation; `is` query its reflexive and transitive closure; `iis` and `iis not` exclusively refer to or exclude the specified nominal effect type.
 13. A rule containing `create A` is only executed if canonical identity `A` is absent.
 14. Every field denotes a collection; its outer mutability and the capacity over its members are orthogonal permissions even with cardinality `[1]`.
@@ -135,8 +135,6 @@ rule ExactIdentifier given value: Identifier {
 > [!question] Q-046 — Invalid creation
 > Determine the result for actions and blocks with multiple creations. For a rule with a single creation, it has already been decided that the entire rule is not executed if the identity is active.
 
-> [!question] Q-047 — Specific defaults
->  Determine the default value for each type constructor and its behaviour when the domain depends on the world.
 
 ## Nominal aliases
 

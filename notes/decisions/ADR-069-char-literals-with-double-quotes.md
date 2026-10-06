@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-069 — `Char` literals with double quotes
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amends: [[notes/decisions/ADR-017-everything-type-well-built-has-default-value|D-017]], [[notes/decisions/ADR-032-contextual-construction-and-nominal-casting-of-aliases|D-032]], [[notes/decisions/ADR-050-comments-terminators-text-and-numeric-separators|D-050]] and [[notes/decisions/ADR-056-char-text-and-unicode-ordering|D-056]]
 - Related question: [[notes/questions/Q-047-s-selection-of-defaults-by-type|Q-047]]
 - Affected documents: lexicon, literal elaboration, `Char`, `Text`, defaults and syntax highlighting
@@ -46,7 +48,7 @@ pressedKey == "x"
 
 Single quotes no longer delimit literals and are not part of the MUD lexicon. An apostrophe remains an ordinary character inside a double-quoted literal.
 
-The default for `Char` is written `"\u{0}"` in a `Char` context. This does not change the Unicode domain, natural order or semantic distinction between `Char` and `Text`.
+`"\u{0}"` is a valid explicit initialiser in a Char context, preserving its Unicode domain and order.
 
 Syntax highlighting classifies double-quoted forms as text because choosing `Char` or `Text` requires type information. A historical internal character category may remain for theme compatibility, but the MUD tokeniser does not emit it for single quotes.
 
@@ -64,5 +66,5 @@ Syntax highlighting classifies double-quoted forms as text because choosing `Cha
 3. Rejection of `""`, `"ab"`, multiline text and interpolations in a `Char` context.
 4. Resolution of `charValue == "x"` as a `Char` comparison.
 5. Lexical rejection of single-quoted forms.
-6. `Char` default `"\u{0}"`.
+6. Explicit Char initialiser `"\u{0}"`.
 7. Highlighting with double quotes and no `character` highlighting for single quotes in MUD.

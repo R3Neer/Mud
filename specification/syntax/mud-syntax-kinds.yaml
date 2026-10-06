@@ -780,14 +780,11 @@ syntax_nodes:
     - calculated-field-declaration
   stored-field-declaration:
     kind: StoredFieldDeclarationSyntax
-    rhs: "[ \"mut\" ] , field-name , \":\" , type-expression
-        , ( \"=\" , descriptor-value-body | [ metadata-body ]\
-      \ )"
+    rhs: '[ "mut" ] , field-name , ":" , type-expression , "=" , descriptor-value-body'
     references:
     - field-name
     - type-expression
     - descriptor-value-body
-    - metadata-body
   calculated-field-declaration:
     kind: CalculatedFieldDeclarationSyntax
     rhs: field-name , [ derived-value-shape ] , ":=" , descriptor-value-body

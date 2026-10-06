@@ -326,7 +326,7 @@ field-declaration
 
 stored-field-declaration
     ::= [ "mut" ] , field-name , ":" , type-expression
-        , ( "=" , descriptor-value-body | [ metadata-body ] )
+        , "=" , descriptor-value-body
         ;
 
 calculated-field-declaration

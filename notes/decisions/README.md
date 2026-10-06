@@ -8,10 +8,10 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 106.
+- Total: 107.
 - Current: 105.
 - Proposed: 0.
-- Superseded: 1.
+- Superseded: 2.
 - Withdrawn: 0.
 - Rejected: 0.
 
@@ -32,7 +32,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-013 | current | 2026-07-27 | [[notes/decisions/ADR-013-complete-formalisation-before-continuing-with-implementation|Complete formalisation before continuing with implementation]] |
 | D-014 | current | 2026-07-27 | [[notes/decisions/ADR-014-unified-ontology-of-thing|Unified ontology of `thing`]] |
 | D-015 | current | 2026-07-27 | [[notes/decisions/ADR-015-acyclic-specialisation-and-state-independent|Acyclic specialisation and state independent]] |
-| D-017 | current | 2026-07-27 | [[notes/decisions/ADR-017-everything-type-well-built-has-default-value|Everything type well-built has default value]] |
+| D-017 | superseded | 2026-07-27 | [[notes/decisions/ADR-017-everything-type-well-built-has-default-value|Everything type well-built has default value]] |
 | D-018 | current | 2026-07-27 | [[notes/decisions/ADR-018-as-declares-specialisation-in-is-the-query|`as` declares specialisation in `is` the query]] |
 | D-019 | current | 2026-07-27 | [[notes/decisions/ADR-019-mutability-orthogonal-to-collection-and-members|Mutability orthogonal to collection and members]] |
 | D-021 | current | 2026-07-27 | [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|Cycle logical lifespan and suspension by department]] |
@@ -125,6 +125,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-109 | current | 2026-10-06 | [[notes/decisions/ADR-109-foreign-language-blocks-and-value-exports|Foreign language blocks and value exports]] |
 | D-110 | current | 2026-10-06 | [[notes/decisions/ADR-110-tentative-wave-journal-and-atomic-confirmation|Tentative wave journal and atomic confirmation]] |
 | D-111 | current | 2026-10-06 | [[notes/decisions/ADR-111-static-thing-field-schema|Static thing field schema]] |
+| D-112 | current | 2026-10-06 | [[notes/decisions/ADR-112-explicit-storage-initialisation|Explicit storage initialisation]] |
 
 ## Reserved identifiers
 

@@ -34,6 +34,7 @@ decisions:
   - D-097
   - D-100
   - D-105
+  - D-112
 ---
 
 # Conversion from CST to Surface AST
@@ -157,7 +158,9 @@ produces `ThingDecl`:
 - Stored or calculated `~...` statements → `metadata_assignment` sequence, normalised to `StoredMetadataAssignment` or `CalculatedMetadataAssignment`.
 - Body → metadata, fields and specific initialisers.
 
-`thing-body` and `thing-body-declaration` do not generate independent AST nodes. `metadata-assignment` does produce its own node and does not become a field. Each `field-declaration` feeds the `fields` sequence; every `thing-initializer`, in either a concrete or abstract `thing`, produces `ThingInitializer(fieldName, value)` in `initializers`, without being folded into `StoredFieldDecl.defaultValue`. A definition that locally declares a field and contains a `thing-initializer` with the same name is rejected during validation before AST construction. Omitting the body and writing an explicit empty body produce the same empty sequences; the terminator is discarded as layout.
+Newly declared stored fields require `=` and retain a mandatory `ValueBlock`. Inherited fields are not redeclared; completeness of alias components and family data belongs to elaboration.
+
+`thing-body` and `thing-body-declaration` do not generate independent AST nodes. `metadata-assignment` does produce its own node and does not become a field. Each `field-declaration` feeds the `fields` sequence; every `thing-initialiser`, in either a concrete or abstract `thing`, produces `ThingInitializer(fieldName, value)` in `initialisers`, without being folded into `StoredFieldDecl.defaultValue`. A definition that locally declares a field and contains a `thing-initialiser` with the same name is rejected during validation before AST construction. Omitting the body and writing an explicit empty body produce the same empty sequences; the terminator is discarded as layout.
 
 A `name = value` form does not trigger any specific syntactic rejection. It is treated like any other `ThingInitializer`; later resolution determines whether `name` actually refers to a stored field inherited from the effective schema. If the same `thing` declares an ordinary `name` field, the combination is rejected by the general rule preventing the same field from being declared and initialised separately. Presentation metadata is still written as `~name = value`.
 

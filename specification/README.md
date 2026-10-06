@@ -15,6 +15,8 @@ questions:
   - Q-066
   - Q-067
   - Q-068
+decisions:
+  - D-112
 ---
 
 # MUD formal specification

@@ -1,10 +1,11 @@
 ---
 id: D-017
 title: "Everything type well-built has default value"
-status: current
+status: superseded
 date: 2026-07-27
 supersedes: []
-superseded-by: []
+superseded-by:
+  - D-112
 questions:
   - "Q-047"
 affects:

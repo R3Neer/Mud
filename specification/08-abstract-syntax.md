@@ -54,6 +54,7 @@ decisions:
   - D-100
   - D-098
   - D-105
+  - D-112
 ---
 
 # 08. Surface abstract syntax
@@ -227,6 +228,8 @@ The preamble contains metadata declarations, while the remainder contains specif
 ```text
 ThingInitializer(name, valueBlock)
 ```
+
+Stored field data carry mandatory `default_value: ValueBlock`; alias component and family datum defaults may remain absent until completeness checking.
 
 It retains the written `fieldName = value-body` shape in a concrete or abstract `thing` body. It is not a `StoredFieldDecl` and is not included in `defaultValue`: the AST keeps schema defaults separate from initialisation contributions. `name` remains an unresolved `FieldName`, and the RHS normalises to `ValueBlock`; later resolution and elaboration ensure that the target is an inherited stored field and that the value satisfies its type and domain.
 

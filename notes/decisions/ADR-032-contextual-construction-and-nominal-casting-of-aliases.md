@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-032 — Contextual construction and nominal casting of aliases
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Amended by: [[notes/decisions/ADR-069-char-literals-with-double-quotes|D-069]]
 
@@ -123,7 +125,7 @@ pagination: Pagination = (2, 30) # valid: complete positional form
 pagination: Pagination = (2)     # invalid: size is missing and unnamed
 ```
 
-The named form may omit components. Each omitted component takes its explicit default value or, if it has none, the default value of its type cash in accordance with D-017:
+The named form may omit components. Each omitted component must have an explicit effective default; otherwise construction is invalid:
 
 ```mud
 pagination: Pagination = (size = 30) # page conserva 1

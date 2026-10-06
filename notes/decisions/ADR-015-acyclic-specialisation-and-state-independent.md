@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-015 — Acyclic specialisation and state independent
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Updated: 28 July 2026 to use the terminology from D-025
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
@@ -67,7 +69,7 @@ When you first activate a specific `thing` through `start with` or:
 create N
 ```
 
-the initialisation of $N$ It takes the effective defaults from its predecessors, incorporates the local declarations and then applies the effective initialisers. It does not take the active states from its predecessors. If there are no predecessors, fields without an explicit default use the default from its type. A reactivation preserves the stored charge in accordance with D-021.
+the initialisation of $N$ It takes the effective defaults from its predecessors, incorporates the local declarations and then applies the effective initialisers. It does not take the active states from its predecessors. Every newly declared stored field has an explicit initialiser. Recreating a destroyed owner reconstructs its own load; dependency suspension preserves independently owned load.
 
 Initialisers do not become declarations of field nor in schema defaults. That an initialiser of a `thing` The fact that an abstract class can be inherited as an initialisation argument does not alter the default inheritability of the field.
 

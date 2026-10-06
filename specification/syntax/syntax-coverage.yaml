@@ -279,6 +279,7 @@ productions:
     ast:
       disposition: constructor
       target: StoredFieldDecl
+      reason: requires an explicit initializer normalized to a mandatory ValueBlock
   calculated-field-declaration:
     cst: CalculatedFieldDeclarationSyntax
     ast:

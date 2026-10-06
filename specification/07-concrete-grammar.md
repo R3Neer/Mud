@@ -81,6 +81,7 @@ decisions:
   - D-100
   - D-099
   - D-105
+  - D-112
 ---
 
 # 07. Concrete grammar
@@ -174,6 +175,10 @@ The list following `as` does not indicate priority. `create` accepts no body her
 create Alexandria
 destroy Alexandria
 ```
+
+### Stored field initialisation
+
+A newly declared stored field requires `name: Type = value-body`, optionally with `mut`. Inherited fields need no repeated declaration. Alias components without explicit defaults are required in constructed values. Family data require an explicit schema default or an assignment in every member. Type annotations do not supply values. Intrinsic metadata and explicit parameter defaults retain their individual contracts.
 
 ### `thing` initialisers
 
@@ -667,7 +672,7 @@ Structural literals are contextual:
 (size = 30)
 ```
 
-The positional form must provide all components. If any are omitted, the form must be fully qualified: the omitted components take their explicit default value or the default value of their type. The components listed may skip previous or intermediate components, but those listed retain the relative order of declaration. You are not allowed to mix positions and names:
+The positional form must provide all components. If any are omitted, the form must be fully qualified: the omitted components must have an explicit effective default value. The components listed may skip previous or intermediate components, but those listed retain the relative order of declaration. You are not allowed to mix positions and names:
 
 ```mud
 pagination: Pagination = (2, 30) # valid

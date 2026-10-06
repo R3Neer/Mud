@@ -198,7 +198,7 @@ module MUDSurface {
     stored_field_data = (flag collection_mutable,
                          field_name name,
                          value_shape shape,
-                         value_block? default_value,
+                         value_block default_value,
                          metadata_assignment* metadata)
         attributes (source_origin origin)
 
