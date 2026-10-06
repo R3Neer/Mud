@@ -35,6 +35,7 @@ decisions:
   - D-112
   - D-113
   - D-114
+  - D-115
 ---
 # 09. Names, paths and anchors
 
@@ -238,7 +239,7 @@ They do not have public anchor:
 
 -  local or iteration variables;
 -  temporary appointments other than registered participants;
-- interim results;
+- interim results and static produced look/message types unless explicitly named as declarations;
 - units created structurally by prefixes;
 -  the built-in values `Prefix`, which are defined as constants rather than declarations;
 -  the branches of functional dictionaries, which are identified only locally within their dictionary owner;

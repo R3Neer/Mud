@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 45 active questions: 26 open and 19 partially decided.
+There are 43 active questions: 24 open and 19 partially decided.
 
 Priorities:
 
@@ -52,9 +52,7 @@ Priorities:
 | [[Q-060-c-reflective-typekind-catalogue|Q-060 — Reflective `TypeKind` catalogue]] | Open |
 | [[Q-062-g-complete-grammar-of-mud-module|Q-062 — Complete grammar of `mud.module`]] | Open |
 | [[Q-064-a-aliases-and-nominal-specialisation-between-modules|Q-064 — Aliases and nominal specialisation between modules]] | Open |
-| [[Q-065-j-join-of-dynamic-look-results|Q-065 — Join of dynamic `look` results]] | Open |
 | [[Q-067-p-message-participants-absent-in-final-state|Q-067 — `message` participants absent in final state]] | Open |
-| [[Q-068-i-identity-and-structural-equality-of-anonymous-types|Q-068 — Identity and structural equality of anonymous types]] | Open |
 
 ## P2 — Product and operation
 

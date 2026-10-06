@@ -38,6 +38,8 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-068-i-identity-and-structural-equality-of-anonymous-types.md",
+    "notes/questions/Q-065-j-join-of-dynamic-look-results.md",
     "notes/questions/Q-066-b-nominal-binding-of-erased-callable-descriptors.md",
     "notes/questions/Q-063-v-variance-and-callable-type-compatibility.md",
     "notes/decisions/ADR-053-semantic-operator-and-authoring-flow.md",
@@ -75,6 +77,8 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-068-i-identity-and-structural-equality-of-anonymous-types.md",
+    "notes/questions/Q-065-j-join-of-dynamic-look-results.md",
     "notes/questions/Q-066-b-nominal-binding-of-erased-callable-descriptors.md",
     "notes/questions/Q-063-v-variance-and-callable-type-compatibility.md",
     "notes/questions/Q-001-g-grammar-and-line-breaks.md",

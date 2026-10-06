@@ -10,13 +10,12 @@ status: in-preparation
 normative: true
 questions:
   - Q-064
-  - Q-065
   - Q-067
-  - Q-068
 decisions:
   - D-112
   - D-113
   - D-114
+  - D-115
 ---
 
 # MUD formal specification
@@ -285,7 +284,7 @@ Planned scope:
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 
-Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Inter-module specialisation, ambiguous joins and anonymous-type identity remain delimited by Q-064, Q-065 and Q-068.
+Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/message types are static and nominal per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Inter-module specialization remains delimited by Q-064.
 
 Juicio principal:
 
@@ -446,7 +445,7 @@ Planned scope:
 - Modular authorisation through `uses`, transitive closure of the types needed to understand a contract and safe cross-module reflection without silent filtering.
 - Host API centred on the identity of public operations, not on a participant chosen as owner.
 - `for`/`given` signatures, external capability of `action` versus `subaction`, callable values and binding at the invocation point.
-- `look` as a pure query with a coherent caller view and one anonymous result.
+- `look` as a pure query with a coherent caller view and one value of its static produced result type.
 - `message` as a causal occurrence, `on` bindings, public payload and internal causal and external stable projections.
 - Separation of bindings and payload, multiplicity and delivery ordering, and rollback of external outputs.
 

@@ -83,6 +83,7 @@ decisions:
   - D-112
   - D-113
   - D-114
+  - D-115
 ---
 
 # 07. Concrete grammar
@@ -1076,7 +1077,7 @@ message KingChanged on kingdom: Kingdom {
 }
 ```
 
-`look` is a pure callable. It may be accessed by the host, by another module whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the anonymous type made from its public fields.
+`look` is a pure callable. It may be accessed by the host, by another module whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the static produced nominal type made from its public fields. Calls to one declaration share that type; different producers remain distinct, even with identical fields.
 
 A `message` is not called directly. Every instance of its `when` that passes `if` creates a causal occurrence with an identity, declaration, `on` bindings and birth wave. That occurrence may feed triggers in the next wave. Within MUD, its payload is projected onto the causal view; after commit, it is projected to the host from the final stable state. A rollback cancels external delivery.
 

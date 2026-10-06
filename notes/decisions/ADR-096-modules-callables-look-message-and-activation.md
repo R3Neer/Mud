@@ -27,6 +27,8 @@ affects:
 
 # ADR-096 — Modules, callables, `look`, `message` and activation
 
+- Amended by: [[ADR-115-static-produced-types-and-union-joins|D-115]].
+
 - Amended by: [[ADR-114-callable-variance-and-static-named-binding|D-114]].
 
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
@@ -43,7 +45,7 @@ affects:
 
 MUD's evolution had left several artificially separate boundaries: elementary versus compound actions, `look` as an essentially external query, `message` as output deferred to the host, separate activation in `things` and `rules`, and implicit domain consumption in operations producing collections. These separations interact poorly when the language is organised into modules, permits callable values and uses wave-based causal resolution.
 
-This decision unifies these pieces without closing the still-open questions of callable typing, anonymous-type identity or the complete `mud.module` grammar.
+This decision unifies these pieces; the complete mud.module grammar and final absent-participant projection remain open.
 
 ## Decision
 
@@ -155,15 +157,15 @@ Named binding requires an unequivocal static role contract shared by every possi
 
 `look` fields are evaluated over a single coherent read view inherited from the caller. From the host this is the queryable stable state; from a rule it is that rule's snapshot; from a `then` it includes the private delta visible at the call's textual point. A `look` can therefore observe earlier private effects of the same `then` while remaining pure.
 
-Each `look` induces an anonymous result object formed from its public fields. A call returns exactly one value of that type; multiplicity is expressed through ordinary fields. The anonymous type receives no anchor merely by existing. It can be obtained with `~type` and used to define an ordinary alias.
+Each look declaration induces one static produced nominal result type formed from its public fields. Different declarations retain distinct result types even when their fields match; calls to the same declaration share its type. A call returns exactly one value of that type; multiplicity is expressed through ordinary fields. The anonymous type receives no anchor merely by existing. It can be obtained with `~type` and used to define an ordinary alias.
 
 A call `MyDragon.Stats()` is a value and cannot directly occupy a type position; `MyDragon.Stats()~type` does denote its static type. By contrast, `Dragon.look(Detail)` is already a callable type.
 
-If a dynamic call may select several `look` declarations with distinct results, the result type must be the most specific common type covering all alternatives. When no more informative common supertype exists that explicitly retains those alternatives, the result is their union. The formal choice when several incomparable common minima exist remains open in Q-065; anonymous-type identity/equality remains open in Q-068.
+If a dynamic call may select several `look` declarations with distinct results, the result type must be the most specific common type covering all alternatives. When no more informative common supertype exists that explicitly retains those alternatives, the result is their union. If several incomparable common minima exist, retain the union of the original result alternatives. Literal products use normalized structural identity; := preserves inferred producer identity.
 
 ### `message` as a causal occurrence
 
-A `message` is not called to produce a value. It occurs as a consequence of its `when` during causal resolution. Each occurrence retains the declaration, its `on` bindings, the causal view/wave and a technical identity preserving multiplicity. The payload is an anonymous type formed from the public fields.
+A `message` is not called to produce a value. It occurs as a consequence of its `when` during causal resolution. Each occurrence retains the declaration, its `on` bindings, the causal view/wave and a technical identity preserving multiplicity. The payload has a static produced nominal type determined by its message declaration, independently of occurrence identity.
 
 The `when` of a reactive rule and that of a `message` share the same trigger language. In addition to temporal triggers, occurrences/firings of compatible visible declarations may be observed: an occurred `message`, a reactive rule that has fired and an `always` rule evaluated for a binding. Actions, subactions, looks, Boolean rules and tests are not trigger sources.
 
@@ -207,8 +209,6 @@ The canonical host API is organised around the identity of public operations, no
 
 - Q-062: complete `mud.module` grammar.
 - Q-064: aliases and nominal specialisation across modules.
-- Q-065: joining `look` result types with multiple common minima.
 - Q-067: `message` participants absent from the final state.
-- Q-068: structural identity and equality of anonymous types.
 
 These questions do not authorise silently choosing a variant during implementation.

@@ -2412,3 +2412,26 @@ cases:
   produces_ast: true
   required_contract: Contravariant read-only input; covariant result; invariant read/write place; independent
     root permission
+- id: look-produced-type-identity
+  category: typing
+  source: 'look Stats for person: Person { age := person.age }
+
+    look Summary for person: Person { age := person.age }
+
+    '
+  cst_root: MudFileSyntax
+  ast: LookDecl(Stats), LookDecl(Summary)
+  produces_ast: true
+  required_contract: Distinct static produced types despite identical fields; repeated Stats calls and
+    inferred locals retain the Stats result identity
+- id: incomparable-result-join-retains-union
+  category: typing
+  source: 'alias Left as A, B
+
+    alias Right as A, B
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasDecl(Left), AliasDecl(Right)
+  produces_ast: true
+  required_contract: If A and B are incomparable minimal common supertypes, join retains Left | Right
