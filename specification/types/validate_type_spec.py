@@ -47,6 +47,9 @@ def check_witness(witness):
             raise ValueError("Invalid authority flag")
 
     parents = witness.get("parents", {})
+    builtins = {"Nat", "Int", "Num", "Rum", "Money", "Text", "Char", "Bool", "Any"}
+    if builtins & parents.keys():
+        raise ValueError("A witness cannot redefine primitive ancestry")
     for name, entries in parents.items():
         if not isinstance(entries, list):
             raise ValueError("Nominal parents must be a list")
@@ -113,7 +116,12 @@ def includes(source, target, parents):
     a, b = source.get("card", [1, 1]), target.get("card", [1, 1])
     if a[0] < b[0] or bound(a[1]) > bound(b[1]):
         return False
-    da, db = source.get("domain", [None, None]), target.get("domain", [None, None])
+    def effective_domain(contract):
+        low, high = contract.get("domain", [None, None])
+        if "Nat" in ancestors(contract["name"], parents):
+            low = max(0, low) if low is not None else 0
+        return low, high
+    da, db = effective_domain(source), effective_domain(target)
     lower = lambda x: -math.inf if x is None else x
     if lower(da[0]) < lower(db[0]) or bound(da[1]) > bound(db[1]):
         return False
@@ -219,13 +227,22 @@ def validate(root=ROOT):
         declared += re.findall(r"(?m)^> \[!rule\] (MUD-(?:TYPE|EFFECT)-\d+)", text)
     if len(declared) != len(set(declared)):
         problems.append("Static chapters contain duplicate rule identifiers.")
-    cases = yaml.safe_load((root / "specification/types/typing-cases.yaml").read_text(encoding="utf-8"))["cases"]
+    corpus = yaml.safe_load((root / "specification/types/typing-cases.yaml").read_text(encoding="utf-8"))
+    if type(corpus.get("schema_version")) is not int or corpus["schema_version"] != 1:
+        problems.append("Unsupported typing-cases schema version.")
+    cases = corpus["cases"]
     seen, covered = set(), set()
     for case in cases:
         name = case["id"]
         if name in seen:
             problems.append(f"{name}: duplicate case identifier.")
         seen.add(name)
+        scopes = {"fragment-with-stated-contract", "independent-concurrent-block-fragments",
+                  "read-only-inclusion-judgement-fragment", "representation-judgement-fragment"}
+        if case.get("source_scope") not in scopes:
+            problems.append(f"{name}: an explicit supported source scope is required.")
+        if not case.get("rules"):
+            problems.append(f"{name}: requires a rule obligation.")
         if not case.get("source", "").strip() or not case.get("contract", "").strip():
             problems.append(f"{name}: source and explicit contract are required.")
         if case["expected"] not in ("static-accept", "static-reject", "runtime-check"):
@@ -242,7 +259,10 @@ def validate(root=ROOT):
             except (KeyError, ValueError, TypeError) as error:
                 problems.append(f"{name}: malformed witness: {error}.")
     problems += [f"No conformance instance for {rule}." for rule in sorted(set(declared) - covered)]
-    coverage = yaml.safe_load((root / "specification/types/expression-coverage.yaml").read_text(encoding="utf-8"))["expressions"]
+    coverage_data = yaml.safe_load((root / "specification/types/expression-coverage.yaml").read_text(encoding="utf-8"))
+    if type(coverage_data.get("schema_version")) is not int or coverage_data["schema_version"] != 1:
+        problems.append("Unsupported expression-coverage schema version.")
+    coverage = coverage_data["expressions"]
     ast = (root / "specification/syntax/mud-surface-ast.asdl").read_text(encoding="utf-8")
     constructors = expression_constructors(ast)
     problems += [f"Missing expression coverage: {x}." for x in sorted(constructors - coverage.keys())]

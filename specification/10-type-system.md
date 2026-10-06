@@ -204,7 +204,7 @@ Synthesis is bottom-up; checking passes an expected contract down into untyped l
 
 For a type-correct value whose domain/cardinality may fail, checking records a site-specific predicate obligation only where runtime admission is authorised. A known invalid static initialiser is rejected. Call admission reports the appropriate refusal; an ordinary value computation uses its Error channel. Mandatory post-effect stored cardinality proof is not replaced by such an obligation.
 
-When an expression produces alternatives, consider their common supertype candidates under the proven inclusion relation. A unique most-specific admissible candidate may be used. Several incomparable minima retain the normalised original union, as does absence of a more informative common candidate. Expected types may check each alternative but cannot force a nominal cast or resolve a nominal call target.
+When an expression produces alternatives, consider their common supertype candidates under the proven inclusion relation. A unique most-specific informative candidate may be used. Any alone is not informative and cannot erase the original alternatives during synthesis. Several incomparable minima retain the normalised original union, as does absence of a more informative common candidate. Expected types may check each alternative but cannot force a nominal cast or resolve a nominal call target.
 
 For a successful is test, $\Phi$ retains the compatible nominal alternatives; its false branch excludes only alternatives established impossible. Iis tests exact effective nominal identity; its negative case may still contain descendants. Narrowing on a mutable read is invalidated when an intervening effect may change that place or dependency. It never creates authority.
 

@@ -846,3 +846,28 @@ cases:
   expected: static-accept
   contract: values is a Nat collection and candidate is singleton Nat. The result is singleton Bool; the collection
     is the left operand.
+- id: nat-intrinsic-domain
+  rules:
+  - MUD-TYPE-005
+  source: 'nonnegative: Int in [0..*] = natural'
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-accept
+  contract: natural has Nat contract. Its intrinsic nonnegative domain discharges read-only inclusion without
+    a value-specific runtime test.
+  witness:
+    kind: inclusion
+    source:
+      name: Nat
+    target:
+      name: Int
+      domain:
+      - 0
+      - null
+- id: any-only-join-keeps-union
+  rules:
+  - MUD-TYPE-008
+  source: result := chosen.Stats()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The static callable alternatives are distinct produced types whose only common upper contract
+    is Any. Synthesis retains the produced-type union rather than replacing it with Any.

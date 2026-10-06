@@ -10,6 +10,15 @@ from validate_type_spec import (
 
 
 class FiniteWitnessTests(unittest.TestCase):
+    def test_nat_implies_its_intrinsic_nonnegative_domain(self):
+        self.assertEqual(witness_result({"kind": "inclusion", "source": {"name": "Nat"},
+                                        "target": {"name": "Int", "domain": [0, None]}}), "static-accept")
+
+    def test_primitive_ancestry_cannot_be_overridden(self):
+        with self.assertRaises(ValueError):
+            witness_result({"kind": "inclusion", "source": {"name": "Nat"}, "target": {"name": "Int"},
+                            "parents": {"Int": ["Nat"]}})
+
     def test_malformed_graph_is_not_semantic_rejection(self):
         for witness in (
             {"kind": "representation", "left": "A", "right": "A", "nodes": {"A": {"kind": "product", "children": ["Missing"]}}},
@@ -120,8 +129,15 @@ class FiniteWitnessTests(unittest.TestCase):
             import yaml
             coverage = yaml.safe_load(path.read_text(encoding="utf-8"))
             del coverage["expressions"]["CallExpr"]
+            coverage["schema_version"] = 2
             path.write_text(yaml.safe_dump(coverage), encoding="utf-8")
             self.assertTrue(any("CallExpr" in problem for problem in validate(root)))
+            self.assertTrue(any("schema version" in problem for problem in validate(root)))
+            path = root / "specification/types/typing-cases.yaml"
+            corpus = yaml.safe_load(path.read_text(encoding="utf-8"))
+            del corpus["cases"][0]["source_scope"]
+            path.write_text(yaml.safe_dump(corpus), encoding="utf-8")
+            self.assertTrue(any("source scope" in problem for problem in validate(root)))
 
 
 if __name__ == "__main__":
