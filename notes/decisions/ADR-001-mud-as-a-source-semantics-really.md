@@ -13,6 +13,8 @@ affects:
 
 # ADR-001 — `.mud` as a source semantics really
 
+- Amended by: [[ADR-107-executable-language-and-rust-reference-implementation|D-107]].
+
 ## Context
 
 The logic of a domain may be divided between code, data, tests,
@@ -22,10 +24,7 @@ to audit the entire process.
 
 ## Decision
 
-The files `.mud` are the only source semantics on the behaviour of domain
-represented by MUD. AST, IR, graphs, generated code, indexes, documentation
-Derivatives and materialisations are reconstructible projections and cannot be added
-rules on domain.
+The `.mud` files explicitly define domain behaviour and the boundaries through which foreign code contributes to it. Reproduction requires the declared foreign sources, library versions and adapter contracts as well as the MUD source and language version. Foreign contributions must be explicit rather than hidden in generated code. AST, IR, graphs, generated code, indexes, documentation and materialisations remain reconstructible projections and cannot add undeclared domain rules.
 
 Decisions and the specification they govern the language in which they
 are interpreted by the source, but do not form part of the state of a world MUD.
@@ -39,6 +38,5 @@ are interpreted by the source, but do not form part of the state of a world MUD.
 
 ## Verification
 
-Two reconstructions using the same source, version by specification and version
-Compilers must preserve the same semantic distinctions.
+Two reconstructions using the same MUD and declared foreign sources, dependency and adapter versions, language version and conforming implementation must preserve the same semantic distinctions. Reproducibility guarantees are conditional on the declared contracts of foreign operations.
 

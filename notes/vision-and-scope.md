@@ -15,7 +15,7 @@ Ordinary interaction does not have to resemble programming in a MUD. The user ex
 7. Regenerates derivatives.
 8. Commit the change to Git.
 
-Language is, therefore, a stable internal interface between human intention and technical implementation.
+MUD is both a stable interface between human intention and implementation and an executable programming language. A rigorous formal specification remains its foundation. The reference compiler and runtime are written in Rust and initially generate Rust. C and TypeScript are possible alternative targets without a near-term commitment.
 
 ## Problem it aims to solve
 
@@ -56,7 +56,7 @@ MUD describes:
 - Which restrictions should be retained?
 - What result A stable result is obtained.
 
-MUD does not describe:
+MUD does not prescribe the technology used for:
 
 - Graphical user interface.
 - Perseverance.
@@ -67,7 +67,7 @@ MUD does not describe:
 - Frameworks, engines or platforms.
 - Algorithms for presentation or deployment.
 
-One materialisation You can decide on all of the above, but you cannot add behaviour from domain absent from the model.
+A materialisation may select those technologies without adding undeclared domain behaviour. MUD may also explicitly coordinate foreign components, retaining its contracts at the boundary. It supports both embedding through `look`, `action` and `message` and coordination through language adapters. Rust, Python and C# are the initial adapter priorities. Reproduction includes declared foreign sources, dependency versions and adapter contracts.
 
 ## Product layers
 

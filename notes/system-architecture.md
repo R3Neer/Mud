@@ -1,6 +1,6 @@
 # System architecture
 
-Architecture must make a boundary visible: `.mud` contains semantics; everything else interprets, verifies, query or brings that about semantics.
+MUD is an executable declarative language. `.mud` explicitly defines its domain model and foreign-code boundaries; generated artefacts preserve those contracts. Reproduction includes declared foreign sources, dependency versions and adapter contracts. The reference compiler and runtime are written in Rust and initially generate Rust code. The formal language remains independent of that implementation choice.
 
 ## View by component
 
@@ -34,7 +34,7 @@ Natural language / CLI / editor
       ┌───────┼────────┐
       ▼       ▼        ▼
  queries  runtime  materialisers
-                   TypeScript, docs, tests
+                   Rust, docs, tests
 ```
 
 The current regulatory chain runs through the Surface AST and Nominal HIR. Typing and elaboration are later architectural phases; no regulatory framework yet defines the semantic representation they will produce.
@@ -43,7 +43,8 @@ The current regulatory chain runs through the Surface AST and Nominal HIR. Typin
 
 Source semantics:
 
-- `.mud` files.
+- `.mud` files, including explicit foreign-code boundaries.
+- Declared foreign sources, library versions and adapter contracts required by those boundaries.
 
 Metadata for governance, no semantics from the world:
 
@@ -185,7 +186,8 @@ Each materialiser receives a validated representation sufficient for its task, t
 
 It can produce:
 
-- TypeScript code.
+- Rust code as the initial backend.
+- C or TypeScript code as possible alternative backends, without near-term commitment.
 - API contracts.
 - Fixtures and tests.
 - Documentation.
@@ -197,6 +199,12 @@ It cannot:
 - convert `failed` to `false`;
 - collapse participants and `given`;
 - change atomicity, causal ordering or identity.
+
+## Hosting and language adapters
+
+The production API remains operation-centred: `look` observes a coherent view, `action` requests a causal transaction and `message` delivers confirmed occurrences. MUD may be embedded in another language or coordinate foreign components itself. Rust, Python and C# are the initial planned adapters, respectively supporting the reference backend, Python libraries and the .NET/Unity ecosystem. Adapters preserve type conversions, capabilities, read dependencies, transaction isolation and error contracts. The Rust backend does not translate Python or C# source into Rust; the corresponding language environment executes those fragments.
+
+Dependencies and adapter versions must be reproducible. A C-compatible ABI may support host integration without implying that MUD generates C source. The exact adapter protocol remains a separate design obligation.
 
 ## Early interfaces
 

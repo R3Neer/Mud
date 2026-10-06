@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-052 — Pipelines, renderers and conformance
 
+- Amended by: [[ADR-107-executable-language-and-rust-reference-implementation|D-107]].
+
 - Expanded by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Expanded by: [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
@@ -56,7 +58,9 @@ The compiler validates the declarations `test`. A profile of production You can 
 
 ## Consequences
 
-- TypeScript is a possible destination, not part of MUD.
+- The reference compiler and runtime are implemented in Rust; initial code generation targets Rust. This is an implementation choice, not a restriction on conforming implementations.
+- C and TypeScript are possible alternative destinations without a near-term delivery commitment.
+- Planned Rust, Python and C# adapters are foreign-language bridges, not additional code-generation backends.
 - The list of reserved words is generated or checked against the standard grammar; it is not maintained manually as a provisional list.
 
 ## Verification

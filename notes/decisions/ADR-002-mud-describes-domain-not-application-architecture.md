@@ -13,6 +13,8 @@ affects:
 
 # ADR-002 — MUD describes domain, not application architecture
 
+- Amended by: [[ADR-107-executable-language-and-rust-reference-implementation|D-107]].
+
 ## Context
 
 MUD needs to represent rules, state and causality without going into the details of
@@ -33,7 +35,8 @@ model its own semantic meaning.
 
 ## Consequences
 
-- Technical adaptors remain outside the semantics from domain.
+- A programme may explicitly coordinate foreign-language components. Its adapter implementation remains technical; its declared types, capabilities, dependencies and effects form the observable boundary contract.
+- MUD may be embedded in another application or host a coordinating programme. Both use the same operation-centred `look`, `action` and `message` boundary.
 - One materialisation you can change the technology without redefining the world.
 - D-052 explores the boundary between compilers and materialisers.
 

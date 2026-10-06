@@ -104,9 +104,10 @@ Mud describes domain meaning:
 - causal occurrences through `message`;
 - isolated declarative tests.
 
-Mud does not describe user interfaces, persistence technologies, networks,
-authentication, deployment infrastructure, application frameworks or rendering
-algorithms. Those belong to the systems that host or materialise a Mud model.
+Mud does not prescribe a user interface, persistence technology, network,
+authentication system, deployment infrastructure or application framework.
+A programme may explicitly coordinate foreign code through adapters while
+retaining the model's visibility, type, capability and transactional contracts.
 
 ## A glimpse of Mud
 
@@ -146,7 +147,7 @@ giving up atomicity, determinism or explanation.
 
 ## Source of truth
 
-Files ending in `.mud` are the only source of domain behaviour.
+Files ending in `.mud` explicitly define the domain model and its foreign-code boundaries. Reproduction also requires the declared foreign sources, dependency versions and adapter contracts. Generated code remains a derivative and must not introduce undeclared domain rules.
 
 Syntax trees, indexes, graphs, generated code, generated documentation and
 runtime representations are reconstructible projections. They may make the
@@ -156,7 +157,17 @@ model easier to execute or inspect, but they cannot add rules of their own.
 
 Mud is under active design and is not ready for production use.
 
-The current target is a formally specified Mud 1.0. The project prioritises
+The target is an executable language with a formally specified Mud 1.0, a
+compiler, runtime and development tools. The reference compiler and runtime
+will be written in Rust, and the first code-generation backend will produce
+Rust. C and TypeScript remain possible alternative targets without a near-term
+implementation commitment. Rust, Python and C# are the initial planned foreign
+language adapters; an adapter is distinct from a code-generation backend.
+
+Mud may be embedded in another application through `look`, `action` and
+`message`, or coordinate foreign-language components itself.
+
+The project prioritises
 completing the formal language specification before continuing with a full
 implementation, so that accidental choices in an early compiler or runtime do
 not silently become language semantics.
