@@ -295,7 +295,7 @@ cases:
   - otherwise-requires-error-handler-branch
 - id: comments-lossless
   category: cst
-  source: "# before\nthing Person { # body #\n    label: Text\n}\n"
+  source: "# before\nthing Person { # body #\n    label: Text = \"person\"\n}\n"
   cst_root: MudFileSyntax
   ast: ThingDecl(Person)
   normalizations:
@@ -1124,12 +1124,12 @@ cases:
   - any-is-not-enumerable
   produces_ast: true
 - id: any-field-requires-initializer
-  category: validation-after-resolution
+  category: validation-before-ast
   source: "thing Broken {\n    value: Any\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
-  - any-has-no-default
-  produces_ast: true
+  - missing-stored-initializer
+  produces_ast: false
 - id: any-operation-requires-narrowing
   category: validation-after-resolution
   source: "rule Broken given value: Any {\n    value + 1 > 0\n}\n"
@@ -1604,7 +1604,8 @@ cases:
   produces_ast: true
 - id: d088-selection-body-after-terminator
   category: expression
-  source: "thing Sample {\n    values: Int [*]\n    selected := x in values:\n        x > 1\n}\n"
+  source: "thing Sample {\n    values: Int [*] = empty\n    selected := x in values:\n        x > 1\n\
+    }\n"
   cst_root: MudFileSyntax
   ast: SelectionExpr(binding=x, source=values, predicate=ExpressionBlock([], x > 1))
   normalizations:
@@ -1752,7 +1753,8 @@ cases:
   produces_ast: true
 - id: d088-selection-binding-visible-in-expression-block
   category: expression
-  source: "thing Sample {\n    values: Int [*]\n    selected := value in values: {\n        adjusted := value + 1\n        adjusted > 0\n    }\n}\n"
+  source: "thing Sample {\n    values: Int [*] = empty\n    selected := value in values: {\n        adjusted\
+    \ := value + 1\n        adjusted > 0\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: SelectionExpr(binding=value, source=values, predicate=ExpressionBlock(preamble=[adjusted], result=...))
   semantic_expectations:
