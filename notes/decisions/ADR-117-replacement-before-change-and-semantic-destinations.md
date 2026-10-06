@@ -37,7 +37,7 @@ Homogeneous collection algebra and Text ordering retain their existing rules. He
 
 Every stored write targets the materialisation generation observed by its branch. Destruction closes that generation and discards its own load; writes aimed at the destroyed generation never carry into a fresh materialisation. A sequential destroy/create may initialize the new generation and write there in the same branch, under lifecycle admission rules. Suspension preserves independently owned load and is not destruction. Mixed activation admission remains delimited by Q-046.
 
-Static analysis reports proven inevitable conflict as an error, proven possible conflict as a warning and proven compatible/disjoint effects without a conflict warning. Runtime conflict rolls back under the structured-error protocol. Domain checking remains mandatory at initialization/write; cardinality analysis retains its stricter proof obligations for complete then results and possible consolidations. The minimum completeness of analyses over arbitrary symbolic destinations remains Q-006, not an unstated scheduler priority.
+Static analysis reports proven inevitable conflict as an error, proven possible conflict as a warning and proven compatible/disjoint effects without a conflict warning. Runtime conflict rolls back under the structured-error protocol. Domain checking remains mandatory at initialization/write; cardinality analysis retains its stricter proof obligations for complete then results and possible consolidations. D-123 and chapter 14 specify the minimum proof and residual-runtime boundary. No complete solver for arbitrary symbolic destinations or unstated scheduler priority is required.
 
 ## Verification
 

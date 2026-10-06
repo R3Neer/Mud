@@ -20,7 +20,7 @@ The author authorised formalisation of D-026, D-046, D-117 and the accepted bloc
 
 ## Decision
 
-Chapter 14 defines root-based writable invariance, reconstruction through immutable intermediate values, immediate inner capabilities, inherited block modes, private regions, static schemas and effect summaries. Minimum conflict analysis handles resolved equal roots, equal/distinct constant keys, distinct components and known generations. Proved incompatible coexistent contributions are rejected; symbolic destination/value overlap not decided by the mandatory proof basis remains a consolidation check.
+Chapter 14 defines root-based writable invariance, reconstruction through immutable intermediate values, immediate inner capabilities, inherited block modes, private regions, static schemas and effect summaries. Minimum conflict analysis handles resolved equal roots, equal/distinct constant keys, distinct components and known generations. Proved inevitable incompatible contributions are rejected. Proved possible conflicts produce a warning and retain their runtime consolidation check; symbolic destination/value overlap not decided by the mandatory proof basis also remains a consolidation check.
 
 Stored cardinality has the stronger existing D-026 obligation: prove preservation at the end of each then and for possible consolidations. Unknown preservation is conservatively rejected, even when an individual argument or query could use a runtime admission check. Finite bounds, known membership, correlated guards, sequential normalization, deduplication and uniqueness no-ops must be included. No complete arbitrary predicate solver is required. These rules delimit the remaining minimum-completeness questions Q-006 and Q-021.
 

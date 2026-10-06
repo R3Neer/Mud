@@ -871,3 +871,24 @@ cases:
   expected: static-accept
   contract: The static callable alternatives are distinct produced types whose only common upper contract
     is Any. Synthesis retains the produced-type union rather than replacing it with Any.
+- id: possible-known-key-conflict
+  rules:
+  - MUD-EFFECT-006
+  source: 'then dict[key] = a
+
+    then dict[key] = b'
+  source_scope: independent-concurrent-block-fragments
+  expected: runtime-check
+  contract: Independent blocks have different replacement values and one known existing key. Admitted guards
+    have a witnessed joint firing but do not imply it inevitably. Report a possible-conflict warning and check
+    actual consolidation; cardinality is separately proved safe.
+- id: inevitable-known-key-conflict
+  rules:
+  - MUD-EFFECT-006
+  source: 'then dict[key] = a
+
+    then dict[key] = b'
+  source_scope: independent-concurrent-block-fragments
+  expected: static-reject
+  contract: Entry/guard facts prove both independent contributions fire together with different known replacement
+    values at the same key. The conflict is inevitable, so reject statically.

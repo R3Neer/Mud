@@ -22,6 +22,8 @@ affects:
 
 - Amended by: [[ADR-120-element-wise-block-error-recovery|D-120]].
 
+- Formalised by: [[ADR-124-expression-and-block-typing-coverage|D-124]].
+
 ## Context
 
 The author chooses first-class Success, Refusal and Errors values and Error-only block recovery. This replaces D-008 and D-079; it amends D-041, D-042, D-055, D-061 and D-077. All tooling and generated diagnostics are in English.
@@ -77,7 +79,7 @@ always rule Positive on counter: Counter { counter.value >= 0 }
 
 The result terminology also amends [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-045-causal-resolution-connections-and-queue|D-045]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-052-pipelines-renderers-and-conformance|D-052]], [[ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]], [[ADR-060-additive-deltas-and-nat-normalisation|D-060]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], [[ADR-095-empty-extrema-as-ordinary-absence|D-095]], [[ADR-096-modules-callables-look-message-and-activation|D-096]], [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]], [[ADR-099-fresh-materialisations-after-destroy-and-create|D-099]], [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]], [[ADR-105-keyed-uniqueness-by-stable-path|D-105]], [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
 
-The developed mathematical, grammar, lexical, CST and AST surfaces represent structured replies and block handlers. Block result types and built-in record contracts are interim semantic authority here until their planned chapters exist. Handler on names are local clause bindings, not new world participants or public anchors. Declaration descriptors retain their ordinary categories; no Origin type or typed-error graph is added to nominal HIR.
+The developed mathematical, grammar, lexical, CST and AST surfaces represent structured replies and block handlers. Chapters 10 and 19 develop static result/record and recovery typing; the complete dynamic action/error taxonomy remains separately scoped. Handler on names are local clause bindings, not new world participants or public anchors. Declaration descriptors retain their ordinary categories; no Origin type or typed-error graph is added to nominal HIR.
 
 ## Verification
 

@@ -14,6 +14,8 @@ affects:
 
 # ADR-112 — Explicit storage initialisation
 
+- Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
+
 ## Context
 
 The author chooses explicit storage initialisation rather than a type-wide default function. This replaces D-017 and amends D-015, D-026, D-031, D-032, D-038, D-056, D-068, D-069, D-074 and D-085.
@@ -32,7 +34,7 @@ Explicit given defaults and intrinsic metadata defaults such as ~name and ~prefi
 
 ## Integration review
 
-The mathematical, grammar, CST and Surface AST surfaces distinguish mandatory storage initialisers from optional alias/family defaults. Alias and family completeness are elaboration constraints. The nominal HIR retains the same field symbols, owners and initialisation references; it requires no type-default node. Type and lifecycle chapters not yet developed retain interim authority through this decision.
+The mathematical, grammar, CST and Surface AST surfaces distinguish mandatory storage initialisers from optional alias/family defaults. Alias and family completeness are elaboration constraints. The nominal HIR retains the same field symbols, owners and initialisation references; it requires no type-default node. Chapters 10 and 14 develop the static initialization contract. Complete lifecycle transitions remain assigned to their planned chapter.
 
 ## Verification
 

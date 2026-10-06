@@ -153,7 +153,9 @@ If target membership, correlated keys or possible coexistence remain unknown, th
 Each symbolic destination contains its storage root, member/key/component path and generation. The analysis may establish equal, disjoint or potentially overlapping destinations. Equality cannot be inferred from spelling alone across different owners; disjointness cannot be inferred from different variable names.
 
 > [!rule] MUD-EFFECT-006 — Static conflicts and residual overlaps
-> A proved incompatible coexistent composition is a static error. If semantic destination overlap cannot be decided, the unresolved coincidence is checked during consolidation, subject to the stronger mandatory stored-cardinality proof. Unknown overlap is neither proved disjointness nor a reason to impose source-order priority.
+> A proved inevitable incompatible composition is a static error. A proved possible conflict is reported as a warning and checked during consolidation. If semantic destination overlap cannot be decided, the unresolved coincidence is also checked during consolidation, subject in both cases to the stronger mandatory stored-cardinality proof. Unknown overlap is neither proved disjointness nor a reason to impose source-order priority.
+
+Inevitable means the conflict follows from the admitted entry/guard facts for the applicable contributions; possible means there is a witnessed admitted conflicting case without that universal conclusion. A runtime check handles actual co-occurrence and values, without turning a warning into permission to defer cardinality proof.
 
 The minimum required cases are identical resolved roots with equal constant keys/component paths, distinct constant keys, known distinct components of one alias and known different generations. Apply the existing replacement-before-change algebra: equal replacements merge, different replacements conflict, replacement precedes compatible arithmetic/partial changes, disjoint components compose, same-key deletion wins, and whole-value/keyed uniqueness is checked jointly. Heterogeneous collection updates without a specified algebra conflict.
 
