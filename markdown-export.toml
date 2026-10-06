@@ -39,6 +39,7 @@ include = [
 ]
 exclude = [
     "notes/questions/Q-019-n-numbers.md",
+    "notes/questions/Q-017-d-circular-dynamic-domains.md",
     "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
     "notes/questions/Q-022-v-action-return-values.md",
     "notes/questions/Q-005-i-binding-identity-and-lifecycle.md",
@@ -92,6 +93,7 @@ title = "Complete current corpus"
 include = ["."]
 exclude = [
     "notes/questions/Q-019-n-numbers.md",
+    "notes/questions/Q-017-d-circular-dynamic-domains.md",
     "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
     "notes/questions/Q-022-v-action-return-values.md",
     "notes/questions/Q-005-i-binding-identity-and-lifecycle.md",

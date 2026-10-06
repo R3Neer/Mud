@@ -327,6 +327,7 @@ Planned file: `17-domains-and-intervals.md`
 Planned scope:
 
 - Declared and calculated domains, membership, normalisation, finiteness and enumerability.
+- Acyclic computed-domain evaluation dependencies, distinct from stored-value reads, recursive constructor enumeration and periodic point-domain normalisation.
 - Linear, discontinuous, cyclic and magnitude-dependent intervals.
 - Explicit materialisation of enumerable domains through `all D` when an operation must produce a collection.
 - Difference between consuming a domain, materialising its enumeration and producing a filtered collection, without implicit conversion of the latter to `Domain`.

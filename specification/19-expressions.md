@@ -51,6 +51,7 @@ decisions:
   - D-126
   - D-127
   - D-129
+  - D-130
 ---
 
 # 19. Expression and block typing
@@ -124,6 +125,8 @@ For a callable value, check every static alternative against the admitted signat
 Boolean rules yield Bool, looks yield their static produced type, and real actions/subactions yield ActionReply only in an effect-capable context. Reactive/always/message declarations are trigger sources under their contracts, not interchangeable Boolean callables. A message payload type is distinct from occurrence identity.
 
 An outer request additionally requires action root capability. A subaction or a value that might denote one is not rescued by an action-shaped annotation. Call cycles must meet the relevant prohibition/proof contract; a type-correct signature does not prove acyclicity.
+
+Computed domains used by expression contracts obey [[10-type-system]]: their evaluation dependencies must be statically acyclic. Reading stored candidate values does not recursively revalidate their contracts. Runtime membership admission cannot legalise an invalid domain-evaluation cycle.
 
 ## 4. Numeric, dimensional and Boolean operators
 

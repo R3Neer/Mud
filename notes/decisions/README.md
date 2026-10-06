@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 124.
-- Current: 120.
+- Total: 125.
+- Current: 121.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -143,6 +143,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-127 | current | 2026-10-07 | [[notes/decisions/ADR-127-actionreply-only-action-results|ActionReply-only action results]] |
 | D-128 | current | 2026-10-07 | [[notes/decisions/ADR-128-sequential-effects-and-staged-consolidation|Sequential effects and staged consolidation]] |
 | D-129 | current | 2026-10-07 | [[notes/decisions/ADR-129-unbounded-exact-numbers-and-money-operators|Unbounded exact numbers and Money operators]] |
+| D-130 | current | 2026-10-07 | [[notes/decisions/ADR-130-acyclic-domain-evaluation|Acyclic domain evaluation]] |
 
 ## Reserved identifiers
 

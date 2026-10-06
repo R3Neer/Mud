@@ -1064,3 +1064,46 @@ cases:
   expected: static-reject
   contract: Both magnitudes use Money coordinates but have distinct incompatible nominal
     dimensions. A coordinate signature does not permit adding them.
+- id: acyclic-domain-stored-bound
+  rules:
+  - MUD-TYPE-016
+  source: 'value: Nat in [0..cap] = candidate'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: This is a local declaration in a value block, not a thing-schema initializer. cap is already stored in the coherent read view; evaluating this interval
+    requires no computed-domain recursion. candidate is Nat in its admitted interval.
+- id: candidate-domain-mutual-stored-reads
+  rules:
+  - MUD-TYPE-016
+  source: a <= b and b <= a
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: These are the two field-domain membership predicates for an already available
+    candidate with stored a=b=3. Each reads values, not the other field domain validator.
+- id: positive-domain-cycle-rejected
+  rules:
+  - MUD-TYPE-016
+  source: 'value: Person in EligibleA = person'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Evaluating EligibleA requires evaluating EligibleB and conversely, even
+    though the set equations use only positive finite unions. No fixed-point interpretation
+    is admitted.
+- id: transitive-domain-cycle-rejected
+  rules:
+  - MUD-TYPE-016
+  source: 'value: Person in SelectEligible() = person'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: SelectEligible reaches a domain calculation that transitively invokes
+    SelectEligible again to compute its admissible set. The cycle cannot be hidden
+    behind a callable.
+- id: recursive-constructor-domain-separation
+  rules:
+  - MUD-TYPE-016
+  source: 'value: Node = leaf'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Node is a productive recursive alias with optional children, leaf is a
+    finite value and all computed domain dependencies are acyclic. Constructor recursion
+    alone is not a computed-domain cycle.

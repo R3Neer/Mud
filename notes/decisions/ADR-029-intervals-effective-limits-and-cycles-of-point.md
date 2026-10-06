@@ -21,6 +21,8 @@ affects:
 
 MUD uses intervals for numerical domains, magnitudes and cardinalities. The original reference did not uniformly define the lateral meaning of `*` nor was it part of the cycle of a magnitude from point in his domain.
 
+- Clarified by: [[ADR-130-acyclic-domain-evaluation|D-130]].
+
 ## Decision
 
 ### Interval forms
@@ -138,7 +140,7 @@ For `[0..360) cycle`:
 ```
 
 `cycle` modifies the normalisation of the domain from point. It does not alter the semantics nor the iteration of the general intervals. Its period must be strictly positive: normalisation to `empty` from D-059 does not repair a domain inverted or degenerate cyclic.
-Nor does it resolve or modify the cycles of dependency between computed domains addressed by Q-017.
+Computed-domain evaluation dependencies must be acyclic; periodic point-domain normalisation does not license recursive computed-domain equations. Reading already stored values is a separate operation.
 
 ## Consequences
 

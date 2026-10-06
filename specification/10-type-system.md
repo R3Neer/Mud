@@ -41,6 +41,7 @@ decisions:
   - D-088
   - D-127
   - D-129
+  - D-130
 ---
 
 # 10. Type system
@@ -121,6 +122,11 @@ Starting with $X_0=\varnothing$, compute $X_{i+1}=X_i\cup F(X_i)$ until equality
 > [!rule] MUD-TYPE-004 — Productive recursion
 > A mandatory recursive constructor cycle without a finite exit is invalid. A recursive type edge does not create a cyclic value reference. Every constructed alias value is a finite immutable tree. An abstract alias cannot be constructed or be the exact target of a nominal cast.
 
+> [!rule] MUD-TYPE-016 — Acyclic domain evaluation
+> A computed domain cannot depend directly or transitively on its own evaluation. Static admission must establish acyclicity across the calculations/callable dependencies needed to obtain it; a potential unresolved circular dependency is not a proof. No least/greatest fixed-point semantics is admitted for recursive computed domains.
+
+Reading an already stored value from the inherited coherent view does not evaluate that value's domain again. Several candidate-field contracts may read each other's already available stored values without a circular domain calculation. This does not permit circular initialisers or remove ordinary field/write/checkpoint validation. Cyclic point-domain normalisation, nominal type recursion and dependency cycles of computed domains are distinct.
+
 Domain obligations are separate from constructor reachability. An empty or state-dependent domain does not acquire a witness from a basic type's unrefined inhabitation. A supplied/default value can witness inhabitation only after its domain check. Without such evidence the analysis must not claim unconditional inhabitation. A well-formed contract may denote no values in a projection; no automatic value is selected to repair it.
 
 **Finite-witness lemma.** Every node admitted at iteration $i$ has a finite constructor witness whose children were admitted earlier. Proof is by induction on $i$. Conversely, any valid finite witness is admitted by induction on its tree height, provided its leaf/domain obligations are witnessed. This does not prove that all state-dependent domains are decidable.
@@ -135,7 +141,7 @@ For a domain $D$, canonical enumeration requires a finite sequence with no dupli
 
 A static stepped domain uses the established signed progression to define membership: positive differences anchor at the lower bound, negative differences at the upper bound, and open starting bounds advance before the first candidate. Canonical materialisation orders the resulting members according to the domain, rather than copying descending traversal order. Finite bounds and nonzero compatible advance establish a finite number of candidates; zero advance cannot establish termination.
 
-A recursive domain needs an explicit finite rank bound and finite branching evidence; induction on the bound reduces enumeration to finite constructor products. Finite individual trees alone supply no bound on the set of trees.
+Enumeration of a recursive constructor type needs an explicit finite rank bound and finite branching evidence; induction on the bound reduces enumeration to finite constructor products whose domain contracts are already established. Finite individual trees alone supply no bound on the set of trees. A finite rank does not license circular evaluation of computed domain definitions.
 
 > [!rule] MUD-TYPE-005 — No guessed proof
 > Mandatory static inclusion, writable invariance, termination and finite enumeration require evidence. Runtime admission checks may validate a particular value only where that context permits them; they cannot justify universal callable substitution or an unproven enumeration.

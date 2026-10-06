@@ -32,6 +32,8 @@ affects:
 - Related questions: Q-003, Q-017
 - Documents affected: future `14-fields-and-mutability.md`, future `17-domains-and-intervals.md`, future `30-final-constraints.md`
 
+- Clarified by: [[ADR-130-acyclic-domain-evaluation|D-130]].
+
 ## Decision
 
 ### Types of field
@@ -89,7 +91,7 @@ given amount: Nat in 1..100
 for people: Person in EligibleCitizens [1..* unique]
 ```
 
-It may appear in fields, alias components, and `for` and `given` roles. A domain calculation must be pure, deterministic, non-stochastic, analysable and free from invalid cycles.
+It may appear in fields, alias components, and `for` and `given` roles. A domain calculation must be pure, deterministic, non-stochastic and analysable, with statically established acyclic evaluation dependencies. Reading already stored candidate values does not recursively evaluate their domains. Recursive computed-domain equations have no fixed-point evaluation semantics.
 
 In a stored field or a role `for`, `in` appears after the type and before the specification from collection:
 
