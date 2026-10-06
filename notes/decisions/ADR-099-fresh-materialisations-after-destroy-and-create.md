@@ -21,13 +21,15 @@ affects:
 - Modifies: [[ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]].
 - Keeps open: [[notes/questions/Q-005-i-binding-identity-and-lifecycle|Q-005]], Q-046 and Q-032 on aspects not fixed here. Q-049 remains closed; this decision retains its resolution on membership and only clarifies the policy for the materialisation itself.
 
+- Modified by: [[ADR-111-static-thing-field-schema|D-111]].
+
 ## Context
 
 D-021 and D-054 made `destroy d` remove a declaration from the effective projection while also retaining a `thing`'s own runtime load; a later `create d` reactivated that same load without running initialisers again. That rule correctly addressed a different problem: when another declaration becomes uninterpretable because it depends on a destroyed declaration, its state must not be erased merely because it is suspended.
 
 The two situations need not share a policy. If `King.kingdom` stores `Panama` and the `Kingdom` type is destroyed, the property belongs to `King`: it may retain its load latently while its type is not effective. By contrast, if a concrete `thing` whose own `health` field is `2` is destroyed, retaining that `2` after `create` turns `destroy` into temporary deactivation and prevents a new materialisation from returning to its declared state.
 
-The same distinction applies to runtime structural modifications owned by a `thing` and to the temporary memory of an explicitly destroyed rule.
+Field declarations remain part of the canonical static schema, including specialisation; runtime never adds or deletes them. The load-discard distinction also applies to the temporary memory of an explicitly destroyed rule.
 
 ## Decision
 
@@ -38,20 +40,18 @@ The canonical definition and semantic identity of a `thing` survive `destroy`. I
 For an active concrete `thing`, the following are conceptually distinct:
 
 1. its canonical definition and identity, belonging to the program;
-2. its current runtime materialisation, containing its stored-field load and runtime structural modifications owned by that `thing`;
+2. its current runtime materialisation, containing its stored-field load under the canonical static schema;
 3. the loads of other declarations that may refer to its identity or depend on its type.
 
 `destroy d`, when the complete transition is valid, ends the current materialisation of concrete `thing` `d`. Its identity, descriptor, declared ancestors and canonical definition remain available for a future materialisation.
 
 An abstract `thing` has no concrete own load to reinitialise; its `destroy` retains the applicable activity-removal and structural-suspension semantics.
 
-### Own load and runtime structure
+### Own load and static schema
 
-When `destroy d` is confirmed for a concrete `thing`, the following are discarded:
+When `destroy d` is confirmed for a concrete `thing`, the stored values belonging to its current materialisation are discarded.
 
-- stored values belonging to its current materialisation;
-- runtime structural modifications owned by `d`, including fields added during that materialisation;
-- runtime removals of `d`'s canonical properties: a future materialisation starts from the canonical definition, not from the edited structure of the ended materialisation.
+Field declarations and descriptors remain in the canonical static schema. Runtime effects cannot add or delete them; rematerialisation derives effective fields from those declarations and their applicable inherited contributions.
 
 Therefore, if:
 
@@ -71,7 +71,7 @@ This rule does not introduce successive identities: both materialisations corres
 
 - the effective schema is reconstructed from the canonical definition and its applicable inherited contributions;
 - defaults and initialisers are applied again;
-- no values or structural modifications from the destroyed materialisation are recovered.
+- no stored values from the destroyed materialisation are recovered.
 
 The seed and result policy for stochastic initialisers remains under Q-032; this decision only requires the operation to be a new materialisation rather than recovery of a previous load.
 
@@ -137,7 +137,7 @@ This decision fixes the effect of an explicit `destroy` on rule memory. Q-005 re
 - `create` after `destroy` materialises the same canonical identity again, not a new identity or recovery of the previous load.
 - Respawn resets matching declared defaults and initialisers naturally arise from `destroy` + `create`; respawn rules needing to retain or modify additional information remain explicit domain logic.
 - Dependency suspension remains reversible and does not erase external state.
-- Runtime structural edits belonging to a materialisation do not survive its destruction.
+- Runtime values may change, but field declarations remain exclusively static.
 - The temporary memory of an explicitly destroyed rule does not cross into its new activation.
 
 ## Rejected alternatives
@@ -154,10 +154,6 @@ Rejected. The disappearance of a type or dependency does not make data stored by
 
 Rejected. `create` continues to operate on a predeclared canonical identity and introduces no instantiation, fresh IDs or distinct nominal incarnations.
 
-### Retain structural modifications from the destroyed materialisation
-
-Rejected. A new materialisation reconstructs its structure from the canonical definition; retaining earlier `add`/`remove` operations would mix an ended materialisation with the next.
-
 ### Retain the temporary memory of a destroyed rule
 
 Rejected. A rule explicitly removed from the world must not compare its new activation with a snapshot belonging to the previous activation.
@@ -165,7 +161,7 @@ Rejected. A rule explicitly removed from the world must not compare its new acti
 ## Verification
 
 1. A destroyed and recreated `thing` retains its identity and descriptor but recovers initial values instead of its previous load.
-2. Runtime fields added to the destroyed materialisation do not reappear; runtime-removed canonical properties do reappear from the definition.
+2. The available fields of each materialisation derive from the same canonical static schema and specialisation; runtime effects cannot add or delete their declarations.
 3. An external property suspended by destroying its type retains exactly its load and is projected again when the type is recreated.
 4. Suspension caused by a dependency does not erase the suspended declaration's own load.
 5. Immutable and `mut` relations retain the restoration distinction fixed by D-077.

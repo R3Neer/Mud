@@ -18,6 +18,7 @@ depends-on:
 questions:
   - Q-063
 decisions:
+  - D-111
   - D-109
   - D-106
   - D-102
@@ -570,9 +571,8 @@ The AST does not assume sequential or simultaneous execution other than that def
 There are specific nodes for:
 
 - Assignment.
-- Addition of a value.
-- Addition of a field.
-- Removal.
+- Addition of a collection value.
+- Removal of a collection value.
 - Creation.
 - Destruction.
 - Action-call candidate.

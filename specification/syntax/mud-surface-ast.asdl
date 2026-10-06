@@ -520,7 +520,6 @@ module MUDSurface {
                               assignment_operator operator,
                               expr value)
            | AddValueEffect(expr value, assignable_expr target)
-           | AddFieldEffect(stored_field_data field, declaration_ref target)
            | RemoveEffect(expr value, assignable_expr target)
            | CreateEffect(declaration_ref target)
            | DestroyEffect(declaration_ref target)

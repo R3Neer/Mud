@@ -2266,3 +2266,68 @@ cases:
   - preserve-foreign-source-and-origin
   produces_ast: true
   required_contract: pure adapter
+- id: runtime-add-field-rejected
+  category: static-field-schema
+  source: "thing Player { }\naction Equip {\n then add shield: Nat = 20 to Player\n}\n"
+  cst_root: MudFileSyntax
+  ast: none
+  produces_ast: false
+  expected_diagnostics:
+  - runtime-field-declaration
+  diagnostic_phase: contextual-syntax
+- id: runtime-add-mut-field-rejected
+  category: static-field-schema
+  source: "thing Player { }\naction Equip {\n then add mut shield: Nat = 20 to Player\n}\n"
+  cst_root: MudFileSyntax
+  ast: none
+  produces_ast: false
+  expected_diagnostics:
+  - runtime-field-declaration
+  diagnostic_phase: contextual-syntax
+- id: runtime-remove-field-rejected
+  category: static-field-schema
+  source: "thing Player {\n shield: Nat = 20\n}\naction Unequip for player: Player [mut] given shield: Nat {\n then remove shield from player\n}\n"
+  cst_root: MudFileSyntax
+  ast: RemoveEffect(value=shield, target=player)
+  produces_ast: true
+  expected_diagnostics:
+  - remove-target-not-writable-collection
+  diagnostic_phase: typing-and-capabilities
+- id: collection-add-preserved
+  category: static-field-schema
+  source: "thing Player {\n mut shields: Nat [*] = empty\n}\naction Equip for player: Player [mut] {\n then add 20 to player.shields\n}\n"
+  cst_root: MudFileSyntax
+  ast: AddValueEffect(value=20, target=player.shields)
+  produces_ast: true
+  required_contract: authorised stored collection insertion; schema still contains shields
+- id: collection-remove-preserved
+  category: static-field-schema
+  source: "thing Player {\n mut shields: Nat [*] = empty\n}\naction Unequip for player: Player [mut] {\n then remove 20 from player.shields\n}\n"
+  cst_root: MudFileSyntax
+  ast: RemoveEffect(value=20, target=player.shields)
+  produces_ast: true
+  required_contract: authorised stored collection removal; declaration and descriptor remain
+- id: dictionary-association-add-preserved
+  category: static-field-schema
+  source: "thing Inventory {\n mut shields: Int -> Nat = empty\n}\naction Equip for inventory: Inventory [mut] {\n then add (1 -> 20) to inventory.shields\n}\n"
+  cst_root: MudFileSyntax
+  ast: AddValueEffect(value=ExactAssociationExpr, target=inventory.shields)
+  produces_ast: true
+  required_contract: association insertion changes collection contents, not fields
+- id: static-inherited-schema-rematerialisation
+  category: static-field-schema
+  source: "abstract thing Character {\n mut health: Nat = 10\n}\nthing Player as Character {\n shield: Nat = 20\n}\n"
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Character), ThingDecl(Player)
+  produces_ast: true
+  required_contract: destroy/create of Player preserves identity and static inherited field descriptors; fresh values health=10 and shield=20
+- id: foreign-schema-write-rejected
+  category: static-field-schema
+  source: "thing Player {\n shield: Nat = 20\n}\naction Equip for player: Player [mut] {\n then from Rust add_field(player)\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlockEffect
+  produces_ast: true
+  expected_diagnostics:
+  - foreign-schema-write
+  diagnostic_phase: adapter-effects
+  required_contract: native adapter cannot introduce a MUD field declaration even within an effect block

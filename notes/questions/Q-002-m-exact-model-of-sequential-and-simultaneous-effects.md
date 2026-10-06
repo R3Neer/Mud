@@ -6,6 +6,7 @@ opened: 2026-07-29
 resolved:
 closed:
 decisions:
+  - D-111
   - D-110
   - D-023
   - D-042
@@ -31,3 +32,7 @@ The complete operational semantics of intermediate reads for the other effect fa
 ## Tentative journal boundary
 
 D-110 fixes tentative wave projections and atomic final confirmation/discard. The reference runtime uses a journal; its physical patch representation is not a language contract. The complete operational read/consolidation semantics for all effect families remains pending.
+
+## Static-schema boundary
+
+D-111 excludes runtime field declaration creation/deletion. The remaining operational question covers value, collection, activity and other surviving effects; it does not reopen schema mutation.

@@ -796,9 +796,7 @@ assignment-operator
       ;
 
 add-effect
-    ::= "add" , expression , "to" , assignable-expression
-      | "add" , [ "mut" ] , field-name , ":" , type-expression , [ "=" , constant-expression ] , "to" , declaration-reference
-      ;
+    ::= "add" , expression , "to" , assignable-expression ;
 
 remove-effect
     ::= "remove" , expression , "from" , assignable-expression ;

@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 105.
-- Current: 104.
+- Total: 106.
+- Current: 105.
 - Proposed: 0.
 - Superseded: 1.
 - Withdrawn: 0.
@@ -124,6 +124,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-108 | current | 2026-10-06 | [[notes/decisions/ADR-108-considered-interactive-model-environment|Considered interactive model environment]] |
 | D-109 | current | 2026-10-06 | [[notes/decisions/ADR-109-foreign-language-blocks-and-value-exports|Foreign language blocks and value exports]] |
 | D-110 | current | 2026-10-06 | [[notes/decisions/ADR-110-tentative-wave-journal-and-atomic-confirmation|Tentative wave journal and atomic confirmation]] |
+| D-111 | current | 2026-10-06 | [[notes/decisions/ADR-111-static-thing-field-schema|Static thing field schema]] |
 
 ## Reserved identifiers
 

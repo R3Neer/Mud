@@ -18,6 +18,7 @@ questions:
   - Q-062
   - Q-063
 decisions:
+  - D-111
   - D-110
   - D-109
   - D-106
@@ -1194,14 +1195,13 @@ target --= values
 add value to collection
 remove value from collection
 
-add mut morale: Nat to Army
-remove morale from Army
-
 create Declaration
 destroy Declaration
 ```
 
-`destroy` preserves identity and canonical definitions, but removes the runtime materialisation of a concrete `thing`. Confirmed destruction discards its stored values and runtime structural modifications regardless of owner identity; a later `create` constructs a fresh materialisation from the effective schema and reapplies defaults and initialisers. This destruction does not delete capabilities owned elsewhere that are merely suspended by an inactive dependency. Destroying a reactive rule also discards that activation's temporal memory; if recreated, its first active wave establishes a new baseline without firing solely because of reactivation.
+`destroy` preserves identity and canonical definitions, but removes the runtime materialisation of a concrete `thing`. Confirmed destruction discards its own stored values; a later `create` constructs a fresh materialisation from the effective schema and reapplies defaults and initialisers. This destruction does not delete capabilities owned elsewhere that are merely suspended by an inactive dependency. Destroying a reactive rule also discards that activation's temporal memory; if recreated, its first active wave establishes a new baseline without firing solely because of reactivation.
+
+`add` and `remove` change compatible writable collections, including dictionary associations; they do not create or delete field declarations. A `thing`'s fields and descriptors are determined exclusively by its canonical static schema, including specialisation. A syntactically valid `remove` targeting a `thing` rather than a writable collection is invalid during resolution/elaboration. Dependency suspension changes effective availability without deleting a static declaration.
 
 An assignable path may traverse stored components of immutable aliases and exact-dictionary indices when it ends at an externally writable root location. This write does not mutate intermediate aliases: elaboration constructs new values of the exact nominal type, preserves their other stored components, recalculates derived values, and propagates replacements outwards to the storage root. For example:
 
@@ -1630,7 +1630,7 @@ The parser or elaborator must resolve the following issues without arbitrary cho
 | `in` | domain, related participant, restriction/filter or unit |
 | `has` | Boolean membership |
 | `call()` | Boolean rule or action |
-| `remove x from y` | collection value or dynamic property |
+| `remove x from y` | collection value |
 | `UNIT_FORM` | unit enabled or invalid name |
 | shared operators | logical, arithmetic, textual or set-theoretic operation |
 | literal structural | alias expected |
@@ -1728,4 +1728,4 @@ Exports are immutable local MUD values, evaluated once at their textual bridge p
 
 The enclosing contract governs reads and writes. Expression/shared/test preambles require external purity; value computations may mutate only their private storage; effects require ordinary participant and place capabilities. A wrapper does not bypass these rules, and a foreign signature's mutability annotation alone does not prove purity. Static value owners require a separately statically evaluable, pure, deterministic contract for the complete body. Foreign calls that are only pure calculations do not satisfy the requirement that `then` contain an effect or executable effect call.
 
-Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require confirmed host delivery or an explicit transactional contract. Wrappers preserve aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.
+Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require confirmed host delivery or an explicit transactional contract. Wrappers preserve the canonical static field schema, aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.

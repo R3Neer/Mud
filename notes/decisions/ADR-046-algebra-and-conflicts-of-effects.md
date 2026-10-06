@@ -26,6 +26,8 @@ affects:
 
 - Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
 
+- Modified by: [[ADR-111-static-thing-field-schema|D-111]].
+
 ## Context
 
 Concurrent effects must be combined according to their meaning, not according to the arbitrary order in which an implementation encounters them.
@@ -38,7 +40,7 @@ The MUD effects catalogue includes:
 - cumulative addition and subtraction;
 - cumulative multiplication;
 - union, intersection, symmetric difference over value-unique collections and cumulative differences;
-- `add` and `remove` regarding collections or properties;
+- `add` and `remove` regarding collection values;
 - `create` and `destroy`;
 - invocations of `action` or `subaction` within any semantic `then` context; the call sequentially incorporates its effects into the private delta in accordance with D-096.
 

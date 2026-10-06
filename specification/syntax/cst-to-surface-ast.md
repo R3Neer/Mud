@@ -16,6 +16,7 @@ depends-on:
 questions:
   - Q-063
 decisions:
+  - D-111
   - D-109
   - D-106
   - D-102
@@ -432,9 +433,11 @@ The concrete operator is converted to:
 
 ### `add`
 
-The alternative using an expression produces `AddValueEffect`.
+`add expression to assignable-expression` produces `AddValueEffect`. Its target must elaborate to a compatible writable collection. No effect introduces a field declaration.
 
-The alternative with a field declaration produces `AddFieldEffect`. The nested declaration is transformed as a stored field.
+### `remove`
+
+`remove expression from assignable-expression` produces `RemoveEffect`. Elaboration validates a compatible writable collection target; this form never deletes a field declaration or descriptor.
 
 ### Call candidate
 

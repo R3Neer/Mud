@@ -1226,14 +1226,10 @@ syntax_nodes:
     references: []
   add-effect:
     kind: AddEffectSyntax
-    rhs: "\"add\" , expression , \"to\" , assignable-expression\n      | \"add\" , [ \"mut\" ] , field-name , \":\" , type-expression , [ \"=\" , constant-expression ] , \"to\" , declaration-reference"
+    rhs: '"add" , expression , "to" , assignable-expression'
     references:
     - expression
     - assignable-expression
-    - field-name
-    - type-expression
-    - constant-expression
-    - declaration-reference
   remove-effect:
     kind: RemoveEffectSyntax
     rhs: '"remove" , expression , "from" , assignable-expression'

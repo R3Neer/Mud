@@ -155,6 +155,27 @@ def foreign_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
     return problems
 
 
+def static_schema_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
+    """Preserve collection effects without admitting runtime field declarations."""
+    code = strip_comments(grammar_text)
+    ast_code = re.sub(r"--.*", "", ast_text)
+    problems: list[str] = []
+    for name, expected in {
+        "add-effect": '"add" , expression , "to" , assignable-expression',
+        "remove-effect": '"remove" , expression , "from" , assignable-expression',
+    }.items():
+        found = re.search(rf"(?m)^{name}\s*::=\s*(.*?)\s*;", code, re.S)
+        if not found or re.sub(r"\s+", " ", found.group(1)).strip() != expected:
+            problems.append(f"{name} must contain only its collection-value form")
+    if re.search(r"\bAddFieldEffect\b", ast_code):
+        problems.append("runtime field declarations must not have a Surface AST effect")
+    for constructor in ["AddValueEffect", "RemoveEffect"]:
+        found = re.findall(rf"\b{constructor}\s*\(([^()]*)\)", ast_code, re.S)
+        if len(found) != 1 or re.sub(r"\s+", " ", found[0]).strip() != "expr value, assignable_expr target":
+            problems.append(f"{constructor} must retain the collection value and target")
+    return problems
+
+
 def validate(root: Path) -> list[Problem]:
     problems: list[Problem] = []
     grammar = root / "specification/grammar/mud.ebnf"
@@ -257,6 +278,15 @@ def validate(root: Path) -> list[Problem]:
     ast_text = asdl_path.read_text(encoding="utf-8")
     problems.extend(Problem(str(asdl_path), message) for message in
                     foreign_contract_problems(grammar.read_text(encoding="utf-8"), ast_text))
+    problems.extend(Problem(str(asdl_path), message) for message in
+                    static_schema_contract_problems(grammar.read_text(encoding="utf-8"), ast_text))
+    add_kind = kind_syntax.get("add-effect", {})
+    if (set(add_kind.get("references", [])) != {"expression", "assignable-expression"}
+            or re.sub(r"\s+", " ", add_kind.get("rhs", "")).strip()
+            != '"add" , expression , "to" , assignable-expression'):
+        problems.append(Problem(str(kinds_path), "add-effect catalogue must contain only collection insertion"))
+    if covered.get("add-effect", {}).get("ast", {}).get("target") != "AddValueEffect":
+        problems.append(Problem(str(coverage_path), "add-effect must map directly to AddValueEffect"))
     required = ["module MUDSurface", "project = MudProject", "source_file = MudFile", "flag = Disabled | Enabled"]
     for snippet in required:
         if snippet not in ast_text:
@@ -322,6 +352,14 @@ def validate(root: Path) -> list[Problem]:
                     problems.append(Problem(str(cases_path), f"{case.get('id')}: metadata {metadata} has no ~"))
 
     required_case_ids = {
+        "runtime-add-field-rejected",
+        "runtime-add-mut-field-rejected",
+        "runtime-remove-field-rejected",
+        "collection-add-preserved",
+        "collection-remove-preserved",
+        "dictionary-association-add-preserved",
+        "static-inherited-schema-rematerialisation",
+        "foreign-schema-write-rejected",
         "thing-concrete-initializer",
         "thing-name-field-initializer",
         "abstract-thing-inherited-initializer",

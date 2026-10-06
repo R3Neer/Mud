@@ -597,8 +597,8 @@ productions:
   add-effect:
     cst: AddEffectSyntax
     ast:
-      disposition: normalized
-      target: effect
+      disposition: constructor
+      target: AddValueEffect
   remove-effect:
     cst: RemoveEffectSyntax
     ast:

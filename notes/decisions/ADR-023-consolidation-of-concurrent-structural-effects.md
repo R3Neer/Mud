@@ -23,6 +23,8 @@ affects:
 - Documents affected: future chapters 25, 28, 29 and 31
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
+- Clarified by: [[ADR-111-static-thing-field-schema|D-111]].
+
 ## Context
 
 Several rules may be requested in the same batch:
@@ -30,7 +32,7 @@ Several rules may be requested in the same batch:
 - The activation of the same `thing` by means of `create`.
 - The activation of the same rule.
 - Incompatible activations and destructions.
-- Additions and removals to the same structure.
+- Additions and removals to the same collection.
 
 It is not always possible to determine statically whether two rules will take effect in the same wave. The semantics nor can it depend on the actual order in which threads or internal structures traverse the `then`.
 
@@ -72,8 +74,8 @@ The consolidation produces a single delta attempt or a conflict which causes the
 After respecting and normalising the internal order of each `then`, the structural effects of different blocks are consolidated in the following order:
 
 1. Activations `create` survivors.
-2. Surviving additions.
-3. Surviving withdrawals.
+2. Surviving collection-value additions.
+3. Surviving collection-value removals.
 4. Surviving ruins.
 
 Therefore, if a `then` requests `create A` and another asks `destroy A`, the result consolidated leaves `A` destroyed.

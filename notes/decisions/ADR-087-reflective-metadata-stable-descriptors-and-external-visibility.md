@@ -18,6 +18,8 @@ affects:
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 - Further clarified by: [[ADR-090-functional-branches-without-public-anchor|D-090]], [[ADR-091-family-data-as-anchored-descriptors|D-091]], [[ADR-092-static-availability-of-reflective-properties|D-092]] and [[ADR-094-terminal-anchors-for-configured-metadata|D-094]].
 
+- Modified by: [[ADR-111-static-thing-field-schema|D-111]].
+
 ## Context
 
 D-085 introduced postfix metadata `~name`, `~path`, `~anchor` and `~file`, but did not fix a general reflection system or a uniform rule for author-defined metadata. It also retained runtime writes to `~name` and anonymous individual participants. The current extension needs stable descriptors for declarations and subordinate elements, structured documentation, file defaults and an explicit boundary between world state and model metadata.
@@ -224,7 +226,7 @@ The body is copied semantically to each descriptor. The group introduces neither
 
 An inherited member retains the anchor, descriptor and metadata of the element that declared it. No metadata-bearing copies are manufactured for each descendant.
 
-Fields, components and associated data declared by a `family` may carry their own metadata. With a short value, they retain the immediate body exclusively from `~...`; when they use `ValueBlock`, those declarations may be integrated as a preamble contiguous with the beginning of the same body. In both cases they belong to the descriptor, not to the value or to the `ValueBlock` statements. A declaration does not combine both metadata locations simultaneously. A data assignment within a `family` member does not admit this body because it declares no new descriptor. A field added dynamically by an effect cannot acquire persistent metadata because it does not satisfy the admission principle.
+Fields, components and associated data declared by a `family` may carry their own metadata. With a short value, they retain the immediate body exclusively from `~...`; when they use `ValueBlock`, those declarations may be integrated as a preamble contiguous with the beginning of the same body. In both cases they belong to the descriptor, not to the value or to the `ValueBlock` statements. A declaration does not combine both metadata locations simultaneously. A data assignment within a `family` member does not admit this body because it declares no new descriptor. Every field descriptor comes from the canonical static schema; runtime effects cannot create or delete it or alter its metadata.
 
 ### `Metadata` descriptor
 

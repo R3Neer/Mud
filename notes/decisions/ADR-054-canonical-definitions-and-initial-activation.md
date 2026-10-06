@@ -22,6 +22,8 @@ affects:
 - Close: [[notes/questions/Q-044-i-identity-and-references-to-future-thing-values|Q-044]], [[notes/questions/Q-045-c-declarative-content-of-create|Q-045]]
 - Documents concerned: [[notes/questions/README|Active questions]], [[specification/04-mathematical-model]], future episodes 06, 07, 08, 09, 11, 21 to 25 and 32
 
+- Modified by: [[ADR-111-static-thing-field-schema|D-111]].
+
 ## Context
 
 The syntax must distinguish between three operations:
@@ -78,7 +80,7 @@ create CanGrow
 
 Its objective must be to solve a single problem statically canonical definition from `thing` or rule. It does not allow for a category, modifier, list of predecessors or body.
 
-One activation following `destroy Tree` restore it to its original state identity `Tree`, with the same predecessors and the same descriptor. In accordance with D-099, if `Tree` is a `thing` specific one whose materialisation the previous one ended, `create Tree` build a materialisation fresh from the canonical definition; it does not restore the load or the structural modifications characteristic of the materialisation destroyed.
+One activation following `destroy Tree` restore it to its original state identity `Tree`, with the same predecessors and the same descriptor. In accordance with D-099, if `Tree` is a `thing` specific one whose materialisation the previous one ended, `create Tree` build a materialisation fresh from the canonical definition; it does not restore the load characteristic of the destroyed materialisation.
 
 Several concurrent applications `create d` addressed to her declaration absent, they are idempotently consolidated. There are no longer any runtime declarative fragments, nor any merging of bodies caused by `create`.
 
@@ -106,12 +108,12 @@ Actions, aliases and magnitudes are not executable statements. Each test declare
 
 The defaults and initialisers for a `thing` apply when building a materialisation from its canonical definition, both during initial materialisation via `start with` or `create` and during a subsequent rematerialisation after `destroy`.
 
-After a `destroy d` confirmed on a `thing` specifically, the own stored data and the runtime structural modifications to the materialisation Once destroyed, they are discarded. One `create d` back:
+After a `destroy d` confirmed on a `thing` specifically, the own stored data of the destroyed materialisation are discarded. One `create d` back:
 
 - retains the identity, the descriptor and the canonical predecessors of `d`;
 - reconstructs the structure from the canonical definition;
 - re-apply defaults and initialisers;
-- does not retrieve values or structural changes from the materialisation completed.
+- does not retrieve values from the completed materialisation.
 
 One `thing` abstracta does not have a specific implementation of its own to reset. For rules, D-099 specifies that the runtime memory of a activation nor does the new one pass through the one that has been explicitly destroyed activation.
 
@@ -174,7 +176,7 @@ DestroyReference(anchor)
 - The graph The specialisation declaration is derived from static definitions, not from fragments accumulated during execution.
 - A bypass of a ancestor The ‘inactive’ status remains temporary and restores the declared edges when reactivated.
 - Conflicts over the merger of organisations are resolved `thing`.
-- Dynamic modification of properties, where permitted, must use explicit operations such as `add` and `remove` and belongs to the materialisation of the relevant asset.
+- Field declarations are determined exclusively by the canonical static schema, including specialisation. Runtime `add` and `remove` change collections, not that schema.
 - Creating an unlimited number of fresh individuals would require a different feature; `create` it does not introduce it implicitly.
 - The LSP can be accessed from any activation or materialisation up to one canonical definition.
 - The list of reserved words must distinguish between hard words and contextual words.
@@ -195,7 +197,7 @@ It is ruled out because a new creation appears to provide a complete definition,
 
 ### Preserve the fragmentary fusion of `thing`
 
-It is ruled out because it makes the descriptor of a identity which rules they agree on and in which waves. Structural changes must use explicit operations.
+It is ruled out because it would make a descriptor depend on which rules fire and in which waves. The complete field schema and specialisation come exclusively from canonical static definitions; execution does not edit them.
 
 ### Modelling `start with` as an action or `then`
 
@@ -218,7 +220,7 @@ The suite must cover:
 11. A project in which certain modules are omitted `start with`, equivalent to an empty initial contribution.
 12. Materialisation the combined total of the contributions from all modules and stabilisation prior to external actions.
 13. `Thing` always in force and cannot be activated.
-14. Load reduction and in-house structural modifications following `destroy`, without removing a third party’s charge that has merely been suspended by reason of subordination.
+14. Discard of own stored load following `destroy`, without removing a third party’s charge that has merely been suspended by reason of subordination.
 15. Union of contributions `start with` of the static transitive closure of reachable tests.
 16. Shooting during the stabilisation initial of a `when` whose condition is initially true.
 17. LSP navigation from each activation to a single definition.

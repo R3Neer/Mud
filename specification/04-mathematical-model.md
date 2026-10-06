@@ -15,6 +15,7 @@ questions:
   - Q-046
   - Q-047
 decisions:
+  - D-111
   - D-110
   - D-014
   - D-015
@@ -79,7 +80,7 @@ The model current stipulates:
 7. Declarations, constraints, domains and effective defaults are inherited, but not state active mutable variables.
 8. Each specific `thing` has its own state.
 9. `create Nombre` only activates a single `thing` or defined rule; it does not support categories, predecessors or the body.
-10. If a canonical `thing` does not have an active materialisation, `create` instantiates that same identity and descriptor. Following a previous `destroy`, the new materialisation reconstructs the schema from the canonical definition and reapplies defaults and initialisers; it does not restore the own stored data or the runtime structural modifications of the destroyed materialisation.
+10. If a canonical `thing` does not have an active materialisation, `create` instantiates that same identity and descriptor. Following a previous `destroy`, the new materialisation reconstructs the schema from the canonical definition and reapplies defaults and initialisers; it does not restore the own stored data of the destroyed materialisation.
 11. Every well-formed type has an default value belonging to its domain, unless a decision expressly excludes it. `Any` has no universal default, and an stored field of type type `Any` must have an initialiser.
 12. `as` introduces direct specialisation; `is` query its reflexive and transitive closure; `iis` and `iis not` exclusively refer to or exclude the specified nominal effect type.
 13. A rule containing `create A` is only executed if canonical identity `A` is absent.
@@ -87,7 +88,7 @@ The model current stipulates:
 15.  A collection of `thing` always requires strict membership: $c\neq T\land c\ \mathsf{is}\ T$. There is no `reflexive`.
 16. `destroy` only commits a withdrawal if all the resulting cardinalities and domains are valid; otherwise, it produces `failed` and a rollback.
 17.  A declaration with an inactive hard dependency is suspended entirely; its fields and participants are not partially rewritten, and that derived suspension does not clear its own stored payload. Only a `destroy` directed at the declaration itself terminates its materialisation runtime in accordance with the current cycle lifetime rules.
-18. `remove` on a property removes its declaration and load stored within the current materialisation. A suspension via an inactive dependency, on the other hand, retains the property and its payload; destroying the owning `thing` terminates all its materialisations, and a future materialisation restarts from the canonical definition.
+18. A `thing`'s field declarations come exclusively from its canonical static schema, including specialisation. Runtime effects may change authorised values and collection membership, but never add or delete field declarations. Dependency suspension retains the static declaration and its applicable payload; destroying the owning `thing` discards its own materialisation's load, and a future materialisation uses the canonical schema.
 19. Each module may contribute at most one `start with`; their finite, unordered contributions are combined into a single surface of activatable statements `thing | rule`, and the contributions of all modules are materialised jointly prior to the initial stabilisation.
 20. Each contribution is a static expression that produces either an activatable declaration or a flat collection; it does not support instructions, effects or nested collections.
 21. If a module omits `start with`, its contribution is empty. `Thing` remains in effect at all times and forms no part of the activatable collection nor of the enumeration materialised by `all Thing`.
@@ -102,7 +103,7 @@ The model current stipulates:
 30. The identity, the effective nominal type, the path and the anchor do not depend on `~name`; multiple entities may share the same presentation. All access to `~` is read-only during execution; `~path`, `~anchor` and `~file` are also intrinsic properties and not configurable metadata.
 31. An immutable relation retains a withdrawn identity in a latent state and can restore that membership when `create` re-materialises the same identity; a relation `mut` removes that stored affiliation.
 32.  No confirmed state contains a collection whose effective cardinality contradicts its declaration.
-33. Destroying a specific `thing` discards the stored values and runtime structural modifications belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
+33. Destroying a specific `thing` discards the stored values belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
 34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
 35. A resolution's private deltas and consolidated wave projections are tentative. Later waves may read consolidated tentative changes, while the confirmed world remains unchanged.
 36. A complete stable resolution is confirmed atomically only after all applicable invariants and the final `after` clauses of every executed action/subaction succeed. Rejection or failure discards every wave's changes and external delivery.
@@ -143,4 +144,4 @@ Aliases form a second nominal partial order. Their nodes are types of value, not
 
 For an nominal alias with several predecessors, the set of values of the descendant must be contained within the intersection of the sets of values of all of them. The union `A | B` does not satisfy this requirement. For structural aliases, the effective form is obtained by aggregating members by origin: a single member inherited via multiple paths is deduplicated, and independent members with the same name produce conflict.
 
-Derived fields denote recalculated collections. Their membership is determined during an snapshot evaluation and is recalculated based on the subsequent consolidated state. The internal capacity `[mut]` may form part of its contract, but does not create authority: it must be guaranteed by the source value and preserved through transformations that maintain the identity semantics of the member `thing`s. This capability applies only to immediate members and does not make derived membership or nested collections writable. Stored collections, on the other hand, retain their membership until an explicit structural modification is made.
+Derived fields denote recalculated collections. Their membership is determined during an snapshot evaluation and is recalculated based on the subsequent consolidated state. The internal capacity `[mut]` may form part of its contract, but does not create authority: it must be guaranteed by the source value and preserved through transformations that maintain the identity semantics of the member `thing`s. This capability applies only to immediate members and does not make derived membership or nested collections writable. Stored collections, on the other hand, retain their membership until an authorised collection membership update is made.

@@ -1,9 +1,13 @@
-"""Regression checks for nominal resolution and foreign syntax boundaries."""
+"""Regression checks for nominal, foreign and static-schema boundaries."""
 from pathlib import Path
 import re
 import unittest
 
-from validate_syntax_model import foreign_contract_problems, nominal_hir_contract_problems
+from validate_syntax_model import (
+    foreign_contract_problems,
+    nominal_hir_contract_problems,
+    static_schema_contract_problems,
+)
 
 
 class NominalHIRContractTests(unittest.TestCase):
@@ -81,6 +85,46 @@ class ForeignContractTests(unittest.TestCase):
     def test_value_owner_cannot_drop_foreign_statement(self):
         bad = self.ast.replace('| ForeignBlockValueStatement(foreign_block value)', '')
         self.assertTrue(foreign_contract_problems(self.grammar, bad))
+
+
+class StaticSchemaContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        root = Path(__file__).resolve().parents[2]
+        cls.grammar = (root / "specification/grammar/mud.ebnf").read_text(encoding="utf-8")
+        cls.ast = (root / "specification/syntax/mud-surface-ast.asdl").read_text(encoding="utf-8")
+
+    def test_current_contract(self):
+        self.assertEqual(static_schema_contract_problems(self.grammar, self.ast), [])
+
+    def test_field_declaration_alternative_is_rejected(self):
+        bad = self.grammar.replace(
+            '"add" , expression , "to" , assignable-expression ;',
+            '"add" , expression , "to" , assignable-expression\n'
+            ' | "add" , field-name , ":" , type-expression , "to" , declaration-reference ;',
+        )
+        self.assertTrue(static_schema_contract_problems(bad, self.ast))
+
+    def test_field_effect_constructor_is_rejected(self):
+        bad = self.ast.replace(
+            'effect = ForeignBlockEffect',
+            'effect = AddFieldEffect(stored_field_data field, declaration_ref target)\n'
+            ' | ForeignBlockEffect',
+        )
+        self.assertTrue(static_schema_contract_problems(self.grammar, bad))
+
+    def test_collection_insertion_cannot_be_removed(self):
+        bad = self.ast.replace('AddValueEffect(', 'MissingCollectionInsertion(')
+        self.assertTrue(static_schema_contract_problems(self.grammar, bad))
+
+    def test_collection_removal_cannot_be_removed(self):
+        bad = self.grammar.replace('"remove" , expression , "from" , assignable-expression', '"remove" , declaration-reference')
+        self.assertTrue(static_schema_contract_problems(bad, self.ast))
+
+    def test_comments_and_layout_are_not_semantic_changes(self):
+        grammar = self.grammar.replace('add-effect\n', 'add-effect\n(* collection insertion *)\n')
+        ast = self.ast + '\n-- AddFieldEffect is excluded\n'
+        self.assertEqual(static_schema_contract_problems(grammar, ast), [])
 
 
 if __name__ == "__main__":

@@ -456,7 +456,7 @@ Planned file: `25-effects.md`
 
 Planned scope:
 
-- Assignments, updates, collection operations, `create`, `destroy` and permitted structural modifications.
+- Assignments, updates, collection operations and `create`/`destroy`; field declarations come exclusively from the canonical static schema, including specialisation.
 - Effectful calls and traversals within a unified `then`.
 - Reads, writes, deltas, conflicts and effect composition.
 - Elaboration of reconstructible assignable paths and propagation of write-back through immutable values to their root storage.

@@ -22,6 +22,8 @@ affects:
 - Questions affected: [[notes/questions/Q-048-d-destruction-with-active-descendants|Q-048]], [[notes/questions/Q-049-d-destruction-and-thing-collections|Q-049]]
 - Documents concerned: [[specification/04-mathematical-model]], future chapters 11, 21 to 25 and 32
 
+- Modified by: [[ADR-111-static-thing-field-schema|D-111]].
+
 ## Context
 
 The cycle In life, one must distinguish between two phenomena that are reversible for different reasons:
@@ -29,7 +31,7 @@ The cycle In life, one must distinguish between two phenomena that are reversibl
 - Explicitly destroy a `thing` or a rule withdraws its activation and ends the materialisation or the runtime memory associated with it.
 - Make another one declaration It ceases to be interpretable because one of its dependencies is inactive; this merely suspends it; that suspension does not destroy the state which belongs to the declaration dependent.
 
-The canonical definition and the identity of a declaration survive `destroy`. Therefore, if `King.kingdom` contains `Panama` and the type `Kingdom`, the ownership of `King` it can retain its charge in a latent state whilst the type is not effective. On the other hand, if the `Kingdom` If a particular one had its own runtime payload or structural modifications, these belonged to the materialisation destroyed and do not reappear when you recreate them.
+The canonical definition and the identity of a declaration survive `destroy`. Therefore, if `King.kingdom` contains `Panama` and the type `Kingdom`, the ownership of `King` it can retain its charge in a latent state whilst the type is not effective. By contrast, a concrete `Kingdom`'s own runtime payload belongs to its destroyed materialisation and is not restored by recreation.
 
 This separation prevents both the destructive pruning of state foreign as an interpretation of `destroy` as a mere hibernation of the materialisation its own.
 
@@ -62,9 +64,9 @@ $$
 \operatorname{active}_{W'}(d)=\bot
 $$
 
-When $d$ is a `thing` Specifically, confirmed destruction also brings an end to its materialisation current runtime. The stored values specific to that materialisation and runtime structural modifications whose owner be $d$. When $d$ is a rule, the runtime memory associated with that is discarded activation in accordance with D-099.
+When $d$ is a `thing` Specifically, confirmed destruction also brings an end to its materialisation current runtime. The stored values belonging to that materialisation are discarded. When $d$ is a rule, the runtime memory associated with that is discarded activation in accordance with D-099.
 
-`create d` re-enable the same one identity declarative. For a `thing` specifically that it no longer owns materialisation active, create a materialisation fresh from the canonical definition: reconstructs its declared structure and reapplies defaults and initialisers. It does not restore the load or the structural modifications specific to the materialisation destroyed.
+`create d` re-enable the same one identity declarative. For a `thing` specifically that it no longer owns materialisation active, create a materialisation fresh from the canonical definition: reconstructs its declared structure and reapplies defaults and initialisers. It does not restore the load specific to the destroyed materialisation.
 
 One `thing` abstracta does not have its own specific payload to reset; its cycle The building’s lifespan depends on appropriate maintenance and structural restoration. For rules, a activation The posterior region reconstructs temporal memory in accordance with D-099 and does not retrieve the memory of the activation destroyed.
 
@@ -232,37 +234,20 @@ Thing
 └── Panama
 ```
 
-The properties declared by `Kingdom` are no longer inherited whilst it is destroyed. The properties inherent in `Panama` remain in force if their provisions remain in force. Upon re-establishment `Kingdom`, the edges and properties derived from its canonical definition; runtime structural modifications belonging to the materialisation destroyed from `Kingdom`.
+The fields inherited from `Kingdom` become unavailable in the effective projection while that dependency is inactive; their canonical static declarations and specialisation remain unchanged. The own fields of `Panama` remain effective when their dependencies permit. Reactivating `Kingdom` restores the applicable projection from canonical definitions without restoring its previous own runtime load.
 
 The specialisation unit declared with `as` it can be crossed at the effective projection and not just one hard dependency which will cause a chain reaction that destroys all the descendants.
 
-## `add` and `remove` about properties
+## Static fields and collection membership
 
-`add` and `remove` also operate on properties. The word `property` is not necessary:
-
-```mud
-add kingdom: Kingdom[1] = Panama to King
-remove kingdom from King
-```
-
-The colon indicates the addition of a declaration resulting from the addition of a member:
+The field declarations of a `thing` come exclusively from its canonical static schema, including specialisation. Runtime effects cannot add or delete a field or its descriptor. `add` and `remove` operate on compatible writable collections:
 
 ```mud
 add Panama to King.kingdoms
 remove Panama from King.kingdoms
 ```
 
-`remove kingdom from King` Removes the property and its stored data. Re-adding a property with the same name does not automatically restore it `Panama`.
-
-Therefore:
-
-$$
-\operatorname{remove}(p)
-\implies
-p\notin\operatorname{Stored}(W')
-$$
-
-whereas destroying one hard dependency It does not transfer ownership, but merely suspends it:
+Changing collection membership does not change the declaration of `kingdoms`. A field suspended by an inactive hard dependency retains its static declaration and any independently owned stored load:
 
 $$
 \operatorname{destroy}(T)
@@ -277,7 +262,7 @@ p\notin\operatorname{Effective}(W')
 \end{cases}
 $$
 
-This preservation does not apply to fields or structural modifications whose load belongs to the materialisation a specific one destroyed.
+This preservation does not apply to stored load belonging to the destroyed concrete owner's own materialisation.
 
 ## Absence of implicit captures
 
@@ -301,7 +286,7 @@ The option to automatically remove all members of collections in the same way is
 
 ### Hibernation of the materialisation own
 
-The option of retaining the payload and runtime structural modifications associated with a `thing` specifically after `destroy`. D-099 requires that a `create` subsequently build a materialisation fresh from the source canonical identity.
+The option of retaining the payload associated with a `thing` specifically after `destroy`. D-099 requires that a `create` subsequently build a materialisation fresh from the source canonical identity.
 
 ### Destructive waterfall
 
