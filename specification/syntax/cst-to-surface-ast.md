@@ -16,6 +16,7 @@ depends-on:
 questions:
   - Q-063
 decisions:
+  - D-106
   - D-102
   - D-015
   - D-054
@@ -530,7 +531,7 @@ Contextual syntax validation rejects a positional argument following the first n
 
 ### Receiver ambiguity
 
-`receiver-tuple` and `structural-literal` converge on one of two forms: `PositionalStructuralLiteralExpr` or `NamedStructuralLiteralExpr`. Subsequent `MemberAccessExpr` and `CallExpr` retain the complete form. Resolution selects a signature and then chooses between one structural receiver and multiple receivers.
+`receiver-tuple` and `structural-literal` converge on one of two forms: `PositionalStructuralLiteralExpr` or `NamedStructuralLiteralExpr`. Subsequent `MemberAccessExpr` and `CallExpr` retain the complete form. Typing and elaboration interpret the preserved form against each candidate signature, including whether it supplies one structural receiver or multiple receivers. Nominal lookup may retain several candidates under the receiver-call rule in [[../09-names-and-anchors#Receiver-call selection|chapter 09]]; the Surface AST does not select one. Multiple compatible declarations remain ambiguous, regardless of their receiver interpretation.
 
 ### Paths
 

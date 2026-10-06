@@ -10,7 +10,7 @@ module MUDNominalHIR {
 
     nominal_project = NominalHIR(nominal_symbol* symbols,
                                  nominal_scope* scopes,
-                                 resolved_reference* bindings,
+                                 nominal_reference* bindings,
                                  nominal_edge* edges)
 
     nominal_symbol = NominalSymbol(symbol_id identity,
@@ -27,9 +27,16 @@ module MUDNominalHIR {
 
     scope_entry = ScopeEntry(string name, symbol_id symbol)
 
-    resolved_reference = ResolvedReference(surface_ref occurrence,
-                                           symbol_id target,
-                                           string role)
+    lookup_level = LexicalLevel | OwnerLevel | CurrentPathLevel
+                 | ExactUsingLevel | RecursiveUsingLevel | BuiltinLevel
+
+    nominal_reference = ResolvedReference(surface_ref occurrence,
+                                         symbol_id target,
+                                         string role)
+                      | PendingReceiverCall(surface_ref occurrence,
+                                             symbol_id* candidates,
+                                             lookup_level level,
+                                             string role)
 
     nominal_edge = Owns(symbol_id owner, symbol_id member)
                  | Specializes(symbol_id derived, symbol_id base)

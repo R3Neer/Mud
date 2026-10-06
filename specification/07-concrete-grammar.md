@@ -16,6 +16,7 @@ questions:
   - Q-062
   - Q-063
 decisions:
+  - D-106
   - D-102
   - D-101
   - D-015
@@ -907,6 +908,8 @@ The link depends on the role category:
 - one `thing` is linked by identity;
 - a built-in value, alias, `family` member, dictionary or other immutable value is bound by value;
 - a role with outer `mut` is bound by storage-location identity and also retains its current value.
+
+Calls with explicit receivers may select between visible nominal callables governed by `for` using static participant compatibility, as specified by [[09-names-and-anchors#Receiver-call selection|receiver-call selection]]. This is a resolution/elaboration rule: no new token, grammar production or Surface AST constructor is introduced. `given` arguments and runtime predicates do not disambiguate the operation.
 
 ## Rules
 

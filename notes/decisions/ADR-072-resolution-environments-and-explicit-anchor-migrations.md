@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-072 — Resolution environments and explicit anchor migrations
 
+- Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
+
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]]
 - Extended by: [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]]
 - Adjusted to the phase boundary of [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
@@ -35,7 +37,7 @@ Roles, `given` parameters, iteration variables and local bindings are lexical sy
 
 ### Normative resolution model
 
-The specification defines resolution through environments and ordered candidate sets. For an unqualified name, levels are consulted in order: lexical scope, the relevant owner, the same MUD path, exact `using` declarations and recursive `using` declarations. The first non-empty level is selected, and exactly one candidate compatible with the required category is required.
+The specification defines resolution through environments and ordered candidate sets. For an unqualified name, levels are consulted in order: lexical scope, the relevant owner, the same MUD path, exact `using` declarations and recursive `using` declarations. The first non-empty level is selected; category incompatibility never permits falling through. Distinct anchors are ambiguous except in a call with explicit receivers whose candidates are nominal callables governed by `for`. Such a call retains all candidates from that level until elaboration selects exactly one by static receiver compatibility. No most-specific preference, `given` argument or runtime predicate breaks a tie.
 
 Scope graphs may be used as an implementation or explanatory representation, but are not the normative authority of MUD 1.0. An implementation must preserve the same candidates, priorities, ambiguities and rejections defined by the resolution judgements.
 

@@ -12,6 +12,7 @@ This directory contains the standardised and verifiable artefacts that link the 
 | `cst-to-surface-ast.md` | Normative | Transformation and standardisation. |
 | `syntax-coverage.yaml` | Mechanical normative | Comprehensive EBNF → CST → AST mapping. |
 | `validate_syntax_model.py` | Publishing tool | Detects discrepancies between the previous artefacts. |
+| `test_validate_syntax_model.py` | Regression suite | Rejects malformed nominal-HIR reference contracts and elaboration fields. |
 | `cases/cst-ast.yaml` | Starter suite | Transformation and pre-AST rejection cases. |
 
 ## Order of authority
@@ -36,7 +37,7 @@ archivo .mud
 → lossless CST
 → contextual syntactic validation
 → normalised Surface AST
-→ nominal resolution: symbols + bindings + partial graph
+→ nominal resolution: symbols + resolved bindings/pending call candidates + partial graph
 → typing/elaboration
 → later semantic representation not yet formalised
 ```
@@ -72,6 +73,7 @@ From the root from the repository:
 
 ```bash
 python specification/syntax/validate_syntax_model.py
+python specification/syntax/test_validate_syntax_model.py
 ```
 
 The command checks:
@@ -82,6 +84,7 @@ The command checks:
 - Correlation between CST categories and coverage.
 - Availability of destinations ASDL as stated.
 - Existence of standard contracts under the scheme.
+- The Nominal HIR distinction between resolved targets and pending receiver-call candidates, without type conclusions.
 
 Not yet verified:
 

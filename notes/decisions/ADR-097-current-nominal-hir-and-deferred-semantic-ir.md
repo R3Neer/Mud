@@ -12,6 +12,8 @@ affects:
 
 # ADR-097 — Current nominal HIR and deferred semantic IR
 
+- Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
+
 - Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
 - Clarifies the phase boundary used by [[ADR-092-static-availability-of-reflective-properties|D-092]].
 
@@ -28,7 +30,7 @@ MUD currently maintains two normative representations in the frontend chain:
 1. the Surface AST in `specification/syntax/mud-surface-ast.asdl`;
 2. the Nominal HIR produced by name resolution in `specification/names/mud-nominal-hir.asdl`.
 
-The nominal HIR contains only information justifiable by nominal resolution. Its graph admits ownership, specialisation and nominal reference. It contains no effective types, effective domains, inferred cardinalities, elaborated conversions, effects, semantic dependencies or termination evidence.
+The nominal HIR contains only information justifiable by nominal resolution, including complete deduplicated candidate sets and lookup levels for pending receiver calls. Those records contain no selected target or compatibility verdict and produce no candidate `RefersTo` edges; static receiver selection belongs to elaboration. Its graph admits ownership, specialisation and nominal reference. It contains no effective types, effective domains, inferred cardinalities, elaborated conversions, effects, semantic dependencies or termination evidence.
 
 Typing and elaboration remain later architectural phases and may produce their own semantic representation. That representation is conceptually called **future semantic IR**, but MUD does not yet fix:
 

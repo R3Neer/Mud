@@ -94,6 +94,39 @@ def load_yaml(path: Path):
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
+def nominal_hir_contract_problems(text: str) -> list[str]:
+    """Check nominal lookup storage without performing receiver elaboration."""
+    code = re.sub(r"--.*", "", text)
+    problems: list[str] = []
+    if "module MUDNominalHIR" not in code:
+        problems.append("module MUDNominalHIR is missing")
+    for fragment in ["semantic_type", "effective_domain", "collection_shape", "effective_cardinality", "termination_evidence", "ConversionExpr"]:
+        if fragment in code:
+            problems.append(f"the nominal HIR contains forbidden elaboration: {fragment}")
+    for fragment in ["Owns(", "Specializes(", "RefersTo("]:
+        if fragment not in code:
+            problems.append(f"required nominal relationship is missing: {fragment}")
+
+    constructors = {
+        "ResolvedReference": "surface_ref occurrence, symbol_id target, string role",
+        "PendingReceiverCall": "surface_ref occurrence, symbol_id* candidates, lookup_level level, string role",
+    }
+    for name, expected in constructors.items():
+        matches = re.findall(rf"\b{name}\s*\(([^()]*)\)", code, re.S)
+        if len(matches) != 1 or re.sub(r"\s+", " ", matches[0]).strip() != expected:
+            problems.append(f"{name} must preserve the nominal reference contract: {expected}")
+    reference_sum = re.search(r"\bnominal_reference\s*=\s*(.*?)(?=\n\s*[a-z][a-z0-9_]*\s*=|\n\s*\})", code, re.S)
+    if not reference_sum or re.findall(r"\b([A-Z][A-Za-z0-9_]*)\s*\(", reference_sum.group(1)) != ["ResolvedReference", "PendingReceiverCall"]:
+        problems.append("nominal_reference must distinguish resolved targets from pending receiver calls")
+    if not re.search(r"\bnominal_reference\*\s+bindings\b", code):
+        problems.append("NominalHIR bindings must preserve resolved and pending references")
+    levels = re.search(r"\blookup_level\s*=\s*(.*?)(?=\n\s*[a-z][a-z0-9_]*\s*=|\n\s*\})", code, re.S)
+    expected_levels = {"LexicalLevel", "OwnerLevel", "CurrentPathLevel", "ExactUsingLevel", "RecursiveUsingLevel", "BuiltinLevel"}
+    if not levels or set(re.findall(r"\b[A-Z][A-Za-z0-9_]*\b", levels.group(1))) != expected_levels:
+        problems.append("lookup_level must preserve the six nominal lookup priorities")
+    return problems
+
+
 def validate(root: Path) -> list[Problem]:
     problems: list[Problem] = []
     grammar = root / "specification/grammar/mud.ebnf"
@@ -175,16 +208,8 @@ def validate(root: Path) -> list[Problem]:
         problems.append(Problem(str(nominal_hir_path), f"undefined ASDL type: {unknown}"))
     if nominal_hir_path.exists():
         hir_text = nominal_hir_path.read_text(encoding="utf-8")
-        if "module MUDNominalHIR" not in hir_text:
-            problems.append(Problem(str(nominal_hir_path), "module MUDNominalHIR is missing"))
-        for fragment in ["semantic_type", "effective_domain", "collection_shape", "effective_cardinality", "termination_evidence", "ConversionExpr"]:
-            if fragment in hir_text:
-                problems.append(Problem(str(nominal_hir_path), f"the nominal HIR contains forbidden elaboration: {fragment}"))
-    if nominal_hir_path.exists():
-        hir_text = nominal_hir_path.read_text(encoding="utf-8")
-        for fragment in ["Owns(", "Specializes(", "RefersTo("]:
-            if fragment not in hir_text:
-                problems.append(Problem(str(nominal_hir_path), f"required nominal relationship is missing: {fragment}"))
+        problems.extend(Problem(str(nominal_hir_path), message)
+                        for message in nominal_hir_contract_problems(hir_text))
 
     cases_path = root / "specification/syntax/cases/cst-ast.yaml"
     cases = load_yaml(cases_path)

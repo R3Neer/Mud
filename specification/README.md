@@ -255,7 +255,7 @@ Defines:
 - Local and qualified resolution.
 - Exact and recursive `using` declarations.
 - Mandatory placement of all `using` declarations in the file header.
-- Ambiguity.
+- Ambiguity and static selection of homonymous imported callables by their supplied `for` participants, without changing anchors or lookup priorities.
 - Formation and uniqueness of public anchors; functional-dictionary branches use local keys and receive no public anchor.
 - Categories `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` and `type::*`.
 - Identity under file moves.

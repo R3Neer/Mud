@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-106
   - D-101
   - D-035
   - D-065
@@ -77,13 +78,72 @@ Let $Gamma$ be an environment and let $n$ be an unqualified name. The resolution
 > [!rule] MUD-NAME-004 — First non-empty level
 > The resolution uses only the first level that produces candidates. If none of its candidates belong to the required category, the reference is invalid; it does not proceed to subsequent levels.
 
-Candidates that refer to the same anchor are deduplicated. Two different anchors at the same level result in ambiguity. The textual order of files and `using` does not resolve ties.
+Candidates that refer to the same anchor are deduplicated. Two different anchors at the same level result in ambiguity, except for the receiver-call selection defined below. The textual order of files and `using` does not resolve ties.
 
 An exact `using` imports a specific path, whilst a recursive one imports its descendants. Neither re-exports the `using`s contained in the files reached. A fully qualified reference avoids level-by-level searching.
 
 `Prefix` appears at the top-level as an embedded type. The SI names `quecto`…`quetta` are also resolved there as built-in constants of `Prefix`; they do not introduce declarations or anchors of their own.
 
 Access paths with nodes are constructed in stages: first, the nominal root is resolved, and then each member is resolved using the resulting type or owner. A qualified path and a chain of members may share surface writing without sharing internal resolution.
+
+### Receiver-call selection
+
+> [!rule] MUD-NAME-007 — Selection by supplied `for` participants
+> An unqualified operation name in a call with explicit receivers may denote several visible declarations from different MUD paths at the first non-empty lookup level. When every distinct candidate is a nominal callable governed by `for` (an action, subaction, Boolean rule or `look`), elaboration selects a declaration by static receiver compatibility. Exactly one compatible declaration is required.
+
+The operation name in `A.Play()` is unqualified even though the receiver `A` is written explicitly. The receiver is resolved independently; it does not make `Play` a member owned by `A`. The lookup levels and modular visibility remain unchanged. A non-callable candidate or a stored callable value at the selected level does not participate in this exception; ordinary ambiguity and category checks apply. A single stored callable value retains its ordinary invocation contract.
+
+For each candidate, elaboration binds the supplied receivers to its declared `for` roles using the ordinary positional or exhaustive named form. It checks the number and names of roles, static type compatibility, collection cardinality and modifiers, and required outer and inner mutability capabilities. A collection supplied for one collective role remains one receiver. A structural receiver form is interpreted against each candidate signature; distinct valid interpretations do not create a preference between candidates.
+
+Only incompatibility established from static receiver information excludes a candidate. Flow-proven narrowing may contribute that information. An unresolved obligation remains subject to ordinary call validation and cannot be used to assume that a competing candidate will fail. Participant-domain predicates and runtime values do not select a declaration. No domain predicate, action condition or callable body is executed during selection.
+
+The result is determined before checking `given` arguments, their names, defaults or types, the expected return type, and action conditions. Those checks validate the selected declaration and cannot select a different one. There is no preference for an exact nominal match or a more specialised signature, nor for a closer path or earlier import.
+
+- No compatible candidate is a static receiver-incompatibility error. Lookup does not continue at a later level.
+- One compatible candidate fixes the declaration for the call; ordinary remaining call obligations still apply.
+- Several compatible candidates are a static ambiguity error, even if only one would accept the `given` arguments or pass a runtime condition. The diagnostic lists their qualified names and anchors. A fully qualified operation reference selects its declaration explicitly and still checks its receiver contract.
+
+Selection is static and never dispatches between declarations using the receiver's runtime type. A union receiver must admit one declaration for all alternatives permitted by its static type; different alternatives selecting different declarations require explicit narrowing into separate calls. Mere inequality of receiver identities does not establish disjoint participant types.
+
+> [!example] Independent actions with the same short name
+> In path `a.stuff`, a concrete `thing A` has a field `score: Nat = 0`, and the action is:
+
+```mud
+action Play for actor: A [mut] {
+    then actor.score += 1
+}
+```
+
+> In path `b.stuff`, an unrelated concrete `thing B` has the same field and an independent action:
+
+```mud
+action Play for actor: B [mut] {
+    then actor.score += 1
+}
+```
+
+> In a context with the required mutation authority and modular visibility, the calls below select `action::a.stuff.Play` and `action::b.stuff.Play`, respectively:
+
+```mud
+using a.stuff
+using b.stuff
+
+action PlayBoth {
+    then A.Play()
+    then B.Play()
+}
+```
+
+The declarations remain owned by their MUD paths. They do not acquire anchors under `A` or `B`. Sharing the path segment `stuff` has no effect on selection. Two `Play` declarations within the same path remain invalid regardless of their participant signatures.
+
+> [!failure] Overlapping signatures
+> If the second imported `Play` accepts `Thing [mut]`, both declarations accept `A`. `A.Play()` is ambiguous; the more specialised `for A` signature does not win. Likewise, a subtype satisfying both imported participant types is ambiguous, even when neither participant type specialises the other. A bare reference to `Play` remains ambiguous: receiver selection applies only to a call with explicit receivers.
+
+### Nominal representation of pending calls
+
+The Nominal HIR represents a reference as either `ResolvedReference` or `PendingReceiverCall`. A pending call retains the source occurrence, its role, the selected lookup level and the complete deduplicated set of nominal candidate symbols. It has at least two candidates, all governed by `for`. Candidate order has no semantic effect; canonical serialisation orders candidates by anchor. A single nominal candidate may be recorded as resolved and remains subject to ordinary type checking.
+
+`PendingReceiverCall` contains no effective type, compatibility verdict or chosen target. It introduces no symbol, owner or public anchor and produces no `RefersTo` edge towards any candidate. Once elaboration has selected a declaration, the selected target belongs to the later semantic result; it is not retroactively recorded as a nominal-resolution conclusion. The resolved receiver roots and other independent references retain their ordinary nominal bindings and graph edges.
 
 
 ## Local scopes, iteration and blocks
@@ -105,9 +165,9 @@ No local scope permits forward references, loops, redeclarations or shading of a
 ## Stages
 
 1.  The Surface AST provides names and provenance.
-2.  The nominal resolution creates symbols, scopes, bindings and anchors, and instantiates them in the Nominal HIR of `names/mud-nominal-hir.asdl`.
+2. The nominal resolution creates symbols, scopes, resolved bindings, pending receiver-call candidate sets and anchors, and instantiates them in the Nominal HIR of `names/mud-nominal-hir.asdl`.
 3. The type system consumes Surface AST + Nominal HIR and resolves unions, domains and references dependent on type.
-4. The elaboration covers accesses, calls, contextual abbreviations and other type-dependent meanings; its subsequent mechanical representation has not yet been finalised.
+4. Elaboration covers accesses, calls (including selection from pending receiver-call candidates), contextual abbreviations and other type-dependent meanings; its subsequent mechanical representation has not yet been finalised.
 
 The Nominal HIR does not contain effective types, effective domains, cardinalities or proofs from termination. It is the contract between name resolution and typed, not a resolved copy of Surface AST.
 
@@ -211,6 +271,8 @@ After the nominal resolution, a partial graph is constructed using resolved symb
 - `Specializes`: nominal specialisation between declarations;
 - `RefersTo`: a nominal reference whose source and destination are already resolved symbols.
 
+Pending receiver-call candidates are lookup results, not resolved reference edges. The nominal graph does not claim that the source calls every candidate or any arbitrarily selected candidate.
+
 Types and effective domains, elaborate initialisation, calculations, reads, writes, effects, derived magnitudes and other type-dependent relationships do not belong to this phase. They are determined, where applicable, during subsequent typing and elaboration phases.
 
 The partial graph does not replace the AST nor does it constitute an source of truth. Its sole purpose is to implement the conclusions of nominal resolution that are to be retained as contract between Surface AST and the type system.
@@ -218,6 +280,8 @@ The partial graph does not replace the AST nor does it constitute an source of t
 ## Conformidad
 
 An conforming implementation must produce the same candidates and anchors, reject the shading and collisions indicated, preserve the provenance and allow the nominal graph to be reconstructed from the source programme.
+
+Receiver-call conformance includes distinct imported participant types, multiple and named receivers, collection-role shape and mutability, flow narrowing, overlapping specialisations, union receivers, duplicate imports of one anchor, and ambiguity unaffected by `given` or expected results. It must also preserve first-level blocking, exact-before-recursive priority, modular visibility, same-path name uniqueness and ambiguity of a bare callable descriptor reference. Pending calls must preserve all nominal candidates without false `RefersTo` edges.
 
 ## Alias specialisation
 

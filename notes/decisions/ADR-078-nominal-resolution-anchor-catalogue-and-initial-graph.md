@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-078 — Nominal resolution, anchor catalogue and initial graph
 
+- Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
+
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]], [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]], [[ADR-096-modules-callables-look-message-and-activation|D-096]] and [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
 - Extends: [[ADR-035-organisation-names-using-and-anchors|D-035]] and [[ADR-072-resolution-environments-and-explicit-anchor-migrations|D-072]].
 
@@ -19,7 +21,7 @@ affects:
 
 The specification calls the logical identity derived from folders a **MUD path**. There is no `namespace` header and `path` is not reserved. LSP may show a virtual header, copy the qualified name and reveal physical provenance without modifying the file.
 
-All top-level declarations in a path share one nominal namespace. An unqualified name is searched in this order: lexical environment, owner or implicit receiver, current path, exact `using`, recursive `using` and built-ins. The first non-empty level is selected; an incompatible category does not permit continuing. Candidates with the same anchor are deduplicated and distinct anchors are ambiguous. A `using` does not re-export. When a candidate belongs to another module, `using` contributes it only to nominal resolution: reaching it also requires `uses` to authorise the dependency and the symbol to belong to the visible closure of the modular contract. A qualified name cannot bypass this boundary.
+All top-level declarations in a path share one nominal namespace. An unqualified name is searched in this order: lexical environment, owner or implicit receiver, current path, exact `using`, recursive `using` and built-ins. The first non-empty level is selected; an incompatible category does not permit continuing. Candidates with the same anchor are deduplicated. Distinct anchors are ambiguous except for calls with explicit receivers whose nominal callable candidates are governed by `for`: elaboration must select exactly one by static participant compatibility from that same level, without a most-specific preference, `given`-based selection or runtime dispatch. A `using` does not re-export. When a candidate belongs to another module, `using` contributes it only to nominal resolution: reaching it also requires `uses` to authorise the dependency and the symbol to belong to the visible closure of the modular contract. A qualified name cannot bypass this boundary.
 
 There is no shadowing of a visible name. `PascalCase`, `lowerCamel` and the unit `lowerCamel` convention are static requirements with an automatic fix.
 
@@ -27,7 +29,7 @@ Anchors belong to top-level nominal declarations, fields in their original owner
 
 Canonical categories are `thing`, `alias`, `family`, `magnitude`, `unit`, `rule`, `action`, `look`, `message`, `test` and `type`. Nested declarations extend the owner's anchor with `::<member>`; a first-level modular `start with` contribution has neither name nor anchor. Module membership is a visibility and dependency dimension, not an additional nominal-anchor component.
 
-Nominal resolution creates symbols, anchors, scopes and reference bindings whose category can already be determined, materialising them in `specification/names/mud-nominal-hir.asdl`. Type names are nominally bound to symbols, but compatibility, unions, domains, cardinalities and type-dependent members belong to typing and elaboration. The specification uses environments and candidate sets; a scope graph is an implementation option, not authority.
+Nominal resolution creates symbols, anchors, scopes, resolved reference bindings and pending receiver-call candidate sets justified by nominal lookup, materialising them in `specification/names/mud-nominal-hir.asdl`. Type names are nominally bound to symbols, but compatibility, unions, domains, cardinalities and type-dependent members belong to typing and elaboration. The specification uses environments and candidate sets; a scope graph is an implementation option, not authority.
 
 The nominal HIR contains only relationship families this phase can justify: ownership/containment (`Owns`), specialisation (`Specializes`) and nominal reference (`RefersTo`). Relationships depending on effective type, domain, elaborated initialisation, computation, effects or termination remain outside the HIR and belong to later phases whose mechanical representation is not yet fixed.
 

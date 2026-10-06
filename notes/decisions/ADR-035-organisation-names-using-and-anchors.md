@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-035 — Organisation, names, `using` and anchors
 
+- Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 
@@ -53,7 +55,7 @@ For an unqualified name, the search continues:
 3. Statements `using` exact.
 4. Statements `using` recursive.
 
-A fully qualified reference avoids name ambiguity, but is only resolved if the declaration is part of the visible modular closure; this classification does not replace the authorisation `uses` from D-096. If two imported candidates provide the same unqualified name, there is ambiguity and the qualified name must be specified.
+A fully qualified reference avoids name ambiguity, but is only resolved if the declaration is part of the visible modular closure; this classification does not replace the authorisation `uses` from D-096. Distinct imported anchors with the same unqualified name are ambiguous outside receiver-call selection. In a call with explicit receivers, nominal callables governed by `for` at the first non-empty lookup level may be selected by static participant compatibility; exactly one compatible candidate is required. The selection does not use `given`, runtime predicates or a most-specific preference, and does not fall through to later levels.
 
 The textual order of files and statements `using` It does not decide draws.
 

@@ -12,6 +12,8 @@ affects:
 
 # ADR-093 — Surface AST, nominal HIR and later semantic phase
 
+- Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
+
 - Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]].
 - Modified by: [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
 - Clarifies: [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]], [[ADR-090-functional-branches-without-public-anchor|D-090]] and [[ADR-091-family-data-as-anchored-descriptors|D-091]].
@@ -28,13 +30,16 @@ Name resolution consumes that AST and produces a normative **nominal HIR**. The 
 
 - anchored symbols and `LocalSymbol`;
 - owners and lexical scopes;
-- bindings from each surface reference to a symbol;
+- resolved bindings from surface references to symbols;
+- pending receiver-call occurrences with their complete nominal candidate sets and selected lookup level, without compatibility conclusions or a chosen target;
 - public anchors;
 - nominal ownership, specialisation and reference edges.
 
 The nominal HIR cannot contain effective types, narrowing, effective domains, collection forms, effective or inferred cardinalities, elaborated conversions, termination proofs or any other conclusion requiring typing or elaboration. Its normative schema lives in `specification/names/mud-nominal-hir.asdl`.
 
-Typing and elaboration consume the Surface AST together with the nominal HIR. Their semantic result belongs to a later architectural phase, but the repository does not yet fix a normative mechanical schema for representing it. That contract will be designed when the typing and elaboration surfaces are sufficiently developed.
+A pending receiver call introduces no symbol or anchor and produces no `RefersTo` edge towards its candidates.
+
+Typing and elaboration consume the Surface AST together with the nominal HIR and select receiver-call targets using static participant compatibility. Their semantic result belongs to a later architectural phase, but the repository does not yet fix a normative mechanical schema for representing it. That contract will be designed when the typing and elaboration surfaces are sufficiently developed.
 
 No derived artefact is an independent semantic source: it is reconstructed from `.mud` files, version decisions and applicable earlier phases.
 
@@ -46,7 +51,7 @@ source text
 → lossless CST
 → Surface AST
 → nominal resolution
-→ nominal HIR: symbols + scopes + bindings + anchors + partial nominal graph
+→ nominal HIR: symbols + scopes + bindings/candidates + anchors + partial nominal graph
 → typing and elaboration
 → later semantic representation to be formalised
 → later analysis / execution

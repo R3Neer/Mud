@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-036 — Participants, recipients and calls
 
+- Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
+
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
@@ -173,7 +175,7 @@ Selection by type It never replaces an exact nominal reference written outside a
 
 ### Recipients and arguments
 
-Recipients connect participants; storylines connect `given`.
+Receivers bind participants; arguments bind `given`. A call with explicit receivers may disambiguate homonymous visible nominal callables from different paths by static compatibility with their `for` roles. Only the first non-empty lookup level participates. Exactly one compatible declaration is required; `given` arguments, defaults, expected results and runtime conditions never select it, and no more-specialised signature wins a tie. Bare descriptor references and stored callable invocation retain their ordinary contracts.
 
 ```mud
 army.IsDestroyed()

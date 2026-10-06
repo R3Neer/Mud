@@ -18,6 +18,7 @@ depends-on:
 questions:
   - Q-063
 decisions:
+  - D-106
   - D-102
   - D-101
   - D-015
@@ -61,7 +62,7 @@ This chapter defines the normalised Surface AST for MUD 1.0. The AST preserves s
 
 The standard mechanical diagram is [[mud-surface-ast]]. This chapter explains its invariants and how it relates to other representations.
 
-Nominal resolution operates on this AST and produces the normative HIR `names/mud-nominal-hir.asdl`, which instantiates symbols, scopes, bindings, anchors and a partial nominal graph without duplicating source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later typing and elaboration stages whose mechanical representation is not yet finalised.
+Nominal resolution operates on this AST and produces the normative HIR `names/mud-nominal-hir.asdl`, which instantiates symbols, scopes, resolved bindings, pending receiver-call candidate sets, anchors and a partial nominal graph without duplicating source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later typing and elaboration stages whose mechanical representation is not yet finalised.
 
 ## Representation pipeline
 
@@ -72,7 +73,7 @@ source text
 → contextual syntactic validation
 → normalised Surface AST
 → nominal resolution
-→ Nominal HIR: symbols + scopes + bindings + anchors + partial graph
+→ Nominal HIR: symbols + scopes + bindings/candidates + anchors + partial graph
 → typing and elaboration
 → later semantic representation, not yet formalised
 ```
@@ -81,7 +82,7 @@ source text
 > The Surface AST does not contain resolved symbols, anchors, inferred types, computed effects or decisions that depend on a declaration found by name.
 
 > [!rule] MUD-AST-003 — Border of the Nominal HIR
-> The Nominal HIR may add identity and resolution, but no type semantics: it contains symbols, scopes, bindings, anchors and named edges. Effect types, effect domains, cardinalities, elaborated conversions and termination evidence are excluded from the Nominal HIR and belong to later typing and elaboration stages.
+> The Nominal HIR may add identity and resolution, but no type semantics: it contains symbols, scopes, resolved bindings, pending receiver-call candidate sets with lookup levels, anchors and named edges. A pending call preserves lookup information only; receiver compatibility and target selection belong to elaboration and do not create nominal reference edges towards candidates. Effect types, effect domains, cardinalities, elaborated conversions and termination evidence are excluded from the Nominal HIR and belong to later typing and elaboration stages.
 
 > [!rule] MUD-AST-002 — Standardisation
 > Two concrete forms declared equivalent by this chapter produce the same AST form, except for their provenance.
