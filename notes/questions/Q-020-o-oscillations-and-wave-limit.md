@@ -19,4 +19,4 @@ Semantic detection, technical safeguard, diagnostics and reproducibility.
 
 Status: **partially decided** by [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]].
 
-A semantic oscillation produces `failed`; a resource limit is a distinguishable technical safeguard. The normative detection algorithm, portable configuration and diagnostics remain to be defined.
+A semantic oscillation produces Error occurrences, reported as `Errors` in an `ActionReply`; a resource limit is a distinguishable technical safeguard. The normative detection algorithm, portable configuration and diagnostics remain to be defined.

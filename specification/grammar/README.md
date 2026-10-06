@@ -33,7 +33,7 @@ Symbol initial:
 `mud.ebnf` is produced from the artefacts listed in:
 
 - `../syntax/mud-syntax-kinds.yaml`.
-- `../syntax/lossless-cst.md`.
+- `../syntax/cst-lossless.md`.
 
 Abstract projection is defined by:
 

@@ -24,7 +24,7 @@ If a rule contains `create A` while canonical identity `A` is already active, th
 
 The following remain to be decided:
 
-- Which result an action requested in the same case receives: `rejected`, `failed` or another result.
+- Which result an action requested in the same case receives: `Success`, `Refusal` or `Errors`.
 - Whether a rule with several creations requires all identities to be absent.
 - How creations with mixed availability combine within a `then` sequence, including those contributed transitively by internal calls.
 

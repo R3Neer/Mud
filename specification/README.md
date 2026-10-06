@@ -121,58 +121,13 @@ Normative glossary of:
 
 Chapter: [[03-notation]].
 
-Fixes the notation used throughout the standard:
+Defines the shared metalanguage: symbols and logic, sets and collection shapes, functions and relations, graphs, judgments, operational notation, EBNF and ASDL-MUD. Mathematical notation is distinct from MUD source and does not prescribe implementation layout. Each semantic chapter defines the objects and judgments it uses; the notation alone does not define an execution protocol.
 
-- Sets, sequences, multisets and finite maps.
-- Relations, partial functions and transitive closures.
-- Directed graphs.
-- EBNF grammars.
-- Typing judgements.
-- Inference rules.
-- Operational semantics.
-- Labelled transition systems.
-- Partial orders and fixed points.
-- Probability and reproducible seeds.
-
-Juicios previstos:
-
-$$
-\Gamma \vdash n \rightsquigarrow a
-$$
-
-“In environment $\Gamma$, name $n$ resolves to anchor $a$.”
-
-$$
-\Gamma;\Sigma \vdash e : \tau
-$$
-
-“In environments $\Gamma$ and $\Sigma$, expression $e$ has type $\tau$.”
-
-$$
-\Gamma;\Sigma \vdash e\ \mathsf{reads}\ R
-$$
-
-“Expression $e$ may read the set of anchors $R$.”
-
-$$
-\langle W, q \rangle \Downarrow \langle W', r, T \rangle
-$$
-
-“Request $q$ on world $W$ terminates in world $W'$, with result $r$ and causal trace $T$.”
-
-## 04. Mathematical model of the world
+## 04. Mathematical foundations of the MUD world
 
 Chapter: [[04-mathematical-model]].
 
-Defines, before discussing syntax:
-
-- Universes of anchors, `thing` and values.
-- World state.
-- Field and relation store.
-- Identity versus structural equality.
-- Well-formed states.
-- Stable and tentative snapshots.
-- Semantically visible observations.
+Defines canonical programme identities, specialisation, values, activation and materialisation generations, owned storage and effective projection. It distinguishes confirmed from tentative state and records the established lifecycle, checkpoint, recovery and initial-world invariants. It remains a foundation for the operational formalisation, with creation admission and reactive suspension memory explicitly bounded by active questions.
 
 ---
 
@@ -760,7 +715,7 @@ The `syntax/` subdirectory contains the CST contract, Surface ASDL, transformati
 
 ```text
 syntax/
-├── lossless-cst.md
+├── cst-lossless.md
 ├── mud-syntax-kinds.yaml
 ├── mud-surface-ast.asdl
 ├── cst-to-surface-ast.md

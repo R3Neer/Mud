@@ -1,7 +1,7 @@
 ---
-title: Model mathematician from world
+title: Mathematical foundations of the MUD world
 aliases:
-  - Model official version of the world MUD
+  - Mathematical model of the MUD world
 tags:
   - mud/specification
   - mud/normativa
@@ -19,7 +19,6 @@ decisions:
   - D-014
   - D-015
   - D-054
-  - D-017
   - D-025
   - D-019
   - D-026
@@ -39,122 +38,109 @@ decisions:
   - D-118
   - D-119
   - D-120
+  - D-122
+  - D-123
+  - D-124
 ---
 
-# 04. Model mathematician from world
+# 04. Mathematical foundations of the MUD world
 
-## State and purpose
+## Scope
 
-This chapter defines the mathematical constraints already established for representing a programme and an state of the world MUD before introducing its concrete syntax or its execution. The complete mathematical structure of the world remains under development and must extend these constraints without contradicting them.
+This chapter defines the semantic objects and invariants shared by the static language and the world model. It distinguishes the programme's canonical definitions, activation, owned storage and effective projection. It records the established boundaries of execution without supplying a complete transition system.
 
-## Sub-units
+The chapter remains a draft. Activation admission for mixed or ineffective creations is bounded by Q-046, and reactive memory under suspension or disappearing bindings by Q-005. The operational chapters must define complete judgments and conformance traces without changing the contracts below.
 
-- [[02-terminology|Terminology]].
-- [[03-notation|Mathematical notation and metalanguage]].
+## Canonical programme and identity
 
-## Planned content
+Let $P$ be a programme, $\mathcal D_P$ its catalogue of declaration identities, and $\operatorname{Def}_P(d)$ the canonical definition of $d\in\mathcal D_P$. The catalogue includes definitions that are currently inactive. Name resolution and anchors identifying these declarations are defined in [[09-names-and-anchors]]; presentation metadata does not supply identity.
 
-- Canonical programme definitions and active identities in each world.
-- Initial set `start with`, creation, destruction and reactivation.
-- Identity from `thing`.
-- Relation specialisation `is`.
-- Fields and relationships store.
-- Stored information and effective projection.
-- Suspension transitive via hard dependencies.
-- Identity versus structural equality.
-- Well-established states.
-- Stable and tentative states.
-- Semantically visible comments.
-- Isolated and disposable worlds from the tests.
+Every `thing` has one top-level canonical definition, including its abstract/concrete category, direct predecessors and body. A concrete `thing` denotes one particular thing with its own state and may also be an ancestor. An abstract `thing` belongs to the same nominal domain but has no own concrete payload. MUD does not turn these declarations into classes with separately created instances.
 
-## Restriction on model
+Let $\mathcal T_P\subseteq\mathcal D_P$ be the `thing` identities, including the built-in abstract `Thing`. Let $R_P\subseteq\mathcal T_P\times\mathcal T_P$ contain direct specialisation edges, oriented from descendant to predecessor. A root other than `Thing` with no declared `as` predecessors has an implicit semantic edge to `Thing`; that edge is not a declared predecessor. The graph is acyclic and its reflexive-transitive closure defines canonical `is`:
 
-MUD does not presuppose a distinction between classes and objects. In particular, an `thing` has no instances. The mathematical model must represent, within a single conceptual domain, both the canonical definitions of the programme and the active identities in each world, without converting them into classes and instances.
+$$
+\operatorname{is}_P:=R_P^*.
+$$
 
+Consequently `is` is a partial order. `as` specifies direct specialisation, while `iis` and `iis not` require or exclude exact effective nominal type. They are not identity comparisons. Specialisation inherits declarations, constraints, domains and effective defaults, never an ancestor's active mutable state.
 
-## Confirmed restrictions
+`Thing` is always effective, has no own concrete state, cannot be created or destroyed, and is excluded from `start with` and `all Thing`. A typed collection of `thing`s requires strict membership: for member $c$ and nominal type $T$, $c\ne T\land c\,\operatorname{is}_P\,T$. There is no `reflexive` modifier.
 
-The model current stipulates:
+## Values and nominal aliases
 
-1.  Every `thing` has identity semantics.
-2. Every specific `thing` denotes a specific thing with its own state and may be ancestor from others.
-3. An abstract `thing` belongs to the same domain, but does not directly denote a specific thing with its own state.
-4. Each `thing` has a single top-level canonical definition, which determines whether it is abstract or concrete, its direct predecessors and its body.
-5. The relation semantics `is` is reflexive and transitive.
-6. Direct specialisation is acyclic, so `is` is also antisymmetric and forms a partial order.
-7. Declarations, constraints, domains and effective defaults are inherited, but not state active mutable variables.
-8. Each specific `thing` has its own state.
-9. `create Nombre` only activates a single `thing` or defined rule; it does not support categories, predecessors or the body.
-10. If a canonical `thing` does not have an active materialisation, `create` instantiates that same identity and descriptor. Following a previous `destroy`, the new materialisation reconstructs the schema from the canonical definition and reapplies defaults and initialisers; it does not restore the own stored data of the destroyed materialisation.
-11. Every newly declared stored field has an explicit initialiser; descendants inherit its schema initialisation. Required alias components and family data must receive explicit values or explicit effective defaults. Types never select default values.
-12. `as` introduces direct specialisation; `is` query its reflexive and transitive closure; `iis` and `iis not` exclusively refer to or exclude the specified nominal effect type.
-13. A rule containing `create A` is only executed if canonical identity `A` is absent.
-14. Every field denotes a collection; its outer mutability and the capacity over its members are orthogonal permissions even with cardinality `[1]`.
-15.  A collection of `thing` always requires strict membership: $c\neq T\land c\ \mathsf{is}\ T$. There is no `reflexive`.
-16. Destroy commits only when resulting domains/cardinalities are valid; an invalid transition produces Error occurrences and rolls back.
-17.  A declaration with an inactive hard dependency is suspended entirely; its fields and participants are not partially rewritten, and that derived suspension does not clear its own stored payload. Only a `destroy` directed at the declaration itself terminates its materialisation runtime in accordance with the current cycle lifetime rules.
-18. A `thing`'s field declarations come exclusively from its canonical static schema, including specialisation. Runtime effects may change authorised values and collection membership, but never add or delete field declarations. Dependency suspension retains the static declaration and its applicable payload; destroying the owning `thing` discards its own materialisation's load, and a future materialisation uses the canonical schema.
-19. Each module may contribute at most one `start with`; their finite, unordered contributions are combined into a single surface of activatable statements `thing | rule`, and the contributions of all modules are materialised jointly prior to the initial stabilisation.
-20. Each contribution is a static expression that produces either an activatable declaration or a flat collection; it does not support instructions, effects or nested collections.
-21. If a module omits `start with`, its contribution is empty. `Thing` remains in effect at all times and forms no part of the activatable collection nor of the enumeration materialised by `all Thing`.
-22. Each test constructs a fresh, isolated world; before the test root, the static transitive closure of reachable tests is computed and their contributions are combined in `start with`.
-23. Tests are not executable statements, nor do they form part of world or the host’s public API; their visibility between modules exists solely in the context of tests.
-24. The world constructed for a test and all its outputs are discarded upon completion of its execution.
-25. `Thing` is an embedded abstract `thing`, which is always effective and takes precedence over any `thing` via `is`.
-26. A root without an `as` retains zero declared predecessors and receives an implicit semantic edge towards `Thing`.
-27. `Thing` has no specific state nor a cycle whose lifespan can be controlled by the programme.
-28. The declarations and values supported by presentation specify typed postfix metadata; `~name` has type `Name`, whilst `~path`, `~anchor` and `~file` describe provenance and identity.
-29.  The default value of `~name` is derived from the unqualified nominal identifier when the category defines it. It can be configured using the declaration or by editing the model, but no `~` access may be the target of a runtime assignment or update; metadata is not inherited.
-30. The identity, the effective nominal type, the path and the anchor do not depend on `~name`; multiple entities may share the same presentation. All access to `~` is read-only during execution; `~path`, `~anchor` and `~file` are also intrinsic properties and not configurable metadata.
-31. An immutable relation retains a withdrawn identity in a latent state and can restore that membership when `create` re-materialises the same identity; a relation `mut` removes that stored affiliation.
-32.  No confirmed state contains a collection whose effective cardinality contradicts its declaration.
-33. Stored writes target the materialisation generation observed by their branch and cannot migrate across destroy/create. Destroying a specific `thing` discards the stored values belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
-34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
-35. A resolution's private deltas and consolidated wave projections are tentative. Later waves may read consolidated tentative changes, while the confirmed world remains unchanged.
-36. Every invocation owns its initiating causal work; jointly caused consequences belong to the common enclosing invocation. After checks its stabilized completion before returning, without later rechecking. Only successful outer completion confirms the tentative world atomically.
-37. Imagine executes the complete invocation protocol in isolation, returns ActionReply unchanged and always discards tentative state. Confirmed world, queues, logs, randomness and resolution identity are unchanged.
-39. Always invariants are checked after the consolidated root and after every consolidated wave. False yields AlwaysRefusal; unsuccessful evaluation yields Error occurrences. A later wave cannot repair a failed checkpoint. Inactive hard-dependent rules are suspended, and restored rules are checked when effective again.
-38. Recording tentative changes does not change semantic consolidation into textual merging or impose a physical journal representation.
+Let $\mathcal V_P$ denote the semantic values admitted by the programme's type contracts. This symbol does not imply that all such values can be enumerated. `thing` values compare by identity; alias values are finite immutable structural values. The equality and collection contracts are defined in [[10-type-system]].
 
-Examples of confirmed distinctions:
+Aliases form a separate nominal partial order whose nodes are value types, not activatable identities. Abstract aliases are inhabited through concrete descendants. Productive recursion describes a finite type graph with finite individual values; it does not introduce cyclic value identity or imply finite enumeration.
 
-```mud
-thing Alexandria as City {
-    ~name = "Alejandría"
-}
+A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Module visibility and permission to specialise follow [[09-names-and-anchors]].
 
-start with {
-    Alexandria,
-    empty
-}
+## Activation and materialisation
 
-rule ExactIdentifier given value: Identifier {
-    value iis PersonId
-}
-```
+Let $\mathcal L_P\subseteq\mathcal D_P$ contain the declarations with explicit lifecycle: concrete and abstract `thing`s, Boolean rules, reactive rules and `always` rules, excluding `Thing`. For a world $W$ of $P$, activation is a total predicate:
 
-`Alexandria is City` query specialisation, `value iis PersonId` requires exact effective nominal type and `Alexandria == Alexandria` compares identity with value. None of these relationships depends on `Alexandria~name`.
+$$
+\operatorname{active}_W:\mathcal L_P\to\{\bot,\top\}.
+$$
 
+Activation does not change $\operatorname{Def}_P$. `create d` and `destroy d` refer to an already-defined `thing` or rule; they do not introduce a category, body, predecessors or implicit captures from their caller. Aliases, actions and the static dimensional system are not lifecycle targets.
 
-## Open questions
+An active concrete `thing` has its own materialisation. Abstract `thing`s have activation without concrete payload; active rules have the memory applicable to their category. A materialisation generation distinguishes successive activations of one concrete identity. Generation tokens are semantic distinctions, not programmer-visible names or a required integer encoding.
 
-> [!question] Q-046 — Invalid creation
-> Determine the result for actions and blocks with multiple creations. For a rule with a single creation, it has already been decided that the entire rule is not executed if the identity is active.
+Destroying a concrete owner ends its materialisation and discards its own stored data. A subsequent creation uses the same canonical identity with a fresh generation and schema initialisation; it does not restore the destroyed payload. Stored writes target the generation observed by their branch and cannot migrate to a later generation.
 
+Explicit destruction of a reactive rule clears that activation's temporary memory. Reactivation establishes a new baseline and does not itself trigger the rule. Memory behaviour for suspension and disappearing bindings not caused by explicit destruction remains open in Q-005.
 
-## Nominal aliases
+A rule containing a single `create A` does not execute when `A` is already active, and publishes no effects. Admission and outcomes for action requests, several creations or mixed availability remain open in Q-046; no general no-op or failure policy is implied here.
 
-Alias values are finite immutable structural values. Abstract aliases provide contracts inhabited only through concrete descendants. Productive component recursion describes a finite type graph and finite individual values; it does not imply finite enumeration or introduce cyclic value identity.
+## Owned storage and static schema
 
-Aliases form a second nominal partial order. Their nodes are types of value, not activatable identities. Direct specialisation is acyclic, and its closure `is` is reflexive, transitive and antisymmetric.
+For a concrete owner $d$, let $\operatorname{Fields}_P(d)$ be its canonical stored field declarations, including inherited declarations identified by origin. Runtime cannot add or delete these declarations. Each newly declared stored field has an explicit initialiser; descendants inherit schema initialisation. Required alias components and family data receive explicit values or explicit effective defaults. A type never supplies a default value.
 
-For an nominal alias with several predecessors, the set of values of the descendant must be contained within the intersection of the sets of values of all of them. The union `A | B` does not satisfy this requirement. For structural aliases, the effective form is obtained by aggregating members by origin: a single member inherited via multiple paths is deduplicated, and independent members with the same name produce conflict.
+For an existing materialisation generation $g$ of $d$, write $\operatorname{store}_W(d,g,f)$ for the stored value at field origin $f\in\operatorname{Fields}_P(d)$. This is a partial selector over owned storage, not a declaration of a physical memory layout. A field can have stored data while it is unavailable in the effective projection.
 
-Derived fields denote recalculated collections. Their membership is determined during an snapshot evaluation and is recalculated based on the subsequent consolidated state. The internal capacity `[mut]` may form part of its contract, but does not create authority: it must be guaranteed by the source value and preserved through transformations that maintain the identity semantics of the member `thing`s. This capability applies only to immediate members and does not make derived membership or nested collections writable. Stored collections, on the other hand, retain their membership until an authorised collection membership update is made.
+Every field denotes a collection. Outer membership mutability and immediate-member capability are independent, including at cardinality `[1]`. Runtime changes values, writable membership, relations and activity within their permissions. [[14-fields-and-mutability]] defines schema, initialisation and capability contracts.
 
+Stored collection membership persists until an authorised change or an applicable lifecycle operation. Derived fields are recalculated from the current evaluation snapshot; they have no independently writable membership. An inner `[mut]` contract requires authority from the source and preserves it through identity-preserving transformations. It affects immediate members, not nested membership or unrestricted external mutation.
 
-## Recovery occurrence contract
+## Effective projection and suspension
 
-Block error handlers select individual Error occurrences in stable causal order. Multiple on roles bind conjunctively; ordinary matching does not introduce implicit distinctness, and each selected occurrence is consumed once. Equal-valued occurrences are not deduplicated. Clauses run in textual order over the remaining occurrences; a false if leaves them pending. No on means catch-all per occurrence. Newly raised errors leave this chain rather than being recaptured by it.
+$\operatorname{Effective}(W)$ is the projection of definitions and stored data currently usable in $W$. It differs from both the canonical catalogue and the activation predicate. A declaration with an inactive hard dependency is suspended as a whole: its signature, participants and fields are not partially rewritten. Suspension does not end its own materialisation or discard its independently owned payload.
 
-The failed block rolls back before recovery. Successful enclosing work stays tentative; failed-body locals/exports are unavailable. Successful recovery writes compose tentatively. Any remaining or newly raised error discards the recovery scope and propagates outward. Expression/value recoveries propose one compatible result; equal proposals agree and incompatible proposals fail composition. Effect recoveries retain ordinary permissions. A bare failed action propagates its error channel, whereas explicitly obtaining an ActionReply containing Errors is ordinary value observation. Refusal is never selected by otherwise.
+Hard dependencies include the owner, declared type and declarations required to interpret a field's domain and shape. A dependent action can become unavailable even though actions are not explicitly destroyable. A suspended reactive rule produces no bindings; a suspended `always` rule imposes no current check; a suspended Boolean rule is unavailable for evaluation.
+
+Canonical specialisation edges survive destruction. Specialisation alone is not a hard dependency that suspends every descendant: an active descendant may remain effective with its own applicable fields while inherited fields requiring the inactive predecessor are unavailable. The effective graph may bridge inactive intermediate ancestors, without altering canonical `is` or rewriting the schema. Restoring a dependency restores the applicable projection and retained foreign-owned storage, not the destroyed dependency's former own payload.
+
+A relation without `mut` capability retains membership of a withdrawn identity latently and may restore it on creation of the same identity. A relation with that capability removes the stored affiliation; creation alone does not restore it. Authorised `remove` also removes latent membership. Destroying the referenced identity does not otherwise clear data belonging to independently owned declarations.
+
+No confirmed state has an effective collection cardinality contrary to its declaration. Destruction commits only if resulting domains and cardinalities remain valid; an invalid transition produces Error occurrences and rolls back. Creation validates jointly the fresh own payload, restored latent memberships and external declarations becoming effective again. An invalid restoration produces Errors and complete rollback; no partial materialisation is confirmed. These requirements do not demand erasing suspended storage or define a complete algorithm for computing the effective projection.
+
+## Confirmed world and tentative resolution
+
+Let $W_c$ denote the confirmed world and $W_t$ a tentative projection in one resolution. Private branch deltas and consolidated wave projections remain tentative. Later waves can read consolidated tentative changes while $W_c$ remains unchanged. These distinctions impose no textual patch format, Git merge algorithm or physical journal layout.
+
+Each invocation owns the causal work it starts. Jointly caused consequences belong to their common enclosing invocation. An invocation's `after` is evaluated when its owned waves have stabilised, before it returns; it is not deferred until the outer invocation completes or rechecked later. Successful outer completion confirms the tentative world atomically.
+
+`always` invariants are checked after the consolidated root and after every consolidated wave. A false condition produces `AlwaysRefusal`; an unsuccessful evaluation produces Error occurrences. Later waves cannot repair a failed checkpoint. Hard-dependent rules are checked when effective again.
+
+`imagine` executes the same invocation protocol in isolation, returns its `ActionReply` and always discards tentative changes. It leaves the confirmed world, queues, logs, randomness and resolution identity unchanged.
+
+Error occurrences belong to the resolution's error channel, not automatically to world storage. Block recovery rolls back its protected failed work before running handlers. Successful recovery remains tentative; unhandled or newly raised errors propagate. Refusal is not an Error occurrence and is not selected by `otherwise`. Selection, occurrence multiplicity, handler composition and ordinary observation of replies are defined in [[19-expressions]].
+
+## Initial and test worlds
+
+Each module contributes at most one `start with`: a static expression yielding an activatable declaration or a flat finite collection of `thing | rule`. It permits no instructions, effects or nested collections. An omitted contribution is empty. Contributions are unordered, deduplicated and materialised jointly before initial stabilisation, as defined in [[07-concrete-grammar]].
+
+Every test constructs a fresh isolated world. The static transitive closure of reachable tests supplies the combined initial contributions before the test root. Tests are not world declarations or the host's public API; cross-module test visibility exists only in the test context. The test world and all its outputs are discarded at completion.
+
+## Metadata and observations
+
+Identity and effective nominal type are independent of presentation. `~name` has type `Name`; when supported, its default comes from the unqualified nominal identifier and may be configured in the declaration or model. Distinct identities may share a presentation name. Metadata is not inherited.
+
+All postfix `~` access is read-only during execution. `~path`, `~anchor` and `~file` are intrinsic, nonconfigurable identity/provenance properties. Their supported categories and descriptor contracts are defined in [[09-names-and-anchors]] and [[19-expressions]].
+
+## Boundary of the operational formalisation
+
+The objects above are a shared foundation, not a complete state tuple, scheduler, transition relation or serialisation format. Operational definitions must account for activation, generations, retained storage, effective projection and tentative ownership. They must also supply effect and wave judgments, recovery traces and checkpoint validation.
+
+Q-046 bounds creation admission; Q-005 bounds reactive memory under suspension and disappearing bindings. Those questions remain active. A complete evaluator cannot be inferred from the notation or from these invariants alone.

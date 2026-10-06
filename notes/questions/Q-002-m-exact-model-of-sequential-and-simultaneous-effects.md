@@ -26,7 +26,7 @@ Sequential private projections, branch normalization, replacement before change,
 
 ## Pending
 
-Write the complete operational judgments for every surviving effect family in the planned effects/root/wave chapters, including activation admission under Q-046 and symbolic analysis completeness under Q-006. These pending formalizations do not reopen the accepted composition policies.
+Write the complete operational judgments for every surviving effect family in the planned effects/root/wave chapters, including activation admission under Q-046. Static conflict analysis is specified in [[specification/10-type-system]] and [[specification/14-fields-and-mutability]]; its accepted contract is not a pending decision. These pending formalizations do not reopen the accepted composition policies.
 
 ## Closure criterion
 

@@ -25,7 +25,7 @@ Hiding destroyed members and allowing effective cardinality to diverge from its 
 ```mud
 members: Person [2] = Alice, Bob
 
-destroy Bob # failed
+destroy Bob # Errors: effective cardinality would violate [2]
 ```
 
 There is no committed state whose effective cardinality contradicts its declaration.

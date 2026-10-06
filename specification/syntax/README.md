@@ -6,7 +6,7 @@ This directory contains the standardised and verifiable artefacts that link the 
 
 | Archive | State | Function |
 |---|---|---|
-| `lossless-cst.md` | Normative | Model of CST, trivia, spans and recovery. |
+| `cst-lossless.md` | Normative | Model of CST, trivia, spans and recovery. |
 | `mud-syntax-kinds.yaml` | Mechanical regulations | List of productions, tokens, trivia and CST categories. |
 | `mud-surface-ast.asdl` | Mechanical regulations | Outline of the Surface AST standardised. |
 | `cst-to-surface-ast.md` | Normative | Transformation and standardisation. |
@@ -21,7 +21,7 @@ The files complement one another; there is no general rule that ‘the latest on
 
 1. `mud-lexicon.ebnf` and `06-lexicon.md` determine lexical recognition.
 2. `mud.ebnf` and `07-concrete-grammar.md` determine concrete grouping.
-3. `lossless-cst.md` determines preservation, trivia and recovery.
+3. `cst-lossless.md` determines preservation, trivia and recovery.
 4. `mud-surface-ast.asdl` defines the abstract constructors.
 5. `cst-to-surface-ast.md` determines the projection.
 6. YAML files make it possible to list and verify the correspondence.
