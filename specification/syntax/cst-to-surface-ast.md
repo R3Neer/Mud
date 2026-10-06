@@ -398,9 +398,9 @@ The action is not classified as either elementary or compound.
 
 A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its RHS remains an ordinary expression: these positions cannot acquire a `ValueBlock` through nesting.
 
-The short form `if ready` produces `ExpressionBlock([], ready)`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. Following otherwise clauses are normalized into that block's handlers; handler scope is distinct from protected-body locals.
+The short form `if ready` produces `ExpressionBlock([], ready, [])`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. Following otherwise clauses are normalized into that block's handlers; handler scope is distinct from protected-body locals.
 
-A short `value-body` normalises to `ValueBlock([], value)`. The expanded form produces `ValueBlock(statements, result)`. Calculated statements produce `LocalCalculatedDecl`, stored ones `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove`, and local iteration `LocalForEach`. Later validation and elaboration verify that every `LocalMutation` stays within storage created by the `ValueBlock`.
+A short `value-body` normalises to `ValueBlock([], value, [])`. The expanded form produces `ValueBlock(statements, result, handlers)`. Calculated statements produce `LocalCalculatedDecl`, stored ones `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove`, and local iteration `LocalForEach`. Later validation and elaboration verify that every `LocalMutation` stays within storage created by the `ValueBlock`.
 
 `LocalForEach` preserves `source`, `step?` and the filter as `ExpressionBlock?`; its short body or text in brackets normalises to `LocalStatementBlock` and never to `EffectBlock`.
 
@@ -512,7 +512,7 @@ player in take m from players : player.score == 2
 
 ### Dictionary associations and branches
 
-`a -> b` produces `ExactAssociationExpr(ExpressionBlock([], a), ValueBlock([], b))`; `selector --> result` produces `DecisionBranchExpr(ExpressionBlock([], selector), ValueBlock([], result))`. The brace-form `mapping-key-body` retains its premises in `ExpressionBlock`; the expanded RHS uses `value-block-body` and stores its statements in `ValueBlock`. The short RHS remains `mapping-expression`, so an outer comma continues to separate clauses rather than becoming part of the first value. `_` produces `FallbackLiteral`. Operations `|`, `&`, `--` and `^` are initially retained as `BinaryExpr`; elaboration specialises them according to resolved types. A functional operation preserves both operands and does not become a merged branch list.
+`a -> b` produces `ExactAssociationExpr(ExpressionBlock([], a, []), ValueBlock([], b, []))`; `selector --> result` produces `DecisionBranchExpr(ExpressionBlock([], selector, []), ValueBlock([], result, []))`. The brace-form `mapping-key-body` retains its premises in `ExpressionBlock`; the expanded RHS uses `value-block-body` and stores its statements in `ValueBlock`. The short RHS remains `mapping-expression`, so an outer comma continues to separate clauses rather than becoming part of the first value. `_` produces `FallbackLiteral`. Operations `|`, `&`, `--` and `^` are initially retained as `BinaryExpr`; elaboration specialises them according to resolved types. A functional operation preserves both operands and does not become a merged branch list.
 
 ### Conversions
 

@@ -14,6 +14,8 @@ affects:
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-082-cycle-as-point-domain-modifier|D-082]]
 - Amends: [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Related to: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
@@ -132,7 +134,7 @@ The result depends on later use:
 - an `if` that tests membership in it may be false and produce `Refusal`;
 - an `after` that requires it not to be empty and is false produces `Refusal`;
 - if the interval forms a domain and leaves a stored value outside that domain, the tentative state is invalid and produces `Errors`;
-- if it causes an `always` rule to be violated, it produces `Errors`.
+- if it causes an `always` rule to be violated, it produces `AlwaysRefusal`; a computing error during the check remains an Error.
 
 A genuine error while evaluating an endpoint — for example, an invalid reference — retains the ordinary failure taxonomy and does not become `empty`.
 

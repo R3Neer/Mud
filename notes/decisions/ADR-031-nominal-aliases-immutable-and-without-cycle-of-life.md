@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-031 — Nominal aliases, immutable and without cycle of life
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[ADR-113-abstract-and-recursive-aliases|D-113]].
 
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
@@ -101,7 +103,7 @@ An outer-mutable place can replace the complete value, and an assignable path ma
 
 ```mud
 thing Piece {
-    mut square: Square
+    mut square: Square = (A, One)
 }
 
 Piece.square = (B, Four)

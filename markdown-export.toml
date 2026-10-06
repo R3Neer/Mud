@@ -38,6 +38,10 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/decisions/ADR-008-results-accepted-rejected-and-failed.md",
+    "notes/decisions/ADR-017-everything-type-well-built-has-default-value.md",
+    "notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message.md",
+    "notes/decisions/ADR-079-external-diagnostics-for-always-rules.md",
     "notes/questions/Q-003-p-validation-points.md",
     "notes/questions/Q-064-a-aliases-and-nominal-specialisation-between-modules.md",
     "notes/questions/Q-068-i-identity-and-structural-equality-of-anonymous-types.md",
@@ -79,6 +83,10 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/decisions/ADR-008-results-accepted-rejected-and-failed.md",
+    "notes/decisions/ADR-017-everything-type-well-built-has-default-value.md",
+    "notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message.md",
+    "notes/decisions/ADR-079-external-diagnostics-for-always-rules.md",
     "notes/questions/Q-003-p-validation-points.md",
     "notes/questions/Q-064-a-aliases-and-nominal-specialisation-between-modules.md",
     "notes/questions/Q-068-i-identity-and-structural-equality-of-anonymous-types.md",

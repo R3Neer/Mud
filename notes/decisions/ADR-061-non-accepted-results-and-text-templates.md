@@ -16,6 +16,8 @@ affects:
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amends: [[notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]], [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]], [[notes/decisions/ADR-035-organisation-names-using-and-anchors|D-035]], [[notes/decisions/ADR-038-close-knit-families-with-strong-values|D-038]], [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-048-reproducible-randomness-and-errors|D-048]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[notes/decisions/ADR-050-comments-terminators-text-and-numeric-separators|D-050]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]] and [[notes/decisions/ADR-056-char-text-and-unicode-ordering|D-056]]
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
@@ -189,8 +191,8 @@ The access is valid only when the receiver's static category exposes `~anchor`. 
 - The AST distinguishes literal fragments, value holes and numeric specifications; anchors use ordinary expression interpolation.
 - The IR retains the expression, format and provenance of every fragment.
 - The lexer requires nested modes for text and code.
-- `otherwise` is optional and localised; its absence produces the relevant style diagnostic.
-- The result catalogue must provide a human-readable reason for every `Refusal` and `Errors`.
+- `otherwise` is optional block error recovery; its absence propagates computing errors and produces no missing-false-diagnostic warning.
+- Each Refusal and each Error element has a human-readable reason; Errors is the nonempty collection alias.
 - Contextual rendering introduces no general implicit conversion to `Text`.
 - The `~name` display may differ from `~anchor`; they are separate reflective properties.
 - `in` serves both linear and point magnitudes and, for the latter, bypasses the format.
@@ -199,8 +201,8 @@ The access is valid only when the receiver's static category exposes `~anchor`. 
 ## Verification
 
 1. External `Refusal` and `Errors` results with mandatory `reason`, and absence of that field in `Success`.
-2. A warning for an `always` rule without `otherwise`, a suggestion in `if` and `after`, and rejection of a diagnostic that is not `Text`.
-3. Lazy evaluation of the diagnostic over the infringing tentative state.
+2. False conditions produce typed refusals and never invoke Error-only handlers.
+3. Computing-error recovery runs after rollback and cannot read failed-body locals.
 4. Ordinary and multiline interpolation with nested expressions.
 5. The escapes `\{`, `\}`, `\"`, `\'` and `\u{...}`.
 6. Rendering of `thing`, `family` members, Boolean rules, intervals and nested collections.

@@ -2386,9 +2386,9 @@ cases:
   produces_ast: true
 - id: abstract-alias-instantiation
   category: typing
-  source: 'abstract alias Base {}
+  source: 'abstract alias Base { x: Int }
 
-    thing World { value: Base = () }
+    thing World { value: Base = (x = 1) }
 
     '
   cst_root: MudFileSyntax
@@ -2398,7 +2398,7 @@ cases:
   produces_ast: true
 - id: erased-callable-names-require-contract
   category: typing
-  source: 'action Go for actor: Person { then {} }
+  source: 'action Go for actor: Person [mut] { then actor.count += 1 }
 
     '
   cst_root: MudFileSyntax

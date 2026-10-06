@@ -355,7 +355,8 @@ lexical_forms:
       \ | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
     references: []
   operator-word:
-    rhs: "\"to\" | \"eventually\" | \"imagine\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
+    rhs: "\"to\" | \"eventually\" | \"imagine\" | \"old\"\n      | \"is\" | \"iis\"\
+      \ | \"in\" | \"has\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
     references: []
   builtin-word:
     rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\" | \"Prefix\""
@@ -1781,8 +1782,7 @@ syntax_nodes:
     kind: DescriptorValueBodySyntax
     rhs: "( value-expression , [ metadata-body ]\n      | \"{\" , declaration-layout\n        , [ metadata-assignment\n\
       \            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n\
-      \        , value-block\n        , [ required-separation ]\n        , \"}\" , { otherwise-clause } ) , { otherwise-clause\
-      \ }"
+      \        , value-block\n        , [ required-separation ]\n        , \"}\" ) , { otherwise-clause }"
     references:
     - value-expression
     - metadata-body

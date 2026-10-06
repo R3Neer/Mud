@@ -17,4 +17,4 @@ superseded-by: []
 
 Premise status: **decided** by [[notes/decisions/ADR-022-structural-deletion-of-inactive-boolean-rules|D-022]].
 
-Calls to inactive Boolean rules are pruned after canonical desugaring to `not`, `and` and `or`. Elaboration of `!=`, `xor`, Boolean quantifiers and interactions with `allowed`, `eventually` and internal failures remains to be fixed.
+Calls to inactive Boolean rules are pruned after canonical desugaring to `not`, `and` and `or`. Elaboration of `!=`, `xor`, Boolean quantifiers and interactions with `imagine`, `eventually` and internal failures remains to be fixed.

@@ -117,19 +117,17 @@ given
     amount: Nat in 1..100
 {
     if kingdom.treasury >= amount * kingdom.recruitmentCost
-    otherwise "The kingdom cannot afford {amount} recruits"
     then {
         kingdom.treasury -= amount * kingdom.recruitmentCost
         kingdom.soldiers += amount
     }
     after kingdom.soldiers >= old kingdom.soldiers
-    otherwise "Recruitment did not increase the army"
 }
 ```
 
 This declares a domain operation rather than an application endpoint. Its
 participants, input domain, precondition, effects, postcondition and
-diagnostics belong to the model. It says nothing about buttons, HTTP requests,
+structured replies belong to the model. It says nothing about buttons, HTTP requests,
 database tables or game-engine objects.
 
 ## Rules meet inside the model
@@ -139,8 +137,10 @@ reactive rules, which may produce further consequences. The system evaluates
 those consequences in causal waves until it reaches a stable tentative world.
 
 That world is confirmed only if the entire resolution is valid. An action can
-finish as `accepted`, `rejected` or `failed`; every result other than
-`accepted` rolls the complete resolution back.
+return `ActionReply`: `Success`, a specialised `Refusal`, or nonempty `Errors`.
+A non-success outer reply rolls the complete resolution back. Computing errors
+can be recovered through block-level `otherwise`; a false condition produces a
+refusal rather than entering that error handler.
 
 This is how behaviour can emerge from independently declared rules without
 giving up atomicity, determinism or explanation.

@@ -249,7 +249,7 @@ StoredFieldDecl(
     collectionMutable,
     name,
     shape,
-    defaultValueBlock?,
+    defaultValueBlock,
     metadata*
 )
 ```
@@ -521,9 +521,9 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 ## Expression blocks and value blocks
 
-`ExpressionBlock(preamble, result)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)` or `PureForeignBlock(ForeignBlock)`. A shorthand form normalises to `ExpressionBlock([], expression)`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
+`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)` or `PureForeignBlock(ForeignBlock)`. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
 
-`ValueBlock(statements, result)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
+`ValueBlock(statements, result, handlers)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
 
 `LocalMutation` retains the unresolved surface destination; typing and elaboration later prove that the complete footprint belongs to storage created within the `ValueBlock`. `LocalForEach` uses `LocalStatementBlock`, not `EffectBlock`, and retains the `ExpressionBlock?` filter.
 

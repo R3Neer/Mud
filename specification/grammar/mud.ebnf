@@ -133,7 +133,7 @@ descriptor-value-body
           ]
         , value-block
         , [ required-separation ]
-        , "}" , { otherwise-clause } ) , { otherwise-clause }
+        , "}" ) , { otherwise-clause }
         ;
 
 alias-declaration

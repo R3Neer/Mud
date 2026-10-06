@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-054 — Canonical definitions and initial activation
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Related to: [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[notes/decisions/ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-035-organisation-names-using-and-anchors|D-035]], [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
@@ -49,7 +51,7 @@ Every declarable `thing` and each rule has exactly one complete top-level defini
 abstract thing Vegetation {}
 
 thing Tree as Vegetation {
-    age: Years
+    age: Years = 0
 }
 
 rule CanGrow on plant: Vegetation {

@@ -1237,7 +1237,7 @@ A local containing an alias remains a value and acquires no path back to storage
 
 If an exact dictionary lookup used as an intermediate step does not find its key, the absence is `empty` and the partial effect is a no-op: it neither creates the association nor synthesises a default value, and does not produce `Errors` merely because of that absence. This does not affect the direct assignment `shop.orders[id] = order`, which replaces a complete association and may create a missing key when the contract permits it.
 
-Resolution and typing distinguish `remove name from Owner` from removing a value. In both cases the parser retains the same provenance; AST construction must produce the correct variant or a diagnostic.
+RemoveEffect always removes a value from a collection-compatible assignable target. It never deletes a field declaration; non-collection targets are rejected during typing.
 
 `|=`, `&=`, `^=` and `--=` retain their update class in the AST. They require an externally mutable location or a reconstructible assignable path whose write-back ends in one, and a result assignable to the location. `^=` accepts only collections that guarantee whole-value uniqueness; ordinary `unique` and `unique by path` both satisfy that precondition. For collections, homogeneous updates consolidate by union, intersection, parity or summed removed multiplicities; mixing different classes is a conflict unless explicitly specified otherwise. For `Text`, `|=` is concatenation and multiple concurrent updates require a defined global order.
 
@@ -1625,7 +1625,7 @@ eventually game.Checkmate(White)
 Rand([1..6])
 ```
 
-`imagine` runs the complete semantic action protocol on an isolated tentative projection and always discards it. Acceptance returns `true`, rejection returns `false`, and technical failure propagates. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
+`imagine` runs the complete semantic action protocol on an isolated tentative projection and always discards it. The result is ActionReply: Success, Refusal or Errors, with no implicit Boolean conversion. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
 
 Operands of `through` are action references, not concrete calls. The list, with or without square brackets, represents the same contextual collection. MUD 1.0 supports only `Rand(source)`; it does not yet include syntax for weights or distributions.
 
