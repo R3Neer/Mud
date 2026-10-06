@@ -18,6 +18,8 @@ affects:
 
 # ADR-118 — Action replies refusals and errors
 
+- Amended by: [[ADR-120-element-wise-block-error-recovery|D-120]].
+
 ## Context
 
 The author chooses first-class Success, Refusal and Errors values and Error-only block recovery. This replaces D-008 and D-079; it amends D-041, D-042, D-055, D-061 and D-077. All tooling and generated diagnostics are in English.

@@ -5,6 +5,7 @@ import unittest
 
 from validate_syntax_model import (
     foreign_contract_problems,
+    recovery_contract_problems,
     nominal_hir_contract_problems,
     static_schema_contract_problems,
 )
@@ -125,6 +126,36 @@ class StaticSchemaContractTests(unittest.TestCase):
         grammar = self.grammar.replace('add-effect\n', 'add-effect\n(* collection insertion *)\n')
         ast = self.ast + '\n-- AddFieldEffect is excluded\n'
         self.assertEqual(static_schema_contract_problems(grammar, ast), [])
+
+
+class RecoveryContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        root = Path(__file__).resolve().parents[2]
+        cls.grammar = (root / "specification/grammar/mud.ebnf").read_text(encoding="utf-8")
+        cls.ast = (root / "specification/syntax/mud-surface-ast.asdl").read_text(encoding="utf-8")
+
+    def test_current_contract(self):
+        self.assertEqual(recovery_contract_problems(self.grammar, self.ast), [])
+
+    def test_all_block_categories_keep_handlers(self):
+        for constructor in ("ExpressionBlock", "ValueBlock", "EffectBlock"):
+            with self.subTest(constructor=constructor):
+                bad = re.sub(rf"({constructor}\([^()]*)recovery_handler\* handlers", r"\1ignored handlers", self.ast)
+                self.assertTrue(recovery_contract_problems(self.grammar, bad))
+
+    def test_branches_cannot_be_sequential(self):
+        bad = self.grammar.replace('| "raise" , value-body', ', "raise" , value-body')
+        self.assertTrue(recovery_contract_problems(bad, self.ast))
+
+    def test_field_initialization_cannot_be_optional(self):
+        bad = self.ast.replace('value_block default_value', 'value_block? default_value')
+        self.assertTrue(recovery_contract_problems(self.grammar, bad))
+
+    def test_abstract_alias_and_imagine_cannot_be_lost(self):
+        for before, after in (("AliasDecl(flag is_abstract", "AliasDecl(flag ignored"), ("ImagineQuery", "AllowedQuery")):
+            with self.subTest(before=before):
+                self.assertTrue(recovery_contract_problems(self.grammar, self.ast.replace(before, after)))
 
 
 if __name__ == "__main__":

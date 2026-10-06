@@ -508,11 +508,11 @@ expression-block
         ;
 
 value-body
-    ::= ( value-expression | value-block-body ) , { otherwise-clause } ;
+    ::= value-expression , { otherwise-clause } | value-block-body ;
 
 value-block-body
     ::= "{" , declaration-layout , value-block
-        , [ required-separation ] , "}"
+        , [ required-separation ] , "}" , { otherwise-clause }
         ;
 
 value-block
@@ -677,7 +677,7 @@ recovery-branch
       | "raise" , value-body ;
 
 recovery-body
-    ::= expression-body | value-block-body | effect-block ;
+    ::= expression-body | value-block-body | effect-block | effect ;
 
 expression-body
     ::= ( expression

@@ -176,6 +176,29 @@ def static_schema_contract_problems(grammar_text: str, ast_text: str) -> list[st
     return problems
 
 
+def recovery_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
+    """Guard semantic boundaries rather than runtime execution results."""
+    code = strip_comments(grammar_text)
+    ast = re.sub(r"--.*", "", ast_text)
+    problems = []
+    for constructor in ("ExpressionBlock", "ValueBlock", "EffectBlock"):
+        found = re.search(rf"\b{constructor}\(([^()]*)\)", ast, re.S)
+        if not found or "recovery_handler* handlers" not in found.group(1):
+            problems.append(f"{constructor} must retain block handlers")
+    for fragment in ("AliasDecl(flag is_abstract", "ImagineQuery", "RecoverThen(recovery_body body)", "RecoverRaise(value_block errors)"):
+        if fragment not in ast:
+            problems.append(f"missing block/type boundary: {fragment}")
+    if re.search(r"\bAllowedQuery\b", ast):
+        problems.append("the speculative AST operator must be ImagineQuery")
+    field = re.search(r"stored_field_data\s*=\s*\(([^()]*)\)", ast, re.S)
+    if not field or "value_block default_value" not in field.group(1) or "value_block? default_value" in field.group(1):
+        problems.append("new stored fields require an explicit value")
+    branch = re.search(r"(?m)^recovery-branch\s*::=\s*(.*?)\s*;", code, re.S)
+    if not branch or re.sub(r"\s+", " ", branch.group(1)).strip() != '"then" , recovery-body | "raise" , value-body':
+        problems.append("recovery must choose exactly then or raise")
+    return problems
+
+
 def validate(root: Path) -> list[Problem]:
     problems: list[Problem] = []
     grammar = root / "specification/grammar/mud.ebnf"
@@ -428,6 +451,8 @@ def validate(root: Path) -> list[Problem]:
     for missing in sorted(required_case_ids - present_case_ids):
         problems.append(Problem(str(cases_path), f"D-086 v4 coverage case is missing: {missing}"))
 
+    problems.extend(Problem(str(asdl_path), message) for message in
+                    recovery_contract_problems(grammar.read_text(encoding="utf-8"), asdl_path.read_text(encoding="utf-8")))
     return problems
 
 

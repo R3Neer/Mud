@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 114.
-- Current: 110.
+- Total: 115.
+- Current: 111.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -133,6 +133,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-117 | current | 2026-10-06 | [[notes/decisions/ADR-117-replacement-before-change-and-semantic-destinations|Replacement before change and semantic destinations]] |
 | D-118 | current | 2026-10-06 | [[notes/decisions/ADR-118-action-replies-refusals-and-errors|Action replies refusals and errors]] |
 | D-119 | current | 2026-10-06 | [[notes/decisions/ADR-119-invocation-owned-completion-and-imagine|Invocation-owned completion and imagine]] |
+| D-120 | current | 2026-10-06 | [[notes/decisions/ADR-120-element-wise-block-error-recovery|Element-wise block error recovery]] |
 
 ## Reserved identifiers
 

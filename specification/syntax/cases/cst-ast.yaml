@@ -2567,3 +2567,28 @@ cases:
   produces_ast: true
   required_contract: Child after sees stabilized 1 before Parent resumes; later 2 does not rerun Child
     after; one commit
+- id: recovery-short-effect
+  category: block
+  source: 'action Repair for counter: Counter [mut] { then { counter.value += 1 } otherwise on problem:
+    Error then counter.value += 2 }'
+  cst_root: MudFileSyntax
+  ast: RecoveryHandler(EffectRecovery)
+  produces_ast: true
+  required_contract: Short then recovery preserves effect permissions.
+- id: recovery-equal-occurrences-not-deduplicated
+  category: block
+  source: 'action Repair for counter: Counter [mut] { then { counter.value += 1 } otherwise on problem:
+    Error { raise problem } }'
+  cst_root: MudFileSyntax
+  ast: RecoveryHandler(RecoverRaise)
+  produces_ast: true
+  required_contract: Equal original occurrences stay distinct; newly raised errors leave the chain.
+- id: recovery-joint-error-roles
+  category: block
+  source: 'action Repair for counter: Counter [mut] { then { counter.value += 1 } otherwise on first:
+    Error, second: Error { raise first } }'
+  cst_root: MudFileSyntax
+  ast: RecoveryHandler(OnClause(first,second))
+  produces_ast: true
+  required_contract: Joint binding uses ordinary matching without implicit inequality; consumption is
+    per occurrence.

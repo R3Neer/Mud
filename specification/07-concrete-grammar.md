@@ -87,6 +87,7 @@ decisions:
   - D-117
   - D-118
   - D-119
+  - D-120
 ---
 
 # 07. Concrete grammar
@@ -1752,3 +1753,10 @@ Exports are immutable local MUD values, evaluated once at their textual bridge p
 The enclosing contract governs reads and writes. Expression/shared/test preambles require external purity; value computations may mutate only their private storage; effects require ordinary participant and place capabilities. A wrapper does not bypass these rules, and a foreign signature's mutability annotation alone does not prove purity. Static value owners require a separately statically evaluable, pure, deterministic contract for the complete body. Foreign calls that are only pure calculations do not satisfy the requirement that `then` contain an effect or executable effect call.
 
 Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require confirmed host delivery or an explicit transactional contract. Wrappers preserve the canonical static field schema, aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.
+
+
+## Recovery occurrence contract
+
+Block error handlers select individual Error occurrences in stable causal order. Multiple on roles bind conjunctively; ordinary matching does not introduce implicit distinctness, and each selected occurrence is consumed once. Equal-valued occurrences are not deduplicated. Clauses run in textual order over the remaining occurrences; a false if leaves them pending. No on means catch-all per occurrence. Newly raised errors leave this chain rather than being recaptured by it.
+
+The failed block rolls back before recovery. Successful enclosing work stays tentative; failed-body locals/exports are unavailable. Successful recovery writes compose tentatively. Any remaining or newly raised error discards the recovery scope and propagates outward. Expression/value recoveries propose one compatible result; equal proposals agree and incompatible proposals fail composition. Effect recoveries retain ordinary permissions. A bare failed action propagates its error channel, whereas explicitly obtaining an ActionReply containing Errors is ordinary value observation. Refusal is never selected by otherwise.

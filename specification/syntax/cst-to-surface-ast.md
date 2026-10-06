@@ -37,6 +37,7 @@ decisions:
   - D-113
   - D-114
   - D-118
+  - D-120
 ---
 
 # Conversion from CST to Surface AST
@@ -719,3 +720,5 @@ The initial corpus is in `cases/cst-ast.yaml`.
 `ForeignBlockSyntax` normalises its short or braced body to `ForeignBlock(language, first, remaining)`. `ForeignCodeStatementSyntax` produces `ForeignCodeStatement(ForeignCode(originalText))`. `ForeignValueExportSyntax` converts only the MUD name and optional type annotation and retains its RHS in `ForeignCode`, with the RHS's source origin. Foreign code is not parsed as a MUD expression and is never executed during CST-to-AST conversion.
 
 Pure preamble positions wrap calculated locals in `PureLocalValue` and foreign blocks in `PureForeignBlock`, retaining their order in `ExpressionBlock.preamble`, `leading_preamble` and `TestAfterBlock.preamble`. Value statement positions produce `ForeignBlockValueStatement`; effect positions produce `EffectStatement(ForeignBlockEffect(...))`. Ordinary later contract checks still distinguish pure calculation from an executable effect. Multiple short-body items, malformed MUD bridge prefixes and structural native boundary errors prevent a valid AST; missing adapter contracts, incompatible conversions and capabilities are later diagnostics. Native recovery cannot reinterpret a second instruction as part of one expression merely because it is on the same line.
+
+Short effect recovery normalizes to EffectRecovery with one EffectStatement. A braced value-block-body retains its own handlers even when used directly as a mapping result. A following otherwise attaches to the nearest completed eligible block; braces preserve the distinction between nested raise-value recovery and an outer handler chain.

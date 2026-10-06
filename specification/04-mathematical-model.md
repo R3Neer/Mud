@@ -38,6 +38,7 @@ decisions:
   - D-117
   - D-118
   - D-119
+  - D-120
 ---
 
 # 04. Model mathematician from world
@@ -150,3 +151,10 @@ Aliases form a second nominal partial order. Their nodes are types of value, not
 For an nominal alias with several predecessors, the set of values of the descendant must be contained within the intersection of the sets of values of all of them. The union `A | B` does not satisfy this requirement. For structural aliases, the effective form is obtained by aggregating members by origin: a single member inherited via multiple paths is deduplicated, and independent members with the same name produce conflict.
 
 Derived fields denote recalculated collections. Their membership is determined during an snapshot evaluation and is recalculated based on the subsequent consolidated state. The internal capacity `[mut]` may form part of its contract, but does not create authority: it must be guaranteed by the source value and preserved through transformations that maintain the identity semantics of the member `thing`s. This capability applies only to immediate members and does not make derived membership or nested collections writable. Stored collections, on the other hand, retain their membership until an authorised collection membership update is made.
+
+
+## Recovery occurrence contract
+
+Block error handlers select individual Error occurrences in stable causal order. Multiple on roles bind conjunctively; ordinary matching does not introduce implicit distinctness, and each selected occurrence is consumed once. Equal-valued occurrences are not deduplicated. Clauses run in textual order over the remaining occurrences; a false if leaves them pending. No on means catch-all per occurrence. Newly raised errors leave this chain rather than being recaptured by it.
+
+The failed block rolls back before recovery. Successful enclosing work stays tentative; failed-body locals/exports are unavailable. Successful recovery writes compose tentatively. Any remaining or newly raised error discards the recovery scope and propagates outward. Expression/value recoveries propose one compatible result; equal proposals agree and incompatible proposals fail composition. Effect recoveries retain ordinary permissions. A bare failed action propagates its error channel, whereas explicitly obtaining an ActionReply containing Errors is ordinary value observation. Refusal is never selected by otherwise.

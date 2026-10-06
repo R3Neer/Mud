@@ -1890,11 +1890,11 @@ syntax_nodes:
     - value-expression
   value-body:
     kind: ValueBodySyntax
-    rhs: ( value-expression | value-block-body ) , { otherwise-clause }
+    rhs: value-expression , { otherwise-clause } | value-block-body
     references:
     - value-expression
-    - value-block-body
     - otherwise-clause
+    - value-block-body
   value-local-declaration:
     kind: ValueLocalDeclarationSyntax
     rhs: "local-calculated-declaration\n      | local-stored-declaration"
@@ -1919,11 +1919,13 @@ syntax_nodes:
     - type-expression
   value-block-body:
     kind: ValueBlockBodySyntax
-    rhs: "\"{\" , declaration-layout , value-block\n        , [ required-separation ] , \"}\""
+    rhs: "\"{\" , declaration-layout , value-block\n        , [ required-separation ] , \"}\" , { otherwise-clause\
+      \ }"
     references:
     - declaration-layout
     - value-block
     - required-separation
+    - otherwise-clause
   pure-preamble-statement:
     kind: PurePreambleStatementSyntax
     rhs: local-value-declaration | foreign-block
@@ -1995,8 +1997,9 @@ syntax_nodes:
     - value-body
   recovery-body:
     kind: RecoveryBodySyntax
-    rhs: expression-body | value-block-body | effect-block
+    rhs: expression-body | value-block-body | effect-block | effect
     references:
     - expression-body
     - value-block-body
     - effect-block
+    - effect
