@@ -43,13 +43,11 @@ given
     amount: Nat in 1..100
 {
     if kingdom.treasury >= amount * kingdom.recruitmentCost
-    otherwise "The kingdom cannot afford {amount} recruits"
     then {
         kingdom.treasury -= amount * kingdom.recruitmentCost
         kingdom.soldiers += amount
     }
     after kingdom.soldiers >= old kingdom.soldiers
-    otherwise "Recruitment did not increase the army"
 }
 ```
 
@@ -74,7 +72,7 @@ There is no semantic distinction between elementary and compound actions. A `the
 
 Each statement reads the private delta visible at its textual position. An internal call is validated and executed there, observes the preceding private effects, and adds its own effects to the resolution. It is atomic and preserves those effects for subsequent statements; it does not open a separate transaction.
 
-Each invocation checks after against its own stabilized causal completion projection before the caller resumes. Private and consolidated wave changes remain tentative until stabilisation, all invariants and these postconditions succeed; the complete transition is then confirmed atomically. Rejection/failure discards the entire journal and external delivery, including earlier waves. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
+Each invocation checks after against its own stabilized causal completion projection before the caller resumes. Private and consolidated wave changes remain tentative until stabilisation, all invariants and these postconditions succeed; the complete transition is then confirmed atomically. A non-success outer request discards the entire journal and delivery; a child non-success rolls back its contribution scope before explicit reply observation, or propagates when called as a bare effect. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
 
 ### Conditions and results
 
@@ -90,7 +88,7 @@ In action/test after, old retains its established entry-view contract; reactive 
 
 - Refusal models an unmet condition; Errors model unsuccessful computation.
 - Atomicity includes root, waves, `always`, `after` and upcoming events.
-- Q-004 is now closed: one `after` 'false' reverses the entire resolution.
+- False after rolls back its invocation scope; an unhandled outer Refusal rolls back the complete resolution.
 - The values of domain returned by a action, if they were to be admitted, they remain open in Q-022.
 
 ## Verification

@@ -9,7 +9,7 @@ questions:
   - Q-002
   - Q-035
 affects:
-  - "Tentative state, reference runtime, waves, consolidation, after, allowed and causal outputs"
+  - "Tentative state, reference runtime, waves, consolidation, after, imagine and causal outputs"
 ---
 
 # ADR-110 — Tentative wave journal and atomic confirmation
