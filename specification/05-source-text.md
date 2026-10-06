@@ -24,6 +24,7 @@ decisions:
   - D-086
   - D-087
   - D-096
+  - D-116
 ---
 
 # 05. Source text and physical structure
@@ -162,6 +163,8 @@ An `battle.mud` file may contain `thing`, aliases, dictionaries, rules, actions,
 An `.mud` file must belong to the module determined by the `mud.module` of its nearest ancestral directory. A nested `mud.module` opens a new boundary, and an `.mud` without a modular ancestor is invalid. The logical name of the module is derived from the directory’s MudPath and need not be repeated in the module file.
 
 `uses` is a subset of `mud.module` and permits dependencies on contract between modules; `using` belongs to the `.mud` family and resolves /importa names. Neither replaces the other. The complete grammar of `mud.module` remains open in Q-062.
+
+Contract-visible thing and alias types may be specialized by an authorized importing module; uses authorization and public type closure are both required. This does not expose private ordinary state or authorize foreign activation.
 
 Dependencies declared using `uses` may form cycles. A modular cycle is valid, but the compiler must warn of cyclic coupling. That cycle does not establish or allow the inference of an initialisation order: the `start with` contributions from the modules are materialised jointly in accordance with the model of activation.
 

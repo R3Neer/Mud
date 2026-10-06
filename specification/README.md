@@ -9,13 +9,13 @@ tags:
 status: in-preparation
 normative: true
 questions:
-  - Q-064
   - Q-067
 decisions:
   - D-112
   - D-113
   - D-114
   - D-115
+  - D-116
 ---
 
 # MUD formal specification
@@ -284,7 +284,7 @@ Planned scope:
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 
-Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/message types are static and nominal per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Inter-module specialization remains delimited by Q-064.
+Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/message types are static and nominal per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized modules.
 
 Juicio principal:
 
@@ -315,7 +315,7 @@ Planned scope:
 - Inherited defaults, immutable values, equality, ordering and enumerability where applicable.
 - Reconstruction of immutable aliases through write-back from assignable paths, without introducing mutability into their values.
 - Boundary between structural compatibility and explicit acquisition of nominality.
-- Alias-specialisation rules across modules, whose exact scope remains open in Q-064.
+- Contract-visible alias specialization across modules under uses authorization and inherited substitutability.
 
 ## 13. Closed value families
 

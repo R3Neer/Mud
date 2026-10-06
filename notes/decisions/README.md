@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 110.
-- Current: 108.
+- Total: 111.
+- Current: 109.
 - Proposed: 0.
 - Superseded: 2.
 - Withdrawn: 0.
@@ -129,6 +129,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-113 | current | 2026-10-06 | [[notes/decisions/ADR-113-abstract-and-recursive-aliases|Abstract and recursive aliases]] |
 | D-114 | current | 2026-10-06 | [[notes/decisions/ADR-114-callable-variance-and-static-named-binding|Callable variance and static named binding]] |
 | D-115 | current | 2026-10-06 | [[notes/decisions/ADR-115-static-produced-types-and-union-joins|Static produced types and union joins]] |
+| D-116 | current | 2026-10-06 | [[notes/decisions/ADR-116-contract-visible-cross-module-specialisation|Contract-visible cross-module specialisation]] |
 
 ## Reserved identifiers
 

@@ -27,6 +27,8 @@ affects:
 
 # ADR-096 — Modules, callables, `look`, `message` and activation
 
+- Amended by: [[ADR-116-contract-visible-cross-module-specialisation|D-116]].
+
 - Amended by: [[ADR-115-static-produced-types-and-union-joins|D-115]].
 
 - Amended by: [[ADR-114-callable-variance-and-static-named-binding|D-114]].
@@ -83,7 +85,7 @@ A `thing` visible by contract exposes the nominal identity/type needed to bind v
 
 Reflection within the module itself may observe the model under the general descriptor system. Across a boundary, a reflective operation is valid only when its contract guarantees that it cannot return invisible entities. Results from `~fields`, `~children`, `~descendants` or similar properties are not silently filtered to simulate security.
 
-`thing` specialisation/inheritance cannot cross a module boundary.
+Things and aliases may specialize contract-visible types across an authorized module boundary. Inherited contracts remain substitutable; private state and activation permissions are not exported by ancestry. Tooling exposes the generated visible type frontier.
 
 ### Module activation
 
@@ -197,7 +199,7 @@ The canonical host API is organised around the identity of public operations, no
 
 - The module boundary is not controlled through explicit visibility modifiers.
 - Cross-module reflection must be contract-safe; results are not silently censored.
-- A `thing` cannot specialise a `thing` from another module.
+- Cross-module thing/alias specialization requires contract visibility and uses authorization, preserving encapsulation.
 - An internal action/subaction call never opens a new root resolution.
 - A `look` remains pure even when it reads the caller's visible private delta.
 - A `message` is not emitted through `emit` or modelled as a `Bool` value.
@@ -208,7 +210,6 @@ The canonical host API is organised around the identity of public operations, no
 ## Open questions
 
 - Q-062: complete `mud.module` grammar.
-- Q-064: aliases and nominal specialisation across modules.
 - Q-067: `message` participants absent from the final state.
 
 These questions do not authorise silently choosing a variant during implementation.

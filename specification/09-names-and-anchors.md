@@ -36,6 +36,7 @@ decisions:
   - D-113
   - D-114
   - D-115
+  - D-116
 ---
 # 09. Names, paths and anchors
 
@@ -167,6 +168,10 @@ In associations `->` and branches `-->`, the left and right blocks create siblin
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
 No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
+
+## Contract-visible specialization
+
+`thing` and `alias` ancestors may cross a module boundary when `uses` authorizes that module and the ancestor is in the public contract's transitive type closure. `using` only imports names. Private implementation types remain unavailable. Inheritance preserves canonical member anchors and owner permissions; it grants no ordinary private-state access or foreign activation authority. `Specializes` and resolved ancestor references retain their existing Nominal HIR representation, with no type or capability proof embedded in it. Generated English contract documentation exposes the visible type frontier and the operations that require each type.
 
 ## Static callable role contracts
 

@@ -2435,3 +2435,25 @@ cases:
   ast: AliasDecl(Left), AliasDecl(Right)
   produces_ast: true
   required_contract: If A and B are incomparable minimal common supertypes, join retains Left | Right
+- id: cross-module-contract-visible-ancestor
+  category: nominal
+  source: 'using public.contract
+
+    thing Local as Base {}
+
+    '
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Local, direct_ancestors=[Base])
+  produces_ast: true
+  required_contract: Base ancestry is admitted only with uses authorization and public contract visibility;
+    existing Specializes edge, no private state permission
+- id: cross-module-private-alias-ancestor
+  category: nominal
+  source: 'alias Local as hidden.Helper
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasDecl(Local, direct_ancestors=[hidden.Helper])
+  expected_diagnostics:
+  - invisible-ancestor
+  produces_ast: true
