@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 115.
-- Current: 111.
+- Total: 116.
+- Current: 112.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -134,6 +134,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-118 | current | 2026-10-06 | [[notes/decisions/ADR-118-action-replies-refusals-and-errors|Action replies refusals and errors]] |
 | D-119 | current | 2026-10-06 | [[notes/decisions/ADR-119-invocation-owned-completion-and-imagine|Invocation-owned completion and imagine]] |
 | D-120 | current | 2026-10-06 | [[notes/decisions/ADR-120-element-wise-block-error-recovery|Element-wise block error recovery]] |
+| D-121 | current | 2026-10-06 | [[notes/decisions/ADR-121-typed-foreign-adapter-contracts|Typed foreign adapter contracts]] |
 
 ## Reserved identifiers
 

@@ -38,6 +38,7 @@ decisions:
   - D-114
   - D-118
   - D-120
+  - D-121
 ---
 
 # Conversion from CST to Surface AST
@@ -722,3 +723,10 @@ The initial corpus is in `cases/cst-ast.yaml`.
 Pure preamble positions wrap calculated locals in `PureLocalValue` and foreign blocks in `PureForeignBlock`, retaining their order in `ExpressionBlock.preamble`, `leading_preamble` and `TestAfterBlock.preamble`. Value statement positions produce `ForeignBlockValueStatement`; effect positions produce `EffectStatement(ForeignBlockEffect(...))`. Ordinary later contract checks still distinguish pure calculation from an executable effect. Multiple short-body items, malformed MUD bridge prefixes and structural native boundary errors prevent a valid AST; missing adapter contracts, incompatible conversions and capabilities are later diagnostics. Native recovery cannot reinterpret a second instruction as part of one expression merely because it is on the same line.
 
 Short effect recovery normalizes to EffectRecovery with one EffectStatement. A braced value-block-body retains its own handlers even when used directly as a mapping result. A following otherwise attaches to the nearest completed eligible block; braces preserve the distinction between nested raise-value recovery and an outer handler chain.
+
+
+## Foreign contract checking boundary
+
+Foreign operations require checked or explicitly trusted type/effect contracts. Read-only native parameters alone do not establish purity. Contracts identify captures, conversions, reads, authorised writes, determinism, static evaluation, Error translation and isolation/lifetime obligations. English tooling identifies trusted obligations at their call sites. Unknown effects cannot silently become pure. The surrounding block's capabilities remain authoritative; native private mutation does not grant world writes.
+
+Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.

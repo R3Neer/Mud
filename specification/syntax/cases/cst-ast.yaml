@@ -2592,3 +2592,26 @@ cases:
   produces_ast: true
   required_contract: Joint binding uses ordinary matching without implicit inequality; consumption is
     per occurrence.
+- id: foreign-trusted-purity-contract
+  category: typing
+  source: 'rule Check { from Python mud result: Bool <- library.check(); result }'
+  cst_root: MudFileSyntax
+  ast: ForeignBlock(Python, ForeignValueExport(result))
+  produces_ast: true
+  required_contract: Explicit author trust permits pure native calculation and reports the trusted obligation
+    in English.
+- id: foreign-readonly-is-not-purity
+  category: typing
+  source: 'rule Check { from Python mud result: Bool <- library.check(); result }'
+  cst_root: MudFileSyntax
+  ast: ForeignBlock(Python, ForeignValueExport(result))
+  produces_ast: true
+  required_contract: Read-only arguments with undeclared global writes do not justify a pure contract.
+- id: foreign-translation-rolls-back-exports
+  category: typing
+  source: 'rule Check { from Python mud result: Bool <- library.check(); result }'
+  cst_root: MudFileSyntax
+  ast: ForeignBlock(Python, ForeignValueExport(result))
+  produces_ast: true
+  required_contract: Translated native failure preserves owning Declaration/source mapping and discards
+    partial exports and tentative writes.

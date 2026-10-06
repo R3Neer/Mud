@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 41 active questions: 22 open and 19 partially decided.
+There are 41 active questions: 20 open and 21 partially decided.
 
 Priorities:
 
@@ -29,8 +29,8 @@ Priorities:
 | [[Q-008-p-git-and-read-protocol|Q-008 — Git and `READ` protocol]] | Partially decided |
 | [[Q-009-f-canonical-ir-form|Q-009 — Canonical IR form]] | Partially decided |
 | [[Q-046-c-ineffective-creation-inside-a-root|Q-046 — Ineffective creation inside a root]] | Partially decided |
-| [[Q-069-foreign-adapter-contract-and-hosting|Q-069 — Foreign adapter contract and hosting protocol]] | Open |
-| [[Q-070-foreign-value-conversion-lifetime-and-errors|Q-070 — Foreign value conversion, lifetime and errors]] | Open |
+| [[Q-069-foreign-adapter-contract-and-hosting|Q-069 — Foreign adapter contract and hosting protocol]] | Partially decided |
+| [[Q-070-foreign-value-conversion-lifetime-and-errors|Q-070 — Foreign value conversion, lifetime and errors]] | Partially decided |
 
 ## P1 — Before extending the language
 

@@ -39,6 +39,7 @@ decisions:
   - D-116
   - D-118
   - D-119
+  - D-121
 ---
 # 09. Names, paths and anchors
 
@@ -357,3 +358,10 @@ An export introduces an ordinary immutable local value in its enclosing MUD bloc
 The adapter language label selects an adapter and does not name a MUD declaration. An export's optional MUD type annotation follows ordinary nominal resolution. Captured MUD identifiers exposed to native code resolve in the same lexical environment, visibility and lookup priority as their enclosing position, using `ResolvedReference` with role `foreign-capture` when a target is known. Native locals must not shadow exposed MUD bindings. The adapter supplies capture occurrences and original source spans; foreign library/member lookup belongs to native tooling.
 
 The existing nominal-HIR contract represents these symbols and references without structural extension. Capture types, conversions, mutability and dependency/effect evidence are not added to it. Wrappers and adapters cannot widen module visibility.
+
+
+## Foreign contract checking boundary
+
+Foreign operations require checked or explicitly trusted type/effect contracts. Read-only native parameters alone do not establish purity. Contracts identify captures, conversions, reads, authorised writes, determinism, static evaluation, Error translation and isolation/lifetime obligations. English tooling identifies trusted obligations at their call sites. Unknown effects cannot silently become pure. The surrounding block's capabilities remain authoritative; native private mutation does not grant world writes.
+
+Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.

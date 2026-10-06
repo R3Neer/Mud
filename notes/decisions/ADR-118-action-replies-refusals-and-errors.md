@@ -18,6 +18,8 @@ affects:
 
 # ADR-118 — Action replies refusals and errors
 
+- Amended by: [[ADR-121-typed-foreign-adapter-contracts|D-121]].
+
 - Amended by: [[ADR-120-element-wise-block-error-recovery|D-120]].
 
 ## Context

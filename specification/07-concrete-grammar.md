@@ -88,6 +88,7 @@ decisions:
   - D-118
   - D-119
   - D-120
+  - D-121
 ---
 
 # 07. Concrete grammar
@@ -1760,3 +1761,10 @@ Adapters track dependencies, respect snapshot reads including `old`/`changes`, r
 Block error handlers select individual Error occurrences in stable causal order. Multiple on roles bind conjunctively; ordinary matching does not introduce implicit distinctness, and each selected occurrence is consumed once. Equal-valued occurrences are not deduplicated. Clauses run in textual order over the remaining occurrences; a false if leaves them pending. No on means catch-all per occurrence. Newly raised errors leave this chain rather than being recaptured by it.
 
 The failed block rolls back before recovery. Successful enclosing work stays tentative; failed-body locals/exports are unavailable. Successful recovery writes compose tentatively. Any remaining or newly raised error discards the recovery scope and propagates outward. Expression/value recoveries propose one compatible result; equal proposals agree and incompatible proposals fail composition. Effect recoveries retain ordinary permissions. A bare failed action propagates its error channel, whereas explicitly obtaining an ActionReply containing Errors is ordinary value observation. Refusal is never selected by otherwise.
+
+
+## Foreign contract checking boundary
+
+Foreign operations require checked or explicitly trusted type/effect contracts. Read-only native parameters alone do not establish purity. Contracts identify captures, conversions, reads, authorised writes, determinism, static evaluation, Error translation and isolation/lifetime obligations. English tooling identifies trusted obligations at their call sites. Unknown effects cannot silently become pure. The surrounding block's capabilities remain authoritative; native private mutation does not grant world writes.
+
+Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
