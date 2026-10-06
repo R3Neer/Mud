@@ -206,6 +206,10 @@ The production API remains operation-centred: `look` observes a coherent view, `
 
 Dependencies and adapter versions must be reproducible. A C-compatible ABI may support host integration without implying that MUD generates C source. The exact adapter protocol remains a separate design obligation.
 
+## Considered interactive environment
+
+An interactive environment similar in purpose to GHCi is a desirable expansion under [[notes/decisions/ADR-108-considered-interactive-model-environment|D-108]]. It would load models and let users interrogate them and evaluate expressions or operations under their ordinary contracts. Entering an expression or operation requests its evaluation or execution; there is no separate `:run` command. Command syntax, loading, sessions and persistence remain undesigned. This expansion is distinct from the illustrative CLI below and carries no initial delivery commitment.
+
 ## Early interfaces
 
 A first executable could be a CLI with commands equivalent to:

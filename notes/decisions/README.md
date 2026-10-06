@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 102.
-- Current: 101.
+- Total: 103.
+- Current: 102.
 - Proposed: 0.
 - Superseded: 1.
 - Withdrawn: 0.
@@ -121,6 +121,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-105 | current | 2026-09-08 | [[notes/decisions/ADR-105-keyed-uniqueness-by-stable-path|Keyed uniqueness by stable path]] |
 | D-106 | current | 2026-10-06 | [[notes/decisions/ADR-106-receiver-based-call-disambiguation|Receiver-based call disambiguation]] |
 | D-107 | current | 2026-10-06 | [[notes/decisions/ADR-107-executable-language-and-rust-reference-implementation|Executable language and Rust reference implementation]] |
+| D-108 | current | 2026-10-06 | [[notes/decisions/ADR-108-considered-interactive-model-environment|Considered interactive model environment]] |
 
 ## Reserved identifiers
 
