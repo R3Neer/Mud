@@ -6,6 +6,7 @@ opened: 2026-07-29
 resolved:
 closed:
 decisions:
+  - D-110
   - D-023
   - D-042
   - D-046
@@ -26,3 +27,7 @@ Status: **partially decided** by [[notes/decisions/ADR-023-consolidation-of-conc
 D-096 establishes that there are no elementary/compound actions: each `then` is interpreted sequentially over its private delta, and an internal call observes the delta at its textual position, contributes its effects to the same resolution and leaves those effects visible to later statements. No block observes partial deltas from other independent blocks. In `Nat`, a private read projects the sum of the initial value and accumulated local delta to zero without clipping the delta itself.
 
 The complete operational semantics of intermediate reads for the other effect families, and of their consolidation when several independent deltas run concurrently in one resolution, remains open.
+
+## Tentative journal boundary
+
+D-110 fixes tentative wave projections and atomic final confirmation/discard. The reference runtime uses a journal; its physical patch representation is not a language contract. The complete operational read/consolidation semantics for all effect families remains pending.

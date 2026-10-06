@@ -492,7 +492,7 @@ Planned scope:
 - Root causal resolution, private deltas and textual sequencing within each `then`.
 - Integration of internal calls without opening independent transactions.
 - Consolidation, normalisation and conflicts among concurrent contributions.
-- State observed by each phase of a resolution.
+- State observed by each phase of a resolution, with consolidated tentative projections kept separate from confirmed storage.
 
 ## 29. Wave-based causal semantics
 
@@ -515,7 +515,7 @@ Planned scope:
 - Checks of domains, cardinalities, `always` rules and other invariants over tentative states.
 - `after` for actions/subactions executed within a resolution and its evaluation over the final tentative stable state.
 - Contextual semantics of `old`, including the difference between actions, tests and reactive rules.
-- Final rejection/failure and restoration of the previous state where applicable.
+- One atomic confirmation after stabilisation, invariants and all executed actions' final `after` clauses; complete tentative discard on rejection/failure.
 
 ## 31. Conflicts, cycles and stabilisation
 

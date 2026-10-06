@@ -15,6 +15,7 @@ questions:
   - Q-046
   - Q-047
 decisions:
+  - D-110
   - D-014
   - D-015
   - D-054
@@ -103,6 +104,10 @@ The model current stipulates:
 32.  No confirmed state contains a collection whose effective cardinality contradicts its declaration.
 33. Destroying a specific `thing` discards the stored values and runtime structural modifications belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
 34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
+35. A resolution's private deltas and consolidated wave projections are tentative. Later waves may read consolidated tentative changes, while the confirmed world remains unchanged.
+36. A complete stable resolution is confirmed atomically only after all applicable invariants and the final `after` clauses of every executed action/subaction succeed. Rejection or failure discards every wave's changes and external delivery.
+37. `allowed` executes the complete semantic protocol in isolation and always discards its tentative result. `accepted` maps to `true`, `rejected` to `false`, and `failed` propagates; it changes no confirmed world state, queues, logs, randomness or resolution identities.
+38. Recording tentative changes does not change semantic consolidation into textual merging or impose a physical journal representation.
 
 Examples of confirmed distinctions:
 

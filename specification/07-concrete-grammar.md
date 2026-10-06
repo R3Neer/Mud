@@ -18,6 +18,7 @@ questions:
   - Q-062
   - Q-063
 decisions:
+  - D-110
   - D-109
   - D-106
   - D-102
@@ -1026,7 +1027,7 @@ There is no semantic classification of elementary versus compound actions. A `th
 
 An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
-The `after` clauses of every executed action and subaction are checked against the final stable state of the complete tentative resolution. A nested `failed` reverses the entire resolution; an internal `rejected` also aborts and reverses it while retaining the `rejected` category. The optional `otherwise` of `if` or `after` explains rejection, and the associated `then` explains failure of the complete transition.
+The `after` clauses of every executed action and subaction are checked against the final stable state of the complete tentative resolution. Private deltas and consolidated wave changes remain tentative; subsequent waves see their consolidated projection, while the confirmed world changes only through one atomic confirmation after stabilisation and all applicable invariants and postconditions succeed. No wave or nested action confirms independently. A nested `failed` reverses the entire resolution; an internal `rejected` also aborts and reverses it while retaining the `rejected` category. The optional `otherwise` of `if` or `after` explains rejection, and the associated `then` explains failure of the complete transition.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -1598,6 +1599,8 @@ eventually game.Checkmate(White)
 
 Rand([1..6])
 ```
+
+`allowed` runs the complete semantic action protocol on an isolated tentative projection and always discards it. Acceptance returns `true`, rejection returns `false`, and technical failure propagates. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
 
 Operands of `through` are action references, not concrete calls. The list, with or without square brackets, represents the same contextual collection. MUD 1.0 supports only `Rand(source)`; it does not yet include syntax for weights or distributions.
 

@@ -19,6 +19,8 @@ affects:
 - Related questions: Q-007, Q-032, Q-035, Q-053
 - Documents concerned: expressions, actions, analysis of admissibility
 
+- Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
+
 ## Context
 
 A rule must be able to check whether a action would be admissible without implementing a simplified version of it or altering the world.
@@ -30,7 +32,7 @@ allowed game.Move(origin, destination)
 allowed (source, destination).Transfer(amount)
 ```
 
-`allowed call` assesses the action specified using the same complete protocol as a request the original, but in a speculative copy:
+`allowed call` assesses the action specified using the same complete protocol as a request the original, but in an isolated speculative projection with a disposable tentative journal:
 
 1. brings participants together;
 2. provides and validates `given`;
@@ -39,7 +41,7 @@ allowed (source, destination).Transfer(amount)
 5. generate waves until they stabilise;
 6. check `always`;
 7. assesses `after`;
-8. Discard the copy.
+8. Always discard the tentative journal, even on acceptance.
 
 The translation of result is:
 
@@ -61,7 +63,7 @@ When an action declares a `for` role with outer mutability, its receiver place i
 
 ## Consequences
 
-- An implementation may reuse the standard transactional engine, replacing confirmation with discard.
+- The reference implementation reuses the standard semantic transactional engine, replacing confirmation with unconditional discard. Physical copying is not required; isolated overlays may implement the projection.
 - Cost or a resource limit cannot silently change ‘true’ to ‘false’.
 - The identity semantics of each point random and its reproducible derivation from the seed have already been set. Q-032 maintains the cache rules, retry rules and result display; Q-035 retains its own characteristics of `allowed`.
 

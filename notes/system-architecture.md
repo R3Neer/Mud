@@ -151,11 +151,22 @@ The runtime requires at least:
 - trigger engine;
 - wave planner;
 - conflict and cycle detector;
-- transaction with confirmation or rollback;
+- tentative journal with private sequential deltas, semantic consolidation and per-wave patches/snapshots;
+- atomic confirmation of the complete resolution or discard;
 - causal explanation registry;
 - deterministic seed manager.
 
 The runtime must consume a representation produced after resolution, typing and elaboration. It must not rely on parser-specific behaviour or use the Nominal HIR as a substitute for semantic information that it deliberately does not contain. The specific form of that representation remains deferred by D-097.
+
+### Tentative journal
+
+[[notes/decisions/ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]] adopts a tentative journal for the reference runtime. A `then` reads its own private sequential delta; concurrent siblings retain the common prior projection. Semantic consolidation creates tentative wave patches and coherent snapshots for the next wave. Recording a patch does not apply it to confirmed world storage.
+
+Only stabilisation, valid invariants and successful final `after` clauses for every executed action/subaction permit the final transition record and one atomic confirmation. Rejection or failure discards every wave's contributions and pending host delivery. For example, concurrent `+= 3` and `+= 4` from `10` consolidate to `17`; Git is an analogy for isolated change records, not the conflict algorithm.
+
+`allowed` shares the semantic engine but always discards its speculative journal. Accepted becomes true, rejected false and failed propagates, with no consumption of confirmed queues, random state or resolution identities. Tentative message occurrences can cause later waves; they reach the host only after a real commit. Diagnostic traces may be retained separately from confirmed logs. Foreign calls must respect the same boundary; patches cannot undo arbitrary native I/O.
+
+Physical journal layout, persistence and compression remain implementation choices. Q-002 still requires complete operational effect semantics, and Q-035 retains admissibility costs, memoisation and resource diagnostics. No semantic IR format is prescribed.
 
 ## Semantic operator
 

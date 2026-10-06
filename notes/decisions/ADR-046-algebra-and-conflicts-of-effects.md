@@ -24,6 +24,8 @@ affects:
 - Documents affected: effects, root, waves, conflicts
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
+- Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
+
 ## Context
 
 Concurrent effects must be combined according to their meaning, not according to the arbitrary order in which an implementation encounters them.

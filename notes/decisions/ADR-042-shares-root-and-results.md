@@ -25,6 +25,8 @@ affects:
 - Related questions: Q-002, Q-003, Q-004, Q-022, Q-023, Q-046, Q-059
 - Documents concerned: public boundary, effects, request shares, semantics of the root
 
+- Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
+
 ## Context
 
 One action is the MUD’s writing boundary. Its contract one must distinguish between expected inadmissibility and that of a request the errors that prevent one from obtaining a state valid.
@@ -68,7 +70,7 @@ There is no semantic distinction between elementary and compound actions. A `the
 
 Each statement reads the private delta visible at its textual position. An internal call is validated and executed there, observes the preceding private effects, and adds its own effects to the resolution. It is atomic and preserves those effects for subsequent statements; it does not open a separate transaction.
 
-The `after` blocks of all invoked actions and subactions are checked against the final attempted stable state when the complete resolution finishes. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
+The `after` blocks of all invoked actions and subactions are checked against the final attempted stable state when the complete resolution finishes. Private and consolidated wave changes remain tentative until stabilisation, all invariants and these postconditions succeed; the complete transition is then confirmed atomically. Rejection/failure discards the entire journal and external delivery, including earlier waves. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
 
 ### `after` and `old`
 

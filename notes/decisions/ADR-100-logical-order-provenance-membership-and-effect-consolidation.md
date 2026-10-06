@@ -22,6 +22,8 @@ affects:
 - Modifies: [[ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-043-speculative-query-with-allowed|D-043]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-064-ordering-by-stable-path|D-064]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]] and [[ADR-096-modules-callables-look-message-and-activation|D-096]].
 - Related questions: [[../questions/Q-006-c-conflicts|Q-006]] and [[../questions/Q-032-a-reproducible-randomness|Q-032]].
 
+- Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
+
 ## Context
 
 MUD already distinguishes ordered and unordered collections, concurrent effects computed from a common snapshot and canonical structural composition. The logical persistence of order, the provenance needed to order values without a common comparator, local collection transformations, Boolean membership and several concurrent-consolidation rules remained to be unified.
