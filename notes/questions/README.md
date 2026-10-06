@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 41 active questions: 23 open and 18 partially decided.
+There are 41 active questions: 22 open and 19 partially decided.
 
 Priorities:
 
@@ -47,7 +47,7 @@ Priorities:
 | [[Q-022-v-action-return-values|Q-022 — Action return values]] | Open |
 | [[Q-023-c-dynamic-composition|Q-023 — Dynamic composition]] | Open |
 | [[Q-050-b-pruning-in-remaining-boolean-operators|Q-050 — Pruning in remaining Boolean operators]] | Partially decided |
-| [[Q-059-o-observing-action-results-in-tests|Q-059 — Observing action results in tests]] | Open |
+| [[Q-059-o-observing-action-results-in-tests|Q-059 — Observing action results in tests]] | Partially decided |
 | [[Q-060-c-reflective-typekind-catalogue|Q-060 — Reflective `TypeKind` catalogue]] | Open |
 | [[Q-062-g-complete-grammar-of-mud-module|Q-062 — Complete grammar of `mud.module`]] | Open |
 | [[Q-067-p-message-participants-absent-in-final-state|Q-067 — `message` participants absent in final state]] | Open |
@@ -65,7 +65,7 @@ Priorities:
 | [[Q-032-a-reproducible-randomness|Q-032 — Reproducible randomness]] | Partially decided |
 | [[Q-033-c-calendars-and-localisation|Q-033 — Calendars and localisation]] | Open |
 | [[Q-034-m-derived-magnitudes|Q-034 — Derived magnitudes]] | Partially decided |
-| [[Q-035-c-cost-of-allowed|Q-035 — Cost of `allowed`]] | Partially decided |
+| [[Q-035-c-cost-of-allowed|Q-035 — Cost of `imagine`]] | Partially decided |
 | [[Q-036-u-human-interaction-unit|Q-036 — Human-interaction unit]] | Open |
 | [[Q-037-c-coexistence-with-hand-written-code|Q-037 — Coexistence with hand-written code]] | Open |
 | [[Q-038-c-compatibility-between-language-versions|Q-038 — Compatibility between language versions]] | Open |

@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-049 — Operators, precedence and standardised intervals
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
@@ -69,7 +71,7 @@ Equality is defined by the type of value:
 From highest to lowest:
 
 1. access `.`, indexing `[]`, call `()` and complete extraction `unit from container in point`;
-2. prefixes `old`, `allowed`, `not` and sign;
+2. prefixes `old`, `imagine`, `not` and sign;
 3. multiplication, division and module;
 4. set-theoretic sum, subtraction and difference;
 5. suffixes `to Type` e `in unit`;

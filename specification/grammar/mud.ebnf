@@ -986,7 +986,7 @@ prefix-expression
     ::= { prefix-operator } , postfix-expression ;
 
 prefix-operator
-    ::= "not" | "+" | "-" | "old" | "allowed" | "all" ;
+    ::= "not" | "+" | "-" | "old" | "imagine" | "all" ;
 
 postfix-expression
     ::= primary-expression

@@ -86,6 +86,7 @@ decisions:
   - D-115
   - D-117
   - D-118
+  - D-119
 ---
 
 # 07. Concrete grammar
@@ -1047,7 +1048,7 @@ There is no semantic classification of elementary versus compound actions. A `th
 
 An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
-The `after` clauses of every executed action and subaction are checked against the final stable state of the complete tentative resolution. Private deltas and consolidated wave changes remain tentative; subsequent waves see their consolidated projection, while the confirmed world changes only through one atomic confirmation after stabilisation and all applicable invariants and postconditions succeed. No wave or nested action confirms independently. A nested `Errors` reverses the entire resolution; an internal `Refusal` also aborts and reverses it while retaining the `Refusal` category. Every invocation returns ActionReply with Success, Refusal or nonempty Errors. If/after falsity and always violations produce Refusal subtypes; unsuccessful computation produces Error occurrences. Otherwise attaches to blocks and captures errors only.
+Each invocation's after runs when its owned causal work stabilizes and before its caller continues. Joint causes belong to the common enclosing invocation. A completed child's after is not rerun after later caller writes. Consolidated waves remain tentative until successful outer completion. Every invocation returns ActionReply. Explicit reply-value calls can be observed after failed child-scope rollback; an invocation used as an effect statement propagates Refusal or Errors. Otherwise captures computing errors only.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -1417,7 +1418,7 @@ From highest to lowest:
 | Level | Shapes | Group |
 | ---: | --- | --- |
 | 1 | access `.`, metadata `~`, index `[]`, call `()` and `unit from container in point` | left or complete form |
-| 2 | prefixes `old`, `allowed`, `not`, sign | right |
+| 2 | prefixes `old`, `imagine`, `not`, sign | right |
 | 3 | `*`, `/`, `%` | left |
 | 4 | `+`, `-`, `--` | left |
 | 5 | suffixes `to Type`, `in unit` and restriction `in Domain` | cumulative |
@@ -1606,10 +1607,12 @@ A linear magnitude without `in` renders the number followed by the canonical uni
 
 `time in picosecond` expresses the total coordinate; `picosecond from second in time` extracts the part within the second. The second method is valid even if the displayed format does not include picoseconds.
 
-## `eventually`, `allowed` and chance
+## `eventually`, `imagine` and chance
+
+Imagine is an isolated ActionReply expression, not a Boolean query. It returns Success, Refusal or nonempty Errors and always discards attempted changes. Real calls require an effect-capable context; storing a reply in a then-local initializer does not make those effects pure.
 
 ```mud
-allowed game.Move(origin, destination)
+imagine game.Move(origin, destination)
 
 eventually game.Checkmate(White)
     through game.Move, game.Pass
@@ -1620,7 +1623,7 @@ eventually game.Checkmate(White)
 Rand([1..6])
 ```
 
-`allowed` runs the complete semantic action protocol on an isolated tentative projection and always discards it. Acceptance returns `true`, rejection returns `false`, and technical failure propagates. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
+`imagine` runs the complete semantic action protocol on an isolated tentative projection and always discards it. Acceptance returns `true`, rejection returns `false`, and technical failure propagates. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
 
 Operands of `through` are action references, not concrete calls. The list, with or without square brackets, represents the same contextual collection. MUD 1.0 supports only `Rand(source)`; it does not yet include syntax for weights or distributions.
 

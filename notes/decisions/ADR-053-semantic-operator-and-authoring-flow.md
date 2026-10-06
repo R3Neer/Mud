@@ -16,6 +16,8 @@ affects:
 ---
 # ADR-053 — Semantic operator and authoring flow
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Expanded by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Related questions: Q-008, Q-015, Q-036, Q-039, Q-040
 - Documents affected: semantic changes, Git, operator tooling
@@ -33,7 +35,7 @@ Before making any changes, the operator classifies the request according to at l
 - structural change, API change, causal, liaison, domain, type, randomness, invariant, admissibility or reachability;
 - ambiguous, incomplete, out of scope or an attempt to circumvent restrictions.
 
-It can apply only mechanical inferences already defined by the language, such as cardinality `[1]`, omission of `given` when no values are required, `empty`, canonical orders and derivable finiteness. It does not invent participants, `given`, domains, rules, actions, `after`, `always`, or the meanings of `allowed` or `eventually`.
+It can apply only mechanical inferences already defined by the language, such as cardinality `[1]`, omission of `given` when no values are required, `empty`, canonical orders and derivable finiteness. It does not invent participants, `given`, domains, rules, actions, `after`, `always`, or the meanings of `imagine` or `eventually`.
 
 The flowchart for a mutation is:
 

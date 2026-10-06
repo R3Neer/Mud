@@ -37,6 +37,7 @@ decisions:
   - D-096
   - D-113
   - D-118
+  - D-119
 ---
 
 # 06. Lexical structure
@@ -90,7 +91,7 @@ rule action subaction look message test
 for on given when changes if then after with otherwise raise
 mut unique ordered
 create destroy add to remove from each by take
-eventually through allowed old
+eventually through imagine old
 is iis in has
 not and or xor
 exists forall count min max

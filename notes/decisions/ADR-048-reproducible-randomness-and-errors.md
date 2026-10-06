@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-048 — Reproducible randomness and errors
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
@@ -47,9 +49,9 @@ D-081 add `take amount from source`. Based on a source with no discernible order
 
 Everything point random has identity semantics and derives its result of a seed reproducible. A computed field 'random' remains the same result within the same snapshot evaluation. It cannot be read directly from Boolean rules, domains, `if`, `when`, `always` nor iteration filters.
 
-`allowed` use a branch specific, planted and disposable. `eventually` quantifies existentially on outcomes with a positive probability in accordance with D-044.
+`imagine` use a branch specific, planted and disposable. `eventually` quantifies existentially on outcomes with a positive probability in accordance with D-044.
 
-The non-finite results of `Rum`, division by zero, an unavailable reference, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `Errors` and rollback. Within `allowed` they spread like failure assessment purposes and do not amount to falsehood.
+The non-finite results of `Rum`, division by zero, an unavailable reference, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `Errors` and rollback. Within `imagine` they spread like failure assessment purposes and do not amount to falsehood.
 
 Each of these errors must have a diagnostic human `Text`. When it reaches the boundary of a action real, that one diagnostic forms the `reason` mandatory for its result `Errors` in accordance with D-061.
 
@@ -60,7 +62,7 @@ Resource constraints and internal flaws in an implementation should not be confu
 - An implementation must not use machine time or evaluation order as a source semantics of chance.
 - Everything point random possesses identity semantics stable, and its selection must be based on the seed reproducible and of that identity without relying on the accidental sequential consumption of a global PRNG. The specific derivation or sub-seeding algorithm is a matter of implementation, provided that it preserves that contract. Q-032 It keeps the cache and retry rules, as well as the display of results, active.
 - The arithmetic portability of `Rum` continues at Q-058.
-- The semantics errors within ordinary Boolean expressions, outside `allowed`, requires a table of regulations within Q-007.
+- The semantics errors within ordinary Boolean expressions, outside `imagine`, requires a table of regulations within Q-007.
 
 ## Verification
 

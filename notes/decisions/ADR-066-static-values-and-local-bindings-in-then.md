@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-066 — Static values and local bindings in `then`
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 - Extended by: [[ADR-071-local-bindings-in-boolean-blocks|D-071]]
 - Amends: [[notes/decisions/ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]], [[notes/decisions/ADR-038-close-knit-families-with-strong-values|D-038]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
@@ -38,7 +40,7 @@ The explicit value of a stored field, component, stored `family` datum or member
 ```mud
 lives: Nat = 3
 king: Person = Arthur
-allowed: Int Interval = 1..2 | 3..4
+imagine: Int Interval = 1..2 | 3..4
 duration: Time = 1 hour + 30 minutes
 ```
 

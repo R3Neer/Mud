@@ -2534,3 +2534,36 @@ cases:
   produces_ast: true
   required_contract: IfRefusal BoolCheck retains earlier=false and skipped OtherCheck=empty, without expanding
     earlier definition or evaluating skipped call
+- id: imagine-returns-action-reply
+  category: expression
+  source: 'rule CanMove for actor: Actor { reply := imagine actor.Move(); reply is Success }
+
+    '
+  cst_root: MudFileSyntax
+  ast: UnaryExpr(ImagineQuery, CallExpr)
+  produces_ast: true
+  required_contract: Full speculative invocation; ActionReply unchanged; discard world, outputs and real
+    randomness
+- id: action-reply-effect-context-binding
+  category: typing
+  source: 'action Parent for actor: Actor { then { reply: ActionReply = actor.Move(); actor.Observe(reply)
+    } }
+
+    '
+  cst_root: MudFileSyntax
+  ast: LocalStoredStatement(CallExpr), EffectStatement(ActionCallCandidateEffect)
+  produces_ast: true
+  required_contract: Explicit reply capture permitted in effect context; a real call in pure code is invalid
+- id: invocation-owned-after-before-caller-resumes
+  category: evaluation
+  source: 'subaction Child for counter: Counter [mut] { then counter.value = 1; after counter.value ==
+    1 }
+
+    action Parent for counter: Counter [mut] { then { counter.Child(); counter.value = 2 } }
+
+    '
+  cst_root: MudFileSyntax
+  ast: ActionDecl(Child), ActionDecl(Parent)
+  produces_ast: true
+  required_contract: Child after sees stabilized 1 before Parent resumes; later 2 does not rerun Child
+    after; one commit

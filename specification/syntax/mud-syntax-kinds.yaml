@@ -29,6 +29,7 @@ synthetic_token_origins:
 - ImplicitTextEnd
 - MissingForRecovery
 fixed_tokens:
+- spelling: imagine
 - spelling: raise
 - spelling: using
 - spelling: .
@@ -126,7 +127,6 @@ fixed_tokens:
 - spelling: --
 - spelling: '%'
 - spelling: old
-- spelling: allowed
 - spelling: take
 - spelling: 'true'
 - spelling: 'false'
@@ -355,7 +355,7 @@ lexical_forms:
       \ | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
     references: []
   operator-word:
-    rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
+    rhs: "\"to\" | \"eventually\" | \"imagine\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
     references: []
   builtin-word:
     rhs: "\"Text\" | \"Char\" | \"Bool\" | \"Thing\" | \"Any\" | \"Nat\" | \"Int\"\n      | \"Num\" | \"Rum\" | \"Money\" | \"Rand\"\n      | \"Name\" | \"MudPath\" | \"Anchor\" | \"MudFile\" | \"Prefix\""
@@ -1502,7 +1502,7 @@ syntax_nodes:
     - postfix-expression
   prefix-operator:
     kind: PrefixOperatorSyntax
-    rhs: '"not" | "+" | "-" | "old" | "allowed" | "all"'
+    rhs: '"not" | "+" | "-" | "old" | "imagine" | "all"'
     references: []
   postfix-expression:
     kind: PostfixExpressionSyntax

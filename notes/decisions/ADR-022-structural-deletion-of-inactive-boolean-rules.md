@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-022 — Structural deletion of inactive Boolean rules
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Related open-ended question: [[notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]]
 - Decision related: [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]]
 - Documents affected: future Chapters 19, 21 and 26
@@ -234,7 +236,7 @@ It is ruled out because it would prevent a formula from continuing to function u
 
 - Elaboration exact translation of `!=`, `xor` and other Boolean operators.
 - Pruning within quantifiers and Boolean aggregations.
-- Interaction with `allowed`, `eventually` and sub-expression errors that disappear.
+- Interaction with `imagine`, `eventually` and sub-expression errors that disappear.
 - Diagnostics or warnings for expressions that are particularly sensitive to their syntactic form.
 
 ## Future verification

@@ -17,6 +17,7 @@ decisions:
   - D-115
   - D-116
   - D-118
+  - D-119
 ---
 
 # MUD formal specification
@@ -391,7 +392,7 @@ Planned scope:
 
 - Literals, operators, calls, access, comparison, conversion and contextual construction.
 - Resolution and elaboration of receivers, arguments and callable values.
-- `old`, `allowed`, `eventually`, selection, `take` and `all D` materialisation in expression contexts.
+- `old`, `imagine`, `eventually`, selection, `take` and `all D` materialisation in expression contexts.
 - Purity, narrowing, expected-type propagation and evaluation failures.
 
 ## 20. Quantifiers, aggregations and iteration
@@ -515,9 +516,9 @@ Planned file: `30-final-constraints.md`
 Planned scope:
 
 - Checks of domains, cardinalities, `always` rules and other invariants over tentative states.
-- `after` for actions/subactions executed within a resolution and its evaluation over the final tentative stable state.
+- Invocation-owned causal completion and after before returning, without rechecking completed children.
 - Contextual semantics of `old`, including the difference between actions, tests and reactive rules.
-- One atomic confirmation after stabilisation, invariants and all executed actions' final `after` clauses; complete tentative discard on rejection/failure.
+- One atomic outer confirmation after owned stabilization, root/wave checkpoints and after; applicable scope rollback on non-success.
 
 ## 31. Conflicts, cycles and stabilisation
 
@@ -565,14 +566,14 @@ Planned scope:
 - Reads, writes, dependencies, binding patterns and stochastic dependencies.
 - Reconstruction criteria from the programme and relation to the Nominal HIR, without turning the latter into a prematurely semantic graph.
 
-## 35. Speculative query `allowed`
+## 35. Speculative query `imagine`
 
-Planned file: `35-allowed.md`
+Planned file: `35-imagine.md`
 
 Planned scope:
 
 - Construction and disposal of the speculative world.
-- Conversion of results to `Bool`, failure propagation and dependence on queried actions.
+- ActionReply results, isolation and unconditional discard, without implicit Bool conversion.
 - Acyclicity/admissibility conditions and reproducibility of randomness.
 
 ## 36. Reachability `eventually`

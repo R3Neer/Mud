@@ -27,6 +27,8 @@ affects:
 
 # ADR-096 — Modules, callables, `look`, `message` and activation
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[ADR-116-contract-visible-cross-module-specialisation|D-116]].
@@ -59,9 +61,9 @@ The semantic separation between elementary and compound actions is removed. A `t
 
 An internal call executes at its textual position within the resolution's private delta: it observes earlier effects visible at that point, contributes its effects to the same resolution, and later statements observe those effects. It does not open an independent transaction.
 
-The `after` clauses of all actions/subactions executed during resolution are checked against the complete resolution's tentative final stable state. An ordered `for each` retains sequential semantics between iterations; in an unordered one, sibling-iteration deltas are consolidated under the ordinary concurrency rules.
+Each invocation checks after once its owned work stabilizes, before its caller continues. Shared consequences belong to the nearest common enclosing invocation; nested completion remains tentative. An ordered `for each` retains sequential semantics between iterations; in an unordered one, sibling-iteration deltas are consolidated under the ordinary concurrency rules.
 
-An `action` or `subaction` may be invoked from any semantic `then` context, including a reactive rule's `then`. `action` also retains outer-root capability; `subaction` does not. A nested `Errors` propagates and reverts the entire resolution. An internal `Refusal` also aborts and reverts, while retaining the `Refusal` category.
+An `action` or `subaction` may be invoked from any semantic `then` context, including a reactive rule's `then`. `action` also retains outer-root capability; `subaction` does not. A bare invocation effect propagates Errors or Refusal; explicit reply-value capture permits observation after rolling back the unsuccessful child attempt.
 
 ### Modules and visibility
 
@@ -146,7 +148,7 @@ then dragon.op(volume)
 
 ```mud
 predicate := someRule
-allowed := dragon.predicate(limit)
+permitted := dragon.predicate(limit)
 ```
 
 With several participants, `(attacker, defender).op(amount)` may be written. Storing the descriptor does not pre-bind receivers or `given`; invocation performs those bindings at the call site.

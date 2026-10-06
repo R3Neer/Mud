@@ -655,7 +655,7 @@ module MUDSurface {
                     | UnaryPlus
                     | UnaryMinus
                     | OldValue
-                    | AllowedQuery
+                    | ImagineQuery
                     | EnumerateAll
 
     binary_operator = Biconditional

@@ -37,6 +37,7 @@ decisions:
   - D-113
   - D-117
   - D-118
+  - D-119
 ---
 
 # 04. Model mathematician from world
@@ -109,8 +110,8 @@ The model current stipulates:
 33. Stored writes target the materialisation generation observed by their branch and cannot migrate across destroy/create. Destroying a specific `thing` discards the stored values belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
 34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
 35. A resolution's private deltas and consolidated wave projections are tentative. Later waves may read consolidated tentative changes, while the confirmed world remains unchanged.
-36. A complete stable resolution is confirmed atomically only after all applicable invariants and the final `after` clauses of every executed action/subaction succeed. Rejection or failure discards every wave's changes and external delivery.
-37. `allowed` executes the complete semantic protocol in isolation and always discards its tentative result. `Success` maps to `true`, `Refusal` to `false`, and `Errors` propagates; it changes no confirmed world state, queues, logs, randomness or resolution identities.
+36. Every invocation owns its initiating causal work; jointly caused consequences belong to the common enclosing invocation. After checks its stabilized completion before returning, without later rechecking. Only successful outer completion confirms the tentative world atomically.
+37. Imagine executes the complete invocation protocol in isolation, returns ActionReply unchanged and always discards tentative state. Confirmed world, queues, logs, randomness and resolution identity are unchanged.
 39. Always invariants are checked after the consolidated root and after every consolidated wave. False yields AlwaysRefusal; unsuccessful evaluation yields Error occurrences. A later wave cannot repair a failed checkpoint. Inactive hard-dependent rules are suspended, and restored rules are checked when effective again.
 38. Recording tentative changes does not change semantic consolidation into textual merging or impose a physical journal representation.
 

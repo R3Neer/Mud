@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 113.
-- Current: 109.
+- Total: 114.
+- Current: 110.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -25,7 +25,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-006 | current | 2026-07-27 | [[notes/decisions/ADR-006-purity-boolean-rules-and-write-boundary|Purity Boolean rules and write boundary]] |
 | D-007 | current | 2026-07-27 | [[notes/decisions/ADR-007-causal-resolution-by-waves-over-snapshots|Causal resolution by waves over snapshots]] |
 | D-008 | superseded | 2026-07-27 | [[notes/decisions/ADR-008-results-accepted-rejected-and-failed|Results `accepted`, `rejected` and `failed`]] |
-| D-009 | current | 2026-07-27 | [[notes/decisions/ADR-009-allowed-as-a-baseless-rumour|`allowed` as a baseless rumour]] |
+| D-009 | current | 2026-07-27 | [[notes/decisions/ADR-009-allowed-as-a-baseless-rumour|`imagine` as a baseless rumour]] |
 | D-010 | current | 2026-07-27 | [[notes/decisions/ADR-010-finiteness-and-termination-required-by-eventually|Finiteness and termination required by `eventually`]] |
 | D-011 | current | 2026-07-27 | [[notes/decisions/ADR-011-derivatives-do-not-add-behaviour-of-domain|Derivatives do not add behaviour of domain]] |
 | D-012 | current | 2026-07-27 | [[notes/decisions/ADR-012-validation-and-atomic-versioning-of-semantic-changes|Validation and atomic versioning of semantic changes]] |
@@ -56,7 +56,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-040 | current | 2026-07-28 | [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|Semantics remaining basic numeracy]] |
 | D-041 | current | 2026-07-28 | [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|Contracts under the three types of rules]] |
 | D-042 | current | 2026-07-28 | [[notes/decisions/ADR-042-shares-root-and-results|Shares, root and results]] |
-| D-043 | current | 2026-07-28 | [[notes/decisions/ADR-043-speculative-query-with-allowed|Speculative query with `allowed`]] |
+| D-043 | current | 2026-07-28 | [[notes/decisions/ADR-043-speculative-query-with-allowed|Speculative query with `imagine`]] |
 | D-044 | current | 2026-07-28 | [[notes/decisions/ADR-044-reachability-eventually|Reachability with `eventually`]] |
 | D-045 | current | 2026-07-28 | [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|Causal resolution, connections and queue]] |
 | D-046 | current | 2026-07-28 | [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|Algebra and conflicts of effects]] |
@@ -132,6 +132,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-116 | current | 2026-10-06 | [[notes/decisions/ADR-116-contract-visible-cross-module-specialisation|Contract-visible cross-module specialisation]] |
 | D-117 | current | 2026-10-06 | [[notes/decisions/ADR-117-replacement-before-change-and-semantic-destinations|Replacement before change and semantic destinations]] |
 | D-118 | current | 2026-10-06 | [[notes/decisions/ADR-118-action-replies-refusals-and-errors|Action replies refusals and errors]] |
+| D-119 | current | 2026-10-06 | [[notes/decisions/ADR-119-invocation-owned-completion-and-imagine|Invocation-owned completion and imagine]] |
 
 ## Reserved identifiers
 

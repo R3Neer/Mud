@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-041 — Contracts under the three types of rules
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Related to: [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
@@ -45,7 +47,7 @@ given
 }
 ```
 
-Register participants via `for`, may state `given`, is pure and returns `Bool`. You can use quantifiers, Boolean aggregations, `allowed` and, where the analysis so permits, `eventually`.
+Register participants via `for`, may state `given`, is pure and returns `Bool`. You can use quantifiers, Boolean aggregations, `imagine` and, where the analysis so permits, `eventually`.
 
 Their `given` They are read-only values and can be declared as static defaults. Calls bind them by position or by name in accordance with D-063.
 
@@ -63,7 +65,7 @@ rule OpenGate on gate: Gate [mut] {
 }
 ```
 
-It declares automatic links through `on`, does not support `given`, requires `when`, admits `if` and has consequences through `then`. The `then` block can combine effects, locals and calls to `action` or `subaction` within causal resolution, in accordance with D-096. Boolean rules can be queried with `allowed` when the resulting graph remains acceptable.
+It declares automatic links through `on`, does not support `given`, requires `when`, admits `if` and has consequences through `then`. The `then` block can combine effects, locals and calls to `action` or `subaction` within causal resolution, in accordance with D-096. Boolean rules can be queried with `imagine` when the resulting graph remains acceptable.
 
 Roles within the same header `on` are solved jointly and may form finite cyclic relational constraints in accordance with D-063.
 

@@ -18,6 +18,8 @@ affects:
 ---
 # ADR-042 — Shares, root and results
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
@@ -72,7 +74,7 @@ There is no semantic distinction between elementary and compound actions. A `the
 
 Each statement reads the private delta visible at its textual position. An internal call is validated and executed there, observes the preceding private effects, and adds its own effects to the resolution. It is atomic and preserves those effects for subsequent statements; it does not open a separate transaction.
 
-The `after` blocks of all invoked actions and subactions are checked against the final attempted stable state when the complete resolution finishes. Private and consolidated wave changes remain tentative until stabilisation, all invariants and these postconditions succeed; the complete transition is then confirmed atomically. Rejection/failure discards the entire journal and external delivery, including earlier waves. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
+Each invocation checks after against its own stabilized causal completion projection before the caller resumes. Private and consolidated wave changes remain tentative until stabilisation, all invariants and these postconditions succeed; the complete transition is then confirmed atomically. Rejection/failure discards the entire journal and external delivery, including earlier waves. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
 
 ### Conditions and results
 
@@ -106,5 +108,5 @@ In action/test after, old retains its established entry-view contract; reactive 
 
 ## Amendment current by D-096
 
-The distinction between elementary and compound actions is removed from the semantics. Every `then` is an ordered sequence that can combine effects, places, calls and `for each`. An internal call observes the exact delta and contributes to effect resolution. `action` retains the ability to operate at the root; `subaction` can be reused from any `then` but cannot operate at the root. Nested `after` blocks are evaluated against the final stable state of the completed resolution.
+The distinction between elementary and compound actions is removed from the semantics. Every `then` is an ordered sequence that can combine effects, places, calls and `for each`. An internal call observes the exact delta and contributes to effect resolution. `action` retains the ability to operate at the root; `subaction` can be reused from any `then` but cannot operate at the root. Nested after runs at its own invocation completion; the outer resolution is the sole commit boundary.
 

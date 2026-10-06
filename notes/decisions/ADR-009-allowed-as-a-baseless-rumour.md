@@ -1,6 +1,6 @@
 ---
 id: D-009
-title: "`allowed` as a baseless rumour"
+title: "`imagine` as a baseless rumour"
 status: current
 date: 2026-07-27
 supersedes: []
@@ -12,7 +12,9 @@ affects:
   - "admissibility and speculative query chapter"
 ---
 
-# ADR-009 — `allowed` as a baseless rumour
+# ADR-009 — `imagine` as a baseless rumour
+
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
 ## Context
 
@@ -22,9 +24,7 @@ unfulfilled or failure.
 
 ## Decision
 
-`allowed` executes the protocol of the action on a copy
-disposable. Not confirmed state nor does it publish outputs. Errors are not converted
-as falsehoods: they are spread as errors of the query.
+`imagine` executes the complete invocation protocol in a disposable projection and returns ActionReply. It never confirms state or publishes outputs. An Errors alternative is returned as an ordinary reply value, rather than converted to false or raised merely by returning it.
 
 ## Consequences
 

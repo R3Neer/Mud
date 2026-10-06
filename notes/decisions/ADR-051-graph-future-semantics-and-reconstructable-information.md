@@ -17,6 +17,8 @@ affects:
 ---
 # ADR-051 — Graph future semantics and reconstructable information
 
+- Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
+
 - Amended by: [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
 - Expanded by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]] and [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]].
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
@@ -44,7 +46,7 @@ When designing this future representation, it must be capable of preserving or r
 - logical activity and suspended dependencies;
 - `look`, `message`, its outflows and deferred liabilities;
 - tests, activation local, effects, assertions and diagnoses;
-- dependencies of `allowed`, `eventually`, `when`, `if`, `after`, `old` and `always`;
+- dependencies of `imagine`, `eventually`, `when`, `if`, `after`, `old` and `always`;
 - structural effects `create`, `destroy`, the addition and removal of collections;
 - derivation of dimensions, quantities, units and equivalences;
 - general departments, including domain, stochastic and hard when they form part of the defined analysis.
