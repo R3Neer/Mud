@@ -20,6 +20,15 @@ An ordinary ephemeral file is not versioned. Logs, builds, caches, dumps,
 local tool state and other reproducible residue must live outside the
 repository or be covered by `.gitignore`.
 
+## Iterative review lists
+
+The Markdown lists required by [[CONSISTENCY-REVIEW-POLICY]] are ordinary
+ephemeral documents. They must live outside the repository, must never be
+staged or committed, and must be removed when the review cycle finishes.
+Neither `.gitignore` nor the intentionally versioned temporary-document
+contract below permits keeping these lists inside the repository or in Git
+history.
+
 ## Source of truth
 
 The metadata in the file itself are the sole source of truth about its
@@ -73,7 +82,7 @@ be covered by a specific policy that establishes an equivalent lifecycle.
 
 ## Obsidian view
 
-`[[temporales.base|governance/temporales.base]]` is a human-facing view derived
+`[[temporaries.base|governance/temporaries.base]]` is a human-facing view derived
 from the Properties of Markdown notes. It is not a second source of truth, and
 no file is added to it manually. Temporary TOML files appear in the validator's
 complete inventory even though Obsidian Bases does not display them.

@@ -24,7 +24,7 @@ The author need not explicitly say "make a commit" after every task. When a
 requested change:
 
 1. Is complete within its scope.
-2. Has been reviewed in proportion to its risk.
+2. Has been reviewed in proportion to its risk under [[CONSISTENCY-REVIEW-POLICY]].
 3. Contains no unrelated changes.
 4. Leaves the repository in a coherent state.
 
@@ -168,6 +168,13 @@ Before creating a commit, Codex must:
 8. Review the staged diff.
 9. Create the commit.
 10. Confirm that the resulting state is as expected.
+
+Review each working unit and its dependencies before committing. Intermediate
+atomic commits may record validated units or review corrections, but the task
+cannot be declared finished until the final repository-wide iterative review
+has an explicitly empty inconsistency list. Its Markdown lists stay outside
+the repository, never enter any commit and are removed at completion, as
+required by [[CONSISTENCY-REVIEW-POLICY]].
 
 ## Main branch
 

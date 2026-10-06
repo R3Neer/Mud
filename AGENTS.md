@@ -22,6 +22,12 @@ In particular:
 
 The mechanical barrier for MUD-EDIT-002 and question handling is executed using `python governance/validate_spec_editorial.py`. Any change affecting `specification/` or `notes/questions/` must pass this check before committing. If the barrier itself is modified, `python governance/test_validate_spec_editorial.py` is also executed.
 
+## Iterative consistency reviews
+
+Every task that changes the vault must follow `governance/CONSISTENCY-REVIEW-POLICY.md`. Review coherent units and their dependencies before committing, and finish with a repository-wide review.
+
+After every major review, write a new temporary Markdown list of inconsistencies outside the repository. Correct the findings, validate and review again, until the final review produces an explicitly empty list. Do not declare the task complete while findings remain. Remove all review temporaries at the end; none may ever be staged or committed. A genuine blocker must be reported as incomplete, not concealed by an empty list.
+
 ## Temporary files
 
 Documents that are intended to be temporary are governed by `governance/TEMPORARY-FILES-POLICY.md`. Ordinary temporary files are not versioned.

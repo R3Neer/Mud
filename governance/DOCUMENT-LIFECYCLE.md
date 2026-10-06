@@ -91,12 +91,18 @@ The promotion of an chapter follows these steps:
 8.  Links, dependencies and metadata for traceability are being checked.
 9. Any decision history or provenance that is not part of the state current is removed from the body.
 10. Integration is checked across all the affected surfaces that have already been developed.
-11. The publication run is being executed.
+11. Execute the publication checks and the iterative repository-wide consistency review under [[CONSISTENCY-REVIEW-POLICY]] until its final temporary Markdown list is explicitly empty; remove the review temporaries.
 12.  The state is replaced and a atomic commit is created.
 
 ## Publication date
 
 Before promoting a chapter to `current`, the following checks are carried out.
+
+The reviews below are repeated under [[CONSISTENCY-REVIEW-POLICY]]. Every major
+review ends with a new Markdown inconsistency list outside the repository;
+findings are corrected and the resulting state is reviewed again. Promotion
+requires an empty final list and removal of review temporaries. Mechanical
+success alone does not satisfy this gate.
 
 ### Semantic review
 

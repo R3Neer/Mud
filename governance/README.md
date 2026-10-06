@@ -15,8 +15,9 @@ not define the language's meaning.
 ## Documents
 
 - [[COMMITS-POLICY|Commit policy]]
+- [[CONSISTENCY-REVIEW-POLICY|Iterative consistency review policy]]
 - [[TEMPORARY-FILES-POLICY|Temporary-file policy]]
-- [[temporales.base|Active-temporaries view]]
+- [[temporaries.base|Active-temporaries view]]
 - [[DOCUMENT-LIFECYCLE|Document lifecycle]]
 - [[DECISIONS-POLICY|Decision policy]]
 - [[QUESTIONS-POLICY|Question policy]]
