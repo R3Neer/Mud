@@ -166,7 +166,7 @@ Each invocation evaluates after once its owned causal work stabilises, before it
 
 `imagine` shares the semantic engine but always discards its speculative journal. It returns ActionReply unchanged (Success, Refusal or Errors), with no consumption of confirmed queues, random state or resolution identities. Tentative message occurrences can cause later waves; they reach the host only after a real commit. Diagnostic traces may be retained separately from confirmed logs. Foreign calls must respect the same boundary; patches cannot undo arbitrary native I/O.
 
-Physical journal layout, persistence and compression remain implementation choices. Q-002 still requires complete operational effect semantics, and Q-035 retains admissibility costs, memoisation and resource diagnostics. No semantic IR format is prescribed.
+Physical journal layout, persistence and compression remain implementation choices. [[specification/25-effects]] specifies private effect judgments and finite root/wave consolidation; it does not implement the scheduler or adapters. Q-035 retains admissibility costs, memoisation and resource diagnostics. No semantic IR format is prescribed.
 
 ## Semantic operator
 

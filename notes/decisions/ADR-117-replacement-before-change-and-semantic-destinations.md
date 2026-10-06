@@ -15,6 +15,8 @@ affects:
 
 # ADR-117 — Replacement before change and semantic destinations
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Amended by: [[ADR-125-instruction-local-lifecycle-no-ops|D-125]].
 
 - Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
@@ -27,7 +29,7 @@ The author accepts replacement before change, disjoint component composition, di
 
 A sequential then keeps textual semantics over its private projection. Normalize each branch before merging sibling deltas: an absolute replacement supersedes preceding local contributions to that destination, while subsequent relative updates remain. Never resurrect an overwritten local update during concurrent consolidation. Siblings evaluate RHS expressions on their common snapshot and cannot observe one another's private deltas.
 
-Concurrent equal complete replacements merge; unequal complete replacements conflict. A replacement and compatible relative updates compose, using the replacement as base and then the existing arithmetic normal form ((base + delta) * P) / Q. An assignment x = old x + 5 is an absolute replacement, not interchangeable with x += 5. Nat projects/saturates only after combining signed deltas under its existing rule.
+Concurrent equal complete replacements merge; unequal complete replacements conflict. A replacement supplies the base for surviving relative updates. Numeric operations preserve each branch's textual sequence; stage k combines the kth surviving operation of each branch at that destination, using ((base + delta) * P) / Q within that stage. An assignment x = old x + 5 is an absolute replacement, not interchangeable with x += 5. Nat projects/saturates only after combining signed deltas under its existing rule.
 
 Semantic destinations retain their root, dictionary keys, stored component path and materialisation generation. Reconstructing two distinct alias components does not manufacture two conflicting whole-root assignments: preserve their independent intents and merge them before one immutable write-back. A whole-container replacement precedes descendant changes when the replacement supports the same well-typed path and nominal contract. Unequal replacements of the same semantic component conflict. A structurally invalid path or insufficient authority is rejected during elaboration.
 
@@ -53,4 +55,4 @@ Static analysis reports proven inevitable conflict as an error, proven possible 
 
 ## Integration review
 
-Assignable-path syntax and AST remain reconstructible expressions; semantic leaf intents belong to elaboration. The developed mathematical and grammar explanations reflect overlapping writes and generation identity. No new field, scope or anchor is introduced; nominal HIR needs no effect representation. Full operational inference rules remain for future effects/wave chapters.
+Assignable-path syntax and AST remain reconstructible expressions; semantic leaf intents belong to elaboration. The developed mathematical and grammar explanations reflect overlapping writes and generation identity. No new field, scope or anchor is introduced; nominal HIR needs no effect representation. Chapter 25 defines private effect judgments, normalisation and finite root/wave batch consolidation; complete scheduling and invocation/evaluation implementations remain separately scoped.

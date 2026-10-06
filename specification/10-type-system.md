@@ -40,6 +40,7 @@ decisions:
   - D-037
   - D-085
   - D-088
+  - D-127
 ---
 
 # 10. Type system
@@ -96,7 +97,7 @@ For exact dictionaries the bracketed specification following the arrow constrain
 > [!rule] MUD-TYPE-002 — Well-formed type constructors
 > Every referenced declaration must be visible and have the required category. Cardinalities have nonnegative integral lower bounds and upper bounds no smaller than their lower bounds. Keyed paths and order paths must be statically meaningful and satisfy their stability contracts. Dictionary arrows must be the complete outer form, including after resolving representation aliases. A collection specification after a complete union qualifies that union; it does not qualify only its last alternative.
 
-The nominal collection alias Errors is one union alternative in ActionReply. Resolving it as an alias does not create anonymous per-alternative collection syntax. No empty structural literal or general intersection syntax is introduced.
+Action/subaction callable output is fixed to the single ActionReply contract; it cannot be specialised into an additional domain-result output. The nominal collection alias Errors is one union alternative in ActionReply. Resolving it as an alias does not create anonymous per-alternative collection syntax. No empty structural literal or general intersection syntax is introduced.
 
 ## 3. Canonicalisation and identity
 

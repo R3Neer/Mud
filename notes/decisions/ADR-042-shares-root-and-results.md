@@ -18,6 +18,8 @@ affects:
 ---
 # ADR-042 — Shares, root and results
 
+- Amended by: [[ADR-127-actionreply-only-action-results|D-127]].
+
 - Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
@@ -80,7 +82,7 @@ Every invocation yields ActionReply = Success | Refusal | Errors. A false if is 
 
 Otherwise handlers belong to expression/value/effect blocks and handle Error values. They use optional on and if, then or raise exclusively. A plain Text diagnostic is invalid. A Refusal never enters an Error handler.
 
-A successful outer request commits atomically. A refused or unhandled erroneous request discards its complete tentative world and external delivery. Nested invocation and speculative execution return the same ordinary reply type without opening independent commits. Extra domain return values remain Q-022.
+A successful outer request commits atomically. A refused or unhandled erroneous request discards its complete tentative world and external delivery. Nested invocation and speculative execution return the same ordinary reply type without opening independent commits. Actions and subactions return only ActionReply; no additional domain return value is admitted.
 
 In action/test after, old retains its established entry-view contract; reactive old still compares wave snapshots. Computing an invalid operation is distinct from successfully obtaining empty or false.
 
@@ -89,7 +91,7 @@ In action/test after, old retains its established entry-view contract; reactive 
 - Refusal models an unmet condition; Errors model unsuccessful computation.
 - Atomicity includes root, waves, `always`, `after` and upcoming events.
 - False after rolls back its invocation scope; an unhandled outer Refusal rolls back the complete resolution.
-- The values of domain returned by a action, if they were to be admitted, they remain open in Q-022.
+- Actions and subactions have one ActionReply result; state effects and message outputs are not extra return values.
 
 ## Verification
 

@@ -31,6 +31,7 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/questions/README.md",
                 "notes/questions/Q-001-g-grammar-and-line-breaks.md",
                 "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+                "notes/questions/Q-007-f-technical-failures.md",
                 "notes/decisions/README.md",
                 "notes/decisions/ADR-054-lenguaje.md",
                 "notes/decisions/ADR-055-nueva-decision.md",
@@ -65,6 +66,10 @@ class BundledProfileTests(unittest.TestCase):
         self.assertIn("notes/decisions/ADR-055-nueva-decision.md", selected)
         self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
+            "notes/questions/Q-007-f-technical-failures.md",
+            selected,
+        )
+        self.assertNotIn(
             "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
             selected,
         )
@@ -133,6 +138,7 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/questions/README.md",
                 "notes/questions/Q-001-g-grammar-and-line-breaks.md",
                 "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+                "notes/questions/Q-007-f-technical-failures.md",
                 "exports/current.md",
                 "tooling/example/node_modules/dependency/README.md",
             }
@@ -151,6 +157,10 @@ class BundledProfileTests(unittest.TestCase):
 
         self.assertIn("notes/questions/README.md", selected)
         self.assertIn(
+            "notes/questions/Q-007-f-technical-failures.md",
+            selected,
+        )
+        self.assertNotIn(
             "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
             selected,
         )

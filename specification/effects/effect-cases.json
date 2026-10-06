@@ -1,0 +1,700 @@
+{
+  "schema_version": 1,
+  "scope": "Finite effect witnesses and declarative traces; not a MUD runtime",
+  "constructors": {
+    "ForeignBlockEffect": [
+      "7",
+      "foreign-private-failure"
+    ],
+    "AssignmentEffect": [
+      "3",
+      "replacement-before-change"
+    ],
+    "AddValueEffect": [
+      "5",
+      "unique-membership"
+    ],
+    "RemoveEffect": [
+      "5",
+      "latent-removal"
+    ],
+    "CreateEffect": [
+      "6",
+      "redundant-create"
+    ],
+    "DestroyEffect": [
+      "6",
+      "fresh-generation"
+    ],
+    "ActionCallCandidateEffect": [
+      "7",
+      "child-scope-reply"
+    ],
+    "ForEachEffect": [
+      "7",
+      "unordered-reduction"
+    ]
+  },
+  "operators": {
+    "Assign": [
+      "3",
+      "replacement-before-change"
+    ],
+    "AddAssign": [
+      "4",
+      "textual-mixed-sequence"
+    ],
+    "SubtractAssign": [
+      "4",
+      "nat-signed-private-ledger"
+    ],
+    "MultiplyAssign": [
+      "4",
+      "staged-mixed-branches"
+    ],
+    "DivideAssign": [
+      "4",
+      "zero-denominator"
+    ],
+    "UnionAssign": [
+      "5",
+      "collection-algebra"
+    ],
+    "IntersectionAssign": [
+      "5",
+      "collection-algebra"
+    ],
+    "SymmetricDifferenceAssign": [
+      "5",
+      "collection-algebra"
+    ],
+    "DifferenceAssign": [
+      "5",
+      "collection-algebra"
+    ]
+  },
+  "cases": [
+    {
+      "id": "textual-mixed-sequence",
+      "contract": "textual mixed sequence",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "*",
+              2
+            ],
+            [
+              "+",
+              3
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 13
+      }
+    },
+    {
+      "id": "staged-mixed-branches",
+      "contract": "staged mixed branches",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "*",
+              2
+            ],
+            [
+              "+",
+              3
+            ]
+          ],
+          [
+            [
+              "*",
+              3
+            ],
+            [
+              "+",
+              4
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 37
+      }
+    },
+    {
+      "id": "single-stage-normal-form",
+      "contract": "single stage normal form",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "+",
+              2
+            ]
+          ],
+          [
+            [
+              "*",
+              3
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 21
+      }
+    },
+    {
+      "id": "replacement-before-change",
+      "contract": "replacement before change",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "+",
+              2
+            ],
+            [
+              "=",
+              10
+            ]
+          ],
+          [
+            [
+              "+",
+              3
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 13
+      }
+    },
+    {
+      "id": "replacement-then-relative",
+      "contract": "replacement then relative",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "=",
+              10
+            ],
+            [
+              "+",
+              2
+            ]
+          ],
+          [
+            [
+              "+",
+              3
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 15
+      }
+    },
+    {
+      "id": "unequal-replacements",
+      "contract": "unequal replacements",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "=",
+              10
+            ]
+          ],
+          [
+            [
+              "=",
+              11
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": "conflict"
+      }
+    },
+    {
+      "id": "equal-replacements",
+      "contract": "equal replacements",
+      "witness": {
+        "kind": "numeric",
+        "base": 5,
+        "branches": [
+          [
+            [
+              "=",
+              10
+            ]
+          ],
+          [
+            [
+              "=",
+              10
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 10
+      }
+    },
+    {
+      "id": "nat-signed-private-ledger",
+      "contract": "nat signed private ledger",
+      "witness": {
+        "kind": "numeric",
+        "base": 0,
+        "branches": [
+          [
+            [
+              "-",
+              2
+            ],
+            [
+              "+",
+              3
+            ]
+          ]
+        ],
+        "nat": true,
+        "expected": 1,
+        "private_reads": [
+          [
+            0,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "id": "nat-concurrent-signed-ledger",
+      "contract": "nat concurrent signed ledger",
+      "witness": {
+        "kind": "numeric",
+        "base": 0,
+        "branches": [
+          [
+            [
+              "-",
+              2
+            ]
+          ],
+          [
+            [
+              "+",
+              3
+            ]
+          ]
+        ],
+        "nat": true,
+        "expected": 1
+      }
+    },
+    {
+      "id": "division-factor-cancellation",
+      "contract": "division factor cancellation",
+      "witness": {
+        "kind": "numeric",
+        "base": 7,
+        "branches": [
+          [
+            [
+              "*",
+              3
+            ]
+          ],
+          [
+            [
+              "/",
+              3
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": 7
+      }
+    },
+    {
+      "id": "zero-denominator",
+      "contract": "zero denominator",
+      "witness": {
+        "kind": "numeric",
+        "base": 7,
+        "branches": [
+          [
+            [
+              "/",
+              0
+            ]
+          ]
+        ],
+        "nat": false,
+        "expected": "arithmetic-error"
+      }
+    },
+    {
+      "id": "redundant-create",
+      "contract": "redundant create",
+      "witness": {
+        "kind": "lifecycle",
+        "initial": {
+          "active": true,
+          "generation": 1,
+          "payload": 2
+        },
+        "initialiser": 10,
+        "operations": [
+          "create"
+        ],
+        "expected": {
+          "active": true,
+          "generation": 1,
+          "payload": 2
+        }
+      }
+    },
+    {
+      "id": "repeated-create",
+      "contract": "repeated create",
+      "witness": {
+        "kind": "lifecycle",
+        "initial": {
+          "active": false,
+          "generation": 0,
+          "payload": null
+        },
+        "initialiser": 10,
+        "operations": [
+          "create",
+          "create"
+        ],
+        "expected": {
+          "active": true,
+          "generation": 1,
+          "payload": 10
+        }
+      }
+    },
+    {
+      "id": "fresh-generation",
+      "contract": "fresh generation",
+      "witness": {
+        "kind": "lifecycle",
+        "initial": {
+          "active": true,
+          "generation": 1,
+          "payload": 2
+        },
+        "initialiser": 10,
+        "operations": [
+          "destroy",
+          "create"
+        ],
+        "expected": {
+          "active": true,
+          "generation": 2,
+          "payload": 10
+        }
+      }
+    },
+    {
+      "id": "redundant-destroy",
+      "contract": "redundant destroy",
+      "witness": {
+        "kind": "lifecycle",
+        "initial": {
+          "active": false,
+          "generation": 0,
+          "payload": null
+        },
+        "initialiser": 10,
+        "operations": [
+          "destroy"
+        ],
+        "expected": {
+          "active": false,
+          "generation": 0,
+          "payload": null
+        }
+      }
+    },
+    {
+      "id": "different-dictionary-keys",
+      "contract": "different dictionary keys",
+      "witness": {
+        "kind": "dictionary",
+        "initial": {
+          "a": "Red"
+        },
+        "proposals": [
+          [
+            "set",
+            "b",
+            "Blue"
+          ],
+          [
+            "set",
+            "c",
+            "Green"
+          ]
+        ],
+        "unique": false,
+        "expected": {
+          "a": "Red",
+          "b": "Blue",
+          "c": "Green"
+        }
+      }
+    },
+    {
+      "id": "same-key-deletion",
+      "contract": "same key deletion",
+      "witness": {
+        "kind": "dictionary",
+        "initial": {
+          "a": "Red"
+        },
+        "proposals": [
+          [
+            "set",
+            "a",
+            "Blue"
+          ],
+          [
+            "delete",
+            "a"
+          ]
+        ],
+        "unique": false,
+        "expected": {}
+      }
+    },
+    {
+      "id": "dictionary-value-conflict",
+      "contract": "dictionary value conflict",
+      "witness": {
+        "kind": "dictionary",
+        "initial": {
+          "a": "Red"
+        },
+        "proposals": [
+          [
+            "set",
+            "a",
+            "Blue"
+          ],
+          [
+            "set",
+            "a",
+            "Green"
+          ]
+        ],
+        "unique": false,
+        "expected": "conflict"
+      }
+    },
+    {
+      "id": "joint-unique-swap",
+      "contract": "joint unique swap",
+      "witness": {
+        "kind": "dictionary",
+        "initial": {
+          "a": "Red",
+          "b": "Blue"
+        },
+        "proposals": [
+          [
+            "set",
+            "a",
+            "Blue"
+          ],
+          [
+            "set",
+            "b",
+            "Red"
+          ]
+        ],
+        "unique": true,
+        "expected": {
+          "a": "Blue",
+          "b": "Red"
+        }
+      }
+    },
+    {
+      "id": "unchanged-association-priority",
+      "contract": "unchanged association priority",
+      "witness": {
+        "kind": "dictionary",
+        "initial": {
+          "a": "Red"
+        },
+        "proposals": [
+          [
+            "set",
+            "b",
+            "Red"
+          ]
+        ],
+        "unique": true,
+        "expected": {
+          "a": "Red"
+        }
+      }
+    },
+    {
+      "id": "uniqueness-restoration-recheck",
+      "contract": "uniqueness restoration recheck",
+      "witness": {
+        "kind": "dictionary",
+        "initial": {
+          "a": "Red",
+          "b": "Blue"
+        },
+        "proposals": [
+          [
+            "set",
+            "a",
+            "Blue"
+          ],
+          [
+            "set",
+            "c",
+            "Red"
+          ]
+        ],
+        "unique": true,
+        "expected": {
+          "a": "Red",
+          "b": "Blue"
+        }
+      }
+    },
+    {
+      "id": "alias-disjoint-components",
+      "contract": "alias disjoint components",
+      "entry": "Same entry profile=(name=Old,age=1); A replaces name, B replaces age.",
+      "expected_trace": "One reconstructed profile has both replacements; no false whole-root conflict."
+    },
+    {
+      "id": "whole-container-before-partial",
+      "contract": "whole container before partial",
+      "entry": "A replaces profile with a compatible alias value; B updates its age component.",
+      "expected_trace": "Replacement supplies the base; component intent follows and the root is rebuilt once."
+    },
+    {
+      "id": "missing-intermediate-key",
+      "contract": "missing intermediate key",
+      "entry": "A observes dict[k] absent and attempts dict[k].age += 1; B inserts dict[k].",
+      "expected_trace": "A remains no-op; insertion does not resurrect its missing-path intent."
+    },
+    {
+      "id": "unique-membership",
+      "contract": "unique membership",
+      "entry": "A and B add the same value to a unique collection.",
+      "expected_trace": "One presence with joint causes; keyed uniqueness uses stable provenance for unequal values sharing a key."
+    },
+    {
+      "id": "latent-removal",
+      "contract": "latent removal",
+      "entry": "An immutable relation retains a withdrawn canonical identity latently; authorised remove targets it.",
+      "expected_trace": "Stored affiliation is removed; later create does not restore that explicitly removed membership."
+    },
+    {
+      "id": "old-generation-write",
+      "contract": "old generation write",
+      "entry": "A targets generation g; compatible lifecycle work ends g and introduces g2.",
+      "expected_trace": "The old write does not migrate to g2; unrelated suspended owned load remains."
+    },
+    {
+      "id": "ordered-traversal",
+      "contract": "ordered traversal",
+      "entry": "Captured ordered source [a,b]; body updates an admitted accumulator.",
+      "expected_trace": "b reads the value left by a; source changes do not extend captured traversal."
+    },
+    {
+      "id": "unordered-reduction",
+      "contract": "unordered reduction",
+      "entry": "Captured unordered source; independent iterations emit += updates to an outer local.",
+      "expected_trace": "All start from one view and contributions consolidate; local slots are not world storage."
+    },
+    {
+      "id": "child-scope-reply",
+      "contract": "child scope reply",
+      "entry": "Child action fails; caller explicitly captures its ActionReply.",
+      "expected_trace": "Child scope is settled/rolled back; reply is a value; a bare failed effect call instead propagates."
+    },
+    {
+      "id": "foreign-private-failure",
+      "contract": "foreign private failure",
+      "entry": "Native body has authorised private writes and exports before an exception.",
+      "expected_trace": "Rollback removes failed writes/exports; adapter diagnostics retain real MUD provenance."
+    },
+    {
+      "id": "false-checkpoint",
+      "contract": "false checkpoint",
+      "entry": "Consolidated root/wave computes an always condition successfully as false.",
+      "expected_trace": "AlwaysRefusal; no accepted next projection and no repair by a later wave."
+    },
+    {
+      "id": "checkpoint-computing-error",
+      "contract": "checkpoint computing error",
+      "entry": "Always evaluation fails while computing its condition.",
+      "expected_trace": "Error occurrences, not false/refusal; the attempted checkpoint is not accepted."
+    },
+    {
+      "id": "recovery-occurrences",
+      "contract": "recovery occurrences",
+      "entry": "Two distinct equal-valued Error occurrences enter handler selection.",
+      "expected_trace": "Both remain distinct; selected occurrences consumed once; newly raised errors leave the chain."
+    },
+    {
+      "id": "outer-rollback",
+      "contract": "outer rollback",
+      "entry": "Child success emits tentative changes/messages, then outer after refuses.",
+      "expected_trace": "All outer-owned tentative contributions/output delivery are discarded."
+    },
+    {
+      "id": "imagine-isolation",
+      "contract": "imagine isolation",
+      "entry": "An imagined action succeeds after effects and owned waves.",
+      "expected_trace": "ActionReply observed; tentative state, outputs and random consumption discarded."
+    },
+    {
+      "id": "collection-algebra",
+      "contract": "collection algebra",
+      "entry": "Homogeneous collection union/intersection/difference/parity contributions.",
+      "expected_trace": "Union uses max multiplicity, intersection min, differences summed removals then zero truncation, unique symmetric difference parity."
+    },
+    {
+      "id": "batch-cardinality-proof",
+      "contract": "batch cardinality proof",
+      "entry": "Stored singleton remove then valid replacement inside one admitted then.",
+      "expected_trace": "Temporary empty is private; complete block and possible consolidation prove cardinality one."
+    },
+    {
+      "id": "non-effect-result-rejected",
+      "contract": "non effect result rejected",
+      "entry": "A look or pure calculation occupies an effect-call candidate position.",
+      "expected_trace": "Static rejection; a normal value query does not satisfy the effect contract."
+    }
+  ]
+}

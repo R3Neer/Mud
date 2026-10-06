@@ -38,6 +38,8 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+    "notes/questions/Q-022-v-action-return-values.md",
     "notes/questions/Q-005-i-binding-identity-and-lifecycle.md",
     "notes/questions/Q-046-c-ineffective-creation-inside-a-root.md",
     "notes/questions/Q-021-a-static-conflict-analysis.md",
@@ -88,6 +90,8 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+    "notes/questions/Q-022-v-action-return-values.md",
     "notes/questions/Q-005-i-binding-identity-and-lifecycle.md",
     "notes/questions/Q-046-c-ineffective-creation-inside-a-root.md",
     "notes/questions/Q-021-a-static-conflict-analysis.md",

@@ -413,9 +413,11 @@ External projection of a `message` whose participants cease to exist remains ope
 
 ## 25. Effects
 
-Planned file: `25-effects.md`
+Chapter: [[25-effects]]. Status: proposed.
 
-Planned scope:
+Defines private effect/statement judgments, semantic destinations and branch normalisation, staged numeric composition, collection/dictionary/lifecycle operations, finite traversal and call/native interfaces, recovery and the root/wave batch boundary. [[effects/README]] supplies Surface AST coverage, declarative traces and bounded executable witnesses. The chapter does not claim a complete scheduler or native ABI.
+
+Scope:
 
 - Assignments, updates, collection operations and `create`/`destroy`; field declarations come exclusively from the canonical static schema, including specialisation.
 - Effectful calls and traversals within a unified `then`.
@@ -441,7 +443,7 @@ Planned file: `27-action-requests.md`
 Planned scope:
 
 - External request, binding and initial validation of a root `action`.
-- First-class ActionReply = Success | Refusal | Errors, mandatory origins and final-condition BoolCheck traces.
+- Sole action/subaction result ActionReply = Success | Refusal | Errors, with no additional domain result; mandatory origins and final-condition BoolCheck traces.
 - Relationship among signature validation, guards, stabilisation, final constraints and external publication.
 
 ## 28. Root semantics

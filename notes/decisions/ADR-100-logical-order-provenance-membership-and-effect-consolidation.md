@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-100 — Logical order, provenance, membership and effect consolidation
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
@@ -95,7 +97,7 @@ For a `unique by path` collection, distinct concurrent insertions whose projecte
 
 ### Concurrent arithmetic normal form
 
-Concurrent arithmetic effects on the same target are normalised into three accumulators:
+Numeric contributions retain each normalised branch's sequence at the same semantic destination. Stage k groups the kth surviving operation from each branch, ignoring unrelated destinations. Advance stages in order. Within each concurrent stage, arithmetic is normalised into three accumulators:
 
 - `Δ`: signed sum of all `+=` and `-=` operations;
 - `P`: product of all `*=` factors;
@@ -107,7 +109,7 @@ The canonical application is:
 x' = ((x + Δ) * P) / Q
 ```
 
-with identities `Δ = 0`, `P = 1` and `Q = 1`. The additive family is applied before the multiplicative family. `/=` is not modelled through a mandatory inverse, and no intermediate divisions or roundings arising from arbitrary ordering between concurrent effects are introduced.
+with identities `Δ = 0`, `P = 1` and `Q = 1`. The additive family is applied before the multiplicative family within that stage. A later stage never moves before an earlier operation in its branch. `/=` is not modelled through a mandatory inverse, and no intermediate divisions or roundings arising from arbitrary ordering between concurrent effects are introduced.
 
 Multiplicative and divisive factors are cancelled when the type's laws guarantee that cancellation preserves semantics exactly, including the accepted case `*= 3` together with `/= 3`. A simplification cannot hide division by zero, overflow, domain violations, units or any other observable property. An invalid consolidated denominator produces the failure applicable to division of the type and the transition is reverted.
 

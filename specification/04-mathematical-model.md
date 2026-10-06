@@ -152,6 +152,6 @@ All postfix `~` access is read-only during execution. `~path`, `~anchor` and `~f
 
 ## Boundary of the operational formalisation
 
-The objects above are a shared foundation, not a complete state tuple, scheduler, transition relation or serialisation format. Operational definitions must account for activation, generations, retained storage, effective projection and tentative ownership. They must also supply effect and wave judgments, recovery traces and checkpoint validation.
+The objects above are a shared foundation, not a complete state tuple, scheduler, transition relation or serialisation format. Operational definitions must account for activation, generations, retained storage, effective projection and tentative ownership. [[25-effects]] supplies private effect judgments, recovery boundaries and root/wave batch consolidation. The remaining operational chapters must complete scheduler/evaluation and invocation protocols without changing that effect boundary.
 
-Lifecycle admission and reactive observation continuity are fixed by the contracts above. Complete operational judgments and conformance traces remain to be formalised; a complete evaluator cannot be inferred from these invariants alone.
+Lifecycle admission and reactive observation continuity are fixed by the contracts above. Complete lifecycle/observation and scheduler protocol judgments and their conformance traces remain to be formalised; a complete evaluator cannot be inferred from these invariants alone.

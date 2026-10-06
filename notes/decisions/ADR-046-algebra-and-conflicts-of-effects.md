@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-046 — Algebra and conflicts of effects
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
@@ -50,7 +52,7 @@ The MUD effects catalogue includes:
 - `create` and `destroy`;
 - invocations of `action` or `subaction` within any semantic `then` context; the call sequentially incorporates its effects into the private delta in accordance with D-096.
 
-Every `then` calculate a delta sequential private from a snapshot common. The consolidation of concurrent deltas is deterministic.
+Each then calculates a textual sequential private delta from the common snapshot. Numeric consolidation combines surviving per-destination operations by stages; the arithmetic table applies within one stage, not across successive statements.
 
 Minimum standards:
 
@@ -92,7 +94,7 @@ Inside a `then`, a subsequent reading examines the saturated projection of the v
 
 - The semantics It does not depend on the order of rules or threads.
 - The saturation of `Nat` it does not violate the commutativity of additive updates.
-- Partial alias paths compose by semantic destination; dictionary deletion wins and replacements precede changes. Q-006 retains formal completeness of static symbolic conflict analysis.
+- Partial alias paths compose by semantic destination; dictionary deletion wins and replacements precede changes. Chapter 14 specifies the conservative static proof boundary; chapter 25 specifies operational composition.
 - The special conservative analysis of cardinality from D-026 takes precedence over the general rule of deferring undecidable matches.
 
 ## Verification

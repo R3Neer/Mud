@@ -13,7 +13,6 @@ depends-on:
 questions:
   - Q-069
   - Q-070
-  - Q-022
   - Q-059
   - Q-062
 decisions:
@@ -91,6 +90,8 @@ decisions:
   - D-121
   - D-125
   - D-126
+  - D-127
+  - D-128
 ---
 
 # 07. Concrete grammar
@@ -1224,7 +1225,7 @@ create Declaration
 destroy Declaration
 ```
 
-Reconstructible paths retain semantic component/key destinations for consolidation. Disjoint components merge; whole replacements precede compatible changes; same-key deletion wins. A missing intermediate key contributes no partial update even if a sibling inserts it.
+Sequential arithmetic updates preserve textual order. Concurrent numeric contributions compose by per-destination stages under [[25-effects]]; addition-before-multiplication applies within a stage rather than reordering successive instructions. Reconstructible paths retain semantic component/key destinations for consolidation. Disjoint components merge; whole replacements precede compatible changes; same-key deletion wins. A missing intermediate key contributes no partial update even if a sibling inserts it.
 
 `create d` when d is explicitly active and `destroy d` when d is explicitly inactive are successful no-ops, tested instruction by instruction against the current private view. They do not skip the enclosing rule or stop subsequent effects, rerun initialisers, change generations or reset temporal memory. The same policy applies to internal calls and mixed-availability sequences; there is no joint all-absent/all-present prerequisite. Effective lifecycle operations retain domain/cardinality validation, rollback and concurrent consolidation rules.
 
@@ -1761,6 +1762,8 @@ The enclosing contract governs reads and writes. Expression/shared/test preamble
 
 Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require confirmed host delivery or an explicit transactional contract. Wrappers preserve the canonical static field schema, aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.
 
+
+Actions and subactions return only ActionReply, with no additional domain result or success payload. Capturing that reply remains distinct from propagating non-success through a bare effect call; world effects and messages are not return values.
 
 ## Recovery occurrence contract
 

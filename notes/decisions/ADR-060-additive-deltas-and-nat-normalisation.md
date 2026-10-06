@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-060 — Additive deltas and `Nat` normalisation
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amends: [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|D-040]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]] and [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]]
@@ -134,12 +136,7 @@ No reactive rule, message, `look`, `old` or `changes` observes negative deltas o
 
 ### Scope
 
-D-060 defines only homogeneous additive updates. The following remain in force:
-
-- the conflict between assignment and arithmetic update;
-- the conflict between additive and multiplicative update;
-- composition by product of compatible multiplicative updates;
-- D-046's open questions about structural effects and partially overlapping targets.
+This decision defines homogeneous additive bookkeeping. Compatible replacement supplies the base before surviving relative contributions. Mixed arithmetic preserves each branch's textual sequence and composes by per-destination stages, using addition before multiplication within each concurrent stage. Semantic paths, dictionary and lifecycle composition follow chapter 25; unsupported combinations do not acquire an invented operator.
 
 ## Consequences
 

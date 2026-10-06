@@ -933,3 +933,24 @@ cases:
   expected: static-reject
   contract: CounterNow depends on mutable runtime-world state. A stored thing schema initializer must be statically
     evaluable even when the look is externally pure.
+- id: sole-action-reply-capture
+  rules:
+  - MUD-TYPE-014
+  source: 'reply: ActionReply = actor.Move()'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Move is an admitted action in an effect owner; its only ordinary output is ActionReply.
+- id: no-additional-action-domain-result
+  rules:
+  - MUD-TYPE-014
+  source: 'distance: Nat = actor.Move()'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Move is an action, not a look. Its ActionReply cannot be captured as Nat or carry a second domain output.
+- id: sole-subaction-reply-capture
+  rules:
+  - MUD-TYPE-014
+  source: 'reply: ActionReply = actor.Step()'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Step is an admitted subaction invoked within its permitted parent effect owner. Its only result is ActionReply.

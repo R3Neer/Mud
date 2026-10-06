@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 121.
-- Current: 117.
+- Total: 123.
+- Current: 119.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -140,6 +140,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-124 | current | 2026-10-06 | [[notes/decisions/ADR-124-expression-and-block-typing-coverage|Expression and block typing coverage]] |
 | D-125 | current | 2026-10-07 | [[notes/decisions/ADR-125-instruction-local-lifecycle-no-ops|Instruction-local lifecycle no-ops]] |
 | D-126 | current | 2026-10-07 | [[notes/decisions/ADR-126-reactive-binding-identity-and-observation-episodes|Reactive binding identity and observation episodes]] |
+| D-127 | current | 2026-10-07 | [[notes/decisions/ADR-127-actionreply-only-action-results|ActionReply-only action results]] |
+| D-128 | current | 2026-10-07 | [[notes/decisions/ADR-128-sequential-effects-and-staged-consolidation|Sequential effects and staged consolidation]] |
 
 ## Reserved identifiers
 

@@ -49,6 +49,7 @@ decisions:
   - D-066
   - D-085
   - D-126
+  - D-127
 ---
 
 # 19. Expression and block typing
@@ -115,6 +116,9 @@ An exact dictionary query checks the key contract and yields its value contract 
 > Select the nominal operation under the receiver-selection rule before checking given arguments or the expected result. Bind every required receiver/argument, validate positional/named form, check types and permissions, and insert only explicitly declared defaults. Unproved domain admission cannot be used to prefer another candidate.
 
 For a callable value, check every static alternative against the admitted signature. Named calls require the static common-name contract. The supplied callable must preserve required purity, determinism and root permission as well as input/output variance.
+
+> [!rule] MUD-TYPE-014 — Sole action result
+> Every action/subaction returns exactly one ActionReply. No additional domain return type, success payload or second output value is admitted. Authorised state changes and message occurrences are effects, not additional return values. Imagine returns the same ActionReply contract.
 
 Boolean rules yield Bool, looks yield their static produced type, and real actions/subactions yield ActionReply only in an effect-capable context. Reactive/always/message declarations are trigger sources under their contracts, not interchangeable Boolean callables. A message payload type is distinct from occurrence identity.
 

@@ -9,7 +9,6 @@ normative: true
 depends-on:
   - "[[10-type-system]]"
 questions:
-  - Q-002
   - Q-023
 decisions:
   - D-019
@@ -35,13 +34,14 @@ decisions:
   - D-123
   - D-066
   - D-126
+  - D-128
 ---
 
 # 14. Fields, mutability and capabilities
 
 ## Scope
 
-This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[10-type-system]] supplies type inclusion and proof evidence; [[19-expressions]] supplies expression/block rules. Complete wave transitions remain Q-002, and acyclicity proofs for dynamically selected callables remain Q-023. Those uncertainties do not grant additional writes or alter the stored-field schema.
+This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[10-type-system]] supplies type inclusion and proof evidence; [[19-expressions]] supplies expression/block rules. [[25-effects]] supplies private execution and the root/wave batch boundary; acyclicity proofs for dynamically selected callables remain Q-023. Those uncertainties do not grant additional writes or alter the stored-field schema.
 
 ## 1. Places and authority
 
@@ -164,7 +164,7 @@ The minimum required cases are identical resolved roots with equal constant keys
 
 Sequential normalisation precedes sibling composition: a later whole replacement erases earlier local updates to that replaced value. Exact-dictionary uniqueness may cause a proposal to become a no-op under the stable-provenance collision rules. Cardinality proof must include that outcome; an intended insertion is not guaranteed to increase size merely because its source contains add.
 
-The minimum does not require a complete solver for arbitrary symbolic predicates. Statically safe but unproved cardinality cases may be rejected. Potential value/key conflicts with proved safe cardinalities retain their defined runtime error behaviour. Q-002 concerns the complete operational transition system, not a licence to choose another static conflict rule.
+The minimum does not require a complete solver for arbitrary symbolic predicates. Statically safe but unproved cardinality cases may be rejected. Potential value/key conflicts with proved safe cardinalities retain their defined runtime error behaviour. [[25-effects]] defines the operational composition boundary without weakening these static conflict rules.
 
 ## 7. Foreign operations and recovery
 

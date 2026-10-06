@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-023 — Consolidation of concurrent structural effects
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Amended by: [[ADR-125-instruction-local-lifecycle-no-ops|D-125]].
 
 - Updated: 28 July 2026 to use the terminology from D-025
@@ -141,12 +143,9 @@ The new rules and suspensions affect the construction of bindings and the assess
 - The outline causal It must specify which idempotent requests were consolidated.
 - A conflict Structural dynamic does not produce a commit or state partial.
 
-## Unresolved issues
+## Formalisation boundary
 
-- Multiple activations within the same `then`.
-- Result operation of a action whose activation is ineffective.
-- Remaining cases of Q-006 which as yet lack a specific algebraic combination or canonical composition: unaccounted-for dictionaries, properties, structural limits of cardinality and partially overlapping destinations or write-backs.
-- Complete conflict matrix between concurrent block deltas that transitively incorporate the effects of internal calls already executed in sequence within each delta private.
+Lifecycle no-ops and mixed availability are specified by D-125. Static overlap/cardinality proof boundaries are specified in chapter 14. Chapter 25 specifies semantic destinations, sequential private effects and finite root/wave composition, including surviving internal-call contributions. Complete scheduler and native-hosting implementations remain separate work.
 
 ## Future verification
 

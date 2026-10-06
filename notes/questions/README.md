@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 36 active questions: 19 open and 17 partially decided.
+There are 34 active questions: 18 open and 16 partially decided.
 
 Priorities:
 
@@ -22,7 +22,6 @@ Priorities:
 
 | Question | Status |
 | --- | --- |
-| [[Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002 — Exact model of sequential and simultaneous effects]] | Partially decided |
 | [[Q-007-f-technical-failures|Q-007 — Technical failures]] | Partially decided |
 | [[Q-008-p-git-and-read-protocol|Q-008 — Git and `READ` protocol]] | Partially decided |
 | [[Q-009-f-canonical-ir-form|Q-009 — Canonical IR form]] | Partially decided |
@@ -40,7 +39,6 @@ Priorities:
 | [[Q-018-i-discontinuous-intervals|Q-018 — Discontinuous intervals]] | Partially decided |
 | [[Q-019-n-numbers|Q-019 — Numbers]] | Partially decided |
 | [[Q-020-o-oscillations-and-wave-limit|Q-020 — Oscillations and wave limit]] | Partially decided |
-| [[Q-022-v-action-return-values|Q-022 — Action return values]] | Open |
 | [[Q-023-c-dynamic-composition|Q-023 — Dynamic composition]] | Open |
 | [[Q-050-b-pruning-in-remaining-boolean-operators|Q-050 — Pruning in remaining Boolean operators]] | Partially decided |
 | [[Q-059-o-observing-action-results-in-tests|Q-059 — Observing action results in tests]] | Partially decided |

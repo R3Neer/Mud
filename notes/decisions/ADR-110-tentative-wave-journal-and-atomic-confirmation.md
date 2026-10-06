@@ -14,6 +14,8 @@ affects:
 
 # ADR-110 — Tentative wave journal and atomic confirmation
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
@@ -36,7 +38,7 @@ Tentative message occurrences may participate in causal triggers in later waves,
 
 ## Non-decisions
 
-This does not complete the operational semantics of every effect family (Q-002) or specify memoisation, budgets and diagnostics for `imagine` (Q-035). Journal representation, in-memory overlays, persistence, compression and resource management are reference-runtime implementation choices. No future semantic IR or nominal-HIR fields are introduced.
+Chapter 25 defines operational effect-family and finite batch contracts. This journal decision does not specify memoisation, budgets and diagnostics for imagine (Q-035). Journal representation, in-memory overlays, persistence, compression and resource management are reference-runtime implementation choices. No future semantic IR or nominal-HIR fields are introduced.
 
 ## Verification scenarios
 

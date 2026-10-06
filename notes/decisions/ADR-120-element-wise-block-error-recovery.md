@@ -14,6 +14,8 @@ affects:
 
 # ADR-120 — Element-wise block error recovery
 
+- Formalised/amended by: [[ADR-128-sequential-effects-and-staged-consolidation|D-128]].
+
 - Formalised by: [[ADR-124-expression-and-block-typing-coverage|D-124]].
 
 ## Context
@@ -42,4 +44,4 @@ Cover joint subtype binding, overlapping roles, equal-valued occurrence multipli
 
 ## Integration review
 
-The grammar, CST catalogue, coverage, AST conversion and developed grammar/math surfaces agree. Handler names remain local nominal symbols; selection and result compatibility occur after nominal resolution. Complete operational proofs and exhaustive runtime error taxonomy remain Q-002 and Q-007, rather than an adapter ABI or executor implementation claim.
+The grammar, CST catalogue, coverage, AST conversion and developed grammar/math surfaces agree. Handler names remain local nominal symbols; selection and result compatibility occur after nominal resolution. Chapter 25 defines the finite operational effect and recovery boundary; exhaustive runtime error taxonomy remains Q-007. Neither claims an adapter ABI or executor implementation.
