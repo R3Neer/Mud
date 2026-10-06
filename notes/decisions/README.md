@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 119.
-- Current: 115.
+- Total: 121.
+- Current: 117.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -138,6 +138,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-122 | current | 2026-10-06 | [[notes/decisions/ADR-122-finite-type-graphs-and-proof-obligations|Finite type graphs and proof obligations]] |
 | D-123 | current | 2026-10-06 | [[notes/decisions/ADR-123-static-capabilities-and-conflict-proof-boundaries|Static capabilities and conflict proof boundaries]] |
 | D-124 | current | 2026-10-06 | [[notes/decisions/ADR-124-expression-and-block-typing-coverage|Expression and block typing coverage]] |
+| D-125 | current | 2026-10-07 | [[notes/decisions/ADR-125-instruction-local-lifecycle-no-ops|Instruction-local lifecycle no-ops]] |
+| D-126 | current | 2026-10-07 | [[notes/decisions/ADR-126-reactive-binding-identity-and-observation-episodes|Reactive binding identity and observation episodes]] |
 
 ## Reserved identifiers
 

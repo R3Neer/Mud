@@ -10,7 +10,6 @@ depends-on:
   - "[[10-type-system]]"
 questions:
   - Q-002
-  - Q-005
   - Q-023
 decisions:
   - D-019
@@ -35,13 +34,14 @@ decisions:
   - D-121
   - D-123
   - D-066
+  - D-126
 ---
 
 # 14. Fields, mutability and capabilities
 
 ## Scope
 
-This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[10-type-system]] supplies type inclusion and proof evidence; [[19-expressions]] supplies expression/block rules. Complete wave transitions remain Q-002, dynamic binding lifecycle remains Q-005, and acyclicity proofs for dynamically selected callables remain Q-023. Those uncertainties do not grant additional writes or alter the stored-field schema.
+This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[10-type-system]] supplies type inclusion and proof evidence; [[19-expressions]] supplies expression/block rules. Complete wave transitions remain Q-002, and acyclicity proofs for dynamically selected callables remain Q-023. Those uncertainties do not grant additional writes or alter the stored-field schema.
 
 ## 1. Places and authority
 

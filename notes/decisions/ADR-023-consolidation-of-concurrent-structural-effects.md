@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-023 — Consolidation of concurrent structural effects
 
+- Amended by: [[ADR-125-instruction-local-lifecycle-no-ops|D-125]].
+
 - Updated: 28 July 2026 to use the terminology from D-025
 - Amended by: [[notes/decisions/ADR-066-static-values-and-local-bindings-in-then|D-066]]
 - Amended by: [[ADR-096-modules-callables-look-message-and-activation|D-096]].
@@ -118,7 +120,7 @@ $$
 \operatorname{create}(d)
 $$
 
-Two complete definitions do not reach runtime: they are a error well-built, even if their bodies are the same. If the declaration it was already active in $W_i$, a rule whose applicability requires that activation It does not publish any of its results. Q-046 keeps general action and block cases open where there are multiple activations with mixed availability.
+Two complete definitions are a static error, even if their bodies are identical. A create targeting an explicitly active declaration is a no-op for that instruction only. Other effects of its rule or action still execute; mixed availability is evaluated against each branch's current private view.
 
 ## Temporary validity
 

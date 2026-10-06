@@ -3,25 +3,32 @@ id: Q-005
 title: Binding identity and lifecycle
 priority: P0
 opened: 2026-07-29
-resolved:
-closed:
+resolved: true
+closed: 2026-10-07
 decisions:
   - D-041
   - D-045
   - D-058
   - D-099
+  - D-126
 affects: []
 superseded-by: []
 ---
 
 # Q-005 — Binding identity and lifecycle
 
-## Content
+## Resolution
 
-How is an `on` binding identified canonically, when is its memory removed, and what happens if an equivalent binding disappears and reappears?
+Resolved by [[notes/decisions/ADR-126-reactive-binding-identity-and-observation-episodes|D-126]] and integrated into the developed normative surfaces below. Complete operational trace formalisation remains separate work; the choices identified by this question are fixed.
 
-Status: **partially decided** by [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]], [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[notes/decisions/ADR-099-fresh-materialisations-after-destroy-and-create|D-099]].
+## Closure criterion
 
-Temporal memory belongs to the binding; bindings are fixed at the start of each wave and additions or removals take effect in the next. A binding present in the first snapshot materialised by `start with` uses a false virtual predecessor for Boolean branches and the snapshot itself for `changes` and `old`; one created later uses its first active wave to establish the complete baseline without firing.
+- C1: Binding identity distinguishes named role assignments and is independent of field values and enumeration order.
+- C2: Observation continuity is defined for disappearance, suspension, rule recreation and participant rematerialisation, including generations changing between snapshots.
+- C3: Initial/later baselines, changes, false filters and lifecycle no-ops have explicit compatible behaviour.
 
-D-099 fixes one removal case: explicit `destroy` of a rule discards that activation's temporal memory, and a later `create` establishes a new baseline without firing merely because it was reactivated. The canonical identity of a binding, and the memory policy when it disappears through participant changes or when the rule is merely suspended by a dependency without explicit `destroy`, remain undefined.
+## Closure evidence
+
+- C1: MUD-TIME-001 in [[specification/04-mathematical-model]] identifies the rule and role-to-participant mapping; D-126 distinguishes swapped roles and preserves causal occurrence identity.
+- C2: MUD-TIME-001 and the temporal contract in [[specification/07-concrete-grammar]] end episodes on absence, suspension and generation changes; D-126 contrasts resumed observation and participant rematerialisation.
+- C3: MUD-TIME-002 and [[specification/19-expressions]] retain changes as consecutive-observation comparison. D-126 cases contrast initial Rise, empty-to-member collection changes, returning bindings, false if and no-op creation.

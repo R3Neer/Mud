@@ -127,7 +127,7 @@ Defines the shared metalanguage: symbols and logic, sets and collection shapes, 
 
 Chapter: [[04-mathematical-model]].
 
-Defines canonical programme identities, specialisation, values, activation and materialisation generations, owned storage and effective projection. It distinguishes confirmed from tentative state and records the established lifecycle, checkpoint, recovery and initial-world invariants. It remains a foundation for the operational formalisation, with creation admission and reactive suspension memory explicitly bounded by active questions.
+Defines canonical programme identities, specialisation, values, activation and materialisation generations, owned storage and effective projection. It distinguishes confirmed from tentative state and records the established lifecycle, checkpoint, recovery and initial-world invariants. It remains a foundation for the operational formalisation, including instruction-local lifecycle no-ops and reactive binding observation episodes.
 
 ---
 

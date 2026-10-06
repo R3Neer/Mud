@@ -41,6 +41,7 @@ decisions:
   - D-119
   - D-121
   - D-122
+  - D-126
 ---
 # 09. Names, paths and anchors
 
@@ -293,6 +294,8 @@ After the nominal resolution, a partial graph is constructed using resolved symb
 - `Owns`: nominal property or containment;
 - `Specializes`: nominal specialisation between declarations;
 - `RefersTo`: a nominal reference whose source and destination are already resolved symbols.
+
+A runtime reactive binding maps the declared role symbols to participant identities; it is distinct from each role's nominal descriptor. Activation/materialisation generations and temporal observation episodes are runtime semantics under [[04-mathematical-model]], not new anchors, nominal symbols or HIR edges. Causal occurrence identities remain separate.
 
 Pending receiver-call candidates are lookup results, not resolved reference edges. The nominal graph does not claim that the source calls every candidate or any arbitrarily selected candidate.
 

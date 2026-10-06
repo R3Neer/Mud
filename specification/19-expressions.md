@@ -48,6 +48,7 @@ decisions:
   - D-037
   - D-066
   - D-085
+  - D-126
 ---
 
 # 19. Expression and block typing
@@ -185,7 +186,7 @@ Domain restriction and derived local collection transforms apply their specified
 
 ## 8. Temporal, random and speculative forms
 
-Old checks the operand under the appropriate entry/snapshot contract; a test/action entry view differs from reactive previous-wave state. Changes compares the defined consecutive views and has temporal-trigger form. Combining/negating inactive Boolean-rule calls uses the specified canonical pruning core; undefined additional desugarings are not inferred from ordinary truth tables.
+Old checks the operand under the appropriate entry/snapshot contract; a test/action entry view differs from reactive previous-wave state. Changes compares defined consecutive observations within one observation episode and has temporal-trigger form. A first or resumed observation supplies a baseline, not a change pulse; lifecycle no-ops preserve continuity. [[04-mathematical-model]] defines binding identity and episode boundaries. Combining/negating inactive Boolean-rule calls uses the specified canonical pruning core; undefined additional desugarings are not inferred from ordinary truth tables.
 
 Rand checks a finite enumerable source and yields a member with the documented random-point identity/cache restrictions. Finiteness, admissibility and purity requirements of its owner still apply. A missing valid sample follows its ordinary error/admission contract, not an invented default.
 

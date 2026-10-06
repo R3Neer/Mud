@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-041 — Contracts under the three types of rules
 
+- Amended by: [[ADR-126-reactive-binding-identity-and-observation-episodes|D-126]].
+
 - Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
@@ -118,7 +120,7 @@ All three variants fall into the category of anchor `rule::*`. In particular, `a
 - Of all the rules, only the multiple-choice questions contain `then` and have consequences that may alter the world.
 - Reactive rules and `always` They may also act as declarative trigger sources in accordance with D-096.
 - A false always invariant refuses the transition with AlwaysRefusal; errors while computing it remain Error values.
-- Q-005 the [... ] still needs to be set canonical identity, the withdrawal of memory and its possible preservation when a connection disappears and reappears.
+- Persistent binding identity uses the rule and role-associated participant identities. Disappearance, suspension or a changed activation/materialisation ends its observation episode; reappearance establishes a baseline without firing.
 
 ## Verification
 

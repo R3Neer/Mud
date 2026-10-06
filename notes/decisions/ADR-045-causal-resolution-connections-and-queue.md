@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-045 — Causal resolution, connections and queue
 
+- Amended by: [[ADR-126-reactive-binding-identity-and-observation-episodes|D-126]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
@@ -69,7 +71,7 @@ Confirmed deliveries retain causal order between waves and are processed within 
 ## Consequences
 
 - The order in which the operations are physically executed does not alter the result.
-- Canonical identity and memory retention after a link is severed remain open in Q-005; the value-level starting policy is already fixed.
+- Binding identity uses the rule and role-associated participant identities. A severed or suspended binding loses its observation episode; reappearance establishes a new baseline without firing.
 - Detection semantics fluctuations and technical safeguards remain open in Q-020.
 - The multiplicity of causally distinct occurrences is preserved and is not deduplicated by payload. Q-067 leaves open the question of what happens if a participant no longer exists or cannot be assessed in the final external projection.
 

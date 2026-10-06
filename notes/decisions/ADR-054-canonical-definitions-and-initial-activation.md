@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-054 — Canonical definitions and initial activation
 
+- Amended by: [[ADR-125-instruction-local-lifecycle-no-ops|D-125]].
+
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
@@ -86,7 +88,7 @@ One activation following `destroy Tree` restore it to its original state identit
 
 Several concurrent applications `create d` addressed to her declaration absent, they are idempotently consolidated. There are no longer any runtime declarative fragments, nor any merging of bodies caused by `create`.
 
-One request `create d` does not change a declaration already active. The applicability of rules and actions that require activations that have already been completed remains subject to Q-046.
+A request `create d` on an explicitly active declaration is a successful no-op, as is `destroy d` on an explicitly inactive declaration. Admission is instruction-local in the private view; no enclosing rule or action is skipped for redundant lifecycle instructions.
 
 ### Starting set `start with`
 

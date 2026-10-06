@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-058 — Temporal triggers, `changes` and reactive `old`
 
+- Amended by: [[ADR-126-reactive-binding-identity-and-observation-episodes|D-126]].
+
 - Amends: [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Related questions: Q-005
 - Extended by: [[notes/decisions/ADR-071-local-bindings-in-boolean-blocks|D-071]]
@@ -166,7 +168,7 @@ A binding created after `start with` retains the previous policy: its first acti
 - Reactive memory retains the previous values required by `when` and `if`, not merely an aggregate Boolean.
 - Temporal pulses may occur in consecutive waves.
 - A quantitative difference uses the ordinary operators and the magnitude system.
-- The identity and preservation of this memory when a binding disappears remain in Q-005.
+- Binding identity uses the rule and role-associated participant identities. Disappearance or suspension ends the observation episode; reappearance or a changed participant materialisation establishes a baseline without firing. A false if does not interrupt observation, and lifecycle no-ops do not reset it.
 
 ## Rejected alternatives
 

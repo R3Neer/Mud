@@ -89,6 +89,8 @@ decisions:
   - D-119
   - D-120
   - D-121
+  - D-125
+  - D-126
 ---
 
 # 07. Concrete grammar
@@ -1008,7 +1010,9 @@ when position - old position >= 10 meters
 A declarative reference used as a trigger takes no parentheses: `when Damaged`, `when Dragon.Damaged`, or a local containing that descriptor. Receivers restrict its `on` bindings; they do not turn the trigger into an ordinary call.
 
 A trigger produces zero or more causal matches. Each match retains its bindings or witnesses and occurrence identities. `and` performs a natural join on compatible matches and, where they share no bindings, a Cartesian product; `or` performs union. Two causally distinct events are not duplicates merely because they share a payload. The purely Boolean case described above is the temporal rising edge that creates these matches when the corresponding transition occurs.
-Bindings found in the first snapshot established by `start with` compare `old` and the current value against that same snapshot, so `changes` does not fire. Rising Boolean branches instead retain a virtual previous value of `false` and may fire when already true. Any binding created later takes its first active wave as a complete baseline without firing, and begins comparison on the next wave.
+Bindings found in the first snapshot established by `start with` compare `old` and the current value against that same snapshot, so `changes` does not fire. Rising Boolean branches instead retain a virtual previous value of `false` and may fire when already true. Any binding created later takes its first active wave as a complete baseline without firing, and begins comparison on the next wave. A persistent binding is identified by its rule and participant identities assigned to named roles, not by field values or enumeration position. Absence or dependency suspension in a wave snapshot ends its observation episode. Reappearance, rule reactivation or participant rematerialisation establishes a fresh baseline, even if a generation changes between snapshots. A false `if` does not erase observation history. Lifecycle no-ops do not reset memory. Causal occurrence identities and multiplicity remain separate from persistent binding identity. Baseline suppression governs memory-based temporal branches, not direct occurrence sources and their causal matches.
+
+An already observed collection changing from `empty` to a member can pulse `changes`; a newly appearing binding has no previous observation and takes its baseline. `changes` is permitted only in reactive-rule/message `when`. Temporal trigger form is not a first-class MUD type that can be stored, returned or used as an ordinary Bool.
 
 ### `always`
 
@@ -1221,6 +1225,8 @@ destroy Declaration
 ```
 
 Reconstructible paths retain semantic component/key destinations for consolidation. Disjoint components merge; whole replacements precede compatible changes; same-key deletion wins. A missing intermediate key contributes no partial update even if a sibling inserts it.
+
+`create d` when d is explicitly active and `destroy d` when d is explicitly inactive are successful no-ops, tested instruction by instruction against the current private view. They do not skip the enclosing rule or stop subsequent effects, rerun initialisers, change generations or reset temporal memory. The same policy applies to internal calls and mixed-availability sequences; there is no joint all-absent/all-present prerequisite. Effective lifecycle operations retain domain/cardinality validation, rollback and concurrent consolidation rules.
 
 `destroy` preserves identity and canonical definitions, but removes the runtime materialisation of a concrete `thing`. Confirmed destruction discards its own stored values; a later `create` constructs a fresh materialisation from the effective schema and reapplies defaults and initialisers. This destruction does not delete capabilities owned elsewhere that are merely suspended by an inactive dependency. Destroying a reactive rule also discards that activation's temporal memory; if recreated, its first active wave establishes a new baseline without firing solely because of reactivation.
 

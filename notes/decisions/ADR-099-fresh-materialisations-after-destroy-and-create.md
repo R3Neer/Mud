@@ -18,10 +18,13 @@ affects:
 
 # ADR-099 — Fresh materialisations after `destroy` and `create`
 
+- Amended by: [[ADR-125-instruction-local-lifecycle-no-ops|D-125]].
+- Amended by: [[ADR-126-reactive-binding-identity-and-observation-episodes|D-126]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Modifies: [[ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]].
-- Keeps open: [[notes/questions/Q-005-i-binding-identity-and-lifecycle|Q-005]], Q-046 and Q-032 on aspects not fixed here. Q-049 remains closed; this decision retains its resolution on membership and only clarifies the policy for the materialisation itself.
+- Related archives: Q-005, Q-046 and Q-049. Q-032 remains open for random initialisers; lifecycle admission and reactive observation continuity are specified by the amendments below.
 
 - Modified by: [[ADR-111-static-thing-field-schema|D-111]].
 
@@ -77,7 +80,7 @@ This rule does not introduce successive identities: both materialisations corres
 
 The seed and result policy for stochastic initialisers remains under Q-032; this decision only requires the operation to be a new materialisation rather than recovery of a previous load.
 
-The applicability of `create` when the declaration is already active remains under Q-046.
+Create on explicitly active and destroy on explicitly inactive are instruction-local successful no-ops; they do not rebuild materialisations or reset memory.
 
 ### Dependency suspension is not destruction
 
@@ -131,7 +134,7 @@ If `create r` activates it again after `start with`, it is treated as a later ac
 
 A Boolean rule does not retain this kind of temporal memory. An `always` reasserts its invariant at its ordinary validation points.
 
-This decision fixes the effect of an explicit `destroy` on rule memory. Q-005 remains open for the canonical identity of bindings and for the memory policy when a binding disappears or a rule is merely suspended for reasons other than explicit destruction.
+Persistent binding identity uses the rule and role-associated participant identities. Disappearance or dependency suspension ends temporal observation, while independently owned world storage is retained. Reappearance or a fresh concrete participant materialisation establishes a new baseline without firing. Generation changes end continuity even between snapshots.
 
 ## Consequences
 
@@ -169,5 +172,5 @@ Rejected. A rule explicitly removed from the world must not compare its new acti
 5. Immutable and `mut` relations retain the restoration distinction fixed by D-077.
 6. A new materialisation that would invalidate cardinality or domain produces `Errors` and complete rollback.
 7. A destroyed and recreated reactive rule establishes a new baseline without triggering merely because of reactivation.
-8. Q-005 remains open for binding disappearances and suspensions not caused by explicit `destroy`.
+8. Binding disappearance, suspension and participant rematerialisation end the old observation episode; subsequent observation begins with a new baseline.
 9. Q-032 continues to govern the concrete reproducibility of random initialisers between materialisations.

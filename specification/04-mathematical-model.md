@@ -10,9 +10,7 @@ normative: true
 depends-on:
   - "[[02-terminology]]"
   - "[[03-notation]]"
-questions:
-  - Q-005
-  - Q-046
+questions: []
 decisions:
   - D-111
   - D-110
@@ -41,6 +39,8 @@ decisions:
   - D-122
   - D-123
   - D-124
+  - D-125
+  - D-126
 ---
 
 # 04. Mathematical foundations of the MUD world
@@ -49,7 +49,7 @@ decisions:
 
 This chapter defines the semantic objects and invariants shared by the static language and the world model. It distinguishes the programme's canonical definitions, activation, owned storage and effective projection. It records the established boundaries of execution without supplying a complete transition system.
 
-The chapter remains a draft. Activation admission for mixed or ineffective creations is bounded by Q-046, and reactive memory under suspension or disappearing bindings by Q-005. The operational chapters must define complete judgments and conformance traces without changing the contracts below.
+The chapter remains a draft. The operational chapters must define complete judgments and conformance traces for the accepted lifecycle and observation contracts without changing the invariants below.
 
 ## Canonical programme and identity
 
@@ -89,9 +89,20 @@ An active concrete `thing` has its own materialisation. Abstract `thing`s have a
 
 Destroying a concrete owner ends its materialisation and discards its own stored data. A subsequent creation uses the same canonical identity with a fresh generation and schema initialisation; it does not restore the destroyed payload. Stored writes target the generation observed by their branch and cannot migrate to a later generation.
 
-Explicit destruction of a reactive rule clears that activation's temporary memory. Reactivation establishes a new baseline and does not itself trigger the rule. Memory behaviour for suspension and disappearing bindings not caused by explicit destruction remains open in Q-005.
+> [!rule] MUD-LIFE-001 — Instruction-local lifecycle admission
+> `create d` on an explicitly active declaration and `destroy d` on an explicitly inactive declaration are successful no-ops. Each instruction tests the current private view, including preceding effects and internal calls. A redundant instruction neither skips its enclosing rule/block/action nor prevents later instructions. Suspension is distinct from explicit inactivity.
 
-A rule containing a single `create A` does not execute when `A` is already active, and publishes no effects. Admission and outcomes for action requests, several creations or mixed availability remain open in Q-046; no general no-op or failure policy is implied here.
+No-op instructions change no generation, initialised payload or temporal memory and produce no refusal/error merely for redundancy. An otherwise successful action returns Success. Multiple lifecycle operations have no joint all-absent/all-present precondition. Effective operations retain validation, tentative composition and rollback; parallel branch consolidation retains its existing rules.
+
+> [!rule] MUD-TIME-001 — Binding identity and observation continuity
+> A persistent reactive binding is identified by the canonical rule and the mapping of named roles to participant identities, independently of field values or enumeration order. Its temporal memory belongs to an observation episode under the same rule activation and concrete participant materialisations. Causal occurrences retain their separate identity and multiplicity.
+
+Absence or dependency suspension in a wave snapshot ends the observation episode. Reappearance establishes a new baseline without firing merely because observation resumes. Explicit destruction/recreation of a rule or concrete participant also starts a new episode, even when the generation changes between snapshots without an observable absence. Suspension does not discard independently owned world storage. A false `if` suppresses consequences, not continued observation. No-op lifecycle instructions do not reset the episode.
+
+> [!rule] MUD-TIME-002 — Observation baseline
+> Initial `start with` bindings retain virtual previous false for Boolean rising branches, while `changes` does not pulse and `old` reads the initial snapshot. Later or resumed episodes use their first observable wave as baseline without a memory-based temporal pulse; comparison begins in the next wave. A genuinely observed value changing from `empty` to a member is a change; missing observation history is not an empty value.
+
+Baseline rules govern the memory-based Boolean/changes/old branches, not the identity or availability of direct message/firing occurrences. Those sources retain their causal-match contracts. Bindings remain fixed at the beginning of each wave. Memory changes are tentative and obey rollback and `imagine` isolation.
 
 ## Owned storage and static schema
 
@@ -143,4 +154,4 @@ All postfix `~` access is read-only during execution. `~path`, `~anchor` and `~f
 
 The objects above are a shared foundation, not a complete state tuple, scheduler, transition relation or serialisation format. Operational definitions must account for activation, generations, retained storage, effective projection and tentative ownership. They must also supply effect and wave judgments, recovery traces and checkpoint validation.
 
-Q-046 bounds creation admission; Q-005 bounds reactive memory under suspension and disappearing bindings. Those questions remain active. A complete evaluator cannot be inferred from the notation or from these invariants alone.
+Lifecycle admission and reactive observation continuity are fixed by the contracts above. Complete operational judgments and conformance traces remain to be formalised; a complete evaluator cannot be inferred from these invariants alone.
