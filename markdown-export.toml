@@ -38,6 +38,8 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-066-b-nominal-binding-of-erased-callable-descriptors.md",
+    "notes/questions/Q-063-v-variance-and-callable-type-compatibility.md",
     "notes/decisions/ADR-053-semantic-operator-and-authoring-flow.md",
     "notes/questions/Q-001-g-grammar-and-line-breaks.md",
     "notes/questions/Q-004-r-rollback-of-rejected.md",
@@ -73,6 +75,8 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-066-b-nominal-binding-of-erased-callable-descriptors.md",
+    "notes/questions/Q-063-v-variance-and-callable-type-compatibility.md",
     "notes/questions/Q-001-g-grammar-and-line-breaks.md",
     "notes/questions/Q-004-r-rollback-of-rejected.md",
     "notes/questions/Q-010-e-state-of-source-decisions.md",

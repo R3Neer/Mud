@@ -15,8 +15,7 @@ depends-on:
   - 07-concrete-grammar
   - syntax/cst-lossless
   - syntax/mud-surface-ast.asdl
-questions:
-  - Q-063
+questions: []
 decisions:
   - D-111
   - D-109
@@ -56,6 +55,7 @@ decisions:
   - D-105
   - D-112
   - D-113
+  - D-114
 ---
 
 # 08. Surface abstract syntax
@@ -298,7 +298,7 @@ It includes both built-in types and programme-declared types. Whether a name den
 
 ### Callable and reflected types
 
-`CallableType(kind, receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage `receivers` remain unresolved `TypeRef` values and `givens` are `TypeExpr`; the AST does not decide signature compatibility or variance, which remain open in Q-063.
+`CallableType(kind, receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage `receivers` remain unresolved `TypeRef` values and `givens` are `TypeExpr`; the AST preserves syntax and leaves contract variance and compatibility to typing.
 
 `ReflectedType(value)` contains a written expression in type position whose form ends in `~type`, such as `MyDragon.Stats()~type`. Resolution and typing must prove that `value` statically produces `Type`; later elaboration obtains the represented type. The mechanical form of that elaboration is not yet fixed. An ordinary call without `~type` remains a value.
 ### Dictionary

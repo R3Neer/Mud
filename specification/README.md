@@ -9,15 +9,14 @@ tags:
 status: in-preparation
 normative: true
 questions:
-  - Q-063
   - Q-064
   - Q-065
-  - Q-066
   - Q-067
   - Q-068
 decisions:
   - D-112
   - D-113
+  - D-114
 ---
 
 # MUD formal specification
@@ -286,7 +285,7 @@ Planned scope:
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 
-Questions of callable variance, inter-module alias specialisation, joins with incomparable common minima, binding after deletion and anonymous-type identity remain delimited respectively by Q-063, Q-064, Q-065, Q-066 and Q-068.
+Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Inter-module specialisation, ambiguous joins and anonymous-type identity remain delimited by Q-064, Q-065 and Q-068.
 
 Juicio principal:
 
@@ -451,7 +450,7 @@ Planned scope:
 - `message` as a causal occurrence, `on` bindings, public payload and internal causal and external stable projections.
 - Separation of bindings and payload, multiplicity and delivery ordering, and rollback of external outputs.
 
-Nominal binding of sufficiently erased callable descriptors and external projection of a `message` whose participants cease to exist remain open in Q-066 and Q-067.
+External projection of a `message` whose participants cease to exist remains open in Q-067.
 
 ## 25. Effects
 

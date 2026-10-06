@@ -1943,7 +1943,7 @@ cases:
   cst_root: MudFileSyntax
   ast: CallableType(ActionCallable, receivers=[Dragon], givens=[Volume])
   semantic_expectations:
-  - callable-variance-remains-governed-by-Q-063
+  - callable-variance-checked-after-nominal-resolution
   produces_ast: true
 - id: callable-type-multiple-receivers
   category: type
@@ -2392,3 +2392,23 @@ cases:
   expected_diagnostics:
   - abstract-alias-construction
   produces_ast: true
+- id: erased-callable-names-require-contract
+  category: typing
+  source: 'action Go for actor: Person { then {} }
+
+    '
+  cst_root: MudFileSyntax
+  ast: ForClause(actor)
+  produces_ast: true
+  required_contract: A concrete Go call accepts actor; an erased union with differently named roles requires
+    positional binding or static narrowing; no runtime scan
+- id: callable-variance-contract
+  category: typing
+  source: 'alias Reader := Animal.look(Detail)
+
+    '
+  cst_root: MudFileSyntax
+  ast: CallableType(Look)
+  produces_ast: true
+  required_contract: Contravariant read-only input; covariant result; invariant read/write place; independent
+    root permission

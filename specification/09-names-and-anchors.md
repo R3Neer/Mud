@@ -34,6 +34,7 @@ decisions:
   - D-100
   - D-112
   - D-113
+  - D-114
 ---
 # 09. Names, paths and anchors
 
@@ -165,6 +166,10 @@ In associations `->` and branches `-->`, the left and right blocks create siblin
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
 No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
+
+## Static callable role contracts
+
+Named `for` and `given` binding requires an unequivocal static role contract: every alternative must agree on names and compatible positions. A concrete declaration supplies that contract. Erasure may preserve positional invocation, but cannot recover names by inspecting runtime members. Static narrowing may restore a concrete contract. Type variance and permission checks occur after nominal resolution; no effective type or mutable-place proof is added to the Nominal HIR.
 
 ## Stages
 

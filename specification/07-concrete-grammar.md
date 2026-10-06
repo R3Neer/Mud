@@ -16,7 +16,6 @@ questions:
   - Q-022
   - Q-059
   - Q-062
-  - Q-063
 decisions:
   - D-111
   - D-110
@@ -83,6 +82,7 @@ decisions:
   - D-105
   - D-112
   - D-113
+  - D-114
 ---
 
 # 07. Concrete grammar
@@ -327,7 +327,7 @@ Dragon.rule(Limit)
 Dragon.look(Detail)
 ```
 
-The category forms part of the type construction. This surface alone determines neither variance nor every compatibility rule between callables: Q-063 keeps that issue open. The ability to root outside `action` likewise cannot be deduced solely from reflective subtyping.
+The category forms part of the type construction. Read-only input contracts are contravariant, outputs covariant and read/write places invariant; capability and default obligations are checked during typing. The ability to root outside `action` likewise cannot be deduced solely from reflective subtyping.
 
 A postfix expression ending in `~type` may occupy a type position when elaboration proves statically that it produces `Type`. For example, `alias Stats := MyDragon.Stats()~type` is valid; the call `MyDragon.Stats()` without `~type` remains a value rather than a type expression. A callable type such as `Dragon.look(Detail)` already denotes `Type` and does not need `~type`.
 The following are invalid:

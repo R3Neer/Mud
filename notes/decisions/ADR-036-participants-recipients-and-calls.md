@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-036 — Participants, recipients and calls
 
+- Amended by: [[ADR-114-callable-variance-and-static-named-binding|D-114]].
+
 - Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
 
 - Amended by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].

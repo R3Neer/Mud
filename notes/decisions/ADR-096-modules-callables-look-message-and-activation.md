@@ -27,6 +27,8 @@ affects:
 
 # ADR-096 — Modules, callables, `look`, `message` and activation
 
+- Amended by: [[ADR-114-callable-variance-and-static-named-binding|D-114]].
+
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Supersedes: [[ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]].
@@ -124,8 +126,8 @@ Descriptors are first-class values and may form part of `Any`. `Any` is a genuin
 An expression that already denotes a `Type`, such as `Dragon.look(Detail)`, does not need `~type` to become a type.
 
 
-The callable surface forms fixed by this decision are `A.action(B...)`, `(A, C).action(B...)`, `A.rule(B...)` and `A.look(B...)`: the left side describes receiver/participant types and the parentheses describe the signature's `given` part. `subaction <: action` remains a semantic descriptor relation and does not by itself introduce a type spelling `A.subaction(...)`. Q-063 keeps variance and formal compatibility between callable types open.
-The reflective relation `subaction <: action <: Declaration` is accepted, but outer-root capability is independent of subtyping. A value widened to `action` cannot cross the outer boundary if any possible runtime alternative remains `subaction`; narrowing may prove that outer capability is safe. Callable variance and formal compatibility remain open in Q-063.
+The callable surface forms fixed by this decision are `A.action(B...)`, `(A, C).action(B...)`, `A.rule(B...)` and `A.look(B...)`: the left side describes receiver/participant types and the parentheses describe the signature's `given` part. `subaction <: action` remains a semantic descriptor relation and does not by itself introduce a type spelling `A.subaction(...)`. Callable compatibility is contravariant for read-only inputs, covariant for outputs and invariant for read/write places, with independent capability obligations.
+The reflective relation `subaction <: action <: Declaration` is accepted, but outer-root capability is independent of subtyping. A value widened to `action` cannot cross the outer boundary if any possible runtime alternative remains `subaction`; narrowing may prove that outer capability is safe. Callable substitution does not weaken purity or grant additional caller authority.
 
 ### Dynamic invocation of callable values
 
@@ -143,7 +145,7 @@ allowed := dragon.predicate(limit)
 
 With several participants, `(attacker, defender).op(amount)` may be written. Storing the descriptor does not pre-bind receivers or `given`; invocation performs those bindings at the call site.
 
-The exact rule for nominal binding when invoking a sufficiently erased descriptor remains open in Q-066.
+Named binding requires an unequivocal static role contract shared by every possible alternative. Positional binding may use an erased compatible contract; named binding requires preserved names or prior static narrowing.
 
 ### `look` as a pure callable
 
@@ -204,10 +206,8 @@ The canonical host API is organised around the identity of public operations, no
 ## Open questions
 
 - Q-062: complete `mud.module` grammar.
-- Q-063: formal compatibility and variance of callable types.
 - Q-064: aliases and nominal specialisation across modules.
 - Q-065: joining `look` result types with multiple common minima.
-- Q-066: nominal binding when invoking an erased descriptor.
 - Q-067: `message` participants absent from the final state.
 - Q-068: structural identity and equality of anonymous types.
 

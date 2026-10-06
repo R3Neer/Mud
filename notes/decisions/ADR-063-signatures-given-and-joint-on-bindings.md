@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-063 — Signatures, `given` and joint `on` bindings
 
+- Amended by: [[ADR-114-callable-variance-and-static-named-binding|D-114]].
+
 - Amends: [[notes/decisions/ADR-019-mutability-orthogonal-to-collection-and-members|D-019]], [[notes/decisions/ADR-036-participants-recipients-and-calls|D-036]], [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Extends: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
 - Closes again: [[notes/questions/Q-011-v-named-participant-binding|Q-011]], [[notes/questions/Q-012-v-named-given-values|Q-012]] and [[notes/questions/Q-013-r-relational-constraints-between-on-participants|Q-013]]

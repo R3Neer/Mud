@@ -13,8 +13,7 @@ depends-on:
   - ../08-abstract-syntax
   - mud-surface-ast.asdl
   - syntax-coverage.yaml
-questions:
-  - Q-063
+questions: []
 decisions:
   - D-111
   - D-109
@@ -36,6 +35,7 @@ decisions:
   - D-105
   - D-112
   - D-113
+  - D-114
 ---
 
 # Conversion from CST to Surface AST
@@ -273,7 +273,7 @@ Every `type-reference` produces `NamedType(TypeRef(...))`. The AST has not yet c
 
 ### Callables and reflected types
 
-`callable-type` produces `CallableType(kind, receivers, givens)` and retains the specified category and types; Q-063 keeps signature compatibility and variance open. `reflected-type` consumes a `postfix-expression` followed by `~type` and produces `ReflectedType(value)`; later elaboration requires the expression to statically denote `Type` and obtains the represented type. The mechanical form after typing and elaboration remains undecided.
+`callable-type` produces `CallableType(kind, receivers, givens)` and retains the specified category and types; signature compatibility and variance are checked during typing. `reflected-type` consumes a `postfix-expression` followed by `~type` and produces `ReflectedType(value)`; later elaboration requires the expression to statically denote `Type` and obtains the represented type. The mechanical form after typing and elaboration remains undecided.
 
 ### Products and dictionaries
 
