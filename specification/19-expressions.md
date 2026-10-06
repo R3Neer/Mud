@@ -45,6 +45,9 @@ decisions:
   - D-120
   - D-121
   - D-124
+  - D-037
+  - D-066
+  - D-085
 ---
 
 # 19. Expression and block typing
@@ -85,7 +88,7 @@ Block evaluation has the disjoint outcomes $\mathsf{Normal}(v)$ and $\mathsf{Fau
 ## 1. Literals, names and constructors
 
 > [!rule] MUD-TYPE-009 — Literal synthesis and checking
-> A name obtains the contract of its resolved visible binding. An exact integral literal synthesises Nat when nonnegative; an exact fractional literal synthesises Num. Signs are operators. A basic/alias/magnitude expected context may contextualise a compatible untyped literal. A Rum literal requires its lexical r prefix even in a Rum context.
+> A name obtains the contract of its resolved visible binding. An exact numeric literal remains contextual until its compatible representation is uniquely established. No Nat/Int/Num/Money priority is applied to an ambiguous literal; an insufficiently constrained calculated binding requires an annotation. Signs are operators. A basic/alias/magnitude expected context may contextualise a compatible untyped literal. A Rum literal requires its lexical r prefix even in a Rum context.
 
 Text literals synthesise Text, including one-scalar text. A Char context admits one decoded Unicode scalar, with no interpolation. Text is not implicitly a canonically ordered Char collection; its specified textual-list construction in a Char-collection context must satisfy that collection's order/shape. Bool literals have singleton Bool.
 
@@ -164,7 +167,7 @@ Exact dictionary operators operate on complete associations with their defined s
 
 ## 7. Domains, selection and finite traversal
 
-All D materialises a proved finite enumerable domain into a collection with its canonical enumeration guarantees. Any and unstepped general Num/Rum intervals do not acquire an enumeration. A stepped exact progression proves a positive step, finite bounds and its supported representation; Nat/Int and Money retain their default successor increments.
+All D materialises a proved finite enumerable domain into a collection with its canonical enumeration guarantees. Any and unstepped general Num/Rum intervals do not acquire an enumeration. A stepped exact progression proves a compatible nonzero signed difference, finite bounds and its supported representation; Nat/Int and Money retain their default successor increments.
 
 Selection binds source members only inside its predicate. It requires a captured finite enumerable source and a pure deterministic singleton-Bool predicate. It preserves surviving member identity, multiplicity, uniqueness, order and supplied inner authority; its conservative cardinality is $[0,u]$. An is predicate may narrow surviving alternatives. A bare domain is explicitly materialised when selection must return a collection. Dictionary pair selection retains complete associations.
 
@@ -210,7 +213,7 @@ All successful recovery proposals compose tentatively. Equal compatible value re
 
 Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/message public fields check their declared/inferred value contracts and module boundary. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
 
-An immutable stored local requires an explicit type/value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique type and obtains no outer place authority. Defaults and static metadata require closed Static mode.
+An immutable stored local requires an explicit type/value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique type and obtains no outer place authority. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
 
 For each syntax family, elaboration selects the already defined operation contract, contextual literal type, runtime admission check, effect summary and proof evidence. Unsupported combinations produce a static diagnostic. Successful static checking proves neither global causal termination nor bit-for-bit binary64 portability beyond the declared guarantees.
 

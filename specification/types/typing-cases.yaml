@@ -505,7 +505,7 @@ cases:
 - id: exact-division
   rules:
   - MUD-TYPE-011
-  source: quotient := 1 / 3
+  source: 'quotient: Num := 1 / 3'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Exact division produces Num without integer truncation.
@@ -585,7 +585,8 @@ cases:
   source: '0.25'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Context-free exact fractional literal yields Num.
+  contract: The receiving Num context checks the exact rational literal 0.25; no context-free numeric priority
+    is selected.
 - id: expression-rumber-literal
   rules:
   - MUD-TYPE-009
@@ -649,21 +650,23 @@ cases:
   source: 1, 2
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: A Nat collection value expression contains two outer members.
+  contract: A receiving Nat [2] context checks the two numeric literals as two outer members.
 - id: expression-positional-structural-literal-expr
   rules:
   - MUD-TYPE-009
-  source: (1, 2)
+  source: (first, second)
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: A context-free two-component product; an unambiguous alias context may contextualise it.
+  contract: first and second are typed singleton Nat bindings. Their context-free product has unambiguous
+    structural identity; an expected alias can contextualise its construction.
 - id: expression-named-structural-literal-expr
   rules:
   - MUD-TYPE-009
-  source: (x = 1, y = 2)
+  source: (x = first, y = second)
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: A named product retains component names/order and complete values.
+  contract: first and second are typed singleton Nat bindings; the product retains its component names and
+    order.
 - id: expression-exact-association-expr
   rules:
   - MUD-TYPE-002
@@ -685,7 +688,8 @@ cases:
   source: 1..3
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: A finite integral interval has an exact normalised domain contract.
+  contract: An explicit Int Interval context supplies the endpoint representation and yields an exact normalised
+    finite domain.
 - id: expression-quantity-value-expr
   rules:
   - MUD-TYPE-009
@@ -779,14 +783,16 @@ cases:
   source: 1 + 2
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Both operands are exact singleton Nat; the result is Nat and lifting bounds are [1..1].
+  contract: The explicit Nat context checks both operands and admits singleton exact arithmetic without choosing
+    a context-free numeric default.
 - id: expression-comparison-chain-expr
   rules:
   - MUD-TYPE-003
-  source: 1 < 2 < 3
+  source: one < two < three
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Every adjacent numeric comparison is admitted; the intermediate value is evaluated once.
+  contract: one, two and three have singleton Nat contracts. Each adjacent comparison produces Bool, and intermediates
+    are evaluated once.
 - id: expression-exact-type-test-expr
   rules:
   - MUD-TYPE-003
@@ -892,3 +898,38 @@ cases:
   expected: static-reject
   contract: Entry/guard facts prove both independent contributions fire together with different known replacement
     values at the same key. The conflict is inevitable, so reject statically.
+- id: ambiguous-numeric-literal
+  rules:
+  - MUD-TYPE-008
+  - MUD-TYPE-009
+  source: number := 3
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: No expected type or dependency disambiguates Nat, Int, Num and Money. Numeric inference supplies
+    no default priority.
+- id: negative-static-step
+  rules:
+  - MUD-TYPE-005
+  source: 'values: Nat in [1..8] by -2 = all'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: 'The static compatible signed difference anchors membership at the upper bound: 8,6,4,2. Canonical
+    all materialisation is 2,4,6,8. Nonzero advance and finite bounds prove finiteness.'
+- id: immutable-outer-shape-inference
+  rules:
+  - MUD-TYPE-002
+  - MUD-EFFECT-004
+  source: 'thing Counters { values: Nat = 1, 2, 3 }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The immutable stored field supplies its explicit Nat member context and infers outer cardinality
+    [3] from its closed static initializer.
+- id: runtime-dependent-schema-initializer
+  rules:
+  - MUD-EFFECT-003
+  - MUD-EFFECT-004
+  source: 'thing Counter { value: Nat = other.CounterNow() }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: CounterNow depends on mutable runtime-world state. A stored thing schema initializer must be statically
+    evaluable even when the look is externally pure.

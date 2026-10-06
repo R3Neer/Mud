@@ -34,6 +34,7 @@ decisions:
   - D-120
   - D-121
   - D-123
+  - D-066
 ---
 
 # 14. Fields, mutability and capabilities
@@ -86,7 +87,7 @@ Compatible order criteria are required whenever two retained orders meet. Whole-
 Let $L$ be the private storage region of the current value computation. An effect summary
 $\epsilon=(R,P,A,B,T)$ consists of read dependencies $R$, private writes $P$, authorised world effects $A$, external delivery obligations $B$ and temporal/random/termination requirements $T$. Entries are symbolic paths/operations with provenance, not a prescribed IR schema. Sequential composition retains statement order; concurrent composition retains common-view provenance. Combining summaries does not itself authorise their entries.
 
-Let $\delta$ be Expression, Value($L$), Effect or Static. The judgement
+Let $\delta$ specify Expression, Value($L$) or Effect together with the owner's static-evaluation requirement where applicable. Static qualifies an existing expression/value computation; it is not a fourth block construction. The judgement
 $\Gamma;\Sigma;\Phi;\delta\vdash b:\tau\triangleright(\epsilon,O)$ checks a block and its obligations $O$.
 
 | Owner mode | Admitted computation |
@@ -94,7 +95,7 @@ $\Gamma;\Sigma;\Phi;\delta\vdash b:\tau\triangleright(\epsilon,O)$ checks a bloc
 | Expression | Externally pure calculation; no storage mutation or real action execution. |
 | Value($L$) | Pure calculation plus mutation of storage created within $L$; no captured-place/world writes. |
 | Effect | Authorised world and local effects, real action calls, lifecycle operations and tentative causal outputs. |
-| Static | Closed statically evaluable, pure deterministic calculation; no runtime-world dependency or real randomness. |
+| Static requirement on Expression/Value($L$) | Closed statically evaluable, externally pure deterministic calculation; permitted private local computation remains private. No runtime-world dependency or real randomness. |
 
 Error production is possible in every mode. Error is not a mutation permission. Randomness, old, changes, imagine and eventually additionally require their contextual contracts; being free of ordinary writes alone does not prove static eligibility or deterministic enumeration predicates.
 
@@ -107,6 +108,8 @@ An effect block may capture a child's ActionReply as a normal value. A bare chil
 
 > [!rule] MUD-EFFECT-004 — Static field schema
 > Thing field declarations come exclusively from the canonical schema and admissible specialisation. Every newly declared stored field has an explicit initialiser. Runtime add/remove modify collections or associations and never add/remove field declarations.
+
+Stored thing schema initialisers must be closed and statically evaluable, including every subordinate ValueBlock and native contract they use. Private temporary storage is permitted, but captured runtime-world dependencies and observable effects are not. Stored locals inside a runtime value/effect computation instead inherit that owner's mode and are not schema initialisers.
 
 Initialisation inherits declaration origins and existing override precedence. It does not inherit another thing's mutable state. A refinement keeps or replaces an initialiser that meets every inherited contract. Destroy/create uses a fresh materialisation generation; writes to the destroyed generation do not become writes to the new one.
 

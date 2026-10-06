@@ -37,6 +37,9 @@ decisions:
   - D-116
   - D-118
   - D-122
+  - D-037
+  - D-085
+  - D-088
 ---
 
 # 10. Type system
@@ -86,7 +89,7 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 | $\mathsf{Callable}(k,I,R,A)$ | Callable category $k$, ordered input slots $I$, output $R$ and authority/effect guarantees $A$. |
 | $\mathsf{Many}(f,D,[\ell,u],q,o,c)$ | Members of form $f$ in domain $D$ and the specified collection guarantees. |
 
-Omitted cardinality means $[1,1]$; the omission remains source provenance. A bare star is resolved against the applicable effective limits, not against a guessed finite runtime population. All actual collections are finite even when their static upper bound is unbounded. Nested collections occupy members without implicit flattening.
+An ordinary omitted collection specification means $[1,1]$; the omission remains source provenance. In an immutable stored field with an initialiser, omitted outer cardinality instead inherits the exact external shape of that initial value. A dictionary remains one outer value independently of its association count. An outwardly mutable field keeps $[1,1]$ when omitted. A bare star is resolved against the applicable effective limits, not against a guessed finite runtime population. All actual collections are finite even when their static upper bound is unbounded. Nested collections occupy members without implicit flattening.
 
 For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. The value contract may itself contain a collection or another dictionary. Text is a positional sequence as one basic value, not Char with a collection-order modifier.
 
@@ -127,7 +130,9 @@ A proof is a finite derivation from declared guarantees, established flow facts,
 
 The mandatory elementary rules include reflexivity, transitivity, intersection elimination, inclusion of normalised finite interval unions, interval arithmetic, declared nominal ancestry, constructor rules in this chapter, and checking all members of a finite explicit enumeration. Unbounded/symbolic predicates may remain unknown. Unknown differs from false; mandatory static obligations cannot be discharged by unknown.
 
-For a domain $D$, canonical enumeration requires a finite sequence with no duplicates whose set equals $D$, with the order required by the domain. Evidence may be a finite explicit set; a bounded integral/scale-two progression; an exact stepped rational progression with a positive step; a finite family; a finite linked-world population snapshot; or finite products/unions/filterings of already witnessed domains. A filtering predicate must terminate and satisfy its owner's purity/determinism requirements. Unstepped general Num intervals, Rum intervals and Any are not enumerable.
+For a domain $D$, canonical enumeration requires a finite sequence with no duplicates whose set equals $D$, with the order required by the domain. Evidence may be a finite explicit set; a bounded integral/scale-two progression; an exact stepped rational progression with a compatible nonzero signed step; a finite family; a finite linked-world population snapshot; or finite products/unions/filterings of already witnessed domains. A filtering predicate must terminate and satisfy its owner's purity/determinism requirements. Unstepped general Num intervals, Rum intervals and Any are not enumerable.
+
+A static stepped domain uses the established signed progression to define membership: positive differences anchor at the lower bound, negative differences at the upper bound, and open starting bounds advance before the first candidate. Canonical materialisation orders the resulting members according to the domain, rather than copying descending traversal order. Finite bounds and nonzero compatible advance establish a finite number of candidates; zero advance cannot establish termination.
 
 A recursive domain needs an explicit finite rank bound and finite branching evidence; induction on the bound reduces enumeration to finite constructor products. Finite individual trees alone supply no bound on the set of trees.
 
