@@ -182,6 +182,7 @@ constant-word
    enumerable without turning entries into hard reserved words. *)
 contextual-word
     ::= "abstract" | "always" | "start"
+      | "mud"
       | "value" | "type"
       | "name" | "path" | "anchor" | "file"
       | "plural" | "abbreviation" | "prefixes" | "format"
@@ -228,7 +229,7 @@ three-character-token
     ::= "<=>" | "-->" | "--=" ;
 
 two-character-token
-    ::= ":=" | "->" | ".." | "==" | "!=" | "<=" | ">="
+    ::= "<-" | ":=" | "->" | ".." | "==" | "!=" | "<=" | ">="
       | "=>" | "+=" | "-=" | "*=" | "/="
       | "|=" | "&=" | "^=" | "--"
       ;

@@ -17,6 +17,8 @@ affects:
 - Subsequently amended by: [[ADR-079-external-diagnostics-for-always-rules|D-079]]
 - Amended by: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]]
 
+- Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
+
 ## Context
 
 MUD conditions may need readable intermediate calculations. Repeating them inside a Boolean expression harms readability, while turning them into fields would introduce state that does not belong to the world.
@@ -29,7 +31,7 @@ MUD already has immutable local bindings via `:=` in `then` blocks. The same voc
 
 A Boolean block contains, in this order:
 
-1. Zero or more local bindings `name [derived-form] := expression`, with an optional static type and derived coercions over domain, cardinality, uniqueness or order.
+1. Zero or more pure preamble statements: local bindings `name [derived-form] := expression`, with an optional derived shape, or externally pure `from` blocks exporting immutable MUD values.
 2. Exactly one final expression.
 
 The final expression must satisfy the owning construct's contract: it elaborates to `Bool` in Boolean rules, guards, invariants and postconditions; in `when`, it elaborates to an activator admitted by D-058. An expression without declaration form must be the last expression in the block; a second non-declarative expression is invalid.
@@ -54,7 +56,7 @@ In a `when`, a local used by `changes` or `old` is evaluated from its defining e
 
 ### Test `after`
 
-A test's `after` block is a non-empty sequence of assertions, not one condition. It may begin with zero or more common local bindings, followed by one or more assertions. Locals are visible in every assertion and its `otherwise`.
+A test's `after` block is a non-empty sequence of assertions, not one condition. It may begin with zero or more common pure preamble statements, followed by one or more assertions. Locals are visible in every assertion and its `otherwise`.
 
 ```mud
 after {
@@ -68,7 +70,7 @@ No new local declaration may be interleaved after the first assertion. A test's 
 
 ### Abstract representation
 
-D-088 generalises the common representation. The surface AST normalises every condition to `ExpressionBlock(locals, result)`. In these contexts the owner requires `result` to satisfy the corresponding Boolean or temporal contract. The `otherwise` diagnostic belongs to the owning construct and may resolve local names. A test `after` uses its own block with common locals and a non-empty sequence of `TestAssertion` nodes.
+D-088 generalises the common representation. The surface AST normalises every condition to `ExpressionBlock(preamble, result)`. In these contexts the owner requires `result` to satisfy the corresponding Boolean or temporal contract. The `otherwise` diagnostic belongs to the owning construct and may resolve local names. A test `after` uses its own block with common locals and a non-empty sequence of `TestAssertion` nodes.
 
 ## Consequences
 
@@ -91,4 +93,4 @@ D-088 generalises the common representation. The surface AST normalises every co
 
 ## Amendment by D-088
 
-The structure generalises to `ExpressionBlock(locals, result)`. Conditions retain their Boolean/temporal contracts; `select`, `exists`, `forall`, `count`, `min` and `max` may write a short expression or `{ locals*; result }` after `:`, with the same rules for purity, sequencing, scope and the absence of forward references, cycles, redeclaration and shadowing.
+The structure generalises to `ExpressionBlock(preamble, result)`. Conditions retain their Boolean/temporal contracts; `select`, `exists`, `forall`, `count`, `min` and `max` may write a short expression or `{ locals*; result }` after `:`, with the same rules for purity, sequencing, scope and the absence of forward references, cycles, redeclaration and shadowing.

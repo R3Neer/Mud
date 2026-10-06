@@ -18,6 +18,7 @@ depends-on:
 questions:
   - Q-063
 decisions:
+  - D-109
   - D-106
   - D-102
   - D-101
@@ -511,9 +512,9 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 ## Expression blocks and value blocks
 
-`ExpressionBlock(locals, result)` contains only pure `LocalValueDecl` calculations and a final expression. A shorthand form normalises to `ExpressionBlock([], expression)`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
+`ExpressionBlock(preamble, result)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)` or `PureForeignBlock(ForeignBlock)`. A shorthand form normalises to `ExpressionBlock([], expression)`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
 
-`ValueBlock(statements, result)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, local mutation and `LocalForEach`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
+`ValueBlock(statements, result)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
 
 `LocalMutation` retains the unresolved surface destination; typing and elaboration later prove that the complete footprint belongs to storage created within the `ValueBlock`. `LocalForEach` uses `LocalStatementBlock`, not `EffectBlock`, and retains the `ExpressionBlock?` filter.
 
@@ -908,3 +909,9 @@ The Surface AST preserves `|`, `&`, `--` and `^` as `BinaryExpr`, because their 
 ## Ownership, restrictions and local adaptation of collections
 
 `has` and `has not` normalise to `HasMember` and `HasNotMember`. `value in Domain` produces `DomainRestrictionExpr`; a selection retains `SelectionExpr` with its original binding. Local specifications produce `CollectionTransformExpr` with `LocalCollectionTransform`, without `mut` capability. Their optional uniqueness is `OrdinaryLocalUnique` or `LocalUniqueBy(path)`, so a keyed local transformation survives projection without becoming a Boolean flag.
+
+## Foreign surface nodes
+
+`ForeignBlock(language, first, remaining)` retains a non-empty sequence of `ForeignItem` nodes. A native statement becomes `ForeignCodeStatement(ForeignCode(text))`; an export becomes `ForeignValueExport(name, annotation?, ForeignCode(text))`. The export RHS is foreign source, never a MUD `expr`. The language label is syntax for adapter selection, not a resolved type. Every node retains source origin, including the RHS's distinct span.
+
+Short and braced bodies normalise to the same block. Preamble positions wrap it in `PureForeignBlock`; value statements use `ForeignBlockValueStatement`; effect positions use `ForeignBlockEffect`. A calculated MUD local in a preamble uses `PureLocalValue`. `leading_preamble` preserves the textual order in action, reactive-rule and message owners, and `TestAfterBlock.preamble` precedes its assertions. Typing, native parsing/analysis, conversions and effects belong to their respective subsequent phases; opaque text does not certify a contract.

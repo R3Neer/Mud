@@ -127,6 +127,34 @@ def nominal_hir_contract_problems(text: str) -> list[str]:
     return problems
 
 
+def foreign_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
+    """Guard delegation and body cardinality; does not parse native source."""
+    grammar_code = strip_comments(grammar_text)
+    ast_code = re.sub(r"--.*", "", ast_text)
+    problems: list[str] = []
+    body = re.search(r'(?m)^foreign-body\s*::=\s*(.*?)\s*;', grammar_code, re.S)
+    expected = 'foreign-item | "{" , declaration-layout , foreign-item , { required-separation , foreign-item } , [ required-separation ] , "}"'
+    if not body or re.sub(r"\s+", " ", body.group(1)).strip() != expected:
+        problems.append("foreign-body must have one short item and a non-empty braced sequence")
+    rhs = re.search(r'(?m)^foreign-code-expression\s*::=\s*(.*?)\s*;', grammar_code, re.S)
+    if not rhs or rhs.group(1).strip() != "FOREIGN_EXPRESSION":
+        problems.append("foreign export RHS must remain delegated FOREIGN_EXPRESSION")
+    for constructor, fields in {
+        "ForeignBlock": "nominal_name language, foreign_item first, foreign_item* remaining",
+        "ForeignValueExport": "variable_name name, type_expr? annotation, foreign_code value",
+        "ForeignCode": "string text",
+    }.items():
+        found = re.findall(rf"\b{constructor}\s*\(([^()]*)\)", ast_code, re.S)
+        if len(found) != 1 or re.sub(r"\s+", " ", found[0]).strip() != fields:
+            problems.append(f"{constructor} must preserve source-only foreign structure: {fields}")
+    for fragment in ["PureForeignBlock(foreign_block value)", "ForeignBlockValueStatement(foreign_block value)", "ForeignBlockEffect(foreign_block value)"]:
+        if fragment not in ast_code:
+            problems.append(f"compatible foreign owner is missing: {fragment}")
+    if "local_value_decl*" in ast_code:
+        problems.append("pure preambles must preserve foreign items as well as calculated locals")
+    return problems
+
+
 def validate(root: Path) -> list[Problem]:
     problems: list[Problem] = []
     grammar = root / "specification/grammar/mud.ebnf"
@@ -227,6 +255,8 @@ def validate(root: Path) -> list[Problem]:
 
     # Global AST properties.
     ast_text = asdl_path.read_text(encoding="utf-8")
+    problems.extend(Problem(str(asdl_path), message) for message in
+                    foreign_contract_problems(grammar.read_text(encoding="utf-8"), ast_text))
     required = ["module MUDSurface", "project = MudProject", "source_file = MudFile", "flag = Disabled | Enabled"]
     for snippet in required:
         if snippet not in ast_text:

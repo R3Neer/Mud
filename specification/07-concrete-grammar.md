@@ -11,11 +11,14 @@ depends-on:
   - "[[05-source-text]]"
   - "[[06-lexicon]]"
 questions:
+  - Q-069
+  - Q-070
   - Q-022
   - Q-059
   - Q-062
   - Q-063
 decisions:
+  - D-109
   - D-106
   - D-102
   - D-101
@@ -263,9 +266,9 @@ The domain on a calculated value acts as a contract. A potentially out-of-domain
 
 ## Expression blocks and value
 
-An `ExpressionBlock` is a declarative form: it contains zero or more pure calculated locals declared with `:=`, followed by a final expression. It does not support stored variables, mutation, `for each` as a statement or an internal `if`. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
+An `ExpressionBlock` is a declarative form: it contains zero or more pure preamble statements (calculated locals declared with `:=` or `from` blocks), followed by a final expression. It does not support stored variables, mutation, `for each` as a statement or an internal `if`. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
 
-A `ValueBlock` constructs a value and contains zero or more local statements followed by a final expression. Its only statements are calculated declarations, stored declarations, assignments whose footprint remains within the block, and local `for each`. It does not support `if`, external effects, actions, subactions, `create` or `destroy`.
+A `ValueBlock` constructs a value and contains zero or more local statements followed by a final expression. Its only statements are calculated declarations, stored declarations, assignments whose footprint remains within the block, local `for each`, and `from` under the same private-write boundary. It does not support `if`, external effects, actions, subactions, `create` or `destroy`.
 
 ```mud
 result := {
@@ -1089,7 +1092,7 @@ Braces do not suppress terminators between elements within a block.
 
 ### Local values in conditions
 
-Boolean-rule blocks, `when`, `if`, `always` rules and action `after` expressions may contain zero or more local bindings followed by exactly one final expression:
+Boolean-rule blocks, `when`, `if`, `always` rules and action `after` expressions may contain zero or more pure preamble statements followed by exactly one final expression:
 
 ```mud
 when {
@@ -1691,3 +1694,35 @@ Configurable `~...` elements appear before ordinary content. Fields, components 
 Boolean membership uses `container has value` and `container has not value`. `in` is not a Boolean membership operator. `value in Domain` locally restricts or filters the value; `binding in source : predicate` remains a selection.
 
 A collection may be transformed locally with `values [unique]`, `values [unique by email]`, `values [ordered]`, `values [ordered by score]` or `values [1..10, unique, ordered]`. This form does not support `mut`. Elaboration normalises domain, uniqueness, order and cardinality. `[n]` remains indexing; an exact local cardinality without other modifiers is written `[n..n]`.
+
+## Foreign language blocks
+
+> [!rule] MUD-GRAM-050 — Foreign body and exports
+> `from Language` admits one direct foreign-body item without braces, or one or more items inside braces. More than one instruction requires braces regardless of physical line count. Each item is a native statement or `mud name [: Type] <- foreignExpression`. The bridge name/type are MUD syntax and the RHS is native syntax.
+
+```mud
+from Python mud result: Int <- calculate(x)
+from Python {
+    model = build_model(x)
+    mud result: Int <- model.process()
+}
+```
+
+This single export may continue over several physical lines under Python's syntax:
+
+```mud
+from Python mud result: Int <- calculate(
+    x,
+    3
+)
+```
+
+`from Python { first(); second() }` contains two native instructions and requires its braces. `from Python first(); second()` cannot consume both as a short body. Native compound statements are counted as native syntactic statements by the adapter, not by their line count. Export bridges are direct items; nested native computations return through a direct bridge. Native strings/comments containing `mud` or braces remain native content.
+
+`from` occupies the preamble of `ExpressionBlock`, shared behavioural preambles and `TestAfterBlock`, or a statement position in `ValueBlock`, `LocalStatementBlock` or `EffectBlock`. It is not a primary expression or a top-level declaration; a value computation still requires its final MUD expression. A test's common preamble ends before its first assertion. Metadata-only bodies and constant-expression-only slots do not gain foreign statements.
+
+Exports are immutable local MUD values, evaluated once at their textual bridge positions per evaluation. Names become visible to later enclosing MUD statements after successful completion; earlier exports are available to subsequent native items. Foreign locals do not escape. A failed body exports no values. Ordinary no-forward-reference, no-redeclaration and no-shadowing rules apply. Omitted annotations require unique adapter conversion and type inference; no opaque foreign object or new world identity is exported.
+
+The enclosing contract governs reads and writes. Expression/shared/test preambles require external purity; value computations may mutate only their private storage; effects require ordinary participant and place capabilities. A wrapper does not bypass these rules, and a foreign signature's mutability annotation alone does not prove purity. Static value owners require a separately statically evaluable, pure, deterministic contract for the complete body. Foreign calls that are only pure calculations do not satisfy the requirement that `then` contain an effect or executable effect call.
+
+Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require confirmed host delivery or an explicit transactional contract. Wrappers preserve aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.

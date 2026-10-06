@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-109
   - D-106
   - D-101
   - D-035
@@ -148,9 +149,9 @@ The Nominal HIR represents a reference as either `ResolvedReference` or `Pending
 
 ## Local scopes, iteration and blocks
 
-Iteration bindings and all local declarations are `LocalSymbol`: they do not receive public anchor and are subject to the first lexical level of resolution. The HIR’s `kind` distinguishes, at a minimum, between iterators, computed locals and stored locals; mutability is a capability checked at a later stage and not a category of anchor.
+Iteration bindings and all local declarations are `LocalSymbol`: they do not receive public anchor and are subject to the first lexical level of resolution. The HIR’s `kind` distinguishes, at a minimum, between iterators, computed locals, stored locals and foreign exports; mutability is a capability checked at a later stage and not a category of anchor.
 
-In `ExpressionBlock` and in the shared preambles of action/rule/message, only pure computed locals are introduced. Each local variable is visible from the next declaration until the end of the block owner and cannot shadow a visible name.
+In `ExpressionBlock` and in the shared preambles of action/rule/message, pure computed locals and immutable exports from externally pure `from` blocks are introduced. Each local variable is visible from the next declaration until the end of the block owner and cannot shadow a visible name.
 
 `ValueBlock` creates its own lexical scope. Its computed and stored declarations are introduced sequentially. An `LocalForEach` resolves `source` and `by` before introducing its binding; the binding is visible in the filter and in `LocalStatementBlock`. Locals created within an iteration do not survive into the next one. A mutation may refer to a mutable local variable of an enclosing scope of the same `ValueBlock`; the check that the final destination does not escape the block is part of type checking/elaboration.
 
@@ -328,3 +329,11 @@ world.combat has not world.trade                # true
 
 Membership of module is a dimension of visibility and a dependency, not an additional component of the nominal anchor. `uses` authorises knowledge of the contract of another module; an `using` does not grant that authorisation. Cross-resolution can only reach operations and types belonging to the visible closure of the modular contract.
 
+
+## Foreign names and captures
+
+An export introduces an ordinary immutable local value in its enclosing MUD block after successful completion of `from`. No forward references, redeclarations or shadowing are permitted. Exported names have local identity without public anchors; `LocalSymbol(owner, "foreign-export", name, ordinal)` represents them in the Nominal HIR. Earlier exports are available to subsequent native items. Foreign private locals do not become MUD symbols or bindings.
+
+The adapter language label selects an adapter and does not name a MUD declaration. An export's optional MUD type annotation follows ordinary nominal resolution. Captured MUD identifiers exposed to native code resolve in the same lexical environment, visibility and lookup priority as their enclosing position, using `ResolvedReference` with role `foreign-capture` when a target is known. Native locals must not shadow exposed MUD bindings. The adapter supplies capture occurrences and original source spans; foreign library/member lookup belongs to native tooling.
+
+The existing nominal-HIR contract represents these symbols and references without structural extension. Capture types, conversions, mutability and dependency/effect evidence are not added to it. Wrappers and adapters cannot widen module visibility.

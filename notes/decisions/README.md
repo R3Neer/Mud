@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 103.
-- Current: 102.
+- Total: 104.
+- Current: 103.
 - Proposed: 0.
 - Superseded: 1.
 - Withdrawn: 0.
@@ -122,6 +122,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-106 | current | 2026-10-06 | [[notes/decisions/ADR-106-receiver-based-call-disambiguation|Receiver-based call disambiguation]] |
 | D-107 | current | 2026-10-06 | [[notes/decisions/ADR-107-executable-language-and-rust-reference-implementation|Executable language and Rust reference implementation]] |
 | D-108 | current | 2026-10-06 | [[notes/decisions/ADR-108-considered-interactive-model-environment|Considered interactive model environment]] |
+| D-109 | current | 2026-10-06 | [[notes/decisions/ADR-109-foreign-language-blocks-and-value-exports|Foreign language blocks and value exports]] |
 
 ## Reserved identifiers
 

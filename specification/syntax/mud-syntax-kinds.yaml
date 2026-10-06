@@ -136,6 +136,8 @@ fixed_tokens:
 - spelling: count
 - spelling: min
 - spelling: max
+- spelling: mud
+- spelling: "<-"
 named_tokens:
 - kind: EOF
 - kind: IDENTIFIER
@@ -150,6 +152,8 @@ named_tokens:
 - kind: EXACT_INTEGER_LITERAL
 - kind: UNIT_FORM
 - kind: TERMINATOR
+- kind: FOREIGN_STATEMENT
+- kind: FOREIGN_EXPRESSION
 lexical_forms:
   mud-source:
     rhs: '[ bom ] , { lexical-element } , eof'
@@ -355,7 +359,7 @@ lexical_forms:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"value\" | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
+    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"mud\"\n      | \"value\" | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"
@@ -388,7 +392,7 @@ lexical_forms:
     rhs: '"<=>" | "-->" | "--="'
     references: []
   two-character-token:
-    rhs: "\":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
+    rhs: "\"<-\" | \":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
     references: []
   one-character-operator:
     rhs: "\"=\" | \"+\" | \"-\" | \"*\" | \"/\" | \"%\"\n      | \"<\" | \">\" | \"&\" | \"|\" | \"^\" | \"~\""
@@ -1004,21 +1008,21 @@ syntax_nodes:
     - expression-block
   expression-block:
     kind: ExpressionBlockSyntax
-    rhs: "{ local-value-declaration , required-separation }
-        , expression"
+    rhs: "{ pure-preamble-statement , required-separation }\n        , expression"
     references:
-    - local-value-declaration
+    - pure-preamble-statement
     - required-separation
     - expression
   reactive-rule-declaration:
     kind: ReactiveRuleDeclarationSyntax
-    rhs: "\"rule\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , when-clause\n        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"rule\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , when-clause\n        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n        , [ required-separation ]\n        , \"}\""
     references:
     - nominal-name
     - on-clause
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - pure-preamble-statement
     - when-clause
     - if-clause
     - then-clause
@@ -1050,7 +1054,7 @@ syntax_nodes:
     - action-signature-body
   action-signature-body:
     kind: ActionSignatureBodySyntax
-    rhs: "nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ action-if-clause , required-separation ]\n        , then-clause\n        , [ required-separation , action-after-clause ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: "nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , [ action-if-clause , required-separation ]\n        , then-clause\n        , [ required-separation , action-after-clause ]\n        , [ required-separation ]\n        , \"}\""
     references:
     - nominal-name
     - for-clause
@@ -1058,6 +1062,7 @@ syntax_nodes:
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - pure-preamble-statement
     - action-if-clause
     - then-clause
     - action-after-clause
@@ -1073,13 +1078,14 @@ syntax_nodes:
     - public-field-declaration
   message-declaration:
     kind: MessageDeclarationSyntax
-    rhs: "\"message\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , when-clause\n        , [ required-separation , if-clause ]\n        , [ required-separation , public-field-declaration\n            , { required-separation , public-field-declaration }\n          ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: "\"message\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , when-clause\n        , [ required-separation , if-clause ]\n        , [ required-separation , public-field-declaration\n            , { required-separation , public-field-declaration }\n          ]\n        , [ required-separation ]\n        , \"}\""
     references:
     - nominal-name
     - on-clause
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - pure-preamble-statement
     - when-clause
     - if-clause
     - public-field-declaration
@@ -1183,11 +1189,11 @@ syntax_nodes:
     - test-after-clause
   test-after-clause:
     kind: TestAfterClauseSyntax
-    rhs: "\"after\" , test-assertion\n      | \"after\" , \"{\"\n          , declaration-layout\n          , { local-value-declaration , required-separation }\n          , test-assertion\n          , { required-separation , test-assertion }\n          , [ required-separation ]\n          , \"}\""
+    rhs: "\"after\" , test-assertion\n      | \"after\" , \"{\"\n          , declaration-layout\n          , { pure-preamble-statement , required-separation }\n          , test-assertion\n          , { required-separation , test-assertion }\n          , [ required-separation ]\n          , \"}\""
     references:
     - test-assertion
     - declaration-layout
-    - local-value-declaration
+    - pure-preamble-statement
     - required-separation
   test-assertion:
     kind: TestAssertionSyntax
@@ -1197,8 +1203,9 @@ syntax_nodes:
     - diagnostic-tail
   effect:
     kind: EffectSyntax
-    rhs: "assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n      | destroy-effect\n      | action-call-effect\n      | for-each-effect"
+    rhs: "foreign-block\n      | assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n      | destroy-effect\n      | action-call-effect\n      | for-each-effect"
     references:
+    - foreign-block
     - assignment-effect
     - add-effect
     - remove-effect
@@ -1875,11 +1882,12 @@ syntax_nodes:
     - local-stored-declaration
   value-statement:
     kind: ValueStatementSyntax
-    rhs: "value-local-declaration\n      | local-mutation\n      | local-for-each"
+    rhs: "value-local-declaration\n      | local-mutation\n      | local-for-each\n      | foreign-block"
     references:
     - value-local-declaration
     - local-mutation
     - local-for-each
+    - foreign-block
   file-metadata-assignment:
     kind: FileMetadataAssignmentSyntax
     rhs: "\"~\" , metadata-name\n        , ( \"=\" , constant-expression\n          | \":\" , type-expression , [ \"=\" , constant-expression\
@@ -1895,3 +1903,48 @@ syntax_nodes:
     - declaration-layout
     - value-block
     - required-separation
+  pure-preamble-statement:
+    kind: PurePreambleStatementSyntax
+    rhs: local-value-declaration | foreign-block
+    references:
+    - local-value-declaration
+    - foreign-block
+  foreign-block:
+    kind: ForeignBlockSyntax
+    rhs: '"from" , foreign-language-name , foreign-body'
+    references:
+    - foreign-language-name
+    - foreign-body
+  foreign-language-name:
+    kind: ForeignLanguageNameSyntax
+    rhs: nominal-name
+    references:
+    - nominal-name
+  foreign-body:
+    kind: ForeignBodySyntax
+    rhs: "foreign-item\n      | \"{\" , declaration-layout , foreign-item\n          , { required-separation , foreign-item }\n          , [ required-separation ] , \"}\""
+    references:
+    - foreign-item
+    - declaration-layout
+    - required-separation
+  foreign-item:
+    kind: ForeignItemSyntax
+    rhs: foreign-code-statement | foreign-value-export
+    references:
+    - foreign-code-statement
+    - foreign-value-export
+  foreign-code-statement:
+    kind: ForeignCodeStatementSyntax
+    rhs: FOREIGN_STATEMENT
+    references: []
+  foreign-value-export:
+    kind: ForeignValueExportSyntax
+    rhs: "\"mud\" , variable-name , [ \":\" , type-expression ]\n        , \"<-\" , foreign-code-expression"
+    references:
+    - variable-name
+    - type-expression
+    - foreign-code-expression
+  foreign-code-expression:
+    kind: ForeignCodeExpressionSyntax
+    rhs: FOREIGN_EXPRESSION
+    references: []

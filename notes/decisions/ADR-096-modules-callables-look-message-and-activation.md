@@ -35,6 +35,8 @@ affects:
 
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
+- Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
+
 ## Context
 
 MUD's evolution had left several artificially separate boundaries: elementary versus compound actions, `look` as an essentially external query, `message` as output deferred to the host, separate activation in `things` and `rules`, and implicit domain consumption in operations producing collections. These separations interact poorly when the language is organised into modules, permits callable values and uses wave-based causal resolution.
@@ -45,7 +47,7 @@ This decision unifies these pieces without closing the still-open questions of c
 
 ### A single `then` model
 
-The semantic separation between elementary and compound actions is removed. A `then` is an ordered sequence of consequences and may mix calculated locals, immutable or `mut` stored locals, direct effects, calls to `action` or `subaction`, and `for each` traversals. Shared locals written before behaviour clauses remain exclusively pure calculated `:=` bindings.
+The semantic separation between elementary and compound actions is removed. A `then` is an ordered sequence of consequences and may mix calculated locals, immutable or `mut` stored locals, direct effects, calls to `action` or `subaction`, and `for each` traversals. Shared behaviour preambles contain pure calculated `:=` bindings or externally pure `from` blocks.
 
 An internal call executes at its textual position within the resolution's private delta: it observes earlier effects visible at that point, contributes its effects to the same resolution, and later statements observe those effects. It does not open an independent transaction.
 

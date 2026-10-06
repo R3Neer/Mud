@@ -16,6 +16,7 @@ depends-on:
 questions:
   - Q-063
 decisions:
+  - D-109
   - D-106
   - D-102
   - D-015
@@ -361,11 +362,11 @@ Default metadata written at the start of the file uses `FileMetadataAssignment(n
 
 ### Boolean rule
 
-The body becomes `ExpressionBlock(locals, result)`. The form without local declarations produces `locals = []`.
+The body becomes `ExpressionBlock(preamble, result)`. The form without local declarations produces `preamble = []`.
 
 ### Reactive rule
 
-`local-value-declaration` forms preceding behavioural clauses become `leading_locals`. `when` produces an `ExpressionBlock` in `activator`; `if` produces another in `guard?`; `then` produces `EffectBlock`.
+Pure preamble statements preceding behavioural clauses become `leading_preamble`. `when` produces an `ExpressionBlock` in `activator`; `if` produces another in `guard?`; `then` produces `EffectBlock`.
 
 ### `always` rule
 
@@ -373,19 +374,19 @@ The body becomes `ExpressionBlock(locals, result)`. The form without local decla
 
 ### Action
 
-`action` and `subaction` produce `ActionDecl` with `PublicAction` or `Subaction`. `local-value-declaration` forms preceding behavioural clauses become `leading_locals`. `if` produces `ActionGuard` with an `ExpressionBlock`; `after` produces `ActionPostcondition` with another.
+`action` and `subaction` produce `ActionDecl` with `PublicAction` or `Subaction`. Pure preamble statements preceding behavioural clauses become `leading_preamble`. `if` produces `ActionGuard` with an `ExpressionBlock`; `after` produces `ActionPostcondition` with another.
 
 The action is not classified as either elementary or compound.
 
 ### `look` and `message`
 
-`look-declaration` projects its optional `given-clause` to `LookDecl.givens`. In `message`, local-value declarations preceding behavioural clauses become `leading_locals`. Public fields are converted to `PublicFieldDecl` and retain their order.
+`look-declaration` projects its optional `given-clause` to `LookDecl.givens`. In `message`, pure preamble statements preceding behavioural clauses become `leading_preamble`. Public fields are converted to `PublicFieldDecl` and retain their order.
 
 ## Expression blocks, value blocks and tests
 
-A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `LocalValueDecl(name, shape?, value)`. Its RHS remains an ordinary expression: these positions cannot acquire a `ValueBlock` through nesting.
+A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its RHS remains an ordinary expression: these positions cannot acquire a `ValueBlock` through nesting.
 
-The short form `if ready` produces `ExpressionBlock([], ready)`. The brace form contains only pure local `:=` declarations and requires a single final expression. `otherwise` lies outside the AST block, although resolution extends those locals' environment to it.
+The short form `if ready` produces `ExpressionBlock([], ready)`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. `otherwise` lies outside the AST block, although resolution extends those locals' environment to it.
 
 A short `value-body` normalises to `ValueBlock([], value)`. The expanded form produces `ValueBlock(statements, result)`. Calculated statements produce `LocalCalculatedDecl`, stored ones `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove`, and local iteration `LocalForEach`. Later validation and elaboration verify that every `LocalMutation` stays within storage created by the `ValueBlock`.
 
@@ -393,7 +394,7 @@ A short `value-body` normalises to `ValueBlock([], value)`. The expanded form pr
 
 When a metadata-bearing owner uses the integrated expanded form, its initial `~...` declarations are extracted to the descriptor's `metadata` field and the following statements form its `ValueBlock`. The preamble does not produce `ValueStatement`. The short form with a separate metadata body converges on the same AST. Validation before AST construction rejects a declaration that combines metadata from both locations.
 
-In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The braced form retains its pure calculated values before the assertions and does not become a `ValueBlock`.
+In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The braced form retains its pure preamble statements before the assertions and does not become a `ValueBlock`.
 
 ## `then` and blocks
 
@@ -479,7 +480,7 @@ The prefix `all D` produces `PrefixExpr(EnumerateAll, D)`; the contextual litera
 
 ### Selection and `take`
 
-`binding in source [by step] : predicate` produces `SelectionExpr(binding, source, step?, predicate)`. Simple or dictionary binding reuses `ValueIterationBinding` or `DictionaryIterationBinding`; its scope is limited to the predicate. The short form and `{ locals*; result }` converge on `ExpressionBlock`.
+`binding in source [by step] : predicate` produces `SelectionExpr(binding, source, step?, predicate)`. Simple or dictionary binding reuses `ValueIterationBinding` or `DictionaryIterationBinding`; its scope is limited to the predicate. The short form and `{ preamble*; result }` converge on `ExpressionBlock`.
 
 `exists`, `forall`, `count`, `min` and `max` produce `QuantifierExpr(kind, variable, source, step?, body)`, with an `ExpressionBlock` body. `sum` is no longer in the catalogue. The transformation does not determine the Boolean contract or, for `min`/`max`, the validity of the source order; these checks occur later.
 
@@ -700,3 +701,9 @@ The initial corpus is in `cases/cst-ast.yaml`.
 ## Membership, restriction and local transformations
 
 `a has b` projects to `HasMember`; `a has not b` projects to `HasNotMember`. `value in Domain` projects to `DomainRestrictionExpr`; `binding in source : predicate` preserves `SelectionExpr`. `collection-transform-suffix` folds to `CollectionTransformExpr`; local transforms provide no internal `mut` capability.
+
+## Foreign block conversion
+
+`ForeignBlockSyntax` normalises its short or braced body to `ForeignBlock(language, first, remaining)`. `ForeignCodeStatementSyntax` produces `ForeignCodeStatement(ForeignCode(originalText))`. `ForeignValueExportSyntax` converts only the MUD name and optional type annotation and retains its RHS in `ForeignCode`, with the RHS's source origin. Foreign code is not parsed as a MUD expression and is never executed during CST-to-AST conversion.
+
+Pure preamble positions wrap calculated locals in `PureLocalValue` and foreign blocks in `PureForeignBlock`, retaining their order in `ExpressionBlock.preamble`, `leading_preamble` and `TestAfterBlock.preamble`. Value statement positions produce `ForeignBlockValueStatement`; effect positions produce `EffectStatement(ForeignBlockEffect(...))`. Ordinary later contract checks still distinguish pure calculation from an executable effect. Multiple short-body items, malformed MUD bridge prefixes and structural native boundary errors prevent a valid AST; missing adapter contracts, incompatible conversions and capabilities are later diagnostics. Native recovery cannot reinterpret a second instruction as part of one expression merely because it is on the same line.

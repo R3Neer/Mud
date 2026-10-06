@@ -153,7 +153,7 @@ module MUDSurface {
                    | ReactiveRuleDecl(nominal_name name,
                                       on_clause? participants,
                                       metadata_assignment* metadata,
-                                      local_value_decl* leading_locals,
+                                      pure_preamble_statement* leading_preamble,
                                       expression_block activator,
                                       expression_block? guard,
                                       effect_block effects)
@@ -167,7 +167,7 @@ module MUDSurface {
                                 for_clause? participants,
                                 given_clause? givens,
                                 metadata_assignment* metadata,
-                                local_value_decl* leading_locals,
+                                pure_preamble_statement* leading_preamble,
                                 action_guard? guard,
                                 effect_block effects,
                                 action_postcondition? postcondition)
@@ -179,7 +179,7 @@ module MUDSurface {
                    | MessageDecl(nominal_name name,
                                  on_clause? participants,
                                  metadata_assignment* metadata,
-                                 local_value_decl* leading_locals,
+                                 pure_preamble_statement* leading_preamble,
                                  expression_block activator,
                                  expression_block? guard,
                                  public_field_decl* fields)
@@ -421,7 +421,7 @@ module MUDSurface {
     -- Bodies, conditions and tests
     -- -----------------------------------------------------------------
 
-    expression_block = ExpressionBlock(local_value_decl* locals, expr result)
+    expression_block = ExpressionBlock(pure_preamble_statement* preamble, expr result)
         attributes (source_origin origin)
 
     value_block = ValueBlock(value_statement* statements, expr result)
@@ -431,6 +431,7 @@ module MUDSurface {
                     | LocalStoredValueStatement(local_stored_decl value)
                     | LocalMutationValueStatement(local_mutation value)
                     | LocalForEachValueStatement(local_for_each value)
+                    | ForeignBlockValueStatement(foreign_block value)
         attributes (source_origin origin)
 
     local_calculated_decl = LocalCalculatedDecl(variable_name name,
@@ -478,6 +479,22 @@ module MUDSurface {
                    | LocalStoredStatement(local_stored_decl value)
         attributes (source_origin origin)
 
+    pure_preamble_statement = PureLocalValue(local_value_decl value)
+                            | PureForeignBlock(foreign_block value)
+        attributes (source_origin origin)
+
+    foreign_block = ForeignBlock(nominal_name language, foreign_item first,
+                                  foreign_item* remaining)
+        attributes (source_origin origin)
+
+    foreign_item = ForeignCodeStatement(foreign_code code)
+                 | ForeignValueExport(variable_name name, type_expr? annotation,
+                                      foreign_code value)
+        attributes (source_origin origin)
+
+    foreign_code = ForeignCode(string text)
+        attributes (source_origin origin)
+
     local_value_decl = LocalValueDecl(variable_name name,
                                       derived_value_shape? shape,
                                       expr value)
@@ -486,7 +503,7 @@ module MUDSurface {
     start_set = StartSet(expr* contributions)
         attributes (source_origin origin)
 
-    test_after_block = TestAfterBlock(local_value_decl* locals,
+    test_after_block = TestAfterBlock(pure_preamble_statement* preamble,
                                       test_assertion first_assertion,
                                       test_assertion* remaining_assertions)
         attributes (source_origin origin)
@@ -498,7 +515,8 @@ module MUDSurface {
     -- Efectos
     -- -----------------------------------------------------------------
 
-    effect = AssignmentEffect(assignable_expr target,
+    effect = ForeignBlockEffect(foreign_block value)
+           | AssignmentEffect(assignable_expr target,
                               assignment_operator operator,
                               expr value)
            | AddValueEffect(expr value, assignable_expr target)

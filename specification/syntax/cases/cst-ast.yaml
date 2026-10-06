@@ -165,7 +165,7 @@ cases:
   category: expression-block
   source: "rule CanAfford for person: Person given price: Money {\n    available := person.money\n    available >= price\n}\n"
   cst_root: MudFileSyntax
-  ast: BooleanRuleDecl(condition=ExpressionBlock(locals=[LocalValueDecl(available)], result=ComparisonChainExpr(...)))
+  ast: BooleanRuleDecl(condition=ExpressionBlock(preamble=[PureLocalValue(LocalValueDecl(available))], result=ComparisonChainExpr(...)))
   normalizations:
   - expression-block-locals-and-result
   produces_ast: true
@@ -173,7 +173,7 @@ cases:
   category: expression-block
   source: "action Buy for person: Person given price: Money {\n    if {\n        missing := price - person.money\n        missing <= 0\n    } otherwise \"You need {missing} more\"\n    then person.money -= price\n}\n"
   cst_root: MudFileSyntax
-  ast: ActionGuard(condition=ExpressionBlock(locals=[LocalValueDecl(missing)], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
+  ast: ActionGuard(condition=ExpressionBlock(preamble=[PureLocalValue(LocalValueDecl(missing))], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
   normalizations:
   - extend-boolean-local-environment-through-otherwise
   produces_ast: true
@@ -410,7 +410,7 @@ cases:
   category: rule
   source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n    population >= 0 people\n}\notherwise \"Population cannot be negative: {population}\"\n"
   cst_root: MudFileSyntax
-  ast: AlwaysRuleDecl(invariant=ExpressionBlock(locals=[LocalValueDecl(population)], result=...), diagnostic=TextTemplateExpr(...))
+  ast: AlwaysRuleDecl(invariant=ExpressionBlock(preamble=[PureLocalValue(LocalValueDecl(population))], result=...), diagnostic=TextTemplateExpr(...))
   normalizations:
   - extend-boolean-local-environment-through-otherwise
   produces_ast: true
@@ -1544,7 +1544,7 @@ cases:
   category: effect
   source: "action Feed for people: Person [* mut] {\n    then for each person in people if {\n        hungry := person.hunger > 0\n        awake := person.state == Awake\n        hungry and awake\n    }:\n        person.health += 1\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(filter=ExpressionBlock(locals=[hungry, awake], result=...), body=EffectBlock(...))
+  ast: ForEachEffect(filter=ExpressionBlock(preamble=[hungry, awake], result=...), body=EffectBlock(...))
   produces_ast: true
 - id: for-each-static-zero-step
   category: validation-after-resolution
@@ -1556,19 +1556,19 @@ cases:
   category: expression
   source: "thing Sample {\n    chosen := value in [1..10] by 2: {\n        limit := 7\n        value < limit\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(value, 1..10, step=2, predicate=ExpressionBlock(locals=[limit], result=...))
+  ast: SelectionExpr(value, 1..10, step=2, predicate=ExpressionBlock(preamble=[limit], result=...))
   produces_ast: true
 - id: quantifier-by-expression-block
   category: expression
   source: "rule Enough {\n    count value in [1..10] by 2: {\n        threshold := 5\n        value >= threshold\n    } > 0\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Count, value, 1..10, step=2, body=ExpressionBlock(locals=[threshold], result=...))
+  ast: QuantifierExpr(Count, value, 1..10, step=2, body=ExpressionBlock(preamble=[threshold], result=...))
   produces_ast: true
 - id: sum-by-expression-block
   category: expression
   source: "thing Sample {\n    total := sum value in [1..10] by 2: {\n        doubled := value * 2\n        doubled\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Sum, value, 1..10, step=2, body=ExpressionBlock(locals=[doubled], result=doubled))
+  ast: QuantifierExpr(Sum, value, 1..10, step=2, body=ExpressionBlock(preamble=[doubled], result=doubled))
   produces_ast: true
 - id: negative-stepped-domain-all
   category: domain
@@ -1740,7 +1740,7 @@ cases:
   category: validation-after-resolution
   source: "action Broken for values: Int [*], mut total: Int {\n    then for each value in values if {\n        adjusted := value + 1\n        adjusted > 0\n    }:\n        total += adjusted\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=value, filter=ExpressionBlock(locals=[adjusted], result=...), body=EffectBlock(...))
+  ast: ForEachEffect(binding=value, filter=ExpressionBlock(preamble=[adjusted], result=...), body=EffectBlock(...))
   expected_diagnostics:
   - filter-local-not-visible-in-loop-body
   semantic_expectations:
@@ -1750,7 +1750,7 @@ cases:
   category: expression
   source: "thing Sample {\n    values: Int [*]\n    selected := value in values: {\n        adjusted := value + 1\n        adjusted > 0\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(binding=value, source=values, predicate=ExpressionBlock(locals=[adjusted], result=...))
+  ast: SelectionExpr(binding=value, source=values, predicate=ExpressionBlock(preamble=[adjusted], result=...))
   semantic_expectations:
   - selection-binding-visible-to-expression-block-locals-and-result
   produces_ast: true
@@ -2017,3 +2017,252 @@ cases:
   cst_root: MudFileSyntax
   ast: StoredFieldDecl(sum)
   produces_ast: true
+- id: foreign-short-export
+  category: foreign
+  source: "rule Positive given x: Int {\n from Python mud result: Int <- calculate(x)\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ExpressionBlock([PureForeignBlock(ForeignValueExport(result, Int, ForeignCode))], result > 0)
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: calculate is pure with declared lexical capture x
+- id: foreign-continued-single-instruction
+  category: foreign
+  source: "rule Positive given x: Int {\n from Python mud result: Int <- calculate(\n  x,\n  3\n )\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: one native expression, multiple physical lines
+- id: foreign-two-items-one-line-braced
+  category: foreign
+  source: "rule Positive given x: Int {\n from Python { model = build(x); mud result: Int <- model.process() }\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: pure adapter and explicit MUD value conversion
+- id: foreign-multiple-items-short-rejected
+  category: foreign
+  source: "rule Positive given x: Int {\n from Python model = build(x); mud result: Int <- model.process()\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: false
+  expected_diagnostics:
+  - foreign-multiple-short-items
+  diagnostic_phase: contextual-syntax
+- id: foreign-strings-and-comments
+  category: foreign
+  source: "rule Positive {\n from Python {\n  marker = \"} mud result <- {\" # mud fake <- }\n  mud result: Int <- len(marker)\n }\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: string/comment delimiters are native content, not bridges
+- id: foreign-csharp-nested-braces
+  category: foreign
+  source: "rule Positive {\n from Csharp {\n  var items = new[] { 1, 2 };\n  mud result: Int <- items.Length;\n }\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: Csharp parser owns native initializer braces and semicolon
+- id: foreign-value-owner
+  category: foreign
+  source: "thing Counter {\n result := {\n  from Rust mud output: Int <- calculate()\n  output\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ValueBlock([ForeignBlockValueStatement], output)
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: pure native calculation
+- id: foreign-effect-owner
+  category: foreign
+  source: "action Update for counter: Counter [mut] {\n then from Rust update(counter)\n}\n"
+  cst_root: MudFileSyntax
+  ast: EffectStatement(ForeignBlockEffect)
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: declared transactional write through authorised wrapper, tracked reads
+- id: foreign-immutable-export-write-rejected
+  category: foreign
+  source: "action Update for counter: Counter [mut] {\n then {\n  from Python mud result: Int <- 3\n  result = 4\n  counter.value = result\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - immutable-foreign-export
+  diagnostic_phase: typing-and-capabilities
+- id: foreign-expression-external-write-rejected
+  category: foreign
+  source: "rule Positive for counter: Counter {\n from Python mud result: Bool <- mutate(counter)\n result\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - foreign-external-write-in-pure-context
+  diagnostic_phase: adapter-effects
+- id: foreign-value-external-write-rejected
+  category: foreign
+  source: "thing Counter {\n result := {\n  from Python mud output: Int <- mutate_external()\n  output\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - foreign-write-escapes-value-boundary
+  diagnostic_phase: adapter-effects
+- id: foreign-readonly-participant-rejected
+  category: foreign
+  source: "action Update for counter: Counter {\n then from Rust mutate(counter)\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - foreign-write-without-capability
+  diagnostic_phase: typing-and-capabilities
+- id: foreign-unknown-purity-rejected
+  category: foreign
+  source: "rule Positive {\n from Python mud result: Bool <- unknown_library()\n result\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - missing-foreign-effect-contract
+  diagnostic_phase: adapter-effects
+- id: foreign-static-owner-rejected
+  category: foreign
+  source: "thing Counter {\n initial: Int = {\n  from Python mud output: Int <- runtime_library()\n  output\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - foreign-not-statically-evaluable
+  diagnostic_phase: static-evaluation
+- id: foreign-ambiguous-inference
+  category: foreign
+  source: "rule Positive {\n from Python mud result <- ambiguous_native_value()\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - ambiguous-foreign-value-conversion
+  diagnostic_phase: typing-and-conversion
+- id: foreign-annotated-export
+  category: foreign
+  source: "rule Positive {\n from Python mud result: Int <- native_int()\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: unique validated Int conversion
+- id: foreign-nominal-wrapper
+  category: foreign
+  source: "thing Meter {\n result := {\n  from Rust mud output: Distance <- measure()\n  output\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: Distance wrapper preserves nominal type and domain
+- id: foreign-opaque-object-rejected
+  category: foreign
+  source: "rule Positive {\n from Python mud result <- create_opaque_object()\n true\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - foreign-value-not-representable
+  diagnostic_phase: typing-and-conversion
+- id: foreign-local-does-not-escape
+  category: foreign
+  source: "rule Positive {\n from Python { hidden = 3; mud result: Int <- hidden }\n hidden > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - unresolved-name
+  diagnostic_phase: nominal-resolution
+- id: foreign-export-forward-reference
+  category: foreign
+  source: "rule Positive {\n before := result\n from Python mud result: Int <- 3\n before > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - unresolved-name
+  diagnostic_phase: nominal-resolution
+- id: foreign-export-shadow-rejected
+  category: foreign
+  source: "rule Positive {\n result := 3\n from Python mud result: Int <- 4\n result > 0\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  expected_diagnostics:
+  - local-redeclaration
+  diagnostic_phase: nominal-resolution
+- id: foreign-invalid-inbound-collection
+  category: foreign
+  source: "thing Counter {\n results := {\n  from Python mud output: Int [2] <- three_values()\n  output\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: conversion rejects invalid cardinality, exports no value and propagates failure
+- id: foreign-temporal-read-tracking
+  category: foreign
+  source: "message Changed on counter: Counter {\n from Rust mud observed: Int <- read_value(counter)\n when changes observed\n value := observed\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: wrapper tracks counter.value; observed evaluated in each required snapshot
+- id: foreign-failure-discards-private-work
+  category: foreign
+  source: "action Update for counter: Counter [mut] {\n then from Rust {\n  update(counter);\n  mud output: Int <- fail_after_update();\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: ForeignBlock
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: mapped technical failure discards private writes and exports, no confirmed state change
+- id: foreign-test-common-preamble
+  category: foreign
+  source: "test Positive {\n start with empty\n then Run()\n after {\n  from Python mud expected: Int <- 3\n  actual == expected\n }\n}\n"
+  cst_root: MudFileSyntax
+  ast: TestAfterBlock([PureForeignBlock], TestAssertion)
+  normalizations:
+  - preserve-foreign-source-and-origin
+  produces_ast: true
+  required_contract: pure adapter

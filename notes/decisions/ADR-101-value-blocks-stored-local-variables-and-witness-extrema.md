@@ -14,6 +14,8 @@ affects:
 - Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]], [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], [[ADR-095-empty-extrema-as-ordinary-absence|D-095]], [[ADR-096-modules-callables-look-message-and-activation|D-096]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 - Retains the `given` default as a closed static expression in accordance with D-063 and D-066.
 
+- Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
+
 ## Context
 
 MUD already distinguished declarative expression blocks and executable effect blocks, but that division left no dedicated form for constructing a value through temporary local storage. It also did not allow stored local variables in `then`, forced every `for each` to be modelled as an effect, and left `sum`, `min` and `max` in an overly heterogeneous aggregation family.
@@ -24,16 +26,17 @@ The extension must preserve two deliberate language boundaries: a value computat
 
 ### Three body contracts
 
-`ExpressionBlock` contains zero or more pure calculated locals `:=` and exactly one final expression. It admits no stored variables, mutation, `for each` as a statement or inner `if`.
+`ExpressionBlock` contains zero or more pure preamble statements (calculated locals `:=` or externally pure `from` blocks) and exactly one final expression. It admits no stored variables, mutation, `for each` as a statement or inner `if`.
 
 `ValueBlock` constructs exactly one value through zero or more `ValueStatement` items and a final expression. Its statement catalogue is closed to:
 
 1. local calculated declaration;
 2. local stored declaration, mutable or immutable;
 3. local mutation;
-4. `LocalForEach`.
+4. `LocalForEach`;
+5. `from` blocks under the value computation's private-write boundary.
 
-`EffectBlock` executes observable consequences. It admits the calculated and stored local declarations above, in addition to ordinary effects. A `then` remains invalid if it contains neither an observable effect nor an executable call.
+`EffectBlock` executes observable consequences. It admits the calculated and stored local declarations above, in addition to ordinary effects and `from` blocks under the same capability and transaction contracts. A `then` remains invalid if it contains neither an observable effect nor an executable call.
 
 Blocks are not general primary expressions. They appear only in explicit owner slots. Arguments, indices, literal elements, ordinary effect RHSs and other `expression` positions do not acquire inline blocks.
 

@@ -17,6 +17,8 @@ affects:
 - Extends: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
 - Affected documents: stored and computed fields, families, defaults, actions, tests, effect blocks, AST and IR
 
+- Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
+
 ## Context
 
 MUD uses `=` for stored or default values and `:=` for computed values. It was unclear whether a value written with `=` could be an expression, and how to name intermediate calculations in a `then` without turning them into world state.
@@ -53,7 +55,7 @@ An executable block may declare a computed local with `x [derived-form] := value
 
 The computed form is pure and not assignable, retaining the applicable inference and coercion rules. Stored forms create execution-frame slots; only `mut` may be reassigned. An initializer is evaluated when execution reaches its declaration and may read the runtime projection visible there. None of these locals creates a field, public anchor or persistent state.
 
-`value-body` may be a short expression or `ValueBlock`. `ExpressionBlock`, shared behaviour preambles and `TestAfterBlock` retain only the pure computed form with an ordinary expression RHS; nesting cannot provide storage or mutability.
+`value-body` may be a short expression or `ValueBlock`. `ExpressionBlock`, shared behaviour preambles and `TestAfterBlock` admit the pure computed form with an ordinary expression RHS and externally pure `from` blocks; nesting cannot grant external mutation.
 
 A mutable local may satisfy a `for mut` participant. The call keeps a temporary binding to the slot and ordinary rollback reverts its changes. Other locals may satisfy only read-only participants or compatible `given` parameters.
 

@@ -17,6 +17,7 @@ depends-on:
   - grammar/mud.ebnf
 questions: []
 decisions:
+  - D-109
   - D-015
   - D-054
   - D-070
@@ -389,3 +390,7 @@ A compliant frontend must meet the following requirements:
 5. The distinction between written tokens and synthetic tokens.
 6. No resolution or typing decisions in the CST.
 7. Output compatible with the Surface AST normalisations.
+
+## Delegated foreign regions
+
+The CST retains `ForeignBlockSyntax`, its short/braced structure, language label, bridge prefixes, separators and contextual `FOREIGN_STATEMENT`/`FOREIGN_EXPRESSION` tokens. Each native token owns its exact original source text and span, including native whitespace, comments and nested delimiters. Adapter-internal syntax may be retained separately, but must not duplicate ownership in the MUD lossless tree. Recovery preserves malformed regions and diagnostics; unsupported adapters cannot fabricate successful native parsing. Virtual-document/source-map projections remain reconstructible from this source.

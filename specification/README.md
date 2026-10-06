@@ -225,6 +225,8 @@ Defines the complete syntax of:
 - Numeric formats within `Text` interpolations.
 - Quantifiers and iterations.
 
+Foreign `from Language` bodies delegate native parsing and preserve `mud name [: Type] <- nativeExpression` bridges, with braces determined by instruction count. All existing block capabilities remain in force; pure preambles and value/effect statement slots admit compatible foreign blocks.
+
 The complete executable grammar lives in `grammar/mud.ebnf`. Parsing produces a lossless CST; this chapter explains ambiguities, precedence, contextual validation and the boundary with desugaring, but does not repeat the entire EBNF.
 
 ## 08. Surface abstract syntax
@@ -240,6 +242,7 @@ Defines the semantically relevant forms after the CST and contextual syntactic v
 - Surface `ActionDecl` with `PublicAction` or `Subaction` class; candidate calls are resolved later without introducing an elementary/compound classification.
 - Dedicated `TestDecl` node and assertions with optional diagnostics.
 - Dedicated nodes for `look`, `message` and public properties.
+- Foreign regions, source origins and immutable exports, with ordered pure preamble statements.
 - Provenance through `SourceOrigin`.
 - Ambiguities retained until resolution.
 
@@ -256,6 +259,7 @@ Defines:
 - Exact and recursive `using` declarations.
 - Mandatory placement of all `using` declarations in the file header.
 - Ambiguity and static selection of homonymous imported callables by their supplied `for` participants, without changing anchors or lookup priorities.
+- Foreign exports as ordinary local symbols and native captures as source-mapped nominal references; adapter labels/private native locals receive no MUD declaration identity.
 - Formation and uniqueness of public anchors; functional-dictionary branches use local keys and receive no public anchor.
 - Categories `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` and `type::*`.
 - Identity under file moves.

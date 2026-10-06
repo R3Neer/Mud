@@ -1168,3 +1168,43 @@ productions:
     ast:
       disposition: normalized
       target: ValueBlock
+  pure-preamble-statement:
+    cst: PurePreambleStatementSyntax
+    ast:
+      disposition: normalized
+      target: pure_preamble_statement
+  foreign-block:
+    cst: ForeignBlockSyntax
+    ast:
+      disposition: normalized
+      target: ForeignBlock
+  foreign-language-name:
+    cst: ForeignLanguageNameSyntax
+    ast:
+      disposition: normalized
+      target: nominal_name
+  foreign-body:
+    cst: ForeignBodySyntax
+    ast:
+      disposition: normalized
+      target: foreign_block
+  foreign-item:
+    cst: ForeignItemSyntax
+    ast:
+      disposition: normalized
+      target: foreign_item
+  foreign-code-statement:
+    cst: ForeignCodeStatementSyntax
+    ast:
+      disposition: normalized
+      target: ForeignCodeStatement
+  foreign-value-export:
+    cst: ForeignValueExportSyntax
+    ast:
+      disposition: normalized
+      target: ForeignValueExport
+  foreign-code-expression:
+    cst: ForeignCodeExpressionSyntax
+    ast:
+      disposition: normalized
+      target: ForeignCode

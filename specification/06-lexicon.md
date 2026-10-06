@@ -9,8 +9,10 @@ status: proposed
 normative: true
 depends-on:
   - "[[05-source-text]]"
-questions: []
+questions:
+  - Q-069
 decisions:
+  - D-109
   - D-034
   - D-035
   - D-050
@@ -95,7 +97,7 @@ Text Char Bool Thing Any Nat Int Num Rum Money
 Name MudPath Anchor MudFile Prefix Rand
 ```
 
-The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>` and `<=>` are not words. `-->` is recognised by the longest match before `--` and `->`. `|=`, `&=`, `^=` and `--=` are also indivisible tokens. `!` on its own does not belong to the lexicon; `!=` remains an indivisible token of inequality and is not interpreted as the composition of negation and assignment.
+The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>`, `<-` and `<=>` are not words. `-->` is recognised by the longest match before `--` and `->`. `|=`, `&=`, `^=` and `--=` are also indivisible tokens. `!` on its own does not belong to the lexicon; `!=` remains an indivisible token of inequality and is not interpreted as the composition of negation and assignment.
 
 The scanner applies the longest match: `a--b` contains the operator `--`, whilst `a - -b` contains separate subtraction and negation. The parenthesised form `a - (-b)` is equivalent to the latter.
 
@@ -104,6 +106,7 @@ They are contextual:
 - `abstract` in front of `thing`.
 - `always` in front of `rule`.
 - `start` as part of `start with`.
+- `mud` at an export bridge in a `from` body.
 - `value` within the selectors and results of functional branches `-->`.
 - `type` in the reflexive positions and in those of type where this is permitted.
 - `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` and `format` after `~` in the permitted positions.
@@ -403,3 +406,10 @@ In a single position, the aim is to:
 The longest valid match within the same category is selected. Comments and horizontal spaces are excluded from the meaningful stream, but are retained as trivia in the complete stream; `NEWLINE` is retained as token in the meaningful stream to determine termination.
 
 Within a template, `\u{...}` is applied first, followed by the other escape sequences, then `{` and, finally, the longest possible fragment literal. Within an interpolation, the standard priority applies once again. The sequence `anchor{` does not receive any special lexical treatment.
+
+## Foreign lexical delegation
+
+> [!rule] MUD-LEX-050 — Contextual foreign regions
+> After `from` and its language label, the selected adapter classifies each native statement or export RHS as `FOREIGN_STATEMENT` or `FOREIGN_EXPRESSION`. These contextual tokens are lossless source spans, not products of ordinary MUD lexing. The label and bridge prefix `mud name [: Type] <-` use MUD syntax. `mud` is contextual only at a direct foreign-body item boundary; `<-` is a two-character token.
+
+The adapter determines native statement boundaries, nesting, strings, comments and continuation. Native braces, semicolons or the word `mud` inside a string/comment do not delimit MUD constructs. A newline inside a continued native expression is not an extra instruction. At the outer body level the adapter hands separators and the closing MUD brace back to the MUD parser; native nested separators remain part of the foreign region. Recognition must use language-aware parsing, not regular-expression splitting. Original offsets, indentation and line endings are preserved; virtual-document indentation adjustments require source maps. The adapter protocol remains uncertain in Q-069.

@@ -47,6 +47,8 @@ Abstract projection is defined by:
 
 The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 
+`from` adds native-language delegation: `FOREIGN_STATEMENT` and `FOREIGN_EXPRESSION` are contextual, lossless regions classified by the selected adapter. The MUD parser owns bridge names/types and body cardinality; it does not lex native source with ordinary MUD rules.
+
 ## Separation of responsibilities
 
 The EBNF distinguishes between recognition of elaboration. It does not attempt to check:

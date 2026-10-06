@@ -503,7 +503,7 @@ boolean-body
         ;
 
 expression-block
-    ::= { local-value-declaration , required-separation }
+    ::= { pure-preamble-statement , required-separation }
         , expression
         ;
 
@@ -526,6 +526,7 @@ value-statement
     ::= value-local-declaration
       | local-mutation
       | local-for-each
+      | foreign-block
       ;
 
 value-local-declaration
@@ -578,7 +579,7 @@ reactive-rule-declaration
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , { local-value-declaration , required-separation }
+        , { pure-preamble-statement , required-separation }
         , when-clause
         , required-separation
         , [ if-clause , required-separation ]
@@ -614,7 +615,7 @@ action-signature-body
         , [ given-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , { local-value-declaration , required-separation }
+        , { pure-preamble-statement , required-separation }
         , [ action-if-clause , required-separation ]
         , then-clause
         , [ required-separation , action-after-clause ]
@@ -640,7 +641,7 @@ message-declaration
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , { local-value-declaration , required-separation }
+        , { pure-preamble-statement , required-separation }
         , when-clause
         , [ required-separation , if-clause ]
         , [ required-separation , public-field-declaration
@@ -691,6 +692,36 @@ then-statement
       | value-local-declaration
       ;
 
+pure-preamble-statement
+    ::= local-value-declaration | foreign-block ;
+
+foreign-block
+    ::= "from" , foreign-language-name , foreign-body ;
+
+foreign-language-name
+    ::= nominal-name ;
+
+foreign-body
+    ::= foreign-item
+      | "{" , declaration-layout , foreign-item
+          , { required-separation , foreign-item }
+          , [ required-separation ] , "}"
+      ;
+
+foreign-item
+    ::= foreign-code-statement | foreign-value-export ;
+
+foreign-code-statement
+    ::= FOREIGN_STATEMENT ;
+
+foreign-value-export
+    ::= "mud" , variable-name , [ ":" , type-expression ]
+        , "<-" , foreign-code-expression
+        ;
+
+foreign-code-expression
+    ::= FOREIGN_EXPRESSION ;
+
 local-value-declaration
     ::= variable-name , [ derived-value-shape ] , ":=" , value-expression ;
 
@@ -731,7 +762,7 @@ test-after-clause
     ::= "after" , test-assertion
       | "after" , "{"
           , declaration-layout
-          , { local-value-declaration , required-separation }
+          , { pure-preamble-statement , required-separation }
           , test-assertion
           , { required-separation , test-assertion }
           , [ required-separation ]
@@ -746,7 +777,8 @@ test-assertion
 (* ------------------------------------------------------------------ *)
 
 effect
-    ::= assignment-effect
+    ::= foreign-block
+      | assignment-effect
       | add-effect
       | remove-effect
       | create-effect
