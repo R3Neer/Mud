@@ -954,3 +954,113 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Step is an admitted subaction invoked within its permitted parent effect owner. Its only result is ActionReply.
+- id: money-exact-scaling
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Money = amount * factor'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: amount is Money 10.00 and factor is Num 0.125. The result is Money 1.25.
+- id: money-half-even-down
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Money = cent / two'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: cent is Money 0.01; two is Num 2. Exact scaling rounds to Money 0.00,
+    ties-to-even.
+- id: money-half-even-up
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Money = cents / two'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: cents is Money 0.03; two is Num 2. Exact scaling rounds to Money 0.02,
+    ties-to-even.
+- id: money-exact-ratio
+  rules:
+  - MUD-TYPE-015
+  source: 'ratio: Num = one / three'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: one and three are Money 0.01 and 0.03. The member result is exact Num
+    1/3, not rounded Money.
+- id: money-scalar-widening
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Money = amount * count'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: amount is Money and count is Int. The factor widens to Num; Money does
+    not widen into the exact chain.
+- id: money-product-rejected
+  rules:
+  - MUD-TYPE-015
+  source: result := left * right
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both operands are Money. No Money-times-Money signature is admitted.
+- id: money-mixed-addition-rejected
+  rules:
+  - MUD-TYPE-015
+  source: result := amount + count
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: amount is Money; count is Int. Scaling signatures do not allow mixed addition.
+- id: money-rum-rejected
+  rules:
+  - MUD-TYPE-015
+  source: result := amount / factor
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: amount is Money and factor is Rum. No implicit approximate conversion
+    is admitted.
+- id: money-ratio-update-rejected
+  rules:
+  - MUD-TYPE-015
+  source: then amount /= other
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both places are Money. The ratio yields Num and cannot implicitly narrow
+    into the Money destination.
+- id: money-zero-divisor
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Money = amount / factor'
+  source_scope: fragment-with-stated-contract
+  expected: runtime-check
+  contract: amount is Money; factor is a runtime Num that can be zero. Zero produces
+    Error occurrences, not an amount or empty.
+- id: unbounded-integer-addition
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Int = large + one'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: large is Int 9223372036854775807 and one is Int 1. The result is 9223372036854775808
+    without native wraparound.
+- id: empty-money-division
+  rules:
+  - MUD-TYPE-015
+  source: 'result: Money [0] = amounts / zero'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: amounts has Money [0] and zero is Num 0. No pair is evaluated; the empty
+    result does not divide by zero.
+- id: money-magnitude-coordinate-scaling
+  rules:
+  - MUD-TYPE-015
+  source: total := pricePerMass * mass
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: pricePerMass has the nominal dimensions Cost/Weight with Money coordinates;
+    mass has Weight dimensions with Num coordinates. Product dimensions reduce to
+    Cost and the admitted Money/Num scaling signature yields Money coordinates.
+- id: money-magnitude-dimensions-not-erased
+  rules:
+  - MUD-TYPE-015
+  source: total := cost + duration
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both magnitudes use Money coordinates but have distinct incompatible nominal
+    dimensions. A coordinate signature does not permit adding them.

@@ -38,6 +38,7 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-019-n-numbers.md",
     "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
     "notes/questions/Q-022-v-action-return-values.md",
     "notes/questions/Q-005-i-binding-identity-and-lifecycle.md",
@@ -90,6 +91,7 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-019-n-numbers.md",
     "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
     "notes/questions/Q-022-v-action-return-values.md",
     "notes/questions/Q-005-i-binding-identity-and-lifecycle.md",

@@ -18,6 +18,8 @@ affects:
 - Related questions: Q-001, Q-019
 - Documents affected: future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`
 
+- Amended by: [[ADR-129-unbounded-exact-numbers-and-money-operators|D-129]].
+
 ## Decision
 
 ### Exact extensions
@@ -46,7 +48,7 @@ D-060 distinguishes the effects from the pure operations `+=` and `-=`. These pr
 
 `Money` uses exact decimal arithmetic with two decimal places. The context provides the type of its clauses.
 
-When an operation or conversion needs to be scaled down, the policy overall number of draws set by D-034. The rules for overflow, division and combining with magnitudes remain in Q-019.
+When an operation or conversion needs to be scaled down, the policy overall number of draws set by D-034. Nat/Int/Money have no language-level integer bound. Money scaling and ratio signatures follow chapter 19; magnitude dimensions remain independently checked.
 
 ### Number separators
 

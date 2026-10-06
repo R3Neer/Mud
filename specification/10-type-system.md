@@ -10,7 +10,6 @@ depends-on:
   - "[[03-notation]]"
   - "[[09-names-and-anchors]]"
 questions:
-  - Q-019
   - Q-060
 decisions:
   - D-014
@@ -41,6 +40,7 @@ decisions:
   - D-085
   - D-088
   - D-127
+  - D-129
 ---
 
 # 10. Type system
@@ -49,7 +49,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[14-fields-and-mutability]] defines place authority and effect obligations; [[19-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-The complete mixed Money/magnitude inference matrix remains Q-019. A combination lacking a defined operator signature cannot be accepted by inventing a promotion. The reflective TypeKind member catalogue remains Q-060; the descriptor typing rules here do not introduce members of that catalogue.
+Numeric signatures and dimensional admission follow [[19-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. The reflective TypeKind member catalogue remains Q-060; the descriptor typing rules here do not introduce members of that catalogue.
 
 ## 1. Environments and judgements
 
@@ -141,6 +141,8 @@ A recursive domain needs an explicit finite rank bound and finite branching evid
 > Mandatory static inclusion, writable invariance, termination and finite enumeration require evidence. Runtime admission checks may validate a particular value only where that context permits them; they cannot justify universal callable substitution or an unproven enumeration.
 
 ## 6. Subtyping and guarantee inclusion
+
+Nat and Int have arbitrary-precision nonnegative/signed integer values. Money has arbitrary-precision signed integer hundredths; Num retains exact rational values. None has a language-level native-integer bound. Implementations must promote before observable overflow; resource exhaustion uses the technical Error channel rather than wrapping or restricting the mathematical domain.
 
 For basic numeric representations the only implicit widening chain is Nat $\preceq$ Int $\preceq$ Num. Rum and Money are not on that chain. Every MUD value contract can be forgotten to Any, but Any supplies no member operations, enumeration, ordering or writable authority.
 

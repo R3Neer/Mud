@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 34 active questions: 18 open and 16 partially decided.
+There are 33 active questions: 18 open and 15 partially decided.
 
 Priorities:
 
@@ -37,7 +37,6 @@ Priorities:
 | [[Q-016-c-canonicalisation-of-identities-activated-during-execution|Q-016 — Canonicalisation of identities activated during execution]] | Open |
 | [[Q-017-d-circular-dynamic-domains|Q-017 — Circular dynamic domains]] | Open |
 | [[Q-018-i-discontinuous-intervals|Q-018 — Discontinuous intervals]] | Partially decided |
-| [[Q-019-n-numbers|Q-019 — Numbers]] | Partially decided |
 | [[Q-020-o-oscillations-and-wave-limit|Q-020 — Oscillations and wave limit]] | Partially decided |
 | [[Q-023-c-dynamic-composition|Q-023 — Dynamic composition]] | Open |
 | [[Q-050-b-pruning-in-remaining-boolean-operators|Q-050 — Pruning in remaining Boolean operators]] | Partially decided |

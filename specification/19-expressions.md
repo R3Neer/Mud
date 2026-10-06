@@ -10,7 +10,7 @@ depends-on:
   - "[[10-type-system]]"
   - "[[14-fields-and-mutability]]"
 questions:
-  - Q-019
+  - Q-007
   - Q-023
   - Q-029
   - Q-050
@@ -50,6 +50,7 @@ decisions:
   - D-085
   - D-126
   - D-127
+  - D-129
 ---
 
 # 19. Expression and block typing
@@ -58,7 +59,7 @@ decisions:
 
 The environments and synthesis/checking judgements are defined in [[10-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[14-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
-The mixed Money/magnitude operator matrix remains Q-019. Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Boolean pruning beyond the specified core remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
+Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Boolean pruning beyond the specified core remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
 
 Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
 
@@ -126,7 +127,24 @@ An outer request additionally requires action root capability. A subaction or a 
 
 ## 4. Numeric, dimensional and Boolean operators
 
-Let $n_A,n_B$ be member numeric representations. Exact addition/subtraction/multiplication use the least common member of Nat, Int, Num. Exact division produces Num; implicit truncation is not introduced. Rum combines with Rum, and implicit exact/Rum or exact/Money mixing is invalid. Defined Money operations retain their specified scale/rounding contract; combinations not fixed by that contract remain outside the inference matrix rather than receiving a guessed result.
+Let $n_A,n_B$ be member numeric representations. Exact addition/subtraction/multiplication use the least common member of Nat, Int, Num. Exact division produces Num; implicit truncation is not introduced. Rum combines only with Rum in its supported signatures, without implicit exact/Rum or Money/Rum mixing.
+
+> [!rule] MUD-TYPE-015 — Numeric representation signatures
+> Nat/Int/Num use their exact widening chain. Money is outside that chain. Its only cross-representation arithmetic signatures are exact scaling by Num, admitting Nat/Int factors through ordinary widening. Select the table's result representation before applying nominal dimensions and destination contracts; an unsupported signature is statically invalid.
+
+| Member operands | Operators and result |
+| --- | --- |
+| Money, Money | + and - yield Money; / yields Num |
+| Money, Num | * and / yield Money |
+| Num, Money | * yields Money |
+| Money, Nat/Int or Nat/Int, Money | Only the corresponding Num scaling signatures via exact widening |
+| Money, Money | * and % are unsupported |
+| Money and a non-Money scalar | + and - are unsupported; a scalar / Money is unsupported |
+| Money, Rum or Rum, Money | All mixed arithmetic is unsupported |
+
+Money-producing scaling computes the exact rational result, rounds to hundredths with round-to-nearest, ties-to-even, then checks the result domain. Money / Money yields an exact rational without monetary rounding. Sequential operators normalise at their textual sites; concurrent numeric stages use [[25-effects]] and its canonical stage normalisation. An update additionally needs a result admissible at its stored destination: Money /= Money cannot implicitly narrow its Num result back to Money.
+
+A supported operation with zero divisor, invalid domain/conversion or prohibited nonfinite Rum result supplies Error occurrences rather than a normal value, empty or sentinel. Resource exhaustion is a technical Error, not numerical overflow/wraparound. A statically invalid closed computation is diagnosed statically. Detailed Error subtype names remain Q-007; binary64 portability remains Q-058. No new arithmetic saturation is inferred.
 
 Pure Nat subtraction saturates before a declared domain check; signed additive effect deltas instead consolidate before one Nat normalisation. Explicit to conversions round and then validate without corrective saturation. Numeric % requires its specified compatible member operation; an absent overload is a static error, not an implicit cast.
 

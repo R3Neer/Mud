@@ -31,6 +31,8 @@ MUD needs to distinguish between:
 - What unit It is written.
 - What dimension results from combining quantities?
 
+- Amended by: [[ADR-129-unbounded-exact-numbers-and-money-operators|D-129]].
+
 ## Decision
 
 ### Basic types
@@ -207,8 +209,8 @@ The following rules are initially applied:
 | `Nat * Nat` | `Nat` |
 | `Nat * Int` | `Int` |
 | `Int * Int` | `Int` |
-| Any transaction involving `Num` | `Num` |
-| Any division | `Num` |
+| An operation within Nat/Int/Num involving `Num` | `Num` |
+| Division within Nat/Int/Num | `Num` |
 
 An explicit representation can be declared as follows:
 
@@ -219,7 +221,7 @@ magnitude DiscreteArea: Nat :=
 
 The table describes exact operations. Operations in which all operands are `Rum` produce `Rum`; `Rum` is not implicitly conflated with exact representations. The inference of derived quantities that combine components `Rum` will be completed in Q-058.
 
-Explicit annotation does not introduce rounding. The programme must satisfy the corresponding static representability rules. The rules for `Money` and the complete matrix of operators remains open in Q-019.
+Explicit annotation does not introduce rounding. The programme must satisfy the corresponding static representability rules. Money representation signatures follow chapter 19: exact scaling yields Money, Money/Money yields Num, and unsupported combinations are rejected. Nominal dimensions remain independently checked.
 
 ## Consequences
 

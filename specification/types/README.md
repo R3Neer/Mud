@@ -8,6 +8,7 @@ decisions:
   - D-123
   - D-124
   - D-127
+  - D-129
 ---
 
 # Static type contract corpus
