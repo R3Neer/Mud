@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 42 active questions: 23 open and 19 partially decided.
+There are 41 active questions: 23 open and 18 partially decided.
 
 Priorities:
 
@@ -23,7 +23,6 @@ Priorities:
 | Question | Status |
 | --- | --- |
 | [[Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002 — Exact model of sequential and simultaneous effects]] | Partially decided |
-| [[Q-003-p-validation-points|Q-003 — Validation points]] | Partially decided |
 | [[Q-005-i-binding-identity-and-lifecycle|Q-005 — Binding identity and lifecycle]] | Partially decided |
 | [[Q-006-c-conflicts|Q-006 — Conflicts]] | Partially decided |
 | [[Q-007-f-technical-failures|Q-007 — Technical failures]] | Partially decided |

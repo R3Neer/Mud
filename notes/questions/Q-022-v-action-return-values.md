@@ -5,7 +5,8 @@ priority: P1
 opened: 2026-07-29
 resolved: false
 closed:
-decisions: []
+decisions:
+  - D-118
 affects: []
 superseded-by: []
 ---
@@ -14,4 +15,4 @@ superseded-by: []
 
 ## Content
 
-Besides an operational result, may an action produce domain values? If so, how do they interact with atomicity and composition?
+ActionReply is an ordinary MUD value. Besides this reply, may an action produce additional domain values? If so, how do they interact with atomicity and composition?

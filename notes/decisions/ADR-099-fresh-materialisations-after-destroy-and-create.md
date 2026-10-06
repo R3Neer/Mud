@@ -18,6 +18,8 @@ affects:
 
 # ADR-099 — Fresh materialisations after `destroy` and `create`
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Modifies: [[ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]].
 - Keeps open: [[notes/questions/Q-005-i-binding-identity-and-lifecycle|Q-005]], Q-046 and Q-032 on aspects not fixed here. Q-049 remains closed; this decision retains its resolution on membership and only clarifies the policy for the materialisation itself.
 
@@ -119,7 +121,7 @@ A `create d` that materialises a `thing` again must validate jointly:
 - latent memberships that D-077 may restore;
 - external declarations and properties that become effective again when the dependency reappears.
 
-If the resulting state is not well formed, the transition produces `failed` and rollback. No partial materialisation is confirmed.
+If the resulting state is not well formed, the transition produces `Errors` and rollback. No partial materialisation is confirmed.
 
 ### Memory of explicitly destroyed rules
 
@@ -165,7 +167,7 @@ Rejected. A rule explicitly removed from the world must not compare its new acti
 3. An external property suspended by destroying its type retains exactly its load and is projected again when the type is recreated.
 4. Suspension caused by a dependency does not erase the suspended declaration's own load.
 5. Immutable and `mut` relations retain the restoration distinction fixed by D-077.
-6. A new materialisation that would invalidate cardinality or domain produces `failed` and complete rollback.
+6. A new materialisation that would invalidate cardinality or domain produces `Errors` and complete rollback.
 7. A destroyed and recreated reactive rule establishes a new baseline without triggering merely because of reactivation.
 8. Q-005 remains open for binding disappearances and suspensions not caused by explicit `destroy`.
 9. Q-032 continues to govern the concrete reproducibility of random initialisers between materialisations.

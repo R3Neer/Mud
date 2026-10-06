@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-052 — Pipelines, renderers and conformance
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-107-executable-language-and-rust-reference-implementation|D-107]].
 
 - Expanded by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
@@ -48,7 +50,7 @@ A materialiser can use functions, parameters, tuples, maps, transactions, specul
 - change identity, nominality or specialisation;
 - to confuse participants with `given`;
 - change atomicity, order causal or results;
-- convert `failed` false;
+- convert `Errors` false;
 - use a floating decimal point for the semantics observable of `Num`;
 - bring forward the publication of `message`.
 

@@ -16,6 +16,7 @@ decisions:
   - D-114
   - D-115
   - D-116
+  - D-118
 ---
 
 # MUD formal specification
@@ -34,7 +35,7 @@ This directory contains the normative MUD specification. Its objective is that t
 3. Assign the same types.
 4. Reject the same programmes statically.
 5. Produce the same observable semantic transitions.
-6. Classify `accepted`, `rejected` and `failed` in the same way.
+6. Classify Success, Refusal and nonempty Errors in ActionReply in the same way.
 7. Agree on admissibility and reachability analyses when they are decidable for the programme.
 
 The specification presupposes no compiler architecture, implementation language, database, graphics engine or framework.
@@ -222,7 +223,7 @@ Defines the complete syntax of:
 - Calls.
 - Canonical definitions of `thing` and rules, module-unified `start with` and activation through `create Name`.
 - Isolated tests with local `start with`, `then`, `after` and `otherwise`.
-- Optional `otherwise` diagnostic after an `always` rule body; omitting it produces a warning and a default reason.
+- Error-only otherwise handlers on expression, value and effect blocks, with joint on bindings and then/raise branches.
 - Numeric formats within `Text` interpolations.
 - Quantifiers and iterations.
 
@@ -241,7 +242,7 @@ Defines the semantically relevant forms after the CST and contextual syntactic v
 - Normalisation of cardinalities, intervals, blocks and contextual literals.
 - Structural distinction among the three rule classes.
 - Surface `ActionDecl` with `PublicAction` or `Subaction` class; candidate calls are resolved later without introducing an elementary/compound classification.
-- Dedicated `TestDecl` node and assertions with optional diagnostics.
+- Dedicated TestDecl and assertions with protected expression blocks.
 - Dedicated nodes for `look`, `message` and public properties.
 - Foreign regions, source origins and immutable exports, with ordered pure preamble statements.
 - Provenance through `SourceOrigin`.
@@ -481,7 +482,7 @@ Planned file: `27-action-requests.md`
 Planned scope:
 
 - External request, binding and initial validation of a root `action`.
-- `accepted`, `rejected` and `failed` results, diagnostics, visible state and rollback.
+- First-class ActionReply = Success | Refusal | Errors, mandatory origins and final-condition BoolCheck traces.
 - Relationship among signature validation, guards, stabilisation, final constraints and external publication.
 
 ## 28. Root semantics
@@ -811,7 +812,7 @@ thing
 → look
 → state
 → message
-→ accepted/rejected/failed
+→ Success/Refusal/Errors
 ```
 
 This allows the complete language to be formalised progressively without starting implementation or postponing every check until the end.

@@ -18,6 +18,8 @@ affects:
 ---
 # ADR-042 — Shares, root and results
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]], [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
@@ -72,31 +74,19 @@ Each statement reads the private delta visible at its textual position. An inter
 
 The `after` blocks of all invoked actions and subactions are checked against the final attempted stable state when the complete resolution finishes. Private and consolidated wave changes remain tentative until stabilisation, all invariants and these postconditions succeed; the complete transition is then confirmed atomically. Rejection/failure discards the entire journal and external delivery, including earlier waves. Call analysis must prevent executable cycles; Q-023 leaves the proof of acyclicity and impact open when selecting a `callable` descriptor is a dynamic property rather than merely a callability check.
 
-### `after` and `old`
+### Conditions and results
 
-`if` and `after` can be given an `otherwise` reason of type `Text` when false. Omitting it is lawful and implies a suggestion, not a warning, because rejection is a normal response; in that case, the result contains a reason based on the condition and its provenance. The diagnostic is pure and lazy.
+Every invocation yields ActionReply = Success | Refusal | Errors. A false if is IfRefusal, a false after is AfterRefusal and a false always is AlwaysRefusal. Computing failures produce Error occurrences; stored-domain violations and effect conflicts are errors. Each refusal/error carries reason and mandatory Declaration origin; ConditionRefusal retains only the actually evaluated final Boolean expression tree. No false condition is captured by otherwise.
 
-`after` is evaluated after all waves against the attempted stable state. If it is false, the result is `rejected`; an error during its evaluation produces `failed`. An error while evaluating `if` or `after` is not captured by `otherwise`, which applies only when the condition has been successfully evaluated as false.
+Otherwise handlers belong to expression/value/effect blocks and handle Error values. They use optional on and if, then or raise exclusively. A plain Text diagnostic is invalid. A Refusal never enters an Error handler.
 
-In the context of actions and tests, `old e` reads `e` in the stable state immediately before the action completes and is permitted only within `after`. D-058 adds a different context for `old` within reactive rules, where it compares wave snapshots.
+A successful outer request commits atomically. A refused or unhandled erroneous request discards its complete tentative world and external delivery. Nested invocation and speculative execution return the same ordinary reply type without opening independent commits. Extra domain return values remain Q-022.
 
-### Results
-
-| Result | Reason |
-| --- | --- |
-| `accepted` | Request valid, root compatible, stabilisation, invariants and `after` satisfied |
-| `rejected` | `given` outside domain, `if` false or `after` false |
-| `failed` | Conflict, cycle or oscillation, invalid operation, domain or invalid references, unfulfilled `always`, or propagated semantic failure |
-
-The request returns an object to the external caller whose `state` field contains one of those three results. When it contains `rejected` or `failed`, the object also includes the compulsory `reason: Text` field with a human explanation. Any regulatory case other than `accepted` must provide that reason in accordance with D-061; it may be accompanied by codes and structured reasons.
-
-Every result other than `accepted` restores exactly the previous stable state and publishes no messages or other external effects.
-
-Normalising a linear interval with inverted endpoints to `empty` is valid under D-059 and does not itself produce `failed`. A `given` excluded by its domain, or an `if` or `after` that is false because of that exclusion, produces `rejected`; a domain that leaves a stored value invalid, or an unfulfilled `always` rule, produces `failed` in the tentative state.
+In action/test after, old retains its established entry-view contract; reactive old still compares wave snapshots. Computing an invalid operation is distinct from successfully obtaining empty or false.
 
 ## Consequences
 
-- `rejected` is a normal semantic result; `failed` indicates that a valid transition could not be completed.
+- Refusal models an unmet condition; Errors model unsuccessful computation.
 - Atomicity includes root, waves, `always`, `after` and upcoming events.
 - Q-004 is now closed: one `after` 'false' reverses the entire resolution.
 - The values of domain returned by a action, if they were to be admitted, they remain open in Q-022.
@@ -111,8 +101,8 @@ Normalising a linear interval with inverted endpoints to `empty` is valid under 
 6. Linking a receiver-a changeable place and the rejection of a receiver let it just be a value.
 7. Normalised inverse interval to `empty` without failure intrinsic.
 8. Distinguishing rejection caused by a false condition involving `empty` from failure caused by state outside its domain.
-9. Mandatory `reason: Text` for `rejected` and `failed`, and its absence from `accepted`.
-10. Explicit and generated `otherwise` diagnostics for `if` and `after`, including lazy evaluation.
+9. Mandatory reason/origin on Refusal/Error; no extra Success components.
+10. Otherwise captures Error occurrences rather than false conditions.
 
 ## Amendment current by D-096
 

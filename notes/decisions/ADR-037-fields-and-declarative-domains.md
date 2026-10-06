@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-037 — Fields and declarative domains
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Amended by: [[ADR-103-inner-capability-in-derived-values|D-103]].
@@ -99,16 +101,16 @@ The semantics from the type and explicit conversions are applied before checking
 
 ### Results by context
 
-- `given` outside domain when applying for a action: `rejected` before assessing `if`, root or waves.
+- `given` outside domain when applying for a action: `Refusal` before assessing `if`, root or waves.
 - `given` outside domain when looking up a Boolean rule: result `false`; if it is constant, it can be diagnosed statically.
-- Field outside domain in a state candidate: the resolution it turns out `failed` and reverses.
+- Field outside domain in a state candidate: the resolution it turns out `Errors` and reverses.
 - Constant initialiser outside domain: error static.
 
 Calculated fields must satisfy both the domain of his type static, just like any other domain `in` declared in its derived form. That domain it may be explicit or be derived in accordance with D-075.
 
 ### Checkpoints
 
-Domains are preserved during initialisation, materialisation, specialisation, deeds, title deeds, waves and publishable statuses. Q-003 must set out these points in a single semantics operational and determine which internal tentative states may exist without being observable.
+Domains are preserved during initialisation, materialisation, specialisation, deeds, title deeds, waves and publishable statuses. Private intermediate cardinality may vary; complete then and consolidated root/wave boundaries validate cardinality. Always checks each consolidated root/wave, and domains are preserved at initialization/write.
 
 The intermediate state exception granted by D-026 refers to cardinality inside the delta deprived of a `then`; it does not remove the ultimate obligation to domain.
 

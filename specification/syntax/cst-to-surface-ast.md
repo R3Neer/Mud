@@ -36,6 +36,7 @@ decisions:
   - D-112
   - D-113
   - D-114
+  - D-118
 ---
 
 # Conversion from CST to Surface AST
@@ -377,7 +378,9 @@ Pure preamble statements preceding behavioural clauses become `leading_preamble`
 
 ### `always` rule
 
-`InvariantBodySyntax`, enclosed in braces, produces an `ExpressionBlock`. The outer `DiagnosticTailSyntax` produces the `AlwaysRuleDecl` diagnostic; if absent, the AST retains `diagnostic = absent`. The warning's default text is not inserted here.
+InvariantBodySyntax produces ExpressionBlock and the following otherwise clauses populate that block's handlers. AlwaysRuleDecl receives no separate diagnostic.
+
+OtherwiseClauseSyntax produces RecoveryHandler(bindings?, filter?, branch), preserving textual order. Recovery branches normalize by the protected block category to ExpressionRecovery, ValueRecovery or EffectRecovery; raise uses RecoverRaise(ValueBlock). Catch-all short otherwise raise is normalized with absent bindings/filter. Multiple on bindings remain syntax until Error-subtype and conjunctive occurrence checking. A missing branch or simultaneous then/raise prevents a valid AST.
 
 ### Action
 
@@ -393,7 +396,7 @@ The action is not classified as either elementary or compound.
 
 A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its RHS remains an ordinary expression: these positions cannot acquire a `ValueBlock` through nesting.
 
-The short form `if ready` produces `ExpressionBlock([], ready)`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. `otherwise` lies outside the AST block, although resolution extends those locals' environment to it.
+The short form `if ready` produces `ExpressionBlock([], ready)`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. Following otherwise clauses are normalized into that block's handlers; handler scope is distinct from protected-body locals.
 
 A short `value-body` normalises to `ValueBlock([], value)`. The expanded form produces `ValueBlock(statements, result)`. Calculated statements produce `LocalCalculatedDecl`, stored ones `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove`, and local iteration `LocalForEach`. Later validation and elaboration verify that every `LocalMutation` stays within storage created by the `ValueBlock`.
 

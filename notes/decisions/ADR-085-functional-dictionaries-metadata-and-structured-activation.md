@@ -13,6 +13,8 @@ affects:
 
 # ADR-085 — Functional dictionaries, metadata and structured activation
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
 
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
@@ -92,7 +94,7 @@ Exact-key application is partial:
 
 - a present key produces its associated value;
 - a missing key produces `empty` with the declared output form;
-- absence does not produce `failed` by itself;
+- absence does not produce `Errors` by itself;
 - failure appears only when the empty result does not belong to the type, domain or cardinality required by the context.
 
 Exact dictionaries:
@@ -103,7 +105,7 @@ Exact dictionaries:
 - admit ordinary `unique`, which requires global whole-value uniqueness of associated values;
 - admit `unique by path`, which requires global uniqueness of associated values by the stable projected value key.
 
-For both modes, the uniqueness criterion is applied to associated values, never to the intrinsically unique dictionary keys. An insertion or replacement that would violate the effective value-uniqueness criterion is a complete no-op. It modifies no association and produces no `failed`.
+For both modes, the uniqueness criterion is applied to associated values, never to the intrinsically unique dictionary keys. An insertion or replacement that would violate the effective value-uniqueness criterion is a complete no-op. It modifies no association and produces no `Errors`.
 
 ### Functional dictionaries
 
@@ -203,7 +205,7 @@ Products may act as exact keys or functional inputs.
 
 ### `empty`, partial queries and cardinality
 
-`empty` represents absence or an empty collection and is not a failure by itself. Every partial operation must produce `empty` when no result exists. Subsequent checking against the expected type, domain and cardinality decides whether that absence is valid or causes `failed`.
+`empty` represents absence or an empty collection and is not a failure by itself. Every partial operation must produce `empty` when no result exists. Subsequent checking against the expected type, domain and cardinality decides whether that absence is valid or causes `Errors`.
 
 A missing exact query retains output form `B`. A functional `FirstMatch` query without a match produces `empty`; an `AllMatches` query without matches produces a valid empty collection.
 

@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-045 — Causal resolution, connections and queue
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
 - Related questions: Q-003, Q-005, Q-020, Q-052
 - Documents concerned: semantics dynamics, reactive rules, messages
@@ -57,7 +59,7 @@ For memory-based association, temporal activators compare values in the initial 
 
 A connection that was not present in the first snapshot, as evidenced by `start with`, joins the group in the first subsequent wave in which it is active. That wave initialises its temporary memory without firing it. Its first possible firing occurs in the following wave. Connections present from the initial snapshot are the express exception: each Boolean branch begins with virtual previous `false` and may fire during initial stabilisation; `changes` and `old` compare that snapshot with itself.
 
-One resolution ends when a wave has no effect and leaves no new consequences or pending causal events for the next one. A detected cycle or oscillation produces `failed`; a resource limit is a distinct technical safeguard, not an alternative definition of stabilisation.
+One resolution ends when a wave has no effect and leaves no new consequences or pending causal events for the next one. A detected cycle or oscillation produces `Errors`; a resource limit is a distinct technical safeguard, not an alternative definition of stabilisation.
 
 Only one causal resolution is active for a world at a time. External applications received during this period are placed in a queue and bind participants, evaluate `given`, domains and `if` when they are due to start, not when they are enqueued.
 

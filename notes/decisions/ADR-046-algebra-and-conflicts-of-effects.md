@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-046 — Algebra and conflicts of effects
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
 
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
@@ -74,7 +76,7 @@ For structural purposes, the following apply D-023, D-026 and D-054:
 - repeated additions of one whole value to a `unique` collection are idempotently consolidated into one presence; in `unique by path`, additions sharing a projected key retain the earliest stable-provenance occurrence and do not conflict;
 - each `then` and all consolidation where possible, they should preserve cardinalities statically.
 
-A conflict It is certainly true that the compiler proves this to be inevitable error static. If it demonstrates that it is possible but not inevitable, it issues a warning. If it demonstrates that the destinations cannot match or that the effects consolidate in a compatible manner, it does not issue diagnostic from conflict. If a conflict Whether it is signalled or cannot be determined statically, it occurs during a resolution, the runtime produces `failed` with a full rollback.
+A conflict It is certainly true that the compiler proves this to be inevitable error static. If it demonstrates that it is possible but not inevitable, it issues a warning. If it demonstrates that the destinations cannot match or that the effects consolidate in a compatible manner, it does not issue diagnostic from conflict. If a conflict Whether it is signalled or cannot be determined statically, it occurs during a resolution, the runtime produces `Errors` with a full rollback.
 
 Additive deltas aimed at a `Nat` are signed integers, although the value of destiny can never be negative. For a value initial $n$ and compatible deltas $\delta_i$, D-060 fixed:
 

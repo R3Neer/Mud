@@ -10,16 +10,21 @@ decisions:
   - D-043
   - D-048
   - D-061
+  - D-118
 affects: []
 superseded-by: []
 ---
 
 # Q-007 — Technical failures
 
-## Content
+## Resolution
 
-What structure does a technical error have, and how is it distinguished from semantic `failed`, a resource limit and a runtime defect?
+ActionReply, mandatory origins/reasons, Refusal subtypes, final-expression BoolCheck, Error inheritance/cause and multiplicity-preserving Error channels are specified. Always falsity is refusal; otherwise selects errors only.
 
-Status: **partially decided** by [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-043-speculative-query-with-allowed|D-043]], [[notes/decisions/ADR-048-reproducible-randomness-and-errors|D-048]] and [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]].
+## Pending
 
-A semantic failure rolls back the action and propagates through `allowed`; it is neither rejection nor falsity. Every external result other than `accepted` requires `reason: Text`, so both rejections and normative failures provide a human-readable diagnostic. A resource limit or internal defect must be distinguished from these. The canonical structure and ordering when several causes are added, the additional code and trace contract for CLI, plugin and materialisations, and the error table for ordinary expressions remain to be fixed.
+Finish the exhaustive expression/adapter error catalogue and the external codes/trace contract; distinguish implementation resource exhaustion, cancellation and runtime defects from modeled recoverable Error. These are not closed by choosing the value representation.
+
+## Closure criterion
+
+- C1: The pending conditions are defined with objective verification evidence.

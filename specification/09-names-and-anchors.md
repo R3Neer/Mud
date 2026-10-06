@@ -37,6 +37,7 @@ decisions:
   - D-114
   - D-115
   - D-116
+  - D-118
 ---
 # 09. Names, paths and anchors
 
@@ -168,6 +169,10 @@ In associations `->` and branches `-->`, the left and right blocks create siblin
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
 No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
+
+## Error handler bindings
+
+`otherwise on` creates clause-local bindings over pending Error occurrences, not world-domain participants. Names are visible only in that handler's filter and branch. They have the owning declaration's scope provenance and no new public anchor. Protected-body locals are not imported into the recovery scope; valid enclosing locals remain visible. Nominal HIR uses LocalSymbol kind `error-binding`, ordinary clause scopes and RefersTo for resolved Error alias names. Error-subtype constraints and occurrence matching are checked after nominal resolution.
 
 ## Contract-visible specialization
 

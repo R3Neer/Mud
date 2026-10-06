@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-039 — Collections and dictionaries
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
 
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
@@ -171,7 +173,7 @@ The form:
 Key -> Value [cardinality modifiers]
 ```
 
-declares a dictionary with intrinsically unique keys. A written uniqueness modifier applies to the **associated values** in accordance with D-085. `unique` requires that the same whole value is not associated with more than one key; `unique by path` requires that no two associated values have the same projected semantic key, with `path` interpreted from the value rather than the dictionary key. An insertion or replacement that would violate the effective value-uniqueness criterion is a complete no-op and does not produce `failed`.
+declares a dictionary with intrinsically unique keys. A written uniqueness modifier applies to the **associated values** in accordance with D-085. `unique` requires that the same whole value is not associated with more than one key; `unique by path` requires that no two associated values have the same projected semantic key, with `path` interpreted from the value rather than the dictionary key. An insertion or replacement that would violate the effective value-uniqueness criterion is a complete no-op and does not produce `Errors`.
 
 ```mud
 stock =
@@ -183,11 +185,11 @@ Concurrent dictionary contributions first compose by association/component desti
 
 Assigning a key replaces its value; entering a missing key triggers the input if type, domain, capacity and cardinality if permitted; removing a missing key is a no-op.
 
-Reading a missing key results in `empty` in accordance with the declared result form. Absence does not itself produce `failed`; a later context may fail only when its type, domain or cardinality does not accept zero elements. `null` is not used, nor is absence silently replaced by a type default.
+Reading a missing key results in `empty` in accordance with the declared result form. Absence does not itself produce `Errors`; a later context may fail only when its type, domain or cardinality does not accept zero elements. `null` is not used, nor is absence silently replaced by a type default.
 
 A dictionary lookup may be followed by access to members of the value obtained when its type allows this. Another chained indexing method requires that the result the intermediate dictionary is itself a compatible dictionary.
 
-When exact indexing is an intermediate step in a path allocable that passes through a alias unchangeable, the elaboration can reconstruct the alias and extend the substitution to the dictionary and the externally mutable location that contains it. If the intermediate key is absent, the query produces `empty` and the partial write-back is a no-op: it does not commit the key, does not apply defaults and does not produce `failed` because of that absence. The direct allocation `dictionary[key] = wholeValue` It remains distinct and may provide a missing clue.
+When exact indexing is an intermediate step in a path allocable that passes through a alias unchangeable, the elaboration can reconstruct the alias and extend the substitution to the dictionary and the externally mutable location that contains it. If the intermediate key is absent, the query produces `empty` and the partial write-back is a no-op: it does not commit the key, does not apply defaults and does not produce `Errors` because of that absence. The direct allocation `dictionary[key] = wholeValue` It remains distinct and may provide a missing clue.
 
 ### Order and iteration
 

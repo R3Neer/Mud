@@ -11,6 +11,8 @@ affects:
 ---
 # ADR-095 — Empty extrema as ordinary absence
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]].
 - Extends: [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
@@ -28,7 +30,7 @@ min : T [0..1]
 max : T [0..1]
 ```
 
-Over a source with at least one accepted candidate they produce exactly one value of type `T`: `min`, the first accepted witness; `max`, the last, always according to the source's semantic order. The `ExpressionBlock` only filters and does not compute an ordering criterion. The extrema operation does not itself introduce `failed`.
+Over a source with at least one accepted candidate they produce exactly one value of type `T`: `min`, the first accepted witness; `max`, the last, always according to the source's semantic order. The `ExpressionBlock` only filters and does not compute an ordering criterion. The extrema operation does not itself introduce `Errors`.
 
 If the receiving context requires cardinality `[1]`, an `empty` result undergoes the ordinary type, domain and cardinality checks and may produce the same normal failure as any other incompatible absence. There is no special category of “empty-extrema aggregation error”.
 

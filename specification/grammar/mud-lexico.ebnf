@@ -155,7 +155,7 @@ keyword-word
       | "thing" | "as" | "alias" | "family" | "magnitude"
       | "rule" | "action" | "subaction" | "look" | "message" | "test"
       | "for" | "on" | "given" | "when" | "changes"
-      | "if" | "then" | "after" | "with" | "otherwise"
+      | "if" | "then" | "after" | "with" | "otherwise" | "raise"
       | "mut" | "unique" | "ordered"
       | "create" | "destroy" | "add" | "remove" | "from"
       | "each" | "by" | "through" | "take"

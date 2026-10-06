@@ -16,6 +16,8 @@ affects:
 
 # ADR-088 — Iteration, signed progressions and expression blocks
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Modified by: [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 
 - Modifies: [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-collection-filtering-take-and-indexing|D-081]] and [[ADR-082-cycle-as-point-domain-modifier|D-082]].
@@ -108,7 +110,7 @@ Inverted endpoints continue to normalise to `empty`; they never express descendi
 
 ## Zero step
 
-If a runtime step is demonstrably zero, it is a static error. If this cannot be demonstrated and it eventually evaluates to zero, evaluation fails with `progression-step-zero`. Inside a real action that failure produces `failed` and rollback under the taxonomy of D-048 and D-061; in a pure context it propagates under the expression-failure contract without becoming `false`. In a stepped domain the step is static, so zero is always an elaboration error.
+If a runtime step is demonstrably zero, it is a static error. If this cannot be demonstrated and it eventually evaluates to zero, evaluation fails with `progression-step-zero`. Inside a real action that failure produces `Errors` and rollback under the taxonomy of D-048 and D-061; in a pure context it propagates under the expression-failure contract without becoming `false`. In a stepped domain the step is static, so zero is always an elaboration error.
 
 ## Default steps
 

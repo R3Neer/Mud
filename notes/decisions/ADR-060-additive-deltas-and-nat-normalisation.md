@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-060 — Additive deltas and `Nat` normalisation
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amends: [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|D-040]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]] and [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]]
 - Related to: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
 - Related questions: Q-002, Q-006, Q-019
@@ -126,7 +128,7 @@ A `then` never observes another `then`'s private deltas. They all start from the
 
 ### Domains and observation
 
-After the result has been normalised to `Nat`, the target's refined domain is checked in accordance with D-037. If the domain excludes the normalised value, the tentative state is invalid and resolution produces `failed`.
+After the result has been normalised to `Nat`, the target's refined domain is checked in accordance with D-037. If the domain excludes the normalised value, the tentative state is invalid and resolution produces `Errors`.
 
 No reactive rule, message, `look`, `old` or `changes` observes negative deltas or intermediate values of a `then`. Waves compare only snapshots that have already been consolidated and normalised.
 

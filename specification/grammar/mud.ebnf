@@ -88,7 +88,7 @@ thing-body
             , { required-separation , thing-body-declaration }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 thing-body-declaration
@@ -121,11 +121,11 @@ metadata-body
             , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 descriptor-value-body
-    ::= value-expression , [ metadata-body ]
+    ::= ( value-expression , [ metadata-body ]
       | "{" , declaration-layout
         , [ metadata-assignment
             , { required-separation , metadata-assignment }
@@ -133,7 +133,7 @@ descriptor-value-body
           ]
         , value-block
         , [ required-separation ]
-        , "}"
+        , "}" , { otherwise-clause } ) , { otherwise-clause }
         ;
 
 alias-declaration
@@ -149,7 +149,7 @@ alias-definition
                 , { required-separation , metadata-assignment }
                 , [ required-separation ]
               ]
-            , "}"
+            , "}" , { otherwise-clause }
           ]
       | structural-alias-body
         ;
@@ -161,7 +161,7 @@ structural-alias-body
             , { required-separation , alias-body-declaration }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 alias-body-declaration
@@ -186,7 +186,7 @@ family-declaration
         , family-member
         , { "," , declaration-layout , family-member }
         , [ required-separation ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 family-data-declaration
@@ -216,7 +216,7 @@ family-member-body
             , { required-separation , family-member-entry }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 family-member-entry
@@ -268,7 +268,7 @@ magnitude-body
             , { required-separation , alternative-unit-declaration }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 derived-unit-body
@@ -278,7 +278,7 @@ derived-unit-body
             , { required-separation , alternative-unit-declaration }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 point-magnitude-body
@@ -287,7 +287,7 @@ point-magnitude-body
             , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 root-unit-declaration
@@ -304,7 +304,7 @@ unit-body
             , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 dimension-expression
@@ -508,9 +508,7 @@ expression-block
         ;
 
 value-body
-    ::= value-expression
-      | value-block-body
-      ;
+    ::= ( value-expression | value-block-body ) , { otherwise-clause } ;
 
 value-block-body
     ::= "{" , declaration-layout , value-block
@@ -571,7 +569,7 @@ local-statement-block
         , value-statement
         , { required-separation , value-statement }
         , [ required-separation ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 reactive-rule-declaration
@@ -592,7 +590,7 @@ always-rule-declaration
     ::= "always" , "rule" , nominal-name
         , [ on-clause ]
         , invariant-body
-        , [ diagnostic-tail ]
+        , { otherwise-clause }
         ;
 
 invariant-body
@@ -658,33 +656,45 @@ if-clause
     ::= "if" , expression-body ;
 
 action-if-clause
-    ::= "if" , expression-body , [ diagnostic-tail ] ;
+    ::= "if" , expression-body ;
 
 action-after-clause
-    ::= "after" , expression-body , [ diagnostic-tail ] ;
+    ::= "after" , expression-body ;
 
-diagnostic-tail
-    ::= [ required-separation ] , "otherwise" , text-expression ;
+otherwise-clause
+    ::= [ required-separation ] , "otherwise"
+        , ( "raise" , value-body
+          | [ on-clause ] , recovery-handler-body ) ;
+
+recovery-handler-body
+    ::= recovery-branch
+      | "{" , declaration-layout
+        , [ if-clause , required-separation ]
+        , recovery-branch , [ required-separation ] , "}" ;
+
+recovery-branch
+    ::= "then" , recovery-body
+      | "raise" , value-body ;
+
+recovery-body
+    ::= expression-body | value-block-body | effect-block ;
 
 expression-body
-    ::= expression
-      | "{" , declaration-layout , expression-block
-          , [ required-separation ] , "}"
+    ::= ( expression
+        | "{" , declaration-layout , expression-block
+          , [ required-separation ] , "}" )
+        , { otherwise-clause }
       ;
 
 then-clause
-    ::= ( "then" , effect
-        | "then" , effect-block
-        )
-        , [ diagnostic-tail ]
-      ;
+    ::= "then" , ( effect , { otherwise-clause } | effect-block ) ;
 
 effect-block
     ::= "{" , declaration-layout
         , then-statement
         , { required-separation , then-statement }
         , [ required-separation ]
-        , "}"
+        , "}" , { otherwise-clause }
         ;
 
 then-statement
@@ -770,7 +780,7 @@ test-after-clause
       ;
 
 test-assertion
-    ::= boolean-expression , [ diagnostic-tail ] ;
+    ::= expression-body ;
 
 (* ------------------------------------------------------------------ *)
 (* Efectos                                                             *)
@@ -858,11 +868,7 @@ mapping-arrow
 value-expression
     ::= expression , [ "," , expression , { "," , expression } ] ;
 
-boolean-expression
-    ::= expression ;
 
-text-expression
-    ::= expression ;
 
 constant-expression
     ::= value-expression ;

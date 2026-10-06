@@ -36,6 +36,7 @@ decisions:
   - D-101
   - D-096
   - D-113
+  - D-118
 ---
 
 # 06. Lexical structure
@@ -86,7 +87,7 @@ Reserved words cannot be used as identifiers. The standard catalogue is:
 using
 thing as alias family magnitude
 rule action subaction look message test
-for on given when changes if then after with otherwise
+for on given when changes if then after with otherwise raise
 mut unique ordered
 create destroy add to remove from each by take
 eventually through allowed old

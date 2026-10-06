@@ -29,6 +29,7 @@ synthetic_token_origins:
 - ImplicitTextEnd
 - MissingForRecovery
 fixed_tokens:
+- spelling: raise
 - spelling: using
 - spelling: .
 - spelling: '*'
@@ -347,7 +348,11 @@ lexical_forms:
     - builtin-word
     - constant-word
   keyword-word:
-    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\" | \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
+    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\"\
+      \ | \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"\
+      changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\" | \"raise\"\n      | \"mut\" | \"\
+      unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\"\
+      \ | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
     references: []
   operator-word:
     rhs: "\"to\" | \"eventually\" | \"allowed\" | \"old\"\n      | \"is\" | \"iis\" | \"in\"\n      | \"not\" | \"and\" | \"or\" | \"xor\""
@@ -541,12 +546,15 @@ syntax_nodes:
     - thing-body
   thing-body:
     kind: ThingBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ thing-body-declaration\n            , { required-separation , thing-body-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
+      \ } , required-separation ]\n        , [ thing-body-declaration\n            , { required-separation , thing-body-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
     - thing-body-declaration
+    - otherwise-clause
   thing-body-declaration:
     kind: ThingBodyDeclarationSyntax
     rhs: "field-declaration\n      | thing-initializer"
@@ -582,21 +590,27 @@ syntax_nodes:
     - alias-definition
   alias-definition:
     kind: AliasDefinitionSyntax
-    rhs: "\":=\" , type-expression\n        , [ \"{\" , declaration-layout\n            , [ metadata-assignment\n                , { required-separation , metadata-assignment }\n                , [ required-separation ]\n              ]\n            , \"}\"\n          ]\n      | structural-alias-body"
+    rhs: "\":=\" , type-expression\n        , [ \"{\" , declaration-layout\n            , [ metadata-assignment\n\
+      \                , { required-separation , metadata-assignment }\n                , [ required-separation ]\n\
+      \              ]\n            , \"}\" , { otherwise-clause }\n          ]\n      | structural-alias-body"
     references:
     - type-expression
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - otherwise-clause
     - structural-alias-body
   structural-alias-body:
     kind: StructuralAliasBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ alias-body-declaration\n            , { required-separation , alias-body-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
+      \ } , required-separation ]\n        , [ alias-body-declaration\n            , { required-separation , alias-body-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
     - alias-body-declaration
+    - otherwise-clause
   alias-body-declaration:
     kind: AliasBodyDeclarationSyntax
     rhs: "component-declaration\n      | calculated-field-declaration\n      | inherited-default-override"
@@ -621,7 +635,10 @@ syntax_nodes:
     - value-body
   family-declaration:
     kind: FamilyDeclarationSyntax
-    rhs: "[ \"ordered\" ] , \"family\" , nominal-name\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { family-data-declaration , required-separation }\n        , family-member\n        , { \",\" , declaration-layout , family-member }\n        , [ required-separation ]\n        , \"}\""
+    rhs: "[ \"ordered\" ] , \"family\" , nominal-name\n        , \"{\" , declaration-layout\n        , [ metadata-assignment\
+      \ , { required-separation , metadata-assignment } , required-separation ]\n        , { family-data-declaration\
+      \ , required-separation }\n        , family-member\n        , { \",\" , declaration-layout , family-member }\n\
+      \        , [ required-separation ]\n        , \"}\" , { otherwise-clause }"
     references:
     - nominal-name
     - declaration-layout
@@ -629,6 +646,7 @@ syntax_nodes:
     - required-separation
     - family-data-declaration
     - family-member
+    - otherwise-clause
   family-data-declaration:
     kind: FamilyDataDeclarationSyntax
     rhs: "stored-family-data-declaration\n      | calculated-family-data-declaration"
@@ -659,12 +677,16 @@ syntax_nodes:
     - family-member-body
   family-member-body:
     kind: FamilyMemberBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , [ family-member-entry\n            , { required-separation , family-member-entry }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment\
+      \ }\n            , required-separation\n          ]\n        , [ family-member-entry\n            , { required-separation\
+      \ , family-member-entry }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause\
+      \ }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
     - family-member-entry
+    - otherwise-clause
   family-member-entry:
     kind: FamilyMemberEntrySyntax
     rhs: family-data-assignment
@@ -715,28 +737,37 @@ syntax_nodes:
     - interval-expression
   magnitude-body:
     kind: MagnitudeBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ root-unit-declaration\n            , { required-separation , alternative-unit-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
+      \ } , required-separation ]\n        , [ root-unit-declaration\n            , { required-separation , alternative-unit-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
     - root-unit-declaration
     - alternative-unit-declaration
+    - otherwise-clause
   derived-unit-body:
     kind: DerivedUnitBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ alternative-unit-declaration\n            , { required-separation , alternative-unit-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
+      \ } , required-separation ]\n        , [ alternative-unit-declaration\n            , { required-separation ,\
+      \ alternative-unit-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause\
+      \ }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
     - alternative-unit-declaration
+    - otherwise-clause
   point-magnitude-body:
     kind: PointMagnitudeBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - otherwise-clause
   root-unit-declaration:
     kind: RootUnitDeclarationSyntax
     rhs: '"root" , "unit" , unit-name , unit-body'
@@ -757,11 +788,13 @@ syntax_nodes:
     - identifier
   unit-body:
     kind: UnitBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - otherwise-clause
   dimension-expression:
     kind: DimensionExpressionSyntax
     rhs: dimension-factor , { ( "*" | "/" ) , dimension-factor }
@@ -1026,12 +1059,13 @@ syntax_nodes:
     - then-clause
   always-rule-declaration:
     kind: AlwaysRuleDeclarationSyntax
-    rhs: "\"always\" , \"rule\" , nominal-name\n        , [ on-clause ]\n        , invariant-body\n        , [ diagnostic-tail ]"
+    rhs: "\"always\" , \"rule\" , nominal-name\n        , [ on-clause ]\n        , invariant-body\n        , { otherwise-clause\
+      \ }"
     references:
     - nominal-name
     - on-clause
     - invariant-body
-    - diagnostic-tail
+    - otherwise-clause
   invariant-body:
     kind: InvariantBodySyntax
     rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , expression-block\n        , [ required-separation ]\n        , \"}\""
@@ -1066,10 +1100,14 @@ syntax_nodes:
     - action-after-clause
   look-declaration:
     kind: LookDeclarationSyntax
-    rhs: "\"look\" , nominal-name\n        , [ for-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , [ public-field-declaration\n            , { required-separation , public-field-declaration }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: "\"look\" , nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n\
+      \        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n \
+      \       , [ public-field-declaration\n            , { required-separation , public-field-declaration }\n   \
+      \         , [ required-separation ]\n          ]\n        , \"}\""
     references:
     - nominal-name
     - for-clause
+    - given-clause
     - declaration-layout
     - metadata-assignment
     - required-separation
@@ -1099,49 +1137,40 @@ syntax_nodes:
     - expression-body
   action-if-clause:
     kind: ActionIfClauseSyntax
-    rhs: '"if" , expression-body , [ diagnostic-tail ]'
+    rhs: '"if" , expression-body'
     references:
     - expression-body
-    - diagnostic-tail
   action-after-clause:
     kind: ActionAfterClauseSyntax
-    rhs: '"after" , expression-body , [ diagnostic-tail ]'
+    rhs: '"after" , expression-body'
     references:
     - expression-body
-    - diagnostic-tail
-  diagnostic-tail:
-    kind: DiagnosticTailSyntax
-    rhs: '[ required-separation ] , "otherwise" , text-expression'
-    references:
-    - required-separation
-    - text-expression
   expression-body:
     kind: ExpressionBodySyntax
-    rhs: "expression\n      | \"{\" , declaration-layout , expression-block\n          , [ required-separation ] , \"}\""
+    rhs: "( expression\n        | \"{\" , declaration-layout , expression-block\n          , [ required-separation\
+      \ ] , \"}\" )\n        , { otherwise-clause }"
     references:
     - expression
     - declaration-layout
     - expression-block
     - required-separation
+    - otherwise-clause
   then-clause:
     kind: ThenClauseSyntax
-    rhs: "( \"then\" , effect\n        | \"then\" , effect-block\n        )\n        , [ diagnostic-tail ]"
+    rhs: '"then" , ( effect , { otherwise-clause } | effect-block )'
     references:
     - effect
+    - otherwise-clause
     - effect-block
-    - diagnostic-tail
   effect-block:
     kind: EffectBlockSyntax
-    rhs: "\"{\" , declaration-layout
-        , then-statement
-        , { required-separation , then-statement }
-       \
-      \ , [ required-separation ]
-        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , then-statement\n        , { required-separation , then-statement }\n\
+      \        , [ required-separation ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - then-statement
     - required-separation
+    - otherwise-clause
   then-statement:
     kind: ThenStatementSyntax
     rhs: "effect
@@ -1163,14 +1192,14 @@ syntax_nodes:
     - start-with-declaration
   start-with-declaration:
     kind: StartWithDeclarationSyntax
-    rhs: "\"start\" , \"with\"\n        , \"{\" , declaration-layout\n        , \"things\" , start-contribution-body\n        , required-separation\n        , \"rules\" , start-contribution-body\n        , declaration-layout , \"}\""
+    rhs: "\"start\" , \"with\"\n        , ( expression | start-contribution-body )"
     references:
-    - declaration-layout
+    - expression
     - start-contribution-body
-    - required-separation
   start-contribution-body:
     kind: StartContributionBodySyntax
-    rhs: "\"{\" , declaration-layout\n        , [ expression\n            , { \",\" , declaration-layout , expression }\n          ]\n        , declaration-layout , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , expression\n        , { \",\" , declaration-layout , expression }\n\
+      \        , [ \",\" ]\n        , declaration-layout , \"}\""
     references:
     - declaration-layout
     - expression
@@ -1195,10 +1224,9 @@ syntax_nodes:
     - required-separation
   test-assertion:
     kind: TestAssertionSyntax
-    rhs: boolean-expression , [ diagnostic-tail ]
+    rhs: expression-body
     references:
-    - boolean-expression
-    - diagnostic-tail
+    - expression-body
   effect:
     kind: EffectSyntax
     rhs: "foreign-block\n      | assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n      | destroy-effect\n      | action-call-effect\n      | for-each-effect"
@@ -1292,16 +1320,6 @@ syntax_nodes:
     rhs: expression , [ "," , expression , { "," , expression } ]
     references:
     - expression
-  boolean-expression:
-    kind: BooleanExpressionSyntax
-    rhs: expression
-    references:
-    - expression
-  text-expression:
-    kind: TextExpressionSyntax
-    rhs: expression
-    references:
-    - expression
   constant-expression:
     kind: ConstantExpressionSyntax
     rhs: value-expression
@@ -1393,9 +1411,9 @@ syntax_nodes:
     - comparison-expression
   comparison-expression:
     kind: ComparisonExpressionSyntax
-    rhs: quantitative-expression , [ comparison-tail ]
+    rhs: restriction-expression , [ comparison-tail ]
     references:
-    - quantitative-expression
+    - restriction-expression
     - comparison-tail
   comparison-tail:
     kind: ComparisonTailSyntax
@@ -1430,7 +1448,10 @@ syntax_nodes:
     - local-collection-transform
   local-collection-transform:
     kind: LocalCollectionTransformSyntax
-    rhs: 'cardinality bounds and local collection modifiers'
+    rhs: "cardinality-bound , \"..\" , cardinality-bound\n        , [ optional-comma , local-collection-modifier ,\
+      \ { optional-comma , local-collection-modifier } ]\n      | cardinality-bound , optional-comma , local-collection-modifier\
+      \ , { optional-comma , local-collection-modifier }\n      | local-collection-modifier , { optional-comma , local-collection-modifier\
+      \ }"
     references:
     - cardinality-bound
     - optional-comma
@@ -1481,17 +1502,19 @@ syntax_nodes:
     - postfix-expression
   prefix-operator:
     kind: PrefixOperatorSyntax
-    rhs: '"not" | "+" | "-" | "old" | "allowed"'
+    rhs: '"not" | "+" | "-" | "old" | "allowed" | "all"'
     references: []
   postfix-expression:
     kind: PostfixExpressionSyntax
-    rhs: "primary-expression\n        , { member-access | metadata-access | index-access | call-arguments }"
+    rhs: "primary-expression\n        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix\
+      \ }"
     references:
     - primary-expression
     - member-access
     - metadata-access
     - index-access
     - call-arguments
+    - collection-transform-suffix
   member-access:
     kind: MemberAccessSyntax
     rhs: '"." , identifier'
@@ -1756,9 +1779,10 @@ syntax_nodes:
     references: []
   descriptor-value-body:
     kind: DescriptorValueBodySyntax
-    rhs: "value-expression , [ metadata-body ]\n      | \"{\" , declaration-layout\n        , [ metadata-assignment\n      \
-      \      , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , value-block\n\
-      \        , [ required-separation ]\n        , \"}\""
+    rhs: "( value-expression , [ metadata-body ]\n      | \"{\" , declaration-layout\n        , [ metadata-assignment\n\
+      \            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n\
+      \        , value-block\n        , [ required-separation ]\n        , \"}\" , { otherwise-clause } ) , { otherwise-clause\
+      \ }"
     references:
     - value-expression
     - metadata-body
@@ -1766,6 +1790,7 @@ syntax_nodes:
     - metadata-assignment
     - required-separation
     - value-block
+    - otherwise-clause
   local-add:
     kind: LocalAddSyntax
     rhs: '"add" , expression , "to" , assignable-expression'
@@ -1813,12 +1838,13 @@ syntax_nodes:
     - assignable-expression
   local-statement-block:
     kind: LocalStatementBlockSyntax
-    rhs: "\"{\" , declaration-layout\n        , value-statement\n        , { required-separation , value-statement }\n     \
-      \   , [ required-separation ]\n        , \"}\""
+    rhs: "\"{\" , declaration-layout\n        , value-statement\n        , { required-separation , value-statement\
+      \ }\n        , [ required-separation ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - value-statement
     - required-separation
+    - otherwise-clause
   local-stored-declaration:
     kind: LocalStoredDeclarationSyntax
     rhs: "[ \"mut\" ] , variable-name , \":\" , type-expression\n        , \"=\" , value-body"
@@ -1849,11 +1875,12 @@ syntax_nodes:
   metadata-body:
     kind: MetadataBodySyntax
     rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment\
-      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\" , { otherwise-clause }"
     references:
     - declaration-layout
     - metadata-assignment
     - required-separation
+    - otherwise-clause
   value-block:
     kind: ValueBlockSyntax
     rhs: "{ value-statement , required-separation }\n        , value-expression"
@@ -1863,11 +1890,11 @@ syntax_nodes:
     - value-expression
   value-body:
     kind: ValueBodySyntax
-    rhs: "value-expression
-      | value-block-body"
+    rhs: ( value-expression | value-block-body ) , { otherwise-clause }
     references:
     - value-expression
     - value-block-body
+    - otherwise-clause
   value-local-declaration:
     kind: ValueLocalDeclarationSyntax
     rhs: "local-calculated-declaration\n      | local-stored-declaration"
@@ -1942,3 +1969,34 @@ syntax_nodes:
     kind: ForeignCodeExpressionSyntax
     rhs: FOREIGN_EXPRESSION
     references: []
+  otherwise-clause:
+    kind: OtherwiseClauseSyntax
+    rhs: "[ required-separation ] , \"otherwise\"\n        , ( \"raise\" , value-body\n          | [ on-clause ] ,\
+      \ recovery-handler-body )"
+    references:
+    - required-separation
+    - value-body
+    - on-clause
+    - recovery-handler-body
+  recovery-handler-body:
+    kind: RecoveryHandlerBodySyntax
+    rhs: "recovery-branch\n      | \"{\" , declaration-layout\n        , [ if-clause , required-separation ]\n   \
+      \     , recovery-branch , [ required-separation ] , \"}\""
+    references:
+    - recovery-branch
+    - declaration-layout
+    - if-clause
+    - required-separation
+  recovery-branch:
+    kind: RecoveryBranchSyntax
+    rhs: "\"then\" , recovery-body\n      | \"raise\" , value-body"
+    references:
+    - recovery-body
+    - value-body
+  recovery-body:
+    kind: RecoveryBodySyntax
+    rhs: expression-body | value-block-body | effect-block
+    references:
+    - expression-body
+    - value-block-body
+    - effect-block

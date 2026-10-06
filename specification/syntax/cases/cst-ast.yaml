@@ -170,13 +170,14 @@ cases:
   - expression-block-locals-and-result
   produces_ast: true
 - id: action-condition-locals-visible-in-otherwise
-  category: expression-block
-  source: "action Buy for person: Person given price: Money {\n    if {\n        missing := price - person.money\n        missing <= 0\n    } otherwise \"You need {missing} more\"\n    then person.money -= price\n}\n"
+  category: validation-before-ast
+  source: "action Buy for person: Person given price: Money {\n    if {\n        missing := price - person.money\n\
+    \        missing <= 0\n    } otherwise \"You need {missing} more\"\n    then person.money -= price\n\
+    }\n"
   cst_root: MudFileSyntax
-  ast: ActionGuard(condition=ExpressionBlock(preamble=[PureLocalValue(LocalValueDecl(missing))], result=ComparisonChainExpr(...)), diagnostic=TextTemplateExpr(...))
-  normalizations:
-  - extend-boolean-local-environment-through-otherwise
-  produces_ast: true
+  produces_ast: false
+  expected_diagnostics:
+  - otherwise-requires-error-handler-branch
 - id: expression-block-without-final-expression
   category: validation-before-ast
   source: "rule Broken for person: Person {\n    available := person.money\n}\n"
@@ -284,14 +285,14 @@ cases:
   - single-assertion-to-test-after-block
   produces_ast: true
 - id: test-after-locals
-  category: test
-  source: "test Purchase {\n    start with {\n        Buyer, empty\n    }\n    then {\n        cost := 5\n        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining >= 0\n        remaining < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
+  category: validation-before-ast
+  source: "test Purchase {\n    start with {\n        Buyer, empty\n    }\n    then {\n        cost :=\
+    \ 5\n        Buyer.money -= cost\n    }\n    after {\n        remaining := Buyer.money\n        remaining\
+    \ >= 0\n        remaining < 10 otherwise \"Unexpected balance: {remaining}\"\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: TestDecl(effects=EffectBlock(firstStatement=LocalCalculatedStatement(LocalCalculatedDecl(cost)), remainingStatements=[EffectStatement(...)]), after=TestAfterBlock(locals=[LocalValueDecl(remaining)], assertions=[TestAssertion(...), TestAssertion(...)]))
-  normalizations:
-  - test-then-locals
-  - test-after-locals-before-assertions
-  produces_ast: true
+  produces_ast: false
+  expected_diagnostics:
+  - otherwise-requires-error-handler-branch
 - id: comments-lossless
   category: cst
   source: "# before\nthing Person { # body #\n    label: Text\n}\n"
@@ -401,25 +402,28 @@ cases:
   ast: RootUnitDecl(meter, metadata=[StoredMetadataAssignment(abbreviation, ...), StoredMetadataAssignment(prefixes, AllLiteral)])
   produces_ast: true
 - id: transition-otherwise
-  category: action
-  source: "action RemoveBob for mut team: Team {\n    then {\n        destroy Bob\n    }\n    otherwise \"Bob is still required by {team}\"\n}\n"
+  category: validation-before-ast
+  source: "action RemoveBob for mut team: Team {\n    then {\n        destroy Bob\n    }\n    otherwise\
+    \ \"Bob is still required by {team}\"\n}\n"
   cst_root: MudFileSyntax
-  ast: EffectBlock(failureDiagnostic=TextTemplateExpr(...))
-  produces_ast: true
+  produces_ast: false
+  expected_diagnostics:
+  - otherwise-requires-error-handler-branch
 - id: always-rule-external-otherwise
-  category: rule
-  source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n    population >= 0 people\n}\notherwise \"Population cannot be negative: {population}\"\n"
+  category: validation-before-ast
+  source: "always rule ValidPopulation on kingdom: Kingdom {\n    population := kingdom.population\n \
+    \   population >= 0 people\n}\notherwise \"Population cannot be negative: {population}\"\n"
   cst_root: MudFileSyntax
-  ast: AlwaysRuleDecl(invariant=ExpressionBlock(preamble=[PureLocalValue(LocalValueDecl(population))], result=...), diagnostic=TextTemplateExpr(...))
-  normalizations:
-  - extend-boolean-local-environment-through-otherwise
-  produces_ast: true
+  produces_ast: false
+  expected_diagnostics:
+  - otherwise-requires-error-handler-branch
 - id: always-rule-internal-otherwise-invalid
   category: validation-before-ast
-  source: "always rule Broken on kingdom: Kingdom {\n    kingdom.population >= 0\n    otherwise \"Invalid population\"\n}\n"
+  source: "always rule Broken on kingdom: Kingdom {\n    kingdom.population >= 0\n    otherwise \"Invalid\
+    \ population\"\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
-  - always-otherwise-must-follow-body
+  - otherwise-requires-error-handler-branch
   produces_ast: false
 - id: leading-or-after-complete-when-expression
   category: validation-before-ast
@@ -2491,3 +2495,42 @@ cases:
   produces_ast: true
   required_contract: Joint replacement of a=Red,b=Blue admits swap; losing uniqueness proposals restore
     previous associations and recheck collisions
+- id: error-handler-joint-on-syntax
+  category: block
+  source: 'action Repair for counter: Counter [mut] { then counter.value += 1 otherwise on first: FirstError,
+    second: SecondError { raise first, second } }
+
+    '
+  cst_root: MudFileSyntax
+  ast: RecoveryHandler(bindings=OnClause(first, second), branch=RecoverRaise)
+  produces_ast: true
+  required_contract: Both Error-specialized roles must match jointly; values remain immutable
+- id: error-handler-then-and-raise-invalid
+  category: validation-before-ast
+  source: 'rule Check { true } otherwise { then true; raise problem }
+
+    '
+  cst_root: MudFileSyntax
+  expected_diagnostics:
+  - exclusive-recovery-branch
+  produces_ast: false
+- id: refusal-is-not-error
+  category: typing
+  source: 'rule Check { true } otherwise on refusal: Refusal { then false }
+
+    '
+  cst_root: MudFileSyntax
+  ast: RecoveryHandler(OnClause(refusal), RecoverThen)
+  expected_diagnostics:
+  - handler-binding-not-error
+  produces_ast: true
+- id: condition-check-trace-final-expression-only
+  category: evaluation
+  source: 'action Check { if { earlier := false; earlier and OtherCheck() }; then World.value += 1 }
+
+    '
+  cst_root: MudFileSyntax
+  ast: ExpressionBlock(result=AndExpr)
+  produces_ast: true
+  required_contract: IfRefusal BoolCheck retains earlier=false and skipped OtherCheck=empty, without expanding
+    earlier definition or evaluating skipped call

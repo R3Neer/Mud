@@ -85,6 +85,7 @@ decisions:
   - D-114
   - D-115
   - D-117
+  - D-118
 ---
 
 # 07. Concrete grammar
@@ -422,7 +423,7 @@ A missing key produces `empty`. A complete association may be inserted as a runt
 then add (Portugal -> Lisbon) to capitalOf
 ```
 
-`unique` requires associated values to be globally unique by whole value. `unique by path` instead requires global uniqueness by the stable key projected from each associated value; the path never starts from the dictionary key. An insertion or replacement that would violate the effective associated-value uniqueness criterion is a complete no-op: it changes no association and does not produce `failed`.
+`unique` requires associated values to be globally unique by whole value. `unique by path` instead requires global uniqueness by the stable key projected from each associated value; the path never starts from the dictionary key. An insertion or replacement that would violate the effective associated-value uniqueness criterion is a complete no-op: it changes no association and does not produce `Errors`.
 
 Adding an association whose key already exists atomically replaces the previous association when the result respects the contract:
 
@@ -1013,10 +1014,20 @@ always rule ValidPopulation on kingdom: Kingdom {
     population := kingdom.population
     population >= 0 people
 }
-otherwise "Population cannot be negative: {population}"
 ```
 
-The body directly contains the condition, without `if`. The optional `otherwise` is written after the closing brace, forms part of the complete rule, and accepts a `Text` expression. Its diagnostic is evaluated only when the condition is false, over the same tentative state and bindings that breached the rule. Its value becomes the reason for the `failed` result. Omitting it is legal, but produces a warning and a default reason. Writing it inside the braces is an error.
+The body directly contains its final Boolean condition. A false invariant yields AlwaysRefusal naming this rule and retaining the final-expression BoolCheck. It is checked after each consolidated root/wave; an error while computing the condition uses the block Error channel. Otherwise handlers follow the protected body and handle those errors, never a successfully computed false invariant. Omitting a handler does not generate a missing-diagnostic warning.
+
+## Block error handlers
+
+Expression, value and effect blocks may carry an ordered list of `otherwise` handlers outside the protected body. Normalized short blocks have the same facility. Each handler has optional `on` bindings to aliases specialized from Error, optional `if`, and exactly one `then` or `raise`. Multiple on roles match jointly; no on is catch-all. Then recovery must preserve the protected block's result and effect contract. Raise returns one Error or a nonempty Errors value. `otherwise raise errorValue` is short catch-all sugar. Raise is restricted to a handler branch. Text-only diagnostics, Refusal bindings and a handler with both then and raise are invalid. No finally clause exists.
+
+```mud
+then { counter.value += amount }
+otherwise on problem: Error { raise problem }
+```
+
+A handler's `then` body is parsed under its protected expression/value/effect category; this syntax does not introduce world effects into a pure block. Braces are required for multiple complete instructions, independent of line count. Handler bindings are scoped locally to their handler.
 
 ## Actions
 
@@ -1024,13 +1035,11 @@ The body directly contains the condition, without `if`. The optional `otherwise`
 action Recruit for kingdom: Kingdom [mut]
 given amount: Nat in 1..100 {
     if kingdom.treasury >= amount * recruitmentCost
-    otherwise "The kingdom cannot afford {amount} recruits"
     then {
         kingdom.treasury -= amount * recruitmentCost
         kingdom.soldiers += amount
     }
     after kingdom.soldiers >= old kingdom.soldiers
-    otherwise "Recruitment did not increase the army"
 }
 ```
 
@@ -1038,7 +1047,7 @@ There is no semantic classification of elementary versus compound actions. A `th
 
 An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
-The `after` clauses of every executed action and subaction are checked against the final stable state of the complete tentative resolution. Private deltas and consolidated wave changes remain tentative; subsequent waves see their consolidated projection, while the confirmed world changes only through one atomic confirmation after stabilisation and all applicable invariants and postconditions succeed. No wave or nested action confirms independently. A nested `failed` reverses the entire resolution; an internal `rejected` also aborts and reverses it while retaining the `rejected` category. The optional `otherwise` of `if` or `after` explains rejection, and the associated `then` explains failure of the complete transition.
+The `after` clauses of every executed action and subaction are checked against the final stable state of the complete tentative resolution. Private deltas and consolidated wave changes remain tentative; subsequent waves see their consolidated projection, while the confirmed world changes only through one atomic confirmation after stabilisation and all applicable invariants and postconditions succeed. No wave or nested action confirms independently. A nested `Errors` reverses the entire resolution; an internal `Refusal` also aborts and reverses it while retaining the `Refusal` category. Every invocation returns ActionReply with Success, Refusal or nonempty Errors. If/after falsity and always violations produce Refusal subtypes; unsuccessful computation produces Error occurrences. Otherwise attaches to blocks and captures errors only.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -1097,7 +1106,6 @@ if {
     available := player.money
     available >= price
 }
-otherwise "Available: {available}"
 ```
 
 Braces do not suppress terminators between elements within a block.
@@ -1116,11 +1124,11 @@ when {
 
 Bindings use `name [: Type] := expression`, are pure, immutable and sequential, and permit no forward references, cycles, redeclaration or shadowing. They are recalculated on every evaluation of the clause and store no state between waves.
 
-Its scope reaches the associated `otherwise`, but not `then` or any other clause. In a `when`, `changes` and `old` evaluate a local's defining expression in every required snapshot.
+Protected-body locals do not become handler inputs after rollback. Handler on bindings have their own scope; enclosing still-valid locals remain visible. In a `when`, `changes` and `old` evaluate a local's defining expression in every required snapshot.
 
 The single non-declaration expression must come last. It must elaborate to `Bool`, except in `when`, where it must produce an activator supported by the temporal contract. An empty block, a block containing only local bindings or a second non-declaration expression is invalid.
 
-The block `after` of a test retains one or more assertions. It may begin with common locals, visible in all assertions and their `otherwise`; after the first assertion, no further local assertions may be declared:
+The block `after` of a test retains one or more assertions. It may begin with common locals, visible in all assertions and their error handlers; after the first assertion, no further local assertions may be declared:
 
 ```mud
 after {
@@ -1224,7 +1232,7 @@ shop.orders[id].retryCount += 1
 
 A local containing an alias remains a value and acquires no path back to storage, so `order.status = Shipped` is invalid when `order` is merely a local binding. A derived alias field is likewise not writable.
 
-If an exact dictionary lookup used as an intermediate step does not find its key, the absence is `empty` and the partial effect is a no-op: it neither creates the association nor synthesises a default value, and does not produce `failed` merely because of that absence. This does not affect the direct assignment `shop.orders[id] = order`, which replaces a complete association and may create a missing key when the contract permits it.
+If an exact dictionary lookup used as an intermediate step does not find its key, the absence is `empty` and the partial effect is a no-op: it neither creates the association nor synthesises a default value, and does not produce `Errors` merely because of that absence. This does not affect the direct assignment `shop.orders[id] = order`, which replaces a complete association and may create a missing key when the contract permits it.
 
 Resolution and typing distinguish `remove name from Owner` from removing a value. In both cases the parser retains the same provenance; AST construction must produce the correct variant or a diagnostic.
 
@@ -1261,7 +1269,7 @@ The `:` is mandatory. Braces form part of the body and do not replace the separa
 [1..8) by -2  -> 6, 4, 2
 ```
 
-A provably zero runtime step is a static error; if it may vary and evaluates to zero, it produces the evaluation failure `progression-step-zero`. In an action that failure yields `failed` and rollback; in a pure expression it propagates as evaluation failure and never becomes `false`. A zero domain step is always a static error. Compatibility uses the advance operation and exact implicit conversions rather than nominal identity: `Nat` may advance through `Int`, `Num` through compatible exact differences, and quantities through compatible units. For a point magnitude, the step is a linear difference.
+A provably zero runtime step is a static error; if it may vary and evaluates to zero, it produces the evaluation failure `progression-step-zero`. In an action that failure yields `Errors` and rollback; in a pure expression it propagates as evaluation failure and never becomes `false`. A zero domain step is always a static error. Compatibility uses the advance operation and exact implicit conversions rather than nominal identity: `Nat` may advance through `Int`, `Num` through compatible exact differences, and quantities through compatible units. For a point magnitude, the step is a linear difference.
 
 `by` is not a stride over arbitrary collections. `ordered by path` has separate semantics.
 
@@ -1398,7 +1406,7 @@ After evaluating and normalising the effective extremes of a linear interval:
 - equal endpoints form a singleton only if both sides are closed, and produce `empty` otherwise;
 - a lower bound greater than the upper bound results in `empty`.
 
-Inversion does not imply descending traversal or a cycle. Producing that empty interval never fails a resolution by itself; only constraints that make the tentative state invalid produce `failed`, such as a stored value outside its domain or an unsatisfied `always` rule. An out-of-domain `given` and a false `if` or `after` retain the `rejected` result.
+Inversion does not imply descending traversal or a cycle. Producing that empty interval never fails a resolution by itself; only constraints that make the tentative state invalid produce `Errors`, such as a stored value outside its domain. A successfully false always invariant instead yields AlwaysRefusal. An out-of-domain `given` and a false `if` or `after` retain the `Refusal` result.
 
 Domains declared in a magnitude header retain bare numeric bounds interpreted in their canonical representation: in the root unit when one exists, and directly in the numeric representation when there are no units. The form `[a..b) cycle` retains this restriction and requires a strictly positive period. Other endpoint forms, such as infinities or empty intervals, are invalid with `cycle`.
 

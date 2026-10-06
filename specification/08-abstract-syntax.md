@@ -56,6 +56,7 @@ decisions:
   - D-112
   - D-113
   - D-114
+  - D-118
 ---
 
 # 08. Surface abstract syntax
@@ -513,7 +514,7 @@ A reactive rule stores:
 
 `changes` is an expression node, not a separate `when` clause variant.
 
-In `always`, `InvariantBodySyntax` produces only the `ExpressionBlock`; the following `DiagnosticTailSyntax` becomes the `diagnostic` field of `AlwaysRuleDecl`. The rule may omit it, in which case the AST retains `diagnostic = absent`. Default warning and diagnostic text belong to validation and elaboration.
+In always, InvariantBodySyntax produces ExpressionBlock with its attached handler list. AlwaysRuleDecl has no separate diagnostic. Condition falsity is interpreted by the owner; Error handler selection is a later evaluation contract.
 
 Default file metadata assignments do not use `ValueBlock`: they retain a static `FileMetadataAssignment`.
 
@@ -542,9 +543,9 @@ An action contains:
 - Optional `for` participants.
 - Optional `given` parameters.
 - Pure local values preceding the behavioural clauses.
-- Optional Boolean guard and diagnostic.
+- Optional Boolean guard with an ExpressionBlock handler list.
 - Effects block.
-- Optional Boolean `after` postcondition and diagnostic.
+- Optional Boolean after postcondition with an ExpressionBlock handler list.
 
 ## `look` and `message`
 
@@ -568,7 +569,9 @@ Module and test `start with` forms share `StartSet`, which retains a single cont
 
 ## Effect blocks
 
-A short `then` and a braced `then` normalise to the same `EffectBlock`. The block retains a non-empty source-ordered `then_statement` sequence and an optional failure diagnostic. Each statement is `EffectStatement`, `LocalCalculatedStatement` or `LocalStoredStatement`; later validation requires at least one observable effect.
+RecoveryHandler preserves optional on bindings, optional ExpressionBlock filter and exactly one RecoverThen or RecoverRaise branch. RecoverThen uses ExpressionRecovery, ValueRecovery or EffectRecovery according to the protected category; RecoverRaise retains a ValueBlock. TestAssertion retains an ExpressionBlock including its error handlers. No false-condition diagnostic is synthesized.
+
+A short `then` and a braced `then` normalise to the same `EffectBlock`. The block retains a non-empty source-ordered `then_statement` sequence and its attached recovery_handler sequence. Each statement is `EffectStatement`, `LocalCalculatedStatement` or `LocalStoredStatement`; later validation requires at least one observable effect.
 
 The AST does not assume sequential or simultaneous execution other than that defined in subsequent chapters; it merely preserves the declared structure.
 

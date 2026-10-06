@@ -1,10 +1,11 @@
 ---
 id: D-008
 title: "Results `accepted`, `rejected` and `failed`"
-status: current
+status: superseded
 date: 2026-07-27
 supersedes: []
-superseded-by: []
+superseded-by:
+  - D-118
 questions:
   - "Q-007"
 affects:

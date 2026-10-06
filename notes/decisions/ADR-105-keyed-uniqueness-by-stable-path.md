@@ -13,6 +13,8 @@ affects:
 
 # ADR-105 — Keyed uniqueness by stable path
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Extends: [[ADR-039-collections-and-dictionaries|D-039]] and [[ADR-064-ordering-by-stable-path|D-064]].
 - Modifies: [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-081-collection-filtering-take-and-indexing|D-081]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]], [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] and [[ADR-102-complete-form-of-computed-family-data|D-102]].
 - Related question: [[../questions/Q-006-c-conflicts|Q-006]].
@@ -58,7 +60,7 @@ When the compiler can prove `Alice.email == Bob.email`, the second declaration r
 
 ### Updates and removals
 
-Adding or inserting a value into `unique by path` is a no-op when the collection already contains an occurrence with an equal projected key. It produces neither `failed` nor a replacement. `remove` retains its existing value-based meaning; keyed uniqueness does not turn it into removal by projected key.
+Adding or inserting a value into `unique by path` is a no-op when the collection already contains an occurrence with an equal projected key. It produces neither `Errors` nor a replacement. `remove` retains its existing value-based meaning; keyed uniqueness does not turn it into removal by projected key.
 
 For compatible concurrent insertions, semantically equal values may first merge as already required for ordinary `unique`. Distinct values with the same keyed-uniqueness key do not merge and do not conflict. Their stable provenance relation is completed using the existing reproducible causal rules, and the earliest occurrence survives. All causes of an already merged equal occurrence remain attached to that occurrence.
 

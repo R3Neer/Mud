@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-048 — Reproducible randomness and errors
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Expanded by: [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
@@ -47,11 +49,11 @@ Everything point random has identity semantics and derives its result of a seed 
 
 `allowed` use a branch specific, planted and disposable. `eventually` quantifies existentially on outcomes with a positive probability in accordance with D-044.
 
-The non-finite results of `Rum`, division by zero, an unavailable reference, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `failed` and rollback. Within `allowed` they spread like failure assessment purposes and do not amount to falsehood.
+The non-finite results of `Rum`, division by zero, an unavailable reference, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `Errors` and rollback. Within `allowed` they spread like failure assessment purposes and do not amount to falsehood.
 
-Each of these errors must have a diagnostic human `Text`. When it reaches the boundary of a action real, that one diagnostic forms the `reason` mandatory for its result `failed` in accordance with D-061.
+Each of these errors must have a diagnostic human `Text`. When it reaches the boundary of a action real, that one diagnostic forms the `reason` mandatory for its result `Errors` in accordance with D-061.
 
-Resource constraints and internal flaws in an implementation should not be confused with a `failed` semantic. Q-007 It must define their external representation and the exact boundary between the two categories.
+Resource constraints and internal flaws in an implementation should not be confused with a `Errors` semantic. Q-007 It must define their external representation and the exact boundary between the two categories.
 
 ## Consequences
 

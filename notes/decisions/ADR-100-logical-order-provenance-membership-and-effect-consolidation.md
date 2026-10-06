@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-100 — Logical order, provenance, membership and effect consolidation
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
 
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
@@ -138,7 +140,7 @@ This order is declarative delta normalisation, not an observable temporal sequen
 
 ### Conflict diagnostics
 
-A true conflict that the compiler proves inevitable is a static error. If it proves that the conflict is possible but not inevitable, it emits a warning. If it proves that targets cannot coincide or that effects consolidate compatibly, it emits no conflict diagnostic. If a warned or statically undecidable conflict materialises at runtime, resolution produces `failed` and complete rollback.
+A true conflict that the compiler proves inevitable is a static error. If it proves that the conflict is possible but not inevitable, it emits a warning. If it proves that targets cannot coincide or that effects consolidate compatibly, it emits no conflict diagnostic. If a warned or statically undecidable conflict materialises at runtime, resolution produces `Errors` and complete rollback.
 
 Analysis may exploit the explicit graph of rules, actions, subactions, bindings, types, domains, guards and causality. The minimum power every implementation must achieve remains open.
 
@@ -185,4 +187,4 @@ Conformance must cover at least:
 7. arithmetic form `(Δ, P, Q)`, valid cancellations and preserved failures;
 8. conflict between distinct assignments; replacement followed by compatible arithmetic;
 9. structural composition `create → add → remove → destroy` and its distinction from sequentiality within a `then`;
-10. error, warning, absence of diagnostic and runtime `failed` according to what can be demonstrated.
+10. error, warning, absence of diagnostic and runtime `Errors` according to what can be demonstrated.

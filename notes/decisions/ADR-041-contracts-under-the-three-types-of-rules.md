@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-041 — Contracts under the three types of rules
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Related to: [[notes/decisions/ADR-025-vocabulary-from-thing-headings-and-sections|D-025]], [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]]
 - Amended by: [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|D-058]] and [[ADR-079-external-diagnostics-for-always-rules|D-079]]
 - As further amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
@@ -97,10 +99,9 @@ A connection that was not present in that first snapshot, whether because a rule
 always rule ValidPosition on game: Game {
     game.board has game.position
 }
-otherwise "A position is outside the board of {game}"
 ```
 
-Declare automatic links via `on`, does not support `given`, cannot be invoked and has no effect. His body contains a pure condition; the diagnostic `Text` optional via `otherwise` is written after the closing brace in accordance with D-079. The condition is automatically checked at the regulatory points in validation. An offence is half-heartedly assessed in the diagnostic on the tentative state offender and results in `failed` with that cause, never `rejected`, in accordance with D-061. If omitted, the compiler issues a warning and the runtime generates a reason default.
+An always rule declares automatic on bindings, has no given or world effects, and checks a pure Boolean body after each consolidated root and wave. False yields AlwaysRefusal; unsuccessful evaluation yields Error. Otherwise handles only the latter through the protected expression block, without a missing-handler warning.
 
 ### Cycle of communal life
 
@@ -114,7 +115,7 @@ All three variants fall into the category of anchor `rule::*`. In particular, `a
 - Only Boolean rules can be called using result Boolean.
 - Of all the rules, only the multiple-choice questions contain `then` and have consequences that may alter the world.
 - Reactive rules and `always` They may also act as declarative trigger sources in accordance with D-096.
-- Alone `always` turns a falsehood into failure from invariant.
+- A false always invariant refuses the transition with AlwaysRefusal; errors while computing it remain Error values.
 - Q-005 the [... ] still needs to be set canonical identity, the withdrawal of memory and its possible preservation when a connection disappears and reappears.
 
 ## Verification
@@ -130,7 +131,7 @@ All three variants fall into the category of anchor `rule::*`. In particular, `a
 9. Initialisation without triggering a binding created outside `start with`.
 10. A combination of two `changes` expressions and a Boolean transition using `and` and `or`.
 11. Consecutive pulses preserved within a time sequence.
-12. Notice regarding a rule `always` without `otherwise`, generation of a reason default value and propagation of a diagnostic explicitly to the `failed`.
+12. AlwaysRefusal on false, computing Error on unsuccessful evaluation, and no missing-diagnostic warning.
 
 ## Amendment current by D-096
 

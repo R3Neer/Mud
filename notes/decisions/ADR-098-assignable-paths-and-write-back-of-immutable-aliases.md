@@ -13,6 +13,8 @@ affects:
 
 # ADR-098 — Assignable paths and write-back of immutable aliases
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
 
 - Modifies: [[ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[ADR-039-collections-and-dictionaries|D-039]] and [[ADR-080-higher-order-collection-algebra-and-updates|D-080]].
@@ -75,7 +77,7 @@ When exact-dictionary indexing appears as an intermediate step of a write-back p
 
 - does not materialise an association;
 - does not construct an alias from its defaults;
-- does not itself produce `failed`.
+- does not itself produce `Errors`.
 
 Therefore:
 
@@ -113,7 +115,7 @@ Rejected. Requiring the author to copy every unchanged component and manually re
 
 Rejected for partial write-back. Without an existing value there is no unambiguous base to reconstruct, and silently materialising the alias would confuse updating with creation. Explicit insertion remains available through direct assignment of the complete association or `add`.
 
-### Produce `failed` for a missing key
+### Produce `Errors` for a missing key
 
 Rejected. A missing exact query already represents ordinary absence through `empty`; partial write-back retains that philosophy and reduces to a no-op.
 
@@ -133,7 +135,7 @@ Rejected. A missing exact query already represents ordinary absence through `emp
 3. A compound update to the component uses the previous value and writes back the reconstructed alias.
 4. An alias-typed local does not become assignable merely by containing a value read from storage.
 5. A derived alias field cannot be a write-back target.
-6. A missing exact key in an intermediate step produces a no-op without insertion or `failed` for that absence.
+6. A missing exact key in an intermediate step produces a no-op without insertion or `Errors` for that absence.
 7. `dictionary[key] = wholeValue` retains the ability to create or replace the complete association.
 8. A root without sufficient outer mutability makes the path invalid.
 9. Sequential semantics within a `then` observe earlier write-backs.

@@ -161,8 +161,7 @@ module MUDSurface {
                    | AlwaysRuleDecl(nominal_name name,
                                     on_clause? participants,
                                     metadata_assignment* metadata,
-                                    expression_block invariant,
-                                    expr? diagnostic)
+                                    expression_block invariant)
                    | ActionDecl(action_kind kind,
                                 nominal_name name,
                                 for_clause? participants,
@@ -422,10 +421,12 @@ module MUDSurface {
     -- Bodies, conditions and tests
     -- -----------------------------------------------------------------
 
-    expression_block = ExpressionBlock(pure_preamble_statement* preamble, expr result)
+    expression_block = ExpressionBlock(pure_preamble_statement* preamble, expr result,
+                                       recovery_handler* handlers)
         attributes (source_origin origin)
 
-    value_block = ValueBlock(value_statement* statements, expr result)
+    value_block = ValueBlock(value_statement* statements, expr result,
+                             recovery_handler* handlers)
         attributes (source_origin origin)
 
     value_statement = LocalCalculatedValueStatement(local_calculated_decl value)
@@ -463,16 +464,29 @@ module MUDSurface {
     local_statement_block = LocalStatementBlock(value_statement* statements)
         attributes (source_origin origin)
 
-    action_guard = ActionGuard(expression_block condition, expr? diagnostic)
+    recovery_handler = RecoveryHandler(on_clause? bindings,
+                                       expression_block? filter,
+                                       recovery_branch branch)
         attributes (source_origin origin)
 
-    action_postcondition = ActionPostcondition(expression_block condition,
-                                               expr? diagnostic)
+    recovery_branch = RecoverThen(recovery_body body)
+                    | RecoverRaise(value_block errors)
+        attributes (source_origin origin)
+
+    recovery_body = ExpressionRecovery(expression_block body)
+                  | ValueRecovery(value_block body)
+                  | EffectRecovery(effect_block body)
+        attributes (source_origin origin)
+
+    action_guard = ActionGuard(expression_block condition)
+        attributes (source_origin origin)
+
+    action_postcondition = ActionPostcondition(expression_block condition)
         attributes (source_origin origin)
 
     effect_block = EffectBlock(then_statement first_statement,
                                then_statement* remaining_statements,
-                               expr? failure_diagnostic)
+                               recovery_handler* handlers)
         attributes (source_origin origin)
 
     then_statement = EffectStatement(effect value)
@@ -509,7 +523,7 @@ module MUDSurface {
                                       test_assertion* remaining_assertions)
         attributes (source_origin origin)
 
-    test_assertion = TestAssertion(expr condition, expr? diagnostic)
+    test_assertion = TestAssertion(expression_block condition)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------

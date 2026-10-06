@@ -27,6 +27,8 @@ affects:
 
 # ADR-096 — Modules, callables, `look`, `message` and activation
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-116-contract-visible-cross-module-specialisation|D-116]].
 
 - Amended by: [[ADR-115-static-produced-types-and-union-joins|D-115]].
@@ -59,7 +61,7 @@ An internal call executes at its textual position within the resolution's privat
 
 The `after` clauses of all actions/subactions executed during resolution are checked against the complete resolution's tentative final stable state. An ordered `for each` retains sequential semantics between iterations; in an unordered one, sibling-iteration deltas are consolidated under the ordinary concurrency rules.
 
-An `action` or `subaction` may be invoked from any semantic `then` context, including a reactive rule's `then`. `action` also retains outer-root capability; `subaction` does not. A nested `failed` propagates and reverts the entire resolution. An internal `rejected` also aborts and reverts, while retaining the `rejected` category.
+An `action` or `subaction` may be invoked from any semantic `then` context, including a reactive rule's `then`. `action` also retains outer-root capability; `subaction` does not. A nested `Errors` propagates and reverts the entire resolution. An internal `Refusal` also aborts and reverts, while retaining the `Refusal` category.
 
 ### Modules and visibility
 
@@ -155,7 +157,7 @@ Named binding requires an unequivocal static role contract shared by every possi
 
 `look` is a pure callable query from the host, another module that can see its contract, its own module and pure runtime contexts compatible with state reading. It admits `for` and `given`.
 
-`look`'s `given` parameters follow the general `given` rules. A dynamic domain violation from the host is a query error; inside a resolution, if it invalidates evaluation, it produces `failed`. `given` parameters must not introduce concerns purely about host transport or presentation.
+`look`'s `given` parameters follow the general `given` rules. A dynamic domain violation from the host is a query error; inside a resolution, if it invalidates evaluation, it produces `Errors`. `given` parameters must not introduce concerns purely about host transport or presentation.
 
 `look` fields are evaluated over a single coherent read view inherited from the caller. From the host this is the queryable stable state; from a rule it is that rule's snapshot; from a `then` it includes the private delta visible at the call's textual point. A `look` can therefore observe earlier private effects of the same `then` while remaining pure.
 

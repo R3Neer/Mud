@@ -36,6 +36,7 @@ decisions:
   - D-112
   - D-113
   - D-117
+  - D-118
 ---
 
 # 04. Model mathematician from world
@@ -88,7 +89,7 @@ The model current stipulates:
 13. A rule containing `create A` is only executed if canonical identity `A` is absent.
 14. Every field denotes a collection; its outer mutability and the capacity over its members are orthogonal permissions even with cardinality `[1]`.
 15.  A collection of `thing` always requires strict membership: $c\neq T\land c\ \mathsf{is}\ T$. There is no `reflexive`.
-16. `destroy` only commits a withdrawal if all the resulting cardinalities and domains are valid; otherwise, it produces `failed` and a rollback.
+16. Destroy commits only when resulting domains/cardinalities are valid; an invalid transition produces Error occurrences and rolls back.
 17.  A declaration with an inactive hard dependency is suspended entirely; its fields and participants are not partially rewritten, and that derived suspension does not clear its own stored payload. Only a `destroy` directed at the declaration itself terminates its materialisation runtime in accordance with the current cycle lifetime rules.
 18. A `thing`'s field declarations come exclusively from its canonical static schema, including specialisation. Runtime effects may change authorised values and collection membership, but never add or delete field declarations. Dependency suspension retains the static declaration and its applicable payload; destroying the owning `thing` discards its own materialisation's load, and a future materialisation uses the canonical schema.
 19. Each module may contribute at most one `start with`; their finite, unordered contributions are combined into a single surface of activatable statements `thing | rule`, and the contributions of all modules are materialised jointly prior to the initial stabilisation.
@@ -109,7 +110,8 @@ The model current stipulates:
 34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
 35. A resolution's private deltas and consolidated wave projections are tentative. Later waves may read consolidated tentative changes, while the confirmed world remains unchanged.
 36. A complete stable resolution is confirmed atomically only after all applicable invariants and the final `after` clauses of every executed action/subaction succeed. Rejection or failure discards every wave's changes and external delivery.
-37. `allowed` executes the complete semantic protocol in isolation and always discards its tentative result. `accepted` maps to `true`, `rejected` to `false`, and `failed` propagates; it changes no confirmed world state, queues, logs, randomness or resolution identities.
+37. `allowed` executes the complete semantic protocol in isolation and always discards its tentative result. `Success` maps to `true`, `Refusal` to `false`, and `Errors` propagates; it changes no confirmed world state, queues, logs, randomness or resolution identities.
+39. Always invariants are checked after the consolidated root and after every consolidated wave. False yields AlwaysRefusal; unsuccessful evaluation yields Error occurrences. A later wave cannot repair a failed checkpoint. Inactive hard-dependent rules are suspended, and restored rules are checked when effective again.
 38. Recording tentative changes does not change semantic consolidation into textual merging or impose a physical journal representation.
 
 Examples of confirmed distinctions:

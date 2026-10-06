@@ -14,6 +14,8 @@ affects:
 
 # ADR-110 — Tentative wave journal and atomic confirmation
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Develops: [[ADR-042-shares-root-and-results|D-042]] and [[ADR-043-speculative-query-with-allowed|D-043]].
 - Preserves the consolidation algebra of [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-060-additive-deltas-and-nat-normalisation|D-060]] and [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]], and internal-call sequencing of [[ADR-096-modules-callables-look-message-and-activation|D-096]].
 - Complements the foreign transaction boundary of [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
@@ -26,7 +28,7 @@ Within one `then`, statements and internal calls observe prior authorised privat
 
 After the complete resolution stabilises, all applicable invariants and the `after` clauses of every executed action/subaction must pass. The successful final checks produce the final transition record, and the resulting transition is then confirmed atomically. A rejected or failed resolution discards its entire journal and tentative outputs, including earlier waves. Completion of one wave or one nested action is not a commit boundary. `old` retains its existing contextual snapshot meaning.
 
-`allowed` uses the same complete semantic resolution protocol on an isolated speculative projection and always discards the journal, including on acceptance. `accepted` maps to `true`, `rejected` to `false`, and `failed` propagates. It does not consume real randomness, resolution identities, confirmed queues, logs or host message delivery. Foreign calls within speculation require the same pure/transactional isolation guarantees; native irreversible I/O cannot be undone by a journal.
+`allowed` uses the same complete semantic resolution protocol on an isolated speculative projection and always discards the journal, including on acceptance. `Success` maps to `true`, `Refusal` to `false`, and `Errors` propagates. It does not consume real randomness, resolution identities, confirmed queues, logs or host message delivery. Foreign calls within speculation require the same pure/transactional isolation guarantees; native irreversible I/O cannot be undone by a journal.
 
 Tentative message occurrences may participate in causal triggers in later waves, but external delivery occurs only after a real commit. Debugging may retain an explicitly separate diagnostic trace without publishing speculative events as confirmed world activity.
 

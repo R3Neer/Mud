@@ -521,11 +521,6 @@ productions:
     ast:
       disposition: normalized
       target: ActionPostcondition
-  diagnostic-tail:
-    cst: DiagnosticTailSyntax
-    ast:
-      disposition: normalized
-      target: expr
   expression-body:
     cst: ExpressionBodySyntax
     ast:
@@ -657,16 +652,6 @@ productions:
       disposition: normalized
       target: expr
       reason: one expression is retained; two or more become CollectionLiteralExpr
-  boolean-expression:
-    cst: BooleanExpressionSyntax
-    ast:
-      disposition: inlined
-      reason: grammar alias or component folded into a larger construct
-  text-expression:
-    cst: TextExpressionSyntax
-    ast:
-      disposition: inlined
-      reason: grammar alias or component folded into a larger construct
   constant-expression:
     cst: ConstantExpressionSyntax
     ast:
@@ -1210,3 +1195,23 @@ productions:
     ast:
       disposition: normalized
       target: ForeignCode
+  otherwise-clause:
+    cst: OtherwiseClauseSyntax
+    ast:
+      disposition: normalized
+      target: RecoveryHandler
+  recovery-handler-body:
+    cst: RecoveryHandlerBodySyntax
+    ast:
+      disposition: normalized
+      target: RecoveryHandler
+  recovery-branch:
+    cst: RecoveryBranchSyntax
+    ast:
+      disposition: normalized
+      target: recovery_branch
+  recovery-body:
+    cst: RecoveryBodySyntax
+    ast:
+      disposition: normalized
+      target: recovery_body

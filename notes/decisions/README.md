@@ -8,10 +8,10 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 112.
-- Current: 110.
+- Total: 113.
+- Current: 109.
 - Proposed: 0.
-- Superseded: 2.
+- Superseded: 4.
 - Withdrawn: 0.
 - Rejected: 0.
 
@@ -24,7 +24,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-003 | current | 2026-07-27 | [[notes/decisions/ADR-003-mud-is-a-formal-declarative-language|MUD is a formal declarative language]] |
 | D-006 | current | 2026-07-27 | [[notes/decisions/ADR-006-purity-boolean-rules-and-write-boundary|Purity Boolean rules and write boundary]] |
 | D-007 | current | 2026-07-27 | [[notes/decisions/ADR-007-causal-resolution-by-waves-over-snapshots|Causal resolution by waves over snapshots]] |
-| D-008 | current | 2026-07-27 | [[notes/decisions/ADR-008-results-accepted-rejected-and-failed|Results `accepted`, `rejected` and `failed`]] |
+| D-008 | superseded | 2026-07-27 | [[notes/decisions/ADR-008-results-accepted-rejected-and-failed|Results `accepted`, `rejected` and `failed`]] |
 | D-009 | current | 2026-07-27 | [[notes/decisions/ADR-009-allowed-as-a-baseless-rumour|`allowed` as a baseless rumour]] |
 | D-010 | current | 2026-07-27 | [[notes/decisions/ADR-010-finiteness-and-termination-required-by-eventually|Finiteness and termination required by `eventually`]] |
 | D-011 | current | 2026-07-27 | [[notes/decisions/ADR-011-derivatives-do-not-add-behaviour-of-domain|Derivatives do not add behaviour of domain]] |
@@ -68,7 +68,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-052 | current | 2026-07-28 | [[notes/decisions/ADR-052-pipelines-renderers-and-conformance|Pipelines, renderers and conformance]] |
 | D-053 | current | 2026-07-28 | [[notes/decisions/ADR-053-semantic-operator-and-authoring-flow|Semantic operator and authoring flow]] |
 | D-054 | current | 2026-07-28 | [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|Canonical definitions and initial activation]] |
-| D-055 | current | 2026-07-28 | [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|Declarative and diagnostic tests `otherwise`]] |
+| D-055 | current | 2026-07-28 | [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|Declarative tests and block error handling]] |
 | D-056 | current | 2026-07-28 | [[notes/decisions/ADR-056-char-text-and-unicode-ordering|`Char`, `Text` and Unicode ordering]] |
 | D-057 | current | 2026-07-28 | [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|Concrete grammar, precedence and continuation]] |
 | D-058 | current | 2026-07-29 | [[notes/decisions/ADR-058-temporal-triggers-changes-and-reactive-old|Temporal triggers, `changes` and reactive `old`]] |
@@ -92,7 +92,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-076 | current | 2026-08-03 | [[notes/decisions/ADR-076-named-units-prefixes-and-adjacent-notation|Named units, prefixes and adjacent notation]] |
 | D-077 | current | 2026-08-03 | [[notes/decisions/ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|Cardinality-conditioned destruction and transition diagnostics]] |
 | D-078 | current | 2026-08-03 | [[notes/decisions/ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|Nominal resolution, anchor catalogue and initial graph]] |
-| D-079 | current | 2026-08-04 | [[notes/decisions/ADR-079-external-diagnostics-for-always-rules|External diagnostics for `always` rules]] |
+| D-079 | superseded | 2026-08-04 | [[notes/decisions/ADR-079-external-diagnostics-for-always-rules|External diagnostics for `always` rules]] |
 | D-080 | current | 2026-08-04 | [[notes/decisions/ADR-080-higher-order-collection-algebra-and-updates|Higher algebra and collection updates]] |
 | D-081 | current | 2026-08-04 | [[notes/decisions/ADR-081-collection-filtering-take-and-indexing|Filtering, `take` and collection indexing]] |
 | D-082 | current | 2026-08-04 | [[notes/decisions/ADR-082-cycle-as-point-domain-modifier|`cycle` as a point-domain modifier]] |
@@ -131,6 +131,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-115 | current | 2026-10-06 | [[notes/decisions/ADR-115-static-produced-types-and-union-joins|Static produced types and union joins]] |
 | D-116 | current | 2026-10-06 | [[notes/decisions/ADR-116-contract-visible-cross-module-specialisation|Contract-visible cross-module specialisation]] |
 | D-117 | current | 2026-10-06 | [[notes/decisions/ADR-117-replacement-before-change-and-semantic-destinations|Replacement before change and semantic destinations]] |
+| D-118 | current | 2026-10-06 | [[notes/decisions/ADR-118-action-replies-refusals-and-errors|Action replies refusals and errors]] |
 
 ## Reserved identifiers
 

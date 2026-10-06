@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-084 — Alias specialisation, inherited members and derived views
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-113-abstract-and-recursive-aliases|D-113]].
 
 - Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
@@ -49,7 +51,7 @@ Members belong to the alias's nominal type. A bare structure does not obtain the
 
 A structural alias may declare derived fields with `:=`. They are pure, unstored and not assignable. The explicit nominal or structural type is checked statically. Domain, cardinality, uniqueness and order declared in the derived form, whether or not an explicit type exists, are coercive over the result and follow local-transformation normalisation. `[mut]` acts as a capability requirement on immediate `thing` members: it may retain source authority when semantic identity is preserved, but cannot manufacture it.
 
-Selection remains fixed during an evaluation snapshot. After effects are consolidated, the view is recomputed over the new state and its contracts are validated; a violation produces `failed` and rollback. A stored collection does not self-prune or recompute its membership.
+Selection remains fixed during an evaluation snapshot. After effects are consolidated, the view is recomputed over the new state and its contracts are validated; a violation produces `Errors` and rollback. A stored collection does not self-prune or recompute its membership.
 
 ### Empty `thing` bodies
 

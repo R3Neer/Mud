@@ -12,6 +12,8 @@ affects:
 
 # ADR-086 — Exact nominal identity, outer arrows and dictionary algebra
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]].
@@ -327,7 +329,7 @@ Set-theoretic key selection first determines candidate associations. Result valu
 - `L -- R` preserves the exact uniqueness mode of `L`.
 - `L ^ R` remains valid regardless of value uniqueness because it operates on dictionary-key membership. It guarantees whole-value uniqueness exactly when both operands do, and does not automatically retain a keyed criterion across the exclusive sides.
 
-Analysis may strengthen those guarantees only when it proves the required absence of cross-association collisions. Whenever the effective result has a value-uniqueness criterion, candidate associations are incorporated in the operation's established order: surviving left associations first, then surviving right associations where that operation includes them. A later association that violates ordinary `unique` or the projected `unique by` key is omitted as a no-op and produces no `failed`.
+Analysis may strengthen those guarantees only when it proves the required absence of cross-association collisions. Whenever the effective result has a value-uniqueness criterion, candidate associations are incorporated in the operation's established order: surviving left associations first, then surviving right associations where that operation includes them. A later association that violates ordinary `unique` or the projected `unique by` key is omitted as a no-op and produces no `Errors`.
 
 ```mud
 left: Person -> Room [unique] =

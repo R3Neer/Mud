@@ -3,6 +3,8 @@ module MUDNominalHIR {
     anchor = Anchor(string value)
     scope_id = ScopeId(int value)
 
+    -- Handler captures use LocalSymbol kind error-binding and clause-local scopes.
+    -- Error typing and pending occurrence matching belong to later phases.
     symbol_id = AnchoredSymbol(anchor value)
               | LocalSymbol(anchor owner, string kind, string name, int ordinal)
 

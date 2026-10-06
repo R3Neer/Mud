@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-059 — Magnitude intervals and inverted endpoints
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Amended by: [[ADR-082-cycle-as-point-domain-modifier|D-082]]
 - Amends: [[notes/decisions/ADR-028-system-of-quantities-and-units|D-028]], [[notes/decisions/ADR-029-intervals-effective-limits-and-cycles-of-point|D-029]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Related to: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
@@ -122,15 +124,15 @@ Constructing `empty` this way is a valid, total operation. A calculated field wh
 
 ### Interaction with actions and constraints
 
-An action does not produce `failed` merely because an interval evaluated during its resolution becomes empty.
+An action does not produce `Errors` merely because an interval evaluated during its resolution becomes empty.
 
 The result depends on later use:
 
-- a `given` that does not belong to the empty interval produces `rejected`;
-- an `if` that tests membership in it may be false and produce `rejected`;
-- an `after` that requires it not to be empty and is false produces `rejected`;
-- if the interval forms a domain and leaves a stored value outside that domain, the tentative state is invalid and produces `failed`;
-- if it causes an `always` rule to be violated, it produces `failed`.
+- a `given` that does not belong to the empty interval produces `Refusal`;
+- an `if` that tests membership in it may be false and produce `Refusal`;
+- an `after` that requires it not to be empty and is false produces `Refusal`;
+- if the interval forms a domain and leaves a stored value outside that domain, the tentative state is invalid and produces `Errors`;
+- if it causes an `always` rule to be violated, it produces `Errors`.
 
 A genuine error while evaluating an endpoint — for example, an invalid reference — retains the ordinary failure taxonomy and does not become `empty`.
 
@@ -177,7 +179,7 @@ This would conflate interval content, enumeration order and cyclic topology. MUD
 6. Rejection of endpoints from different magnitudes or with incompatible representations.
 7. Equal closed endpoints produce a singleton; with either side open they produce `empty`.
 8. Dynamically inverted endpoints produce `empty` without construction failure.
-9. An empty domain that excludes a stored value produces `failed`.
-10. An `if`, `given` or `after` made false by emptiness produces `rejected`.
+9. An empty domain that excludes a stored value produces `Errors`.
+10. An `if`, `given` or `after` made false by emptiness produces `Refusal`.
 11. No implicit descending or cyclic interpretation.
 12. Preservation of the special domain constraints for magnitudes and `[a..b) cycle`.

@@ -1,10 +1,11 @@
 ---
 id: D-079
 title: "External diagnostics for `always` rules"
-status: current
+status: superseded
 date: 2026-08-04
 supersedes: []
-superseded-by: []
+superseded-by:
+  - D-118
 questions: []
 affects:
   - "always rules, grammar, CST, AST, examples and diagnostics"
