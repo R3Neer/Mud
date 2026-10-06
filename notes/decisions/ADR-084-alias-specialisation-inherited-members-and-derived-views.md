@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-084 — Alias specialisation, inherited members and derived views
 
+- Amended by: [[ADR-113-abstract-and-recursive-aliases|D-113]].
+
 - Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
 
 - Modified by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]

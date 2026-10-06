@@ -574,7 +574,8 @@ syntax_nodes:
     - derived-value-shape
   alias-declaration:
     kind: AliasDeclarationSyntax
-    rhs: "\"alias\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference } ]\n        , [ alias-definition ]"
+    rhs: '[ "abstract" ] , "alias" , nominal-name , [ "as" , type-reference , { "," , type-reference } ]
+      , [ alias-definition ]'
     references:
     - nominal-name
     - type-reference

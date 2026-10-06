@@ -82,6 +82,7 @@ decisions:
   - D-099
   - D-105
   - D-112
+  - D-113
 ---
 
 # 07. Concrete grammar
@@ -661,6 +662,8 @@ An alias declaration may write an unordered list of ancestors using `as`. The lo
 `:= type` introduces the representation of a root nominal alias. Nominal aliases with ancestors inherit the effective representation and cannot redeclare it. In particular, `alias UserName as PlayerName := Text` is invalid.
 
 A `:= type` representation may be followed by an immediate body containing only alias metadata. A representational alias can therefore be documented or configured without acquiring structural components.
+
+An `abstract alias` provides a structural contract but has no directly constructible exact value. Concrete descendants carry its components. Recursive components describe finite immutable values; mandatory recursion without a finite terminating alternative is invalid. Nominal specialization remains acyclic.
 
 The structural body may contain stored components, calculated fields and inherited-default overrides. An override `name = value` changes only the default value: it cannot alter type, domain, cardinality, order, uniqueness or inner capability.
 

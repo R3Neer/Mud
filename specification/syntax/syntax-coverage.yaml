@@ -132,6 +132,7 @@ productions:
     ast:
       disposition: constructor
       target: AliasDecl
+      reason: preserves the abstract flag and declared ancestors
   alias-definition:
     cst: AliasDefinitionSyntax
     ast:

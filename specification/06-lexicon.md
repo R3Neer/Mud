@@ -35,6 +35,7 @@ decisions:
   - D-100
   - D-101
   - D-096
+  - D-113
 ---
 
 # 06. Lexical structure
@@ -103,7 +104,7 @@ The scanner applies the longest match: `a--b` contains the operator `--`, whilst
 
 They are contextual:
 
-- `abstract` in front of `thing`.
+- `abstract` in front of `thing` or a structural `alias`.
 - `always` in front of `rule`.
 - `start` as part of `start with`.
 - `mud` at an export bridge in a `from` body.

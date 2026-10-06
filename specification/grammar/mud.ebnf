@@ -137,7 +137,7 @@ descriptor-value-body
         ;
 
 alias-declaration
-    ::= "alias" , nominal-name
+    ::= [ "abstract" ] , "alias" , nominal-name
         , [ "as" , type-reference , { "," , type-reference } ]
         , [ alias-definition ]
         ;

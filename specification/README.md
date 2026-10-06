@@ -17,6 +17,7 @@ questions:
   - Q-068
 decisions:
   - D-112
+  - D-113
 ---
 
 # MUD formal specification

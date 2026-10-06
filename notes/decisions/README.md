@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 107.
-- Current: 105.
+- Total: 108.
+- Current: 106.
 - Proposed: 0.
 - Superseded: 2.
 - Withdrawn: 0.
@@ -126,6 +126,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-110 | current | 2026-10-06 | [[notes/decisions/ADR-110-tentative-wave-journal-and-atomic-confirmation|Tentative wave journal and atomic confirmation]] |
 | D-111 | current | 2026-10-06 | [[notes/decisions/ADR-111-static-thing-field-schema|Static thing field schema]] |
 | D-112 | current | 2026-10-06 | [[notes/decisions/ADR-112-explicit-storage-initialisation|Explicit storage initialisation]] |
+| D-113 | current | 2026-10-06 | [[notes/decisions/ADR-113-abstract-and-recursive-aliases|Abstract and recursive aliases]] |
 
 ## Reserved identifiers
 

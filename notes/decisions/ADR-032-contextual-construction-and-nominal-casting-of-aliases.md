@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-032 — Contextual construction and nominal casting of aliases
 
+- Amended by: [[ADR-113-abstract-and-recursive-aliases|D-113]].
+
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
 
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]

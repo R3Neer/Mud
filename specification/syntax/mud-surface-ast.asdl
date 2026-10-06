@@ -119,7 +119,8 @@ module MUDSurface {
                                metadata_assignment* metadata,
                                field_decl* fields,
                                thing_initializer* initializers)
-                   | AliasDecl(nominal_name name,
+                   | AliasDecl(flag is_abstract,
+                               nominal_name name,
                                type_ref* direct_ancestors,
                                alias_definition? definition,
                                metadata_assignment* metadata)

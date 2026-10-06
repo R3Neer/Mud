@@ -34,6 +34,7 @@ decisions:
   - D-099
   - D-103
   - D-112
+  - D-113
 ---
 
 # 04. Model mathematician from world
@@ -137,6 +138,8 @@ rule ExactIdentifier given value: Identifier {
 
 
 ## Nominal aliases
+
+Alias values are finite immutable structural values. Abstract aliases provide contracts inhabited only through concrete descendants. Productive component recursion describes a finite type graph and finite individual values; it does not imply finite enumeration or introduce cyclic value identity.
 
 Aliases form a second nominal partial order. Their nodes are types of value, not activatable identities. Direct specialisation is acyclic, and its closure `is` is reflexive, transitive and antisymmetric.
 

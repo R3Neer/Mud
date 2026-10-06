@@ -7,25 +7,21 @@ resolved:
 closed:
 decisions:
   - D-084
+  - D-113
 affects: []
 superseded-by: []
 ---
 
 # Q-056 — Normalised form and alias recursion
 
-## Decided by D-084
+## Resolution
 
-- Simple and multiple specialisation of aliases.
-- Intersection of nominal representations and compatible domains.
-- Inheritance of components and derived fields.
-- Diamond deduplication by origin and conflicts between independent names.
-- Exclusive overriding of stored defaults.
-- Contextual construction and nominal member access.
+Abstract structural bases and finite productive recursion are accepted. D-113 defines finite type-graph normalization, a constructor productivity fixed point and enumeration requirements. Explicit initialization removes type-default decidability from the scope.
 
-## Outstanding
+## Pending
 
-Complete inductive definition of normalised structural form for nested or recursive aliases; admission or rejection of direct and indirect recursion; productivity conditions; and decidability of compatibility, defaults and canonical enumeration for each component type.
+Complete the formal compatibility/productivity proof obligations for arbitrary domain refinements and effective canonical enumeration in the future type-system chapter. Representation and nominal recursion policies are no longer pending.
 
 ## Closure criterion
 
-Q-056 can close when the specification defines canonical normalisation for nested aliases, resolves recursion and establishes decidable conditions for compatibility, productivity, defaults and enumeration.
+- C1: The pending conditions are defined with objective verification evidence.

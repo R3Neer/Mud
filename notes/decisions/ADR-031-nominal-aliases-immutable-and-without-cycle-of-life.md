@@ -12,6 +12,8 @@ affects:
 ---
 # ADR-031 — Nominal aliases, immutable and without cycle of life
 
+- Amended by: [[ADR-113-abstract-and-recursive-aliases|D-113]].
+
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
 
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]]
@@ -116,7 +118,7 @@ The declaration has a anchor static for resolution and nominality, but their val
 
 - It cannot appear as a target for `create`.
 - It cannot appear as a target for `destroy`.
-- That can’t be right `abstract`.
+- An abstract structural alias is a contract base and cannot be instantiated directly.
 - Participates in acyclic nominal specialisation in accordance with D-084, without purchasing identity nor cycle runtime.
 - It does not maintain state its own mutable variable.
 
@@ -141,7 +143,7 @@ The values are compared by type nominal value and content. The declaration It is
 6. Rejection of `mut` external and acceptance of `[mut]` internal aspect of a collective component of `thing`.
 7. Rejection of a partial update regarding a branch alias and agreement to reconstruction/write-back when the path ends up in writable storage.
 8. Complete replacement from a field mutable and preservation of unmodified components during a partial write-back.
-9. Rejection of `create`, `destroy` and `abstract`; acceptance of `as` and `is` as nominal specialisation in accordance with D-084.
+9. Rejection of create/destroy, abstract-base construction and unproductive recursion; acceptance of abstract aliases, `as` and `is` as nominal specialisation in accordance with D-084.
 
 ## Amended by D-084
 

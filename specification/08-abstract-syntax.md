@@ -55,6 +55,7 @@ decisions:
   - D-098
   - D-105
   - D-112
+  - D-113
 ---
 
 # 08. Surface abstract syntax
@@ -364,6 +365,8 @@ The CST can represent `unique unique`, `unique unique by email` or two `unique b
 ## Aliases
 
 `AliasDecl` contains:
+
+- `is_abstract: flag`, preserved without deciding productivity.
 
 - Nominal name.
 - Sequence of direct ancestors that have not yet been resolved.

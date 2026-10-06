@@ -2362,3 +2362,33 @@ cases:
   expected_diagnostics:
   - uninitialized-family-datum
   produces_ast: true
+- id: abstract-recursive-alias
+  category: alias
+  source: 'abstract alias Error { cause: Error [0..1] = empty }
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasDecl(is_abstract=Enabled, definition=StructuralAlias)
+  produces_ast: true
+- id: alias-unproductive-recursion
+  category: typing
+  source: 'alias Chain { next: Chain }
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasDecl(Chain)
+  expected_diagnostics:
+  - unproductive-alias-cycle
+  produces_ast: true
+- id: abstract-alias-instantiation
+  category: typing
+  source: 'abstract alias Base {}
+
+    thing World { value: Base = () }
+
+    '
+  cst_root: MudFileSyntax
+  ast: AliasDecl(is_abstract=Enabled)
+  expected_diagnostics:
+  - abstract-alias-construction
+  produces_ast: true
