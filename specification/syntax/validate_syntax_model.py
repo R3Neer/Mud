@@ -176,6 +176,21 @@ def static_schema_contract_problems(grammar_text: str, ast_text: str) -> list[st
     return problems
 
 
+def catalogue_contract_problems(grammar_text: str, entries: dict) -> list[str]:
+    """Compare complete RHSs, including quoted semicolon terminals."""
+    code = strip_comments(grammar_text)
+    found = list(re.finditer(r"(?m)^([a-z][a-z0-9-]*)\s*::=", code))
+    problems = []
+    for index, match in enumerate(found):
+        end = found[index + 1].start() if index + 1 < len(found) else len(code)
+        rhs = code[match.end():end].strip().removesuffix(";").strip()
+        recorded = entries.get(match.group(1), {}).get("rhs", "")
+        normal = lambda value: re.sub(r"\s+", " ", value).strip()
+        if normal(rhs) != normal(recorded):
+            problems.append(f"{match.group(1)} RHS differs from its CST catalogue")
+    return problems
+
+
 def recovery_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
     """Guard semantic boundaries rather than runtime execution results."""
     code = strip_comments(grammar_text)
@@ -193,6 +208,10 @@ def recovery_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
     field = re.search(r"stored_field_data\s*=\s*\(([^()]*)\)", ast, re.S)
     if not field or "value_block default_value" not in field.group(1) or "value_block? default_value" in field.group(1):
         problems.append("new stored fields require an explicit value")
+    for name in ("thing-body", "metadata-body", "alias-definition", "structural-alias-body", "family-declaration", "family-member-body", "magnitude-body", "derived-unit-body", "point-magnitude-body", "unit-body", "local-statement-block"):
+        found = re.search(rf"(?m)^{name}\s*::=\s*(.*?)\s*;", code, re.S)
+        if found and "otherwise-clause" in found.group(1):
+            problems.append(f"{name} is not an independent block handler owner")
     branch = re.search(r"(?m)^recovery-branch\s*::=\s*(.*?)\s*;", code, re.S)
     if not branch or re.sub(r"\s+", " ", branch.group(1)).strip() != '"then" , recovery-body | "raise" , value-body':
         problems.append("recovery must choose exactly then or raise")
@@ -238,6 +257,9 @@ def validate(root: Path) -> list[Problem]:
 
     kind_syntax = kinds.get("syntax_nodes", {})
     kind_lexical = kinds.get("lexical_forms", {})
+    for path, entries in ((grammar, kind_syntax), (lexical, kind_lexical)):
+        problems.extend(Problem(str(kinds_path), message) for message in
+                        catalogue_contract_problems(path.read_text(encoding="utf-8"), entries))
     covered = coverage.get("productions", {})
     fixed_tokens = {str(item.get("spelling")) for item in kinds.get("fixed_tokens", [])}
 

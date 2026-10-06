@@ -48,7 +48,7 @@ Mitigation: semantics Small-scale operational testing in stages and comprehensiv
 
 ### Combinatorial explosion
 
-Multiple links, calculated fields, `allowed` and `eventually` can grow exponentially.
+Multiple links, calculated fields, `imagine` and `eventually` can grow exponentially.
 
 Mitigation: metrics, conservative analysis, transparent technical specifications and advanced features outside the core.
 
@@ -80,7 +80,7 @@ Mitigation: transactional staging in a temporary area and publication only after
 
 ### Inadequate diagnostics
 
-A `failed` without a chain causal The MUD’s main promise is once again in doubt.
+An Error without a chain causal The MUD’s main promise is once again in doubt.
 
 Mitigation: codes for error stables, anchors, ranges, waves, readings/escrituras and suggestions for corrections.
 

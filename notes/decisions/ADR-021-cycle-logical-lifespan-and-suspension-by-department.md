@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-021 — Cycle logical lifespan and suspension by department
 
+- Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
+
 - Updated: 28 July 2026 to use the terminology of D-025
 - Related to: [[notes/decisions/ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]]
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
@@ -112,7 +114,6 @@ rule OpenGate on gate: Gate [mut] {
 always rule ValidKingdom on kingdom: Kingdom {
     kingdom.population >= 0
 }
-otherwise "Invalid population in {kingdom}"
 ```
 
 Runtime activations omit the category and body:

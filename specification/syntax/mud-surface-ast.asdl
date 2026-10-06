@@ -512,7 +512,7 @@ module MUDSurface {
 
     local_value_decl = LocalValueDecl(variable_name name,
                                       derived_value_shape? shape,
-                                      expr value)
+                                      expression_block value)
         attributes (source_origin origin)
 
     start_set = StartSet(expr* contributions)

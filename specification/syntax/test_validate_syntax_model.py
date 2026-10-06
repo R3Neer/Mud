@@ -5,6 +5,7 @@ import unittest
 
 from validate_syntax_model import (
     foreign_contract_problems,
+    catalogue_contract_problems,
     recovery_contract_problems,
     nominal_hir_contract_problems,
     static_schema_contract_problems,
@@ -128,6 +129,17 @@ class StaticSchemaContractTests(unittest.TestCase):
         self.assertEqual(static_schema_contract_problems(grammar, ast), [])
 
 
+class CatalogueRHSContractTests(unittest.TestCase):
+    def test_quoted_semicolon_is_not_a_production_end(self):
+        grammar = 'token ::= "," | ";" ;\nother ::= token ;'
+        entries = {"token": {"rhs": '"," | ";"'}, "other": {"rhs": "token"}}
+        self.assertEqual(catalogue_contract_problems(grammar, entries), [])
+
+    def test_missing_operator_and_wrong_handler_rhs_are_detected(self):
+        self.assertTrue(catalogue_contract_problems('operator ::= "is" | "has" ;', {"operator": {"rhs": '"is"'}}))
+        self.assertTrue(catalogue_contract_problems('body ::= expression , { handler } ;', {"body": {"rhs": 'expression'}}))
+
+
 class RecoveryContractTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -147,6 +159,12 @@ class RecoveryContractTests(unittest.TestCase):
     def test_branches_cannot_be_sequential(self):
         bad = self.grammar.replace('| "raise" , value-body', ', "raise" , value-body')
         self.assertTrue(recovery_contract_problems(bad, self.ast))
+
+    def test_declaration_braces_cannot_gain_handlers(self):
+        for production in ("thing-body", "metadata-body", "structural-alias-body", "unit-body"):
+            with self.subTest(production=production):
+                bad = re.sub(rf"(?m)(^{production}\s*::=.*?)(;)", r"\1 , { otherwise-clause }\2", self.grammar, count=1, flags=re.S)
+                self.assertTrue(recovery_contract_problems(bad, self.ast))
 
     def test_field_initialization_cannot_be_optional(self):
         bad = self.ast.replace('value_block default_value', 'value_block? default_value')

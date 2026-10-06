@@ -30,7 +30,9 @@ Then recovery preserves the protected category: expression recovery is externall
 
 Raise is confined to a recovery branch. Its value body yields one Error or a nonempty collection compatible with Errors. Flatten the collection while preserving distinct occurrences; empty and non-Error results are invalid. A long raise body is a normal value block and may have its own block handlers. Then and raise are alternatives; neither an arbitrary in-body raise statement nor finally is introduced. Otherwise raise is catch-all sugar.
 
-Short effect recovery is admitted just like short ordinary then. For braces that are syntactically compatible with several block categories, the protected owner determines normalization; typing then checks the branch. A following otherwise belongs to the nearest complete eligible block. Braces delimit the handler when an outer handler chain is intended, so a raise value's own recovery cannot silently be flattened into its parent's chain.
+Short effect recovery is admitted just like short ordinary then. Declaration/schema/metadata braces are not evaluated block owners. LocalStatementBlock is grouping within the owning ValueBlock and shares its error channel, without an independent handler list. Pure short-local RHSs normalize to ExpressionBlock with handlers, never private mutable ValueBlock storage.
+
+For braces that are syntactically compatible with several block categories, the protected owner determines normalization; typing then checks the branch. A following otherwise belongs to the nearest complete eligible block. Braces delimit the handler when an outer handler chain is intended, so a raise value's own recovery cannot silently be flattened into its parent's chain.
 
 ## Verification
 

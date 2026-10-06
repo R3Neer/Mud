@@ -18,7 +18,7 @@ lexical-element
       ;
 
 bom              ::= ? U+FEFF, only as the first character ? ;
-eof              ::= ? fin de archivo ? ;
+eof              ::= ? end of file ? ;
 horizontal-space ::= " " | tab ;
 tab              ::= ? U+0009 ? ;
 newline          ::= cr , [ lf ] | lf ;
@@ -64,7 +64,7 @@ text-literal
 quote ::= ? U+0022 COMILLA DOBLE ? ;
 
 text-character
-    ::= ? escalar Unicode salvo '"', "\", "{", "}", CR y LF ? ;
+    ::= ? Unicode scalar except '"', "\", "{", "}", CR and LF ? ;
 
 value-template-hole
     ::= special-value-template-hole ;

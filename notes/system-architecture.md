@@ -162,9 +162,9 @@ The runtime must consume a representation produced after resolution, typing and 
 
 [[notes/decisions/ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]] adopts a tentative journal for the reference runtime. A `then` reads its own private sequential delta; concurrent siblings retain the common prior projection. Semantic consolidation creates tentative wave patches and coherent snapshots for the next wave. Recording a patch does not apply it to confirmed world storage.
 
-Only stabilisation, valid invariants and successful final `after` clauses for every executed action/subaction permit the final transition record and one atomic confirmation. Rejection or failure discards every wave's contributions and pending host delivery. For example, concurrent `+= 3` and `+= 4` from `10` consolidate to `17`; Git is an analogy for isolated change records, not the conflict algorithm.
+Each invocation evaluates after once its owned causal work stabilises, before its caller resumes. Nested completion retains tentative work; only successful outer completion permits one atomic confirmation. Non-success scopes discard their attempted contributions and delivery under explicit reply-capture and block-recovery rules. For example, concurrent `+= 3` and `+= 4` from `10` consolidate to `17`; Git is an analogy for isolated change records, not the conflict algorithm.
 
-`allowed` shares the semantic engine but always discards its speculative journal. Accepted becomes true, rejected false and failed propagates, with no consumption of confirmed queues, random state or resolution identities. Tentative message occurrences can cause later waves; they reach the host only after a real commit. Diagnostic traces may be retained separately from confirmed logs. Foreign calls must respect the same boundary; patches cannot undo arbitrary native I/O.
+`imagine` shares the semantic engine but always discards its speculative journal. It returns ActionReply unchanged (Success, Refusal or Errors), with no consumption of confirmed queues, random state or resolution identities. Tentative message occurrences can cause later waves; they reach the host only after a real commit. Diagnostic traces may be retained separately from confirmed logs. Foreign calls must respect the same boundary; patches cannot undo arbitrary native I/O.
 
 Physical journal layout, persistence and compression remain implementation choices. Q-002 still requires complete operational effect semantics, and Q-035 retains admissibility costs, memoisation and resource diagnostics. No semantic IR format is prescribed.
 
@@ -207,7 +207,7 @@ It can produce:
 It cannot:
 
 - infer rules from a new domain;
-- convert `failed` to `false`;
+- convert an Error or Refusal into an untyped false;
 - collapse participants and `given`;
 - change atomicity, causal ordering or identity.
 

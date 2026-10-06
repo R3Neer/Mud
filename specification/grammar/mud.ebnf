@@ -88,7 +88,7 @@ thing-body
             , { required-separation , thing-body-declaration }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 thing-body-declaration
@@ -121,7 +121,7 @@ metadata-body
             , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 descriptor-value-body
@@ -149,7 +149,7 @@ alias-definition
                 , { required-separation , metadata-assignment }
                 , [ required-separation ]
               ]
-            , "}" , { otherwise-clause }
+            , "}"
           ]
       | structural-alias-body
         ;
@@ -161,7 +161,7 @@ structural-alias-body
             , { required-separation , alias-body-declaration }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 alias-body-declaration
@@ -186,7 +186,7 @@ family-declaration
         , family-member
         , { "," , declaration-layout , family-member }
         , [ required-separation ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 family-data-declaration
@@ -216,7 +216,7 @@ family-member-body
             , { required-separation , family-member-entry }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 family-member-entry
@@ -268,7 +268,7 @@ magnitude-body
             , { required-separation , alternative-unit-declaration }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 derived-unit-body
@@ -278,7 +278,7 @@ derived-unit-body
             , { required-separation , alternative-unit-declaration }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 point-magnitude-body
@@ -287,7 +287,7 @@ point-magnitude-body
             , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 root-unit-declaration
@@ -304,7 +304,7 @@ unit-body
             , { required-separation , metadata-assignment }
             , [ required-separation ]
           ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 dimension-expression
@@ -569,7 +569,7 @@ local-statement-block
         , value-statement
         , { required-separation , value-statement }
         , [ required-separation ]
-        , "}" , { otherwise-clause }
+        , "}"
         ;
 
 reactive-rule-declaration
@@ -733,7 +733,7 @@ foreign-code-expression
     ::= FOREIGN_EXPRESSION ;
 
 local-value-declaration
-    ::= variable-name , [ derived-value-shape ] , ":=" , value-expression ;
+    ::= variable-name , [ derived-value-shape ] , ":=" , value-expression , { otherwise-clause } ;
 
 (* ------------------------------------------------------------------ *)
 (* Initial activation and tests                                         *)
@@ -854,11 +854,11 @@ mapping-left
 
 mapping-key-body
     ::= "{" , declaration-layout , expression-block
-        , [ required-separation ] , "}"
+        , [ required-separation ] , "}" , { otherwise-clause }
         ;
 
 mapping-right
-    ::= mapping-expression
+    ::= mapping-expression , { otherwise-clause }
       | value-block-body
       ;
 

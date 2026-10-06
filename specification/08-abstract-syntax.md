@@ -521,7 +521,7 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 ## Expression blocks and value blocks
 
-`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)` or `PureForeignBlock(ForeignBlock)`. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
+`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)` or `PureForeignBlock(ForeignBlock)`. LocalValueDecl retains its short RHS as an ExpressionBlock including handlers; it cannot introduce private mutable storage. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
 
 `ValueBlock(statements, result, handlers)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
 
@@ -932,3 +932,5 @@ Short and braced bodies normalise to the same block. Preamble positions wrap it 
 Foreign operations require checked or explicitly trusted type/effect contracts. Read-only native parameters alone do not establish purity. Contracts identify captures, conversions, reads, authorised writes, determinism, static evaluation, Error translation and isolation/lifetime obligations. English tooling identifies trusted obligations at their call sites. Unknown effects cannot silently become pure. The surrounding block's capabilities remain authoritative; native private mutation does not grant world writes.
 
 Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
+
+LocalStatementBlock groups statements within the owning ValueBlock and shares its error channel; it is not an independent value-result block or handler owner. Declaration/schema/metadata braces are not evaluated expression, value or effect blocks. Otherwise may attach to their contained initializer computations, not to the declaration braces themselves.

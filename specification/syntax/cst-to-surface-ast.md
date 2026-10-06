@@ -396,7 +396,7 @@ The action is not classified as either elementary or compound.
 
 ## Expression blocks, value blocks and tests
 
-A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its RHS remains an ordinary expression: these positions cannot acquire a `ValueBlock` through nesting.
+A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its short RHS normalizes to ExpressionBlock([], result, handlers); a comma-separated result becomes CollectionLiteralExpr. These positions cannot acquire private mutable storage or a ValueBlock through nesting.
 
 The short form `if ready` produces `ExpressionBlock([], ready, [])`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. Following otherwise clauses are normalized into that block's handlers; handler scope is distinct from protected-body locals.
 
@@ -512,7 +512,7 @@ player in take m from players : player.score == 2
 
 ### Dictionary associations and branches
 
-`a -> b` produces `ExactAssociationExpr(ExpressionBlock([], a, []), ValueBlock([], b, []))`; `selector --> result` produces `DecisionBranchExpr(ExpressionBlock([], selector, []), ValueBlock([], result, []))`. The brace-form `mapping-key-body` retains its premises in `ExpressionBlock`; the expanded RHS uses `value-block-body` and stores its statements in `ValueBlock`. The short RHS remains `mapping-expression`, so an outer comma continues to separate clauses rather than becoming part of the first value. `_` produces `FallbackLiteral`. Operations `|`, `&`, `--` and `^` are initially retained as `BinaryExpr`; elaboration specialises them according to resolved types. A functional operation preserves both operands and does not become a merged branch list.
+`a -> b` produces `ExactAssociationExpr(ExpressionBlock([], a, []), ValueBlock([], b, []))`; `selector --> result` produces `DecisionBranchExpr(ExpressionBlock([], selector, []), ValueBlock([], result, []))`. The brace-form `mapping-key-body` retains its premises in `ExpressionBlock`; the expanded RHS uses `value-block-body` and stores its statements in `ValueBlock`. The short RHS remains `mapping-expression` with optional block handlers, so an outer comma continues to separate clauses rather than becoming part of the first value. `_` produces `FallbackLiteral`. Operations `|`, `&`, `--` and `^` are initially retained as `BinaryExpr`; elaboration specialises them according to resolved types. A functional operation preserves both operands and does not become a merged branch list.
 
 ### Conversions
 
