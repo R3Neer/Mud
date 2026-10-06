@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 41 active questions: 20 open and 21 partially decided.
+There are 38 active questions: 19 open and 19 partially decided.
 
 Priorities:
 
@@ -24,7 +24,6 @@ Priorities:
 | --- | --- |
 | [[Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002 — Exact model of sequential and simultaneous effects]] | Partially decided |
 | [[Q-005-i-binding-identity-and-lifecycle|Q-005 — Binding identity and lifecycle]] | Partially decided |
-| [[Q-006-c-conflicts|Q-006 — Conflicts]] | Partially decided |
 | [[Q-007-f-technical-failures|Q-007 — Technical failures]] | Partially decided |
 | [[Q-008-p-git-and-read-protocol|Q-008 — Git and `READ` protocol]] | Partially decided |
 | [[Q-009-f-canonical-ir-form|Q-009 — Canonical IR form]] | Partially decided |
@@ -43,7 +42,6 @@ Priorities:
 | [[Q-018-i-discontinuous-intervals|Q-018 — Discontinuous intervals]] | Partially decided |
 | [[Q-019-n-numbers|Q-019 — Numbers]] | Partially decided |
 | [[Q-020-o-oscillations-and-wave-limit|Q-020 — Oscillations and wave limit]] | Partially decided |
-| [[Q-021-a-static-conflict-analysis|Q-021 — Static conflict analysis]] | Open |
 | [[Q-022-v-action-return-values|Q-022 — Action return values]] | Open |
 | [[Q-023-c-dynamic-composition|Q-023 — Dynamic composition]] | Open |
 | [[Q-050-b-pruning-in-remaining-boolean-operators|Q-050 — Pruning in remaining Boolean operators]] | Partially decided |
@@ -71,7 +69,6 @@ Priorities:
 | [[Q-038-c-compatibility-between-language-versions|Q-038 — Compatibility between language versions]] | Open |
 | [[Q-039-e-sufficient-explanation|Q-039 — Sufficient explanation]] | Open |
 | [[Q-040-a-threats-and-permissions|Q-040 — Threats and permissions]] | Open |
-| [[Q-056-f-normalised-form-and-alias-recursion|Q-056 — Normalised form and alias recursion]] | Partially decided |
 | [[Q-058-e-portable-evaluation-of-rum|Q-058 — Portable evaluation of `Rum`]] | Open |
 
 ## Historial

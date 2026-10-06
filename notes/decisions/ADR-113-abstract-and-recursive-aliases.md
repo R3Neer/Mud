@@ -13,6 +13,8 @@ affects:
 
 # ADR-113 — Abstract and recursive aliases
 
+- Formalised by: [[ADR-122-finite-type-graphs-and-proof-obligations|D-122]].
+
 ## Context
 
 Abstract Error and Refusal values need extensible immutable records and productive recursive cause/trace components. This amends D-031, D-032 and D-084; it does not permit a cycle in nominal specialisation.
@@ -42,7 +44,7 @@ alias B := A # invalid: transparent cycle
 
 ## Integration review
 
-Grammar and Surface AST retain the abstract flag; the CST transformation records it without deciding productivity. Lexicon includes abstract before alias. The nominal HIR's existing alias symbols and Specializes/RefersTo edges suffice: recursive representation edges are type elaboration data, not new nominal ancestry. Future type/alias chapters retain interim semantic authority here.
+Grammar and Surface AST retain the abstract flag; the CST transformation records it without deciding productivity. Lexicon includes abstract before alias. The nominal HIR's existing alias symbols and Specializes/RefersTo edges suffice: recursive representation edges are type elaboration data, not new nominal ancestry. Chapter 10 develops the static contract; the complete alias declaration chapter remains to be developed.
 
 ## Verification
 

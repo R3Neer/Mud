@@ -14,6 +14,7 @@ depends-on:
 questions: []
 decisions:
   - D-070
+  - D-118
 ---
 
 # 03. Mathematical notation and metalanguage
@@ -47,7 +48,7 @@ Typography conveys information, but it will never be the only way to distinguish
 | $a,c,v,w$ | Elements and values | An anchor or an value |
 | $\Gamma,\Sigma,\rho$ | Environments and name assignments | Environment |
 | $\tau,\sigma$ | Types | Type of an expression |
-| $\mathsf{accepted}$ | Formal categories and literal names in the metalanguage | Result of a request |
+| $\mathsf{Success}$ | Formal categories and literal names in the metalanguage | Result of a request |
 | $\operatorname{dom}(f)$ | Named operations | Domain of a function |
 
 Specific names used in mathematical examples may be written in sans serif:
@@ -523,7 +524,7 @@ The specification will always distinguish between:
 - A partial function is not defined for a given input.
 -  An value of domain representing absence, should MUD ever define it.
 - A never-ending calculation.
-- A semantic result such as $\mathsf{rejected}$ or $\mathsf{failed}$.
+- A semantic ActionReply alternative: Success, Refusal or a nonempty Errors value.
 - An error from a particular implementation.
 
 None of these situations will be identified as another without an explicit rule.

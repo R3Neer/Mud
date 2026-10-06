@@ -14,6 +14,8 @@ affects:
 
 # ADR-114 — Callable variance and static named binding
 
+- Formalised by: [[ADR-122-finite-type-graphs-and-proof-obligations|D-122]].
+
 ## Context
 
 The author accepts ordinary variance subject to capabilities, and named binding only through an unequivocal static contract. This amends D-036, D-063 and D-096 and closes Q-063 and Q-066.

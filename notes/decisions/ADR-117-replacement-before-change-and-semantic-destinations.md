@@ -15,6 +15,8 @@ affects:
 
 # ADR-117 — Replacement before change and semantic destinations
 
+- Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
+
 ## Context
 
 The author accepts replacement before change, disjoint component composition, dictionary deletion precedence and generation-bound writes. This amends D-046, D-098 and the concurrent dictionary scope of D-039/D-100. Runtime field schema changes remain excluded by D-111.

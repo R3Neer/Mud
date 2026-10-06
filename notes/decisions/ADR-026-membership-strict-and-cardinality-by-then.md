@@ -14,6 +14,8 @@ affects:
 ---
 # ADR-026 — Membership strict and cardinality by `then`
 
+- Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
+
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]].
 
 - Expanded by: [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]]

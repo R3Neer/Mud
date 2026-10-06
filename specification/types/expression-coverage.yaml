@@ -1,0 +1,146 @@
+schema_version: 1
+expressions:
+  DottedPathExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-dotted-path-expr
+  ExactNumberLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-exact-number-literal
+  RumberLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-rumber-literal
+  PointLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-point-literal
+  BoolLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-bool-literal
+  EmptyLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-empty-literal
+  AllLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-all-literal
+  FallbackLiteral:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-fallback-literal
+  DeclarationCategoryExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-declaration-category-expr
+  TextTemplateExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-text-template-expr
+  CollectionLiteralExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-collection-literal-expr
+  PositionalStructuralLiteralExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-positional-structural-literal-expr
+  NamedStructuralLiteralExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-named-structural-literal-expr
+  ExactAssociationExpr:
+    section: 6. Collection and dictionary algebra
+    cases:
+    - expression-exact-association-expr
+  DecisionBranchExpr:
+    section: 6. Collection and dictionary algebra
+    cases:
+    - expression-decision-branch-expr
+  IntervalValueExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-interval-value-expr
+  QuantityValueExpr:
+    section: 1. Literals, names and constructors
+    cases:
+    - expression-quantity-value-expr
+  PointComponentExpr:
+    section: 4. Numeric, dimensional and Boolean operators
+    cases:
+    - expression-point-component-expr
+  ContextualPointComponentExpr:
+    section: 4. Numeric, dimensional and Boolean operators
+    cases:
+    - expression-contextual-point-component-expr
+  RandomExpr:
+    section: 8. Temporal, random and speculative forms
+    cases:
+    - expression-random-expr
+  TakeExpr:
+    section: 7. Domains, selection and finite traversal
+    cases:
+    - expression-take-expr
+  SelectionExpr:
+    section: 7. Domains, selection and finite traversal
+    cases:
+    - expression-selection-expr
+  DomainRestrictionExpr:
+    section: 7. Domains, selection and finite traversal
+    cases:
+    - expression-domain-restriction-expr
+  CollectionTransformExpr:
+    section: 7. Domains, selection and finite traversal
+    cases:
+    - expression-collection-transform-expr
+  QuantifierExpr:
+    section: 7. Domains, selection and finite traversal
+    cases:
+    - expression-quantifier-expr
+  EventuallyExpr:
+    section: 8. Temporal, random and speculative forms
+    cases:
+    - expression-eventually-expr
+  ChangesExpr:
+    section: 8. Temporal, random and speculative forms
+    cases:
+    - expression-changes-expr
+  PrefixExpr:
+    section: 4. Numeric, dimensional and Boolean operators
+    cases:
+    - expression-prefix-expr
+  BinaryExpr:
+    section: 4. Numeric, dimensional and Boolean operators
+    cases:
+    - expression-binary-expr
+  ComparisonChainExpr:
+    section: 5. Equality, comparisons, membership and narrowing
+    cases:
+    - expression-comparison-chain-expr
+  ExactTypeTestExpr:
+    section: 5. Equality, comparisons, membership and narrowing
+    cases:
+    - expression-exact-type-test-expr
+  ConversionExpr:
+    section: 4. Numeric, dimensional and Boolean operators
+    cases:
+    - expression-conversion-expr
+  MemberAccessExpr:
+    section: 2. Access, reflection and indexing
+    cases:
+    - expression-member-access-expr
+  MetadataAccessExpr:
+    section: 2. Access, reflection and indexing
+    cases:
+    - expression-metadata-access-expr
+  IndexExpr:
+    section: 2. Access, reflection and indexing
+    cases:
+    - expression-index-expr
+  CallExpr:
+    section: 3. Calls
+    cases:
+    - expression-call-expr

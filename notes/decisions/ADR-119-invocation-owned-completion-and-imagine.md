@@ -15,6 +15,8 @@ affects:
 
 # ADR-119 — Invocation-owned completion and imagine
 
+- Formalised by: [[ADR-124-expression-and-block-typing-coverage|D-124]].
+
 ## Context
 
 The author chooses invocation-owned stabilization, each invocation's own after before returning to its caller, and imagine as a speculative ActionReply expression. This amends D-009, D-042, D-043, D-096 and D-110.

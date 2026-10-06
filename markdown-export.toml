@@ -38,6 +38,9 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-021-a-static-conflict-analysis.md",
+    "notes/questions/Q-006-c-conflicts.md",
+    "notes/questions/Q-056-f-normalised-form-and-alias-recursion.md",
     "notes/decisions/ADR-008-results-accepted-rejected-and-failed.md",
     "notes/decisions/ADR-017-everything-type-well-built-has-default-value.md",
     "notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message.md",
@@ -83,6 +86,9 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-021-a-static-conflict-analysis.md",
+    "notes/questions/Q-006-c-conflicts.md",
+    "notes/questions/Q-056-f-normalised-form-and-alias-recursion.md",
     "notes/decisions/ADR-008-results-accepted-rejected-and-failed.md",
     "notes/decisions/ADR-017-everything-type-well-built-has-default-value.md",
     "notes/decisions/ADR-027-departures-from-the-model-by-means-of-look-and-message.md",

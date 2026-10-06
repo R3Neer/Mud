@@ -58,6 +58,7 @@ decisions:
   - D-114
   - D-118
   - D-121
+  - D-122
 ---
 
 # 08. Surface abstract syntax
@@ -302,7 +303,7 @@ It includes both built-in types and programme-declared types. Whether a name den
 
 `CallableType(kind, receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage `receivers` remain unresolved `TypeRef` values and `givens` are `TypeExpr`; the AST preserves syntax and leaves contract variance and compatibility to typing.
 
-`ReflectedType(value)` contains a written expression in type position whose form ends in `~type`, such as `MyDragon.Stats()~type`. Resolution and typing must prove that `value` statically produces `Type`; later elaboration obtains the represented type. The mechanical form of that elaboration is not yet fixed. An ordinary call without `~type` remains a value.
+`ReflectedType(value)` contains a written expression in type position whose form ends in `~type`, such as `MyDragon.Stats()~type`. Resolution and typing must prove that `value` statically produces `Type`; later elaboration obtains the represented type. Static checking follows [[10-type-system]] and [[19-expressions]]; the mechanical form of that elaboration is not yet fixed. An ordinary call without `~type` remains a value.
 ### Dictionary
 
 ```text

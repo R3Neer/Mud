@@ -15,6 +15,8 @@ affects:
 
 # ADR-121 — Typed foreign adapter contracts
 
+- Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
+
 ## Context
 
 The author retains access to native ecosystems, including Python, through checked or explicitly trusted contracts rather than requiring every native library to prove purity. This refines D-109 at the abstract type/effect boundary; it does not implement native hosting.

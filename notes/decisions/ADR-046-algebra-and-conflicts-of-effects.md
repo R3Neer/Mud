@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-046 — Algebra and conflicts of effects
 
+- Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
+
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
 
 - Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].

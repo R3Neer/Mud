@@ -16,7 +16,7 @@ affects:
 
 ## Context
 
-The author chooses explicit storage initialisation rather than a type-wide default function. This replaces D-017 and amends D-015, D-026, D-031, D-032, D-038, D-068, D-069, D-074 and D-085.
+The author chooses explicit storage initialisation rather than a type-wide default function. This replaces D-017 and amends D-015, D-026, D-031, D-032, D-038, D-056, D-068, D-069, D-074 and D-085.
 
 ## Decision
 

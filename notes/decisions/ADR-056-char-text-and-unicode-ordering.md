@@ -19,6 +19,8 @@ affects:
 - Partially closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
 - Affected documents: [[specification/06-lexicon]], [[specification/07-concrete-grammar]], future chapters 10 and 15
 
+- Amended by: [[ADR-112-explicit-storage-initialisation|D-112]]; Char has no automatic type default.
+
 ## Context
 
 Modelling `Text` literally as `Char [* ordered]` would conflate two distinct concepts:
@@ -48,7 +50,7 @@ After escape sequences have been interpreted, a literal must contain exactly one
 
 ASCII is the subset of Unicode from `U+0000` to `U+007F`. It is not a separate type.
 
-The default value of `Char` is the `U+0000` scalar, written `"\u{0}"` in a `Char` context. It is an ordinary `Char` value, neither absence nor a text terminator. MUD does not introduce the special escape `\0`; the general Unicode notation already expresses the value without relying on a C-specific convention.
+The `U+0000` scalar can be supplied explicitly, written `"\u{0}"` in a `Char` context. It is an ordinary `Char` value, neither absence nor a text terminator. MUD does not introduce the special escape `\0`; the general Unicode notation already expresses the value without relying on a C-specific convention.
 
 ### Ordering
 
@@ -107,5 +109,5 @@ Under D-061, `Text` literals are also templates. Their literal fragments and int
 5. Preservation of `"cba"` as `Text`.
 6. Rejection of `"cba"` as a value of `Char [* ordered]`.
 7. Rejection of `ordered by` for `Char` and of collection modifiers on `Text`.
-8. The default `"\u{0}"` for `Char`, and rejection of `"\0"` as an undeclared escape.
+8. The explicit `"\u{0}"` value for `Char`, and rejection of `"\0"` as an undeclared escape.
 9. Positional preservation of literal and interpolated fragments within a template.

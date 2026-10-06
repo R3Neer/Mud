@@ -14,6 +14,8 @@ affects:
 
 # ADR-115 — Static produced types and union joins
 
+- Formalised by: [[ADR-122-finite-type-graphs-and-proof-obligations|D-122]].
+
 ## Context
 
 The author retains producer identity for look values, structural identity for anonymous literals, and the union where a common result join is ambiguous. This amends D-096 and closes Q-065/Q-068.

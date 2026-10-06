@@ -12,6 +12,8 @@ affects:
 
 # ADR-097 — Current nominal HIR and deferred semantic IR
 
+- Formalised by: [[ADR-122-finite-type-graphs-and-proof-obligations|D-122]].
+
 - Amended by: [[ADR-106-receiver-based-call-disambiguation|D-106]].
 
 - Modifies: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]] and [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]].
@@ -49,7 +51,7 @@ Every future change that introduces or modifies names, scopes, owners, bindings,
 ## Consequences
 
 - No validator may require `mud-semantic-ir.asdl` to exist.
-- No current specification document presents a post-typing and elaboration contract as existing.
+- No current specification document presents a serialized post-typing representation or concrete semantic IR schema as existing. Static typing judgements and conceptual elaboration obligations are specified independently of such an encoding.
 - The nominal HIR remains a normative mechanical contract reconstructible from the superficial AST and resolution rules.
 - Decisions requiring a later semantic distinction may retain it as a future elaboration requirement without fixing its encoding in advance.
 - Designing the future IR will require integrating the typing and elaboration surfaces that exist then and may adopt a structure different from any previous experimental schema.

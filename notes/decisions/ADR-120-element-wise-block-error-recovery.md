@@ -14,6 +14,8 @@ affects:
 
 # ADR-120 — Element-wise block error recovery
 
+- Formalised by: [[ADR-124-expression-and-block-typing-coverage|D-124]].
+
 ## Context
 
 The author selects optional on, conjunctive Error roles and recovery by error elements, retaining ordinary participant binding rather than predicates over an Errors aggregate. This completes the recovery contract of D-118.

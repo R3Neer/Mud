@@ -13,6 +13,8 @@ affects:
 
 # ADR-116 — Contract-visible cross-module specialisation
 
+- Formalised by: [[ADR-122-finite-type-graphs-and-proof-obligations|D-122]].
+
 ## Context
 
 The author accepts one cross-module specialisation policy for things and aliases, through the existing contract-visible type closure rather than another export keyword. This amends D-096 and closes Q-064.

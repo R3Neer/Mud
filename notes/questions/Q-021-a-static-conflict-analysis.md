@@ -3,24 +3,31 @@ id: Q-021
 title: Static conflict analysis
 priority: P1
 opened: 2026-07-29
-resolved: false
-closed:
+resolved: true
+closed: 2026-10-06
 decisions:
   - D-023
   - D-026
   - D-031
   - D-046
   - D-054
+  - D-123
 affects: []
 superseded-by: []
 ---
 
 # Q-021 — Static conflict analysis
 
-## Content
+## Resolution
 
-Which conflicts can be proven at compile time, and which only in a concrete resolution?
+MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/14-fields-and-mutability]] distinguish proved static conflicts, residual runtime overlap and conservatively rejected unknown stored cardinality. Finite proof-boundary witnesses are checked by validate_type_spec.py and its regression tests.
 
-D-023 and [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]] establish the initial criterion: a conflict the compiler can prove is rejected statically; a coincidence it cannot decide is checked at runtime, and the transaction is rolled back if it occurs. D-054 removes matching activations of one `thing` or rule from this category: they are idempotent because their definitions are unique. D-031 makes the alias case inapplicable.
+The required analysis is sound and conservative, not a complete solver for arbitrary symbolic predicates. Operational engine and general termination design retain their own questions.
 
-D-026 strengthens the cardinality case: the compiler must prove local and consolidated preservation; if it cannot, it conservatively rejects the programme instead of deferring the case to runtime.
+## Closure criterion
+
+- C1: The remaining formal proof/minimum-analysis boundary is specified with objective obligations and contrasting conformance evidence.
+
+## Closure evidence
+
+- C1: MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/14-fields-and-mutability]] distinguish proved static conflicts, residual runtime overlap and conservatively rejected unknown stored cardinality. Finite proof-boundary witnesses are checked by validate_type_spec.py and its regression tests. [[notes/decisions/ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]] records the integration.

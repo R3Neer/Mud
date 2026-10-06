@@ -1,0 +1,848 @@
+schema_version: 1
+scope: Declarative fragments and finite derivation witnesses; no MUD parser/runtime claim
+cases:
+- id: exact-widening
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: 'wide: Num = natural'
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-accept
+  contract: Nat widens through Int to Num. The witness disposition concerns unconditional inclusion, not an
+    independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Nat
+    target:
+      name: Num
+    parents: {}
+- id: approximate-mix-rejected
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: 'approximate: Rum = exact'
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-reject
+  contract: Exact/approximate mixing needs an explicit quantitative conversion. The witness disposition concerns
+    unconditional inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Num
+    target:
+      name: Rum
+    parents: {}
+- id: narrower-cardinality
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: receiver.Use(values)
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-accept
+  contract: Readonly inclusion preserves complete cardinality guarantees. The witness disposition concerns
+    unconditional inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Nat
+      card:
+      - 2
+      - 3
+    target:
+      name: Int
+      card:
+      - 0
+      - 5
+    parents: {}
+- id: broader-cardinality-not-subtyping
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: receiver.Use(values)
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-reject
+  contract: Potential value admission is not unconditional subtyping. The witness disposition concerns unconditional
+    inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Nat
+      card:
+      - 0
+      - 5
+    target:
+      name: Int
+      card:
+      - 2
+      - 3
+    parents: {}
+- id: key-unique-implies-value-unique
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: receiver.Use(people)
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-accept
+  contract: Stable keyed uniqueness implies whole-value uniqueness. The witness disposition concerns unconditional
+    inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Person
+      unique: key:email
+    target:
+      name: Person
+      unique: value
+    parents: {}
+- id: different-order-criteria
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: receiver.Use(people)
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-reject
+  contract: Observable ordering criteria are not interchangeable. The witness disposition concerns unconditional
+    inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Person
+      order: age
+    target:
+      name: Person
+      order: name
+    parents: {}
+- id: authority-not-manufactured
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: receiver.Edit(people)
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-reject
+  contract: A readonly source cannot satisfy requested inner authority. The witness disposition concerns unconditional
+    inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: Person
+      inner_mut: false
+    target:
+      name: Person
+      inner_mut: true
+    parents: {}
+- id: nominal-alias-not-erased
+  rules:
+  - MUD-TYPE-002
+  - MUD-TYPE-005
+  source: 'raw: Text = playerName'
+  source_scope: read-only-inclusion-judgement-fragment
+  expected: static-reject
+  contract: Nominal representation equality is not implicit subtyping. The witness disposition concerns unconditional
+    inclusion, not an independently permitted runtime admission of this fragment.
+  witness:
+    kind: inclusion
+    source:
+      name: PlayerName
+    target:
+      name: Text
+    parents: {}
+- id: callable-input-contravariance
+  rules:
+  - MUD-TYPE-007
+  - MUD-EFFECT-001
+  source: receiver.Operation(argument)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Static callable contracts check input variance, result covariance and writable invariance.
+  witness:
+    kind: callable
+    parents: &id001
+      Dog:
+      - Animal
+    supplied:
+      inputs:
+      - mode: read
+        type:
+          name: Animal
+      output:
+        name: Dog
+    requested:
+      inputs:
+      - mode: read
+        type:
+          name: Dog
+      output:
+        name: Animal
+- id: callable-input-too-narrow
+  rules:
+  - MUD-TYPE-007
+  - MUD-EFFECT-001
+  source: receiver.Operation(argument)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Static callable contracts check input variance, result covariance and writable invariance.
+  witness:
+    kind: callable
+    parents: *id001
+    supplied:
+      inputs:
+      - mode: read
+        type:
+          name: Dog
+      output:
+        name: Dog
+    requested:
+      inputs:
+      - mode: read
+        type:
+          name: Animal
+      output:
+        name: Animal
+- id: writable-input-invariance
+  rules:
+  - MUD-TYPE-007
+  - MUD-EFFECT-001
+  source: receiver.Operation(argument)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Static callable contracts check input variance, result covariance and writable invariance.
+  witness:
+    kind: callable
+    parents: *id001
+    supplied:
+      inputs:
+      - mode: write
+        type:
+          name: Animal
+      output:
+        name: Dog
+    requested:
+      inputs:
+      - mode: write
+        type:
+          name: Dog
+      output:
+        name: Animal
+- id: recursive-empty-exit
+  rules:
+  - MUD-TYPE-004
+  source: 'alias Tree { children: Tree [*] = empty }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
+  witness:
+    kind: productivity
+    root: Tree
+    nodes:
+      Tree:
+        kind: product
+        children:
+        - Children
+      Children:
+        kind: container
+        minimum: 0
+        children:
+        - Tree
+- id: mandatory-cycle
+  rules:
+  - MUD-TYPE-004
+  source: 'alias Chain { next: Chain }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
+  witness:
+    kind: productivity
+    root: Chain
+    nodes:
+      Chain:
+        kind: product
+        children:
+        - Chain
+- id: abstract-concrete-witness
+  rules:
+  - MUD-TYPE-004
+  source: 'abstract alias Problem { reason: Text }; alias Missing as Problem'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
+  witness:
+    kind: productivity
+    root: Problem
+    nodes:
+      Missing:
+        kind: product
+        children:
+        - Text
+      Text:
+        kind: leaf
+      Problem:
+        kind: abstract
+        children:
+        - Missing
+- id: positive-unique-needs-enough-witnesses
+  rules:
+  - MUD-TYPE-004
+  source: 'alias Group { members: Member [2 unique] }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
+  witness:
+    kind: productivity
+    root: Group
+    nodes:
+      Group:
+        kind: container
+        minimum: 2
+        unique: true
+        witness_count: 1
+        children:
+        - One
+      One:
+        kind: leaf
+- id: transparent-recursion
+  rules:
+  - MUD-TYPE-004
+  source: alias A := B; alias B := A
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
+  witness:
+    kind: productivity
+    root: A
+    nodes:
+      A:
+        kind: transparent
+        children:
+        - B
+      B:
+        kind: transparent
+        children:
+        - A
+- id: recursive-same-shape
+  rules:
+  - MUD-TYPE-006
+  source: left to Right
+  source_scope: representation-judgement-fragment
+  expected: static-accept
+  contract: Bisimulation checks local labels and all recursive child pairs; this proves shape only, not inhabitation.
+    The expected disposition is only representation equivalence of the finite graphs. These mandatory cycles
+    are not admitted alias declarations or evidence of a constructible value; complete programme checking
+    separately rejects them.
+  witness:
+    kind: representation
+    nodes:
+      A:
+        kind: product
+        label:
+        - value
+        - next
+        children:
+        - Text
+        - A
+      B:
+        kind: product
+        label:
+        - value
+        - next
+        children:
+        - Text
+        - B
+      Text:
+        kind: leaf
+        label: Text
+      Int:
+        kind: leaf
+        label: Int
+    left: A
+    right: B
+- id: recursive-shape-mismatch
+  rules:
+  - MUD-TYPE-006
+  source: left to Right
+  source_scope: representation-judgement-fragment
+  expected: static-reject
+  contract: Bisimulation checks local labels and all recursive child pairs; this proves shape only, not inhabitation.
+    The expected disposition is only representation equivalence of the finite graphs. These mandatory cycles
+    are not admitted alias declarations or evidence of a constructible value; complete programme checking
+    separately rejects them.
+  witness:
+    kind: representation
+    nodes:
+      A:
+        kind: product
+        label:
+        - value
+        - next
+        children:
+        - Text
+        - A
+      B:
+        kind: product
+        label:
+        - value
+        - next
+        children:
+        - Int
+        - B
+      Text:
+        kind: leaf
+        label: Text
+      Int:
+        kind: leaf
+        label: Int
+    left: A
+    right: B
+- id: unknown-stored-cardinality
+  rules:
+  - MUD-EFFECT-005
+  - MUD-TYPE-005
+  source: then { remove current from kings; add replacement to kings }
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The replace example needs current membership/replacement validity evidence; runtime value admission
+    cannot replace stored-cardinality proof.
+  witness:
+    kind: proof-boundary
+    context: stored-cardinality
+    proof: unknown
+- id: runtime-value-domain
+  rules:
+  - MUD-EFFECT-005
+  - MUD-TYPE-005
+  source: then { remove current from kings; add replacement to kings }
+  source_scope: fragment-with-stated-contract
+  expected: runtime-check
+  contract: The replace example needs current membership/replacement validity evidence; runtime value admission
+    cannot replace stored-cardinality proof.
+  witness:
+    kind: proof-boundary
+    context: value-admission
+    proof: unknown
+- id: proved-stored-cardinality
+  rules:
+  - MUD-EFFECT-005
+  - MUD-TYPE-005
+  source: then { remove current from kings; add replacement to kings }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The replace example needs current membership/replacement validity evidence; runtime value admission
+    cannot replace stored-cardinality proof.
+  witness:
+    kind: proof-boundary
+    context: stored-cardinality
+    proof: proved
+- id: nominal-hir-stays-untyped
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Nominal HIR retains candidates; elaboration selects/checks the receiver target without adding
+    typed fields to nominal HIR.
+- id: producer-identity
+  rules:
+  - MUD-TYPE-003
+  source: a := actor.Stats(); b := actor.Summary()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Distinct producers retain distinct static nominal result types despite identical field contents.
+- id: ambiguous-join-retains-union
+  rules:
+  - MUD-TYPE-008
+  source: result := selected.Stats()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Under multiple incomparable common result minima, the inferred type retains the original union.
+- id: named-call-needs-static-names
+  rules:
+  - MUD-TYPE-007
+  source: operation(actor = person)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Under an erased callable contract with actor/hero alternatives, named binding is not statically
+    unequivocal.
+- id: explicit-field-initializer
+  rules:
+  - MUD-EFFECT-004
+  source: 'thing Counter { mut value: Nat = 0 }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A new stored field supplies an explicit valid initialiser; runtime does not change its schema.
+- id: private-value-mutation
+  rules:
+  - MUD-EFFECT-003
+  source: '{ mut count: Nat = 0; count += 1; count }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A value owner admits mutation of its own private stored local.
+- id: captured-value-write
+  rules:
+  - MUD-EFFECT-002
+  - MUD-EFFECT-003
+  source: '{ captured.value += 1; captured.value }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A value owner cannot write captured world state even if the receiver carries inner authority.
+- id: residual-symbolic-key-overlap
+  rules:
+  - MUD-EFFECT-006
+  source: 'then dict[first] = a
+
+    then dict[second] = b'
+  source_scope: independent-concurrent-block-fragments
+  expected: runtime-check
+  contract: These fragments belong to independently triggered blocks reading one common view. Their complete
+    existing-key replacements have proved safe cardinality; unresolved same-key different-value overlap is
+    checked at consolidation, not resolved by textual order.
+- id: char-context
+  rules:
+  - MUD-TYPE-009
+  source: 'letter: Char = "a"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: One decoded scalar receives Char context; context-free "a" remains Text.
+- id: exact-division
+  rules:
+  - MUD-TYPE-011
+  source: quotient := 1 / 3
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Exact division produces Num without integer truncation.
+- id: unrestricted-lifting
+  rules:
+  - MUD-TYPE-011
+  source: left + right
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both operand contracts have upper cardinality greater than one; no implicit zip/Cartesian product
+    is selected.
+- id: optional-index-and-extrema
+  rules:
+  - MUD-TYPE-009
+  source: 'witness := min x in values: x > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A finite ordered source with no proved survivor yields a Nat [0..1] witness; absence is not an
+    extremum error.
+- id: error-only-recovery
+  rules:
+  - MUD-TYPE-012
+  - MUD-TYPE-013
+  source: 'rule Check { true } otherwise on problem: Error { then false }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Computing errors can yield a Bool fallback; normal false is not captured.
+- id: refusal-handler-rejected
+  rules:
+  - MUD-TYPE-013
+  source: 'rule Check { true } otherwise on refusal: Refusal { then false }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A Refusal does not specialise Error.
+- id: imagine-reply
+  rules:
+  - MUD-TYPE-010
+  - MUD-EFFECT-003
+  source: reply := imagine actor.Move()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: In a pure reading owner an isolated root-capable action yields ActionReply, never implicit Bool.
+- id: foreign-readonly-insufficient
+  rules:
+  - MUD-EFFECT-003
+  source: 'from Python mud result: Bool <- library.check()'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Read-only parameters with no checked/trusted external-effect contract do not justify expression-owner
+    purity.
+- id: exact-association
+  rules:
+  - MUD-TYPE-002
+  source: name -> value
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: An exact association checks key/value owners and contributes one complete association, not a writable
+    derived field.
+- id: domain-enumeration
+  rules:
+  - MUD-TYPE-005
+  source: all FiniteDomain
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A witnessed finite canonical domain materialises members; it does not enumerate Any or an unstepped
+    rational interval.
+- id: expression-dotted-path-expr
+  rules:
+  - MUD-TYPE-009
+  source: value
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: value is an immutable singleton Nat binding.
+- id: expression-exact-number-literal
+  rules:
+  - MUD-TYPE-009
+  source: '0.25'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Context-free exact fractional literal yields Num.
+- id: expression-rumber-literal
+  rules:
+  - MUD-TYPE-009
+  source: r0.25
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The r prefix gives singleton Rum, with no implicit exact mixing.
+- id: expression-point-literal
+  rules:
+  - MUD-TYPE-009
+  source: '13:30'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A declared point format recognises this literal; the corresponding point contract determines its
+    dimension.
+- id: expression-bool-literal
+  rules:
+  - MUD-TYPE-009
+  source: 'true'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A singleton Bool literal.
+- id: expression-empty-literal
+  rules:
+  - MUD-TYPE-009
+  source: empty
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The receiving collection permits zero members and fixes the expected member type.
+- id: expression-all-literal
+  rules:
+  - MUD-TYPE-009
+  source: ~prefixes = all
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The metadata context supplies the finite Prefix domain.
+- id: expression-fallback-literal
+  rules:
+  - MUD-TYPE-009
+  source: _ --> 0
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A fallback occupies its admitted final functional-dictionary branch position.
+- id: expression-declaration-category-expr
+  rules:
+  - MUD-TYPE-009
+  source: action
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A declaration-category expression denotes the action descriptor category, not execution.
+- id: expression-text-template-expr
+  rules:
+  - MUD-TYPE-009
+  source: '"{count}"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: count is Nat; its defined text rendering yields Text without a general implicit cast.
+- id: expression-collection-literal-expr
+  rules:
+  - MUD-TYPE-009
+  source: 1, 2
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A Nat collection value expression contains two outer members.
+- id: expression-positional-structural-literal-expr
+  rules:
+  - MUD-TYPE-009
+  source: (1, 2)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A context-free two-component product; an unambiguous alias context may contextualise it.
+- id: expression-named-structural-literal-expr
+  rules:
+  - MUD-TYPE-009
+  source: (x = 1, y = 2)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A named product retains component names/order and complete values.
+- id: expression-exact-association-expr
+  rules:
+  - MUD-TYPE-002
+  source: 1 -> "one"
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The key/value owners check Nat and Text and construct one exact association.
+- id: expression-decision-branch-expr
+  rules:
+  - MUD-TYPE-002
+  source: selector --> result
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Within a typed functional dictionary selector matches its key contract and result meets its output
+    contract.
+- id: expression-interval-value-expr
+  rules:
+  - MUD-TYPE-009
+  source: 1..3
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A finite integral interval has an exact normalised domain contract.
+- id: expression-quantity-value-expr
+  rules:
+  - MUD-TYPE-009
+  source: 3 meter
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: meter is the visible root unit of a linear magnitude with the given numeric representation.
+- id: expression-point-component-expr
+  rules:
+  - MUD-TYPE-011
+  source: minute from hour in clock
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: clock is a point, and minute/hour are compatible units ordered as required; result Nat.
+- id: expression-contextual-point-component-expr
+  rules:
+  - MUD-TYPE-011
+  source: minute from hour
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A point-format context supplies the otherwise omitted point receiver.
+- id: expression-random-expr
+  rules:
+  - MUD-TYPE-012
+  source: Rand(all FiniteDomain)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: FiniteDomain has a witnessed nonempty finite enumeration; the owner admits the random point.
+- id: expression-take-expr
+  rules:
+  - MUD-TYPE-005
+  source: take 2 from values
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: values is a finite enumerable Nat collection; result contains at most two and retains source guarantees.
+- id: expression-selection-expr
+  rules:
+  - MUD-TYPE-005
+  source: 'x in values: x > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: values is a finite enumerable Nat collection; the predicate is pure deterministic Bool.
+- id: expression-domain-restriction-expr
+  rules:
+  - MUD-TYPE-005
+  source: value in Allowed
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Allowed is the compatible restricting domain; no filtered collection becomes a Domain.
+- id: expression-collection-transform-expr
+  rules:
+  - MUD-TYPE-005
+  source: values [ordered]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A local transform establishes semantic order by the declared natural member order; it does not
+    create nominal identity or inner authority.
+- id: expression-quantifier-expr
+  rules:
+  - MUD-TYPE-005
+  source: 'min x in values: x > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: values has finite observable order; Bool filtering yields a source witness with [0..1] cardinality.
+- id: expression-eventually-expr
+  rules:
+  - MUD-TYPE-012
+  source: eventually game.Goal() through game.Move
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The goal is Bool, Move is a root-capable action reference and the applicable reachability obligations
+    hold.
+- id: expression-changes-expr
+  rules:
+  - MUD-TYPE-012
+  source: count changes
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A reactive owner supplies consecutive snapshots; the internal temporal qualification is not a
+    new named MUD type.
+- id: expression-prefix-expr
+  rules:
+  - MUD-TYPE-011
+  source: not ready
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: ready is singleton Bool; no truthiness conversion is introduced.
+- id: expression-binary-expr
+  rules:
+  - MUD-TYPE-011
+  source: 1 + 2
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both operands are exact singleton Nat; the result is Nat and lifting bounds are [1..1].
+- id: expression-comparison-chain-expr
+  rules:
+  - MUD-TYPE-003
+  source: 1 < 2 < 3
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Every adjacent numeric comparison is admitted; the intermediate value is evaluated once.
+- id: expression-exact-type-test-expr
+  rules:
+  - MUD-TYPE-003
+  source: value iis Concrete
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Concrete is a visible nominal type; test exact effective identity without granting authority.
+- id: expression-conversion-expr
+  rules:
+  - MUD-TYPE-009
+  source: value to PlayerName
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: PlayerName is a concrete alias with compatible underlying representation; validate its target
+    domain.
+- id: expression-member-access-expr
+  rules:
+  - MUD-TYPE-002
+  source: actor.score
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: actor is one visible thing with an accessible stored Nat score contract; this is a read.
+- id: expression-metadata-access-expr
+  rules:
+  - MUD-TYPE-002
+  source: operation~for
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The static operation category supports for metadata, including empty if the clause is absent.
+- id: expression-index-expr
+  rules:
+  - MUD-TYPE-002
+  source: values[2]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: values is observably ordered; result is [0..1] unless position existence is proved.
+- id: expression-call-expr
+  rules:
+  - MUD-TYPE-010
+  source: actor.Move()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The call occurs in an effect owner with admitted receiver/capabilities and yields ActionReply.
+- id: sequential-key-replacement
+  rules:
+  - MUD-EFFECT-006
+  source: then { dict[key] = a; dict[key] = b }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: One sequential effect block replacing an existing key keeps its proved cardinality and finishes
+    with b. This is not a sibling replacement conflict.
+- id: has-operand-direction
+  rules:
+  - MUD-TYPE-009
+  source: values has candidate
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: values is a Nat collection and candidate is singleton Nat. The result is singleton Bool; the collection
+    is the left operand.

@@ -18,6 +18,9 @@ decisions:
   - D-116
   - D-118
   - D-119
+  - D-122
+  - D-123
+  - D-124
 ---
 
 # MUD formal specification
@@ -276,9 +279,9 @@ $$
 
 ## 10. Type system
 
-Planned file: `10-type-system.md`
+Chapter: [[10-type-system]].
 
-Planned scope:
+Defines:
 
 - Built-in, nominal, structural, collection, dictionary, interval, magnitude and union types.
 - `Any`, first-class descriptors, callable types and types obtained statically through `~type`.
@@ -331,9 +334,9 @@ Planned scope:
 
 ## 14. Fields, mutability and capabilities
 
-Planned file: `14-fields-and-mutability.md`
+Chapter: [[14-fields-and-mutability]].
 
-Planned scope:
+Defines:
 
 - Stored and calculated fields, defaults, initialisers and derived views.
 - External mutability, inner `[mut]` capability and its composition without implicit deep mutability.
@@ -386,9 +389,9 @@ Planned scope:
 
 ## 19. Expressions
 
-Planned file: `19-expressions.md`
+Chapter: [[19-expressions]].
 
-Planned scope:
+Defines:
 
 - Literals, operators, calls, access, comparison, conversion and contextual construction.
 - Resolution and elaboration of receivers, arguments and callable values.
@@ -765,6 +768,10 @@ syntax/
 ├── validate_syntax_model.py
 └── cases/
 ```
+
+## Verifiable static artefacts
+
+The [[types/README|static contract corpus]] maps expression constructors and rule obligations to declarative fragments and finite derivation witnesses. Its validator does not parse or execute MUD programmes.
 
 ## Main dependencies
 

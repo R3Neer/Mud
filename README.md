@@ -175,7 +175,8 @@ not silently become language semantics.
 Substantially developed areas include the lexical and concrete grammars, a
 lossless concrete syntax tree, a normalised surface AST, stable names and
 public anchors, nominal resolution, a nominal HIR contract, mechanically
-synchronised syntax artefacts and reviewed semantic decisions.
+synchronised syntax artefacts, proposed static type/capability/expression chapters
+and reviewed semantic decisions.
 
 Syntax highlighting, formatting and smart editing are implemented tooling. The
 complete type system, elaboration, causal runtime, advanced analyses, semantic

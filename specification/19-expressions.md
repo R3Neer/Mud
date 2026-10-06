@@ -1,0 +1,217 @@
+---
+title: Expression and block typing
+aliases:
+  - Static expression rules
+tags:
+  - mud/specification
+status: proposed
+normative: true
+depends-on:
+  - "[[10-type-system]]"
+  - "[[14-fields-and-mutability]]"
+questions:
+  - Q-019
+  - Q-023
+  - Q-029
+  - Q-050
+  - Q-058
+decisions:
+  - D-028
+  - D-030
+  - D-032
+  - D-034
+  - D-039
+  - D-040
+  - D-047
+  - D-048
+  - D-049
+  - D-056
+  - D-058
+  - D-061
+  - D-074
+  - D-075
+  - D-080
+  - D-081
+  - D-086
+  - D-088
+  - D-092
+  - D-095
+  - D-101
+  - D-103
+  - D-114
+  - D-115
+  - D-118
+  - D-119
+  - D-120
+  - D-121
+  - D-124
+---
+
+# 19. Expression and block typing
+
+## Scope and notation
+
+The environments and synthesis/checking judgements are defined in [[10-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[14-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
+
+The mixed Money/magnitude operator matrix remains Q-019. Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Boolean pruning beyond the specified core remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
+
+Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
+
+## Judgement composition
+
+Write $\mathcal C=(\Sigma,\Gamma,\Phi,\delta)$ and $\mathcal C\vdash e\Rightarrow\tau\triangleright(\epsilon,O)$ for synthesis. Checking does not change a value's identity or the permitted owner mode:
+
+$$
+\frac{\mathcal C\vdash e\Rightarrow\tau\triangleright(\epsilon,O)\quad
+\Sigma;\Phi\vdash\tau\preceq\sigma}
+{\mathcal C\vdash e\Leftarrow\sigma\triangleright(\epsilon,O)}
+\;\mathsf{E\text{-}Subsumption}.
+$$
+
+Contextual literal construction and explicit conversions use their own rules rather than this subsumption rule. When only domain/cardinality admission of an otherwise compatible value is unknown, E-Admission adds that exact predicate to $O$ if and only if its context admits a runtime check. It cannot be used for writable invariance, enumeration, universal callable substitution or post-effect stored cardinality.
+
+$$
+\frac{\Gamma(x)=\tau\quad x\ \mathsf{visible}}
+{\mathcal C\vdash x\Rightarrow\tau\triangleright(\mathsf{read}(x),\varnothing)}
+\;\mathsf{E\text{-}Binding}.
+$$
+
+For an admitted call with selected signature $I\to R$, every actual expression checks against its assigned input slot under the same owner mode; slot permission premises also hold. Its result is $R$, effects compose the actual summaries and the declared callee summary, and obligations are their union together with call-site admission predicates. This rule runs after nominal target selection; it has no premise that can pick another candidate using the result type.
+
+For sequential local declarations, check each RHS in the preceding environment, then extend $\Gamma$ with its checked/inferred contract and storage region. Check the final result only in the completed environment. Effects compose in statement order. Pure preambles require expression mode; value preambles additionally permit their declared private region. Effect-block completion requires every stored-cardinality obligation before returning its normal result.
+
+Block evaluation has the disjoint outcomes $\mathsf{Normal}(v)$ and $\mathsf{Fault}(E)$, where $E$ is a nonempty collection of Error occurrences. For an admitted block contract $\tau$, Normal requires $v\in\llbracket\tau\rrbracket_W$; Fault supplies no $v$. A stored Error value or an ActionReply containing Errors is not Fault by its shape alone. These outcome labels are metalanguage, not added MUD constructors.
+
+## 1. Literals, names and constructors
+
+> [!rule] MUD-TYPE-009 — Literal synthesis and checking
+> A name obtains the contract of its resolved visible binding. An exact integral literal synthesises Nat when nonnegative; an exact fractional literal synthesises Num. Signs are operators. A basic/alias/magnitude expected context may contextualise a compatible untyped literal. A Rum literal requires its lexical r prefix even in a Rum context.
+
+Text literals synthesise Text, including one-scalar text. A Char context admits one decoded Unicode scalar, with no interpolation. Text is not implicitly a canonically ordered Char collection; its specified textual-list construction in a Char-collection context must satisfy that collection's order/shape. Bool literals have singleton Bool.
+
+Empty has cardinality zero and no chosen nominal member type. An expected zero-admitting collection can check it; a positive-minimum context fails the ordinary admission/contract check. All and fallback are contextual forms: all requires a finite enumerable expected domain, and fallback exists only in a functional branch position.
+
+Component declarations/checking provide the ordered schema of a structural literal. Named and positional forms use the construction rules in chapter 10. A comma-separated value expression produces one outer member for each element expression and does not flatten nested collections. The outer cardinality counts supplied element expressions.
+
+A declaration-category expression denotes its defined descriptor category. Interval, quantity and point literals retain their own elaborated domain/dimensional forms; they are not guessed from their visual similarity to products or numbers.
+
+## 2. Access, reflection and indexing
+
+For field access, every possible static receiver alternative must expose one compatible member contract under the module's access rights. The result joins those contracts without inventing nominal identity. A thing's private ordinary fields remain inaccessible across modules even when its type is visible. A multi-receiver collection does not implicitly project each member's fields.
+
+Metadata access applies the static owner-category matrix. Type reflection returns Type for the statically known contract at that programme point, including valid narrowing. Unsupported metadata is rejected; supported absent optional metadata returns its declared optional result. No runtime lookup repairs invalid reflection.
+
+Positional indexing requires observable order, uses one-based indices and returns the optional member form when absence is permitted. Slices preserve the source members' contracts and retained guarantees with conservative cardinality. Text indexing produces Char and text slicing produces Text; positional text order is distinct from a canonical ordered-collection modifier.
+
+An exact dictionary query checks the key contract and yields its value contract with possible absence; composite keys contextualise one product key. A functional query applies all relevant branch-selector/result contracts and the dictionary's selection mode. The static result preserves the documented FirstMatch or AllMatches collection shape. Missing exact keys and unmatched functional branches yield empty, not an invented type default or a special aggregation error.
+
+## 3. Calls
+
+> [!rule] MUD-TYPE-010 — Call contract
+> Select the nominal operation under the receiver-selection rule before checking given arguments or the expected result. Bind every required receiver/argument, validate positional/named form, check types and permissions, and insert only explicitly declared defaults. Unproved domain admission cannot be used to prefer another candidate.
+
+For a callable value, check every static alternative against the admitted signature. Named calls require the static common-name contract. The supplied callable must preserve required purity, determinism and root permission as well as input/output variance.
+
+Boolean rules yield Bool, looks yield their static produced type, and real actions/subactions yield ActionReply only in an effect-capable context. Reactive/always/message declarations are trigger sources under their contracts, not interchangeable Boolean callables. A message payload type is distinct from occurrence identity.
+
+An outer request additionally requires action root capability. A subaction or a value that might denote one is not rescued by an action-shaped annotation. Call cycles must meet the relevant prohibition/proof contract; a type-correct signature does not prove acyclicity.
+
+## 4. Numeric, dimensional and Boolean operators
+
+Let $n_A,n_B$ be member numeric representations. Exact addition/subtraction/multiplication use the least common member of Nat, Int, Num. Exact division produces Num; implicit truncation is not introduced. Rum combines with Rum, and implicit exact/Rum or exact/Money mixing is invalid. Defined Money operations retain their specified scale/rounding contract; combinations not fixed by that contract remain outside the inference matrix rather than receiving a guessed result.
+
+Pure Nat subtraction saturates before a declared domain check; signed additive effect deltas instead consolidate before one Nat normalisation. Explicit to conversions round and then validate without corrective saturation. Numeric % requires its specified compatible member operation; an absent overload is a static error, not an implicit cast.
+
+Magnitude arithmetic composes nominal dimensional factors and selects the representation allowed by the operation. Addition/subtraction require the specified dimension and linear/point compatibility. Different unitless nominal magnitudes retain different factors. Unit presentation in changes presentation, not dimension or nominal magnitude. Point extraction requires compatible ordered units and produces Nat.
+
+> [!rule] MUD-TYPE-011 — Restricted arithmetic lifting
+> Binary numeric +, -, *, / and % admit collection lifting only when at least one static upper cardinality is at most one. Every pair of possible member alternatives must support the operator. The result preserves one occurrence per evaluated pair and has conservative bounds $[\ell_A\ell_B,u_Au_B]$ before explicit normalisation.
+
+If an operand is empty, no member operation is evaluated. Order is preserved from the sole potentially multiple operand where observable. Uniqueness is retained only with non-collision evidence; key uniqueness additionally requires a meaningful stable key path. No implicit zip, reduction or unrestricted Cartesian product is selected.
+
+Logical not, and, or, xor, implication and equivalence require singleton Bool results, with their specified short-circuit/desugaring contract. Temporal is a metalanguage qualification of triggers, not a newly introduced first-class MUD type. A temporal trigger expression is not a Bool that may participate in arbitrary operators: only its defined trigger-combination forms are admitted.
+
+## 5. Equality, comparisons, membership and narrowing
+
+Equality requires compatible effective member types and uses their defined equality: thing identity, exact nominal alias/produced identity with payload equality, family identity, normalised intervals, multisets or ordered sequences, and extensional dictionaries as applicable. Any equality first checks effective types. A representation match alone does not compare two nominal aliases as one type.
+
+Ordering requires a common defined order. Any has none. Ordered family members, Char scalar values, compatible numbers, normalised supported intervals and lexicographically ordered structural alias components use their specified order. A type without such a contract cannot obtain ordering through an arbitrary comparator.
+
+Is and iis check a nominal type operand. Is uses specialisation; iis uses exact effective nominal identity. Positive/negative flow facts refine subsequent statically justified uses without changing value identity or authority. Has checks the right-hand candidate against the left-hand collection/domain contract; membership tests do not turn a domain into a collection.
+
+Comparison chains type each adjacent comparison and evaluate intermediate expressions once under the concrete chain restrictions. Contextual comparison may type one bare literal from an already typed alias operand; two context-free structural literals do not supply a nominal comparison context.
+
+## 6. Collection and dictionary algebra
+
+Collection |, &, -- and ^ combine compatible member contracts and preserve whole-value multiplicities according to their specified algebra. ^ requires whole-value uniqueness from both operands. Text | is concatenation and does not provide Text overloads for &, -- or ^.
+
+For finite upper bounds $u_A,u_B$, conservative size bounds are:
+
+| Operation | Bounds without stronger overlap evidence |
+| --- | --- |
+| Union | $[\max(\ell_A,\ell_B),u_A+u_B]$ |
+| Intersection | $[0,\min(u_A,u_B)]$ |
+| Difference | $[\max(0,\ell_A-u_B),u_A]$ |
+| Unique symmetric difference | $[0,u_A+u_B]$ |
+
+Infinite upper bounds use extended nonnegative interval arithmetic. Domain/member result contracts account for both operand domains where needed; lower bounds may be strengthened only with evidence. Keyed uniqueness implies whole-value uniqueness but does not survive cross-operand collisions by declaration alone.
+
+Union guarantees whole-value uniqueness only when both operands supply it. Intersection retains a sole/equal keyed criterion, but differing keyed criteria conservatively yield whole-value uniqueness; without keyed criteria either unique operand suffices. Difference retains the left criterion; symmetric difference conservatively yields whole-value uniqueness. Chapter 14 supplies the separate order/authority table.
+
+An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch checks its selector against the input contract, its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. These are value constructors, not assignable branch storage.
+
+Exact dictionary operators operate on complete associations with their defined shared-key precedence; ordered equality and value-uniqueness requirements remain part of the contract. Functional operators are extensional combinations of result computations, not implicit edits or concatenation of branch lists. Their operand/result contracts and termination proofs must all remain valid.
+
+## 7. Domains, selection and finite traversal
+
+All D materialises a proved finite enumerable domain into a collection with its canonical enumeration guarantees. Any and unstepped general Num/Rum intervals do not acquire an enumeration. A stepped exact progression proves a positive step, finite bounds and its supported representation; Nat/Int and Money retain their default successor increments.
+
+Selection binds source members only inside its predicate. It requires a captured finite enumerable source and a pure deterministic singleton-Bool predicate. It preserves surviving member identity, multiplicity, uniqueness, order and supplied inner authority; its conservative cardinality is $[0,u]$. An is predicate may narrow surviving alternatives. A bare domain is explicitly materialised when selection must return a collection. Dictionary pair selection retains complete associations.
+
+Take checks a singleton Nat amount and a finite enumerable source. With constant amount $n$ its bounds are $[\min(\ell,n),\min(u,n)]$. It preserves the documented prefix/sample behaviour and retained members' guarantees; an unordered proper sample is a random point, not a proof of deterministic purity. Taking an entire provably small source or zero members need not consume randomness. Text take yields Text; container alias nominality is not reconstructed automatically.
+
+| Quantifier | Source/body requirements | Result |
+| --- | --- | --- |
+| Exists, forall | Finite enumerable source; pure deterministic Bool predicate | Singleton Bool |
+| Count | Same predicate contract | Singleton Nat, bounded by source size |
+| Min, max | Finite enumerable source with the required order; pure deterministic Bool filter | Source member contract with cardinality $[0,1]$ |
+
+Min/max return witnesses, not a value computed by a numeric body. No accepted witness yields ordinary empty. Direct quantification/traversal may consume a finite domain without first constructing a collection where its contract permits this. For each executes the appropriate effect/private-region block and preserves its source snapshot and decreasing/finite traversal evidence.
+
+Domain restriction and derived local collection transforms apply their specified filtering, cardinality, ordering and uniqueness normalisation. They do not introduce implicit flattening, a new nominal alias, a new domain from a filtered collection or new inner authority.
+
+## 8. Temporal, random and speculative forms
+
+Old checks the operand under the appropriate entry/snapshot contract; a test/action entry view differs from reactive previous-wave state. Changes compares the defined consecutive views and has temporal-trigger form. Combining/negating inactive Boolean-rule calls uses the specified canonical pruning core; undefined additional desugarings are not inferred from ordinary truth tables.
+
+Rand checks a finite enumerable source and yields a member with the documented random-point identity/cache restrictions. Finiteness, admissibility and purity requirements of its owner still apply. A missing valid sample follows its ordinary error/admission contract, not an invented default.
+
+Imagine checks a root-capable admissible action call, including isolation of its foreign work, and synthesises ActionReply. It is available in pure reading contexts but is not automatically static or deterministic evidence. All resulting world writes/outputs remain speculative and are discarded; an Errors alternative is returned as a value.
+
+Eventually checks its Boolean goal and finite permitted action references, with the specified reachability finiteness/termination obligations. It does not accept arbitrary effect statements as through operands. Its accepted static shape does not prove that an unrestricted world search terminates.
+
+## 9. Blocks and error recovery
+
+> [!rule] MUD-TYPE-012 — Normal result and error channel
+> Every expression/value/effect block checks its owner's result contract and effect permissions and carries an Error collection channel. Empty means the normal result is available. Nonempty means it is unavailable. Successfully evaluating false is a normal Bool; only the owning action/invariant interprets it as Refusal.
+
+ExpressionBlock introduces sequential immutable pure preamble values and one final expression. A pure local's short RHS is itself an ExpressionBlock, not private mutable storage. ValueBlock introduces sequential private computed/stored locals, admitted local mutations/iterations and one final value. EffectBlock contains ordered effects/locals and its required observable effect contract. Declaration/schema braces and LocalStatementBlock grouping do not create another normal-result owner.
+
+Handler on bindings are clause-local immutable Error specialisations. All roles must bind jointly; no on is catch-all. A handler's optional if is an externally pure singleton-Bool expression block. False leaves occurrences pending; errors produced while calculating the filter go outward.
+
+> [!rule] MUD-TYPE-013 — Recovery alternatives
+> Then recovery checks against the protected normal result and mode. Raise checks an Error or nonempty Errors-compatible collection and is confined to a handler branch. Then and raise cannot coexist in one handler. Text-only diagnostics, Refusal bindings and arbitrary in-body raise are static errors.
+
+Distinct equal-valued error occurrences are not deduplicated. Clauses handle remaining occurrences in textual/stable causal order; ordinary role binding does not introduce implicit inequality. Protected-body locals and partial exports are unavailable after rollback. Valid enclosing locals and handler bindings remain available.
+
+All successful recovery proposals compose tentatively. Equal compatible value results agree; incompatible result proposals produce a composition error. Remaining or newly raised errors discard the recovery scope and propagate outward without reentering the same chain. Nested recovery blocks retain their own handlers. No finally is introduced.
+
+## 10. Declaration and programme acceptance
+
+Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/message public fields check their declared/inferred value contracts and module boundary. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
+
+An immutable stored local requires an explicit type/value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique type and obtains no outer place authority. Defaults and static metadata require closed Static mode.
+
+For each syntax family, elaboration selects the already defined operation contract, contextual literal type, runtime admission check, effect summary and proof evidence. Unsupported combinations produce a static diagnostic. Successful static checking proves neither global causal termination nor bit-for-bit binary64 portability beyond the declared guarantees.
+
+The coverage matrix in [[types/expression-coverage.yaml]] accounts for every Surface AST expression constructor. [[types/typing-cases.yaml]] supplies positive, negative and runtime-boundary examples. Their mechanical validation verifies coverage, evidence and finite type-contract witnesses rather than claiming a complete MUD parser/typechecker or executor.
