@@ -84,6 +84,7 @@ decisions:
   - D-113
   - D-114
   - D-115
+  - D-117
 ---
 
 # 07. Concrete grammar
@@ -1207,6 +1208,8 @@ remove value from collection
 create Declaration
 destroy Declaration
 ```
+
+Reconstructible paths retain semantic component/key destinations for consolidation. Disjoint components merge; whole replacements precede compatible changes; same-key deletion wins. A missing intermediate key contributes no partial update even if a sibling inserts it.
 
 `destroy` preserves identity and canonical definitions, but removes the runtime materialisation of a concrete `thing`. Confirmed destruction discards its own stored values; a later `create` constructs a fresh materialisation from the effective schema and reapplies defaults and initialisers. This destruction does not delete capabilities owned elsewhere that are merely suspended by an inactive dependency. Destroying a reactive rule also discards that activation's temporal memory; if recreated, its first active wave establishes a new baseline without firing solely because of reactivation.
 

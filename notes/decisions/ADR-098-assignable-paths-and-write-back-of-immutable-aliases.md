@@ -13,6 +13,8 @@ affects:
 
 # ADR-098 — Assignable paths and write-back of immutable aliases
 
+- Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
+
 - Modifies: [[ADR-031-nominal-aliases-immutable-and-without-cycle-of-life|D-031]], [[ADR-039-collections-and-dictionaries|D-039]] and [[ADR-080-higher-order-collection-algebra-and-updates|D-080]].
 - Related to: [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-086-exact-nominal-identity-external-arrows-and-dictionary-algebra|D-086]].
 - Keeps [[notes/questions/Q-006-c-conflicts|Q-006]] open for compatibility of concurrent effects on partially overlapping targets.
@@ -95,7 +97,7 @@ Direct writing retains exact-dictionary semantics: it replaces an existing assoc
 
 Within the same `then`, a reconstructible path observes the value projected by the private delta's preceding sequential effects, and its write-back is visible to later statements like any other effect.
 
-This decision does not complete the concurrent-conflict matrix. In particular, Q-006 remains open on compatibility between concurrent updates to different components of one reconstructed alias, between a partial update and complete replacement of its container, and other partially overlapping targets.
+Concurrent disjoint stored components compose by semantic destination. Complete replacements precede compatible partial changes; unequal replacements of the same destination conflict. Shared write-back roots do not alone create a conflict. Dictionary deletion and missing-path admission retain their specified precedence.
 
 ## Rejected alternatives
 
@@ -122,7 +124,7 @@ Rejected. A missing exact query already represents ordinary absence through `emp
 - Elaboration, not the superficial AST, reconstructs intermediate values and obtains the actual storage target.
 - Deep paths avoid introducing copy APIs, registries or manual reconstruction merely to update keyed-population state.
 - A missing key cleanly distinguishes partial update from complete insertion.
-- Compatibility of partially overlapping concurrent write-backs remains pending in the general conflict matrix.
+- Elaboration preserves semantic leaf intents through reconstruction for concurrent consolidation.
 
 ## Verification
 
@@ -135,4 +137,4 @@ Rejected. A missing exact query already represents ordinary absence through `emp
 7. `dictionary[key] = wholeValue` retains the ability to create or replace the complete association.
 8. A root without sufficient outer mutability makes the path invalid.
 9. Sequential semantics within a `then` observe earlier write-backs.
-10. Concurrent overlaps receive no new rule beyond what is already fixed and remain delimited by Q-006.
+10. Disjoint components merge and container replacements precede compatible partial updates; incompatible replacements conflict.

@@ -14,33 +14,21 @@ decisions:
   - D-098
   - D-100
   - D-105
+  - D-117
 affects: []
 superseded-by: []
 ---
 
 # Q-006 — Conflicts
 
-## Question
+## Resolution
 
-What is the complete compatibility matrix for assignments, increments, multiplications and concurrent structural operations?
+The remaining accepted composition policies are explicit: equal/different replacements, arithmetic, disjoint components, containers, dictionary keys/deletion/uniqueness and generation-bound writes. Heterogeneous collection updates without an algebra conflict.
 
-## Already decided
+## Pending
 
-The question is **partially decided** by [[notes/decisions/ADR-023-consolidation-of-concurrent-structural-effects|D-023]], [[notes/decisions/ADR-039-collections-and-dictionaries|D-039]], [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]], [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]], [[notes/decisions/ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[notes/decisions/ADR-098-assignable-paths-and-write-back-of-immutable-aliases|D-098]], [[notes/decisions/ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] and [[notes/decisions/ADR-105-keyed-uniqueness-by-stable-path|D-105]].
-
-Equal and unequal assignments; concurrent arithmetic `(Δ, P, Q)` with an additive block before the multiplicative one; the structural core `create → add → remove → destroy`; composition of `add` and `remove` on one presence; homogeneous updates `|=`, `&=`, `^=` and `--=`; idempotent consolidation of multiple additions of one value to an ordinary `unique` collection; first-by-stable-provenance consolidation of distinct equal-key insertions under `unique by`; reproducible provenance tie-breaking for concurrent insertions; and sequential reconstruction/write-back semantics for stored aliases are fixed. In `Nat`, additive deltas are summed as signed integers and only then normalised to zero.
-
-## Outstanding
-
-The families for which no algebraic combination or canonical composition yet exists remain to be completed, including remaining dictionary cases, properties, structural cardinality limits, and partially overlapping destinations or write-backs. The minimum required precision of static analysis distinguishing inevitable, possible and impossible conflict also remains to be fixed.
+Specify the minimum required completeness of conflict analysis for symbolic alias/key destinations and value-uniqueness constraints. The accepted semantic matrix is no longer pending; arbitrary symbolic proofs and undecidability boundaries need formal inference rules.
 
 ## Closure criterion
 
-- C1. A complete classification exists for remaining concurrent dictionary combinations that can coincide on one semantic destination.
-- C2. A complete classification exists for operations on properties and structural cardinality limits lacking an algebraic combination or canonical composition.
-- C3. A complete rule exists for partially overlapping destinations and write-backs, including the condition distinguishing valid composition from conflict.
-- C4. The minimum required precision of static analysis distinguishing inevitable, possible and impossible conflict is fixed.
-
-## Resolution
-
-Pending satisfaction of C1–C4.
+- C1: The pending conditions are defined with objective verification evidence.

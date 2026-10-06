@@ -2457,3 +2457,37 @@ cases:
   expected_diagnostics:
   - invisible-ancestor
   produces_ast: true
+- id: replacement-before-relative-update
+  category: effects
+  source: 'action Set for mut counter: Counter { then counter.value = 10 }
+
+    action Add for mut counter: Counter { then counter.value += 2 }
+
+    '
+  cst_root: MudFileSyntax
+  ast: AssignEffect, CompoundAssignEffect
+  produces_ast: true
+  required_contract: Concurrent branches on one generation consolidate to 12; unequal complete replacements
+    conflict
+- id: disjoint-alias-writeback-composes
+  category: effects
+  source: 'action Edit for mut owner: Owner { then { owner.profile.age += 1; owner.profile.name = "Ada"
+    } }
+
+    '
+  cst_root: MudFileSyntax
+  ast: EffectBlock(AssignEffect, CompoundAssignEffect)
+  produces_ast: true
+  required_contract: Sibling branch edits of these distinct components compose, retaining one immutable
+    write-back root
+- id: dictionary-joint-uniqueness-swap
+  category: effects
+  source: 'action Swap for mut owner: Owner { then { owner.colours[a] = Blue; owner.colours[b] = Red }
+    }
+
+    '
+  cst_root: MudFileSyntax
+  ast: EffectBlock(AssignEffect, AssignEffect)
+  produces_ast: true
+  required_contract: Joint replacement of a=Red,b=Blue admits swap; losing uniqueness proposals restore
+    previous associations and recheck collisions

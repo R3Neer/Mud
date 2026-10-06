@@ -35,6 +35,7 @@ decisions:
   - D-103
   - D-112
   - D-113
+  - D-117
 ---
 
 # 04. Model mathematician from world
@@ -104,7 +105,7 @@ The model current stipulates:
 30. The identity, the effective nominal type, the path and the anchor do not depend on `~name`; multiple entities may share the same presentation. All access to `~` is read-only during execution; `~path`, `~anchor` and `~file` are also intrinsic properties and not configurable metadata.
 31. An immutable relation retains a withdrawn identity in a latent state and can restore that membership when `create` re-materialises the same identity; a relation `mut` removes that stored affiliation.
 32.  No confirmed state contains a collection whose effective cardinality contradicts its declaration.
-33. Destroying a specific `thing` discards the stored values belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
+33. Stored writes target the materialisation generation observed by their branch and cannot migrate across destroy/create. Destroying a specific `thing` discards the stored values belonging to its current materialisation, but does not clear loads belonging to other declarations that are merely suspended because they depend on its identity or type.
 34. Explicitly destroying a reactive rule clears the temporary memory of that activation. A subsequent activation establishes a new baseline without triggering it merely by reactivation; the policy memory for suspensions or disappearances of bindings not caused by `destroy` remains open in Q-005.
 35. A resolution's private deltas and consolidated wave projections are tentative. Later waves may read consolidated tentative changes, while the confirmed world remains unchanged.
 36. A complete stable resolution is confirmed atomically only after all applicable invariants and the final `after` clauses of every executed action/subaction succeed. Rejection or failure discards every wave's changes and external delivery.

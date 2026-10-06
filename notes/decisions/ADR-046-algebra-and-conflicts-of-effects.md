@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-046 — Algebra and conflicts of effects
 
+- Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Amended by: [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
@@ -54,7 +56,7 @@ Minimum standards:
 | allocations to other items | conflict |
 | homogeneous additive updates | compatible, sum of deltas before normalising the destination |
 | homogeneous multiplicative and divisive updates | compatible, accumulation in the numerator `P` and denominator `Q` |
-| assignment with arithmetic update | conflict |
+| assignment with arithmetic update | replacement first, then compatible relative updates |
 | additive update with multiplicative or divisive update | compatible; standard form `((x + Δ) * P) / Q` |
 | updates `|=` consistent across collections | union of operands |
 | concatenations `|=` consistent data on `Text` | compatible only with a specific total order amount |
@@ -86,7 +88,7 @@ Inside a `then`, a subsequent reading examines the saturated projection of the v
 
 - The semantics It does not depend on the order of rules or threads.
 - The saturation of `Nat` it does not violate the commutativity of additive updates.
-- Q-006 remains open for the remaining combinations of collections, dictionaries, properties, cycle lifespan and partial overlaps.
+- Partial alias paths compose by semantic destination; dictionary deletion wins and replacements precede changes. Q-006 retains formal completeness of static symbolic conflict analysis.
 - The special conservative analysis of cardinality from D-026 takes precedence over the general rule of deferring undecidable matches.
 
 ## Verification

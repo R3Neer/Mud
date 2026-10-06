@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-100 — Logical order, provenance, membership and effect consolidation
 
+- Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Modified by: [[ADR-103-inner-capability-in-derived-values|D-103]].
@@ -107,7 +109,7 @@ with identities `Δ = 0`, `P = 1` and `Q = 1`. The additive family is applied be
 
 Multiplicative and divisive factors are cancelled when the type's laws guarantee that cancellation preserves semantics exactly, including the accepted case `*= 3` together with `/= 3`. A simplification cannot hide division by zero, overflow, domain violations, units or any other observable property. An invalid consolidated denominator produces the failure applicable to division of the type and the transition is reverted.
 
-Concurrent assignments to the same value remain compatible; assignments to different values are a conflict. An assignment mixed with an arithmetic update remains a conflict.
+Concurrent assignments to the same value remain compatible; assignments to different values are a conflict. A compatible relative arithmetic update follows the replacement base before arithmetic normalization.
 
 
 ### Consolidation of local `for each` accumulators
@@ -168,7 +170,7 @@ The following are rejected:
 
 ## Open questions
 
-Q-006 remains partially decided. Families for which no concrete algebraic combination or canonical composition has yet been fixed remain open, including remaining cases of dictionaries, properties, structural cardinality and partially overlapping write-back. The mandatory minimum precision of static conflict analysis also remains unfixed. Q-032 remains partially decided only for caching and retry rules and exposure of stochastic results; the concrete derivation or sub-seed algorithm needs no additional decision while it preserves the semantic contract already fixed.
+Q-006 remains partially decided. The accepted matrix covers dictionary associations, semantic component overlap, generation identity and replacement-before-change. The mandatory minimum completeness of static analysis over arbitrary symbolic targets and uniqueness constraints remains to be formalized. Q-032 remains partially decided only for caching and retry rules and exposure of stochastic results; the concrete derivation or sub-seed algorithm needs no additional decision while it preserves the semantic contract already fixed.
 
 ## Verification
 
@@ -181,6 +183,6 @@ Conformance must cover at least:
 5. `has` and `has not`, with rejection of `in` as Boolean membership;
 6. prior merging of semantically equal ordinary-`unique` insertions, first-by-stable-provenance resolution of keyed collisions, and reproducible causal-respecting linear extension;
 7. arithmetic form `(Δ, P, Q)`, valid cancellations and preserved failures;
-8. conflict between distinct assignments and between assignment and arithmetic;
+8. conflict between distinct assignments; replacement followed by compatible arithmetic;
 9. structural composition `create → add → remove → destroy` and its distinction from sequentiality within a `then`;
 10. error, warning, absence of diagnostic and runtime `failed` according to what can be demonstrated.

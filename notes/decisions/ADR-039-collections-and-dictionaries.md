@@ -13,6 +13,8 @@ affects:
 ---
 # ADR-039 — Collections and dictionaries
 
+- Amended by: [[ADR-117-replacement-before-change-and-semantic-destinations|D-117]].
+
 - Modified by: [[ADR-105-keyed-uniqueness-by-stable-path|D-105]].
 
 - Amended by: [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]]
@@ -176,6 +178,8 @@ stock =
     Grain -> 2_000,
     Bronze -> 500
 ```
+
+Concurrent dictionary contributions first compose by association/component destination. Deletion wins on one key. Value uniqueness is checked jointly, allowing swaps; unchanged/restored associations win collisions and competing new proposals use stable provenance, with losing proposals reverted and collisions rechecked to a finite fixed point. Final cardinality remains required.
 
 Assigning a key replaces its value; entering a missing key triggers the input if type, domain, capacity and cardinality if permitted; removing a missing key is a no-op.
 
