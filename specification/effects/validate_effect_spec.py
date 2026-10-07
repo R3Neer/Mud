@@ -134,7 +134,7 @@ def validate_messages(data):
         "child-success-not-commit", "child-fault-observed", "protected-recovery", "joint-cause-owner",
         "failed-checkpoint-no-publication", "isolated-no-publication", "private-submessage-no-publication",
         "subscribe-after-finalisation", "equal-payload-distinct-occurrences", "host-irreversible-effect",
-        "root-publication-barrier",
+        "root-publication-barrier", "relative-child-success-parent-disposal",
     }
     cases = data["cases"]
     ids = [c["id"] for c in cases]

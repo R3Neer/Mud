@@ -86,9 +86,11 @@ Every invocation yields ActionReply = Success | Refusal | Errors. A false if is 
 
 Otherwise handlers belong to expression/value/effect blocks and handle Error values. They use optional on and if, then or raise exclusively. A plain Text diagnostic is invalid. A Refusal never enters an Error handler.
 
-A successful outer request commits atomically. A refused or unhandled erroneous request discards its complete tentative world, suppresses unpublished occurrences and marks published pending tickets Dropped. Nested invocation and speculative execution return the same ordinary reply type without opening independent commits. Actions and subactions return only ActionReply; no additional domain return value is admitted.
+A successful outer request commits atomically. A refused or unhandled erroneous request discards its complete tentative world, suppresses unpublished occurrences and marks published pending tickets Dropped. Nested invocation and speculative execution return the same ordinary reply type. Child Success confirms relative to its level and incorporates automatically into its containing level without an independent stable-root commit. Imagine discards its alternative branch; Q-072 retains the complete operational algorithm. Actions and subactions return only ActionReply; no additional domain return value is admitted.
 
 In action/test after, old retains its established entry-view contract; reactive old still compares wave snapshots. Computing an invalid operation is distinct from successfully obtaining empty or false.
+
+- Amended by: [[ADR-139-reality-levels-branches-and-relative-confirmation|D-139]].
 
 ## Consequences
 

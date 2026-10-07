@@ -675,7 +675,7 @@
     {
       "id": "imagine-isolation",
       "contract": "imagine isolation",
-      "entry": "An imagined action succeeds after effects and owned waves.",
+      "entry": "An imagined action succeeds after effects and owned causal work.",
       "expected_trace": "ActionReply observed; tentative state, outputs and random consumption discarded."
     },
     {

@@ -51,7 +51,7 @@ class MessageTraceTests(unittest.TestCase):
 
     def test_current_message_traces(self):
         from validate_effect_spec import validate_messages
-        self.assertEqual(validate_messages(self.data), 15)
+        self.assertEqual(validate_messages(self.data), 16)
 
     def test_recovery_trace_cannot_be_omitted(self):
         from validate_effect_spec import validate_messages

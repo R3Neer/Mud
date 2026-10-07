@@ -18,9 +18,11 @@ affects:
 
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]], [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]] and [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
+- Amended by: [[ADR-139-reality-levels-branches-and-relative-confirmation|D-139]].
+
 ## Decision
 
-Imagine call evaluates an admissible action under the complete real invocation protocol in a disposable isolated projection. It returns ActionReply with Success, Refusal or nonempty Errors, never an implicit Bool. The operand retains ordinary binding and outer-capability requirements. Every root/wave checkpoint and invocation-owned after uses the same semantics as real execution.
+Imagine call evaluates an admissible action under the complete real invocation protocol in a disposable isolated alternative branch. Relative Success does not incorporate that branch into the stable root. It returns ActionReply with Success, Refusal or nonempty Errors, never an implicit Bool. The operand retains ordinary binding and outer-capability requirements. Every root/wave checkpoint and invocation-owned after uses the same semantics as real execution.
 
 The speculative journal is always discarded, including after Success. No real world, queues, logs, randomness consumption, resolution identity or host delivery changes. Random branches have stable semantic identity and do not consume a real invocation's branch. Mutable receiver places resolve to speculative storage. Foreign calls require isolation; irreversible delivery cannot occur in imagination.
 

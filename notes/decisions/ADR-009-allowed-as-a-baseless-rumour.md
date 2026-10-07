@@ -22,9 +22,11 @@ Check only the preconditions for a action may declare a
 request whose resolution 'complete' would end in conflict, invariant
 unfulfilled or failure.
 
+- Amended by: [[ADR-139-reality-levels-branches-and-relative-confirmation|D-139]].
+
 ## Decision
 
-`imagine` executes the complete invocation protocol in a disposable projection and returns ActionReply. It never confirms state or publishes outputs. An Errors alternative is returned as an ordinary reply value, rather than converted to false or raised merely by returning it.
+`imagine` executes the complete invocation protocol in a disposable alternative branch and returns ActionReply. Inner relative confirmation does not reach the stable root or publish exterior outputs. An Errors alternative is returned as an ordinary reply value, rather than converted to false or raised merely by returning it.
 
 ## Consequences
 

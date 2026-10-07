@@ -61,10 +61,10 @@
     },
     {
       "id": "child-success-not-commit",
-      "entry": "Child after passes; parent has pending work.",
+      "entry": "Child confirms at its level after after passes; parent has pending work; no stable-root commit yet.",
       "expected_trace": [
         "child publishes Waiting",
-        "child Success leaves ticket Waiting",
+        "child relative Success incorporates work into parent level; ticket Waiting",
         "parent commits",
         "ticket Kept"
       ],
@@ -195,6 +195,21 @@
       "ticket_states": [
         "Waiting",
         "Kept"
+      ]
+    },
+    {
+      "id": "relative-child-success-parent-disposal",
+      "entry": "Child confirms relative to its level; parent later refuses after.",
+      "expected_trace": [
+        "child validated wave publishes Waiting",
+        "child relative Success automatically incorporates its contribution into parent level",
+        "caller can observe child Success without stable-root confirmation",
+        "parent refusal discards the containing level and incorporated child work",
+        "ticket Dropped; stable world unchanged"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Dropped"
       ]
     }
   ]

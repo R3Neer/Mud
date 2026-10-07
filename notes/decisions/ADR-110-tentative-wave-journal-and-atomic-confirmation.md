@@ -26,15 +26,17 @@ affects:
 
 - Amended by: [[ADR-133-provisional-messages-and-scope-aware-tickets|D-133]].
 
+- Amended by: [[ADR-139-reality-levels-branches-and-relative-confirmation|D-139]].
+
 ## Decision
 
 The reference runtime will use a tentative journal, with private sequential deltas before consolidation and consolidated patches/snapshots for each wave. The Git-patch analogy describes keeping changes isolated and disposable; it does not introduce textual merges, repository operations or an implementation-independent serialised patch format.
 
 Within one `then`, statements and internal calls observe prior authorised private effects at their textual positions. Concurrent siblings start from the common wave projection, without reading one another's partial deltas. Consolidation uses the existing semantic algebra and detects conflicts. Consolidated effects update only the resolution's tentative projection, which subsequent waves may observe; they never prematurely update confirmed world storage.
 
-Each invocation runs after once its own causal work stabilizes, before its caller resumes. Shared causes belong to the common enclosing invocation. Completed children are not rechecked. The outer resolution commits once its work, checkpoints and after succeed; nested completion is not confirmation. Non-success scopes discard tentative effects and pending occurrences and drop already published tickets under reply/recovery rules. Old retains its contextual entry/snapshot meaning.
+Each invocation runs after once its own causal work stabilizes, before its caller resumes. Shared causes belong to the common enclosing invocation. Completed children are not rechecked. The outer resolution commits once its work, checkpoints and after succeed; nested completion is relative confirmation with automatic incorporation into the containing level, not independent stable-root confirmation. Containing disposal still discards incorporated work; Q-072 retains the full algorithm. Non-success scopes discard tentative effects and pending occurrences and drop already published tickets under reply/recovery rules. Old retains its contextual entry/snapshot meaning.
 
-`imagine` uses the same complete semantic resolution protocol on an isolated speculative projection and always discards the journal, including on acceptance. It returns ActionReply unchanged, with no implicit Boolean conversion. It does not consume real randomness, resolution identities, confirmed queues, logs or host message delivery. Foreign calls within speculation require the same pure/transactional isolation guarantees; native irreversible I/O cannot be undone by a journal.
+`imagine` uses the same complete semantic resolution protocol in an isolated alternative branch and always discards the journal, including on acceptance. It returns ActionReply unchanged, with no implicit Boolean conversion. It does not consume real randomness, resolution identities, confirmed queues, logs or host message delivery. Foreign calls within speculation require the same pure/transactional isolation guarantees; native irreversible I/O cannot be undone by a journal.
 
 Tentative message occurrences participate in later causal waves. Shared normal messages publish a frozen payload with Waiting after validated consolidation; real commit makes surviving tickets Kept, and scope rollback makes affected tickets Dropped. These callbacks do not expose tentative storage or publish confirmed world activity. Debugging may retain an explicitly separate diagnostic trace without publishing speculative events as confirmed world activity.
 

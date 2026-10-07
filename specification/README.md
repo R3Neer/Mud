@@ -445,7 +445,8 @@ Planned file: `26-evaluation.md`
 
 Planned scope:
 
-- Environments, read views, store and deterministic expression evaluation.
+- Environments, stable/provisional read views, store and deterministic expression evaluation.
+- Reality levels as relative confirmation frontiers and isolated alternative branches.
 - Evaluation of calculated fields, partial queries, expected types and failures.
 - Coherent views inherited by `look`, including the private delta visible at the call site.
 - Evaluation of callables and effective binding once their signature is resolved.
@@ -467,7 +468,7 @@ Planned file: `28-root.md`
 Planned scope:
 
 - Root causal resolution, private deltas and textual sequencing within each `then`.
-- Integration of internal calls without opening independent transactions.
+- Automatic relative incorporation of nested invocation contributions without independent stable-root transactions.
 - Consolidation, normalisation and conflicts among concurrent contributions.
 - State observed by each phase of a resolution, with consolidated tentative projections kept separate from confirmed storage.
 
@@ -480,7 +481,7 @@ Planned scope:
 - Snapshots, active bindings, triggers and progression between waves.
 - Causal matches with witnesses, multiplicity and conjunction/disjunction composition.
 - `message` occurrences and rule firings as consequences available to later waves.
-- Effect combination, stabilisation and causal trace.
+- Effect combination, causal work registration/discovery, readiness and stabilisation; invocation ownership distinct from shared physical waves.
 - Distinction between causal ordering and any reproducible technical ordering within a wave.
 
 ## 30. Constraints, `after` and `old`
@@ -492,7 +493,7 @@ Planned scope:
 - Checks of domains, cardinalities, `always` rules and other invariants over tentative states.
 - Invocation-owned causal completion and after before returning, without rechecking completed children.
 - Contextual semantics of `old`, including the difference between actions, tests and reactive rules.
-- One atomic outer confirmation after owned stabilization, root/wave checkpoints and after; applicable scope rollback on non-success.
+- Relative inner confirmation and automatic incorporation; one atomic stable-root confirmation after owned completion, root/wave checkpoints and after; containing-level and protected-scope rollback.
 
 ## 31. Conflicts, cycles and stabilisation
 

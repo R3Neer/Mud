@@ -10,9 +10,10 @@ normative: true
 depends-on:
   - "[[02-terminology]]"
   - "[[03-notation]]"
-questions: []
+questions:
+  - Q-072
 decisions:
-  - D-134
+  - D-139  - D-134
   - D-133
   - D-111
   - D-110
@@ -132,13 +133,15 @@ No confirmed state has an effective collection cardinality contrary to its decla
 
 Let $W_c$ denote the confirmed world and $W_t$ a tentative projection in one resolution. Private branch deltas and consolidated wave projections remain tentative. Later waves can read consolidated tentative changes while $W_c$ remains unchanged. These distinctions impose no textual patch format, Git merge algorithm or physical journal layout.
 
-Each invocation owns the causal work it starts. Jointly caused consequences belong to their common enclosing invocation. An invocation's `after` is evaluated when its owned waves have stabilised, before it returns; it is not deferred until the outer invocation completes or rechecked later. Successful outer completion confirms the tentative world atomically.
+Reality levels distinguish relative confirmation from incorporation into the stable root observed by exterior consumers. A nested invocation confirms its contribution relative to its level and incorporates it automatically into the containing caller level; that work remains disposable if a containing level fails. Alternative branches represent isolated evolution, including imagination, rather than an ordinary call's nested confirmation frontier. These distinctions prescribe no physical world copies.
+
+Each invocation instance owns causal work, not whole waves; a reality's wave may consolidate contributions from several invocations. Jointly caused consequences retain their causes and belong to their common enclosing invocation. An invocation's `after` is evaluated against its consolidated completion projection before it returns; it is not deferred until the outer invocation completes or rechecked later. Successful exterior completion confirms the stable world atomically. Q-072 retains the complete causal attribution, discovery, readiness, completion and level-incorporation algorithm; wave membership alone is not that algorithm.
 
 `always` invariants are checked after the consolidated root and after every consolidated wave. A false condition produces `AlwaysRefusal`; an unsuccessful evaluation produces Error occurrences. Later waves cannot repair a failed checkpoint. Hard-dependent rules are checked when effective again.
 
 Message occurrence data consists of identity, declaration, canonical participant bindings, birth view/wave, frozen payload and rollback-scope provenance. For each externally published occurrence $o$, its host ticket has $s(o)\in\{\mathrm{Waiting},\mathrm{Kept},\mathrm{Dropped}\}$. The only transitions are Waiting to Kept after outer confirmation, or Waiting to Dropped after disposal of a containing scope. Kept and Dropped are terminal. A consolidated validated wave may publish Waiting without changing $W_c$; these observations and the confirmed world are distinct. [[07-concrete-grammar]] defines payload, publication and read-only subscription contracts.
 
-`imagine` executes the same invocation protocol in isolation, returns its `ActionReply` and always discards tentative changes. It leaves the confirmed world, queues, logs, randomness and resolution identity unchanged.
+`imagine` executes the invocation protocol in an isolated alternative branch, returns its `ActionReply` including relative Success, and always discards that branch's changes. It leaves the confirmed world, queues, logs, randomness and resolution identity unchanged.
 
 Error occurrences belong to the resolution's error channel, not automatically to world storage. Block recovery rolls back its protected failed work before running handlers. Successful recovery remains tentative; unhandled or newly raised errors propagate. Refusal is not an Error occurrence and is not selected by `otherwise`. Selection, occurrence multiplicity, handler composition and ordinary observation of replies are defined in [[19-expressions]].
 

@@ -11,11 +11,11 @@ depends-on:
   - "[[05-source-text]]"
   - "[[06-lexicon]]"
 questions:
-  - Q-069
+  - Q-072  - Q-069
   - Q-070
   - Q-059
 decisions:
-  - D-137
+  - D-139  - D-137
   - D-136
   - D-135
   - D-134
@@ -1067,7 +1067,7 @@ There is no semantic classification of elementary versus compound actions. A `th
 
 An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
-Each invocation's after runs when its owned causal work stabilizes and before its caller continues. Joint causes belong to the common enclosing invocation. A completed child's after is not rerun after later caller writes. Consolidated waves remain tentative until successful outer completion. Every invocation returns ActionReply. Explicit reply-value calls can be observed after failed child-scope rollback; an invocation used as an effect statement propagates Refusal or Errors. Otherwise captures computing errors only.
+Each invocation's after runs when its owned causal work stabilizes and before its caller continues. Joint causes belong to the common enclosing invocation. A completed child's after is not rerun after later caller writes. Consolidated contributions remain provisional relative to the stable root until successful exterior completion. Nested Success confirms relative to its level and automatically incorporates work into the caller's containing level; containing rollback can still discard it. Levels differ from disposable alternative branches used by imagine. The complete discovery/completion algorithm remains Q-072. Every invocation returns ActionReply. Explicit reply-value calls can be observed after failed child-scope rollback; an invocation used as an effect statement propagates Refusal or Errors. Otherwise captures computing errors only.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -1676,7 +1676,7 @@ eventually game.Checkmate(White)
 Rand([1..6])
 ```
 
-`imagine` runs the complete semantic action protocol on an isolated tentative projection and always discards it. The result is ActionReply: Success, Refusal or Errors, with no implicit Boolean conversion. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
+`imagine` runs the action protocol in an isolated alternative branch and always discards it, including work confirmed relative to an inner level. The result is ActionReply: Success, Refusal or Errors, with no implicit Boolean conversion. No confirmed state, queue, log, random branch, resolution identity or external message delivery is changed. Recording tentative patches cannot replace semantic effect consolidation with textual merging.
 
 Operands of `through` are action references, not concrete calls. The list, with or without square brackets, represents the same contextual collection. MUD 1.0 supports only `Rand(source)`; it does not yet include syntax for weights or distributions.
 

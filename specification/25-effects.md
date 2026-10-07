@@ -8,14 +8,14 @@ depends-on:
   - "[[14-fields-and-mutability]]"
   - "[[19-expressions]]"
 questions:
-  - Q-007
+  - Q-072  - Q-007
   - Q-020
   - Q-023
   - Q-058
   - Q-069
   - Q-070
 decisions:
-  - D-137
+  - D-139  - D-137
   - D-133
   - D-023
   - D-026
@@ -140,7 +140,7 @@ ForEach captures its finite enumerable source and semantic order at entry. Its o
 
 Ordered iterations execute sequentially and see preceding iteration writes. Unordered iterations start from the same prior projection, including shared outer local slots, and combine their contributions by this chapter's batch algebra. They do not receive an invented source order. Fault/refusal and recovery retain the owning scopes; membership/generation permissions remain applicable to each destination.
 
-An ActionCallCandidateEffect must elaborate into a permitted effectful action/subaction call. Execute it through the invocation-owned completion protocol of [[04-mathematical-model]]: bind/validate inputs, evaluate its guard, execute its private work, stabilise owned consequences, and check its after once before returning. Successful child contributions remain tentative; non-success rolls back their applicable scope. A bare call propagates Refusal/Fault; explicit capture obtains the ordinary ActionReply after settlement. No call opens an independent commit or exports an extra domain return value.
+An ActionCallCandidateEffect must elaborate into a permitted effectful action/subaction call. Execute it through the invocation-owned completion protocol of [[04-mathematical-model]]: bind/validate inputs, evaluate its guard, execute its private work, stabilise owned consequences, and check its after once before returning. Successful child contributions confirm relative to their level and are automatically incorporated into the caller's containing level; they remain provisional relative to the stable root. Non-success rolls back their applicable scope. Q-072 retains the complete discovery/completion and level-incorporation algorithm. A bare call propagates Refusal/Fault; explicit capture obtains the ordinary ActionReply after settlement. No nested call independently confirms the stable root or exports an extra domain return value.
 
 ForeignBlockEffect executes through its checked/trusted native contract. The adapter receives the permitted private read/write view, emits only authorised intents/occurrences, validates immutable bridge values and source maps failures to Error occurrences. A failed body exports no locals. It cannot write confirmed storage, retain writable handles or publish irreversible effects lacking a transactional/confirmed-delivery contract. ABI/hosting details are separate from this effect interface.
 
