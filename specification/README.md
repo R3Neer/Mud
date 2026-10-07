@@ -10,6 +10,9 @@ status: in-preparation
 normative: true
 questions:
 decisions:
+  - D-140
+  - D-139
+  - D-138
   - D-137
   - D-134
   - D-135
@@ -420,7 +423,7 @@ Planned scope:
 - Generic callable signatures and static receiver/written-given selection, with no expected-result tie-break.
 - `for`/`given` signatures, external capability of `action` versus `subaction`, callable values and binding at the invocation point.
 - `look` as a pure query with a coherent caller view and one value of its static produced result type.
-- Message/submessage causal occurrences with frozen birth-view payloads; shared normal messages publish provisional Ticket handles after validated wave consolidation, with Waiting/Kept/Dropped scope-aware lifetime.
+- Message/submessage causal occurrences with frozen birth-view payloads; shared normal messages publish host-only provisional Ticket handles after validated wave consolidation, with Waiting/Kept/Dropped scope-aware lifetime. Generalised observation objects and exterior execution results remain to be specified.
 - Separation of bindings and payload, multiplicity and delivery ordering, and rollback of external outputs.
 
 Canonical participant descriptors and frozen historical payloads survive later inactivity; host looks read confirmed state and tickets report eventual commitment or rollback.
@@ -458,7 +461,7 @@ Planned file: `27-action-requests.md`
 Planned scope:
 
 - External request, binding and initial validation of a root `action`.
-- Sole action/subaction result ActionReply = Success | Refusal | Errors, with no additional domain result; mandatory origins and final-condition BoolCheck traces.
+- Sole action/subaction result ActionReply = Success | Refusal | Errors, with no additional domain result; patch-access interface pending, mandatory origins and final-condition BoolCheck traces.
 - Relationship among signature validation, guards, stabilisation, final constraints and external publication.
 
 ## 28. Root semantics

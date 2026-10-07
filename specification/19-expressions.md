@@ -10,12 +10,14 @@ depends-on:
   - "[[10-type-system]]"
   - "[[14-fields-and-mutability]]"
 questions:
+  - Q-073
   - Q-007
   - Q-023
   - Q-029
   - Q-050
   - Q-058
 decisions:
+  - D-140
   - D-137
   - D-136
   - D-135
@@ -255,7 +257,7 @@ All successful recovery proposals compose tentatively. Equal compatible value re
 
 ## 10. Declaration and programme acceptance
 
-Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/sublook/message/submessage public fields check their declared/inferred value contracts and part boundary. Message payload expressions are evaluated once in the causal birth view and yield immutable, validated values; an error enters the enclosing block error channel instead of publishing a partial occurrence. Ticket is part of the host envelope contract, not a new expression/type constructor. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
+Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/sublook/message/submessage public fields check their declared/inferred value contracts and part boundary. Message payload expressions are evaluated once in the causal birth view and yield immutable, validated values; an error enters the enclosing block error channel instead of publishing a partial occurrence. Ticket is exclusively part of the host observation contract, not a new expression/type constructor. Access to a successful invocation's textual patch remains Q-073 and introduces no guessed source-level field or expression form. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
 
 > [!rule] MUD-TYPE-023 — Live local derivations
 > Every := local registers a non-assignable derivation with a fixed static contract. An actual read evaluates its definition against the applicable current or temporal view, including preceding effects of its own sequential branch. Derived RHSs and their handlers remain externally pure, including confined fresh ValueBlock computation. = locals instead evaluate once at slot creation and capture the resulting value. Neither form creates a world field or persistent memory between declaration instances.

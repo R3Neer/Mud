@@ -11,9 +11,13 @@ depends-on:
   - "[[02-terminology]]"
   - "[[03-notation]]"
 questions:
+  - Q-074
+  - Q-073
   - Q-072
 decisions:
-  - D-139  - D-134
+  - D-140
+  - D-139
+  - D-134
   - D-133
   - D-111
   - D-110
@@ -131,7 +135,7 @@ No confirmed state has an effective collection cardinality contrary to its decla
 
 ## Confirmed world and tentative resolution
 
-Let $W_c$ denote the confirmed world and $W_t$ a tentative projection in one resolution. Private branch deltas and consolidated wave projections remain tentative. Later waves can read consolidated tentative changes while $W_c$ remains unchanged. These distinctions impose no textual patch format, Git merge algorithm or physical journal layout.
+Let $W_c$ denote the confirmed world and $W_t$ a tentative projection in one resolution. Private branch deltas and consolidated wave projections remain tentative. Later waves can read consolidated tentative changes while $W_c$ remains unchanged. Successful incorporated work must be obtainable as a readable serialisable textual Mud patch. Its schema, access from replies and reproduction/application contract remain Q-073. No Git merge algorithm or physical journal layout is prescribed. Reading a patch does not apply it again.
 
 Reality levels distinguish relative confirmation from incorporation into the stable root observed by exterior consumers. A nested invocation confirms its contribution relative to its level and incorporates it automatically into the containing caller level; that work remains disposable if a containing level fails. Alternative branches represent isolated evolution, including imagination, rather than an ordinary call's nested confirmation frontier. These distinctions prescribe no physical world copies.
 
@@ -139,7 +143,7 @@ Each invocation instance owns causal work, not whole waves; a reality's wave may
 
 `always` invariants are checked after the consolidated root and after every consolidated wave. A false condition produces `AlwaysRefusal`; an unsuccessful evaluation produces Error occurrences. Later waves cannot repair a failed checkpoint. Hard-dependent rules are checked when effective again.
 
-Message occurrence data consists of identity, declaration, canonical participant bindings, birth view/wave, frozen payload and rollback-scope provenance. For each externally published occurrence $o$, its host ticket has $s(o)\in\{\mathrm{Waiting},\mathrm{Kept},\mathrm{Dropped}\}$. The only transitions are Waiting to Kept after outer confirmation, or Waiting to Dropped after disposal of a containing scope. Kept and Dropped are terminal. A consolidated validated wave may publish Waiting without changing $W_c$; these observations and the confirmed world are distinct. [[07-concrete-grammar]] defines payload, publication and read-only subscription contracts.
+Message occurrence data consists of identity, declaration, canonical participant bindings, birth view/wave, frozen payload and rollback-scope provenance. For each externally published occurrence $o$, its host ticket has $s(o)\in\{\mathrm{Waiting},\mathrm{Kept},\mathrm{Dropped}\}$. The only transitions are Waiting to Kept after surviving incorporation into the stable root, or Waiting to Dropped after disposal of a containing scope. Relative inner confirmation leaves Waiting. Kept and Dropped are terminal. A consolidated validated wave may publish Waiting without changing $W_c$; these observations and the confirmed world are distinct. [[07-concrete-grammar]] defines message payload, publication and read-only subscription contracts. Tickets remain host-only; Q-074 retains additional ticket-bearing observation objects and exterior-intention execution results. Confirmation of an intention is not successful material delivery.
 
 `imagine` executes the invocation protocol in an isolated alternative branch, returns its `ActionReply` including relative Success, and always discards that branch's changes. It leaves the confirmed world, queues, logs, randomness and resolution identity unchanged.
 

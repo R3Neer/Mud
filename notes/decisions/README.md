@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 134.
-- Current: 130.
+- Total: 135.
+- Current: 131.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -153,6 +153,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-137 | current | 2026-10-07 | [[notes/decisions/ADR-137-live-locals-stored-inference-and-binding-patterns|Live locals, stored type inference and positional binding patterns]] |
 | D-138 | current | 2026-10-07 | [[notes/decisions/ADR-138-standard-library-scope-and-world-descriptor|Standard library scope and world descriptor direction]] |
 | D-139 | current | 2026-10-07 | [[notes/decisions/ADR-139-reality-levels-branches-and-relative-confirmation|Reality levels, branches and relative confirmation]] |
+| D-140 | current | 2026-10-07 | [[notes/decisions/ADR-140-readable-patches-and-host-only-confirmation-tickets|Readable patches and host-only confirmation tickets]] |
 
 ## Reserved identifiers
 

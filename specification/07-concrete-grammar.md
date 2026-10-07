@@ -11,11 +11,16 @@ depends-on:
   - "[[05-source-text]]"
   - "[[06-lexicon]]"
 questions:
-  - Q-072  - Q-069
+  - Q-074
+  - Q-073
+  - Q-072
+  - Q-069
   - Q-070
   - Q-059
 decisions:
-  - D-139  - D-137
+  - D-140
+  - D-139
+  - D-137
   - D-136
   - D-135
   - D-134
@@ -1067,7 +1072,7 @@ There is no semantic classification of elementary versus compound actions. A `th
 
 An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
-Each invocation's after runs when its owned causal work stabilizes and before its caller continues. Joint causes belong to the common enclosing invocation. A completed child's after is not rerun after later caller writes. Consolidated contributions remain provisional relative to the stable root until successful exterior completion. Nested Success confirms relative to its level and automatically incorporates work into the caller's containing level; containing rollback can still discard it. Levels differ from disposable alternative branches used by imagine. The complete discovery/completion algorithm remains Q-072. Every invocation returns ActionReply. Explicit reply-value calls can be observed after failed child-scope rollback; an invocation used as an effect statement propagates Refusal or Errors. Otherwise captures computing errors only.
+Each invocation's after runs when its owned causal work stabilizes and before its caller continues. Joint causes belong to the common enclosing invocation. A completed child's after is not rerun after later caller writes. Consolidated contributions remain provisional relative to the stable root until successful exterior completion. Nested Success confirms relative to its level and automatically incorporates work into the caller's containing level; containing rollback can still discard it. Levels differ from disposable alternative branches used by imagine. The complete discovery/completion algorithm remains Q-072. Every invocation returns ActionReply. Incorporated changes must be obtainable as a readable textual patch; its schema and result-access interface remain Q-073, without new return syntax or a second domain result. Explicit reply-value calls can be observed after failed child-scope rollback; an invocation used as an effect statement propagates Refusal or Errors. Otherwise captures computing errors only.
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
@@ -1115,9 +1120,9 @@ A message/submessage occurrence is born when its `when` matches and its `if`, if
 
 A shared normal `message` is provisionally delivered after the producing wave is consolidated and its mandatory always/domain/cardinality checkpoints succeed. No sibling private prefix or failed checkpoint is published. Internal causal consumers still see the occurrence in the next wave. A `submessage`, a declaration in a `part only` file, an isolated test or `imagine` has no external delivery. A root-produced occurrence passes the analogous root consolidation/checkpoint barrier. Publication does not confirm tentative world state, and host `look` continues to read confirmed state.
 
-The host envelope keeps declaration/occurrence identity, `on` bindings, immutable payload and `ticket` separate. A `Ticket` is a read-only host-facing occurrence handle whose `state` is `Waiting`, `Kept` or `Dropped`. It is not a Mud thing, a writable participant, a new keyword or a user-constructible source type. It has no new nominal anchor. Its occurrence identity is distinct even when another message has the same payload. Concrete ABI and native representation follow the adapter contracts.
+The host envelope keeps declaration/occurrence identity, `on` bindings, immutable payload and `ticket` separate. A `Ticket` is a read-only host-facing confirmation handle; the specified message instance is an occurrence handle whose `state` is `Waiting`, `Kept` or `Dropped`. It is not a Mud thing, a writable participant, a new keyword or a user-constructible source type. It has no new nominal anchor. Its occurrence identity is distinct even when another message has the same payload. Concrete ABI and native representation follow the adapter contracts. Additional ticket-bearing objects and provisional patch/intention observations remain Q-074; they do not add a Mud source type or expression.
 
-Every published ticket starts Waiting. It transitions once to Kept when the real outer resolution commits and its producing rollback scope survives, or to Dropped when that scope or an enclosing scope is discarded. Both terminal states are permanent. Successful child completion leaves Waiting until outer confirmation. Later caller changes do not recheck the child's after or invalidate historical payload values. A child's refusal/error drops its attempted occurrences and causal descendants. Outer refusal/error drops all surviving pending tickets. For jointly caused work the owner is the nearest common enclosing invocation; an entire physical wave does not acquire a single owner.
+Every published ticket starts Waiting. It transitions once to Kept when its producing scope survives incorporation into the stable root, or to Dropped when that scope or an enclosing scope is discarded. Both terminal states are permanent. Successful child completion leaves Waiting until outer confirmation. Later caller changes do not recheck the child's after or invalidate historical payload values. A child's refusal/error drops its attempted occurrences and causal descendants. Outer refusal/error drops all surviving pending tickets. For jointly caused work the owner is the nearest common enclosing invocation; an entire physical wave does not acquire a single owner.
 
 Block rollback is part of ticket provenance. A failed protected block drops its occurrences even if `otherwise` recovers and the outer action succeeds. Handler occurrences belong to their new surviving scope and get new tickets. An occurrence discarded before its publication barrier emits no provisional host notification. Payload-evaluation errors enter the ordinary error channel; they do not create a successfully published occurrence with a partially calculated payload.
 
@@ -1125,7 +1130,7 @@ The host can read current ticket state and subscribe to terminal updates. Subscr
 
 Waiting permits speculative host responses with cancellation/compensation; irreversible external effects require Kept or an explicit transactional adapter contract. Dropped does not undo arbitrary I/O, sound or already displayed frames. Ticket observation is not permission to read tentative storage. Published frozen payloads and terminal ticket state remain readable as historical evidence after rollback; private writable handles and failed foreign exports do not escape.
 
-Publication preserves causal order across wave barriers. A reproducible technical order within a wave does not give semantic priority to equal-time occurrences. Tickets report validity of the recorded causal occurrence, not whether its payload still equals current state. Unbounded resolution duration or nontermination may leave Waiting pending; timeout/oscillation policy is separate from inventing Kept or Dropped.
+Publication preserves causal order across wave barriers. A reproducible technical order within a wave does not give semantic priority to equal-time occurrences. Tickets report confirmation of the recorded causal occurrence, not whether its payload still equals current state or an associated exterior operation succeeded. Unbounded resolution duration or nontermination may leave Waiting pending; timeout/oscillation policy is separate from inventing Kept or Dropped.
 
 
 The outer envelope keeps the `on` bindings that identify participants separate from the public payload; it does not merge the two namespaces. Provisionally delivered occurrences retain causal order between waves and, within one wave, a stable reproducible technical order that introduces no priority semantics among them.

@@ -8,6 +8,7 @@ supersedes:
   - D-079
 superseded-by: []
 questions:
+  - Q-073
   - Q-003
   - Q-007
   - Q-022
@@ -28,7 +29,11 @@ affects:
 
 The author chooses first-class Success, Refusal and Errors values and Error-only block recovery. This replaces D-008 and D-079; it amends D-041, D-042, D-055, D-061 and D-077. All tooling and generated diagnostics are in English.
 
+- Amended by: [[ADR-140-readable-patches-and-host-only-confirmation-tickets|D-140]].
+
 ## Decision
+
+The following reply catalogue specifies no patch component; Q-073 retains that access interface.
 
 ```mud
 alias Success {}
@@ -52,7 +57,7 @@ alias Errors := Error [1..*]
 alias ActionReply := Success | Refusal | Errors
 ```
 
-These are language-defined nominal aliases; user aliases can specialize abstract bases with their own required fields and static conceptual metadata. Success has no extra data. Error and Refusal have mandatory nonempty origin descriptors and human-readable reason. Origin is not a new general-purpose type: Declaration retains its existing nominal/reflection contract. An always refusal identifies the always rule declaration itself, whose identifier/path/anchor are available through existing metadata. ArgumentRefusal identifies the supplied role descriptor; the declaration origin is the invoked operation. Native exception origins identify the owning MUD declaration and source-mapped call site in diagnostics, not a fabricated native Declaration.
+These are language-defined nominal aliases; user aliases can specialize abstract bases with their own required fields and static conceptual metadata. Success denotes successful relative confirmation; access to the incorporated textual patch remains Q-073. The catalogue above does not select a patch component or resolve that interface. Error and Refusal have mandatory nonempty origin descriptors and human-readable reason. Origin is not a new general-purpose type: Declaration retains its existing nominal/reflection contract. An always refusal identifies the always rule declaration itself, whose identifier/path/anchor are available through existing metadata. ArgumentRefusal identifies the supplied role descriptor; the declaration origin is the invoked operation. Native exception origins identify the owning MUD declaration and source-mapped call site in diagnostics, not a fabricated native Declaration.
 
 Error's optional cause enables wrapping another finite immutable error value. Conceptual description belongs to static metadata (for example ~description); specific reason, origin, cause and subtype-specific data are ordinary components. No field named message is introduced: message remains reserved for its language declaration.
 

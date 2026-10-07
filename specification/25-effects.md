@@ -8,14 +8,19 @@ depends-on:
   - "[[14-fields-and-mutability]]"
   - "[[19-expressions]]"
 questions:
-  - Q-072  - Q-007
+  - Q-074
+  - Q-073
+  - Q-072
+  - Q-007
   - Q-020
   - Q-023
   - Q-058
   - Q-069
   - Q-070
 decisions:
-  - D-139  - D-137
+  - D-140
+  - D-139
+  - D-137
   - D-133
   - D-023
   - D-026
@@ -140,7 +145,7 @@ ForEach captures its finite enumerable source and semantic order at entry. Its o
 
 Ordered iterations execute sequentially and see preceding iteration writes. Unordered iterations start from the same prior projection, including shared outer local slots, and combine their contributions by this chapter's batch algebra. They do not receive an invented source order. Fault/refusal and recovery retain the owning scopes; membership/generation permissions remain applicable to each destination.
 
-An ActionCallCandidateEffect must elaborate into a permitted effectful action/subaction call. Execute it through the invocation-owned completion protocol of [[04-mathematical-model]]: bind/validate inputs, evaluate its guard, execute its private work, stabilise owned consequences, and check its after once before returning. Successful child contributions confirm relative to their level and are automatically incorporated into the caller's containing level; they remain provisional relative to the stable root. Non-success rolls back their applicable scope. Q-072 retains the complete discovery/completion and level-incorporation algorithm. A bare call propagates Refusal/Fault; explicit capture obtains the ordinary ActionReply after settlement. No nested call independently confirms the stable root or exports an extra domain return value.
+An ActionCallCandidateEffect must elaborate into a permitted effectful action/subaction call. Execute it through the invocation-owned completion protocol of [[04-mathematical-model]]: bind/validate inputs, evaluate its guard, execute its private work, stabilise owned consequences, and check its after once before returning. Successful child contributions confirm relative to their level and are automatically incorporated into the caller's containing level; they remain provisional relative to the stable root. Non-success rolls back their applicable scope. Q-072 retains the complete discovery/completion and level-incorporation algorithm. A bare call propagates Refusal/Fault; explicit capture obtains the ordinary ActionReply after settlement. No nested call independently confirms the stable root or exports an extra domain return value. Obtaining the readable patch of incorporated changes does not apply them again; its schema and reply access remain Q-073.
 
 ForeignBlockEffect executes through its checked/trusted native contract. The adapter receives the permitted private read/write view, emits only authorised intents/occurrences, validates immutable bridge values and source maps failures to Error occurrences. A failed body exports no locals. It cannot write confirmed storage, retain writable handles or publish irreversible effects lacking a transactional/confirmed-delivery contract. ABI/hosting details are separate from this effect interface.
 
@@ -162,12 +167,12 @@ Let $B$ be a finite set of sibling branch configurations with common entry $W_0$
 4. Compose compatible replacements, numeric stages, homogeneous collection operations, exact associations and lifecycle contributions using sections 3–6. Apply joint uniqueness after proposals are known; preserve causal outputs separately.
 5. Rebuild the candidate effective projection. Normalise values under their type laws, validate all affected domains and completed stored cardinalities, including restored latent references and fresh initialised payloads.
 6. Check effective always rules after the consolidated root/wave. A false condition yields AlwaysRefusal; unsuccessful evaluation yields Fault. A later wave cannot repair this failed checkpoint.
-7. On success expose the consolidated tentative next view and pending causal outputs; on non-success discard the affected batch/resolution scope under the owner contract. Never publish a partial confirmed world or a sibling-private/unchecked host payload. Successful checkpoint completion permits provisional Waiting notifications under the message contract; outer commit alone makes surviving tickets Kept.
+7. On success expose the consolidated tentative next view and pending causal outputs; on non-success discard the affected batch/resolution scope under the owner contract. Never publish a partial confirmed world or a sibling-private/unchecked host payload. Successful checkpoint completion permits provisional Waiting notifications under the message contract; surviving stable-root incorporation makes tickets Kept. Extra host observation objects and exterior execution-result contracts remain Q-074.
 
 > [!rule] MUD-EFFECT-012 — Batch boundary
-> A root and each wave use the same composition/validation boundary. Completed private blocks and all possible consolidations must satisfy the static stored-cardinality proof. Temporary deviations within an admitted private sequence are not observable by siblings or later waves. Runtime validation is a safeguard, not permission to omit the proof. Only successful outer completion confirms the world and delivers outputs.
+> A root and each wave use the same composition/validation boundary. Completed private blocks and all possible consolidations must satisfy the static stored-cardinality proof. Temporary deviations within an admitted private sequence are not observable by siblings or later waves. Runtime validation is a safeguard, not permission to omit the proof. Only successful exterior completion incorporates into stable world storage. Validated provisional message publication is distinct from that confirmation. Ordinary irreversible exterior intentions wait for stable-root confirmation; their execution-result protocol remains Q-074.
 
-The judgment can be written $W_0;B\Downarrow_{\mathrm{batch}}(W_1,U,o)$. On Continue, $W_1$ is the consolidated tentative next view; it may feed later waves. On Fault/Refuse there is no accepted next view from that attempt. Checkpoint/after ownership distinguishes a protected child scope from outer rollback; an explicitly observed child reply does not commit its effects.
+The judgment can be written $W_0;B\Downarrow_{\mathrm{batch}}(W_1,U,o)$. On Continue, $W_1$ is the consolidated tentative next view; it may feed later waves. On Fault/Refuse there is no accepted next view from that attempt. Checkpoint/after ownership distinguishes a protected child scope from outer rollback; an explicitly observed child Success incorporates its contribution at the relative level without independently confirming the stable root.
 
 This finite batch algorithm does not decide which causal wave comes next or certify that the resolution eventually stabilises. Those responsibilities belong to the invocation/wave/constraint chapters and their separately active questions. Imagine uses this same boundary in isolation and always discards its result state/outputs.
 

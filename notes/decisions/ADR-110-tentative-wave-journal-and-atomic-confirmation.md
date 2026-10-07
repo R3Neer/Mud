@@ -6,6 +6,8 @@ date: 2026-10-06
 supersedes: []
 superseded-by: []
 questions:
+  - Q-072
+  - Q-073
   - Q-002
   - Q-035
 affects:
@@ -28,9 +30,11 @@ affects:
 
 - Amended by: [[ADR-139-reality-levels-branches-and-relative-confirmation|D-139]].
 
+- Amended by: [[ADR-140-readable-patches-and-host-only-confirmation-tickets|D-140]].
+
 ## Decision
 
-The reference runtime will use a tentative journal, with private sequential deltas before consolidation and consolidated patches/snapshots for each wave. The Git-patch analogy describes keeping changes isolated and disposable; it does not introduce textual merges, repository operations or an implementation-independent serialised patch format.
+The reference runtime will use a tentative journal, with private sequential deltas before consolidation and consolidated patches/snapshots for each wave. The Git-patch analogy describes keeping changes isolated and disposable; it does not introduce textual merges, repository operations or a selected serialised patch format. D-140 requires readable textual patches of incorporated work; schema and reply access remain Q-073, independently of private journal layout.
 
 Within one `then`, statements and internal calls observe prior authorised private effects at their textual positions. Concurrent siblings start from the common wave projection, without reading one another's partial deltas. Consolidation uses the existing semantic algebra and detects conflicts. Consolidated effects update only the resolution's tentative projection, which subsequent waves may observe; they never prematurely update confirmed world storage.
 

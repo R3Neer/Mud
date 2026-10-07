@@ -10,8 +10,10 @@ depends-on:
   - "[[03-notation]]"
   - "[[09-names-and-anchors]]"
 questions:
+  - Q-073
   - Q-060
 decisions:
+  - D-140
   - D-137
   - D-136
   - D-135
@@ -328,7 +330,7 @@ Descriptor reflection is checked against every possible static receiver category
 
 ## 11. Results and errors as types
 
-Success is a zero-component nominal alias supplied by successful action evaluation. Refusal and Error are abstract structural aliases. IfRefusal, AfterRefusal and AlwaysRefusal are ConditionRefusal specialisations; ArgumentRefusal identifies the argument role. Refusal/Error require reason and Declaration origin. Error has an optional finite cause; ConditionRefusal has the BoolCheck trace of the actually evaluated final Boolean expression.
+Success is a nominal alias supplied by successful action evaluation. The interface for obtaining the incorporated textual patch, including any Success component, remains Q-073; no additional component/type is defined here. It remains part of the sole ActionReply result, not an action-specific domain return. Refusal and Error are abstract structural aliases. IfRefusal, AfterRefusal and AlwaysRefusal are ConditionRefusal specialisations; ArgumentRefusal identifies the argument role. Refusal/Error require reason and Declaration origin. Error has an optional finite cause; ConditionRefusal has the BoolCheck trace of the actually evaluated final Boolean expression.
 
 Errors is a nominal alias of a nonempty Error collection; ActionReply is the union Success | Refusal | Errors. Producing an Error or obtaining an ActionReply containing Errors is ordinary value production. Entering a block error channel is a separate evaluation outcome. Every block has an Error collection channel allowing zero occurrences; its normal result is available only when that channel is empty.
 
