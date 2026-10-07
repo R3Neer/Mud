@@ -2,6 +2,91 @@ schema_version: 1
 grammar: specification/grammar/mud.ebnf
 ast: specification/syntax/mud-surface-ast.asdl
 productions:
+  generic-union-argument:
+    cst: GenericUnionArgumentSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  ancestor-clause:
+    cst: AncestorClauseSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  structural-type-equality-operator:
+    cst: StructuralTypeEqualityOperatorSyntax
+    ast:
+      disposition: normalized
+      target: flag
+  structural-type-comparison:
+    cst: StructuralTypeComparisonSyntax
+    ast:
+      disposition: normalized
+      target: StructuralTypeEqualityExpr
+  generic-family-member:
+    cst: GenericFamilyMemberSyntax
+    ast:
+      disposition: normalized
+      target: GenericFamilyMemberExpr
+  generic-call-suffix:
+    cst: GenericCallSuffixSyntax
+    ast:
+      disposition: normalized
+      target: GenericCallSpecializationExpr
+  generic-argument:
+    cst: GenericArgumentSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  generic-argument-list:
+    cst: GenericArgumentListSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  postfix-generic-type-application:
+    cst: PostfixGenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  explicit-generic-type-application:
+    cst: ExplicitGenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  generic-type-application:
+    cst: GenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  generic-constructor:
+    cst: GenericConstructorSyntax
+    ast:
+      disposition: normalized
+      target: type_ref
+  nominal-type:
+    cst: NominalTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  generic-bound-list:
+    cst: GenericBoundListSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  type-parameter-list:
+    cst: TypeParameterListSyntax
+    ast:
+      disposition: normalized
+      target: generic_parameter
+  generic-parameter-group:
+    cst: GenericParameterGroupSyntax
+    ast:
+      disposition: normalized
+      target: generic_parameter
+  ancestor-list:
+    cst: AncestorListSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
   message-signature-body:
     cst: MessageSignatureBodySyntax
     ast:
@@ -381,11 +466,6 @@ productions:
     ast:
       disposition: constructor
       target: ReflectedType
-  interval-type:
-    cst: IntervalTypeSyntax
-    ast:
-      disposition: constructor
-      target: IntervalType
   product-type:
     cst: ProductTypeSyntax
     ast:

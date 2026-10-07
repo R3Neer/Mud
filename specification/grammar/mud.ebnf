@@ -90,9 +90,64 @@ identifier ::= IDENTIFIER ;
 (* Declaraciones nominales                                             *)
 (* ------------------------------------------------------------------ *)
 
+ancestor-clause
+    ::= "as" , ancestor-list ;
+
+ancestor-list
+    ::= nominal-type , { "," , nominal-type }
+      | "[" , nominal-type , { "," , nominal-type } , "]" ;
+
+generic-parameter-group
+    ::= "with" , type-parameter-list , [ "as" , generic-bound-list ] ;
+
+type-parameter-list
+    ::= nominal-name , { "," , nominal-name }
+      | "[" , nominal-name , { "," , nominal-name } , "]" ;
+
+generic-bound-list
+    ::= nominal-type , { "," , nominal-type }
+      | "[" , nominal-type , { "," , nominal-type } , "]" ;
+
+nominal-type
+    ::= type-reference | generic-type-application | "(" , nominal-type , ")" ;
+
+generic-constructor
+    ::= type-reference | "Interval" ;
+
+generic-type-application
+    ::= explicit-generic-type-application | postfix-generic-type-application ;
+
+explicit-generic-type-application
+    ::= generic-constructor , "with" , generic-argument-list ;
+
+postfix-generic-type-application
+    ::= generic-argument , generic-constructor ;
+
+generic-argument-list
+    ::= generic-argument , { "," , generic-argument } ;
+
+generic-argument
+    ::= declared-type | "(" , generic-union-argument , ")" ;
+
+generic-union-argument
+    ::= declared-type , { "|" , declared-type } ;
+
+generic-call-suffix
+    ::= "with" , generic-argument-list ;
+
+generic-family-member
+    ::= generic-type-application , "." , member-name ;
+
+structural-type-comparison
+    ::= type-expression , structural-type-equality-operator , type-expression ;
+
+structural-type-equality-operator
+    ::= "===" | "!==" ;
+
 thing-declaration
     ::= [ "abstract" ] , "thing" , nominal-name
-        , [ "as" , type-reference , { "," , type-reference } ]
+        , [ ancestor-clause ]
+        , { generic-parameter-group }
         , [ thing-body ]
         ;
 
@@ -153,7 +208,8 @@ descriptor-value-body
 
 alias-declaration
     ::= [ "abstract" ] , "alias" , nominal-name
-        , [ "as" , type-reference , { "," , type-reference } ]
+        , [ ancestor-clause ]
+        , { generic-parameter-group }
         , [ alias-definition ]
         ;
 
@@ -195,6 +251,7 @@ inherited-default-override
 
 family-declaration
     ::= [ "ordered" ] , "family" , nominal-name
+        , { generic-parameter-group }
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
         , { family-data-declaration , required-separation }
@@ -384,7 +441,7 @@ declared-type
     ::= type-reference
       | callable-type
       | reflected-type
-      | interval-type
+      | generic-type-application
       | product-type
       ;
 
@@ -394,9 +451,9 @@ callable-type
         ;
 
 callable-receiver
-    ::= type-reference
-      | "(" , type-reference , "," , type-reference
-          , { "," , type-reference } , ")"
+    ::= nominal-type
+      | "(" , nominal-type , "," , nominal-type
+          , { "," , nominal-type } , ")"
       ;
 
 callable-kind
@@ -404,9 +461,6 @@ callable-kind
 
 reflected-type
     ::= postfix-expression , "~" , "type" ;
-
-interval-type
-    ::= type-reference , "Interval" ;
 
 product-type
     ::= positional-product-type
@@ -502,6 +556,7 @@ given-declaration
 
 boolean-rule-declaration
     ::= "rule" , nominal-name
+        , { generic-parameter-group }
         , [ for-clause ]
         , [ given-clause ]
         , boolean-body
@@ -624,6 +679,7 @@ subaction-declaration
 
 action-signature-body
     ::= nominal-name
+        , { generic-parameter-group }
         , [ for-clause ]
         , [ given-clause ]
         , "{" , declaration-layout
@@ -644,6 +700,7 @@ sublook-declaration
 
 look-signature-body
     ::= nominal-name
+        , { generic-parameter-group }
         , [ for-clause ]
         , [ given-clause ]
         , "{" , declaration-layout
@@ -957,7 +1014,8 @@ change-expression
     ::= comparison-expression , [ "changes" ] ;
 
 comparison-expression
-    ::= restriction-expression , [ comparison-tail ] ;
+    ::= restriction-expression , [ comparison-tail ]
+      | structural-type-comparison ;
 
 restriction-expression
     ::= quantitative-expression , [ "in" , type-alternative-domain ] ;
@@ -989,7 +1047,7 @@ quantitative-expression
         ;
 
 conversion-suffix
-    ::= "to" , type-reference
+    ::= "to" , nominal-type
       | "in" , unit-expression
       ;
 
@@ -1017,7 +1075,7 @@ prefix-operator
 
 postfix-expression
     ::= primary-expression
-        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix }
+        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix | generic-call-suffix }
         ;
 
 collection-transform-suffix
@@ -1061,7 +1119,9 @@ receiver-entry
       ;
 
 primary-expression
-    ::= literal
+    ::= generic-family-member
+      | generic-type-application
+      | literal
       | take-expression
       | selection-expression
       | qualified-name

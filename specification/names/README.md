@@ -8,7 +8,7 @@ It is the regulatory solution to nominal resolution on the Surface AST. It prese
 
 It must not contain effective types, effective domains, inferred cardinalities, narrowing, elaborate conversions, effects, semantic dependencies or evidence of termination. These conclusions relate to later stages that have not yet been formalised in technical terms.
 
-`ResolvedReference` names one nominally resolved target. `PendingReceiverCall` retains at least two distinct anchored nominal callables governed by `for`, from the first non-empty lookup level, ordered by anchor for canonical serialisation. It contains no compatibility verdict or chosen target and produces no `RefersTo` edge towards a candidate. Elaboration performs static receiver selection as defined in [[../09-names-and-anchors#Receiver-call selection|chapter 09]].
+`ResolvedReference` names one nominally resolved target. `PendingReceiverCall` retains at least two distinct anchored nominal callables governed by `for`, from the first non-empty lookup level, ordered by anchor for canonical serialisation. It contains no compatibility verdict or chosen target and produces no `RefersTo` edge towards a candidate. Elaboration performs static receiver/written-given selection as defined in [[../09-names-and-anchors#Receiver-call selection|chapter 09]].
 
 The Nominal HIR It is derived and reconstructible: it does not constitute a source semantics independent.
 
@@ -23,3 +23,5 @@ python specification/syntax/test_validate_syntax_model.py
 
 The validator checks ASDL type references, the resolved/pending reference sum, candidate and lookup-level storage, and the exclusion of elaboration fields. The regression suite checks that malformed contracts are rejected. Neither command resolves or executes MUD calls; candidate-set cardinality, candidate visibility and receiver compatibility remain semantic conformance obligations.
 
+
+Generic parameters use joint header/body local scopes; application references retain constructor/argument provenance without new application symbols or anchors. Effective application identity, ancestry, variance and closure proofs remain typing/elaboration responsibilities.

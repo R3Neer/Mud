@@ -17,6 +17,8 @@ depends-on:
   - grammar/mud.ebnf
 questions: []
 decisions:
+  - D-134
+  - D-135
   - D-131
   - D-132
   - D-109
@@ -192,7 +194,7 @@ Terminators ignored by `layout` remain present as tokens in the CST.
 
 ## Other significant tokens
 
-The CST retains the fixed tokens `-->` and `~`, the operator word `iis`, and contextual words written in their usual positions. Longest match must prevent `-->` from being split into `--` and `>`, or into `-` and `->`. `has not` and `iis not` retain two tokens with their own trivia. There is no `ANCHOR_INTERPOLATION_START`; an expression `~anchor` inside `{...}` uses the same nodes and tokens as outside a template.
+The CST retains indivisible `===` and `!==` before the shorter `==` and `!=` matches, as well as the fixed tokens `-->` and `~`, the operator word `iis`, and contextual words written in their usual positions. Longest match must prevent `-->` from being split into `--` and `>`, or into `-` and `->`. `has not` and `iis not` retain two tokens with their own trivia. There is no `ANCHOR_INTERPOLATION_START`; an expression `~anchor` inside `{...}` uses the same nodes and tokens as outside a template.
 
 ## `Text` literals
 

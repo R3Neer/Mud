@@ -37,7 +37,7 @@ Roles, `given` parameters, iteration variables and local bindings are lexical sy
 
 ### Normative resolution model
 
-The specification defines resolution through environments and ordered candidate sets. For an unqualified name, levels are consulted in order: lexical scope, the relevant owner, the same MUD path, exact `using` declarations and recursive `using` declarations. The first non-empty level is selected; category incompatibility never permits falling through. Distinct anchors are ambiguous except in a call with explicit receivers whose candidates are nominal callables governed by `for`. Such a call retains all candidates from that level until elaboration selects exactly one by static receiver compatibility. No most-specific preference, `given` argument or runtime predicate breaks a tie.
+The specification defines resolution through environments and ordered candidate sets. For an unqualified name, levels are consulted in order: lexical scope, the relevant owner, the same MUD path, exact `using` declarations and recursive `using` declarations. The first non-empty level is selected; category incompatibility never permits falling through. Distinct anchors are ambiguous except in a call with explicit receivers whose candidates are nominal callables governed by `for`. Such a call retains all candidates from that level until elaboration selects exactly one by static receiver compatibility. Written given names/types participate in static candidate checks. No most-specific preference, expected result, omitted default as invented evidence or runtime predicate breaks a tie.
 
 Scope graphs may be used as an implementation or explanatory representation, but are not the normative authority of MUD 1.0. An implementation must preserve the same candidates, priorities, ambiguities and rejections defined by the resolution judgements.
 
@@ -82,3 +82,7 @@ Q-014 remains partially decided pending the format and location of the record, c
 6. Descriptive diagnostic for a local symbol without fabricating an anchor.
 7. Anchor change when renaming or moving between paths.
 8. Explicit migration of persistent references without an implicit source alias.
+
+## Amendment provenance
+
+[[ADR-136-static-given-call-disambiguation|D-136]] extends static selection to written given arguments; lookup priorities and nominal graph boundaries remain in force.

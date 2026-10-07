@@ -21,7 +21,7 @@ affects:
 
 The specification calls the logical identity derived from folders a **MUD path**. There is no `namespace` header and `path` is not reserved. LSP may show a virtual header, copy the qualified name and reveal physical provenance without modifying the file.
 
-All top-level declarations in a path share one nominal namespace. An unqualified name is searched in this order: lexical environment, owner or implicit receiver, current path, exact `using`, recursive `using` and built-ins. The first non-empty level is selected; an incompatible category does not permit continuing. Candidates with the same anchor are deduplicated. Distinct anchors are ambiguous except for calls with explicit receivers whose nominal callable candidates are governed by `for`: elaboration must select exactly one by static participant compatibility from that same level, without a most-specific preference, `given`-based selection or runtime dispatch. A `using` does not re-export. When a candidate belongs to another part, `using` contributes it only to nominal resolution: reaching it also requires `uses` to authorise the dependency and the symbol to belong to the visible closure of the part-level contract. A qualified name cannot bypass this boundary.
+All top-level declarations in a path share one nominal namespace. An unqualified name is searched in this order: lexical environment, owner or implicit receiver, current path, exact `using`, recursive `using` and built-ins. The first non-empty level is selected; an incompatible category does not permit continuing. Candidates with the same anchor are deduplicated. Distinct anchors are ambiguous except for calls with explicit receivers whose nominal callable candidates are governed by `for`: elaboration must select exactly one by static participant and written-given compatibility from that same level, including written `given` names/types, without a most-specific preference or runtime dispatch. A `using` does not re-export. When a candidate belongs to another part, `using` contributes it only to nominal resolution: reaching it also requires `uses` to authorise the dependency and the symbol to belong to the visible closure of the part-level contract. A qualified name cannot bypass this boundary.
 
 There is no shadowing of a visible name. `PascalCase`, `lowerCamel` and the unit `lowerCamel` convention are static requirements with an automatic fix.
 
@@ -51,3 +51,7 @@ An anchor changes with category, path or qualified name. Tooling retains an expl
 8. HIR graph limited to `Owns`, `Specializes` and `RefersTo`.
 9. `using` or a qualified name cannot cross a part boundary without `uses` and a visible contract.
 10. Part membership does not alter the nominal anchor.
+
+## Amendment provenance
+
+The static written-given selection contract is amended by [[ADR-136-static-given-call-disambiguation|D-136]]; the first non-empty lookup level, nominal HIR boundary and absence of runtime dispatch remain in force.

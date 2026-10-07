@@ -1107,3 +1107,594 @@ cases:
   contract: Node is a productive recursive alias with optional children, leaf is a
     finite value and all computed domain dependencies are acyclic. Constructor recursion
     alone is not a computed-domain cycle.
+- id: generic-header-shared-bounds
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Example with T, U as A, B with V as C with W { first: T; second: U; third: V; last: W }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A/B/C are visible nominal bounds. T and U satisfy both A and B; V satisfies C; W only Any. Bodies use
+    only those guarantees.
+- id: generic-joint-header-scope
+  rules:
+  - MUD-TYPE-017
+  source: abstract thing Derived as T Base with T { }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Base is an abstract arity-one generic thing. Postfix T Base precedes the with group introducing local parameter T; joint header resolution admits its earlier ancestor occurrence.
+- id: generic-bracketed-header
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Pair with [T, U] { first: T; second: U }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Bracketed and unbracketed parameter lists have identical source-ordered parameter contracts.
+- id: generic-concrete-thing-forbidden
+  rules:
+  - MUD-TYPE-017
+  source: 'thing Store with T { mut items: T [*] = empty }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A concrete thing cannot declare type parameters or obtain canonical identity by application.
+- id: generic-abstract-thing-application
+  rules:
+  - MUD-TYPE-017
+  source: 'abstract thing Store with T { mut items: T [*] = empty }
+
+    thing CatStore as Cat Store'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Cat is a visible thing type. Store application remains abstract; CatStore has its own canonical identity,
+    substituted schema and initializer.
+- id: generic-complex-shape-alias
+  rules:
+  - MUD-TYPE-017
+  source: 'alias CatQueue := Cat [* ordered]
+
+    alias Box with T { value: T }
+
+    look Queues { boxed: CatQueue Box := (value = queue) }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Cat is visible and queue is a fixture value already typed as CatQueue. A nominal representation alias may carry its nested collection shape as one type argument.
+- id: generic-direct-cardinality-argument
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Box with T { value: T }
+
+    look Invalid { boxed: Box with (Cat [*]) := empty }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A grouped direct Cat[*] generic argument is prohibited. Use a representation alias; a collection suffix on the complete Box application instead shapes Box values.
+- id: generic-direct-shaped-bound
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Invalid with T as Cat [*] { value: T }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Bounds admit nominal types only, without outer collection specifications.
+- id: generic-direct-domain-bound
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Invalid with T as Nat in 0..10 { value: T }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Bounds cannot transport a domain into each occurrence.
+- id: generic-arity-and-product
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Pair with A, B { first: A; second: B }
+
+    alias Wrapper with T { value: T }
+
+    look Types { pair := ((Cat, Dog) Pair)~type; product := ((Nat, Nat) Wrapper)~type }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Cat/Dog are visible types. Grouped Pair supplies two arguments; Wrapper supplies one product. Neither
+    declaration overloads by arity.
+- id: generic-arity-mismatch
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Pair with A, B { first: A; second: B }
+
+    look Invalid { value: Pair with Nat := 0 }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: An arity-two constructor is supplied only one explicit argument.
+- id: generic-family-phantom
+  rules:
+  - MUD-TYPE-017
+  source: 'family Slot with T { Empty, Full }
+
+    look States { cat: Cat Slot := Cat Slot.Empty; dog: Dog Slot := Empty }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Cat/Dog are visible types. Each applied family is distinct even though T is phantom; members keep source
+    anchors and applied types.
+- id: generic-family-members-not-payloads
+  rules:
+  - MUD-TYPE-017
+  source: 'family Slot with T { Empty, Full }
+
+    look Invalid { result := (Cat Slot.Full)(Cat) }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A closed family member is a value, not a generic runtime payload constructor.
+- id: generic-bound-operation-rejected
+  rules:
+  - MUD-TYPE-017
+  source: 'rule Larger with T for left, right: T { left > right }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Any alone proves no order; runtime values cannot repair the generic body.
+- id: generic-call-explicit
+  rules:
+  - MUD-TYPE-017
+  source: 'rule Equal with T for left, right: T { left == right }
+
+    rule Same { (Bob, Bob).Equal() with Person }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Bob has Person type; explicit arguments specialise before invocation. Bounds and normal receiver permissions
+    are checked.
+- id: generic-look-produced-identity
+  rules:
+  - MUD-TYPE-017
+  source: 'look Read with T given value: T { result: T := value }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Calls with the same static T share one produced type irrespective of value. Different exact arguments
+    distinguish produced types; no application anchor is created.
+- id: generic-reactive-header-forbidden
+  rules:
+  - MUD-TYPE-017
+  source: 'rule Changed with T on item: Person { when item changes; then item.React() }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Reactive headers do not declare generic parameters; Person/React are valid fixture declarations.
+- id: generic-interval-equivalent-forms
+  rules:
+  - MUD-TYPE-017
+  source: 'look Ranges { first: Nat Interval := 0..10; second: Interval with Nat := 0..10 }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both spellings apply the same builtin arity-one Interval constructor and preserve ordinary endpoint
+    constraints.
+- id: generic-variance-readable
+  rules:
+  - MUD-TYPE-018
+  source: 'alias Box with T { value: T }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Only proven read/output occurrences admit covariance; Box application identity still includes exact
+    arguments.
+- id: generic-variance-consuming
+  rules:
+  - MUD-TYPE-018
+  source: alias Consumer with T := T.rule()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: T occurs only in a readonly callable receiver/input position, giving contravariance when all other contract
+    obligations are proved.
+- id: generic-variance-writable-invariant
+  rules:
+  - MUD-TYPE-018
+  source: 'abstract thing Store with T { mut items: T [*] = empty }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Full-contract reads and writes force invariance, even though a read-only generic wrapper could be covariant.
+- id: generic-variance-phantom-invariant
+  rules:
+  - MUD-TYPE-018
+  source: family Slot with T { Empty, Full }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: No directional proof exists for phantom T; its variance is invariant and different arguments retain
+    different identities.
+- id: generic-finite-recursion
+  rules:
+  - MUD-TYPE-019
+  source: 'alias Node with T { value: T; next: T Node [0..1] }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The recursive application is Node(T), closing a finite graph. Optional next separately supplies a finite
+    value witness.
+- id: generic-finite-permutation
+  rules:
+  - MUD-TYPE-019
+  source: 'alias Swap with A, B { next: (B, A) Swap [0..1] }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Reachable application patterns alternate Swap(A,B) and Swap(B,A); closure is finite without erasing
+    exact arguments.
+- id: generic-growing-instantiation
+  rules:
+  - MUD-TYPE-019
+  source: 'alias List with T := T [* ordered]
+
+    alias Growing with T { next: Growing with (List with T) [0..1] }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Repeated substitution generates Growing(T), Growing(List(T)), Growing(List(List(T))) and so on. Optional
+    finite values do not prove finite type closure.
+- id: structural-equality-calculated-body
+  rules:
+  - MUD-TYPE-020
+  source: 'alias A { x: Nat := 1 }
+
+    alias B { x: Nat := 2 }
+
+    A === B'
+  source_scope: representation-judgement-fragment
+  expected: static-accept
+  contract: This is an exact equality judgement on supplied normalized contracts, not standalone programme acceptance.
+    Bodies differ but complete calculated contracts agree.
+  witness:
+    kind: structural-equality
+    nodes:
+      Nat:
+        kind: primitive
+        identity: type::Nat
+      A:
+        kind: alias
+        identity: alias::A
+        children:
+        - RA
+      B:
+        kind: alias
+        identity: alias::B
+        children:
+        - RB
+      RA:
+        kind: record
+        children:
+        - FA
+      RB:
+        kind: record
+        children:
+        - FB
+      FA:
+        kind: field
+        contract:
+          name: x
+          storage: calculated
+          card:
+          - 1
+          - 1
+        children:
+        - Nat
+        body: '1'
+      FB:
+        kind: field
+        contract:
+          name: x
+          storage: calculated
+          card:
+          - 1
+          - 1
+        children:
+        - Nat
+        body: '2'
+    left: A
+    right: B
+- id: structural-equality-member-kind
+  rules:
+  - MUD-TYPE-020
+  source: 'alias A { x: Nat := 1 }
+
+    alias B { x: Nat }
+
+    A !== B'
+  source_scope: representation-judgement-fragment
+  expected: static-accept
+  contract: 'The normalized inequality judgement holds: calculated x differs from component x, despite equal names/types.'
+  witness:
+    kind: structural-equality
+    nodes:
+      A:
+        children:
+        - RA
+        identity: alias::A
+        kind: alias
+      B:
+        children:
+        - RB
+        identity: alias::B
+        kind: alias
+      FA:
+        body: '1'
+        children:
+        - Nat
+        contract:
+          card:
+          - 1
+          - 1
+          name: x
+          storage: calculated
+        kind: field
+      FB:
+        body: '2'
+        children:
+        - Nat
+        contract:
+          card:
+          - 1
+          - 1
+          name: x
+          storage: component
+        kind: field
+      Nat:
+        identity: type::Nat
+        kind: primitive
+      RA:
+        children:
+        - FA
+        kind: record
+      RB:
+        children:
+        - FB
+        kind: record
+    left: A
+    right: B
+    negated: true
+- id: structural-equality-applied-family-opaque
+  rules:
+  - MUD-TYPE-020
+  source: Cat Slot !== Dog Slot
+  source_scope: representation-judgement-fragment
+  expected: static-accept
+  contract: The inequality judgement retains exact arguments of an opaque family constructor, including phantom
+    arguments.
+  witness:
+    kind: structural-equality
+    nodes:
+      CatSlot:
+        kind: family
+        identity: family::Slot
+        arguments:
+        - thing::Cat
+      DogSlot:
+        kind: family
+        identity: family::Slot
+        arguments:
+        - thing::Dog
+    left: CatSlot
+    right: DogSlot
+    negated: true
+- id: structural-equality-values-rejected
+  rules:
+  - MUD-TYPE-020
+  source: Cat Slot.Empty === Dog Slot.Empty
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Members are values, not Type operands; comparing their reflected types is admitted instead.
+- id: structural-equality-symbolic-domains
+  rules:
+  - MUD-TYPE-020
+  source: Nat in (ActiveIds) !== Nat in (OtherIds)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both visible domains have valid definitions. Different normalized symbolic origins do not become equal
+    because one world snapshot has the same values.
+- id: structural-equality-collection-shape
+  rules:
+  - MUD-TYPE-020
+  source: Text [*] !== Text [* ordered]
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both operands denote Type; order is observable and no collection lifting occurs.
+- id: structural-equality-defaults-ignored
+  rules:
+  - MUD-TYPE-020
+  source: 'alias A { x: Nat = 1 }
+
+    alias B { x: Nat = 2 }
+
+    A === B'
+  source_scope: representation-judgement-fragment
+  expected: static-accept
+  contract: Explicit types/shapes agree; different component defaults do not change the equality judgement.
+- id: structural-equality-things-opaque
+  rules:
+  - MUD-TYPE-020
+  source: ThingA !== ThingB
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Distinct visible thing identities remain opaque even with identical schemas.
+- id: given-static-type-disambiguation
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play(textValue)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The first nonempty lookup level has both supplied candidate signatures. Actor/textValue have Actor/Text
+    type; written argument contracts select b.Play.
+  witness:
+    kind: given-selection
+    receivers:
+    - name: Actor
+    arguments:
+    - types:
+      - name: Text
+    candidates:
+    - identity: a.Play
+      receivers:
+      - name: Actor
+      givens:
+      - name: value
+        type:
+          name: Nat
+    - identity: b.Play
+      receivers:
+      - name: Actor
+      givens:
+      - name: value
+        type:
+          name: Text
+- id: given-static-name-disambiguation
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play(text = textValue)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Provided given names distinguish candidates after ordinary static receiver checks; no runtime argument
+    evaluation selects the declaration.
+  witness:
+    arguments:
+    - name: text
+      types:
+      - name: Text
+    candidates:
+    - givens:
+      - name: number
+        type:
+          name: Nat
+      identity: a.Play
+      receivers:
+      - name: Actor
+    - givens:
+      - name: text
+        type:
+          name: Text
+      identity: b.Play
+      receivers:
+      - name: Actor
+    kind: given-selection
+    receivers:
+    - name: Actor
+- id: given-contextual-literal-ambiguous
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play(1)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The fixture admits the literal in both Nat and Money contexts. Each candidate checks independently and
+    there is no numeric priority.
+  witness:
+    arguments:
+    - types:
+      - name: Nat
+      - name: Money
+    candidates:
+    - givens:
+      - name: value
+        type:
+          name: Nat
+      identity: a.Play
+      receivers:
+      - name: Actor
+    - givens:
+      - name: value
+        type:
+          name: Money
+      identity: b.Play
+      receivers:
+      - name: Actor
+    kind: given-selection
+    receivers:
+    - name: Actor
+- id: given-defaults-do-not-select
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play()
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both candidate signatures supply explicit defaults. Omission invents no static argument evidence or
+    priority; the receiver tie remains.
+  witness:
+    arguments: []
+    candidates:
+    - givens:
+      - name: value
+        type:
+          name: Nat
+        default: true
+      identity: a.Play
+      receivers:
+      - name: Actor
+    - givens:
+      - name: value
+        type:
+          name: Text
+        default: true
+      identity: b.Play
+      receivers:
+      - name: Actor
+    kind: given-selection
+    receivers:
+    - name: Actor
+- id: given-expected-result-does-not-select
+  rules:
+  - MUD-TYPE-001
+  source: 'reply: Expected = actor.Read(textValue)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both homonymous visible look signatures accept the same Actor/Text arguments; different result types
+    cannot break the tie.
+- id: generic-grouped-union-argument
+  rules:
+  - MUD-TYPE-017
+  source: 'alias Box with T { value: T }
+
+    look Values { item: Box with (Nat | Text) := (value = "cat") }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A grouped union is one member-form argument; direct per-alternative domains/cardinalities and dictionary
+    alternatives remain prohibited. The named structural literal supplies one component.
+- id: given-required-versus-default-binding
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play()
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: 'At the first lookup level both candidates accept Actor receivers. Candidate a requires given value:
+    Nat without a default; candidate b supplies a declared default. Missing required binding excludes a, so b remains.
+    If both admit omission, no default value/type is invented to break the tie.'
+- id: given-union-no-runtime-dispatch
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play(value)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: value has static Nat | Text. The first lookup level has separate Actor operations accepting Nat and
+    Text. No one declaration admits every alternative; no runtime dispatch selects a declaration from value type.
+- id: given-unknown-admission-keeps-candidates
+  rules:
+  - MUD-TYPE-001
+  source: actor.Play(values)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Both candidates have compatible Actor/Nat member types. Cardinality admission remains unknown and runtime-checkable.
+    That obligation is not proven incompatibility and cannot choose either candidate.
+  witness:
+    kind: given-selection
+    receivers:
+    - name: Actor
+    arguments:
+    - types:
+      - name: Nat
+        card:
+        - 0
+        - 10
+        unknown_admission: true
+    candidates:
+    - identity: a.Play
+      receivers:
+      - name: Actor
+      givens:
+      - name: values
+        type:
+          name: Nat
+          card:
+          - 0
+          - 5
+    - identity: b.Play
+      receivers:
+      - name: Actor
+      givens:
+      - name: values
+        type:
+          name: Nat
+          card:
+          - 0
+          - 7

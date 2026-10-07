@@ -13,6 +13,8 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-136
+  - D-134
   - D-132
   - D-131
   - D-111
@@ -98,31 +100,33 @@ Candidates that refer to the same anchor are deduplicated. Two different anchors
 
 An exact `using` imports a specific path, whilst a recursive one imports its descendants. Neither re-exports the `using`s contained in the files reached. A fully qualified reference avoids level-by-level searching.
 
-`Prefix` appears at the top-level as an embedded type. The SI names `quecto`…`quetta` are also resolved there as built-in constants of `Prefix`; they do not introduce declarations or anchors of their own.
+`Interval` resolves at the builtin level as an arity-one type constructor with source anchor `type::Interval`; an applied interval has no own anchor. `Prefix` appears at the top-level as an embedded type. The SI names `quecto`…`quetta` are also resolved there as built-in constants of `Prefix`; they do not introduce declarations or anchors of their own.
 
 Access paths with nodes are constructed in stages: first, the nominal root is resolved, and then each member is resolved using the resulting type or owner. A qualified path and a chain of members may share surface writing without sharing internal resolution.
 
 ### Receiver-call selection
 
-> [!rule] MUD-NAME-007 — Selection by supplied `for` participants
-> An unqualified operation name in a call with explicit receivers may denote several visible declarations from different MUD paths at the first non-empty lookup level. When every distinct candidate is a nominal callable governed by `for` (an action, subaction, Boolean rule, look or sublook), elaboration selects a declaration by static receiver compatibility. Exactly one compatible declaration is required.
+> [!rule] MUD-NAME-007 — Selection by supplied participants and givens
+> An unqualified operation name in a call with explicit receivers may denote several visible declarations from different MUD paths at the first non-empty lookup level. When every distinct candidate is a nominal callable governed by `for` (an action, subaction, Boolean rule, look or sublook), elaboration selects a declaration by static compatibility of receivers and explicitly supplied `given` arguments. Exactly one compatible declaration is required.
 
 The operation name in `A.Play()` is unqualified even though the receiver `A` is written explicitly. The receiver is resolved independently; it does not make `Play` a member owned by `A`. The lookup levels and part-level visibility remain unchanged. A non-callable candidate or a stored callable value at the selected level does not participate in this exception; ordinary ambiguity and category checks apply. A single stored callable value retains its ordinary invocation contract.
 
 For each candidate, elaboration binds the supplied receivers to its declared `for` roles using the ordinary positional or exhaustive named form. It checks the number and names of roles, static type compatibility, collection cardinality and modifiers, and required outer and inner mutability capabilities. A collection supplied for one collective role remains one receiver. A structural receiver form is interpreted against each candidate signature; distinct valid interpretations do not create a preference between candidates.
 
-Only incompatibility established from static receiver information excludes a candidate. Flow-proven narrowing may contribute that information. An unresolved obligation remains subject to ordinary call validation and cannot be used to assume that a competing candidate will fail. Participant-domain predicates and runtime values do not select a declaration. No domain predicate, action condition or callable body is executed during selection.
+Only incompatibility established from static receiver and written argument information excludes a candidate. Flow-proven narrowing may contribute that information. An unresolved obligation remains subject to ordinary call validation and cannot be used to assume that a competing candidate will fail. Participant-domain predicates and runtime values do not select a declaration. No domain predicate, action condition or callable body is executed during selection.
 
-The result is determined before checking `given` arguments, their names, defaults or types, the expected return type, and action conditions. Those checks validate the selected declaration and cannot select a different one. There is no preference for an exact nominal match or a more specialised signature, nor for a closer path or earlier import.
+For each candidate, also bind the actually written positional/named `given` arguments and check their names, arity and static contracts. A missing required argument excludes a candidate; an explicit default permits omission but supplies no written type/name evidence and no preference. Each candidate checks the same source independently. Already typed arguments keep their types; contextual literals may admit several candidates and cannot acquire one candidate's inferred type before considering the others. Nothing is evaluated for selection, including argument expressions or defaults. Statically known argument-expression contracts may contribute; their runtime values do not.
+
+Generic constraints are solved independently for each candidate from explicit type arguments, receivers and supplied givens. A proven incompatibility or bound violation excludes it; unresolved inference is not evidence that it will fail. A unique remaining declaration is required before expected-result information may refine its generic arguments. Expected results, runtime domain predicates, defaults as invented argument evidence and action conditions cannot break a tie. There is no preference for an exact nominal match, a more specialised signature, a closer path or an earlier import.
 
 - No compatible candidate is a static receiver-incompatibility error. Lookup does not continue at a later level.
 - One compatible candidate fixes the declaration for the call; ordinary remaining call obligations still apply.
-- Several compatible candidates are a static ambiguity error, even if only one would accept the `given` arguments or pass a runtime condition. The diagnostic lists their qualified names and anchors. A fully qualified operation reference selects its declaration explicitly and still checks its receiver contract.
+- Several compatible candidates are a static ambiguity error, after checking static written arguments; runtime conditions and expected results cannot break the tie. The diagnostic lists their qualified names and anchors. A fully qualified operation reference selects its declaration explicitly and still checks its receiver contract.
 
 Selection is static and never dispatches between declarations using the receiver's runtime type. A union receiver must admit one declaration for all alternatives permitted by its static type; different alternatives selecting different declarations require explicit narrowing into separate calls. Mere inequality of receiver identities does not establish disjoint participant types.
 
 > [!example] Independent actions with the same short name
-> In path `a.stuff`, a concrete `thing A` has a field `score: Nat = 0`, and the action is:
+> In path `a.stuff`, a concrete `thing A` has a field `mut score: Nat = 0`, and the action is:
 
 ```mud
 action Play for actor: A [mut] {
@@ -145,8 +149,10 @@ using a.stuff
 using b.stuff
 
 action PlayBoth {
-    then A.Play()
-    then B.Play()
+    then {
+        A.Play()
+        B.Play()
+    }
 }
 ```
 
@@ -177,6 +183,14 @@ In associations `->` and branches `-->`, the left and right blocks create siblin
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
 No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
+
+## Generic type-parameter scope and application references
+
+Generic parameters are LocalSymbol values of kind `type-parameter`, owned by the declaring nominal symbol. Collect them before resolving any part of its header; the shared lexical scope covers bounds, ancestors, signatures and body, including ancestors textually preceding `with`. Duplicate parameters, shadowing and nominal inheritance cycles remain invalid. Parameters receive no public anchors or metadata. Written parameter/bound/argument references preserve ordinary source spans and RefersTo bindings where resolved.
+
+Generic constructor declarations and their declared members retain ordinary anchors. Applications create no symbol, owner, Owns edge, metadata owner or public anchor. Parameter substitution and applied type identity belong to elaboration, which consumes the written arguments in Surface AST together with resolved constructor references. `Specializes` retains the written constructor-level ancestry edge; the source application arguments determine the effective specialised type later. Such an edge does not assert that every application of the base is an ancestor. Repeated applications with different arguments are not conflated by deduplicating that nominal edge.
+
+An applied-family member uses its source member symbol/anchor and effective applied type. Type descriptors retain origin and arguments without inventing a monomorphisation anchor. The existing Nominal HIR represents these scopes and references; inferred arguments, variance and finite-closure proofs are not HIR fields.
 
 ## Error handler bindings
 
@@ -314,7 +328,7 @@ The partial graph does not replace the AST nor does it constitute an source of t
 
 An conforming implementation must produce the same candidates and anchors, reject the shading and collisions indicated, preserve the provenance and allow the nominal graph to be reconstructed from the source programme.
 
-Receiver-call conformance includes distinct imported participant types, multiple and named receivers, collection-role shape and mutability, flow narrowing, overlapping specialisations, union receivers, duplicate imports of one anchor, and ambiguity unaffected by `given` or expected results. It must also preserve first-level blocking, exact-before-recursive priority, part-level visibility, same-path name uniqueness and ambiguity of a bare callable descriptor reference. Pending calls must preserve all nominal candidates without false `RefersTo` edges.
+Receiver-call conformance includes distinct imported participant types, multiple and named receivers, collection-role shape and mutability, flow narrowing, overlapping specialisations, union receivers, duplicate imports of one anchor, and written-given disambiguation, contextual-argument ties, and ambiguity unaffected by expected results, omitted defaults or runtime conditions. It must also preserve first-level blocking, exact-before-recursive priority, part-level visibility, same-path name uniqueness and ambiguity of a bare callable descriptor reference. Pending calls must preserve all nominal candidates without false `RefersTo` edges.
 
 ## Alias specialisation
 

@@ -29,6 +29,8 @@ synthetic_token_origins:
 - ImplicitTextEnd
 - MissingForRecovery
 fixed_tokens:
+- spelling: '!=='
+- spelling: '==='
 - spelling: submessage
 - spelling: sublook
 - spelling: uses
@@ -405,7 +407,7 @@ lexical_forms:
     - two-character-token
     - one-character-operator
   three-character-token:
-    rhs: '"<=>" | "-->" | "--="'
+    rhs: '"<=>" | "-->" | "--=" | "===" | "!=="'
     references: []
   two-character-token:
     rhs: "\"<-\" | \":=\" | \"->\" | \"..\" | \"==\" | \"!=\" | \"<=\" | \">=\"\n      | \"=>\" | \"+=\" | \"-=\" | \"*=\" | \"/=\"\n      | \"|=\" | \"&=\" | \"^=\" | \"--\""
@@ -426,6 +428,99 @@ lexical_forms:
     rhs: '"," | "." | ":" | ";"'
     references: []
 syntax_nodes:
+  generic-union-argument:
+    kind: GenericUnionArgumentSyntax
+    rhs: declared-type , { "|" , declared-type }
+    references:
+    - declared-type
+  ancestor-clause:
+    kind: AncestorClauseSyntax
+    rhs: '"as" , ancestor-list'
+    references:
+    - ancestor-list
+  structural-type-equality-operator:
+    kind: StructuralTypeEqualityOperatorSyntax
+    rhs: '"===" | "!=="'
+    references: []
+  structural-type-comparison:
+    kind: StructuralTypeComparisonSyntax
+    rhs: type-expression , structural-type-equality-operator , type-expression
+    references:
+    - structural-type-equality-operator
+    - type-expression
+  generic-family-member:
+    kind: GenericFamilyMemberSyntax
+    rhs: generic-type-application , "." , member-name
+    references:
+    - generic-type-application
+    - member-name
+  generic-call-suffix:
+    kind: GenericCallSuffixSyntax
+    rhs: '"with" , generic-argument-list'
+    references:
+    - generic-argument-list
+  generic-argument:
+    kind: GenericArgumentSyntax
+    rhs: declared-type | "(" , generic-union-argument , ")"
+    references:
+    - declared-type
+    - generic-union-argument
+  generic-argument-list:
+    kind: GenericArgumentListSyntax
+    rhs: generic-argument , { "," , generic-argument }
+    references:
+    - generic-argument
+  postfix-generic-type-application:
+    kind: PostfixGenericTypeApplicationSyntax
+    rhs: generic-argument , generic-constructor
+    references:
+    - generic-argument
+    - generic-constructor
+  explicit-generic-type-application:
+    kind: ExplicitGenericTypeApplicationSyntax
+    rhs: generic-constructor , "with" , generic-argument-list
+    references:
+    - generic-argument-list
+    - generic-constructor
+  generic-type-application:
+    kind: GenericTypeApplicationSyntax
+    rhs: explicit-generic-type-application | postfix-generic-type-application
+    references:
+    - explicit-generic-type-application
+    - postfix-generic-type-application
+  generic-constructor:
+    kind: GenericConstructorSyntax
+    rhs: type-reference | "Interval"
+    references:
+    - type-reference
+  nominal-type:
+    kind: NominalTypeSyntax
+    rhs: 'type-reference | generic-type-application | "(" , nominal-type , ")"'
+    references:
+    - type-reference
+    - generic-type-application
+    - nominal-type
+  generic-bound-list:
+    kind: GenericBoundListSyntax
+    rhs: "nominal-type , { \",\" , nominal-type }\n      | \"[\" , nominal-type , { \",\" , nominal-type } , \"]\""
+    references:
+    - nominal-type
+  type-parameter-list:
+    kind: TypeParameterListSyntax
+    rhs: "nominal-name , { \",\" , nominal-name }\n      | \"[\" , nominal-name , { \",\" , nominal-name } , \"]\""
+    references:
+    - nominal-name
+  generic-parameter-group:
+    kind: GenericParameterGroupSyntax
+    rhs: '"with" , type-parameter-list , [ "as" , generic-bound-list ]'
+    references:
+    - generic-bound-list
+    - type-parameter-list
+  ancestor-list:
+    kind: AncestorListSyntax
+    rhs: "nominal-type , { \",\" , nominal-type }\n      | \"[\" , nominal-type , { \",\" , nominal-type } , \"]\""
+    references:
+    - nominal-type
   message-signature-body:
     kind: MessageSignatureBodySyntax
     rhs: "nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment\
@@ -450,18 +545,19 @@ syntax_nodes:
     - message-signature-body
   look-signature-body:
     kind: LookSignatureBodySyntax
-    rhs: "nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n\
-      \        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation\
-      \ ]\n        , [ public-field-declaration\n            , { required-separation , public-field-declaration\
+    rhs: "nominal-name\n        , { generic-parameter-group }\n        , [ for-clause ]\n        , [ given-clause\
+      \ ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
+      \ } , required-separation ]\n        , [ public-field-declaration\n            , { required-separation , public-field-declaration\
       \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
     references:
-    - nominal-name
-    - for-clause
-    - given-clause
     - declaration-layout
+    - for-clause
+    - generic-parameter-group
+    - given-clause
     - metadata-assignment
-    - required-separation
+    - nominal-name
     - public-field-declaration
+    - required-separation
   sublook-declaration:
     kind: SublookDeclarationSyntax
     rhs: '"sublook" , look-signature-body'
@@ -618,10 +714,12 @@ syntax_nodes:
     references: []
   thing-declaration:
     kind: ThingDeclarationSyntax
-    rhs: "[ \"abstract\" ] , \"thing\" , nominal-name\n        , [ \"as\" , type-reference , { \",\" , type-reference } ]\n        , [ thing-body ]"
+    rhs: "[ \"abstract\" ] , \"thing\" , nominal-name\n        , [ ancestor-clause ]\n        , { generic-parameter-group\
+      \ }\n        , [ thing-body ]"
     references:
+    - ancestor-clause
+    - generic-parameter-group
     - nominal-name
-    - type-reference
     - thing-body
   thing-body:
     kind: ThingBodySyntax
@@ -660,12 +758,13 @@ syntax_nodes:
     - derived-value-shape
   alias-declaration:
     kind: AliasDeclarationSyntax
-    rhs: '[ "abstract" ] , "alias" , nominal-name , [ "as" , type-reference , { "," , type-reference } ]
-      , [ alias-definition ]'
+    rhs: "[ \"abstract\" ] , \"alias\" , nominal-name\n        , [ ancestor-clause ]\n        , { generic-parameter-group\
+      \ }\n        , [ alias-definition ]"
     references:
-    - nominal-name
-    - type-reference
     - alias-definition
+    - ancestor-clause
+    - generic-parameter-group
+    - nominal-name
   alias-definition:
     kind: AliasDefinitionSyntax
     rhs: "\":=\" , type-expression\n        , [ \"{\" , declaration-layout\n            , [ metadata-assignment\n\
@@ -711,17 +810,18 @@ syntax_nodes:
     - value-body
   family-declaration:
     kind: FamilyDeclarationSyntax
-    rhs: "[ \"ordered\" ] , \"family\" , nominal-name\n        , \"{\" , declaration-layout\n        , [ metadata-assignment\
-      \ , { required-separation , metadata-assignment } , required-separation ]\n        , { family-data-declaration\
-      \ , required-separation }\n        , family-member\n        , { \",\" , declaration-layout , family-member }\n\
-      \        , [ required-separation ]\n        , \"}\""
+    rhs: "[ \"ordered\" ] , \"family\" , nominal-name\n        , { generic-parameter-group }\n        , \"{\" , declaration-layout\n\
+      \        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n \
+      \       , { family-data-declaration , required-separation }\n        , family-member\n        , { \",\" , declaration-layout\
+      \ , family-member }\n        , [ required-separation ]\n        , \"}\""
     references:
-    - nominal-name
     - declaration-layout
-    - metadata-assignment
-    - required-separation
     - family-data-declaration
     - family-member
+    - generic-parameter-group
+    - metadata-assignment
+    - nominal-name
+    - required-separation
   family-data-declaration:
     kind: FamilyDataDeclarationSyntax
     rhs: "stored-family-data-declaration\n      | calculated-family-data-declaration"
@@ -938,13 +1038,14 @@ syntax_nodes:
     - domain-expression
   declared-type:
     kind: DeclaredTypeSyntax
-    rhs: "type-reference\n      | callable-type\n      | reflected-type\n      | interval-type\n      | product-type"
+    rhs: "type-reference\n      | callable-type\n      | reflected-type\n      | generic-type-application\n      |\
+      \ product-type"
     references:
-    - type-reference
     - callable-type
-    - reflected-type
-    - interval-type
+    - generic-type-application
     - product-type
+    - reflected-type
+    - type-reference
   callable-type:
     kind: CallableTypeSyntax
     rhs: "callable-receiver , \".\" , callable-kind\n        , \"(\" , [ type-expression , { \",\" , type-expression } ] , \")\""
@@ -954,9 +1055,10 @@ syntax_nodes:
     - type-expression
   callable-receiver:
     kind: CallableReceiverSyntax
-    rhs: "type-reference\n      | \"(\" , type-reference , \",\" , type-reference\n          , { \",\" , type-reference } , \")\""
+    rhs: "nominal-type\n      | \"(\" , nominal-type , \",\" , nominal-type\n          , { \",\" , nominal-type }\
+      \ , \")\""
     references:
-    - type-reference
+    - nominal-type
   callable-kind:
     kind: CallableKindSyntax
     rhs: '"action" | "rule" | "look"'
@@ -966,11 +1068,6 @@ syntax_nodes:
     rhs: 'postfix-expression , "~" , "type"'
     references:
     - postfix-expression
-  interval-type:
-    kind: IntervalTypeSyntax
-    rhs: type-reference , "Interval"
-    references:
-    - type-reference
   product-type:
     kind: ProductTypeSyntax
     rhs: "positional-product-type\n      | named-product-type"
@@ -1091,12 +1188,14 @@ syntax_nodes:
     - required-separation
   boolean-rule-declaration:
     kind: BooleanRuleDeclarationSyntax
-    rhs: "\"rule\" , nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , boolean-body"
+    rhs: "\"rule\" , nominal-name\n        , { generic-parameter-group }\n        , [ for-clause ]\n        , [ given-clause\
+      \ ]\n        , boolean-body"
     references:
-    - nominal-name
-    - for-clause
-    - given-clause
     - boolean-body
+    - for-clause
+    - generic-parameter-group
+    - given-clause
+    - nominal-name
   boolean-body:
     kind: BooleanBodySyntax
     rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment\n            , { required-separation , metadata-assignment }\n            , required-separation\n          ]\n        , expression-block\n        , [ required-separation ] , \"}\""
@@ -1154,18 +1253,23 @@ syntax_nodes:
     - action-signature-body
   action-signature-body:
     kind: ActionSignatureBodySyntax
-    rhs: "nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , [ action-if-clause , required-separation ]\n        , then-clause\n        , [ required-separation , action-after-clause ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: "nominal-name\n        , { generic-parameter-group }\n        , [ for-clause ]\n        , [ given-clause\
+      \ ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
+      \ } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , [ action-if-clause\
+      \ , required-separation ]\n        , then-clause\n        , [ required-separation , action-after-clause ]\n\
+      \        , [ required-separation ]\n        , \"}\""
     references:
-    - nominal-name
-    - for-clause
-    - given-clause
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
-    - pure-preamble-statement
-    - action-if-clause
-    - then-clause
     - action-after-clause
+    - action-if-clause
+    - declaration-layout
+    - for-clause
+    - generic-parameter-group
+    - given-clause
+    - metadata-assignment
+    - nominal-name
+    - pure-preamble-statement
+    - required-separation
+    - then-clause
   look-declaration:
     kind: LookDeclarationSyntax
     rhs: '"look" , look-signature-body'
@@ -1463,10 +1567,11 @@ syntax_nodes:
     - comparison-expression
   comparison-expression:
     kind: ComparisonExpressionSyntax
-    rhs: restriction-expression , [ comparison-tail ]
+    rhs: "restriction-expression , [ comparison-tail ]\n      | structural-type-comparison"
     references:
-    - restriction-expression
     - comparison-tail
+    - restriction-expression
+    - structural-type-comparison
   comparison-tail:
     kind: ComparisonTailSyntax
     rhs: "chainable-comparison , quantitative-expression\n        , { chainable-comparison , quantitative-expression }\n      | nonchainable-comparison , quantitative-expression"
@@ -1522,9 +1627,9 @@ syntax_nodes:
     - arithmetic-continuation
   conversion-suffix:
     kind: ConversionSuffixSyntax
-    rhs: "\"to\" , type-reference\n      | \"in\" , unit-expression"
+    rhs: "\"to\" , nominal-type\n      | \"in\" , unit-expression"
     references:
-    - type-reference
+    - nominal-type
     - unit-expression
   arithmetic-continuation:
     kind: ArithmeticContinuationSyntax
@@ -1559,14 +1664,15 @@ syntax_nodes:
   postfix-expression:
     kind: PostfixExpressionSyntax
     rhs: "primary-expression\n        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix\
-      \ }"
+      \ | generic-call-suffix }"
     references:
-    - primary-expression
-    - member-access
-    - metadata-access
-    - index-access
     - call-arguments
     - collection-transform-suffix
+    - generic-call-suffix
+    - index-access
+    - member-access
+    - metadata-access
+    - primary-expression
   member-access:
     kind: MemberAccessSyntax
     rhs: '"." , identifier'
@@ -1606,25 +1712,27 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: "literal\n      | take-expression\n      | selection-expression\n      | qualified-name\n     \
-      \ | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n\
-      \      | point-component-expression\n      | quantifier-expression\n      | random-expression\n  \
-      \    | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"action\" | \"subaction\"\
-      \ | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\" , expression ,\
-      \ \")\""
+    rhs: "generic-family-member\n      | generic-type-application\n      | literal\n      | take-expression\n    \
+      \  | selection-expression\n      | qualified-name\n      | structural-literal\n      | collection-literal\n\
+      \      | interval-expression\n      | quantity-expression\n      | point-component-expression\n      | quantifier-expression\n\
+      \      | random-expression\n      | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"\
+      action\" | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\" ,\
+      \ expression , \")\""
     references:
-    - literal
-    - take-expression
-    - selection-expression
-    - qualified-name
-    - structural-literal
     - collection-literal
-    - interval-expression
-    - quantity-expression
-    - point-component-expression
-    - quantifier-expression
-    - random-expression
     - expression
+    - generic-family-member
+    - generic-type-application
+    - interval-expression
+    - literal
+    - point-component-expression
+    - qualified-name
+    - quantifier-expression
+    - quantity-expression
+    - random-expression
+    - selection-expression
+    - structural-literal
+    - take-expression
   take-expression:
     kind: TakeExpressionSyntax
     rhs: '"take" , expression , "from" , expression'

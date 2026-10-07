@@ -2805,3 +2805,104 @@ cases:
   produces_ast: true
   expected_host_diagnostics:
   - sub-operation-not-host-endpoint
+- id: generic-with-groups
+  category: generic-types
+  source: 'alias Example with T, U as A, B with V as C with W { first: T; second: U; third: V; last: W }'
+  cst_root: MudFileSyntax
+  ast: AliasDecl(parameters=[T(A,B), U(A,B), V(C), W(Any)])
+  normalizations:
+  - copy-shared-bounds
+  - synthesize-Any-bound
+  produces_ast: true
+- id: generic-bracket-header
+  category: generic-types
+  source: 'alias Pair with [T, U] { first: T; second: U }'
+  cst_root: MudFileSyntax
+  ast: AliasDecl(parameters=[T(Any), U(Any)])
+  normalizations:
+  - discard-header-list-brackets
+  produces_ast: true
+- id: generic-postfix-group-preserved
+  category: generic-types
+  source: 'alias Pair with A, B { first: A; second: B }
+
+    look Values { value: (Nat, Nat) Pair := (1, 2) }'
+  cst_root: MudFileSyntax
+  ast: GenericTypeApplication(Pair, [PositionalProductType(Nat,Nat)], PostfixGroupedGeneric)
+  normalizations:
+  - defer-grouped-arity-interpretation
+  produces_ast: true
+- id: generic-product-argument-preserved
+  category: generic-types
+  source: 'alias Wrapper with T { value: T }
+
+    look Values { value: (Nat, Nat) Wrapper := (value = (1, 2)) }'
+  cst_root: MudFileSyntax
+  ast: GenericTypeApplication(Wrapper, [PositionalProductType(Nat,Nat)], PostfixGroupedGeneric)
+  normalizations:
+  - defer-grouped-arity-interpretation
+  produces_ast: true
+- id: generic-interval-unified
+  category: generic-types
+  source: 'look Values { first: Nat Interval := 0..10; second: Interval with Nat := 0..10 }'
+  cst_root: MudFileSyntax
+  ast: GenericTypeApplication(Interval, [Nat], PostfixSingleGeneric); GenericTypeApplication(Interval, [Nat], ExplicitGenericWith)
+  normalizations:
+  - builtin-Interval-generic-application
+  produces_ast: true
+- id: generic-applied-family-member
+  category: generic-types
+  source: 'family Slot with T { Empty, Full }
+
+    look Values { result: Cat Slot := Cat Slot.Empty }'
+  cst_root: MudFileSyntax
+  ast: GenericFamilyMemberExpr(GenericTypeApplication(Slot,[Cat],PostfixSingleGeneric),Empty)
+  normalizations:
+  - preserve-source-member-reference
+  produces_ast: true
+- id: generic-call-static-suffix
+  category: generic-types
+  source: 'rule Equal with T for left, right: T { left == right }
+
+    rule Same { (Bob, Bob).Equal() with Person }'
+  cst_root: MudFileSyntax
+  ast: GenericCallSpecializationExpr(CallExpr(Equal, receivers=[Bob,Bob]), [Person])
+  normalizations:
+  - retain-call-before-specialization-elaboration
+  produces_ast: true
+- id: structural-type-comparison
+  category: generic-types
+  source: rule Different { Text [*] !== Text [* ordered] }
+  cst_root: MudFileSyntax
+  ast: StructuralTypeEqualityExpr(Text[*], Text[* ordered], Enabled)
+  normalizations:
+  - retain-complete-type-operands
+  produces_ast: true
+- id: structural-type-reflected-comparison
+  category: generic-types
+  source: rule Different { Cat Slot.Empty~type !== Dog Slot.Empty~type }
+  cst_root: MudFileSyntax
+  ast: StructuralTypeEqualityExpr(ReflectedType(MetadataAccessExpr(Cat Slot.Empty,type)), ReflectedType(MetadataAccessExpr(Dog Slot.Empty,type)), Enabled)
+  normalizations:
+  - preserve-applied-family-type-reflection
+  produces_ast: true
+- id: generic-grouped-union-preserved
+  category: generic-types
+  source: 'alias Box with T { value: T }
+
+    look Values { item: Box with (Nat | Text) := (value = "cat") }'
+  cst_root: MudFileSyntax
+  ast: GenericTypeApplication(Box,[TypeExpr(Nat | Text)],ExplicitGenericWith)
+  normalizations:
+  - preserve-grouped-member-union
+  produces_ast: true
+- id: generic-grouped-ancestor-header
+  category: generic-types
+  source: abstract thing Derived as (Base with T) with T { }
+  cst_root: MudFileSyntax
+  ast: ThingDecl(Derived,parameters=[T(Any)],direct_ancestors=[GenericTypeApplication(Base,[T],ExplicitGenericWith)])
+  normalizations:
+  - discard-nominal-grouping
+  - preserve-header-with-boundary
+  - joint-header-type-parameter-scope
+  produces_ast: true

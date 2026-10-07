@@ -179,7 +179,7 @@ Named binding requires an unequivocal static role contract shared by every possi
 
 `look` fields are evaluated over a single coherent read view inherited from the caller. From the host this is the queryable stable state; from a rule it is that rule's snapshot; from a `then` it includes the private delta visible at the call's textual point. A `look` can therefore observe earlier private effects of the same `then` while remaining pure.
 
-Each look declaration induces one static produced nominal result type formed from its public fields. Different declarations retain distinct result types even when their fields match; calls to the same declaration share its type. A call returns exactly one value of that type; multiplicity is expressed through ordinary fields. The anonymous type receives no anchor merely by existing. It can be obtained with `~type` and used to define an ordinary alias.
+Each look/sublook declaration and static generic application induces one produced nominal result type formed from its public fields and exact generic arguments. Different declarations retain distinct result types even when their fields match; calls to the same declaration with the same exact generic arguments share its type, independently of receiver identity or runtime state. A call returns exactly one value of that type; multiplicity is expressed through ordinary fields. The anonymous type receives no anchor merely by existing. It can be obtained with `~type` and used to define an ordinary alias.
 
 A call `MyDragon.Stats()` is a value and cannot directly occupy a type position; `MyDragon.Stats()~type` does denote its static type. By contrast, `Dragon.look(Detail)` is already a callable type.
 
@@ -236,3 +236,5 @@ The canonical host API is organised around the identity of public operations, no
 - `message` occurrences do not become `on` participants; causality belongs to `when`.
 - Actions, subactions, looks, sublooks, Boolean rules and tests are not declarative trigger sources.
 - Selection producing a collection from a domain must use a source explicitly materialised with `all D`.
+
+Generic produced-type identity is extended by [[ADR-134-static-generic-declarations-and-applications|D-134]]; host-boundary and activation contracts remain unchanged.

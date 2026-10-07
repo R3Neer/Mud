@@ -10,6 +10,9 @@ status: in-preparation
 normative: true
 questions:
 decisions:
+  - D-134
+  - D-135
+  - D-136
   - D-133
   - D-132
   - D-131
@@ -164,7 +167,7 @@ Defines:
 - Tokens, trivia, spans and lexical errors.
 - Complete stream and significant view.
 
-The executable lexical grammar lives in `grammar/mud-lexicon.ebnf`.
+The normative lexical grammar lives in `grammar/mud-lexico.ebnf`.
 
 ## 07. Concrete grammar
 
@@ -242,11 +245,12 @@ Defines:
 
 - Built-in, nominal, structural, collection, dictionary, interval, magnitude and union types.
 - `Any`, first-class descriptors, callable types and types obtained statically through `~type`.
-- Subtyping, compatibility, narrowing, equality, ordering, conversions and inference.
+- Static generic parameters/applications, nominal bounds, conservative inferred variance and proven finite application closure.
+- Subtyping, compatibility, narrowing, exact normalized structural type equality, ordering, conversions and unambiguous inference.
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 
-Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/message types are static and nominal per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized parts.
+Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/sublook types are static and nominal per declaration and exact generic arguments; message/submessage types are static per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized parts.
 
 Juicio principal:
 
@@ -261,7 +265,7 @@ Planned file: `11-things.md`
 Planned scope:
 
 - Identity, activity, destruction of a materialisation's own load, rematerialisation from the canonical definition and independent state of concrete and abstract `thing`s.
-- Single and multiple specialisation, inheritable schema, defaults and initialisers.
+- Single and multiple specialisation, including applied generic abstract ancestors, inheritable schema, defaults and initialisers; concrete things are not generic.
 - Integration of `Thing` as the built-in root and of nominal identity/equality rules.
 - Part-level boundary of `thing`s: visible identity/type versus ordinary state projected through public operations and inter-part specialisation limits.
 - `thing` metadata and reflection without confusing them with state fields.
@@ -272,7 +276,7 @@ Planned file: `12-aliases.md`
 
 Planned scope:
 
-- Nominal and structural representation aliases, contextual construction and nominal casting.
+- Nominal and structural representation aliases, generic applications, contextual construction and nominal casting; exact structural type equality remains distinct from nominal value equality.
 - Single and multiple nominal specialisation, inheritance of representation or members, provenance-based deduplication and conflicts between independent members.
 - Inherited defaults, immutable values, equality, ordering and enumerability where applicable.
 - Reconstruction of immutable aliases through write-back from assignable paths, without introducing mutability into their values.
@@ -285,7 +289,7 @@ Planned file: `13-closed-families.md`
 
 Planned scope:
 
-- Declaration, members, nominality, ordering and enumeration of `family`.
+- Declaration, generic applications, members, nominality, ordering and enumeration of `family`; applied members retain source anchors and exact applied types.
 - Uniform schema for associated data, defaults and per-member calculations.
 - Equality, ordering, reflection and absence of runtime lifecycle for its values.
 
@@ -407,6 +411,7 @@ Planned scope:
 - Contracts visible between parts and to the host for `action`, `look` and `message`; `test` crosses parts only in a test context.
 - Part-level authorisation through `uses`, transitive closure of the types needed to understand a contract and safe cross-part reflection without silent filtering.
 - Host API centred on the identity of public operations, not on a participant chosen as owner.
+- Generic callable signatures and static receiver/written-given selection, with no expected-result tie-break.
 - `for`/`given` signatures, external capability of `action` versus `subaction`, callable values and binding at the invocation point.
 - `look` as a pure query with a coherent caller view and one value of its static produced result type.
 - Message/submessage causal occurrences with frozen birth-view payloads; shared normal messages publish provisional Ticket handles after validated wave consolidation, with Waiting/Kept/Dropped scope-aware lifetime.

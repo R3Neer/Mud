@@ -22,7 +22,7 @@ The author retains producer identity for look values, structural identity for an
 
 ## Decision
 
-Each look declaration has one statically determined produced nominal result type, identified internally by its declaration identity and result schema. Different look declarations have different result types even if fields coincide. Calls to the same declaration share the produced type, irrespective of receiver or runtime state. Each message declaration similarly has a static produced payload type; occurrence identity and multiplicity are separate from payload type and equality.
+Each look/sublook declaration and static generic application has one statically determined produced nominal result type, identified internally by its declaration identity, exact generic arguments and result schema. Different look declarations have different result types even if fields coincide. Calls to the same declaration with the same exact generic arguments share the produced type, irrespective of receiver identity or runtime state. Each message declaration similarly has a static produced payload type; occurrence identity and multiplicity are separate from payload type and equality.
 
 Anonymous literal products have structural type identity determined statically by normalized components, names/order, domains and collection/capability contracts. Contextual literal construction may obtain a nominal expected type; this does not merge different producer types. A local := preserves the inferred type, including producer identity. Explicit annotation validates compatibility rather than granting an implicit nominal cast. Runtime evaluation creates values, never a new result type. ~type returns the static type at the program point, including flow narrowing.
 
@@ -37,3 +37,7 @@ Two calls to Stats on different receivers have one produced type. Stats and Summ
 ## Integration review
 
 Existing look/AST descriptions and the roadmap distinguish static produced identity from syntax. The names chapter retains no public anchor for interim results; existing nominal references identify their producer. The nominal HIR needs no runtime type or join node. Chapter 10 develops the static inference and proof contract; an executable typechecker remains unimplemented.
+
+## Amendment provenance
+
+Generic produced-type identity is extended by [[ADR-134-static-generic-declarations-and-applications|D-134]]; non-generic producer identity and union joins remain in force.

@@ -177,7 +177,7 @@ Selection by type It never replaces an exact nominal reference written outside a
 
 ### Recipients and arguments
 
-Receivers bind participants; arguments bind `given`. A call with explicit receivers may disambiguate homonymous visible nominal callables from different paths by static compatibility with their `for` roles. Only the first non-empty lookup level participates. Exactly one compatible declaration is required; `given` arguments, defaults, expected results and runtime conditions never select it, and no more-specialised signature wins a tie. Bare descriptor references and stored callable invocation retain their ordinary contracts.
+Receivers bind participants; arguments bind `given`. A call with explicit receivers may disambiguate homonymous visible nominal callables from different paths by static compatibility with their `for` roles. Only the first non-empty lookup level participates. Exactly one compatible declaration is required; written `given` names/types may select it; defaults as invented evidence, expected results and runtime conditions never select it, and no more-specialised signature wins a tie. Bare descriptor references and stored callable invocation retain their ordinary contracts.
 
 ```mud
 army.IsDestroyed()
@@ -282,3 +282,7 @@ A `look` supports `given` in accordance with the general rules for binding and d
 
 Furthermore, a related participant `on name: Type in source` can map values from a finite, countable source, not just `thing` identities. The direct form without a source remains reserved for the implicit universe of `thing`; therefore `on n: Nat` without a finite source is invalid.
 
+
+## Amendment provenance
+
+The static written-given selection contract is amended by [[ADR-136-static-given-call-disambiguation|D-136]]; the first non-empty lookup level, nominal HIR boundary and absence of runtime dispatch remain in force.

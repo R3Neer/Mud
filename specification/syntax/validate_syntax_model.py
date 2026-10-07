@@ -127,6 +127,35 @@ def nominal_hir_contract_problems(text: str) -> list[str]:
     return problems
 
 
+def generic_contract_problems(grammar_text: str, ast_text: str, lexicon_text: str) -> list[str]:
+    """Guard source distinctions; do not perform inference or generic resolution."""
+    code = strip_comments(grammar_text)
+    ast = re.sub(r"--.*", "", ast_text)
+    problems = []
+    for name in ("ThingDecl", "AliasDecl", "FamilyDecl", "BooleanRuleDecl",
+                 "ActionDecl", "LookDecl", "SublookDecl"):
+        constructor = re.search(rf"\b{name}\(([^()]*)\)", ast, re.S)
+        if not constructor or "generic_parameter* parameters" not in constructor[1]:
+            problems.append(f"{name} must retain generic parameter declarations")
+    for name in ("ReactiveRuleDecl", "AlwaysRuleDecl", "MessageDecl", "SubmessageDecl", "TestDecl"):
+        constructor = re.search(rf"\b{name}\(([^()]*)\)", ast, re.S)
+        if constructor and "generic_parameter" in constructor[1]:
+            problems.append(f"{name} cannot declare generic parameters")
+    equality = re.search(r"\bStructuralTypeEqualityExpr\(([^()]*)\)", ast, re.S)
+    if not equality or re.sub(r"\s+", " ", equality[1]).strip() != "type_expr left, type_expr right, flag negated":
+        problems.append("structural equality must retain complete Type operands and negation")
+    if "IntervalType(" in ast or "generic_application_form form" not in ast:
+        problems.append("type applications must retain source grouping and use one generic Interval constructor")
+    lexical = strip_comments(lexicon_text)
+    triples = re.search(r'(?m)^three-character-token\s*::=\s*(.*?);', lexical, re.S)
+    if not triples or any(f'"{token}"' not in triples[1] for token in ("===", "!==")):
+        problems.append("structural comparison tokens must be indivisible three-character tokens")
+    for production in ("generic-parameter-group", "generic-type-application", "generic-family-member", "structural-type-comparison"):
+        if not re.search(rf"(?m)^{production}\s*::=", code):
+            problems.append(f"missing generic/type grammar distinction: {production}")
+    return problems
+
+
 def foreign_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
     """Guard delegation and body cardinality; does not parse native source."""
     grammar_code = strip_comments(grammar_text)
@@ -349,9 +378,12 @@ def validate(root: Path) -> list[Problem]:
             problems.append(Problem(str(cases_path), f"{case_id}: produces_ast is missing"))
 
     # Global AST properties.
+    ast_text = asdl_path.read_text(encoding="utf-8")
+    problems.extend(Problem(str(asdl_path), message) for message in
+                    generic_contract_problems(grammar.read_text(encoding="utf-8"), ast_text,
+                                              (root / "specification/grammar/mud-lexico.ebnf").read_text(encoding="utf-8")))
     problems.extend(Problem(str(asdl_path), message) for message in
                     part_contract_problems(grammar.read_text(encoding="utf-8"), asdl_path.read_text(encoding="utf-8")))
-    ast_text = asdl_path.read_text(encoding="utf-8")
     problems.extend(Problem(str(asdl_path), message) for message in
                     foreign_contract_problems(grammar.read_text(encoding="utf-8"), ast_text))
     problems.extend(Problem(str(asdl_path), message) for message in

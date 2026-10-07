@@ -17,6 +17,8 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-135
+  - D-134
   - D-132
   - D-131
   - D-111
@@ -310,9 +312,15 @@ NamedType(TypeRef)
 It includes both built-in types and programme-declared types. Whether a name denotes `Nat`, a `thing`, a `family`, an alias or a magnitude is decided later.
 
 
+### Generic parameters and type applications
+
+ThingDecl, AliasDecl, FamilyDecl, BooleanRuleDecl, ActionDecl, LookDecl and SublookDecl retain a source-ordered generic_parameter sequence. Concrete generic things are represented only for diagnostics and rejected statically. Ancestors use declared_type so applied nominal ancestors survive projection. Each parameter has a name and copied nominal bounds; omitted bounds supply Any with omitted-default provenance. Joint header/body scope, arity, variance, substitution and finite application closure belong to resolution/typing, not syntactic normalization.
+
+GenericTypeApplication(constructor, arguments, form) preserves static application syntax without manufacturing a nominal declaration. Its form distinguishes explicit with, postfix single and postfix grouped argument presentation. Grouped postfix products remain one preserved product until constructor arity is resolved. TypeApplicationExpr and GenericFamilyMemberExpr embed applied types and members in expression position. GenericCallSpecializationExpr retains a call plus explicit static arguments, to be elaborated before execution. StructuralTypeEqualityExpr retains complete Type operands and a negated flag; it is distinct from ordinary comparison chains. Interval is represented by GenericTypeApplication with the builtin constructor.
+
 ### Callable and reflected types
 
-`CallableType(kind, receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage `receivers` remain unresolved `TypeRef` values and `givens` are `TypeExpr`; the AST preserves syntax and leaves contract variance and compatibility to typing.
+`CallableType(kind, receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage `receivers` remain unresolved `declared_type` values, including generic applications, while `givens` are `TypeExpr`; the AST preserves syntax and leaves contract variance and compatibility to typing.
 
 `ReflectedType(value)` contains a written expression in type position whose form ends in `~type`, such as `MyDragon.Stats()~type`. Resolution and typing must prove that `value` statically produces `Type`; later elaboration obtains the represented type. Static checking follows [[10-type-system]] and [[19-expressions]]; the mechanical form of that elaboration is not yet fixed. An ordinary call without `~type` remains a value.
 ### Dictionary
@@ -562,7 +570,7 @@ An action contains:
 
 ## `look` and `message`
 
-`LookDecl` and `SublookDecl` retain `for` participants, `given` parameters and public fields.
+`LookDecl` and `SublookDecl` retain generic type parameters, `for` participants, `given` parameters and public fields.
 
 `MessageDecl` and `SubmessageDecl` retain `on` participants, pure local values preceding their behavioural clauses, an activator expression block, an optional Boolean guard and public fields.
 

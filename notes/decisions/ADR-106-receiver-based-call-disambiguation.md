@@ -21,9 +21,9 @@ Independent MUD paths may define operations with the same short name for unrelat
 
 ## Decision
 
-MUD-NAME-007 in [[specification/09-names-and-anchors#Receiver-call selection|chapter 09]] defines the complete contract. In a call with explicit receivers, all homonymous nominal callables governed by `for` at the first non-empty lookup level may be considered. They may be actions, subactions, Boolean rules or looks. Exactly one must remain compatible with the static receivers, including role binding, collection shape and mutation capabilities.
+MUD-NAME-007 in [[specification/09-names-and-anchors#Receiver-call selection|chapter 09]] defines the complete contract. In a call with explicit receivers, all homonymous nominal callables governed by `for` at the first non-empty lookup level may be considered. They may be actions, subactions, Boolean rules, looks or sublooks. Exactly one must remain compatible with the static receivers, including role binding, collection shape, mutation capabilities and written given arguments. Candidate-local generic inference cannot use the expected result to choose a declaration.
 
-Only statically established incompatibility excludes a candidate. Domain predicates and runtime values do not select an operation; ordinary unresolved obligations still apply after selection. Flow narrowing contributes static receiver information, but a union never triggers runtime dispatch between declarations. `given`, defaults, expected results and action conditions cannot select a target. There is no most-specific preference, path-distance preference or import-order tie-break. Lookup never falls through because all candidates at an earlier level are incompatible.
+Only statically established incompatibility excludes a candidate. Domain predicates and runtime values do not select an operation; ordinary unresolved obligations still apply after selection. Flow narrowing contributes static receiver information, but a union never triggers runtime dispatch between declarations. Written `given` names/types may select a target; omitted defaults as evidence, expected results and action conditions cannot. There is no most-specific preference, path-distance preference or import-order tie-break. Lookup never falls through because all candidates at an earlier level are incompatible.
 
 Bare descriptor references, declarations governed by `on`, stored callable invocation and same-path name uniqueness retain their existing contracts. This decision does not resolve erased-descriptor binding or callable variance; it does not require changing those existing questions.
 
@@ -43,7 +43,7 @@ The nominal HIR represents bindings using the sum `nominal_reference`: `Resolved
 
 - Changing anchors to make imported actions members of their receivers.
 - Allowing two declarations named `Play` within the same MUD path.
-- Choosing by `given`, result type, runtime domains or conditions.
+- Choosing by result type, omitted defaults as argument evidence, runtime domains or conditions.
 - Selecting the most specialised compatible candidate.
 - Trying later lookup levels when an earlier non-empty level has no compatible receiver contract.
 - Recording every candidate as a resolved nominal reference or placing receiver types in the nominal HIR.
@@ -58,7 +58,7 @@ The following are semantic conformance requirements, not claims that a MUD compi
 4. Missing roles, incompatible static types or collection contracts, and unavailable mutation capabilities exclude incompatible candidates.
 5. `for A` and `for Thing`, or two unrelated bases satisfied by a common subtype, remain ambiguous for a compatible receiver.
 6. A zero-candidate result fails at the original lookup level; exact imports retain priority over recursive imports and current-path or lexical symbols retain their precedence.
-7. Different `given` names/types/defaults, expected results and runtime conditions never break a receiver tie. A uniquely selected target with invalid arguments fails ordinary validation.
+7. Different written `given` names/types may break a receiver tie; omitted defaults as evidence, expected results and runtime conditions never do. A uniquely selected target with invalid arguments fails ordinary validation.
 8. Narrowing before the call may yield a unique target; a union cannot dispatch each alternative to a different target at runtime.
 9. Bare `Play` descriptor references remain ambiguous, and stored callable values retain their existing invocation contract.
 10. Fully qualified operation references avoid short-name selection but still require compatible participants and authorised part-level visibility.
@@ -66,3 +66,7 @@ The following are semantic conformance requirements, not claims that a MUD compi
 12. Pending HIR calls retain source provenance, lookup level and the complete candidate set, with neither a target nor candidate `RefersTo` edges. Resolved receiver roots retain their own edges.
 
 Mechanical validation checks the HIR constructor contract, declared ASDL types, forbidden elaboration fields, grammar/CST/AST consistency, decision metadata, question metadata, editorial rules and temporary-document inventory. Regression tests reject malformed HIR declarations; they do not implement the receiver compatibility algorithm.
+
+## Amendment provenance
+
+The static written-given selection contract is amended by [[ADR-136-static-given-call-disambiguation|D-136]]; the first non-empty lookup level, nominal HIR boundary and absence of runtime dispatch remain in force.

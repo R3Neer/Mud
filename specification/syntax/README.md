@@ -129,3 +129,5 @@ This directory does not define:
 
 References to these phases serve solely to prevent the Surface AST anticipate them.
 
+
+Generic header/application and structural-type comparison distinctions are guarded by validate_syntax_model.py and test_generic_contract.py. The tests reject loss of parameter/grouping information, value operands in the structural operator node and split structural tokens; they do not implement parsing or type inference.

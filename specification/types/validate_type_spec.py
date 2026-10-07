@@ -20,10 +20,16 @@ from tooling.cli_support import (
     HelpCatalogue, HelpItem, MudArgumentParser, add_presentation_arguments,
     failure, parse_cli,
 )
+from specification.types.generic_contract_witnesses import structural_equal, selected_candidates
 
 
 def check_witness(witness):
     """Reject malformed certificates rather than reporting semantic rejection."""
+    if witness.get("kind") == "structural-equality":
+        if type(witness.get("negated", False)) is not bool:
+            raise ValueError("Structural negation must be a Boolean")
+        structural_equal(witness["nodes"], witness["left"], witness["right"])
+        return
     def natural(value):
         return type(value) is int and value >= 0
 
@@ -56,7 +62,25 @@ def check_witness(witness):
         if any(name in ancestors(parent, parents) for parent in entries):
             raise ValueError("Nominal ancestry contains a cycle")
     kind = witness["kind"]
-    if kind == "inclusion":
+    if kind == "given-selection":
+        for value in witness.get("receivers", []):
+            contract(value)
+        for actual in witness.get("arguments", []):
+            if not isinstance(actual["types"], list) or not actual["types"]:
+                raise ValueError("An argument needs admitted contextual type possibilities")
+            for value in actual["types"]:
+                contract(value)
+                if type(value.get("unknown_admission", False)) is not bool:
+                    raise ValueError("Unknown admission premise must be Boolean")
+        for candidate in witness["candidates"]:
+            for value in candidate.get("receivers", []):
+                contract(value)
+            for slot in candidate.get("givens", []):
+                contract(slot["type"])
+                if type(slot.get("default", False)) is not bool:
+                    raise ValueError("Default availability must be Boolean")
+        selected_candidates(witness, includes, {"Nat": ["Int"], "Int": ["Num"], **parents})
+    elif kind == "inclusion":
         contract(witness["source"])
         contract(witness["target"])
     elif kind == "callable":
@@ -197,6 +221,11 @@ def witness_result(witness):
     check_witness(witness)
     kind = witness["kind"]
     parents = {"Nat": ["Int"], "Int": ["Num"], **witness.get("parents", {})}
+    if kind == "structural-equality":
+        equal = structural_equal(witness["nodes"], witness["left"], witness["right"])
+        return "static-accept" if equal != witness.get("negated", False) else "static-reject"
+    if kind == "given-selection":
+        return "static-accept" if len(selected_candidates(witness, includes, parents)) == 1 else "static-reject"
     if kind == "inclusion":
         return "static-accept" if includes(witness["source"], witness["target"], parents) else "static-reject"
     if kind == "callable":

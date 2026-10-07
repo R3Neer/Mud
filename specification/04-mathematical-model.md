@@ -12,6 +12,7 @@ depends-on:
   - "[[03-notation]]"
 questions: []
 decisions:
+  - D-134
   - D-133
   - D-111
   - D-110
@@ -72,7 +73,7 @@ Consequently `is` is a partial order. `as` specifies direct specialisation, whil
 
 Let $\mathcal V_P$ denote the semantic values admitted by the programme's type contracts. This symbol does not imply that all such values can be enumerated. `thing` values compare by identity; alias values are finite immutable structural values. The equality and collection contracts are defined in [[10-type-system]].
 
-Aliases form a separate nominal partial order whose nodes are value types, not activatable identities. Abstract aliases are inhabited through concrete descendants. Productive recursion describes a finite type graph with finite individual values; it does not introduce cyclic value identity or imply finite enumeration.
+Aliases form a separate nominal partial order whose nodes are value types, not activatable identities. Abstract aliases are inhabited through concrete descendants. Statically admitted generic applications have a proven finite closure. Productive recursion describes that finite type graph with finite individual values; it does not introduce cyclic value identity or imply finite enumeration.
 
 A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Part visibility and permission to specialise follow [[09-names-and-anchors]].
 

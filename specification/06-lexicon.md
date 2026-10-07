@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-135
   - D-132
   - D-131
   - D-109
@@ -102,7 +103,7 @@ Text Char Bool Thing Any Nat Int Num Rum Money
 Name MudPath Anchor MudFile Prefix Rand
 ```
 
-The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>`, `<-` and `<=>` are not words. `-->` is recognised by the longest match before `--` and `->`. `|=`, `&=`, `^=` and `--=` are also indivisible tokens. `!` on its own does not belong to the lexicon; `!=` remains an indivisible token of inequality and is not interpreted as the composition of negation and assignment.
+The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>`, `<-` and `<=>` are not words. `-->` is recognised by the longest match before `--` and `->`. `|=`, `&=`, `^=` and `--=` are also indivisible tokens. `!` on its own does not belong to the lexicon; `===` and `!==` are indivisible structural-type comparison tokens, matched before `==` and `!=`; `!=` remains an indivisible token of inequality and is not interpreted as the composition of negation and assignment.
 
 The scanner applies the longest match: `a--b` contains the operator `--`, whilst `a - -b` contains separate subtraction and negation. The parenthesised form `a - (-b)` is equivalent to the latter.
 
@@ -118,7 +119,7 @@ They are contextual:
 - `type` in the reflexive positions and in those of type where this is permitted.
 - `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` and `format` after `~` in the permitted positions.
 - `root`, `unit`, `point`, `over` and `cycle` in their own productions.
-- `Interval` immediately following a reference to type within `interval-type`.
+- `Interval` as the builtin generic constructor in postfix `Nat Interval` or explicit `Interval with Nat` application.
 
 `for`, `on` and `given` remain hard reserved words, but `metadata-name` explicitly permits them after `~` for the reflexive properties `~for`, `~on` and `~given`. This syntactic exception does not make them `IDENTIFIER` nor does it allow them to be used as ordinary names.
 

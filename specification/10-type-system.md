@@ -12,6 +12,9 @@ depends-on:
 questions:
   - Q-060
 decisions:
+  - D-136
+  - D-135
+  - D-134
   - D-132
   - D-131
   - D-014
@@ -72,7 +75,7 @@ An elaborated value contract $\tau$ consists of an element form, its domain and 
 The unadorned $\Gamma;\Sigma\vdash e:\tau$ abbreviates a successful synthesis judgement after discharging its mandatory static obligations. Checking is distinct: a permitted runtime admission obligation does not prove subtyping.
 
 > [!rule] MUD-TYPE-001 — Separate nominal and typed phases
-> Type, cardinality, domain, capability and effect information is elaborated after nominal resolution. It is not inserted into nominal HIR. A pending receiver call retains its complete candidate set until the receiver-selection rule selects one target.
+> Type, cardinality, domain, capability and effect information is elaborated after nominal resolution. It is not inserted into nominal HIR. A pending receiver call retains its complete candidate set until the static receiver/given selection rule selects one target.
 
 ## 2. Type graph
 
@@ -81,9 +84,10 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 | Form | Information retained |
 | --- | --- |
 | $\mathsf{Basic}(b)$ | Text, Char, Bool, Nat, Int, Num, Rum, Money and Any. |
+| $\mathsf{App}(a,(\tau_i),k)$ | Static application of constructor declaration $a$ to type arguments, retaining category $k$. |
 | $\mathsf{Nom}(a,k)$ | Nominal declaration identity $a$ and category $k$: thing, alias or family. |
 | $\mathsf{Product}((n_i,\tau_i)_{i=1}^m)$ | Ordered named/positional structural components and their complete contracts. |
-| $\mathsf{Produced}(a,S)$ | A look/message producer identity and its statically elaborated public schema $S$. |
+| $\mathsf{Produced}(a,(\tau_i),S)$ | A producer declaration $a$, its static generic arguments where applicable, and public schema $S$. |
 | $\mathsf{Union}(\tau_1,\ldots,\tau_m)$ | Finite nonempty alternatives without an invented intersection type. |
 | $\mathsf{Exact}(K,V,s)$ | Exact dictionary key/value contracts and association specification $s$. |
 | $\mathsf{Functional}(K,V,m)$ | Functional dictionary selector/result contracts and branch-selection mode $m$. |
@@ -106,14 +110,52 @@ Action/subaction callable output is fixed to the single ActionReply contract; it
 
 Normalisation first resolves identities and validates the specialisation DAG. It gathers inherited declarations by origin, deduplicates diamonds, intersects permitted refinements and requires explicit resolution of incompatible independent contributions. Source order of ancestors supplies no priority.
 
-Create one graph node for each resolved nominal declaration and normalised constructor specification. Representation/component edges may return to an existing node. Transparent alias edges must terminate at a constructor and cannot form a strongly connected component containing only transparent edges. This worklist terminates because the source graph and effective schemas are finite.
+Create one graph node for each resolved nominal declaration and normalised constructor specification. Representation/component edges may return to an existing node. Transparent alias edges must terminate at a constructor and cannot form a strongly connected component containing only transparent edges. Before unfolding generic applications, establish a finite application closure under section 3.1. Within that admitted closure this worklist terminates; finite source text alone does not establish finite generic instantiation.
 
 Union normalisation flattens nested unions, removes duplicate identical alternatives and gives them a stable canonical order for comparison. It preserves distinct nominal identities and does not discard an alternative merely because its domain is included in another. Cardinalities, nominal factors, stable paths and capabilities remain part of the contract.
 
 > [!rule] MUD-TYPE-003 — Value type identity
-> Each alias/family/thing declaration introduces a nominal identity. Each look, sublook, message or submessage declaration introduces one static produced type, independent of receiver and runtime state. Context-free literal products have structural identity from their normalised names, order and component contracts. Runtime evaluation creates values, not types or public anchors.
+> Each alias/family/thing declaration introduces a nominal identity. Each look/sublook declaration and static generic application introduces one produced type, independent of receiver identity and runtime state; each message/submessage declaration introduces one produced type. Context-free literal products have structural identity from their normalised names, order and component contracts. Runtime evaluation creates values, not types or public anchors.
 
 Specialisation views retain a value's exact effective nominal identity. Equality, hashing and caches cannot erase that identity merely because a value is held under a more general static annotation. A structural match grants neither nominal members nor an implicit alias identity. A calculated binding preserves its inferred producer identity.
+
+### 3.1. Generic declarations and applications
+
+> [!rule] MUD-TYPE-017 — Static generic application
+> Aliases, families, abstract things, actions/subactions, Boolean rules and looks/sublooks may declare type parameters with `with`. Concrete things, reactive/always rules, messages/submessages, magnitudes and tests do not. Each parameter has all its written nominal `as` bounds, or Any when omitted. The entire header and body share the parameter scope, including ancestors written before `with`. A generic body must typecheck using only those bounds.
+
+`with T, U as A, B with V as C with W` gives T and U both bounds A and B, V bound C, and W bound Any. Bounds are nominal types, possibly statically applied, with no direct domain, cardinality or collection modifiers. Header lists may be bracketed: `with [T, U] as [A, B]` and `as [ParentA, ParentB]`; brackets are sugar, not runtime collections. Ancestor `as` precedes parameter groups; `as` inside a `with` group supplies bounds. In the declaration's ancestor/parameter portion, before any for/given clauses, a new ungrouped `with` starts the next parameter group. An explicit application inside an unbracketed ancestor/bound list is parenthesised, as in `as (Base with T) with T`; a postfix ancestor `as T Base with T` is concise. An explicit application inside a bracketed ancestor/bound list is already delimited by that list.
+
+Arguments likewise have no direct outer domain, cardinality or modifiers. A named representation alias may wrap a complete shape: `alias CatQueue := Cat [* ordered]` admits `Box with CatQueue`; `Box with (Cat [*])` is invalid. A suffix after the complete application, as in `(Box with Cat) [*]`, shapes the outer Box collection, not its Cat argument. Grouped member unions such as `Box with (Nat | Text)` are also admitted without per-alternative collection/domain syntax. An ungrouped `|` combines the surrounding complete type, not generic arguments. Product arguments are admitted, with each component retaining its ordinary complete contract. Substitution replaces the member form at a parameter occurrence; the occurrence supplies its own outer domain/collection contract. It neither flattens a collection-valued argument nor fuses its inner shape with the occurrence's outer shape. Keyed order/uniqueness requires bounds proving the relevant paths and contracts.
+
+`Constructor with A, B` is explicit application. `A Constructor` and `(A, B) Constructor` are postfix forms. After resolving constructor arity, a grouped postfix product supplies its components to an arity greater than one, or remains one product argument to an arity-one constructor. Thus `(Cat, Dog) Pair` supplies two arguments and `(Nat, Nat) Wrapper` supplies one product. Grouping does not bypass argument-shape restrictions, arity or bounds. There is no overloading one generic declaration by arity; an unapplied constructor does not denote a value type or implicit self-application. Its declared parameter type variables are available within its own parameterised scope.
+
+An application is identified by constructor declaration and exact canonical argument identities, independent of source spelling or scope. It creates no declaration, global symbol, anchor, metadata owner or runtime world identity. Applied aliases retain nominal constructor-and-argument identity; a separately declared alias representing an application introduces a new alias identity. Applications of abstract things remain abstract and cannot be created or destroyed. A concrete thing specialising one provides its own canonical identity and statically substituted schema:
+
+```mud
+abstract thing Store with T {
+    mut items: T [*] = empty
+}
+thing CatStore as Cat Store
+```
+
+Applied family types differ by exact argument identities, including phantom parameters. Members retain their source declaration anchors but have the applied family type. `Cat Slot.Empty` and `Dog Slot.Empty` may share `~anchor` while their `~type` differs. Expected applied-family context permits unqualified `Empty`. Parameters may appear in uniform associated data; members remain closed nominal values, not runtime payload constructors.
+
+Interval is a builtin arity-one generic constructor: `Interval with Nat` and `Nat Interval` are one application. Its existing numeric endpoint/ordered-member admission, domain normalisation and interval operations remain builtin contracts; ordinary generics do not grant an order to a type lacking one.
+
+For generic callables, explicit arguments follow the ordinary call: `(left, right).Equal() with Nat`. Candidate-local constraints come from static `for` and written `given` arguments, explicit type arguments and bounds. A unique declaration must be selected without the expected result; that result may refine inference only afterwards. Apply explicit arguments first and check their substituted inputs by ordinary compatibility. For parameters still requiring inference, a direct parameter input contributes an equation with its supplied static member type; nested contracts contribute corresponding structural equations after candidate-local literal checking. Solve consistent equations and discharge bounds/contract checks under the supported proof rules. Compatibility with arbitrary supertypes does not create extra inferred solutions or a most-specific priority. Conflicting, absent or otherwise ambiguous constraints require explicit `with`; an already selected declaration may use an expected result to supply missing equations. No most-specific guessed solution, runtime Type argument or runtime dispatch is introduced. All ordinary purity, capability, visibility and role-name contracts still apply.
+
+> [!rule] MUD-TYPE-018 — Conservative generic variance
+> Infer covariance for a parameter occurring solely in proven output/read positions, contravariance solely in input/consume positions, and invariance for mixed, writable, phantom or unproved positions. Inspect the full effective contract, including inherited/calculated members, domains and authority, rather than only a `mut` spelling. Variance licenses contract inclusion, never equality of applied nominal identities or extra mutation authority.
+
+Start with positive polarity at a produced value contract. Read-only fields/components preserve polarity; callable inputs reverse it and outputs preserve it. Read/write positions require both polarities. An applied constructor composes polarities with its proven parameter variances; invariant positions require both. Dependencies through domain predicates, criteria or other contracts must preserve the inclusion universally; without proof they force invariance. On a finite template dependency graph, accumulate positive/negative requirements to a fixed point; unresolved circular variance claims remain invariant. A phantom parameter supplies no directional proof and remains invariant, in particular in families. Mutable-place substitution retains ordinary complete-contract invariance even when its contained generic constructor has covariant parameters.
+
+For one constructor, proven covariance checks source argument inclusion in the target, contravariance reverses it, and invariance requires mutual complete-contract inclusion. These are compatibility checks, not erasure of exact argument identity. Specialisation ancestry of an application substitutes arguments into its written ancestor applications. Reaching different applications of the same ancestor must satisfy existing coherent-schema/diamond rules rather than merge merely by constructor name.
+
+> [!rule] MUD-TYPE-019 — Finite application closure
+> Before normalisation, prove that the static applications reachable through the programme's effective contracts form a finite closed graph. Reject unproved closure and indefinitely growing argument instantiation. Productive recursive values require the separate finite-witness checks below.
+
+Recursion at the same application, mutual recursion and permutations of a finite argument tuple may close a finite graph. A constructor that recursively demands itself with `List with T`, then List of List and so on, does not. A finite closure certificate enumerates application identities, roots and all substituted outgoing applications, with every edge inside that set and all bounds discharged; it is not a depth cutoff or a visited-pair assumption. Generic body checking additionally establishes this obligation parametrically for admitted inputs. Implementations may use a conservative proof procedure; inability to prove closure requires a static diagnostic, not truncation or runtime type creation. Closure finiteness does not establish productivity or enumerable value populations.
 
 ## 4. Finite recursive values and productivity
 
@@ -194,6 +236,26 @@ Two context-free structural literals do not supply each other with a nominal com
 
 Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
 
+### 7.1. Exact structural type equality
+
+> [!rule] MUD-TYPE-020 — Structural equality of normalized contracts
+> `===` compares two Type operands by their entire normalized effective contracts, erasing only alias nominal identity. `!==` is its exact negation. Things and families, including their applications, are nominally opaque: distinct exact identities never become equal by matching fields or members. Ordinary value equality, nominal `is`/`iis` and representation compatibility for `to` retain their separate contracts.
+
+Compare member names and declaration order, stored/component versus calculated kind, complete member types, domains, cardinality, multiplicity, uniqueness and its key criterion, order and its criterion, inner authority, product composition, nested collection layers, dictionary grouping and normalized union alternatives. Callable contracts retain inputs, outputs and authority guarantees. Alias representations and effective inherited schemas participate after substitution. Metadata, presentation names, documentation, defaults and calculated bodies do not participate; a default or body that changes an inferred effective type/shape affects comparison through that resulting contract. Hence calculated `x: Nat := 1` and `x: Nat := 2` match, while stored and calculated x do not.
+
+Domain equality uses normalized symbolic contracts, including resolved provenance, binders and generic substitution, plus the defined exact arithmetic/interval normalization. It does not evaluate current populations or arbitrary predicates to prove semantic equivalence. Different symbolic predicates do not become equal because they currently yield equal sets. Union order/duplicate syntax is normalized; match the complete normalized alternatives without source-order dependence. Nominally distinct alternatives retained by ordinary union normalization are not silently removed by representational matching or semantic inclusion. No general program-equivalence oracle is required.
+
+For recursive admitted type graphs, compare a closed finite relation of node pairs: all local structural labels must match and every required child pair must belong to the relation. Alias identity is omitted from these labels; opaque thing/family labels retain constructor and exact argument identities. Greatest-fixed-point labelled bisimulation handles recursion without comparing sample values. Merely visiting a pair is not evidence. The relation is exact equality of this normalized contract representation, not the weaker conversion representation relation $\cong_R$.
+
+```mud
+alias A { x: Nat; y: Text [0..1] }
+alias B { x: Nat; y: Text [0..1] }
+rule SameStructure { A === B }
+rule DifferentOrder { Text [*] !== Text [* ordered] }
+```
+
+Both types may be exposed as Type descriptors without adding application anchors. Descriptors retain source constructor and argument information; member `~anchor` denotes the source declaration and `~type` the effective applied type. This does not introduce new intrinsic metadata spellings or settle the TypeKind member catalogue.
+
 ## 8. Callable substitution and call selection
 
 Write a callable contract as $(I,R,A)$; $I$ is the ordered input-slot list and $A$ includes permissions, effects, determinism and outer-root capability. Let $s$ be supplied and $t$ requested.
@@ -214,7 +276,7 @@ Here $\equiv$ means mutual complete-contract inclusion, not equality of source t
 > [!rule] MUD-TYPE-007 — Static signature names
 > Named receiver/argument binding requires identical unambiguous names at compatible static signature positions across all possible callable alternatives. Collections are not scanned at runtime to recover names. Positional binding or prior static narrowing may use an otherwise compatible erased contract. An action-shaped type containing a subaction does not obtain outer-root permission.
 
-Receiver-based nominal selection obeys [[09-names-and-anchors#Receiver-call selection]]. Only statically established incompatibility eliminates candidates; an unresolved domain/cardinality obligation does not select another declaration. Given arguments, return expectations and guards validate the selected declaration and never resolve nominal ambiguity.
+Receiver-based nominal selection obeys [[09-names-and-anchors#Receiver-call selection]]. Only statically established incompatibility eliminates candidates; an unresolved domain/cardinality obligation does not select another declaration. Written given names and static contracts participate in candidate-local selection. Expected results, omitted defaults as argument evidence and guards cannot resolve nominal ambiguity; ordinary remaining admission obligations validate the selected declaration.
 
 ## 9. Checking, inference and narrowing
 

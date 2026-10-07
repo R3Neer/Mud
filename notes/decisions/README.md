@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 128.
-- Current: 124.
+- Total: 131.
+- Current: 127.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -147,6 +147,9 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-131 | current | 2026-10-07 | [[notes/decisions/ADR-131-parts-file-privacy-and-sub-operations|Parts, file privacy and sub operations]] |
 | D-132 | current | 2026-10-07 | [[notes/decisions/ADR-132-minimal-part-manifests-and-direct-uses|Minimal part manifests and direct uses]] |
 | D-133 | current | 2026-10-07 | [[notes/decisions/ADR-133-provisional-messages-and-scope-aware-tickets|Provisional messages and scope-aware tickets]] |
+| D-134 | current | 2026-10-07 | [[notes/decisions/ADR-134-static-generic-declarations-and-applications|Static generic declarations and applications]] |
+| D-135 | current | 2026-10-07 | [[notes/decisions/ADR-135-normalized-structural-type-equality|Normalized structural type equality]] |
+| D-136 | current | 2026-10-07 | [[notes/decisions/ADR-136-static-given-call-disambiguation|Static given call disambiguation]] |
 
 ## Reserved identifiers
 

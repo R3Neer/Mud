@@ -2,7 +2,7 @@
 
 This directory contains the MUD 1.0 reference grammars:
 
-- `mud-lexicon.ebnf`: conversion of Unicode source text into meaningful tokens and lexical forms.
+- `mud-lexico.ebnf`: conversion of Unicode source text into meaningful tokens and lexical forms.
 - `mud.ebnf`: conversion of significant tokens into concrete syntax.
 
 Lossless representation, the CST node catalogue and the Surface AST are documented in [[../syntax/README|syntax/]].
@@ -24,11 +24,11 @@ The normative details of the dialect can be found in [[../03-notation]].
 Symbol initial:
 
 - Glossary: `mud-source`.
-- Concrete: `mud-file`.
+- Concrete: `mud-input`, selecting `mud-file` or `part-file` by physical filename.
 
 ## Products
 
-`mud-lexicon.ebnf` does not mean that an implementation must ignore comments or spaces. [[../06-lexicon]] defines a complete workflow using trivia and a significant grammar insight.
+`mud-lexico.ebnf` does not mean that an implementation must ignore comments or spaces. [[../06-lexicon]] defines a complete workflow using trivia and a significant grammar insight.
 
 `mud.ebnf` is produced from the artefacts listed in:
 
@@ -43,7 +43,7 @@ Abstract projection is defined by:
 
 ## Modal scanner
 
-`Text` templates require nested modes. `mud-lexicon.ebnf` maintains the inventory of special forms; [[../06-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
+`Text` templates require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../06-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
 
 The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 

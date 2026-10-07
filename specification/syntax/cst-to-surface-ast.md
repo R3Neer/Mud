@@ -15,6 +15,9 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-136
+  - D-135
+  - D-134
   - D-132
   - D-131
   - D-111
@@ -166,7 +169,7 @@ produces `ThingDecl`:
 
 - `abstract` → `Enabled`; omission → `Disabled`.
 - Name → `NominalName`.
-- Predecessors → sequence of `TypeRef`.
+- Predecessors → sequence of `declared_type` values, nominal or statically applied.
 - Stored or calculated `~...` statements → `metadata_assignment` sequence, normalised to `StoredMetadataAssignment` or `CalculatedMetadataAssignment`.
 - Body → metadata, fields and specific initialisers.
 
@@ -177,6 +180,16 @@ Newly declared stored fields require `=` and retain a mandatory `ValueBlock`. In
 A `name = value` form does not trigger any specific syntactic rejection. It is treated like any other `ThingInitializer`; later resolution determines whether `name` actually refers to a stored field inherited from the effective schema. If the same `thing` declares an ordinary `name` field, the combination is rejected by the general rule preventing the same field from being declared and initialised separately. Presentation metadata is still written as `~name = value`.
 
 An explicit `Thing` predecessor remains at the surface level. It does not hinder transformation: later resolution reports the redundancy, normalises the effective root, and may offer a code action that removes the text.
+
+## Generic headers and applications
+
+Admitted declaration constructors retain `generic_parameter* parameters`. Flatten header groups in source order; copy each group's bounds to every parameter and supply NamedType(Any) with Synthetic/OmittedDefault origin when `as` is absent. Optional list brackets disappear. Parameters retain written name/group provenance; joint header scope resolution occurs later. Concrete thing generic headers may be represented for diagnostics but are statically invalid.
+
+GenericTypeApplication retains unresolved constructor, arguments as complete type_expr wrappers and ExplicitGenericWith, PostfixSingleGeneric or PostfixGroupedGeneric. A grouped postfix product initially remains one product argument; constructor arity later decides whether to split its components. Do not discard grouping information by choosing argument arity at this phase. Nested application and member-union parentheses are grouping; direct argument outer shapes remain prohibited by static validation. Interval uses the same application constructor with its builtin source name, never a second IntervalType node.
+
+In expression position an application becomes TypeApplicationExpr; an applied-family member becomes GenericFamilyMemberExpr with separate application and member. Joint nominal lookup separates a qualified constructor path from a final member name without creating an application symbol. Generic-call-suffix wraps the retained ordinary CallExpr in GenericCallSpecializationExpr; later typing applies its arguments before call evaluation. A suffix on a non-call expression is invalid.
+
+Structural-type-comparison produces StructuralTypeEqualityExpr with complete type-expression operands and Disabled for `===`, Enabled for `!==`. Reflected operands retain ReflectedType. No ComparisonChainExpr or ordinary Equal/NotEqual enum represents this operation. Operands must subsequently denote Type; no value comparison or implicit lifting is inferred.
 
 ## Fields
 
@@ -284,7 +297,7 @@ Every `type-reference` produces `NamedType(TypeRef(...))`. The AST has not yet c
 
 ### Callables and reflected types
 
-`callable-type` produces `CallableType(kind, receivers, givens)` and retains the specified category and types; signature compatibility and variance are checked during typing. `reflected-type` consumes a `postfix-expression` followed by `~type` and produces `ReflectedType(value)`; later elaboration requires the expression to statically denote `Type` and obtains the represented type. The mechanical form after typing and elaboration remains undecided.
+`callable-type` produces `CallableType(kind, receivers, givens)` and retains the specified category and types; signature compatibility and variance are checked during typing. `reflected-type` consumes a `postfix-expression` followed by `~type` and produces `ReflectedType(MetadataAccessExpr(value, type))`, retaining the complete Type-producing operation; later elaboration requires the expression to statically denote `Type` and obtains the represented type. The mechanical form after typing and elaboration remains undecided.
 
 ### Products and dictionaries
 
@@ -554,7 +567,7 @@ Contextual syntax validation rejects a positional argument following the first n
 
 ### Receiver ambiguity
 
-`receiver-tuple` and `structural-literal` converge on one of two forms: `PositionalStructuralLiteralExpr` or `NamedStructuralLiteralExpr`. Subsequent `MemberAccessExpr` and `CallExpr` retain the complete form. Typing and elaboration interpret the preserved form against each candidate signature, including whether it supplies one structural receiver or multiple receivers. Nominal lookup may retain several candidates under the receiver-call rule in [[../09-names-and-anchors#Receiver-call selection|chapter 09]]; the Surface AST does not select one. Multiple compatible declarations remain ambiguous, regardless of their receiver interpretation.
+`receiver-tuple` and `structural-literal` converge on one of two forms: `PositionalStructuralLiteralExpr` or `NamedStructuralLiteralExpr`. Subsequent `MemberAccessExpr` and `CallExpr` retain the complete form. Typing and elaboration interpret the preserved form against each candidate signature, including whether it supplies one structural receiver or multiple receivers. Nominal lookup may retain several candidates under the receiver-call rule in [[../09-names-and-anchors#Receiver-call selection|chapter 09]]; the Surface AST does not select one. Candidates also check the actually written given arguments statically during elaboration. Multiple compatible declarations remain ambiguous, regardless of their receiver interpretation or expected result.
 
 ### Paths
 

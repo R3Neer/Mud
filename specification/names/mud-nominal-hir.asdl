@@ -2,6 +2,12 @@
 -- Normal/sub operations create their own nominal categories and anchors.
 -- Part headers and uses declarations create no symbols, owners or anchors;
 -- no visibility, callable-capability or contract-type proof is stored here.
+-- Generic parameters use LocalSymbol kind type-parameter in a joint header/body scope.
+-- Application constructors/arguments keep SurfaceRef provenance and ordinary bindings.
+-- Applications create no symbols or anchors. Specializes retains source constructors;
+-- effective application ancestry, inferred arguments and closure proofs are elaboration.
+-- PendingReceiverCall also defers static written-given compatibility, without storing it.
+
 module MUDNominalHIR {
     source_span = SourceSpan(string file, int start_byte, int end_byte)
     anchor = Anchor(string value)

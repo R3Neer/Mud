@@ -28,3 +28,7 @@ The chapter remains proposed pending chapter publication. Its rules formalise ac
 ## Verification
 
 MUD-TYPE-001 through MUD-TYPE-008 and finite inclusion, variance, recursive productivity and graph-equivalence witnesses in specification/types/typing-cases.yaml. The validator and its regressions check these finite witnesses and coverage, not MUD programme execution.
+
+## Amendment provenance
+
+[[ADR-134-static-generic-declarations-and-applications|D-134]] requires a finite generic application closure before graph normalization, and [[ADR-135-normalized-structural-type-equality|D-135]] adds exact normalized-contract equality without replacing conversion representation equivalence.

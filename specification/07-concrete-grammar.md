@@ -15,6 +15,9 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-136
+  - D-135
+  - D-134
   - D-133
   - D-132
   - D-131
@@ -313,6 +316,12 @@ then {
 The form `x := ...` cannot be assigned to. `x: X = ...` creates a local slot that cannot be reassigned, and `mut x: X = ...` creates one that can. A `then` still requires at least one observable effect.
 
 The default of `given` preserves `constant-expression` and does not allow `ValueBlock`.
+
+## Generic syntax and structural type comparisons
+
+Generic header groups use `with T, U as A, B`, with optional list brackets; ancestors precede those groups. Parameters scope over the complete header and body, independently of text order. In the declaration's ancestor/parameter portion, before any for/given clauses, each ungrouped `with` starts a parameter group; explicit applications in unbracketed ancestor/bound lists must be grouped, for example `as (Base with T) with T`. Postfix `as T Base with T` and bracketed `as [Base with T] with T` avoid that ambiguity. The productions in [[grammar/mud.ebnf]] recognise applications `Constructor with A, B`, `A Constructor` and `(A, B) Constructor`, generic family-member access and a `with` suffix after an ordinary call. Recognition preserves grouping; resolved constructor arity determines a grouped postfix product's argument interpretation. Direct outer domain/cardinality/modifier arguments and bounds are prohibited; named aliases may wrap such shapes.
+
+The builtin Interval is an arity-one generic constructor. Structural `===` and `!==` are indivisible, nonchainable comparison-level tokens with complete type-expression operands. Type context distinguishes collection specifications from value indexing; qualified-constructor/member and grouped-product ambiguities are resolved using the nominal catalogue, without executing expressions. Callable specialization suffixes bind to the immediately preceding complete call, before its evaluation. The generic declaration category and semantic restrictions are specified by [[10-type-system#3.1. Generic declarations and applications]].
 
 ## Type unions and outer arrows
 
@@ -933,7 +942,7 @@ The link depends on the role category:
 - a built-in value, alias, `family` member, dictionary or other immutable value is bound by value;
 - a role with outer `mut` is bound by storage-location identity and also retains its current value.
 
-Calls with explicit receivers may select between visible nominal callables governed by `for` using static participant compatibility, as specified by [[09-names-and-anchors#Receiver-call selection|receiver-call selection]]. This is a resolution/elaboration rule: no new token, grammar production or Surface AST constructor is introduced. `given` arguments and runtime predicates do not disambiguate the operation.
+Calls with explicit receivers may select between visible nominal callables governed by `for` using static participant compatibility, as specified by [[09-names-and-anchors#Receiver-call selection|receiver-call selection]]. This is a resolution/elaboration rule: no new token, grammar production or Surface AST constructor is introduced. Actually written `given` names and static argument contracts may disambiguate it. Expected results, omitted defaults as argument evidence and runtime predicates cannot.
 
 ## Rules
 
@@ -1099,7 +1108,7 @@ message KingChanged on kingdom: Kingdom {
 
 Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
 
-`look` is a pure callable. It may be accessed by the host, by another part whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the static produced nominal type made from its public fields. Calls to one declaration share that type; different producers remain distinct, even with identical fields.
+`look` is a pure callable. It may be accessed by the host, by another part whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the static produced nominal type made from its public fields. Calls to one declaration with the same exact static generic arguments share that type, independently of receiver identity and runtime state; different producers or different exact arguments remain distinct, even with identical fields.
 
 A message/submessage occurrence is born when its `when` matches and its `if`, if present, is true. Its public fields are evaluated and frozen as one immutable payload in that causal view. The internal and external observations share that payload and occurrence identity. Later field changes, participant destruction or recreation neither reproject the payload nor suppress it by final-state equality. Participants in `on` remain canonical identity descriptors; their later inactivity does not invalidate the event or grant a host mutable world handle.
 
@@ -1378,7 +1387,7 @@ board[E, Four]
 
 ## Intervals
 
-The type form for an interval first writes the endpoint type and then the contextual word `Interval`:
+Interval is a builtin arity-one generic constructor. Its postfix spelling writes the endpoint type before `Interval`; the equivalent explicit spelling is `Interval with Nat`, for example:
 
 ```mud
 Nat Interval
@@ -1388,7 +1397,7 @@ Rum Interval
 Money Interval
 ```
 
-The grammar retains any `type-reference` in that position; the static phase requires it to resolve to an accepted numeric representation. `Interval` is not a nominal declaration looked up by name resolution in this construct.
+Both forms resolve the builtin Interval constructor, whose source anchor is `type::Interval`. The argument must satisfy the existing accepted numeric endpoint representation and order contracts; generic application does not extend Interval to every type or introduce an application anchor.
 
 Forms:
 
@@ -1445,12 +1454,12 @@ From highest to lowest:
 
 | Level | Shapes | Group |
 | ---: | --- | --- |
-| 1 | access `.`, metadata `~`, index `[]`, call `()` and `unit from container in point` | left or complete form |
+| 1 | access `.`, metadata `~`, index `[]`, call `()` with optional static `with` arguments and `unit from container in point` | left or complete form |
 | 2 | prefixes `old`, `imagine`, `not`, sign | right |
 | 3 | `*`, `/`, `%` | left |
 | 4 | `+`, `-`, `--` | left |
 | 5 | suffixes `to Type`, `in unit` and restriction `in Domain` | cumulative |
-| 6 | `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `iis`, `iis not`, `has`, `has not` | restricted |
+| 6 | `===`, `!==`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `is`, `is not`, `iis`, `iis not`, `has`, `has not` | restricted |
 | 7 | temporal suffix `changes` | non-membership-based |
 | 8 | `and`, `&` | left |
 | 9 | `or`, `|` | left |
@@ -1510,6 +1519,7 @@ a < b and b < c
 
 Chained equality follows the same rule. `<=>` produces comparisons between adjacent pairs. The following do not form chains:
 
+- `===` and `!==`
 - `!=`
 - `is` and `is not`
 - `iis` and `iis not`

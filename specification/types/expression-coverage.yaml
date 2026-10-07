@@ -144,3 +144,20 @@ expressions:
     section: 3. Calls
     cases:
     - expression-call-expr
+  TypeApplicationExpr:
+    section: Static generic expressions
+    cases:
+    - generic-interval-equivalent-forms
+  GenericFamilyMemberExpr:
+    section: Static generic expressions
+    cases:
+    - generic-family-phantom
+  GenericCallSpecializationExpr:
+    section: Static generic expressions
+    cases:
+    - generic-call-explicit
+  StructuralTypeEqualityExpr:
+    section: 5. Equality, comparisons, membership and narrowing
+    cases:
+    - structural-equality-calculated-body
+    - structural-equality-values-rejected

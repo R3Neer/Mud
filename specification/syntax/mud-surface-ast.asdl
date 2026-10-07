@@ -125,17 +125,20 @@ module MUDSurface {
 
     top_level_decl = ThingDecl(flag is_abstract,
                                nominal_name name,
-                               type_ref* direct_ancestors,
+                               generic_parameter* parameters,
+                               declared_type* direct_ancestors,
                                metadata_assignment* metadata,
                                field_decl* fields,
                                thing_initializer* initializers)
                    | AliasDecl(flag is_abstract,
                                nominal_name name,
-                               type_ref* direct_ancestors,
+                               generic_parameter* parameters,
+                               declared_type* direct_ancestors,
                                alias_definition? definition,
                                metadata_assignment* metadata)
                    | FamilyDecl(flag is_ordered,
                                 nominal_name name,
+                                generic_parameter* parameters,
                                 metadata_assignment* metadata,
                                 family_data_decl* data,
                                 family_member first_member,
@@ -157,6 +160,7 @@ module MUDSurface {
                                         point_domain? domain,
                                         metadata_assignment* metadata)
                    | BooleanRuleDecl(nominal_name name,
+                                     generic_parameter* parameters,
                                      for_clause? participants,
                                      given_clause? givens,
                                      metadata_assignment* metadata,
@@ -174,6 +178,7 @@ module MUDSurface {
                                     expression_block invariant)
                    | ActionDecl(action_kind kind,
                                 nominal_name name,
+                                generic_parameter* parameters,
                                 for_clause? participants,
                                 given_clause? givens,
                                 metadata_assignment* metadata,
@@ -182,11 +187,13 @@ module MUDSurface {
                                 effect_block effects,
                                 action_postcondition? postcondition)
                    | LookDecl(nominal_name name,
+                              generic_parameter* parameters,
                               for_clause? participants,
                               given_clause? givens,
                               metadata_assignment* metadata,
                               public_field_decl* fields)
                    | SublookDecl(nominal_name name,
+                              generic_parameter* parameters,
                               for_clause? participants,
                               given_clause? givens,
                               metadata_assignment* metadata,
@@ -291,13 +298,21 @@ module MUDSurface {
     -- Types, domains and collections
     -- -----------------------------------------------------------------
 
+    generic_parameter = (nominal_name name, declared_type* bounds)
+        attributes (source_origin origin)
+
+    generic_application_form = ExplicitGenericWith | PostfixSingleGeneric
+                             | PostfixGroupedGeneric
+
     declared_type = NamedType(type_ref name)
                   | CallableType(callable_kind kind,
-                                 type_ref first_receiver,
-                                 type_ref* remaining_receivers,
+                                 declared_type first_receiver,
+                                 declared_type* remaining_receivers,
                                  type_expr* givens)
                   | ReflectedType(expr value)
-                  | IntervalType(type_ref element_type)
+                  | GenericTypeApplication(type_ref constructor,
+                                           type_expr* arguments,
+                                           generic_application_form form)
                   | PositionalProductType(type_expr first,
                                           type_expr second,
                                           type_expr* remaining)
@@ -640,8 +655,12 @@ module MUDSurface {
          | ComparisonChainExpr(expr first,
                                comparison_link first_comparison,
                                comparison_link* remaining_comparisons)
+         | TypeApplicationExpr(declared_type application)
+         | GenericFamilyMemberExpr(declared_type application, member_name member)
+         | GenericCallSpecializationExpr(expr call, type_expr* arguments)
+         | StructuralTypeEqualityExpr(type_expr left, type_expr right, flag negated)
          | ExactTypeTestExpr(expr value,
-                             type_ref tested_type,
+                             declared_type tested_type,
                              flag negated)
          | ConversionExpr(expr value, conversion_target target)
          | MemberAccessExpr(expr receiver, identifier_name member)
@@ -709,7 +728,7 @@ module MUDSurface {
     comparison_link = (comparison_operator operator, expr operand)
         attributes (source_origin origin)
 
-    conversion_target = TypeConversion(type_ref target)
+    conversion_target = TypeConversion(declared_type target)
                       | UnitConversion(unit_expr target)
         attributes (source_origin origin)
 

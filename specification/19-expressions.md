@@ -16,6 +16,9 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-136
+  - D-135
+  - D-134
   - D-133
   - D-132
   - D-131
@@ -117,10 +120,14 @@ Positional indexing requires observable order, uses one-based indices and return
 
 An exact dictionary query checks the key contract and yields its value contract with possible absence; composite keys contextualise one product key. A functional query applies all relevant branch-selector/result contracts and the dictionary's selection mode. The static result preserves the documented FirstMatch or AllMatches collection shape. Missing exact keys and unmatched functional branches yield empty, not an invented type default or a special aggregation error.
 
+## Static generic expressions
+
+`TypeApplicationExpr` denotes an admitted static type application, never a runtime constructor chosen by a Type value. `GenericFamilyMemberExpr` denotes the source member at that applied family type; expected applied-family context may provide its qualification. `GenericCallSpecializationExpr` supplies static arguments to its retained CallExpr before checking or executing the call. It does not execute an unspecialised call first, alter action result/error propagation or add host/root capability. Generic look results retain producer-and-argument identity independently of participant values. Ambiguous generic inference requires explicit `with`, not a guessed type.
+
 ## 3. Calls
 
 > [!rule] MUD-TYPE-010 — Call contract
-> Select the nominal operation under the receiver-selection rule before checking given arguments or the expected result. Bind every required receiver/argument, validate positional/named form, check types and permissions, and insert only explicitly declared defaults. Unproved domain admission cannot be used to prefer another candidate.
+> Select the nominal operation using static receivers and actually written given arguments, without using the expected result. Bind every required receiver/argument, validate positional/named form, check types and permissions, and insert only explicitly declared defaults. Unproved domain admission cannot be used to prefer another candidate.
 
 For a callable value, check every static alternative against the admitted signature. Named calls require the static common-name contract. The supplied callable must preserve required purity, determinism and root permission as well as input/output variance.
 
@@ -168,6 +175,8 @@ Logical not, and, or, xor, implication and equivalence require singleton Bool re
 ## 5. Equality, comparisons, membership and narrowing
 
 Equality requires compatible effective member types and uses their defined equality: thing identity, exact nominal alias/produced identity with payload equality, family identity, normalised intervals, multisets or ordered sequences, and extensional dictionaries as applicable. Any equality first checks effective types. A representation match alone does not compare two nominal aliases as one type.
+
+`===` and `!==` require two operands denoting Type and produce singleton Bool. They compare normalized complete contracts under [[10-type-system#7.1. Exact structural type equality]]; collection-shaped source types are Type operands, not lifted value comparisons. They are nonchainable comparison-level operators. A family member value is invalid as an operand; `Cat Slot.Empty~type !== Dog Slot.Empty~type` is valid, while their `~anchor` values may compare equal with ordinary `==`. Computation of a Type-producing expression obeys normal purity/error/dependency rules; comparison does not evaluate symbolic domains or create runtime types.
 
 Ordering requires a common defined order. Any has none. Ordered family members, Char scalar values, compatible numbers, normalised supported intervals and lexicographically ordered structural alias components use their specified order. A type without such a contract cannot obtain ordering through an arbitrary comparator.
 

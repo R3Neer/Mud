@@ -55,7 +55,7 @@ For an unqualified name, the search continues:
 3. Statements `using` exact.
 4. Statements `using` recursive.
 
-A fully qualified reference avoids name ambiguity, but is only resolved if the declaration is part of the visible part-level closure; this classification does not replace the authorisation `uses` from D-096. Distinct imported anchors with the same unqualified name are ambiguous outside receiver-call selection. In a call with explicit receivers, nominal callables governed by `for` at the first non-empty lookup level may be selected by static participant compatibility; exactly one compatible candidate is required. The selection does not use `given`, runtime predicates or a most-specific preference, and does not fall through to later levels.
+A fully qualified reference avoids name ambiguity, but is only resolved if the declaration is part of the visible part-level closure; this classification does not replace the authorisation `uses` from D-096. Distinct imported anchors with the same unqualified name are ambiguous outside receiver-call selection. In a call with explicit receivers, nominal callables governed by `for` at the first non-empty lookup level may be selected by static participant and written-given compatibility; exactly one compatible candidate is required. The selection uses static written `given` names/types as well as receivers, but not runtime predicates or a most-specific preference, and does not fall through to later levels.
 
 The textual order of files and statements `using` It does not decide draws.
 
@@ -129,3 +129,7 @@ D-076 sets the identity stable for each unit using the identifier `lowerCamel` m
 
 D-096 enter the part as a dimension semantics from visibility without incorporating it into the anchors. The MudPath nominal, and the existing anchors retain their shape. `using` continues to resolve/importando names within a `.mud`; it does not grant on its own permission to cross a part-level boundary, which corresponds to `uses` in `mud.part`.
 
+
+## Amendment provenance
+
+The static written-given selection contract is amended by [[ADR-136-static-given-call-disambiguation|D-136]]; the first non-empty lookup level, nominal HIR boundary and absence of runtime dispatch remain in force.
