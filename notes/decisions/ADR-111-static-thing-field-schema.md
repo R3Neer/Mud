@@ -39,7 +39,7 @@ All field descriptors and their metadata derive from canonical declarations. The
 
 The change covers grammar and its CST catalogue/coverage, Surface AST, CST conversion, developed mathematical/syntax/nominal surfaces, specification roadmap and affected current ADR bodies. The nominal HIR has been reviewed: it already represents canonical field symbols and needs no structural change. Collection value insertion/removal, immutable alias write-back, `create`/`destroy`, branch editing by authoring tools and local frame storage remain in scope under their existing contracts.
 
-Chapter 25 defines operational judgments for the surviving effect families. This decision excludes runtime schema edits from that catalogue; its scope remains static schema authority.
+Chapter 28 defines operational judgments for the surviving effect families. This decision excludes runtime schema edits from that catalogue; its scope remains static schema authority.
 
 ## Verification
 

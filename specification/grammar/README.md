@@ -30,7 +30,7 @@ Symbol initial:
 
 ## Products
 
-`mud-lexico.ebnf` does not mean that an implementation must ignore comments or spaces. [[../06-lexicon]] defines a complete workflow using trivia and a significant grammar insight.
+`mud-lexico.ebnf` does not mean that an implementation must ignore comments or spaces. [[../07-lexicon]] defines a complete workflow using trivia and a significant grammar insight.
 
 `mud.ebnf` is produced from the artefacts listed in:
 
@@ -39,19 +39,19 @@ Symbol initial:
 
 Abstract projection is defined by:
 
-- `../08-abstract-syntax.md`.
+- `../09-abstract-syntax.md`.
 - `../syntax/mud-surface-ast.asdl`.
 - `../syntax/cst-to-surface-ast.md`.
 
 ## Modal scanner
 
-`Text` templates require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../06-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
+`Text` templates require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../07-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.
 
 The ways of unit and from magnitude from point are also context-dependent. The fact that there is a token contextual does not anticipate its resolution semantics.
 
 `from` adds native-language delegation: `FOREIGN_STATEMENT` and `FOREIGN_EXPRESSION` are contextual, lossless regions classified by the selected adapter. The MUD parser owns bridge names/types and body cardinality; it does not lex native source with ordinary MUD rules.
 
-`HEADER_WITH` is the contextual view of an ungrouped `with` in a declaration's ancestor/parameter portion, as defined in [[../06-lexicon#Generic header boundary]]. Only parameter groups consume that terminal; explicit applications consume ordinary `with`. Classification preserves the base token and does not require type lookup.
+`HEADER_WITH` is the contextual view of an ungrouped `with` in a declaration's ancestor/parameter portion, as defined in [[../07-lexicon#Generic header boundary]]. Only parameter groups consume that terminal; explicit applications consume ordinary `with`. Classification preserves the base token and does not require type lookup.
 
 ## Separation of responsibilities
 
@@ -89,7 +89,7 @@ The joint validator also uses `ebnf_analysis.py` to reject left-recursive paths 
 Any structural alteration to a production You must update this in the same commit:
 
 1. The EBNF.
-2. The explanation from [[../07-concrete-grammar]].
+2. The explanation from [[../08-concrete-grammar]].
 3. `mud-syntax-kinds.yaml`.
 4. `syntax-coverage.yaml`.
 5. The CST → AST transformation, where applicable.

@@ -24,7 +24,7 @@ superseded-by: []
 
 ## Resolution
 
-MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/14-fields-and-mutability]] define the minimum constant-path analysis and the residual symbolic/uniqueness boundary, including mandatory static stored-cardinality preservation. The residual-symbolic-key-overlap and static-cardinality cases supply contrasting instances.
+MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/15-fields-and-mutability]] define the minimum constant-path analysis and the residual symbolic/uniqueness boundary, including mandatory static stored-cardinality preservation. The residual-symbolic-key-overlap and static-cardinality cases supply contrasting instances.
 
 The required analysis is sound and conservative, not a complete solver for arbitrary symbolic predicates. Operational engine and general termination design retain their own questions.
 
@@ -34,4 +34,4 @@ The required analysis is sound and conservative, not a complete solver for arbit
 
 ## Closure evidence
 
-- C1: MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/14-fields-and-mutability]] define the minimum constant-path analysis and the residual symbolic/uniqueness boundary, including mandatory static stored-cardinality preservation. The residual-symbolic-key-overlap and static-cardinality cases supply contrasting instances. [[notes/decisions/ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]] records the integration.
+- C1: MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/15-fields-and-mutability]] define the minimum constant-path analysis and the residual symbolic/uniqueness boundary, including mandatory static stored-cardinality preservation. The residual-symbolic-key-overlap and static-cardinality cases supply contrasting instances. [[notes/decisions/ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]] records the integration.

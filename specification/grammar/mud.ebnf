@@ -1,6 +1,6 @@
 (* MUD 1.0 — normative concrete grammar.
    Upper-case terminals come from mud-lexico.ebnf or the contextual
-   classifier described in 06-lexicon.md. *)
+   classifier described in 07-lexicon.md. *)
 
 mud-input
     ::= mud-file | part-file ;
@@ -1172,7 +1172,7 @@ membership-has
     ::= "has" , [ "not" ] ;
 
 (* quantitative-expression admits postfix to/in barriers. The parser
-   applies the table from 07-concrete-grammar and continues over the result. *)
+   applies the table from 08-concrete-grammar and continues over the result. *)
 quantitative-expression
     ::= arithmetic-expression
         , { conversion-suffix , [ arithmetic-continuation ] }

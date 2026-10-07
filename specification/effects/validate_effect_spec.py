@@ -117,7 +117,7 @@ def validate(data):
     if len(cases)!=len(data["cases"]): raise ValueError("Duplicate case IDs")
     for section, case in list(data["constructors"].values()) + list(data["operators"].values()):
         if case not in cases: raise ValueError("Missing constructor case")
-        chapter=(ROOT/"specification/25-effects.md").read_text(encoding="utf-8")
+        chapter=(ROOT/"specification/28-effects.md").read_text(encoding="utf-8")
         if not re.search(r"^## "+re.escape(section)+r"\.",chapter,re.M): raise ValueError("Missing chapter section")
     for c in cases.values():
         if not c.get("contract"): raise ValueError("Missing case contract")

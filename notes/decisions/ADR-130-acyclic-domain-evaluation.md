@@ -8,8 +8,8 @@ superseded-by: []
 questions:
   - Q-017
 affects:
-  - "[[specification/10-type-system]]"
-  - "[[specification/19-expressions]]"
+  - "[[specification/11-type-system]]"
+  - "[[specification/21-expressions]]"
   - "[[specification/README]]"
   - Declarative domain dependency and evaluation contracts
 ---
@@ -38,4 +38,4 @@ Recursive type descriptions, their finite immutable values and bounded construct
 
 ## Integration
 
-MUD-TYPE-016 in chapter 10 defines static admission and the stored-read boundary; chapter 19 applies it to expression typing. The future domain chapter's remit and current ADR bodies are updated, and static conformance fragments contrast stored reads, hidden transitive cycles and positive recursion. No domain keyword, grammar constructor, nominal anchor or HIR field is introduced. Q-023's general dynamically selected callable proof question remains separate.
+MUD-TYPE-016 in chapter 11 defines static admission and the stored-read boundary; chapter 21 applies it to expression typing. The future domain chapter's remit and current ADR bodies are updated, and static conformance fragments contrast stored reads, hidden transitive cycles and positive recursion. No domain keyword, grammar constructor, nominal anchor or HIR field is introduced. Q-023's general dynamically selected callable proof question remains separate.

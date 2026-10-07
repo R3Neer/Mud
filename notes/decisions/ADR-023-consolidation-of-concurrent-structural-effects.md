@@ -11,7 +11,7 @@ questions:
   - "Q-021"
   - "Q-046"
 affects:
-  - "future chapters 25, 28, 29 and 31"
+  - "future chapters 28, 31, 32 and 34"
 ---
 # ADR-023 — Consolidation of concurrent structural effects
 
@@ -24,7 +24,7 @@ affects:
 - Amended by: [[ADR-096-modules-callables-look-message-and-activation|D-096]].
 - Related to: [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]]
 - Related questions: [[notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects|Q-002]], [[notes/questions/Q-006-c-conflicts|Q-006]], [[notes/questions/Q-021-a-static-conflict-analysis|Q-021]], [[notes/questions/Q-046-c-ineffective-creation-inside-a-root|Q-046]]
-- Documents affected: future chapters 25, 28, 29 and 31
+- Documents affected: future chapters 28, 31, 32 and 34
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 - Clarified by: [[ADR-111-static-thing-field-schema|D-111]].
@@ -147,7 +147,7 @@ The new rules and suspensions affect the construction of bindings and the assess
 
 ## Formalisation boundary
 
-Lifecycle no-ops and mixed availability are specified by D-125. Static overlap/cardinality proof boundaries are specified in chapter 14. Chapter 25 specifies semantic destinations, sequential private effects and finite root/wave composition, including surviving internal-call contributions. Complete scheduler and native-hosting implementations remain separate work.
+Lifecycle no-ops and mixed availability are specified by D-125. Static overlap/cardinality proof boundaries are specified in chapter 15. Chapter 28 specifies semantic destinations, sequential private effects and finite root/wave composition, including surviving internal-call contributions. Complete scheduler and native-hosting implementations remain separate work.
 
 ## Future verification
 

@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-001"
 affects:
-  - "[[specification/06-lexicon]], [[specification/07-concrete-grammar]], formateador"
+  - "[[specification/07-lexicon]], [[specification/08-concrete-grammar]], formateador"
 ---
 # ADR-050 — Comments, terminators, text and numeric separators
 
@@ -17,7 +17,7 @@ affects:
 - Related to: [[notes/decisions/ADR-055-declarative-and-diagnostic-tests-otherwise|D-055]], [[notes/decisions/ADR-056-char-text-and-unicode-ordering|D-056]], [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Partially closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
-- Documents concerned: [[specification/06-lexicon]], [[specification/07-concrete-grammar]], formatter
+- Documents concerned: [[specification/07-lexicon]], [[specification/08-concrete-grammar]], formatter
 
 ## Context
 

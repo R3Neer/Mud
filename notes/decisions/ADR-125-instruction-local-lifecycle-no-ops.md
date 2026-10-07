@@ -9,7 +9,7 @@ questions:
   - Q-046
 affects:
   - "[[specification/04-mathematical-model]]"
-  - "[[specification/07-concrete-grammar]]"
+  - "[[specification/08-concrete-grammar]]"
   - Effects and runtime lifecycle operational formalisation
 ---
 
@@ -42,4 +42,4 @@ All resulting transitions still obey domain/cardinality and checkpoint validatio
 
 ## Integration
 
-MUD-LIFE-001 in [[specification/04-mathematical-model]] and the effect contract in [[specification/07-concrete-grammar]] express the accepted rule. Q-046 is archived with explicit closure evidence. No grammar, AST or nominal-HIR constructor is added.
+MUD-LIFE-001 in [[specification/04-mathematical-model]] and the effect contract in [[specification/08-concrete-grammar]] express the accepted rule. Q-046 is archived with explicit closure evidence. No grammar, AST or nominal-HIR constructor is added.

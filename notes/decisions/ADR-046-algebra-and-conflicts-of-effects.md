@@ -94,7 +94,7 @@ Inside a `then`, a subsequent reading examines the saturated projection of the v
 
 - The semantics It does not depend on the order of rules or threads.
 - The saturation of `Nat` it does not violate the commutativity of additive updates.
-- Partial alias paths compose by semantic destination; dictionary deletion wins and replacements precede changes. Chapter 14 specifies the conservative static proof boundary; chapter 25 specifies operational composition.
+- Partial alias paths compose by semantic destination; dictionary deletion wins and replacements precede changes. Chapter 15 specifies the conservative static proof boundary; chapter 28 specifies operational composition.
 - The special conservative analysis of cardinality from D-026 takes precedence over the general rule of deferring undecidable matches.
 
 ## Verification

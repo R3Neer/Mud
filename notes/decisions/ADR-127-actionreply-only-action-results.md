@@ -9,9 +9,9 @@ questions:
   - Q-073
   - Q-022
 affects:
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/10-type-system]]"
-  - "[[specification/19-expressions]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/11-type-system]]"
+  - "[[specification/21-expressions]]"
   - Action requests and callable contracts
 ---
 
@@ -40,4 +40,4 @@ Ordinary explicit reply capture remains possible in an effect-capable context. A
 
 ## Integration
 
-MUD-TYPE-014 in [[specification/19-expressions]] and the callable/grammar surfaces state this contract. No grammar, CST, Surface AST or nominal HIR constructor changes are required.
+MUD-TYPE-014 in [[specification/21-expressions]] and the callable/grammar surfaces state this contract. No grammar, CST, Surface AST or nominal HIR constructor changes are required.

@@ -10,7 +10,7 @@ questions:
   - "Q-021"
   - "Q-047"
 affects:
-  - "[[specification/04-mathematical-model]], future `10-type-system.md`, future `15-collections.md`"
+  - "[[specification/04-mathematical-model]], future `11-type-system.md`, future `16-collections.md`"
 ---
 # ADR-026 — Membership strict and cardinality by `then`
 
@@ -21,7 +21,7 @@ affects:
 - Expanded by: [[ADR-077-cardinality-conditioned-destruction-and-transition-diagnostics|D-077]]
 
 - Questions affected: [[notes/questions/Q-003-p-validation-points|Q-003]], [[notes/questions/Q-021-a-static-conflict-analysis|Q-021]], [[notes/questions/Q-047-s-selection-of-defaults-by-type|Q-047]]
-- Documents affected: [[specification/04-mathematical-model]], future `10-type-system.md`, future `15-collections.md`
+- Documents affected: [[specification/04-mathematical-model]], future `11-type-system.md`, future `16-collections.md`
 
 ## Context
 

@@ -24,4 +24,4 @@ Actions and subactions return only ActionReply; additional domain results are no
 
 ## Closure evidence
 
-- C1: MUD-TYPE-014 in [[specification/19-expressions]] prohibits extra return types/payloads. [[specification/10-type-system]] fixes action callable output, [[specification/07-concrete-grammar]] preserves ordinary reply capture without added syntax, and [[notes/decisions/ADR-127-actionreply-only-action-results|D-127]] contrasts reply capture with invalid domain-result use.
+- C1: MUD-TYPE-014 in [[specification/21-expressions]] prohibits extra return types/payloads. [[specification/11-type-system]] fixes action callable output, [[specification/08-concrete-grammar]] preserves ordinary reply capture without added syntax, and [[notes/decisions/ADR-127-actionreply-only-action-results|D-127]] contrasts reply capture with invalid domain-result use.

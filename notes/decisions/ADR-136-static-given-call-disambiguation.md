@@ -7,10 +7,10 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[specification/09-names-and-anchors]]"
-  - "[[specification/10-type-system]]"
-  - "[[specification/19-expressions]]"
-  - "[[specification/07-concrete-grammar]]"
+  - "[[specification/10-names-and-anchors]]"
+  - "[[specification/11-type-system]]"
+  - "[[specification/21-expressions]]"
+  - "[[specification/08-concrete-grammar]]"
 ---
 
 # ADR-136 — Static given call disambiguation

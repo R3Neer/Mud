@@ -10,7 +10,7 @@ questions:
   - "Q-006"
   - "Q-019"
 affects:
-  - "future chapters `10-type-system.md`, `25-effects.md`, `28-action-resolution.md` and `29-waves.md`"
+  - "future chapters `11-type-system.md`, `28-effects.md`, `31-root.md` and `32-waves.md`"
 ---
 # ADR-060 — Additive deltas and `Nat` normalisation
 
@@ -21,7 +21,7 @@ affects:
 - Amends: [[notes/decisions/ADR-040-semantics-remaining-basic-numeracy|D-040]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]] and [[notes/decisions/ADR-046-algebra-and-conflicts-of-effects|D-046]]
 - Related to: [[notes/decisions/ADR-037-fields-and-declarative-domains|D-037]]
 - Related questions: Q-002, Q-006, Q-019
-- Affected documents: future chapters `10-type-system.md`, `25-effects.md`, `28-action-resolution.md` and `29-waves.md`
+- Affected documents: future chapters `11-type-system.md`, `28-effects.md`, `31-root.md` and `32-waves.md`
 
 ## Context
 
@@ -136,7 +136,7 @@ No reactive rule, message, `look`, `old` or `changes` observes negative deltas o
 
 ### Scope
 
-This decision defines homogeneous additive bookkeeping. Compatible replacement supplies the base before surviving relative contributions. Mixed arithmetic preserves each branch's textual sequence and composes by per-destination stages, using addition before multiplication within each concurrent stage. Semantic paths, dictionary and lifecycle composition follow chapter 25; unsupported combinations do not acquire an invented operator.
+This decision defines homogeneous additive bookkeeping. Compatible replacement supplies the base before surviving relative contributions. Mixed arithmetic preserves each branch's textual sequence and composes by per-destination stages, using addition before multiplication within each concurrent stage. Semantic paths, dictionary and lifecycle composition follow chapter 28; unsupported combinations do not acquire an invented operator.
 
 ## Consequences
 

@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-059"
 affects:
-  - "[[notes/questions/README|Active questions]], future chapters 06 to 09, 25, 28, 30, 43, 46 and 49"
+  - "[[notes/questions/README|Active questions]], future chapters 07 to 10, 28, 31, 33, 47, 50 and 53"
 ---
 
 # ADR-055 — Declarative tests and block error handling

@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-001"
 affects:
-  - "[[specification/06-lexicon]], [[specification/07-concrete-grammar]], future chapters 10 and 15"
+  - "[[specification/07-lexicon]], [[specification/08-concrete-grammar]], future chapters 11 and 16"
 ---
 # ADR-056 — `Char`, `Text` and Unicode ordering
 
@@ -17,7 +17,7 @@ affects:
 - Amended by: [[notes/decisions/ADR-061-non-accepted-results-and-text-templates|D-061]]
 - Amended by: [[notes/decisions/ADR-069-char-literals-with-double-quotes|D-069]]
 - Partially closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
-- Affected documents: [[specification/06-lexicon]], [[specification/07-concrete-grammar]], future chapters 10 and 15
+- Affected documents: [[specification/07-lexicon]], [[specification/08-concrete-grammar]], future chapters 11 and 16
 
 - Amended by: [[ADR-112-explicit-storage-initialisation|D-112]]; Char has no automatic type default.
 

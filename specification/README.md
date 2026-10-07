@@ -9,7 +9,21 @@ tags:
 status: in-preparation
 normative: true
 questions:
+  - Q-009
+  - Q-059
+  - Q-069
+  - Q-070
+  - Q-071
+  - Q-072
+  - Q-073
+  - Q-074
 decisions:
+  - D-013
+  - D-107
+  - D-108
+  - D-109
+  - D-120
+  - D-121
   - D-140
   - D-139
   - D-138
@@ -77,17 +91,27 @@ An implementation must not silently choose behaviour for a question marked open 
 
 ## Specification architecture
 
-The specification is organised into five parts. The separation is conceptual: some chapters depend on earlier definitions, but no part may contradict another.
+The specification is organised into five parts and 53 numbered chapters, with a separate planned standard-library contract volume. The separation is conceptual: chapters depend on definitions elsewhere, and all normative surfaces must agree.
 
 ```text
 Part I    Foundations and notation
-Part II   Static language
+Part II   Language constructs and static contracts
 Part III  Dynamic semantics
 Part IV   Advanced semantic analyses
 Part V    Conformance and normative appendices
 ```
 
 The compiler, conversational plugin, Git and materialisers have their own specifications. They rely on the language but do not define its meaning.
+
+Planned chapters and library documents gain no developed authority merely by appearing in this plan. Current rules remain governed by their developed surfaces and linked current decisions until publication under the document lifecycle. Cross-cutting responsibilities are allocated as follows.
+
+| Cross-cutting scope | Read with | Responsibility |
+| --- | --- | --- |
+| [[#20. Blocks and error recovery]] | 11, 21, 28–33 | Shared block outcomes, protection and recovery; category-specific expression/effect evaluation stays in its chapter. |
+| [[#27. Foreign interoperability]] | 08–11, 15, 26–34 | `from` boundaries, conversions, adapter guarantees and native hosting contracts. |
+| [[#06. World descriptors and dependencies]] | 05, 10, 26 | World/distribution configuration and resolution, distinct from local part access and name imports. |
+| [[#37. Textual patches and reproduction]] | 28–34, 36, 52 | Readable incorporated changes, validated reproduction and patch compatibility. |
+| [[#Standard-library contracts]] | Relevant type, effect, interoperability and dependency chapters | Included-base and extension API contracts, distinct from their implementations. |
 
 ---
 
@@ -113,18 +137,19 @@ Chapter: [[02-terminology]].
 
 Normative glossary of:
 
-- MUD programme, part, file and path.
+- MUD world/programme, part, source file, descriptor, distribution and path.
 - Declaration, symbol, name and anchor.
 - `thing`, identity and value.
 - Field, relation and collection.
 - Exact dictionary, functional dictionary, association, branch, selector and fallback.
 - Participant, role, binding and `given`.
 - Queryable, reactive and `always` rule.
-- Action, request, root, wave and resolution.
+- Action declaration, invocation identity, causal owner, request, root, wave and resolution.
 - Test, assertion and diagnostic.
-- State, snapshot, effect and conflict.
+- State, snapshot, effect, conflict, reality level, alternative branch and relative confirmation.
 - Domain, constraint, condition and invariant.
-- Acceptance, rejection and failure.
+- ActionReply, Success, Refusal, Error occurrence, Errors and block error channel.
+- Textual patch, reproduction and host-only Ticket confirmation, with pending interfaces explicitly delimited.
 
 ## 03. Mathematical notation and metalanguage
 
@@ -140,7 +165,7 @@ Defines canonical programme identities, specialisation, values, activation and m
 
 ---
 
-# Part II — Static language
+# Part II — Language constructs and static contracts
 
 ## 05. Source text and physical structure
 
@@ -149,17 +174,32 @@ Chapter: [[05-source-text]].
 Defines:
 
 - Encoding.
-- Archivos `.mud`.
+- `.mud` source files and minimal `mud.part` manifests.
+- World/part/file boundaries, direct non-transitive `uses` and initial `part only` placement.
 - Derivation of MUD paths from routes.
 - Multiple declarations per file.
 - Semantic independence from file ordering.
 - Line terminators.
 
-The world descriptor is planned as `mud.world.toml`; its schema and external distribution resolution are not part of the current source grammar.
+The world descriptor is planned as `mud.world.toml`; its schema and external distribution resolution are not part of the current source grammar. [[#06. World descriptors and dependencies]] owns that scope, pending Q-071 and coordinated with adapter configuration in Q-069.
 
-## 06. Lexical structure
+## 06. World descriptors and dependencies
 
-Chapter: [[06-lexicon]].
+Planned file: `06-world-and-dependencies.md`
+
+Planned scope:
+
+- `mud.world.toml` discovery, descriptor schema and validation under Q-071.
+- Included library base and installable official extensions; distribution identity, sources, versions, locking and namespace collisions.
+- Distribution-to-part mapping under direct `uses`, file privacy and contract-type closure; `using` imports names rather than installing dependencies.
+- Adapter declarations, label lookup, dependency-local environments and delegated native manifests coordinated with Q-069.
+- Configuration boundaries for runtime and recording once the causal, patch and host-observation contracts support them.
+
+Required tables, defaults, schema-version notation, build settings, adapter aliases, quick fixes and runtime/recording options remain unselected. Descriptor examples are design material, not an accepted manifest schema.
+
+## 07. Lexical structure
+
+Chapter: [[07-lexicon]].
 
 Defines:
 
@@ -171,13 +211,13 @@ Defines:
 - `#`, `#...#` and `###...###` comments.
 - Whitespace.
 - Tokens, trivia, spans and lexical errors.
-- Complete stream and significant view.
+- Complete stream and significant view, including contextual generic-header and native-region token boundaries.
 
 The normative lexical grammar lives in `grammar/mud-lexico.ebnf`.
 
-## 07. Concrete grammar
+## 08. Concrete grammar
 
-Chapter: [[07-concrete-grammar]].
+Chapter: [[08-concrete-grammar]].
 
 Defines the complete syntax of:
 
@@ -199,11 +239,11 @@ Defines the complete syntax of:
 
 Foreign `from Language` bodies delegate native parsing and preserve `mud name [: Type] <- nativeExpression` bridges, with braces determined by instruction count. All existing block capabilities remain in force; pure preambles and value/effect statement slots admit compatible foreign blocks.
 
-The complete executable grammar lives in `grammar/mud.ebnf`. Parsing produces a lossless CST; this chapter explains ambiguities, precedence, contextual validation and the boundary with desugaring, but does not repeat the entire EBNF.
+The complete concrete grammar lives in `grammar/mud.ebnf`. Parsing produces a lossless CST; this chapter explains ambiguities, precedence, contextual validation and the boundary with desugaring, but does not repeat the entire EBNF.
 
-## 08. Surface abstract syntax
+## 09. Surface abstract syntax
 
-Chapter: [[08-abstract-syntax]].
+Chapter: [[09-abstract-syntax]].
 
 Defines the semantically relevant forms after the CST and contextual syntactic validation:
 
@@ -221,9 +261,9 @@ Defines the semantically relevant forms after the CST and contextual syntactic v
 
 Mechanical and transformation artefacts: `syntax/`.
 
-## 09. Paths, `using`, names and anchors
+## 10. Paths, `using`, names and anchors
 
-Chapter: [[09-names-and-anchors]].
+Chapter: [[10-names-and-anchors]].
 
 Defines:
 
@@ -231,7 +271,7 @@ Defines:
 - Local and qualified resolution.
 - Exact and recursive `using` declarations.
 - Mandatory placement of all `using` declarations in the file header.
-- Ambiguity and static selection of homonymous imported callables by their supplied `for` participants, without changing anchors or lookup priorities.
+- Ambiguity and candidate-local static selection of homonymous imported callables by supplied `for` participants and written `given` arguments, without expected-result tie-breaking or changes to anchors and lookup priorities.
 - Foreign exports as ordinary local symbols and native captures as source-mapped nominal references; adapter labels/private native locals receive no MUD declaration identity.
 - One ordinary LocalSymbol per named pattern leaf; discards and type holes introduce no symbol or anchor.
 - Formation and uniqueness of public anchors; functional-dictionary branches use local keys and receive no public anchor.
@@ -245,9 +285,9 @@ $$
 \Gamma \vdash n \rightsquigarrow a
 $$
 
-## 10. Type system
+## 11. Type system
 
-Chapter: [[10-type-system]].
+Chapter: [[11-type-system]].
 
 Defines:
 
@@ -267,9 +307,9 @@ $$
 \Gamma;\Sigma \vdash e : \tau
 $$
 
-## 11. `Thing`, specialisation and identity
+## 12. `Thing`, specialisation and identity
 
-Planned file: `11-things.md`
+Planned file: `12-things.md`
 
 Planned scope:
 
@@ -279,9 +319,9 @@ Planned scope:
 - Part-level boundary of `thing`s: visible identity/type versus ordinary state projected through public operations and inter-part specialisation limits.
 - `thing` metadata and reflection without confusing them with state fields.
 
-## 12. Nominal aliases and structural values
+## 13. Nominal aliases and structural values
 
-Planned file: `12-aliases.md`
+Planned file: `13-aliases.md`
 
 Planned scope:
 
@@ -292,9 +332,9 @@ Planned scope:
 - Boundary between structural compatibility and explicit acquisition of nominality.
 - Contract-visible alias specialization across parts under uses authorization and inherited substitutability.
 
-## 13. Closed value families
+## 14. Closed value families
 
-Planned file: `13-closed-families.md`
+Planned file: `14-closed-families.md`
 
 Planned scope:
 
@@ -302,9 +342,9 @@ Planned scope:
 - Uniform schema for associated data, defaults and per-member calculations.
 - Equality, ordering, reflection and absence of runtime lifecycle for its values.
 
-## 14. Fields, mutability and capabilities
+## 15. Fields, mutability and capabilities
 
-Chapter: [[14-fields-and-mutability]].
+Chapter: [[15-fields-and-mutability]].
 
 Defines:
 
@@ -313,9 +353,9 @@ Defines:
 - Participant capability and write accessibility.
 - Postfix metadata as information separate from ordinary state and read-only during execution.
 
-## 15. Cardinalities and collections
+## 16. Cardinalities and collections
 
-Planned file: `15-collections.md`
+Planned file: `16-collections.md`
 
 Planned scope:
 
@@ -324,9 +364,9 @@ Planned scope:
 - Inference and preservation of cardinality, domain, ordering and capabilities.
 - Snapshots and observable semantics of collection iteration.
 
-## 16. Dictionaries
+## 17. Dictionaries
 
-Planned file: `16-dictionaries.md`
+Planned file: `17-dictionaries.md`
 
 Planned scope:
 
@@ -335,9 +375,9 @@ Planned scope:
 - Indexing within assignable paths, partial write-back on associated values and treatment of missing keys without confusing partial update with complete insertion.
 - Branch-selection modes, fallback, dependencies, recursion and termination of functional dictionaries.
 
-## 17. Domains and intervals
+## 18. Domains and intervals
 
-Planned file: `17-domains-and-intervals.md`
+Planned file: `18-domains-and-intervals.md`
 
 Planned scope:
 
@@ -347,9 +387,9 @@ Planned scope:
 - Explicit materialisation of enumerable domains through `all D` when an operation must produce a collection.
 - Difference between consuming a domain, materialising its enumeration and producing a filtered collection, without implicit conversion of the latter to `Domain`.
 
-## 18. Magnitudes, units and points
+## 19. Magnitudes, units and points
 
-Planned file: `18-magnitudes.md`
+Planned file: `19-magnitudes.md`
 
 Planned scope:
 
@@ -358,9 +398,21 @@ Planned scope:
 - Coordinates, cycles, presentation, formats and component extraction.
 - Temporal magnitudes and calendar/localisation constructs that ultimately belong to the MUD 1.0 profile.
 
-## 19. Expressions
+## 20. Blocks and error recovery
 
-Chapter: [[19-expressions]].
+Planned file: `20-blocks-and-recovery.md`
+
+Planned scope:
+
+- Common outcomes of expression, value and effect blocks; an empty Error occurrence channel permits the normal result, while a nonempty channel is distinct from an ordinary Error or ActionReply value.
+- Protected scopes, rollback before recovery, propagation and observation boundaries.
+- Error-only `otherwise`, joint element-wise `on` bindings, optional filters and exclusive `then`/`raise` branches; occurrence identity and unhandled errors.
+- Refusal versus computing failure, wrapping through finite causes, and block-category-specific fallback/result obligations.
+- Interfaces with chapter 11's reply/error types, chapters 21/28's evaluation and chapters 29–33's completion; unresolved test observation belongs to Q-059.
+
+## 21. Expressions
+
+Chapter: [[21-expressions]].
 
 Defines:
 
@@ -368,10 +420,13 @@ Defines:
 - Resolution and elaboration of receivers, arguments and callable values.
 - `old`, `imagine`, `eventually`, selection, `take` and `all D` materialisation in expression contexts.
 - Purity, narrowing, expected-type propagation and evaluation failures.
+- Local declarations, ordered/shared preambles and positional binding patterns; stored annotation holes use the static inference contract in chapter 11.
 
-## 20. Quantifiers, aggregations and iteration
+[[#20. Blocks and error recovery]] owns the common block/error protocol; this chapter supplies expression-specific admission, normal results and evaluation obligations.
 
-Planned file: `20-quantifiers-and-iteration.md`
+## 22. Quantifiers, aggregations and iteration
+
+Planned file: `22-quantifiers-and-iteration.md`
 
 Planned scope:
 
@@ -379,9 +434,9 @@ Planned scope:
 - `for each`, iteration bindings, ordering, filters, steps and membership snapshots.
 - Direct consumption of finite domains when no collection is produced and termination requirements for every traversal.
 
-## 21. Boolean rules
+## 23. Boolean rules
 
-Planned file: `21-boolean-rules.md`
+Planned file: `23-boolean-rules.md`
 
 Planned scope:
 
@@ -390,9 +445,9 @@ Planned scope:
 - Boolean evaluation, dependencies, memoisation and treatment of non-effective declarations.
 - Integration with callable values of Boolean-rule type.
 
-## 22. Reactive rules
+## 24. Reactive rules
 
-Planned file: `22-reactive-rules.md`
+Planned file: `24-reactive-rules.md`
 
 Planned scope:
 
@@ -401,9 +456,9 @@ Planned scope:
 - Appearance, disappearance and temporal identity of bindings.
 - Use of a triggered reactive rule as a causal source for other triggers.
 
-## 23. `always` rules
+## 25. `always` rules
 
-Planned file: `23-always-rules.md`
+Planned file: `25-always-rules.md`
 
 Planned scope:
 
@@ -411,13 +466,14 @@ Planned scope:
 - Dependencies, suspension and the effect of a violation on resolution.
 - Use of `always` evaluation as a causal trigger source, separately from whether its condition is true or false.
 
-## 24. Public boundary: `action`, `look` and `message`
+## 26. Public boundary: `action`, `look` and `message`
 
-Planned file: `24-public-boundary.md`
+Planned file: `26-public-boundary.md`
 
 Planned scope:
 
 - Contracts visible between parts and to the host for `action`, `look` and `message`; `test` crosses parts only in a test context.
+- Normal/sub operation availability across authorised parts, host entry capability and the whole-file `part only` boundary.
 - Part-level authorisation through `uses`, transitive closure of the types needed to understand a contract and safe cross-part reflection without silent filtering.
 - Host API centred on the identity of public operations, not on a participant chosen as owner.
 - Generic callable signatures and static receiver/written-given selection, with no expected-result tie-break.
@@ -428,9 +484,30 @@ Planned scope:
 
 Canonical participant descriptors and frozen historical payloads survive later inactivity; host looks read confirmed state and tickets report eventual commitment or rollback.
 
-## 25. Effects
+Generalised host observation objects and exterior execution-result contracts remain Q-074. Native adapter boundaries are coordinated with [[#27. Foreign interoperability]], rather than inferred from a public operation's signature alone.
 
-Chapter: [[25-effects]]. Status: proposed.
+## 27. Foreign interoperability
+
+Planned file: `27-foreign-interoperability.md`
+
+Planned scope:
+
+- Embedding Mud through `look`/`action`/`message` and coordinating native fragments through `from`, under the same language contracts.
+- Native parsing and immutable value exports, captures, source maps and semantic tooling boundaries.
+- Conversion, wrappers, nominal identity, domains, collection shapes, capabilities and read/dependency reporting.
+- Checked/trusted purity, declared effects, private work, Error translation and exterior intentions relative to stable-root confirmation.
+- Adapter configuration and hosting/ABI negotiation under Q-069; conversion, borrowing, retained-reference and lifetime protocols under Q-070.
+- Transactional adapter guarantees and exterior execution results coordinated with Q-072/Q-074; no implicit reversibility or asynchronous source syntax.
+
+Rust, Python and Csharp are the initial planned adapters. SQL is a persistence-adapter candidate; no dialect, connection protocol, adapter alias scheme or implementation order is selected here.
+
+---
+
+# Part III — Dynamic semantics
+
+## 28. Effects
+
+Chapter: [[28-effects]]. Status: proposed.
 
 Defines private effect/statement judgments, semantic destinations and branch normalisation, staged numeric composition, collection/dictionary/lifecycle operations, finite traversal and call/native interfaces, recovery and the root/wave batch boundary. [[effects/README]] supplies Surface AST coverage, declarative traces and bounded executable witnesses. The chapter does not claim a complete scheduler or native ABI.
 
@@ -442,31 +519,35 @@ Scope:
 - Elaboration of reconstructible assignable paths and propagation of write-back through immutable values to their root storage.
 - Interaction between direct effects and internal calls sharing one causal resolution.
 
-## 26. State and expression evaluation
+[[#20. Blocks and error recovery]] owns the common protected-block protocol; this chapter supplies effect sequencing, rollback/recovery integration and batch-specific obligations.
 
-Planned file: `26-evaluation.md`
+## 29. State and expression evaluation
+
+Planned file: `29-evaluation.md`
 
 Planned scope:
 
 - Environments, stable/provisional read views, store and deterministic expression evaluation.
 - Reality levels as relative confirmation frontiers and isolated alternative branches.
+- Abstract evaluation configurations and transitions, with observation views and pending native work coordinated by Q-072 and Q-069/Q-070.
 - Evaluation of calculated fields, partial queries, expected types and failures.
 - Coherent views inherited by `look`, including the private delta visible at the call site.
 - Evaluation of callables and effective binding once their signature is resolved.
 
-## 27. Action requests and results
+## 30. Action requests and results
 
-Planned file: `27-action-requests.md`
+Planned file: `30-action-requests.md`
 
 Planned scope:
 
 - External request, binding and initial validation of a root `action`.
 - Sole action/subaction result ActionReply = Success | Refusal | Errors, with no additional domain result; patch-access interface pending, mandatory origins and final-condition BoolCheck traces.
 - Relationship among signature validation, guards, stabilisation, final constraints and external publication.
+- Explicit reply capture versus bare effect-call propagation, distinct from a block's error channel; test observation/aggregation remains Q-059.
 
-## 28. Root semantics
+## 31. Root semantics
 
-Planned file: `28-root.md`
+Planned file: `31-root.md`
 
 Planned scope:
 
@@ -475,9 +556,9 @@ Planned scope:
 - Consolidation, normalisation and conflicts among concurrent contributions.
 - State observed by each phase of a resolution, with consolidated tentative projections kept separate from confirmed storage.
 
-## 29. Wave-based causal semantics
+## 32. Wave-based causal semantics
 
-Planned file: `29-waves.md`
+Planned file: `32-waves.md`
 
 Planned scope:
 
@@ -486,10 +567,11 @@ Planned scope:
 - `message` occurrences and rule firings as consequences available to later waves.
 - Effect combination, causal work registration/discovery, readiness and stabilisation; invocation ownership distinct from shared physical waves.
 - Distinction between causal ordering and any reproducible technical ordering within a wave.
+- Causal attribution, discovery barriers, readiness and completion pseudocode with reviewed traces; the complete algorithm remains Q-072.
 
-## 30. Constraints, `after` and `old`
+## 33. Constraints, `after` and `old`
 
-Planned file: `30-final-constraints.md`
+Planned file: `33-final-constraints.md`
 
 Planned scope:
 
@@ -498,9 +580,9 @@ Planned scope:
 - Contextual semantics of `old`, including the difference between actions, tests and reactive rules.
 - Relative inner confirmation and automatic incorporation; one atomic stable-root confirmation after owned completion, root/wave checkpoints and after; containing-level and protected-scope rollback.
 
-## 31. Conflicts, cycles and stabilisation
+## 34. Conflicts, cycles and stabilisation
 
-Planned file: `31-conflicts-and-stabilisation.md`
+Planned file: `34-conflicts-and-stabilisation.md`
 
 Planned scope:
 
@@ -509,9 +591,9 @@ Planned scope:
 - Purely causal message/firing cycles that may keep consequences pending even without state change.
 - Semantic stabilisation condition and separation from technical implementation limits.
 
-## 32. Runtime creation, destruction and identity
+## 35. Runtime creation, destruction and identity
 
-Planned file: `32-runtime-lifecycle.md`
+Planned file: `35-runtime-lifecycle.md`
 
 Planned scope:
 
@@ -520,9 +602,9 @@ Planned scope:
 - Latent storage of suspended foreign state, effective projection, dependency suspension and restoration.
 - Appearance and disappearance of activity-dependent bindings.
 
-## 33. Randomness
+## 36. Randomness
 
-Planned file: `33-randomness.md`
+Planned file: `36-randomness.md`
 
 Planned scope:
 
@@ -530,13 +612,27 @@ Planned scope:
 - Snapshot caches, randomness in expressions/effects and its relationship to rollback.
 - Conditions under which an apparently random operation simplifies to a deterministic choice.
 
+## 37. Textual patches and reproduction
+
+Planned file: `37-patches-and-reproduction.md`
+
+Planned scope:
+
+- Readable serialisable records of successfully incorporated changes, with automatic relative incorporation and no duplicate application caused by observation.
+- Semantic contents, originating identities, dependencies/preconditions, generations, joint contributions and destination compatibility.
+- ActionReply/Success access, textual grammar, format compatibility and round-trip cases under Q-073; no source Patch type, Success component or mandatory disk file is assumed.
+- Validated transition reconstruction versus programme re-execution, including exterior inputs, randomness, failed attempts and irreversible-operation limits.
+- Provisional host observations and prepared exterior intentions coordinated with Q-074; ticket confirmation is distinct from successful exterior execution.
+
+Derive the patch contract from the completed causal algorithm in Q-072. Physical journals and the later semantic representation do not determine its schema. Recording defaults and retention remain pending.
+
 ---
 
 # Part IV — Advanced semantic analyses
 
-## 34. Semantic graph
+## 38. Semantic graph
 
-Planned file: `34-semantic-graph.md`
+Planned file: `38-semantic-graph.md`
 
 Planned scope:
 
@@ -544,19 +640,20 @@ Planned scope:
 - Reads, writes, dependencies, binding patterns and stochastic dependencies.
 - Reconstruction criteria from the programme and relation to the Nominal HIR, without turning the latter into a prematurely semantic graph.
 
-## 35. Speculative query `imagine`
+## 39. Speculative query `imagine`
 
-Planned file: `35-imagine.md`
+Planned file: `39-imagine.md`
 
 Planned scope:
 
-- Construction and disposal of the speculative world.
+- Construction and unconditional disposal of an isolated alternative reality branch, distinct from a nested invocation's confirmation level.
 - ActionReply results, isolation and unconditional discard, without implicit Bool conversion.
+- Relative Success inside the branch, without incorporation into the stable root or speculative host publication.
 - Acyclicity/admissibility conditions and reproducibility of randomness.
 
-## 36. Reachability `eventually`
+## 40. Reachability `eventually`
 
-Planned file: `36-eventually.md`
+Planned file: `40-eventually.md`
 
 Planned scope:
 
@@ -564,9 +661,9 @@ Planned scope:
 - Randomness semantics and state equivalence/canonicalisation criteria.
 - Search strategies only insofar as they form part of normative meaning.
 
-## 37. Finiteness, enumerability and relevant state
+## 41. Finiteness, enumerability and relevant state
 
-Planned file: `37-finiteness-and-enumerability.md`
+Planned file: `41-finiteness-and-enumerability.md`
 
 Planned scope:
 
@@ -574,9 +671,9 @@ Planned scope:
 - Finite-world profiles, relevant state and state canonicalisation.
 - Sufficient conditions for exhaustive analysis and constructs requiring enumerability.
 
-## 38. Termination and decidability
+## 42. Termination and decidability
 
-Planned file: `38-termination.md`
+Planned file: `42-termination.md`
 
 Planned scope:
 
@@ -584,9 +681,9 @@ Planned scope:
 - Conservative analyses and the boundary between static rejection, runtime failure and undecidability.
 - Decidable or semi-decidable properties of advanced constructs.
 
-## 39. Metatheoretic properties
+## 43. Metatheoretic properties
 
-Planned file: `39-properties.md`
+Planned file: `43-properties.md`
 
 Planned scope:
 
@@ -598,19 +695,19 @@ Planned scope:
 
 # Part V — Conformance and appendices
 
-## 40. Diagnostics
+## 44. Diagnostics
 
-Planned file: `40-diagnostics.md`
+Planned file: `44-diagnostics.md`
 
 Planned scope:
 
 - Categories, codes, locations and related anchors.
 - Mandatory diagnostics versus drafting freedom.
-- Error recovery and relationship between static and dynamic diagnostics.
+- Parser/tooling recovery and the relationship between static and dynamic diagnostics; language-level block recovery belongs to [[#20. Blocks and error recovery]].
 
-## 41. Later semantic representation
+## 45. Later semantic representation
 
-Planned file: `41-ir.md`
+Planned file: `45-ir.md`
 
 Planned scope:
 
@@ -620,19 +717,22 @@ Planned scope:
 
 No ASDL/JSON schema, concrete node or edge names, schema version or storage-versus-reconstruction policy is currently assumed. These details will be fixed only when typing and elaboration surfaces make them justifiable.
 
-## 42. Implementation conformance
+The representation question remains Q-009. A textual patch records incorporated changes under [[#37. Textual patches and reproduction]]; it does not define this compiler representation.
 
-Planned file: `42-conformance.md`
+## 46. Implementation conformance
+
+Planned file: `46-conformance.md`
 
 Planned scope:
 
 - Implementation profiles and each one's requirements.
 - Determinism, version declaration, optional features and conforming materialisation.
 - Relationship between frontend, runtime, analysis and normative tooling conformance.
+- Applicable host, adapter, package and library contract obligations, without requiring every implementation to use the reference backend.
 
-## 43. Declarative tests
+## 47. Declarative tests
 
-Planned file: `43-declarative-tests.md`
+Planned file: `47-declarative-tests.md`
 
 Planned scope:
 
@@ -640,16 +740,18 @@ Planned scope:
 - Static transitive closure of reachable tests and union of **their own** `start with` contributions; ordinary part activation is not part of a test's initial world.
 - Prior materialisation/stabilisation, `then`, `after`, `old`, diagnostics and executor results.
 - Test visibility between parts exclusively in a test context.
+- ActionReply observation, assertion/aggregation and protected-scope observation lifetime, pending Q-059.
 
-## 44. Conformance suite
+## 48. Conformance suite
 
-Planned file: `44-conformance-suite.md`
+Planned file: `48-conformance-suite.md`
 
 Planned scope:
 
 - Valid and invalid cases, diagnostics and normative regressions.
 - Current normative mechanical outputs to compare at each phase.
 - Transitions, traces and observable properties needed to contrast implementations.
+- Nested relative confirmation, parent rollback, isolated branches, host ticket transitions, adapter failures and patch round-trips under their applicable specified contracts.
 
 The corpus will live in:
 
@@ -664,38 +766,39 @@ conformance/
 
 Declarative tests written by a user are part of MUD, but do not replace this suite: the conformance suite checks complete language implementations.
 
-## 45. Consolidated grammar
+## 49. Consolidated grammar
 
-Planned file: `45-consolidated-grammar.md`
+Planned file: `49-consolidated-grammar.md`
 
 Normative appendix generated or verified against `grammar/mud.ebnf`.
 
-## 46. Reserved-word catalogue
+## 50. Reserved-word catalogue
 
-Planned file: `46-reserved-words.md`
+Planned file: `50-reserved-words.md`
 
 Normative list and classification as reserved or contextual words, derived from the current lexical grammar.
 
-## 47. End-to-end examples
+## 51. End-to-end examples
 
-Planned file: `47-end-to-end-examples.md`
+Planned file: `51-end-to-end-examples.md`
 
 Informative examples built only from rules already specified. They introduce no new behaviour.
 
-## 48. Compatibility and migrations
+## 52. Compatibility and migrations
 
-Planned file: `48-compatibility.md`
+Planned file: `52-compatibility.md`
 
 Planned scope:
 
 - Compatible and incompatible language changes.
 - Anchor evolution and programme migration.
 - Compatibility of serialised normative artefacts where an applicable serialisation contract exists.
+- Separate language, descriptor/distribution, adapter-protocol and patch-format compatibility obligations; their concrete version schemes are specified only by the corresponding contracts.
 - Deprecation of syntax and version declarations.
 
-## 49. Normative-rule index
+## 53. Normative-rule index
 
-Planned file: `49-normative-index.md`
+Planned file: `53-normative-index.md`
 
 Generated index of requirements with stable identifiers, for example:
 
@@ -712,9 +815,19 @@ MUD-TEST-003
 
 ---
 
+# Standard-library contracts
+
+Planned location: `libraries/`
+
+Plan an included base and installable official extensions. Inventory broad capability contracts and representative Mud uses before detailed implementations, using [[../notes/standard-library-design|the library design catalogue]] as non-normative design material.
+
+For each selected API, specify types/generic parameters, cardinalities, capabilities, purity/read dependencies, effects, errors, determinism and applicable confirmation/reproduction guarantees. Library wrappers reuse the language's collection, numeric, callable and effect contracts. Candidate themes do not become mandatory APIs merely by appearing in the catalogue.
+
+Native implementations and runtime integration follow the completed language/adapter contracts. Asynchronous I/O APIs depend on causal execution and exterior protocols; library wrappers cannot implicitly select scheduling syntax or transaction guarantees.
+
 # Related but separate specifications
 
-These documents are not part of the language definition:
+Planned tooling documents are separate from the language and library contracts:
 
 ```text
 tooling/
@@ -723,11 +836,16 @@ tooling/
 ├── editor-support.md
 ├── semantic-operator.md
 ├── git-protocol.md
-├── typescript-materialisation.md
+├── rust-backend.md
+├── interactive-environment.md
 └── plugin-codex.md
 ```
 
 This separation prevents an architectural decision from accidentally becoming a MUD rule.
+
+The reference compiler and runtime use Rust and initially generate Rust. C and TypeScript are possible alternative destinations without near-term implementation commitment. Backend architecture does not impose an implementation language on conformance.
+
+An interactive model environment is a considered expansion. Entering an expression or operation requests evaluation/execution; no separate `:run` command is planned. Loading, sessions, persistence and command syntax are not designed here. Compiler, runtime and library implementation follow the complete-formalisation gate.
 
 ## Verifiable syntax artefacts
 
@@ -785,20 +903,15 @@ Numerical order is the final reading order, not the strict writing order. Work p
 7. Add conformance tests.
 8. Review dependencies and open questions.
 
-Recommended first cycle:
+## Current drafting priorities
 
-```text
-thing
-→ basic fields
-→ Boolean rule
-→ action
-→ look
-→ state
-→ message
-→ Success/Refusal/Errors
-```
+1. Formalise the causal runtime across chapters 29–34: abstract state, reality levels/branches, invocation identities, observation views, causal attribution/discovery, readiness, wave advancement, completion and incorporation/disposal. Close Q-072 through pseudocode and contrasting traces, not diagrams alone. Existing effect algebra and relative-confirmation rules constrain this work; asynchronous source syntax and concurrent exterior roots are not selected implicitly.
+2. In parallel, complete independent static construct chapters among 12–26, including things, aliases, families, collections, dictionaries, quantifiers and Boolean rules. Resolve each chapter's actual pending questions before publication. Reactive/always rules and host publication must coordinate their final execution contracts with the causal algorithm.
+3. After the causal algorithm, specify textual patches/reproduction under Q-073 and additional host observation/exterior execution contracts under Q-074. Coordinate native hosting, conversion and lifetime work with Q-069/Q-070.
+4. Develop world/dependency configuration under Q-071 with the adapter boundary. Its descriptor/distribution work may advance independently where possible; runtime/recording settings wait for the contracts they expose. Inventory library contracts broadly, while asynchronous and effectful APIs wait for their required runtime/exterior guarantees.
+5. Complete lifecycle, randomness, advanced analyses, diagnostics, applicable library/adapter contracts and end-to-end conformance evidence. Justify the later semantic representation from developed typing/elaboration under Q-009. Publish chapters through the document lifecycle and finish the complete specification before compiler/runtime/library implementation.
 
-This allows the complete language to be formalised progressively without starting implementation or postponing every check until the end.
+Shared block/recovery formalisation accompanies the affected expression, effect and completion units rather than waiting until diagnostics. Mathematical chapters 03/04 supply common foundations; each operational chapter defines its own state and transitions without duplicating the world model. Examples, mechanical witnesses and iterative dependency reviews accompany every unit.
 
 ## “Complete specification” criterion
 
@@ -814,3 +927,4 @@ MUD 1.0 will be formally specified when:
 8. Promised properties are proved or delimited by explicit hypotheses.
 9. End-to-end examples do not depend on implicit behaviour.
 10. An implementation can objectively declare its degree of conformance.
+11. Every world/package, adapter, library and patch feature included in the target profile has an explicit applicable contract and conformance evidence; deferred features and unselected protocols are identified without presenting design examples as accepted schemas.

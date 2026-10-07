@@ -27,7 +27,7 @@ affects:
 
 - Modifies: [[ADR-017-everything-type-well-built-has-default-value|D-017]], [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-037-fields-and-declarative-domains|D-037]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-054-canonical-definitions-and-initial-activation|D-054]], [[ADR-061-non-accepted-results-and-text-templates|D-061]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-081-collection-filtering-take-and-indexing|D-081]], [[ADR-083-unitless-base-quantities|D-083]] and [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]].
 - Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]], [[ADR-052-pipelines-renderers-and-conformance|D-052]] and [[ADR-053-semantic-operator-and-authoring-flow|D-053]].
-- Affected documents: chapters 05 to 09, future chapters 10 to 20, 24, 26, 32, 34 and 38, grammar, syntax models, diagnostics and semantic operations.
+- Affected documents: chapters 05 to 10, future chapters 11 to 22, 26, 29, 35, 38 and 42, grammar, syntax models, diagnostics and semantic operations.
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Context

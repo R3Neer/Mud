@@ -44,4 +44,4 @@ Cover joint subtype binding, overlapping roles, equal-valued occurrence multipli
 
 ## Integration review
 
-The grammar, CST catalogue, coverage, AST conversion and developed grammar/math surfaces agree. Handler names remain local nominal symbols; selection and result compatibility occur after nominal resolution. Chapter 25 defines the finite operational effect and recovery boundary; exhaustive runtime error taxonomy remains Q-007. Neither claims an adapter ABI or executor implementation.
+The grammar, CST catalogue, coverage, AST conversion and developed grammar/math surfaces agree. Handler names remain local nominal symbols; selection and result compatibility occur after nominal resolution. Chapter 28 defines the finite operational effect and recovery boundary; exhaustive runtime error taxonomy remains Q-007. Neither claims an adapter ABI or executor implementation.

@@ -36,7 +36,7 @@ Two calls to Stats on different receivers have one produced type. Stats and Summ
 
 ## Integration review
 
-Existing look/AST descriptions and the roadmap distinguish static produced identity from syntax. The names chapter retains no public anchor for interim results; existing nominal references identify their producer. The nominal HIR needs no runtime type or join node. Chapter 10 develops the static inference and proof contract; an executable typechecker remains unimplemented.
+Existing look/AST descriptions and the roadmap distinguish static produced identity from syntax. The names chapter retains no public anchor for interim results; existing nominal references identify their producer. The nominal HIR needs no runtime type or join node. Chapter 11 develops the static inference and proof contract; an executable typechecker remains unimplemented.
 
 ## Amendment provenance
 

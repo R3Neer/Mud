@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[specification/19-expressions]]"
+  - "[[specification/21-expressions]]"
 ---
 
 # ADR-124 — Expression and block typing coverage
@@ -18,7 +18,7 @@ The static formalisation needs a contract for each existing expression construct
 
 ## Decision
 
-Chapter 19 defines synthesis/checking for literals, products, access/reflection, calls, numeric lifting, collection/dictionary algebra, domains, finite traversal, temporal/random/speculative forms and expression/value/effect blocks. It incorporates the existing per-occurrence conjunctive otherwise on, then or raise recovery and normal-result separation from Error collections. Refusal remains outside error recovery.
+Chapter 21 defines synthesis/checking for literals, products, access/reflection, calls, numeric lifting, collection/dictionary algebra, domains, finite traversal, temporal/random/speculative forms and expression/value/effect blocks. It incorporates the existing per-occurrence conjunctive otherwise on, then or raise recovery and normal-result separation from Error collections. Refusal remains outside error recovery.
 
 Coverage maps every Surface AST expression constructor to a chapter section and a declarative example. Finite derivation witnesses are mechanically evaluated where their restricted evidence language applies. Other fragments describe obligations; they are not executable compiler tests. Open numeric, binary64, pruning and termination questions retain their explicit scope and no overload is invented to conceal them.
 

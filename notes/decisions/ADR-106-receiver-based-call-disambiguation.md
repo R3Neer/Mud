@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "chapter 09, participant calls, chapter 07, Surface AST phase boundary, CST-to-AST explanation, Nominal HIR, validators and decision index"
+  - "chapter 10, participant calls, chapter 08, Surface AST phase boundary, CST-to-AST explanation, Nominal HIR, validators and decision index"
 ---
 
 # ADR-106 — Receiver-based call disambiguation
@@ -21,7 +21,7 @@ Independent MUD paths may define operations with the same short name for unrelat
 
 ## Decision
 
-MUD-NAME-007 in [[specification/09-names-and-anchors#Receiver-call selection|chapter 09]] defines the complete contract. In a call with explicit receivers, all homonymous nominal callables governed by `for` at the first non-empty lookup level may be considered. They may be actions, subactions, Boolean rules, looks or sublooks. Exactly one must remain compatible with the static receivers, including role binding, collection shape, mutation capabilities and written given arguments. Candidate-local generic inference cannot use the expected result to choose a declaration.
+MUD-NAME-007 in [[specification/10-names-and-anchors#Receiver-call selection|chapter 10]] defines the complete contract. In a call with explicit receivers, all homonymous nominal callables governed by `for` at the first non-empty lookup level may be considered. They may be actions, subactions, Boolean rules, looks or sublooks. Exactly one must remain compatible with the static receivers, including role binding, collection shape, mutation capabilities and written given arguments. Candidate-local generic inference cannot use the expected result to choose a declaration.
 
 Only statically established incompatibility excludes a candidate. Domain predicates and runtime values do not select an operation; ordinary unresolved obligations still apply after selection. Flow narrowing contributes static receiver information, but a union never triggers runtime dispatch between declarations. Written `given` names/types may select a target; omitted defaults as evidence, expected results and action conditions cannot. There is no most-specific preference, path-distance preference or import-order tie-break. Lookup never falls through because all candidates at an earlier level are incompatible.
 
@@ -33,8 +33,8 @@ The nominal HIR represents bindings using the sum `nominal_reference`: `Resolved
 
 ## Integration review
 
-- Chapter 09 incorporates the exception, selection failures, examples, counterexamples, phase boundaries and graph invariants in their canonical locations.
-- Chapters 07 and 08 and the CST-to-AST explanation preserve existing syntax while explaining deferred selection. EBNF, CST kinds, coverage and Surface AST constructors require no structural change.
+- Chapter 10 incorporates the exception, selection failures, examples, counterexamples, phase boundaries and graph invariants in their canonical locations.
+- Chapters 08 and 09 and the CST-to-AST explanation preserve existing syntax while explaining deferred selection. EBNF, CST kinds, coverage and Surface AST constructors require no structural change.
 - `names/mud-nominal-hir.asdl`, its README and the syntax validator incorporate the pending nominal lookup contract atomically.
 - Amended current ADR bodies describe the resulting state and retain reciprocal provenance links. The decision index is regenerated.
 - No chapter is promoted to `current`; their unrelated publication obligations and active questions remain in force. No temporary document or new open question is required.

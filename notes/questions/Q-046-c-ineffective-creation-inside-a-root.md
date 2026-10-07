@@ -28,5 +28,5 @@ Resolved by [[notes/decisions/ADR-125-instruction-local-lifecycle-no-ops|D-125]]
 
 ## Closure evidence
 
-- C1: MUD-LIFE-001 in [[specification/04-mathematical-model]] and the lifecycle effect contract in [[specification/07-concrete-grammar]] specify successful no-ops; D-125 contrasting cases cover redundant create/destroy and continued Bob creation.
+- C1: MUD-LIFE-001 in [[specification/04-mathematical-model]] and the lifecycle effect contract in [[specification/08-concrete-grammar]] specify successful no-ops; D-125 contrasting cases cover redundant create/destroy and continued Bob creation.
 - C2: D-125 contrasting cases cover repeated create, repeated destroy and destroy/create; MUD-LIFE-001 applies preceding effects/internal calls and preserves validation and concurrent composition.

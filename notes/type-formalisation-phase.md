@@ -9,9 +9,9 @@ tags:
 
 ## Completed scope
 
-Chapters 10, 14 and 19 develop the accepted static contracts: finite type graphs, recursive productivity, nominal/representation compatibility, variance, checking and inference, schema initialization, root and inner permissions, block modes, effect/cardinality obligations, expression families, recovery and abstract foreign contracts. D-122 through D-124 record integration. Q-056, Q-006 and Q-021 close their remaining formal proof/minimum-analysis boundaries with rules and contrasting evidence.
+Chapters 11, 15 and 21 develop the accepted static contracts: finite type graphs, recursive productivity, nominal/representation compatibility, variance, checking and inference, schema initialization, root and inner permissions, block modes, effect/cardinality obligations, expression families, recovery and abstract foreign contracts. D-122 through D-124 record integration. Q-056, Q-006 and Q-021 close their remaining formal proof/minimum-analysis boundaries with rules and contrasting evidence.
 
-The nominal HIR was reviewed with chapter 09. It retains only names, scopes, symbols, candidate sets and nominal relations; no type or effect fields were added. Existing grammar and AST forms are reused.
+The nominal HIR was reviewed with chapter 10. It retains only names, scopes, symbols, candidate sets and nominal relations; no type or effect fields were added. Existing grammar and AST forms are reused.
 
 ## Validation limits
 

@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-056"
 affects:
-  - "future `10-type-system.md`, future `12-aliases.md`, future `19-expressions.md`"
+  - "future `11-type-system.md`, future `13-aliases.md`, future `21-expressions.md`"
 ---
 # ADR-032 — Contextual construction and nominal casting of aliases
 
@@ -21,7 +21,7 @@ affects:
 
 - Read more: [[notes/decisions/ADR-030-explicit-quantitative-conversion-using-to|D-030]]
 - Related question: Q-056
-- Documents affected: future `10-type-system.md`, future `12-aliases.md`, future `19-expressions.md`
+- Documents affected: future `11-type-system.md`, future `13-aliases.md`, future `21-expressions.md`
 
 ## Context
 

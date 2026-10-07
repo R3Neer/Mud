@@ -46,7 +46,7 @@ Tentative message occurrences participate in later causal waves. Shared normal m
 
 ## Non-decisions
 
-Chapter 25 defines operational effect-family and finite batch contracts. This journal decision does not specify memoisation, budgets and diagnostics for imagine (Q-035). Journal representation, in-memory overlays, persistence, compression and resource management are reference-runtime implementation choices. No future semantic IR or nominal-HIR fields are introduced.
+Chapter 28 defines operational effect-family and finite batch contracts. This journal decision does not specify memoisation, budgets and diagnostics for imagine (Q-035). Journal representation, in-memory overlays, persistence, compression and resource management are reference-runtime implementation choices. No future semantic IR or nominal-HIR fields are introduced.
 
 ## Verification scenarios
 

@@ -60,7 +60,7 @@ The chapter remains a draft. The operational chapters must define complete judgm
 
 ## Canonical programme and identity
 
-Let $P$ be a programme, $\mathcal D_P$ its catalogue of declaration identities, and $\operatorname{Def}_P(d)$ the canonical definition of $d\in\mathcal D_P$. The catalogue includes definitions that are currently inactive. Name resolution and anchors identifying these declarations are defined in [[09-names-and-anchors]]; presentation metadata does not supply identity.
+Let $P$ be a programme, $\mathcal D_P$ its catalogue of declaration identities, and $\operatorname{Def}_P(d)$ the canonical definition of $d\in\mathcal D_P$. The catalogue includes definitions that are currently inactive. Name resolution and anchors identifying these declarations are defined in [[10-names-and-anchors]]; presentation metadata does not supply identity.
 
 Every `thing` has one top-level canonical definition, including its abstract/concrete category, direct predecessors and body. A concrete `thing` denotes one particular thing with its own state and may also be an ancestor. An abstract `thing` belongs to the same nominal domain but has no own concrete payload. MUD does not turn these declarations into classes with separately created instances.
 
@@ -76,11 +76,11 @@ Consequently `is` is a partial order. `as` specifies direct specialisation, whil
 
 ## Values and nominal aliases
 
-Let $\mathcal V_P$ denote the semantic values admitted by the programme's type contracts. This symbol does not imply that all such values can be enumerated. `thing` values compare by identity; alias values are finite immutable structural values. The equality and collection contracts are defined in [[10-type-system]].
+Let $\mathcal V_P$ denote the semantic values admitted by the programme's type contracts. This symbol does not imply that all such values can be enumerated. `thing` values compare by identity; alias values are finite immutable structural values. The equality and collection contracts are defined in [[11-type-system]].
 
 Aliases form a separate nominal partial order whose nodes are value types, not activatable identities. Abstract aliases are inhabited through concrete descendants. Statically admitted generic applications have a proven finite closure. Productive recursion describes that finite type graph with finite individual values; it does not introduce cyclic value identity or imply finite enumeration.
 
-A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Part visibility and permission to specialise follow [[09-names-and-anchors]].
+A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Part visibility and permission to specialise follow [[10-names-and-anchors]].
 
 ## Activation and materialisation
 
@@ -117,7 +117,7 @@ For a concrete owner $d$, let $\operatorname{Fields}_P(d)$ be its canonical stor
 
 For an existing materialisation generation $g$ of $d$, write $\operatorname{store}_W(d,g,f)$ for the stored value at field origin $f\in\operatorname{Fields}_P(d)$. This is a partial selector over owned storage, not a declaration of a physical memory layout. A field can have stored data while it is unavailable in the effective projection.
 
-Every field denotes a collection. Outer membership mutability and immediate-member capability are independent, including at cardinality `[1]`. Runtime changes values, writable membership, relations and activity within their permissions. [[14-fields-and-mutability]] defines schema, initialisation and capability contracts.
+Every field denotes a collection. Outer membership mutability and immediate-member capability are independent, including at cardinality `[1]`. Runtime changes values, writable membership, relations and activity within their permissions. [[15-fields-and-mutability]] defines schema, initialisation and capability contracts.
 
 Stored collection membership persists until an authorised change or an applicable lifecycle operation. Derived fields are recalculated from the current evaluation snapshot; they have no independently writable membership. An inner `[mut]` contract requires authority from the source and preserves it through identity-preserving transformations. It affects immediate members, not nested membership or unrestricted external mutation.
 
@@ -143,15 +143,15 @@ Each invocation instance owns causal work, not whole waves; a reality's wave may
 
 `always` invariants are checked after the consolidated root and after every consolidated wave. A false condition produces `AlwaysRefusal`; an unsuccessful evaluation produces Error occurrences. Later waves cannot repair a failed checkpoint. Hard-dependent rules are checked when effective again.
 
-Message occurrence data consists of identity, declaration, canonical participant bindings, birth view/wave, frozen payload and rollback-scope provenance. For each externally published occurrence $o$, its host ticket has $s(o)\in\{\mathrm{Waiting},\mathrm{Kept},\mathrm{Dropped}\}$. The only transitions are Waiting to Kept after surviving incorporation into the stable root, or Waiting to Dropped after disposal of a containing scope. Relative inner confirmation leaves Waiting. Kept and Dropped are terminal. A consolidated validated wave may publish Waiting without changing $W_c$; these observations and the confirmed world are distinct. [[07-concrete-grammar]] defines message payload, publication and read-only subscription contracts. Tickets remain host-only; Q-074 retains additional ticket-bearing observation objects and exterior-intention execution results. Confirmation of an intention is not successful material delivery.
+Message occurrence data consists of identity, declaration, canonical participant bindings, birth view/wave, frozen payload and rollback-scope provenance. For each externally published occurrence $o$, its host ticket has $s(o)\in\{\mathrm{Waiting},\mathrm{Kept},\mathrm{Dropped}\}$. The only transitions are Waiting to Kept after surviving incorporation into the stable root, or Waiting to Dropped after disposal of a containing scope. Relative inner confirmation leaves Waiting. Kept and Dropped are terminal. A consolidated validated wave may publish Waiting without changing $W_c$; these observations and the confirmed world are distinct. [[08-concrete-grammar]] defines message payload, publication and read-only subscription contracts. Tickets remain host-only; Q-074 retains additional ticket-bearing observation objects and exterior-intention execution results. Confirmation of an intention is not successful material delivery.
 
 `imagine` executes the invocation protocol in an isolated alternative branch, returns its `ActionReply` including relative Success, and always discards that branch's changes. It leaves the confirmed world, queues, logs, randomness and resolution identity unchanged.
 
-Error occurrences belong to the resolution's error channel, not automatically to world storage. Block recovery rolls back its protected failed work before running handlers. Successful recovery remains tentative; unhandled or newly raised errors propagate. Refusal is not an Error occurrence and is not selected by `otherwise`. Selection, occurrence multiplicity, handler composition and ordinary observation of replies are defined in [[19-expressions]].
+Error occurrences belong to the resolution's error channel, not automatically to world storage. Block recovery rolls back its protected failed work before running handlers. Successful recovery remains tentative; unhandled or newly raised errors propagate. Refusal is not an Error occurrence and is not selected by `otherwise`. Selection, occurrence multiplicity, handler composition and ordinary observation of replies are defined in [[21-expressions]].
 
 ## Initial and test worlds
 
-Each part contributes at most one `start with`: a static expression yielding an activatable declaration or a flat finite collection of `thing | rule`. It permits no instructions, effects or nested collections. An omitted contribution is empty. Contributions are unordered, deduplicated and materialised jointly before initial stabilisation, as defined in [[07-concrete-grammar]].
+Each part contributes at most one `start with`: a static expression yielding an activatable declaration or a flat finite collection of `thing | rule`. It permits no instructions, effects or nested collections. An omitted contribution is empty. Contributions are unordered, deduplicated and materialised jointly before initial stabilisation, as defined in [[08-concrete-grammar]].
 
 Every test constructs a fresh isolated world. The static transitive closure of reachable tests supplies the combined initial contributions before the test root. Tests are not world declarations or the host's public API; cross-part test visibility exists only in the test context. The test world and all its outputs are discarded at completion.
 
@@ -159,10 +159,10 @@ Every test constructs a fresh isolated world. The static transitive closure of r
 
 Identity and effective nominal type are independent of presentation. `~name` has type `Name`; when supported, its default comes from the unqualified nominal identifier and may be configured in the declaration or model. Distinct identities may share a presentation name. Metadata is not inherited.
 
-All postfix `~` access is read-only during execution. `~path`, `~anchor` and `~file` are intrinsic, nonconfigurable identity/provenance properties. Their supported categories and descriptor contracts are defined in [[09-names-and-anchors]] and [[19-expressions]].
+All postfix `~` access is read-only during execution. `~path`, `~anchor` and `~file` are intrinsic, nonconfigurable identity/provenance properties. Their supported categories and descriptor contracts are defined in [[10-names-and-anchors]] and [[21-expressions]].
 
 ## Boundary of the operational formalisation
 
-The objects above are a shared foundation, not a complete state tuple, scheduler, transition relation or serialisation format. Operational definitions must account for activation, generations, retained storage, effective projection and tentative ownership. [[25-effects]] supplies private effect judgments, recovery boundaries and root/wave batch consolidation. The remaining operational chapters must complete scheduler/evaluation and invocation protocols without changing that effect boundary.
+The objects above are a shared foundation, not a complete state tuple, scheduler, transition relation or serialisation format. Operational definitions must account for activation, generations, retained storage, effective projection and tentative ownership. [[28-effects]] supplies private effect judgments, recovery boundaries and root/wave batch consolidation. The remaining operational chapters must complete scheduler/evaluation and invocation protocols without changing that effect boundary.
 
 Lifecycle admission and reactive observation continuity are fixed by the contracts above. Complete lifecycle/observation and scheduler protocol judgments and their conformance traces remain to be formalised; a complete evaluator cannot be inferred from these invariants alone.

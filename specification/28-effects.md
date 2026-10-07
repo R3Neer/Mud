@@ -5,8 +5,8 @@ normative: true
 depends-on:
   - "[[03-notation]]"
   - "[[04-mathematical-model]]"
-  - "[[14-fields-and-mutability]]"
-  - "[[19-expressions]]"
+  - "[[15-fields-and-mutability]]"
+  - "[[21-expressions]]"
 questions:
   - Q-074
   - Q-073
@@ -46,13 +46,13 @@ decisions:
   - D-129
 ---
 
-# 25. Effects and batch consolidation
+# 28. Effects and batch consolidation
 
 ## Scope
 
-This chapter defines execution of statically admitted effect families over private projections and consolidation of finite branch contributions at root/wave boundaries. [[14-fields-and-mutability]] supplies authority and static proof obligations; [[19-expressions]] supplies expression evaluation contracts. A successful batch produces a tentative next view, not an independent commit.
+This chapter defines execution of statically admitted effect families over private projections and consolidation of finite branch contributions at root/wave boundaries. [[15-fields-and-mutability]] supplies authority and static proof obligations; [[21-expressions]] supplies expression evaluation contracts. A successful batch produces a tentative next view, not an independent commit.
 
-The judgment is parameterised by expression evaluation, the invocation completion protocol and checked/trusted adapter operations. It does not implement those interfaces, select a wave scheduler or add arithmetic overloads beyond [[19-expressions]]. Detailed Error categories remain Q-007; binary64 portability remains Q-058; oscillation detection remains Q-020; dynamic callable acyclicity remains Q-023; native hosting/conversion protocols remain Q-069/Q-070. None grants permission to change the effect laws below.
+The judgment is parameterised by expression evaluation, the invocation completion protocol and checked/trusted adapter operations. It does not implement those interfaces, select a wave scheduler or add arithmetic overloads beyond [[21-expressions]]. Detailed Error categories remain Q-007; binary64 portability remains Q-058; oscillation detection remains Q-020; dynamic callable acyclicity remains Q-023; native hosting/conversion protocols remain Q-069/Q-070. None grants permission to change the effect laws below.
 
 ## 1. Configurations and outcomes
 
@@ -105,7 +105,7 @@ The identities are $\Delta_k=0$, $P_k=Q_k=1$. Preserve the denominator as a divi
 
 Nat's additive bookkeeping retains signed pending quantities through private reads and consolidation stages. Its visible projection is nonnegative, and saturation does not overwrite the ledger. In a homogeneous additive sequence from $n$, a private read is $\max(0,n+\sum\delta_i)$; the completed additive batch uses the same total. Do not truncate a negative pending total between stages. Pure Nat subtraction still saturates immediately.
 
-Other arithmetic applies its established representation, rounding and validation rules. Money signatures and rounding follow [[19-expressions#4. Numeric, dimensional and Boolean operators]]; Rum portability remains separately constrained. In an exact arithmetic witness, one branch from 5 with *=2; +=3 yields 13; branches *=2; +=3 and *=3; +=4 yield 37. A +=2 and B *=3 still yield 21. An absolute replacement first removes that branch's overwritten updates before stages are numbered.
+Other arithmetic applies its established representation, rounding and validation rules. Money signatures and rounding follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]; Rum portability remains separately constrained. In an exact arithmetic witness, one branch from 5 with *=2; +=3 yields 13; branches *=2; +=3 and *=3; +=4 yield 37. A +=2 and B *=3 still yield 21. An absolute replacement first removes that branch's overwritten updates before stages are numbered.
 
 ## 5. Collections, add/remove and exact dictionaries
 
@@ -155,7 +155,7 @@ A protected block preserves its entry configuration. Refusal bypasses otherwise.
 
 Successful handler effects compose tentatively under ordinary authority. For value/expression recovery, equal compatible proposals agree and incompatible proposals fault. Unhandled or newly raised errors discard the recovery scope and propagate without reentering the same chain. Then and raise remain exclusive; there is no finally. Constructing an Error value alone does not raise it.
 
-Causal outputs/firings preserve occurrence identity, multiplicity and all initiating owners. Jointly caused consequences belong to the nearest common enclosing invocation. They are available to the appropriate later wave, not by immediate physical execution order. The immutable payload is fixed at birth; final participant activity does not reproject it. A shared normal message may publish its Waiting ticket only after its root/wave batch has passed consolidation and mandatory validation. Scope disposal marks published affected tickets Dropped; protected-block recovery does not resurrect them. [[07-concrete-grammar]] defines the host envelope and terminal confirmation contract.
+Causal outputs/firings preserve occurrence identity, multiplicity and all initiating owners. Jointly caused consequences belong to the nearest common enclosing invocation. They are available to the appropriate later wave, not by immediate physical execution order. The immutable payload is fixed at birth; final participant activity does not reproject it. A shared normal message may publish its Waiting ticket only after its root/wave batch has passed consolidation and mandatory validation. Scope disposal marks published affected tickets Dropped; protected-block recovery does not resurrect them. [[08-concrete-grammar]] defines the host envelope and terminal confirmation contract.
 
 ## 9. Root/wave batch judgment
 

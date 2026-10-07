@@ -36,4 +36,4 @@ Two callable alternatives naming their sole receiver `actor` permit that named b
 
 ## Integration review
 
-The callable grammar/AST already preserve receiver contracts and written role names. Names and anchors retain pending candidates until typing; variance and named admissibility are not stored in nominal HIR. The developed names chapter states the boundary; chapter 10 develops the type contract, while the complete public-boundary chapter remains planned.
+The callable grammar/AST already preserve receiver contracts and written role names. Names and anchors retain pending candidates until typing; variance and named admissibility are not stored in nominal HIR. The developed names chapter states the boundary; chapter 11 develops the type contract, while the complete public-boundary chapter remains planned.

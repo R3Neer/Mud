@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-056"
 affects:
-  - "[[specification/10-type-system]]"
+  - "[[specification/11-type-system]]"
 ---
 
 # ADR-122 — Finite type graphs and proof obligations
@@ -19,7 +19,7 @@ The author authorised development of the static formalisation from the accepted 
 
 ## Decision
 
-Chapter 10 defines finite normalised type graphs, least-fixed-point constructor productivity, separately witnessed domain inhabitation, finite canonical enumeration, read-only contract inclusion, nominal construction, representation equivalence, callable substitution and unambiguous synthesis/checking. A recursive pair alone proves nothing; representation comparison checks the complete finite relation and all local labels. A positive unique container requires enough distinct admissible witnesses, not merely an inhabited member constructor.
+Chapter 11 defines finite normalised type graphs, least-fixed-point constructor productivity, separately witnessed domain inhabitation, finite canonical enumeration, read-only contract inclusion, nominal construction, representation equivalence, callable substitution and unambiguous synthesis/checking. A recursive pair alone proves nothing; representation comparison checks the complete finite relation and all local labels. A positive unique container requires enough distinct admissible witnesses, not merely an inhabited member constructor.
 
 The mandatory proof basis consists of nominal ancestry, declared guarantees and established flow facts, normalised exact interval arithmetic, constructor rules and exhaustive finite witnessed cases. Arbitrary predicates need not be decidable. Unknown is not a discharged static obligation. Permitted runtime admission checks apply to a particular value, not universal callable substitution or canonical enumeration. This completes the remaining formal proof boundary of Q-056; it does not introduce universal domain-solving or termination algorithms.
 

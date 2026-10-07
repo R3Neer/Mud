@@ -119,7 +119,7 @@ class FiniteWitnessTests(unittest.TestCase):
     def test_losing_an_expression_or_rule_case_is_detected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for relative in ("10-type-system.md", "14-fields-and-mutability.md", "19-expressions.md",
+            for relative in ("11-type-system.md", "15-fields-and-mutability.md", "21-expressions.md",
                              "types/typing-cases.yaml", "types/expression-coverage.yaml",
                              "syntax/mud-surface-ast.asdl"):
                 target = root / "specification" / relative

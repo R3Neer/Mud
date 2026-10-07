@@ -7,11 +7,11 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[specification/10-type-system]]"
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/08-abstract-syntax]]"
-  - "[[specification/09-names-and-anchors]]"
-  - "[[specification/19-expressions]]"
+  - "[[specification/11-type-system]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/09-abstract-syntax]]"
+  - "[[specification/10-names-and-anchors]]"
+  - "[[specification/21-expressions]]"
 ---
 
 # ADR-134 — Static generic declarations and applications

@@ -8,7 +8,7 @@ status: proposed
 normative: true
 depends-on:
   - "[[03-notation]]"
-  - "[[09-names-and-anchors]]"
+  - "[[10-names-and-anchors]]"
 questions:
   - Q-073
   - Q-060
@@ -52,13 +52,13 @@ decisions:
   - D-130
 ---
 
-# 10. Type system
+# 11. Type system
 
 ## Scope and dependencies
 
-This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[14-fields-and-mutability]] defines place authority and effect obligations; [[19-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
+This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[19-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. The reflective TypeKind member catalogue remains Q-060; the descriptor typing rules here do not introduce members of that catalogue.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. The reflective TypeKind member catalogue remains Q-060; the descriptor typing rules here do not introduce members of that catalogue.
 
 ## 1. Environments and judgements
 
@@ -216,7 +216,7 @@ f_A\preceq f_B\quad D_A\subseteq D_B\quad
 \;\mathsf{T\text{-}ReadCollection}
 $$
 
-All premises are proved under $\Sigma;\Phi$. Guarantee strength $\succeq$ means the source supplies every target guarantee: keyed uniqueness implies whole-value uniqueness, which implies none; equal keyed criteria are compatible; order preserves the required criterion; authority may be forgotten but not created. No deep mutability is inferred. Outer writable-place invariance is defined in [[14-fields-and-mutability]].
+All premises are proved under $\Sigma;\Phi$. Guarantee strength $\succeq$ means the source supplies every target guarantee: keyed uniqueness implies whole-value uniqueness, which implies none; equal keyed criteria are compatible; order preserves the required criterion; authority may be forgotten but not created. No deep mutability is inferred. Outer writable-place invariance is defined in [[15-fields-and-mutability]].
 
 A source union is usable as $\sigma$ only when every alternative satisfies $\sigma$. A source fits a target union if it satisfies a target alternative; composite derivations may prove coverage without arbitrarily selecting a target for an ambiguous literal. Read-only products require matching component names/order and componentwise inclusion. Nominal membership still needs ancestry or contextual construction.
 
@@ -279,7 +279,7 @@ Here $\equiv$ means mutual complete-contract inclusion, not equality of source t
 > [!rule] MUD-TYPE-007 — Static signature names
 > Named receiver/argument binding requires identical unambiguous names at compatible static signature positions across all possible callable alternatives. Collections are not scanned at runtime to recover names. Positional binding or prior static narrowing may use an otherwise compatible erased contract. An action-shaped type containing a subaction does not obtain outer-root permission.
 
-Receiver-based nominal selection obeys [[09-names-and-anchors#Receiver-call selection]]. Only statically established incompatibility eliminates candidates; an unresolved domain/cardinality obligation does not select another declaration. Written given names and static contracts participate in candidate-local selection. Expected results, omitted defaults as argument evidence and guards cannot resolve nominal ambiguity; ordinary remaining admission obligations validate the selected declaration.
+Receiver-based nominal selection obeys [[10-names-and-anchors#Receiver-call selection]]. Only statically established incompatibility eliminates candidates; an unresolved domain/cardinality obligation does not select another declaration. Written given names and static contracts participate in candidate-local selection. Expected results, omitted defaults as argument evidence and guards cannot resolve nominal ambiguity; ordinary remaining admission obligations validate the selected declaration.
 
 ## 9. Checking, inference and narrowing
 
@@ -334,7 +334,7 @@ Success is a nominal alias supplied by successful action evaluation. The interfa
 
 Errors is a nominal alias of a nonempty Error collection; ActionReply is the union Success | Refusal | Errors. Producing an Error or obtaining an ActionReply containing Errors is ordinary value production. Entering a block error channel is a separate evaluation outcome. Every block has an Error collection channel allowing zero occurrences; its normal result is available only when that channel is empty.
 
-Otherwise roles bind only Error specialisations, conjunctively and by occurrences. A then recovery checks against the protected block's normal contract and permissions; raise checks one Error or a nonempty compatible Errors collection. Refusal is never an Error binding. [[19-expressions]] defines the block typing rules.
+Otherwise roles bind only Error specialisations, conjunctively and by occurrences. A then recovery checks against the protected block's normal contract and permissions; raise checks one Error or a nonempty compatible Errors collection. Refusal is never an Error binding. [[21-expressions]] defines the block typing rules.
 
 ## 12. Static acceptance and elaboration output
 

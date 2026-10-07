@@ -10,7 +10,7 @@ questions:
   - "Q-017"
   - "Q-061"
 affects:
-  - "future `14-fields-and-mutability.md`, future `17-domains-and-intervals.md`, future `30-final-constraints.md`"
+  - "future `15-fields-and-mutability.md`, future `18-domains-and-intervals.md`, future `33-final-constraints.md`"
 ---
 # ADR-037 — Fields and declarative domains
 
@@ -30,7 +30,7 @@ affects:
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 - Expanded by: [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]]
 - Related questions: Q-003, Q-017
-- Documents affected: future `14-fields-and-mutability.md`, future `17-domains-and-intervals.md`, future `30-final-constraints.md`
+- Documents affected: future `15-fields-and-mutability.md`, future `18-domains-and-intervals.md`, future `33-final-constraints.md`
 
 - Clarified by: [[ADR-130-acyclic-domain-evaluation|D-130]].
 

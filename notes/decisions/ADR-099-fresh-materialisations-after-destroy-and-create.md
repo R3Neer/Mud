@@ -13,7 +13,7 @@ questions:
 affects:
   - "`thing` lifecycle, materialisation, stored state, dependency suspension, runtime structure and reactive memory"
   - "D-021, D-041, D-054, D-058 and D-077"
-  - "chapter 04 and future chapters 11, 21 to 25 and 32"
+  - "chapter 04 and future chapters 12, 23 to 28 and 35"
 ---
 
 # ADR-099 — Fresh materialisations after `destroy` and `create`

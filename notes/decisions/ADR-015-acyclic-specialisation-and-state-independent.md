@@ -9,7 +9,7 @@ questions:
   - "Q-042"
   - "Q-043"
 affects:
-  - "[[specification/04-mathematical-model]], future `11-things.md`"
+  - "[[specification/04-mathematical-model]], future `12-things.md`"
 ---
 # ADR-015 — Acyclic specialisation and state independent
 
@@ -19,7 +19,7 @@ affects:
 - Updated: 28 July 2026 to use the terminology from D-025
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 - Questions: [[notes/questions/Q-042-e-specialisation-from-a-concrete-thing|Q-042]], [[notes/questions/Q-043-c-specialisation-cycles|Q-043]]
-- Documents concerned: [[specification/04-mathematical-model]], future `11-things.md`
+- Documents concerned: [[specification/04-mathematical-model]], future `12-things.md`
 
 ## Context
 

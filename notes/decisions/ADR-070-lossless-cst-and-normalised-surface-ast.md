@@ -129,7 +129,7 @@ The decision is embodied in:
 
 - `specification/syntax/cst-lossless.md`.
 - `specification/syntax/mud-syntax-kinds.yaml`.
-- `specification/08-abstract-syntax.md`.
+- `specification/09-abstract-syntax.md`.
 - `specification/syntax/mud-surface-ast.asdl`.
 - `specification/syntax/cst-to-surface-ast.md`.
 - `specification/syntax/syntax-coverage.yaml`.
@@ -170,8 +170,8 @@ Rejected because `action-call-effect ::= postfix-expression` requires resolving 
 
 ## Derived changes
 
-- `06-lexicon.md` must distinguish complete and significant streams.
-- `07-concrete-grammar.md` must state that parsing produces a CST.
-- `08-abstract-syntax.md` replaces the planned skeleton.
+- `07-lexicon.md` must distinguish complete and significant streams.
+- `08-concrete-grammar.md` must state that parsing produces a CST.
+- `09-abstract-syntax.md` replaces the planned skeleton.
 - READMEs must incorporate the new phase chain.
 - The numeric representation of magnitudes uses declared type syntax and is statically validated as numeric.

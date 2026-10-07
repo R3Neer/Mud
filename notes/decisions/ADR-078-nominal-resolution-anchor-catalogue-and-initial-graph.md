@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-014"
 affects:
-  - "chapter 09, surface AST, nominal HIR, nominal resolution, symbol table, anchors, diagnostics, LSP, nominal graph, later typing and elaboration"
+  - "chapter 10, surface AST, nominal HIR, nominal resolution, symbol table, anchors, diagnostics, LSP, nominal graph, later typing and elaboration"
 ---
 # ADR-078 — Nominal resolution, anchor catalogue and initial graph
 

@@ -74,7 +74,7 @@ Internal links should preferably use wikilinks:
 
 ```markdown
 [[03-notation|mathematical notation]]
-[[29-waves#Wave configuration]]
+[[32-waves#Wave configuration]]
 ```
 
 Each chapter must link to:
@@ -288,7 +288,7 @@ Every file generated must state this in its header and declare its source. The `
 Any grammatical change that affects the structure must update the corresponding CST catalogue, coverage, transformation and ASDL in the same commit.
 
 > [!rule] MUD-EDIT-004 — Propagation of nominal resolution
-> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, nominal visibility, qualification or specialisation must be reviewed in the same change `09-names-and-anchors.md` and `names/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
+> Any change that introduces, removes or modifies names, scopes, owners, bindings, nominal categories, anchors, nominal visibility, qualification or specialisation must be reviewed in the same change `10-names-and-anchors.md` and `names/mud-nominal-hir.asdl`. If it affects its contract, both surfaces and their validators must be updated atomically.
 
 review must at least check which symbols are created, in which scope they reside, which name resolves to them, what owner they have, whether they receive public anchor, and which relationships `Owns`, `Specializes` or `RefersTo` the resolution produces. A rule dependent on types, effects or elaboration is not added to the Nominal HIR in order to artificially satisfy this requirement.
 

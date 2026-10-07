@@ -10,7 +10,7 @@ questions:
   - "Q-047"
   - "Q-061"
 affects:
-  - "future `13-closed-families.md`"
+  - "future `14-closed-families.md`"
 ---
 # ADR-038 — Close-knit families with strong values
 

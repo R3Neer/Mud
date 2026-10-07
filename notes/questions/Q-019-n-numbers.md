@@ -32,6 +32,6 @@ Nat/Int/Money have arbitrary precision. Money's scaling, ratio and unsupported-o
 
 ## Closure evidence
 
-- C1: [[notes/decisions/ADR-129-unbounded-exact-numbers-and-money-operators|D-129]] and chapter 10's inclusion section require arbitrary precision and promotion before overflow, distinguishing resource faults from numerical values.
-- C2: MUD-TYPE-015 and the table/rounding paragraphs of [[specification/19-expressions]] define the matrix and dimensional boundary; [[specification/types/typing-cases.yaml]] contrasts scaling, exact ratio, rejected operations and invalid update narrowing.
-- C3: Chapter 19's numeric failure contract and [[specification/25-effects]] preserve ordinary Error/recovery/rollback, Nat ledger rules and empty lifting; conformance fragments distinguish zero divisors from a non-evaluated empty pair.
+- C1: [[notes/decisions/ADR-129-unbounded-exact-numbers-and-money-operators|D-129]] and chapter 11's inclusion section require arbitrary precision and promotion before overflow, distinguishing resource faults from numerical values.
+- C2: MUD-TYPE-015 and the table/rounding paragraphs of [[specification/21-expressions]] define the matrix and dimensional boundary; [[specification/types/typing-cases.yaml]] contrasts scaling, exact ratio, rejected operations and invalid update narrowing.
+- C3: Chapter 21's numeric failure contract and [[specification/28-effects]] preserve ordinary Error/recovery/rollback, Nat ledger rules and empty lifting; conformance fragments distinguish zero divisors from a non-evaluated empty pair.

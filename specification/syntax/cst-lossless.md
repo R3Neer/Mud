@@ -11,8 +11,8 @@ normative: true
 depends-on:
   - 03-notation
   - 05-source-text
-  - 06-lexicon
-  - 07-concrete-grammar
+  - 07-lexicon
+  - 08-concrete-grammar
   - grammar/mud-lexico.ebnf
   - grammar/mud.ebnf
 questions: []
@@ -51,8 +51,8 @@ Authority is distributed as follows:
 
 - [[mud-lexico]] defines which sequences constitute lexical items.
 - [[mud]] defines syntactic productions.
-- [[06-lexicon]] defines lexical algorithms and rules that do not fit within EBNF.
-- [[07-concrete-grammar]] defines precedence, associativity and contextual parsing constraints.
+- [[07-lexicon]] defines lexical algorithms and rules that do not fit within EBNF.
+- [[08-concrete-grammar]] defines precedence, associativity and contextual parsing constraints.
 - `mud-syntax-kinds.yaml` maintains the mechanical inventory for the CST categories.
 - This document defines the common model, text preservation and recovery.
 
@@ -179,7 +179,7 @@ The minimum catalogue is:
 - `MultilineCommentTrivia`.
 - `SkippedTokensTrivia`, for recovery purposes only.
 
-A multiline comment preserves its delimiters, indentation and internal line breaks in a single trivia element. Its line breaks do not produce `TERMINATOR`, in accordance with [[06-lexicon]].
+A multiline comment preserves its delimiters, indentation and internal line breaks in a single trivia element. Its line breaks do not produce `TERMINATOR`, in accordance with [[07-lexicon]].
 
 ## `TERMINATOR`
 
@@ -194,7 +194,7 @@ Terminators ignored by `layout` remain present as tokens in the CST.
 
 ## Other significant tokens
 
-The contextual `HEADER_WITH` view retains the same source token, spelling `with`, span and trivia as the base reserved word. Its classification follows the header nesting boundary in [[06-lexicon#Generic header boundary]]. It must not duplicate token ownership or depend on nominal resolution.
+The contextual `HEADER_WITH` view retains the same source token, spelling `with`, span and trivia as the base reserved word. Its classification follows the header nesting boundary in [[07-lexicon#Generic header boundary]]. It must not duplicate token ownership or depend on nominal resolution.
 
 The CST retains indivisible `===` and `!==` before the shorter `==` and `!=` matches, as well as the fixed tokens `-->` and `~`, the operator word `iis`, and contextual words written in their usual positions. Longest match must prevent `-->` from being split into `--` and `>`, or into `-` and `->`. `has not` and `iis not` retain two tokens with their own trivia. There is no `ANCHOR_INTERPOLATION_START`; an expression `~anchor` inside `{...}` uses the same nodes and tokens as outside a template.
 

@@ -12,7 +12,7 @@ tags:
 
 [[decisions/ADR-139-reality-levels-branches-and-relative-confirmation|D-139]] fixes relative levels, alternative branches and the stable exterior root. [[questions/Q-072-causal-work-and-reality-completion-algorithm|Q-072]] retains the full operational algorithm. This note is a review plan, not an implemented scheduler or a closed transition system.
 
-The specification drafting order uses vertical cycles, not strict chapter numbering. After static contracts and chapter 25 effects, the relevant work is state/evaluation (26), requests/results (27), roots (28), waves (29), constraints/old (30) and conflicts/stabilisation (31). Develop these together in reviewable units. D-013 still requires complete formalisation before implementation; prototypes cannot decide language semantics by accident. Semantic IR layout, ABI, threads and asynchronous source syntax are separate choices.
+The specification drafting order uses vertical cycles, not strict chapter numbering. After static contracts and chapter 28 effects, the relevant work is state/evaluation (29), requests/results (30), roots (31), waves (32), constraints/old (33) and conflicts/stabilisation (34). Develop these together in reviewable units. D-013 still requires complete formalisation before implementation; prototypes cannot decide language semantics by accident. Semantic IR layout, ABI, threads and asynchronous source syntax are separate choices.
 
 ## Review sequence
 

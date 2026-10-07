@@ -34,7 +34,7 @@ Explicit given defaults and intrinsic metadata defaults such as ~name and ~prefi
 
 ## Integration review
 
-The mathematical, grammar, CST and Surface AST surfaces distinguish mandatory storage initialisers from optional alias/family defaults. Alias and family completeness are elaboration constraints. The nominal HIR retains the same field symbols, owners and initialisation references; it requires no type-default node. Chapters 10 and 14 develop the static initialization contract. Complete lifecycle transitions remain assigned to their planned chapter.
+The mathematical, grammar, CST and Surface AST surfaces distinguish mandatory storage initialisers from optional alias/family defaults. Alias and family completeness are elaboration constraints. The nominal HIR retains the same field symbols, owners and initialisation references; it requires no type-default node. Chapters 11 and 15 develop the static initialization contract. Complete lifecycle transitions remain assigned to their planned chapter.
 
 ## Verification
 

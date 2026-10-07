@@ -1,6 +1,6 @@
 (* MUD 1.0 — normative lexical grammar.
    Dialect described in README.md.
-   SPECIAL_* productions refer to the normative algorithms in 06-lexicon.md. *)
+   SPECIAL_* productions refer to the normative algorithms in 07-lexicon.md. *)
 
 mud-source ::= [ bom ] , { lexical-element } , eof ;
 

@@ -9,7 +9,7 @@ status: proposed
 normative: true
 depends-on:
   - "[[05-source-text]]"
-  - "[[08-abstract-syntax]]"
+  - "[[09-abstract-syntax]]"
 questions:
   - Q-014
 decisions:
@@ -48,7 +48,7 @@ decisions:
   - D-122
   - D-126
 ---
-# 09. Names, paths and anchors
+# 10. Names, paths and anchors
 
 ## State and purpose
 
@@ -211,7 +211,7 @@ Named `for` and `given` binding requires an unequivocal static role contract: ev
 
 1.  The Surface AST provides names and provenance.
 2. The nominal resolution creates symbols, scopes, resolved bindings, pending receiver-call candidate sets and anchors, and instantiates them in the Nominal HIR of `names/mud-nominal-hir.asdl`.
-3. The type system consumes Surface AST + Nominal HIR and resolves unions, domains and references dependent on type under [[10-type-system]], [[14-fields-and-mutability]] and [[19-expressions]].
+3. The type system consumes Surface AST + Nominal HIR and resolves unions, domains and references dependent on type under [[11-type-system]], [[15-fields-and-mutability]] and [[21-expressions]].
 4. Elaboration covers accesses, calls (including selection from pending receiver-call candidates), contextual abbreviations and other type-dependent meanings; its subsequent mechanical representation has not yet been finalised.
 
 The Nominal HIR does not contain effective types, effective domains, cardinalities or proofs from termination. It is the contract between name resolution and typed, not a resolved copy of Surface AST.

@@ -7,11 +7,11 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "[[specification/10-type-system]]"
-  - "[[specification/19-expressions]]"
-  - "[[specification/06-lexicon]]"
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/08-abstract-syntax]]"
+  - "[[specification/11-type-system]]"
+  - "[[specification/21-expressions]]"
+  - "[[specification/07-lexicon]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/09-abstract-syntax]]"
 ---
 
 # ADR-135 — Normalized structural type equality

@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "future `07-concrete-grammar.md`, future `08-abstract-syntax.md`, future `11-things.md`"
+  - "future `08-concrete-grammar.md`, future `09-abstract-syntax.md`, future `12-things.md`"
 ---
 # ADR-018 — `as` declares specialisation in `is` the query
 
@@ -15,7 +15,7 @@ affects:
 - Updated: 28 July 2026
 - Amended by: [[notes/decisions/ADR-068-universal-thing-and-intrinsic-name|D-068]]
 - As further amended by: [[notes/decisions/ADR-073-explicit-but-redundant-as-thing|D-073]]
-- Documents affected: future `07-concrete-grammar.md`, future `08-abstract-syntax.md`, future `11-things.md`
+- Documents affected: future `08-concrete-grammar.md`, future `09-abstract-syntax.md`, future `12-things.md`
 
 ## Context
 

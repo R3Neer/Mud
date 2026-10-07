@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - Q-006
 affects:
-  - "structural aliases, exact dictionaries, assignable targets, effects, typing and elaboration, chapters 07 and 08, future chapters 12, 16 and 25"
+  - "structural aliases, exact dictionaries, assignable targets, effects, typing and elaboration, chapters 08 and 09, future chapters 13, 17 and 28"
 ---
 
 # ADR-098 — Assignable paths and write-back of immutable aliases

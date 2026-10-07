@@ -7,8 +7,8 @@ tags:
 status: proposed
 normative: true
 depends-on:
-  - "[[10-type-system]]"
-  - "[[14-fields-and-mutability]]"
+  - "[[11-type-system]]"
+  - "[[15-fields-and-mutability]]"
 questions:
   - Q-073
   - Q-007
@@ -63,13 +63,13 @@ decisions:
   - D-130
 ---
 
-# 19. Expression and block typing
+# 21. Expression and block typing
 
 Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
 
 ## Scope and notation
 
-The environments and synthesis/checking judgements are defined in [[10-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[14-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
+The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
 Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Boolean pruning beyond the specified core remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
 
@@ -112,7 +112,7 @@ Text literals synthesise Text, including one-scalar text. A Char context admits 
 
 Empty has cardinality zero and no chosen nominal member type. An expected zero-admitting collection can check it; a positive-minimum context fails the ordinary admission/contract check. All and fallback are contextual forms: all requires a finite enumerable expected domain, and fallback exists only in a functional branch position.
 
-Component declarations/checking provide the ordered schema of a structural literal. Named and positional forms use the construction rules in chapter 10. A comma-separated value expression produces one outer member for each element expression and does not flatten nested collections. The outer cardinality counts supplied element expressions.
+Component declarations/checking provide the ordered schema of a structural literal. Named and positional forms use the construction rules in chapter 11. A comma-separated value expression produces one outer member for each element expression and does not flatten nested collections. The outer cardinality counts supplied element expressions.
 
 A declaration-category expression denotes its defined descriptor category. Interval, quantity and point literals retain their own elaborated domain/dimensional forms; they are not guessed from their visual similarity to products or numbers.
 
@@ -144,7 +144,7 @@ Boolean rules yield Bool, looks yield their static produced type, and real actio
 
 An outer request additionally requires action root capability. A subaction or a value that might denote one is not rescued by an action-shaped annotation. Call cycles must meet the relevant prohibition/proof contract; a type-correct signature does not prove acyclicity.
 
-Computed domains used by expression contracts obey [[10-type-system]]: their evaluation dependencies must be statically acyclic. Reading stored candidate values does not recursively revalidate their contracts. Runtime membership admission cannot legalise an invalid domain-evaluation cycle.
+Computed domains used by expression contracts obey [[11-type-system]]: their evaluation dependencies must be statically acyclic. Reading stored candidate values does not recursively revalidate their contracts. Runtime membership admission cannot legalise an invalid domain-evaluation cycle.
 
 ## 4. Numeric, dimensional and Boolean operators
 
@@ -163,7 +163,7 @@ Let $n_A,n_B$ be member numeric representations. Exact addition/subtraction/mult
 | Money and a non-Money scalar | + and - are unsupported; a scalar / Money is unsupported |
 | Money, Rum or Rum, Money | All mixed arithmetic is unsupported |
 
-Money-producing scaling computes the exact rational result, rounds to hundredths with round-to-nearest, ties-to-even, then checks the result domain. Money / Money yields an exact rational without monetary rounding. Sequential operators normalise at their textual sites; concurrent numeric stages use [[25-effects]] and its canonical stage normalisation. An update additionally needs a result admissible at its stored destination: Money /= Money cannot implicitly narrow its Num result back to Money.
+Money-producing scaling computes the exact rational result, rounds to hundredths with round-to-nearest, ties-to-even, then checks the result domain. Money / Money yields an exact rational without monetary rounding. Sequential operators normalise at their textual sites; concurrent numeric stages use [[28-effects]] and its canonical stage normalisation. An update additionally needs a result admissible at its stored destination: Money /= Money cannot implicitly narrow its Num result back to Money.
 
 A supported operation with zero divisor, invalid domain/conversion or prohibited nonfinite Rum result supplies Error occurrences rather than a normal value, empty or sentinel. Resource exhaustion is a technical Error, not numerical overflow/wraparound. A statically invalid closed computation is diagnosed statically. Detailed Error subtype names remain Q-007; binary64 portability remains Q-058. No new arithmetic saturation is inferred.
 
@@ -182,7 +182,7 @@ Logical not, and, or, xor, implication and equivalence require singleton Bool re
 
 Equality requires compatible effective member types and uses their defined equality: thing identity, exact nominal alias/produced identity with payload equality, family identity, normalised intervals, multisets or ordered sequences, and extensional dictionaries as applicable. Any equality first checks effective types. A representation match alone does not compare two nominal aliases as one type.
 
-`===` and `!==` require two operands denoting Type and produce singleton Bool. They compare normalized complete contracts under [[10-type-system#7.1. Exact structural type equality]]; collection-shaped source types are Type operands, not lifted value comparisons. They are nonchainable comparison-level operators. A family member value is invalid as an operand; `Cat Slot.Empty~type !== Dog Slot.Empty~type` is valid, while their `~anchor` values may compare equal with ordinary `==`. Computation of a Type-producing expression obeys normal purity/error/dependency rules; comparison does not evaluate symbolic domains or create runtime types.
+`===` and `!==` require two operands denoting Type and produce singleton Bool. They compare normalized complete contracts under [[11-type-system#7.1. Exact structural type equality]]; collection-shaped source types are Type operands, not lifted value comparisons. They are nonchainable comparison-level operators. A family member value is invalid as an operand; `Cat Slot.Empty~type !== Dog Slot.Empty~type` is valid, while their `~anchor` values may compare equal with ordinary `==`. Computation of a Type-producing expression obeys normal purity/error/dependency rules; comparison does not evaluate symbolic domains or create runtime types.
 
 Ordering requires a common defined order. Any has none. Ordered family members, Char scalar values, compatible numbers, normalised supported intervals and lexicographically ordered structural alias components use their specified order. A type without such a contract cannot obtain ordering through an arbitrary comparator.
 
@@ -205,7 +205,7 @@ For finite upper bounds $u_A,u_B$, conservative size bounds are:
 
 Infinite upper bounds use extended nonnegative interval arithmetic. Domain/member result contracts account for both operand domains where needed; lower bounds may be strengthened only with evidence. Keyed uniqueness implies whole-value uniqueness but does not survive cross-operand collisions by declaration alone.
 
-Union guarantees whole-value uniqueness only when both operands supply it. Intersection retains a sole/equal keyed criterion, but differing keyed criteria conservatively yield whole-value uniqueness; without keyed criteria either unique operand suffices. Difference retains the left criterion; symmetric difference conservatively yields whole-value uniqueness. Chapter 14 supplies the separate order/authority table.
+Union guarantees whole-value uniqueness only when both operands supply it. Intersection retains a sole/equal keyed criterion, but differing keyed criteria conservatively yield whole-value uniqueness; without keyed criteria either unique operand suffices. Difference retains the left criterion; symmetric difference conservatively yields whole-value uniqueness. Chapter 15 supplies the separate order/authority table.
 
 An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch checks its selector against the input contract, its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. These are value constructors, not assignable branch storage.
 

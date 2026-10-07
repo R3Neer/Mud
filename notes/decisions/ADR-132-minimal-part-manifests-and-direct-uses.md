@@ -9,10 +9,10 @@ questions:
   - Q-062
 affects:
   - "[[specification/05-source-text]]"
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/08-abstract-syntax]]"
-  - "[[specification/09-names-and-anchors]]"
-  - "[[specification/10-type-system]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/09-abstract-syntax]]"
+  - "[[specification/10-names-and-anchors]]"
+  - "[[specification/11-type-system]]"
   - Grammar, syntax catalogues, nominal resolution and host contracts
 ---
 

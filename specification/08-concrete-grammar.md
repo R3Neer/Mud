@@ -9,7 +9,7 @@ status: proposed
 normative: true
 depends-on:
   - "[[05-source-text]]"
-  - "[[06-lexicon]]"
+  - "[[07-lexicon]]"
 questions:
   - Q-074
   - Q-073
@@ -105,7 +105,7 @@ decisions:
   - D-128
 ---
 
-# 07. Concrete grammar
+# 08. Concrete grammar
 
 ## State and purpose
 
@@ -327,11 +327,11 @@ The default of `given` preserves `constant-expression` and does not allow `Value
 
 Generic header groups use `with T, U as A, B`, with optional list brackets; ancestors precede those groups. Parameters scope over the complete header and body, independently of text order. In the declaration's ancestor/parameter portion, before any for/given clauses, each ungrouped `with` starts a parameter group; explicit applications in unbracketed ancestor/bound lists must be grouped, for example `as (Base with T) with T`. Postfix `as T Base with T` and bracketed `as [Base with T] with T` avoid that ambiguity. The productions in [[grammar/mud.ebnf]] recognise applications `Constructor with A, B`, `A Constructor` and `(A, B) Constructor`, generic family-member access and a `with` suffix after an ordinary call. Recognition preserves grouping; resolved constructor arity determines a grouped postfix product's argument interpretation. Direct outer domain/cardinality/modifier arguments and bounds are prohibited; named aliases may wrap such shapes.
 
-The EBNF consumes `HEADER_WITH` at a parameter-group boundary and ordinary `with` for an application, using the source-nesting classification in [[06-lexicon#Generic header boundary]]. This distinction also applies inside reflected ancestor or bound expressions: an ungrouped header `with` cannot be consumed by a nested application or call-specialisation production.
+The EBNF consumes `HEADER_WITH` at a parameter-group boundary and ordinary `with` for an application, using the source-nesting classification in [[07-lexicon#Generic header boundary]]. This distinction also applies inside reflected ancestor or bound expressions: an ungrouped header `with` cannot be consumed by a nested application or call-specialisation production.
 
 Generic arguments start at `generic-argument-head` (or its stored-annotation counterpart), followed by a sequence of constructor and callable-contract suffixes. A postfix application ends with a constructor suffix. These suffixes fold from left to right; a callable suffix has a nominal receiver or tuple of nominal receivers, checked statically. In expression position, explicit and grouped postfix applications can start a primary; the latter retains complete product-component contracts. `expression-generic-suffix` retains any callable-contract suffixes before its final constructor, while ordinary member accesses remain in the postfix chain. A constructor suffix requires a type-designating operand satisfying the ordinary generic argument restrictions, not an arbitrary value expression. This factoring removes the generic argument/application left-recursive cycle without claiming that the complete EBNF is LL or prescribing a parser architecture.
 
-The builtin Interval is an arity-one generic constructor. Structural `===` and `!==` are indivisible, nonchainable comparison-level tokens with complete type-expression operands. Type context distinguishes collection specifications from value indexing; qualified-constructor/member and grouped-product ambiguities are resolved using the nominal catalogue, without executing expressions. Callable specialization suffixes bind to the immediately preceding complete call, before its evaluation. The generic declaration category and semantic restrictions are specified by [[10-type-system#3.1. Generic declarations and applications]].
+The builtin Interval is an arity-one generic constructor. Structural `===` and `!==` are indivisible, nonchainable comparison-level tokens with complete type-expression operands. Type context distinguishes collection specifications from value indexing; qualified-constructor/member and grouped-product ambiguities are resolved using the nominal catalogue, without executing expressions. Callable specialization suffixes bind to the immediately preceding complete call, before its evaluation. The generic declaration category and semantic restrictions are specified by [[11-type-system#3.1. Generic declarations and applications]].
 
 ## Type unions and outer arrows
 
@@ -952,7 +952,7 @@ The link depends on the role category:
 - a built-in value, alias, `family` member, dictionary or other immutable value is bound by value;
 - a role with outer `mut` is bound by storage-location identity and also retains its current value.
 
-Calls with explicit receivers may select between visible nominal callables governed by `for` using static participant compatibility, as specified by [[09-names-and-anchors#Receiver-call selection|receiver-call selection]]. This is a resolution/elaboration rule: no new token, grammar production or Surface AST constructor is introduced. Actually written `given` names and static argument contracts may disambiguate it. Expected results, omitted defaults as argument evidence and runtime predicates cannot.
+Calls with explicit receivers may select between visible nominal callables governed by `for` using static participant compatibility, as specified by [[10-names-and-anchors#Receiver-call selection|receiver-call selection]]. This is a resolution/elaboration rule: no new token, grammar production or Surface AST constructor is introduced. Actually written `given` names and static argument contracts may disambiguate it. Expected results, omitted defaults as argument evidence and runtime predicates cannot.
 
 ## Rules
 
@@ -1277,7 +1277,7 @@ create Declaration
 destroy Declaration
 ```
 
-Sequential arithmetic updates preserve textual order. Concurrent numeric contributions compose by per-destination stages under [[25-effects]]; addition-before-multiplication applies within a stage rather than reordering successive instructions. Reconstructible paths retain semantic component/key destinations for consolidation. Disjoint components merge; whole replacements precede compatible changes; same-key deletion wins. A missing intermediate key contributes no partial update even if a sibling inserts it.
+Sequential arithmetic updates preserve textual order. Concurrent numeric contributions compose by per-destination stages under [[28-effects]]; addition-before-multiplication applies within a stage rather than reordering successive instructions. Reconstructible paths retain semantic component/key destinations for consolidation. Disjoint components merge; whole replacements precede compatible changes; same-key deletion wins. A missing intermediate key contributes no partial update even if a sibling inserts it.
 
 `create d` when d is explicitly active and `destroy d` when d is explicitly inactive are successful no-ops, tested instruction by instruction against the current private view. They do not skip the enclosing rule or stop subsequent effects, rerun initialisers, change generations or reset temporal memory. The same policy applies to internal calls and mixed-availability sequences; there is no joint all-absent/all-present prerequisite. Effective lifecycle operations retain domain/cardinality validation, rollback and concurrent consolidation rules.
 

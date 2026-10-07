@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-014"
 affects:
-  - "qualified names, scopes, anchors, diagnostics, migrations, future chapter 09 and tooling"
+  - "qualified names, scopes, anchors, diagnostics, migrations, future chapter 10 and tooling"
 ---
 # ADR-072 — Resolution environments and explicit anchor migrations
 

@@ -249,7 +249,7 @@ def expression_constructors(text):
 
 def validate(root=ROOT):
     problems = []
-    chapters = ("10-type-system.md", "14-fields-and-mutability.md", "19-expressions.md")
+    chapters = ("11-type-system.md", "15-fields-and-mutability.md", "21-expressions.md")
     texts = {name: (root / "specification" / name).read_text(encoding="utf-8") for name in chapters}
     declared = []
     for text in texts.values():
@@ -296,7 +296,7 @@ def validate(root=ROOT):
     constructors = expression_constructors(ast)
     problems += [f"Missing expression coverage: {x}." for x in sorted(constructors - coverage.keys())]
     problems += [f"Unknown expression constructor: {x}." for x in sorted(coverage.keys() - constructors)]
-    headings = set(re.findall(r"(?m)^## (.+)$", texts["19-expressions.md"]))
+    headings = set(re.findall(r"(?m)^## (.+)$", texts["21-expressions.md"]))
     for name, entry in coverage.items():
         if entry["section"] not in headings:
             problems.append(f"{name}: expression section does not exist.")

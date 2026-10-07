@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "pipeline, nominal resolution, nominal HIR, typing, elaboration, future semantic representation, chapter 09, validators and mechanical artefacts"
+  - "pipeline, nominal resolution, nominal HIR, typing, elaboration, future semantic representation, chapter 10, validators and mechanical artefacts"
 ---
 
 # ADR-097 — Current nominal HIR and deferred semantic IR
@@ -46,7 +46,7 @@ The conceptual catalogue from D-051 becomes a set of requirements to be reviewed
 
 The generic `specification/ir/` directory is no longer a normative surface. The nominal HIR is located alongside name resolution in `specification/names/`.
 
-Every future change that introduces or modifies names, scopes, owners, bindings, nominal categories, anchors, nominal visibility or specialisation must review chapter 09 and the nominal HIR in the same change, in accordance with MUD-EDIT-004.
+Every future change that introduces or modifies names, scopes, owners, bindings, nominal categories, anchors, nominal visibility or specialisation must review chapter 10 and the nominal HIR in the same change, in accordance with MUD-EDIT-004.
 
 ## Consequences
 
@@ -62,4 +62,4 @@ Every future change that introduces or modifies names, scopes, owners, bindings,
 2. `specification/names/mud-nominal-hir.asdl` exists and models only nominal information.
 3. Validators require no current semantic IR.
 4. The documentation pipeline distinguishes the current nominal HIR from the future semantic representation, which is not yet formalised.
-5. Changes affecting nominal resolution have an explicit editorial obligation to review chapter 09 and the nominal HIR.
+5. Changes affecting nominal resolution have an explicit editorial obligation to review chapter 10 and the nominal HIR.

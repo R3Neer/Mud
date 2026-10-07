@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-050"
 affects:
-  - "future chapters 19, 21 and 26"
+  - "future chapters 21, 23 and 29"
 ---
 # ADR-022 — Structural deletion of inactive Boolean rules
 
@@ -16,7 +16,7 @@ affects:
 
 - Related open-ended question: [[notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]]
 - Decision related: [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]]
-- Documents affected: future Chapters 19, 21 and 26
+- Documents affected: future Chapters 21, 23 and 29
 
 ## Context
 

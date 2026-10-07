@@ -142,5 +142,5 @@ success alone does not satisfy this gate.
 - Grammar or verifiable outlines, where available.
 -  A follow-up to conformance, updated where necessary.
 - Mechanical barrier of MUD-EDIT-002 and the processing of queries via `python governance/validate_spec_editorial.py`; MUD-EDIT-003 also retains its review semantics in terms of affected surfaces.
-- Application of MUD-EDIT-004 and consistency between chapter 09 and Nominal HIR where the change affects name resolution.
+- Application of MUD-EDIT-004 and consistency between chapter 10 and Nominal HIR where the change affects name resolution.
 

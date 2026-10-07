@@ -44,7 +44,7 @@ alias B := A # invalid: transparent cycle
 
 ## Integration review
 
-Grammar and Surface AST retain the abstract flag; the CST transformation records it without deciding productivity. Lexicon includes abstract before alias. The nominal HIR's existing alias symbols and Specializes/RefersTo edges suffice: recursive representation edges are type elaboration data, not new nominal ancestry. Chapter 10 develops the static contract; the complete alias declaration chapter remains to be developed.
+Grammar and Surface AST retain the abstract flag; the CST transformation records it without deciding productivity. Lexicon includes abstract before alias. The nominal HIR's existing alias symbols and Specializes/RefersTo edges suffice: recursive representation edges are type elaboration data, not new nominal ancestry. Chapter 11 develops the static contract; the complete alias declaration chapter remains to be developed.
 
 ## Verification
 

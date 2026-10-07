@@ -9,7 +9,7 @@ questions:
   - "Q-006"
   - "Q-047"
 affects:
-  - "future `15-collections.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`"
+  - "future `16-collections.md`, future `17-dictionaries.md`, future `22-quantifiers-and-iteration.md`"
 ---
 # ADR-039 — Collections and dictionaries
 
@@ -25,7 +25,7 @@ affects:
 - Amended by: [[ADR-080-higher-order-collection-algebra-and-updates|D-080]] and [[ADR-081-collection-filtering-take-and-indexing|D-081]]
 - Read more: D-019, D-026, D-033
 - Related questions: Q-006, Q-047
-- Documents affected: future `15-collections.md`, future `16-dictionaries.md`, future `20-quantifiers-and-iteration.md`
+- Documents affected: future `16-collections.md`, future `17-dictionaries.md`, future `22-quantifiers-and-iteration.md`
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Decision

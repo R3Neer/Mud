@@ -8,9 +8,9 @@ superseded-by: []
 questions:
   - Q-019
 affects:
-  - "[[specification/10-type-system]]"
-  - "[[specification/19-expressions]]"
-  - "[[specification/25-effects]]"
+  - "[[specification/11-type-system]]"
+  - "[[specification/21-expressions]]"
+  - "[[specification/28-effects]]"
   - Numeric and dimensional operator contracts
 ---
 
@@ -44,4 +44,4 @@ An arithmetic update must preserve the stored destination contract. Money *= Num
 
 ## Integration
 
-Chapters 10/19 fix the scalar contracts, signatures and error boundary. Chapter 25 delegates representation validation/rounding to those contracts. Static conformance fragments distinguish these cases. No grammar, nominal resolver, AST or HIR constructor changes are required.
+Chapters 11/21 fix the scalar contracts, signatures and error boundary. Chapter 28 delegates representation validation/rounding to those contracts. Static conformance fragments distinguish these cases. No grammar, nominal resolver, AST or HIR constructor changes are required.

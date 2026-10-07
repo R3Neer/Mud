@@ -10,9 +10,9 @@ questions:
   - Q-067
 affects:
   - "[[specification/04-mathematical-model]]"
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/19-expressions]]"
-  - "[[specification/25-effects]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/21-expressions]]"
+  - "[[specification/28-effects]]"
   - Message payload, host boundary, rollback and adapter obligations
 ---
 

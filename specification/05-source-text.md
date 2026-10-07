@@ -34,7 +34,7 @@ decisions:
 
 ## State and purpose
 
-This chapter defines the physical unit received by a MUD processor. The identity semantics of the statements is defined in [[09-names-and-anchors]]; the lexical structure belongs to [[06-lexicon]].
+This chapter defines the physical unit received by a MUD processor. The identity semantics of the statements is defined in [[10-names-and-anchors]]; the lexical structure belongs to [[07-lexicon]].
 
 ## Files
 

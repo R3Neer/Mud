@@ -17,7 +17,7 @@ superseded-by: []
 
 ## Resolution
 
-MUD-TYPE-004 and MUD-TYPE-005 in [[specification/10-type-system]] define constructor productivity, domain witness obligations and finite effective enumeration. The productivity/representation/proof-boundary witnesses and regression tests distinguish recursive reachability from admissible finite values and unknown from proof.
+MUD-TYPE-004 and MUD-TYPE-005 in [[specification/11-type-system]] define constructor productivity, domain witness obligations and finite effective enumeration. The productivity/representation/proof-boundary witnesses and regression tests distinguish recursive reachability from admissible finite values and unknown from proof.
 
 The required analysis is sound and conservative, not a complete solver for arbitrary symbolic predicates. Operational engine and general termination design retain their own questions.
 
@@ -27,4 +27,4 @@ The required analysis is sound and conservative, not a complete solver for arbit
 
 ## Closure evidence
 
-- C1: MUD-TYPE-004 and MUD-TYPE-005 in [[specification/10-type-system]] define constructor productivity, domain witness obligations and finite effective enumeration. The productivity/representation/proof-boundary witnesses and regression tests distinguish recursive reachability from admissible finite values and unknown from proof. [[notes/decisions/ADR-122-finite-type-graphs-and-proof-obligations|D-122]] records the integration.
+- C1: MUD-TYPE-004 and MUD-TYPE-005 in [[specification/11-type-system]] define constructor productivity, domain witness obligations and finite effective enumeration. The productivity/representation/proof-boundary witnesses and regression tests distinguish recursive reachability from admissible finite values and unknown from proof. [[notes/decisions/ADR-122-finite-type-graphs-and-proof-obligations|D-122]] records the integration.

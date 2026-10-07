@@ -9,7 +9,7 @@ questions:
   - "Q-044"
   - "Q-045"
 affects:
-  - "[[notes/questions/README|Active questions]], [[specification/04-mathematical-model]], future chapters 06, 07, 08, 09, 11, 21 to 25 and 32"
+  - "[[notes/questions/README|Active questions]], [[specification/04-mathematical-model]], future chapters 07, 08, 09, 10, 12, 23 to 28 and 35"
 ---
 # ADR-054 — Canonical definitions and initial activation
 

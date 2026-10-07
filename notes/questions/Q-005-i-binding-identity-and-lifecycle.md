@@ -30,5 +30,5 @@ Resolved by [[notes/decisions/ADR-126-reactive-binding-identity-and-observation-
 ## Closure evidence
 
 - C1: MUD-TIME-001 in [[specification/04-mathematical-model]] identifies the rule and role-to-participant mapping; D-126 distinguishes swapped roles and preserves causal occurrence identity.
-- C2: MUD-TIME-001 and the temporal contract in [[specification/07-concrete-grammar]] end episodes on absence, suspension and generation changes; D-126 contrasts resumed observation and participant rematerialisation.
-- C3: MUD-TIME-002 and [[specification/19-expressions]] retain changes as consecutive-observation comparison. D-126 cases contrast initial Rise, empty-to-member collection changes, returning bindings, false if and no-op creation.
+- C2: MUD-TIME-001 and the temporal contract in [[specification/08-concrete-grammar]] end episodes on absence, suspension and generation changes; D-126 contrasts resumed observation and participant rematerialisation.
+- C3: MUD-TIME-002 and [[specification/21-expressions]] retain changes as consecutive-observation comparison. D-126 cases contrast initial Rise, empty-to-member collection changes, returning bindings, false if and no-op creation.

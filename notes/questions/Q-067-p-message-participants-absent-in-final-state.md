@@ -26,5 +26,5 @@ Message payloads are frozen in their causal birth view, with canonical participa
 
 ## Closure evidence
 
-- C1: D-133 and specification/07-concrete-grammar define frozen causal values, canonical bindings and distinct equal-valued occurrences; message conformance traces cover changes and disappearance.
-- C2: D-133, specification/04-mathematical-model and specification/25-effects define Waiting/Kept/Dropped, validated barriers and protected/invocation/outer scopes; specification/effects/message-delivery-cases.json contrasts recovery, child completion, imagination and subscription.
+- C1: D-133 and specification/08-concrete-grammar define frozen causal values, canonical bindings and distinct equal-valued occurrences; message conformance traces cover changes and disappearance.
+- C2: D-133, specification/04-mathematical-model and specification/28-effects define Waiting/Kept/Dropped, validated barriers and protected/invocation/outer scopes; specification/effects/message-delivery-cases.json contrasts recovery, child completion, imagination and subscription.

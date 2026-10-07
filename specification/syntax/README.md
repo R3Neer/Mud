@@ -22,8 +22,8 @@ This directory contains the standardised and verifiable artefacts that link the 
 
 The files complement one another; there is no general rule that ‘the latest one takes precedence’.
 
-1. `mud-lexico.ebnf` and `06-lexicon.md` determine lexical recognition.
-2. `mud.ebnf` and `07-concrete-grammar.md` determine concrete grouping.
+1. `mud-lexico.ebnf` and `07-lexicon.md` determine lexical recognition.
+2. `mud.ebnf` and `08-concrete-grammar.md` determine concrete grouping.
 3. `cst-lossless.md` determines preservation, trivia and recovery.
 4. `mud-surface-ast.asdl` defines the abstract constructors.
 5. `cst-to-surface-ast.md` determines the projection.

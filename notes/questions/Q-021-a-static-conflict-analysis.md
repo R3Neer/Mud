@@ -20,7 +20,7 @@ superseded-by: []
 
 ## Resolution
 
-MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/14-fields-and-mutability]] distinguish proved static conflicts, residual runtime overlap and conservatively rejected unknown stored cardinality. Finite proof-boundary witnesses are checked by validate_type_spec.py and its regression tests.
+MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/15-fields-and-mutability]] distinguish proved static conflicts, residual runtime overlap and conservatively rejected unknown stored cardinality. Finite proof-boundary witnesses are checked by validate_type_spec.py and its regression tests.
 
 The required analysis is sound and conservative, not a complete solver for arbitrary symbolic predicates. Operational engine and general termination design retain their own questions.
 
@@ -30,4 +30,4 @@ The required analysis is sound and conservative, not a complete solver for arbit
 
 ## Closure evidence
 
-- C1: MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/14-fields-and-mutability]] distinguish proved static conflicts, residual runtime overlap and conservatively rejected unknown stored cardinality. Finite proof-boundary witnesses are checked by validate_type_spec.py and its regression tests. [[notes/decisions/ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]] records the integration.
+- C1: MUD-EFFECT-005 and MUD-EFFECT-006 in [[specification/15-fields-and-mutability]] distinguish proved static conflicts, residual runtime overlap and conservatively rejected unknown stored cardinality. Finite proof-boundary witnesses are checked by validate_type_spec.py and its regression tests. [[notes/decisions/ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]] records the integration.

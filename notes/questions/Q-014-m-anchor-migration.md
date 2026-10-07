@@ -9,7 +9,7 @@ decisions:
   - D-072
   - D-078
 affects:
-  - future chapter 09, compatibility, persistence and renaming tooling
+  - future chapter 10, compatibility, persistence and renaming tooling
 superseded-by: []
 ---
 

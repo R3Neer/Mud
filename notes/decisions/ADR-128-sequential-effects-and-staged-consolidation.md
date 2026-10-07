@@ -8,9 +8,9 @@ superseded-by: []
 questions:
   - Q-002
 affects:
-  - "[[specification/25-effects]]"
-  - "[[specification/14-fields-and-mutability]]"
-  - "[[specification/07-concrete-grammar]]"
+  - "[[specification/28-effects]]"
+  - "[[specification/15-fields-and-mutability]]"
+  - "[[specification/08-concrete-grammar]]"
   - Effect conformance corpus and root/wave batch interface
 ---
 
@@ -44,6 +44,6 @@ Other effect families retain their established canonical composition: homogeneou
 
 ## Integration and evidence
 
-[[specification/25-effects]] defines private statement/effect judgments, all surviving AST effect families, branch normalisation, staged consolidation, dictionaries, lifecycle generations, root/wave batch validation and rollback/recovery boundaries. [[specification/effects/README]] records bounded executable witnesses and declarative boundary cases. This is not a full MUD interpreter, a complete scheduler, a foreign ABI or a general solver for termination/dynamic domains.
+[[specification/28-effects]] defines private statement/effect judgments, all surviving AST effect families, branch normalisation, staged consolidation, dictionaries, lifecycle generations, root/wave batch validation and rollback/recovery boundaries. [[specification/effects/README]] records bounded executable witnesses and declarative boundary cases. This is not a full MUD interpreter, a complete scheduler, a foreign ABI or a general solver for termination/dynamic domains.
 
 Amends D-117 and the sequential/concurrent arithmetic wording of D-100/D-046/D-060. D-023's obsolete admission and open-conflict claims are rewritten to current policy. Q-020/Q-023/Q-007/Q-069/Q-070 remain separately scoped.

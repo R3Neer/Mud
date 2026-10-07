@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-005"
 affects:
-  - "[[specification/07-concrete-grammar]], `specification/grammar/mud.ebnf`"
+  - "[[specification/08-concrete-grammar]], `specification/grammar/mud.ebnf`"
 ---
 # ADR-058 — Temporal triggers, `changes` and reactive `old`
 
@@ -17,7 +17,7 @@ affects:
 - Amends: [[notes/decisions/ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[notes/decisions/ADR-042-shares-root-and-results|D-042]], [[notes/decisions/ADR-045-causal-resolution-connections-and-queue|D-045]], [[notes/decisions/ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]] and [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]]
 - Related questions: Q-005
 - Extended by: [[notes/decisions/ADR-071-local-bindings-in-boolean-blocks|D-071]]
-- Affected documents: [[specification/07-concrete-grammar]], `specification/grammar/mud.ebnf`
+- Affected documents: [[specification/08-concrete-grammar]], `specification/grammar/mud.ebnf`
 
 ## Context
 

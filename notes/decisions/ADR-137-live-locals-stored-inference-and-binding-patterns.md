@@ -8,14 +8,14 @@ superseded-by: []
 questions: []
 affects:
   - "[[specification/README]]"
-  - "[[specification/06-lexicon]]"
-  - "[[specification/07-concrete-grammar.md]]"
-  - "[[specification/08-abstract-syntax.md]]"
-  - "[[specification/09-names-and-anchors.md]]"
-  - "[[specification/10-type-system.md]]"
-  - "[[specification/14-fields-and-mutability.md]]"
-  - "[[specification/19-expressions.md]]"
-  - "[[specification/25-effects.md]]"
+  - "[[specification/07-lexicon]]"
+  - "[[specification/08-concrete-grammar.md]]"
+  - "[[specification/09-abstract-syntax.md]]"
+  - "[[specification/10-names-and-anchors.md]]"
+  - "[[specification/11-type-system.md]]"
+  - "[[specification/15-fields-and-mutability.md]]"
+  - "[[specification/21-expressions.md]]"
+  - "[[specification/28-effects.md]]"
 ---
 
 # ADR-137 — Live locals, stored type inference and positional binding patterns

@@ -18,7 +18,7 @@ affects:
 
 - Modifies: [[ADR-038-close-knit-families-with-strong-values|D-038]], [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]], [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]], [[ADR-068-universal-thing-and-intrinsic-name|D-068]], [[ADR-070-lossless-cst-and-normalised-surface-ast|D-070]], [[ADR-074-nominal-unions-and-type-narrowing|D-074]], [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]], [[ADR-080-higher-order-collection-algebra-and-updates|D-080]], [[ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]] and [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]].
 - Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-052-pipelines-renderers-and-conformance|D-052]].
-- Affected documents: chapters 02 and 04 to 09; future chapters 10, 12, 15, 16, 19, 20, 34, 38, 40, 41, 44 and 47; grammar; CST; Surface AST; semantic representation after typing and elaboration; conformance cases.
+- Affected documents: chapters 02 and 04 to 10; future chapters 11, 13, 16, 17, 21, 22, 38, 42, 44, 45, 48 and 51; grammar; CST; Surface AST; semantic representation after typing and elaboration; conformance cases.
 
 ## Context
 
@@ -499,7 +499,7 @@ This version incorporates, as part of the same normative unit, the documentary a
 - inference of `[0]`, `[1]` and greater cardinalities, including dictionaries as one outer value;
 - `iis` with multiple specialisation and exact narrowing.
 
-The corresponding normative examples belong to numbered chapters 05 to 09. Future chapters listed in the index must retain or refine them when drafted, but may not refer only to this ADR.
+The corresponding normative examples belong to numbered chapters 05 to 10. Future chapters listed in the index must retain or refine them when drafted, but may not refer only to this ADR.
 
 ## Consequences
 

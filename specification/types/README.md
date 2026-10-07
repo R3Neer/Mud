@@ -18,7 +18,7 @@ decisions:
 
 # Static type contract corpus
 
-The contracts are specified in [[../10-type-system]], [[../14-fields-and-mutability]] and [[../19-expressions]]. The chapters remain proposed; this corpus does not promote their publication status.
+The contracts are specified in [[../11-type-system]], [[../15-fields-and-mutability]] and [[../21-expressions]]. The chapters remain proposed; this corpus does not promote their publication status.
 
 - [[typing-cases.yaml]] contains declarative fragments with explicitly stated premises and expected static acceptance, rejection or runtime obligations. Fragments require their stated fixture; they are not claimed to be standalone programmes. source_scope distinguishes ordinary fragments, independently concurrent blocks and individual inclusion/representation judgements. A successful graph-equivalence judgement does not assert that the complete programme is well formed.
 - [[expression-coverage.yaml]] associates every current Surface AST expression constructor with a chapter section and a case.

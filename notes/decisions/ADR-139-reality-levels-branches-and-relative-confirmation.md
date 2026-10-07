@@ -9,8 +9,8 @@ questions:
   - Q-072
 affects:
   - "[[specification/04-mathematical-model]]"
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/25-effects]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/28-effects]]"
   - Dynamic chapter remits, invocation completion and architecture
 ---
 

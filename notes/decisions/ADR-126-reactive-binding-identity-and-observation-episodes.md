@@ -9,10 +9,10 @@ questions:
   - Q-005
 affects:
   - "[[specification/04-mathematical-model]]"
-  - "[[specification/07-concrete-grammar]]"
-  - "[[specification/09-names-and-anchors]]"
-  - "[[specification/14-fields-and-mutability]]"
-  - "[[specification/19-expressions]]"
+  - "[[specification/08-concrete-grammar]]"
+  - "[[specification/10-names-and-anchors]]"
+  - "[[specification/15-fields-and-mutability]]"
+  - "[[specification/21-expressions]]"
   - Reactive waves and runtime lifecycle operational formalisation
 ---
 
@@ -51,4 +51,4 @@ Trigger remains an internal temporal qualification, not a first-class storable M
 
 ## Integration
 
-MUD-TIME-001/MUD-TIME-002 in [[specification/04-mathematical-model]], temporal/effect contracts in [[specification/07-concrete-grammar]] and the temporal typing boundary in [[specification/19-expressions]] preserve these distinctions. No runtime memory nodes are added to nominal HIR. Operational trace formalisation remains future work, not an unanswered choice in Q-005.
+MUD-TIME-001/MUD-TIME-002 in [[specification/04-mathematical-model]], temporal/effect contracts in [[specification/08-concrete-grammar]] and the temporal typing boundary in [[specification/21-expressions]] preserve these distinctions. No runtime memory nodes are added to nominal HIR. Operational trace formalisation remains future work, not an unanswered choice in Q-005.

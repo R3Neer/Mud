@@ -135,7 +135,7 @@ The lossless CST contract is defined in [[syntax/cst-lossless]], and its catalog
 
 The specification distinguishes absence from a set, an undefined partial application, a domain value denoting absence, nontermination, a semantic outcome and an implementation failure. None implies another without an explicit rule.
 
-`ActionReply` has the semantic alternatives `Success`, `Refusal` and a nonempty `Errors` value. A block's error channel may instead contain zero or more Error occurrences. An Error carried as an ordinary value is not automatically a raised error. The contracts for these distinctions are defined in [[19-expressions]].
+`ActionReply` has the semantic alternatives `Success`, `Refusal` and a nonempty `Errors` value. A block's error channel may instead contain zero or more Error occurrences. An Error carried as an ordinary value is not automatically a raised error. The contracts for these distinctions are defined in [[21-expressions]].
 
 ## Use in other chapters
 

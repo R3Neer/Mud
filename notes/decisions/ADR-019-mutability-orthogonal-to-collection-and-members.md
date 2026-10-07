@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "future `14-fields-and-mutability.md`, future `15-collections.md`"
+  - "future `15-fields-and-mutability.md`, future `16-collections.md`"
 ---
 # ADR-019 — Mutability orthogonal to collection and members
 
@@ -15,7 +15,7 @@ affects:
 
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
-- Documents affected: future `14-fields-and-mutability.md`, future `15-collections.md`
+- Documents affected: future `15-fields-and-mutability.md`, future `16-collections.md`
 - Amended by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
 ## Context

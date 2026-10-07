@@ -8,7 +8,7 @@ superseded-by: []
 questions:
   - "Q-057"
 affects:
-  - "future `12-aliases.md`, future `25-efectos.md`"
+  - "future `13-aliases.md`, future `25-efectos.md`"
 ---
 # ADR-031 — Nominal aliases, immutable and without cycle of life
 
@@ -23,7 +23,7 @@ affects:
 
 - Related to: [[notes/decisions/ADR-021-cycle-logical-lifespan-and-suspension-by-department|D-021]], [[notes/decisions/ADR-054-canonical-definitions-and-initial-activation|D-054]]
 - Resolves: [[notes/questions/Q-057-c-inner-capability-within-alias-values|Q-057]]
-- Documents affected: future `12-aliases.md`, future `25-efectos.md`
+- Documents affected: future `13-aliases.md`, future `25-efectos.md`
 
 ## Context
 

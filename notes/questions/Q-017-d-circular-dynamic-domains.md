@@ -24,5 +24,5 @@ Computed-domain evaluation must be acyclic. Recursive domain equations are stati
 
 ## Closure evidence
 
-- C1: [[notes/decisions/ADR-130-acyclic-domain-evaluation|D-130]] and MUD-TYPE-016 in [[specification/10-type-system]] require static acyclicity including transitive calculation dependencies and reject recursive equations without fixed-point evaluation.
-- C2: Chapter 10's stored-read and enumeration paragraphs, chapter 19's expression admission, the domain roadmap and [[specification/types/typing-cases.yaml]] contrast available candidate values with direct/transitive recursive domain calculations.
+- C1: [[notes/decisions/ADR-130-acyclic-domain-evaluation|D-130]] and MUD-TYPE-016 in [[specification/11-type-system]] require static acyclicity including transitive calculation dependencies and reject recursive equations without fixed-point evaluation.
+- C2: Chapter 11's stored-read and enumeration paragraphs, chapter 21's expression admission, the domain roadmap and [[specification/types/typing-cases.yaml]] contrast available candidate values with direct/transitive recursive domain calculations.

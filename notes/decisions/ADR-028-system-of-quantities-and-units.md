@@ -11,14 +11,14 @@ questions:
   - "Q-054"
   - "Q-055"
 affects:
-  - "future `10-type-system.md`, future `18-magnitudes.md`, future `19-expressions.md`"
+  - "future `11-type-system.md`, future `19-magnitudes.md`, future `21-expressions.md`"
 ---
 # ADR-028 — System of quantities and units
 
 - Amended by: [[notes/decisions/ADR-034-num-exactly-and-rum-binary64|D-034]], [[notes/decisions/ADR-059-magnitude-intervals-and-inverted-endpoints|D-059]] and [[notes/decisions/ADR-083-unitless-base-quantities|D-083]]
 - Expanded by: [[ADR-076-named-units-prefixes-and-adjacent-notation|D-076]]
 - Related questions: Q-019, Q-034, Q-054, [[notes/questions/Q-055-l-point-magnitude-literals|Q-055]]
-- Documents affected: future `10-type-system.md`, future `18-magnitudes.md`, future `19-expressions.md`
+- Documents affected: future `11-type-system.md`, future `19-magnitudes.md`, future `21-expressions.md`
 
 ## Context
 
@@ -221,7 +221,7 @@ magnitude DiscreteArea: Nat :=
 
 The table describes exact operations. Operations in which all operands are `Rum` produce `Rum`; `Rum` is not implicitly conflated with exact representations. The inference of derived quantities that combine components `Rum` will be completed in Q-058.
 
-Explicit annotation does not introduce rounding. The programme must satisfy the corresponding static representability rules. Money representation signatures follow chapter 19: exact scaling yields Money, Money/Money yields Num, and unsupported combinations are rejected. Nominal dimensions remain independently checked.
+Explicit annotation does not introduce rounding. The programme must satisfy the corresponding static representability rules. Money representation signatures follow chapter 21: exact scaling yields Money, Money/Money yields Num, and unsupported combinations are rejected. Nominal dimensions remain independently checked.
 
 ## Consequences
 

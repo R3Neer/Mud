@@ -9,14 +9,14 @@ questions:
   - "Q-001"
   - "Q-019"
 affects:
-  - "future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`"
+  - "future `07-lexicon.md`, future `11-type-system.md`, future `18-domains-and-intervals.md`"
 ---
 # ADR-040 — Semantics remaining basic numeracy
 
 - Read more: D-028, D-030, D-034
 - Amended by: [[notes/decisions/ADR-060-additive-deltas-and-nat-normalisation|D-060]]
 - Related questions: Q-001, Q-019
-- Documents affected: future `06-lexicon.md`, future `10-type-system.md`, future `17-domains-and-intervals.md`
+- Documents affected: future `07-lexicon.md`, future `11-type-system.md`, future `18-domains-and-intervals.md`
 
 - Amended by: [[ADR-129-unbounded-exact-numbers-and-money-operators|D-129]].
 
@@ -48,7 +48,7 @@ D-060 distinguishes the effects from the pure operations `+=` and `-=`. These pr
 
 `Money` uses exact decimal arithmetic with two decimal places. The context provides the type of its clauses.
 
-When an operation or conversion needs to be scaled down, the policy overall number of draws set by D-034. Nat/Int/Money have no language-level integer bound. Money scaling and ratio signatures follow chapter 19; magnitude dimensions remain independently checked.
+When an operation or conversion needs to be scaled down, the policy overall number of draws set by D-034. Nat/Int/Money have no language-level integer bound. Money scaling and ratio signatures follow chapter 21; magnitude dimensions remain independently checked.
 
 ### Number separators
 
