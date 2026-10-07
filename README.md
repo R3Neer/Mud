@@ -164,6 +164,12 @@ Rust. C and TypeScript remain possible alternative targets without a near-term
 implementation commitment. Rust, Python and C# are the initial planned foreign
 language adapters; an adapter is distinct from a code-generation backend.
 
+An included standard-library base and installable official extensions are planned.
+The world-descriptor direction is `mud.world.toml`; its schema, package
+resolution and adapter configuration remain under design. See
+[standard-library planning](notes/standard-library-design.md) and
+[descriptor design](notes/world-descriptor-design.md).
+
 Mud may be embedded in another application through `look`, `action` and
 `message`, or coordinate foreign-language components itself.
 

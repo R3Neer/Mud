@@ -152,6 +152,8 @@ Defines:
 - Semantic independence from file ordering.
 - Line terminators.
 
+The world descriptor is planned as `mud.world.toml`; its schema and external distribution resolution are not part of the current source grammar.
+
 ## 06. Lexical structure
 
 Chapter: [[06-lexicon]].

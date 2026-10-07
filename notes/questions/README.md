@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 30 active questions: 15 open and 15 partially decided.
+There are 31 active questions: 15 open and 16 partially decided.
 
 Priorities:
 
@@ -41,6 +41,7 @@ Priorities:
 | [[Q-050-b-pruning-in-remaining-boolean-operators|Q-050 — Pruning in remaining Boolean operators]] | Partially decided |
 | [[Q-059-o-observing-action-results-in-tests|Q-059 — Observing action results in tests]] | Partially decided |
 | [[Q-060-c-reflective-typekind-catalogue|Q-060 — Reflective `TypeKind` catalogue]] | Open |
+| [[Q-071-world-descriptor-and-library-resolution|Q-071 — World descriptor and library resolution]] | Partially decided |
 
 ## P2 — Product and operation
 

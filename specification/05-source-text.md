@@ -10,7 +10,9 @@ normative: true
 depends-on:
   - "[[01-scope-and-conformance]]"
 questions:
+  - Q-071
 decisions:
+  - D-138
   - D-132
   - D-131
   - D-035
@@ -44,6 +46,10 @@ This chapter defines the physical unit received by a MUD processor. The identity
 
 > [!rule] MUD-LEX-003 — Jumps
 > The processor must recognise `LF` and `CRLF`. It must also accept `CR` on its own as a jump and normalise all three forms to a single token `NEWLINE`.
+
+## World descriptor boundary
+
+`mud.world.toml` is the planned TOML descriptor for a world. Its schema, required presence, world-root discovery, package resolution and external distribution-to-part mapping remain unspecified under Q-071. It is not `.mud` source or a `mud.part` manifest, and the source grammar does not parse it. Existing local part discovery and direct `uses`/`using` rules remain applicable.
 
 ## Derived namespace
 

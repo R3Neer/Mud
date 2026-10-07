@@ -18,7 +18,7 @@ affects:
 
 ## Context
 
-The author accepted the supplied generic-design document, corrected its stale thing initializer examples and resolved callable categories, argument shape, variance and recursive application questions. Interval uses the generic mechanism. Standard-library planning is explicitly deferred. This extends D-096/D-115 produced-type identity and D-122 finite normalization; reciprocal current-body notes retain that provenance.
+The author accepted the supplied generic-design document, corrected its stale thing initializer examples and resolved callable categories, argument shape, variance and recursive application questions. Interval uses the generic mechanism. Standard-library scope and world-descriptor planning are resumed by [[ADR-138-standard-library-scope-and-world-descriptor|D-138]]; concrete APIs and implementation remain deferred. This extends D-096/D-115 produced-type identity and D-122 finite normalization; reciprocal current-body notes retain that provenance.
 
 ## Decision
 
