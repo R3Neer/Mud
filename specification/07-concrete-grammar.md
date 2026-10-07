@@ -14,8 +14,9 @@ questions:
   - Q-069
   - Q-070
   - Q-059
-  - Q-062
 decisions:
+  - D-132
+  - D-131
   - D-111
   - D-110
   - D-109
@@ -98,7 +99,7 @@ decisions:
 
 ## State and purpose
 
-[[grammar/mud.ebnf]] defines the complete syntax of standard `.mud` source files in MUD 1.0. The additional physical format of `mud.module` is documented separately, and its complete grammar remains open in Q-062. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
+[[grammar/mud.ebnf]] defines `.mud` source and minimal `mud.part` manifests. The physical filename selects `mud-file` or `part-file`; `mud-input` joins their grammar entry points for inventory validation. [[05-source-text]] defines exact manifest targets, direct permissions and the physical first-content constraint of `part only`. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
 
 ## Parsing output
 
@@ -828,7 +829,7 @@ Without `~format`, the literal is written as an ordinary quantity with a compati
 
 ## Initial activation with `start with`
 
-Each module may declare at most one `start with`. It is not a `main`, does not invoke modules and does not specify an initialisation order. Omitting `start with` from a module is equivalent to an empty contribution.
+Each part may declare at most one `start with`. It is not a `main`, does not invoke parts and does not specify an initialisation order. Omitting `start with` from a part is equivalent to an empty contribution.
 
 The declaration accepts a direct contribution or a unified block:
 
@@ -847,7 +848,7 @@ start with {
 
 Each expression must be static and may contain zero, one or more activatable `thing | rule` declarations. A collection contributes its members directly; nested collections are not permitted. Duplicate identities are deduplicated, and source order is retained only as provenance, not as priority.
 
-A `start with` may activate only declarations whose lifecycle is module-scoped. Contributions from all modules are combined before initial stabilisation. `Thing` is always active and is not part of the activatable collection.
+A `start with` may activate only declarations whose lifecycle is part-scoped. Contributions from all parts are combined before initial stabilisation. `Thing` is always active and is not part of the activatable collection.
 
 `all D` may materialise a countable domain when a contribution requires an explicit collection; `all` without an operand retains its contextual meaning.
 
@@ -1095,7 +1096,9 @@ message KingChanged on kingdom: Kingdom {
 }
 ```
 
-`look` is a pure callable. It may be accessed by the host, by another module whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the static produced nominal type made from its public fields. Calls to one declaration share that type; different producers remain distinct, even with identical fields.
+Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
+
+`look` is a pure callable. It may be accessed by the host, by another part whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the static produced nominal type made from its public fields. Calls to one declaration share that type; different producers remain distinct, even with identical fields.
 
 A `message` is not called directly. Every instance of its `when` that passes `if` creates a causal occurrence with an identity, declaration, `on` bindings and birth wave. That occurrence may feed triggers in the next wave. Within MUD, its payload is projected onto the causal view; after commit, it is projected to the host from the final stable state. A rollback cancels external delivery.
 

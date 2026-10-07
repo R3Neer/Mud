@@ -601,7 +601,7 @@ cases:
   category: start
   source: "start with {\n        all, empty, CanGrow\n    }\n"
   cst_root: MudFileSyntax
-  ast: ModuleStartDecl(StartSet(contributions=[all, empty, CanGrow]))
+  ast: PartStartDecl(StartSet(contributions=[all, empty, CanGrow]))
   produces_ast: true
 - id: decision-fallback
   category: dictionary
@@ -2617,3 +2617,163 @@ cases:
   produces_ast: true
   required_contract: Translated native failure preserves owning Declaration/source mapping and discards
     partial exports and tentative writes.
+- id: part-manifest-empty
+  category: parts
+  source: ''
+  cst_root: PartFileSyntax
+  ast: MudPartFile(uses=0)
+  normalizations: []
+  produces_ast: true
+- id: part-manifest-exact-uses
+  category: parts
+  source: 'uses world.people
+
+    uses world.weather; uses world.time
+
+    '
+  cst_root: PartFileSyntax
+  ast: MudPartFile(uses=3)
+  normalizations: []
+  produces_ast: true
+- id: part-manifest-group-rejected
+  category: parts
+  source: 'uses { world.people, world.weather }
+
+    '
+  cst_root: PartFileSyntax
+  ast: none
+  normalizations: []
+  produces_ast: false
+  expected_diagnostics:
+  - manifest-grouped-uses
+- id: part-manifest-wildcard-rejected
+  category: parts
+  source: 'uses world.*
+
+    '
+  cst_root: PartFileSyntax
+  ast: none
+  normalizations: []
+  produces_ast: false
+  expected_diagnostics:
+  - manifest-exact-path-required
+- id: part-manifest-relative-rejected
+  category: parts
+  source: 'uses .people
+
+    '
+  cst_root: PartFileSyntax
+  ast: none
+  normalizations: []
+  produces_ast: false
+  expected_diagnostics:
+  - manifest-exact-path-required
+- id: part-manifest-declaration-rejected
+  category: parts
+  source: 'thing Person {}
+
+    '
+  cst_root: PartFileSyntax
+  ast: none
+  normalizations: []
+  produces_ast: false
+  expected_diagnostics:
+  - manifest-content-not-permitted
+- id: part-only-before-using
+  category: parts
+  source: "\n  part only\nusing world.people\nsublook Detail { score := 0 }\n"
+  cst_root: MudFileSyntax
+  ast: MudFile(part_only=Enabled, declarations=[SublookDecl(Detail)])
+  normalizations: []
+  produces_ast: true
+- id: part-only-comment-before-header-rejected
+  category: parts
+  source: '# before
+
+    part only
+
+    '
+  cst_root: MudFileSyntax
+  ast: none
+  normalizations: []
+  produces_ast: false
+  expected_diagnostics:
+  - part-only-not-first-content
+- id: part-only-after-using-rejected
+  category: parts
+  source: 'using world.people
+
+    part only
+
+    '
+  cst_root: MudFileSyntax
+  ast: none
+  normalizations: []
+  produces_ast: false
+  expected_diagnostics:
+  - part-only-not-first-content
+- id: submessage-retains-category
+  category: parts
+  source: "submessage Changed { when true changes\n score := 0 }\n"
+  cst_root: MudFileSyntax
+  ast: SubmessageDecl(Changed)
+  normalizations: []
+  produces_ast: true
+- id: sublook-retains-category
+  category: parts
+  source: 'sublook Detail { score := 0 }
+
+    '
+  cst_root: MudFileSyntax
+  ast: SublookDecl(Detail)
+  normalizations: []
+  produces_ast: true
+- id: part-only-qualified-reference-denied
+  category: parts
+  source: 'value := world.hidden.Detail
+
+    '
+  cst_root: MudFileSyntax
+  ast: ComputedLocal(value)
+  normalizations: []
+  produces_ast: true
+  expected_nominal_diagnostics:
+  - part-only-reference
+  context: Detail is declared in a part only file of another part; qualification cannot bypass file privacy.
+- id: part-uses-not-transitive
+  category: parts
+  source: 'value := world.third.Detail()
+
+    '
+  cst_root: MudFileSyntax
+  ast: CallExpr(Detail)
+  normalizations: []
+  produces_ast: true
+  expected_nominal_diagnostics:
+  - direct-uses-required
+  context: A uses B; B uses world.third; A has no direct uses world.third.
+- id: part-private-type-contract-leak
+  category: parts
+  source: 'look Detail { hidden := Secret }
+
+    '
+  cst_root: MudFileSyntax
+  ast: LookDecl(Detail)
+  normalizations: []
+  produces_ast: true
+  expected_type_diagnostics:
+  - private-file-contract-leak
+  context: Secret is a type declared in a part only file; a shared produced field cannot expose it.
+- id: part-manifest-duplicate-warning
+  category: parts
+  source: 'uses world.people
+
+    uses world.people
+
+    '
+  cst_root: PartFileSyntax
+  ast: MudPartFile(uses=2)
+  normalizations: []
+  produces_ast: true
+  expected_warnings:
+  - redundant-uses

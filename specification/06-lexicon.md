@@ -12,6 +12,8 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-132
+  - D-131
   - D-109
   - D-034
   - D-035
@@ -87,7 +89,7 @@ Reserved words cannot be used as identifiers. The standard catalogue is:
 ```text
 using
 thing as alias family magnitude
-rule action subaction look message test
+rule action subaction look sublook message submessage test
 for on given when changes if then after with otherwise raise
 mut unique ordered
 create destroy add to remove from each by take
@@ -105,6 +107,8 @@ The terminals `&`, `|`, `^`, `--`, `->`, `-->`, `~`, `=>`, `<-` and `<=>` are no
 The scanner applies the longest match: `a--b` contains the operator `--`, whilst `a - -b` contains separate subtraction and negation. The parenthesised form `a - (-b)` is equivalent to the latter.
 
 They are contextual:
+
+- `part` and `only` in the initial `.mud` header `part only`; `uses` in a `mud.part` manifest.
 
 - `abstract` in front of `thing` or a structural `alias`.
 - `always` in front of `rule`.

@@ -1,6 +1,6 @@
 ---
 id: Q-064
-title: Aliases and nominal specialisation between modules
+title: Aliases and nominal specialisation between parts
 priority: P1
 opened: 2026-08-28
 resolved: true
@@ -9,11 +9,11 @@ decisions:
   - D-096
   - D-116
 affects:
-  - modules, aliases, types
+  - parts, aliases, types
 superseded-by: []
 ---
 
-# Q-064 — Aliases and nominal specialisation between modules
+# Q-064 — Aliases and nominal specialisation between parts
 
 ## Resolution
 

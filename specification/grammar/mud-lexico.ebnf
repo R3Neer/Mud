@@ -153,7 +153,7 @@ reserved-word
 keyword-word
     ::= "using"
       | "thing" | "as" | "alias" | "family" | "magnitude"
-      | "rule" | "action" | "subaction" | "look" | "message" | "test"
+      | "rule" | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" | "test"
       | "for" | "on" | "given" | "when" | "changes"
       | "if" | "then" | "after" | "with" | "otherwise" | "raise"
       | "mut" | "unique" | "ordered"

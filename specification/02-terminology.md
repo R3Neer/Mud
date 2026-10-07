@@ -32,7 +32,7 @@ The regulatory text has not yet been drafted.
 
 ## Planned terminology families
 
--  MUD programme, module file and path.
+-  MUD programme, part file and path.
 - Declaration, symbol, name and anchor.
 - `thing` abstract or concrete, canonical identity, activity, materialisation and value.
 - Field, relation and collection.

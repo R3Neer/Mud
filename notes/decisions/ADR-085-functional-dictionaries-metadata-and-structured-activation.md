@@ -238,7 +238,7 @@ It preserves multiplicity, the exact uniqueness criterion, ordering, ordering cr
 
 ### Structured initial activation
 
-D-096 replaces category separation with a single surface. Each module may provide at most one `start with`, either directly or as a block:
+D-096 replaces category separation with a single surface. Each part may provide at most one `start with`, either directly or as a block:
 
 ```mud
 start with {
@@ -250,7 +250,7 @@ start with {
 
 Each expression contributes zero, one or more activatable `thing | rule` declarations: an individual reference contributes one, `empty` contributes zero, a collection contributes its members directly and `all D` explicitly materialises an enumerable domain. A collection of collections is invalid.
 
-Repeated identities are deduplicated and ordering is not observable. Expressions are evaluated only with information available before runtime, and each module may activate only declarations with the same module lifecycle. Contributions from all modules are materialised jointly before initial stabilisation.
+Repeated identities are deduplicated and ordering is not observable. Expressions are evaluated only with information available before runtime, and each part may activate only declarations with the same part lifecycle. Contributions from all parts are materialised jointly before initial stabilisation.
 
 The AST retains a single `StartSet(contributions)` sequence; elaboration checks activatable category, depth and static evaluability.
 
@@ -388,7 +388,7 @@ The minimum new diagnostics are:
 - MUD gains pure case-based policies without introducing general functions.
 - Absence is retained until an external contract requires presence.
 - The external API distinguishes public actions from atomic auxiliaries.
-- Initial activation gathers activatable `thing | rule` declarations per module into one deduplicated set without semantic ordering.
+- Initial activation gathers activatable `thing | rule` declarations per part into one deduplicated set without semantic ordering.
 - Identity, presentation and provenance are separated and typed.
 - Arrows and products allow structural keys and policies without weakening alias nominality.
 - `Any` serves as a universal value boundary without inventing universal enumeration, ordering or defaults.
@@ -424,7 +424,7 @@ The suite must cover at least:
 7. Positional and named products, structural equality and use as key or input.
 8. `[0]`, `[1]` and `[n]` inference for immutable stored fields, explicitness suggestion and mutable exception.
 9. Selection without wrapping, projection or flattening, including dictionary pairs.
-10. Module-unified `start with`, direct and block forms, `empty`, one-level collections, deduplication, `all D` when materialising a domain and rejection of nested collections.
+10. Part-unified `start with`, direct and block forms, `empty`, one-level collections, deduplication, `all D` when materialising a domain and rejection of nested collections.
 11. Permanent effectiveness and catalogue exclusion of `Thing`.
 12. `Any`, narrowing, compatible equality, enumeration rejection and initialiser requirement.
 13. Metadata reading and types; runtime read-only access for all `~`, separation of identity and `~file` warning.
@@ -434,6 +434,6 @@ The suite must cover at least:
 
 ## Current amendment by D-096
 
-The structured activation section requiring separate `things` and `rules` blocks is replaced. `start with` accepts a direct contribution or a unified expression block providing activatable `thing | rule` declarations; identities are deduplicated and ordering is not semantic. Activation is aggregated per module.
+The structured activation section requiring separate `things` and `rules` blocks is replaced. `start with` accepts a direct contribution or a unified expression block providing activatable `thing | rule` declarations; identities are deduplicated and ordering is not semantic. Activation is aggregated per part.
 
 `subaction` is also broadened: it may be invoked from any `then` context, not only from another action/subaction, without acquiring external root capability.

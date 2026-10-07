@@ -92,7 +92,7 @@ A request `create d` on an explicitly active declaration is a successful no-op, 
 
 ### Starting set `start with`
 
-The definitions of `thing` and rules do not remain active simply because they appear. Each module can contribute a maximum of one `start with` unified:
+The definitions of `thing` and rules do not remain active simply because they appear. Each part can contribute a maximum of one `start with` unified:
 
 ```mud
 start with {
@@ -104,7 +104,7 @@ start with {
 
 A direct contribution, or each expression in the block, contributes zero, one or several activatable statements `thing | rule`: a reference provides one, `empty` equals zero and one collection contributed by its members. To bring about a domain Explicit enumeration is used `all D`; a collection of collections is invalid. Duplicate identifiers are deduplicated and the order is not observable.
 
-Expressions can only depend on information available before they exist world runtime. The contributions from all modules are combined, materialised and validated atomically, and stabilised before external actions are accepted. Each module can only trigger statements with cycle its lifespan module.
+Expressions can only depend on information available before they exist world runtime. The contributions from all parts are combined, materialised and validated atomically, and stabilised before external actions are accepted. Each part can only trigger statements with cycle its lifespan part.
 
 Actions, aliases and magnitudes are not executable statements. Each test declares his own contribution `start with`; for a test root the contributions from the static transitive closure of reachable tests are combined in accordance with D-096.
 
@@ -127,7 +127,7 @@ The suspension of a declaration because one hard dependency 'is inactive' does n
 
 `with` is a reserved word.
 
-`start` is a contextual word: the parser recognises it as the start of a modular contribution `start with` top-tier or the `start with` contained in a test.
+`start` is a contextual word: the parser recognises it as the start of a part-level contribution `start with` top-tier or the `start with` contained in a test.
 
 `abstract` It is also context-dependent: the parser recognises it as a modifier only when it precedes `thing`. Outside that position, it can be used as an ordinary identifier.
 
@@ -217,12 +217,12 @@ The suite must cover:
 4. Activation and the destruction of a `thing`.
 5. Rematerialisation of a specific `thing` while retaining its exact identity and descriptor, but reconstructing its stored data from defaults and initialisers.
 6. Activation concurrent idempotent of a identity absent.
-7. At most one `start with` by module and a valid exemption from contribution in a module.
+7. At most one `start with` by part and a valid exemption from contribution in a part.
 8. Order independence and deduplication within the unified set of contributions.
 9. Support for direct input, unified block and optional trailing comma.
-10. Rejection of non-activatable declarations, activation from another module and nested collections.
-11. A project in which certain modules are omitted `start with`, equivalent to an empty initial contribution.
-12. Materialisation the combined total of the contributions from all modules and stabilisation prior to external actions.
+10. Rejection of non-activatable declarations, activation from another part and nested collections.
+11. A project in which certain parts are omitted `start with`, equivalent to an empty initial contribution.
+12. Materialisation the combined total of the contributions from all parts and stabilisation prior to external actions.
 13. `Thing` always in force and cannot be activated.
 14. Discard of own stored load following `destroy`, without removing a third party’s charge that has merely been suspended by reason of subordination.
 15. Union of contributions `start with` of the static transitive closure of reachable tests.
@@ -235,4 +235,4 @@ The body of a `thing` may be omitted when it contains no members. `thing A`, `th
 
 ## Amendment current by D-096
 
-Initial activation becomes modular. Each module may contribute at most one `start with`; all contributions are combined before stabilisation. `start with` no longer separates `things` and `rules`, does not specify an order, and can activate only declarations whose lifecycle belongs to that module.
+Initial activation becomes modular. Each part may contribute at most one `start with`; all contributions are combined before stabilisation. `start with` no longer separates `things` and `rules`, does not specify an order, and can activate only declarations whose lifecycle belongs to that part.

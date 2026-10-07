@@ -12,6 +12,8 @@ depends-on:
 questions:
   - Q-060
 decisions:
+  - D-132
+  - D-131
   - D-014
   - D-018
   - D-028
@@ -54,7 +56,7 @@ Numeric signatures and dimensional admission follow [[19-expressions#4. Numeric,
 
 ## 1. Environments and judgements
 
-Let $P$ be a linked, nominally resolved programme. Its finite nominal catalogue is $\Sigma$. It records declaration identity, category, ancestry, schema origins, callable signatures, module visibility and declared type expressions. $\Gamma$ maps visible local names to value contracts and place information. $\Phi$ is the finite set of facts established at the programme point by contracts and control-flow narrowing. $W$ is a well-formed world projection used only to interpret state-dependent domains.
+Let $P$ be a linked, nominally resolved programme. Its finite nominal catalogue is $\Sigma$. It records declaration identity, category, ancestry, schema origins, callable signatures, part visibility and declared type expressions. $\Gamma$ maps visible local names to value contracts and place information. $\Phi$ is the finite set of facts established at the programme point by contracts and control-flow narrowing. $W$ is a well-formed world projection used only to interpret state-dependent domains.
 
 An elaborated value contract $\tau$ consists of an element form, its domain and its outer collection specification. A place's outer mutability is separate. Let $\mathcal V$ be the universe of finite MUD values and $\llbracket\tau\rrbracket_W\subseteq\mathcal V$ the values satisfying that complete contract in $W$. A normal result must belong to this set; a computing error supplies no normal result.
 
@@ -190,6 +192,8 @@ An explicit nominal cast requires representation equivalence and validates desti
 
 Two context-free structural literals do not supply each other with a nominal comparison context. An already typed alias operand may supply its type to the opposite untyped compatible literal.
 
+Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
+
 ## 8. Callable substitution and call selection
 
 Write a callable contract as $(I,R,A)$; $I$ is the ordered input-slot list and $A$ includes permissions, effects, determinism and outer-root capability. Let $s$ be supplied and $t$ requested.
@@ -233,7 +237,7 @@ Inherited writable stored contracts remain invariant. Immutable alias contracts 
 
 Thing value admission preserves strict membership: a field whose member type is the thing declaration $T$ does not admit $T$ itself as a population member; compatible concrete descendants are admissible. A declaration descriptor for $T$ is a distinct reflective use.
 
-Cross-module thing/alias specialisation requires uses authorisation and membership of the visible public contract's transitive type closure. Importing a path supplies no authority. Inherited initialisation is compiled under the declaring owner's access rights. Private ordinary thing fields do not become public through specialisation.
+Cross-part thing/alias specialisation requires uses authorisation and membership of the visible public contract's transitive type closure. Importing a path supplies no authority. Inherited initialisation is compiled under the declaring owner's access rights. Private ordinary thing fields do not become public through specialisation.
 
 Descriptor reflection is checked against every possible static receiver category. A supported optional property may return empty; an unsupported property is a static error, never a dynamic empty fallback. A type expression obtained through type reflection must be statically established as Type; runtime-dependent type generation is invalid. Source spans and AST values are not MUD values merely because the compiler holds them.
 

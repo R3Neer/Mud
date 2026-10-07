@@ -13,7 +13,7 @@ affects:
 # ADR-106 — Receiver-based call disambiguation
 
 - Modifies: [[ADR-035-organisation-names-using-and-anchors|D-035]], [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-072-resolution-environments-and-explicit-anchor-migrations|D-072]], [[ADR-078-nominal-resolution-anchor-catalogue-and-initial-graph|D-078]], [[ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|D-093]] and [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
-- Preserves the callable and modular contracts of [[ADR-096-modules-callables-look-message-and-activation|D-096]].
+- Preserves the callable and part-level contracts of [[ADR-096-modules-callables-look-message-and-activation|D-096]].
 
 ## Context
 
@@ -27,7 +27,7 @@ Only statically established incompatibility excludes a candidate. Domain predica
 
 Bare descriptor references, declarations governed by `on`, stored callable invocation and same-path name uniqueness retain their existing contracts. This decision does not resolve erased-descriptor binding or callable variance; it does not require changing those existing questions.
 
-The two example declarations retain `action::a.stuff.Play` and `action::b.stuff.Play`. Their receivers neither own the actions nor contribute new anchor segments. Path overlap has no selection semantics. Qualification and `using` do not bypass modular visibility.
+The two example declarations retain `action::a.stuff.Play` and `action::b.stuff.Play`. Their receivers neither own the actions nor contribute new anchor segments. Path overlap has no selection semantics. Qualification and `using` do not bypass part-level visibility.
 
 The nominal HIR represents bindings using the sum `nominal_reference`: `ResolvedReference` or `PendingReceiverCall`. Pending calls retain at least two deduplicated nominal candidate symbols and the selected lookup level, with no type conclusion or chosen target. They introduce no symbols or anchors and no candidate `RefersTo` edges. Static selection belongs to later elaboration; the schema of that later result remains unfixed.
 
@@ -61,7 +61,7 @@ The following are semantic conformance requirements, not claims that a MUD compi
 7. Different `given` names/types/defaults, expected results and runtime conditions never break a receiver tie. A uniquely selected target with invalid arguments fails ordinary validation.
 8. Narrowing before the call may yield a unique target; a union cannot dispatch each alternative to a different target at runtime.
 9. Bare `Play` descriptor references remain ambiguous, and stored callable values retain their existing invocation contract.
-10. Fully qualified operation references avoid short-name selection but still require compatible participants and authorised modular visibility.
+10. Fully qualified operation references avoid short-name selection but still require compatible participants and authorised part-level visibility.
 11. Same-path duplicates remain invalid, and the selected action retains its path-derived anchor.
 12. Pending HIR calls retain source provenance, lookup level and the complete candidate set, with neither a target nor candidate `RefersTo` edges. Resolved receiver roots retain their own edges.
 

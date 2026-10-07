@@ -47,7 +47,7 @@ class NominalHIRContractTests(unittest.TestCase):
         self.assertTrue(any("PendingReceiverCall" in p for p in problems))
 
     def test_layout_and_comments_are_not_contract_changes(self):
-        reformatted = re.sub(r"\s+", " ", self.hir)
+        reformatted = re.sub(r"\s+", " ", re.sub(r"--[^\n]*", "", self.hir))
         # Preserve the type-definition boundaries used by the ASDL reader.
         reformatted = re.sub(r" (?=[a-z][a-z0-9_]* =)", "\n    ", reformatted).replace(" }", "\n}")
         self.assertEqual(nominal_hir_contract_problems(reformatted), [])
@@ -178,3 +178,30 @@ class RecoveryContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PartContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        root = Path(__file__).resolve().parents[2]
+        cls.grammar = (root / "specification/grammar/mud.ebnf").read_text(encoding="utf-8")
+        cls.ast = (root / "specification/syntax/mud-surface-ast.asdl").read_text(encoding="utf-8")
+
+    def test_current_boundary(self):
+        from validate_syntax_model import part_contract_problems
+        self.assertEqual(part_contract_problems(self.grammar, self.ast), [])
+
+    def test_manifest_cannot_accept_source_declarations(self):
+        from validate_syntax_model import part_contract_problems
+        grammar = self.grammar.replace('"uses" , mud-path', '"uses" , (mud-path | top-level-declaration)')
+        self.assertTrue(part_contract_problems(grammar, self.ast))
+
+    def test_private_file_marker_cannot_be_erased(self):
+        from validate_syntax_model import part_contract_problems
+        self.assertTrue(part_contract_problems(self.grammar, self.ast.replace("flag part_only,", "")))
+
+    def test_sub_categories_cannot_collapse_to_host_operations(self):
+        from validate_syntax_model import part_contract_problems
+        for name in ("SublookDecl", "SubmessageDecl"):
+            with self.subTest(name=name):
+                self.assertTrue(part_contract_problems(self.grammar, self.ast.replace(name, "LostCategory")))

@@ -47,9 +47,19 @@ module MUDSurface {
     -- Roots
     -- -----------------------------------------------------------------
 
-    project = MudProject(source_file* files)
+    project = MudProject(source_file* files, part_file* parts)
+
+    input_file = SourceInput(source_file source) | PartInput(part_file manifest)
+        attributes (source_origin origin)
+
+    part_file = MudPartFile(file_metadata metadata, uses_decl* uses)
+        attributes (source_origin origin)
+
+    uses_decl = UsesDecl(mud_path path)
+        attributes (source_origin origin)
 
     source_file = MudFile(file_metadata metadata,
+                          flag part_only,
                           file_metadata_assignment* metadata_defaults,
                           using_decl* usings,
                           top_level_decl* declarations)
@@ -176,7 +186,19 @@ module MUDSurface {
                               given_clause? givens,
                               metadata_assignment* metadata,
                               public_field_decl* fields)
+                   | SublookDecl(nominal_name name,
+                              for_clause? participants,
+                              given_clause? givens,
+                              metadata_assignment* metadata,
+                              public_field_decl* fields)
                    | MessageDecl(nominal_name name,
+                                 on_clause? participants,
+                                 metadata_assignment* metadata,
+                                 pure_preamble_statement* leading_preamble,
+                                 expression_block activator,
+                                 expression_block? guard,
+                                 public_field_decl* fields)
+                   | SubmessageDecl(nominal_name name,
                                  on_clause? participants,
                                  metadata_assignment* metadata,
                                  pure_preamble_statement* leading_preamble,
@@ -188,7 +210,7 @@ module MUDSurface {
                               start_set start,
                               effect_block effects,
                               test_after_block after)
-                   | ModuleStartDecl(start_set start)
+                   | PartStartDecl(start_set start)
         attributes (source_origin origin)
 
     -- -----------------------------------------------------------------

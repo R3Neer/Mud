@@ -218,6 +218,35 @@ def recovery_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
     return problems
 
 
+def part_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
+    """Protect the file/category boundary without claiming a Mud parser."""
+    code = strip_comments(grammar_text)
+    ast = re.sub(r"--.*", "", ast_text)
+    problems = []
+    found = list(re.finditer(r"(?m)^([a-z][a-z0-9-]*)\s*::=", code))
+    rhs = {}
+    for i, match in enumerate(found):
+        end = found[i + 1].start() if i + 1 < len(found) else len(code)
+        rhs[match[1]] = re.sub(r"\s+", " ", code[match.end():end].strip().removesuffix(";").strip())
+    expected = {
+        "mud-input": "mud-file | part-file",
+        "uses-declaration": '\"uses\" , mud-path',
+        "part-only-directive": '\"part\" , \"only\"',
+        "part-file": "layout , [ uses-declaration , { required-separation , uses-declaration } , [ required-separation ] ] , EOF",
+        "sublook-declaration": '\"sublook\" , look-signature-body',
+        "submessage-declaration": '\"submessage\" , message-signature-body',
+    }
+    for name, value in expected.items():
+        if rhs.get(name) != value:
+            problems.append(f"{name} must preserve the minimal part/category boundary")
+    if "[ part-only-directive , required-separation ]" not in rhs.get("mud-file", ""):
+        problems.append("source root must retain the optional part-only header")
+    for fragment in ("flag part_only", "part_file* parts", "MudPartFile(", "UsesDecl(", "SublookDecl(", "SubmessageDecl("):
+        if fragment not in ast:
+            problems.append(f"part AST contract is missing: {fragment}")
+    return problems
+
+
 def validate(root: Path) -> list[Problem]:
     problems: list[Problem] = []
     grammar = root / "specification/grammar/mud.ebnf"
@@ -320,6 +349,8 @@ def validate(root: Path) -> list[Problem]:
             problems.append(Problem(str(cases_path), f"{case_id}: produces_ast is missing"))
 
     # Global AST properties.
+    problems.extend(Problem(str(asdl_path), message) for message in
+                    part_contract_problems(grammar.read_text(encoding="utf-8"), asdl_path.read_text(encoding="utf-8")))
     ast_text = asdl_path.read_text(encoding="utf-8")
     problems.extend(Problem(str(asdl_path), message) for message in
                     foreign_contract_problems(grammar.read_text(encoding="utf-8"), ast_text))

@@ -63,4 +63,4 @@ The restriction is syntactic. It does not change:
 
 ## Current amendment by D-096
 
-`using` remains the name-resolution header of a `.mud` file. The new modular dependency `uses` lives in `mud.module` and authorises crossing the semantic boundary; `using` does not grant that authorisation and `uses` does not automatically import every name into each file.
+`using` remains the name-resolution header of a `.mud` file. The new part-level dependency `uses` lives in `mud.part` and authorises crossing the semantic boundary; `using` does not grant that authorisation and `uses` does not automatically import every name into each file.

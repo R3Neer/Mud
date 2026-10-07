@@ -93,7 +93,7 @@ Temporary triggers are made up of the words `and` and `or`. An ordinary Boolean 
 
 ### Initialisation of the reactive memory
 
-The links found in the first snapshot by combining module `start with` contributions, or contributions compiled for a test world, receive a virtual previous Boolean value of $\mathsf{false}$ for each branch. If a branch is true in that first stabilisation snapshot, it fires. Temporal expressions, including `changes` and `old`, compare against the initial snapshot itself: `changes` does not fire and `old e` equals `e`.
+The links found in the first snapshot by combining part `start with` contributions, or contributions compiled for a test world, receive a virtual previous Boolean value of $\mathsf{false}$ for each branch. If a branch is true in that first stabilisation snapshot, it fires. Temporal expressions, including `changes` and `old`, compare against the initial snapshot itself: `changes` does not fire and `old e` equals `e`.
 
 A connection that was not present in that first snapshot, whether because a rule activated it or because participants arrived, does not take part in the root or wave that creates it. During its first wave it stores the current value without firing `when` or producing a `changes` pulse. Subsequent waves compare two snapshots normally. In particular, if it stores $\mathsf{false}$ and the condition is $\mathsf{true}$ in the next wave, `when` fires; if it is first memorised as $\mathsf{true}$, that mere appearance does not trigger it.
 

@@ -17,6 +17,8 @@ depends-on:
   - grammar/mud.ebnf
 questions: []
 decisions:
+  - D-131
+  - D-132
   - D-109
   - D-015
   - D-054
@@ -36,6 +38,8 @@ decisions:
 ## State and purpose
 
 This document defines the specific structure retained by a MUD file following lexical and syntactic analysis. The CST enables the original byte stream to be reconstructed, preserves comments and formatting, provides local diagnostics and supports editing tools without attributing any semantic meaning to the physical layout of the text.
+
+`MudFileSyntax` and `PartFileSyntax` are selected by physical filename. The inventory union `MudInputSyntax` does not guess a filename from content. A source header retains PartOnlyDirectiveSyntax and all leading trivia; validation rejects any non-whitespace content before that header. A manifest retains each UsesDeclarationSyntax, including duplicates for diagnostics.
 
 The CST is **per file**. A project may contain several CSTs, but there is no single CST that physically spans multiple files.
 

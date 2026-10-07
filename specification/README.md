@@ -11,6 +11,8 @@ normative: true
 questions:
   - Q-067
 decisions:
+  - D-132
+  - D-131
   - D-112
   - D-113
   - D-114
@@ -104,7 +106,7 @@ Chapter: [[02-terminology]].
 
 Normative glossary of:
 
-- MUD programme, module, file and path.
+- MUD programme, part, file and path.
 - Declaration, symbol, name and anchor.
 - `thing`, identity and value.
 - Field, relation and collection.
@@ -180,7 +182,7 @@ Defines the complete syntax of:
 - Effects.
 - Blocks.
 - Calls.
-- Canonical definitions of `thing` and rules, module-unified `start with` and activation through `create Name`.
+- Canonical definitions of `thing` and rules, part-unified `start with` and activation through `create Name`.
 - Isolated tests with local `start with`, `then`, `after` and `otherwise`.
 - Error-only otherwise handlers on expression, value and effect blocks, with joint on bindings and then/raise branches.
 - Numeric formats within `Text` interpolations.
@@ -244,7 +246,7 @@ Defines:
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 
-Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/message types are static and nominal per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized modules.
+Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/message types are static and nominal per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized parts.
 
 Juicio principal:
 
@@ -261,7 +263,7 @@ Planned scope:
 - Identity, activity, destruction of a materialisation's own load, rematerialisation from the canonical definition and independent state of concrete and abstract `thing`s.
 - Single and multiple specialisation, inheritable schema, defaults and initialisers.
 - Integration of `Thing` as the built-in root and of nominal identity/equality rules.
-- Modular boundary of `thing`s: visible identity/type versus ordinary state projected through public operations and inter-module specialisation limits.
+- Part-level boundary of `thing`s: visible identity/type versus ordinary state projected through public operations and inter-part specialisation limits.
 - `thing` metadata and reflection without confusing them with state fields.
 
 ## 12. Nominal aliases and structural values
@@ -275,7 +277,7 @@ Planned scope:
 - Inherited defaults, immutable values, equality, ordering and enumerability where applicable.
 - Reconstruction of immutable aliases through write-back from assignable paths, without introducing mutability into their values.
 - Boundary between structural compatibility and explicit acquisition of nominality.
-- Contract-visible alias specialization across modules under uses authorization and inherited substitutability.
+- Contract-visible alias specialization across parts under uses authorization and inherited substitutability.
 
 ## 13. Closed value families
 
@@ -402,8 +404,8 @@ Planned file: `24-public-boundary.md`
 
 Planned scope:
 
-- Contracts visible between modules and to the host for `action`, `look` and `message`; `test` crosses modules only in a test context.
-- Modular authorisation through `uses`, transitive closure of the types needed to understand a contract and safe cross-module reflection without silent filtering.
+- Contracts visible between parts and to the host for `action`, `look` and `message`; `test` crosses parts only in a test context.
+- Part-level authorisation through `uses`, transitive closure of the types needed to understand a contract and safe cross-part reflection without silent filtering.
 - Host API centred on the identity of public operations, not on a participant chosen as owner.
 - `for`/`given` signatures, external capability of `action` versus `subaction`, callable values and binding at the invocation point.
 - `look` as a pure query with a coherent caller view and one value of its static produced result type.
@@ -499,7 +501,7 @@ Planned file: `32-runtime-lifecycle.md`
 Planned scope:
 
 - Activity, materialisation, destruction of a materialisation's own load and rematerialisation from the canonical definition.
-- Module `start with` contributions, joint materialisation and first-activation initialisation.
+- Part `start with` contributions, joint materialisation and first-activation initialisation.
 - Latent storage of suspended foreign state, effective projection, dependency suspension and restoration.
 - Appearance and disappearance of activity-dependent bindings.
 
@@ -620,9 +622,9 @@ Planned file: `43-declarative-tests.md`
 Planned scope:
 
 - `test` declarations, fresh isolated world, execution and disposal.
-- Static transitive closure of reachable tests and union of **their own** `start with` contributions; ordinary module activation is not part of a test's initial world.
+- Static transitive closure of reachable tests and union of **their own** `start with` contributions; ordinary part activation is not part of a test's initial world.
 - Prior materialisation/stabilisation, `then`, `after`, `old`, diagnostics and executor results.
-- Test visibility between modules exclusively in a test context.
+- Test visibility between parts exclusively in a test context.
 
 ## 44. Conformance suite
 

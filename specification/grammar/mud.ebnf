@@ -2,8 +2,21 @@
    Upper-case terminals come from mud-lexico.ebnf or the contextual
    classifier described in 06-lexicon.md. *)
 
+mud-input
+    ::= mud-file | part-file ;
+
+part-file
+    ::= layout , [ uses-declaration , { required-separation , uses-declaration } , [ required-separation ] ] , EOF ;
+
+uses-declaration
+    ::= "uses" , mud-path ;
+
+part-only-directive
+    ::= "part" , "only" ;
+
 mud-file
     ::= layout
+        , [ part-only-directive , required-separation ]
         , [ file-metadata-assignment , { required-separation , file-metadata-assignment } , required-separation ]
         , [ using-file-body | declaration-file-body ]
         , EOF
@@ -39,9 +52,11 @@ top-level-declaration
       | action-declaration
       | subaction-declaration
       | look-declaration
+      | sublook-declaration
       | message-declaration
+      | submessage-declaration
       | test-declaration
-      | module-start-declaration
+      | part-start-declaration
       ;
 
 (* ------------------------------------------------------------------ *)
@@ -622,7 +637,13 @@ action-signature-body
         ;
 
 look-declaration
-    ::= "look" , nominal-name
+    ::= "look" , look-signature-body ;
+
+sublook-declaration
+    ::= "sublook" , look-signature-body ;
+
+look-signature-body
+    ::= nominal-name
         , [ for-clause ]
         , [ given-clause ]
         , "{" , declaration-layout
@@ -635,7 +656,13 @@ look-declaration
         ;
 
 message-declaration
-    ::= "message" , nominal-name
+    ::= "message" , message-signature-body ;
+
+submessage-declaration
+    ::= "submessage" , message-signature-body ;
+
+message-signature-body
+    ::= nominal-name
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
@@ -739,7 +766,7 @@ local-value-declaration
 (* Initial activation and tests                                         *)
 (* ------------------------------------------------------------------ *)
 
-module-start-declaration
+part-start-declaration
     ::= start-with-declaration ;
 
 start-with-declaration
@@ -1046,7 +1073,7 @@ primary-expression
       | quantifier-expression
       | random-expression
       | "thing" | "alias" | "family" | "magnitude" | "rule"
-      | "action" | "subaction" | "look" | "message" | "test"
+      | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" | "test"
       | "(" , expression , ")"
       ;
 

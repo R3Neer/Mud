@@ -129,7 +129,7 @@ Just one magnitude `point over` it may be cyclical. In accordance with D-082, `c
 [a..b) cycle
 ```
 
-The domain It must be finite, contiguous, non-empty, closed on the left and open on the right. Its period is $b-a$ and everything value is normalised module that period in relation to $a$.
+The domain It must be finite, contiguous, non-empty, closed on the left and open on the right. Its period is $b-a$ and everything value is normalised part that period in relation to $a$.
 
 For `[0..360) cycle`:
 

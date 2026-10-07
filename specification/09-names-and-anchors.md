@@ -13,6 +13,8 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-132
+  - D-131
   - D-111
   - D-109
   - D-106
@@ -78,6 +80,8 @@ Participants `for`, `on` and `given` are lexical symbols with a stable subordina
 
 ## Environments of resolution
 
+The owning part and file-wide `part only` restriction filter visibility before any lookup level is considered, including qualified references. Direct `uses` authorisation is required across parts; its operational permission is nontransitive. Necessary contract-type closure does not export operations or private-file declarations. A rejected private name is not a candidate to be selected by receiver typing.
+
 Let $Gamma$ be an environment and let $n$ be an unqualified name. The resolution query has the following levels:
 
 1.  Symbols from the scope lexicon.
@@ -101,9 +105,9 @@ Access paths with nodes are constructed in stages: first, the nominal root is re
 ### Receiver-call selection
 
 > [!rule] MUD-NAME-007 — Selection by supplied `for` participants
-> An unqualified operation name in a call with explicit receivers may denote several visible declarations from different MUD paths at the first non-empty lookup level. When every distinct candidate is a nominal callable governed by `for` (an action, subaction, Boolean rule or `look`), elaboration selects a declaration by static receiver compatibility. Exactly one compatible declaration is required.
+> An unqualified operation name in a call with explicit receivers may denote several visible declarations from different MUD paths at the first non-empty lookup level. When every distinct candidate is a nominal callable governed by `for` (an action, subaction, Boolean rule, look or sublook), elaboration selects a declaration by static receiver compatibility. Exactly one compatible declaration is required.
 
-The operation name in `A.Play()` is unqualified even though the receiver `A` is written explicitly. The receiver is resolved independently; it does not make `Play` a member owned by `A`. The lookup levels and modular visibility remain unchanged. A non-callable candidate or a stored callable value at the selected level does not participate in this exception; ordinary ambiguity and category checks apply. A single stored callable value retains its ordinary invocation contract.
+The operation name in `A.Play()` is unqualified even though the receiver `A` is written explicitly. The receiver is resolved independently; it does not make `Play` a member owned by `A`. The lookup levels and part-level visibility remain unchanged. A non-callable candidate or a stored callable value at the selected level does not participate in this exception; ordinary ambiguity and category checks apply. A single stored callable value retains its ordinary invocation contract.
 
 For each candidate, elaboration binds the supplied receivers to its declared `for` roles using the ordinary positional or exhaustive named form. It checks the number and names of roles, static type compatibility, collection cardinality and modifiers, and required outer and inner mutability capabilities. A collection supplied for one collective role remains one receiver. A structural receiver form is interpreted against each candidate signature; distinct valid interpretations do not create a preference between candidates.
 
@@ -134,7 +138,7 @@ action Play for actor: B [mut] {
 }
 ```
 
-> In a context with the required mutation authority and modular visibility, the calls below select `action::a.stuff.Play` and `action::b.stuff.Play`, respectively:
+> In a context with the required mutation authority and part-level visibility, the calls below select `action::a.stuff.Play` and `action::b.stuff.Play`, respectively:
 
 ```mud
 using a.stuff
@@ -180,7 +184,7 @@ No local scope permits forward references, loops, redeclarations or shading of a
 
 ## Contract-visible specialization
 
-`thing` and `alias` ancestors may cross a module boundary when `uses` authorizes that module and the ancestor is in the public contract's transitive type closure. `using` only imports names. Private implementation types remain unavailable. Inheritance preserves canonical member anchors and owner permissions; it grants no ordinary private-state access or foreign activation authority. `Specializes` and resolved ancestor references retain their existing Nominal HIR representation, with no type or capability proof embedded in it. Generated English contract documentation exposes the visible type frontier and the operations that require each type.
+`thing` and `alias` ancestors may cross a part boundary when `uses` authorizes that part and the ancestor is in the public contract's transitive type closure. `using` only imports names. Private implementation types remain unavailable. Inheritance preserves canonical member anchors and owner permissions; it grants no ordinary private-state access or foreign activation authority. `Specializes` and resolved ancestor references retain their existing Nominal HIR representation, with no type or capability proof embedded in it. Generated English contract documentation exposes the visible type frontier and the operations that require each type.
 
 ## Static callable role contracts
 
@@ -230,14 +234,17 @@ The canonical form is `<category>::<qualified-name>` and, for a nested declarati
 | unit declared | `unit` |
 | any of the three types of rule | `rule` |
 | action | `action` |
+| subaction | `subaction` |
 | look | `look` |
+| sublook | `sublook` |
 | message | `message` |
+| submessage | `submessage` |
 | test | `test` |
 | type incorporated | `type` |
 
 The participants `for`, `on` and `given` do not introduce a new superordinate category: their anchor is subordinate to that of owner and is also derived from the clause class and the identifier, in accordance with the model of descriptors. The position is never part of that identity.
 
-`start with` of module does not introduce a name and therefore does not have anchor. The category describes the parent declaration: an field of `look` retains an anchor as `look::game.Status::score`, not an additional category `field`.
+`start with` of part does not introduce a name and therefore does not have anchor. The category describes the parent declaration: an field of `look` retains an anchor as `look::game.Status::score`, not an additional category `field`.
 
 They have anchor:
 
@@ -307,7 +314,7 @@ The partial graph does not replace the AST nor does it constitute an source of t
 
 An conforming implementation must produce the same candidates and anchors, reject the shading and collisions indicated, preserve the provenance and allow the nominal graph to be reconstructed from the source programme.
 
-Receiver-call conformance includes distinct imported participant types, multiple and named receivers, collection-role shape and mutability, flow narrowing, overlapping specialisations, union receivers, duplicate imports of one anchor, and ambiguity unaffected by `given` or expected results. It must also preserve first-level blocking, exact-before-recursive priority, modular visibility, same-path name uniqueness and ambiguity of a bare callable descriptor reference. Pending calls must preserve all nominal candidates without false `RefersTo` edges.
+Receiver-call conformance includes distinct imported participant types, multiple and named receivers, collection-role shape and mutability, flow narrowing, overlapping specialisations, union receivers, duplicate imports of one anchor, and ambiguity unaffected by `given` or expected results. It must also preserve first-level blocking, exact-before-recursive priority, part-level visibility, same-path name uniqueness and ambiguity of a bare callable descriptor reference. Pending calls must preserve all nominal candidates without false `RefersTo` edges.
 
 ## Alias specialisation
 
@@ -316,7 +323,7 @@ Receiver-call conformance includes distinct imported participant types, multiple
 
 ## Metadata, descriptors and subordinate anchors
 
-Reflective access `~` distinguishes between intrinsic properties and configured metadata: `~identifier` is the source identifier, `~name` is configurable presentation, and all `~` accesses are runtime-readonly. Only stable semantic entities with descriptor typing and public anchor possess their own metadata: nominal declarations, members of `family`, units, fields, components and participants. Expressions, clause bodies and both `start with` are excluded as owners; that of module remains without anchor.
+Reflective access `~` distinguishes between intrinsic properties and configured metadata: `~identifier` is the source identifier, `~name` is configurable presentation, and all `~` accesses are runtime-readonly. Only stable semantic entities with descriptor typing and public anchor possess their own metadata: nominal declarations, members of `family`, units, fields, components and participants. Expressions, clause bodies and both `start with` are excluded as owners; that of part remains without anchor.
 
 Declaration-header participants `for`, `on` and `given` have a name and a subordinate anchor based on owner, a clause type and an identifier. The position is not part of identity. Declaration participants are anchored symbols; ordinary locals and otherwise on bindings remain as `LocalSymbol`. Field symbols derive exclusively from canonical static declarations and specialisation; runtime `add`/`remove` introduce or retire no field symbols or anchors. Dependency suspension affects effective availability rather than nominal declaration identity. Inherited members retain descriptor, anchor and metadata from their original declaration. `~metadata` lists only configured metadata, never intrinsic properties.
 
@@ -350,9 +357,9 @@ world.combat has not world.trade                # true
 
 `is` query specialisation closure; `iis` compares exact effective nominal type. The narrowing of `iis not` eliminates a single nominal possibility and does not eliminate its specialisations. This distinction does not create new anchors nor does it replace the singleton identity equality via `==`.
 
-## Modules, `uses` and anchors
+## Parts, `uses` and anchors
 
-Membership of module is a dimension of visibility and a dependency, not an additional component of the nominal anchor. `uses` authorises knowledge of the contract of another module; an `using` does not grant that authorisation. Cross-resolution can only reach operations and types belonging to the visible closure of the modular contract.
+Membership of part is a dimension of visibility and a dependency, not an additional component of the nominal anchor. `uses` authorises knowledge of the contract of another part; an `using` does not grant that authorisation. Cross-resolution can only reach operations and types belonging to the visible closure of the part-level contract.
 
 
 ## Foreign names and captures
@@ -361,7 +368,7 @@ An export introduces an ordinary immutable local value in its enclosing MUD bloc
 
 The adapter language label selects an adapter and does not name a MUD declaration. An export's optional MUD type annotation follows ordinary nominal resolution. Captured MUD identifiers exposed to native code resolve in the same lexical environment, visibility and lookup priority as their enclosing position, using `ResolvedReference` with role `foreign-capture` when a target is known. Native locals must not shadow exposed MUD bindings. The adapter supplies capture occurrences and original source spans; foreign library/member lookup belongs to native tooling.
 
-The existing nominal-HIR contract represents these symbols and references without structural extension. Capture types, conversions, mutability and dependency/effect evidence are not added to it. Wrappers and adapters cannot widen module visibility.
+The existing nominal-HIR contract represents these symbols and references without structural extension. Capture types, conversions, mutability and dependency/effect evidence are not added to it. Wrappers and adapters cannot widen part visibility.
 
 
 ## Foreign contract checking boundary

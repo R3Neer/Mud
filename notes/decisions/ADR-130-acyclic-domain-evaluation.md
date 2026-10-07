@@ -18,7 +18,7 @@ affects:
 
 ## Context
 
-The author accepts rejecting cycles of domain evaluation. Q-017 concerns computed admissible sets, not nominal inheritance or module-path dependencies. This clarifies D-037's invalid-cycle restriction and D-029's separation between cyclic point intervals and domain dependencies.
+The author accepts rejecting cycles of domain evaluation. Q-017 concerns computed admissible sets, not nominal inheritance or part-path dependencies. This clarifies D-037's invalid-cycle restriction and D-029's separation between cyclic point intervals and domain dependencies.
 
 ## Decision
 

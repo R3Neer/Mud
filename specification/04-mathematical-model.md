@@ -73,7 +73,7 @@ Let $\mathcal V_P$ denote the semantic values admitted by the programme's type c
 
 Aliases form a separate nominal partial order whose nodes are value types, not activatable identities. Abstract aliases are inhabited through concrete descendants. Productive recursion describes a finite type graph with finite individual values; it does not introduce cyclic value identity or imply finite enumeration.
 
-A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Module visibility and permission to specialise follow [[09-names-and-anchors]].
+A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Part visibility and permission to specialise follow [[09-names-and-anchors]].
 
 ## Activation and materialisation
 
@@ -140,9 +140,9 @@ Error occurrences belong to the resolution's error channel, not automatically to
 
 ## Initial and test worlds
 
-Each module contributes at most one `start with`: a static expression yielding an activatable declaration or a flat finite collection of `thing | rule`. It permits no instructions, effects or nested collections. An omitted contribution is empty. Contributions are unordered, deduplicated and materialised jointly before initial stabilisation, as defined in [[07-concrete-grammar]].
+Each part contributes at most one `start with`: a static expression yielding an activatable declaration or a flat finite collection of `thing | rule`. It permits no instructions, effects or nested collections. An omitted contribution is empty. Contributions are unordered, deduplicated and materialised jointly before initial stabilisation, as defined in [[07-concrete-grammar]].
 
-Every test constructs a fresh isolated world. The static transitive closure of reachable tests supplies the combined initial contributions before the test root. Tests are not world declarations or the host's public API; cross-module test visibility exists only in the test context. The test world and all its outputs are discarded at completion.
+Every test constructs a fresh isolated world. The static transitive closure of reachable tests supplies the combined initial contributions before the test root. Tests are not world declarations or the host's public API; cross-part test visibility exists only in the test context. The test world and all its outputs are discarded at completion.
 
 ## Metadata and observations
 

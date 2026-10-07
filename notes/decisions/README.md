@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 125.
-- Current: 121.
+- Total: 127.
+- Current: 123.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -109,7 +109,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-093 | current | 2026-08-16 | [[notes/decisions/ADR-093-surface-ast-nominal-hir-and-later-semantic-phase|Surface AST, nominal HIR and later semantic phase]] |
 | D-094 | current | 2026-08-16 | [[notes/decisions/ADR-094-terminal-anchors-for-configured-metadata|Terminal anchors for configured metadata]] |
 | D-095 | current | 2026-08-16 | [[notes/decisions/ADR-095-empty-extrema-as-ordinary-absence|Empty extrema as ordinary absence]] |
-| D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modules-callables-look-message-and-activation|Modules, callables, `look`, `message` and activation]] |
+| D-096 | current | 2026-08-28 | [[notes/decisions/ADR-096-modules-callables-look-message-and-activation|Parts, callables, `look`, `message` and activation]] |
 | D-097 | current | 2026-08-28 | [[notes/decisions/ADR-097-current-nominal-hir-and-deferred-semantic-ir|Current nominal HIR and deferred semantic IR]] |
 | D-098 | current | 2026-08-28 | [[notes/decisions/ADR-098-assignable-paths-and-write-back-of-immutable-aliases|Assignable paths and write-back of immutable aliases]] |
 | D-099 | current | 2026-08-28 | [[notes/decisions/ADR-099-fresh-materialisations-after-destroy-and-create|Fresh materialisations after `destroy` and `create`]] |
@@ -129,7 +129,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-113 | current | 2026-10-06 | [[notes/decisions/ADR-113-abstract-and-recursive-aliases|Abstract and recursive aliases]] |
 | D-114 | current | 2026-10-06 | [[notes/decisions/ADR-114-callable-variance-and-static-named-binding|Callable variance and static named binding]] |
 | D-115 | current | 2026-10-06 | [[notes/decisions/ADR-115-static-produced-types-and-union-joins|Static produced types and union joins]] |
-| D-116 | current | 2026-10-06 | [[notes/decisions/ADR-116-contract-visible-cross-module-specialisation|Contract-visible cross-module specialisation]] |
+| D-116 | current | 2026-10-06 | [[notes/decisions/ADR-116-contract-visible-cross-module-specialisation|Contract-visible cross-part specialisation]] |
 | D-117 | current | 2026-10-06 | [[notes/decisions/ADR-117-replacement-before-change-and-semantic-destinations|Replacement before change and semantic destinations]] |
 | D-118 | current | 2026-10-06 | [[notes/decisions/ADR-118-action-replies-refusals-and-errors|Action replies refusals and errors]] |
 | D-119 | current | 2026-10-06 | [[notes/decisions/ADR-119-invocation-owned-completion-and-imagine|Invocation-owned completion and imagine]] |
@@ -144,6 +144,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-128 | current | 2026-10-07 | [[notes/decisions/ADR-128-sequential-effects-and-staged-consolidation|Sequential effects and staged consolidation]] |
 | D-129 | current | 2026-10-07 | [[notes/decisions/ADR-129-unbounded-exact-numbers-and-money-operators|Unbounded exact numbers and Money operators]] |
 | D-130 | current | 2026-10-07 | [[notes/decisions/ADR-130-acyclic-domain-evaluation|Acyclic domain evaluation]] |
+| D-131 | current | 2026-10-07 | [[notes/decisions/ADR-131-parts-file-privacy-and-sub-operations|Parts, file privacy and sub operations]] |
+| D-132 | current | 2026-10-07 | [[notes/decisions/ADR-132-minimal-part-manifests-and-direct-uses|Minimal part manifests and direct uses]] |
 
 ## Reserved identifiers
 

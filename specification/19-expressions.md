@@ -16,6 +16,8 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-132
+  - D-131
   - D-028
   - D-030
   - D-032
@@ -55,6 +57,8 @@ decisions:
 ---
 
 # 19. Expression and block typing
+
+Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
 
 ## Scope and notation
 
@@ -104,7 +108,7 @@ A declaration-category expression denotes its defined descriptor category. Inter
 
 ## 2. Access, reflection and indexing
 
-For field access, every possible static receiver alternative must expose one compatible member contract under the module's access rights. The result joins those contracts without inventing nominal identity. A thing's private ordinary fields remain inaccessible across modules even when its type is visible. A multi-receiver collection does not implicitly project each member's fields.
+For field access, every possible static receiver alternative must expose one compatible member contract under the part's access rights. The result joins those contracts without inventing nominal identity. A thing's private ordinary fields remain inaccessible across parts even when its type is visible. A multi-receiver collection does not implicitly project each member's fields.
 
 Metadata access applies the static owner-category matrix. Type reflection returns Type for the statically known contract at that programme point, including valid narrowing. Unsupported metadata is rejected; supported absent optional metadata returns its declared optional result. No runtime lookup repairs invalid reflection.
 
@@ -237,7 +241,7 @@ All successful recovery proposals compose tentatively. Equal compatible value re
 
 ## 10. Declaration and programme acceptance
 
-Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/message public fields check their declared/inferred value contracts and module boundary. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
+Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/message public fields check their declared/inferred value contracts and part boundary. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
 
 An immutable stored local requires an explicit type/value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique type and obtains no outer place authority. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
 

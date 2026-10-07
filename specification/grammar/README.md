@@ -92,3 +92,5 @@ Any structural alteration to a production You must update this in the same commi
 
 Implementations may use any scanning or parsing technique provided they produce the same observable CST, the same rejections and the same Surface AST standardised.
 
+
+The concrete grammar inventory starts at `mud-input`; filenames select `.mud` → `mud-file` and `mud.part` → `part-file`. Manifests contain only exact `uses` statements and layout. Source header placement is validated against retained trivia under [[../05-source-text]].

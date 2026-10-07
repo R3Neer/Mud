@@ -72,7 +72,7 @@ From highest to lowest:
 
 1. access `.`, indexing `[]`, call `()` and complete extraction `unit from container in point`;
 2. prefixes `old`, `imagine`, `not` and sign;
-3. multiplication, division and module;
+3. multiplication, division and part;
 4. set-theoretic sum, subtraction and difference;
 5. suffixes `to Type` e `in unit`;
 6. comparisons, `is`, `iis`, `has` and `has not`;

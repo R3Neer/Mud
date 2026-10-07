@@ -2,6 +2,46 @@ schema_version: 1
 grammar: specification/grammar/mud.ebnf
 ast: specification/syntax/mud-surface-ast.asdl
 productions:
+  message-signature-body:
+    cst: MessageSignatureBodySyntax
+    ast:
+      disposition: discarded
+      reason: signature body absorbed by owning declaration
+  look-signature-body:
+    cst: LookSignatureBodySyntax
+    ast:
+      disposition: discarded
+      reason: signature body absorbed by owning declaration
+  submessage-declaration:
+    cst: SubmessageDeclarationSyntax
+    ast:
+      disposition: constructor
+      target: SubmessageDecl
+  sublook-declaration:
+    cst: SublookDeclarationSyntax
+    ast:
+      disposition: constructor
+      target: SublookDecl
+  part-only-directive:
+    cst: PartOnlyDirectiveSyntax
+    ast:
+      disposition: normalized
+      target: flag
+  uses-declaration:
+    cst: UsesDeclarationSyntax
+    ast:
+      disposition: constructor
+      target: UsesDecl
+  part-file:
+    cst: PartFileSyntax
+    ast:
+      disposition: constructor
+      target: MudPartFile
+  mud-input:
+    cst: MudInputSyntax
+    ast:
+      disposition: normalized
+      target: input_file
   mud-file:
     cst: MudFileSyntax
     ast:
@@ -546,11 +586,11 @@ productions:
     ast:
       disposition: constructor
       target: LocalValueDecl
-  module-start-declaration:
-    cst: ModuleStartDeclarationSyntax
+  part-start-declaration:
+    cst: PartStartDeclarationSyntax
     ast:
       disposition: constructor
-      target: ModuleStartDecl
+      target: PartStartDecl
   start-with-declaration:
     cst: StartWithDeclarationSyntax
     ast:

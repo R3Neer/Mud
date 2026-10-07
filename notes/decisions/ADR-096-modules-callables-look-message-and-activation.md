@@ -1,6 +1,6 @@
 ---
 id: D-096
-title: "Modules, callables, `look`, `message` and activation"
+title: "Parts, callables, `look`, `message` and activation"
 status: current
 date: 2026-08-28
 supersedes:
@@ -17,7 +17,7 @@ questions:
   - "Q-067"
   - "Q-068"
 affects:
-  - "modules, visibility and reflection"
+  - "parts, visibility and reflection"
   - "actions, subactions and `then`"
   - "`look`, `message` and triggers"
   - "domains, `all` and selection"
@@ -25,7 +25,7 @@ affects:
   - "grammar, CST, AST, IR, typing, resolution and host boundary"
 ---
 
-# ADR-096 — Modules, callables, `look`, `message` and activation
+# ADR-096 — Parts, callables, `look`, `message` and activation
 
 - Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
@@ -41,7 +41,7 @@ affects:
 
 - Supersedes: [[ADR-027-departures-from-the-model-by-means-of-look-and-message|D-027]].
 - Modifies: [[ADR-036-participants-recipients-and-calls|D-036]], [[ADR-041-contracts-under-the-three-types-of-rules|D-041]], [[ADR-042-shares-root-and-results|D-042]], [[ADR-045-causal-resolution-connections-and-queue|D-045]], [[ADR-058-temporal-triggers-changes-and-reactive-old|D-058]], [[ADR-063-signatures-given-and-joint-on-bindings|D-063]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]], [[ADR-081-collection-filtering-take-and-indexing|D-081]], [[ADR-085-functional-dictionaries-metadata-and-structured-activation|D-085]], [[ADR-087-reflective-metadata-stable-descriptors-and-external-visibility|D-087]] and [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
-- Associated open questions: Q-062 to Q-068.
+- Amendments: [[ADR-131-parts-file-privacy-and-sub-operations|D-131]], [[ADR-132-minimal-part-manifests-and-direct-uses|D-132]].
 
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
@@ -49,9 +49,9 @@ affects:
 
 ## Context
 
-MUD's evolution had left several artificially separate boundaries: elementary versus compound actions, `look` as an essentially external query, `message` as output deferred to the host, separate activation in `things` and `rules`, and implicit domain consumption in operations producing collections. These separations interact poorly when the language is organised into modules, permits callable values and uses wave-based causal resolution.
+MUD's evolution had left several artificially separate boundaries: elementary versus compound actions, `look` as an essentially external query, `message` as output deferred to the host, separate activation in `things` and `rules`, and implicit domain consumption in operations producing collections. These separations interact poorly when the language is organised into parts, permits callable values and uses wave-based causal resolution.
 
-This decision unifies these pieces; the complete mud.module grammar and final absent-participant projection remain open.
+The local manifest grammar is specified by D-132; external messages are specified by the causal delivery contract.
 
 ## Decision
 
@@ -65,37 +65,51 @@ Each invocation checks after once its owned work stabilizes, before its caller c
 
 An `action` or `subaction` may be invoked from any semantic `then` context, including a reactive rule's `then`. `action` also retains outer-root capability; `subaction` does not. A bare invocation effect propagates Errors or Refusal; explicit reply-value capture permits observation after rolling back the unsuccessful child attempt.
 
-### Modules and visibility
+### Parts and visibility
 
-Visibility derives from the semantic category, owning module, inter-module contracts and the type closure required by those contracts.
+A part is an encapsulation unit within a Mud world project. Each `.mud` belongs to the part of its nearest ancestor `mud.part`; no such ancestor is a static error. A nested manifest opens a new part. The part path is derived from its directory relative to the world root, without a repeated name declaration.
 
-A module is a semantic encapsulation unit. Between modules, the visible operational boundary consists of `action`, `look`, `message` and, only in a test context, `test`. The application boundary towards the host includes `action`, `look` and `message`, not `test`.
+A `mud.part` is a minimal manifest: only whitespace, comments and zero or more `uses exact.part.path` statements. Empty manifests are valid. Statements use ordinary newline or `;` separation. Paths are exact MudPaths from the world root and must identify directories containing a `mud.part`. Relative paths, wildcard paths, grouped lists, metadata, source declarations and backend settings are invalid. A repeated `uses` is redundant and produces a warning.
 
-Internal implementation declarations do not become visible by default. A module may use its own operations with the same semantic capabilities it grants to other modules in the relevant context.
+```mud
+uses world.people
+uses world.weather; uses world.time
+```
 
-Module membership is not part of the nominal anchor. Anchors such as `thing::infrastructure.economy.Bank` or `action::infrastructure.economy.Transfer` retain their form; the module is an additional dimension of visibility and dependency.
+`uses` authorises direct access to another part's visible contract; it does not import short names. `using` imports names inside an `.mud` and does not grant permission. Operational access is not transitive: if A uses B and B uses C, A cannot call C without its own uses C. The transitive type closure needed to represent B's visible contract remains available, without exporting all of C's operations. Fully qualified references obey the same checks.
 
-The physical root of a module is marked by a visible `mud.module` file. Each `.mud` belongs to the module of the nearest ancestor `mud.module`; a `.mud` without a modular ancestor is invalid, and a nested `mud.module` opens a new boundary. The module's logical name derives from the directory's MudPath.
+The optional header `part only` applies to its entire `.mud` file. It must be the first content after an optional BOM and whitespace; comments, metadata, `using` and declarations cannot precede it. It is followed by ordinary statement separation. Declarations remain available throughout their owning part but cannot cross to another part or the host. The header does not affect other files or nested parts, and is not accepted in `mud.part`. No declaration-level visibility modifiers or export-selection list exist.
 
-`mud.module` declares external dependencies through `uses`. `uses` authorises a module to know another module's contract; `using` retains its name-resolution/import role inside a `.mud` and does not by itself grant modular permission. Modular dependencies may form cycles: the compiler must warn about cyclic coupling, not invent an initialisation order.
+```mud
+part only
+using world.people
 
-The complete grammar of the `mud.module` file remains open in Q-062; this decision fixes its semantic role, physical name and the responsibility of `uses`, but introduces no additional surface.
+sublook Detail { score := 0 }
+```
 
-### Type closure and cross-module reflection
+Normal `action`, `look` and `message` form host operations. Their sub forms `subaction`, `sublook` and `submessage` are visible to authorised Mud parts by default but are not direct host endpoints. A subaction has no outer-root capability; sublook is a pure query with no action-only calling restriction; submessage supplies internal causal occurrences without host delivery. A `part only` file restricts normal and sub forms alike. Tests retain test-context visibility.
+
+A visible signature, produced value, nested alias/type component or reflective result cannot expose a `part only` declaration. Contract closure cannot lift this restriction. A visible ordinary value projection may be computed using private implementation state without exposing its private type. Ordinary thing fields remain private; imports, specialisation and descriptor widening grant no additional authority.
+
+Contract-visible thing and alias types may be specialised under direct uses authorisation and public type closure. Inherited initialisation keeps the declaring owner's rights. Part dependency cycles are valid with a cyclic-coupling warning; they imply no startup order and do not permit cycles of domain evaluation. Part start contributions are materialised jointly.
+
+Part membership remains an additional visibility dimension, not part of an anchor. Existing thing/action anchors retain their form; new sub declarations use their own sub category. Headers and manifest dependencies introduce no nominal symbols or anchors.
+
+### Type closure and cross-part reflection
 
 A visible contract must be closed with respect to the types needed to understand and use it. The closure includes, where applicable, `for` and `given` types, `on` participants, `look` results, `message` payloads and transitively required types inside aliases, families, magnitudes, collections, dictionaries and exposed products.
 
 A `thing` visible by contract exposes the nominal identity/type needed to bind values, not its ordinary fields. Public state reading is expressed through `look`. A visible `alias`, `family` or `magnitude` exposes the structure needed to represent its values.
 
-Reflection within the module itself may observe the model under the general descriptor system. Across a boundary, a reflective operation is valid only when its contract guarantees that it cannot return invisible entities. Results from `~fields`, `~children`, `~descendants` or similar properties are not silently filtered to simulate security.
+Reflection within the part itself may observe the model under the general descriptor system. Across a boundary, a reflective operation is valid only when its contract guarantees that it cannot return invisible entities. Results from `~fields`, `~children`, `~descendants` or similar properties are not silently filtered to simulate security.
 
-Things and aliases may specialize contract-visible types across an authorized module boundary. Inherited contracts remain substitutable; private state and activation permissions are not exported by ancestry. Tooling exposes the generated visible type frontier.
+Things and aliases may specialize contract-visible types across an authorized part boundary. Inherited contracts remain substitutable; private state and activation permissions are not exported by ancestry. Tooling exposes the generated visible type frontier.
 
-### Module activation
+### Part activation
 
-Each module may contribute at most one `start with`. It is not `main`, does not call modules and does not establish an initialisation order. Contributions from all modules are combined and materialised together before initial stabilisation.
+Each part may contribute at most one `start with`. It is not `main`, does not call parts and does not establish an initialisation order. Contributions from all parts are combined and materialised together before initial stabilisation.
 
-A module's `start with` may activate only declarations with a lifecycle in the same module. The mandatory separation between `things` and `rules` sections is removed: the conceptual set contains activatable `thing | rule` declarations, is unordered and deduplicated, and is not interpreted as `for each create`.
+A part's `start with` may activate only declarations with a lifecycle in the same part. The mandatory separation between `things` and `rules` sections is removed: the conceptual set contains activatable `thing | rule` declarations, is unordered and deduplicated, and is not interpreted as `for each create`.
 
 One direct contribution and one contribution block are admitted:
 
@@ -113,7 +127,7 @@ start with {
 
 Each expression may contribute zero, one or several activatable declarations. Repeated identities are deduplicated and order has no semantic meaning.
 
-Tests respect the module boundary. In a test context they may call public tests from other modules authorised by `uses` from `then`. Before the root test runs, the static transitive closure of reachable tests is computed and their `start with` contributions are joined; a later call to a test already included does not execute its initial activation again. An executable cycle of calls between tests is invalid.
+Tests respect the part boundary. In a test context they may call public tests from other parts authorised by `uses` from `then`. Before the root test runs, the static transitive closure of reachable tests is computed and their `start with` contributions are joined; a later call to a test already included does not execute its initial activation again. An executable cycle of calls between tests is invalid.
 
 ### Domains, `all` and selection
 
@@ -157,7 +171,7 @@ Named binding requires an unequivocal static role contract shared by every possi
 
 ### `look` as a pure callable
 
-`look` is a pure callable query from the host, another module that can see its contract, its own module and pure runtime contexts compatible with state reading. It admits `for` and `given`.
+`look` is a pure callable query from the host, another part that can see its contract, its own part and pure runtime contexts compatible with state reading. It admits `for` and `given`.
 
 `look`'s `given` parameters follow the general `given` rules. A dynamic domain violation from the host is a query error; inside a resolution, if it invalidates evaluation, it produces `Errors`. `given` parameters must not introduce concerns purely about host transport or presentation.
 
@@ -197,13 +211,13 @@ A local may name a trigger before `when`; it does not select a concrete occurren
 
 ### Operation-centred host boundary
 
-The canonical host API is organised around the identity of public operations, not around a participant chosen as owner. The production boundary comprises `action`, `look` and `message`. Tests may be public between modules in a test context, but are not thereby part of the external production API.
+The canonical host API is organised around the identity of public operations, not around a participant chosen as owner. The production boundary comprises `action`, `look` and `message`. Tests may be public between parts in a test context, but are not thereby part of the external production API.
 
 ## Additional constraints
 
-- The module boundary is not controlled through explicit visibility modifiers.
-- Cross-module reflection must be contract-safe; results are not silently censored.
-- Cross-module thing/alias specialization requires contract visibility and uses authorization, preserving encapsulation.
+- The part boundary is not controlled through explicit visibility modifiers.
+- Cross-part reflection must be contract-safe; results are not silently censored.
+- Cross-part thing/alias specialization requires contract visibility and uses authorization, preserving encapsulation.
 - An internal action/subaction call never opens a new root resolution.
 - A `look` remains pure even when it reads the caller's visible private delta.
 - A `message` is not emitted through `emit` or modelled as a `Bool` value.
@@ -213,7 +227,6 @@ The canonical host API is organised around the identity of public operations, no
 
 ## Open questions
 
-- Q-062: complete `mud.module` grammar.
 - Q-067: `message` participants absent from the final state.
 
 These questions do not authorise silently choosing a variant during implementation.

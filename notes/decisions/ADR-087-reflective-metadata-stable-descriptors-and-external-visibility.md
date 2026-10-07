@@ -24,6 +24,8 @@ affects:
 
 D-085 introduced postfix metadata `~name`, `~path`, `~anchor` and `~file`, but did not fix a general reflection system or a uniform rule for author-defined metadata. It also retained runtime writes to `~name` and anonymous individual participants. The current extension needs stable descriptors for declarations and subordinate elements, structured documentation, file defaults and an explicit boundary between world state and model metadata.
 
+- Amended by: [[ADR-131-parts-file-privacy-and-sub-operations|D-131]].
+
 ## Decision
 
 ### Postfix `~` operator
@@ -335,8 +337,8 @@ The LSP and official tooling preferentially present, when available:
 - Anchored participants, fields and components become part of the nominal graph as persistent descriptors.
 - The surface AST retains metadata declarations and bodies; typing and elaboration distinguish intrinsic properties from configured `Metadata` values. The subsequent mechanical encoding of that distinction is not yet fixed.
 - Runtime writes to any `~` access are static errors.
-- External visibility is derived from the owning module, its `uses` contract, the operational category and type closure; tooling presents that boundary, it does not invent it.
-- `start with` contributions from modules and tests remain outside the metadata-bearing surface.
+- External visibility is derived from the owning part, its `uses` contract, the operational category and type closure; tooling presents that boundary, it does not invent it.
+- `start with` contributions from parts and tests remain outside the metadata-bearing surface.
 
 ## Future verification
 
@@ -357,4 +359,4 @@ The LSP and official tooling preferentially present, when available:
 
 ## Current amendment by D-096
 
-External visibility is derived from module, operational category and type closure. Cross-module reflection is valid only if its contract guarantees that it cannot return invisible entities; silently filtering a reflective collection to hide them is not permitted. Full tooling and reflection available to MUD code remain distinct surfaces.
+External visibility is derived from part, file-wide part only, operational category and type closure. Normal/sub pairs share reflective descriptor relations subaction <: action, sublook <: look and submessage <: message without sharing host capabilities. Private file declarations cannot escape through signatures or reflection. Cross-part reflection is valid only if its contract guarantees that it cannot return invisible entities; silently filtering a reflective collection to hide them is not permitted. Full tooling and reflection available to MUD code remain distinct surfaces.

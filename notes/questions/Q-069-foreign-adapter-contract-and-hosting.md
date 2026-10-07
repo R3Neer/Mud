@@ -9,7 +9,7 @@ decisions:
   - D-109
   - D-121
 affects:
-  - foreign adapters, effects, dependency tracking, module dependencies, runtime and tooling
+  - foreign adapters, effects, dependency tracking, part dependencies, runtime and tooling
 superseded-by: []
 ---
 

@@ -17,6 +17,8 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-132
+  - D-131
   - D-111
   - D-109
   - D-106
@@ -62,6 +64,14 @@ decisions:
 ---
 
 # 08. Surface abstract syntax
+
+## Input roots and part visibility
+
+`MudProject(files, parts)` aggregates source files and manifest files. The physical filename selects `SourceInput(MudFile(...))` or `PartInput(MudPartFile(metadata, uses*))`. A manifest's `UsesDecl(path)` retains each exact unresolved path and source origin, including repetitions for diagnostics. It creates no nominal declaration.
+
+`MudFile` retains `part_only: flag`. Enabled requires a written first-content header; omission gives Disabled. CST trivia retains its exact position and comments; physical validation rejects comments before the header. `PartStartDecl` is the source-level activation contribution, not manifest content.
+
+`SublookDecl` and `SubmessageDecl` retain the same signature/body fields as `LookDecl` and `MessageDecl`, with distinct declaration categories. Their host capabilities and visibility are checked after syntax projection. The header does not discard AST declarations or change their paths.
 
 ## State and purpose
 
@@ -131,6 +141,7 @@ Its files are canonically serialised by normalised `relativePath`. This arrangem
 Every `MudFile` contains:
 
 - Physical metadata.
+- The file-wide `part_only` flag.
 - The default file metadata in source order.
 - The list of `using`.
 - The list of top-level declarations.
@@ -208,7 +219,7 @@ It cannot be represented as an integer or a string.
 
 Every surface builder that directly represents a metadata-bearing owner preserves a `metadata_assignment*` sequence. This includes metadata-bearing nominal declarations, units, fields, components and participants. The specific bodies merely delimit the preamble; a separate `MetadataAttachment` is not produced, nor is the owner's identity or `SourceSpan` lost.
 
-A grouped participant header is normalised into several descriptors, and the same metadata sequence is copied to each. `ModuleStartDecl` and `start with` inside a test do not receive their own sequence.
+A grouped participant header is normalised into several descriptors, and the same metadata sequence is copied to each. `PartStartDecl` and `start with` inside a test do not receive their own sequence.
 
 ## `thing` declarations
 
@@ -567,7 +578,7 @@ They cannot be reduced to generic rules or actions because their subsequent cont
 
 The shape `after expr` produces a block with no statements and an assertion. In the form `after { ... }`, all local declarations precede the first assertion.
 
-Module and test `start with` forms share `StartSet`, which retains a single contribution sequence; only the module form is wrapped in `ModuleStartDecl`.
+Part and test `start with` forms share `StartSet`, which retains a single contribution sequence; only the part form is wrapped in `PartStartDecl`.
 
 ## Effect blocks
 

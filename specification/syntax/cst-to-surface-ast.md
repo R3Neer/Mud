@@ -15,6 +15,8 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-132
+  - D-131
   - D-111
   - D-109
   - D-106
@@ -53,13 +55,19 @@ The exhaustive production-by-production matrix is in `syntax-coverage.yaml`. Thi
 
 The transformation takes the following form:
 
-- A complete `MudFileSyntax`.
+- A complete `MudFileSyntax` or `PartFileSyntax`, selected by physical filename.
 - Tokens and nodes with consistent spans.
 - Absence of blocking syntactic errors in the transformed sub-tree.
 - Contextual validation of duplicates and prohibited combinations.
 - Physical metadata of the file.
 
 The presence of `MissingForRecovery`, `ErrorSyntax` or `SkippedTokensSyntax` inside a declaration prevents the corresponding normative node from being generated, unless an implementation also provides a non-normative fault-tolerant AST.
+
+## Input roots
+
+`MudInputSyntax` is the inventory union of filename-selected roots. A source becomes `SourceInput(MudFile(metadata, part_only, defaults, usings, declarations))`; a manifest becomes `PartInput(MudPartFile(metadata, uses))`. The project retains both collections. An omitted header produces Disabled; a written `PartOnlyDirectiveSyntax` produces Enabled after first-content/trivia validation. Manifest paths remain unresolved `UsesDecl` values until linking.
+
+Look/message signature-body wrappers are absorbed into the owning `LookDecl`/`SublookDecl` or `MessageDecl`/`SubmessageDecl`. The written category survives; no sub form is normalised into a host operation.
 
 ## Result
 
@@ -81,7 +89,7 @@ The build aggregator then constructs `MudProject` and orders its files by normal
 
 ### Trivia
 
-All trivia is ignored. Ordinary comments do not produce AST nodes.
+After physical first-content validation, all trivia is ignored. Ordinary comments do not produce AST nodes.
 
 ### Punctuation
 
@@ -655,7 +663,7 @@ Unit and dimension expressions remove grouping parentheses but retain the tree s
 
 The expression form and block form of `start with` produce a single `StartSet(contributions)`. Source order is retained only as provenance, not as activation semantics.
 
-The module-level declaration adds `ModuleStartDecl`. Within a test, the same `StartSet` is a field of `TestDecl`.
+The part-level declaration adds `PartStartDecl`. Within a test, the same `StartSet` is a field of `TestDecl`.
 
 `after assertion` and `after { assertion... }` produce a uniform `TestAfterBlock`.
 

@@ -38,6 +38,7 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
     "notes/questions/Q-019-n-numbers.md",
     "notes/questions/Q-017-d-circular-dynamic-domains.md",
     "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
@@ -92,6 +93,7 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
     "notes/questions/Q-019-n-numbers.md",
     "notes/questions/Q-017-d-circular-dynamic-domains.md",
     "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",

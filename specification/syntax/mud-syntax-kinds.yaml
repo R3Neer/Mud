@@ -29,6 +29,11 @@ synthetic_token_origins:
 - ImplicitTextEnd
 - MissingForRecovery
 fixed_tokens:
+- spelling: submessage
+- spelling: sublook
+- spelling: uses
+- spelling: only
+- spelling: part
 - spelling: imagine
 - spelling: raise
 - spelling: using
@@ -348,11 +353,13 @@ lexical_forms:
     - builtin-word
     - constant-word
   keyword-word:
-    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\" | \"action\"\
-      \ | \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"for\" | \"on\" | \"given\" | \"when\" | \"\
-      changes\"\n      | \"if\" | \"then\" | \"after\" | \"with\" | \"otherwise\" | \"raise\"\n      | \"mut\" | \"\
-      unique\" | \"ordered\"\n      | \"create\" | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\"\
-      \ | \"by\" | \"through\" | \"take\"\n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
+    kind: KeywordWordSyntax
+    rhs: "\"using\"\n      | \"thing\" | \"as\" | \"alias\" | \"family\" | \"magnitude\"\n      | \"rule\"\
+      \ | \"action\" | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n\
+      \      | \"for\" | \"on\" | \"given\" | \"when\" | \"changes\"\n      | \"if\" | \"then\" | \"after\"\
+      \ | \"with\" | \"otherwise\" | \"raise\"\n      | \"mut\" | \"unique\" | \"ordered\"\n      | \"create\"\
+      \ | \"destroy\" | \"add\" | \"remove\" | \"from\"\n      | \"each\" | \"by\" | \"through\" | \"take\"\
+      \n      | \"exists\" | \"forall\" | \"count\" | \"min\" | \"max\""
     references: []
   operator-word:
     rhs: "\"to\" | \"eventually\" | \"imagine\" | \"old\"\n      | \"is\" | \"iis\"\
@@ -416,17 +423,80 @@ lexical_forms:
     rhs: '"," | "." | ":" | ";"'
     references: []
 syntax_nodes:
-  mud-file:
-    kind: MudFileSyntax
-    rhs: "layout
-        , [ file-metadata-assignment , { required-separation , file-metadata-assignment } , required-separation\
-      \ ]
-        , [ using-file-body | declaration-file-body ]
-        , EOF"
+  message-signature-body:
+    kind: MessageSignatureBodySyntax
+    rhs: "nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment\
+      \ , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement\
+      \ , required-separation }\n        , when-clause\n        , [ required-separation , if-clause ]\n\
+      \        , [ required-separation , public-field-declaration\n            , { required-separation ,\
+      \ public-field-declaration }\n          ]\n        , [ required-separation ]\n        , \"}\""
+    references:
+    - nominal-name
+    - on-clause
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
+    - pure-preamble-statement
+    - when-clause
+    - if-clause
+    - public-field-declaration
+  submessage-declaration:
+    kind: SubmessageDeclarationSyntax
+    rhs: '"submessage" , message-signature-body'
+    references:
+    - message-signature-body
+  look-signature-body:
+    kind: LookSignatureBodySyntax
+    rhs: "nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n\
+      \        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation\
+      \ ]\n        , [ public-field-declaration\n            , { required-separation , public-field-declaration\
+      \ }\n            , [ required-separation ]\n          ]\n        , \"}\""
+    references:
+    - nominal-name
+    - for-clause
+    - given-clause
+    - declaration-layout
+    - metadata-assignment
+    - required-separation
+    - public-field-declaration
+  sublook-declaration:
+    kind: SublookDeclarationSyntax
+    rhs: '"sublook" , look-signature-body'
+    references:
+    - look-signature-body
+  part-only-directive:
+    kind: PartOnlyDirectiveSyntax
+    rhs: '"part" , "only"'
+    references: []
+  uses-declaration:
+    kind: UsesDeclarationSyntax
+    rhs: '"uses" , mud-path'
+    references:
+    - mud-path
+  part-file:
+    kind: PartFileSyntax
+    rhs: layout , [ uses-declaration , { required-separation , uses-declaration } , [ required-separation
+      ] ] , EOF
     references:
     - layout
-    - file-metadata-assignment
+    - uses-declaration
     - required-separation
+  mud-input:
+    kind: MudInputSyntax
+    rhs: mud-file | part-file
+    references:
+    - mud-file
+    - part-file
+  mud-file:
+    kind: MudFileSyntax
+    rhs: "layout\n        , [ part-only-directive , required-separation ]\n        , [ file-metadata-assignment\
+      \ , { required-separation , file-metadata-assignment } , required-separation ]\n        , [ using-file-body\
+      \ | declaration-file-body ]\n        , EOF"
+    references:
+    - layout
+    - part-only-directive
+    - required-separation
+    - file-metadata-assignment
     - using-file-body
     - declaration-file-body
   using-file-body:
@@ -449,7 +519,10 @@ syntax_nodes:
     - mud-path
   top-level-declaration:
     kind: TopLevelDeclarationSyntax
-    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n      | boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n      | action-declaration\n      | subaction-declaration\n      | look-declaration\n      | message-declaration\n      | test-declaration\n      | module-start-declaration"
+    rhs: "thing-declaration\n      | alias-declaration\n      | family-declaration\n      | magnitude-declaration\n\
+      \      | boolean-rule-declaration\n      | reactive-rule-declaration\n      | always-rule-declaration\n\
+      \      | action-declaration\n      | subaction-declaration\n      | look-declaration\n      | sublook-declaration\n\
+      \      | message-declaration\n      | submessage-declaration\n      | test-declaration\n      | part-start-declaration"
     references:
     - thing-declaration
     - alias-declaration
@@ -461,9 +534,11 @@ syntax_nodes:
     - action-declaration
     - subaction-declaration
     - look-declaration
+    - sublook-declaration
     - message-declaration
+    - submessage-declaration
     - test-declaration
-    - module-start-declaration
+    - part-start-declaration
   mud-path:
     kind: MudPathSyntax
     rhs: lower-name , { "." , lower-name }
@@ -1090,31 +1165,14 @@ syntax_nodes:
     - action-after-clause
   look-declaration:
     kind: LookDeclarationSyntax
-    rhs: "\"look\" , nominal-name\n        , [ for-clause ]\n        , [ given-clause ]\n        , \"{\" , declaration-layout\n\
-      \        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n \
-      \       , [ public-field-declaration\n            , { required-separation , public-field-declaration }\n   \
-      \         , [ required-separation ]\n          ]\n        , \"}\""
+    rhs: '"look" , look-signature-body'
     references:
-    - nominal-name
-    - for-clause
-    - given-clause
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
-    - public-field-declaration
+    - look-signature-body
   message-declaration:
     kind: MessageDeclarationSyntax
-    rhs: "\"message\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , when-clause\n        , [ required-separation , if-clause ]\n        , [ required-separation , public-field-declaration\n            , { required-separation , public-field-declaration }\n          ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: '"message" , message-signature-body'
     references:
-    - nominal-name
-    - on-clause
-    - declaration-layout
-    - metadata-assignment
-    - required-separation
-    - pure-preamble-statement
-    - when-clause
-    - if-clause
-    - public-field-declaration
+    - message-signature-body
   when-clause:
     kind: WhenClauseSyntax
     rhs: '"when" , expression-body'
@@ -1176,8 +1234,8 @@ syntax_nodes:
     - derived-value-shape
     - value-expression
     - otherwise-clause
-  module-start-declaration:
-    kind: ModuleStartDeclarationSyntax
+  part-start-declaration:
+    kind: PartStartDeclarationSyntax
     rhs: start-with-declaration
     references:
     - start-with-declaration
@@ -1545,7 +1603,12 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: "literal\n      | take-expression\n      | selection-expression\n      | qualified-name\n      | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n      | point-component-expression\n      | quantifier-expression\n      | random-expression\n      | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"action\" | \"subaction\" | \"look\" | \"message\" | \"test\"\n      | \"(\" , expression , \")\""
+    rhs: "literal\n      | take-expression\n      | selection-expression\n      | qualified-name\n     \
+      \ | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n\
+      \      | point-component-expression\n      | quantifier-expression\n      | random-expression\n  \
+      \    | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"action\" | \"subaction\"\
+      \ | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\" , expression ,\
+      \ \")\""
     references:
     - literal
     - take-expression

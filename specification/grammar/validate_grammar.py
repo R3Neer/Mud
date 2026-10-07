@@ -166,7 +166,7 @@ def main(argv: list[str] | None = None) -> int:
     root = Path(__file__).resolve().parent
     checks = (
         (root / "mud-lexico.ebnf", "mud-source"),
-        (root / "mud.ebnf", "mud-file"),
+        (root / "mud.ebnf", "mud-input"),
     )
     errors = [error for path, start in checks for error in validate(path, start)]
 

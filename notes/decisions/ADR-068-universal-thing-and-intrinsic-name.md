@@ -23,7 +23,7 @@ affects:
 
 ## Context
 
-MUD needs operations that accept any `thing`, heterogeneous collections and a common identity type without a declared shared ancestor. Letting each programme declare its own root does not ensure independent modules share it or let tools recognise the contract universally.
+MUD needs operations that accept any `thing`, heterogeneous collections and a common identity type without a declared shared ancestor. Letting each programme declare its own root does not ensure independent parts share it or let tools recognise the contract universally.
 
 Interpolating a `thing` currently uses its nominal name. That value is stable for identity and resolution, but a game may need a different human presentation without renaming anchors or adding a repeated mutable field to every declaration.
 
