@@ -43,6 +43,10 @@ Abstract projection is defined by:
 - `../syntax/mud-surface-ast.asdl`.
 - `../syntax/cst-to-surface-ast.md`.
 
+## Newline classification
+
+The scanner retains physical newlines. Before the concrete productions consume `TERMINATOR`, [[../08-concrete-grammar#Open line endings and prefixes]] classifies them from current-prefix completeness and the next grammatical unit/continuation. A next-unit start has priority even when incomplete. ContinuationNewlineTrivia preserves continued line breaks without altering production shapes, node/token kinds, ASDL constructors or nominal resolution. The finite certificates in `../syntax/cases/newline-cases.json` check supplied boundary premises, not source parsing.
+
 ## Modal scanner
 
 `Text` templates require nested modes. `mud-lexico.ebnf` maintains the inventory of special forms; [[../07-lexicon]] defines the algorithm; `mud.ebnf` analyses tokens emitted within interpolations.

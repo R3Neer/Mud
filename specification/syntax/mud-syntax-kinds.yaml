@@ -17,6 +17,8 @@ special_node_kinds:
 trivia_kinds:
 - kind: HorizontalWhitespaceTrivia
   source: horizontal-space
+- kind: ContinuationNewlineTrivia
+  source: newline classified as continuation by the grammatical context
 - kind: OpenLineCommentTrivia
   source: open-line-comment
 - kind: ClosedLineCommentTrivia

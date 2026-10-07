@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "rule": "MUD-SYN-015",
+  "scope": "Supplied grammatical premises and preclassified tokens; no source parsing.",
+  "cases": [
+    {
+      "id": "leading-plus",
+      "context": "effect-block",
+      "source": "total = a\n + b",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "continue",
+      "tokens": [
+        "\"{\"",
+        "IDENTIFIER",
+        "\"=\"",
+        "IDENTIFIER",
+        "\"+\"",
+        "IDENTIFIER",
+        "\"}\""
+      ],
+      "grammar_start": "effect-block",
+      "expected_acceptance": true
+    },
+    {
+      "id": "next-incomplete-assignment",
+      "context": "effect-block",
+      "source": "total = a\nother =\n b + c",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": false,
+        "enclosing_end": false
+      },
+      "expected_boundary": "separate",
+      "tokens": [
+        "\"{\"",
+        "IDENTIFIER",
+        "\"=\"",
+        "IDENTIFIER",
+        "TERMINATOR",
+        "IDENTIFIER",
+        "\"=\"",
+        "IDENTIFIER",
+        "\"+\"",
+        "IDENTIFIER",
+        "\"}\""
+      ],
+      "grammar_start": "effect-block",
+      "expected_acceptance": true
+    },
+    {
+      "id": "unfinished-rhs",
+      "context": "effect-block",
+      "source": "other =\n b + c",
+      "premises": {
+        "separator": "newline",
+        "current_complete": false,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "continue"
+    },
+    {
+      "id": "separate-call",
+      "context": "effect-block",
+      "source": "total = a\nactor.Move()",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": false,
+        "enclosing_end": false
+      },
+      "expected_boundary": "separate"
+    },
+    {
+      "id": "start-wins-over-extension",
+      "context": "effect-block",
+      "source": "total = a\n(b, c) = pair",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "separate",
+      "tokens": [
+        "\"{\"",
+        "IDENTIFIER",
+        "\"=\"",
+        "IDENTIFIER",
+        "TERMINATOR",
+        "\"(\"",
+        "IDENTIFIER",
+        "\",\"",
+        "IDENTIFIER",
+        "\")\"",
+        "\"=\"",
+        "IDENTIFIER",
+        "\"}\""
+      ],
+      "grammar_start": "effect-block",
+      "expected_acceptance": true,
+      "premise_note": "The parenthesized prefix can continue a call expression; its assignment beginning establishes a separate pattern statement. Do not append this next statement to the previous RHS."
+    },
+    {
+      "id": "later-error-keeps-start",
+      "context": "effect-block",
+      "source": "total = a\nother = * b",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": true,
+        "can_extend": false,
+        "enclosing_end": false
+      },
+      "expected_boundary": "separate",
+      "tokens": [
+        "\"{\"",
+        "IDENTIFIER",
+        "\"=\"",
+        "IDENTIFIER",
+        "TERMINATOR",
+        "IDENTIFIER",
+        "\"=\"",
+        "\"*\"",
+        "IDENTIFIER",
+        "\"}\""
+      ],
+      "grammar_start": "effect-block",
+      "expected_acceptance": false
+    },
+    {
+      "id": "no-valid-interpretation",
+      "context": "effect-block",
+      "source": "total = a\n @ b",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": false,
+        "enclosing_end": false
+      },
+      "expected_boundary": "error"
+    },
+    {
+      "id": "unfinished-invalid",
+      "context": "effect-block",
+      "source": "total =\n @ b",
+      "premises": {
+        "separator": "newline",
+        "current_complete": false,
+        "next_unit_start": false,
+        "can_extend": false,
+        "enclosing_end": false
+      },
+      "expected_boundary": "error"
+    },
+    {
+      "id": "semicolon-is-explicit",
+      "context": "effect-block",
+      "source": "total = a;\n + b",
+      "premises": {
+        "separator": "semicolon",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "separate",
+      "tokens": [
+        "\"{\"",
+        "IDENTIFIER",
+        "\"=\"",
+        "IDENTIFIER",
+        "TERMINATOR",
+        "\"+\"",
+        "IDENTIFIER",
+        "\"}\""
+      ],
+      "grammar_start": "effect-block",
+      "expected_acceptance": false
+    },
+    {
+      "id": "semicolon-does-not-repair",
+      "context": "effect-block",
+      "source": "total = a +;\n b",
+      "premises": {
+        "separator": "semicolon",
+        "current_complete": false,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "error"
+    },
+    {
+      "id": "comments-and-blanks",
+      "context": "effect-block",
+      "source": "total = a\n# note\n\n + b",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "continue"
+    },
+    {
+      "id": "complete-at-block-end",
+      "context": "effect-block",
+      "source": "total = a\n}",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": false,
+        "enclosing_end": true
+      },
+      "expected_boundary": "separate"
+    },
+    {
+      "id": "unfinished-at-block-end",
+      "context": "effect-block",
+      "source": "total = a +\n}",
+      "premises": {
+        "separator": "newline",
+        "current_complete": false,
+        "next_unit_start": false,
+        "can_extend": false,
+        "enclosing_end": true
+      },
+      "expected_boundary": "error"
+    },
+    {
+      "id": "open-parentheses",
+      "context": "effect-block",
+      "source": "total = (a\n + b)",
+      "premises": {
+        "separator": "newline",
+        "current_complete": false,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "continue"
+    },
+    {
+      "id": "leading-or",
+      "context": "trigger-expression-block",
+      "source": "alarm.day changes\nor alarm.enabled",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "continue"
+    },
+    {
+      "id": "postfix-member",
+      "context": "effect-block",
+      "source": "total = a\n.member",
+      "premises": {
+        "separator": "newline",
+        "current_complete": true,
+        "next_unit_start": false,
+        "can_extend": true,
+        "enclosing_end": false
+      },
+      "expected_boundary": "continue"
+    }
+  ]
+}

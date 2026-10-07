@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-141
   - D-137
   - D-136
   - D-135
@@ -92,6 +93,8 @@ The build aggregator then constructs `MudProject` and orders its files by normal
 ## Common rules
 
 ### Trivia
+
+Contextual newline classification precedes this projection. Continuation newlines remain lossless CST ContinuationNewlineTrivia and contribute no AST node or statement boundary. Separating newlines retain TERMINATOR in the CST and disappear as ordinary layout in the AST. The projection must preserve the resulting grouping; it cannot reclassify a semicolon or reconsider the boundary using resolved names or types.
 
 After physical first-content validation, all trivia is ignored. Ordinary comments do not produce AST nodes.
 

@@ -17,6 +17,7 @@ depends-on:
   - grammar/mud.ebnf
 questions: []
 decisions:
+  - D-141
   - D-134
   - D-135
   - D-131
@@ -174,6 +175,7 @@ This rule prevents decisions from depending on the comment class. An implementat
 The minimum catalogue is:
 
 - `HorizontalWhitespaceTrivia`.
+- `ContinuationNewlineTrivia`, for scanner newlines classified as continuation.
 - `OpenLineCommentTrivia`.
 - `ClosedLineCommentTrivia`.
 - `MultilineCommentTrivia`.
@@ -190,7 +192,7 @@ A multiline comment preserves its delimiters, indentation and internal line brea
 - `CR`.
 - `;` when the grammar checker and the scanner classify it as a terminator.
 
-Terminators ignored by `layout` remain present as tokens in the CST.
+Terminators ignored by `layout` remain present as tokens in the CST. Scanner NEWLINE tokens are classified by [[../08-concrete-grammar#Open line endings and prefixes|the contextual boundary contract]]. A continued newline is ContinuationNewlineTrivia retaining its exact bytes and span, rather than a TERMINATOR. Every comment and skipped blank-line byte remains owned exactly once. This classification uses the explicit continuation trivia kind and adds no node or Surface AST constructor.
 
 ## Other significant tokens
 

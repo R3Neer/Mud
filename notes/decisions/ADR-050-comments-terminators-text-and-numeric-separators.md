@@ -19,6 +19,8 @@ affects:
 - Partially closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
 - Documents concerned: [[specification/07-lexicon]], [[specification/08-concrete-grammar]], formatter
 
+- Amended by: [[ADR-141-contextual-newline-continuation|D-141]].
+
 ## Context
 
 These lexical rules are independent of the ontology and must be set in stone without the need to manually maintain a parallel catalogue of keywords. The delimiters for comment and the text follows a deliberate symmetry between standard and multiline fonts.
@@ -87,7 +89,7 @@ The jump does not act as a terminator when it appears within a syntactically ope
 
 The keys `{}` they do not remove the terminators within them: a block contains instructions or statements separated by jumps or `;`.
 
-If the prefix prior to the jump, it can already form a unit A complete expression is terminated by a jump, even if the following line might begin another expression. Continuation never depends on indentation.
+After a complete prefix, inspect the next significant fragment in the grammatical context, skipping comments and blank lines. A valid separate-unit start wins, even when that next unit is unfinished. If no separate unit can start but the fragment can extend the current unit, the newline continues it. If neither interpretation is valid, diagnose a syntax error. Semicolons remain explicit separators; lookahead cannot cross them or an enclosing closing boundary. Continuation never depends on indentation, resolved names or types.
 
 ```mud
 rule CanAttack for
@@ -113,7 +115,7 @@ Therefore, `1_000.123456e1000`, `1000.123_456` and `3e1_000` are valid. `1_00000
 
 ## Consequences
 
-- The lexer removes comments and outputs skip tokens; the parser determines which are terminators based on whether the prefix The syntactic structure is complete.
+- The lexer removes comments and outputs skip tokens; the parser determines which are terminators from prefix completeness and the next fragment in its grammatical context.
 - The highlighter can implement the lexicon without knowing the model semantic.
 - The list of reserved words is generated from the consolidated grammar.
 - The catalogue distinguishes between reserved and contextual words in accordance with D-035, D-054 and D-055. `using`, `with`, `test`, `otherwise` and `ordered` are reserved; `start`, `abstract`, `always`, `name` and `prefixes` are contextual in their grammatical functions.

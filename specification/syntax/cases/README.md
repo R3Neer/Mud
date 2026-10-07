@@ -1,5 +1,7 @@
 # CST cases → AST
 
+`newline-cases.json` provides reviewed source fragments for MUD-SYN-015. Each certificate supplies prefix completeness, next-unit-start and continuation premises; `test_newline_contract.py` checks the finite boundary decision, then uses the existing EBNF recogniser on separately preclassified token fixtures. Source grouping, premise correctness and exact CST byte ownership remain review obligations. This is not an implemented scanner or parser.
+
 `cst-ast.yaml` contains initial declarative cases. Each entry may include:
 
 - `id` stable.

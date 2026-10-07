@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-141
   - D-140
   - D-139
   - D-137
@@ -994,7 +995,7 @@ when {
 }
 ```
 
-On the other hand, starting the second line with `or` is invalid:
+The operator may also start the next line:
 
 ```mud
 when {
@@ -1003,7 +1004,7 @@ when {
 }
 ```
 
-The newline after `changes` ends a complete expression; braces do not suppress terminators, so `or` has no left operand. To place the operator at the start of the second line, the expression must be kept open with parentheses.
+Although the prefix ending in `changes` is complete, `or alarm.enabled` cannot begin a separate expression in this context and can continue the current trigger. The newline is therefore continuation whitespace. Braces do not suppress ordinary separators between valid block items. Writing `;` after `changes` instead makes the leading `or` invalid.
 
 It has lower precedence than arithmetic, conversions and comparisons, but higher precedence than `and` and `or`. Therefore:
 
@@ -1691,7 +1692,7 @@ Operands of `through` are action references, not concrete calls. The list, with 
 
 ## Open line endings and prefixes
 
-`TERMINATOR` comes from `;` or `NEWLINE`. A line break continues the expression when it follows:
+`TERMINATOR` comes from an explicit `;` or a separating `NEWLINE`. The parser classifies scanner newlines before the EBNF consumes TERMINATOR. Open-prefix continuation includes:
 
 1. Within `()` or `[]`.
 2. After `,`.
@@ -1701,10 +1702,49 @@ Operands of `through` are action references, not concrete calls. The list, with 
 6. Within a header which, according to the EBNF, it can’t be over yet.
 7. Inside a literal or multiline comment.
 
-A newline after a unit terminates that unit. Line wrapping never determines semantics.
+### Contextual newline classification
 
-> [!example]
-> In `value = first`, the newline terminates the assignment. In `value = first +`, it does not complete the operation because the right-hand operand is missing.
+Let $C$ be the grammatical context containing the current unit, $P$ its significant-token prefix and $F$ the next significant source fragment after comments and blank lines. A unit is a declaration, statement or final expression as permitted by $C$. Required clause/body attachment and open-delimiter rules remain part of the grammar; this procedure does not grant arbitrary expressions statement status.
+
+Define $Complete_C(P)$ when the current unit can end here, $Start_C(F)$ when the following fragment starts a separate unit admitted at this boundary, and $Extend_C(P,F)$ when the fragment is a grammatical continuation of the current unit with the newline treated as whitespace. Start includes an incomplete but valid beginning such as `other =`; it does not require a complete next physical line. These predicates use syntax only. A recognised next-unit beginning keeps its boundary even if that unit has a later syntax error. No fixed token-count lookahead or parser implementation is prescribed.
+
+> [!rule] MUD-SYN-015 — Contextual newline boundary
+> Inside an open `()`/`[]` or an unfinished unit, a newline permits continuation when the grammar admits it. After a complete unit, a valid next-unit start takes precedence and the newline separates the units. Otherwise, if the next fragment can extend the current unit, the newline is continuation whitespace. If neither interpretation is valid, report a syntax error rather than accepting a concatenation. An explicit `;` is always a separator and cannot be reclassified to repair an incomplete unit. Indentation has no role.
+
+At EOF or a closing delimiter of the containing block, a complete unit may end under the ordinary enclosing production; an incomplete unit is an error. Lookahead skips comments and blank lines but does not cross an explicit semicolon, EOF or the enclosing closing delimiter to seek a rescuing fragment. Newlines inside native regions, literal contents and multiline comments retain their own scanner/adapter contracts.
+
+| Current prefix | Following fragment | Boundary |
+| --- | --- | --- |
+| Incomplete and extendible | Required content | Continue |
+| Complete | Valid separate-unit start, including an incomplete one | Separate |
+| Complete | Not a separate-unit start, but a valid continuation | Continue |
+| Neither interpretation is valid | Invalid fragment | Syntax error |
+
+For an effect-block fixture, these fragments contrast the outcomes:
+
+```mud
+total = a
+    + b
+```
+
+The result is one assignment with RHS `a + b`: unary `+ b` is not an independent effect statement.
+
+```mud
+total = a
+other =
+    b + c
+```
+
+There are two assignments. The first newline separates them because `other =` starts the next statement; the second continues its unfinished RHS.
+
+```mud
+total = a;
+    + b
+```
+
+This is invalid: `;` ends the assignment and the following arithmetic expression is not an effect statement. Within a pure final-expression position, a leading binary `or` may continue the preceding expression, but names and types must still be valid during later analysis. Syntax continuation does not hide static errors.
+
+[[syntax/cases/newline-cases.json]] supplies reviewed source fragments and finite boundary certificates. Its checker evaluates supplied grammatical premises, not a Mud parser or name/type solver.
 
 ## Contextual distinctions
 

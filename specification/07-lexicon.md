@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-141
   - D-134
   - D-137
   - D-135
@@ -421,7 +422,7 @@ In a single position, the aim is to:
 4. Literals `Rum`, numbers and identifiers.
 5. Single-character operators.
 
-The longest valid match within the same category is selected. Comments and horizontal spaces are excluded from the meaningful stream, but are retained as trivia in the complete stream; `NEWLINE` is retained as token in the meaningful stream to determine termination.
+The longest valid match within the same category is selected. Comments and horizontal spaces are excluded from the meaningful stream, but are retained as trivia in the complete stream; `NEWLINE` is retained in the scanner stream until the parser applies [[08-concrete-grammar#Open line endings and prefixes|contextual newline classification]]. Classification uses both current-prefix completeness and the next significant fragment in its grammatical context, never resolved names, types or indentation. A continuation newline becomes CST ContinuationNewlineTrivia with its original bytes and span; a separating newline supplies TERMINATOR.
 
 Within a template, `\u{...}` is applied first, followed by the other escape sequences, then `{` and, finally, the longest possible fragment literal. Within an interpolation, the standard priority applies once again. The sequence `anchor{` does not receive any special lexical treatment.
 

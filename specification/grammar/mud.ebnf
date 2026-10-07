@@ -1,6 +1,8 @@
 (* MUD 1.0 — normative concrete grammar.
    Upper-case terminals come from mud-lexico.ebnf or the contextual
-   classifier described in 07-lexicon.md. *)
+   classifier described in 07-lexicon.md. NEWLINE is classified as
+   TERMINATOR or continuation whitespace by the grammatical-context
+   boundary contract in 08-concrete-grammar.md before these productions. *)
 
 mud-input
     ::= mud-file | part-file ;

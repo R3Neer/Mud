@@ -17,6 +17,8 @@ This directory contains the standardised and verifiable artefacts that link the 
 | `test_generic_grammar.py` | Grammar regression suite | Recognises preclassified token fixtures for explicit/postfix applications, tuple/product grouping, callable suffixes, stored holes and contextual header boundaries; rejects reintroduced generic left recursion. |
 | `test_validate_syntax_model.py` | Regression suite | Rejects malformed nominal-HIR, foreign delegation/body, static field-schema and part/category boundary contracts. |
 | `cases/cst-ast.yaml` | Starter suite | Transformation and pre-AST rejection cases. |
+| `cases/newline-cases.json` | Finite contract corpus | Reviewed source fragments, supplied grammatical boundary premises and preclassified token fixtures. |
+| `test_newline_contract.py` | Bounded witness checker | Checks boundary priority certificates, CST continuation-trivia registration and EBNF acceptance/rejection of supplied token fixtures. It does not infer premises or scan/parse Mud source. |
 
 ## Order of authority
 
@@ -77,6 +79,7 @@ From the root from the repository:
 ```bash
 python specification/syntax/validate_syntax_model.py
 python specification/syntax/test_validate_syntax_model.py
+python -m unittest discover -s specification/syntax -p test_*.py
 ```
 
 The command checks:

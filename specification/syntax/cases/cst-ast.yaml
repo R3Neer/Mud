@@ -426,8 +426,16 @@ cases:
   - otherwise-requires-error-handler-branch
   produces_ast: false
 - id: leading-or-after-complete-when-expression
+  category: expression
+  source: "rule WrappedAlarm on alarm: Alarm {\n    when {\n        alarm.calendar.day changes\n        or alarm.enabled\n    }\n    then create AlarmTriggered\n}\n"
+  cst_root: MudFileSyntax
+  ast: ReactiveRuleDecl(when=BinaryExpr(ChangesExpr(...), WordOr, ...))
+  normalizations:
+  - leading-or-newline-to-continuation-trivia
+  produces_ast: true
+- id: leading-or-after-explicit-semicolon
   category: validation-before-ast
-  source: "rule BrokenAlarm on alarm: Alarm {\n    when {\n        alarm.calendar.day changes\n        or alarm.enabled\n    }\n    then create AlarmTriggered\n}\n"
+  source: "rule BrokenAlarm on alarm: Alarm {\n    when {\n        alarm.calendar.day changes;\n        or alarm.enabled\n    }\n    then create AlarmTriggered\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - unexpected-leading-operator-after-terminator

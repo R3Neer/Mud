@@ -25,6 +25,8 @@ affects:
 - Closes: [[notes/questions/Q-001-g-grammar-and-line-breaks|Q-001]]
 - Affected documents: [[specification/05-source-text]], [[specification/07-lexicon]], [[specification/08-concrete-grammar]], `specification/grammar/`
 
+- Amended by: [[ADR-141-contextual-newline-continuation|D-141]].
+
 ## Context
 
 MUD decisions had already established the principal constructions, but no consolidated grammar existed. This left no single answer to the following questions:
@@ -59,7 +61,7 @@ Headers use distinct productions for `for`, `on` and `given` participants. The E
 
 ### Terminators
 
-The lexer emits `NEWLINE` and `SEMICOLON`. The parser turns them into `TERMINATOR`, except where a line break occurs:
+The lexer emits `NEWLINE` and `SEMICOLON`. A semicolon is an explicit separator. Newlines inside open constructions permit continuation, including:
 
 - Within `()`, `[]` or another delimited construction that remains open.
 - After a comma.
@@ -67,7 +69,7 @@ The lexer emits `NEWLINE` and `SEMICOLON`. The parser turns them into `TERMINATO
 - After an introductory word that requires content.
 - Within a literal or multiline comment.
 
-The exhaustive list of introductory words and operators is derived from the grammar itself. Indentation plays no part in this decision.
+The exhaustive list of introductory words and operators is derived from the grammar itself. For a complete unit, a following fragment that begins a separate grammatical unit takes priority, including an unfinished beginning such as `other =`. Otherwise a syntactically valid extension continues the current unit. If neither interpretation is valid, report an error. Skip comments and blank lines without crossing explicit semicolons or enclosing boundaries. Names, types and indentation play no part in classification. Continuation newlines remain exact whitespace trivia in the lossless CST.
 
 ### Operators
 
