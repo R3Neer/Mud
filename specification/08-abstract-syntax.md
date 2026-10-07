@@ -562,9 +562,9 @@ An action contains:
 
 ## `look` and `message`
 
-`LookDecl` retains `for` participants, `given` parameters and public fields.
+`LookDecl` and `SublookDecl` retain `for` participants, `given` parameters and public fields.
 
-`MessageDecl` retains `on` participants, pure local values preceding its behavioural clauses, a Boolean activator, an optional Boolean guard and public fields.
+`MessageDecl` and `SubmessageDecl` retain `on` participants, pure local values preceding their behavioural clauses, an activator expression block, an optional Boolean guard and public fields.
 
 They cannot be reduced to generic rules or actions because their subsequent contracts are different.
 

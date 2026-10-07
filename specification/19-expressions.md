@@ -16,6 +16,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-133
   - D-132
   - D-131
   - D-028
@@ -241,7 +242,7 @@ All successful recovery proposals compose tentatively. Equal compatible value re
 
 ## 10. Declaration and programme acceptance
 
-Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/message public fields check their declared/inferred value contracts and part boundary. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
+Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/sublook/message/submessage public fields check their declared/inferred value contracts and part boundary. Message payload expressions are evaluated once in the causal birth view and yield immutable, validated values; an error enters the enclosing block error channel instead of publishing a partial occurrence. Ticket is part of the host envelope contract, not a new expression/type constructor. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
 
 An immutable stored local requires an explicit type/value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique type and obtains no outer place authority. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
 

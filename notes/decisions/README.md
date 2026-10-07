@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 127.
-- Current: 123.
+- Total: 128.
+- Current: 124.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -146,6 +146,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-130 | current | 2026-10-07 | [[notes/decisions/ADR-130-acyclic-domain-evaluation|Acyclic domain evaluation]] |
 | D-131 | current | 2026-10-07 | [[notes/decisions/ADR-131-parts-file-privacy-and-sub-operations|Parts, file privacy and sub operations]] |
 | D-132 | current | 2026-10-07 | [[notes/decisions/ADR-132-minimal-part-manifests-and-direct-uses|Minimal part manifests and direct uses]] |
+| D-133 | current | 2026-10-07 | [[notes/decisions/ADR-133-provisional-messages-and-scope-aware-tickets|Provisional messages and scope-aware tickets]] |
 
 ## Reserved identifiers
 

@@ -115,7 +115,7 @@ The conversion to UTF-16 positions falls within the LSP boundary.
 
 ## Syntactic roots
 
-Each file produces an independent CST and, following validation, an `MudFile` derived from Surface AST. An `MudProject` combines several `MudFile`s; it is not a construction written in a single file.
+Each source file produces an independent MudFileSyntax CST and a validated MudFile. Each mud.part manifest produces PartFileSyntax and MudPartFile. Filename-selected input wrappers retain those separate categories. MudProject aggregates both collections; it is not written in one physical file.
 
 For structural serialisation, `MudProject` files are sorted by normalised relative path. This ordering does not alter the semantics.
 

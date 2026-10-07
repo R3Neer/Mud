@@ -127,6 +127,28 @@ def validate(data):
         elif not c.get("entry") or not c.get("expected_trace"): raise ValueError("Incomplete declarative trace")
     return len(cases),sum("witness" in c for c in cases.values())
 
+def validate_messages(data):
+    """Validate declarative trace completeness and ticket lifetime assertions."""
+    required = {
+        "changed-final-value", "destroyed-participant", "recreated-participant", "outer-refusal",
+        "child-success-not-commit", "child-fault-observed", "protected-recovery", "joint-cause-owner",
+        "failed-checkpoint-no-publication", "isolated-no-publication", "private-submessage-no-publication",
+        "subscribe-after-finalisation", "equal-payload-distinct-occurrences", "host-irreversible-effect",
+        "root-publication-barrier",
+    }
+    cases = data["cases"]
+    ids = [c["id"] for c in cases]
+    if len(ids) != len(set(ids)) or not required <= set(ids):
+        raise ValueError("Message lifetime trace coverage is missing or duplicated")
+    for c in cases:
+        if not c.get("entry") or not c.get("expected_trace"):
+            raise ValueError("Message trace must state entry and reviewed outcome")
+        states = c["ticket_states"]
+        if states not in ([], ["Waiting", "Kept"], ["Waiting", "Dropped"]):
+            raise ValueError("Ticket trace must preserve initial Waiting and terminal Kept/Dropped")
+    return len(cases)
+
+
 def main(argv=None):
     invocation = "python specification/effects/validate_effect_spec.py"
     catalogue = HelpCatalogue(
@@ -145,10 +167,11 @@ def main(argv=None):
         return parsed.exit_code
     try:
         n, w = validate(json.loads(CORPUS.read_text(encoding="utf-8")))
+        messages = validate_messages(json.loads(CORPUS.with_name("message-delivery-cases.json").read_text(encoding="utf-8")))
     except (OSError, ValueError, KeyError, TypeError) as exc:
         failure(parsed.ui, "Effect witness validation failed.", code="Mud.Effects.Invalid", details=str(exc))
         return 1
-    parsed.ui.success(f"Effects: {n} cases, {w} bounded witnesses; AST/operator coverage matches.")
+    parsed.ui.success(f"Effects: {n} cases, {w} bounded witnesses, {messages} reviewed message traces; AST/operator coverage matches.")
     return 0
 
 if __name__ == "__main__":

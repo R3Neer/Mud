@@ -21,6 +21,8 @@ affects:
 
 The author chooses invocation-owned stabilization, each invocation's own after before returning to its caller, and imagine as a speculative ActionReply expression. This amends D-009, D-042, D-043, D-096 and D-110.
 
+- Amended by: [[ADR-133-provisional-messages-and-scope-aware-tickets|D-133]].
+
 ## Decision
 
 Every action/subaction invocation has a distinct internal causal owner within the one outer resolution. Its effects, message occurrences and reactive firings retain causal provenance. Consequences with one initiating owner belong to that invocation; a consequence jointly caused by different invocations belongs to their nearest common enclosing invocation. Ownership is by contribution/occurrence, not by assigning an entire physical wave to one action. Joint causes are retained, not replaced by a randomly chosen owner. These are execution identities, not new world things or public anchors.
@@ -29,7 +31,7 @@ An invocation finishes its then and stabilizes the causal work it owns. After no
 
 Normal waves still consolidate compatible concurrent contributions over common views before checkpoints. Ownership neither serializes sibling contributions by source order nor allows reading their private deltas. Concurrent invocation continuations cross the applicable consolidation/completion barrier; after sees a consolidated completion projection, not a sibling's partially executed body. Always is checked after each consolidated root/wave. Its false condition refuses that attempted transition even if a later wave could repair it.
 
-Nested completion is not a commit. Success retains the child's tentative effects for the caller, and outer confirmation occurs only after the outer invocation's causal work, checkpoints and after succeed. A child's non-success attempt rolls back its contribution scope before returning a reply; causal descendants and attempted outputs are included. A non-success outer request discards the entire resolution.
+Nested completion is not a commit. Success retains the child's tentative effects for the caller, and outer confirmation occurs only after the outer invocation's causal work, checkpoints and after succeed. A child's non-success attempt rolls back its contribution scope before returning a reply; causal descendants and attempted outputs are included. A non-success outer request discards the entire resolution. Provisional messages also retain protected-block rollback scope: its failure drops published tickets even if a recovery succeeds. Child success remains Waiting; outer commit alone marks surviving tickets Kept.
 
 ActionReply is an ordinary value. Real action calls are admitted only in an effect-capable context, including a local value initializer evaluated by an effect block, subject to ordinary permissions. A pure expression/value computation cannot execute a real action by hiding it in a nested initializer. Explicitly obtaining a reply as a value permits observation of Success, Refusal or Errors after the attempted child scope has been settled/rolled back. An invocation used solely as an effect statement propagates non-success: Refusal aborts the current attempt, and Errors enter its enclosing block's error channel. Constructing or passing an Error value alone does not raise it. This distinguishes explicit result observation from silently ignoring failed effects; comprehensive test aggregation remains Q-059.
 

@@ -323,6 +323,8 @@ Receiver-call conformance includes distinct imported participant types, multiple
 
 ## Metadata, descriptors and subordinate anchors
 
+Sublook and Submessage are distinct DeclarationKind members, retained by `~kind`; their hard keywords also denote categorical values in expression position. Sublook supports `~for` and `~given`, and submessage supports `~on`, under the same supported-versus-absent-clause rules as their normal forms. Descriptor subtyping does not alter their written category, anchor or host capability.
+
 Reflective access `~` distinguishes between intrinsic properties and configured metadata: `~identifier` is the source identifier, `~name` is configurable presentation, and all `~` accesses are runtime-readonly. Only stable semantic entities with descriptor typing and public anchor possess their own metadata: nominal declarations, members of `family`, units, fields, components and participants. Expressions, clause bodies and both `start with` are excluded as owners; that of part remains without anchor.
 
 Declaration-header participants `for`, `on` and `given` have a name and a subordinate anchor based on owner, a clause type and an identifier. The position is not part of identity. Declaration participants are anchored symbols; ordinary locals and otherwise on bindings remain as `LocalSymbol`. Field symbols derive exclusively from canonical static declarations and specialisation; runtime `add`/`remove` introduce or retire no field symbols or anchors. Dependency suspension affects effective availability rather than nominal declaration identity. Inherited members retain descriptor, anchor and metadata from their original declaration. `~metadata` lists only configured metadata, never intrinsic properties.

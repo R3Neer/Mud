@@ -2,7 +2,7 @@
 root = "."
 output_dir = "exports"
 default_profile = "current"
-source_languages = { ebnf = "ebnf", asdl = "asdl", yaml = "yaml" }
+source_languages = { ebnf = "ebnf", asdl = "asdl", yaml = "yaml", json = "json", base = "yaml" }
 exclude = [
     "exports/**",
     "**/node_modules/**",
@@ -38,6 +38,7 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-067-p-message-participants-absent-in-final-state.md",
     "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
     "notes/questions/Q-019-n-numbers.md",
     "notes/questions/Q-017-d-circular-dynamic-domains.md",
@@ -93,6 +94,7 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-067-p-message-participants-absent-in-final-state.md",
     "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
     "notes/questions/Q-019-n-numbers.md",
     "notes/questions/Q-017-d-circular-dynamic-domains.md",

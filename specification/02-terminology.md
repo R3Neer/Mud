@@ -32,7 +32,7 @@ The regulatory text has not yet been drafted.
 
 ## Planned terminology families
 
--  MUD programme, part file and path.
+-  MUD world project, part, source/manifest file and path.
 - Declaration, symbol, name and anchor.
 - `thing` abstract or concrete, canonical identity, activity, materialisation and value.
 - Field, relation and collection.
@@ -41,7 +41,7 @@ The regulatory text has not yet been drafted.
 - Participant, role, relationship and value provided.
 - Reference rule, reactive rule and rule `always`.
 - Action, test, assertion, diagnostic `otherwise`, `look`, `message`, request, observation, occurrence, root, wave and resolution.
-- State, snapshot, effect and conflict.
+- State, snapshot, effect and conflict; host Ticket and Waiting/Kept/Dropped.
 - Domain, restriction, condition and invariant.
 - Acceptance, rejection and failure of actions; passing, failure and error of tests.
 

@@ -9,8 +9,8 @@ tags:
 status: in-preparation
 normative: true
 questions:
-  - Q-067
 decisions:
+  - D-133
   - D-132
   - D-131
   - D-112
@@ -409,10 +409,10 @@ Planned scope:
 - Host API centred on the identity of public operations, not on a participant chosen as owner.
 - `for`/`given` signatures, external capability of `action` versus `subaction`, callable values and binding at the invocation point.
 - `look` as a pure query with a coherent caller view and one value of its static produced result type.
-- `message` as a causal occurrence, `on` bindings, public payload and internal causal and external stable projections.
+- Message/submessage causal occurrences with frozen birth-view payloads; shared normal messages publish provisional Ticket handles after validated wave consolidation, with Waiting/Kept/Dropped scope-aware lifetime.
 - Separation of bindings and payload, multiplicity and delivery ordering, and rollback of external outputs.
 
-External projection of a `message` whose participants cease to exist remains open in Q-067.
+Canonical participant descriptors and frozen historical payloads survive later inactivity; host looks read confirmed state and tickets report eventual commitment or rollback.
 
 ## 25. Effects
 

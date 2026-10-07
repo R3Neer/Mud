@@ -11,6 +11,7 @@ depends-on:
 questions:
   - Q-023
 decisions:
+  - D-133
   - D-019
   - D-026
   - D-037
@@ -85,7 +86,7 @@ Compatible order criteria are required whenever two retained orders meet. Whole-
 ## 3. Effect summaries and owner modes
 
 Let $L$ be the private storage region of the current value computation. An effect summary
-$\epsilon=(R,P,A,B,T)$ consists of read dependencies $R$, private writes $P$, authorised world effects $A$, external delivery obligations $B$ and temporal/random/termination requirements $T$. Entries are symbolic paths/operations with provenance, not a prescribed IR schema. Sequential composition retains statement order; concurrent composition retains common-view provenance. Combining summaries does not itself authorise their entries.
+$\epsilon=(R,P,A,B,T)$ consists of read dependencies $R$, private writes $P$, authorised world effects $A$, external delivery obligations $B$ (including provisional notification and later Ticket confirmation/disposal) and temporal/random/termination requirements $T$. Entries are symbolic paths/operations with provenance, not a prescribed IR schema. Sequential composition retains statement order; concurrent composition retains common-view provenance. Combining summaries does not itself authorise their entries.
 
 Let $\delta$ specify Expression, Value($L$) or Effect together with the owner's static-evaluation requirement where applicable. Static qualifies an existing expression/value computation; it is not a fourth block construction. The judgement
 $\Gamma;\Sigma;\Phi;\delta\vdash b:\tau\triangleright(\epsilon,O)$ checks a block and its obligations $O$.

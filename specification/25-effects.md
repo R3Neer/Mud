@@ -15,6 +15,7 @@ questions:
   - Q-069
   - Q-070
 decisions:
+  - D-133
   - D-023
   - D-026
   - D-039
@@ -146,7 +147,7 @@ A protected block preserves its entry configuration. Refusal bypasses otherwise.
 
 Successful handler effects compose tentatively under ordinary authority. For value/expression recovery, equal compatible proposals agree and incompatible proposals fault. Unhandled or newly raised errors discard the recovery scope and propagate without reentering the same chain. Then and raise remain exclusive; there is no finally. Constructing an Error value alone does not raise it.
 
-Causal outputs/firings preserve occurrence identity, multiplicity and all initiating owners. Jointly caused consequences belong to the nearest common enclosing invocation. They are available to the appropriate later wave, not by immediate physical execution order. This chapter neither collapses outputs by payload nor completes host projection for disappeared participants.
+Causal outputs/firings preserve occurrence identity, multiplicity and all initiating owners. Jointly caused consequences belong to the nearest common enclosing invocation. They are available to the appropriate later wave, not by immediate physical execution order. The immutable payload is fixed at birth; final participant activity does not reproject it. A shared normal message may publish its Waiting ticket only after its root/wave batch has passed consolidation and mandatory validation. Scope disposal marks published affected tickets Dropped; protected-block recovery does not resurrect them. [[07-concrete-grammar]] defines the host envelope and terminal confirmation contract.
 
 ## 9. Root/wave batch judgment
 
@@ -158,7 +159,7 @@ Let $B$ be a finite set of sibling branch configurations with common entry $W_0$
 4. Compose compatible replacements, numeric stages, homogeneous collection operations, exact associations and lifecycle contributions using sections 3–6. Apply joint uniqueness after proposals are known; preserve causal outputs separately.
 5. Rebuild the candidate effective projection. Normalise values under their type laws, validate all affected domains and completed stored cardinalities, including restored latent references and fresh initialised payloads.
 6. Check effective always rules after the consolidated root/wave. A false condition yields AlwaysRefusal; unsuccessful evaluation yields Fault. A later wave cannot repair this failed checkpoint.
-7. On success expose the consolidated tentative next view and pending causal outputs; on non-success discard the affected batch/resolution scope under the owner contract. Never publish a partial confirmed world or host delivery.
+7. On success expose the consolidated tentative next view and pending causal outputs; on non-success discard the affected batch/resolution scope under the owner contract. Never publish a partial confirmed world or a sibling-private/unchecked host payload. Successful checkpoint completion permits provisional Waiting notifications under the message contract; outer commit alone makes surviving tickets Kept.
 
 > [!rule] MUD-EFFECT-012 — Batch boundary
 > A root and each wave use the same composition/validation boundary. Completed private blocks and all possible consolidations must satisfy the static stored-cardinality proof. Temporary deviations within an admitted private sequence are not observable by siblings or later waves. Runtime validation is a safeguard, not permission to omit the proof. Only successful outer completion confirms the world and delivers outputs.

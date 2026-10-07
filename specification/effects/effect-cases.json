@@ -670,7 +670,7 @@
       "id": "outer-rollback",
       "contract": "outer rollback",
       "entry": "Child success emits tentative changes/messages, then outer after refuses.",
-      "expected_trace": "All outer-owned tentative contributions/output delivery are discarded."
+      "expected_trace": "Outer-owned tentative contributions and unpublished occurrences are discarded; provisionally published affected tickets become Dropped."
     },
     {
       "id": "imagine-isolation",

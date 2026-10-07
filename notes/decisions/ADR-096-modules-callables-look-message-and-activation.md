@@ -53,6 +53,8 @@ MUD's evolution had left several artificially separate boundaries: elementary ve
 
 The local manifest grammar is specified by D-132; external messages are specified by the causal delivery contract.
 
+- Amended by: [[ADR-133-provisional-messages-and-scope-aware-tickets|D-133]].
+
 ## Decision
 
 ### A single `then` model
@@ -187,7 +189,7 @@ If a dynamic call may select several `look` declarations with distinct results, 
 
 A `message` is not called to produce a value. It occurs as a consequence of its `when` during causal resolution. Each occurrence retains the declaration, its `on` bindings, the causal view/wave and a technical identity preserving multiplicity. The payload has a static produced nominal type determined by its message declaration, independently of occurrence identity.
 
-The `when` of a reactive rule and that of a `message` share the same trigger language. In addition to temporal triggers, occurrences/firings of compatible visible declarations may be observed: an occurred `message`, a reactive rule that has fired and an `always` rule evaluated for a binding. Actions, subactions, looks, Boolean rules and tests are not trigger sources.
+The `when` of a reactive rule and that of a `message` share the same trigger language. In addition to temporal triggers, occurrences/firings of compatible visible declarations may be observed: an occurred `message`, a reactive rule that has fired and an `always` rule evaluated for a binding. Actions, subactions, looks, sublooks, Boolean rules and tests are not trigger sources.
 
 Declarations governed by `on` do not admit `given`; when referenced as a trigger they have no `()`. `when Damaged`, `when Dragon.Damaged` or a prior local such as `damage := Dragon.Damaged` followed by `when damage` are valid forms. The receivers of a reference constrain `on` bindings; they do not turn the trigger into an ordinary call.
 
@@ -197,13 +199,23 @@ A trigger produces zero or more matches, not necessarily a `Bool`. Each match re
 
 An occurrence born on wave `n` becomes available as a causal consequence on the next wave; it does not execute consumers immediately by physical order. Stabilisation requires a wave with no effects or pending new consequences/occurrences. A purely causal cycle of messages or firings may prevent stabilisation even when world state does not change.
 
-The `when` and `if` of a `message` are resolved in the causal view producing the occurrence. If `if` is false, the occurrence is not born. Within MUD, the observed payload is projected onto the occurrence's causal view. Towards the host, if resolution confirms, it is projected onto the final stable state. Both projections belong to the same occurrence; if resolution reverts, there is no external delivery.
+A message/submessage occurrence is born when its `when` matches and its `if`, if present, is true. Its public fields are evaluated and frozen as one immutable payload in that causal view. The internal and external observations share that payload and occurrence identity. Later field changes, participant destruction or recreation neither reproject the payload nor suppress it by final-state equality. Participants in `on` remain canonical identity descriptors; their later inactivity does not invalidate the event or grant a host mutable world handle.
 
-External treatment of participants that cease to exist before the final state remains open in Q-067.
+A shared normal `message` is provisionally delivered after the producing wave is consolidated and its mandatory always/domain/cardinality checkpoints succeed. No sibling private prefix or failed checkpoint is published. Internal causal consumers still see the occurrence in the next wave. A `submessage`, a declaration in a `part only` file, an isolated test or `imagine` has no external delivery. A root-produced occurrence passes the analogous root consolidation/checkpoint barrier. Publication does not confirm tentative world state, and host `look` continues to read confirmed state.
 
+The host envelope keeps declaration/occurrence identity, `on` bindings, immutable payload and `ticket` separate. A `Ticket` is a read-only host-facing occurrence handle whose `state` is `Waiting`, `Kept` or `Dropped`. It is not a Mud thing, a writable participant, a new keyword or a user-constructible source type. It has no new nominal anchor. Its occurrence identity is distinct even when another message has the same payload. Concrete ABI and native representation follow the adapter contracts.
 
-The external wrapper of a confirmed occurrence keeps `on` bindings and the public payload separate; they are not flattened into one object where participant names compete with payload names. Delivery preserves causal order between waves. Within one wave, a stable reproducible technical order is used without attributing semantic priority between occurrences to that order.
-### Locals preceding behaviour clauses
+Every published ticket starts Waiting. It transitions once to Kept when the real outer resolution commits and its producing rollback scope survives, or to Dropped when that scope or an enclosing scope is discarded. Both terminal states are permanent. Successful child completion leaves Waiting until outer confirmation. Later caller changes do not recheck the child's after or invalidate historical payload values. A child's refusal/error drops its attempted occurrences and causal descendants. Outer refusal/error drops all surviving pending tickets. For jointly caused work the owner is the nearest common enclosing invocation; an entire physical wave does not acquire a single owner.
+
+Block rollback is part of ticket provenance. A failed protected block drops its occurrences even if `otherwise` recovers and the outer action succeeds. Handler occurrences belong to their new surviving scope and get new tickets. An occurrence discarded before its publication barrier emits no provisional host notification. Payload-evaluation errors enter the ordinary error channel; they do not create a successfully published occurrence with a partially calculated payload.
+
+The host can read current ticket state and subscribe to terminal updates. Subscription registration and its initial current-state observation must be serialised with state transitions so that a host cannot miss completion between reading Waiting and registering. Local observation and remote occurrence-identity notifications obey this same contract; transport replay/reconnection protocols are adapter details. The host cannot set ticket state or cancel a Mud resolution through this handle. Kept is observable only after the confirmed state is available.
+
+Waiting permits speculative host responses with cancellation/compensation; irreversible external effects require Kept or an explicit transactional adapter contract. Dropped does not undo arbitrary I/O, sound or already displayed frames. Ticket observation is not permission to read tentative storage. Published frozen payloads and terminal ticket state remain readable as historical evidence after rollback; private writable handles and failed foreign exports do not escape.
+
+Publication preserves causal order across wave barriers. A reproducible technical order within a wave does not give semantic priority to equal-time occurrences. Tickets report validity of the recorded causal occurrence, not whether its payload still equals current state. Unbounded resolution duration or nontermination may leave Waiting pending; timeout/oscillation policy is separate from inventing Kept or Dropped.
+
+### Locals preceding### Locals preceding behaviour clauses
 
 A `action`, reactive rule or `message` may declare pure locals using `:=` between metadata and its main clauses. They are immutable and sequential, visible to later locals and clauses, and follow the ordinary rules against forward references, cycles and shadowing.
 
@@ -215,18 +227,12 @@ The canonical host API is organised around the identity of public operations, no
 
 ## Additional constraints
 
-- The part boundary is not controlled through explicit visibility modifiers.
+- There are no per-declaration visibility modifiers; part only restricts an entire file.
 - Cross-part reflection must be contract-safe; results are not silently censored.
 - Cross-part thing/alias specialization requires contract visibility and uses authorization, preserving encapsulation.
 - An internal action/subaction call never opens a new root resolution.
 - A `look` remains pure even when it reads the caller's visible private delta.
 - A `message` is not emitted through `emit` or modelled as a `Bool` value.
 - `message` occurrences do not become `on` participants; causality belongs to `when`.
-- Actions, subactions, looks, Boolean rules and tests are not declarative trigger sources.
+- Actions, subactions, looks, sublooks, Boolean rules and tests are not declarative trigger sources.
 - Selection producing a collection from a domain must use a source explicitly materialised with `all D`.
-
-## Open questions
-
-- Q-067: `message` participants absent from the final state.
-
-These questions do not authorise silently choosing a variant during implementation.

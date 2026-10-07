@@ -15,6 +15,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-133
   - D-132
   - D-131
   - D-111
@@ -1100,9 +1101,24 @@ Normal and sub operations retain distinct declaration identity: `subaction <: ac
 
 `look` is a pure callable. It may be accessed by the host, by another part whose contract makes it visible, and by MUD code in reading contexts, including `then`. Its fields read one coherent view inherited from the caller: host stable state, a rule snapshot, or the private delta visible at that point in `then`. It supports `for` and `given` and returns exactly one value of the static produced nominal type made from its public fields. Calls to one declaration share that type; different producers remain distinct, even with identical fields.
 
-A `message` is not called directly. Every instance of its `when` that passes `if` creates a causal occurrence with an identity, declaration, `on` bindings and birth wave. That occurrence may feed triggers in the next wave. Within MUD, its payload is projected onto the causal view; after commit, it is projected to the host from the final stable state. A rollback cancels external delivery.
+A message/submessage occurrence is born when its `when` matches and its `if`, if present, is true. Its public fields are evaluated and frozen as one immutable payload in that causal view. The internal and external observations share that payload and occurrence identity. Later field changes, participant destruction or recreation neither reproject the payload nor suppress it by final-state equality. Participants in `on` remain canonical identity descriptors; their later inactivity does not invalidate the event or grant a host mutable world handle.
 
-The outer envelope keeps the `on` bindings that identify participants separate from the public payload; it does not merge the two namespaces. Confirmed occurrences retain causal order between waves and, within one wave, a stable reproducible technical order that introduces no priority semantics among them.
+A shared normal `message` is provisionally delivered after the producing wave is consolidated and its mandatory always/domain/cardinality checkpoints succeed. No sibling private prefix or failed checkpoint is published. Internal causal consumers still see the occurrence in the next wave. A `submessage`, a declaration in a `part only` file, an isolated test or `imagine` has no external delivery. A root-produced occurrence passes the analogous root consolidation/checkpoint barrier. Publication does not confirm tentative world state, and host `look` continues to read confirmed state.
+
+The host envelope keeps declaration/occurrence identity, `on` bindings, immutable payload and `ticket` separate. A `Ticket` is a read-only host-facing occurrence handle whose `state` is `Waiting`, `Kept` or `Dropped`. It is not a Mud thing, a writable participant, a new keyword or a user-constructible source type. It has no new nominal anchor. Its occurrence identity is distinct even when another message has the same payload. Concrete ABI and native representation follow the adapter contracts.
+
+Every published ticket starts Waiting. It transitions once to Kept when the real outer resolution commits and its producing rollback scope survives, or to Dropped when that scope or an enclosing scope is discarded. Both terminal states are permanent. Successful child completion leaves Waiting until outer confirmation. Later caller changes do not recheck the child's after or invalidate historical payload values. A child's refusal/error drops its attempted occurrences and causal descendants. Outer refusal/error drops all surviving pending tickets. For jointly caused work the owner is the nearest common enclosing invocation; an entire physical wave does not acquire a single owner.
+
+Block rollback is part of ticket provenance. A failed protected block drops its occurrences even if `otherwise` recovers and the outer action succeeds. Handler occurrences belong to their new surviving scope and get new tickets. An occurrence discarded before its publication barrier emits no provisional host notification. Payload-evaluation errors enter the ordinary error channel; they do not create a successfully published occurrence with a partially calculated payload.
+
+The host can read current ticket state and subscribe to terminal updates. Subscription registration and its initial current-state observation must be serialised with state transitions so that a host cannot miss completion between reading Waiting and registering. Local observation and remote occurrence-identity notifications obey this same contract; transport replay/reconnection protocols are adapter details. The host cannot set ticket state or cancel a Mud resolution through this handle. Kept is observable only after the confirmed state is available.
+
+Waiting permits speculative host responses with cancellation/compensation; irreversible external effects require Kept or an explicit transactional adapter contract. Dropped does not undo arbitrary I/O, sound or already displayed frames. Ticket observation is not permission to read tentative storage. Published frozen payloads and terminal ticket state remain readable as historical evidence after rollback; private writable handles and failed foreign exports do not escape.
+
+Publication preserves causal order across wave barriers. A reproducible technical order within a wave does not give semantic priority to equal-time occurrences. Tickets report validity of the recorded causal occurrence, not whether its payload still equals current state. Unbounded resolution duration or nontermination may leave Waiting pending; timeout/oscillation policy is separate from inventing Kept or Dropped.
+
+
+The outer envelope keeps the `on` bindings that identify participants separate from the public payload; it does not merge the two namespaces. Provisionally delivered occurrences retain causal order between waves and, within one wave, a stable reproducible technical order that introduces no priority semantics among them.
 
 A public field whose direct value is a magnitude supporting units should preferably select its representation with `in`. Omitting it is legal and uses the canonical unit projection, but triggers a warning because it implies an API decision. A unitless magnitude displays its numeric value directly without that warning. A direct point magnitude publishes its coordinate in the chosen unit, not its `~format`; publishing the format requires a `Text` field.
 
@@ -1534,9 +1550,9 @@ The access is written `owner~metadata`, never `owner.~metadata`. All access `~` 
 | `~kind` | a reflective family, according to receiver | compatible statements and descriptors | no, intrinsic |
 | `~type` | `Type` | everything value MUD | no, intrinsic |
 | `~metadata` | `Metadata [* unique]` | metadata-bearing elements | no, intrinsic |
-| `~for` | `Participant [* unique ordered]` | Boolean rule, `action`, `subaction`, `look` | no, intrinsic |
-| `~on` | `Participant [* unique ordered]` | reactive rule, ruler `always`, `message` | no, intrinsic |
-| `~given` | `Participant [* unique ordered]` | Boolean rule, `action`, `subaction`, `look` | no, intrinsic |
+| `~for` | `Participant [* unique ordered]` | Boolean rule, `action`, `subaction`, `look`, `sublook` | no, intrinsic |
+| `~on` | `Participant [* unique ordered]` | reactive rule, rule `always`, `message`, `submessage` | no, intrinsic |
+| `~given` | `Participant [* unique ordered]` | Boolean rule, `action`, `subaction`, `look`, `sublook` | no, intrinsic |
 | `~clauses` | `ClauseKind [* unique]` | statements containing clauses | no, intrinsic |
 | `~plural` | `Text` | units | yes |
 | `~abbreviation` | `Text` | units | yes |
@@ -1763,7 +1779,7 @@ Exports are immutable local MUD values, evaluated once at their textual bridge p
 
 The enclosing contract governs reads and writes. Expression/shared/test preambles require external purity; value computations may mutate only their private storage; effects require ordinary participant and place capabilities. A wrapper does not bypass these rules, and a foreign signature's mutability annotation alone does not prove purity. Static value owners require a separately statically evaluable, pure, deterministic contract for the complete body. Foreign calls that are only pure calculations do not satisfy the requirement that `then` contain an effect or executable effect call.
 
-Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require confirmed host delivery or an explicit transactional contract. Wrappers preserve the canonical static field schema, aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.
+Adapters track dependencies, respect snapshot reads including `old`/`changes`, route authorised MUD writes into the private delta and cannot expose confirmed storage or retain writable handles. Irreversible native side effects require Kept ticket confirmation or an explicit transactional contract. Wrappers preserve the canonical static field schema, aliases, exact numbers, domains and collection contracts; inbound values are validated and cannot retain hidden mutable aliases. Missing contracts cannot be assumed pure. The precise hosting/effect protocol and conversion/lifetime/error rules remain Q-069 and Q-070.
 
 
 Actions and subactions return only ActionReply, with no additional domain result or success payload. Capturing that reply remains distinct from propagating non-success through a bare effect call; world effects and messages are not return values.

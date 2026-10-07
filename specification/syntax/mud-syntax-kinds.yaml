@@ -372,7 +372,10 @@ lexical_forms:
     rhs: '"true" | "false" | "empty" | "all" | "_"'
     references: []
   contextual-word:
-    rhs: "\"abstract\" | \"always\" | \"start\"\n      | \"mud\"\n      | \"value\" | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\" | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\" | \"cycle\""
+    rhs: "\"abstract\" | \"part\" | \"only\" | \"uses\" | \"always\" | \"start\"\n      | \"mud\"\n    \
+      \  | \"value\" | \"type\"\n      | \"name\" | \"path\" | \"anchor\" | \"file\"\n      | \"plural\"\
+      \ | \"abbreviation\" | \"prefixes\" | \"format\"\n      | \"root\" | \"unit\" | \"point\" | \"over\"\
+      \ | \"cycle\""
     references: []
   identifier:
     rhs: "contextual-word\n      | identifier-form"

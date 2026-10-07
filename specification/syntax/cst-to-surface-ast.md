@@ -374,7 +374,7 @@ The name, `TypeExpr`, default and metadata are converted. A dictionary type uses
 
 ## Rules and actions
 
-The metadata-bearing preamble of every rule, action, subaction, look, message and test is retained in the `metadata` field of the corresponding parent constructor. `start with` does not generate metadata of its own.
+The metadata-bearing preamble of every rule, action, subaction, look, sublook, message, submessage and test is retained in the `metadata` field of the corresponding parent constructor. `start with` does not generate metadata of its own.
 
 Default metadata written at the start of the file uses `FileMetadataAssignment(name, type?, value?)`. Its value remains a static `expr?` and is not normalised to `ValueBlock`; this is a deliberate exception for file defaults.
 
@@ -400,7 +400,7 @@ The action is not classified as either elementary or compound.
 
 ### `look` and `message`
 
-`look-declaration` projects its optional `given-clause` to `LookDecl.givens`. In `message`, pure preamble statements preceding behavioural clauses become `leading_preamble`. Public fields are converted to `PublicFieldDecl` and retain their order.
+Look/sublook declarations project optional given-clause to their owning constructor's givens. In message/submessage, pure preamble statements preceding behavioural clauses become `leading_preamble`. Public fields are converted to `PublicFieldDecl` and retain their order.
 
 ## Expression blocks, value blocks and tests
 

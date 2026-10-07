@@ -12,6 +12,7 @@ depends-on:
   - "[[03-notation]]"
 questions: []
 decisions:
+  - D-133
   - D-111
   - D-110
   - D-014
@@ -133,6 +134,8 @@ Let $W_c$ denote the confirmed world and $W_t$ a tentative projection in one res
 Each invocation owns the causal work it starts. Jointly caused consequences belong to their common enclosing invocation. An invocation's `after` is evaluated when its owned waves have stabilised, before it returns; it is not deferred until the outer invocation completes or rechecked later. Successful outer completion confirms the tentative world atomically.
 
 `always` invariants are checked after the consolidated root and after every consolidated wave. A false condition produces `AlwaysRefusal`; an unsuccessful evaluation produces Error occurrences. Later waves cannot repair a failed checkpoint. Hard-dependent rules are checked when effective again.
+
+Message occurrence data consists of identity, declaration, canonical participant bindings, birth view/wave, frozen payload and rollback-scope provenance. For each externally published occurrence $o$, its host ticket has $s(o)\in\{\mathrm{Waiting},\mathrm{Kept},\mathrm{Dropped}\}$. The only transitions are Waiting to Kept after outer confirmation, or Waiting to Dropped after disposal of a containing scope. Kept and Dropped are terminal. A consolidated validated wave may publish Waiting without changing $W_c$; these observations and the confirmed world are distinct. [[07-concrete-grammar]] defines payload, publication and read-only subscription contracts.
 
 `imagine` executes the same invocation protocol in isolation, returns its `ActionReply` and always discards tentative changes. It leaves the confirmed world, queues, logs, randomness and resolution identity unchanged.
 

@@ -27,10 +27,13 @@ class BundledProfileTests(unittest.TestCase):
                 "specification/grammar/mud.ebnf",
                 "specification/asdl/acciones.asdl",
                 "specification/syntax/modelo.yaml",
+                "specification/effects/message-delivery-cases.json",
                 "notes/vision-and-scope.md",
                 "notes/questions/README.md",
                 "notes/questions/Q-001-g-grammar-and-line-breaks.md",
                 "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+                "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
+                "notes/questions/Q-067-p-message-participants-absent-in-final-state.md",
                 "notes/questions/Q-007-f-technical-failures.md",
                 "notes/decisions/README.md",
                 "notes/decisions/ADR-054-lenguaje.md",
@@ -62,6 +65,7 @@ class BundledProfileTests(unittest.TestCase):
         self.assertIn("specification/grammar/mud.ebnf", selected)
         self.assertIn("specification/asdl/acciones.asdl", selected)
         self.assertIn("specification/syntax/modelo.yaml", selected)
+        self.assertIn("specification/effects/message-delivery-cases.json", selected)
         self.assertIn("notes/vision-and-scope.md", selected)
         self.assertIn("notes/decisions/ADR-055-nueva-decision.md", selected)
         self.assertIn("notes/questions/README.md", selected)
@@ -89,6 +93,8 @@ class BundledProfileTests(unittest.TestCase):
             "notes/decisions/ADR-053-semantic-operator-and-authoring-flow.md",
             selected,
         )
+        self.assertNotIn("notes/questions/Q-062-g-complete-grammar-of-mud-module.md", selected)
+        self.assertNotIn("notes/questions/Q-067-p-message-participants-absent-in-final-state.md", selected)
         self.assertNotIn("notes/risks-and-constraints.md", selected)
         self.assertNotIn("tooling/README.md", selected)
 
@@ -103,6 +109,8 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/questions/README.md",
                 "notes/questions/Q-001-g-grammar-and-line-breaks.md",
                 "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+                "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
+                "notes/questions/Q-067-p-message-participants-absent-in-final-state.md",
                 "specification/README.md",
             }
             for relative in documents:
@@ -127,6 +135,8 @@ class BundledProfileTests(unittest.TestCase):
             "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
             selected,
         )
+        self.assertIn("notes/questions/Q-062-g-complete-grammar-of-mud-module.md", selected)
+        self.assertIn("notes/questions/Q-067-p-message-participants-absent-in-final-state.md", selected)
         self.assertNotIn("specification/README.md", selected)
 
     def test_current_profile_excludes_closed_questions(self) -> None:
@@ -138,6 +148,8 @@ class BundledProfileTests(unittest.TestCase):
                 "notes/questions/README.md",
                 "notes/questions/Q-001-g-grammar-and-line-breaks.md",
                 "notes/questions/Q-002-m-exact-model-of-sequential-and-simultaneous-effects.md",
+                "notes/questions/Q-062-g-complete-grammar-of-mud-module.md",
+                "notes/questions/Q-067-p-message-participants-absent-in-final-state.md",
                 "notes/questions/Q-007-f-technical-failures.md",
                 "exports/current.md",
                 "tooling/example/node_modules/dependency/README.md",
@@ -168,6 +180,8 @@ class BundledProfileTests(unittest.TestCase):
             "notes/questions/Q-001-g-grammar-and-line-breaks.md",
             selected,
         )
+        self.assertNotIn("notes/questions/Q-062-g-complete-grammar-of-mud-module.md", selected)
+        self.assertNotIn("notes/questions/Q-067-p-message-participants-absent-in-final-state.md", selected)
         self.assertNotIn("exports/current.md", selected)
         self.assertNotIn(
             "tooling/example/node_modules/dependency/README.md",

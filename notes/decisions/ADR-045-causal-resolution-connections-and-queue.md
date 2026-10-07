@@ -27,6 +27,8 @@ affects:
 
 The result MUD behaviour cannot depend on the order in which rules, files, threads or internal structures are evaluated. Reactions are organised into waves based on snapshots.
 
+- Amended by: [[ADR-133-provisional-messages-and-scope-aware-tickets|D-133]].
+
 ## Decision
 
 One resolution Follow this sequence:
@@ -65,15 +67,14 @@ One resolution ends when a wave has no effect and leaves no new consequences or 
 
 Only one causal resolution is active for a world at a time. External applications received during this period are placed in a queue and bind participants, evaluate `given`, domains and `if` when they are due to start, not when they are enqueued.
 
-Every `message` occurrence is preserved as a causal attempt with identity, declaration, bindings and birth view. Its payload is projected onto that causal view, and the same occurrence is available as a trigger in the next wave; after confirmation, the payload is projected to the host against the final stable state. A rollback cancels all external delivery.
-Confirmed deliveries retain causal order between waves and are processed within each wave in a stable, reproducible technical order that carries no semantic priority.
+Every message occurrence retains identity, canonical bindings, birth view and immutable payload. Internal triggers consume it in the next wave. Shared normal messages publish Waiting after validated wave consolidation; final commit/disposal changes their Ticket state without reprojecting fields.
 
 ## Consequences
 
 - The order in which the operations are physically executed does not alter the result.
 - Binding identity uses the rule and role-associated participant identities. A severed or suspended binding loses its observation episode; reappearance establishes a new baseline without firing.
 - Detection semantics fluctuations and technical safeguards remain open in Q-020.
-- The multiplicity of causally distinct occurrences is preserved and is not deduplicated by payload. Q-067 leaves open the question of what happens if a participant no longer exists or cannot be assessed in the final external projection.
+- Multiplicity is preserved; equal payloads do not merge occurrences. Final inactive participants remain canonical descriptors.
 
 ## Verification
 
@@ -81,7 +82,7 @@ Confirmed deliveries retain causal order between waves and are processed within 
 2. A link created in one wave participates only in the next wave.
 3. Each action is validated against the state in which it begins.
 4. An oscillation does not confirm a partial state.
-5. A rolled-back resolution publishes no messages.
+5. A rolled-back resolution has no Kept message; already published tickets become Dropped and unpublished occurrences are suppressed.
 6. A genuine initial connection takes effect during stabilisation from `start with`.
 7. A link created in one wave takes its baseline in the next and can fire only from the following wave.
 8. Two consecutive net changes produce two `changes` pulses.
@@ -92,4 +93,4 @@ Confirmed deliveries retain causal order between waves and are processed within 
 
 ## Amendment current by D-096
 
-A `message` is a occurrence causal with identity and bindings, not merely an output whose fields are deferred to the state end. The occurrence born in a wave is available as a trigger in the wave next. Within the MUD, its payload is projected onto the view causal from the start; to the host, after commit, it is projected onto the stable state final. Both projections belong to the same occurrence. The stabilisation it also requires that there be no consequences/ocurrencias pending cases.
+Messages freeze their causal payload at birth; next-wave consumers retain that occurrence. Shared normal messages publish Waiting after validated consolidation and transition to Kept/Dropped under D-133. Stabilisation still requires no pending causal consequences.

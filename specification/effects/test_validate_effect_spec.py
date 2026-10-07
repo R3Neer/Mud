@@ -43,3 +43,22 @@ class EffectWitnessTests(unittest.TestCase):
         self.assertEqual(evaluate(self.cases["redundant-create"]["witness"]),{"active":True,"generation":1,"payload":2})
 
 if __name__=="__main__":unittest.main()
+
+
+class MessageTraceTests(unittest.TestCase):
+    def setUp(self):
+        self.data = json.loads(CORPUS.with_name("message-delivery-cases.json").read_text(encoding="utf-8"))
+
+    def test_current_message_traces(self):
+        from validate_effect_spec import validate_messages
+        self.assertEqual(validate_messages(self.data), 15)
+
+    def test_recovery_trace_cannot_be_omitted(self):
+        from validate_effect_spec import validate_messages
+        self.data["cases"] = [c for c in self.data["cases"] if c["id"] != "protected-recovery"]
+        with self.assertRaises(ValueError): validate_messages(self.data)
+
+    def test_terminal_state_cannot_be_reversed(self):
+        from validate_effect_spec import validate_messages
+        self.data["cases"][0]["ticket_states"] = ["Waiting", "Dropped", "Kept"]
+        with self.assertRaises(ValueError): validate_messages(self.data)

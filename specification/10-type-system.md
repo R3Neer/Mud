@@ -111,7 +111,7 @@ Create one graph node for each resolved nominal declaration and normalised const
 Union normalisation flattens nested unions, removes duplicate identical alternatives and gives them a stable canonical order for comparison. It preserves distinct nominal identities and does not discard an alternative merely because its domain is included in another. Cardinalities, nominal factors, stable paths and capabilities remain part of the contract.
 
 > [!rule] MUD-TYPE-003 — Value type identity
-> Each alias/family/thing declaration introduces a nominal identity. Each look or message declaration introduces one static produced type, independent of receiver and runtime state. Context-free literal products have structural identity from their normalised names, order and component contracts. Runtime evaluation creates values, not types or public anchors.
+> Each alias/family/thing declaration introduces a nominal identity. Each look, sublook, message or submessage declaration introduces one static produced type, independent of receiver and runtime state. Context-free literal products have structural identity from their normalised names, order and component contracts. Runtime evaluation creates values, not types or public anchors.
 
 Specialisation views retain a value's exact effective nominal identity. Equality, hashing and caches cannot erase that identity merely because a value is held under a more general static annotation. A structural match grants neither nominal members nor an implicit alias identity. A calculated binding preserves its inferred producer identity.
 

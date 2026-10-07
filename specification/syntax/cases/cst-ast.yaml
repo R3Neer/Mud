@@ -2730,11 +2730,9 @@ cases:
   produces_ast: true
 - id: part-only-qualified-reference-denied
   category: parts
-  source: 'value := world.hidden.Detail
-
-    '
+  source: "rule CanRead { value := world.hidden.Detail\n true }\n"
   cst_root: MudFileSyntax
-  ast: ComputedLocal(value)
+  ast: BooleanRuleDecl(CanRead)
   normalizations: []
   produces_ast: true
   expected_nominal_diagnostics:
@@ -2742,11 +2740,9 @@ cases:
   context: Detail is declared in a part only file of another part; qualification cannot bypass file privacy.
 - id: part-uses-not-transitive
   category: parts
-  source: 'value := world.third.Detail()
-
-    '
+  source: "rule CanRead { value := world.third.Detail()\n true }\n"
   cst_root: MudFileSyntax
-  ast: CallExpr(Detail)
+  ast: BooleanRuleDecl(CanRead)
   normalizations: []
   produces_ast: true
   expected_nominal_diagnostics:
@@ -2754,7 +2750,7 @@ cases:
   context: A uses B; B uses world.third; A has no direct uses world.third.
 - id: part-private-type-contract-leak
   category: parts
-  source: 'look Detail { hidden := Secret }
+  source: 'look Detail { hidden: Secret := secretValue }
 
     '
   cst_root: MudFileSyntax
@@ -2777,3 +2773,35 @@ cases:
   produces_ast: true
   expected_warnings:
   - redundant-uses
+- id: part-manifest-missing-target
+  category: parts
+  source: 'uses world.missing
+
+    '
+  cst_root: PartFileSyntax
+  ast: MudPartFile(uses=[world.missing])
+  normalizations: []
+  produces_ast: true
+  expected_nominal_diagnostics:
+  - uses-target-has-no-manifest
+  context: world.missing does not identify a directory with mud.part
+- id: sublook-host-endpoint-denied
+  category: parts
+  source: 'sublook Detail { score := 0 }
+
+    '
+  cst_root: MudFileSyntax
+  ast: SublookDecl(Detail)
+  normalizations: []
+  produces_ast: true
+  expected_host_diagnostics:
+  - sub-operation-not-host-endpoint
+- id: submessage-host-endpoint-denied
+  category: parts
+  source: "submessage Changed { when true changes\n score := 0 }\n"
+  cst_root: MudFileSyntax
+  ast: SubmessageDecl(Changed)
+  normalizations: []
+  produces_ast: true
+  expected_host_diagnostics:
+  - sub-operation-not-host-endpoint

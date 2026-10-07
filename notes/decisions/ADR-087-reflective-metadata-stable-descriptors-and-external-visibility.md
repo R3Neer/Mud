@@ -125,7 +125,7 @@ The following conceptual families are introduced:
 ```mud
 family DeclarationKind {
     Thing, Alias, Family, FamilyMember, Magnitude, Unit,
-    Rule, Action, Subaction, Look, Message, Test, Start
+    Rule, Action, Subaction, Look, Sublook, Message, Submessage, Test, Start
 }
 
 family RuleKind { Boolean, Reactive, Always }
@@ -138,7 +138,7 @@ family MetadataKind { Standard, User }
 
 `Start` may describe the category of a global declaration in project tooling/reflection, but does not imply that the construct has an anchor or `~metadata`.
 
-Category hard keywords already present in the grammar may appear bare in expression position as `DeclarationKind` values: `thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `subaction`, `look`, `message` and `test`. The surface form is retained as a categorical value, not as a nominal reference. `DeclarationKind` members without their own hard keyword do not receive a new literal spelling under this decision.
+Category hard keywords already present in the grammar may appear bare in expression position as `DeclarationKind` values: `thing`, `alias`, `family`, `magnitude`, `rule`, `action`, `subaction`, `look`, `sublook`, `message`, `submessage` and `test`. The surface form is retained as a categorical value, not as a nominal reference. `DeclarationKind` members without their own hard keyword do not receive a new literal spelling under this decision.
 
 Categorical narrowing admits forms such as `declaration is rule`, `declaration is action`, `declaration is subaction` and `declaration is thing`. `~type` does not replace this classification.
 
@@ -158,7 +158,9 @@ Participant properties have these capabilities by declaration subcategory:
 | `action` | yes | no | yes |
 | `subaction` | yes | no | yes |
 | `look` | yes | no | yes |
+| `sublook` | yes | no | yes |
 | `message` | no | yes | no |
+| `submessage` | no | yes | no |
 | other declarations | no | no | no |
 
 When a property is supported by the subcategory but the concrete declaration omits its optional clause, the value is `empty` with the corresponding collection type. When the property is not supported by the static subcategory, access is a static error; it does not produce `empty` or a default value. For example, `thing A` makes `A~for` invalid, whereas an `action` without a `for` clause admits `ActionName~for` and returns `empty`.

@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "scope": "Reviewed declarative message/host traces; not an executable scheduler or transport",
+  "cases": [
+    {
+      "id": "changed-final-value",
+      "entry": "Shared message snapshots score=3; later caller writes score=9; outer succeeds.",
+      "expected_trace": [
+        "birth payload=3",
+        "validated wave publishes Waiting",
+        "confirmed look before commit reads old confirmed score",
+        "outer commit updates world; ticket Kept",
+        "historical payload remains 3"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ],
+      "expected_payload": 3
+    },
+    {
+      "id": "destroyed-participant",
+      "entry": "Player participates at birth then is destroyed; final constraints succeed.",
+      "expected_trace": [
+        "publish frozen payload and canonical Player binding",
+        "Player becomes inactive",
+        "commit leaves binding inspectable; no final field access"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    },
+    {
+      "id": "recreated-participant",
+      "entry": "Player is destroyed and recreated after the event.",
+      "expected_trace": [
+        "freeze old-generation values",
+        "canonical binding stays Player",
+        "reinitialisation does not substitute new payload",
+        "surviving occurrence confirms"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    },
+    {
+      "id": "outer-refusal",
+      "entry": "A validated wave publishes; outer after is false.",
+      "expected_trace": [
+        "publish Waiting",
+        "after returns Refusal",
+        "rollback tentative world",
+        "published ticket becomes Dropped; payload remains readable"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Dropped"
+      ]
+    },
+    {
+      "id": "child-success-not-commit",
+      "entry": "Child after passes; parent has pending work.",
+      "expected_trace": [
+        "child publishes Waiting",
+        "child Success leaves ticket Waiting",
+        "parent commits",
+        "ticket Kept"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    },
+    {
+      "id": "child-fault-observed",
+      "entry": "Child publishes, then fails; caller explicitly captures Errors and continues.",
+      "expected_trace": [
+        "publish child Waiting",
+        "child rollback drops its message/descendants",
+        "caller captures reply",
+        "parent commit does not resurrect child ticket"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Dropped"
+      ]
+    },
+    {
+      "id": "protected-recovery",
+      "entry": "Protected block publishes then errors; otherwise succeeds and publishes a new message.",
+      "expected_trace": [
+        "body ticket Waiting",
+        "body scope rollback sets Dropped",
+        "handler occurrence has new identity and Waiting",
+        "outer commit keeps handler ticket only"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Dropped"
+      ]
+    },
+    {
+      "id": "joint-cause-owner",
+      "entry": "A consequence is jointly caused by two child invocations.",
+      "expected_trace": [
+        "nearest common enclosing invocation owns consequence",
+        "child completion leaves joint ticket Waiting",
+        "outer commit makes joint ticket Kept"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    },
+    {
+      "id": "failed-checkpoint-no-publication",
+      "entry": "Occurrence is pending in a batch that violates always/domain/cardinality checks.",
+      "expected_trace": [
+        "private birth",
+        "consolidation",
+        "checkpoint failure",
+        "rollback suppresses occurrence before provisional notice"
+      ],
+      "ticket_states": []
+    },
+    {
+      "id": "isolated-no-publication",
+      "entry": "The same causal event arises in imagine or a fresh isolated test.",
+      "expected_trace": [
+        "internal causal occurrence may drive next wave",
+        "no host callback or externally allocated ticket",
+        "discard isolated resolution"
+      ],
+      "ticket_states": []
+    },
+    {
+      "id": "private-submessage-no-publication",
+      "entry": "Submessage or part-only normal message occurs in a real resolution.",
+      "expected_trace": [
+        "internal causal occurrence preserved",
+        "no host endpoint or provisional notification"
+      ],
+      "ticket_states": []
+    },
+    {
+      "id": "subscribe-after-finalisation",
+      "entry": "Ticket finalises between host reading Waiting and subscription registration.",
+      "expected_trace": [
+        "transition occurs under serialised state observation",
+        "subscribe returns current terminal state",
+        "completion is not missed or reverted"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    },
+    {
+      "id": "equal-payload-distinct-occurrences",
+      "entry": "Two distinct causal events carry equal fields.",
+      "expected_trace": [
+        "two separate occurrence identities and tickets",
+        "no payload-based deduplication",
+        "both surviving tickets Kept"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    },
+    {
+      "id": "host-irreversible-effect",
+      "entry": "Host receives a provisional notice while world remains unconfirmed.",
+      "expected_trace": [
+        "read confirmed world through look",
+        "host may begin reversible response",
+        "ticket Kept permits irreversible effect; Dropped requires cancellation/compensation"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Dropped"
+      ]
+    },
+    {
+      "id": "root-publication-barrier",
+      "entry": "Root produces an occurrence before a next wave exists.",
+      "expected_trace": [
+        "root consolidation and validation",
+        "provisional Waiting notice",
+        "causal next wave",
+        "outer commit Kept"
+      ],
+      "ticket_states": [
+        "Waiting",
+        "Kept"
+      ]
+    }
+  ]
+}
