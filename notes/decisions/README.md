@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 131.
-- Current: 127.
+- Total: 132.
+- Current: 128.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -150,6 +150,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-134 | current | 2026-10-07 | [[notes/decisions/ADR-134-static-generic-declarations-and-applications|Static generic declarations and applications]] |
 | D-135 | current | 2026-10-07 | [[notes/decisions/ADR-135-normalized-structural-type-equality|Normalized structural type equality]] |
 | D-136 | current | 2026-10-07 | [[notes/decisions/ADR-136-static-given-call-disambiguation|Static given call disambiguation]] |
+| D-137 | current | 2026-10-07 | [[notes/decisions/ADR-137-live-locals-stored-inference-and-binding-patterns|Live locals, stored type inference and positional binding patterns]] |
 
 ## Reserved identifiers
 

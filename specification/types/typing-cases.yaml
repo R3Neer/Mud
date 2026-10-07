@@ -1698,3 +1698,309 @@ cases:
           card:
           - 0
           - 7
+- id: hole-partial-positional
+  rules: &locals001
+  - MUD-TYPE-008
+  - MUD-TYPE-021
+  source: 'pair: (_, Text) = source'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: source synthesizes singleton (Int, Text); resolve the first hole to Int, preserving the second
+    written contract.
+- id: hole-mutable-fixed-type
+  rules: *locals001
+  source: 'mut count: _ = knownNat'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: knownNat has singleton Nat type and the owner admits mutable locals; later writes retain this fixed
+    Nat contract.
+- id: hole-empty-unresolved
+  rules: *locals001
+  source: 'values: _ = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: No member-type evidence exists; compilation reports the unresolved hole and never falls back to
+    Any.
+- id: hole-nested-empty-unresolved
+  rules: *locals001
+  source: 'pair: (_, Text) = (empty, "hello")'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The second component supplies Text only; the first component has no unique member type.
+- id: hole-domain-unique
+  rules: *locals001
+  source: 'values: _ in Cats [*] = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The fixture Cats domain has one statically established exact member type Cat; the collection admits
+    zero members.
+- id: hole-context-free-numeric-ambiguous
+  rules: *locals001
+  source: 'value: _ = 3'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: No representation context exists; multiple numeric elaborations remain and no arbitrary Nat/Int
+    priority resolves the hole.
+- id: hole-generic-partial
+  rules: *locals001
+  source: 'box: Box with _ = knownBox'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Box is an eligible constructor and knownBox has fixed Box with Cat application; solve Cat and check
+    its bounds/finite closure.
+- id: hole-stored-does-not-coerce
+  rules: *locals001
+  source: 'values: _ [1..* unique] = repeated'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: repeated has known Text members with a statically repeated value; a stored constraint does not
+    deduplicate to repair it.
+- id: hole-nominal-alias-not-guessed
+  rules: *locals001
+  source: 'value: _ = structuralLiteral'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The fixture literal needs a contextual nominal constructor, with two compatible distinct aliases
+    and no unique annotation.
+- id: hole-explicit-part-incompatible
+  rules: *locals001
+  source: 'pair: (_, Text) = boolPair'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: boolPair has singleton (Int, Bool); solving the first hole cannot repair the written Text mismatch.
+- id: pattern-nested-capture
+  rules: &locals002
+  - MUD-TYPE-022
+  source: (x, rest) = source
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: source is singleton (Num, (Text, Bool)); rest captures the whole second product with no flattening.
+- id: pattern-discard-no-symbol
+  rules: *locals002
+  source: '(_, value) in dictionary : value > zero'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: dictionary is an exact Int->Int dictionary and zero is Int; discard validates key and creates no
+    symbol.
+- id: pattern-named-product-rejected
+  rules: *locals002
+  source: (x, y) = named
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: 'named has structural named product (x: Int, y: Int); names do not make it positional.'
+- id: pattern-arity-rejected
+  rules: *locals002
+  source: (x, y, z) = pair
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: pair has a two-component positional type; mismatch is static, never a filtering match.
+- id: pattern-no-implicit-flattening
+  rules: *locals002
+  source: (x, y) = pairs
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: pairs is a two-member collection of pairs, not a singleton positional product.
+- id: pattern-full-discard-obligation
+  rules: *locals002
+  source: (_, _) = pair
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: pair is singleton (Int, Text); evaluate stored RHS once and preserve its possible computing Error
+    despite no symbols.
+- id: local-live-sequential-read
+  rules:
+  - MUD-TYPE-023
+  - MUD-EFFECT-003
+  - MUD-TYPE-021
+  source: 'then { captured: _ = a.balance; live := a.balance; a.balance -= ten; a.saved = live }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: balance and saved are authorised Int slots, ten is Int 10 and entry balance is 50. captured stays
+    50; the actual live read obtains 40. Scalar writes satisfy completed contracts.
+- id: local-live-value-block
+  rules:
+  - MUD-TYPE-023
+  - MUD-EFFECT-003
+  source: 'result: Int = { mut counter: Int = one; live := counter; counter += one; live }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: one is Int 1; private counter starts 1, the live final read is 2 and no write escapes the owning
+    value computation.
+- id: local-live-temporal-snapshots
+  rules:
+  - MUD-TYPE-023
+  source: current := a.balance; when current changes
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Reactive fixture supplies two defined consecutive balance observations 5 and 6; interpret the same
+    derivation in each snapshot and pulse. No stored capture or initial-observation pulse is invented.
+- id: pattern-derived-live
+  rules: *locals002
+  source: then { (x, y) := a.point; a.point = newPoint; a.saved = x }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: point is authorised singleton (Int, Int), newPoint is already typed (3,4) and saved is Int. x projects
+    3 on its later read and no pattern slot is assigned.
+- id: preamble-value-body-private
+  rules:
+  - MUD-TYPE-008
+  - MUD-TYPE-021
+  - MUD-EFFECT-003
+  source: 'before: _ = { mut local: Int = one; local += one; local }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture is a shared behavioural preamble, one is Int 1; private mutation is confined to ValueBlock
+    and captured before equals 2.
+- id: preamble-mut-rejected
+  rules:
+  - MUD-TYPE-008
+  - MUD-TYPE-021
+  - MUD-EFFECT-003
+  source: 'mut before: _ = a.balance'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture is a shared behavioural preamble; outer mutable locals are forbidden even when inference
+    is unique.
+- id: live-local-real-action-rejected
+  rules:
+  - MUD-TYPE-023
+  - MUD-EFFECT-003
+  source: then { reply := actor.Move(); actor.score += one }
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Move is a real action; derived locals are externally pure and cannot replay the call at reads.
+    Use a stored reply capture in an effect-capable owner.
+- id: stored-reply-hole-capture
+  rules:
+  - MUD-TYPE-014
+  - MUD-TYPE-021
+  source: 'then { reply: _ = actor.Move(); actor.score += one }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Move has uniquely fixed ActionReply output and caller has the necessary effect authority. Execute
+    once, capture the normal reply, and retain the ordinary explicit-capture behavior after Errors or Refusal.
+- id: live-local-read-error-channel
+  rules:
+  - MUD-TYPE-023
+  - MUD-TYPE-012
+  source: then { live := computation; actor.saved = live }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: computation is an otherwise-admitted pure Int computation whose read raises an Error; it faults
+    at the later read, using that protected scope, rather than freezing or raising eagerly at declaration.
+- id: pure-pattern-expression-rhs
+  rules:
+  - MUD-TYPE-022
+  - MUD-TYPE-023
+  source: if { (x, y) := point; x == y }
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: point is a singleton positional (Int, Int); pure derived pattern projections have no stored place
+    or ValueBlock RHS.
+- id: hole-partial-dictionary
+  rules:
+  - MUD-TYPE-021
+  source: 'table: _ -> Text [*] = knownMap'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: knownMap has an exact Int->Text dictionary contract; solve key Int without changing association
+    cardinality or constructing a collection of dictionaries.
+- id: hole-partial-named-product
+  rules:
+  - MUD-TYPE-021
+  source: 'record: (count: _, label: Text) = knownRecord'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: 'knownRecord has named structural product (count: Int, label: Text); infer Int. Named products
+    admit stored annotation holes even though named-product destructuring is forbidden.'
+- id: pattern-duplicate-name
+  rules:
+  - MUD-TYPE-022
+  source: (x, x) = pair
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: pair is singleton positional (Int, Int); repeated capture introduces a duplicate local and is invalid.
+    Repeated discards would introduce no name.
+- id: pattern-no-forward-leaf
+  rules:
+  - MUD-TYPE-022
+  source: (x, y) = (x, source)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: No earlier x is visible; resolve the whole RHS before introducing any new pattern leaf.
+- id: pattern-union-shape-mismatch
+  rules:
+  - MUD-TYPE-022
+  source: (x, y) := possible
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: possible has a union of singleton two- and three-position product contracts. Every alternative
+    must match and cannot be silently filtered by the pattern.
+- id: pure-pattern-value-block-rejected
+  rules:
+  - MUD-TYPE-022
+  - MUD-TYPE-023
+  source: if { (x, y) := { pair }; x == y }
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: 'The owner is ExpressionBlock: pure pattern declarations require an expression RHS and cannot introduce
+    a ValueBlock.'
+- id: pattern-discard-unreadable
+  rules:
+  - MUD-TYPE-022
+  source: 'for each (_, value) in dictionary : actor.Use(_)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The fixture has an exact dictionary source; discard creates no variable and cannot be supplied
+    as a readable value.
+- id: preamble-no-world-mutation
+  rules:
+  - MUD-EFFECT-003
+  - MUD-TYPE-021
+  source: 'initial: _ = { actor.balance -= ten; actor.balance }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The owner is a shared behavioural preamble. A nested ValueBlock cannot spend actor authority to
+    mutate captured world state.
+- id: dictionary-pattern-retains-key-witness
+  rules:
+  - MUD-TYPE-022
+  source: 'min (_, value) in table : value > zero'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: table is an exact ordered Int->Int dictionary with zero typed Int. The pair projects key/value
+    for its Boolean predicate; min returns the accepted original key with cardinality [0..1], not a positional
+    product.
+- id: dictionary-single-discard-is-key-traversal
+  rules:
+  - MUD-TYPE-022
+  source: 'count _ in table : true'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: table is a finite exact dictionary; the single discard validates each key but creates no binding.
+    Count retains ordinary key/association-count semantics.
+- id: hole-established-any-contract
+  rules:
+  - MUD-TYPE-021
+  source: 'captured: _ = opaque'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: opaque already has a statically established singleton Any contract; synthesize that known type,
+    not an Any fallback for lack of evidence.
+- id: hole-independent-occurrences
+  rules:
+  - MUD-TYPE-021
+  source: 'pair: (_, _) = typedPair'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: typedPair has singleton positional (Int, Text). Distinct hole occurrences independently resolve
+    to Int and Text, not one shared wildcard variable.
+- id: pattern-context-free-numeric-ambiguity
+  rules:
+  - MUD-TYPE-008
+  - MUD-TYPE-022
+  source: (x, y) = (3, 4)
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: No expected numeric representations are available. A pattern supplies positional structure but
+    no annotations for choosing a unique numeric elaboration.

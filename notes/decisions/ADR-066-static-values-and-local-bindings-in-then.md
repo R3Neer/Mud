@@ -21,6 +21,8 @@ affects:
 
 - Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 MUD uses `=` for stored or default values and `:=` for computed values. It was unclear whether a value written with `=` could be an expression, and how to name intermediate calculations in a `then` without turning them into world state.
@@ -57,13 +59,13 @@ An executable block may declare a computed local with `x [derived-form] := value
 
 The computed form is pure and not assignable, retaining the applicable inference and coercion rules. Stored forms create execution-frame slots; only `mut` may be reassigned. An initializer is evaluated when execution reaches its declaration and may read the runtime projection visible there. None of these locals creates a field, public anchor or persistent state.
 
-`value-body` may be a short expression or `ValueBlock`. `ExpressionBlock`, shared behaviour preambles and `TestAfterBlock` admit the pure computed form with an ordinary expression RHS and externally pure `from` blocks; nesting cannot grant external mutation.
+`value-body` may be a short expression or `ValueBlock`. ExpressionBlock and TestAfterBlock retain pure derived expression RHSs; shared behaviour preambles admit immutable stored/derived locals and patterns with value-body RHSs. No shared preamble admits mut; private value computation cannot grant external mutation.
 
 A mutable local may satisfy a `for mut` participant. The call keeps a temporary binding to the slot and ordinary rollback reverts its changes. Other locals may satisfy only read-only participants or compatible `given` parameters.
 
 ### Sequencing, evaluation and scope
 
-The declaration is evaluated exactly once when execution reaches its textual position, reading the private sequential projection produced by earlier instructions in the same `then`. Its value is fixed; later effects do not re-evaluate it even if they change fields used by the expression.
+A stored declaration evaluates its initializer exactly once when its slot is created. A calculated declaration registers a live derivation without storage, evaluated against the applicable semantic view at each read, including preceding effects of its own private sequence. Later changes to dependencies therefore affect later derived reads, not captured stored values.
 
 The name is visible from the instruction after its declaration to the end of its block; not before the declaration; usable by later local bindings; and unable to shadow or redeclare another visible name. Forward references and cycles are forbidden.
 
@@ -105,7 +107,7 @@ A `then` still requires at least one effect or action call. A block consisting o
 4. Local value with inferred and annotated type.
 5. Rejection of ambiguous inference.
 6. Local read of a preceding sequential effect.
-7. Preservation of a local value across later effects.
+7. Preservation of stored captures and live reevaluation of derived locals across later effects.
 8. Dependency on an earlier local.
 9. Rejection of forward reference, cycle, redeclaration and shadowing.
 10. Scope by block and iteration.

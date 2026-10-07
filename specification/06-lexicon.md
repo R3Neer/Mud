@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-137
   - D-135
   - D-132
   - D-131
@@ -69,6 +70,8 @@ identifier ::= ascii-letter , { ascii-letter | digit } ;
 
 > [!rule] MUD-LEX-011 — ASCII identifiers
 > Identifiers may only contain ASCII letters and numbers; they must begin with a letter and may not contain `_`.
+
+The standalone token `_` has context-specific syntax: a stored annotation uses it as a type-inference hole, a value-binding pattern uses it as a discard, and a functional dictionary may use it as fallback. None of these uses creates an identifier or a readable value named `_`. Numeric digit grouping retains its separate lexical rules.
 
 They are case-sensitive. `Kingdom`, `kingdom` and `KINGDOM` are three different notations.
 

@@ -16,6 +16,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-137
   - D-136
   - D-135
   - D-134
@@ -86,14 +87,17 @@ $$
 Contextual literal construction and explicit conversions use their own rules rather than this subsumption rule. When only domain/cardinality admission of an otherwise compatible value is unknown, E-Admission adds that exact predicate to $O$ if and only if its context admits a runtime check. It cannot be used for writable invariance, enumeration, universal callable substitution or post-effect stored cardinality.
 
 $$
-\frac{\Gamma(x)=\tau\quad x\ \mathsf{visible}}
-{\mathcal C\vdash x\Rightarrow\tau\triangleright(\mathsf{read}(x),\varnothing)}
+\frac{\Gamma(x)=\tau\quad x\ \mathsf{visible}\quad
+ B_{\mathcal C}(x)=(\epsilon_x,O_x)}
+{\mathcal C\vdash x\Rightarrow\tau\triangleright(\epsilon_x,O_x)}
 \;\mathsf{E\text{-}Binding}.
 $$
 
+Here $B_{\mathcal C}(x)$ is the binding-read summary and obligations in context $\mathcal C$. For a stored or iteration binding it is the ordinary captured-slot/value read summary. For a derived binding it checks the registered RHS under the read's semantic view and includes that derivation's dependencies, computing faults, temporal/random requirements and permitted confined private computation in the read summary and obligations. Its resolved lexical environment is the one preceding its declaration; no self/forward reference or later name rebinding is possible. All potential reads must satisfy their contexts even when a declaration itself performs no eager RHS evaluation.
+
 For an admitted call with selected signature $I\to R$, every actual expression checks against its assigned input slot under the same owner mode; slot permission premises also hold. Its result is $R$, effects compose the actual summaries and the declared callee summary, and obligations are their union together with call-site admission predicates. This rule runs after nominal target selection; it has no premise that can pick another candidate using the result type.
 
-For sequential local declarations, check each RHS in the preceding environment, then extend $\Gamma$ with its checked/inferred contract and storage region. Check the final result only in the completed environment. Effects compose in statement order. Pure preambles require expression mode; value preambles additionally permit their declared private region. Effect-block completion requires every stored-cardinality obligation before returning its normal result.
+For sequential local declarations, check each RHS in the preceding environment, then extend $\Gamma$ with its checked/inferred contract and, for stored bindings only, storage region. Pattern leaves are introduced together after the complete RHS and pattern have been checked; no leaf can resolve within that same RHS. Check the final result only in the completed environment. Effects compose in statement order. Expression/test preambles require expression mode. Shared behaviour preamble local RHSs may use confined Value computation; their foreign statement items remain externally pure. Value computations additionally permit their declared private region. Effect-block completion requires every stored-cardinality obligation before returning its normal result.
 
 Block evaluation has the disjoint outcomes $\mathsf{Normal}(v)$ and $\mathsf{Fault}(E)$, where $E$ is a nonempty collection of Error occurrences. For an admitted block contract $\tau$, Normal requires $v\in\llbracket\tau\rrbracket_W$; Fault supplies no $v$. A stored Error value or an ActionReply containing Errors is not Fault by its shape alone. These outcome labels are metalanguage, not added MUD constructors.
 
@@ -219,13 +223,13 @@ Take checks a singleton Nat amount and a finite enumerable source. With constant
 | Count | Same predicate contract | Singleton Nat, bounded by source size |
 | Min, max | Finite enumerable source with the required order; pure deterministic Bool filter | Source member contract with cardinality $[0,1]$ |
 
-Min/max return witnesses, not a value computed by a numeric body. No accepted witness yields ordinary empty. Direct quantification/traversal may consume a finite domain without first constructing a collection where its contract permits this. For each executes the appropriate effect/private-region block and preserves its source snapshot and decreasing/finite traversal evidence.
+Min/max return witnesses, not a value computed by a numeric body. No accepted witness yields ordinary empty. Direct quantification/traversal may consume a finite domain without first constructing a collection where its contract permits this. For each executes the appropriate effect/private-region block and preserves its source snapshot and decreasing/finite traversal evidence. Iteration, selection and quantifiers validate the complete recursive binding pattern before the predicate/body, introducing named leaves together and no symbol for a discard. Exact association patterns preserve dictionary witnesses; min/max still return the original accepted witness. Pattern mismatch is a static error and cannot filter the source.
 
 Domain restriction and derived local collection transforms apply their specified filtering, cardinality, ordering and uniqueness normalisation. They do not introduce implicit flattening, a new nominal alias, a new domain from a filtered collection or new inner authority.
 
 ## 8. Temporal, random and speculative forms
 
-Old checks the operand under the appropriate entry/snapshot contract; a test/action entry view differs from reactive previous-wave state. Changes compares defined consecutive observations within one observation episode and has temporal-trigger form. A first or resumed observation supplies a baseline, not a change pulse; lifecycle no-ops preserve continuity. [[04-mathematical-model]] defines binding identity and episode boundaries. Combining/negating inactive Boolean-rule calls uses the specified canonical pruning core; undefined additional desugarings are not inferred from ordinary truth tables.
+Old checks the operand under the appropriate entry/snapshot contract; a derived local or pattern projection reinterprets its derivation in that temporal view, while a stored local remains its captured slot. Changes compares the same derivation in the relevant snapshots, not a frozen local result. A test/action entry view differs from reactive previous-wave state. Changes compares defined consecutive observations within one observation episode and has temporal-trigger form. A first or resumed observation supplies a baseline, not a change pulse; lifecycle no-ops preserve continuity. [[04-mathematical-model]] defines binding identity and episode boundaries. Combining/negating inactive Boolean-rule calls uses the specified canonical pruning core; undefined additional desugarings are not inferred from ordinary truth tables.
 
 Rand checks a finite enumerable source and yields a member with the documented random-point identity/cache restrictions. Finiteness, admissibility and purity requirements of its owner still apply. A missing valid sample follows its ordinary error/admission contract, not an invented default.
 
@@ -238,7 +242,7 @@ Eventually checks its Boolean goal and finite permitted action references, with 
 > [!rule] MUD-TYPE-012 — Normal result and error channel
 > Every expression/value/effect block checks its owner's result contract and effect permissions and carries an Error collection channel. Empty means the normal result is available. Nonempty means it is unavailable. Successfully evaluating false is a normal Bool; only the owning action/invariant interprets it as Refusal.
 
-ExpressionBlock introduces sequential immutable pure preamble values and one final expression. A pure local's short RHS is itself an ExpressionBlock, not private mutable storage. ValueBlock introduces sequential private computed/stored locals, admitted local mutations/iterations and one final value. EffectBlock contains ordered effects/locals and its required observable effect contract. Declaration/schema braces and LocalStatementBlock grouping do not create another normal-result owner.
+ExpressionBlock introduces sequential immutable pure preamble values and one final expression. A pure local or pure derived pattern has an ExpressionBlock RHS, not private mutable storage. ValueBlock introduces sequential private computed/stored locals, admitted local mutations/iterations and one final value. EffectBlock contains ordered effects/locals and its required observable effect contract. Declaration/schema braces and LocalStatementBlock grouping do not create another normal-result owner.
 
 Handler on bindings are clause-local immutable Error specialisations. All roles must bind jointly; no on is catch-all. A handler's optional if is an externally pure singleton-Bool expression block. False leaves occurrences pending; errors produced while calculating the filter go outward.
 
@@ -253,7 +257,14 @@ All successful recovery proposals compose tentatively. Equal compatible value re
 
 Check signatures and effective schemas before their bodies. Guards, after conditions and always invariants require pure singleton Bool; reactive activators additionally require their temporal context. Look/sublook/message/submessage public fields check their declared/inferred value contracts and part boundary. Message payload expressions are evaluated once in the causal birth view and yield immutable, validated values; an error enters the enclosing block error channel instead of publishing a partial occurrence. Ticket is part of the host envelope contract, not a new expression/type constructor. Test assertions have expression blocks and a false assertion is distinct from an error in calculating it.
 
-An immutable stored local requires an explicit type/value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique type and obtains no outer place authority. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
+> [!rule] MUD-TYPE-023 — Live local derivations
+> Every := local registers a non-assignable derivation with a fixed static contract. An actual read evaluates its definition against the applicable current or temporal view, including preceding effects of its own sequential branch. Derived RHSs and their handlers remain externally pure, including confined fresh ValueBlock computation. = locals instead evaluate once at slot creation and capture the resulting value. Neither form creates a world field or persistent memory between declaration instances.
+
+A real action call may be captured by a stored initializer in an effect-capable context, for example `reply: ActionReply = actor.Move()`. A live derived initializer such as `reply := actor.Move()` is invalid: reading the local cannot replay world effects. Imagine remains an admitted pure speculative query under its ordinary isolation/random rules. Shared preambles, expressions and value-only owners never gain real-action authority from a stored initializer.
+
+Derived positional captures project their common registered RHS, retaining its resolved origin and random-point identity. They do not manufacture independent copied RHS/random sites per leaf; caching/sharing must preserve the existing random and temporal contract. Faults arise on an actual derived read and enter that read's protected block unless handled by the derivation's own admissible RHS handler. Stored initialization faults arise at slot creation and expose no partial captures.
+
+An immutable stored local requires an annotation and initial value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique static type, registers a live derivation and obtains no outer place authority. Every read uses the semantic view applicable there, including the current private sequential projection; the inferred type does not change when values change. Stored bindings capture once at slot creation. Explicit or partial `_` annotations obey unique stored-hole inference. Shared behaviour preambles admit immutable stored/derived bindings with value-body RHSs, while expression/test preambles retain pure derived expression RHSs. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
 
 For each syntax family, elaboration selects the already defined operation contract, contextual literal type, runtime admission check, effect summary and proof evidence. Unsupported combinations produce a static diagnostic. Successful static checking proves neither global causal termination nor bit-for-bit binary64 portability beyond the declared guarantees.
 

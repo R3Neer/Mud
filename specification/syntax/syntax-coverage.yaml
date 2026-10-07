@@ -2,6 +2,141 @@ schema_version: 1
 grammar: specification/grammar/mud.ebnf
 ast: specification/syntax/mud-surface-ast.asdl
 productions:
+  behaviour-preamble-statement:
+    cst: BehaviourPreambleStatementSyntax
+    ast:
+      disposition: normalized
+      target: behaviour_preamble_statement
+  binding-pattern:
+    cst: BindingPatternSyntax
+    ast:
+      disposition: normalized
+      target: binding_pattern
+  immutable-local-stored-declaration:
+    cst: ImmutableLocalStoredDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: LocalStoredDecl
+  local-pattern-declaration:
+    cst: LocalPatternDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: local_pattern_decl
+  positional-binding-pattern:
+    cst: PositionalBindingPatternSyntax
+    ast:
+      disposition: normalized
+      target: PositionalBinding
+  pure-pattern-declaration:
+    cst: PurePatternDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: PurePatternDecl
+  stored-callable-receiver:
+    cst: StoredCallableReceiverSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  stored-callable-type:
+    cst: StoredCallableTypeSyntax
+    ast:
+      disposition: normalized
+      target: CallableType
+  stored-declared-type:
+    cst: StoredDeclaredTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  stored-dictionary-link:
+    cst: StoredDictionaryLinkSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  stored-dictionary-type:
+    cst: StoredDictionaryTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  stored-dictionary-value-type:
+    cst: StoredDictionaryValueTypeSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  stored-explicit-generic-type-application:
+    cst: StoredExplicitGenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  stored-generic-argument:
+    cst: StoredGenericArgumentSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  stored-generic-argument-list:
+    cst: StoredGenericArgumentListSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  stored-generic-type-application:
+    cst: StoredGenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  stored-generic-union-argument:
+    cst: StoredGenericUnionArgumentSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  stored-named-product-component:
+    cst: StoredNamedProductComponentSyntax
+    ast:
+      disposition: normalized
+      target: named_product_component
+  stored-named-product-type:
+    cst: StoredNamedProductTypeSyntax
+    ast:
+      disposition: normalized
+      target: NamedProductType
+  stored-nominal-type:
+    cst: StoredNominalTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  stored-positional-product-type:
+    cst: StoredPositionalProductTypeSyntax
+    ast:
+      disposition: normalized
+      target: PositionalProductType
+  stored-postfix-generic-type-application:
+    cst: StoredPostfixGenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  stored-product-type:
+    cst: StoredProductTypeSyntax
+    ast:
+      disposition: normalized
+      target: declared_type
+  stored-type-alternative:
+    cst: StoredTypeAlternativeSyntax
+    ast:
+      disposition: normalized
+      target: type_alternative
+  stored-type-expression:
+    cst: StoredTypeExpressionSyntax
+    ast:
+      disposition: normalized
+      target: TypeExpr
+  stored-union-type-expression:
+    cst: StoredUnionTypeExpressionSyntax
+    ast:
+      disposition: normalized
+      target: TypeExpr
+  type-inference-hole:
+    cst: TypeInferenceHoleSyntax
+    ast:
+      disposition: normalized
+      target: TypeInferenceHole
   generic-union-argument:
     cst: GenericUnionArgumentSyntax
     ast:

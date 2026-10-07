@@ -47,6 +47,8 @@ affects:
 
 - Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 MUD's evolution had left several artificially separate boundaries: elementary versus compound actions, `look` as an essentially external query, `message` as output deferred to the host, separate activation in `things` and `rules`, and implicit domain consumption in operations producing collections. These separations interact poorly when the language is organised into parts, permits callable values and uses wave-based causal resolution.
@@ -59,7 +61,7 @@ The local manifest grammar is specified by D-132; external messages are specifie
 
 ### A single `then` model
 
-The semantic separation between elementary and compound actions is removed. A `then` is an ordered sequence of consequences and may mix calculated locals, immutable or `mut` stored locals, direct effects, calls to `action` or `subaction`, and `for each` traversals. Shared behaviour preambles contain pure calculated `:=` bindings or externally pure `from` blocks.
+The semantic separation between elementary and compound actions is removed. A `then` is an ordered sequence of consequences and may mix calculated locals, immutable or `mut` stored locals, direct effects, calls to `action` or `subaction`, and `for each` traversals. Shared behaviour preambles contain immutable stored locals, live derived locals, stored/derived positional patterns and externally pure from blocks. Local RHSs may be ValueBlock; outer mut is forbidden.
 
 An internal call executes at its textual position within the resolution's private delta: it observes earlier effects visible at that point, contributes its effects to the same resolution, and later statements observe those effects. It does not open an independent transaction.
 
@@ -215,9 +217,9 @@ Waiting permits speculative host responses with cancellation/compensation; irrev
 
 Publication preserves causal order across wave barriers. A reproducible technical order within a wave does not give semantic priority to equal-time occurrences. Tickets report validity of the recorded causal occurrence, not whether its payload still equals current state. Unbounded resolution duration or nontermination may leave Waiting pending; timeout/oscillation policy is separate from inventing Kept or Dropped.
 
-### Locals preceding### Locals preceding behaviour clauses
+### Locals preceding behaviour clauses
 
-A `action`, reactive rule or `message` may declare pure locals using `:=` between metadata and its main clauses. They are immutable and sequential, visible to later locals and clauses, and follow the ordinary rules against forward references, cycles and shadowing.
+Action/subaction, reactive rule and message/submessage may declare immutable stored locals, live derived locals and positional patterns between metadata and their main clauses. Their value-body RHSs permit private ValueBlock computation, never outer mut or world effects. They are visible to later locals and clauses and follow ordinary no-forward-reference/no-cycle/no-shadowing rules. Stored captures belong only to the concrete declaration instance.
 
 A local may name a trigger before `when`; it does not select a concrete occurrence until `when` produces a match. Payload fields are accessible only where flow analysis guarantees that the binding exists.
 

@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-137
   - D-136
   - D-134
   - D-132
@@ -172,7 +173,9 @@ The Nominal HIR represents a reference as either `ResolvedReference` or `Pending
 
 Iteration bindings and all local declarations are `LocalSymbol`: they do not receive public anchor and are subject to the first lexical level of resolution. The HIR’s `kind` distinguishes, at a minimum, between iterators, computed locals, stored locals and foreign exports; mutability is a capability checked at a later stage and not a category of anchor.
 
-In `ExpressionBlock` and in the shared preambles of action/rule/message, pure computed locals and immutable exports from externally pure `from` blocks are introduced. Each local variable is visible from the next declaration until the end of the block owner and cannot shadow a visible name.
+In ExpressionBlock and TestAfterBlock preambles, pure derived locals/patterns and immutable externally pure foreign exports are introduced. Shared preambles of action/subaction, reactive rule and message/submessage additionally introduce immutable stored locals/patterns and admit value-body RHSs. Each local is visible only after its declaration until the end of the block owner and cannot shadow a visible name.
+
+Resolve the complete RHS before introducing any pattern leaf. Each named leaf introduces one LocalSymbol of the applicable computed/stored/iterator kind, with its source occurrence and deterministic ordinal in textual depth-first pattern order. Duplicate names are invalid even within one pattern; discards may repeat and introduce no symbol, scope entry, anchor or Owns/RefersTo edge. A discard is not a reference to a variable called `_`. Named for/on/given participants retain their mandatory identifiers. Type-inference holes introduce no nominal symbol or anchor; solving them belongs to elaboration. Pattern shape, association projection, inferred component types and live evaluation are not nominal-HIR payloads.
 
 `ValueBlock` creates its own lexical scope. Its computed and stored declarations are introduced sequentially. An `LocalForEach` resolves `source` and `by` before introducing its binding; the binding is visible in the filter and in `LocalStatementBlock`. Locals created within an iteration do not survive into the next one. A mutation may refer to a mutable local variable of an enclosing scope of the same `ValueBlock`; the check that the final destination does not escape the block is part of type checking/elaboration.
 

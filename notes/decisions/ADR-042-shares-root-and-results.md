@@ -33,6 +33,8 @@ affects:
 
 - Developed by: [[ADR-110-tentative-wave-journal-and-atomic-confirmation|D-110]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 One action is the MUD’s writing boundary. Its contract one must distinguish between expected inadmissibility and that of a request the errors that prevent one from obtaining a state valid.
@@ -68,7 +70,7 @@ One action:
 
 Participants are recipients, while `given` values are arguments in accordance with D-036 and D-063. When an action starts, roles are linked by identity, value or place according to their contract; types, cardinalities and capabilities are checked. Omitted `given` values use their static defaults, which are evaluated and validated before `if`. A role with outer `mut` retains its original receiver place as the destination for effects and requires that place to be storable and externally mutable. A `given` value outside its domain or a false `if` has no effect.
 
-Within a block `then`, D-066 allows for calculated local links. They are resolved in textual order, reading the delta previous private provision, remain unchanged and do not form part of the state from the world.
+Within then, stored locals capture their initial value when the slot is created. Calculated locals register live derivations and read the applicable private sequential view at each use. Both resolve names textually and do not create world fields.
 
 ### Unified sequence of `then`
 

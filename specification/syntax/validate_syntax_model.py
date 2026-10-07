@@ -127,6 +127,84 @@ def nominal_hir_contract_problems(text: str) -> list[str]:
     return problems
 
 
+def local_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
+    """Guard annotation contexts and pattern/preamble distinctions, not inference."""
+    from specification.grammar.validate_grammar import productions, COMMENT
+
+    rhs = dict(productions(COMMENT.sub("", grammar_text)))
+    refs = {
+        name: set(re.findall(r"\b[a-z][a-z0-9-]*\b", re.sub(r'"[^"]*"', "", body)))
+        for name, body in rhs.items()
+    }
+
+    def reachable(start: str, target: str) -> bool:
+        pending, seen = [start], set()
+        while pending:
+            name = pending.pop()
+            if name == target:
+                return True
+            if name not in seen:
+                seen.add(name)
+                pending.extend(refs.get(name, set()) & refs.keys())
+        return False
+
+    problems = []
+    # Only traverse the type grammar: an ordinary signature's domain expression
+    # may contain its own local stored computation, which is a separate owner.
+    type_nodes = {name for name in rhs if name.startswith("stored-")}
+    type_nodes.update({"type-expression", "type-alternative", "union-type-expression",
+                      "declared-type", "product-type", "positional-product-type",
+                      "named-product-type", "named-product-component", "dictionary-type",
+                      "dictionary-link", "dictionary-value-type", "callable-type",
+                      "callable-receiver", "nominal-type", "generic-type-application",
+                      "explicit-generic-type-application", "postfix-generic-type-application",
+                      "generic-argument", "generic-argument-list", "generic-union-argument",
+                      "type-inference-hole"})
+    refs = {name: values & type_nodes for name, values in refs.items()}
+    if reachable("type-expression", "type-inference-hole"):
+        problems.append("ordinary type expressions must not admit inference holes")
+    if not reachable("stored-type-expression", "type-inference-hole"):
+        problems.append("stored annotations must retain inference holes")
+    for name in ("stored-positional-product-type", "stored-generic-argument",
+                 "stored-dictionary-value-type", "stored-nominal-type"):
+        if not reachable(name, "type-inference-hole"):
+            problems.append(f"{name} must preserve recursive annotation holes")
+    pure = rhs.get("pure-preamble-statement", "")
+    if any(name in pure for name in ("local-stored-declaration", "local-pattern-declaration",
+                                     "behaviour-preamble-statement")):
+        problems.append("expression preambles cannot acquire stored/value-body locals")
+    if "pure-pattern-declaration" not in pure:
+        problems.append("expression preambles must retain pure derived patterns")
+    if "value-body" in rhs.get("pure-pattern-declaration", ""):
+        problems.append("pure patterns require expression RHSs")
+    behaviour = rhs.get("behaviour-preamble-statement", "")
+    if "immutable-local-stored-declaration" not in behaviour or re.search(r'"mut"', behaviour):
+        problems.append("behaviour preambles require immutable stored locals")
+    if "local-stored-declaration" in behaviour.replace("immutable-local-stored-declaration", ""):
+        problems.append("behaviour preambles cannot admit mutable stored locals")
+    for owner in ("action-signature-body", "reactive-rule-declaration", "message-signature-body"):
+        if "behaviour-preamble-statement" not in rhs.get(owner, ""):
+            problems.append(f"{owner} must preserve the shared behaviour preamble")
+    if not rhs.get("iteration-binding", "").strip() == "binding-pattern":
+        problems.append("iteration binding must use the general pattern")
+    if "iteration-binding" not in rhs.get("quantifier-expression", ""):
+        problems.append("quantifiers must retain general patterns")
+    if "positional-binding-pattern" not in rhs.get("local-pattern-declaration", ""):
+        problems.append("local pattern declarations require positional roots")
+    if "binding-pattern" in rhs.get("local-pattern-declaration", "").replace("positional-binding-pattern", ""):
+        problems.append("local pattern declarations cannot acquire standalone name/discard roots")
+    required = ("TypeInferenceHole", "NameBinding(", "DiscardBinding", "PositionalBinding(",
+                "IterationBinding(binding_pattern pattern)", "behaviour_preamble_statement* leading_preamble",
+                "BehaviourStoredLocal(local_stored_decl value)", "PurePatternDecl(binding_pattern binding, expression_block value)")
+    normalized = re.sub(r"\s+", " ", ast_text)
+    for item in required:
+        if item not in normalized:
+            problems.append(f"local surface contract is missing: {item}")
+    if "DictionaryIterationBinding" in ast_text or "ValueIterationBinding" in ast_text:
+        problems.append("iteration AST must not restrict general binding patterns")
+    return problems
+
+
 def generic_contract_problems(grammar_text: str, ast_text: str, lexicon_text: str) -> list[str]:
     """Guard source distinctions; do not perform inference or generic resolution."""
     code = strip_comments(grammar_text)
@@ -379,6 +457,8 @@ def validate(root: Path) -> list[Problem]:
 
     # Global AST properties.
     ast_text = asdl_path.read_text(encoding="utf-8")
+    problems.extend(Problem(str(asdl_path), message) for message in
+                    local_contract_problems(grammar.read_text(encoding="utf-8"), ast_text))
     problems.extend(Problem(str(asdl_path), message) for message in
                     generic_contract_problems(grammar.read_text(encoding="utf-8"), ast_text,
                                               (root / "specification/grammar/mud-lexico.ebnf").read_text(encoding="utf-8")))

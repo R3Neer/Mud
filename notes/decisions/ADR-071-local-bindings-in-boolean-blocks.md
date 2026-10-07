@@ -21,6 +21,8 @@ affects:
 
 - Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 MUD conditions may need readable intermediate calculations. Repeating them inside a Boolean expression harms readability, while turning them into fields would introduce state that does not belong to the world.
@@ -33,7 +35,7 @@ MUD already has immutable local bindings via `:=` in `then` blocks. The same voc
 
 A Boolean block contains, in this order:
 
-1. Zero or more pure preamble statements: local bindings `name [derived-form] := expression`, with an optional derived shape, or externally pure `from` blocks exporting immutable MUD values.
+1. Zero or more pure preamble statements: local bindings `name [derived-form] := expression`, pure derived positional patterns, or externally pure `from` blocks exporting immutable MUD values.
 2. Exactly one final expression.
 
 The final expression must satisfy the owning construct's contract: it elaborates to `Bool` in Boolean rules, guards, invariants and postconditions; in `when`, it elaborates to an activator admitted by D-058. An expression without declaration form must be the last expression in the block; a second non-declarative expression is invalid.
@@ -50,7 +52,7 @@ Boolean blocks are admitted in Boolean rule bodies, `when` and `if` clauses, `al
 
 ### Evaluation and scope
 
-Local bindings are pure, immutable and evaluated sequentially once per clause evaluation, against the same snapshot observed by the condition. They create no persistent state and survive no other evaluation.
+Local := bindings and derived positional patterns are pure non-assignable derivations introduced in textual order. Reads evaluate their definitions in the condition's applicable view, including temporal snapshots. They create no stored slot or persistent state and survive no other evaluation.
 
 Each name is visible from the following declaration through the final Boolean expression. Failed-body locals are not visible in its otherwise handlers. It is not visible in `then`, another clause or outside the block. D-066's prohibitions remain: no forward references, cycles, redeclaration or shadowing.
 

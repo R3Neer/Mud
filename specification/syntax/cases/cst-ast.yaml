@@ -877,7 +877,7 @@ cases:
   category: iteration
   source: "action Visit for capitals: Country -> City,\n    mut visited: Country [* unique] {\n    then for each country in capitals: {\n        add country to visited\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=country, source=capitals)
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(country)), source=capitals)
   normalizations:
   - dictionary-single-binding-iterates-keys
   produces_ast: true
@@ -885,7 +885,7 @@ cases:
   category: iteration
   source: "action Visit for capitals: Country -> City,\n    mut visited: City [* unique] {\n    then for each (country, city) in capitals: {\n        add city to visited\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=(country, city), source=capitals)
+  ast: ForEachEffect(binding=IterationBinding(PositionalBinding(NameBinding(country), NameBinding(city))), source=capitals)
   normalizations:
   - dictionary-pair-binding-iterates-associations
   produces_ast: true
@@ -1542,7 +1542,7 @@ cases:
   category: effect
   source: "action Iterate for mut total: Num {\n    then for each i in [1..8] by -3:\n        total += i\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=i, source=1..8, step=PrefixExpr(UnaryMinus, 3), filter=None, body=EffectBlock(...))
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(i)), source=1..8, step=PrefixExpr(UnaryMinus, 3), filter=None, body=EffectBlock(...))
   produces_ast: true
 - id: for-each-filter-expression-block
   category: effect
@@ -1560,20 +1560,21 @@ cases:
   category: expression
   source: "thing Sample {\n    chosen := value in [1..10] by 2: {\n        limit := 7\n        value < limit\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(value, 1..10, step=2, predicate=ExpressionBlock(preamble=[limit], result=...))
+  ast: SelectionExpr(IterationBinding(NameBinding(value)), 1..10, step=2, predicate=ExpressionBlock(preamble=[limit], result=...))
   produces_ast: true
 - id: quantifier-by-expression-block
   category: expression
   source: "rule Enough {\n    count value in [1..10] by 2: {\n        threshold := 5\n        value >= threshold\n    } > 0\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Count, value, 1..10, step=2, body=ExpressionBlock(preamble=[threshold], result=...))
+  ast: QuantifierExpr(Count, IterationBinding(NameBinding(value)), 1..10, step=2, body=ExpressionBlock(preamble=[threshold], result=...))
   produces_ast: true
 - id: sum-by-expression-block
   category: expression
   source: "thing Sample {\n    total := sum value in [1..10] by 2: {\n        doubled := value * 2\n        doubled\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Sum, value, 1..10, step=2, body=ExpressionBlock(preamble=[doubled], result=doubled))
-  produces_ast: true
+  ast: none
+  expected_diagnostics: [unsupported-quantifier-form]
+  produces_ast: false
 - id: negative-stepped-domain-all
   category: domain
   source: "thing Sample {\n    values: Nat in [1..8] by -2 [4] = all\n}\n"
@@ -1598,7 +1599,7 @@ cases:
   category: iteration
   source: "action Accumulate for values: Int [*], mut total: Int {\n    then for each i in values:\n        total += i\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=i, source=values, body=EffectBlock(...))
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(i)), source=values, body=EffectBlock(...))
   normalizations:
   - discard-separation-after-colon
   produces_ast: true
@@ -1607,7 +1608,7 @@ cases:
   source: "thing Sample {\n    values: Int [*] = empty\n    selected := x in values:\n        x > 1\n\
     }\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(binding=x, source=values, predicate=ExpressionBlock([], x > 1))
+  ast: SelectionExpr(binding=IterationBinding(NameBinding(x)), source=values, predicate=ExpressionBlock([], x > 1))
   normalizations:
   - discard-separation-after-colon
   produces_ast: true
@@ -1615,7 +1616,7 @@ cases:
   category: expression
   source: "rule HasLarge for values: Int [*] {\n    exists x in values:\n        {\n            limit := 1\n            x > limit\n        }\n}\n"
   cst_root: MudFileSyntax
-  ast: QuantifierExpr(Exists, x, values, body=ExpressionBlock([limit], x > limit))
+  ast: QuantifierExpr(Exists, IterationBinding(NameBinding(x)), values, body=ExpressionBlock([limit], x > limit))
   normalizations:
   - discard-separation-after-colon
   produces_ast: true
@@ -1623,7 +1624,7 @@ cases:
   category: runtime
   source: "action Accumulate for mut total: Num given step: Int {\n    then for each i in [1..8] by step:\n        total += i\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=i, source=[1..8], step=step, body=EffectBlock(...))
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(i)), source=[1..8], step=step, body=EffectBlock(...))
   semantic_expectations:
   - runtime-zero-step-produces-progression-step-zero
   - step-evaluated-once-before-traversal
@@ -1679,7 +1680,7 @@ cases:
   category: iteration
   source: "action Visit for values: Rum [*], mut seen: Nat {\n    then for each value in values:\n        seen += 1\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=value, source=values, step=None, body=EffectBlock(...))
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(value)), source=values, step=None, body=EffectBlock(...))
   semantic_expectations:
   - enumeration-comes-from-collection-not-rum-progression
   produces_ast: true
@@ -1735,7 +1736,7 @@ cases:
   category: validation-after-resolution
   source: "action Broken for mut total: Num {\n    then for each value in [1..8] by value:\n        total += value\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=value, step=DottedPathExpr(value), ...)
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(value)), step=DottedPathExpr(value), ...)
   expected_diagnostics:
   - iteration-binding-not-visible-in-step
   semantic_expectations:
@@ -1745,7 +1746,7 @@ cases:
   category: validation-after-resolution
   source: "action Broken for values: Int [*], mut total: Int {\n    then for each value in values if {\n        adjusted := value + 1\n        adjusted > 0\n    }:\n        total += adjusted\n}\n"
   cst_root: MudFileSyntax
-  ast: ForEachEffect(binding=value, filter=ExpressionBlock(preamble=[adjusted], result=...), body=EffectBlock(...))
+  ast: ForEachEffect(binding=IterationBinding(NameBinding(value)), filter=ExpressionBlock(preamble=[adjusted], result=...), body=EffectBlock(...))
   expected_diagnostics:
   - filter-local-not-visible-in-loop-body
   semantic_expectations:
@@ -1756,7 +1757,7 @@ cases:
   source: "thing Sample {\n    values: Int [*] = empty\n    selected := value in values: {\n        adjusted\
     \ := value + 1\n        adjusted > 0\n    }\n}\n"
   cst_root: MudFileSyntax
-  ast: SelectionExpr(binding=value, source=values, predicate=ExpressionBlock(preamble=[adjusted], result=...))
+  ast: SelectionExpr(binding=IterationBinding(NameBinding(value)), source=values, predicate=ExpressionBlock(preamble=[adjusted], result=...))
   semantic_expectations:
   - selection-binding-visible-to-expression-block-locals-and-result
   produces_ast: true
@@ -1835,9 +1836,9 @@ cases:
   produces_ast: true
 - id: min-empty-is-empty
   category: quantifier-semantics
-  source: "thing Sample {\n    values: Nat [*] = empty\n    minimum := min x in values: x\n}\n"
+  source: "thing Sample {\n    values: Nat [* ordered] = empty\n    minimum := min x in values: true\n}\n"
   cst_root: MudFileSyntax
-  ast: CalculatedFieldDecl(minimum, value=QuantifierExpr(Min, source=values, body=ExpressionBlock([], x)))
+  ast: CalculatedFieldDecl(minimum, value=QuantifierExpr(Minimum, binding=IterationBinding(NameBinding(x)), source=values, body=ExpressionBlock([], true)))
   semantic_expectations:
   - result-type-Nat
   - result-cardinality-0-or-1
@@ -1845,9 +1846,9 @@ cases:
   produces_ast: true
 - id: max-empty-is-empty
   category: quantifier-semantics
-  source: "thing Sample {\n    values: Nat [*] = empty\n    maximum := max x in values: x\n}\n"
+  source: "thing Sample {\n    values: Nat [* ordered] = empty\n    maximum := max x in values: true\n}\n"
   cst_root: MudFileSyntax
-  ast: CalculatedFieldDecl(maximum, value=QuantifierExpr(Max, source=values, body=ExpressionBlock([], x)))
+  ast: CalculatedFieldDecl(maximum, value=QuantifierExpr(Maximum, binding=IterationBinding(NameBinding(x)), source=values, body=ExpressionBlock([], true)))
   semantic_expectations:
   - result-type-Nat
   - result-cardinality-0-or-1
@@ -2906,3 +2907,95 @@ cases:
   - preserve-header-with-boundary
   - joint-header-type-parameter-scope
   produces_ast: true
+- id: stored-partial-type-hole
+  category: locals
+  source: 'thing Example { pair: (_, Text) = (knownInt, "hello") }'
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(TypeInferenceHole, Text)
+  normalizations: []
+  produces_ast: true
+- id: shared-preamble-stored-value-block
+  category: locals
+  source: 'action A for a: Account [mut] { before: _ = { value := a.balance; value }; then a.balance -= before
+    }'
+  cst_root: MudFileSyntax
+  ast: ActionDecl(BehaviourStoredLocal(LocalStoredDecl(ValueBlock)))
+  normalizations: []
+  produces_ast: true
+- id: submessage-shared-stored-preamble
+  category: locals
+  source: 'submessage Notice on a: Account { captured: _ = a.balance; when a.balance changes; balance := captured
+    }'
+  cst_root: MudFileSyntax
+  ast: SubmessageDecl(BehaviourStoredLocal)
+  normalizations: []
+  produces_ast: true
+- id: nested-positional-pattern
+  category: locals
+  source: 'action A for a: Account [mut] { then { (x, (_, flag)) = tuple; a.flag = flag } }'
+  cst_root: MudFileSyntax
+  ast: StoredPatternDecl(PositionalBinding(NameBinding, PositionalBinding(DiscardBinding, NameBinding)))
+  normalizations: []
+  produces_ast: true
+- id: pure-positional-pattern
+  category: locals
+  source: 'action A for a: Account [mut] { if { (x, y) := point; x == y }; then a.ready = true }'
+  cst_root: MudFileSyntax
+  ast: PurePatternLocal(PurePatternDecl(ExpressionBlock))
+  normalizations: []
+  produces_ast: true
+- id: quantifier-discard-pattern
+  category: locals
+  source: 'rule R { exists (_, value) in dictionary : value > zero }'
+  cst_root: MudFileSyntax
+  ast: QuantifierExpr(IterationBinding(PositionalBinding(DiscardBinding, NameBinding)))
+  normalizations: []
+  produces_ast: true
+- id: standalone-discard-declaration-rejected
+  category: validation-after-resolution
+  source: action A { then { _ = value; Run() } }
+  cst_root: MudFileSyntax
+  ast: AssignmentEffect(target=FallbackLiteral)
+  normalizations: []
+  produces_ast: true
+  diagnostic: A fallback literal is not an assignable stored place; this syntax introduces no binding.
+- id: pattern-mut-rejected
+  category: locals
+  source: action A { then { mut (x, y) = point; Run() } }
+  cst_root: MudFileSyntax
+  ast: No AST
+  normalizations: []
+  produces_ast: false
+  diagnostic: Local positional pattern declarations are immutable.
+- id: expression-stored-pattern-rejected
+  category: locals
+  source: rule R { (x, y) = point; x == y }
+  cst_root: MudFileSyntax
+  ast: No AST
+  normalizations: []
+  produces_ast: false
+  diagnostic: Expression preambles admit only derived patterns.
+- id: signature-hole-rejected
+  category: locals
+  source: 'action A given x: _ { then Run() }'
+  cst_root: MudFileSyntax
+  ast: No AST
+  normalizations: []
+  produces_ast: false
+  diagnostic: Signatures do not admit stored inference holes.
+- id: stored-hole-without-initializer-rejected
+  category: locals
+  source: 'alias A { field: _ }'
+  cst_root: MudFileSyntax
+  ast: No AST
+  normalizations: []
+  produces_ast: false
+  diagnostic: Hole-bearing stored annotations require their own initial value.
+- id: stored-hole-unknown-produces-ast
+  category: locals
+  source: 'thing A { items: _ = empty }'
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(TypeInferenceHole)
+  normalizations: []
+  produces_ast: true
+  diagnostic: Later typing rejects unresolved member type; syntactic AST construction succeeds.

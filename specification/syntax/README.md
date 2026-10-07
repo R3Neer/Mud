@@ -12,6 +12,7 @@ This directory contains the standardised and verifiable artefacts that link the 
 | `cst-to-surface-ast.md` | Normative | Transformation and standardisation. |
 | `syntax-coverage.yaml` | Mechanical normative | Comprehensive EBNF → CST → AST mapping. |
 | `validate_syntax_model.py` | Publishing tool | Detects discrepancies between the previous artefacts. |
+| `test_local_contract.py` | Regression suite | Guards stored-only recursive holes, immutable shared preambles, pure patterns, positional declaration roots and generalized quantifier bindings. |
 | `test_validate_syntax_model.py` | Regression suite | Rejects malformed nominal-HIR, foreign delegation/body, static field-schema and part/category boundary contracts. |
 | `cases/cst-ast.yaml` | Starter suite | Transformation and pre-AST rejection cases. |
 

@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-137
   - D-135
   - D-134
   - D-132
@@ -541,9 +542,9 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 ## Expression blocks and value blocks
 
-`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)` or `PureForeignBlock(ForeignBlock)`. LocalValueDecl retains its short RHS as an ExpressionBlock including handlers; it cannot introduce private mutable storage. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
+`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)`, `PurePatternLocal(PurePatternDecl)` or `PureForeignBlock(ForeignBlock)`. LocalValueDecl retains its short RHS as an ExpressionBlock including handlers; it cannot introduce private mutable storage. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
 
-`ValueBlock(statements, result, handlers)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
+`ValueBlock(statements, result, handlers)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, positional pattern declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
 
 `LocalMutation` retains the unresolved surface destination; typing and elaboration later prove that the complete footprint belongs to storage created within the `ValueBlock`. `LocalForEach` uses `LocalStatementBlock`, not `EffectBlock`, and retains the `ExpressionBlock?` filter.
 
@@ -552,6 +553,12 @@ The owners of `ExpressionBlock` are Boolean rules, `always`, `when`, guards, act
 `min` and `max` retain `QuantifierExpr` and a Boolean `ExpressionBlock`. Elaboration returns the first or last accepted witness according to `source`'s semantic order; `Sum` does not exist in `quantifier_kind`.
 
 When metadata and `ValueBlock` physically share a compatible descriptor body, the AST extracts metadata into the owner's `metadata` field and retains only value statements in `ValueBlock`.
+
+Shared behaviour preambles use `behaviour_preamble_statement`, distinct from pure expression/test preambles. BehaviourCalculatedLocal, BehaviourStoredLocal, BehaviourPatternLocal and BehaviourForeignBlock preserve order and value-body RHSs; BehaviourStoredLocal has disabled outer mutability. LocalPatternValueStatement and LocalPatternStatement retain StoredPatternDecl or DerivedPatternDecl in value/effect positions. PurePatternDecl instead retains an ExpressionBlock RHS. Local declaration roots must be positional patterns; no standalone discard/name declaration is synthesized from these constructors.
+
+`binding_pattern` preserves NameBinding, DiscardBinding and recursive PositionalBinding with spans. IterationBinding wraps this pattern for iteration, selection and QuantifierExpr. Association versus ordinary product projection is a later type-directed distinction, not a syntactic claim that dictionary entries are products. Discards generate no nominal symbols.
+
+TypeInferenceHole is retained at its written stored-annotation position in the existing recursive type tree, including nested products/generic arguments. Contextual validation permits it only for eligible stored owners with their own initial value. It is not a usable declared type or expression operand. The Surface AST records neither its solution nor guessed types; typing diagnoses unresolved/ambiguous holes at their source spans.
 
 ## Actions
 
@@ -563,7 +570,7 @@ An action contains:
 
 - Optional `for` participants.
 - Optional `given` parameters.
-- Pure local values preceding the behavioural clauses.
+- BehaviourPreambleStatement items preceding the behavioural clauses.
 - Optional Boolean guard with an ExpressionBlock handler list.
 - Effects block.
 - Optional Boolean after postcondition with an ExpressionBlock handler list.
@@ -654,7 +661,7 @@ Non-chainable comparisons result in a single edge in the chain or an equivalent 
 
 ### Selection and quantifiers
 
-`SelectionExpr(binding, source, step?, predicate)` preserves `step?` and normalises the predicate to `ExpressionBlock`. `QuantifierExpr(kind, variable, source, step?, body)` does the same for the five quantifiers `exists`, `forall`, `count`, `min` and `max`. The AST does not decide the Boolean contract of `body` or the validity of the required source order.
+`SelectionExpr(binding, source, step?, predicate)` preserves `step?` and normalises the predicate to `ExpressionBlock`. `QuantifierExpr(kind, binding, source, step?, body)` does the same for the five quantifiers `exists`, `forall`, `count`, `min` and `max`. The AST does not decide the Boolean contract of `body` or the validity of the required source order.
 
 ### Conversions
 
@@ -944,7 +951,7 @@ The Surface AST preserves `|`, `&`, `--` and `^` as `BinaryExpr`, because their 
 
 `ForeignBlock(language, first, remaining)` retains a non-empty sequence of `ForeignItem` nodes. A native statement becomes `ForeignCodeStatement(ForeignCode(text))`; an export becomes `ForeignValueExport(name, annotation?, ForeignCode(text))`. The export RHS is foreign source, never a MUD `expr`. The language label is syntax for adapter selection, not a resolved type. Every node retains source origin, including the RHS's distinct span.
 
-Short and braced bodies normalise to the same block. Preamble positions wrap it in `PureForeignBlock`; value statements use `ForeignBlockValueStatement`; effect positions use `ForeignBlockEffect`. A calculated MUD local in a preamble uses `PureLocalValue`. `leading_preamble` preserves the textual order in action, reactive-rule and message owners, and `TestAfterBlock.preamble` precedes its assertions. Typing, native parsing/analysis, conversions and effects belong to their respective subsequent phases; opaque text does not certify a contract.
+Short and braced bodies normalise to the same block. Expression/test preambles wrap it in PureForeignBlock and shared behaviour preambles in BehaviourForeignBlock; value statements use ForeignBlockValueStatement and effect positions use ForeignBlockEffect. A calculated MUD local in an expression/test preamble uses PureLocalValue, while a pure derived pattern uses PurePatternLocal. Shared preambles use BehaviourCalculatedLocal/BehaviourStoredLocal/BehaviourPatternLocal/BehaviourForeignBlock. `leading_preamble` preserves the textual order in action, reactive-rule and message owners, and `TestAfterBlock.preamble` precedes its assertions. Typing, native parsing/analysis, conversions and effects belong to their respective subsequent phases; opaque text does not certify a contract.
 
 
 ## Foreign contract checking boundary

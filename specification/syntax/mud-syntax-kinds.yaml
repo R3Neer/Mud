@@ -428,6 +428,176 @@ lexical_forms:
     rhs: '"," | "." | ":" | ";"'
     references: []
 syntax_nodes:
+  behaviour-preamble-statement:
+    kind: BehaviourPreambleStatementSyntax
+    rhs: local-calculated-declaration | immutable-local-stored-declaration | local-pattern-declaration | foreign-block
+    references:
+    - local-calculated-declaration
+    - immutable-local-stored-declaration
+    - local-pattern-declaration
+    - foreign-block
+  binding-pattern:
+    kind: BindingPatternSyntax
+    rhs: variable-name | "_" | positional-binding-pattern
+    references:
+    - variable-name
+    - positional-binding-pattern
+  immutable-local-stored-declaration:
+    kind: ImmutableLocalStoredDeclarationSyntax
+    rhs: variable-name , ":" , stored-type-expression , "=" , value-body
+    references:
+    - variable-name
+    - stored-type-expression
+    - value-body
+  local-pattern-declaration:
+    kind: LocalPatternDeclarationSyntax
+    rhs: positional-binding-pattern , ( "=" | ":=" ) , value-body
+    references:
+    - positional-binding-pattern
+    - value-body
+  positional-binding-pattern:
+    kind: PositionalBindingPatternSyntax
+    rhs: '"(" , binding-pattern , "," , binding-pattern , { "," , binding-pattern } , ")"'
+    references:
+    - binding-pattern
+  pure-pattern-declaration:
+    kind: PurePatternDeclarationSyntax
+    rhs: positional-binding-pattern , ":=" , value-expression , { otherwise-clause }
+    references:
+    - positional-binding-pattern
+    - value-expression
+    - otherwise-clause
+  stored-callable-receiver:
+    kind: StoredCallableReceiverSyntax
+    rhs: stored-nominal-type | "(" , stored-nominal-type , "," , stored-nominal-type , { "," , stored-nominal-type
+      } , ")"
+    references:
+    - stored-nominal-type
+  stored-callable-type:
+    kind: StoredCallableTypeSyntax
+    rhs: stored-callable-receiver , "." , callable-kind , "(" , [ stored-type-expression , { "," , stored-type-expression
+      } ] , ")"
+    references:
+    - stored-callable-receiver
+    - callable-kind
+    - stored-type-expression
+  stored-declared-type:
+    kind: StoredDeclaredTypeSyntax
+    rhs: type-inference-hole | type-reference | stored-callable-type | reflected-type | stored-generic-type-application
+      | stored-product-type
+    references:
+    - type-inference-hole
+    - type-reference
+    - stored-callable-type
+    - reflected-type
+    - stored-generic-type-application
+    - stored-product-type
+  stored-dictionary-link:
+    kind: StoredDictionaryLinkSyntax
+    rhs: dictionary-arrow , stored-dictionary-value-type , [ collection-specification ]
+    references:
+    - dictionary-arrow
+    - stored-dictionary-value-type
+    - collection-specification
+  stored-dictionary-type:
+    kind: StoredDictionaryTypeSyntax
+    rhs: stored-dictionary-link , { stored-dictionary-link }
+    references:
+    - stored-dictionary-link
+  stored-dictionary-value-type:
+    kind: StoredDictionaryValueTypeSyntax
+    rhs: stored-union-type-expression
+    references:
+    - stored-union-type-expression
+  stored-explicit-generic-type-application:
+    kind: StoredExplicitGenericTypeApplicationSyntax
+    rhs: generic-constructor , "with" , stored-generic-argument-list
+    references:
+    - generic-constructor
+    - stored-generic-argument-list
+  stored-generic-argument-list:
+    kind: StoredGenericArgumentListSyntax
+    rhs: stored-generic-argument , { "," , stored-generic-argument }
+    references:
+    - stored-generic-argument
+  stored-generic-argument:
+    kind: StoredGenericArgumentSyntax
+    rhs: stored-declared-type | "(" , stored-generic-union-argument , ")"
+    references:
+    - stored-declared-type
+    - stored-generic-union-argument
+  stored-generic-type-application:
+    kind: StoredGenericTypeApplicationSyntax
+    rhs: stored-explicit-generic-type-application | stored-postfix-generic-type-application
+    references:
+    - stored-explicit-generic-type-application
+    - stored-postfix-generic-type-application
+  stored-generic-union-argument:
+    kind: StoredGenericUnionArgumentSyntax
+    rhs: stored-declared-type , { "|" , stored-declared-type }
+    references:
+    - stored-declared-type
+  stored-named-product-component:
+    kind: StoredNamedProductComponentSyntax
+    rhs: component-name , ":" , stored-type-expression
+    references:
+    - component-name
+    - stored-type-expression
+  stored-named-product-type:
+    kind: StoredNamedProductTypeSyntax
+    rhs: '"(" , stored-named-product-component , "," , stored-named-product-component , { "," , stored-named-product-component
+      } , ")"'
+    references:
+    - stored-named-product-component
+  stored-nominal-type:
+    kind: StoredNominalTypeSyntax
+    rhs: type-inference-hole | type-reference | stored-generic-type-application | "(" , stored-nominal-type ,
+      ")"
+    references:
+    - type-inference-hole
+    - type-reference
+    - stored-generic-type-application
+    - stored-nominal-type
+  stored-positional-product-type:
+    kind: StoredPositionalProductTypeSyntax
+    rhs: '"(" , stored-type-expression , "," , stored-type-expression , { "," , stored-type-expression } , ")"'
+    references:
+    - stored-type-expression
+  stored-postfix-generic-type-application:
+    kind: StoredPostfixGenericTypeApplicationSyntax
+    rhs: stored-generic-argument , generic-constructor
+    references:
+    - stored-generic-argument
+    - generic-constructor
+  stored-product-type:
+    kind: StoredProductTypeSyntax
+    rhs: stored-positional-product-type | stored-named-product-type
+    references:
+    - stored-positional-product-type
+    - stored-named-product-type
+  stored-type-alternative:
+    kind: StoredTypeAlternativeSyntax
+    rhs: stored-declared-type , [ "in" , type-alternative-domain ] | "(" , stored-type-expression , ")"
+    references:
+    - stored-declared-type
+    - type-alternative-domain
+    - stored-type-expression
+  stored-type-expression:
+    kind: StoredTypeExpressionSyntax
+    rhs: stored-union-type-expression , [ collection-specification | stored-dictionary-type ]
+    references:
+    - stored-union-type-expression
+    - collection-specification
+    - stored-dictionary-type
+  stored-union-type-expression:
+    kind: StoredUnionTypeExpressionSyntax
+    rhs: stored-type-alternative , { "|" , stored-type-alternative }
+    references:
+    - stored-type-alternative
+  type-inference-hole:
+    kind: TypeInferenceHoleSyntax
+    rhs: '"_"'
+    references: []
   generic-union-argument:
     kind: GenericUnionArgumentSyntax
     rhs: declared-type , { "|" , declared-type }
@@ -523,18 +693,17 @@ syntax_nodes:
     - nominal-type
   message-signature-body:
     kind: MessageSignatureBodySyntax
-    rhs: "nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment\
-      \ , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement\
-      \ , required-separation }\n        , when-clause\n        , [ required-separation , if-clause ]\n\
-      \        , [ required-separation , public-field-declaration\n            , { required-separation ,\
-      \ public-field-declaration }\n          ]\n        , [ required-separation ]\n        , \"}\""
+    rhs: nominal-name , [ on-clause ] , "{" , declaration-layout , [ metadata-assignment , { required-separation
+      , metadata-assignment } , required-separation ] , { behaviour-preamble-statement , required-separation
+      } , when-clause , [ required-separation , if-clause ] , [ required-separation , public-field-declaration
+      , { required-separation , public-field-declaration } ] , [ required-separation ] , "}"
     references:
     - nominal-name
     - on-clause
     - declaration-layout
     - metadata-assignment
     - required-separation
-    - pure-preamble-statement
+    - behaviour-preamble-statement
     - when-clause
     - if-clause
     - public-field-declaration
@@ -745,16 +914,12 @@ syntax_nodes:
     - value-body
   metadata-assignment:
     kind: MetadataAssignmentSyntax
-    rhs: "\"~\" , metadata-name
-        , ( \"=\" , value-body
-          | \":\" , type-expression , [ \"=\" , value-body\
-      \ ]
-          | [ derived-value-shape ] , \":=\" , value-body
-          )"
+    rhs: '"~" , metadata-name , ( "=" , value-body | ":" , stored-type-expression , [ "=" , value-body ] | [
+      derived-value-shape ] , ":=" , value-body )'
     references:
     - metadata-name
     - value-body
-    - type-expression
+    - stored-type-expression
     - derived-value-shape
   alias-declaration:
     kind: AliasDeclarationSyntax
@@ -795,11 +960,10 @@ syntax_nodes:
     - inherited-default-override
   component-declaration:
     kind: ComponentDeclarationSyntax
-    rhs: "component-name , \":\" , type-expression
-        , ( \"=\" , descriptor-value-body | [ metadata-body ] )"
+    rhs: component-name , ":" , stored-type-expression , ( "=" , descriptor-value-body | [ metadata-body ] )
     references:
     - component-name
-    - type-expression
+    - stored-type-expression
     - descriptor-value-body
     - metadata-body
   inherited-default-override:
@@ -830,11 +994,10 @@ syntax_nodes:
     - calculated-family-data-declaration
   stored-family-data-declaration:
     kind: StoredFamilyDataDeclarationSyntax
-    rhs: "field-name , \":\" , type-expression
-        , ( \"=\" , descriptor-value-body | [ metadata-body ] )"
+    rhs: field-name , ":" , stored-type-expression , ( "=" , descriptor-value-body | [ metadata-body ] )
     references:
     - field-name
-    - type-expression
+    - stored-type-expression
     - descriptor-value-body
     - metadata-body
   calculated-family-data-declaration:
@@ -982,10 +1145,10 @@ syntax_nodes:
     - calculated-field-declaration
   stored-field-declaration:
     kind: StoredFieldDeclarationSyntax
-    rhs: '[ "mut" ] , field-name , ":" , type-expression , "=" , descriptor-value-body'
+    rhs: '[ "mut" ] , field-name , ":" , stored-type-expression , "=" , descriptor-value-body'
     references:
     - field-name
-    - type-expression
+    - stored-type-expression
     - descriptor-value-body
   calculated-field-declaration:
     kind: CalculatedFieldDeclarationSyntax
@@ -1213,14 +1376,17 @@ syntax_nodes:
     - expression
   reactive-rule-declaration:
     kind: ReactiveRuleDeclarationSyntax
-    rhs: "\"rule\" , nominal-name\n        , [ on-clause ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , when-clause\n        , required-separation\n        , [ if-clause , required-separation ]\n        , then-clause\n        , [ required-separation ]\n        , \"}\""
+    rhs: '"rule" , nominal-name , [ on-clause ] , "{" , declaration-layout , [ metadata-assignment , { required-separation
+      , metadata-assignment } , required-separation ] , { behaviour-preamble-statement , required-separation
+      } , when-clause , required-separation , [ if-clause , required-separation ] , then-clause , [ required-separation
+      ] , "}"'
     references:
     - nominal-name
     - on-clause
     - declaration-layout
     - metadata-assignment
     - required-separation
-    - pure-preamble-statement
+    - behaviour-preamble-statement
     - when-clause
     - if-clause
     - then-clause
@@ -1253,23 +1419,22 @@ syntax_nodes:
     - action-signature-body
   action-signature-body:
     kind: ActionSignatureBodySyntax
-    rhs: "nominal-name\n        , { generic-parameter-group }\n        , [ for-clause ]\n        , [ given-clause\
-      \ ]\n        , \"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
-      \ } , required-separation ]\n        , { pure-preamble-statement , required-separation }\n        , [ action-if-clause\
-      \ , required-separation ]\n        , then-clause\n        , [ required-separation , action-after-clause ]\n\
-      \        , [ required-separation ]\n        , \"}\""
+    rhs: nominal-name , { generic-parameter-group } , [ for-clause ] , [ given-clause ] , "{" , declaration-layout
+      , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ] , { behaviour-preamble-statement
+      , required-separation } , [ action-if-clause , required-separation ] , then-clause , [ required-separation
+      , action-after-clause ] , [ required-separation ] , "}"
     references:
-    - action-after-clause
-    - action-if-clause
-    - declaration-layout
-    - for-clause
-    - generic-parameter-group
-    - given-clause
-    - metadata-assignment
     - nominal-name
-    - pure-preamble-statement
+    - generic-parameter-group
+    - for-clause
+    - given-clause
+    - declaration-layout
+    - metadata-assignment
     - required-separation
+    - behaviour-preamble-statement
+    - action-if-clause
     - then-clause
+    - action-after-clause
   look-declaration:
     kind: LookDeclarationSyntax
     rhs: '"look" , look-signature-body'
@@ -1445,9 +1610,9 @@ syntax_nodes:
     - effect-block
   iteration-binding:
     kind: IterationBindingSyntax
-    rhs: "variable-name\n      | \"(\" , variable-name , \",\" , variable-name , \")\""
+    rhs: binding-pattern
     references:
-    - variable-name
+    - binding-pattern
   assignable-expression:
     kind: AssignableExpressionSyntax
     rhs: primary-expression , { member-access | index-access }
@@ -1845,10 +2010,11 @@ syntax_nodes:
     - expression
   quantifier-expression:
     kind: QuantifierExpressionSyntax
-    rhs: 'quantifier , variable-name , "in" , expression , [ "by" , expression ] , ":" , [ required-separation ] , expression-body'
+    rhs: quantifier , iteration-binding , "in" , expression , [ "by" , expression ] , ":" , [ required-separation
+      ] , expression-body
     references:
     - quantifier
-    - variable-name
+    - iteration-binding
     - expression
     - required-separation
     - expression-body
@@ -2010,10 +2176,10 @@ syntax_nodes:
     - required-separation
   local-stored-declaration:
     kind: LocalStoredDeclarationSyntax
-    rhs: "[ \"mut\" ] , variable-name , \":\" , type-expression\n        , \"=\" , value-body"
+    rhs: '[ "mut" ] , variable-name , ":" , stored-type-expression , "=" , value-body'
     references:
     - variable-name
-    - type-expression
+    - stored-type-expression
     - value-body
   mapping-key-body:
     kind: MappingKeyBodySyntax
@@ -2061,10 +2227,11 @@ syntax_nodes:
     - value-block-body
   value-local-declaration:
     kind: ValueLocalDeclarationSyntax
-    rhs: "local-calculated-declaration\n      | local-stored-declaration"
+    rhs: local-calculated-declaration | local-stored-declaration | local-pattern-declaration
     references:
     - local-calculated-declaration
     - local-stored-declaration
+    - local-pattern-declaration
   value-statement:
     kind: ValueStatementSyntax
     rhs: "value-local-declaration\n      | local-mutation\n      | local-for-each\n      | foreign-block"
@@ -2075,12 +2242,12 @@ syntax_nodes:
     - foreign-block
   file-metadata-assignment:
     kind: FileMetadataAssignmentSyntax
-    rhs: "\"~\" , metadata-name\n        , ( \"=\" , constant-expression\n          | \":\" , type-expression , [ \"=\" , constant-expression\
-      \ ]\n          )"
+    rhs: '"~" , metadata-name , ( "=" , constant-expression | ":" , stored-type-expression , [ "=" , constant-expression
+      ] )'
     references:
     - metadata-name
     - constant-expression
-    - type-expression
+    - stored-type-expression
   value-block-body:
     kind: ValueBlockBodySyntax
     rhs: "\"{\" , declaration-layout , value-block\n        , [ required-separation ] , \"}\" , { otherwise-clause\
@@ -2092,9 +2259,10 @@ syntax_nodes:
     - otherwise-clause
   pure-preamble-statement:
     kind: PurePreambleStatementSyntax
-    rhs: local-value-declaration | foreign-block
+    rhs: local-value-declaration | pure-pattern-declaration | foreign-block
     references:
     - local-value-declaration
+    - pure-pattern-declaration
     - foreign-block
   foreign-block:
     kind: ForeignBlockSyntax

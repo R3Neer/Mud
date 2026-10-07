@@ -17,6 +17,8 @@ affects:
 
 - Formalised by: [[ADR-124-expression-and-block-typing-coverage|D-124]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 The author chooses invocation-owned stabilization, each invocation's own after before returning to its caller, and imagine as a speculative ActionReply expression. This amends D-009, D-042, D-043, D-096 and D-110.
@@ -33,7 +35,7 @@ Normal waves still consolidate compatible concurrent contributions over common v
 
 Nested completion is not a commit. Success retains the child's tentative effects for the caller, and outer confirmation occurs only after the outer invocation's causal work, checkpoints and after succeed. A child's non-success attempt rolls back its contribution scope before returning a reply; causal descendants and attempted outputs are included. A non-success outer request discards the entire resolution. Provisional messages also retain protected-block rollback scope: its failure drops published tickets even if a recovery succeeds. Child success remains Waiting; outer commit alone marks surviving tickets Kept.
 
-ActionReply is an ordinary value. Real action calls are admitted only in an effect-capable context, including a local value initializer evaluated by an effect block, subject to ordinary permissions. A pure expression/value computation cannot execute a real action by hiding it in a nested initializer. Explicitly obtaining a reply as a value permits observation of Success, Refusal or Errors after the attempted child scope has been settled/rolled back. An invocation used solely as an effect statement propagates non-success: Refusal aborts the current attempt, and Errors enter its enclosing block's error channel. Constructing or passing an Error value alone does not raise it. This distinguishes explicit result observation from silently ignoring failed effects; comprehensive test aggregation remains Q-059.
+ActionReply is an ordinary value. Real action calls are admitted only in an effect-capable context, including a stored local initializer evaluated by an effect block, subject to ordinary permissions. A pure expression/value computation cannot execute a real action by hiding it in a nested initializer. A live := derivation is externally pure and cannot execute/replay a real action at its reads; use a stored = capture to observe a real invocation reply. Explicitly obtaining a reply as a value permits observation of Success, Refusal or Errors after the attempted child scope has been settled/rolled back. An invocation used solely as an effect statement propagates non-success: Refusal aborts the current attempt, and Errors enter its enclosing block's error channel. Constructing or passing an Error value alone does not raise it. This distinguishes explicit result observation from silently ignoring failed effects; comprehensive test aggregation remains Q-059.
 
 ```mud
 then {

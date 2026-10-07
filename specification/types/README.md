@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-137
   - D-136
   - D-135
   - D-134
@@ -30,4 +31,4 @@ Run the validator with python specification/types/validate_type_spec.py. Run the
 
 Generic variance, application closure and inference fragments are declarative obligations, not claims of implemented solvers. Structural witnesses supply normalized symbolic labels and complete normalized union alternatives, matched independently of source order; they do not normalize MUD source or prove domain equivalence. Static-given witnesses supply pretyped possibilities and cannot use expected outputs or evaluate expressions. A structural equality judgement may be false without making its comparison expression ill typed; representation-judgement-fragment records that distinction.
 
-A witness is a finite certificate in the validator's restricted language. Nat includes its intrinsic nonnegative domain; primitive ancestry cannot be overridden. Domain/leaf flags stand for supplied premises; the tool does not prove arbitrary predicates, parse the source fragments, resolve MUD names, typecheck MUD programmes or execute actions. Coverage and expected outcomes for non-witness fragments remain review obligations. The complete implementation conformance suite is separately scoped.
+A witness is a finite certificate in the validator's restricted language. Nat includes its intrinsic nonnegative domain; primitive ancestry cannot be overridden. Domain/leaf flags stand for supplied premises; the tool does not prove arbitrary predicates, parse the source fragments, resolve MUD names, typecheck MUD programmes or execute actions. Coverage and expected outcomes for non-witness fragments remain review obligations. The complete implementation conformance suite is separately scoped. Stored whole/partial holes, unique inference diagnostics, immutable pattern scopes and live-local sequential/temporal observations have reviewed declarative cases in typing-cases.yaml; these do not claim an implemented inference/evaluation engine.

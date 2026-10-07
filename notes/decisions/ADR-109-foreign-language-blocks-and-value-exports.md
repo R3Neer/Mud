@@ -20,6 +20,8 @@ affects:
 - Modifies: [[ADR-066-static-values-and-local-bindings-in-then|D-066]], [[ADR-071-local-bindings-in-boolean-blocks|D-071]], [[ADR-096-modules-callables-look-message-and-activation|D-096]] and [[ADR-101-value-blocks-stored-local-variables-and-witness-extrema|D-101]].
 - Preserves the nominal phase boundary of [[ADR-097-current-nominal-hir-and-deferred-semantic-ir|D-097]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Decision
 
 `from Language` delegates a body to a language-specific adapter. A short body contains exactly one foreign instruction or MUD export; braces are required for multiple instructions, independently of line count. `mud name [: Type] <- foreignExpression` is a bridge: its name and optional annotation use MUD syntax, and its RHS uses the selected foreign language. `mud` is contextual at the bridge position, not a globally reserved name.

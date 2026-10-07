@@ -11,6 +11,7 @@ depends-on:
 questions:
   - Q-023
 decisions:
+  - D-137
   - D-133
   - D-019
   - D-026
@@ -114,7 +115,7 @@ Stored thing schema initialisers must be closed and statically evaluable, includ
 
 Initialisation inherits declaration origins and existing override precedence. It does not inherit another thing's mutable state. A refinement keeps or replaces an initialiser that meets every inherited contract. Destroy/create uses a fresh materialisation generation; writes to the destroyed generation do not become writes to the new one.
 
-Stored fields require outer authority for replacement. Calculated fields are recomputed values without assignable storage. Their declared domain, cardinality, uniqueness and order apply the specified derived transformations/checks; inner mut is an authority requirement. Stored collections do not automatically recompute or prune their membership to mimic derived views.
+Stored fields require outer authority for replacement. Calculated fields and `:=` locals are recomputed derivations without assignable storage. A live local reads the semantic view at its use, not an earlier captured value; `=` captures at slot creation. Derived ValueBlock computation may mutate only its fresh private storage. Type holes in stored annotations must be uniquely solved before execution and do not alter capability or cardinality proof obligations. Their declared domain, cardinality, uniqueness and order apply the specified derived transformations/checks; inner mut is an authority requirement. Stored collections do not automatically recompute or prune their membership to mimic derived views.
 
 Explicit alias defaults are closed pure static values. Every family member supplies each required datum or uses its explicit schema default. Intrinsic metadata defaults have their own contracts; user-declared metadata needs an explicit effective value and all runtime metadata access is read-only.
 

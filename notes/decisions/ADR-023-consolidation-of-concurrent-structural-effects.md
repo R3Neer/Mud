@@ -29,6 +29,8 @@ affects:
 
 - Clarified by: [[ADR-111-static-thing-field-schema|D-111]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 Several rules may be requested in the same batch:
@@ -62,7 +64,7 @@ which begins on $W_i$. A subsequent instruction from the same `then` You can see
 
 None `then` notes that during the same wave, the delta part of another `then`. The implementation may interleave or parallelise the computation, but this scheduling is not observable.
 
-A local binding `name [: type] := expression` is evaluated once at its textual position and can read the private overlay produced by previous instructions in the same block. It does not produce a delta and subsequent instructions do not recalculate its value, in accordance with D-066.
+A local binding `name [derived-form] := value-body` registers a live derivation without storage. Its reads use the applicable private view, including preceding effects; stored `=` locals instead capture once. Neither declaration alone produces a world delta.
 
 Once all the blocks have been completed, each one is normalised delta private and are then consolidated:
 

@@ -1,3 +1,6 @@
+-- Named pattern leaves use ordinary computed/stored/iterator LocalSymbol kinds.
+-- Ordinals follow textual depth-first leaf order; discards create no symbol or edge.
+-- Type holes have SurfaceRef provenance only, no symbol, inferred type or HIR payload.
 -- File/part catalogues enforce part-only and direct uses before lookup.
 -- Normal/sub operations create their own nominal categories and anchors.
 -- Part headers and uses declarations create no symbols, owners or anchors;

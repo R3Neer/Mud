@@ -16,6 +16,8 @@ affects:
 
 - Amended by: [[ADR-109-foreign-language-blocks-and-value-exports|D-109]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 MUD already distinguished declarative expression blocks and executable effect blocks, but that division left no dedicated form for constructing a value through temporary local storage. It also did not allow stored local variables in `then`, forced every `for each` to be modelled as an effect, and left `sum`, `min` and `max` in an overly heterogeneous aggregation family.
@@ -30,8 +32,8 @@ The extension must preserve two deliberate language boundaries: a value computat
 
 `ValueBlock` constructs exactly one value through zero or more `ValueStatement` items and a final expression. Its statement catalogue is closed to:
 
-1. local calculated declaration;
-2. local stored declaration, mutable or immutable;
+1. local calculated declaration or derived positional pattern;
+2. local stored declaration, mutable or immutable, or immutable stored positional pattern;
 3. local mutation;
 4. `LocalForEach`;
 5. `from` blocks under the value computation's private-write boundary.
@@ -133,4 +135,4 @@ A declaration does not combine the integrated preamble with a second metadata bo
 8. All four short/extended combinations of `->` and `-->`, with independent scopes.
 9. Integrated metadata projected to the descriptor and rejection of a second metadata body.
 10. `given` default remains constant.
-11. `TestAfterBlock`, `start with`, metadata-only bodies and shared behaviour preambles retain their special contracts.
+11. TestAfterBlock, start with and metadata-only bodies retain their special contracts. Shared behaviour preambles admit immutable stored/derived locals and patterns with value-body RHSs, including private ValueBlock computation, but no outer mut.

@@ -15,6 +15,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-137
   - D-136
   - D-135
   - D-134
@@ -288,7 +289,7 @@ The domain on a calculated value acts as a contract. A potentially out-of-domain
 
 ## Expression blocks and value
 
-An `ExpressionBlock` is a declarative form: it contains zero or more pure preamble statements (calculated locals declared with `:=` or `from` blocks), followed by a final expression. It does not support stored variables, mutation, `for each` as a statement or an internal `if`. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
+An ExpressionBlock is a declarative form: it contains zero or more pure preamble statements (calculated locals and derived positional patterns declared with :=, or pure from blocks), followed by a final expression. It does not support stored variables, mutation, for each as a statement or an internal if. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
 
 A `ValueBlock` constructs a value and contains zero or more local statements followed by a final expression. Its only statements are calculated declarations, stored declarations, assignments whose footprint remains within the block, local `for each`, and `from` under the same private-write boundary. It does not support `if`, external effects, actions, subactions, `create` or `destroy`.
 
@@ -1186,11 +1187,25 @@ then {
 }
 ```
 
-The form `name [derived-value-shape] := value-expression` declares an immutable local value. The derived shape permits `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Type and cardinality are inferred when a unique solution exists; otherwise, they must be written explicitly. Outer `mut` is not permitted.
+The form `name [derived-value-shape] := value-body` declares a live, non-assignable local derivation. The derived shape permits `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Type and cardinality are inferred when a unique solution exists; otherwise, they must be written explicitly. Outer `mut` is not permitted.
 
-The expression is pure and evaluated only once when execution reaches the declaration. It reads preceding sequential effects from the same private delta and retains its value even if later statements change its dependencies.
+A `:=` local registers a derivation without its own storage. Each read evaluates that derivation against the semantic view applicable at the read, including preceding sequential effects of the same branch. A stored `=` local evaluates its initialiser once when its slot is created and retains that captured value. Neither form observes concurrent sibling private deltas.
 
 The name is available only from its declaration to the end of the block. It may be used in later statements, but not before it appears; there are no forward references, cycles, redeclarations or shadowing. Each iteration creates a new scope. A `then` must retain at least one effect or call: a block containing only locals is invalid.
+
+### Stored annotations and binding patterns
+
+`name: _ = value-body` declares an immutable stored local; `mut name: _ = value-body` is admitted wherever mutable stored locals are admitted. `_` is a type-inference hole, including nested positions such as `pair: (_, Text) = value-body` or `items: Box with _ = value-body`. Stored annotations preserve written type structure, domains, collection cardinalities, uniqueness, order and inner authority. Holes are not admitted in signatures, derived annotations, alias representation declarations or general Type expressions. Every hole must have a unique static solution; missing or ambiguous evidence is a compile-time error reported at that hole.
+
+Stored fields, alias components with defaults, family data with defaults and stored metadata with explicit initial values admit the same annotation syntax under their owners' ordinary static requirements. A hole-bearing annotation without its own initial value is invalid; member population, runtime values or later assignment cannot supply its type. `_` does not omit a cardinality or modifier and does not grant derived coercion.
+
+`binding-pattern` consists of a name, discard `_`, or a recursive positional pattern with at least two positions. Local pattern declarations require a positional root: `(x, y) = point` captures immutable components; `(x, y) := point` derives their live projections. Nested patterns and repeated discards are admitted. `mut` patterns, standalone `_ = value`/`_ := value`, and bare `x = value` as a declaration are invalid. The latter remains assignment to an existing place.
+
+In a local declaration position, a complete positional binding-pattern immediately followed by `=` or `:=` is classified as a pattern declaration before considering an assignment expression. This classification depends only on written syntax, not whether leaf names already resolve. A following access such as `(x, y).field = value` does not match that form and gains no multi-target assignment meaning. Existing visible capture names still produce redeclaration/shadowing errors.
+
+Only positional products can be opened; named products cannot. A name may capture an entire nested component without opening it. Iteration, selection and all five quantifiers accept the same patterns, including a sole `_`. Exact-dictionary iteration retains association semantics: a two-position pattern projects key and value without turning the association into an ordinary product. Functional dictionaries retain their traversal restrictions. Pattern/source compatibility is checked statically; there is no implicit collection flattening or runtime filtering by pattern shape. Min/max return the original accepted source witness, not an arbitrarily selected captured component.
+
+ExpressionBlock and TestAfterBlock preambles retain pure derived locals and pure derived positional patterns with expression RHSs; they admit neither stored locals nor ValueBlock RHSs. Shared preambles of action/subaction, reactive rule and message/submessage instead admit immutable stored locals, live derived locals and immutable stored/derived positional patterns, all with value-body RHSs. No shared preamble admits outer mut. A nested ValueBlock may mutate only its private storage, never the surrounding world. Stored preamble slots belong to that concrete declaration instance and do not persist between instances, executions or observation episodes.
 
 ## Calls
 
@@ -1268,7 +1283,7 @@ shop.orders[id].status = Shipped
 shop.orders[id].retryCount += 1
 ```
 
-A local containing an alias remains a value and acquires no path back to storage, so `order.status = Shipped` is invalid when `order` is merely a local binding. A derived alias field is likewise not writable.
+An immutable or derived local containing an alias remains a value and acquires no write-back path to its source storage, so order.status = Shipped is invalid through that binding. A mutable stored local instead has its own writable local root under the owning block's permissions; it does not thereby obtain a path to the original external storage. A derived alias field is likewise not writable.
 
 If an exact dictionary lookup used as an intermediate step does not find its key, the absence is `empty` and the partial effect is a no-op: it neither creates the association nor synthesises a default value, and does not produce `Errors` merely because of that absence. This does not affect the direct assignment `shop.orders[id] = order`, which replaces a complete association and may create a missing key when the contract permits it.
 
@@ -1294,7 +1309,7 @@ The `:` is mandatory. Braces form part of the body and do not replace the separa
 
 ### Iteration filter
 
-`by` precedes `if`. The filter may be an expression or an expression block with local values. It is pure and non-stochastic. With semantic order, it is evaluated immediately before each iteration and observes the sequential projection left by preceding iterations; without semantic order, all filters start from the same initial projection and accepted modifications are consolidated simultaneously under the body's contract. An exact dictionary may bind `(key, value)`.
+`by` precedes `if`. The filter may be an expression or an expression block with local values. It is pure and non-stochastic. With semantic order, it is evaluated immediately before each iteration and observes the sequential projection left by preceding iterations; without semantic order, all filters start from the same initial projection and accepted modifications are consolidated simultaneously under the body's contract. An exact dictionary binds keys with a single name/discard or projects associations with a two-position root pattern such as (key, value). Nested positional key/value patterns are admitted under their static contracts. Min/max on dictionaries retain accepted key witnesses; association patterns supply predicate bindings without changing that result contract.
 
 ### Progression `by`
 

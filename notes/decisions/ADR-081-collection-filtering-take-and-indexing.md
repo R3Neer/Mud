@@ -24,6 +24,8 @@ affects:
 - Modifies: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-048-reproducible-randomness-and-errors|D-048]], [[ADR-056-char-text-and-unicode-ordering|D-056]], [[ADR-064-ordering-by-stable-path|D-064]] and [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]].
 - Related questions: [[notes/questions/Q-028-f-finiteness|Q-028]] and [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 `for each ... if ...` selects participants to produce effects, but does not build a reusable pure collection. Quantifiers consume witnesses to produce booleans or aggregates and `all` enumerates a complete domain; none of these forms returns the subcollection satisfying a predicate.
@@ -43,7 +45,7 @@ player in players :
 
 is a selection expression. It binds each enumerable member of the source, evaluates a pure deterministic predicate and returns the occurrences for which the predicate is `true`.
 
-The binding may be simple or a dictionary pair, as in `for each`:
+The binding may be a name, discard or recursive positional pattern, as in for each. Exact dictionary pairs retain association semantics:
 
 ```mud
 (key, value) in stock :

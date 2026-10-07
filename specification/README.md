@@ -10,6 +10,7 @@ status: in-preparation
 normative: true
 questions:
 decisions:
+  - D-137
   - D-134
   - D-135
   - D-136
@@ -208,7 +209,8 @@ Defines the semantically relevant forms after the CST and contextual syntactic v
 - Surface `ActionDecl` with `PublicAction` or `Subaction` class; candidate calls are resolved later without introducing an elementary/compound classification.
 - Dedicated TestDecl and assertions with protected expression blocks.
 - Dedicated nodes for `look`, `message` and public properties.
-- Foreign regions, source origins and immutable exports, with ordered pure preamble statements.
+- Foreign regions, source origins and immutable exports, with distinct ordered expression/test and shared behaviour preambles.
+- Recursive positional binding patterns, explicit discards and stored annotation type holes with preserved source spans.
 - Provenance through `SourceOrigin`.
 - Ambiguities retained until resolution.
 
@@ -226,6 +228,7 @@ Defines:
 - Mandatory placement of all `using` declarations in the file header.
 - Ambiguity and static selection of homonymous imported callables by their supplied `for` participants, without changing anchors or lookup priorities.
 - Foreign exports as ordinary local symbols and native captures as source-mapped nominal references; adapter labels/private native locals receive no MUD declaration identity.
+- One ordinary LocalSymbol per named pattern leaf; discards and type holes introduce no symbol or anchor.
 - Formation and uniqueness of public anchors; functional-dictionary branches use local keys and receive no public anchor.
 - Categories `thing::*`, `alias::*`, `family::*`, `magnitude::*`, `unit::*`, `rule::*`, `action::*`, `look::*`, `message::*`, `test::*` and `type::*`.
 - Identity under file moves.
@@ -247,6 +250,7 @@ Defines:
 - `Any`, first-class descriptors, callable types and types obtained statically through `~type`.
 - Static generic parameters/applications, nominal bounds, conservative inferred variance and proven finite application closure.
 - Subtyping, compatibility, narrowing, exact normalized structural type equality, ordering, conversions and unambiguous inference.
+- Whole and partial stored type holes requiring a unique compile-time solution, and exact positional pattern typing.
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.
 

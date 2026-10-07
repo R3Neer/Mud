@@ -168,7 +168,7 @@ module MUDSurface {
                    | ReactiveRuleDecl(nominal_name name,
                                       on_clause? participants,
                                       metadata_assignment* metadata,
-                                      pure_preamble_statement* leading_preamble,
+                                      behaviour_preamble_statement* leading_preamble,
                                       expression_block activator,
                                       expression_block? guard,
                                       effect_block effects)
@@ -182,7 +182,7 @@ module MUDSurface {
                                 for_clause? participants,
                                 given_clause? givens,
                                 metadata_assignment* metadata,
-                                pure_preamble_statement* leading_preamble,
+                                behaviour_preamble_statement* leading_preamble,
                                 action_guard? guard,
                                 effect_block effects,
                                 action_postcondition? postcondition)
@@ -201,14 +201,14 @@ module MUDSurface {
                    | MessageDecl(nominal_name name,
                                  on_clause? participants,
                                  metadata_assignment* metadata,
-                                 pure_preamble_statement* leading_preamble,
+                                 behaviour_preamble_statement* leading_preamble,
                                  expression_block activator,
                                  expression_block? guard,
                                  public_field_decl* fields)
                    | SubmessageDecl(nominal_name name,
                                  on_clause? participants,
                                  metadata_assignment* metadata,
-                                 pure_preamble_statement* leading_preamble,
+                                 behaviour_preamble_statement* leading_preamble,
                                  expression_block activator,
                                  expression_block? guard,
                                  public_field_decl* fields)
@@ -304,7 +304,8 @@ module MUDSurface {
     generic_application_form = ExplicitGenericWith | PostfixSingleGeneric
                              | PostfixGroupedGeneric
 
-    declared_type = NamedType(type_ref name)
+    declared_type = TypeInferenceHole
+                  | NamedType(type_ref name)
                   | CallableType(callable_kind kind,
                                  declared_type first_receiver,
                                  declared_type* remaining_receivers,
@@ -466,7 +467,8 @@ module MUDSurface {
                              recovery_handler* handlers)
         attributes (source_origin origin)
 
-    value_statement = LocalCalculatedValueStatement(local_calculated_decl value)
+    value_statement = LocalPatternValueStatement(local_pattern_decl value)
+                    | LocalCalculatedValueStatement(local_calculated_decl value)
                     | LocalStoredValueStatement(local_stored_decl value)
                     | LocalMutationValueStatement(local_mutation value)
                     | LocalForEachValueStatement(local_for_each value)
@@ -526,12 +528,33 @@ module MUDSurface {
                                recovery_handler* handlers)
         attributes (source_origin origin)
 
-    then_statement = EffectStatement(effect value)
+    then_statement = LocalPatternStatement(local_pattern_decl value)
+                   | EffectStatement(effect value)
                    | LocalCalculatedStatement(local_calculated_decl value)
                    | LocalStoredStatement(local_stored_decl value)
         attributes (source_origin origin)
 
-    pure_preamble_statement = PureLocalValue(local_value_decl value)
+    behaviour_preamble_statement = BehaviourCalculatedLocal(local_calculated_decl value)
+                                 | BehaviourStoredLocal(local_stored_decl value)
+                                 | BehaviourPatternLocal(local_pattern_decl value)
+                                 | BehaviourForeignBlock(foreign_block value)
+        attributes (source_origin origin)
+
+    local_pattern_decl = StoredPatternDecl(binding_pattern binding, value_block value)
+                       | DerivedPatternDecl(binding_pattern binding, value_block value)
+        attributes (source_origin origin)
+
+    pure_pattern_decl = PurePatternDecl(binding_pattern binding, expression_block value)
+        attributes (source_origin origin)
+
+    binding_pattern = NameBinding(variable_name name)
+                    | DiscardBinding
+                    | PositionalBinding(binding_pattern first, binding_pattern second,
+                                        binding_pattern* remaining)
+        attributes (source_origin origin)
+
+    pure_preamble_statement = PurePatternLocal(pure_pattern_decl value)
+                            | PureLocalValue(local_value_decl value)
                             | PureForeignBlock(foreign_block value)
         attributes (source_origin origin)
 
@@ -593,9 +616,7 @@ module MUDSurface {
                         | SymmetricDifferenceAssign
                         | DifferenceAssign
 
-    iteration_binding = ValueIterationBinding(variable_name value)
-                      | DictionaryIterationBinding(variable_name key,
-                                                   variable_name value)
+    iteration_binding = IterationBinding(binding_pattern pattern)
         attributes (source_origin origin)
 
     assignable_expr = AssignableExpr(expr base, access_suffix* accesses)
@@ -644,7 +665,7 @@ module MUDSurface {
          | DomainRestrictionExpr(expr value, domain_expr domain)
          | CollectionTransformExpr(expr source, local_collection_transform transform)
          | QuantifierExpr(quantifier_kind kind,
-                          variable_name variable,
+                          iteration_binding binding,
                           expr source,
                           expr? step,
                           expression_block body)

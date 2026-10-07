@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-137
   - D-136
   - D-135
   - D-134
@@ -397,7 +398,7 @@ The body becomes `ExpressionBlock(preamble, result)`. The form without local dec
 
 ### Reactive rule
 
-Pure preamble statements preceding behavioural clauses become `leading_preamble`. `when` produces an `ExpressionBlock` in `activator`; `if` produces another in `guard?`; `then` produces `EffectBlock`.
+Behaviour preamble statements preceding behavioural clauses become `leading_preamble`. `when` produces an `ExpressionBlock` in `activator`; `if` produces another in `guard?`; `then` produces `EffectBlock`.
 
 ### `always` rule
 
@@ -407,27 +408,35 @@ OtherwiseClauseSyntax produces RecoveryHandler(bindings?, filter?, branch), pres
 
 ### Action
 
-`action` and `subaction` produce `ActionDecl` with `PublicAction` or `Subaction`. Pure preamble statements preceding behavioural clauses become `leading_preamble`. `if` produces `ActionGuard` with an `ExpressionBlock`; `after` produces `ActionPostcondition` with another.
+`action` and `subaction` produce `ActionDecl` with `PublicAction` or `Subaction`. Behaviour preamble statements preceding behavioural clauses become `leading_preamble`. `if` produces `ActionGuard` with an `ExpressionBlock`; `after` produces `ActionPostcondition` with another.
 
 The action is not classified as either elementary or compound.
 
 ### `look` and `message`
 
-Look/sublook declarations project optional given-clause to their owning constructor's givens. In message/submessage, pure preamble statements preceding behavioural clauses become `leading_preamble`. Public fields are converted to `PublicFieldDecl` and retain their order.
+Look/sublook declarations project optional given-clause to their owning constructor's givens. In message/submessage, behaviour preamble statements preceding behavioural clauses become `leading_preamble`. Public fields are converted to `PublicFieldDecl` and retain their order.
 
 ## Expression blocks, value blocks and tests
 
-A `local-value-declaration` inside an `ExpressionBlock`, a shared preamble or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its short RHS normalizes to ExpressionBlock([], result, handlers); a comma-separated result becomes CollectionLiteralExpr. These positions cannot acquire private mutable storage or a ValueBlock through nesting.
+A `local-value-declaration` inside an `ExpressionBlock` or a `TestAfterBlock` produces `PureLocalValue(LocalValueDecl(name, shape?, value))`. Its short RHS normalizes to ExpressionBlock([], result, handlers); a comma-separated result becomes CollectionLiteralExpr. These positions cannot acquire private mutable storage or a ValueBlock through nesting.
 
-The short form `if ready` produces `ExpressionBlock([], ready, [])`. The brace form contains pure calculated locals or pure `from` blocks and requires a single final expression. Following otherwise clauses are normalized into that block's handlers; handler scope is distinct from protected-body locals.
+The short form `if ready` produces `ExpressionBlock([], ready, [])`. The brace form contains pure calculated locals, pure derived positional patterns or pure from blocks and requires a single final expression. Following otherwise clauses are normalized into that block's handlers; handler scope is distinct from protected-body locals.
 
-A short `value-body` normalises to `ValueBlock([], value, [])`. The expanded form produces `ValueBlock(statements, result, handlers)`. Calculated statements produce `LocalCalculatedDecl`, stored ones `LocalStoredDecl`, mutations `LocalAssignment`/`LocalAdd`/`LocalRemove`, and local iteration `LocalForEach`. Later validation and elaboration verify that every `LocalMutation` stays within storage created by the `ValueBlock`.
+A short value-body normalises to ValueBlock with no statements and preserves its RHS handlers. The expanded form produces ValueBlock(statements, result, handlers). Calculated statements produce LocalCalculatedDecl, stored ones LocalStoredDecl, positional declarations StoredPatternDecl/DerivedPatternDecl with their statement wrappers, mutations LocalAssignment/LocalAdd/LocalRemove, and local iteration LocalForEach. Later validation and elaboration verify that every LocalMutation stays within storage created by the ValueBlock.
 
 `LocalForEach` preserves `source`, `step?` and the filter as `ExpressionBlock?`; its short body or text in brackets normalises to `LocalStatementBlock` and never to `EffectBlock`.
 
 When a metadata-bearing owner uses the integrated expanded form, its initial `~...` declarations are extracted to the descriptor's `metadata` field and the following statements form its `ValueBlock`. The preamble does not produce `ValueStatement`. The short form with a separate metadata body converges on the same AST. Validation before AST construction rejects a declaration that combines metadata from both locations.
 
 In tests, `after expr` produces `TestAfterBlock([], [TestAssertion(expr)])`. The braced form retains its pure preamble statements before the assertions and does not become a `ValueBlock`.
+
+Shared behaviour preambles convert calculated locals to BehaviourCalculatedLocal, immutable stored locals to BehaviourStoredLocal and positional declarations to BehaviourPatternLocal. Short and braced RHSs normalize to ValueBlock, preserving handlers and private local computation. Their outer mutability is disabled; pure ExpressionBlock and TestAfterBlock preambles cannot acquire these capabilities.
+
+Local positional `=`/`:=` forms produce StoredPatternDecl/DerivedPatternDecl and their owner-specific value/effect wrappers. Pure positional `:=` forms produce PurePatternLocal(PurePatternDecl) with an ExpressionBlock RHS. Preserve every nested NameBinding, DiscardBinding and PositionalBinding and its source span. Local declaration roots must be positional; repeated discards survive, while duplicate/shadowed names are diagnosed by nominal resolution. No lowering here evaluates a stored RHS several times or captures a live derived result.
+
+Classify a complete positional pattern followed immediately by = or := as a local pattern declaration before assignment-candidate projection. Name lookup cannot alter this syntactic classification. Access suffixes before the assignment operator do not match a pattern declaration and do not introduce multi-target assignment.
+
+Each type-inference-hole maps to TypeInferenceHole at its exact recursive location. Stored-prefixed structural productions normalize to the ordinary type/product/generic/dictionary constructors; only the explicit hole node is new. Context validation requires an eligible stored declaration with its own initial value and rejects holes in general type/signature/derived positions. Unsolved holes are later typing errors, not pre-AST syntax failures. Written modifiers/cardinality omission provenance is preserved.
 
 ## `then` and blocks
 
@@ -445,7 +454,7 @@ then {
 
 both produce `EffectBlock`, with one statement in equivalent cases.
 
-All block statements are retained in order. Calculated declarations produce `LocalCalculatedStatement`, stored declarations `LocalStoredStatement`, and effects `EffectStatement`. Later validation requires at least one observable effect; a block made solely of local values is therefore not a valid `then`.
+All block statements are retained in order. Calculated declarations produce `LocalCalculatedStatement`, stored declarations `LocalStoredStatement`, positional local patterns `LocalPatternStatement`, and effects `EffectStatement`. Later validation requires at least one observable effect; a block made solely of local values is therefore not a valid `then`.
 
 ## Effects
 
@@ -477,7 +486,7 @@ The concrete operator is converted to:
 
 ### Iteration
 
-Simple binding produces `ValueIterationBinding`. The bracketed pair yields `DictionaryIterationBinding`. Executable `for each` retains `by` as `step?`, normalises `if` to `ExpressionBlock`, and converts both its short effect and the block after `:` to `EffectBlock`. Iteration inside a `ValueBlock` is another production and produces `LocalForEach` with `LocalStatementBlock`. Addressability, compatibility and zero steps belong to later phases.
+Every iteration binding produces IterationBinding(pattern). A name becomes NameBinding, `_` becomes DiscardBinding and a positional pattern becomes recursive PositionalBinding. There is no syntactic dictionary-specific binding constructor; later typing identifies association projection from the source contract. Executable `for each` retains `by` as `step?`, normalises `if` to `ExpressionBlock`, and converts both its short effect and the block after `:` to `EffectBlock`. Iteration inside a `ValueBlock` is another production and produces `LocalForEach` with `LocalStatementBlock`. Addressability, compatibility and zero steps belong to later phases.
 
 ## Expressions
 
@@ -515,9 +524,9 @@ The prefix `all D` produces `PrefixExpr(EnumerateAll, D)`; the contextual litera
 
 ### Selection and `take`
 
-`binding in source [by step] : predicate` produces `SelectionExpr(binding, source, step?, predicate)`. Simple or dictionary binding reuses `ValueIterationBinding` or `DictionaryIterationBinding`; its scope is limited to the predicate. The short form and `{ preamble*; result }` converge on `ExpressionBlock`.
+`binding in source [by step] : predicate` produces `SelectionExpr(binding, source, step?, predicate)`. All forms reuse IterationBinding with the recursive binding_pattern; its scope is limited to the predicate. The short form and `{ preamble*; result }` converge on `ExpressionBlock`.
 
-`exists`, `forall`, `count`, `min` and `max` produce `QuantifierExpr(kind, variable, source, step?, body)`, with an `ExpressionBlock` body. `sum` is no longer in the catalogue. The transformation does not determine the Boolean contract or, for `min`/`max`, the validity of the source order; these checks occur later.
+`exists`, `forall`, `count`, `min` and `max` produce `QuantifierExpr(kind, binding, source, step?, body)`, with an `ExpressionBlock` body. `sum` is no longer in the catalogue. The transformation does not determine the Boolean contract or, for `min`/`max`, the validity of the source order; these checks occur later.
 
 `take amount from source` produces `TakeExpr(amount, source)`. The node's shape does not determine whether the selection is an ordered prefix or a reproducible sample: that distinction depends on the type and resolved properties of `source`.
 
@@ -741,7 +750,7 @@ The initial corpus is in `cases/cst-ast.yaml`.
 
 `ForeignBlockSyntax` normalises its short or braced body to `ForeignBlock(language, first, remaining)`. `ForeignCodeStatementSyntax` produces `ForeignCodeStatement(ForeignCode(originalText))`. `ForeignValueExportSyntax` converts only the MUD name and optional type annotation and retains its RHS in `ForeignCode`, with the RHS's source origin. Foreign code is not parsed as a MUD expression and is never executed during CST-to-AST conversion.
 
-Pure preamble positions wrap calculated locals in `PureLocalValue` and foreign blocks in `PureForeignBlock`, retaining their order in `ExpressionBlock.preamble`, `leading_preamble` and `TestAfterBlock.preamble`. Value statement positions produce `ForeignBlockValueStatement`; effect positions produce `EffectStatement(ForeignBlockEffect(...))`. Ordinary later contract checks still distinguish pure calculation from an executable effect. Multiple short-body items, malformed MUD bridge prefixes and structural native boundary errors prevent a valid AST; missing adapter contracts, incompatible conversions and capabilities are later diagnostics. Native recovery cannot reinterpret a second instruction as part of one expression merely because it is on the same line.
+Pure preamble positions wrap calculated locals in `PureLocalValue` and foreign blocks in `PureForeignBlock`, retaining their order in `ExpressionBlock.preamble` and `TestAfterBlock.preamble`; shared leading_preamble uses BehaviourForeignBlock and the other behaviour_preamble_statement constructors. Value statement positions produce `ForeignBlockValueStatement`; effect positions produce `EffectStatement(ForeignBlockEffect(...))`. Ordinary later contract checks still distinguish pure calculation from an executable effect. Multiple short-body items, malformed MUD bridge prefixes and structural native boundary errors prevent a valid AST; missing adapter contracts, incompatible conversions and capabilities are later diagnostics. Native recovery cannot reinterpret a second instruction as part of one expression merely because it is on the same line.
 
 Short effect recovery normalizes to EffectRecovery with one EffectStatement. A braced value-block-body retains its own handlers even when used directly as a mapping result. A following otherwise attaches to the nearest completed eligible block; braces preserve the distinction between nested raise-value recovery and an outer handler chain.
 

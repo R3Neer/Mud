@@ -26,6 +26,8 @@ affects:
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]] in the identity and derivation of random points.
 - Related questions: [[notes/questions/Q-018-i-discontinuous-intervals|Q-018]], [[notes/questions/Q-028-f-finiteness|Q-028]], [[notes/questions/Q-029-t-termination|Q-029]] and [[notes/questions/Q-032-a-reproducible-randomness|Q-032]].
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 MUD already has `for each`, quantifiers, pure selection and stepped domains, but the earlier rules mixed enumerability, progression by a difference and the structure of the body after `:`. D-075 also required a positive step, and D-047 did not precisely distinguish when an ordered iteration's filter can observe earlier effects.
@@ -69,7 +71,7 @@ Locals are pure, immutable and sequential, and do not admit forward references, 
 
 ## Iteration scopes and expression blocks
 
-`source` and optional `by` are resolved in the outer environment before introducing the iteration binding. Therefore, the iterated variable—or the `(key, value)` pair—is not visible inside `source` or `by`.
+`source` and optional `by` are resolved in the outer environment before introducing the iteration binding. Therefore, no named leaf of the recursive binding pattern is visible inside source or by. Discards introduce no symbol; all named leaves are introduced together after source/by resolution.
 
 In `for each`, the iteration binding is visible in the `if` filter and the corresponding subordinate body. If the filter uses an `ExpressionBlock`, its locals are visible only in later locals and the filter's final expression; they disappear before entering the executable `EffectBlock` or the `LocalStatementBlock` of a `LocalForEach`.
 

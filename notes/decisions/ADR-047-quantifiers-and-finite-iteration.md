@@ -25,6 +25,8 @@ affects:
 - Related questions: Q-018, Q-028, Q-029
 - Documents affected: expressions, ranges, iteration
 
+- Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
+
 ## Context
 
 MUD needs to iterate through domain sets without introducing general loops whose termination or result depends on the inner container.
@@ -61,7 +63,7 @@ for each value in source by step if predicate :
     iterations += 1
 ```
 
-The clause `by` 'optional' always precedes `if`. A dictionary can link a pair by means of `(key, value)`.
+The clause `by` 'optional' always precedes `if`. Iteration and quantifiers admit recursive name/discard/positional patterns; exact-dictionary pairs project key and value without making an association an ordinary product.
 
 Membership of `source` is taken as snapshot at the start of the loop. The filter is pure, deterministic and cannot depend on computed randomness. In a source with semantic order, each filter is evaluated immediately before its iteration and observes the previous sequential effects within the delta private. In a source with no semantic order, all filters read the same snapshot The initial value and the deltas from the accepted iterations are combined as simultaneous effects; a conflict reverses the resolution complete.
 

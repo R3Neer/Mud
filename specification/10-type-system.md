@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-060
 decisions:
+  - D-137
   - D-136
   - D-135
   - D-134
@@ -280,7 +281,7 @@ Receiver-based nominal selection obeys [[09-names-and-anchors#Receiver-call sele
 
 ## 9. Checking, inference and narrowing
 
-Synthesis is bottom-up; checking passes an expected contract down into untyped literals and callable arguments. Each stored binding/declaration has its required annotation and explicit initialiser. Calculated bindings preserve their synthesised type unless an explicit shape requires checking or a declared derived transformation.
+Synthesis is bottom-up; checking passes an expected contract down into untyped literals and callable arguments. Each stored binding/declaration has its required annotation and initialiser/default under its owner contract; an annotation may contain inference holes only when the declaration has its own initial value. Calculated bindings preserve their synthesised type unless an explicit shape requires checking or a declared derived transformation.
 
 For a type-correct value whose domain/cardinality may fail, checking records a site-specific predicate obligation only where runtime admission is authorised. A known invalid static initialiser is rejected. Call admission reports the appropriate refusal; an ordinary value computation uses its Error channel. Mandatory post-effect stored cardinality proof is not replaced by such an obligation.
 
@@ -290,6 +291,28 @@ For a successful is test, $\Phi$ retains the compatible nominal alternatives; it
 
 > [!rule] MUD-TYPE-008 — Unique inference
 > An omitted type is inferred only when synthesis and the available context determine a unique contract, or a defined union join. Otherwise an annotation/narrowing is required. Context-free empty has cardinality zero and no chosen nominal member type; it can be checked against a zero-admitting expected collection, but cannot select a family member, world identity or type default.
+
+### 9.1. Stored type-inference holes
+
+> [!rule] MUD-TYPE-021 — Unique stored-hole solution
+> In a stored annotation with an initial value, each `_` stands for one omitted static member type. Holes may occur recursively in otherwise admitted product, generic-argument, callable and dictionary type positions. Solve the complete annotation and initialiser jointly, using written structure and established domain/type evidence. Every hole must have one uniquely determined normalized type. Unsolved, inconsistent or ambiguous holes are compile-time errors, with tooling marking the hole's source span. No unresolved hole reaches runtime. A hole is not Any, a wildcard, dynamic typing or a fresh nominal type, and insufficient evidence never falls back to Any.
+
+Each written hole is an independent inference occurrence; two underscores do not implicitly equate their solutions. An already established Any source contract may itself be the uniquely synthesized type, but Any cannot be guessed to repair missing evidence. Propagate the written expected structure into components of the initialiser and synthesize missing component contracts where unique. Several source spellings for the same normalized exact type are one solution; structurally equal but nominally distinct aliases are different possible solutions. Do not enumerate nominal aliases to invent a contextual construction. Defined union synthesis retains its ordinary rule; a union of possible guesses is not a solution for an ambiguous hole. A generic application is checked only after its arguments are resolved, with ordinary bounds, variance and finite-closure obligations.
+
+`pair: (_, Text) = source` succeeds when source and written constraints determine the first component uniquely and the second meets Text. `pair: (_, Text) = (empty, "hello")` fails without additional evidence for the first member type. `values: _ = empty` fails; `values: _ in Cats [*] = empty` succeeds only if the domain contract supplies unique type evidence. Mutable stored annotations admit holes with the same rule; subsequent assignments obey the inferred fixed contract and ordinary writable invariance.
+
+Written domains, cardinalities, uniqueness, order and authority remain stored admission constraints, never coercive derived transforms. Omitted outer shape retains the owner's existing policy, including initializer-shape capture for immutable stored fields and the singleton default for mutable fields. No hole infers missing bounds or creates authority. Schema/default/metadata initialisers retain their closed-static requirements. Hole syntax is unavailable in participant/given signatures, generic parameter bounds, alias representation definitions, derived annotations, ordinary casts or standalone Type expressions.
+
+### 9.2. Pattern typing
+
+> [!rule] MUD-TYPE-022 — Exact positional binding
+> Check a binding pattern against its complete source contract. Names capture the corresponding component; `_` checks the same position but binds nothing. A positional node requires an admitted singleton positional product of exactly its arity and recursively checks its components. Named products cannot be opened. Every statically possible source alternative must admit the pattern and yield a unique contract for every named capture under the ordinary inference rules. Shape mismatch is a static error, not a filter or a runtime failed match.
+
+Nested products may remain whole under a name or be opened recursively. An already nominal alias is not implicitly cast into an anonymous product to enable a pattern; its exposed positional representation, where available under the ordinary alias contract, supplies projections while the original source identity remains intact. Exact-dictionary traversal admits a two-position association pattern with key/value contracts; this exception does not make associations ordinary products. Nested positions inside that pattern follow ordinary positional-product rules. Iteration, selection and quantifiers bind one admitted source item/association at a time; a collection-valued component is not implicitly flattened.
+
+Exact dictionaries retain key traversal for a single name or discard. A positional root of exactly two positions selects association projection, even when the key itself has a positional representation; open that key within the first position if needed. The pattern only changes available predicate/body bindings. Selection retains accepted associations, and dictionary min/max retain their original accepted key witness rather than constructing an ordinary product from key/value bindings. Step, finiteness and usable-order requirements remain those of the original traversal.
+
+Stored local patterns evaluate the RHS once, validate the complete pattern and establish all immutable captures atomically; a failed RHS exposes no partial bindings. Derived patterns register live component projections of their common RHS. They have no writable root, and pure expression positions retain their ExpressionBlock restrictions. A completely discarded stored pattern still evaluates its RHS and enforces admission/error obligations; tooling may suggest removal only when no observable obligation is lost. Derived patterns retain derivation checks even when every component is discarded, but do not introduce eager reads or new effects solely to discard them.
 
 ## 10. Schemas, visibility and descriptor types
 

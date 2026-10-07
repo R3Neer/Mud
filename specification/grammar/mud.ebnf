@@ -173,14 +173,14 @@ thing-initializer
 file-metadata-assignment
     ::= "~" , metadata-name
         , ( "=" , constant-expression
-          | ":" , type-expression , [ "=" , constant-expression ]
+          | ":" , stored-type-expression , [ "=" , constant-expression ]
           )
         ;
 
 metadata-assignment
     ::= "~" , metadata-name
         , ( "=" , value-body
-          | ":" , type-expression , [ "=" , value-body ]
+          | ":" , stored-type-expression , [ "=" , value-body ]
           | [ derived-value-shape ] , ":=" , value-body
           )
         ;
@@ -242,7 +242,7 @@ alias-body-declaration
         ;
 
 component-declaration
-    ::= component-name , ":" , type-expression
+    ::= component-name , ":" , stored-type-expression
         , ( "=" , descriptor-value-body | [ metadata-body ] )
         ;
 
@@ -267,7 +267,7 @@ family-data-declaration
       ;
 
 stored-family-data-declaration
-    ::= field-name , ":" , type-expression
+    ::= field-name , ":" , stored-type-expression
         , ( "=" , descriptor-value-body | [ metadata-body ] )
         ;
 
@@ -397,7 +397,7 @@ field-declaration
       ;
 
 stored-field-declaration
-    ::= [ "mut" ] , field-name , ":" , type-expression
+    ::= [ "mut" ] , field-name , ":" , stored-type-expression
         , "=" , descriptor-value-body
         ;
 
@@ -414,6 +414,94 @@ derived-value-shape
       | "in" , type-alternative-domain , [ collection-specification ]
       | collection-specification
         ;
+
+type-inference-hole
+    ::= "_" ;
+
+stored-type-expression
+    ::= stored-union-type-expression
+        , [ collection-specification | stored-dictionary-type ]
+        ;
+
+stored-union-type-expression
+    ::= stored-type-alternative , { "|" , stored-type-alternative }
+        ;
+
+stored-type-alternative
+    ::= stored-declared-type , [ "in" , type-alternative-domain ]
+      | "(" , stored-type-expression , ")"
+        ;
+
+stored-declared-type
+    ::= type-inference-hole
+      | type-reference
+      | stored-callable-type
+      | reflected-type
+      | stored-generic-type-application
+      | stored-product-type
+      ;
+
+stored-callable-type
+    ::= stored-callable-receiver , "." , callable-kind
+        , "(" , [ stored-type-expression , { "," , stored-type-expression } ] , ")"
+        ;
+
+stored-callable-receiver
+    ::= stored-nominal-type
+      | "(" , stored-nominal-type , "," , stored-nominal-type
+          , { "," , stored-nominal-type } , ")"
+      ;
+
+stored-nominal-type
+    ::= type-inference-hole | type-reference | stored-generic-type-application | "(" , stored-nominal-type , ")" ;
+
+stored-generic-type-application
+    ::= stored-explicit-generic-type-application | stored-postfix-generic-type-application ;
+
+stored-explicit-generic-type-application
+    ::= generic-constructor , "with" , stored-generic-argument-list ;
+
+stored-postfix-generic-type-application
+    ::= stored-generic-argument , generic-constructor ;
+
+stored-generic-argument-list
+    ::= stored-generic-argument , { "," , stored-generic-argument } ;
+
+stored-generic-argument
+    ::= stored-declared-type | "(" , stored-generic-union-argument , ")" ;
+
+stored-generic-union-argument
+    ::= stored-declared-type , { "|" , stored-declared-type } ;
+
+stored-product-type
+    ::= stored-positional-product-type
+      | stored-named-product-type
+      ;
+
+stored-positional-product-type
+    ::= "(" , stored-type-expression , "," , stored-type-expression
+        , { "," , stored-type-expression } , ")"
+      ;
+
+stored-named-product-type
+    ::= "(" , stored-named-product-component
+        , "," , stored-named-product-component
+        , { "," , stored-named-product-component } , ")"
+      ;
+
+stored-named-product-component
+    ::= component-name , ":" , stored-type-expression ;
+
+stored-dictionary-type
+    ::= stored-dictionary-link , { stored-dictionary-link } ;
+
+stored-dictionary-link
+    ::= dictionary-arrow , stored-dictionary-value-type
+        , [ collection-specification ]
+      ;
+
+stored-dictionary-value-type
+    ::= stored-union-type-expression ;
 
 type-expression
     ::= union-type-expression
@@ -600,13 +688,14 @@ value-statement
 value-local-declaration
     ::= local-calculated-declaration
       | local-stored-declaration
+      | local-pattern-declaration
       ;
 
 local-calculated-declaration
     ::= variable-name , [ derived-value-shape ] , ":=" , value-body ;
 
 local-stored-declaration
-    ::= [ "mut" ] , variable-name , ":" , type-expression
+    ::= [ "mut" ] , variable-name , ":" , stored-type-expression
         , "=" , value-body
         ;
 
@@ -647,7 +736,7 @@ reactive-rule-declaration
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , { pure-preamble-statement , required-separation }
+        , { behaviour-preamble-statement , required-separation }
         , when-clause
         , required-separation
         , [ if-clause , required-separation ]
@@ -684,7 +773,7 @@ action-signature-body
         , [ given-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , { pure-preamble-statement , required-separation }
+        , { behaviour-preamble-statement , required-separation }
         , [ action-if-clause , required-separation ]
         , then-clause
         , [ required-separation , action-after-clause ]
@@ -723,7 +812,7 @@ message-signature-body
         , [ on-clause ]
         , "{" , declaration-layout
         , [ metadata-assignment , { required-separation , metadata-assignment } , required-separation ]
-        , { pure-preamble-statement , required-separation }
+        , { behaviour-preamble-statement , required-separation }
         , when-clause
         , [ required-separation , if-clause ]
         , [ required-separation , public-field-declaration
@@ -786,8 +875,31 @@ then-statement
       | value-local-declaration
       ;
 
+behaviour-preamble-statement
+    ::= local-calculated-declaration
+      | immutable-local-stored-declaration
+      | local-pattern-declaration
+      | foreign-block
+        ;
+
+immutable-local-stored-declaration
+    ::= variable-name , ":" , stored-type-expression , "=" , value-body ;
+
+local-pattern-declaration
+    ::= positional-binding-pattern , ( "=" | ":=" ) , value-body ;
+
+pure-pattern-declaration
+    ::= positional-binding-pattern , ":=" , value-expression , { otherwise-clause } ;
+
+binding-pattern
+    ::= variable-name | "_" | positional-binding-pattern ;
+
+positional-binding-pattern
+    ::= "(" , binding-pattern , "," , binding-pattern
+        , { "," , binding-pattern } , ")" ;
+
 pure-preamble-statement
-    ::= local-value-declaration | foreign-block ;
+    ::= local-value-declaration | pure-pattern-declaration | foreign-block ;
 
 foreign-block
     ::= "from" , foreign-language-name , foreign-body ;
@@ -914,9 +1026,7 @@ for-each-effect
         ;
 
 iteration-binding
-    ::= variable-name
-      | "(" , variable-name , "," , variable-name , ")"
-      ;
+    ::= binding-pattern ;
 
 assignable-expression
     ::= primary-expression , { member-access | index-access } ;
@@ -1220,7 +1330,7 @@ random-expression
     ::= "Rand" , "(" , expression , ")" ;
 
 quantifier-expression
-    ::= quantifier , variable-name , "in" , expression
+    ::= quantifier , iteration-binding , "in" , expression
         , [ "by" , expression ]
         , ":" , [ required-separation ] , expression-body
         ;

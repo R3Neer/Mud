@@ -15,6 +15,7 @@ questions:
   - Q-069
   - Q-070
 decisions:
+  - D-137
   - D-133
   - D-023
   - D-026
@@ -50,7 +51,7 @@ The judgment is parameterised by expression evaluation, the invocation completio
 
 ## 1. Configurations and outcomes
 
-Let $W_0$ be a batch's common tentative entry view. A branch configuration $C=(W_0,\rho,L,I,U,\omega)$ contains its lexical environment $\rho$, private local storage $L$, ordered semantic intents $I$, tentative causal outputs $U$ and invocation owner $\omega$. Let $\operatorname{view}(C)$ be its private projection after applying its preceding intents. These components are semantic observations, not a required IR or memory layout.
+Let $W_0$ be a batch's common tentative entry view. A branch configuration $C=(W_0,\rho,L,I,U,\omega)$ contains its lexical environment $\rho$, private local storage $L$, ordered semantic intents $I$, tentative causal outputs $U$ and invocation owner $\omega$. Let $\operatorname{view}(C)$ be its private projection after applying its preceding intents. The environment distinguishes references to stored local slots from registered derivations with their preceding lexical environment; only the former have roots in L. These components are semantic observations, not a required IR or memory layout.
 
 A destination $\lambda=(r,g,p)$ identifies storage root $r$, materialisation generation $g$ where applicable, and resolved component/key path $p$. Local roots additionally identify their computation/frame. Intents retain the evaluated operand, destination, operation, causal owner and stable provenance. Causal outputs retain occurrence identity and joint causes, not only equal payloads.
 
@@ -73,7 +74,9 @@ Refuse/Fault stops dependent evaluation and skips the remaining statements. The 
 > [!rule] MUD-EFFECT-007 — Private sequencing
 > Operands and paths observe preceding effects of their own branch, never siblings' private deltas. Evaluate each operand/path once at its textual site and retain its result and provenance. Internal calls continue in the same causal resolution. Reordering instructions is valid only if it preserves these observations and surviving intents.
 
-Calculated local statements evaluate a value and extend $\rho$ immutably. Stored local statements allocate admitted frame-local storage with their explicit value and permissions. Both propagate evaluation faults and obey no-shadowing/no-forward-reference. Local mutation does not acquire world authority.
+Calculated local statements extend $\rho$ with a live derivation over the preceding lexical environment, without allocating or capturing its result. At each actual read, evaluate its RHS under the applicable current private view; computing faults propagate from that read. Stored local statements evaluate their initialiser once and allocate admitted frame-local storage with the resulting value and permissions. Stored positional patterns evaluate one RHS and install all immutable captures atomically; derived patterns install component-projection derivations. RHS names resolve before introducing any new leaf. Both forms obey no-shadowing/no-forward-reference and retain their owner capabilities. Local mutation does not acquire world authority.
+
+Re-evaluation is conceptual: caching is permitted only when it preserves values, errors, dependencies and contextual random-point/temporal observations. A derived ValueBlock creates fresh confined private computation for a read; its temporary storage does not become the derived local's storage. Lexically captured names are not rebound by later declarations. No derived read opens an independent world effect or changes concurrent branch ordering.
 
 ## 3. Assignment and relative update
 
