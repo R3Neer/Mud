@@ -158,7 +158,8 @@ def local_contract_problems(grammar_text: str, ast_text: str) -> list[str]:
                       "dictionary-link", "dictionary-value-type", "callable-type",
                       "callable-receiver", "nominal-type", "generic-type-application",
                       "explicit-generic-type-application", "postfix-generic-type-application",
-                      "generic-argument", "generic-argument-list", "generic-union-argument",
+                      "generic-argument", "generic-argument-head", "callable-type-suffix",
+                      "generic-argument-list", "generic-union-argument",
                       "type-inference-hole"})
     refs = {name: values & type_nodes for name, values in refs.items()}
     if reachable("type-expression", "type-inference-hole"):
@@ -210,6 +211,21 @@ def generic_contract_problems(grammar_text: str, ast_text: str, lexicon_text: st
     code = strip_comments(grammar_text)
     ast = re.sub(r"--.*", "", ast_text)
     problems = []
+    from specification.grammar.ebnf_analysis import left_corner_graph, left_recursion_path
+    graph = left_corner_graph(grammar_text)
+    for name in ("generic-type-application", "postfix-generic-type-application",
+                 "generic-argument", "stored-generic-type-application",
+                 "stored-postfix-generic-type-application", "stored-generic-argument"):
+        path = left_recursion_path(graph, name)
+        if path:
+            problems.append("generic left recursion: " + " -> ".join(path))
+    group = re.search(r'(?m)^generic-parameter-group\s*::=\s*(.*?)\s*;', code, re.S)
+    if not group or not group[1].strip().startswith("HEADER_WITH ,"):
+        problems.append("generic parameter groups must consume the contextual HEADER_WITH boundary")
+    from specification.grammar.validate_grammar import productions
+    boundary_users = {name for name, body in productions(code) if re.search(r'\bHEADER_WITH\b', body)}
+    if boundary_users != {"generic-parameter-group"}:
+        problems.append("only generic-parameter-group may consume HEADER_WITH")
     for name in ("ThingDecl", "AliasDecl", "FamilyDecl", "BooleanRuleDecl",
                  "ActionDecl", "LookDecl", "SublookDecl"):
         constructor = re.search(rf"\b{name}\(([^()]*)\)", ast, re.S)

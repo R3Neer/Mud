@@ -13,6 +13,8 @@ This directory contains the standardised and verifiable artefacts that link the 
 | `syntax-coverage.yaml` | Mechanical normative | Comprehensive EBNF → CST → AST mapping. |
 | `validate_syntax_model.py` | Publishing tool | Detects discrepancies between the previous artefacts. |
 | `test_local_contract.py` | Regression suite | Guards stored-only recursive holes, immutable shared preambles, pure patterns, positional declaration roots and generalized quantifier bindings. |
+| `test_generic_contract.py` | Regression suite | Guards parameter/grouping provenance, structural comparison operands/tokens and non-generic declaration categories. |
+| `test_generic_grammar.py` | Grammar regression suite | Recognises preclassified token fixtures for explicit/postfix applications, tuple/product grouping, callable suffixes, stored holes and contextual header boundaries; rejects reintroduced generic left recursion. |
 | `test_validate_syntax_model.py` | Regression suite | Rejects malformed nominal-HIR, foreign delegation/body, static field-schema and part/category boundary contracts. |
 | `cases/cst-ast.yaml` | Starter suite | Transformation and pre-AST rejection cases. |
 
@@ -86,6 +88,7 @@ The command checks:
 - Availability of destinations ASDL as stated.
 - Existence of standard contracts under the scheme.
 - The Nominal HIR distinction between resolved targets and pending receiver-call candidates, without type conclusions.
+- Absence of generic argument/application left recursion and exclusive parameter-group consumption of `HEADER_WITH`.
 
 Not yet verified:
 
@@ -131,4 +134,4 @@ This directory does not define:
 References to these phases serve solely to prevent the Surface AST anticipate them.
 
 
-Generic header/application and structural-type comparison distinctions are guarded by validate_syntax_model.py and test_generic_contract.py. The tests reject loss of parameter/grouping information, value operands in the structural operator node and split structural tokens; they do not implement parsing or type inference.
+Generic header/application and structural-type comparison distinctions are guarded by validate_syntax_model.py and test_generic_contract.py. The tests reject loss of parameter/grouping information, value operands in the structural operator node and split structural tokens. test_generic_grammar.py additionally uses the EBNF analysis helper to recognise bounded preclassified token fixtures. These checks do not provide a complete Mud scanner/parser, constructor-arity resolution or type inference; the declarative CST/AST cases remain transformation contracts rather than executed compiler tests.

@@ -147,6 +147,7 @@ fixed_tokens:
 - spelling: mud
 - spelling: "<-"
 named_tokens:
+- kind: HEADER_WITH
 - kind: EOF
 - kind: IDENTIFIER
 - kind: POINT_LITERAL
@@ -469,18 +470,15 @@ syntax_nodes:
     - otherwise-clause
   stored-callable-receiver:
     kind: StoredCallableReceiverSyntax
-    rhs: stored-nominal-type | "(" , stored-nominal-type , "," , stored-nominal-type , { "," , stored-nominal-type
-      } , ")"
+    rhs: stored-nominal-type
     references:
     - stored-nominal-type
   stored-callable-type:
     kind: StoredCallableTypeSyntax
-    rhs: stored-callable-receiver , "." , callable-kind , "(" , [ stored-type-expression , { "," , stored-type-expression
-      } ] , ")"
+    rhs: stored-callable-receiver , stored-callable-type-suffix
     references:
     - stored-callable-receiver
-    - callable-kind
-    - stored-type-expression
+    - stored-callable-type-suffix
   stored-declared-type:
     kind: StoredDeclaredTypeSyntax
     rhs: type-inference-hole | type-reference | stored-callable-type | reflected-type | stored-generic-type-application
@@ -522,10 +520,11 @@ syntax_nodes:
     - stored-generic-argument
   stored-generic-argument:
     kind: StoredGenericArgumentSyntax
-    rhs: stored-declared-type | "(" , stored-generic-union-argument , ")"
+    rhs: stored-generic-argument-head , { generic-constructor | stored-callable-type-suffix }
     references:
-    - stored-declared-type
-    - stored-generic-union-argument
+    - generic-constructor
+    - stored-callable-type-suffix
+    - stored-generic-argument-head
   stored-generic-type-application:
     kind: StoredGenericTypeApplicationSyntax
     rhs: stored-explicit-generic-type-application | stored-postfix-generic-type-application
@@ -551,13 +550,11 @@ syntax_nodes:
     - stored-named-product-component
   stored-nominal-type:
     kind: StoredNominalTypeSyntax
-    rhs: type-inference-hole | type-reference | stored-generic-type-application | "(" , stored-nominal-type ,
-      ")"
+    rhs: stored-generic-argument-head , { generic-constructor | stored-callable-type-suffix }
     references:
-    - type-inference-hole
-    - type-reference
-    - stored-generic-type-application
-    - stored-nominal-type
+    - generic-constructor
+    - stored-callable-type-suffix
+    - stored-generic-argument-head
   stored-positional-product-type:
     kind: StoredPositionalProductTypeSyntax
     rhs: '"(" , stored-type-expression , "," , stored-type-expression , { "," , stored-type-expression } , ")"'
@@ -565,10 +562,11 @@ syntax_nodes:
     - stored-type-expression
   stored-postfix-generic-type-application:
     kind: StoredPostfixGenericTypeApplicationSyntax
-    rhs: stored-generic-argument , generic-constructor
+    rhs: stored-generic-argument-head , { generic-constructor | stored-callable-type-suffix } , generic-constructor
     references:
-    - stored-generic-argument
     - generic-constructor
+    - stored-callable-type-suffix
+    - stored-generic-argument-head
   stored-product-type:
     kind: StoredProductTypeSyntax
     rhs: stored-positional-product-type | stored-named-product-type
@@ -620,9 +618,9 @@ syntax_nodes:
     - type-expression
   generic-family-member:
     kind: GenericFamilyMemberSyntax
-    rhs: generic-type-application , "." , member-name
+    rhs: explicit-generic-type-application , "." , member-name
     references:
-    - generic-type-application
+    - explicit-generic-type-application
     - member-name
   generic-call-suffix:
     kind: GenericCallSuffixSyntax
@@ -631,10 +629,11 @@ syntax_nodes:
     - generic-argument-list
   generic-argument:
     kind: GenericArgumentSyntax
-    rhs: declared-type | "(" , generic-union-argument , ")"
+    rhs: generic-argument-head , { generic-constructor | callable-type-suffix }
     references:
-    - declared-type
-    - generic-union-argument
+    - callable-type-suffix
+    - generic-argument-head
+    - generic-constructor
   generic-argument-list:
     kind: GenericArgumentListSyntax
     rhs: generic-argument , { "," , generic-argument }
@@ -642,9 +641,10 @@ syntax_nodes:
     - generic-argument
   postfix-generic-type-application:
     kind: PostfixGenericTypeApplicationSyntax
-    rhs: generic-argument , generic-constructor
+    rhs: generic-argument-head , { generic-constructor | callable-type-suffix } , generic-constructor
     references:
-    - generic-argument
+    - callable-type-suffix
+    - generic-argument-head
     - generic-constructor
   explicit-generic-type-application:
     kind: ExplicitGenericTypeApplicationSyntax
@@ -672,7 +672,7 @@ syntax_nodes:
     - nominal-type
   generic-bound-list:
     kind: GenericBoundListSyntax
-    rhs: "nominal-type , { \",\" , nominal-type }\n      | \"[\" , nominal-type , { \",\" , nominal-type } , \"]\""
+    rhs: nominal-type , { "," , nominal-type } | "[" , nominal-type , { "," , nominal-type } , "]"
     references:
     - nominal-type
   type-parameter-list:
@@ -682,13 +682,13 @@ syntax_nodes:
     - nominal-name
   generic-parameter-group:
     kind: GenericParameterGroupSyntax
-    rhs: '"with" , type-parameter-list , [ "as" , generic-bound-list ]'
+    rhs: HEADER_WITH , type-parameter-list , [ "as" , generic-bound-list ]
     references:
     - generic-bound-list
     - type-parameter-list
   ancestor-list:
     kind: AncestorListSyntax
-    rhs: "nominal-type , { \",\" , nominal-type }\n      | \"[\" , nominal-type , { \",\" , nominal-type } , \"]\""
+    rhs: nominal-type , { "," , nominal-type } | "[" , nominal-type , { "," , nominal-type } , "]"
     references:
     - nominal-type
   message-signature-body:
@@ -1211,17 +1211,17 @@ syntax_nodes:
     - type-reference
   callable-type:
     kind: CallableTypeSyntax
-    rhs: "callable-receiver , \".\" , callable-kind\n        , \"(\" , [ type-expression , { \",\" , type-expression } ] , \")\""
+    rhs: callable-receiver , callable-type-suffix
     references:
     - callable-receiver
-    - callable-kind
-    - type-expression
+    - callable-type-suffix
   callable-receiver:
     kind: CallableReceiverSyntax
-    rhs: "nominal-type\n      | \"(\" , nominal-type , \",\" , nominal-type\n          , { \",\" , nominal-type }\
-      \ , \")\""
+    rhs: generic-argument-head , { generic-constructor | callable-type-suffix }
     references:
-    - nominal-type
+    - callable-type-suffix
+    - generic-argument-head
+    - generic-constructor
   callable-kind:
     kind: CallableKindSyntax
     rhs: '"action" | "rule" | "look"'
@@ -1828,11 +1828,12 @@ syntax_nodes:
     references: []
   postfix-expression:
     kind: PostfixExpressionSyntax
-    rhs: "primary-expression\n        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix\
-      \ | generic-call-suffix }"
+    rhs: primary-expression , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix
+      | generic-call-suffix | expression-generic-suffix }
     references:
     - call-arguments
     - collection-transform-suffix
+    - expression-generic-suffix
     - generic-call-suffix
     - index-access
     - member-access
@@ -1877,17 +1878,17 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: "generic-family-member\n      | generic-type-application\n      | literal\n      | take-expression\n    \
-      \  | selection-expression\n      | qualified-name\n      | structural-literal\n      | collection-literal\n\
-      \      | interval-expression\n      | quantity-expression\n      | point-component-expression\n      | quantifier-expression\n\
-      \      | random-expression\n      | \"thing\" | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"\
-      action\" | \"subaction\" | \"look\" | \"sublook\" | \"message\" | \"submessage\" | \"test\"\n      | \"(\" ,\
-      \ expression , \")\""
+    rhs: generic-family-member | explicit-generic-type-application | grouped-postfix-generic-type-application | literal
+      | take-expression | selection-expression | qualified-name | structural-literal | collection-literal | interval-expression
+      | quantity-expression | point-component-expression | quantifier-expression | random-expression | "thing" | "alias"
+      | "family" | "magnitude" | "rule" | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" |
+      "test" | "(" , expression , ")"
     references:
     - collection-literal
+    - explicit-generic-type-application
     - expression
     - generic-family-member
-    - generic-type-application
+    - grouped-postfix-generic-type-application
     - interval-expression
     - literal
     - point-component-expression
@@ -2335,3 +2336,51 @@ syntax_nodes:
     - value-block-body
     - effect-block
     - effect
+  generic-argument-head:
+    kind: GenericArgumentHeadSyntax
+    rhs: type-reference | explicit-generic-type-application | reflected-type | product-type | "(" , generic-union-argument
+      , ")"
+    references:
+    - explicit-generic-type-application
+    - generic-union-argument
+    - product-type
+    - reflected-type
+    - type-reference
+  stored-callable-type-suffix:
+    kind: StoredCallableTypeSuffixSyntax
+    rhs: '"." , callable-kind , "(" , [ stored-type-expression , { "," , stored-type-expression } ] , ")"'
+    references:
+    - callable-kind
+    - stored-type-expression
+  stored-generic-argument-head:
+    kind: StoredGenericArgumentHeadSyntax
+    rhs: type-inference-hole | type-reference | stored-explicit-generic-type-application | reflected-type | stored-product-type
+      | "(" , stored-generic-union-argument , ")"
+    references:
+    - reflected-type
+    - stored-explicit-generic-type-application
+    - stored-generic-union-argument
+    - stored-product-type
+    - type-inference-hole
+    - type-reference
+  callable-type-suffix:
+    kind: CallableTypeSuffixSyntax
+    rhs: '"." , callable-kind , "(" , [ type-expression , { "," , type-expression } ] , ")"'
+    references:
+    - callable-kind
+    - type-expression
+  grouped-postfix-generic-type-application:
+    kind: GroupedPostfixGenericTypeApplicationSyntax
+    rhs: ( product-type | "(" , generic-union-argument , ")" ) , { generic-constructor | callable-type-suffix } ,
+      generic-constructor
+    references:
+    - callable-type-suffix
+    - generic-constructor
+    - generic-union-argument
+    - product-type
+  expression-generic-suffix:
+    kind: ExpressionGenericSuffixSyntax
+    rhs: '{ callable-type-suffix } , generic-constructor'
+    references:
+    - callable-type-suffix
+    - generic-constructor

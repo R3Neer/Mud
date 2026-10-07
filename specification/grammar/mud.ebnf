@@ -98,7 +98,7 @@ ancestor-list
       | "[" , nominal-type , { "," , nominal-type } , "]" ;
 
 generic-parameter-group
-    ::= "with" , type-parameter-list , [ "as" , generic-bound-list ] ;
+    ::= HEADER_WITH , type-parameter-list , [ "as" , generic-bound-list ] ;
 
 type-parameter-list
     ::= nominal-name , { "," , nominal-name }
@@ -121,13 +121,28 @@ explicit-generic-type-application
     ::= generic-constructor , "with" , generic-argument-list ;
 
 postfix-generic-type-application
-    ::= generic-argument , generic-constructor ;
+    ::= generic-argument-head
+        , { generic-constructor | callable-type-suffix }
+        , generic-constructor ;
+
+generic-argument-head
+    ::= type-reference | explicit-generic-type-application
+      | reflected-type | product-type
+      | "(" , generic-union-argument , ")" ;
+
+grouped-postfix-generic-type-application
+    ::= ( product-type | "(" , generic-union-argument , ")" )
+        , { generic-constructor | callable-type-suffix }
+        , generic-constructor ;
+
+expression-generic-suffix
+    ::= { callable-type-suffix } , generic-constructor ;
 
 generic-argument-list
     ::= generic-argument , { "," , generic-argument } ;
 
 generic-argument
-    ::= declared-type | "(" , generic-union-argument , ")" ;
+    ::= generic-argument-head , { generic-constructor | callable-type-suffix } ;
 
 generic-union-argument
     ::= declared-type , { "|" , declared-type } ;
@@ -136,7 +151,7 @@ generic-call-suffix
     ::= "with" , generic-argument-list ;
 
 generic-family-member
-    ::= generic-type-application , "." , member-name ;
+    ::= explicit-generic-type-application , "." , member-name ;
 
 structural-type-comparison
     ::= type-expression , structural-type-equality-operator , type-expression ;
@@ -442,18 +457,18 @@ stored-declared-type
       ;
 
 stored-callable-type
-    ::= stored-callable-receiver , "." , callable-kind
-        , "(" , [ stored-type-expression , { "," , stored-type-expression } ] , ")"
-        ;
+    ::= stored-callable-receiver , stored-callable-type-suffix ;
+
+stored-callable-type-suffix
+    ::= "." , callable-kind
+        , "(" , [ stored-type-expression , { "," , stored-type-expression } ] , ")" ;
 
 stored-callable-receiver
-    ::= stored-nominal-type
-      | "(" , stored-nominal-type , "," , stored-nominal-type
-          , { "," , stored-nominal-type } , ")"
-      ;
+    ::= stored-nominal-type ;
 
 stored-nominal-type
-    ::= type-inference-hole | type-reference | stored-generic-type-application | "(" , stored-nominal-type , ")" ;
+    ::= stored-generic-argument-head
+        , { generic-constructor | stored-callable-type-suffix } ;
 
 stored-generic-type-application
     ::= stored-explicit-generic-type-application | stored-postfix-generic-type-application ;
@@ -462,13 +477,20 @@ stored-explicit-generic-type-application
     ::= generic-constructor , "with" , stored-generic-argument-list ;
 
 stored-postfix-generic-type-application
-    ::= stored-generic-argument , generic-constructor ;
+    ::= stored-generic-argument-head
+        , { generic-constructor | stored-callable-type-suffix }
+        , generic-constructor ;
+
+stored-generic-argument-head
+    ::= type-inference-hole | type-reference | stored-explicit-generic-type-application
+      | reflected-type | stored-product-type
+      | "(" , stored-generic-union-argument , ")" ;
 
 stored-generic-argument-list
     ::= stored-generic-argument , { "," , stored-generic-argument } ;
 
 stored-generic-argument
-    ::= stored-declared-type | "(" , stored-generic-union-argument , ")" ;
+    ::= stored-generic-argument-head , { generic-constructor | stored-callable-type-suffix } ;
 
 stored-generic-union-argument
     ::= stored-declared-type , { "|" , stored-declared-type } ;
@@ -534,15 +556,15 @@ declared-type
       ;
 
 callable-type
-    ::= callable-receiver , "." , callable-kind
-        , "(" , [ type-expression , { "," , type-expression } ] , ")"
-        ;
+    ::= callable-receiver , callable-type-suffix ;
+
+callable-type-suffix
+    ::= "." , callable-kind
+        , "(" , [ type-expression , { "," , type-expression } ] , ")" ;
 
 callable-receiver
-    ::= nominal-type
-      | "(" , nominal-type , "," , nominal-type
-          , { "," , nominal-type } , ")"
-      ;
+    ::= generic-argument-head
+        , { generic-constructor | callable-type-suffix } ;
 
 callable-kind
     ::= "action" | "rule" | "look" ;
@@ -1185,7 +1207,7 @@ prefix-operator
 
 postfix-expression
     ::= primary-expression
-        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix | generic-call-suffix }
+        , { member-access | metadata-access | index-access | call-arguments | collection-transform-suffix | generic-call-suffix | expression-generic-suffix }
         ;
 
 collection-transform-suffix
@@ -1230,7 +1252,8 @@ receiver-entry
 
 primary-expression
     ::= generic-family-member
-      | generic-type-application
+      | explicit-generic-type-application
+      | grouped-postfix-generic-type-application
       | literal
       | take-expression
       | selection-expression

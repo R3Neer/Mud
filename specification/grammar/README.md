@@ -4,6 +4,8 @@ This directory contains the MUD 1.0 reference grammars:
 
 - `mud-lexico.ebnf`: conversion of Unicode source text into meaningful tokens and lexical forms.
 - `mud.ebnf`: conversion of significant tokens into concrete syntax.
+- `validate_grammar.py`: editorial checks of production uniqueness, references and reachability.
+- `ebnf_analysis.py`: EBNF structure, nullability and left-corner analysis, plus BNF lowering and token-fixture recognition for regression tests. It is not a complete Mud scanner or source parser.
 
 Lossless representation, the CST node catalogue and the Surface AST are documented in [[../syntax/README|syntax/]].
 
@@ -49,6 +51,8 @@ The ways of unit and from magnitude from point are also context-dependent. The f
 
 `from` adds native-language delegation: `FOREIGN_STATEMENT` and `FOREIGN_EXPRESSION` are contextual, lossless regions classified by the selected adapter. The MUD parser owns bridge names/types and body cardinality; it does not lex native source with ordinary MUD rules.
 
+`HEADER_WITH` is the contextual view of an ungrouped `with` in a declaration's ancestor/parameter portion, as defined in [[../06-lexicon#Generic header boundary]]. Only parameter groups consume that terminal; explicit applications consume ordinary `with`. Classification preserves the base token and does not require type lookup.
+
 ## Separation of responsibilities
 
 The EBNF distinguishes between recognition of elaboration. It does not attempt to check:
@@ -77,6 +81,8 @@ python specification/syntax/validate_syntax_model.py
 ```
 
 The first check identifies duplicate, undefined or unachievable production targets. The second checks CST stock levels, coverage and destinations ASDL. None of them replace the tests for conformance of a parser.
+
+The joint validator also uses `ebnf_analysis.py` to reject left-recursive paths through generic argument/application entry points, including their stored-annotation counterparts. This is a targeted structural guarantee, not a claim that the whole grammar is LL/LR-unambiguous. `../syntax/test_generic_grammar.py` checks accepted and rejected token fixtures for application forms and header boundaries.
 
 ## Policy exchange
 

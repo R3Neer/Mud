@@ -1470,3 +1470,33 @@ productions:
     ast:
       disposition: normalized
       target: recovery_body
+  generic-argument-head:
+    cst: GenericArgumentHeadSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  stored-callable-type-suffix:
+    cst: StoredCallableTypeSuffixSyntax
+    ast:
+      disposition: normalized
+      target: CallableType
+  stored-generic-argument-head:
+    cst: StoredGenericArgumentHeadSyntax
+    ast:
+      disposition: normalized
+      target: type_expr
+  callable-type-suffix:
+    cst: CallableTypeSuffixSyntax
+    ast:
+      disposition: normalized
+      target: CallableType
+  grouped-postfix-generic-type-application:
+    cst: GroupedPostfixGenericTypeApplicationSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication
+  expression-generic-suffix:
+    cst: ExpressionGenericSuffixSyntax
+    ast:
+      disposition: normalized
+      target: GenericTypeApplication

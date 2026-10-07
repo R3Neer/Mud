@@ -2999,3 +2999,50 @@ cases:
   normalizations: []
   produces_ast: true
   diagnostic: Later typing rejects unresolved member type; syntactic AST construction succeeds.
+- id: generic-postfix-chain-fold
+  category: generics
+  source: 'alias Wrapped := Cat Box Wrapper'
+  cst_root: MudFileSyntax
+  ast: GenericTypeApplication(Wrapper, GenericTypeApplication(Box, Cat))
+  normalizations:
+  - Fold constructor suffixes from left to right; each application retains postfix source form.
+  produces_ast: true
+- id: generic-postfix-callable-receiver-fold
+  category: generics
+  source: 'alias Callback := (Cat, Dog) Pair.action()'
+  cst_root: MudFileSyntax
+  ast: CallableType(ActionCallable, receivers=[GenericTypeApplication(Pair, PositionalProductType(Cat, Dog))], givens=[])
+  normalizations:
+  - Construct the applied receiver before the callable suffix; constructor arity is resolved later.
+  produces_ast: true
+- id: generic-header-with-is-parameter-boundary
+  category: generics
+  source: 'abstract thing X as Base with T'
+  cst_root: MudFileSyntax
+  ast: ThingDecl(X, direct_ancestors=[Base], parameters=[T])
+  normalizations:
+  - The ungrouped with token has contextual kind HEADER_WITH and cannot apply Base.
+  produces_ast: true
+- id: generic-header-bound-with-is-next-group
+  category: generics
+  source: 'abstract thing X with T as Base with U'
+  cst_root: MudFileSyntax
+  ast: ThingDecl(X, parameters=[T(bound=Base), U(bound=Any)])
+  normalizations:
+  - Both ungrouped with tokens are HEADER_WITH; Base is the bound of T, not an application.
+  produces_ast: true
+- id: generic-header-grouped-application-boundary
+  category: generics
+  source: 'abstract thing X as (Base with T) with T'
+  cst_root: MudFileSyntax
+  ast: ThingDecl(X, direct_ancestors=[GenericTypeApplication(Base, T)], parameters=[T])
+  normalizations:
+  - The grouped with is ordinary application syntax; the final ungrouped with is HEADER_WITH.
+  produces_ast: true
+- id: generic-postfix-value-operand-rejected
+  category: validation-before-ast
+  source: 'rule R { 3 Box === Cat Box }'
+  cst_root: MudFileSyntax
+  ast: No AST
+  produces_ast: false
+  diagnostic: A constructor suffix requires an admitted generic-argument type form; a numeric value is not implicitly lifted to a type.

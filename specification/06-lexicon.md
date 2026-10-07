@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-134
   - D-137
   - D-135
   - D-132
@@ -48,7 +49,7 @@ decisions:
 
 ## State and purpose
 
-This chapter defines the base scanner and the contextual classification for font shapes. The base scanner transforms Unicode into tokens without consulting the model; `POINT_LITERAL` and `UNIT_FORM` are added only in a subsequent contextual view. The base lexical grammar is in [[grammar/mud-lexico.ebnf]]. The syntax that processes the significant views belongs to [[07-concrete-grammar]].
+This chapter defines the base scanner and contextual token classification. The base scanner transforms Unicode into tokens without consulting the model; `POINT_LITERAL`, `UNIT_FORM` and `HEADER_WITH` are added only in a subsequent contextual view. The base lexical grammar is in [[grammar/mud-lexico.ebnf]]. The syntax that processes the significant views belongs to [[07-concrete-grammar]].
 
 ## Unicode scalar values
 
@@ -135,6 +136,12 @@ Outside of these positions, they can be tokenised as `IDENTIFIER`. The classifie
 `all` is an reserved word that serves both as a contextual literal without an operand, whose enumerable domain is derived from the context, and as prefix `all D` to explicitly instantiate an enumerable domain. Its reserved nature makes it possible to distinguish between these two forms of an ordinary declaration even before typing.
 
 `iis` is a reserved operator word. `has not` and `iis not` retain two word tokens with their own trivia; the parser groups each pair in the corresponding comparison. `in` does not form a Boolean membership: its uses are domain, filtering, binding or conversion, depending on the context.
+
+## Generic header boundary
+
+While parsing a declaration's ancestor/parameter portion, a `with` outside source parentheses and list brackets is classified as `HEADER_WITH`. This view ends before a `for`/`on`/`given` clause, a declaration body, an alias representation's `:=`, or a terminator completing the declaration. A `with` inside parentheses/brackets, or outside that header portion, retains the ordinary reserved-word token. Parentheses and brackets are tracked by source nesting, not by resolved constructor arity. Native regions and text contents do not contribute Mud header delimiters.
+
+`HEADER_WITH` has the original spelling `with`, span and trivia. It is a syntactic contextual view of one reserved-word token, not a new source word or an alternative classification chosen by type lookup. Only `generic-parameter-group` consumes it; explicit generic applications and call specialisation consume ordinary `with`. Thus `as Base with T` cannot consume the parameter boundary as part of its ancestor, whereas `as (Base with T) with T` and `as [Base with T] with T` can contain an explicit application.
 
 ## Adjacency of units
 

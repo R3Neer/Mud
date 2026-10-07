@@ -194,6 +194,8 @@ Terminators ignored by `layout` remain present as tokens in the CST.
 
 ## Other significant tokens
 
+The contextual `HEADER_WITH` view retains the same source token, spelling `with`, span and trivia as the base reserved word. Its classification follows the header nesting boundary in [[06-lexicon#Generic header boundary]]. It must not duplicate token ownership or depend on nominal resolution.
+
 The CST retains indivisible `===` and `!==` before the shorter `==` and `!=` matches, as well as the fixed tokens `-->` and `~`, the operator word `iis`, and contextual words written in their usual positions. Longest match must prevent `-->` from being split into `--` and `>`, or into `-` and `->`. `has not` and `iis not` retain two tokens with their own trivia. There is no `ANCHOR_INTERPOLATION_START`; an expression `~anchor` inside `{...}` uses the same nodes and tokens as outside a template.
 
 ## `Text` literals
