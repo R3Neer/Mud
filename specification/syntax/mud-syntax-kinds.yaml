@@ -935,14 +935,16 @@ syntax_nodes:
   alias-definition:
     kind: AliasDefinitionSyntax
     rhs: "\":=\" , type-expression\n        , [ \"{\" , declaration-layout\n            , [ metadata-assignment\n\
-      \                , { required-separation , metadata-assignment }\n                , [ required-separation ]\n\
-      \              ]\n            , \"}\"\n          ]\n      | structural-alias-body"
+      \                , { required-separation , metadata-assignment }\n                , required-separation\n  \
+      \            ]\n            , [ operator-declaration , { required-separation , operator-declaration } , [ required-separation\
+      \ ] ]\n            , \"}\"\n          ]\n      | structural-alias-body"
     references:
-    - type-expression
     - declaration-layout
     - metadata-assignment
+    - operator-declaration
     - required-separation
     - structural-alias-body
+    - type-expression
   structural-alias-body:
     kind: StructuralAliasBodySyntax
     rhs: "\"{\" , declaration-layout\n        , [ metadata-assignment , { required-separation , metadata-assignment\
@@ -955,11 +957,13 @@ syntax_nodes:
     - alias-body-declaration
   alias-body-declaration:
     kind: AliasBodyDeclarationSyntax
-    rhs: "component-declaration\n      | calculated-field-declaration\n      | inherited-default-override"
+    rhs: "component-declaration\n      | calculated-field-declaration\n      | inherited-default-override\n      |\
+      \ operator-declaration"
     references:
-    - component-declaration
     - calculated-field-declaration
+    - component-declaration
     - inherited-default-override
+    - operator-declaration
   component-declaration:
     kind: ComponentDeclarationSyntax
     rhs: component-name , ":" , stored-type-expression , ( "=" , descriptor-value-body | [ metadata-body ] )
@@ -2386,3 +2390,28 @@ syntax_nodes:
     references:
     - callable-type-suffix
     - generic-constructor
+  operator-declaration:
+    kind: OperatorDeclarationSyntax
+    rhs: "operator-operand , overload-binary-operator , operator-operand\n        , [ \":\" , type-expression ] ,\
+      \ \":=\" , value-body\n      | overload-unary-operator , operator-operand\n        , [ \":\" , type-expression\
+      \ ] , \":=\" , value-body"
+    references:
+    - operator-operand
+    - overload-binary-operator
+    - overload-unary-operator
+    - type-expression
+    - value-body
+  operator-operand:
+    kind: OperatorOperandSyntax
+    rhs: variable-name | "(" , variable-name , ":" , type-expression , ")"
+    references:
+    - type-expression
+    - variable-name
+  overload-unary-operator:
+    kind: OverloadUnaryOperatorSyntax
+    rhs: '"+" | "-"'
+    references: []
+  overload-binary-operator:
+    kind: OverloadBinaryOperatorSyntax
+    rhs: '"+" | "-" | "*" | "/" | "%" | "|" | "&" | "^" | "--"'
+    references: []

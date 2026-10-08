@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-146
   - D-145
   - D-143
   - D-141
@@ -1876,3 +1877,7 @@ Foreign operations require checked or explicitly trusted type/effect contracts. 
 Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
 
 LocalStatementBlock groups statements within the owning ValueBlock and shares its error channel; it is not an independent value-result block or handler owner. Declaration/schema/metadata braces are not evaluated expression, value or effect blocks. Otherwise may attach to their contained initializer computations, not to the declaration braces themselves.
+
+## Alias operator declarations
+
+Inside an alias body, binary declarations use `a * (factor: Num): Vector2 := value-body`; unary declarations use `-a: Vector2 := value-body`. Bare operands omit their owner-alias type, not required punctuation around a written type. Result annotations may be omitted. Existing expression precedence/grouping is unchanged. The overloadable set and static result contracts are specified in [[21-expressions#Alias-owned operator signatures]]. Representation-alias bodies may retain owner metadata followed by operators; operator bodies are ordinary value bodies, not implicit metadata owners.

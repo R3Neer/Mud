@@ -235,8 +235,9 @@ alias-definition
         , [ "{" , declaration-layout
             , [ metadata-assignment
                 , { required-separation , metadata-assignment }
-                , [ required-separation ]
+                , required-separation
               ]
+            , [ operator-declaration , { required-separation , operator-declaration } , [ required-separation ] ]
             , "}"
           ]
       | structural-alias-body
@@ -256,7 +257,21 @@ alias-body-declaration
     ::= component-declaration
       | calculated-field-declaration
       | inherited-default-override
+      | operator-declaration
         ;
+
+operator-declaration
+    ::= operator-operand , overload-binary-operator , operator-operand
+        , [ ":" , type-expression ] , ":=" , value-body
+      | overload-unary-operator , operator-operand
+        , [ ":" , type-expression ] , ":=" , value-body ;
+
+operator-operand
+    ::= variable-name | "(" , variable-name , ":" , type-expression , ")" ;
+
+overload-unary-operator ::= "+" | "-" ;
+
+overload-binary-operator ::= "+" | "-" | "*" | "/" | "%" | "|" | "&" | "^" | "--" ;
 
 component-declaration
     ::= component-name , ":" , stored-type-expression

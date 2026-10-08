@@ -247,17 +247,27 @@ module MUDSurface {
                                         metadata_assignment* metadata)
         attributes (source_origin origin)
 
-    alias_definition = AliasRepresentation(type_expr target)
+    alias_definition = AliasRepresentation(type_expr target, operator_decl* operators)
                      | StructuralAlias(alias_member* members)
         attributes (source_origin origin)
 
-    alias_member = AliasComponentDecl(alias_component component)
+    alias_member = AliasOperatorDecl(operator_decl declaration)
+                 | AliasComponentDecl(alias_component component)
                  | AliasCalculatedFieldDecl(field_name name,
                                             derived_value_shape? shape,
                                             value_block value,
                                             metadata_assignment* metadata)
                  | AliasDefaultOverride(component_name name,
                                         value_block value)
+        attributes (source_origin origin)
+
+    operator_decl = UnaryOperatorDecl(prefix_operator operator, operator_operand operand,
+                                      type_expr? result, value_block value)
+                  | BinaryOperatorDecl(operator_operand left, binary_operator operator,
+                                       operator_operand right, type_expr? result, value_block value)
+        attributes (source_origin origin)
+
+    operator_operand = OperatorOperand(variable_name name, type_expr? explicit_type)
         attributes (source_origin origin)
 
     alias_component = AliasComponent(component_name name,

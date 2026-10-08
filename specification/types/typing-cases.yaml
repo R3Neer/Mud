@@ -2035,3 +2035,27 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Effective limits admit zero inner and one outer member. This is one empty row, not zero rows. Int [0] [1] admits [[]] but rejects empty; Int [0] [0] admits empty but rejects [[]]. Variable rows need not be rectangular.
+- id: alias-operator-closed-set
+  rules:
+  - MUD-TYPE-028
+  source: 'a * (factor: Num): Vector2 := (a.x * factor, a.y * factor)'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies owner Vector2, valid fields and uniquely established signature. Only written order
+    exists; Num * Vector2 needs its explicit inverse. Comparators/logical operators are invalid declarations.
+- id: operator-result-owner-priority
+  rules:
+  - MUD-TYPE-029
+  source: a + b := (a.x + b.x, a.y + b.y)
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies a tuple admitting owner contextual construction. Owner wins over other operand types;
+    two fitting non-owner operand types require annotation. No result context selects a signature.
+- id: operator-update-replacement
+  rules:
+  - MUD-TYPE-028
+  source: v *= factor
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies writable Vector2 destination and admitted Vector2 * Num returning storable Vector2.
+    It computes an absolute replacement. Concurrent differing proposals conflict rather than multiply factors.

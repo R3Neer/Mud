@@ -1,3 +1,6 @@
+-- Alias operator declarations/operands retain SurfaceRef provenance.
+-- Their candidate/identity contract remains unspecified; no selected target,
+-- inferred operand/result type or type-dependent anchor is manufactured.
 -- Named pattern leaves use ordinary computed/stored/iterator LocalSymbol kinds.
 -- Ordinals follow textual depth-first leaf order; discards create no symbol or edge.
 -- Type holes have SurfaceRef provenance only, no symbol, inferred type or HIR payload.

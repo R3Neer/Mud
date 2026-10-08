@@ -11,8 +11,10 @@ depends-on:
   - "[[05-source-text]]"
   - "[[09-abstract-syntax]]"
 questions:
+  - Q-075
   - Q-014
 decisions:
+  - D-146
   - D-137
   - D-136
   - D-134
@@ -395,3 +397,7 @@ The existing nominal-HIR contract represents these symbols and references withou
 Foreign operations require checked or explicitly trusted type/effect contracts. Read-only native parameters alone do not establish purity. Contracts identify captures, conversions, reads, authorised writes, determinism, static evaluation, Error translation and isolation/lifetime obligations. English tooling identifies trusted obligations at their call sites. Unknown effects cannot silently become pure. The surrounding block's capabilities remain authoritative; native private mutation does not grant world writes.
 
 Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
+
+## Alias operator resolution boundary
+
+Operator source names and type references retain SurfaceRef provenance. Operand bindings belong to the declaration's body scope, not the alias payload or field catalogue. No semantic signature selection or inferred result enters nominal HIR. Candidate discovery, inheritance, public identities and descriptor/metadata exposure are [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]; the established named-call anchor scheme must not be silently reused as a type-dependent operator identity. Preserve declaration/operand provenance for subsequent checking without asserting a selected target or a new public anchor.

@@ -18,6 +18,7 @@ questions:
   - Q-069
   - Q-070
 decisions:
+  - D-146
   - D-140
   - D-139
   - D-137
@@ -87,7 +88,7 @@ Re-evaluation is conceptual: caching is permitted only when it preserves values,
 
 Assignment resolves an authorised destination and evaluates its RHS on the current private view. A complete exact-key assignment may insert an absent final association. MissingIntermediate produces no intent for a partial path. Otherwise append a replacement/update intent and project the new private value under the established operation laws. Domain/type checks remain mandatory; permitted temporary stored-cardinality deviations follow section 9.
 
-For assignment, record an absolute replacement, even when the RHS reads the target. `x = x + 5` is not `x += 5`. For arithmetic updates retain signed addition/subtraction amounts and multiplication/division operands; for collection updates retain the specified algebraic operator. No unsupported overload is inferred.
+For assignment, record an absolute replacement, even when the RHS reads the target. `x = x + 5` is not `x += 5`. For incorporated arithmetic updates retain signed addition/subtraction amounts and multiplication/division operands; for incorporated collection updates retain the specified algebraic operator. An update selecting an alias-authored overload instead computes and records an absolute replacement, after locating the destination once and evaluating its RHS once. Errors write no result. Concurrent replacements use ordinary agreement/conflict, not inferred factor or set composition.
 
 > [!rule] MUD-EFFECT-008 — Semantic replacement normalisation
 > A later absolute replacement supersedes earlier intents of that branch within its replaced destination/subtree. It does not erase sibling contributions. Retain subsequent relative/descendant changes. Equal concurrent replacements at one semantic destination merge; unequal ones fault. A whole-container replacement supplies the base for compatible surviving descendant changes. Reconstruct immutable ancestors once after their semantic component intents have composed.

@@ -695,6 +695,18 @@
       "contract": "non effect result rejected",
       "entry": "A look or pure calculation occupies an effect-call candidate position.",
       "expected_trace": "Static rejection; a normal value query does not satisfy the effect contract."
+    },
+    {
+      "id": "alias-update-replacement",
+      "source": "A: v *= 2; B: v *= 3",
+      "scope": "Reviewed declarative fixture; no alias evaluation or selection engine.",
+      "contract": "Fixture overload returns different valid Vector2 replacements from one common entry. Proposals conflict under replacement rules; factors are not multiplied. A single branch performs ordinary sequential updates. A faulty overload writes no replacement.",
+      "entry": "Two independent branches share a Vector2 destination; uniquely supplied overload returns distinct valid replacements.",
+      "expected_trace": [
+        "Locate/evaluate the destination once in each private branch.",
+        "Compute each replacement with the selected overload.",
+        "Unequal concurrent replacements conflict; numeric factor composition is not used."
+      ]
     }
   ]
 }

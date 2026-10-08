@@ -1500,3 +1500,23 @@ productions:
     ast:
       disposition: normalized
       target: GenericTypeApplication
+  operator-declaration:
+    cst: OperatorDeclarationSyntax
+    ast:
+      disposition: normalized
+      target: operator_decl
+  operator-operand:
+    cst: OperatorOperandSyntax
+    ast:
+      disposition: normalized
+      target: OperatorOperand
+  overload-unary-operator:
+    cst: OverloadUnaryOperatorSyntax
+    ast:
+      disposition: normalized
+      target: prefix_operator
+  overload-binary-operator:
+    cst: OverloadBinaryOperatorSyntax
+    ast:
+      disposition: normalized
+      target: binary_operator

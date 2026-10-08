@@ -9,6 +9,7 @@ tags:
 status: in-preparation
 normative: true
 questions:
+  - Q-075
   - Q-009
   - Q-059
   - Q-069
@@ -18,6 +19,8 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-146
+  - D-145
   - D-013
   - D-107
   - D-108
@@ -928,3 +931,5 @@ MUD 1.0 will be formally specified when:
 9. End-to-end examples do not depend on implicit behaviour.
 10. An implementation can objectively declare its degree of conformance.
 11. Every world/package, adapter, library and patch feature included in the target profile has an explicit applicable contract and conformance evidence; deferred features and unselected protocols are identified without presenting design examples as accepted schemas.
+
+Accepted alias operator signatures/result inference, direct nested collection suffixes and non-collapsed empty members are integrated in the developed static/syntax surfaces. Full alias operator lookup, inheritance and public identity remain Q-075; chapter completion and publication still require their applicable gates.

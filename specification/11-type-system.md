@@ -10,9 +10,11 @@ depends-on:
   - "[[03-notation]]"
   - "[[10-names-and-anchors]]"
 questions:
+  - Q-075
   - Q-073
   - Q-060
 decisions:
+  - D-146
   - D-145
   - D-144
   - D-140
@@ -60,7 +62,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. The public TypeKind core categories are specified below; their complete extensibility and projection contract remains Q-060.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; unresolved discovery/identity boundaries remain Q-075. The public TypeKind core categories are specified below; their complete extensibility and projection contract remains Q-060.
 
 ## 1. Environments and judgements
 

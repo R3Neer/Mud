@@ -4,6 +4,11 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-146
+  - D-145
+  - D-144
+  - D-143
+  - D-142
   - D-137
   - D-136
   - D-135

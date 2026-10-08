@@ -10,6 +10,7 @@ depends-on:
   - "[[11-type-system]]"
   - "[[15-fields-and-mutability]]"
 questions:
+  - Q-075
   - Q-073
   - Q-007
   - Q-023
@@ -17,6 +18,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-146
   - D-145
   - D-143
   - D-142
@@ -187,6 +189,18 @@ Logical not, and, or, xor, implication and equivalence require singleton Bool re
 The marker erased is metalanguage, not Bool or a stored value. Negation preserves erased. A binary and/or with one erased child retains the other; two erased children remain erased. With exactly one erased operand, canonical equality closes to true and inequality/xor to false; with both erased, each complete owner closes to true. Ordinary truth-table rewrites must not precede deletion if they change these results.
 
 For each enumerated source member, a wholly erased predicate closes to true. A nonempty source then satisfies exists and forall; the empty-source results remain false and true respectively. Selection retains all members, count counts all members, and min/max select the first/last accepted witness in the required semantic order. Empty selection/min/max yield empty and empty count zero. All ordinary finiteness, enumeration, purity and order proofs still apply. Pruning across speculative and error boundaries remains [[../notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]].
+
+### Alias-owned operator signatures
+
+> [!rule] MUD-TYPE-028 — Declared alias operator contract
+> Only unary + and - and binary +, -, *, /, %, |, &, ^, -- are overloadable. Every declaration belongs to an alias and has at least one operand of its owner applied type. A bare operand has that type; an annotated operand is grouped as (name: type). The optional result follows a colon and the value body follows :=. The body obeys ordinary ValueBlock purity, capability, termination and error contracts. Equality, ordering, logical/contextual operations and assignment are not directly overloadable.
+
+Each declaration introduces only its written ordered signature. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator candidate discovery, inheritance, builtin intersections, union/collection matching and public identity remain [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
+
+> [!rule] MUD-TYPE-029 — Operator result contextual preference
+> An explicit result contract takes precedence. Without one, an untyped returned tuple first checks construction of the owner alias under its complete contract. If that fails, form the set of distinct operand types admitting its contextual construction. A singleton set selects that type; more than one requires an explicit result or expression type. If none fits, use ordinary structural inference. Typed values retain their nominal identity; no implicit alias conversion is introduced.
+
+Fit includes component names/order, types, cardinalities, domains and authority, not arity alone. This preference is confined to operator result inference. A tuple fitting the owner and another operand type takes the owner. A tuple fitting two other nominal operand types requires annotation. Source examples inside Vector2 are `a + b: Vector2 := (a.x + b.x, a.y + b.y)` and `a * (factor: Num) := (a.x * factor, a.y * factor)`. The explicit inverse is `(factor: Num) * b: Vector2 := b * factor`.
 
 ## 5. Equality, comparisons, membership and narrowing
 

@@ -11,6 +11,7 @@ depends-on:
 questions:
   - Q-023
 decisions:
+  - D-146
   - D-137
   - D-133
   - D-019
@@ -178,6 +179,8 @@ Handlers run after the protected scope has rolled back. Their bindings are immut
 
 ## 8. Elaboration and conformance
 
-Elaboration records storage roots, reconstructible paths, generation dependencies, authorised footprints, per-block proof obligations and permitted runtime overlap checks. It preserves update classes for consolidation rather than rewriting every update into assignment. It does not add those fields to nominal HIR or prescribe a semantic IR layout.
+Elaboration records storage roots, reconstructible paths, generation dependencies, authorised footprints, per-block proof obligations and permitted runtime overlap checks. It preserves incorporated operator update classes for consolidation; user-overloaded updates retain their computed replacement class rather than acquiring an inferred algebra. It does not add those fields to nominal HIR or prescribe a semantic IR layout.
 
 Conformance instances in [[types/typing-cases.yaml]] cover writable invariance, nested capability boundaries, private-region mutation, cardinality-preserving replacement, rejected unknown cardinality and residual key overlap. Full operational wave correctness and dynamic lifetime/acyclicity proofs remain separately scoped.
+
+Alias-overloaded compound updates use an admitted binary signature with the destination as its left operand and a result admissible at that destination. Resolve the place once and evaluate the RHS once; a failed calculation supplies no write. Preserve ordinary reconstructible-path write-back and authority. Such updates contribute absolute replacements; the numeric/set consolidation laws are not inferred from the token. [[28-effects]] defines replacement agreement/conflict.
