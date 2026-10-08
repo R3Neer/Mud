@@ -142,7 +142,7 @@ Category hard keywords already present in the grammar may appear bare in express
 
 Categorical narrowing admits forms such as `declaration is rule`, `declaration is action`, `declaration is subaction` and `declaration is thing`. `~type` does not replace this classification.
 
-The complete catalogue of `TypeKind` members belongs to the type-system specification; this decision does not invent that catalogue.
+Selected TypeKind categories and the public-exterior principle are fixed by [[ADR-144-public-type-kind-categories|D-144]]. The complete descriptor/projection and extensibility contract remains Q-060.
 
 ### Signatures and participants
 

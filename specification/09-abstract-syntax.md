@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-144
   - D-137
   - D-135
   - D-134
@@ -961,3 +962,5 @@ Foreign operations require checked or explicitly trusted type/effect contracts. 
 Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
 
 LocalStatementBlock groups statements within the owning ValueBlock and shares its error channel; it is not an independent value-result block or handler owner. Declaration/schema/metadata braces are not evaluated expression, value or effect blocks. Otherwise may attach to their contained initializer computations, not to the declaration braces themselves.
+
+Public reflective categories are defined in [[11-type-system#Public TypeKind categories]]; they are not AST constructors. Public Tuple/Dictionary naming does not rename the syntactic product or ExactDictionaryType constructors.

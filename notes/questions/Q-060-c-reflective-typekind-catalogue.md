@@ -3,9 +3,10 @@ id: Q-060
 title: Reflective `TypeKind` catalogue
 priority: P1
 opened: 2026-08-16
-resolved: false
+resolved:
 closed:
 decisions:
+  - D-144
   - D-087
 affects:
   - specification/09-abstract-syntax.md
@@ -24,22 +25,20 @@ D-087 makes `Type~kind` observable, but deliberately leaves the concrete `TypeKi
 
 ## Already decided
 
-- Every value exposes `~type: Type`.
-- `Type` exposes `~kind`.
-- The `TypeKind` catalogue is part of the reflective API and must not automatically be confused with internal compiler constructors.
+D-144 and MUD-TYPE-026 fix the public exterior principle and selected categories, including Tuple, Dictionary, FunctionalDictionary, distinct descriptors and callable groups. Applied generics retain their constructor category. The author chooses additions rather than an exhaustive closed-per-version catalogue; standard categories cannot be reclassified.
 
-## Outstanding
+## Pending
 
-- C1: Enumerate the minimum public categories of MUD 1.0.
-- C2: Decide which catalogue changes are compatible between versions.
-- C3: Define the relation between a public category and normalised internal forms the compiler may use.
+- Complete the descriptor category inventory and deterministic projection boundaries, including singleton/normalized anonymous forms.
+- Choose extension identity and registration, collision handling and catalogue compatibility rules.
+- Define how the extensible reflective catalogue relates to ordinary closed family contracts.
 
 ## Closure criterion
 
-- C1: A complete normative catalogue exists for MUD 1.0.
-- C2: The specification declares its observable stability.
-- C3: Every relevant internal form can be projected deterministically to a public `TypeKind` member without accidentally exposing implementation details.
+- C1: A complete normative core catalogue and projection exists.
+- C2: Extension identity, registration and observable compatibility are specified.
+- C3: Internal forms project without exposing incidental implementation nodes.
 
 ## Resolution
 
-Pending.
+Partially resolved by [[../decisions/ADR-144-public-type-kind-categories]]. The selected categories are accepted; the pending items are not implied by this choice.

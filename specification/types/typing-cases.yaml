@@ -2021,3 +2021,10 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A compatible ordered interval fixture yields two canonical maximal segments. Reordering does not alter keys; overlaps merge; excluded rational-point gaps do not. Signed stepping restarts per segment. The finite witness suite checks integral content only, not general endpoint normalization.
+- id: public-type-kind-exterior
+  rules:
+  - MUD-TYPE-026
+  source: 'Vector2~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies a nominal Vector2 alias. Its Type descriptor reports Alias regardless of tuple representation. Nat reports Basic; applied aliases remain Alias. The case does not claim completion of extension identity or anonymous normalization boundaries.

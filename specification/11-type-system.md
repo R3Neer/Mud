@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-060
 decisions:
+  - D-144
   - D-140
   - D-137
   - D-136
@@ -58,7 +59,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. The reflective TypeKind member catalogue remains Q-060; the descriptor typing rules here do not introduce members of that catalogue.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. The public TypeKind core categories are specified below; their complete extensibility and projection contract remains Q-060.
 
 ## 1. Environments and judgements
 
@@ -315,6 +316,25 @@ Nested products may remain whole under a name or be opened recursively. An alrea
 Exact dictionaries retain key traversal for a single name or discard. A positional root of exactly two positions selects association projection, even when the key itself has a positional representation; open that key within the first position if needed. The pattern only changes available predicate/body bindings. Selection retains accepted associations, and dictionary min/max retain their original accepted key witness rather than constructing an ordinary product from key/value bindings. Step, finiteness and usable-order requirements remain those of the original traversal.
 
 Stored local patterns evaluate the RHS once, validate the complete pattern and establish all immutable captures atomically; a failed RHS exposes no partial bindings. Derived patterns register live component projections of their common RHS. They have no writable root, and pure expression positions retain their ExpressionBlock restrictions. A completely discarded stored pattern still evaluates its RHS and enforces admission/error obligations; tooling may suggest removal only when no observable obligation is lost. Derived patterns retain derivation checks even when every component is discarded, but do not introduce eager reads or new effects solely to discard them.
+
+### Public TypeKind categories
+
+> [!rule] MUD-TYPE-026 — Public exterior classification
+> TypeKind classifies the public type exterior. An alias remains Alias regardless of its representation. Applied generics retain the constructor's public category; neither application nodes nor internal compiler constructors acquire a public kind merely by existing.
+
+| Public form | Selected category |
+| --- | --- |
+| Nat, Int, Num, Rum, Money, Text, Char, Bool | Basic |
+| Any | Any |
+| Nominal thing, alias, family | Thing, Alias, Family respectively |
+| Anonymous tuple, collection, union, interval | Tuple, Collection, Union, Interval respectively |
+| Exact dictionary; functional dictionary | Dictionary; FunctionalDictionary |
+| Linear magnitude; point magnitude (including cyclic points) | Magnitude; PointMagnitude |
+| Produced look/sublook result; message/submessage payload | LookResult; MessagePayload |
+| Action/subaction callable; look/sublook callable; Boolean-rule callable | ActionCallable; LookCallable; BooleanRuleCallable |
+| Type, field, participant, metadata, domain descriptor | TypeDescriptor, FieldDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor respectively |
+
+Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. The catalogue permits additions, so consumers must not assume the selected core exhausts future/extension categories. Standard forms retain their classification. Extension identities/registration, compatibility rules, complete descriptor inventory and remaining normalization/projection boundaries are [[../notes/questions/Q-060-c-reflective-typekind-catalogue|Q-060]]; this table does not claim a complete extensible-family schema.
 
 ## 10. Schemas, visibility and descriptor types
 

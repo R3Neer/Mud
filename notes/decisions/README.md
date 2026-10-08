@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 138.
-- Current: 134.
+- Total: 139.
+- Current: 135.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -157,6 +157,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-141 | current | 2026-10-07 | [[notes/decisions/ADR-141-contextual-newline-continuation|Contextual newline continuation]] |
 | D-142 | current | 2026-10-08 | [[notes/decisions/ADR-142-canonical-pruning-and-empty-filter-closures|Canonical pruning and empty-filter closures]] |
 | D-143 | current | 2026-10-08 | [[notes/decisions/ADR-143-discontinuous-interval-normal-form|Discontinuous interval normal form]] |
+| D-144 | current | 2026-10-08 | [[notes/decisions/ADR-144-public-type-kind-categories|Public TypeKind categories]] |
 
 ## Reserved identifiers
 
