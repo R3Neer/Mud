@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-147
   - D-146
   - D-133
   - D-128
@@ -11,7 +12,7 @@ decisions:
 
 # Effect conformance witnesses
 
-[[../28-effects]] specifies the effects and batch boundary. [[effect-cases.json]] maps the eight Surface AST effect constructors and nine assignment operators to chapter sections and contrasting cases. It includes bounded executable exact-arithmetic, lifecycle and dictionary witnesses, plus reviewed declarative traces for compound/adapter/invocation boundaries.
+[[../28-effects]] specifies the effects and batch boundary. [[effect-cases.json]] maps the nine Surface AST effect constructors and nine assignment operators to chapter sections and contrasting cases. It includes bounded executable exact-arithmetic, lifecycle and dictionary witnesses, plus reviewed declarative traces for compound/adapter/invocation boundaries.
 
 Run `python specification/effects/validate_effect_spec.py` and `python -m unittest discover -s specification/effects -p test_*.py`.
 

@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-147
   - D-146
   - D-145
   - D-143
@@ -1055,7 +1056,7 @@ The body directly contains its final Boolean condition. A false invariant yields
 
 ## Block error handlers
 
-Expression, value and effect blocks may carry an ordered list of `otherwise` handlers outside the protected body. Normalized short blocks have the same facility. Each handler has optional `on` bindings to aliases specialized from Error, optional `if`, and exactly one `then` or `raise`. Multiple on roles match jointly; no on is catch-all. Then recovery must preserve the protected block's result and effect contract. Raise returns one Error or a nonempty Errors value. `otherwise raise errorValue` is short catch-all sugar. Raise is restricted to a handler branch. Text-only diagnostics, Refusal bindings and a handler with both then and raise are invalid. No finally clause exists.
+Expression, value and effect blocks may carry an ordered list of `otherwise` handlers outside the protected body. Normalized short blocks have the same facility. Each handler has optional `on` bindings to aliases specialized from Error, optional `if`, and exactly one `then` or `raise`. Multiple on roles match jointly; no on is catch-all. Then recovery must preserve the protected block's result and effect contract. Raise evaluates a value body producing one Error or a nonempty Errors value, then enters the error channel without a normal result. `otherwise raise errorValue` is short catch-all sugar. Raise also occurs in executable expression/value/effect bodies and follows the same fault/recovery channel. Text-only diagnostics, Refusal bindings and a handler with both then and raise are invalid. No finally clause exists.
 
 ```mud
 then { counter.value += amount }
@@ -1881,3 +1882,7 @@ LocalStatementBlock groups statements within the owning ValueBlock and shares it
 ## Alias operator declarations
 
 Inside an alias body, binary declarations use `a * (factor: Num): Vector2 := value-body`; unary declarations use `-a: Vector2 := value-body`. Bare operands omit their owner-alias type, not required punctuation around a written type. Result annotations may be omitted. Existing expression precedence/grouping is unchanged. The overloadable set and static result contracts are specified in [[21-expressions#Alias-owned operator signatures]]. Representation-alias bodies may retain owner metadata followed by operators; operator bodies are ordinary value bodies, not implicit metadata owners.
+
+## Executable raise
+
+`raise value-body` is an expression form and may stand as a value/effect statement. Its payload and normal-result/error contracts follow [[21-expressions#9. Blocks and error recovery]]. It is not a declaration or a general escape from typing. Preserve the existing nearest-completed-block attachment rule for otherwise; braces distinguish a payload's recovery from recovery of the containing raised computation. A direct raise in an effect statement projects to RaiseEffect, not ActionCallCandidateEffect; a direct raise in a value statement projects to RaiseValueStatement.

@@ -161,3 +161,7 @@ expressions:
     cases:
     - structural-equality-calculated-body
     - structural-equality-values-rejected
+  RaiseExpr:
+    section: 9. Blocks and error recovery
+    cases:
+    - expression-raise-expr

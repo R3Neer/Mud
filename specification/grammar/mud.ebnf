@@ -722,6 +722,7 @@ value-statement
       | local-mutation
       | local-for-each
       | foreign-block
+      | raise-statement
       ;
 
 value-local-declaration
@@ -1030,7 +1031,12 @@ effect
       | destroy-effect
       | action-call-effect
       | for-each-effect
+      | raise-effect
       ;
+
+raise-expression ::= "raise" , value-body ;
+raise-effect ::= raise-expression ;
+raise-statement ::= raise-expression ;
 
 assignment-effect
     ::= assignable-expression , assignment-operator , value-expression ;
@@ -1273,6 +1279,7 @@ primary-expression
       | grouped-postfix-generic-type-application
       | literal
       | take-expression
+      | raise-expression
       | selection-expression
       | qualified-name
       | structural-literal

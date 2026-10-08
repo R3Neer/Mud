@@ -14,6 +14,7 @@ questions:
   - Q-073
   - Q-060
 decisions:
+  - D-147
   - D-146
   - D-145
   - D-144
@@ -362,7 +363,7 @@ Success is a nominal alias supplied by successful action evaluation. The interfa
 
 Errors is a nominal alias of a nonempty Error collection; ActionReply is the union Success | Refusal | Errors. Producing an Error or obtaining an ActionReply containing Errors is ordinary value production. Entering a block error channel is a separate evaluation outcome. Every block has an Error collection channel allowing zero occurrences; its normal result is available only when that channel is empty.
 
-Otherwise roles bind only Error specialisations, conjunctively and by occurrences. A then recovery checks against the protected block's normal contract and permissions; raise checks one Error or a nonempty compatible Errors collection. Refusal is never an Error binding. [[21-expressions]] defines the block typing rules.
+Otherwise roles bind only Error specialisations, conjunctively and by occurrences. A then recovery checks against the protected block's normal contract and permissions; raise checks one Error or a nonempty compatible Errors collection. Refusal is never an Error binding. Explicit raise in executable bodies has the same payload contract and no normal value; checking-only result contextualisation follows [[21-expressions#9. Blocks and error recovery]]. [[21-expressions]] defines the block typing rules.
 
 ## 12. Static acceptance and elaboration output
 

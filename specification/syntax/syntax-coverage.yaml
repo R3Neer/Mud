@@ -1520,3 +1520,18 @@ productions:
     ast:
       disposition: normalized
       target: binary_operator
+  raise-expression:
+    cst: RaiseExpressionSyntax
+    ast:
+      disposition: normalized
+      target: RaiseExpr
+  raise-effect:
+    cst: RaiseEffectSyntax
+    ast:
+      disposition: normalized
+      target: RaiseEffect
+  raise-statement:
+    cst: RaiseStatementSyntax
+    ast:
+      disposition: normalized
+      target: RaiseValueStatement

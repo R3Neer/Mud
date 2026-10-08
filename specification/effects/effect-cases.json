@@ -33,6 +33,10 @@
     "ForEachEffect": [
       "7",
       "unordered-reduction"
+    ],
+    "RaiseEffect": [
+      "2",
+      "explicit-raise-fault"
     ]
   },
   "operators": {
@@ -706,6 +710,17 @@
         "Locate/evaluate the destination once in each private branch.",
         "Compute each replacement with the selected overload.",
         "Unequal concurrent replacements conflict; numeric factor composition is not used."
+      ]
+    },
+    {
+      "id": "explicit-raise-fault",
+      "contract": "Explicit Error faults use existing protected-block recovery and skip dependent continuation. Error values alone do not fault.",
+      "entry": "An effect block has prior tentative work, a valid Error payload and an enclosing compatible recovery.",
+      "source": "raise problem",
+      "expected_trace": [
+        "Evaluate the payload once under existing permissions.",
+        "Produce Fault, skip dependent continuation and roll back the failed scope.",
+        "Run producing-block recovery; propagate only unhandled errors."
       ]
     }
   ]

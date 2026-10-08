@@ -18,6 +18,7 @@ questions:
   - Q-069
   - Q-070
 decisions:
+  - D-147
   - D-146
   - D-140
   - D-139
@@ -83,6 +84,8 @@ Refuse/Fault stops dependent evaluation and skips the remaining statements. The 
 Calculated local statements extend $\rho$ with a live derivation over the preceding lexical environment, without allocating or capturing its result. At each actual read, evaluate its RHS under the applicable current private view; computing faults propagate from that read. Stored local statements evaluate their initialiser once and allocate admitted frame-local storage with the resulting value and permissions. Stored positional patterns evaluate one RHS and install all immutable captures atomically; derived patterns install component-projection derivations. RHS names resolve before introducing any new leaf. Both forms obey no-shadowing/no-forward-reference and retain their owner capabilities. Local mutation does not acquire world authority.
 
 Re-evaluation is conceptual: caching is permitted only when it preserves values, errors, dependencies and contextual random-point/temporal observations. A derived ValueBlock creates fresh confined private computation for a read; its temporary storage does not become the derived local's storage. Lexically captured names are not rebound by later declarations. No derived read opens an independent world effect or changes concurrent branch ordering.
+
+RaiseEffect evaluates its RaiseExpr payload using ordinary value permissions, then supplies Fault and no world-update intent. Stop dependent continuation and apply the existing producing-block recovery/rollback before outward propagation. An Error-valued expression without raise does not fault by shape alone.
 
 ## 3. Assignment and relative update
 
@@ -179,4 +182,4 @@ This finite batch algorithm does not decide which causal wave comes next or cert
 
 ## 10. Coverage and conformance
 
-[[effects/README]] maps all eight current Surface AST effect constructors and nine assignment operators to these sections. It contains contrasting declarative traces and bounded executable witnesses for sequencing and composition. Its validator checks finite witnesses and inventory synchronisation; it is not a MUD parser/typechecker/runtime or a proof about arbitrary native code, predicates, cycles or numeric portability.
+[[effects/README]] maps all nine current Surface AST effect constructors and nine assignment operators to these sections. It contains contrasting declarative traces and bounded executable witnesses for sequencing and composition. Its validator checks finite witnesses and inventory synchronisation; it is not a MUD parser/typechecker/runtime or a proof about arbitrary native code, predicates, cycles or numeric portability.

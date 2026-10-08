@@ -18,6 +18,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-147
   - D-146
   - D-145
   - D-143
@@ -277,8 +278,22 @@ ExpressionBlock introduces sequential immutable pure preamble values and one fin
 
 Handler on bindings are clause-local immutable Error specialisations. All roles must bind jointly; no on is catch-all. A handler's optional if is an externally pure singleton-Bool expression block. False leaves occurrences pending; errors produced while calculating the filter go outward.
 
+> [!rule] MUD-TYPE-030 — Explicit fault production
+> Raise evaluates its value body under the current permissions and requires one Error or a nonempty Errors-compatible collection. On success it produces Fault(E), preserving distinct occurrences and providing no normal value. It can check against any otherwise well-formed expected normal-result contract without fabricating an inhabitant. Without a determining result context, raise alone does not infer a nominal normal type. No source bottom/never value is introduced.
+
+Let $\mathsf{ErrorPayload}$ denote the existing singleton-Error or nonempty-Errors checking contract, not a new source type. For every well-formed expected normal contract $\tau$:
+
+$$
+\frac{\mathcal C\vdash b\Leftarrow\mathsf{ErrorPayload}\triangleright(\epsilon,O)}
+{\mathcal C\vdash\mathsf{raise}\ b\Leftarrow\tau\triangleright(\epsilon,O)}\;\mathsf{E\text{-}Raise}.
+$$
+
+Payload faults use ordinary computation recovery. A successful payload v supplies Fault(occurrences(v)); there is no Normal result. Text, Refusal and empty cannot be successful payloads. Uncertain domain/cardinality admission uses only the existing authorised checking rules; a failed check follows the ordinary error channel. Producing or returning Error values without raise remains Normal.
+
+Expression/value/effect bodies, including operator implementations, can explicitly fault. The producing block handles the fault first; unhandled errors propagate through existing nested-block/call/invocation contracts. Explicit ActionReply capture retains its existing observation boundary. Raised handler errors leave that chain; nested payload blocks retain their own handlers. The failed scope rolls back before recovery and dependent continuation is skipped. All source remains statically resolved/typed. Raise adds no world authority in pure contexts, no return/break/continue and no finally. An unhandled fault in a required static initializer makes the declaration inadmissible.
+
 > [!rule] MUD-TYPE-013 — Recovery alternatives
-> Then recovery checks against the protected normal result and mode. Raise checks an Error or nonempty Errors-compatible collection and is confined to a handler branch. Then and raise cannot coexist in one handler. Text-only diagnostics, Refusal bindings and arbitrary in-body raise are static errors.
+> Then recovery checks against the protected normal result and mode. Raise checks an Error or nonempty Errors-compatible collection and is also admitted in executable bodies. Then and raise cannot coexist in one handler. Text-only diagnostics and Refusal bindings are static errors.
 
 Distinct equal-valued error occurrences are not deduplicated. Clauses handle remaining occurrences in textual/stable causal order; ordinary role binding does not introduce implicit inequality. Protected-body locals and partial exports are unavailable after rollback. Valid enclosing locals and handler bindings remain available.
 

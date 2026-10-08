@@ -1556,16 +1556,18 @@ syntax_nodes:
     - expression-body
   effect:
     kind: EffectSyntax
-    rhs: "foreign-block\n      | assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n      | destroy-effect\n      | action-call-effect\n      | for-each-effect"
+    rhs: "foreign-block\n      | assignment-effect\n      | add-effect\n      | remove-effect\n      | create-effect\n\
+      \      | destroy-effect\n      | action-call-effect\n      | for-each-effect\n      | raise-effect"
     references:
-    - foreign-block
-    - assignment-effect
+    - action-call-effect
     - add-effect
-    - remove-effect
+    - assignment-effect
     - create-effect
     - destroy-effect
-    - action-call-effect
     - for-each-effect
+    - foreign-block
+    - raise-effect
+    - remove-effect
   assignment-effect:
     kind: AssignmentEffectSyntax
     rhs: assignable-expression , assignment-operator , value-expression
@@ -1884,11 +1886,12 @@ syntax_nodes:
     - role-name
   primary-expression:
     kind: PrimaryExpressionSyntax
-    rhs: generic-family-member | explicit-generic-type-application | grouped-postfix-generic-type-application | literal
-      | take-expression | selection-expression | qualified-name | structural-literal | collection-literal | interval-expression
-      | quantity-expression | point-component-expression | quantifier-expression | random-expression | "thing" | "alias"
-      | "family" | "magnitude" | "rule" | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" |
-      "test" | "(" , expression , ")"
+    rhs: "generic-family-member\n      | explicit-generic-type-application\n      | grouped-postfix-generic-type-application\n\
+      \      | literal\n      | take-expression\n      | raise-expression\n      | selection-expression\n      | qualified-name\n\
+      \      | structural-literal\n      | collection-literal\n      | interval-expression\n      | quantity-expression\n\
+      \      | point-component-expression\n      | quantifier-expression\n      | random-expression\n      | \"thing\"\
+      \ | \"alias\" | \"family\" | \"magnitude\" | \"rule\"\n      | \"action\" | \"subaction\" | \"look\" | \"sublook\"\
+      \ | \"message\" | \"submessage\" | \"test\"\n      | \"(\" , expression , \")\""
     references:
     - collection-literal
     - explicit-generic-type-application
@@ -1901,6 +1904,7 @@ syntax_nodes:
     - qualified-name
     - quantifier-expression
     - quantity-expression
+    - raise-expression
     - random-expression
     - selection-expression
     - structural-literal
@@ -2241,12 +2245,14 @@ syntax_nodes:
     - local-pattern-declaration
   value-statement:
     kind: ValueStatementSyntax
-    rhs: "value-local-declaration\n      | local-mutation\n      | local-for-each\n      | foreign-block"
+    rhs: "value-local-declaration\n      | local-mutation\n      | local-for-each\n      | foreign-block\n      |\
+      \ raise-statement"
     references:
-    - value-local-declaration
-    - local-mutation
-    - local-for-each
     - foreign-block
+    - local-for-each
+    - local-mutation
+    - raise-statement
+    - value-local-declaration
   file-metadata-assignment:
     kind: FileMetadataAssignmentSyntax
     rhs: '"~" , metadata-name , ( "=" , constant-expression | ":" , stored-type-expression , [ "=" , constant-expression
@@ -2415,3 +2421,18 @@ syntax_nodes:
     kind: OverloadBinaryOperatorSyntax
     rhs: '"+" | "-" | "*" | "/" | "%" | "|" | "&" | "^" | "--"'
     references: []
+  raise-expression:
+    kind: RaiseExpressionSyntax
+    rhs: '"raise" , value-body'
+    references:
+    - value-body
+  raise-effect:
+    kind: RaiseEffectSyntax
+    rhs: raise-expression
+    references:
+    - raise-expression
+  raise-statement:
+    kind: RaiseStatementSyntax
+    rhs: raise-expression
+    references:
+    - raise-expression

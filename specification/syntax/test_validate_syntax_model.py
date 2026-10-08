@@ -109,9 +109,9 @@ class StaticSchemaContractTests(unittest.TestCase):
 
     def test_field_effect_constructor_is_rejected(self):
         bad = self.ast.replace(
-            'effect = ForeignBlockEffect',
+            'effect = RaiseEffect',
             'effect = AddFieldEffect(stored_field_data field, declaration_ref target)\n'
-            ' | ForeignBlockEffect',
+            ' | RaiseEffect',
         )
         self.assertTrue(static_schema_contract_problems(self.grammar, bad))
 

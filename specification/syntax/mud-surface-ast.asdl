@@ -478,7 +478,8 @@ module MUDSurface {
                              recovery_handler* handlers)
         attributes (source_origin origin)
 
-    value_statement = LocalPatternValueStatement(local_pattern_decl value)
+    value_statement = RaiseValueStatement(expr raised)
+                    | LocalPatternValueStatement(local_pattern_decl value)
                     | LocalCalculatedValueStatement(local_calculated_decl value)
                     | LocalStoredValueStatement(local_stored_decl value)
                     | LocalMutationValueStatement(local_mutation value)
@@ -601,7 +602,8 @@ module MUDSurface {
     -- Efectos
     -- -----------------------------------------------------------------
 
-    effect = ForeignBlockEffect(foreign_block value)
+    effect = RaiseEffect(expr raised)
+           | ForeignBlockEffect(foreign_block value)
            | AssignmentEffect(assignable_expr target,
                               assignment_operator operator,
                               expr value)
@@ -641,7 +643,8 @@ module MUDSurface {
     -- Expresiones
     -- -----------------------------------------------------------------
 
-    expr = DottedPathExpr(identifier_name first,
+    expr = RaiseExpr(value_block errors)
+         | DottedPathExpr(identifier_name first,
                           identifier_name* remaining)
          | ExactNumberLiteral(string canonical)
          | RumberLiteral(string canonical)

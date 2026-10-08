@@ -2059,3 +2059,42 @@ cases:
   expected: static-accept
   contract: Fixture supplies writable Vector2 destination and admitted Vector2 * Num returning storable Vector2.
     It computes an absolute replacement. Concurrent differing proposals conflict rather than multiply factors.
+- id: expression-raise-expr
+  rules:
+  - MUD-TYPE-030
+  source: raise problem
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies an Error value and expected Num normal result. Raise checks but has no normal value;
+    it supplies Fault, while problem alone is an ordinary Error value.
+- id: raise-empty-rejected
+  rules:
+  - MUD-TYPE-030
+  source: raise empty
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Empty is not an admitted Error/nonempty Errors payload. Refusal and Text are also invalid payloads.
+- id: raise-pure-context
+  rules:
+  - MUD-TYPE-030
+  source: raise problem
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A pure executable owner may fault but receives no world-write authority. All skipped continuation remains
+    statically checked.
+- id: raise-nested-recovery
+  rules:
+  - MUD-TYPE-030
+  source: '{ raise problem } otherwise then replacement'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies Error problem and compatible normal replacement. The producing protected block recovers
+    first; only unhandled errors propagate outward. Newly raised handler errors do not reenter that chain.
+- id: raise-static-initializer
+  rules:
+  - MUD-TYPE-030
+  source: 'initial: Num = raise problem'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture is a required closed-static initializer with an unhandled raised Error. No value exists to materialize
+    the declaration.

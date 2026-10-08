@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-147
   - D-146
   - D-145
   - D-144
@@ -970,3 +971,5 @@ Public reflective categories are defined in [[11-type-system#Public TypeKind cat
 NestedCollectionType preserves collection-valued members inside TypeExpr; direct suffixes and explicit grouping retain the same layer structure without an extra implicit singleton.
 
 AliasOperatorDecl wraps UnaryOperatorDecl/BinaryOperatorDecl, preserving operand annotations, optional result contracts and ordinary value bodies. Representation aliases retain an operator list outside their payload. No inverse or update declaration is synthesized.
+
+RaiseExpr retains its error-producing ValueBlock. RaiseValueStatement and RaiseEffect wrap that expression in executable statement positions; RecoverRaise retains the existing handler-branch distinction. No normal result or implicit throwing of Error-valued expressions is synthesized.

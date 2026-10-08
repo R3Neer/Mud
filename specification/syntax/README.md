@@ -142,3 +142,5 @@ Generic header/application and structural-type comparison distinctions are guard
 - test_nested_collection_contract.py checks preclassified direct/grouped suffix fixtures and the retained layer wrapper, without scanning or typechecking Mud source.
 
 - test_operator_contract.py checks preclassified alias-operator signatures and the closed token set; overload discovery, inherited selection and public identity are not implemented.
+
+- test_raise_contract.py checks preclassified executable raise and recovery grouping fixtures. Nested fault/recovery outcomes in static/effect corpora remain reviewed certificates, not runtime execution tests.
