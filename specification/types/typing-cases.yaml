@@ -2179,3 +2179,34 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Admitted action root and speculative isolation yield ordinary ActionReply. Internal Boolean pruning does not propagate erasure as an ActionReply value; imagine in a deleted inactive call argument is not evaluated.
+
+- id: finite-snapshot-unbounded-static-size
+  rules: [MUD-TYPE-033]
+  source: 'forall x in items: x >= 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied items is a concrete Int [*] collection snapshot and the predicate terminates. Each actual collection is finite; no uniform finite upper cardinality is necessary for this traversal.
+- id: infinite-int-all-rejected
+  rules: [MUD-TYPE-033]
+  source: 'items: Int [*] = all'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The full integer domain is infinite. An unbounded static cardinality does not supply an infinite collection or lazy generator.
+- id: rum-all-language-enumeration-rejected
+  rules: [MUD-TYPE-033]
+  source: 'numbers: Rum [*] = all'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Rum binary64 is mathematically finite/countable, but no canonical enumeration of its full numeric domain is provided. This is not an uncountability argument.
+- id: finite-rum-container-traversal
+  rules: [MUD-TYPE-033]
+  source: 'forall x in [r0.1, r0.2]: x >= r0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The explicit finite collection supplies its enumeration; no Rum progression or exact/approximate conversion is introduced.
+- id: bounded-rational-grid
+  rules: [MUD-TYPE-033]
+  source: 'numbers: Num in 0..1 by 0.2 [6] = all'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Exact step one fifth selects six points. It does not enumerate all rationals in the bounded interval, whose member set is infinite.

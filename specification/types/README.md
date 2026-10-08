@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-151
   - D-150
   - D-149
   - D-148
@@ -44,6 +45,6 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 
 - test_pruning_witnesses.py checks finite Bool/erased kernel pairs and demand sharing, plus empty/nonempty no-filter witnesses. It also checks the selected standalone derived/stored, prefix-fault and erased-initial-goal boundaries. Full compositional short-circuit/prefix demand remains outside these certificates.
 
-- test_interval_witnesses.py checks supplied finite integral segment normal forms and descending step restart. Continuous and domain-dependent interval normalization remain semantic review obligations.
+- test_interval_witnesses.py checks supplied finite integral segment normal forms and descending step restart. It also contrasts a supplied exact rational grid with a rational inside the bounds but outside the grid. Continuous and domain-dependent interval normalization remain semantic review obligations.
 
 - operator_contract_witnesses.py and test_operator_contract_witnesses.py check supplied finite operand-admission sets: strict specificity, crossed ambiguity, source-origin deduplication, duplicate local declarations, narrowed union coverage and direct/builtin/lifting priority. They do not discover Mud candidates, infer source types, encode arbitrary anchors or execute operator bodies.

@@ -43,7 +43,7 @@ min x in source : predicate
 max x in source : predicate
 ```
 
-The domain must be finite and countable. Evaluation is pure. The five bodies are Boolean predicates. `min` and `max` return the first or last accepted witness according to the source's semantic order; they require a source with a usable order. These are partial queries: if no witness is accepted, they produce `empty` with cardinality `[0..1]`; otherwise they produce a value of the source member type. The result is a problem only when a later receiving context does not support cardinality zero, in accordance with D-095.
+The source must be finite and have an admitted canonical enumeration; mathematical countability alone is insufficient. Evaluation is pure. The five bodies are Boolean predicates. `min` and `max` return the first or last accepted witness according to the source's semantic order; they require a source with a usable order. These are partial queries: if no witness is accepted, they produce `empty` with cardinality `[0..1]`; otherwise they produce a value of the source member type. The result is a problem only when a later receiving context does not support cardinality zero, in accordance with D-095.
 
 D-081 Add a pure selection that returns the flags rather than consuming them:
 
@@ -85,10 +85,10 @@ A discontinuous interval is normalised into disjoint segments and traversed segm
 2. Gaps for `min` and `max` cause `empty`; any subsequent incompatibility follows the standard cardinality rules.
 3. A noticeable difference between an ordered and an unordered loop.
 4. Open, closed, discontinuous and stepped intervals.
-5. Rejection of a list `Rum` or infinite.
+5. Reject infinite domain enumeration and Rum interval progression; admit explicit finite collections of Rum values.
 6. Syntactic order `by` before `if` and linking dictionary pairs.
 
 ## Amendment by D-088
 
-D-088 generalises `by` compatible signed differences, evaluated once, and distinguishes between ordered filters (which see previous sequential effects) and unordered filters (which read the snapshot (initial). The five quantifiers support `by` when the source defines progression and Boolean expression blocks. `Rum` remains uncountable, and the cyclic domains of point are covered over a maximum of one fundamental period.
+D-088 generalises `by` compatible signed differences, evaluated once, and distinguishes between ordered filters (which see previous sequential effects) and unordered filters (which read the snapshot (initial). The five quantifiers support `by` when the source defines progression and Boolean expression blocks. As corrected by [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]], Rum is mathematically finite/countable, but its numeric interval progression is not admitted. Explicit Rum collections retain container enumeration. Cyclic point domains cover at most one fundamental period.
 

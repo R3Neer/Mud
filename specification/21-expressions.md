@@ -18,6 +18,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-151
   - D-150
   - D-149
   - D-147
@@ -282,7 +283,7 @@ Exact dictionary operators operate on complete associations with their defined s
 
 ## 7. Domains, selection and finite traversal
 
-All D materialises a proved finite enumerable domain into a collection with its canonical enumeration guarantees. Any and unstepped general Num/Rum intervals do not acquire an enumeration. A stepped exact progression proves a compatible nonzero signed difference, finite bounds and its supported representation; Nat/Int and Money retain their default successor increments.
+All D materialises a proved finite canonically enumerable domain into a finite collection. [*] admits unbounded finite sizes, not infinite values. Neither contextual Int [*] = all nor Rum [*] = all is admitted for the full numeric domain. Exact rational Num domains are countably infinite; bounded endpoints alone do not make them finite. Rum has finitely many binary64 values, but no numeric domain/interval enumeration is supplied. Explicit finite Rum collections remain enumerable. Any and unstepped general Num/Rum intervals do not acquire an enumeration. Deferred internal realization must preserve the same finite snapshot, result, fault and dependency observations; it introduces no lazy source-language sequence type. A stepped exact progression proves a compatible nonzero signed difference, finite bounds and its supported representation; Nat/Int and Money retain their default successor increments.
 
 Selection binds source members only inside its predicate. It requires a captured finite enumerable source and a pure deterministic singleton-Bool predicate. It preserves surviving member identity, multiplicity, uniqueness, order and supplied inner authority; its conservative cardinality is $[0,u]$. An is predicate may narrow surviving alternatives. A bare domain is explicitly materialised when selection must return a collection. Dictionary pair selection retains complete associations.
 

@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-151
   - D-147
   - D-146
   - D-145
@@ -877,7 +878,7 @@ Each expression must be static and may contain zero, one or more activatable `th
 
 A `start with` may activate only declarations whose lifecycle is part-scoped. Contributions from all parts are combined before initial stabilisation. `Thing` is always active and is not part of the activatable collection.
 
-`all D` may materialise a countable domain when a contribution requires an explicit collection; `all` without an operand retains its contextual meaning.
+`all D` may materialise a finite domain with an admitted canonical enumeration when a contribution requires an explicit collection; `all` without an operand retains its contextual meaning.
 
 ## Participants
 
@@ -1309,7 +1310,7 @@ RemoveEffect always removes a value from a collection-compatible assignable targ
 
 ## `for each`, progressions, selection and quantifiers
 
-`for each` accepts any finite, countable source: collections, exact dictionaries, countable intervals, finite countable domains and any other value with canonical enumeration. An interval does not become a collection merely because it can be traversed.
+`for each` accepts any source with proved finiteness and an admitted canonical enumeration: collections, exact dictionaries, supported discrete intervals and finite canonically enumerable domains. An interval does not become a collection merely because it can be traversed.
 
 ```mud
 for each person in kingdom.people if person.hungry :
@@ -1366,6 +1367,8 @@ selected := x in source by step : {
 A selection directly returns the accepted instances and preserves provable multiplicity, uniqueness and order. Its predicate remains pure and deterministic.
 
 ### `take` and indexing
+
+All collections are finite values; [*] does not introduce infinite streams or generators. Contextual all and all D require complete finite canonical enumeration, not merely mathematical countability. Int [*] = all and Rum [*] = all are invalid for the full numeric domains. Rum binary64 values are mathematically finite, but the language supplies no enumeration of its full numeric domain or numeric intervals; explicit finite Rum collections retain their container enumeration.
 
 `take amount from source` retains its existing semantics. Because it produces a collection, a domain `D` cannot appear bare as `source`: it must be explicitly materialised as `all D`. On an ordered collection or a materialisation with canonical enumeration, it takes the prefix; on an unordered collection or dictionary, it takes a reproducible sample without replacement. Positional indexing still requires an observable order.
 

@@ -32,7 +32,7 @@ colors: Color in [Red, White] [2] = all
 numbers: Num in 0..1 by 0.2 [6] = all
 ```
 
-`by` turns a linear interval into a discrete domain. Its step is static, signed, non-zero, exact and compatible with the type or dimension. A positive step anchors at the lower bound and a negative step at the upper bound, in accordance with D-088. `Num` uses exact rational arithmetic; a `Rum` domain is not enumerable. Cardinality always uses square brackets and is independent of the domain.
+`by` turns a linear interval into a discrete domain. Its step is static, signed, non-zero, exact and compatible with the type or dimension. A positive step anchors at the lower bound and a negative step at the upper bound, in accordance with D-088. `Num` uses exact rational arithmetic; the full numeric Rum domain and Rum intervals have no admitted numeric enumeration. Finite explicit Rum containers/sets can have their own enumeration, as clarified by [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]]. Cardinality always uses square brackets and is independent of the domain.
 
 ### Contextual `all` literal
 

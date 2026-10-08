@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 145.
-- Current: 141.
+- Total: 146.
+- Current: 142.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -164,6 +164,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-148 | current | 2026-10-08 | [[notes/decisions/ADR-148-fixed-type-kind-family-and-normalized-projection|Fixed TypeKind family and normalized projection]] |
 | D-149 | current | 2026-10-08 | [[notes/decisions/ADR-149-alias-operator-selection-inheritance-and-reflection|Alias operator selection, inheritance and reflection]] |
 | D-150 | current | 2026-10-08 | [[notes/decisions/ADR-150-transparent-derived-boolean-pruning-boundaries|Transparent derived Boolean pruning boundaries]] |
+| D-151 | current | 2026-10-08 | [[notes/decisions/ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|Finite collections and mandatory enumeration proof basis]] |
 
 ## Reserved identifiers
 

@@ -118,7 +118,7 @@ If a runtime step is demonstrably zero, it is a static error. If this cannot be 
 
 A source that already has its own enumeration—for example a collection, exact dictionary or finite nominal domain—does not need `by` to be traversed. Default steps apply only when enumeration is constructed as a progression. In a source whose enumeration is constructed as a progression, `by` may be omitted only when the traversed type defines a canonical successor difference. MUD fixes `Nat -> 1`, `Int -> 1` and `Money -> 0.01`; omitting `by` always selects that positive difference. Other exact-progression types require an explicit step unless a decision defines a canonical successor.
 
-`Num` admits progression with an explicit exact step, but a general `Num` interval without a step is invalid. `Rum` retains D-034's prohibition: its intervals are never enumerable and do not admit `by` progression, either in iteration or stepped domains. An explicit collection of `Rum` values may be enumerated without `by` because its enumeration comes from the collection, not a numeric progression.
+`Num` admits progression with an explicit exact step, but a general `Num` interval without a step is invalid. `Rum` retains D-034's prohibition: its intervals have no admitted numeric enumeration and do not admit `by` progression, either in iteration or stepped domains. An explicit collection of `Rum` values may be enumerated without `by` because its enumeration comes from the collection, not a numeric progression.
 
 ## Stepped domains
 

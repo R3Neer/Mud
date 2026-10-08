@@ -188,7 +188,7 @@ A range of `Rum` you can declare a domain:
 value: Rum in [r0..r1]
 ```
 
-It is uncountable. Therefore, it cannot be a source of `for each` nor any other construction that requires an exhaustive list:
+Corrected by [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]]: binary64 has finitely many representable values, so Rum and its intervals are mathematically finite and countable. Mud does not supply numeric interval enumeration or approximate by progressions. Consequently, this interval cannot serve as that numeric progression source:
 
 ```mud
 action InvalidRumIteration for mut total: Rum {
@@ -222,5 +222,5 @@ That loop is invalid. The restriction prevents the approximate accumulation from
 8. Close conversion ties were settled as draws.
 9. Division by zero error and non-finite results.
 10. Normalisation of negative zero.
-11. Use of intervals `Rum` such as domain and rejection as a countable source.
+11. Rum intervals may constrain values but cannot supply numeric progression; explicit finite Rum collections remain traversable.
 

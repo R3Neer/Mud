@@ -13,7 +13,9 @@ questions:
   - Q-075
   - Q-073
   - Q-060
+  - Q-028
 decisions:
+  - D-151
   - D-149
   - D-148
   - D-147
@@ -196,7 +198,7 @@ A proof is a finite derivation from declared guarantees, established flow facts,
 
 The mandatory elementary rules include reflexivity, transitivity, intersection elimination, inclusion of normalised finite interval unions, interval arithmetic, declared nominal ancestry, constructor rules in this chapter, and checking all members of a finite explicit enumeration. Unbounded/symbolic predicates may remain unknown. Unknown differs from false; mandatory static obligations cannot be discharged by unknown.
 
-For a domain $D$, canonical enumeration requires a finite sequence with no duplicates whose set equals $D$, with the order required by the domain. Evidence may be a finite explicit set; a bounded integral/scale-two progression; an exact stepped rational progression with a compatible nonzero signed step; a finite family; a finite linked-world population snapshot; or finite products/unions/filterings of already witnessed domains. A filtering predicate must terminate and satisfy its owner's purity/determinism requirements. Unstepped general Num intervals, Rum intervals and Any are not enumerable.
+For a domain $D$, canonical enumeration requires a finite sequence with no duplicates whose set equals $D$, with the order required by the domain. Evidence may be a finite explicit set; a bounded integral/scale-two progression; an exact stepped rational progression with a compatible nonzero signed step; a finite family; a finite linked-world population snapshot; or finite products/unions/filterings of already witnessed domains. A filtering predicate must terminate and satisfy its owner's purity/determinism requirements. Unstepped general Num intervals, Rum intervals and Any have no admitted finite canonical domain enumeration. Rum binary64 values are mathematically finite/countable; the restriction on its numeric domain/interval enumeration is a language contract. Explicit finite Rum collections/sets obtain enumeration from their supplied members. Num's exact rational domain is countably infinite; bounded rational endpoints alone do not supply a finite enumeration.
 
 A static stepped domain uses the established signed progression to define membership: positive differences anchor at the lower bound, negative differences at the upper bound, and open starting bounds advance before the first candidate. Canonical materialisation orders the resulting members according to the domain, rather than copying descending traversal order. Finite bounds and nonzero compatible advance establish a finite number of candidates; zero advance cannot establish termination.
 
@@ -204,6 +206,11 @@ Enumeration of a recursive constructor type needs an explicit finite rank bound 
 
 > [!rule] MUD-TYPE-005 — No guessed proof
 > Mandatory static inclusion, writable invariance, termination and finite enumeration require evidence. Runtime admission checks may validate a particular value only where that context permits them; they cannot justify universal callable substitution or an unproven enumeration.
+
+> [!rule] MUD-TYPE-033 — Mandatory finite enumeration basis
+> Implementations must support the specified elementary proof rules and established finite source constructions. A finite collection snapshot needs no uniform finite static size bound. Enumerating a domain requires a complete finite canonical enumeration certificate; producing the source and evaluating each body retain their independent termination obligations. Unknown mandatory proof obligations are rejected statically, without trial truncation or a negative runtime answer.
+
+The minimum basis comprises finite explicit sets/collection snapshots, closed finite families, bounded integral or Money progressions, exact stepped rational progressions, finite linked-world population snapshots, and justified finite products/unions/filterings of enumerated domains. Use the premises and elementary inclusion/arithmetic rules above. A filter does not make an unenumerated infinite source enumerable; take does not turn all Int into a lazy prefix operation. Further conservative analysis limits and diagnostics remain [[../notes/questions/Q-028-f-finiteness|Q-028]]. A finite container value supplies no finite bound on all future worlds or recursively generated values.
 
 ## 6. Subtyping and guarantee inclusion
 
