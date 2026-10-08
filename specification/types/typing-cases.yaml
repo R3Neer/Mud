@@ -2117,3 +2117,34 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Supplied Field and Component descriptors project to FieldDescriptor and ComponentDescriptor. A declaration descriptor without an established specific category projects to DeclarationDescriptor; DeclarationKind remains separate.
+
+- id: operator-specific-static-selection
+  rules: [MUD-TYPE-031]
+  source: 'special * factor'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied SpecialVector subtype and Num operand admit both a Vector2 and SpecialVector signature; the unique narrower signature wins without result context or runtime dispatch.
+- id: operator-distinct-equal-signatures
+  rules: [MUD-TYPE-031]
+  source: 'a * b'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Two visible distinct declarations owned by A and B have the same A * B operands. Neither dominates; identical bodies or different result types do not disambiguate. Duplicate signatures within one owner are rejected even without use.
+- id: operator-union-and-narrowing
+  rules: [MUD-TYPE-031]
+  source: 'v * factor'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied Vector2 | Vector3 and Num alternatives each select uniquely, joining their results. After narrowing to Vector2 only that alternative is checked. Any missing or ambiguous remaining pair rejects the use.
+- id: operator-direct-collection-priority
+  rules: [MUD-TYPE-031]
+  source: 'v * factors'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied direct Vector2 * Num [2] wins over member lifting of Vector2 * Num. With no direct or builtin contract, restricted lifting is allowed only when at least one upper cardinality is at most one.
+- id: operator-no-alias-or-dimension-erasure
+  rules: [MUD-TYPE-031]
+  source: 'v * length'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Only Vector2 * Num is declared; Length uses Num representation but is not a scalar Num argument. A Scale representation alias is also not silently unwrapped. Builtin Length * Num remains dimension preserving.

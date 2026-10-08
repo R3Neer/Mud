@@ -18,6 +18,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-149
   - D-147
   - D-146
   - D-145
@@ -196,12 +197,31 @@ For each enumerated source member, a wholly erased predicate closes to true. A n
 > [!rule] MUD-TYPE-028 — Declared alias operator contract
 > Only unary + and - and binary +, -, *, /, %, |, &, ^, -- are overloadable. Every declaration belongs to an alias and has at least one operand of its owner applied type. A bare operand has that type; an annotated operand is grouped as (name: type). The optional result follows a colon and the value body follows :=. The body obeys ordinary ValueBlock purity, capability, termination and error contracts. Equality, ordering, logical/contextual operations and assignment are not directly overloadable.
 
-Each declaration introduces only its written ordered signature. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator candidate discovery, inheritance, builtin intersections, union/collection matching and public identity remain [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
+Each declaration introduces only its written ordered signature. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator selection follows the rules below; exact complex-signature identity encoding and the detailed reflective schema remain [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
 
 > [!rule] MUD-TYPE-029 — Operator result contextual preference
 > An explicit result contract takes precedence. Without one, an untyped returned tuple first checks construction of the owner alias under its complete contract. If that fails, form the set of distinct operand types admitting its contextual construction. A singleton set selects that type; more than one requires an explicit result or expression type. If none fits, use ordinary structural inference. Typed values retain their nominal identity; no implicit alias conversion is introduced.
 
 Fit includes component names/order, types, cardinalities, domains and authority, not arity alone. This preference is confined to operator result inference. A tuple fitting the owner and another operand type takes the owner. A tuple fitting two other nominal operand types requires annotation. Source examples inside Vector2 are `a + b: Vector2 := (a.x + b.x, a.y + b.y)` and `a * (factor: Num) := (a.x * factor, a.y * factor)`. The explicit inverse is `(factor: Num) * b: Vector2 := b * factor`.
+
+### Static operator selection
+
+> [!rule] MUD-TYPE-031 — Static alias operator selection
+> Resolve visible alias candidates on both operands, deduplicating originating declarations. An applicable signature must admit the complete effective operand contracts by ordinary static compatibility. Select one uniquely most-specific signature; equal or incomparable distinct candidates are ambiguous. Results, bodies, import order and runtime subtypes do not select signatures. A duplicate ordered operand signature within one declaring alias is a declaration error even when unused.
+
+Let $C(A,B)$ be the visible original declarations supplied by the aliases of the operands and their admissible ancestors. Preserve part/file access and inherited declaration provenance. Merely importing another unrelated alias adds no candidates. Names of operands and result contracts are not signature discriminants. Normalize operands with nominal identity preserved, not by alias-erasing structural type equality.
+
+For a binary candidate $s$ with operand contracts $P_s,Q_s$, define applicability by $A\preceq P_s$ and $B\preceq Q_s$. Candidate-local untyped literal checking follows ordinary contextual typing; no representation preference or implicit conversion is invented to break a tie. Define $s\prec t$ when $P_s\preceq P_t$ and $Q_s\preceq Q_t$, with at least one strict inclusion. A sole applicable candidate wins; with multiple candidates, one must strictly dominate every other distinct candidate. Unary selection uses the corresponding single operand relation. Unknown inclusion is not a proof of dominance.
+
+An inherited Vector2 * Num -> Vector2 implementation remains owned by Vector2 and returns Vector2 even when it admits a descendant. A descendant-specific declaration may dominate it; inherited bodies are not rewritten to construct descendant components. Reaching one originating declaration through a diamond contributes one candidate. Two distinct owners may each declare A * B, but a use seeing both equal signatures is ambiguous, even if their bodies agree. Changing the result annotation cannot repair this ambiguity.
+
+For union operands use the alternatives remaining after flow narrowing. Every possible pair must be independently admissible and uniquely selected; join their normal result contracts. An implementation may branch on the checked union alternative but must not discover new overloads from a more specific runtime subtype. A missing or ambiguous pair rejects the whole expression; current runtime population does not eliminate a static alternative.
+
+For each checked alternative pair, resolve direct explicit signatures on the complete operands before considering builtin operation contracts. If none is applicable, use an admitted builtin operation, otherwise try permitted arithmetic lifting. An ambiguous direct candidate set stops with an error. Execution errors, result-domain errors and unstorable destination results never trigger fallback. A Vector2 * Num [2] declaration therefore takes priority over lifting Vector2 * Num across a two-member collection.
+
+Binary overloads of +, -, *, / and % admit the same restricted member lifting as numeric arithmetic: at least one static operand upper cardinality is at most one and every possible member pair admits the operation. Preserve occurrence/cardinality and observable order contracts; preserve uniqueness only with non-collision evidence. Empty inputs execute no member bodies but do not waive static signature checks. No member lifting is introduced for |, &, ^ or --; their existing outer collection algebra is available when no direct overload applies.
+
+Representation aliases are not implicitly unwrapped for matching. A Scale alias represented by Num does not satisfy a Num operand merely by representation. Magnitudes retain dimensions: builtins reuse their admitted numeric representation signatures without requiring redeclarations, but a Length represented by Num is not a Num scalar argument. Magnitudes have only numeric representations Nat, Int, Num, Rum and Money; arbitrary-representation magnitudes and generalized dimensional vector operations are not part of this contract.
 
 ## 5. Equality, comparisons, membership and narrowing
 

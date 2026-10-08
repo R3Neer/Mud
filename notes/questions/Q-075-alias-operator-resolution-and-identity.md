@@ -6,6 +6,7 @@ opened: 2026-10-08
 resolved:
 closed:
 decisions:
+  - D-149
   - D-146
 affects:
   - specification/10-names-and-anchors.md
@@ -22,13 +23,12 @@ How are visible alias operator candidates discovered, inherited, disambiguated a
 
 ## Already decided
 
-D-146 fixes source signatures, owner participation, the overloadable set, result inference, explicit inverses and replacement-style derived updates. Proofs and metadata cannot select signatures. Result ambiguity requires annotation.
+D-146 fixes source signatures, owner participation, the overloadable set, result inference, explicit inverses and replacement-style derived updates. Proofs and metadata cannot select signatures. Result ambiguity requires annotation. D-149 fixes bilateral lookup, unique static specificity, original inheritance/diamond deduplication, union narrowing, restricted arithmetic lifting, explicit-before-builtin priority, duplicate declaration rejection, subordinate signature identity and descriptor catalogues.
 
 ## Pending
 
-- Define lookup across operand aliases and specializations, inheritance, diamond contributions, duplicate signatures and builtin/overload intersections.
-- Define public identity/anchors, descriptor exposure and metadata ownership without inventing a type-dependent nominal anchor accidentally.
-- Specify matching/lifting of overload signatures with union/collection operands and fixture-independent selection diagnostics.
+- Specify collision-free canonical anchor encoding for every complete operand contract, including generic binders, applications, domains, cardinalities and escaping, under source-origin identity rules.
+- Complete the reflective property/type schema and source representation of operator metadata, preserving the selected whole-declaration ownership and nominal/typed phase separation.
 
 ## Closure criterion
 
@@ -38,4 +38,4 @@ D-146 fixes source signatures, owner participation, the overloadable set, result
 
 ## Resolution
 
-Partially resolved. Accepted contracts are integrated; the remaining policies are not selected.
+Partially resolved by [[../decisions/ADR-149-alias-operator-selection-inheritance-and-reflection]]. Chapter 21 and supplied finite candidate witnesses cover selected policies; full anchor encoding and reflective schema evidence remain required before closure.

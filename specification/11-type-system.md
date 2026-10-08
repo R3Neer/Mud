@@ -14,6 +14,7 @@ questions:
   - Q-073
   - Q-060
 decisions:
+  - D-149
   - D-148
   - D-147
   - D-146
@@ -64,7 +65,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; unresolved discovery/identity boundaries remain Q-075. The fixed TypeKind family and selected categories are specified below; the complete inventory/projection and version-compatibility audit remains Q-060.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; selection and lifting follow the same section; exact complex-signature identity encoding and the reflective schema remain Q-075. The fixed TypeKind family and selected categories are specified below; the complete inventory/projection and version-compatibility audit remains Q-060.
 
 ## 1. Environments and judgements
 

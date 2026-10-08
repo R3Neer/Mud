@@ -14,6 +14,7 @@ questions:
   - Q-075
   - Q-014
 decisions:
+  - D-149
   - D-146
   - D-137
   - D-136
@@ -400,4 +401,14 @@ Nominal resolution binds captures/exports without inserting semantic types or na
 
 ## Alias operator resolution boundary
 
-Operator source names and type references retain SurfaceRef provenance. Operand bindings belong to the declaration's body scope, not the alias payload or field catalogue. No semantic signature selection or inferred result enters nominal HIR. Candidate discovery, inheritance, public identities and descriptor/metadata exposure are [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]; the established named-call anchor scheme must not be silently reused as a type-dependent operator identity. Preserve declaration/operand provenance for subsequent checking without asserting a selected target or a new public anchor.
+Operator source names and type references retain SurfaceRef provenance. Operand bindings have declaration-local body scopes and do not become alias fields or public participant descriptors. Nominal HIR records no effective signature, selected operation or inferred result. Operator anchors depend on typed operand contracts and are established after typing, separately from ordinary nominal name anchors.
+
+The public identity is the original declaring alias, operator symbol, arity and ordered normalized operand contracts with nominal identities retained. Names of arguments, result and body do not distinguish it. Its simple anchor form is:
+
+```text
+alias::path.Vector2::operator::*(path.Vector2, Num)
+```
+
+The alias owner is explicit even when it also occurs among the operands. Declarations of A * B inside A and inside B have distinct identities; inherited declarations retain their original identity without descendant copies. Instantiating a generic follows existing declaration-origin identity rules rather than manufacturing application anchors. Exact canonical encoding of complex contracts, generic binders and escaping remains [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]; the example is not a complete anchor grammar.
+
+Alias~operators exposes own and inherited declaration descriptors, deduplicated by origin; Alias~declaredOperators exposes own declarations only. General and specific signatures both remain present. Operator descriptors have TypeKind DeclarationDescriptor, not a new callable kind. Reflection supports owner, anchor, symbol, ordered operand contracts, result and configured metadata under ordinary visibility. The exact property/type schema is Q-075. Descriptor inspection does not introduce first-class operator calls, special mathematical metadata or selection by metadata. Configured metadata describes the whole original declaration, not the returned alias value or a particular invocation.
