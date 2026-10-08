@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-149
   - D-147
   - D-146
   - D-145
@@ -933,6 +934,6 @@ MUD 1.0 will be formally specified when:
 10. An implementation can objectively declare its degree of conformance.
 11. Every world/package, adapter, library and patch feature included in the target profile has an explicit applicable contract and conformance evidence; deferred features and unselected protocols are identified without presenting design examples as accepted schemas.
 
-The developed static/syntax surfaces define alias operator signatures/result inference, direct nested collection suffixes and non-collapsed empty members. Full alias operator lookup, inheritance and public identity remain Q-075; chapter completion and publication still require their applicable gates.
+The developed static/syntax surfaces define alias operator signatures, static specificity, origin-preserving inheritance, narrowed-union selection, restricted arithmetic lifting and direct-overload priority. Operator reflection and the simple subordinate signature anchor are specified; exact complex-contract anchor encoding and the detailed reflective schema remain Q-075. Direct nested collection suffixes and non-collapsed empty members retain their contracts; chapter publication still requires its applicable gates.
 
 Explicit raise is admitted in executable expression/value/effect bodies and uses the existing producing-block fault/recovery channel. It does not turn ordinary Error values into faults or add world-write permission.
