@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 142.
-- Current: 138.
+- Total: 143.
+- Current: 139.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -161,6 +161,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-145 | current | 2026-10-08 | [[notes/decisions/ADR-145-nested-collection-suffixes-and-empty-shape|Nested collection suffixes and empty shape]] |
 | D-146 | current | 2026-10-08 | [[notes/decisions/ADR-146-alias-operator-signatures-and-derived-updates|Alias operator signatures and derived updates]] |
 | D-147 | current | 2026-10-08 | [[notes/decisions/ADR-147-explicit-raise-in-executable-bodies|Explicit raise in executable bodies]] |
+| D-148 | current | 2026-10-08 | [[notes/decisions/ADR-148-fixed-type-kind-family-and-normalized-projection|Fixed TypeKind family and normalized projection]] |
 
 ## Reserved identifiers
 

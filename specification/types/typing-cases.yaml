@@ -2027,7 +2027,7 @@ cases:
   source: 'Vector2~kind'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Fixture supplies a nominal Vector2 alias. Its Type descriptor reports Alias regardless of tuple representation. Nat reports Basic; applied aliases remain Alias. The case does not claim completion of extension identity or anonymous normalization boundaries.
+  contract: Fixture supplies a nominal Vector2 alias. Its Type descriptor reports Alias regardless of tuple representation. Nat reports Basic; applied aliases remain Alias. TypeKind is a closed builtin family, fixed per language version. Its complete builtin inventory audit remains separate.
 - id: nested-matrix-and-empty-member
   rules:
   - MUD-TYPE-027
@@ -2098,3 +2098,22 @@ cases:
   expected: static-reject
   contract: Fixture is a required closed-static initializer with an unhandled raised Error. No value exists to materialize
     the declaration.
+
+- id: type-kind-normalized-union
+  rules: [MUD-TYPE-026]
+  source: '(Int | Int)~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Normalization yields Int and kind Basic. A nominal alias represented by Int remains Alias; identity is not erased for kind projection.
+- id: type-kind-collection-exterior
+  rules: [MUD-TYPE-026]
+  source: '(Int [*] [*])~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The exterior projects to Collection independently of depth, cardinality, order or uniqueness. No Matrix category is introduced.
+- id: type-kind-descriptor-categories
+  rules: [MUD-TYPE-026]
+  source: 'descriptor~type~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied Field and Component descriptors project to FieldDescriptor and ComponentDescriptor. A declaration descriptor without an established specific category projects to DeclarationDescriptor; DeclarationKind remains separate.

@@ -6,6 +6,7 @@ opened: 2026-08-16
 resolved:
 closed:
 decisions:
+  - D-148
   - D-144
   - D-087
 affects:
@@ -25,20 +26,19 @@ D-087 makes `Type~kind` observable, but deliberately leaves the concrete `TypeKi
 
 ## Already decided
 
-D-144 and MUD-TYPE-026 fix the public exterior principle and selected categories, including Tuple, Dictionary, FunctionalDictionary, distinct descriptors and callable groups. Applied generics retain their constructor category. The author chooses additions rather than an exhaustive closed-per-version catalogue; standard categories cannot be reclassified.
+D-144 and MUD-TYPE-026 fix the public exterior principle and selected categories, including Tuple, Dictionary, FunctionalDictionary, distinct descriptors and callable groups. Applied generics retain their constructor category. D-148 fixes a closed builtin family per language version, normalized projection with nominal preservation, uniform Collection classification, ComponentDescriptor and the DeclarationDescriptor fallback. Libraries cannot extend the catalogue.
 
 ## Pending
 
-- Complete the descriptor category inventory and deterministic projection boundaries, including singleton/normalized anonymous forms.
-- Choose extension identity and registration, collision handling and catalogue compatibility rules.
-- Define how the extensible reflective catalogue relates to ordinary closed family contracts.
+- Audit the complete public builtin descriptor/type inventory and any remaining projection boundary not covered by the selected categories and normalization policy.
+- Specify observable compatibility for catalogue changes between language versions; extensible-category registration is no longer a pending language feature.
 
 ## Closure criterion
 
 - C1: A complete normative core catalogue and projection exists.
-- C2: Extension identity, registration and observable compatibility are specified.
+- C2: Fixed-family behavior and observable version compatibility are specified.
 - C3: Internal forms project without exposing incidental implementation nodes.
 
 ## Resolution
 
-Partially resolved by [[../decisions/ADR-144-public-type-kind-categories]]. The selected categories are accepted; the pending items are not implied by this choice.
+Partially resolved by [[../decisions/ADR-144-public-type-kind-categories]] and [[../decisions/ADR-148-fixed-type-kind-family-and-normalized-projection]]. The selected categories are accepted; the pending items are not implied by this choice.

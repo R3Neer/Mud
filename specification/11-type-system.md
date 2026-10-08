@@ -14,6 +14,7 @@ questions:
   - Q-073
   - Q-060
 decisions:
+  - D-148
   - D-147
   - D-146
   - D-145
@@ -63,7 +64,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; unresolved discovery/identity boundaries remain Q-075. The public TypeKind core categories are specified below; their complete extensibility and projection contract remains Q-060.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; unresolved discovery/identity boundaries remain Q-075. The fixed TypeKind family and selected categories are specified below; the complete inventory/projection and version-compatibility audit remains Q-060.
 
 ## 1. Environments and judgements
 
@@ -341,7 +342,7 @@ Descriptor reflection is checked against every possible static receiver category
 ### Public TypeKind categories
 
 > [!rule] MUD-TYPE-026 — Public exterior classification
-> TypeKind classifies the public type exterior. An alias remains Alias regardless of its representation. Applied generics retain the constructor's public category; neither application nodes nor internal compiler constructors acquire a public kind merely by existing.
+> TypeKind is a builtin closed family, fixed for each language version and not extensible by programmes or libraries. It classifies the normalized effective public type exterior, preserving nominal identities. An alias remains Alias regardless of its representation. Applied generics retain the constructor's category; internal compiler nodes have no public kind merely by existing.
 
 | Public form | Selected category |
 | --- | --- |
@@ -353,9 +354,12 @@ Descriptor reflection is checked against every possible static receiver category
 | Linear magnitude; point magnitude (including cyclic points) | Magnitude; PointMagnitude |
 | Produced look/sublook result; message/submessage payload | LookResult; MessagePayload |
 | Action/subaction callable; look/sublook callable; Boolean-rule callable | ActionCallable; LookCallable; BooleanRuleCallable |
-| Type, field, participant, metadata, domain descriptor | TypeDescriptor, FieldDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor respectively |
+| Type, field, component, participant, metadata, domain descriptor | TypeDescriptor, FieldDescriptor, ComponentDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor respectively |
+| Declaration descriptor without a more specific established category | DeclarationDescriptor |
 
-Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. The catalogue permits additions, so consumers must not assume the selected core exhausts future/extension categories. Standard forms retain their classification. Extension identities/registration, compatibility rules, complete descriptor inventory and remaining normalization/projection boundaries are [[../notes/questions/Q-060-c-reflective-typekind-catalogue|Q-060]]; this table does not claim a complete extensible-family schema.
+Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. TypeKind itself is a family and has category Family. Its members follow ordinary closed-family identity, equality and finite enumeration. Future language versions may change the catalogue only through their specification. The complete public builtin inventory, remaining projection boundaries and version compatibility are [[../notes/questions/Q-060-c-reflective-typekind-catalogue|Q-060]]; the selected table is not a claim that this audit is complete.
+
+Normalize before classification: Int | Int has kind Basic, whereas a nominal alias represented by Int has kind Alias. Collection specifications [3], [*], [3 ordered] and [3 unique] all project to Collection; Int [*] [*] is also Collection because its exterior is a collection. Cardinality, guarantees and element types remain separate reflective contracts. DeclarationKind classifies a described declaration; TypeKind classifies the descriptor's own type. Field descriptors and component descriptors have different TypeKind members even though they share structural properties.
 
 ## 11. Results and errors as types
 
