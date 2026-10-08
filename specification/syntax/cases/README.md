@@ -21,3 +21,5 @@ A future implementation may map these cases to specific snapshots. Cases invalid
 
 Foreign cases are declarative conformance requirements. Mechanical catalogue and ASDL checks do not execute native parsers, adapters or a runtime and do not establish that those implementations exist.
 
+
+Reviewed projection cases include alias operator operands/result annotations, retained nested collection layers and executable raise with producing-block recovery. These cases describe CST-to-AST obligations; no source parser or projection implementation is claimed.

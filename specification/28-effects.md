@@ -85,7 +85,7 @@ Calculated local statements extend $\rho$ with a live derivation over the preced
 
 Re-evaluation is conceptual: caching is permitted only when it preserves values, errors, dependencies and contextual random-point/temporal observations. A derived ValueBlock creates fresh confined private computation for a read; its temporary storage does not become the derived local's storage. Lexically captured names are not rebound by later declarations. No derived read opens an independent world effect or changes concurrent branch ordering.
 
-RaiseEffect evaluates its RaiseExpr payload using ordinary value permissions, then supplies Fault and no world-update intent. Stop dependent continuation and apply the existing producing-block recovery/rollback before outward propagation. An Error-valued expression without raise does not fault by shape alone.
+RaiseEffect evaluates its RaiseExpr payload using ordinary value permissions, then supplies Fault and no world-update intent. This is an observable error-channel effect, so a direct raise is an admitted effect statement even without a world write. Stop dependent continuation and apply the existing producing-block recovery/rollback before outward propagation. An Error-valued expression without raise does not fault by shape alone.
 
 ## 3. Assignment and relative update
 

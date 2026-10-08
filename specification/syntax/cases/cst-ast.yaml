@@ -540,7 +540,7 @@ cases:
 
     '
   cst_root: MudFileSyntax
-  ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=AliasRepresentation(Text))
+  ast: AliasDecl(UserIdentifier, ancestors=[Identifier], definition=AliasRepresentation(Text, operators=[]))
   produces_ast: true
 - id: structural-member-requires-nominal-alias
   category: resolution
@@ -1526,7 +1526,7 @@ cases:
   category: metadata
   source: "alias UserId := Nat {\n    ~summary = \"user identifier\"\n}\n"
   cst_root: MudFileSyntax
-  ast: AliasDecl(UserId, definition=AliasRepresentation(Nat), metadata=[StoredMetadataAssignment(summary)])
+  ast: AliasDecl(UserId, definition=AliasRepresentation(Nat, operators=[]), metadata=[StoredMetadataAssignment(summary)])
   produces_ast: true
 - id: declaration-kind-keyword-value
   category: metadata
@@ -1976,7 +1976,7 @@ cases:
   category: type
   source: "alias Stats := MyDragon.Stats()~type\n"
   cst_root: MudFileSyntax
-  ast: AliasDecl(Stats, definition=AliasRepresentation(ReflectedType(...)))
+  ast: AliasDecl(Stats, definition=AliasRepresentation(ReflectedType(...), operators=[]))
   semantic_expectations:
   - reflected-expression-must-statically-denote-Type
   - reflected-type-elaborates-to-represented-semantic-type
@@ -3054,3 +3054,21 @@ cases:
   ast: No AST
   produces_ast: false
   diagnostic: A constructor suffix requires an admitted generic-argument type form; a numeric value is not implicitly lifted to a type.
+- id: alias-operator-typed-and-omitted-operands
+  category: alias
+  source: 'alias Vector2 { x: Num; y: Num; a * (factor: Num): Vector2 := (a.x * factor, a.y * factor) }'
+  cst_root: MudFileSyntax
+  ast: 'AliasDecl(Vector2, StructuralAlias([AliasComponentDecl(x), AliasComponentDecl(y), AliasOperatorDecl(BinaryOperatorDecl(OperatorOperand(a, None), Multiply, OperatorOperand(factor, Num), result=Vector2, value=ValueBlock(...)))]))'
+  produces_ast: true
+- id: nested-collection-layer-projection
+  category: type
+  source: 'matrix: Int [3 ordered] [2 ordered] = [[1, 2, 3], [4, 5, 6]]'
+  cst_root: StoredFieldDeclarationSyntax
+  ast: 'TypeExpr(NestedCollectionType(TypeExpr(Int, collection=[3 ordered])), collection=[2 ordered])'
+  produces_ast: true
+- id: executable-raise-protected-body
+  category: block
+  source: '{ raise problem } otherwise then replacement'
+  cst_root: ValueBlockBodySyntax
+  ast: 'ValueBlock([], RaiseExpr(ValueBlock([], problem, [])), [RecoveryHandler(branch=RecoverThen(ValueRecovery(replacement)))])'
+  produces_ast: true

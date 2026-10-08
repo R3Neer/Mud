@@ -65,6 +65,8 @@ Exact dictionary indexing at an intermediate path step may yield no association.
 
 Given values and ordinary on roles do not receive outer replacement authority. Only a signature's permitted outer mut slot accepts a caller's writable place. A literal, computed binding or immutable stored binding cannot satisfy it. Inner mut remains legal but inoperative for member types with no editable thing state; tooling may warn and must not manufacture a write.
 
+Alias-overloaded compound updates use an admitted binary signature with the destination as its left operand and a result admissible at that destination. Resolve the place once and evaluate the RHS once; a failed calculation supplies no write. Preserve ordinary reconstructible-path write-back and authority. Such updates contribute absolute replacements; the numeric/set consolidation laws are not inferred from the token. [[28-effects]] defines replacement agreement/conflict.
+
 ## 2. Invariance and authority propagation
 
 A supplied place of contract $\tau_s$ satisfies a requested read/write place of contract $\tau_t$ only if both $\tau_s\preceq\tau_t$ and $\tau_t\preceq\tau_s$ are proved. Domains, cardinality and collection guarantees participate, not just nominal names. This prevents a callee from writing a value valid for its parameter but invalid for the caller's storage.
@@ -106,6 +108,8 @@ Error production is possible in every mode. Error is not a mutation permission. 
 > Initialisers, nested blocks, called operations, recoveries and foreign code inherit the owner's restrictions. Hiding a real action call in a local initialiser cannot make it pure. A value block may mutate a mutable enclosing private local belonging to the same computation, but cannot escape to captured external storage.
 
 An effect block may capture a child's ActionReply as a normal value. A bare child effect call propagates its non-success outcome under the invocation contract. Imagine uses a disposable projection, returns ActionReply and contributes no confirmed writes/delivery; native calls inside it must satisfy isolation as well.
+
+Explicit raise is an observable error-channel effect under the owner permissions, not a world-write footprint. Its Fault prevents normal completion; it does not excuse static checking of source continuations.
 
 ## 4. Schemas and initialisation
 
@@ -182,5 +186,3 @@ Handlers run after the protected scope has rolled back. Their bindings are immut
 Elaboration records storage roots, reconstructible paths, generation dependencies, authorised footprints, per-block proof obligations and permitted runtime overlap checks. It preserves incorporated operator update classes for consolidation; user-overloaded updates retain their computed replacement class rather than acquiring an inferred algebra. It does not add those fields to nominal HIR or prescribe a semantic IR layout.
 
 Conformance instances in [[types/typing-cases.yaml]] cover writable invariance, nested capability boundaries, private-region mutation, cardinality-preserving replacement, rejected unknown cardinality and residual key overlap. Full operational wave correctness and dynamic lifetime/acyclicity proofs remain separately scoped.
-
-Alias-overloaded compound updates use an admitted binary signature with the destination as its left operand and a result admissible at that destination. Resolve the place once and evaluate the RHS once; a failed calculation supplies no write. Preserve ordinary reconstructible-path write-back and authority. Such updates contribute absolute replacements; the numeric/set consolidation laws are not inferred from the token. [[28-effects]] defines replacement agreement/conflict.

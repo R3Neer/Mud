@@ -326,6 +326,18 @@ Exact dictionaries retain key traversal for a single name or discard. A position
 
 Stored local patterns evaluate the RHS once, validate the complete pattern and establish all immutable captures atomically; a failed RHS exposes no partial bindings. Derived patterns register live component projections of their common RHS. They have no writable root, and pure expression positions retain their ExpressionBlock restrictions. A completely discarded stored pattern still evaluates its RHS and enforces admission/error obligations; tooling may suggest removal only when no observable obligation is lost. Derived patterns retain derivation checks even when every component is discarded, but do not introduce eager reads or new effects solely to discard them.
 
+## 10. Schemas, visibility and descriptor types
+
+Every new stored thing field has an explicit initialiser. Alias components are all present in a value, from supplied values or explicit defaults. Family data are supplied by the schema or by every member. User-defined metadata needs an explicit effective value; intrinsic defaults retain their individual contracts.
+
+Inherited writable stored contracts remain invariant. Immutable alias contracts may refine all inherited guarantees, with a valid effective initialiser/default where one is required. Diamonds deduplicate origins and incomparable independent members need a common explicit refinement. No runtime effect changes the set of field declarations.
+
+Thing value admission preserves strict membership: a field whose member type is the thing declaration $T$ does not admit $T$ itself as a population member; compatible concrete descendants are admissible. A declaration descriptor for $T$ is a distinct reflective use.
+
+Cross-part thing/alias specialisation requires uses authorisation and membership of the visible public contract's transitive type closure. Importing a path supplies no authority. Inherited initialisation is compiled under the declaring owner's access rights. Private ordinary thing fields do not become public through specialisation.
+
+Descriptor reflection is checked against every possible static receiver category. A supported optional property may return empty; an unsupported property is a static error, never a dynamic empty fallback. A type expression obtained through type reflection must be statically established as Type; runtime-dependent type generation is invalid. Source spans and AST values are not MUD values merely because the compiler holds them.
+
 ### Public TypeKind categories
 
 > [!rule] MUD-TYPE-026 — Public exterior classification
@@ -344,18 +356,6 @@ Stored local patterns evaluate the RHS once, validate the complete pattern and e
 | Type, field, participant, metadata, domain descriptor | TypeDescriptor, FieldDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor respectively |
 
 Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. The catalogue permits additions, so consumers must not assume the selected core exhausts future/extension categories. Standard forms retain their classification. Extension identities/registration, compatibility rules, complete descriptor inventory and remaining normalization/projection boundaries are [[../notes/questions/Q-060-c-reflective-typekind-catalogue|Q-060]]; this table does not claim a complete extensible-family schema.
-
-## 10. Schemas, visibility and descriptor types
-
-Every new stored thing field has an explicit initialiser. Alias components are all present in a value, from supplied values or explicit defaults. Family data are supplied by the schema or by every member. User-defined metadata needs an explicit effective value; intrinsic defaults retain their individual contracts.
-
-Inherited writable stored contracts remain invariant. Immutable alias contracts may refine all inherited guarantees, with a valid effective initialiser/default where one is required. Diamonds deduplicate origins and incomparable independent members need a common explicit refinement. No runtime effect changes the set of field declarations.
-
-Thing value admission preserves strict membership: a field whose member type is the thing declaration $T$ does not admit $T$ itself as a population member; compatible concrete descendants are admissible. A declaration descriptor for $T$ is a distinct reflective use.
-
-Cross-part thing/alias specialisation requires uses authorisation and membership of the visible public contract's transitive type closure. Importing a path supplies no authority. Inherited initialisation is compiled under the declaring owner's access rights. Private ordinary thing fields do not become public through specialisation.
-
-Descriptor reflection is checked against every possible static receiver category. A supported optional property may return empty; an unsupported property is a static error, never a dynamic empty fallback. A type expression obtained through type reflection must be statically established as Type; runtime-dependent type generation is invalid. Source spans and AST values are not MUD values merely because the compiler holds them.
 
 ## 11. Results and errors as types
 

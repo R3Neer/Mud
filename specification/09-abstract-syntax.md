@@ -228,6 +228,8 @@ Every surface builder that directly represents a metadata-bearing owner preserve
 
 A grouped participant header is normalised into several descriptors, and the same metadata sequence is copied to each. `PartStartDecl` and `start with` inside a test do not receive their own sequence.
 
+Public reflective categories are defined in [[11-type-system#Public TypeKind categories]]; they are not AST constructors. Public Tuple/Dictionary naming does not rename the syntactic product or ExactDictionaryType constructors.
+
 ## `thing` declarations
 
 A `ThingDecl` contains:
@@ -340,6 +342,8 @@ The brackets required by the grammar for a nested dictionary are not preserved b
 
 Functional-dictionary branches remain value nodes in the Surface AST and receive neither `AnchoredSymbol` nor a synthetic anchor. Resolution preserves source order and derives a dictionary-local `decision_branch_key` from the normalised selector; that key is used for reconstruction and internal dependencies, not for nominal resolution or metadata.
 
+NestedCollectionType preserves collection-valued members inside TypeExpr; direct suffixes and explicit grouping retain the same layer structure without an extra implicit singleton.
+
 ## Collections
 
 The standard form is:
@@ -403,7 +407,7 @@ The CST can represent `unique unique`, `unique unique by email` or two `unique b
 The local definition is one of the following:
 
 ```text
-AliasRepresentation(TypeExpr)
+AliasRepresentation(TypeExpr, OperatorDecl*)
 StructuralAlias(AliasMember*)
 ```
 
@@ -413,6 +417,7 @@ Structural members may include:
 AliasComponentDecl(AliasComponent)
 AliasCalculatedFieldDecl(name, shape?, expression)
 AliasDefaultOverride(name, value)
+AliasOperatorDecl(OperatorDecl)
 ```
 
 The absence of a definition is preserved when `as` is present; pre-AST validation rejects `alias A` without ancestors or a definition. An explicit empty body and an omitted body are distinct concrete forms, but both produce an empty local sequence.
@@ -430,6 +435,8 @@ Structural literals remain contextual. `PositionalStructuralLiteralExpr` require
 The same rule applies to basic literals. If the context expects a nominal alias whose representation the literal supports, elaboration constructs that alias directly without introducing a general implicit conversion. For example, with `alias PlayerName := Text`, `name: PlayerName = "Ada"` is valid. By contrast, an expression already typed as `Text`, such as `rawName`, does not silently become `PlayerName`; it requires `rawName to PlayerName`.
 
 Later elaboration must distinguish alias construction guided by an expected type from an explicit nominal `to` conversion. The Surface AST does not add a contextual-alias node because it still retains the literal and its expected context; the mechanical representation of the resolved distinction is fixed at that later stage.
+
+AliasOperatorDecl wraps UnaryOperatorDecl/BinaryOperatorDecl, preserving operand annotations, optional result contracts and ordinary value bodies. Representation aliases retain an operator list outside their payload. No inverse or update declaration is synthesized.
 
 ## Families
 
@@ -546,13 +553,13 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 ## Expression blocks and value blocks
 
-`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)`, `PurePatternLocal(PurePatternDecl)` or `PureForeignBlock(ForeignBlock)`. LocalValueDecl retains its short RHS as an ExpressionBlock including handlers; it cannot introduce private mutable storage. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation, `LocalForEach` or `ValueBlock` nested as a primary expression.
+`ExpressionBlock(preamble, result, handlers)` contains pure `PurePreambleStatement` items and a final expression. Each item is `PureLocalValue(LocalValueDecl)`, `PurePatternLocal(PurePatternDecl)` or `PureForeignBlock(ForeignBlock)`. LocalValueDecl retains its short RHS as an ExpressionBlock including handlers; it cannot introduce private mutable storage. A shorthand form normalises to `ExpressionBlock([], expression, [])`. It contains no stored variables, mutation or LocalForEach statements. A standalone ValueBlock is not a primary expression; RaiseExpr retains its payload ValueBlock under the enclosing permissions.
 
-`ValueBlock(statements, result, handlers)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, positional pattern declarations, local mutation, `LocalForEach` and `ForeignBlockValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
+`ValueBlock(statements, result, handlers)` contains `ValueStatement*` and a final expression. `ValueStatement` distinguishes calculated declarations, stored declarations, positional pattern declarations, local mutation, `LocalForEach`, `ForeignBlockValueStatement` and `RaiseValueStatement`. Calculated and stored declarations inside a `ValueBlock` in turn retain their initialisers as `ValueBlock`, so short and expanded forms converge without turning the block into an `expr`.
 
 `LocalMutation` retains the unresolved surface destination; typing and elaboration later prove that the complete footprint belongs to storage created within the `ValueBlock`. `LocalForEach` uses `LocalStatementBlock`, not `EffectBlock`, and retains the `ExpressionBlock?` filter.
 
-The owners of `ExpressionBlock` are Boolean rules, `always`, `when`, guards, action `after`, `for each` filters, selections, `exists`, `forall`, `count`, `min`, `max`, exact keys and functional selectors. The owners of `ValueBlock` are the value slots declared by the grammar: locals, fields, data/components, initialisers, dictionary values/results and metadata. `given` retains `expr? defaultValue` because its default does not accept a value block.
+The owners of `ExpressionBlock` are Boolean rules, `always`, `when`, guards, action `after`, `for each` filters, selections, `exists`, `forall`, `count`, `min`, `max`, exact keys and functional selectors. The owners of `ValueBlock` are the value slots declared by the grammar: locals, fields, data/components, initialisers, dictionary values/results, operator implementations, raise payloads and metadata. `given` retains `expr? defaultValue` because its default does not accept a value block.
 
 `min` and `max` retain `QuantifierExpr` and a Boolean `ExpressionBlock`. Elaboration returns the first or last accepted witness according to `source`'s semantic order; `Sum` does not exist in `quantifier_kind`.
 
@@ -563,6 +570,8 @@ Shared behaviour preambles use `behaviour_preamble_statement`, distinct from pur
 `binding_pattern` preserves NameBinding, DiscardBinding and recursive PositionalBinding with spans. IterationBinding wraps this pattern for iteration, selection and QuantifierExpr. Association versus ordinary product projection is a later type-directed distinction, not a syntactic claim that dictionary entries are products. Discards generate no nominal symbols.
 
 TypeInferenceHole is retained at its written stored-annotation position in the existing recursive type tree, including nested products/generic arguments. Contextual validation permits it only for eligible stored owners with their own initial value. It is not a usable declared type or expression operand. The Surface AST records neither its solution nor guessed types; typing diagnoses unresolved/ambiguous holes at their source spans.
+
+RaiseExpr retains its error-producing ValueBlock. RaiseValueStatement and RaiseEffect wrap that expression in executable statement positions; RecoverRaise retains the existing handler-branch distinction. No normal result or implicit throwing of Error-valued expressions is synthesized.
 
 ## Actions
 
@@ -617,6 +626,8 @@ There are specific nodes for:
 - Creation.
 - Destruction.
 - Action-call candidate.
+- Explicit raise (`RaiseEffect`).
+- Foreign block.
 - Iteration `for each`.
 
 ### Comma-separated values
@@ -965,11 +976,3 @@ Foreign operations require checked or explicitly trusted type/effect contracts. 
 Nominal resolution binds captures/exports without inserting semantic types or native representations into nominal HIR. Later typing validates conversions and footprints. Wrappers preserve effective nominal identity, exact numbers and collection contracts; exports are immutable and failed foreign blocks publish none. Native failures use an Error with a real owning MUD Declaration and source-mapped diagnostics. ABI/hosting and concrete per-adapter conversion/lifetime protocols remain unresolved.
 
 LocalStatementBlock groups statements within the owning ValueBlock and shares its error channel; it is not an independent value-result block or handler owner. Declaration/schema/metadata braces are not evaluated expression, value or effect blocks. Otherwise may attach to their contained initializer computations, not to the declaration braces themselves.
-
-Public reflective categories are defined in [[11-type-system#Public TypeKind categories]]; they are not AST constructors. Public Tuple/Dictionary naming does not rename the syntactic product or ExactDictionaryType constructors.
-
-NestedCollectionType preserves collection-valued members inside TypeExpr; direct suffixes and explicit grouping retain the same layer structure without an extra implicit singleton.
-
-AliasOperatorDecl wraps UnaryOperatorDecl/BinaryOperatorDecl, preserving operand annotations, optional result contracts and ordinary value bodies. Representation aliases retain an operator list outside their payload. No inverse or update declaration is synthesized.
-
-RaiseExpr retains its error-producing ValueBlock. RaiseValueStatement and RaiseEffect wrap that expression in executable statement positions; RecoverRaise retains the existing handler-branch distinction. No normal result or implicit throwing of Error-valued expressions is synthesized.

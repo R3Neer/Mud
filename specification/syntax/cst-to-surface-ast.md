@@ -15,6 +15,10 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-147
+  - D-146
+  - D-145
+  - D-084
   - D-141
   - D-137
   - D-136
@@ -328,7 +332,7 @@ The CST can recognise a parenthesised arrow inside an alternative, but contextua
 
 The alias modifier `abstract` produces `is_abstract = Enabled`; omission produces `Disabled`. Whether its representation is structural and productive belongs to elaboration.
 
-The list written after `as` is preserved as `direct_ancestors`. The `:= type-expression` alternative produces `AliasRepresentation`; combining it with ancestors is rejected before AST construction. An absent definition produces `definition = None` and is valid only when at least one ancestor exists. A body following `:= type-expression` feeds AliasDecl.metadata and AliasRepresentation.operators; it creates no structural components.
+The list written after `as` is preserved as `direct_ancestors`. The `:= type-expression` alternative produces `AliasRepresentation`; combining it with ancestors is retained for semantic refinement checking against all inherited representations. An absent definition produces `definition = None` and is valid only when at least one ancestor exists. A body following `:= type-expression` feeds AliasDecl.metadata and AliasRepresentation.operators; it creates no structural components.
 
 `type-expression` normalises one or more `type-alternative` values separated by `|` into a single `TypeExpr`. Redundant groupings are removed, identical alternatives are deduplicated, and every nominal alternative is retained even when its domain is contained within another. The first written collection specification applies to the complete union TypeExpr. Fold each subsequent specification into a TypeExpr whose sole alternative is NestedCollectionType(previous TypeExpr), with that specification as its outer collection. Grouping a collection-shaped type before an outer suffix uses the same wrapper. Preserve written layer provenance without flattening or inserting an implicit singleton between written layers.
 
