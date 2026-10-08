@@ -138,3 +138,5 @@ References to these phases serve solely to prevent the Surface AST anticipate th
 
 
 Generic header/application and structural-type comparison distinctions are guarded by validate_syntax_model.py and test_generic_contract.py. The tests reject loss of parameter/grouping information, value operands in the structural operator node and split structural tokens. test_generic_grammar.py additionally uses the EBNF analysis helper to recognise bounded preclassified token fixtures. These checks do not provide a complete Mud scanner/parser, constructor-arity resolution or type inference; the declarative CST/AST cases remain transformation contracts rather than executed compiler tests.
+
+- test_nested_collection_contract.py checks preclassified direct/grouped suffix fixtures and the retained layer wrapper, without scanning or typechecking Mud source.

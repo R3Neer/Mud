@@ -304,7 +304,8 @@ module MUDSurface {
     generic_application_form = ExplicitGenericWith | PostfixSingleGeneric
                              | PostfixGroupedGeneric
 
-    declared_type = TypeInferenceHole
+    declared_type = NestedCollectionType(type_expr inner)
+                  | TypeInferenceHole
                   | NamedType(type_ref name)
                   | CallableType(callable_kind kind,
                                  declared_type first_receiver,

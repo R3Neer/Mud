@@ -17,6 +17,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-145
   - D-143
   - D-142
   - D-140
@@ -114,7 +115,7 @@ Text literals synthesise Text, including one-scalar text. A Char context admits 
 
 Empty has cardinality zero and no chosen nominal member type. An expected zero-admitting collection can check it; a positive-minimum context fails the ordinary admission/contract check. All and fallback are contextual forms: all requires a finite enumerable expected domain, and fallback exists only in a functional branch position.
 
-Component declarations/checking provide the ordered schema of a structural literal. Named and positional forms use the construction rules in chapter 11. A comma-separated value expression produces one outer member for each element expression and does not flatten nested collections. The outer cardinality counts supplied element expressions.
+Component declarations/checking provide the ordered schema of a structural literal. Named and positional forms use the construction rules in chapter 11. A comma-separated value expression produces one outer member for each element expression and does not flatten nested collections. The outer cardinality counts supplied element expressions, including empty collection members. Thus [empty] equals [[]] under compatible context and differs from empty. This holds for computed members and at every depth.
 
 A declaration-category expression denotes its defined descriptor category. Interval, quantity and point literals retain their own elaborated domain/dimensional forms; they are not guessed from their visual similarity to products or numbers.
 

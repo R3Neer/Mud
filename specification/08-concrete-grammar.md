@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-145
   - D-143
   - D-141
   - D-140
@@ -334,6 +335,8 @@ The EBNF consumes `HEADER_WITH` at a parameter-group boundary and ordinary `with
 Generic arguments start at `generic-argument-head` (or its stored-annotation counterpart), followed by a sequence of constructor and callable-contract suffixes. A postfix application ends with a constructor suffix. These suffixes fold from left to right; a callable suffix has a nominal receiver or tuple of nominal receivers, checked statically. In expression position, explicit and grouped postfix applications can start a primary; the latter retains complete product-component contracts. `expression-generic-suffix` retains any callable-contract suffixes before its final constructor, while ordinary member accesses remain in the postfix chain. A constructor suffix requires a type-designating operand satisfying the ordinary generic argument restrictions, not an arbitrary value expression. This factoring removes the generic argument/application left-recursive cycle without claiming that the complete EBNF is LL or prescribing a parser architecture.
 
 The builtin Interval is an arity-one generic constructor. Structural `===` and `!==` are indivisible, nonchainable comparison-level tokens with complete type-expression operands. Type context distinguishes collection specifications from value indexing; qualified-constructor/member and grouped-product ambiguities are resolved using the nominal catalogue, without executing expressions. Callable specialization suffixes bind to the immediately preceding complete call, before its evaluation. The generic declaration category and semantic restrictions are specified by [[11-type-system#3.1. Generic declarations and applications]].
+
+Repeated collection specifications fold left to right, inner to outer: `Int [3 ordered] [2 ordered]` means two ordered rows of three ordered integers, equivalent to `(Int [3 ordered]) [2 ordered]`. Each modifier belongs to its own layer. `Int [* ordered] [* ordered]` allows unequal row lengths. `[[]]` contains one empty row; empty contains none.
 
 ## Type unions and outer arrows
 

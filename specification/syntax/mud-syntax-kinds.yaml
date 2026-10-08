@@ -584,7 +584,7 @@ syntax_nodes:
     - stored-type-expression
   stored-type-expression:
     kind: StoredTypeExpressionSyntax
-    rhs: stored-union-type-expression , [ collection-specification | stored-dictionary-type ]
+    rhs: "stored-union-type-expression\n        , ( { collection-specification } | stored-dictionary-type )"
     references:
     - stored-union-type-expression
     - collection-specification
@@ -1175,7 +1175,7 @@ syntax_nodes:
     - collection-specification
   type-expression:
     kind: TypeExpressionSyntax
-    rhs: "union-type-expression\n        , [ collection-specification | dictionary-type ]"
+    rhs: "union-type-expression\n        , ( { collection-specification } | dictionary-type )"
     references:
     - union-type-expression
     - collection-specification

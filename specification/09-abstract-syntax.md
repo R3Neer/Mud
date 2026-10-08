@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-145
   - D-144
   - D-137
   - D-135
@@ -964,3 +965,5 @@ Nominal resolution binds captures/exports without inserting semantic types or na
 LocalStatementBlock groups statements within the owning ValueBlock and shares its error channel; it is not an independent value-result block or handler owner. Declaration/schema/metadata braces are not evaluated expression, value or effect blocks. Otherwise may attach to their contained initializer computations, not to the declaration braces themselves.
 
 Public reflective categories are defined in [[11-type-system#Public TypeKind categories]]; they are not AST constructors. Public Tuple/Dictionary naming does not rename the syntactic product or ExactDictionaryType constructors.
+
+NestedCollectionType preserves collection-valued members inside TypeExpr; direct suffixes and explicit grouping retain the same layer structure without an extra implicit singleton.

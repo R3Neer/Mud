@@ -2028,3 +2028,10 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture supplies a nominal Vector2 alias. Its Type descriptor reports Alias regardless of tuple representation. Nat reports Basic; applied aliases remain Alias. The case does not claim completion of extension identity or anonymous normalization boundaries.
+- id: nested-matrix-and-empty-member
+  rules:
+  - MUD-TYPE-027
+  source: 'matrix: Int [* ordered] [* ordered] = [[]]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Effective limits admit zero inner and one outer member. This is one empty row, not zero rows. Int [0] [1] admits [[]] but rejects empty; Int [0] [0] admits empty but rejects [[]]. Variable rows need not be rectangular.

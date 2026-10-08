@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-060
 decisions:
+  - D-145
   - D-144
   - D-140
   - D-137
@@ -109,6 +110,11 @@ For exact dictionaries the bracketed specification following the arrow constrain
 > Every referenced declaration must be visible and have the required category. Cardinalities have nonnegative integral lower bounds and upper bounds no smaller than their lower bounds. Keyed paths and order paths must be statically meaningful and satisfy their stability contracts. Dictionary arrows must be the complete outer form, including after resolving representation aliases. A collection specification after a complete union qualifies that union; it does not qualify only its last alternative.
 
 Action/subaction callable output is fixed to the single ActionReply contract; it cannot be specialised into an additional domain-result output. The nominal collection alias Errors is one union alternative in ActionReply. Resolving it as an alias does not create anonymous per-alternative collection syntax. No empty structural literal or general intersection syntax is introduced.
+
+> [!rule] MUD-TYPE-027 — Independent nested collection layers
+> Repeated specifications wrap the preceding complete member contract from left to right. Every layer independently satisfies its cardinality, domain, uniqueness, order and authority obligations. Neither nested values nor singleton-empty members are flattened. Empty and [] have zero outer members; [empty] and [[]] have one empty collection member and compare equal under compatible context, but unequal to empty.
+
+Int [0] [1] admits one empty inner collection; Int [0] [0] admits no outer member. Int [3] [*] fixes each inner length at three; Int [*] [*] does not imply rectangularity. Empty still requires a zero-admitting outer context and cannot choose an ambiguous nominal member type.
 
 ## 3. Canonicalisation and identity
 

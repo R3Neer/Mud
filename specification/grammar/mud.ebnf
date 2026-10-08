@@ -437,7 +437,7 @@ type-inference-hole
 
 stored-type-expression
     ::= stored-union-type-expression
-        , [ collection-specification | stored-dictionary-type ]
+        , ( { collection-specification } | stored-dictionary-type )
         ;
 
 stored-union-type-expression
@@ -529,7 +529,7 @@ stored-dictionary-value-type
 
 type-expression
     ::= union-type-expression
-        , [ collection-specification | dictionary-type ]
+        , ( { collection-specification } | dictionary-type )
         ;
 
 union-type-expression
