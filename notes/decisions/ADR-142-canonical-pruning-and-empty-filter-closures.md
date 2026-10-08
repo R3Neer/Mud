@@ -26,8 +26,8 @@ Close a completely erased per-element predicate to true: it means no filter. Non
 
 ## Alternatives and consequences
 
-Reject XOR truth-table completion of an erased operand: erased is not a third Bool. Reject treating erased predicates as false, because it removes rather than removes the filter. No new pruning through stored values, speculative operations or error boundaries is selected.
+Reject XOR truth-table completion of an erased operand: erased is not a third Bool. Reject treating erased predicates as false, because it removes rather than removes the filter. [[ADR-150-transparent-derived-boolean-pruning-boundaries|D-150]] extends pruning through computed Boolean bindings and wholly erased initial eventually goals, preserving independent prefix work, faults and ordinary stored values.
 
 ## Verification
 
-MUD-TYPE-024 and finite pruning witnesses cover all pairs of Bool/erased inputs, quantifier empty/nonempty boundaries and demand sharing. Q-050 remains partial for its independent boundary interactions. Chapter publication states are unchanged.
+MUD-TYPE-024 and finite pruning witnesses cover all pairs of Bool/erased inputs, quantifier empty/nonempty boundaries and demand sharing. Q-050 remains partial for the complete compositional demand/short-circuit account of erased derivations/query goals carrying prefix computations. Chapter publication states are unchanged.

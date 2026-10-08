@@ -234,11 +234,10 @@ It is ruled out because it would prevent a formula from continuing to function u
 
 ## Accepted extensions
 
-Canonical inequality/xor expansion, demand sharing and no-filter predicate closure are fixed by [[ADR-142-canonical-pruning-and-empty-filter-closures|D-142]] and MUD-TYPE-024.
+Canonical inequality/xor expansion, demand sharing and no-filter predicate closure are fixed by [[ADR-142-canonical-pruning-and-empty-filter-closures|D-142]] and MUD-TYPE-024. [[ADR-150-transparent-derived-boolean-pruning-boundaries|D-150]] defines transparent computed Boolean bindings, erased initial eventually goals, actual-read prefix fault preservation and the absence of mandatory pruning-sensitivity warnings.
 
 ## Unresolved issues
-- Interaction with `imagine`, `eventually` and sub-expression errors that disappear.
-- Diagnostics or warnings for expressions that are particularly sensitive to their syntactic form.
+- Complete the compositional demand/short-circuit rules for erased derived/query fragments carrying independent prefix computations. The selected standalone/actual-read behavior remains mandatory; imagine keeps its ordinary ActionReply contract. No pruning-sensitivity warning is required.
 
 ## Future verification
 

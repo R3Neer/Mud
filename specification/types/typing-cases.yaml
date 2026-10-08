@@ -2148,3 +2148,34 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Only Vector2 * Num is declared; Length uses Num representation but is not a scalar Num argument. A Scale representation alias is also not silently unwrapped. Builtin Length * Num remains dimension preserving.
+
+- id: pruning-derived-versus-stored
+  rules: [MUD-TYPE-032]
+  source: 'p: Bool := x.InactiveRule(); not p'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Valid inactive rule and a derived Bool binding transmit erasure, closing not p to true. Replacing := with = captures true and makes not p false. Computed fields/components/metadata use the same rule.
+- id: pruning-prefix-fault-preserved
+  rules: [MUD-TYPE-032]
+  source: 'p := { n: Num = 1 / divisor; x.InactiveRule() }; not p'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture admits this ValueBlock. On the actual standalone read of p, zero divisor faults before any erased final result; a successful prefix transmits erasure. Recovery returning ordinary Bool does not transmit the erased original result.
+- id: pruning-erased-eventually-goal
+  rules: [MUD-TYPE-032]
+  source: 'not (eventually x.InactiveRule() through game.Move)'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture proves the query profile and its initial goal is wholly erased. After demanded goal-prefix work succeeds the query transmits erasure, so outer not closes true. Static obligations remain required.
+- id: pruning-erased-query-does-not-waive-proof
+  rules: [MUD-TYPE-032]
+  source: 'eventually x.InactiveRule() through game.UnboundedCreate'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture lacks the required finite reachable-state proof. Erasure of the goal does not make an inadmissible query acceptable.
+- id: pruning-imagine-is-ordinary-reply
+  rules: [MUD-TYPE-032]
+  source: 'reply := imagine actor.Move()'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Admitted action root and speculative isolation yield ordinary ActionReply. Internal Boolean pruning does not propagate erasure as an ActionReply value; imagine in a deleted inactive call argument is not evaluated.

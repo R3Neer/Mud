@@ -18,6 +18,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-150
   - D-149
   - D-147
   - D-146
@@ -78,7 +79,7 @@ Normal and sub operations retain distinct declaration identity: `subaction <: ac
 
 The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
-Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Pruning across speculative and error boundaries remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
+Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. The remaining compositional pruning/demand contract for prefix-bearing erased derivations and query goals is Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
 
 Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
 
@@ -190,7 +191,30 @@ Logical not, and, or, xor, implication and equivalence require singleton Bool re
 
 The marker erased is metalanguage, not Bool or a stored value. Negation preserves erased. A binary and/or with one erased child retains the other; two erased children remain erased. With exactly one erased operand, canonical equality closes to true and inequality/xor to false; with both erased, each complete owner closes to true. Ordinary truth-table rewrites must not precede deletion if they change these results.
 
-For each enumerated source member, a wholly erased predicate closes to true. A nonempty source then satisfies exists and forall; the empty-source results remain false and true respectively. Selection retains all members, count counts all members, and min/max select the first/last accepted witness in the required semantic order. Empty selection/min/max yield empty and empty count zero. All ordinary finiteness, enumeration, purity and order proofs still apply. Pruning across speculative and error boundaries remains [[../notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]].
+For each enumerated source member, a wholly erased predicate closes to true. A nonempty source then satisfies exists and forall; the empty-source results remain false and true respectively. Selection retains all members, count counts all members, and min/max select the first/last accepted witness in the required semantic order. Empty selection/min/max yield empty and empty count zero. All ordinary finiteness, enumeration, purity and order proofs still apply. The complete compositional demand/short-circuit contract for prefix-bearing erased derivations/query goals remains [[../notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]].
+
+> [!rule] MUD-TYPE-032 — Derived and speculative pruning boundaries
+> A Boolean binding defined by := can transmit erasure from its derivation into a Boolean formula; a binding defined by = captures ordinary values. An actually read derivation retains independent prefix computations and their faults even when its final expression is erased. A wholly erased initial eventually goal transmits erasure through the query. Imagine retains ActionReply. Pruning does not waive static obligations and does not require sensitivity warnings.
+
+The binding rule applies to locals, computed fields/components and computed metadata. Use the derivation's resolved origin, access rights and applicable semantic view. A Bool annotation is a contract, not a storage boundary. When a value is required as ordinary data, close residual erasure to true; do not store erased, invent a third Bool, remove a constructed collection member or transmit erasure through arbitrary calls. Flow dependencies and static checking of potentially erased syntax remain required.
+
+For a valid inactive Boolean rule x.InactiveRule(), not x.InactiveRule() closes true. With p := x.InactiveRule(), not p also closes true. With p: Bool = x.InactiveRule(), the initializer captures true and not p is false. The distinction remains when the calculated binding is a field, component or metadata property.
+
+In a context admitting this ValueBlock, an actual read of the following derivation still executes its stored prefix initializer:
+
+```mud
+p := {
+    n: Num = 1 / divisor
+    x.InactiveRule()
+}
+not p
+```
+
+With divisor zero, initialization supplies Fault and ordinary recovery applies before a normal result can exist; erasure cannot turn the fault into success. With a successful prefix and erased final expression, the derived read transmits erasure and the outer not closes true. A recovery producing an ordinary Bool contributes that Bool, not the original erased fragment. Unread derivations do not execute. Ordinary derived domain/cardinality obligations are not waived. Their interaction with transmitted erasure, and the full account of demanded prefixes when surrounding short-circuit operators eliminate residual fragments, remain Q-050; these examples do not select all such execution orders.
+
+For an admitted query, not (eventually x.InactiveRule() through game.Move) closes true if its initial goal is wholly erased and its demanded prefix work succeeds. The query is structurally erased rather than returning ordinary true to not. A non-erased initial goal follows the ordinary reachability contract. All source, finiteness, enumerability, purity and termination checks remain mandatory even when a query is erased. An ordinary imagine result remains ActionReply; inside a deleted call's arguments, imagine is not evaluated because those arguments are skipped.
+
+Pruning-sensitive syntax is normal admitted language usage. No mandatory yellow-warning category is introduced for it. Tooling may explain the applied pruning on request; invalid contracts and ambiguous uses retain their ordinary mandatory diagnostics.
 
 ### Alias-owned operator signatures
 

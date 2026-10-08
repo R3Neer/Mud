@@ -2,6 +2,11 @@
 import itertools
 import unittest
 E = 'erased'
+
+def supplied_derived_read(prefix, residual):
+    """Certificate for an actual read, not general short-circuit scheduling."""
+    prefix()
+    return residual
 def prune(t, values):
     if isinstance(t, str): return E if values[t] == E else t
     op, *children = t
@@ -37,4 +42,33 @@ class PruningWitnesses(unittest.TestCase):
             self.assertEqual(any(predicates),size>0)
             self.assertTrue(all(predicates))
             self.assertEqual(sum(predicates),size)
+    def test_actual_derived_read_versus_stored_capture(self):
+        residual = supplied_derived_read(lambda: None, E)
+        derived = prune(('not', 'p'), {'p': residual})
+        self.assertTrue(evaluate(derived, {'p': residual}, {}, []))
+        stored = True if residual == E else residual
+        captured = prune(('not', 'p'), {'p': stored})
+        self.assertFalse(evaluate(captured, {'p': stored}, {}, []))
+
+    def test_actual_read_preserves_prefix_fault_before_erasure(self):
+        reads = []
+        def prefix():
+            reads.append('initialize-n')
+            raise ValueError('supplied computing fault')
+        with self.assertRaises(ValueError):
+            supplied_derived_read(prefix, E)
+        self.assertEqual(reads, ['initialize-n'])
+        # A supplied recovered ordinary result is not the original erasure.
+        recovered = False
+        self.assertTrue(evaluate(prune(('not', 'p'), {'p': recovered}),
+                                 {'p': recovered}, {}, []))
+
+    def test_erased_initial_goal_transmits_query_erasure(self):
+        reads = []
+        goal = supplied_derived_read(lambda: reads.append('goal-prefix'), E)
+        # Only the selected wholly erased goal boundary is certified here.
+        query = E if goal == E else 'ordinary-query-result'
+        outer = prune(('not', 'query'), {'query': query})
+        self.assertTrue(evaluate(outer, {'query': query}, {}, []))
+        self.assertEqual(reads, ['goal-prefix'])
 if __name__ == '__main__': unittest.main()
