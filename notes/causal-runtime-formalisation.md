@@ -46,6 +46,15 @@ Attribution needs explicit rules for consulted derived dependencies, net changes
 - Checkpoint false refuses immediately, while computing faults and resource interruptions remain distinct.
 - A message-only causal cycle cannot be mistaken for quiescence because world fields stopped changing.
 
-## Deferred questions
+## Cost analysis alongside formalisation
+
+[[runtime-ownership-cost-analysis|The ownership cost analysis]] separates owner
+selection from dependency tracking, completion and selective reconstruction.
+Its synthetic cases compare exact sharing/grouping with coarse ownership. They
+are analytical counts, not benchmarks or a selected executor. Carry these costs
+through the remaining barrier/completion formalisation before choosing an
+approximation or claiming a language-level performance factor.
+
+## Deferred execution choices
 
 A syntax for asynchronous initiation, detached work, joins/handles and concurrent exterior roots is not chosen. The current single exterior-resolution queue remains the supported boundary. The physical runtime may optimise an abstract algorithm but cannot change views, checkpoints, randomness, ownership or results.
