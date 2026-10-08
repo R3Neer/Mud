@@ -2004,3 +2004,13 @@ cases:
   expected: static-reject
   contract: No expected numeric representations are available. A pattern supplies positional structure but
     no annotations for choosing a unique numeric elaboration.
+- id: canonical-pruning-no-filter
+  rules:
+  - MUD-TYPE-024
+  source: 'exists x in items: x.InactiveRule()'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies a finite enumerable source and statically valid inactive Boolean rule. Per-member erased
+    predicates close true. Nonempty exists is true; empty exists false. Canonical xor with one erased operand is
+    false; both erased close true. Demand-shared operands are evaluated at most once. See test_pruning_witnesses.py
+    for finite kernel certificates.

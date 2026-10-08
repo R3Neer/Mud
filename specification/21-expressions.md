@@ -17,6 +17,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-142
   - D-140
   - D-137
   - D-136
@@ -71,7 +72,7 @@ Normal and sub operations retain distinct declaration identity: `subaction <: ac
 
 The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
-Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Boolean pruning beyond the specified core remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
+Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Pruning across speculative and error boundaries remains Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
 
 Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
 
@@ -177,6 +178,13 @@ Magnitude arithmetic composes nominal dimensional factors and selects the repres
 If an operand is empty, no member operation is evaluated. Order is preserved from the sole potentially multiple operand where observable. Uniqueness is retained only with non-collision evidence; key uniqueness additionally requires a meaningful stable key path. No implicit zip, reduction or unrestricted Cartesian product is selected.
 
 Logical not, and, or, xor, implication and equivalence require singleton Bool results, with their specified short-circuit/desugaring contract. Temporal is a metalanguage qualification of triggers, not a newly introduced first-class MUD type. A temporal trigger expression is not a Bool that may participate in arbitrary operators: only its defined trigger-combination forms are admitted.
+
+> [!rule] MUD-TYPE-024 — Canonical Boolean pruning and predicate closure
+> Boolean equality expands to `(p and q) or (not p and not q)`; Boolean inequality and word xor expand to its negation. Resolve/type the original source, expand, delete inactive Boolean-rule calls structurally, close an erased Boolean owner to true, then evaluate the residual kernel. Each original operand is evaluated at most once on demand within its expansion; deleted call receivers/arguments and short-circuited operands are not evaluated. Separate written occurrences are not shared.
+
+The marker erased is metalanguage, not Bool or a stored value. Negation preserves erased. A binary and/or with one erased child retains the other; two erased children remain erased. With exactly one erased operand, canonical equality closes to true and inequality/xor to false; with both erased, each complete owner closes to true. Ordinary truth-table rewrites must not precede deletion if they change these results.
+
+For each enumerated source member, a wholly erased predicate closes to true. A nonempty source then satisfies exists and forall; the empty-source results remain false and true respectively. Selection retains all members, count counts all members, and min/max select the first/last accepted witness in the required semantic order. Empty selection/min/max yield empty and empty count zero. All ordinary finiteness, enumeration, purity and order proofs still apply. Pruning across speculative and error boundaries remains [[../notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]].
 
 ## 5. Equality, comparisons, membership and narrowing
 

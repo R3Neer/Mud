@@ -232,10 +232,11 @@ It describes intuition well, but it is not sufficient for negation, implication 
 
 It is ruled out because it would prevent a formula from continuing to function under the other conditions that still apply.
 
-## Unresolved issues
+## Accepted extensions
 
-- Elaboration exact translation of `!=`, `xor` and other Boolean operators.
-- Pruning within quantifiers and Boolean aggregations.
+Canonical inequality/xor expansion, demand sharing and no-filter predicate closure are fixed by [[ADR-142-canonical-pruning-and-empty-filter-closures|D-142]] and MUD-TYPE-024.
+
+## Unresolved issues
 - Interaction with `imagine`, `eventually` and sub-expression errors that disappear.
 - Diagnostics or warnings for expressions that are particularly sensitive to their syntactic form.
 

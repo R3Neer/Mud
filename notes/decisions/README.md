@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 136.
-- Current: 132.
+- Total: 137.
+- Current: 133.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -155,6 +155,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-139 | current | 2026-10-07 | [[notes/decisions/ADR-139-reality-levels-branches-and-relative-confirmation|Reality levels, branches and relative confirmation]] |
 | D-140 | current | 2026-10-07 | [[notes/decisions/ADR-140-readable-patches-and-host-only-confirmation-tickets|Readable patches and host-only confirmation tickets]] |
 | D-141 | current | 2026-10-07 | [[notes/decisions/ADR-141-contextual-newline-continuation|Contextual newline continuation]] |
+| D-142 | current | 2026-10-08 | [[notes/decisions/ADR-142-canonical-pruning-and-empty-filter-closures|Canonical pruning and empty-filter closures]] |
 
 ## Reserved identifiers
 
