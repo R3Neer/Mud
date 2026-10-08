@@ -2014,3 +2014,10 @@ cases:
     predicates close true. Nonempty exists is true; empty exists false. Canonical xor with one erased operand is
     false; both erased close true. Demand-shared operands are evaluated at most once. See test_pruning_witnesses.py
     for finite kernel certificates.
+- id: discontinuous-interval-content
+  rules:
+  - MUD-TYPE-025
+  source: '[1..3] | [7..9]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A compatible ordered interval fixture yields two canonical maximal segments. Reordering does not alter keys; overlaps merge; excluded rational-point gaps do not. Signed stepping restarts per segment. The finite witness suite checks integral content only, not general endpoint normalization.

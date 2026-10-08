@@ -139,7 +139,7 @@ Stepped domains may appear in any context admitting a domain: fields, components
 
 In a normalised form with several disjoint segments, the step restarts in each segment. A positive step traverses segments from lower to higher and anchors at the lower endpoint; a negative one traverses from higher to lower and anchors at the upper endpoint.
 
-The consolidated syntax of discontinuous intervals remains open in Q-018. D-088 settles explicit descending traversal: it is expressed by a negative step, never by reversing endpoints.
+The consolidated syntax and canonical keys of discontinuous intervals are fixed by [[ADR-143-discontinuous-interval-normal-form|D-143]]. D-088 settles explicit descending traversal: it is expressed by a negative step, never by reversing endpoints.
 
 A cyclic point domain may be enumerated with a compatible difference, but only for one fundamental period. It never wraps indefinitely.
 
@@ -161,7 +161,7 @@ The implementation must diagnose a missing `:`, zero step, incompatible differen
 
 ## Verification
 
-Verification covers enumerable sources of every admitted class, `:` with short and braced bodies, short filters and filters with locals, positive/negative/runtime steps, single step evaluation, static/runtime zero, open/closed bounds, empty/infinite intervals, signed stepped domains and `all`, `Num`, rejection of `Rum` progression, explicit `Rum` collections, selection and the five quantifiers with `by` and Boolean blocks, magnitudes with compatible units, and the distinction between ordered and unordered filters. Concrete verification of discontinuous intervals is completed when Q-018 closes its consolidated source form; their semantics are fixed by this decision. The requirement to traverse at most one fundamental period of a cyclic domain belongs to D-082's verification and does not depend on Q-018.
+Verification covers enumerable sources of every admitted class, `:` with short and braced bodies, short filters and filters with locals, positive/negative/runtime steps, single step evaluation, static/runtime zero, open/closed bounds, empty/infinite intervals, signed stepped domains and `all`, `Num`, rejection of `Rum` progression, explicit `Rum` collections, selection and the five quantifiers with `by` and Boolean blocks, magnitudes with compatible units, and the distinction between ordered and unordered filters. Discontinuous source/key verification is completed by D-143 and its finite witnesses; the signed traversal contract remains unchanged. The requirement to traverse at most one fundamental period of a cyclic domain belongs to D-082's verification and does not depend on Q-018.
 
 ## Current amendment by D-096
 

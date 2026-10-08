@@ -76,7 +76,7 @@ A discontinuous interval is normalised into disjoint segments and traversed segm
 ## Consequences
 
 - There is no implicit iteration over infinite or uncountable domains.
-- The established syntax for discontinuous intervals continues in Q-018; the explicit downward path is expressed by `by` negative in accordance with D-088.
+- Discontinuous intervals use existing interval algebra under D-143; the explicit downward path is expressed by negative `by` under D-088.
 - Tests for finiteness and termination may be conservative.
 
 ## Verification

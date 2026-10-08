@@ -17,6 +17,7 @@ questions:
   - Q-050
   - Q-058
 decisions:
+  - D-143
   - D-142
   - D-140
   - D-137
@@ -236,6 +237,11 @@ Take checks a singleton Nat amount and a finite enumerable source. With constant
 Min/max return witnesses, not a value computed by a numeric body. No accepted witness yields ordinary empty. Direct quantification/traversal may consume a finite domain without first constructing a collection where its contract permits this. For each executes the appropriate effect/private-region block and preserves its source snapshot and decreasing/finite traversal evidence. Iteration, selection and quantifiers validate the complete recursive binding pattern before the predicate/body, introducing named leaves together and no symbol for a discard. Exact association patterns preserve dictionary witnesses; min/max still return the original accepted witness. Pattern mismatch is a static error and cannot filter the source.
 
 Domain restriction and derived local collection transforms apply their specified filtering, cardinality, ordering and uniqueness normalisation. They do not introduce implicit flattening, a new nominal alias, a new domain from a filtered collection or new inner authority.
+
+> [!rule] MUD-TYPE-025 — Discontinuous interval content
+> Compatible interval algebra denotes a normalized finite sequence of maximal nonempty convex segments, sorted in the admitted member order. Two adjacent segments merge exactly when their union is one interval in that member universe. Empty has zero segments; one simple nonempty interval has one. Equality and dictionary keys compare canonical member identity, normalized endpoints and boundary inclusion, not construction order.
+
+For example, `[1..3] | [7..9]` is a discontinuous interval; `[7..9] | [1..3]` has the same canonical key. Overlapping `[1..5] | [3..9]` normalizes to `[1..9]`. An excluded rational point in `[1..3) | (3..5]` prevents merging. Integral adjacency is interpreted relative to the integral member universe. Operations retain ordinary type/domain admission and magnitude-unit normalization. No multi-segment literal is required. Stepping restarts on each canonical segment, with negative steps traversing segments in descending order; continuous unstepped intervals do not gain enumerability.
 
 ## 8. Temporal, random and speculative forms
 

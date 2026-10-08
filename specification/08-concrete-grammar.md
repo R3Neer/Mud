@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-143
   - D-141
   - D-140
   - D-139
@@ -275,7 +276,7 @@ allowedRange: Int Interval = 1..2 | 3..4
 duration: Time = 1 hour + 30 minutes
 ```
 
-The first method directly produces a normalised discontinuous interval.
+The first method directly produces a normalised discontinuous interval. Discontinuous intervals use the ordinary interval-algebra expressions, not an additional literal. Canonical segments and content-based keys follow [[21-expressions#7. Domains, selection and finite traversal]].
 
 ```mud
 mut population: Population in [0..*] [1] = 10 people

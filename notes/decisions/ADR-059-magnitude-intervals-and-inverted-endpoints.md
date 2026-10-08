@@ -120,7 +120,7 @@ Let $l$ be the effective lower bound and $u$ the effective upper bound of a line
 
 These rules define normalisation by endpoint order. They do not exclude other empty intervals by content; for example, a discrete type may contain no value between two consecutive open endpoints.
 
-Inversion does not denote descending traversal or wraparound. The possible descending enumeration order remains separate in Q-018.
+Inversion does not denote descending traversal or wraparound. Descending enumeration uses a negative step under D-088; the discontinuous source/key contract is completed by D-143.
 
 Constructing `empty` this way is a valid, total operation. A calculated field whose endpoints cross denotes the empty interval; crossing is not itself an evaluation error.
 
