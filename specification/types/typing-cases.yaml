@@ -2101,16 +2101,16 @@ cases:
 
 - id: type-kind-normalized-union
   rules: [MUD-TYPE-026]
-  source: '(Int | Int)~kind'
+  source: 'typeDescriptor~kind'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Normalization yields Int and kind Basic. A nominal alias represented by Int remains Alias; identity is not erased for kind projection.
+  contract: Fixture supplies a Type descriptor for Int | Int. Normalization yields Int and kind Basic. A nominal alias represented by Int remains Alias; identity is not erased for kind projection.
 - id: type-kind-collection-exterior
   rules: [MUD-TYPE-026]
-  source: '(Int [*] [*])~kind'
+  source: 'typeDescriptor~kind'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: The exterior projects to Collection independently of depth, cardinality, order or uniqueness. No Matrix category is introduced.
+  contract: Fixture supplies a Type descriptor for Int [*] [*]. The exterior projects to Collection independently of depth, cardinality, order or uniqueness. No Matrix category is introduced.
 - id: type-kind-descriptor-categories
   rules: [MUD-TYPE-026]
   source: 'descriptor~type~kind'

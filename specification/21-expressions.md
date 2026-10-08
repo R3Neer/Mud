@@ -215,7 +215,7 @@ With divisor zero, initialization supplies Fault and ordinary recovery applies b
 
 For an admitted query, not (eventually x.InactiveRule() through game.Move) closes true if its initial goal is wholly erased and its demanded prefix work succeeds. The query is structurally erased rather than returning ordinary true to not. A non-erased initial goal follows the ordinary reachability contract. All source, finiteness, enumerability, purity and termination checks remain mandatory even when a query is erased. An ordinary imagine result remains ActionReply; inside a deleted call's arguments, imagine is not evaluated because those arguments are skipped.
 
-Pruning-sensitive syntax is normal admitted language usage. No mandatory yellow-warning category is introduced for it. Tooling may explain the applied pruning on request; invalid contracts and ambiguous uses retain their ordinary mandatory diagnostics.
+Pruning-sensitive syntax is normal admitted language usage. No sensitivity warning is required for conformance. Tooling may explain the applied pruning on request; invalid contracts and ambiguous uses retain their ordinary mandatory diagnostics.
 
 ### Alias-owned operator signatures
 

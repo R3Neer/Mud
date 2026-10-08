@@ -1,6 +1,6 @@
 """Finite supplied applicability sets; not Mud lookup, inference or execution.
 
-Each operand contract is supplied as a finite set of abstract inhabitants.
+Candidates belong to one supplied operator symbol. Each operand contract is supplied as a finite set of abstract inhabitants.
 The certificate therefore checks inclusion and selection independently of
 source parsing, nominal resolution and any general domain proof procedure.
 """
