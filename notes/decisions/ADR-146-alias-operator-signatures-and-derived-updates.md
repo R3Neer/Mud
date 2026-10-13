@@ -45,6 +45,6 @@ Reject automatically generated inverses, proof-dependent public admission, compa
 
 ## Verification
 
-MUD-TYPE-028/029, grammar/CST/AST models, declared acceptance/rejection cases and reviewed result-priority cases cover the accepted contracts. Q-075 delimits the remaining selection/identity work. No chapter is promoted.
+MUD-TYPE-028/029, grammar/CST/AST models, declared acceptance/rejection cases and reviewed result-priority cases cover the accepted contracts. D-156 completes the identity/reflection scope of Q-075. No chapter is promoted.
 
 Complete identity/schema specification and evidence: [[ADR-156-canonical-operator-contract-encoding-and-reflection-schema|D-156]].
