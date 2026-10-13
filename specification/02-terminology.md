@@ -4,7 +4,7 @@ aliases:
   - MUD Regulatory Glossary
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[01-scope-and-conformance]]"

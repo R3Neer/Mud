@@ -85,3 +85,27 @@ The next author discussion is the static subset of Q-058: Rum literal/constant c
 ## Numeric closure — 2026-10-13
 
 D-160 closes Q-058 with portable nearest-even binary64 conversion and arithmetic, gradual underflow, canonical positive zero, truncating-quotient remainder and explicit source rounding sites. Mud retains finite-only values and zero-divisor faults. Derived Rum representations follow existing signatures; no implicit exact/Rum mixing is introduced. Six finite rational certificates and seven declarative cases cover the boundary. Physical IR and foreign protocols remain excluded. Independent chapter drafting can now proceed without this numeric blocker.
+
+
+## Static construct integration — 2026-10-14
+
+Chapters 12–14, 16–20 and 22–26 are now developed English candidates. Existing
+11/15/21/28 and nominal chapter 10 were integrated where required; chapter 02
+now supplies the shared glossary and 01 retains its supporting fixed-target
+static contract. Each concrete construction starts with a short syntax example.
+
+D-160 closes Q-058's binary64 contract. D-161 closes Q-076's exact truncating
+remainder; D-162/Q-077 exclude functional value equality; D-163/Q-078 admit
+unitless point coordinates; D-164/Q-079 fixes quantifier predicate demand with
+source validation preserved; D-165/Q-080 admits only reserved private diagnostic
+provenance without operational/private-schema authority. Current decisions,
+question archives, active/export indexes and mechanical evidence are reconciled.
+
+The earlier audit/order entries are dated planning history. The current
+chapter-by-chapter publication assessment and scoped verification evidence are
+[[static-chapter-publication-review]]. Q-075/Q-060/Q-034/Q-058 are closed; no
+return to their earlier semantic choices is needed. Q-038 remains partial for
+project/version and migration protocols. Q-023/Q-028/Q-029 still prevent claiming
+a complete admission/certification procedure. Excluded causal, descriptor,
+foreign, patch and host protocols remain open; interface transcription does not
+close them or implement a compiler/runtime.

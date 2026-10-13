@@ -2,7 +2,7 @@
 title: Thing specialisation and identity
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[04-mathematical-model]]"
