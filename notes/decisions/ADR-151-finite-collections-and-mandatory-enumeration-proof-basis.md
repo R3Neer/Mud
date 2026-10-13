@@ -31,3 +31,7 @@ Failure to prove a mandatory obligation is static rejection, never a negative ru
 ## Verification and provenance
 
 Clarifies [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-075-enumerable-domains-all-and-derived-value-form|D-075]] and [[ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]], and corrects [[ADR-034-num-exactly-and-rum-binary64|D-034]]. Chapter 11 identifies mandatory proof premises; chapter 21 and the corpus contrast finite values, infinite domains, finite explicit Rum containers and exact rational grids. No chapter is promoted.
+
+## Analysis procedure policy
+
+[[ADR-155-uniform-normative-analysis-and-finiteness-diagnostics|D-155]] requires the same normative procedure per language version, distinguishes proved violation/unproved obligation/tool interruption, and prohibits implementation-specific expansion of admission. Q-028 retains exact procedure formalization rather than an unchosen policy for tool limits.
