@@ -92,3 +92,7 @@ A discontinuous interval is normalised into disjoint segments and traversed segm
 
 D-088 generalises `by` compatible signed differences, evaluated once, and distinguishes between ordered filters (which see previous sequential effects) and unordered filters (which read the snapshot (initial). The five quantifiers support `by` when the source defines progression and Boolean expression blocks. As corrected by [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]], Rum is mathematically finite/countable, but its numeric interval progression is not admitted. Explicit Rum collections retain container enumeration. Cyclic point domains cover at most one fundamental period.
 
+
+## Predicate demand
+
+D-164 fixes semantic-order short circuit for exists/forall, complete common-view unordered evaluation, all-predicate count and first-end min/last-end reverse max search. Source production/validation and demanded faults are preserved. This operates on an already ordered witness source, not a numeric minimization body.

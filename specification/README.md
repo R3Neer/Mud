@@ -437,9 +437,9 @@ Defines:
 
 ## 22. Quantifiers, aggregations and iteration
 
-Planned file: `22-quantifiers-and-iteration.md`
+Chapter: [[22-quantifiers-and-iteration]].
 
-Planned scope:
+Defines:
 
 - Quantifiers and aggregators over finite enumerable sources.
 - `for each`, iteration bindings, ordering, filters, steps and membership snapshots.

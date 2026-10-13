@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-164
   - D-163
   - D-162
   - D-161
@@ -70,3 +71,5 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 The declaration certificates also check supplied comparison edges for the transitive functional-value exclusion, separately from derived fields, empty containers and supported projected keys. This does not implement whole-program equality eligibility analysis.
 
 `test_quantitative_catalogue.py` compares the normative SI catalogue with its accepted decision and checks finite unitless-point identity/domain certificates, including literal rejection before cycle repair. It does not implement point evaluation or format inversion.
+
+`test_quantifier_demand_witnesses.py` checks supplied finite predicate truth/fault labels for ordered/unordered demand, count and reverse extremum search. It evaluates no Mud source or source-production expression.

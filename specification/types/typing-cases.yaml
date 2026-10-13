@@ -2605,3 +2605,39 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture supplies family F with stored functional associated data. Member equality compares family/member identity, not those associated policy values.
+
+- id: quantifier-ordered-exists-demand
+  rules:
+  - MUD-TYPE-012
+  - MUD-TYPE-005
+  source: 'exists item in cases : 1 / item.divisor > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Required static fixture has complete position-ordered immutable records with divisors 1,0. The first true predicate skips the second zero divisor; source construction is normal.
+
+- id: quantifier-unordered-exists-fault
+  rules:
+  - MUD-TYPE-012
+  - MUD-TYPE-005
+  source: 'exists item in cases : 1 / item.divisor > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Required static fixture has the same two records but no semantic order. All predicates are demanded; unhandled zero-divisor fault prevents a normal result.
+
+- id: quantifier-max-reverse-demand
+  rules:
+  - MUD-TYPE-012
+  - MUD-TYPE-005
+  source: 'max x in values : 1 / x > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Required static fixture has ordered Num values -1,0,1. Reverse search accepts 1 before zero; min would demand the zero-divisor fault.
+
+- id: quantifier-count-demands-all
+  rules:
+  - MUD-TYPE-012
+  - MUD-TYPE-005
+  source: 'count item in cases : 1 / item.divisor > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Required static fixture has position-ordered divisor records 1,0. Count cannot stop at the first accepted item; zero divisor faults without recovery.

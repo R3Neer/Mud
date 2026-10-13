@@ -166,3 +166,7 @@ Verification covers enumerable sources of every admitted class, `:` with short a
 ## Current amendment by D-096
 
 Operations that produce a collection from a domain, including selection, require explicit `all D` materialisation. `for each` traversals and quantifiers may consume finite enumerable domains directly because they do not themselves materialise a collection. Actions, reactive rules and messages also admit preceding pure locals between metadata and behaviour clauses.
+
+## Predicate demand
+
+D-164 fixes semantic-order short circuit for exists/forall, complete common-view unordered evaluation, all-predicate count and first-end min/last-end reverse max search. Source production/validation and demanded faults are preserved. This operates on an already ordered witness source, not a numeric minimization body.

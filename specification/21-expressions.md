@@ -15,6 +15,7 @@ questions:
   - Q-023
   - Q-029
 decisions:
+  - D-164
   - D-163
   - D-162
   - D-161
@@ -312,6 +313,8 @@ Take checks a singleton Nat amount and a finite enumerable source. With constant
 | Exists, forall | Finite enumerable source; pure deterministic Bool predicate | Singleton Bool |
 | Count | Same predicate contract | Singleton Nat, bounded by source size |
 | Min, max | Finite enumerable source with the required order; pure deterministic Bool filter | Source member contract with cardinality $[0,1]$ |
+
+Quantifier predicate demand follows MUD-ITER-004 in [[22-quantifiers-and-iteration]]: ordered exists/forall short-circuit, unordered sources evaluate all, count needs all, and extrema search from their respective semantic ends. Source production/validation remains demanded; skipped predicates produce no reads/faults.
 
 Min/max return witnesses, not a value computed by a numeric body. No accepted witness yields ordinary empty. Direct quantification/traversal may consume a finite domain without first constructing a collection where its contract permits this. For each executes the appropriate effect/private-region block and preserves its source snapshot and decreasing/finite traversal evidence. Iteration, selection and quantifiers validate the complete recursive binding pattern before the predicate/body, introducing named leaves together and no symbol for a discard. Exact association patterns preserve dictionary witnesses; min/max still return the original accepted witness. Pattern mismatch is a static error and cannot filter the source.
 

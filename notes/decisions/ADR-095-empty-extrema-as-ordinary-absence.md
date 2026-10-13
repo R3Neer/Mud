@@ -50,3 +50,7 @@ Static cardinality may be narrowed when the compiler proves that at least one ca
 3. A `[0..1]` receiving context accepts absence.
 4. A `[1]` receiving context fails under the ordinary cardinality rule, not through a special aggregator diagnostic.
 5. A proof that at least one witness is accepted may narrow the result to `[1]`.
+
+## Predicate demand
+
+D-164 fixes semantic-order short circuit for exists/forall, complete common-view unordered evaluation, all-predicate count and first-end min/last-end reverse max search. Source production/validation and demanded faults are preserved. This operates on an already ordered witness source, not a numeric minimization body.
