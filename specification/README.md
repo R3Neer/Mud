@@ -377,9 +377,9 @@ Defines:
 
 ## 17. Dictionaries
 
-Planned file: `17-dictionaries.md`
+Chapter: [[17-dictionaries]].
 
-Planned scope:
+Defines:
 
 - Exact and functional dictionaries, their types, cardinalities and queries.
 - Associations, keys, iteration, ordering and algebraic operations.

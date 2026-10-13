@@ -419,3 +419,5 @@ Alias~operators exposes own and inherited declaration descriptors, deduplicated 
 [[12-things]] defines canonical thing schemas and ancestry admission; [[13-aliases]] defines alias member origins, construction and owned operator boundaries; [[14-closed-families]] defines closed member/data admission. Their symbols, owners and origin-preserving references use the nominal catalogue defined here. Generic applications create no additional symbols or anchors. Family data overrides supply values to existing schema declarations and create no member-specific datum descriptors. Static evaluation, effective contracts and materialisation generations belong to elaboration/semantics, not nominal HIR.
 
 [[20-blocks-and-recovery]] checks clause-local Error bindings using these existing local symbols and scopes. Recovery creates no world identity or public handler anchor.
+
+[[17-dictionaries]] uses association patterns and contextual value references in their existing local scopes. A normalized functional selector key is local reconstruction identity, not a public symbol/anchor; its result does not supply a new declaration.
