@@ -84,7 +84,7 @@ r0.1 + r0.2 == r0.3
 
 its accuracy is not guaranteed; the approximation forms part of the contract.
 
-The binary64 evaluation parameters required for bit-for-bit portability will be finalised in Q-058. No implementation may exploit this to use a different width or display extended precision as result observable or replace the semantics as a decimal.
+[[ADR-160-portable-rum-literals-operations-and-representation|D-160]] fixes portable binary64 literal and operation sites, subnormals/underflow, constant evaluation, canonical finite words and Rum representation inference. No implementation may exploit this to use a different width or display extended precision as result observable or replace the semantics as a decimal.
 
 ### Literal expressions
 
@@ -166,7 +166,7 @@ exactValue to Rum == rapidValue
 exactValue == rapidValue to Num
 ```
 
-`Num to Rum` is produced by the value `binary64` the nearest value, rounded to the nearest whole number.
+`Num to Rum` rounds the exact rational to the nearest binary64 value, ties to even; this is not integer rounding.
 
 `Rum to Num` It produces the exact rational number represented by the stored finite binary pattern. It does not necessarily reconstruct the decimal number that appeared in the programme.
 

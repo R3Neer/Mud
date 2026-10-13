@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-160
   - D-158
   - D-157
   - D-156
@@ -58,3 +59,5 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 - test_operator_identity_witnesses.py certifies canonical numbering of supplied small quotient graphs, nominal/domain/binder distinctions, ordered versus set edges and escaped scalar labels. Quotient construction and source normalization are supplied premises; it is not a complete operator identity encoder.
 
 - test_dimension_witnesses.py checks supplied finite anchor/exponent maps, exact positive unit ratios, nominal unitless distinctions and Money signature rejection before cancellation. It is not a source unit/representation analyzer.
+
+- test_rum_witnesses.py checks exact-rational certificates with supplied candidate/spacings: nearest-even ties, gradual underflow, overflow carry, mathematical truncating remainder and observable FMA differences. It does not implement a general binary64 converter, compiler or runtime.

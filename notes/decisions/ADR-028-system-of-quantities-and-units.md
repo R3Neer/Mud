@@ -219,7 +219,7 @@ magnitude DiscreteArea: Nat :=
     Width * Height
 ```
 
-The table describes exact operations. Operations in which all operands are `Rum` produce `Rum`; `Rum` is not implicitly conflated with exact representations. The inference of derived quantities that combine components `Rum` will be completed in Q-058.
+The table describes exact operations. Operations in which all operands are `Rum` produce `Rum`; `Rum` is not implicitly conflated with exact representations. [[ADR-160-portable-rum-literals-operations-and-representation|D-160]] completes Rum-derived representation inference: use each original Rum-only signature; mixed exact/Rum or Money/Rum is rejected without an admitted explicit conversion.
 
 Explicit annotation does not introduce rounding. The programme must satisfy the corresponding static representability rules. Money representation signatures follow chapter 21: exact scaling yields Money, Money/Money yields Num, and unsupported combinations are rejected. Nominal dimensions remain independently checked.
 
@@ -244,4 +244,4 @@ Explicit annotation does not introduce rounding. The programme must satisfy the 
 
 ## Deterministic normalization
 
-[[ADR-158-dimensional-normalization-and-representation-boundaries|D-158]] specifies finite anchor/exponent maps, acyclic topological unit-scale normalization and representation-first Money checks. Q-034 is completed; Q-058 retains Rum inference and numeric portability. Equal factors do not erase nominal magnitude identities or authorize reassociation across rounding sites.
+[[ADR-158-dimensional-normalization-and-representation-boundaries|D-158]] specifies finite anchor/exponent maps, acyclic topological unit-scale normalization and representation-first Money checks. Q-034 is completed; D-160 specifies Rum inference and numeric portability. Equal factors do not erase nominal magnitude identities or authorize reassociation across rounding sites.

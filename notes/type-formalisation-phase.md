@@ -81,3 +81,7 @@ Q-075, Q-060 and Q-034 are now closed with complete scoped specifications and ev
 D-159 formalizes the independent static part of Q-038 in chapter 01, now draft. Project descriptor/default/discovery and source/IR/persisted-world migration remain outside scope, so Q-038 remains partial. Chapter 02 is still a skeleton; the other developed chapters remain proposed. This does not publish them or create the pending 12–26 chapters.
 
 The next author discussion is the static subset of Q-058: Rum literal/constant conversion and any remaining derived representation inference. Exact numeric signatures, rejection of implicit exact/Rum mixing and dimensional normalization must not be reopened. After those indispensable choices, continue the chapter drafting order above; ask only for a concrete unselected case, not an advanced-analysis proposal as a blanket prerequisite.
+
+## Numeric closure — 2026-10-13
+
+D-160 closes Q-058 with portable nearest-even binary64 conversion and arithmetic, gradual underflow, canonical positive zero, truncating-quotient remainder and explicit source rounding sites. Mud retains finite-only values and zero-divisor faults. Derived Rum representations follow existing signatures; no implicit exact/Rum mixing is introduced. Six finite rational certificates and seven declarative cases cover the boundary. Physical IR and foreign protocols remain excluded. Independent chapter drafting can now proceed without this numeric blocker.

@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-160
   - D-158
   - D-156
   - D-154
@@ -1908,3 +1909,5 @@ These are alternative forms of the same illustrative declaration, not two declar
 ## Executable raise
 
 `raise value-body` is an expression form and may stand as a value/effect statement. Its payload and normal-result/error contracts follow [[21-expressions#9. Blocks and error recovery]]. It is not a declaration or a general escape from typing. Preserve the existing nearest-completed-block attachment rule for otherwise; braces distinguish a payload's recovery from recovery of the containing raised computation. A direct raise in an effect statement projects to RaiseEffect, not ActionCallCandidateEffect; a direct raise in a value statement projects to RaiseValueStatement.
+
+Rum literal decimal decoding, binary64 rounding and constant evaluation follow MUD-TYPE-038 in [[11-type-system]]. The lexical r distinction and established Rum-unit context remain unchanged.

@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 30 active questions: 12 open and 18 partially decided.
+There are 29 active questions: 11 open and 18 partially decided.
 
 Priorities:
 
@@ -61,7 +61,6 @@ Priorities:
 | [[Q-038-c-compatibility-between-language-versions|Q-038 — Compatibility between language versions]] | Partially decided |
 | [[Q-039-e-sufficient-explanation|Q-039 — Sufficient explanation]] | Open |
 | [[Q-040-a-threats-and-permissions|Q-040 — Threats and permissions]] | Open |
-| [[Q-058-e-portable-evaluation-of-rum|Q-058 — Portable evaluation of `Rum`]] | Open |
 
 ## Historial
 

@@ -12,9 +12,9 @@ depends-on:
 questions:
   - Q-073
   - Q-028
-  - Q-058
   - Q-029
 decisions:
+  - D-160
   - D-159
   - D-158
   - D-157
@@ -243,7 +243,24 @@ For example, Length/Time and Length*Time/Time/Time have the same factor map. Len
 
 Select representations recursively in original source grouping using [[21-expressions#4. Numeric, dimensional and Boolean operators]]. Nat/Int/Num products follow their widening rules and division yields Num. Money*Num and Money/Num yield Money; Num*Money yields Money; Money/Money yields Num; Money*Money and scalar/Money remain invalid. Money result sites round to hundredths ties-to-even and then check domains. An explicit representation annotation requires the existing representability evidence and introduces no rounding or implicit conversion. Thus a dimensionally canceling expression can still be rejected for an unsupported intermediate representation signature.
 
-The dimension/scale procedure takes checked canonical equivalence values as input. Representation inference for derived magnitudes involving Rum and portable conversion/evaluation of Rum constants remain [[../notes/questions/Q-058-e-portable-evaluation-of-rum|Q-058]]. Factor normalization does not fill that gap or rewrite floating-point computation.
+The dimension/scale procedure takes checked canonical equivalence values as input. Rum literal/constant evaluation and derived representation follow MUD-TYPE-038 below. Factor normalization never rewrites floating-point computation across its rounding sites.
+
+### Portable Rum values and static evaluation
+
+> [!rule] MUD-TYPE-038 — Portable binary64 sites and canonical values
+> Rum literals and admitted arithmetic use round-to-nearest, ties-to-even binary64, with subnormals and gradual underflow. Each source arithmetic site rounds independently. Preserve observable errors/dependencies and actual demand during constant evaluation. No implicit exact/Rum or Money/Rum signature is created. Nonfinite values and division by zero remain faults; all zero results normalize to positive zero.
+
+Define RN(t) for a nonnegative exact rational t as its nearest integer, choosing the even integer on a tie. For exact rational x, let a=abs(x). If a=0, return canonical positive zero. If 0<a<2^-1022, compute k=RN(a*2^1074). Return the signed subnormal k*2^-1074, except k=0 returns positive zero and k=2^52 is the minimum normal. Otherwise choose the unique integer e with 2^e<=a<2^(e+1), and k=RN(a/2^(e-52)). If k=2^53, replace k by 2^52 and increment e. If e>1023, the rounded result is outside finite binary64 and supplies a fault. Otherwise return sign(x)*k*2^(e-52). Comparisons/rounding use exact integer/rational relations, not a host decimal approximation. The overflow midpoint is handled by this same carry rule, never by clamping to the largest finite value.
+
+The finite canonical word has the IEEE binary64 sign, exponent and fraction fields. For a nonzero normal result, exponent=e+1023 and fraction=k-2^52. A subnormal has exponent=0 and fraction=k. Canonical zero is the all-zero word. Use exactly 16 lowercase hexadecimal digits when a textual semantic bit-pattern label is required. This fixes value identity for normalized constants and signature-domain labels; it does not prescribe physical IR fields, file encoding or foreign ABI.
+
+Decode a decimal literal's digits and exponent into an exact rational first, then apply this procedure once. A pure Rum literal requires r; the established Rum-magnitude unit context may omit r. Unary signs are separate operators. A nonfinite/unrepresentable literal is statically invalid. Subnormal literals are valid and tiny literals may become zero; their contextual domain/cardinality admission remains required. Num to Rum uses the same procedure; Rum to Num recovers the exact rational of the canonical finite value. Subsequent explicit integer conversion retains the existing quantitative ties-to-even contract.
+
+For Rum operands, +, -, * and / compute the mathematical operation on their represented finite dyadic values and round once at that source site. A zero divisor faults. Unary minus changes the sign of a nonzero value and leaves canonical zero. Comparisons use the represented numerical values. For a%b with b nonzero, let q be truncation toward zero of the exact mathematical a/b; compute a-q*b and round to Rum. Do not calculate q through a rounded Rum division. Thus (-r5.5)%r2 is -r1.5; r5%r3 is r2. A zero remainder normalizes to positive zero.
+
+Every expression site has binary64 intermediate precision; wider host registers cannot change results. a*b+c has a multiplication rounding followed by addition rounding. Automatic FMA contraction, reassociation or constant folding is permitted only when it preserves the complete observable value/fault/demand contract. No implicit fast-math mode or source FMA operation is established. Required static owners must produce a normal admitted result after applicable recovery; executable computing faults retain the ordinary error channel. Staged effect consolidation retains its specified algebra/rounding stages in [[28-effects]] rather than acquiring an accidental host evaluation order.
+
+Unit construction consumes its checked numeric value, converts its coordinate using the symbolic exact canonical unit factor and rounds the resulting Rum coordinate. The exact factor belongs to unit elaboration, not a new implicit source arithmetic signature. Domain validation follows canonical result construction. All operands of a derived magnitude's representation expression must admit their original operation signatures: Rum-only product/quotient results are Rum; mixed exact/Rum or Money/Rum is rejected. Annotation cannot silently convert components. Dimensional equality does not rescue an unsupported numeric signature.
 
 ## 6. Subtyping and guarantee inclusion
 

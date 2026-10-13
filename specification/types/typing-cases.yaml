@@ -2364,3 +2364,52 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: a has Money representation, factor is Num and dimensions fit the supplied context. The Money result rounds at this source site ties-to-even and then checks its result domain; factor cancellation cannot move that site.
+
+- id: rum-normal-literal-rounding
+  rules: [MUD-TYPE-038]
+  source: 'value: Rum = r0.1'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Decode the decimal exactly and round once to binary64 nearest-even. Its canonical word is 3fb999999999999a; it is not exact rational one tenth.
+
+- id: rum-underflow-literal-zero
+  rules: [MUD-TYPE-038]
+  source: 'value: Rum = r1e-400'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The nonzero exact decimal rounds to canonical positive zero; underflow alone is not an error. A positive-only destination domain would independently reject zero.
+
+- id: rum-overflow-literal-rejected
+  rules: [MUD-TYPE-038]
+  source: 'value: Rum = r1e400'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The literal rounds outside finite binary64. It cannot be clamped to max finite or exposed as Infinity.
+
+- id: rum-remainder-negative
+  rules: [MUD-TYPE-038]
+  source: '(-r5.5) % r2'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Use the truncating exact mathematical quotient -2 and result -r1.5. Do not use Python floor modulo or a rounded division.
+
+- id: rum-source-rounding-sites
+  rules: [MUD-TYPE-038]
+  source: 'a * b + c'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied finite Rum a=1+2^-27, b=1-2^-27, c=-1. Separate sites yield zero; FMA would yield -2^-54 and is not an equivalent optimization.
+
+- id: rum-derived-mixed-representation
+  rules: [MUD-TYPE-038]
+  source: 'magnitude Speed: Rum := RapidLength / ExactTime'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Supplied RapidLength has Rum representation and ExactTime has Num representation. The explicit result annotation cannot invent a mixed arithmetic signature or component conversion.
+
+- id: rum-derived-homogeneous
+  rules: [MUD-TYPE-038]
+  source: 'magnitude Speed := RapidLength / RapidTime'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both component representations are Rum and the dimensions are valid. The existing Rum-only quotient fixes the inferred representation to Rum.

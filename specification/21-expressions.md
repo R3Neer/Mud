@@ -14,8 +14,8 @@ questions:
   - Q-007
   - Q-023
   - Q-029
-  - Q-058
 decisions:
+  - D-160
   - D-158
   - D-156
   - D-155
@@ -84,7 +84,7 @@ Normal and sub operations retain distinct declaration identity: `subaction <: ac
 
 The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
-Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation. Mandatory finite/termination certification follows the uniform normative procedure contract in [[11-type-system]]; optional stronger tool analysis cannot independently admit additional programs.
+Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Portable binary64 literal/operation sites and static evaluation follow MUD-TYPE-038 in [[11-type-system]]. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation. Mandatory finite/termination certification follows the uniform normative procedure contract in [[11-type-system]]; optional stronger tool analysis cannot independently admit additional programs.
 
 Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
 
@@ -178,7 +178,7 @@ Let $n_A,n_B$ be member numeric representations. Exact addition/subtraction/mult
 
 Money-producing scaling computes the exact rational result, rounds to hundredths with round-to-nearest, ties-to-even, then checks the result domain. Money / Money yields an exact rational without monetary rounding. Sequential operators normalise at their textual sites; concurrent numeric stages use [[28-effects]] and its canonical stage normalisation. An update additionally needs a result admissible at its stored destination: Money /= Money cannot implicitly narrow its Num result back to Money.
 
-A supported operation with zero divisor, invalid domain/conversion or prohibited nonfinite Rum result supplies Error occurrences rather than a normal value, empty or sentinel. Resource exhaustion is a technical Error, not numerical overflow/wraparound. A statically invalid closed computation is diagnosed statically. Detailed Error subtype names remain Q-007; binary64 portability remains Q-058. No new arithmetic saturation is inferred.
+A supported operation with zero divisor, invalid domain/conversion or prohibited nonfinite Rum result supplies Error occurrences rather than a normal value, empty or sentinel. Resource exhaustion is a technical Error, not numerical overflow/wraparound. A statically invalid closed computation is diagnosed statically. Detailed Error subtype names remain Q-007; binary64 evaluation follows MUD-TYPE-038 in [[11-type-system]]. No new arithmetic saturation is inferred.
 
 Pure Nat subtraction saturates before a declared domain check; signed additive effect deltas instead consolidate before one Nat normalisation. Explicit to conversions round and then validate without corrective saturation. Numeric % requires its specified compatible member operation; an absent overload is a static error, not an implicit cast.
 
@@ -363,6 +363,6 @@ Derived positional captures project their common registered RHS, retaining its r
 
 An immutable stored local requires an annotation and initial value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique static type, registers a live derivation and obtains no outer place authority. Every read uses the semantic view applicable there, including the current private sequential projection; the inferred type does not change when values change. Stored bindings capture once at slot creation. Explicit or partial `_` annotations obey unique stored-hole inference. Shared behaviour preambles admit immutable stored/derived bindings with value-body RHSs, while expression/test preambles retain pure derived expression RHSs. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
 
-For each syntax family, elaboration selects the already defined operation contract, contextual literal type, runtime admission check, effect summary and proof evidence. Unsupported combinations produce a static diagnostic. Successful static checking proves neither global causal termination nor bit-for-bit binary64 portability beyond the declared guarantees.
+For each syntax family, elaboration selects the already defined operation contract, contextual literal type, runtime admission check, effect summary and proof evidence. Unsupported combinations produce a static diagnostic. Successful static checking proves neither global causal termination nor operational properties beyond the declared numeric/static guarantees.
 
 The coverage matrix in [[types/expression-coverage.yaml]] accounts for every Surface AST expression constructor. [[types/typing-cases.yaml]] supplies positive, negative and runtime-boundary examples. Their mechanical validation verifies coverage, evidence and finite type-contract witnesses rather than claiming a complete MUD parser/typechecker or executor.
