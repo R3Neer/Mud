@@ -3072,3 +3072,16 @@ cases:
   cst_root: ValueBlockBodySyntax
   ast: 'ValueBlock([], RaiseExpr(ValueBlock([], problem, [])), [RecoveryHandler(branch=RecoverThen(ValueRecovery(replacement)))])'
   produces_ast: true
+
+- id: alias-operator-short-metadata-owner
+  category: alias
+  source: 'alias V { x: Num; a * (factor: Num): V := a { ~summary = "Scale" } }'
+  cst_root: MudFileSyntax
+  ast: 'AliasOperatorDecl(BinaryOperatorDecl(value=ValueBlock(...), metadata=[StoredMetadataAssignment(summary)]))'
+  produces_ast: true
+- id: alias-operator-integrated-metadata-owner
+  category: alias
+  source: 'alias V { x: Num; a * (factor: Num): V := { ~summary = "Scale"; a } }'
+  cst_root: MudFileSyntax
+  ast: 'AliasOperatorDecl(BinaryOperatorDecl(value=ValueBlock(...), metadata=[StoredMetadataAssignment(summary)]))'
+  produces_ast: true

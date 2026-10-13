@@ -1,3 +1,6 @@
+-- Operator metadata retains its source owner; typed signature anchors and reflective
+-- operand contracts are not nominal HIR fields. Invocation operand bindings are
+-- unavailable in the declaration metadata environment.
 -- Alias operator declarations/operands retain SurfaceRef provenance.
 -- Operator selection and signature-dependent public anchors belong to typing.
 -- Preserve original alias ownership and separate declaration-local operand scopes;

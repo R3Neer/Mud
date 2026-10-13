@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-153
   - D-151
   - D-147
   - D-146
@@ -1884,7 +1885,20 @@ LocalStatementBlock groups statements within the owning ValueBlock and shares it
 
 ## Alias operator declarations
 
-Inside an alias body, binary declarations use `a * (factor: Num): Vector2 := value-body`; unary declarations use `-a: Vector2 := value-body`. Bare operands omit their owner-alias type, not required punctuation around a written type. Result annotations may be omitted. Existing expression precedence/grouping is unchanged. The overloadable set and static result contracts are specified in [[21-expressions#Alias-owned operator signatures]]. Representation-alias bodies may retain owner metadata followed by operators; operator bodies are ordinary value bodies, not implicit metadata owners.
+Inside an alias body, binary declarations use `a * (factor: Num): Vector2 := value-body`; unary declarations use `-a: Vector2 := value-body`. Bare operands omit their owner-alias type, not required punctuation around a written type. Result annotations may be omitted. Existing expression precedence/grouping is unchanged. The overloadable set and static result contracts are specified in [[21-expressions#Alias-owned operator signatures]]. Representation-alias bodies may retain owner metadata followed by operators; each operator is a metadata-bearing declaration using descriptor-value-body. A short expression may be followed by one metadata-only body; an expanded body may begin with an integrated metadata preamble. These forms cannot be combined. Metadata belongs to the whole operator descriptor, not its produced value, and cannot read invocation operand bindings.
+
+```mud
+a * (factor: Num): Vector2 := (a.x * factor, a.y * factor) {
+    ~summary = "Scales the vector."
+}
+
+a * (factor: Num): Vector2 := {
+    ~summary = "Scales the vector."
+    (a.x * factor, a.y * factor)
+}
+```
+
+These are alternative forms of the same illustrative declaration, not two declarations allowed together in one owner.
 
 ## Executable raise
 

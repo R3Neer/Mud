@@ -14,4 +14,15 @@ class OperatorFixtures(unittest.TestCase):
     def test_typed_operand_and_unary(self):
         for source in ('a * (factor: Num): Vector2 := a','(factor: Num) * b := b','-a: Vector2 := a','+a := a'):
             self.assertTrue(recognises(self.bnf,'operator-declaration',fixture(source)),source)
+    def test_descriptor_metadata_attachment_forms(self):
+        for source in (
+            'a * (factor: Num): V := a { ~summary = description }',
+            'a * (factor: Num): V := { ~summary = description; a }',
+            '-a := { ~summary = description; a }',
+        ):
+            tokens = ['TERMINATOR' if token == '";"' else token for token in fixture(source)]
+            self.assertTrue(recognises(self.bnf, 'operator-declaration', tokens), source)
+        mixed = 'a * b := { ~summary = description; a } { ~name = title }'
+        tokens = ['TERMINATOR' if token == '";"' else token for token in fixture(mixed)]
+        self.assertFalse(recognises(self.bnf, 'operator-declaration', tokens))
 if __name__=='__main__': unittest.main()

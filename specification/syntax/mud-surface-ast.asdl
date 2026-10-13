@@ -262,9 +262,11 @@ module MUDSurface {
         attributes (source_origin origin)
 
     operator_decl = UnaryOperatorDecl(prefix_operator operator, operator_operand operand,
-                                      type_expr? result, value_block value)
+                                      type_expr? result, value_block value,
+                                      metadata_assignment* metadata)
                   | BinaryOperatorDecl(operator_operand left, binary_operator operator,
-                                       operator_operand right, type_expr? result, value_block value)
+                                       operator_operand right, type_expr? result, value_block value,
+                                       metadata_assignment* metadata)
         attributes (source_origin origin)
 
     operator_operand = OperatorOperand(variable_name name, type_expr? explicit_type)

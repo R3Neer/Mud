@@ -262,9 +262,9 @@ alias-body-declaration
 
 operator-declaration
     ::= operator-operand , overload-binary-operator , operator-operand
-        , [ ":" , type-expression ] , ":=" , value-body
+        , [ ":" , type-expression ] , ":=" , descriptor-value-body
       | overload-unary-operator , operator-operand
-        , [ ":" , type-expression ] , ":=" , value-body ;
+        , [ ":" , type-expression ] , ":=" , descriptor-value-body ;
 
 operator-operand
     ::= variable-name | "(" , variable-name , ":" , type-expression , ")" ;

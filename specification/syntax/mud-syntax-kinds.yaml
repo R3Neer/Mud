@@ -2398,15 +2398,13 @@ syntax_nodes:
     - generic-constructor
   operator-declaration:
     kind: OperatorDeclarationSyntax
-    rhs: "operator-operand , overload-binary-operator , operator-operand\n        , [ \":\" , type-expression ] ,\
-      \ \":=\" , value-body\n      | overload-unary-operator , operator-operand\n        , [ \":\" , type-expression\
-      \ ] , \":=\" , value-body"
+    rhs: "operator-operand , overload-binary-operator , operator-operand\n        , [ \":\" , type-expression ] , \":=\" , descriptor-value-body\n      | overload-unary-operator , operator-operand\n        , [ \":\" , type-expression ] , \":=\" , descriptor-value-body"
     references:
     - operator-operand
     - overload-binary-operator
     - overload-unary-operator
     - type-expression
-    - value-body
+    - descriptor-value-body
   operator-operand:
     kind: OperatorOperandSyntax
     rhs: variable-name | "(" , variable-name , ":" , type-expression , ")"

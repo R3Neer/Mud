@@ -6,6 +6,7 @@ opened: 2026-10-08
 resolved:
 closed:
 decisions:
+  - D-153
   - D-149
   - D-146
 affects:
@@ -28,7 +29,9 @@ D-146 fixes source signatures, owner participation, the overloadable set, result
 ## Pending
 
 - Specify collision-free canonical anchor encoding for every complete operand contract, including generic binders, applications, domains, cardinalities and escaping, under source-origin identity rules.
-- Complete the reflective property/type schema and source representation of operator metadata, preserving the selected whole-declaration ownership and nominal/typed phase separation.
+- Complete the reflective property/type schema, including ordered name/type operand descriptors. Metadata source attachment uses descriptor-value-body and is no longer pending.
+
+The full anchor must use self-contained textual encoding; exact grammar/escaping is formalization under that policy. These remaining items are specification work, not unchosen overload selection or metadata ownership.
 
 ## Closure criterion
 
