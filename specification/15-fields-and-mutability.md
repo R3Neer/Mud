@@ -47,6 +47,13 @@ decisions:
 
 This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[11-type-system]] supplies type inclusion and proof evidence; [[21-expressions]] supplies expression/block rules. [[28-effects]] supplies private execution and the root/wave batch boundary; acyclicity proofs for dynamically selected callables remain Q-023. Those uncertainties do not grant additional writes or alter the stored-field schema.
 
+```mud
+thing Counter {
+    mut value: Nat = 0
+    doubled := value * 2
+}
+```
+
 ## 1. Places and authority
 
 Let $\pi$ be a symbolic assignable path, $\lambda$ its final storage root, $\tau$ its leaf contract and $\kappa$ its available authority. Define

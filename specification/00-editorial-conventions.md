@@ -238,6 +238,8 @@ The examples are categorised as follows:
 - `invalid`: this should be rejected.
 - `interaction`: combines features.
 
+A chapter about a concrete language construction includes a short syntax example near the beginning, after its brief introductory text. Detailed interaction and boundary examples may remain later; the opening example illustrates the construction without replacing its rules.
+
 An illustrative example can never be the sole definition of a rule.
 
 ## 10. Unresolved issues

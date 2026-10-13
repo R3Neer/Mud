@@ -38,6 +38,11 @@ decisions:
 > runtime payload constructor. `ordered family` additionally supplies member
 > comparison by declaration position.
 
+```mud
+ordered family Severity { Low, Medium, High }
+level: Severity = Medium
+```
+
 Let F be a resolved family, A its exact static type arguments (empty for a
 nongeneric family), and M(F)=(m1,...,mn) its member declaration sequence. Its
 values are Member(F,A,mi). Equality requires the same constructor, exact

@@ -52,6 +52,12 @@ decisions:
 
 Shared block ownership, occurrence selection and recovery typing are [[20-blocks-and-recovery]]. The effect judgments here instantiate its protected rollback and composition boundary.
 
+```mud
+action Increment for mut total: Num {
+    then total += 1
+}
+```
+
 ## Scope
 
 This chapter defines execution of statically admitted effect families over private projections and consolidation of finite branch contributions at root/wave boundaries. [[15-fields-and-mutability]] supplies authority and static proof obligations; [[21-expressions]] supplies expression evaluation contracts. A successful batch produces a tentative next view, not an independent commit.

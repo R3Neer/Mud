@@ -41,6 +41,11 @@ algorithm, identity registry encoding, wave scheduling or causal attribution.
 The corresponding operational contracts belong to [[04-mathematical-model]]
 and [[28-effects]].
 
+```mud
+abstract thing Place
+thing Harbor as Place { mut visitors: Nat = 0 }
+```
+
 ## Identity and declaration
 
 > [!definition] Canonical thing

@@ -41,6 +41,13 @@ is [[21-expressions]]; place permissions are [[15-fields-and-mutability]];
 protected effect boundaries and composition are [[28-effects]]. These interfaces
 do not define causal occurrence generation, wave discovery or adapter protocols.
 
+```mud
+result: Num = {
+    divisor: Num = 0
+    10 / divisor
+} otherwise then 0
+```
+
 A block owner fixes its normal result contract and mode. ExpressionBlock has
 ordered immutable pure preamble derivations and one final expression. ValueBlock
 admits ordered private stored/computed locals, permitted private mutations and

@@ -49,6 +49,12 @@ definition `alias A := Type` is static type definition, not runtime calculation.
 An ordered structural body declares stored components and optional pure derived
 fields. Component defaults do not remove components from the representation.
 
+```mud
+alias PlayerName := Text
+alias Vector2 { x: Num; y: Num }
+position: Vector2 = (1, 2)
+```
+
 > [!rule] MUD-ALIAS-001 — Nominal immutable values
 > An alias introduces its own nominal type even when its normalized
 > representation equals another type's representation. Its values are finite
