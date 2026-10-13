@@ -22,7 +22,7 @@ Normalize linear dimensions as finite integer exponent maps over original base m
 
 Check every original representation operation before dimensional cancellation using existing numeric signatures. Money scaling and Money/Money follow chapter 21; unsupported Money*Money cannot be repaired by cancellation or reassociation. Money-producing arithmetic retains source-site ties-to-even rounding and result-domain admission. Explicit derived representation annotations must satisfy the established representability rules and cannot invent a cast or operation. Point kind/cycle compatibility is checked independently and never erased by linear factor equality.
 
-Rum representation inference and literal/constant arithmetic portability remain Q-058. The dimensional algorithm consumes checked canonical quantities and does not choose those pending numeric rules. This completes Q-034's dimensional algorithm/Money boundary, not Q-058's numeric semantics.
+Rum representation inference and literal/constant arithmetic follow D-160, which closes Q-058. The dimensional algorithm consumes checked canonical quantities under those numeric rules. Q-034's dimensional algorithm/Money boundary and the numeric semantics retain their separate canonical contracts.
 
 ## Verification and provenance
 

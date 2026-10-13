@@ -2027,7 +2027,7 @@ cases:
   source: 'Vector2~kind'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: Fixture supplies a nominal Vector2 alias. Its Type descriptor reports Alias regardless of tuple representation. Nat reports Basic; applied aliases remain Alias. TypeKind is a closed builtin family, fixed per language version. Its complete builtin inventory audit remains separate.
+  contract: Fixture supplies a nominal Vector2 alias. Its Type descriptor reports Alias regardless of tuple representation. Nat reports Basic; applied aliases remain Alias. TypeKind is a closed builtin family, fixed per language version. The complete builtin inventory projects through the fixed target catalogue in chapter 11.
 - id: nested-matrix-and-empty-member
   rules:
   - MUD-TYPE-027

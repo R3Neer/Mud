@@ -15,6 +15,8 @@ affects:
 ---
 # ADR-048 — Reproducible randomness and errors
 
+- Static initialization/condition contracts reconciled with D-112/D-137; numeric portability formalized by D-160.
+
 - Amended by: [[ADR-119-invocation-owned-completion-and-imagine|D-119]].
 
 - Amended by: [[ADR-118-action-replies-refusals-and-errors|D-118]].
@@ -37,13 +39,13 @@ MUD 1.0 sets out an explicitly random method of sampling:
 Rand(source)
 ```
 
-The source must be a demonstrable collection or domain. There are as yet no compelling arguments regarding weights, distributions or local policy.
+The source must be an admitted finite enumerable collection or domain. There are as yet no compelling arguments regarding weights, distributions or local policy.
 
 D-081 add `take amount from source`. Based on a source with no discernible order and with more occurrences than `amount`, `take` is a point reproducible randomness even if I don’t write anything `Rand`: selects uniformly without replacement. It has the same identity, cache by snapshot and contextual constraints. When dealing with a well-organised source, or when there is no real choice, `take` It is deterministic and does not involve chance.
 
 `Rand` It can intervene in three ways:
 
-- stored field initialised randomly using `=`;
+- stored runtime local capture or authorised effect write using an admitted random calculation; closed stored schema initialisers and static defaults cannot use runtime sampling;
 - computed field randomly using `:=`;
 - sampling within a effect.
 
@@ -51,9 +53,9 @@ Everything point random has identity semantics and derives its result of a seed 
 
 `imagine` use a branch specific, planted and disposable. `eventually` quantifies existentially on outcomes with a positive probability in accordance with D-044.
 
-The non-finite results of `Rum`, division by zero, an unavailable reference, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `Errors` and rollback. Within `imagine` they spread like failure assessment purposes and do not amount to falsehood.
+The non-finite results of `Rum`, division by zero, an unavailable required value reference outside established Boolean pruning, an operation outside domain and any effect which cannot produce a state well-formed are errors. Within a action actually produce `Errors` and rollback. Within `imagine` they spread like failure assessment purposes and do not amount to falsehood.
 
-Each of these errors must have a diagnostic human `Text`. When it reaches the boundary of a action real, that one diagnostic forms the `reason` mandatory for its result `Errors` in accordance with D-061.
+Each Error occurrence has mandatory human-readable Text reason and diagnostic origin under D-118. At a real action boundary, unresolved occurrences form the nonempty Errors reply alternative; they are not flattened into one collection-wide reason. Established inactive Boolean-call pruning remains distinct from ordinary required-value faults.
 
 Resource constraints and internal flaws in an implementation should not be confused with a `Errors` semantic. Q-007 It must define their external representation and the exact boundary between the two categories.
 
@@ -61,7 +63,7 @@ Resource constraints and internal flaws in an implementation should not be confu
 
 - An implementation must not use machine time or evaluation order as a source semantics of chance.
 - Everything point random possesses identity semantics stable, and its selection must be based on the seed reproducible and of that identity without relying on the accidental sequential consumption of a global PRNG. The specific derivation or sub-seeding algorithm is a matter of implementation, provided that it preserves that contract. Q-032 It keeps the cache and retry rules, as well as the display of results, active.
-- The arithmetic portability of `Rum` continues at Q-058.
+- D-160 specifies portable Rum conversion/arithmetic and closes Q-058; finite-only and zero-divisor error rules remain required.
 - The semantics errors within ordinary Boolean expressions, outside `imagine`, requires a table of regulations within Q-007.
 
 ## Verification

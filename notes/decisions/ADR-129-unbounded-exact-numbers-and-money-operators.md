@@ -32,7 +32,7 @@ For magnitudes, apply the representation signatures together with existing nomin
 
 Unsupported signatures are static errors. A supported computation with a zero divisor, invalid destination domain/conversion, or a prohibited nonfinite Rum result has no normal value and uses Error occurrences under the owner's existing recovery/rollback contract. A statically invalid closed computation is diagnosed statically. No wraparound, sentinel, implicit empty or additional saturation is introduced. Pure Nat subtraction and signed additive effect bookkeeping retain their established distinct rules. Empty collection lifting still performs no member operation.
 
-An arithmetic update must preserve the stored destination contract. Money *= Num and Money /= Num are admitted with the ordinary proof/authority obligations; Money /= Money is not, since its member result is Num and there is no implicit narrowing into Money. Error subtype names remain in Q-007 and binary64 portability in Q-058.
+An arithmetic update must preserve the stored destination contract. Money *= Num and Money /= Num are admitted with the ordinary proof/authority obligations; Money /= Money is not, since its member result is Num and there is no implicit narrowing into Money. Error subtype names remain in Q-007; D-160 specifies binary64 portability and closes Q-058.
 
 ## Contrasting evidence
 
