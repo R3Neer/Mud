@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 156.
-- Current: 152.
+- Total: 157.
+- Current: 153.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -175,6 +175,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-159 | current | 2026-10-13 | [[notes/decisions/ADR-159-fixed-target-static-conformance-and-version-boundaries|Fixed target static conformance and version boundaries]] |
 | D-160 | current | 2026-10-13 | [[notes/decisions/ADR-160-portable-rum-literals-operations-and-representation|Portable Rum literals operations and representation]] |
 | D-161 | current | 2026-10-13 | [[notes/decisions/ADR-161-exact-truncating-remainder|Exact truncating remainder]] |
+| D-162 | current | 2026-10-14 | [[notes/decisions/ADR-162-no-functional-value-equality|No functional value equality]] |
 
 ## Reserved identifiers
 

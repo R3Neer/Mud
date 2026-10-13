@@ -8,7 +8,40 @@ import unittest
 from specification.types.validate_type_spec import ancestors
 
 
+def supplied_comparison_reaches_functional(nodes, root):
+    """Check a supplied finite equality-edge certificate, not source eligibility."""
+    seen, todo = set(), [root]
+    while todo:
+        node = todo.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        if nodes[node]["kind"] == "functional":
+            return True
+        todo.extend(nodes[node].get("compared", []))
+    return False
+
+
 class DeclarationWitnesses(unittest.TestCase):
+    def test_functional_equality_exclusion_is_transitive(self):
+        nodes = {"F": {"kind": "functional"},
+                 "Alias": {"kind": "alias", "compared": ["F"]},
+                 "Tuple": {"kind": "tuple", "compared": ["Alias"]},
+                 "Tree": {"kind": "alias", "compared": ["Tree", "Nat"]},
+                 "Nat": {"kind": "basic"}}
+        self.assertTrue(supplied_comparison_reaches_functional(nodes, "Tuple"))
+        self.assertFalse(supplied_comparison_reaches_functional(nodes, "Tree"))
+
+    def test_projected_key_and_derived_or_empty_contents_are_separate(self):
+        nodes = {"F": {"kind": "functional"}, "Nat": {"kind": "basic"},
+                 "Record": {"kind": "alias", "compared": ["Nat"], "derived": ["F"]},
+                 "Empty": {"kind": "zero-maximum-container", "compared": []},
+                 "WithPolicy": {"kind": "alias", "compared": ["Nat", "F"]}}
+        self.assertFalse(supplied_comparison_reaches_functional(nodes, "Record"))
+        self.assertFalse(supplied_comparison_reaches_functional(nodes, "Empty"))
+        self.assertTrue(supplied_comparison_reaches_functional(nodes, "WithPolicy"))
+        self.assertFalse(supplied_comparison_reaches_functional(nodes, "Nat"))
+
     def test_ancestry_is_reflexive_but_membership_strict(self):
         graph = {"Egypt": ["Kingdom"], "Kingdom": ["Thing"]}
         self.assertEqual(ancestors("Egypt", graph), {"Egypt", "Kingdom", "Thing"})

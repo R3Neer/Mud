@@ -366,9 +366,9 @@ Defines:
 
 ## 16. Cardinalities and collections
 
-Planned file: `16-collections.md`
+Chapter: [[16-collections]].
 
-Planned scope:
+Defines:
 
 - Cardinalities, `empty`, multiplicity, uniqueness and ordering.
 - Membership, collection algebra, indexing, selection and `take`.

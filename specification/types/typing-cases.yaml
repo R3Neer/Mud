@@ -2493,3 +2493,51 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: This is a required static value owner with no recovery; its zero divisor cannot produce a normal result.
+
+- id: functional-value-equality-rejected
+  rules:
+  - MUD-TYPE-040
+  source: 'left == right'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies two Int --> Nat policies; value equality is unavailable, even if their current outputs coincide.
+
+- id: functional-payload-alias-equality-rejected
+  rules:
+  - MUD-TYPE-040
+  source: 'left == right'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies the same concrete alias with a stored functional policy component; nominality does not grant payload equality.
+
+- id: functional-exact-key-rejected
+  rules:
+  - MUD-TYPE-040
+  source: 'table[policy]'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture attempts a FunctionalDictionary exact key; required key equality is unavailable.
+
+- id: functional-ordinary-unique-rejected
+  rules:
+  - MUD-TYPE-040
+  source: 'policies [* unique]'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies functional values. Ordinary uniqueness requires their unavailable whole-value equality.
+
+- id: functional-projected-key-supported
+  rules:
+  - MUD-TYPE-040
+  source: 'records [* unique by id]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies immutable records with stable Nat id and stored policy. Projected Nat keys support equality; this does not enable record value comparison.
+
+- id: functional-type-contract-equality-supported
+  rules:
+  - MUD-TYPE-040
+  source: 'leftType === rightType'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies Type descriptors of policies. Normalized contract comparison excludes policy bodies and captures; it is not value equality.

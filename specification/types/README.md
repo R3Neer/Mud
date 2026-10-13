@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-162
   - D-161
   - D-160
   - D-158
@@ -64,3 +65,5 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 - test_rum_witnesses.py checks exact-rational certificates with supplied candidate/spacings: nearest-even ties, gradual underflow, overflow carry, mathematical truncating remainder and observable FMA differences. It does not implement a general binary64 converter, compiler or runtime.
 
 `test_declaration_witnesses.py` checks supplied ancestry/strict-membership and initializer-origin certificates, applied family identity, shared datum origins and enumeration/key/member-order distinctions. Chapters 12 and 14 own these declaration contracts. These witnesses do not evaluate source programs.
+
+The declaration certificates also check supplied comparison edges for the transitive functional-value exclusion, separately from derived fields, empty containers and supported projected keys. This does not implement whole-program equality eligibility analysis.

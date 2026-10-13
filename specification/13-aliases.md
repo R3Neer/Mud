@@ -13,6 +13,7 @@ questions:
   - Q-028
   - Q-029
 decisions:
+  - D-162
   - D-031
   - D-032
   - D-033
@@ -172,8 +173,9 @@ conversion before ordinary nominal comparison.
 
 A representation alias inherits the representation's order when available.
 A structural alias has lexicographic order by stored component sequence when
-every component supplies the required semantic order. Equality is available
-without ordering. Comparison can provide expected nominal context to an untyped
+every component supplies the required semantic order. Equality needs no ordering but must be supported by all compared stored
+contents under MUD-TYPE-040 in [[11-type-system]]; functional payload cannot
+acquire equality from alias nominality. Comparison can provide expected nominal context to an untyped
 literal on either side; it cannot silently convert a typed variable or select
 between two bare untyped structural literals.
 

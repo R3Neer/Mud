@@ -15,6 +15,7 @@ questions:
   - Q-023
   - Q-029
 decisions:
+  - D-162
   - D-161
   - D-160
   - D-158
@@ -272,6 +273,8 @@ Is and iis check a nominal type operand. Is uses specialisation; iis uses exact 
 
 Comparison chains type each adjacent comparison and evaluate intermediate expressions once under the concrete chain restrictions. Contextual comparison may type one bare literal from an already typed alias operand; two context-free structural literals do not supply a nominal comparison context.
 
+Value equality, whole-value membership/algebra and equality-dependent keys or uniqueness additionally require MUD-TYPE-040 in [[11-type-system]]. Functional dictionary values and stored contents requiring their comparison have no admitted ==/!=. Type ===/!== retains its normalized-contract meaning.
+
 ## 6. Collection and dictionary algebra
 
 Collection |, &, -- and ^ combine compatible member contracts and preserve whole-value multiplicities according to their specified algebra. ^ requires whole-value uniqueness from both operands. Text | is concatenation and does not provide Text overloads for &, -- or ^.
@@ -283,7 +286,7 @@ For finite upper bounds $u_A,u_B$, conservative size bounds are:
 | Union | $[\max(\ell_A,\ell_B),u_A+u_B]$ |
 | Intersection | $[0,\min(u_A,u_B)]$ |
 | Difference | $[\max(0,\ell_A-u_B),u_A]$ |
-| Unique symmetric difference | $[0,u_A+u_B]$ |
+| Unique symmetric difference | $[\max(0,\ell_A-u_B,\ell_B-u_A),u_A+u_B]$ |
 
 Infinite upper bounds use extended nonnegative interval arithmetic. Domain/member result contracts account for both operand domains where needed; lower bounds may be strengthened only with evidence. Keyed uniqueness implies whole-value uniqueness but does not survive cross-operand collisions by declaration alone.
 

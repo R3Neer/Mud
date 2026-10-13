@@ -109,6 +109,9 @@ For both modes, the uniqueness criterion is applied to associated values, never 
 
 ### Functional dictionaries
 
+D-162 excludes functional value equality and comparisons requiring it transitively. It does not change FirstMatch selection or Type contract equality.
+
+
 The type:
 
 ```mud

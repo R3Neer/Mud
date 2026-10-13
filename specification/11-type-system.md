@@ -14,6 +14,7 @@ questions:
   - Q-028
   - Q-029
 decisions:
+  - D-162
   - D-161
   - D-160
   - D-159
@@ -315,6 +316,15 @@ An explicit nominal cast requires representation equivalence and validates desti
 Two context-free structural literals do not supply each other with a nominal comparison context. An already typed alias operand may supply its type to the opposite untyped compatible literal.
 
 Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
+
+### Value equality support
+
+> [!rule] MUD-TYPE-040 — Functional values have no equality
+> FunctionalDictionary does not admit value == or !=. A comparison of aliases, tuples, collections or exact dictionaries is likewise inadmissible when comparing their stored contents requires functional value equality. Nominal wrapping cannot grant that operation. All remaining possible compared static alternatives must support equality; missing proof cannot be replaced by inspecting current runtime contents.
+
+Apply this exclusion through equality's stored representation/component/key/value edges in the finite normalized type graph. Derived fields, computed data and metadata are not stored equality payload and do not create such edges. A container with proven maximum zero has no compared-member edge; comparing its empty content does not compare a functional value. Productive finite recursive values do not become unequal merely because their type graph is recursive; the exclusion applies when a compared reachable form is functional. This is a restriction on existing equality contracts, not a new source trait or public TypeKind.
+
+Exact dictionary keys, ordinary unique, whole-value membership/algebra and order comparisons cannot use an unsupported required equality. A stable unique by path can use a supported projected key without comparing the complete functional payload; it does not make ordinary whole-value equality or collection algebra available. Any claim of whole-value uniqueness is conditional on the member type having that equality. Functional FirstMatch ordered mode is branch selection, not a value comparator. Application and noncomparing filtering/traversal retain their established contracts. Type ===/!== below compares normalized contracts, not functional behavior, branch bodies or runtime captures.
 
 ### 7.1. Exact structural type equality
 

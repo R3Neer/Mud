@@ -204,6 +204,8 @@ board[E, Four]
 
 ### Equality
 
+Equality requires supported comparison of every compared key/member/value. D-162 excludes functional payload transitively; projected keyed uniqueness remains separate.
+
 - Collection ordered: same sequence and multiplicity.
 - Collection unordered: same multiset.
 - Dictionary: the same key associations–value; the order in which they are stored does not affect equality.

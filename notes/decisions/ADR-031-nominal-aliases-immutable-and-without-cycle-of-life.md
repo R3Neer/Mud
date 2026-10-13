@@ -124,7 +124,7 @@ The declaration has a anchor static for resolution and nominality, but their val
 - Participates in acyclic nominal specialisation in accordance with D-084, without purchasing identity nor cycle runtime.
 - It does not maintain state its own mutable variable.
 
-The values are compared by type nominal value and content. The declaration It is present throughout the programme in its fully developed form and does not form part of the projected activity of the world.
+Where the stored representation supports equality, values compare by exact nominal type and content. D-162 excludes comparisons requiring functional dictionary equality. The declaration It is present throughout the programme in its fully developed form and does not form part of the projected activity of the world.
 
 ## Consequences
 

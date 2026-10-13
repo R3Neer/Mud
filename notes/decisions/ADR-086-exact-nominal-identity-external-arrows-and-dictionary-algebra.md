@@ -435,7 +435,7 @@ The operation remains pure and deterministic with respect to the common snapshot
 
 ### Equality
 
-Defining the algebra extensionally does not turn general functional equality into an equivalence proof for every input. `F == G` remains subject to nominal or structural rules defined separately.
+Defining the algebra extensionally does not turn general functional equality into an equivalence proof for every input. D-162 rejects `F == G`/`F != G` and comparisons requiring functional value equality transitively; no structural policy/capture equality is introduced.
 
 ## Common restrictions
 

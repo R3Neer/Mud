@@ -185,7 +185,7 @@ Two values are equal if they have the same nominal alias and the same content.
 
 Simple aliases inherit their order from their type underlying, but they are only compared with values from the same alias. A structural alias It supports order comparisons if all its components are ordered; the order is lexicographical according to the declaration.
 
-Equality `==` and inequality `!=` are available even if the representation has no particular order. `<`, `<=`, `>` and `>=` require an ordered representation.
+Equality `==` and inequality `!=` need no representation order, but every compared stored component must support equality. D-162 excludes functional dictionary payload transitively. `<`, `<=`, `>` and `>=` require an ordered representation.
 
 ## Consequences
 
