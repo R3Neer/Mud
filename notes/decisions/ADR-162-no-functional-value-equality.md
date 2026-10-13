@@ -29,14 +29,14 @@ A raw functional dictionary has no admitted value equality. Alias nominality
 does not manufacture it. An alias/tuple/collection/exact dictionary comparison
 that would compare a contained functional dictionary is likewise rejected.
 Inspect stored representation and all possible compared static alternatives;
-derived fields and metadata are not equality payload. Unproved absence of an
+derived fields, family associated data and metadata are not equality payload. Unproved absence of an
 unsupported compared alternative is not proof of equality support.
 
 Functional values cannot be exact dictionary keys or ordinary unique criteria
 requiring that equality. Keyed uniqueness may use another supported projected
 key when its existing path/authority/stability requirements hold; that does not
 create whole-functional value equality or enable whole-value collection algebra.
-FirstMatch ordered policy mode, policy application and noncomparing traversal
+Automatic on binding sets and temporal changes must likewise not compare unsupported functional values. Thing identity and closed family member equality ignore ordinary fields/associated data. FirstMatch ordered policy mode, policy application and noncomparing traversal
 retain their contracts. Type ===/!== remains normalized contract comparison and
 does not compare policy behavior or captured values.
 

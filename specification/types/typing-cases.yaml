@@ -2581,3 +2581,27 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Fixture supplies Cursor over unitless Num Offset with domain [0..1) cycle. Source coordinates outside the period are not repaired by wrapping.
+
+- id: functional-automatic-binding-rejected
+  rules:
+  - MUD-TYPE-040
+  source: 'rule Observe on policy in policies { when true; then actor.Touch() }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies a finite nonempty FunctionalDictionary collection policies. Automatic bindings deduplicate role values and cannot introduce unsupported functional equality.
+
+- id: functional-changes-rejected
+  rules:
+  - MUD-TYPE-040
+  source: 'when policy changes'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies a functional policy value; changes needs its unavailable previous/current value equality.
+
+- id: functional-data-family-equality-supported
+  rules:
+  - MUD-TYPE-040
+  source: 'F.One == F.Two'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies family F with stored functional associated data. Member equality compares family/member identity, not those associated policy values.

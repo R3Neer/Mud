@@ -151,7 +151,7 @@ B
 \\}.
 $$
 
-Constraints are interpreted jointly. Repeated membership by multiplicity does not duplicate the same role assignment.
+Constraints are interpreted jointly. Repeated membership by multiplicity does not duplicate the same role assignment. D-162 requires supported equality for compared value participants; functional policy values cannot acquire internal equality from automatic binding syntax. Thing participants retain identity equality.
 
 This is a finite relational join, not a fixed point. An implementation may use filtered products, indexes, joins or another strategy, provided that it produces the same set.
 

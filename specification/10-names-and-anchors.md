@@ -423,3 +423,5 @@ Alias~operators exposes own and inherited declaration descriptors, deduplicated 
 [[17-dictionaries]] uses association patterns and contextual value references in their existing local scopes. A normalized functional selector key is local reconstruction identity, not a public symbol/anchor; its result does not supply a new declaration.
 
 [[19-magnitudes]] retains canonical magnitude/unit declarations and structural prefixed forms. Unitless point construction creates values of the existing declaration, not unit symbols or new anchors. Contextual unit/point interpretation and dimensional contracts are checked after nominal resolution.
+
+Automatic on tuple membership and temporal changes require the compared-value equality support defined by MUD-TYPE-040 in [[11-type-system]]. This later static admission check does not alter role symbols, scope ownership, anchors or the nominal HIR shape.
