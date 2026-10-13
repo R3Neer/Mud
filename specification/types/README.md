@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-163
   - D-162
   - D-161
   - D-160
@@ -67,3 +68,5 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 `test_declaration_witnesses.py` checks supplied ancestry/strict-membership and initializer-origin certificates, applied family identity, shared datum origins and enumeration/key/member-order distinctions. Chapters 12 and 14 own these declaration contracts. These witnesses do not evaluate source programs.
 
 The declaration certificates also check supplied comparison edges for the transitive functional-value exclusion, separately from derived fields, empty containers and supported projected keys. This does not implement whole-program equality eligibility analysis.
+
+`test_quantitative_catalogue.py` compares the normative SI catalogue with its accepted decision and checks finite unitless-point identity/domain certificates, including literal rejection before cycle repair. It does not implement point evaluation or format inversion.

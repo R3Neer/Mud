@@ -71,6 +71,8 @@ This branch of `to` requires a compatible numeric representation and checks the 
 
 A quantity that writes a unit, such as `5 m`, acquires only the factors determined by that unit. The context does not silently add unitless factors. Those factors must come from an already typed operand or a valid explicit conversion.
 
+D-163 extends contextual numeric coordinates and explicit numeric to to unformatted points over an underlying magnitude lacking admitted unit presentation. Point identity/domain and ordinary numeric contracts remain distinct.
+
 ### Presentation
 
 The canonical form of a unitless base magnitude is the canonical form of its numeric value, without a suffix or trailing space:

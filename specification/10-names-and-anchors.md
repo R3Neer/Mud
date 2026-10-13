@@ -421,3 +421,5 @@ Alias~operators exposes own and inherited declaration descriptors, deduplicated 
 [[20-blocks-and-recovery]] checks clause-local Error bindings using these existing local symbols and scopes. Recovery creates no world identity or public handler anchor.
 
 [[17-dictionaries]] uses association patterns and contextual value references in their existing local scopes. A normalized functional selector key is local reconstruction identity, not a public symbol/anchor; its result does not supply a new declaration.
+
+[[19-magnitudes]] retains canonical magnitude/unit declarations and structural prefixed forms. Unitless point construction creates values of the existing declaration, not unit symbols or new anchors. Contextual unit/point interpretation and dimensional contracts are checked after nominal resolution.

@@ -2541,3 +2541,43 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture supplies Type descriptors of policies. Normalized contract comparison excludes policy bodies and captures; it is not value equality.
+
+- id: unitless-point-contextual-literal
+  rules:
+  - MUD-TYPE-041
+  source: 'position: Cursor = 0.5'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture declares unitless Num Offset and unformatted Cursor point over Offset. Unique expected point context constructs its canonical coordinate.
+
+- id: unitless-point-explicit-numeric
+  rules:
+  - MUD-TYPE-041
+  source: 'position: Cursor = coordinate to Cursor'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies a typed Num coordinate and the same visible unitless Cursor; explicit materialization checks representation and domain.
+
+- id: unitless-point-typed-number-no-implicit
+  rules:
+  - MUD-TYPE-041
+  source: 'position: Cursor = coordinate'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Typed Num retains its type; unlike a contextual literal, it requires explicit to Cursor.
+
+- id: unitless-point-unit-presentation-rejected
+  rules:
+  - MUD-TYPE-041
+  source: 'position in meter'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies unitless Cursor over Offset. Length meter cannot provide Cursor units or erase its independent nominal factor.
+
+- id: unitless-point-cycle-literal-domain
+  rules:
+  - MUD-TYPE-041
+  source: 'position: Cursor = 2'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies Cursor over unitless Num Offset with domain [0..1) cycle. Source coordinates outside the period are not repaired by wrapping.

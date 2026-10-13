@@ -173,7 +173,7 @@ time := clock.time in second
 
 Omitting it is legal, but produces a warning where a unit can be selected because it makes a public boundary depend on its canonical projection. The suggested fix explicitly adds that unit. A magnitude without units publishes its number and produces no warning. For a point magnitude, a direct field without `in` publishes the numeric coordinate, not `~format`; to publish the formatted representation, declare a `Text` field, for example `timeText := "{clock.time}"`.
 
-The rule applies to public fields whose direct value is a magnitude. Recursive serialisation of magnitudes contained in aliases or collections remains in Q-051.
+The rule applies to public fields whose direct value is a magnitude. Recursive foreign serialization of magnitudes contained in aliases or collections belongs to Q-070 conversion/hosting protocols; closed Q-051 concerns basic look identity/selection.
 
 ### Anchors within templates
 

@@ -43,6 +43,8 @@ You can convert:
 3. A more general quantitative expression of the representation stated by the magnitude of destination.
 4. A basic numerical expression to one magnitude a base without units, such as materialisation explicit nominal.
 
+D-163 additionally admits explicit numeric coordinate materialization into an unformatted point whose underlying magnitude has no unit presentation, with ordinary representation/domain checks and no invalid-coordinate repair.
+
 The fourth form, as set out by D-083, check the compatibility of representation and the domain of destination. It does not allow conversion between two different nominal quantities simply because neither has unit.
 
 ```mud

@@ -14,6 +14,7 @@ questions:
   - Q-028
   - Q-029
 decisions:
+  - D-163
   - D-162
   - D-161
   - D-160
@@ -270,6 +271,13 @@ Unit construction consumes its checked numeric value, converts its coordinate us
 > Nat%Nat yields Nat, Int%Int yields Int and Num%Num yields Num. Mixed operands use the exact Nat-to-Int-to-Num widening chain. With nonzero divisor b, let q=trunc(a/b), where trunc is mathematical integer truncation toward zero; the exact result is a-q*b. A zero divisor supplies Fault under ordinary demand and recovery rules. Money has no remainder signature and %= is not introduced.
 
 For a nonzero remainder its sign is the dividend's sign and its absolute value is below abs(b). Thus (-5)%3=-2, 5%(-3)=2 and (5/2)%1=1/2. This internal quotient is not a source integer conversion and does not use its ties-to-even rule. Existing arithmetic member lifting retains its static cardinality/signature premises; no member computation occurs for empty inputs.
+
+### Unitless point coordinates
+
+> [!rule] MUD-TYPE-041 — Contextual coordinates without units
+> A point with no ~format over a magnitude without admitted unit presentation accepts a bare numeric literal only under one unique expected point type. A typed numeric expression must use explicit to Point, applying its quantitative representation/domain checks. Absent unit text neither removes nominal factors nor grants conversion between unrelated nominal magnitudes/points.
+
+A source literal must satisfy the point domain before cyclic normalization; coordinate materialization through to cannot silently repair an invalid value. Ordinary runtime point arithmetic retains the declared cycle contract. Unit presentation/extraction requires actual compatible units and is unavailable in this case; no synthetic unit or new format hole exists. Rum numeric literals keep their r prefix without a unit context. Existing point formats retain their separate invertibility and canonical-rendering requirements.
 
 ## 6. Subtyping and guarantee inclusion
 

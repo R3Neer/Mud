@@ -400,9 +400,9 @@ Defines:
 
 ## 19. Magnitudes, units and points
 
-Planned file: `19-magnitudes.md`
+Chapter: [[19-magnitudes]].
 
-Planned scope:
+Defines:
 
 - Base, derived and point magnitudes, their representations and domains.
 - Units, prefixes, equivalences, normalisation and dimensional arithmetic.

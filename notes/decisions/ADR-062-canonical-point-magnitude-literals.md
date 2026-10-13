@@ -57,7 +57,7 @@ Omission neither rounds nor retains implicit information.
 
 ### Magnitude without `~format`
 
-When the expected type declares no `~format`, its literal uses ordinary quantity syntax and must write a compatible unit enabled for the underlying magnitude. The quantity is interpreted as the point's complete coordinate relative to its canonical origin.
+When the expected type declares no `~format`, a magnitude with units uses ordinary quantity syntax and a compatible enabled underlying unit. D-163 permits a bare contextual numeric coordinate when the underlying magnitude has no admitted unit presentation, or explicit to Point for a typed number. Both forms denote the complete coordinate relative to the canonical origin and preserve domain checks.
 
 ### Domain
 
