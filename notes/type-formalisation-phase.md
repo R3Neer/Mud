@@ -73,3 +73,11 @@ No other currently active question was identified as a blanket static drafting b
 Start with 12/14 and the independent alias contracts in 13; formalize Q-075/Q-060 surfaces alongside that work. Continue with stored/derived fields and collections/dictionaries/domains (15–18), exact magnitudes (19), shared blocks/recovery (20) and the focused 21–23 integration. Draft 24–26 static interfaces using explicit operational boundaries. Ask about Rum inference when reaching its affected unit, or any other indispensable concrete case discovered during drafting.
 
 Chapters 08–11, 15 and 21 remain proposed; 01–02 remain skeletons. Planned 12–14, 16–20 and 22–26 have not been created or declared complete in this update. Publication remains a separate chapter-by-chapter lifecycle with conformance evidence and an empty final consistency review.
+
+## Follow-up closure — 2026-10-13
+
+Q-075, Q-060 and Q-034 are now closed with complete scoped specifications and evidence: D-156 operator identities/reflection, D-157 fixed TypeKind inventory and D-158 dimensions/representation boundaries. The author accepted DeclarationKind.Operator and auxiliary alias/Prefix classifications. Exact source/operator/typed phase boundaries remain intact.
+
+D-159 formalizes the independent static part of Q-038 in chapter 01, now draft. Project descriptor/default/discovery and source/IR/persisted-world migration remain outside scope, so Q-038 remains partial. Chapter 02 is still a skeleton; the other developed chapters remain proposed. This does not publish them or create the pending 12–26 chapters.
+
+The next author discussion is the static subset of Q-058: Rum literal/constant conversion and any remaining derived representation inference. Exact numeric signatures, rejection of implicit exact/Rum mixing and dimensional normalization must not be reopened. After those indispensable choices, continue the chapter drafting order above; ask only for a concrete unselected case, not an advanced-analysis proposal as a blanket prerequisite.

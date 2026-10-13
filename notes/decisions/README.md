@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 153.
-- Current: 149.
+- Total: 154.
+- Current: 150.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -172,6 +172,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-156 | current | 2026-10-13 | [[notes/decisions/ADR-156-canonical-operator-contract-encoding-and-reflection-schema|Canonical operator contract encoding and reflection schema]] |
 | D-157 | current | 2026-10-13 | [[notes/decisions/ADR-157-complete-fixed-type-kind-core-catalogue|Complete fixed TypeKind core catalogue]] |
 | D-158 | current | 2026-10-13 | [[notes/decisions/ADR-158-dimensional-normalization-and-representation-boundaries|Dimensional normalization and representation boundaries]] |
+| D-159 | current | 2026-10-13 | [[notes/decisions/ADR-159-fixed-target-static-conformance-and-version-boundaries|Fixed target static conformance and version boundaries]] |
 
 ## Reserved identifiers
 

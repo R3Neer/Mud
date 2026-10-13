@@ -15,6 +15,7 @@ questions:
   - Q-058
   - Q-029
 decisions:
+  - D-159
   - D-158
   - D-157
   - D-156
@@ -402,7 +403,7 @@ Complete signature encoding and operator reflection schema: [[names/operator-con
 | Type, field, component, participant, metadata, domain descriptor | TypeDescriptor, FieldDescriptor, ComponentDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor respectively |
 | Declaration descriptor without a more specific established category | DeclarationDescriptor |
 
-Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. TypeKind itself is a family and has category Family. Its members follow ordinary closed-family identity, equality and finite enumeration. Future language versions may change the catalogue only through their specification. The table is the complete MUD 1.0 core constructor catalogue. Every public contract must project through one of its forms; compiler-private tags cannot add public categories. The supporting builtin inventory below covers the established reflective/error types. Project target declaration and persistent migration protocols remain separate version-scope work.
+Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. TypeKind itself is a family and has category Family. Its members follow ordinary closed-family identity, equality and finite enumeration. Future language versions may change the catalogue only through their specification. The table is the complete MUD 1.0 core constructor catalogue. Every public contract must project through one of its forms; compiler-private tags cannot add public categories. The supporting builtin inventory below covers the established reflective/error types. Fixed-target compatibility follows [[01-scope-and-conformance]]; project target declaration and persistent migration protocols remain separate version-scope work.
 
 Normalize before classification: Int | Int has kind Basic, whereas a nominal alias represented by Int has kind Alias. Collection specifications [3], [*], [3 ordered] and [3 unique] all project to Collection; Int [*] [*] is also Collection because its exterior is a collection. Cardinality, guarantees and element types remain separate reflective contracts. DeclarationKind classifies a described declaration; TypeKind classifies the descriptor's own type. Field descriptors and component descriptors have different TypeKind members even though they share structural properties.
 
