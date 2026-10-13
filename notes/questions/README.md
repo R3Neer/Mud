@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 33 active questions: 14 open and 19 partially decided.
+There are 33 active questions: 13 open and 20 partially decided.
 
 Priorities:
 
@@ -52,7 +52,7 @@ Priorities:
 | [[Q-026-v-multiple-actions-in-eventually|Q-026 — Multiple actions in `eventually`]] | Partially decided |
 | [[Q-027-e-relevant-state|Q-027 — Relevant state]] | Open |
 | [[Q-028-f-finiteness|Q-028 — Finiteness]] | Partially decided |
-| [[Q-029-t-termination|Q-029 — Termination]] | Open |
+| [[Q-029-t-termination|Q-029 — Termination]] | Partially decided |
 | [[Q-030-p-finite-world-profile|Q-030 — Finite-world profile]] | Open |
 | [[Q-031-s-non-turing-complete-subset|Q-031 — Non-Turing-complete subset]] | Open |
 | [[Q-032-a-reproducible-randomness|Q-032 — Reproducible randomness]] | Partially decided |

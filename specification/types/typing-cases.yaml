@@ -2266,3 +2266,24 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: settings is an immutable handle but limit is a mutable field. Handle immutability does not prove the endpoint stable.
+
+- id: analysis-proved-infinite-reason
+  rules: [MUD-TYPE-033, MUD-TYPE-035]
+  source: 'values: Int [*] = all'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The normative basis proves full Int infinite. Diagnose a proved finiteness violation, rather than insufficient evidence or tool interruption.
+
+- id: analysis-unproved-obligation-reason
+  rules: [MUD-TYPE-033, MUD-TYPE-035]
+  source: 'forall item in items: item.Check()'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies finite items but the normative procedure completes without the required Check termination proof. Diagnose the unproved obligation; do not assert the source infinite or Check divergent.
+
+- id: analysis-large-finite-bound
+  rules: [MUD-TYPE-033, MUD-TYPE-035]
+  source: 'values: Int in [0..1000000000000] [*] = all'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The finite integral bounds discharge enumeration under the elementary basis without allocating all members during analysis. A tool interruption would leave verification incomplete, not change this expected normative disposition.

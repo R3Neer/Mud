@@ -14,7 +14,9 @@ questions:
   - Q-073
   - Q-060
   - Q-028
+  - Q-029
 decisions:
+  - D-155
   - D-154
   - D-151
   - D-149
@@ -216,7 +218,12 @@ Enumeration of a recursive constructor type needs an explicit finite rank bound 
 > [!rule] MUD-TYPE-033 — Mandatory finite enumeration basis
 > Implementations must support the specified elementary proof rules and established finite source constructions. A finite collection snapshot needs no uniform finite static size bound. Enumerating a domain requires a complete finite canonical enumeration certificate; producing the source and evaluating each body retain their independent termination obligations. Unknown mandatory proof obligations are rejected statically, without trial truncation or a negative runtime answer.
 
-The minimum basis comprises finite explicit sets/collection snapshots, closed finite families, bounded integral or Money progressions, exact stepped rational progressions, finite linked-world population snapshots, and justified finite products/unions/filterings of enumerated domains. Use the premises and elementary inclusion/arithmetic rules above. A filter does not make an unenumerated infinite source enumerable; take does not turn all Int into a lazy prefix operation. Further conservative analysis limits and diagnostics remain [[../notes/questions/Q-028-f-finiteness|Q-028]]. A finite container value supplies no finite bound on all future worlds or recursively generated values.
+The minimum basis comprises finite explicit sets/collection snapshots, closed finite families, bounded integral or Money progressions, exact stepped rational progressions, finite linked-world population snapshots, and justified finite products/unions/filterings of enumerated domains. Use the premises and elementary inclusion/arithmetic rules above. A filter does not make an unenumerated infinite source enumerable; take does not turn all Int into a lazy prefix operation. The exact finite-analysis normalization, proof search and completion procedure remain [[../notes/questions/Q-028-f-finiteness|Q-028]]; general termination certification remains [[../notes/questions/Q-029-t-termination|Q-029]]. A finite container value supplies no finite bound on all future worlds or recursively generated values.
+
+> [!rule] MUD-TYPE-035 — Uniform normative analysis and diagnostic outcomes
+> All conforming implementations of one language version must reproduce its normative certification procedure. A reusable reference analyzer may supply it; stronger optional analysis cannot independently expand admission. A proved violation and a completed analysis leaving an obligation unproved require distinct static diagnostic reasons. Resource-interrupted analysis reports incomplete tool verification, not a judgement that the program is invalid. These outcomes introduce no source-language values or runtime error types.
+
+The procedure includes its normalization, search and completion conditions, not merely a collection of inference rules. An implementation's memory/time/depth limit cannot silently constrain a mathematical domain or replace obligatory elementary evidence. Finite source admissibility, body termination and finite reachable-state analysis remain distinct obligations. The unresolved procedure boundaries above do not imply implementation-dependent admission is permitted.
 
 ## 6. Subtyping and guarantee inclusion
 
