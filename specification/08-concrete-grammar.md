@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-158
   - D-156
   - D-154
   - D-153
@@ -797,6 +798,8 @@ magnitude Length: Num in [0..*] {
     }
 }
 ```
+
+Dimensional factor/scale normalization and representation admission follow MUD-TYPE-037 in [[11-type-system#Dimensional normalization]]. Compatible factors do not authorize unsupported arithmetic or erase nominal identity.
 
 Magnitude derived:
 

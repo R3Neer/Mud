@@ -16,6 +16,7 @@ questions:
   - Q-029
   - Q-058
 decisions:
+  - D-158
   - D-156
   - D-155
   - D-154
@@ -181,7 +182,7 @@ A supported operation with zero divisor, invalid domain/conversion or prohibited
 
 Pure Nat subtraction saturates before a declared domain check; signed additive effect deltas instead consolidate before one Nat normalisation. Explicit to conversions round and then validate without corrective saturation. Numeric % requires its specified compatible member operation; an absent overload is a static error, not an implicit cast.
 
-Magnitude arithmetic composes nominal dimensional factors and selects the representation allowed by the operation. Addition/subtraction require the specified dimension and linear/point compatibility. Different unitless nominal magnitudes retain different factors. Unit presentation in changes presentation, not dimension or nominal magnitude. Point extraction requires compatible ordered units and produces Nat.
+Magnitude arithmetic composes nominal dimensional factors and selects the representation allowed by the operation. Addition/subtraction require the specified dimension and linear/point compatibility. Different unitless nominal magnitudes retain different factors. Unit presentation in changes presentation, not dimension or nominal magnitude. Point extraction requires compatible ordered units and produces Nat. The deterministic factor/scale procedure is MUD-TYPE-037 in [[11-type-system#Dimensional normalization]]; its equality never bypasses the original representation signatures or source rounding sites.
 
 > [!rule] MUD-TYPE-011 — Restricted arithmetic lifting
 > Binary numeric +, -, *, / and % admit collection lifting only when at least one static upper cardinality is at most one. Every pair of possible member alternatives must support the operator. The result preserves one occurrence per evaluated pair and has conservative bounds $[\ell_A\ell_B,u_Au_B]$ before explicit normalisation.

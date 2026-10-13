@@ -10,7 +10,7 @@ status: active
 
 This index contains only questions in `open` or `partially-decided` state. They are governed by [[governance/QUESTIONS-POLICY|MUD question policy]].
 
-There are 31 active questions: 13 open and 18 partially decided.
+There are 30 active questions: 13 open and 17 partially decided.
 
 Priorities:
 
@@ -55,7 +55,6 @@ Priorities:
 | [[Q-031-s-non-turing-complete-subset|Q-031 — Non-Turing-complete subset]] | Open |
 | [[Q-032-a-reproducible-randomness|Q-032 — Reproducible randomness]] | Partially decided |
 | [[Q-033-c-calendars-and-localisation|Q-033 — Calendars and localisation]] | Open |
-| [[Q-034-m-derived-magnitudes|Q-034 — Derived magnitudes]] | Partially decided |
 | [[Q-035-c-cost-of-allowed|Q-035 — Cost of `imagine`]] | Partially decided |
 | [[Q-036-u-human-interaction-unit|Q-036 — Human-interaction unit]] | Open |
 | [[Q-037-c-coexistence-with-hand-written-code|Q-037 — Coexistence with hand-written code]] | Open |

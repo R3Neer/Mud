@@ -2336,3 +2336,31 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Supplied bare Int has Basic. Redundant unrestricted Int [1] is also Basic. Nondefault/nested collection shapes have Collection. Int | Int normalizes to Basic; Int | Text remains Union. Applied constructors retain category.
+
+- id: magnitude-normalization-compatible-units
+  rules: [MUD-TYPE-037]
+  source: 'speed: Speed := 90 km/h'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied exact Length/Time roots meter/second, enabled kilo, hour=3600 seconds and compatible Speed context. Normalized scale is 5/18; canonical exact coordinate is 25. No implicit nominal conversion between already typed values is asserted.
+
+- id: magnitude-normalization-independent-unitless
+  rules: [MUD-TYPE-037]
+  source: 'a + b'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Supplied independent unitless magnitudes retain different original base anchors. Missing printed units do not make their dimensions equal or erase nominality.
+
+- id: magnitude-normalization-money-cancellation
+  rules: [MUD-TYPE-037]
+  source: '(a * b) / b'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: a and b have Money representations. The first Money*Money operation is unsupported even if the final factor map would cancel b. No reassociation can repair admission.
+
+- id: magnitude-normalization-money-scaling
+  rules: [MUD-TYPE-037]
+  source: 'a * factor'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: a has Money representation, factor is Num and dimensions fit the supplied context. The Money result rounds at this source site ties-to-even and then checks its result domain; factor cancellation cannot move that site.

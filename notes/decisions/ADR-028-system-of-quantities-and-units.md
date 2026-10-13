@@ -241,3 +241,7 @@ Explicit annotation does not introduce rounding. The programme must satisfy the 
 6. Equivalence between a unit Derived noun and its structural form.
 7. None prefix by default or `empty`, full catalogue available via `all` and subset using a collection explicit.
 
+
+## Deterministic normalization
+
+[[ADR-158-dimensional-normalization-and-representation-boundaries|D-158]] specifies finite anchor/exponent maps, acyclic topological unit-scale normalization and representation-first Money checks. Q-034 is completed; Q-058 retains Rum inference and numeric portability. Equal factors do not erase nominal magnitude identities or authorize reassociation across rounding sites.
