@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-153
   - D-155
   - D-154
   - D-149
@@ -336,6 +337,7 @@ Planned scope:
 - Single and multiple nominal specialisation, inheritance of representation or members, provenance-based deduplication and conflicts between independent members.
 - Inherited defaults, immutable values, equality, ordering and enumerability where applicable.
 - Reconstruction of immutable aliases through write-back from assignable paths, without introducing mutability into their values.
+- Alias-owned operator signatures, static selection and inheritance, descriptor metadata and complete textual signature identities, read with chapter 21.
 - Boundary between structural compatibility and explicit acquisition of nominality.
 - Contract-visible alias specialization across parts under uses authorization and inherited substitutability.
 
@@ -936,6 +938,6 @@ MUD 1.0 will be formally specified when:
 10. An implementation can objectively declare its degree of conformance.
 11. Every world/package, adapter, library and patch feature included in the target profile has an explicit applicable contract and conformance evidence; deferred features and unselected protocols are identified without presenting design examples as accepted schemas.
 
-The developed static/syntax surfaces define alias operator signatures, static specificity, origin-preserving inheritance, narrowed-union selection, restricted arithmetic lifting and direct-overload priority. Operator reflection and the simple subordinate signature anchor are specified; exact complex-contract anchor encoding and the detailed reflective schema remain Q-075. Direct nested collection suffixes and non-collapsed empty members retain their contracts; chapter publication still requires its applicable gates.
+The developed static/syntax surfaces define alias operator signatures, static specificity, origin-preserving inheritance, narrowed-union selection, restricted arithmetic lifting and direct-overload priority. Operator reflection includes ordered operand names/types and whole-declaration metadata attachments. Signature identity uses complete textual canonical encoding; the simple subordinate anchor is specified, while exact complex-contract encoding and the detailed reflective schema remain Q-075. Direct nested collection suffixes and non-collapsed empty members retain their contracts; chapter publication still requires its applicable gates.
 
 Explicit raise is admitted in executable expression/value/effect bodies and uses the existing producing-block fault/recovery channel. It does not turn ordinary Error values into faults or add world-write permission.
