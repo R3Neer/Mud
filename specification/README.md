@@ -411,9 +411,9 @@ Planned scope:
 
 ## 20. Blocks and error recovery
 
-Planned file: `20-blocks-and-recovery.md`
+Chapter: [[20-blocks-and-recovery]].
 
-Planned scope:
+Defines:
 
 - Common outcomes of expression, value and effect blocks; an empty Error occurrence channel permits the normal result, while a nonempty channel is distinct from an ordinary Error or ActionReply value.
 - Protected scopes, rollback before recovery, propagation and observation boundaries.

@@ -323,6 +323,8 @@ Eventually checks its Boolean goal and finite permitted action references, with 
 
 ## 9. Blocks and error recovery
 
+[[20-blocks-and-recovery]] defines shared owner/outcome, occurrence selection and protected recovery contracts. The rules here instantiate them for expression typing.
+
 > [!rule] MUD-TYPE-012 — Normal result and error channel
 > Every expression/value/effect block checks its owner's result contract and effect permissions and carries an Error collection channel. Empty means the normal result is available. Nonempty means it is unavailable. Successfully evaluating false is a normal Bool; only the owning action/invariant interprets it as Refusal.
 

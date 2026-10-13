@@ -90,6 +90,8 @@ Compatible order criteria are required whenever two retained orders meet. Whole-
 
 ## 3. Effect summaries and owner modes
 
+[[20-blocks-and-recovery]] supplies the common block and recovery contract; the permission summaries here constrain each owner and its handlers.
+
 Let $L$ be the private storage region of the current value computation. An effect summary
 $\epsilon=(R,P,A,B,T)$ consists of read dependencies $R$, private writes $P$, authorised world effects $A$, external delivery obligations $B$ (including provisional notification and later Ticket confirmation/disposal) and temporal/random/termination requirements $T$. Entries are symbolic paths/operations with provenance, not a prescribed IR schema. Sequential composition retains statement order; concurrent composition retains common-view provenance. Combining summaries does not itself authorise their entries.
 
