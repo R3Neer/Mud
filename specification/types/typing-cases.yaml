@@ -2210,3 +2210,24 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Exact step one fifth selects six points. It does not enumerate all rationals in the bounded interval, whose member set is infinite.
+
+- id: pruning-ordered-prefix-demand
+  rules: [MUD-TYPE-024, MUD-TYPE-032]
+  source: 'p or true; true or p'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: An erased p has a potentially faulting independent prefix. The first form demands p and preserves its fault; the second short-circuits and performs no p prefix work. Corresponding and forms p and false / false and p preserve the same ordered demand distinction.
+
+- id: pruning-equality-prefix-demand
+  rules: [MUD-TYPE-024, MUD-TYPE-032]
+  source: 'p == q; p != q'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Both original reads are demanded left to right once even with one erased operand and constant residual truth. A first-read fault skips the second; a second-read fault is not removed by residual simplification.
+
+- id: pruning-domain-versus-shape
+  rules: [MUD-TYPE-024, MUD-TYPE-032]
+  source: 'p: Bool [1] := x.InactiveRule(); q: Bool in [true] := x.InactiveRule()'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Redundant singleton confirmation preserves erasure, so not p closes true. Domain restriction materializes true first, so not q is false. Collection construction retains a true member for an erased element.

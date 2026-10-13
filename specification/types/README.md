@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-152
   - D-151
   - D-150
   - D-149
@@ -43,7 +44,7 @@ Generic variance, application closure and inference fragments are declarative ob
 
 A witness is a finite certificate in the validator's restricted language. Nat includes its intrinsic nonnegative domain; primitive ancestry cannot be overridden. Domain/leaf flags stand for supplied premises; the tool does not prove arbitrary predicates, parse the source fragments, resolve MUD names, typecheck MUD programmes or execute actions. Coverage and expected outcomes for non-witness fragments remain review obligations. The complete implementation conformance suite is separately scoped. Stored whole/partial holes, unique inference diagnostics, immutable pattern scopes and live-local sequential/temporal observations have reviewed declarative cases in typing-cases.yaml; these do not claim an implemented inference/evaluation engine.
 
-- test_pruning_witnesses.py checks finite Bool/erased kernel pairs and demand sharing, plus empty/nonempty no-filter witnesses. It also checks the selected standalone derived/stored, prefix-fault and erased-initial-goal boundaries. Full compositional short-circuit/prefix demand remains outside these certificates.
+- test_pruning_witnesses.py checks finite Bool/erased kernel pairs and demand sharing, plus empty/nonempty no-filter witnesses. It also checks derived/stored capture, ordered prefix demand and faults under and/or and equality, erased-initial-goal demand, and ordinary domain/collection boundaries. The witnesses operate on supplied residuals and callbacks, not Mud source or a general runtime.
 
 - test_interval_witnesses.py checks supplied finite integral segment normal forms and descending step restart. It also contrasts a supplied exact rational grid with a rational inside the bounds but outside the grid. Continuous and domain-dependent interval normalization remain semantic review obligations.
 

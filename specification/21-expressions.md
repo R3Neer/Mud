@@ -15,9 +15,9 @@ questions:
   - Q-007
   - Q-023
   - Q-029
-  - Q-050
   - Q-058
 decisions:
+  - D-152
   - D-151
   - D-150
   - D-149
@@ -80,7 +80,7 @@ Normal and sub operations retain distinct declaration identity: `subaction <: ac
 
 The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
-Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. The remaining compositional pruning/demand contract for prefix-bearing erased derivations and query goals is Q-050; portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
+Dynamic callable acyclicity proofs remain Q-023 and general termination methods beyond the established decreasing measures remain Q-029. Portable binary64 evaluation parameters remain Q-058. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation.
 
 Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
 
@@ -188,11 +188,11 @@ If an operand is empty, no member operation is evaluated. Order is preserved fro
 Logical not, and, or, xor, implication and equivalence require singleton Bool results, with their specified short-circuit/desugaring contract. Temporal is a metalanguage qualification of triggers, not a newly introduced first-class MUD type. A temporal trigger expression is not a Bool that may participate in arbitrary operators: only its defined trigger-combination forms are admitted.
 
 > [!rule] MUD-TYPE-024 — Canonical Boolean pruning and predicate closure
-> Boolean equality expands to `(p and q) or (not p and not q)`; Boolean inequality and word xor expand to its negation. Resolve/type the original source, expand, delete inactive Boolean-rule calls structurally, close an erased Boolean owner to true, then evaluate the residual kernel. Each original operand is evaluated at most once on demand within its expansion; deleted call receivers/arguments and short-circuited operands are not evaluated. Separate written occurrences are not shared.
+> Boolean equality expands to `(p and q) or (not p and not q)`; Boolean inequality and word xor expand to its negation. Resolve/type the original source, expand, and delete inactive Boolean-rule calls structurally, retaining independent work attached to demanded derived reads. Close a complete erased Boolean owner to true after its demanded work succeeds. Each original operand is evaluated at most once within its expansion. Equality/inequality/xor demand the original operands left to right; an erased operand does not discard the other operand's independent work. A fault stops subsequent demand. Deleted call receivers/arguments are not evaluated. Separate written occurrences are not shared.
 
 The marker erased is metalanguage, not Bool or a stored value. Negation preserves erased. A binary and/or with one erased child retains the other; two erased children remain erased. With exactly one erased operand, canonical equality closes to true and inequality/xor to false; with both erased, each complete owner closes to true. Ordinary truth-table rewrites must not precede deletion if they change these results.
 
-For each enumerated source member, a wholly erased predicate closes to true. A nonempty source then satisfies exists and forall; the empty-source results remain false and true respectively. Selection retains all members, count counts all members, and min/max select the first/last accepted witness in the required semantic order. Empty selection/min/max yield empty and empty count zero. All ordinary finiteness, enumeration, purity and order proofs still apply. The complete compositional demand/short-circuit contract for prefix-bearing erased derivations/query goals remains [[../notes/questions/Q-050-b-pruning-in-remaining-boolean-operators|Q-050]].
+For each enumerated source member, a wholly erased predicate closes to true. A nonempty source then satisfies exists and forall; the empty-source results remain false and true respectively. Selection retains all members, count counts all members, and min/max select the first/last accepted witness in the required semantic order. Empty selection/min/max yield empty and empty count zero. All ordinary finiteness, enumeration, purity and order proofs still apply. Demanded independent predicate-prefix work and faults remain subject to the ordered demand contract below.
 
 > [!rule] MUD-TYPE-032 — Derived and speculative pruning boundaries
 > A Boolean binding defined by := can transmit erasure from its derivation into a Boolean formula; a binding defined by = captures ordinary values. An actually read derivation retains independent prefix computations and their faults even when its final expression is erased. A wholly erased initial eventually goal transmits erasure through the query. Imagine retains ActionReply. Pruning does not waive static obligations and does not require sensitivity warnings.
@@ -211,7 +211,9 @@ p := {
 not p
 ```
 
-With divisor zero, initialization supplies Fault and ordinary recovery applies before a normal result can exist; erasure cannot turn the fault into success. With a successful prefix and erased final expression, the derived read transmits erasure and the outer not closes true. A recovery producing an ordinary Bool contributes that Bool, not the original erased fragment. Unread derivations do not execute. Ordinary derived domain/cardinality obligations are not waived. Their interaction with transmitted erasure, and the full account of demanded prefixes when surrounding short-circuit operators eliminate residual fragments, remain Q-050; these examples do not select all such execution orders.
+With divisor zero, initialization supplies Fault and ordinary recovery applies before a normal result can exist; erasure cannot turn the fault into success. With a successful prefix and erased final expression, the derived read transmits erasure and the outer not closes true. A recovery producing an ordinary Bool contributes that Bool, not the original erased fragment. Unread derivations do not execute. Ordinary derived domain/cardinality obligations are not waived. A derived domain restriction consumes values: close erasure to true before applying its filtering/checking contract, and use its ordinary transformed result. An annotation that only confirms a statically guaranteed identical shape, such as Bool [1] on a singleton Bool, retains transparency. Value-consuming collection transformations close erasure before transforming their values. Constructed collection elements close individually and remain members. A filter excluding true can yield empty; singleton use must still satisfy cardinality.
+
+For and/or, demand left to right. An ordinary false left operand of and or true left operand of or skips the right read. An erased operand cannot decide a short circuit: retain its demanded prefix work and continue with the surviving operand. Thus p or true and p and false execute p's prefix; true or p and false and p do not. Truth simplification cannot discard demanded independent work. Negation and canonical expansions preserve the same demand obligations; equality, inequality and xor demand their original operands once in source order, including when pruning makes their residual result constant. An erased eventually query participates under this same surrounding demand contract.
 
 For an admitted query, not (eventually x.InactiveRule() through game.Move) closes true if its initial goal is wholly erased and its demanded prefix work succeeds. The query is structurally erased rather than returning ordinary true to not. A non-erased initial goal follows the ordinary reachability contract. All source, finiteness, enumerability, purity and termination checks remain mandatory even when a query is erased. An ordinary imagine result remains ActionReply; inside a deleted call's arguments, imagine is not evaluated because those arguments are skipped.
 

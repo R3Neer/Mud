@@ -7,6 +7,32 @@ def supplied_derived_read(prefix, residual):
     """Certificate for an actual read, not general short-circuit scheduling."""
     prefix()
     return residual
+
+def demanded_binary(op, left, right):
+    """Finite supplied read certificate; erasure is never a truth value."""
+    a = left()
+    if op == 'and' and a is False:
+        return False
+    if op == 'or' and a is True:
+        return True
+    b = right()
+    if a == E:
+        return b
+    if b == E:
+        return a
+    return a and b if op == 'and' else a or b
+
+def demanded_equality(left, right, negated=False):
+    """Each supplied source occurrence is read once in its original order."""
+    a, b = left(), right()
+    if a == b == E:
+        return True
+    if E in (a, b):
+        return not negated
+    return a != b if negated else a == b
+
+def ordinary(residual):
+    return True if residual == E else residual
 def prune(t, values):
     if isinstance(t, str): return E if values[t] == E else t
     op, *children = t
@@ -25,6 +51,59 @@ def evaluate(t, values, cache, reads):
     a = evaluate(xs[0], values, cache, reads)
     return (a and evaluate(xs[1], values, cache, reads)) if op == 'and' else (a or evaluate(xs[1], values, cache, reads))
 class PruningWitnesses(unittest.TestCase):
+    def test_ordered_prefix_short_circuit_and_faults(self):
+        for op, decisive in (('or', True), ('and', False)):
+            reads = []
+            def faulting():
+                reads.append('prefix')
+                raise ValueError('supplied prefix fault')
+            self.assertEqual(demanded_binary(op, lambda: decisive, faulting), decisive)
+            self.assertEqual(reads, [])
+            with self.assertRaises(ValueError):
+                demanded_binary(op, faulting, lambda: decisive)
+            self.assertEqual(reads, ['prefix'])
+            reads.clear()
+            def erased():
+                reads.append('erased-prefix')
+                return E
+            self.assertEqual(demanded_binary(op, erased, lambda: decisive), decisive)
+            self.assertEqual(reads, ['erased-prefix'])
+
+    def test_equality_preserves_both_original_reads(self):
+        for a, b in itertools.product((False, True, E), repeat=2):
+            for negated in (False, True):
+                reads = []
+                def read(name, value):
+                    reads.append(name)
+                    return value
+                result = demanded_equality(lambda: read('p', a), lambda: read('q', b), negated)
+                expected = True if a == b == E else not negated if E in (a, b) else (a != b if negated else a == b)
+                self.assertEqual(result, expected)
+                self.assertEqual(reads, ['p', 'q'])
+        for first_fault in (False, True):
+            reads = []
+            def fault():
+                reads.append('fault')
+                raise ValueError('supplied prefix fault')
+            def erased():
+                reads.append('erased')
+                return E
+            with self.assertRaises(ValueError):
+                demanded_equality(fault if first_fault else erased, erased if first_fault else fault)
+            self.assertEqual(reads, ['fault'] if first_fault else ['erased', 'fault'])
+
+    def test_domain_transform_and_identical_shape_boundary(self):
+        # A supplied identical singleton shape leaves the residual untouched.
+        unchanged = E
+        self.assertTrue(ordinary(E if unchanged == E else not unchanged))
+        # A supplied domain transformation operates on ordinary members.
+        admitted = [v for v in [ordinary(E)] if v is True]
+        self.assertEqual(admitted, [True])
+        self.assertFalse(not admitted[0])
+        excluded = [v for v in [ordinary(E)] if v is False]
+        self.assertEqual(excluded, [])
+        self.assertEqual([ordinary(E)], [True])
+
     def test_all_finite_kernel_pairs(self):
         eq = ('or', ('and','p','q'), ('and',('not','p'),('not','q')))
         for p,q in itertools.product((False, True, E), repeat=2):

@@ -28,10 +28,10 @@ Imagine retains its ordinary ActionReply contract. If it occurs in a deleted ina
 
 No conformance warning is required merely for pruning-sensitive syntax. Tooling may provide requested explanations or optional diagnostics; ordinary static errors remain mandatory.
 
-## Boundaries still requiring formalization
+## Compositional demand
 
-Q-050 retains the complete compositional demand/short-circuit account for erased derived/query fragments carrying independent prefix work. The accepted actual-read and standalone examples must hold; this decision does not silently select an ordering policy for every enclosing short-circuit combination.
+[[ADR-152-ordered-demand-and-value-boundaries-for-pruning|D-152]] fixes ordered and/or demand, original-operand equality/inequality/xor reads and value-consuming domain/collection boundaries. Identical shape confirmations retain transparency. Demanded work and faults survive pruning; undemanded reads remain unevaluated.
 
 ## Verification and provenance
 
-Extends [[ADR-142-canonical-pruning-and-empty-filter-closures|D-142]] and [[ADR-022-structural-deletion-of-inactive-boolean-rules|D-022]]. The chapter and static corpus contrast derived/stored reads, prefix faults, recovery, eventually and ordinary imagine capture. Finite certificates test these selected boundary cases, not a general evaluator or causal implementation. Q-050 remains partial until its remaining compositional contract is evidenced.
+Extends [[ADR-142-canonical-pruning-and-empty-filter-closures|D-142]] and [[ADR-022-structural-deletion-of-inactive-boolean-rules|D-022]]. The chapter and static corpus contrast derived/stored reads, prefix faults, recovery, eventually and ordinary imagine capture. Finite certificates test these selected boundary cases, not a general evaluator or causal implementation. Q-050 is covered together with D-152 and its contrasting evidence.

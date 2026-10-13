@@ -30,4 +30,4 @@ Reject XOR truth-table completion of an erased operand: erased is not a third Bo
 
 ## Verification
 
-MUD-TYPE-024 and finite pruning witnesses cover all pairs of Bool/erased inputs, quantifier empty/nonempty boundaries and demand sharing. Q-050 remains partial for the complete compositional demand/short-circuit account of erased derivations/query goals carrying prefix computations. Chapter publication states are unchanged.
+MUD-TYPE-024 and finite pruning witnesses cover all pairs of Bool/erased inputs, quantifier empty/nonempty boundaries and demand sharing. [[ADR-152-ordered-demand-and-value-boundaries-for-pruning|D-152]] fixes ordered prefix demand and ordinary transformation boundaries, completing Q-050 together with D-150. Chapter publication states are unchanged.
