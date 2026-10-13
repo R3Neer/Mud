@@ -331,9 +331,9 @@ Defines:
 
 ## 13. Nominal aliases and structural values
 
-Planned file: `13-aliases.md`
+Chapter: [[13-aliases]].
 
-Planned scope:
+Defines:
 
 - Nominal and structural representation aliases, generic applications, contextual construction and nominal casting; exact structural type equality remains distinct from nominal value equality.
 - Single and multiple nominal specialisation, inheritance of representation or members, provenance-based deduplication and conflicts between independent members.
