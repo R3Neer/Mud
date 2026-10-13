@@ -60,7 +60,7 @@ States:
 - `skeleton`
 - `draft`
 - `proposed`
-- `en-revision`
+- `in-review`
 - `current`
 - `superseded`
 
@@ -74,7 +74,7 @@ Internal links should preferably use wikilinks:
 
 ```markdown
 [[03-notation|mathematical notation]]
-[[32-waves#Wave configuration]]
+[[21-expressions#9. Blocks and error recovery]]
 ```
 
 Each chapter must link to:
