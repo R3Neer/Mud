@@ -17,6 +17,7 @@ questions:
   - Q-029
   - Q-058
 decisions:
+  - D-154
   - D-153
   - D-152
   - D-151
@@ -154,7 +155,7 @@ Boolean rules yield Bool, looks yield their static produced type, and real actio
 
 An outer request additionally requires action root capability. A subaction or a value that might denote one is not rescued by an action-shaped annotation. Call cycles must meet the relevant prohibition/proof contract; a type-correct signature does not prove acyclicity.
 
-Computed domains used by expression contracts obey [[11-type-system]]: their evaluation dependencies must be statically acyclic. Reading stored candidate values does not recursively revalidate their contracts. Runtime membership admission cannot legalise an invalid domain-evaluation cycle.
+Computed domains used by expression contracts obey [[11-type-system]]: their evaluation dependencies must be statically acyclic. Reading stored candidate values does not recursively revalidate their contracts. Runtime membership admission cannot legalise an invalid domain-evaluation cycle or an unstable stored interval bound. Stored field/local endpoints must satisfy MUD-TYPE-034; derived fields/locals and local filters may use dynamic domains in the applicable coherent view. An immutable scalar capture supplies its captured value, not a live read of its initializer.
 
 ## 4. Numeric, dimensional and Boolean operators
 

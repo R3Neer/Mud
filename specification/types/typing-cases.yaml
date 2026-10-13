@@ -1070,7 +1070,7 @@ cases:
   source: 'value: Nat in [0..cap] = candidate'
   source_scope: fragment-with-stated-contract
   expected: static-accept
-  contract: This is a local declaration in a value block, not a thing-schema initializer. cap is already stored in the coherent read view; evaluating this interval
+  contract: This is a local declaration in a value block, not a thing-schema initializer. cap is an already captured immutable Nat scalar, stable for this binding lifetime; evaluating this interval
     requires no computed-domain recursion. candidate is Nat in its admitted interval.
 - id: candidate-domain-mutual-stored-reads
   rules:
@@ -2231,3 +2231,38 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Redundant singleton confirmation preserves erasure, so not p closes true. Domain restriction materializes true first, so not q is false. Collection construction retains a true member for an erased element.
+
+- id: stored-interval-direct-mutable-bound
+  rules: [MUD-TYPE-034]
+  source: 'a: Int in [0..upper] = candidate'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture is an admitted local/field owner but upper is mutable. Stored interval bounds must be stable, irrespective of the current candidate being in range.
+
+- id: stored-interval-hidden-mutable-bound
+  rules: [MUD-TYPE-034]
+  source: 'upper := settings.limit; a: Int in [0..upper] = candidate'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: settings.limit is mutable. The calculated name upper hides no dependency; transitive endpoint stability fails.
+
+- id: stored-interval-captured-scalar-bound
+  rules: [MUD-TYPE-034]
+  source: 'upper: Int = settings.limit; a: Int in [0..upper] = candidate'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture is an admitted stored-local context with supplied upper/candidate admission. upper captures an immutable scalar. Its bound does not reread settings.limit; later source mutations do not move this stored interval.
+
+- id: derived-interval-live-bound
+  rules: [MUD-TYPE-034]
+  source: 'selected: Int in [0..upper] [*] := source'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: upper is mutable and source is a finite Int collection. The derived result and interval are read in the same view; filtering retains dependencies. Later reads may have different membership; captured prior values do not change.
+
+- id: immutable-handle-mutable-bound
+  rules: [MUD-TYPE-034]
+  source: 'a: Int in [0..settings.limit] = candidate'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: settings is an immutable handle but limit is a mutable field. Handle immutability does not prove the endpoint stable.

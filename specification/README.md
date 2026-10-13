@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-154
   - D-149
   - D-147
   - D-146
@@ -386,7 +387,7 @@ Planned file: `18-domains-and-intervals.md`
 
 Planned scope:
 
-- Declared and calculated domains, membership, normalisation, finiteness and enumerability.
+- Declared and calculated domains, membership, normalisation, finiteness and enumerability; stored field/local interval bounds are transitively stable, while derived fields/locals may use dynamic domains in their applicable read view.
 - Acyclic computed-domain evaluation dependencies, distinct from stored-value reads, recursive constructor enumeration and periodic point-domain normalisation.
 - Linear, discontinuous, cyclic and magnitude-dependent intervals.
 - Explicit materialisation of enumerable domains through `all D` when an operation must produce a collection.

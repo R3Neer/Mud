@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-154
   - D-153
   - D-151
   - D-147
@@ -270,7 +271,7 @@ Calculated form:
 fieldName [derived-value-shape] := value-body
 ```
 
-`derived-value-shape` may be `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Therefore, both `area: Num in 0..* := width * height` and `area in 0..* := width * height` are valid. If the type is omitted, it must be inferred unambiguously from the expression, without a predetermined preference between compatible representations or contextual forms. If more than one solution exists, the type must be written. A calculated field does not support outer `mut`; its shape may specify a domain, a collection specification and internal `[mut]` capability.
+`derived-value-shape` may be `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Therefore, both `area: Num in 0..* := width * height` and `area in 0..* := width * height` are valid. If the type is omitted, it must be inferred unambiguously from the expression, without a predetermined preference between compatible representations or contextual forms. If more than one solution exists, the type must be written. A calculated field does not support outer `mut`; its shape may specify a domain, a collection specification and internal `[mut]` capability. Its domain and interval endpoints may depend on mutable state, subject to pure, deterministic, acyclic evaluation in the read's view. Interval endpoints in stored field/local restrictions must instead be transitively stable for the binding lifetime; their syntax does not implicitly capture mutable endpoints.
 
 Outer `mut` is written before the name because it describes the storage location, not the type of its members. `fieldName: mut Type` is not part of the syntax. Field names and metadata names occupy different syntactic positions: `name: Text` declares a field, whereas `~name = expression` declares or amends presentation metadata.
 

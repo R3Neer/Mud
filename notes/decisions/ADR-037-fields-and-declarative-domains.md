@@ -91,7 +91,7 @@ given amount: Nat in 1..100
 for people: Person in EligibleCitizens [1..* unique]
 ```
 
-It may appear in fields, alias components, and `for` and `given` roles. A domain calculation must be pure, deterministic, non-stochastic and analysable, with statically established acyclic evaluation dependencies. Reading already stored candidate values does not recursively evaluate their domains. Recursive computed-domain equations have no fixed-point evaluation semantics.
+It may appear in fields, alias components, and `for` and `given` roles. A domain calculation must be pure, deterministic, non-stochastic and analysable, with statically established acyclic evaluation dependencies. [[ADR-154-stable-stored-interval-bounds-and-live-derived-domains|D-154]] additionally requires transitively stable interval endpoints for stored field/local constraints. Calculated fields/locals may use dynamic bounds and domains; no endpoint capture is implicit. Reading already stored candidate values does not recursively evaluate their domains. Recursive computed-domain equations have no fixed-point evaluation semantics.
 
 In a stored field or a role `for`, `in` appears after the type and before the specification from collection:
 

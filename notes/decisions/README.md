@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 148.
-- Current: 144.
+- Total: 149.
+- Current: 145.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -167,6 +167,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-151 | current | 2026-10-08 | [[notes/decisions/ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|Finite collections and mandatory enumeration proof basis]] |
 | D-152 | current | 2026-10-13 | [[notes/decisions/ADR-152-ordered-demand-and-value-boundaries-for-pruning|Ordered demand and value boundaries for pruning]] |
 | D-153 | current | 2026-10-13 | [[notes/decisions/ADR-153-operator-descriptors-metadata-and-textual-anchor-policy|Operator descriptors metadata and textual anchor policy]] |
+| D-154 | current | 2026-10-13 | [[notes/decisions/ADR-154-stable-stored-interval-bounds-and-live-derived-domains|Stable stored interval bounds and live derived domains]] |
 
 ## Reserved identifiers
 

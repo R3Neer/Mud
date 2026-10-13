@@ -30,7 +30,7 @@ Recursive type descriptions, their finite immutable values and bounded construct
 
 ## Contrasting cases
 
-- A domain calculated from already stored cap and a finite interval is acyclic.
+- A domain calculated from already stored cap and a finite interval is acyclic. Under [[ADR-154-stable-stored-interval-bounds-and-live-derived-domains|D-154]], a stored interval restriction also needs stable cap; derived domains may retain a mutable cap dependency. Acyclicity does not establish stability.
 - Two domain validations reading already stored a and b in one candidate can both succeed when a equals b.
 - EligibleA requires EligibleB to be evaluated, which requires EligibleA: statically invalid even if the equations are positive or finite sets.
 - A negative self-dependency through complement is likewise invalid; no fixed point is chosen.

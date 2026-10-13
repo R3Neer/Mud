@@ -15,6 +15,7 @@ questions:
   - Q-060
   - Q-028
 decisions:
+  - D-154
   - D-151
   - D-149
   - D-148
@@ -186,7 +187,12 @@ Starting with $X_0=\varnothing$, compute $X_{i+1}=X_i\cup F(X_i)$ until equality
 > [!rule] MUD-TYPE-016 — Acyclic domain evaluation
 > A computed domain cannot depend directly or transitively on its own evaluation. Static admission must establish acyclicity across the calculations/callable dependencies needed to obtain it; a potential unresolved circular dependency is not a proof. No least/greatest fixed-point semantics is admitted for recursive computed domains.
 
-Reading an already stored value from the inherited coherent view does not evaluate that value's domain again. Several candidate-field contracts may read each other's already available stored values without a circular domain calculation. This does not permit circular initialisers or remove ordinary field/write/checkpoint validation. Cyclic point-domain normalisation, nominal type recursion and dependency cycles of computed domains are distinct.
+> [!rule] MUD-TYPE-034 — Stable stored interval bounds
+> Interval bounds restricting stored fields or stored locals must be stable for the binding's lifetime. Their evaluation cannot depend directly or transitively on mutable state. A pure acyclic expression is insufficient if it reads mutable data. An immutable captured scalar can supply a bound; an immutable handle does not freeze mutable fields reached through it. No endpoint snapshot is implicit.
+
+Derived fields and locals defined by := may retain dynamic interval bounds and domains. On each demanded read, compute the derivation and domain in the same applicable semantic view, retain their transitive dependencies, apply the specified transformations and then check cardinality. An already captured collection retains its ordinary value. This rule does not freeze domain members, restrict every named state-dependent set or change participant-domain admission.
+
+Reading an already stored value from the inherited coherent view does not evaluate that value's domain again. Several candidate-field contracts may read already available stored values without a circular domain calculation, but stored interval endpoint reads must independently satisfy stability. This does not permit circular initialisers or remove ordinary field/write/checkpoint validation. Cyclic point-domain normalisation, nominal type recursion and dependency cycles of computed domains are distinct.
 
 Domain obligations are separate from constructor reachability. An empty or state-dependent domain does not acquire a witness from a basic type's unrefined inhabitation. A supplied/default value can witness inhabitation only after its domain check. Without such evidence the analysis must not claim unconditional inhabitation. A well-formed contract may denote no values in a projection; no automatic value is selected to repair it.
 
