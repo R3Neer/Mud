@@ -2413,3 +2413,51 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Both component representations are Rum and the dimensions are valid. The existing Rum-only quotient fixes the inferred representation to Rum.
+
+- id: family-stored-data-missing
+  rules:
+  - MUD-TYPE-002
+  source: 'family Missing { code: Nat; One }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Every member requires an explicit member value or explicit schema default; Nat supplies no default.
+
+- id: family-computed-override
+  rules:
+  - MUD-TYPE-002
+  source: 'family F { score: Nat = 0; doubled := score * 2; One { doubled = 4 } }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A member assignment cannot target computed schema data.
+
+- id: family-computed-cycle
+  rules:
+  - MUD-TYPE-016
+  source: 'family F { first := second; second := first; One }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The supplied computed data graph has the first/second cycle; forward lookup does not make it admissible.
+
+- id: family-unordered-comparison
+  rules:
+  - MUD-TYPE-002
+  source: 'F.One < F.Two'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture declares unordered family F with One and Two. Finite declaration-order enumeration does not supply member comparison.
+
+- id: family-shared-data-descriptor
+  rules:
+  - MUD-TYPE-026
+  source: 'F~fields'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture declares visible family F with stored datum score. The aggregate has one original schema Field descriptor, not a descriptor per member.
+
+- id: thing-ancestry-cycle
+  rules:
+  - MUD-TYPE-002
+  source: 'thing A as B; thing B as A'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Resolved thing ancestry must be acyclic; reflexive is does not admit direct cycles.

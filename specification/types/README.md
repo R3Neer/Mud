@@ -61,3 +61,5 @@ A witness is a finite certificate in the validator's restricted language. Nat in
 - test_dimension_witnesses.py checks supplied finite anchor/exponent maps, exact positive unit ratios, nominal unitless distinctions and Money signature rejection before cancellation. It is not a source unit/representation analyzer.
 
 - test_rum_witnesses.py checks exact-rational certificates with supplied candidate/spacings: nearest-even ties, gradual underflow, overflow carry, mathematical truncating remainder and observable FMA differences. It does not implement a general binary64 converter, compiler or runtime.
+
+`test_declaration_witnesses.py` checks supplied ancestry/strict-membership and initializer-origin certificates, applied family identity, shared datum origins and enumeration/key/member-order distinctions. Chapters 12 and 14 own these declaration contracts. These witnesses do not evaluate source programs.

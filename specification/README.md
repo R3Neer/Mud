@@ -319,9 +319,9 @@ $$
 
 ## 12. `Thing`, specialisation and identity
 
-Planned file: `12-things.md`
+Chapter: [[12-things]].
 
-Planned scope:
+Defines:
 
 - Identity, activity, destruction of a materialisation's own load, rematerialisation from the canonical definition and independent state of concrete and abstract `thing`s.
 - Single and multiple specialisation, including applied generic abstract ancestors, inheritable schema, defaults and initialisers; concrete things are not generic.
@@ -345,9 +345,9 @@ Planned scope:
 
 ## 14. Closed value families
 
-Planned file: `14-closed-families.md`
+Chapter: [[14-closed-families]].
 
-Planned scope:
+Defines:
 
 - Declaration, generic applications, members, nominality, ordering and enumeration of `family`; applied members retain source anchors and exact applied types.
 - Uniform schema for associated data, defaults and per-member calculations.
