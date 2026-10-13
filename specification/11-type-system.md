@@ -14,6 +14,7 @@ questions:
   - Q-028
   - Q-029
 decisions:
+  - D-161
   - D-160
   - D-159
   - D-158
@@ -261,6 +262,13 @@ For Rum operands, +, -, * and / compute the mathematical operation on their repr
 Every expression site has binary64 intermediate precision; wider host registers cannot change results. a*b+c has a multiplication rounding followed by addition rounding. Automatic FMA contraction, reassociation or constant folding is permitted only when it preserves the complete observable value/fault/demand contract. No implicit fast-math mode or source FMA operation is established. Required static owners must produce a normal admitted result after applicable recovery; executable computing faults retain the ordinary error channel. Staged effect consolidation retains its specified algebra/rounding stages in [[28-effects]] rather than acquiring an accidental host evaluation order.
 
 Unit construction consumes its checked numeric value, converts its coordinate using the symbolic exact canonical unit factor and rounds the resulting Rum coordinate. The exact factor belongs to unit elaboration, not a new implicit source arithmetic signature. Domain validation follows canonical result construction. All operands of a derived magnitude's representation expression must admit their original operation signatures: Rum-only product/quotient results are Rum; mixed exact/Rum or Money/Rum is rejected. Annotation cannot silently convert components. Dimensional equality does not rescue an unsupported numeric signature.
+
+### Exact remainder
+
+> [!rule] MUD-TYPE-039 — Exact truncating remainder
+> Nat%Nat yields Nat, Int%Int yields Int and Num%Num yields Num. Mixed operands use the exact Nat-to-Int-to-Num widening chain. With nonzero divisor b, let q=trunc(a/b), where trunc is mathematical integer truncation toward zero; the exact result is a-q*b. A zero divisor supplies Fault under ordinary demand and recovery rules. Money has no remainder signature and %= is not introduced.
+
+For a nonzero remainder its sign is the dividend's sign and its absolute value is below abs(b). Thus (-5)%3=-2, 5%(-3)=2 and (5/2)%1=1/2. This internal quotient is not a source integer conversion and does not use its ties-to-even rule. Existing arithmetic member lifting retains its static cardinality/signature premises; no member computation occurs for empty inputs.
 
 ## 6. Subtyping and guarantee inclusion
 

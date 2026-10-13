@@ -2461,3 +2461,35 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Resolved thing ancestry must be acyclic; reflexive is does not admit direct cycles.
+
+- id: exact-remainder-negative
+  rules:
+  - MUD-TYPE-039
+  source: '(-5) % 3'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Int remainder is exact -2; the quotient truncates toward zero.
+
+- id: exact-remainder-rational
+  rules:
+  - MUD-TYPE-039
+  source: '(5 / 2) % 1'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Exact widening produces Num remainder 1/2 without integer rounding.
+
+- id: exact-remainder-money
+  rules:
+  - MUD-TYPE-039
+  source: 'cash % cash'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies Money operands; Money has no remainder signature.
+
+- id: exact-remainder-zero
+  rules:
+  - MUD-TYPE-039
+  source: '1 % 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: This is a required static value owner with no recovery; its zero divisor cannot produce a normal result.

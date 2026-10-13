@@ -15,6 +15,7 @@ questions:
   - Q-023
   - Q-029
 decisions:
+  - D-161
   - D-160
   - D-158
   - D-156
@@ -180,7 +181,7 @@ Money-producing scaling computes the exact rational result, rounds to hundredths
 
 A supported operation with zero divisor, invalid domain/conversion or prohibited nonfinite Rum result supplies Error occurrences rather than a normal value, empty or sentinel. Resource exhaustion is a technical Error, not numerical overflow/wraparound. A statically invalid closed computation is diagnosed statically. Detailed Error subtype names remain Q-007; binary64 evaluation follows MUD-TYPE-038 in [[11-type-system]]. No new arithmetic saturation is inferred.
 
-Pure Nat subtraction saturates before a declared domain check; signed additive effect deltas instead consolidate before one Nat normalisation. Explicit to conversions round and then validate without corrective saturation. Numeric % requires its specified compatible member operation; an absent overload is a static error, not an implicit cast.
+Pure Nat subtraction saturates before a declared domain check; signed additive effect deltas instead consolidate before one Nat normalisation. Explicit to conversions round and then validate without corrective saturation. Nat/Int/Num % uses exact widening and the truncating-quotient signature/result of MUD-TYPE-039 in [[11-type-system]]. Rum % follows MUD-TYPE-038. No Money remainder signature exists; an absent overload is a static error, not an implicit cast.
 
 Magnitude arithmetic composes nominal dimensional factors and selects the representation allowed by the operation. Addition/subtraction require the specified dimension and linear/point compatibility. Different unitless nominal magnitudes retain different factors. Unit presentation in changes presentation, not dimension or nominal magnitude. Point extraction requires compatible ordered units and produces Nat. The deterministic factor/scale procedure is MUD-TYPE-037 in [[11-type-system#Dimensional normalization]]; its equality never bypasses the original representation signatures or source rounding sites.
 

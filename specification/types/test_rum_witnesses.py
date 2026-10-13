@@ -1,4 +1,4 @@
-"""Exact-rational certificates for supplied binary64 sites, not a runtime.
+"""Exact-rational certificates for binary64 sites and exact remainder, not a runtime.
 
 Spacings, exponents and candidates are supplied premises. This checks finite
 rounding/exception/contraction examples; it does not parse or evaluate Mud.
@@ -65,6 +65,15 @@ class RumWitnesses(unittest.TestCase):
         self.assertEqual(supplied_remainder(power(1023), power(-1074)), 0)
         with self.assertRaises(ZeroDivisionError):
             supplied_remainder(Fraction(1), Fraction(0))
+
+    def test_exact_remainder_includes_rational_values(self):
+        for a, b, expected in ((Fraction(-5), Fraction(3), Fraction(-2)),
+                               (Fraction(5), Fraction(-3), Fraction(2)),
+                               (Fraction(5, 2), Fraction(1), Fraction(1, 2))):
+            result = supplied_remainder(a, b)
+            self.assertEqual(result, expected)
+            self.assertLess(abs(result), abs(b))
+            self.assertEqual(result > 0, a > 0)
 
     def test_fma_changes_the_supplied_observable_result(self):
         a, b, c = 1 + power(-27), 1 - power(-27), Fraction(-1)
