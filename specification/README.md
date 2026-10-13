@@ -388,9 +388,9 @@ Defines:
 
 ## 18. Domains and intervals
 
-Planned file: `18-domains-and-intervals.md`
+Chapter: [[18-domains-and-intervals]].
 
-Planned scope:
+Defines:
 
 - Declared and calculated domains, membership, normalisation, finiteness and enumerability; stored field/local interval bounds are transitively stable, while derived fields/locals may use dynamic domains in their applicable read view.
 - Acyclic computed-domain evaluation dependencies, distinct from stored-value reads, recursive constructor enumeration and periodic point-domain normalisation.
