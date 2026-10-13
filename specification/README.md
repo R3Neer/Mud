@@ -9,7 +9,6 @@ tags:
 status: in-preparation
 normative: true
 questions:
-  - Q-075
   - Q-009
   - Q-059
   - Q-069
@@ -19,6 +18,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-156
   - D-153
   - D-155
   - D-154
@@ -938,6 +938,6 @@ MUD 1.0 will be formally specified when:
 10. An implementation can objectively declare its degree of conformance.
 11. Every world/package, adapter, library and patch feature included in the target profile has an explicit applicable contract and conformance evidence; deferred features and unselected protocols are identified without presenting design examples as accepted schemas.
 
-The developed static/syntax surfaces define alias operator signatures, static specificity, origin-preserving inheritance, narrowed-union selection, restricted arithmetic lifting and direct-overload priority. Operator reflection includes ordered operand names/types and whole-declaration metadata attachments. Signature identity uses complete textual canonical encoding; the simple subordinate anchor is specified, while exact complex-contract encoding and the detailed reflective schema remain Q-075. Direct nested collection suffixes and non-collapsed empty members retain their contracts; chapter publication still requires its applicable gates.
+The developed static/syntax surfaces define alias operator signatures, static specificity, origin-preserving inheritance, narrowed-union selection, restricted arithmetic lifting and direct-overload priority. Operator reflection includes ordered operand names/types and whole-declaration metadata attachments. Signature identity uses complete textual canonical encoding; the full contract encoding and detailed read-only reflective schema are specified in names/operator-contract-identity. Direct nested collection suffixes and non-collapsed empty members retain their contracts; chapter publication still requires its applicable gates.
 
 Explicit raise is admitted in executable expression/value/effect bodies and uses the existing producing-block fault/recovery channel. It does not turn ordinary Error values into faults or add world-write permission.

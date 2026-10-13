@@ -10,12 +10,12 @@ depends-on:
   - "[[03-notation]]"
   - "[[10-names-and-anchors]]"
 questions:
-  - Q-075
   - Q-073
   - Q-060
   - Q-028
   - Q-029
 decisions:
+  - D-156
   - D-155
   - D-154
   - D-151
@@ -70,7 +70,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; selection and lifting follow the same section; exact complex-signature identity encoding and the reflective schema remain Q-075. The fixed TypeKind family and selected categories are specified below; the complete inventory/projection and version-compatibility audit remains Q-060.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; selection and lifting follow the same section; complete signature identity and the reflective schema follow [[names/operator-contract-identity]]. The fixed TypeKind family and selected categories are specified below; the complete inventory/projection and version-compatibility audit remains Q-060.
 
 ## 1. Environments and judgements
 
@@ -359,6 +359,11 @@ Thing value admission preserves strict membership: a field whose member type is 
 Cross-part thing/alias specialisation requires uses authorisation and membership of the visible public contract's transitive type closure. Importing a path supplies no authority. Inherited initialisation is compiled under the declaring owner's access rights. Private ordinary thing fields do not become public through specialisation.
 
 Descriptor reflection is checked against every possible static receiver category. A supported optional property may return empty; an unsupported property is a static error, never a dynamic empty fallback. A type expression obtained through type reflection must be statically established as Type; runtime-dependent type generation is invalid. Source spans and AST values are not MUD values merely because the compiler holds them.
+
+> [!rule] MUD-TYPE-036 — Operator declaration descriptors
+> An operator descriptor is a non-callable declaration descriptor. Its category property is DeclarationKind.Operator and its own public type category is TypeKind.DeclarationDescriptor. Descriptor access is read-only and obeys ordinary static visibility for every returned contract. Reflection neither selects overloads nor creates inverse signatures.
+
+Complete signature encoding and operator reflection schema: [[names/operator-contract-identity]].
 
 ### Public TypeKind categories
 

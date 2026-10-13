@@ -3,9 +3,10 @@ id: Q-075
 title: Alias operator resolution and identity
 priority: P0
 opened: 2026-10-08
-resolved:
-closed:
+resolved: true
+closed: 2026-10-13
 decisions:
+  - D-156
   - D-153
   - D-149
   - D-146
@@ -18,27 +19,18 @@ superseded-by: []
 
 # Q-075 — Alias operator resolution and identity
 
-## Question
+## Resolution
 
-How are visible alias operator candidates discovered, inherited, disambiguated and identified publicly?
-
-## Already decided
-
-D-146 fixes source signatures, owner participation, the overloadable set, result inference, explicit inverses and replacement-style derived updates. Proofs and metadata cannot select signatures. Result ambiguity requires annotation. D-149 fixes bilateral lookup, unique static specificity, original inheritance/diamond deduplication, union narrowing, restricted arithmetic lifting, explicit-before-builtin priority, duplicate declaration rejection, subordinate signature identity and descriptor catalogues.
-
-## Pending
-
-- Specify collision-free canonical anchor encoding for every complete operand contract, including generic binders, applications, domains, cardinalities and escaping, under source-origin identity rules.
-- Complete the reflective property/type schema, including ordered name/type operand descriptors. Metadata source attachment uses descriptor-value-body and is no longer pending.
-
-The full anchor must use self-contained textual encoding; exact grammar/escaping is formalization under that policy. These remaining items are specification work, not unchosen overload selection or metadata ownership.
+Static selection, origin-preserving inheritance, complete textual encoding and read-only operator/operand reflection are specified. Metadata attachment forms and descriptor categories are fixed; no first-class operator call or new TypeKind is introduced.
 
 ## Closure criterion
 
-- C1: A deterministic selection contract and contrasting ambiguous/inherited cases exist.
-- C2: Nominal HIR and public identity/descriptor contracts cover operator declarations and applications.
+- C1: Deterministic selection and contrasting ambiguous/inherited cases exist.
+- C2: Nominal/typed identity and complete descriptor encoding/schema cover declarations and applications.
 - C3: Union/collection matching and builtin interactions have static evidence.
 
-## Resolution
+## Closure evidence
 
-Partially resolved by [[../decisions/ADR-149-alias-operator-selection-inheritance-and-reflection]]. Chapter 21 and supplied finite candidate witnesses cover selected policies; full anchor encoding and reflective schema evidence remain required before closure.
+- C1: D-149, MUD-TYPE-031 and specification/types/test_operator_contract_witnesses.py.
+- C2: D-156, specification/names/operator-contract-identity.md, chapter 10, reviewed nominal HIR and finite identity witnesses in specification/types/test_operator_identity_witnesses.py.
+- C3: D-149, operator-union-and-narrowing / operator-direct-collection-priority corpus cases and test_operator_contract_witnesses.py.

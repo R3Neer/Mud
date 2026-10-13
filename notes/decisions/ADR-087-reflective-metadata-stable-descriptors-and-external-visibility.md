@@ -70,7 +70,9 @@ An element may have metadata of its own only when it jointly satisfies:
 4. the metadata describes the complete element, not an accidental syntactic occurrence;
 5. its existence does not depend on a particular execution.
 
-Accordingly, anchored nominal declarations, `family` members, units, stored/computed/public fields, stored/computed associated `family` data, alias components and `for`/`on`/`given` participants may be metadata-bearing.
+[[ADR-156-canonical-operator-contract-encoding-and-reflection-schema|D-156]] adds Operator declaration reflection and its complete subordinate anchor/schema.
+
+Accordingly, anchored operator declarations, anchored nominal declarations, `family` members, units, stored/computed/public fields, stored/computed associated `family` data, alias components and `for`/`on`/`given` participants may be metadata-bearing.
 
 Expressions, statements, operands, conditions, clause bodies, tokens, arbitrary AST nodes and functional branches without a stable descriptor are not. A functional-dictionary branch likewise has no public anchor: its local structural identity belongs to the owning dictionary and serves later reconstruction and analysis without becoming an anchor or symbol. `when`, `if`, `then`, `after` and `otherwise` may be reflected as present classes through `~clauses`, but their bodies do not become metadata-bearing objects.
 
@@ -125,7 +127,7 @@ The following conceptual families are introduced:
 ```mud
 family DeclarationKind {
     Thing, Alias, Family, FamilyMember, Magnitude, Unit,
-    Rule, Action, Subaction, Look, Sublook, Message, Submessage, Test, Start
+    Rule, Action, Subaction, Look, Sublook, Message, Submessage, Test, Start, Operator
 }
 
 family RuleKind { Boolean, Reactive, Always }
@@ -287,7 +289,7 @@ Standard presentation and configuration metadata are retained with these princip
 
 `Prefix` is a built-in nominal type. The SI catalogue fixed by D-076 provides built-in `Prefix` values from `quecto` to `quetta`. Their names are ordinary identifiers resolved at the built-in level. Therefore `~prefixes = [kilo, milli]` is an ordinary MUD collection, `all` enumerates the built-in `Prefix` domain and `empty` represents the empty collection. Units retain neither `unit-property`, `prefix-selection` nor another parallel subgrammar: their body contains only general metadata declarations.
 
-`~name`, `~summary`, `~description` and `~deprecated` are available on every compatible metadata-bearing element. `~name` defaults to a presentation derived from `~identifier`. `~summary` is a brief description; `~description` accepts presentation Markdown; a non-empty `~deprecated` activates a deprecation diagnostic but does not invalidate use.
+`~name`, `~summary`, `~description` and `~deprecated` are available on every compatible metadata-bearing element. `~name` defaults to a presentation derived from `~identifier` where the owner has one; operator declarations use the symbol presentation under D-156. `~summary` is a brief description; `~description` accepts presentation Markdown; a non-empty `~deprecated` activates a deprecation diagnostic but does not invalidate use.
 
 ### User metadata
 

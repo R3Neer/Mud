@@ -2287,3 +2287,31 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The finite integral bounds discharge enumeration under the elementary basis without allocating all members during analysis. A tool interruption would leave verification incomplete, not change this expected normative disposition.
+
+- id: operator-descriptor-kind-schema
+  rules: [MUD-TYPE-036]
+  source: 'op~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied op is an operator descriptor. Its kind is DeclarationKind.Operator; its own type category is DeclarationDescriptor. It remains non-callable.
+
+- id: operator-operand-description-schema
+  rules: [MUD-TYPE-036]
+  source: 'op~operands'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied binary operator yields two ordered immutable name/type records, with effective applied contracts. Operand names do not affect the original generic-slot anchor and records receive no independent anchors or metadata.
+
+- id: operator-descriptor-no-invocation
+  rules: [MUD-TYPE-036]
+  source: 'op(a, b)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: An operator declaration descriptor is not a callable. Reflection does not provide a first-class operator invocation or bypass static selection.
+
+- id: operator-complete-contract-identity
+  rules: [MUD-TYPE-036]
+  source: 'v * factors'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied selected contract retains Num [2], its domain and authority in graph encoding; it cannot be encoded as unrestricted Num. Inherited descriptors retain original owner identity.

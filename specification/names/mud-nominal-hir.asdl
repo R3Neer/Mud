@@ -1,3 +1,5 @@
+-- Canonical operator contract graphs and reflective operand records are typed
+-- results specified separately; this nominal model adds no effective signature.
 -- Operator metadata retains its source owner; typed signature anchors and reflective
 -- operand contracts are not nominal HIR fields. Invocation operand bindings are
 -- unavailable in the declaration metadata environment.

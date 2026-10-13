@@ -25,3 +25,5 @@ The validator checks ASDL type references, the resolved/pending reference sum, c
 
 
 Generic parameters use joint header/body local scopes; application references retain constructor/argument provenance without new application symbols or anchors. Effective application identity, ancestry, variance and closure proofs remain typing/elaboration responsibilities. Alias operator declarations retain source provenance and original owner scopes; their signature-dependent public anchors and static candidate selection belong to typing, not nominal HIR fields.
+
+[[operator-contract-identity]] specifies typed operator contract encoding, original generic signature anchors and read-only reflection. It is separate from nominal HIR and semantic IR. Finite supplied-graph certificates in types/test_operator_identity_witnesses.py check canonical numbering, ordering and escaped labels without normalizing Mud source.

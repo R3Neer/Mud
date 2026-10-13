@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 150.
-- Current: 146.
+- Total: 151.
+- Current: 147.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -169,6 +169,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-153 | current | 2026-10-13 | [[notes/decisions/ADR-153-operator-descriptors-metadata-and-textual-anchor-policy|Operator descriptors metadata and textual anchor policy]] |
 | D-154 | current | 2026-10-13 | [[notes/decisions/ADR-154-stable-stored-interval-bounds-and-live-derived-domains|Stable stored interval bounds and live derived domains]] |
 | D-155 | current | 2026-10-13 | [[notes/decisions/ADR-155-uniform-normative-analysis-and-finiteness-diagnostics|Uniform normative analysis and finiteness diagnostics]] |
+| D-156 | current | 2026-10-13 | [[notes/decisions/ADR-156-canonical-operator-contract-encoding-and-reflection-schema|Canonical operator contract encoding and reflection schema]] |
 
 ## Reserved identifiers
 

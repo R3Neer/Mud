@@ -10,13 +10,13 @@ depends-on:
   - "[[11-type-system]]"
   - "[[15-fields-and-mutability]]"
 questions:
-  - Q-075
   - Q-073
   - Q-007
   - Q-023
   - Q-029
   - Q-058
 decisions:
+  - D-156
   - D-155
   - D-154
   - D-153
@@ -227,7 +227,7 @@ Pruning-sensitive syntax is normal admitted language usage. No sensitivity warni
 > [!rule] MUD-TYPE-028 — Declared alias operator contract
 > Only unary + and - and binary +, -, *, /, %, |, &, ^, -- are overloadable. Every declaration belongs to an alias and has at least one operand of its owner applied type. A bare operand has that type; an annotated operand is grouped as (name: type). The optional result follows a colon and the value body follows :=. The body obeys ordinary ValueBlock purity, capability, termination and error contracts. Equality, ordering, logical/contextual operations and assignment are not directly overloadable.
 
-Each declaration introduces only its written ordered signature. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator selection follows the rules below; exact complex-signature identity encoding and the detailed reflective schema remain [[../notes/questions/Q-075-alias-operator-resolution-and-identity|Q-075]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
+Each declaration introduces only its written ordered signature. An inverse requires a declaration; it may delegate to the original. A same-type signature admits exchanged values without asserting commutativity. Metadata has no algebraic privileges, and compiler proofs do not create signatures or settle selection. Alias operator selection follows the rules below; complete signature identity encoding and the read-only reflective schema follow [[names/operator-contract-identity]]. The following result rule applies once a signature is unambiguously established; expected results cannot invent or select one.
 
 > [!rule] MUD-TYPE-029 — Operator result contextual preference
 > An explicit result contract takes precedence. Without one, an untyped returned tuple first checks construction of the owner alias under its complete contract. If that fails, form the set of distinct operand types admitting its contextual construction. A singleton set selects that type; more than one requires an explicit result or expression type. If none fits, use ordinary structural inference. Typed values retain their nominal identity; no implicit alias conversion is introduced.

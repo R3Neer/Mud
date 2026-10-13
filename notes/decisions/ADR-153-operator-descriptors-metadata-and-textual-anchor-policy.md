@@ -27,10 +27,12 @@ Operator metadata follows the established descriptor-value-body convention: a sh
 
 Canonical operator anchors use complete collision-free textual encodings of normalized operand contracts. They are self-contained; a digest or registry lookup is not their identity. The established simple form remains alias::path.Vector2::operator::*(path.Vector2, Num). Formatting and normalized equivalent sugar do not change identity; nominal labels, symbolic domain provenance and ordered contracts remain significant. A display may abbreviate an anchor without changing it.
 
-## Formalization boundary
+## Complete formalization
 
-Q-075 retains the exact canonical grammar/escaping for complex normalized contract graphs, generic binders and applications, and the complete reflective property/type schema. These are required specification work under the accepted policy, not permission to choose hash identities or erase operand names. No new policy for generic application anchors is introduced.
+[[ADR-156-canonical-operator-contract-encoding-and-reflection-schema|D-156]] completes the exact grammar, escaping, generic graph contracts and full reflection schema. Application descriptors retain their originating declaration anchors.
 
 ## Verification and provenance
 
 Extends [[ADR-149-alias-operator-selection-inheritance-and-reflection|D-149]]. EBNF, CST catalogue, coverage, Surface AST metadata lists, projection, source fixtures and token-level grammar tests integrate both attachment forms. Chapter 10 and nominal HIR preserve typed/nominal phase separation.
+
+Complete identity/schema specification and evidence: [[ADR-156-canonical-operator-contract-encoding-and-reflection-schema|D-156]].

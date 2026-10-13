@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-156
   - D-154
   - D-153
   - D-151
