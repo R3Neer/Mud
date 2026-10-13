@@ -2315,3 +2315,24 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Supplied selected contract retains Num [2], its domain and authority in graph encoding; it cannot be encoded as unrestricted Num. Inherited descriptors retain original owner identity.
+
+- id: typekind-support-inventory
+  rules: [MUD-TYPE-026]
+  source: 'typeDescriptor~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied Type descriptors for Name/Anchor/MudPath/MudFile/Cardinality/Order project to Alias; Prefix and reflective families project to Family. These are categories, not payload schema declarations.
+
+- id: typekind-nominal-reply-alias
+  rules: [MUD-TYPE-026]
+  source: 'typeDescriptor~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied ActionReply and Errors are nominal aliases. Kind remains Alias despite union/collection representation. Operand description records are Tuple; no new TypeKind is introduced.
+
+- id: typekind-default-versus-explicit-collection
+  rules: [MUD-TYPE-026]
+  source: 'typeDescriptor~kind'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Supplied bare Int has Basic. Redundant unrestricted Int [1] is also Basic. Nondefault/nested collection shapes have Collection. Int | Int normalizes to Basic; Int | Text remains Union. Applied constructors retain category.

@@ -22,7 +22,7 @@ The author selects public categories, renames Product to Tuple and ExactDictiona
 
 Classify the public exterior, not an alias's hidden representation or compiler nodes. Nominal thing/alias/family categories are Thing, Alias and Family. Nat, Int, Num, Rum, Money, Text, Char and Bool are Basic; Any is separate. Anonymous forms use Tuple, Collection, Union, Interval, Dictionary and FunctionalDictionary. Magnitude and PointMagnitude are separate; cyclic points remain PointMagnitude. Produced look/sublook types use LookResult; message/submessage payload types use MessagePayload. Callable categories are ActionCallable, LookCallable and BooleanRuleCallable; reactive/always rules do not become Boolean callables. Generic applications retain their constructor's category rather than acquiring GenericApplication. Descriptors are separated by semantic kind, including TypeDescriptor, FieldDescriptor, ParticipantDescriptor, MetadataDescriptor and DomainDescriptor, rather than one undifferentiated Descriptor.
 
-Amended by [[ADR-148-fixed-type-kind-family-and-normalized-projection|D-148]]: TypeKind is a builtin closed family, fixed per language version. Libraries cannot add categories. Classification uses the normalized public type while preserving nominal identities. Collection properties do not create kinds. ComponentDescriptor is distinct from FieldDescriptor; DeclarationDescriptor covers declarations without a more specific established category. The complete descriptor inventory and remaining projection/compatibility boundaries stay in Q-060.
+Amended by [[ADR-148-fixed-type-kind-family-and-normalized-projection|D-148]]: TypeKind is a builtin closed family, fixed per language version. Libraries cannot add categories. Classification uses the normalized public type while preserving nominal identities. Collection properties do not create kinds. ComponentDescriptor is distinct from FieldDescriptor; DeclarationDescriptor covers declarations without a more specific established category. The complete descriptor inventory and fixed-target compatibility follow [[ADR-157-complete-fixed-type-kind-core-catalogue|D-157]].
 
 ## Alternatives and consequences
 
@@ -30,4 +30,4 @@ Reject representation-based alias classification, GenericApplication and the nam
 
 ## Verification
 
-MUD-TYPE-026 and the accepted category table integrate the choices. Q-060 remains partial with exact outstanding closure work. No chapter is promoted.
+MUD-TYPE-026 and the accepted category table integrate the choices. D-157 completes Q-060 with exact inventory/projection evidence. No chapter is promoted.

@@ -11,10 +11,10 @@ depends-on:
   - "[[10-names-and-anchors]]"
 questions:
   - Q-073
-  - Q-060
   - Q-028
   - Q-029
 decisions:
+  - D-157
   - D-156
   - D-155
   - D-154
@@ -70,7 +70,7 @@ decisions:
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
-Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; selection and lifting follow the same section; complete signature identity and the reflective schema follow [[names/operator-contract-identity]]. The fixed TypeKind family and selected categories are specified below; the complete inventory/projection and version-compatibility audit remains Q-060.
+Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; selection and lifting follow the same section; complete signature identity and the reflective schema follow [[names/operator-contract-identity]]. The complete fixed TypeKind catalogue, supporting inventory and normalized projection are specified below.
 
 ## 1. Environments and judgements
 
@@ -370,7 +370,7 @@ Complete signature encoding and operator reflection schema: [[names/operator-con
 > [!rule] MUD-TYPE-026 — Public exterior classification
 > TypeKind is a builtin closed family, fixed for each language version and not extensible by programmes or libraries. It classifies the normalized effective public type exterior, preserving nominal identities. An alias remains Alias regardless of its representation. Applied generics retain the constructor's category; internal compiler nodes have no public kind merely by existing.
 
-| Public form | Selected category |
+| Public form | Category |
 | --- | --- |
 | Nat, Int, Num, Rum, Money, Text, Char, Bool | Basic |
 | Any | Any |
@@ -383,15 +383,33 @@ Complete signature encoding and operator reflection schema: [[names/operator-con
 | Type, field, component, participant, metadata, domain descriptor | TypeDescriptor, FieldDescriptor, ComponentDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor respectively |
 | Declaration descriptor without a more specific established category | DeclarationDescriptor |
 
-Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. TypeKind itself is a family and has category Family. Its members follow ordinary closed-family identity, equality and finite enumeration. Future language versions may change the catalogue only through their specification. The complete public builtin inventory, remaining projection boundaries and version compatibility are [[../notes/questions/Q-060-c-reflective-typekind-catalogue|Q-060]]; the selected table is not a claim that this audit is complete.
+Reactive/always rules do not acquire a BooleanRuleCallable category. Exact nominal identities and generic arguments remain available independently of kind. Public names do not change product notation or AST constructors. TypeKind itself is a family and has category Family. Its members follow ordinary closed-family identity, equality and finite enumeration. Future language versions may change the catalogue only through their specification. The table is the complete MUD 1.0 core constructor catalogue. Every public contract must project through one of its forms; compiler-private tags cannot add public categories. The supporting builtin inventory below covers the established reflective/error types. Project target declaration and persistent migration protocols remain separate version-scope work.
 
 Normalize before classification: Int | Int has kind Basic, whereas a nominal alias represented by Int has kind Alias. Collection specifications [3], [*], [3 ordered] and [3 unique] all project to Collection; Int [*] [*] is also Collection because its exterior is a collection. Cardinality, guarantees and element types remain separate reflective contracts. DeclarationKind classifies a described declaration; TypeKind classifies the descriptor's own type. Field descriptors and component descriptors have different TypeKind members even though they share structural properties.
+
+### Supporting builtin inventory and complete projection
+
+| Established builtin forms | Projection |
+| --- | --- |
+| Name, Anchor, MudPath, MudFile, Cardinality, Order | Alias. Payload APIs are not determined by category. |
+| Prefix, TypeKind, DeclarationKind, RuleKind, ActionKind, FieldKind, ClauseKind, ParticipantClause, MetadataKind | Family. Prefix has the fixed SI member catalogue. |
+| Success, Refusal, ConditionRefusal, IfRefusal, AfterRefusal, AlwaysRefusal, ArgumentRefusal, BoolCheck, Error, Errors, ActionReply | Alias, including abstract aliases and aliases represented by a collection or union. |
+| Type, Field, Component, Participant, Metadata, Domain descriptor contracts | Their specific TypeDescriptor, FieldDescriptor, ComponentDescriptor, ParticipantDescriptor, MetadataDescriptor, DomainDescriptor categories. |
+| General Declaration/Rule, FamilyMember, Unit and operator declaration descriptor contracts | DeclarationDescriptor when no more specific established callable category applies. A unit descriptor is not a first-class unit expression or quantity. |
+| Effective Action/Subaction, Look/Sublook and Boolean-rule callable contracts | ActionCallable, LookCallable and BooleanRuleCallable. A generic declaration descriptor view is not automatically callable. |
+| Operator operand description record | Tuple; its containing ordered list is Collection. No new descriptor category or anchor. |
+
+A simple unrestricted singleton specification, whether omitted or written, is a default wrapper and does not classify bare Int as Collection. A redundant unrestricted Int [1] confirms the same default singleton contract and is Basic. A nondefault collection form such as Int [0], Int [*], or an ordered/unique/nested collection layer is Collection. A nominal alias of any such form remains Alias; its schema does not leak through kind projection. Normalize duplicate unions before projection. A genuine remaining multi-alternative union is Union, even if all alternatives share one category. A generic application follows its constructor category, not GenericApplication. Cyclic points remain PointMagnitude. This recursion on the normalized public exterior terminates on the admitted finite type graph; nominal leaves do not require representation unfolding.
+
+For a fixed language version, the TypeKind member set, its spellings and this projection are invariant across compiler releases. A later catalogue applies only to a different selected language version; it is never silently merged into this one. Rechecking source under a new version may require changes to exhaustive family use. No unknown-kind fallback or automatic migration is implied. DeclarationKind.Operator classifies an operator declaration, whereas its descriptor's type category remains DeclarationDescriptor.
+
+The catalogue has no members for host-only Ticket states, Normal/Fault block outcomes, the erased marker, AST/CST/HIR nodes, compiler proof objects, unit spellings, part/file syntax nodes or generic binders. A public immutable MudFile value still uses its nominal Alias category; that does not expose a file syntax tree. These exclusions do not prohibit explicitly supported reflection values.
 
 ## 11. Results and errors as types
 
 Success is a nominal alias supplied by successful action evaluation. The interface for obtaining the incorporated textual patch, including any Success component, remains Q-073; no additional component/type is defined here. It remains part of the sole ActionReply result, not an action-specific domain return. Refusal and Error are abstract structural aliases. IfRefusal, AfterRefusal and AlwaysRefusal are ConditionRefusal specialisations; ArgumentRefusal identifies the argument role. Refusal/Error require reason and Declaration origin. Error has an optional finite cause; ConditionRefusal has the BoolCheck trace of the actually evaluated final Boolean expression.
 
-Errors is a nominal alias of a nonempty Error collection; ActionReply is the union Success | Refusal | Errors. Producing an Error or obtaining an ActionReply containing Errors is ordinary value production. Entering a block error channel is a separate evaluation outcome. Every block has an Error collection channel allowing zero occurrences; its normal result is available only when that channel is empty.
+Errors is a nominal alias of a nonempty Error collection; ActionReply is the nominal alias of the union Success | Refusal | Errors. Producing an Error or obtaining an ActionReply containing Errors is ordinary value production. Entering a block error channel is a separate evaluation outcome. Every block has an Error collection channel allowing zero occurrences; its normal result is available only when that channel is empty.
 
 Otherwise roles bind only Error specialisations, conjunctively and by occurrences. A then recovery checks against the protected block's normal contract and permissions; raise checks one Error or a nonempty compatible Errors collection. Refusal is never an Error binding. Explicit raise in executable bodies has the same payload contract and no normal value; checking-only result contextualisation follows [[21-expressions#9. Blocks and error recovery]]. [[21-expressions]] defines the block typing rules.
 

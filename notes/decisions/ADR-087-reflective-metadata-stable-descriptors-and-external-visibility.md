@@ -144,7 +144,7 @@ Category hard keywords already present in the grammar may appear bare in express
 
 Categorical narrowing admits forms such as `declaration is rule`, `declaration is action`, `declaration is subaction` and `declaration is thing`. `~type` does not replace this classification.
 
-Selected TypeKind categories and the public-exterior principle are fixed by [[ADR-144-public-type-kind-categories|D-144]]. [[ADR-148-fixed-type-kind-family-and-normalized-projection|D-148]] fixes TypeKind as a closed builtin family and adds ComponentDescriptor and DeclarationDescriptor. The complete descriptor/projection and version-compatibility contract remains Q-060.
+Selected TypeKind categories and the public-exterior principle are fixed by [[ADR-144-public-type-kind-categories|D-144]]. [[ADR-148-fixed-type-kind-family-and-normalized-projection|D-148]] fixes TypeKind as a closed builtin family and adds ComponentDescriptor and DeclarationDescriptor. The complete core descriptor/projection and fixed-target compatibility contract is specified by [[ADR-157-complete-fixed-type-kind-core-catalogue|D-157]].
 
 ### Signatures and participants
 

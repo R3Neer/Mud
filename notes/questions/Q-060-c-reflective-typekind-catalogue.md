@@ -3,9 +3,10 @@ id: Q-060
 title: Reflective `TypeKind` catalogue
 priority: P1
 opened: 2026-08-16
-resolved:
-closed:
+resolved: true
+closed: 2026-10-13
 decisions:
+  - D-157
   - D-148
   - D-144
   - D-087
@@ -16,29 +17,18 @@ superseded-by: []
 
 # Q-060 — Reflective `TypeKind` catalogue
 
-## Question
+## Resolution
 
-Which public members does `TypeKind` contain, what stability does MUD guarantee for this reflective catalogue, and how does it relate to the type system's normalised internal forms?
-
-## Context
-
-D-087 makes `Type~kind` observable, but deliberately leaves the concrete `TypeKind` catalogue to the type-system specification. Without an active question, this part of the reflective API could be closed accidentally while formalising internal types.
-
-## Already decided
-
-D-144 and MUD-TYPE-026 fix the public exterior principle and selected categories, including Tuple, Dictionary, FunctionalDictionary, distinct descriptors and callable groups. Applied generics retain their constructor category. D-148 fixes a closed builtin family per language version, normalized projection with nominal preservation, uniform Collection classification, ComponentDescriptor and the DeclarationDescriptor fallback. Libraries cannot extend the catalogue.
-
-## Pending
-
-- Audit the complete public builtin descriptor/type inventory and any remaining projection boundary not covered by the selected categories and normalization policy.
-- Specify observable compatibility for catalogue changes between language versions; extensible-category registration is no longer a pending language feature.
+The complete fixed core constructor/support inventory and normalized projection are specified. Libraries cannot add kinds. Compiler releases preserve the selected target catalogue; project target declaration and persistent migrations remain Q-038, without changing this fixed-version contract.
 
 ## Closure criterion
 
-- C1: A complete normative core catalogue and projection exists.
-- C2: Fixed-family behavior and observable version compatibility are specified.
-- C3: Internal forms project without exposing incidental implementation nodes.
+- C1: Complete normative core catalogue and projection exist.
+- C2: Fixed-family behavior and observable target-version compatibility are specified.
+- C3: Internal forms project without incidental implementation nodes.
 
-## Resolution
+## Closure evidence
 
-Partially resolved by [[../decisions/ADR-144-public-type-kind-categories]] and [[../decisions/ADR-148-fixed-type-kind-family-and-normalized-projection]]. The selected categories are accepted; the pending items are not implied by this choice.
+- C1: D-157 and the public/core-support tables in specification/11-type-system.md, including nominal support/error aliases, reflective families and descriptor boundaries.
+- C2: MUD-TYPE-026 and the fixed-target compatibility paragraphs in chapter 11: no compiler-release catalogue changes or automatic merge/fallback.
+- C3: Chapter 11 normalized-exterior algorithm and exclusions; typekind-support-inventory, typekind-nominal-reply-alias and typekind-default-versus-explicit-collection corpus cases.

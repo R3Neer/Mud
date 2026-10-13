@@ -28,7 +28,7 @@ Retain D-144's selected categories. Add ComponentDescriptor, distinct from Field
 
 ## Consequences and remaining scope
 
-This partially amends D-144 and clarifies D-087. Their selected-category contracts remain current. Complete coverage of public builtin descriptor types, projection boundaries not covered by these choices and version compatibility details remain Q-060; the family decision alone is not evidence of a complete catalogue.
+This partially amends D-144 and clarifies D-087. Their selected-category contracts remain current. [[ADR-157-complete-fixed-type-kind-core-catalogue|D-157]] supplies the complete builtin projection inventory and fixed-target compatibility contract, closing Q-060. Project version declaration and persistent migration remain Q-038.
 
 ## Verification
 
