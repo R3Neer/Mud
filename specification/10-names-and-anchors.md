@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-165
   - D-156
   - D-153
   - D-149
@@ -425,3 +426,7 @@ Alias~operators exposes own and inherited declaration descriptors, deduplicated 
 [[19-magnitudes]] retains canonical magnitude/unit declarations and structural prefixed forms. Unitless point construction creates values of the existing declaration, not unit symbols or new anchors. Contextual unit/point interpretation and dimensional contracts are checked after nominal resolution.
 
 Automatic on tuple membership and temporal changes require the compared-value equality support defined by MUD-TYPE-040 in [[11-type-system]]. This later static admission check does not alter role symbols, scope ownership, anchors or the nominal HIR shape.
+
+[[23-boolean-rules]], [[24-reactive-rules]], [[25-always-rules]] and [[26-public-boundary]] elaborate the existing signature roles, joint on scopes, rule variants and normal/sub operation identities. Contract visibility and host admission are checked with their complete effective types after lookup. Causal matches, observation episodes, generated result schemas and completed invocation owners do not add nominal HIR fields.
+
+MUD-TYPE-042 in [[11-type-system]] permits private provenance references only in established diagnostic components. They preserve original canonical identities without adding lookup candidates, invocation rights, public schemas or nominal HIR entities. Ordinary private qualification and host endpoint checks remain unchanged.

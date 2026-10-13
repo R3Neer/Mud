@@ -14,6 +14,7 @@ depends-on:
 questions:
   - Q-007
 decisions:
+  - D-165
   - D-066
   - D-071
   - D-088
@@ -123,6 +124,8 @@ non-success propagation contract. A false successfully evaluated owning if,
 after or always condition yields its specified Refusal; an error while computing
 the condition has no Bool result and uses the error channel. Static diagnostics
 are not runtime Error values.
+
+Diagnostic origin/argument descriptors crossing a public boundary retain only the component-scoped provenance exception MUD-TYPE-042 in [[11-type-system]]. Private helper failures need not lose their origin; diagnostic receipt grants no private-schema or operation authority.
 
 ## Explicit raise
 

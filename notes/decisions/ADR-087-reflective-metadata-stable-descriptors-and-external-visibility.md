@@ -363,4 +363,8 @@ The LSP and official tooling preferentially present, when available:
 
 ## Current amendment by D-096
 
-External visibility is derived from part, file-wide part only, operational category and type closure. Normal/sub pairs share reflective descriptor relations subaction <: action, sublook <: look and submessage <: message without sharing host capabilities. Private file declarations cannot escape through signatures or reflection. Cross-part reflection is valid only if its contract guarantees that it cannot return invisible entities; silently filtering a reflective collection to hide them is not permitted. Full tooling and reflection available to MUD code remain distinct surfaces.
+External visibility is derived from part, file-wide part only, operational category and type closure. Normal/sub pairs share reflective descriptor relations subaction <: action, sublook <: look and submessage <: message without sharing host capabilities. Private file declarations cannot escape through ordinary signatures or reflection, except for D-165's reserved diagnostic provenance components without authority. Cross-part reflection is valid only if its contract guarantees that it cannot return invisible entities; silently filtering a reflective collection to hide them is not permitted. Full tooling and reflection available to MUD code remain distinct surfaces.
+
+## Diagnostic provenance boundary
+
+D-165 permits private descriptor references in the original Error.origin, Refusal.origin and ArgumentRefusal.argument components, retaining only read-only identity/provenance without private-schema or invocation permission. It does not export private Error subtypes or arbitrary private payload fields; inherited component identity defines the exception.

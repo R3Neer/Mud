@@ -2641,3 +2641,91 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Required static fixture has position-ordered divisor records 1,0. Count cannot stop at the first accepted item; zero divisor faults without recovery.
+
+- id: boolean-rule-effect-rejected
+  rules:
+  - MUD-TYPE-012
+  source: 'rule Bad for mut total: Num { total += 1 }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Boolean rules have pure Bool bodies and cannot require outer mutable roles or execute effects.
+
+- id: reactive-rule-given-rejected
+  rules:
+  - MUD-TYPE-010
+  source: 'rule Bad on actor: Actor given n: Nat { when true; then actor.Touch() }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Reactive rules automatically bind on and cannot declare given.
+
+- id: always-false-not-error-handler
+  rules:
+  - MUD-TYPE-012
+  source: 'always rule Nonnegative on actor: Actor { actor.value >= 0 }'
+  source_scope: fragment-with-stated-contract
+  expected: runtime-check
+  contract: Fixture supplies a mutable Int value. A normal false checkpoint produces AlwaysRefusal; computing faults remain Error and no future wave repairs the checkpoint.
+
+- id: public-subaction-after-widening-rejected
+  rules:
+  - MUD-TYPE-007
+  source: 'operation'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture gives an action-typed descriptor whose alternatives include a shared subaction. Widening cannot grant outer-root capability.
+
+- id: public-look-produced-identity
+  rules:
+  - MUD-TYPE-003
+  source: 'first.Stats()~type === second.Stats()~type'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture calls the same visible look producer with identical generic arguments; receiver identity does not create another produced type.
+
+- id: public-transitive-private-type-rejected
+  rules:
+  - MUD-TYPE-002
+  source: 'look View { result := privateRecord }'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture produces a record whose nested alias type belongs to a part-only file. A visible field cannot export that private type through an outer annotation.
+
+- id: reactive-payload-alternative-flow-rejected
+  rules:
+  - MUD-TYPE-002
+  source: 'when Damaged or Tick'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture later unconditionally reads Damaged payload in then. Tick-only matches do not establish that payload; alternative composition guarantees only common bindings.
+
+- id: private-diagnostic-origin-supported
+  rules:
+  - MUD-TYPE-042
+  source: 'issue.origin~anchor'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Fixture supplies a visible builtin Error with the original Error.origin component referencing a part-only helper. Intrinsic provenance is allowed without visibility/invocation rights.
+
+- id: private-diagnostic-schema-rejected
+  rules:
+  - MUD-TYPE-042
+  source: 'issue.origin~fields'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture supplies that private diagnostic origin. The exception cannot expose its private schema; ordinary property availability also applies.
+
+- id: private-diagnostic-arbitrary-field-rejected
+  rules:
+  - MUD-TYPE-042
+  source: 'result.origin'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture attempts to publish an ordinary public record field named origin containing a private declaration. Matching spelling is not the inherited Error/Refusal component identity.
+
+- id: private-error-subtype-export-rejected
+  rules:
+  - MUD-TYPE-042
+  source: 'reply'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Fixture attempts an external ActionReply containing a private part-only Error subtype. Provenance exception does not export that value type.

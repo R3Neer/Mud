@@ -14,6 +14,7 @@ questions:
   - Q-028
   - Q-029
 decisions:
+  - D-165
   - D-163
   - D-162
   - D-161
@@ -475,6 +476,13 @@ Success is a nominal alias supplied by successful action evaluation. The interfa
 Errors is a nominal alias of a nonempty Error collection; ActionReply is the nominal alias of the union Success | Refusal | Errors. Producing an Error or obtaining an ActionReply containing Errors is ordinary value production. Entering a block error channel is a separate evaluation outcome. Every block has an Error collection channel allowing zero occurrences; its normal result is available only when that channel is empty.
 
 Otherwise roles bind only Error specialisations, conjunctively and by occurrences. A then recovery checks against the protected block's normal contract and permissions; raise checks one Error or a nonempty compatible Errors collection. Refusal is never an Error binding. Explicit raise in executable bodies has the same payload contract and no normal value; checking-only result contextualisation follows [[21-expressions#9. Blocks and error recovery]]. [[21-expressions]] defines the block typing rules.
+
+### Diagnostic provenance and privacy
+
+> [!rule] MUD-TYPE-042 — Private diagnostic references grant no authority
+> The original Error.origin, Refusal.origin and ArgumentRefusal.argument components may retain private declaration/participant references across a public boundary as read-only diagnostic provenance. Recognition is by original inherited component identity, not field spelling. This exception does not export a private diagnostic subtype, arbitrary additional private payload or operational/schema authority.
+
+The reference preserves canonical identity. Its supported intrinsic identifier/anchor/path/file/category information may be observed; ordinary property-category checks remain mandatory. Invocation, state access, private schema/participant/ancestry reflection and arbitrary configured metadata are not granted. Static ~type retains its existing contract and privacy obligations; no private signature/type frontier becomes visible from diagnostic receipt. Independent visibility rights are separate. Finite Error cause chains/diagnostic containers retain the same component-scoped exception when their value types are otherwise visible. Copying, widening or narrowing cannot launder it into an ordinary visible declaration or host endpoint; export elsewhere remains prohibited. No new source descriptor category or nominal identity is created.
 
 ## 12. Static acceptance and elaboration output
 

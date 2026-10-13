@@ -447,9 +447,9 @@ Defines:
 
 ## 23. Boolean rules
 
-Planned file: `23-boolean-rules.md`
+Chapter: [[23-boolean-rules]].
 
-Planned scope:
+Defines:
 
 - Pure signatures with explicitly named `for` participants and read-only `given` values.
 - Binding of receivers and arguments, domains, defaults and capabilities admitted by a pure query.
@@ -458,9 +458,9 @@ Planned scope:
 
 ## 24. Reactive rules
 
-Planned file: `24-reactive-rules.md`
+Chapter: [[24-reactive-rules]].
 
-Planned scope:
+Defines:
 
 - Set-valued `on` bindings, including finite enumerable related sources and nominal refinements.
 - `when`, `changes` and `old` triggers, `if` guards, reactive memory and `then` consequences.
@@ -469,9 +469,9 @@ Planned scope:
 
 ## 25. `always` rules
 
-Planned file: `25-always-rules.md`
+Chapter: [[25-always-rules]].
 
-Planned scope:
+Defines:
 
 - `on` bindings, pure condition, checkpoints and diagnostics.
 - Dependencies, suspension and the effect of a violation on resolution.
@@ -479,9 +479,9 @@ Planned scope:
 
 ## 26. Public boundary: `action`, `look` and `message`
 
-Planned file: `26-public-boundary.md`
+Chapter: [[26-public-boundary]].
 
-Planned scope:
+Defines:
 
 - Contracts visible between parts and to the host for `action`, `look` and `message`; `test` crosses parts only in a test context.
 - Normal/sub operation availability across authorised parts, host entry capability and the whole-file `part only` boundary.

@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-165
   - D-164
   - D-163
   - D-162
@@ -73,3 +74,5 @@ The declaration certificates also check supplied comparison edges for the transi
 `test_quantitative_catalogue.py` compares the normative SI catalogue with its accepted decision and checks finite unitless-point identity/domain certificates, including literal rejection before cycle repair. It does not implement point evaluation or format inversion.
 
 `test_quantifier_demand_witnesses.py` checks supplied finite predicate truth/fault labels for ordered/unordered demand, count and reverse extremum search. It evaluates no Mud source or source-production expression.
+
+`test_public_contract_witnesses.py` checks finite supplied endpoint alternatives, recursive required-type frontiers and direct uses versus transitive type understanding. It does not parse parts, discover exports or implement a host/causal protocol. Chapters 23–26 own the corresponding static signatures and operational boundaries.

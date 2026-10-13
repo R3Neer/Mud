@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 159.
-- Current: 155.
+- Total: 160.
+- Current: 156.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -178,6 +178,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-162 | current | 2026-10-14 | [[notes/decisions/ADR-162-no-functional-value-equality|No functional value equality]] |
 | D-163 | current | 2026-10-14 | [[notes/decisions/ADR-163-unitless-point-coordinates|Unitless point coordinates]] |
 | D-164 | current | 2026-10-14 | [[notes/decisions/ADR-164-quantifier-predicate-demand|Quantifier predicate demand]] |
+| D-165 | current | 2026-10-14 | [[notes/decisions/ADR-165-private-diagnostic-provenance-without-authority|Private diagnostic provenance without authority]] |
 
 ## Reserved identifiers
 

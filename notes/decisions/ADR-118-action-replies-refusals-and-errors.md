@@ -89,3 +89,7 @@ The developed mathematical, grammar, lexical, CST and AST surfaces represent str
 ## Verification
 
 Check each refusal subtype and mandatory origin, Error wrapping, finite BoolCheck trees with skipped branches, nominal Errors in a union, equal-valued occurrence multiplicity and Error-only handler selection. A false invariant is refused rather than a computing error. Errors from a Boolean computation remain distinguishable from false.
+
+## Diagnostic provenance boundary
+
+D-165 permits private descriptor references in the original Error.origin, Refusal.origin and ArgumentRefusal.argument components, retaining only read-only identity/provenance without private-schema or invocation permission. It does not export private Error subtypes or arbitrary private payload fields; inherited component identity defines the exception.
