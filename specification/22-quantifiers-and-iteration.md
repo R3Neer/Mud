@@ -13,10 +13,10 @@ depends-on:
   - "[[20-blocks-and-recovery]]"
   - "[[21-expressions]]"
 questions:
-  - Q-028
-  - Q-029
   - Q-032
 decisions:
+  - D-167
+  - D-168
   - D-164
   - D-033
   - D-047
@@ -60,9 +60,8 @@ Let C be the owner environment/mode and S its checked source. Write Enum(S,W,E)
 when E is a finite canonical enumeration of S captured in view W. Source
 production, enumeration and each body require their own purity/termination
 contracts; finite individual values or countability alone do not prove Enum.
-The complete certification procedures remain
-[[../notes/questions/Q-028-f-finiteness|Q-028]] and
-[[../notes/questions/Q-029-t-termination|Q-029]].
+Certification follows [[types/finite-static-certification]] and
+[[types/termination-certification]].
 
 > [!rule] MUD-ITER-001 — Captured finite source and lexical binding
 > Check source and optional step in the outer environment before introducing

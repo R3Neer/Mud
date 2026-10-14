@@ -13,6 +13,8 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-165
   - D-156
@@ -433,3 +435,5 @@ Automatic on tuple membership and temporal changes require the compared-value eq
 MUD-TYPE-042 in [[11-type-system]] permits private provenance references only in established diagnostic components. They preserve original canonical identities without adding lookup candidates, invocation rights, public schemas or nominal HIR entities. Ordinary private qualification and host endpoint checks remain unchanged.
 
 Contextual callable destinations and summaries follow [[types/contextual-call-analysis]] after ordinary lookup and static signature selection. Context keys preserve existing declaration/application identities; they add no nominal HIR fields, anchors or source scopes.
+
+[[types/termination-certification]] records code-origin proof nodes for functional policies and statically selected operator bodies. They create no value equality, public callable category or additional nominal HIR field. Ranking/context information remains in later semantic analysis.

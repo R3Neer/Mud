@@ -14,6 +14,8 @@ depends-on:
 questions:
   - Q-007
 decisions:
+  - D-167
+  - D-168
   - D-165
   - D-066
   - D-071
@@ -90,6 +92,8 @@ local initializer remains effectful. A confined value computation may update
 an enclosing private local in the same region, but cannot update captured
 external storage. Real action execution in an Effect initializer may capture
 ActionReply; a pure live derivation cannot replay those world effects.
+
+Body and handler completion follow [[types/termination-certification]]. Normal, Fault and applicable Refusal completion are distinct from guaranteed success; every recovery call must satisfy the same ranking obligations.
 
 ## Normal and Fault outcomes
 

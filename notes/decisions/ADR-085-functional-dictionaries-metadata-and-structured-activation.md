@@ -140,7 +140,7 @@ A functional dictionary:
 - is not a source for `for each`;
 - may refer directly or indirectly to other functional dictionaries.
 
-Every recursive component of the call graph must have a well-founded measure that decreases strictly along every edge continuing the cycle. The compiler must prove termination through numeric descent, cardinality reduction, strictly smaller substructures or an equivalent proof. Absence of proof is a static error.
+Every recursive component of the call graph must have a well-founded measure that decreases strictly along every edge continuing the cycle. D-167/D-168 specify the normative natural/structural/finite-order, lexicographic/phase and affine certificate procedure. Functional composite input sugar constructs one expected structural value, like composite exact keys. Absence of the required proof is a static error; independent owner-specific acyclicity remains mandatory.
 
 #### `ordered` mode
 

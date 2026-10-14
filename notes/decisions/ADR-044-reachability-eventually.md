@@ -64,7 +64,7 @@ $$
 
 `through` accepts one or more references to actions using the contextual syntax of collection, with optional square brackets. Its elements are references to actions, not calls with participants, and `given` already defined: the analysis lists the admissible requests based on their domains.
 
-The order in which the references appear does not alter the truth of the query. The canonical order of enumeration and the specific search strategy are not yet part of the normative meaning, provided that the algorithm is complete for the permitted profile and terminates. General recursion is not introduced into the source language.
+The order in which the references appear does not alter the truth of the query. The canonical order of enumeration and the specific search strategy are not yet part of the normative meaning, provided that the algorithm is complete for the permitted profile and terminates. Uncertified general recursion is not introduced. D-167/D-168 admit only the defined certified pure recursive classes; body termination does not establish the eventually world/state profile.
 
 ## Consequences
 

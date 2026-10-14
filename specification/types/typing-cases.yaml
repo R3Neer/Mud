@@ -2748,3 +2748,46 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The complete legally obtainable compatible catalogue consists of two acyclic targets; no explicit target list is required when every mandatory obligation is proved.
+
+- id: recursive-pure-rule-structural-descent
+  rules: [MUD-TYPE-044]
+  source: 'rule HasMarked for node: Node { node.marked or exists child in node.children : child.HasMarked() }'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Node is an immutable finite recursive alias with Bool marked and finite children; each recursive input is a proper existing child, and all other checks pass.
+- id: functional-lexicographic-reset
+  rules: [MUD-TYPE-044]
+  source: 'finish[value.major - 1, value.major]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Ordered prior branch excludes positive minor; major is positive Nat. The alias input accepts positional composite sugar and (major, minor) strictly descends although minor resets.
+- id: functional-affine-ranking-synthesis
+  rules: [MUD-TYPE-044]
+  source: 'walk[value.x - 1, value.y + 1]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The other guarded edge is (x+1,y-2). Both decrease the synthesized natural measure 3*x+2*y by one; no source measure annotation is required.
+- id: exact-rational-halving-no-ranking
+  rules: [MUD-TYPE-044]
+  source: 'value > 0 --> exact[value / 2]'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The Num input can remain positive forever; neither finite order nor a positive unchanged advance is established. Strict numeric decrease alone is insufficient.
+- id: rum-halving-represented-descent
+  rules: [MUD-TYPE-044]
+  source: 'value > r0 --> approx[value / r2]'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Positive finite Rum division by r2 strictly decreases actual rounded values including subnormal zero; its finite ordinal ranking is valid without source enumeration.
+- id: rum-absorbed-decrement-no-descent
+  rules: [MUD-TYPE-044]
+  source: 'again[value - r0.00000000000000000001]'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The source can receive r1 and recurse unchanged after rounding. The real-number expression does not prove actual represented descent.
+- id: finite-snapshot-without-uniform-bound
+  rules: [MUD-TYPE-045]
+  source: 'count x in items : true'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: items has an admitted finite Int[*] snapshot; its unbounded static upper cardinality does not require a constant size cap. Body and source production are certified separately.

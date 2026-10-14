@@ -10,9 +10,9 @@ depends-on:
   - "[[00-editorial-conventions]]"
 questions:
   - Q-038
-  - Q-028
-  - Q-029
 decisions:
+  - D-167
+  - D-168
   - D-159
   - D-157
   - D-155
@@ -33,7 +33,7 @@ A chapter's normative surface and publication status are distinct. A proposed/dr
 > [!rule] MUD-CONF-001 — Fixed-target static claims
 > A static conformance claim identifies the effective language target and covered constructs. Changing compiler releases under that target must preserve its normative grammar, type/visibility/capability contracts, reflective catalogues and certification procedure. A tool resource interruption is incomplete verification, not an invalid-program judgement or a new admission policy.
 
-Let $V$ be a specified language target, $P$ a resolved program under that target and $C$ the claimed construct scope. Write $\mathsf{Check}_V(P,C)$ for the completed normative static procedure over that scope, with its explicit premises and permitted runtime admission obligations. Its result distinguishes accepted, proved-violation rejection and completed-but-unproved rejection. Resource-interrupted checking does not supply a completed judgement. [[11-type-system]] defines the evidence/admission boundary; the full finite and general termination procedures retain their precisely delimited pending scopes under Q-028 and Q-029.
+Let $V$ be a specified language target, $P$ a resolved program under that target and $C$ the claimed construct scope. Write $\mathsf{Check}_V(P,C)$ for the completed normative static procedure over that scope, with its explicit premises and permitted runtime admission obligations. Its result distinguishes accepted, proved-violation rejection and completed-but-unproved rejection. Resource-interrupted checking does not supply a completed judgement. [[11-type-system]] defines the evidence/admission boundary; source/application finiteness and body termination follow [[types/finite-static-certification]] and [[types/termination-certification]].
 
 For conforming implementations $I$ and $J$ which both complete this procedure under the same $V$, equal input contracts and scope imply equal acceptance/rejection results and normalized static contracts. Internal caches or a shared reference analyzer do not alter the judgement. This is a conformance requirement, not a claim that the complete analyzer has already been specified or implemented.
 

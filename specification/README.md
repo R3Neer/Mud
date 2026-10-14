@@ -18,6 +18,9 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-166
+  - D-167
+  - D-168
   - D-160
   - D-159
   - D-156
@@ -876,6 +879,16 @@ syntax/
 ## Verifiable static artefacts
 
 The [[types/README|static contract corpus]] maps expression constructors and rule obligations to declarative fragments and finite derivation witnesses. Its validator does not parse or execute MUD programmes.
+
+The source/application certification procedures are
+[[types/contextual-call-analysis|contextual destinations and impact]],
+[[types/finite-static-certification|finite normative certification]] and
+[[types/termination-certification|body termination and ranking search]]. They
+fix completed proof classifications for their supported abstraction, including
+conservative rejection; resource interruption supplies no completed judgement.
+Finite source/body certification does not supply a future state-space profile,
+causal stabilization or foreign/host protocols. Those remain in their owning
+advanced and operational chapters.
 
 ## Main dependencies
 

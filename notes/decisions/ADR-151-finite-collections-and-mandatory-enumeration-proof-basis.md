@@ -26,7 +26,7 @@ Correct D-034/D-047's mathematical description: binary64 Rum values form a finit
 
 Require a normative minimum basis of finiteness/enumeration proofs, not wholly implementation-dependent acceptance. The existing elementary rules and established finite source constructions form that basis: finite concrete collections, finite closed families/explicit sets, admitted bounded discrete progressions and justified finite compositions. Producing a source and evaluating each body still require their own termination/purity obligations. Finite individual values do not imply a finite reachable world/state space.
 
-Failure to prove a mandatory obligation is static rejection, never a negative runtime query answer or bounded trial traversal. Q-028 still owns detailed conservative analysis limits and diagnostic contracts for cases beyond the established basis; Q-029 retains general termination certification. This does not implement a compiler or select a causal search algorithm.
+Failure to prove a mandatory obligation is static rejection, never a negative runtime query answer or bounded trial traversal. D-168 specifies the supported conservative proof abstraction and exact finite completion, closing Q-028/Q-029 alongside D-167's ranking classes. This does not implement a compiler or select a causal search algorithm.
 
 ## Verification and provenance
 
@@ -34,4 +34,4 @@ Clarifies [[ADR-047-quantifiers-and-finite-iteration|D-047]], [[ADR-075-enumerab
 
 ## Analysis procedure policy
 
-[[ADR-155-uniform-normative-analysis-and-finiteness-diagnostics|D-155]] requires the same normative procedure per language version, distinguishes proved violation/unproved obligation/tool interruption, and prohibits implementation-specific expansion of admission. Q-028 retains exact procedure formalization rather than an unchosen policy for tool limits.
+[[ADR-155-uniform-normative-analysis-and-finiteness-diagnostics|D-155]] requires the same normative procedure per language version, distinguishes proved violation/unproved obligation/tool interruption, and prohibits implementation-specific expansion of admission. D-168 supplies the exact scoped procedure; deeper future-state profiles remain Q-030 rather than following from snapshot finiteness.

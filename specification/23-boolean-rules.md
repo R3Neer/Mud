@@ -12,9 +12,10 @@ depends-on:
   - "[[21-expressions]]"
   - "[[22-quantifiers-and-iteration]]"
 questions:
-  - Q-028
-  - Q-029
+  - Q-030
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-006
   - D-021
@@ -115,9 +116,9 @@ derived reads, transitive queries, domains and availability conditions; a compil
 must not conceal them behind locals or cached results.
 
 Contextual dynamic-call impact follows [[types/contextual-call-analysis]].
-Finite/reachability and recursive termination certification remain
-[[../notes/questions/Q-028-f-finiteness|Q-028]] and
-[[../notes/questions/Q-029-t-termination|Q-029]]. Required evidence is not waived;
+Finite source/application and recursive body certification follow
+[[types/finite-static-certification]] and [[types/termination-certification]].
+Deeper eventually state-profile design remains Q-030. Required evidence is not waived;
 this chapter supplies neither a causal search algorithm nor an implementation-
 specific admission heuristic.
 
@@ -148,6 +149,8 @@ shape confirmation remains transparent; domains and value-consuming transforms
 close erasure before operating. Quantifier predicates use the source-witness
 contract in [[22-quantifiers-and-iteration]]: erased filters never manufacture
 witnesses or excuse static obligations. No pruning-sensitivity warning is required.
+
+Pure recursive bodies retain their ordinary static result contract. [[types/termination-certification]] supplies their ranking search and evidence; it does not infer an ambiguous result, introduce nominal types or bypass independent owner-specific acyclicity.
 
 ## Generic and callable contracts
 

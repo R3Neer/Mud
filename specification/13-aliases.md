@@ -9,10 +9,10 @@ depends-on:
   - "[[11-type-system]]"
   - "[[15-fields-and-mutability]]"
   - "[[21-expressions]]"
-questions:
-  - Q-028
-  - Q-029
+questions: []
 decisions:
+  - D-167
+  - D-168
   - D-162
   - D-031
   - D-032
@@ -156,12 +156,10 @@ domain, callable-input and capability uses can force invariance. A phantom or
 unproved parameter remains invariant. Recursive finite values do not establish
 finite generic application closure or finite exhaustive enumeration.
 
-The exact uniform certification procedures for domain finiteness/application
-closure and general recursive computations remain
-[[../notes/questions/Q-028-f-finiteness|Q-028]] and
-[[../notes/questions/Q-029-t-termination|Q-029]]. Required proofs
-remain admission premises; this chapter does not substitute an implementation's
-chosen heuristic or an unaccepted lexicographic rule.
+Domain/source finiteness and application closure follow [[types/finite-static-certification]].
+Pure operator bodies use [[types/termination-certification]], including certified
+lexicographic/phase and synthesized affine measures. Required proofs remain
+admission premises; implementation-specific admission is not permitted.
 
 ## Equality, order and enumeration
 
@@ -204,6 +202,8 @@ contract. Leaf calculation or admission faults still use ordinary error handling
 Sequential/private and concurrent semantic-destination contracts are
 [[28-effects]]; reconstruction does not reduce all component effects to conflicting
 whole-root replacements.
+
+Pure recursive bodies retain their ordinary static result contract. [[types/termination-certification]] supplies their ranking search and evidence; it does not infer an ambiguous result, introduce nominal types or bypass independent owner-specific acyclicity.
 
 ## Owned operators and reflection
 

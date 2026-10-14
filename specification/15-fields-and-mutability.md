@@ -8,8 +8,10 @@ status: proposed
 normative: true
 depends-on:
   - "[[11-type-system]]"
-questions:
+questions: []
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-154
   - D-146
@@ -53,6 +55,8 @@ thing Counter {
     doubled := value * 2
 }
 ```
+
+Pure subordinate calls and default/derived value calculations retain the mandatory body certificate in [[types/termination-certification]]. Independent schema/local/domain acyclicity is not relaxed.
 
 ## 1. Places and authority
 

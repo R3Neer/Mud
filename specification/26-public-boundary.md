@@ -14,13 +14,14 @@ depends-on:
   - "[[24-reactive-rules]]"
   - "[[28-effects]]"
 questions:
-  - Q-029
   - Q-069
   - Q-070
   - Q-072
   - Q-073
   - Q-074
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-165
   - D-036
@@ -201,6 +202,8 @@ The incorporated textual patch interface remains
 [[../notes/questions/Q-073-textual-patch-contract-and-reproduction|Q-073]]; no Success
 field or serialization API is selected here.
 
+Pure recursive bodies retain their ordinary static result contract. [[types/termination-certification]] supplies their ranking search and evidence; it does not infer an ambiguous result, introduce nominal types or bypass independent owner-specific acyclicity.
+
 ## Looks and produced types
 
 A look/sublook has for/given signatures and pure public-field value bodies.
@@ -265,7 +268,7 @@ stochastic conditions and unguaranteed causal payload access. A public view may
 return a Money computed from private fields while keeping those fields private.
 Such projection does not grant a host state mutation handle.
 
-Dynamic-call impact follows [[types/contextual-call-analysis]]; general body termination remains Q-029. Signatures
+Dynamic-call impact follows [[types/contextual-call-analysis]]; body termination follows [[types/termination-certification]]. Signatures
 and summaries cannot invent those certificates or a causal algorithm.
 [[types/typing-cases.yaml]], callable/produced-type certificates, part grammar/
 nominal coverage and [[effects/README]] supply scoped static and reviewed boundary

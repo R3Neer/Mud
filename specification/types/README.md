@@ -4,6 +4,8 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-165
   - D-164
@@ -79,3 +81,5 @@ The declaration certificates also check supplied comparison edges for the transi
 `test_public_contract_witnesses.py` checks finite supplied endpoint alternatives, recursive required-type frontiers and direct uses versus transitive type understanding. It does not parse parts, discover exports or implement a host/causal protocol. Chapters 23–26 own the corresponding static signatures and operational boundaries.
 
 [[contextual-call-analysis]] defines the normative finite target/context fixed point and impact joins. test_contextual_call_witnesses.py checks supplied finite contextual graphs, conservative inputs, narrowing and summary regions without extracting Mud source or implementing a compiler.
+
+[[finite-static-certification]] and [[termination-certification]] define the completed scoped normative procedures. test_static_certification_witnesses.py checks supplied exact elimination, integral-period, lexicographic/phase, affine and represented-Rum certificates. It is not a source analyzer or compiler/runtime implementation.

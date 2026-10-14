@@ -11,9 +11,9 @@ depends-on:
   - "[[10-names-and-anchors]]"
 questions:
   - Q-073
-  - Q-028
-  - Q-029
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-165
   - D-163
@@ -226,7 +226,7 @@ Enumeration of a recursive constructor type needs an explicit finite rank bound 
 > [!rule] MUD-TYPE-033 — Mandatory finite enumeration basis
 > Implementations must support the specified elementary proof rules and established finite source constructions. A finite collection snapshot needs no uniform finite static size bound. Enumerating a domain requires a complete finite canonical enumeration certificate; producing the source and evaluating each body retain their independent termination obligations. Unknown mandatory proof obligations are rejected statically, without trial truncation or a negative runtime answer.
 
-The minimum basis comprises finite explicit sets/collection snapshots, closed finite families, bounded integral or Money progressions, exact stepped rational progressions, finite linked-world population snapshots, and justified finite products/unions/filterings of enumerated domains. Use the premises and elementary inclusion/arithmetic rules above. A filter does not make an unenumerated infinite source enumerable; take does not turn all Int into a lazy prefix operation. The exact finite-analysis normalization, proof search and completion procedure remain [[../notes/questions/Q-028-f-finiteness|Q-028]]; general termination certification remains [[../notes/questions/Q-029-t-termination|Q-029]]. A finite container value supplies no finite bound on all future worlds or recursively generated values.
+The minimum basis comprises finite explicit sets/collection snapshots, closed finite families, bounded integral or Money progressions, exact stepped rational progressions, finite linked-world population snapshots, and justified finite products/unions/filterings of enumerated domains. Use the premises and elementary inclusion/arithmetic rules above. A filter does not make an unenumerated infinite source enumerable; take does not turn all Int into a lazy prefix operation. Exact normalization, proof search and completion follow [[types/finite-static-certification]]; body termination follows [[types/termination-certification]]. A finite container value supplies no finite bound on all future worlds or recursively generated values.
 
 > [!rule] MUD-TYPE-035 — Uniform normative analysis and diagnostic outcomes
 > All conforming implementations of one language version must reproduce its normative certification procedure. A reusable reference analyzer may supply it; stronger optional analysis cannot independently expand admission. A proved violation and a completed analysis leaving an obligation unproved require distinct static diagnostic reasons. Resource-interrupted analysis reports incomplete tool verification, not a judgement that the program is invalid. These outcomes introduce no source-language values or runtime error types.
@@ -489,6 +489,12 @@ The reference preserves canonical identity. Its supported intrinsic identifier/a
 
 > [!rule] MUD-TYPE-043 — Contextual complete call analysis
 > Compute destination contexts and transitive summaries by [[types/contextual-call-analysis]]. Preserve demonstrated nominal input contexts and use the compatible legally obtainable catalogue for unknown inputs. Every remaining alternative retains its signature, permission, dependency, effect and acyclicity/termination obligations. No runtime scan, expected-result selection or source execution supplies missing evidence.
+
+> [!rule] MUD-TYPE-044 — Normative recursive body certification
+> Functional dictionaries, Boolean rules, looks/sublooks and alias operator bodies may use recursion only with [[types/termination-certification]]'s strict continuing-edge certificate. Finite natural tuples, same-declaration phases, actual finite Rum order and exact affine scalar synthesis are supported. Independent action/test, domain and definition-cycle prohibitions remain mandatory.
+
+> [!rule] MUD-TYPE-045 — Complete finite certification procedure
+> Mandatory source/application finiteness and elementary proof decisions follow [[types/finite-static-certification]]. Its fixed normalization, supported abstraction, search and completion distinguish established violation, completed-unproved rejection and tool interruption. No implementation-specific stronger solver may expand admission under the same target.
 
 ## 12. Static acceptance and elaboration output
 

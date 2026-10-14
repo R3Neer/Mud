@@ -6,10 +6,10 @@ depends-on:
   - "[[../10-names-and-anchors]]"
   - "[[../11-type-system]]"
   - "[[../15-fields-and-mutability]]"
-questions:
-  - Q-029
+questions: []
 decisions:
   - D-166
+  - D-167
   - D-114
   - D-123
   - D-155
@@ -40,6 +40,17 @@ all Dispatch invocations creates an apparent declaration cycle.
 Let N be the finite catalogue of callable declarations with their admitted exact
 static generic applications. A destination is one such identity, not its display
 name or a new public anchor. Sort identities by their canonical encodings.
+The full invocation graph also includes statically selected alias operator bodies
+and functional-policy code origins. An operator body is not a first-class callable;
+a functional origin is not policy value identity, equality or a public anchor.
+Track possible policy code origins in a separate finite upper-bound lattice over
+written definitions/constructors, including pointwise-policy expression origins.
+Different captures may share an origin without being equated. Unknown admitted
+policy producers join compatible legal source origins; unsupported foreign origins
+need their checked/trusted contract. Functional application and operator selection
+add their corresponding typed graph edges. This extends graph coverage, not the
+nominal descriptor catalogue or source dispatch syntax.
+
 Let S be the finite set of callable-valued signature slots and statically written
 component/projection paths relevant to calls. A recursive schema reference is
 represented by its existing origin/type node; do not invent successively deeper
@@ -53,7 +64,13 @@ contract fallback below.
 > input destination tuples remain distinct contexts; an uncertain slot contains
 > every possible destination established by its conservative analysis.
 
-There are finitely many keys: each slot has at most 2^|N| subsets. Empty is
+For a policy/operator node, replace the nominal declaration label with its typed
+body/code origin. Relevant callable formal/capture slots use the same subsets of
+N; policy-valued slots use subsets of the separate finite policy-origin catalogue.
+Their product supplies finite context keys as well. These keys do not equate
+captures or policy instances.
+
+There are finitely many keys: each nominal callable slot has at most 2^|N| subsets. Empty is
 ordinary absence, not evidence of a callable target. Signature/cardinality
 checks independently decide whether that absence is admitted.
 
@@ -111,7 +128,7 @@ Incomplete tool resources supply no completed verdict.
 > Context separation cannot excuse a remaining cycle.
 
 Pure recursive components require their separate normative termination
-certificate under Q-029. Computed domains and calculated/local/schema dependency
+certificate under [[termination-certification]]. Computed domains and calculated/local/schema dependency
 graphs retain their own acyclicity requirements; a recursive proof cannot waive
 a prohibition applying to that owning construct. Declarative when sources are
 causal dependencies, not source invocation edges. Causal oscillation or resolution

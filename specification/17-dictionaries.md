@@ -11,9 +11,10 @@ depends-on:
   - "[[16-collections]]"
   - "[[20-blocks-and-recovery]]"
   - "[[21-expressions]]"
-questions:
-  - Q-029
+questions: []
 decisions:
+  - D-167
+  - D-168
   - D-033
   - D-039
   - D-080
@@ -181,6 +182,12 @@ suggestion. A selected branch's computing fault enters ordinary block recovery;
 it is not a reason to retry another signature or treat the branch as no match.
 No type provides an implicit fallback.
 
+Composite application `F[a, b]` constructs one contextual input just as
+`F[(a, b)]` does. The input must admit that complete positional construction;
+there are no independently dispatched multiple keys. Named alias components
+may be supplied positionally; anonymous named and positional products remain
+distinct. Ordinary input domain/shape checks and once-only argument demand apply.
+
 ## Recursive admission and pointwise algebra
 
 > [!rule] MUD-DICT-004 — Proven recursive descent
@@ -189,9 +196,9 @@ No type provides an implicit fallback.
 > cardinality reduction or smaller substructures require valid evidence. Lack
 > of proof is static rejection, not permission to try an implementation heuristic.
 
-The complete version-uniform certification method remains
-[[../notes/questions/Q-029-t-termination|Q-029]]. No additional lexicographic
-scheme is silently selected here. A policy's input domain need not be exhaustively
+The version-uniform method is [[types/termination-certification]], with finite
+lexicographic tuples, constant declaration phases, actual finite Rum order and
+exact affine scalar synthesis. A policy's input domain need not be exhaustively
 enumerable to admit individually terminating applications.
 
 For compatible policies F and G and a collection operator op among |, &, --, ^,

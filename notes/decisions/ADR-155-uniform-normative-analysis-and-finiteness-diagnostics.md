@@ -25,10 +25,16 @@ Distinguish a proved violation (infinite or lacking the required admitted enumer
 
 A tool resource bound does not impose a language-level maximum on integer endpoints, collection sizes or contract depths and cannot replace the mandatory elementary basis. Finite/countable mathematics does not by itself grant language enumeration, including Rum's full numeric domain.
 
-## Unresolved procedure and scope
+## Procedure and independent scope
 
-Q-028 retains exact finite-analysis normalization/search/termination specification and required evidence. Q-029 retains the classes and complete method for termination certification. The lexicographic-descent proposal was not accepted and introduces no rule. Existing decreasing-measure obligations remain; no compiler/runtime/reference-analyzer implementation is requested here. These advanced analysis questions do not prevent documenting independently fixed construct typing and effect contracts.
+D-166/D-167/D-168 specify the contextual, finite and recursive source-body
+procedures. The author accepts finite lexicographic descent, declaration phases,
+certified pure operation classes, actual finite Rum order and exact affine scalar
+synthesis. Q-028/Q-029 close with scoped rules and evidence, without claiming a
+complete arbitrary-predicate solver, future-state profile or causal completion.
+Those independent advanced/native protocols retain their existing questions.
+No compiler/runtime/reference-analyzer implementation is requested here.
 
 ## Verification and provenance
 
-Extends [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]]. MUD-TYPE-035 and reviewed proof-boundary corpus cases distinguish violation, unproved obligation and interrupted verification. Q-028/Q-029 remain active rather than presenting a policy as a completed algorithm.
+Extends [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]]. MUD-TYPE-035 and reviewed proof-boundary corpus cases distinguish violation, unproved obligation and interrupted verification. D-168 completes the scoped normalization/search/completion procedures; their certificates do not implement the compiler or causal algorithm.

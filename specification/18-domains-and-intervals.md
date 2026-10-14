@@ -9,9 +9,10 @@ depends-on:
   - "[[15-fields-and-mutability]]"
   - "[[16-collections]]"
   - "[[21-expressions]]"
-questions:
-  - Q-028
+questions: []
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-029
   - D-037
@@ -163,8 +164,7 @@ one fundamental period. `cycle` is exclusive to point-domain declaration after
 a finite contiguous nonempty [a..b), with strictly positive b-a; it does not
 modify an ordinary interval expression or add wraparound to cardinality.
 
-Exact version-uniform finite-analysis procedures remain
-[[../notes/questions/Q-028-f-finiteness|Q-028]]. Proved violation and completed
+The exact version-uniform finite-analysis procedure is [[types/finite-static-certification]]. Proved violation and completed
 unproved obligations are distinct static rejection reasons; resource-interrupted
 verification yields no completed admission verdict. Optional stronger analysis
 can explain but cannot independently expand accepted programs.

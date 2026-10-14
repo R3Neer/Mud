@@ -9,9 +9,10 @@ depends-on:
   - "[[15-fields-and-mutability]]"
   - "[[21-expressions]]"
 questions:
-  - Q-028
   - Q-032
 decisions:
+  - D-167
+  - D-168
   - D-162
   - D-019
   - D-026
@@ -211,8 +212,7 @@ has finitely many representable values but no supplied numeric-domain enumeratio
 explicit finite Rum collections remain traversable. Mathematical finiteness and
 Mud's finite canonical enumeration evidence are distinct.
 
-The complete normative finite-analysis procedure remains
-[[../notes/questions/Q-028-f-finiteness|Q-028]]. Random-point cache/retry protocol
+The normative finite-analysis procedure is [[types/finite-static-certification]]. Random-point cache/retry protocol
 details remain [[../notes/questions/Q-032-a-reproducible-randomness|Q-032]];
 they do not permit different cardinality, purity or prefix/sample contracts.
 [[types/typing-cases.yaml]], nested syntax tests and type/contract certificates

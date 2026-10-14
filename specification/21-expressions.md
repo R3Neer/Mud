@@ -12,8 +12,9 @@ depends-on:
 questions:
   - Q-073
   - Q-007
-  - Q-029
 decisions:
+  - D-167
+  - D-168
   - D-166
   - D-164
   - D-163
@@ -93,7 +94,7 @@ value: Num = 2 + 3 * 4
 positive := value > 0
 ```
 
-Dynamic callable destinations and acyclicity follow [[types/contextual-call-analysis]]; general termination certification remains Q-029. Portable binary64 literal/operation sites and static evaluation follow MUD-TYPE-038 in [[11-type-system]]. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation. Mandatory finite/termination certification follows the uniform normative procedure contract in [[11-type-system]]; optional stronger tool analysis cannot independently admit additional programs.
+Dynamic callable destinations and acyclicity follow [[types/contextual-call-analysis]]; body termination follows [[types/termination-certification]]. Portable binary64 literal/operation sites and static evaluation follow MUD-TYPE-038 in [[11-type-system]]. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation. Mandatory finite/termination certification follows the uniform normative procedure contract in [[11-type-system]]; optional stronger tool analysis cannot independently admit additional programs.
 
 Let $\epsilon_e$ be an expression's effect/dependency summary and $O_e$ its obligations. Composition preserves evaluation order and actual short-circuiting; it does not force evaluation of skipped operands. Element operator contracts below are lifted only where expressly permitted.
 
@@ -334,6 +335,8 @@ Rand checks a finite enumerable source and yields a member with the documented r
 Imagine checks a root-capable admissible action call, including isolation of its foreign work, and synthesises ActionReply. It is available in pure reading contexts but is not automatically static or deterministic evidence. All resulting world writes/outputs remain speculative and are discarded; an Errors alternative is returned as a value.
 
 Eventually checks its Boolean goal and finite permitted action references, with the specified reachability finiteness/termination obligations. It does not accept arbitrary effect statements as through operands. Its accepted static shape does not prove that an unrestricted world search terminates.
+
+Pure recursive bodies retain their ordinary static result contract. [[types/termination-certification]] supplies their ranking search and evidence; it does not infer an ambiguous result, introduce nominal types or bypass independent owner-specific acyclicity.
 
 ## 9. Blocks and error recovery
 

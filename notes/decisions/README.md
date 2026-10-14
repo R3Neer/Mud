@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 161.
-- Current: 157.
+- Total: 163.
+- Current: 159.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -180,6 +180,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-164 | current | 2026-10-14 | [[notes/decisions/ADR-164-quantifier-predicate-demand|Quantifier predicate demand]] |
 | D-165 | current | 2026-10-14 | [[notes/decisions/ADR-165-private-diagnostic-provenance-without-authority|Private diagnostic provenance without authority]] |
 | D-166 | current | 2026-10-14 | [[notes/decisions/ADR-166-contextual-callable-destinations-and-impact|Contextual callable destinations and impact]] |
+| D-167 | current | 2026-10-14 | [[notes/decisions/ADR-167-certified-pure-recursion-and-ranking-search|Certified pure recursion and ranking search]] |
+| D-168 | current | 2026-10-14 | [[notes/decisions/ADR-168-finite-normative-static-certification-procedure|Finite normative static certification procedure]] |
 
 ## Reserved identifiers
 

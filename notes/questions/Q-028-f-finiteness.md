@@ -3,40 +3,44 @@ id: Q-028
 title: Finiteness
 priority: P2
 opened: 2026-07-29
-resolved:
-closed:
+resolved: true
+closed: 2026-10-14
 decisions:
+  - D-168
   - D-155
   - D-151
   - D-044
   - D-047
   - D-081
   - D-088
-affects: []
+affects:
+  - specification/11-type-system.md
+  - specification/types
 superseded-by: []
 ---
 
 # Q-028 — Finiteness
 
-## Content
+## Resolution
 
-Analysis limits, conservative approximations and messages when finiteness cannot be proven.
+D-168 completes the fixed-target source/application procedure: normalization,
+finite source construction/search, exact proof decisions, nonexpansive generic
+closure and explicit no-growth/variable-elimination completion. Violation,
+completed-unproved and tool interruption remain distinct. Finite source values
+need no uniform constant bound; no infinite lazy collections are introduced.
+Deeper future-state/reachability profile work remains Q-027/Q-030 rather than
+being inferred from a finite snapshot. The accepted procedure deliberately
+rejects unsupported proofs conservatively; it does not promise a complete
+mathematical solver for all source predicates.
 
-Status: **partially decided** by [[notes/decisions/ADR-044-reachability-eventually|D-044]], [[notes/decisions/ADR-047-quantifiers-and-finite-iteration|D-047]], [[notes/decisions/ADR-081-collection-filtering-take-and-indexing|D-081]] and [[notes/decisions/ADR-088-iteration-signed-progressions-and-expression-blocks|D-088]].
+## Closure criterion
 
-Failure to prove finiteness or enumerability statically rejects a use that requires it; it does not produce a negative runtime answer. The same obligation applies to filters and `take`. D-088 retains this requirement for `for each`, selection and quantifiers/aggregators, and limits traversable cyclic domains to one fundamental period. The mandatory elementary basis is specified; the uniform procedure and diagnostic classes are fixed, while its complete normalization/search/completion specification remains to be written.
+- C1: The mandatory finite basis and source/generic proof premises are covered.
+- C2: Specify exact normalization/search/completion and outcome distinctions.
+- C3: Evidence sound accepted/rejected/unsupported and resource boundaries.
 
-## Already decided
+## Closure evidence
 
-D-151 retains finite collections, distinguishes unbounded static cardinality from infinite values, fixes a mandatory elementary enumeration proof basis, and corrects Rum's finite binary64 domain description without enabling numeric interval enumeration. No infinite lazy sequence type is introduced.
-
-## Pending
-
-- Specify and evidence the exact shared normative procedure: normalization, supported finite-proof search and completion conditions. Implementation-dependent admission and language-level limits inferred from tool resource caps are not pending choices.
-- Provide contrasting evidence for proved violation, completed-but-unproved obligation and resource-interrupted tool verification, without introducing new runtime value/error types.
-- Coordinate deeper state-space finiteness with reachability and termination without treating a finite snapshot as a uniform bound on future worlds.
-
-## Closure criteria
-
-- C1: The mandatory basis and proof premises are covered by normative rules and evidence.
-- C2: The shared procedure and its completion/search conditions are specified; diagnostic distinctions are evidenced.
+- C1: MUD-TYPE-033/MUD-TYPE-045 and finite-static-certification sections 3–4, with source/interval/generic witnesses.
+- C2: D-168, MUD-CERT-001/MUD-CERT-002 and sections 1–5; the exact mixed affine, finite Rum and fixed-point procedures.
+- C3: test_static_certification_witnesses.py, existing finite proof witnesses and corpus cases; explicit advanced-profile and tool-interruption exclusions.
