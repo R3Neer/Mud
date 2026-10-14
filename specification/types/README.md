@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-172
   - D-171
   - D-167
   - D-168
@@ -92,3 +93,9 @@ collection_policy_witnesses.py and test_collection_policy_witnesses.py check sup
 `test_alias_constructor_witnesses.py` checks supplied finite component/default,
 naming, target eligibility and nominal-identity certificates. It does not resolve
 source constructors or implement a parser, typechecker or runtime.
+
+
+`test_selector_scope_reuse_witnesses.py` verifies supplied finite nominal scope
+parents and per-application/branch derivation traces, including unchanged reuse,
+private dependency invalidation, lazy demand, disposal and retained footprints.
+It executes no Mud RHS and implements no source resolver or runtime cache.

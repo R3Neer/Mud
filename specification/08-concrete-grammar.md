@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-172
   - D-171
   - D-170
   - D-169
@@ -456,7 +457,7 @@ key -> { result }
 { key } -> { result }
 ```
 
-The scopes on both sides are independent. Key or selector locals do not flow into the value or result. Dictionary application remains externally pure.
+Exact key/value scopes are independent. Functional result scopes extend their own selector's completed direct-preamble environment under [[17-dictionaries#Branch-local scope and derivation reuse]]. Nested locals and other branches remain separate. Dictionary application remains externally pure.
 
 ### Exact dictionaries `->`
 
@@ -535,10 +536,11 @@ left ^ right   # AKey -> 1, CKey -> 3
 A functional dictionary is a pure case-defined policy.
 
 A functional branch has a pure selector and a ValueBlock result. Its input
-is the implicit immutable ordinary variable `value`, visible in both sibling
-scopes. It is not a reserved or contextually classified word. Normal lookup,
+is the implicit immutable ordinary variable `value`, visible in its selector
+and result scopes. It is not a reserved or contextually classified word. Normal lookup,
 duplicate-name and no-shadowing rules apply; neither result nor selector may
-redeclare it. Selector locals do not escape to the result. Exact associations
+redeclare it. Direct selector-preamble bindings are visible in their own result;
+nested locals retain their inner scopes. Exact associations
 do not inject value: their values are computed at association construction,
 not recomputed for each lookup.
 

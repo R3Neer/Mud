@@ -126,7 +126,7 @@ represents a pure policy defined by branches. A branch is written:
 selector --> result
 ```
 
-Within the selector and result, `value` is an implicit ordinary immutable variable bound to the input of type `A`. The selector is a Boolean `ExpressionBlock` and the result a `ValueBlock`; their local scopes are independent.
+Within the selector and result, `value` is an implicit ordinary immutable variable bound to the input of type `A`. The selector is a Boolean `ExpressionBlock` and the result a `ValueBlock`; the result extends its own selector's completed direct-preamble environment under D-172. Nested locals and other branches remain separate; per-application successful derivations are reused while inputs/dependencies remain unchanged.
 
 Selectors elaborate to pure Bool after the category-directed shorthand defined in the dictionary chapter. Bool expressions remain conditions; other supported values compare equality, intervals/domains test membership and nominal types use is. Complete input coverage is required. Fallback handles no applicable selector, not an empty selected result.
 

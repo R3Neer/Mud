@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-172
   - D-171
   - D-169
   - D-167
@@ -314,6 +315,13 @@ Union guarantees whole-value uniqueness only when both operands supply it. Inter
 An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch interprets its selector in the input contract, proves complete input coverage, checks its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. These are value constructors, not assignable branch storage.
 
 Exact dictionary operators operate on complete associations with their defined shared-key precedence; ordered equality and value-uniqueness requirements remain part of the contract. Functional operators are extensional combinations of result computations, not implicit edits or concatenation of branch lists. Their operand/result contracts and termination proofs must all remain valid.
+
+Functional branch results extend their own selector's direct-preamble environment
+under MUD-DICT-005 in [[17-dictionaries]]. Every selected path must establish the
+referenced binding; outer selector recovery cannot resurrect failed-scope locals.
+Reuse successful demanded derivations with unchanged inputs/dependencies in the
+same application/branch, retaining full footprints and ordinary invalidation.
+No eager computation, cross-call sharing or mutation permission is introduced.
 
 ## 7. Domains, selection and finite traversal
 

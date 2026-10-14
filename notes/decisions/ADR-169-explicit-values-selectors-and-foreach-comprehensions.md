@@ -44,7 +44,9 @@ selector negation and logical combinations. Bool operands remain predicates;
 explicit == compares Bool/interval values. value becomes an implicit ordinary
 immutable input variable; .member abbreviates its member access. Exact dictionaries
 do not inject it. No as input binding, structural patterns or additional guard
-syntax is accepted. All policies require proven input coverage or a fallback;
+syntax is accepted. D-172 extends each result scope with its own direct selector-preamble bindings
+and requires demand-preserving per-application reuse of unchanged derivations.
+All policies require proven input coverage or a fallback;
 explicit empty output handles a case and does not invoke fallback.
 
 foreach replaces the separated traversal spelling everywhere. foreach with :

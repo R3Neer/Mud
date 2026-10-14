@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 166.
-- Current: 162.
+- Total: 167.
+- Current: 163.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -185,6 +185,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-169 | current | 2026-10-14 | [[notes/decisions/ADR-169-explicit-values-selectors-and-foreach-comprehensions|Explicit value declarations, exhaustive selector shorthand and foreach comprehensions]] |
 | D-170 | current | 2026-10-14 | [[notes/decisions/ADR-170-uniform-immutable-alias-component-markers|Uniform immutable alias component markers]] |
 | D-171 | current | 2026-10-14 | [[notes/decisions/ADR-171-explicit-structural-alias-construction|Explicit structural alias construction and readability suggestions]] |
+| D-172 | current | 2026-10-14 | [[notes/decisions/ADR-172-shared-functional-selector-locals-and-reuse|Shared functional selector locals and demand-preserving reuse]] |
 
 ## Reserved identifiers
 

@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-172
   - D-171
   - D-170
   - D-169
@@ -91,7 +92,8 @@ body separately from executable ForEachEffect/LocalForEach. ImplicitMemberExpr
 retains omitted-receiver provenance until nominal resolution. SelectorExpr and
 selector_syntax retain abbreviated comparisons, nominal tests and logical
 combinations without guessing Bool, equality or membership during CST projection.
-DecisionBranchExpr retains independent selector/result block scopes. Neither
+DecisionBranchExpr retains separate selector/result block syntax; nominal result
+lookup extends the completed direct selector-preamble scope. Neither
 surface AST nor nominal HIR contains a fabricated coverage proof or inferred type.
 
 ## Input roots and part visibility

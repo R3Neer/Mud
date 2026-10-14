@@ -10,6 +10,7 @@ questions:
   - Q-030
   - Q-027
 decisions:
+  - D-172
   - D-169
   - D-168
   - D-151
@@ -72,6 +73,12 @@ contract obligations. Use the contextual procedure's finite destination/summary
 fixed point. A captured value and a later mutable/live read have different origins
 when an intervening effect can change them. Pure repeated reads may share only
 when their inputs, dependencies and coherent view are established equal.
+
+Functional shared-preamble bindings use their established availability on every
+selected normal/recovered path. A cached derivation retains its complete origin
+and transitive dependencies; only a proven unchanged view/input/dependency set
+permits reuse. Invalidated or unavailable bindings supply no stale flow premise.
+Sharing across different applications/branches is not assumed.
 
 Use full signature/value admission premises established at the actual body
 entry. For global stored reads, a declared domain/cardinality is usable only to

@@ -14,6 +14,7 @@ depends-on:
 questions:
   - Q-007
 decisions:
+  - D-172
   - D-169
   - D-167
   - D-168
@@ -95,6 +96,12 @@ external storage. Real action execution in an Effect initializer may capture
 ActionReply; a pure live derivation cannot replay those world effects.
 
 Body and handler completion follow [[types/termination-certification]]. Normal, Fault and applicable Refusal completion are distinct from guaranteed success; every recovery call must satisfy the same ranking obligations.
+
+Functional selector/result sharing follows [[17-dictionaries]]. It extends only
+normal direct-preamble bindings. Whole-selector recovery does not restore locals
+from its rolled-back scope; result access still requires definite availability.
+A normally recovered local RHS may supply a reusable normal value. Per-application
+reuse preserves dependency/fault demand and never caches a Fault as Normal.
 
 ## Normal and Fault outcomes
 

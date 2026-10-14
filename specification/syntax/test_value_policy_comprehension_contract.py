@@ -19,7 +19,9 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
         raw = re.findall(r'-->|:=|==|!=|>=|<=|\+=|-=|->|\.\.|[A-Za-z_]\w*|\d+|[^\s]', source)
         tokens = []
         for token in raw:
-            if token.isdigit():
+            if token == ';':
+                tokens.append('TERMINATOR')
+            elif token.isdigit():
                 tokens.append('EXACT_NUMBER_LITERAL')
             elif token in self.words or not token[0].isalnum():
                 tokens.append('"' + token + '"')
@@ -34,6 +36,12 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
         # Semantic construction later rejects mixed arguments; ordinary call AST retains them.
         self.assertTrue(self.accepts('postfix-expression', 'Vector2(1, y = 2)'))
         self.assertFalse(self.accepts('top-level-declaration', 'let f: Num --> Num = _ --> value'))
+
+    def test_shared_selector_locals_retain_block_syntax(self):
+        self.assertTrue(self.accepts('mapping-expression',
+            '{ let adjusted := .power - .armor; adjusted > 0 } --> adjusted'))
+        self.assertFalse(self.accepts('mapping-expression',
+            '{ let adjusted = .power - .armor; adjusted > 0 } --> adjusted'))
 
     def test_alias_stored_components_require_let(self):
         for source in ('let x: Num', 'let x: Num = 0', 'let x: _ = 0'):

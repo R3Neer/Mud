@@ -4,7 +4,10 @@
 -- defaults and construction checking belong to typing; no callable or anchor
 -- is created by this expression.
 -- Functional branches share one implicit ordinary LocalSymbol kind functional-input
--- named value between sibling selector/result scopes. It has branch SurfaceRef
+-- named value in a branch input scope. Its result scope extends the completed
+-- direct selector-preamble scope; nested RHS scopes and other branches remain
+-- separate. Binding availability and per-application reuse are later facts, not
+-- HIR fields. It has branch SurfaceRef
 -- provenance and a source ordinal under the nearest anchored owner, no anchor.
 -- Omitted .member receivers refer to it through normal lexical lookup.
 -- Comprehension iterator leaves are shared by sibling filter/result scopes.

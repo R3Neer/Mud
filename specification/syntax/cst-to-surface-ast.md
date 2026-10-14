@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-172
   - D-171
   - D-170
   - D-169
@@ -67,6 +68,12 @@ ImplicitMemberExpr preserves receiver omission. Every functional --> left side n
 type operand interpretation are elaboration decisions. Logical selector trees
 retain demand order and exact written interval boundaries. Do not inject an
 input variable into exact associations, invent structural patterns or bind as.
+DecisionBranchExpr retains its ExpressionBlock and ValueBlock; sharing direct
+selector-preamble locals is nominal scope parenting, not copying declarations
+into the RHS or changing source order. Cache validity/availability are typed
+and evaluation contracts, not CST/AST fields. Exact associations and comprehension
+filters retain their independent scope boundaries.
+
 Functional value is an ordinary nominally resolved input symbol, not a token
 classification. Input/filter/result scope contracts follow 10-names-and-anchors.
 

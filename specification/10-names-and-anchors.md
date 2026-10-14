@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-172
   - D-171
   - D-169
   - D-167
@@ -65,7 +66,9 @@ decisions:
 Each functional branch introduces one ordinary immutable LocalSymbol of kind
 functional-input named value, owned by the nearest anchored declaration and
 distinguished by the branch's source ordinal. The branch has a shared input
-scope with sibling selector/result scopes. The implicit declaration retains
+scope containing the selector scope; the result scope extends its completed
+direct-preamble environment. Nested selector/RHS scopes are not exported. The
+implicit declaration retains
 branch SurfaceRef provenance and no public anchor. References to value and
 implicit .member receivers resolve to that symbol through ordinary lexical
 lookup. A visible outer value conflicts under no-shadowing; branch-local
@@ -211,7 +214,15 @@ Resolve the complete RHS before introducing any pattern leaf. Each named leaf in
 
 In the `foreach` executable, the same rules for introducing bindings apply, but the body belongs to `EffectBlock` and can write to external locations in accordance with its authority. In a selection or quantifier, the binding exists only within its `ExpressionBlock`.
 
-In associations `->` and branches `-->`, the left and right blocks create sibling scopes: the /selector-scoped locals are not visible in value/resultado. Both can see the common outer environment, and the function branches also retain their ordinary implicit input variable `value` where applicable.
+In exact associations -> the key and value blocks remain sibling scopes and key
+locals are unavailable in the value. In functional branches --> the result scope
+has the completed selector scope as parent: its direct-preamble locals, pattern
+leaves and completed foreign exports retain their original LocalSymbols. Nested
+selector/RHS locals are unavailable. Each branch owns a separate environment;
+other branches/fallback never inherit it. Both sides retain the common implicit
+value. Sequential introduction, no forward references and no shadowing remain.
+Runtime binding availability, stable-view dependencies and derivation reuse are
+checked/elaborated under [[17-dictionaries]], not stored as nominal HIR fields.
 
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 

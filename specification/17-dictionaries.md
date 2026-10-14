@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-172
   - D-169
   - D-167
   - D-168
@@ -39,7 +40,8 @@ decisions:
 
 An exact dictionary stores finite key/value associations. A functional dictionary
 is a pure branch policy applied to an input; its selectors and results are
-computations, not mutable associations.
+computations, not mutable associations. Value declarations in examples belong
+to admitted containing bodies; let/mut are not file-root declarations.
 
 ```mud
 let labels: Int -> Text = 1 -> "one", 2 -> "two"
@@ -156,12 +158,62 @@ contracts and inferred bounds must account for that omission.
 > Every functional dictionary has pure deterministic interpreted selectors and proven input coverage. Its results satisfy the complete output contract.
 
 A functional branch has a pure selector and a ValueBlock result. Its input
-is the implicit immutable ordinary variable `value`, visible in both sibling
-scopes. It is not a reserved or contextually classified word. Normal lookup,
+is the implicit immutable ordinary variable `value`, visible in its selector
+and result scopes. It is not a reserved or contextually classified word. Normal lookup,
 duplicate-name and no-shadowing rules apply; neither result nor selector may
-redeclare it. Selector locals do not escape to the result. Exact associations
+redeclare it. Direct selector-preamble locals are visible in that branch's result under the shared-scope contract below. Exact associations
 do not inject value: their values are computed at association construction,
 not recomputed for each lookup.
+
+### Branch-local scope and derivation reuse
+
+> [!rule] MUD-DICT-005 — Shared selector preamble and demand-preserving reuse
+> Direct selector-preamble bindings are visible in the same branch's result.
+> A successful demanded derivation must reuse its normal result within that
+> application/branch while its inputs and transitive dependencies remain unchanged.
+> Sharing is neither eager evaluation nor a stored capture or cross-call cache.
+
+The result's lexical environment extends the completed selector environment.
+Direct named locals, pure positional-pattern leaves and successfully exported
+immutable foreign bindings retain their original symbols and contracts. Locals
+inside nested operand/RHS blocks do not escape. Result locals cannot redeclare
+or shadow a visible selector local. Other branches, fallback and the outside
+scope receive none of these bindings. Exact key/value scopes and comprehension
+filter/result scopes remain independent under their owning contracts.
+
+```mud
+# A branch fragment within an admitted functional policy:
+{
+    let adjusted := adjustedDamage[value]
+    adjusted > .shield
+} --> adjusted - .shield
+```
+
+Names are statically resolved, but the result may use a selector binding only
+when every admitted path selecting that result establishes its availability.
+A failed selector scope rolls back its locals before recovery. Recovering that
+whole selector to true does not resurrect a lost local. A local RHS that itself
+recovers normally can establish its binding. Missing definite-availability
+proof prevents such a use; handlers retain their ordinary protected-scope rules.
+
+A shared selector-preamble derivation is first evaluated only at an actual demand. Cache its completed
+normal outcome, including permitted local recovery, for that binding instance.
+On a valid reuse retain the full transitive read/dependency footprint and value
+provenance without replaying the RHS or its recovery. An ordinary Error value is
+still a value; a later raise creates its own occurrence. Fault supplies no cached
+normal value and follows the ordinary error channel.
+
+All policy reads use the stable application snapshot. Explicit permitted private
+writes still invalidate any affected captured-local/transitive dependency; an
+unproved overlap conservatively invalidates. Unrelated changes do not invalidate
+an established independent binding. A valid hit must be reused; invalidated demand
+recomputes under the applicable view. Neither reuse nor invalidation permits
+stochastic replay, outer writes, lost fault demand or guessed native purity.
+Each application, recursive invocation and AllMatches branch has independent
+binding instances. A direct derived positional pattern shares its complete RHS
+outcome among its named projections; discarded leaves add no demand. No physical cache layout, world-version protocol or cross-call
+memoization is selected. A wholly unused local stays undemanded, including when
+only the result would first read it. Scope disposal ends its binding/cache lifetime.
 
 Inside a functional branch, `.member` abbreviates `value.member`, including
 subsequent access/index/call suffixes and Text interpolations. It supplies no
@@ -238,7 +290,7 @@ A selected result yielding empty has handled that input and does not trigger
 fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
 is valid when the output admits absence. Selected computing faults propagate;
 they do not retry another branch or fallback. Ordered FirstMatch chooses the
-first applicable selector; unordered AllMatches evaluates all ordinary selectors
+first applicable selector; without ordered, AllMatches evaluates all ordinary selectors
 in one snapshot and produces all applicable results. Coverage is required in
 both modes; unreachable/redundant cases are diagnosed when provable.
 

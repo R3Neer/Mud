@@ -2865,3 +2865,29 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: PlayerName represents Text rather than a structural component schema; explicit to retains its separate contract.
+
+- id: shared-selector-local-result-supported
+  rules: [MUD-TYPE-005]
+  source: '{ let adjusted := .power - .armor; adjusted > 0 } --> adjusted'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: An admitted policy has Num power/armor input components and an exhaustive fallback. The result resolves the same direct local and reuses its successful unchanged derivation.
+- id: nested-selector-local-result-rejected
+  rules: [MUD-TYPE-005]
+  source: 'hidden'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: hidden was declared inside a nested selector operand or RHS, not its direct preamble; result scope cannot import it.
+- id: recovered-selector-local-unavailable
+  rules: [MUD-TYPE-005]
+  source: 'adjusted'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A whole-selector fault can recover to true after its local scope rolls back. No selected-path availability proof exists for adjusted.
+
+- id: shared-selector-result-shadowing-rejected
+  rules: [MUD-TYPE-005]
+  source: 'let adjusted := 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The result body tries to redeclare its visible direct selector local adjusted; ordinary no-shadowing remains mandatory.
