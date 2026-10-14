@@ -4,7 +4,7 @@ aliases:
   - Static types of MUD
 tags:
   - mud/specification
-status: proposed
+status: in-review
 normative: true
 depends-on:
   - "[[03-notation]]"
@@ -77,6 +77,15 @@ decisions:
 ## Scope and dependencies
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
+
+```mud
+alias Position { x: Int; y: Int }
+origin: Position = (0, 0)
+coordinates: Int [2] = [origin.x, origin.y]
+```
+
+Position supplies the unique nominal construction context; coordinates checks
+its own member and cardinality contract.
 
 Numeric signatures and dimensional admission follow [[21-expressions#4. Numeric, dimensional and Boolean operators]]. A combination lacking a defined signature cannot be accepted by inventing a promotion. Alias operator declarations and their local result-inference preference follow [[21-expressions#Alias-owned operator signatures]]; selection and lifting follow the same section; complete signature identity and the reflective schema follow [[names/operator-contract-identity]]. The complete fixed TypeKind catalogue, supporting inventory and normalized projection are specified below.
 
@@ -231,7 +240,7 @@ The minimum basis comprises finite explicit sets/collection snapshots, closed fi
 > [!rule] MUD-TYPE-035 — Uniform normative analysis and diagnostic outcomes
 > All conforming implementations of one language version must reproduce its normative certification procedure. A reusable reference analyzer may supply it; stronger optional analysis cannot independently expand admission. A proved violation and a completed analysis leaving an obligation unproved require distinct static diagnostic reasons. Resource-interrupted analysis reports incomplete tool verification, not a judgement that the program is invalid. These outcomes introduce no source-language values or runtime error types.
 
-The procedure includes its normalization, search and completion conditions, not merely a collection of inference rules. An implementation's memory/time/depth limit cannot silently constrain a mathematical domain or replace obligatory elementary evidence. Finite source admissibility, body termination and finite reachable-state analysis remain distinct obligations. The unresolved procedure boundaries above do not imply implementation-dependent admission is permitted.
+The procedure includes its normalization, search and completion conditions, not merely a collection of inference rules. An implementation's memory/time/depth limit cannot silently constrain a mathematical domain or replace obligatory elementary evidence. Finite source admissibility, body termination and finite reachable-state analysis remain distinct obligations. Source/application and body proofs follow the fixed procedures above; advanced reachable-state profiles require their separate evidence and do not permit implementation-dependent admission.
 
 ### Dimensional normalization
 
@@ -354,7 +363,7 @@ rule SameStructure { A === B }
 rule DifferentOrder { Text [*] !== Text [* ordered] }
 ```
 
-Both types may be exposed as Type descriptors without adding application anchors. Descriptors retain source constructor and argument information; member `~anchor` denotes the source declaration and `~type` the effective applied type. This does not introduce new intrinsic metadata spellings or settle the TypeKind member catalogue.
+Both types may be exposed as Type descriptors without adding application anchors. Descriptors retain source constructor and argument information; member `~anchor` denotes the source declaration and `~type` the effective applied type. Their public categories follow the complete fixed TypeKind catalogue below; structural comparison introduces no additional intrinsic metadata spellings.
 
 ## 8. Callable substitution and call selection
 
@@ -502,6 +511,28 @@ An accepted programme has well-formed visible schemas, finite normalised type gr
 
 Elaboration preserves source origins and records the selected nominal targets, effective schemas/types, literal contextualisation, operation overloads, conversions, flow facts, permission checks, effect footprints, finite-enumeration/termination evidence and runtime predicate checks. No particular semantic IR serialisation or node catalogue is required.
 
-**Conditional safety statement.** If the stated static premises hold, trusted foreign contracts hold, and each admitted runtime predicate succeeds, a normal result satisfies its declared contract and every write uses authorised storage. A computing error or refusal does not assert that a normal result exists. This is a compositional static obligation, not a proof of termination or atomic correctness of a complete causal engine.
+**Conditional safety statement.** Assume the static derivation's premises hold
+in the applicable observation view, every primitive/subordinate operation meets
+its established value/effect contract, trusted foreign contracts hold, and every
+permitted runtime admission predicate succeeds. A completed normal result meets
+its checked contract and every write uses authorised storage. Fault or Refusal
+asserts no normal result. This is a local compositional statement over these
+interfaces, not a theorem about the complete causal engine.
+
+Declared storage bounds are not automatically facts at each private prefix.
+The permission chapter admits temporary stored-cardinality deviations; proofs
+must use the actual view and invalidate changed/dependent flow facts. A later
+completion/checkpoint guarantee cannot establish an earlier predicate or erase
+an earlier possible call. The finite certification procedure supplies the
+conservative widening of unestablished proof bounds; it does not change the
+field declaration, reflective schema or completed-storage obligation.
+
+For finite nonrecursive derivations, composition follows induction on the
+checked expression/block: admitted construction and conversion discharge their
+component and destination checks; substitution preserves inputs/results and
+permissions; alternatives and handlers retain the required normal-result
+contract; actual-view reads use only established premises. Recursive body
+composition additionally uses the certified well-founded call measure. Neither
+argument assumes a missing runtime interface or proves global stabilization.
 
 The machine-readable instances in [[types/typing-cases.yaml]] distinguish static acceptance/rejection from permitted runtime checks. Their validator checks evidence structure and finite contract witnesses; it does not parse or execute MUD programmes.

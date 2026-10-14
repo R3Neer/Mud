@@ -22,9 +22,9 @@ The author authorised formalisation of D-026, D-046, D-117 and the accepted bloc
 
 Chapter 15 defines root-based writable invariance, reconstruction through immutable intermediate values, immediate inner capabilities, inherited block modes, private regions, static schemas and effect summaries. Minimum conflict analysis handles resolved equal roots, equal/distinct constant keys, distinct components and known generations. Proved inevitable incompatible contributions are rejected. Proved possible conflicts produce a warning and retain their runtime consolidation check; symbolic destination/value overlap not decided by the mandatory proof basis also remains a consolidation check.
 
-Stored cardinality has the stronger existing D-026 obligation: prove preservation at the end of each then and for possible consolidations. Unknown preservation is conservatively rejected, even when an individual argument or query could use a runtime admission check. Finite bounds, known membership, correlated guards, sequential normalization, deduplication and uniqueness no-ops must be included. No complete arbitrary predicate solver is required. These rules delimit the remaining minimum-completeness questions Q-006 and Q-021.
+Stored cardinality has the stronger existing D-026 obligation: prove preservation at the end of each then and for possible consolidations. Unknown preservation is conservatively rejected, even when an individual argument or query could use a runtime admission check. Finite bounds, known membership, correlated guards, sequential normalization, deduplication and uniqueness no-ops must be included. No complete arbitrary predicate solver is required. These rules close the static minimum-proof boundaries of Q-006 and Q-021; D-166–D-168 supply the subsequent common contextual/finite/body procedures.
 
-Foreign contracts and recovery cannot manufacture write permission or bypass the protected block mode. Full causal transitions, lifetime protocols and adapter ABI remain outside this static phase. The chapter remains proposed pending publication.
+Foreign contracts and recovery cannot manufacture write permission or bypass the protected block mode. Full causal transitions, lifetime protocols and adapter ABI remain outside this static phase. Chapter 15 is current after its construct publication review.
 
 ## Verification
 

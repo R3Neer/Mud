@@ -20,9 +20,9 @@ The static formalisation needs a contract for each existing expression construct
 
 Chapter 21 defines synthesis/checking for literals, products, access/reflection, calls, numeric lifting, collection/dictionary algebra, domains, finite traversal, temporal/random/speculative forms and expression/value/effect blocks. It incorporates the existing per-occurrence conjunctive otherwise on, then or raise recovery and normal-result separation from Error collections. Refusal remains outside error recovery.
 
-Coverage maps every Surface AST expression constructor to a chapter section and a declarative example. Finite derivation witnesses are mechanically evaluated where their restricted evidence language applies. Other fragments describe obligations; they are not executable compiler tests. Open numeric, binary64, pruning and termination questions retain their explicit scope and no overload is invented to conceal them.
+Coverage maps every Surface AST expression constructor to a chapter section and a declarative example. Finite derivation witnesses are mechanically evaluated where their restricted evidence language applies. Other fragments describe obligations; they are not executable compiler tests. The integrated numeric, binary64, pruning and body-certification decisions retain their defined contracts; independently pending causal/native protocols are not inferred from this coverage.
 
-The chapter remains proposed pending publication. Neither a parser/typechecker nor an evaluator, native adapter or serialized semantic IR is delivered by the documentation validator.
+Chapter 21 is current after its construct publication review. Neither a parser/typechecker nor an evaluator, native adapter or serialized semantic IR is delivered by the documentation validator.
 
 ## Verification
 
