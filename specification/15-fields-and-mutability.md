@@ -9,8 +9,8 @@ normative: true
 depends-on:
   - "[[11-type-system]]"
 questions:
-  - Q-023
 decisions:
+  - D-166
   - D-154
   - D-146
   - D-137
@@ -45,7 +45,7 @@ decisions:
 
 ## Scope
 
-This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[11-type-system]] supplies type inclusion and proof evidence; [[21-expressions]] supplies expression/block rules. [[28-effects]] supplies private execution and the root/wave batch boundary; acyclicity proofs for dynamically selected callables remain Q-023. Those uncertainties do not grant additional writes or alter the stored-field schema.
+This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[11-type-system]] supplies type inclusion and proof evidence; [[21-expressions]] supplies expression/block rules. [[28-effects]] supplies private execution and the root/wave batch boundary; contextual callable destination/impact checking follows [[types/contextual-call-analysis]]. It grants no additional writes or stored-schema changes.
 
 ```mud
 thing Counter {

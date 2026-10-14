@@ -38,4 +38,4 @@ Recursive type descriptions, their finite immutable values and bounded construct
 
 ## Integration
 
-MUD-TYPE-016 in chapter 11 defines static admission and the stored-read boundary; chapter 21 applies it to expression typing. The future domain chapter's remit and current ADR bodies are updated, and static conformance fragments contrast stored reads, hidden transitive cycles and positive recursion. No domain keyword, grammar constructor, nominal anchor or HIR field is introduced. Q-023's general dynamically selected callable proof question remains separate.
+MUD-TYPE-016 in chapter 11 defines static admission and the stored-read boundary; chapter 21 applies it to expression typing. The future domain chapter's remit and current ADR bodies are updated, and static conformance fragments contrast stored reads, hidden transitive cycles and positive recursion. No domain keyword, grammar constructor, nominal anchor or HIR field is introduced. D-166 specifies the contextual dynamic-call procedure and closes Q-023; computed-domain acyclicity retains its independent prohibition.

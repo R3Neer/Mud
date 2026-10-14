@@ -38,6 +38,7 @@ include = [
     "notes/questions/*.md",
 ]
 exclude = [
+    "notes/questions/Q-023-c-dynamic-composition.md",
     "notes/questions/Q-058-e-portable-evaluation-of-rum.md",
   "notes/questions/Q-076-exact-remainder-signatures.md",
   "notes/questions/Q-077-functional-value-equality.md",
@@ -105,6 +106,7 @@ max_chars = 0
 title = "Complete current corpus"
 include = ["."]
 exclude = [
+    "notes/questions/Q-023-c-dynamic-composition.md",
     "notes/questions/Q-058-e-portable-evaluation-of-rum.md",
   "notes/questions/Q-076-exact-remainder-signatures.md",
   "notes/questions/Q-077-functional-value-equality.md",

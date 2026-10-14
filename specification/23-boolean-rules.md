@@ -12,10 +12,10 @@ depends-on:
   - "[[21-expressions]]"
   - "[[22-quantifiers-and-iteration]]"
 questions:
-  - Q-023
   - Q-028
   - Q-029
 decisions:
+  - D-166
   - D-006
   - D-021
   - D-022
@@ -114,8 +114,8 @@ Unknown foreign effects cannot establish purity. Dependencies include actual
 derived reads, transitive queries, domains and availability conditions; a compiler
 must not conceal them behind locals or cached results.
 
-Exact general dynamic-call impact, finite/reachability and recursive termination
-certification remain [[../notes/questions/Q-023-c-dynamic-composition|Q-023]],
+Contextual dynamic-call impact follows [[types/contextual-call-analysis]].
+Finite/reachability and recursive termination certification remain
 [[../notes/questions/Q-028-f-finiteness|Q-028]] and
 [[../notes/questions/Q-029-t-termination|Q-029]]. Required evidence is not waived;
 this chapter supplies neither a causal search algorithm nor an implementation-

@@ -13,10 +13,10 @@ questions:
   - Q-072
   - Q-007
   - Q-020
-  - Q-023
   - Q-069
   - Q-070
 decisions:
+  - D-166
   - D-160
   - D-147
   - D-146
@@ -62,7 +62,7 @@ action Increment for mut total: Num {
 
 This chapter defines execution of statically admitted effect families over private projections and consolidation of finite branch contributions at root/wave boundaries. [[15-fields-and-mutability]] supplies authority and static proof obligations; [[21-expressions]] supplies expression evaluation contracts. A successful batch produces a tentative next view, not an independent commit.
 
-The judgment is parameterised by expression evaluation, the invocation completion protocol and checked/trusted adapter operations. It does not implement those interfaces, select a wave scheduler or add arithmetic overloads beyond [[21-expressions]]. Detailed Error categories remain Q-007; binary64 sites follow MUD-TYPE-038 in [[11-type-system]]; oscillation detection remains Q-020; dynamic callable acyclicity remains Q-023; native hosting/conversion protocols remain Q-069/Q-070. None grants permission to change the effect laws below.
+The judgment is parameterised by expression evaluation, the invocation completion protocol and checked/trusted adapter operations. It does not implement those interfaces, select a wave scheduler or add arithmetic overloads beyond [[21-expressions]]. Detailed Error categories remain Q-007; binary64 sites follow MUD-TYPE-038 in [[11-type-system]]; oscillation detection remains Q-020; dynamic callable acyclicity follows [[types/contextual-call-analysis]]; native hosting/conversion protocols remain Q-069/Q-070. None grants permission to change the effect laws below.
 
 ## 1. Configurations and outcomes
 

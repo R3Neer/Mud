@@ -2729,3 +2729,22 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Fixture attempts an external ActionReply containing a private part-only Error subtype. Provenance exception does not export that value type.
+
+- id: contextual-dispatch-apparent-cycle
+  rules: [MUD-TYPE-043]
+  source: 'then account.Dispatch(A)'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A calls Dispatch(B), B is a leaf; distinct demonstrated contexts give a finite acyclic graph despite an apparent merged declaration cycle.
+- id: contextual-dispatch-actual-cycle
+  rules: [MUD-TYPE-043]
+  source: 'then account.Dispatch(Loop)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Loop calls Dispatch(Loop); the remaining contextual action component contains a cycle.
+- id: open-callable-conservative-accept
+  rules: [MUD-TYPE-043]
+  source: 'then account.op()'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The complete legally obtainable compatible catalogue consists of two acyclic targets; no explicit target list is required when every mandatory obligation is proved.

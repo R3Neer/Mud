@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-166
   - D-165
   - D-156
   - D-153
@@ -430,3 +431,5 @@ Automatic on tuple membership and temporal changes require the compared-value eq
 [[23-boolean-rules]], [[24-reactive-rules]], [[25-always-rules]] and [[26-public-boundary]] elaborate the existing signature roles, joint on scopes, rule variants and normal/sub operation identities. Contract visibility and host admission are checked with their complete effective types after lookup. Causal matches, observation episodes, generated result schemas and completed invocation owners do not add nominal HIR fields.
 
 MUD-TYPE-042 in [[11-type-system]] permits private provenance references only in established diagnostic components. They preserve original canonical identities without adding lookup candidates, invocation rights, public schemas or nominal HIR entities. Ordinary private qualification and host endpoint checks remain unchanged.
+
+Contextual callable destinations and summaries follow [[types/contextual-call-analysis]] after ordinary lookup and static signature selection. Context keys preserve existing declaration/application identities; they add no nominal HIR fields, anchors or source scopes.

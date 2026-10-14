@@ -14,6 +14,7 @@ questions:
   - Q-028
   - Q-029
 decisions:
+  - D-166
   - D-165
   - D-163
   - D-162
@@ -483,6 +484,11 @@ Otherwise roles bind only Error specialisations, conjunctively and by occurrence
 > The original Error.origin, Refusal.origin and ArgumentRefusal.argument components may retain private declaration/participant references across a public boundary as read-only diagnostic provenance. Recognition is by original inherited component identity, not field spelling. This exception does not export a private diagnostic subtype, arbitrary additional private payload or operational/schema authority.
 
 The reference preserves canonical identity. Its supported intrinsic identifier/anchor/path/file/category information may be observed; ordinary property-category checks remain mandatory. Invocation, state access, private schema/participant/ancestry reflection and arbitrary configured metadata are not granted. Static ~type retains its existing contract and privacy obligations; no private signature/type frontier becomes visible from diagnostic receipt. Independent visibility rights are separate. Finite Error cause chains/diagnostic containers retain the same component-scoped exception when their value types are otherwise visible. Copying, widening or narrowing cannot launder it into an ordinary visible declaration or host endpoint; export elsewhere remains prohibited. No new source descriptor category or nominal identity is created.
+
+## Contextual callable destinations
+
+> [!rule] MUD-TYPE-043 — Contextual complete call analysis
+> Compute destination contexts and transitive summaries by [[types/contextual-call-analysis]]. Preserve demonstrated nominal input contexts and use the compatible legally obtainable catalogue for unknown inputs. Every remaining alternative retains its signature, permission, dependency, effect and acyclicity/termination obligations. No runtime scan, expected-result selection or source execution supplies missing evidence.
 
 ## 12. Static acceptance and elaboration output
 

@@ -10,9 +10,9 @@ depends-on:
   - "[[16-collections]]"
   - "[[21-expressions]]"
 questions:
-  - Q-023
   - Q-028
 decisions:
+  - D-166
   - D-029
   - D-037
   - D-049
@@ -90,7 +90,7 @@ value retains its separate dependency obligations.
 Acyclicity does not prove bound stability or finiteness. Recursive productive
 type descriptions and cyclic point normalization do not grant recursive domain
 evaluation. General dynamically selected callable impact/acyclicity evidence
-remains [[../notes/questions/Q-023-c-dynamic-composition|Q-023]].
+follows [[types/contextual-call-analysis]].
 
 ## Linear interval forms and normalization
 

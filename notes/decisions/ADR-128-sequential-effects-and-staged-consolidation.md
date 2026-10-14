@@ -46,4 +46,4 @@ Other effect families retain their established canonical composition: homogeneou
 
 [[specification/28-effects]] defines private statement/effect judgments, all surviving AST effect families, branch normalisation, staged consolidation, dictionaries, lifecycle generations, root/wave batch validation and rollback/recovery boundaries. [[specification/effects/README]] records bounded executable witnesses and declarative boundary cases. This is not a full MUD interpreter, a complete scheduler, a foreign ABI or a general solver for termination/dynamic domains.
 
-Amends D-117 and the sequential/concurrent arithmetic wording of D-100/D-046/D-060. D-023's obsolete admission and open-conflict claims are rewritten to current policy. Q-020/Q-023/Q-007/Q-069/Q-070 remain separately scoped.
+Amends D-117 and the sequential/concurrent arithmetic wording of D-100/D-046/D-060. D-023's obsolete admission and open-conflict claims are rewritten to current policy. Q-020/Q-007/Q-069/Q-070 remain separately scoped; D-166 specifies the contextual call procedure and closes Q-023.

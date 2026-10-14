@@ -14,11 +14,11 @@ depends-on:
   - "[[28-effects]]"
 questions:
   - Q-020
-  - Q-023
   - Q-028
   - Q-029
   - Q-072
 decisions:
+  - D-166
   - D-021
   - D-036
   - D-041
@@ -166,8 +166,8 @@ invariants, not a memory layout or update scheduler.
 The complete discovery/readiness/causal attribution/completion algorithm remains
 [[../notes/questions/Q-072-causal-work-and-reality-completion-algorithm|Q-072]].
 Oscillation detection remains [[../notes/questions/Q-020-o-oscillations-and-wave-limit|Q-020]];
-it is not inferred from static trigger composition. Dynamic-call impact,
-finite/termination certification remain Q-023/Q-028/Q-029. None of these gaps
+it is not inferred from static trigger composition. Dynamic-call impact follows [[types/contextual-call-analysis]];
+finite/termination certification remains Q-028/Q-029. None of these gaps
 permits unproved static permissions or fabricated runtime selection.
 
 Reject given, outer-mutable on, nonenumerable related sources, ambiguous header

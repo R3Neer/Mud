@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 160.
-- Current: 156.
+- Total: 161.
+- Current: 157.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -179,6 +179,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-163 | current | 2026-10-14 | [[notes/decisions/ADR-163-unitless-point-coordinates|Unitless point coordinates]] |
 | D-164 | current | 2026-10-14 | [[notes/decisions/ADR-164-quantifier-predicate-demand|Quantifier predicate demand]] |
 | D-165 | current | 2026-10-14 | [[notes/decisions/ADR-165-private-diagnostic-provenance-without-authority|Private diagnostic provenance without authority]] |
+| D-166 | current | 2026-10-14 | [[notes/decisions/ADR-166-contextual-callable-destinations-and-impact|Contextual callable destinations and impact]] |
 
 ## Reserved identifiers
 

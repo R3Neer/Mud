@@ -14,7 +14,6 @@ depends-on:
   - "[[24-reactive-rules]]"
   - "[[28-effects]]"
 questions:
-  - Q-023
   - Q-029
   - Q-069
   - Q-070
@@ -22,6 +21,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-166
   - D-165
   - D-036
   - D-042
@@ -265,7 +265,7 @@ stochastic conditions and unguaranteed causal payload access. A public view may
 return a Money computed from private fields while keeping those fields private.
 Such projection does not grant a host state mutation handle.
 
-Dynamic-call impact and general body termination remain Q-023/Q-029. Signatures
+Dynamic-call impact follows [[types/contextual-call-analysis]]; general body termination remains Q-029. Signatures
 and summaries cannot invent those certificates or a causal algorithm.
 [[types/typing-cases.yaml]], callable/produced-type certificates, part grammar/
 nominal coverage and [[effects/README]] supply scoped static and reviewed boundary

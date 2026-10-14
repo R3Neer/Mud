@@ -14,11 +14,11 @@ depends-on:
 questions:
   - Q-007
   - Q-020
-  - Q-023
   - Q-028
   - Q-029
   - Q-072
 decisions:
+  - D-166
   - D-021
   - D-036
   - D-041
@@ -143,8 +143,8 @@ admitted declarative sources. Source occurrence delivery, attribution, readiness
 completion and rollback-scope ownership are supplied by the causal algorithm,
 still [[../notes/questions/Q-072-causal-work-and-reality-completion-algorithm|Q-072]].
 Oscillation/wave-limit policy remains
-[[../notes/questions/Q-020-o-oscillations-and-wave-limit|Q-020]]. Static
-impact/finite/termination procedures remain Q-023/Q-028/Q-029. These boundaries
+[[../notes/questions/Q-020-o-oscillations-and-wave-limit|Q-020]]. Static impact follows [[types/contextual-call-analysis]];
+finite/termination procedures remain Q-028/Q-029. These boundaries
 do not permit arbitrary checkpoints, guessed scheduling or relaxed static proofs.
 
 ## Counterexamples and conformance evidence
