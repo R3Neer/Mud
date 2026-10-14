@@ -274,7 +274,7 @@ overload-unary-operator ::= "+" | "-" ;
 overload-binary-operator ::= "+" | "-" | "*" | "/" | "%" | "|" | "&" | "^" | "--" ;
 
 component-declaration
-    ::= component-name , ":" , stored-type-expression
+    ::= "let" , component-name , ":" , stored-type-expression
         , ( "=" , descriptor-value-body | [ metadata-body ] )
         ;
 

@@ -52,13 +52,13 @@ A structural alias declares an ordered block of components:
 
 ```mud
 alias Square {
-    file: File
-    rank: Rank
+    let file: File
+    let rank: Rank
 }
 
 alias Pagination {
-    page: Nat = 1
-    size: Nat = 20
+    let page: Nat = 1
+    let size: Nat = 20
 }
 ```
 

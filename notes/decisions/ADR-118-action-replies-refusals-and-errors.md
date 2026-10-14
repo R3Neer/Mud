@@ -37,21 +37,21 @@ The following reply catalogue specifies no patch component; Q-073 retains that a
 
 ```mud
 alias Success {}
-abstract alias Refusal { reason: Text; origin: Declaration }
-abstract alias ConditionRefusal as Refusal { condition: BoolCheck }
+abstract alias Refusal { let reason: Text; let origin: Declaration }
+abstract alias ConditionRefusal as Refusal { let condition: BoolCheck }
 alias IfRefusal as ConditionRefusal
 alias AfterRefusal as ConditionRefusal
 alias AlwaysRefusal as ConditionRefusal
-alias ArgumentRefusal as Refusal { argument: Participant }
+alias ArgumentRefusal as Refusal { let argument: Participant }
 alias BoolCheck {
-    expression: Text
-    value: Bool [0..1]
-    parts: BoolCheck [* ordered] = empty
+    let expression: Text
+    let value: Bool [0..1]
+    let parts: BoolCheck [* ordered] = empty
 }
 abstract alias Error {
-    reason: Text
-    origin: Declaration
-    cause: Error [0..1] = empty
+    let reason: Text
+    let origin: Declaration
+    let cause: Error [0..1] = empty
 }
 alias Errors := Error [1..*]
 alias ActionReply := Success | Refusal | Errors

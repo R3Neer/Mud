@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 164.
-- Current: 160.
+- Total: 165.
+- Current: 161.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -183,6 +183,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-167 | current | 2026-10-14 | [[notes/decisions/ADR-167-certified-pure-recursion-and-ranking-search|Certified pure recursion and ranking search]] |
 | D-168 | current | 2026-10-14 | [[notes/decisions/ADR-168-finite-normative-static-certification-procedure|Finite normative static certification procedure]] |
 | D-169 | current | 2026-10-14 | [[notes/decisions/ADR-169-explicit-values-selectors-and-foreach-comprehensions|Explicit value declarations, exhaustive selector shorthand and foreach comprehensions]] |
+| D-170 | current | 2026-10-14 | [[notes/decisions/ADR-170-uniform-immutable-alias-component-markers|Uniform immutable alias component markers]] |
 
 ## Reserved identifiers
 

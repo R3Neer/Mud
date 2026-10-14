@@ -27,6 +27,14 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
                 tokens.append('IDENTIFIER')
         return recognises(self.bnf, start, tokens)
 
+    def test_alias_stored_components_require_let(self):
+        for source in ('let x: Num', 'let x: Num = 0', 'let x: _ = 0'):
+            self.assertTrue(self.accepts('component-declaration', source))
+        for source in ('x: Num', 'x: Num = 0', 'mut x: Num', 'let x = 0'):
+            self.assertFalse(self.accepts('component-declaration', source))
+        self.assertTrue(self.accepts('inherited-default-override', 'x = 0'))
+        self.assertFalse(self.accepts('inherited-default-override', 'let x = 0'))
+
     def test_stored_markers_and_partial_annotations(self):
         for source in ('let x = item', 'mut x = item', 'let x: _ = item',
                        'let x in Items = item', 'mut x [* ordered] = empty',

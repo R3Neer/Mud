@@ -33,8 +33,9 @@ transformations should not require a hand-written private accumulator.
 Ordinary immutable stored/derived value declarations require let. Mutable stored
 declarations require mut. Stored annotations may be omitted or constrain inference
 by type/domain/shape. Bare : _ annotations remain valid with a semantics-preserving
-simplification suggestion; partial holes remain useful. Schema slots, parameters,
-metadata, type definitions, units and overrides keep their distinct contracts.
+simplification suggestion; partial holes remain useful. Stored alias components also require let, including components without a
+default, as clarified by D-170. Family stored data, parameters, metadata, type
+definitions, units and overrides keep their distinct contracts.
 Stored domain-only annotations constrain admission and never filter their values.
 
 Functional selectors retain complete Bool predicates and add ordinary-value

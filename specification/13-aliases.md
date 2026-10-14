@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-170
   - D-169
   - D-167
   - D-168
@@ -53,7 +54,7 @@ fields. Component defaults do not remove components from the representation.
 
 ```mud
 alias PlayerName := Text
-alias Vector2 { x: Num; y: Num }
+alias Vector2 { let x: Num; let y: Num }
 let position: Vector2 = (1, 2)
 ```
 
@@ -75,7 +76,8 @@ Grammar and source constructors are [[grammar/mud.ebnf]] and
 
 Let S(A)=((n1,t1),...,(nk,tk)) be the effective stored component sequence of
 structural alias A. Every value contains those k components in that order.
-Each component has a complete type/domain/collection contract and optionally
+A stored component begins with let, even without a default. Each component
+has a complete type/domain/collection contract and optionally
 an explicit statically evaluable default. Outer `mut` is not permitted on an
 alias component. Inner `[mut]` is an immediate-thing capability governed by
 [[15-fields-and-mutability]], not mutable alias storage or implicit deep authority.
@@ -237,19 +239,19 @@ write-back destinations belong to later phases.
 ## Examples and counterexamples
 
 ```mud
-alias Pagination { page: Nat = 1; size: Nat = 20 }
+alias Pagination { let page: Nat = 1; let size: Nat = 20 }
 let p: Pagination = (size = 30)       # constructs page=1, size=30
 alias PlayerName := Text
 let name: PlayerName = "Ada"         # contextual literal construction
 let raw: Text = "Ada"
 let converted: PlayerName = raw to PlayerName
-alias Tree { children: Tree [*] = empty }
+alias Tree { let children: Tree [*] = empty }
 ```
 
 ```mud
 let bad: Pagination = (2)            # invalid: incomplete unnamed form
 let badName: PlayerName = raw        # invalid: typed Text does not become alias
-alias Impossible { next: Impossible } # invalid: no finite value
+alias Impossible { let next: Impossible } # invalid: no finite value
 alias A := B
 alias B := A                     # invalid: transparent cycle
 ```

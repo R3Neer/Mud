@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-170
   - D-169
   - D-160
   - D-158
@@ -679,8 +680,8 @@ Variable names do not create component names: `(x, y)` remains positional even w
 
 ```mud
 alias Coordinate {
-    x: Num
-    y: Num
+    let x: Num
+    let y: Num
 }
 
 let raw: (Num, Num) = (1, 2)
@@ -713,21 +714,21 @@ alias UserName as PlayerName
 alias Board := Square -> Piece [0..32 ordered]
 
 alias Square {
-    file: File
-    rank: Rank
+    let file: File
+    let rank: Rank
     let label: Text := "{file}{rank}"
 }
 
 alias Coordinate {
-    x: Num
-    y: Num
+    let x: Num
+    let y: Num
 }
 
 alias PositionedCoordinate as Coordinate
 
 alias Pagination {
-    page: Nat = 1
-    size: Nat = 20
+    let page: Nat = 1
+    let size: Nat = 20
 }
 
 alias LargePagination as Pagination {
@@ -761,13 +762,13 @@ let pagination: Pagination = (2)     # invalid: partial positional form
 let pagination: Pagination = (size = 30) # valid: page retains 1
 ```
 
-A component does not support outer `mut` because the alias value and each component are immutable. Its collection specification may nevertheless contain `[mut]` to grant internal capability over directly contained `thing` values; this capability does not make the collection itself assignable.
+Every stored alias component requires `let` before its name, including a required component without a default. An inherited-default override remains an assignment to an existing component, not a new declaration. Parameters and family stored data retain their own forms. A component does not support outer `mut` because the alias value and each component are immutable. Its collection specification may nevertheless contain `[mut]` to grant internal capability over directly contained `thing` values; this capability does not make the collection itself assignable.
 
 A calculated alias component uses the same syntax as other calculated fields, including an optional declared shape:
 
 ```mud
 alias Squad {
-    members: Soldier [*]
+    let members: Soldier [*]
 
     let wounded [* mut] := soldier in members :
         soldier.health < MaximumHealth

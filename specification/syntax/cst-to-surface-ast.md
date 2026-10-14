@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-170
   - D-169
   - D-147
   - D-146
@@ -354,7 +355,7 @@ The list written after `as` is preserved as `direct_ancestors`. The `:= type-exp
 
 A restriction `interval-expression by constant-expression` produces `SteppedDomain`; the other restrictions result in `ExpressionDomain`. Brackets that do not alter the grouping do not reach the Surface AST.
 
-The structural body produces `StructuralAlias` with `AliasMember` in source order. A `component-declaration` produces `AliasComponentDecl`; a `calculated-field-declaration` produces `AliasCalculatedFieldDecl`; and `inherited-default-override` produces `AliasDefaultOverride`.
+The structural body produces `StructuralAlias` with `AliasMember` in source order. A `component-declaration` requires the written let marker and produces `AliasComponentDecl`; the marker is retained by CST and introduces no AST mutability flag; a `calculated-field-declaration` produces `AliasCalculatedFieldDecl`; and `inherited-default-override` produces `AliasDefaultOverride`.
 
 A component cannot produce outer mutability. Its collection specification may produce `elementsMutable = Enabled`. A calculated field may also state `elementsMutable = Enabled`; that capability belongs to the calculated collection and is not inferred from the sources used by its expression.
 

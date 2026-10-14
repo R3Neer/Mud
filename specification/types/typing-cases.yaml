@@ -227,7 +227,7 @@ cases:
 - id: recursive-empty-exit
   rules:
   - MUD-TYPE-004
-  source: 'alias Tree { children: Tree [*] = empty }'
+  source: "alias Tree { let children: Tree [*] = empty }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
@@ -247,7 +247,7 @@ cases:
 - id: mandatory-cycle
   rules:
   - MUD-TYPE-004
-  source: 'alias Chain { next: Chain }'
+  source: "alias Chain { let next: Chain }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
@@ -262,7 +262,7 @@ cases:
 - id: abstract-concrete-witness
   rules:
   - MUD-TYPE-004
-  source: 'abstract alias Problem { reason: Text }; alias Missing as Problem'
+  source: "abstract alias Problem { let reason: Text }; alias Missing as Problem"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
@@ -283,7 +283,7 @@ cases:
 - id: positive-unique-needs-enough-witnesses
   rules:
   - MUD-TYPE-004
-  source: 'alias Group { members: Member [2 unique] }'
+  source: "alias Group { let members: Member [2 unique] }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Finite constructor witnesses require a productive exit, valid domains and enough unique members.
@@ -1110,7 +1110,7 @@ cases:
 - id: generic-header-shared-bounds
   rules:
   - MUD-TYPE-017
-  source: 'alias Example with T, U as A, B with V as C with W { first: T; second: U; third: V; last: W }'
+  source: "alias Example with T, U as A, B with V as C with W { let first: T; let second: U; let third: V; let last: W }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A/B/C are visible nominal bounds. T and U satisfy both A and B; V satisfies C; W only Any. Bodies use
@@ -1125,7 +1125,7 @@ cases:
 - id: generic-bracketed-header
   rules:
   - MUD-TYPE-017
-  source: 'alias Pair with [T, U] { first: T; second: U }'
+  source: "alias Pair with [T, U] { let first: T; let second: U }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Bracketed and unbracketed parameter lists have identical source-ordered parameter contracts.
@@ -1149,45 +1149,35 @@ cases:
 - id: generic-complex-shape-alias
   rules:
   - MUD-TYPE-017
-  source: 'alias CatQueue := Cat [* ordered]
-
-    alias Box with T { value: T }
-
-    look Queues { let boxed: CatQueue Box := (value = queue) }'
+  source: "alias CatQueue := Cat [* ordered]\nalias Box with T { let value: T }\nlook Queues { let boxed: CatQueue Box := (value = queue) }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Cat is visible and queue is a fixture value already typed as CatQueue. A nominal representation alias may carry its nested collection shape as one type argument.
 - id: generic-direct-cardinality-argument
   rules:
   - MUD-TYPE-017
-  source: 'alias Box with T { value: T }
-
-    look Invalid { let boxed: Box with (Cat [*]) := empty }'
+  source: "alias Box with T { let value: T }\nlook Invalid { let boxed: Box with (Cat [*]) := empty }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: A grouped direct Cat[*] generic argument is prohibited. Use a representation alias; a collection suffix on the complete Box application instead shapes Box values.
 - id: generic-direct-shaped-bound
   rules:
   - MUD-TYPE-017
-  source: 'alias Invalid with T as Cat [*] { value: T }'
+  source: "alias Invalid with T as Cat [*] { let value: T }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Bounds admit nominal types only, without outer collection specifications.
 - id: generic-direct-domain-bound
   rules:
   - MUD-TYPE-017
-  source: 'alias Invalid with T as Nat in 0..10 { value: T }'
+  source: "alias Invalid with T as Nat in 0..10 { let value: T }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Bounds cannot transport a domain into each occurrence.
 - id: generic-arity-and-product
   rules:
   - MUD-TYPE-017
-  source: 'alias Pair with A, B { first: A; second: B }
-
-    alias Wrapper with T { value: T }
-
-    look Types { let pair := ((Cat, Dog) Pair)~type; let product := ((Nat, Nat) Wrapper)~type }'
+  source: "alias Pair with A, B { let first: A; let second: B }\nalias Wrapper with T { let value: T }\nlook Types { let pair := ((Cat, Dog) Pair)~type; let product := ((Nat, Nat) Wrapper)~type }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Cat/Dog are visible types. Grouped Pair supplies two arguments; Wrapper supplies one product. Neither
@@ -1195,9 +1185,7 @@ cases:
 - id: generic-arity-mismatch
   rules:
   - MUD-TYPE-017
-  source: 'alias Pair with A, B { first: A; second: B }
-
-    look Invalid { let value: Pair with Nat := 0 }'
+  source: "alias Pair with A, B { let first: A; let second: B }\nlook Invalid { let value: Pair with Nat := 0 }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: An arity-two constructor is supplied only one explicit argument.
@@ -1263,7 +1251,7 @@ cases:
 - id: generic-variance-readable
   rules:
   - MUD-TYPE-018
-  source: 'alias Box with T { value: T }'
+  source: "alias Box with T { let value: T }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Only proven read/output occurrences admit covariance; Box application identity still includes exact
@@ -1294,7 +1282,7 @@ cases:
 - id: generic-finite-recursion
   rules:
   - MUD-TYPE-019
-  source: 'alias Node with T { value: T; next: T Node [0..1] }'
+  source: "alias Node with T { let value: T; let next: T Node [0..1] }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The recursive application is Node(T), closing a finite graph. Optional next separately supplies a finite
@@ -1302,7 +1290,7 @@ cases:
 - id: generic-finite-permutation
   rules:
   - MUD-TYPE-019
-  source: 'alias Swap with A, B { next: (B, A) Swap [0..1] }'
+  source: "alias Swap with A, B { let next: (B, A) Swap [0..1] }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Reachable application patterns alternate Swap(A,B) and Swap(B,A); closure is finite without erasing
@@ -1310,9 +1298,7 @@ cases:
 - id: generic-growing-instantiation
   rules:
   - MUD-TYPE-019
-  source: 'alias List with T := T [* ordered]
-
-    alias Growing with T { next: Growing with (List with T) [0..1] }'
+  source: "alias List with T := T [* ordered]\nalias Growing with T { let next: Growing with (List with T) [0..1] }"
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Repeated substitution generates Growing(T), Growing(List(T)), Growing(List(List(T))) and so on. Optional
@@ -1380,11 +1366,7 @@ cases:
 - id: structural-equality-member-kind
   rules:
   - MUD-TYPE-020
-  source: 'alias A { let x: Nat := 1 }
-
-    alias B { x: Nat }
-
-    A !== B'
+  source: "alias A { let x: Nat := 1 }\nalias B { let x: Nat }\nA !== B"
   source_scope: representation-judgement-fragment
   expected: static-accept
   contract: 'The normalized inequality judgement holds: calculated x differs from component x, despite equal names/types.'
@@ -1486,11 +1468,7 @@ cases:
 - id: structural-equality-defaults-ignored
   rules:
   - MUD-TYPE-020
-  source: 'alias A { x: Nat = 1 }
-
-    alias B { x: Nat = 2 }
-
-    A === B'
+  source: "alias A { let x: Nat = 1 }\nalias B { let x: Nat = 2 }\nA === B"
   source_scope: representation-judgement-fragment
   expected: static-accept
   contract: Explicit types/shapes agree; different component defaults do not change the equality judgement.
@@ -1634,9 +1612,7 @@ cases:
 - id: generic-grouped-union-argument
   rules:
   - MUD-TYPE-017
-  source: 'alias Box with T { value: T }
-
-    look Values { let item: Box with (Nat | Text) := (value = "cat") }'
+  source: "alias Box with T { let value: T }\nlook Values { let item: Box with (Nat | Text) := (value = \"cat\") }"
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A grouped union is one member-form argument; direct per-alternative domains/cardinalities and dictionary

@@ -103,7 +103,7 @@ cases:
   produces_ast: true
 - id: alias-inner-mut
   category: alias
-  source: "alias Party {\n    members: Person [* mut]\n}\n"
+  source: "alias Party {\n    let members: Person [* mut]\n}\n"
   cst_root: MudFileSyntax
   ast: AliasComponent(members, elementsMutable=Enabled)
   produces_ast: true
@@ -509,21 +509,19 @@ cases:
   produces_ast: true
 - id: structural-alias-specialization-and-derived
   category: alias
-  source: "alias Person {\n    first: Text\n    last: Text\n    let full: Text := \"{first} {last}\"\n}\n\
-    alias Student as Person {\n    id: Nat\n}\n"
+  source: "alias Person {\n    let first: Text\n    let last: Text\n    let full: Text := \"{first} {last}\"\n}\nalias Student as Person {\n    let id: Nat\n}\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(Student, ancestors=[Person], definition=StructuralAlias(...))
   produces_ast: true
 - id: alias-default-override
   category: alias
-  source: "alias Pagination {\n    page: Nat = 1\n    size: Nat = 20\n}\nalias LargePagination as Pagination {\n    size = 100\n}\n"
+  source: "alias Pagination {\n    let page: Nat = 1\n    let size: Nat = 20\n}\nalias LargePagination as Pagination {\n    size = 100\n}\n"
   cst_root: MudFileSyntax
   ast: AliasDefaultOverride(size, 100)
   produces_ast: true
 - id: alias-derived-mutable-view
   category: alias
-  source: "alias Squad {\n    members: Soldier [* mut]\n    let wounded [* mut] := soldier in members: soldier.health\
-    \ < MaximumHealth\n}\n"
+  source: "alias Squad {\n    let members: Soldier [* mut]\n    let wounded [* mut] := soldier in members: soldier.health < MaximumHealth\n}\n"
   cst_root: MudFileSyntax
   ast: AliasCalculatedFieldDecl(wounded, elementsMutable=Enabled, ...)
   produces_ast: true
@@ -548,15 +546,13 @@ cases:
   produces_ast: true
 - id: structural-member-requires-nominal-alias
   category: resolution
-  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    let derived: Nat := first * second\n\
-    }\nrule Valid {\n    ((1, 2) to CosoAlias).derived == 2\n}\n"
+  source: "alias CosoAlias {\n    let first: Nat\n    let second: Nat\n    let derived: Nat := first * second\n}\nrule Valid {\n    ((1, 2) to CosoAlias).derived == 2\n}\n"
   cst_root: MudFileSyntax
   ast: MemberAccessExpr(ConvertExpr(PositionalStructuralLiteralExpr(...), CosoAlias), derived)
   produces_ast: true
 - id: structural-literal-does-not-own-alias-member
   category: validation-after-resolution
-  source: "alias CosoAlias {\n    first: Nat\n    second: Nat\n    let derived: Nat := first * second\n\
-    }\nrule Invalid {\n    (1, 2).derived == 2\n}\n"
+  source: "alias CosoAlias {\n    let first: Nat\n    let second: Nat\n    let derived: Nat := first * second\n}\nrule Invalid {\n    (1, 2).derived == 2\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - member-requires-nominal-alias
@@ -1119,8 +1115,7 @@ cases:
   produces_ast: true
 - id: product-nominal-alias-incompatible
   category: validation-after-resolution
-  source: "alias Coordinate {\n    x: Num\n    y: Num\n}\nthing Broken {\n    let raw: (Num, Num) = (1,\
-    \ 2)\n    let nominal: Coordinate = raw\n}\n"
+  source: "alias Coordinate {\n    let x: Num\n    let y: Num\n}\nthing Broken {\n    let raw: (Num, Num) = (1, 2)\n    let nominal: Coordinate = raw\n}\n"
   cst_root: MudFileSyntax
   expected_diagnostics:
   - structural-product-not-implicitly-nominal-alias
@@ -2464,11 +2459,7 @@ cases:
   produces_ast: false
 - id: alias-required-component
   category: typing
-  source: 'alias Point { x: Int; y: Int = 0 }
-
-    thing Board { point: Point = (y = 1) }
-
-    '
+  source: "alias Point { let x: Int; let y: Int = 0 }\nthing Board { point: Point = (y = 1) }\n"
   cst_root: MudFileSyntax
   ast: AliasComponent(required=x, explicitDefault=y)
   expected_diagnostics:
@@ -2486,17 +2477,13 @@ cases:
   produces_ast: true
 - id: abstract-recursive-alias
   category: alias
-  source: 'abstract alias Error { cause: Error [0..1] = empty }
-
-    '
+  source: "abstract alias Error { let cause: Error [0..1] = empty }\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(is_abstract=Enabled, definition=StructuralAlias)
   produces_ast: true
 - id: alias-unproductive-recursion
   category: typing
-  source: 'alias Chain { next: Chain }
-
-    '
+  source: "alias Chain { let next: Chain }\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(Chain)
   expected_diagnostics:
@@ -2504,11 +2491,7 @@ cases:
   produces_ast: true
 - id: abstract-alias-instantiation
   category: typing
-  source: 'abstract alias Base { x: Int }
-
-    thing World { let value: Base = (x = 1) }
-
-    '
+  source: "abstract alias Base { let x: Int }\nthing World { let value: Base = (x = 1) }\n"
   cst_root: MudFileSyntax
   ast: AliasDecl(is_abstract=Enabled)
   expected_diagnostics:
@@ -2923,7 +2906,7 @@ cases:
   - sub-operation-not-host-endpoint
 - id: generic-with-groups
   category: generic-types
-  source: 'alias Example with T, U as A, B with V as C with W { first: T; second: U; third: V; last: W }'
+  source: "alias Example with T, U as A, B with V as C with W { let first: T; let second: U; let third: V; let last: W }"
   cst_root: MudFileSyntax
   ast: AliasDecl(parameters=[T(A,B), U(A,B), V(C), W(Any)])
   normalizations:
@@ -2932,7 +2915,7 @@ cases:
   produces_ast: true
 - id: generic-bracket-header
   category: generic-types
-  source: 'alias Pair with [T, U] { first: T; second: U }'
+  source: "alias Pair with [T, U] { let first: T; let second: U }"
   cst_root: MudFileSyntax
   ast: AliasDecl(parameters=[T(Any), U(Any)])
   normalizations:
@@ -2940,9 +2923,7 @@ cases:
   produces_ast: true
 - id: generic-postfix-group-preserved
   category: generic-types
-  source: 'alias Pair with A, B { first: A; second: B }
-
-    look Values { let value: (Nat, Nat) Pair := (1, 2) }'
+  source: "alias Pair with A, B { let first: A; let second: B }\nlook Values { let value: (Nat, Nat) Pair := (1, 2) }"
   cst_root: MudFileSyntax
   ast: GenericTypeApplication(Pair, [PositionalProductType(Nat,Nat)], PostfixGroupedGeneric)
   normalizations:
@@ -2950,9 +2931,7 @@ cases:
   produces_ast: true
 - id: generic-product-argument-preserved
   category: generic-types
-  source: 'alias Wrapper with T { value: T }
-
-    look Values { let value: (Nat, Nat) Wrapper := (value = (1, 2)) }'
+  source: "alias Wrapper with T { let value: T }\nlook Values { let value: (Nat, Nat) Wrapper := (value = (1, 2)) }"
   cst_root: MudFileSyntax
   ast: GenericTypeApplication(Wrapper, [PositionalProductType(Nat,Nat)], PostfixGroupedGeneric)
   normalizations:
@@ -3004,9 +2983,7 @@ cases:
   produces_ast: true
 - id: generic-grouped-union-preserved
   category: generic-types
-  source: 'alias Box with T { value: T }
-
-    look Values { let item: Box with (Nat | Text) := (value = "cat") }'
+  source: "alias Box with T { let value: T }\nlook Values { let item: Box with (Nat | Text) := (value = \"cat\") }"
   cst_root: MudFileSyntax
   ast: GenericTypeApplication(Box,[TypeExpr(Nat | Text)],ExplicitGenericWith)
   normalizations:
@@ -3100,7 +3077,7 @@ cases:
   diagnostic: Signatures do not admit stored inference holes.
 - id: stored-hole-without-initializer-rejected
   category: locals
-  source: 'alias A { field: _ }'
+  source: "alias A { let field: _ }"
   cst_root: MudFileSyntax
   ast: No AST
   normalizations: []
@@ -3163,7 +3140,7 @@ cases:
   diagnostic: A constructor suffix requires an admitted generic-argument type form; a numeric value is not implicitly lifted to a type.
 - id: alias-operator-typed-and-omitted-operands
   category: alias
-  source: 'alias Vector2 { x: Num; y: Num; a * (factor: Num): Vector2 := (a.x * factor, a.y * factor) }'
+  source: "alias Vector2 { let x: Num; let y: Num; a * (factor: Num): Vector2 := (a.x * factor, a.y * factor) }"
   cst_root: MudFileSyntax
   ast: 'AliasDecl(Vector2, StructuralAlias([AliasComponentDecl(x), AliasComponentDecl(y), AliasOperatorDecl(BinaryOperatorDecl(OperatorOperand(a, None), Multiply, OperatorOperand(factor, Num), result=Vector2, value=ValueBlock(...)))]))'
   produces_ast: true
@@ -3182,13 +3159,13 @@ cases:
 
 - id: alias-operator-short-metadata-owner
   category: alias
-  source: 'alias V { x: Num; a * (factor: Num): V := a { ~summary = "Scale" } }'
+  source: "alias V { let x: Num; a * (factor: Num): V := a { ~summary = \"Scale\" } }"
   cst_root: MudFileSyntax
   ast: 'AliasOperatorDecl(BinaryOperatorDecl(value=ValueBlock(...), metadata=[StoredMetadataAssignment(summary)]))'
   produces_ast: true
 - id: alias-operator-integrated-metadata-owner
   category: alias
-  source: 'alias V { x: Num; a * (factor: Num): V := { ~summary = "Scale"; a } }'
+  source: "alias V { let x: Num; a * (factor: Num): V := { ~summary = \"Scale\"; a } }"
   cst_root: MudFileSyntax
   ast: 'AliasOperatorDecl(BinaryOperatorDecl(value=ValueBlock(...), metadata=[StoredMetadataAssignment(summary)]))'
   produces_ast: true

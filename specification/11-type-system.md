@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-170
   - D-169
   - D-167
   - D-168
@@ -84,7 +85,7 @@ Ordinary stored field/local types may be omitted when initialiser and domain evi
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
 ```mud
-alias Position { x: Int; y: Int }
+alias Position { let x: Int; let y: Int }
 let origin: Position = (0, 0)
 let coordinates: Int [2] = [origin.x, origin.y]
 ```
@@ -362,8 +363,8 @@ Domain equality uses normalized symbolic contracts, including resolved provenanc
 For recursive admitted type graphs, compare a closed finite relation of node pairs: all local structural labels must match and every required child pair must belong to the relation. Alias identity is omitted from these labels; opaque thing/family labels retain constructor and exact argument identities. Greatest-fixed-point labelled bisimulation handles recursion without comparing sample values. Merely visiting a pair is not evidence. The relation is exact equality of this normalized contract representation, not the weaker conversion representation relation $\cong_R$.
 
 ```mud
-alias A { x: Nat; y: Text [0..1] }
-alias B { x: Nat; y: Text [0..1] }
+alias A { let x: Nat; let y: Text [0..1] }
+alias B { let x: Nat; let y: Text [0..1] }
 rule SameStructure { A === B }
 rule DifferentOrder { Text [*] !== Text [* ordered] }
 ```

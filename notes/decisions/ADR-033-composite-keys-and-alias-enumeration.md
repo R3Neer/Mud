@@ -28,8 +28,8 @@ A alias it could be the type unique key in a dictionary:
 
 ```mud
 alias Square {
-    file: File
-    rank: Rank
+    let file: File
+    let rank: Rank
 }
 
 board: Square -> Piece [0..32 ordered]
@@ -55,8 +55,8 @@ A structural alias is finite and countable if all its components have finite and
 
 ```mud
 alias Coordinate {
-    horizontal: Int in 0..7
-    vertical: Int in 0..7
+    let horizontal: Int in 0..7
+    let vertical: Int in 0..7
 }
 ```
 

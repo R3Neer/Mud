@@ -977,8 +977,7 @@ syntax_nodes:
     - operator-declaration
   component-declaration:
     kind: ComponentDeclarationSyntax
-    rhs: "component-name , \":\" , stored-type-expression\n        , ( \"=\" , descriptor-value-body | [\
-      \ metadata-body ] )"
+    rhs: "\"let\" , component-name , \":\" , stored-type-expression\n        , ( \"=\" , descriptor-value-body | [ metadata-body ] )"
     references:
     - component-name
     - descriptor-value-body
