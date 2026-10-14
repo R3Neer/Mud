@@ -18,6 +18,9 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-172
+  - D-171
+  - D-170
   - D-169
   - D-166
   - D-167
@@ -339,7 +342,8 @@ Chapter: [[13-aliases]].
 
 Defines:
 
-- Nominal and structural representation aliases, generic applications, contextual construction and nominal casting; exact structural type equality remains distinct from nominal value equality.
+- Nominal and structural representation aliases, generic applications, contextual construction, explicit statically named structural constructors and nominal casting; exact structural type equality remains distinct from nominal value equality.
+- Immutable stored/derived components marked with let, positional/named argument admission and configurable construction readability suggestions; values remain declared inside admitted owners rather than at file root.
 - Single and multiple nominal specialisation, inheritance of representation or members, provenance-based deduplication and conflicts between independent members.
 - Inherited defaults, immutable values, equality, ordering and enumerability where applicable.
 - Reconstruction of immutable aliases through write-back from assignable paths, without introducing mutability into their values.
@@ -389,6 +393,7 @@ Defines:
 - Associations, keys, iteration, ordering and algebraic operations.
 - Indexing within assignable paths, partial write-back on associated values and treatment of missing keys without confusing partial update with complete insertion.
 - Branch-selection modes, fallback, dependencies, recursion and termination of functional dictionaries.
+- Direct selector-preamble locals shared with their own result, definite availability after recovery and mandatory reuse of successful derivations while inputs/dependencies are unchanged; separate application/branch instances preserve laziness and full footprints. AllMatches remains the default; ordered explicitly selects FirstMatch.
 
 ## 18. Domains and intervals
 

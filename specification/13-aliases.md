@@ -56,7 +56,9 @@ fields. Component defaults do not remove components from the representation.
 ```mud
 alias PlayerName := Text
 alias Vector2 { let x: Num; let y: Num }
-let position: Vector2 = (1, 2)
+look Example {
+    let position: Vector2 := (1, 2)
+}
 ```
 
 > [!rule] MUD-ALIAS-001 — Nominal immutable values
@@ -122,9 +124,10 @@ several nominal aliases have matching component arity.
 
 ```mud
 alias Vector2 { let x: Num; let y: Num }
-# Within an admitted value computation:
-let position = Vector2(1, 2)
-let named = Vector2(x = 1, y = 2)
+look Example {
+    let position := Vector2(1, 2)
+    let named := Vector2(x = 1, y = 2)
+}
 ```
 
 The target may be a qualified alias reference or a fully resolved admitted

@@ -87,8 +87,10 @@ This chapter defines well-formed types, value identity, representation compatibi
 
 ```mud
 alias Position { let x: Int; let y: Int }
-let origin: Position = (0, 0)
-let coordinates: Int [2] = [origin.x, origin.y]
+look Example {
+    let origin: Position := (0, 0)
+    let coordinates: Int [2] := [origin.x, origin.y]
+}
 ```
 
 Position supplies the unique nominal construction context; coordinates checks
