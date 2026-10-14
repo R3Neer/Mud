@@ -2,7 +2,7 @@
 title: Magnitudes units and points
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[07-lexicon]]"

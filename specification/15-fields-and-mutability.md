@@ -4,7 +4,7 @@ aliases:
   - Static authority and effects
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[11-type-system]]"

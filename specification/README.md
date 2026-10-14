@@ -292,7 +292,7 @@ Defines:
 - Identity under file moves.
 - Path and anchor migration.
 
-Juicio principal:
+Main judgement:
 
 $$
 \Gamma \vdash n \rightsquigarrow a
@@ -314,7 +314,7 @@ Defines:
 
 Callable contracts use contravariant read-only inputs, covariant outputs and invariant read/write places. Named invocation requires an unequivocal static signature, with no runtime scan. Produced look/sublook types are static and nominal per declaration and exact generic arguments; message/submessage types are static per declaration; anonymous literal types are structural. Multiple incomparable common result minima retain the original union. Things and aliases share contract-visible specialization across authorized parts.
 
-Juicio principal:
+Main judgement:
 
 $$
 \Gamma;\Sigma \vdash e : \tau
@@ -930,7 +930,7 @@ Numerical order is the final reading order, not the strict writing order. Work p
 ## Current drafting priorities
 
 1. Formalise the causal runtime across chapters 29–34: abstract state, reality levels/branches, invocation identities, observation views, causal attribution/discovery, readiness, wave advancement, completion and incorporation/disposal. Close Q-072 through pseudocode and contrasting traces, not diagrams alone. Existing effect algebra and relative-confirmation rules constrain this work; asynchronous source syntax and concurrent exterior roots are not selected implicitly.
-2. In parallel, complete independent static construct chapters among 12–26, including things, aliases, families, collections, dictionaries, quantifiers and Boolean rules. Resolve each chapter's actual pending questions before publication. Reactive/always rules and host publication must coordinate their final execution contracts with the causal algorithm.
+2. Maintain and verify the developed static construct contracts in chapters 12–26 and their contextual/finite/body certification procedures. Complete the separate advanced and operational interfaces under their active questions. Reactive/always rules and public operations retain the established static permissions while their final execution contracts coordinate with the causal algorithm.
 3. After the causal algorithm, specify textual patches/reproduction under Q-073 and additional host observation/exterior execution contracts under Q-074. Coordinate native hosting, conversion and lifetime work with Q-069/Q-070.
 4. Develop world/dependency configuration under Q-071 with the adapter boundary. Its descriptor/distribution work may advance independently where possible; runtime/recording settings wait for the contracts they expose. Inventory library contracts broadly, while asynchronous and effectful APIs wait for their required runtime/exterior guarantees.
 5. Complete lifecycle, randomness, advanced analyses, diagnostics, applicable library/adapter contracts and end-to-end conformance evidence. Justify the later semantic representation from developed typing/elaboration under Q-009. Publish chapters through the document lifecycle and finish the complete specification before compiler/runtime/library implementation.

@@ -2,7 +2,7 @@
 title: Static contracts of always rules
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[04-mathematical-model]]"

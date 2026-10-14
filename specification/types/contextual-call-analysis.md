@@ -1,6 +1,6 @@
 ---
 title: Contextual static callable analysis
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[../10-names-and-anchors]]"

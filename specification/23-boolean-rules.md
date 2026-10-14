@@ -2,7 +2,7 @@
 title: Boolean rules
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[10-names-and-anchors]]"

@@ -2,7 +2,7 @@
 title: Nominal aliases and structural values
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[10-names-and-anchors]]"

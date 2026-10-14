@@ -16,10 +16,13 @@ It records publication evidence, not language rules. Descriptor/dependency
 chapter 06, pending interoperability 27, causal algorithms 29–34, patches and
 host protocols remain excluded. Unrelated causal-author work is preserved.
 
-The complete static admission procedure is not claimed. Q-023/Q-028/Q-029
-retain dynamic-call impact and version-uniform proof/certification procedures.
-Construct contracts over explicit evidence do not silently supply those methods.
-Active operational questions retain their established scopes.
+This is the initial construct publication assessment, before D-166–D-168.
+At that review Q-023/Q-028/Q-029 retained the incomplete dynamic-call and
+certification methods. The subsequent assessment is
+[[static-certification-publication-review]]; it records their closure and the
+new publication candidates. The tables and counts below retain the initial
+review's historical state. Active operational questions are not closed by either
+assessment.
 
 ## Chapter assessment
 

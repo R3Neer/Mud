@@ -2,7 +2,7 @@
 title: Static contracts of reactive rules
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[04-mathematical-model]]"
@@ -169,7 +169,7 @@ Oscillation detection remains [[../notes/questions/Q-020-o-oscillations-and-wave
 it is not inferred from static trigger composition. Dynamic-call impact follows [[types/contextual-call-analysis]];
 finite/body termination certification follows [[types/finite-static-certification]]
 and [[types/termination-certification]]. The operational gaps never
-permits unproved static permissions or fabricated runtime selection.
+permit unproved static permissions or fabricated runtime selection.
 
 Reject given, outer-mutable on, nonenumerable related sources, ambiguous header
 types, unsupported temporal operators, unguaranteed payload accesses, stochastic

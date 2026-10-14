@@ -4,7 +4,7 @@ aliases:
   - Static expression rules
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[11-type-system]]"

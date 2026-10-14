@@ -86,7 +86,7 @@ decisions:
 
 This chapter defines the normalised Surface AST for MUD 1.0. The AST preserves syntactic distinctions that affect later stages and removes punctuation, trivia, concrete grouping and sugar whose interpretation does not depend on name or type resolution.
 
-The standard mechanical diagram is [[mud-surface-ast]]. This chapter explains its invariants and how it relates to other representations.
+The standard mechanical diagram is [[syntax/mud-surface-ast.asdl]]. This chapter explains its invariants and how it relates to other representations.
 
 Nominal resolution operates on this AST and produces the normative HIR `names/mud-nominal-hir.asdl`, which instantiates symbols, scopes, resolved bindings, pending receiver-call candidate sets, anchors and a partial nominal graph without duplicating source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later typing and elaboration stages whose mechanical representation is not yet finalised.
 
@@ -836,7 +836,7 @@ This serialisation is used for snapshots, caching and tooling. It is not MUD cod
 
 ## Coverage
 
-Every production from [[mud]] must appear in:
+Every production from [[grammar/mud.ebnf]] must appear in:
 
 - `mud-syntax-kinds.yaml`.
 - `syntax-coverage.yaml`.

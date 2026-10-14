@@ -2,7 +2,7 @@
 title: Blocks and error recovery
 tags:
   - mud/specification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[08-concrete-grammar]]"

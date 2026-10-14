@@ -109,3 +109,26 @@ project/version and migration protocols. Q-023/Q-028/Q-029 still prevent claimin
 a complete admission/certification procedure. Excluded causal, descriptor,
 foreign, patch and host protocols remain open; interface transcription does not
 close them or implement a compiler/runtime.
+
+
+## Static certification closure — 2026-10-14
+
+D-166 closes Q-023 with finite nominal destination contexts, conservative legal
+catalogue fallback, and substituted complete impact summaries. D-167/D-168 close
+Q-029/Q-028 with eligible pure recursion, natural lexicographic/phase search,
+actual Rum ranks, exact scalar affine synthesis, finite source/application
+certification and prescribed proof/completion outcomes. Composite functional
+input sugar retains one contextual value; positional alias construction does
+not equate anonymous named and positional tuples.
+
+The common procedure is now a specification, with finite supplied arithmetic,
+origin/graph and rank witnesses. It is not a compiler/runtime or a complete
+solver for arbitrary predicates. Unsupported mandatory proofs are rejected by
+the fixed abstraction; interrupted verification is not completed rejection.
+Advanced future-state/eventually profiles remain Q-027/Q-030, causal completion
+and oscillation remain Q-072/Q-020, and independent foreign/host/descriptor
+protocols retain their questions. None is inferred from finite source values.
+
+The current chapter-by-chapter publication assessment and validation limits are
+[[static-certification-publication-review]]. Earlier dated entries describe the
+preceding phases and must not be used as the current blocker inventory.

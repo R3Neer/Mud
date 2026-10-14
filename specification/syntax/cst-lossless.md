@@ -50,8 +50,8 @@ The CST is **per file**. A project may contain several CSTs, but there is no sin
 
 Authority is distributed as follows:
 
-- [[mud-lexico]] defines which sequences constitute lexical items.
-- [[mud]] defines syntactic productions.
+- [[../grammar/mud-lexico.ebnf]] defines which sequences constitute lexical items.
+- [[../grammar/mud.ebnf]] defines syntactic productions.
 - [[07-lexicon]] defines lexical algorithms and rules that do not fit within EBNF.
 - [[08-concrete-grammar]] defines precedence, associativity and contextual parsing constraints.
 - `mud-syntax-kinds.yaml` maintains the mechanical inventory for the CST categories.

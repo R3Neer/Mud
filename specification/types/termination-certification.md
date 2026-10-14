@@ -1,6 +1,6 @@
 ---
 title: Normative body termination certification
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[contextual-call-analysis]]"
