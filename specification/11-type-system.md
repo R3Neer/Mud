@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-171
   - D-170
   - D-169
   - D-167
@@ -510,6 +511,13 @@ The reference preserves canonical identity. Its supported intrinsic identifier/a
 
 > [!rule] MUD-TYPE-045 — Complete finite certification procedure
 > Mandatory source/application finiteness and elementary proof decisions follow [[types/finite-static-certification]]. Its fixed normalization, supported abstraction, search and completion distinguish established violation, completed-unproved rejection and tool interruption. No implementation-specific stronger solver may expand admission under the same target.
+
+> [!rule] MUD-TYPE-046 — Explicit structural alias construction
+> A statically named concrete structural alias construction follows MUD-ALIAS-005
+> in [[13-aliases]]. Check its exact applied schema, positional/named completeness,
+> defaults, component contracts and permissions before producing that exact alias.
+> No expected-result selection, runtime Type dispatch or implicit unpacking/cast
+> supplies a missing argument or changes the constructed nominal identity.
 
 ## 12. Static acceptance and elaboration output
 

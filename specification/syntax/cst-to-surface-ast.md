@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-171
   - D-170
   - D-169
   - D-147
@@ -597,6 +598,12 @@ CallExpr(
   [x]
 )
 ```
+
+A statically named alias construction retains the same CallExpr and argument
+nodes. It is classified by nominal resolution and checked during elaboration;
+CST/AST normalization does not convert it into a callable or a structural literal,
+including its zero/one-argument forms. Generic type applications retain their
+existing TypeApplicationExpr provenance before the call suffix.
 
 ### Arguments
 

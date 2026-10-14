@@ -3209,3 +3209,25 @@ cases:
   normalizations:
   - retain-value-policy-comprehension-provenance
   produces_ast: true
+
+- id: alias-constructor-call-preserved
+  category: call
+  source: 'look Origin { let result := Vector2(1, 2) }'
+  cst_root: MudFileSyntax
+  ast: 'CallExpr(DottedPathExpr(Vector2), positionalArguments=2)'
+  normalizations: [preserve-call-shaped-construction-for-resolution]
+  produces_ast: true
+- id: alias-constructor-zero-arguments-preserved
+  category: call
+  source: 'look Origin { let result := Defaults() }'
+  cst_root: MudFileSyntax
+  ast: 'CallExpr(DottedPathExpr(Defaults), positionalArguments=0)'
+  normalizations: [preserve-call-shaped-construction-for-resolution]
+  produces_ast: true
+- id: alias-constructor-mixed-arguments-retained-before-typing
+  category: call
+  source: 'look Origin { let result := Vector2(1, y = 2) }'
+  cst_root: MudFileSyntax
+  ast: 'CallExpr(DottedPathExpr(Vector2), positionalArguments=1, namedArguments=1)'
+  normalizations: [preserve-mixed-call-arguments-for-target-specific-checking]
+  produces_ast: true

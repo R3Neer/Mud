@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-171
   - D-170
   - D-169
   - D-167
@@ -109,6 +110,66 @@ all missing components have defaults, and every resulting component check
 succeeds with its required obligations. Its result has exact nominal type A.
 An abstract A fails the first premise. A unique context is necessary even when
 several nominal aliases have matching component arity.
+
+### Explicit structural construction
+
+> [!rule] MUD-ALIAS-005 — Statically named structural constructor
+> A call-shaped expression whose target resolves unambiguously to a concrete
+> structural alias constructs that exact alias through Construct. It does not
+> invoke a callable, overload a constructor, select a type from the expected
+> result or call a runtime Type value. Every supplied component retains its
+> complete checking and owner permission obligations.
+
+```mud
+alias Vector2 { let x: Num; let y: Num }
+# Within an admitted value computation:
+let position = Vector2(1, 2)
+let named = Vector2(x = 1, y = 2)
+```
+
+The target may be a qualified alias reference or a fully resolved admitted
+static generic application, for example `(Pair with Num)(1, 2)`. An unapplied
+generic alias supplies no constructor; this form adds no constructor-specific
+argument inference. Ordinary lexical/nominal ambiguity is diagnosed before
+construction. Representation aliases, abstract aliases, things, families,
+produced query types and arbitrary Type-valued expressions are not structural
+constructors. Representation aliases retain contextual construction and to.
+
+Positional arguments provide every stored component in declaration order.
+A single argument supplies one component even when that component is itself a
+tuple; no existing tuple or alias is implicitly unpacked or converted. Named
+arguments use stored component names in declaration-relative order, without
+unknown/duplicate names. Positional and named forms cannot mix. Named construction
+may omit only explicit effective defaults. Empty argument lists are admitted
+exactly when all stored components have those defaults (vacuously for an
+otherwise admitted zero-component schema); no missing value is invented.
+
+A one-component alias accepts A(x) without introducing an anonymous singleton
+product. Construct fills omitted defaults and checks the complete component
+sequence, preserving inherited origins and initializer precedence. Derived
+fields are not constructor arguments and retain their ordinary derivation/demand
+contract. Supplied expressions are evaluated once left to right under their
+component contexts; a computing fault stops dependent argument work. All written
+arguments are statically checked. Default and destination admission retain their
+existing static/runtime requirements. The result is an already nominal A value;
+an expected unrelated B cannot rename or implicitly cast it.
+
+### Construction readability suggestions
+
+Constructor and literal forms retain equal validity. Tooling may suggest a
+statically named constructor when no locally evident unique expected alias
+identifies a structural literal. It may suggest named arguments for at least
+three positional components, especially with repeated component types. Short
+conventional forms such as Vector2(x,y) remain appropriate. These are configurable
+editor suggestions, never warnings or admission conditions.
+
+Source distance to the type declaration is only a secondary presentation
+heuristic; it cannot change meaning or independently require a suggestion.
+A visible annotation/signature can already identify the type, and constructor
+qualification does not explain unnamed argument roles. Suggestions must preserve
+the resolved alias, component order/defaults, argument demand and checked result.
+
+### Explicit conversion
 
 Nominal `to` requires normalized representation compatibility, preserves the
 underlying content and changes its exact nominal type, validating the destination

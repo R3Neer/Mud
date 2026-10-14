@@ -4,6 +4,7 @@ status: proposed
 normative: true
 questions: []
 decisions:
+  - D-171
   - D-167
   - D-168
   - D-166
@@ -86,3 +87,8 @@ The declaration certificates also check supplied comparison edges for the transi
 ## Policy and comprehension finite witnesses
 
 collection_policy_witnesses.py and test_collection_policy_witnesses.py check supplied finite input coverage, empty selected results, Bool predicate/equality distinction, interval boundaries, source capture, multiplicity/order, nested empty members and fault propagation. Predicates/results are supplied Python certificate functions; these tests are not a MUD interpreter or general coverage solver.
+
+
+`test_alias_constructor_witnesses.py` checks supplied finite component/default,
+naming, target eligibility and nominal-identity certificates. It does not resolve
+source constructors or implement a parser, typechecker or runtime.

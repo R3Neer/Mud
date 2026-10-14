@@ -27,6 +27,14 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
                 tokens.append('IDENTIFIER')
         return recognises(self.bnf, start, tokens)
 
+    def test_constructor_calls_keep_ordinary_argument_syntax(self):
+        for source in ('Vector2(1, 2)', 'Vector2(x = 1, y = 2)', 'Defaults()',
+                       '(Pair with Num)(1, 2)'):
+            self.assertTrue(self.accepts('postfix-expression', source), source)
+        # Semantic construction later rejects mixed arguments; ordinary call AST retains them.
+        self.assertTrue(self.accepts('postfix-expression', 'Vector2(1, y = 2)'))
+        self.assertFalse(self.accepts('top-level-declaration', 'let f: Num --> Num = _ --> value'))
+
     def test_alias_stored_components_require_let(self):
         for source in ('let x: Num', 'let x: Num = 0', 'let x: _ = 0'):
             self.assertTrue(self.accepts('component-declaration', source))

@@ -2834,3 +2834,34 @@ cases:
   expected: static-accept
   contract: A supplied expected nested member contract admits empty; each accepted iteration contributes
     one empty collection member.
+
+- id: alias-explicit-positional-construction
+  rules: [MUD-TYPE-046]
+  source: 'Vector2(1, 2)'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A visible concrete structural Vector2 has Num x/y components. Construction selects its exact type without an expected result.
+- id: alias-explicit-named-default-construction
+  rules: [MUD-TYPE-046]
+  source: 'Pagination(size = 30)'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Effective component order is page/size; page has an admitted explicit default. Named omission fills only that default.
+- id: alias-explicit-mixed-arguments-rejected
+  rules: [MUD-TYPE-046]
+  source: 'Vector2(1, y = 2)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Ordinary CallExpr syntax retains the arguments, but structural construction prohibits mixing positional and named forms.
+- id: alias-explicit-runtime-type-rejected
+  rules: [MUD-TYPE-046]
+  source: 'typeValue(1, 2)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: typeValue is a Type-valued binding, not a statically resolved structural alias constructor.
+- id: alias-explicit-representation-constructor-rejected
+  rules: [MUD-TYPE-046]
+  source: 'PlayerName(text)'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: PlayerName represents Text rather than a structural component schema; explicit to retains its separate contract.

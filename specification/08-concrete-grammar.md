@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-171
   - D-170
   - D-169
   - D-160
@@ -761,6 +762,13 @@ let pagination: Pagination = (2, 30) # valid
 let pagination: Pagination = (2)     # invalid: partial positional form
 let pagination: Pagination = (size = 30) # valid: page retains 1
 ```
+
+Call-shaped Alias(arguments) uses the ordinary postfix call syntax; it is
+structural construction only when the target statically resolves to an admitted
+concrete structural alias. `(Alias with T)(arguments)` names a resolved static
+application. Its typed component/default/naming contract and readability
+suggestions are [[13-aliases#Explicit structural construction]]. There is no
+runtime Type invocation or overloaded constructor.
 
 Every stored alias component requires `let` before its name, including a required component without a default. An inherited-default override remains an assignment to an existing component, not a new declaration. Parameters and family stored data retain their own forms. A component does not support outer `mut` because the alias value and each component are immutable. Its collection specification may nevertheless contain `[mut]` to grant internal capability over directly contained `thing` values; this capability does not make the collection itself assignable.
 

@@ -1,3 +1,8 @@
+-- Explicit alias construction retains CallExpr SurfaceRef provenance and an
+-- ordinary ResolvedReference role construction-target to its source alias.
+-- Static application references remain ordinary bindings. Effective schema,
+-- defaults and construction checking belong to typing; no callable or anchor
+-- is created by this expression.
 -- Functional branches share one implicit ordinary LocalSymbol kind functional-input
 -- named value between sibling selector/result scopes. It has branch SurfaceRef
 -- provenance and a source ordinal under the nearest anchored owner, no anchor.

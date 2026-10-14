@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-171
   - D-170
   - D-169
   - D-157
@@ -222,6 +223,11 @@ A sequence of identifiers linked solely by `.` is represented as `DottedPathExpr
 - Declaration and member.
 - Participant and field.
 - A combination of the above.
+
+Alias(arguments) retains ordinary CallExpr syntax and argument provenance.
+Nominal lookup resolves the written alias/application target; typing checks
+structural construction. Surface AST does not guess that a PascalCase target
+is a constructor, erase argument names or add a selected effective schema.
 
 When the chain contains calls, indices or other postfixes, it uses `MemberAccessExpr`, `IndexExpr` and `CallExpr`.
 

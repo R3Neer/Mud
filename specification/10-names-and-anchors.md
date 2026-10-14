@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-171
   - D-169
   - D-167
   - D-168
@@ -215,6 +216,18 @@ In associations `->` and branches `-->`, the left and right blocks create siblin
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
 No local scope permits forward references, loops, redeclarations or shading of a name that is already visible.
+
+## Explicit alias construction references
+
+A call-shaped construction retains CallExpr source provenance. Ordinary nominal
+lookup must unambiguously resolve its qualified alias or static application
+constructor. Record the alias target through ResolvedReference with role
+construction-target (application argument references retain their ordinary roles).
+Ambiguous nominal names are not selected by the expected result. The expression
+introduces no symbol, public anchor or callable category. Concrete/structural
+eligibility, effective component binding, defaults and value admission are typed
+checks, not Nominal HIR fields. Argument labels retain SurfaceRef provenance;
+they do not introduce given participants or local bindings.
 
 ## Generic type-parameter scope and application references
 

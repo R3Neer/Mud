@@ -8,6 +8,7 @@ depends-on:
   - "[[../15-fields-and-mutability]]"
 questions: []
 decisions:
+  - D-171
   - D-166
   - D-167
   - D-114
@@ -36,6 +37,11 @@ subaction C for account: Account { then account.Dispatch(A) }
 B is a compatible leaf operation. The contexts Dispatch(A) and Dispatch(B) are
 distinct; C → Dispatch(A) → A → Dispatch(B) → B is acyclic even though merging
 all Dispatch invocations creates an apparent declaration cycle.
+
+Explicit structural alias construction is a typed construction site, not a
+callable destination. Its argument/default computations retain their ordinary
+read, fault, permission and subordinate-call obligations; no constructor callable
+or extra public anchor is added to the catalogue.
 
 Let N be the finite catalogue of callable declarations with their admitted exact
 static generic applications. A destination is one such identity, not its display

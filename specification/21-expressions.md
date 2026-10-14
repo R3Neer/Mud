@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-171
   - D-169
   - D-167
   - D-168
@@ -169,6 +170,14 @@ For a callable value, check every static alternative against the admitted signat
 
 > [!rule] MUD-TYPE-014 — Sole action result
 > Every action/subaction returns exactly one ActionReply. No additional domain return type, success payload or second output value is admitted. Authorised state changes and message occurrences are effects, not additional return values. Imagine returns the same ActionReply contract.
+
+A CallExpr resolved to a concrete structural alias instead follows explicit
+construction in [[13-aliases#Explicit structural construction]] and produces its
+exact alias type. It is not a callable invocation. A fully specified static
+application is allowed; unapplied constructors and arbitrary runtime Type values
+are not. Components, defaults, argument demand and ordinary owner permissions
+retain the constructor contract. Mixed positional/named arguments, though
+representable for ordinary calls, are invalid for this construction.
 
 Boolean rules yield Bool, looks yield their static produced type, and real actions/subactions yield ActionReply only in an effect-capable context. Reactive/always/message declarations are trigger sources under their contracts, not interchangeable Boolean callables. A message payload type is distinct from occurrence identity.
 

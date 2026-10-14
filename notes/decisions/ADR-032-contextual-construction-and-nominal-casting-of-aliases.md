@@ -214,3 +214,11 @@ Equality `==` and inequality `!=` need no representation order, but every compar
 
 The components and fields derived from a alias are only available after a literal structural change has led to that type nominal by context or `to`. `(1, 2).derived` is invalid; `((1, 2) to CosoAlias).derived` is valid. The resolution does not search for candidate aliases by the name of the member.
 
+
+
+## Explicit construction extension
+
+D-171 additionally admits statically named concrete structural alias construction,
+with the existing component/default rules and exact target nominality. It does
+not extend to representation aliases or replace the quantitative/nominal to
+families. Current contextual literal and typed-value distinction remains.

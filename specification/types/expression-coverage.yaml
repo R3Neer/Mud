@@ -144,6 +144,8 @@ expressions:
     section: 3. Calls
     cases:
     - expression-call-expr
+    - alias-explicit-positional-construction
+    - alias-explicit-mixed-arguments-rejected
   TypeApplicationExpr:
     section: Static generic expressions
     cases:
