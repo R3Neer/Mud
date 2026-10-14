@@ -10,7 +10,10 @@ tags:
 
 ## Scope and decisions
 
-Review date: 2026-10-14. This follows [[static-chapter-publication-review]] and
+Review date: 2026-10-14. This records the preceding construct/certification phase;
+its subsequent chapter 11 publication and chapter 28 hold are assessed in
+[[type-system-publication-and-effects-hold-review]]. This follows
+[[static-chapter-publication-review]] and
 covers the publication of the developed static contracts in chapters 12–26,
 supporting 01–02, and the contextual/finite/body certification procedures.
 Nominal chapter 10, typing chapter 11 and effect chapter 28 are dependency

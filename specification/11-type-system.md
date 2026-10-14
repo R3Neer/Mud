@@ -4,7 +4,7 @@ aliases:
   - Static types of MUD
 tags:
   - mud/specification
-status: in-review
+status: current
 normative: true
 depends-on:
   - "[[03-notation]]"

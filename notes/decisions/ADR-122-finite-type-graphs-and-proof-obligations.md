@@ -23,7 +23,7 @@ Chapter 11 defines finite normalised type graphs, least-fixed-point constructor 
 
 The mandatory proof basis consists of nominal ancestry, declared guarantees and established flow facts, normalised exact interval arithmetic, constructor rules and exhaustive finite witnessed cases. Arbitrary predicates need not be decidable. Unknown is not a discharged static obligation. Permitted runtime admission checks apply to a particular value, not universal callable substitution or canonical enumeration. This completes the remaining formal proof boundary of Q-056; it does not introduce universal domain-solving or termination algorithms.
 
-The chapter remains proposed pending chapter publication. Its rules formalise accepted contracts; conceptual elaboration outputs do not prescribe ASDL, serialisation, nodes or storage strategy. D-097 continues to delimit nominal HIR and deferred semantic representation.
+Chapter 11 is current after its complete type-system publication review. Its rules formalise accepted contracts; conceptual elaboration outputs do not prescribe ASDL, serialisation, nodes or storage strategy. D-097 continues to delimit nominal HIR and deferred semantic representation.
 
 ## Verification
 

@@ -132,3 +132,14 @@ protocols retain their questions. None is inferred from finite source values.
 The current chapter-by-chapter publication assessment and validation limits are
 [[static-certification-publication-review]]. Earlier dated entries describe the
 preceding phases and must not be used as the current blocker inventory.
+
+
+## Type-system publication and effects hold — 2026-10-14
+
+[[type-system-publication-and-effects-hold-review]] records the complete chapter
+11 review and publication. The chapter's type/proof contract is independent of
+unselected runtime algorithms; its safety hypotheses and actual-view proof
+premises are explicit. Chapter 28 remains proposed: its dynamic settlement and
+completion contract must be reconciled with the runtime candidate under Q-072.
+This static task does not approve completion-round proposals or alter after.
+Earlier assessments retain their dated publication states.
