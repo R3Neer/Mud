@@ -40,7 +40,7 @@ Design examples for grouping collections, transforming text, exact statistics, p
 
 SQL could expose a named dialect, parameterised Mud inputs and typed results. A dialect alone does not select a database connection. Transactions need a contract relating preparation, Mud confirmation and exterior execution; rollback in a database does not establish atomic confirmation across both systems. SQLite-first and PostgreSQL-next remain recommendations, not chosen implementation order.
 
-Rust-backed base libraries without mandatory Python/.NET installation are a recommendation. Scientific Python, .NET/Unity, graphics and media are candidate extensions. Concrete adapter and conversion protocols remain [[questions/Q-069-foreign-adapter-contract-and-hosting|Q-069]] and [[questions/Q-070-foreign-value-conversion-lifetime-and-errors|Q-070]]. Related work includes dynamic-callable analysis Q-023, technical failures Q-007, Rum portability Q-058, randomness Q-032 and calendars Q-033.
+Rust-backed base libraries without mandatory Python/.NET installation are a recommendation. Scientific Python, .NET/Unity, graphics and media are candidate extensions. Concrete adapter and conversion protocols remain [[questions/Q-069-foreign-adapter-contract-and-hosting|Q-069]] and [[questions/Q-070-foreign-value-conversion-lifetime-and-errors|Q-070]]. Library contracts must use the specified [[specification/types/contextual-call-analysis|contextual-call analysis]] and [[specification/21-expressions|numeric/Rum contracts]]. Remaining work includes technical failures Q-007, runtime randomness Q-032 and calendars Q-033.
 
 ## Next work
 

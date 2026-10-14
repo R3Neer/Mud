@@ -1,132 +1,78 @@
-# Risks and restrictions
+# Risks and constraints
+
+This note collects design and implementation risks. Language contracts belong to
+specification and current decisions; mitigations below introduce no new semantics.
 
 ## Conceptual risks
 
-### To confuse semantic representation completely architecture-independent
-
-All semantics An executable implies decisions: identity, atomicity, concurrency, error, time and chance. MUD can do without React or a database, but it cannot be neutral with regard to its own model operational.
-
-Mitigation: treat those decisions as semantics explicitly define them and test them using different implementations.
-
-### Promising regeneration without specifying the boundaries
-
-The generated code may require manual integration. If that integration contains rules for domain, `.mud` is no longer the source of truth.
-
-Mitigation: clear contracts, generated zones, explicit adaptors and tests that compare behaviour.
-
-### Natural language as an incidental source
-
-If the AI ‘remembers’ an intention that was not recorded in `.mud` or in versioned metadata, the system retrieves semantics invisible.
-
-Mitigation: after each operation, any lasting effect must remain in the source or decision revised.
-
-### Early overextension
-
-The specification It combines compilation, reactive runtime, state tracking, generation, AI integration and Git. Implementing it horizontally can produce many components without a contract verifiable.
-
-Mitigation: first complete the formalisation of MUD 1.0 in accordance with [[notes/decisions/ADR-013-complete-formalisation-before-continuing-with-implementation|D-013]] and then validate the implementation using vertical sections and scenarios of conformance.
+- **Architecture independence confused with semantic neutrality.** Identity,
+  atomicity, concurrency, errors, time and randomness require explicit language
+  contracts even when Mud chooses no UI framework or database. Validate those
+  contracts with contrasting conformance scenarios.
+- **Regeneration with hidden domain logic.** Manual integrations and foreign
+  fragments must retain their declared contracts and reproducible dependencies.
+  Generated artefacts must preserve the source model's meaning.
+- **Natural language as hidden authority.** An operator's inferred intention must
+  not introduce behaviour absent from the model or accepted specification.
+- **Premature implementation breadth.** Complete formalisation under
+  [[notes/decisions/ADR-013-complete-formalisation-before-continuing-with-implementation|D-013]]
+  before implementing the compiler/runtime. Later implementation can proceed
+  through vertical conformance scenarios rather than many incomplete components.
 
 ## Semantic risks
 
-### No determinism accidental
+- **Accidental nondeterminism.** Unspecified enumeration, match order, native
+  behaviour or stochastic replay can alter observations. Preserve semantic order,
+  the stated demand contracts and reproducibility inputs; physical hash/scheduler
+  order cannot decide language behaviour.
+- **Nontermination and oscillation.** Static source/body certification does not
+  prove causal stabilization. Restricted reachability profiles and the still-pending
+  operational cycle/resource policy retain separate obligations.
+- **Invalid intermediate views.** Private temporary states, consolidated
+  checkpoints and confirmed state have different validation/observation boundaries.
+  Test those boundaries with traces rather than moving validation opportunistically.
+- **Combinatorial growth.** Joint bindings, derived dependencies, imagine and
+  eventually can require expensive exploration. Use cost models and measurements;
+  unsupported proof obligations and technical interruption must retain their
+  specified meanings.
+- **Unstable identity.** Renaming paths can affect anchors, dependencies and
+  persisted references. Anchor/data migrations need their own contracts before
+  automatic refactoring promises compatibility.
 
-You can browse by map, explore the collections, resolution statements `using`, coincidence or chance.
+## Tooling and implementation risks
 
-Mitigation: canonical order, explicit seeds, repeated tests and byte-by-byte comparison of IR and traces.
+- **Desynchronized derivatives.** Graphs, diagnostics and generated code must
+  refer to the same model/version and remain reconstructible.
+- **Unrelated changes in commits.** Isolate candidates or restrict edits/staging
+  to known paths and hunks; never reset another author's work.
+- **Incomplete authoring rollback.** Prepare and validate changes before publishing
+  them, rather than relying on undoing partial external mutations.
+- **Weak diagnostics.** Preserve error occurrence identity, source locations,
+  dependencies and causal provenance. Do not confuse computing errors, refusal,
+  unproved obligations and interrupted verification.
+- **An accidental IR API.** Static contracts are specified, but semantic IR nodes,
+  serialization and version migration remain undesigned. Consumers must not
+  depend on placeholder encodings.
+- **Premature syntax assumptions.** Respect the current grammar and chapter
+  publication status. Test readability on real cases and route changes through
+  the decision/conformance process rather than letting a parser choose semantics.
+- **Silent semantic choices in implementation.** Report unspecified behaviour
+  through its open question; passing a test does not authorize extending Mud.
 
-### No termination
+## Boundaries to preserve
 
-Reactive rules can fluctuate or simulate unbounded computation.
+The model and declared foreign contracts remain the source of domain behaviour.
+Boolean rules remain pure; external writes require the owning authority and
+transaction/adapter contracts. Participants and given values retain their distinct
+roles. Derivatives, prompts and maintenance logs add no language rules.
 
-Mitigation: cycle detection, restricted profiles and diagnostics that distinguish between technical limitations and contradictions semantics.
+Tentative world state is not confirmed storage. Validated normal-message
+notifications may be published provisionally with Waiting tickets; surviving
+stable-root confirmation makes them Kept and scope disposal makes them Dropped.
+This explicit protocol does not authorize leaking unchecked private state or
+performing irreversible exterior writes before their confirmation/transaction
+contract allows them.
 
-### Invalid intermediate states
-
-Validating at different times can affect which rules are triggered and which actions are accepted.
-
-Mitigation: semantics Small-scale operational testing in stages and comprehensive trace testing.
-
-### Combinatorial explosion
-
-Multiple links, calculated fields, `imagine` and `eventually` can grow exponentially.
-
-Mitigation: metrics, conservative analysis, transparent technical specifications and advanced features outside the core.
-
-### Identity unstable
-
-Renaming or moving MUD paths changes anchors and may break history, references and persisted states.
-
-Mitigation: Migrate first-class anchors before allowing automatic refactoring.
-
-## Tooling risks
-
-### Desynchronised derivatives
-
-Graph, tax reference number, code or documentation may not correspond to the same one model.
-
-Mitigation: source content and compiler version are recorded in each derivative; full reconstruction is available.
-
-### Corrupted commits
-
-An automation may include previous changes made by the user or unrelated artefacts.
-
-Mitigation: index An isolated worktree, a file allowlist and a comparison of the diff against the plan.
-
-### Incomplete rollback
-
-Editing source code, generating files and running formatters leaves several areas that need to be restored.
-
-Mitigation: transactional staging in a temporary area and publication only after validation, rather than ‘undoing’ partial changes.
-
-### Inadequate diagnostics
-
-An Error without a chain causal The MUD’s main promise is once again in doubt.
-
-Mitigation: codes for error stables, anchors, ranges, waves, readings/escrituras and suggestions for corrections.
-
-## Risks associated with future developments
-
-### IR has become an accidental API
-
-Materialisers and plug-ins can be linked to placeholder details.
-
-Mitigation: outline version, compatibility declared and migration evidence.
-
-### Syntax frozen too soon
-
-Optimise for readability before stabilising the semantics leads to costly migration.
-
-Mitigation: treat the grammar established by [[notes/decisions/ADR-057-concrete-grammar-precedence-and-continuation|D-057]] as a regulatory proposal subject to the document lifecycle; validate real-world examples and record any changes through standardisation, decision and conformance.
-
-### Silent decisions during implementation
-
-A developer will fix any inevitable gaps if the tests require it.
-
-Mitigation: the implementation must be able to select ‘not specified’ and link to the open-ended question, rather than choosing an arbitrary behaviour.
-
-## Non-negotiable restrictions
-
-- `.mud` is the sole source of behaviour for domain.
-- Interim results are not published.
-- An invalid change does not result in a commit.
-- Derivatives can be reconstructed.
-- Boolean rules are pure.
-- External writing is expressed through actions.
-- Participants and `given` remain apart.
-- The result It does not depend on random order.
-- Unresolved issues are not resolved without provenance.
-- The implementation cannot silently extend the language.
-
-## Warning signs during development
-
-Stop and check whether any of the following situations occur:
-
-- “For the time being, the order will be as given in the dictionary.”
-- “The generator can add this validation”.
-- “This case returns a false result because it’s easier.”
-- “We’ll only keep this rule in the prompt.”
-- “We’ll migrate the anchors later.”
-- “The boundary of waves defines meaning.”
-- “The parser will make a decision based on context, even if the grammar is ambiguous.”
-- “The commit also includes these changes, but they appear to be related.”
-
+Warning signs include relying on physical wave order, hiding a rule in a prompt,
+turning an error into false for convenience, waiving a mandatory proof, guessing a
+native purity contract or mixing unrelated changes into one commit.

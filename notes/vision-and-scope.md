@@ -15,7 +15,7 @@ Ordinary interaction does not have to resemble programming in a MUD. The user ex
 7. Regenerates derivatives.
 8. Commit the change to Git.
 
-MUD is both a stable interface between human intention and implementation and an executable programming language. A rigorous formal specification remains its foundation. The reference compiler and runtime are written in Rust and initially generate Rust. C and TypeScript are possible alternative targets without a near-term commitment.
+MUD is both a stable interface between human intention and implementation and an executable programming language. A rigorous formal specification remains its foundation. The planned reference compiler and runtime use Rust, with Rust as the initial generation target; they are not implemented. C and TypeScript are possible alternative targets without a near-term commitment.
 
 ## Problem it aims to solve
 
@@ -85,7 +85,7 @@ The natural language interface sits on top of the semantic operator; it is not p
 If the project is successful, I should be able to promise:
 
 - **Preservation of meaning**: the relevant logic is in `.mud`.
-- **Atomicity**: half a change is never published.
+- **Atomicity**: partial work never becomes confirmed world state; validated provisional message notifications expose their Waiting/Kept/Dropped status.
 - **Explainability**: You can list read, written and affected anchors.
 - **Reproducibility**: the same model, tickets and seed produce the same result.
 - **Reconstruction**: derivatives are regenerated from the source.
@@ -94,7 +94,7 @@ If the project is successful, I should be able to promise:
 
 ## Criteria for the success of a first version
 
-The first version does not need to express all the specification. You do need to demonstrate, from start to finish, that:
+The specification must be formalised before implementation. An initial implementation milestone can exercise a subset of its contracts, demonstrating end to end that:
 
 1. A model A small one can be written and validated.
 2. Its symbols and anchors are stable.
@@ -105,10 +105,10 @@ The first version does not need to express all the specification. You do need to
 
 ## No early targets
 
-- To be a general-purpose language.
+- To deliver every planned standard-library capability in the first implementation.
 - Replace all implementation languages.
 - Create a complete application.
-- Deal with it from the outset `eventually`, chance, calendars and multiple inheritance.
+- Deliver every advanced reachability, calendar and adapter capability in the first implementation milestone.
 - To accept any ambiguous request without human intervention.
 - To guarantee formal properties that have not yet been proven.
 
