@@ -73,7 +73,7 @@ The semantics It does not use binary floating-point numbers. An implementation m
 `Rum` represents approximate values in IEEE 754 format `binary64`. A materialisation You can only use the native float if you play the contract set for MUD.
 
 ```mud
-value: Rum = r0.1
+let value: Rum = r0.1
 ```
 
 The approach is part of the meaning:
@@ -109,13 +109,13 @@ Negation is an external operator:
 The prefix It remains compulsory even if there is a type expected `Rum`:
 
 ```mud
-value: Rum = 0.1
+let value: Rum = 0.1
 ```
 
 is invalid. It should be written as:
 
 ```mud
-value: Rum = r0.1
+let value: Rum = r0.1
 ```
 
 Nor are exact and rapid literals mixed together:
@@ -192,7 +192,7 @@ Corrected by [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|
 
 ```mud
 action InvalidRumIteration for mut total: Rum {
-    then for each value in [r0..r1] by r0.1 :
+    then foreach value in [r0..r1] by r0.1 :
         total += value
 }
 ```

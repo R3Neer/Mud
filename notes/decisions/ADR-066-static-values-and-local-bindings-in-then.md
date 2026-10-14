@@ -23,6 +23,8 @@ affects:
 
 - Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
 MUD uses `=` for stored or default values and `:=` for computed values. It was unclear whether a value written with `=` could be an expression, and how to name intermediate calculations in a `then` without turning them into world state.
@@ -40,22 +42,22 @@ A closed static expression is pure, deterministic and non-stochastic; can be ful
 The explicit value of a stored field, component, stored `family` datum or member assignment must be statically evaluable. It may be a short expression or `ValueBlock`, provided the complete body meets this contract. A `given` default remains specifically a closed static expression and does not accept `ValueBlock`.
 
 ```mud
-lives: Nat = 3
-king: Person = Arthur
-imagine: Int Interval = 1..2 | 3..4
-duration: Time = 1 hour + 30 minutes
+let lives: Nat = 3
+let king: Person = Arthur
+let imagine: Int Interval = 1..2 | 3..4
+let duration: Time = 1 hour + 30 minutes
 ```
 
-The interval union produces one normalised discontinuous interval value; it is not a special exception. If `victories` is state, `initialScore: Nat = victories * 3` is invalid; the computed form is `score := victories * 3`. `=` introduces materialisable storage or a default, whereas `:=` declares a computed dependency. The distinction does not depend on how simple the expression looks.
+The interval union produces one normalised discontinuous interval value; it is not a special exception. If `victories` is state, `let initialScore: Nat = victories * 3` is invalid; the computed form is `let score := victories * 3`. `=` introduces materialisable storage or a default, whereas `:=` declares a computed dependency. The distinction does not depend on how simple the expression looks.
 
 ```mud
-initialScore: Nat = victories * 3   # invalid when victories is state
-score := victories * 3
+let initialScore: Nat = victories * 3   # invalid when victories is state
+let score := victories * 3
 ```
 
 ### Computed and stored locals
 
-An executable block may declare a computed local with `x [derived-form] := value-body`, an immutable stored local with `x: X = value-body`, or a mutable stored local with `mut x: X = value-body`.
+An executable block may declare a computed local with `let x [derived-form] := value-body`, an immutable stored local with `let x: X = value-body`, or a mutable stored local with `mut x: X = value-body`.
 
 The computed form is pure and not assignable, retaining the applicable inference and coercion rules. Stored forms create execution-frame slots; only `mut` may be reassigned. An initializer is evaluated when execution reaches its declaration and may read the runtime projection visible there. None of these locals creates a field, public anchor or persistent state.
 
@@ -71,8 +73,8 @@ The name is visible from the instruction after its declaration to the end of its
 
 ```mud
 then {
-    tax := basePrice / 10
-    finalPrice := basePrice + tax
+    let tax := basePrice / 10
+    let finalPrice := basePrice + tax
     account.balance -= finalPrice
 }
 ```
@@ -81,13 +83,13 @@ This is invalid because `tax` is referenced before its declaration:
 
 ```mud
 then {
-    finalPrice := basePrice + tax
-    tax := basePrice / 10
+    let finalPrice := basePrice + tax
+    let tax := basePrice / 10
     account.balance -= finalPrice
 }
 ```
 
-Each `for each` block creates a new local scope per iteration. Locals do not survive into the next iteration. A `LocalForEach` in a `ValueBlock` may modify mutable slots in the enclosing `ValueBlock`; an executable traversal may additionally write authorised world locations.
+Each `foreach` block creates a new local scope per iteration. Locals do not survive into the next iteration. A `LocalForEach` in a `ValueBlock` may modify mutable slots in the enclosing `ValueBlock`; an executable traversal may additionally write authorised world locations.
 
 A `then` still requires at least one effect or action call. A block consisting only of local bindings changes no world state and is invalid as an action body or reactive consequence.
 

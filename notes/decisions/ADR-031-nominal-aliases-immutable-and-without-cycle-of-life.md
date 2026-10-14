@@ -95,7 +95,7 @@ alias CityName :=
 A value from alias is unchangeable. A link that contains only that value It is unable to update one of its components:
 
 ```mud
-square := Piece.square
+let square := Piece.square
 square.file = B # invalid
 ```
 

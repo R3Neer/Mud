@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-162
@@ -53,7 +54,7 @@ fields. Component defaults do not remove components from the representation.
 ```mud
 alias PlayerName := Text
 alias Vector2 { x: Num; y: Num }
-position: Vector2 = (1, 2)
+let position: Vector2 = (1, 2)
 ```
 
 > [!rule] MUD-ALIAS-001 — Nominal immutable values
@@ -237,17 +238,17 @@ write-back destinations belong to later phases.
 
 ```mud
 alias Pagination { page: Nat = 1; size: Nat = 20 }
-p: Pagination = (size = 30)       # constructs page=1, size=30
+let p: Pagination = (size = 30)       # constructs page=1, size=30
 alias PlayerName := Text
-name: PlayerName = "Ada"         # contextual literal construction
-raw: Text = "Ada"
-converted: PlayerName = raw to PlayerName
+let name: PlayerName = "Ada"         # contextual literal construction
+let raw: Text = "Ada"
+let converted: PlayerName = raw to PlayerName
 alias Tree { children: Tree [*] = empty }
 ```
 
 ```mud
-bad: Pagination = (2)            # invalid: incomplete unnamed form
-badName: PlayerName = raw        # invalid: typed Text does not become alias
+let bad: Pagination = (2)            # invalid: incomplete unnamed form
+let badName: PlayerName = raw        # invalid: typed Text does not become alias
 alias Impossible { next: Impossible } # invalid: no finite value
 alias A := B
 alias B := A                     # invalid: transparent cycle
@@ -255,7 +256,7 @@ alias B := A                     # invalid: transparent cycle
 
 Inside an action with authority to update `Piece.square`, writing
 `Piece.square.file = C` reconstructs its stored Square value. Writing
-`square.file = C` after `square := Piece.square` is invalid because the binding
+`square.file = C` after `let square := Piece.square` is invalid because the binding
 has no writable root. Two aliases both represented by Text do not compare as
 the same nominal values.
 

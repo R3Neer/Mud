@@ -15,6 +15,7 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-164
@@ -35,17 +36,61 @@ decisions:
 
 # 22. Quantifiers and finite iteration
 
+## Pure foreach comprehensions
+
+`foreach binding in source [by step] [if predicate] --> value-body` is a pure
+collection-producing comprehension. `foreach ... : body` is executable or
+confined private traversal; its colon is mandatory and its body may be short
+or braced. The separated spelling for plus each is not traversal syntax.
+Selection retains `binding in source : predicate` and returns surviving source
+occurrences, not predicate results. A comprehension instead emits one complete
+body result per accepted occurrence.
+
+```mud
+let doubles := foreach number in numbers --> number * 2
+let flags := foreach number in numbers --> number > 1
+let names := foreach person in people if person.age >= 18 --> person.name
+let named := foreach person in people --> naming[person]
+```
+
+For ordered numbers [1,2,3], doubles is [2,4,6] and flags is [false,true,true].
+The latter does not filter numbers. Source production and optional step are
+checked in the outer scope. Capture a proved finite canonical source once;
+introduce the validated positional binding in the filter/body scopes. These
+scopes share the immutable iterator binding but not filter-local declarations.
+Dictionary pairs follow the existing key/association projection contract.
+Unlike selection of associations, comprehension returns body values.
+Named-product destructuring and binding mismatch filtering are not permitted.
+
+Comprehension filters are pure deterministic singleton Bool expressions in the
+captured view; body ValueBlocks may mutate only fresh private storage. A body
+cannot execute world effects or manufacture authority. Every accepted body
+evaluates in that captured view. Computing faults propagate through the owning
+block's error channel, never becoming a dropped element or implicit false.
+Prove source enumeration and body/filter termination even for an empty source.
+by remains domain progression, not an arbitrary collection stride. Bare finite
+domains may be explicitly materialised with all D to produce source collections.
+
+Preserve source occurrence multiplicity and observable order. Do not preserve
+source uniqueness unless independent non-collision evidence proves it for the
+produced values. Each body result is one outer member: collection-valued results,
+including empty, remain nested and are never implicitly flattened. A scalar
+body over an unfiltered source [l..u] gives [l..u]; with a filter the conservative
+outer bound is [0..u]. Infer one compatible member contract or the defined union
+join from the body. Retain only authority actually supplied by produced values.
+No lazy source-language sequence or general function category is introduced.
+
 ## Forms and result categories
 
 Quantifiers consume a finite enumerable source and a Boolean predicate.
-Executable `for each` consumes such a source to produce effects or confined
+Executable `foreach ... :` consumes such a source to produce effects or confined
 private computation; it does not construct a collection of body results.
 
 ```mud
-anyPositive := exists item in values : item > 0
-positiveCount := count item in values : item > 0
+let anyPositive := exists item in values : item > 0
+let positiveCount := count item in values : item > 0
 action Accumulate for values: Int [* ordered], mut total: Int {
-    then for each item in values : total += item
+    then foreach item in values : total += item
 }
 ```
 

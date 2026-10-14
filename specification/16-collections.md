@@ -11,6 +11,7 @@ depends-on:
 questions:
   - Q-032
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-162
@@ -37,6 +38,10 @@ decisions:
 
 # 16. Cardinalities and collections
 
+## Per-occurrence transformation
+
+A `foreach ... --> value-body` comprehension produces one complete body value per accepted source occurrence. It preserves multiplicity and observable order, proves output uniqueness independently and retains nested/empty collection members without flattening. Scope, filtering, cardinality, fault and enumeration contracts follow [[22-quantifiers-and-iteration#Pure foreach comprehensions]].
+
 ## Values and shapes
 
 Collections contain finite member occurrences. Cardinality, multiplicity,
@@ -45,9 +50,9 @@ An unbounded static upper limit permits arbitrarily large finite values, never
 an infinite or lazy source-language sequence.
 
 ```mud
-scores: Int [*] = [3, 1, 3]
-distinct: Int [* unique] = [3, 1, 3]
-matrix: Int [*] [*] = [[1, 2], [3, 4]]
+let scores: Int [*] = [3, 1, 3]
+let distinct: Int [* unique] = [3, 1, 3]
+let matrix: Int [*] [*] = [[1, 2], [3, 4]]
 ```
 
 Every field has an outer collection shape, including singleton `[1]`. An ordered
@@ -206,7 +211,7 @@ nonunique collections is invalid. A `[2 unique]` literal `[1,1]` normalizes to
 one member, warns for duplication, then fails cardinality. Taking three members
 can produce fewer than three; an outer `[3]` contract still requires three.
 
-`items: Int [*] = all` cannot materialize the infinite Int domain. Num is
+`let items: Int [*] = all` cannot materialize the infinite Int domain. Num is
 countably infinite and a bounded rational interval is not thereby finite. Rum
 has finitely many representable values but no supplied numeric-domain enumeration;
 explicit finite Rum collections remain traversable. Mathematical finiteness and

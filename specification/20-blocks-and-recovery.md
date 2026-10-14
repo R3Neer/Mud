@@ -14,6 +14,7 @@ depends-on:
 questions:
   - Q-007
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-165
@@ -45,8 +46,8 @@ protected effect boundaries and composition are [[28-effects]]. These interfaces
 do not define causal occurrence generation, wave discovery or adapter protocols.
 
 ```mud
-result: Num = {
-    divisor: Num = 0
+let result: Num = {
+    let divisor: Num = 0
     10 / divisor
 } otherwise then 0
 ```
@@ -218,9 +219,9 @@ The following are fragments with stated contracts. `failure` is one existing
 concrete Error value, `refusal` one Refusal value, and `issue` a handler binding:
 
 ```mud
-result: Num = { raise failure } otherwise then 0
-errors: Error = failure       # ordinary value; no implicit fault
-flag: Bool = false            # ordinary value; no intrinsic refusal
+let result: Num = { raise failure } otherwise then 0
+let errors: Error = failure       # ordinary value; no implicit fault
+let flag: Bool = false            # ordinary value; no intrinsic refusal
 ```
 
 The first fragment checks as Num and recovers zero; raise does not construct
@@ -229,9 +230,9 @@ in its inherited optional cause component and be raised. Cause storage does not
 automatically reproduce the original occurrence in the pending set.
 
 ```mud
-result: Num = { raise "explanation" } # invalid: Text is not ErrorPayload
-result: Num = { raise empty }         # invalid: payload cannot be empty
-result: Num = { raise refusal }       # invalid: Refusal is not Error
+let result: Num = { raise "explanation" } # invalid: Text is not ErrorPayload
+let result: Num = { raise empty }         # invalid: payload cannot be empty
+let result: Num = { raise refusal }       # invalid: Refusal is not Error
 ```
 
 Boundary example: two equal-valued Error occurrences each match a catch-all;

@@ -44,9 +44,9 @@ Every `given` has a mandatory name, is read-only and may declare a static defaul
 
 ```mud
 given
-    origin: Square = Capital,
+    let origin: Square = Capital,
     depth: Nat,
-    exhaustive: Bool = false
+    let exhaustive: Bool = false
 ```
 
 A `given` permits neither external mutability nor an inner `mut` capability. If an action needs to write to the supplied collection or to the state of a received `thing`, that value is an operation subject and must be declared with `for`.

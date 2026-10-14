@@ -18,6 +18,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-169
   - D-166
   - D-167
   - D-168
@@ -445,7 +446,7 @@ Chapter: [[22-quantifiers-and-iteration]].
 Defines:
 
 - Quantifiers and aggregators over finite enumerable sources.
-- `for each`, iteration bindings, ordering, filters, steps and membership snapshots.
+- `foreach`, iteration bindings, ordering, filters, steps and membership snapshots.
 - Direct consumption of finite domains when no collection is produced and termination requirements for every traversal; certification has one versioned normative procedure with a reusable reference analyzer, distinct from a tool resource interruption.
 
 ## 23. Boolean rules

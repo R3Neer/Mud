@@ -150,8 +150,8 @@ A numeric hole permits:
 Left precision is permitted for every basic numeric type. Right precision is permitted only for types that can show a fractional part: `Num`, `Rum` and `Money`. Formatting changes exclusively the produced `Text`, never the value or its type.
 
 ```mud
-count: Nat = 12
-ratio: Num = 12.3
+let count: Nat = 12
+let ratio: Num = 12.3
 
 "{count:4}"     # 0012
 "{ratio::2}"    # 12.30
@@ -167,11 +167,11 @@ The `~format` metadata of a `point over` magnitude uses this same syntax, not a 
 A public field whose value is a magnitude may select its display with `in`:
 
 ```mud
-speed := vehicle.speed in km/h
-time := clock.time in second
+let speed := vehicle.speed in km/h
+let time := clock.time in second
 ```
 
-Omitting it is legal, but produces a warning where a unit can be selected because it makes a public boundary depend on its canonical projection. The suggested fix explicitly adds that unit. A magnitude without units publishes its number and produces no warning. For a point magnitude, a direct field without `in` publishes the numeric coordinate, not `~format`; to publish the formatted representation, declare a `Text` field, for example `timeText := "{clock.time}"`.
+Omitting it is legal, but produces a warning where a unit can be selected because it makes a public boundary depend on its canonical projection. The suggested fix explicitly adds that unit. A magnitude without units publishes its number and produces no warning. For a point magnitude, a direct field without `in` publishes the numeric coordinate, not `~format`; to publish the formatted representation, declare a `Text` field, for example `let timeText := "{clock.time}"`.
 
 The rule applies to public fields whose direct value is a magnitude. Recursive foreign serialization of magnitudes contained in aliases or collections belongs to Q-070 conversion/hosting protocols; closed Q-051 concerns basic look identity/selection.
 

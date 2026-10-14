@@ -11,6 +11,7 @@ depends-on:
   - "[[15-fields-and-mutability]]"
 questions: []
 decisions:
+  - D-169
   - D-014
   - D-015
   - D-018
@@ -126,7 +127,7 @@ ancestor order never resolves a conflict. Externally writable stored contracts
 are invariant. Initialisers select values and cannot create declarations.
 
 Every newly declared stored field has an explicit, statically admissible
-initialiser. A declaration `field: Type = value` is one declaration, not a
+initialiser. A declaration `let field: Type = value` is one declaration, not a
 separate assignment. `field = value` in a thing body must resolve to an inherited
 stored field. Declaring that field locally and assigning it separately in the
 same definition is invalid. Types supply no implicit initial value.
@@ -203,7 +204,7 @@ thing A as B
 thing B as A                 # invalid: ancestry cycle
 thing Store with T           # invalid: concrete generic declaration
 thing Broken as Kingdom {
-    treasury: Money = 10
+    let treasury: Money = 10
     treasury = 20            # invalid: local declaration plus assignment
 }
 ```

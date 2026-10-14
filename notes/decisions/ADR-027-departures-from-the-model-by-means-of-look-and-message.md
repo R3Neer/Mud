@@ -36,8 +36,8 @@ A `look` declares explicit participants with `for`, does not support `given` and
 
 ```mud
 look RealmSummary for kingdom: Kingdom {
-    name := kingdom.name
-    population: Nat := kingdom.cities.population.sum
+    let name := kingdom.name
+    let population: Nat := kingdom.cities.population.sum
 }
 ```
 
@@ -45,7 +45,7 @@ Conceptual form:
 
 ```text
 look name for participants {
-    public-property [ : type ] := expression
+    let public-property [ : type ] := expression
     ...
 }
 ```
@@ -61,8 +61,8 @@ message KingChanged on kingdom: Kingdom {
     when kingdom.king changes
     if kingdom.visible
 
-    kingdomName := kingdom.name
-    kingName: Text := kingdom.king.name
+    let kingdomName := kingdom.name
+    let kingName: Text := kingdom.king.name
 }
 ```
 
@@ -72,7 +72,7 @@ Conceptual form:
 message name on participants {
     when boolean-expression
     [if boolean-expression]
-    public-property [ : type ] := expression
+    let public-property [ : type ] := expression
     ...
 }
 ```

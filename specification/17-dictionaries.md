@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-033
@@ -41,8 +42,8 @@ is a pure branch policy applied to an input; its selectors and results are
 computations, not mutable associations.
 
 ```mud
-labels: Int -> Text = 1 -> "one", 2 -> "two"
-describe: Int --> Text [ordered] =
+let labels: Int -> Text = 1 -> "one", 2 -> "two"
+let describe: Int --> Text [ordered] =
     value > 0 --> "positive",
     _ --> "other"
 ```
@@ -151,42 +152,103 @@ contracts and inferred bounds must account for that omission.
 
 ## Functional policy branches
 
-> [!rule] MUD-DICT-003 — Explicit pure selectors
-> An ordinary `selector --> result` branch has a singleton-Bool ExpressionBlock
-> selector and an admitted ValueBlock result. `value` denotes the input in both
-> independent scopes. No implicit value equality, type query or membership
-> selector is inserted. `_` is fallback, not a binding or readable value.
+> [!rule] MUD-DICT-003 — Pure exhaustive selectors
+> Every functional dictionary has pure deterministic interpreted selectors and proven input coverage. Its results satisfy the complete output contract.
 
-Selectors/results may read external state, recording all transitive dependencies
-and observing one stable application snapshot. They have no world-write/action
-authority; result ValueBlocks may use confined private temporaries. Functional
-dictionaries admit neither outer mutability nor inner `[mut]`, and cannot supply
-a `for each` enumeration of branches or input population.
+A functional branch has a pure selector and a ValueBlock result. Its input
+is the implicit immutable ordinary variable `value`, visible in both sibling
+scopes. It is not a reserved or contextually classified word. Normal lookup,
+duplicate-name and no-shadowing rules apply; neither result nor selector may
+redeclare it. Selector locals do not escape to the result. Exact associations
+do not inject value: their values are computed at association construction,
+not recomputed for each lookup.
 
-Ordinary normalized selectors have distinct local branch keys; duplicate keys
-are invalid. `_` has one unique fallback key. Changing only a result retains the
-selector key; changing a selector changes that local identity. A branch has no
-public anchor or metadata-bearing descriptor. Source/model editing of branches
-is not runtime policy mutation.
+Inside a functional branch, `.member` abbreviates `value.member`, including
+subsequent access/index/call suffixes and Text interpolations. It supplies no
+receiver outside that branch and never picks a traversal binding implicitly.
 
-| Mode | Application contract |
+Interpret each selector operand with its established static category before
+combining selector `not`, `and` and `or`:
+
+| Written selector | Predicate |
 | --- | --- |
-| FirstMatch (`ordered`) | Test ordinary branches in source order; first match wins. Fallback is last. Without match/fallback result cardinality is [0..1]; fallback supplies the required one result. |
-| AllMatches | Evaluate ordinary branches; each match contributes its admitted result. Source order does not select a winner. Fallback contributes one result only with no ordinary match. |
+| Ordinary singleton Bool expression | The expression itself. |
+| Ordinary non-Bool singleton value expression | `value == expression`. |
+| Interval/domain expression | `expression has value`, preserving all boundaries. |
+| Nominal type reference | `value is Type`. |
+| `== expected`, `!= expected`, `< limit`, `<= limit`, `> limit`, `>= limit` | The corresponding comparison with value. |
+| `is Type`, `is not Type`, `iis Type`, `iis not Type` | The explicit nominal test. |
+| `not selector` | Negation of the interpreted predicate. |
+| `_` | Residual fallback. |
 
-For AllMatches, a proved maximum n of matching branches supplies [0..n] before
-result normalization; fallback raises the lower bound to one. Ordinary/keyed
-uniqueness normalizes produced result values under its supported equality
-criterion. In FirstMatch either criterion is redundant and receives a removal
-suggestion. A selected branch's computing fault enters ordinary block recovery;
-it is not a reason to retry another signature or treat the branch as no match.
-No type provides an implicit fallback.
+Bool operands keep their ordinary predicate meaning: `false` never applies;
+`== false` compares the input with false. For a non-Bool expected value,
+`not expected` means inequality. For an interval it means exclusion and for a
+type it means failed membership. Arbitrary collection expressions acquire no
+implicit membership. Explicit equality forces value comparison when supported;
+`== (1..10)` compares an interval value, whereas `(1..10)` tests membership in
+the open interval. Bare `1..10` retains closed-bound sugar. Type membership does
+not erase nominal identity or the distinction between is and iis.
 
-Composite application `F[a, b]` constructs one contextual input just as
-`F[(a, b)]` does. The input must admit that complete positional construction;
-there are no independently dispatched multiple keys. Named alias components
-may be supplied positionally; anonymous named and positional products remain
-distinct. Ordinary input domain/shape checks and once-only argument demand apply.
+Logical operators combine the expanded predicates with their ordinary demand,
+pruning and narrowing rules. `Low or Medium` and `== Low or == Medium` compare
+family members, rather than applying Boolean or to member values. A complete
+condition such as `value.age >= 18 and value.hasPermit` needs no additional if.
+No as input binding, structural selector patterns or new guard form exists.
+Supported equality, singleton-Bool admission and purity remain mandatory.
+
+Composite application `policy[a, b]` supplies one complete contextual input,
+equivalent to `policy[(a, b)]`. The implicit value is that complete tuple or
+nominal product, not one independently dispatched argument. No argument names
+are injected as locals. Named components are accessible through value/.member;
+anonymous positional products use admitted positional binding.
+
+```mud
+let total: (Int, Int) --> Int [ordered] =
+    _ --> {
+        let (left, right) = value
+        left + right
+    }
+```
+
+total[2,3] applies this one tuple-input policy and produces 5 under its contract.
+A nominal named product cannot be opened with that positional binding; access
+its named components instead. Structural input identity and once-only input
+evaluation retain the ordinary contextual-construction rules.
+
+Coverage is universal over the admitted input contract and applicable views,
+not a check of one current world or runtime sample. State-dependent guards
+require fallback unless the version's finite static certificate procedure
+proves coverage independently of that sample. Finite family enumeration,
+nominal inclusion/exclusion, static domain coverage and propositional Boolean
+certificates use the existing static proof rules. No general theorem solver
+or type-based nominal guessing is introduced.
+
+Each dictionary must cover every input admitted by its complete input contract.
+Coverage must be proved from declared family members, nominal alternatives,
+admitted interval/domain relations, ordinary supported Boolean facts or a
+residual `_`. Unproved coverage is static rejection, including for a dictionary
+with an empty-admitting output. Arbitrary predicates need a fallback when the
+supported proof procedure cannot establish coverage. Closed-family members
+can be enumerated; union coverage respects overlapping ancestry and exact iis
+tests rather than treating every nominal type as a disjoint variant.
+
+Fallback is unique and last. It applies only when no ordinary selector applies.
+A selected result yielding empty has handled that input and does not trigger
+fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
+is valid when the output admits absence. Selected computing faults propagate;
+they do not retry another branch or fallback. Ordered FirstMatch chooses the
+first applicable selector; unordered AllMatches evaluates all ordinary selectors
+in one snapshot and produces all applicable results. Coverage is required in
+both modes; unreachable/redundant cases are diagnosed when provable.
+
+Input and output types may be inferred only with unique evidence/context.
+`_ --> .name` alone does not establish an input type. An explicit input with
+an output hole can, as in `let naming: Person --> _ [ordered] = _ --> .name`.
+Output cardinality follows admitted branch results, not coverage alone; a
+covered FirstMatch returning optional values can still produce empty.
+
+Functional dictionaries have no outer mutability or inner `[mut]` capability and cannot enumerate branches or their input population. All reads record transitive dependencies in one stable application snapshot. Branch selector keys remain local normalized reconstruction identities without public anchors; equivalent shorthand normalizes to the same predicate key.
 
 ## Recursive admission and pointwise algebra
 
@@ -222,8 +284,8 @@ With L=(1->"one",2->"two") and R=(2->"other",3->"three"), L|R retains
 keys 1 and 3. Exchanging L and R changes the shared-key value. A partial write
 through an absent key creates nothing; a valid whole association write can insert.
 
-A selector `1 --> "one"` is invalid: write `value == 1 --> "one"`.
-Assigning policy branches at runtime, using F in `for each`, comparing F==G,
+A selector `1 --> "one"` compares value with 1. A Bool selector false is a condition; write `== false` for equality. A policy with unproved coverage and no fallback is invalid.
+Assigning policy branches at runtime, using F in `foreach`, comparing F==G,
 or using a functional value as an exact key is invalid. Combining -> and -->
 operands or putting an effective arrow alias inside a union is invalid.
 

@@ -43,7 +43,7 @@ A\mathbin{\odot}B
 [\,a\mathbin{\odot}b\mid a\in A,\ b\in B\,].
 $$
 
-The collection retains one occurrence for each pair of occurrences. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, the cardinality before any uniqueness normalisation is:
+The collection retains one occurrence foreach pair of occurrences. If the cardinalities are $[\ell_A..u_A]$ and $[\ell_B..u_B]$, the cardinality before any uniqueness normalisation is:
 
 $$
 [\ell_A\ell_B..u_Au_B].

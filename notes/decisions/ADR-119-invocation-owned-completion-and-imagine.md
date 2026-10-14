@@ -42,7 +42,7 @@ ActionReply is an ordinary value. Real action calls are admitted only in an effe
 
 ```mud
 then {
-    reply: ActionReply = actor.Move()
+    let reply: ActionReply = actor.Move()
     # the reply can be passed to an ordinary rule/action contract
 }
 ```
@@ -50,8 +50,8 @@ then {
 Imagine executes the invocation, consolidation, checkpoint and after protocol in a disposable isolated alternative branch and returns ActionReply, without converting it to Bool or propagating an Errors alternative merely because it is returned. It always discards tentative world writes, occurrence queues, real randomness consumption, resolution identities, logs and external delivery. Pure contexts can use imagine and then inspect its reply through ordinary types/narrowing. Static admissibility cycles remain invalid. Foreign operations used under imagination need checked/trusted isolation contracts and cannot publish irreversible effects.
 
 ```mud
-reply: ActionReply = imagine actor.Move()
-canMove := reply is Success
+let reply: ActionReply = imagine actor.Move()
+let canMove := reply is Success
 ```
 
 Imagine uses the existing prefix-operator precedence and root-capability checking of its operand; it is not a general sandbox for arbitrary effect statements. The word allowed is an ordinary identifier, not the speculative keyword. Cost/memoization/resource behavior remains Q-035 and cannot silently turn inability to evaluate into Refusal.

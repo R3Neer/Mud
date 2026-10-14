@@ -63,7 +63,7 @@ The compound operators `+=`, `-=`, `*=`, `/=`, `|=`, `&=`, `^=` and `--=` use th
 A local binding containing only an alias value does not become a writable location:
 
 ```mud
-order := orders[id]
+let order := orders[id]
 order.status = Shipped # invalid
 ```
 

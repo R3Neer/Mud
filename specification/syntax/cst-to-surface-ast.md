@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-169
   - D-147
   - D-146
   - D-145
@@ -53,6 +54,19 @@ decisions:
 ---
 
 # Conversion from CST to Surface AST
+
+## Stored shapes, selector spelling and foreach results
+
+Normalize optional stored annotations into ExplicitStoredShape or
+InferredStoredShape, retaining absent shape rather than inserting Any or a
+type hole. let/mut, foreach, colon and result-arrow spelling remain in the CST.
+ComprehensionExpr is not lowered into mutation or executable traversal.
+ImplicitMemberExpr preserves receiver omission. Every functional --> left side normalizes to a SelectorExpr/selector_syntax tree, including a complete condition retained as a Bool operand; ordinary Bool expressions, equality shorthand and domain/
+type operand interpretation are elaboration decisions. Logical selector trees
+retain demand order and exact written interval boundaries. Do not inject an
+input variable into exact associations, invent structural patterns or bind as.
+Functional value is an ordinary nominally resolved input symbol, not a token
+classification. Input/filter/result scope contracts follow 10-names-and-anchors.
 
 ## State and purpose
 
@@ -449,7 +463,7 @@ Shared behaviour preambles convert calculated locals to BehaviourCalculatedLocal
 
 Local positional `=`/`:=` forms produce StoredPatternDecl/DerivedPatternDecl and their owner-specific value/effect wrappers. Pure positional `:=` forms produce PurePatternLocal(PurePatternDecl) with an ExpressionBlock RHS. Preserve every nested NameBinding, DiscardBinding and PositionalBinding and its source span. Local declaration roots must be positional; repeated discards survive, while duplicate/shadowed names are diagnosed by nominal resolution. No lowering here evaluates a stored RHS several times or captures a live derived result.
 
-Classify a complete positional pattern followed immediately by = or := as a local pattern declaration before assignment-candidate projection. Name lookup cannot alter this syntactic classification. Access suffixes before the assignment operator do not match a pattern declaration and do not introduce multi-target assignment.
+Classify let followed by a complete positional pattern and = or := as a local pattern declaration before assignment-candidate projection. Name lookup cannot alter this syntactic classification. Access suffixes before the assignment operator do not match a pattern declaration and do not introduce multi-target assignment.
 
 Each type-inference-hole maps to TypeInferenceHole at its exact recursive location. Stored-prefixed structural productions normalize to the ordinary type/product/generic/dictionary constructors; only the explicit hole node is new. Context validation requires an eligible stored declaration with its own initial value and rejects holes in general type/signature/derived positions. Unsolved holes are later typing errors, not pre-AST syntax failures. Written modifiers/cardinality omission provenance is preserved.
 
@@ -501,7 +515,7 @@ The concrete operator is converted to:
 
 ### Iteration
 
-Every iteration binding produces IterationBinding(pattern). A name becomes NameBinding, `_` becomes DiscardBinding and a positional pattern becomes recursive PositionalBinding. There is no syntactic dictionary-specific binding constructor; later typing identifies association projection from the source contract. Executable `for each` retains `by` as `step?`, normalises `if` to `ExpressionBlock`, and converts both its short effect and the block after `:` to `EffectBlock`. Iteration inside a `ValueBlock` is another production and produces `LocalForEach` with `LocalStatementBlock`. Addressability, compatibility and zero steps belong to later phases.
+Every iteration binding produces IterationBinding(pattern). A name becomes NameBinding, `_` becomes DiscardBinding and a positional pattern becomes recursive PositionalBinding. There is no syntactic dictionary-specific binding constructor; later typing identifies association projection from the source contract. Executable `foreach` retains `by` as `step?`, normalises `if` to `ExpressionBlock`, and converts both its short effect and the block after `:` to `EffectBlock`. Iteration inside a `ValueBlock` is another production and produces `LocalForEach` with `LocalStatementBlock`. Addressability, compatibility and zero steps belong to later phases.
 
 ## Expressions
 

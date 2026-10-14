@@ -5,7 +5,7 @@ cases:
   rules:
   - MUD-TYPE-002
   - MUD-TYPE-005
-  source: 'wide: Num = natural'
+  source: 'let wide: Num = natural'
   source_scope: read-only-inclusion-judgement-fragment
   expected: static-accept
   contract: Nat widens through Int to Num. The witness disposition concerns unconditional inclusion, not an
@@ -21,7 +21,7 @@ cases:
   rules:
   - MUD-TYPE-002
   - MUD-TYPE-005
-  source: 'approximate: Rum = exact'
+  source: 'let approximate: Rum = exact'
   source_scope: read-only-inclusion-judgement-fragment
   expected: static-reject
   contract: Exact/approximate mixing needs an explicit quantitative conversion. The witness disposition concerns
@@ -135,7 +135,7 @@ cases:
   rules:
   - MUD-TYPE-002
   - MUD-TYPE-005
-  source: 'raw: Text = playerName'
+  source: 'let raw: Text = playerName'
   source_scope: read-only-inclusion-judgement-fragment
   expected: static-reject
   contract: Nominal representation equality is not implicit subtyping. The witness disposition concerns unconditional
@@ -443,14 +443,14 @@ cases:
 - id: producer-identity
   rules:
   - MUD-TYPE-003
-  source: a := actor.Stats(); b := actor.Summary()
+  source: let a := actor.Stats(); let b := actor.Summary()
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Distinct producers retain distinct static nominal result types despite identical field contents.
 - id: ambiguous-join-retains-union
   rules:
   - MUD-TYPE-008
-  source: result := selected.Stats()
+  source: let result := selected.Stats()
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Under multiple incomparable common result minima, the inferred type retains the original union.
@@ -498,14 +498,14 @@ cases:
 - id: char-context
   rules:
   - MUD-TYPE-009
-  source: 'letter: Char = "a"'
+  source: 'let letter: Char = "a"'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: One decoded scalar receives Char context; context-free "a" remains Text.
 - id: exact-division
   rules:
   - MUD-TYPE-011
-  source: 'quotient: Num := 1 / 3'
+  source: 'let quotient: Num := 1 / 3'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Exact division produces Num without integer truncation.
@@ -520,7 +520,7 @@ cases:
 - id: optional-index-and-extrema
   rules:
   - MUD-TYPE-009
-  source: 'witness := min x in values: x > 0'
+  source: 'let witness := min x in values: x > 0'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A finite ordered source with no proved survivor yields a Nat [0..1] witness; absence is not an
@@ -544,7 +544,7 @@ cases:
   rules:
   - MUD-TYPE-010
   - MUD-EFFECT-003
-  source: reply := imagine actor.Move()
+  source: let reply := imagine actor.Move()
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: In a pure reading owner an isolated root-capable action yields ActionReply, never implicit Bool.
@@ -855,7 +855,7 @@ cases:
 - id: nat-intrinsic-domain
   rules:
   - MUD-TYPE-005
-  source: 'nonnegative: Int in [0..*] = natural'
+  source: 'let nonnegative: Int in [0..*] = natural'
   source_scope: read-only-inclusion-judgement-fragment
   expected: static-accept
   contract: natural has Nat contract. Its intrinsic nonnegative domain discharges read-only inclusion without
@@ -872,7 +872,7 @@ cases:
 - id: any-only-join-keeps-union
   rules:
   - MUD-TYPE-008
-  source: result := chosen.Stats()
+  source: let result := chosen.Stats()
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The static callable alternatives are distinct produced types whose only common upper contract
@@ -902,7 +902,7 @@ cases:
   rules:
   - MUD-TYPE-008
   - MUD-TYPE-009
-  source: number := 3
+  source: let number := 3
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: No expected type or dependency disambiguates Nat, Int, Num and Money. Numeric inference supplies
@@ -910,7 +910,7 @@ cases:
 - id: negative-static-step
   rules:
   - MUD-TYPE-005
-  source: 'values: Nat in [1..8] by -2 = all'
+  source: 'let values: Nat in [1..8] by -2 = all'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: 'The static compatible signed difference anchors membership at the upper bound: 8,6,4,2. Canonical
@@ -919,7 +919,7 @@ cases:
   rules:
   - MUD-TYPE-002
   - MUD-EFFECT-004
-  source: 'thing Counters { values: Nat = 1, 2, 3 }'
+  source: 'thing Counters { let values: Nat = 1, 2, 3 }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The immutable stored field supplies its explicit Nat member context and infers outer cardinality
@@ -928,7 +928,7 @@ cases:
   rules:
   - MUD-EFFECT-003
   - MUD-EFFECT-004
-  source: 'thing Counter { value: Nat = other.CounterNow() }'
+  source: 'thing Counter { let value: Nat = other.CounterNow() }'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: CounterNow depends on mutable runtime-world state. A stored thing schema initializer must be statically
@@ -936,35 +936,35 @@ cases:
 - id: sole-action-reply-capture
   rules:
   - MUD-TYPE-014
-  source: 'reply: ActionReply = actor.Move()'
+  source: 'let reply: ActionReply = actor.Move()'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Move is an admitted action in an effect owner; its only ordinary output is ActionReply.
 - id: no-additional-action-domain-result
   rules:
   - MUD-TYPE-014
-  source: 'distance: Nat = actor.Move()'
+  source: 'let distance: Nat = actor.Move()'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Move is an action, not a look. Its ActionReply cannot be captured as Nat or carry a second domain output.
 - id: sole-subaction-reply-capture
   rules:
   - MUD-TYPE-014
-  source: 'reply: ActionReply = actor.Step()'
+  source: 'let reply: ActionReply = actor.Step()'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Step is an admitted subaction invoked within its permitted parent effect owner. Its only result is ActionReply.
 - id: money-exact-scaling
   rules:
   - MUD-TYPE-015
-  source: 'result: Money = amount * factor'
+  source: 'let result: Money = amount * factor'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: amount is Money 10.00 and factor is Num 0.125. The result is Money 1.25.
 - id: money-half-even-down
   rules:
   - MUD-TYPE-015
-  source: 'result: Money = cent / two'
+  source: 'let result: Money = cent / two'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: cent is Money 0.01; two is Num 2. Exact scaling rounds to Money 0.00,
@@ -972,7 +972,7 @@ cases:
 - id: money-half-even-up
   rules:
   - MUD-TYPE-015
-  source: 'result: Money = cents / two'
+  source: 'let result: Money = cents / two'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: cents is Money 0.03; two is Num 2. Exact scaling rounds to Money 0.02,
@@ -980,7 +980,7 @@ cases:
 - id: money-exact-ratio
   rules:
   - MUD-TYPE-015
-  source: 'ratio: Num = one / three'
+  source: 'let ratio: Num = one / three'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: one and three are Money 0.01 and 0.03. The member result is exact Num
@@ -988,7 +988,7 @@ cases:
 - id: money-scalar-widening
   rules:
   - MUD-TYPE-015
-  source: 'result: Money = amount * count'
+  source: 'let result: Money = amount * count'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: amount is Money and count is Int. The factor widens to Num; Money does
@@ -996,21 +996,21 @@ cases:
 - id: money-product-rejected
   rules:
   - MUD-TYPE-015
-  source: result := left * right
+  source: let result := left * right
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Both operands are Money. No Money-times-Money signature is admitted.
 - id: money-mixed-addition-rejected
   rules:
   - MUD-TYPE-015
-  source: result := amount + count
+  source: let result := amount + count
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: amount is Money; count is Int. Scaling signatures do not allow mixed addition.
 - id: money-rum-rejected
   rules:
   - MUD-TYPE-015
-  source: result := amount / factor
+  source: let result := amount / factor
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: amount is Money and factor is Rum. No implicit approximate conversion
@@ -1026,7 +1026,7 @@ cases:
 - id: money-zero-divisor
   rules:
   - MUD-TYPE-015
-  source: 'result: Money = amount / factor'
+  source: 'let result: Money = amount / factor'
   source_scope: fragment-with-stated-contract
   expected: runtime-check
   contract: amount is Money; factor is a runtime Num that can be zero. Zero produces
@@ -1034,7 +1034,7 @@ cases:
 - id: unbounded-integer-addition
   rules:
   - MUD-TYPE-015
-  source: 'result: Int = large + one'
+  source: 'let result: Int = large + one'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: large is Int 9223372036854775807 and one is Int 1. The result is 9223372036854775808
@@ -1042,7 +1042,7 @@ cases:
 - id: empty-money-division
   rules:
   - MUD-TYPE-015
-  source: 'result: Money [0] = amounts / zero'
+  source: 'let result: Money [0] = amounts / zero'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: amounts has Money [0] and zero is Num 0. No pair is evaluated; the empty
@@ -1050,7 +1050,7 @@ cases:
 - id: money-magnitude-coordinate-scaling
   rules:
   - MUD-TYPE-015
-  source: total := pricePerMass * mass
+  source: let total := pricePerMass * mass
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: pricePerMass has the nominal dimensions Cost/Weight with Money coordinates;
@@ -1059,7 +1059,7 @@ cases:
 - id: money-magnitude-dimensions-not-erased
   rules:
   - MUD-TYPE-015
-  source: total := cost + duration
+  source: let total := cost + duration
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Both magnitudes use Money coordinates but have distinct incompatible nominal
@@ -1067,7 +1067,7 @@ cases:
 - id: acyclic-domain-stored-bound
   rules:
   - MUD-TYPE-016
-  source: 'value: Nat in [0..cap] = candidate'
+  source: 'let value: Nat in [0..cap] = candidate'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: This is a local declaration in a value block, not a thing-schema initializer. cap is an already captured immutable Nat scalar, stable for this binding lifetime; evaluating this interval
@@ -1083,7 +1083,7 @@ cases:
 - id: positive-domain-cycle-rejected
   rules:
   - MUD-TYPE-016
-  source: 'value: Person in EligibleA = person'
+  source: 'let value: Person in EligibleA = person'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Evaluating EligibleA requires evaluating EligibleB and conversely, even
@@ -1092,7 +1092,7 @@ cases:
 - id: transitive-domain-cycle-rejected
   rules:
   - MUD-TYPE-016
-  source: 'value: Person in SelectEligible() = person'
+  source: 'let value: Person in SelectEligible() = person'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: SelectEligible reaches a domain calculation that transitively invokes
@@ -1101,7 +1101,7 @@ cases:
 - id: recursive-constructor-domain-separation
   rules:
   - MUD-TYPE-016
-  source: 'value: Node = leaf'
+  source: 'let value: Node = leaf'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Node is a productive recursive alias with optional children, leaf is a
@@ -1153,7 +1153,7 @@ cases:
 
     alias Box with T { value: T }
 
-    look Queues { boxed: CatQueue Box := (value = queue) }'
+    look Queues { let boxed: CatQueue Box := (value = queue) }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Cat is visible and queue is a fixture value already typed as CatQueue. A nominal representation alias may carry its nested collection shape as one type argument.
@@ -1162,7 +1162,7 @@ cases:
   - MUD-TYPE-017
   source: 'alias Box with T { value: T }
 
-    look Invalid { boxed: Box with (Cat [*]) := empty }'
+    look Invalid { let boxed: Box with (Cat [*]) := empty }'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: A grouped direct Cat[*] generic argument is prohibited. Use a representation alias; a collection suffix on the complete Box application instead shapes Box values.
@@ -1187,7 +1187,7 @@ cases:
 
     alias Wrapper with T { value: T }
 
-    look Types { pair := ((Cat, Dog) Pair)~type; product := ((Nat, Nat) Wrapper)~type }'
+    look Types { let pair := ((Cat, Dog) Pair)~type; let product := ((Nat, Nat) Wrapper)~type }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Cat/Dog are visible types. Grouped Pair supplies two arguments; Wrapper supplies one product. Neither
@@ -1197,7 +1197,7 @@ cases:
   - MUD-TYPE-017
   source: 'alias Pair with A, B { first: A; second: B }
 
-    look Invalid { value: Pair with Nat := 0 }'
+    look Invalid { let value: Pair with Nat := 0 }'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: An arity-two constructor is supplied only one explicit argument.
@@ -1206,7 +1206,7 @@ cases:
   - MUD-TYPE-017
   source: 'family Slot with T { Empty, Full }
 
-    look States { cat: Cat Slot := Cat Slot.Empty; dog: Dog Slot := Empty }'
+    look States { let cat: Cat Slot := Cat Slot.Empty; let dog: Dog Slot := Empty }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Cat/Dog are visible types. Each applied family is distinct even though T is phantom; members keep source
@@ -1216,7 +1216,7 @@ cases:
   - MUD-TYPE-017
   source: 'family Slot with T { Empty, Full }
 
-    look Invalid { result := (Cat Slot.Full)(Cat) }'
+    look Invalid { let result := (Cat Slot.Full)(Cat) }'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: A closed family member is a value, not a generic runtime payload constructor.
@@ -1240,7 +1240,7 @@ cases:
 - id: generic-look-produced-identity
   rules:
   - MUD-TYPE-017
-  source: 'look Read with T given value: T { result: T := value }'
+  source: 'look Read with T given value: T { let result: T := value }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Calls with the same static T share one produced type irrespective of value. Different exact arguments
@@ -1255,7 +1255,7 @@ cases:
 - id: generic-interval-equivalent-forms
   rules:
   - MUD-TYPE-017
-  source: 'look Ranges { first: Nat Interval := 0..10; second: Interval with Nat := 0..10 }'
+  source: 'look Ranges { let first: Nat Interval := 0..10; let second: Interval with Nat := 0..10 }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Both spellings apply the same builtin arity-one Interval constructor and preserve ordinary endpoint
@@ -1320,9 +1320,9 @@ cases:
 - id: structural-equality-calculated-body
   rules:
   - MUD-TYPE-020
-  source: 'alias A { x: Nat := 1 }
+  source: 'alias A { let x: Nat := 1 }
 
-    alias B { x: Nat := 2 }
+    alias B { let x: Nat := 2 }
 
     A === B'
   source_scope: representation-judgement-fragment
@@ -1380,7 +1380,7 @@ cases:
 - id: structural-equality-member-kind
   rules:
   - MUD-TYPE-020
-  source: 'alias A { x: Nat := 1 }
+  source: 'alias A { let x: Nat := 1 }
 
     alias B { x: Nat }
 
@@ -1626,7 +1626,7 @@ cases:
 - id: given-expected-result-does-not-select
   rules:
   - MUD-TYPE-001
-  source: 'reply: Expected = actor.Read(textValue)'
+  source: 'let reply: Expected = actor.Read(textValue)'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Both homonymous visible look signatures accept the same Actor/Text arguments; different result types
@@ -1636,7 +1636,7 @@ cases:
   - MUD-TYPE-017
   source: 'alias Box with T { value: T }
 
-    look Values { item: Box with (Nat | Text) := (value = "cat") }'
+    look Values { let item: Box with (Nat | Text) := (value = "cat") }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: A grouped union is one member-form argument; direct per-alternative domains/cardinalities and dictionary
@@ -1702,7 +1702,7 @@ cases:
   rules: &locals001
   - MUD-TYPE-008
   - MUD-TYPE-021
-  source: 'pair: (_, Text) = source'
+  source: 'let pair: (_, Text) = source'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: source synthesizes singleton (Int, Text); resolve the first hole to Int, preserving the second
@@ -1716,62 +1716,62 @@ cases:
     Nat contract.
 - id: hole-empty-unresolved
   rules: *locals001
-  source: 'values: _ = empty'
+  source: 'let values: _ = empty'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: No member-type evidence exists; compilation reports the unresolved hole and never falls back to
     Any.
 - id: hole-nested-empty-unresolved
   rules: *locals001
-  source: 'pair: (_, Text) = (empty, "hello")'
+  source: 'let pair: (_, Text) = (empty, "hello")'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The second component supplies Text only; the first component has no unique member type.
 - id: hole-domain-unique
   rules: *locals001
-  source: 'values: _ in Cats [*] = empty'
+  source: 'let values: _ in Cats [*] = empty'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The fixture Cats domain has one statically established exact member type Cat; the collection admits
     zero members.
 - id: hole-context-free-numeric-ambiguous
   rules: *locals001
-  source: 'value: _ = 3'
+  source: 'let value: _ = 3'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: No representation context exists; multiple numeric elaborations remain and no arbitrary Nat/Int
     priority resolves the hole.
 - id: hole-generic-partial
   rules: *locals001
-  source: 'box: Box with _ = knownBox'
+  source: 'let box: Box with _ = knownBox'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Box is an eligible constructor and knownBox has fixed Box with Cat application; solve Cat and check
     its bounds/finite closure.
 - id: hole-stored-does-not-coerce
   rules: *locals001
-  source: 'values: _ [1..* unique] = repeated'
+  source: 'let values: _ [1..* unique] = repeated'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: repeated has known Text members with a statically repeated value; a stored constraint does not
     deduplicate to repair it.
 - id: hole-nominal-alias-not-guessed
   rules: *locals001
-  source: 'value: _ = structuralLiteral'
+  source: 'let value: _ = structuralLiteral'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The fixture literal needs a contextual nominal constructor, with two compatible distinct aliases
     and no unique annotation.
 - id: hole-explicit-part-incompatible
   rules: *locals001
-  source: 'pair: (_, Text) = boolPair'
+  source: 'let pair: (_, Text) = boolPair'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: boolPair has singleton (Int, Bool); solving the first hole cannot repair the written Text mismatch.
 - id: pattern-nested-capture
   rules: &locals002
   - MUD-TYPE-022
-  source: (x, rest) = source
+  source: let (x, rest) = source
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: source is singleton (Num, (Text, Bool)); rest captures the whole second product with no flattening.
@@ -1784,25 +1784,25 @@ cases:
     symbol.
 - id: pattern-named-product-rejected
   rules: *locals002
-  source: (x, y) = named
+  source: let (x, y) = named
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: 'named has structural named product (x: Int, y: Int); names do not make it positional.'
 - id: pattern-arity-rejected
   rules: *locals002
-  source: (x, y, z) = pair
+  source: let (x, y, z) = pair
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: pair has a two-component positional type; mismatch is static, never a filtering match.
 - id: pattern-no-implicit-flattening
   rules: *locals002
-  source: (x, y) = pairs
+  source: let (x, y) = pairs
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: pairs is a two-member collection of pairs, not a singleton positional product.
 - id: pattern-full-discard-obligation
   rules: *locals002
-  source: (_, _) = pair
+  source: let (_, _) = pair
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: pair is singleton (Int, Text); evaluate stored RHS once and preserve its possible computing Error
@@ -1812,7 +1812,7 @@ cases:
   - MUD-TYPE-023
   - MUD-EFFECT-003
   - MUD-TYPE-021
-  source: 'then { captured: _ = a.balance; live := a.balance; a.balance -= ten; a.saved = live }'
+  source: 'then { let captured: _ = a.balance; let live := a.balance; a.balance -= ten; a.saved = live }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: balance and saved are authorised Int slots, ten is Int 10 and entry balance is 50. captured stays
@@ -1821,7 +1821,7 @@ cases:
   rules:
   - MUD-TYPE-023
   - MUD-EFFECT-003
-  source: 'result: Int = { mut counter: Int = one; live := counter; counter += one; live }'
+  source: 'let result: Int = { mut counter: Int = one; let live := counter; counter += one; live }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: one is Int 1; private counter starts 1, the live final read is 2 and no write escapes the owning
@@ -1829,14 +1829,14 @@ cases:
 - id: local-live-temporal-snapshots
   rules:
   - MUD-TYPE-023
-  source: current := a.balance; when current changes
+  source: let current := a.balance; when current changes
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Reactive fixture supplies two defined consecutive balance observations 5 and 6; interpret the same
     derivation in each snapshot and pulse. No stored capture or initial-observation pulse is invented.
 - id: pattern-derived-live
   rules: *locals002
-  source: then { (x, y) := a.point; a.point = newPoint; a.saved = x }
+  source: then { let (x, y) := a.point; a.point = newPoint; a.saved = x }
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: point is authorised singleton (Int, Int), newPoint is already typed (3,4) and saved is Int. x projects
@@ -1846,7 +1846,7 @@ cases:
   - MUD-TYPE-008
   - MUD-TYPE-021
   - MUD-EFFECT-003
-  source: 'before: _ = { mut local: Int = one; local += one; local }'
+  source: 'let before: _ = { mut local: Int = one; local += one; local }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture is a shared behavioural preamble, one is Int 1; private mutation is confined to ValueBlock
@@ -1865,7 +1865,7 @@ cases:
   rules:
   - MUD-TYPE-023
   - MUD-EFFECT-003
-  source: then { reply := actor.Move(); actor.score += one }
+  source: then { let reply := actor.Move(); actor.score += one }
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Move is a real action; derived locals are externally pure and cannot replay the call at reads.
@@ -1874,7 +1874,7 @@ cases:
   rules:
   - MUD-TYPE-014
   - MUD-TYPE-021
-  source: 'then { reply: _ = actor.Move(); actor.score += one }'
+  source: 'then { let reply: _ = actor.Move(); actor.score += one }'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Move has uniquely fixed ActionReply output and caller has the necessary effect authority. Execute
@@ -1883,7 +1883,7 @@ cases:
   rules:
   - MUD-TYPE-023
   - MUD-TYPE-012
-  source: then { live := computation; actor.saved = live }
+  source: then { let live := computation; actor.saved = live }
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: computation is an otherwise-admitted pure Int computation whose read raises an Error; it faults
@@ -1892,7 +1892,7 @@ cases:
   rules:
   - MUD-TYPE-022
   - MUD-TYPE-023
-  source: if { (x, y) := point; x == y }
+  source: if { let (x, y) := point; x == y }
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: point is a singleton positional (Int, Int); pure derived pattern projections have no stored place
@@ -1900,7 +1900,7 @@ cases:
 - id: hole-partial-dictionary
   rules:
   - MUD-TYPE-021
-  source: 'table: _ -> Text [*] = knownMap'
+  source: 'let table: _ -> Text [*] = knownMap'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: knownMap has an exact Int->Text dictionary contract; solve key Int without changing association
@@ -1908,7 +1908,7 @@ cases:
 - id: hole-partial-named-product
   rules:
   - MUD-TYPE-021
-  source: 'record: (count: _, label: Text) = knownRecord'
+  source: 'let record: (count: _, label: Text) = knownRecord'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: 'knownRecord has named structural product (count: Int, label: Text); infer Int. Named products
@@ -1916,7 +1916,7 @@ cases:
 - id: pattern-duplicate-name
   rules:
   - MUD-TYPE-022
-  source: (x, x) = pair
+  source: let (x, x) = pair
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: pair is singleton positional (Int, Int); repeated capture introduces a duplicate local and is invalid.
@@ -1924,14 +1924,14 @@ cases:
 - id: pattern-no-forward-leaf
   rules:
   - MUD-TYPE-022
-  source: (x, y) = (x, source)
+  source: let (x, y) = (x, source)
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: No earlier x is visible; resolve the whole RHS before introducing any new pattern leaf.
 - id: pattern-union-shape-mismatch
   rules:
   - MUD-TYPE-022
-  source: (x, y) := possible
+  source: let (x, y) := possible
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: possible has a union of singleton two- and three-position product contracts. Every alternative
@@ -1940,7 +1940,7 @@ cases:
   rules:
   - MUD-TYPE-022
   - MUD-TYPE-023
-  source: if { (x, y) := { pair }; x == y }
+  source: if { let (x, y) := { pair }; x == y }
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: 'The owner is ExpressionBlock: pure pattern declarations require an expression RHS and cannot introduce
@@ -1948,7 +1948,7 @@ cases:
 - id: pattern-discard-unreadable
   rules:
   - MUD-TYPE-022
-  source: 'for each (_, value) in dictionary : actor.Use(_)'
+  source: 'foreach (_, value) in dictionary : actor.Use(_)'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The fixture has an exact dictionary source; discard creates no variable and cannot be supplied
@@ -1957,7 +1957,7 @@ cases:
   rules:
   - MUD-EFFECT-003
   - MUD-TYPE-021
-  source: 'initial: _ = { actor.balance -= ten; actor.balance }'
+  source: 'let initial: _ = { actor.balance -= ten; actor.balance }'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The owner is a shared behavioural preamble. A nested ValueBlock cannot spend actor authority to
@@ -1982,7 +1982,7 @@ cases:
 - id: hole-established-any-contract
   rules:
   - MUD-TYPE-021
-  source: 'captured: _ = opaque'
+  source: 'let captured: _ = opaque'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: opaque already has a statically established singleton Any contract; synthesize that known type,
@@ -1990,7 +1990,7 @@ cases:
 - id: hole-independent-occurrences
   rules:
   - MUD-TYPE-021
-  source: 'pair: (_, _) = typedPair'
+  source: 'let pair: (_, _) = typedPair'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: typedPair has singleton positional (Int, Text). Distinct hole occurrences independently resolve
@@ -1999,7 +1999,7 @@ cases:
   rules:
   - MUD-TYPE-008
   - MUD-TYPE-022
-  source: (x, y) = (3, 4)
+  source: let (x, y) = (3, 4)
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: No expected numeric representations are available. A pattern supplies positional structure but
@@ -2031,7 +2031,7 @@ cases:
 - id: nested-matrix-and-empty-member
   rules:
   - MUD-TYPE-027
-  source: 'matrix: Int [* ordered] [* ordered] = [[]]'
+  source: 'let matrix: Int [* ordered] [* ordered] = [[]]'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Effective limits admit zero inner and one outer member. This is one empty row, not zero rows. Int [0] [1] admits [[]] but rejects empty; Int [0] [0] admits empty but rejects [[]]. Variable rows need not be rectangular.
@@ -2093,7 +2093,7 @@ cases:
 - id: raise-static-initializer
   rules:
   - MUD-TYPE-030
-  source: 'initial: Num = raise problem'
+  source: 'let initial: Num = raise problem'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Fixture is a required closed-static initializer with an unhandled raised Error. No value exists to materialize
@@ -2151,13 +2151,13 @@ cases:
 
 - id: pruning-derived-versus-stored
   rules: [MUD-TYPE-032]
-  source: 'p: Bool := x.InactiveRule(); not p'
+  source: 'let p: Bool := x.InactiveRule(); not p'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Valid inactive rule and a derived Bool binding transmit erasure, closing not p to true. Replacing := with = captures true and makes not p false. Computed fields/components/metadata use the same rule.
 - id: pruning-prefix-fault-preserved
   rules: [MUD-TYPE-032]
-  source: 'p := { n: Num = 1 / divisor; x.InactiveRule() }; not p'
+  source: 'let p := { let n: Num = 1 / divisor; x.InactiveRule() }; not p'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture admits this ValueBlock. On the actual standalone read of p, zero divisor faults before any erased final result; a successful prefix transmits erasure. Recovery returning ordinary Bool does not transmit the erased original result.
@@ -2175,7 +2175,7 @@ cases:
   contract: Fixture lacks the required finite reachable-state proof. Erasure of the goal does not make an inadmissible query acceptable.
 - id: pruning-imagine-is-ordinary-reply
   rules: [MUD-TYPE-032]
-  source: 'reply := imagine actor.Move()'
+  source: let reply := imagine actor.Move()
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Admitted action root and speculative isolation yield ordinary ActionReply. Internal Boolean pruning does not propagate erasure as an ActionReply value; imagine in a deleted inactive call argument is not evaluated.
@@ -2188,13 +2188,13 @@ cases:
   contract: Supplied items is a concrete Int [*] collection snapshot and the predicate terminates. Each actual collection is finite; no uniform finite upper cardinality is necessary for this traversal.
 - id: infinite-int-all-rejected
   rules: [MUD-TYPE-033]
-  source: 'items: Int [*] = all'
+  source: 'let items: Int [*] = all'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The full integer domain is infinite. An unbounded static cardinality does not supply an infinite collection or lazy generator.
 - id: rum-all-language-enumeration-rejected
   rules: [MUD-TYPE-033]
-  source: 'numbers: Rum [*] = all'
+  source: 'let numbers: Rum [*] = all'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Rum binary64 is mathematically finite/countable, but no canonical enumeration of its full numeric domain is provided. This is not an uncountability argument.
@@ -2206,7 +2206,7 @@ cases:
   contract: The explicit finite collection supplies its enumeration; no Rum progression or exact/approximate conversion is introduced.
 - id: bounded-rational-grid
   rules: [MUD-TYPE-033]
-  source: 'numbers: Num in 0..1 by 0.2 [6] = all'
+  source: 'let numbers: Num in 0..1 by 0.2 [6] = all'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Exact step one fifth selects six points. It does not enumerate all rationals in the bounded interval, whose member set is infinite.
@@ -2227,49 +2227,49 @@ cases:
 
 - id: pruning-domain-versus-shape
   rules: [MUD-TYPE-024, MUD-TYPE-032]
-  source: 'p: Bool [1] := x.InactiveRule(); q: Bool in [true] := x.InactiveRule()'
+  source: 'let p: Bool [1] := x.InactiveRule(); let q: Bool in [true] := x.InactiveRule()'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Redundant singleton confirmation preserves erasure, so not p closes true. Domain restriction materializes true first, so not q is false. Collection construction retains a true member for an erased element.
 
 - id: stored-interval-direct-mutable-bound
   rules: [MUD-TYPE-034]
-  source: 'a: Int in [0..upper] = candidate'
+  source: 'let a: Int in [0..upper] = candidate'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Fixture is an admitted local/field owner but upper is mutable. Stored interval bounds must be stable, irrespective of the current candidate being in range.
 
 - id: stored-interval-hidden-mutable-bound
   rules: [MUD-TYPE-034]
-  source: 'upper := settings.limit; a: Int in [0..upper] = candidate'
+  source: 'let upper := settings.limit; let a: Int in [0..upper] = candidate'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: settings.limit is mutable. The calculated name upper hides no dependency; transitive endpoint stability fails.
 
 - id: stored-interval-captured-scalar-bound
   rules: [MUD-TYPE-034]
-  source: 'upper: Int = settings.limit; a: Int in [0..upper] = candidate'
+  source: 'let upper: Int = settings.limit; let a: Int in [0..upper] = candidate'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture is an admitted stored-local context with supplied upper/candidate admission. upper captures an immutable scalar. Its bound does not reread settings.limit; later source mutations do not move this stored interval.
 
 - id: derived-interval-live-bound
   rules: [MUD-TYPE-034]
-  source: 'selected: Int in [0..upper] [*] := source'
+  source: 'let selected: Int in [0..upper] [*] := source'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: upper is mutable and source is a finite Int collection. The derived result and interval are read in the same view; filtering retains dependencies. Later reads may have different membership; captured prior values do not change.
 
 - id: immutable-handle-mutable-bound
   rules: [MUD-TYPE-034]
-  source: 'a: Int in [0..settings.limit] = candidate'
+  source: 'let a: Int in [0..settings.limit] = candidate'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: settings is an immutable handle but limit is a mutable field. Handle immutability does not prove the endpoint stable.
 
 - id: analysis-proved-infinite-reason
   rules: [MUD-TYPE-033, MUD-TYPE-035]
-  source: 'values: Int [*] = all'
+  source: 'let values: Int [*] = all'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The normative basis proves full Int infinite. Diagnose a proved finiteness violation, rather than insufficient evidence or tool interruption.
@@ -2283,7 +2283,7 @@ cases:
 
 - id: analysis-large-finite-bound
   rules: [MUD-TYPE-033, MUD-TYPE-035]
-  source: 'values: Int in [0..1000000000000] [*] = all'
+  source: 'let values: Int in [0..1000000000000] [*] = all'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The finite integral bounds discharge enumeration under the elementary basis without allocating all members during analysis. A tool interruption would leave verification incomplete, not change this expected normative disposition.
@@ -2339,7 +2339,7 @@ cases:
 
 - id: magnitude-normalization-compatible-units
   rules: [MUD-TYPE-037]
-  source: 'speed: Speed := 90 km/h'
+  source: 'let speed: Speed := 90 km/h'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Supplied exact Length/Time roots meter/second, enabled kilo, hour=3600 seconds and compatible Speed context. Normalized scale is 5/18; canonical exact coordinate is 25. No implicit nominal conversion between already typed values is asserted.
@@ -2367,21 +2367,21 @@ cases:
 
 - id: rum-normal-literal-rounding
   rules: [MUD-TYPE-038]
-  source: 'value: Rum = r0.1'
+  source: 'let value: Rum = r0.1'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Decode the decimal exactly and round once to binary64 nearest-even. Its canonical word is 3fb999999999999a; it is not exact rational one tenth.
 
 - id: rum-underflow-literal-zero
   rules: [MUD-TYPE-038]
-  source: 'value: Rum = r1e-400'
+  source: 'let value: Rum = r1e-400'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: The nonzero exact decimal rounds to canonical positive zero; underflow alone is not an error. A positive-only destination domain would independently reject zero.
 
 - id: rum-overflow-literal-rejected
   rules: [MUD-TYPE-038]
-  source: 'value: Rum = r1e400'
+  source: 'let value: Rum = r1e400'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The literal rounds outside finite binary64. It cannot be clamped to max finite or exposed as Infinity.
@@ -2425,7 +2425,7 @@ cases:
 - id: family-computed-override
   rules:
   - MUD-TYPE-002
-  source: 'family F { score: Nat = 0; doubled := score * 2; One { doubled = 4 } }'
+  source: 'family F { score: Nat = 0; let doubled := score * 2; One { doubled = 4 } }'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: A member assignment cannot target computed schema data.
@@ -2433,7 +2433,7 @@ cases:
 - id: family-computed-cycle
   rules:
   - MUD-TYPE-016
-  source: 'family F { first := second; second := first; One }'
+  source: family F { let first := second; let second := first; One }
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: The supplied computed data graph has the first/second cycle; forward lookup does not make it admissible.
@@ -2545,7 +2545,7 @@ cases:
 - id: unitless-point-contextual-literal
   rules:
   - MUD-TYPE-041
-  source: 'position: Cursor = 0.5'
+  source: 'let position: Cursor = 0.5'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture declares unitless Num Offset and unformatted Cursor point over Offset. Unique expected point context constructs its canonical coordinate.
@@ -2553,7 +2553,7 @@ cases:
 - id: unitless-point-explicit-numeric
   rules:
   - MUD-TYPE-041
-  source: 'position: Cursor = coordinate to Cursor'
+  source: 'let position: Cursor = coordinate to Cursor'
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: Fixture supplies a typed Num coordinate and the same visible unitless Cursor; explicit materialization checks representation and domain.
@@ -2561,7 +2561,7 @@ cases:
 - id: unitless-point-typed-number-no-implicit
   rules:
   - MUD-TYPE-041
-  source: 'position: Cursor = coordinate'
+  source: 'let position: Cursor = coordinate'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Typed Num retains its type; unlike a contextual literal, it requires explicit to Cursor.
@@ -2577,7 +2577,7 @@ cases:
 - id: unitless-point-cycle-literal-domain
   rules:
   - MUD-TYPE-041
-  source: 'position: Cursor = 2'
+  source: 'let position: Cursor = 2'
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Fixture supplies Cursor over unitless Num Offset with domain [0..1) cycle. Source coordinates outside the period are not repaired by wrapping.
@@ -2685,7 +2685,7 @@ cases:
 - id: public-transitive-private-type-rejected
   rules:
   - MUD-TYPE-002
-  source: 'look View { result := privateRecord }'
+  source: look View { let result := privateRecord }
   source_scope: fragment-with-stated-contract
   expected: static-reject
   contract: Fixture produces a record whose nested alias type belongs to a part-only file. A visible field cannot export that private type through an outer annotation.
@@ -2791,3 +2791,70 @@ cases:
   source_scope: fragment-with-stated-contract
   expected: static-accept
   contract: items has an admitted finite Int[*] snapshot; its unbounded static upper cardinality does not require a constant size cap. Body and source production are certified separately.
+- id: expression-comprehension-expr
+  rules:
+  - MUD-TYPE-008
+  source: let doubled := foreach x in values --> x * 2
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: values is a captured finite ordered Int collection; produce one scalar per occurrence, preserving
+    order and multiplicity.
+- id: expression-implicit-member-expr
+  rules:
+  - MUD-TYPE-008
+  source: 'let naming: Person --> Text [ordered] = _ --> .name'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Person has a visible singleton Text name; the omitted receiver resolves to the ordinary implicit
+    input.
+- id: expression-selector-expr
+  rules:
+  - MUD-TYPE-008
+  source: 'let describe: Int --> Text [ordered] = == 0 --> "zero", < 0 --> "negative", _ --> "positive"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Abbreviated comparisons expand against the input; explicit residual supplies coverage.
+- id: policy-incomplete-family-coverage
+  rules:
+  - MUD-TYPE-008
+  source: 'let describe: Severity --> Text [ordered] = Severity.Low --> "low"'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: Severity has Low, Medium and High; no residual or proof covers the omitted members.
+- id: policy-bool-equality
+  rules:
+  - MUD-TYPE-008
+  source: 'let describe: Bool --> Text [ordered] = == false --> "false", _ --> "true"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Bare false would be a false condition; explicit equality covers only the false input.
+- id: comprehension-boolean-results
+  rules:
+  - MUD-TYPE-008
+  source: let flags := foreach x in values --> x > 1
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: For supplied ordered values [1,2,3], flags is [false,true,true], not a source selection.
+- id: stored-domain-only-contract
+  rules:
+  - MUD-TYPE-008
+  source: mut age in [0..130] = source.age
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: source.age determines a unique Nat contract and is proven in range; assignments are constrained,
+    not filtered.
+- id: policy-uninferred-input
+  rules:
+  - MUD-TYPE-008
+  source: let naming = _ --> .name
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: No contextual input type is supplied; member spelling cannot choose a nominal input type.
+- id: comprehension-nested-empty
+  rules:
+  - MUD-TYPE-008
+  source: let nested := foreach x in values --> empty
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A supplied expected nested member contract admits empty; each accepted iteration contributes
+    one empty collection member.

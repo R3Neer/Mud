@@ -52,8 +52,8 @@ Keyed normalisation traverses occurrences in stable provenance order. For each s
 For either uniqueness mode, a collection literal contextually intended for that mode and whose collision can be proved at compile time is normalised immediately and produces a non-blocking warning. The diagnostic identifies the exact retained source occurrence and the colliding later occurrence or occurrences. Cardinality is checked after that normalisation, exactly as with ordinary `unique`. This literal-construction rule does not turn a value declaration into a coercion: an already-computed collection assigned to a declared uniqueness contract is verified rather than rewritten, in accordance with D-100. Local and derived transformations remain coercive as defined below.
 
 ```mud
-members: Person [* unique] = [Alice, Alice]
-contacts: Person [* unique by email] = [Alice, Bob]
+let members: Person [* unique] = [Alice, Alice]
+let contacts: Person [* unique by email] = [Alice, Bob]
 ```
 
 When the compiler can prove `Alice.email == Bob.email`, the second declaration retains `Alice` and warns that `Bob` is discarded by the keyed-uniqueness criterion.

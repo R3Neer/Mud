@@ -10,6 +10,7 @@ questions:
   - Q-030
   - Q-027
 decisions:
+  - D-169
   - D-168
   - D-151
   - D-155
@@ -27,7 +28,7 @@ target fixes the procedure and its supported abstraction. Unsupported predicates
 remain unproved, even when another mathematical method could prove them.
 
 ```mud
-items: Int [*] = all [1..20]
+let items: Int [*] = all [1..20]
 rule Positive for n: Nat { n > 0 }
 ```
 

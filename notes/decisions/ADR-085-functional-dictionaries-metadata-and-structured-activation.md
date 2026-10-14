@@ -30,6 +30,8 @@ affects:
 - Affected documents: chapters 05 to 10, future chapters 11 to 22, 26, 29, 35, 38 and 42, grammar, syntax models, diagnostics and semantic operations.
 - Modified by: [[ADR-100-logical-order-provenance-membership-and-effect-consolidation|D-100]].
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
 MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `Text` templates. Several later decisions show four related needs:
@@ -124,9 +126,9 @@ represents a pure policy defined by branches. A branch is written:
 selector --> result
 ```
 
-Within the selector and result, `value` is a contextual word bound to the input of type `A`. The selector is a Boolean `ExpressionBlock` and the result a `ValueBlock`; their local scopes are independent.
+Within the selector and result, `value` is an implicit ordinary immutable variable bound to the input of type `A`. The selector is a Boolean `ExpressionBlock` and the result a `ValueBlock`; their local scopes are independent.
 
-Every ordinary selector must elaborate directly to `Bool`. MUD does not implicitly insert `value`, `==`, `is` or membership: `value == expression`, `domain has value`, `value is Type` or another pure Boolean condition must be written explicitly. A bare expression that does not produce `Bool` is invalid. `_` is the fallback and is considered only when no applicable ordinary branch has produced a result.
+Selectors elaborate to pure Bool after the category-directed shorthand defined in the dictionary chapter. Bool expressions remain conditions; other supported values compare equality, intervals/domains test membership and nominal types use is. Complete input coverage is required. Fallback handles no applicable selector, not an empty selected result.
 
 Results and selectors may read external state. Every read must be recorded as a dependency of the branch and dictionary. All transitive calls of an application observe the same stable snapshot of the world.
 
@@ -137,7 +139,7 @@ A functional dictionary:
 - admits no external mutability;
 - admits no inner `[mut]` capability;
 - statically rejects any `mut` applied to its type or location;
-- is not a source for `for each`;
+- is not a source for `foreach`;
 - may refer directly or indirectly to other functional dictionaries.
 
 Every recursive component of the call graph must have a well-founded measure that decreases strictly along every edge continuing the cycle. D-167/D-168 specify the normative natural/structural/finite-order, lexicographic/phase and affine certificate procedure. Functional composite input sugar constructs one expected structural value, like composite exact keys. Absence of the required proof is a static error; independent owner-specific acyclicity remains mandatory.
@@ -152,8 +154,8 @@ A --> B [ordered]
 - The first match wins.
 - Selectors may overlap and ordering forms part of the value.
 - `_` must be the last effective branch; every later branch is unreachable.
-- Without a match or fallback, application has derived cardinality `[0..1]` and produces `empty` when there is no result.
-- With a fallback, derived cardinality is `[1]`.
+- Without fallback, complete input coverage must be proved; output absence depends on the admitted selected result contract.
+- Fallback establishes coverage but not a singleton result when the output admits empty.
 - ordinary `unique` and `unique by path` are valid but redundant because at most one result is produced; either produces a removal suggestion.
 
 The elaborated mode is called `FirstMatch`.
@@ -168,9 +170,9 @@ A --> B
 - Each matching branch contributes a result.
 - Selectors may overlap.
 - Source order is not semantic.
-- Without matches, the empty collection is obtained.
-- `_` contributes exactly one result only when no ordinary branch matches.
-- Derived cardinality is `[0..n]`, where `n` is the demonstrable maximum of matching ordinary branches; with a fallback, the lower bound becomes `1`.
+- Coverage must be proved or supplied by a residual branch; empty is an explicitly admitted selected result.
+- `_` contributes its admitted result only when no ordinary branch matches, including explicit empty when allowed.
+- Derived cardinality is `[0..n]`, where `n` is the demonstrable maximum of matching ordinary branches; fallback establishes coverage, while the lower bound depends on all reachable output contracts.
 - `unique` deduplicates equal whole-value results produced by different branches; `unique by path` deduplicates equal projected keys and retains the first result by stable occurrence provenance.
 
 The elaborated mode is called `AllMatches`.

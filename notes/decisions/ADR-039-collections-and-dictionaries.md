@@ -52,9 +52,9 @@ Adding a value already present in a `unique` collection is a no-op. Adding to a 
 When a literal intended for a collection with uniqueness contains a collision that can be proven statically, the compiler normalises it and issues a non-blocking warning. Ordinary `unique` compares whole values; `unique by path` compares the projected semantic key. In both cases the first occurrence by stable provenance survives, and the warning identifies the exact retained source occurrence and the colliding later occurrence or occurrences. If the normalised collection fails its cardinality, the programme also has a static cardinality error:
 
 ```mud
-members: Person [* unique] = [Alice, Alice]  # warning; retains the first Alice
-pair: Person [2 unique] = [Alice, Alice]     # error; normalisation leaves one value
-contacts: Person [* unique by email] = [Alice, Bob]  # if the e-mails are provably equal, warning; retains Alice
+let members: Person [* unique] = [Alice, Alice]  # warning; retains the first Alice
+let pair: Person [2 unique] = [Alice, Alice]     # error; normalisation leaves one value
+let contacts: Person [* unique by email] = [Alice, Bob]  # if the e-mails are provably equal, warning; retains Alice
 ```
 
 Initial sources of information:
@@ -154,9 +154,9 @@ In consequence, when a binary operation constructs its observable sequence throu
 Example of inference:
 
 ```mud
-leftChars: Char [1..5] = ["a"]
-rightChars: Char [0..2] = empty
-combinedChars := leftChars | rightChars
+let leftChars: Char [1..5] = ["a"]
+let rightChars: Char [0..2] = empty
+let combinedChars := leftChars | rightChars
 ```
 
 The type static of `combinedChars` is `Char [1..7]`: it isn't `unique`, `ordered` nor `mut`, and its domain from member is the domain full list of `Char`.

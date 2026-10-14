@@ -40,7 +40,7 @@ The optional header `part only` applies to its entire `.mud` file. It must be th
 part only
 using world.people
 
-sublook Detail { score := 0 }
+sublook Detail { let score := 0 }
 ```
 
 Normal `action`, `look` and `message` form host operations. Their sub forms `subaction`, `sublook` and `submessage` are visible to authorised Mud parts by default but are not direct host endpoints. A subaction has no outer-root capability; sublook is a pure query with no action-only calling restriction; submessage supplies internal causal occurrences without host delivery. A `part only` file restricts normal and sub forms alike. Tests retain test-context visibility.

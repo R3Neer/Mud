@@ -165,3 +165,15 @@ expressions:
     section: 9. Blocks and error recovery
     cases:
     - expression-raise-expr
+  ComprehensionExpr:
+    section: Collection comprehension typing
+    cases:
+    - expression-comprehension-expr
+  ImplicitMemberExpr:
+    section: 6. Collection and dictionary algebra
+    cases:
+    - expression-implicit-member-expr
+  SelectorExpr:
+    section: 6. Collection and dictionary algebra
+    cases:
+    - expression-selector-expr

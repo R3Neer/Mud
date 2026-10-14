@@ -59,7 +59,7 @@ abstract thing A as BaseOne {
 }
 ```
 
-The shape `field = value` does not declare a field. You should contact a stored field already provided by the legacy scheme. A single definition of `thing` You cannot declare a field and also initialise it using another statement `field = value`. The form `field: Type = value` it remains a single one declaration from field with a default value and does not count as a separate initialiser.
+The shape `field = value` does not declare a field. You should contact a stored field already provided by the legacy scheme. A single definition of `thing` You cannot declare a field and also initialise it using another statement `field = value`. The form `let field: Type = value` it remains a single one declaration from field with a default value and does not count as a separate initialiser.
 
 One `thing` abstract does not materialise own stored data, but their initialisers form part of the specialisation and may contribute to the first materialisation of a specific descendant. For the same field, an initialiser declared in a more specific descendant overrides the less specific inherited initialisers. If the same original initialiser reaches a descendant via several paths in a diamond, it is deduplicated by origin; independent and incomparable initialisers that compete for the same field produce conflict, with no priority based on the written order of `as`, in accordance with D-084.
 
@@ -148,7 +148,7 @@ It is invalid to declare and initialise the same variable separately field in a 
 
 ```mud
 thing Broken as Kingdom {
-    treasury: Money = 10
+    let treasury: Money = 10
     treasury = 20
 }
 ```

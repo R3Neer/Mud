@@ -42,7 +42,7 @@ family Terrain {
     movementCost: Nat = 1 {
         ~summary = "Base movement cost"
     }
-    costly := movementCost >= 3 {
+    let costly := movementCost >= 3 {
         ~summary = "Indicates costly terrain"
     }
 

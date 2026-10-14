@@ -10,6 +10,7 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-166
@@ -45,6 +46,46 @@ decisions:
 
 # 15. Fields, mutability and capabilities
 
+## Value declarations and stored inference
+
+Ordinary stored field/local declarations use `let name [stored-shape] = value-body`
+or `mut name [stored-shape] = value-body`. Ordinary calculated fields, public
+result fields, calculated alias/family data and derived locals use
+`let name [derived-shape] := value-body`. `let` prevents reassignment, not
+change of a live derived result. `mut` requires stored `=`; `mut name := ...`
+is invalid. A bare assignment introduces no name. Alias representation/type
+definitions, stored alias components, stored family schema data, signature
+parameters, metadata, units and inherited/member assignments retain their own
+declaration or assignment forms.
+
+A stored shape may be `: StoredType`, `in domain` with an optional collection
+specification, or a collection specification alone. Its omission infers a
+unique member type from the initialiser and available domain evidence, without
+guessing nominal identities or granting authority. Written domains and shape
+are admission constraints, not filters, casts, deduplication or reordering.
+Every later mutable assignment obeys the same fixed contract. Stored interval
+bounds remain transitively stable for the binding lifetime. Existing owner-specific
+omitted-cardinality rules remain unchanged; omitted type does not imply omitted
+collection bounds. Schema initialisers remain closed static calculations.
+
+`let initial: _ = source` is valid. Tooling suggests `let initial = source`
+only when removing that complete hole preserves the contract and meaning.
+Partial holes such as `let pair: (_, Text) = source` and
+`let policy: Person --> _ [ordered] = _ --> .name` retain their information.
+Omission and holes fail when evidence is insufficient; context-free empty or
+an input using only `.name` does not choose an arbitrary member/input type.
+The annotation `_ [ordered]` does not move a collection modifier into an
+inferred dictionary's branch-selection contract. Write its arrow explicitly;
+`Person --> _ [ordered]` declares FirstMatch, while a parenthesised dictionary
+with an outer suffix describes a collection of dictionaries.
+
+Immutable positional patterns use `let (first, second) = source` or
+`let (first, second) := source`. Mutable patterns, standalone discard
+declarations and named-product destructuring are invalid. Expression/test
+preambles still admit only pure derived expression RHSs; shared behaviour
+preambles still forbid outer mutability. Introducing let does not expand an
+owner's permissible computation mode.
+
 ## Scope
 
 This chapter defines stored/derived fields, writable places, capabilities, block effect admissibility and the minimum static obligations for effect compatibility. [[11-type-system]] supplies type inclusion and proof evidence; [[21-expressions]] supplies expression/block rules. [[28-effects]] supplies private execution and the root/wave batch boundary; contextual callable destination/impact checking follows [[types/contextual-call-analysis]]. It grants no additional writes or stored-schema changes.
@@ -52,7 +93,7 @@ This chapter defines stored/derived fields, writable places, capabilities, block
 ```mud
 thing Counter {
     mut value: Nat = 0
-    doubled := value * 2
+    let doubled := value * 2
 }
 ```
 

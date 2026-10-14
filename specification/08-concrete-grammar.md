@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-169
   - D-160
   - D-158
   - D-156
@@ -118,6 +119,14 @@ decisions:
 
 # 08. Concrete grammar
 
+## Comprehension and executable traversal
+
+The executable form is `foreach binding in source [by step] [if predicate] : body`, with a short or braced body. The collection-producing form is `foreach binding in source [by step] [if predicate] --> value-body`. Pure selection retains `binding in source : predicate`. The source EBNF is [[grammar/mud.ebnf]]; scope, shape, order, fault and enumeration contracts follow [[22-quantifiers-and-iteration#Pure foreach comprehensions]].
+
+## Value declaration markers and omitted stored shapes
+
+Ordinary immutable stored and derived values require let; mutable stored values require mut. Stored = annotations may be omitted or written as : StoredType, in domain with optional collection shape, or a collection shape alone. Derived := retains derived-value-shape and never admits outer mut. Positional declaration patterns require let. Schema components, metadata, signature slots, operators, type definitions and overrides retain their category forms. Owner restrictions and stored inference follow [[15-fields-and-mutability#Value declarations and stored inference]].
+
 ## State and purpose
 
 [[grammar/mud.ebnf]] defines `.mud` source and minimal `mud.part` manifests. The physical filename selects `mud-file` or `part-file`; `mud-input` joins their grammar entry points for inventory validation. [[05-source-text]] defines exact manifest targets, direct permissions and the physical first-content constraint of `part only`. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
@@ -210,7 +219,7 @@ destroy Alexandria
 
 ### Stored field initialisation
 
-A newly declared stored field requires `name: Type = value-body`, optionally with `mut`. Inherited fields need no repeated declaration. Alias components without explicit defaults are required in constructed values. Family data require an explicit schema default or an assignment in every member. Type annotations do not supply values. Intrinsic metadata and explicit parameter defaults retain their individual contracts.
+A newly declared stored field requires `let name: Type = value-body`, optionally with `mut`. Inherited fields need no repeated declaration. Alias components without explicit defaults are required in constructed values. Family data require an explicit schema default or an assignment in every member. Type annotations do not supply values. Intrinsic metadata and explicit parameter defaults retain their individual contracts.
 
 ### `thing` initialisers
 
@@ -220,7 +229,7 @@ A `thing`, whether concrete or abstract, can initialise a stored field already c
 fieldName = value-body
 ```
 
-The target is retained as a field name until resolution. It does not declare a new field, replace its inheritable default, or target a calculated field. It must resolve to an inherited field: the same `thing` cannot locally declare `fieldName` and also contain a separate `fieldName = ...` initialiser. The form `fieldName: Type = value` is a single declaration with a default and remains valid. The initialiser value accepts a short expression or `ValueBlock`; the entire body is subject to the inherited field's static materialisation contract.
+The target is retained as a field name until resolution. It does not declare a new field, replace its inheritable default, or target a calculated field. It must resolve to an inherited field: the same `thing` cannot locally declare `fieldName` and also contain a separate `fieldName = ...` initialiser. The form `let fieldName: Type = value` is a single declaration with a default and remains valid. The initialiser value accepts a short expression or `ValueBlock`; the entire body is subject to the inherited field's static materialisation contract.
 
 In an `abstract thing`, the initialiser does not materialise its own stored data; it is preserved as an inherited contribution to the first materialisation of concrete descendants. In a concrete `thing`, the local initialiser applies to its own first materialisation and is not inherited by its descendants. A more specific initialiser takes precedence over a less specific inherited one. Multiple specialisation does not establish precedence from the order of `as`: if the same source is duplicated and separate, incomparable contributions target the same field, they conflict.
 
@@ -250,7 +259,7 @@ Mixing a field declaration with its separate initialiser in one definition is no
 
 ```mud
 thing Broken as Kingdom {
-    treasury: Money = 10
+    let treasury: Money = 10
     treasury = 20
 }
 ```
@@ -265,32 +274,32 @@ When a metadata-bearing owner with a `ValueBlock` uses the expanded form, its in
 Stored format:
 
 ```text
-[mut] fieldName: Type [in domain] [collection-specification] [= value-body]
+(let | mut) fieldName [stored-value-shape] = value-body
 ```
 
 Calculated form:
 
 ```text
-fieldName [derived-value-shape] := value-body
+let fieldName [derived-value-shape] := value-body
 ```
 
-`derived-value-shape` may be `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Therefore, both `area: Num in 0..* := width * height` and `area in 0..* := width * height` are valid. If the type is omitted, it must be inferred unambiguously from the expression, without a predetermined preference between compatible representations or contextual forms. If more than one solution exists, the type must be written. A calculated field does not support outer `mut`; its shape may specify a domain, a collection specification and internal `[mut]` capability. Its domain and interval endpoints may depend on mutable state, subject to pure, deterministic, acyclic evaluation in the read's view. Interval endpoints in stored field/local restrictions must instead be transitively stable for the binding lifetime; their syntax does not implicitly capture mutable endpoints.
+`derived-value-shape` may be `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Therefore, both `let area: Num in 0..* := width * height` and `let area in 0..* := width * height` are valid. If the type is omitted, it must be inferred unambiguously from the expression, without a predetermined preference between compatible representations or contextual forms. If more than one solution exists, the type must be written. A calculated field does not support outer `mut`; its shape may specify a domain, a collection specification and internal `[mut]` capability. Its domain and interval endpoints may depend on mutable state, subject to pure, deterministic, acyclic evaluation in the read's view. Interval endpoints in stored field/local restrictions must instead be transitively stable for the binding lifetime; their syntax does not implicitly capture mutable endpoints.
 
-Outer `mut` is written before the name because it describes the storage location, not the type of its members. `fieldName: mut Type` is not part of the syntax. Field names and metadata names occupy different syntactic positions: `name: Text` declares a field, whereas `~name = expression` declares or amends presentation metadata.
+Outer `mut` is written before the name because it describes the storage location, not the type of its members. `fieldName: mut Type` is not part of the syntax. Field names and metadata names occupy different syntactic positions: `let name: Text = expression` declares a field, whereas `~name = expression` declares or amends presentation metadata.
 
 The value after `=` may be a short expression or a `ValueBlock`. In a stored field, the complete body must remain static: it is fully evaluated at compile time and cannot read world state, participants, `given` values, external locations or activities. Temporary mutable structures created within the `ValueBlock` are valid when the complete structure can be constructed statically. For example:
 
 ```mud
-allowedRange: Int Interval = 1..2 | 3..4
-duration: Time = 1 hour + 30 minutes
+let allowedRange: Int Interval = 1..2 | 3..4
+let duration: Time = 1 hour + 30 minutes
 ```
 
 The first method directly produces a normalised discontinuous interval. Discontinuous intervals use the ordinary interval-algebra expressions, not an additional literal. Canonical segments and content-based keys follow [[21-expressions#7. Domains, selection and finite traversal]].
 
 ```mud
 mut population: Population in [0..*] [1] = 10 people
-density := population / area
-displayDensity: Density := density
+let density := population / area
+let displayDensity: Density := density
 ```
 
 If a calculated field's expression is also statically closed, the compiler must suggest the immutable stored form. This is neither an error nor an automatic rewrite, and the suggestion does not appear when the calculation depends on runtime state.
@@ -298,21 +307,21 @@ If a calculated field's expression is also statically closed, the compiler must 
 A comma-separated list forms a calculated collection and infers type and cardinality where they can be proven:
 
 ```mud
-numbers := a * b, d, c / a
+let numbers := a * b, d, c / a
 ```
 
 The domain on a calculated value acts as a contract. A potentially out-of-domain result triggers a warning and a runtime transition check; a result that is provably outside the domain is an error.
 
 ## Expression blocks and value
 
-An ExpressionBlock is a declarative form: it contains zero or more pure preamble statements (calculated locals and derived positional patterns declared with :=, or pure from blocks), followed by a final expression. It does not support stored variables, mutation, for each as a statement or an internal if. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
+An ExpressionBlock is a declarative form: it contains zero or more pure preamble statements (calculated locals and derived positional patterns declared with :=, or pure from blocks), followed by a final expression. It does not support stored variables, mutation, foreach as a statement or an internal if. It is used by conditions, filters, quantifiers and dictionary key or selector sides.
 
-A `ValueBlock` constructs a value and contains zero or more local statements followed by a final expression. Its only statements are calculated declarations, stored declarations, assignments whose footprint remains within the block, local `for each`, and `from` under the same private-write boundary. It does not support `if`, external effects, actions, subactions, `create` or `destroy`.
+A `ValueBlock` constructs a value and contains zero or more local statements followed by a final expression. Its only statements are calculated declarations, stored declarations, assignments whose footprint remains within the block, local `foreach`, and `from` under the same private-write boundary. It does not support `if`, external effects, actions, subactions, `create` or `destroy`.
 
 ```mud
-result := {
+let result := {
     mut total: Money = 0
-    for each item in items if item.taxable :
+    foreach item in items if item.taxable :
         total += item.price
     total
 }
@@ -330,7 +339,7 @@ then {
 }
 ```
 
-The form `x := ...` cannot be assigned to. `x: X = ...` creates a local slot that cannot be reassigned, and `mut x: X = ...` creates one that can. A `then` still requires at least one observable effect.
+The form `let x := ...` cannot be assigned to. `let x: X = ...` creates a local slot that cannot be reassigned, and `mut x: X = ...` creates one that can. A `then` still requires at least one observable effect.
 
 The default of `given` preserves `constant-expression` and does not allow `ValueBlock`.
 
@@ -396,7 +405,7 @@ value: A -> Lookup
 The alias restriction is checked after nominal resolution. Each non-arrow alternative may declare a domain and at most one collection specification. The final collection specification belongs to the complete union:
 
 ```mud
-values: Nat in 0..10 | Int in -10..-1 [1..*] = [2 to Nat]
+let values: Nat in 0..10 | Int in -10..-1 [1..*] = [2 to Nat]
 ```
 
 Cardinalities by alternative are not permitted. If a contextual expression fits several alternatives, one must be selected using `to`.
@@ -416,10 +425,10 @@ contacts: Person [0..* unique by email]
 A trailing comma is not permitted. In an immutable stored field with an initialiser, an omitted cardinality remains omitted in the AST and is inferred as the initial value's exact outer cardinality:
 
 ```mud
-one: Nat = 1                 # [1]
-three: Nat = [1, 2, 3]      # [3]
-none: Nat = empty            # [0]
-table: A -> B = AValue -> BValue # [1]: the complete dictionary is one value
+let one: Nat = 1                 # [1]
+let three: Nat = [1, 2, 3]      # [3]
+let none: Nat = empty            # [0]
+let table: A -> B = AValue -> BValue # [1]: the complete dictionary is one value
 ```
 
 A field with outer `mut` retains `[1]` when cardinality is omitted. Calculated fields declared with `:=` retain the inferred shape of their expression. An inferred immutable cardinality other than `[1]` prompts the author to write it explicitly.
@@ -427,9 +436,9 @@ A field with outer `mut` retains `[1]` when cardinality is omitted. Calculated f
 Compatible collections support `|`, `&` and `--`. `^` requires the result to comply with uniqueness rules. They operate on multiplicities or membership; they do not concatenate:
 
 ```mud
-leftChars: Char [1..5] = ["a"]
-rightChars: Char [0..2] = empty
-combinedChars := leftChars | rightChars
+let leftChars: Char [1..5] = ["a"]
+let rightChars: Char [0..2] = empty
+let combinedChars := leftChars | rightChars
 ```
 
 `empty` is not a failure by itself. A partial query produces `empty`; failure appears only when the required outer shape does not permit cardinality zero.
@@ -452,7 +461,7 @@ The scopes on both sides are independent. Key or selector locals do not flow int
 An exact dictionary is queried by key equality, is countable and permits outer mutability. Associations are written with the same arrow:
 
 ```mud
-capitalOf: Country -> City [2 ordered] =
+let capitalOf: Country -> City [2 ordered] =
     Spain -> Madrid,
     France -> Paris
 ```
@@ -479,11 +488,11 @@ for capitalOf: Country -> City [*],
     mut visitedCountries: Country [* unique],
     mut visitedCapitals: City [* unique] {
     then {
-        for each country in capitalOf : {
+        foreach country in capitalOf : {
             add country to visitedCountries
         }
 
-        for each (country, capital) in capitalOf : {
+        foreach (country, capital) in capitalOf : {
             add country to visitedCountries
             add capital to visitedCapitals
         }
@@ -500,7 +509,7 @@ capitalOf[Italy] # City [0..1], produces empty if Italy is absent
 The key elements may be structural components:
 
 ```mud
-distance: (City, City) -> Length =
+let distance: (City, City) -> Length =
     (Madrid, Toledo) -> 74 km,
     (Madrid, Segovia) -> 91 km
 ```
@@ -508,8 +517,8 @@ distance: (City, City) -> Length =
 Set-theoretic operators on dictionaries act on keys. For a common key, `|` and `&` retain the left-hand value:
 
 ```mud
-left: Key -> Nat = AKey -> 1, BKey -> 2
-right: Key -> Nat = BKey -> 9, CKey -> 3
+let left: Key -> Nat = AKey -> 1, BKey -> 2
+let right: Key -> Nat = BKey -> 9, CKey -> 3
 
 left | right   # AKey -> 1, BKey -> 2, CKey -> 3
 left & right   # BKey -> 2
@@ -521,83 +530,109 @@ left ^ right   # AKey -> 1, CKey -> 3
 
 ### Functional dictionaries `-->`
 
-A functional dictionary is a pure case-defined policy. `value` refers to the input within both the selector and the result; `_` is the fallback:
+A functional dictionary is a pure case-defined policy.
+
+A functional branch has a pure selector and a ValueBlock result. Its input
+is the implicit immutable ordinary variable `value`, visible in both sibling
+scopes. It is not a reserved or contextually classified word. Normal lookup,
+duplicate-name and no-shadowing rules apply; neither result nor selector may
+redeclare it. Selector locals do not escape to the result. Exact associations
+do not inject value: their values are computed at association construction,
+not recomputed for each lookup.
+
+Inside a functional branch, `.member` abbreviates `value.member`, including
+subsequent access/index/call suffixes and Text interpolations. It supplies no
+receiver outside that branch and never picks a traversal binding implicitly.
+
+Interpret each selector operand with its established static category before
+combining selector `not`, `and` and `or`:
+
+| Written selector | Predicate |
+| --- | --- |
+| Ordinary singleton Bool expression | The expression itself. |
+| Ordinary non-Bool singleton value expression | `value == expression`. |
+| Interval/domain expression | `expression has value`, preserving all boundaries. |
+| Nominal type reference | `value is Type`. |
+| `== expected`, `!= expected`, `< limit`, `<= limit`, `> limit`, `>= limit` | The corresponding comparison with value. |
+| `is Type`, `is not Type`, `iis Type`, `iis not Type` | The explicit nominal test. |
+| `not selector` | Negation of the interpreted predicate. |
+| `_` | Residual fallback. |
+
+Bool operands keep their ordinary predicate meaning: `false` never applies;
+`== false` compares the input with false. For a non-Bool expected value,
+`not expected` means inequality. For an interval it means exclusion and for a
+type it means failed membership. Arbitrary collection expressions acquire no
+implicit membership. Explicit equality forces value comparison when supported;
+`== (1..10)` compares an interval value, whereas `(1..10)` tests membership in
+the open interval. Bare `1..10` retains closed-bound sugar. Type membership does
+not erase nominal identity or the distinction between is and iis.
+
+Logical operators combine the expanded predicates with their ordinary demand,
+pruning and narrowing rules. `Low or Medium` and `== Low or == Medium` compare
+family members, rather than applying Boolean or to member values. A complete
+condition such as `value.age >= 18 and value.hasPermit` needs no additional if.
+No as input binding, structural selector patterns or new guard form exists.
+Supported equality, singleton-Bool admission and purity remain mandatory.
+
+Composite application `policy[a, b]` supplies one complete contextual input,
+equivalent to `policy[(a, b)]`. The implicit value is that complete tuple or
+nominal product, not one independently dispatched argument. No argument names
+are injected as locals. Named components are accessible through value/.member;
+anonymous positional products use admitted positional binding.
 
 ```mud
-dangerOf: Creature --> Danger [ordered] =
-    value is Dragon --> Extreme,
-    value is Predator --> High,
-    _ --> Low
-```
-
-`ordered` means `FirstMatch`: the first applicable branch wins, and application yields `[0..1]`, or `[1]` with a fallback. Without `ordered`, every ordinary branch is evaluated and all results are obtained; the effective uniqueness modifier then normalises them: ordinary `unique` removes repeated whole values and `unique by path` removes later equal-key results:
-
-```mud
-traitsOf: Creature --> Trait [unique] =
-    value is Flying --> Aerial,
-    value is Aquatic --> Aquatic,
-    value is Magical --> Magical
-```
-
-Selectors are written explicitly. No shorthand implicitly inserts `value`, `==`, `is` or `in`:
-
-```mud
-seasonName: Month --> Text [ordered] =
-    value == January --> "winter",
-    [March..May] has value --> "spring",
-    value == June or value == July --> "summer",
-    _ --> "other"
-```
-
-Therefore, `January --> "winter"`, `[March..May] --> "spring"`, `Dragon --> Extreme` and `shop.discounted --> DiscountedPrice` do not automatically acquire selector meaning. The complete comparison or membership must be written.
-
-Applicability and result production are tracked separately. A branch whose selector applies may produce `empty`; the `_` fallback contributes a result only when no applicable ordinary branch has produced one. `FirstMatch` preserves evidence order; `AllMatches` records every result actually produced.
-
-Selectors and results may read external state purely:
-
-```mud
-priceOf: Product --> Money [ordered] =
-    value in shop.discounted --> value.basePrice * shop.discount,
-    _ --> value.basePrice
-```
-
-These readings create explicit dependencies on `shop.discounted`, `shop.discount` and `basePrice`. All transitive calls use the same snapshot.
-
-It supports neither outer `mut` nor `[mut]`, is not traversed directly with `for each`, and every recursion must have a demonstrably well-founded measure. Valid proofs include numeric descent, strict cardinality reduction, or transition to a strict substructure; a cycle without such evidence is an error.
-
-To iterate over results, iterate over an input domain and apply the dictionary:
-
-```mud
-action CollectPrices
-for products: Product [*], pricing: Product --> Money,
-    mut prices: Money [*] {
-    then for each product in products : {
-        price := pricing[product]
-        add price to prices
+let total: (Int, Int) --> Int [ordered] =
+    _ --> {
+        let (left, right) = value
+        left + right
     }
-}
 ```
 
-Branches can be changed only by editing the model at the owning dictionary. By default, a structural edit may insert before `_`, and may update, remove or move a branch, but none of these operations targets a branch anchor or assumes an independent public identity; the local key is grounded in the resolved representation.
+total[2,3] applies this one tuple-input policy and produces 5 under its contract.
+A nominal named product cannot be opened with that positional binding; access
+its named components instead. Structural input identity and once-only input
+evaluation retain the ordinary contextual-construction rules.
 
-Functional calculus is extensional; it does not merge branches:
+Coverage is universal over the admitted input contract and applicable views,
+not a check of one current world or runtime sample. State-dependent guards
+require fallback unless the version's finite static certificate procedure
+proves coverage independently of that sample. Finite family enumeration,
+nominal inclusion/exclusion, static domain coverage and propositional Boolean
+certificates use the existing static proof rules. No general theorem solver
+or type-based nominal guessing is introduced.
 
-```text
-(F op G)[x] = F[x] op G[x]
-```
+Each dictionary must cover every input admitted by its complete input contract.
+Coverage must be proved from declared family members, nominal alternatives,
+admitted interval/domain relations, ordinary supported Boolean facts or a
+residual `_`. Unproved coverage is static rejection, including for a dictionary
+with an empty-admitting output. Arbitrary predicates need a fallback when the
+supported proof procedure cannot establish coverage. Closed-family members
+can be enumerated; union coverage respects overlapping ancestry and exact iis
+tests rather than treating every nominal type as a disjoint variant.
 
-`F | G`, `F & G`, `F -- G` and `F ^ G` combine the sets obtained by applying both operands to `x`. Their fallbacks are evaluated independently. The union and symmetric difference of two `ordered` functionals may produce two outcomes and generally lose `ordered`; intersection and difference may preserve it.
+Fallback is unique and last. It applies only when no ordinary selector applies.
+A selected result yielding empty has handled that input and does not trigger
+fallback. Exhaustive treatment is independent of output presence: `_ --> empty`
+is valid when the output admits absence. Selected computing faults propagate;
+they do not retry another branch or fallback. Ordered FirstMatch chooses the
+first applicable selector; unordered AllMatches evaluates all ordinary selectors
+in one snapshot and produces all applicable results. Coverage is required in
+both modes; unreachable/redundant cases are diagnosed when provable.
 
-It is not permitted to combine an exact match with a functional match directly.
+Input and output types may be inferred only with unique evidence/context.
+`_ --> .name` alone does not establish an input type. An explicit input with
+an output hole can, as in `let naming: Person --> _ [ordered] = _ --> .name`.
+Output cardinality follows admitted branch results, not coverage alone; a
+covered FirstMatch returning optional values can still produce empty.
 
 ### `FirstMatch`, `AllMatches`, fallback and cardinality
 
-In a functional `[ordered]` dictionary, ordinary `unique` and `unique by path` are valid but redundant and trigger a suggestion to remove the uniqueness modifier. Without a fallback, application has cardinality `[0..1]`; with a fallback, `[1]`.
+In a functional `[ordered]` dictionary, ordinary `unique` and `unique by path` are valid but redundant and trigger a suggestion to remove the uniqueness modifier. Input coverage is mandatory with or without fallback. Result cardinality follows all reachable branch result contracts, including explicit empty results; fallback does not by itself establish presence.
 
-In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback raises the lower bound to `1`. `unique` deduplicates equal whole-value results from different branches. `unique by path` deduplicates equal projected result keys and retains the first result by stable occurrence provenance. Neither changes which branches applied.
+In an unordered functional dictionary, each matching ordinary branch contributes at most one result. With `n` potentially matching branches, the conservative cardinality is `[0..n]`; a fallback establishes coverage; the lower bound is 1 only when every reachable branch result guarantees a singleton value. `unique` deduplicates equal whole-value results from different branches. `unique by path` deduplicates equal projected result keys and retains the first result by stable occurrence provenance. Neither changes which branches applied.
 
 ```mud
-tagsOf: Creature --> Tag [unique] =
+let tagsOf: Creature --> Tag [unique] =
     value is Dragon --> Magical,
     value is FireCreature --> Magical,
     value is Flying --> Aerial,
@@ -621,13 +656,13 @@ The second example is equivalent to `Name -> (Coordinate -> Piece [*])`. Each co
 The chained application processes each level in turn:
 
 ```mud
-piece := boardByGame[game][coordinate]
+let piece := boardByGame[game][coordinate]
 ```
 
 Composition does not introduce an abstract function category. It is expressed by applying one dictionary's result as input to another:
 
 ```mud
-weather := weatherOf[capitalOf[country]]
+let weather := weatherOf[capitalOf[country]]
 ```
 
 ### Anonymous structural products
@@ -648,8 +683,8 @@ alias Coordinate {
     y: Num
 }
 
-raw: (Num, Num) = (1, 2)
-nominal: Coordinate = (x = 1, y = 2)
+let raw: (Num, Num) = (1, 2)
+let nominal: Coordinate = (x = 1, y = 2)
 ```
 
 `raw` and `nominal` are not interchangeable without an explicit nominal conversion. Anonymous-product compatibility requires the same arity, compatible component names where present, and component-by-component correspondence.
@@ -680,7 +715,7 @@ alias Board := Square -> Piece [0..32 ordered]
 alias Square {
     file: File
     rank: Rank
-    label: Text := "{file}{rank}"
+    let label: Text := "{file}{rank}"
 }
 
 alias Coordinate {
@@ -721,9 +756,9 @@ Structural literals are contextual:
 The positional form must provide all components. If any are omitted, the form must be fully qualified: the omitted components must have an explicit effective default value. The components listed may skip previous or intermediate components, but those listed retain the relative order of declaration. You are not allowed to mix positions and names:
 
 ```mud
-pagination: Pagination = (2, 30) # valid
-pagination: Pagination = (2)     # invalid: partial positional form
-pagination: Pagination = (size = 30) # valid: page retains 1
+let pagination: Pagination = (2, 30) # valid
+let pagination: Pagination = (2)     # invalid: partial positional form
+let pagination: Pagination = (size = 30) # valid: page retains 1
 ```
 
 A component does not support outer `mut` because the alias value and each component are immutable. Its collection specification may nevertheless contain `[mut]` to grant internal capability over directly contained `thing` values; this capability does not make the collection itself assignable.
@@ -734,7 +769,7 @@ A calculated alias component uses the same syntax as other calculated fields, in
 alias Squad {
     members: Soldier [*]
 
-    wounded [* mut] := soldier in members :
+    let wounded [* mut] := soldier in members :
         soldier.health < MaximumHealth
 }
 ```
@@ -747,7 +782,7 @@ A calculated collection is not a stored subcollection of `members`: it has its o
 family Terrain {
     movementCost: Nat = 1
     passable: Bool = true
-    costly := movementCost >= 3
+    let costly := movementCost >= 3
 
     Plain,
     Forest {
@@ -769,7 +804,7 @@ family Terrain {
     movementCost: Nat = 1 {
         ~summary = "Base movement cost"
     }
-    costly := movementCost >= 3 {
+    let costly := movementCost >= 3 {
         ~summary = "Indica terreno costoso"
     }
 
@@ -834,8 +869,8 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 A base magnitude has one of two forms: an empty body, or exactly one `root unit name` followed by zero or more alternative units. An alternative cannot be declared without a root. Absence of a root is a complete semantic choice: the magnitude retains an independent nominal dimension, but its values display no unit. It is not identical to its numeric representation, another unitless magnitude, or the dimensionless element.
 
 ```mud
-chance: Probability = 0.75
-explicitChance := ratio to Probability
+let chance: Probability = 0.75
+let explicitChance := ratio to Probability
 ```
 
 A bare numeric literal may take the type of a unitless magnitude when the expected context determines it uniquely. A general numeric expression requires `to` to construct that magnitude. Arithmetic retains the nominal factor even when it has no unit form; the visible unit projection may coincide across statically distinct dimensions. A quantity that explicitly writes a unit includes only the factors that unit identifies: context introduces no hidden factors.
@@ -938,7 +973,7 @@ In an action, `mut` before any `for` role name, including cardinality `[1]`, gra
 action Treat for
     mut patients: Person [1..10, unique, mut]
 {
-    then for each patient in patients : {
+    then foreach patient in patients : {
         patient.health += 10
     }
 }
@@ -981,7 +1016,7 @@ rule IsAdult for person: Person {
 }
 
 rule CanAfford for person: Person given price: Money {
-    available := person.money
+    let available := person.money
     available >= price
 }
 ```
@@ -1055,7 +1090,7 @@ An already observed collection changing from `empty` to a member can pulse `chan
 
 ```mud
 always rule ValidPopulation on kingdom: Kingdom {
-    population := kingdom.population
+    let population := kingdom.population
     population >= 0 people
 }
 ```
@@ -1087,7 +1122,7 @@ given amount: Nat in 1..100 {
 }
 ```
 
-There is no semantic classification of elementary versus compound actions. A `then` is an ordered sequence of consequences and may contain local `:=` bindings, direct effects, `action` or `subaction` calls, and `for each` iteration. An internal call executes at its textual position over the resolution's private delta: it observes preceding visible effects, adds its own effects to that resolution, and its subsequent judgements observe them.
+There is no semantic classification of elementary versus compound actions. A `then` is an ordered sequence of consequences and may contain local `:=` bindings, direct effects, `action` or `subaction` calls, and `foreach` iteration. An internal call executes at its textual position over the resolution's private delta: it observes preceding visible effects, adds its own effects to that resolution, and its subsequent judgements observe them.
 
 An `action` may be an external root. A `subaction` never can, but both may be omitted and may be invoked from any semantic `then` context, including the `then` of a reactive rule or test when the context permits it. An internal call does not open an independent transaction or root resolution.
 
@@ -1116,18 +1151,18 @@ External eligibility and reflective subtyping are distinct properties: `subactio
 ```mud
 look RealmSummary for kingdom: Kingdom
 given locale: Locale {
-    name := kingdom~name
-    population: Population := kingdom.population in people
+    let name := kingdom~name
+    let population: Population := kingdom.population in people
 }
 
 message KingChanged on kingdom: Kingdom {
     when kingdom.king changes
     if kingdom.visible
 
-    kingdomName := kingdom~name
-    kingName: Text := kingdom.king~name
-    time := kingdom.clock in second
-    timeText := "{kingdom.clock}"
+    let kingdomName := kingdom~name
+    let kingName: Text := kingdom.king~name
+    let time := kingdom.clock in second
+    let timeText := "{kingdom.clock}"
 }
 ```
 
@@ -1164,7 +1199,7 @@ A public field whose direct value is a magnitude supporting units should prefera
 if ready
 
 if {
-    available := player.money
+    let available := player.money
     available >= price
 }
 ```
@@ -1177,13 +1212,13 @@ Boolean-rule blocks, `when`, `if`, `always` rules and action `after` expressions
 
 ```mud
 when {
-    wasOpen := old door.open
-    isOpen := door.open
+    let wasOpen := old door.open
+    let isOpen := door.open
     wasOpen != isOpen
 }
 ```
 
-Bindings use `name [: Type] := expression`, are pure, immutable and sequential, and permit no forward references, cycles, redeclaration or shadowing. They are recalculated on every evaluation of the clause and store no state between waves.
+Bindings use `let name [: Type] := expression`, are pure, immutable and sequential, and permit no forward references, cycles, redeclaration or shadowing. They are recalculated on every evaluation of the clause and store no state between waves.
 
 Protected-body locals do not become handler inputs after rollback. Handler on bindings have their own scope; enclosing still-valid locals remain visible. In a `when`, `changes` and `old` evaluate a local's defining expression in every required snapshot.
 
@@ -1193,7 +1228,7 @@ The block `after` of a test retains one or more assertions. It may begin with co
 
 ```mud
 after {
-    expected := before + amount
+    let expected := before + amount
     kingdom.soldiers == expected
     kingdom.treasury >= 0
 }
@@ -1205,13 +1240,13 @@ A block `then`, including that of an iteration, can interleave effects with comp
 
 ```mud
 then {
-    cost := amount * price
-    remaining: Money := kingdom.money - cost
+    let cost := amount * price
+    let remaining: Money := kingdom.money - cost
     kingdom.money -= cost
 }
 ```
 
-The form `name [derived-value-shape] := value-body` declares a live, non-assignable local derivation. The derived shape permits `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Type and cardinality are inferred when a unique solution exists; otherwise, they must be written explicitly. Outer `mut` is not permitted.
+The form `let name [derived-value-shape] := value-body` declares a live, non-assignable local derivation. The derived shape permits `: Type`, `in domain` with an optional collection specification, or a collection specification alone. Type and cardinality are inferred when a unique solution exists; otherwise, they must be written explicitly. Outer `mut` is not permitted.
 
 A `:=` local registers a derivation without its own storage. Each read evaluates that derivation against the semantic view applicable at the read, including preceding sequential effects of the same branch. A stored `=` local evaluates its initialiser once when its slot is created and retains that captured value. Neither form observes concurrent sibling private deltas.
 
@@ -1219,13 +1254,13 @@ The name is available only from its declaration to the end of the block. It may 
 
 ### Stored annotations and binding patterns
 
-`name: _ = value-body` declares an immutable stored local; `mut name: _ = value-body` is admitted wherever mutable stored locals are admitted. `_` is a type-inference hole, including nested positions such as `pair: (_, Text) = value-body` or `items: Box with _ = value-body`. Stored annotations preserve written type structure, domains, collection cardinalities, uniqueness, order and inner authority. Holes are not admitted in signatures, derived annotations, alias representation declarations or general Type expressions. Every hole must have a unique static solution; missing or ambiguous evidence is a compile-time error reported at that hole.
+`let name: _ = value-body` declares an immutable stored local; `mut name: _ = value-body` is admitted wherever mutable stored locals are admitted. `_` is a type-inference hole, including nested positions such as `let pair: (_, Text) = value-body` or `let items: Box with _ = value-body`. Stored annotations preserve written type structure, domains, collection cardinalities, uniqueness, order and inner authority. Holes are not admitted in signatures, derived annotations, alias representation declarations or general Type expressions. Every hole must have a unique static solution; missing or ambiguous evidence is a compile-time error reported at that hole.
 
 Stored fields, alias components with defaults, family data with defaults and stored metadata with explicit initial values admit the same annotation syntax under their owners' ordinary static requirements. A hole-bearing annotation without its own initial value is invalid; member population, runtime values or later assignment cannot supply its type. `_` does not omit a cardinality or modifier and does not grant derived coercion.
 
-`binding-pattern` consists of a name, discard `_`, or a recursive positional pattern with at least two positions. Local pattern declarations require a positional root: `(x, y) = point` captures immutable components; `(x, y) := point` derives their live projections. Nested patterns and repeated discards are admitted. `mut` patterns, standalone `_ = value`/`_ := value`, and bare `x = value` as a declaration are invalid. The latter remains assignment to an existing place.
+`binding-pattern` consists of a name, discard `_`, or a recursive positional pattern with at least two positions. Local pattern declarations require a positional root: `(x, y) = point` captures immutable components; `let (x, y) := point` derives their live projections. Nested patterns and repeated discards are admitted. `mut` patterns, standalone `_ = value`/`_ := value`, and bare `x = value` as a declaration are invalid. The latter remains assignment to an existing place.
 
-In a local declaration position, a complete positional binding-pattern immediately followed by `=` or `:=` is classified as a pattern declaration before considering an assignment expression. This classification depends only on written syntax, not whether leaf names already resolve. A following access such as `(x, y).field = value` does not match that form and gains no multi-target assignment meaning. Existing visible capture names still produce redeclaration/shadowing errors.
+In a local declaration position, let followed by a complete positional binding-pattern and then `=` or `:=` is classified as a pattern declaration before considering an assignment expression. This classification depends only on written syntax, not whether leaf names already resolve. A following access such as `(x, y).field = value` does not match that form and gains no multi-target assignment meaning. Existing visible capture names still produce redeclaration/shadowing errors.
 
 Only positional products can be opened; named products cannot. A name may capture an entire nested component without opening it. Iteration, selection and all five quantifiers accept the same patterns, including a sole `_`. Exact-dictionary iteration retains association semantics: a two-position pattern projects key and value without turning the association into an ordinary product. Functional dictionaries retain their traversal restrictions. Pattern/source compatibility is checked statically; there is no implicit collection flattening or runtime filtering by pattern shape. Min/max return the original accepted source witness, not an arbitrarily selected captured component.
 
@@ -1255,7 +1290,7 @@ Every `given` must have a name, is read-only and may declare a closed static def
 ```mud
 given origin: Square = Capital,
       depth: Nat,
-      exhaustive: Bool = false
+      let exhaustive: Bool = false
 ```
 
 Arguments may be positional, named or a positional prefix followed by named arguments. After the first named argument, no positional argument may appear. In positional use, only a complete suffix with defaults may be omitted; in named use, intermediate defaults may be omitted and arguments reordered:
@@ -1315,21 +1350,21 @@ RemoveEffect always removes a value from a collection-compatible assignable targ
 
 `|=`, `&=`, `^=` and `--=` retain their update class in the AST. They require an externally mutable location or a reconstructible assignable path whose write-back ends in one, and a result assignable to the location. `^=` accepts only collections that guarantee whole-value uniqueness; ordinary `unique` and `unique by path` both satisfy that precondition. For collections, homogeneous updates consolidate by union, intersection, parity or summed removed multiplicities; mixing different classes is a conflict unless explicitly specified otherwise. For `Text`, `|=` is concatenation and multiple concurrent updates require a defined global order.
 
-## `for each`, progressions, selection and quantifiers
+## `foreach`, progressions, selection and quantifiers
 
-`for each` accepts any source with proved finiteness and an admitted canonical enumeration: collections, exact dictionaries, supported discrete intervals and finite canonically enumerable domains. An interval does not become a collection merely because it can be traversed.
+`foreach` accepts any source with proved finiteness and an admitted canonical enumeration: collections, exact dictionaries, supported discrete intervals and finite canonically enumerable domains. An interval does not become a collection merely because it can be traversed.
 
 ```mud
-for each person in kingdom.people if person.hungry :
+foreach person in kingdom.people if person.hungry :
     person.health -= 1
 
-for each value in [0..100] by 5 : {
-    doubled := value * 2
+foreach value in [0..100] by 5 : {
+    let doubled := value * 2
     total += doubled
 }
 ```
 
-The `:` is mandatory. Braces form part of the body and do not replace the separator. The body may begin on the same line or after one or more terminators; this physical separation does not alter its abstract structure. In executable `for each`, the short body must be an effect or action call and the braced body uses `EffectBlock`. Within `ValueBlock`, `LocalForEach` uses a short `ValueStatement` or a `LocalStatementBlock`, accepts only local statements, and cannot outlive the value block's scope.
+The `:` is mandatory. Braces form part of the body and do not replace the separator. The body may begin on the same line or after one or more terminators; this physical separation does not alter its abstract structure. In executable `foreach`, the short body must be an effect or action call and the braced body uses `EffectBlock`. Within `ValueBlock`, `LocalForEach` uses a short `ValueStatement` or a `LocalStatementBlock`, accepts only local statements, and cannot outlive the value block's scope.
 
 ### Iteration filter
 
@@ -1356,7 +1391,7 @@ A source with its own enumeration order does not need `by`. For sequence-based e
 
 ### Stepped domains
 
-`interval by step` uses the same progression to define membership, and a static step may be negative. Its sign may change the members, but order is not part of the type. `all` materialises in canonical order; `Nat in [1..8] by -2 = all` produces `2, 4, 6, 8`. In discontinuous intervals, iteration restarts for each segment; positive steps traverse segments from lowest to highest, while negative steps reverse that order. A cyclic point domain covers at most one fundamental period.
+`interval by step` uses the same progression to define membership, and a static step may be negative. Its sign may change the members, but order is not part of the type. `all` materialises in canonical order; `let samples: Nat in [1..8] by -2 = all` produces `2, 4, 6, 8`. In discontinuous intervals, iteration restarts for each segment; positive steps traverse segments from lowest to highest, while negative steps reverse that order. A cyclic point domain covers at most one fundamental period.
 
 ### Selection and quantifiers
 
@@ -1365,8 +1400,8 @@ Selections and `exists`, `forall`, `count`, `min` and `max` accept `by` when the
 A selection produces a collection and therefore does not consume a bare domain directly: if the conceptual source is a domain `D`, it must be written `all D`. Iterations and quantifiers that do not produce a collection may consume a finite, countable domain directly.
 
 ```mud
-selected := x in source by step : {
-    threshold := limit
+let selected := x in source by step : {
+    let threshold := limit
     x < threshold
 }
 ```
@@ -1401,7 +1436,7 @@ rule Positive given value: Any {
 Inside a functional branch, `is` and `iis` retain their narrowing in the result:
 
 ```mud
-describeAny: Any --> Text [ordered] =
+let describeAny: Any --> Text [ordered] =
     value iis PersonId --> "Person id {value}",
     value is Nat --> "Natural {value}",
     _ --> "Other"
@@ -1624,14 +1659,14 @@ The table summarises the common and configurable properties that affect the synt
 General conversions are explicit when the following apply:
 
 ```mud
-pathText: Text = Alexandria~path to Text
+let pathText: Text = Alexandria~path to Text
 ```
 
 Templates can render metadata types directly without establishing general nominal compatibility with `Text`. `~file` is valid in any expression, but triggers a warning when it appears outside text or purely informative public output and its value may affect behaviour:
 
 ```mud
 look SourceInfo {
-    source := "Loaded from {Alexandria~file}"
+    let source := "Loaded from {Alexandria~file}"
 }
 
 rule Fragile given expected: MudFile {

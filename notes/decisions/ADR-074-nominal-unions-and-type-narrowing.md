@@ -45,8 +45,8 @@ The union is associative, commutative and idempotent with respect to identical a
 An expression is implicitly incorporated when it has one compatible alternative. If a literal or contextually constructible expression satisfies several, it is ambiguous:
 
 ```mud
-value: Nat | Int = 2        # invalid
-value: Nat | Int = 2 to Int # valid
+let value: Nat | Int = 2        # invalid
+let value: Nat | Int = 2 to Int # valid
 ```
 
 This is especially important for distinct aliases with the same representation. A union value retains the nominal alternative through which it entered. A union of `thing` types retains the original identity and is compatible with `Thing` exactly when all its alternatives are.

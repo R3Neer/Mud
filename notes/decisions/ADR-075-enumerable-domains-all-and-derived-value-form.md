@@ -28,8 +28,8 @@ Intervals alone cannot constrain enumerated, stepped or nominal values. The coll
 The model distinguishes interval, finite, stepped and named domains, and compositions using union, intersection, difference and symmetric difference.
 
 ```mud
-colors: Color in [Red, White] [2] = all
-numbers: Num in 0..1 by 0.2 [6] = all
+let colors: Color in [Red, White] [2] = all
+let numbers: Num in 0..1 by 0.2 [6] = all
 ```
 
 `by` turns a linear interval into a discrete domain. Its step is static, signed, non-zero, exact and compatible with the type or dimension. A positive step anchors at the lower bound and a negative step at the upper bound, in accordance with D-088. `Num` uses exact rational arithmetic; the full numeric Rum domain and Rum intervals have no admitted numeric enumeration. Finite explicit Rum containers/sets can have their own enumeration, as clarified by [[ADR-151-finite-collections-and-mandatory-enumeration-proof-basis|D-151]]. Cardinality always uses square brackets and is independent of the domain.
@@ -45,17 +45,17 @@ When enumeration depends on the world, such as `all` over `thing`, it may feed o
 Computed fields, computed family data, local bindings and public `look` and `message` fields share this form:
 
 ```text
-name [derived-form] ":=" expression
+let name [derived-form] ":=" expression
 ```
 
-The derived form is a complete `: type` annotation, an `in domain` constraint optionally followed by a collection specification, or a collection without type or domain. Thus both `a: A in [B, C] := expression` and `a in [B, C] := expression` are possible without fabricating a superficial type annotation.
+The derived form is a complete `: type` annotation, an `in domain` constraint optionally followed by a collection specification, or a collection without type or domain. Thus both `let a: A in [B, C] := expression` and `let a in [B, C] := expression` are possible without fabricating a superficial type annotation.
 
 The declared domain in a derived form is coercive: it filters the result with the same semantics as a local domain constraint. Cardinality is checked after that transformation; an unsatisfiable lower bound produces the corresponding obligation or failure and never fabricates members.
 
 A comma-separated list of expressions constructs a derived collection:
 
 ```mud
-numbers := a * b, d, c / a
+let numbers := a * b, d, c / a
 ```
 
 Its common type and cardinality are inferred. Arity is exact cardinality for ordinary multiplicity collections; under ordinary `unique` it is exact only when whole-value distinction can be proved, and under `unique by path` only when distinction of the projected keys can be proved. A collection included as an element is not implicitly flattened.
@@ -67,9 +67,9 @@ A selection `value in source : predicate` and `take amount from source` also pro
 When `to` supplies only a type context, tooling suggests moving it to the declaration. If the conversion is constant and safe, it also normalises the value:
 
 ```mud
-value := 3.7 to Nat
-value: Nat := 4
-value: Nat = 4
+let value := 3.7 to Nat
+let value: Nat := 4
+let value: Nat = 4
 ```
 
 Each transformation is an independent suggestion and is offered only when it preserves domains and failure behaviour.

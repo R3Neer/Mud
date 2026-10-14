@@ -71,9 +71,9 @@ magnitude Population: Nat {
 Numeric literals do not have suffixes of type. There aren't any `30N`, `30I`, `30M` or equivalent forms. The type context determines the exact representation. Literals `Rum` Cigars form a distinct family with prefix `r`, according to D-034:
 
 ```mud
-balance: Money = 30
-population: Population = 30 people
-rapid: Rum = r0.1
+let balance: Money = 30
+let population: Population = 30 people
+let rapid: Rum = r0.1
 ```
 
 ### Non-derived quantities

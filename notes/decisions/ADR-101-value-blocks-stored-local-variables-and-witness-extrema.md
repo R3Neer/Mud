@@ -7,7 +7,7 @@ supersedes: []
 superseded-by: []
 questions: []
 affects:
-  - "ExpressionBlock, ValueBlock, EffectBlock, local variables, for each, fields, aliases, family, dictionaries, metadata, participants, min, max, grammar, CST, AST, resolution and consolidation"
+  - "ExpressionBlock, ValueBlock, EffectBlock, local variables, foreach, fields, aliases, family, dictionaries, metadata, participants, min, max, grammar, CST, AST, resolution and consolidation"
 ---
 # ADR-101 — Value blocks, stored local variables and witness extrema
 
@@ -18,9 +18,11 @@ affects:
 
 - Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
-MUD already distinguished declarative expression blocks and executable effect blocks, but that division left no dedicated form for constructing a value through temporary local storage. It also did not allow stored local variables in `then`, forced every `for each` to be modelled as an effect, and left `sum`, `min` and `max` in an overly heterogeneous aggregation family.
+MUD already distinguished declarative expression blocks and executable effect blocks, but that division left no dedicated form for constructing a value through temporary local storage. It also did not allow stored local variables in `then`, forced every `foreach` to be modelled as an effect, and left `sum`, `min` and `max` in an overly heterogeneous aggregation family.
 
 The extension must preserve two deliberate language boundaries: a value computation cannot acquire observable effects, and `if` does not become a general statement inside calculation blocks.
 
@@ -28,7 +30,7 @@ The extension must preserve two deliberate language boundaries: a value computat
 
 ### Three body contracts
 
-`ExpressionBlock` contains zero or more pure preamble statements (calculated locals `:=` or externally pure `from` blocks) and exactly one final expression. It admits no stored variables, mutation, `for each` as a statement or inner `if`.
+`ExpressionBlock` contains zero or more pure preamble statements (calculated locals `:=` or externally pure `from` blocks) and exactly one final expression. It admits no stored variables, mutation, `foreach` as a statement or inner `if`.
 
 `ValueBlock` constructs exactly one value through zero or more `ValueStatement` items and a final expression. Its statement catalogue is closed to:
 
@@ -52,22 +54,22 @@ There is no `if` statement inside `ExpressionBlock`, `ValueBlock` or `LocalState
 
 ### Stored local variables
 
-In addition to `x := value-body`, the following are admitted:
+In addition to `let x := value-body`, the following are admitted:
 
 ```mud
-x: X = value-body
+let x: X = value-body
 mut x: X = value-body
 ```
 
-`:=` does not create an assignable location. `x: X =` creates a non-reassignable stored local slot and `mut x: X =` a reassignable one. The local initialiser is evaluated when the declaration is reached and may read runtime state when the context permits.
+`:=` does not create an assignable location. `let x: X =` creates a non-reassignable stored local slot and `mut x: X =` a reassignable one. The local initialiser is evaluated when the declaration is reached and may read runtime state when the context permits.
 
 Stored variables admit the complete type/value form compatible with their owner. Slot mutability and the inner capability of its value are orthogonal.
 
 A calculated local may be a `given` or a readonly `for` participant. An immutable stored local may be a `given` or readonly `for`. A mutable stored local may also satisfy `for mut`. The call temporarily binds the participant to the slot; it introduces neither first-class references nor copy-in/copy-out, and a failure also reverts modifications to that slot under ordinary atomicity.
 
-### Local `for each`
+### Local `foreach`
 
-Within `ValueBlock`, `for each` uses `LocalStatementBlock`, which contains only `ValueStatement` items and has no final expression of its own. Its filter remains a Boolean `ExpressionBlock`.
+Within `ValueBlock`, `foreach` uses `LocalStatementBlock`, which contains only `ValueStatement` items and has no final expression of its own. Its filter remains a Boolean `ExpressionBlock`.
 
 In an iteration with semantic order, a mutable outside the loop but inside the owning body is observed sequentially between iterations. In an iteration without semantic order, all iterations start from the same prior projection and their modifications to an outer mutable are consolidated as concurrent. A set of compatible `+=` operations uses general arithmetic consolidation; several absolute `=` assignments do not thereby acquire accumulator semantics.
 
@@ -75,7 +77,7 @@ Each iteration retains an independent local scope.
 
 ### `ExpressionBlock` owners
 
-The following use `ExpressionBlock`: Boolean rules, `always`, `when`, `if` guards, action `after`, `for each` filters, selection, `exists`, `forall`, `count`, `min`, `max`, exact-dictionary keys and functional-dictionary selectors. Functional selectors and the bodies of the five quantifiers listed elaborate to `Bool`, except for the temporally distinct contracts already fixed for `when`.
+The following use `ExpressionBlock`: Boolean rules, `always`, `when`, `if` guards, action `after`, `foreach` filters, selection, `exists`, `forall`, `count`, `min`, `max`, exact-dictionary keys and functional-dictionary selectors. Functional selectors and the bodies of the five quantifiers listed elaborate to `Bool`, except for the temporally distinct contracts already fixed for `when`.
 
 ### Witness extrema
 
@@ -91,7 +93,7 @@ The owner's constraints remain in force. When a field, component, datum, member 
 
 ### Dictionaries
 
-An exact association has `ExpressionBlock` on the left and `ValueBlock` on the right. A functional branch has `ExpressionBlock<Bool>` on the left and `ValueBlock` on the right. The scopes on both sides are independent; locals on the left do not pass to the right. The common outer environment and contextual functional `value` remain available under their contracts.
+An exact association has `ExpressionBlock` on the left and `ValueBlock` on the right. A functional branch has `ExpressionBlock<Bool>` on the left and `ValueBlock` on the right. The scopes on both sides are independent; locals on the left do not pass to the right. The common outer environment and ordinary implicit input `value` remain available under their contracts.
 
 Braces replace only the extended operand. All four short/extended combinations are freely admitted:
 
@@ -130,7 +132,7 @@ A declaration does not combine the integrated preamble with a second metadata bo
 3. Local `:=`, `=` and `mut ... =` declarations with correct scopes and shadowing.
 4. Nested `LocalForEach`, pure filter and body without a mandatory result.
 5. Sequential ordered accumulator and consolidated unordered accumulator; distinction between `+=` and `=`.
-6. Readonly binding and `for mut` for each local class, including rollback.
+6. Readonly binding and `for mut` foreach local class, including rollback.
 7. Boolean `min`/`max` returning witnesses, ordered source without a key and `empty` without candidates.
 8. All four short/extended combinations of `->` and `-->`, with independent scopes.
 9. Integrated metadata projected to the descriptor and rejection of a second metadata body.

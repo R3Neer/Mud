@@ -64,7 +64,7 @@ which begins on $W_i$. A subsequent instruction from the same `then` You can see
 
 None `then` notes that during the same wave, the delta part of another `then`. The implementation may interleave or parallelise the computation, but this scheduling is not observable.
 
-A local binding `name [derived-form] := value-body` registers a live derivation without storage. Its reads use the applicable private view, including preceding effects; stored `=` locals instead capture once. Neither declaration alone produces a world delta.
+A local binding `let name [derived-form] := value-body` registers a live derivation without storage. Its reads use the applicable private view, including preceding effects; stored `=` locals instead capture once. Neither declaration alone produces a world delta.
 
 Once all the blocks have been completed, each one is normalised delta private and are then consolidated:
 

@@ -304,8 +304,7 @@ stored-family-data-declaration
         ;
 
 calculated-family-data-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
-        ;
+    ::= "let" , field-name , [ derived-value-shape ] , ":=" , descriptor-value-body ;
 
 family-member
     ::= member-name , [ family-member-body ] ;
@@ -429,23 +428,25 @@ field-declaration
       ;
 
 stored-field-declaration
-    ::= [ "mut" ] , field-name , ":" , stored-type-expression
-        , "=" , descriptor-value-body
-        ;
+    ::= ( "let" | "mut" ) , field-name , [ stored-value-shape ]
+        , "=" , descriptor-value-body ;
 
 calculated-field-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
-        ;
+    ::= "let" , field-name , [ derived-value-shape ] , ":=" , descriptor-value-body ;
 
 public-field-declaration
-    ::= field-name , [ derived-value-shape ] , ":=" , descriptor-value-body
-        ;
+    ::= "let" , field-name , [ derived-value-shape ] , ":=" , descriptor-value-body ;
 
 derived-value-shape
     ::= ":" , type-expression
       | "in" , type-alternative-domain , [ collection-specification ]
       | collection-specification
         ;
+
+stored-value-shape
+    ::= ":" , stored-type-expression
+      | "in" , type-alternative-domain , [ collection-specification ]
+      | collection-specification ;
 
 type-inference-hole
     ::= "_" ;
@@ -732,12 +733,11 @@ value-local-declaration
       ;
 
 local-calculated-declaration
-    ::= variable-name , [ derived-value-shape ] , ":=" , value-body ;
+    ::= "let" , variable-name , [ derived-value-shape ] , ":=" , value-body ;
 
 local-stored-declaration
-    ::= [ "mut" ] , variable-name , ":" , stored-type-expression
-        , "=" , value-body
-        ;
+    ::= ( "let" | "mut" ) , variable-name , [ stored-value-shape ]
+        , "=" , value-body ;
 
 local-mutation
     ::= local-assignment
@@ -755,7 +755,7 @@ local-remove
     ::= "remove" , expression , "from" , assignable-expression ;
 
 local-for-each
-    ::= "for" , "each" , iteration-binding , "in" , expression
+    ::= "foreach" , iteration-binding , "in" , expression
         , [ "by" , expression ]
         , [ "if" , expression-body ]
         , ":"
@@ -923,13 +923,13 @@ behaviour-preamble-statement
         ;
 
 immutable-local-stored-declaration
-    ::= variable-name , ":" , stored-type-expression , "=" , value-body ;
+    ::= "let" , variable-name , [ stored-value-shape ] , "=" , value-body ;
 
 local-pattern-declaration
-    ::= positional-binding-pattern , ( "=" | ":=" ) , value-body ;
+    ::= "let" , positional-binding-pattern , ( "=" | ":=" ) , value-body ;
 
 pure-pattern-declaration
-    ::= positional-binding-pattern , ":=" , value-expression , { otherwise-clause } ;
+    ::= "let" , positional-binding-pattern , ":=" , value-expression , { otherwise-clause } ;
 
 binding-pattern
     ::= variable-name | "_" | positional-binding-pattern ;
@@ -969,7 +969,7 @@ foreign-code-expression
     ::= FOREIGN_EXPRESSION ;
 
 local-value-declaration
-    ::= variable-name , [ derived-value-shape ] , ":=" , value-expression , { otherwise-clause } ;
+    ::= "let" , variable-name , [ derived-value-shape ] , ":=" , value-expression , { otherwise-clause } ;
 
 (* ------------------------------------------------------------------ *)
 (* Initial activation and tests                                         *)
@@ -1062,7 +1062,7 @@ action-call-effect
     ::= postfix-expression ;
 
 for-each-effect
-    ::= "for" , "each" , iteration-binding , "in" , expression
+    ::= "foreach" , iteration-binding , "in" , expression
         , [ "by" , expression ]
         , [ "if" , expression-body ]
         , ":"
@@ -1084,7 +1084,25 @@ expression
     ::= mapping-expression ;
 
 mapping-expression
-    ::= mapping-left , [ mapping-arrow , mapping-right ] ;
+    ::= mapping-left , [ mapping-arrow , mapping-right ]
+      | selector-expression , "-->" , mapping-right ;
+
+selector-expression
+    ::= selector-and , { "or" , selector-and } ;
+
+selector-and
+    ::= selector-term , { "and" , selector-term } ;
+
+selector-term
+    ::= "not" , selector-term
+      | selector-comparison , comparison-expression
+      | "is" , [ "not" ] , declared-type
+      | "iis" , [ "not" ] , declared-type
+      | comparison-expression
+      | "(" , selector-expression , ")" ;
+
+selector-comparison
+    ::= "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 
 mapping-left
     ::= eventually-expression
@@ -1281,6 +1299,8 @@ primary-expression
       | take-expression
       | raise-expression
       | selection-expression
+      | comprehension-expression
+      | implicit-member-expression
       | qualified-name
       | structural-literal
       | collection-literal
@@ -1296,6 +1316,14 @@ primary-expression
 
 take-expression
     ::= "take" , expression , "from" , expression ;
+
+comprehension-expression
+    ::= "foreach" , iteration-binding , "in" , expression
+        , [ "by" , expression ] , [ "if" , expression-body ]
+        , "-->" , [ required-separation ] , value-body ;
+
+implicit-member-expression
+    ::= "." , identifier ;
 
 selection-expression
     ::= iteration-binding , "in" , expression

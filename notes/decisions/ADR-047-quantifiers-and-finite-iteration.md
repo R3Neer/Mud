@@ -53,13 +53,13 @@ item in source : predicate
 
 It shares responsibility for finiteness and enumerability, produces the accepted subcollection, and can subsequently feed into a quantifier, `take` or another expression.
 
-The `for each` The executable appears inside a `then`; D-101 also allows for `LocalForEach` inside `ValueBlock`, with `LocalStatementBlock` and has no external effects. The executable form retains:
+The `foreach` The executable appears inside a `then`; D-101 also allows for `LocalForEach` inside `ValueBlock`, with `LocalStatementBlock` and has no external effects. The executable form retains:
 
 ```mud
-for each item in source if predicate :
+foreach item in source if predicate :
     iterations += 1
 
-for each value in source by step if predicate :
+foreach value in source by step if predicate :
     iterations += 1
 ```
 

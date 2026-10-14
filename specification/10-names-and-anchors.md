@@ -13,6 +13,7 @@ depends-on:
 questions:
   - Q-014
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-166
@@ -57,6 +58,26 @@ decisions:
   - D-126
 ---
 # 10. Names, paths and anchors
+
+## Functional input and comprehension scopes
+
+Each functional branch introduces one ordinary immutable LocalSymbol of kind
+functional-input named value, owned by the nearest anchored declaration and
+distinguished by the branch's source ordinal. The branch has a shared input
+scope with sibling selector/result scopes. The implicit declaration retains
+branch SurfaceRef provenance and no public anchor. References to value and
+implicit .member receivers resolve to that symbol through ordinary lexical
+lookup. A visible outer value conflicts under no-shadowing; branch-local
+redeclaration also fails. Exact associations introduce no implicit input.
+Selector shorthand retains source references; operator interpretation, type
+membership, coverage and result joins belong to elaboration, not Nominal HIR.
+
+A comprehension checks its source/step in the outer scope, then introduces
+ordinary iterator LocalSymbol leaves in the shared iteration scope. Filter
+and result scopes are siblings; only iterator leaves are shared. Discards
+create no symbol. Its result creates no nominal declaration or public anchor.
+let/mut markers select existing computed/stored local kinds; omitted annotations
+and holes retain provenance without adding inferred types to Nominal HIR.
 
 ## State and purpose
 
@@ -187,9 +208,9 @@ Resolve the complete RHS before introducing any pattern leaf. Each named leaf in
 
 `ValueBlock` creates its own lexical scope. Its computed and stored declarations are introduced sequentially. An `LocalForEach` resolves `source` and `by` before introducing its binding; the binding is visible in the filter and in `LocalStatementBlock`. Locals created within an iteration do not survive into the next one. A mutation may refer to a mutable local variable of an enclosing scope of the same `ValueBlock`; the check that the final destination does not escape the block is part of type checking/elaboration.
 
-In the `for each` executable, the same rules for introducing bindings apply, but the body belongs to `EffectBlock` and can write to external locations in accordance with its authority. In a selection or quantifier, the binding exists only within its `ExpressionBlock`.
+In the `foreach` executable, the same rules for introducing bindings apply, but the body belongs to `EffectBlock` and can write to external locations in accordance with its authority. In a selection or quantifier, the binding exists only within its `ExpressionBlock`.
 
-In associations `->` and branches `-->`, the left and right blocks create sibling scopes: the /selector-scoped locals are not visible in value/resultado. Both can see the common outer environment, and the function branches also retain their contextual bindings `value` where applicable.
+In associations `->` and branches `-->`, the left and right blocks create sibling scopes: the /selector-scoped locals are not visible in value/resultado. Both can see the common outer environment, and the function branches also retain their ordinary implicit input variable `value` where applicable.
 
 The calculated and stored locals still do not satisfy a public anchor. A mutable stored local may satisfy participant `for mut`; nominal resolution binds the name to `LocalSymbol`, whilst typing/elaboration checks ensure that the occurrence used as receiver refers to a writable slot. The Nominal HIR does not require a reference class or any additional symbol.
 
@@ -308,7 +329,7 @@ The full description does not constitute a new anchor.
 An member of family may be abbreviated when the expected type determines the family:
 
 ```mud
-severity: Severity = Critical
+let severity: Severity = Critical
 ```
 
 `Severity.Critical` remains available. Units follow the same rule for magnitude, identifier, `name`, plural and abbreviation. If two values remain possible, further specification is required.
@@ -424,7 +445,7 @@ Alias~operators exposes own and inherited declaration descriptors, deduplicated 
 
 [[20-blocks-and-recovery]] checks clause-local Error bindings using these existing local symbols and scopes. Recovery creates no world identity or public handler anchor.
 
-[[17-dictionaries]] uses association patterns and contextual value references in their existing local scopes. A normalized functional selector key is local reconstruction identity, not a public symbol/anchor; its result does not supply a new declaration.
+[[17-dictionaries]] uses association patterns and ordinary implicit input references in their existing local scopes. A normalized functional selector key is local reconstruction identity, not a public symbol/anchor; its result does not supply a new declaration.
 
 [[19-magnitudes]] retains canonical magnitude/unit declarations and structural prefixed forms. Unitless point construction creates values of the existing declaration, not unit symbols or new anchors. Contextual unit/point interpretation and dimensional contracts are checked after nominal resolution.
 

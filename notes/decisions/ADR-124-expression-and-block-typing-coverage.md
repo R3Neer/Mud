@@ -12,6 +12,8 @@ affects:
 
 # ADR-124 — Expression and block typing coverage
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
 The static formalisation needs a contract for each existing expression constructor and for normal results versus recovery channels, without introducing new syntax.

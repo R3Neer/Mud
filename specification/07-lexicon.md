@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-069
 decisions:
+  - D-169
   - D-141
   - D-134
   - D-137
@@ -90,6 +91,10 @@ A name that does not follow the capitalisation rules is a static error, not an a
 
 ## Reserved and contextual words
 
+`let` and `foreach` are hard reserved words. `each` and `value` are ordinary
+identifiers. Functional input injection and abbreviated .member receivers
+belong to nominal scopes, not lexical classification.
+
 Reserved words cannot be used as identifiers. The standard catalogue is:
 
 ```text
@@ -97,8 +102,8 @@ using
 thing as alias family magnitude
 rule action subaction look sublook message submessage test
 for on given when changes if then after with otherwise raise
-mut unique ordered
-create destroy add to remove from each by take
+let mut unique ordered
+create destroy add to remove from foreach by take
 eventually through imagine old
 is iis in has
 not and or xor
@@ -120,7 +125,6 @@ They are contextual:
 - `always` in front of `rule`.
 - `start` as part of `start with`.
 - `mud` at an export bridge in a `from` body.
-- `value` within the selectors and results of functional branches `-->`.
 - `type` in the reflexive positions and in those of type where this is permitted.
 - `name`, `path`, `anchor`, `file`, `plural`, `abbreviation`, `prefixes` and `format` after `~` in the permitted positions.
 - `root`, `unit`, `point`, `over` and `cycle` in their own productions.

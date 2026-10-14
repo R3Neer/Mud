@@ -156,9 +156,9 @@ keyword-word
       | "rule" | "action" | "subaction" | "look" | "sublook" | "message" | "submessage" | "test"
       | "for" | "on" | "given" | "when" | "changes"
       | "if" | "then" | "after" | "with" | "otherwise" | "raise"
-      | "mut" | "unique" | "ordered"
+      | "let" | "mut" | "unique" | "ordered"
       | "create" | "destroy" | "add" | "remove" | "from"
-      | "each" | "by" | "through" | "take"
+      | "foreach" | "by" | "through" | "take"
       | "exists" | "forall" | "count" | "min" | "max"
       ;
 
@@ -183,7 +183,7 @@ constant-word
 contextual-word
     ::= "abstract" | "part" | "only" | "uses" | "always" | "start"
       | "mud"
-      | "value" | "type"
+      | "type"
       | "name" | "path" | "anchor" | "file"
       | "plural" | "abbreviation" | "prefixes" | "format"
       | "root" | "unit" | "point" | "over" | "cycle"

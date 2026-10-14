@@ -27,7 +27,7 @@ Computed `family` data was already represented in EBNF and the AST with `derived
 Computed `family` data uses the same complete declarable form as a computed field:
 
 ```text
-name [derived-form] := value-body
+let name [derived-form] := value-body
 ```
 
 `derived-form` is the ordinary `derived-value-shape`: it may fix a `type-expression`, declare a domain with an optional collection form, or declare a collection form directly. If it does not fix a type, the type must be inferred uniquely.
@@ -42,9 +42,9 @@ The RHS admits the short expression or the `ValueBlock` already defined for comp
 
 ```mud
 family Tier {
-    score: Nat := baseScore
-    normalized in 0..100 := rawScore
-    tags: Text [* unique ordered] := inheritedTags
+    let score: Nat := baseScore
+    let normalized in 0..100 := rawScore
+    let tags: Text [* unique ordered] := inheritedTags
 
     Low,
     High

@@ -64,7 +64,7 @@ $$
 A pure expression always produces a value of its type. In particular:
 
 ```mud
-result: Nat := 0 - 2
+let result: Nat := 0 - 2
 ```
 
 produces `0`.

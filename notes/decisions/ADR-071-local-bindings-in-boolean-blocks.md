@@ -23,6 +23,8 @@ affects:
 
 - Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
 MUD conditions may need readable intermediate calculations. Repeating them inside a Boolean expression harms readability, while turning them into fields would introduce state that does not belong to the world.
@@ -35,15 +37,15 @@ MUD already has immutable local bindings via `:=` in `then` blocks. The same voc
 
 A Boolean block contains, in this order:
 
-1. Zero or more pure preamble statements: local bindings `name [derived-form] := expression`, pure derived positional patterns, or externally pure `from` blocks exporting immutable MUD values.
+1. Zero or more pure preamble statements: local bindings `let name [derived-form] := expression`, pure derived positional patterns, or externally pure `from` blocks exporting immutable MUD values.
 2. Exactly one final expression.
 
 The final expression must satisfy the owning construct's contract: it elaborates to `Bool` in Boolean rules, guards, invariants and postconditions; in `when`, it elaborates to an activator admitted by D-058. An expression without declaration form must be the last expression in the block; a second non-declarative expression is invalid.
 
 ```mud
 if {
-    cost := amount * price
-    available := kingdom.money
+    let cost := amount * price
+    let available := kingdom.money
     available >= cost
 }
 ```
@@ -64,7 +66,7 @@ A test's `after` block is a non-empty sequence of assertions, not one condition.
 
 ```mud
 after {
-    expected := before + amount
+    let expected := before + amount
     kingdom.soldiers == expected
     kingdom.treasury >= 0
 }

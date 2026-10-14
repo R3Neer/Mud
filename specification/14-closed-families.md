@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-169
   - D-038
   - D-064
   - D-066
@@ -40,7 +41,7 @@ decisions:
 
 ```mud
 ordered family Severity { Low, Medium, High }
-level: Severity = Medium
+let level: Severity = Medium
 ```
 
 Let F be a resolved family, A its exact static type arguments (empty for a
@@ -102,7 +103,7 @@ contract as other static value owners.
 > inferred or explicitly checked contract and an acyclic dependency graph.
 > Member override bodies must not change the uniform schema.
 
-Computed data uses `name [derived-form] := value-body`. The full derived form
+Computed data uses `let name [derived-form] := value-body`. The full derived form
 may specify a type, domain, cardinality, uniqueness and order. It is pure,
 unstored and nonassignable, and cannot manufacture `[mut]` or other authority.
 Its local domain/shape transformations follow [[15-fields-and-mutability]].
@@ -156,7 +157,7 @@ The projected type category is Family even for applied families and members.
 ordered family Terrain {
     movementCost: Nat = 1
     passable: Bool = true
-    costly := movementCost >= 3
+    let costly := movementCost >= 3
 
     Plain,
     Forest { movementCost = 2 },
@@ -174,12 +175,12 @@ member order.
 family Missing { code: Nat; One }       # invalid: no code value
 family Override {
     score: Nat = 0
-    doubled := score * 2
+    let doubled := score * 2
     One { doubled = 4 }                # invalid: computed datum assignment
 }
 family Cycle {
-    first := second
-    second := first
+    let first := second
+    let second := first
     One                                # invalid: computed dependency cycle
 }
 ```

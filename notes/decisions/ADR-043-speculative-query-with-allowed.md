@@ -29,8 +29,8 @@ The speculative journal is always discarded, including after Success. No real wo
 Imagine is available in pure reading contexts; its reply is inspected with ordinary types/narrowing. The admissibility dependency graph is acyclic. Resource limits or executor defects cannot silently yield Refusal or false. Q-007 retains that external failure boundary; Q-032 retains cache/retry rules and stochastic-result exposure; Q-035 retains speculative budgets, memoization and diagnostics.
 
 ```mud
-reply: ActionReply = imagine (source, destination).Transfer(amount)
-permitted := reply is Success
+let reply: ActionReply = imagine (source, destination).Transfer(amount)
+let permitted := reply is Success
 ```
 
 ## Verification

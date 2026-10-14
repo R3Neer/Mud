@@ -28,7 +28,7 @@ affects:
 
 ## Context
 
-`for each ... if ...` selects participants to produce effects, but does not build a reusable pure collection. Quantifiers consume witnesses to produce booleans or aggregates and `all` enumerates a complete domain; none of these forms returns the subcollection satisfying a predicate.
+`foreach ... if ...` selects participants to produce effects, but does not build a reusable pure collection. Quantifiers consume witnesses to produce booleans or aggregates and `all` enumerates a complete domain; none of these forms returns the subcollection satisfying a predicate.
 
 There was also no distinction between observable position, quantitative selection and reproducible random choice, without forcing `Rand` when the rule merely says to take some members.
 
@@ -106,22 +106,22 @@ The nominality of a container alias is not reconstructed implicitly: the result 
 
 ```mud
 # Up to n matches.
-best := take n from player in players :
+let best := take n from player in players :
     player.score == 2
 
 # Matches within a previous selection.
-best := player in take m from players :
+let best := player in take m from players :
     player.score == 2
 
 # Both constraints.
-best := take n from player in take m from players :
+let best := take n from player in take m from players :
     player.score == 2
 ```
 
 The declaration annotation is independent of the selection:
 
 ```mud
-chosen [3] := take 3 from player in players :
+let chosen [3] := take 3 from player in players :
     player.score == 2
 ```
 
@@ -158,7 +158,7 @@ A `unique by` path over a union obeys the same totality, singularity and transit
 ## Consequences
 
 - Queries can build groups defined by a rule without introducing mutable variables or auxiliary effects.
-- `for each` remains the way to act on members; selection is the way to obtain them as a value.
+- `foreach` remains the way to act on members; selection is the way to obtain them as a value.
 - `take` expresses a general quantitative constraint and uses ordering or a seed according to source semantics.
 - Indexing never invents positions for unordered collections.
 - A union cannot make an `ordered by` key partial.

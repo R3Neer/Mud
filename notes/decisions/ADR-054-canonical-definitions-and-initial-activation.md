@@ -53,7 +53,7 @@ Every declarable `thing` and each rule has exactly one complete top-level defini
 abstract thing Vegetation {}
 
 thing Tree as Vegetation {
-    age: Years = 0
+    let age: Years = 0
 }
 
 rule CanGrow on plant: Vegetation {

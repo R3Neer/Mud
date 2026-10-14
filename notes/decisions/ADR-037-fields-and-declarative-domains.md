@@ -39,12 +39,12 @@ affects:
 ### Types of field
 
 ```mud
-title: Text = ""
+let title: Text = ""
 mut treasury: Money = 0
-age: Nat in 0..150 [1] = 18
+let age: Nat in 0..150 [1] = 18
 subjects: Person [* unique]
-maintenanceCost := soldiers * 2
-displayCost: Money := maintenanceCost
+let maintenanceCost := soldiers * 2
+let displayCost: Money := maintenanceCost
 ```
 
 - `=` Enter the stored load.
@@ -62,7 +62,7 @@ The specific form of a stored field is:
 The domain precedes the specification from collection. A computed field usa:
 
 ```text
-name [ derived-form ] := value-body
+let name [ derived-form ] := value-body
 ```
 
 where the derived form may declare type and, in accordance with D-075, domain, cardinality and modifiers for collection compatible with the result.
@@ -77,7 +77,7 @@ The inference It does not apply a default priority between compatible interpreta
 
 The computed field always has a statically resolved type, whether declared or inferred. It has no assignable storage and does not support outer `mut`. Explicit nominal or structural types are checked statically. Domain, cardinality, uniqueness (`unique` or `unique by path`) and order declared in the derived form are coercive: they transform the result with the same semantics and normalisation as equivalent local transformations. `[mut]` is not a coercion that creates authority; it is an obligation based on capability and is fulfilled only when the result is already guaranteed by source-preserving transformations over the `thing` members.
 
-For example, if `leftChars` has type `Char [1..5]` and `rightChars` has type `Char [0..2]`, `combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with D-039. The result does not acquire modifiers that the propagation rules cannot guarantee.
+For example, if `leftChars` has type `Char [1..5]` and `rightChars` has type `Char [0..2]`, `let combinedChars := leftChars | rightChars` infers `Char [1..7]` in accordance with D-039. The result does not acquire modifiers that the propagation rules cannot guarantee.
 
 When the context of declaration also supports a stored field and if the evaluated expression is statically closed, the compiler must suggest the equivalent immutable stored form. The suggestion is conservative; it does not alter the validity of the programme and does not authorise an automatic rewriting. It does not apply if the expression depends on state or whether storing it would affect its dependencies or its evaluation time.
 

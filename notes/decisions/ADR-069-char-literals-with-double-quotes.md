@@ -30,14 +30,14 @@ Ordinary `Char` and `Text` literals begin with double quotes. The same form is e
 - When the context requires `Char`, it may be elaborated as `Char` if, after interpreting escapes, it contains exactly one Unicode scalar value.
 - The `Char` form requires an explicit closing quote and permits no value or anchor interpolation.
 - The multiline form is always `Text`.
-- Without an expected type, `value := "a"` infers `Text`.
+- Without an expected type, `let value := "a"` infers `Text`.
 - An empty literal or one containing several scalars is invalid when `Char` is required.
 
 ```mud
-letter: Char = "a"
-newline: Char = "\n"
-face: Char = "\u{1F642}"
-word: Text = "a"
+let letter: Char = "a"
+let newline: Char = "\n"
+let face: Char = "\u{1F642}"
+let word: Text = "a"
 ```
 
 In a comparison or other bidirectional expression, the other operand may provide the expected type:
@@ -62,7 +62,7 @@ Syntax highlighting classifies double-quoted forms as text because choosing `Cha
 ## Verification
 
 1. `"a"`, `"ñ"`, `"\n"` and `"\u{1F642}"` in a `Char` context.
-2. Inference of `Text` for `value := "a"`.
+2. Inference of `Text` for `let value := "a"`.
 3. Rejection of `""`, `"ab"`, multiline text and interpolations in a `Char` context.
 4. Resolution of `charValue == "x"` as a `Char` comparison.
 5. Lexical rejection of single-quoted forms.

@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-166
@@ -74,14 +75,18 @@ decisions:
 
 # 11. Type system
 
+## Stored declaration inference
+
+Ordinary stored field/local types may be omitted when initialiser and domain evidence determine a unique contract. Explicit recursive holes retain MUD-TYPE-021; a bare hole is valid with a semantics-preserving simplification suggestion. Written constraints remain admission checks. Declaration markers, omitted-cardinality policy and domain-only shapes follow [[15-fields-and-mutability#Value declarations and stored inference]]. No inferred input type is invented for an uncontextualised functional policy.
+
 ## Scope and dependencies
 
 This chapter defines well-formed types, value identity, representation compatibility, subtyping, contextual checking and inference. [[15-fields-and-mutability]] defines place authority and effect obligations; [[21-expressions]] assigns these contracts to expressions and blocks. These three chapters describe a static language contract, not a compiler data layout or a causal evaluator.
 
 ```mud
 alias Position { x: Int; y: Int }
-origin: Position = (0, 0)
-coordinates: Int [2] = [origin.x, origin.y]
+let origin: Position = (0, 0)
+let coordinates: Int [2] = [origin.x, origin.y]
 ```
 
 Position supplies the unique nominal construction context; coordinates checks
@@ -350,7 +355,7 @@ Exact dictionary keys, ordinary unique, whole-value membership/algebra and order
 > [!rule] MUD-TYPE-020 — Structural equality of normalized contracts
 > `===` compares two Type operands by their entire normalized effective contracts, erasing only alias nominal identity. `!==` is its exact negation. Things and families, including their applications, are nominally opaque: distinct exact identities never become equal by matching fields or members. Ordinary value equality, nominal `is`/`iis` and representation compatibility for `to` retain their separate contracts.
 
-Compare member names and declaration order, stored/component versus calculated kind, complete member types, domains, cardinality, multiplicity, uniqueness and its key criterion, order and its criterion, inner authority, product composition, nested collection layers, dictionary grouping and normalized union alternatives. Callable contracts retain inputs, outputs and authority guarantees. Alias representations and effective inherited schemas participate after substitution. Metadata, presentation names, documentation, defaults and calculated bodies do not participate; a default or body that changes an inferred effective type/shape affects comparison through that resulting contract. Hence calculated `x: Nat := 1` and `x: Nat := 2` match, while stored and calculated x do not.
+Compare member names and declaration order, stored/component versus calculated kind, complete member types, domains, cardinality, multiplicity, uniqueness and its key criterion, order and its criterion, inner authority, product composition, nested collection layers, dictionary grouping and normalized union alternatives. Callable contracts retain inputs, outputs and authority guarantees. Alias representations and effective inherited schemas participate after substitution. Metadata, presentation names, documentation, defaults and calculated bodies do not participate; a default or body that changes an inferred effective type/shape affects comparison through that resulting contract. Hence calculated `let x: Nat := 1` and `let x: Nat := 2` match, while stored and calculated x do not.
 
 Domain equality uses normalized symbolic contracts, including resolved provenance, binders and generic substitution, plus the defined exact arithmetic/interval normalization. It does not evaluate current populations or arbitrary predicates to prove semantic equivalence. Different symbolic predicates do not become equal because they currently yield equal sets. Union order/duplicate syntax is normalized; match the complete normalized alternatives without source-order dependence. Nominally distinct alternatives retained by ordinary union normalization are not silently removed by representational matching or semantic inclusion. No general program-equivalence oracle is required.
 
@@ -389,7 +394,7 @@ Receiver-based nominal selection obeys [[10-names-and-anchors#Receiver-call sele
 
 ## 9. Checking, inference and narrowing
 
-Synthesis is bottom-up; checking passes an expected contract down into untyped literals and callable arguments. Each stored binding/declaration has its required annotation and initialiser/default under its owner contract; an annotation may contain inference holes only when the declaration has its own initial value. Calculated bindings preserve their synthesised type unless an explicit shape requires checking or a declared derived transformation.
+Synthesis is bottom-up; checking passes an expected contract down into untyped literals and callable arguments. Each stored binding/declaration has its required initialiser/default under its owner contract. Ordinary field/local annotations may be omitted; written annotations may contain inference holes only when the declaration has its own initial value. Calculated bindings preserve their synthesised type unless an explicit shape requires checking or a declared derived transformation.
 
 For a type-correct value whose domain/cardinality may fail, checking records a site-specific predicate obligation only where runtime admission is authorised. A known invalid static initialiser is rejected. Call admission reports the appropriate refusal; an ordinary value computation uses its Error channel. Mandatory post-effect stored cardinality proof is not replaced by such an obligation.
 
@@ -407,7 +412,7 @@ For a successful is test, $\Phi$ retains the compatible nominal alternatives; it
 
 Each written hole is an independent inference occurrence; two underscores do not implicitly equate their solutions. An already established Any source contract may itself be the uniquely synthesized type, but Any cannot be guessed to repair missing evidence. Propagate the written expected structure into components of the initialiser and synthesize missing component contracts where unique. Several source spellings for the same normalized exact type are one solution; structurally equal but nominally distinct aliases are different possible solutions. Do not enumerate nominal aliases to invent a contextual construction. Defined union synthesis retains its ordinary rule; a union of possible guesses is not a solution for an ambiguous hole. A generic application is checked only after its arguments are resolved, with ordinary bounds, variance and finite-closure obligations.
 
-`pair: (_, Text) = source` succeeds when source and written constraints determine the first component uniquely and the second meets Text. `pair: (_, Text) = (empty, "hello")` fails without additional evidence for the first member type. `values: _ = empty` fails; `values: _ in Cats [*] = empty` succeeds only if the domain contract supplies unique type evidence. Mutable stored annotations admit holes with the same rule; subsequent assignments obey the inferred fixed contract and ordinary writable invariance.
+`let pair: (_, Text) = source` succeeds when source and written constraints determine the first component uniquely and the second meets Text. `let pair: (_, Text) = (empty, "hello")` fails without additional evidence for the first member type. `let values: _ = empty` fails; `let values: _ in Cats [*] = empty` succeeds only if the domain contract supplies unique type evidence. Mutable stored annotations admit holes with the same rule; subsequent assignments obey the inferred fixed contract and ordinary writable invariance.
 
 Written domains, cardinalities, uniqueness, order and authority remain stored admission constraints, never coercive derived transforms. Omitted outer shape retains the owner's existing policy, including initializer-shape capture for immutable stored fields and the singleton default for mutable fields. No hole infers missing bounds or creates authority. Schema/default/metadata initialisers retain their closed-static requirements. Hole syntax is unavailable in participant/given signatures, generic parameter bounds, alias representation definitions, derived annotations, ordinary casts or standalone Type expressions.
 

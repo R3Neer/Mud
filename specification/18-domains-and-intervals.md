@@ -11,6 +11,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-166
@@ -38,8 +39,8 @@ a domain/value with ordered bounds and explicit endpoint inclusion. A domain
 does not become a finite collection merely because it is written with brackets.
 
 ```mud
-age: Nat in 0..150 = 18
-eligible in 0..cap := candidateValues
+let age: Nat in 0..150 = 18
+let eligible in 0..cap := candidateValues
 # Interval expressions:
 [1..3] | [7..9]
 ```

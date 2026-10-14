@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-166
@@ -85,13 +86,17 @@ decisions:
 
 Normal and sub operations retain distinct declaration identity: `subaction <: action`, `sublook <: look` and `submessage <: message` in the descriptor hierarchy. Widening does not confer host capability. Only normal operations from shared files are host endpoints; any possible sub or part-only alternative requires narrowing/proof before host admission. Mud calls across parts use direct uses permission. Sublook is pure in every ordinary reading context, including a look body; submessage is a causal source with the ordinary on/when contracts but no external endpoint. Each look/sublook/message/submessage declaration has its own static produced type.
 
+## Collection comprehension typing
+
+ComprehensionExpr checks its source/step before introducing the iterator and checks filter/body in sibling scopes sharing that binding. The filter is pure singleton Bool and the body is an externally pure ValueBlock with fresh private storage only. Infer the body member contract or ordinary union join, preserve source occurrence multiplicity/order, and weaken uniqueness unless non-collision is proved. Each complete body result is one outer member, including a nested empty result. For unfiltered [l..u] the outer count is [l..u], conservatively [0..u] with a filter. Finite snapshot, fault and termination obligations follow [[22-quantifiers-and-iteration#Pure foreach comprehensions]].
+
 ## Scope and notation
 
 The environments and synthesis/checking judgements are defined in [[11-type-system]]. Block modes, effect summaries and stored-cardinality obligations are defined in [[15-fields-and-mutability]]. This chapter supplies syntax-directed contracts for every expression family in the Surface AST, without defining the physical representation of an elaborated expression or the full evaluator.
 
 ```mud
-value: Num = 2 + 3 * 4
-positive := value > 0
+let value: Num = 2 + 3 * 4
+let positive := value > 0
 ```
 
 Dynamic callable destinations and acyclicity follow [[types/contextual-call-analysis]]; body termination follows [[types/termination-certification]]. Portable binary64 literal/operation sites and static evaluation follow MUD-TYPE-038 in [[11-type-system]]. These uncertainties cannot justify an undocumented operator overload, a real effect in a pure owner or a different numeric representation. Mandatory finite/termination certification follows the uniform normative procedure contract in [[11-type-system]]; optional stronger tool analysis cannot independently admit additional programs.
@@ -149,7 +154,7 @@ Metadata access applies the static owner-category matrix. Type reflection return
 
 Positional indexing requires observable order, uses one-based indices and returns the optional member form when absence is permitted. Slices preserve the source members' contracts and retained guarantees with conservative cardinality. Text indexing produces Char and text slicing produces Text; positional text order is distinct from a canonical ordered-collection modifier.
 
-An exact dictionary query checks the key contract and yields its value contract with possible absence; composite keys contextualise one product key. A functional query applies all relevant branch-selector/result contracts and the dictionary's selection mode. The static result preserves the documented FirstMatch or AllMatches collection shape. Missing exact keys and unmatched functional branches yield empty, not an invented type default or a special aggregation error.
+An exact dictionary query checks the key contract and yields its value contract with possible absence; composite keys contextualise one product key. A functional query applies all relevant branch-selector/result contracts and the dictionary's selection mode. The static result preserves the documented FirstMatch or AllMatches collection shape. Missing exact keys yield empty; exhaustive functional policies obtain absence only from admitted selected results, not an invented type default or a special aggregation error.
 
 ## Static generic expressions
 
@@ -220,8 +225,8 @@ For a valid inactive Boolean rule x.InactiveRule(), not x.InactiveRule() closes 
 In a context admitting this ValueBlock, an actual read of the following derivation still executes its stored prefix initializer:
 
 ```mud
-p := {
-    n: Num = 1 / divisor
+let p := {
+    let n: Num = 1 / divisor
     x.InactiveRule()
 }
 not p
@@ -297,7 +302,7 @@ Infinite upper bounds use extended nonnegative interval arithmetic. Domain/membe
 
 Union guarantees whole-value uniqueness only when both operands supply it. Intersection retains a sole/equal keyed criterion, but differing keyed criteria conservatively yield whole-value uniqueness; without keyed criteria either unique operand suffices. Difference retains the left criterion; symmetric difference conservatively yields whole-value uniqueness. Chapter 15 supplies the separate order/authority table.
 
-An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch checks its selector against the input contract, its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. These are value constructors, not assignable branch storage.
+An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch interprets its selector in the input contract, proves complete input coverage, checks its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. These are value constructors, not assignable branch storage.
 
 Exact dictionary operators operate on complete associations with their defined shared-key precedence; ordered equality and value-uniqueness requirements remain part of the contract. Functional operators are extensional combinations of result computations, not implicit edits or concatenation of branch lists. Their operand/result contracts and termination proofs must all remain valid.
 
@@ -377,11 +382,11 @@ Check signatures and effective schemas before their bodies. Guards, after condit
 > [!rule] MUD-TYPE-023 — Live local derivations
 > Every := local registers a non-assignable derivation with a fixed static contract. An actual read evaluates its definition against the applicable current or temporal view, including preceding effects of its own sequential branch. Derived RHSs and their handlers remain externally pure, including confined fresh ValueBlock computation. = locals instead evaluate once at slot creation and capture the resulting value. Neither form creates a world field or persistent memory between declaration instances.
 
-A real action call may be captured by a stored initializer in an effect-capable context, for example `reply: ActionReply = actor.Move()`. A live derived initializer such as `reply := actor.Move()` is invalid: reading the local cannot replay world effects. Imagine remains an admitted pure speculative query under its ordinary isolation/random rules. Shared preambles, expressions and value-only owners never gain real-action authority from a stored initializer.
+A real action call may be captured by a stored initializer in an effect-capable context, for example `let reply: ActionReply = actor.Move()`. A live derived initializer such as `let reply := actor.Move()` is invalid: reading the local cannot replay world effects. Imagine remains an admitted pure speculative query under its ordinary isolation/random rules. Shared preambles, expressions and value-only owners never gain real-action authority from a stored initializer.
 
 Derived positional captures project their common registered RHS, retaining its resolved origin and random-point identity. They do not manufacture independent copied RHS/random sites per leaf; caching/sharing must preserve the existing random and temporal contract. Faults arise on an actual derived read and enter that read's protected block unless handled by the derivation's own admissible RHS handler. Stored initialization faults arise at slot creation and expose no partial captures.
 
-An immutable stored local requires an annotation and initial value; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique static type, registers a live derivation and obtains no outer place authority. Every read uses the semantic view applicable there, including the current private sequential projection; the inferred type does not change when values change. Stored bindings capture once at slot creation. Explicit or partial `_` annotations obey unique stored-hole inference. Shared behaviour preambles admit immutable stored/derived bindings with value-body RHSs, while expression/test preambles retain pure derived expression RHSs. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
+An immutable stored local requires let and an initial value; its optional annotation constrains unique inference; a mutable local additionally receives its private/effect-region place. A calculated binding synthesises or checks a unique static type, registers a live derivation and obtains no outer place authority. Every read uses the semantic view applicable there, including the current private sequential projection; the inferred type does not change when values change. Stored bindings capture once at slot creation. Explicit or partial `_` annotations obey unique stored-hole inference. Shared behaviour preambles admit immutable stored/derived bindings with value-body RHSs, while expression/test preambles retain pure derived expression RHSs. Stored schema initialisers, defaults and static metadata require closed static evaluation in the permitted expression/value mode.
 
 For each syntax family, elaboration selects the already defined operation contract, contextual literal type, runtime admission check, effect summary and proof evidence. Unsupported combinations produce a static diagnostic. Successful static checking proves neither global causal termination nor operational properties beyond the declared numeric/static guarantees.
 

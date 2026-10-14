@@ -11,7 +11,7 @@ questions:
   - "Q-029"
   - "Q-032"
 affects:
-  - "for each, filters, quantifiers, selection, stepped domains, intervals, magnitudes, expression blocks, name resolution, grammar, CST and AST"
+  - "foreach, filters, quantifiers, selection, stepped domains, intervals, magnitudes, expression blocks, name resolution, grammar, CST and AST"
 ---
 
 # ADR-088 — Iteration, signed progressions and expression blocks
@@ -28,17 +28,19 @@ affects:
 
 - Amended by: [[ADR-137-live-locals-stored-inference-and-binding-patterns|D-137]].
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
-MUD already has `for each`, quantifiers, pure selection and stepped domains, but the earlier rules mixed enumerability, progression by a difference and the structure of the body after `:`. D-075 also required a positive step, and D-047 did not precisely distinguish when an ordered iteration's filter can observe earlier effects.
+MUD already has `foreach`, quantifiers, pure selection and stepped domains, but the earlier rules mixed enumerability, progression by a difference and the structure of the body after `:`. D-075 also required a positive step, and D-047 did not precisely distinguish when an ordered iteration's filter can observe earlier effects.
 
-## Enumerable sources and `for each`
+## Enumerable sources and `foreach`
 
-`for each` accepts any source whose finiteness and enumerability can be demonstrated: collections, exact dictionaries, enumerable intervals, finite enumerable domains and any other value with a defined canonical enumeration. An interval remains an interval; being enumerable does not turn it into a collection.
+`foreach` accepts any source whose finiteness and enumerability can be demonstrated: collections, exact dictionaries, enumerable intervals, finite enumerable domains and any other value with a defined canonical enumeration. An interval remains an interval; being enumerable does not turn it into a collection.
 
 ```mud
 action Accumulate for values: Int [* ordered], mut total: Int {
-    then for each value in values :
+    then foreach value in values :
         total += value
 }
 ```
@@ -51,14 +53,14 @@ When a construct uses `:` to separate a header from a subordinate body, braces b
 
 ```mud
 action AccumulateDoubled for values: Int [* ordered], mut total: Int {
-    then for each value in values : {
-        doubled := value * 2
+    then foreach value in values : {
+        let doubled := value * 2
         total += doubled
     }
 }
 ```
 
-The form without `:` is invalid. After `:`, the body may begin on the same line or after physical separation by terminators; the line break does not change the AST. Executable `for each` uses the `EffectBlock` contract. A `for each` written inside `ValueBlock` instead uses `LocalStatementBlock`, without outer effects and restricted to D-101's local statements.
+The form without `:` is invalid. After `:`, the body may begin on the same line or after physical separation by terminators; the line break does not change the AST. Executable `foreach` uses the `EffectBlock` contract. A `foreach` written inside `ValueBlock` instead uses `LocalStatementBlock`, without outer effects and restricted to D-101's local statements.
 
 Selection and `exists`, `forall`, `count`, `min` and `max` likewise retain their mandatory `:`. Their body may be a short expression or an expression block with zero or more local bindings followed by a single final expression.
 
@@ -73,18 +75,18 @@ Locals are pure, immutable and sequential, and do not admit forward references, 
 
 `source` and optional `by` are resolved in the outer environment before introducing the iteration binding. Therefore, no named leaf of the recursive binding pattern is visible inside source or by. Discards introduce no symbol; all named leaves are introduced together after source/by resolution.
 
-In `for each`, the iteration binding is visible in the `if` filter and the corresponding subordinate body. If the filter uses an `ExpressionBlock`, its locals are visible only in later locals and the filter's final expression; they disappear before entering the executable `EffectBlock` or the `LocalStatementBlock` of a `LocalForEach`.
+In `foreach`, the iteration binding is visible in the `if` filter and the corresponding subordinate body. If the filter uses an `ExpressionBlock`, its locals are visible only in later locals and the filter's final expression; they disappear before entering the executable `EffectBlock` or the `LocalStatementBlock` of a `LocalForEach`.
 
 In selection and quantifiers, the introduced binding is visible in the locals and final expression of their `ExpressionBlock`, but not outside it. Each local becomes visible after its own declaration, so it may be used by later locals and the final result, never by its initialiser or earlier declarations.
 
-## `for each` filter
+## `foreach` filter
 
 The optional `if` appears after `by` and may be an expression or expression block. The predicate is pure and non-stochastic in accordance with D-048.
 
 - With semantic order, each filter is evaluated immediately before its iteration and observes sequential effects produced by earlier iterations.
 - Without semantic order, all filters observe the same initial snapshot and accepted iterations produce deltas consolidated as simultaneous.
 
-Therefore, `for each ... if ...` is not universally defined as literal desugaring to a pre-materialised selection.
+Therefore, `foreach ... if ...` is not universally defined as literal desugaring to a pre-materialised selection.
 
 ## `by` as progression
 
@@ -96,13 +98,13 @@ A positive step is anchored at the lower bound; a negative one at the upper boun
 
 ```mud
 action Forward for mut total: Num {
-    then for each value in [1..8] by 2 :
+    then foreach value in [1..8] by 2 :
         total += value
 }
 # traversal: 1, 3, 5, 7
 
 action Backward for mut total: Num {
-    then for each value in [1..8] by -3 :
+    then foreach value in [1..8] by -3 :
         total += value
 }
 # traversal: 8, 5, 2
@@ -165,7 +167,7 @@ Verification covers enumerable sources of every admitted class, `:` with short a
 
 ## Current amendment by D-096
 
-Operations that produce a collection from a domain, including selection, require explicit `all D` materialisation. `for each` traversals and quantifiers may consume finite enumerable domains directly because they do not themselves materialise a collection. Actions, reactive rules and messages also admit preceding pure locals between metadata and behaviour clauses.
+Operations that produce a collection from a domain, including selection, require explicit `all D` materialisation. `foreach` traversals and quantifiers may consume finite enumerable domains directly because they do not themselves materialise a collection. Actions, reactive rules and messages also admit preceding pure locals between metadata and behaviour clauses.
 
 ## Predicate demand
 

@@ -1,3 +1,10 @@
+-- Functional branches share one implicit ordinary LocalSymbol kind functional-input
+-- named value between sibling selector/result scopes. It has branch SurfaceRef
+-- provenance and a source ordinal under the nearest anchored owner, no anchor.
+-- Omitted .member receivers refer to it through normal lexical lookup.
+-- Comprehension iterator leaves are shared by sibling filter/result scopes.
+-- Source and step use the outer scope; selector interpretation and coverage
+-- are elaboration facts and create no nominal HIR type fields.
 -- Canonical operator contract graphs and reflective operand records are typed
 -- results specified separately; this nominal model adds no effective signature.
 -- Operator metadata retains its source owner; typed signature anchors and reflective

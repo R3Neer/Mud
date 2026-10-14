@@ -226,7 +226,7 @@ module MUDSurface {
 
     stored_field_data = (flag collection_mutable,
                          field_name name,
-                         value_shape shape,
+                         stored_value_shape? shape,
                          value_block default_value,
                          metadata_assignment* metadata)
         attributes (source_origin origin)
@@ -357,6 +357,10 @@ module MUDSurface {
         attributes (source_origin origin)
 
     value_shape = (type_expr type)
+        attributes (source_origin origin)
+
+    stored_value_shape = ExplicitStoredShape(type_expr type)
+                       | InferredStoredShape(domain_expr? domain, collection_spec collection)
         attributes (source_origin origin)
 
     derived_value_shape = ExplicitDerivedShape(type_expr type)
@@ -496,7 +500,7 @@ module MUDSurface {
 
     local_stored_decl = LocalStoredDecl(flag is_mutable,
                                         variable_name name,
-                                        type_expr type,
+                                        stored_value_shape? shape,
                                         value_block value)
         attributes (source_origin origin)
 
@@ -645,7 +649,11 @@ module MUDSurface {
     -- Expresiones
     -- -----------------------------------------------------------------
 
-    expr = RaiseExpr(value_block errors)
+    expr = ComprehensionExpr(iteration_binding binding, expr source, expr? step,
+                             expression_block? filter, value_block body)
+         | ImplicitMemberExpr(identifier_name member)
+         | SelectorExpr(selector_syntax selector)
+         | RaiseExpr(value_block errors)
          | DottedPathExpr(identifier_name first,
                           identifier_name* remaining)
          | ExactNumberLiteral(string canonical)
@@ -708,6 +716,14 @@ module MUDSurface {
          | CallExpr(expr callee,
                     expr* positional_arguments,
                     named_call_argument* named_arguments)
+        attributes (source_origin origin)
+
+    selector_syntax = SelectorOperand(expr value)
+                    | SelectorComparison(comparison_operator operator, expr expected)
+                    | SelectorNominal(declared_type type, flag exact, flag negated)
+                    | SelectorNot(selector_syntax operand)
+                    | SelectorAnd(selector_syntax left, selector_syntax right)
+                    | SelectorOr(selector_syntax left, selector_syntax right)
         attributes (source_origin origin)
 
     named_structural_element = NamedStructuralElement(component_name name,

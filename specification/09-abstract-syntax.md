@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-169
   - D-157
   - D-153
   - D-147
@@ -73,6 +74,23 @@ decisions:
 ---
 
 # 09. Surface abstract syntax
+
+## Value declarations, selectors and comprehensions
+
+StoredFieldData and LocalStoredDecl preserve optional stored_value_shape:
+ExplicitStoredShape carries the written type; InferredStoredShape carries the
+written domain/collection constraint. Omitted shapes remain absent. The markers
+let/mut remain lossless CST tokens; normalized mutability belongs to the stored
+node and derived declarations are nonassignable. Pure/local positional pattern
+nodes preserve let without acquiring mutable patterns.
+
+ComprehensionExpr carries its binding, source, optional step/filter and ValueBlock
+body separately from executable ForEachEffect/LocalForEach. ImplicitMemberExpr
+retains omitted-receiver provenance until nominal resolution. SelectorExpr and
+selector_syntax retain abbreviated comparisons, nominal tests and logical
+combinations without guessing Bool, equality or membership during CST projection.
+DecisionBranchExpr retains independent selector/result block scopes. Neither
+surface AST nor nominal HIR contains a fabricated coverage proof or inferred type.
 
 ## Input roots and part visibility
 
@@ -259,7 +277,7 @@ Stored field data carry mandatory `default_value: ValueBlock`; alias component a
 
 It retains the written `fieldName = value-body` shape in a concrete or abstract `thing` body. It is not a `StoredFieldDecl` and is not included in `defaultValue`: the AST keeps schema defaults separate from initialisation contributions. `name` remains an unresolved `FieldName`, and the RHS normalises to `ValueBlock`; later resolution and elaboration ensure that the target is an inherited stored field and that the value satisfies its type and domain.
 
-Validation before AST construction rejects a definition that contains both a field declaration and a `ThingInitializer` with the same name. A `fieldName: Type = value` declaration retains its `defaultValue` inside `StoredFieldDecl` and does not generate `ThingInitializer`.
+Validation before AST construction rejects a definition that contains both a field declaration and a `ThingInitializer` with the same name. A `let fieldName: Type = value` declaration retains its `defaultValue` inside `StoredFieldDecl` and does not generate `ThingInitializer`.
 
 The initialiser sequence remains separate from the field sequence. In an abstract `thing`, it represents inheritable initialisation contributions that do not instantiate the abstract thing's own stored data; in a concrete `thing`, it represents contributions to that thing's first materialisation. The CST continues to preserve the body's natural interleaved physical structure.
 
@@ -434,7 +452,7 @@ A calculated field has no assignable storage; it may specify its shape and inter
 
 Structural literals remain contextual. `PositionalStructuralLiteralExpr` requires at least two values and `NamedStructuralLiteralExpr` retains one or more named components; neither names a specific alias. Alias members therefore become available only after contextual elaboration or an explicit nominal conversion.
 
-The same rule applies to basic literals. If the context expects a nominal alias whose representation the literal supports, elaboration constructs that alias directly without introducing a general implicit conversion. For example, with `alias PlayerName := Text`, `name: PlayerName = "Ada"` is valid. By contrast, an expression already typed as `Text`, such as `rawName`, does not silently become `PlayerName`; it requires `rawName to PlayerName`.
+The same rule applies to basic literals. If the context expects a nominal alias whose representation the literal supports, elaboration constructs that alias directly without introducing a general implicit conversion. For example, with `alias PlayerName := Text`, `let name: PlayerName = "Ada"` is valid. By contrast, an expression already typed as `Text`, such as `rawName`, does not silently become `PlayerName`; it requires `rawName to PlayerName`.
 
 Later elaboration must distinguish alias construction guided by an expected type from an explicit nominal `to` conversion. The Surface AST does not add a contextual-alias node because it still retains the literal and its expected context; the mechanical representation of the resolved distinction is fixed at that later stage.
 
@@ -561,7 +579,7 @@ Default file metadata assignments do not use `ValueBlock`: they retain a static 
 
 `LocalMutation` retains the unresolved surface destination; typing and elaboration later prove that the complete footprint belongs to storage created within the `ValueBlock`. `LocalForEach` uses `LocalStatementBlock`, not `EffectBlock`, and retains the `ExpressionBlock?` filter.
 
-The owners of `ExpressionBlock` are Boolean rules, `always`, `when`, guards, action `after`, `for each` filters, selections, `exists`, `forall`, `count`, `min`, `max`, exact keys and functional selectors. The owners of `ValueBlock` are the value slots declared by the grammar: locals, fields, data/components, initialisers, dictionary values/results, operator implementations, raise payloads and metadata. `given` retains `expr? defaultValue` because its default does not accept a value block.
+The owners of `ExpressionBlock` are Boolean rules, `always`, `when`, guards, action `after`, `foreach` filters, selections, `exists`, `forall`, `count`, `min`, `max`, exact keys and functional selectors. The owners of `ValueBlock` are the value slots declared by the grammar: locals, fields, data/components, initialisers, dictionary values/results, operator implementations, raise payloads and metadata. `given` retains `expr? defaultValue` because its default does not accept a value block.
 
 `min` and `max` retain `QuantifierExpr` and a Boolean `ExpressionBlock`. Elaboration returns the first or last accepted witness according to `source`'s semantic order; `Sum` does not exist in `quantifier_kind`.
 
@@ -630,7 +648,7 @@ There are specific nodes for:
 - Action-call candidate.
 - Explicit raise (`RaiseEffect`).
 - Foreign block.
-- Iteration `for each`.
+- Iteration `foreach`.
 
 ### Comma-separated values
 
@@ -646,7 +664,7 @@ A single-element form remains that expression rather than becoming a synthetic c
 
 `AssignableExpr` retains a root and member or index suffixes. Verifying that the path ends in a writable location belongs to resolution, typing and effects. The Surface AST does not expand a path crossing immutable aliases: it retains its suffixes, and later elaboration decides whether it can rebuild intermediate values and propagate write-back to externally writable storage. A missing exact key at an intermediate stage is likewise not rewritten in the AST.
 
-### Iteration `for each`
+### Iteration `foreach`
 
 `ForEachEffect(binding, source, step?, filter?, body)` retains the `by` expression and the filter as an `ExpressionBlock`, and normalises either a short effect or the block following `:` to an `EffectBlock`. Addressability, default steps, compatibility, filter order and zero steps belong to elaboration.
 
@@ -889,7 +907,7 @@ produces `ExactTypeTestExpr(value, PersonId, Enabled)`.
 produces `TextTemplateExpr([ValueInterpolation(MetadataAccessExpr(value, anchor))])`.
 
 ```mud
-values: Nat = [1, 2, 3]
+let values: Nat = [1, 2, 3]
 ```
 
 preserves `OmittedCardinality` in the Surface AST and obtains `[3]` only during field elaboration.
@@ -930,7 +948,7 @@ Validation after resolution rejects an arrow as a partial union alternative, eve
 `CollectionSpec` preserves `WrittenCardinality` or `OmittedCardinality`. Thus:
 
 ```mud
-values: Nat = [1, 2, 3]
+let values: Nat = [1, 2, 3]
 ```
 
 the Surface AST retains the omission. Later elaboration of an immutable stored field infers `[3]` and records `InferredFromInitializer`; parsing does not generate that information.

@@ -83,14 +83,14 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
     ~format = "{hour:2}:{minute:2}:{second:2}"
 }
 
-opening: TimeOfDay = 07:05:00
+let opening: TimeOfDay = 07:05:00
 ```
 
 The value of `opening` has zero fractional seconds.
 
 ```mud
-opening: TimeOfDay = 7:05:00   # invalid: not the canonical form
-opening: TimeOfDay = 26:00:00  # invalid: outside the domain
+let opening: TimeOfDay = 7:05:00   # invalid: not the canonical form
+let opening: TimeOfDay = 26:00:00  # invalid: outside the domain
 ```
 
 Without a format:
@@ -98,7 +98,7 @@ Without a format:
 ```mud
 magnitude Timestamp point over Time {}
 
-created: Timestamp = 90 second
+let created: Timestamp = 90 second
 ```
 
 ## Verification

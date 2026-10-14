@@ -83,3 +83,6 @@ The declaration certificates also check supplied comparison edges for the transi
 [[contextual-call-analysis]] defines the normative finite target/context fixed point and impact joins. test_contextual_call_witnesses.py checks supplied finite contextual graphs, conservative inputs, narrowing and summary regions without extracting Mud source or implementing a compiler.
 
 [[finite-static-certification]] and [[termination-certification]] define the completed scoped normative procedures. test_static_certification_witnesses.py checks supplied exact elimination, integral-period, lexicographic/phase, affine and represented-Rum certificates. It is not a source analyzer or compiler/runtime implementation.
+## Policy and comprehension finite witnesses
+
+collection_policy_witnesses.py and test_collection_policy_witnesses.py check supplied finite input coverage, empty selected results, Bool predicate/equality distinction, interval boundaries, source capture, multiplicity/order, nested empty members and fault propagation. Predicates/results are supplied Python certificate functions; these tests are not a MUD interpreter or general coverage solver.

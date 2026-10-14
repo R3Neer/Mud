@@ -64,7 +64,7 @@ This alias has $8\cdot 8=64$ values and can be used as a source:
 
 ```mud
 action VisitCoordinates for mut visits: Nat {
-    then for each coordinate in Coordinate :
+    then foreach coordinate in Coordinate :
         visits += 1
 }
 
@@ -96,7 +96,7 @@ The enumerability requires that each component provides not only a finite set, b
 
 - Multi-key sugar is generated before resolving access to the dictionary.
 - The compiler can calculate the cardinality of a finished product.
-- Quantifiers and `for each` share the same canonical numbering of the alias.
+- Quantifiers and `foreach` share the same canonical numbering of the alias.
 - The order of the components affects both structural nominality and comparison and enumeration.
 
 ## Future verification

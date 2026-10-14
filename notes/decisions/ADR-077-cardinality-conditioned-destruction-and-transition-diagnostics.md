@@ -23,7 +23,7 @@ Hiding destroyed members and allowing effective cardinality to diverge from its 
 `destroy c` computes the complete transition and validates every affected property. If removing `c` from the effective projection violates a cardinality or domain, the transition returns `Errors` and is rolled back in full:
 
 ```mud
-members: Person [2] = Alice, Bob
+let members: Person [2] = Alice, Bob
 
 destroy Bob # Errors: effective cardinality would violate [2]
 ```

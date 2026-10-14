@@ -183,7 +183,7 @@ Therefore, if:
 
 ```mud
 thing King {
-    kingdom: Kingdom[1] = Panama
+    let kingdom: Kingdom[1] = Panama
 }
 ```
 

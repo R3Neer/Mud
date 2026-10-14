@@ -115,4 +115,4 @@ Concrete error recovery is not part of the accepted language. An implementation 
 
 ## Amendment by D-088
 
-`:` is the required separator in every construction that uses it to introduce a subordinate body; braces do not replace it. `for each` must always write `:` before its effect or block. Selections and quantifiers retain `:` even with `{ ... }`. The grammar adds optional `by` to selections and quantifiers, and generalises `boolean-block` to `expression-block`.
+`:` is the required separator in every construction that uses it to introduce a subordinate body; braces do not replace it. `foreach` must always write `:` before its effect or block. Selections and quantifiers retain `:` even with `{ ... }`. The grammar adds optional `by` to selections and quantifiers, and generalises `boolean-block` to `expression-block`.

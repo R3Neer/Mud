@@ -20,6 +20,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-166
@@ -61,10 +62,10 @@ occurrences with frozen produced payloads. A participant is not the API owner.
 action Deposit for account: Account [mut] given amount: Money in [0..*] {
     then account.balance += amount
 }
-look Balance for account: Account { value := account.balance }
+look Balance for account: Account { let value := account.balance }
 message Overdrawn on account: Account {
     when account.balance < 0
-    value := account.balance
+    let value := account.balance
 }
 ```
 

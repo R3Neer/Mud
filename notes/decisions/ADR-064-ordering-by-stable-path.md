@@ -46,7 +46,7 @@ Each intermediate access must be singular and resolve unambiguously on the prece
 When the natural criterion is a formula, it is given a name:
 
 ```mud
-priority := baseValue * rarityWeight
+let priority := baseValue * rarityWeight
 cards: Card [* ordered by priority]
 ```
 

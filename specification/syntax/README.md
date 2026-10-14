@@ -2,6 +2,10 @@
 
 This directory contains the standardised and verifiable artefacts that link the concrete grammar with the Surface AST.
 
+## Value and policy regression coverage
+
+test_value_policy_comprehension_contract.py checks bounded preclassified-token acceptance and rejection for let/mut, stored domain-only shapes, positional declarations, selector shorthand and foreach colon/result-arrow separation. It does not scan source, infer types or prove coverage.
+
 ## Artefacts
 
 | Archive | State | Function |

@@ -48,7 +48,7 @@ D-163 additionally admits explicit numeric coordinate materialization into an un
 The fourth form, as set out by D-083, check the compatibility of representation and the domain of destination. It does not allow conversion between two different nominal quantities simply because neither has unit.
 
 ```mud
-averagePopulation: Population :=
+let averagePopulation: Population :=
     population / regions to Population
 ```
 

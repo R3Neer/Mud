@@ -116,9 +116,9 @@ Multiplicative and divisive factors are cancelled when the type's laws guarantee
 Concurrent assignments to the same value remain compatible; assignments to different values are a conflict. A compatible relative arithmetic update follows the replacement base before arithmetic normalization.
 
 
-### Consolidation of local `for each` accumulators
+### Consolidation of local `foreach` accumulators
 
-A mutable local outside a `for each` may be written by its iterations. If the source has semantic order, iterations are sequential and each observes the value left by the previous one. Without semantic order, all start from the same prior projection and their slot modifications are consolidated as concurrent using the same algebraic rules as equivalent effects. Thus several compatible `+=` operations may form a reduction, whereas `x = x + value` produces concurrent absolute assignments and receives no special accumulator semantics.
+A mutable local outside a `foreach` may be written by its iterations. If the source has semantic order, iterations are sequential and each observes the value left by the previous one. Without semantic order, all start from the same prior projection and their slot modifications are consolidated as concurrent using the same algebraic rules as equivalent effects. Thus several compatible `+=` operations may form a reduction, whereas `x = x + value` produces concurrent absolute assignments and receives no special accumulator semantics.
 
 The slot remains local-frame storage, not world state; applying the same algebra does not turn local mutation into a persistent effect.
 

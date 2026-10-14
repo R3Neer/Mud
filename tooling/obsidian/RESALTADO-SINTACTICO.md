@@ -88,7 +88,7 @@ Since version 1.1.0, the MUD package distinguishes words by semantic function
 without putting MUD knowledge into the adapters: declarations, declaration
 modifiers, control flow, quantifiers, effects and clauses receive independent
 categories. In particular, `mut` is a declaration modifier and both words in
-`for each` are highlighted as a quantifier. Each theme can assign different
+`foreach` are highlighted as a quantifier. Each theme can assign different
 colours to these categories, and other language profiles can reuse the same
 mechanism.
 
@@ -101,7 +101,7 @@ After reloading Obsidian, verify:
 3. Contextual highlighting of `~format` and `cycle`.
 4. Compact formatting of ranges such as `[0..10]`.
 5. The compound operators currently defined by the lexicon.
-6. That `family`, `mut`, `for each`, `then`, `destroy` and `from` are
+6. That `family`, `mut`, `foreach`, `then`, `destroy` and `from` are
    distinguished according to their semantic function.
 7. Preservation of migrated settings, profiles and themes.
 

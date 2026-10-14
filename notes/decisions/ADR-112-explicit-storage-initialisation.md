@@ -16,6 +16,8 @@ affects:
 
 - Formalised by: [[ADR-123-static-capabilities-and-conflict-proof-boundaries|D-123]].
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
 The author chooses explicit storage initialisation rather than a type-wide default function. This replaces D-017 and amends D-015, D-026, D-031, D-032, D-038, D-056, D-068, D-069, D-074 and D-085.

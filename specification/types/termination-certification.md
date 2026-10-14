@@ -11,6 +11,7 @@ questions:
   - Q-030
   - Q-072
 decisions:
+  - D-169
   - D-167
   - D-168
   - D-085
@@ -29,7 +30,7 @@ functional dictionaries, Boolean rules, looks/sublooks and alias operator bodies
 
 ```mud
 alias Counters { major: Nat; minor: Nat }
-finish: Counters --> Nat [ordered] =
+let finish: Counters --> Nat [ordered] =
     value.minor > 0 --> finish[value.major, value.minor - 1],
     value.major > 0 --> finish[value.major - 1, value.major],
     _ --> 0

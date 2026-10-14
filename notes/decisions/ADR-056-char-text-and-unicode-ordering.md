@@ -57,13 +57,13 @@ The `U+0000` scalar can be supplied explicitly, written `"\u{0}"` in a `Char` co
 The natural order of `Char` is the ascending order of its Unicode scalar value. Therefore, in a collection:
 
 ```mud
-letters: Char [* ordered] = "abc"
+let letters: Char [* ordered] = "abc"
 ```
 
 `ordered` requires that canonical order. The following initialisation is invalid:
 
 ```mud
-letters: Char [* ordered] = "cba"
+let letters: Char [* ordered] = "cba"
 ```
 
 `ordered by` is not permitted for `Char`: it cannot replace the natural Unicode order.
@@ -73,7 +73,7 @@ letters: Char [* ordered] = "cba"
 `Text` remains a distinct basic type. It denotes a finite sequence of `Char` values and preserves their written positional order:
 
 ```mud
-word: Text = "cba"
+let word: Text = "cba"
 ```
 
 This value remains `"cba"`. In particular:

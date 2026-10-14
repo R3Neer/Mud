@@ -22,7 +22,7 @@ The braced body of an `always` rule contains only zero or more local bindings fo
 
 ```mud
 always rule ValidPopulation on kingdom: Kingdom {
-    population := kingdom.population
+    let population := kingdom.population
     population >= 0 people
 }
 otherwise "Population cannot be negative: {population}"

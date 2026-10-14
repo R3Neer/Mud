@@ -90,7 +90,7 @@ En particular:
 
 ```mud
 thing King {
-    kingdom: Kingdom = Panama
+    let kingdom: Kingdom = Panama
 }
 ```
 

@@ -14,6 +14,7 @@ questions:
   - Q-033
   - Q-070
 decisions:
+  - D-169
   - D-028
   - D-029
   - D-030
@@ -49,7 +50,7 @@ magnitude Length {
 }
 magnitude Time { root unit second { ~abbreviation = "s" } }
 magnitude Speed := Length / Time
-distance: Length = 3 m
+let distance: Length = 3 m
 ```
 
 Only Nat, Int, Num, Rum and Money can represent magnitudes; Num is the default.
@@ -195,7 +196,7 @@ or implicit rounding. A noninvertible format is invalid. Two point types may
 have the same visible spelling when expected context selects one.
 
 Without format, a point over a unitless magnitude admits a contextual numeric
-literal, such as `position: Cursor = 0.5`, and typed numbers require explicit
+literal, such as `let position: Cursor = 0.5`, and typed numbers require explicit
 `to Cursor`. Conversion checks representation/domain without silently repairing
 invalid coordinates. No synthetic unit, unit presentation, unit extraction or
 conversion from an unrelated nominal magnitude is introduced. Rum's r prefix
@@ -227,7 +228,7 @@ invertibility requirement.
 A direct public magnitude field can explicitly select units with in. Omitting
 it is legal but warns when units are selectable; no warning is needed for a
 unitless magnitude. A direct point field publishes its numeric coordinate;
-publishing ~format requires a Text field such as `timeText := "{clock.time}"`.
+publishing ~format requires a Text field such as `let timeText := "{clock.time}"`.
 Recursive foreign serialization of contained magnitudes remains
 [[../notes/questions/Q-070-foreign-value-conversion-lifetime-and-errors|Q-070]] and is
 not an implied host protocol here.

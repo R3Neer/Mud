@@ -58,13 +58,13 @@ The internal representation of a dimension therefore distinguishes its nominal f
 A bare numeric literal may be elaborated as a unitless magnitude when the expected context determines a single magnitude:
 
 ```mud
-chance: Probability = 0.75
+let chance: Probability = 0.75
 ```
 
 Without that context, the literal retains a basic numeric type. An ordinary numeric expression does not implicitly acquire a magnitude. Explicit materialisation uses `to`:
 
 ```mud
-chance := ratio to Probability
+let chance := ratio to Probability
 ```
 
 This branch of `to` requires a compatible numeric representation and checks the target domain. It does not authorise converting a different nominal magnitude merely because both are unitless.
@@ -78,8 +78,8 @@ D-163 extends contextual numeric coordinates and explicit numeric to to unformat
 The canonical form of a unitless base magnitude is the canonical form of its numeric value, without a suffix or trailing space:
 
 ```mud
-chance: Probability = 0.75
-text := "Chance: {chance}"  # Chance: 0.75
+let chance: Probability = 0.75
+let text := "Chance: {chance}"  # Chance: 0.75
 ```
 
 For a derived magnitude, canonical presentation writes the unit projection of its dimension. Factors from unitless magnitudes retain their static meaning but add no visible label. If the projection is empty, only the number is written.

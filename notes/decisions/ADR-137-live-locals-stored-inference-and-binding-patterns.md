@@ -20,6 +20,8 @@ affects:
 
 # ADR-137 — Live locals, stored type inference and positional binding patterns
 
+Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensions|D-169]].
+
 ## Context
 
 Local := and derived fields need the same mental model. Capturing a computed local forever makes sequential private updates and shared preamble observations unexpectedly stale. Explicit stored inference and reusable patterns allow concise captures without name-dependent parsing or mutable destructuring.
@@ -30,7 +32,7 @@ Stored = evaluates once at slot creation; derived := registers a live non-assign
 
 Action/subaction, reactive-rule and message/submessage shared preambles admit immutable stored and derived locals and positional patterns with value-body RHSs, including privately mutable ValueBlock computation. They admit no outer mut. Stored slots exist only within a concrete declaration instance. Expression/test preambles retain derived expression RHSs and admit pure derived positional patterns only.
 
-Eligible stored annotations with their own initializer/default admit _ recursively in type positions, including mutable stored owners. Written structure, domains and collection modifiers remain normal stored admission constraints. Every hole must resolve uniquely and completely before execution; unknown, contradictory or ambiguous evidence is a compilation error marked at the hole. No nominal alias enumeration, arbitrary literal promotion, runtime type generation, Any fallback or union of guessed solutions is permitted. General type expressions/signatures and derived annotations do not admit holes.
+Optional stored annotations with their own initializer/default admit _ recursively in type positions, including mutable stored owners. Written structure, domains and collection modifiers remain normal stored admission constraints. Every hole must resolve uniquely and completely before execution; unknown, contradictory or ambiguous evidence is a compilation error marked at the hole. No nominal alias enumeration, arbitrary literal promotion, runtime type generation, Any fallback or union of guessed solutions is permitted. General type expressions/signatures and derived annotations do not admit holes.
 
 Binding patterns recursively capture names, discard _ or open positional products. Local pattern declarations require a positional root and are immutable; standalone _ =/_ := and mut destructuring are invalid. Stored patterns evaluate once and introduce captures atomically; derived patterns are live projections. Named products cannot be opened. Iteration, selection and all quantifiers reuse the same pattern model; exact-dictionary pairs retain association semantics. Semantic for/on/given roles keep mandatory names. Discards introduce no LocalSymbol; named leaves retain ordinary lexical rules.
 

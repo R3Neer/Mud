@@ -17,6 +17,7 @@ depends-on:
   - grammar/mud.ebnf
 questions: []
 decisions:
+  - D-169
   - D-141
   - D-134
   - D-135
@@ -59,7 +60,7 @@ Authority is distributed as follows:
 
 A discrepancy between these files is a fault in the specification and must be detected by means of `validate_syntax_model.py`.
 
-Among the specific categories is `ExpressionBlockSyntax`, which preserves the initial local declarations and final expression in order. The category does not itself determine that expression's contract: its owner decides whether it must be Boolean, temporal, aggregatable or sortable. In `for each`, selections and quantifiers, the `TERMINATOR` written between `:` and the beginning of the body remains in the CST as concrete separation and disappears when the AST is projected. The CST does not itself extend its scope to `otherwise`; that relation is determined when elaborating the owning construct.
+Among the specific categories is `ExpressionBlockSyntax`, which preserves the initial local declarations and final expression in order. The category does not itself determine that expression's contract: its owner decides whether it must be Boolean, temporal, aggregatable or sortable. In `foreach`, selections and quantifiers, the `TERMINATOR` written between `:` and the beginning of the body remains in the CST as concrete separation and disappears when the AST is projected. The CST does not itself extend its scope to `otherwise`; that relation is determined when elaborating the owning construct.
 
 ## Terminology
 

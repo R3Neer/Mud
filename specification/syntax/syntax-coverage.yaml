@@ -1535,3 +1535,38 @@ productions:
     ast:
       disposition: normalized
       target: RaiseValueStatement
+  stored-value-shape:
+    cst: StoredValueShapeSyntax
+    ast:
+      disposition: normalized
+      target: stored_value_shape
+  selector-expression:
+    cst: SelectorExpressionSyntax
+    ast:
+      disposition: normalized
+      target: SelectorExpr
+  selector-and:
+    cst: SelectorAndSyntax
+    ast:
+      disposition: normalized
+      target: selector_syntax
+  selector-term:
+    cst: SelectorTermSyntax
+    ast:
+      disposition: normalized
+      target: selector_syntax
+  selector-comparison:
+    cst: SelectorComparisonSyntax
+    ast:
+      disposition: normalized
+      target: comparison_operator
+  comprehension-expression:
+    cst: ComprehensionExpressionSyntax
+    ast:
+      disposition: normalized
+      target: ComprehensionExpr
+  implicit-member-expression:
+    cst: ImplicitMemberExpressionSyntax
+    ast:
+      disposition: normalized
+      target: ImplicitMemberExpr

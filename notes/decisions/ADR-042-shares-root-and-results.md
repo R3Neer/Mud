@@ -75,7 +75,7 @@ Within then, stored locals capture their initial value when the slot is created.
 
 ### Unified sequence of `then`
 
-There is no semantic distinction between elementary and compound actions. A `then` is an ordered sequence of consequences and may combine local bindings, direct effects, calls to `action` or `subaction`, and `for each` traversals.
+There is no semantic distinction between elementary and compound actions. A `then` is an ordered sequence of consequences and may combine local bindings, direct effects, calls to `action` or `subaction`, and `foreach` traversals.
 
 Each statement reads the private delta visible at its textual position. An internal call is validated and executed there, observes the preceding private effects, and adds its own effects to the resolution. It is atomic and preserves those effects for subsequent statements; it does not open a separate transaction.
 
@@ -115,5 +115,5 @@ In action/test after, old retains its established entry-view contract; reactive 
 
 ## Amendment current by D-096
 
-The distinction between elementary and compound actions is removed from the semantics. Every `then` is an ordered sequence that can combine effects, places, calls and `for each`. An internal call observes the exact delta and contributes to effect resolution. `action` retains the ability to operate at the root; `subaction` can be reused from any `then` but cannot operate at the root. Nested after runs at its own invocation completion; the outer resolution is the sole commit boundary.
+The distinction between elementary and compound actions is removed from the semantics. Every `then` is an ordered sequence that can combine effects, places, calls and `foreach`. An internal call observes the exact delta and contributes to effect resolution. `action` retains the ability to operate at the root; `subaction` can be reused from any `then` but cannot operate at the root. Nested after runs at its own invocation completion; the outer resolution is the sole commit boundary.
 

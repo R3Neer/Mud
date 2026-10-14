@@ -61,11 +61,11 @@ The local manifest grammar is specified by D-132; external messages are specifie
 
 ### A single `then` model
 
-The semantic separation between elementary and compound actions is removed. A `then` is an ordered sequence of consequences and may mix calculated locals, immutable or `mut` stored locals, direct effects, calls to `action` or `subaction`, and `for each` traversals. Shared behaviour preambles contain immutable stored locals, live derived locals, stored/derived positional patterns and externally pure from blocks. Local RHSs may be ValueBlock; outer mut is forbidden.
+The semantic separation between elementary and compound actions is removed. A `then` is an ordered sequence of consequences and may mix calculated locals, immutable or `mut` stored locals, direct effects, calls to `action` or `subaction`, and `foreach` traversals. Shared behaviour preambles contain immutable stored locals, live derived locals, stored/derived positional patterns and externally pure from blocks. Local RHSs may be ValueBlock; outer mut is forbidden.
 
 An internal call executes at its textual position within the resolution's private delta: it observes earlier effects visible at that point, contributes its effects to the same resolution, and later statements observe those effects. It does not open an independent transaction.
 
-Each invocation checks after once its owned work stabilizes, before its caller continues. Shared consequences belong to the nearest common enclosing invocation; nested completion remains tentative. An ordered `for each` retains sequential semantics between iterations; in an unordered one, sibling-iteration deltas are consolidated under the ordinary concurrency rules.
+Each invocation checks after once its owned work stabilizes, before its caller continues. Shared consequences belong to the nearest common enclosing invocation; nested completion remains tentative. An ordered `foreach` retains sequential semantics between iterations; in an unordered one, sibling-iteration deltas are consolidated under the ordinary concurrency rules.
 
 An `action` or `subaction` may be invoked from any semantic `then` context, including a reactive rule's `then`. `action` also retains outer-root capability; `subaction` does not. A bare invocation effect propagates Errors or Refusal; explicit reply-value capture permits observation after rolling back the unsuccessful child attempt.
 
@@ -88,7 +88,7 @@ The optional header `part only` applies to its entire `.mud` file. It must be th
 part only
 using world.people
 
-sublook Detail { score := 0 }
+sublook Detail { let score := 0 }
 ```
 
 Normal `action`, `look` and `message` form host operations. Their sub forms `subaction`, `sublook` and `submessage` are visible to authorised Mud parts by default but are not direct host endpoints. A subaction has no outer-root capability; sublook is a pure query with no action-only calling restriction; submessage supplies internal causal occurrences without host delivery. A `part only` file restricts normal and sub forms alike. Tests retain test-context visibility.
@@ -113,7 +113,7 @@ Things and aliases may specialize contract-visible types across an authorized pa
 
 Each part may contribute at most one `start with`. It is not `main`, does not call parts and does not establish an initialisation order. Contributions from all parts are combined and materialised together before initial stabilisation.
 
-A part's `start with` may activate only declarations with a lifecycle in the same part. The mandatory separation between `things` and `rules` sections is removed: the conceptual set contains activatable `thing | rule` declarations, is unordered and deduplicated, and is not interpreted as `for each create`.
+A part's `start with` may activate only declarations with a lifecycle in the same part. The mandatory separation between `things` and `rules` sections is removed: the conceptual set contains activatable `thing | rule` declarations, is unordered and deduplicated, and is not interpreted as `foreach create`.
 
 One direct contribution and one contribution block are admitted:
 
@@ -160,13 +160,13 @@ The reflective relation `subaction <: action <: Declaration` is accepted, but ou
 A stored callable descriptor is invoked using the same receiver form as a nominal declaration, without special `.(op)` syntax:
 
 ```mud
-op := someAction
+let op := someAction
 then dragon.op(volume)
 ```
 
 ```mud
-predicate := someRule
-permitted := dragon.predicate(limit)
+let predicate := someRule
+let permitted := dragon.predicate(limit)
 ```
 
 With several participants, `(attacker, defender).op(amount)` may be written. Storing the descriptor does not pre-bind receivers or `given`; invocation performs those bindings at the call site.
@@ -193,7 +193,7 @@ A `message` is not called to produce a value. It occurs as a consequence of its 
 
 The `when` of a reactive rule and that of a `message` share the same trigger language. In addition to temporal triggers, occurrences/firings of compatible visible declarations may be observed: an occurred `message`, a reactive rule that has fired and an `always` rule evaluated for a binding. Actions, subactions, looks, sublooks, Boolean rules and tests are not trigger sources.
 
-Declarations governed by `on` do not admit `given`; when referenced as a trigger they have no `()`. `when Damaged`, `when Dragon.Damaged` or a prior local such as `damage := Dragon.Damaged` followed by `when damage` are valid forms. The receivers of a reference constrain `on` bindings; they do not turn the trigger into an ordinary call.
+Declarations governed by `on` do not admit `given`; when referenced as a trigger they have no `()`. `when Damaged`, `when Dragon.Damaged` or a prior local such as `let damage := Dragon.Damaged` followed by `when damage` are valid forms. The receivers of a reference constrain `on` bindings; they do not turn the trigger into an ordinary call.
 
 A reactive rule used as a trigger pulses when it has actually fired. An `always` used as a trigger pulses on every wave in which it is evaluated for the corresponding binding; observing it does not invert its meaning or turn it into a failure trigger. Tooling must warn about the risk of useless causality or lack of stabilisation.
 

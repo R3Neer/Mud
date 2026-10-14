@@ -84,7 +84,7 @@ A literal The structural form, in and of itself, does not possess identity from 
 The type As expected, you can build the value nominal:
 
 ```mud
-square: Square = (E, Four)
+let square: Square = (E, Four)
 game.Move((E, Four)) # when the expected `given` type is Square
 board[E, Four]       # when the expected key type is Square
 ```
@@ -92,14 +92,14 @@ board[E, Four]       # when the expected key type is Square
 The same applies to basic literals:
 
 ```mud
-playerName: PlayerName = "Ada"
+let playerName: PlayerName = "Ada"
 ```
 
 This contextual construction does not require `to`. By contrast, a type-checked expression retains its type and requires explicit conversion:
 
 ```mud
-rawName: Text = "Ada"
-playerName: PlayerName =
+let rawName: Text = "Ada"
+let playerName: PlayerName =
     rawName to PlayerName
 ```
 
@@ -123,15 +123,15 @@ The full form can list all the components in the order of declaration:
 The positional form must provide all components, even if some are predefined. There is no such thing as a partial positional construction:
 
 ```mud
-pagination: Pagination = (2, 30) # valid: complete positional form
-pagination: Pagination = (2)     # invalid: size is missing and unnamed
+let pagination: Pagination = (2, 30) # valid: complete positional form
+let pagination: Pagination = (2)     # invalid: size is missing and unnamed
 ```
 
 The named form may omit components. Each omitted component must have an explicit effective default; otherwise construction is invalid:
 
 ```mud
-pagination: Pagination = (size = 30) # page conserva 1
-pagination: Pagination = (page = 2)  # size conserva 20
+let pagination: Pagination = (size = 30) # page conserva 1
+let pagination: Pagination = (page = 2)  # size conserva 20
 ```
 
 Therefore, if not all components are listed, all those that are listed must be named. Positions and names must not be mixed. The components listed retain the relative order of declaration, even if earlier or intermediate components are omitted. Duplicates, unknown components or the reordering of existing components are static errors.
@@ -143,14 +143,14 @@ Full construction renders all components before producing the value nominal. The
 Two bare structural literals cannot be compared because neither provides a type expected:
 
 ```mud
-(E, Four) == (E, Four) # invalid
+let (E, Four) == (E, Four) # invalid
 ```
 
 If an operand has already been evaluated as a alias and the other is a literal a syntactically compatible construction that can still be inferred from context, the type The nominal value is passed on as an expectation to the literal:
 
 ```mud
 (E, Four) to Square == (E, Four)
-(E, Four) == (E, Four) to Square
+let (E, Four) == (E, Four) to Square
 ```
 
 Spread is bidirectional with respect to the left or right position and applies to both basic and structural literals. It only constructs literals; it does not silently convert variables, accesses, calls or other expressions that already have type.
