@@ -15,6 +15,10 @@ set are independent from Mud's repository tooling.
 
 ## Interface
 
+The planned source-model change workflow is described in
+[[model-authoring|Semantic model authoring]]. It is separate from runtime actions
+and from the command-line tools already available here.
+
 Every human-facing command supports `-h`, `--help`,
 `--colour auto|always|never`, `--ascii` and `NO_COLOR`. Command suites provide
 focused pages through `<command> --help`. Mud tooling deliberately has no

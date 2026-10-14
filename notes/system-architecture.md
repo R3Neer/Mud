@@ -1,6 +1,6 @@
 # System architecture
 
-MUD is an executable declarative language. `.mud` explicitly defines its domain model and foreign-code boundaries; generated artefacts preserve those contracts. Reproduction includes declared foreign sources, dependency versions and adapter contracts. The reference compiler and runtime are written in Rust and initially generate Rust code. The formal language remains independent of that implementation choice.
+MUD is an executable declarative language. `.mud` explicitly defines its domain model and foreign-code boundaries; generated artefacts must preserve those contracts. Reproduction includes declared foreign sources, dependency versions and adapter contracts. The planned reference compiler and runtime use Rust, with Rust as the initial generation target. These components are not implemented. The formal language remains independent of that implementation choice.
 
 ## View by component
 
@@ -37,7 +37,7 @@ Natural language / CLI / editor
                    Rust, docs, tests
 ```
 
-The current regulatory chain runs through the Surface AST and Nominal HIR. Typing and elaboration are later architectural phases; no regulatory framework yet defines the semantic representation they will produce.
+The specification defines the Surface AST, Nominal HIR and the static typing, elaboration and certification contracts in [[specification/11-type-system]], [[specification/15-fields-and-mutability]], [[specification/21-expressions]] and [[specification/types/README]]. Their implementation and the semantic IR encoding remain pending. Finite witnesses validate supplied contracts rather than execute arbitrary Mud source.
 
 ## Source and derivatives
 
@@ -60,11 +60,16 @@ Reconstructible derivatives already defined:
 - Anchor index.
 - Nominal HIR and its nominal graph ownership, specialisation and reference.
 
-Derivatives or subsequent representations not yet established by a complete contractual regulatory mechanism:
+Defined static analysis results whose concrete storage/encoding remains pending:
 
 - Types and effective contracts resulting from classification and elaboration.
+- Read/write, dependency and effect summaries used by the static contracts.
+- Finite source/application and body-termination certificates.
+
+Later representations and consumers still requiring design or implementation:
+
 - Semantic representation after typing and elaboration.
-- Subsequent semantic graphs and indices, such as reads, writes, effects or elaborated dependencies.
+- Runtime causal graphs and execution records.
 - Materialised code.
 - Generated tests and documentation.
 - Editor support that depends on later stages.
@@ -82,7 +87,7 @@ Current or planned separation:
 5. **Nominal HIR**: current regulatory framework for resolution, limited to nominal information.
 6. **Classification and elaboration**: types, cardinalities, domains, conversions, mutability and other contracts that require information in addition to names.
 7. **Subsequent semantic analyses**: purity, effects, cycles, finiteness, stochasticity and other advanced properties.
-8. **Later semantic representation**: this may come into effect once the preceding stages have been sufficiently formalised; its specific details have not yet been finalised.
+8. **Later semantic representation**: its design must encode the established static contracts and the operational contracts still being formalised; concrete nodes and serialization remain pending.
 9. **Consumers**: runtime, queries, diagnostics, materialisers and editor support.
 
 The parser should not directly generate an elaborated semantic representation. This separation makes it possible to trace errors, resolve names before typing and prevent premature IR decisions from influencing language aspects not yet formalised.
@@ -116,7 +121,7 @@ The current contract for this boundary is [[notes/decisions/ADR-097-current-nomi
 
 Classification and elaboration will need a representation suitable for execution, analysis and materialisation. For now, it exists only as an architectural necessity and set of requirements, not as a current regulatory framework.
 
-When designing, a decision must be made, taking into account the typefaces and elaboration already developed:
+Its design must account for the types, effect summaries and certification procedures already specified:
 
 - which nodes and relationships it requires;
 - what information should be stored and what can be reconstructed;
@@ -128,7 +133,7 @@ There is currently no `schemaVersion` contract for that representation, nor a no
 
 ## Searchable graphs
 
-The Nominal HIR now makes it possible to reconstruct a nominal graph for navigation, ownership, specialisation and references. Richer semantic graphs may be projected from the later representation once typing and elaboration provide sufficient information.
+The Nominal HIR makes it possible to reconstruct a nominal graph for navigation, ownership, specialisation and references. Richer semantic graphs may be projected from the later representation using the specified typing, elaboration and dependency information.
 
 Any derived graph is used for:
 
@@ -172,7 +177,25 @@ Each invocation evaluates after once its owned causal work stabilises, before it
 
 [[notes/causal-runtime-formalisation|The causal formalisation work plan]] develops state, attribution, wave advancement, completion and exterior waits before a complete algorithm. No asynchronous initiation syntax or concurrent exterior-root policy has been selected. Readable textual patches of incorporated work are required, with schema, reply access, admissibility and reproduction pending [[notes/questions/Q-073-textual-patch-contract-and-reproduction|Q-073]]. Host-only confirmation tickets may generalise beyond messages, but extra objects and exterior execution results remain [[notes/questions/Q-074-generalised-host-ticket-and-exterior-intentions|Q-074]]. [[notes/patches-and-host-observation-design|Patch/observation design]] separates confirmed transition records, re-execution inputs and diagnostic traces; no recording table is selected. Physical journal layout, persistence and compression remain implementation choices. [[specification/28-effects]] specifies private effect judgments and finite root/wave consolidation; it does not implement the scheduler or adapters. Q-035 retains admissibility costs, memoisation and resource diagnostics. No semantic IR format is prescribed.
 
+### Pending runtime publication
+
+Chapter 28 remains proposed because invocation completion, causal ownership,
+scope disposal, recovery, observation and settlement depend on the coordinated
+algorithm still owned by Q-072. Its accepted effect algebra retains its authority;
+finite consolidation witnesses do not certify the scheduler or stabilization.
+
+The local candidate at `notes/causal-runtime-operational-algorithm.md` proposes
+completion checks that may repeat when reconstruction introduces obligations.
+Publication must reconcile that proposal with the current once-only after check,
+resolve the affected semantics with the author and integrate the accepted result
+across the developed invocation/effect/runtime surfaces with contrasting traces.
+The candidate is analysis, not an accepted change or closure of Q-072. Oscillation,
+technical/native failures, adapter protocols and patch/host observation retain
+their separate active questions and publication boundaries.
+
 ## Semantic operator
+
+The authoring workflow is described in [[tooling/model-authoring]].
 
 The natural language processing layer should not edit text arbitrarily. It should produce a structured plan:
 
@@ -248,7 +271,7 @@ The current policy for operator classification, permitted inferences and atomic 
 
 ## Runtime-state persistence
 
-The specification rules out persistence of MUD semantics, but a materialisation will need to save states. A distinction must be made between:
+MUD does not select a database or physical persistence format. A materialisation may need to save states. A distinction must be made between:
 
 - The `.mud` model, which states what the world may be.
 - A runtime-state instance.

@@ -11,7 +11,6 @@ affects:
   - specification/01-scope-and-conformance.md
   - specification/11-type-system.md
   - specification/README.md
-  - notes/type-formalisation-phase.md
 ---
 
 # ADR-159 — Fixed target static conformance and version boundaries
@@ -26,4 +25,4 @@ This specifies the static part of Q-038 from D-148/D-155 and the established edi
 
 ## Verification
 
-Chapter 01's draft defines fixed-target conformance judgements and contrasting compiler-release/target/certification/categorical-change cases. Chapter 11 and the phase audit cross-reference the boundary. Chapter 01 remains draft; the general version/migration question is not marked closed.
+Chapter 01's draft defines fixed-target conformance judgements and contrasting compiler-release/target/certification/categorical-change cases. Chapter 11 cross-references the boundary. Chapter 01 remains draft; the general version/migration question is not marked closed.
