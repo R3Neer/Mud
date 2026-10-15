@@ -57,6 +57,15 @@ A newline alone does not replace that comma.
 
 ## Constructors, collections and dictionary values
 
+Use an unbracketed comma collection where the complete value is clearly delimited,
+such as a field initialiser: kinds = Kind.Motion, Kind.SharedEffects. This notation
+does not imply uniqueness or remove order/repetitions. Nested members retain their
+brackets: a, [b, c], d has three outer members, including one inner collection.
+Keep brackets when commas also delimit arguments, branches or associations and
+could obscure which collection owns a value. Do not remove singleton brackets
+mechanically. Metadata consumed by a bounded literal-only tool retains the form
+that consumer supports.
+
 Keep small, obvious positional constructors compact. For long records or several
 similar arguments, prefer named construction with one component per line. Preserve
 the component declaration order; do not sort arguments alphabetically or mix named

@@ -31,12 +31,12 @@ thing PlayerFeedback as FeedbackChannel {
             FeedbackAsset.LegacyPulse, FeedbackAsset.AmbientGlow],
         FeedbackStage.Partial -> [FeedbackAsset.AmbientGlow],
         FeedbackStage.Success -> [FeedbackAsset.AmbientGlow]
-    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
+    selectionRejected = FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime
 }
 
 thing MissingProfileFeedback as FeedbackChannel {
     magic = MagicWorld
     caster = Player
     global = FeedbackStage.Selected -> [FeedbackAsset.AmbientGlow]
-    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
+    selectionRejected = FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime
 }

@@ -35,6 +35,18 @@ class ValuePolicyComprehensionContract(unittest.TestCase):
         for source in ('items[mut]', 'items[1..3 unique]', 'items[..*]', 'items[*..]'):
             self.assertFalse(self.accepts('postfix-expression', source), source)
 
+    def test_bare_comma_collections_and_nested_members(self):
+        for source in ('a, b, c', 'a, [b, c], d', '[a, b, c]'):
+            self.assertTrue(self.accepts('value-expression', source), source)
+        self.assertFalse(self.accepts('expression', 'a, b, c'))
+        self.assertFalse(self.accepts('value-expression', 'a, b,'))
+
+    def test_argument_commas_do_not_supply_an_unbracketed_collection_argument(self):
+        # Both are valid, but the call grammar admits three expressions versus
+        # one bracketed collection expression; source authors must choose.
+        self.assertTrue(self.accepts('call-arguments', '(a, b, c)'))
+        self.assertTrue(self.accepts('call-arguments', '([a, b, c])'))
+
     def test_optional_cardinality_and_abstract_field_syntax(self):
         self.assertTrue(self.accepts('type-expression', 'Int [?]'))
         self.assertTrue(self.accepts('thing-declaration', 'abstract thing Base { mut size: Nat }'))

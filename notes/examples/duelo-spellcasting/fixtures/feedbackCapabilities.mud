@@ -15,7 +15,7 @@ thing VisualFeedback as FeedbackChannel {
         excluded = [FeedbackAsset.CastChime]
     )
     global = FeedbackStage.Selected -> [FeedbackAsset.AmbientGlow, FeedbackAsset.CastChime]
-    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
+    selectionRejected = FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime
 }
 
 thing AudioFeedback as FeedbackChannel {
@@ -27,7 +27,7 @@ thing AudioFeedback as FeedbackChannel {
             FeedbackStage.Selected -> [FeedbackAsset.CastChime, FeedbackAsset.SynchronizedBurst]
         ]
     )
-    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
+    selectionRejected = FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime
 }
 
 thing MutedFeedback as FeedbackChannel {
@@ -37,7 +37,7 @@ thing MutedFeedback as FeedbackChannel {
     profiles = Spell.Sympathy -> SpellFeedbackProfile(
         byStage = [FeedbackStage.Selected -> [FeedbackAsset.SelectionFlash]]
     )
-    selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
+    selectionRejected = FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime
 }
 
 thing CompleteFeedback as FeedbackChannel {
