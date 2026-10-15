@@ -108,12 +108,14 @@ would not enforce its test.
 SelectionPlan is a pure priority policy: active-toggle takes precedence over
 locked checks. Its optional singleton fields describe actual work. IsResolvable
 is a Boolean rule. Cancellation and cast handling use domain subactions with
-if admission guards; pure dispatch selects an admitted operation. Iterations
-traverse actual planned spells or optional operations, not singleton collections
-invented to stand in for conditionals. Stored local dispatch policies infer
-their callable output contracts, retaining receiver capabilities.
+if admission guards. Pure optional policies return the resolvable spell or
+empty; `[?]` extraction omits the dependent call when no spell is available.
+The same extraction handles planned cancellation and rejection. The activation
+iteration retains its multi-statement body over the planned spell. Optional
+contracts use `[?]`, the abbreviation for `[0..1]`.
 
-The dispatch selects the matching completion operation before calling it:
+The completion dispatch infers its callable output contract, retaining receiver
+capabilities, and selects the matching operation before calling it:
 successful concentration, successful instant cast, or continued targeting.
 None, Partial and Failed therefore complete normally with castFinished=false.
 A genuinely false subaction guard would produce IfRefusal, not a skipped body;

@@ -34,7 +34,7 @@ alias Aim {
     let x: Rum
     let y: Rum
     let z: Rum
-    let hitObject: Text [0..1]
+    let hitObject: Text [?]
 }
 
 alias CasterSnapshot {
@@ -48,14 +48,14 @@ alias ProtocolObservation {
     let kind: ProtocolKind
     let spell: Spell = Spell.None
     let result: CastResult = CastResult.None
-    let aim: Aim [0..1] = empty
+    let aim: Aim [?] = empty
     let view: CasterSnapshot
 }
 
 alias SelectionPlan {
-    let activate: Spell [0..1] = empty
-    let cancel: Spell [0..1] = empty
-    let reject: Spell [0..1] = empty
+    let activate: Spell [?] = empty
+    let cancel: Spell [?] = empty
+    let reject: Spell [?] = empty
 }
 
 abstract thing Caster {
@@ -83,11 +83,10 @@ abstract thing Caster {
 
     let selection: Spell --> SelectionPlan [ordered] :=
         activeSpells has value --> SelectionPlan(cancel = [value]),
-        value.slot == 0 or value.slot > unlockedCount -->
-            SelectionPlan(reject = [value]),
-        configured has not value --> SelectionPlan(reject = [value]),
-        concentrating has value and concentrationFull -->
-            SelectionPlan(reject = [value]),
+        .slot == 0 or .slot > unlockedCount
+            or configured has not value
+            or concentrating has value and concentrationFull -->
+                SelectionPlan(reject = [value]),
         _ --> SelectionPlan(activate = [value])
 
     let clampUnlocked: Int --> Nat [ordered] :=
@@ -116,7 +115,7 @@ subaction Record for caster: Caster [mut] given
     kind: ProtocolKind,
     spell: Spell = Spell.None,
     result: CastResult = CastResult.None,
-    aim: Aim [0..1] = empty {
+    aim: Aim [?] = empty {
     then {
         let view = caster.snapshot
         add ProtocolObservation(
@@ -127,10 +126,9 @@ subaction Record for caster: Caster [mut] given
 
 subaction CancelOne for caster: Caster [mut] given requested: Spell {
     then {
-        let cancellation: Spell --> _ [0..1 ordered] =
-            caster.IsResolvable(value) --> CancelAvailableSpell,
-            _ --> empty
-        foreach cancel in cancellation[requested] : caster.cancel(requested)
+        let available: Spell --> Spell [? ordered] =
+            caster.IsResolvable(value) --> value
+        caster.CancelAvailableSpell(available[requested][?])
     }
 }
 
@@ -141,7 +139,7 @@ subaction CancelAvailableSpell for caster: Caster [mut] given spell: Spell {
         caster.Record(ProtocolKind.CallCancel, spell)
         caster.Record(ProtocolKind.Canceled, spell)
         let remainingSelection: Spell --> Spell [ordered] =
-            value == spell --> Spell.None,
+            == spell --> Spell.None,
             _ --> value
         caster.selectedSpell = remainingSelection[caster.selectedSpell]
     }
@@ -152,15 +150,14 @@ action Select for caster: Caster [mut] given requested: Spell {
         let plan = caster.selection[requested]
         caster.lastTrace = empty
         caster.selectionAccepted = false
-        foreach spell in plan.cancel : caster.CancelOne(spell)
+        caster.CancelOne(plan.cancel[?])
         foreach spell in plan.activate : {
             add spell to caster.activeSpells
             caster.selectedSpell = spell
             caster.Record(ProtocolKind.Selected, spell)
             caster.selectionAccepted = true
         }
-        foreach spell in plan.reject :
-            caster.Record(ProtocolKind.SelectionFailed, spell)
+        caster.Record(ProtocolKind.SelectionFailed, plan.reject[?])
     }
 }
 
@@ -193,10 +190,9 @@ action CastSample for caster: Caster [mut] given result: CastResult, aim: Aim {
         let selected = caster.selectedSpell
         caster.lastTrace = empty
         caster.castFinished = true
-        let attempts: Spell --> _ [0..1 ordered] =
-            caster.IsResolvable(value) --> AttemptCast,
-            _ --> empty
-        foreach attempt in attempts[selected] : caster.attempt(selected, result, aim)
+        let available: Spell --> Spell [? ordered] =
+            caster.IsResolvable(value) --> value
+        caster.AttemptCast(available[selected][?], result, aim)
     }
 }
 
@@ -204,10 +200,10 @@ subaction AttemptCast for caster: Caster [mut] given
     spell: Spell, result: CastResult, aim: Aim {
     if caster.IsResolvable(spell)
     then {
-        caster.Record(ProtocolKind.CallCast, spell, aim = [aim])
-        caster.Record(ProtocolKind.CastAttempted, spell, result, [aim])
+        caster.Record(ProtocolKind.CallCast, spell, aim = aim)
+        caster.Record(ProtocolKind.CastAttempted, spell, result, aim)
         let completion: CastResult --> _ [ordered] =
-            value == CastResult.Success and caster.concentrating has spell -->
+            CastResult.Success and caster.concentrating has spell -->
                 CompleteConcentrationCast,
             CastResult.Success --> CompleteInstantCast,
             _ --> KeepTargeting
