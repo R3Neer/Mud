@@ -25,6 +25,12 @@ The specification drafting order uses vertical cycles, not strict chapter number
 
 Review each unit with the author before dependent choices. A top-level loop with undefined attribution/completion helpers does not constitute a complete algorithm. Textual patches follow this operational foundation; ticket frontiers are coordinated with it.
 
+The local, unversioned candidate at `notes/causal-runtime-operational-algorithm.md`
+develops the state, wave loop, attribution, completion rounds, reconstruction,
+exterior waits and exact optimisation strategies. It is not part of this
+published repository snapshot and remains analysis pending transition/conformance
+review and normative integration; it does not close Q-072.
+
 ## Candidate bookkeeping — not an accepted state representation
 
 A unit of work could carry identity, status, invocation responsible for completion, full causal provenance, containing level/branch/scope, dependencies and pending barriers. A proposal tests completion using finished then, no assigned pending work and no undiscovered consequence/checkpoint. Suspended work remains pending even when absent from a wave. Descendant registration and predecessor retirement must not permit premature completion.
