@@ -17,6 +17,7 @@ depends-on:
   - grammar/mud.ebnf
 questions: []
 decisions:
+  - D-179
   - D-169
   - D-141
   - D-134
@@ -46,6 +47,10 @@ This document defines the specific structure retained by a MUD file following le
 `MudFileSyntax` and `PartFileSyntax` are selected by physical filename. The inventory union `MudInputSyntax` does not guess a filename from content. A source header retains PartOnlyDirectiveSyntax and all leading trivia; validation rejects any non-whitespace content before that header. A manifest retains each UsesDeclarationSyntax, including duplicates for diagnostics.
 
 The CST is **per file**. A project may contain several CSTs, but there is no single CST that physically spans multiple files.
+
+Base/point magnitude declarations retain an optional body child. A bodyless
+declaration has no body node or brace tokens; an explicit empty body retains both
+delimiters and their trivia. Both have the same Surface AST projection.
 
 ## Layers and authority
 

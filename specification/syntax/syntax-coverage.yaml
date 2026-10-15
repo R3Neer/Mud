@@ -466,6 +466,7 @@ productions:
       disposition: normalized
       target: top_level_decl
   base-magnitude-declaration:
+    # An absent body supplies empty metadata/units and no root unit.
     cst: BaseMagnitudeDeclarationSyntax
     ast:
       disposition: constructor
@@ -476,6 +477,7 @@ productions:
       disposition: constructor
       target: DerivedMagnitudeDecl
   point-magnitude-declaration:
+    # An absent body supplies empty direct metadata; the header remains intact.
     cst: PointMagnitudeDeclarationSyntax
     ast:
       disposition: constructor

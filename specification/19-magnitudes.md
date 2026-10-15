@@ -14,6 +14,7 @@ questions:
   - Q-033
   - Q-070
 decisions:
+  - D-179
   - D-169
   - D-028
   - D-029
@@ -67,8 +68,10 @@ identities. They have nominal declarations/metadata and fixed dimensions.
 > create an implicit conversion.
 
 A base with units declares exactly one root unit and may declare positive
-alternative equivalences. A unitless base has an empty unit body and no alternative
-units. For example Probability and Opacity, both Num in [0..1], remain distinct
+alternative equivalences. A unitless base has no root or alternative units.
+Its body may be omitted when there is no direct metadata; omission and an
+explicit empty body are equivalent. For example Probability and Opacity,
+both Num in [0..1], remain distinct
 nominal dimensions. A unitless numeric literal can construct a base with one
 unique expected context; a typed numeric expression requires admitted explicit
 `to`. A quantity with units supplies only the factors those units denote, never
@@ -166,8 +169,10 @@ prefixes. Micro accepts µ, μ or u input, normalized to µ.
 
 A point magnitude `P point over M` describes coordinates on linear M.
 It inherits M's numeric representation and units, declares no root/alternative
-units of its own, and has independent nominal point identity. Its optional
-domain is either ordinary linear or a finite [a..b) cycle with positive period.
+units of its own, and has independent nominal point identity. Its body may be
+omitted when it contains no direct metadata, with the same meaning as `{}`.
+Its optional domain is either ordinary linear or a finite [a..b) cycle with
+positive period.
 
 | Admitted compatible operation | Result |
 | --- | --- |

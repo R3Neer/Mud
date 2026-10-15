@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-179
   - D-178
   - D-177
   - D-176
@@ -381,6 +382,10 @@ In a member preamble, each `metadata-assignment` produces `StoredMetadataAssignm
 The comma between clauses is removed. The absence of a final comma has already been validated by the grammar rules.
 
 ## Magnitudes
+
+Absent base/point bodies and explicit empty bodies project to the same empty
+metadata/unit fields. No synthetic root unit or format is introduced. Derived
+bodies retain the same omission rule. Source delimiters remain in the CST only.
 
 ### Representation
 

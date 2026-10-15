@@ -143,6 +143,8 @@ module MUDSurface {
                                 family_data_decl* data,
                                 family_member first_member,
                                 family_member* remaining_members)
+                   -- Omitted and explicit empty magnitude bodies have the same
+                   -- metadata/unit fields; only the CST retains body presence.
                    | BaseMagnitudeDecl(nominal_name name,
                                        declared_type? representation,
                                        interval_expr? domain,

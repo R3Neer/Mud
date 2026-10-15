@@ -343,7 +343,7 @@ base-magnitude-declaration
     ::= "magnitude" , nominal-name
         , [ ":" , declared-type ]
         , [ "in" , interval-expression ]
-        , magnitude-body
+        , [ magnitude-body ]
         ;
 
 derived-magnitude-declaration
@@ -358,7 +358,7 @@ point-magnitude-declaration
     ::= "magnitude" , nominal-name
         , "point" , "over" , type-reference
         , [ "in" , point-domain ]
-        , point-magnitude-body
+        , [ point-magnitude-body ]
         ;
 
 point-domain

@@ -8,8 +8,8 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 
 ## Summary
 
-- Total: 173.
-- Current: 169.
+- Total: 174.
+- Current: 170.
 - Proposed: 0.
 - Superseded: 4.
 - Withdrawn: 0.
@@ -192,6 +192,7 @@ by [[governance/DECISIONS-POLICY|the decisions policy]].
 | D-176 | current | 2026-10-15 | [[notes/decisions/ADR-176-optional-extraction-and-positional-access|Optional extraction and positional access]] |
 | D-177 | current | 2026-10-15 | [[notes/decisions/ADR-177-abstract-thing-initialization-obligations|Abstract thing initialization obligations]] |
 | D-178 | current | 2026-10-15 | [[notes/decisions/ADR-178-structural-tuple-inputs-and-postfix-generics|Structural tuple inputs and postfix generics]] |
+| D-179 | current | 2026-10-16 | [[notes/decisions/ADR-179-optional-empty-magnitude-bodies|Optional empty magnitude bodies]] |
 
 ## Reserved identifiers
 

@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-179
   - D-178
   - D-177
   - D-176
@@ -847,7 +848,7 @@ Members are separated by commas and do not permit a trailing comma. `ordered fam
 Magnitude base:
 
 ```mud
-magnitude Probability: Num in [0..1] {}
+magnitude Probability: Num in [0..1]
 
 magnitude Length: Num in [0..*] {
     root unit meter {
@@ -874,7 +875,7 @@ magnitude Speed: Num in [0..*] := Length / Time {
 Point magnitude:
 
 ```mud
-magnitude RawInstant point over Time {}
+magnitude RawInstant point over Time
 
 magnitude Timestamp point over Time {
     ~format = "{day}:{hour:2}:{minute:2}"
@@ -889,7 +890,7 @@ magnitude TimeOfDay point over Time in [0..86_400) cycle {
 }
 ```
 
-A base magnitude has one of two forms: an empty body, or exactly one `root unit name` followed by zero or more alternative units. An alternative cannot be declared without a root. Absence of a root is a complete semantic choice: the magnitude retains an independent nominal dimension, but its values display no unit. It is not identical to its numeric representation, another unitless magnitude, or the dimensionless element.
+A base magnitude has no units, or exactly one `root unit name` followed by zero or more alternative units. A base or point declaration may omit its body when it contains no units or direct metadata; omission is equivalent to `{}`. Direct metadata and unit declarations require a braced body. Explicit empty bodies remain valid. A complete bodyless declaration uses the ordinary contextual newline boundary; an incomplete annotation, domain or point-over header must still complete. An alternative cannot be declared without a root. Absence of a root is a complete semantic choice: the magnitude retains an independent nominal dimension, but its values display no unit. It is not identical to its numeric representation, another unitless magnitude, or the dimensionless element.
 
 ```mud
 let chance: Probability = 0.75

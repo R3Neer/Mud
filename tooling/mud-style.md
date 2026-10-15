@@ -100,6 +100,10 @@ Do not add parentheses to every comparison. Retain them where precedence or
 construction shape requires them. Use [] when actual collection nesting is
 intended; do not flatten nested values to shorten a line.
 
+Omit an empty magnitude body: write magnitude Strength: Num or magnitude
+Coordinate point over Length. Retain braces for declared units or direct metadata.
+Explicit empty braces remain valid under chapter 19.
+
 ## Choose a semantic unit before extracting a helper
 
 A useful subaction performs a named domain transformation with clear participants

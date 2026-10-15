@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-179
   - D-178
   - D-177
   - D-176
@@ -485,6 +486,10 @@ Every `FamilyMember` retains metadata assignments, such as `~name`, and assignme
 `QuantifierExpr(Min|Max, ...)` needs no special default constructor. Elaboration assigns the element type and conservative cardinality `[0..1]` to its result; evaluation without candidates produces the ordinary `empty` value. Only a later context incompatible with zero elements introduces the normal cardinality failure.
 
 ## Magnitudes
+
+An omitted magnitude body and an explicit empty body project to identical
+metadata/unit fields; no synthetic body, unit or nominal declaration is created.
+The CST retains which source spelling was written.
 
 There are separate constructors:
 

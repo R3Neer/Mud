@@ -1062,7 +1062,7 @@ syntax_nodes:
   base-magnitude-declaration:
     kind: BaseMagnitudeDeclarationSyntax
     rhs: "\"magnitude\" , nominal-name\n        , [ \":\" , declared-type ]\n        , [ \"in\" , interval-expression\
-      \ ]\n        , magnitude-body"
+      \ ]\n        , [ magnitude-body ]"
     references:
     - declared-type
     - interval-expression
@@ -1081,7 +1081,7 @@ syntax_nodes:
   point-magnitude-declaration:
     kind: PointMagnitudeDeclarationSyntax
     rhs: "\"magnitude\" , nominal-name\n        , \"point\" , \"over\" , type-reference\n        , [ \"\
-      in\" , point-domain ]\n        , point-magnitude-body"
+      in\" , point-domain ]\n        , [ point-magnitude-body ]"
     references:
     - nominal-name
     - point-domain
