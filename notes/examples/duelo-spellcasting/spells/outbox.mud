@@ -6,7 +6,7 @@ part only
 
 rule PublishSpellEvents on magic: Magic [mut] {
     when magic.pending changes
-    if exists event in magic.pending : true
+    if magic.pending != empty
     then {
         let events = magic.pending
         magic.pending = empty

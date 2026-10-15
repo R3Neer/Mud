@@ -244,6 +244,13 @@ omits a request only when no group contains effects and the rejection sequence
 is empty. The reactive planner maps the frozen input batch directly into requests,
 preserving event order and repetitions and omitting only absent per-event results.
 
+Within phaseGroupsFor, globalAssets applies exclusions before phaseAssets merges
+the specific origin. A comprehension produces one FeedbackGroup per phase inside
+the optional-profile traversal; it does not flatten nested collection results.
+PlayerFeedback constructs its identical Fireball/Sympathy profile once as a local
+in the closed initializer and associates that immutable value with both keys.
+The local adds no field, subtype, query endpoint or activation dependency.
+
 ## Engine boundary and limits
 
 Physics, VFX, resource handles and native hosting stay outside the domain.

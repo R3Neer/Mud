@@ -40,6 +40,6 @@ look Sympathy for magic: Magic, entity: Entity {
 
 message LinkEffectsRequested on magic: Magic {
     when magic.PrepareLinkEffects
-    if exists event in magic.linkEffects : true
+    if magic.linkEffects != empty
     let events := magic.linkEffects
 }

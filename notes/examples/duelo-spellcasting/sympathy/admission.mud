@@ -8,15 +8,15 @@ using spells
 # Endpoint admission, pair revalidation and global exclusivity.
 
 rule TargetUsable for magic: Magic, entity: Entity {
-    entity.present and (exists shape in entity.shape : true)
-        and (exists kind in entity.kinds : true)
+    entity.present and entity.shape != empty
+        and entity.kinds != empty
         and not (exists link in magic.links : link.leader == entity or link.follower == entity)
 }
 
 rule CanLink for magic: Magic, leader: Entity, follower: Entity {
     leader != follower and (magic, leader).TargetUsable() and (magic, follower).TargetUsable()
         and leader.shape == follower.shape
-        and (exists kind in leader.kinds & follower.kinds : true)
+        and (leader.kinds & follower.kinds) != empty
 }
 
 always rule ExclusiveSympathy on magic: Magic {

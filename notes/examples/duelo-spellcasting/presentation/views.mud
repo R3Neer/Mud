@@ -7,7 +7,7 @@ using sympathy
 look Targeting for caster: Spellcaster {
     let selected := caster.selected
     let prepared := caster.preparation
-    let visible := caster.present and (exists spell in caster.selected : true)
+    let visible := caster.present and caster.selected != empty
 }
 
 message TargetingChanged on caster: Spellcaster {

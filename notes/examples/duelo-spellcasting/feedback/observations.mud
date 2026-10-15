@@ -2,7 +2,7 @@
 
 message FeedbackRequested on channel: FeedbackChannel {
     when channel.PlanSpellFeedback
-    if exists _ in channel.requests : true
+    if channel.requests != empty
     let requests := channel.requests
 }
 

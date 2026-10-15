@@ -33,12 +33,12 @@ abstract thing FeedbackChannel {
             let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
             mut groups: FeedbackGroup [* ordered] = empty
             foreach profile in profiles[event.spell] : {
-                foreach stage in phasesFor[event] : {
-                    let effects = (global[stage][unique] -- profile.excluded)
-                        | profile.byStage[stage][unique]
-                    let permitted := foreach asset in effects
+                groups = foreach stage in phasesFor[event] --> {
+                    let globalAssets = global[stage][unique] -- profile.excluded
+                    let phaseAssets = globalAssets | profile.byStage[stage][unique]
+                    let permitted := foreach asset in phaseAssets
                         if allowedAssets has asset --> asset
-                    add FeedbackGroup(stage, permitted) to groups
+                    FeedbackGroup(stage, permitted)
                 }
             }
             groups
