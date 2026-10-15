@@ -19,9 +19,21 @@ look EffectiveEffects for magic: Magic, entity: Entity {
 
 look Sympathy for magic: Magic, entity: Entity {
     let leading := foreach link in magic.links if link.leader == entity -->
-        LinkSnapshot(link.id, link.owner, link.leader, link.follower, link.kinds)
+        LinkSnapshot(
+            link.id,
+            link.owner,
+            link.leader,
+            link.follower,
+            link.kinds
+        )
     let following := foreach link in magic.links if link.follower == entity -->
-        LinkSnapshot(link.id, link.owner, link.leader, link.follower, link.kinds)
+        LinkSnapshot(
+            link.id,
+            link.owner,
+            link.leader,
+            link.follower,
+            link.kinds
+        )
     let invertible := foreach link in magic.links
         if entity.present and link.follower == entity --> link.id
 }

@@ -30,7 +30,10 @@ family FeedbackAsset {
         ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Audio]
     },
     SynchronizedBurst {
-        ~modalities: FeedbackModality [1..* unique] = [FeedbackModality.Audio, FeedbackModality.Visual]
+        ~modalities: FeedbackModality [1..* unique] = [
+            FeedbackModality.Audio,
+            FeedbackModality.Visual
+        ]
     }
 }
 

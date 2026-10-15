@@ -23,7 +23,9 @@ thing AudioFeedback as FeedbackChannel {
     caster = Player
     allowedModalities = [FeedbackModality.Audio]
     profiles = Spell.Sympathy -> SpellFeedbackProfile(
-        byStage = [FeedbackStage.Selected -> [FeedbackAsset.CastChime, FeedbackAsset.SynchronizedBurst]]
+        byStage = [
+            FeedbackStage.Selected -> [FeedbackAsset.CastChime, FeedbackAsset.SynchronizedBurst]
+        ]
     )
     selectionRejected = [FeedbackAsset.RejectionChime, FeedbackAsset.RejectionChime]
 }

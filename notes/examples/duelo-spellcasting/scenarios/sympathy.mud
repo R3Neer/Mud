@@ -45,7 +45,10 @@ test FirstTargetPreparesWithoutReservingEndpoint {
 }
 
 test SuccessfulLinkEndsTargetingButKeepsConcentration {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.PairAdmission, configuration.TestConcern.Lifecycle]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.PairAdmission,
+        configuration.TestConcern.Lifecycle
+    ]
 
     start with {
         ActivationSelection([ActivationFeature.LinkEffects]).declarations,
@@ -67,7 +70,10 @@ test SuccessfulLinkEndsTargetingButKeepsConcentration {
 }
 
 test InitialOrientationPrefersGrabbedFollower {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.PairAdmission, configuration.TestConcern.Contributions]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.PairAdmission,
+        configuration.TestConcern.Contributions
+    ]
 
     start with {
         ActivationSelection().declarations,
@@ -100,14 +106,18 @@ test InversionChangesTheRelationWithoutAnInteractorCache {
     }
     after {
         (count link in MagicWorld.links : true) == 1
-        forall link in MagicWorld.links : link.id == 1 and link.leader == BoxB and link.follower == BoxA
+        forall link in MagicWorld.links :
+            link.id == 1 and link.leader == BoxB and link.follower == BoxA
         (count event in MagicWorld.published : event.kind == SpellEventKind.Inverted) == 1
         Player.activeSpells == [Spell.Sympathy]
     }
 }
 
 test TargetDepartureInvalidatesPreparationWithoutEndingTheSpell {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Lifecycle, configuration.TestConcern.PairAdmission]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.Lifecycle,
+        configuration.TestConcern.PairAdmission
+    ]
 
     start with {
         ActivationSelection().declarations,

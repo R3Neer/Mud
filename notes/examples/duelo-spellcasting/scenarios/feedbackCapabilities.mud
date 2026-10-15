@@ -14,12 +14,17 @@ test VisualChannelFiltersBothOrigins {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
         MagicWorld, Player, VisualFeedback
     }
-    then add SpellEvent(kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
-        aim = Aim(Point3(r1, r2, r3), empty)) to MagicWorld.pending
+    then add SpellEvent(
+        kind = SpellEventKind.Selected,
+        caster = Player,
+        spell = Spell.Sympathy,
+        aim = Aim(Point3(r1, r2, r3), empty)
+    ) to MagicWorld.pending
     after {
         (count request in VisualFeedback.requests : true) == 1
         forall request in VisualFeedback.requests : request.groups == [FeedbackGroup(
-            FeedbackStage.Selected, [FeedbackAsset.SelectionFlash, FeedbackAsset.AmbientGlow]
+            FeedbackStage.Selected,
+            [FeedbackAsset.SelectionFlash, FeedbackAsset.AmbientGlow]
         )]
         Player.activeSpells == empty and Player.concentration == 0
         MagicWorld.links == empty
@@ -31,12 +36,17 @@ test CompositeResourceRequiresEveryModality {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
         MagicWorld, Player, AudioFeedback
     }
-    then add SpellEvent(kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
+    then add SpellEvent(
+        kind = SpellEventKind.Selected,
+        caster = Player,
+        spell = Spell.Sympathy,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
         (count request in AudioFeedback.requests : true) == 1
         forall request in AudioFeedback.requests : request.groups == [FeedbackGroup(
-            FeedbackStage.Selected, [FeedbackAsset.CastChime]
+            FeedbackStage.Selected,
+            [FeedbackAsset.CastChime]
         )]
     }
 }
@@ -46,12 +56,17 @@ test CompositeResourcePassesWithAllModalities {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
         MagicWorld, Player, CompleteFeedback
     }
-    then add SpellEvent(kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
+    then add SpellEvent(
+        kind = SpellEventKind.Selected,
+        caster = Player,
+        spell = Spell.Sympathy,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
         (count request in CompleteFeedback.requests : true) == 1
         forall request in CompleteFeedback.requests : request.groups == [FeedbackGroup(
-            FeedbackStage.Selected, [FeedbackAsset.SynchronizedBurst]
+            FeedbackStage.Selected,
+            [FeedbackAsset.SynchronizedBurst]
         )]
     }
 }
@@ -62,10 +77,18 @@ test MutedChannelProducesNoWork {
         MagicWorld, Player, MutedFeedback
     }
     then {
-        add SpellEvent(kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
-            aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
-        add SpellEvent(kind = SpellEventKind.SelectionRejected, caster = Player, spell = Spell.Sympathy,
-            aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
+        add SpellEvent(
+            kind = SpellEventKind.Selected,
+            caster = Player,
+            spell = Spell.Sympathy,
+            aim = Aim(Point3(r0, r0, r0), empty)
+        ) to MagicWorld.pending
+        add SpellEvent(
+            kind = SpellEventKind.SelectionRejected,
+            caster = Player,
+            spell = Spell.Sympathy,
+            aim = Aim(Point3(r0, r0, r0), empty)
+        ) to MagicWorld.pending
     }
     after MutedFeedback.requests == empty and Player.activeSpells == empty
 }
@@ -75,8 +98,12 @@ test RejectionFilteringRetainsOrderedDuplicates {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
         MagicWorld, Player, AudioFeedback
     }
-    then add SpellEvent(kind = SpellEventKind.SelectionRejected, caster = Player, spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
+    then add SpellEvent(
+        kind = SpellEventKind.SelectionRejected,
+        caster = Player,
+        spell = Spell.Sympathy,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
         (count request in AudioFeedback.requests : true) == 1
         forall request in AudioFeedback.requests : request.rejected ==
@@ -89,8 +116,12 @@ test RejectionFilteringCanRemoveAllWork {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
         MagicWorld, Player, VisualFeedback
     }
-    then add SpellEvent(kind = SpellEventKind.SelectionRejected, caster = Player, spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
+    then add SpellEvent(
+        kind = SpellEventKind.SelectionRejected,
+        caster = Player,
+        spell = Spell.Sympathy,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after VisualFeedback.requests == empty
 }
 
@@ -99,8 +130,13 @@ test FilteredSuccessRetainsRepeatedPhaseResources {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
         MagicWorld, Player, VisualFeedback
     }
-    then add SpellEvent(kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Sympathy,
-        outcome = CastOutcome.Success, aim = Aim(Point3(r0, r0, r0), empty)) to MagicWorld.pending
+    then add SpellEvent(
+        kind = SpellEventKind.Attempted,
+        caster = Player,
+        spell = Spell.Sympathy,
+        outcome = CastOutcome.Success,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
         (count request in VisualFeedback.requests : true) == 1
         forall request in VisualFeedback.requests : request.groups == [

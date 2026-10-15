@@ -36,7 +36,8 @@ abstract thing FeedbackChannel {
                     let effects = (global[stage][unique] -- profile.excluded)
                         | profile.byStage[stage][unique]
                     let permitted := foreach asset in effects
-                        if forall modality in asset~modalities : allowedModalities has modality --> asset
+                        if forall modality in asset~modalities :
+                            allowedModalities has modality --> asset
                     add FeedbackGroup(stage, permitted) to groups
                 }
             }
@@ -54,5 +55,11 @@ abstract thing FeedbackChannel {
             let rejected := rejectedFor[value]
             (exists group in groups : exists _ in group.effects : true)
                 or (exists _ in rejected : true)
-        } --> FeedbackRequest(value.caster, value.spell, value.aim, groups, rejected)
+        } --> FeedbackRequest(
+            value.caster,
+            value.spell,
+            value.aim,
+            groups,
+            rejected
+        )
 }

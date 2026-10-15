@@ -20,8 +20,9 @@ rule CanLink for magic: Magic, leader: Entity, follower: Entity {
 }
 
 always rule ExclusiveSympathy on magic: Magic {
-    forall first in magic.links : forall second in magic.links :
-        first.id == second.id or
-            (first.leader != second.leader and first.leader != second.follower
-                and first.follower != second.leader and first.follower != second.follower)
+    forall first in magic.links :
+        forall second in magic.links :
+            first.id == second.id
+                or (first.leader != second.leader and first.leader != second.follower
+                    and first.follower != second.leader and first.follower != second.follower)
 }

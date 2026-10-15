@@ -27,7 +27,8 @@ alias SympathyPlan {
 }
 
 rule PrepareLinkEffects on magic: Magic [mut] {
-    ~activationFeature: configuration.ActivationFeature = configuration.ActivationFeature.LinkEffects
+    ~activationFeature: configuration.ActivationFeature =
+        configuration.ActivationFeature.LinkEffects
 
     let incoming := magic.SpellEvents
     when incoming

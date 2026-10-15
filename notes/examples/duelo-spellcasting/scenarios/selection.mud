@@ -46,7 +46,10 @@ test CapabilityBelongsToTheActualEntity {
 }
 
 test SelectionToggleEndsTheSameSpell {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Selection, configuration.TestConcern.Lifecycle]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.Selection,
+        configuration.TestConcern.Lifecycle
+    ]
 
     start with {
         ActivationSelection().declarations,
@@ -118,7 +121,10 @@ test NoConcentrationRoomRejectsSelection {
 }
 
 test InstantProviderCompletionProtocolReleasesActivity {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Selection, configuration.TestConcern.Lifecycle]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.Selection,
+        configuration.TestConcern.Lifecycle
+    ]
 
     start with {
         ActivationSelection().declarations,

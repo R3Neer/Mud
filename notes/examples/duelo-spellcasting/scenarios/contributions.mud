@@ -27,7 +27,9 @@ test BorrowedEffectsStayLiveWithoutOverwritingOwnEffects {
         BoxB.ownEffects == ("heat" -> EffectValue("heat", 20, 7))
         (MagicWorld, BoxB).EffectiveEffects().own == BoxB.ownEffects
         (MagicWorld, BoxB).EffectiveEffects().borrowed == [BorrowedEffects(
-            1, BoxA, "heat" -> EffectValue("heat", 13, 5)
+            1,
+            BoxA,
+            "heat" -> EffectValue("heat", 13, 5)
         )]
         Player.selected == empty and Player.concentration == 1
     }
@@ -50,7 +52,9 @@ test InversionReversesOnlyBorrowedContributions {
         BoxA.ownEffects == ("red" -> EffectValue("red", 10, 2))
         BoxB.ownEffects == ("blue" -> EffectValue("blue", 20, 7))
         (MagicWorld, BoxA).EffectiveEffects().borrowed == [BorrowedEffects(
-            1, BoxB, "blue" -> EffectValue("blue", 20, 7)
+            1,
+            BoxB,
+            "blue" -> EffectValue("blue", 20, 7)
         )]
         (MagicWorld, BoxB).EffectiveEffects().borrowed == empty
         forall link in MagicWorld.links : link.leader == BoxB and link.follower == BoxA
@@ -59,7 +63,10 @@ test InversionReversesOnlyBorrowedContributions {
 }
 
 test CancellationDoesNotPersistBorrowedEffects {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Contributions, configuration.TestConcern.Lifecycle]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.Contributions,
+        configuration.TestConcern.Lifecycle
+    ]
 
     start with {
         ActivationSelection().declarations,
@@ -82,7 +89,10 @@ test CancellationDoesNotPersistBorrowedEffects {
 }
 
 test LaterGrabbingDoesNotReorientAnExistingLink {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Contributions, configuration.TestConcern.PairAdmission]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.Contributions,
+        configuration.TestConcern.PairAdmission
+    ]
 
     start with {
         ActivationSelection().declarations,

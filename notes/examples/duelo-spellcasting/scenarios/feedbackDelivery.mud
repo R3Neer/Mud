@@ -17,7 +17,9 @@ test FeedbackRejectionRetainsDuplicateEffectsWithoutProfile {
         Player, MagicWorld, MissingProfileFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.SelectionRejected, caster = Player, spell = Spell.Sympathy,
+        kind = SpellEventKind.SelectionRejected,
+        caster = Player,
+        spell = Spell.Sympathy,
         aim = Aim(Point3(r0, r0, r0), empty)
     ) to MagicWorld.pending
     after {
@@ -34,7 +36,9 @@ test FeedbackMissingProfileProducesNoRequest {
         Player, MagicWorld, MissingProfileFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
+        kind = SpellEventKind.Selected,
+        caster = Player,
+        spell = Spell.Sympathy,
         aim = Aim(Point3(r0, r0, r0), empty)
     ) to MagicWorld.pending
     after {
@@ -43,7 +47,11 @@ test FeedbackMissingProfileProducesNoRequest {
 }
 
 test FeedbackModelsARealSympathyCast {
-    ~checks: configuration.TestConcern [1..* unique] = [configuration.TestConcern.Feedback, configuration.TestConcern.Selection, configuration.TestConcern.PairAdmission]
+    ~checks: configuration.TestConcern [1..* unique] = [
+        configuration.TestConcern.Feedback,
+        configuration.TestConcern.Selection,
+        configuration.TestConcern.PairAdmission
+    ]
 
     start with {
         ActivationSelection([ActivationFeature.Feedback]).declarations,
@@ -56,8 +64,8 @@ test FeedbackModelsARealSympathyCast {
     }
     after {
         exists request in PlayerFeedback.requests :
-            request.spell == Spell.Sympathy and
-                (exists group in request.groups : group.stage == FeedbackStage.Success)
+            request.spell == Spell.Sympathy
+                and (exists group in request.groups : group.stage == FeedbackStage.Success)
         Player.selected == empty
         Player.concentration == 1
         (count _ in MagicWorld.links : true) == 1
@@ -70,8 +78,11 @@ test FeedbackNoneProducesNoRequest {
         Player, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
-        outcome = CastOutcome.None, aim = Aim(Point3(r0, r0, r0), empty)
+        kind = SpellEventKind.Attempted,
+        caster = Player,
+        spell = Spell.Fireball,
+        outcome = CastOutcome.None,
+        aim = Aim(Point3(r0, r0, r0), empty)
     ) to MagicWorld.pending
     after {
         PlayerFeedback.requests == empty
@@ -85,7 +96,9 @@ test FeedbackRepeatedEqualFactsRemainTwoRequests {
     }
     then {
         let event = SpellEvent(
-            kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
+            kind = SpellEventKind.Selected,
+            caster = Player,
+            spell = Spell.Fireball,
             aim = Aim(Point3(r0, r0, r0), empty)
         )
         add event to MagicWorld.pending
@@ -106,7 +119,9 @@ test FeedbackIgnoresAnotherSpellcaster {
         Player, Turret, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Selected, caster = Turret, spell = Spell.Fireball,
+        kind = SpellEventKind.Selected,
+        caster = Turret,
+        spell = Spell.Fireball,
         aim = Aim(Point3(r0, r0, r0), empty)
     ) to MagicWorld.pending
     after PlayerFeedback.requests == empty
@@ -119,11 +134,15 @@ test FeedbackFiltersAMixedCasterBatch {
     }
     then {
         add SpellEvent(
-            kind = SpellEventKind.Selected, caster = Turret, spell = Spell.Fireball,
+            kind = SpellEventKind.Selected,
+            caster = Turret,
+            spell = Spell.Fireball,
             aim = Aim(Point3(r1, r0, r0), empty)
         ) to MagicWorld.pending
         add SpellEvent(
-            kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
+            kind = SpellEventKind.Selected,
+            caster = Player,
+            spell = Spell.Fireball,
             aim = Aim(Point3(r2, r0, r0), empty)
         ) to MagicWorld.pending
     }

@@ -17,7 +17,9 @@ test FeedbackSelectedEffectsAreMerged {
         Player, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
+        kind = SpellEventKind.Selected,
+        caster = Player,
+        spell = Spell.Fireball,
         aim = Aim(Point3(r1, r2, r3), empty)
     ) to MagicWorld.pending
     after {
@@ -37,16 +39,23 @@ test FeedbackSuccessfulAttemptHasTwoPhases {
         Player, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
-        outcome = CastOutcome.Success, aim = Aim(Point3(r4, r5, r6), empty)
+        kind = SpellEventKind.Attempted,
+        caster = Player,
+        spell = Spell.Fireball,
+        outcome = CastOutcome.Success,
+        aim = Aim(Point3(r4, r5, r6), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
-            FeedbackGroup(FeedbackStage.Partial,
-                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]),
-            FeedbackGroup(FeedbackStage.Success,
-                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow, FeedbackAsset.SuccessFlash])
+            FeedbackGroup(
+                FeedbackStage.Partial,
+                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]
+            ),
+            FeedbackGroup(
+                FeedbackStage.Success,
+                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow, FeedbackAsset.SuccessFlash]
+            )
         ]
     }
 }
@@ -57,14 +66,19 @@ test FeedbackPartialAttemptHasNoSuccessPhase {
         Player, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
-        outcome = CastOutcome.Partial, aim = Aim(Point3(r0, r0, r0), empty)
+        kind = SpellEventKind.Attempted,
+        caster = Player,
+        spell = Spell.Fireball,
+        outcome = CastOutcome.Partial,
+        aim = Aim(Point3(r0, r0, r0), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
-            FeedbackGroup(FeedbackStage.Partial,
-                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow])
+            FeedbackGroup(
+                FeedbackStage.Partial,
+                [FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]
+            )
         ]
     }
 }
@@ -75,8 +89,11 @@ test FeedbackFailedAttemptUsesFailureEffects {
         Player, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
-        outcome = CastOutcome.Failed, aim = Aim(Point3(r0, r0, r0), empty)
+        kind = SpellEventKind.Attempted,
+        caster = Player,
+        spell = Spell.Fireball,
+        outcome = CastOutcome.Failed,
+        aim = Aim(Point3(r0, r0, r0), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
@@ -92,7 +109,9 @@ test FeedbackCancellationRetainsItsAim {
         Player, MagicWorld, PlayerFeedback
     }
     then add SpellEvent(
-        kind = SpellEventKind.Cancelled, caster = Player, spell = Spell.Fireball,
+        kind = SpellEventKind.Cancelled,
+        caster = Player,
+        spell = Spell.Fireball,
         aim = Aim(Point3(r7, r8, r9), empty)
     ) to MagicWorld.pending
     after {

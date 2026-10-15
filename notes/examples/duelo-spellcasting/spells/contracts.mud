@@ -16,7 +16,9 @@ alias Aim {
     let target: Entity [?] = empty
 }
 
-family SpellEventKind { Selected, SelectionRejected, Attempted, Cancelled, Linked, Inverted, Unlinked }
+family SpellEventKind {
+    Selected, SelectionRejected, Attempted, Cancelled, Linked, Inverted, Unlinked
+}
 
 alias LinkSnapshot {
     let id: Nat
