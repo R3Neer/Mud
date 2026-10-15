@@ -223,6 +223,10 @@ from this example. The normative language specification is unchanged.
 
 ## Files and verification
 
+The [operational metadata proposal](metadata-proposal.md) evaluates concrete
+activation, feedback filtering and regression-selection consumers. It is a design
+candidate; the current sources do not yet apply those changes.
+
 | Directory | Semantic files | Part-only files |
 | --- | --- | --- |
 | world | entities.mud: identities, shapes, capabilities and own effects | None |
