@@ -86,7 +86,7 @@ abstract thing Caster {
         value.slot == 0 or value.slot > unlockedCount -->
             SelectionPlan(reject = [value]),
         configured has not value --> SelectionPlan(reject = [value]),
-        (concentrating has value) and concentrationFull -->
+        concentrating has value and concentrationFull -->
             SelectionPlan(reject = [value]),
         _ --> SelectionPlan(activate = [value])
 
@@ -104,7 +104,7 @@ thing ThreeConcentrationCaster as Caster {
 
 rule IsResolvable for caster: Caster given spell: Spell {
     spell.slot > 0 and spell.slot <= caster.unlockedCount
-        and (caster.configured has spell)
+        and caster.configured has spell
 }
 
 subaction Record for caster: Caster [mut] given
@@ -202,7 +202,7 @@ subaction AttemptCast for caster: Caster [mut] given
         caster.Record(ProtocolKind.CallCast, spell, aim = [aim])
         caster.Record(ProtocolKind.CastAttempted, spell, result, [aim])
         let completion: CastResult --> _ [ordered] =
-            value == CastResult.Success and (caster.concentrating has spell) -->
+            value == CastResult.Success and caster.concentrating has spell -->
                 CompleteConcentrationCast,
             CastResult.Success --> CompleteInstantCast,
             _ --> KeepTargeting
@@ -213,7 +213,7 @@ subaction AttemptCast for caster: Caster [mut] given
 
 subaction CompleteConcentrationCast for caster: Caster [mut] given
     spell: Spell, result: CastResult {
-    if result == CastResult.Success and (caster.concentrating has spell)
+    if result == CastResult.Success and caster.concentrating has spell
     then {
         caster.castFinished = true
         caster.selectedSpell = Spell.None
@@ -222,7 +222,7 @@ subaction CompleteConcentrationCast for caster: Caster [mut] given
 
 subaction CompleteInstantCast for caster: Caster [mut] given
     spell: Spell, result: CastResult {
-    if result == CastResult.Success and (caster.concentrating has not spell)
+    if result == CastResult.Success and caster.concentrating has not spell
     then {
         caster.castFinished = true
         remove spell from caster.activeSpells

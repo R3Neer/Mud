@@ -59,8 +59,10 @@ authorised changes, looks query a coherent view, and messages are causal
 occurrences with frozen produced payloads. A participant is not the API owner.
 
 ```mud
-action Deposit for account: Account [mut] given amount: Money in [0..*] {
-    then account.balance += amount
+action Withdraw for account: Account [mut] given amount: Money in [0..*] {
+    if account.balance >= amount
+    then account.balance -= amount
+    after account.balance >= 0
 }
 look Balance for account: Account { let value := account.balance }
 message Overdrawn on account: Account {
@@ -70,8 +72,10 @@ message Overdrawn on account: Account {
 ```
 
 These declarations belong to a part where Account.balance is accessible.
-Deposit requires authority over that participant's mutable field. Balance and
-the message field remain pure read computations.
+Withdraw requires authority over that participant's mutable field. Its `if`
+admits the request only when the balance covers the amount; its `after` checks
+the completion balance. Balance and the message field remain pure read
+computations.
 
 ## Parts, file privacy and contract closure
 
@@ -204,6 +208,38 @@ The incorporated textual patch interface remains
 field or serialization API is selected here.
 
 Pure recursive bodies retain their ordinary static result contract. [[types/termination-certification]] supplies their ranking search and evidence; it does not infer an ambiguous result, introduce nominal types or bypass independent owner-specific acyclicity.
+
+### Admission and completion examples
+
+The same optional `if` and `after` clauses belong to `subaction`:
+
+```mud
+subaction Debit for account: Account [mut] given amount: Money in [0..*] {
+    if account.balance >= amount
+    then account.balance -= amount
+    after account.balance >= 0
+}
+```
+
+In isolation, with no further causal effects on the balance, an initial balance
+of 10 and amount 4 passes the guard and the postcondition checks the completion
+balance of 6. For amount 12, the guard
+produces IfRefusal before the subtraction. A bare `account.Debit(12)` propagates
+that refusal; it is not a conditional no-op. Use selection or a filtered
+`foreach` when absence of matching work should complete normally.
+
+An action `after` is a contract check, not an additional effect or a repair.
+For example, changing this postcondition to `after account.balance >= 5` makes
+the admitted request with initial balance 10 and amount 6 end in AfterRefusal;
+the failed invocation's tentative subtraction is rolled back. An error while
+computing either Boolean condition follows the Error channel instead.
+
+An `after` belongs to one invocation's completion. An `always` rule constrains
+every applicable consolidated root/wave checkpoint under [[25-always-rules]].
+A test's `after` asserts the expected test outcome under
+[[08-concrete-grammar#Local values in conditions]]; it does not add a postcondition to the action
+being tested. Invocation completion retains the boundary and open algorithmic
+scope described above.
 
 ## Looks and produced types
 

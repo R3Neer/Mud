@@ -1144,8 +1144,10 @@ Each invocation's after runs when its owned causal work stabilizes and before it
 
 ```mud
 subaction RemoveMoney for account: Account [mut]
-given amount: Money {
+given amount: Money in [0..*] {
+    if account.balance >= amount
     then account.balance -= amount
+    after account.balance >= 0
 }
 
 action Transfer
@@ -1157,6 +1159,15 @@ given amount: Money {
     }
 }
 ```
+
+The optional `if` precedes `then` and admits the invocation; a false guard
+produces IfRefusal rather than silently skipping the body. The optional `after`
+follows `then` and checks the invocation's consolidated completion view; a false
+postcondition produces AfterRefusal and the invocation does not retain its
+failed tentative work. Both clauses are pure singleton Boolean computations,
+also for subactions. [[26-public-boundary#Admission and completion examples]]
+contrasts admission, completion and ordinary conditional work. A test's `after`
+is a separate assertion construct.
 
 External eligibility and reflective subtyping are distinct properties: `subaction <: action`, but widening a descriptor does not make a `subaction` a safe external root.
 

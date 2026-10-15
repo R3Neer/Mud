@@ -118,6 +118,20 @@ A genuinely false subaction guard would produce IfRefusal, not a skipped body;
 ordinary bare calls preserve that refusal or any Error rather than ignoring it.
 Decisions are captured before the mutations they govern.
 
+The guards are part of the executable contracts: CancelAvailableSpell and
+AttemptCast require a resolvable provider; CompleteConcentrationCast and
+CompleteInstantCast require the corresponding successful outcome and spell
+kind; KeepTargeting requires a non-success outcome. Membership comparisons bind
+more tightly than `and`, so these conditions need no grouping parentheses.
+
+Public gameplay rejection remains normal completion where required by the C#
+contract. Moving such cases into an action guard would turn them into Refusal
+and could suppress the required trace entries. The model does not add action
+`after` checks to its existing invocation contracts. General admission and
+postcondition examples, including AfterRefusal rollback, are in
+[[specification/26-public-boundary#Admission and completion examples]]. The
+`after` clauses in scenarios.mud are test assertions, not action postconditions.
+
 The mutable state includes two explicitly auxiliary fields: selectionAccepted
 and castFinished preserve the corresponding C# Boolean results for inspection.
 They are not ActionReply payloads. Ordinary gameplay rejection is a completed
