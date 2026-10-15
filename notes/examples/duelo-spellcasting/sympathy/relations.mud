@@ -5,7 +5,7 @@ using spells
 
 action Invert
 for magic: Magic [mut], follower: Entity
-given id: Nat {
+given id: LinkId {
     if follower.present
         and (exists link in magic.links : link.id == id and link.follower == follower)
     then {

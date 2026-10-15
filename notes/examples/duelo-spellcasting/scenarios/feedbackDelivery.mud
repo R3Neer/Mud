@@ -20,7 +20,7 @@ test FeedbackRejectionRetainsDuplicateEffectsWithoutProfile {
         kind = SpellEventKind.SelectionRejected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count _ in MissingProfileFeedback.requests : true) == 1
@@ -39,7 +39,7 @@ test FeedbackMissingProfileProducesNoRequest {
         kind = SpellEventKind.Selected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         MissingProfileFeedback.requests == empty
@@ -59,8 +59,8 @@ test FeedbackModelsARealSympathyCast {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r1, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r2, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r1 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r2 m, r0 m, r0 m), [BoxB]))
     }
     after {
         exists request in PlayerFeedback.requests :
@@ -82,7 +82,7 @@ test FeedbackNoneProducesNoRequest {
         caster = Player,
         spell = Spell.Fireball,
         outcome = CastOutcome.None,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         PlayerFeedback.requests == empty
@@ -99,7 +99,7 @@ test FeedbackRepeatedEqualFactsRemainTwoRequests {
             kind = SpellEventKind.Selected,
             caster = Player,
             spell = Spell.Fireball,
-            aim = Aim(Point3(r0, r0, r0), empty)
+            aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
         )
         add event to MagicWorld.pending
         add event to MagicWorld.pending
@@ -122,7 +122,7 @@ test FeedbackIgnoresAnotherSpellcaster {
         kind = SpellEventKind.Selected,
         caster = Turret,
         spell = Spell.Fireball,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after PlayerFeedback.requests == empty
 }
@@ -137,18 +137,18 @@ test FeedbackFiltersAMixedCasterBatch {
             kind = SpellEventKind.Selected,
             caster = Turret,
             spell = Spell.Fireball,
-            aim = Aim(Point3(r1, r0, r0), empty)
+            aim = Aim(Point3(r1 m, r0 m, r0 m), empty)
         ) to MagicWorld.pending
         add SpellEvent(
             kind = SpellEventKind.Selected,
             caster = Player,
             spell = Spell.Fireball,
-            aim = Aim(Point3(r2, r0, r0), empty)
+            aim = Aim(Point3(r2 m, r0 m, r0 m), empty)
         ) to MagicWorld.pending
     }
     after {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.caster == Player
-            and request.aim.point == Point3(r2, r0, r0)
+            and request.aim.point == Point3(r2 m, r0 m, r0 m)
     }
 }

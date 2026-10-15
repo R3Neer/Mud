@@ -4,7 +4,7 @@ using spells
 # Read-only relation projections, live contributions and engine requests.
 
 alias BorrowedEffects {
-    let link: Nat
+    let link: LinkId
     let source: Entity
     let effects: Text -> EffectValue
 }

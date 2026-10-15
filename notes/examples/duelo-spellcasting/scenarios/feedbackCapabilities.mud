@@ -18,7 +18,7 @@ test VisualChannelFiltersBothOrigins {
         kind = SpellEventKind.Selected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r1, r2, r3), empty)
+        aim = Aim(Point3(r1 m, r2 m, r3 m), empty)
     ) to MagicWorld.pending
     after {
         (count request in VisualFeedback.requests : true) == 1
@@ -40,7 +40,7 @@ test CompositeResourceRequiresEveryModality {
         kind = SpellEventKind.Selected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count request in AudioFeedback.requests : true) == 1
@@ -60,7 +60,7 @@ test CompositeResourcePassesWithAllModalities {
         kind = SpellEventKind.Selected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count request in CompleteFeedback.requests : true) == 1
@@ -81,13 +81,13 @@ test MutedChannelProducesNoWork {
             kind = SpellEventKind.Selected,
             caster = Player,
             spell = Spell.Sympathy,
-            aim = Aim(Point3(r0, r0, r0), empty)
+            aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
         ) to MagicWorld.pending
         add SpellEvent(
             kind = SpellEventKind.SelectionRejected,
             caster = Player,
             spell = Spell.Sympathy,
-            aim = Aim(Point3(r0, r0, r0), empty)
+            aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
         ) to MagicWorld.pending
     }
     after MutedFeedback.requests == empty and Player.activeSpells == empty
@@ -102,7 +102,7 @@ test RejectionFilteringRetainsOrderedDuplicates {
         kind = SpellEventKind.SelectionRejected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count request in AudioFeedback.requests : true) == 1
@@ -120,7 +120,7 @@ test RejectionFilteringCanRemoveAllWork {
         kind = SpellEventKind.SelectionRejected,
         caster = Player,
         spell = Spell.Sympathy,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after VisualFeedback.requests == empty
 }
@@ -135,7 +135,7 @@ test FilteredSuccessRetainsRepeatedPhaseResources {
         caster = Player,
         spell = Spell.Sympathy,
         outcome = CastOutcome.Success,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count request in VisualFeedback.requests : true) == 1

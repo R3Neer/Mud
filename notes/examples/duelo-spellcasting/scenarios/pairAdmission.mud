@@ -18,10 +18,10 @@ test SharedPreparationDoesNotReserveAnEndpoint {
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
         (MagicWorld, Turret).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Turret).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
-        (MagicWorld, Turret).Cast(Aim(Point3(r0, r0, r0), [BoxC]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Turret).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
+        (MagicWorld, Turret).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxC]))
     }
     after {
         (count link in MagicWorld.links : true) == 1
@@ -42,9 +42,9 @@ test PairCreationRevalidatesThePreparedShape {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
         BoxA.shape = Shape.Sphere
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
     }
     after {
         MagicWorld.links == empty
@@ -63,10 +63,10 @@ test PairCreationRevalidatesSharedCapabilities {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
         BoxA.kinds = [SympathyKind.Motion]
         BoxB.kinds = [SympathyKind.SharedEffects]
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
     }
     after {
         MagicWorld.links == empty
@@ -84,9 +84,9 @@ test MissingAndUnsuitableHitsDoNotAcquireExtraConcentration {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [Unshaped]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [Unshaped]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
     }
     after {
         Player.concentration == 1

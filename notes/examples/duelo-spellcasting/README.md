@@ -19,9 +19,9 @@ using sympathy
 using fixtures
 
 (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-(MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-(MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
-(MagicWorld, BoxB).Invert(1)
+(MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+(MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
+(MagicWorld, BoxB).Invert(LinkId(1))
 (MagicWorld, Player).CancelSpell(Spell.Sympathy)
 ```
 
@@ -75,8 +75,8 @@ value, not a mutable object with methods.
 Magic owns links and finite delivery buffers, not copies of every entity.
 SympathyLink is an identified relation with an owner, directed endpoints and
 supported effect kinds. Its id stays fixed on inversion. nextLink allocates
-fresh model data keys during serial domain mutations; it is not a native
-address or a dynamic thing allocation. There is no class/instance interpretation
+fresh LinkId values from an internal Nat counter during serial domain mutations;
+it is not a native address or a dynamic thing allocation. There is no class/instance interpretation
 of create. The example does not supply a concurrent allocation algorithm.
 
 The stored owner component explicitly retains Spellcaster [mut] authority from
@@ -84,6 +84,34 @@ the casting action's for role. That permission is used when a departing endpoint
 must release the owner's reservation. It does not grant authority over the
 other endpoints. Public facts and queries construct separate LinkSnapshot values
 with read-only participants; they never export the operational link's authority.
+
+## Quantities, positions and link identity
+
+Time uses exact Num coordinates with seconds as its canonical unit. EffectValue
+requires a nonnegative duration, for example 10 s; the Time magnitude itself can
+represent signed differences. There is no clock or temporal point in this model.
+No timer, expiration or time progression is inferred from storing a duration.
+
+Length uses Rum coordinates and metres: one world-space unit is one metre.
+Its signed domain supports differences along each axis. WorldCoordinate is a
+point over Length in one fixed world frame; Point3 groups three such coordinates.
+Point3 subtraction returns Displacement3. Translating a point by a displacement
+returns a point, with both addition directions declared explicitly. Displacements
+support addition/subtraction. Point+Point and point scaling are not declared.
+No floating-point algebraic identity is promised beyond Rum's ordinary rounding.
+
+EffectIntensity is an independent unitless Num magnitude with no new domain
+restriction: negative values and values above one remain admitted. It prevents
+accidental interchange with time, length or a bare typed number; it does not
+supply a universal effect-combination law or make different effect kinds compatible.
+Concentration, capacity, catalogue slots and unlock counts remain Nat.
+
+LinkId wraps a Nat as an immutable identity, shared by operational links, public
+snapshots, borrowed origins and inversion inputs. The allocator increments its
+ordinary Nat counter and constructs a LinkId at allocation; ids have no arithmetic
+operators. These visible value contracts require an adapter to handle quantities
+and ids explicitly. No foreign serialisation, conversion or clock protocol is
+implemented by this example.
 
 ## Selection and attempt contracts
 
@@ -247,18 +275,19 @@ for readable headers, branches, constructors and private semantic helpers.
 
 | Directory | Semantic files | Part-only files |
 | --- | --- | --- |
-| world | entities.mud: identities, shapes, capabilities and own effects | None |
+| world | quantities.mud, geometry.mud, entities.mud: quantities, positions, identities and capabilities | None |
 | configuration | activationFeature.mud, testConcern.mud | activationSelection.mud |
-| spells | contracts.mud, state.mud, selection.mud, observations.mud | availability.mud, completion.mud, outbox.mud |
+| spells | linkId.mud, contracts.mud, state.mud, selection.mud, observations.mud | availability.mud, completion.mud, outbox.mud |
 | sympathy | casting.mud, relations.mud, observations.mud | admission.mud, linkState.mud, targetPlan.mud, attempt.mud, creation.mud |
 | feedback | contracts.mud, channel.mud, observations.mud | allowedAssets.mud, planning.mud |
 | presentation | views.mud: derived views and change notifications | None |
 | fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
-| scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud | All nine |
+| scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud, quantities.mud | All ten |
 
-The root mud.part has no foreign dependencies. The 47 source scenarios cover
+The root mud.part has no foreign dependencies. The 48 source scenarios cover
 selection, pair admission, effects, departure, cancellation, frozen occurrences
-and feedback without changing the domain contracts.
+and feedback, plus quantitative and affine contracts. Existing scenario values
+retain their coordinates, seconds and link keys under the explicit types.
 
 From the repository root, python tooling/examples/spell_metadata.py --concern Feedback
 validates the bounded metadata inventory and prints independent scenario activation

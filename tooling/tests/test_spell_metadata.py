@@ -17,9 +17,9 @@ class SpellMetadataTests(unittest.TestCase):
 
     def test_every_scenario_is_classified_and_has_an_independent_world(self):
         plan = self.inventory.plan([])
-        self.assertEqual(len(plan['worlds']), 47)
+        self.assertEqual(len(plan['worlds']), 48)
         self.assertFalse(plan['executesMud'])
-        self.assertEqual(len({w['root'] for w in plan['worlds']}), 47)
+        self.assertEqual(len({w['root'] for w in plan['worlds']}), 48)
         for world in plan['worlds']:
             self.assertEqual(world['tests'], [world['root']])
             self.assertIn('spells.CanSelect', world['activation'])

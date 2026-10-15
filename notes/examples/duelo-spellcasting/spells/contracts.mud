@@ -21,7 +21,7 @@ family SpellEventKind {
 }
 
 alias LinkSnapshot {
-    let id: Nat
+    let id: LinkId
     let owner: Spellcaster
     let leader: Entity
     let follower: Entity

@@ -17,8 +17,8 @@ test RepeatedCancellationProducesNoDuplicateDomainFacts {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
         (MagicWorld, Player).CancelSpell(Spell.Sympathy)
         (MagicWorld, Player).CancelSpell(Spell.Sympathy)
     }
@@ -36,8 +36,8 @@ test RelockingDoesNotTrapAnActiveSpell {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
         Player.SetUnlocked(0)
         (MagicWorld, Player).CancelSpell(Spell.Sympathy)
     }
@@ -65,9 +65,9 @@ test LinkEffectFactsKeepTheirOwnOrientation {
             kind = SpellEventKind.Linked,
             caster = Player,
             spell = Spell.Sympathy,
-            aim = Aim(Point3(r0, r0, r0), [BoxB]),
+            aim = Aim(Point3(r0 m, r0 m, r0 m), [BoxB]),
             link = [LinkSnapshot(
-                1,
+                LinkId(1),
                 Player,
                 BoxA,
                 BoxB,
@@ -78,9 +78,9 @@ test LinkEffectFactsKeepTheirOwnOrientation {
             kind = SpellEventKind.Inverted,
             caster = Player,
             spell = Spell.Sympathy,
-            aim = Aim(Point3(r0, r0, r0), [BoxA]),
+            aim = Aim(Point3(r0 m, r0 m, r0 m), [BoxA]),
             link = [LinkSnapshot(
-                1,
+                LinkId(1),
                 Player,
                 BoxB,
                 BoxA,
@@ -92,7 +92,7 @@ test LinkEffectFactsKeepTheirOwnOrientation {
         (count event in MagicWorld.linkEffects : true) == 2
         forall event in MagicWorld.linkEffects :
             forall link in event.link :
-                link.id == 1
+                link.id == LinkId(1)
                     and ((event.kind == SpellEventKind.Linked
                             and link.leader == BoxA and link.follower == BoxB)
                         or (event.kind == SpellEventKind.Inverted

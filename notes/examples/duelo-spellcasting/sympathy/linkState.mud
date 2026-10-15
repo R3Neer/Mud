@@ -6,7 +6,7 @@ using spells
 # Operational relations, pair plans and link-effect delivery state.
 
 alias SympathyLink {
-    let id: Nat
+    let id: LinkId
     # Explicit immediate authority, supplied by the spellcaster's for role.
     # Public facts/looks project LinkSnapshot instead of exposing this component.
     let owner: Spellcaster [mut]

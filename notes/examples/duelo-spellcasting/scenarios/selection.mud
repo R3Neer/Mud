@@ -85,7 +85,7 @@ test RepeatedFailedAttemptsPreservePreparationAndReservation {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        let aim = Aim(Point3(r1, r2, r3), [Unshaped])
+        let aim = Aim(Point3(r1 m, r2 m, r3 m), [Unshaped])
         (MagicWorld, Player).Cast(aim)
         (MagicWorld, Player).Cast(aim)
     }
@@ -103,7 +103,7 @@ test CastingWithoutSelectionProducesNoAttempt {
         ActivationSelection().declarations,
         MagicWorld, Player
     }
-    then (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
+    then (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))
     after MagicWorld.published == empty and MagicWorld.pending == empty
 }
 
@@ -135,7 +135,7 @@ test InstantProviderCompletionProtocolReleasesActivity {
         # A fixture supplies the result of a hypothetical Mud spell body.
         # This is not Fireball implementation or a host result endpoint.
         (MagicWorld, InstantProtocolCaster).ResolveAttempt(
-            Spell.Fireball, CastOutcome.Success, Aim(Point3(r0, r0, r0), empty)
+            Spell.Fireball, CastOutcome.Success, Aim(Point3(r0 m, r0 m, r0 m), empty)
         )
     }
     after {

@@ -20,7 +20,7 @@ test FeedbackSelectedEffectsAreMerged {
         kind = SpellEventKind.Selected,
         caster = Player,
         spell = Spell.Fireball,
-        aim = Aim(Point3(r1, r2, r3), empty)
+        aim = Aim(Point3(r1 m, r2 m, r3 m), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
@@ -28,7 +28,7 @@ test FeedbackSelectedEffectsAreMerged {
             FeedbackStage.Selected,
             [FeedbackAsset.SelectionFlash, FeedbackAsset.CastChime, FeedbackAsset.AmbientGlow]
         )]
-        forall request in PlayerFeedback.requests : request.aim.point == Point3(r1, r2, r3)
+        forall request in PlayerFeedback.requests : request.aim.point == Point3(r1 m, r2 m, r3 m)
         MagicWorld.pending == empty
     }
 }
@@ -43,7 +43,7 @@ test FeedbackSuccessfulAttemptHasTwoPhases {
         caster = Player,
         spell = Spell.Fireball,
         outcome = CastOutcome.Success,
-        aim = Aim(Point3(r4, r5, r6), empty)
+        aim = Aim(Point3(r4 m, r5 m, r6 m), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
@@ -70,7 +70,7 @@ test FeedbackPartialAttemptHasNoSuccessPhase {
         caster = Player,
         spell = Spell.Fireball,
         outcome = CastOutcome.Partial,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
@@ -93,7 +93,7 @@ test FeedbackFailedAttemptUsesFailureEffects {
         caster = Player,
         spell = Spell.Fireball,
         outcome = CastOutcome.Failed,
-        aim = Aim(Point3(r0, r0, r0), empty)
+        aim = Aim(Point3(r0 m, r0 m, r0 m), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
@@ -112,13 +112,13 @@ test FeedbackCancellationRetainsItsAim {
         kind = SpellEventKind.Cancelled,
         caster = Player,
         spell = Spell.Fireball,
-        aim = Aim(Point3(r7, r8, r9), empty)
+        aim = Aim(Point3(r7 m, r8 m, r9 m), empty)
     ) to MagicWorld.pending
     after {
         (count _ in PlayerFeedback.requests : true) == 1
         forall request in PlayerFeedback.requests : request.groups == [
             FeedbackGroup(FeedbackStage.Cancelled, [FeedbackAsset.CancelPulse])
         ]
-        forall request in PlayerFeedback.requests : request.aim.point == Point3(r7, r8, r9)
+        forall request in PlayerFeedback.requests : request.aim.point == Point3(r7 m, r8 m, r9 m)
     }
 }

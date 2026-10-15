@@ -15,7 +15,7 @@ given pair: SympathyPair, aim: Aim {
             _ --> value
         let endpoints = orientation[pair]
         let link = SympathyLink(
-            id = magic.nextLink,
+            id = LinkId(magic.nextLink),
             owner = caster,
             leader = endpoints.leader,
             follower = endpoints.follower,

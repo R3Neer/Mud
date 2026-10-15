@@ -16,10 +16,10 @@ test ParticipantDepartureClosesLinksAndReleasesTheirOwner {
         MagicWorld, Player, BoxA, BoxB
     }
     then {
-        BoxA.ownEffects = "red" -> EffectValue("red", 10, 2)
+        BoxA.ownEffects = "red" -> EffectValue("red", 10 s, 2)
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
         (MagicWorld, BoxA).LeaveWorld()
     }
     after {
@@ -40,8 +40,8 @@ test CasterDepartureAlsoClosesLinksBetweenOtherEntities {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
         (MagicWorld, Player).LeaveWorld()
     }
     after {
@@ -60,7 +60,7 @@ test DepartingCasterReleasesPreparationWithoutAnyLink {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
         (MagicWorld, Player).LeaveWorld()
     }
     after {

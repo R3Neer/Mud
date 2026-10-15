@@ -17,7 +17,7 @@ test NoHitIsNoneRatherThanARejection {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))
     }
     after {
         Player.prepared == empty
@@ -33,7 +33,7 @@ test FirstTargetPreparesWithoutReservingEndpoint {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r1, r2, r3), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r1 m, r2 m, r3 m), [BoxA]))
     }
     after {
         Player.preparation == [BoxA]
@@ -56,8 +56,8 @@ test SuccessfulLinkEndsTargetingButKeepsConcentration {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r4, r5, r6), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r4 m, r5 m, r6 m), [BoxB]))
     }
     after {
         Player.selected == empty and Player.prepared == empty
@@ -82,8 +82,8 @@ test InitialOrientationPrefersGrabbedFollower {
     then {
         BoxB.grabbed = true
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
     }
     after {
         (count link in MagicWorld.links : true) == 1
@@ -100,14 +100,14 @@ test InversionChangesTheRelationWithoutAnInteractorCache {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
-        (MagicWorld, BoxB).Invert(1)
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxB]))
+        (MagicWorld, BoxB).Invert(LinkId(1))
     }
     after {
         (count link in MagicWorld.links : true) == 1
         forall link in MagicWorld.links :
-            link.id == 1 and link.leader == BoxB and link.follower == BoxA
+            link.id == LinkId(1) and link.leader == BoxB and link.follower == BoxA
         (count event in MagicWorld.published : event.kind == SpellEventKind.Inverted) == 1
         Player.activeSpells == [Spell.Sympathy]
     }
@@ -125,7 +125,7 @@ test TargetDepartureInvalidatesPreparationWithoutEndingTheSpell {
     }
     then {
         (MagicWorld, Player).SelectSpell(Spell.Sympathy)
-        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), [BoxA]))
         (MagicWorld, BoxA).LeaveWorld()
     }
     after {
