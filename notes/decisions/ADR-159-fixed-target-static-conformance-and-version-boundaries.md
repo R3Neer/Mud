@@ -25,4 +25,4 @@ This specifies the static part of Q-038 from D-148/D-155 and the established edi
 
 ## Verification
 
-Chapter 01's draft defines fixed-target conformance judgements and contrasting compiler-release/target/certification/categorical-change cases. Chapter 11 cross-references the boundary. Chapter 01 remains draft; the general version/migration question is not marked closed.
+Chapter 01 defines fixed-target conformance judgements and contrasting compiler-release/target/certification/categorical-change cases. Chapter 11 cross-references the boundary. Its publication covers fixed-target static conformance; the general version/migration question remains partial.

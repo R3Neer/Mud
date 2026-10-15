@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/specification
   - mud/normativa
-status: draft
+status: current
 normative: true
 depends-on:
   - "[[02-terminology]]"
@@ -56,7 +56,9 @@ decisions:
 
 This chapter defines the semantic objects and invariants shared by the static language and the world model. It distinguishes the programme's canonical definitions, activation, owned storage and effective projection. It records the established boundaries of execution without supplying a complete transition system.
 
-The chapter remains a draft. The operational chapters must define complete judgments and conformance traces for the accepted lifecycle and observation contracts without changing the invariants below.
+The operational chapters own complete judgments and conformance traces for the established lifecycle and observation interfaces; their missing protocols cannot be inferred from these invariants.
+
+The published scope is the common mathematical vocabulary and established identity, storage, view and observation invariants used by the construct chapters. Operational summaries below are interface premises of those contracts, not a definition of the causal algorithm. Scheduler transitions, complete invocation completion and patch/host serialization remain outside this foundation.
 
 ## Canonical programme and identity
 
@@ -80,7 +82,7 @@ Let $\mathcal V_P$ denote the semantic values admitted by the programme's type c
 
 Aliases form a separate nominal partial order whose nodes are value types, not activatable identities. Abstract aliases are inhabited through concrete descendants. Statically admitted generic applications have a proven finite closure. Productive recursion describes that finite type graph with finite individual values; it does not introduce cyclic value identity or imply finite enumeration.
 
-A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it; independent origins with the same name conflict. Part visibility and permission to specialise follow [[10-names-and-anchors]].
+A descendant of several nominal aliases must satisfy every predecessor: its admitted values are contained in their intersection, not their union. Effective structural members are aggregated by declaration origin. Reaching one member by several inheritance paths does not duplicate it. Independent same-name contributions require the compatibility/refinement checks of [[13-aliases]]; written predecessor order never resolves a conflict. Part visibility and permission to specialise follow [[10-names-and-anchors]].
 
 ## Activation and materialisation
 

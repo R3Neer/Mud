@@ -4,7 +4,7 @@ aliases:
   - Scope from the specification MUD
 tags:
   - mud/specification
-status: draft
+status: current
 normative: true
 depends-on:
   - "[[00-editorial-conventions]]"
@@ -28,6 +28,8 @@ This specification defines Mud syntax, static contracts, applicable observable s
 
 A chapter's normative surface and publication status are distinct. A proposed/draft chapter may integrate accepted contracts but cannot replace current decisions or introduce semantics for an active question. A conformance claim cannot rely on an illustrative example alone or silently choose a result for an unspecified feature. Complete language conformance requires all applicable contracts; a checked subset must be identified as partial conformance.
 
+This chapter publishes fixed-target source/static conformance and the interpretation of partial claims. Descriptor version selection/discovery, source/IR/state migration and complete dynamic conformance are separate protocols, not prerequisites silently supplied by this chapter.
+
 ## Target language version and static conformance
 
 > [!rule] MUD-CONF-001 — Fixed-target static claims
@@ -35,7 +37,7 @@ A chapter's normative surface and publication status are distinct. A proposed/dr
 
 Let $V$ be a specified language target, $P$ a resolved program under that target and $C$ the claimed construct scope. Write $\mathsf{Check}_V(P,C)$ for the completed normative static procedure over that scope, with its explicit premises and permitted runtime admission obligations. Its result distinguishes accepted, proved-violation rejection and completed-but-unproved rejection. Resource-interrupted checking does not supply a completed judgement. [[11-type-system]] defines the evidence/admission boundary; source/application finiteness and body termination follow [[types/finite-static-certification]] and [[types/termination-certification]].
 
-For conforming implementations $I$ and $J$ which both complete this procedure under the same $V$, equal input contracts and scope imply equal acceptance/rejection results and normalized static contracts. Internal caches or a shared reference analyzer do not alter the judgement. This is a conformance requirement, not a claim that the complete analyzer has already been specified or implemented.
+For conforming implementations $I$ and $J$ which both complete this procedure under the same $V$, equal input contracts and scope imply equal acceptance/rejection results and normalized static contracts. Internal caches or a shared reference analyzer do not alter the judgement. This is a conformance requirement, not a claim of an implemented analyzer or completed operational/advanced-profile certification.
 
 An implementation may support several language targets. Its supported targets and actual selected target are distinct from its software release identifier. It must not report completed conformance to an unsupported target or substitute a newer target without identifying that change. This does not select a default project version, command-line option or descriptor field.
 

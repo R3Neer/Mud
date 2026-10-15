@@ -10,6 +10,7 @@ status: in-preparation
 normative: true
 questions:
   - Q-009
+  - Q-038
   - Q-059
   - Q-069
   - Q-070
@@ -140,13 +141,13 @@ Chapter: [[01-scope-and-conformance]].
 
 Defines:
 
-- Purpose of the specification.
-- What it means to implement MUD.
-- Conformance profiles.
-- Extensions and experimental features.
-- Compatibility between versions.
-- Authority of examples, notes and appendices.
-- Normative treatment of open questions.
+- Scope/authority of the specification and explicit partial conformance claims.
+- Fixed-target source/static conformance, distinct from a compiler release.
+- Version-specific catalogues, prescribed certification and interrupted verification.
+- Source/static contract compatibility, distinct from execution or persistence compatibility.
+- Authority of examples and the boundary of active questions.
+
+Project target discovery/defaults, descriptor settings and source/IR/world migration protocols remain outside this published scope under Q-038; fixed-target checking does not invent them.
 
 ## 02. Terminology
 
