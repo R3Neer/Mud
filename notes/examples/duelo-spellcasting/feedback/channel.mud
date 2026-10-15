@@ -17,7 +17,7 @@ abstract thing FeedbackChannel {
     # A replaceable delivery batch, not an execution history.
     mut requests: FeedbackRequest [* ordered] = empty
 
-    let stages: SpellEvent --> FeedbackStage [* ordered] =
+    let phasesFor: SpellEvent --> FeedbackStage [* ordered] =
         .kind == SpellEventKind.Selected --> [FeedbackStage.Selected],
         .kind == SpellEventKind.Cancelled --> [FeedbackStage.Cancelled],
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Success -->
@@ -27,34 +27,36 @@ abstract thing FeedbackChannel {
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Failed -->
             [FeedbackStage.Failed]
 
-    let groupsFor: SpellEvent --> FeedbackGroup [* ordered] :=
+    let phaseGroupsFor: SpellEvent --> FeedbackGroup [* ordered] :=
         _ --> {
             let event = value
+            let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
             mut groups: FeedbackGroup [* ordered] = empty
             foreach profile in profiles[event.spell] : {
-                foreach stage in stages[event] : {
+                foreach stage in phasesFor[event] : {
                     let effects = (global[stage][unique] -- profile.excluded)
                         | profile.byStage[stage][unique]
                     let permitted := foreach asset in effects
-                        if forall modality in asset~modalities :
-                            allowedModalities has modality --> asset
+                        if allowedAssets has asset --> asset
                     add FeedbackGroup(stage, permitted) to groups
                 }
             }
             groups
         }
 
-    let rejectedFor: SpellEvent --> FeedbackAsset [* ordered] :=
-        .kind == SpellEventKind.SelectionRejected -->
+    let rejectionAssetsFor: SpellEvent --> FeedbackAsset [* ordered] :=
+        .kind == SpellEventKind.SelectionRejected --> {
+            let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
             foreach asset in selectionRejected
-                if forall modality in asset~modalities : allowedModalities has modality --> asset
+                if allowedAssets has asset --> asset
+        }
 
     let requestFor: SpellEvent --> FeedbackRequest [? ordered] :=
         {
-            let groups := groupsFor[value]
-            let rejected := rejectedFor[value]
-            (exists group in groups : exists _ in group.effects : true)
-                or (exists _ in rejected : true)
+            let groups := phaseGroupsFor[value]
+            let rejected := rejectionAssetsFor[value]
+            (exists group in groups : group.effects != empty)
+                or rejected != empty
         } --> FeedbackRequest(
             value.caster,
             value.spell,

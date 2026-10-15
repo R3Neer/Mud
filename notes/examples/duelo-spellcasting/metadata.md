@@ -89,19 +89,26 @@ to all three modalities. Metadata describes resource requirements; the channel
 field determines which requirements this receiver can satisfy. Live mute state,
 if needed later, belongs in world state rather than writable metadata.
 
-After the existing per-phase merge, deduplication and global-only exclusions:
+The part-only AllowedFeedbackAssets sublook derives the admitted resource set
+from the closed FeedbackAsset family and a supplied modality configuration:
 
 ```mud
-let permitted := foreach asset in effects
-    if forall modality in asset~modalities : allowedModalities has modality --> asset
+let assets := foreach asset in all FeedbackAsset
+    if forall modality in asset~modalities : modalities has modality --> asset
 ```
 
 Every required modality must be allowed. Audio-only output omits SynchronizedBurst;
 it does not request half that resource. Separate resource members express independent
-presentation. The same predicate filters selectionRejected using an ordered
-comprehension, preserving permitted repetitions. Filtering never reorders phases,
-merges resources across phases or changes captured aim/context. Empty work yields
-no FeedbackRequest. An empty allowed set silences all resources.
+presentation. Phase policies filter merged effects by membership in this set,
+after deduplication and global-only exclusions. Rejection uses an ordered
+comprehension with the same membership test, preserving permitted repetitions.
+Filtering never reorders phases, merges resources across phases or changes
+captured aim/context. Empty work yields no FeedbackRequest. An empty allowed
+set silences all resources.
+
+The query reads the complete, immutable metadata of this finite resource family.
+It needs no lifecycle activation and makes no memoisation guarantee. The policies
+retain ordinary derived-read demand in their captured view.
 
 An all-enabled channel preserves the existing merge/exclusion contract under the
 resource identity migration. All prior feedback scenarios remain; seven additional

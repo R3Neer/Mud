@@ -209,6 +209,12 @@ The channels are filtered by caster identity, not names or native callbacks.
 Resource modalities metadata additionally filters work against each channel's
 allowedModalities. Every required modality must be allowed; filtering preserves
 phase order and rejection repetitions and never changes spell acceptance.
+The private AllowedFeedbackAssets sublook supplies the shared resource-admission
+policy. The phasesFor, phaseGroupsFor and rejectionAssetsFor policies distinguish
+phase selection, per-phase merging and rejection fallback. The requestFor policy
+omits a request only when no group contains effects and the rejection sequence
+is empty. The reactive planner maps the frozen input batch directly into requests,
+preserving event order and repetitions and omitting only absent per-event results.
 
 ## Engine boundary and limits
 
@@ -245,7 +251,7 @@ for readable headers, branches, constructors and private semantic helpers.
 | configuration | activationFeature.mud, testConcern.mud | activationSelection.mud |
 | spells | contracts.mud, state.mud, selection.mud, observations.mud | availability.mud, completion.mud, outbox.mud |
 | sympathy | casting.mud, relations.mud, observations.mud | admission.mud, linkState.mud, targetPlan.mud, attempt.mud, creation.mud |
-| feedback | contracts.mud, channel.mud, observations.mud | planning.mud |
+| feedback | contracts.mud, channel.mud, observations.mud | allowedAssets.mud, planning.mud |
 | presentation | views.mud: derived views and change notifications | None |
 | fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
 | scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud | All nine |
