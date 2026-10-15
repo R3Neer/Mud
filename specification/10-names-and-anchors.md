@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/specification
   - mud/nombres
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[05-source-text]]"
@@ -358,11 +358,11 @@ let severity: Severity = Critical
 
 `Severity.Critical` remains available. Units follow the same rule for magnitude, identifier, `name`, plural and abbreviation. If two values remain possible, further specification is required.
 
-## Migration
+## Migration boundary
 
-Renaming, changing the category or moving between paths alters the anchor. The tooling records a directed mapping from the previous one to current. This mapping can migrate persistent references and history, but never converts the old name to alias, which is supported by the compiler.
+Renaming, changing the category or moving between paths alters the anchor. The tooling records a directed mapping from the previous one to current. The mapping supports persistent-reference/history migration but never makes the previous anchor a source alias accepted by ordinary resolution.
 
-The external format and the complete cycle record remain open in [[notes/questions/Q-014-m-anchor-migration|Q-014]].
+The mapping record format, composition, retention and persisted-state application are outside this chapter's source-resolution scope and remain open in [[notes/questions/Q-014-m-anchor-migration|Q-014]].
 
 ## Nominal graph initial
 

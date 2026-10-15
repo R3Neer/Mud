@@ -1,6 +1,6 @@
 ---
 title: Canonical operator identity and reflection
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[../10-names-and-anchors]]"
