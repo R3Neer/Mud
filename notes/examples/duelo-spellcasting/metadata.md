@@ -135,7 +135,7 @@ separate worlds; the tool never combines all selected fixtures into one world.
 The --root option permits checking another copy of this same example layout.
 
 The closed concern family is Selection, PairAdmission, Contributions, Lifecycle
-Feedback and Quantities. All 48 scenarios have nonempty checks, normally through file defaults.
+Feedback and Quantities. All 50 scenarios have nonempty checks, normally through file defaults.
 Mixed scenarios override their complete value. In particular,
 FeedbackModelsARealSympathyCast explicitly covers Feedback, Selection and PairAdmission.
 An override replaces its file default; it does not append to it.

@@ -9,11 +9,9 @@ given aim: Aim {
     then {
         let plan = (magic, caster).PlanSympathy(aim).plan
 
-        foreach target in plan.prepare :
-            caster.prepared = target
+        caster.prepared = plan.prepare[?]
 
-        foreach pair in plan.pair :
-            (magic, caster).EstablishSympathyLink(pair, aim)
+        (magic, caster).EstablishSympathyLink(plan.pair[?], aim)
 
         (magic, caster).ResolveAttempt(Spell.Sympathy, plan.outcome, aim)
     }

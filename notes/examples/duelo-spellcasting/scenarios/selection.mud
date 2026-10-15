@@ -98,13 +98,20 @@ test RepeatedFailedAttemptsPreservePreparationAndReservation {
     }
 }
 
-test CastingWithoutSelectionProducesNoAttempt {
+test CastingWithoutSelectionRefusesWithoutAttempt {
     start with {
         ActivationSelection().declarations,
         MagicWorld, Player
     }
-    then (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))
-    after MagicWorld.published == empty and MagicWorld.pending == empty
+    then {
+        # Capture the refused child instead of propagating its refusal.
+        let reply = (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))
+    }
+    after {
+        (imagine (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))) is IfRefusal
+        Player.selected == empty and Player.activeSpells == empty
+        MagicWorld.published == empty and MagicWorld.pending == empty
+    }
 }
 
 test NoConcentrationRoomRejectsSelection {
@@ -142,5 +149,45 @@ test InstantProviderCompletionProtocolReleasesActivity {
         InstantProtocolCaster.selected == empty
         InstantProtocolCaster.activeSpells == empty
         (count event in MagicWorld.published : event.kind == SpellEventKind.Attempted) == 1
+    }
+}
+
+test CastingUnsupportedProviderRefusesWithoutAttempt {
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, InstantProtocolCaster
+    }
+    then {
+        (MagicWorld, InstantProtocolCaster).SelectSpell(Spell.Fireball)
+        let reply = (MagicWorld, InstantProtocolCaster).Cast(
+            Aim(Point3(r0 m, r0 m, r0 m), empty)
+        )
+    }
+    after {
+        (imagine (MagicWorld, InstantProtocolCaster).Cast(
+            Aim(Point3(r0 m, r0 m, r0 m), empty)
+        )) is IfRefusal
+        InstantProtocolCaster.selected == [Spell.Fireball]
+        InstantProtocolCaster.activeSpells == [Spell.Fireball]
+        (count event in MagicWorld.published : event.kind == SpellEventKind.Attempted) == 0
+        MagicWorld.pending == empty
+    }
+}
+
+test CastingUnavailableSelectionRefusesWithoutAttempt {
+    start with {
+        ActivationSelection().declarations,
+        MagicWorld, Player
+    }
+    then {
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        Player.unlocked = 0
+        let reply = (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))
+    }
+    after {
+        (imagine (MagicWorld, Player).Cast(Aim(Point3(r0 m, r0 m, r0 m), empty))) is IfRefusal
+        Player.selected == [Spell.Sympathy] and Player.activeSpells == [Spell.Sympathy]
+        (count event in MagicWorld.published : event.kind == SpellEventKind.Attempted) == 0
+        MagicWorld.pending == empty
     }
 }

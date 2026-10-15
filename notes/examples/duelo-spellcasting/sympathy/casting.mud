@@ -1,10 +1,10 @@
 using spells
 
-# Select the implemented provider. No selection remains a successful no-op.
+# Admit an available implemented spell before attempting it.
 action Cast
 for magic: Magic [mut], caster: Spellcaster [mut]
 given aim: Aim {
-    then foreach spell in caster.selected[ordered]
-        if spell == Spell.Sympathy and caster.CanAttempt(spell) :
-            (magic, caster).AttemptSympathy(aim)
+    if caster.selected has Spell.Sympathy
+        and caster.CanAttempt(Spell.Sympathy)
+    then (magic, caster).AttemptSympathy(aim)
 }

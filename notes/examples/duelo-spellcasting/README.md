@@ -115,7 +115,9 @@ implemented by this example.
 
 ## Selection and attempt contracts
 
-Cast selects the provider and delegates to private AttemptSympathy. The pure
+Cast admits only a selected Sympathy spell for which CanAttempt holds, then
+delegates to private AttemptSympathy. An absent selection, unsupported provider
+or unavailable spell produces IfRefusal before any attempt. The pure
 PlanSympathy sublook classifies its input. EstablishSympathyLink checks admission
 again immediately before creating the oriented relation; ResolveAttempt completes
 the outcome. These helpers have ordinary child-resolution and rollback boundaries,
@@ -291,7 +293,7 @@ for readable headers, branches, constructors and private semantic helpers.
 | fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
 | scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud, quantities.mud | All ten |
 
-The root mud.part has no foreign dependencies. The 48 source scenarios cover
+The root mud.part has no foreign dependencies. The 50 source scenarios cover
 selection, pair admission, effects, departure, cancellation, frozen occurrences
 and feedback, plus quantitative and affine contracts. Existing scenario values
 retain their coordinates, seconds and link keys under the explicit types.
