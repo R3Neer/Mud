@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/specification
   - mud/normativa
-status: draft
+status: current
 normative: true
 depends-on:
   - "[[00-editorial-conventions]]"
@@ -21,7 +21,7 @@ decisions:
 
 ## Scope
 
-This chapter fixes conventions for reading the specification. Mathematical notation describes MUD; it is not source syntax and does not prescribe an implementation's memory layout. Each chapter defines its own semantic objects and judgments using these conventions. This draft does not define an evaluator or an execution protocol.
+This chapter fixes conventions for reading the specification. Mathematical notation describes MUD; it is not source syntax and does not prescribe an implementation's memory layout. Each chapter defines its own semantic objects and judgments using these conventions. This chapter does not define an evaluator or an execution protocol.
 
 ## Symbols and logic
 
