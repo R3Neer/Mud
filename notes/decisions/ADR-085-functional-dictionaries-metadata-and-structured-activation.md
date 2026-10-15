@@ -36,6 +36,8 @@ Partially amended by [[ADR-169-explicit-values-selectors-and-foreach-comprehensi
 
 - Amended by: [[ADR-177-abstract-thing-initialization-obligations|D-177]].
 
+- Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
+
 ## Context
 
 MUD already has collections, exact dictionaries, sequential composition through calls within `then`, nominal names, initial activation and `Text` templates. Several later decisions show four related needs:
@@ -224,7 +226,7 @@ Cardinality omission is no longer universally normalised to `[1]` before the fie
 
 - In a stored field without external mutability and with an initialiser, the exact external cardinality of the initial value is inferred.
 - A unit value infers `[1]`, a literal collection of three members infers `[3]` and `empty` infers `[0]`.
-- The internal contents of a dictionary do not alter external cardinality: a dictionary is one value even when it contains several associations or branches.
+- The internal contents of a dictionary do not alter external cardinality: a dictionary is one value even when it contains several associations or branches. Under D-180, omitted arrow-owned cardinalities separately reuse the same owner matrix: infer immutable/derived association or application bounds; mutable exact/type-only contracts default to [1]. Uncovered functional definitions can infer minimum zero instead of an implicit totality requirement.
 - In a field with external mutability, omission retains `[1]`.
 - Every concrete stored field declaration requires an explicit initialiser, including Any; an abstract explicitly typed field may defer it under D-177.
 - Calculated fields `:=` retain the form inferred from their expression or the declared form.

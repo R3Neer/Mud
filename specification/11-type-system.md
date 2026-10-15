@@ -12,6 +12,7 @@ depends-on:
 questions:
   - Q-073
 decisions:
+  - D-180
   - D-176
   - D-178
   - D-177
@@ -143,7 +144,7 @@ The following constructors are metalanguage, not new source syntax. $\mathsf{Man
 
 An ordinary omitted collection specification means $[1,1]$; the omission remains source provenance. In an immutable stored field with an initialiser, omitted outer cardinality instead inherits the exact external shape of that initial value. A dictionary remains one outer value independently of its association count. An outwardly mutable field keeps $[1,1]$ when omitted. A bare star is resolved against the applicable effective limits, not against a guessed finite runtime population. All actual collections are finite even when their static upper bound is unbounded. Nested collections occupy members without implicit flattening.
 
-For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. The value contract may itself contain a collection or another dictionary. Text is a positional sequence as one basic value, not Char with a collection-order modifier.
+For exact dictionaries the bracketed specification following the arrow constrains associations, not a collection of independent dictionaries. For functional dictionaries it constrains application results. Each arrow-owned omitted cardinality follows the owner matrix in [[17-dictionaries#Omitted cardinality and owner contracts]]: infer immutable initializers and derived bodies, retain [1] for mutable stored exact dictionaries and type-only contracts. Inference is static over admitted inputs/views, not the first invocation. Written bounds are checked before an inferred policy can satisfy a positive-minimum receiving contract. The value contract may itself contain a collection or another dictionary. Text is a positional sequence as one basic value, not Char with a collection-order modifier.
 
 > [!rule] MUD-TYPE-002 — Well-formed type constructors
 > Every referenced declaration must be visible and have the required category. Cardinalities have nonnegative integral lower bounds and upper bounds no smaller than their lower bounds. Keyed paths and order paths must be statically meaningful and satisfy their stability contracts. Dictionary arrows must be the complete outer form, including after resolving representation aliases. A collection specification after a complete union qualifies that union; it does not qualify only its last alternative.
@@ -421,7 +422,7 @@ Each written hole is an independent inference occurrence; two underscores do not
 
 `let pair: (_, Text) = source` succeeds when source and written constraints determine the first component uniquely and the second meets Text. `let pair: (_, Text) = (empty, "hello")` fails without additional evidence for the first member type. `let values: _ = empty` fails; `let values: _ in Cats [*] = empty` succeeds only if the domain contract supplies unique type evidence. Mutable stored annotations admit holes with the same rule; subsequent assignments obey the inferred fixed contract and ordinary writable invariance.
 
-Written domains, cardinalities, uniqueness, order and authority remain stored admission constraints, never coercive derived transforms. Omitted outer shape retains the owner's existing policy, including initializer-shape capture for immutable stored fields and the singleton default for mutable fields. No hole infers missing bounds or creates authority. Schema/default/metadata initialisers retain their closed-static requirements. Hole syntax is unavailable in participant/given signatures, generic parameter bounds, alias representation definitions, derived annotations, ordinary casts or standalone Type expressions.
+Written domains, cardinalities, uniqueness, order and authority remain stored admission constraints, never coercive derived transforms. Omitted shape retains the owner policy, including initializer-shape capture for immutable stored fields, body-result inference for functional definitions, and the singleton default for mutable fields and type-only contracts. Dictionary arrow-owned counts and exterior cardinality are resolved independently under [[17-dictionaries#Omitted cardinality and owner contracts]]. No hole infers missing bounds or creates authority. Schema/default/metadata initialisers retain their closed-static requirements. Hole syntax is unavailable in participant/given signatures, generic parameter bounds, alias representation definitions, derived annotations, ordinary casts or standalone Type expressions.
 
 ### 9.2. Pattern typing
 

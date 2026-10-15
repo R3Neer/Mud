@@ -34,6 +34,8 @@ affects:
 
 - Amended by: [[ADR-175-historical-order-and-local-collection-properties|D-175]].
 
+- Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
+
 ## Decision
 
 ### Collections
@@ -47,7 +49,7 @@ T[min..*]
 T[*]
 ```
 
-To omit it is tantamount to `[1]`; `[n]` is equivalent to `[n..n]`; `[*]` use the semantics effective limit of D-029 and is usually equivalent to `[0..*]`.
+Omission uses the owner matrix of D-085/D-180: immutable stored and derived definitions infer bounds, while mutable stored and type-only positions use `[1]`; `[n]` is equivalent to `[n..n]`; `[*]` use the semantics effective limit of D-029 and is usually equivalent to `[0..*]`.
 
 `empty` means 'absence of' `null`.
 

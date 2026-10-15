@@ -40,7 +40,7 @@ family FeedbackAsset {
 family FeedbackStage { Selected, Rejected, Partial, Failed, Success, Cancelled }
 
 alias SpellFeedbackProfile {
-    let byStage: FeedbackStage -> (FeedbackAsset [*]) = empty
+    let byStage: FeedbackStage -> (FeedbackAsset [*]) [*] = empty
     let excluded: FeedbackAsset [* unique] = empty
 }
 

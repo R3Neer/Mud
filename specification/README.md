@@ -19,6 +19,7 @@ questions:
   - Q-073
   - Q-074
 decisions:
+  - D-180
   - D-172
   - D-171
   - D-170
@@ -312,7 +313,7 @@ Defines:
 - Built-in, nominal, structural, collection, dictionary, interval, magnitude and union types.
 - `Any`, first-class descriptors, callable types and types obtained statically through `~type`.
 - Static generic parameters/applications, nominal bounds, conservative inferred variance and proven finite application closure.
-- Subtyping, compatibility, narrowing, exact normalized structural type equality, ordering, conversions and unambiguous inference.
+- Subtyping, compatibility, narrowing, exact normalized structural type equality, ordering, conversions and unambiguous inference, including owner-directed dictionary association/application cardinality.
 - Whole and partial stored type holes requiring a unique compile-time solution, and exact positional pattern typing.
 - Typing of anonymous `look` results and `message` payloads, including the join of dynamic calls.
 - Interaction between a callable descriptor's static type and the nominal identity needed to bind its signature.

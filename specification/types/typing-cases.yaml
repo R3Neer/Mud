@@ -2793,10 +2793,10 @@ cases:
 - id: policy-incomplete-family-coverage
   rules:
   - MUD-TYPE-008
-  source: 'let describe: Severity --> Text [ordered] = Severity.Low --> "low"'
+  source: 'let describe: Severity --> Text [1 ordered] = Severity.Low --> "low"'
   source_scope: fragment-with-stated-contract
   expected: static-reject
-  contract: Severity has Low, Medium and High; no residual or proof covers the omitted members.
+  contract: Severity has Low, Medium and High; the explicit positive minimum requires coverage, but no residual or proof covers the omitted members.
 - id: policy-bool-equality
   rules:
   - MUD-TYPE-008
@@ -2994,3 +2994,212 @@ cases:
   expected: static-accept
   contract: Negative and zero inputs have no applicable branch and return normal empty. A positive minimum
     would require coverage. Selected faults never become absence.
+- id: dictionary-immutable-literal-count
+  rules:
+  - MUD-TYPE-008
+  source: 'let table: Int -> Text = 1 -> "one", 2 -> "two"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The dictionary exterior is [1]; the omitted arrow count infers two associations.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 2
+    - 2
+    inferred:
+    - 2
+    - 2
+- id: dictionary-immutable-contextual-empty
+  rules:
+  - MUD-TYPE-008
+  source: 'let table: Int -> Text = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The explicit arrow supplies key/value types; omitted association count infers zero.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 0
+    - 0
+    inferred:
+    - 0
+    - 0
+- id: dictionary-mutable-omitted-empty-rejected
+  rules:
+  - MUD-TYPE-008
+  source: 'mut table: Int -> Text = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: An omitted mutable association contract remains [1]; contextual empty cannot satisfy it.
+  witness:
+    kind: dictionary-cardinality
+    owner: mutable-stored
+    actual:
+    - 0
+    - 0
+- id: dictionary-mutable-explicit-growing
+  rules:
+  - MUD-TYPE-008
+  source: 'mut table: Int -> Text [*] = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The written zero-admitting association capacity admits initialization and later insertions.
+  witness:
+    kind: dictionary-cardinality
+    owner: mutable-stored
+    actual:
+    - 0
+    - 0
+    written:
+    - 0
+    - null
+- id: dictionary-type-only-singleton-contract
+  rules:
+  - MUD-TYPE-008
+  source: 'given table: Int -> Text'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The supplied map has two associations; a type-only omitted cardinality means one, not per-call
+    inference.
+  witness:
+    kind: dictionary-cardinality
+    owner: type-only
+    actual:
+    - 2
+    - 2
+- id: dictionary-schema-empty-inference-is-not-capacity
+  rules:
+  - MUD-TYPE-008
+  source: 'let table: Int -> Text = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: After inferring the default as zero associations, a two-association constructor argument does not
+    satisfy the fixed schema contract.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 2
+    - 2
+    inferred:
+    - 0
+    - 0
+- id: dictionary-schema-explicit-variable-capacity
+  rules:
+  - MUD-TYPE-008
+  source: 'let table: Int -> Text [*] = empty'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: A written component capacity permits constructor arguments with a different count from its empty
+    default.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 2
+    - 2
+    inferred:
+    - 0
+    - 0
+    written:
+    - 0
+    - null
+- id: functional-inferred-partial-firstmatch
+  rules:
+  - MUD-TYPE-008
+  source: 'let positive: Int --> Text [ordered] = > 0 --> "positive"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: Uncovered inputs contribute zero; no implicit positive application minimum is introduced.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 0
+    - 1
+    inferred:
+    - 0
+    - 1
+- id: functional-written-positive-rejects-partial
+  rules:
+  - MUD-TYPE-008
+  source: 'let positive: Int --> Text [1 ordered] = > 0 --> "positive"'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: The explicit positive minimum cannot admit the supplied uncovered-input interval.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 0
+    - 1
+    inferred:
+    - 0
+    - 1
+    written:
+    - 1
+    - 1
+- id: functional-inferred-allmatches-range
+  rules:
+  - MUD-TYPE-008
+  source: 'let labels: Int --> Text = > 0 --> "positive", >= 0 --> "nonnegative", _ --> "negative"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The supplied whole-input proof gives one or two scalar results with residual fallback; source order
+    is not FirstMatch.
+  witness:
+    kind: dictionary-cardinality
+    owner: immutable-stored
+    actual:
+    - 1
+    - 2
+    inferred:
+    - 1
+    - 2
+- id: functional-type-only-result-singleton
+  rules:
+  - MUD-TYPE-008
+  source: 'given policy: Int --> Text'
+  source_scope: fragment-with-stated-contract
+  expected: static-reject
+  contract: A potentially absent policy does not satisfy a type-only contract requiring exactly one result.
+  witness:
+    kind: dictionary-cardinality
+    owner: type-only
+    actual:
+    - 0
+    - 1
+- id: dictionary-derived-shape-not-first-read
+  rules:
+  - MUD-TYPE-008
+  source: 'let selected: Int -> Text := (key, entry) in table : key > 0'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The source has at most ten associations; derived selection retains conservative bounds across reads.
+  witness:
+    kind: dictionary-cardinality
+    owner: derived
+    actual:
+    - 0
+    - 10
+    inferred:
+    - 0
+    - 10
+- id: functional-derived-views-include-absence
+  rules:
+  - MUD-TYPE-008
+  source: 'let positive: Int --> Text [ordered] := gate.enabled and value > 0 --> "positive"'
+  source_scope: fragment-with-stated-contract
+  expected: static-accept
+  contract: The supplied proof accounts for enabled and disabled views, not only the first invocation.
+  witness:
+    kind: dictionary-cardinality
+    owner: derived
+    actual:
+    - 0
+    - 1
+    inferred:
+    - 0
+    - 1

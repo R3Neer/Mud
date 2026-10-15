@@ -711,7 +711,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-set-union
   category: expression
-  source: "rule Merge for left: Key -> Value, right: Key -> Value {\n    let (left | right) == (left | right)\n\
+  source: "rule Merge for left: Key -> Value [*], right: Key -> Value [*] {\n    let (left | right) == (left | right)\n\
     }\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolOr)
@@ -720,7 +720,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-symmetric-difference
   category: expression
-  source: "rule Exclusive for left: Key -> Value, right: Key -> Value {\n    let (left ^ right) == (left\
+  source: "rule Exclusive for left: Key -> Value [*], right: Key -> Value [*] {\n    let (left ^ right) == (left\
     \ ^ right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolXor)
@@ -738,7 +738,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-intersection-and-difference
   category: expression
-  source: "rule ExactAlgebra for left: Key -> Value, right: Key -> Value {\n    let (left & right) == (left\
+  source: "rule ExactAlgebra for left: Key -> Value [*], right: Key -> Value [*] {\n    let (left & right) == (left\
     \ & right) and\n    let (left -- right) == (left -- right)\n}\n"
   cst_root: MudFileSyntax
   ast: BinaryExpr(SymbolAnd) with ExactDictionarySetOperationExpr expectations
@@ -891,7 +891,7 @@ cases:
   produces_ast: false
 - id: exact-dictionary-substitution
   category: effect
-  source: "action ChangeCapital for mut capitals: Country -> City {\n    then add (Spain -> Barcelona) to capitals\n}\n"
+  source: "action ChangeCapital for mut capitals: Country -> City [*] {\n    then add (Spain -> Barcelona) to capitals\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(ExactAssociationExpr)
   normalizations:
@@ -899,7 +899,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-keys
   category: iteration
-  source: "action Visit for capitals: Country -> City,\n    mut visited: Country [* unique] {\n    then\
+  source: "action Visit for capitals: Country -> City [*],\n    mut visited: Country [* unique] {\n    then\
     \ foreach country in capitals: {\n        add country to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=IterationBinding(NameBinding(country)), source=capitals)
@@ -908,7 +908,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-iterate-associations
   category: iteration
-  source: "action Visit for capitals: Country -> City,\n    mut visited: City [* unique] {\n    then foreach\
+  source: "action Visit for capitals: Country -> City [*],\n    mut visited: City [* unique] {\n    then foreach\
     \ (country, city) in capitals: {\n        add city to visited\n    }\n}\n"
   cst_root: MudFileSyntax
   ast: ForEachEffect(binding=IterationBinding(PositionalBinding(NameBinding(country), NameBinding(city))), source=capitals)
@@ -917,7 +917,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-unique-collision-noop
   category: execution-contract
-  source: "thing Registry {\n    mut rooms: Person -> Room [unique] = Ana -> BlueRoom\n}\naction AddRoom for registry: Registry [mut] {\n    then add (Luis -> BlueRoom) to registry.rooms\n}\n"
+  source: "thing Registry {\n    mut rooms: Person -> Room [* unique] = Ana -> BlueRoom\n}\naction AddRoom for registry: Registry [mut] {\n    then add (Luis -> BlueRoom) to registry.rooms\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(ExactAssociationExpr)
   normalizations:
@@ -925,7 +925,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-missing-key-empty
   category: expression
-  source: "rule Missing for capitals: Country -> City {\n    capitals[Italy] == empty\n}\n"
+  source: "rule Missing for capitals: Country -> City [*] {\n    capitals[Italy] == empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(capitals, Italy)
   normalizations:
@@ -1095,13 +1095,13 @@ cases:
   produces_ast: true
 - id: nested-dictionary-application
   category: expression
-  source: "rule Occupied for boardByGame: Game -> Coordinate -> Piece, game: Game, square: Coordinate {\n    boardByGame[game][square] != empty\n}\n"
+  source: "rule Occupied for boardByGame: Game -> (Coordinate -> Piece [*]) [*], game: Game, square: Coordinate {\n    boardByGame[game][square] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(IndexExpr(boardByGame, game), square)
   produces_ast: true
 - id: dictionary-composition-by-application
   category: expression
-  source: "rule Weather for capitalOf: Country -> City, weatherOf: City -> Weather, country: Country {\n    weatherOf[capitalOf[country]] != empty\n}\n"
+  source: "rule Weather for capitalOf: Country -> City [*], weatherOf: City -> Weather [*], country: Country {\n    weatherOf[capitalOf[country]] != empty\n}\n"
   cst_root: MudFileSyntax
   ast: IndexExpr(weatherOf, IndexExpr(capitalOf, country))
   produces_ast: true
@@ -1278,6 +1278,7 @@ cases:
   normalizations:
   - dictionary-entry-count-does-not-change-outer-cardinality
   - infer-cardinality-one-from-initializer
+  - infer-arrow-association-cardinality-two-from-initializer
   produces_ast: true
 - id: cardinality-mut-omitted-remains-one
   category: field
@@ -1368,7 +1369,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-order
   category: dictionary
-  source: "rule Merge for left: Key -> Value [ordered], right: Key -> Value [ordered] {\n    let (left |\
+  source: "rule Merge for left: Key -> Value [* ordered], right: Key -> Value [* ordered] {\n    let (left |\
     \ right) == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
@@ -1378,7 +1379,7 @@ cases:
   produces_ast: true
 - id: exact-dictionary-operation-unique-noop
   category: execution-contract
-  source: "rule Merge for left: Key -> Value [unique], right: Key -> Value [unique] {\n    let (left | right)\
+  source: "rule Merge for left: Key -> Value [* unique], right: Key -> Value [* unique] {\n    let (left | right)\
     \ == (left | right)\n}\n"
   cst_root: MudFileSyntax
   ast: ExactDictionarySetOperationExpr(DictionaryUnion)
@@ -1430,7 +1431,7 @@ cases:
   produces_ast: true
 - id: allmatches-empty-valid
   category: expression
-  source: "rule EmptyAllowed for policy: A --> B, input: A {\n    policy[input] == empty\n}\n"
+  source: "rule EmptyAllowed for policy: A --> B [*], input: A {\n    policy[input] == empty\n}\n"
   cst_root: MudFileSyntax
   ast: DecisionApplyExpr(mode=AllMatches)
   normalizations:
@@ -2424,7 +2425,7 @@ cases:
   required_contract: authorised stored collection removal; declaration and descriptor remain
 - id: dictionary-association-add-preserved
   category: static-field-schema
-  source: "thing Inventory {\n mut shields: Int -> Nat = empty\n}\naction Equip for inventory: Inventory [mut] {\n then add (1 -> 20) to inventory.shields\n}\n"
+  source: "thing Inventory {\n mut shields: Int -> Nat [*] = empty\n}\naction Equip for inventory: Inventory [mut] {\n then add (1 -> 20) to inventory.shields\n}\n"
   cst_root: MudFileSyntax
   ast: AddValueEffect(value=ExactAssociationExpr, target=inventory.shields)
   produces_ast: true
@@ -3231,3 +3232,28 @@ cases:
   ast: 'CallExpr(DottedPathExpr(Vector2), positionalArguments=1, namedArguments=1)'
   normalizations: [preserve-mixed-call-arguments-for-target-specific-checking]
   produces_ast: true
+- id: dictionary-cardinality-omission-independent-layers
+  category: typing-after-ast
+  source: 'thing Sample { let table: Int -> Text = 1 -> "one", 2 -> "two" }'
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(ExactDictionaryType(entries=OmittedCardinality), exterior=OmittedCardinality)
+  normalizations:
+  - infer-arrow-association-cardinality-two-from-initializer
+  - dictionary-entry-count-does-not-change-outer-cardinality
+  produces_ast: true
+- id: functional-omission-mode-only-infers-partial
+  category: typing-after-ast
+  source: 'thing Sample { let positive: Int --> Text [ordered] = > 0 --> "positive" }'
+  cst_root: MudFileSyntax
+  ast: DecisionDictionaryType(mode=FirstMatch, branches=OmittedCardinality)
+  normalizations:
+  - derive-application-cardinality-zero-to-one
+  produces_ast: true
+- id: dictionary-mutable-empty-requires-capacity
+  category: validation-after-resolution
+  source: 'thing Sample { mut table: Int -> Text = empty }'
+  cst_root: MudFileSyntax
+  ast: StoredFieldDecl(ExactDictionaryType(entries=OmittedCardinality), collection_mutable=Enabled)
+  produces_ast: true
+  required_contract: Mutable association count defaults to [1]; the empty initializer fails static cardinality
+    admission.

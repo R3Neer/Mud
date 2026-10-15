@@ -4,6 +4,7 @@ status: current
 normative: true
 questions: []
 decisions:
+  - D-180
   - D-174
   - D-173
   - D-172
@@ -112,3 +113,11 @@ explicit key order and dictionary replacement/reinsertion. `access_schema_witnes
 and `test_access_schema_witnesses.py` check finite supplied demand/emission,
 component contract, projected-key and initialization-origin facts. They do not
 parse Mud, infer schemas or implement optional propagation or a runtime.
+
+
+`dictionary_cardinality_witnesses.py` checks supplied owner/interval certificates
+for omitted association/application counts. Its regressions contrast immutable,
+mutable, derived and type-only owners; exterior versus association counts;
+partial/overlapping policies; explicit minima; state views and schema defaults.
+The corpus validator checks those certificates without inferring Mud branch
+conditions or pretending that a sample input proves universal coverage.

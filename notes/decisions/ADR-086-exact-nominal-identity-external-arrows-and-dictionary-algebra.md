@@ -20,6 +20,8 @@ affects:
 - Extends: [[ADR-051-graph-future-semantics-and-reconstructable-information|D-051]] and [[ADR-052-pipelines-renderers-and-conformance|D-052]].
 - Affected documents: chapters 02 and 04 to 10; future chapters 11, 13, 16, 17, 21, 22, 38, 42, 44, 45, 48 and 51; grammar; CST; Surface AST; semantic representation after typing and elaboration; conformance cases.
 
+- Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
+
 ## Context
 
 D-085 introduced exact dictionary types `A -> B` and branch-defined dictionaries `A --> B`, together with anonymous products, absence through `empty`, postfix metadata and right-associative arrows. The first integration left three issues incomplete:

@@ -11,13 +11,13 @@ abstract thing FeedbackChannel {
     let allowedModalities: FeedbackModality [* unique] = [
         FeedbackModality.Visual, FeedbackModality.Audio, FeedbackModality.Haptic
     ]
-    let profiles: Spell -> SpellFeedbackProfile = empty
-    let global: FeedbackStage -> (FeedbackAsset [*]) = empty
+    let profiles: Spell -> SpellFeedbackProfile [*] = empty
+    let global: FeedbackStage -> (FeedbackAsset [*]) [*] = empty
     let selectionRejected: FeedbackAsset [* ordered] = empty
     # A replaceable delivery batch, not an execution history.
     mut requests: FeedbackRequest [* ordered] = empty
 
-    let phasesFor: SpellEvent --> FeedbackStage [* ordered] =
+    let phasesFor: SpellEvent --> FeedbackStage [ordered] =
         .kind == SpellEventKind.Selected --> [FeedbackStage.Selected],
         .kind == SpellEventKind.Cancelled --> [FeedbackStage.Cancelled],
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Success -->
@@ -27,7 +27,7 @@ abstract thing FeedbackChannel {
         .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Failed -->
             [FeedbackStage.Failed]
 
-    let phaseGroupsFor: SpellEvent --> FeedbackGroup [* ordered] :=
+    let phaseGroupsFor: SpellEvent --> FeedbackGroup [ordered] :=
         _ --> {
             let event = value
             let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
@@ -44,14 +44,14 @@ abstract thing FeedbackChannel {
             groups
         }
 
-    let rejectionAssetsFor: SpellEvent --> FeedbackAsset [* ordered] :=
+    let rejectionAssetsFor: SpellEvent --> FeedbackAsset [ordered] :=
         .kind == SpellEventKind.SelectionRejected --> {
             let allowedAssets := AllowedFeedbackAssets(allowedModalities).assets
             foreach asset in selectionRejected
                 if allowedAssets has asset --> asset
         }
 
-    let requestFor: SpellEvent --> FeedbackRequest [? ordered] := {
+    let requestFor: SpellEvent --> FeedbackRequest [ordered] := {
         let groups := phaseGroupsFor[value]
         let rejected := rejectionAssetsFor[value]
         (exists group in groups : group.effects != empty)

@@ -334,6 +334,8 @@ module MUDSurface {
                                           type_expr* remaining)
                   | NamedProductType(named_product_component first,
                                      named_product_component* remaining)
+                  -- Arrow-owned omitted counts are elaborated by owner/body.
+                  -- Decision branches specifies application results, not branch count.
                   | ExactDictionaryType(type_expr key_type,
                                         type_expr value_type,
                                         collection_spec entries)

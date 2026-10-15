@@ -17,6 +17,7 @@ depends-on:
   - syntax/mud-surface-ast.asdl
 questions: []
 decisions:
+  - D-180
   - D-179
   - D-178
   - D-177
@@ -964,6 +965,14 @@ let values: Nat = [1, 2, 3]
 ```
 
 the Surface AST retains the omission. Later elaboration of an immutable stored field infers `[3]` and records `InferredFromInitializer`; parsing does not generate that information.
+
+The same omission provenance is preserved independently in ExactDictionaryType
+entries and DecisionDictionaryType branches (the application-result specifier,
+not a count of declared branches). Immutable definitions infer association or
+application bounds, derived definitions retain inferred bounds, and mutable
+exact/type-only owners use [1] under [[17-dictionaries#Omitted cardinality and owner contracts]].
+A dictionary's exterior remains singleton. A written mode without a count does
+not turn an omitted application cardinality into WrittenCardinality.
 
 ## Nominal comparisons
 

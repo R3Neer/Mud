@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-180
   - D-179
   - D-178
   - D-177
@@ -450,7 +451,17 @@ let none: Nat = empty            # [0]
 let table: A -> B = AValue -> BValue # [1]: the complete dictionary is one value
 ```
 
-A field with outer `mut` retains `[1]` when cardinality is omitted. Calculated fields declared with `:=` retain the inferred shape of their expression. An inferred immutable cardinality other than `[1]` prompts the author to write it explicitly.
+A field with outer `mut` retains `[1]` when cardinality is omitted. Calculated fields declared with `:=` retain the inferred shape of their expression. An inferred immutable cardinality other than `[1]` prompts the author to write it explicitly; this is a suggestion, not a requirement to replace inference.
+
+Dictionary arrows apply the same owner policy to their internal counted layer,
+separately from the dictionary's singleton exterior. An immutable stored exact
+definition infers association bounds; a functional definition infers results
+per application from its body and mode. Derived definitions preserve inferred
+bounds. Mutable stored exact definitions and type-only positions default to
+[1]. Modifier-only [ordered]/[unique] retains omitted cardinality. Inference
+of a functional minimum zero permits uncovered inputs; a positive written or
+receiving contract requires coverage and enough results. See
+[[17-dictionaries#Omitted cardinality and owner contracts]].
 
 Compatible collections support `|`, `&` and `--`. `^` requires the result to comply with uniqueness rules. They operate on multiplicities or membership; they do not concatenate:
 
@@ -480,7 +491,7 @@ Exact key/value scopes are independent. Functional result scopes extend their ow
 An exact dictionary is queried by key equality, is countable and permits outer mutability. Associations are written with the same arrow:
 
 ```mud
-let capitalOf: Country -> City [2 ordered] =
+mut capitalOf: Country -> City [* ordered] =
     Spain -> Madrid,
     France -> Paris
 ```

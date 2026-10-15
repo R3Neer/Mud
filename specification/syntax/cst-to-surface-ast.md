@@ -15,6 +15,7 @@ depends-on:
   - syntax-coverage.yaml
 questions: []
 decisions:
+  - D-180
   - D-179
   - D-178
   - D-177
@@ -272,7 +273,14 @@ let value: Nat = 0
 let values: Nat = [1, 2, 3]
 ```
 
-Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST neither manufactures `[1]` nor infers `[3]`. Later elaboration uses the owner and initialiser: an ordinary scalar without evidence to the contrary preserves `[1]`; an immutable stored field with a finite initialiser may yield an exact cardinality with provenance `InferredFromInitializer`.
+Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST neither manufactures `[1]` nor infers `[3]`. Later elaboration uses the owner and initialiser: type-only and mutable stored positions preserve [1]; immutable stored definitions infer their initializer's bounds, and derived definitions preserve expression bounds.
+
+Dictionary entries/application specifications retain OmittedCardinality
+independently of the singleton exterior. The same owner-directed elaboration
+infers immutable association/application counts under [[../17-dictionaries#Omitted cardinality and owner contracts]].
+A mode-only [ordered] still leaves its cardinality omitted. The branches field
+of DecisionDictionaryType carries an application-result specification, not a
+branch-population count. No AST constructor or branch-selection default changes.
 
 ### Exact cardinality
 
@@ -363,7 +371,7 @@ The list written after `as` is preserved as `direct_ancestors`. The `:= type-exp
 
 `type-expression` normalises one or more `type-alternative` values separated by `|` into a single `TypeExpr`. Redundant groupings are removed, identical alternatives are deduplicated, and every nominal alternative is retained even when its domain is contained within another. The first written collection specification applies to the complete union TypeExpr. Fold each subsequent specification into a TypeExpr whose sole alternative is NestedCollectionType(previous TypeExpr), with that specification as its outer collection. Grouping a collection-shaped type before an outer suffix uses the same wrapper. Preserve written layer provenance without flattening or inserting an implicit singleton between written layers.
 
-`derived-value-shape` with `: type-expression` produces `ExplicitDerivedShape`. Shapes without a type, `in domain [collection]` and `collection`, produce `InferredDerivedShape`; when the collection is omitted, it defaults to scalar cardinality and the type is deferred to inference.
+`derived-value-shape` with `: type-expression` produces `ExplicitDerivedShape`. Shapes without a type, `in domain [collection]` and `collection`, produce `InferredDerivedShape`; when the collection is omitted, its cardinality remains omitted and both type and shape are deferred to owner-directed inference. It is not defaulted to scalar before derived expression checking.
 
 A restriction `interval-expression by constant-expression` produces `SteppedDomain`; the other restrictions result in `ExpressionDomain`. Brackets that do not alter the grouping do not reach the Surface AST.
 

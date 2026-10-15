@@ -23,9 +23,11 @@ affects:
 - Modifies: [[ADR-039-collections-and-dictionaries|D-039]], [[ADR-046-algebra-and-conflicts-of-effects|D-046]], [[ADR-049-operators-precedence-and-standardised-intervals|D-049]] and [[ADR-057-concrete-grammar-precedence-and-continuation|D-057]].
 - Related questions: [[notes/questions/Q-006-c-conflicts|Q-006]] and [[notes/questions/Q-019-n-numbers|Q-019]].
 
+- Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
+
 ## Context
 
-Every MUD field denotes a collection, and an omitted cardinality is equivalent to `[1]`. It remained necessary to determine how arithmetic operators receive those values, to distinguish numeric subtraction from collection difference, and to complete the compound updates corresponding to collection algebra.
+Every MUD field denotes a collection. Omitted cardinality follows D-085/D-180: immutable stored and derived definitions infer bounds, while mutable stored and type-only positions retain `[1]`. Dictionary arrow counts use the same owner matrix independently of their singleton exterior. It remained necessary to determine how arithmetic operators receive those values, to distinguish numeric subtraction from collection difference, and to complete the compound updates corresponding to collection algebra.
 
 The symmetric difference of multisets defined by absolute multiplicity difference was not associative either. That property prevented `^=` from being consolidated and made a chain of `^` appear to have XOR's usual laws when it did not.
 

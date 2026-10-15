@@ -11,7 +11,7 @@ affects:
 ---
 # ADR-019 — Mutability orthogonal to collection and members
 
-- Amended by: [[ADR-103-inner-capability-in-derived-values|D-103]].
+- Amended by: [[ADR-103-inner-capability-in-derived-values|D-103]] and [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
 
 - Amended by: [[notes/decisions/ADR-084-alias-specialisation-inherited-members-and-derived-views|D-084]]
 - Amended by: [[notes/decisions/ADR-063-signatures-given-and-joint-on-bindings|D-063]]
@@ -20,7 +20,7 @@ affects:
 
 ## Context
 
-Everything field MUD is consistently interpreted as a collection with cardinality. The cardinality omitted is equivalent to `[1]`; it does not convert the field in a category semantics different.
+Every MUD field is consistently interpreted as a collection with cardinality. Omission uses the owner-directed policy of D-085/D-180: immutable stored and derived definitions infer bounds; mutable stored and type-only positions use [1]. Dictionary arrow-owned counts use that same matrix. None of these choices introduces a separate scalar semantic category.
 
 MUD distinguishes between two types of permission:
 
@@ -58,7 +58,7 @@ The two axes are orthogonal for all cardinality, including `[1]`.
 | `capital: City [1 mut]` | No | Yes |
 | `mut capital: City [1 mut]` | Yes | Yes |
 
-The cardinality The omitted one follows exactly the same rule:
+In type-only positions without a defining initializer/body, omitted cardinality follows the singleton default. For example, the following signature-slot forms:
 
 ```mud
 mut capital: City

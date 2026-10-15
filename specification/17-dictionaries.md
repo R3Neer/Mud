@@ -13,6 +13,7 @@ depends-on:
   - "[[21-expressions]]"
 questions: []
 decisions:
+  - D-180
   - D-176
   - D-178
   - D-174
@@ -69,6 +70,76 @@ an outer collection. A dictionary itself is one outer value.
 
 Nominal aliases may represent dictionaries but retain their alias identity.
 TypeKind distinguishes Dictionary and FunctionalDictionary for raw constructors.
+
+## Omitted cardinality and owner contracts
+
+> [!rule] MUD-DICT-006 — Uniform owner-directed cardinality
+> A written arrow cardinality is an association/application contract. If it is
+> omitted, immutable stored definitions infer it from their initializer/body,
+> derived definitions preserve expression-inferred bounds, and mutable stored
+> exact dictionaries and type-only positions use [1]. A dictionary's exterior
+> remains one value independently of these internal bounds.
+
+| Owner with omitted arrow cardinality | Effective internal cardinality |
+| --- | --- |
+| Immutable stored exact definition with initializer | Inferred association bounds; proved literal counts are exact. |
+| Immutable stored functional definition with body | Inferred application-result bounds over admitted inputs and views. |
+| Derived exact/functional definition | The expression's inferred association/application bounds. |
+| Mutable stored exact definition | [1], not the initial association count. |
+| Type-only position without defining-value inference | [1], including signatures and alias representations. |
+
+Let O be the declaration owner, E its defining expression/body and W an optional
+written cardinality. Let Bounds(E) be its conservatively proved static interval
+of association counts or normal application-result counts, as appropriate.
+The owner judgement resolves an omitted count by the following cases:
+
+- If W is present, retain W and apply its ordinary owner-specific admission or
+  derived-transformation rules.
+- Otherwise, for immutable stored or derived definitions, use Bounds(E).
+- Otherwise, for mutable stored exact or type-only positions, use [1,1].
+
+Missing required type/body evidence is a diagnostic, not another default case.
+A dictionary's independent exterior count is resolved at its own layer.
+
+Resolve the member/input/output types and written structure without prematurely
+supplying a singleton for an omitted inference slot. Then infer the counted
+layer using the owner's initializer/body. A modifier-only specification such
+as [ordered] or [unique] still has omitted cardinality. It preserves the
+written mode/guarantee without imposing a singleton count. Existing nested
+value contracts and arrow grouping remain independent; a receiving type-only
+contract is not inferred anew from every supplied value.
+
+```mud
+let names: Int -> Text = 1 -> "one", 2 -> "two"  # two associations
+let noNames: Int -> Text = empty                 # zero associations
+mut growing: Int -> Text [*] = empty             # explicit variable capacity
+let partial: Int --> Text [ordered] = > 0 --> "positive"  # [0..1]
+let total: Int --> Text [1 ordered] =
+    > 0 --> "positive",
+    _ --> "other"
+```
+
+Without [*], growing defaults to one association and cannot initialize from
+empty. Without the last branch, total is rejected for incomplete coverage;
+partial instead admits uncovered inputs and returns ordinary empty. In a
+signature, Int -> Text requires one association and Int --> Text requires one
+result per application; use explicit bounds to accept other shapes.
+
+Inferred bounds describe every normal result admitted by the static contract,
+not a sample invocation or the first state of a live calculation. Use the
+supported normative proof procedures and conservative interval operations;
+unsupported coverage facts cannot establish a positive inferred minimum.
+Uncovered inputs and possibly empty selected results contribute zero; faults
+remain faults and do not become zero results. Written positive minima require
+coverage and enough results. AllMatches accounts for overlapping selectors,
+fallback and any result uniqueness normalization. FirstMatch accounts for the
+first admitted result's bounds, including a collection-valued result contract.
+A missing inference certificate or type is not repaired by guessing a body,
+nominal input, singleton or totality guarantee.
+
+Schema/component defaults with omitted bounds may infer [0] or a fixed count.
+Write bounds explicitly when the schema must admit other constructor arguments
+or inherited overrides. This requirement is independent of public visibility.
 
 ## Exact association construction and query
 

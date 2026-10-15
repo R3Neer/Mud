@@ -10,6 +10,7 @@ depends-on:
   - "[[11-type-system]]"
 questions: []
 decisions:
+  - D-180
   - D-177
   - D-175
   - D-169
@@ -67,8 +68,11 @@ guessing nominal identities or granting authority. Written domains and shape
 are admission constraints, not filters, casts, deduplication or reordering.
 Every later mutable assignment obeys the same fixed contract. Stored interval
 bounds remain transitively stable for the binding lifetime. Existing owner-specific
-omitted-cardinality rules remain unchanged; omitted type does not imply omitted
-collection bounds. Schema initialisers remain closed static calculations.
+omitted-cardinality rules apply to ordinary outer collections and separately
+to dictionary association/application counts under [[17-dictionaries#Omitted cardinality and owner contracts]]; omitted type does not imply omitted
+collection bounds. Immutable dictionary definitions infer those internal counts;
+mutable exact dictionaries and type-only positions retain [1] unless written
+otherwise. Derived dictionary definitions retain their inferred bounds. Schema initialisers remain closed static calculations.
 
 `let initial: _ = source` is valid. Tooling suggests `let initial = source`
 only when removing that complete hole preserves the contract and meaning.

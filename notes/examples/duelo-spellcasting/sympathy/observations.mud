@@ -6,7 +6,7 @@ using spells
 alias BorrowedEffects {
     let link: LinkId
     let source: Entity
-    let effects: Text -> EffectValue
+    let effects: Text -> EffectValue [*]
 }
 
 look EffectiveEffects for magic: Magic, entity: Entity {

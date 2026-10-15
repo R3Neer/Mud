@@ -293,6 +293,13 @@ for readable headers, branches, constructors and private semantic helpers.
 | fixtures | entities.mud, feedback.mud, feedbackCapabilities.mud: concrete example configurations | None |
 | scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, feedbackCapabilities.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud, quantities.mud | All ten |
 
+Internal feedback policies infer their application cardinality from their bodies;
+[ordered] retains FirstMatch without imposing one result. Public/default-bearing
+maps (profiles, stage assets and borrowed effects) explicitly admit [*]
+associations. Their empty defaults do not restrict supplied configurations to
+zero associations. Mutable buffers/maps and domain optionality keep explicit
+bounds; those are storage or domain contracts rather than redundant inference.
+
 The root mud.part has no foreign dependencies. The 50 source scenarios cover
 selection, pair admission, effects, departure, cancellation, frozen occurrences
 and feedback, plus quantitative and affine contracts. Existing scenario values

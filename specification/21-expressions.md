@@ -13,6 +13,7 @@ questions:
   - Q-073
   - Q-007
 decisions:
+  - D-180
   - D-178
   - D-176
   - D-173
@@ -376,7 +377,7 @@ Infinite upper bounds use extended nonnegative interval arithmetic. Domain/membe
 
 Union guarantees whole-value uniqueness only when both operands supply it. Intersection retains a sole/equal keyed criterion, but differing keyed criteria conservatively yield whole-value uniqueness; without keyed criteria either unique operand suffices. Difference retains the left criterion; symmetric difference conservatively yields whole-value uniqueness. Chapter 15 supplies the separate order/authority table.
 
-An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch interprets its selector in the input contract, proves complete input coverage, checks its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. These are value constructors, not assignable branch storage.
+An exact association checks one key and one complete value against its contextual dictionary contract and contributes one association. A functional branch interprets its selector in the input contract, checks its result against the output contract and its fallback only in the permitted branch position; selection mode determines result multiplicity. Omitted application cardinality in a definition is inferred from the complete body over admitted inputs/views, including zero for uncovered cases. Coverage and sufficient result presence must be proved when a written or receiving contract has a positive minimum, not merely because a functional body exists. Exact association and functional result bounds follow MUD-DICT-006 in [[17-dictionaries]]. These are value constructors, not assignable branch storage.
 
 Exact dictionary operators operate on complete associations with their defined shared-key precedence; ordered equality and value-uniqueness requirements remain part of the contract. Functional operators are extensional combinations of result computations, not implicit edits or concatenation of branch lists. Their operand/result contracts and termination proofs must all remain valid.
 

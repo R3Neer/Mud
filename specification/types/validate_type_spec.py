@@ -21,10 +21,14 @@ from tooling.cli_support import (
     failure, parse_cli,
 )
 from specification.types.generic_contract_witnesses import structural_equal, selected_candidates
+from specification.types.dictionary_cardinality_witnesses import certificate_admitted
 
 
 def check_witness(witness):
     """Reject malformed certificates rather than reporting semantic rejection."""
+    if witness.get("kind") == "dictionary-cardinality":
+        certificate_admitted(witness)
+        return
     if witness.get("kind") == "structural-equality":
         if type(witness.get("negated", False)) is not bool:
             raise ValueError("Structural negation must be a Boolean")
@@ -221,6 +225,8 @@ def witness_result(witness):
     check_witness(witness)
     kind = witness["kind"]
     parents = {"Nat": ["Int"], "Int": ["Num"], **witness.get("parents", {})}
+    if kind == "dictionary-cardinality":
+        return "static-accept" if certificate_admitted(witness) else "static-reject"
     if kind == "structural-equality":
         equal = structural_equal(witness["nodes"], witness["left"], witness["right"])
         return "static-accept" if equal != witness.get("negated", False) else "static-reject"

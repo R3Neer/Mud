@@ -23,6 +23,8 @@ affects:
 
 - Amended by: [[ADR-178-structural-tuple-inputs-and-postfix-generics|D-178]].
 
+- Cardinality inference clarified by: [[ADR-180-uniform-dictionary-cardinality-inference|D-180]].
+
 ## Context
 
 The author accepts explicit let/mut markers to distinguish declarations from
