@@ -1,205 +1,204 @@
-# Declarative contracts, not executed tests. Each test has a fresh world.
+# Declarative domain contracts; no Mud compiler/runtime executes these tests.
+# Tests inject typed domain facts into the accepted ephemeral outbox.
 
-test FeedbackSelectionMergesPerPhase {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.Selected,
-        spell = Spell.Fireball,
-        aim = Aim(r1, r2, r3, empty),
-        liveAssets = [FeedbackAsset("specific"), FeedbackAsset("shared"),
-                      FeedbackAsset("global"), FeedbackAsset("excluded")]
-    ))
+test FeedbackSelectedEffectsAreMerged {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
+        aim = Aim(Point3(r1, r2, r3), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [FeedbackGroup(
+        (count _ in PlayerFeedback.requests : true) == 1
+        forall request in PlayerFeedback.requests : request.groups == [FeedbackGroup(
             FeedbackStage.Selected,
             [FeedbackAsset("specific"), FeedbackAsset("shared"), FeedbackAsset("global")]
         )]
-        forall plan in PlayerFeedback.ready : plan.sample.aim == Aim(r1, r2, r3, empty)
-        forall plan in PlayerFeedback.ready : plan.applicator == "player"
-        PlayerFeedback.pending == empty
+        forall request in PlayerFeedback.requests : request.aim.point == Point3(r1, r2, r3)
+        MagicWorld.pending == empty
     }
 }
 
-test FeedbackSuccessKeepsBothPhases {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.CastAttempted,
-        spell = Spell.Fireball,
-        result = CastResult.Success,
-        aim = Aim(r4, r5, r6, ["crate"]),
-        liveAssets = [FeedbackAsset("shared"), FeedbackAsset("global"), FeedbackAsset("success")]
-    ))
+test FeedbackSuccessfulAttemptHasTwoPhases {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
+        outcome = CastOutcome.Success, aim = Aim(Point3(r4, r5, r6), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Partial, [FeedbackAsset("shared"), FeedbackAsset("global")]),
+        (count _ in PlayerFeedback.requests : true) == 1
+        forall request in PlayerFeedback.requests : request.groups == [
+            FeedbackGroup(FeedbackStage.Partial,
+                [FeedbackAsset("shared"), FeedbackAsset("global")]),
             FeedbackGroup(FeedbackStage.Success,
                 [FeedbackAsset("shared"), FeedbackAsset("global"), FeedbackAsset("success")])
         ]
-        forall plan in PlayerFeedback.ready : plan.sample.aim == Aim(r4, r5, r6, ["crate"])
     }
 }
 
-test FeedbackPartialHasNoSuccessPhase {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.CastAttempted, spell = Spell.Fireball,
-        result = CastResult.Partial, aim = Aim(r0, r0, r0, empty),
-        liveAssets = [FeedbackAsset("shared"), FeedbackAsset("success")]
-    ))
+test FeedbackPartialAttemptHasNoSuccessPhase {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
+        outcome = CastOutcome.Partial, aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Partial, [FeedbackAsset("shared")])
+        (count _ in PlayerFeedback.requests : true) == 1
+        forall request in PlayerFeedback.requests : request.groups == [
+            FeedbackGroup(FeedbackStage.Partial,
+                [FeedbackAsset("shared"), FeedbackAsset("global")])
         ]
     }
 }
 
-test FeedbackFailedUsesFailedPhase {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.CastAttempted, spell = Spell.Fireball,
-        result = CastResult.Failed, aim = Aim(r0, r0, r0, empty),
-        liveAssets = [FeedbackAsset("failed"), FeedbackAsset("shared")]
-    ))
+test FeedbackFailedAttemptUsesFailureEffects {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
+        outcome = CastOutcome.Failed, aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Failed, [FeedbackAsset("failed")])
+        (count _ in PlayerFeedback.requests : true) == 1
+        forall request in PlayerFeedback.requests : request.groups == [
+            FeedbackGroup(FeedbackStage.Failed, [FeedbackAsset("failure")])
         ]
     }
 }
 
-test FeedbackCancellationUsesOwnerContext {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.Canceled, spell = Spell.Fireball,
-        aim = Aim(r7, r8, r9, empty), liveAssets = [FeedbackAsset("cancel")]
-    ))
+test FeedbackCancellationRetainsItsAim {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Cancelled, caster = Player, spell = Spell.Fireball,
+        aim = Aim(Point3(r7, r8, r9), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Canceled, [FeedbackAsset("cancel")])
+        (count _ in PlayerFeedback.requests : true) == 1
+        forall request in PlayerFeedback.requests : request.groups == [
+            FeedbackGroup(FeedbackStage.Cancelled, [FeedbackAsset("cancel")])
         ]
-        forall plan in PlayerFeedback.ready : plan.sample.aim == Aim(r7, r8, r9, empty)
+        forall request in PlayerFeedback.requests : request.aim.point == Point3(r7, r8, r9)
     }
 }
 
-test FeedbackFailureFallbackRetainsDuplicatesWithoutProfile {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.SelectionFailed, spell = Spell.SympathyLink,
-        aim = Aim(r0, r0, r0, empty), liveAssets = [FeedbackAsset("fallback")]
-    ))
+test FeedbackRejectionRetainsDuplicateEffectsWithoutProfile {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, MissingProfileFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.SelectionRejected, caster = Player, spell = Spell.Sympathy,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == empty
-        forall plan in PlayerFeedback.ready : plan.fallback ==
-            [FeedbackAsset("fallback"), FeedbackAsset("fallback")]
+        (count _ in MissingProfileFeedback.requests : true) == 1
+        forall request in MissingProfileFeedback.requests : request.groups == empty
+        forall request in MissingProfileFeedback.requests : request.rejected ==
+            [FeedbackAsset("rejected"), FeedbackAsset("rejected")]
     }
 }
 
-test FeedbackMissingProfileDoesNotPlayGlobals {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.Selected, spell = Spell.SympathyLink,
-        aim = Aim(r0, r0, r0, empty), liveAssets = [FeedbackAsset("global")]
-    ))
+test FeedbackMissingProfileProducesNoRequest {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, MissingProfileFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Selected, caster = Player, spell = Spell.Sympathy,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
     after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == empty and plan.fallback == empty
+        MissingProfileFeedback.requests == empty
     }
 }
 
-test FeedbackNoneDoesNotPlayCastEffects {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-        kind = ProtocolKind.CastAttempted, spell = Spell.Fireball,
-        result = CastResult.None, aim = Aim(r0, r0, r0, empty),
-        liveAssets = [FeedbackAsset("shared"), FeedbackAsset("global")]
-    ))
-    after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == empty and plan.fallback == empty
-    }
-}
-
-test FeedbackRepeatedEqualCallbacksRemainTwoRequests {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
+test FeedbackModelsARealSympathyCast {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld, BoxA, BoxB,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
     then {
-        let sample = FeedbackSample(
-            kind = ProtocolKind.Selected, spell = Spell.Fireball,
-            aim = Aim(r0, r0, r0, empty), liveAssets = [FeedbackAsset("specific")]
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r1, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r2, r0, r0), [BoxB]))
+    }
+    after {
+        exists request in PlayerFeedback.requests :
+            request.spell == Spell.Sympathy and
+                (exists group in request.groups : group.stage == FeedbackStage.Success)
+        Player.selected == empty
+        Player.concentration == 1
+        (count _ in MagicWorld.links : true) == 1
+    }
+}
+
+test FeedbackNoneProducesNoRequest {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Attempted, caster = Player, spell = Spell.Fireball,
+        outcome = CastOutcome.None, aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
+    after {
+        PlayerFeedback.requests == empty
+    }
+}
+
+test FeedbackRepeatedEqualFactsRemainTwoRequests {
+    start with { Entity, Creature, Spellcaster, Magic, Player, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then {
+        let event = SpellEvent(
+            kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
+            aim = Aim(Point3(r0, r0, r0), empty)
         )
-        PlayerFeedback.ReceiveSpellFeedback(sample)
-        PlayerFeedback.ReceiveSpellFeedback(sample)
+        add event to MagicWorld.pending
+        add event to MagicWorld.pending
     }
     after {
-        (count plan in PlayerFeedback.ready : true) == 2
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Selected, [FeedbackAsset("specific")])
-        ]
-        PlayerFeedback.pending == empty
+        (count _ in PlayerFeedback.requests : true) == 2
+        forall request in PlayerFeedback.requests : request.groups == [FeedbackGroup(
+            FeedbackStage.Selected,
+            [FeedbackAsset("specific"), FeedbackAsset("shared"), FeedbackAsset("global")]
+        )]
     }
 }
 
-test FeedbackDisabledCallbackIsNotResurrected {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
-    then {
-        PlayerFeedback.SetSpellFeedbackEnabled(false)
-        PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-            kind = ProtocolKind.Selected, spell = Spell.Fireball,
-            aim = Aim(r0, r0, r0, empty), liveAssets = [FeedbackAsset("specific")]
-        ))
-        PlayerFeedback.SetSpellFeedbackEnabled(true)
-    }
-    after PlayerFeedback.pending == empty and PlayerFeedback.ready == empty
+test FeedbackIgnoresAnotherSpellcaster {
+    start with { Entity, Creature, Spellcaster, Magic, Player, Turret, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
+    then add SpellEvent(
+        kind = SpellEventKind.Selected, caster = Turret, spell = Spell.Fireball,
+        aim = Aim(Point3(r0, r0, r0), empty)
+    ) to MagicWorld.pending
+    after PlayerFeedback.requests == empty
 }
 
-test FeedbackDisablingDoesNotDiscardCapturedWork {
-    start with { SpellFeedback, PlayerFeedback, PrepareSpellFeedback }
+test FeedbackFiltersAMixedCasterBatch {
+    start with { Entity, Creature, Spellcaster, Magic, Player, Turret, MagicWorld,
+        FeedbackChannel, PlayerFeedback, CanSelect, CanAttempt, TargetUsable, CanLink,
+        ConcentrationWithinLimit, ExclusiveSympathy, PublishSpellEvents, PlanSpellFeedback }
     then {
-        PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-            kind = ProtocolKind.Selected, spell = Spell.Fireball,
-            aim = Aim(r0, r0, r0, empty), liveAssets = [FeedbackAsset("specific")]
-        ))
-        PlayerFeedback.SetSpellFeedbackEnabled(false)
+        add SpellEvent(
+            kind = SpellEventKind.Selected, caster = Turret, spell = Spell.Fireball,
+            aim = Aim(Point3(r1, r0, r0), empty)
+        ) to MagicWorld.pending
+        add SpellEvent(
+            kind = SpellEventKind.Selected, caster = Player, spell = Spell.Fireball,
+            aim = Aim(Point3(r2, r0, r0), empty)
+        ) to MagicWorld.pending
     }
     after {
-        not PlayerFeedback.enabled
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Selected, [FeedbackAsset("specific")])
-        ]
-    }
-}
-
-test FeedbackBridgePreservesControllerCastContext {
-    start with {
-        Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster,
-        SpellFeedback, PlayerFeedback, PrepareSpellFeedback
-    }
-    then {
-        PlayerCaster.Select(Spell.Fireball)
-        PlayerCaster.CastSample(CastResult.Success, Aim(r4, r5, r6, ["crate"]))
-        # Explicit sample bridge for this one operation, before lastTrace resets.
-        foreach observation in PlayerCaster.lastTrace
-            if observation.kind == ProtocolKind.CastAttempted :
-                PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
-                    kind = observation.kind, spell = observation.spell,
-                    result = observation.result, aim = observation.aim[?],
-                    liveAssets = [FeedbackAsset("shared")]
-                ))
-    }
-    after {
-        (count plan in PlayerFeedback.ready : true) == 1
-        forall plan in PlayerFeedback.ready : plan.groups == [
-            FeedbackGroup(FeedbackStage.Partial, [FeedbackAsset("shared")]),
-            FeedbackGroup(FeedbackStage.Success, [FeedbackAsset("shared")])
-        ]
-        forall plan in PlayerFeedback.ready : plan.sample.aim == Aim(r4, r5, r6, ["crate"])
-        PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.None
+        (count _ in PlayerFeedback.requests : true) == 1
+        forall request in PlayerFeedback.requests : request.caster == Player
+            and request.aim.point == Point3(r2, r0, r0)
     }
 }

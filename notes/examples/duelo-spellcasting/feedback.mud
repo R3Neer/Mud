@@ -1,158 +1,130 @@
-# Informative feedback planner. Actual VFX execution remains an adapter effect.
-# A sample is one captured callback, not a change in the caster's current state.
+# Domain feedback requests. Rendering and asset execution belong to the adapter.
 
-alias FeedbackAsset {
-    let token: Text
-}
-
-family FeedbackStage { Selected, Canceled, Partial, Failed, Success }
-
-alias FeedbackLists {
-    let selected: FeedbackAsset [*] = empty
-    let canceled: FeedbackAsset [*] = empty
-    let partial: FeedbackAsset [*] = empty
-    let failed: FeedbackAsset [*] = empty
-    let success: FeedbackAsset [*] = empty
-}
+alias FeedbackAsset { let name: Text }
+family FeedbackStage { Selected, Rejected, Partial, Failed, Success, Cancelled }
 
 alias SpellFeedbackProfile {
-    let effects: FeedbackLists = FeedbackLists()
-    let excluded: FeedbackAsset [*] = empty
-}
-
-alias FeedbackSample {
-    let kind: ProtocolKind in [ProtocolKind.Selected, ProtocolKind.SelectionFailed,
-                              ProtocolKind.CastAttempted, ProtocolKind.Canceled]
-    let spell: Spell
-    let result: CastResult = CastResult.None
-    # Owner position with no target, or the actual cast point/target.
-    let aim: Aim
-    # Stable registry tokens of assets alive at this callback boundary.
-    let liveAssets: FeedbackAsset [* unique]
+    let byStage: FeedbackStage -> (FeedbackAsset [*]) = empty
+    let excluded: FeedbackAsset [* unique] = empty
 }
 
 alias FeedbackGroup {
     let stage: FeedbackStage
-    # No order is promised within the native HashSet merge.
     let effects: FeedbackAsset [* unique]
 }
 
-alias FeedbackPlan {
-    let applicator: Text
-    let sample: FeedbackSample
-    let groups: FeedbackGroup [* ordered] = empty
-    # Generic failure bypasses merging and retains duplicates and order.
-    let fallback: FeedbackAsset [* ordered] = empty
+alias FeedbackRequest {
+    let caster: Spellcaster
+    let spell: Spell
+    let aim: Aim
+    let groups: FeedbackGroup [* ordered]
+    # Rejected selections use this sequence directly, retaining repetitions.
+    let rejected: FeedbackAsset [* ordered]
 }
 
-abstract thing SpellFeedback {
-    let applicator: Text
-    let profiles: Spell --> SpellFeedbackProfile [? ordered]
-    let global: FeedbackLists = FeedbackLists()
-    let selectionFailed: FeedbackAsset [* ordered] = empty
+abstract thing FeedbackChannel {
+    let magic: Magic
+    let caster: Spellcaster
+    let subscribed: Bool = true
+    let profiles: Spell -> SpellFeedbackProfile = empty
+    let global: FeedbackStage -> (FeedbackAsset [*]) = empty
+    let selectionRejected: FeedbackAsset [* ordered] = empty
+    # A replaceable delivery batch, not an execution history.
+    mut requests: FeedbackRequest [* ordered] = empty
 
-    mut enabled: Bool = true
-    mut pending: FeedbackPlan [* ordered] = empty
-    mut ready: FeedbackPlan [* ordered] = empty
+    let stages: SpellEvent --> FeedbackStage [* ordered] =
+        .kind == SpellEventKind.Selected --> [FeedbackStage.Selected],
+        .kind == SpellEventKind.Cancelled --> [FeedbackStage.Cancelled],
+        .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Success -->
+            [FeedbackStage.Partial, FeedbackStage.Success],
+        .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Partial -->
+            [FeedbackStage.Partial],
+        .kind == SpellEventKind.Attempted and .outcome == CastOutcome.Failed -->
+            [FeedbackStage.Failed]
 
-    let stages: FeedbackSample --> FeedbackStage [* ordered] :=
-        .kind == ProtocolKind.Selected --> [FeedbackStage.Selected],
-        .kind == ProtocolKind.Canceled --> [FeedbackStage.Canceled],
-        .kind == ProtocolKind.CastAttempted
-            and .result == CastResult.Success -->
-                [FeedbackStage.Partial, FeedbackStage.Success],
-        .kind == ProtocolKind.CastAttempted
-            and .result == CastResult.Partial --> [FeedbackStage.Partial],
-        .kind == ProtocolKind.CastAttempted
-            and .result == CastResult.Failed --> [FeedbackStage.Failed]
-
-    let effectsAt: (lists: FeedbackLists, stage: FeedbackStage)
-        --> FeedbackAsset [*] :=
-        .stage == FeedbackStage.Selected --> .lists.selected,
-        .stage == FeedbackStage.Canceled --> .lists.canceled,
-        .stage == FeedbackStage.Partial --> .lists.partial,
-        .stage == FeedbackStage.Failed --> .lists.failed,
-        .stage == FeedbackStage.Success --> .lists.success
-
-    let fallback: FeedbackSample --> FeedbackAsset [* ordered] :=
-        .kind == ProtocolKind.SelectionFailed -->
-            foreach effect in selectionFailed
-                if .liveAssets has effect --> effect
-
-    let plan: FeedbackSample --> FeedbackPlan [ordered] :=
+    let groupsFor: SpellEvent --> FeedbackGroup [* ordered] :=
         _ --> {
-            let sample = value
+            let event = value
             mut groups: FeedbackGroup [* ordered] = empty
-            foreach profile in profiles[sample.spell] : {
-                foreach stage in stages[sample] : {
-                    let effects =
-                        ((effectsAt[global, stage][unique] -- profile.excluded)
-                            | effectsAt[profile.effects, stage])
-                            & sample.liveAssets
+            foreach profile in profiles[event.spell] : {
+                foreach stage in stages[event] : {
+                    let effects = (global[stage][unique] -- profile.excluded)
+                        | profile.byStage[stage][unique]
                     add FeedbackGroup(stage, effects) to groups
                 }
             }
-            FeedbackPlan(applicator, sample, groups, fallback[sample])
+            groups
         }
+
+    let rejectedFor: SpellEvent --> FeedbackAsset [* ordered] :=
+        .kind == SpellEventKind.SelectionRejected --> selectionRejected
+
+    let requestFor: SpellEvent --> FeedbackRequest [? ordered] :=
+        {
+            let groups := groupsFor[value]
+            let rejected := rejectedFor[value]
+            (exists group in groups : exists _ in group.effects : true)
+                or (exists _ in rejected : true)
+        } --> FeedbackRequest(value.caster, value.spell, value.aim, groups, rejected)
 }
 
-action ReceiveSpellFeedback for feedback: SpellFeedback [mut] given
-    sample: FeedbackSample {
+# The matched message supplies frozen facts; actions are not trigger sources.
+rule PlanSpellFeedback on channel: FeedbackChannel [mut] {
+    let incoming := channel.magic.SpellEvents
+    when incoming
+    if channel.subscribed
     then {
-        # Disabled callbacks are a normal no-op, never an IfRefusal.
-        let admitted: Bool --> FeedbackPlan [? ordered] =
-            == true --> [feedback.plan[sample]]
-        add admitted[feedback.enabled][?] to feedback.pending
+        mut requests: FeedbackRequest [* ordered] = empty
+        foreach event in incoming.events if event.caster == channel.caster :
+            add channel.requestFor[event][?] to requests
+        channel.requests = requests
     }
 }
 
-action SetSpellFeedbackEnabled for feedback: SpellFeedback [mut] given
-    enabled: Bool {
-    then feedback.enabled = enabled
-    after feedback.enabled == enabled
+message FeedbackRequested on channel: FeedbackChannel {
+    when channel.PlanSpellFeedback
+    if exists _ in channel.requests : true
+    let requests := channel.requests
 }
 
-rule PrepareSpellFeedback on feedback: SpellFeedback [mut] {
-    when feedback.pending changes
-    if exists plan in feedback.pending : true
-    then {
-        let pending = feedback.pending
-        feedback.pending = empty
-        feedback.ready = pending
-    }
+look CurrentFeedback for channel: FeedbackChannel {
+    let requests := channel.requests
 }
 
-# A batch occurrence follows an actual firing, even if its payload equals the
-# preceding batch. This is not one message per synchronous Unity callback.
-message SpellFeedbackPrepared on feedback: SpellFeedback {
-    when feedback.PrepareSpellFeedback
-    let plans := feedback.ready
-}
-
-look PreparedSpellFeedback for feedback: SpellFeedback {
-    let plans := feedback.ready
-}
-
-# Fixed assets and owner token for source-level contract examples.
-thing PlayerFeedback as SpellFeedback {
-    applicator = "player"
-    profiles = Spell.Fireball --> SpellFeedbackProfile(
-        effects = FeedbackLists(
-            selected = [FeedbackAsset("specific"), FeedbackAsset("shared")],
-            canceled = [FeedbackAsset("cancel")],
-            partial = [FeedbackAsset("shared")],
-            failed = [FeedbackAsset("failed")],
-            success = [FeedbackAsset("shared"), FeedbackAsset("success")]
+thing PlayerFeedback as FeedbackChannel {
+    magic = MagicWorld
+    caster = Player
+    profiles = Spell.Fireball -> SpellFeedbackProfile(
+        byStage = (
+            FeedbackStage.Selected -> [FeedbackAsset("specific"), FeedbackAsset("shared")],
+            FeedbackStage.Partial -> [FeedbackAsset("shared")],
+            FeedbackStage.Failed -> [FeedbackAsset("failure")],
+            FeedbackStage.Success -> [FeedbackAsset("shared"), FeedbackAsset("success")],
+            FeedbackStage.Cancelled -> [FeedbackAsset("cancel")]
+        ),
+        excluded = [FeedbackAsset("shared"), FeedbackAsset("excluded")]
+    ),
+    Spell.Sympathy -> SpellFeedbackProfile(
+        byStage = (
+            FeedbackStage.Selected -> [FeedbackAsset("specific"), FeedbackAsset("shared")],
+            FeedbackStage.Partial -> [FeedbackAsset("shared")],
+            FeedbackStage.Failed -> [FeedbackAsset("failure")],
+            FeedbackStage.Success -> [FeedbackAsset("shared"), FeedbackAsset("success")],
+            FeedbackStage.Cancelled -> [FeedbackAsset("cancel")]
         ),
         excluded = [FeedbackAsset("shared"), FeedbackAsset("excluded")]
     )
-    global = FeedbackLists(
-        selected = [FeedbackAsset("global"), FeedbackAsset("shared"),
-                    FeedbackAsset("excluded"), FeedbackAsset("excluded"),
-                    FeedbackAsset("global")],
-        partial = [FeedbackAsset("global")],
-        success = [FeedbackAsset("global")]
-    )
-    selectionFailed = [FeedbackAsset("fallback"), FeedbackAsset("fallback"),
-                       FeedbackAsset("dead")]
+    global =
+        FeedbackStage.Selected -> [FeedbackAsset("global"), FeedbackAsset("shared"),
+            FeedbackAsset("excluded"), FeedbackAsset("global")],
+        FeedbackStage.Partial -> [FeedbackAsset("global")],
+        FeedbackStage.Success -> [FeedbackAsset("global")]
+    selectionRejected = [FeedbackAsset("rejected"), FeedbackAsset("rejected")]
+}
+
+thing MissingProfileFeedback as FeedbackChannel {
+    magic = MagicWorld
+    caster = Player
+    global = FeedbackStage.Selected -> [FeedbackAsset("global")]
+    selectionRejected = [FeedbackAsset("rejected"), FeedbackAsset("rejected")]
 }

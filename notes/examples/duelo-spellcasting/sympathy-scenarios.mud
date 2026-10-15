@@ -1,272 +1,104 @@
-# Declarative contracts, not executed tests. Every test has fresh registries.
+# Declarative contracts for the implemented Sympathy provider.
 
-test SympathyInvalidTargetPrecedesBusyLeader {
-    start with { SympathyWorld, SympathyFixture }
+test NoHitIsNoneRatherThanARejection {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.objects["a"].role = SympathyRole.Leader
-        SympathyFixture.CastSympathySample(empty)
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
     }
     after {
-        SympathyFixture.lastResult == CastResult.None
-        SympathyFixture.leader == ["a"]
-        SympathyFixture.trace == empty
+        Player.prepared == empty
+        (count event in MagicWorld.published :
+            event.kind == SpellEventKind.Attempted and event.outcome == CastOutcome.None) == 1
     }
 }
 
-test SympathyFirstTargetReservesNoSession {
-    start with { SympathyWorld, SympathyFixture }
-    then SympathyFixture.CastSympathySample(["a"])
-    after {
-        SympathyFixture.lastResult == CastResult.Partial
-        SympathyFixture.leader == ["a"]
-        SympathyFixture.follower == empty
-        SympathyFixture.sessions == empty
-        SympathyFixture.preview
-    }
-}
-
-test SympathyMissingIdentityStillReturnsPartial {
-    start with { SympathyWorld, SympathyFixture }
+test FirstTargetPreparesWithoutReservingEndpoint {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        SympathyFixture.objects["a"].identity = empty
-        SympathyFixture.CastSympathySample(["a"])
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r1, r2, r3), [BoxA]))
     }
     after {
-        SympathyFixture.lastResult == CastResult.Partial
-        SympathyFixture.leader == empty
-        SympathyFixture.identity == empty
-        SympathyFixture.preview
+        Player.preparation == [BoxA]
+        MagicWorld.links == empty
+        (MagicWorld, BoxA).TargetUsable()
+        (count event in MagicWorld.published :
+            event.kind == SpellEventKind.Attempted and event.outcome == CastOutcome.Partial) == 1
     }
 }
 
-test SympathyMissingIdentityClearsOldCachedIdentity {
-    start with { SympathyWorld, SympathyFixture }
+test SuccessfulLinkEndsTargetingButKeepsConcentration {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents, PrepareLinkEffects }
     then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.objects["a"].alive = false
-        SympathyFixture.objects["b"].identity = empty
-        SympathyFixture.CastSympathySample(["b"])
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r4, r5, r6), [BoxB]))
     }
     after {
-        SympathyFixture.lastResult == CastResult.Partial
-        SympathyFixture.leader == ["a"]
-        SympathyFixture.identity == empty
+        Player.selected == empty and Player.prepared == empty
+        Player.activeSpells == [Spell.Sympathy] and Player.concentration == 1
+        (count link in MagicWorld.links : true) == 1
+        forall link in MagicWorld.links : link.leader == BoxA and link.follower == BoxB
+        (count event in MagicWorld.published :
+            event.kind == SpellEventKind.Attempted and event.outcome == CastOutcome.Success) == 1
     }
 }
 
-test SympathyBusyFirstTargetIsRemembered {
-    start with { SympathyWorld, SympathyFixture }
+test InitialOrientationPrefersGrabbedFollower {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        SympathyFixture.objects["a"].role = SympathyRole.Follower
-        SympathyFixture.CastSympathySample(["a"])
+        BoxB.grabbed = true
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
     }
     after {
-        SympathyFixture.lastResult == CastResult.Partial
-        SympathyFixture.leader == ["a"]
+        (count link in MagicWorld.links : true) == 1
+        forall link in MagicWorld.links : link.leader == BoxB and link.follower == BoxA
     }
 }
 
-test SympathyBusyRememberedLeaderRejectsNextTarget {
-    start with { SympathyWorld, SympathyFixture }
+test InversionChangesTheRelationWithoutAnInteractorCache {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA, BoxB,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.objects["a"].role = SympathyRole.Leader
-        SympathyFixture.CastSympathySample(["b"])
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
+        (MagicWorld, BoxB).Invert(1)
     }
     after {
-        SympathyFixture.lastResult == CastResult.Failed
-        SympathyFixture.sessions == empty
-        SympathyFixture.trace == empty
+        (count link in MagicWorld.links : true) == 1
+        forall link in MagicWorld.links : link.id == 1 and link.leader == BoxB and link.follower == BoxA
+        (count event in MagicWorld.published : event.kind == SpellEventKind.Inverted) == 1
+        Player.activeSpells == [Spell.Sympathy]
     }
 }
 
-test SympathySameObjectIsRejected {
-    start with { SympathyWorld, SympathyFixture }
+test TargetDepartureInvalidatesPreparationWithoutEndingTheSpell {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["a"])
-    }
-    after SympathyFixture.lastResult == CastResult.Failed and SympathyFixture.sessions == empty
-}
-
-test SympathyDifferentShapeIsRejected {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.objects["b"].identity = SympathyIdentity(["sphere"])
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-    }
-    after SympathyFixture.lastResult == CastResult.Failed and SympathyFixture.sessions == empty
-}
-
-test SympathyEmptyMeshMatchesAnotherEmptyMesh {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.objects["a"].identity = SympathyIdentity(empty)
-        SympathyFixture.objects["b"].identity = SympathyIdentity(empty)
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-    }
-    after SympathyFixture.lastResult == CastResult.Success
-}
-
-test SympathyNeedsAnEffectBeforeAddingVisuals {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.objects["b"].supports = empty
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
+        (MagicWorld, BoxA).LeaveWorld()
     }
     after {
-        SympathyFixture.lastResult == CastResult.Failed
-        SympathyFixture.combined == empty
-        SympathyFixture.sessions == empty
+        not BoxA.present
+        Player.preparation == empty
+        Player.activeSpells == [Spell.Sympathy]
+        Player.concentration == 1
+        MagicWorld.links == empty
     }
-}
-
-test SympathyStartsBeforePublishingSessionReferences {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-    }
-    after {
-        SympathyFixture.lastResult == CastResult.Success
-        SympathyFixture.leader == ["a"]
-        SympathyFixture.follower == ["b"]
-        (count session in SympathyFixture.sessions : true) == 1
-        forall state in SympathyFixture.objects["a"] : state.role == SympathyRole.Leader and state.session == [1]
-        forall state in SympathyFixture.objects["b"] : state.role == SympathyRole.Follower and state.session == [1]
-        (foreach command in SympathyFixture.trace --> command.kind) == [
-            SympathyCommandKind.ExecuteEffect, SympathyCommandKind.ExecuteEffect,
-            SympathyCommandKind.StartSync, SympathyCommandKind.RoleChanged, SympathyCommandKind.RoleChanged
-        ]
-        forall command in SympathyFixture.trace :
-            forall state in command.objects["a"] : state.session == empty
-    }
-}
-
-test SympathyGrabbedFollowerBecomesLeader {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.objects["b"].grabbed = true
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-    }
-    after {
-        SympathyFixture.lastResult == CastResult.Success
-        SympathyFixture.leader == ["b"]
-        SympathyFixture.follower == ["a"]
-        not SympathyFixture.preview
-        (foreach command in SympathyFixture.trace --> command.kind) == [
-            SympathyCommandKind.PreviewOff, SympathyCommandKind.PreviewCancel, SympathyCommandKind.PreviewDispose,
-            SympathyCommandKind.ExecuteEffect, SympathyCommandKind.ExecuteEffect,
-            SympathyCommandKind.StartSync, SympathyCommandKind.RoleChanged, SympathyCommandKind.RoleChanged
-        ]
-    }
-}
-
-test SympathyOldSessionCanClearNewFollowerReference {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.sessions[0] = SympathySessionState(
-            "c", "b", [SympathyEffectKind.Physics, SympathyEffectKind.Visuals], true
-        )
-        SympathyFixture.objects["c"].role = SympathyRole.Leader
-        SympathyFixture.objects["c"].session = 0
-        SympathyFixture.objects["b"].role = SympathyRole.Follower
-        SympathyFixture.objects["b"].session = 0
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-        SympathyFixture.StopSympathySession(0)
-    }
-    after {
-        SympathyFixture.lastResult == CastResult.Success
-        forall state in SympathyFixture.objects["a"] : state.session == [1]
-        forall state in SympathyFixture.objects["b"] : state.role == SympathyRole.Free and state.session == empty
-        (count session in SympathyFixture.sessions : true) == 2
-    }
-}
-
-test SympathyInversionDoesNotSwapProviderReferences {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-        SympathyFixture.InvertSympathySession(1)
-    }
-    after {
-        SympathyFixture.leader == ["a"]
-        SympathyFixture.follower == ["b"]
-        forall state in SympathyFixture.sessions[1] : state.leader == "b" and state.follower == "a"
-        (foreach command in SympathyFixture.trace --> command.kind) == [
-            SympathyCommandKind.InvertEffect, SympathyCommandKind.InvertEffect,
-            SympathyCommandKind.InvertSync, SympathyCommandKind.RoleChanged, SympathyCommandKind.RoleChanged
-        ]
-    }
-}
-
-test SympathyRepeatedStopStillCancelsAndNotifies {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-        SympathyFixture.StopSympathySession(1)
-        SympathyFixture.StopSympathySession(1)
-    }
-    after {
-        (foreach command in SympathyFixture.trace --> command.kind) == [
-            SympathyCommandKind.CancelEffect, SympathyCommandKind.CancelEffect,
-            SympathyCommandKind.StopSync, SympathyCommandKind.SessionStopped
-        ]
-        forall state in SympathyFixture.objects["a"] : state.role == SympathyRole.Free and state.session == empty
-        forall state in SympathyFixture.objects["b"] : state.role == SympathyRole.Free and state.session == empty
-        (count session in SympathyFixture.sessions : true) == 1
-    }
-}
-
-test SympathyPreviewCancellationKeepsCachedIdentity {
-    start with { SympathyWorld, SympathyFixture }
-    then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CancelSympathy()
-    }
-    after {
-        SympathyFixture.leader == empty and SympathyFixture.follower == empty
-        SympathyFixture.identity == [SympathyIdentity(["cube"])]
-        not SympathyFixture.preview
-        (foreach command in SympathyFixture.trace --> command.kind) == [
-            SympathyCommandKind.PreviewOff, SympathyCommandKind.PreviewCancel, SympathyCommandKind.PreviewDispose
-        ]
-    }
-}
-
-test SympathyCachedInteractorDoesNotRecheckFollower {
-    start with { SympathyWorld, SympathyFixture, SympathyInteractor, SympathyInteractorFixture }
-    then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-        (SympathyInteractorFixture, SympathyFixture).CheckSympathyInteraction("b")
-        SympathyFixture.InvertSympathySession(1)
-        (SympathyInteractorFixture, SympathyFixture).InteractWithSympathy()
-    }
-    after {
-        forall state in SympathyFixture.sessions[1] : state.leader == "a" and state.follower == "b"
-        SympathyInteractorFixture.keepsCurrent
-        not SympathyInteractorFixture.allowsAction
-        SympathyInteractorFixture.ghost
-    }
-}
-
-test SympathyCachedInteractorWithoutSessionKeepsInteraction {
-    start with { SympathyWorld, SympathyFixture, SympathyInteractor, SympathyInteractorFixture }
-    then {
-        SympathyFixture.CastSympathySample(["a"])
-        SympathyFixture.CastSympathySample(["b"])
-        (SympathyInteractorFixture, SympathyFixture).CheckSympathyInteraction("b")
-        SympathyFixture.StopSympathySession(1)
-        (SympathyInteractorFixture, SympathyFixture).InteractWithSympathy()
-    }
-    after SympathyFixture.trace == empty and SympathyInteractorFixture.keepsCurrent
 }

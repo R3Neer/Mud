@@ -1,315 +1,118 @@
-# Declarative examples for future execution; no Mud runtime is available yet.
-# Each test starts a fresh world and activates its own fixture.
+# Declarative source contracts. Each test starts a fresh domain world.
 
-test SelectionReservesConcentration {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then PlayerCaster.Select(Spell.SympathyLink)
+test SelectionReservesConcentrationBeforeLink {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
+    then (MagicWorld, Player).SelectSpell(Spell.Sympathy)
     after {
-        PlayerCaster.selectionAccepted
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.activeSpells == [Spell.SympathyLink]
-        PlayerCaster.concentration == 1
+        Player.selected == [Spell.Sympathy]
+        Player.activeSpells == [Spell.Sympathy]
+        Player.concentration == 1
+        Player.prepared == empty
+        MagicWorld.links == empty
+        (count event in MagicWorld.published : event.kind == SpellEventKind.Selected) == 1
     }
 }
 
-test SwitchingDoesNotDeactivateAnInstantSpell {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
+test CapabilityBelongsToTheActualEntity {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, Turret,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        PlayerCaster.Select(Spell.Fireball)
-        PlayerCaster.Select(Spell.SympathyLink)
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Turret).SelectSpell(Spell.Sympathy)
     }
     after {
-        PlayerCaster.activeSpells == [Spell.Fireball, Spell.SympathyLink]
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.concentration == 1
+        Player is Creature
+        Player is Spellcaster
+        Turret is Entity
+        Turret is Spellcaster
+        Player != Turret
+        Player.concentration == 1 and Turret.concentration == 1
     }
 }
 
-test TogglingBackgroundSpellReturnsFalseWithoutFailure {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
+test SelectionToggleEndsTheSameSpell {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.Select(Spell.Fireball)
-        PlayerCaster.Select(Spell.SympathyLink)
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
     }
     after {
-        not PlayerCaster.selectionAccepted
-        PlayerCaster.selectedSpell == Spell.Fireball
-        PlayerCaster.activeSpells == [Spell.Fireball]
-        PlayerCaster.concentration == 0
-        PlayerCaster.lastTrace == [
-            ProtocolObservation(
-                kind = ProtocolKind.CallCancel,
-                spell = Spell.SympathyLink,
-                view = CasterSnapshot(3, Spell.Fireball, [Spell.Fireball], 0)
-            ),
-            ProtocolObservation(
-                kind = ProtocolKind.Canceled,
-                spell = Spell.SympathyLink,
-                view = CasterSnapshot(3, Spell.Fireball, [Spell.Fireball], 0)
-            )
-        ]
+        Player.selected == empty and Player.activeSpells == empty
+        Player.concentration == 0
+        (count event in MagicWorld.published : event.kind == SpellEventKind.Cancelled) == 1
     }
 }
 
-test FullConcentrationRejectsThirdSpell {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, ThreeConcentrationCaster }
+test UnconfiguredSpellIsNormalDomainRejection {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
+    then (MagicWorld, Player).SelectSpell(Spell.Fireball)
+    after {
+        Player.activeSpells == empty
+        (count event in MagicWorld.published : event.kind == SpellEventKind.SelectionRejected) == 1
+    }
+}
+
+test RepeatedFailedAttemptsPreservePreparationAndReservation {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player, Unshaped,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        ThreeConcentrationCaster.Select(Spell.SympathyLink)
-        ThreeConcentrationCaster.Select(Spell.SympathyMagnet)
-        ThreeConcentrationCaster.Select(Spell.Fireball)
+        (MagicWorld, Player).SelectSpell(Spell.Sympathy)
+        let aim = Aim(Point3(r1, r2, r3), [Unshaped])
+        (MagicWorld, Player).Cast(aim)
+        (MagicWorld, Player).Cast(aim)
     }
     after {
-        not ThreeConcentrationCaster.selectionAccepted
-        ThreeConcentrationCaster.concentration == 2
-        ThreeConcentrationCaster.selectedSpell == Spell.SympathyMagnet
-        ThreeConcentrationCaster.activeSpells == [Spell.SympathyLink, Spell.SympathyMagnet]
-        (count event in ThreeConcentrationCaster.lastTrace :
-            event.kind == ProtocolKind.SelectionFailed) == 1
+        (count event in MagicWorld.published :
+            event.kind == SpellEventKind.Attempted and event.outcome == CastOutcome.Failed) >= 1
+        Player.prepared == empty
+        Player.concentration == 1
+        MagicWorld.pending == empty
     }
 }
 
-test ZeroLimitRejectsConcentration {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, NoConcentrationCaster }
-    then NoConcentrationCaster.Select(Spell.SympathyLink)
+test CastingWithoutSelectionProducesNoAttempt {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
+    then (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), empty))
+    after MagicWorld.published == empty and MagicWorld.pending == empty
+}
+
+test NoConcentrationRoomRejectsSelection {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, NoFocus,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
+    then (MagicWorld, NoFocus).SelectSpell(Spell.Sympathy)
     after {
-        not NoConcentrationCaster.selectionAccepted
-        NoConcentrationCaster.activeSpells == empty
-        NoConcentrationCaster.concentration == 0
+        NoFocus.activeSpells == empty
+        NoFocus.concentration == 0
+        (count event in MagicWorld.published : event.kind == SpellEventKind.SelectionRejected) == 1
     }
 }
 
-test ZeroLimitStillAllowsInstantSpells {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, NoConcentrationCaster }
-    then NoConcentrationCaster.Select(Spell.Fireball)
-    after {
-        NoConcentrationCaster.selectionAccepted
-        NoConcentrationCaster.selectedSpell == Spell.Fireball
-        NoConcentrationCaster.concentration == 0
-    }
-}
-
-test LockedSelectionPreservesCurrentSpell {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
+test InstantProviderCompletionProtocolReleasesActivity {
+    start with { Entity, Creature, Spellcaster, Magic, MagicWorld, InstantProtocolCaster,
+        CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
+        ExclusiveSympathy, PublishSpellEvents }
     then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.Select(Spell.Transmutation)
+        (MagicWorld, InstantProtocolCaster).SelectSpell(Spell.Fireball)
+        # A fixture supplies the result of a hypothetical Mud spell body.
+        # This is not Fireball implementation or a host result endpoint.
+        (MagicWorld, InstantProtocolCaster).ResolveAttempt(
+            Spell.Fireball, CastOutcome.Success, Aim(Point3(r0, r0, r0), empty)
+        )
     }
     after {
-        not PlayerCaster.selectionAccepted
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.activeSpells == [Spell.SympathyLink]
+        InstantProtocolCaster.selected == empty
+        InstantProtocolCaster.activeSpells == empty
+        (count event in MagicWorld.published : event.kind == SpellEventKind.Attempted) == 1
     }
-}
-
-test UnlockedDoesNotMeanConfigured {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.AdjustUnlocked(1)
-        PlayerCaster.Select(Spell.FireRegulator)
-    }
-    after {
-        PlayerCaster.unlockedCount == 4
-        not PlayerCaster.selectionAccepted
-        PlayerCaster.selectedSpell == Spell.None
-        PlayerCaster.activeSpells == empty
-    }
-}
-
-test NoneIsAnActualIncompleteCastResult {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.CastSample(CastResult.None, Aim(r0, r0, r0, empty))
-    }
-    after {
-        not PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.activeSpells == [Spell.SympathyLink]
-        (count event in PlayerCaster.lastTrace : event.kind == ProtocolKind.CastAttempted) == 1
-    }
-}
-
-test PartialCastKeepsTargeting {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.CastSample(CastResult.Partial, Aim(r0, r0, r0, ["crate"]))
-    }
-    after {
-        not PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.concentration == 1
-    }
-}
-
-test FailedCastKeepsTargeting {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.CastSample(CastResult.Failed, Aim(r0, r0, r0, ["crate"]))
-    }
-    after {
-        not PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.concentration == 1
-    }
-}
-
-test SuccessfulInstantCastNotifiesBeforeCleanup {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.Fireball)
-        PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, ["crate"]))
-    }
-    after {
-        PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.None
-        PlayerCaster.activeSpells == empty
-        PlayerCaster.lastTrace == [
-            ProtocolObservation(
-                kind = ProtocolKind.CallCast,
-                spell = Spell.Fireball,
-                aim = [Aim(r0, r0, r0, ["crate"])],
-                view = CasterSnapshot(3, Spell.Fireball, [Spell.Fireball], 0)
-            ),
-            ProtocolObservation(
-                kind = ProtocolKind.CastAttempted,
-                spell = Spell.Fireball,
-                result = CastResult.Success,
-                aim = [Aim(r0, r0, r0, ["crate"])],
-                view = CasterSnapshot(3, Spell.Fireball, [Spell.Fireball], 0)
-            )
-        ]
-    }
-}
-
-test SuccessfulConcentrationCastRetainsActivity {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, ["crate"]))
-    }
-    after {
-        PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.None
-        PlayerCaster.activeSpells == [Spell.SympathyLink]
-        PlayerCaster.concentration == 1
-    }
-}
-
-test NoSelectionDoesNotCallProvider {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, empty))
-    after {
-        PlayerCaster.castFinished
-        PlayerCaster.lastTrace == empty
-    }
-}
-
-test RelockedSelectedSpellCannotBeCast {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.AdjustUnlocked(-3)
-        PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, empty))
-    }
-    after {
-        PlayerCaster.unlockedCount == 0
-        PlayerCaster.castFinished
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.activeSpells == [Spell.SympathyLink]
-        PlayerCaster.concentration == 1
-        PlayerCaster.lastTrace == empty
-    }
-}
-
-test RelockedActiveToggleIsSilent {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.AdjustUnlocked(-3)
-        PlayerCaster.CancelSelected()
-        PlayerCaster.Select(Spell.SympathyLink)
-    }
-    after {
-        not PlayerCaster.selectionAccepted
-        PlayerCaster.selectedSpell == Spell.SympathyLink
-        PlayerCaster.activeSpells == [Spell.SympathyLink]
-        PlayerCaster.lastTrace == empty
-    }
-}
-
-test UnlockingAgainAllowsCancellation {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.Select(Spell.SympathyLink)
-        PlayerCaster.AdjustUnlocked(-3)
-        PlayerCaster.AdjustUnlocked(3)
-        PlayerCaster.CancelSelected()
-    }
-    after {
-        PlayerCaster.selectedSpell == Spell.None
-        PlayerCaster.activeSpells == empty
-        PlayerCaster.concentration == 0
-        forall event in PlayerCaster.lastTrace :
-            event.view.selectedSpell == Spell.SympathyLink
-    }
-}
-
-test SelfCancellationOfInactiveProviderStillNotifies {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then PlayerCaster.SelfCancelledSample(Spell.SympathyLink)
-    after {
-        PlayerCaster.activeSpells == empty
-        (count event in PlayerCaster.lastTrace : event.kind == ProtocolKind.CallCancel) == 1
-        (count event in PlayerCaster.lastTrace : event.kind == ProtocolKind.Canceled) == 1
-    }
-}
-
-test UnchangedUnlockCountStillNotifies {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then {
-        PlayerCaster.AdjustUnlocked(100)
-        PlayerCaster.AdjustUnlocked(1)
-    }
-    after {
-        PlayerCaster.unlockedCount == 17
-        PlayerCaster.lastTrace == [ProtocolObservation(
-            kind = ProtocolKind.UnlockedCountNotified,
-            view = CasterSnapshot(17, Spell.None, empty, 0)
-        )]
-    }
-}
-
-test NoneSelectionNotifiesFailure {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then PlayerCaster.Select(Spell.None)
-    after {
-        not PlayerCaster.selectionAccepted
-        PlayerCaster.lastTrace == [ProtocolObservation(
-            kind = ProtocolKind.SelectionFailed,
-            spell = Spell.None,
-            view = CasterSnapshot(3, Spell.None, empty, 0)
-        )]
-    }
-}
-
-test NoneCancellationIsSilent {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then PlayerCaster.CancelSelected()
-    after {
-        not PlayerCaster.selectionAccepted
-        PlayerCaster.selectedSpell == Spell.None
-        PlayerCaster.lastTrace == empty
-    }
-}
-
-test StartAnnouncesInitialCount {
-    start with { Caster, IsResolvable, ConcentrationWithinLimit, PlayerCaster }
-    then PlayerCaster.StartSample()
-    after PlayerCaster.lastTrace == [ProtocolObservation(
-        kind = ProtocolKind.UnlockedCountNotified,
-        view = CasterSnapshot(3, Spell.None, empty, 0)
-    )]
 }

@@ -1,55 +1,81 @@
-# Informative controller model; provider invocations are trace data, not C# calls.
-# See README.md for the non-reentrant, valid-configuration boundary.
+# Domain model, not a reproduction of Unity callbacks. See README.md.
 
 family Spell {
     slot: Nat
-    None { slot = 0 },
-    SympathyLink { slot = 1 },
-    SympathyMagnet { slot = 2 },
-    Fireball { slot = 3 },
-    FireRegulator { slot = 4 },
-    VeilOfInvisibility { slot = 5 },
-    VeilOfAvoidance { slot = 6 },
-    EarthWall { slot = 7 },
-    EarthSubdivision { slot = 8 },
-    ShieldOfAbsorption { slot = 9 },
-    ShieldOfReflection { slot = 10 },
-    WaterBubble { slot = 11 },
-    WaterConnection { slot = 12 },
-    PortalOfSpace { slot = 13 },
-    PortalOfTime { slot = 14 },
-    AirPush { slot = 15 },
-    AirUpwardsCurrent { slot = 16 },
-    Transmutation { slot = 17 }
+    needsConcentration: Bool
+    Sympathy { slot = 1; needsConcentration = true },
+    Fireball { slot = 2; needsConcentration = false }
 }
 
-family CastResult { None, Success, Partial, Failed }
+family CastOutcome { None, Partial, Failed, Success }
+family Shape { Cube, Sphere }
+family SympathyKind { Motion, SharedEffects }
+family SpellEventKind { Selected, SelectionRejected, Attempted, Cancelled, Linked, Inverted, Unlinked }
 
-family ProtocolKind {
-    Selected, SelectionFailed, CallCast, CastAttempted,
-    CallCancel, Canceled, UnlockedCountNotified
-}
-
-alias Aim {
+alias Point3 {
     let x: Rum
     let y: Rum
     let z: Rum
-    let hitObject: Text [?]
 }
 
-alias CasterSnapshot {
-    let unlockedCount: Nat
-    let selectedSpell: Spell
-    let activeSpells: Spell [* unique]
-    let concentration: Nat
+alias Aim {
+    let point: Point3
+    let target: Entity [?] = empty
 }
 
-alias ProtocolObservation {
-    let kind: ProtocolKind
-    let spell: Spell = Spell.None
-    let result: CastResult = CastResult.None
-    let aim: Aim [?] = empty
-    let view: CasterSnapshot
+alias EffectValue {
+    let kind: Text
+    let duration: Num in [0..*]
+    let intensity: Num
+}
+
+abstract thing Entity {
+    # Presence in this game world, independently of Mud declaration activity.
+    mut present: Bool = true
+    mut position: Point3 = Point3(r0, r0, r0)
+    mut grabbed: Bool = false
+    mut shape: Shape [?] = empty
+    mut kinds: SympathyKind [* unique] = empty
+    mut ownEffects: Text -> EffectValue = empty
+}
+
+abstract thing Creature as Entity
+
+abstract thing Spellcaster as Entity {
+    let configured: Spell [* unique] = [Spell.Sympathy]
+    let maxConcentration: Nat = 2
+    mut unlocked: Nat = 2
+    mut selected: Spell [?] = empty
+    mut activeSpells: Spell [* unique] = empty
+    mut prepared: Entity [?] = empty
+
+    let concentration := count spell in activeSpells : spell.needsConcentration
+    let preparation := foreach entity in prepared if entity.present --> entity
+}
+
+alias LinkSnapshot {
+    let id: Nat
+    let owner: Spellcaster
+    let leader: Entity
+    let follower: Entity
+    let kinds: SympathyKind [* unique]
+}
+
+alias SpellEvent {
+    let kind: SpellEventKind
+    let caster: Spellcaster
+    let spell: Spell
+    let outcome: CastOutcome = CastOutcome.None
+    let aim: Aim
+    let link: LinkSnapshot [?] = empty
+}
+
+abstract thing Magic {
+    mut links: SympathyLink [* unique by id] = empty
+    mut nextLink: Nat = 1
+    mut pending: SpellEvent [* ordered] = empty
+    mut published: SpellEvent [* ordered] = empty
+    mut linkEffects: SpellEvent [* ordered] = empty
 }
 
 alias SelectionPlan {
@@ -58,198 +84,137 @@ alias SelectionPlan {
     let reject: Spell [?] = empty
 }
 
-abstract thing Caster {
-    let capacity: Nat = 17
-    let maxConcentration: Nat = 2
-    let configured: Spell [* unique] =
-        [Spell.SympathyLink, Spell.SympathyMagnet, Spell.Fireball]
-    let concentrating: Spell [* unique] =
-        [Spell.SympathyLink, Spell.SympathyMagnet]
-
-    mut unlockedCount: Nat = 3
-    mut selectedSpell: Spell = Spell.None
-    mut activeSpells: Spell [* unique] = empty
-
-    # Auxiliary observations of the last invocation of each Boolean method.
-    mut selectionAccepted: Bool = false
-    mut castFinished: Bool = true
-    mut lastTrace: ProtocolObservation [* ordered] = empty
-
-    let concentration := count spell in activeSpells : concentrating has spell
-    let concentrationFull := concentration >= maxConcentration
-    let snapshot := CasterSnapshot(
-        unlockedCount, selectedSpell, activeSpells, concentration
-    )
-
-    let selection: Spell --> SelectionPlan [ordered] :=
-        activeSpells has value --> SelectionPlan(cancel = [value]),
-        .slot == 0 or .slot > unlockedCount
-            or configured has not value
-            or concentrating has value and concentrationFull -->
-                SelectionPlan(reject = [value]),
-        _ --> SelectionPlan(activate = [value])
-
-    let clampUnlocked: Int --> Nat [ordered] :=
-        value < 0 --> 0,
-        value > capacity --> capacity,
-        _ --> value to Nat
+rule CanSelect for caster: Spellcaster given spell: Spell {
+    caster.present and caster.configured has spell and spell.slot <= caster.unlocked
+        and (not spell.needsConcentration or caster.concentration < caster.maxConcentration)
 }
 
-thing PlayerCaster as Caster
-thing NoConcentrationCaster as Caster { maxConcentration = 0 }
-thing ThreeConcentrationCaster as Caster {
-    concentrating = [Spell.SympathyLink, Spell.SympathyMagnet, Spell.Fireball]
+rule CanAttempt for caster: Spellcaster given spell: Spell {
+    caster.present and caster.selected has spell and caster.activeSpells has spell
+        and caster.configured has spell and spell.slot <= caster.unlocked
 }
 
-# Cross-field guarantee not supplied by concentration's Nat type.
-always rule ConcentrationWithinLimit on caster: Caster {
+always rule ConcentrationWithinLimit on caster: Spellcaster {
     caster.concentration <= caster.maxConcentration
 }
 
-rule IsResolvable for caster: Caster given spell: Spell {
-    spell.slot > 0 and spell.slot <= caster.unlockedCount
-        and caster.configured has spell
-}
-
-subaction Record for caster: Caster [mut] given
-    kind: ProtocolKind,
-    spell: Spell = Spell.None,
-    result: CastResult = CastResult.None,
-    aim: Aim [?] = empty {
+action SelectSpell for magic: Magic [mut], caster: Spellcaster [mut] given requested: Spell {
     then {
-        let view = caster.snapshot
-        add ProtocolObservation(
-            kind = kind, spell = spell, result = result, aim = aim, view = view
-        ) to caster.lastTrace
-    }
-}
-
-subaction CancelOne for caster: Caster [mut] given requested: Spell {
-    then {
-        let available: Spell --> Spell [? ordered] =
-            caster.IsResolvable(value) --> value
-        caster.CancelAvailableSpell(available[requested][?])
-    }
-}
-
-subaction CancelAvailableSpell for caster: Caster [mut] given spell: Spell {
-    if caster.IsResolvable(spell)
-    then {
-        remove spell from caster.activeSpells
-        caster.Record(ProtocolKind.CallCancel, spell)
-        caster.Record(ProtocolKind.Canceled, spell)
-        let remainingSelection: Spell --> Spell [ordered] =
-            == spell --> Spell.None,
-            _ --> value
-        caster.selectedSpell = remainingSelection[caster.selectedSpell]
-    }
-}
-
-action Select for caster: Caster [mut] given requested: Spell {
-    then {
-        let plan = caster.selection[requested]
-        caster.lastTrace = empty
-        caster.selectionAccepted = false
-        caster.CancelOne(plan.cancel[?])
+        let selection: Spell --> SelectionPlan [ordered] =
+            caster.activeSpells has value --> SelectionPlan(cancel = [value]),
+            caster.CanSelect(value) --> SelectionPlan(activate = [value]),
+            _ --> SelectionPlan(reject = [value])
+        let plan = selection[requested]
+        (magic, caster).EndSpell(plan.cancel[?])
         foreach spell in plan.activate : {
             add spell to caster.activeSpells
-            caster.selectedSpell = spell
-            caster.Record(ProtocolKind.Selected, spell)
-            caster.selectionAccepted = true
+            caster.selected = spell
+            caster.prepared = empty
+            add SpellEvent(kind = SpellEventKind.Selected, caster = caster, spell = spell,
+                           aim = Aim(caster.position, empty)) to magic.pending
         }
-        caster.Record(ProtocolKind.SelectionFailed, plan.reject[?])
+        add SpellEvent(kind = SpellEventKind.SelectionRejected, caster = caster,
+                       spell = plan.reject[?], aim = Aim(caster.position, empty)) to magic.pending
     }
 }
 
-action AdjustUnlocked for caster: Caster [mut] given amount: Int {
+action CancelSpell for magic: Magic [mut], caster: Spellcaster [mut] given spell: Spell {
+    then (magic, caster).EndSpell(spell)
+}
+
+# One atomic domain operation shared by cancellation and participant departure.
+subaction EndSpell for magic: Magic [mut], caster: Spellcaster [mut] given spell: Spell {
     then {
-        let next = caster.clampUnlocked[caster.unlockedCount + amount]
-        caster.lastTrace = empty
-        caster.unlockedCount = next
-        caster.Record(ProtocolKind.UnlockedCountNotified)
+        foreach link in magic.links[ordered] if link.owner == caster and spell == Spell.Sympathy : {
+            remove link from magic.links
+            add SpellEvent(kind = SpellEventKind.Unlinked, caster = caster, spell = spell,
+                           aim = Aim(caster.position, empty),
+                           link = [LinkSnapshot(link.id, caster, link.leader, link.follower, link.kinds)])
+                to magic.pending
+        }
+        foreach active in caster.activeSpells[ordered] if active == spell : {
+            remove active from caster.activeSpells
+            add SpellEvent(kind = SpellEventKind.Cancelled, caster = caster, spell = spell,
+                           aim = Aim(caster.position, empty)) to magic.pending
+        }
+        caster.selected = foreach selected in caster.selected if selected != spell --> selected
+        caster.prepared = foreach entity in caster.prepared if spell != Spell.Sympathy --> entity
     }
+    after caster.activeSpells has not spell
 }
 
-action CancelSelected for caster: Caster [mut] {
+# Integration contract for spell bodies written in Mud, not a host-supplied result action.
+subaction ResolveAttempt for magic: Magic [mut], caster: Spellcaster [mut] given
+    spell: Spell, outcome: CastOutcome, aim: Aim {
+    if caster.CanAttempt(spell)
     then {
-        let requested = caster.selectedSpell
-        caster.lastTrace = empty
-        caster.CancelOne(requested)
+        add SpellEvent(kind = SpellEventKind.Attempted, caster = caster, spell = spell,
+                       outcome = outcome, aim = aim) to magic.pending
+        caster.selected = foreach selected in caster.selected
+            if selected != spell or outcome != CastOutcome.Success --> selected
+        caster.prepared = foreach entity in caster.prepared
+            if spell != Spell.Sympathy or outcome != CastOutcome.Success --> entity
+        foreach active in caster.activeSpells[ordered]
+            if active == spell and outcome == CastOutcome.Success and not spell.needsConcentration :
+                remove active from caster.activeSpells
     }
 }
 
-action SelfCancelledSample for caster: Caster [mut] given requested: Spell {
+action SetUnlocked for caster: Spellcaster [mut] given amount: Nat {
+    then caster.unlocked = amount
+    after caster.unlocked == amount
+}
+
+# One firing publishes one immutable ordered batch, including equal entries.
+rule PublishSpellEvents on magic: Magic [mut] {
+    when magic.pending changes
+    if exists event in magic.pending : true
     then {
-        caster.lastTrace = empty
-        caster.CancelOne(requested)
+        let events = magic.pending
+        magic.pending = empty
+        magic.published = events
     }
 }
 
-action CastSample for caster: Caster [mut] given result: CastResult, aim: Aim {
-    then {
-        let selected = caster.selectedSpell
-        caster.lastTrace = empty
-        caster.castFinished = true
-        let available: Spell --> Spell [? ordered] =
-            caster.IsResolvable(value) --> value
-        caster.AttemptCast(available[selected][?], result, aim)
-    }
+message SpellEvents on magic: Magic {
+    when magic.PublishSpellEvents
+    let events := magic.published
 }
 
-subaction AttemptCast for caster: Caster [mut] given
-    spell: Spell, result: CastResult, aim: Aim {
-    if caster.IsResolvable(spell)
-    then {
-        caster.Record(ProtocolKind.CallCast, spell, aim = aim)
-        caster.Record(ProtocolKind.CastAttempted, spell, result, aim)
-        let completion: CastResult --> _ [ordered] =
-            CastResult.Success and caster.concentrating has spell -->
-                CompleteConcentrationCast,
-            CastResult.Success --> CompleteInstantCast,
-            _ --> KeepTargeting
-        let nextStep = completion[result]
-        caster.nextStep(spell, result)
-    }
+look Spellcasting for caster: Spellcaster {
+    let selected := caster.selected
+    let active := caster.activeSpells
+    let concentration := caster.concentration
+    let prepared := caster.preparation
 }
 
-subaction CompleteConcentrationCast for caster: Caster [mut] given
-    spell: Spell, result: CastResult {
-    if result == CastResult.Success and caster.concentrating has spell
-    then {
-        caster.castFinished = true
-        caster.selectedSpell = Spell.None
-    }
-    after caster.castFinished and caster.selectedSpell == Spell.None
+thing MagicWorld as Magic
+thing Player as Creature, Spellcaster {
+    shape = [Shape.Cube]
+    kinds = [SympathyKind.Motion, SympathyKind.SharedEffects]
 }
-
-subaction CompleteInstantCast for caster: Caster [mut] given
-    spell: Spell, result: CastResult {
-    if result == CastResult.Success and caster.concentrating has not spell
-    then {
-        caster.castFinished = true
-        remove spell from caster.activeSpells
-        caster.selectedSpell = Spell.None
-    }
-    after caster.castFinished and caster.selectedSpell == Spell.None
-        and caster.activeSpells has not spell
+thing Turret as Entity, Spellcaster {
+    shape = [Shape.Cube]
+    kinds = [SympathyKind.Motion, SympathyKind.SharedEffects]
 }
-
-subaction KeepTargeting for caster: Caster [mut] given
-    spell: Spell, result: CastResult {
-    if result != CastResult.Success
-    then caster.castFinished = false
+thing BoxA as Entity {
+    shape = [Shape.Cube]
+    kinds = [SympathyKind.Motion, SympathyKind.SharedEffects]
 }
-
-action StartSample for caster: Caster [mut] {
-    then {
-        caster.lastTrace = empty
-        caster.Record(ProtocolKind.UnlockedCountNotified)
-    }
+thing BoxB as Entity {
+    shape = [Shape.Cube]
+    kinds = [SympathyKind.Motion, SympathyKind.SharedEffects]
 }
+thing BoxC as Entity {
+    shape = [Shape.Cube]
+    kinds = [SympathyKind.Motion, SympathyKind.SharedEffects]
+}
+thing Unshaped as Entity
 
-look Observation for caster: Caster {
-    let state := caster.snapshot
-    let selectionAccepted := caster.selectionAccepted
-    let castFinished := caster.castFinished
-    let trace := caster.lastTrace
+# Provider-independent completion fixture; no Fireball body is claimed.
+thing InstantProtocolCaster as Creature, Spellcaster {
+    configured = [Spell.Fireball]
+}
+thing NoFocus as Creature, Spellcaster {
+    maxConcentration = 0
 }
