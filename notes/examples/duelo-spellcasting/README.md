@@ -20,7 +20,7 @@ PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, ["other-crate"]))
 ```
 
 These are effect-call fragments for a `then`, after activating Caster,
-IsResolvable and PlayerCaster.
+IsResolvable, ConcentrationWithinLimit and PlayerCaster.
 The first cast keeps targeting; the second finishes targeting while retaining
 the concentration spell's activity. The provider outcomes are sample inputs,
 not an implementation of Sympathy's target selection or physics.
@@ -85,6 +85,8 @@ clear a different selected slot. None or a non-resolvable provider is a no-op.
 - `controller.mud` contains the catalogue, pure selection policy, controller
   state, public operations and observation query.
 - `scenarios.mud` contains declarative Mud tests with fresh fixture state.
+- `reactive-presentation.mud` is an optional Mud-oriented consumer with reactive
+  update examples; it does not replace the Unity callback trace.
 - `mud.part` defines this example's part without dependencies.
 
 The three installed fixture definitions are test configurations: SympathyLink
@@ -126,9 +128,11 @@ more tightly than `and`, so these conditions need no grouping parentheses.
 
 Public gameplay rejection remains normal completion where required by the C#
 contract. Moving such cases into an action guard would turn them into Refusal
-and could suppress the required trace entries. The model does not add action
-`after` checks to its existing invocation contracts. General admission and
-postcondition examples, including AfterRefusal rollback, are in
+and could suppress the required trace entries. CompleteConcentrationCast and CompleteInstantCast declare `after` contracts
+for their final castFinished/selection state; the instant case also guarantees
+the spell is inactive. These are consequences of their existing bodies within
+the fixed non-reentrant model boundary. General admission and postcondition
+examples, including AfterRefusal rollback, are in
 [[specification/26-public-boundary#Admission and completion examples]]. The
 `after` clauses in scenarios.mud are test assertions, not action postconditions.
 
@@ -217,3 +221,35 @@ comparison. They do not measure the ceremony of a Mud-oriented architecture.
 Native callback reentrancy belongs to the chosen bridge contract; an adapted
 exterior need not retain arbitrary C# callback interleavings. Neither issue
 justifies new source syntax on the evidence of this exercise alone.
+
+## Invariants, postconditions and reactive consumers
+
+ConcentrationWithinLimit is activated explicitly by every controller scenario.
+Nat excludes a negative concentration but does not relate its derived count to
+maxConcentration. The always rule protects this cross-field checkpoint contract;
+it is not a repairing action. Valid serial controller operations already
+preserve it. It also documents why independently admitted proposals cannot be
+assumed jointly capacity-safe. The existing causal checkpoint interface applies;
+this example supplies no scheduler or completion algorithm.
+
+The completion subactions state their operation-specific final guarantees with
+after. These conditions are not world invariants: ordinary targeting may retain
+selection and active spells. No invariant requires selected spells to remain
+unlocked, because the Unity contract permits relocking without deselection.
+Unlocked capacity is enforced by the existing clamping policy; a redundant
+second always check is not added merely to increase syntax coverage.
+
+The optional presentation variant stores a consumer's visible targeting state
+and updates it through a reactive rule after observed controller changes.
+Its abstract schema deliberately leaves caster to the concrete presentation.
+The two accompanying scenarios are declarative source contracts, not executed
+tests. The variant assumes fresh fixtures and normal binding observation;
+reactivation/resynchronization and a real Unity UI adapter are not specified.
+If only a query is needed, a derived field is preferable to storing this state.
+
+A changes trigger observes consolidated snapshots. It cannot reproduce every
+synchronous notification, an unchanged-value notification, or transient states
+inside one operation. The reactive variant therefore leaves the existing
+lastTrace writes intact and makes no claim of callback/reentrancy equivalence.
+An action is not a causal when source. Per-attempt notifications would require
+an explicit message/adapter occurrence contract, not guessing from final state.

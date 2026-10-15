@@ -102,6 +102,11 @@ thing ThreeConcentrationCaster as Caster {
     concentrating = [Spell.SympathyLink, Spell.SympathyMagnet, Spell.Fireball]
 }
 
+# Cross-field guarantee not supplied by concentration's Nat type.
+always rule ConcentrationWithinLimit on caster: Caster {
+    caster.concentration <= caster.maxConcentration
+}
+
 rule IsResolvable for caster: Caster given spell: Spell {
     spell.slot > 0 and spell.slot <= caster.unlockedCount
         and caster.configured has spell
@@ -218,6 +223,7 @@ subaction CompleteConcentrationCast for caster: Caster [mut] given
         caster.castFinished = true
         caster.selectedSpell = Spell.None
     }
+    after caster.castFinished and caster.selectedSpell == Spell.None
 }
 
 subaction CompleteInstantCast for caster: Caster [mut] given
@@ -228,6 +234,8 @@ subaction CompleteInstantCast for caster: Caster [mut] given
         remove spell from caster.activeSpells
         caster.selectedSpell = Spell.None
     }
+    after caster.castFinished and caster.selectedSpell == Spell.None
+        and caster.activeSpells has not spell
 }
 
 subaction KeepTargeting for caster: Caster [mut] given
