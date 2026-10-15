@@ -19,7 +19,8 @@ PlayerCaster.CastSample(CastResult.Partial, Aim(r0, r0, r0, ["crate"]))
 PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, ["other-crate"]))
 ```
 
-These are effect-call fragments for a `then`, after activating PlayerCaster.
+These are effect-call fragments for a `then`, after activating Caster,
+IsResolvable and PlayerCaster.
 The first cast keeps targeting; the second finishes targeting while retaining
 the concentration spell's activity. The provider outcomes are sample inputs,
 not an implementation of Sympathy's target selection or physics.
@@ -96,18 +97,36 @@ requiring concentration, solely to exercise a third candidate at the limit;
 this is not a claim about an implemented Fireball spell. The complete
 enum is retained so an unlocked slot can lack a provider and a configured slot
 can be locked. No global start with activates the library fixtures; each test
-chooses its initial population.
+chooses its initial population, including abstract Caster and IsResolvable.
+Ancestry does not implicitly activate Caster; its inherited-schema/type
+dependencies must be available. Boolean rules have an activation lifecycle:
+the driver must keep this predicate active, otherwise inactive-call pruning
+would not enforce its test.
 
 SelectionPlan is a pure priority policy: active-toggle takes precedence over
-locked checks. Its optional singleton fields describe actual work, allowing
-then to traverse those fields without an invented imperative if/else syntax.
-Every policy application is captured with `=` before any world mutation.
+locked checks. Its optional singleton fields describe actual work. IsResolvable
+is a Boolean rule. Cancellation and cast handling use domain subactions with
+if admission guards; pure dispatch selects an admitted operation. Iterations
+traverse actual planned spells or optional operations, not singleton collections
+invented to stand in for conditionals. Stored local dispatch policies infer
+their callable output contracts, retaining receiver capabilities.
+
+The dispatch selects the matching completion operation before calling it:
+successful concentration, successful instant cast, or continued targeting.
+None, Partial and Failed therefore complete normally with castFinished=false.
+A genuinely false subaction guard would produce IfRefusal, not a skipped body;
+ordinary bare calls preserve that refusal or any Error rather than ignoring it.
+Decisions are captured before the mutations they govern.
 
 The mutable state includes two explicitly auxiliary fields: selectionAccepted
 and castFinished preserve the corresponding C# Boolean results for inspection.
 They are not ActionReply payloads. Ordinary gameplay rejection is a completed
 model operation with selectionAccepted=false, not a Mud Refusal or Error.
 Cancel and unlock operations do not redefine those last per-method results.
+These compatibility projections are harness requirements, not evidence that
+Mud actions need arbitrary result payloads. A Mud-oriented exterior would use
+the action reply for admission/completion, looks for current state and messages
+for occurrences; it need not preserve the C# Boolean-method interface.
 
 ## Provider and observation boundary
 
@@ -174,8 +193,13 @@ surrounding specification artefacts; they do not typecheck or execute this model
 Neither Unity tests nor Unity were run for this exercise.
 
 Evaluate whether the selection policy reads naturally, whether derived
-concentration avoids unnecessary bookkeeping, and whether the separate Boolean
-result projection and ordered callback trace introduce too much ceremony.
-The trace is evidence scaffolding rather than a proposed idiomatic replacement
-for every gameplay event. This exercise can expose friction without converting
-an adapter requirement or an unspecified spell mechanic into a language rule.
+concentration avoids unnecessary bookkeeping and whether the decomposition into
+guarded domain operations stays readable. Distinguish shortcomings of this
+representation from missing language capabilities. SelectionPlan could also be
+represented by a union of nominal decision aliases using existing constructs.
+
+The Boolean result projections and callback trace preserve a C# interface for
+comparison. They do not measure the ceremony of a Mud-oriented architecture.
+Native callback reentrancy belongs to the chosen bridge contract; an adapted
+exterior need not retain arbitrary C# callback interleavings. Neither issue
+justifies new source syntax on the evidence of this exercise alone.

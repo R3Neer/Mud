@@ -81,10 +81,6 @@ abstract thing Caster {
         unlockedCount, selectedSpell, activeSpells, concentration
     )
 
-    let resolvable: Spell --> Bool [ordered] :=
-        _ --> value.slot > 0 and value.slot <= unlockedCount
-            and (configured has value)
-
     let selection: Spell --> SelectionPlan [ordered] :=
         activeSpells has value --> SelectionPlan(cancel = [value]),
         value.slot == 0 or value.slot > unlockedCount -->
@@ -106,6 +102,11 @@ thing ThreeConcentrationCaster as Caster {
     concentrating = [Spell.SympathyLink, Spell.SympathyMagnet, Spell.Fireball]
 }
 
+rule IsResolvable for caster: Caster given spell: Spell {
+    spell.slot > 0 and spell.slot <= caster.unlockedCount
+        and (caster.configured has spell)
+}
+
 subaction Record for caster: Caster [mut] given
     kind: ProtocolKind,
     spell: Spell = Spell.None,
@@ -120,12 +121,24 @@ subaction Record for caster: Caster [mut] given
 }
 
 subaction CancelOne for caster: Caster [mut] given requested: Spell {
-    then foreach spell in [requested] if caster.resolvable[spell] : {
+    then {
+        let cancellation: Spell --> _ [0..1 ordered] =
+            caster.IsResolvable(value) --> CancelAvailableSpell,
+            _ --> empty
+        foreach cancel in cancellation[requested] : caster.cancel(requested)
+    }
+}
+
+subaction CancelAvailableSpell for caster: Caster [mut] given spell: Spell {
+    if caster.IsResolvable(spell)
+    then {
         remove spell from caster.activeSpells
         caster.Record(ProtocolKind.CallCancel, spell)
         caster.Record(ProtocolKind.Canceled, spell)
-        foreach selected in [caster.selectedSpell] if selected == spell :
-            caster.selectedSpell = Spell.None
+        let remainingSelection: Spell --> Spell [ordered] =
+            value == spell --> Spell.None,
+            _ --> value
+        caster.selectedSpell = remainingSelection[caster.selectedSpell]
     }
 }
 
@@ -175,17 +188,52 @@ action CastSample for caster: Caster [mut] given result: CastResult, aim: Aim {
         let selected = caster.selectedSpell
         caster.lastTrace = empty
         caster.castFinished = true
-        foreach spell in [selected] if caster.resolvable[spell] : {
-            caster.Record(ProtocolKind.CallCast, spell, aim = [aim])
-            caster.Record(ProtocolKind.CastAttempted, spell, result, [aim])
-            caster.castFinished = result == CastResult.Success
-            foreach completed in [spell] if result == CastResult.Success : {
-                foreach instant in [completed] if caster.concentrating has not instant :
-                    remove instant from caster.activeSpells
-                caster.selectedSpell = Spell.None
-            }
-        }
+        let attempts: Spell --> _ [0..1 ordered] =
+            caster.IsResolvable(value) --> AttemptCast,
+            _ --> empty
+        foreach attempt in attempts[selected] : caster.attempt(selected, result, aim)
     }
+}
+
+subaction AttemptCast for caster: Caster [mut] given
+    spell: Spell, result: CastResult, aim: Aim {
+    if caster.IsResolvable(spell)
+    then {
+        caster.Record(ProtocolKind.CallCast, spell, aim = [aim])
+        caster.Record(ProtocolKind.CastAttempted, spell, result, [aim])
+        let completion: CastResult --> _ [ordered] =
+            value == CastResult.Success and (caster.concentrating has spell) -->
+                CompleteConcentrationCast,
+            CastResult.Success --> CompleteInstantCast,
+            _ --> KeepTargeting
+        let nextStep = completion[result]
+        caster.nextStep(spell, result)
+    }
+}
+
+subaction CompleteConcentrationCast for caster: Caster [mut] given
+    spell: Spell, result: CastResult {
+    if result == CastResult.Success and (caster.concentrating has spell)
+    then {
+        caster.castFinished = true
+        caster.selectedSpell = Spell.None
+    }
+}
+
+subaction CompleteInstantCast for caster: Caster [mut] given
+    spell: Spell, result: CastResult {
+    if result == CastResult.Success and (caster.concentrating has not spell)
+    then {
+        caster.castFinished = true
+        remove spell from caster.activeSpells
+        caster.selectedSpell = Spell.None
+    }
+}
+
+subaction KeepTargeting for caster: Caster [mut] given
+    spell: Spell, result: CastResult {
+    if result != CastResult.Success
+    then caster.castFinished = false
 }
 
 action StartSample for caster: Caster [mut] {

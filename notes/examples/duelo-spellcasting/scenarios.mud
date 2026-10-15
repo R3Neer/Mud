@@ -2,7 +2,7 @@
 # Each test starts a fresh world and activates its own fixture.
 
 test SelectionReservesConcentration {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then PlayerCaster.Select(Spell.SympathyLink)
     after {
         PlayerCaster.selectionAccepted
@@ -13,7 +13,7 @@ test SelectionReservesConcentration {
 }
 
 test SwitchingDoesNotDeactivateAnInstantSpell {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.Fireball)
         PlayerCaster.Select(Spell.SympathyLink)
@@ -26,7 +26,7 @@ test SwitchingDoesNotDeactivateAnInstantSpell {
 }
 
 test TogglingBackgroundSpellReturnsFalseWithoutFailure {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.Select(Spell.Fireball)
@@ -53,7 +53,7 @@ test TogglingBackgroundSpellReturnsFalseWithoutFailure {
 }
 
 test FullConcentrationRejectsThirdSpell {
-    start with ThreeConcentrationCaster
+    start with { Caster, IsResolvable, ThreeConcentrationCaster }
     then {
         ThreeConcentrationCaster.Select(Spell.SympathyLink)
         ThreeConcentrationCaster.Select(Spell.SympathyMagnet)
@@ -70,7 +70,7 @@ test FullConcentrationRejectsThirdSpell {
 }
 
 test ZeroLimitRejectsConcentration {
-    start with NoConcentrationCaster
+    start with { Caster, IsResolvable, NoConcentrationCaster }
     then NoConcentrationCaster.Select(Spell.SympathyLink)
     after {
         not NoConcentrationCaster.selectionAccepted
@@ -80,7 +80,7 @@ test ZeroLimitRejectsConcentration {
 }
 
 test ZeroLimitStillAllowsInstantSpells {
-    start with NoConcentrationCaster
+    start with { Caster, IsResolvable, NoConcentrationCaster }
     then NoConcentrationCaster.Select(Spell.Fireball)
     after {
         NoConcentrationCaster.selectionAccepted
@@ -90,7 +90,7 @@ test ZeroLimitStillAllowsInstantSpells {
 }
 
 test LockedSelectionPreservesCurrentSpell {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.Select(Spell.Transmutation)
@@ -103,7 +103,7 @@ test LockedSelectionPreservesCurrentSpell {
 }
 
 test UnlockedDoesNotMeanConfigured {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.AdjustUnlocked(1)
         PlayerCaster.Select(Spell.FireRegulator)
@@ -117,7 +117,7 @@ test UnlockedDoesNotMeanConfigured {
 }
 
 test NoneIsAnActualIncompleteCastResult {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.CastSample(CastResult.None, Aim(r0, r0, r0, empty))
@@ -131,7 +131,7 @@ test NoneIsAnActualIncompleteCastResult {
 }
 
 test PartialCastKeepsTargeting {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.CastSample(CastResult.Partial, Aim(r0, r0, r0, ["crate"]))
@@ -144,7 +144,7 @@ test PartialCastKeepsTargeting {
 }
 
 test FailedCastKeepsTargeting {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.CastSample(CastResult.Failed, Aim(r0, r0, r0, ["crate"]))
@@ -157,7 +157,7 @@ test FailedCastKeepsTargeting {
 }
 
 test SuccessfulInstantCastNotifiesBeforeCleanup {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.Fireball)
         PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, ["crate"]))
@@ -185,7 +185,7 @@ test SuccessfulInstantCastNotifiesBeforeCleanup {
 }
 
 test SuccessfulConcentrationCastRetainsActivity {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, ["crate"]))
@@ -199,7 +199,7 @@ test SuccessfulConcentrationCastRetainsActivity {
 }
 
 test NoSelectionDoesNotCallProvider {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then PlayerCaster.CastSample(CastResult.Success, Aim(r0, r0, r0, empty))
     after {
         PlayerCaster.castFinished
@@ -208,7 +208,7 @@ test NoSelectionDoesNotCallProvider {
 }
 
 test RelockedSelectedSpellCannotBeCast {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.AdjustUnlocked(-3)
@@ -225,7 +225,7 @@ test RelockedSelectedSpellCannotBeCast {
 }
 
 test RelockedActiveToggleIsSilent {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.AdjustUnlocked(-3)
@@ -241,7 +241,7 @@ test RelockedActiveToggleIsSilent {
 }
 
 test UnlockingAgainAllowsCancellation {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.Select(Spell.SympathyLink)
         PlayerCaster.AdjustUnlocked(-3)
@@ -258,7 +258,7 @@ test UnlockingAgainAllowsCancellation {
 }
 
 test SelfCancellationOfInactiveProviderStillNotifies {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then PlayerCaster.SelfCancelledSample(Spell.SympathyLink)
     after {
         PlayerCaster.activeSpells == empty
@@ -268,7 +268,7 @@ test SelfCancellationOfInactiveProviderStillNotifies {
 }
 
 test UnchangedUnlockCountStillNotifies {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then {
         PlayerCaster.AdjustUnlocked(100)
         PlayerCaster.AdjustUnlocked(1)
@@ -283,7 +283,7 @@ test UnchangedUnlockCountStillNotifies {
 }
 
 test NoneSelectionNotifiesFailure {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then PlayerCaster.Select(Spell.None)
     after {
         not PlayerCaster.selectionAccepted
@@ -296,7 +296,7 @@ test NoneSelectionNotifiesFailure {
 }
 
 test NoneCancellationIsSilent {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then PlayerCaster.CancelSelected()
     after {
         not PlayerCaster.selectionAccepted
@@ -306,7 +306,7 @@ test NoneCancellationIsSilent {
 }
 
 test StartAnnouncesInitialCount {
-    start with PlayerCaster
+    start with { Caster, IsResolvable, PlayerCaster }
     then PlayerCaster.StartSample()
     after PlayerCaster.lastTrace == [ProtocolObservation(
         kind = ProtocolKind.UnlockedCountNotified,
