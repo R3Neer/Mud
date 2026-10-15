@@ -90,6 +90,8 @@ clear a different selected slot. None or a non-resolvable provider is a no-op.
 - `feedback.mud` models callback admission, feedback composition and reactive
   preparation of immutable batches; `feedback-scenarios.mud` supplies its
   declarative contract examples.
+- `sympathy.mud` models the two-target provider, session/tag transitions and
+  cached inverter interaction. `sympathy-scenarios.mud` supplies its contracts.
 - `mud.part` defines this example's part without dependencies.
 
 The three installed fixture definitions are test configurations: SympathyLink
@@ -198,7 +200,7 @@ initial counts outside capacity are outside this exercise. The constructor
 does not itself clamp initialUnlockedCount in C#. Unlock arithmetic here uses
 exact Int and matches only C# additions that do not overflow Int32.
 
-Controller diagnostics, UI timing, spell internals and
+Controller diagnostics, UI timing, native spell effects and
 PassiveMagicalCaster are external components, not silently completed systems.
 The fixture does not introduce a new Mud runtime rule or settle causal scheduling.
 
@@ -340,5 +342,155 @@ illustrates an explicit bridge for one captured lastTrace before it resets;
 it is not a general polling adapter. A real bridge forwards every subscribed
 callback, including repeated identical events. Its sampling/hosting ABI is not
 defined here. The twelve new scenarios are declarative source contracts, not
-executed tests. Sympathy's provider/session/synchronization remains a separate
-modelling unit.
+executed tests. The separate sympathy unit below models the provider/session
+protocol while leaving native synchronization and effect execution external.
+
+## Sympathy provider, sessions and cached interaction
+
+The sympathy model first separates the provider's remembered endpoints from
+the session's current orientation. They are different state: inverting a
+session does not swap the provider's references.
+
+```mud
+SympathyFixture.CastSympathySample(["a"])
+SympathyFixture.CastSympathySample(["b"])
+SympathyFixture.InvertSympathySession(1)
+(SympathyInteractorFixture, SympathyFixture).CheckSympathyInteraction("a")
+(SympathyInteractorFixture, SympathyFixture).InteractWithSympathy()
+```
+
+These are effect fragments with SympathyWorld, SympathyFixture,
+SympathyInteractor and SympathyInteractorFixture active. The first cast returns
+Partial through the auxiliary lastResult projection; the second returns Success
+and establishes a session. Inverting makes a the follower, so the interactor
+can cache its tag and invert the session again. Actions still return only
+ActionReply; lastResult is an observation for the modelling harness.
+
+The source contracts are SympathyLink, SympathySession, SympathyTag,
+SympathyInverterInteractor and SympathyEffectsFactory under
+`Scripts/Motors/SpellCasting/Sympathy`, with their PlayMode tests.
+EffectSynchronizer under `Scripts/Core/Tags/Effects` and its EditMode tests
+define the native synchronization boundary. Physics and visual effects remain
+adapter operations, not reconstructed Unity engine behaviour. The stale local
+electrical implementation is excluded: NativeExtension is an opaque sampled
+capability for the factory's second registered evaluator, not an electrical
+system implemented here.
+
+SympathyWorld owns finite exact registries of immutable object/session records.
+Updates use ordinary alias reconstruction through the writable registry root.
+Object tokens identify stable host objects; shape tokens identify Mesh assets,
+not equal geometry. The IdentityTag is an optional record whose shape is itself
+optional: absent identity and present identity with a null Mesh remain distinct.
+Session Nat keys identify retained records in this model, not allocated Mud
+things, host memory addresses or native allocation instructions. The fixture's
+nextSession counter stays above every imported/session key and is advanced only
+by allocation, keeping keys fresh. Sessions are retained so an old session can
+still be stopped again.
+
+For source correspondence, registry tokens must map injectively to objects,
+records must remain available, and every registered object must retain its
+SympathyTag. tagsManager controls valid cast targeting; it is not a replacement
+for an independent tag-removal simulation. IdentityTag instances and Mesh values
+stay fixed during an attempt. The source caches a tag reference; this model
+captures its value, which would differ if that tag were replaced or edited
+between the two casts. alive, grabbed and capabilities are sampled by the
+boundary before each input. grabbed means any non-Free Grabbable state,
+including Pushed, rather than only the Held enum case.
+
+Admission preserves the source priority:
+
+1. Null, destroyed, unknown or manager-less targets return None, even if the
+   remembered leader is busy.
+2. A living remembered leader with a non-Free sympathy role returns Failed.
+   This does not test whether the new target is free.
+3. Without a living remembered leader, a valid target returns Partial. It is
+   remembered only if it has IdentityTag; missing identity still clears the
+   cached identity and may request preview with no living leader.
+4. A second cast rejects the same object or incompatible identities/shapes.
+   Two present identities with null Mesh values can match.
+5. The factory selects every supported handler in registration order before
+   any grabbed-object swap. No handler means Failed; Visuals is appended only
+   after that test, so visuals alone cannot make an incompatible pair link.
+
+A grabbed follower replaces an ungrabbed leader; two grabbed objects retain
+their original orientation. A configured swap stops/cancels/disposes the old
+preview before starting the session. The session starts effects in order,
+starts synchronization, then updates leader and follower roles. Subscription
+to SessionStopped and both CurrentSession assignments happen afterward. Trace
+entries freeze object records, making the role-before-reference-assignment
+ordering inspectable. RoleChanged is recorded only when the role changes.
+
+Inversion requests each effect's Invert in order, then InvertSync, then swaps
+the session endpoints and updates roles. Provider references remain untouched.
+Stop requests each effect's Cancel, then StopSync, clears the leader's role and
+session reference, then the follower's, then records the subscribed stop notice.
+It has no idempotence guard. It also has no ownership check before clearing a
+tag: an older session can clear a newer session reference on an overlapping
+follower. The model deliberately adds neither an exclusive-session invariant
+nor automatic repair of that state.
+
+CancelSympathy uses the provider's remembered leader tag to find the session,
+including after inversion. It cancels a lone leader's configured preview,
+stops a session only when both remembered objects are alive, clears endpoint
+references and disposes the current preview reference. Cached identity and the
+combined handler list survive cancellation. preview models only whether the
+current CTS reference exists; it does not model resource identity, leaked
+overwritten previews or VFX completion.
+
+The interactor caches a tag during CheckSympathyInteraction, including when
+that check returns false because its role is not Follower. InteractWithSympathy
+requires a previously cached tag, uses its current session and does not recheck
+the role. An absent session is a normal no-op. keepsCurrent, allowsAction and
+ghost expose the constant interaction contract; they are not extra ActionReply
+payloads. The two for roles are supplied as a receiver tuple, not as given
+arguments.
+
+### Native effects, synchronization and callback boundary
+
+ExecuteEffect creates/addresses the handler instance identified by session key
+and effect kind, with the captured endpoints. InvertEffect and CancelEffect
+address that same instance; they do not infer its internal endpoints from the
+session's later orientation. The ordered commands are data for review, not
+executed native calls, and trace resets per public operation. Successful state
+correspondence assumes all native operations complete normally without callback
+reentry. A native fault is not silently converted into successful Mud execution;
+an executable adapter must supply the actual error/rollback contract.
+
+The corresponding adapter obligations include:
+
+- Physics Execute synchronizes the follower and acquires its constraints;
+  inversion releases old constraints, inverts modifiers, swaps internal roles
+  and reacquires constraints. Cancel stops synchronization and releases tokens.
+- Visual Execute applies the secondary state and creates the link line; it
+  does not unconditionally reapply the primary state. Visual inversion swaps
+  internal endpoints only when the configured colours differ. Inverting with
+  no configuration can fail in the source; the model does not prescribe a
+  successful no-op. Cancellation retains its actual CTS/line cleanup contract.
+- StartSync mirrors existing and newly added leader effect tags, matching exact
+  runtime tag type. It reuses a follower tag or creates one, copies Duration
+  before Intensity, then subscribes to changes. Mirrored tags are distinct
+  instances. Existing follower tags are modified but not owned by this sync.
+- StopSync removes only tags created by its current synchronization direction,
+  preserving preexisting tags. InvertSync stops without removal, clears the
+  ownership map and starts in reverse. A subsequent stop therefore does not
+  remove mirrors left by the earlier direction. There is no inferred mirror
+  removal on leader-tag removal, continuous timer model or exact replacement
+  for native approximate-float event tests.
+
+SympathyTag.OnDestroy calls Stop through its current session. A bridge must
+supply that session and the actual liveness view; changing a sampled alive flag
+alone does not synthesize a destruction callback. SessionStopped likewise
+records a notification boundary here. In Unity it can synchronously reenter
+SpellCaster cancellation and produce repeated notifications. This module does
+not wire that callback into the earlier non-reentrant controller model or
+pretend that delivering a later message is equivalent. A real bridge must
+specify that continuation explicitly before claiming full integration.
+
+The model therefore uses direct actions, pure policies and ordered effect data.
+Current state is queried by SympathyStatus; no reactive repair, always rule or
+derived-state cache is needed for these contracts. The native synchronizer's
+subscriptions are retained as an adapter contract rather than replaced by
+wave-based changes that could lose intermediate updates. Eighteen scenarios
+exercise the discrete model, including empty Mesh values, occupied followers,
+old-session clearing, repeated stops and cached interaction. They are source
+contracts, not executed Mud tests or an implementation of the synchronizer.
