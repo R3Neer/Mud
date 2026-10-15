@@ -1,4 +1,11 @@
-# Declarative source contracts. Each test starts a fresh domain world.
+part only
+
+using world
+using spells
+using sympathy
+using fixtures
+
+# Declarative source contracts; each test starts a fresh world. Not executed Mud tests.
 
 test SelectionReservesConcentrationBeforeLink {
     start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,

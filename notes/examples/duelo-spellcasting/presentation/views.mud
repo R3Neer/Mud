@@ -1,4 +1,8 @@
-# Presentation observes derived domain views; it does not maintain a target cache.
+using world
+using spells
+using sympathy
+
+# Derived presentation views and change notifications; no target caches.
 
 look Targeting for caster: Spellcaster {
     let selected := caster.selected

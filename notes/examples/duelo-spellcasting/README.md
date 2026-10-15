@@ -13,6 +13,11 @@ Spellcaster capability; a link is a domain relation, and engine effects are
 requests to an adapter. It is not an executable Unity port or a language rule.
 
 ```mud
+using world
+using spells
+using sympathy
+using fixtures
+
 (MagicWorld, Player).SelectSpell(Spell.Sympathy)
 (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxA]))
 (MagicWorld, Player).Cast(Aim(Point3(r0, r0, r0), [BoxB]))
@@ -20,13 +25,42 @@ requests to an adapter. It is not an executable Unity port or a language rule.
 (MagicWorld, Player).CancelSpell(Spell.Sympathy)
 ```
 
-These are effect fragments inside an admitted then. Start a fresh world with
+The using directives belong in the file header; the calls are effect fragments
+inside an admitted then. Start a fresh world with
 Entity, Creature, Spellcaster, Magic, MagicWorld, Player, BoxA and BoxB, plus
 CanSelect, CanAttempt, TargetUsable, CanLink, ConcentrationWithinLimit,
 ExclusiveSympathy and PublishSpellEvents. Add PrepareLinkEffects for engine
 requests. Boolean rules must remain active: inactive-call pruning must not
 silently remove mandatory domain checks. Message declarations are not lifecycle
 targets. The full rule set is explicit in every source scenario.
+
+## Paths and part visibility
+
+Treat this directory as the standalone Mud world root. Its mud.part owns every
+source file below it; none of the subdirectories opens another part. Directory
+names supply paths, while filenames only group related declarations. For example,
+world/entities.mud declares world.Entity; spells/selection.mud declares
+spells.SelectSpell, with anchor action::spells.SelectSpell. Moving a declaration
+to another directory changes its qualified identity, so the example's paths are
+part of its public contract.
+
+Files import the paths they use with exact using directives. A using supplies
+short names; uses in a mud.part would authorise access across parts. This example
+has no cross-part dependency, so its manifest needs no uses entry. Neither files
+nor directories are automatically imported, and imports are not re-exported.
+
+Files headed part only contain internal plans, operational links, admission and
+invariant rules, atomic completion helpers, and reactive delivery planners. They
+remain available to all files in this part, including its scenarios, but cannot
+be referenced by another part or the host. The header is the first content in
+each private file, before comments and using directives. It does not mean
+file-private or directory-private.
+
+Public actions, looks, messages and their value contracts remain in shared files.
+Public relation values use LinkSnapshot rather than the private SympathyLink
+carrying owner mutation authority. Concrete fixtures remain shared so an adapter
+can identify their entities; test declarations are grouped in part-only files.
+No public signature or produced value exports an internal helper type.
 
 ## Entities, values and authority
 
@@ -189,14 +223,19 @@ from this example. The normative language specification is unchanged.
 
 ## Files and verification
 
-- controller.mud: capability, selection, completion protocol and typed domain facts.
-- sympathy.mud: pair admission, relations, departure, contribution queries and link requests.
-- feedback.mud: exact configuration tables, phase policies and causal feedback consumers.
-- reactive-presentation.mud: derived views and their change notifications.
-- scenarios.mud, sympathy-scenarios.mud and feedback-scenarios.mud: declarative contracts.
-- domain-scenarios.mud: cross-entity exclusivity, revalidation, live contributions,
-  inversion, departure, relocking, idempotence and frozen link-effect contexts.
-- mud.part: this example part has no foreign dependencies.
+| Directory | Semantic files | Part-only files |
+| --- | --- | --- |
+| world | entities.mud: identities, shapes, capabilities and own effects | None |
+| spells | contracts.mud, state.mud, selection.mud, observations.mud | availability.mud, completion.mud, outbox.mud |
+| sympathy | casting.mud, relations.mud, observations.mud | admission.mud, linkState.mud |
+| feedback | contracts.mud, channel.mud, observations.mud | planning.mud |
+| presentation | views.mud: derived views and change notifications | None |
+| fixtures | entities.mud and feedback.mud: concrete example configurations | None |
+| scenarios | selection.mud, sympathy.mud, feedbackPhases.mud, feedbackDelivery.mud, pairAdmission.mud, contributions.mud, departure.mud, cancellation.mud | All eight |
+
+The root mud.part has no foreign dependencies. The forty source scenarios cover
+selection, pair admission, effects, departure, cancellation, frozen occurrences
+and feedback without changing the domain contracts.
 
 The source scenarios are not executed tests: no Mud compiler/runtime exists here.
 Repository validators check specification artefacts; bounded grammar witnesses

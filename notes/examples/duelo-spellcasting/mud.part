@@ -1,1 +1,2 @@
-# Informative Mud-owned spell domain. No foreign part dependencies.
+# One spell-domain part owns every descendant source file.
+# No foreign part dependencies: using imports stay inside this part.

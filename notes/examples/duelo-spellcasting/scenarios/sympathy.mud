@@ -1,4 +1,11 @@
-# Declarative contracts for the implemented Sympathy provider.
+part only
+
+using world
+using spells
+using sympathy
+using fixtures
+
+# Sympathy provider source contracts; no compiler/runtime executes these yet.
 
 test NoHitIsNoneRatherThanARejection {
     start with { Entity, Creature, Spellcaster, Magic, MagicWorld, Player,
