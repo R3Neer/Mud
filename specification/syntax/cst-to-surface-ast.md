@@ -6,7 +6,7 @@ aliases:
 tags:
   - mud/specification
   - mud/sintaxis
-status: proposed
+status: current
 normative: true
 depends-on:
   - cst-lossless
@@ -241,19 +241,16 @@ mut population: Population in [0..*] [1] = 10 people
 is projected to:
 
 ```text
-StoredFieldDecl(
-    collectionMutable = Enabled,
+StoredFieldDecl(field = stored_field_data(
+    collection_mutable = Enabled,
     name = population,
-    shape = ValueShape(
-        type = NamedType(Population),
-        domain = [0..*],
-        collection = CollectionSpec([1..1], ...)
-    ),
-    defaultValue = 10 people
-)
+    shape = ExplicitStoredShape(type_expression),
+    default_value = value_block,
+    metadata = []
+))
 ```
 
-The value-form domain and collection specification are normalised nodes, not text fragments.
+Here type_expression denotes the complete TypeExpr with Population, its domain and written singleton collection; value_block denotes the normalized quantity result. These names and the stored_field_data product display are explanatory abbreviations, not constructor additions. Domain and collection specifications remain normalized nodes, not text fragments.
 
 ### Calculated and public
 
@@ -264,8 +261,8 @@ An omitted type entry remains absent. The type is inferred.
 ### Cardinality omitted
 
 ```mud
-value: Nat
-values: Nat = [1, 2, 3]
+let value: Nat = 0
+let values: Nat = [1, 2, 3]
 ```
 
 Both forms produce a `CollectionSpec` with `OmittedCardinality`. The Surface AST neither manufactures `[1]` nor infers `[3]`. Later elaboration uses the owner and initialiser: an ordinary scalar without evidence to the contrary preserves `[1]`; an immutable stored field with a finite initialiser may yield an exact cardinality with provenance `InferredFromInitializer`.
@@ -733,9 +730,9 @@ The part-level declaration adds `PartStartDecl`. Within a test, the same `StartS
 
 `after assertion` and `after { assertion... }` produce a uniform `TestAfterBlock`.
 
-## Elements not yet normalised
+## Checks owned by subsequent phases
 
-The following are still pending for subsequent phases:
+The following are deliberately not decided by CST projection. Resolution and static checking follow chapters 10/11/21; their semantic representation is separate:
 
 - Qualified names versus semantic access.
 - Specific alias selected for a structural literal.

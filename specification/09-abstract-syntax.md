@@ -6,7 +6,7 @@ aliases:
 tags:
   - mud/specification
   - mud/sintaxis
-status: proposed
+status: current
 normative: true
 depends-on:
   - 03-notation
@@ -111,6 +111,8 @@ This chapter defines the normalised Surface AST for MUD 1.0. The AST preserves s
 The standard mechanical diagram is [[syntax/mud-surface-ast.asdl]]. This chapter explains its invariants and how it relates to other representations.
 
 Nominal resolution operates on this AST and produces the normative HIR `names/mud-nominal-hir.asdl`, which instantiates symbols, scopes, resolved bindings, pending receiver-call candidate sets, anchors and a partial nominal graph without duplicating source syntax. Effective types, domains, cardinalities, dependencies and other inferred conclusions belong to later typing and elaboration stages whose mechanical representation is not yet finalised.
+
+The constructor signatures in [[syntax/mud-surface-ast.asdl]] are the mechanical schema. Explanatory displays may abbreviate nested type/name/origin wrappers and use CamelCase labels for ASDL products; such displays are not serialized instances. Ordered fields and required/optional structure still follow the schema.
 
 ## Representation pipeline
 
@@ -295,16 +297,10 @@ The initialiser sequence remains separate from the field sequence. In an abstrac
 ### Stored field
 
 ```text
-StoredFieldDecl(
-    collectionMutable,
-    name,
-    shape,
-    defaultValueBlock,
-    metadata*
-)
+StoredFieldDecl(field)
 ```
 
-`ValueShape` contains a `TypeExpr` normalised using nominal alternatives, an optional domain per alternative, and one outer collection specification.
+The field is a stored_field_data product containing collection_mutable, name, optional stored_value_shape, mandatory default_value ValueBlock and metadata. ExplicitStoredShape contains the written TypeExpr; InferredStoredShape retains written domain/collection restrictions without inventing a type. A wholly omitted annotation remains absent.
 
 ### Calculated field
 
@@ -320,12 +316,7 @@ It contains no outer mutability. An absent `shape` delegates type, domain and co
 
 ## Value shape
 
-`ValueShape` is a structure reused by:
-
-- Stored fields.
-- Alias components.
-- Stored `family` data.
-- Participants `for`.
+The value_shape product wraps one complete type_expr where the schema requires a complete contract, including participants. Stored fields, alias components and stored family data instead use optional stored_value_shape to preserve omitted or partial annotations; calculated/public fields use optional derived_value_shape.
 
 It contains the complete type expression, but not a default value or outer mutability. Those aspects belong to the owning context.
 
@@ -356,18 +347,19 @@ GenericTypeApplication(constructor, arguments, form) preserves static applicatio
 
 ### Callable and reflected types
 
-`CallableType(kind, receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage `receivers` remain unresolved `declared_type` values, including generic applications, while `givens` are `TypeExpr`; the AST preserves syntax and leaves contract variance and compatibility to typing.
+`CallableType(kind, first_receiver, remaining_receivers, givens)` retains types such as `Dragon.action(Volume)`, `(Attacker, Defender).action(Amount)` and `Dragon.look(Detail)`. At this stage the first and remaining receivers remain unresolved `declared_type` values, including generic applications, while `givens` are `TypeExpr`; the AST preserves syntax and leaves contract variance and compatibility to typing.
 
 `ReflectedType(value)` contains a written expression in type position whose form ends in `~type`, such as `MyDragon.Stats()~type`. Resolution and typing must prove that `value` statically produces `Type`; later elaboration obtains the represented type. Static checking follows [[11-type-system]] and [[21-expressions]]; the mechanical form of that elaboration is not yet fixed. An ordinary call without `~type` remains a value.
 ### Dictionary
 
 ```text
-DictionaryType(keyType, valueTypeExpression)
+ExactDictionaryType(key_type, value_type, entries)
+DecisionDictionaryType(input_type, output_type, mode, branches)
 ```
 
-The value retains its `TypeExpr`, so it may contain its own domain and collection. The collection written after the complete dictionary belongs to the outer `TypeExpr`.
+The key/input and value/output retain complete TypeExpr contracts. A collection specification after an arrow belongs to that arrow: entries or branches retains it in the respective dictionary constructor, with mode separate for a functional dictionary. It is not an outer collection of independent dictionaries. [[17-dictionaries]] defines its semantic cardinality and selection meaning; the AST fields do not themselves count source branch nodes. Grouped value contracts retain their own collection layers.
 
-The brackets required by the grammar for a nested dictionary are not preserved by the AST.
+Parentheses used solely for admitted type grouping are not preserved as extra AST nodes. Arrow chains fold from the right, preserving each arrow's own specification.
 
 Functional-dictionary branches remain value nodes in the Surface AST and receive neither `AnchoredSymbol` nor a synthetic anchor. Resolution preserves source order and derives a dictionary-local `decision_branch_key` from the normalised selector; that key is used for reconstruction and internal dependencies, not for nominal resolution or metadata.
 
@@ -380,9 +372,10 @@ The standard form is:
 ```text
 CollectionSpec(
     cardinality,
+    origin,
     uniqueness,
     order,
-    elementsMutable
+    elements_mutable
 )
 ```
 
@@ -444,7 +437,7 @@ Structural members may include:
 
 ```text
 AliasComponentDecl(AliasComponent)
-AliasCalculatedFieldDecl(name, shape?, expression)
+AliasCalculatedFieldDecl(name, shape?, value, metadata*)
 AliasDefaultOverride(name, value)
 AliasOperatorDecl(OperatorDecl)
 ```
@@ -459,7 +452,7 @@ A structural component:
 
 A calculated field has no assignable storage; it may specify its shape and internal capability, and its value is recalculated from the expression. A local override may target only an inherited stored component and replaces only its default value.
 
-Structural literals remain contextual. `PositionalStructuralLiteralExpr` requires at least two values and `NamedStructuralLiteralExpr` retains one or more named components; neither names a specific alias. Alias members therefore become available only after contextual elaboration or an explicit nominal conversion.
+Structural literals remain contextual. `PositionalStructuralLiteralExpr` requires at least two values and `NamedStructuralLiteralExpr` retains one or more named components; neither names a specific alias. Alias members become available after contextual elaboration, explicit statically named structural construction or an admitted nominal conversion. Statically named construction retains ordinary CallExpr syntax under [[13-aliases]].
 
 The same rule applies to basic literals. If the context expects a nominal alias whose representation the literal supports, elaboration constructs that alias directly without introducing a general implicit conversion. For example, with `alias PlayerName := Text`, `let name: PlayerName = "Ada"` is valid. By contrast, an expression already typed as `Text`, such as `rawName`, does not silently become `PlayerName`; it requires `rawName to PlayerName`.
 
@@ -553,7 +546,7 @@ References between participants, including forward references and cycles, are pr
 - Optional default.
 - Metadata for the descriptor in source order.
 
-It can represent neither outer nor inner mutability.
+It introduces no mutable parameter storage. Any written inner capability remains in its TypeExpr for diagnostics and static rejection; retaining syntax grants no authority.
 
 ### Clauses
 

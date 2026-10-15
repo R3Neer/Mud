@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/specification
   - mud/fuente
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[01-scope-and-conformance]]"
@@ -35,7 +35,7 @@ decisions:
 
 ## State and purpose
 
-This chapter defines the physical unit received by a MUD processor. The identity semantics of the statements is defined in [[10-names-and-anchors]]; the lexical structure belongs to [[07-lexicon]].
+This chapter defines the physical unit received by a MUD processor. Declaration identity is defined in [[10-names-and-anchors]]; the lexical structure belongs to [[07-lexicon]].
 
 ## Files
 
@@ -48,13 +48,15 @@ This chapter defines the physical unit received by a MUD processor. The identity
 > [!rule] MUD-LEX-003 — Jumps
 > The processor must recognise `LF` and `CRLF`. It must also accept `CR` on its own as a jump and normalise all three forms to a single token `NEWLINE`.
 
+This chapter takes the source root and local input files as supplied. It publishes their physical/source contract, not descriptor discovery, external package resolution or runtime loading.
+
 ## World descriptor boundary
 
 `mud.world.toml` is the planned TOML descriptor for a world. Its schema, required presence, world-root discovery, package resolution and external distribution-to-part mapping remain unspecified under Q-071. It is not `.mud` source or a `mud.part` manifest, and the source grammar does not parse it. Existing local part discovery and direct `uses`/`using` rules remain applicable.
 
 ## Derived namespace
 
-The path MUD for a file is derived from the relative path from the root MUD:
+The MUD path for a file is derived from the relative path from the root MUD:
 
 ```text
 world/kingdoms.mud
@@ -104,7 +106,7 @@ given newTitle: Text {
 
 ## Identity from the source and provenance
 
-Each file is assigned an `SourceId` derived from its normalised relative path. The `SourceId` identifies the unit of provenance during a build; it is not an anchor semantics and may change when the file is moved.
+Each file is assigned a `SourceId` derived from its normalised relative path. The `SourceId` identifies the unit of provenance during a build; it is not an anchor semantics and may change when the file is moved.
 
 Syntactic positions use:
 

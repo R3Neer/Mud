@@ -6,7 +6,7 @@ aliases:
 tags:
   - mud/specification
   - mud/sintaxis
-status: proposed
+status: current
 normative: true
 depends-on:
   - 03-notation

@@ -5,13 +5,14 @@ aliases:
 tags:
   - mud/specification
   - mud/lexico
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[05-source-text]]"
 questions:
   - Q-069
 decisions:
+  - D-164
   - D-169
   - D-141
   - D-134
@@ -53,10 +54,12 @@ decisions:
 
 This chapter defines the base scanner and contextual token classification. The base scanner transforms Unicode into tokens without consulting the model; `POINT_LITERAL`, `UNIT_FORM` and `HEADER_WITH` are added only in a subsequent contextual view. The base lexical grammar is in [[grammar/mud-lexico.ebnf]]. The syntax that processes the significant views belongs to [[08-concrete-grammar]].
 
+Code examples below are lexical fragments in admitted containing bodies, not file-root value declarations. Foreign native-region boundaries are supplied by the adapter contract; this chapter specifies the Mud envelope and source preservation, not the ABI or hosting protocol.
+
 ## Unicode scalar values
 
 > [!definition] Value Unicode scalar
->  is a point Unicode code point, except for the range reserved for surrogates `U+D800`–`U+DFFF`.
+> A Unicode scalar value is a Unicode code point outside the range reserved for surrogates `U+D800`–`U+DFFF`.
 
 > [!rule] MUD-LEX-010 — Valid Unicode
 > The source text must be decoded as valid UTF-8. An isolated surrogate or a malformed UTF-8 sequence is a lexical error.
@@ -154,10 +157,10 @@ The base scanner does not need to know about units in order to recognise the bou
 
 The canonical form inserts a space between the number and the first unit. This standardisation is carried out by the formatter, not by the base scanner or the highlighter.
 
-## Contextual classification in font forms
+## Contextual classification of source forms
 
 > [!rule] MUD-LEX-012 — Independence of the base scanner
-> The base scanner relies solely on Unicode text and the fixed MUD lexicon. No query declarations, expected types, `~format` or unit catalogues. All its tokens and trivia retain exact offsets in the source text.
+> The base scanner relies solely on Unicode text and the fixed MUD lexicon. It does not query declarations, expected types, `~format` or unit catalogues. All its tokens and trivia retain exact offsets in the source text.
 
 > [!rule] MUD-LEX-013 — Contextual alternative for span
 > `POINT_LITERAL` and `UNIT_FORM` are contextual classifications of spans in the original text. The classifier may cover one or more units of the base tokenisation, but must retain the exact source interval and must not invent characters when reconstructing tokens.
@@ -178,13 +181,13 @@ The specific architecture may use the token lattice, localised re-tokenisation o
 
 ## Comments
 
-### Comment up to the jump
+### Line comment
 
 ```mud
 # Everything else on the line is a comment
 ```
 
-### Comment – line closed
+### Closed line comment
 
 ```mud
 value = 1 # explanation # + 2
@@ -192,12 +195,12 @@ value = 1 # explanation # + 2
 
 The second `#` resumes tokenisation from the same line. This form never crosses a line break.
 
-### Comment multi-line
+### Multi-line comment
 
 ```mud
 ###
 The content may span several lines.
-No se anida.
+Comments do not nest.
 ###
 ```
 
@@ -213,12 +216,12 @@ No se anida.
 The following form is invalid:
 
 ```mud
-### comentario ###
+### comment ###
 ```
 
 Comments do not emit tokens that are significant for the grammar, but are preserved with their exact text as trivia in the complete lexical stream and in the Lossless CST. A complete multi-line comment does not produce any significant tokens `NEWLINE`; its internal line breaks remain within the trivia of the comment.
 
-## Full flow, significant flow and trivia
+## Full stream, significant stream and trivia
 
 The scanner offers two synchronised views:
 
@@ -247,10 +250,10 @@ An implicitly closed `TEXT_END` is emitted as a synthetic token of zero width an
 `Char` shares the ordinary literals enclosed in double quotation marks with `Text`:
 
 ```mud
-letter: Char = "a"
-letterEnye: Char = "ñ"
-newline: Char = "\n"
-face: Char = "\u{1F642}"
+let letter: Char = "a"
+let letterEnye: Char = "ñ"
+let newline: Char = "\n"
+let face: Char = "\u{1F642}"
 ```
 
 > [!rule] MUD-LEX-025 — A single scalar
@@ -279,16 +282,16 @@ or be implicitly closed before the jump:
 Both denote the same `Text`. If the content is followed by an operator, delimiter or comment, the closing quotation mark is mandatory:
 
 ```mud
-greeting = "Hello" | ", world"
-name = "Ada" # comentario
+let greeting = "Hello" | ", world"
+let name = "Ada" # comment
 ```
 
-Without the first closing quotation mark, `| ", world"` would be included. Without the second, `# comentario` would also be included.
+Without the first closing quotation mark, `| ", world"` would be included. Without the second, `# comment` would also be included.
 
 ###  Multi-line form
 
 ```mud
-description = """
+let description = """
     First line.
       Second line with two extra spaces.
     """
@@ -315,7 +318,7 @@ description = """
 
 Everything in `Text` is a template. `{...}` contains an ordinary MUD expression, which can use postfix operators `~` such as `~anchor`. `anchor{...}` does not exist. Interpolated code braces are balanced and `\{`/`\}` writes literal braces. The scanner delivery `TEXT_START`, `TEXT_FRAGMENT`, `INTERPOLATION_START`, `INTERPOLATION_END` and `TEXT_END`.
 
-## Exhausts
+## Escapes
 
 The minimum forms are:
 
@@ -406,7 +409,7 @@ An magnitude `point over` can enable contextual writes via its metadata `~format
 > [!rule]
 > `POINT_LITERAL` is interpreted against the single type of magnitude of point required by the context. If `~format` is declared, the text must match its canonical representation exactly and the format must be statically invertible. Unrepresented sub-precision takes the value zero value.
 
-An magnitude of point without `~format` uses an ordinary quantity with a compatible unit as its full coordinate. In both cases, the reconstructed coordinate must belong to the declared domain. Cyclic domains do not normalise out-of-range literals: an literal equivalent to `26 hours` is invalid for `[0..24 hours) cycle`.
+A point without `~format` uses an ordinary quantity with a compatible inherited unit, or a contextual numeric literal when its underlying magnitude has no units. The latter retains ordinary numeric tokenization and does not invent a unit token; its checking/conversion contract is [[19-magnitudes#Points, differences and domains]]. Every reconstructed coordinate must belong to the declared domain. Cyclic domains do not normalise out-of-range literals: an literal equivalent to `26 hours` is invalid for `[0..24 hours) cycle`.
 
 This chapter only defines the lexical recognition of these forms; their interpretation is handled by model for magnitudes of point.
 

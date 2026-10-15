@@ -5,7 +5,7 @@ aliases:
 tags:
   - mud/specification
   - mud/gramatica
-status: proposed
+status: current
 normative: true
 depends-on:
   - "[[05-source-text]]"
@@ -18,6 +18,7 @@ questions:
   - Q-070
   - Q-059
 decisions:
+  - D-164
   - D-172
   - D-171
   - D-170
@@ -133,6 +134,8 @@ Ordinary immutable stored and derived values require let; mutable stored values 
 ## State and purpose
 
 [[grammar/mud.ebnf]] defines `.mud` source and minimal `mud.part` manifests. The physical filename selects `mud-file` or `part-file`; `mud-input` joins their grammar entry points for inventory validation. [[05-source-text]] defines exact manifest targets, direct permissions and the physical first-content constraint of `part only`. This chapter specifies how to read the grammar, interpret contextual constructs and group expressions. The questions listed in the frontmatter affect semantics, but do not prevent the source form from being recognised.
+
+This chapter publishes source recognition, contextual syntactic validation and the interfaces to later checks. Examples of values/effects are fragments inside their admitted owners. Operational summaries refer to their owning contracts; no scheduler, native ABI, host transport or test-observation protocol is supplied here.
 
 ## Parsing output
 
@@ -650,12 +653,12 @@ For a fire-breathing dragon, `Magical` appears only once. The union or symmetric
 Arrows accept complete types and are right-associative:
 
 ```mud
-board: Square -> Piece [0..32 ordered]
-nested: Name -> Coordinate -> Piece [*]
-policyByMode: Mode -> Product --> Money [2..4 ordered]
+Square -> Piece [0..32 ordered]
+Name -> Coordinate -> Piece [*]
+Mode -> Product --> Money [2..4 ordered]
 ```
 
-The second example is equivalent to `Name -> (Coordinate -> Piece [*])`. Each collection specification applies to the immediately preceding arrow. Parentheses are needed only to alter the natural grouping or delimit another complete construction.
+These are type-expression fragments. The second example is equivalent to `Name -> (Coordinate -> Piece [*])`. Each collection specification applies to the immediately preceding arrow. Parentheses are needed only to alter the natural grouping or delimit another complete construction.
 
 The chained application processes each level in turn:
 
@@ -892,7 +895,7 @@ A unit body contains only ordinary `~...` statements; there is no `unit-property
 
 A number may omit the space before its unit, but the formatter inserts it: `3m` and `3 m` have the same AST, and the latter is canonical.
 
-`~format` is optional and uses the general `Text` template syntax: spaces are literal, and `:2` sets two places to the left of the point here. Without it, a point has no special representation: it uses the ordinary textual representation of a magnitude, with the coordinate in the root unit and that unit's abbreviation or name. In this case, the first component is the coordinate in that unit—reduced by the cycle, if one exists—and each subsequent component is extracted within the preceding one. A non-obvious container is made explicit, for example `~format = "{week from year:2}"`.
+`~format` is optional and uses the general `Text` template syntax: spaces are literal, and `:2` sets two places to the left of the point here. Without it, a point has no special representation: it uses the ordinary textual representation of a magnitude, with the coordinate in the root unit and that unit's abbreviation or name when units exist; a unitless point displays only its numeric coordinate. In this case, the first component is the coordinate in that unit—reduced by the cycle, if one exists—and each subsequent component is extracted within the preceding one. A non-obvious container is made explicit, for example `~format = "{week from year:2}"`.
 
 Outside `~format`, extraction requires the point:
 
@@ -906,7 +909,7 @@ The form is one syntactic construct. Its receiver must be a point magnitude; bot
 
 Forms produced by `~format` occupy the contextual token `POINT_LITERAL`. The expected type selects a single point magnitude, and the literal must reproduce its canonical form exactly. A format that cannot be inverted unambiguously is invalid. Components finer than the last one shown take the value zero.
 
-Without `~format`, the literal is written as an ordinary quantity with a compatible unit. Every literal must belong to the domain before cyclic normalisation is applied; for example, `26:00:00` is invalid for `TimeOfDay`.
+Without `~format`, use an ordinary quantity with a compatible inherited unit, or a contextual numeric literal for a point over a unitless magnitude. The latter uses the ordinary numeric syntax and requires a unique expected point type; typed numeric values use explicit `to` under [[19-magnitudes]]. Every literal must belong to the domain before cyclic normalisation is applied; for example, `26:00:00` is invalid for `TimeOfDay`.
 
 ## Initial activation with `start with`
 
