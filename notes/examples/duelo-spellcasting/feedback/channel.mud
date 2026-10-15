@@ -51,17 +51,16 @@ abstract thing FeedbackChannel {
                 if allowedAssets has asset --> asset
         }
 
-    let requestFor: SpellEvent --> FeedbackRequest [? ordered] :=
-        {
-            let groups := phaseGroupsFor[value]
-            let rejected := rejectionAssetsFor[value]
-            (exists group in groups : group.effects != empty)
-                or rejected != empty
-        } --> FeedbackRequest(
-            value.caster,
-            value.spell,
-            value.aim,
-            groups,
-            rejected
-        )
+    let requestFor: SpellEvent --> FeedbackRequest [? ordered] := {
+        let groups := phaseGroupsFor[value]
+        let rejected := rejectionAssetsFor[value]
+        (exists group in groups : group.effects != empty)
+            or rejected != empty
+    } --> FeedbackRequest(
+        value.caster,
+        value.spell,
+        value.aim,
+        groups,
+        rejected
+    )
 }
