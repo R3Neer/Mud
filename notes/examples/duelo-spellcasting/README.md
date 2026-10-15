@@ -194,6 +194,8 @@ from this example. The normative language specification is unchanged.
 - feedback.mud: exact configuration tables, phase policies and causal feedback consumers.
 - reactive-presentation.mud: derived views and their change notifications.
 - scenarios.mud, sympathy-scenarios.mud and feedback-scenarios.mud: declarative contracts.
+- domain-scenarios.mud: cross-entity exclusivity, revalidation, live contributions,
+  inversion, departure, relocking, idempotence and frozen link-effect contexts.
 - mud.part: this example part has no foreign dependencies.
 
 The source scenarios are not executed tests: no Mud compiler/runtime exists here.
