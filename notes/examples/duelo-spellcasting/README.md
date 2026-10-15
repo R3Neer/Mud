@@ -36,7 +36,7 @@ authority for game behaviour is the implementation, rather than design notes:
 | `Scripts/Motors/SpellCasting/SpellCaster.cs` | Owns active flags, selected slot, concentration accounting, unlock adjustment, dispatch and event order. This is the modelled controller. |
 | `Scripts/Motors/SpellCasting/ISpell.cs` | Defines slot identifiers, RequiresConcentration, Cast, Cancel and self-cancellation. Providers remain external; the model records their invocation boundaries. |
 | `Scripts/Player/States/SpellCastingState.cs` | Uses selection/cast Boolean results to control targeting. Its movement, input and player-state transitions remain external. |
-| `Scripts/Motors/SpellCasting/SpellFeedbackManager.cs` | Consumes selected, failed-selection, attempted-cast and cancelled events. Feedback composition and execution remain external. |
+| `Scripts/Motors/SpellCasting/SpellFeedbackManager.cs` | Consumes selected, failed-selection, attempted-cast and cancelled events. The optional feedback model captures composition; native VFX execution remains external. |
 | `Scripts/Motors/SpellCasting/SpellBarManager.cs` | Consumes unlocked-count notifications. Drawing and fading remain external. |
 | `Scripts/Motors/SpellCasting/PassiveMagicalCaster.cs` | Separately traverses configured definitions; it is not dispatch of the selected active spell and is outside this controller model. |
 
@@ -87,6 +87,9 @@ clear a different selected slot. None or a non-resolvable provider is a no-op.
 - `scenarios.mud` contains declarative Mud tests with fresh fixture state.
 - `reactive-presentation.mud` is an optional Mud-oriented consumer with reactive
   update examples; it does not replace the Unity callback trace.
+- `feedback.mud` models callback admission, feedback composition and reactive
+  preparation of immutable batches; `feedback-scenarios.mud` supplies its
+  declarative contract examples.
 - `mud.part` defines this example's part without dependencies.
 
 The three installed fixture definitions are test configurations: SympathyLink
@@ -195,7 +198,7 @@ initial counts outside capacity are outside this exercise. The constructor
 does not itself clamp initialUnlockedCount in C#. Unlock arithmetic here uses
 exact Int and matches only C# additions that do not overflow Int32.
 
-Controller diagnostics, UI timing, feedback selection, spell internals and
+Controller diagnostics, UI timing, spell internals and
 PassiveMagicalCaster are external components, not silently completed systems.
 The fixture does not introduce a new Mud runtime rule or settle causal scheduling.
 
@@ -255,3 +258,87 @@ inside one operation. The reactive variant therefore leaves the existing
 lastTrace writes intact and makes no claim of callback/reentrancy equivalence.
 An action is not a causal when source. Per-attempt notifications would require
 an explicit message/adapter occurrence contract, not guessing from final state.
+
+## Callback feedback and reactive batches
+
+The optional feedback model consumes captured callbacks through
+ReceiveSpellFeedback. Its input is one FeedbackSample for each Selected,
+SelectionFailed, CastAttempted or Canceled callback, in reception order.
+CallCast, CallCancel and UnlockedCountNotified are trace entries, not feedback
+callbacks, and are outside the sample's kind domain.
+
+```mud
+PlayerFeedback.ReceiveSpellFeedback(FeedbackSample(
+    kind = ProtocolKind.CastAttempted, spell = Spell.Fireball,
+    result = CastResult.Success, aim = Aim(r1, r2, r3, ["crate"]),
+    liveAssets = [FeedbackAsset("shared"), FeedbackAsset("global")]
+))
+```
+
+This is an effect fragment after activating SpellFeedback, PlayerFeedback and
+PrepareSpellFeedback. The callback bridge supplies the original cast point and
+target for CastAttempted. For selection, cancellation and selection failure it
+supplies the feedback owner's position at the callback and an empty target.
+The applicator is the feedback owner's GameObject, represented by a stable
+registry token. An adapter maps FeedbackAsset tokens injectively to asset
+identity, not asset names, never reusing tokens while work remains pending.
+liveAssets captures which referenced assets are alive, including Unity's
+destroyed-object/null filtering. No null asset is itself a token.
+
+The pure plan preserves the source distinctions:
+
+- Selected, Canceled and CastAttempted require a profile for that spell; a
+  missing profile suppresses globals too.
+- Each merge removes excluded globals, reincorporates specific effects and
+  deduplicates by asset identity. Global lists are deduplicated before bag
+  subtraction so repeated excluded assets cannot survive. Effects within one
+  group are unordered, reflecting the absence of a promised HashSet order.
+- Success has two ordered groups: Partial, then Success. The same asset in
+  both groups is invoked twice; there is no event-wide deduplication. Partial
+  and Failed use only their respective group; None produces no cast group.
+- Every selection failure uses the generic fallback, without requiring a
+  profile or applying exclusions. Its sequence retains repetitions and filters
+  dead assets. It is not restricted to concentration failures.
+
+ReceiveSpellFeedback captures a complete plan while enabled and appends it to
+an ordered pending collection that permits equal entries. A disabled callback
+is a normal no-op. SetSpellFeedbackEnabled models subscription admission:
+disabling does not discard previously captured work or cancel running VFX;
+reenabling does not resurrect discarded callbacks. The bridge must preserve
+the ordering of callbacks and subscription changes rather than delivering old
+callbacks against a new enabled state.
+
+PrepareSpellFeedback reacts to pending changes, captures the complete batch,
+clears pending and replaces ready. The empty-queue guard prevents its own clear
+from producing another prepared batch. SpellFeedbackPrepared is sourced from
+the rule's actual firing, rather than ready changes: consecutive equal batches
+can still produce distinct occurrences. All requests in a batch, including
+identical ones, survive. No-op plans with empty groups/fallback are retained for
+inspection and require no VFX calls. PreparedSpellFeedback queries the latest
+batch; it is not a queue of unacknowledged messages.
+
+An exterior consumer executes batches in request order, group phases in order,
+and each group's asset set once per member; fallback uses its sequence order
+and multiplicity. Invocation context comes from the captured sample, never
+current targeting or position. ApplyEffect is void: this is invocation order,
+not animation-completion order. Native calls must receive the owner's
+destruction token, not a cast or disable token. Cancellation of asynchronous
+effects and disposal remain adapter responsibilities. The model publishes work
+descriptions; it does not execute or confirm successful native effects.
+
+This is a deliberate batch boundary, not a synchronous Unity callback port.
+Assume fixed profiles, live-asset status stable throughout each callback's
+merges, no effects that mutate configuration/assets or reenter the caster, and
+serial input with the planner active before intake and kept active until drain.
+Otherwise the source can observe mutations between Success's two merges that
+one captured plan cannot reproduce. No wall-clock timing, exactly-once native
+delivery protocol, reactivation recovery or Q-072 causal algorithm is supplied.
+Message payloads and publication retain the existing checkpoint/rollback rules.
+
+The controller remains unchanged. FeedbackBridgePreservesControllerCastContext
+illustrates an explicit bridge for one captured lastTrace before it resets;
+it is not a general polling adapter. A real bridge forwards every subscribed
+callback, including repeated identical events. Its sampling/hosting ABI is not
+defined here. The twelve new scenarios are declarative source contracts, not
+executed tests. Sympathy's provider/session/synchronization remains a separate
+modelling unit.
